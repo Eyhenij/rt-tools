@@ -3,7 +3,8 @@
 **Status:** proposed · **Revision:** 2026-09-22 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the kit's checkbox, radio button, icon, icon button, menu, tooltip, input, select,
 date picker, toggle switch, side panel, spinner, scroll area and toolbar — the family draws with
-them instead of Material; the material styling preset — it brings the first kit's colours
+them instead of Material; the kit's first-kit preset — the second kit's own styling preset that
+brings the first kit's colours
 **Laws:** `frontend-application`, `verifiability`, `reuse-first`, `lists`
 **Procedures:** none
 
@@ -12,6 +13,10 @@ records move into the second kit as a family of their own, next to `rt-table` an
 `rt-dynamic-list`. Neither of those is edited and neither is replaced: the application chooses
 which one a screen takes. Where the agreement merges is open question `Q-TP-1`; the scenario
 numbers stay as they are after the merge.
+
+The first kit's behaviour is copied as it is, oddities included — the owner's word "copy as is,
+we discuss it in detail later". The oddities are named in the decisions, so that the later
+discussion has its list.
 
 ## Why
 
@@ -47,6 +52,7 @@ parts it drew with — by the kit's own components.
 | a ready cell          | a cell the family draws by the column declaration, without a template of the application                              |
 | an opt-out node       | a part of a row the application marks so that a press on it does not reach the row                                    |
 | the column settings   | the order of columns, their visibility and the two scrollbar switches, saved per table                                |
+| the first-kit preset  | the second kit's own styling preset that draws the kit in the first kit's colours; it is not the Material library     |
 
 ### What it is called in the interface
 
@@ -75,11 +81,18 @@ The words are the first kit's; the kit's dictionary gives them in all eight lang
 
 - **The family stands next to `rt-table` and `rt-dynamic-list` and changes neither.** A screen
   drawn with the second kit's table looks and behaves the same before and after this work.
-- **No part of the family imports Material.** Every control the first kit took from Material is
-  the kit's own component: the checkbox, the radio button, the icon, the icon button, the menu, the
-  tooltip, the input, the select, the date picker, the toggle switch and the side panel.
-- **Every colour of the family comes from an appointment of the kit.** So the material preset
-  draws it in the first kit's colours and the dark theme repaints it without a rule of its own.
+- **The family carries no Material of any kind.** No import of `@angular/material` — the kit's
+  lint ban on it covers every file of the second kit — no Material Symbols font, and no input or
+  output that exists only because Material has it. Every control the first kit took from Material
+  is the kit's own component: the checkbox, the radio button, the icon, the icon button, the menu,
+  the tooltip, the input, the select, the date picker, the toggle switch and the side panel.
+- **Every colour of the family comes from an appointment of the kit, except the style line a
+  column gives its icon.** So the first-kit preset draws the family in the first kit's colours and
+  the dark theme repaints it without a rule of its own; the column's style line is drawn as given.
+- **An application moves a screen from the first kit's table without editing its column
+  declarations, its bindings or its saved settings.** Only the names of the components and
+  directives change, and a screen that set the Material field-look inputs drops them — the one
+  named exception.
 
 ### Columns and cells
 
@@ -88,11 +101,14 @@ The words are the first kit's; the kit's dictionary gives them in all eight lang
   change nothing in the drawing: the value is shown as it is, or as the column's shaping function
   returns it.
 - **An absent value and an empty string are drawn as a dash.** Zero and `false` are values and
-  are drawn.
+  are drawn; an empty list is drawn as nothing and an empty object as its default text form.
 - **The value keeps one line and is cut with an ellipsis; a hint shows the full value only when it
   was cut.** A column may give its own hint text instead of the value.
-- **The column may put an icon before or after the value, and the icon's style is computed per row
-  from the value.**
+- **The column may put an icon before or after the value, and the icon's style is a free line of
+  style the column computes per row from the value.**
+- **The column declaration takes every field of the first kit's, the ones nothing draws
+  included.** A link, a class name, the two filtering flags, the fixed flag and the icon's hint,
+  visibility and colour are accepted and change nothing, as in the first kit.
 - **A copyable ready cell carries a copy button, revealed while the pointer is over the cell.** It
   stands on the side opposite to the value's alignment unless the column names the side.
 - **A copyable ready cell whose value is absent, an empty string, an empty list or an empty object
@@ -110,6 +126,13 @@ The words are the first kit's; the kit's dictionary gives them in all eight lang
   column is not handed to the application.
 - **The header of a sorted column shows which way it is sorted.**
 - **A header may carry an icon before or after its label and a hint on the label.**
+- **An icon a column declaration names, in its header or its cells, is drawn by the kit's own icon
+  set through the kit's map of first-kit names; nothing is drawn by a font.** The declaration keeps
+  the first kit's name; the map gives it the kit's drawing. The icon's "outlined" flag is accepted
+  and changes nothing: the kit's set has one drawing per name.
+- **A name with no pair in the map draws no icon.** The value and the label are drawn as usual.
+  The application then renames the icon, or the map and the set are extended by the map's own rule:
+  each first-kit name has one pair, and a name without a pair stands in the map with a reason.
 
 ### The filter row
 
@@ -123,13 +146,17 @@ The words are the first kit's; the kit's dictionary gives them in all eight lang
   operator of a column with neither a condition nor a value asks nothing.
 - **The family keeps no conditions of its own and narrows no rows.** The application answers with
   new rows.
+- **The family takes no field-look input.** The first kit's `appearance` and `filterAppearance`
+  chose between the Material field looks "fill" and "outline"; they are not carried over, and the
+  kit's input draws its one look.
 
 ### Rows and presses
 
 - **A row made clickable reports a press on it with the row and the event.** A row not made
   clickable reports neither a press nor a double click.
-- **A press is reported when the pointer button goes down, not when it goes up.** So a double click
-  arrives after two row presses.
+- **A press is reported when a pointer button goes down, not when it goes up, and any button
+  counts, the right one included.** So a double click arrives after two row presses.
+- **A row takes no keyboard focus and no key.**
 - **A double click on a clickable row is reported with the row.**
 - **A press or a double click inside an opt-out node, in the selection cell, in the header or on
   the row menu button does not reach the row.**
@@ -143,6 +170,8 @@ The words are the first kit's; the kit's dictionary gives them in all eight lang
 - **The strip is revealed while the pointer is over its row and while the row's menu is open.** On
   a device without hover it is always shown.
 - **A row whose menu is open is marked as the active row until the menu closes.**
+- **A press on an inline action reaches the row unless the application stops it itself.** Only the
+  row menu button is stopped by the table.
 
 ### The selection column
 
@@ -150,8 +179,14 @@ The words are the first kit's; the kit's dictionary gives them in all eight lang
   whenever the list's selection is on.**
 - **In multiple selection every row carries a checkbox and the header carries the page
   checkbox.**
-- **The page checkbox is checked when every row of the shown page is marked, indeterminate when
-  some are, and empty when none are.** Marks on other pages do not make it indeterminate.
+- **The page checkbox is checked when every row of the shown page is marked.** It is shown
+  indeterminate only while it is not checked.
+- **After a row is marked or unmarked the page checkbox is indeterminate while any record is
+  marked, on the shown page or on another.** With no mark left anywhere it is empty.
+- **After the page checkbox is pressed it is indeterminate while some row of the shown page is
+  marked.**
+- **The list recounts the page checkbox for the shown page when rows arrive; the bare table does
+  not, and keeps the state it had on the page before.**
 - **The page checkbox marks or unmarks the rows of the shown page and touches no other mark.**
 - **Marks are held by the record key and survive a change of the page.**
 - **The application reads the marked records themselves, not only their keys.** A record marked on
@@ -169,6 +204,8 @@ The words are the first kit's; the kit's dictionary gives them in all eight lang
 
 - **The preset marks are applied once, when the first non-empty rows and a non-empty preset have
   both arrived.** A later change of the preset does not overwrite what the person marked since.
+- **Only the preset records found among those first rows are marked; the other keys of the preset
+  are dropped.**
 - **A switched-off selection column keeps its marks visible and lets none be changed.** Select all
   is switched off with it.
 
@@ -185,7 +222,9 @@ The words are the first kit's; the kit's dictionary gives them in all eight lang
 - **Marking an excluded record again takes it out of the exclusions; with none left select all is
   checked again.**
 - **An excluded record arrives unmarked every time its page is loaded again.**
-- **Unchecking select all takes every mark off and ends the across-pages mode.**
+- **Unchecking select all takes every mark off and ends the across-pages mode, and the exclusions
+  stay.** They are emptied only by the application's own call; until then a new select all starts
+  with the old exclusions.
 - **The application reads whether select all is on, whether the across-pages mode is on and which
   records are excluded.** A bulk action over all records is sent as "all but these": the family
   never holds the records it did not load.
@@ -202,9 +241,13 @@ The words are the first kit's; the kit's dictionary gives them in all eight lang
   when the table is opened again.**
 - **Saved settings whose set of columns differs from the declared one are dropped, and the table
   is drawn by the declaration.**
+- **Settings the first kit saved under a storage key are read by the family under the same key.**
+  The shape of the saved record is the first kit's.
 - **A table with no saved settings shows the horizontal scrollbar and hides the vertical one.**
 - **A hidden scrollbar hides the bar, not the scrolling.**
-- **The scrollbar choice applies to its own table and to no other on the page.**
+- **The scrollbar choice is applied to the whole page: every table of the family on it shows the
+  choice last applied.** A list applies its choice when its settings are read and when they are
+  saved.
 - **A hidden column draws neither its cell nor its filter cell.**
 
 ### The toolbar and the list
@@ -216,6 +259,8 @@ The words are the first kit's; the kit's dictionary gives them in all eight lang
 - **The clear-filters button is shown while the filter row is, and is unavailable while no
   condition is set.**
 - **Refresh asks the application to reload.**
+- **The list takes the switch of the pagination bar and passes it nowhere.** The bar is drawn by
+  its own rules whatever the switch says, and refresh never clears the search.
 - **The application's toolbar selectors and actions stand in the toolbar next to the kit's
   controls.**
 - **The placeholder replaces the table when there are no rows and no conditions.** With
@@ -231,6 +276,7 @@ The words are the first kit's; the kit's dictionary gives them in all eight lang
 - **Up to six pages are all shown; beyond that the first, the last and the neighbours of the
   current one are shown with dividers between them.**
 - **The arrows and the numbers ask for a page only when there is one to go to.**
+- **An arrow or a page number asks for its page on any key pressed on it, Tab included.**
 - **A change of the page size asks for the page that keeps the person at the same distance from
   the end of the list.**
 
@@ -299,7 +345,7 @@ value, icons on both sides, copy), `Sort`, `Filters` (every filter type, operato
 click, an opt-out node, with an event line), `RowActions` (menu, inline actions, both) and
 `Settings` (the panel and both scrollbar switches); the list adds `SelectAcrossPages`, `Toolbar`,
 `Pagination` and `Placeholder`; then `States`, `Narrow`, `Themes` and `Presets`. Every story
-carries both halves of the styling preset pair — the base look and the material one. The first
+carries both halves of the styling preset pair — the kit's base preset and its first-kit preset. The first
 kit's stories `ManyItems`, `FewItems`, `NoItems` and `CopyButtonOnHover` are covered by `Overview`,
 `Placeholder` and `Columns`.
 
@@ -322,80 +368,77 @@ pagination bar is compact, the toolbar folds into two lines.
 
 ### Several objects
 
-Several tables on one page do not meet: each holds its own marks and its own settings under its
-own storage key, and each applies its own scrollbar choice.
+Several tables on one page hold their own marks and their own settings under their own storage
+keys. The scrollbar choice is the exception, as in the first kit: it lies on the page, and the
+table that applied it last decides it for all.
 
 ## Decisions
 
 - **The family is named `rt-data-table` for the table and `rt-data-list` for the list.** The
-  second kit's `rt-` prefix; the first kit's names `rt-table` and `rt-dynamic-list` are taken by
-  the second kit's own families. Rejected: `rt-legacy-table` — it reads as a deprecated part,
-  while the owner asked for an alternative.
+  owner's choice of 22 September 2026. The second kit's `rt-` prefix; the first kit's names
+  `rt-table` and `rt-dynamic-list` are taken by the second kit's own families. Rejected:
+  `rt-legacy-table` — it reads as a deprecated part, while the owner asked for an alternative.
 - **The family is separate, not additions to `rt-table`.** The owner's word of 22 September 2026.
   Rejected: the first draft of this agreement, which added eight features to `rt-table`.
 - **The single choice of a row is drawn by `rt-radio-button`**, given by its `checked` input and
   heard by its `checkedChange` output, with `ariaLabel` for the circle alone; the multiple choice
   by `rt-checkbox` with its indeterminate state.
-- **The composite parts are ported, not borrowed from the second kit.** The pagination bar, the
-  filter cell and the settings panel repeat the first kit's layout on the kit's primitives: the
-  second kit's own versions of them look different. Whether some can be shared is `Q-TP-16`.
-- **The page checkbox answers for the shown page only.** The first kit, after a row is unmarked,
-  keeps the page checkbox indeterminate while marks stay on other pages, and the bare table never
-  recounts it on a page change; the agreement takes the recount. Open to the owner as `Q-TP-10`.
-- **The scrollbar choice belongs to one table.** The first kit writes it on the page root, and the
-  last table to save it repaints every other table on the page. Open to the owner as `Q-TP-11`.
-- **Closed:** `Q-TP-2` — the types format nothing, as in the first kit; `Q-TP-3` — no cards;
-  `Q-TP-5` — the press is reported on the button going down, as in the first kit; `Q-TP-8` — the
-  counter is shown only when select all is hidden, so it never meets the across-pages mode;
+- **The composite parts are the family's own, ported from the first kit.** The pagination bar,
+  the filter cell and the column settings panel repeat the first kit's layout on the kit's
+  primitives; `rt-pagination` and the second kit's settings panel are not used. The owner's word
+  "our own from the first kit" closes `Q-TP-16`.
+- **The application moves without edits.** The owner's word "yes, without edits" closes
+  `Q-TP-18` — the declaration keeps every field of the first kit's — and `Q-TP-19` — the settings
+  the first kit saved are read under the same key.
+- **The first kit's behaviour is copied as it is, oddities included.** The owner's word "copy as
+  is, we discuss it in detail later" closes `Q-TP-4`, `Q-TP-6`, `Q-TP-7`, `Q-TP-10`, `Q-TP-11`,
+  `Q-TP-14`, `Q-TP-15`, `Q-TP-20`, `Q-TP-21` and `Q-TP-22`; the list below keeps them for that
+  discussion.
+- **There is no Material in the family.** The owner's word "there must be no Material!" It
+  reverses `Q-TP-12`: the field-look inputs are not carried over, the one exception to a move
+  without edits.
+- **Icons of the column declarations are drawn by the kit's own set.** The owner's word "by the
+  kit's set" closes `Q-TP-13`. The price is named in the rules: a first-kit name without a pair in
+  the kit's map draws nothing until the application renames it or the map is extended.
+- **Closed earlier:** `Q-TP-2` — the types format nothing, as in the first kit; `Q-TP-3` — no
+  cards; `Q-TP-5` — the press is reported on the button going down, as in the first kit; `Q-TP-8`
+  — the counter is shown only when select all is hidden, so it never meets the across-pages mode;
   `Q-TP-9` — the radio button is the kit's family `rt-radio-button`.
+
+### First-kit oddities ported as is, to be discussed with the owner later
+
+- `Q-TP-4` — the icon of a ready cell takes a free style line from the column, which neither the
+  first-kit preset nor the dark theme repaints.
+- `Q-TP-6` — rows take no focus and no key; a page number turns the page on any key, Tab
+  included.
+- `Q-TP-7` — preset marks of records not among the first rows are dropped silently.
+- `Q-TP-10` — the page checkbox stays indeterminate while marks remain on other pages, and the
+  bare table does not recount it on a page change.
+- `Q-TP-11` — the scrollbar choice lies on the page, and the last table to apply it repaints the
+  others.
+- `Q-TP-14` — a press on an inline action reaches the row unless the application stops it.
+- `Q-TP-15` — the right pointer button activates a row too.
+- `Q-TP-20` — the exclusions outlive the unchecking of select all.
+- `Q-TP-21` — the list's pagination switch reaches nothing, and refresh never clears the search.
+- `Q-TP-22` — an empty list or object in a ready cell gets no dash, while the copy button counts
+  both as empty.
 
 ## Open questions
 
 - **`Q-TP-1` — where the agreement merges.** Proposed: a new subdomain of the second kit for the
   family. The boundary is the owner's.
-- **`Q-TP-4` — the icon style of a ready cell.** The first kit takes a free line of style from the
-  column per row; a free colour stays unchanged under the material preset and the dark theme.
-  Named colours of the kit's icon, or the free style as in the first kit.
-- **`Q-TP-6` — the keyboard.** The first kit's rows take no focus and no key, and a page number
-  turns the page on any key, Tab included. Whether the port keeps that or activates a row and a
-  page by Enter and Space.
-- **`Q-TP-7` — the preset marks of records not on the first page.** The first kit marks only the
-  preset records found among the first rows and drops the rest of the keys silently.
-- **`Q-TP-10` — the page checkbox as in the first kit or by the shown page.** See the decisions.
-- **`Q-TP-11` — the scrollbar choice per page or per table.** See the decisions.
-- **`Q-TP-12` — the field look.** The first kit takes `appearance` and `filterAppearance` — the
-  Material field looks "fill" and "outline"; the kit's input has one look. Whether the inputs stay
-  and draw one look, or leave.
-- **`Q-TP-13` — icon names in the column declaration.** The application names header and cell
-  icons by Material Symbols names; the kit's icon set is named differently, and its map of first-kit
-  names covers only the names seen in the first kit's templates.
-- **`Q-TP-14` — a press on an inline action.** In the first kit it reaches the row unless the
-  application stops it itself; only the row menu button is stopped by the table.
-- **`Q-TP-15` — which pointer button activates a row.** The first kit reports a press of any
-  button, the right one included.
-- **`Q-TP-16` — sharing parts with the second kit.** Whether the pagination bar, the settings
-  panel and the copy button of the family should be the second kit's own parts with a look added,
-  as the reuse-first law asks, or stay the family's own.
 - **`Q-TP-17` — `Q-DL-1` of the list of records.** The grill closed it by "selection in the kit";
-  now the selection lives in the new family, and `rt-dynamic-list` still holds none.
-- **`Q-TP-18` — declared but never drawn column fields.** The first kit declares a link, a class
-  name, two filtering flags, a fixed flag and the icon's hint, visibility and colour, and draws none
-  of them. Whether the declaration keeps them so that the application's columns compile unchanged.
-- **`Q-TP-19` — settings saved by the first kit.** Whether the family reads the settings the
-  application saved under the same key while it ran on the first kit, or starts from the
-  declaration.
-- **`Q-TP-20` — the exclusions after select all is unchecked.** The first kit empties the marks but
-  keeps the exclusions until the application clears them, and checking select all again starts with
-  the old exclusions.
-- **`Q-TP-21` — the list's switch of the pagination bar.** The first kit's list takes it and passes
-  it nowhere: the bar is always drawn, and the container's rule "refresh without pagination also
-  clears the search" never fires. Whether the port wires the switch, and with it that rule.
-- **`Q-TP-22` — an empty list or object in a ready cell.** The first kit draws a dash only for an
-  absent value and an empty string; an empty list shows nothing and an empty object shows its
-  default text, while the copy button already counts both as empty.
+  now the selection lives in the new family, and `rt-dynamic-list` still holds none. It lies
+  outside this family.
 
 ## History of changes
 
 - 2026-09-22 — the agreement is written before the code, task RT-2316.
 - 2026-09-22 — rewritten by the owner's word: a separate family with the first kit's look, not
   additions to `rt-table`; no cards; the column types and the double click as in the first kit.
+- 2026-09-22 — the owner's answers: the names confirmed; the first kit's oddities copied as is;
+  the application moves without edits; the pagination bar and the settings panel are the family's
+  own.
+- 2026-09-22 — the owner's answers on icons and Material: the column declarations' icons are drawn
+  by the kit's own set through its map; no Material of any kind, and the field-look inputs are not
+  carried over.

@@ -35,11 +35,11 @@ Then the page checkbox is checked and not indeterminate
 
 Not covered: the family has no code yet.
 
-### SC-UKV-240 — marks on another page do not make the page checkbox indeterminate
+### SC-UKV-240 — a mark on another page keeps the page checkbox indeterminate after a row change
 
-Given two rows marked on the first page and the person unmarked one of them before moving on
-When the second page with no marked rows is shown
-Then the page checkbox of the second page is empty
+Given a data list with one row marked on the first page and the second page shown with no marks
+When a person marks a row of the second page and unmarks it again
+Then the page checkbox of the second page is indeterminate
 
 Not covered: the family has no code yet.
 
@@ -299,11 +299,11 @@ Then the table draws the five declared columns in the declared order
 
 Not covered: the family has no code yet.
 
-### SC-UKV-273 — the scrollbar choice of one table does not touch another
+### SC-UKV-273 — the scrollbar choice saved by one list applies to every list on the page
 
-Given two data lists on one page with different storage keys
+Given two data lists on one page with different storage keys, both showing the horizontal scrollbar
 When a person hides the horizontal scrollbar of the first and saves
-Then the second still shows its horizontal scrollbar
+Then the second list shows no horizontal scrollbar either, while its saved settings stay unchanged
 
 Not covered: the family has no code yet.
 
@@ -319,7 +319,7 @@ Not covered: the family has no code yet.
 
 Given the showcase pages of the data table and the data list
 When the preset stories check runs
-Then every story of both families carries the base and the material half
+Then every story of both families carries the half of the kit's base preset and the half of its first-kit preset
 
 Not covered: the family has no code yet.
 
@@ -456,5 +456,29 @@ Not covered: the family has no code yet.
 Given a data list
 When it is drawn first with loading on and then with rows and fetching on
 Then the first shows a spinner in place of the list, and the second keeps the rows under a spinner with a backdrop
+
+Not covered: the family has no code yet.
+
+### SC-UKV-317 — settings the first kit saved come back in the family
+
+Given settings the first kit's table saved under the key "orders", with one column hidden
+When a data list with the storage key "orders" and the same columns is opened
+Then the column is drawn hidden and the saved order and scrollbar flags are applied
+
+Not covered: the family has no code yet.
+
+### SC-UKV-318 — a first-kit icon name in a column declaration is drawn by the kit's own set
+
+Given a header icon and a cell icon declared by first-kit names that have pairs in the kit's map
+When the data table is drawn
+Then both are the kit's icons of the paired names, and no icon font is asked for
+
+Not covered: the family has no code yet.
+
+### SC-UKV-319 — an icon name without a pair in the map draws no icon
+
+Given a cell icon declared by a first-kit name that has no pair in the kit's map
+When the data table is drawn
+Then the cell shows its value with no icon beside it
 
 Not covered: the family has no code yet.
