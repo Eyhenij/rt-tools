@@ -193,6 +193,11 @@ Rules that decide what goes in a matrix:
   `white-space`, the ligatures and smoothing. A class with the family alone takes the host's font
   size and line height, and the icons shift inside their buttons. No frame catches the shift while
   the references are taken with it; the owner found it by eye.
+- **The first showcase's Material Symbols file is a subset by icon names, and a glyph outside it
+  draws a stray shape, not the word.** A story naming a new glyph gets it only after the subset is
+  fetched again with the whole old list of names plus the new one. The ligatures of the old and the
+  new file are compared before the replacement: a name lost from the list breaks a neighbour's frame
+  silently.
 - `projects/ui-kit/src/lib/ui-kit/dynamic-selectors/` uses a misspelled
   `strories/` folder. It is matched by the `../src/**` glob and works; leave it
   unless you are deliberately renaming it (both the stylelint ignore and any
