@@ -126,13 +126,25 @@ The words are the first kit's; the kit's dictionary gives them in all eight lang
   column is not handed to the application.
 - **The header of a sorted column shows which way it is sorted.**
 - **A header may carry an icon before or after its label and a hint on the label.**
+
+### Icons of the column declarations
+
 - **An icon a column declaration names, in its header or its cells, is drawn by the kit's own icon
   set through the kit's map of first-kit names; nothing is drawn by a font.** The declaration keeps
   the first kit's name; the map gives it the kit's drawing. The icon's "outlined" flag is accepted
   and changes nothing: the kit's set has one drawing per name.
-- **A name with no pair in the map draws no icon.** The value and the label are drawn as usual.
-  The application then renames the icon, or the map and the set are extended by the map's own rule:
-  each first-kit name has one pair, and a name without a pair stands in the map with a reason.
+- **The application can hand the family an icon template by the directive `rtDataTableIcon`,
+  placed inside `rt-data-table` or inside `rt-data-list`, which hands it to its table.** The
+  template receives the icon name, the column and, in a cell, the row; it draws whatever the
+  application wants — its own `rt-icon`, a picture, anything.
+- **When an icon template is given, it draws every header and cell icon a column declaration
+  names, and the kit's map is not asked.** This is the way out for a name the map does not pair.
+- **Without an icon template, a name with no pair in the map draws no icon.** The value and the
+  label are drawn as usual. The application then gives an icon template, renames the icon, or the
+  map and the set are extended by the map's own rule: each first-kit name has one pair, and a name
+  without a pair stands in the map with a reason.
+- **A column of the type "custom" is the second way: the whole cell, its icon included, is the
+  application's template.** The family draws no ready cell and no declared icon in such a cell.
 
 ### The filter row
 
@@ -340,7 +352,7 @@ flags. The selection lives while the screen is open and is not saved.
 The showcase gets stories of its own, apart from the stories of `rt-table` and `rt-dynamic-list`:
 the table under "Organisms/Table/DataTable", the list under "Organisms/Data/DataList". Each has
 `Overview`, `Playground`, then one story per axis — `Columns` (every column type, the dash, a cut
-value, icons on both sides, copy), `Sort`, `Filters` (every filter type, operators), `Selection`
+value, icons on both sides by the kit's map and by an icon template, copy), `Sort`, `Filters` (every filter type, operators), `Selection`
 (none, some and all of the page; switched off), `SingleSelection`, `RowEvents` (press, double
 click, an opt-out node, with an event line), `RowActions` (menu, inline actions, both) and
 `Settings` (the panel and both scrollbar switches); the list adds `SelectAcrossPages`, `Toolbar`,
@@ -400,6 +412,11 @@ table that applied it last decides it for all.
 - **Icons of the column declarations are drawn by the kit's own set.** The owner's word "by the
   kit's set" closes `Q-TP-13`. The price is named in the rules: a first-kit name without a pair in
   the kit's map draws nothing until the application renames it or the map is extended.
+- **The application can draw the icons itself.** The owner's word "for the icons, provide handing
+  an icon over by a directive, or as an option a custom cell". The directive is `rtDataTableIcon`,
+  in the kit's naming; the custom cell is the column type "custom" the family already takes.
+  Rejected: an icon template per column — the first kit declares the icon per column by a name,
+  and one template that receives the name answers every column at once.
 - **Closed earlier:** `Q-TP-2` — the types format nothing, as in the first kit; `Q-TP-3` — no
   cards; `Q-TP-5` — the press is reported on the button going down, as in the first kit; `Q-TP-8`
   — the counter is shown only when select all is hidden, so it never meets the across-pages mode;
@@ -442,3 +459,5 @@ table that applied it last decides it for all.
 - 2026-09-22 — the owner's answers on icons and Material: the column declarations' icons are drawn
   by the kit's own set through its map; no Material of any kind, and the field-look inputs are not
   carried over.
+- 2026-09-22 — the owner's word on icons: the application can draw them by an icon template or by
+  a custom cell.

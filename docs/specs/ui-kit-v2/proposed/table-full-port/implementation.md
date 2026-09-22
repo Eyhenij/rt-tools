@@ -21,7 +21,7 @@ next to it; the rules themselves get their bindings verbatim when the agreement 
 | the toolbar and the list            | the family's list component on the kit's toolbar, scroll area, spinner, icon button and input                                                                                                            |
 | the pagination bar                  | a pagination component of the family; the page numbers and the size correction as pure functions                                                                                                         |
 | no Material of any kind             | the kit's lint ban on importing `@angular/material` in `eslint.config.mjs`, which covers every file of the second kit                                                                                    |
-| icons of the column declarations    | the kit's icon `projects/ui-kit-v2/src/lib/components/icon/` and its map of first-kit names in the same directory                                                                                        |
+| icons of the column declarations    | the kit's icon `projects/ui-kit-v2/src/lib/components/icon/` and its map of first-kit names in the same directory; the family's icon template directive `rtDataTableIcon`, asked before the map          |
 | the narrow screen                   | the kit's breakpoint service and the family's styles                                                                                                                                                     |
 | the labels                          | the kit's dictionary `projects/ui-kit-v2/src/lib/i18n/`, namespace `rtKit`, all eight languages                                                                                                          |
 | the look                            | the kit's first-kit styling preset `projects/ui-kit-v2/src/styles/_preset-material.scss` and the agreement `docs/specs/ui-kit-v2/proposed/material-preset/`                                              |
@@ -50,5 +50,5 @@ kit's oddities are ported as they are, and the spec lists them for a later discu
 ## Scenarios
 
 - **Scenario** — Test
-- **`SC-UKV-236`** … **`SC-UKV-275`**, **`SC-UKV-300`** … **`SC-UKV-319`** — no test yet; every
+- **`SC-UKV-236`** … **`SC-UKV-275`**, **`SC-UKV-300`** … **`SC-UKV-322`** — no test yet; every
   scenario carries the `Not covered:` mark
