@@ -71,22 +71,33 @@ function columnOf(
     };
 }
 
+/**
+ * Вид колонки значение не форматирует — ни в первом ките, ни здесь: ячейка показывает то, что
+ * лежит в записи, пока колонка не даст `transform`. Поэтому витрина даёт его так же, как дало бы
+ * приложение: без него в кадре стояли бы `148000`, `0.42` и момент ISO целиком.
+ */
+const toMoney: (value: unknown) => string = (value: unknown): string => `${Number(value).toLocaleString('ru-RU')} ₽`;
+const toPercent: (value: unknown) => string = (value: unknown): string => `${Math.round(Number(value) * 100)}%`;
+const toDay: (value: unknown) => string = (value: unknown): string => new Date(String(value)).toLocaleDateString('ru-RU');
+const toYesNo: (value: unknown) => string = (value: unknown): string => (value ? 'да' : 'нет');
+const toTags: (value: unknown) => string = (value: unknown): string => (value as string[]).join(', ');
+
 /** Каждый тип колонки по разу: так видно, чем готовая ячейка рисует значение каждого вида. */
 export const TEST_DATA_TABLE_COLUMNS: Array<IRtDataTable.Column<ITestDataTableRow>> = [
     columnOf('title', 'Договор', ERtDataTableColumnType.TEXT, { copyable: true, sorting: SORTING }),
     columnOf('city', 'Город', ERtDataTableColumnType.TEXT),
-    columnOf('sum', 'Сумма', ERtDataTableColumnType.CURRENCY, { align: 'right' }),
-    columnOf('share', 'Доля', ERtDataTableColumnType.PERCENT, { align: 'right' }),
-    columnOf('signed', 'Подписан', ERtDataTableColumnType.DATE),
-    columnOf('active', 'Действует', ERtDataTableColumnType.BOOLEAN),
-    columnOf('tags', 'Метки', ERtDataTableColumnType.ARRAY),
+    columnOf('sum', 'Сумма', ERtDataTableColumnType.CURRENCY, { align: 'right', transform: toMoney }),
+    columnOf('share', 'Доля', ERtDataTableColumnType.PERCENT, { align: 'right', transform: toPercent }),
+    columnOf('signed', 'Подписан', ERtDataTableColumnType.DATE, { transform: toDay }),
+    columnOf('active', 'Действует', ERtDataTableColumnType.BOOLEAN, { transform: toYesNo }),
+    columnOf('tags', 'Метки', ERtDataTableColumnType.ARRAY, { transform: toTags }),
 ];
 
 /** Тот же состав покороче: где ось не о типах колонок, семь колонок только мешают читать. */
 export const TEST_DATA_TABLE_SHORT_COLUMNS: Array<IRtDataTable.Column<ITestDataTableRow>> = [
     columnOf('title', 'Договор', ERtDataTableColumnType.TEXT, { sorting: SORTING }),
     columnOf('city', 'Город', ERtDataTableColumnType.TEXT),
-    columnOf('sum', 'Сумма', ERtDataTableColumnType.CURRENCY, { align: 'right' }),
+    columnOf('sum', 'Сумма', ERtDataTableColumnType.CURRENCY, { align: 'right', transform: toMoney }),
 ];
 
 /**
@@ -100,5 +111,5 @@ export const TEST_DATA_TABLE_FILTER_COLUMNS: Array<IRtDataTable.Column<ITestData
         filterType: ERtDataTableFilterType.SELECT,
         filterSelectOptions: [CITY_MOSCOW, CITY_SPB, CITY_NSK],
     }),
-    columnOf('sum', 'Сумма', ERtDataTableColumnType.CURRENCY, { align: 'right' }),
+    columnOf('sum', 'Сумма', ERtDataTableColumnType.CURRENCY, { align: 'right', transform: toMoney }),
 ];

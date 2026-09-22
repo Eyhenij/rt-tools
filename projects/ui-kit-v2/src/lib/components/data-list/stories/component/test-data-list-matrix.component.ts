@@ -8,6 +8,7 @@ import { StoryThemesComponent } from '../../../../../showcase/story-themes.compo
 import { IRtDataTable } from '../../../data-table/rt-data-table.model';
 import {
     ITestDataTableRow,
+    TEST_DATA_TABLE_COLUMNS,
     TEST_DATA_TABLE_FILTER_COLUMNS,
     TEST_DATA_TABLE_ROWS,
     TEST_DATA_TABLE_SHORT_COLUMNS,
@@ -16,7 +17,8 @@ import { TestRtDataListCellComponent } from './test-data-list-cell.component';
 import { TestRtDataListSettingsComponent } from './test-data-list-settings.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TDataListMatrixPart = 'loading' | 'placeholder' | 'pagination' | 'filters' | 'selection' | 'settings' | 'presets' | 'themes';
+export type TDataListMatrixPart =
+    'loading' | 'placeholder' | 'pagination' | 'filters' | 'selection' | 'settings' | 'narrow' | 'presets' | 'themes';
 
 /** Случай оси загрузки: первая загрузка и дозагрузка порознь не различаются. */
 interface ILoadingCase {
@@ -68,6 +70,16 @@ const SELECTION_CASES: readonly { readonly name: string; readonly selectAll: boo
 ];
 
 const PAGE_ONE: IPageModel = { pageNumber: 1, pageSize: 10, totalCount: 27, hasPrev: false, hasNext: true };
+
+/**
+ * Случай узкой коробки — не узкого окна: порог кита это запрос к ширине окна, а окно показа
+ * узким не бывает. Кадр отвечает на другое: карточек у таблицы нет вовсе, и восемь колонок вместе
+ * с колонкой выбора остаются таблицей, обрезанной своей коробкой. Ширина ячейки задана по имени —
+ * список тянется на всю ширину родителя и сам по себе ширины показа не даёт; нулевой минимум
+ * нужен рядом с ней: ячейка витрины — гибкий элемент, и без него она растёт по содержимому,
+ * а таблица вылезает на соседа вместо того, чтобы ехать вбок своей же прокруткой.
+ */
+const NARROW_CASES: readonly { readonly name: string }[] = [{ name: '360 px — уже таблицы: карточек нет, строки остаются таблицей' }];
 
 /**
  * Матрицы состояний `rt-data-list` для витрины.
@@ -176,6 +188,23 @@ const PAGE_ONE: IPageModel = { pageNumber: 1, pageSize: 10, totalCount: 27, hasP
                 </app-story-presets>
             }
 
+            @case ('narrow') {
+                <app-story-presets caption="Узкий экран в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="22.5rem" [items]="narrowCases" [itemLabel]="caseLabel">
+                            <ng-template let-item>
+                                <app-data-list-cell
+                                    [storageKey]="'story-list-narrow-' + item.name"
+                                    [columns]="allColumns"
+                                    [rows]="rows"
+                                    [page]="pageOne"
+                                    [style.min-inline-size]="'0'" />
+                            </ng-template>
+                        </app-story-row>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('presets') {
                 <app-story-presets caption="Список в обоих наборах">
                     <ng-template>
@@ -214,12 +243,14 @@ export class TestRtDataListMatrixComponent {
     public readonly noRows: ITestDataTableRow[] = [];
     public readonly columns: Array<IRtDataTable.Column<ITestDataTableRow>> = TEST_DATA_TABLE_SHORT_COLUMNS;
     public readonly filterColumns: Array<IRtDataTable.Column<ITestDataTableRow>> = TEST_DATA_TABLE_FILTER_COLUMNS;
+    public readonly allColumns: Array<IRtDataTable.Column<ITestDataTableRow>> = TEST_DATA_TABLE_COLUMNS;
     public readonly pageOne: IPageModel = PAGE_ONE;
 
     public readonly setFilters: Array<IFilterModel<'title' | 'city'>> = [
         { propertyName: 'city', operatorType: EFilterOperatorType.EQUALS, value: 'Москва' },
     ];
 
+    public readonly narrowCases: readonly { readonly name: string }[] = NARROW_CASES;
     public readonly loadingCases: readonly ILoadingCase[] = LOADING_CASES;
     public readonly placeholderCases: readonly IPlaceholderCase[] = PLACEHOLDER_CASES;
     public readonly pageCases: readonly IPageCase[] = PAGE_CASES;

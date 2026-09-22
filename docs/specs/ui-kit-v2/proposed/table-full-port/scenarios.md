@@ -281,7 +281,7 @@ Covered: `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-row-cli
 Given the showcase pages of the data table and the data list
 When the preset stories check runs
 Then every story of both families carries the half of the kit's base preset and the half of its first-kit preset
-Not covered: the check over the stories of both families is created in stage 4, together with the stories themselves.
+Not covered: no test names the number, and none can — the promise is about the set of stories, not about a call. It is held by the check `tools/check-preset-stories.mjs`, which refuses a family the preset touches whose showing carries no pair; both families stand among the 70 it counts.
 
 ### SC-UKV-300 — a row press is reported on the button going down, before a double click
 
@@ -379,7 +379,7 @@ Covered: `projects/ui-kit-v2/src/lib/components/data-list/pagination/rt-data-lis
 Given a data list of eight columns on a screen below the kit's threshold
 When it is drawn
 Then the rows stay a table wider than the screen, it scrolls sideways, and no hint opens on hover
-Not covered: the table has no card view at all, so nothing switches on a narrow screen; that it scrolls sideways is confirmed by a frame at that width — stage 4.
+Not covered: a frame at that width is impossible — the kit's threshold is a media query over the window width, and the showing's window is never narrow. The substance of the scenario is held by the frame of a narrow box, where no card view switches on and the eight columns stay a table clipped by it: `projects/ui-kit-v2/.storybook/__snapshots__/organisms-datalist-datalist--narrow.png`; the sideways scroll itself is the table's own `overflow: auto` and is held by reading.
 
 ### SC-UKV-314 — the counter stands in place of a hidden select all
 
@@ -443,3 +443,10 @@ Given two columns — one declaring a name paired in the kit's map, one a name w
 When the data table is drawn
 Then both icons are the template's drawings, and neither is the kit's icon of the map
 Covered: `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table.component.spec.ts`.
+
+### SC-UKV-323 — an empty page leaves the page checkbox checked, as in the first kit
+
+Given a list whose page holds no rows and no row is marked
+When the page arrives and the page state is recomputed
+Then the page checkbox is checked and not indeterminate — the first kit answers the same, because "no row is left unmarked" holds over an empty page
+Covered: `projects/ui-kit-v2/src/lib/components/data-list/rt-data-list-selectors.directive.spec.ts`.

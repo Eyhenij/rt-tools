@@ -5,7 +5,7 @@
 Rewritten by every session, not appended to.
 
 - **State:** `этап-идёт`
-- **Stage:** 2 из 5 — Таблица `rt-data-table`
+- **Stage:** 5 из 5 — Сдача
 - **Done:** задача заведена и привязана к эпику 1870; слово владельца и сверка лежат в
   `grill.md`. Первая запись договорённости (SC-UKV-236…275) описывала добавки к `rt-table`, а
   владелец 22 сентября сказал другое: таблица первого кита — отдельный компонент рядом, с видом
@@ -46,7 +46,29 @@ Rewritten by every session, not appended to.
   Этап 4.2 закрыт: у списка восемь историй-матриц, площадка и обзорная страница. Панель настройки
   колонок показана отдельной осью и стоит в кадре прямо: в наложении поверх страницы её разметки
   не видно вовсе. Проверки покрытия витрины, наборов оформления и таблиц входов зелёные.
-- **Next step:** этап 4 — обход историй и взгляд на кадры глазами.
+  Этап 4.3 закрыт, и взгляд глазами нашёл четыре вещи. Вид колонки значение не форматирует — ни
+  в первом ките, ни здесь: без `transform` в кадре стояли `148000`, `0.42` и момент ISO целиком;
+  витрина даёт его так же, как дало бы приложение. Полоса действий строки скрыта до наведения, и
+  в неподвижном кадре её не было вовсе — добавлен третий случай оси с признаком `data-story-state`
+  и параметром `pseudo`. Ось нажимаемости в кадре не видна вовсе, различие только в указателе —
+  объявлена в обзоре как непоказуемая, молча одинаковых ячеек не осталось. Пустая страница
+  оставляет флажок страницы отмеченным: это странность первого кита — `!find(...)` на пустом
+  наборе даёт истину; записана сценарием SC-UKV-323 с тестом и краем в обоих обзорах.
+  Один настоящий дефект: `rt-toggle-switch` не проецирует содержимое, и подписи двух
+  переключателей полос прокрутки молча терялись — в панели стояли два безымянных переключателя.
+  Подпись поставлена соседним словом в строке, как это делает сам кит.
+  Обмёт зелёный: 609 историй и 85 обзорных страниц, пустых показов и ошибок отрисовки нет. Первые
+  три попытки обмёта умирали на чужой странице «потерей контекста»: витрина этого сеанса
+  устарела — вылечено перезапуском, дерево при этом было неподвижно.
+  Этап 4.4 закрыт: кадры сняты в образе и подтверждены вторым прогоном подряд — 629 из 629,
+  сирот нет. Попутно пересняты три кадра семьи значков: они стояли от дня, когда в набор дорисовали
+  знак «равно», и разошлись ровно на нём. Закрыты и две отметки, ждавшие кадра. SC-UKV-275 держит
+  проверка историй наборов — теста на неё нет и быть не может, обещание о наборе историй, а не о
+  вызове. SC-UKV-313 кадром в принципе не закрывается: порог кита — запрос к ширине окна, а окно
+  показа узким не бывает; суть сценария держит кадр узкой коробки — карточек нет, восемь колонок
+  остаются таблицей. Обе причины записаны в договорённости, `check:specs` зелёная.
+  Весь второй кит — 1720 из 1720 тестов.
+- **Next step:** этап 5.1 — слить договорённость в спецификацию кита.
 - **Uncommitted:** ничего.
 - **Waiting for the owner:** нет.
 - **PR:** not open yet
@@ -69,9 +91,9 @@ Rewritten by every session, not appended to.
 - [x] 3.6 Spec of the list on its scenarios
 - [x] 4.1 Stories and `Overview` of `rt-data-table` by the coverage contract
 - [x] 4.2 Stories and `Overview` of `rt-data-list` by the coverage contract
-- [>] 4.3 Sweep over the stories and a look at the frames by eye
-- [ ] 4.4 Frames in the image and a second run in a row
-- [ ] 5.1 The agreement merged into the kit spec
+- [x] 4.3 Sweep over the stories and a look at the frames by eye
+- [x] 4.4 Frames in the image and a second run in a row
+- [>] 5.1 The agreement merged into the kit spec
 - [ ] 5.2 The gate before the push and the push of the branch
 - [ ] 5.3 The stories shown to the owner
 
@@ -145,7 +167,7 @@ Put together by a hook before the compaction of the context (auto).
 
 - **State:** `этап-идёт`
 - **Stage:** 2 из 5 — Таблица `rt-data-table`
-- **Next step:** этап 3 — выбор всех записей по страницам, заглушка пустого списка и вид
+- **Next step:** этап 4 — обход историй и взгляд на кадры глазами.
 - **PR:** not open yet
 
 The progress in full — `docs/tasks/RT-2316-table-full-port/progress.md`; the plan lies next to it.
@@ -153,20 +175,26 @@ The progress in full — `docs/tasks/RT-2316-table-full-port/progress.md`; the p
 ### Uncommitted
 
 ```
- M projects/ui-kit-v2/src/lib/components/data-list/index.ts
- M projects/ui-kit-v2/src/lib/components/data-list/rt-data-list-settings.logic.ts
- M projects/ui-kit-v2/src/lib/i18n/rt-kit-labels.en.ts
-?? projects/ui-kit-v2/src/lib/components/data-list/rt-data-list-selection.logic.ts
-?? projects/ui-kit-v2/src/lib/components/data-list/rt-data-list-selectors.directive.ts
-?? projects/ui-kit-v2/src/lib/components/data-list/rt-data-list.component.html
-?? projects/ui-kit-v2/src/lib/components/data-list/rt-data-list.component.scss
-?? projects/ui-kit-v2/src/lib/components/data-list/rt-data-list.component.ts
-?? projects/ui-kit-v2/src/lib/components/data-list/rt-data-list.directive.ts
+ M projects/ui-kit-v2/src/lib/components/data-table/stories/component/test-data-table.rows.ts
+ M tools/visual-gate.mjs
+?? projects/ui-kit-v2/.storybook/__snapshots__/organisms-datatable-datatable--actions.png
+?? projects/ui-kit-v2/.storybook/__snapshots__/organisms-datatable-datatable--clickable.png
+?? projects/ui-kit-v2/.storybook/__snapshots__/organisms-datatable-datatable--columns.png
+?? projects/ui-kit-v2/.storybook/__snapshots__/organisms-datatable-datatable--filters.png
+?? projects/ui-kit-v2/.storybook/__snapshots__/organisms-datatable-datatable--presets.png
+?? projects/ui-kit-v2/.storybook/__snapshots__/organisms-datatable-datatable--selection.png
+?? projects/ui-kit-v2/.storybook/__snapshots__/organisms-datatable-datatable--sort.png
+?? projects/ui-kit-v2/.storybook/__snapshots__/organisms-datatable-datatable--themes.png
 ```
 
 ### Commits over the main branch
 
 ```
+32d10cfc3 feat(rt:ui-kit-v2): витрина списка rt-data-list — восемь матриц и обзор
+0ec090305 feat(rt:ui-kit-v2): витрина таблицы rt-data-table — восемь матриц и обзор
+1e996281d feat(rt:ui-kit-v2): полосы прокрутки таблицы по сохранённой настройке
+4ca587caf feat(rt:ui-kit-v2): русские слова обеих семей в витрине и починка типов списка
+668cb04c6 feat(rt:ui-kit-v2): список rt-data-list — полосы по краям, заглушка, выбор по страницам
 26e767761 feat(rt:ui-kit-v2): панель настройки колонок rt-data-list — порядок, видимость, полосы
 79a27f955 feat(rt:ui-kit-v2): полоса страниц rt-data-list — ряд номеров, стрелки, размер страницы
 b4d4c53e0 feat(rt:ui-kit-v2): панель действий списка rt-data-list — поиск, отбор, обновление
@@ -182,11 +210,6 @@ f9ec4afe5 feat(rt:ui-kit-v2): ячейка шапки rt-data-table — поря
 24baf3a50 docs: план RT-2316 записан — таблица первого кита во втором в пять этапов
 371d95aa8 docs: в задаче RT-2316 записано слово владельца: материала в таблице быть не должно
 dbd5078a4 docs: в задаче RT-2316 записано слово владельца о значках из описания колонок
-01f19aa17 docs: в задаче RT-2316 записаны ответы владельца об имени, странностях первого кита и переезде
-15008db23 docs: в задаче RT-2316 записано, что договорённость переписана и ждёт ответов владельца
-6a49e7681 Merge branch 'RT-2317-radio-button' into RT-2316-table-full-port
-c2e8d4dc5 Merge branch 'RT-1870-one-kit' into RT-2317-radio-button
-70ffc166f Merge remote-tracking branch 'origin/main' into RT-1870-one-kit
 ```
 
 Written by a hook before the compaction of the context. Everything standing here is checked

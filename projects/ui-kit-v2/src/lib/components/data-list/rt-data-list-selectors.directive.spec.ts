@@ -219,4 +219,12 @@ describe('RtDataListSelectorsDirective', () => {
         expect(qa(fixture, 'data-list-select-all')).toBeNull();
         expect(textOf(qa(fixture, 'data-list-selected-count'))).toBe('Selected: 2');
     });
+
+    it('SC-UKV-323 — пустая страница оставляет флажок страницы отмеченным, как в первом ките', async (): Promise<void> => {
+        const fixture: ComponentFixture<SelectorsHostComponent> = await setup((host: SelectorsHostComponent) => host.rows.set([]));
+
+        expect(selectors(fixture).selectedEntitiesIds()).toEqual([]);
+        expect(selectors(fixture).isPageEntitiesSelected()).toBe(true);
+        expect(selectors(fixture).isPageEntitiesIndeterminate()).toBe(false);
+    });
 });

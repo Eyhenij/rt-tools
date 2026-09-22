@@ -34,6 +34,12 @@ export const Selection: TStory = { args: { part: 'selection' } };
 /** Панель настройки колонок стоит в кадре прямо: в наложении поверх страницы её не снять. */
 export const Settings: TStory = { args: { part: 'settings' } };
 
+/**
+ * Узкая коробка, а не узкое окно: порог кита — запрос к ширине окна, и окно показа узким не
+ * бывает. Кадр отвечает на другое: карточек у таблицы нет, восемь колонок остаются таблицей.
+ */
+export const Narrow: TStory = { args: { part: 'narrow' } };
+
 export const Presets: TStory = { args: { part: 'presets' } };
 
 export const Themes: TStory = { args: { part: 'themes' } };

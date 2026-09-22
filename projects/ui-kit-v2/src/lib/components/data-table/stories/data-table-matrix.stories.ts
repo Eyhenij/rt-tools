@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/angular';
 
+import { storyPseudoParameters } from '../../../../showcase/story-states';
 import { TestRtDataTableMatrixComponent } from './component/test-data-table-matrix.component';
 
 /**
@@ -34,7 +35,14 @@ export const Filters: TStory = { args: { part: 'filters' } };
 /** Выбор многих даёт флажки и флажок страницы, выбор по одной — радиокнопки и шапку без флажка. */
 export const Selection: TStory = { args: { part: 'selection' } };
 
-export const Actions: TStory = { args: { part: 'actions' } };
+/**
+ * Полоса действий скрыта, пока строка не наведена: в неподвижном кадре наведение ставит аддон
+ * витрины — признак стоит на ячейке, а правило со `:hover` написано на строке таблицы.
+ */
+export const Actions: TStory = {
+    args: { part: 'actions' },
+    parameters: { pseudo: storyPseudoParameters('.rt-data-table__row') },
+};
 
 export const Clickable: TStory = { args: { part: 'clickable' } };
 

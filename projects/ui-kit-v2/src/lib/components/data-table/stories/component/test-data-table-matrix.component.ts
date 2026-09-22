@@ -62,14 +62,31 @@ const SELECTION_CASES: readonly ISelectionCase[] = [
     { name: 'колонка выбора недоступна', shown: true, multiple: true, disabled: true },
 ];
 
-const ACTION_CASES: readonly { readonly name: string; readonly withActions: boolean }[] = [
-    { name: 'без действий над строкой', withActions: false },
-    { name: 'меню строки в полосе действий', withActions: true },
+/**
+ * Случай оси действий строки. Полоса действий скрыта, пока строка не наведена, и в неподвижном
+ * кадре наведения не поймать: его ставит признак `data-story-state`, а правило со `:hover`
+ * переписывает в классовое аддон витрины — параметром `pseudo` рядом с историей.
+ */
+interface IActionCase {
+    readonly name: string;
+    readonly withActions: boolean;
+    readonly hovered: boolean;
+}
+
+const ACTION_CASES: readonly IActionCase[] = [
+    { name: 'без действий над строкой', withActions: false, hovered: false },
+    { name: 'меню строки есть, строка не наведена — полоса скрыта', withActions: true, hovered: false },
+    { name: 'строка наведена — проявилось меню строки', withActions: true, hovered: true },
 ];
 
+/**
+ * Случай оси нажимаемости. В кадре эти две ячейки одинаковы: нажимаемая строка отличается только
+ * указателем-рукой, ни фона, ни рамки она не меняет — как в первом ките. Ось объявлена в обзоре
+ * как непоказуемая, а подписи говорят, чем ячейки различаются на самом деле.
+ */
 const CLICKABLE_CASES: readonly { readonly name: string; readonly clickable: boolean }[] = [
-    { name: 'обычная строка', clickable: false },
-    { name: 'строка отзывается на нажатие', clickable: true },
+    { name: 'обычная строка — указатель обычный', clickable: false },
+    { name: 'строка отзывается на нажатие — указатель-рука, в кадре её не видно', clickable: true },
 ];
 
 /**
@@ -155,7 +172,8 @@ const CLICKABLE_CASES: readonly { readonly name: string; readonly clickable: boo
                                     [storageKey]="'story-actions-' + item.name"
                                     [columns]="shortColumns"
                                     [rows]="rows"
-                                    [withRowActions]="item.withActions" />
+                                    [withRowActions]="item.withActions"
+                                    [attr.data-story-state]="item.hovered ? 'hover' : null" />
                             </ng-template>
                         </app-story-row>
                     </ng-template>
@@ -219,7 +237,7 @@ export class TestRtDataTableMatrixComponent {
     public readonly sortCases: readonly ISortCase[] = SORT_CASES;
     public readonly filterCases: readonly IFilterCase[] = FILTER_CASES;
     public readonly selectionCases: readonly ISelectionCase[] = SELECTION_CASES;
-    public readonly actionCases: readonly { readonly name: string; readonly withActions: boolean }[] = ACTION_CASES;
+    public readonly actionCases: readonly IActionCase[] = ACTION_CASES;
     public readonly clickableCases: readonly { readonly name: string; readonly clickable: boolean }[] = CLICKABLE_CASES;
 
     public readonly caseLabel: (value: { readonly name: string }) => string = (value: { readonly name: string }): string => value.name;

@@ -27,6 +27,7 @@
  *   node tools/visual-gate.mjs ui-kit --update     # a re-take of them, by the same road
  *   node tools/visual-gate.mjs ui-kit-v2           # the second showcase's snapshots
  *   node tools/visual-gate.mjs ui-kit-v2 --update  # a re-take of them, by the same road
+ *   node tools/visual-gate.mjs ui-kit-v2 --update '<path sample>'  # a re-take of the named files only
  */
 import { spawn, spawnSync } from 'node:child_process';
 import { createServer } from 'node:net';
@@ -43,6 +44,7 @@ const KITS = {
         built: 'dist/storybook/@rt-tools/ui-kit',
         snapshots: 'test:visual',
         update: 'test:visual:update',
+        updateOne: 'test:visual:update',
         probes: ['check:paint'],
         image: true,
     },
@@ -51,6 +53,7 @@ const KITS = {
         built: 'dist/storybook/@rt-tools/ui-kit-v2',
         snapshots: 'test:visual:v2',
         update: 'test:visual:v2:update-all',
+        updateOne: 'test:visual:v2:update',
         probes: ['check:icons', 'check:window'],
         image: true,
     },
@@ -70,6 +73,17 @@ const kit = process.argv[2];
  * holds the raster of the machine that took it, and no other machine draws that.
  */
 const retakes = process.argv.includes('--update');
+
+/**
+ * A path sample after `--update`: then only the stories of the named files are re-taken.
+ *
+ * Without it the re-take goes over the whole directory, and that erases the divergence nobody
+ * expected together with the one being fixed: a frame that moved by itself becomes the new
+ * reference and is never looked at again. New stories have no reference at all, and they are
+ * exactly the case where a pointed re-take is the only lawful road.
+ */
+const retakeSample = retakes ? process.argv[process.argv.indexOf('--update') + 1] : undefined;
+const pointed = retakeSample !== undefined && !retakeSample.startsWith('--');
 
 if (!Object.hasOwn(KITS, kit)) {
     console.error(`\n  The kit is not named or is unknown: «${kit ?? ''}». Expected one of: ${Object.keys(KITS).join(', ')}\n`);
@@ -219,14 +233,15 @@ if (!judgesFrames) {
     console.log(`\n  The frames of ${kit} are matched in the pipeline only: its showcase shoots with the machine's browser.\n`);
 }
 
-const snapshots = retakes ? KITS[kit].update : KITS[kit].snapshots;
+const snapshots = retakes ? (pointed ? KITS[kit].updateOne : KITS[kit].update) : KITS[kit].snapshots;
 
 if (!snapshots) {
     console.error(`\n  The showcase ${kit} has no re-take of its own here — it is taken where its own harness says.\n`);
     process.exit(1);
 }
 
-const shoot = KITS[kit].image ? ['node', ['tools/shot-browser.mjs', 'pnpm', 'run', snapshots]] : ['pnpm', ['run', snapshots]];
+const shotArgs = pointed ? ['pnpm', 'run', snapshots, retakeSample] : ['pnpm', 'run', snapshots];
+const shoot = KITS[kit].image ? ['node', ['tools/shot-browser.mjs', ...shotArgs]] : [shotArgs[0], shotArgs.slice(1)];
 
 const run = judgesFrames
     ? spawnSync(shoot[0], shoot[1], {
