@@ -39,7 +39,11 @@ Rewritten by every session, not appended to.
   Без теста остались два, и у обоих причина записана: 275 (показ наборов в витрине) и 313 (узкий
   экран) закрываются кадром на этапе 4 — до него строка «Verified by» этапа 3 зелёной не станет.
   Весь второй кит — 1719 из 1719 тестов.
-- **Next step:** этап 4 — истории и обзорная страница `rt-data-table`.
+  Этап 4.1 закрыт: у таблицы восемь историй-матриц, площадка и обзорная страница. Каждая ячейка
+  матрицы несёт свою службу настроек и свой ключ хранения — колонки таблица берёт у службы, и
+  одна на весь показ дала бы всем ячейкам один состав. Части семьи — ячейки, шапка, отбор,
+  директивы — названы в списке покрытия с тем, где их видно.
+- **Next step:** этап 4 — истории и обзорная страница `rt-data-list`.
 - **Uncommitted:** ничего.
 - **Waiting for the owner:** нет.
 - **PR:** not open yet
@@ -60,8 +64,8 @@ Rewritten by every session, not appended to.
 - [x] 3.4 Selection across pages, the empty placeholder and the loading look
 - [x] 3.5 Words of both families in the kit's eight-language dictionary
 - [x] 3.6 Spec of the list on its scenarios
-- [>] 4.1 Stories and `Overview` of `rt-data-table` by the coverage contract
-- [ ] 4.2 Stories and `Overview` of `rt-data-list` by the coverage contract
+- [x] 4.1 Stories and `Overview` of `rt-data-table` by the coverage contract
+- [>] 4.2 Stories and `Overview` of `rt-data-list` by the coverage contract
 - [ ] 4.3 Sweep over the stories and a look at the frames by eye
 - [ ] 4.4 Frames in the image and a second run in a row
 - [ ] 5.1 The agreement merged into the kit spec

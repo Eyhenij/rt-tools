@@ -31,13 +31,23 @@
     "ng-template[rtTableRowActions]": "маркер проекции содержимого: своей разметки у него нет вовсе. В кадре виден не маркер, а то, как меню строки таблицы разложило содержимое, и это показывает история семейства `table`",
     "ng-template[rtThreadListFilters]": "маркер проекции содержимого: своей разметки у него нет вовсе. В кадре виден не маркер, а то, как список бесед разложил содержимое, и это показывает история семейства `thread-list`",
     "ng-template[rtThreadListRow]": "маркер проекции содержимого: своей разметки у него нет вовсе. В кадре виден не маркер, а то, как список бесед разложил содержимое, и это показывает история семейства `thread-list`",
-    "ng-template[rtThreadListSearch]": "маркер проекции содержимого: своей разметки у него нет вовсе. В кадре виден не маркер, а то, как список бесед разложил содержимое, и это показывает история семейства `thread-list`"
+    "ng-template[rtThreadListSearch]": "маркер проекции содержимого: своей разметки у него нет вовсе. В кадре виден не маркер, а то, как список бесед разложил содержимое, и это показывает история семейства `thread-list`",
+    "[rtDataTableCustomCells]": "маркер шаблонов ячеек приложения: своей разметки у него нет вовсе. В кадре видна ячейка приложения, а не маркер, и рисует её приложение — витрине показывать нечего",
+    "[rtDataTableAdditionalRowActions]": "маркер действий рядом с кнопкой меню строки: разметку даёт приложение, у маркера её нет. Полосу действий строки показывает история `Actions` семейства `data-table`",
+    "ng-template[rtDataTableIcon]": "маркер шаблона значка приложения: рисунок даёт приложение, у маркера разметки нет. Значки из перечня кита видны в истории `Columns` семейства `data-table`",
+    "[rtDataTableStopRowClick]": "признак «нажатие сюда до строки не доходит»: он ничего не рисует и в кадре неотличим от его отсутствия. Проверяется вызовом — спека директивы нажатия строки"
   },
   "shownWithin": {
     "[rtDynamicListActions]": "projects/ui-kit-v2/src/lib/components/dynamic-list/stories/dynamic-list-matrix.stories.ts",
     "[rtDynamicListSelectors]": "projects/ui-kit-v2/src/lib/components/dynamic-list/stories/dynamic-list-matrix.stories.ts",
     "[rtFieldHint]": "projects/ui-kit-v2/src/lib/components/field/stories/field-matrix.stories.ts",
-    "rt-table-settings-aside": "projects/ui-kit-v2/src/showcase/templates/stories/bookings-template.stories.ts"
+    "rt-table-settings-aside": "projects/ui-kit-v2/src/showcase/templates/stories/bookings-template.stories.ts",
+    "rt-data-table-cell": "projects/ui-kit-v2/src/lib/components/data-table/stories/data-table-matrix.stories.ts",
+    "rt-data-table-header-cell": "projects/ui-kit-v2/src/lib/components/data-table/stories/data-table-matrix.stories.ts",
+    "rt-data-table-filter-cell": "projects/ui-kit-v2/src/lib/components/data-table/stories/data-table-matrix.stories.ts",
+    "[rtDataTableRowActions]": "projects/ui-kit-v2/src/lib/components/data-table/stories/data-table-matrix.stories.ts",
+    "[rtDataTableRowClick]": "projects/ui-kit-v2/src/lib/components/data-table/stories/data-table-matrix.stories.ts",
+    "rt-data-table[rtDataTableSelectors]": "projects/ui-kit-v2/src/lib/components/data-table/stories/data-table-matrix.stories.ts"
   },
   "noPlayground": {
     "toolbar": "Содержимое панели приходит проекцией шаблонов в три места, и страница с входами их не задаёт: витрина умеет подставлять значения, а не разметку. Единственный вход — плотность — показан своей осью."
