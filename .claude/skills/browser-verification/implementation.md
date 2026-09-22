@@ -41,7 +41,7 @@ here" (the bold part of the item). An article without a line and a line without 
 divergence: the rule promises what the tree does not have, or the tree holds what the rule is
 silent about.
 
-- **A second instance of an application that is already up is not raised.** — **Not carried out.** No second-instance guard is laid out; it is held by the order: `lsof -nP -iTCP:<port> -sTCP:LISTEN` before the startup — `6006` and `6007` on the showcases, `3000` and `4200` on the applications, `3310` and `4310` on the end-to-end suite's stand. A taken port means something already up rather than a reason to take the next one; a separate showcase instance for the snapshot run comes up on its own port and is passed through `STORYBOOK_URL`. Everything is raised by the agent itself: `pnpm run storybook`, `storybook:ui-kit-v2`, `serve:db`, `serve:api`, `serve:admin`, `serve:stand`.
+- **A second instance of an application that is already up is not raised.** — **Not carried out.** No second-instance guard is laid out; it is held by the order: `lsof -nP -iTCP:<port> -sTCP:LISTEN` before the startup — `6006` and `6007` on the showcases, `3000` and `4200` on the applications, `3310` and `4310` on the end-to-end suite's stand. A taken port means something already up rather than a reason to take the next one; a separate showcase instance for the snapshot run comes up on its own port and is passed through `STORYBOOK_URL`. Everything is raised by the agent itself: `pnpm run storybook:ui-kit-v1`, `storybook:ui-kit-v2`, `serve:db`, `serve:api`, `serve:admin`, `serve:stand`.
 - **The browser is driven by one driver on the pinned profile.** — `.claude/hooks/browser-guard-no-other-drivers.sh:deny` — it refuses the second and third drivers, opening a link by system means, launching the binary and driving by an automation script.
 - **A browser raised by a library from inside a script is the same door as launching the binary.** — `.claude/hooks/browser-guard-no-other-drivers.sh:launch` — it judges the content of the file being run and the code passed as an argument instead of a file, against the entry points of browser libraries; a file that does not exist it does not judge at all.
 - **The browser choice goes stale and needs a repeated call.** — `.claude/hooks/browser-guard-require-select.sh:ttl` — the choice mark lives five minutes and is refreshed by every call that passes.
@@ -54,7 +54,7 @@ silent about.
 - **A measurement is taken on the longest value, not on the sample one.** — **Not checked by anything.** Text clipping by the browser is invisible in the markup: the specs read the whole text and are green on both sides of the miss. Held by a measurement — the pattern `browser-verification-measure`
 - **A ready-made kit piece taken for values of another size is measured, not looked at.** — **Not checked by anything.** Neither the linter, nor the build, nor a showcase snapshot knows what value the component will be filled with at a consumer; a snapshot catches this only where a frame of its own is started for the new place
 - **The stand proxy supplies what the application recognises the request's tenant by.** — **Not applicable.** Neither application here keeps several organisations behind one address: the receiver tells callers apart by the token of the request, not by a header of the host, and a request to the showcase belongs to nobody at all.
-- **The production configuration is checked only behind the real proxy.** — `apps/message-bus-admin-e2e/stand/serve-admin.mjs:proxy` — the suite's stand raises production builds of both applications, and the admin panel proxies `/api` to the receiver: that is the real request path of this tree. There is no nginx in front of them, so what lives in a proxy config elsewhere is not checked here at all. On the kits the closest is the built showcase (`pnpm run build-storybook`) against the showcase in development mode.
+- **The production configuration is checked only behind the real proxy.** — `apps/message-bus-admin-e2e/stand/serve-admin.mjs:proxy` — the suite's stand raises production builds of both applications, and the admin panel proxies `/api` to the receiver: that is the real request path of this tree. There is no nginx in front of them, so what lives in a proxy config elsewhere is not checked here at all. On the kits the closest is the built showcase (`pnpm run build-storybook:ui-kit-v1`) against the showcase in development mode.
 - **What is shown to a person is built from the work under discussion.** — **Not checked by anything:** building the stand is an ordinary build command, and it is invisible from it that what was built will go to the owner. Held by what is said about the shown naming the branch.
 - **The work branch keeps the tip of main merged in the whole time, not only before delivery.** — `.claude/hooks/git-guard-delivery.sh:behind` — the guard judges how far behind the branch is when a request is opened; between deliveries nothing judges it.
 - **A measurement that will have to be repeated is taken by an end-to-end test, not by the driver.** — `apps/message-bus-admin-e2e/src/list-state-filter.narrow.spec.ts:viewport` — the window width is taken from the page, the position and width of a node from its rectangle; the rest of the specs with the `.narrow` suffix measure the list and the filter the same way. The viewport is set for the whole suite in `apps/message-bus-admin-e2e/playwright.config.ts`.
@@ -86,9 +86,9 @@ silent about.
 
 ## What this is checked by
 
-- `pnpm run storybook` and `pnpm run storybook:ui-kit-v2` — the showcases of the first and the
+- `pnpm run storybook:ui-kit-v1` and `pnpm run storybook:ui-kit-v2` — the showcases of the first and the
   second kit.
-- `pnpm run build-storybook` — the built showcase, if a divergence looks like a trace of
+- `pnpm run build-storybook:ui-kit-v1` — the built showcase, if a divergence looks like a trace of
   development mode.
 - `pnpm run test:visual` — a snapshot of every story of the first kit against a reference; the
   references themselves lie in `projects/ui-kit/.storybook/__snapshots__/`, the divergences in
@@ -98,9 +98,15 @@ silent about.
 
 ## About the showcase snapshots
 
-- **A reference is pinned to the machine.** Here that costs nothing: the CI runner is the same
-  machine as the developer's, so a reference taken locally matches the run in CI. A change of
-  machine or of browser version means re-taking all the references, not sorting out divergences.
+- **A first-kit reference is pinned to the machine that judges it, and that is the pipeline's
+  runner, not the developer's machine.** The runner stands on another machine: the first step of
+  the run log names it (`Runner name`), and its work directory lies under another account. The first
+  kit's showcase shoots with the machine's own browser, so the push gate here does not match its
+  frames at all — it prints that they are matched in the pipeline only. A reference taken here
+  diverges there on dense text by a few hundredths of a percent, while the layout is the same. So a
+  first-kit reference is taken from the runner's frame: the `visual-diffs` artifact of the run holds
+  each failed frame as three panels, and the right one is what the runner drew. The second kit
+  shoots in a browser image and matches on both machines.
 - **A snapshot and a measurement answer different questions.** A measurement of computed values
   says only what it was asked about; a snapshot catches everything visible, but fires on a shift
   of one pixel too. One does not replace the other.
@@ -137,3 +143,19 @@ await page.evaluate(() => getComputedStyle(document.querySelector('<selector>'))
 - **A rule with nothing to hang it on is checked by hanging the class.** A modifier that is set by
   measuring the content may fire at no width at all in the showcase; then the class is added from
   the page, and the computed value under it is measured.
+
+## Who raised a running showcase
+
+Before asking the owner to restart a showcase, the session asks the machine whose it is. A stand
+raised by an agent session is that session's to restart, by process id; a stand raised by the owner
+is theirs. The answer is the parent chain of the process on the port:
+
+```bash
+p=$(lsof -nP -iTCP:6006 -sTCP:LISTEN -t | head -1)
+while [ -n "$p" ] && [ "$p" != 1 ]; do ps -o pid=,ppid=,command= -p "$p" | cut -c1-120; p=$(ps -o ppid= -p "$p" | tr -d ' '); done
+```
+
+A chain passing through `zsh -c source …/.claude/shell-snapshots/…` and a `claude` process was
+raised by an agent session. A chain reaching a terminal or the editor without `claude` in it was
+raised by a person. Which session of several it was, the chain does not say; the session's own
+background task list does.

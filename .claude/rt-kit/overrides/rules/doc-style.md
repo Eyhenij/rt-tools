@@ -24,3 +24,16 @@ default: it has no right to start removing records in a tree that did not ask fo
 
 - `archive-record` — the record of closed work: what goes into it, how it is found without a
   list, and what is not written in it.
+
+## The consumers of the kits are not named
+
+The kits are published, and the applications that install them belong to other people. A text of
+this tree — code, a comment, a story, a spec, a task folder, a commit body, a PR description — says
+"the application" or "the consumer" and never names one.
+
+- **A name that got into history stays there.** Rewriting published history is refused by the
+  environment, and it would break every copy of the branch besides. A name written into a progress
+  file and fixed by the next commit is still readable in the commit before it.
+- **A request from a consumer is retold by what it asks, not by whose it is.** "The gallery passes
+  ids in their original type" carries everything the work needs; the application's name adds
+  nothing to it.

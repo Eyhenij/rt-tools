@@ -90,6 +90,10 @@ threshold.
   not plug the component in otherwise does not get its declarations either, and one that plugged it in gets
   the declarations of a component they did not ask about. A property of a component at that stays with the
   component: the rule speaks of the common names.
+- **A new name shared with the first kit is refused, including one the first kit declares by interpolation.**
+  Both kits live in one application, and the style file connected later wins the shared name. The first kit
+  declares its scales by a loop over a map, so a literal search does not see those names. Unseen, they made
+  the first reference to such a name read as a new collision.
 
 - **The value lives in the scale; an appointment and an override of a theme refer to a step.** A literal in
   the layer of the appointments cancels the whole sense of the layer: it is found neither by a search over
@@ -173,8 +177,9 @@ threshold.
 
 ## What is out of scope
 
-- **The first kit and its design:** neither its tokens nor its checks are touched. The nine names both kits
-  declare are accepted by a list: a new coincidence is refused by the check.
+- **The first kit and its design:** neither its tokens nor its checks are touched. The fourteen names both
+  kits declare are accepted by a list: a new coincidence is refused by the check. Five of them the first kit
+  declares by interpolation over a scale, and the check reads them since task RT-2302.
 - **A move to a foreign library of the themes:** the arrangement of a foreign kit is taken as a sample of the
   layout and does not become a dependency — neither the library of the themes nor its format of the presets
   goes into the kit.
@@ -346,7 +351,7 @@ Taken 2026-08-13, after the epic on the design had closed. The numbers are repro
 | of them to their own light appointment              | 61    |
 | names declared in all                               | 590   |
 | handles of the consumer                             | 11    |
-| names used by both kits, accepted by a list         | 9     |
+| names used by both kits, accepted by a list         | 14    |
 | colour appointments of the light theme              | 119   |
 | of them answered by an override                     | 58    |
 | answered through a chain of references              | 17    |

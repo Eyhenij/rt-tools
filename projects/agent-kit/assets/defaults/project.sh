@@ -109,6 +109,18 @@ rt_push_checks_default() {
     return 0
 }
 
+# Is a check of the gate set heavy: success — it builds, raises or shoots, and costs minutes. After
+# the first red check the gate still runs the light ones, so that one refusal names every red among
+# them; a heavy one is not started then — its minutes buy nothing while the push is refused anyway.
+# Before, the gate left on the first red, and every fix opened the next reason by a push of its own.
+rt_push_check_heavy_default() {
+    case "$1" in
+        *' nx '* | *'nx affected'* | *'nx run'* | *'docker '* | *playwright* | *e2e*) return 0 ;;
+    esac
+
+    return 1
+}
+
 # Which document must travel by the same commit as this file. Prints a path pattern or stays silent.
 rt_docs_pair_for_default() {
     case "$1" in
@@ -457,6 +469,7 @@ rt_qa_decorative_default() {
 # Defaults under the shared names. The project override will declare any of them anew — and call the
 # same name from here with the `_default` suffix for everything it did not name itself.
 rt_push_checks() { rt_push_checks_default "$@"; }
+rt_push_check_heavy() { rt_push_check_heavy_default "$@"; }
 rt_push_docs_only() { rt_push_docs_only_default "$@"; }
 
 rt_docs_pair_for() { rt_docs_pair_for_default "$@"; }

@@ -185,3 +185,33 @@ rm -f "${TMPDIR:-/tmp}/rt-kit-push-gate-gap-$GAP_SESSION"
 rm -rf "$GAP_GATE"
 
 suite_result "гард проверок перед пушем"
+
+# --- SC-AK-1166. Один отказ называет все красные лёгкие проверки ------------------------------
+# Набор выходил на первой красной, и каждая починка открывала следующую причину своим пушем: на
+# одной ветке так ушло три пуша подряд. Тяжёлая проверка после первой красной не запускается —
+# пуш всё равно отбит, — но называется отложенной, чтобы молчание о ней не читалось зелёным.
+ALL_RED="$(fixture_repo RT-2302-all-red)"
+mkdir -p "$ALL_RED/.claude/rt-kit"
+cat > "$ALL_RED/.claude/rt-kit/project.sh" <<'PROFILE'
+rt_push_checks() {
+    printf '%s\n' 'echo first-red-output; false' 'true' 'echo second-red-output; exit 3' 'touch heavy-ran; false'
+}
+rt_push_check_heavy() { case "$1" in *heavy-ran*) return 0 ;; esac; return 1; }
+PROFILE
+all_red_says="$(CLAUDE_PROJECT_DIR="$ALL_RED" input_cmd 'git push origin RT-2302-all-red' Bash "$ALL_RED" \
+    | CLAUDE_PROJECT_DIR="$ALL_RED" "$HOOKS/git-guard-push-tests.sh" 2>/dev/null \
+    | jq -r '.hookSpecificOutput.permissionDecisionReason // ""' 2>/dev/null)"
+case "$all_red_says" in
+    *'first-red-output'*'second-red-output'*) report "SC-AK-1166 — отказ называет обе красные проверки" да да ;;
+    *) report "SC-AK-1166 — отказ называет обе красные проверки" нет да ;;
+esac
+case "$all_red_says" in
+    *'Red checks: 2'*) report "SC-AK-1166 — зелёная в число красных не попала" да да ;;
+    *) report "SC-AK-1166 — зелёная в число красных не попала" нет да ;;
+esac
+report "SC-AK-1166 — тяжёлая после красной не запущена" "$([ -e "$ALL_RED/heavy-ran" ] && echo да || echo нет)" нет
+case "$all_red_says" in
+    *'Not started after the red ones'*'heavy-ran'*) report "SC-AK-1166 — отложенная тяжёлая названа" да да ;;
+    *) report "SC-AK-1166 — отложенная тяжёлая названа" нет да ;;
+esac
+rm -rf "$ALL_RED"

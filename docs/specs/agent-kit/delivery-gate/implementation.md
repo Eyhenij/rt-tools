@@ -46,3 +46,4 @@ whole.
 - **The guard once per session names what its set is narrower than the pipeline by.** — `projects/agent-kit/assets/hooks/git-guard-push-tests.sh:gap_mark` — the mark lives in the temporary file directory and is keyed by the session sign; scenario SC-AK-820
 - **A refusal of the push gate names three moves, not two.** — `projects/agent-kit/assets/hooks/git-guard-push-tests.sh:reason` — scenario SC-AK-851
 - **What is disputed is not put into the known list.** — `projects/agent-kit/assets/checks/check-doc-paths.mjs:ALLOWLIST` — the same is said in the refusal text of the address check; scenario SC-AK-851
+- **A refusal of the push gate names every red light check at once.** — `projects/agent-kit/assets/hooks/git-guard-push-tests.sh:held` — the heavy ones are named by `projects/agent-kit/assets/defaults/project.sh:rt_push_check_heavy_default`. A tree adds its own by `rt_push_check_heavy`; scenario SC-AK-1166
