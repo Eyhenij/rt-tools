@@ -1,5 +1,17 @@
 {
   "accepted": {
+    "enum ERtDataTableCellColor @ projects/ui-kit-v2 ~ ETextCellColor @ projects/ui-kit": {
+      "reason": "the first kit's table moved into the second as a family of its own by the owner's word — a separate family next to `rt-table`, not a replacement, with the first kit's behaviour copied as it is; two kits stand side by side in one application and share no code: their own selectors, their own styling token set, their own component list; the set of cell colours is the first kit's contract, and an application moves without editing its declarations",
+      "task": "RT-2316"
+    },
+    "enum ERtDataTableColumnType @ projects/ui-kit-v2 ~ ETableColumnTypes @ projects/ui-kit": {
+      "reason": "the first kit's table moved into the second as a family of its own by the owner's word — a separate family next to `rt-table`, not a replacement, with the first kit's behaviour copied as it is; two kits stand side by side in one application and share no code: their own selectors, their own styling token set, their own component list; the set of column types is the first kit's contract, and an application moves without editing its declarations",
+      "task": "RT-2316"
+    },
+    "enum ERtDataTableFilterType @ projects/ui-kit-v2 ~ ETableColumnFilterTypes @ projects/ui-kit": {
+      "reason": "the first kit's table moved into the second as a family of its own by the owner's word — a separate family next to `rt-table`, not a replacement, with the first kit's behaviour copied as it is; two kits stand side by side in one application and share no code: their own selectors, their own styling token set, their own component list; the set of filter types is the first kit's contract, and an application moves without editing its declarations",
+      "task": "RT-2316"
+    },
     "export Counter @ projects/ui-kit, projects/ui-kit-v2": {
       "reason": "a showcase story heading: the kits have showcases of their own, and the story names match by the agreement of showing",
       "task": "RT-1880"
@@ -15,6 +27,10 @@
     "export MessageBus @ projects/core, projects/ui-kit-v2": {
       "reason": "the second kit carries an event bus of its own so as not to depend on the core",
       "task": "RT-764"
+    },
+    "export Pagination @ projects/ui-kit, projects/ui-kit-v2": {
+      "reason": "the first kit's table moved into the second as a family of its own by the owner's word — a separate family next to `rt-table`, not a replacement, with the first kit's behaviour copied as it is; two kits stand side by side in one application and share no code: their own selectors, their own styling token set, their own component list",
+      "task": "RT-2316"
     },
     "export Playground @ projects/ui-kit, projects/ui-kit-v2": {
       "reason": "a showcase story heading: the kits have showcases of their own, and the story names match by the agreement of showing",
@@ -35,6 +51,10 @@
     "export SIGN_IN_PATH @ apps/message-bus-admin-e2e, libs/message-bus-admin/auth/util": {
       "reason": "the end-to-end suite declares the entry address and the node search by values of its own deliberately: taken out of the lib under check, they would be green at any value",
       "task": "RT-764"
+    },
+    "export comparePropNames @ projects/ui-kit, projects/ui-kit-v2": {
+      "reason": "the first kit's table moved into the second as a family of its own by the owner's word — a separate family next to `rt-table`, not a replacement, with the first kit's behaviour copied as it is; two kits stand side by side in one application and share no code: their own selectors, their own styling token set, their own component list",
+      "task": "RT-2316"
     },
     "export pathOf @ projects/agent-kit, projects/ui-kit-v2": {
       "reason": "one name over different notions: a resource path at the rules package and an address path at the kit",

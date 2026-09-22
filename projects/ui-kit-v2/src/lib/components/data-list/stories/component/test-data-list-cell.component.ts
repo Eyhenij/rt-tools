@@ -1,4 +1,14 @@
-import { ChangeDetectionStrategy, Component, inject, input, InputSignal, OnInit } from '@angular/core';
+import { BooleanInput } from '@angular/cdk/coercion';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    InputSignal,
+    InputSignalWithTransform,
+    OnInit,
+    booleanAttribute,
+    inject,
+    input,
+} from '@angular/core';
 
 import { IFilterModel, IPageModel, ISortModel, TNullable } from '@rt-tools/utils';
 
@@ -49,11 +59,21 @@ export class TestRtDataListCellComponent implements OnInit {
     public readonly page: InputSignal<IPageModel> = input.required<IPageModel>();
     public readonly sort: InputSignal<TNullable<ISortModel<'title'>>> = input<TNullable<ISortModel<'title'>>>(null);
     public readonly filters: InputSignal<Array<IFilterModel<'title' | 'city'>>> = input<Array<IFilterModel<'title' | 'city'>>>([]);
-    public readonly filtersShown: InputSignal<boolean> = input<boolean>(false);
-    public readonly loading: InputSignal<boolean> = input<boolean>(false);
-    public readonly fetching: InputSignal<boolean> = input<boolean>(false);
-    public readonly selectAllShown: InputSignal<boolean> = input<boolean>(true);
-    public readonly multiSelect: InputSignal<boolean> = input<boolean>(true);
+    public readonly filtersShown: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+    public readonly loading: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+    public readonly fetching: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+    public readonly selectAllShown: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
+        transform: booleanAttribute,
+    });
+    public readonly multiSelect: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
+        transform: booleanAttribute,
+    });
 
     public ngOnInit(): void {
         this.#configService.initConfig(this.storageKey(), this.columns());

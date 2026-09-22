@@ -1,4 +1,14 @@
-import { ChangeDetectionStrategy, Component, inject, input, InputSignal, OnInit } from '@angular/core';
+import { BooleanInput } from '@angular/cdk/coercion';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    InputSignal,
+    InputSignalWithTransform,
+    OnInit,
+    booleanAttribute,
+    inject,
+    input,
+} from '@angular/core';
 
 import { IFilterModel, ISortModel, TNullable } from '@rt-tools/utils';
 
@@ -64,12 +74,24 @@ export class TestRtDataTableCellComponent implements OnInit {
     public readonly rows: InputSignal<ITestDataTableRow[]> = input<ITestDataTableRow[]>([]);
     public readonly sort: InputSignal<TNullable<ISortModel<'title'>>> = input<TNullable<ISortModel<'title'>>>(null);
     public readonly filters: InputSignal<Array<IFilterModel<'title' | 'city'>>> = input<Array<IFilterModel<'title' | 'city'>>>([]);
-    public readonly filtersShown: InputSignal<boolean> = input<boolean>(false);
-    public readonly clickable: InputSignal<boolean> = input<boolean>(false);
-    public readonly selectorsShown: InputSignal<boolean> = input<boolean>(false);
-    public readonly multiSelect: InputSignal<boolean> = input<boolean>(true);
-    public readonly selectorsDisabled: InputSignal<boolean> = input<boolean>(false);
-    public readonly withRowActions: InputSignal<boolean> = input<boolean>(false);
+    public readonly filtersShown: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+    public readonly clickable: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+    public readonly selectorsShown: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+    public readonly multiSelect: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
+        transform: booleanAttribute,
+    });
+    public readonly selectorsDisabled: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+    public readonly withRowActions: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
 
     public ngOnInit(): void {
         this.#configService.initConfig(this.storageKey(), this.columns());
