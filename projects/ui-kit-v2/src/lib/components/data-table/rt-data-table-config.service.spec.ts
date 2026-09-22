@@ -23,6 +23,8 @@ class StorageStub {
     public readonly writes: Array<string> = [];
     /** Ключи, по которым служба читала, — по одному на каждый поток в `reads`. */
     public readonly readKeys: Array<string> = [];
+    /** Что именно легло в хранилище: без этого путь «сохранили — открыли снова» не проверить. */
+    public readonly stored: Map<string, unknown> = new Map<string, unknown>();
 
     readonly #sets: Array<Subject<void>> = [];
 
@@ -35,12 +37,13 @@ class StorageStub {
     }
 
     /** Запись отвечает не сразу: снятие, пущенное следом, обгоняло бы её при двух потоках. */
-    public set(key: string): Observable<void> {
+    public set(key: string, value?: unknown): Observable<void> {
         const write: Subject<void> = new Subject<void>();
         this.#sets.push(write);
 
         return new Observable<void>((subscriber: { next: (value: void) => void; complete: () => void }) => {
             this.writes.push(`set:${key}`);
+            this.stored.set(key, value);
             write.subscribe({ next: (): void => subscriber.next(), complete: (): void => subscriber.complete() });
         });
     }
@@ -164,5 +167,41 @@ describe('RtDataTableConfigService', () => {
         storage.completeSet(0);
 
         expect(storage.writes).toEqual(['set:orders', 'remove:orders']);
+    });
+
+    it('SC-UKV-269 — под ключом без сохранённого видна только горизонтальная полоса', () => {
+        service.initConfig('orders', [columnOf('id', 'Номер'), columnOf('title', 'Название')]);
+
+        storage.reads[0].next(undefined);
+
+        expect(service.tableConfig().isHorizontalScrollbarShown).toBe(true);
+        expect(service.tableConfig().isVerticalScrollbarShown).toBe(false);
+    });
+
+    it('SC-UKV-271 — сохранённое возвращается при следующем открытии таблицы', () => {
+        const columns: Array<IRtDataTable.Column<IEntity>> = [columnOf('id', 'Номер'), columnOf('title', 'Название')];
+
+        service.initConfig('orders', columns);
+        storage.reads[0].next(undefined);
+
+        // Человек спрятал колонку, переставил порядок и показал вертикальную полосу.
+        service.updateConfig('orders', {
+            isVerticalScrollbarShown: true,
+            isHorizontalScrollbarShown: true,
+            columns: [
+                { ...columnOf('title', 'Название'), orderIndex: 0, hidden: false },
+                { ...columnOf('id', 'Номер'), orderIndex: 1, hidden: true },
+            ],
+        });
+
+        // Открыли снова тем же ключом — и хранилище отвечает ровно тем, что туда легло.
+        service.initConfig('orders', columns);
+        storage.reads[1].next(storage.stored.get('orders'));
+
+        const config: IRtDataTable.Config.Data<IEntity> = service.tableConfig();
+
+        expect(propNames(config)).toEqual(['title', 'id']);
+        expect(config.columns[1].hidden).toBe(true);
+        expect(config.isVerticalScrollbarShown).toBe(true);
     });
 });

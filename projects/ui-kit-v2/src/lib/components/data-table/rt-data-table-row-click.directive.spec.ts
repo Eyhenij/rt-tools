@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, WritableSignal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import {
@@ -16,20 +16,24 @@ interface IEntity {
 class RowHostStub implements IRtDataTableRowHost<IEntity> {
     public readonly clicks: IEntity[] = [];
     public readonly doubleClicks: IEntity[] = [];
+    /** Порядок сообщений: двойное нажатие приходит после двух одинарных, и это видно только здесь. */
+    public readonly order: string[] = [];
 
     public onRowClick(row: IEntity): void {
         this.clicks.push(row);
+        this.order.push('click');
     }
 
     public onRowDoubleClick(row: IEntity): void {
         this.doubleClicks.push(row);
+        this.order.push('doubleClick');
     }
 }
 
 @Component({
     selector: 'rt-test-row-host',
     template: `
-        <div qa-dataid="row" [rtDataTableRowClick]="row">
+        <div qa-dataid="row" [rtDataTableRowClick]="row" [isTableRowClickable]="clickable()">
             <span qa-dataid="text">Заказ</span>
             <span qa-dataid="opt-out" rtDataTableStopRowClick>Картинка</span>
         </div>
@@ -39,6 +43,7 @@ class RowHostStub implements IRtDataTableRowHost<IEntity> {
 })
 class RowHostComponent {
     public readonly row: IEntity = { id: 3 };
+    public readonly clickable: WritableSignal<boolean> = signal(true);
 }
 
 describe('RtDataTableRowClickDirective', () => {
@@ -89,5 +94,25 @@ describe('RtDataTableRowClickDirective', () => {
         press(node('opt-out'), 'mousedown');
 
         expect(host.clicks).toEqual([]);
+    });
+
+    it('SC-UKV-300 — нажатие сообщается на опускании кнопки, до двойного нажатия', () => {
+        press(node('text'), 'mousedown');
+        press(node('text'), 'mousedown');
+        press(node('text'), 'dblclick');
+
+        expect(host.order).toEqual(['click', 'click', 'doubleClick']);
+        expect(host.clicks).toEqual([{ id: 3 }, { id: 3 }]);
+        expect(host.doubleClicks).toEqual([{ id: 3 }]);
+    });
+
+    it('SC-UKV-301 — строка, не сделанная нажимаемой, не сообщает ничего', () => {
+        fixture.componentInstance.clickable.set(false);
+        fixture.detectChanges();
+
+        press(node('text'), 'mousedown');
+        press(node('text'), 'dblclick');
+
+        expect(host.order).toEqual([]);
     });
 });

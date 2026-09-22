@@ -33,8 +33,13 @@ Rewritten by every session, not appended to.
   Этап 3.5 закрыт: русский словарь витрины получил 27 слов обеих семей — без них витрина показала
   бы английские умолчания вперемешку с русским. Словарь админки ничего не получил: он неполный по
   замыслу и отвечает только на те ключи, что нужны её экранам, а этих семей там нет.
-  Весь второй кит — 1712 из 1712 тестов.
-- **Next step:** этап 3 — проверка списка по его сценариям.
+  Этап 3.6 закрыт, и на нём нашлось недоделанное: таблица не читала признаки полос прокрутки
+  вовсе. Дописано — размер полос приходит с корня страницы, туда его ставит список по сохранённой
+  настройке, скрытая полоса это нулевой размер. Закрыты сценарии 269, 270, 271, 273, 300 и 301.
+  Без теста остались два, и у обоих причина записана: 275 (показ наборов в витрине) и 313 (узкий
+  экран) закрываются кадром на этапе 4 — до него строка «Verified by» этапа 3 зелёной не станет.
+  Весь второй кит — 1719 из 1719 тестов.
+- **Next step:** этап 4 — истории и обзорная страница `rt-data-table`.
 - **Uncommitted:** ничего.
 - **Waiting for the owner:** нет.
 - **PR:** not open yet
@@ -54,8 +59,8 @@ Rewritten by every session, not appended to.
 - [x] 3.3 Own column settings panel ported from the first kit
 - [x] 3.4 Selection across pages, the empty placeholder and the loading look
 - [x] 3.5 Words of both families in the kit's eight-language dictionary
-- [>] 3.6 Spec of the list on its scenarios
-- [ ] 4.1 Stories and `Overview` of `rt-data-table` by the coverage contract
+- [x] 3.6 Spec of the list on its scenarios
+- [>] 4.1 Stories and `Overview` of `rt-data-table` by the coverage contract
 - [ ] 4.2 Stories and `Overview` of `rt-data-list` by the coverage contract
 - [ ] 4.3 Sweep over the stories and a look at the frames by eye
 - [ ] 4.4 Frames in the image and a second run in a row
@@ -107,6 +112,12 @@ Rewritten by every session, not appended to.
   строк, а блок длительности nx печатает и при отказе — отказ оказался выше среза, и коммит ушёл с
   двумя расхождениями типов. Найдено на следующем шаге, починено там же: вывод nx читается по
   словам «error TS» и «Successfully», а не по хвосту. Affected stage of the plan: 3.
+
+- **Полосы прокрутки ставятся на корень страницы, а не на таблицу.** Приём первого кита: выбор,
+  сохранённый одним списком, достаётся каждому списку страницы — это записано сценарием. Своего
+  объявления свойства на блоке таблицы нет намеренно: оно победило бы унаследованное, и выбор
+  человека до таблицы не дошёл бы. Скрытая полоса — нулевой размер, прокрутка остаётся.
+  Affected stage of the plan: 3.
 
 ## Sessions
 

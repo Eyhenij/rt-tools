@@ -16,6 +16,15 @@
         width: 100%;
         height: 100%;
 
+        /* Размер полос прокрутки приходит с корня страницы: туда его ставит список по
+           сохранённой настройке. Своего объявления на блоке нет намеренно — оно победило бы
+           унаследованное, и выбор человека до таблицы не дошёл бы. Без списка полосы кита
+           обычные: запасное значение — та же ступень, что в основе. */
+        &::-webkit-scrollbar {
+            width: var(--rt-data-table-scrollbar-vertical-width, var(--rt-size-3));
+            height: var(--rt-data-table-scrollbar-horizontal-height, var(--rt-size-3));
+        }
+
         &__table {
             width: 100%;
             border-collapse: collapse;

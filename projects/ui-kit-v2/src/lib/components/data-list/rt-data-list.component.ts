@@ -5,6 +5,7 @@ import {
     computed,
     contentChild,
     DestroyRef,
+    effect,
     inject,
     input,
     InputSignal,
@@ -16,7 +17,7 @@ import {
     viewChild,
     ViewEncapsulation,
 } from '@angular/core';
-import { NgTemplateOutlet } from '@angular/common';
+import { DOCUMENT, NgTemplateOutlet } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Observable, Subject } from 'rxjs';
 import { exhaustMap, filter } from 'rxjs/operators';
@@ -48,6 +49,12 @@ import {
 import { RtDataListToolbarActionsDirective, RtDataListToolbarSelectorsDirective } from './rt-data-list-toolbar.directive';
 
 const BEM_BLOCK: string = 'rt-data-list';
+
+/** Показанная полоса прокрутки — ступень размеров кита, та же, что в основе его полос. */
+const SCROLLBAR_SIZE: string = 'var(--rt-size-3)';
+
+/** Скрытая полоса — нулевой размер: прокрутка остаётся, видно её не будет. */
+const SCROLLBAR_HIDDEN: string = '0';
 
 /**
  * Список записей первого кита во втором: панель действий, таблица, полоса страниц, заглушка
@@ -92,6 +99,7 @@ export class RtDataListComponent<
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
     readonly #asideService: RtAsideService = inject(RtAsideService);
     readonly #configService: RtDataTableConfigService<ENTITY_TYPE> = inject(RtDataTableConfigService);
+    readonly #pageRoot: HTMLElement = inject(DOCUMENT).documentElement;
 
     /**
      * Нажатия на «настроить колонки». Панель открывается объявленным потоком, а `exhaustMap`
@@ -197,6 +205,22 @@ export class RtDataListComponent<
         viewChild<RtDataTableComponent<ENTITY_TYPE, SORT_PROPERTY, KEY>>(RtDataTableComponent);
 
     constructor() {
+        /* Размер полос прокрутки ставится на корень страницы, а не на список: приём первого
+           кита — выбор, сохранённый одним списком, достаётся каждому списку страницы. Скрытая
+           полоса — это нулевой размер, а не запрет прокрутки: содержимое по-прежнему ездит. */
+        effect(() => {
+            const config: IRtDataTable.Config.Data<ENTITY_TYPE> = this.#configService.tableConfig();
+
+            this.#pageRoot.style.setProperty(
+                '--rt-data-table-scrollbar-vertical-width',
+                config.isVerticalScrollbarShown ? SCROLLBAR_SIZE : SCROLLBAR_HIDDEN
+            );
+            this.#pageRoot.style.setProperty(
+                '--rt-data-table-scrollbar-horizontal-height',
+                config.isHorizontalScrollbarShown ? SCROLLBAR_SIZE : SCROLLBAR_HIDDEN
+            );
+        });
+
         this.#openSettingsSource
             .pipe(
                 exhaustMap((): Observable<IRtDataTable.Config.Data<ENTITY_TYPE> | undefined> =>

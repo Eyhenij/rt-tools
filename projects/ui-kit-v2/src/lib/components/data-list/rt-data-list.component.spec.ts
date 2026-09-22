@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EnvironmentProviders, signal, Signal, WritableSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EnvironmentProviders, Provider, Signal, signal, WritableSignal } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
 
 import { EFilterOperatorType, IFilterModel, IPageModel } from '@rt-tools/utils';
@@ -28,10 +28,33 @@ const COLUMNS: Array<IRtDataTable.Column<IEntity>> = [
 ];
 
 /** Двойник службы настроек: заглушка и вид загрузки от состава колонок не зависят. */
-const CONFIG_STUB: { tableConfig: Signal<IRtDataTable.Config.Data<IEntity>>; updateConfig: () => void } = {
-    tableConfig: signal({ isVerticalScrollbarShown: false, isHorizontalScrollbarShown: true, columns: COLUMNS }),
-    updateConfig: (): void => undefined,
-};
+interface IConfigStub {
+    tableConfig: WritableSignal<IRtDataTable.Config.Data<IEntity>>;
+    updateConfig: () => void;
+}
+
+function configStub(vertical: boolean = false, horizontal: boolean = true): IConfigStub {
+    return {
+        tableConfig: signal<IRtDataTable.Config.Data<IEntity>>({
+            isVerticalScrollbarShown: vertical,
+            isHorizontalScrollbarShown: horizontal,
+            columns: COLUMNS,
+        }),
+        updateConfig: (): void => undefined,
+    };
+}
+
+const CONFIG_STUB: IConfigStub = configStub();
+
+/** Размер полос список ставит на корень страницы — оттуда его наследует таблица. */
+function scrollbarSizes(): { vertical: string; horizontal: string } {
+    const style: CSSStyleDeclaration = document.documentElement.style;
+
+    return {
+        vertical: style.getPropertyValue('--rt-data-table-scrollbar-vertical-width'),
+        horizontal: style.getPropertyValue('--rt-data-table-scrollbar-horizontal-height'),
+    };
+}
 
 const PAGE: IPageModel = { pageNumber: 1, pageSize: 10, totalCount: 0, hasPrev: false, hasNext: false };
 
@@ -61,7 +84,7 @@ class DataListHostComponent {
 
 async function setup(
     patch: (host: DataListHostComponent) => void = (): void => undefined,
-    extra: EnvironmentProviders[] = []
+    extra: Array<EnvironmentProviders | Provider> = []
 ): Promise<ComponentFixture<DataListHostComponent>> {
     const fixture: ComponentFixture<DataListHostComponent> = createRtFixture(
         DataListHostComponent,
@@ -76,6 +99,48 @@ async function setup(
 
     return fixture;
 }
+
+/* Два списка на одной странице: у каждого своя служба настроек и свой ключ хранения — так их
+   объявляет приложение. Выбор полос при этом общий, и это приём первого кита. */
+const FIRST_STUB: IConfigStub = configStub(false, true);
+const SECOND_STUB: IConfigStub = configStub(false, true);
+
+@Component({
+    selector: 'rt-test-first-list',
+    template: `
+        <rt-data-list tableConfigStorageKey="first" [entities]="[]" [pageModel]="page" [currentSortModel]="null" />
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtDataListComponent],
+    providers: [{ provide: RtDataTableConfigService, useValue: FIRST_STUB }],
+})
+class FirstListComponent {
+    public readonly page: IPageModel = PAGE;
+}
+
+@Component({
+    selector: 'rt-test-second-list',
+    template: `
+        <rt-data-list tableConfigStorageKey="second" [entities]="[]" [pageModel]="page" [currentSortModel]="null" />
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtDataListComponent],
+    providers: [{ provide: RtDataTableConfigService, useValue: SECOND_STUB }],
+})
+class SecondListComponent {
+    public readonly page: IPageModel = PAGE;
+}
+
+@Component({
+    selector: 'rt-test-two-lists-host',
+    template: `
+        <rt-test-first-list />
+        <rt-test-second-list />
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [FirstListComponent, SecondListComponent],
+})
+class TwoListsHostComponent {}
 
 describe('RtDataListComponent', () => {
     it('SC-UKV-309 — заглушка стоит только без строк и без условий отбора', async (): Promise<void> => {
@@ -136,5 +201,42 @@ describe('RtDataListComponent', () => {
         fixture.detectChanges();
 
         expect(textOf(qa(fixture, 'data-list-placeholder'))).toContain('Keine Daten gefunden');
+    });
+
+    it('SC-UKV-269 — размер полос идёт с корня страницы: горизонтальная видна, вертикальной нет', async (): Promise<void> => {
+        await setup();
+
+        expect(scrollbarSizes()).toEqual({ vertical: '0', horizontal: 'var(--rt-size-3)' });
+    });
+
+    it('SC-UKV-270 — скрытая полоса — это нулевой размер, а не запрет прокрутки', async (): Promise<void> => {
+        const stub: IConfigStub = configStub(false, false);
+        const fixture: ComponentFixture<DataListHostComponent> = await setup(undefined, [
+            { provide: RtDataTableConfigService, useValue: stub },
+        ]);
+
+        expect(scrollbarSizes()).toEqual({ vertical: '0', horizontal: '0' });
+
+        stub.tableConfig.set({ isVerticalScrollbarShown: true, isHorizontalScrollbarShown: true, columns: COLUMNS });
+        fixture.detectChanges();
+
+        expect(scrollbarSizes()).toEqual({ vertical: 'var(--rt-size-3)', horizontal: 'var(--rt-size-3)' });
+    });
+
+    it('SC-UKV-273 — выбор полос, сохранённый одним списком, достаётся каждому списку страницы', async (): Promise<void> => {
+        const fixture: ComponentFixture<TwoListsHostComponent> = createRtFixture(TwoListsHostComponent, {}, { skipInitialDetect: true });
+
+        fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
+
+        expect(scrollbarSizes().horizontal).toBe('var(--rt-size-3)');
+
+        // Человек спрятал горизонтальную полосу у первого списка и сохранил.
+        FIRST_STUB.tableConfig.set({ isVerticalScrollbarShown: false, isHorizontalScrollbarShown: false, columns: COLUMNS });
+        fixture.detectChanges();
+
+        expect(scrollbarSizes().horizontal).toBe('0');
+        expect(SECOND_STUB.tableConfig().isHorizontalScrollbarShown).toBe(true);
     });
 });
