@@ -8,98 +8,112 @@ scenario is covered it carries a `Not covered:` mark with the reason.
 Given a data table asked for the selection column in multiple selection, with five rows
 When it is drawn
 Then every row carries a kit checkbox and the header of the first column carries the page checkbox
-Not covered: the family has no code yet.
+
+Covered: `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-selectors.directive.spec.ts`.
 
 ### SC-UKV-237 — marking a row hands the record to the application
 
 Given a data table with multiple selection and nothing marked
 When a person checks the checkbox of the second row
 Then the application reads one marked record, and it is the record of the second row
-Not covered: the family has no code yet.
+
+Covered: `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-selectors.directive.spec.ts`.
 
 ### SC-UKV-238 — the page checkbox is indeterminate while some rows of the page are marked
 
 Given a page of five rows, two of them marked
 When the table is drawn
 Then the page checkbox is indeterminate
-Not covered: the family has no code yet.
+
+Covered: `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-selectors.directive.spec.ts`.
 
 ### SC-UKV-239 — the page checkbox is checked when every row of the page is marked
 
 Given a page of five rows, all five marked
 When the table is drawn
 Then the page checkbox is checked and not indeterminate
-Not covered: the family has no code yet.
+
+Covered: `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-selectors.directive.spec.ts`.
 
 ### SC-UKV-240 — a mark on another page keeps the page checkbox indeterminate after a row change
 
 Given a data list with one row marked on the first page and the second page shown with no marks
 When a person marks a row of the second page and unmarks it again
 Then the page checkbox of the second page is indeterminate
-Not covered: the family has no code yet.
+
+Covered: `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-selectors.directive.spec.ts`.
 
 ### SC-UKV-241 — the page checkbox marks the rows of the shown page only
 
 Given two rows marked on the first page and the second page shown
 When a person checks the page checkbox and then unchecks it
 Then the two rows of the first page are still marked
-Not covered: the family has no code yet.
+
+Covered: `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-selectors.directive.spec.ts`.
 
 ### SC-UKV-242 — marks survive going to another page and back
 
 Given the second row of the first page marked
 When the person goes to the second page and back to the first
 Then the second row is drawn marked
-Not covered: the family has no code yet.
+
+Covered: `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-selectors.directive.spec.ts`.
 
 ### SC-UKV-243 — clearing the selection leaves nothing behind
 
 Given three marked rows and the page checkbox indeterminate
 When the application clears the selection
 Then no row is marked and the page checkbox is empty
-Not covered: the family has no code yet.
+
+Covered: `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-selectors.directive.spec.ts`.
 
 ### SC-UKV-244 — the selection cell does not activate the row
 
 Given a clickable row with the selection column
 When a person presses and double-clicks inside the selection cell
 Then the table reports neither a row press nor a double click
-Not covered: the family has no code yet.
+
+Covered: `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-selectors.directive.spec.ts`.
 
 ### SC-UKV-245 — single selection draws radio buttons and no page checkbox or select all
 
 Given a data list with single selection
 When it is drawn
 Then every row carries a kit radio button with an accessible name, the header of the first column is empty, and the toolbar has neither select all nor the counter
-Not covered: the family has no code yet.
+
+Covered: `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-selectors.directive.spec.ts`.
 
 ### SC-UKV-246 — choosing a second row takes the mark off the first
 
 Given single selection with the first row chosen
 When a person chooses the third row
 Then only the third row is marked and the application reads the third record alone
-Not covered: the family has no code yet.
+
+Covered: `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-selectors.directive.spec.ts`.
 
 ### SC-UKV-247 — the preset marks are applied to the first rows
 
 Given the preset marks name two records of the first page
 When the first rows arrive
 Then those two rows are drawn marked and the application reads both records
-Not covered: the family has no code yet.
+
+Covered: `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-selectors.directive.spec.ts`.
 
 ### SC-UKV-248 — a later preset does not overwrite what the person marked
 
 Given the preset marks were applied and the person marked one more row
 When the application changes the preset marks
 Then the marks stay as the person left them
-Not covered: the family has no code yet.
+
+Covered: `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-selectors.directive.spec.ts`.
 
 ### SC-UKV-249 — a switched-off selection column keeps its marks and changes nothing
 
 Given two marked rows and the selection column switched off
 When a person presses a row checkbox, the page checkbox and select all
 Then all three are unavailable and the same two rows stay marked
-Not covered: the family has no code yet.
+
+Covered: `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-selectors.directive.spec.ts`.
 
 ### SC-UKV-250 — select all marks the loaded rows and every page that arrives after
 
@@ -171,21 +185,24 @@ Covered: `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-row-cli
 Given a data table with two inline actions and a row menu
 When a person hovers a row
 Then the actions strip is revealed with the two actions before the menu button
-Not covered: the family has no code yet.
+
+Covered: `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table.component.spec.ts`.
 
 ### SC-UKV-260 — inline actions without a menu still get the actions strip
 
 Given a data table with inline actions and no row menu
 When a person hovers a row
 Then the actions strip is revealed with the inline actions and no menu button
-Not covered: the family has no code yet.
+
+Covered: `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table.component.spec.ts`.
 
 ### SC-UKV-261 — the row menu button does not activate the row
 
 Given a clickable row with a row menu
 When a person presses the menu button
 Then the menu opens, the row is active and the table reports no row press
-Not covered: the family has no code yet.
+
+Covered: `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table.component.spec.ts`.
 
 ### SC-UKV-262 — an empty value is drawn as a dash
 
@@ -336,7 +353,8 @@ Covered: `projects/ui-kit-v2/src/lib/components/data-table/filter-cell/rt-data-t
 Given the filter row shown and the settings with the email column hidden
 When the table is drawn
 Then neither the header, nor the filter row, nor any row has a cell of the email column
-Not covered: the family has no code yet.
+
+Covered: `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table.component.spec.ts`.
 
 ### SC-UKV-306 — the settings panel saves nothing until something changed
 
@@ -461,4 +479,5 @@ Covered: `projects/ui-kit-v2/src/lib/components/data-table/header-cell/rt-data-t
 Given two columns — one declaring a name paired in the kit's map, one a name without a pair — and an icon template
 When the data table is drawn
 Then both icons are the template's drawings, and neither is the kit's icon of the map
-Not covered: the family has no code yet.
+
+Covered: `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table.component.spec.ts`.

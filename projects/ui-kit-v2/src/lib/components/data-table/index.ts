@@ -8,3 +8,7 @@ export * from './rt-data-table-sort.logic';
 export * from './header-cell/rt-data-table-header-cell.component';
 export * from './rt-data-table-filter.logic';
 export * from './filter-cell/rt-data-table-filter-cell.component';
+export * from './rt-data-table-cells.directive';
+export * from './rt-data-table-selection.logic';
+export * from './rt-data-table.component';
+export * from './rt-data-table-selectors.directive';

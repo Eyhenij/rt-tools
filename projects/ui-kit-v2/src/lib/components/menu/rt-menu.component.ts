@@ -8,6 +8,8 @@ import {
     input,
     InputSignal,
     InputSignalWithTransform,
+    output,
+    OutputEmitterRef,
     Signal,
     signal,
     ViewEncapsulation,
@@ -122,19 +124,29 @@ export class RtMenuComponent {
         transform: booleanAttribute,
     });
 
+    /** Панель открылась (`true`) или закрылась (`false`); повтор того же состояния не приходит. */
+    public readonly openedChange: OutputEmitterRef<boolean> = output<boolean>();
+
     protected toggle(event: MouseEvent): void {
         // Клик по триггеру не должен активировать строку таблицы под ним.
         event.stopPropagation();
-        this.isOpen.update((open: boolean): boolean => !open);
+        this.#setOpen(!this.isOpen());
     }
 
     protected close(): void {
-        this.isOpen.set(false);
+        this.#setOpen(false);
     }
 
     protected onKeydown(event: KeyboardEvent): void {
         if (event.key === 'Escape') {
             this.close();
+        }
+    }
+
+    #setOpen(open: boolean): void {
+        if (open !== this.isOpen()) {
+            this.isOpen.set(open);
+            this.openedChange.emit(open);
         }
     }
 }

@@ -19,8 +19,10 @@ Rewritten by every session, not appended to.
   Этап 2: готовая ячейка, ячейка шапки и ячейка отбора сделаны — 31 из 31 теста семейства; в
   набор значков кита дорисован знак «равно» по слову владельца. Отметки покрытия в договорённости
   сняты у 19 сценариев, у которых тест уже есть: проверка покрытия отказывала на них.
-- **Next step:** этап 2 — сама таблица: строки, область действий, выбор строки радиокнопкой и
-  флажком.
+  Этап 2 закрыт: таблица рисует шапку, строку отбора, готовые и пользовательские ячейки, колонку
+  выбора и полосу действий — 51 из 51 теста семейства, проверки слога, слоёв и покрытия чистые.
+- **Next step:** этап 3 — панель действий списка: поиск, снятие отбора, обновление и селекторы
+  приложения.
 - **Uncommitted:** ничего.
 - **Waiting for the owner:** нет.
 - **PR:** not open yet
@@ -33,9 +35,9 @@ Rewritten by every session, not appended to.
 - [x] 2.1 Ready cell by column type, the copy button and the icons through the kit's map
 - [x] 2.2 Header cell with sorting and the header icon
 - [x] 2.3 Filter cell with the operator menu on the kit's input, select and date picker
-- [>] 2.4 The table: rows, actions area, single choice by `rt-radio-button`, multiple by `rt-checkbox`
-- [ ] 2.5 Spec of the table on its scenarios
-- [ ] 3.1 Toolbar with search, clear-filters and refresh, and the application's selectors
+- [x] 2.4 The table: rows, actions area, single choice by `rt-radio-button`, multiple by `rt-checkbox`
+- [x] 2.5 Spec of the table on its scenarios
+- [>] 3.1 Toolbar with search, clear-filters and refresh, and the application's selectors
 - [ ] 3.2 Own pagination bar ported from the first kit
 - [ ] 3.3 Own column settings panel ported from the first kit
 - [ ] 3.4 Selection across pages, the empty placeholder and the loading look
@@ -66,6 +68,14 @@ Rewritten by every session, not appended to.
   полуночи дня по местному времени. Подсказки «1/1/2025» у поля даты нет: поле кита рисует
   браузер, и формат дня он показывает сам. Надпись пустого списка — общая надпись кита.
   Affected stage of the plan: 2, 3.5.
+
+- **Строки таблицы различаются ключом записи, а не местом в списке.** Первый кит следил по
+  месту, и при смене страницы флажок доставался соседней записи — это видно в спеке выбора.
+  Отступление от «как есть» наружу не видно: приложение об этом не знает. Affected stage of the
+  plan: 2.
+- **Меню кита `rt-menu` получило выход `openedChange`.** Таблице нужно знать, у какой строки
+  открыто меню, — первый кит брал это у Material. Готовое расширено там, где оно живёт, а не
+  повторено рядом. Affected stage of the plan: 2.
 
 ## Sessions
 
