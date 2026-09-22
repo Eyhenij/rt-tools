@@ -1,6 +1,6 @@
 # The first kit's table as a family of the second kit
 
-**Status:** proposed · **Revision:** 2026-09-22 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 22 September 2026 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the kit's checkbox, radio button, icon, icon button, menu, tooltip, input, select,
 date picker, toggle switch, side panel, spinner, scroll area and toolbar — the family draws with
 them instead of Material; the kit's first-kit preset — the second kit's own styling preset that
@@ -8,11 +8,10 @@ brings the first kit's colours
 **Laws:** `frontend-application`, `verifiability`, `reuse-first`, `lists`
 **Procedures:** none
 
-A product agreement written before the code, task RT-2316. The first kit's table and its list of
-records move into the second kit as a family of their own, next to `rt-table` and
-`rt-dynamic-list`. Neither of those is edited and neither is replaced: the application chooses
-which one a screen takes. Where the agreement merges is open question `Q-TP-1`; the scenario
-numbers stay as they are after the merge.
+A subdomain of the second kit's spec, written before the code by task RT-2316 and merged with the
+scenario numbers it had as an agreement. The first kit's table and its list of records move into
+the second kit as a family of their own, next to `rt-table` and `rt-dynamic-list`. Neither of those
+is edited and neither is replaced: the application chooses which one a screen takes.
 
 The first kit's behaviour is copied as it is, oddities included — the owner's word "copy as is,
 we discuss it in detail later". The oddities are named in the decisions, so that the later
@@ -442,8 +441,6 @@ table that applied it last decides it for all.
 
 ## Open questions
 
-- **`Q-TP-1` — where the agreement merges.** Proposed: a new subdomain of the second kit for the
-  family. The boundary is the owner's.
 - **`Q-TP-17` — `Q-DL-1` of the list of records.** The grill closed it by "selection in the kit";
   now the selection lives in the new family, and `rt-dynamic-list` still holds none. It lies
   outside this family.
@@ -461,3 +458,6 @@ table that applied it last decides it for all.
   carried over.
 - 2026-09-22 — the owner's word on icons: the application can draw them by an icon template or by
   a custom cell.
+- 22 September 2026 — the agreement merged into the spec of the second kit as a subdomain of its
+  own, with the scenario numbers it had; `Q-TP-1` is closed by the plan of the task, which names
+  that place.
