@@ -1,4 +1,4 @@
-# What it will be carried out by — the whole table of the first kit in the second kit
+# What it will be carried out by — the first kit's table as a family of the second kit
 
 There is no code yet, so there is not one `file:symbol` binding here: the agreement is written
 before the code, and the place of execution appears with it. Here are only the foreseen places, so
@@ -7,41 +7,47 @@ next to it; the rules themselves get their bindings verbatim when the agreement 
 
 ## Where execution is foreseen
 
-| Group of rules                          | Where it is foreseen                                                                                                                                       |
-| --------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| the selection column, one row at a time | the table family `projects/ui-kit-v2/src/lib/components/table/` — the column is registered by the table the way the row actions column already is          |
-| the checkbox of a row and of the page   | the kit's checkbox `projects/ui-kit-v2/src/lib/components/checkbox/rt-checkbox.component.ts` — it already has the indeterminate state                      |
-| the radio of a row                      | nothing yet: the second kit has no radio — `Q-TP-9`                                                                                                        |
-| holding the selection                   | a pure selection logic next to the table's other logic files, so that the marks are tested without drawing a table                                         |
-| all records across pages, the counter   | the list family `projects/ui-kit-v2/src/lib/components/dynamic-list/` — it already carries the view inputs of select all and the counter                   |
-| a double click, opt-out of a row click  | the row directive `projects/ui-kit-v2/src/lib/components/table/rt-table-row.directive.ts` — it already skips interactive elements                          |
-| inline actions                          | the actions strip of `projects/ui-kit-v2/src/lib/components/table/rt-table.component.html` and a directive next to the row actions directive               |
-| ready cells                             | a new part of the table family; the copy button is the kit's copy cell `projects/ui-kit-v2/src/lib/components/table/copy-cell/`                            |
-| the hint of a cut value                 | the kit's tooltip `projects/ui-kit-v2/src/lib/components/tooltip/`                                                                                         |
-| the icon of a ready cell                | the kit's icon `projects/ui-kit-v2/src/lib/components/icon/` — its named colours                                                                           |
-| scrollbars                              | the settings panel `projects/ui-kit-v2/src/lib/components/table/settings-panel/` and the saved settings — the persistence file next to the table component |
-| the labels                              | the kit's dictionary, namespace `rtKit`, all eight languages                                                                                               |
-| the look                                | the material styling preset — the agreement `docs/specs/ui-kit-v2/proposed/material-preset/`                                                               |
-| the stories and their preset pairs      | the matrix pages of the table, the list and the settings panel; the pairs are held by `tools/check-preset-stories.mjs`                                     |
+| Group of rules                      | Where it is foreseen                                                                                                                                                              |
+| ----------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| the family                          | a new component directory of the second kit next to `projects/ui-kit-v2/src/lib/components/table/`, exported by the kit's barrel `projects/ui-kit-v2/src/lib/components/index.ts` |
+| columns and ready cells             | a ready-cell component of the family; a pure logic file for the dash, the shaping and the copied text, so they are tested without drawing a table                                 |
+| the header and the sort             | a header-cell component of the family; the next-order choice as a pure function                                                                                                   |
+| the filter row                      | a filter-cell component of the family on the kit's input, select, date picker and menu; the edit of the set of conditions as a pure function                                      |
+| rows and presses, the opt-out node  | a row directive and an opt-out directive of the family                                                                                                                            |
+| the actions strip                   | the family's table template; the menu is the kit's `projects/ui-kit-v2/src/lib/components/menu/`                                                                                  |
+| the selection column                | the kit's checkbox `projects/ui-kit-v2/src/lib/components/checkbox/` and radio button `projects/ui-kit-v2/src/lib/components/radio-button/`                                       |
+| holding the selection, across pages | a pure selection logic of the family — marks, exclusions, the page checkbox and select all — so they are tested without drawing                                                   |
+| the column settings                 | a settings service and a settings panel of the family; storage through the browser database service the second kit's table already uses                                           |
+| the toolbar and the list            | the family's list component on the kit's toolbar, scroll area, spinner, icon button and input                                                                                     |
+| the pagination bar                  | a pagination component of the family; the page numbers and the size correction as pure functions                                                                                  |
+| the narrow screen                   | the kit's breakpoint service and the family's styles                                                                                                                              |
+| the labels                          | the kit's dictionary `projects/ui-kit-v2/src/lib/i18n/`, namespace `rtKit`, all eight languages                                                                                   |
+| the look                            | the material styling preset `projects/ui-kit-v2/src/styles/_preset-material.scss` and the agreement `docs/specs/ui-kit-v2/proposed/material-preset/`                              |
+| the stories and their preset pairs  | the family's own showcase pages; the pairs are held by `tools/check-preset-stories.mjs`                                                                                           |
 
 ## The first kit's sources
 
-Read, not edited — the behaviour was taken from them:
+Read, not edited — the behaviour and the layout are taken from them:
 
-- the table and its selection column — `projects/ui-kit/src/lib/ui-kit/table/components/table/rtui-table.component.ts`
-- the selection on a bare table — `projects/ui-kit/src/lib/ui-kit/table/util/table-selectors.directive.ts`
-- the selection across pages — `projects/ui-kit/src/lib/ui-kit/table/util/dynamic-list-selectors.directive.ts`
-- the ready cell — `projects/ui-kit/src/lib/ui-kit/table/components/table-base-cell/table-base-cell.component.ts`
-- the scrollbar switches — `projects/ui-kit/src/lib/ui-kit/table/components/table-config-aside/rt-table-config-aside.component.html`
-- the row click and the opt-out — `projects/ui-kit/src/lib/ui-kit/table/directives/`
+- the table, the actions strip and the selection column — `projects/ui-kit/src/lib/ui-kit/table/components/table/`
+- the look of rows, header and strip — `projects/ui-kit/src/styles/components/_table.scss`
+- the ready cell — `projects/ui-kit/src/lib/ui-kit/table/components/table-base-cell/`
+- the header and the filter cell — `projects/ui-kit/src/lib/ui-kit/table/components/table-header-cell/`, `projects/ui-kit/src/lib/ui-kit/table/components/table-header-filter-cell/`
+- the toolbar, the placeholder and the scrollbars — `projects/ui-kit/src/lib/ui-kit/table/components/table-container/`
+- the settings panel and the saved settings — `projects/ui-kit/src/lib/ui-kit/table/components/table-config-aside/`, `projects/ui-kit/src/lib/ui-kit/table/util/table-config.service.ts`
+- the pagination bar — `projects/ui-kit/src/lib/ui-kit/table/components/pagination-view/`
+- the selection — `projects/ui-kit/src/lib/ui-kit/table/util/table-selectors.directive.ts`, `projects/ui-kit/src/lib/ui-kit/table/util/dynamic-list-selectors.directive.ts`
+- the row press and the opt-out — `projects/ui-kit/src/lib/ui-kit/table/directives/`
 
 ## What is not decided yet
 
-Nine open questions of the spec stand without a place of execution until the owner answers them.
-The radio (`Q-TP-9`) blocks the single selection entirely: without it the rule of one row at a
-time has nothing to be drawn with.
+Seventeen open questions of the spec stand without a place of execution until the owner answers
+them. `Q-TP-10`, `Q-TP-11`, `Q-TP-14` and `Q-TP-15` decide how the selection, the scrollbars and
+the presses behave; `Q-TP-12`, `Q-TP-13` and `Q-TP-18` decide what the application's column
+declarations and field looks compile to.
 
 ## Scenarios
 
 - **Scenario** — Test
-- **`SC-UKV-236`** … **`SC-UKV-275`** — no test yet; every scenario carries the `Not covered:` mark
+- **`SC-UKV-236`** … **`SC-UKV-275`**, **`SC-UKV-300`** … **`SC-UKV-316`** — no test yet; every
+  scenario carries the `Not covered:` mark
