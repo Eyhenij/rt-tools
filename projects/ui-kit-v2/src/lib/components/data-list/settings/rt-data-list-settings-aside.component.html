@@ -3,23 +3,25 @@
 
     <ng-container rtBlock="rt-data-list-settings-aside">
         <div rtElem="switches">
-            <rt-toggle-switch
-                qa-dataid="data-list-settings-vertical"
-                [ariaLabel]="verticalLabel()"
-                [ngModel]="isVerticalScrollbarShown()"
-                [ngModelOptions]="{ standalone: true }"
-                (ngModelChange)="isVerticalScrollbarShown.set($event)">
-                {{ verticalLabel() }}
-            </rt-toggle-switch>
+            <div rtElem="switch-row">
+                <span rtElem="switch-label" qa-dataid="data-list-settings-vertical-label">{{ verticalLabel() }}</span>
+                <rt-toggle-switch
+                    qa-dataid="data-list-settings-vertical"
+                    [ariaLabel]="verticalLabel()"
+                    [ngModel]="isVerticalScrollbarShown()"
+                    [ngModelOptions]="{ standalone: true }"
+                    (ngModelChange)="isVerticalScrollbarShown.set($event)" />
+            </div>
 
-            <rt-toggle-switch
-                qa-dataid="data-list-settings-horizontal"
-                [ariaLabel]="horizontalLabel()"
-                [ngModel]="isHorizontalScrollbarShown()"
-                [ngModelOptions]="{ standalone: true }"
-                (ngModelChange)="isHorizontalScrollbarShown.set($event)">
-                {{ horizontalLabel() }}
-            </rt-toggle-switch>
+            <div rtElem="switch-row">
+                <span rtElem="switch-label" qa-dataid="data-list-settings-horizontal-label">{{ horizontalLabel() }}</span>
+                <rt-toggle-switch
+                    qa-dataid="data-list-settings-horizontal"
+                    [ariaLabel]="horizontalLabel()"
+                    [ngModel]="isHorizontalScrollbarShown()"
+                    [ngModelOptions]="{ standalone: true }"
+                    (ngModelChange)="isHorizontalScrollbarShown.set($event)" />
+            </div>
         </div>
 
         <rt-table-settings-panel qa-dataid="data-list-settings-columns" [(items)]="items" />
