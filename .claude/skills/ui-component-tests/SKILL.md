@@ -93,8 +93,8 @@ Four checks do not replace one another, and the choice between them is not a mat
   no cause. Each gets its own refusal, and it names which half broke.
 - **A settled layout is not yet a drawn page, and the frame is taken after two in a row match.** The
   harness can wait for the sizes, the fonts, the network's silence and finished animations, and the
-  frame still diverges by sub-pixel halos on the labels: the rasterisation differs there, and the
-  browser gives no "the page is drawn" event at all. Two identical frames in a row say the same
+  frame still diverges by sub-pixel halos on the labels, and the browser gives no "the page is
+  drawn" event. Two identical frames in a row say the same
   thing and are checked directly.
 - **A settled page and a drawn page are different, and the frame waits for the second.** An
   animation frame's handler runs **before** the drawing, so a wait spinning such a cycle lets the

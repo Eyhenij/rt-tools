@@ -27,8 +27,7 @@ A rule under the "Law on verifiability", the section about showing a visible sta
 - **A story that draws an empty collection is not coverage.** First plausible data, then the
   matrix.
 - **The arg-driven page is called `Playground` everywhere, and a family without one names its
-  reason.** Called by two names, it is found at an unfamiliar family by guessing: the kit stood
-  with twenty-two families calling it `Default` and sixty calling it `Playground`. The name is one,
+  reason.** Called by two names, it is found at an unfamiliar family by guessing. The name is one,
   and a family that cannot have such a page — its content arrives as projected templates, and the
   showcase substitutes values rather than markup — is told from a family that simply lacks it only
   by reading. So the reason is written twice: in words on the family's overview page, and in the
@@ -60,8 +59,7 @@ A rule under the "Law on verifiability", the section about showing a visible sta
   not a threshold on the pair.
 - **A showing of one instance asks the pair for the width of its half.** Standing alone, such a
   showing took the width of the page, and the half shrinks its content to its own width: the
-  pagination host measured eight points and drew the collapsed form instead of the numbers, the
-  header drew a stub of a hundred and sixty instead of a bar. It is asked by name, because the half
+  pagination host measured eight points and drew the collapsed form instead of the numbers. It is asked by name, because the half
   shrinks deliberately — a bare button stretched across it would look unlike the same button in the
   matrix next door.
 - **A showing that gets no pair says why, in the markup next to it.** Three reasons are lawful: the
