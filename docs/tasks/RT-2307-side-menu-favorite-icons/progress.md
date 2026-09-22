@@ -4,8 +4,8 @@
 
 - **State:** `этап-идёт`
 - **Stage:** 3 of 3 — The spec and the showcase follow
-- **Done:** stages 1–2 — the buttons draw the icons from the settings; the side menu specs are 186 of 186
-- **Next step:** 3.1 — the spec gets the rule, the scenarios and the bindings
+- **Done:** stages 1–2, step 3.1 — the spec holds the icons rule, SC-UK-121…123; `check:specs` exit 0
+- **Next step:** 3.2 — a story shows the set icons
 - **Uncommitted:** no
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -18,8 +18,8 @@
 - [x] 2.1 The remove button draws `icons.remove` with its turn
 - [x] 2.2 The handle draws `icons.drag` with its turn, and the styles lose the fixed turn
 - [x] 2.3 The component specs cover the default and the set icons
-- [>] 3.1 The spec gets the rule, the scenarios and the bindings
-- [ ] 3.2 A story shows the set icons, and the frames are looked at locally
+- [x] 3.1 The spec gets the rule, the scenarios and the bindings
+- [>] 3.2 A story shows the set icons, and the frames are looked at locally
 - [ ] 3.3 The favourites references are taken from the runner's frame
 
 ## Decisions along the way
