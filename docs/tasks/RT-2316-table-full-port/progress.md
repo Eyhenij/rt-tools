@@ -23,7 +23,9 @@ Rewritten by every session, not appended to.
   выбора и полосу действий — 51 из 51 теста семейства, проверки слога, слоёв и покрытия чистые.
   Панель действий списка сделана: поиск с задержкой в полсекунды, снятие отбора, обновление,
   настройка колонок, селекторы и действия приложения — 58 из 58 тестов обеих семей.
-- **Next step:** этап 3 — своя пагинация, перенесённая из первого кита.
+  Своя полоса страниц перенесена: ряд номеров с разрывами, стрелки, выбор размера страницы —
+  65 из 65 тестов обеих семей.
+- **Next step:** этап 3 — своя панель настройки колонок, перенесённая из первого кита.
 - **Uncommitted:** ничего.
 - **Waiting for the owner:** нет.
 - **PR:** not open yet
@@ -39,8 +41,8 @@ Rewritten by every session, not appended to.
 - [x] 2.4 The table: rows, actions area, single choice by `rt-radio-button`, multiple by `rt-checkbox`
 - [x] 2.5 Spec of the table on its scenarios
 - [x] 3.1 Toolbar with search, clear-filters and refresh, and the application's selectors
-- [>] 3.2 Own pagination bar ported from the first kit
-- [ ] 3.3 Own column settings panel ported from the first kit
+- [x] 3.2 Own pagination bar ported from the first kit
+- [>] 3.3 Own column settings panel ported from the first kit
 - [ ] 3.4 Selection across pages, the empty placeholder and the loading look
 - [ ] 3.5 Words of both families in the kit's eight-language dictionary
 - [ ] 3.6 Spec of the list on its scenarios
