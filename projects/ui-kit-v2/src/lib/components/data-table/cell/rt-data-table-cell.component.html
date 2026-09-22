@@ -1,0 +1,34 @@
+<ng-container rtBlock="rt-data-table-cell">
+    <ng-template #iconTpl>
+        @if (iconTemplate(); as template) {
+            <ng-container [ngTemplateOutlet]="template" [ngTemplateOutletContext]="iconContext()" />
+        } @else if (kitIcon(); as name) {
+            <rt-icon size="lg" [name]="name" [style]="iconStyle()" />
+        }
+    </ng-template>
+
+    @if (icon()?.placement === 'left') {
+        <span rtElem="prefix" qa-dataid="data-table-cell-prefix"><ng-container [ngTemplateOutlet]="iconTpl" /></span>
+    }
+
+    <div rtElem="title" [rtMod]="titleMods()">
+        <div rtElem="text" qa-dataid="data-table-cell-text" [rtTooltip]="hint()">{{ value() | emptyToDash }}</div>
+    </div>
+
+    @if (icon()?.placement === 'right') {
+        <span rtElem="suffix" qa-dataid="data-table-cell-suffix"><ng-container [ngTemplateOutlet]="iconTpl" /></span>
+    }
+
+    @if (copyable()) {
+        <rt-icon-button
+            rtElem="copy-button"
+            rtDataTableStopRowClick
+            qa-dataid="data-table-cell-copy"
+            size="sm"
+            [rtMod]="copyMods()"
+            [icon]="copyIcon()"
+            [ariaLabel]="copyLabel()"
+            [tooltip]="narrow() ? '' : copyLabel()"
+            (clicked)="onCopy()" />
+    }
+</ng-container>

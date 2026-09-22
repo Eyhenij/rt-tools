@@ -42,6 +42,8 @@ export const RT_KIT_LABELS_EN = {
     chatTitle: 'Chat',
     counterDecrease: 'Decrease',
     counterIncrease: 'Increase',
+    dataTableCopied: 'Copied!',
+    dataTableCopy: 'Copy',
     fieldErrorEmail: 'Invalid email',
     fieldErrorMax: 'Value is too large',
     fieldErrorMaxLength: 'Value is too long',

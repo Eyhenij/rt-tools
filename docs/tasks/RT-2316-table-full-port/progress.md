@@ -16,7 +16,7 @@ Rewritten by every session, not appended to.
   сценарии SC-UKV-236…275 и 300…322. Главная влита по цепочке: эпик, радиокнопка, эта ветка.
   Этап 1 закрыт: модель колонок и настроек поле в поле с первым китом, хранение настроек под
   ключом и в форме первого кита, директивы нажатия строки — 9 из 9 тестов, линтер и типы чистые.
-- **Next step:** этап 2 — готовая ячейка по виду колонки, кнопка копирования, значки набором кита и шаблоном `rtDataTableIcon`.
+- **Next step:** этап 2 — ячейка шапки с сортировкой и значком.
 - **Uncommitted:** ничего.
 - **Waiting for the owner:** нет.
 - **PR:** not open yet
@@ -26,8 +26,8 @@ Rewritten by every session, not appended to.
 - [x] 1.1 Column model, settings model and the first kit's field set carried over as declared
 - [x] 1.2 Settings storage under the first kit's key and shape, with its spec
 - [x] 1.3 Row press and "ignore row press" directives with their spec
-- [>] 2.1 Ready cell by column type, the copy button and the icons through the kit's map
-- [ ] 2.2 Header cell with sorting and the header icon
+- [x] 2.1 Ready cell by column type, the copy button and the icons through the kit's map
+- [>] 2.2 Header cell with sorting and the header icon
 - [ ] 2.3 Filter cell with the operator menu on the kit's input, select and date picker
 - [ ] 2.4 The table: rows, actions area, single choice by `rt-radio-button`, multiple by `rt-checkbox`
 - [ ] 2.5 Spec of the table on its scenarios
