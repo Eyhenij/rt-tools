@@ -266,6 +266,41 @@ describe('RtuiSideMenuComponent — избранное', () => {
         expect(tooltip(fixture, HANDLE).message).toBe('Потяните за кнопку');
     });
 
+    it('SC-UK-121 — без значков в настройках «убрать» рисует корзину, ручка — стрелку на четверть оборота', () => {
+        const { fixture } = withFavorites(['rates']);
+
+        hoverFirstItem(fixture);
+
+        const removeIcon: HTMLElement = fixture.nativeElement.querySelector(`${REMOVE} mat-icon`) as HTMLElement;
+        const handleIcon: HTMLElement = fixture.nativeElement.querySelector(`${HANDLE} mat-icon`) as HTMLElement;
+
+        expect(removeIcon.textContent?.trim()).toBe('delete');
+        expect(removeIcon.style.rotate).toBe('0deg');
+        expect(handleIcon.textContent?.trim()).toBe('arrows_outward');
+        expect(handleIcon.style.rotate).toBe('90deg');
+    });
+
+    it('SC-UK-122 — значок «убрать» из настроек меняет глиф, подсказка остаётся подписью', () => {
+        const { fixture } = withFavorites(['rates'], { config: { icons: { remove: { glyph: 'close' } } } });
+
+        hoverFirstItem(fixture);
+
+        expect((fixture.nativeElement.querySelector(`${REMOVE} mat-icon`) as HTMLElement).textContent?.trim()).toBe('close');
+        expect(tooltip(fixture, REMOVE).message).toBe('Remove from favourites');
+        expect((fixture.nativeElement.querySelector(`${HANDLE} mat-icon`) as HTMLElement).style.rotate).toBe('90deg');
+    });
+
+    it('SC-UK-123 — значок ручки из настроек рисуется с заданным поворотом', () => {
+        const { fixture } = withFavorites(['rates'], { config: { icons: { drag: { glyph: 'drag_indicator', rotate: 0 } } } });
+
+        hoverFirstItem(fixture);
+
+        const handleIcon: HTMLElement = fixture.nativeElement.querySelector(`${HANDLE} mat-icon`) as HTMLElement;
+
+        expect(handleIcon.textContent?.trim()).toBe('drag_indicator');
+        expect(handleIcon.style.rotate).toBe('0deg');
+    });
+
     it('SC-UK-86 — на узком экране блок стоит под полем поиска, звёзды видны без наведения', () => {
         // Подпункт меряет экран своим экземпляром службы, и узкий экран ему подменяется отдельно.
         const narrow: BreakpointServiceStub = new BreakpointServiceStub();

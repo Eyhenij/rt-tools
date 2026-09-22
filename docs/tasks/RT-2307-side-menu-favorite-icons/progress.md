@@ -3,9 +3,9 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 2 of 3 — The buttons draw the resolved icons
-- **Done:** stage 1 — the service gives out `icons`; the settings spec is 24 of 24
-- **Next step:** 2.1 — the remove button draws `icons.remove`
+- **Stage:** 3 of 3 — The spec and the showcase follow
+- **Done:** stages 1–2 — the buttons draw the icons from the settings; the side menu specs are 186 of 186
+- **Next step:** 3.1 — the spec gets the rule, the scenarios and the bindings
 - **Uncommitted:** no
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -15,10 +15,10 @@
 - [x] 1.1 The config gets `icons`, the defaults are the trash can and the turned `arrows_outward`
 - [x] 1.2 The service gives out `icons`, merged per icon, a blank glyph counting as absent
 - [x] 1.3 The types are exported from the side menu's public entry
-- [>] 2.1 The remove button draws `icons.remove` with its turn
-- [ ] 2.2 The handle draws `icons.drag` with its turn, and the styles lose the fixed turn
-- [ ] 2.3 The component specs cover the default and the set icons
-- [ ] 3.1 The spec gets the rule, the scenarios and the bindings
+- [x] 2.1 The remove button draws `icons.remove` with its turn
+- [x] 2.2 The handle draws `icons.drag` with its turn, and the styles lose the fixed turn
+- [x] 2.3 The component specs cover the default and the set icons
+- [>] 3.1 The spec gets the rule, the scenarios and the bindings
 - [ ] 3.2 A story shows the set icons, and the frames are looked at locally
 - [ ] 3.3 The favourites references are taken from the runner's frame
 
@@ -26,6 +26,8 @@
 
 - A set icon replaces its default whole: a glyph without `rotate` is not turned, so `drag_indicator`
   set alone does not inherit the 90° of the default arrow.
+- The turn is bound as `[style.rotate.deg]`, the independent `rotate` property: it does not argue
+  with a `transform` the button or the drag preview may set.
 
 ## Sessions
 
