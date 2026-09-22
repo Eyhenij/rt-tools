@@ -18,8 +18,8 @@
 >
 > Требования:
 >
-> - Значения по умолчанию равны текущим: remove — `{ glyph: 'remove' }`, drag — `{ glyph:
-'arrows_outward', rotate: 90 }`. Приложение без icons видит то же, что сейчас.
+> - Значения по умолчанию равны текущим: remove — `{ glyph: 'remove' }`, drag —
+>   `{ glyph: 'arrows_outward', rotate: 90 }`. Приложение без icons видит то же, что сейчас.
 > - Поворот задаётся числом из icons.drag.rotate, а не жёстким transform в SCSS.
 > - RtuiSideMenuSettingsService отдаёт итоговые иконки так же, как labels: приложение рисует ими
 >   те же кнопки в своих галереях и не держит второй копии значений.
