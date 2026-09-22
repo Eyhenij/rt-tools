@@ -178,3 +178,19 @@ When they are drawn
 Then the colour of the choice, the rim and the texts come from the material appointments
 
 Not covered: the family has no code yet.
+
+### SC-UKV-298 — the choice given by the input, without a form
+
+Given two radio buttons without a form, the first given as chosen by the input
+When the person presses the second one
+Then the output of the change reports that the second is chosen, and the look follows the input the caller sets back
+
+Not covered: the family has no code yet.
+
+### SC-UKV-299 — the circle alone is named by the input
+
+Given a radio button without a label, with a name given by the input
+When the assistive means read it
+Then they read that name together with the role and the choice
+
+Not covered: the family has no code yet.

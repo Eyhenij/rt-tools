@@ -4,53 +4,58 @@
 **Draft:** `docs/specs/ui-kit-v2/proposed/radio-button/`
 **Behaviour:** changes
 
-A tree that writes the agreement straight into the domain spec names it instead of the draft:
-`**Spec:** `<path to the spec>``.
-
-Work that does not touch application code needs no agreement — then instead of the draft line
-stands `**Behaviour:** unchanged — <the owner's reason>`; an empty reason is not accepted.
-
-After it is written this file is not edited. A stage revision goes to `progress.md` as a decision
-along the way.
+После записи этот файл не правится. Пересмотр этапа идёт в `progress.md` решением по ходу.
 
 ## Task footprint
 
-<What the work touches. Filled in by exploration before the grill and confirmed by the owner. By
-this same table, at closing, one sees what of the specs, rules and patterns has gone stale: what
-is named here is read twice — before the work and after it.>
-
-| What  | Where                         |
-| ----- | ----------------------------- |
-| Specs | `docs/specs/<domain>/`        |
-| Laws  | `docs/constitution/<name>.md` |
-| Rules | `.claude/skills/<name>/`      |
-| Code  | `projects/<package>/`         |
+| What  | Where                                                                                                                                            |
+| ----- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Specs | `docs/specs/ui-kit-v2/proposed/radio-button/` — сливается в спеку домена                                                                         |
+| Laws  | `docs/constitution/frontend-application.md`, `docs/constitution/verifiability.md`                                                                |
+| Rules | `.claude/skills/component-structure/`, `.claude/skills/styling-bem/`, `.claude/skills/rt-tools-storybook/`, `.claude/skills/ui-component-tests/` |
+| Code  | `projects/ui-kit-v2/src/lib/components/` — новый каталог семейства, `index.ts`                                                                   |
 
 ## What counts as done
 
-- <a statement that can be checked>
+- Во втором ките есть `rt-radio-button`, и каждый сценарий SC-UKV-276…299 назван в спеке
+  компонента.
+- У семейства истории по договору покрытия: `Overview`, `Playground`, `Value`, `Label`, `Card`,
+  `States`, `Themes`, `Presets` — и кадры их в образе.
+- Договорённость слита в спеку домена, каталога `proposed/radio-button/` в ветке нет.
+- Импорта `@angular/material` в семействе нет.
 
 ## Stages
 
-### 1. <name>
+### 1. Компонент и его спека
 
 - **Steps:**
-    1. <what is done first>
-    2. <what is done after it>
-- **Readiness sign:** <what must become true>
-- **Verified by:** `<command>` — <what in its output means "it matched">
+    1. Компонент, шаблон и стили семейства по образцу владельца на назначениях кита
+    2. Спека компонента на сценарии SC-UKV-276…299
+    3. Выгрузка семейства из `index.ts` кита
+- **Readiness sign:** спека семейства зелёная, линтер кита без находок.
+- **Verified by:** `pnpm exec nx test @rt-tools/ui-kit-v2 --testFile=rt-radio-button.component.spec.ts` —
+  в отчёте «Tests:» все прошли, число — не меньше 24.
 
-The steps are the smallest unit of the work, and they are written here in full: the progress
-mirrors this list with its marks, and a check matches the two by number and by name. A step is
-named by what is done, not by what is thought over — a line nobody can call done is not a step.
+### 2. Витрина
 
-The command is written in backticks: the turn exit guard reads it and does not let out a turn in
-which the stage is declared closed and the command was not run. An acceptance written in prose
-cannot be confirmed by anything. The command is run right here, while the plan is written, not at
-the end of the stage: its output is what names the readiness sign. A sign written by a guess is
-sometimes impossible to meet — the line the stage must put out comes from an unconfigured tree
-rather than from the work — and that is found out latest of everything that depended on it.
+- **Steps:**
+    1. Обёртка и истории по договору покрытия, страница `Overview`
+    2. Обход историй и взгляд на кадры глазами
+    3. Кадры в образе и второй прогон подряд
+- **Readiness sign:** кадры семейства сняты и совпали вторым прогоном.
+- **Verified by:** `node tools/visual-gate.mjs ui-kit-v2` — «Snapshots:» все прошли, сирот нет.
+
+### 3. Закрытие
+
+- **Steps:**
+    1. Договорённость слита в спеку домена
+    2. Ворота перед отправкой и отправка ветки
+    3. Истории показаны владельцу
+- **Readiness sign:** `check-specs` зелёный без `proposed/radio-button`, ветка на хостинге.
+- **Verified by:** `node tools/check-specs.mjs` — выход 0.
 
 ## What this work does not do
 
-- <neighbouring work that is not dragged in here, and where it is created>
+- Таблицу первого кита — это RT-2316, она берёт радиокнопку после слияния этой задачи.
+- Группу радиокнопок и несколько радиокнопок на одном поле реактивной формы — открытый вопрос
+  договорённости; таблице он не нужен.

@@ -74,8 +74,8 @@ radio button.
   person reading the screen not by the eyes hears "radio button, chosen" or "not chosen", and
   "unavailable" at an unavailable one.
 - **The radio button is one stop of the keyboard focus, the unavailable one included.** The sample
-  keeps an unavailable radio button reachable by Tab and says it is unavailable; see the open
-  questions — the neighbouring checkbox does the opposite.
+  keeps an unavailable radio button reachable by Tab and says it is unavailable; the neighbouring
+  checkbox does the opposite, and the family follows the sample.
 - **The focus reached from the keyboard is visible by the ring of the kit; the focus from a press
   is not.** The sample has no ring of its own; without one a person moving by Tab does not see
   where they are.
@@ -88,7 +88,14 @@ radio button.
 - **In the card look the frame of a chosen radio button takes the colour of the choice.** A card
   that is not chosen keeps the neutral frame.
 - **The unavailable radio button is dimmed as a whole and takes no pointer.** The dimming covers
-  the circle, the dot, the texts and the frame of the card at once.
+  the circle, the dot, the texts and the frame of the card at once, by the kit's step for the
+  unavailable look.
+- **The choice is also given by an input without a form, and a change of it is reported by an
+  output of its own.** The table of the first kit sets the choice of a row by an input and listens
+  to the change; a form per row would be a second model of the same choice.
+- **A radio button without a label takes its name for the assistive means from an input.** In the
+  table the radio button is the circle alone, and without the name it is read as a nameless
+  control.
 - **Every colour of the radio button comes from an appointment of the kit.** The colour of the
   choice, the rim, the texts and the frame of the card are appointments, never values of its own —
   so the dark theme and the material preset repaint it without a rule of its own.
@@ -96,8 +103,7 @@ radio button.
 ## What is out of scope
 
 - **A group of radio buttons** — one name for several, the arrows between neighbours, one stop of
-  the focus for the whole group. The sample has none, and the table does not need it; see the open
-  questions.
+  the focus for the whole group. The sample has none, and the table does not need it.
 - **The table itself.** The single choice of a row moves to the second kit by task RT-2316; this
   agreement gives it the component and nothing of the table.
 - **The first kit.** It has no radio button of its own and is not edited: its table stays on the
@@ -109,8 +115,9 @@ radio button.
 ## Contract
 
 Not applicable: the surface is the inputs and the output of a component of the kit, the subdomain
-serves no procedures. The inputs are the value (required, of any type), `disabled`, `card`, `label`
-and `description`; the output reports the press; the choice goes through the form binding.
+serves no procedures. The inputs are the value (required, of any type), `checked`, `disabled`,
+`card`, `label`, `description` and `ariaLabel`; the outputs report the press and the change of the
+choice; the choice goes through the form binding or through `checked`.
 
 ### Refusal codes
 
@@ -179,44 +186,25 @@ that would do it instead.
 - **The focus ring and the hover look are taken from the house pattern of the checkbox**: a ring of
   the kit on the keyboard focus, no hover look. The sample has neither, and the state coverage
   demands both to be shown.
+- **The open questions are settled by the sample, and beyond it only by what the table needs.** The
+  owner's word of 22 September 2026: «если чего-то не хватает то пилим спрашивай я дам пример или
+  скажу пили сам», and the sample was given. So: the choice by an input for the table and a name by
+  an input for the circle alone; the measures of the sample, 16 and 6 px, under both presets; the
+  unavailable one stays in the order of Tab; a choice by a key reports nothing outward; the dimming
+  is the kit's step; no group; the rim that is not chosen takes the strong neutral border under the
+  material preset.
 
 ## Open questions
 
 The numbers are issued at the merge into the domain spec: neighbouring work of the same epic keeps
 its own and has not reached the epic branch yet.
 
-- **A group of radio buttons.** One name, the arrows between neighbours and one stop of the focus
-  for the group are not in the sample, and the table does not need them. The work goes with the
-  assumption that there is no group, and that is exactly what leaves the next question open.
 - **Several radio buttons on one control of a reactive form.** A press on one gives its value to the
   control, but the neighbours bound to the same control are not told, and the one chosen before may
   keep its dot. The template binding of the form rewrites every radio button by change detection;
   the reactive one does not. Whether the family needs a registry of its own, a group, or a word in
-  its description that one model is shared through the template binding — for the owner.
-- **The choice without a form.** The table of the first kit sets the choice of a row by an input and
-  listens to the change, not through a form. The sample has only the form binding. Whether the
-  family gets an input of the choice for the table, or the table binds a form per row — for the
-  owner; it decides the agreement of RT-2316.
-- **The name of a radio button without a label.** In the table the radio button is the circle alone,
-  and the assistive means have no name to read for it. The checkbox takes a name by an input; the
-  sample has none.
-- **The unavailable radio button in the order of Tab.** The sample keeps it reachable and declares it
-  unavailable; the checkbox of the kit takes the unavailable one out of the order. The work goes by
-  the sample, until the owner says the two must behave the same.
-- **Whether a choice by a key reports the press outward and marks the radio button touched.** The
-  output of the sample reports a press of the pointer. The work assumes the key chooses and marks the
-  radio button touched, but reports nothing outward.
-- **The dimming of the unavailable one.** The sample dims to 0.75, the kit's step for the
-  unavailable look is 0.6, the checkbox dims to 0.5. Which one the family takes is not decided; a
-  number of its own is refused by the design of the kit.
-- **The measures of the material look.** The Material radio button draws a circle of 20 px, a dot of
-  10 px and a round halo on hover and focus; the sample draws 16 px and 6 px without a halo. The
-  material preset changes only colours, so under it the family keeps the sample's measures and does
-  not reproduce the Material look in size.
-- **Which colour is the rim of a radio button that is not chosen under the material preset.** The
-  first kit themes its Material radio button by the Material theme, not by its own tokens, and the
-  preset has no appointment taken from that rim. The work assumes the strong neutral border of the
-  kit.
+  its description that one model is shared through the template binding — the table does not meet
+  it: it gives the choice by the input.
 
 ## History of changes
 
