@@ -59,7 +59,7 @@ class SelectorsHostComponent {
     public readonly presetKeys: WritableSignal<number[]> = signal<number[]>([]);
 
     public readonly selectors: Signal<TNullable<RtDataTableSelectorsDirective<IEntity, 'title', 'id'>>> =
-        viewChild(RtDataTableSelectorsDirective);
+        viewChild<RtDataTableSelectorsDirective<IEntity, 'title', 'id'>>(RtDataTableSelectorsDirective);
 }
 
 function setup(patch: (host: SelectorsHostComponent) => void = (): void => undefined): ComponentFixture<SelectorsHostComponent> {

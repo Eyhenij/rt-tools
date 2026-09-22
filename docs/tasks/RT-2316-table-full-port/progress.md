@@ -21,8 +21,9 @@ Rewritten by every session, not appended to.
   сняты у 19 сценариев, у которых тест уже есть: проверка покрытия отказывала на них.
   Этап 2 закрыт: таблица рисует шапку, строку отбора, готовые и пользовательские ячейки, колонку
   выбора и полосу действий — 51 из 51 теста семейства, проверки слога, слоёв и покрытия чистые.
-- **Next step:** этап 3 — панель действий списка: поиск, снятие отбора, обновление и селекторы
-  приложения.
+  Панель действий списка сделана: поиск с задержкой в полсекунды, снятие отбора, обновление,
+  настройка колонок, селекторы и действия приложения — 58 из 58 тестов обеих семей.
+- **Next step:** этап 3 — своя пагинация, перенесённая из первого кита.
 - **Uncommitted:** ничего.
 - **Waiting for the owner:** нет.
 - **PR:** not open yet
@@ -37,8 +38,8 @@ Rewritten by every session, not appended to.
 - [x] 2.3 Filter cell with the operator menu on the kit's input, select and date picker
 - [x] 2.4 The table: rows, actions area, single choice by `rt-radio-button`, multiple by `rt-checkbox`
 - [x] 2.5 Spec of the table on its scenarios
-- [>] 3.1 Toolbar with search, clear-filters and refresh, and the application's selectors
-- [ ] 3.2 Own pagination bar ported from the first kit
+- [x] 3.1 Toolbar with search, clear-filters and refresh, and the application's selectors
+- [>] 3.2 Own pagination bar ported from the first kit
 - [ ] 3.3 Own column settings panel ported from the first kit
 - [ ] 3.4 Selection across pages, the empty placeholder and the loading look
 - [ ] 3.5 Words of both families in the kit's eight-language dictionary
@@ -76,6 +77,10 @@ Rewritten by every session, not appended to.
 - **Меню кита `rt-menu` получило выход `openedChange`.** Таблице нужно знать, у какой строки
   открыто меню, — первый кит брал это у Material. Готовое расширено там, где оно живёт, а не
   повторено рядом. Affected stage of the plan: 2.
+
+- **Видимость поля поиска считается по сигналу, а не по состоянию формы.** Поле формы сигналом не
+  является, и пересчёта по нему не бывает — на заглушке поле не появлялось вовсе. Набранное
+  записывается в сигнал тем же потоком, что уходит приложению. Affected stage of the plan: 3.
 
 ## Sessions
 

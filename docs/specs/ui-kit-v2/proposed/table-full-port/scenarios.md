@@ -390,7 +390,8 @@ Not covered: the family has no code yet.
 Given the list's search field
 When a person types " ann " and stops for half a second, then types nothing more
 Then the application gets one search request with "ann"
-Not covered: the family has no code yet.
+
+Covered: `projects/ui-kit-v2/src/lib/components/data-list/toolbar/rt-data-list-toolbar.component.spec.ts`.
 
 ### SC-UKV-311 — the pagination bar hides while every record fits the smallest page
 
@@ -418,7 +419,8 @@ Not covered: the family has no code yet.
 Given a data list in multiple selection with select all hidden by the application
 When a person marks two rows
 Then the toolbar shows "Selected: 2" and no select all
-Not covered: the family has no code yet.
+
+Covered: `projects/ui-kit-v2/src/lib/components/data-list/toolbar/rt-data-list-toolbar.component.spec.ts`.
 
 ### SC-UKV-315 — the family's words follow the page language
 

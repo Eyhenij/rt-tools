@@ -23,6 +23,8 @@ export * from './confirm-popover';
 export * from './container';
 export * from './counter';
 export * from './counter-row';
+export * from './data-list';
+export * from './data-table';
 export * from './date-picker';
 export * from './detail-list';
 export * from './dialog';

@@ -1,0 +1,85 @@
+<ng-container rtBlock="rt-data-list-toolbar">
+    <rt-toolbar>
+        @if (hasSelectors() && !isPlaceholderShown()) {
+            <ng-container *rtToolbarLeft>
+                <div rtElem="selectors">
+                    @if (isMultiSelect()) {
+                        @if (isSelectAllSelectorShown()) {
+                            <rt-checkbox
+                                qa-dataid="data-list-select-all"
+                                [ariaLabel]="selectAllLabel()"
+                                [disabled]="isSelectAllSelectorDisabled()"
+                                [indeterminate]="isAllEntitiesIndeterminate() && !isAllEntitiesSelected()"
+                                [ngModel]="isAllEntitiesSelected()"
+                                [ngModelOptions]="{ standalone: true }"
+                                (ngModelChange)="onToggleAllEntities($event)">
+                                {{ selectAllLabel() }}
+                            </rt-checkbox>
+                        } @else {
+                            <span rtElem="counter" qa-dataid="data-list-selected-count">{{ selectedLabel() }}</span>
+                        }
+                    }
+
+                    @if (toolbarSelectorsTpl(); as selectors) {
+                        <ng-container [ngTemplateOutlet]="selectors" />
+                    }
+                </div>
+            </ng-container>
+        }
+
+        <ng-container *rtToolbarRight>
+            <div rtElem="right">
+                <div rtElem="actions">
+                    @if (toolbarActionsTpl(); as actions) {
+                        <ng-container [ngTemplateOutlet]="actions" />
+
+                        <span rtElem="divider"></span>
+                    }
+
+                    @if (isFiltersShown()) {
+                        <rt-icon-button
+                            qa-dataid="data-list-clear-filters"
+                            variant="ghost"
+                            [icon]="clearFiltersIcon"
+                            [ariaLabel]="clearFiltersLabel()"
+                            [tooltip]="clearFiltersLabel()"
+                            [disabled]="isFiltersEmpty()"
+                            (clicked)="onClearFilters()" />
+                    }
+
+                    @if (isRefreshButtonShown()) {
+                        <rt-icon-button
+                            qa-dataid="data-list-refresh"
+                            variant="ghost"
+                            [icon]="refreshIcon"
+                            [ariaLabel]="refreshLabel()"
+                            [tooltip]="refreshLabel()"
+                            (clicked)="onRefresh()" />
+                    }
+
+                    @if (isTableConfigButtonShown()) {
+                        <rt-icon-button
+                            qa-dataid="data-list-table-config"
+                            variant="ghost"
+                            [icon]="tableConfigIcon"
+                            [ariaLabel]="tableConfigLabel()"
+                            [tooltip]="tableConfigLabel()"
+                            (clicked)="onOpenConfig()" />
+                    }
+                </div>
+
+                @if (isSearchShown()) {
+                    <div rtElem="search">
+                        <rt-input
+                            qa-dataid="data-list-search"
+                            size="sm"
+                            [iconLeft]="searchIcon"
+                            [placeholder]="searchPlaceholder()"
+                            [ariaLabel]="searchPlaceholder()"
+                            [formControl]="searchControl" />
+                    </div>
+                }
+            </div>
+        </ng-container>
+    </rt-toolbar>
+</ng-container>
