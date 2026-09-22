@@ -3,9 +3,15 @@ import { MatIconRegistry } from '@angular/material/icon';
 import { applicationConfig, Meta, StoryObj } from '@storybook/angular';
 
 import { provideRtStorage } from '@rt-tools/core';
-import { provideRtuiSideMenuSettings, RtuiSideMenuSettingsService } from '../settings/rtui-side-menu-settings.service';
+import {
+    IRtuiSideMenuSettingsConfig,
+    provideRtuiSideMenuSettings,
+    RTUI_SIDE_MENU_SETTINGS_CONFIG,
+    RtuiSideMenuSettingsService,
+} from '../settings/rtui-side-menu-settings.service';
 import { ISideMenu } from '../side-menu.types';
 import { MENU_ITEMS, TestSideMenuWrapperComponent } from './component/test-side-menu-wrapper.component';
+import { waitFor } from './side-menu.wait';
 
 /**
  * Избранное бокового меню: звёзды у разделов и блок вверху подменю.
@@ -102,6 +108,29 @@ export default {
 
 type TStory = StoryObj<TestSideMenuWrapperComponent>;
 
+/**
+ * Узкий экран открывает раздел нажатием: без него в кадре одна полоса. Ждётся кнопка «убрать» в
+ * блоке — знак того, что подменю раздела с избранным открыто.
+ */
+async function openNarrowFavorites({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> {
+    const item: HTMLElement | null = await waitFor<HTMLElement>((): HTMLElement | null =>
+        canvasElement.querySelector('mat-list-item.rtui-mobile-side-menu-item')
+    );
+
+    if (item === null) {
+        throw new Error('Пункт узкого меню не появился: нажимать нечего');
+    }
+
+    item.click();
+
+    if (
+        (await waitFor<HTMLElement>((): HTMLElement | null => canvasElement.querySelector('[qa-dataid="side-menu-favorite-remove"]'))) ===
+        null
+    ) {
+        throw new Error('Блок избранного не открылся: кнопки «убрать» нет');
+    }
+}
+
 /** Закреплённое подменю «Content», открытое на «Sidebar» во вложенной папке: папки раскрыты, блок и звёзды видны. */
 export const SubMenuFavorites: TStory = {
     args: {
@@ -119,6 +148,10 @@ export const SubMenuFavorites: TStory = {
 /** Узкий экран: тот же блок под полем поиска, полые звёзды и кнопки «убрать» видны без наведения. */
 export const SubMenuFavoritesMobile: TStory = {
     globals: { viewport: { value: 'narrow' } },
+    // Снимок берёт узкое окно сам: витринный размер кадр не меняет, а в окне 1280 px кнопки
+    // «убрать» и ручки прячутся до наведения и в кадр не попадают.
+    parameters: { snapshotViewport: { width: 360, height: 780 } },
+    play: openNarrowFavorites,
     args: {
         menuItems: FAVORITES_MENU,
         menuId: SHOWCASE_MENU_ID,
@@ -129,4 +162,22 @@ export const SubMenuFavoritesMobile: TStory = {
         isSubMenuButtonIconsOutlined: false,
         isSubMenuTooltipsShown: true,
     },
+};
+
+/** Значки, заданные настройками: крестик вместо корзины и ручка без поворота; подсказки остаются подписями. */
+const CUSTOM_ICONS: IRtuiSideMenuSettingsConfig = {
+    storageKey: SHOWCASE_KEY,
+    icons: { remove: { glyph: 'close' }, drag: { glyph: 'drag_indicator', rotate: 0 } },
+};
+
+/** Узкий экран со значками из настроек: кнопки «убрать» и ручки видны без наведения. */
+export const SubMenuFavoritesCustomIcons: TStory = {
+    ...SubMenuFavoritesMobile,
+    decorators: [applicationConfig({ providers: [{ provide: RTUI_SIDE_MENU_SETTINGS_CONFIG, useValue: CUSTOM_ICONS }] })],
+};
+
+/** Указатель на кнопке «убрать»: корзина красная, цвет приложение задаёт свойством `--rt-side-menu-favorite-remove-hover-color`. */
+export const SubMenuFavoritesRemoveHover: TStory = {
+    ...SubMenuFavorites,
+    parameters: { snapshotHover: '[qa-dataid="side-menu-favorite-remove"]' },
 };

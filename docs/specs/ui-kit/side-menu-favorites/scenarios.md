@@ -184,7 +184,8 @@ are `b`, and the item output did not fire
 
 Given the service with `a` in the list and the block drawn
 When the row `a` is looked at
-Then its handle is a button with the icon `arrows_outward` named "Hold button to drag"
+Then its handle is a button with the icon of the settings, `arrows_outward` by default, named
+"Hold button to drag"
 
 ### SC-UK-96 — an empty panel shows no one's favourites
 
@@ -347,3 +348,34 @@ Then the submenu closes
 Given the service and a submenu opened by hover
 When a row is dropped inside the panel, and then another drop lands outside it
 Then the submenu stays open after the first drop and closes after the second
+
+### SC-UK-121 — without icons in the settings the remove button draws a trash can
+
+Given the service provided without `icons`
+When the block is drawn with `a` in the list
+Then the remove button draws `delete` without a turn, the handle draws `arrows_outward` turned by
+90°
+
+### SC-UK-122 — a set remove icon changes the glyph and keeps the tooltip
+
+Given the service provided with `icons.remove` of the glyph `close`
+When the block is drawn with `a` in the list
+Then the remove button draws `close`, its tooltip stays "Remove from favourites", and the handle
+keeps its default icon; a blank glyph leaves the trash can
+
+### SC-UK-123 — a set handle icon is drawn with its own turn
+
+Given the service provided with `icons.drag` of the glyph `drag_indicator` and the turn 0
+When the block is drawn with `a` in the list
+Then the handle draws `drag_indicator` without a turn; an icon without a turn is not turned
+
+### SC-UK-124 — the remove icon turns red under the pointer
+
+Given the service with `a` in the list and a wide screen with a hovering pointer
+When the pointer stands on the remove button of the row `a`
+Then its icon takes `--rt-side-menu-favorite-remove-hover-color`, the danger colour by default; the
+star of a list row keeps its colours
+
+Coverage: partial — the spec checks the mark the styles read, not the colour itself: the spec
+environment applies no component styles and has no hover. The colour is shown by the showcase frame
+of the pointer on the remove button.

@@ -275,4 +275,43 @@ describe('RtuiSideMenuSettingsService', (): void => {
             drag: 'Hold button to drag',
         });
     });
+
+    it('SC-UK-121 — без значков в настройках удаление рисует корзину, ручка — повёрнутую стрелку', (): void => {
+        const service: RtuiSideMenuSettingsService = createService(null);
+
+        expect(service.icons).toEqual({
+            remove: { glyph: 'delete', rotate: 0 },
+            drag: { glyph: 'arrows_outward', rotate: 90 },
+        });
+    });
+
+    it('SC-UK-122 — заданный значок заменяет свой, второй остаётся по умолчанию', (): void => {
+        const service: RtuiSideMenuSettingsService = createService(null, { icons: { remove: { glyph: 'close' } } });
+
+        expect(service.icons).toEqual({
+            remove: { glyph: 'close', rotate: 0 },
+            drag: { glyph: 'arrows_outward', rotate: 90 },
+        });
+    });
+
+    it('SC-UK-122 — пустой глиф равен отсутствию значка', (): void => {
+        const service: RtuiSideMenuSettingsService = createService(null, { icons: { remove: { glyph: '  ', rotate: 45 } } });
+
+        expect(service.icons.remove).toEqual({ glyph: 'delete', rotate: 0 });
+    });
+
+    it('SC-UK-123 — поворот ручки задаётся числом, ноль снимает поворот по умолчанию', (): void => {
+        const service: RtuiSideMenuSettingsService = createService(null, { icons: { drag: { glyph: 'drag_indicator', rotate: 0 } } });
+
+        expect(service.icons.drag).toEqual({ glyph: 'drag_indicator', rotate: 0 });
+    });
+
+    it('SC-UK-123 — значок без поворота и с нечисловым поворотом не повёрнут', (): void => {
+        const service: RtuiSideMenuSettingsService = createService(null, {
+            icons: { drag: { glyph: 'drag_indicator' }, remove: { glyph: 'close', rotate: Number.NaN } },
+        });
+
+        expect(service.icons.drag.rotate).toBe(0);
+        expect(service.icons.remove.rotate).toBe(0);
+    });
 });

@@ -54,13 +54,15 @@
                             rtElem="favorite"
                             qa-dataid="side-menu-favorite-remove"
                             matTooltipPosition="above"
-                            [rtMod]="{ always: narrow() }"
+                            [rtMod]="{ always: narrow(), remove: true }"
                             [matTooltip]="favorites.labels.remove"
                             [matTooltipDisabled]="narrow()"
                             [attr.aria-label]="favorites.labels.remove"
                             (click)="onRemoveFavorite(item, $event)"
                             (focusin)="onFavoriteFocus($event)">
-                            <mat-icon rtElem="favorite-icon" [rtIconOutlined]="true">remove</mat-icon>
+                            <mat-icon rtElem="favorite-icon" [rtIconOutlined]="true" [style.rotate.deg]="favorites.icons.remove.rotate">
+                                {{ favorites.icons.remove.glyph }}
+                            </mat-icon>
                         </button>
                     } @else if (favoritesOn() && favorites && item.link?.trim()) {
                         <!--

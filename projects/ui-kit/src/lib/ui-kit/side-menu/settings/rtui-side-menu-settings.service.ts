@@ -34,10 +34,23 @@ export interface IRtuiSideMenuFavoritesLabels {
     readonly drag: string;
 }
 
+/** Значок кнопки избранного: глиф набора Material Symbols и поворот. */
+export interface IRtuiSideMenuFavoritesIcon {
+    readonly glyph: string;
+    /** Градусы по часовой стрелке; не задан — ноль. */
+    readonly rotate?: number;
+}
+
+export interface IRtuiSideMenuFavoritesIcons {
+    readonly remove: IRtuiSideMenuFavoritesIcon;
+    readonly drag: IRtuiSideMenuFavoritesIcon;
+}
+
 export interface IRtuiSideMenuSettingsConfig {
     /** Ключ записи в хранилище; два приложения на одном адресе держат свои настройки двумя ключами. */
     readonly storageKey?: string;
     readonly labels?: Partial<IRtuiSideMenuFavoritesLabels>;
+    readonly icons?: Partial<IRtuiSideMenuFavoritesIcons>;
 }
 
 const DEFAULT_LABELS: IRtuiSideMenuFavoritesLabels = {
@@ -45,6 +58,11 @@ const DEFAULT_LABELS: IRtuiSideMenuFavoritesLabels = {
     add: 'Add to favourites',
     remove: 'Remove from favourites',
     drag: 'Hold button to drag',
+};
+
+const DEFAULT_ICONS: IRtuiSideMenuFavoritesIcons = {
+    remove: { glyph: 'delete', rotate: 0 },
+    drag: { glyph: 'arrows_outward', rotate: 90 },
 };
 
 export const RTUI_SIDE_MENU_SETTINGS_CONFIG: InjectionToken<IRtuiSideMenuSettingsConfig> = new InjectionToken<IRtuiSideMenuSettingsConfig>(
@@ -103,6 +121,11 @@ export class RtuiSideMenuSettingsService {
     /** Номера меню, чьи настройки лежат в хранилище. */
     public readonly menuIds: Signal<string[]> = computed((): string[] => Object.keys(this.#settings()));
     public readonly labels: IRtuiSideMenuFavoritesLabels = { ...DEFAULT_LABELS, ...this.#definedLabels() };
+    /** Заданный приложением значок заменяет свой целиком, незаданный остаётся по умолчанию. */
+    public readonly icons: IRtuiSideMenuFavoritesIcons = {
+        remove: this.#icon(this.#config.icons?.remove, DEFAULT_ICONS.remove),
+        drag: this.#icon(this.#config.icons?.drag, DEFAULT_ICONS.drag),
+    };
 
     constructor() {
         if (!inject(PlatformService).isPlatformBrowser) {
@@ -253,6 +276,17 @@ export class RtuiSideMenuSettingsService {
         return Object.fromEntries(
             Object.entries(this.#config.labels ?? {}).filter(([, value]: [string, string | undefined]): boolean => Boolean(value?.trim()))
         );
+    }
+
+    /** Пустой глиф равен отсутствию, как пустая подпись: иначе кнопка осталась бы без значка. */
+    #icon(icon: IRtuiSideMenuFavoritesIcon | undefined, fallback: IRtuiSideMenuFavoritesIcon): IRtuiSideMenuFavoritesIcon {
+        const glyph: string = icon?.glyph?.trim() ?? '';
+        if (!glyph) {
+            return fallback;
+        }
+        const rotate: number | undefined = icon?.rotate;
+
+        return { glyph, rotate: rotate !== undefined && Number.isFinite(rotate) ? rotate : 0 };
     }
 }
 

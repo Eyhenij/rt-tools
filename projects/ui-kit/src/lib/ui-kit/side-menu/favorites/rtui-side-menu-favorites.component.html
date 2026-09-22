@@ -54,7 +54,9 @@
                             (click)="$event.stopPropagation()"
                             (keydown.arrowup)="onHandleKey($event, $index, -1)"
                             (keydown.arrowdown)="onHandleKey($event, $index, 1)">
-                            <mat-icon rtElem="handle-icon" [rtIconOutlined]="true">arrows_outward</mat-icon>
+                            <mat-icon rtElem="handle-icon" [rtIconOutlined]="true" [style.rotate.deg]="favorites.icons.drag.rotate">
+                                {{ favorites.icons.drag.glyph }}
+                            </mat-icon>
                         </button>
                     </rtui-side-menu-sub-item>
                 </div>
