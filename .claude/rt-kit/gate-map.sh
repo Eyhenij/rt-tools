@@ -204,6 +204,22 @@ skill_for() {
                     return 0
                     ;;
 
+                # The showcase page head and its own stylesheets: the icon fonts and their class
+                # rules live here. A font declared in the stylesheet broke the paint probe, and a
+                # class without a size shifted the menu icons; no rule was asked for either edit.
+                # The branch stands before the general styles one: a showcase stylesheet is still
+                # styles, so the styling pair follows the showcase rule.
+                */.storybook/preview-head.html)
+                    printf '%s\n' 'rt-tools-storybook'
+                    return 0
+                    ;;
+                */.storybook/*.scss | */.storybook/*.css)
+                    printf '%s\n' 'rt-tools-storybook'
+                    printf '%s\n' 'styling-bem'
+                    printf '%s\n' 'rt-tools-styling'
+                    return 0
+                    ;;
+
                 # The kits' styling: the package rule speaks by the law's technique, one's own by
                 # the tokens, the theme handles, the narrow-screen threshold and the cascade layers
                 # of this tree. A pair, not a choice: the technique cannot be applied without the

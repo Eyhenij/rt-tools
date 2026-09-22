@@ -192,6 +192,11 @@ refuses the push.
   the owner and fix the check.
 - **What is disputed is not put into the known list.** The list keeps the accepted, not the results
   of a broken check.
+- **A refusal of the push gate names every red light check at once.** Left on the first red one, the
+  gate made every fix open the next reason by a push of its own: three pushes in a row went so on one
+  branch. After the first red a heavy check is not started and is named as held. A build, an image and
+  a snapshot run are heavy: the push is refused anyway, and their minutes buy nothing. Which check is
+  heavy the tree profile says; the package default knows the builder and the container runner.
 
 ## What is out of scope
 
@@ -237,7 +242,7 @@ Not applicable: the check answers with an exit code and a text, not with named c
 | several delivery conditions did not come together           | —    | all that did not come together at once, each with its action    |
 | a branch is created from a base without the tip of main     | —    | how many commits it fell behind by and how to take a fresh one  |
 | the working copy signs commits with a foreign mail          | —    | both mails and the command the signature is fixed by            |
-| a line of the gate set fell before the push                 | —    | the fallen line and the tail of its output                      |
+| lines of the gate set fell before the push                  | —    | every fallen line, the tail of each output, the held heavy ones |
 | a branch switch stands in the same command as the push      | —    | which branch the set would be run by and how to split the calls |
 
 A refusal of a guard has no command exit code: it refuses the call before it is carried out and names
@@ -312,6 +317,8 @@ silence means "there is no rule about this", not "the rule is kept".
 The open questions of the domain are shared, and they live in the spec next to it.
 
 ## History of changes
+
+- 2026-09-21 — the push gate names every red light check by one refusal, task RT-2302.
 
 - 2026-09-05 — creating a branch is recognised with a flag before `-b`, task RT-1799.
 

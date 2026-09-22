@@ -30,8 +30,16 @@ reason. The development server is not shot at all: from the image it reloads the
 and the runner's injected script does not survive a single reload.
 
 The first kit's frames are still taken by the machine's own browser, and they are therefore matched
-only where they were taken — in the pipeline. A change of machine or of browser version means
-re-taking all of its references rather than sorting out divergences.
+only in the pipeline, on its runner — another machine. A change of machine or of browser version
+means re-taking all of its references rather than sorting out divergences.
+
+**A first-kit reference is taken from the runner's frame, not from a local re-take.** The local
+run is a look: it shows whether the frame holds what it should, and nothing more. The push gate
+does not match first-kit frames at all, so a local re-take passes it and goes red in the pipeline
+on dense text — a table and a list diverged by 0.02–0.05 %, letter edges only. The order is:
+look at the new frame locally, push, and take the reference from the `visual-diffs` artifact of
+the red run — each failed frame is three panels, and the right one is the runner's. A frame the
+local look did not see is not taken from the artifact either.
 
 Two traits of the machine are taken out of that dependence at the second kit — the timezone and the
 browser's language. The timezone is set by the run's settings file, the language by the arguments of
@@ -71,6 +79,24 @@ export const SelectorPopup: Story = {
     },
 };
 ```
+
+**A narrow screen** — set by the same parameter, not by the showcase's viewport global. The first
+kit's harness reads only `snapshotViewport` and shoots at 1280×720 otherwise: a story that sets
+`globals.viewport` alone looks narrow in the showcase and lands in the reference wide.
+
+```typescript
+export const Mobile: TStory = {
+    globals: { viewport: { value: 'narrow' } },
+    parameters: { snapshotViewport: { width: 360, height: 780 } },
+};
+```
+
+**An animation is shot at its last frame, and the harness has to say so itself.** Storybook's test
+mode inserts `animation-direction: reverse` and `animation-play-state: paused` with `!important`, so
+"finishing" an animation lands on its first frame. The first kit's harness returns the direction and
+the play state in its own stop style. Before that, a part fading in from transparency came out empty
+or half-transparent: the narrow side menu without a single item, an open sub-menu without its
+entries, table rows at half opacity — and ten references pinned exactly that.
 
 **The markup does not arrive in the same frame as the story.** A search for a node in `play` is
 wrapped in a wait:

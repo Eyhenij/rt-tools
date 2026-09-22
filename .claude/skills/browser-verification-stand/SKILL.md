@@ -4,7 +4,7 @@ kind: pattern
 rule: browser-verification
 description: Pattern of rule browser-verification. Load when an honest stand is needed — the production build of the site, the admin stand, a stand behind real nginx, signing in to the admin, finding out what sits on a port. Not for layout measurements — that is pattern browser-verification-measure.
 ---
-<!-- rt-kit v0.29.0 · patterns/browser-verification-stand.md · bff488797902 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · patterns/browser-verification-stand.md · 7cf68d6dd747 · правится надстройкой, не здесь -->
 
 # An honest stand
 
@@ -252,8 +252,8 @@ database.
 
 | Role                  | Port  | Raised by                              |
 | --------------------- | ----- | -------------------------------------- |
-| the showcase          | 6006  | `pnpm run storybook`                   |
-| the built showcase    | 6007  | `pnpm run build-storybook` and serving  |
+| the showcase          | 6006  | `pnpm run storybook:ui-kit-v1`         |
+| the built showcase    | 6007  | `pnpm run build-storybook:ui-kit-v1` and serving |
 | the stand receiver    | 3310  | `pnpm run serve:stand`                 |
 | the stand admin panel | 4310  | by the same call                       |
 | the dev receiver      | 3000  | `pnpm run serve:api`                   |

@@ -33,7 +33,9 @@ pnpm run lint
 # Format code
 pnpm run prettier
 
-# Run all checks (lint, test, build)
+# Lint, types, tests, build and verify over every project, then the styles linter. It is not the
+# push gate: the tree checks, the hook scenarios and the showcase snapshots run only before a push,
+# and that set is printed by `rt_push_checks` in `.claude/rt-kit/project.sh`
 pnpm run check:all
 
 # Raise the applications on one's own machine. The database is needed only by the receiver;
@@ -48,7 +50,8 @@ pnpm run serve:admin   # the admin panel, port 4200
 pnpm run serve:stand
 
 # Run Storybook
-pnpm run storybook
+pnpm run storybook:ui-kit-v1   # the first kit, port 6006
+pnpm run storybook:ui-kit-v2   # the second kit, port 6007
 
 # View dependency graph
 pnpm run graph

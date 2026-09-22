@@ -126,9 +126,68 @@ for (const path of files.filter((file) => file.includes('/lib/'))) {
     }
 }
 
+/** The top-level keys of a Sass map `$name: ( … );` declared in the text, or null if there is none. */
+function mapKeys(text, name) {
+    const start = text.search(new RegExp(`^\\$${name}:\\s*\\(`, 'm'));
+    if (start < 0) {
+        return null;
+    }
+    const keys = [];
+    let depth = 0;
+    let segment = '';
+    for (const char of text.slice(text.indexOf('(', start))) {
+        if (char === '(') {
+            depth += 1;
+            if (depth === 1) {
+                continue;
+            }
+        }
+        if (char === ')') {
+            depth -= 1;
+            if (depth === 0) {
+                break;
+            }
+        }
+        if (depth === 1 && char === ',') {
+            keys.push(segment);
+            segment = '';
+            continue;
+        }
+        segment += char;
+    }
+    keys.push(segment);
+    return keys.map((part) => part.split(':')[0].trim()).filter((key) => /^[a-z0-9-]+$/.test(key));
+}
+
+/**
+ * The names a file declares by interpolation over a map: `@each $token, $value in $shadow` with
+ * `--rt-shadow-#{$token}` inside gives `--rt-shadow-sm`, `--rt-shadow-md` and the rest. A literal
+ * search never sees them, and the first reference to such a name read as a new collision.
+ * One interpolation at the end of the name is expanded; a name with two of them is left unread.
+ */
+function interpolatedNames(text) {
+    const names = [];
+    for (const loop of text.matchAll(/@each\s+\$([a-z0-9-]+)\s*,\s*\$[a-z0-9-]+\s+in\s+\$([a-z0-9-]+)\s*\{((?:#\{[^{}]*\}|[^{}])*)/g)) {
+        const [, key, map, body] = loop;
+        const keys = mapKeys(text, map);
+        if (!keys) {
+            continue;
+        }
+        for (const [, prefix] of body.matchAll(new RegExp(`(--rt-[a-z0-9-]*)#\\{\\$${key}\\}\\s*:`, 'g'))) {
+            keys.forEach((token) => names.push(`${prefix}${token}`));
+        }
+    }
+    return names;
+}
+
 /** 4. A name used by both kits. */
 if (existsSync(join(ROOT, OTHER_KIT))) {
-    const otherNames = new Set(scssFiles(OTHER_KIT).flatMap((path) => [...read(path).matchAll(/(--rt-[a-z0-9-]+)/g)].map((m) => m[1])));
+    const otherNames = new Set(
+        scssFiles(OTHER_KIT).flatMap((path) => {
+            const text = read(path);
+            return [...namesIn(text, /(--rt-[a-z0-9-]+)/g), ...interpolatedNames(text)];
+        })
+    );
     for (const name of [...declared].filter((declaredName) => otherNames.has(declaredName)).sort()) {
         add(`a shared name with the first kit ${name}`, `${name} — the name is used by both kits; the style file connected later wins`);
     }

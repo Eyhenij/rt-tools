@@ -4,7 +4,7 @@ kind: rule
 law: project-documentation
 description: Rule under the project-documentation law. Load when editing any .md including specs, and also code comments, commit bodies and PR descriptions. Names the path check, the pairs of an edit and its document, and what nothing checks in this tree. Ready-made wording is in pattern doc-style-write.
 ---
-<!-- rt-kit v0.29.0 · rules/doc-style.md · 3a783cccdc7d · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · rules/doc-style.md · 53b478fed2bb · правится надстройкой, не здесь -->
 
 # Project texts — how it works here
 
@@ -291,3 +291,16 @@ index at all the rule itself says; here — what came of that in the tree.
 
 The number is named by the key `archiveRetentionDays` in the checks config. The package gives no
 default: it has no right to start removing records in a tree that did not ask for it.
+
+## The consumers of the kits are not named
+
+The kits are published, and the applications that install them belong to other people. A text of
+this tree — code, a comment, a story, a spec, a task folder, a commit body, a PR description — says
+"the application" or "the consumer" and never names one.
+
+- **A name that got into history stays there.** Rewriting published history is refused by the
+  environment, and it would break every copy of the branch besides. A name written into a progress
+  file and fixed by the next commit is still readable in the commit before it.
+- **A request from a consumer is retold by what it asks, not by whose it is.** "The gallery passes
+  ids in their original type" carries everything the work needs; the application's name adds
+  nothing to it.

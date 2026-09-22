@@ -253,7 +253,7 @@ second one's sake would fail the first one's references.
 
 |                     | `@rt-tools/ui-kit`                             | `@rt-tools/ui-kit-v2`                            |
 | ------------------- | ---------------------------------------------- | ------------------------------------------------ |
-| Showcase            | `pnpm run storybook` — port 6006               | `pnpm run storybook:ui-kit-v2` — port 6007       |
+| Showcase            | `pnpm run storybook:ui-kit-v1` — port 6006     | `pnpm run storybook:ui-kit-v2` — port 6007       |
 | Snapshot harness    | `projects/ui-kit/.storybook/test-runner.ts`    | `projects/ui-kit-v2/.storybook/test-runner.ts`   |
 | References          | `projects/ui-kit/.storybook/__snapshots__`     | `projects/ui-kit-v2/.storybook/__snapshots__`    |
 | The audit           | `pnpm run test:visual`                         | `pnpm run test:visual:v2`                        |

@@ -5,7 +5,7 @@
 @use '../src/styles/base/variables' as vars;
 @use '../src/styles/base/mixin' as mixins;
 
-@include mat.core();
+@include mat.core;
 
 $mat-theme: mat.define-theme(
     (
@@ -30,11 +30,9 @@ $mat-theme: mat.define-theme(
 }
 
 html {
-    @include mat.all-component-themes($mat-theme);
+    font-family: var(--font-default);
 
-    & {
-        font-family: var(--font-default);
-    }
+    @include mat.all-component-themes($mat-theme);
 }
 
 // For correct displaying modal height in storybook

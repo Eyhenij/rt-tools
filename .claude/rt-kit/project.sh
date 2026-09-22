@@ -246,6 +246,14 @@ EOF
     case " $_touched " in *' kit2 '*) printf '%s\n' "$shot_v2" ;; esac
 }
 
+# The heavy steps of this tree past the package default: the showcase snapshots raise a showcase
+# and shoot it, minutes each, and the package does not know their name.
+rt_push_check_heavy() {
+    case "$1" in *visual-gate*) return 0 ;; esac
+
+    rt_push_check_heavy_default "$1"
+}
+
 # Which subjects the branch touched. It prints the subject words separated by spaces; `everything`
 # means there is nothing to split — the shared base was touched, or a path the sign did not
 # recognise.
