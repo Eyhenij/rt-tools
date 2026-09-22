@@ -1,3 +1,17 @@
+# [0.11.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2@0.10.0...rt-ui-kit-v2@0.11.0) (2026-09-22)
+
+### Bug Fixes
+
+- **rt:ui-kit-v2:** окно раздвигается под снимаемый узел перед кадром ([5972b97](https://github.com/Eyhenij/rt-tools/commit/5972b97c2b2ca9a0788357b2cc39395db827f1cb))
+- **rt:ui-kit-v2:** ссылки между страницами витрины ведут на существующие страницы ([e3036c1](https://github.com/Eyhenij/rt-tools/commit/e3036c11d3e947547c3ea8fc9e6ee96b31d34ea9))
+
+### Features
+
+- **rt:ui-kit-v2:** готовый список переписок принимает строковый номер строки ([07c6186](https://github.com/Eyhenij/rt-tools/commit/07c61865ef3aa41ee8b50cb9db964872a4a0894a))
+- **rt:ui-kit-v2:** показ пары наборов заведён всем задетым семействам ([29d1764](https://github.com/Eyhenij/rt-tools/commit/29d17644c64fa16c27701d548b030dda1c635ff9))
+- **rt:ui-kit-v2:** покрытие второго кита сосчитано, волна нажатия показана ([676ff5a](https://github.com/Eyhenij/rt-tools/commit/676ff5abae287cbc52b2dabfac8dcdb20145ce00))
+- **rt:ui-kit-v2:** причина у семейства без пары наборов написана на витрине ([204853c](https://github.com/Eyhenij/rt-tools/commit/204853c8540e45a01f2da5f0bacf8cf821929a29))
+
 # [0.10.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2@0.9.0...rt-ui-kit-v2@0.10.0) (2026-09-09)
 
 # [0.9.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2@0.8.1...rt-ui-kit-v2@0.9.0) (2026-09-09)
