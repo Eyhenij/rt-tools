@@ -1,0 +1,82 @@
+@layer rt-kit.components {
+    /* rt-data-table-header-cell — ячейка шапки таблицы первого кита. Размеры первого кита лежат на
+       шкале: промежуток 8px — ступень sm, отступ стрелок 16px — ступень md, значок 24px — размер lg
+       набора. Стрелки порядка — два треугольника первого кита: бока 3px — ступень толстой
+       рамки, высота 5.2px округлена к ступени габарита 4px, зазор между ними — ступень 2xs. */
+
+    .rt-data-table-header-cell {
+        --rt-data-table-header-cell-arrow-side: var(--rt-border-width-thick);
+        --rt-data-table-header-cell-arrow-height: var(--rt-size-1);
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+
+        &:hover .rt-data-table-header-cell__arrows {
+            visibility: visible;
+        }
+
+        &__label {
+            display: flex;
+            flex-grow: 1;
+            align-items: center;
+            gap: var(--rt-space-sm);
+
+            &--align--left {
+                justify-content: flex-start;
+            }
+
+            &--align--center {
+                justify-content: center;
+            }
+
+            &--align--right {
+                justify-content: flex-end;
+            }
+        }
+
+        &__prefix,
+        &__suffix {
+            display: inline-flex;
+            min-width: fit-content;
+        }
+
+        /* Подпись длиннее места обрезается многоточием; целиком её читают в подсказке колонки. */
+        &__text {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        &__arrows {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-left: var(--rt-space-md);
+            visibility: hidden;
+
+            &--active {
+                visibility: visible;
+            }
+        }
+
+        &__arrow {
+            width: 0;
+            height: 0;
+            border-right: var(--rt-data-table-header-cell-arrow-side) solid transparent;
+            border-bottom: var(--rt-data-table-header-cell-arrow-height) solid var(--rt-color-text-muted);
+            border-left: var(--rt-data-table-header-cell-arrow-side) solid transparent;
+
+            &--second {
+                margin-top: var(--rt-space-2xs);
+                transform: scaleY(-1);
+            }
+
+            &--active {
+                border-bottom-color: var(--rt-color-text-primary);
+            }
+        }
+    }
+}

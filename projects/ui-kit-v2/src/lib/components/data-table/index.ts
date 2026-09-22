@@ -4,3 +4,5 @@ export * from './rt-data-table-config.service';
 export * from './rt-data-table-icon.directive';
 export * from './rt-data-table-row-click.directive';
 export * from './cell/rt-data-table-cell.component';
+export * from './rt-data-table-sort.logic';
+export * from './header-cell/rt-data-table-header-cell.component';

@@ -98,12 +98,11 @@ export class RtDataTableCellComponent<T = Record<string, unknown>> {
 
     protected readonly copyable: Signal<boolean> = computed(() => this.column().copyable && !this.empty());
 
-    /** Значок колонки, если он объявлен и не спрятан. */
-    protected readonly icon: Signal<IRtDataTable.Icon | null> = computed(() => {
-        const icon: IRtDataTable.Icon | undefined = this.column().icon;
-
-        return icon && icon.visible !== false ? icon : null;
-    });
+    /**
+     * Значок колонки. Его видимость, цвет и подсказку ячейка не читает — как первый кит: поля
+     * приняты ради переезда без правок и ничего не меняют.
+     */
+    protected readonly icon: Signal<IRtDataTable.Icon | null> = computed(() => this.column().icon ?? null);
 
     /** Значок набора кита для имени первого кита; без пары — ничего. */
     protected readonly kitIcon: Signal<IRtIcon.Name | null> = computed(() => {
