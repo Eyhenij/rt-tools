@@ -1,0 +1,124 @@
+:host {
+    display: block;
+
+    // Блок отделён от списка раздела чертой: без неё строка избранного и строка того же пункта
+    // в списке стоят подряд и читаются как повтор. Отступ под чертой даёт верхний отступ самого
+    // списка, 8 px: свой отступ здесь удвоил бы его. Черта и отступы — те же, что у разделителей
+    // пунктов подменю у потребителей: 8 px, приглушённая черта, 8 px.
+    &:has(.rtui-side-menu-favorites__list) {
+        padding-bottom: var(--rt-side-menu-favorites-divider-gap, var(--rt-spacing-8));
+        border-bottom: 1px solid var(--rt-side-menu-favorites-divider-color, var(--rt-border-neutral-subtle));
+    }
+
+    .rtui-side-menu-favorites {
+        // Заголовок: подпись и звезда. Звезда красится тем же цветом, что и закрашенные звёзды
+        // списка; цвет и размер подписи и звезды приложение задаёт своими свойствами.
+        &__title {
+            display: flex;
+            align-items: center;
+            padding: var(--rt-spacing-8) var(--rt-spacing-16) var(--rt-spacing-4);
+            color: var(--rt-side-menu-favorites-title-color, var(--rt-text-base-secondary));
+            font-size: var(--rt-side-menu-favorites-title-font-size, var(--rt-font-size-sm));
+            font-weight: var(--rt-font-weight-semibold);
+            gap: var(--rt-spacing-6);
+        }
+
+        &__title-icon {
+            width: var(--rt-side-menu-favorites-title-icon-size, var(--rt-icon-size-sm));
+            height: var(--rt-side-menu-favorites-title-icon-size, var(--rt-icon-size-sm));
+            color: var(
+                --rt-side-menu-favorite-color,
+                var(--mat-sys-primary, var(--mat-button-filled-container-color, var(--rt-icon-accent-primary)))
+            );
+            font-size: var(--rt-side-menu-favorites-title-icon-size, var(--rt-icon-size-sm));
+        }
+
+        &__title-text {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        &__list {
+            padding: 0;
+        }
+    }
+}
+
+// Строка, ручка и её значок объявлены вне корня блока: строку в руке CDK выносит в оверлей, и
+// правило из корня до неё не доходит — ручка там становилась кнопкой Material по умолчанию,
+// крупнее и другого цвета.
+.rtui-side-menu-favorites {
+    &__row {
+        display: flex;
+        align-items: center;
+    }
+
+    &__handle {
+        --mat-icon-button-state-layer-size: var(--rt-side-menu-favorite-action-size, calc(var(--rt-spacing-16) * 2));
+        --mat-icon-button-icon-size: var(--rt-side-menu-favorite-action-icon-size, var(--rt-font-size-lg));
+        --mat-icon-button-icon-color: var(--rt-side-menu-favorite-action-color, var(--rt-text-base-secondary));
+
+        flex: 0 0 auto;
+        cursor: grab;
+        opacity: 0;
+
+        &:active {
+            cursor: grabbing;
+        }
+
+        // Ручка видна так же, как кнопка «убрать»: под наведением и фокусом своей строки, на узком
+        // экране и там, где указатель не умеет наводиться, — всегда. Прячется прозрачностью, а не
+        // снятием с раскладки: кнопка остаётся на месте и достижима клавишей Tab.
+        &--always {
+            opacity: 1;
+        }
+
+        @media (hover: none) {
+            opacity: 1;
+        }
+    }
+
+    // Фокус показывает кнопки только с клавиатуры: после нажатия мышью кнопка держит фокус, и
+    // правило по любому фокусу оставляло бы её видимой, когда указатель уже ушёл.
+    &__row:hover &__handle,
+    &__row:has(:focus-visible) &__handle,
+    &__row.cdk-drag-preview &__handle {
+        opacity: 1;
+    }
+
+    // Значок берёт размер кнопки: иначе он остаётся в 24 px и съезжает от центра. Глиф
+    // `arrows_outward` повёрнут на четверть оборота — так его выбрал владелец.
+    &__handle-icon {
+        width: var(--mat-icon-button-icon-size);
+        height: var(--mat-icon-button-icon-size);
+        font-size: var(--mat-icon-button-icon-size);
+        line-height: 1;
+        transform: rotate(90deg);
+    }
+
+    &__item {
+        min-width: 0;
+        flex: 1 1 auto;
+    }
+}
+
+// На узком экране под блоком не список со своим отступом, а сами пункты раздела вплотную:
+// отступ под чертой блок ставит сам.
+:host-context(.rtui-mobile-side-menu-list__sub):has(.rtui-side-menu-favorites__list) {
+    margin-bottom: var(--rt-spacing-8);
+}
+
+// Строка в руке живёт в оверлее CDK, вне блока, и правило из корня до неё не доходит. Тень — та же,
+// что у строки в руке динамического селектора: имена шкалы теней кита совпадают со вторым китом.
+.rtui-side-menu-favorites__row.cdk-drag-preview {
+    display: flex;
+    align-items: center;
+    border-radius: var(--rt-radius-xl);
+    background-color: var(--rt-side-menu-favorites-drag-background, var(--rt-bg-base-base));
+    box-shadow: var(--rt-side-menu-favorites-drag-shadow, 0 0.5rem 1rem 0 var(--rt-shadow-color));
+}
+
+.rtui-side-menu-favorites__row.cdk-drag-placeholder {
+    opacity: 0;
+}

@@ -114,6 +114,7 @@ outgrew the length limit. The table of the subdomains stands after the rules.
 | Subdomain                                                                               | About what                                                                                               |
 | --------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
 | [The second level of the side menu](side-menu/spec.md)                                  | the mode of the submenu, a pinned panel, the search over a submenu, the width and the pull               |
+| [Favourites of the side menu](side-menu-favorites/spec.md)                              | the star, the favourites block, the order by a drag                                                      |
 | [The look of a field of input in the setting of the kit](form-field-appearance/spec.md) | where the components take the look of a field of input from and in which order the values are overridden |
 
 ## What is out of scope

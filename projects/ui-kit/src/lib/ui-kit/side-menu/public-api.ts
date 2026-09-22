@@ -13,3 +13,11 @@ export {
 } from './side-menu.logic';
 export type { ISubMenuTitlePart } from './side-menu.logic';
 export { RtuiSideMenuComponent, RtuiSideMenuFooterDirective, RtuiSideMenuHeaderDirective } from './menu/rtui-side-menu.component';
+export { DEFAULT_MENU_ID, SIDE_MENU_SETTINGS_KEY } from './settings/side-menu-settings.logic';
+export type { TSideMenuSettingsRecord } from './settings/side-menu-settings.logic';
+export {
+    provideRtuiSideMenuSettings,
+    RTUI_SIDE_MENU_SETTINGS_CONFIG,
+    RtuiSideMenuSettingsService,
+} from './settings/rtui-side-menu-settings.service';
+export type { IRtuiSideMenuSettingsConfig, IRtuiSideMenuFavoritesLabels } from './settings/rtui-side-menu-settings.service';
