@@ -120,49 +120,56 @@ Covered: `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-selecto
 Given a data list of three pages in the across-pages mode, the first page shown
 When a person checks select all and goes to the second page
 Then every row of both pages is marked and select all is checked
-Not covered: the family has no code yet.
+
+Covered: `projects/ui-kit-v2/src/lib/components/data-list/rt-data-list-selectors.directive.spec.ts`.
 
 ### SC-UKV-251 — unmarking a row under select all excludes it
 
 Given select all is checked in the across-pages mode
 When a person unmarks the second row
 Then the application reads that record among the exclusions and select all is indeterminate
-Not covered: the family has no code yet.
+
+Covered: `projects/ui-kit-v2/src/lib/components/data-list/rt-data-list-selectors.directive.spec.ts`.
 
 ### SC-UKV-252 — marking the only excluded record again checks select all
 
 Given select all is on with one excluded record
 When a person marks that record again
 Then the exclusions are empty and select all is checked
-Not covered: the family has no code yet.
+
+Covered: `projects/ui-kit-v2/src/lib/components/data-list/rt-data-list-selectors.directive.spec.ts`.
 
 ### SC-UKV-253 — an excluded record stays unmarked when its page comes back
 
 Given select all is on and a record of the first page is excluded
 When the person goes to the second page and back to the first
 Then the excluded record is drawn unmarked and every other row of the page marked
-Not covered: the family has no code yet.
+
+Covered: `projects/ui-kit-v2/src/lib/components/data-list/rt-data-list-selectors.directive.spec.ts`.
 
 ### SC-UKV-254 — unchecking the page checkbox under select all excludes the page
 
 Given select all is on and the first page of five rows is shown
 When a person unchecks the page checkbox
 Then all five records are among the exclusions and select all is indeterminate
-Not covered: the family has no code yet.
+
+Covered: `projects/ui-kit-v2/src/lib/components/data-list/rt-data-list-selectors.directive.spec.ts`.
 
 ### SC-UKV-255 — unchecking select all takes every mark off
 
 Given select all is on in the across-pages mode
 When a person unchecks select all
 Then no row is marked and the application reads that the across-pages mode is off
-Not covered: the family has no code yet.
+
+Covered: `projects/ui-kit-v2/src/lib/components/data-list/rt-data-list-selectors.directive.spec.ts`.
 
 ### SC-UKV-256 — with the across-pages mode off select all marks the loaded rows only
 
 Given a data list with the across-pages mode switched off by the application
 When a person checks select all and goes to the second page
 Then the rows of the first page are marked and the rows of the second are not
-Not covered: the family has no code yet.
+
+Covered: `projects/ui-kit-v2/src/lib/components/data-list/rt-data-list-selectors.directive.spec.ts`.
 
 ### SC-UKV-257 — a double click on a clickable row is reported with the row
 
@@ -386,7 +393,8 @@ Covered: `projects/ui-kit-v2/src/lib/components/data-table/cell/rt-data-table-ce
 Given a data list with no rows
 When it is drawn first without conditions and then with one condition set
 Then the first shows the placeholder "No Data Found", and the second the table with its filter row
-Not covered: the family has no code yet.
+
+Covered: `projects/ui-kit-v2/src/lib/components/data-list/rt-data-list.component.spec.ts`.
 
 ### SC-UKV-310 — the search asks once, trimmed, after the typing stopped
 
@@ -439,7 +447,8 @@ Not covered: the family has no code yet.
 Given a data list
 When it is drawn first with loading on and then with rows and fetching on
 Then the first shows a spinner in place of the list, and the second keeps the rows under a spinner with a backdrop
-Not covered: the family has no code yet.
+
+Covered: `projects/ui-kit-v2/src/lib/components/data-list/rt-data-list.component.spec.ts`.
 
 ### SC-UKV-317 — settings the first kit saved come back in the family
 

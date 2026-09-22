@@ -46,6 +46,7 @@ export const RT_KIT_LABELS_EN = {
     dataListHorizontalScrollbar: 'Horizontal scrollbar shown',
     dataListItemsPerPage: 'Items per page:',
     dataListNextPage: 'Next page',
+    dataListPlaceholder: 'No Data Found',
     dataListPrevPage: 'Previous page',
     dataListRefresh: 'Refresh',
     dataListSearchPlaceholder: 'Search...',

@@ -1,0 +1,83 @@
+@if (loading()) {
+    <div rtBlock="rt-data-list" rtElem="loading" qa-dataid="data-list-loading">
+        <rt-spinner />
+    </div>
+} @else {
+    <ng-container rtBlock="rt-data-list">
+        @if (fetching()) {
+            <div rtElem="fetching" qa-dataid="data-list-fetching">
+                <rt-spinner />
+            </div>
+        }
+
+        <rt-data-list-toolbar
+            [isFiltersShown]="isFiltersShown()"
+            [isFiltersEmpty]="isFiltersEmpty()"
+            [isRefreshButtonShown]="isRefreshButtonShown()"
+            [isTableConfigButtonShown]="isTableConfigButtonShown()"
+            [isPlaceholderShown]="isPlaceholderShown()"
+            [searchTerm]="searchTerm()"
+            (searchChange)="onSearchChange($event)"
+            (refreshAction)="onRefresh()"
+            (clearFiltersAction)="onClearFilters()"
+            (openConfigAction)="onOpenSettings()">
+            @if (toolbarSelectorsTpl(); as selectors) {
+                <ng-container *rtDataListToolbarSelectors>
+                    <ng-container [ngTemplateOutlet]="selectors" />
+                </ng-container>
+            }
+
+            @if (toolbarActionsTpl(); as actions) {
+                <ng-container *rtDataListToolbarActions>
+                    <ng-container [ngTemplateOutlet]="actions" />
+                </ng-container>
+            }
+        </rt-data-list-toolbar>
+
+        @if (isPlaceholderShown()) {
+            <div rtElem="placeholder" qa-dataid="data-list-placeholder">
+                <rt-empty-state icon="search" [title]="placeholderLabel()" />
+            </div>
+        } @else {
+            <div rtElem="content">
+                <rt-data-table
+                    [keyExp]="keyExp()"
+                    [entities]="entities()"
+                    [currentSortModel]="currentSortModel()"
+                    [filterModel]="filterModel()"
+                    [isFiltersShown]="isFiltersShown()"
+                    [isTableRowsClickable]="isTableRowsClickable()"
+                    (sortChange)="onSortChange($event)"
+                    (filterChange)="onFilterChange($event)"
+                    (rowClick)="onRowClick($event)"
+                    (rowDoubleClick)="onRowDoubleClick($event)">
+                    @if (customCellsTpl(); as cells) {
+                        <ng-container [rtDataTableCustomCells]="cells.cellsTemplates()" />
+                    }
+
+                    @if (rowActionsTpl(); as actions) {
+                        <ng-template rtDataTableRowActions let-row>
+                            <ng-container [ngTemplateOutlet]="actions" [ngTemplateOutletContext]="{ $implicit: row }" />
+                        </ng-template>
+                    }
+
+                    @if (additionalRowActionsTpl(); as additional) {
+                        <ng-template rtDataTableAdditionalRowActions let-row>
+                            <ng-container [ngTemplateOutlet]="additional" [ngTemplateOutletContext]="{ $implicit: row }" />
+                        </ng-template>
+                    }
+
+                    @if (iconTpl(); as icon) {
+                        <ng-template rtDataTableIcon let-name let-column="column" let-row="row">
+                            <ng-container
+                                [ngTemplateOutlet]="icon.template"
+                                [ngTemplateOutletContext]="{ $implicit: name, column: column, row: row }" />
+                        </ng-template>
+                    }
+                </rt-data-table>
+            </div>
+
+            <rt-data-list-pagination [currentPageModel]="pageModel()" (pageModelChange)="onPageModelChange($event)" />
+        }
+    </ng-container>
+}

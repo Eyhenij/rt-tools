@@ -4,3 +4,7 @@ export * from './rt-data-list-pagination.logic';
 export * from './pagination/rt-data-list-pagination.component';
 export * from './rt-data-list-settings.logic';
 export * from './settings/rt-data-list-settings-aside.component';
+export * from './rt-data-list-selection.logic';
+export * from './rt-data-list-selectors.directive';
+export * from './rt-data-list.directive';
+export * from './rt-data-list.component';

@@ -27,8 +27,10 @@ Rewritten by every session, not appended to.
   65 из 65 тестов обеих семей.
   Панель настройки колонок собрана на готовом редакторе колонок кита: два признака полос
   прокрутки, перетаскивание, глаз, сохранение только после изменения — 69 из 69 тестов.
-- **Next step:** этап 3 — выбор всех записей по страницам, заглушка пустого списка и вид
-  загрузки.
+  Этап 3.4 закрыт: список собран целиком — полоса действий, таблица, полоса страниц, заглушка
+  пустого списка и два вида загрузки; выбор записей по страницам с исключениями ведёт директива
+  `rtDataListSelectors`. Семейный документ списка написан. Весь второй кит — 1711 из 1711 тестов.
+- **Next step:** этап 3 — слова обеих семей в восьмиязычном словаре кита.
 - **Uncommitted:** ничего.
 - **Waiting for the owner:** нет.
 - **PR:** not open yet
@@ -46,8 +48,8 @@ Rewritten by every session, not appended to.
 - [x] 3.1 Toolbar with search, clear-filters and refresh, and the application's selectors
 - [x] 3.2 Own pagination bar ported from the first kit
 - [x] 3.3 Own column settings panel ported from the first kit
-- [>] 3.4 Selection across pages, the empty placeholder and the loading look
-- [ ] 3.5 Words of both families in the kit's eight-language dictionary
+- [x] 3.4 Selection across pages, the empty placeholder and the loading look
+- [>] 3.5 Words of both families in the kit's eight-language dictionary
 - [ ] 3.6 Spec of the list on its scenarios
 - [ ] 4.1 Stories and `Overview` of `rt-data-table` by the coverage contract
 - [ ] 4.2 Stories and `Overview` of `rt-data-list` by the coverage contract
@@ -98,3 +100,61 @@ Rewritten by every session, not appended to.
 - Сверка таблиц первого и второго кита: во втором нет восьми возможностей, у трёх историй первого
   кита нет пары.
 - Задача RT-2316 заведена, строка 7.9 плана эпика.
+
+## Handover of the session
+
+Put together by a hook before the compaction of the context (auto).
+
+**Working tree:** /Users/sviatoslavkhutornoy/WebstormProjects/rt-tools
+**Branch:** RT-2316-table-full-port
+
+### Where we stand at the minute of the compaction
+
+- **State:** `этап-идёт`
+- **Stage:** 2 из 5 — Таблица `rt-data-table`
+- **Next step:** этап 3 — выбор всех записей по страницам, заглушка пустого списка и вид
+- **PR:** not open yet
+
+The progress in full — `docs/tasks/RT-2316-table-full-port/progress.md`; the plan lies next to it.
+
+### Uncommitted
+
+```
+ M projects/ui-kit-v2/src/lib/components/data-list/index.ts
+ M projects/ui-kit-v2/src/lib/components/data-list/rt-data-list-settings.logic.ts
+ M projects/ui-kit-v2/src/lib/i18n/rt-kit-labels.en.ts
+?? projects/ui-kit-v2/src/lib/components/data-list/rt-data-list-selection.logic.ts
+?? projects/ui-kit-v2/src/lib/components/data-list/rt-data-list-selectors.directive.ts
+?? projects/ui-kit-v2/src/lib/components/data-list/rt-data-list.component.html
+?? projects/ui-kit-v2/src/lib/components/data-list/rt-data-list.component.scss
+?? projects/ui-kit-v2/src/lib/components/data-list/rt-data-list.component.ts
+?? projects/ui-kit-v2/src/lib/components/data-list/rt-data-list.directive.ts
+```
+
+### Commits over the main branch
+
+```
+26e767761 feat(rt:ui-kit-v2): панель настройки колонок rt-data-list — порядок, видимость, полосы
+79a27f955 feat(rt:ui-kit-v2): полоса страниц rt-data-list — ряд номеров, стрелки, размер страницы
+b4d4c53e0 feat(rt:ui-kit-v2): панель действий списка rt-data-list — поиск, отбор, обновление
+85c3ead5e feat(rt:ui-kit-v2): таблица rt-data-table — строки, полоса действий, выбор строк
+8dba21675 feat(rt:ui-kit-v2): ячейка отбора rt-data-table — поле, число, дата, список и вид сравнения
+ae9d7c8ba feat(rt:ui-kit-v2): в наборе значков кита появился знак «равно»
+b9665b899 test(rt:ui-kit-v2): спека шапки rt-data-table задаёт порядок значением перечисления
+f9ec4afe5 feat(rt:ui-kit-v2): ячейка шапки rt-data-table — порядок, стрелки, значок
+23be0461a feat(rt:ui-kit-v2): готовая ячейка rt-data-table — значение, копирование, значки набором кита
+466c82afe feat(rt:ui-kit-v2): основа rt-data-table — модель колонок, хранение настроек, нажатие строки
+91c5ee85b docs(rt:ui-kit-v2): в договорённость о таблице добавлен шаблон значка и пользовательская ячейка
+9e4050368 docs(rt:ui-kit-v2): договорённость о таблице приведена к ответам владельца
+24baf3a50 docs: план RT-2316 записан — таблица первого кита во втором в пять этапов
+371d95aa8 docs: в задаче RT-2316 записано слово владельца: материала в таблице быть не должно
+dbd5078a4 docs: в задаче RT-2316 записано слово владельца о значках из описания колонок
+01f19aa17 docs: в задаче RT-2316 записаны ответы владельца об имени, странностях первого кита и переезде
+15008db23 docs: в задаче RT-2316 записано, что договорённость переписана и ждёт ответов владельца
+6a49e7681 Merge branch 'RT-2317-radio-button' into RT-2316-table-full-port
+c2e8d4dc5 Merge branch 'RT-1870-one-kit' into RT-2317-radio-button
+70ffc166f Merge remote-tracking branch 'origin/main' into RT-1870-one-kit
+```
+
+Written by a hook before the compaction of the context. Everything standing here is checked
+against the tree: a handover retells what was written and describes the minute it was put together.

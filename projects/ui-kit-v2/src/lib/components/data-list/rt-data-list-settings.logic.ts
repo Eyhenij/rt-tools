@@ -22,13 +22,11 @@ export function dataListColumnsFromItems<ENTITY_TYPE>(
         columns.map((column: IRtDataTable.Column<ENTITY_TYPE>) => [String(column.propName), column])
     );
 
-    return items
-        .map((item: IRtTable.ColumnSettingItem, index: number) => {
-            const column: IRtDataTable.Column<ENTITY_TYPE> | undefined = byKey.get(item.key);
+    return items.flatMap((item: IRtTable.ColumnSettingItem, index: number): Array<IRtDataTable.Column<ENTITY_TYPE>> => {
+        const column: IRtDataTable.Column<ENTITY_TYPE> | undefined = byKey.get(item.key);
 
-            return column ? { ...column, hidden: item.hidden, orderIndex: index } : null;
-        })
-        .filter((column: IRtDataTable.Column<ENTITY_TYPE> | null): column is IRtDataTable.Column<ENTITY_TYPE> => column !== null);
+        return column ? [{ ...column, hidden: item.hidden, orderIndex: index }] : [];
+    });
 }
 
 /** Слепок настройки: порядок колонок, их видимость и два признака полос прокрутки. */
