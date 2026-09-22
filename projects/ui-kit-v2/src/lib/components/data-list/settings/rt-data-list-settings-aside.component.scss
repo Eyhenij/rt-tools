@@ -1,0 +1,16 @@
+@layer rt-kit.components {
+    /* rt-data-list-settings-aside — панель настройки колонок первого кита. Промежуток между
+       признаками полос прокрутки и списком колонок 16px — ступень md шкалы. */
+
+    .rt-data-list-settings-aside {
+        display: flex;
+        flex-direction: column;
+        gap: var(--rt-space-md);
+
+        &__switches {
+            display: flex;
+            flex-direction: column;
+            gap: var(--rt-space-sm);
+        }
+    }
+}

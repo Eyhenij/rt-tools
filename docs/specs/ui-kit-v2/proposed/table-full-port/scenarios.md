@@ -257,7 +257,8 @@ Covered: `projects/ui-kit-v2/src/lib/components/data-table/cell/rt-data-table-ce
 Given a data list with the settings button
 When a person opens the settings panel
 Then the panel shows the vertical and the horizontal scrollbar switches above the column list
-Not covered: the family has no code yet.
+
+Covered: `projects/ui-kit-v2/src/lib/components/data-list/settings/rt-data-list-settings-aside.component.spec.ts`.
 
 ### SC-UKV-269 — a table with no saved settings shows the horizontal bar only
 
@@ -361,14 +362,16 @@ Covered: `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table.compone
 Given the settings panel just opened
 When nothing is changed
 Then its save is unavailable, and cancel closes it with the settings as they were
-Not covered: the family has no code yet.
+
+Covered: `projects/ui-kit-v2/src/lib/components/data-list/settings/rt-data-list-settings-aside.component.spec.ts`.
 
 ### SC-UKV-307 — moving a column in the panel moves it in the table
 
 Given the settings panel open
 When a person drags the third column to the top and saves
 Then the table draws that column first
-Not covered: the family has no code yet.
+
+Covered: `projects/ui-kit-v2/src/lib/components/data-list/settings/rt-data-list-settings-aside.component.spec.ts`.
 
 ### SC-UKV-308 — the copy button says it copied for two seconds, and the row is not pressed
 

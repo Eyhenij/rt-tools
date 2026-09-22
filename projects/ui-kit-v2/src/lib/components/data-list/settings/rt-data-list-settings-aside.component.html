@@ -1,0 +1,52 @@
+<rt-aside size="md" [ariaLabel]="title()">
+    <rt-aside-header [title]="title()" [overline]="hint()" />
+
+    <ng-container rtBlock="rt-data-list-settings-aside">
+        <div rtElem="switches">
+            <rt-toggle-switch
+                qa-dataid="data-list-settings-vertical"
+                [ariaLabel]="verticalLabel()"
+                [ngModel]="isVerticalScrollbarShown()"
+                [ngModelOptions]="{ standalone: true }"
+                (ngModelChange)="isVerticalScrollbarShown.set($event)">
+                {{ verticalLabel() }}
+            </rt-toggle-switch>
+
+            <rt-toggle-switch
+                qa-dataid="data-list-settings-horizontal"
+                [ariaLabel]="horizontalLabel()"
+                [ngModel]="isHorizontalScrollbarShown()"
+                [ngModelOptions]="{ standalone: true }"
+                (ngModelChange)="isHorizontalScrollbarShown.set($event)">
+                {{ horizontalLabel() }}
+            </rt-toggle-switch>
+        </div>
+
+        <rt-table-settings-panel qa-dataid="data-list-settings-columns" [(items)]="items" />
+    </ng-container>
+
+    <rt-aside-footer>
+        <!-- Подпись кнопке рисует директива кита, поэтому тело пустое. -->
+        <button
+            rtButton
+            asideDismiss
+            type="button"
+            appearance="text"
+            qa-dataid="data-list-settings-cancel"
+            [label]="cancelLabel()"
+            (click)="onCancel()">
+            <!-- empty: label is drawn by the directive -->
+        </button>
+
+        <button
+            rtButton
+            asidePrimary
+            type="button"
+            qa-dataid="data-list-settings-save"
+            [label]="saveLabel()"
+            [disabled]="!isChanged()"
+            (click)="onSave()">
+            <!-- empty: label is drawn by the directive -->
+        </button>
+    </rt-aside-footer>
+</rt-aside>

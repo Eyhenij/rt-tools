@@ -25,7 +25,10 @@ Rewritten by every session, not appended to.
   настройка колонок, селекторы и действия приложения — 58 из 58 тестов обеих семей.
   Своя полоса страниц перенесена: ряд номеров с разрывами, стрелки, выбор размера страницы —
   65 из 65 тестов обеих семей.
-- **Next step:** этап 3 — своя панель настройки колонок, перенесённая из первого кита.
+  Панель настройки колонок собрана на готовом редакторе колонок кита: два признака полос
+  прокрутки, перетаскивание, глаз, сохранение только после изменения — 69 из 69 тестов.
+- **Next step:** этап 3 — выбор всех записей по страницам, заглушка пустого списка и вид
+  загрузки.
 - **Uncommitted:** ничего.
 - **Waiting for the owner:** нет.
 - **PR:** not open yet
@@ -42,8 +45,8 @@ Rewritten by every session, not appended to.
 - [x] 2.5 Spec of the table on its scenarios
 - [x] 3.1 Toolbar with search, clear-filters and refresh, and the application's selectors
 - [x] 3.2 Own pagination bar ported from the first kit
-- [>] 3.3 Own column settings panel ported from the first kit
-- [ ] 3.4 Selection across pages, the empty placeholder and the loading look
+- [x] 3.3 Own column settings panel ported from the first kit
+- [>] 3.4 Selection across pages, the empty placeholder and the loading look
 - [ ] 3.5 Words of both families in the kit's eight-language dictionary
 - [ ] 3.6 Spec of the list on its scenarios
 - [ ] 4.1 Stories and `Overview` of `rt-data-table` by the coverage contract
@@ -83,6 +86,10 @@ Rewritten by every session, not appended to.
 - **Видимость поля поиска считается по сигналу, а не по состоянию формы.** Поле формы сигналом не
   является, и пересчёта по нему не бывает — на заглушке поле не появлялось вовсе. Набранное
   записывается в сигнал тем же потоком, что уходит приложению. Affected stage of the plan: 3.
+
+- **Список колонок в панели настроек — готовый редактор кита `rt-table-settings-panel`.** Он не
+  знает модели колонок ни одной из таблиц: принимает пункты «ключ, подпись, скрыта» и отдаёт их
+  обратно. Своего перетаскивания семейство не писало. Affected stage of the plan: 3.
 
 ## Sessions
 
