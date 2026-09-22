@@ -4,8 +4,8 @@
 
 Rewritten by every session, not appended to.
 
-- **State:** `замысел-записан`
-- **Stage:** 1 из 5 — Модель и чистые части
+- **State:** `этап-идёт`
+- **Stage:** 2 из 5 — Таблица `rt-data-table`
 - **Done:** задача заведена и привязана к эпику 1870; слово владельца и сверка лежат в
   `grill.md`. Первая запись договорённости (SC-UKV-236…275) описывала добавки к `rt-table`, а
   владелец 22 сентября сказал другое: таблица первого кита — отдельный компонент рядом, с видом
@@ -13,18 +13,20 @@ Rewritten by every session, not appended to.
   Радиокнопка, на которой стоит выбор строки, сделана задачей RT-2317 — запрос #2318 ждёт слияния;
   эта ветка стоит на её ветке и сливается после неё.
   Договорённость переписана под отдельное семейство — `rt-data-table` и `rt-data-list`,
-  сценарии SC-UKV-236…275 и 300…316. Главная влита по цепочке: эпик, радиокнопка, эта ветка.
-- **Next step:** этап 1 — модель колонок и настроек, хранение настроек, директивы нажатия строки.
+  сценарии SC-UKV-236…275 и 300…322. Главная влита по цепочке: эпик, радиокнопка, эта ветка.
+  Этап 1 закрыт: модель колонок и настроек поле в поле с первым китом, хранение настроек под
+  ключом и в форме первого кита, директивы нажатия строки — 9 из 9 тестов, линтер и типы чистые.
+- **Next step:** этап 2 — готовая ячейка по виду колонки, кнопка копирования, значки набором кита и шаблоном `rtDataTableIcon`.
 - **Uncommitted:** ничего.
 - **Waiting for the owner:** нет.
 - **PR:** not open yet
 
 ## Steps
 
-- [>] 1.1 Column model, settings model and the first kit's field set carried over as declared
-- [ ] 1.2 Settings storage under the first kit's key and shape, with its spec
-- [ ] 1.3 Row press and "ignore row press" directives with their spec
-- [ ] 2.1 Ready cell by column type, the copy button and the icons through the kit's map
+- [x] 1.1 Column model, settings model and the first kit's field set carried over as declared
+- [x] 1.2 Settings storage under the first kit's key and shape, with its spec
+- [x] 1.3 Row press and "ignore row press" directives with their spec
+- [>] 2.1 Ready cell by column type, the copy button and the icons through the kit's map
 - [ ] 2.2 Header cell with sorting and the header icon
 - [ ] 2.3 Filter cell with the operator menu on the kit's input, select and date picker
 - [ ] 2.4 The table: rows, actions area, single choice by `rt-radio-button`, multiple by `rt-checkbox`
