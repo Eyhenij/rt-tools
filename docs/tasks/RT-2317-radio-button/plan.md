@@ -1,7 +1,7 @@
 # Plan
 
 **Task:** RT-2317 · **Branch:** RT-2317-radio-button
-**Draft:** `<path to the product agreement>`
+**Draft:** `docs/specs/ui-kit-v2/proposed/radio-button/`
 **Behaviour:** changes
 
 A tree that writes the agreement straight into the domain spec names it instead of the draft:
