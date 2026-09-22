@@ -68,6 +68,16 @@ async function pick(page: Page, filter: string, name: string): Promise<void> {
     await page.getByRole('option', { name, exact: true }).click();
 }
 
+/** Выбрать состояние разговора: этот отбор кит держит в поповере под иконкой в шапке списка. */
+async function pickState(page: Page, name: string): Promise<void> {
+    await qa(page, 'thread-list-filter').click();
+    await pick(page, 'chat-state-filter', name);
+
+    // поповер накрывает список собой: пока он открыт, по строке не нажать
+    await page.keyboard.press('Escape');
+    await expect(qa(page, 'thread-list-filters-panel')).toHaveCount(0);
+}
+
 test.describe('раздел чата', () => {
     test('SC-CH-36, SC-CH-38 — оператор видит раздел и в нём разговоры своих сайтов', async ({ page }: { page: Page }) => {
         await openSection(page, 'chat');
@@ -191,7 +201,7 @@ test.describe('раздел чата', () => {
 
         await expect(talks(page)).toHaveCount(CHAT.talks.length);
 
-        await pick(page, 'chat-state-filter', 'Живой');
+        await pickState(page, 'Живой');
 
         await expect(talks(page)).toHaveCount(CHAT.talks.filter((talk): boolean => !talk.closed).length);
 
@@ -200,7 +210,7 @@ test.describe('раздел чата', () => {
 
         await expect(talks(page)).toHaveCount(CHAT.talks.filter((talk): boolean => !talk.closed).length - 1);
 
-        await pick(page, 'chat-state-filter', 'Закрытый');
+        await pickState(page, 'Закрытый');
 
         // положительная пара к уходу из живых: закрытый разговор виден по своему отбору
         await expect(talks(page)).toHaveCount(2);
@@ -233,7 +243,7 @@ test.describe('раздел чата', () => {
 
         // положительная пара к пустоте: раздел открылся, и пустота названа словами
         await expect(qa(page, 'chat-talks')).toBeVisible();
-        await expect(qa(page, 'chat-talks-empty')).toBeVisible();
+        await expect(qa(page, 'thread-list-empty')).toBeVisible();
         await expect(qa(page, 'chat-talk')).toHaveCount(0);
     });
 });

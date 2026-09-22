@@ -13,11 +13,21 @@ import {
 } from '@angular/core';
 import { ChatFeedStore, ChatTalksStore } from '@rt/message-bus-admin/chat/data-access';
 import { AdminChatSiteFilterComponent, AdminChatStateFilterComponent, AdminChatTalkComponent } from '@rt/message-bus-admin/chat/ui';
-import { ChatMessageMapper, chatKitThread, IChat, IChatSideLabels } from '@rt/message-bus-admin/chat/util';
+import { ChatMessageMapper, chatKitTalks, chatKitThread, IChat, IChatKitTalkRow, IChatSideLabels } from '@rt/message-bus-admin/chat/util';
 import { AdminTextService } from '@rt/message-bus-admin/common/core/util';
 import { BlockDirective, ElemDirective, WINDOW } from '@rt-tools/core';
 import { CHAT_STREAM_PATH, EChatTalkState, IChatMessageEventRow } from '@rt/message-bus-common';
-import { IRtChat, RtButtonDirective, RtChatComponent, RtEmptyStateComponent } from '@rt-tools/ui-kit-v2';
+import {
+    IRtChat,
+    IRtThreadList,
+    RtButtonDirective,
+    RtChatComponent,
+    RtEmptyStateComponent,
+    RtThreadListComponent,
+    RtThreadListFiltersDirective,
+    RtThreadListRowDirective,
+    RtThreadListSearchDirective,
+} from '@rt-tools/ui-kit-v2';
 
 const BEM_BLOCK: string = 'admin-chat';
 
@@ -55,6 +65,10 @@ const TALKS_PAGE_SIZE: number = 50;
         RtButtonDirective,
         RtChatComponent,
         RtEmptyStateComponent,
+        RtThreadListComponent,
+        RtThreadListFiltersDirective,
+        RtThreadListRowDirective,
+        RtThreadListSearchDirective,
     ],
     host: { class: BEM_BLOCK },
 })
@@ -68,6 +82,12 @@ export class AdminChatPanelComponent {
     readonly #mapper: ChatMessageMapper = new ChatMessageMapper();
 
     protected readonly rows: Signal<readonly IChat.Talk.State[]> = this.#talks.rows;
+
+    /** Строки готового списка кита: разговор едет в шаблон строки целиком. */
+    protected readonly talkRows: Signal<readonly IChatKitTalkRow[]> = computed((): readonly IChatKitTalkRow[] => chatKitTalks(this.rows()));
+
+    /** Идёт ли чтение списка: на месте строк кит рисует заглушки. */
+    protected readonly talksReading: Signal<boolean> = this.#talks.loading;
     protected readonly messages: Signal<readonly IChat.Message.State[]> = this.#feed.messages;
 
     /** Идёт ли чтение ленты: на её месте кит рисует своё ожидание. */
@@ -139,8 +159,15 @@ export class AdminChatPanelComponent {
         afterNextRender((): void => this.#listen());
     }
 
-    /** Выбрать разговор: лента читается с начала, набранное в поле остаётся при экране. */
-    protected choose(talkId: string): void {
+    /**
+     * Выбрать разговор: лента читается с начала, набранное в поле остаётся при экране.
+     *
+     * Номер строки приходит от кита числом или строкой — у разговора он строковый, и приводится
+     * к нему на границе, а не разносится по экрану двумя видами.
+     */
+    protected choose(rowId: IRtThreadList.TRowId): void {
+        const talkId: string = String(rowId);
+
         this.chosen.set(talkId);
         this.#feed.read(talkId);
     }

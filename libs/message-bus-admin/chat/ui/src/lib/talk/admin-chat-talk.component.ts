@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, InputSignal, output, OutputEmitterRef, Signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, InputSignal, Signal } from '@angular/core';
 import { chatMomentText, EChatSide, IChat } from '@rt/message-bus-admin/chat/util';
 import { AdminLocaleService, AdminTextService } from '@rt/message-bus-admin/common/core/util';
 import { EChatTalkState } from '@rt/message-bus-common';
@@ -9,8 +9,8 @@ const BEM_BLOCK: string = 'admin-chat-talk';
 /**
  * Строка списка переписок: сайт, последняя реплика, минута и состояние разговора.
  *
- * Своего состояния не держит: выбранный разговор приходит входом, нажатие уходит наверх
- * признаком. Последняя реплика показана здесь же — без неё панель спрашивала бы по обращению на
+ * Своего состояния не держит и своего нажатия тоже: строку рисует готовый список кита, и выбор —
+ * его дело. Последняя реплика показана здесь же — без неё панель спрашивала бы по обращению на
  * каждую строку.
  *
  * Производные значения объявлены выше входов, как велит порядок членов; считаются они при
@@ -25,7 +25,7 @@ const BEM_BLOCK: string = 'admin-chat-talk';
         BlockDirective,
         ElemDirective,
     ],
-    host: { class: BEM_BLOCK },
+    host: { class: BEM_BLOCK, 'qa-dataid': 'chat-talk' },
 })
 export class AdminChatTalkComponent {
     readonly #text: AdminTextService = inject(AdminTextService);
@@ -46,9 +46,4 @@ export class AdminChatTalkComponent {
 
     /** Разговор строки. */
     public readonly talk: InputSignal<IChat.Talk.State> = input.required<IChat.Talk.State>();
-
-    /** Выбран ли этот разговор: выбранное называет экран, а не строка. */
-    public readonly chosen: InputSignal<boolean> = input<boolean>(false);
-
-    public readonly choose: OutputEmitterRef<string> = output<string>();
 }

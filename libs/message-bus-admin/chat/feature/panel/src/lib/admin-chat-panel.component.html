@@ -1,15 +1,28 @@
 <ng-container rtBlock="admin-chat">
     <section rtElem="talks" qa-dataid="chat-talks">
-        <div rtElem="filters">
-            <admin-chat-site-filter [site]="site()" [sites]="sites()" (siteChange)="site.set($event)" />
-            <admin-chat-state-filter [state]="state()" (stateChange)="state.set($event)" />
-        </div>
+        <!--
+            Список переписок — готовый список кита: выбор строки, заглушки чтения и пустое
+            состояние он умеет сам. Поле поиска кит рисует всегда, а поиска по тексту переписок у
+            приёмника нет, и его место занято сужением по сайту.
+        -->
+        <rt-thread-list
+            [activeId]="chosen()"
+            [emptyText]="talksEmpty()"
+            [loading]="talksReading()"
+            [rows]="talkRows()"
+            (selectRow)="choose($event)">
+            <ng-template rtThreadListSearch>
+                <admin-chat-site-filter [site]="site()" [sites]="sites()" (siteChange)="site.set($event)" />
+            </ng-template>
 
-        @for (talk of rows(); track talk.id) {
-            <admin-chat-talk [chosen]="talk.id === chosen()" [talk]="talk" (choose)="choose($event)" />
-        } @empty {
-            <rt-empty-state qa-dataid="chat-talks-empty" [description]="talksEmptyFrom()" [title]="talksEmpty()" />
-        }
+            <ng-template rtThreadListFilters>
+                <admin-chat-state-filter [state]="state()" (stateChange)="state.set($event)" />
+            </ng-template>
+
+            <ng-template let-row [rtThreadListRow]="talkRows()">
+                <admin-chat-talk [talk]="row" />
+            </ng-template>
+        </rt-thread-list>
     </section>
 
     <section rtElem="feed" qa-dataid="chat-feed">
