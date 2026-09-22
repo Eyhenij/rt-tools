@@ -6,8 +6,8 @@ database.
 
 | Role                  | Port  | Raised by                              |
 | --------------------- | ----- | -------------------------------------- |
-| the showcase          | 6006  | `pnpm run storybook`                   |
-| the built showcase    | 6007  | `pnpm run build-storybook` and serving  |
+| the showcase          | 6006  | `pnpm run storybook:ui-kit-v1`         |
+| the built showcase    | 6007  | `pnpm run build-storybook:ui-kit-v1` and serving |
 | the stand receiver    | 3310  | `pnpm run serve:stand`                 |
 | the stand admin panel | 4310  | by the same call                       |
 | the dev receiver      | 3000  | `pnpm run serve:api`                   |

@@ -33,6 +33,12 @@ of the second kit's styles and sorts a name into three states; the list of handl
   there.
 - **A name used by both kits is refused.** The styles file included later wins, and an application
   with two kits gets what neither of them counted on.
+- **The first kit's scale names are read by expanding the loop, not by a literal search.** The first
+  kit declares radii, shadows and the other scales by `@each $token, $value in $<map>` with
+  `--rt-<scale>-#{$token}` inside. The check expands one interpolation at the end of a name over the
+  map's top-level keys; a name with two interpolations (`--rt-color-#{$hue}-#{$step}`) it does not
+  read. A collision the check does not name is therefore not proof of its absence. A name the first
+  kit declares that way is looked up by the map in `_tokens.scss`, not by a search over the styles.
 
 ## The dark theme answers, and a machine counts the contrast
 

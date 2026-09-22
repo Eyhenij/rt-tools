@@ -322,6 +322,20 @@ and the check was silently not performed at all, looking as if it came together
 
 Covered: `projects/agent-kit/tests/git-guards.test.sh`.
 
+### SC-AK-1165 — the title is read by the long key, and the short one only in its absence
+
+Given a command where a run line with the short key stands before the opening of the request, and
+the title stands after it
+When the delivery guard reads the title
+Then it takes the title of the request: the short key is taken by neighbours, and the refusal used
+to say the title does not start with the number of the task while it did
+
+Given a command where the title is named by the short key alone
+When the guard reads it
+Then it takes that title and judges its number as before
+
+Covered: `projects/agent-kit/tests/git-guards.test.sh`.
+
 ### SC-AK-820 — what the gate set is narrower than the pipeline set by
 
 Given the tree has a green set before the push and this is the first push of the session
@@ -416,83 +430,11 @@ Then it reads the body from the file and stays silent about the section; a file 
 
 Covered: `projects/agent-kit/tests/git-guards.test.sh`.
 
-### SC-AK-991 — the epic of a task is declared by one shape, and it is read in one place
+### SC-AK-1166 — the push gate names every red light check by one refusal
 
-Given a task body naming its epic — by the number with a hash or with the task key, in either case
-of the word about the task
-When the declaration is read
-Then the number of the epic comes back
+Given the gate set holds two red light checks, a green one between them and a heavy one after them
+When the guard judges the push
+Then the refusal names both red lines and the tail of each output. The green one is not named. The
+heavy one is not started and is named as held
 
-Given the body only mentions a number — in reasoning, in a quoted refusal, in the list of what the
-work does not do
-When the same reading goes
-Then no epic comes back: a mention is not a declaration
-
-Given the same words inside a sentence — «в работу взяты семь задач эпика #1870» — and, apart, a
-declaration as an item of a list — `- Вторая задача эпика #7, идёт после первой`
-When the same reading goes
-Then the first gives no epic and the second gives its number: a declaration opens its line, and a
-list marker or an ordinal before it is allowed
-
-Covered: `projects/agent-kit/tests/guard-epic-base.test.sh`.
-
-### SC-AK-992 — the state of a task carries the number of its epic
-
-Given a task whose body declares an epic
-When the work queue helper is asked for the state of the task
-Then the state carries the number of the epic as a field of its own
-
-Given a task outside an epic
-When the same asking goes
-Then the field is empty, and that is not a refusal
-
-Covered: `projects/agent-kit/tests/guard-epic-base.test.sh`.
-
-### SC-AK-993 — the branch of a task is taken from the branch of its epic
-
-Given a task whose state names an epic, and the branch of that epic is in the remote
-When the guard judges the creation of a branch from the main one
-Then it refuses and names the branch of the epic
-
-Given the same branch is created from the branch of the epic
-When the guard judges it
-Then it lets it through
-
-Given the state of the task names no epic
-When the guard judges the creation of a branch from the main one
-Then the base is judged against the main branch, as before
-
-Covered: `projects/agent-kit/tests/guard-epic-base.test.sh`.
-
-### SC-AK-994 — the request of a task of an epic goes into the branch of the epic
-
-Given a task whose state names an epic, and the branch of that epic is in the remote
-When the guard judges the opening of a request with the main branch as its base
-Then it refuses and names the branch of the epic
-
-Given the base named is the branch of the epic
-When the guard judges the same opening
-Then it does not refuse over the base
-
-Given the state of the task names no epic
-When the guard judges the opening with the main branch as its base
-Then the base is not judged at all
-
-Covered: `projects/agent-kit/tests/guard-epic-base.test.sh`.
-
-### SC-AK-995 — the request of an epic waits for the folders of its tasks to be taken apart
-
-Given the branch of a card carrying the label of an epic, and a folder of a task is committed into
-that branch
-When the guard judges the opening of a request into the main branch
-Then it refuses and names the folder
-
-Given the folder is taken apart by a commit of the branch
-When the guard judges the same opening
-Then it does not refuse over the folders
-
-Given the card carries no label of an epic
-When the guard judges the same opening with a folder in the branch
-Then this condition is not judged at all
-
-Covered: `projects/agent-kit/tests/guard-epic-base.test.sh`.
+Covered: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.

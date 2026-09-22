@@ -73,6 +73,24 @@ export const SelectorPopup: Story = {
 };
 ```
 
+**A narrow screen** — set by the same parameter, not by the showcase's viewport global. The first
+kit's harness reads only `snapshotViewport` and shoots at 1280×720 otherwise: a story that sets
+`globals.viewport` alone looks narrow in the showcase and lands in the reference wide.
+
+```typescript
+export const Mobile: TStory = {
+    globals: { viewport: { value: 'narrow' } },
+    parameters: { snapshotViewport: { width: 360, height: 780 } },
+};
+```
+
+**An animation is shot at its last frame, and the harness has to say so itself.** Storybook's test
+mode inserts `animation-direction: reverse` and `animation-play-state: paused` with `!important`, so
+"finishing" an animation lands on its first frame. The first kit's harness returns the direction and
+the play state in its own stop style. Before that, a part fading in from transparency came out empty
+or half-transparent: the narrow side menu without a single item, an open sub-menu without its
+entries, table rows at half opacity — and ten references pinned exactly that.
+
 **The markup does not arrive in the same frame as the story.** A search for a node in `play` is
 wrapped in a wait:
 

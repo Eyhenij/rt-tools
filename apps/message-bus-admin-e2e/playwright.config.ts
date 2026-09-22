@@ -1,6 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
 
-import { ADMIN_ORIGIN, ADMIN_PORT } from './stand/stand.mjs';
+import { ADMIN_ORIGIN, ADMIN_PAGE_ORIGIN } from './stand/stand.mjs';
 
 /**
  * Адрес браузера, поднятого в образе. Его называет `tools/shot-browser.mjs` — он же образ и
@@ -22,8 +22,11 @@ if (!SHOT_BROWSER) {
 /**
  * Стенд остаётся на машине: он поднимает прод-сборки и базу, и вторая их сборка внутри образа
  * стоила бы дороже переноса. Из образа машина зовётся своим именем — `localhost` там свой.
+ *
+ * Имя берётся у стенда, а не пишется здесь: тем же именем засев называет адреса страниц площадок
+ * виджета, и написанное дважды оно разошлось бы молча — виджет получил бы отказ по списку адресов.
  */
-const PAGE_ORIGIN: string = `http://host.docker.internal:${ADMIN_PORT}`;
+const PAGE_ORIGIN: string = ADMIN_PAGE_ORIGIN;
 
 /**
  * Сквозной набор админки.

@@ -204,8 +204,8 @@ describe('RtBottomSheetComponent', (): void => {
         });
     });
 
-    describe('форма записи открытости — SC-UKV-133, SC-UKV-134, SC-UKV-135', (): void => {
-        it('SC-UKV-133 — голый атрибут ставит логическому входу истину', (): void => {
+    describe('форма записи открытости — SC-UKV-235, SC-UKV-134, SC-UKV-135', (): void => {
+        it('SC-UKV-235 — голый атрибут ставит логическому входу истину', (): void => {
             const fixture: ComponentFixture<BottomSheetBareHostComponent> = createRtFixture(BottomSheetBareHostComponent);
 
             expect(sheetClasses(fixture)).toContain('rt-bottom-sheet--open');

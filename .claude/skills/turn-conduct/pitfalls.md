@@ -1,4 +1,4 @@
-<!-- rt-kit v0.29.0 · pitfalls/turn-conduct.md · a49da7e6cbbe · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · pitfalls/turn-conduct.md · 24737b50a8cb · правится надстройкой, не здесь -->
 # Session turn — cold part
 
 Pitfalls: cases and numbers that used to stand next to the rule's articles. Loaded not with the
@@ -132,3 +132,21 @@ The rule is `turn-conduct`; the articles that hold the law stand there.
   The guard counted the launch as work — there were edits in the turn, and the last action was not
   a wait. Now the last tool of the turn is judged: the agent tool or a command sent to the
   background standing last gives the turn back, and work after the launch releases it.
+
+## A single read of the run state taken for watching it
+
+22 September 2026. An epic was handed over whole: nine tasks merged, the request of the epic opened
+into the main branch as a draft. The pipeline woke by itself, and the turn held no starting command.
+
+The executor read the state once — the run was going — and ended the turn with the words "I am not
+waiting for the run". The run finished in 12 minutes 35 seconds, green. The draft stayed, the merge
+button stayed locked, and the owner learned the work was ready forty minutes later, by asking what
+the executor was busy with.
+
+What confirmed the wrong decision: the waiting guard let the turn go. It demands that the state of
+the handed-over work be asked, and the state was asked — while the run was still going. The guard
+judged the fact of the question, not the end of the run, and its tier about a run started in the
+turn knew only the commands that start one by hand.
+
+What it cost: a ready request stood forty minutes under a green run; the owner checked the work
+instead of the executor; two turns went on the conversation about why the work stood still.

@@ -40,6 +40,30 @@ rt_hooks_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 [ -f "$rt_hooks_dir/write-targets.sh" ] && . "$rt_hooks_dir/write-targets.sh" 2>/dev/null
 command -v rt_write_targets >/dev/null 2>&1 || rt_write_targets() { cat >/dev/null; }
 
+# The bodies of the heredocs of a command, one after another. The delimiter is taken as the shell
+# takes it — quoted or bare — and everything up to the closing line is the written text.
+rt_prose_heredoc_bodies() {
+    awk -v q="'" '
+        inside {
+            if ($0 == tag) { inside = 0 } else { print }
+            next
+        }
+        {
+            s = $0
+            re = "<<-?[ \t]*(\"[^\"]+\"|" q "[^" q "]+" q "|[A-Za-z_][A-Za-z0-9_]*)"
+            while (match(s, re)) {
+                t = substr(s, RSTART, RLENGTH)
+                s = substr(s, RSTART + RLENGTH)
+                sub(/^<<-?[ \t]*/, "", t)
+                gsub(/\"/, "", t)
+                gsub(q, "", t)
+                tag = t
+                inside = 1
+            }
+        }
+    '
+}
+
 tool="$(rt_hook_tool)"
 case "$tool" in
     Edit | Write | MultiEdit)
@@ -52,9 +76,13 @@ case "$tool" in
         # The first document among the write targets. A command writing several is judged by one of
         # them: the text is one for the whole command, and a second refusal would repeat the first.
         path="$(printf '%s' "$cmd" | rt_write_targets | grep -m1 '\.md$')"
-        # The new text is the body of the command: the written text stands inside it, and the
-        # findings of the check name the very lines that go into the file.
-        added="$cmd"
+        # The new text is taken from the heredoc bodies of the command, not from the whole call.
+        # A rewrite carrying the previous wording inside the call would otherwise be refused by
+        # the words of that previous wording, and the refusal repeats at the second attempt. No
+        # heredoc in the command — the whole text is judged, as before: a redirect of a printf
+        # holds the written text and nothing else.
+        added="$(printf '%s' "$cmd" | rt_prose_heredoc_bodies)"
+        [ -z "$added" ] && added="$cmd"
         ;;
     *) exit 0 ;;
 esac
@@ -63,6 +91,24 @@ case "$path" in
     *.md) ;;
     *) exit 0 ;;
 esac
+
+# The judgement's boundary is the project root. A scratch document written outside it belongs to no
+# repository, and the wording conventions of this tree are nobody's convention there: a fixture in
+# the system temporary directory was refused over a word in it.
+if [ -n "${CLAUDE_PROJECT_DIR:-}" ]; then
+    case "$path" in
+        /*)
+            rt_root="$(cd "$CLAUDE_PROJECT_DIR" 2>/dev/null && pwd)"
+            # A root that cannot be entered is taken as it was declared: the directory may be
+            # absent on this machine, and that says nothing about where the document lies.
+            [ -n "$rt_root" ] || rt_root="$CLAUDE_PROJECT_DIR"
+            case "$path" in
+                "$rt_root"/*) ;;
+                *) exit 0 ;;
+            esac
+            ;;
+    esac
+fi
 
 # The archive and the task folders are not judged: the archive is not edited at all, and the
 # progress is written in haste and lives until the merge.

@@ -137,7 +137,7 @@ A rule under the "Law on verifiability", the section about showing a visible sta
 | ---------------- | ----------------------------- | -------------------------------------------------------- |
 | Config           | `projects/ui-kit/.storybook/` | `projects/ui-kit-v2/.storybook/`                         |
 | Port             | 6006                          | 6007                                                     |
-| Command          | `pnpm run storybook`          | `pnpm run storybook:ui-kit-v2`                           |
+| Command          | `pnpm run storybook:ui-kit-v1` | `pnpm run storybook:ui-kit-v2`                           |
 | Wrapper prefix   | `Test*Component`              | `TestRt*Component`                                       |
 | Global providers | per-story `applicationConfig` | `preview.ts` (zoneless, storage, icons, labels, theme toolbar) |
 | Story set        | `Default` + ad-hoc variants   | fixed set — see the coverage contract below              |
@@ -149,8 +149,8 @@ Storybook 10 with `@storybook/angular`. Config lives in
 `../src/**/*.stories.@(js|jsx|mjs|ts|tsx)` and docs from `../docs/**/*.mdx`.
 
 ```bash
-pnpm run storybook          # nx run @rt-tools/ui-kit:storybook — port 6006
-pnpm run build-storybook    # dist/storybook/@rt-tools/ui-kit
+pnpm run storybook:ui-kit-v1        # nx run @rt-tools/ui-kit:storybook — port 6006
+pnpm run build-storybook:ui-kit-v1  # dist/storybook/@rt-tools/ui-kit
 ```
 
 ## What `preview.ts` already gives
@@ -266,6 +266,19 @@ Rules that decide what goes in a matrix:
   `process.env.RT_SNAPSHOT_RUN` instead of `process.env['RT_SNAPSHOT_RUN']` passed `check:all`
   whole and was refused only by `pnpm run build-storybook:ui-kit-v2`. An edit in `.storybook/` is
   confirmed by a showcase build, not by a sweeping run of the checks.
+- **An icon font of the first showcase is declared in `.storybook/preview-head.html`, not in a
+  showcase stylesheet.** The font file lies in the tree and is served by the showcase itself. A
+  `@font-face` in `storybook.scss` arrives later than the page head, and the paint probe catches the
+  frame before the font. The class rule next to the family repeats the whole set the other families
+  carry there: `font-size: 24px`, `line-height: 1`, `letter-spacing`, `text-transform`, `display`,
+  `white-space`, the ligatures and smoothing. A class with the family alone takes the host's font
+  size and line height, and the icons shift inside their buttons. No frame catches the shift while
+  the references are taken with it; the owner found it by eye.
+- **The first showcase's Material Symbols file is a subset by icon names, and a glyph outside it
+  draws a stray shape, not the word.** A story naming a new glyph gets it only after the subset is
+  fetched again with the whole old list of names plus the new one. The ligatures of the old and the
+  new file are compared before the replacement: a name lost from the list breaks a neighbour's frame
+  silently.
 - `projects/ui-kit/src/lib/ui-kit/dynamic-selectors/` uses a misspelled
   `strories/` folder. It is matched by the `../src/**` glob and works; leave it
   unless you are deliberately renaming it (both the stylelint ignore and any

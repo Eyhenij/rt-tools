@@ -1,4 +1,4 @@
-<!-- rt-kit v0.29.0 · laws/work-conduct.md · 818818732ba0 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · laws/work-conduct.md · c25e0f1857d9 · правится надстройкой, не здесь -->
 # Law on work conduct
 
 The law sets how work is conducted from the moment a task is set until it is closed. Work outlasts
@@ -91,6 +91,16 @@ one session and keeps its whole context and state when it passes to the next.
   check.
 - **Done work is marked in one place.** Two records of the same thing drift apart silently, and then
   neither shows what remains.
+- **The steps of the work are written out in full before it starts, and each of them can be called
+  done or not done.** A plan of prose alone cannot say how much is left: whoever reads it counts by
+  eye and counts differently every time, so the work reads as nearly finished from the first step
+  onwards.
+- **The step going on right now is marked at every minute of the work, and there is only ever one.**
+  A record that names the whole stage and not the step inside it says nothing about where the work
+  broke off, and the session that picks it up starts by guessing.
+- **Work with a step that is not done is not finished, and a report about the done does not finish
+  it either.** A report ends the account, not the work: it looks like completeness better than
+  anything else, and the emptiness behind it is invisible to whoever wrote it.
 - **A decision made along the way is written down together with its reason.** Without a reason it
   reads as accidental and is revoked by the next session, and brought back by the third.
 - **The boundary of the work is named before it starts.** A boundary not named aloud does not exist:
@@ -191,6 +201,18 @@ one session and keeps its whole context and state when it passes to the next.
   being watched. While it runs, the next task is taken, and the check is returned to in the turn
   that reads its end. A session spent waiting costs as much as one with a task done, and yields
   nothing.
+- **A check the work started is watched to its end, and watching goes beside the next task.** Not
+  waiting and not watching are different things: the first frees the executor, the second abandons
+  the work. The return is arranged in the turn that started the check, by something that comes back
+  by itself; a state read once is a moment, not an outcome.
+- **A check is started by the work, not only by the command that names it.** Handing the work over
+  starts a check by itself where the machine is set up for that, and the executor answers for it as
+  for one started by hand.
+- **A check that came back green is carried to the end by the one who handed the work over.** What
+  is left after it — a lock to lift, a mark to set — is the executor's step: the owner sees the lock
+  and reads it as work still going. A red one is fixed by the same executor, in the same work.
+- **A check left with nobody watching is a miss and is analysed as one.** The work is finished and
+  nobody knows it; every minute until the owner asks is paid by them.
 - **A wait that does stop the work is named to the owner separately and directly.** Sometimes there
   is no way forward: the next task stands on one not yet reviewed, or the change waits for a
   decision only the owner has. Then the executor says three things — what stands still, what it

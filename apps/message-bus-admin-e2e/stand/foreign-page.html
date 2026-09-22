@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="ru">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Страница чужого адреса со встроенным чатом</title>
+        <style>
+            /*
+             * Страница стоит на своём порту и о сервисе не знает ничего, кроме адреса скрипта.
+             * Красится она иначе, чем страница того же адреса, что и сервис: так на снимке видно,
+             * какая из двух поднята.
+             */
+            body {
+                margin: 0;
+                padding: 32px;
+                background: #eff6ff;
+                color: #1e3a8a;
+                font-family: Georgia, 'Times New Roman', serif;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Страница чужого адреса</h1>
+        <p>Эта страница поднята на своём порту: для браузера она и сервис — разные адреса.</p>
+
+        <script src="__SERVICE__/widget.js"></script>
+        <script>
+            /*
+             * Ключ площадки приезжает в адресе страницы — тем же способом, что и на странице
+             * своего адреса. Адрес сервиса виджет берёт оттуда, откуда приехал сам скрипт.
+             */
+            const widget = document.createElement('rt-chat-widget');
+
+            widget.setAttribute('site', new URLSearchParams(location.search).get('site') ?? '');
+            document.body.append(widget);
+        </script>
+    </body>
+</html>

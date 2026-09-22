@@ -1,12 +1,12 @@
 # Scenarios — a boolean input of the kit and the bare attribute
 
-### SC-UKV-133 — the bare attribute sets a boolean input to truth
+### SC-UKV-235 — the bare attribute sets a boolean input to truth
 
 Given a kit component with a boolean input
 When the input is written as a bare attribute, without a value
 Then the input holds truth, and the component draws the look that value gives it
 
-Covered: `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet.component.spec.ts` — «SC-UKV-133 — голый атрибут ставит логическому входу истину».
+Covered: `projects/ui-kit-v2/src/lib/components/bottom-sheet/rt-bottom-sheet.component.spec.ts` — «SC-UKV-235 — голый атрибут ставит логическому входу истину».
 
 ### SC-UKV-134 — a required boolean input takes the bare attribute the same way
 

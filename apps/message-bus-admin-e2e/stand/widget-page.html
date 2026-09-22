@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ru">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Страница потребителя со встроенным чатом</title>
+        <style>
+            /*
+             * Стили страницы нарочно красят всё подряд: так видно, что до виджета они не
+             * достают. Виджет рисует себя в теневом дереве, и ни эти правила туда, ни его
+             * правила сюда не проходят.
+             */
+            body {
+                margin: 0;
+                padding: 32px;
+                background: #fffbeb;
+                color: #92400e;
+                font-family: Georgia, 'Times New Roman', serif;
+            }
+
+            button,
+            input {
+                padding: 24px;
+                border: 4px dashed #b91c1c;
+                background: #fecaca;
+                color: #7f1d1d;
+                font-family: inherit;
+                font-size: 28px;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Страница потребителя</h1>
+        <p>Эта страница ничего о чате не знает: она подключает один скрипт и ставит один тег.</p>
+        <button type="button">Кнопка страницы</button>
+
+        <script src="/widget.js"></script>
+        <script>
+            /*
+             * Ключ площадки приезжает в адресе страницы: площадок у набора несколько — живая,
+             * без часов и та, чей список адресов эту страницу не знает, — а страница одна.
+             */
+            const widget = document.createElement('rt-chat-widget');
+
+            widget.setAttribute('site', new URLSearchParams(location.search).get('site') ?? '');
+            document.body.append(widget);
+        </script>
+    </body>
+</html>

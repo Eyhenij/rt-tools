@@ -5,6 +5,7 @@ export * from './lib/cargo-quarantine-note';
 export * from './lib/cargo-kind';
 export * from './lib/cargo-page';
 export * from './lib/cargo-release-version';
+export * from './lib/chat';
 export * from './lib/release-version-order';
 export * from './lib/cargo-shape';
 export * from './lib/cargo-state';

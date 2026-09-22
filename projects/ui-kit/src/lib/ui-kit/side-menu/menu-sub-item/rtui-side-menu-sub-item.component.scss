@@ -58,8 +58,13 @@
             align-items: center;
             justify-content: space-between;
 
+            // Подпись забирает свободное место строки, и все кнопки встают вплотную к правому краю:
+            // кнопка пункта, звезда или «убрать», ручка. Разнос кнопок по ширине разводил их
+            // врозь, как только их становилось больше одной.
             &__text {
                 overflow: hidden;
+                min-width: 0;
+                flex: 1 1 auto;
                 font-size: var(--rt-side-menu-sub-menu-item-title-font-size);
                 text-overflow: ellipsis;
                 white-space: nowrap;
@@ -94,6 +99,90 @@
                     border-color: var(--rt-border-neutral-emphasis);
                 }
             }
+
+            // В разделе с избранным кнопка потребителя стоит последней, в столбце звёзд и ручек:
+            // её центр ставится на центр их кнопки — половина их размера минус половина её
+            // ширины в 26 px: значок, внутренний отступ и рамка.
+            &--favorites .rtui-side-menu-sub-item-title-button {
+                --rt-side-menu-sub-item-favorite-column: var(--rt-side-menu-favorite-action-size, calc(var(--rt-spacing-16) * 2));
+
+                margin-right: calc((var(--rt-side-menu-sub-item-favorite-column) - var(--rt-spacing-24) - var(--rt-spacing-2)) / 2);
+            }
+
+            // Кнопка избранного: звезда у пункта раздела и «убрать» у строки блока. Закрашенная
+            // звезда видна всегда: выбранное читается с одного взгляда. Остальные — под
+            // наведением и под фокусом своей строки: кнопки на каждой строке длинного списка
+            // читались бы шумом. Прячется прозрачностью, а не снятием с раскладки: кнопка остаётся
+            // на своём месте и достижима клавишей Tab.
+
+            // Цвета и размеры кнопок приложение задаёт своими свойствами `--rt-side-menu-favorite-*`
+            // на любом предке меню. Свойства не объявлены в ките нарочно: значение по умолчанию стоит
+            // запасным в `var()`, а объявленное на кнопке перебило бы значение от предка.
+            &__favorite {
+                --mat-icon-button-state-layer-size: var(--rt-side-menu-favorite-action-size, calc(var(--rt-spacing-16) * 2));
+                --mat-icon-button-icon-size: var(--rt-side-menu-favorite-action-icon-size, var(--rt-font-size-lg));
+                --mat-icon-button-icon-color: var(--rt-side-menu-favorite-action-color, var(--rt-text-base-secondary));
+
+                flex: 0 0 auto;
+                margin-left: var(--rt-spacing-4);
+                opacity: 0;
+
+                // Узкий экран отмечает порог сервиса кита, а не медиазапрос: порог настраивается
+                // приложением, и число в стилях с ним разошлось бы. На узком экране рисуется своя
+                // ветка разметки, и наводиться там нечем.
+                &--on,
+                &--always {
+                    opacity: 1;
+                }
+
+                &--on {
+                    --mat-icon-button-icon-color: var(
+                        --rt-side-menu-favorite-color,
+                        var(--mat-sys-primary, var(--mat-button-filled-container-color, var(--rt-icon-accent-primary)))
+                    );
+                }
+
+                // Корзина под указателем и под фокусом клавиатуры краснеет: нажатие убирает пункт.
+                // Приложение ставит свой цвет свойством на предке меню, свой обычный — чтобы не
+                // краснела вовсе. Наведение — только где указатель умеет наводиться: на сенсорном
+                // экране оно залипает в точке касания, и после «убрать» под пальцем краснела бы
+                // корзина соседней строки.
+                @media (hover: hover) {
+                    &--remove:hover {
+                        --mat-icon-button-icon-color: var(--rt-side-menu-favorite-remove-hover-color, var(--rt-icon-accent-danger));
+                    }
+                }
+
+                &--remove:focus-visible {
+                    --mat-icon-button-icon-color: var(--rt-side-menu-favorite-remove-hover-color, var(--rt-icon-accent-danger));
+                }
+
+                // Где указатель не умеет наводиться, кнопке ждать нечего.
+                @media (hover: none) {
+                    opacity: 1;
+                }
+
+                // Зона касания Material шире кнопки и заходит на соседние строки; мыши она не нужна.
+                @media (pointer: fine) {
+                    --mat-icon-button-touch-target-display: none;
+                }
+            }
+
+            // Значок берёт размер кнопки. Сам по себе он остаётся в 24 px, а отступ кнопки
+            // считается от её размера значка — и глиф съезжает влево вверх на разницу.
+            &__favorite-icon {
+                width: var(--mat-icon-button-icon-size);
+                height: var(--mat-icon-button-icon-size);
+                font-size: var(--mat-icon-button-icon-size);
+                line-height: 1;
+            }
+        }
+
+        // Фокус показывает кнопки только с клавиатуры: снятая мышью звезда держит фокус, и правило
+        // по любому фокусу оставляло бы полую звезду видимой, когда указатель уже ушёл.
+        &:hover .rtui-side-menu-sub-item-title__favorite,
+        &:has(:focus-visible) .rtui-side-menu-sub-item-title__favorite {
+            opacity: 1;
         }
     }
 
@@ -115,6 +204,14 @@
         .rtui-side-menu-expand-sub-item-header {
             max-width: 100%;
             padding: 0;
+
+            // В разделе с избранным шеврон папки стоит в одном столбце со звёздами: центр значка
+            // кнопки звезды левее центра шеврона на половину её размера без половины шеврона в 24 px.
+            // Сдвиг — внешним отступом: раскрытая папка поворачивает значок вместе с его внутренними
+            // отступами, и неравный внутренний отступ уходил бы на другую сторону.
+            &--favorites ::ng-deep .mat-expansion-indicator {
+                margin-right: calc(var(--rt-side-menu-favorite-action-size, calc(var(--rt-spacing-16) * 2)) / 2 - var(--rt-spacing-12));
+            }
 
             &--activated {
                 background-color: var(--mat-list-active-indicator-color);

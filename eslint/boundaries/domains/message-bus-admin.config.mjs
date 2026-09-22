@@ -94,6 +94,7 @@ export const messageBusAdminBoundaries = [
             'scope:message-bus-admin-proposals-shell',
             'scope:message-bus-admin-summaries-shell',
             'scope:message-bus-admin-usage-shell',
+            'scope:message-bus-admin-chat-shell',
             'scope:message-bus-admin-invites-shell',
             'scope:message-bus-admin-accounts-shell',
             CORE_UTIL,

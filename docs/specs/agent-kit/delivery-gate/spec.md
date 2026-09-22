@@ -192,45 +192,11 @@ refuses the push.
   the owner and fix the check.
 - **What is disputed is not put into the known list.** The list keeps the accepted, not the results
   of a broken check.
-
-- **The epic of a task is declared by one shape, and it is read in one place.** Three readers need
-  it — the creating command writes the declaration, the queue audit judges the link both ways, the
-  guard takes the base of a branch by it. Read in two places, one shape diverges silently: one side
-  demands what the other does not see.
-- **The declaration opens its line, and the same words inside a sentence are not one.** A task whose
-  description said «семь задач эпика #1870» was read as belonging to that epic, and the opening of
-  its request from the main branch was refused. The words alone cannot tell a declaration from prose
-  about an epic; the place in the line can. Before it stands at most an ordinal or a list marker:
-  the creating command writes the declaration as a line of its own, and a hand-written one lies
-  among the items of a plan.
-- **The state of a task carries the number of its epic.** The guard has no other road to the epic:
-  the work queue holds neither branches nor kinship of cards, and a second asking for the body would
-  cost an extra call and diverge from the first.
-- **The base of a request about a task of an epic is the branch of that epic.** A request into the
-  main branch takes the task past its epic: the epic is handed in without it, and the reviewer sees
-  the edit next to everything lying in the main branch and not in the epic. A base not named at all
-  is the same case — the hosting takes the default branch of the repository.
-- **The freshness asked before a request of such a task is the epic's, not the main branch's.** The
-  request goes into the epic, and it is the divergence with the epic that shows in the diff; the main
-  branch reaches the task through the epic.
-- **The request of an epic opens when the folders of all its tasks are taken apart.** The folder
-  guard reads the folder of one task, by the name of the branch, and the branch of an epic has none
-  of its own: every folder lying there belongs to a task whose work is not closed, and merged as it
-  is the epic carries them into the main branch.
-- **An epic is recognised by the label of its card, not by the shape of the branch name.** The branch
-  of an epic and the branch of a task are named alike; the tree names the label itself, and one that
-  has not named it is not judged by this condition at all.
-- **The base of a new task branch is judged against the branch of its epic, not against the main
-  branch.** A task branched from the main one leaves its epic half merged before the epic itself is
-  handed in: the merge of the epic then carries nothing of that task, and the guard used to let this
-  through in silence.
-- **The freshness of the main branch moves to the branch of the epic together with the base.** Asked
-  of the base of a task branch, it left the executor either waiting for the epic branch to catch up
-  or taking the base from the main one — that is, doing what the previous statement forbids. Asked of
-  the epic, it is fixed by one merge, and the branches of all its tasks get it at once.
-- **The branch of an epic is looked for among the remote refs, and neither absence nor a second one
-  is guessed at.** A branch living on one machine is a base nobody else has; two branches of one epic
-  give no way to tell which the task grows from. Both are named by a refusal of their own.
+- **A refusal of the push gate names every red light check at once.** Left on the first red one, the
+  gate made every fix open the next reason by a push of its own: three pushes in a row went so on one
+  branch. After the first red a heavy check is not started and is named as held. A build, an image and
+  a snapshot run are heavy: the push is refused anyway, and their minutes buy nothing. Which check is
+  heavy the tree profile says; the package default knows the builder and the container runner.
 
 ## What is out of scope
 
@@ -276,7 +242,7 @@ Not applicable: the check answers with an exit code and a text, not with named c
 | several delivery conditions did not come together           | —    | all that did not come together at once, each with its action    |
 | a branch is created from a base without the tip of main     | —    | how many commits it fell behind by and how to take a fresh one  |
 | the working copy signs commits with a foreign mail          | —    | both mails and the command the signature is fixed by            |
-| a line of the gate set fell before the push                 | —    | the fallen line and the tail of its output                      |
+| lines of the gate set fell before the push                  | —    | every fallen line, the tail of each output, the held heavy ones |
 | a branch switch stands in the same command as the push      | —    | which branch the set would be run by and how to split the calls |
 
 A refusal of a guard has no command exit code: it refuses the call before it is carried out and names
@@ -351,6 +317,8 @@ silence means "there is no rule about this", not "the rule is kept".
 The open questions of the domain are shared, and they live in the spec next to it.
 
 ## History of changes
+
+- 2026-09-21 — the push gate names every red light check by one refusal, task RT-2302.
 
 - 2026-09-05 — creating a branch is recognised with a flag before `-b`, task RT-1799.
 

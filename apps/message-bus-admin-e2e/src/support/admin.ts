@@ -38,7 +38,7 @@ export type TPageMark = 'hint' | 'columns' | 'refresh' | 'fault' | 'retry';
  * роли не имеют ни отбора, ни панели подробностей: их панели правят и открываются кнопкой и
  * меню строки, а не нажатием на строку.
  */
-export type TSectionName = 'postmortems' | 'proposals' | 'summaries' | 'usage' | 'invites' | 'people' | 'roles';
+export type TSectionName = 'postmortems' | 'proposals' | 'summaries' | 'usage' | 'invites' | 'people' | 'roles' | 'chat';
 
 /** Разделы админки: адрес, заголовок экрана и `qa-dataid` его таблицы и строк. */
 export const SECTION: Readonly<Record<TSectionName, ISectionMarks>> = Object.freeze({
@@ -65,6 +65,14 @@ export const SECTION: Readonly<Record<TSectionName, ISectionMarks>> = Object.fre
         table: 'summaries-table',
         row: 'summaries-row',
         details: 'month-record-details-close',
+    }),
+    chat: Object.freeze({
+        path: SECTIONS.chat,
+        title: 'Чат',
+        prefix: 'chat',
+        table: 'chat-talks',
+        row: 'chat-talk',
+        details: 'chat-feed',
     }),
     usage: Object.freeze({
         path: SECTIONS.usage,
@@ -105,6 +113,19 @@ export const SECTION: Readonly<Record<TSectionName, ISectionMarks>> = Object.fre
         details: '',
     }),
 });
+
+/**
+ * Прямоугольник узла на экране.
+ *
+ * Playwright отдаёт пустоту, когда узла на экране нет, и спека сверяет это отдельно: измерение
+ * пустоты молча читалось бы нулями и сходилось бы с любым обещанием о раскладке.
+ */
+export interface IBox {
+    readonly x: number;
+    readonly y: number;
+    readonly width: number;
+    readonly height: number;
+}
 
 /** Узел по метке проверки: ею размечены все места, за которые набор держится. */
 export function qa(page: Page, id: string): Locator {

@@ -12,6 +12,13 @@
             Семейства объявлены те два, что рисуются историями: обычное и контурное. Правила
             классов повторяют то, что отдавал внешний адрес, — иначе кадр сдвинулся бы вместе
             с ними, и эталоны пришлось бы пересъёмывать.
+
+            Третье — Material Symbols, шрифт значков потребителей кита: на него переключаются
+            истории избранного бокового меню, в старых наборах нет `arrows_outward` и оси
+            заливки звезды. Файл — подмножество со значками всех шаблонов кита и пунктов
+            историй бокового меню; значок вне подмножества рисуется словом. Класс повторяет
+            правила двух первых целиком: без размера и высоты строки значок берёт размер
+            текста и съезжает вниз.
         -->
         <style>
             @font-face {
@@ -26,6 +33,13 @@
                 font-style: normal;
                 font-weight: 400;
                 src: url('/fonts/material-icons-outlined.woff2') format('woff2');
+            }
+
+            @font-face {
+                font-family: 'Material Symbols Outlined';
+                font-style: normal;
+                font-weight: 100 700;
+                src: url('/fonts/material-symbols-outlined.woff2') format('woff2');
             }
 
             .material-icons {
@@ -46,6 +60,22 @@
 
             .material-icons-outlined {
                 font-family: 'Material Icons Outlined';
+                font-weight: normal;
+                font-style: normal;
+                font-size: 24px;
+                line-height: 1;
+                letter-spacing: normal;
+                text-transform: none;
+                display: inline-block;
+                white-space: nowrap;
+                word-wrap: normal;
+                direction: ltr;
+                -webkit-font-feature-settings: 'liga';
+                -webkit-font-smoothing: antialiased;
+            }
+
+            .material-symbols-outlined {
+                font-family: 'Material Symbols Outlined';
                 font-weight: normal;
                 font-style: normal;
                 font-size: 24px;

@@ -177,3 +177,61 @@ When the same audit goes
 Then no such line is printed
 
 Covered: `projects/agent-kit/tests/checks-board-columns.test.sh`.
+
+### SC-AK-1153 — a task branch that never carried its folder is named
+
+Given a task branch with a contribution of its own and no task folder in its history
+When the audit goes
+Then it names the branch by a line of its own and counts it into the divergences
+
+Covered: `projects/agent-kit/tests/checks-board-folders.test.sh`.
+
+### SC-AK-1154 — the branch of an epic is due no task folder
+
+Given a branch whose plan inside it names that same branch as the branch of an epic
+When the same audit goes
+Then it stays silent about that branch: an epic branch carries no task folder at all
+
+Covered: `projects/agent-kit/tests/checks-board-folders.test.sh`.
+
+### SC-AK-1127 — a task branch with its folder is no divergence
+
+Given the same task branch after the folder has travelled in by a commit
+When the same audit goes
+Then it stays silent about the branch
+
+Covered: `projects/agent-kit/tests/checks-board-folders.test.sh`.
+
+### SC-AK-1155 — the plan of a live epic is read out of the branch of the epic
+
+Given the card of an epic names a plan the checked-out branch does not carry, while the branch of
+that epic carries it
+When the queue audit reads the makeup of the epic
+Then the plan is read out of that branch and no line about emptiness is printed
+
+Covered: `projects/agent-kit/tests/checks-board-epic-plan.test.sh`.
+
+### SC-AK-1156 — a plan neither on disk nor in a branch stays a divergence
+
+Given the card names a path that no branch of the tree carries
+When the same audit goes
+Then it says that the card points into emptiness and counts the line into the divergences
+
+Covered: `projects/agent-kit/tests/checks-board-epic-plan.test.sh`.
+
+### SC-AK-1157 — the number of a task is read from the task column of the makeup
+
+Given a makeup row naming the task in its own column and the request that merged it in the state
+column
+When the queue audit reads which tasks the plan names
+Then it takes the number of the task and not the number of the request
+
+Covered: `projects/agent-kit/tests/checks-board-epic-plan.test.sh`.
+
+### SC-AK-1159 — the plan is taken from the epic branch while the current branch lags behind it
+
+Given the disk carries an older copy of the plan and the branch of the epic a newer one
+When the queue audit reads the makeup of the epic
+Then it takes the text of the branch, and the tasks standing only in the newer copy are counted
+
+Covered: `projects/agent-kit/tests/checks-board-epic-plan.test.sh`.

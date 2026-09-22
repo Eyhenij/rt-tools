@@ -76,6 +76,14 @@ flowchart TD
   have no closed set, and they are declared as a file constant with a telling name.
       <!-- rt-when: *.ts -->
 
+- **A set that must be complete is declared as a full record over the key type, not a partial
+  one.** A partial declaration makes a missing key lawful, and the shortage shows on the screen
+  rather than at the build. The set that must answer for every key of another one is declared by
+  that key type whole, and an unfilled key stops compiling. The type is silent about the value —
+  an empty string and a copy of the key pass it — so the completeness of values is held by a test
+  that walks the whole set, written by the same change as the declaration.
+      <!-- rt-when: *.ts -->
+
 - **A type is taken from the package where it is declared.** An own copy of a foreign type
   diverges from the original silently, and only one of them compiles.
       <!-- rt-when: *.ts -->

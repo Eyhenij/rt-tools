@@ -349,6 +349,12 @@ const config: TestRunnerConfig = {
 
         // Рябь Material и анимации панелей дают недетерминированный кадр: движение
         // останавливается, а не пережидается — пережидать пришлось бы каждый раз дольше.
+        //
+        // Останавливается на последнем кадре, а не на первом. Режим тестов Storybook сам вставляет
+        // обратное направление и паузу с `!important`, и без возврата направления анимация
+        // «доводилась до конца» в свой первый кадр: список узкого бокового меню, проявляющийся из
+        // прозрачности, снимался пустым, хотя десять пунктов лежали в разметке. Правило стоит позже
+        // вставленного, поэтому при равной силе побеждает оно.
         await page.addStyleTag({
             content: `
                 *,
@@ -356,6 +362,8 @@ const config: TestRunnerConfig = {
                 *::after {
                     animation-duration: 0s !important;
                     animation-delay: 0s !important;
+                    animation-direction: normal !important;
+                    animation-play-state: running !important;
                     transition-duration: 0s !important;
                     transition-delay: 0s !important;
                     caret-color: transparent !important;

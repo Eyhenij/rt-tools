@@ -67,7 +67,7 @@ it lives by the hovering and leaves the screen before the hand reaches the edge
 
 Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
 
-### SC-UK-69 — the handle is pulled by a pen and by a finger
+### SC-UK-125 — the handle is pulled by a pen and by a finger
 
 Given the mode is the pinned one and an open submenu
 When the handle gets a pointer press of a pen, then a movement to the right and a release
@@ -75,7 +75,7 @@ Then the panel follows the movement, and the asked width goes away outward at th
 
 Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
 
-### SC-UK-70 — a pointer taken away by the environment ends the pull
+### SC-UK-126 — a pointer taken away by the environment ends the pull
 
 Given the mode is the pinned one and a pull begun
 When the environment takes the pointer away — a gesture of the system, a call
@@ -84,7 +84,7 @@ listeners of the movement are taken off
 
 Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
 
-### SC-UK-71 — the beginning and the end of the pull go outward
+### SC-UK-127 — the beginning and the end of the pull go outward
 
 Given the mode is the pinned one and an open submenu
 When the handle is pressed, led and released
@@ -92,7 +92,7 @@ Then the event of the beginning goes outward once and the event of the end goes 
 
 Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
 
-### SC-UK-72 — a pull taken away by the environment ends outward too
+### SC-UK-128 — a pull taken away by the environment ends outward too
 
 Given the mode is the pinned one and a pull begun
 When the environment takes the pointer away instead of a release
@@ -101,7 +101,7 @@ takes it down in both cases
 
 Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
 
-### SC-UK-73 — the number that goes outward matches the drawn width
+### SC-UK-129 — the number that goes outward matches the drawn width
 
 Given the consumer set the width of the submenu by their own design, wider than the lower limit of the kit
 When a person pulls the edge to the left past that width, and the panel stops at it
@@ -111,7 +111,7 @@ Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component
 
 ## The keyboard and the reader
 
-### SC-UK-74 — the arrows move the width by a step
+### SC-UK-130 — the arrows move the width by a step
 
 Given the mode is the pinned one and a width named by the consumer
 When the handle has the focus and the arrow to the right is pressed, then the arrow to the left
@@ -119,7 +119,7 @@ Then the width asked outward grows by a step and then comes back by the same ste
 
 Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
 
-### SC-UK-75 — Home and End take the width to the limits
+### SC-UK-131 — Home and End take the width to the limits
 
 Given the mode is the pinned one and a width named by the consumer
 When the handle has the focus and `Home` is pressed, then `End`
@@ -127,7 +127,7 @@ Then outward goes the lower limit of the kit and then the upper one
 
 Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
 
-### SC-UK-76 — a key leads no pull, and the events of the pull do not come about
+### SC-UK-132 — a key leads no pull, and the events of the pull do not come about
 
 Given the mode is the pinned one and a width named by the consumer
 When the width is changed by the arrows
@@ -135,7 +135,7 @@ Then neither the event of the beginning nor the event of the end goes outward
 
 Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
 
-### SC-UK-77 — the reader names the width and both limits
+### SC-UK-133 — the reader names the width and both limits
 
 Given the mode is the pinned one and a width named by the consumer
 When the handle is looked at

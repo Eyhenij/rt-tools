@@ -8,9 +8,16 @@
 # Every function may stay silent. Silence means "there is no rule for this", and the hook lets it
 # through: an empty profile leaves the hooks harmless rather than refusing at random.
 
-# Where the showcases come up. This repository holds no applications at all: it publishes packages,
-# and what is looked at live is the showcases.
-RT_STANDS='the ui-kit showcase http://localhost:6006, the ui-kit-v2 showcase http://localhost:6007'
+# What comes up here and where. The repository publishes packages and holds two applications —
+# the cargo receiver and the admin panel to it — plus the stand of the end-to-end suite, which
+# raises production builds of both on ports of its own.
+#
+# The only reader of this list is the dev server guard, and this tree took it out by the `skip`
+# list of `.claude/rt-kit.json`: nothing here reads the variable. It is kept nonetheless, because
+# the companion of the browser rule names it as the declared list of stands, and a person reads it
+# from there. A list that is stale and unread is read as an honest one — that is exactly how it
+# came to name showcases alone while three applications stood on disk.
+RT_STANDS='the receiver http://localhost:3000, the admin panel http://localhost:4200, the end-to-end stand http://localhost:3310 and http://localhost:4310, the ui-kit showcase http://localhost:6006, the ui-kit-v2 showcase http://localhost:6007'
 
 # The shape of the number in a PR title and the task state by number are taken from the package as
 # they are.
@@ -250,6 +257,14 @@ EOF
     # набор собирает прод-сборку сам.
         case " $_touched " in *' kit2 '*) printf '%s\n%s\n' "$shot_v2" "$e2e" ;; esac
     } | awk '!seen[$0]++'
+}
+
+# The heavy steps of this tree past the package default: the showcase snapshots raise a showcase
+# and shoot it, minutes each, and the package does not know their name.
+rt_push_check_heavy() {
+    case "$1" in *visual-gate*) return 0 ;; esac
+
+    rt_push_check_heavy_default "$1"
 }
 
 # Which subjects the branch touched. It prints the subject words separated by spaces; `everything`

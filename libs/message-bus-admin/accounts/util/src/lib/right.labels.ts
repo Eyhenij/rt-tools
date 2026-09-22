@@ -34,6 +34,7 @@ const SECTION_LABEL_KEY: Readonly<Record<string, TAdminLabelKey>> = {
     proposals: 'sectionProposals',
     summaries: 'sectionSummaries',
     usage: 'sectionUsage',
+    chat: 'sectionChat',
     invites: 'sectionInvites',
     accounts: 'sectionPeople',
     roles: 'sectionRoles',

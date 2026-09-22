@@ -65,7 +65,7 @@ describe('SC-UK-35 — край закреплённого подменю тян
     });
 });
 
-describe('SC-UK-69 — ручка тянется пером и пальцем', () => {
+describe('SC-UK-125 — ручка тянется пером и пальцем', () => {
     it('перо тянет край так же, как мышь', () => {
         const { fixture, host }: ISetup = setup('pinned', ['refs']);
 
@@ -89,7 +89,7 @@ describe('SC-UK-69 — ручка тянется пером и пальцем', 
     });
 });
 
-describe('SC-UK-70 — отнятый средой указатель кончает тягу', () => {
+describe('SC-UK-126 — отнятый средой указатель кончает тягу', () => {
     it('отмена указателя отдаёт наружу дотянутую ширину', () => {
         const { fixture, host }: ISetup = setup('pinned', ['refs']);
 
@@ -123,7 +123,7 @@ describe('SC-UK-70 — отнятый средой указатель конча
     });
 });
 
-describe('SC-UK-71 — начало и конец тяги уходят наружу', () => {
+describe('SC-UK-127 — начало и конец тяги уходят наружу', () => {
     it('за одну тягу каждое событие уходит ровно по разу', () => {
         const { fixture }: ISetup = setup('pinned', ['refs']);
         const started: jest.Mock = jest.fn();
@@ -154,7 +154,7 @@ describe('SC-UK-71 — начало и конец тяги уходят нару
     });
 });
 
-describe('SC-UK-72 — отнятая средой тяга тоже кончается наружу', () => {
+describe('SC-UK-128 — отнятая средой тяга тоже кончается наружу', () => {
     it('отмена указателя отдаёт наружу конец тяги', () => {
         const { fixture }: ISetup = setup('pinned', ['refs']);
         const ended: jest.Mock = jest.fn();
@@ -171,7 +171,7 @@ describe('SC-UK-72 — отнятая средой тяга тоже конча�
     });
 });
 
-describe('SC-UK-73 — наружу уходит то число, которым панель нарисована', () => {
+describe('SC-UK-129 — наружу уходит то число, которым панель нарисована', () => {
     it('тяга влево за ширину оформления отдаёт нарисованное, а не натянутое', () => {
         const { fixture, host }: ISetup = setup('pinned', ['refs']);
 
@@ -215,7 +215,7 @@ function pressOnResizer(fixture: ComponentFixture<HostComponent>, key: string): 
     return event;
 }
 
-describe('SC-UK-74 — стрелки двигают ширину шагом', () => {
+describe('SC-UK-130 — стрелки двигают ширину шагом', () => {
     it('вправо шире на шаг, влево — обратно на него же', () => {
         const { fixture, host }: ISetup = setup('pinned', ['refs']);
 
@@ -239,7 +239,7 @@ describe('SC-UK-74 — стрелки двигают ширину шагом', (
     });
 });
 
-describe('SC-UK-75 — Home и End ведут ширину к пределам', () => {
+describe('SC-UK-131 — Home и End ведут ширину к пределам', () => {
     it('Home даёт нижний предел, End — верхний', () => {
         const { fixture, host }: ISetup = setup('pinned', ['refs']);
 
@@ -256,7 +256,7 @@ describe('SC-UK-75 — Home и End ведут ширину к пределам',
     });
 });
 
-describe('SC-UK-76 — клавиша тяги не ведёт, и событий тяги нет', () => {
+describe('SC-UK-132 — клавиша тяги не ведёт, и событий тяги нет', () => {
     it('ни начало, ни конец наружу не уходят', () => {
         const { fixture, host }: ISetup = setup('pinned', ['refs']);
         const started: jest.Mock = jest.fn();
@@ -275,7 +275,7 @@ describe('SC-UK-76 — клавиша тяги не ведёт, и событи�
     });
 });
 
-describe('SC-UK-77 — диктор называет ширину и оба предела', () => {
+describe('SC-UK-133 — диктор называет ширину и оба предела', () => {
     it('ручка стоит в обходе табуляцией и несёт три числа', () => {
         const { fixture, host }: ISetup = setup('pinned', ['refs']);
 

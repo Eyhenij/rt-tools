@@ -25,9 +25,13 @@ export class RateLimitService {
      *
      * Ключ пустым не бывает: чем зовётся клиент, решает вызывающий, и «неизвестно» у него тоже
      * ключ — иначе неопознанные обращения обходили бы предел все разом.
+     *
+     * Предел и окно приходят доводами: у обращения дерева за токеном и у реплики посетителя
+     * чата они разные, а счётчик один — второй такой же держал бы те же отметки под своим
+     * замком и расходился бы с первым молча.
      */
-    public allow(key: string, at: Date): boolean {
-        const verdict: IRateVerdict = rateVerdict(this.#marks.get(key) ?? [], at);
+    public allow(key: string, at: Date, limit?: number, windowMs?: number): boolean {
+        const verdict: IRateVerdict = rateVerdict(this.#marks.get(key) ?? [], at, limit, windowMs);
 
         if (verdict.marks.length === 0) {
             this.#marks.delete(key);

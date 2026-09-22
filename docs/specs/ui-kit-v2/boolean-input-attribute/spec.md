@@ -122,3 +122,6 @@ count, `Q-2` by the scenario about the string `false`.
   coercion, and all eleven took it. `Q-2` closed by the scenario `SC-UKV-135`.
 - 14 September 2026 — brought into force and moved into the domain spec: the code is written, the
   check stands in the gate set, every scenario is closed by a test.
+- 22 September 2026 — the main branch merged into the epic branch brought SC-UKV-133 already in force
+  in the tokens spec. The scenario of this spec, issued in the epic branch alone, moved to SC-UKV-235
+  together with its test.

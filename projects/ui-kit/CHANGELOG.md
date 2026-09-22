@@ -1,3 +1,45 @@
+# [0.9.0](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.8.0...rt-tools@0.9.0) (2026-09-22)
+
+### Bug Fixes
+
+- **rt:ui-kit:** два узких эталона избранного взяты с кадра раннера ([49f2bc1](https://github.com/Eyhenij/rt-tools/commit/49f2bc18877a4cf8a1cfafb018b04802cd6c96fc))
+- **rt:ui-kit:** корзина не краснеет от касания на сенсорном экране ([10004d0](https://github.com/Eyhenij/rt-tools/commit/10004d00257e86659cd412c08712489a49ba7aa7))
+
+### Features
+
+- **rt:ui-kit:** кнопки избранного рисуют значки из настроек ([26f72ed](https://github.com/Eyhenij/rt-tools/commit/26f72ed440b62f38f34b0ec775b9a10d2e8a4fda))
+- **rt:ui-kit:** корзина избранного краснеет под указателем ([fca13b0](https://github.com/Eyhenij/rt-tools/commit/fca13b03ae0189f74a87463ec48a1f39f9c04391))
+- **rt:ui-kit:** настройки меню отдают значки избранного ([491ecee](https://github.com/Eyhenij/rt-tools/commit/491eceed0deee184441e4cdc96cd171ca19cd717))
+
+# [0.8.0](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.7.1...rt-tools@0.8.0) (2026-09-22)
+
+### Bug Fixes
+
+- **rt:ui-kit:** в шрифте витрины — все значки шаблонов кита ([3c101f8](https://github.com/Eyhenij/rt-tools/commit/3c101f8cfffa9195464c78c51e8725ed26eec33a))
+- **rt:ui-kit:** витрина избранного рисует значки шрифтом Material Symbols ([8b26507](https://github.com/Eyhenij/rt-tools/commit/8b26507fa0ad6f8ada91e7ea81c0a8b6f6948279))
+- **rt:ui-kit:** звезда избранного в цвете темы Material, заголовок крупнее ([2cbcecb](https://github.com/Eyhenij/rt-tools/commit/2cbcecb96871c3abeb9f27f85befa1736bcf77f0))
+- **rt:ui-kit:** значки избранного по центру кнопки, в витрине — папки ([22a9abf](https://github.com/Eyhenij/rt-tools/commit/22a9abf8fef1b6a68829ba6e66509d8d309b7c9e))
+- **rt:ui-kit:** избранное по ревью — раздел по показанному набору, удержание, клавиатура ([9a7342d](https://github.com/Eyhenij/rt-tools/commit/9a7342d4f1ef1d307611e41f2044e19b025191a8))
+- **rt:ui-kit:** пустой номер меню — номер по умолчанию, перенос по видимым в сервисе ([8eb0fa4](https://github.com/Eyhenij/rt-tools/commit/8eb0fa478ff1d646de9f541b85d3529695556d63))
+- **rt:ui-kit:** пять эталонов таблицы и списка взяты с кадра раннера ([f258480](https://github.com/Eyhenij/rt-tools/commit/f2584801be5b6046488c66cc420c18750c3e5792))
+- **rt:ui-kit:** ручка внутри пункта, «+» последним, шеврон в столбце звёзд ([17ba8a3](https://github.com/Eyhenij/rt-tools/commit/17ba8a30cef6be9f8c90bf0542c592df7ff115ac))
+- **rt:ui-kit:** ручка избранного справа, после кнопки «убрать» ([c9042b7](https://github.com/Eyhenij/rt-tools/commit/c9042b7da0a6fac7a536d6c5b52de61c41acbb26))
+- **rt:ui-kit:** снимки витрины берут анимации на последнем кадре ([59c1a8d](https://github.com/Eyhenij/rt-tools/commit/59c1a8d1cf7cddb9597c3d8f8667f2c1c9eccaaa)), closes [#2303](https://github.com/Eyhenij/rt-tools/issues/2303)
+- **rt:ui-kit:** снятая мышью звезда прячется, когда указатель ушёл ([83f389e](https://github.com/Eyhenij/rt-tools/commit/83f389e7a784bd596c6272f7d0e7359f60a667ca))
+- **rt:ui-kit:** тень строки в руке — без имени, общего со вторым китом ([458db5b](https://github.com/Eyhenij/rt-tools/commit/458db5b70bb95ae0fd11dd772a42c9fa49dd0133))
+- **rt:ui-kit:** удержание подменю снимается, когда строка избранного пропала или брошена за панелью ([1cbe425](https://github.com/Eyhenij/rt-tools/commit/1cbe425412f0a5aa5af2eda0593463d6b58adde0))
+- **rt:ui-kit:** цвета, размеры и отступы избранного — свойствами приложения ([5082845](https://github.com/Eyhenij/rt-tools/commit/5082845e1fd63e9e7f03298d07cd5d2d97c2eb08))
+- **rt:ui-kit:** шрифт Material Symbols витрины объявлен рядом с остальными ([9ade200](https://github.com/Eyhenij/rt-tools/commit/9ade200215c61025e565272080e5e36ec2bb1154))
+
+### Features
+
+- **rt:ui-kit:** витрина показывает избранное бокового меню ([f17bf8d](https://github.com/Eyhenij/rt-tools/commit/f17bf8db9343275999b5591d6d9b7da276d1cc43))
+- **rt:ui-kit:** звезда у раздела и блок избранного вверху подменю бокового меню ([df79ef4](https://github.com/Eyhenij/rt-tools/commit/df79ef432500d7294afa1ec515e04748fe5eb4c5))
+- **rt:ui-kit:** избранное включается у раздела, в блоке — кнопка «убрать» ([86f4684](https://github.com/Eyhenij/rt-tools/commit/86f46845d1a4b6f7f552b55daa81348903786dbe))
+- **rt:ui-kit:** мода и ширина подменю в настройках меню рядом с избранным ([4a6ba65](https://github.com/Eyhenij/rt-tools/commit/4a6ba656426078e0bf6468f933a8061aa70532a1))
+- **rt:ui-kit:** настройки бокового меню в одном ключе, по номеру меню ([8109cc0](https://github.com/Eyhenij/rt-tools/commit/8109cc0d7eb4aa1576e220e4e015903feae9ee48))
+- **rt:ui-kit:** сервис избранного бокового меню хранит список в localStorage ([f31a01a](https://github.com/Eyhenij/rt-tools/commit/f31a01afab33420cf495207724ac68905f0d2d8e))
+
 ## [0.7.1](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.7.0...rt-tools@0.7.1) (2026-09-10)
 
 ### Bug Fixes

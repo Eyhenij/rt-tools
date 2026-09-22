@@ -332,3 +332,212 @@ model Session {
     @@index([accountId])
     @@map("session")
 }
+
+/// Сторона сообщения: кто его написал. Двух слов хватает на весь эпик — отвечают посетителю
+/// операторы, а не служба: ответа машины договорённость не обещает.
+enum ChatSide {
+    /// Написал посетитель сайта.
+    visitor
+    /// Написал оператор пространства.
+    operator
+}
+
+/// Пространство чата: сайты и операторы одного клиента сервиса. Всё, что есть у чата, лежит
+/// внутри пространства — без этого клиент увидел бы переписки соседа по первой ошибке в адресе.
+model ChatSpace {
+    id        String   @id @default(uuid())
+    /// Читаемое имя: его называет владелец при заведении.
+    name      String   @unique
+    createdAt DateTime @default(now())
+
+    sites     ChatSite[]
+    operators ChatOperator[]
+
+    @@map("chat_space")
+}
+
+/// Сайт: площадка, на которой стоит виджет. Принадлежит одному пространству и несёт свой ключ.
+model ChatSite {
+    id      String    @id @default(uuid())
+    spaceId String
+    space   ChatSpace @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+    /// Читаемое имя площадки: по нему оператор отличает сайты в панели.
+    name    String
+    /// Ключ сайта: открытый признак, которым виджет называет сайт. Лежит в скрипте страницы и
+    /// тайной не является — прав, кроме приёма реплики, он не даёт.
+    key     String    @unique
+    /// Адреса страниц, с которых зовут операции этого сайта. Пустой список отказывает всему:
+    /// сайт, у которого он не заполнен, ещё никуда не поставлен.
+    origins String[]
+    /// Выключенный сайт отвечает как неизвестный: по ответу эти две причины не различаются.
+    enabled Boolean   @default(true)
+    /// Приветствие площадки: его виджет показывает до первой реплики. Пусто — виджет открывается
+    /// сразу полем набора, и это законное состояние площадки, которой сказать нечего.
+    greeting String    @default("")
+    /// Часы ответа минутами суток в часовом поясе площадки. Равные значения означают, что часы
+    /// не названы: виджет тогда молчит о них и ничего не обещает.
+    answerFrom Int     @default(0)
+    answerTo   Int     @default(0)
+    /// Часовой пояс площадки именем базы поясов. Пусто — часы считаются по поясу узла.
+    timeZone   String  @default("")
+    /// Адрес, по которому сервис зовёт приложение площадки. Пусто — площадка вызовов наружу не
+    /// получает вовсе, и это законное её состояние.
+    hookUrl    String  @default("")
+    /// Тайна подписи вызова: ею приложение отличает сервис от любого, кто узнал адрес. Без неё
+    /// вызовы не уходят — площадка с адресом, но без тайны настроена наполовину.
+    hookSecret String  @default("")
+    /// Через сколько минут без ответа переписка будит оператора. Ноль — будильник выключен.
+    answerWithin Int   @default(0)
+    createdAt DateTime @default(now())
+
+    visitors      ChatVisitor[]
+    conversations ChatConversation[]
+    operators     ChatOperatorSite[]
+    hookCalls     ChatHookCall[]
+
+    @@index([spaceId])
+    @@map("chat_site")
+}
+
+/// Вызов наружу: что ушло в приложение площадки, когда и чем кончилось.
+///
+/// Запись обязательна: успех отправки ещё не значит, что приложение вызов приняло, а вызов,
+/// который не ушёл вовсе, и вызов, отбитый принимающей стороной, без неё выглядят одинаково.
+model ChatHookCall {
+    id             String       @id @default(uuid())
+    siteId         String
+    site           ChatSite     @relation(fields: [siteId], references: [id], onDelete: Cascade)
+    /// Переписка, о которой вызов. Она же стоит в теле вызова.
+    conversationId String
+    /// Род события: о чём сервис говорит приложению.
+    kind           ChatHookKind
+    /// Тело вызова, как оно ушло: по нему считалась подпись.
+    body           String
+    /// Сколько попыток сделано. Предел попыток называет сервис одним местом.
+    attempts       Int          @default(0)
+    /// Код ответа последней попытки. Пусто — ответа не было вовсе.
+    lastStatus     Int?
+    /// Чем кончилась последняя попытка, когда ответа не было: причина словами.
+    lastFault      String       @default("")
+    /// Минута, которой вызов приняли. Пусто — не приняли ни разу.
+    deliveredAt    DateTime?
+    createdAt      DateTime     @default(now())
+
+    @@index([siteId, createdAt])
+    @@map("chat_hook_call")
+}
+
+/// Род события, уходящего наружу. Ответ оператора сюда не входит: приложение узнаёт о нём из
+/// той самой панели, в которой оператор его и написал.
+enum ChatHookKind {
+    /// Посетитель написал реплику.
+    remark
+    /// Оператор закрыл переписку.
+    closing
+    /// На переписку никто не ответил условленное время.
+    unanswered
+}
+
+/// Посетитель: тот, кто пишет с сайта без входа. Узнаётся признаком, который выдал сервис, —
+/// придуманный страницей опознаватель дал бы читать чужую переписку по догадке.
+model ChatVisitor {
+    id     String   @id @default(uuid())
+    siteId String
+    site   ChatSite @relation(fields: [siteId], references: [id], onDelete: Cascade)
+    /// Признак посетителя, как он выдан виджету. Открывает одну переписку одного сайта и
+    /// ничего кроме неё.
+    token  String
+    /// Минута первого обращения: по ней видно, когда посетитель пришёл впервые.
+    firstSeenAt DateTime @default(now())
+
+    conversations ChatConversation[]
+
+    @@unique([siteId, token])
+    @@map("chat_visitor")
+}
+
+/// Переписка: разговор одного посетителя на одном сайте. Живая переписка у посетителя одна —
+/// иначе перезагрузка страницы рвала бы разговор на куски, которые оператор видит как разных людей.
+model ChatConversation {
+    id        String      @id @default(uuid())
+    siteId    String
+    site      ChatSite    @relation(fields: [siteId], references: [id], onDelete: Cascade)
+    visitorId String      @unique
+    visitor   ChatVisitor @relation(fields: [visitorId], references: [id], onDelete: Cascade)
+    createdAt DateTime    @default(now())
+    /// Минута последнего сообщения: по ней панель оператора ставит переписки по свежести.
+    lastMessageAt DateTime @default(now())
+    /// Жива переписка или закрыта. Заводится живой: закрывает её оператор, а реплика посетителя
+    /// открывает снова — иначе вернувшийся человек писал бы туда, куда никто не смотрит.
+    state         ChatConversationState @default(live)
+    /// Минута, которой переписка последний раз будила оператора. Пусто — не будила ни разу.
+    /// Ответ оператора её снимает: иначе одна переписка будила бы каждую минуту, и приложение
+    /// научилось бы не смотреть на эти вызовы вовсе.
+    wokeAt        DateTime?
+
+    messages ChatMessage[]
+
+    @@index([siteId, state, lastMessageAt])
+    @@map("chat_conversation")
+}
+
+/// Сообщение: одна реплика разговора. Порядок задаёт минута приёма сервисом, а не часы
+/// отправителя: неверные часы одной страницы перемешали бы разговор всем, кто его читает.
+model ChatMessage {
+    id             String           @id @default(uuid())
+    conversationId String
+    conversation   ChatConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+    /// Кто написал реплику.
+    side           ChatSide
+    /// Текст реплики целиком. Пустой не принимается, предел длины держит операция приёма.
+    text           String
+    /// Минута приёма сервисом.
+    takenAt        DateTime         @default(now())
+
+    @@index([conversationId, takenAt])
+    @@map("chat_message")
+}
+
+/// Состояние переписки: жива она или закрыта. Двух слов хватает на весь эпик — третье сперва
+/// пишется в договорённость, и только потом в код: набор читает экран, и значение, которого он не
+/// знает, показывается машинной строкой.
+enum ChatConversationState {
+    /// Разговор идёт: он в списке оператора и ждёт ответа.
+    live
+    /// Разговор закрыт оператором. Реплика посетителя открывает его снова.
+    closed
+}
+
+/// Оператор чата: человек пространства, который читает переписки и отвечает на них.
+///
+/// Учётную запись приёмника запись называет колонкой, а не связью: таблиц приёма чат не трогает —
+/// связь завела бы обратное поле в чужой записи. Своей двери входа у оператора нет, и эпик её не
+/// обещал: представляется он входом человека в приёмник.
+model ChatOperator {
+    id        String    @id @default(uuid())
+    spaceId   String
+    space     ChatSpace @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+    /// Признак учётной записи приёмника, входом которой представляется оператор.
+    accountId String
+    createdAt DateTime  @default(now())
+
+    sites ChatOperatorSite[]
+
+    @@unique([spaceId, accountId])
+    @@index([accountId])
+    @@map("chat_operator")
+}
+
+/// За какие сайты отвечает оператор. Чего в этом наборе нет, того он не видит вовсе: набор идёт в
+/// сам запрос чтения, а не отсеивается после него.
+model ChatOperatorSite {
+    operatorId String
+    operator   ChatOperator @relation(fields: [operatorId], references: [id], onDelete: Cascade)
+    siteId     String
+    site       ChatSite     @relation(fields: [siteId], references: [id], onDelete: Cascade)
+    addedAt    DateTime     @default(now())
+
+    @@id([operatorId, siteId])
+    @@index([siteId])
+    @@map("chat_operator_site")
+}

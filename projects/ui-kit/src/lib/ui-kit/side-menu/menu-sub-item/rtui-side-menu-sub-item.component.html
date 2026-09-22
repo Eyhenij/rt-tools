@@ -6,8 +6,8 @@
     @if (item?.link) {
         <mat-list-item
             rtBlock="rtui-side-menu-sub-item"
-            [rtMod]="{ fixed: isSubMenuXScrollEnabled(), highlighted: menuRef.highlightedMenuId() === item.id }"
-            [id]="item.id"
+            [rtMod]="{ fixed: isSubMenuXScrollEnabled(), highlighted: !inFavorites() && menuRef.highlightedMenuId() === item.id }"
+            [id]="inFavorites() ? null : item.id"
             [activated]="menuRef.activeMenuIds().includes(item.id)"
             (click)="onClickSubMenu(item, $event)">
             @if (item?.icon) {
@@ -15,7 +15,7 @@
             }
 
             @if (item?.name) {
-                <div rtBlock="rtui-side-menu-sub-item-title">
+                <div rtBlock="rtui-side-menu-sub-item-title" [rtMod]="{ favorites: favoritesOn() || inFavorites() }">
                     <div
                         #titleTpl
                         rtElem="text"
@@ -43,6 +43,67 @@
                         }
                     </div>
 
+                    <!--
+                        Строка блока избранного несёт кнопку «убрать», а не звезду: всё в блоке уже
+                        в избранном, и звезда там ничего не различала бы.
+                    -->
+                    @if (inFavorites() && favorites) {
+                        <button
+                            mat-icon-button
+                            type="button"
+                            rtElem="favorite"
+                            qa-dataid="side-menu-favorite-remove"
+                            matTooltipPosition="above"
+                            [rtMod]="{ always: narrow(), remove: true }"
+                            [matTooltip]="favorites.labels.remove"
+                            [matTooltipDisabled]="narrow()"
+                            [attr.aria-label]="favorites.labels.remove"
+                            (click)="onRemoveFavorite(item, $event)"
+                            (focusin)="onFavoriteFocus($event)">
+                            <mat-icon rtElem="favorite-icon" [rtIconOutlined]="true" [style.rotate.deg]="favorites.icons.remove.rotate">
+                                {{ favorites.icons.remove.glyph }}
+                            </mat-icon>
+                        </button>
+                    } @else if (favoritesOn() && favorites && item.link?.trim()) {
+                        <!--
+                            Звезда — у пункта со своим адресом в разделе, где приложение включило
+                            избранное. Полая — не в избранном, закрашенная цветом темы — в нём.
+                            Заливку дают и глиф, и ось заливки: статичный набор значков оси не знает,
+                            а у переменного `star` без оси рисуется полым.
+
+                            Имя кнопки называет следующее нажатие, и `aria-pressed` у неё нет:
+                            нажатая кнопка с именем «убрать» читалась бы вдвое.
+                        -->
+                        @let isFavorite = favoriteIds().includes(item.id);
+                        <button
+                            mat-icon-button
+                            type="button"
+                            rtElem="favorite"
+                            qa-dataid="side-menu-favorite-star"
+                            matTooltipPosition="above"
+                            [rtMod]="{ on: isFavorite, always: narrow() }"
+                            [matTooltip]="isFavorite ? favorites.labels.remove : favorites.labels.add"
+                            [matTooltipDisabled]="narrow()"
+                            [attr.aria-label]="isFavorite ? favorites.labels.remove : favorites.labels.add"
+                            (click)="onToggleFavorite(item, $event)"
+                            (focusin)="onFavoriteFocus($event)">
+                            <mat-icon rtElem="favorite-icon" [rtIconOutlined]="!isFavorite">
+                                {{ isFavorite ? 'star' : 'star_border' }}
+                            </mat-icon>
+                        </button>
+                    }
+
+                    <!--
+                        Действия, которые строке передаёт владелец: блок избранного кладёт сюда ручку
+                        перетаскивания. Слот один на шаблон — подпункт со ссылкой рисуется один раз.
+                    -->
+                    <ng-content select="[rtuiSideMenuSubItemAction]" />
+
+                    <!--
+                        Кнопка потребителя видна всегда и потому стоит последней, у правого края:
+                        кнопки избранного, появляющиеся под наведением, встают перед ней и не
+                        сдвигают её.
+                    -->
                     @if (item?.iconButton?.icon) {
                         <div rtBlock="rtui-side-menu-sub-item-title-button">
                             <mat-icon
@@ -73,6 +134,7 @@
                 [rtMod]="{
                     activated: menuRef.activeMenuIds().includes(item.id),
                     highlighted: menuRef.highlightedMenuId() === item.id,
+                    favorites: favoritesOn(),
                 }">
                 @if (item?.icon) {
                     <mat-icon matListItemIcon rtElem="icon" [rtIconOutlined]="isSubMenuIconsOutlined()">{{ item.icon }}</mat-icon>

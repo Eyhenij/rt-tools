@@ -57,7 +57,12 @@ skill_for() {
                 # `*.spec.ts`, which gives a spec to the component check rule: the node's code has
                 # no showcases, no snapshots and no layout measurements, and out of forty-odd
                 # kilobytes of that rule it needs one line.
-                */projects/agent-kit/*.spec.ts | */tools/*.spec.ts | */tools/*.test.ts)
+
+                # A check of the tree and the cases next to it fall here too: the verifiability
+                # rule holds everything such a check is written by — its place in the gate and in
+                # the pipeline, the shape of its accepted list, the fail-open of a guard — while
+                # the default leads neither the check nor a shell case file to any rule at all.
+                */projects/agent-kit/*.spec.ts | */tools/*.spec.ts | */tools/*.test.ts | */tools/*.test.sh | */tools/tests/* | */tools/check-*.mjs)
                     printf '%s\n' 'testing'
                     return 0
                     ;;
@@ -102,6 +107,15 @@ skill_for() {
                 # stand: they are edited by the shared verifiability rule together with the stand
                 # rule, not by the rule of a kit component's spec. The branch stands before the
                 # general `*.spec.ts` and before the server one: their file names are the same.
+                # The references of the suite lie inside its directory, and the branch above them
+                # used to answer for them too: the frame rule was never reached on a reference at
+                # all. A frame is judged by the component check rule — the same one that judges a
+                # story frame — so it stands before the branch of the suite, not after it.
+                */apps/message-bus-admin-e2e/__snapshots__/* | */apps/message-bus-admin-e2e/*/__snapshots__/*)
+                    printf '%s\n' 'ui-component-tests'
+                    return 0
+                    ;;
+
                 */apps/message-bus-admin-e2e/*)
                     printf '%s\n' 'testing'
                     printf '%s\n' 'browser-verification'
@@ -171,8 +185,38 @@ skill_for() {
                     return 0
                     ;;
 
+                # A file that is neither a component nor a store and still builds a derived
+                # value. The signal rules are about exactly that, and by path alone such a file
+                # reads as ordinary code: the derived text of a refusal was first put into a kit
+                # signal from an `effect`, and the rule forbidding that was loaded only on the fix.
+                # Judged by what is written into the file, not by its name.
+                */apps/message-bus/*.ts | */libs/message-bus*/*.ts)
+                    if printf '%s' "$written" | grep -qE '(^|[^[:alnum:]_])(effect|computed|toSignal)\('; then
+                        printf '%s\n' 'angular-patterns'
+                    else
+                        printf '%s\n' 'typescript-conventions'
+                    fi
+                    return 0
+                    ;;
+
                 */apps/message-bus/* | */libs/message-bus*/*)
                     printf '%s\n' 'typescript-conventions'
+                    return 0
+                    ;;
+
+                # The showcase page head and its own stylesheets: the icon fonts and their class
+                # rules live here. A font declared in the stylesheet broke the paint probe, and a
+                # class without a size shifted the menu icons; no rule was asked for either edit.
+                # The branch stands before the general styles one: a showcase stylesheet is still
+                # styles, so the styling pair follows the showcase rule.
+                */.storybook/preview-head.html)
+                    printf '%s\n' 'rt-tools-storybook'
+                    return 0
+                    ;;
+                */.storybook/*.scss | */.storybook/*.css)
+                    printf '%s\n' 'rt-tools-storybook'
+                    printf '%s\n' 'styling-bem'
+                    printf '%s\n' 'rt-tools-styling'
                     return 0
                     ;;
 
