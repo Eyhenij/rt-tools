@@ -4,7 +4,7 @@ kind: rule
 law: code-structure
 description: Rule under the code-structure law. Load when editing any .ts except a component, service, directive, pipe, guard or interceptor — strict typing, access modifiers, file names, prefixes, no casting in a mapper. Pattern ts-procedure.
 ---
-<!-- rt-kit v0.29.0 · rules/typescript-conventions.md · 09d9b5fd6153 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · rules/typescript-conventions.md · c9c509405efe · правится надстройкой, не здесь -->
 
 # Code structure — how it works here
 
@@ -75,6 +75,14 @@ flowchart TD
   `util` layer of the domain that owns the set, and what is shared by several applications — in
   the shared lib. A single address, a separator and a signature sign do not become an enum: they
   have no closed set, and they are declared as a file constant with a telling name.
+      <!-- rt-when: *.ts -->
+
+- **A set that must be complete is declared as a full record over the key type, not a partial
+  one.** A partial declaration makes a missing key lawful, and the shortage shows on the screen
+  rather than at the build. The set that must answer for every key of another one is declared by
+  that key type whole, and an unfilled key stops compiling. The type is silent about the value —
+  an empty string and a copy of the key pass it — so the completeness of values is held by a test
+  that walks the whole set, written by the same change as the declaration.
       <!-- rt-when: *.ts -->
 
 - **A type is taken from the package where it is declared.** An own copy of a foreign type

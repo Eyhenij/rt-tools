@@ -240,3 +240,13 @@ Then it does not promise merging by sections and says outright that a resource o
 override by sections: a promise true of a third of the cases sends people to work by it
 
 Covered: `projects/agent-kit/tests/rule-source-guard.test.sh`.
+
+### SC-AK-1140 — a quote inside a heredoc body is not a write target
+
+Given the command writes a document by a heredoc, and inside the body stands a quote line with a
+path of another file
+When the shared parse takes the write targets out of the command text
+Then the path from the quote is named by nothing, and the target standing before the body is named
+as before
+
+Covered: `projects/agent-kit/tests/shell-write-paths.test.sh`.

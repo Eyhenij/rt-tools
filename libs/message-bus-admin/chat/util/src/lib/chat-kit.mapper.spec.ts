@@ -1,10 +1,23 @@
+import { EChatTalkState } from '@rt/message-bus-common';
 import { ERtChatMessageStatus, IRtChat } from '@rt-tools/ui-kit-v2';
 
-import { chatKitMessage, chatKitThread, IChatSideLabels } from './chat-kit.mapper';
+import { chatKitMessage, chatKitTalk, chatKitTalks, chatKitThread, IChatKitTalkRow, IChatSideLabels } from './chat-kit.mapper';
 import { EChatSendState, EChatSide, IChat } from './chat.model';
 
 /** Подписи сторон: на экране их даёт набор подписей, здесь — довод пробы. */
 const LABELS: IChatSideLabels = { operator: 'Оператор', visitor: 'Посетитель' };
+
+/** Разговор панели: остальные поля пробам безразличны. */
+function talk(id: string): IChat.Talk.State {
+    return {
+        id,
+        siteId: 'site-1',
+        state: EChatTalkState.Live,
+        lastMessageAt: '2026-09-21T10:00:00.000Z',
+        lastMessage: 'Здравствуйте',
+        lastMessageSide: EChatSide.Visitor,
+    };
+}
 
 /** Реплика панели: сторона и состояние отправки задаются каждой пробой. */
 function message(side: EChatSide, send: EChatSendState = EChatSendState.Taken): IChat.Message.State {
@@ -59,5 +72,28 @@ describe('перевод реплики панели в реплику кита'
         ];
 
         expect(chatKitThread(feed, LABELS).map((one: IRtChat.Message): string => String(one.id))).toEqual(['первая', 'вторая']);
+    });
+});
+
+describe('перевод разговора панели в строку готового списка', () => {
+    it('разговор доезжает до строки целиком: шаблон строки рисует его поля', () => {
+        const row: IChatKitTalkRow = chatKitTalk(talk('talk-1'));
+
+        expect(row.id).toBe('talk-1');
+        expect(row.siteId).toBe('site-1');
+        expect(row.lastMessage).toBe('Здравствуйте');
+        expect(row.lastMessageSide).toBe(EChatSide.Visitor);
+    });
+
+    it('непрочитанных у разговора нет: приёмник их не считает', () => {
+        // положительная пара к лжи признака: сам разговор на месте, и дело именно в непрочитанных
+        expect(chatKitTalk(talk('talk-1')).id).toBe('talk-1');
+        expect(chatKitTalk(talk('talk-1')).hasUnread).toBe(false);
+    });
+
+    it('порядок списка переводом не меняется', () => {
+        const rows: IChatKitTalkRow[] = chatKitTalks([talk('первый'), talk('второй')]);
+
+        expect(rows.map((row: IChatKitTalkRow): string => String(row.id))).toEqual(['первый', 'второй']);
     });
 });

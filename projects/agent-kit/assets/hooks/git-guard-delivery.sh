@@ -368,7 +368,8 @@ command -v rt_epic_own_pull >/dev/null 2>&1 && rt_epic_own_pull "$state"
 title=''
 if command -v perl >/dev/null 2>&1; then
     title="$(printf '%s' "$cmd" | perl -0ne '
-        if (/(?:--title|-t)(?:=|\s+)(?:"((?:[^"\\]|\\.)*)"|\x27([^\x27]*)\x27|(\S+))/s) {
+        my $v = qr/(?:"((?:[^"\\]|\\.)*)"|\x27([^\x27]*)\x27|(\S+))/;
+        if (/--title(?:=|\s+)$v/s || /(?<![-\w])-t(?:=|\s+)$v/s) {
             print defined $1 ? $1 : (defined $2 ? $2 : $3);
         }
     ' 2>/dev/null)"

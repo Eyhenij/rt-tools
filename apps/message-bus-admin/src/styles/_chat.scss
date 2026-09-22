@@ -23,26 +23,17 @@
 
     &__talks {
         display: flex;
+        overflow: hidden;
         min-width: 0;
         flex-direction: column;
         border: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
         border-radius: var(--rt-radius-lg);
         background: var(--rt-color-bg-surface);
-        gap: var(--rt-space-xs);
-        overflow-y: auto;
-        padding-block: var(--rt-space-sm);
 
         @media (max-width: bp.$rt-bp-md) {
             max-height: 40vh;
             order: 2;
         }
-    }
-
-    &__filters {
-        display: flex;
-        flex-wrap: wrap;
-        gap: var(--rt-space-sm);
-        padding-inline: var(--rt-space-sm);
     }
 
     &__feed {
@@ -75,32 +66,18 @@
  * Строка списка переписок: сайт и состояние верхней строкой, последняя реплика — второй.
  *
  * Реплика обрезается многоточием: тексты посетителей любой длины, а место строки одно, и
- * убежавший за край текст лёг бы поверх соседа. Целиком её человек видит в ленте — туда и ведёт
- * нажатие на строку.
+ * убежавший за край текст лёг бы поверх соседа. Целиком её человек видит в ленте.
+ *
+ * Нажатие, наведение и окраска выбранной строки — дело готового списка кита: кнопку строки он
+ * рисует сам, а здесь лежит только то, что у строки внутри.
  */
 .admin-chat-talk {
-    display: block;
-
-    &__button {
-        display: grid;
-        width: 100%;
-        padding: var(--rt-space-sm) var(--rt-space-md);
-        border: none;
-        background: transparent;
-        color: var(--rt-color-text-primary);
-        cursor: pointer;
-        gap: var(--rt-space-2xs);
-        grid-template-columns: 1fr auto;
-        text-align: start;
-
-        &:hover {
-            background: var(--rt-color-bg-hover);
-        }
-
-        &[aria-current='true'] {
-            background: var(--rt-color-bg-surface-subtle);
-        }
-    }
+    display: grid;
+    min-width: 0;
+    flex: 1 1 auto;
+    gap: var(--rt-space-2xs);
+    grid-template-columns: 1fr auto;
+    text-align: start;
 
     &__site {
         overflow: hidden;

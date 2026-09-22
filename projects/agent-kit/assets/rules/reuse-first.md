@@ -14,7 +14,7 @@ the same; here — what that stands on in this tree and what it is called.
 
 | In the law                            | Here                                                                                                                                              |
 | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| the ready-made                        | the kit components of `@rt-tools/ui-kit-v2` with the `rt-` prefix — over seventy today — and selectorless base classes inherited in a screen's `@Component` |
+| the ready-made                        | the kit components of `@rt-tools/ui-kit-v2` with the `rt-` prefix and selectorless base classes inherited in a screen's `@Component` |
 | the layout of pages, forms and windows | `apps/<app>/src/styles/`, applied with the BEM directives                                                                                        |
 | styling of a part of the application  | the `.scss` file next to the component                                                                                                            |
 | a departure decided by the owner      | the `native-ok` marker with an explanation — a comment on the line above or in the line itself                                                    |
@@ -112,13 +112,19 @@ flowchart TD
 
 ## What of the law is not here
 
-The same response of an input field to an error is held by the kit: nobody in this tree inherits
-`RtFormControlBase`, because fields are taken as its ready-made components. There is nothing here
-to bind this article of the law to.
+Two articles of the law are counted by no check, and each of them is a number about a tree.
+Whether a field of the application answers an error the way the ready-made one does; how many
+places report a success or a failure by their own markup instead of the shared bus. A template or
+styles inside the decorator is not a third of them: the package set carries a sign for that, and a
+tree that declared the set gets a refusal on such an edit.
 
-An inline template stands on one component, and the same one has the only `styles:` — the admin
-header. `role="alert"` is written by hand in sixteen templates, and `rt-message` is called by one
-consumer. That is debt, not a permitted departure.
+A number like that is not written into a text at all: it goes stale by itself, with no edit in the
+tree, and a stale number reads as a current one. The companion of the rule writes the way to ask
+it — the command, and what the answer of that command is a measurement of — and the answer stays
+where it is true, in the tree.
+
+The law's article about stopping a departure before the file is written is held in part, and the
+part that is missing is named below, where the signs are described.
 
 ## Patterns
 
@@ -152,6 +158,11 @@ A sign names its scope: inheriting a base and a class decorator do not land in a
 sign judging them by the added text is always silent. A sign also names its cancel — a sample
 under which it does not fire: the base is already inherited, the ready-made is already called.
 
+The boundary of a sign is the text by which it is recognised. A whole piece drawn by hand in place
+of a ready-made component is assembled from ordinary markup nodes, and no sign names it: a screen
+that drew its own feed of messages instead of the kit's passes the guard and the full check alike.
+A declared set closes native controls, overlays and layout, and not that.
+
 ## Pitfalls
 
 - **A sample is searched for by the kit's names, not by what the kit is written on.** A search by
@@ -165,10 +176,21 @@ under which it does not fire: the base is already inherited, the ready-made is a
   changes its indent while staying the same code.
 - An answer given before reading the sample is overruled by the sample: the agreed shape of a list
   query was replayed together with the contract two questions after it was accepted.
-- **A set is declared by what the tree consumes, not by what the package ships.** A tree in which
-  the kit is written, not called, having declared its set, gets advice to call the kit on the
-  kit's own files: the sign is right but pointed the wrong way. Such a tree declares only the sets
-  whose ready-made it takes from outside.
+- **A set is declared by what the tree consumes, and a tree that consumes what it writes declares
+  it with an area.** A tree in which the kit is written, not called, having declared its set, gets
+  advice to call the kit on the kit's own files: the sign is right but pointed the wrong way. That
+  is no reason to leave the set undeclared where the same tree is also its consumer: undeclared, it
+  leaves the consumer's screens unjudged, and the silence there is read as order. The area stands
+  next to the name — in place of the bare name a pair of the name and the roots it holds over.
+
+    ```json
+    { "reuse": { "bundles": ["angular", { "name": "kit", "roots": ["apps/admin", "libs/admin"] }] } }
+    ```
+
 - **A guard that received no sign is indistinguishable from a guard with nothing to refuse.** It
   says so itself, and the first edit in a tree without declared sets shows it. Silence of the
   check does not count as a sign of order — first one looks whether it has anything to judge by.
+- **A newly declared set lights up the code written before it, and none of that is new debt.**
+  Every place the set names arrives at once and as fresh, so the gate refuses a push for code
+  nobody touched. Either those places are closed by the same work, or the snapshot of what
+  accumulated is re-taken: the full check takes the key `--baseline` for exactly that.

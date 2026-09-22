@@ -4,7 +4,7 @@ kind: rule
 law: delivery
 description: Rule under the delivery law for a tree on GitHub. Load for creating a task and a branch, commit, push, opening a PR and merging. Names the one-to-one pair of task and branch, the machine account and the delivery guards. Patterns git-workflow-commit, -pr, -merge, -stack. Rollout — rule deploy-flow.
 ---
-<!-- rt-kit v0.29.0 · rules/git-workflow.github.md · c9997d393399 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · rules/git-workflow.github.md · 09d425d896fc · правится надстройкой, не здесь -->
 
 # Delivery — how it works here
 
@@ -89,7 +89,8 @@ flowchart TD
   own.** An edit made in it goes into `main` unreviewed: nobody opens a PR from that branch to it.
 - **The main branch is merged into the epic branch, and the epic branch into the branches of its
   tasks — while the work runs, not before the hand-over.** Otherwise the reviewer sees the edit mixed
-  with someone else's, checked from a base that is gone.
+  with someone else's, checked from a base that is gone. A merge not sent yet answers by the base:
+  a task branch from the merged local epic branch is let through.
 - **A wave of branches off one epic branch is checked by a trial merge, not one by one:** each is
   green on its own, and they collide on what one branch cannot show.
 - **The next work's branch is taken from the previous one while the chain is unbroken.** `git

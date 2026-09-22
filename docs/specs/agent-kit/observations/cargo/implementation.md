@@ -62,5 +62,6 @@ whole.
 - **A broken line does not leave and does not stop the cargo.** — `projects/agent-kit/src/lib/observations-cargo.ts:parseObservationLine` — `null` for a broken or foreign line, and the reader skips it
 - **The cargo goes by the same request as the rest, with the tree token, and only by a command.** — `projects/agent-kit/src/lib/shipment.ts:shipmentsOf` — the fourth shipment next to the digest, sent by the same command
 - **The check for a tree address covers the observation cargo.** — `projects/agent-kit/src/lib/shipment.ts:leaksOfCargo` — the lines are walked on a par with the digest
+- **A resource name the package does not ship leaves as a constant word, not as itself.** — `projects/agent-kit/src/lib/observations-cargo.ts:OWN_RESOURCE` — the name is judged against the laid-out assets by `packaged` and substituted in `linesOfDay`, for every event kind
 - **The schema version of the cargo rises.** — `projects/agent-kit/src/lib/cargo.ts:CARGO_SCHEMA_VERSION`
 - **The dry run names the observation cargo with the number of lines and days.** — `projects/agent-kit/src/lib/shipment.ts:describe` — the line `observations — строк N за D дн.`

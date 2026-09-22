@@ -23,6 +23,11 @@ export interface IChatSideLabels {
     readonly visitor: string;
 }
 
+/** Строка готового списка кита с разговором целиком: шаблон строки рисует его поля. */
+export interface IChatKitTalkRow extends IChat.Talk.State {
+    readonly hasUnread: boolean;
+}
+
 /**
  * Состояние доставки своей реплики.
  *
@@ -62,4 +67,20 @@ export function chatKitMessage(message: IChat.Message.State, labels: IChatSideLa
 /** Лента панели как тред кита: порядок тот же, что дало чтение. */
 export function chatKitThread(feed: readonly IChat.Message.State[], labels: IChatSideLabels): IRtChat.Message[] {
     return feed.map((message: IChat.Message.State): IRtChat.Message => chatKitMessage(message, labels));
+}
+
+/**
+ * Разговор панели как строка готового списка кита.
+ *
+ * Кит читает у строки только номер и признаки показа: сам разговор доезжает до шаблона строки
+ * целиком. Непрочитанных у разговора нет — приёмник их не считает, и признак стоит ложью, а не
+ * догадкой по минуте последней реплики.
+ */
+export function chatKitTalk(talk: IChat.Talk.State): IChatKitTalkRow {
+    return { ...talk, hasUnread: false };
+}
+
+/** Список переписок как строки кита: порядок тот же, что дало чтение. */
+export function chatKitTalks(talks: readonly IChat.Talk.State[]): IChatKitTalkRow[] {
+    return talks.map((talk: IChat.Talk.State): IChatKitTalkRow => chatKitTalk(talk));
 }

@@ -4,7 +4,7 @@ kind: pattern
 rule: testing
 description: Pattern of rule testing. Load when editing and running end-to-end tests in apps/site-e2e and apps/admin-e2e — what an end-to-end test closes, ready-made run commands, a stand from the production build behind real nginx, test switches. Not for unit tests — that is pattern testing-unit.
 ---
-<!-- rt-kit v0.29.0 · patterns/testing-e2e.md · 024fd52243a1 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.0 · patterns/testing-e2e.md · 1b7d6ae51796 · правится надстройкой, не здесь -->
 
 # End-to-end tests
 
@@ -108,6 +108,20 @@ one it is not, and which test did not make it turns out a matter of chance.
 This knowledge is entered in the rule, not in the shared module of the suite. Written only as code,
 it is known to whoever wrote it — the next test repeats the miss, because it reads the rule, not the
 code.
+
+A click on closing a panel is not its disappearance either. While the panel leaves the screen it
+keeps its fields, its buttons and its anchors: a test that filled a field in a panel already going
+away stood until its time limit, and the trace showed the fill landing in a node nobody was going
+to read. So the absence of the node is awaited before the next action:
+
+```ts
+await qa(page, 'invite-create-close').click();
+await expect(qa(page, 'invite-create-panel')).toHaveCount(0);
+```
+
+The same holds for a popup that stays open after its item is chosen. It covers the screen, and the
+click aimed at a button under it goes to the popup: the screen answers as if the button had not
+been pressed at all. The popup is closed and its absence awaited by the same pair of lines.
 
 ## Common misses
 

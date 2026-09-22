@@ -32,7 +32,14 @@ The guard has no interface: only the executor sees it — as the text of a refus
 - **A write by a shell command is judged the same as one by the edit tool.** The same text with the
   name of the shell instead of the name of the edit gave silence, and a document written by a heredoc
   went past the wording convention whole. The target is taken by the shared parse of write targets,
-  and the new text is the body of the command: the written text stands inside it.
+  and the new text is the body of the command: the written text stands inside it. The
+  text is taken from the heredoc bodies of the call. A rewrite carrying the previous wording inside
+  the command was refused by the words of that wording, twice in a row. A command without a heredoc
+  is judged whole, as before.
+- **The boundary of the judgement is the project root.** A scratch document written outside it
+  belongs to no repository. The wording agreements of this tree are nobody's agreement there: a
+  fixture in the system temporary directory was refused over a word in it. A tree that names no root
+  is judged as before.
 - **Only the new text of the edit is judged.** What has accumulated is fixed by separate work;
   refusing an edit of a neighbouring line for it would make the guard avoidable out of necessity.
 - **The boundaries of a word are counted by letters, not by the class `\w`.** It is ASCII-only: a

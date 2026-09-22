@@ -63,6 +63,11 @@ turn.
   three times in a row in one session, and not one call wrote anything. A body that does write gives
   out its paths whole: the path and the write call stand there on different lines, and there is
   nothing to link them by.
+- **The body of a heredoc is data of the command, and the shell parse does not read it.** A markdown
+  quote line inside a body opens with the same sign as a redirection: a path standing in the quote
+  was taken as a write target, and an edit that wrote nothing into the tree was refused twice by it.
+  The bodies are parsed apart, by the interpreter branch, and what stands before the body is named
+  as before.
 - **Muted output is never a sign of a write, inside a body either.** A redirection into the empty
   device and into the error stream is removed before the parse — by the same technique the shell write
   sign removes it. Otherwise a body that writes nothing gives out all its paths again: a command with

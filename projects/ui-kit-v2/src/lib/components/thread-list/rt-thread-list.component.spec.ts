@@ -38,12 +38,12 @@ const ROWS: ReadonlyArray<IThread> = [
 })
 class ThreadListHostComponent {
     public readonly rows: WritableSignal<ReadonlyArray<IThread>> = signal<ReadonlyArray<IThread>>(ROWS);
-    public readonly activeId: WritableSignal<number | null> = signal<number | null>(null);
+    public readonly activeId: WritableSignal<IRtThreadList.TRowId | null> = signal<IRtThreadList.TRowId | null>(null);
     public readonly loading: WritableSignal<boolean> = signal<boolean>(false);
     public readonly fetching: WritableSignal<boolean> = signal<boolean>(false);
     public readonly hasMore: WritableSignal<boolean> = signal<boolean>(false);
-    public selected: number | null = null;
-    public openedInTab: number | null = null;
+    public selected: IRtThreadList.TRowId | null = null;
+    public openedInTab: IRtThreadList.TRowId | null = null;
     public loadMoreCount: number = 0;
 }
 
@@ -112,6 +112,19 @@ describe('RtThreadListComponent', (): void => {
 
             expect(fixture.componentInstance.openedInTab).toBe(1);
             expect(fixture.componentInstance.selected).toBeNull();
+        });
+
+        it('строковый номер строки доходит наружу как есть', (): void => {
+            // Записи домена не всегда нумеруются числом: у переписки чата ключ строковый,
+            // и приведение его к числу потеряло бы саму строку.
+            const fixture: ComponentFixture<ThreadListHostComponent> = setup();
+
+            fixture.componentInstance.rows.set([{ id: 'talk-1', hasUnread: false, title: 'Переписка' }]);
+            render(fixture);
+            rows(fixture)[0].click();
+            fixture.detectChanges();
+
+            expect(fixture.componentInstance.selected).toBe('talk-1');
         });
     });
 

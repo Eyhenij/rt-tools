@@ -9,7 +9,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ```html
 <rt-thread-list [rows]="threads()" [activeId]="openId()" (selectRow)="open($event)">
-    <ng-template rtThreadListRow let-row>
+    <ng-template let-row [rtThreadListRow]="threads()">
         <strong>{{ row.title }}</strong>
     </ng-template>
 </rt-thread-list>

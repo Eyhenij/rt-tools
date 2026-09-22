@@ -185,3 +185,5 @@ site is named in every row, and the narrowing by site is a narrowing, not the on
 - 2026-09-21 — the thread and the field of the answer are said to be the ready-made chat of the kit
   by the task RT-2284: four rules about the drawing, the translation of the model and the word about
   the sending, and the scenarios `SC-CH-80` … `SC-CH-82`.
+- 2026-09-21 — the list of the talks is drawn by the ready-made list of the kit by the task RT-2293:
+  the rules stayed as they were, and the companion names what the row of the list holds now.
