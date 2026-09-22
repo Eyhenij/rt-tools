@@ -10,7 +10,8 @@
  * Выбор живёт на устройстве, а не у учётной записи: приёмник о языке не знает вовсе, и тема с
  * языком принадлежат тому, кто смотрит, а не тому, кем вошли.
  */
-import { DOCUMENT } from '@angular/common';
+import { DOCUMENT, registerLocaleData } from '@angular/common';
+import localeRu from '@angular/common/locales/ru';
 import {
     computed,
     effect,
@@ -103,6 +104,11 @@ export class AdminLocaleService {
  * объявляет сигналами ровно ради этого: приложение, меняющее язык на ходу, кладёт в них свои.
  */
 export function provideAdminKitLabels(): EnvironmentProviders {
+    // Данные русского языка ставятся здесь же: ими `DatePipe` показывает минуту, и кит зовёт его
+    // русской локалью из токена выше. Без них пайп падает на первой же дате, и падение видно
+    // только на собранном экране — английские данные у Angular свои, русских нет
+    registerLocaleData(localeRu, EAdminLocale.Ru);
+
     return makeEnvironmentProviders([
         { provide: RT_KIT_TRANSLATOR, useFactory: (): Signal<TRtKitTranslator> => inject(AdminLocaleService).translator },
         { provide: RT_KIT_LOCALE, useFactory: (): Signal<string> => inject(AdminLocaleService).tag },

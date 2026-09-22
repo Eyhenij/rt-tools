@@ -3,6 +3,7 @@ import { APP_FILTER } from '@nestjs/core';
 
 import { AccessModule } from '@rt/message-bus-api/access/feature';
 import { AccountsModule } from '@rt/message-bus-api/accounts/feature';
+import { ChatModule } from '@rt/message-bus-api/chat/feature';
 import { ObservationsModule } from '@rt/message-bus-api/observations/feature';
 import { AppLoggerService } from '@rt/message-bus-api/observability/feature';
 import { PrismaModule } from '@rt/message-bus-api/persistence/feature';
@@ -37,6 +38,7 @@ import { FailureFilter } from './failure.filter';
         PostmortemsModule,
         CargoStateModule,
         TreesModule,
+        ChatModule,
     ],
     controllers: [HealthController],
     providers: [AppLoggerService, { provide: APP_FILTER, useClass: FailureFilter }],

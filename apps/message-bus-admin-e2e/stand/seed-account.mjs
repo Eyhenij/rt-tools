@@ -64,6 +64,7 @@ async function role(sql) {
         'accounts:read',
         'accounts:manage',
         'roles:manage',
+        'chat:read',
     ]
         .map((right) => `'${right}'`)
         .join(', ');
@@ -107,14 +108,18 @@ async function people(cookie, path, body) {
 }
 
 /**
- * Роль наблюдателя: права на все четыре раздела груза и ни одного права на людей.
+ * Роль наблюдателя: права на все четыре раздела груза, на чат — и ни одного права на людей.
  *
  * Ею набор входит, проверяя, что раздел людей без права `accounts:read` не показан и не
  * открывается. Роль без единого права ответила бы на другой вопрос: вошедший без прав не видит
  * ни одного раздела вообще, и пропажа пункта людей ничего не значила бы.
+ *
+ * Право на чат у наблюдателя есть, а записи оператора чата — нет: им набор проверяет, что
+ * вошедший с правом, но не оператор, видит пустой список, а не отказ. Право и принадлежность
+ * сайтам — разные вопросы, и без такого человека их не различить.
  */
 async function watcherRole(sql) {
-    const rights = ['postmortems:read', 'proposals:read', 'summaries:read', 'usage:read', 'invites:read']
+    const rights = ['postmortems:read', 'proposals:read', 'summaries:read', 'usage:read', 'invites:read', 'chat:read']
         .map((right) => `'${right}'`)
         .join(', ');
 
