@@ -103,7 +103,7 @@ export class RtDataListPaginationComponent {
     public readonly pageModelChange: OutputEmitterRef<Partial<IPageModel>> = output<Partial<IPageModel>>();
 
     /** Страницу просят только тогда, когда на неё есть куда идти. */
-    protected onPageNumber(pageNumber: number | string): void {
+    protected onPageNumber(pageNumber: number | null): void {
         if (typeof pageNumber === 'number' && dataListPageReachable(this.currentPageModel(), pageNumber)) {
             this.pageModelChange.emit({ pageNumber });
         }

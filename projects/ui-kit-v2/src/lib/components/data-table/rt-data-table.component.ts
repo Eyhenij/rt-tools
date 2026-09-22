@@ -24,7 +24,7 @@ import {
 import { FormsModule } from '@angular/forms';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
-import { EFilterOperatorType, IFilterModel, ISortModel, TNullable, transformArrayInput } from '@rt-tools/utils';
+import { EFilterOperatorType, ISortModel, TNullable, transformArrayInput } from '@rt-tools/utils';
 
 import { rtKitLabel } from '../../i18n';
 import { RtCheckboxComponent } from '../checkbox/rt-checkbox.component';
@@ -42,7 +42,7 @@ import {
 import { RtDataTableConfigService } from './rt-data-table-config.service';
 import { RtDataTableIconDirective } from './rt-data-table-icon.directive';
 import { RT_DATA_TABLE_ROW_HOST, RtDataTableRowClickDirective } from './rt-data-table-row-click.directive';
-import { ERtDataTableColumnType, IRtDataTable } from './rt-data-table.model';
+import { ERtDataTableColumnType, IRtDataTable, TRtDataTableFilters } from './rt-data-table.model';
 
 const BEM_BLOCK: string = 'rt-data-table';
 
@@ -123,10 +123,12 @@ export class RtDataTableComponent<
     public readonly currentSortModel: InputSignal<TNullable<ISortModel<SORT_PROPERTY>>> =
         input.required<TNullable<ISortModel<SORT_PROPERTY>>>();
 
-    public readonly filterModel: InputSignalWithTransform<IFilterModel<KEY>[], IFilterModel<KEY>[] | null | undefined> = input<
-        IFilterModel<KEY>[],
-        IFilterModel<KEY>[] | null | undefined
-    >([], { transform: transformArrayInput });
+    /**
+     * Условия отбора. Их ключ — имя свойства колонки, а не ключ записи: отбирают по колонке, и
+     * ключ записи здесь оказался бы уже нужного — строка отбора зовёт ячейку именем колонки.
+     */
+    public readonly filterModel: InputSignalWithTransform<TRtDataTableFilters<ENTITY_TYPE>, TNullable<TRtDataTableFilters<ENTITY_TYPE>>> =
+        input<TRtDataTableFilters<ENTITY_TYPE>, TNullable<TRtDataTableFilters<ENTITY_TYPE>>>([], { transform: transformArrayInput });
 
     public readonly isFiltersShown: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
         transform: booleanAttribute,
@@ -135,7 +137,7 @@ export class RtDataTableComponent<
     public readonly rowClick: OutputEmitterRef<{ row: ENTITY_TYPE; event: MouseEvent }> = output<{ row: ENTITY_TYPE; event: MouseEvent }>();
     public readonly rowDoubleClick: OutputEmitterRef<ENTITY_TYPE> = output<ENTITY_TYPE>();
     public readonly sortChange: OutputEmitterRef<ISortModel<SORT_PROPERTY>> = output<ISortModel<SORT_PROPERTY>>();
-    public readonly filterChange: OutputEmitterRef<IFilterModel<KEY>[]> = output<IFilterModel<KEY>[]>();
+    public readonly filterChange: OutputEmitterRef<TRtDataTableFilters<ENTITY_TYPE>> = output<TRtDataTableFilters<ENTITY_TYPE>>();
 
     public readonly customCellsTpl: Signal<TNullable<RtDataTableCustomCellsDirective<ENTITY_TYPE>>> =
         contentChild(RtDataTableCustomCellsDirective);
@@ -186,7 +188,7 @@ export class RtDataTableComponent<
         }
     }
 
-    public onFilterChange(filterModel: IFilterModel<KEY>[]): void {
+    public onFilterChange(filterModel: TRtDataTableFilters<ENTITY_TYPE>): void {
         this.filterChange.emit(filterModel);
     }
 

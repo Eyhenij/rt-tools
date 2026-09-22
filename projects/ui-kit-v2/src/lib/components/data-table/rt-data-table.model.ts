@@ -8,7 +8,7 @@
  */
 import { FormControl } from '@angular/forms';
 
-import { ISortModel, TFilterOperatorType } from '@rt-tools/utils';
+import { IFilterModel, ISortModel, TFilterOperatorType } from '@rt-tools/utils';
 
 /** Вид колонки: решает, чем рисуется значение ячейки. */
 export enum ERtDataTableColumnType {
@@ -38,6 +38,11 @@ export enum ERtDataTableCellColor {
     EMPTY = 'empty',
 }
 
+/**
+ * Условия отбора таблицы. Ключ — имя свойства колонки, а не ключ записи: отбирают по колонке.
+ */
+export type TRtDataTableFilters<T> = Array<IFilterModel<Extract<keyof T, string>>>;
+
 export namespace IRtDataTable {
     export type CellColor = `${ERtDataTableCellColor}`;
 
@@ -49,7 +54,9 @@ export namespace IRtDataTable {
 
     export interface Column<T = Record<string, unknown>> extends Record<string, unknown> {
         align: IRtDataTable.Align;
-        propName: keyof T;
+        /* Имя свойства записи, только строковое: им же колонка называет себя строке отбора, а та
+           берёт строку — у первого кита имя свойства тоже всегда строка. */
+        propName: Extract<keyof T, string>;
         type: IRtDataTable.ColumnType;
         copyable: boolean;
         header: IRtDataTable.Header;

@@ -13,7 +13,7 @@ interface IEntity extends Record<string, unknown> {
     email: string;
 }
 
-function columnOf(propName: keyof IEntity, displayName: string, hidden: boolean = false): IRtDataTable.Column<IEntity> {
+function columnOf(propName: Extract<keyof IEntity, string>, displayName: string, hidden: boolean = false): IRtDataTable.Column<IEntity> {
     return {
         align: 'left',
         propName,

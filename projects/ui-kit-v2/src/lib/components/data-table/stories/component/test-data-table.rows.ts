@@ -56,7 +56,7 @@ export const TEST_DATA_TABLE_ROWS: ITestDataTableRow[] = [
 ];
 
 function columnOf(
-    propName: keyof ITestDataTableRow,
+    propName: Extract<keyof ITestDataTableRow, string>,
     label: string,
     type: ERtDataTableColumnType,
     patch: Partial<IRtDataTable.Column<ITestDataTableRow>> = {}

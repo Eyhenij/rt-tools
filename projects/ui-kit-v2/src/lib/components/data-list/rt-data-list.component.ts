@@ -23,7 +23,7 @@ import { Observable, Subject } from 'rxjs';
 import { exhaustMap, filter } from 'rxjs/operators';
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
-import { IFilterModel, IPageModel, ISortModel, TNullable, transformArrayInput } from '@rt-tools/utils';
+import { IPageModel, ISortModel, TNullable, transformArrayInput } from '@rt-tools/utils';
 
 import { rtKitLabel } from '../../i18n';
 import { RtAsideService } from '../aside/rt-aside.service';
@@ -35,7 +35,7 @@ import {
     RtDataTableCustomCellsDirective,
     RtDataTableRowActionsDirective,
 } from '../data-table/rt-data-table-cells.directive';
-import { IRtDataTable } from '../data-table/rt-data-table.model';
+import { IRtDataTable, TRtDataTableFilters } from '../data-table/rt-data-table.model';
 import { RtEmptyStateComponent } from '../empty-state/rt-empty-state.component';
 import { RtSpinnerComponent } from '../spinner/rt-spinner.component';
 import { RtDataListPaginationComponent } from './pagination/rt-data-list-pagination.component';
@@ -128,10 +128,9 @@ export class RtDataListComponent<
 
     public readonly searchTerm: InputSignal<TNullable<string>> = input<TNullable<string>>('');
 
-    public readonly filterModel: InputSignalWithTransform<IFilterModel<KEY>[], IFilterModel<KEY>[] | null | undefined> = input<
-        IFilterModel<KEY>[],
-        IFilterModel<KEY>[] | null | undefined
-    >([], { transform: transformArrayInput });
+    /** Условия отбора: их ключ — имя свойства колонки, а не ключ записи, как и у таблицы. */
+    public readonly filterModel: InputSignalWithTransform<TRtDataTableFilters<ENTITY_TYPE>, TNullable<TRtDataTableFilters<ENTITY_TYPE>>> =
+        input<TRtDataTableFilters<ENTITY_TYPE>, TNullable<TRtDataTableFilters<ENTITY_TYPE>>>([], { transform: transformArrayInput });
 
     public readonly keyExp: InputSignal<NonNullable<KEY>> = input('id' as NonNullable<KEY>);
 
@@ -166,7 +165,7 @@ export class RtDataListComponent<
     });
 
     public readonly sortChange: OutputEmitterRef<ISortModel<SORT_PROPERTY>> = output<ISortModel<SORT_PROPERTY>>();
-    public readonly filterChange: OutputEmitterRef<IFilterModel<KEY>[]> = output<IFilterModel<KEY>[]>();
+    public readonly filterChange: OutputEmitterRef<TRtDataTableFilters<ENTITY_TYPE>> = output<TRtDataTableFilters<ENTITY_TYPE>>();
     public readonly pageModelChange: OutputEmitterRef<Partial<IPageModel>> = output<Partial<IPageModel>>();
     public readonly searchChange: OutputEmitterRef<string> = output<string>();
     public readonly refresh: OutputEmitterRef<void> = output<void>();
@@ -195,8 +194,16 @@ export class RtDataListComponent<
         { read: TemplateRef }
     );
 
-    /** Шаблон значка приложения — он уезжает в таблицу списка. */
-    public readonly iconTpl: Signal<TNullable<RtDataTableIconDirective<ENTITY_TYPE>>> = contentChild(RtDataTableIconDirective);
+    /**
+     * Шаблон значка приложения — он уезжает в таблицу списка.
+     *
+     * Родовой тип здесь по умолчанию, а не тип записи списка, и это не упрощение: шаблон-посредник
+     * внутри разметки объявлен той же директивой, а родового довода разметка ей не даёт — она
+     * ставит его по умолчанию. Объявленное здесь по типу записи расходится с ним, и сборка
+     * библиотеки отказывает на выводе шаблона. Приложение своего значка не теряет: его собственный
+     * шаблон объявлен той же директивой и тем же умолчанием.
+     */
+    public readonly iconTpl: Signal<TNullable<RtDataTableIconDirective>> = contentChild(RtDataTableIconDirective);
 
     /** Панель действий и таблица: их состояние ставит директива выбора списка. */
     public readonly toolbarRef: Signal<TNullable<RtDataListToolbarComponent>> = viewChild(RtDataListToolbarComponent);
@@ -248,7 +255,7 @@ export class RtDataListComponent<
         this.sortChange.emit(sortModel);
     }
 
-    protected onFilterChange(filterModel: IFilterModel<KEY>[]): void {
+    protected onFilterChange(filterModel: TRtDataTableFilters<ENTITY_TYPE>): void {
         this.filterChange.emit(filterModel);
     }
 

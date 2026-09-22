@@ -158,7 +158,7 @@ export class RtDataTableConfigService<ENTITY_TYPE> {
                     // Сверка составов выше гарантирует, что столбец с этим именем объявлен.
                     ...(declared as IRtDataTable.Column<ENTITY_TYPE>),
                     displayName: declared?.header?.label?.length ? declared.header.label : el?.propName?.toString(),
-                    propName: el.propName as keyof ENTITY_TYPE,
+                    propName: el.propName as Extract<keyof ENTITY_TYPE, string>,
                     width: el?.width ?? 'auto',
                     orderIndex: el?.orderIndex ?? 0,
                     hidden: !!el?.hidden,
