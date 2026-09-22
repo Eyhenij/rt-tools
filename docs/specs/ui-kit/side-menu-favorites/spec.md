@@ -1,6 +1,6 @@
 # Favourites of the side menu
 
-**Status:** in force · **Revision:** 2026-09-21 · **Scenario prefix:** `SC-UK`
+**Status:** in force · **Revision:** 2026-09-22 · **Scenario prefix:** `SC-UK`
 **Depends on:** the second level of the side menu — the favourites block stands in its submenu
 **Laws:** `frontend-application`, `reuse-first`, `navigation`
 **Procedures:** none
@@ -40,7 +40,7 @@ sign-out or fill it with defaults.
 | The favourites block | the heading "Favourites" of 14 px with a filled star of 16 px in the theme colour, rows under it     |
 | The star, off        | a hollow star, `star_border`; the tooltip "Add to favourites"                                        |
 | The star, on         | a filled star in the theme colour; the tooltip "Remove from favourites"                              |
-| The remove button    | a minus, `remove`; the tooltip "Remove from favourites"                                              |
+| The remove button    | a trash can, `delete`; the tooltip "Remove from favourites"                                          |
 | The handle           | the button `arrows_outward` turned by 90° after the remove button, the tooltip "Hold button to drag" |
 
 ## Rules
@@ -127,19 +127,20 @@ sign-out or fill it with defaults.
   button size changes, the chevron of a folder and the consumer's button follow it and stay in the
   column of the stars.
 
-    | Property                                   | Default                                        |
-    | ------------------------------------------ | ---------------------------------------------- |
-    | `--rt-side-menu-favorite-color`            | the primary colour of the Material theme       |
-    | `--rt-side-menu-favorite-action-color`     | `--rt-text-base-secondary`                     |
-    | `--rt-side-menu-favorite-action-size`      | 32 px, twice `--rt-spacing-16`                 |
-    | `--rt-side-menu-favorite-action-icon-size` | `--rt-font-size-lg`                            |
-    | `--rt-side-menu-favorites-title-color`     | `--rt-text-base-secondary`                     |
-    | `--rt-side-menu-favorites-title-font-size` | `--rt-font-size-sm`                            |
-    | `--rt-side-menu-favorites-title-icon-size` | `--rt-icon-size-sm`                            |
-    | `--rt-side-menu-favorites-divider-color`   | `--rt-border-neutral-subtle`                   |
-    | `--rt-side-menu-favorites-divider-gap`     | `--rt-spacing-8`                               |
-    | `--rt-side-menu-favorites-drag-background` | `--rt-bg-base-base`                            |
-    | `--rt-side-menu-favorites-drag-shadow`     | the dragged-row shadow of the dynamic selector |
+    | Property                                     | Default                                        |
+    | -------------------------------------------- | ---------------------------------------------- |
+    | `--rt-side-menu-favorite-color`              | the primary colour of the Material theme       |
+    | `--rt-side-menu-favorite-action-color`       | `--rt-text-base-secondary`                     |
+    | `--rt-side-menu-favorite-remove-hover-color` | `--rt-icon-accent-danger`                      |
+    | `--rt-side-menu-favorite-action-size`        | 32 px, twice `--rt-spacing-16`                 |
+    | `--rt-side-menu-favorite-action-icon-size`   | `--rt-font-size-lg`                            |
+    | `--rt-side-menu-favorites-title-color`       | `--rt-text-base-secondary`                     |
+    | `--rt-side-menu-favorites-title-font-size`   | `--rt-font-size-sm`                            |
+    | `--rt-side-menu-favorites-title-icon-size`   | `--rt-icon-size-sm`                            |
+    | `--rt-side-menu-favorites-divider-color`     | `--rt-border-neutral-subtle`                   |
+    | `--rt-side-menu-favorites-divider-gap`       | `--rt-spacing-8`                               |
+    | `--rt-side-menu-favorites-drag-background`   | `--rt-bg-base-base`                            |
+    | `--rt-side-menu-favorites-drag-shadow`       | the dragged-row shadow of the dynamic selector |
 
 - **The hollow star and the remove button show on hover and on focus inside their row; the
   filled star always shows.** Stars on every row of a long list read as noise; the chosen ones must be visible at a
@@ -176,8 +177,8 @@ sign-out or fill it with defaults.
   id would take them over.
 - **A row of the block is dragged by its handle, and the new order is kept at the drop.** The rest
   of the row stays a link: a row dragged by its whole body cannot be pressed without a jitter. The
-  handle is a button with the icon `arrows_outward` turned by a quarter and the tooltip "Hold button
-  to drag". It stands inside the item after the remove button and before the consumer's button,
+  handle is a button with the icon `arrows_outward` turned by a quarter, unless the settings name
+  another, and the tooltip "Hold button to drag". It stands inside the item after the remove button and before the consumer's button,
   in the column of the list's stars, and shows under the hover and the focus of its row, the same as
   the remove button. The label of a block row starts where the label of a list row does.
 - **A drop moves the dragged id next to its visible neighbour, and hidden ids keep their places.**
@@ -196,6 +197,18 @@ sign-out or fill it with defaults.
   second level stands: an address without sections lifts the pinned submenu, favourites or not.
 - **The labels are sewn in in English and are replaced by the provider settings.** The first kit
   has no dictionary; an application in another language names its own four labels once.
+- **The icons of the remove button and the handle are replaced by the provider settings, one
+  without the other.** An icon is a glyph of Material Symbols and a turn in degrees. The trash can
+  and the arrows turned by 90° stand by default. A set icon replaces its default whole: without a
+  turn it is not turned. A blank glyph counts as absent, the same as a blank label. The service
+  gives the resolved icons out, so the application draws the same buttons without a second copy.
+  The turn is a number bound to the icon, and the styles hold no turn of their own.
+- **The remove icon turns the danger colour under the pointer and the keyboard focus.** The press
+  removes the item, and the colour says so before it. The application sets another colour by
+  `--rt-side-menu-favorite-remove-hover-color`, its ordinary one included, and then the icon does
+  not turn red at all. The star keeps its colours under the pointer. A touch screen gets no red
+  hover: there the hover sticks where the finger was, and after a remove the neighbouring trash can
+  would stay red under it.
 - **On a narrow screen the block stands the same, under the search of the submenu.** The same rows,
   the same buttons, the same handle: the split between the two layouts would be a second favourites.
 
@@ -239,23 +252,23 @@ menu and writes the object back.
 
 The public surface:
 
-| Name                                              | What it is                                                                                                              |
-| ------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `provideRtuiSideMenuSettings(config?)`            | the providers of the service; `config.storageKey`, `config.labels` with `title`, `add`, `remove`, `drag`                |
-| `--rt-side-menu-favorites-title-color`            | the colour of the heading's label, set by the application on an ancestor of the menu                                    |
-| `ISideMenu.Item.favorites`                        | the flag of a strip item switching its favourites on; off by default                                                    |
-| `--rt-side-menu-favorite-color`                   | the colour of the filled star and of the heading's star, set by the application on an ancestor of the menu              |
-| `menuId` of `rtui-side-menu`                      | the id the menu keeps its settings under; `default` when none or an empty one is given                                  |
-| `RtuiSideMenuSettingsService.ids(menuId)`         | the whole list of a menu as a read-only signal, ids hidden from every block included                                    |
-| `menuIds`                                         | the ids of the menus whose settings are stored, as a signal                                                             |
-| `has`, `add`, `remove`, `toggle` `(menuId, id)`   | a check and three edits of one id; adding an id already in the list does nothing                                        |
-| `move(menuId, from, to)`                          | moves an entry between two places of the list                                                                           |
-| `moveVisible(menuId, visibleIds, from, to)`       | moves between places of the shown ids only: the shown ones swap among themselves, the hidden ones stay where they stood |
-| `set(menuId, ids)`, `clear(menuId)`               | replaces the list whole, empties it                                                                                     |
-| `subMenuMode(menuId)`, `subMenuWidth(menuId)`     | the stored mode, `hover` when none, and the stored width, empty when none, as signals                                   |
-| `setSubMenuMode`, `setSubMenuWidth` `(menuId, …)` | write the mode, write the width brought within the submenu's limits                                                     |
-| `settings(menuId)`, `deleteSettings(menuId)`      | the whole settings of a menu as a signal; deletes them, called only by the application                                  |
-| `SIDE_MENU_SETTINGS_KEY`, `DEFAULT_MENU_ID`       | the storage key and the menu id by default                                                                              |
+| Name                                              | What it is                                                                                                                                     |
+| ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `provideRtuiSideMenuSettings(config?)`            | the providers of the service; `config.storageKey`, `config.labels` with `title`, `add`, `remove`, `drag`, `config.icons` with `remove`, `drag` |
+| `--rt-side-menu-favorites-title-color`            | the colour of the heading's label, set by the application on an ancestor of the menu                                                           |
+| `ISideMenu.Item.favorites`                        | the flag of a strip item switching its favourites on; off by default                                                                           |
+| `--rt-side-menu-favorite-color`                   | the colour of the filled star and of the heading's star, set by the application on an ancestor of the menu                                     |
+| `menuId` of `rtui-side-menu`                      | the id the menu keeps its settings under; `default` when none or an empty one is given                                                         |
+| `RtuiSideMenuSettingsService.ids(menuId)`         | the whole list of a menu as a read-only signal, ids hidden from every block included                                                           |
+| `menuIds`                                         | the ids of the menus whose settings are stored, as a signal                                                                                    |
+| `has`, `add`, `remove`, `toggle` `(menuId, id)`   | a check and three edits of one id; adding an id already in the list does nothing                                                               |
+| `move(menuId, from, to)`                          | moves an entry between two places of the list                                                                                                  |
+| `moveVisible(menuId, visibleIds, from, to)`       | moves between places of the shown ids only: the shown ones swap among themselves, the hidden ones stay where they stood                        |
+| `set(menuId, ids)`, `clear(menuId)`               | replaces the list whole, empties it                                                                                                            |
+| `subMenuMode(menuId)`, `subMenuWidth(menuId)`     | the stored mode, `hover` when none, and the stored width, empty when none, as signals                                                          |
+| `setSubMenuMode`, `setSubMenuWidth` `(menuId, …)` | write the mode, write the width brought within the submenu's limits                                                                            |
+| `settings(menuId)`, `deleteSettings(menuId)`      | the whole settings of a menu as a signal; deletes them, called only by the application                                                         |
+| `SIDE_MENU_SETTINGS_KEY`, `DEFAULT_MENU_ID`       | the storage key and the menu id by default                                                                                                     |
 
 ## Screens and states
 
@@ -368,5 +381,7 @@ One settings object per application key, and in it one list per menu id.
   block does, and the block's drop reads the storage before it writes. Scenario SC-UK-118 added.
 - 2026-09-21 — the review of the change: a row dropped outside the panel closes a hover submenu, and
   a dragged row that disappears releases the hold. Scenarios SC-UK-119 and SC-UK-120 added.
-- 2026-09-21 — the review of the change: a row dropped outside the panel closes a hover submenu, and
-  a dragged row that disappears releases the hold. Scenarios SC-UK-119 and SC-UK-120 added.
+- 2026-09-22 — the owner: the application sets the icons of the remove button and the handle by
+  `config.icons`, a glyph and a turn each; the default remove icon is the trash can. Scenarios
+  SC-UK-121…SC-UK-123 added, SC-UK-95 names the icon by the settings. The remove icon turns red
+  under the pointer, the colour is a property of the application. Scenario SC-UK-124 added.

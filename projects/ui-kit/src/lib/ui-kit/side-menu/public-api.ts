@@ -20,4 +20,9 @@ export {
     RTUI_SIDE_MENU_SETTINGS_CONFIG,
     RtuiSideMenuSettingsService,
 } from './settings/rtui-side-menu-settings.service';
-export type { IRtuiSideMenuSettingsConfig, IRtuiSideMenuFavoritesLabels } from './settings/rtui-side-menu-settings.service';
+export type {
+    IRtuiSideMenuFavoritesIcon,
+    IRtuiSideMenuFavoritesIcons,
+    IRtuiSideMenuFavoritesLabels,
+    IRtuiSideMenuSettingsConfig,
+} from './settings/rtui-side-menu-settings.service';
