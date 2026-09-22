@@ -1,14 +1,14 @@
 # The radio button
 
-**Status:** proposed · **Revision:** 22 September 2026 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 22 September 2026 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the design of the kit — the colours come from its appointments; the material
 preset — it repaints the radio button without a rule of its own; a boolean input and the bare
 attribute — `disabled` and `card` take the bare attribute as truth
 **Laws:** `frontend-application`, `verifiability`, `reuse-first`
 **Procedures:** none
 
-A product agreement written before the code, task RT-2317. It merges into the spec of the second kit
-as a subdomain of its own, with the scenario numbers it has here.
+A subdomain of the second kit's spec, written before the code by task RT-2317 and merged with the
+scenario numbers it had as an agreement.
 
 ## Why
 
@@ -196,10 +196,7 @@ that would do it instead.
 
 ## Open questions
 
-The numbers are issued at the merge into the domain spec: neighbouring work of the same epic keeps
-its own and has not reached the epic branch yet.
-
-- **Several radio buttons on one control of a reactive form.** A press on one gives its value to the
+- **Q-RB-1** — several radio buttons on one control of a reactive form. A press on one gives its value to the
   control, but the neighbours bound to the same control are not told, and the one chosen before may
   keep its dot. The template binding of the form rewrites every radio button by change detection;
   the reactive one does not. Whether the family needs a registry of its own, a group, or a word in
@@ -210,3 +207,5 @@ its own and has not reached the epic branch yet.
 
 - 22 September 2026 — the agreement was written by the grilling of the owner's request and by the
   owner's sample.
+- 22 September 2026 — the agreement merged into the spec of the second kit as a subdomain of its own;
+  the open question got the number `Q-RB-1`.
