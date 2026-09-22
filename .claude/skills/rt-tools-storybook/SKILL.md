@@ -117,8 +117,7 @@ A rule under the "Law on verifiability", the section about showing a visible sta
 - **A link between the showcase's pages dies with a rename of a section.** The address is not a path
   in the tree: it comes from the page's title. So the address check does not see such a link. A dead
   one looks exactly like a live one. The page is drawn whole, and the miss shows only to whoever
-  pressed it. Laying the sections out by the levels of atomic design killed every link of the kit at
-  once, 346 of them, and nothing turned red. The addresses are derived by the showcase's own helper.
+  pressed it. The addresses are derived by the showcase's own helper.
   A rule written out next to the check diverges on the first title with a capital letter in the
   middle of a word.
 - **A link to a family that has not migrated is not written at all.** An address that will exist some
@@ -232,12 +231,7 @@ Rules that decide what goes in a matrix:
   grid because the pair changes how each reads; `size × theme` does not. The full
   cartesian product is explicitly rejected — see ADR 0002 decision 3.
 - **An axis you cannot show is declared, not skipped.** Say so in `Overview` with
-  the reason; a silent gap looks exactly like coverage.
-- **Wrap the matrix in the pair of preset halves; never make the preset an axis.** A preset
-  leaves the markup and the sizes alone, so crossed with an axis it only doubles the cells.
-- **The pair goes on every story of a touched family, not on one of them.** A lone `Presets`
-  story leaves every other axis shown in one set.
-
+  the reason.
 - **A story that renders an empty collection is not coverage.** Ten stories
   currently pass an empty array and paint nothing (`UI-KIT-V2-ISSUES.md` §2.3);
   seed a realistic fixture instead.
@@ -272,8 +266,7 @@ Rules that decide what goes in a matrix:
   frame before the font. The class rule next to the family repeats the whole set the other families
   carry there: `font-size: 24px`, `line-height: 1`, `letter-spacing`, `text-transform`, `display`,
   `white-space`, the ligatures and smoothing. A class with the family alone takes the host's font
-  size and line height, and the icons shift inside their buttons. No frame catches the shift while
-  the references are taken with it; the owner found it by eye.
+  size and line height, and the icons shift inside their buttons.
 - **The first showcase's Material Symbols file is a subset by icon names, and a glyph outside it
   draws a stray shape, not the word.** A story naming a new glyph gets it only after the subset is
   fetched again with the whole old list of names plus the new one. The ligatures of the old and the
