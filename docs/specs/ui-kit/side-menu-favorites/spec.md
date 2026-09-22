@@ -206,7 +206,9 @@ sign-out or fill it with defaults.
 - **The remove icon turns the danger colour under the pointer and the keyboard focus.** The press
   removes the item, and the colour says so before it. The application sets another colour by
   `--rt-side-menu-favorite-remove-hover-color`, its ordinary one included, and then the icon does
-  not turn red at all. The star keeps its colours under the pointer.
+  not turn red at all. The star keeps its colours under the pointer. A touch screen gets no red
+  hover: there the hover sticks where the finger was, and after a remove the neighbouring trash can
+  would stay red under it.
 - **On a narrow screen the block stands the same, under the search of the submenu.** The same rows,
   the same buttons, the same handle: the split between the two layouts would be a second favourites.
 
@@ -377,8 +379,6 @@ One settings object per application key, and in it one list per menu id.
   writes as `default` in the menu and in the service. Scenario SC-UK-117 added.
 - 2026-09-21 — the owner: the service moves among the shown ids by `moveVisible`, the way the
   block does, and the block's drop reads the storage before it writes. Scenario SC-UK-118 added.
-- 2026-09-21 — the review of the change: a row dropped outside the panel closes a hover submenu, and
-  a dragged row that disappears releases the hold. Scenarios SC-UK-119 and SC-UK-120 added.
 - 2026-09-21 — the review of the change: a row dropped outside the panel closes a hover submenu, and
   a dragged row that disappears releases the hold. Scenarios SC-UK-119 and SC-UK-120 added.
 - 2026-09-22 — the owner: the application sets the icons of the remove button and the handle by

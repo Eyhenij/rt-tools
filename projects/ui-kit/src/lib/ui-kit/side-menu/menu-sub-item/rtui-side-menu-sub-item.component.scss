@@ -144,8 +144,15 @@
 
                 // Корзина под указателем и под фокусом клавиатуры краснеет: нажатие убирает пункт.
                 // Приложение ставит свой цвет свойством на предке меню, свой обычный — чтобы не
-                // краснела вовсе.
-                &--remove:hover,
+                // краснела вовсе. Наведение — только где указатель умеет наводиться: на сенсорном
+                // экране оно залипает в точке касания, и после «убрать» под пальцем краснела бы
+                // корзина соседней строки.
+                @media (hover: hover) {
+                    &--remove:hover {
+                        --mat-icon-button-icon-color: var(--rt-side-menu-favorite-remove-hover-color, var(--rt-icon-accent-danger));
+                    }
+                }
+
                 &--remove:focus-visible {
                     --mat-icon-button-icon-color: var(--rt-side-menu-favorite-remove-hover-color, var(--rt-icon-accent-danger));
                 }
