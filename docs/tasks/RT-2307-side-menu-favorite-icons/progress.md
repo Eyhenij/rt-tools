@@ -4,8 +4,8 @@
 
 - **State:** `этап-идёт`
 - **Stage:** 3 of 3 — The spec and the showcase follow
-- **Done:** stages 1–2, step 3.1 — the spec holds the icons rule, SC-UK-121…123; `check:specs` exit 0
-- **Next step:** 3.2 — a story shows the set icons
+- **Done:** stages 1–2, steps 3.1–3.2 — red hover added by the owner's word, SC-UK-121…124, specs 187 of 187; four favourites frames looked at locally
+- **Next step:** 3.3 — the favourites references are taken from the runner's frame
 - **Uncommitted:** no
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -19,10 +19,19 @@
 - [x] 2.2 The handle draws `icons.drag` with its turn, and the styles lose the fixed turn
 - [x] 2.3 The component specs cover the default and the set icons
 - [x] 3.1 The spec gets the rule, the scenarios and the bindings
-- [>] 3.2 A story shows the set icons, and the frames are looked at locally
-- [ ] 3.3 The favourites references are taken from the runner's frame
+- [x] 3.2 A story shows the set icons, and the frames are looked at locally
+- [>] 3.3 The favourites references are taken from the runner's frame
 
 ## Decisions along the way
+
+- The owner widened the task mid-work: the remove icon turns red under hover, and the colour is the
+  property `--rt-side-menu-favorite-remove-hover-color`, the danger icon token by default. It rides
+  in stage 2 and step 3.1 by one more modifier and one more rule, without a stage of its own.
+- The narrow story is shot at the window of 1280 px, so the remove buttons and handles never reach
+  its frame. The narrow stories now take a window of 360 px and open the section by a `play` step.
+- The showcase's Symbols subset lacked `drag_indicator` and drew it as a stray shape. The subset is
+  fetched again with the same 79 names plus that one; the comparison of the ligatures shows nothing
+  lost.
 
 - A set icon replaces its default whole: a glyph without `rotate` is not turned, so `drag_indicator`
   set alone does not inherit the 90° of the default arrow.

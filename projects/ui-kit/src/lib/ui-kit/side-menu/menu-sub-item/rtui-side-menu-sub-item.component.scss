@@ -142,6 +142,14 @@
                     );
                 }
 
+                // Корзина под указателем и под фокусом клавиатуры краснеет: нажатие убирает пункт.
+                // Приложение ставит свой цвет свойством на предке меню, свой обычный — чтобы не
+                // краснела вовсе.
+                &--remove:hover,
+                &--remove:focus-visible {
+                    --mat-icon-button-icon-color: var(--rt-side-menu-favorite-remove-hover-color, var(--rt-icon-accent-danger));
+                }
+
                 // Где указатель не умеет наводиться, кнопке ждать нечего.
                 @media (hover: none) {
                     opacity: 1;

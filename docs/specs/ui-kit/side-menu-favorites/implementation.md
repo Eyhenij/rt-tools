@@ -44,6 +44,7 @@ given from the root of the tree.
 - **The block does not keep open a pinned panel that has nothing else to show.** — `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.ts:subMenuOpened`
 - **The labels are sewn in in English and are replaced by the provider settings.** — `projects/ui-kit/src/lib/ui-kit/side-menu/settings/rtui-side-menu-settings.service.ts:labels`
 - **The icons of the remove button and the handle are replaced by the provider settings, one without the other.** — `projects/ui-kit/src/lib/ui-kit/side-menu/settings/rtui-side-menu-settings.service.ts:icons`, the blank glyph — `projects/ui-kit/src/lib/ui-kit/side-menu/settings/rtui-side-menu-settings.service.ts:#icon`, the markup — `projects/ui-kit/src/lib/ui-kit/side-menu/menu-sub-item/rtui-side-menu-sub-item.component.html:favorite-icon`
+- **The remove icon turns the danger colour under the pointer and the keyboard focus.** — `projects/ui-kit/src/lib/ui-kit/side-menu/menu-sub-item/rtui-side-menu-sub-item.component.scss:rt-side-menu-favorite-remove-hover-color`, the mark — `projects/ui-kit/src/lib/ui-kit/side-menu/menu-sub-item/rtui-side-menu-sub-item.component.html:remove: true`
 - **On a narrow screen the block stands the same, under the search of the submenu.** — `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.html:rtui-side-menu-favorites`
 
 The scenarios of the subdomain are bound to the tests by the number in the title of a test, not by a table

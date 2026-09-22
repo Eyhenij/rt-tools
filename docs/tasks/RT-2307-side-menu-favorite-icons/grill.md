@@ -36,6 +36,8 @@
 
 > на удаление по умолчанию мусорка
 
+> мусорка на ховер красная и дать возможность убрать это из вне типа сисс переменная цвета на ховер
+
 The request names the consuming application; the tree does not name consumers, so it is written
 here as "the application".
 
@@ -64,6 +66,11 @@ changes accordingly.
   turn of their own — the request asks for the number, not for a class.
 - **The first kit's references are taken from the runner's frame** — the pattern
   `ui-component-tests-visual`: the first kit's frames are matched only in the pipeline.
+
+**Said mid-work: what does the remove button do on hover?** мусорка на ховер красная и дать
+возможность убрать это из вне типа сисс переменная цвета на ховер — the remove icon turns the
+danger colour under the pointer and the keyboard focus, and the application sets another colour by
+a property of its own.
 
 ## What is left unclear
 

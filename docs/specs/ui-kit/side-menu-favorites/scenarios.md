@@ -368,3 +368,14 @@ keeps its default icon; a blank glyph leaves the trash can
 Given the service provided with `icons.drag` of the glyph `drag_indicator` and the turn 0
 When the block is drawn with `a` in the list
 Then the handle draws `drag_indicator` without a turn; an icon without a turn is not turned
+
+### SC-UK-124 — the remove icon turns red under the pointer
+
+Given the service with `a` in the list and a wide screen with a hovering pointer
+When the pointer stands on the remove button of the row `a`
+Then its icon takes `--rt-side-menu-favorite-remove-hover-color`, the danger colour by default; the
+star of a list row keeps its colours
+
+Coverage: partial — the spec checks the mark the styles read, not the colour itself: the spec
+environment applies no component styles and has no hover. The colour is shown by the showcase frame
+of the pointer on the remove button.

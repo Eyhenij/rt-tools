@@ -290,6 +290,19 @@ describe('RtuiSideMenuComponent — избранное', () => {
         expect((fixture.nativeElement.querySelector(`${HANDLE} mat-icon`) as HTMLElement).style.rotate).toBe('90deg');
     });
 
+    it('SC-UK-124 — кнопка «убрать» помечена для красного наведения, звезда — нет', () => {
+        const { fixture } = withFavorites(['rates']);
+
+        hoverFirstItem(fixture);
+
+        const remove: HTMLElement = fixture.nativeElement.querySelector(REMOVE) as HTMLElement;
+        const star: HTMLElement = listRow(fixture, 'rates').querySelector(STAR) as HTMLElement;
+
+        expect(remove.classList).toContain('rtui-side-menu-sub-item-title__favorite--remove');
+        expect(star).not.toBeNull();
+        expect(star.classList).not.toContain('rtui-side-menu-sub-item-title__favorite--remove');
+    });
+
     it('SC-UK-123 — значок ручки из настроек рисуется с заданным поворотом', () => {
         const { fixture } = withFavorites(['rates'], { config: { icons: { drag: { glyph: 'drag_indicator', rotate: 0 } } } });
 

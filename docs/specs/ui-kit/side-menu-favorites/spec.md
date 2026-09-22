@@ -127,19 +127,20 @@ sign-out or fill it with defaults.
   button size changes, the chevron of a folder and the consumer's button follow it and stay in the
   column of the stars.
 
-    | Property                                   | Default                                        |
-    | ------------------------------------------ | ---------------------------------------------- |
-    | `--rt-side-menu-favorite-color`            | the primary colour of the Material theme       |
-    | `--rt-side-menu-favorite-action-color`     | `--rt-text-base-secondary`                     |
-    | `--rt-side-menu-favorite-action-size`      | 32 px, twice `--rt-spacing-16`                 |
-    | `--rt-side-menu-favorite-action-icon-size` | `--rt-font-size-lg`                            |
-    | `--rt-side-menu-favorites-title-color`     | `--rt-text-base-secondary`                     |
-    | `--rt-side-menu-favorites-title-font-size` | `--rt-font-size-sm`                            |
-    | `--rt-side-menu-favorites-title-icon-size` | `--rt-icon-size-sm`                            |
-    | `--rt-side-menu-favorites-divider-color`   | `--rt-border-neutral-subtle`                   |
-    | `--rt-side-menu-favorites-divider-gap`     | `--rt-spacing-8`                               |
-    | `--rt-side-menu-favorites-drag-background` | `--rt-bg-base-base`                            |
-    | `--rt-side-menu-favorites-drag-shadow`     | the dragged-row shadow of the dynamic selector |
+    | Property                                     | Default                                        |
+    | -------------------------------------------- | ---------------------------------------------- |
+    | `--rt-side-menu-favorite-color`              | the primary colour of the Material theme       |
+    | `--rt-side-menu-favorite-action-color`       | `--rt-text-base-secondary`                     |
+    | `--rt-side-menu-favorite-remove-hover-color` | `--rt-icon-accent-danger`                      |
+    | `--rt-side-menu-favorite-action-size`        | 32 px, twice `--rt-spacing-16`                 |
+    | `--rt-side-menu-favorite-action-icon-size`   | `--rt-font-size-lg`                            |
+    | `--rt-side-menu-favorites-title-color`       | `--rt-text-base-secondary`                     |
+    | `--rt-side-menu-favorites-title-font-size`   | `--rt-font-size-sm`                            |
+    | `--rt-side-menu-favorites-title-icon-size`   | `--rt-icon-size-sm`                            |
+    | `--rt-side-menu-favorites-divider-color`     | `--rt-border-neutral-subtle`                   |
+    | `--rt-side-menu-favorites-divider-gap`       | `--rt-spacing-8`                               |
+    | `--rt-side-menu-favorites-drag-background`   | `--rt-bg-base-base`                            |
+    | `--rt-side-menu-favorites-drag-shadow`       | the dragged-row shadow of the dynamic selector |
 
 - **The hollow star and the remove button show on hover and on focus inside their row; the
   filled star always shows.** Stars on every row of a long list read as noise; the chosen ones must be visible at a
@@ -202,6 +203,10 @@ sign-out or fill it with defaults.
   turn it is not turned. A blank glyph counts as absent, the same as a blank label. The service
   gives the resolved icons out, so the application draws the same buttons without a second copy.
   The turn is a number bound to the icon, and the styles hold no turn of their own.
+- **The remove icon turns the danger colour under the pointer and the keyboard focus.** The press
+  removes the item, and the colour says so before it. The application sets another colour by
+  `--rt-side-menu-favorite-remove-hover-color`, its ordinary one included, and then the icon does
+  not turn red at all. The star keeps its colours under the pointer.
 - **On a narrow screen the block stands the same, under the search of the submenu.** The same rows,
   the same buttons, the same handle: the split between the two layouts would be a second favourites.
 
@@ -378,4 +383,5 @@ One settings object per application key, and in it one list per menu id.
   a dragged row that disappears releases the hold. Scenarios SC-UK-119 and SC-UK-120 added.
 - 2026-09-22 — the owner: the application sets the icons of the remove button and the handle by
   `config.icons`, a glyph and a turn each; the default remove icon is the trash can. Scenarios
-  SC-UK-121…SC-UK-123 added, SC-UK-95 names the icon by the settings.
+  SC-UK-121…SC-UK-123 added, SC-UK-95 names the icon by the settings. The remove icon turns red
+  under the pointer, the colour is a property of the application. Scenario SC-UK-124 added.
