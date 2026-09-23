@@ -34,10 +34,10 @@ import { TALKS_WORDS } from './talks-words';
 const BEM_BLOCK: string = 'talks-page';
 
 /** Сколько переписок читается за раз: список идёт страницей, как и в панели оператора. */
-const TALKS_PAGE_SIZE: number = 50;
+const PAGE_TALKS_SIZE: number = 50;
 
 /** Сколько реплик читается за раз. */
-const FEED_PAGE_SIZE: number = 100;
+const PAGE_FEED_SIZE: number = 100;
 
 /** Подписи сторон для треда набора: набор о сторонах этого домена не знает ничего. */
 const SIDE_LABELS: IChatSideLabels = { operator: TALKS_WORDS.sideOperator, visitor: TALKS_WORDS.sideVisitor };
@@ -134,7 +134,7 @@ export class TalksApp implements OnInit {
                 switchMap((): Observable<IPage<IChat.Talk.State>> => {
                     this.#talksReading.set(true);
 
-                    return this.#api.talks({ sign: this.#entrance.sign(), page: 1, size: TALKS_PAGE_SIZE, state: '' }).pipe(this.#quiet());
+                    return this.#api.talks({ sign: this.#entrance.sign(), page: 1, size: PAGE_TALKS_SIZE, state: '' }).pipe(this.#quiet());
                 }),
                 takeUntilDestroyed()
             )
@@ -148,7 +148,7 @@ export class TalksApp implements OnInit {
                 switchMap((talkId: string): Observable<IPage<IChat.Message.State>> => {
                     this.#feedReading.set(true);
 
-                    return this.#api.feed(talkId, { sign: this.#entrance.sign(), page: 1, size: FEED_PAGE_SIZE }).pipe(this.#quiet());
+                    return this.#api.feed(talkId, { sign: this.#entrance.sign(), page: 1, size: PAGE_FEED_SIZE }).pipe(this.#quiet());
                 }),
                 takeUntilDestroyed()
             )
