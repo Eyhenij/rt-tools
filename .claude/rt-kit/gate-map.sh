@@ -62,6 +62,16 @@ skill_for() {
                 # rule holds everything such a check is written by — its place in the gate and in
                 # the pipeline, the shape of its accepted list, the fail-open of a guard — while
                 # the default leads neither the check nor a shell case file to any rule at all.
+                # The generator of the kit's styling values: the scales, the islands of the theme
+                # and the order of the sublayers are emitted here, so editing it is editing the
+                # styling. The branch below covers the tree's checks alone, and this file fell
+                # into no branch at all — while the styling articles themselves mark `*.mjs`.
+                */tools/build-tokens-v2.mjs)
+                    printf '%s\n' 'styling-bem'
+                    printf '%s\n' 'rt-tools-styling'
+                    return 0
+                    ;;
+
                 */projects/agent-kit/*.spec.ts | */tools/*.spec.ts | */tools/*.test.ts | */tools/*.test.sh | */tools/tests/* | */tools/check-*.mjs)
                     printf '%s\n' 'testing'
                     return 0
@@ -253,6 +263,18 @@ skill_for() {
                 # check here is reading.
                 */.storybook/*.ts)
                     printf '%s\n' 'rt-tools-storybook'
+                    return 0
+                    ;;
+
+                # A wrapper of a story is a component: it is declared in three files like any
+                # other, and the showcase rule says nothing about that. The branch below swallowed
+                # the default whole, so a wrapper asked neither the uniformity rule nor the
+                # component file rule — and two wrappers with the template and the styles inside
+                # the class reached the push gate, after the frames had been taken and committed.
+                # The default is called after the showcase rule rather than instead of it.
+                */src/showcase/*.component.ts | */stories/component/*.component.ts)
+                    printf '%s\n' 'rt-tools-storybook'
+                    command -v skill_for_default >/dev/null 2>&1 && skill_for_default "$kind" "$target" "$written"
                     return 0
                     ;;
 
