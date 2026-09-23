@@ -1,30 +1,68 @@
 <rt-aside size="md" [ariaLabel]="title()">
-    <rt-aside-header [title]="title()" [overline]="hint()" />
+    <rt-aside-header [title]="title()" />
 
     <ng-container rtBlock="rt-data-list-settings-aside">
+        <!-- Подпись стоит под заголовком, как у панели первого кита: у шапки шторки место есть
+             только над заголовком. -->
+        <p rtElem="hint" qa-dataid="data-list-settings-hint">{{ hint() }}</p>
+
         <div rtElem="switches">
             <div rtElem="switch-row">
-                <span rtElem="switch-label" qa-dataid="data-list-settings-vertical-label">{{ verticalLabel() }}</span>
                 <rt-toggle-switch
                     qa-dataid="data-list-settings-vertical"
                     [ariaLabel]="verticalLabel()"
                     [ngModel]="isVerticalScrollbarShown()"
                     [ngModelOptions]="{ standalone: true }"
                     (ngModelChange)="isVerticalScrollbarShown.set($event)" />
+                <span rtElem="switch-label" qa-dataid="data-list-settings-vertical-label">{{ verticalLabel() }}</span>
             </div>
 
             <div rtElem="switch-row">
-                <span rtElem="switch-label" qa-dataid="data-list-settings-horizontal-label">{{ horizontalLabel() }}</span>
                 <rt-toggle-switch
                     qa-dataid="data-list-settings-horizontal"
                     [ariaLabel]="horizontalLabel()"
                     [ngModel]="isHorizontalScrollbarShown()"
                     [ngModelOptions]="{ standalone: true }"
                     (ngModelChange)="isHorizontalScrollbarShown.set($event)" />
+                <span rtElem="switch-label" qa-dataid="data-list-settings-horizontal-label">{{ horizontalLabel() }}</span>
             </div>
         </div>
 
-        <rt-table-settings-panel qa-dataid="data-list-settings-columns" [(items)]="items" />
+        <!-- Колонки — плашками первого кита: ручка ✥ и черта, имя, черта и глаз. Общая панель
+             колонок кита рисует вид второго кита, и её рисует его собственная таблица. -->
+        <ul rtElem="columns" qa-dataid="data-list-settings-columns" cdkDropList (cdkDropListDropped)="onDrop($event)">
+            @for (item of items(); track item.key) {
+                <li
+                    rtElem="column"
+                    qa-dataid="data-list-settings-column"
+                    cdkDrag
+                    [attr.data-key]="item.key"
+                    [rtMod]="{ hidden: item.hidden, locked: item.locked === true }"
+                    [cdkDragDisabled]="item.locked === true">
+                    <button
+                        rtElem="handle"
+                        qa-dataid="data-list-settings-drag"
+                        type="button"
+                        cdkDragHandle
+                        [disabled]="item.locked === true"
+                        [attr.aria-label]="dragLabel()">
+                        <rt-icon name="arrows" size="sm" />
+                    </button>
+
+                    <span rtElem="column-label" qa-dataid="data-list-settings-column-label">{{ item.label }}</span>
+
+                    <rt-icon-button
+                        rtElem="toggle"
+                        qa-dataid="data-list-settings-toggle"
+                        variant="ghost"
+                        [icon]="item.hidden ? 'eye-slash' : 'eye'"
+                        [ariaLabel]="item.hidden ? showColumnLabel() : hideColumnLabel()"
+                        [tooltip]="item.hidden ? showLabel() : hideLabel()"
+                        [disabled]="item.locked === true"
+                        (clicked)="onToggleHidden(item.key)" />
+                </li>
+            }
+        </ul>
     </ng-container>
 
     <rt-aside-footer>
