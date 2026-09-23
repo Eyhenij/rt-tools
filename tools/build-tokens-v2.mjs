@@ -63,6 +63,25 @@ const COARSE_NOTE = `/* On touch devices an input is not smaller than 16px: WebK
    zooms the page on focusing a field with font-size < 16px — hence the horizontal
    shift of the layout. The desktop keeps the dense 14px. */`;
 
+/* The sign of the theme answers on an ordinary node too, not at the root of the page alone: that is
+   what a local piece of the theme stands on — a dark card inside a light page and a light card
+   inside a dark one. The whole set goes over together, because a piece repainting the ground alone
+   reads as a defect of the layout at the first shadow left from the other theme.
+
+   The properties of a custom property are inherited, so a node carrying the sign wins over what it
+   inherited from the root, and the nearer sign wins over the farther one by the same rule. */
+const SCOPE_NOTE = {
+    light: `/* A light piece inside a page of another theme. The root above already carries this set; the
+   rule is repeated for a node so that the piece returns its subtree to the light theme. */`,
+    dark: `/* The bare attribute stands next to the root one for the sake of a local piece of the theme: a
+   dark card inside a light page carries the sign on itself, not on the root of the page. */`,
+    presetLight: `/* A light piece inside a page of the set. The set is a second layer of assignments over the same
+   markup, and at the root it wins over the light base by the order of the files. A piece stands
+   deeper, and what is nailed onto an ancestor does not reach it — so the set is laid over the piece
+   once more. A dark piece needs no such rule: the set has no dark half, and at the root the dark
+   theme wins over it just the same. */`,
+};
+
 const errors = [];
 function fail(message) {
     errors.push(message);
@@ -153,18 +172,21 @@ const files = {
 
     [`${stylesDir}/_semantic.scss`]:
         `${BANNER}\n\n${PREAMBLE.semantic}\n\n@mixin rt-theme-light-tokens {\n${renderNodes(light)}\n}\n\n` +
-        `:root {\n    @include rt-theme-light-tokens;\n}\n\n${COARSE_NOTE}\n@media (pointer: coarse) {\n    :root {\n` +
+        `:root {\n    @include rt-theme-light-tokens;\n}\n\n${SCOPE_NOTE.light}\n[data-theme='light'] {\n` +
+        `    @include rt-theme-light-tokens;\n}\n\n${COARSE_NOTE}\n@media (pointer: coarse) {\n    :root {\n` +
         coarsePointer.map((token) => `        ${token.name}: ${token.value};`).join('\n') +
         `\n    }\n}\n`,
 
     [`${stylesDir}/_theme-dark.scss`]:
         `${BANNER}\n\n${PREAMBLE.dark}\n\n@mixin rt-theme-dark-tokens {\n${renderNodes(darkNodes)}\n}\n\n` +
-        `:root[data-theme='dark'],\nhtml.rt-theme-dark {\n    @include rt-theme-dark-tokens;\n}\n`,
+        `${SCOPE_NOTE.dark}\n:root[data-theme='dark'],\n[data-theme='dark'],\nhtml.rt-theme-dark {\n` +
+        `    @include rt-theme-dark-tokens;\n}\n`,
 
     [`${stylesDir}/_preset-material.scss`]:
         `${BANNER}\n\n${PREAMBLE.material}\n\n@mixin rt-preset-material-tokens {\n${renderNodes(material)}\n}\n\n` +
         `:root[data-preset='material'],\n[data-preset='material'],\n.rt-preset-material {\n` +
-        `    @include rt-preset-material-tokens;\n}\n`,
+        `    @include rt-preset-material-tokens;\n}\n\n${SCOPE_NOTE.presetLight}\n` +
+        `[data-preset='material'] [data-theme='light'] {\n    @include rt-preset-material-tokens;\n}\n`,
 
     [typesFile]: renderTypes(),
 };

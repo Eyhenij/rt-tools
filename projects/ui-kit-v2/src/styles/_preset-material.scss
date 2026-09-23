@@ -100,3 +100,12 @@
 .rt-preset-material {
     @include rt-preset-material-tokens;
 }
+
+/* A light piece inside a page of the set. The set is a second layer of assignments over the same
+   markup, and at the root it wins over the light base by the order of the files. A piece stands
+   deeper, and what is nailed onto an ancestor does not reach it — so the set is laid over the piece
+   once more. A dark piece needs no such rule: the set has no dark half, and at the root the dark
+   theme wins over it just the same. */
+[data-preset='material'] [data-theme='light'] {
+    @include rt-preset-material-tokens;
+}

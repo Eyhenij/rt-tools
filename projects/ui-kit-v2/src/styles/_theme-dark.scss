@@ -140,7 +140,10 @@
     --rt-color-skeleton-wave: var(--rt-charcoal-border);
 }
 
+/* The bare attribute stands next to the root one for the sake of a local piece of the theme: a
+   dark card inside a light page carries the sign on itself, not on the root of the page. */
 :root[data-theme='dark'],
+[data-theme='dark'],
 html.rt-theme-dark {
     @include rt-theme-dark-tokens;
 }
