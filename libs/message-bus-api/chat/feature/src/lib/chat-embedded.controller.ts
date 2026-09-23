@@ -33,7 +33,6 @@ import {
 } from '@nestjs/common';
 
 import { PublicOperation } from '@rt/message-bus-api/access/util';
-import { IChatEntryOpened } from '@rt/message-bus-api/chat/api';
 import {
     conversationsPage,
     findLiveSiteByKey,
@@ -57,7 +56,7 @@ import {
     pageOrigin,
 } from '@rt/message-bus-api/chat/util';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
-import { EChatTalkState, ERefusal, IPage, pageAsked, pageFault, refusalBody } from '@rt/message-bus-common';
+import { EChatTalkState, ERefusal, IChatEntryOpened, IPage, pageAsked, pageFault, refusalBody } from '@rt/message-bus-common';
 
 import { chatStateAsked, ChatTalkService, IChatStateChanged } from './chat-talk.service';
 

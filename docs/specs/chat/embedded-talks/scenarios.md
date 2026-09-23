@@ -41,18 +41,12 @@ Under a live sign the page draws the list of the talks of its site, the feed of 
 the box of the answer. An answer sent from the page arrives into the feed as a remark of the
 operator.
 
-Not covered: the page itself is written by the tasks RT-2313 and RT-2314.
-
 ### SC-CH-90 — a talk is closed from the embedded page
 
 The person of the consumer closes a talk. The row of the list changes its state, and the visitor of
 that talk opens a new one by their next remark.
 
-Not covered: the page itself is written by the tasks RT-2313 and RT-2314.
-
 ### SC-CH-91 — the page carries no choice of a site
 
 The site is named by the key the page was embedded with: the page has no selector of sites, and the
 list holds the talks of one site only.
-
-Not covered: the page itself is written by the tasks RT-2313 and RT-2314.
