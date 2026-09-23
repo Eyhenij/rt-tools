@@ -3,17 +3,9 @@ import { inject, Injectable, signal, Signal, WritableSignal } from '@angular/cor
 import { firstValueFrom } from 'rxjs';
 
 import { WINDOW } from '@rt-tools/core';
-import { CHAT_EMBEDDED_ENTRY_PATH, IChatEntryOpened } from '@rt/message-bus-common';
+import { CHAT_EMBEDDED_ENTRY_PATH, CHAT_PAGE_SIGNATURE_ASKED, IChatEntryOpened, IChatPageSignature } from '@rt/message-bus-common';
 
-import {
-    CHAT_PAGE_SIGNATURE_ASKED,
-    chatPageNeedsSignature,
-    chatPageRefusalWords,
-    chatPageSignatureOf,
-    ETalksEntry,
-    IChatPageEntry,
-    IChatPageSignature,
-} from './talks-entry.logic';
+import { chatPageNeedsSignature, chatPageRefusalWords, chatPageSignatureOf, ETalksEntry, IChatPageEntry } from './talks-entry.logic';
 
 /**
  * Вход страницы: подпись потребителя меняется на признак страницы и живёт в памяти вкладки.

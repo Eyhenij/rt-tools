@@ -1,0 +1,26 @@
+{
+  "name": "chat-talks-embed",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/chat-talks-embed/src",
+  "tags": ["scope:chat-talks-embed-app"],
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/dist/apps/chat-talks-embed"],
+      "options": {
+        "command": "npx vite build",
+        "cwd": "apps/chat-talks-embed"
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx tsc -p apps/chat-talks-embed/tsconfig.json --noEmit"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}

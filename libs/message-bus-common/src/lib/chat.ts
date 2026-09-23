@@ -55,6 +55,25 @@ export interface IChatEntryOpened {
     readonly expiresAt: string;
 }
 
+/**
+ * Слово сообщения с подписью: по нему страница отличает своё сообщение от чужого.
+ *
+ * Лежит в общем слое, а не в одном из двух приложений: скрипт установки стоит в чужой админке,
+ * страница — в рамке на ней, и оба читают одно слово. Вторая копия разошлась бы с первой молча, а
+ * увиделось бы это пустым разделом у потребителя.
+ */
+export const CHAT_PAGE_SIGNATURE_KIND: string = 'rt-chat-signature';
+
+/** Слово просьбы: им страница просит у встроившего свежую подпись. */
+export const CHAT_PAGE_SIGNATURE_ASKED: string = 'rt-chat-signature-asked';
+
+/** Подпись потребителя: ключ площадки, минута и сам знак. */
+export interface IChatPageSignature {
+    readonly site: string;
+    readonly at: number;
+    readonly signature: string;
+}
+
 /** Адрес потока событий оператора. */
 export const CHAT_STREAM_PATH: string = '/api/chat/conversations/stream';
 
