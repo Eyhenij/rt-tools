@@ -271,9 +271,11 @@ export class RtDataListComponent<
                         >(RtDataListSettingsAsideComponent, {
                             data: this.#configService.tableConfig(),
                             position: 'right',
-                            // Панель живёт поверх страницы, вне списка, и вид списка до неё сам не
-                            // доходит: класс набора она получает от того, кто её открыл.
+                            // Панель и подложка под ней живут поверх страницы, вне списка, и вид списка
+                            // до них сам не доходит: класс набора они получают от того, кто их открыл.
                             panelClass: this.look() === 'material' ? RT_PRESET_MATERIAL_CLASS : [],
+                            backdropClass:
+                                this.look() === 'material' ? ['rt-aside-backdrop', RT_PRESET_MATERIAL_CLASS] : 'rt-aside-backdrop',
                         })
                         .afterClosed()
                 ),

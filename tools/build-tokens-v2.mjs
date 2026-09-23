@@ -91,6 +91,11 @@ const SCOPE_NOTE = {
     dark: `/* A dark piece inside a page of another theme. The light base goes under the dark answers, exactly
    as it lies under them at the root: a piece carrying the dark answers alone would inherit the rest
    from the root already resolved by the light values, and come out half dark. */`,
+    presetNode: `/* A node carrying the set on a light page. The set alone rewrites only its own names, and a name
+   whose value refers to one of them would stay resolved at the root by the base values: the text
+   button in a panel of the set kept the base blue while the brand beside it followed the theme. The
+   node therefore declares the light base under the set. The dark rules below have the same force and
+   stand after this one, so a node under a dark theme still takes them. */`,
     presetOnDark: `/* A piece carrying the set under a dark theme — of the page or of a piece around it. A component
    draws the look of the first kit by carrying the set on its own host, and the plain rule of the set
    would lay its light values over the dark ones the node inherited: the table came out light with
@@ -211,6 +216,8 @@ const files = {
         `${SCOPE_NOTE.light}\n[data-theme='light']:not(:root) {\n    @include semantic.rt-theme-light-tokens;\n}\n\n` +
         `${SCOPE_NOTE.dark}\n[data-theme='dark']:not(:root) {\n    @include semantic.rt-theme-light-tokens;\n` +
         `    @include dark.rt-theme-dark-tokens;\n}\n\n` +
+        `${SCOPE_NOTE.presetNode}\n[data-preset='material']:not(:root),\n.rt-preset-material:not(:root) {\n` +
+        `    @include semantic.rt-theme-light-tokens;\n    @include material.rt-preset-material-tokens;\n}\n\n` +
         `${SCOPE_NOTE.presetOnDark}\n[data-theme='dark'] [data-preset='material'],\n` +
         `[data-theme='dark'] .rt-preset-material,\nhtml.rt-theme-dark [data-preset='material'],\n` +
         `html.rt-theme-dark .rt-preset-material {\n` +

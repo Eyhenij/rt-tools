@@ -11,12 +11,6 @@
         flex-direction: column;
         gap: var(--rt-space-md);
 
-        &__hint {
-            margin: 0;
-            color: var(--rt-color-text-muted);
-            font-size: var(--rt-text-sm);
-        }
-
         &__switches {
             display: flex;
             flex-direction: column;
@@ -50,7 +44,7 @@
             display: flex;
             align-items: center;
             border-radius: var(--rt-data-list-settings-aside-radius);
-            background-color: var(--rt-color-bg-subtle);
+            background-color: var(--rt-list-settings-column-bg);
             gap: var(--rt-space-sm);
             padding-inline-end: var(--rt-space-sm);
 
@@ -90,6 +84,122 @@
         &__toggle {
             border-left: var(--rt-data-list-settings-aside-divider-width) solid var(--rt-color-border-subtle);
             padding-inline-start: var(--rt-space-sm);
+        }
+    }
+
+    /* Вид первого кита: панель открыта списком с материальным набором (класс набора стоит на
+       панели поверх страницы) или страница целиком под набором. Числа сняты с панели колонок
+       первого кита на его витрине: поля 32px, заголовок 24px, переключатели 48×24 через 32px,
+       плашки 48px, кнопки-таблетки 36px без черты над ними. Цвета переключателя даёт сам
+       материальный набор; здесь — размеры, которых у набора нет.
+
+       Свойства вложенных блоков переназначаются правилом той же цели и большей силы: каждый
+       блок объявляет свои на себе, и унаследованное значение до них не дошло бы. */
+    :is(.rt-preset-material, [data-preset='material']) .rt-data-list-settings-aside {
+        --rt-aside-inset: var(--rt-space-xl);
+        --rt-aside-content-gap: var(--rt-space-xl);
+        --rt-data-list-settings-aside-radius: var(--rt-radius-sm);
+        --rt-data-list-settings-aside-column-height: 48px;
+        --rt-data-list-settings-aside-control-size: 36px;
+        --rt-data-list-settings-aside-icon-size: 18px;
+        --rt-data-list-settings-aside-back-icon-size: 24px;
+        --rt-data-list-settings-aside-header-height: 96px;
+
+        .rt-aside-header {
+            --rt-aside-header-title-size: var(--rt-text-2xl);
+            --rt-aside-header-title-weight: var(--rt-font-weight-semibold);
+            --rt-aside-header-subtitle-size: var(--rt-text-md);
+            --rt-aside-header-gap: var(--rt-space-md);
+            --rt-aside-header-min-height: var(--rt-data-list-settings-aside-header-height);
+        }
+
+        .rt-aside-header__back .rt-icon-button {
+            --rt-icon-button-size: var(--rt-data-list-settings-aside-control-size);
+            --rt-icon-button-color: var(--rt-list-settings-icon-color);
+        }
+
+        .rt-aside-header__back .rt-icon {
+            min-width: var(--rt-data-list-settings-aside-back-icon-size);
+            min-height: var(--rt-data-list-settings-aside-back-icon-size);
+        }
+
+        .rt-aside-footer {
+            --rt-aside-footer-border-width: 0;
+        }
+
+        .rt-aside-footer__content {
+            justify-content: flex-end;
+            gap: var(--rt-space-md);
+        }
+
+        .rt-aside-footer .rt-button {
+            --rt-btn-height: var(--rt-data-list-settings-aside-control-size);
+            --rt-btn-radius: var(--rt-radius-full);
+            --rt-btn-padding: 0 var(--rt-space-6);
+            --rt-btn-font-size: var(--rt-text-sm);
+        }
+
+        .rt-aside-footer .rt-button--text {
+            --rt-btn-padding: 0 var(--rt-space-sm);
+        }
+
+        .rt-toggle-switch {
+            --rt-toggle-track-width: 48px;
+            --rt-toggle-track-height: 24px;
+            --rt-toggle-thumb-size: 20px;
+            --rt-toggle-thumb-inset: 2px;
+            --rt-toggle-thumb-travel: 24px;
+        }
+
+        .rt-data-list-settings-aside__switches {
+            gap: var(--rt-space-xl);
+        }
+
+        .rt-data-list-settings-aside__switch-label {
+            color: var(--rt-color-text-muted);
+
+            &--on {
+                color: var(--rt-color-text-primary);
+            }
+        }
+
+        .rt-data-list-settings-aside__column {
+            min-height: var(--rt-data-list-settings-aside-column-height);
+            color: var(--rt-color-text-primary);
+            padding-inline: var(--rt-space-xs);
+
+            &--hidden {
+                color: var(--rt-color-text-primary);
+            }
+        }
+
+        .rt-data-list-settings-aside__handle {
+            min-width: calc(var(--rt-data-list-settings-aside-control-size) + 2 * var(--rt-space-xs));
+            height: var(--rt-data-list-settings-aside-control-size);
+            align-self: center;
+            padding: 0 var(--rt-space-xs);
+            border-right-color: var(--rt-color-border-strong);
+            color: var(--rt-list-settings-icon-color);
+            margin-inline-end: var(--rt-space-xs);
+
+            .rt-icon {
+                min-width: var(--rt-data-list-settings-aside-icon-size);
+                min-height: var(--rt-data-list-settings-aside-icon-size);
+            }
+        }
+
+        .rt-data-list-settings-aside__column-label {
+            font-size: var(--rt-text-md);
+        }
+
+        .rt-data-list-settings-aside__toggle {
+            border-left: none;
+            padding-inline-start: 0;
+        }
+
+        .rt-data-list-settings-aside__toggle .rt-icon-button {
+            --rt-icon-button-size: var(--rt-data-list-settings-aside-control-size);
+            --rt-icon-button-color: var(--rt-list-settings-icon-color);
         }
     }
 }

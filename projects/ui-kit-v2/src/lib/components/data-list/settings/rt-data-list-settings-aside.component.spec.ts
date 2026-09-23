@@ -113,16 +113,17 @@ describe('RtDataListSettingsAsideComponent', () => {
         ]);
     });
 
-    it('SC-UKV-352 — подпись стоит под заголовком, переключатель — слева от своей подписи', () => {
+    it('SC-UKV-352 — подпись стоит в шапке под заголовком, переключатель — слева от своей подписи', () => {
         const fixture: ComponentFixture<RtDataListSettingsAsideComponent<IEntity>> = setup();
         const host: HTMLElement = fixture.nativeElement;
         const header: Element | null = host.querySelector('rt-aside-header');
-        const hint: Element | null = host.querySelector('[qa-dataid="data-list-settings-hint"]');
         const row: Element | null = host.querySelector('.rt-data-list-settings-aside__switch-row');
+        const order: Array<string | null> = Array.from(header?.querySelectorAll('[qa-dataid]') ?? []).map((node: Element) =>
+            node.getAttribute('qa-dataid')
+        );
 
-        const order: Array<Element | null> = Array.from(host.querySelectorAll('rt-aside-header, [qa-dataid="data-list-settings-hint"]'));
-
-        expect(order).toEqual([header, hint]);
+        expect(order.indexOf('aside-subtitle')).toBeGreaterThan(order.indexOf('aside-title'));
+        expect(header?.querySelector('[qa-dataid="aside-subtitle"]')?.textContent?.trim()).not.toBe('');
         expect(row?.firstElementChild?.getAttribute('qa-dataid')).toBe('data-list-settings-vertical');
     });
 

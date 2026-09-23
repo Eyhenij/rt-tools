@@ -60,3 +60,11 @@ When the kit settings name `dataList.appearance` `outline` and `dataList.filterA
 Then the search is in the `outline` look and the filter fields in the `fill` look
 
 Covered by the component test of the list.
+
+### SC-UKV-362 — the column settings panel gets the preset of the list
+
+Given a list whose look is not given
+When the column settings panel is opened
+Then the panel and the backdrop under it carry the material preset
+
+Covered by the component test of the list.

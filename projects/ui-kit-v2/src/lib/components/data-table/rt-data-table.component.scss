@@ -112,6 +112,12 @@
                 background-color: var(--rt-color-bg-surface);
             }
 
+            /* Поля отбора первого кита — обведённые поля Material со скруглением 4px, а не
+               скругление контрола материального набора: то круглее, и поля выходили таблетками. */
+            :is(.rt-preset-material, [data-preset='material']) &--filterable {
+                --rt-input-radius: var(--rt-radius-sm);
+            }
+
             /* Разделитель между ячейками шапки — полоса в половину высоты, как у первого кита. */
             &--head:not(:last-child, .rt-data-table__cell--selectable, .rt-data-table__cell--empty):after {
                 position: absolute;

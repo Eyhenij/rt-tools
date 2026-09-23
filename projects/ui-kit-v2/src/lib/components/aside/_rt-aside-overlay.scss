@@ -26,6 +26,15 @@
         transition: opacity var(--rt-aside-animation-duration) ease;
     }
 
+    /* Под материальным набором подложка первого кита — затемнение без размытия. Цвет объявлен
+       заново на самой подложке: на корне он вычислен по назначениям корня, а класс набора стоит
+       на подложке, которую открыл список первого кита. */
+    :is(.rt-preset-material, [data-preset='material']).cdk-overlay-backdrop.rt-aside-backdrop,
+    [data-preset='material'] .cdk-overlay-backdrop.rt-aside-backdrop {
+        --rt-aside-backdrop-bg: var(--rt-color-bg-overlay);
+        --rt-aside-backdrop-blur: 0;
+    }
+
     .rt-aside-overlay {
         height: 100dvh;
         transition: transform var(--rt-aside-animation-duration) ease;

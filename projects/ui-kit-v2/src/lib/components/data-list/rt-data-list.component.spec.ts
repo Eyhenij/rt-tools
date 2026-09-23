@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, EnvironmentProviders, Provider, Signal, signal, WritableSignal } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
+import { EMPTY, Observable } from 'rxjs';
 
 import { EFilterOperatorType, IFilterModel, IPageModel } from '@rt-tools/utils';
 
@@ -10,6 +11,7 @@ import { RtDataTableConfigService } from '../data-table/rt-data-table-config.ser
 import { ERtDataTableColumnType, ERtDataTableFilterType, IRtDataTable, RT_PRESET_MATERIAL_CLASS } from '../data-table/rt-data-table.model';
 import { IRtInput } from '../input/rt-input.model';
 import { RtDataListComponent } from './rt-data-list.component';
+import { IRtAsideConfig, RtAsideService } from '../aside/rt-aside.service';
 
 interface IEntity extends Record<string, unknown> {
     id: number;
@@ -214,6 +216,26 @@ describe('RtDataListComponent', () => {
         ]);
 
         expect([hasClass(fixture, 'rt-data-list'), hasClass(fixture, 'rt-data-table')]).toEqual([false, false]);
+    });
+
+    it('SC-UKV-362 — панель колонок и подложка под ней получают набор вида первого кита', async (): Promise<void> => {
+        const opened: IRtAsideConfig[] = [];
+        const aside: unknown = {
+            open: (_component: unknown, config?: IRtAsideConfig): { afterClosed: () => Observable<never> } => {
+                opened.push(config ?? {});
+
+                return { afterClosed: (): Observable<never> => EMPTY };
+            },
+        };
+        const fixture: ComponentFixture<DefaultLookHostComponent> = await drawDefaultLook([{ provide: RtAsideService, useValue: aside }]);
+
+        (qa(fixture, 'data-list-table-config')?.nativeElement as HTMLElement).querySelector('button')?.click();
+        fixture.detectChanges();
+
+        expect([opened[0]?.panelClass, opened[0]?.backdropClass]).toEqual([
+            RT_PRESET_MATERIAL_CLASS,
+            ['rt-aside-backdrop', RT_PRESET_MATERIAL_CLASS],
+        ]);
     });
 
     it('SC-UKV-361 — вид поиска и полей отбора по умолчанию задаётся настройками кита', async (): Promise<void> => {

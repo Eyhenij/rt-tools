@@ -205,6 +205,25 @@ export const material = [
     { name: `--rt-list-search-color-placeholder`, value: `var(--mat-sys-on-surface-variant, var(--rt-mat-neutral-30))` },
 
     {
+        lead: `    /* Панель настройки колонок первого кита: плашка колонки залита цветом выбранного пункта
+       Material, значки — в тоне on-surface-variant темы. Сняты с панели на витрине первого кита. */`,
+        space: true,
+        name: `--rt-list-settings-column-bg`,
+        value: `var(--mat-option-selected-state-layer-color, var(--mat-sys-secondary-container, var(--rt-mat-neutral-10)))`,
+    },
+    { name: `--rt-list-settings-icon-color`, value: `var(--mat-sys-on-surface-variant, var(--rt-mat-neutral-60))` },
+
+    {
+        lead: `    /* Переключатель первого кита — свой, не Material: серый трек в рамке и графитовый
+       включённый. Тёмная тема отвечает на эти имена своими цветами. */`,
+        space: true,
+        name: `--rt-toggle-color-track`,
+        value: `var(--rt-mat-neutral-20)`,
+    },
+    { name: `--rt-toggle-color-track-on`, value: `var(--rt-mat-neutral-80)` },
+    { name: `--rt-toggle-color-border`, value: `var(--rt-mat-neutral-30)` },
+
+    {
         lead: `    /* Кнопка и поле первого кита скруглены заметно сильнее: 1.5rem против 10px.
        Значение снято числом — ссылки на токены первого кита во второй кит не едут. */`,
         space: true,

@@ -185,6 +185,19 @@ export const lightForms = [
         dark: `var(--rt-input-color-text-placeholder)`,
     },
     {
+        lead: `    /* Панель настройки колонок списка — заливка плашки колонки и тон значков на ней.
+       Свой вид берёт подложку и приглушённый текст; материальный набор отдаёт их теме. */`,
+        space: true,
+        name: `--rt-list-settings-column-bg`,
+        value: `var(--rt-color-bg-subtle)`,
+        dark: `var(--rt-color-bg-subtle)`,
+    },
+    {
+        name: `--rt-list-settings-icon-color`,
+        value: `var(--rt-color-text-muted)`,
+        dark: `var(--rt-color-text-muted)`,
+    },
+    {
         lead: `    /* Скругление контрола — назначение, а не ступень на месте. Кнопка, поле ввода и
        всё, что стоит с ними в строке, берут его отсюда: набор оформления живёт слоем
        назначений и до ступени, взятой компонентом напрямую, не достаёт. */`,
@@ -340,10 +353,12 @@ export const lightForms = [
     {
         name: `--rt-toggle-color-track-on`,
         value: `var(--rt-color-action-primary)`,
+        dark: `var(--rt-color-action-primary)`,
     },
     {
         name: `--rt-toggle-color-border`,
         value: `var(--rt-color-border-strong)`,
+        dark: `var(--rt-color-border-strong)`,
     },
     {
         name: `--rt-toggle-color-thumb`,

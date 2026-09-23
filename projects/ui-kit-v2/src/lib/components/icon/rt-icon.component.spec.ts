@@ -78,7 +78,7 @@ describe('RtIconComponent', (): void => {
         });
 
         it.each<[IRtIcon.Color, string]>([
-            ['muted', 'var(--rt-neutral-600)'],
+            ['muted', 'var(--rt-icon-color-muted, var(--rt-neutral-600))'],
             ['info', 'var(--rt-color-state-info)'],
             ['success', 'var(--rt-color-state-success)'],
             ['warning', 'var(--rt-color-state-warning)'],

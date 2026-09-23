@@ -46,6 +46,8 @@
     --rt-list-search-color-bg: var(--rt-input-color-bg);
     --rt-list-search-icon-color: var(--rt-input-icon-color);
     --rt-list-search-color-placeholder: var(--rt-input-color-text-placeholder);
+    --rt-list-settings-column-bg: var(--rt-color-bg-subtle);
+    --rt-list-settings-icon-color: var(--rt-color-text-muted);
     --rt-input-icon-color: var(--rt-neutral-600);
 
     /* Stepper — в dark рельса уходит от яркого синего к приглушённому серо-синему
@@ -117,6 +119,8 @@
        общий bg-surface на обоих слил бы их в один силуэт. Тень на графите
        не работает, роль разделителя берёт на себя контраст. */
     --rt-toggle-color-track: var(--rt-charcoal-950);
+    --rt-toggle-color-track-on: var(--rt-color-action-primary);
+    --rt-toggle-color-border: var(--rt-color-border-strong);
     --rt-toggle-color-thumb: var(--rt-neutral-50);
     --rt-toggle-shadow-thumb: var(--rt-shadow-none);
 

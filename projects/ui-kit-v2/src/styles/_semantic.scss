@@ -248,6 +248,11 @@
     --rt-list-search-icon-color: var(--rt-input-icon-color);
     --rt-list-search-color-placeholder: var(--rt-input-color-text-placeholder);
 
+    /* Панель настройки колонок списка — заливка плашки колонки и тон значков на ней.
+       Свой вид берёт подложку и приглушённый текст; материальный набор отдаёт их теме. */
+    --rt-list-settings-column-bg: var(--rt-color-bg-subtle);
+    --rt-list-settings-icon-color: var(--rt-color-text-muted);
+
     /* Скругление контрола — назначение, а не ступень на месте. Кнопка, поле ввода и
        всё, что стоит с ними в строке, берут его отсюда: набор оформления живёт слоем
        назначений и до ступени, взятой компонентом напрямую, не достаёт. */

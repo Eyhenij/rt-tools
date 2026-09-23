@@ -1,11 +1,8 @@
 <rt-aside size="md" [ariaLabel]="title()">
-    <rt-aside-header [title]="title()" />
+    <!-- Подпись стоит в шапке под заголовком, как у панели первого кита. -->
+    <rt-aside-header [title]="title()" [subtitle]="hint()" />
 
     <ng-container rtBlock="rt-data-list-settings-aside">
-        <!-- Подпись стоит под заголовком, как у панели первого кита: у шапки шторки место есть
-             только над заголовком. -->
-        <p rtElem="hint" qa-dataid="data-list-settings-hint">{{ hint() }}</p>
-
         <div rtElem="switches">
             <div rtElem="switch-row">
                 <rt-toggle-switch
@@ -14,7 +11,9 @@
                     [ngModel]="isVerticalScrollbarShown()"
                     [ngModelOptions]="{ standalone: true }"
                     (ngModelChange)="isVerticalScrollbarShown.set($event)" />
-                <span rtElem="switch-label" qa-dataid="data-list-settings-vertical-label">{{ verticalLabel() }}</span>
+                <span rtElem="switch-label" qa-dataid="data-list-settings-vertical-label" [rtMod]="{ on: isVerticalScrollbarShown() }">
+                    {{ verticalLabel() }}
+                </span>
             </div>
 
             <div rtElem="switch-row">
@@ -24,7 +23,9 @@
                     [ngModel]="isHorizontalScrollbarShown()"
                     [ngModelOptions]="{ standalone: true }"
                     (ngModelChange)="isHorizontalScrollbarShown.set($event)" />
-                <span rtElem="switch-label" qa-dataid="data-list-settings-horizontal-label">{{ horizontalLabel() }}</span>
+                <span rtElem="switch-label" qa-dataid="data-list-settings-horizontal-label" [rtMod]="{ on: isHorizontalScrollbarShown() }">
+                    {{ horizontalLabel() }}
+                </span>
             </div>
         </div>
 

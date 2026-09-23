@@ -70,6 +70,17 @@ Nothing new is shown to a person: the list keeps its labels, only its look follo
   `--rt-color-field-fill-underline`; the material preset reads `--mat-sys-on-surface-variant` for
   it, as the Material fill field does, and the dark theme answers it itself.
 
+- **The column settings panel of the list draws the first kit's panel in the material preset.** The
+  numbers are taken from the first kit's panel on its showcase: 32 px insets, a 24 px title with its
+  caption under it in the header, 48 × 24 switches 32 px apart, 48 px column plaques in the colour of
+  the selected Material option, 36 px pill buttons with no line above them and a backdrop with no
+  blur. The list hands the preset class to the panel and to its backdrop, because both are drawn over
+  the page, outside the list.
+
+- **A node carrying the preset declares the light base under the set.** The set rewrites only its own
+  names, and a name that refers to one of them stays resolved at the page root: the text button of
+  the panel kept the base blue while the brand beside it followed the theme.
+
 ## What is out of scope
 
 - **The round buttons above the table.** The first kit draws them as small raised Material buttons;
@@ -83,7 +94,8 @@ Nothing new is shown to a person: the list keeps its labels, only its look follo
 
 ## Contract
 
-The list and the table get the input `look` (`'material' | 'own'`), the menu gets `panelClass`.
+The list and the table get the input `look` (`'material' | 'own'`), the menu gets `panelClass`, the
+aside header gets `subtitle`.
 The kit settings get the sections `dataTable` (`look`) and `dataList` (`appearance`,
 `filterAppearance`). The default of `appearance` of the list stays `fill`.
 
@@ -147,3 +159,5 @@ Not applicable: the family holds no data of a workspace.
 - 2026-09-23 — the list search is 52 px in both looks of the material preset and fill by default,
   after «инпуты серча на материальном наборе не такие как в первом ките, вьюха по дефолту должна быть
   как в первом ките».
+- 2026-09-23 — the column settings panel draws the first kit's panel, after «что с асайдом на таблице
+  первого кита конфиг колонок он выглядит как асайл второго кита».

@@ -19,6 +19,16 @@ describe('RtAsideHeaderComponent', (): void => {
         expect(textOf(qa(setup({ overline: 'Создание записи' }), 'aside-overline'))).toBe('Создание записи');
     });
 
+    it('подпись под заголовком появляется только со своим значением и стоит после него', (): void => {
+        expect(qa(setup(), 'aside-subtitle')).toBeNull();
+
+        const fixture: ComponentFixture<RtAsideHeaderComponent> = setup({ subtitle: 'Порядок и видимость колонок' });
+        const title: HTMLElement | undefined = qa(fixture, 'aside-title')?.nativeElement;
+
+        expect(textOf(qa(fixture, 'aside-subtitle'))).toBe('Порядок и видимость колонок');
+        expect(title?.nextElementSibling?.getAttribute('qa-dataid')).toBe('aside-subtitle');
+    });
+
     it('стрелка «назад» стоит по умолчанию и снимается входом', (): void => {
         // Пара нужна целиком: панель без стрелки выглядит исправной ровно до тех
         // пор, пока её не потеряли у всех панелей разом.

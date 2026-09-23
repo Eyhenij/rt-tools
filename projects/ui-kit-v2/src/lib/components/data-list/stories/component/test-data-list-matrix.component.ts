@@ -207,11 +207,14 @@ const NARROW_CASES: readonly { readonly name: string }[] = [{ name: '360 px — 
             }
 
             @case ('settings') {
-                <app-story-presets single caption="Панель настройки колонок">
-                    <ng-template>
-                        <app-data-list-settings />
+                <app-story-row
+                    caption="Панель настройки колонок в виде первого кита и в своём виде второго кита"
+                    slotWidth="34rem"
+                    [items]="looks">
+                    <ng-template let-look>
+                        <app-data-list-settings [look]="look" />
                     </ng-template>
-                </app-story-presets>
+                </app-story-row>
             }
 
             @case ('narrow') {

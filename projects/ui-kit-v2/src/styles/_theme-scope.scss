@@ -34,6 +34,17 @@
     @include dark.rt-theme-dark-tokens;
 }
 
+/* A node carrying the set on a light page. The set alone rewrites only its own names, and a name
+   whose value refers to one of them would stay resolved at the root by the base values: the text
+   button in a panel of the set kept the base blue while the brand beside it followed the theme. The
+   node therefore declares the light base under the set. The dark rules below have the same force and
+   stand after this one, so a node under a dark theme still takes them. */
+[data-preset='material']:not(:root),
+.rt-preset-material:not(:root) {
+    @include semantic.rt-theme-light-tokens;
+    @include material.rt-preset-material-tokens;
+}
+
 /* A piece carrying the set under a dark theme — of the page or of a piece around it. A component
    draws the look of the first kit by carrying the set on its own host, and the plain rule of the set
    would lay its light values over the dark ones the node inherited: the table came out light with

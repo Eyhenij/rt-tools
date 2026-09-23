@@ -82,6 +82,12 @@ export const darkLayout = [
         name: `--rt-list-search-color-placeholder`,
     },
     {
+        name: `--rt-list-settings-column-bg`,
+    },
+    {
+        name: `--rt-list-settings-icon-color`,
+    },
+    {
         name: `--rt-input-icon-color`,
     },
     {
@@ -212,6 +218,12 @@ export const darkLayout = [
        не работает, роль разделителя берёт на себя контраст. */`,
         space: true,
         name: `--rt-toggle-color-track`,
+    },
+    {
+        name: `--rt-toggle-color-track-on`,
+    },
+    {
+        name: `--rt-toggle-color-border`,
     },
     {
         name: `--rt-toggle-color-thumb`,
