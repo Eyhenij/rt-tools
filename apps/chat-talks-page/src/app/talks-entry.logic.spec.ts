@@ -1,16 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
-import { ERefusal, refusalBody } from '@rt/message-bus-common';
+import { CHAT_PAGE_SIGNATURE_KIND, ERefusal, IChatPageSignature, refusalBody } from '@rt/message-bus-common';
 
-import {
-    CHAT_PAGE_SIGNATURE_KIND,
-    chatPageEntryOf,
-    chatPageNeedsSignature,
-    chatPageRefusalWords,
-    chatPageSignatureOf,
-    IChatPageEntry,
-    IChatPageSignature,
-} from './talks-entry.logic';
+import { chatPageEntryOf, chatPageNeedsSignature, chatPageRefusalWords, chatPageSignatureOf, IChatPageEntry } from './talks-entry.logic';
 
 /** Ключ площадки, с которым страницу встроили. */
 const KEY: string = 'live-key';

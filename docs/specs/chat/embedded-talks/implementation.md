@@ -11,6 +11,9 @@ task RT-2314 is the installation into a foreign admin and the sample of a signin
 - **The sign of the page opens one site.** — `libs/message-bus-api/chat/feature/src/lib/chat-embedded.controller.ts:#site` — every operation reads the site out of the sign and is given that site alone. A talk of a neighbouring site answers as not found.
 - **The page shows the same as the panel of the operator, for one site.** — `apps/chat-talks-page/src/app/talks-app.ts:TalksApp` — the list and the chat of the kit, the same ones the panel is drawn by.
 - **The page carries no choice of a site.** — `apps/chat-talks-page/src/app/talks-api.service.ts:talks` — the request of the list carries the sign alone. The site is named by the sign, and the page has no selector.
+- **The page is installed by one script and one tag.** — `apps/chat-talks-embed/src/lib/talks-embed.element.ts:TalksEmbedElement` — the tag `rt-chat-talks` with the key of the site and the address of the signing point. Nothing else is asked of the admin.
+- **The section stands in a frame, and the styles of the two sides never meet.** — `apps/chat-talks-embed/src/lib/talks-embed.logic.ts:talksEmbedFrameSrc` — the address of the frame carries the key of the site and the address of the admin. The page opens inside it.
+- **The signature travels to the frame by a message, not by the address.** — `apps/chat-talks-embed/src/lib/talks-embed.element.ts:TALKS_TAG` — the script answers the request of the frame by a message and sends it to the address of the service alone.
 - **An answer from the embedded page is a remark of the operator.** — `libs/message-bus-api/chat/feature/src/lib/chat-talk.service.ts:answer` — the panel and the page write through one service, so the thread and the order of the messages are one.
 
 ## What it is called here
@@ -33,6 +36,10 @@ consumer, and the sample page of the stand signs on its own side.
 The address of the page is asked only when it is named. The header is set by the browser and a page
 cannot forge it, while a call without the header came from a server of the consumer. Nothing tells
 that case from a call made by a tool.
+
+Nothing checks that the point of the consumer gives out a signature only to its own people: the
+service sees a signature and knows nothing of who asked for it. The sample of such a point lives in
+the stand of the end-to-end suite, and the requirement lives in the text of the installation.
 
 ## The language of the page is one today
 

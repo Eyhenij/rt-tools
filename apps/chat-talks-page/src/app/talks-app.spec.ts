@@ -17,11 +17,18 @@ import { TestBed } from '@angular/core/testing';
 import { IRtChat } from '@rt-tools/ui-kit-v2';
 import { WINDOW } from '@rt-tools/core';
 import { IChatKitTalkRow } from '@rt/message-bus-admin/chat/util';
-import { CHAT_EMBEDDED_ENTRY_PATH, CHAT_EMBEDDED_PATH, EChatTalkState, IChatMessageRow, IChatTalkRow, IPage } from '@rt/message-bus-common';
+import {
+    CHAT_EMBEDDED_ENTRY_PATH,
+    CHAT_EMBEDDED_PATH,
+    CHAT_PAGE_SIGNATURE_KIND,
+    EChatTalkState,
+    IChatMessageRow,
+    IChatTalkRow,
+    IPage,
+} from '@rt/message-bus-common';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import { TalksApp } from './talks-app';
-import { CHAT_PAGE_SIGNATURE_KIND } from './talks-entry.logic';
 import { TALKS_WORDS } from './talks-words';
 
 /** Ключ площадки, с которым страницу встроили. */

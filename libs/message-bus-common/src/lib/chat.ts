@@ -55,6 +55,36 @@ export interface IChatEntryOpened {
     readonly expiresAt: string;
 }
 
+/**
+ * Признак тега с ключом площадки: им её называют оба встраиваемых файла.
+ *
+ * Виджет посетителя и скрипт раздела переписок читают один и тот же тег чужой страницы. Вторая
+ * копия имени разошлась бы с первой молча: тег остался бы прежним, а читать его перестали бы.
+ */
+export const CHAT_TAG_SITE_ATTRIBUTE: string = 'site';
+
+/** Признак тега с адресом сервиса: площадка вправе держать его на своём поддомене. */
+export const CHAT_TAG_SERVICE_ATTRIBUTE: string = 'service';
+
+/**
+ * Слово сообщения с подписью: по нему страница отличает своё сообщение от чужого.
+ *
+ * Лежит в общем слое, а не в одном из двух приложений: скрипт установки стоит в чужой админке,
+ * страница — в рамке на ней, и оба читают одно слово. Вторая копия разошлась бы с первой молча, а
+ * увиделось бы это пустым разделом у потребителя.
+ */
+export const CHAT_PAGE_SIGNATURE_KIND: string = 'rt-chat-signature';
+
+/** Слово просьбы: им страница просит у встроившего свежую подпись. */
+export const CHAT_PAGE_SIGNATURE_ASKED: string = 'rt-chat-signature-asked';
+
+/** Подпись потребителя: ключ площадки, минута и сам знак. */
+export interface IChatPageSignature {
+    readonly site: string;
+    readonly at: number;
+    readonly signature: string;
+}
+
 /** Адрес потока событий оператора. */
 export const CHAT_STREAM_PATH: string = '/api/chat/conversations/stream';
 

@@ -12,7 +12,7 @@
  * Решения здесь чистые: разбор адреса, разбор сообщения и слова отказа. Кто их зовёт и куда кладёт
  * ответ — дело самой страницы, и проверяются они вызовом.
  */
-import { ERefusal, IRefusal, refusalOf } from '@rt/message-bus-common';
+import { CHAT_PAGE_SIGNATURE_KIND, ERefusal, IChatPageSignature, IRefusal, refusalOf } from '@rt/message-bus-common';
 
 /** Чем страница представляется сервису: ключ площадки, адрес сервиса и адрес встроившей её админки. */
 export interface IChatPageEntry {
@@ -21,19 +21,6 @@ export interface IChatPageEntry {
     /** Адрес админки потребителя: с ним и только с ним страница обменивается сообщениями. */
     readonly host: string;
 }
-
-/** Подпись потребителя: ключ площадки, минута и сам знак. */
-export interface IChatPageSignature {
-    readonly site: string;
-    readonly at: number;
-    readonly signature: string;
-}
-
-/** Слово сообщения с подписью: по нему страница отличает своё сообщение от чужого. */
-export const CHAT_PAGE_SIGNATURE_KIND: string = 'rt-chat-signature';
-
-/** Слово сообщения-просьбы: им страница просит у встроившего свежую подпись. */
-export const CHAT_PAGE_SIGNATURE_ASKED: string = 'rt-chat-signature-asked';
 
 /** Значение признака адреса без окружающих пробелов. Пустое считается неназванным. */
 function asked(params: URLSearchParams, name: string): string {
