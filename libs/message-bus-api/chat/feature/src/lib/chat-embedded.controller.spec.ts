@@ -253,7 +253,7 @@ describe('ChatEmbeddedController', () => {
         expect(store.messages).toHaveLength(1);
     });
 
-    it('SC-CH-91 — выбора площадки у страницы нет: сайт назван признаком', async (): Promise<void> => {
+    it('SC-CH-87 — названный в запросе чужой сайт признака не перебивает', async (): Promise<void> => {
         talk('own', 'site-1', 'своя');
         talk('foreign', 'site-2', 'соседская');
 

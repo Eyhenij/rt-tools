@@ -83,13 +83,13 @@ by the words «Страница переписок не открылась», th
 Not applicable in the sense of codes of its own kind: the answers carry the codes of the vocabulary
 shared with the taking in of a remark, and the page words them by the code.
 
-| What happened                            | What the code says                                       |
-| ---------------------------------------- | -------------------------------------------------------- |
-| No signature, or it does not add up      | the entry is refused, without saying which part failed   |
-| The minute is outside the allowed spread | the entry is refused by the age of the signature         |
-| The key of the site is unknown           | the entry is refused, and nothing is said about the site |
-| The sign of the page has expired         | the operation is refused, and a new sign is asked for    |
-| The talk belongs to a foreign site       | not found                                                |
+| What happened                            | What the code says                                                             |
+| ---------------------------------------- | ------------------------------------------------------------------------------ |
+| No signature, or it does not add up      | the entry is refused, without saying which part failed — `ChatEntryRejected`   |
+| The minute is outside the allowed spread | the entry is refused by the age of the signature — `ChatEntryStale`            |
+| The key of the site is unknown           | the entry is refused, and nothing is said about the site — `ChatEntryRejected` |
+| The sign of the page has expired         | the operation is refused, and a new sign is asked for — `ChatEntryExpired`     |
+| The talk belongs to a foreign site       | not found — `ChatConversationNotFound`                                         |
 
 ## Data
 
@@ -153,3 +153,5 @@ embeds the page as many times, and the pages know nothing of one another.
 ## History of changes
 
 - 2026-09-23 — the text is written before the code, by the first task of the epic RT-2309.
+- 2026-09-23 — the entry and the operations behind it are written by the task RT-2312; the codes of
+  the refusals are named in the table above.
