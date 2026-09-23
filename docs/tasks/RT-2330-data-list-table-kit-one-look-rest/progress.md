@@ -3,9 +3,9 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 5 of 6 — toolbar buttons, row selection, paginator, floating bar
+- **Stage:** 6 of 6 — spec and references
 - **Done:** measurement; the material preset reads the Material theme from the page
-- **Next step:** measure the toolbar buttons, the row selection, the paginator and the floating bar against the first kit
+- **Next step:** write the new rules and scenarios into the table family spec
 - **Uncommitted:** no
 - **Waiting for the owner:** no; the board on the host does not list #2330 — the branch carries the number by the owner's «если тупик заводи дубликт и работаем», and the board is checked again before the PR
 - **PR:** not open yet
@@ -24,9 +24,9 @@
 - [x] 3.3 Cover the checkbox centre and the row height with specs
 - [x] 4.1 Bring the fill look of the field to the first kit Material fill field by measurement: height, fill, underline, search icon
 - [x] 4.2 Re-take the field and list references
-- [>] 5.1 Measure each of the four against the first kit and size the edit
-- [ ] 5.2 Bring those that fit this task, file the rest as tasks of epic 1870 and tell the owner the numbers
-- [ ] 6.1 Write the new rules and scenarios into the table family spec
+- [x] 5.1 Measure each of the four against the first kit and size the edit
+- [x] 5.2 Bring those that fit this task, file the rest as tasks of epic 1870 and tell the owner the numbers
+- [>] 6.1 Write the new rules and scenarios into the table family spec
 - [ ] 6.2 Re-take the references changed by stages 2–5 and run the whole check set
 
 ## Measurement
@@ -85,6 +85,15 @@ measured: the tree has no pinned browser profile, and the rule allows no other d
   fill field reads `--rt-color-field-fill-underline`, which the preset takes from
   `--mat-sys-on-surface-variant`. Measured on `organisms-dynamiclist-datalist--material-theme`: fill
   51 px `#e8e0eb`, underline 1 px `#49454e` — the first kit's numbers. Affected stage of the plan: 4.
+
+- **Of the four differences of stage 5 two are no differences of the list** — the floating bar of
+  selected records is placed by the application in the first kit (`rtui-action-bar-container` in
+  its story), and the second kit has the same dark bar (`molecules-data-actionbar--presets`); the
+  radio stands in the first kit frame because that story selects one record, and the second kit
+  draws a radio in the same mode (`organisms-dynamiclist-datalist--selection`). The round toolbar
+  buttons and the paginator are real differences in other components: filed as #2331 and #2332,
+  epic plan rows 7.13 and 7.14. Neither reached the board listing — the same host failure as
+  #2329 and #2330. Affected stage of the plan: 5.
 
 ## Sessions
 
