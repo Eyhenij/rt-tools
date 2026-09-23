@@ -90,6 +90,9 @@
     --rt-color-skeleton-base: var(--rt-mat-neutral-10);
     --rt-color-skeleton-wave: var(--rt-mat-neutral-25);
 
+    /* Шапка таблицы первого кита залита тем же цветом, что залитое поле Material. */
+    --rt-color-table-head-bg: var(--mat-form-field-filled-container-color, var(--mat-sys-surface-variant, var(--rt-mat-overlay-black-4)));
+
     /* Кнопка и поле первого кита скруглены заметно сильнее: 1.5rem против 10px.
        Значение снято числом — ссылки на токены первого кита во второй кит не едут. */
     --rt-radius-control: 1.5rem;

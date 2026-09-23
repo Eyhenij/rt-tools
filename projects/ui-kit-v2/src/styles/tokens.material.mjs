@@ -170,6 +170,13 @@ export const material = [
     { name: `--rt-color-skeleton-wave`, value: `var(--rt-mat-neutral-25)` },
 
     {
+        lead: `    /* Шапка таблицы первого кита залита тем же цветом, что залитое поле Material. */`,
+        space: true,
+        name: `--rt-color-table-head-bg`,
+        value: `var(--mat-form-field-filled-container-color, var(--mat-sys-surface-variant, var(--rt-mat-overlay-black-4)))`,
+    },
+
+    {
         lead: `    /* Кнопка и поле первого кита скруглены заметно сильнее: 1.5rem против 10px.
        Значение снято числом — ссылки на токены первого кита во второй кит не едут. */`,
         space: true,

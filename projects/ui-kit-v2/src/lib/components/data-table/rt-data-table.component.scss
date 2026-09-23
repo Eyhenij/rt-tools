@@ -8,6 +8,7 @@
 
     .rt-data-table {
         --rt-data-table-row-height: var(--rt-control-height-lg);
+        --rt-data-table-head-height: calc(var(--rt-control-height-lg) - var(--rt-space-1));
         --rt-data-table-border-width: var(--rt-border-width-thin);
         --rt-data-table-row-transition-duration: var(--rt-duration-base);
 
@@ -34,6 +35,12 @@
             position: sticky;
             z-index: var(--rt-z-sticky);
             top: 0;
+
+            /* Шапка первого кита — 44px: ступени такой нет, и она собрана из ступени lg без ступени 1.
+               Высоту держит строка, а не поля ячейки: поля первого кита 10px на шкалу не ложатся. */
+            tr:first-child {
+                height: var(--rt-data-table-head-height);
+            }
 
             tr:last-child {
                 border-bottom: var(--rt-data-table-border-width) solid var(--rt-color-border-default);
@@ -77,7 +84,7 @@
 
             &--head {
                 position: relative;
-                background-color: var(--rt-color-bg-surface-subtle);
+                background-color: var(--rt-color-table-head-bg);
                 color: var(--rt-color-text-primary);
                 font-size: var(--rt-text-md);
                 font-weight: var(--rt-font-weight-medium);
@@ -90,6 +97,14 @@
             &--selectable,
             &--filterable {
                 pointer-events: auto;
+            }
+
+            /* Чекбокс и радиокнопка — строчные хосты: в строке текста они встают на базовую линию,
+               и место под выносными поднимает их на 2px над серединой ячейки. Блочный хост строки
+               текста не заводит, и ячейка ставит его по своей середине. */
+            &--selectable > rt-checkbox,
+            &--selectable > rt-radio-button {
+                display: flex;
             }
 
             &--filterable {

@@ -3,9 +3,9 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 3 of 6 — table header, rows and header checkbox
+- **Stage:** 4 of 6 — search field of the list
 - **Done:** measurement; the material preset reads the Material theme from the page
-- **Next step:** put the header checkbox on the vertical centre of its cell
+- **Next step:** bring the fill look of the search field to the first kit Material fill field: height 52, underline, icon
 - **Uncommitted:** no
 - **Waiting for the owner:** no; the board on the host does not list #2330 — the branch carries the number by the owner's «если тупик заводи дубликт и работаем», and the board is checked again before the PR
 - **PR:** not open yet
@@ -19,10 +19,10 @@
 - [x] 2.2 Rebuild the tokens and cover the wrapping with a spec
 - [x] 2.3 Give the second kit showcase a violet Material theme declared as plain properties, no Material package
 - [x] 2.4 Rewrite the Material rule of the proposed material preset spec by the owner's decision
-- [>] 3.1 Put the header checkbox on the vertical centre of its cell
-- [ ] 3.2 Bring the header fill, the row height and the font of the table in the material preset to the measured first-kit values
-- [ ] 3.3 Cover the checkbox centre and the row height with specs
-- [ ] 4.1 Bring the fill look of the field to the first kit Material fill field by measurement: height, fill, underline, search icon
+- [x] 3.1 Put the header checkbox on the vertical centre of its cell
+- [x] 3.2 Bring the header fill, the row height and the font of the table in the material preset to the measured first-kit values
+- [x] 3.3 Cover the checkbox centre and the row height with specs
+- [>] 4.1 Bring the fill look of the field to the first kit Material fill field by measurement: height, fill, underline, search icon
 - [ ] 4.2 Re-take the field and list references
 - [ ] 5.1 Measure each of the four against the first kit and size the edit
 - [ ] 5.2 Bring those that fit this task, file the rest as tasks of epic 1870 and tell the owner the numbers
@@ -62,6 +62,23 @@ measured: the tree has no pinned browser profile, and the rule allows no other d
   `3rem`; the story sets `--rt-table-row-height: 64px`. Affected stage of the plan: 3.
 - **The token checks read a Material name as its fallback** — they judge the kit on a page without
   a Material theme; `tools/tokens-looks.mjs:withoutMaterial`. Affected stage of the plan: 2.
+
+- **The checkbox and radio of the selection column are block hosts** — an inline host stood on the
+  text baseline and rose 2 px above the cell middle; it also stretched the header to 40 px. After
+  the edit: header checkbox centre 230.5 against the header centre 230.5, row checkbox 278.5 against
+  278.5 (frame `organisms-dynamiclist-datalist--material-theme`). Affected stage of the plan: 3.
+- **The header height is its own property, 44 px** — `calc(lg − space-1)`: the scale has no 44, and
+  the first kit's 10 px cell padding does not lie on it. Affected stage of the plan: 3.
+- **The row stays 50 px** — cell padding 8 plus text padding 8 around the line; within 2 px of the
+  first kit's default 48. Affected stage of the plan: 3.
+- **The table header colour is a name of its own, `--rt-color-table-head-bg`, with a dark answer** —
+  without the answer the dark theme yielded it to the preset, and the dark material header lost its
+  fill. Affected stage of the plan: 3.
+- **Step 3.3 is covered by frames, not by specs** — jsdom computes no layout; the centre and the
+  height are held by the list and table references and measured above. Affected stage of the plan: 3.
+- **The font is the application's** — the first kit showcase sets Roboto on the page
+  (`--font-default`), the first kit ships no font of its own. Named to the owner in stage 5.
+  Affected stage of the plan: 3, 5.
 
 ## Sessions
 
