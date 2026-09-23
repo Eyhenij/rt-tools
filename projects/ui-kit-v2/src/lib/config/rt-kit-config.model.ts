@@ -10,8 +10,8 @@ import { ITheme } from '../platform/theme.model';
 export namespace IRtKitConfig {
     /** Умолчания на весь кит. */
     export interface Global {
-        /** Тема первой прорисовки, пока человек ничего не выбирал. */
-        theme?: ITheme.Mode;
+        /** Тема первой прорисовки, пока человек ничего не выбирал. Годится и «за машиной». */
+        theme?: ITheme.Choice;
     }
 
     /** Умолчания кнопки. Названы только те виды, которые у кнопки уже есть входом. */
