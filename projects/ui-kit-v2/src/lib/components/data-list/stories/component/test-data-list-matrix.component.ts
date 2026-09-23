@@ -214,9 +214,9 @@ const NARROW_CASES: readonly { readonly name: string }[] = [{ name: '360 px — 
             }
 
             @case ('themes') {
-                <app-story-presets caption="Список в обеих темах в обоих наборах">
+                <app-story-presets caption="Список в обеих темах в обоих наборах" fill>
                     <ng-template>
-                        <app-story-themes>
+                        <app-story-themes fill>
                             <ng-template>
                                 <app-data-list-cell storageKey="story-list-themes" [columns]="columns" [rows]="rows" [page]="pageOne" />
                             </ng-template>

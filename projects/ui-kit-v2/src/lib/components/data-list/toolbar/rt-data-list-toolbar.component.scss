@@ -43,8 +43,12 @@
             border-left: var(--rt-data-list-toolbar-divider-width) solid var(--rt-color-border-subtle);
         }
 
+        // Поиск стоит на своей ширине, пока ему хватает места, и уступает, когда не хватает:
+        // узкая колонка бывает и на широком окне, где запрос по ширине окна ниже не сработает.
         &__search {
             width: var(--rt-size-60);
+            min-width: 0;
+            flex-shrink: 1;
         }
 
         @media (width <= #{bp.$rt-bp-lg}) {

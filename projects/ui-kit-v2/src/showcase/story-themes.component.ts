@@ -1,10 +1,13 @@
+import { BooleanInput } from '@angular/cdk/coercion';
 import { NgTemplateOutlet } from '@angular/common';
 import {
+    booleanAttribute,
     ChangeDetectionStrategy,
     Component,
     contentChild,
     input,
     InputSignal,
+    InputSignalWithTransform,
     Signal,
     TemplateRef,
     ViewEncapsulation,
@@ -60,6 +63,7 @@ import {
         // Корень показа: по нему обвязка снимков берёт область кадра — см. STORY_SNAPSHOT_ROOT_ATTRIBUTE.
         // Записан литералом, а не константой: метаданные компонента читаются сборщиком статически.
         'data-story-root': '',
+        '[class.app-story-themes--fill]': 'fill()',
     },
     imports: [
         // angular
@@ -71,4 +75,13 @@ export class StoryThemesComponent {
 
     /** Подпись над парой — что именно сравнивается. */
     public readonly caption: InputSignal<string> = input<string>('');
+
+    /**
+     * Показ занимает всю ширину половины — тот же вход, что у пары наборов. Половина ужимает
+     * содержимое по его собственной ширине, и список с таблицей внутри вставал на ширину таблицы:
+     * на холсте 900 px он выходил за край половины на 197 px и ложился на соседнюю.
+     */
+    public readonly fill: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
 }
