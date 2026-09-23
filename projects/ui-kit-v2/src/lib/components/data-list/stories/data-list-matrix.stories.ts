@@ -9,7 +9,9 @@ import { TestRtDataListMatrixComponent } from './component/test-data-list-matrix
  * неотличимо от отсутствующего.
  */
 export default {
-    title: 'Organisms/Tables & Lists/DataList',
+    title: 'Organisms/First Kit Table/DataList',
+    // Тема первого кита на всю страницу: таблица первого кита рисуется как на его витрине.
+    globals: { preset: 'first-kit-theme' },
     component: TestRtDataListMatrixComponent,
     parameters: {
         controls: { disable: true },

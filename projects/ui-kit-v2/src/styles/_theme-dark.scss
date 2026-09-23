@@ -44,6 +44,9 @@
     --rt-input-color-border: var(--rt-charcoal-border);
     --rt-list-search-color-border: var(--rt-input-color-border);
     --rt-list-search-color-bg: var(--rt-input-color-bg);
+    --rt-list-search-icon-color: var(--rt-input-icon-color);
+    --rt-list-search-color-placeholder: var(--rt-input-color-text-placeholder);
+    --rt-input-icon-color: var(--rt-neutral-600);
 
     /* Stepper — в dark рельса уходит от яркого синего к приглушённому серо-синему
        (текущий шаг остаётся янтарным из light-семантики). */

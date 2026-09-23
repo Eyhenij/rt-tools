@@ -180,10 +180,13 @@ export type TRtDesignTokenName =
     | '--rt-input-focus-shadow'
     | '--rt-input-focus-shadow-error'
     | '--rt-input-font-size'
+    | '--rt-input-gap'
     | '--rt-input-height'
     | '--rt-input-height-lg'
     | '--rt-input-height-md'
     | '--rt-input-height-sm'
+    | '--rt-input-icon-color'
+    | '--rt-input-icon-size'
     | '--rt-input-line-height'
     | '--rt-input-max-width'
     | '--rt-input-padding-x'
@@ -199,8 +202,15 @@ export type TRtDesignTokenName =
     | '--rt-letter-spacing-wide'
     | '--rt-list-search-color-bg'
     | '--rt-list-search-color-border'
+    | '--rt-list-search-color-placeholder'
+    | '--rt-list-search-font-size'
+    | '--rt-list-search-gap'
     | '--rt-list-search-height'
+    | '--rt-list-search-icon-color'
+    | '--rt-list-search-icon-size'
+    | '--rt-list-search-padding-x'
     | '--rt-list-search-radius'
+    | '--rt-list-search-width'
     | '--rt-mat-blue-100'
     | '--rt-mat-blue-20'
     | '--rt-mat-blue-40'
@@ -639,10 +649,13 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-input-focus-shadow',
     '--rt-input-focus-shadow-error',
     '--rt-input-font-size',
+    '--rt-input-gap',
     '--rt-input-height',
     '--rt-input-height-lg',
     '--rt-input-height-md',
     '--rt-input-height-sm',
+    '--rt-input-icon-color',
+    '--rt-input-icon-size',
     '--rt-input-line-height',
     '--rt-input-max-width',
     '--rt-input-padding-x',
@@ -658,8 +671,15 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-letter-spacing-wide',
     '--rt-list-search-color-bg',
     '--rt-list-search-color-border',
+    '--rt-list-search-color-placeholder',
+    '--rt-list-search-font-size',
+    '--rt-list-search-gap',
     '--rt-list-search-height',
+    '--rt-list-search-icon-color',
+    '--rt-list-search-icon-size',
+    '--rt-list-search-padding-x',
     '--rt-list-search-radius',
+    '--rt-list-search-width',
     '--rt-mat-blue-100',
     '--rt-mat-blue-20',
     '--rt-mat-blue-40',

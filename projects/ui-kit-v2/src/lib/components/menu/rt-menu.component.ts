@@ -119,6 +119,12 @@ export class RtMenuComponent {
     /** Сторона раскрытия панели относительно триггера. */
     public readonly align: InputSignal<IRtMenu.Align> = input<IRtMenu.Align>('end');
 
+    /**
+     * Классы панели. Панель живёт поверх страницы, вне хоста меню, и признаки вида над хостом до неё
+     * не доходят: семья, нарисованная своим набором, отдаёт его панели этим входом.
+     */
+    public readonly panelClass: InputSignal<string | string[]> = input<string | string[]>([]);
+
     /** Триггер отключён — меню не открыть. */
     public readonly disabled: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,

@@ -43,7 +43,19 @@ export enum ERtDataTableCellColor {
  */
 export type TRtDataTableFilters<T> = Array<IFilterModel<Extract<keyof T, string>>>;
 
+/**
+ * Класс материального набора на узле. Стоит на хосте семьи и уходит панелям, которые семья открывает
+ * поверх страницы: вне хоста признак вида до них иначе не доходит.
+ */
+export const RT_PRESET_MATERIAL_CLASS: string = 'rt-preset-material';
+
 export namespace IRtDataTable {
+    /**
+     * Вид семьи: `material` — вид первого кита, материальный набор на самом узле; `own` — свой вид
+     * второго кита. Умолчание — вид первого кита: семья переехала оттуда и выглядит как там.
+     */
+    export type Look = 'material' | 'own';
+
     export type CellColor = `${ERtDataTableCellColor}`;
 
     export type ColumnType = `${ERtDataTableColumnType}`;

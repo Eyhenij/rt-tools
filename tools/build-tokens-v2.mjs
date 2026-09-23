@@ -91,6 +91,12 @@ const SCOPE_NOTE = {
     dark: `/* A dark piece inside a page of another theme. The light base goes under the dark answers, exactly
    as it lies under them at the root: a piece carrying the dark answers alone would inherit the rest
    from the root already resolved by the light values, and come out half dark. */`,
+    presetOnDark: `/* A piece carrying the set under a dark theme — of the page or of a piece around it. A component
+   draws the look of the first kit by carrying the set on its own host, and the plain rule of the set
+   would lay its light values over the dark ones the node inherited: the table came out light with
+   dark text in a dark piece. The node therefore declares the whole set in the order the root has —
+   light base, the set, the dark answers. A light piece between the dark one and the node answers
+   with the light base and the set; one level of such nesting is told apart, the next is not. */`,
     preset: `/* A piece inside a page of the styling set, and a piece carrying the set itself. The set lies over
    the light base and under the dark answers — the same order the root has, and there the order is
    what the dark theme wins over the set by. */`,
@@ -205,10 +211,22 @@ const files = {
         `${SCOPE_NOTE.light}\n[data-theme='light']:not(:root) {\n    @include semantic.rt-theme-light-tokens;\n}\n\n` +
         `${SCOPE_NOTE.dark}\n[data-theme='dark']:not(:root) {\n    @include semantic.rt-theme-light-tokens;\n` +
         `    @include dark.rt-theme-dark-tokens;\n}\n\n` +
-        `${SCOPE_NOTE.preset}\n[data-preset='material'][data-theme='light']:not(:root),\n` +
-        `[data-preset='material'] [data-theme='light']:not(:root) {\n` +
+        `${SCOPE_NOTE.presetOnDark}\n[data-theme='dark'] [data-preset='material'],\n` +
+        `[data-theme='dark'] .rt-preset-material,\nhtml.rt-theme-dark [data-preset='material'],\n` +
+        `html.rt-theme-dark .rt-preset-material {\n` +
+        `    @include semantic.rt-theme-light-tokens;\n    @include material.rt-preset-material-tokens;\n` +
+        `    @include dark.rt-theme-dark-tokens;\n}\n\n` +
+        `[data-theme='dark'] [data-theme='light'] [data-preset='material'],\n` +
+        `[data-theme='dark'] [data-theme='light'] .rt-preset-material,\n` +
+        `html.rt-theme-dark [data-theme='light'] [data-preset='material'],\n` +
+        `html.rt-theme-dark [data-theme='light'] .rt-preset-material {\n` +
         `    @include semantic.rt-theme-light-tokens;\n    @include material.rt-preset-material-tokens;\n}\n\n` +
-        `[data-preset='material'][data-theme='dark']:not(:root),\n[data-preset='material'] [data-theme='dark']:not(:root) {\n` +
+        `${SCOPE_NOTE.preset}\n[data-preset='material'][data-theme='light']:not(:root),\n` +
+        `[data-preset='material'] [data-theme='light']:not(:root),\n` +
+        `.rt-preset-material[data-theme='light']:not(:root),\n.rt-preset-material [data-theme='light']:not(:root) {\n` +
+        `    @include semantic.rt-theme-light-tokens;\n    @include material.rt-preset-material-tokens;\n}\n\n` +
+        `[data-preset='material'][data-theme='dark']:not(:root),\n[data-preset='material'] [data-theme='dark']:not(:root),\n` +
+        `.rt-preset-material[data-theme='dark']:not(:root),\n.rt-preset-material [data-theme='dark']:not(:root) {\n` +
         `    @include semantic.rt-theme-light-tokens;\n    @include material.rt-preset-material-tokens;\n` +
         `    @include dark.rt-theme-dark-tokens;\n}\n`,
 

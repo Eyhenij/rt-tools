@@ -16,6 +16,7 @@
     [cdkConnectedOverlayOrigin]="trigger"
     [cdkConnectedOverlayOpen]="isOpen()"
     [cdkConnectedOverlayPositions]="overlayPositions()"
+    [cdkConnectedOverlayPanelClass]="panelClass()"
     (backdropClick)="close()"
     (detach)="close()"
     (overlayKeydown)="onKeydown($event)">

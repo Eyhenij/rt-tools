@@ -87,13 +87,13 @@ const applyTheme: (theme: string) => void = (theme: string): void => {
 const applyPreset: (preset: string) => void = (preset: string): void => {
     const root: HTMLElement = document.documentElement;
 
-    if (preset === 'own') {
-        delete root.dataset['preset'];
-    } else {
+    if (preset === 'material' || preset === 'material-violet') {
         root.dataset['preset'] = 'material';
+    } else {
+        delete root.dataset['preset'];
     }
 
-    if (preset === 'material-violet') {
+    if (preset === 'material-violet' || preset === 'first-kit-theme') {
         root.dataset['showcaseMaterialTheme'] = 'violet';
     } else {
         delete root.dataset['showcaseMaterialTheme'];
@@ -168,6 +168,9 @@ const preview: Preview = {
                     { value: 'own', title: 'Свой набор' },
                     { value: 'material', title: 'Material' },
                     { value: 'material-violet', title: 'Material, фиолетовая тема первого кита' },
+                    // Только тема, без набора на странице: таблица первого кита ставит свой вид на
+                    // себя сама, и набор на странице перекрасил бы её свой вид, показанный рядом.
+                    { value: 'first-kit-theme', title: 'Фиолетовая тема первого кита, без набора' },
                 ],
                 dynamicTitle: true,
             },

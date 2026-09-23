@@ -4,7 +4,9 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtDataTableComponent } from './component/test-data-table.component';
 
 export default {
-    title: 'Organisms/Tables & Lists/DataTable',
+    title: 'Organisms/First Kit Table/DataTable',
+    // Тема первого кита на всю страницу: таблица первого кита рисуется как на его витрине.
+    globals: { preset: 'first-kit-theme' },
     component: TestRtDataTableComponent,
     argTypes: {
         filtersShown: { control: { type: 'boolean' } },

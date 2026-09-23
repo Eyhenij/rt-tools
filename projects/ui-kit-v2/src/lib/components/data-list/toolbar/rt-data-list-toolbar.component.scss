@@ -63,9 +63,15 @@
             --rt-input-radius: var(--rt-list-search-radius);
             --rt-input-color-border: var(--rt-list-search-color-border);
             --rt-input-color-bg: var(--rt-list-search-color-bg);
+            --rt-input-padding-x: var(--rt-list-search-padding-x);
+            --rt-input-gap: var(--rt-list-search-gap);
+            --rt-input-font-size: var(--rt-list-search-font-size);
+            --rt-input-icon-size: var(--rt-list-search-icon-size);
+            --rt-input-icon-color: var(--rt-list-search-icon-color);
+            --rt-input-color-text-placeholder: var(--rt-list-search-color-placeholder);
 
             min-width: 0;
-            flex: 0 1 var(--rt-size-60);
+            flex: 0 1 var(--rt-list-search-width);
             contain: inline-size;
         }
 

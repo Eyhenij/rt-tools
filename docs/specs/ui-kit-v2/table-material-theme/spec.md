@@ -29,6 +29,18 @@ Nothing new is shown to a person: the list keeps its labels, only its look follo
 
 ## Rules
 
+- **The list and the table of the first kit draw the first kit's look by default.** The family
+  carries the material preset on its own host, so it looks like the first kit wherever it stands,
+  and its neighbours on the page keep their look. The panels it opens above the page — the column
+  settings panel and the row menu — get the same class from it.
+
+- **Another look of the family is set by the kit settings.** `dataTable.look` in the kit settings
+  gives `own`, the second kit's look; the `look` input on the spot beats the settings.
+
+- **The default look of the list search and the filter fields is set by the kit settings.**
+  `dataList.appearance` and `dataList.filterAppearance`; the kit's own defaults are `fill` and
+  `outline`, the first kit's.
+
 - **The table header in the material preset is filled with the colour of the Material fill field.**
   The name is `--rt-color-table-head-bg`; the preset reads `--mat-form-field-filled-container-color`,
   then `--mat-sys-surface-variant`, then its own scale step. The dark theme answers the name itself,
@@ -45,6 +57,11 @@ Nothing new is shown to a person: the list keeps its labels, only its look follo
   Material field at density −1. The height, the 4 px radius, the outline border and the transparent
   inside of the outline search are names of the list search, `--rt-list-search-*`: the own preset
   keeps its small pill search, the material preset rewrites them.
+
+- **The list search in the material preset has the first kit's measures.** 22rem wide, a 24 px icon
+  12 px in from the edge, 16 px from the icon to a 16 px text, the icon and the text in the variant
+  tone of the theme. The field takes them through its own properties — the icon size, the icon tone
+  and the gap — whose defaults are its former values.
 
 - **The list search is drawn fill when the look is not given.** The first kit's field takes the fill
   look of Material when nothing is said; the filter fields stay outline by default in both kits.
@@ -66,7 +83,9 @@ Nothing new is shown to a person: the list keeps its labels, only its look follo
 
 ## Contract
 
-No new inputs or outputs. The default of `appearance` of the list becomes `fill`.
+The list and the table get the input `look` (`'material' | 'own'`), the menu gets `panelClass`.
+The kit settings get the sections `dataTable` (`look`) and `dataList` (`appearance`,
+`filterAppearance`). The default of `appearance` of the list stays `fill`.
 
 ### Refusal codes
 
@@ -123,6 +142,8 @@ Not applicable: the family holds no data of a workspace.
 
 - 2026-09-23 — the subdomain is started by RT-2330 after the owner compared the two lists: «то что я
   вижу нихуя не похоже на 1 кит, палитра тем применяется? Инпуты серча не такие».
+- 2026-09-23 — the family draws the first kit's look by default, and the kit settings give another,
+  after «через конфиг задавать вьюху по дефолту вьюха точь в точь как в первом ките».
 - 2026-09-23 — the list search is 52 px in both looks of the material preset and fill by default,
   after «инпуты серча на материальном наборе не такие как в первом ките, вьюха по дефолту должна быть
   как в первом ките».

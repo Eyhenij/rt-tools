@@ -194,6 +194,15 @@ export const material = [
     { name: `--rt-list-search-radius`, value: `var(--rt-radius-sm)` },
     { name: `--rt-list-search-color-border`, value: `var(--mat-sys-outline, var(--rt-mat-neutral-25))` },
     { name: `--rt-list-search-color-bg`, value: `transparent` },
+    /* The search field of the first kit's list, measured on its showcase: 22rem wide, the icon of 24px
+       12px in from the edge, 16px from the icon to a 16px text, icon and text in the variant tone. */
+    { name: `--rt-list-search-width`, value: `calc(var(--rt-size-64) + var(--rt-size-24))` },
+    { name: `--rt-list-search-padding-x`, value: `calc(var(--rt-space-2) + var(--rt-space-1) - var(--rt-border-width-thin))` },
+    { name: `--rt-list-search-gap`, value: `var(--rt-space-4)` },
+    { name: `--rt-list-search-font-size`, value: `var(--rt-text-md)` },
+    { name: `--rt-list-search-icon-size`, value: `var(--rt-size-6)` },
+    { name: `--rt-list-search-icon-color`, value: `var(--mat-sys-on-surface-variant, var(--rt-mat-neutral-30))` },
+    { name: `--rt-list-search-color-placeholder`, value: `var(--mat-sys-on-surface-variant, var(--rt-mat-neutral-30))` },
 
     {
         lead: `    /* Кнопка и поле первого кита скруглены заметно сильнее: 1.5rem против 10px.

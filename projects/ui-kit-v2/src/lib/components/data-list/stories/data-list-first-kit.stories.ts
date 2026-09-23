@@ -7,14 +7,13 @@ import { TEST_PEOPLE } from './component/test-data-list-people';
  * Весь список с тем же наполнением, что у истории списка первого кита на его витрине: многими
  * записями, немногими и без записей. Две витрины кладут рядом и сравнивают.
  *
- * Набор и тема ставятся на всю страницу, а не половиной пары: боковая панель настройки колонок и
- * меню строки открываются поверх страницы и до половины не достают. Переключатель «Набор» в
- * панели витрины показывает тот же список в своём наборе.
+ * Вид первого кита список ставит на себя сам и отдаёт его боковой панели и меню строки, которые
+ * открываются поверх страницы. Витрина добавляет только фиолетовую тему первого кита.
  */
 export default {
-    title: 'Organisms/Tables & Lists/DataList',
+    title: 'Organisms/First Kit Table/DataList',
     component: TestRtDataListFirstKitComponent,
-    globals: { preset: 'material-violet' },
+    globals: { preset: 'first-kit-theme' },
     argTypes: {
         rows: { control: false },
         page: { control: false },

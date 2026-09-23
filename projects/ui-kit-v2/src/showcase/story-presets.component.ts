@@ -68,4 +68,12 @@ export class StoryPresetsComponent {
     public readonly fill: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
+
+    /**
+     * Одна половина вместо пары, без признака набора. Нужна семье, которая свой вид ставит на себя
+     * сама — таблице первого кита: её вид по умолчанию один, и пара показала бы его дважды.
+     */
+    public readonly single: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
 }

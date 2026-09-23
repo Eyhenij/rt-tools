@@ -179,4 +179,4 @@ Then the filter row is not seen at all: the card view hides it together with the
 
 Not covered: it cannot be closed by a test with an identifier — the hiding is done by the
 component's own styles, and a component test raises the markup without them. It is checked by the
-narrow frame of the story `Organisms/Tables & Lists/Table › Filters`.
+narrow frame of the story `Organisms/Table/Table › Filters`.

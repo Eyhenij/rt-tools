@@ -42,6 +42,7 @@
         } @else {
             <div rtElem="content">
                 <rt-data-table
+                    [look]="look()"
                     [keyExp]="keyExp()"
                     [entities]="entities()"
                     [currentSortModel]="currentSortModel()"

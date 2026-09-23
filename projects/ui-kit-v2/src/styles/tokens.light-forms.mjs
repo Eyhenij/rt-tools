@@ -95,6 +95,19 @@ export const lightForms = [
         value: `var(--rt-color-text-muted)`,
     },
     {
+        name: `--rt-input-icon-color`,
+        value: `var(--rt-neutral-600)`,
+        dark: `var(--rt-neutral-600)`,
+    },
+    {
+        name: `--rt-input-icon-size`,
+        value: `var(--rt-size-4)`,
+    },
+    {
+        name: `--rt-input-gap`,
+        value: `var(--rt-space-sm)`,
+    },
+    {
         lead: `    /* Sizes (single-line height scale) */`,
         space: true,
         name: `--rt-input-height-sm`,
@@ -140,6 +153,36 @@ export const lightForms = [
         name: `--rt-list-search-color-bg`,
         value: `var(--rt-input-color-bg)`,
         dark: `var(--rt-input-color-bg)`,
+    },
+    {
+        name: `--rt-list-search-width`,
+        value: `var(--rt-size-60)`,
+    },
+    {
+        name: `--rt-list-search-padding-x`,
+        value: `var(--rt-input-padding-x)`,
+    },
+    {
+        name: `--rt-list-search-gap`,
+        value: `var(--rt-input-gap)`,
+    },
+    {
+        name: `--rt-list-search-font-size`,
+        value: `var(--rt-input-font-size)`,
+    },
+    {
+        name: `--rt-list-search-icon-size`,
+        value: `var(--rt-input-icon-size)`,
+    },
+    {
+        name: `--rt-list-search-icon-color`,
+        value: `var(--rt-input-icon-color)`,
+        dark: `var(--rt-input-icon-color)`,
+    },
+    {
+        name: `--rt-list-search-color-placeholder`,
+        value: `var(--rt-input-color-text-placeholder)`,
+        dark: `var(--rt-input-color-text-placeholder)`,
     },
     {
         lead: `    /* Скругление контрола — назначение, а не ступень на месте. Кнопка, поле ввода и

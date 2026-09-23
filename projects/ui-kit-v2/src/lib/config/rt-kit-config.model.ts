@@ -1,4 +1,6 @@
 import { IButton } from '../components/button/rt-button.model';
+import { IRtDataTable } from '../components/data-table/rt-data-table.model';
+import { IRtInput } from '../components/input/rt-input.model';
 import { ITheme } from '../platform/theme.model';
 
 /**
@@ -33,10 +35,27 @@ export namespace IRtKitConfig {
         closeOnEscape?: boolean;
     }
 
+    /** Умолчания таблицы первого кита — и отдельной, и той, что стоит внутри списка. */
+    export interface DataTable {
+        /** Вид семьи. Умолчание кита — вид первого кита. */
+        look?: IRtDataTable.Look;
+    }
+
+    /** Умолчания списка первого кита. */
+    export interface DataList {
+        /** Вид поля поиска. Умолчание кита — `fill`, как у поля Material первого кита. */
+        appearance?: IRtInput.Appearance;
+
+        /** Вид полей отбора. Умолчание кита — `outline`, как у первого кита. */
+        filterAppearance?: IRtInput.Appearance;
+    }
+
     /** Умолчания по узлам: каждое действует на одну семью и перебивает общее. */
     export interface Components {
         button?: Button;
         aside?: Aside;
+        dataTable?: DataTable;
+        dataList?: DataList;
     }
 
     /** Весь объект настроек целиком. */

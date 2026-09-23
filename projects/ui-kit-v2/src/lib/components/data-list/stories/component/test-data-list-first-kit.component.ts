@@ -124,7 +124,7 @@ export class TestRtDataListFirstKitComponent implements OnInit {
     readonly #configService: RtDataTableConfigService<ITestPerson> = inject(RtDataTableConfigService);
 
     /** Одна ячейка ряда: весь список, подписанный набором, в котором он нарисован. */
-    protected readonly captions: readonly string[] = ['материальный набор, фиолетовая тема первого кита'];
+    protected readonly captions: readonly string[] = ['вид первого кита, его фиолетовая тема'];
 
     /** Подпись ряда: какая это история первого кита. */
     public readonly caption: InputSignal<string> = input.required<string>();

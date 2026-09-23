@@ -16,7 +16,7 @@
         color: var(--rt-input-color-text);
         cursor: text;
         font-size: var(--rt-input-font-size);
-        gap: var(--rt-space-sm);
+        gap: var(--rt-input-gap);
         line-height: var(--rt-input-line-height);
         transition: var(--rt-input-transition);
 
@@ -108,6 +108,18 @@
         &__icon-right,
         &__clear {
             flex-shrink: 0;
+        }
+
+        /* Размер и цвет значка приходят от самого значка встроенным стилем и правилом не перебиваются.
+           Нижняя граница размер расширяет, а приглушённый тон значок берёт из свойства, которое читает
+           его встроенный стиль: так набор оформления даёт значку поля вид первого кита, не трогая входов
+           значка. По умолчанию оба равны нынешним, и вид не меняется. */
+        &__icon-left,
+        &__icon-right {
+            --rt-icon-color-muted: var(--rt-input-icon-color);
+
+            min-width: var(--rt-input-icon-size);
+            min-height: var(--rt-input-icon-size);
         }
 
         &__toggle {

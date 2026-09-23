@@ -103,6 +103,13 @@
     --rt-list-search-radius: var(--rt-radius-sm);
     --rt-list-search-color-border: var(--mat-sys-outline, var(--rt-mat-neutral-25));
     --rt-list-search-color-bg: transparent;
+    --rt-list-search-width: calc(var(--rt-size-64) + var(--rt-size-24));
+    --rt-list-search-padding-x: calc(var(--rt-space-2) + var(--rt-space-1) - var(--rt-border-width-thin));
+    --rt-list-search-gap: var(--rt-space-4);
+    --rt-list-search-font-size: var(--rt-text-md);
+    --rt-list-search-icon-size: var(--rt-size-6);
+    --rt-list-search-icon-color: var(--mat-sys-on-surface-variant, var(--rt-mat-neutral-30));
+    --rt-list-search-color-placeholder: var(--mat-sys-on-surface-variant, var(--rt-mat-neutral-30));
 
     /* Кнопка и поле первого кита скруглены заметно сильнее: 1.5rem против 10px.
        Значение снято числом — ссылки на токены первого кита во второй кит не едут. */

@@ -32,7 +32,9 @@ const SIZES: Readonly<Record<IRtIcon.Size, number>> = Object.freeze({
 
 const COLORS: Readonly<Record<IRtIcon.Color, string>> = Object.freeze({
     current: 'currentColor',
-    muted: 'var(--rt-neutral-600)',
+    // Приглушённый тон можно переназначить свойством сверху: поле ввода называет так тон своего
+    // значка в наборе оформления. Цвет стоит встроенным стилем, и правилом его не перебить.
+    muted: 'var(--rt-icon-color-muted, var(--rt-neutral-600))',
     info: 'var(--rt-color-state-info)',
     success: 'var(--rt-color-state-success)',
     warning: 'var(--rt-color-state-warning)',

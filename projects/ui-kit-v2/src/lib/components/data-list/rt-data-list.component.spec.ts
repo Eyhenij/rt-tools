@@ -3,10 +3,11 @@ import { ComponentFixture } from '@angular/core/testing';
 
 import { EFilterOperatorType, IFilterModel, IPageModel } from '@rt-tools/utils';
 
+import { provideRtKit } from '../../config/rt-kit-config.providers';
 import { provideRtKitLabels, TRtKitLabelKey, TRtKitLabelParams } from '../../i18n';
 import { createRtFixture, el, qa, textOf } from '../../../testing/rt-kit-testing';
 import { RtDataTableConfigService } from '../data-table/rt-data-table-config.service';
-import { ERtDataTableColumnType, ERtDataTableFilterType, IRtDataTable } from '../data-table/rt-data-table.model';
+import { ERtDataTableColumnType, ERtDataTableFilterType, IRtDataTable, RT_PRESET_MATERIAL_CLASS } from '../data-table/rt-data-table.model';
 import { IRtInput } from '../input/rt-input.model';
 import { RtDataListComponent } from './rt-data-list.component';
 
@@ -163,6 +164,26 @@ class DefaultLookHostComponent {
     public readonly page: IPageModel = PAGE;
 }
 
+/** Список без указанного вида, нарисованный с записями и, по желанию, с настройками кита. */
+async function drawDefaultLook(extra: Array<EnvironmentProviders | Provider> = []): Promise<ComponentFixture<DefaultLookHostComponent>> {
+    const fixture: ComponentFixture<DefaultLookHostComponent> = createRtFixture(
+        DefaultLookHostComponent,
+        {},
+        { providers: extra, skipInitialDetect: true }
+    );
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    return fixture;
+}
+
+/** Стоит ли на узле класс материального набора — признак вида первого кита. */
+function hasClass(fixture: ComponentFixture<unknown>, selector: string): boolean {
+    return (el(fixture, selector)?.nativeElement as HTMLElement).classList.contains(RT_PRESET_MATERIAL_CLASS);
+}
+
 describe('RtDataListComponent', () => {
     it('SC-UKV-359 — без указанного вида поиск залит, как у поля Material первого кита, а поля отбора в рамке', async (): Promise<void> => {
         const fixture: ComponentFixture<DefaultLookHostComponent> = createRtFixture(
@@ -179,6 +200,30 @@ describe('RtDataListComponent', () => {
             (qa(fixture, anchor)?.nativeElement as HTMLElement | undefined)?.className.includes('--appearance--fill');
 
         expect([isFill('data-list-search'), isFill('data-table-filter-input')]).toEqual([true, false]);
+    });
+
+    it('SC-UKV-360 — без настроек список и его таблица стоят в виде первого кита', async (): Promise<void> => {
+        const fixture: ComponentFixture<DefaultLookHostComponent> = await drawDefaultLook();
+
+        expect([hasClass(fixture, 'rt-data-list'), hasClass(fixture, 'rt-data-table')]).toEqual([true, true]);
+    });
+
+    it('SC-UKV-360 — свой вид второго кита задаётся настройками кита', async (): Promise<void> => {
+        const fixture: ComponentFixture<DefaultLookHostComponent> = await drawDefaultLook([
+            provideRtKit({ components: { dataTable: { look: 'own' } } }),
+        ]);
+
+        expect([hasClass(fixture, 'rt-data-list'), hasClass(fixture, 'rt-data-table')]).toEqual([false, false]);
+    });
+
+    it('SC-UKV-361 — вид поиска и полей отбора по умолчанию задаётся настройками кита', async (): Promise<void> => {
+        const fixture: ComponentFixture<DefaultLookHostComponent> = await drawDefaultLook([
+            provideRtKit({ components: { dataList: { appearance: 'outline', filterAppearance: 'fill' } } }),
+        ]);
+        const isFill: (anchor: string) => boolean | undefined = (anchor: string): boolean | undefined =>
+            (qa(fixture, anchor)?.nativeElement as HTMLElement | undefined)?.className.includes('--appearance--fill');
+
+        expect([isFill('data-list-search'), isFill('data-table-filter-input')]).toEqual([false, true]);
     });
 
     it('SC-UKV-354 — вид поиска и вид полей отбора задаются порознь и доходят до полей', async (): Promise<void> => {

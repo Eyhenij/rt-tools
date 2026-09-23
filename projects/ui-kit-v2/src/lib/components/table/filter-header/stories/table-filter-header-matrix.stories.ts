@@ -3,7 +3,7 @@ import { Meta, StoryObj } from '@storybook/angular';
 import { TestRtTableFilterHeaderMatrixComponent } from './component/test-table-filter-header-matrix.component';
 
 export default {
-    title: 'Organisms/Tables & Lists/TableFilterHeader',
+    title: 'Organisms/Table/TableFilterHeader',
     component: TestRtTableFilterHeaderMatrixComponent,
 } as Meta<TestRtTableFilterHeaderMatrixComponent>;
 

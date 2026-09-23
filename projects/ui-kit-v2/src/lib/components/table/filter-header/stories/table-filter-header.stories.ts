@@ -3,7 +3,7 @@ import { Meta, StoryObj } from '@storybook/angular';
 import { TestRtTableFilterHeaderComponent } from './component/test-table-filter-header.component';
 
 export default {
-    title: 'Organisms/Tables & Lists/TableFilterHeaderPlayground',
+    title: 'Organisms/Table/TableFilterHeaderPlayground',
     component: TestRtTableFilterHeaderComponent,
     argTypes: {
         kind: { control: { type: 'inline-radio' }, options: ['text', 'number', 'select', 'date'] },

@@ -35,6 +35,7 @@ import { ITestDataTableRow } from './test-data-table.rows';
         <rt-data-table
             rtDataTableSelectors
             keyExp="id"
+            [look]="look()"
             [entities]="rows()"
             [currentSortModel]="sort()"
             [filterModel]="filters()"
@@ -71,6 +72,7 @@ export class TestRtDataTableCellComponent implements OnInit {
     public readonly columns: InputSignal<Array<IRtDataTable.Column<ITestDataTableRow>>> =
         input.required<Array<IRtDataTable.Column<ITestDataTableRow>>>();
 
+    public readonly look: InputSignal<IRtDataTable.Look> = input<IRtDataTable.Look>('material');
     public readonly rows: InputSignal<ITestDataTableRow[]> = input<ITestDataTableRow[]>([]);
     public readonly sort: InputSignal<TNullable<ISortModel<'title'>>> = input<TNullable<ISortModel<'title'>>>(null);
     public readonly filters: InputSignal<Array<IFilterModel<'title' | 'city'>>> = input<Array<IFilterModel<'title' | 'city'>>>([]);

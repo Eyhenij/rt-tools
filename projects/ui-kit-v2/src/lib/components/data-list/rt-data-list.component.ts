@@ -21,6 +21,8 @@ import { DOCUMENT, NgTemplateOutlet } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Observable, Subject } from 'rxjs';
 import { exhaustMap, filter } from 'rxjs/operators';
+import { IRtKitConfig } from '../../config/rt-kit-config.model';
+import { rtKitDefault } from '../../config/rt-kit-config.providers';
 import { IRtInput } from '../input/rt-input.model';
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
@@ -36,7 +38,7 @@ import {
     RtDataTableCustomCellsDirective,
     RtDataTableRowActionsDirective,
 } from '../data-table/rt-data-table-cells.directive';
-import { IRtDataTable, TRtDataTableFilters } from '../data-table/rt-data-table.model';
+import { IRtDataTable, RT_PRESET_MATERIAL_CLASS, TRtDataTableFilters } from '../data-table/rt-data-table.model';
 import { RtEmptyStateComponent } from '../empty-state/rt-empty-state.component';
 import { RtSpinnerComponent } from '../spinner/rt-spinner.component';
 import { RtDataListPaginationComponent } from './pagination/rt-data-list-pagination.component';
@@ -90,7 +92,7 @@ const SCROLLBAR_HIDDEN: string = '0';
         RtDataTableIconDirective,
         RtDataTableRowActionsDirective,
     ],
-    host: { class: BEM_BLOCK },
+    host: { class: BEM_BLOCK, '[class.rt-preset-material]': "look() === 'material'" },
 })
 export class RtDataListComponent<
     ENTITY_TYPE extends Record<string, unknown>,
@@ -99,6 +101,23 @@ export class RtDataListComponent<
 > {
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
     readonly #asideService: RtAsideService = inject(RtAsideService);
+
+    /* Вид считается из настроек при объявлении входа: вход в разметке по-прежнему перебивает всё. */
+    readonly #look: IRtDataTable.Look = rtKitDefault(
+        'dataTable',
+        (it: IRtKitConfig.DataTable): IRtDataTable.Look | undefined => it.look,
+        'material'
+    );
+    readonly #appearance: IRtInput.Appearance = rtKitDefault(
+        'dataList',
+        (it: IRtKitConfig.DataList): IRtInput.Appearance | undefined => it.appearance,
+        'fill'
+    );
+    readonly #filterAppearance: IRtInput.Appearance = rtKitDefault(
+        'dataList',
+        (it: IRtKitConfig.DataList): IRtInput.Appearance | undefined => it.filterAppearance,
+        'outline'
+    );
     readonly #configService: RtDataTableConfigService<ENTITY_TYPE> = inject(RtDataTableConfigService);
     readonly #pageRoot: HTMLElement = inject(DOCUMENT).documentElement;
 
@@ -116,11 +135,17 @@ export class RtDataListComponent<
 
     protected readonly isFiltersEmpty: Signal<boolean> = computed(() => !this.filterModel().length);
 
-    /** Вид поля поиска, как `appearance` списка первого кита; по умолчанию `fill`, как у поля Material. */
-    public readonly appearance: InputSignal<IRtInput.Appearance> = input<IRtInput.Appearance>('fill');
+    /**
+     * Вид семьи. Материальный набор стоит на самом узле, а не на странице: семья выглядит как первый
+     * кит, где бы её ни поставили, и соседи на странице своего вида не теряют.
+     */
+    public readonly look: InputSignal<IRtDataTable.Look> = input<IRtDataTable.Look>(this.#look);
+
+    /** Вид поля поиска, как `appearance` списка первого кита; умолчание берётся из настроек кита. */
+    public readonly appearance: InputSignal<IRtInput.Appearance> = input<IRtInput.Appearance>(this.#appearance);
 
     /** Вид полей отбора: `outline` — рамка со всех сторон, `fill` — залитое поле с чертой снизу. */
-    public readonly filterAppearance: InputSignal<IRtInput.Appearance> = input<IRtInput.Appearance>('outline');
+    public readonly filterAppearance: InputSignal<IRtInput.Appearance> = input<IRtInput.Appearance>(this.#filterAppearance);
 
     public readonly tableConfigStorageKey: InputSignal<string> = input.required<string>();
 
@@ -243,7 +268,13 @@ export class RtDataListComponent<
                             RtDataListSettingsAsideComponent<ENTITY_TYPE>,
                             IRtDataTable.Config.Data<ENTITY_TYPE>,
                             IRtDataTable.Config.Data<ENTITY_TYPE> | undefined
-                        >(RtDataListSettingsAsideComponent, { data: this.#configService.tableConfig(), position: 'right' })
+                        >(RtDataListSettingsAsideComponent, {
+                            data: this.#configService.tableConfig(),
+                            position: 'right',
+                            // Панель живёт поверх страницы, вне списка, и вид списка до неё сам не
+                            // доходит: класс набора она получает от того, кто её открыл.
+                            panelClass: this.look() === 'material' ? RT_PRESET_MATERIAL_CLASS : [],
+                        })
                         .afterClosed()
                 ),
                 filter(Boolean),

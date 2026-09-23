@@ -219,6 +219,9 @@
     --rt-input-color-border-error: var(--rt-color-state-danger);
     --rt-input-color-text: var(--rt-color-text-primary);
     --rt-input-color-text-placeholder: var(--rt-color-text-muted);
+    --rt-input-icon-color: var(--rt-neutral-600);
+    --rt-input-icon-size: var(--rt-size-4);
+    --rt-input-gap: var(--rt-space-sm);
 
     /* Sizes (single-line height scale) */
     --rt-input-height-sm: var(--rt-control-height-sm);
@@ -237,6 +240,13 @@
     --rt-list-search-radius: var(--rt-input-radius);
     --rt-list-search-color-border: var(--rt-input-color-border);
     --rt-list-search-color-bg: var(--rt-input-color-bg);
+    --rt-list-search-width: var(--rt-size-60);
+    --rt-list-search-padding-x: var(--rt-input-padding-x);
+    --rt-list-search-gap: var(--rt-input-gap);
+    --rt-list-search-font-size: var(--rt-input-font-size);
+    --rt-list-search-icon-size: var(--rt-input-icon-size);
+    --rt-list-search-icon-color: var(--rt-input-icon-color);
+    --rt-list-search-color-placeholder: var(--rt-input-color-text-placeholder);
 
     /* Скругление контрола — назначение, а не ступень на месте. Кнопка, поле ввода и
        всё, что стоит с ними в строке, берут его отсюда: набор оформления живёт слоем

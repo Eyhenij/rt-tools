@@ -107,7 +107,7 @@ const NARROW_CASES: readonly { readonly name: string }[] = [{ name: '360 px — 
     template: `
         @switch (part) {
             @case ('loading') {
-                <app-story-presets caption="Загрузка и дозагрузка в обоих наборах">
+                <app-story-presets single caption="Загрузка и дозагрузка">
                     <ng-template>
                         <app-story-row [items]="loadingCases" [itemLabel]="caseLabel">
                             <ng-template let-item>
@@ -125,7 +125,7 @@ const NARROW_CASES: readonly { readonly name: string }[] = [{ name: '360 px — 
             }
 
             @case ('placeholder') {
-                <app-story-presets caption="Пустой список и пустой ответ на условие в обоих наборах">
+                <app-story-presets single caption="Пустой список и пустой ответ на условие">
                     <ng-template>
                         <app-story-row [items]="placeholderCases" [itemLabel]="caseLabel">
                             <ng-template let-item>
@@ -143,7 +143,7 @@ const NARROW_CASES: readonly { readonly name: string }[] = [{ name: '360 px — 
             }
 
             @case ('pagination') {
-                <app-story-presets caption="Полоса страниц в обоих наборах">
+                <app-story-presets single caption="Полоса страниц">
                     <ng-template>
                         <app-story-row [items]="pageCases" [itemLabel]="caseLabel">
                             <ng-template let-item>
@@ -159,7 +159,7 @@ const NARROW_CASES: readonly { readonly name: string }[] = [{ name: '360 px — 
             }
 
             @case ('filters') {
-                <app-story-presets caption="Строка отбора и снятие отбора в обоих наборах">
+                <app-story-presets single caption="Строка отбора и снятие отбора">
                     <ng-template>
                         <app-data-list-cell
                             storageKey="story-list-filters"
@@ -173,7 +173,7 @@ const NARROW_CASES: readonly { readonly name: string }[] = [{ name: '360 px — 
             }
 
             @case ('appearance') {
-                <app-story-presets caption="Поиск в виде outline, поля отбора в виде fill — обратное умолчанию, в обоих наборах">
+                <app-story-presets single caption="Поиск в виде outline, поля отбора в виде fill — обратное умолчанию">
                     <ng-template>
                         <app-data-list-cell
                             storageKey="story-list-appearance"
@@ -189,7 +189,7 @@ const NARROW_CASES: readonly { readonly name: string }[] = [{ name: '360 px — 
             }
 
             @case ('selection') {
-                <app-story-presets caption="Выбор записей в обоих наборах">
+                <app-story-presets single caption="Выбор записей">
                     <ng-template>
                         <app-story-row [items]="selectionCases" [itemLabel]="caseLabel">
                             <ng-template let-item>
@@ -207,7 +207,7 @@ const NARROW_CASES: readonly { readonly name: string }[] = [{ name: '360 px — 
             }
 
             @case ('settings') {
-                <app-story-presets caption="Панель настройки колонок в обоих наборах">
+                <app-story-presets single caption="Панель настройки колонок">
                     <ng-template>
                         <app-data-list-settings />
                     </ng-template>
@@ -215,7 +215,7 @@ const NARROW_CASES: readonly { readonly name: string }[] = [{ name: '360 px — 
             }
 
             @case ('narrow') {
-                <app-story-presets caption="Узкий экран в обоих наборах">
+                <app-story-presets single caption="Узкий экран">
                     <ng-template>
                         <app-story-row slotWidth="22.5rem" [items]="narrowCases" [itemLabel]="caseLabel">
                             <ng-template let-item>
@@ -232,18 +232,23 @@ const NARROW_CASES: readonly { readonly name: string }[] = [{ name: '360 px — 
             }
 
             @case ('presets') {
-                <app-story-presets caption="Список в обоих наборах">
-                    <ng-template>
-                        <app-data-list-cell storageKey="story-list-presets" [columns]="columns" [rows]="rows" [page]="pageOne" />
+                <app-story-row caption="Список в виде первого кита и в своём виде второго кита" slotWidth="36rem" [items]="looks">
+                    <ng-template let-look>
+                        <app-data-list-cell
+                            [storageKey]="'story-list-presets-' + look"
+                            [look]="look"
+                            [columns]="columns"
+                            [rows]="rows"
+                            [page]="pageOne" />
                     </ng-template>
-                </app-story-presets>
+                </app-story-row>
             }
 
             @case ('material-theme') {
                 <!-- Фиолетовая тема Material объявлена витриной обычными свойствами — пакета Material у
                      второго кита нет. Свой набор имён Material не читает и остаётся прежним. -->
                 <div data-showcase-material-theme="violet">
-                    <app-story-presets caption="Список под фиолетовой темой Material, как на витрине первого кита">
+                    <app-story-presets single caption="Список под фиолетовой темой Material, как на витрине первого кита">
                         <ng-template>
                             <app-data-list-cell
                                 storageKey="story-list-material-theme"
@@ -257,7 +262,7 @@ const NARROW_CASES: readonly { readonly name: string }[] = [{ name: '360 px — 
             }
 
             @case ('themes') {
-                <app-story-presets caption="Список в обеих темах в обоих наборах" fill>
+                <app-story-presets single caption="Список в обеих темах" fill>
                     <ng-template>
                         <app-story-themes fill>
                             <ng-template>
@@ -280,6 +285,9 @@ const NARROW_CASES: readonly { readonly name: string }[] = [{ name: '360 px — 
     ],
 })
 export class TestRtDataListMatrixComponent {
+    /** Два вида семьи: вид первого кита стоит по умолчанию, свой вид второго кита задаётся входом. */
+    protected readonly looks: readonly IRtDataTable.Look[] = ['material', 'own'];
+
     public part: TDataListMatrixPart = 'loading';
 
     public readonly rows: ITestDataTableRow[] = TEST_DATA_TABLE_ROWS;

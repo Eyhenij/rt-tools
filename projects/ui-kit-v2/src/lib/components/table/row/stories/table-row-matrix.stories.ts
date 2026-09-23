@@ -13,7 +13,7 @@ import { TestRtTableRowMatrixComponent } from './component/test-table-row-matrix
  * намеренно.
  */
 export default {
-    title: 'Organisms/Tables & Lists/TableRow',
+    title: 'Organisms/Table/TableRow',
     component: TestRtTableRowMatrixComponent,
     parameters: {
         controls: { disable: true },
