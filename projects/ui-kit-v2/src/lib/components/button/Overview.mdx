@@ -100,18 +100,18 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Входы
 
-| вход          | тип                                                                        | умолчание                  |
-| ------------- | -------------------------------------------------------------------------- | -------------------------- |
-| `label`       | `string \| null`                                                           | `null`                     |
-| `icon`        | `string \| null` — имя из набора `rt-icon`                                 | `null`                     |
-| `iconPos`     | `'left' \| 'right'`                                                        | `'left'`                   |
-| `theme`       | `'primary' \| 'secondary' \| 'success' \| 'warning' \| 'danger' \| 'info'` | `'primary'`                |
-| `appearance`  | `'filled' \| 'outlined' \| 'text'`                                         | `'filled'`                 |
-| `size`        | `'sm' \| 'md' \| 'lg' \| 'xl' \| '2xl'`                                    | `'md'`                     |
-| `rounded`     | `boolean`                                                                  | `false`                    |
-| `loading`     | `boolean`                                                                  | `false`                    |
-| `loadingIcon` | `string \| null`                                                           | `null` → встроенное кольцо |
-| `pressed`     | `boolean \| null`                                                          | `null` → положения нет     |
+| вход          | тип                                                                        | умолчание                     |
+| ------------- | -------------------------------------------------------------------------- | ----------------------------- |
+| `label`       | `string \| null`                                                           | `null`                        |
+| `icon`        | `string \| null` — имя из набора `rt-icon`                                 | `null`                        |
+| `iconPos`     | `'left' \| 'right'`                                                        | `'left'`                      |
+| `theme`       | `'primary' \| 'secondary' \| 'success' \| 'warning' \| 'danger' \| 'info'` | `'primary'`                   |
+| `appearance`  | `'filled' \| 'outlined' \| 'text'`                                         | настройки кита или `'filled'` |
+| `size`        | `'sm' \| 'md' \| 'lg' \| 'xl' \| '2xl'`                                    | настройки кита или `'md'`     |
+| `rounded`     | `boolean`                                                                  | настройки кита или `false`    |
+| `loading`     | `boolean`                                                                  | `false`                       |
+| `loadingIcon` | `string \| null`                                                           | `null` → встроенное кольцо    |
+| `pressed`     | `boolean \| null`                                                          | `null` → положения нет        |
 
 `pressed` трёхзначен нарочно. `true` — кнопка нажата и остаётся такой после отпускания, `false` —
 отжата, `null` — положения у неё нет вовсе. Третье не то же, что второе: обычная кнопка о положении

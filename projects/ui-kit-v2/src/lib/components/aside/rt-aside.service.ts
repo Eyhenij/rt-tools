@@ -5,6 +5,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { EMPTY, map, merge, mergeMap, Observable, Subject, takeUntil } from 'rxjs';
 
+import { IRtKitConfig } from '../../config/rt-kit-config.model';
+import { rtKitDefault } from '../../config/rt-kit-config.providers';
 import { RtAsideRef } from './rt-aside-ref';
 import { RT_ASIDE_DATA } from './rt-aside.tokens';
 
@@ -103,6 +105,11 @@ export class RtAsideService {
 
     readonly #openSource: Subject<IRtAsideOpenContext> = new Subject<IRtAsideOpenContext>();
 
+    /* Закрывает ли `Escape` штору, когда вызов об этом промолчал. Умолчание кита — закрывает;
+       приложению, которому это мешает, иначе пришлось бы писать отказ на каждом вызове, и
+       забытый вызов отличался бы от остальных. */
+    readonly #closeOnEscape: boolean = rtKitDefault('aside', (it: IRtKitConfig.Aside): boolean | undefined => it.closeOnEscape, true);
+
     constructor() {
         // Per-open close-подписки (backdrop / ESC) живут в одном постоянном
         // конструкторном стриме: open() эмитит контекст открытия, mergeMap
@@ -177,7 +184,7 @@ export class RtAsideService {
             overlayRef,
             asideRef,
             closeOnBackdropClick: config?.closeOnBackdropClick !== false,
-            closeOnEscape: config?.closeOnEscape !== false,
+            closeOnEscape: config?.closeOnEscape ?? this.#closeOnEscape,
         });
 
         const injector: Injector = Injector.create({
