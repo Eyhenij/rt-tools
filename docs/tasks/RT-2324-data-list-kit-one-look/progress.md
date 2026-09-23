@@ -30,9 +30,9 @@ Rewritten by every session, not appended to.
 - [x] 2.2 The fix measured on a narrow canvas
 - [x] 3.1 Missing glyphs drawn into the kit set
 - [x] 3.2 The family's icon mapping switched to them
-- [>] 4.1 The panel content rebuilt by the first kit's layout inside `rt-aside`
-- [ ] 4.2 The tests of the panel brought to the new markup
-- [ ] 5.1 The family's references re-taken after being looked at
+- [x] 4.1 The panel content rebuilt by the first kit's layout inside `rt-aside`
+- [x] 4.2 The tests of the panel brought to the new markup
+- [>] 5.1 The family's references re-taken after being looked at
 - [ ] 5.2 The pairs written into `tools/kit-shot-pairs.json`
 
 ## Decisions along the way
@@ -97,52 +97,50 @@ Rewritten by every session, not appended to.
 
 ## Handover of the session
 
-### Work
+Put together by a hook before the compaction of the context (auto).
 
-RT-2324 «Таблица второго кита выглядит не как в первом ките: темы, значки, панель колонок». Working
-tree — `/Users/sviatoslavkhutornoy/WebstormProjects/rt-tools`, branch
-`RT-2324-data-list-kit-one-look`, local only, standing on `RT-1882-kit-settings-theme`. Its PR goes
-to base `RT-1882-kit-settings-theme` while #2323 is open, and to `RT-1870-one-kit` after it merges.
-PR #2323 (RT-1882, settings and theme) is open, ready, waiting for the reviewer's merge into the
-epic branch.
+**Working tree:** /Users/sviatoslavkhutornoy/WebstormProjects/rt-tools
+**Branch:** RT-2324-data-list-kit-one-look
 
-### Where to look
+### Where we stand at the minute of the compaction
 
-The progress and the plan come by the hook. The grill lies next to them; the agreement is
-`docs/specs/ui-kit-v2/proposed/data-list-kit-one-look/`.
+- **State:** `этап-идёт`
+- **Stage:** 4 of 5 — The settings panel content looks as in the first kit
+- **Next step:** run `node tools/visual-gate.mjs ui-kit-v2` on the tip and read which frames moved
+- **PR:** not open yet.
 
-### Epic 1870 — one kit
+The progress in full — `docs/tasks/RT-2324-data-list-kit-one-look/progress.md`; the plan lies next to it.
 
-| #   | Task                                                           | State       |
-| --- | -------------------------------------------------------------- | ----------- |
-| 1   | RT-2316 — the first kit table in the second as its own family  | closed      |
-| 2   | RT-2317 — the radio button                                     | closed      |
-| 3   | RT-1882 — kit settings and the theme                           | PR #2323    |
-| 4   | **RT-2324 — the table family looks as in the first kit**       | in progress |
-| 5   | RT-1883 — the side menu; RT-1884 — by the application's demand | ahead       |
-| 6   | RT-1881 — the image uploader                                   | postponed   |
+### Uncommitted
 
-### Done and the next step
+```
+ M projects/ui-kit-v2/src/lib/components/data-list/settings/rt-data-list-settings-aside.component.scss
+```
 
-Done: stages 1–3; stage 4 begun. Next: the snapshot run on the tip, then the stage 4 styles (rules for `columns` and `column-label`
-are missing — the style check before sending names them) and the panel spec, then the snapshot run.
+### Commits over the main branch
 
-### What to keep in mind
+```
+82af4cb1e fix(rt:ui-kit-v2): поиск списка не держит ширину своим полем ввода
+d67e7cbb9 docs(rt:ui-kit-v2): поле поиска списка получает оба вида материала по слову владельца
+be630d58f docs: ход работы RT-2324 переписан, передача сессии записана
+3937433fe feat(rt:ui-kit-v2): панель колонок списка начата в виде первого кита
+3956d0d90 docs: в ходе работы RT-2324 закрыты этапы наложения и значка
+53597f131 feat(rt:ui-kit-v2): в наборе значков кита появилась ручка из четырёх стрелок
+d0029f4f9 fix(rt:ui-kit-v2): тулбар списка уступает ширину в узкой колонке
+dec9e4def docs(rt:ui-kit-v2): решение об общей панели колонок вынесено в раздел решений
+27ae38569 docs(rt:ui-kit-v2): панель колонок и значки сравнены с первым китом
+f066a962e docs(rt:ui-kit-v2): у правки вида таблицы появилась договорённость
+cb2135918 docs: в ходе работы RT-2324 шаги плана переписаны в разбираемом виде
+629da7196 docs: папка задачи RT-2324 заведена, план записан
+34eaa2ec0 Merge remote-tracking branch 'origin/RT-1870-one-kit' into RT-1882-kit-settings-theme
+c2a5c505c build: карта ворот ведёт обёртку истории и порождающую программу к их правилам
+a1678f295 docs: в плане эпика 1870 шестой шаг отмечен закрытым, порядок задач обновлён
+f18cfc8e4 docs: в плане эпика 1870 записано, чем держится отправка RT-1882
+06c0a9572 refactor(rt:ui-kit-v2): обёртки историй разбиты на три файла
+066d63827 docs: папка RT-1882 разобрана, находки уехали в план эпика
+308ea0330 docs(rt:ui-kit-v2): договорённость о настройках и теме влита в спеку кита
+d3a47f1af feat(rt:ui-kit-v2): настройки и местная тема показаны витриной
+```
 
-- One-off image-browser shots go with `E2E_SHOT_CONTAINER=rt-tools-shot-probe E2E_SHOT_PORT=43219`:
-  under the default name they take away the browser of a running snapshot gate. The measuring
-  scripts lay in the session scratchpad and are gone. The recipe: build the showcase
-  (`pnpm exec nx run @rt-tools/ui-kit-v2:build-storybook --configuration ci`), serve it by
-  `node tools/serve-static.mjs dist/storybook/@rt-tools/ui-kit-v2 <port>` on the machine's address,
-  run a script under `node tools/shot-browser.mjs node <script>` that connects to `RT_SHOT_BROWSER`
-  and measures every node of `.app-story-themes__pane` against the pane's right edge at 600, 900
-  and 1280 px.
-- A command whose text holds the word for sending to the host is judged by the sending gate whole —
-  even inside a heredoc; texts with that word are written by the file tools.
-- The second kit showcase on 6007 was raised by this session in dev mode from the RT-1882 branch
-  for the owner and may still be running.
-- The search field look is decided by the owner — both `fill` and `outline`, by the inputs
-  `appearance` and `filterAppearance` as in the first kit; it is a rule of the agreement now. Not
-  asked again.
-- The four diverged frames lie in `projects/ui-kit-v2/.storybook/__snapshots__/__diff_output__/`,
-  outside history.
+Written by a hook before the compaction of the context. Everything standing here is checked
+against the tree: a handover retells what was written and describes the minute it was put together.

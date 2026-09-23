@@ -4,7 +4,8 @@ import { createRtFixture, el, qaAll, textOf } from '../../../../testing/rt-kit-t
 import { RtAsideRef } from '../../aside/rt-aside-ref';
 import { RT_ASIDE_DATA } from '../../aside/rt-aside.tokens';
 import { ERtDataTableColumnType, IRtDataTable } from '../../data-table/rt-data-table.model';
-import { dataListColumnsFromItems, dataListSettingItems } from '../rt-data-list-settings.logic';
+import { IRtTable } from '../../table/rt-table.model';
+import { dataListColumnsFromItems, dataListMoveItem, dataListSettingItems, dataListToggleHidden } from '../rt-data-list-settings.logic';
 import { RtDataListSettingsAsideComponent } from './rt-data-list-settings-aside.component';
 
 interface IEntity extends Record<string, unknown> {
@@ -69,7 +70,7 @@ describe('RtDataListSettingsAsideComponent', () => {
 
         expect(el(fixture, '[qa-dataid="data-list-settings-vertical"]')).not.toBeNull();
         expect(el(fixture, '[qa-dataid="data-list-settings-horizontal"]')).not.toBeNull();
-        expect(qaAll(fixture, 'table-settings-label').map(textOf)).toEqual(['Название', 'Почта']);
+        expect(qaAll(fixture, 'data-list-settings-column-label').map(textOf)).toEqual(['Название', 'Почта']);
     });
 
     it('SC-UKV-306 — сохранение недоступно, пока в панели ничего не изменилось', () => {
@@ -86,7 +87,7 @@ describe('RtDataListSettingsAsideComponent', () => {
     it('сохранение отдаёт настройку, а отмена не отдаёт ничего', () => {
         const fixture: ComponentFixture<RtDataListSettingsAsideComponent<IEntity>> = setup();
 
-        el(fixture, '[qa-dataid="table-settings-toggle"] [qa-dataid="icon-button-control"]')?.nativeElement.click();
+        el(fixture, '[qa-dataid="data-list-settings-toggle"] [qa-dataid="icon-button-control"]')?.nativeElement.click();
         fixture.detectChanges();
         saveButton(fixture).click();
         el(fixture, '[qa-dataid="data-list-settings-cancel"]')?.nativeElement.click();
@@ -110,5 +111,47 @@ describe('RtDataListSettingsAsideComponent', () => {
             ['email', 0],
             ['title', 1],
         ]);
+    });
+
+    it('SC-UKV-352 — подпись стоит под заголовком, переключатель — слева от своей подписи', () => {
+        const fixture: ComponentFixture<RtDataListSettingsAsideComponent<IEntity>> = setup();
+        const host: HTMLElement = fixture.nativeElement;
+        const header: Element | null = host.querySelector('rt-aside-header');
+        const hint: Element | null = host.querySelector('[qa-dataid="data-list-settings-hint"]');
+        const row: Element | null = host.querySelector('.rt-data-list-settings-aside__switch-row');
+
+        const order: Array<Element | null> = Array.from(host.querySelectorAll('rt-aside-header, [qa-dataid="data-list-settings-hint"]'));
+
+        expect(order).toEqual([header, hint]);
+        expect(row?.firstElementChild?.getAttribute('qa-dataid')).toBe('data-list-settings-vertical');
+    });
+
+    it('SC-UKV-352 — у каждой колонки ручка, имя и глаз, скрытая помечена модификатором', () => {
+        const fixture: ComponentFixture<RtDataListSettingsAsideComponent<IEntity>> = setup({
+            ...configOf(),
+            columns: [columnOf('title', 'Название'), columnOf('email', 'Почта', true)],
+        });
+        const rows: Array<HTMLElement> = Array.from(
+            (fixture.nativeElement as HTMLElement).querySelectorAll<HTMLElement>('[qa-dataid="data-list-settings-column"]')
+        );
+
+        expect(rows.map((row: HTMLElement) => row.querySelector('[qa-dataid="data-list-settings-drag"]') !== null)).toEqual([true, true]);
+        expect(rows.map((row: HTMLElement) => row.classList.contains('rt-data-list-settings-aside__column--hidden'))).toEqual([
+            false,
+            true,
+        ]);
+    });
+
+    it('перестановка и скрытие в панели — чистые функции, запертая колонка не скрывается', () => {
+        const items: ReadonlyArray<IRtTable.ColumnSettingItem> = [
+            { key: 'a', label: 'A', hidden: false },
+            { key: 'b', label: 'B', hidden: false, locked: true },
+            { key: 'c', label: 'C', hidden: false },
+        ];
+
+        expect(dataListMoveItem(items, 0, 2).map((item: IRtTable.ColumnSettingItem) => item.key)).toEqual(['b', 'c', 'a']);
+        expect(dataListMoveItem(items, 1, 1)).toBe(items);
+        expect(dataListToggleHidden(items, 'a')[0].hidden).toBe(true);
+        expect(dataListToggleHidden(items, 'b')[1].hidden).toBe(false);
     });
 });
