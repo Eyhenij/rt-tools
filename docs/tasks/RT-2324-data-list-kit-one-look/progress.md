@@ -4,16 +4,16 @@
 
 Rewritten by every session, not appended to.
 
-- **State:** `этап-идёт`
+- **State:** `этапы-кончились`
 - **Stage:** 5 of 5 — paired frames and the family's references
-- **Done:** stages 1–4 committed; the panel of columns in the first kit's look — `679452b21`. The
-  two field looks — `60cddb735`: the input `appearance` on `rt-input`, `rt-input-number`,
-  `rt-select`, `rt-date-picker`; the list passes `appearance` to the search and `filterAppearance`
-  to the filter fields; stories `Appearance` for the four fields and the list.
-- **Next step:** read the snapshot run of `60cddb735`, look at every diverged and new frame by eye,
-  re-take them one at a time; then the pairs in `tools/kit-shot-pairs.json`.
+- **Done:** all five stages. The references re-taken after being looked at; the second full run of
+  the snapshots is green — 186 suites, 617 tests, 636 frames. The pairs: `node
+tools/check-kit-shot-pairs.mjs` — «paired 2».
+- **Next step:** merge the agreement into `docs/specs/ui-kit-v2/table-full-port/` and cancel its
+  rule «the family takes no field-look input»; take the task folder apart; push; open the PR into
+  `RT-1882-kit-settings-theme` while #2323 is open.
 - **Uncommitted:** nothing.
-- **Waiting for the owner:** no.
+- **Waiting for the owner:** no — the owner sees the pairs in the PR.
 - **Not pushed:** the branch is local only.
 - **PR:** not open yet.
 
@@ -31,8 +31,8 @@ Rewritten by every session, not appended to.
 - [x] 3.2 The family's icon mapping switched to them
 - [x] 4.1 The panel content rebuilt by the first kit's layout inside `rt-aside`
 - [x] 4.2 The tests of the panel brought to the new markup
-- [>] 5.1 The family's references re-taken after being looked at
-- [ ] 5.2 The pairs written into `tools/kit-shot-pairs.json`
+- [x] 5.1 The family's references re-taken after being looked at
+- [x] 5.2 The pairs written into `tools/kit-shot-pairs.json`
 
 ## Decisions along the way
 
@@ -103,6 +103,14 @@ Rewritten by every session, not appended to.
 @rt-tools/ui-kit-v2` on `60cddb735`: 143 suites, 1748 tests, all passed, exit 0. The turn-exit
   guard did not see the run: after the compaction the last 400 lines of the record hold no message
   of the owner, so its list of this turn's commands is empty whatever runs.
+
+- The new `Appearance` frames looked at before they were committed; the browser was not driven —
+  the tree has no pinned profile (`.claude/rt-kit/browser-device-id` is absent), so the frames were
+  read as the images the gate took. The first `fill` drew the pill radius of the material preset on
+  top and a fill that merged with the card: the look got its own radius (step `sm`, 4 px), the fill
+  `--rt-color-bg-surface-subtle-2` and the underline `--rt-color-border-strong`.
+- The `drag_handle` cell of the icon migration map moved without an edit here: its reference was
+  taken before `ae9d7c8ba` drew «equals» in the base branch; the new frame shows it.
 
 ## Handover of the session
 
