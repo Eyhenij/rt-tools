@@ -5,17 +5,16 @@
 Rewritten by every session, not appended to.
 
 - **State:** `этап-идёт`
-- **Stage:** 4 of 5 — The settings panel content looks as in the first kit
-- **Done:** stages 1–3 committed. Stage 4 begun in `3937433fe` and not checked: the settings
-  panel markup and the pure move and toggle functions are in, the plaque styles are not written, the
-  panel spec is not rewritten. The toolbar fix is half done — see the decision about `min-width`.
-- **Next step:** run `node tools/visual-gate.mjs ui-kit-v2` on the tip and read which frames moved
-  (expected: `Toolbar → Fill` back to its reference; `DataList → Narrow`, `Themes`, `Settings`
-  changed for the better); then the stage 4 plaque styles and the panel spec; then the two field
-  looks.
+- **Stage:** 5 of 5 — paired frames and the family's references
+- **Done:** stages 1–4 committed; the panel of columns in the first kit's look — `679452b21`. The
+  two field looks — `60cddb735`: the input `appearance` on `rt-input`, `rt-input-number`,
+  `rt-select`, `rt-date-picker`; the list passes `appearance` to the search and `filterAppearance`
+  to the filter fields; stories `Appearance` for the four fields and the list.
+- **Next step:** read the snapshot run of `60cddb735`, look at every diverged and new frame by eye,
+  re-take them one at a time; then the pairs in `tools/kit-shot-pairs.json`.
 - **Uncommitted:** nothing.
 - **Waiting for the owner:** no.
-- **Not pushed:** the branch is local only; the push gate would refuse it on the snapshots and the panel spec.
+- **Not pushed:** the branch is local only.
 - **PR:** not open yet.
 
 ## Steps
@@ -66,6 +65,11 @@ Rewritten by every session, not appended to.
   rule «the family takes no field-look input». The work is outside the plan's stages and is done
   after stage 4, before the paired frames. Affected stage of the plan: none — added after 4.
 
+- **The field look is an input of each of the four filter fields, not of the shared form-control
+  base** — the base carries nine fields, and five of them would take an input they do not draw.
+  The fill look is a host modifier declared before the state blocks, so focus, error and read-only
+  still override its border. Affected stage of the plan: none — the work added after stage 4.
+
 ## Sessions
 
 ### 2026-09-23
@@ -94,6 +98,11 @@ Rewritten by every session, not appended to.
 - Stage 2 closed by `contain: inline-size` on the list search: the input's own width had held the
   right bar at 256 px. Measured by the image browser on the built showcase: 0 px past the pane for
   both theme stories at 600, 900 and 1280 px, with the shared bar keeping its min-content width.
+
+- Stage 4 closed by `679452b21`, the two field looks by `60cddb735`. `pnpm exec nx test
+@rt-tools/ui-kit-v2` on `60cddb735`: 143 suites, 1748 tests, all passed, exit 0. The turn-exit
+  guard did not see the run: after the compaction the last 400 lines of the record hold no message
+  of the owner, so its list of this turn's commands is empty whatever runs.
 
 ## Handover of the session
 
