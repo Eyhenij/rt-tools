@@ -1,16 +1,16 @@
 # The embedded page of the talks — where the rules are carried out
 
 The first column is the rule verbatim, as it is written in the "Rules" section of the spec. The
-entry and the operations behind it are carried out. What the person sees is written by the tasks
-RT-2313 and RT-2314, and those rules carry the verdict "Not carried out" with the number of the task.
+entry, the operations behind it and the page the person sees are carried out. What is left to the
+task RT-2314 is the installation into a foreign admin and the sample of a signing server.
 
 - **The consumer decides who to let in, and the service checks only the signature.** — `libs/message-bus-api/chat/feature/src/lib/chat-embedded.controller.ts:entry` — it takes the key of the site, the minute and the signature. It answers with the sign of the page, and no account of the service takes part in it.
-- **The signature is made on the server of the consumer, never in the page.** — **Not carried out.** The sample of such a server is written by the task RT-2314 together with the page of the stand.
+- **The signature is made on the server of the consumer, never in the page.** — `apps/chat-talks-page/src/app/talks-entry.service.ts:start` — the page asks the one who embedded it for a signature. It never makes one. The sample of such a server is written by RT-2314.
 - **The signature carries the minute and lives by it.** — `libs/message-bus-api/chat/util/src/lib/chat-entry.logic.ts:chatEntryMinuteFits` — the minute goes into the signature itself and is allowed a spread in both directions. Outside it the entry is refused.
-- **The sign of the page is given for a time and is asked for anew.** — `libs/message-bus-api/chat/util/src/lib/chat-entry.logic.ts:chatEntrySignExpired` — the sign carries its own last minute, and an expired one is refused by a code of its own. Asking for a new one without the person is written by the task RT-2313.
+- **The sign of the page is given for a time and is asked for anew.** — `apps/chat-talks-page/src/app/talks-entry.service.ts:refused` — an expired sign is refused by a code of its own. On that code the page asks for a new signature, and the person types nothing.
 - **The sign of the page opens one site.** — `libs/message-bus-api/chat/feature/src/lib/chat-embedded.controller.ts:#site` — every operation reads the site out of the sign and is given that site alone. A talk of a neighbouring site answers as not found.
-- **The page shows the same as the panel of the operator, for one site.** — **Not carried out.** The page itself is written by the task RT-2313 on the ready-made pieces of the kit.
-- **The page carries no choice of a site.** — **Not carried out.** The page is written by the task RT-2313, and the site comes to it with the key it was embedded with.
+- **The page shows the same as the panel of the operator, for one site.** — `apps/chat-talks-page/src/app/talks-app.ts:TalksApp` — the list and the chat of the kit, the same ones the panel is drawn by.
+- **The page carries no choice of a site.** — `apps/chat-talks-page/src/app/talks-api.service.ts:talks` — the request of the list carries the sign alone. The site is named by the sign, and the page has no selector.
 - **An answer from the embedded page is a remark of the operator.** — `libs/message-bus-api/chat/feature/src/lib/chat-talk.service.ts:answer` — the panel and the page write through one service, so the thread and the order of the messages are one.
 
 ## What it is called here
@@ -33,3 +33,13 @@ consumer, and the sample page of the stand signs on its own side.
 The address of the page is asked only when it is named. The header is set by the browser and a page
 cannot forge it, while a call without the header came from a server of the consumer. Nothing tells
 that case from a call made by a tool.
+
+## The language of the page is one today
+
+The spec asks for the labels in every set of the kit vocabulary. The page carries one set — the
+Russian one, and it lies in `apps/chat-talks-page/src/app/talks-words.ts`. The kit itself ships one
+set, the English one; a label the page does not word falls back to it.
+
+That is a debt, not a decision. It is paid when a consumer of another language comes: the words of
+the page move into the vocabulary of the kit, and the set is chosen by the language of the admin.
+Until then a consumer who does not read Russian sees two languages at once.
