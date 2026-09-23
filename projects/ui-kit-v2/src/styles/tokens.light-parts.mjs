@@ -20,6 +20,15 @@ export const lightParts = [
         dark: `var(--rt-color-bg-surface-subtle)`,
     },
     {
+        lead: `    /* Залитое поле (вид fill у поля ввода, числа, даты и выбора) — черта снизу. Своё имя,
+       а не рамка роли: в материальном наборе она берёт цвет черты поля Material, а рамка роли
+       остаётся светлой у всех остальных частей кита. Тёмная тема отвечает на имя сама. */`,
+        space: true,
+        name: `--rt-color-field-fill-underline`,
+        value: `var(--rt-color-border-strong)`,
+        dark: `var(--rt-color-border-strong)`,
+    },
+    {
         lead: `    /* Stepper (rt-stepper) — рельса прогресса. Текущий шаг — янтарный (одинаков
        в обеих темах); трек/прогресс переопределяются в dark на приглушённые. */`,
         space: true,

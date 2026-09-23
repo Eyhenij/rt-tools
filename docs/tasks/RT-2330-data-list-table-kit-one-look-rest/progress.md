@@ -3,9 +3,9 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 4 of 6 — search field of the list
+- **Stage:** 5 of 6 — toolbar buttons, row selection, paginator, floating bar
 - **Done:** measurement; the material preset reads the Material theme from the page
-- **Next step:** bring the fill look of the search field to the first kit Material fill field: height 52, underline, icon
+- **Next step:** measure the toolbar buttons, the row selection, the paginator and the floating bar against the first kit
 - **Uncommitted:** no
 - **Waiting for the owner:** no; the board on the host does not list #2330 — the branch carries the number by the owner's «если тупик заводи дубликт и работаем», and the board is checked again before the PR
 - **PR:** not open yet
@@ -22,9 +22,9 @@
 - [x] 3.1 Put the header checkbox on the vertical centre of its cell
 - [x] 3.2 Bring the header fill, the row height and the font of the table in the material preset to the measured first-kit values
 - [x] 3.3 Cover the checkbox centre and the row height with specs
-- [>] 4.1 Bring the fill look of the field to the first kit Material fill field by measurement: height, fill, underline, search icon
-- [ ] 4.2 Re-take the field and list references
-- [ ] 5.1 Measure each of the four against the first kit and size the edit
+- [x] 4.1 Bring the fill look of the field to the first kit Material fill field by measurement: height, fill, underline, search icon
+- [x] 4.2 Re-take the field and list references
+- [>] 5.1 Measure each of the four against the first kit and size the edit
 - [ ] 5.2 Bring those that fit this task, file the rest as tasks of epic 1870 and tell the owner the numbers
 - [ ] 6.1 Write the new rules and scenarios into the table family spec
 - [ ] 6.2 Re-take the references changed by stages 2–5 and run the whole check set
@@ -79,6 +79,12 @@ measured: the tree has no pinned browser profile, and the rule allows no other d
 - **The font is the application's** — the first kit showcase sets Roboto on the page
   (`--font-default`), the first kit ships no font of its own. Named to the owner in stage 5.
   Affected stage of the plan: 3, 5.
+
+- **The fill search is 52 px and its underline has a colour name of its own** — the list toolbar
+  gives the fill search size lg and sets its height to `calc(xl − space-1)`; the underline of every
+  fill field reads `--rt-color-field-fill-underline`, which the preset takes from
+  `--mat-sys-on-surface-variant`. Measured on `organisms-dynamiclist-datalist--material-theme`: fill
+  51 px `#e8e0eb`, underline 1 px `#49454e` — the first kit's numbers. Affected stage of the plan: 4.
 
 ## Sessions
 

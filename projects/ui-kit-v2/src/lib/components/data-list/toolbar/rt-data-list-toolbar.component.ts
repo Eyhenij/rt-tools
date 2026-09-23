@@ -108,6 +108,12 @@ export class RtDataListToolbarComponent {
         () => !this.isPlaceholderShown() || !!this.#searchText() || this.#isSearchTouched()
     );
 
+    /**
+     * Залитый поиск первого кита — поле Material высотой 52px; размер lg с высотой, которую панель
+     * ставит ему сама. Обведённый остаётся малым, как был.
+     */
+    protected readonly searchSize: Signal<IRtInput.Size> = computed(() => (this.searchAppearance() === 'fill' ? 'lg' : 'sm'));
+
     protected readonly hasSelectors: Signal<boolean> = computed(() => this.isMultiSelect() || !!this.toolbarSelectorsTpl());
 
     /** Вид поля поиска: `outline` — рамка со всех сторон, `fill` — залитое поле с чертой снизу. */
