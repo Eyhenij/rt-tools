@@ -5,11 +5,17 @@
 Rewritten by every session, not appended to.
 
 - **State:** `этап-идёт`
-- **Stage:** 4 of 5 — The settings panel content looks as in the first kit
-- **Done:** stages 1–3 — the agreement written; the list toolbar shrinks in a narrow column (`d0029f4f9`), measured 0 px past the pane at 600, 900 and 1280; the ✥ handle `arrows` drawn in both sets and mapped from `open_with` (`53597f131`).
-- **Next step:** read the snapshot run of `53597f131` (`node tools/visual-gate.mjs ui-kit-v2`), re-take the frames the toolbar fix moved one by one after looking at them, then rebuild the column list of `rt-data-list-settings-aside` in the first kit's look.
+- **Stage:** 2 of 5 — The theme stories do not overlap (reopened; stage 4 begun in parallel)
+- **Done:** stages 1–3 committed. Stage 4 begun in `3937433fe` and not checked: the settings
+  panel markup and the pure move and toggle functions are in, the plaque styles are not written, the
+  panel spec is not rewritten. The toolbar fix is half done — see the decision about `min-width`.
+- **Next step:** make the list toolbar fit a 352 px pane without `min-width: 0` on the right bar of
+  `rt-toolbar` — trace what holds 256 px with the measuring script, the search likely; then write the
+  plaque styles and the panel spec, run `pnpm exec nx test @rt-tools/ui-kit-v2`, then
+  `node tools/visual-gate.mjs ui-kit-v2` and re-take the diverged frames one by one after looking.
 - **Uncommitted:** nothing.
 - **Waiting for the owner:** no.
+- **Not pushed:** the branch is local only; the push gate would refuse it on the snapshots and the panel spec.
 - **PR:** not open yet.
 
 ## Steps
@@ -20,11 +26,11 @@ Rewritten by every session, not appended to.
 - [x] 1.2 The icons of both kits listed glyph against glyph
 - [x] 1.3 The settings panel of both kits compared element by element
 - [x] 1.4 The agreement written in `proposed/data-list-kit-one-look`
-- [x] 2.1 The pane of the theme wrapper keeps its content inside
-- [x] 2.2 The fix measured on a narrow canvas
+- [>] 2.1 The pane of the theme wrapper keeps its content inside
+- [ ] 2.2 The fix measured on a narrow canvas
 - [x] 3.1 Missing glyphs drawn into the kit set
 - [x] 3.2 The family's icon mapping switched to them
-- [>] 4.1 The panel content rebuilt by the first kit's layout inside `rt-aside`
+- [ ] 4.1 The panel content rebuilt by the first kit's layout inside `rt-aside`
 - [ ] 4.2 The tests of the panel brought to the new markup
 - [ ] 5.1 The family's references re-taken after being looked at
 - [ ] 5.2 The pairs written into `tools/kit-shot-pairs.json`
@@ -44,6 +50,19 @@ Rewritten by every session, not appended to.
 - **The shared `rt-table-settings-panel` is not edited** — the second kit's own table draws its
   settings with it, and that look is the second kit's. The column list in the first kit's look is
   the list's own. Affected stage of the plan: 4.
+
+- **The right bar of `rt-toolbar` keeps its min-content width** — with `min-width: 0` it shrank
+  below its own button: the frame `Organisms/Table/Toolbar → Fill` put «Сохранить» 20 px past the
+  half's edge (diff 0.98%). Without it the list theme story overflows by 93 px instead of 197: the
+  right bar stands 256 px in a 222 px parent. Affected stage of the plan: 2 — reopened.
+- **The search field has two looks in the first kit, and the second kit has one** — owner's remark
+  23 September 2026: «серч инпут в материал имеет два вид аутлайн и другой смотри какой в первом ките
+  в динамик листе». Read in the code: `rtui-dynamic-list` takes the required input `appearance`
+  (`fill` or `outline`, anything else becomes `outline`) for the search, and `filterAppearance`
+  (default `outline`) for the filter fields; the search is `mat-form-field` with a search prefix
+  icon and a clear button. `rt-data-list` has no such input, and `rt-input` draws one look. Not in
+  the plan: goes into the agreement before any code, and the owner is asked whether both looks are
+  needed or the one the application passes. Affected stage of the plan: none yet.
 
 ## Sessions
 
@@ -66,3 +85,59 @@ Rewritten by every session, not appended to.
 - The ✥ glyph: `material-icons-outlined` draws `open_with` as filled triangles, Material Symbols as
   arrows with a gap; the material set follows Symbols, so the outline was taken from the Symbols
   subset of the first kit (`uniE89F`) and matched on the comparison sheet.
+- The overlap fixed by `d0029f4f9`, then half undone: the snapshot run of `53597f131` diverged on
+  four frames — `Toolbar → Fill` for the worse (the button past the edge), `DataList → Narrow`,
+  `Themes`, `Settings` for the better (the search no longer leaves the box).
+- Stage 4 begun in `3937433fe`; the branch is local only.
+
+## Handover of the session
+
+### Work
+
+RT-2324 «Таблица второго кита выглядит не как в первом ките: темы, значки, панель колонок». Working
+tree — `/Users/sviatoslavkhutornoy/WebstormProjects/rt-tools`, branch
+`RT-2324-data-list-kit-one-look`, local only, standing on `RT-1882-kit-settings-theme`. Its PR goes
+to base `RT-1882-kit-settings-theme` while #2323 is open, and to `RT-1870-one-kit` after it merges.
+PR #2323 (RT-1882, settings and theme) is open, ready, waiting for the reviewer's merge into the
+epic branch.
+
+### Where to look
+
+The progress and the plan come by the hook. The grill lies next to them; the agreement is
+`docs/specs/ui-kit-v2/proposed/data-list-kit-one-look/`.
+
+### Epic 1870 — one kit
+
+| #   | Task                                                           | State       |
+| --- | -------------------------------------------------------------- | ----------- |
+| 1   | RT-2316 — the first kit table in the second as its own family  | closed      |
+| 2   | RT-2317 — the radio button                                     | closed      |
+| 3   | RT-1882 — kit settings and the theme                           | PR #2323    |
+| 4   | **RT-2324 — the table family looks as in the first kit**       | in progress |
+| 5   | RT-1883 — the side menu; RT-1884 — by the application's demand | ahead       |
+| 6   | RT-1881 — the image uploader                                   | postponed   |
+
+### Done and the next step
+
+Done: stages 1 and 3; stage 2 reopened; stage 4 begun. Next: the toolbar fit without
+`min-width: 0` on the shared bar, then the stage 4 styles (rules for `columns` and `column-label`
+are missing — the style check before sending names them) and the panel spec, then the snapshot run.
+
+### What to keep in mind
+
+- One-off image-browser shots go with `E2E_SHOT_CONTAINER=rt-tools-shot-probe E2E_SHOT_PORT=43219`:
+  under the default name they take away the browser of a running snapshot gate. The measuring
+  scripts lay in the session scratchpad and are gone. The recipe: build the showcase
+  (`pnpm exec nx run @rt-tools/ui-kit-v2:build-storybook --configuration ci`), serve it by
+  `node tools/serve-static.mjs dist/storybook/@rt-tools/ui-kit-v2 <port>` on the machine's address,
+  run a script under `node tools/shot-browser.mjs node <script>` that connects to `RT_SHOT_BROWSER`
+  and measures every node of `.app-story-themes__pane` against the pane's right edge at 600, 900
+  and 1280 px.
+- A command whose text holds the word for sending to the host is judged by the sending gate whole —
+  even inside a heredoc; texts with that word are written by the file tools.
+- The second kit showcase on 6007 was raised by this session in dev mode from the RT-1882 branch
+  for the owner and may still be running.
+- The search field look (`fill` / `outline`) is an open remark of the owner, written in the
+  decisions — ask them before coding it.
+- The four diverged frames lie in `projects/ui-kit-v2/.storybook/__snapshots__/__diff_output__/`,
+  outside history.
