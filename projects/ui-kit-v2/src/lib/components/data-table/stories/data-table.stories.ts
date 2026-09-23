@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtDataTableComponent } from './component/test-data-table.component';
 
 export default {
-    title: 'Organisms/Data/DataTable',
+    title: 'Organisms/Tables & Lists/DataTable',
     component: TestRtDataTableComponent,
     argTypes: {
         filtersShown: { control: { type: 'boolean' } },

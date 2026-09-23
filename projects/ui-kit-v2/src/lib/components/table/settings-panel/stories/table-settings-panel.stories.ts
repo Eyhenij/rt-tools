@@ -3,7 +3,7 @@ import { Meta, StoryObj } from '@storybook/angular';
 import { TestRtTableSettingsPanelComponent } from './component/test-table-settings-panel.component';
 
 export default {
-    title: 'Organisms/Table/TableSettingsPanel',
+    title: 'Organisms/Tables & Lists/TableSettingsPanel',
     component: TestRtTableSettingsPanelComponent,
     // Панель рисует себя сама, а не сеткой показа из `src/showcase`: корня показа на странице
     // нет, и кадр берётся целой страницей.

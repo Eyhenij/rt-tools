@@ -1,0 +1,63 @@
+import { Meta, StoryObj } from '@storybook/angular';
+
+import { TestRtDataListFirstKitComponent } from './component/test-data-list-first-kit.component';
+import { TEST_PEOPLE } from './component/test-data-list-people';
+
+/**
+ * Весь список с тем же наполнением, что у истории списка первого кита на его витрине: многими
+ * записями, немногими и без записей. Две витрины кладут рядом и сравнивают.
+ *
+ * Набор и тема ставятся на всю страницу, а не половиной пары: боковая панель настройки колонок и
+ * меню строки открываются поверх страницы и до половины не достают. Переключатель «Набор» в
+ * панели витрины показывает тот же список в своём наборе.
+ */
+export default {
+    title: 'Organisms/Tables & Lists/DataList',
+    component: TestRtDataListFirstKitComponent,
+    globals: { preset: 'material-violet' },
+    argTypes: {
+        rows: { control: false },
+        page: { control: false },
+        selectedIds: { control: false },
+    },
+} as Meta<TestRtDataListFirstKitComponent>;
+
+type TStory = StoryObj<TestRtDataListFirstKitComponent>;
+
+const FEW: typeof TEST_PEOPLE = TEST_PEOPLE.slice(0, 11);
+
+export const ManyItems: TStory = {
+    args: {
+        caption: 'Много записей, как у первого кита',
+        storageKey: 'story-list-first-kit-many',
+        rows: TEST_PEOPLE,
+        page: { pageNumber: 1, pageSize: 10, totalCount: 20, hasPrev: false, hasNext: true },
+        selectedIds: [TEST_PEOPLE[0].id, TEST_PEOPLE[3].id],
+        filtersShown: true,
+        multiSelect: true,
+    },
+};
+
+export const FewItems: TStory = {
+    args: {
+        caption: 'Немного записей, как у первого кита',
+        storageKey: 'story-list-first-kit-few',
+        rows: FEW,
+        page: { pageNumber: 1, pageSize: 20, totalCount: 12, hasPrev: false, hasNext: false },
+        selectedIds: [FEW[1].id],
+        filtersShown: false,
+        multiSelect: false,
+    },
+};
+
+export const NoItems: TStory = {
+    args: {
+        caption: 'Без записей, как у первого кита',
+        storageKey: 'story-list-first-kit-none',
+        rows: [],
+        page: { pageNumber: 1, pageSize: 20, totalCount: 0, hasPrev: false, hasNext: false },
+        selectedIds: [],
+        filtersShown: false,
+        multiSelect: false,
+    },
+};

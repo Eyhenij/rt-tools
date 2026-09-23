@@ -115,13 +115,13 @@
         "components-table--many-items"
       ],
       "kitTwo": [
-        "organisms-data-datalist--filters",
-        "organisms-data-datalist--placeholder",
-        "organisms-data-datalist--settings",
-        "organisms-data-datalist--themes",
-        "organisms-data-datatable--columns",
-        "organisms-data-datatable--filters",
-        "organisms-data-datatable--themes"
+        "organisms-tables-lists-datalist--filters",
+        "organisms-tables-lists-datalist--placeholder",
+        "organisms-tables-lists-datalist--settings",
+        "organisms-tables-lists-datalist--themes",
+        "organisms-tables-lists-datatable--columns",
+        "organisms-tables-lists-datatable--filters",
+        "organisms-tables-lists-datatable--themes"
       ],
       "reason": ""
     }

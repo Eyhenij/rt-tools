@@ -9,7 +9,7 @@ import { TestRtDataListMatrixComponent } from './component/test-data-list-matrix
  * неотличимо от отсутствующего.
  */
 export default {
-    title: 'Organisms/Data/DataList',
+    title: 'Organisms/Tables & Lists/DataList',
     component: TestRtDataListMatrixComponent,
     parameters: {
         controls: { disable: true },

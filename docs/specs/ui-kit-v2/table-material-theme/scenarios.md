@@ -14,7 +14,7 @@ Then the search has size `sm` in both looks, and its height comes from the prese
 preset, 52 px in the material one
 
 Covered by the component test of the toolbar for the size, and by the preset test of `SC-UKV-355`
-for the names; the 52 px are closed by the frame `organisms-data-datalist--presets`.
+for the names; the 52 px are closed by the frame `organisms-tables-lists-datalist--presets`.
 
 ### SC-UKV-357 — the selection checkbox stands in the middle of its cell
 
@@ -23,7 +23,7 @@ When the header and the rows are drawn
 Then the checkbox centre and the cell centre match, in the header and in every row
 
 Not covered: layout is not computed in the test environment. Closed by the frame
-`organisms-data-datalist--material-theme`: header checkbox 230.5 against header 230.5, row
+`organisms-tables-lists-datalist--material-theme`: header checkbox 230.5 against header 230.5, row
 checkbox 278.5 against row 278.5.
 
 ### SC-UKV-358 — the header and the fill search follow the Material theme of the page
@@ -34,7 +34,7 @@ Then the header is 44 px filled `#e8e0eb`, the fill search is 51 px filled `#e8e
 `#49454e` underline — the first kit's numbers
 
 Not covered: colours of a theme are not computed in the test environment. Closed by the frame
-`organisms-data-datalist--material-theme`; the names themselves are held by the preset test of
+`organisms-tables-lists-datalist--material-theme`; the names themselves are held by the preset test of
 `SC-UKV-355`.
 
 ### SC-UKV-359 — the list search is fill when the look is not given

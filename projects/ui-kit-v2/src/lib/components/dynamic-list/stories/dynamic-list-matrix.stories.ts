@@ -12,7 +12,7 @@ import { TestRtDynamicListMatrixComponent } from './component/test-dynamic-list-
  * можно только на кадре порога, и потому у показа объявлена ширина.
  */
 export default {
-    title: 'Organisms/Data/DynamicList',
+    title: 'Organisms/Tables & Lists/DynamicList',
     component: TestRtDynamicListMatrixComponent,
     parameters: {
         controls: { disable: true },

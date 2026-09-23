@@ -78,6 +78,28 @@ const applyTheme: (theme: string) => void = (theme: string): void => {
     document.documentElement.dataset['theme'] = theme === 'dark' ? 'dark' : 'light';
 };
 
+/**
+ * Набор оформления всей страницы. Пара половин в историях показывает оба набора рядом, но всё, что
+ * кит выносит поверх страницы — боковая панель, меню, окно, — живёт у `<body>`, вне половины, и
+ * рисовалось своим набором. Признак на `<html>` достаёт и до них, и до значков: значок ищет признак
+ * у ближайшего предка. Фиолетовая тема — та же, что на витрине первого кита.
+ */
+const applyPreset: (preset: string) => void = (preset: string): void => {
+    const root: HTMLElement = document.documentElement;
+
+    if (preset === 'own') {
+        delete root.dataset['preset'];
+    } else {
+        root.dataset['preset'] = 'material';
+    }
+
+    if (preset === 'material-violet') {
+        root.dataset['showcaseMaterialTheme'] = 'violet';
+    } else {
+        delete root.dataset['showcaseMaterialTheme'];
+    }
+};
+
 const preview: Preview = {
     decorators: [
         applicationConfig({
@@ -119,6 +141,7 @@ const preview: Preview = {
         // уже с подставленными значениями, и зовут его без аргументов.
         (story: TDecoratorStory, context: TDecoratorContext): ReturnType<Decorator> => {
             applyTheme(String(context.globals['theme'] ?? 'light'));
+            applyPreset(String(context.globals['preset'] ?? 'own'));
 
             return story();
         },
@@ -136,9 +159,23 @@ const preview: Preview = {
                 dynamicTitle: true,
             },
         },
+        preset: {
+            description: 'Набор оформления всей страницы — пишется в `<html data-preset>`',
+            toolbar: {
+                title: 'Набор',
+                icon: 'paintbrush',
+                items: [
+                    { value: 'own', title: 'Свой набор' },
+                    { value: 'material', title: 'Material' },
+                    { value: 'material-violet', title: 'Material, фиолетовая тема первого кита' },
+                ],
+                dynamicTitle: true,
+            },
+        },
     },
     initialGlobals: {
         theme: 'light',
+        preset: 'own',
     },
     parameters: {
         controls: {

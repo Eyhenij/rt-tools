@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../../showcase';
 import { TestRtTableSortHeaderComponent } from './component/test-table-sort-header.component';
 
 export default {
-    title: 'Organisms/Table/TableSortHeader',
+    title: 'Organisms/Tables & Lists/TableSortHeader',
     component: TestRtTableSortHeaderComponent,
     argTypes: {
         rtSortHeader: { control: { type: 'text' } },

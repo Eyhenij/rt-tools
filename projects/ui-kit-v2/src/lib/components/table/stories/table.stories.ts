@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtTableComponent } from './component/test-table.component';
 
 export default {
-    title: 'Organisms/Table/Table',
+    title: 'Organisms/Tables & Lists/Table',
     component: TestRtTableComponent,
     argTypes: {
         ariaLabel: { control: { type: 'text' } },

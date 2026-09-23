@@ -12,7 +12,7 @@ import { TestRtTableMatrixComponent } from './component/test-table-matrix.compon
  * а не перестроенная стилями таблица. Порог таблица берёт у службы порогов ширины.
  */
 export default {
-    title: 'Organisms/Table/Table',
+    title: 'Organisms/Tables & Lists/Table',
     component: TestRtTableMatrixComponent,
     parameters: {
         controls: { disable: true },

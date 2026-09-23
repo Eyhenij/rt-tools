@@ -12,7 +12,7 @@ import { TestRtToolbarMatrixComponent } from './component/test-toolbar-matrix.co
  * кадр: на нём слоты перестраиваются.
  */
 export default {
-    title: 'Organisms/Table/Toolbar',
+    title: 'Organisms/Tables & Lists/Toolbar',
     component: TestRtToolbarMatrixComponent,
     parameters: {
         controls: { disable: true },

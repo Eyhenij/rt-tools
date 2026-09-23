@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtDynamicListComponent } from './component/test-dynamic-list.component';
 
 export default {
-    title: 'Organisms/Data/DynamicList',
+    title: 'Organisms/Tables & Lists/DynamicList',
     component: TestRtDynamicListComponent,
 } as Meta<TestRtDynamicListComponent>;
 
