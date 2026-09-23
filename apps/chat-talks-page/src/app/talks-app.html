@@ -1,13 +1,66 @@
 <ng-container rtBlock="talks-page">
-    <main rtElem="frame">
-        @if (!entry) {
-        <p rtElem="refused">Страница переписок не открылась</p>
-        } @else if (state() === refused) {
-        <p rtElem="refused">{{ refusalWords() }}</p>
-        } @else if (state() === opened) {
-        <p rtElem="talks">Переписки открыты</p>
-        } @else {
-        <p rtElem="waiting">Переписки открываются…</p>
-        }
+    @if (!entry) {
+    <p rtElem="refused">Страница переписок не открылась</p>
+    } @else { @if (state() === refused) {
+    <p rtElem="refused">{{ refusalWords() }}</p>
+    } @if (state() === opened || talkRows().length) {
+    <main rtElem="screen">
+        <section rtElem="talks">
+            <!--
+                        Список переписок — готовый список набора: выбор строки, заглушки чтения и
+                        пустое состояние он умеет сам. Поля поиска и отбора страница не показывает:
+                        поиска по тексту у сервиса нет, а площадка у страницы одна.
+                    -->
+            <rt-thread-list
+                [activeId]="chosen()"
+                [emptyText]="words['talksEmpty']"
+                [loading]="talksReading()"
+                [rows]="talkRows()"
+                (selectRow)="choose($event)">
+                <!-- Место поиска занято названием раздела: поиска по тексту у сервиса нет -->
+                <ng-template rtThreadListSearch>
+                    <p rtElem="title">Переписки</p>
+                </ng-template>
+
+                <ng-template let-row [rtThreadListRow]="talkRows()">
+                    <p rtElem="row">
+                        <span rtElem="row-text">{{ row.lastMessage }}</span>
+                        <span rtElem="row-state">{{ row.state === closed ? words['stateClosed'] : words['stateLive'] }}</span>
+                    </p>
+                </ng-template>
+            </rt-thread-list>
+        </section>
+
+        <section rtElem="feed">
+            @if (chosen()) {
+            <button
+                rtButton
+                rtElem="state"
+                type="button"
+                appearance="text"
+                [attr.aria-label]="stateLabel()"
+                [label]="stateLabel()"
+                (click)="changeState()"></button>
+
+            <!--
+                            Лента и поле ответа — готовый чат набора: тред, состояния своей реплики
+                            и повтор отбитой он уже умеет.
+                        -->
+            <rt-chat
+                canReply
+                fill
+                hasThread
+                rtElem="thread"
+                [loading]="feedReading()"
+                [messages]="thread()"
+                [placeholder]="words['answerPlaceholder']"
+                (send)="send($event)" />
+            } @else {
+            <rt-empty-state [title]="words['feedUnchosen']" />
+            }
+        </section>
     </main>
+    } @else if (state() !== refused) {
+    <p rtElem="waiting">Переписки открываются…</p>
+    } }
 </ng-container>
