@@ -45,10 +45,10 @@ async function talk(site, text) {
 }
 
 /** Ответ оператора: кладётся прямым запросом — операция закрыта входом, а засев идёт без него. */
-function answerSql(conversationId, text, shift) {
+function answerSql(conversationId, text, shift, id = `chat-answer-${shift}`) {
     return [
         `INSERT INTO "chat_message" ("id", "conversationId", "side", "text", "takenAt")`,
-        `VALUES ('chat-answer-${shift}', '${conversationId}', 'operator', '${text}',`,
+        `VALUES ('${id}', '${conversationId}', 'operator', '${text}',`,
         `    TIMESTAMP '${FIRST_MOMENT}' + (${shift} * INTERVAL '1 minute'));`,
     ].join('\n');
 }
@@ -86,6 +86,11 @@ function recordsSql() {
         `    ('${CHAT.widgetClosed.id}', 'chat-space-stand', '${CHAT.widgetClosed.name}', '${CHAT.widgetClosed.key}',`,
         `        ARRAY['${ADMIN_ORIGIN}', '${ADMIN_PAGE_ORIGIN}'], true, '${CHAT.widgetClosed.greeting}', ${closed.from}, ${closed.to}, 'UTC',`,
         `        '', '', 0);`,
+        // Площадка встраиваемой страницы: её тайной подписан вход, а в списке адресов стоит
+        // адрес админки стенда — страница переписок стоит там же, откуда приехал её скрипт.
+        `INSERT INTO "chat_site" ("id", "spaceId", "name", "key", "origins", "enabled", "hookSecret") VALUES`,
+        `    ('${CHAT.embed.id}', 'chat-space-stand', '${CHAT.embed.name}', '${CHAT.embed.key}',`,
+        `        ARRAY['${ADMIN_ORIGIN}', '${ADMIN_PAGE_ORIGIN}', '${CHAT.embed.origin}'], true, '${CHAT.embed.secret}');`,
     ].join('\n');
 }
 
@@ -118,6 +123,12 @@ export async function seedChat(sql, accountName) {
 
     await talk(CHAT.foreign, CHAT.foreignTalk);
 
+    const embedded = [];
+
+    for (const asked of CHAT.embed.talks) {
+        embedded.push(await talk(CHAT.embed, asked.text));
+    }
+
     const script = [];
 
     CHAT.talks.forEach((asked, index) => {
@@ -138,6 +149,23 @@ export async function seedChat(sql, accountName) {
 
         if (asked.closed) {
             script.push(`UPDATE "chat_conversation" SET "state" = 'closed' WHERE "id" = '${own[index]}';`);
+        }
+    });
+
+    CHAT.embed.talks.forEach((asked, index) => {
+        const shift = index + 1;
+
+        script.push(
+            [
+                `UPDATE "chat_message" SET "takenAt" = TIMESTAMP '${FIRST_MOMENT}' + (${shift} * INTERVAL '1 hour')`,
+                `WHERE "conversationId" = '${embedded[index]}' AND "side" = 'visitor';`,
+                `UPDATE "chat_conversation" SET "lastMessageAt" = TIMESTAMP '${FIRST_MOMENT}' + (${shift} * INTERVAL '1 hour')`,
+                `WHERE "id" = '${embedded[index]}';`,
+            ].join('\n')
+        );
+
+        if (asked.answer) {
+            script.push(answerSql(embedded[index], asked.answer, shift, `chat-answer-embed-${shift}`));
         }
     });
 
