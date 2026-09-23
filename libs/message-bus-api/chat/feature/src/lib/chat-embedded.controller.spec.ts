@@ -1,8 +1,9 @@
-import { ForbiddenException, HttpException, UnauthorizedException } from '@nestjs/common';
+import { ForbiddenException, HttpException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import { OPERATION_ACCESS } from '@rt/message-bus-api/access/util';
 import { IChatEntryOpened } from '@rt/message-bus-api/chat/api';
+import { IChatConversationListRow, IChatMessageListRow } from '@rt/message-bus-api/chat/data-access';
 import {
     CHAT_ENTRY_SIGN_LIFETIME_MS,
     CHAT_ENTRY_SIGNATURE_SPREAD_MS,
@@ -11,9 +12,12 @@ import {
     chatEntrySignRead,
     IChatEntrySign,
 } from '@rt/message-bus-api/chat/util';
-import { ERefusal } from '@rt/message-bus-common';
+import { EChatTalkState, ERefusal, IPage } from '@rt/message-bus-common';
 
 import { ChatEmbeddedController, IChatEmbeddedRequest } from './chat-embedded.controller';
+import { ChatHookSpy } from './chat-hook.double';
+import { ChatSubscribersService } from './chat-subscribers.service';
+import { ChatTalkService } from './chat-talk.service';
 import { ChatPrismaDouble } from './chat.double';
 
 /** Минута, от которой считаются все остальные: часы машины в спеке не читаются. */
@@ -27,7 +31,7 @@ const KEY: string = 'live-key';
 const ADMIN: IChatEmbeddedRequest = { headers: { origin: 'https://admin.shop.example' } };
 
 /** Отказ вызова: принятый ответ превращается в исключение, чтобы обе дороги читались одинаково. */
-async function refusalOf(call: Promise<IChatEntryOpened>): Promise<HttpException> {
+async function refusalOf(call: Promise<unknown>): Promise<HttpException> {
     return call.then((): HttpException => new HttpException('вход открыт', 200)).catch((fault: HttpException): HttpException => fault);
 }
 
@@ -39,6 +43,24 @@ function codeOf(refusal: HttpException): string {
 describe('ChatEmbeddedController', () => {
     let store: ChatPrismaDouble;
     let entry: ChatEmbeddedController;
+    let hooks: ChatHookSpy;
+
+    /** Переписка с последней репликой в названную минуту. */
+    function talk(id: string, siteId: string, text: string, state: string = 'live'): void {
+        store.conversations.push({ id, siteId, visitorId: `visitor-of-${id}`, lastMessageAt: AT, state });
+        store.messages.push({ id: `message-of-${id}`, conversationId: id, side: 'visitor', text, takenAt: AT });
+    }
+
+    /** Признак страницы своего сайта, выданный в названную минуту. */
+    async function signOf(at: Date = AT): Promise<string> {
+        const opened: IChatEntryOpened = await entry.entry(
+            { site: KEY, at: at.getTime(), signature: chatEntrySignature(SECRET, KEY, at.getTime()) },
+            ADMIN,
+            at
+        );
+
+        return opened.sign;
+    }
 
     beforeEach((): void => {
         store = new ChatPrismaDouble();
@@ -50,7 +72,12 @@ describe('ChatEmbeddedController', () => {
             enabled: true,
             hookSecret: SECRET,
         });
-        entry = new ChatEmbeddedController(store.asPrisma());
+        store.sites.push({ id: 'site-2', spaceId: 'space-1', key: 'other-key', origins: [], enabled: true, hookSecret: 'тайна соседа' });
+        hooks = new ChatHookSpy();
+
+        const subscribers: ChatSubscribersService = new ChatSubscribersService();
+
+        entry = new ChatEmbeddedController(store.asPrisma(), new ChatTalkService(store.asPrisma(), subscribers, hooks));
     });
 
     it('SC-CH-83 — сошедшаяся подпись открывает страницу и отвечает признаком своего сайта', async (): Promise<void> => {
@@ -150,5 +177,89 @@ describe('ChatEmbeddedController', () => {
         expect(codeOf(refusal)).toBe(ERefusal.ChatOriginRejected);
         // обращение с сервера потребителя заголовка адреса не несёт, и отвечает за него подпись
         await expect(entry.entry({ site: KEY, at: AT.getTime(), signature }, {}, AT)).resolves.toBeTruthy();
+    });
+    it('SC-CH-87 — под признаком страницы видны переписки своего сайта и не видны соседские', async (): Promise<void> => {
+        talk('own', 'site-1', 'своя');
+        talk('foreign', 'site-2', 'соседская');
+
+        const page: IPage<IChatConversationListRow> = await entry.page({ sign: await signOf() }, AT);
+
+        expect(page.rows.map((row: IChatConversationListRow): string => row.id)).toEqual(['own']);
+        expect(page.total).toBe(1);
+    });
+
+    it('SC-CH-87 — переписка соседнего сайта отвечает как ненайденная', async (): Promise<void> => {
+        talk('own', 'site-1', 'своя');
+        talk('foreign', 'site-2', 'соседская');
+        const sign: string = await signOf();
+
+        // положительная пара: своя переписка тем же признаком читается
+        await expect(entry.messages('own', { sign }, AT)).resolves.toBeTruthy();
+        await expect(entry.messages('foreign', { sign }, AT)).rejects.toThrow(NotFoundException);
+        await expect(entry.answer('foreign', { sign, text: 'чужому' }, AT)).rejects.toThrow(NotFoundException);
+        expect(store.messages.filter((row: { conversationId: string }): boolean => row.conversationId === 'foreign')).toHaveLength(1);
+    });
+
+    it('SC-CH-87 — испорченный признак и подпись чужой тайной отвечают отказом входа', async (): Promise<void> => {
+        const refusal: HttpException = await refusalOf(entry.page({ sign: 'только-тело' }, AT));
+
+        expect(refusal).toBeInstanceOf(UnauthorizedException);
+        expect(codeOf(refusal)).toBe(ERefusal.ChatEntryRejected);
+    });
+
+    it('SC-CH-87 — ответ со встраиваемой страницы пишется стороной оператора', async (): Promise<void> => {
+        talk('own', 'site-1', 'вопрос посетителя');
+
+        const answer: IChatMessageListRow = await entry.answer('own', { sign: await signOf(), text: 'ответ потребителя' }, AT);
+
+        expect(answer.side).toBe('operator');
+        expect(answer.text).toBe('ответ потребителя');
+    });
+
+    it('SC-CH-87 — закрытие разговора со страницы меняет состояние и уходит вызовом наружу', async (): Promise<void> => {
+        talk('own', 'site-1', 'вопрос посетителя');
+
+        await entry.state('own', { sign: await signOf(), state: EChatTalkState.Closed }, AT);
+        // вызов уходит вслед за ответом: он его не держит
+        await new Promise<void>((done: () => void): void => {
+            setTimeout(done, 0);
+        });
+
+        expect(store.conversations.find((row: { id: string }): boolean => row.id === 'own')?.state).toBe(EChatTalkState.Closed);
+        expect(hooks.said.map((call: { kind: string }): string => call.kind)).toEqual(['closing']);
+    });
+
+    it('SC-CH-88 — просроченный признак отвечает своим отказом, по которому страница берёт новый', async (): Promise<void> => {
+        talk('own', 'site-1', 'своя');
+        const sign: string = await signOf();
+        const later: Date = new Date(AT.getTime() + CHAT_ENTRY_SIGN_LIFETIME_MS);
+
+        // положительная пара: до своей минуты тот же признак работает
+        await expect(entry.page({ sign }, AT)).resolves.toBeTruthy();
+
+        const refusal: HttpException = await refusalOf(entry.page({ sign }, later));
+
+        expect(codeOf(refusal)).toBe(ERefusal.ChatEntryExpired);
+    });
+
+    it('SC-CH-88 — просроченный признак закрывает и чтение сообщений, и ответ, и закрытие', async (): Promise<void> => {
+        talk('own', 'site-1', 'своя');
+        const sign: string = await signOf();
+        const later: Date = new Date(AT.getTime() + CHAT_ENTRY_SIGN_LIFETIME_MS);
+
+        await expect(entry.messages('own', { sign }, later)).rejects.toThrow(UnauthorizedException);
+        await expect(entry.answer('own', { sign, text: 'поздний ответ' }, later)).rejects.toThrow(UnauthorizedException);
+        await expect(entry.state('own', { sign, state: EChatTalkState.Closed }, later)).rejects.toThrow(UnauthorizedException);
+        expect(store.messages).toHaveLength(1);
+    });
+
+    it('SC-CH-91 — выбора площадки у страницы нет: сайт назван признаком', async (): Promise<void> => {
+        talk('own', 'site-1', 'своя');
+        talk('foreign', 'site-2', 'соседская');
+
+        // названный в запросе чужой сайт признак не перебивает: отбор идёт по нему одному
+        const page: IPage<IChatConversationListRow> = await entry.page({ sign: await signOf(), site: 'site-2' }, AT);
+
+        expect(page.rows.map((row: IChatConversationListRow): string => row.id)).toEqual(['own']);
     });
 });

@@ -8,6 +8,7 @@ import { ChatHookService } from './chat-hook.service';
 import { ChatIntakeController } from './chat-intake.controller';
 import { ChatReadController } from './chat-read.controller';
 import { ChatSubscribersService } from './chat-subscribers.service';
+import { ChatTalkService } from './chat-talk.service';
 import { ChatWakeService } from './chat-wake.service';
 
 /**
@@ -28,12 +29,21 @@ import { ChatWakeService } from './chat-wake.service';
  * Пути названы поимённо, а не образцом: позволение даётся ровно открытым операциям, и чтение
  * оператором, закрытое входом человека, к этому списку отношения не имеет.
  */
-const OPEN_PATHS: readonly string[] = ['chat/conversations', 'chat/site', 'chat/messages', 'chat/stream', 'chat/embedded/entry'];
+const OPEN_PATHS: readonly string[] = [
+    'chat/conversations',
+    'chat/site',
+    'chat/messages',
+    'chat/stream',
+    'chat/embedded/entry',
+    'chat/embedded/conversations',
+    'chat/embedded/conversations/:id/messages',
+    'chat/embedded/conversations/:id/state',
+];
 
 @Module({
     imports: [AccessModule],
     controllers: [ChatIntakeController, ChatReadController, ChatEmbeddedController],
-    providers: [ChatSubscribersService, ChatHookService, ChatWakeService],
+    providers: [ChatSubscribersService, ChatHookService, ChatWakeService, ChatTalkService],
 })
 export class ChatModule implements NestModule {
     public configure(consumer: MiddlewareConsumer): void {

@@ -13,6 +13,7 @@ import { ChatHookService } from './chat-hook.service';
 import { ChatIntakeController } from './chat-intake.controller';
 import { ChatReadController } from './chat-read.controller';
 import { ChatSubscribersService } from './chat-subscribers.service';
+import { ChatTalkService } from './chat-talk.service';
 import { ChatPrismaDouble, IDoubleConversation, IDoubleMessage } from './chat.double';
 
 /** Минута, от которой считаются все остальные: часы машины в спеке не читаются. */
@@ -40,7 +41,9 @@ describe('ChatReadController', () => {
         store.sites.push({ id: 'site-2', spaceId: 'space-2', key: 'other-key', origins: ['https://other.example'], enabled: true });
         store.operatorSites.push({ accountId: 'account-1', siteId: 'site-1' });
         hooks = new ChatHookSpy();
-        reads = new ChatReadController(store.asPrisma(), new ChatSubscribersService(), hooks);
+        const subscribers: ChatSubscribersService = new ChatSubscribersService();
+
+        reads = new ChatReadController(store.asPrisma(), subscribers, new ChatTalkService(store.asPrisma(), subscribers, hooks));
     });
 
     it('SC-CH-15 — оператор видит переписки своих сайтов и не видит соседских', async (): Promise<void> => {
