@@ -2,9 +2,9 @@
     @if (!entry) {
     <p rtElem="refused">Страница переписок не открылась</p>
     } @else { @if (state() === refused) {
-    <p rtElem="refused">{{ refusalWords() }}</p>
+    <p rtElem="refused" qa-dataid="talks-refused">{{ refusalWords() }}</p>
     } @if (state() === opened || talkRows().length) {
-    <main rtElem="screen">
+    <main rtElem="screen" qa-dataid="talks-screen">
         <section rtElem="talks">
             <!--
                         Список переписок — готовый список набора: выбор строки, заглушки чтения и
@@ -25,7 +25,9 @@
                 <ng-template let-row [rtThreadListRow]="talkRows()">
                     <p rtElem="row">
                         <span rtElem="row-text">{{ row.lastMessage }}</span>
-                        <span rtElem="row-state">{{ row.state === closed ? words['stateClosed'] : words['stateLive'] }}</span>
+                        <span rtElem="row-state" qa-dataid="talks-row-state">
+                            {{ row.state === closed ? words['stateClosed'] : words['stateLive'] }}
+                        </span>
                     </p>
                 </ng-template>
             </rt-thread-list>
@@ -36,6 +38,7 @@
             <button
                 rtButton
                 rtElem="state"
+                qa-dataid="talks-state"
                 type="button"
                 appearance="text"
                 [attr.aria-label]="stateLabel()"

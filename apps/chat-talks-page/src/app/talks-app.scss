@@ -4,9 +4,9 @@
 
     &__screen {
         display: grid;
-        background: var(--rt-color-surface);
+        background: var(--rt-color-bg-surface);
         block-size: 100%;
-        gap: var(--rt-spacing-md);
+        gap: var(--rt-space-4);
         grid-template-columns: minmax(0, 20rem) minmax(0, 1fr);
     }
 
@@ -21,11 +21,14 @@
         min-block-size: 0;
     }
 
+    /* Строка списка — готовая часть набора, и она сама стоит рядом: место берётся долей */
     &__row {
         display: flex;
+        flex: 1 1 auto;
         justify-content: space-between;
         margin: 0;
-        gap: var(--rt-spacing-xs);
+        gap: var(--rt-space-2);
+        min-inline-size: 0;
     }
 
     &__row-text {
@@ -35,7 +38,7 @@
     }
 
     &__row-state {
-        color: var(--rt-color-text-secondary);
+        color: var(--rt-color-text-muted);
     }
 
     &__title {
@@ -45,9 +48,9 @@
 
     &__waiting,
     &__refused {
-        padding: var(--rt-spacing-md);
+        padding: var(--rt-space-4);
         margin: 0;
-        color: var(--rt-color-on-surface);
+        color: var(--rt-color-text-primary);
     }
 
     /* Узкий экран: список и лента встают друг под другом, как в панели оператора */

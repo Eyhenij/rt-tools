@@ -50,3 +50,13 @@ that talk opens a new one by their next remark.
 
 The site is named by the key the page was embedded with: the page has no selector of sites, and the
 list holds the talks of one site only.
+
+### SC-CH-92 — the admin of the consumer puts the section by one script and one tag
+
+The admin of the consumer loads one script of the service and puts one tag with the key of the site.
+The section of the talks comes up in place of the tag, and the styles of the admin do not reach it.
+
+### SC-CH-93 — the signature is asked from the server of the consumer, and the person types nothing
+
+The section asks the page that embedded it for a signature, and that page takes it from the server
+of the consumer. The secret of the site never reaches the browser, and nobody is asked for anything.
