@@ -119,6 +119,7 @@ export const iconsName = [
     'ellipsis-h',
     'ellipsis-v',
     'email',
+    'equals',
     'exclamation-circle',
     'external-link',
     'eye',

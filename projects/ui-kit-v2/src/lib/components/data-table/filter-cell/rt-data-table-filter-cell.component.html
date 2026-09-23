@@ -1,0 +1,78 @@
+<ng-container rtBlock="rt-data-table-filter-cell">
+    @if (filterOperators().length) {
+        <rt-menu qa-dataid="data-table-filter-operator" [icon]="operatorIcon()" [ariaLabel]="operatorLabel()">
+            @for (item of operatorItems(); track item.operator) {
+                <rt-menu-item
+                    qa-dataid="data-table-filter-operator-item"
+                    [icon]="item.icon"
+                    [label]="item.label"
+                    (selected)="onOperatorChange(item.operator)" />
+            }
+        </rt-menu>
+    }
+
+    @switch (filterType()) {
+        @case (filterTypes.TEXT) {
+            <rt-input
+                rtElem="field"
+                qa-dataid="data-table-filter-input"
+                size="sm"
+                [placeholder]="valuePlaceholder()"
+                [ngModel]="currentFilter().value"
+                [ngModelOptions]="{ standalone: true }"
+                (ngModelChange)="onDraft($event)"
+                (keydown.enter)="onCommit()"
+                (focusout)="onCommit()" />
+        }
+        @case (filterTypes.NUMBER) {
+            <rt-input-number
+                rtElem="field"
+                qa-dataid="data-table-filter-number"
+                size="sm"
+                [placeholder]="valuePlaceholder()"
+                [ngModel]="number()"
+                [ngModelOptions]="{ standalone: true }"
+                (ngModelChange)="onNumberDraft($event)"
+                (keydown.enter)="onCommit()"
+                (focusout)="onCommit()" />
+        }
+        @case (filterTypes.DATE) {
+            <rt-icon-button
+                qa-dataid="data-table-filter-clear"
+                icon="close"
+                [ariaLabel]="clearLabel()"
+                [tooltip]="clearLabel()"
+                [disabled]="!hasValue()"
+                (clicked)="onValueChange('')" />
+
+            <rt-date-picker
+                rtElem="field"
+                qa-dataid="data-table-filter-date"
+                size="sm"
+                [clearable]="false"
+                [ngModel]="day()"
+                [ngModelOptions]="{ standalone: true }"
+                (ngModelChange)="onDayChange($event)" />
+        }
+        @case (filterTypes.SELECT) {
+            <rt-icon-button
+                qa-dataid="data-table-filter-clear"
+                icon="close"
+                [ariaLabel]="clearLabel()"
+                [tooltip]="clearLabel()"
+                [disabled]="!hasValue()"
+                (clicked)="onValueChange('')" />
+
+            <rt-select
+                rtElem="field"
+                qa-dataid="data-table-filter-select"
+                size="sm"
+                [clearable]="false"
+                [options]="selectOptions()"
+                [placeholder]="selectPlaceholder()"
+                [ngModel]="currentFilter().value || null"
+                [ngModelOptions]="{ standalone: true }"
+                (selectionChange)="onValueChange($event)" />
+        }
+    }
+</ng-container>

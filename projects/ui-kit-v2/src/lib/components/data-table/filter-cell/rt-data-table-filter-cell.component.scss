@@ -1,0 +1,18 @@
+@layer rt-kit.components {
+    /* rt-data-table-filter-cell — ячейка строки отбора первого кита: кнопка вида сравнения или
+       очистки, за ней поле во всю оставшуюся ширину. Промежуток 8px — ступень sm. Длинное значение
+       не выходит за ячейку: поле кита сжимается и режет текст само. */
+
+    .rt-data-table-filter-cell {
+        display: flex;
+        width: 100%;
+        align-items: center;
+        justify-content: flex-start;
+        gap: var(--rt-space-sm);
+
+        &__field {
+            min-width: 0;
+            flex-grow: 1;
+        }
+    }
+}

@@ -18,7 +18,7 @@ function items(): HTMLElement[] {
 @Component({
     selector: 'rt-menu-host',
     template: `
-        <rt-menu [ariaLabel]="ariaLabel()" [align]="align()" [disabled]="disabled()">
+        <rt-menu [ariaLabel]="ariaLabel()" [align]="align()" [disabled]="disabled()" (openedChange)="opened.push($event)">
             <rt-menu-item label="Открыть" icon="ico-eye" (selected)="picked = picked + 1" />
             <rt-menu-item label="Удалить" icon="ico-trash" [danger]="true" [disabled]="itemDisabled()" (selected)="removed = removed + 1" />
         </rt-menu>
@@ -31,6 +31,7 @@ class MenuHostComponent {
     public readonly align: WritableSignal<IRtMenu.Align> = signal<IRtMenu.Align>('end');
     public readonly disabled: WritableSignal<boolean> = signal<boolean>(false);
     public readonly itemDisabled: WritableSignal<boolean> = signal<boolean>(false);
+    public readonly opened: boolean[] = [];
     public picked: number = 0;
     public removed: number = 0;
 }
@@ -58,6 +59,16 @@ describe('RtMenuComponent', (): void => {
 
         expect(panel()).not.toBeNull();
         expect(items().length).toBe(2);
+    });
+
+    it('открытие и закрытие панели приходят выходом', (): void => {
+        const fixture: ComponentFixture<MenuHostComponent> = setup();
+
+        openMenu(fixture);
+        items()[0].click();
+        fixture.detectChanges();
+
+        expect(fixture.componentInstance.opened).toEqual([true, false]);
     });
 
     it('повторный клик закрывает', (): void => {

@@ -5,6 +5,10 @@
     "projects/ui-kit-v2/src/lib/components/button/rt-button.directive.ts:pressed": {
       "reason": "a tri-state: pressed, not pressed, not said. The third value is what the button is in until the answer arrives, and it is not the same as «not pressed» — coercion would turn it into one.",
       "task": "RT-2082"
+    },
+    "projects/ui-kit-v2/src/lib/components/radio-button/rt-radio-button.component.ts:checked": {
+      "reason": "a tri-state: chosen, not chosen, not said. The third value leaves the choice to the form, and it is not the same as «not chosen» — coercion would turn every radio button bound to a form into a not chosen one.",
+      "task": "RT-2317"
     }
   }
 }

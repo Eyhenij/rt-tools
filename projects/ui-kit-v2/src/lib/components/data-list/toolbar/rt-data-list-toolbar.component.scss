@@ -1,0 +1,60 @@
+@use '../../../../styles/breakpoints' as bp;
+
+@layer rt-kit.components {
+    /* rt-data-list-toolbar — панель действий списка первого кита. Промежутки 8px и 16px — ступени
+       sm и md шкалы, ширина поля поиска 240px — размер 60 шкалы. На узком экране поиск уходит на
+       свою строку: в ряд с кнопками он там не помещается. */
+
+    .rt-data-list-toolbar {
+        --rt-data-list-toolbar-divider-width: var(--rt-border-width-thin);
+
+        display: block;
+        width: 100%;
+
+        &__selectors {
+            display: flex;
+            align-items: center;
+            gap: var(--rt-space-md);
+        }
+
+        &__counter {
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-sm);
+        }
+
+        &__right {
+            display: flex;
+            width: 100%;
+            align-items: center;
+            justify-content: flex-end;
+            gap: var(--rt-space-md);
+        }
+
+        &__actions {
+            display: flex;
+            align-items: center;
+            gap: var(--rt-space-sm);
+        }
+
+        /* Черта отделяет действия приложения от кнопок кита: это рамка, а не полоса шириной в
+           ступень рамки — ступени рамок размеров не задают. */
+        &__divider {
+            height: var(--rt-size-5);
+            border-left: var(--rt-data-list-toolbar-divider-width) solid var(--rt-color-border-subtle);
+        }
+
+        &__search {
+            width: var(--rt-size-60);
+        }
+
+        @media (width <= #{bp.$rt-bp-lg}) {
+            &__right {
+                flex-wrap: wrap;
+            }
+
+            &__search {
+                width: 100%;
+            }
+        }
+    }
+}

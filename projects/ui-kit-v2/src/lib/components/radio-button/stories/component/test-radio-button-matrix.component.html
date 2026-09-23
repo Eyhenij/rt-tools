@@ -1,0 +1,127 @@
+@switch (part) {
+    @case ('value') {
+        <app-story-presets caption="Выбор в обоих наборах">
+            <ng-template>
+                <app-story-row [items]="valueCases" [itemLabel]="caseLabel">
+                    <ng-template let-valueCase>
+                        <rt-radio-button [value]="valueCase.name" [checked]="valueCase.checked" [ariaLabel]="valueCase.name" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('label') {
+        <app-story-presets caption="Подпись и пояснение в обоих наборах">
+            <ng-template>
+                <app-story-row [items]="labelCases" [itemLabel]="caseLabel">
+                    <ng-template let-labelCase>
+                        <rt-radio-button
+                            [value]="labelCase.name"
+                            [checked]="true"
+                            [label]="labelCase.label"
+                            [description]="labelCase.description"
+                            [ariaLabel]="labelCase.name" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('card') {
+        <app-story-presets caption="Вид «карточка» × выбор в обоих наборах">
+            <ng-template>
+                <app-story-grid
+                    caption="Вид × выбор"
+                    [rows]="looks"
+                    [columns]="valueCases"
+                    [rowLabel]="lookLabel"
+                    [columnLabel]="caseLabel">
+                    <ng-template let-card let-valueCase="col">
+                        <rt-radio-button
+                            label="Доставка курьером"
+                            description="Завтра с 10 до 18"
+                            [value]="valueCase.name"
+                            [checked]="valueCase.checked"
+                            [card]="card" />
+                    </ng-template>
+                </app-story-grid>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('states') {
+        <app-story-presets caption="Взаимодействие в обоих наборах">
+            <ng-template>
+                <app-story-row [items]="states" [itemLabel]="stateLabel">
+                    <ng-template let-state>
+                        <rt-radio-button label="Москва" [value]="1" [attr.data-story-state]="state.state" />
+                    </ng-template>
+                </app-story-row>
+
+                <app-story-grid
+                    caption="Выбор × отключённость"
+                    [rows]="valueCases"
+                    [columns]="switches"
+                    [rowLabel]="caseLabel"
+                    [columnLabel]="switchLabel">
+                    <ng-template let-valueCase let-off="col">
+                        <rt-radio-button label="Москва" [value]="valueCase.name" [checked]="valueCase.checked" [disabled]="off" />
+                    </ng-template>
+                </app-story-grid>
+
+                <app-story-grid
+                    caption="Карточка: выбор × отключённость"
+                    [rows]="valueCases"
+                    [columns]="switches"
+                    [rowLabel]="caseLabel"
+                    [columnLabel]="switchLabel">
+                    <ng-template let-valueCase let-off="col">
+                        <rt-radio-button
+                            label="Доставка курьером"
+                            [value]="valueCase.name"
+                            [checked]="valueCase.checked"
+                            [disabled]="off"
+                            [card]="true" />
+                    </ng-template>
+                </app-story-grid>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('presets') {
+        <app-story-presets caption="Положения в обоих наборах">
+            <ng-template>
+                @for (valueCase of valueCases; track valueCase.name) {
+                    <rt-radio-button [value]="valueCase.name" [checked]="valueCase.checked" [label]="valueCase.name" />
+                    <rt-radio-button
+                        description="Завтра с 10 до 18"
+                        [value]="valueCase.name"
+                        [checked]="valueCase.checked"
+                        [label]="valueCase.name"
+                        [card]="true" />
+                }
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('themes') {
+        <app-story-presets caption="Положения в обеих темах в обоих наборах">
+            <ng-template>
+                <app-story-themes>
+                    <ng-template>
+                        @for (valueCase of valueCases; track valueCase.name) {
+                            <rt-radio-button [value]="valueCase.name" [checked]="valueCase.checked" [label]="valueCase.name" />
+                            <rt-radio-button
+                                description="Завтра с 10 до 18"
+                                [value]="valueCase.name"
+                                [checked]="valueCase.checked"
+                                [label]="valueCase.name"
+                                [card]="true" />
+                        }
+                    </ng-template>
+                </app-story-themes>
+            </ng-template>
+        </app-story-presets>
+    }
+}
