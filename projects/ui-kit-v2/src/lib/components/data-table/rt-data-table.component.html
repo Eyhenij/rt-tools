@@ -1,0 +1,144 @@
+<ng-container rtBlock="rt-data-table">
+    <table rtElem="table">
+        <thead rtElem="head">
+            <tr>
+                @if (isSelectorsColumnShown()) {
+                    <th rtElem="cell" [rtMod]="{ head: true, selectable: true }">
+                        @if (isMultiSelect()) {
+                            <rt-checkbox
+                                qa-dataid="data-table-page-checkbox"
+                                [ariaLabel]="selectPageLabel()"
+                                [disabled]="isSelectorsColumnDisabled()"
+                                [indeterminate]="isPageEntitiesIndeterminate() && !isPageEntitiesSelected()"
+                                [ngModel]="isPageEntitiesSelected()"
+                                [ngModelOptions]="{ standalone: true }"
+                                (ngModelChange)="onTogglePageEntities($event)" />
+                        }
+                    </th>
+                }
+
+                @for (column of visibleColumns(); track column.propName) {
+                    <th
+                        rtElem="cell"
+                        qa-dataid="data-table-header-cell"
+                        [rtMod]="{ head: true, sortable: !!column.sorting }"
+                        [style.width]="column.width"
+                        [style.min-width]="column.minWidth">
+                        <rt-data-table-header-cell
+                            [headerModel]="column.header"
+                            [sortModel]="column.sorting"
+                            [currentSortModel]="currentSortModel()"
+                            [column]="column"
+                            [iconTemplate]="iconTpl()?.template ?? null"
+                            (sortChange)="onSortChange($event)" />
+                    </th>
+                }
+
+                @if (hasRowActions()) {
+                    <th #headerSpacer rtElem="cell" qa-dataid="data-table-actions-header" [rtMod]="{ head: true }">{{ actionsLabel() }}</th>
+                }
+            </tr>
+
+            @if (isFiltersShown()) {
+                <tr qa-dataid="data-table-filter-row">
+                    @if (isSelectorsColumnShown()) {
+                        <th rtElem="cell" [rtMod]="{ head: true, filterable: true, empty: true }"></th>
+                    }
+
+                    @for (column of visibleColumns(); track column.propName) {
+                        <th rtElem="cell" [rtMod]="{ head: true, filterable: true }">
+                            @if (column.filterType; as filterType) {
+                                <rt-data-table-filter-cell
+                                    [filterProperty]="column.propName"
+                                    [filterType]="filterType"
+                                    [filterModel]="filterModel()"
+                                    [defaultFilterOperator]="column.defaultFilterOperator"
+                                    [filterOperators]="column.filterOperators"
+                                    [filterSelectOptions]="column.filterSelectOptions"
+                                    (filterChange)="onFilterChange($event)" />
+                            }
+                        </th>
+                    }
+
+                    @if (hasRowActions()) {
+                        <th rtElem="cell" [rtMod]="{ head: true, filterable: true }"></th>
+                    }
+                </tr>
+            }
+        </thead>
+
+        <tbody>
+            @for (row of entities(); track row[keyExp()]; let index = $index) {
+                <tr
+                    rtElem="row"
+                    qa-dataid="data-table-row"
+                    [rtDataTableRowClick]="row"
+                    [isTableRowClickable]="isTableRowsClickable()"
+                    [rtMod]="{ clickable: isTableRowsClickable(), active: activeRowIndex() === index }">
+                    @if (isSelectorsColumnShown()) {
+                        <td rtElem="cell" [rtMod]="{ selectable: true }" [attr.rt-data-table-stop-row-click]="''">
+                            @if (isMultiSelect()) {
+                                <rt-checkbox
+                                    qa-dataid="data-table-row-checkbox"
+                                    [ariaLabel]="selectRowLabel()"
+                                    [disabled]="isSelectorsColumnDisabled()"
+                                    [ngModel]="selectedEntitiesIds().includes(row[keyExp()])"
+                                    [ngModelOptions]="{ standalone: true }"
+                                    (ngModelChange)="onToggleEntity(row, $event)" />
+                            } @else {
+                                <rt-radio-button
+                                    qa-dataid="data-table-row-radio"
+                                    [value]="row[keyExp()]"
+                                    [ariaLabel]="selectRowLabel()"
+                                    [disabled]="isSelectorsColumnDisabled()"
+                                    [checked]="selectedEntitiesIds().includes(row[keyExp()])"
+                                    (checkedChange)="onToggleEntity(row, true)" />
+                            }
+                        </td>
+                    }
+
+                    @for (column of visibleColumns(); track column.propName) {
+                        <td
+                            rtElem="cell"
+                            qa-dataid="data-table-cell"
+                            [rtMod]="{ copyable: !!column.copyable }"
+                            [style.width]="column.width"
+                            [style.min-width]="column.minWidth">
+                            @if (column.type === columnTypes.CUSTOM) {
+                                <ng-container
+                                    [ngTemplateOutlet]="customCellsTpl()?.getTemplateByPropName(column.propName) ?? null"
+                                    [ngTemplateOutletContext]="{ $implicit: row }" />
+                            } @else {
+                                <rt-data-table-cell [row]="row" [column]="column" [iconTemplate]="iconTpl()?.template ?? null" />
+                            }
+                        </td>
+                    }
+
+                    @if (hasRowActions()) {
+                        <td #rowSpacer rtElem="cell" [rtMod]="{ spacer: true }"></td>
+
+                        <div rtBlock="rt-data-table-actions" [rtMod]="{ hidden: activeRowIndex() !== index }">
+                            <div #rowActions rtElem="container" qa-dataid="data-table-actions">
+                                @if (additionalRowActionsTpl(); as additional) {
+                                    <ng-container [ngTemplateOutlet]="additional" [ngTemplateOutletContext]="{ $implicit: row }" />
+                                }
+
+                                @if (rowActionsTpl(); as actions) {
+                                    <rt-menu
+                                        rtElem="action"
+                                        qa-dataid="data-table-row-menu"
+                                        icon="ellipsis-v"
+                                        [attr.rt-data-table-stop-row-click]="''"
+                                        [ariaLabel]="actionsLabel()"
+                                        (openedChange)="onMenuOpenedChange(index, $event)">
+                                        <ng-container [ngTemplateOutlet]="actions" [ngTemplateOutletContext]="{ $implicit: row }" />
+                                    </rt-menu>
+                                }
+                            </div>
+                        </div>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</ng-container>

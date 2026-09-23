@@ -1,0 +1,30 @@
+@layer rt-kit.components {
+    /* rt-data-list-settings-aside — панель настройки колонок первого кита. Промежуток между
+       признаками полос прокрутки и списком колонок 16px — ступень md шкалы. */
+
+    .rt-data-list-settings-aside {
+        display: flex;
+        flex-direction: column;
+        gap: var(--rt-space-md);
+
+        &__switches {
+            display: flex;
+            flex-direction: column;
+            gap: var(--rt-space-sm);
+        }
+
+        /* Слово рядом с переключателем: своего содержимого `rt-toggle-switch` не рисует — без
+           строки-соседа в панели стояли бы два переключателя без подписи. */
+        &__switch-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: var(--rt-space-md);
+        }
+
+        &__switch-label {
+            color: var(--rt-color-text-primary);
+            font-size: var(--rt-text-sm);
+        }
+    }
+}

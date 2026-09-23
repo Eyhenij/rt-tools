@@ -1,0 +1,80 @@
+@use '../../../../styles/breakpoints' as bp;
+
+@layer rt-kit.components {
+    /* rt-data-table-cell — готовая ячейка таблицы первого кита. Размеры первого кита лежат на
+       шкале: промежуток и поля 8px — ступень sm, отступ кнопки копирования 4px — ступень xs,
+       значок 24px — размер lg набора. Кнопка копирования стоит поверх края ячейки и
+       проявляется наведением; на узком экране наведения нет, и она видна всегда. */
+
+    .rt-data-table-cell {
+        --rt-data-table-cell-transition-duration: var(--rt-duration-fast);
+
+        position: relative;
+        display: flex;
+        width: 100%;
+        height: 100%;
+        align-items: center;
+        gap: var(--rt-space-sm);
+
+        &__prefix,
+        &__suffix {
+            display: inline-flex;
+            min-width: fit-content;
+            flex: 0 0 auto;
+        }
+
+        /* Значение длиннее места обрезается многоточием: раскладка fixed даёт тексту ширину
+           ячейки, а не ширину значения. Подсказку с целым значением получает только обрезанное. */
+        &__title {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+
+            &--align--left {
+                text-align: left;
+            }
+
+            &--align--center {
+                text-align: center;
+            }
+
+            &--align--right {
+                text-align: right;
+            }
+        }
+
+        &__text {
+            overflow: hidden;
+            width: 100%;
+            padding: var(--rt-space-sm) var(--rt-space-sm) var(--rt-space-sm) 0;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        &__copy-button {
+            position: absolute;
+            transition: visibility var(--rt-data-table-cell-transition-duration) linear;
+            visibility: hidden;
+
+            @media (width <= #{bp.$rt-bp-lg}) {
+                visibility: visible;
+            }
+
+            &--position--left {
+                left: var(--rt-space-xs);
+            }
+
+            &--position--right {
+                right: var(--rt-space-xs);
+            }
+
+            &--complete {
+                cursor: not-allowed;
+            }
+
+            &--visible {
+                visibility: visible;
+            }
+        }
+    }
+}

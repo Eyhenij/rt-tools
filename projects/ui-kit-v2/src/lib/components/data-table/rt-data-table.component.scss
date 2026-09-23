@@ -1,0 +1,169 @@
+@layer rt-kit.components {
+    /* rt-data-table — таблица первого кита во втором. Размеры первого кита положены на шкалу:
+       высота строки 48px — ступень роста контрола lg, поля ячейки 10px округлены к ступени sm,
+       место под полосу действий 64px — ступень 3xl, поля ячейки отбора 4px и 8px — ступени xs и
+       sm. Подпись шапки 16px — ступень md при межстрочном tight, значение строки 14px — sm.
+       Шапка стоит над строками ярусом sticky шкалы, полоса действий — ярусом base: она в
+       разметке идёт после ячеек и потому рисуется поверх них. */
+
+    .rt-data-table {
+        --rt-data-table-row-height: var(--rt-control-height-lg);
+        --rt-data-table-border-width: var(--rt-border-width-thin);
+        --rt-data-table-row-transition-duration: var(--rt-duration-base);
+
+        display: block;
+        overflow: auto;
+        width: 100%;
+        height: 100%;
+
+        /* Размер полос прокрутки приходит с корня страницы: туда его ставит список по
+           сохранённой настройке. Своего объявления на блоке нет намеренно — оно победило бы
+           унаследованное, и выбор человека до таблицы не дошёл бы. Без списка полосы кита
+           обычные: запасное значение — та же ступень, что в основе. */
+        &::-webkit-scrollbar {
+            width: var(--rt-data-table-scrollbar-vertical-width, var(--rt-size-3));
+            height: var(--rt-data-table-scrollbar-horizontal-height, var(--rt-size-3));
+        }
+
+        &__table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            position: sticky;
+            z-index: var(--rt-z-sticky);
+            top: 0;
+
+            tr:last-child {
+                border-bottom: var(--rt-data-table-border-width) solid var(--rt-color-border-default);
+            }
+        }
+
+        tbody {
+            font-size: var(--rt-text-sm);
+        }
+
+        &__row {
+            height: var(--rt-data-table-row-height);
+            border-bottom: var(--rt-data-table-border-width) solid var(--rt-color-border-subtle);
+            color: var(--rt-color-text-primary);
+            transform: translate(0);
+
+            &:hover {
+                border-bottom-color: var(--rt-color-state-info);
+                transition: border-bottom-color var(--rt-data-table-row-transition-duration);
+            }
+
+            &:hover .rt-data-table-actions {
+                visibility: visible;
+            }
+
+            &--active {
+                border-bottom-color: var(--rt-color-state-info);
+            }
+
+            &--clickable {
+                cursor: pointer;
+            }
+        }
+
+        /* Ячейка шапки не ловит указатель вовсе: у первого кита нажимаются только сортируемая
+           ячейка, ячейка отбора и ячейка выбора. */
+        &__cell {
+            width: fit-content;
+            height: 100%;
+            padding: var(--rt-space-sm);
+
+            &--head {
+                position: relative;
+                background-color: var(--rt-color-bg-surface-subtle);
+                color: var(--rt-color-text-primary);
+                font-size: var(--rt-text-md);
+                font-weight: var(--rt-font-weight-medium);
+                line-height: var(--rt-leading-tight);
+                pointer-events: none;
+                text-align: start;
+            }
+
+            &--sortable,
+            &--selectable,
+            &--filterable {
+                pointer-events: auto;
+            }
+
+            &--filterable {
+                padding: var(--rt-space-xs) var(--rt-space-sm);
+                background-color: var(--rt-color-bg-surface);
+            }
+
+            /* Разделитель между ячейками шапки — полоса в половину высоты, как у первого кита. */
+            &--head:not(:last-child, .rt-data-table__cell--selectable, .rt-data-table__cell--empty):after {
+                position: absolute;
+                top: 25%;
+                right: 0;
+                height: 50%;
+                border-right: var(--rt-data-table-border-width) solid var(--rt-color-border-strong);
+                content: '';
+                pointer-events: none;
+            }
+
+            /* Место под полосу действий: ширину ячейке ставит сама таблица по ширине полосы. */
+            &--spacer {
+                padding: 0;
+            }
+        }
+    }
+
+    /* Полоса действий висит над концом строки и проявляется наведением; там, где наведения нет,
+       она видна всегда. Левый край растворяется в фоне — приём первого кита. */
+    .rt-data-table-actions {
+        position: absolute;
+        z-index: var(--rt-z-base);
+        top: 0;
+        right: 0;
+        display: flex;
+        width: 100%;
+        height: var(--rt-data-table-row-height);
+        align-items: center;
+        justify-content: flex-end;
+        pointer-events: none;
+
+        &__container {
+            position: sticky;
+            right: 0;
+            display: flex;
+            overflow: hidden;
+            width: fit-content;
+            height: calc(var(--rt-data-table-row-height) - var(--rt-data-table-border-width) * 2);
+            align-items: center;
+            justify-content: flex-end;
+            padding: 0 var(--rt-space-xs) 0 var(--rt-space-5);
+            background: linear-gradient(
+                to right,
+                transparent 0%,
+                color-mix(in srgb, var(--rt-color-bg-surface) 30%, transparent) 10%,
+                var(--rt-color-bg-surface) 20%,
+                var(--rt-color-bg-surface) 100%
+            );
+            gap: var(--rt-space-xs);
+            pointer-events: none;
+        }
+
+        /* Сама полоса указателя не ловит — нажатие сквозь неё доходит до строки; ловят его
+           кнопки, которые в ней стоят: и меню строки, и действия приложения рядом с ним. */
+        &__container > * {
+            pointer-events: auto;
+        }
+
+        &__action {
+            position: sticky;
+        }
+
+        @media (hover: hover) {
+            &--hidden {
+                visibility: hidden;
+            }
+        }
+    }
+}

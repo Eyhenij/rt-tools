@@ -50,7 +50,11 @@ export const iconMaterialMap: readonly IRtIconMaterialEntry[] = [
     { from: 'delete_forever', to: null, why: 'корзины с крестом в наборе нет — нужен рисунок' },
     { from: 'done', to: 'check', why: 'галочка, один в один; есть двойник ico-check' },
     { from: 'download', to: 'ico-download', why: 'простая стрелка вниз есть только в своей рисовке — во фрейме лишь облако' },
-    { from: 'drag_handle', to: null, why: 'двух горизонтальных полос для перетаскивания в наборе нет — нужен рисунок' },
+    {
+        from: 'drag_handle',
+        to: 'equals',
+        why: 'две горизонтальные полосы; рисунок дорисован по слову владельца — им таблица первого кита показывает сравнение «равно»',
+    },
     { from: 'edit', to: 'pencil', why: 'карандаш, один в один' },
     { from: 'info', to: 'info-circle', why: 'круг с буквой i — так рисует Material; голое info в наборе другое' },
     { from: 'keyboard_arrow_down', to: 'chevron-down', why: 'шеврон вниз, один в один; есть двойник ico-chevron-down' },

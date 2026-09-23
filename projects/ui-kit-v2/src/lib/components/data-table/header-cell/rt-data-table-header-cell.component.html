@@ -1,0 +1,34 @@
+<ng-container rtBlock="rt-data-table-header-cell">
+    <ng-template #iconTpl>
+        @if (iconTemplate(); as template) {
+            <ng-container [ngTemplateOutlet]="template" [ngTemplateOutletContext]="iconContext()" />
+        } @else if (kitIcon(); as name) {
+            <rt-icon size="lg" [name]="name" />
+        }
+    </ng-template>
+
+    <div rtElem="label" [rtMod]="labelMods()">
+        @if (icon()?.placement === 'left') {
+            <span rtElem="prefix" qa-dataid="data-table-header-prefix"><ng-container [ngTemplateOutlet]="iconTpl" /></span>
+        }
+
+        <div
+            rtElem="text"
+            qa-dataid="data-table-header-text"
+            [class]="[headerModel().className] | concatClasses"
+            [rtTooltip]="headerModel().tooltip ?? ''">
+            {{ headerModel().label }}
+        </div>
+
+        @if (icon()?.placement === 'right') {
+            <span rtElem="suffix" qa-dataid="data-table-header-suffix"><ng-container [ngTemplateOutlet]="iconTpl" /></span>
+        }
+    </div>
+
+    @if (sortModel()) {
+        <div rtElem="arrows" qa-dataid="data-table-header-sort" [rtMod]="arrowsMods()">
+            <div rtElem="arrow" [rtMod]="descMods()"></div>
+            <div rtElem="arrow" [rtMod]="ascMods()"></div>
+        </div>
+    }
+</ng-container>

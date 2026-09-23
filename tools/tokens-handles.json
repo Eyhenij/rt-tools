@@ -11,6 +11,8 @@
     "--rt-logo-tagline-dark": "the same for the dark theme",
     "--rt-workspace-aside-size": "the width of the workspace's side column",
     "--rt-workspace-list-size": "the width of the workspace's list",
-    "--rt-page-header-bg": "the backdrop of the page header; the default is the kit's navigation panel backdrop"
+    "--rt-page-header-bg": "the backdrop of the page header; the default is the kit's navigation panel backdrop",
+    "--rt-data-table-scrollbar-vertical-width": "the width of the data table's vertical scrollbar; the list writes it on the page root by the saved setting, and the default is the step --rt-size-3",
+    "--rt-data-table-scrollbar-horizontal-height": "the same for the horizontal one"
   }
 }
