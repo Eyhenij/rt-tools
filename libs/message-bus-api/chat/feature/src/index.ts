@@ -1,3 +1,4 @@
+export * from './lib/chat-embedded.controller';
 export * from './lib/chat-hook.service';
 export * from './lib/chat-intake.controller';
 export * from './lib/chat-read.controller';
