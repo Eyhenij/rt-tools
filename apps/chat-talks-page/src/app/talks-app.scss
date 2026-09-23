@@ -1,0 +1,16 @@
+.talks-page {
+    &__frame {
+        display: flex;
+        flex-direction: column;
+        padding: var(--rt-spacing-md);
+        background: var(--rt-color-surface);
+        block-size: 100%;
+        color: var(--rt-color-on-surface);
+    }
+
+    &__waiting,
+    &__refused {
+        margin: 0;
+        font-size: var(--rt-font-size-md);
+    }
+}
