@@ -1,0 +1,63 @@
+.talks-page {
+    display: block;
+    block-size: 100%;
+
+    &__screen {
+        display: grid;
+        background: var(--rt-color-bg-surface);
+        block-size: 100%;
+        gap: var(--rt-space-4);
+        grid-template-columns: minmax(0, 20rem) minmax(0, 1fr);
+    }
+
+    &__talks,
+    &__feed {
+        display: flex;
+        flex-direction: column;
+        min-block-size: 0;
+    }
+
+    &__thread {
+        min-block-size: 0;
+    }
+
+    /* Строка списка — готовая часть набора, и она сама стоит рядом: место берётся долей */
+    &__row {
+        display: flex;
+        flex: 1 1 auto;
+        justify-content: space-between;
+        margin: 0;
+        gap: var(--rt-space-2);
+        min-inline-size: 0;
+    }
+
+    &__row-text {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    &__row-state {
+        color: var(--rt-color-text-muted);
+    }
+
+    &__title {
+        margin: 0;
+        font-weight: var(--rt-font-weight-medium);
+    }
+
+    &__waiting,
+    &__refused {
+        padding: var(--rt-space-4);
+        margin: 0;
+        color: var(--rt-color-text-primary);
+    }
+
+    /* Узкий экран: список и лента встают друг под другом, как в панели оператора */
+    @media (width <= 48rem) {
+        &__screen {
+            grid-template-columns: minmax(0, 1fr);
+            grid-template-rows: minmax(0, 18rem) minmax(0, 1fr);
+        }
+    }
+}

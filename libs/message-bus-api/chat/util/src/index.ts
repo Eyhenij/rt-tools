@@ -1,3 +1,4 @@
+export * from './lib/chat-entry.logic';
 export * from './lib/chat-hook.logic';
 export * from './lib/chat-hours.logic';
 export * from './lib/chat-limits';

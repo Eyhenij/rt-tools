@@ -106,6 +106,12 @@ export enum ERefusal {
     ChatThrottled = 'chatThrottled',
     /** Состояние переписки названо словом не из набора. */
     ChatStateUnknown = 'chatStateUnknown',
+    /** Вход на встраиваемую страницу не открыт: подписи нет, она не сошлась или ключ неизвестен. */
+    ChatEntryRejected = 'chatEntryRejected',
+    /** Минута подписи входа вне допуска: подпись верна, но стара. */
+    ChatEntryStale = 'chatEntryStale',
+    /** Признак встраиваемой страницы истёк: страница берёт новый той же дорогой. */
+    ChatEntryExpired = 'chatEntryExpired',
 }
 
 /** Подстановки отказа: причина названа кодом, а значения идут рядом по имени. */
@@ -178,6 +184,9 @@ const SAID: Readonly<Record<ERefusal, string>> = {
     [ERefusal.ChatTextTooLong]: 'в реплике больше {{limit}} знаков',
     [ERefusal.ChatThrottled]: 'реплик с одного посетителя больше {{limit}} за окно: повторите через {{after}} с',
     [ERefusal.ChatStateUnknown]: 'состояние переписки ожидается одним из: live, closed',
+    [ERefusal.ChatEntryRejected]: 'страница переписок не открылась',
+    [ERefusal.ChatEntryStale]: 'подпись входа устарела',
+    [ERefusal.ChatEntryExpired]: 'вход устарел, обновите страницу',
 };
 
 /**
