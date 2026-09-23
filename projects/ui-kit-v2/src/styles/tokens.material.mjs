@@ -208,7 +208,7 @@ export const material = [
         lead: `    /* Панель настройки колонок первого кита: плашка колонки залита цветом выбранного пункта
        Material, значки — в тоне on-surface-variant темы. Сняты с панели на витрине первого кита. */`,
         space: true,
-        name: `--rt-list-settings-column-bg`,
+        name: `--rt-list-settings-item-bg`,
         value: `var(--mat-option-selected-state-layer-color, var(--mat-sys-secondary-container, var(--rt-mat-neutral-10)))`,
     },
     { name: `--rt-list-settings-icon-color`, value: `var(--mat-sys-on-surface-variant, var(--rt-mat-neutral-60))` },

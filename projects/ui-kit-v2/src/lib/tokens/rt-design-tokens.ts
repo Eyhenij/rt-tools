@@ -211,8 +211,8 @@ export type TRtDesignTokenName =
     | '--rt-list-search-padding-x'
     | '--rt-list-search-radius'
     | '--rt-list-search-width'
-    | '--rt-list-settings-column-bg'
     | '--rt-list-settings-icon-color'
+    | '--rt-list-settings-item-bg'
     | '--rt-mat-blue-100'
     | '--rt-mat-blue-20'
     | '--rt-mat-blue-40'
@@ -682,8 +682,8 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-list-search-padding-x',
     '--rt-list-search-radius',
     '--rt-list-search-width',
-    '--rt-list-settings-column-bg',
     '--rt-list-settings-icon-color',
+    '--rt-list-settings-item-bg',
     '--rt-mat-blue-100',
     '--rt-mat-blue-20',
     '--rt-mat-blue-40',

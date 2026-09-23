@@ -188,7 +188,7 @@ export const lightForms = [
         lead: `    /* Панель настройки колонок списка — заливка плашки колонки и тон значков на ней.
        Свой вид берёт подложку и приглушённый текст; материальный набор отдаёт их теме. */`,
         space: true,
-        name: `--rt-list-settings-column-bg`,
+        name: `--rt-list-settings-item-bg`,
         value: `var(--rt-color-bg-subtle)`,
         dark: `var(--rt-color-bg-subtle)`,
     },

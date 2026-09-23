@@ -82,7 +82,7 @@ export const darkLayout = [
         name: `--rt-list-search-color-placeholder`,
     },
     {
-        name: `--rt-list-settings-column-bg`,
+        name: `--rt-list-settings-item-bg`,
     },
     {
         name: `--rt-list-settings-icon-color`,

@@ -113,10 +113,7 @@
 
     /* Панель настройки колонок первого кита: плашка колонки залита цветом выбранного пункта
        Material, значки — в тоне on-surface-variant темы. Сняты с панели на витрине первого кита. */
-    --rt-list-settings-column-bg: var(
-        --mat-option-selected-state-layer-color,
-        var(--mat-sys-secondary-container, var(--rt-mat-neutral-10))
-    );
+    --rt-list-settings-item-bg: var(--mat-option-selected-state-layer-color, var(--mat-sys-secondary-container, var(--rt-mat-neutral-10)));
     --rt-list-settings-icon-color: var(--mat-sys-on-surface-variant, var(--rt-mat-neutral-60));
 
     /* Переключатель первого кита — свой, не Material: серый трек в рамке и графитовый

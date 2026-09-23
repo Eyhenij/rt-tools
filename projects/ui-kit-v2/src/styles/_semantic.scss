@@ -250,7 +250,7 @@
 
     /* Панель настройки колонок списка — заливка плашки колонки и тон значков на ней.
        Свой вид берёт подложку и приглушённый текст; материальный набор отдаёт их теме. */
-    --rt-list-settings-column-bg: var(--rt-color-bg-subtle);
+    --rt-list-settings-item-bg: var(--rt-color-bg-subtle);
     --rt-list-settings-icon-color: var(--rt-color-text-muted);
 
     /* Скругление контрола — назначение, а не ступень на месте. Кнопка, поле ввода и
