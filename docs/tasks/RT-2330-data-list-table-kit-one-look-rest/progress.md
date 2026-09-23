@@ -5,7 +5,7 @@
 - **State:** `этап-идёт`
 - **Stage:** 6 of 6 — spec and references
 - **Done:** measurement; the material preset reads the Material theme from the page
-- **Next step:** write the new rules and scenarios into the table family spec
+- **Next step:** run the whole check set
 - **Uncommitted:** no
 - **Waiting for the owner:** no; the board on the host does not list #2330 — the branch carries the number by the owner's «если тупик заводи дубликт и работаем», and the board is checked again before the PR
 - **PR:** not open yet
@@ -26,8 +26,8 @@
 - [x] 4.2 Re-take the field and list references
 - [x] 5.1 Measure each of the four against the first kit and size the edit
 - [x] 5.2 Bring those that fit this task, file the rest as tasks of epic 1870 and tell the owner the numbers
-- [>] 6.1 Write the new rules and scenarios into the table family spec
-- [ ] 6.2 Re-take the references changed by stages 2–5 and run the whole check set
+- [x] 6.1 Write the new rules and scenarios into the table family spec
+- [>] 6.2 Re-take the references changed by stages 2–5 and run the whole check set
 
 ## Measurement
 
@@ -94,6 +94,10 @@ measured: the tree has no pinned browser profile, and the rule allows no other d
   buttons and the paginator are real differences in other components: filed as #2331 and #2332,
   epic plan rows 7.13 and 7.14. Neither reached the board listing — the same host failure as
   #2329 and #2330. Affected stage of the plan: 5.
+
+- **The rules of this work live in a subdomain of their own, `table-material-theme`** — the table
+  family spec stands at 485 lines and its scenarios at 480 against the limit of 500. Affected stage
+  of the plan: 6.
 
 ## Sessions
 
