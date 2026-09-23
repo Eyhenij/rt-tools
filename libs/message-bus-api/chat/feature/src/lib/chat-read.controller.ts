@@ -13,29 +13,24 @@
  * Поток событий стоит здесь же, а не отдельной поверхностью: он закрыт тем же входом и отвечает
  * за те же сайты, а добор пропущенного после обрыва идёт чтением сообщений с названной минутой.
  */
-import { BadRequestException, Body, Controller, Get, NotFoundException, Param, Post, Query, Req, Sse } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Param, Post, Query, Req, Sse } from '@nestjs/common';
 import { Observable } from 'rxjs';
 
 import { SessionOperation } from '@rt/message-bus-api/access/util';
 import { accountOf, IAccountBearingRequest, IRequestAccount } from '@rt/message-bus-api/accounts/util';
 import {
-    appendOperatorMessage,
-    conversationOfSites,
     conversationsPage,
-    findSiteById,
     IChatConversationListRow,
     IChatMessageListRow,
-    IChatSiteRow,
     messagesPage,
     operatorSites,
-    setConversationState,
 } from '@rt/message-bus-api/chat/data-access';
-import { CHAT_TEXT_LIMIT, chatStateOf, chatTextFault, EChatTextFault, missedSince } from '@rt/message-bus-api/chat/util';
+import { missedSince } from '@rt/message-bus-api/chat/util';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
-import { EChatTalkState, ERefusal, IPage, pageAsked, pageFault, refusalBody } from '@rt/message-bus-common';
+import { EChatTalkState, IPage, pageAsked, pageFault } from '@rt/message-bus-common';
 
-import { ChatHookService } from './chat-hook.service';
 import { ChatSubscribersService, IChatFrame } from './chat-subscribers.service';
+import { chatStateAsked, ChatTalkService, IChatStateChanged } from './chat-talk.service';
 
 /** Поля порядка списка переписок. Первое — умолчание: свежие разговоры стоят первыми. */
 const CONVERSATION_SORTABLE: readonly string[] = ['lastMessageAt'];
@@ -43,22 +38,16 @@ const CONVERSATION_SORTABLE: readonly string[] = ['lastMessageAt'];
 /** Поля порядка списка сообщений: разговор читается с начала. */
 const MESSAGE_SORTABLE: readonly string[] = ['takenAt'];
 
-/** Ответ на смену состояния переписки. */
-interface IChatStateChanged {
-    readonly id: string;
-    readonly state: string;
-}
-
 @Controller('chat/conversations')
 export class ChatReadController {
     readonly #prisma: PrismaService;
     readonly #subscribers: ChatSubscribersService;
-    readonly #hooks: ChatHookService;
+    readonly #talks: ChatTalkService;
 
-    constructor(prisma: PrismaService, subscribers: ChatSubscribersService, hooks: ChatHookService) {
+    constructor(prisma: PrismaService, subscribers: ChatSubscribersService, talks: ChatTalkService) {
         this.#prisma = prisma;
         this.#subscribers = subscribers;
-        this.#hooks = hooks;
+        this.#talks = talks;
     }
 
     /**
@@ -79,7 +68,7 @@ export class ChatReadController {
             throw new BadRequestException(fault);
         }
 
-        const state: EChatTalkState | null = query['state'] === undefined ? null : this.#state(query['state']);
+        const state: EChatTalkState | null = query['state'] === undefined ? null : chatStateAsked(query['state']);
         const site: unknown = query['site'];
 
         return conversationsPage(
@@ -104,7 +93,7 @@ export class ChatReadController {
             throw new BadRequestException(fault);
         }
 
-        await this.#own(request, id);
+        await this.#talks.own(await this.#sites(request), id);
 
         return messagesPage(this.#prisma, id, pageAsked(query, MESSAGE_SORTABLE), missedSince(query['since']));
     }
@@ -144,31 +133,8 @@ export class ChatReadController {
     ): Promise<IChatMessageListRow> {
         const fields: Record<string, unknown> = (body ?? {}) as Record<string, unknown>;
         const text: string = typeof fields['text'] === 'string' ? fields['text'].trim() : '';
-        const talk: { id: string; siteId: string; state: string } = await this.#own(request, id);
-        const fault: EChatTextFault | null = chatTextFault(text);
 
-        if (fault === EChatTextFault.Empty) {
-            throw new BadRequestException(refusalBody(ERefusal.ChatTextEmpty));
-        }
-
-        if (fault === EChatTextFault.TooLong) {
-            throw new BadRequestException(refusalBody(ERefusal.ChatTextTooLong, { limit: CHAT_TEXT_LIMIT }));
-        }
-
-        const message: IChatMessageListRow = await appendOperatorMessage(this.#prisma, talk.id, text, at);
-
-        this.#subscribers.send(
-            { conversationId: talk.id, siteId: talk.siteId },
-            {
-                text,
-                conversationId: talk.id,
-                messageId: message.id,
-                side: message.side,
-                takenAt: message.takenAt.toISOString(),
-            }
-        );
-
-        return message;
+        return this.#talks.answer(await this.#sites(request), id, text, at);
     }
 
     /** Смена состояния переписки: закрыть разговор или открыть его снова. */
@@ -176,37 +142,9 @@ export class ChatReadController {
     @SessionOperation()
     public async state(@Param('id') id: string, @Body() body: unknown, @Req() request: IAccountBearingRequest): Promise<IChatStateChanged> {
         const fields: Record<string, unknown> = (body ?? {}) as Record<string, unknown>;
-        const asked: EChatTalkState = this.#state(fields['state']);
-        const talk: { id: string; siteId: string; state: string } = await this.#own(request, id);
-        const changed: IChatStateChanged = await setConversationState(this.#prisma, id, asked);
+        const asked: EChatTalkState = chatStateAsked(fields['state']);
 
-        if (asked === EChatTalkState.Closed) {
-            // вызов наружу ответа оператору не держит: приложение о закрытии узнаёт своим чередом
-            void this.#sayClosed(talk.siteId, id);
-        }
-
-        return changed;
-    }
-
-    /**
-     * Сказать приложению площадки, что переписку закрыли.
-     *
-     * Площадку читает отдельный запрос: список сайтов оператора несёт признаки, а не адрес
-     * вызова с тайной — второе их чтение здесь же разошлось бы с первым молча.
-     */
-    async #sayClosed(siteId: string, conversationId: string): Promise<void> {
-        const site: IChatSiteRow | null = await findSiteById(this.#prisma, siteId);
-
-        if (!site) {
-            return;
-        }
-
-        await this.#hooks.say(
-            { id: site.id, key: site.key, hookUrl: site.hookUrl, hookSecret: site.hookSecret },
-            'closing',
-            { conversationId, fields: {} },
-            new Date()
-        );
+        return this.#talks.state(await this.#sites(request), id, asked);
     }
 
     /** Сайты вошедшего. Пусто — он не оператор чата, и видеть ему нечего. */
@@ -214,31 +152,5 @@ export class ChatReadController {
         const account: IRequestAccount = accountOf(request);
 
         return operatorSites(this.#prisma, account.id);
-    }
-
-    /** Переписка своего сайта. Чужая и несуществующая отвечают одинаково. */
-    async #own(request: IAccountBearingRequest, id: string): Promise<{ id: string; siteId: string; state: string }> {
-        const found: { id: string; siteId: string; state: string } | null = await conversationOfSites(
-            this.#prisma,
-            await this.#sites(request),
-            id
-        );
-
-        if (!found) {
-            throw new NotFoundException(refusalBody(ERefusal.ChatConversationNotFound));
-        }
-
-        return found;
-    }
-
-    /** Состояние из запроса. Слово не из набора — отказ, и набор назван в нём. */
-    #state(value: unknown): EChatTalkState {
-        const state: EChatTalkState | null = chatStateOf(value);
-
-        if (!state) {
-            throw new BadRequestException(refusalBody(ERefusal.ChatStateUnknown));
-        }
-
-        return state;
     }
 }

@@ -12,6 +12,7 @@ import { ChatHookService } from './chat-hook.service';
 import { ChatIntakeController } from './chat-intake.controller';
 import { ChatReadController } from './chat-read.controller';
 import { ChatSubscribersService, IChatFrame } from './chat-subscribers.service';
+import { ChatTalkService } from './chat-talk.service';
 import { ChatPrismaDouble } from './chat.double';
 
 /** Адрес страницы, с которой зовут операции: он же стоит в списке живого сайта. */
@@ -79,7 +80,11 @@ describe('поток событий чата', () => {
         store.operatorSites.push({ accountId: 'account-1', siteId: 'site-1' });
         subscribers = new ChatSubscribersService();
         intake = new ChatIntakeController(store.asPrisma(), new RateLimitService(), subscribers, new ChatHookService(store.asPrisma()));
-        reads = new ChatReadController(store.asPrisma(), subscribers, new ChatHookService(store.asPrisma()));
+        reads = new ChatReadController(
+            store.asPrisma(),
+            subscribers,
+            new ChatTalkService(store.asPrisma(), subscribers, new ChatHookService(store.asPrisma()))
+        );
     });
 
     it('SC-CH-28 — реплика посетителя доходит до потока его переписки', async (): Promise<void> => {

@@ -1,0 +1,76 @@
+{
+  "name": "chat-talks-page",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "prefix": "talks",
+  "sourceRoot": "apps/chat-talks-page/src",
+  "tags": ["scope:chat-talks-page-app"],
+  "targets": {
+    "build": {
+      "executor": "@angular/build:application",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/chat-talks-page",
+        "browser": "apps/chat-talks-page/src/main.ts",
+        "tsConfig": "apps/chat-talks-page/tsconfig.app.json",
+        "inlineStyleLanguage": "scss",
+        "assets": [
+          {
+            "glob": "**/*.svg",
+            "input": "projects/ui-kit-v2/src/assets/icons",
+            "output": "icons"
+          }
+        ],
+        "styles": ["apps/chat-talks-page/src/styles.scss"]
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "500kb",
+              "maximumError": "1mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "4kb",
+              "maximumError": "8kb"
+            }
+          ],
+          "outputHashing": "all"
+        },
+        "development": {
+          "optimization": false,
+          "extractLicenses": false,
+          "sourceMap": true
+        }
+      }
+    },
+    "serve": {
+      "continuous": true,
+      "executor": "@angular/build:dev-server",
+      "defaultConfiguration": "development",
+      "options": {
+        "proxyConfig": "apps/chat-talks-page/proxy.conf.json"
+      },
+      "configurations": {
+        "production": {
+          "buildTarget": "chat-talks-page:build:production"
+        },
+        "development": {
+          "buildTarget": "chat-talks-page:build:development"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@angular/build:unit-test",
+      "options": {
+        "watch": false
+      }
+    }
+  }
+}

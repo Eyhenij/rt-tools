@@ -70,14 +70,14 @@ export const baseTypeScriptConfig = {
         ...ts.configs.recommended.rules,
         ...flatRules(angular.configs.tsRecommended),
 
-        // Приставок здесь три, а не одна: два кита живут рядом в одном дереве и обязаны
-        // различаться селектором — `rt-*` у второго, `rtui-*` у первого, — а экраны админки
-        // носят свою.
+        // Приставок здесь четыре, а не одна: два кита живут рядом в одном дереве и обязаны
+        // различаться селектором — `rt-*` у второго, `rtui-*` у первого, — а экраны админки и
+        // встраиваемой страницы переписок носят свои.
         '@angular-eslint/directive-selector': [
             'error',
             {
                 type: 'attribute',
-                prefix: ['rt', 'rtui', 'admin'],
+                prefix: ['rt', 'rtui', 'admin', 'talks'],
                 style: 'camelCase',
             },
         ],
@@ -85,7 +85,7 @@ export const baseTypeScriptConfig = {
             'error',
             {
                 type: 'element',
-                prefix: ['rt', 'rtui', 'admin'],
+                prefix: ['rt', 'rtui', 'admin', 'talks'],
                 style: 'kebab-case',
             },
         ],

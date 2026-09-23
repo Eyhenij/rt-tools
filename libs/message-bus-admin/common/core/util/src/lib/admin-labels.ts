@@ -313,6 +313,9 @@ export const ADMIN_LABELS = {
     [ERefusal.ChatTextTooLong]: 'В реплике больше {{limit}} знаков',
     [ERefusal.ChatThrottled]: 'Реплик с одного посетителя больше {{limit}} за окно: повторите через {{after}} с',
     [ERefusal.ChatStateUnknown]: 'Состояние переписки ожидается одним из: live, closed',
+    [ERefusal.ChatEntryRejected]: 'Страница переписок не открылась',
+    [ERefusal.ChatEntryStale]: 'Подпись входа устарела',
+    [ERefusal.ChatEntryExpired]: 'Вход устарел, обновите страницу',
 } as const;
 
 /** Ключ подписи админки. Опечатка в шаблоне не доживает до собранного экрана. */
