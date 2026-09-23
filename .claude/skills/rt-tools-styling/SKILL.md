@@ -209,6 +209,16 @@ The sections below are this tree's articles: the law's technique is named by the
   a container is what lets two presets stand side by side on one page.
   <!-- rt-when: *.scss *.css *.html -->
 
+- **A theme or a preset scoped to a node declares the whole set of the assignments on that node,
+  not the difference from the page.** A reference of a property resolves where it is declared, not
+  where it is read: an assignment left at the root keeps resolving against the values of the root,
+  and the island comes out half applied — a ground from one look, a shadow from the other. Nothing
+  catches that but the eyes. The build assembles it, the styles linter judges the properties, and a
+  frame shows a half-applied island as a lawful one; it cost 314 diverged frames in one run and 38
+  in the next. The root is cut out of every rule of the island, so the layering of the page stays
+  as it was.
+  <!-- rt-when: *.scss *.css *.mjs -->
+
 - **The dark theme wins over a preset, and it wins by the order in the file, not by specificity.**
   Both flags sit on the same root with equal specificity, so the preset rule is emitted before the
   dark theme's. A preset declared after it would silently repaint the dark theme with light values.

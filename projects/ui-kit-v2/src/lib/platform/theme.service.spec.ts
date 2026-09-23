@@ -137,4 +137,21 @@ describe('тема кита', (): void => {
         // Машину спрашивать некого: вывод остаётся светлым.
         expect(theme.current()).toBe('light');
     });
+
+    it('SC-UKV-350 — окно без умения спросить машину не роняет службу', (): void => {
+        const ask: typeof window.matchMedia = window.matchMedia;
+        // Среда тестов потребителя даёт именно такое окно: браузерное, но спрашивать не умеет.
+        Reflect.deleteProperty(window, 'matchMedia');
+
+        try {
+            const theme: ThemeService = service({ global: { theme: 'auto' } });
+            flush();
+
+            expect(theme.choice()).toBe('auto');
+            expect(theme.current()).toBe('light');
+            expect(signAtRoot()).toBe('light');
+        } finally {
+            window.matchMedia = ask;
+        }
+    });
 });

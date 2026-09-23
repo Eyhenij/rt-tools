@@ -1,8 +1,8 @@
 # The settings of the kit and the theme
 
-**Status:** proposed · **Revision:** 2026-09-23 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 23 September 2026 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the design of the kit — [the sign of the theme at the root of the page and the two
-sets of the properties it switches](../../tokens/spec.md); the service of the platform and the
+sets of the properties it switches](../tokens/spec.md); the service of the platform and the
 storage of the core package; the handing out of the labels of the kit as the sample of the form
 **Laws:** `frontend-application`, `verifiability`, `reuse-first`
 **Procedures:** none
@@ -34,7 +34,7 @@ reload and what the kit does where there is no window to ask.
 - **The theme** — one of three: the light one, the dark one, and "follow the machine".
 - **The sign of the theme** — `data-theme='dark'` at the root of the page and the class
   `rt-theme-dark` equal to it. The sign is declared by [the design of the
-  kit](../../tokens/spec.md); this subdomain says who puts it and when.
+  kit](../tokens/spec.md); this subdomain says who puts it and when.
 - **The setting of the machine** — what the browser answers about the dark look being preferred.
 - **A local piece of the theme** — a subtree drawn in a theme of its own while the page around it
   stays in the theme of the page.
@@ -111,6 +111,12 @@ chose for the whole kit. The only handle they touch is the switch of the theme.
   sign.** A painting on the server has no machine to ask and no device to remember: it goes in the
   light look, and the choice arrives when the browser takes the page over.
 
+- **A window that cannot ask the machine leaves the kit working.** Not every window calling itself
+  a browser one knows how to ask, and the environment of the tests of a consumer gives exactly such
+  a window. The service of the theme is a root one: falling there, it fells every test that raised
+  a single component of the kit, and the consumer has nothing to fix that with. There is no machine
+  — "follow the machine" resolves into the light look, and the rest works as before.
+
 ### The local piece of the theme
 
 - **A node carrying a theme of its own draws its subtree in it, and the page around it stays as it
@@ -137,7 +143,7 @@ chose for the whole kit. The only handle they touch is the switch of the theme.
   theme".
 
 - **The sign at a node means the same as the sign at the root.** Which properties the sign switches
-  is the word of [the design of the kit](../../tokens/spec.md); this subdomain only puts the sign at
+  is the word of [the design of the kit](../tokens/spec.md); this subdomain only puts the sign at
   the node instead of the root.
 
 ## What is out of scope
@@ -167,7 +173,7 @@ chose for the whole kit. The only handle they touch is the switch of the theme.
   roles.
 
     This is not a decision of this work. The kit has decided it three times already, and each time on
-    its own skin: [the design of the kit](../../tokens/spec.md) rejects the setting of the design by
+    its own skin: [the design of the kit](../tokens/spec.md) rejects the setting of the design by
     code outright, the agreement about the set of the design of this same epic repeats the rejection
     for a second layer of colours, and two families carried over by this same epic — the
     badge of the sign and the bar of the actions — were carried over without a colour of their own for
@@ -292,7 +298,7 @@ apart, and a choice made in one does not move the other.
   has nothing to lean on until a rule answers the sign at an ordinary node. The price of that edit is
   known and small: both sets already exist whole as two mixins, and the rule is emitted by the same
   generator that puts the properties together. What is unclear is only the place — the edit lives in
-  the layer [the design of the kit](../../tokens/spec.md) speaks for, while the promise stands here.
+  the layer [the design of the kit](../tokens/spec.md) speaks for, while the promise stands here.
 
 ## History of changes
 

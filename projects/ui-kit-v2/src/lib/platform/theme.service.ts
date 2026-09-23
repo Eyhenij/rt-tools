@@ -95,6 +95,16 @@ export class ThemeService {
             return;
         }
 
+        /*
+         * Спросить машину умеет не всякое окно, назвавшееся браузерным: среда тестов потребителя
+         * даёт именно такое. Служба корневая — упав здесь, она роняет каждый тест, поднявший хоть
+         * один компонент кита, и чинить это потребителю нечем. Проверка среды тут не поможет: она
+         * отвечает про место прорисовки, а вопрос — про умение самого окна.
+         */
+        if (typeof this.#window.matchMedia !== 'function') {
+            return;
+        }
+
         const query: MediaQueryList = this.#window.matchMedia(DARK_QUERY);
         this.#machinePrefersDark.set(query.matches);
 
