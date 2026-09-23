@@ -96,6 +96,14 @@
     /* Черта снизу у залитого поля Material — цвет on-surface-variant темы. */
     --rt-color-field-fill-underline: var(--mat-sys-on-surface-variant, var(--rt-mat-neutral-30));
 
+    /* Поиск списка первого кита — обведённое или залитое поле Material при плотности −1:
+       52px, скругление 4px, рамка цвета outline темы, внутри прозрачное. Ступени 52px нет, высота собрана из ступени
+       xl без ступени 1. */
+    --rt-list-search-height: calc(var(--rt-control-height-xl) - var(--rt-space-1));
+    --rt-list-search-radius: var(--rt-radius-sm);
+    --rt-list-search-color-border: var(--mat-sys-outline, var(--rt-mat-neutral-25));
+    --rt-list-search-color-bg: transparent;
+
     /* Кнопка и поле первого кита скруглены заметно сильнее: 1.5rem против 10px.
        Значение снято числом — ссылки на токены первого кита во второй кит не едут. */
     --rt-radius-control: 1.5rem;

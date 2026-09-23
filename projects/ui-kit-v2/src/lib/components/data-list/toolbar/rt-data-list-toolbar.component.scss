@@ -7,7 +7,6 @@
 
     .rt-data-list-toolbar {
         --rt-data-list-toolbar-divider-width: var(--rt-border-width-thin);
-        --rt-data-list-toolbar-search-fill-height: calc(var(--rt-control-height-xl) - var(--rt-space-1));
 
         display: block;
         width: 100%;
@@ -44,18 +43,29 @@
             border-left: var(--rt-data-list-toolbar-divider-width) solid var(--rt-color-border-subtle);
         }
 
+        // Правая часть тулбара списка занимает всё место после левой, а не ширину своего содержимого:
+        // у поиска содержимого для счёта нет (он сжимаемый), и по содержимому часть сжалась бы до
+        // кнопок. Общий тулбар кита правую часть не растягивает — это правило только списка.
+        .rt-toolbar__bar--right {
+            flex-grow: 1;
+        }
+
         // Поиск стоит на своей ширине, пока ему хватает места, и уступает, когда не хватает:
         // узкая колонка бывает и на широком окне, где запрос по ширине окна ниже не сработает.
         // Своей наименьшей ширины у поиска нет: поле ввода внутри несёт собственную, и она держала
         // правую часть тулбара на 256 px в колонке 222 px. Ширину решает место, а не содержимое.
-        // Залитый поиск — поле Material первого кита при плотности −1: 52px. Ступени такой нет, и
-        // высота собрана из ступени xl без ступени 1; поле получает её как свою высоту размера lg.
+        // 240px — исходный размер во флексе, а не ширина: заданная ширина браузер считает наименьшим
+        // размером поля, и в колонке 322 px правая часть держала все 240 px и вылезала за край.
+        // Высоту, скругление и рамку поле поиска берёт из имён поиска списка: материальный набор
+        // делает из них поле Material первого кита, свой набор оставляет поле как есть.
         &__search {
-            --rt-input-height-lg: var(--rt-data-list-toolbar-search-fill-height);
+            --rt-input-height-sm: var(--rt-list-search-height);
+            --rt-input-radius: var(--rt-list-search-radius);
+            --rt-input-color-border: var(--rt-list-search-color-border);
+            --rt-input-color-bg: var(--rt-list-search-color-bg);
 
-            width: var(--rt-size-60);
             min-width: 0;
-            flex-shrink: 1;
+            flex: 0 1 var(--rt-size-60);
             contain: inline-size;
         }
 
@@ -65,7 +75,7 @@
             }
 
             &__search {
-                width: 100%;
+                flex-basis: 100%;
             }
         }
     }

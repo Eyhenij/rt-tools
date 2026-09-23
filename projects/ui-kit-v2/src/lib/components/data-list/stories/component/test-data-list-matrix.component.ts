@@ -173,11 +173,12 @@ const NARROW_CASES: readonly { readonly name: string }[] = [{ name: '360 px — 
             }
 
             @case ('appearance') {
-                <app-story-presets caption="Поиск и поля отбора в виде fill в обоих наборах">
+                <app-story-presets caption="Поиск в виде outline, поля отбора в виде fill — обратное умолчанию, в обоих наборах">
                     <ng-template>
                         <app-data-list-cell
                             storageKey="story-list-appearance"
-                            appearance="fill"
+                            appearance="outline"
+                            filterAppearance="fill"
                             [columns]="filterColumns"
                             [rows]="rows"
                             [page]="pageOne"

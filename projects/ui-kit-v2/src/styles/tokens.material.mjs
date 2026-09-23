@@ -184,6 +184,18 @@ export const material = [
     },
 
     {
+        lead: `    /* Поиск списка первого кита — обведённое или залитое поле Material при плотности −1:
+       52px, скругление 4px, рамка цвета outline темы, внутри прозрачное. Ступени 52px нет, высота собрана из ступени
+       xl без ступени 1. */`,
+        space: true,
+        name: `--rt-list-search-height`,
+        value: `calc(var(--rt-control-height-xl) - var(--rt-space-1))`,
+    },
+    { name: `--rt-list-search-radius`, value: `var(--rt-radius-sm)` },
+    { name: `--rt-list-search-color-border`, value: `var(--mat-sys-outline, var(--rt-mat-neutral-25))` },
+    { name: `--rt-list-search-color-bg`, value: `transparent` },
+
+    {
         lead: `    /* Кнопка и поле первого кита скруглены заметно сильнее: 1.5rem против 10px.
        Значение снято числом — ссылки на токены первого кита во второй кит не едут. */`,
         space: true,

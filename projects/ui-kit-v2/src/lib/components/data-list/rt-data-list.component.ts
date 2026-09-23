@@ -116,10 +116,10 @@ export class RtDataListComponent<
 
     protected readonly isFiltersEmpty: Signal<boolean> = computed(() => !this.filterModel().length);
 
-    /** Вид полей отбора: `outline` — рамка со всех сторон, `fill` — залитое поле с чертой снизу. */
-    /** Вид поля поиска, как `appearance` списка первого кита: `outline` или `fill`. */
-    public readonly appearance: InputSignal<IRtInput.Appearance> = input<IRtInput.Appearance>('outline');
+    /** Вид поля поиска, как `appearance` списка первого кита; по умолчанию `fill`, как у поля Material. */
+    public readonly appearance: InputSignal<IRtInput.Appearance> = input<IRtInput.Appearance>('fill');
 
+    /** Вид полей отбора: `outline` — рамка со всех сторон, `fill` — залитое поле с чертой снизу. */
     public readonly filterAppearance: InputSignal<IRtInput.Appearance> = input<IRtInput.Appearance>('outline');
 
     public readonly tableConfigStorageKey: InputSignal<string> = input.required<string>();

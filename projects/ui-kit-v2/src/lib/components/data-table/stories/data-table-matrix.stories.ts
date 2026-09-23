@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/angular';
 
+import { storySnapshotWidths } from '../../../../showcase/story-snapshot';
 import { storyPseudoParameters } from '../../../../showcase/story-states';
 import { TestRtDataTableMatrixComponent } from './component/test-data-table-matrix.component';
 
@@ -48,4 +49,8 @@ export const Clickable: TStory = { args: { part: 'clickable' } };
 
 export const Presets: TStory = { args: { part: 'presets' } };
 
-export const Themes: TStory = { args: { part: 'themes' } };
+/**
+ * Кадр на окне 1100 px: при нём половины наборов уже узкие, а полоса страниц ещё считает себя
+ * широкой — тулбар и полоса страниц вылезали из карточки темы на соседнюю.
+ */
+export const Themes: TStory = { args: { part: 'themes' }, parameters: storySnapshotWidths(1100) };

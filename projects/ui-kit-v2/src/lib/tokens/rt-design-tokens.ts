@@ -197,6 +197,10 @@ export type TRtDesignTokenName =
     | '--rt-leading-snug'
     | '--rt-leading-tight'
     | '--rt-letter-spacing-wide'
+    | '--rt-list-search-color-bg'
+    | '--rt-list-search-color-border'
+    | '--rt-list-search-height'
+    | '--rt-list-search-radius'
     | '--rt-mat-blue-100'
     | '--rt-mat-blue-20'
     | '--rt-mat-blue-40'
@@ -652,6 +656,10 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-leading-snug',
     '--rt-leading-tight',
     '--rt-letter-spacing-wide',
+    '--rt-list-search-color-bg',
+    '--rt-list-search-color-border',
+    '--rt-list-search-height',
+    '--rt-list-search-radius',
     '--rt-mat-blue-100',
     '--rt-mat-blue-20',
     '--rt-mat-blue-40',

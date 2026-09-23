@@ -120,6 +120,28 @@ export const lightForms = [
         value: `var(--rt-control-max-width)`,
     },
     {
+        lead: `    /* Поиск списка (rt-data-list). Свои имена, а не имена поля: в материальном наборе поиск
+       списка — поле Material первого кита, 52px высотой, со скруглением 4px и рамкой цвета
+       outline темы, а остальные поля набора остаются полями первого кита вне Material. */`,
+        space: true,
+        name: `--rt-list-search-height`,
+        value: `var(--rt-input-height-sm)`,
+    },
+    {
+        name: `--rt-list-search-radius`,
+        value: `var(--rt-input-radius)`,
+    },
+    {
+        name: `--rt-list-search-color-border`,
+        value: `var(--rt-input-color-border)`,
+        dark: `var(--rt-input-color-border)`,
+    },
+    {
+        name: `--rt-list-search-color-bg`,
+        value: `var(--rt-input-color-bg)`,
+        dark: `var(--rt-input-color-bg)`,
+    },
+    {
         lead: `    /* Скругление контрола — назначение, а не ступень на месте. Кнопка, поле ввода и
        всё, что стоит с ними в строке, берут его отсюда: набор оформления живёт слоем
        назначений и до ступени, взятой компонентом напрямую, не достаёт. */`,

@@ -148,7 +148,39 @@ class SecondListComponent {
 })
 class TwoListsHostComponent {}
 
+/** Список без указанного вида — так его объявляет приложение, которое полагается на умолчание. */
+@Component({
+    selector: 'rt-test-default-look-host',
+    template: `
+        <rt-data-list tableConfigStorageKey="default-look" isFiltersShown [entities]="rows" [pageModel]="page" [currentSortModel]="null" />
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtDataListComponent],
+    providers: [{ provide: RtDataTableConfigService, useValue: CONFIG_STUB }],
+})
+class DefaultLookHostComponent {
+    public readonly rows: IEntity[] = ROWS;
+    public readonly page: IPageModel = PAGE;
+}
+
 describe('RtDataListComponent', () => {
+    it('SC-UKV-359 — без указанного вида поиск залит, как у поля Material первого кита, а поля отбора в рамке', async (): Promise<void> => {
+        const fixture: ComponentFixture<DefaultLookHostComponent> = createRtFixture(
+            DefaultLookHostComponent,
+            {},
+            { skipInitialDetect: true }
+        );
+
+        fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
+
+        const isFill: (anchor: string) => boolean | undefined = (anchor: string): boolean | undefined =>
+            (qa(fixture, anchor)?.nativeElement as HTMLElement | undefined)?.className.includes('--appearance--fill');
+
+        expect([isFill('data-list-search'), isFill('data-table-filter-input')]).toEqual([true, false]);
+    });
+
     it('SC-UKV-354 — вид поиска и вид полей отбора задаются порознь и доходят до полей', async (): Promise<void> => {
         const fixture: ComponentFixture<DataListHostComponent> = await setup((host: DataListHostComponent): void => {
             host.rows.set(ROWS);

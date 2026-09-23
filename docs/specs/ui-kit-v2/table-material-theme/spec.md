@@ -20,6 +20,8 @@ and the owner read it as "nothing like the first kit".
   `--mat-sys-*` and the properties of Material's own parts, such as the fill field.
 - **Fill search** — the search field of the list in the `fill` look: the Material fill field of the
   first kit.
+- **Outline search** — the same field in the `outline` look: the Material outline field of the first
+  kit, a border on every side and no fill inside.
 
 ### What it is called in the interface
 
@@ -39,9 +41,13 @@ Nothing new is shown to a person: the list keeps its labels, only its look follo
   hosts are block boxes in that cell: an inline host stood on the text baseline, 2 px above the
   middle, and stretched the header.
 
-- **The fill search of the list is 52 px high.** That is the first kit's Material fill field at
-  density −1. The toolbar gives the fill search size `lg` and sets that size to 52 px; the outline
-  search stays small.
+- **The list search in the material preset is 52 px high in both looks.** That is the first kit's
+  Material field at density −1. The height, the 4 px radius, the outline border and the transparent
+  inside of the outline search are names of the list search, `--rt-list-search-*`: the own preset
+  keeps its small pill search, the material preset rewrites them.
+
+- **The list search is drawn fill when the look is not given.** The first kit's field takes the fill
+  look of Material when nothing is said; the filter fields stay outline by default in both kits.
 
 - **The underline of a fill field has a colour name of its own.** The name is
   `--rt-color-field-fill-underline`; the material preset reads `--mat-sys-on-surface-variant` for
@@ -60,7 +66,7 @@ Nothing new is shown to a person: the list keeps its labels, only its look follo
 
 ## Contract
 
-No new inputs or outputs. The toolbar picks the search size from the look it already receives.
+No new inputs or outputs. The default of `appearance` of the list becomes `fill`.
 
 ### Refusal codes
 
@@ -76,8 +82,9 @@ Not applicable: the look holds no data.
 | ---------------------------------- | ------------------------------------------------------------------- |
 | material preset, Material theme    | header and fill search in the theme's fill colour, violet underline |
 | material preset, no Material theme | header and fill search in the preset's own grey                     |
+| material preset, outline search    | 52 px, radius 4 px, the theme's outline border, no fill inside      |
 | material preset, dark theme        | the dark header of the dark theme                                   |
-| own preset                         | unchanged                                                           |
+| own preset                         | a 32 px pill search, filled by default                              |
 
 ## Cross-cutting requirements
 
@@ -102,9 +109,11 @@ Not applicable: the family holds no data of a workspace.
 
 - **The header colour is a name of its own rather than the surface role.** The surface role paints a
   dozen other parts of the kit, and a violet fill on all of them is not the first kit's look.
-- **The fill search height is set by the toolbar, not by the fill look of the field.** A 52 px fill
+- **The search height is set by names of the list search, not by the look of the field.** A 52 px
   field everywhere would erase the size axis of the field, and only the list's search is that tall
   in the first kit.
+- **The default look changes for the own preset too.** The input is one for both presets, and an
+  application moving from the first kit keeps the look it had without saying it.
 
 ## Open questions
 
@@ -114,3 +123,6 @@ Not applicable: the family holds no data of a workspace.
 
 - 2026-09-23 — the subdomain is started by RT-2330 after the owner compared the two lists: «то что я
   вижу нихуя не похоже на 1 кит, палитра тем применяется? Инпуты серча не такие».
+- 2026-09-23 — the list search is 52 px in both looks of the material preset and fill by default,
+  after «инпуты серча на материальном наборе не такие как в первом ките, вьюха по дефолту должна быть
+  как в первом ките».

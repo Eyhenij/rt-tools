@@ -95,16 +95,16 @@ describe('RtDataListToolbarComponent', () => {
         expect(fixture.componentInstance.searches).toEqual(['анн']);
     });
 
-    it.each([
-        ['outline', 'rt-input--size--sm'],
-        ['fill', 'rt-input--size--lg'],
-    ] as const)('SC-UKV-356 — поиск в виде %s получает размер %s', (appearance: IRtInput.Appearance, sizeClass: string) => {
-        const fixture: ComponentFixture<ToolbarHostComponent> = setup((host: ToolbarHostComponent): void =>
-            host.searchAppearance.set(appearance)
-        );
+    it.each(['outline', 'fill'] as const)(
+        'SC-UKV-356 — поиск в виде %s одного размера: высоту ему даёт набор оформления, а не вид',
+        (appearance: IRtInput.Appearance) => {
+            const fixture: ComponentFixture<ToolbarHostComponent> = setup((host: ToolbarHostComponent): void =>
+                host.searchAppearance.set(appearance)
+            );
 
-        expect(el(fixture, '[qa-dataid="data-list-search"]')?.nativeElement.classList).toContain(sizeClass);
-    });
+            expect(el(fixture, '[qa-dataid="data-list-search"]')?.nativeElement.classList).toContain('rt-input--size--sm');
+        }
+    );
 
     it('очищенное поле спрашивает пустой поиск сразу, а тот же текст — не спрашивает вовсе', () => {
         const fixture: ComponentFixture<ToolbarHostComponent> = setup();

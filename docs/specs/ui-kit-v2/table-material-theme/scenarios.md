@@ -6,13 +6,15 @@ reach carries a `Not covered:` mark saying what closes it instead.
 The numbers are issued once and are never reused: a number given to a second scenario leaves the old
 reference alive and pointing at something else.
 
-### SC-UKV-356 — the fill search of the list is large, the outline search small
+### SC-UKV-356 — the list search has one size in both looks
 
 Given the list toolbar with a search in one of the two looks
 When the toolbar is drawn
-Then the fill search has size `lg` set to 52 px, and the outline search has size `sm`
+Then the search has size `sm` in both looks, and its height comes from the preset: 32 px in the own
+preset, 52 px in the material one
 
-Covered by the component test of the toolbar.
+Covered by the component test of the toolbar for the size, and by the preset test of `SC-UKV-355`
+for the names; the 52 px are closed by the frame `organisms-data-datalist--presets`.
 
 ### SC-UKV-357 — the selection checkbox stands in the middle of its cell
 
@@ -34,3 +36,11 @@ Then the header is 44 px filled `#e8e0eb`, the fill search is 51 px filled `#e8e
 Not covered: colours of a theme are not computed in the test environment. Closed by the frame
 `organisms-data-datalist--material-theme`; the names themselves are held by the preset test of
 `SC-UKV-355`.
+
+### SC-UKV-359 — the list search is fill when the look is not given
+
+Given a list whose `appearance` is not given
+When the list is drawn with records
+Then the search is in the `fill` look and the filter fields in the `outline` look
+
+Covered by the component test of the list.

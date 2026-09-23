@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/angular';
 
+import { storySnapshotWidths } from '../../../../showcase/story-snapshot';
 import { TestRtDataListMatrixComponent } from './component/test-data-list-matrix.component';
 
 /**
@@ -45,7 +46,11 @@ export const Narrow: TStory = { args: { part: 'narrow' } };
 
 export const Presets: TStory = { args: { part: 'presets' } };
 
-export const Themes: TStory = { args: { part: 'themes' } };
+/**
+ * Кадр на окне 1100 px: при нём половины наборов уже узкие, а полоса страниц ещё считает себя
+ * широкой — тулбар и полоса страниц вылезали из карточки темы на соседнюю.
+ */
+export const Themes: TStory = { args: { part: 'themes' }, parameters: storySnapshotWidths(1100) };
 
 /**
  * Тема Material со страницы: материальный набор берёт её цвета, как первый кит. Тема та же, что на

@@ -70,6 +70,12 @@ export const darkLayout = [
         name: `--rt-input-color-border`,
     },
     {
+        name: `--rt-list-search-color-border`,
+    },
+    {
+        name: `--rt-list-search-color-bg`,
+    },
+    {
         lead: `    /* Stepper — в dark рельса уходит от яркого синего к приглушённому серо-синему
        (текущий шаг остаётся янтарным из light-семантики). */`,
         space: true,

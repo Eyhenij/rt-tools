@@ -42,6 +42,8 @@
 
     /* Input border видим в dark (в light — transparent). */
     --rt-input-color-border: var(--rt-charcoal-border);
+    --rt-list-search-color-border: var(--rt-input-color-border);
+    --rt-list-search-color-bg: var(--rt-input-color-bg);
 
     /* Stepper — в dark рельса уходит от яркого синего к приглушённому серо-синему
        (текущий шаг остаётся янтарным из light-семантики). */

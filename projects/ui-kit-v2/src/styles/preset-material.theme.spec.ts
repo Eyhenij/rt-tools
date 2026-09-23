@@ -33,6 +33,9 @@ describe('материальный набор и тема Material', () => {
         ['--rt-color-bg-nav', 'var(--mat-sys-primary, var(--rt-mat-navy-100))'],
         ['--rt-color-bg-surface', 'var(--mat-sys-surface, var(--rt-mat-neutral-0))'],
         ['--rt-color-bg-inverse', 'var(--mat-sys-inverse-surface, var(--rt-mat-neutral-100))'],
+        ['--rt-list-search-color-border', 'var(--mat-sys-outline, var(--rt-mat-neutral-25))'],
+        ['--rt-list-search-color-bg', 'transparent'],
+        ['--rt-color-field-fill-underline', 'var(--mat-sys-on-surface-variant, var(--rt-mat-neutral-30))'],
         [
             '--rt-color-bg-surface-subtle-2',
             'var(--mat-form-field-filled-container-color, var(--mat-sys-surface-variant, var(--rt-mat-neutral-15)))',
