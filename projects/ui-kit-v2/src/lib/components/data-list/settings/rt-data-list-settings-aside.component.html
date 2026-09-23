@@ -37,6 +37,7 @@
                     rtElem="column"
                     qa-dataid="data-list-settings-column"
                     cdkDrag
+                    [cdkDragPreviewClass]="dragPreviewClass()"
                     [attr.data-key]="item.key"
                     [rtMod]="{ hidden: item.hidden, locked: item.locked === true }"
                     [cdkDragDisabled]="item.locked === true">

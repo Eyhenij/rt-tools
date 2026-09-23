@@ -75,7 +75,8 @@ Nothing new is shown to a person: the list keeps its labels, only its look follo
   caption under it in the header, 48 × 24 switches 32 px apart, 48 px column plaques in the colour of
   the selected Material option, 36 px pill buttons with no line above them and a backdrop with no
   blur. The list hands the preset class to the panel and to its backdrop, because both are drawn over
-  the page, outside the list.
+  the page, outside the list. A dragged plaque keeps that look too: it carries the preset class and
+  its own properties itself, and the place it left stays empty, as in the first kit.
 
 - **A node carrying the preset declares the light base under the set.** The set rewrites only its own
   names, and a name that refers to one of them stays resolved at the page root: the text button of

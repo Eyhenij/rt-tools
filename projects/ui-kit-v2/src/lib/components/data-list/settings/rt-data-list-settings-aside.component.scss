@@ -4,9 +4,6 @@
        глазом через черты. Промежутки 8px и 16px — ступени sm и md шкалы. */
 
     .rt-data-list-settings-aside {
-        --rt-data-list-settings-aside-radius: var(--rt-radius-md);
-        --rt-data-list-settings-aside-divider-width: var(--rt-border-width-thin);
-
         display: flex;
         flex-direction: column;
         gap: var(--rt-space-md);
@@ -39,18 +36,48 @@
             list-style: none;
         }
 
-        /* Плашка колонки: залита, без рамки — так рисует список первого кита. */
+        /* Плашка колонки: залита, без рамки — так рисует список первого кита. Свои свойства она
+           объявляет на себе, а не на корне блока: тянутую плашку наложение переносит в конец
+           страницы, и с корня блока до неё ничего не дошло бы. */
         &__column {
+            --rt-data-list-settings-aside-radius: var(--rt-radius-md);
+            --rt-data-list-settings-aside-divider-width: var(--rt-border-width-thin);
+            --rt-data-list-settings-aside-drag-shadow: var(--rt-shadow-lg);
+            --rt-data-list-settings-aside-drag-duration: var(--rt-duration-base);
+            --rt-data-list-settings-aside-padding-start: 0;
+            --rt-data-list-settings-aside-padding-end: var(--rt-space-sm);
+            --rt-data-list-settings-aside-color: var(--rt-color-text-primary);
+
             display: flex;
             align-items: center;
             border-radius: var(--rt-data-list-settings-aside-radius);
             background-color: var(--rt-list-settings-item-bg);
+            color: var(--rt-data-list-settings-aside-color);
             gap: var(--rt-space-sm);
-            padding-inline-end: var(--rt-space-sm);
+            padding-inline: var(--rt-data-list-settings-aside-padding-start) var(--rt-data-list-settings-aside-padding-end);
 
             &--hidden {
-                color: var(--rt-color-text-muted);
+                --rt-data-list-settings-aside-color: var(--rt-color-text-muted);
             }
+
+            /* Тянутая плашка лежит над страницей с тенью; место, откуда её взяли, пустеет, а
+               соседи съезжают плавно — как у списка первого кита. */
+            &.cdk-drag-preview {
+                box-sizing: border-box;
+                box-shadow: var(--rt-data-list-settings-aside-drag-shadow);
+            }
+
+            &.cdk-drag-placeholder {
+                opacity: 0;
+            }
+
+            &.cdk-drag-animating {
+                transition: transform var(--rt-data-list-settings-aside-drag-duration) ease-out;
+            }
+        }
+
+        &__columns.cdk-drop-list-dragging &__column:not(.cdk-drag-placeholder) {
+            transition: transform var(--rt-data-list-settings-aside-drag-duration) ease-out;
         }
 
         /* Ручка и черта справа от неё — одна кнопка: черта отделяет её от имени, как в первом
@@ -98,10 +125,7 @@
     :is(.rt-preset-material, [data-preset='material']) .rt-data-list-settings-aside {
         --rt-aside-inset: var(--rt-space-xl);
         --rt-aside-content-gap: var(--rt-space-xl);
-        --rt-data-list-settings-aside-radius: var(--rt-radius-sm);
-        --rt-data-list-settings-aside-column-height: 48px;
         --rt-data-list-settings-aside-control-size: 36px;
-        --rt-data-list-settings-aside-icon-size: 18px;
         --rt-data-list-settings-aside-back-icon-size: 24px;
         --rt-data-list-settings-aside-header-height: 96px;
 
@@ -162,16 +186,22 @@
                 color: var(--rt-color-text-primary);
             }
         }
+    }
 
-        .rt-data-list-settings-aside__column {
-            min-height: var(--rt-data-list-settings-aside-column-height);
-            color: var(--rt-color-text-primary);
-            padding-inline: var(--rt-space-xs);
+    /* Плашка колонки в виде первого кита — и в панели, и тянутая: тянутая лежит в конце страницы
+       и несёт класс набора на себе, поэтому цель правила — сама плашка, а не панель вокруг. */
+    .rt-data-list-settings-aside__column:is(.rt-preset-material, .rt-preset-material *, [data-preset='material'] *) {
+        --rt-data-list-settings-aside-radius: var(--rt-radius-sm);
+        --rt-data-list-settings-aside-drag-shadow: var(--rt-shadow-xl);
+        --rt-data-list-settings-aside-column-height: 48px;
+        --rt-data-list-settings-aside-control-size: 36px;
+        --rt-data-list-settings-aside-icon-size: 18px;
+        --rt-data-list-settings-aside-padding-start: var(--rt-space-xs);
+        --rt-data-list-settings-aside-padding-end: var(--rt-space-xs);
+        --rt-data-list-settings-aside-color: var(--rt-color-text-primary);
 
-            &--hidden {
-                color: var(--rt-color-text-primary);
-            }
-        }
+        min-height: var(--rt-data-list-settings-aside-column-height);
+        font-size: var(--rt-text-md);
 
         .rt-data-list-settings-aside__handle {
             min-width: calc(var(--rt-data-list-settings-aside-control-size) + 2 * var(--rt-space-xs));
@@ -202,4 +232,17 @@
             --rt-icon-button-color: var(--rt-list-settings-icon-color);
         }
     }
+}
+
+/* rt-layer-outside: фон, цвет и поля тянутой плашки.
+
+   CDK кладёт тянутую плашку в конец страницы и в момент перетаскивания подключает свой слой
+   `cdk-resets` с `.cdk-drag-preview { background: none; color: inherit; padding: 0 }`. Слой
+   появляется на странице позже слоя кита и потому сильнее его: оставленные в слое, три свойства
+   ниже проигрывают, и плашка едет прозрачной, без полей. Размеры и тень остаются в слое — их
+   CDK не трогает. */
+.rt-data-list-settings-aside__column.cdk-drag-preview {
+    background-color: var(--rt-list-settings-item-bg);
+    color: var(--rt-data-list-settings-aside-color);
+    padding-inline: var(--rt-data-list-settings-aside-padding-start) var(--rt-data-list-settings-aside-padding-end);
 }

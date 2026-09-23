@@ -1,5 +1,16 @@
 import { CdkDrag, CdkDragDrop, CdkDragHandle, CdkDropList } from '@angular/cdk/drag-drop';
-import { ChangeDetectionStrategy, Component, computed, inject, Signal, signal, ViewEncapsulation, WritableSignal } from '@angular/core';
+import {
+    afterNextRender,
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    ElementRef,
+    inject,
+    Signal,
+    signal,
+    ViewEncapsulation,
+    WritableSignal,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
@@ -11,7 +22,7 @@ import { RtAsideComponent } from '../../aside/rt-aside.component';
 import { RtAsideFooterComponent } from '../../aside/footer/rt-aside-footer.component';
 import { RtAsideHeaderComponent } from '../../aside/header/rt-aside-header.component';
 import { RtButtonDirective } from '../../button/rt-button.directive';
-import { IRtDataTable } from '../../data-table/rt-data-table.model';
+import { IRtDataTable, RT_PRESET_MATERIAL_CLASS } from '../../data-table/rt-data-table.model';
 import { RtIconButtonComponent } from '../../icon-button/rt-icon-button.component';
 import { RtIconComponent } from '../../icon/rt-icon.component';
 import { IRtTable } from '../../table/rt-table.model';
@@ -62,6 +73,7 @@ const BEM_BLOCK: string = 'rt-data-list-settings-aside';
     host: { class: BEM_BLOCK },
 })
 export class RtDataListSettingsAsideComponent<ENTITY_TYPE = Record<string, unknown>> {
+    readonly #host: ElementRef<HTMLElement> = inject<ElementRef<HTMLElement>>(ElementRef);
     readonly #asideRef: RtAsideRef<IRtDataTable.Config.Data<ENTITY_TYPE>> =
         inject<RtAsideRef<IRtDataTable.Config.Data<ENTITY_TYPE>>>(RtAsideRef);
 
@@ -91,7 +103,22 @@ export class RtDataListSettingsAsideComponent<ENTITY_TYPE = Record<string, unkno
         columns: dataListColumnsFromItems(this.#saved.columns, this.items()),
     }));
 
+    /**
+     * Класс тянутой плашки. Её наложение переносит в конец страницы, вне панели, и вид первого
+     * кита, который панель получила классом набора на наложении, туда не доходит: плашка несёт
+     * класс на себе. Предок с классом известен только после первой отрисовки.
+     */
+    protected readonly dragPreviewClass: WritableSignal<string> = signal('');
+
     protected readonly isChanged: Signal<boolean> = computed(() => dataListSettingsChanged(this.#saved, this.config()));
+
+    constructor() {
+        afterNextRender((): void => {
+            if (this.#host.nativeElement.closest(`.${RT_PRESET_MATERIAL_CLASS}`) !== null) {
+                this.dragPreviewClass.set(RT_PRESET_MATERIAL_CLASS);
+            }
+        });
+    }
 
     protected onDrop(event: CdkDragDrop<unknown>): void {
         this.items.set(dataListMoveItem(this.items(), event.previousIndex, event.currentIndex));
