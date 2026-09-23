@@ -301,4 +301,7 @@ export const ADMIN_LABELS_EN: Record<TAdminLabelKey, string> = Object.freeze({
     [ERefusal.ChatTextTooLong]: 'The remark is longer than {{limit}} characters',
     [ERefusal.ChatThrottled]: 'There are more remarks from one visitor than {{limit}} per window: repeat in {{after}} s',
     [ERefusal.ChatStateUnknown]: 'The state of a conversation is expected as one of: live, closed',
+    [ERefusal.ChatEntryRejected]: 'The page of the talks did not open',
+    [ERefusal.ChatEntryStale]: 'The signature of the entry is stale',
+    [ERefusal.ChatEntryExpired]: 'The entry is stale, refresh the page',
 });
