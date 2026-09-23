@@ -5,9 +5,9 @@
 Rewritten by every session, not appended to.
 
 - **State:** `этап-идёт`
-- **Stage:** 1 of 5 — The divergences measured and the agreement written
-- **Done:** the task, the branch from `RT-1882-kit-settings-theme`, the grill and the plan.
-- **Next step:** measure the overlap of the theme stories on a narrow canvas.
+- **Stage:** 2 of 5 — The theme stories do not overlap
+- **Done:** stage 1 — the overlap measured, the icons and the settings panel compared, the agreement written.
+- **Next step:** make the list toolbar and table stay inside a narrow pane.
 - **Uncommitted:** nothing.
 - **Waiting for the owner:** no.
 - **PR:** not open yet.
@@ -18,9 +18,9 @@ Rewritten by every session, not appended to.
 
 - [x] 1.1 The overlap in the theme stories measured on a narrow canvas
 - [x] 1.2 The icons of both kits listed glyph against glyph
-- [>] 1.3 The settings panel of both kits compared element by element
-- [ ] 1.4 The agreement written in `proposed/data-list-kit-one-look`
-- [ ] 2.1 The pane of the theme wrapper keeps its content inside
+- [x] 1.3 The settings panel of both kits compared element by element
+- [x] 1.4 The agreement written in `proposed/data-list-kit-one-look`
+- [>] 2.1 The pane of the theme wrapper keeps its content inside
 - [ ] 2.2 The fix measured on a narrow canvas
 - [ ] 3.1 Missing glyphs drawn into the kit set
 - [ ] 3.2 The family's icon mapping switched to them
@@ -35,10 +35,15 @@ Rewritten by every session, not appended to.
   rewritten there, and #2323 is not merged. Affected stage of the plan: none.
 - **The icons are not redrawn into the kit's own set; only the drag handle changes** — the grill
   assumed the first kit's glyphs go into the own set, but the second kit has a material set, and
-  the look of the first kit is that set. The sheet of seventeen icons of the family, shot by the
-  image browser: in the material set sixteen match the first kit glyph for glyph, the drag handle
-  differs (two strokes against three). The own set draws its own look on purpose and stays.
-  Affected stage of the plan: 3 — it shrinks to the drag handle.
+  the look of the first kit is that set. The sheet of the family icons, shot by the image browser:
+  in the material set all sixteen mapped icons match the first kit glyph for glyph. The own set
+  draws its own look on purpose and stays. A first reading paired `drag_handle` with `bars` — that
+  pair was mine, not the kit map's: in the first kit `drag_handle` is the «equals» sign of the filter
+  cell, already drawn by RT-2316, and the drag handle of the settings panel is `open_with` (✥),
+  which neither set of the second kit has. Affected stage of the plan: 3 — it shrinks to drawing ✥.
+- **The shared `rt-table-settings-panel` is not edited** — the second kit's own table draws its
+  settings with it, and that look is the second kit's. The column list in the first kit's look is
+  the list's own. Affected stage of the plan: 4.
 
 ## Sessions
 
