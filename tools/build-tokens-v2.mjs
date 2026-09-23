@@ -57,6 +57,22 @@ const PREAMBLE = {
 
    The preset rule is declared before the dark theme on purpose: the root signs have equal
    specificity, and the order in the file is the only thing by which the dark theme wins over the preset. */`,
+
+    scope: `/* A local piece of the theme: the sign answers on an ordinary node too, not at the root of the page
+   alone. A dark card inside a light page, a light card inside a dark one, and either of them inside
+   a page of the styling set.
+
+   Every rule here declares the whole set of the assignments on one node rather than only the
+   difference from the page. That is not a repetition: the value of a property that refers to another
+   one is resolved where it is declared, not where it is read. A node carrying only the difference
+   inherits the rest from the root already resolved — by the values of the root — and the piece comes
+   out half of one theme and half of the other, whole and green in the frame.
+
+   The root is cut out of every rule by \`:not(:root)\`: there the layers already lie in the right
+   order, and laying the base over them once more would wipe the set on a dark page.
+
+   The file stands last in the aggregator: its rules are stronger than the root ones by their place,
+   not by specificity, and a piece must win over the page around it. */`,
 };
 
 const COARSE_NOTE = `/* On touch devices an input is not smaller than 16px: WebKit (all of iOS, Chrome included)
@@ -71,15 +87,13 @@ const COARSE_NOTE = `/* On touch devices an input is not smaller than 16px: WebK
    The properties of a custom property are inherited, so a node carrying the sign wins over what it
    inherited from the root, and the nearer sign wins over the farther one by the same rule. */
 const SCOPE_NOTE = {
-    light: `/* A light piece inside a page of another theme. The root above already carries this set; the
-   rule is repeated for a node so that the piece returns its subtree to the light theme. */`,
-    dark: `/* The bare attribute stands next to the root one for the sake of a local piece of the theme: a
-   dark card inside a light page carries the sign on itself, not on the root of the page. */`,
-    presetLight: `/* A light piece inside a page of the set. The set is a second layer of assignments over the same
-   markup, and at the root it wins over the light base by the order of the files. A piece stands
-   deeper, and what is nailed onto an ancestor does not reach it — so the set is laid over the piece
-   once more. A dark piece needs no such rule: the set has no dark half, and at the root the dark
-   theme wins over it just the same. */`,
+    light: `/* A light piece inside a page of another theme. */`,
+    dark: `/* A dark piece inside a page of another theme. The light base goes under the dark answers, exactly
+   as it lies under them at the root: a piece carrying the dark answers alone would inherit the rest
+   from the root already resolved by the light values, and come out half dark. */`,
+    preset: `/* A piece inside a page of the styling set, and a piece carrying the set itself. The set lies over
+   the light base and under the dark answers — the same order the root has, and there the order is
+   what the dark theme wins over the set by. */`,
 };
 
 const errors = [];
@@ -172,21 +186,31 @@ const files = {
 
     [`${stylesDir}/_semantic.scss`]:
         `${BANNER}\n\n${PREAMBLE.semantic}\n\n@mixin rt-theme-light-tokens {\n${renderNodes(light)}\n}\n\n` +
-        `:root {\n    @include rt-theme-light-tokens;\n}\n\n${SCOPE_NOTE.light}\n[data-theme='light'] {\n` +
-        `    @include rt-theme-light-tokens;\n}\n\n${COARSE_NOTE}\n@media (pointer: coarse) {\n    :root {\n` +
+        `:root {\n    @include rt-theme-light-tokens;\n}\n\n${COARSE_NOTE}\n@media (pointer: coarse) {\n    :root {\n` +
         coarsePointer.map((token) => `        ${token.name}: ${token.value};`).join('\n') +
         `\n    }\n}\n`,
 
     [`${stylesDir}/_theme-dark.scss`]:
         `${BANNER}\n\n${PREAMBLE.dark}\n\n@mixin rt-theme-dark-tokens {\n${renderNodes(darkNodes)}\n}\n\n` +
-        `${SCOPE_NOTE.dark}\n:root[data-theme='dark'],\n[data-theme='dark'],\nhtml.rt-theme-dark {\n` +
-        `    @include rt-theme-dark-tokens;\n}\n`,
+        `:root[data-theme='dark'],\nhtml.rt-theme-dark {\n    @include rt-theme-dark-tokens;\n}\n`,
 
     [`${stylesDir}/_preset-material.scss`]:
         `${BANNER}\n\n${PREAMBLE.material}\n\n@mixin rt-preset-material-tokens {\n${renderNodes(material)}\n}\n\n` +
         `:root[data-preset='material'],\n[data-preset='material'],\n.rt-preset-material {\n` +
-        `    @include rt-preset-material-tokens;\n}\n\n${SCOPE_NOTE.presetLight}\n` +
-        `[data-preset='material'] [data-theme='light'] {\n    @include rt-preset-material-tokens;\n}\n`,
+        `    @include rt-preset-material-tokens;\n}\n`,
+
+    [`${stylesDir}/_theme-scope.scss`]:
+        `${BANNER}\n\n${PREAMBLE.scope}\n\n@use './semantic' as semantic;\n@use './theme-dark' as dark;\n` +
+        `@use './preset-material' as material;\n\n` +
+        `${SCOPE_NOTE.light}\n[data-theme='light']:not(:root) {\n    @include semantic.rt-theme-light-tokens;\n}\n\n` +
+        `${SCOPE_NOTE.dark}\n[data-theme='dark']:not(:root) {\n    @include semantic.rt-theme-light-tokens;\n` +
+        `    @include dark.rt-theme-dark-tokens;\n}\n\n` +
+        `${SCOPE_NOTE.preset}\n[data-preset='material'][data-theme='light']:not(:root),\n` +
+        `[data-preset='material'] [data-theme='light']:not(:root) {\n` +
+        `    @include semantic.rt-theme-light-tokens;\n    @include material.rt-preset-material-tokens;\n}\n\n` +
+        `[data-preset='material'][data-theme='dark']:not(:root),\n[data-preset='material'] [data-theme='dark']:not(:root) {\n` +
+        `    @include semantic.rt-theme-light-tokens;\n    @include material.rt-preset-material-tokens;\n` +
+        `    @include dark.rt-theme-dark-tokens;\n}\n`,
 
     [typesFile]: renderTypes(),
 };

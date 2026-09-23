@@ -400,12 +400,6 @@
     @include rt-theme-light-tokens;
 }
 
-/* A light piece inside a page of another theme. The root above already carries this set; the
-   rule is repeated for a node so that the piece returns its subtree to the light theme. */
-[data-theme='light'] {
-    @include rt-theme-light-tokens;
-}
-
 /* On touch devices an input is not smaller than 16px: WebKit (all of iOS, Chrome included)
    zooms the page on focusing a field with font-size < 16px — hence the horizontal
    shift of the layout. The desktop keeps the dense 14px. */
