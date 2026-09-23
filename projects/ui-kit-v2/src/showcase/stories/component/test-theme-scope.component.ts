@@ -38,51 +38,8 @@ const SCOPE_CASES: IRtThemeScopeCase[] = [
  */
 @Component({
     selector: 'app-theme-scope',
-    template: `
-        <app-story-row caption="Местный кусок темы" slotWidth="16rem" [items]="items" [itemLabel]="labelOf">
-            <ng-template let-item>
-                <div class="app-theme-scope__box" [rtTheme]="item.outer">
-                    <span class="app-theme-scope__text">Снаружи</span>
-                    <button rtButton label="Сохранить" size="sm"></button>
-
-                    <div class="app-theme-scope__box app-theme-scope__box--inner" [rtTheme]="item.inner">
-                        <span class="app-theme-scope__text">Внутри</span>
-                        <button rtButton label="Сохранить" size="sm" appearance="outlined"></button>
-                    </div>
-                </div>
-            </ng-template>
-        </app-story-row>
-    `,
-    styles: [
-        `
-            .app-theme-scope__box {
-                display: flex;
-                flex-direction: column;
-                gap: var(--rt-space-8);
-                align-items: flex-start;
-                padding: var(--rt-space-12);
-                border: 1px solid var(--rt-color-border-subtle);
-                border-radius: var(--rt-radius-md);
-                background-color: var(--rt-color-bg-page);
-                color: var(--rt-color-text-primary);
-            }
-
-            /*
-             * Ширину внутренняя коробка берёт растяжкой по поперечной оси, а не долей от ширины:
-             * внешняя — колонка с прижатыми к началу детьми, сжатая по содержимому, и доля
-             * считается не от неё. Внутренняя вылезала за правый край ровно на отступ и наезжала
-             * на соседнюю ячейку ряда.
-             */
-            .app-theme-scope__box--inner {
-                align-self: stretch;
-                background-color: var(--rt-color-bg-surface);
-            }
-
-            .app-theme-scope__text {
-                font-size: var(--rt-text-sm);
-            }
-        `,
-    ],
+    templateUrl: './test-theme-scope.component.html',
+    styleUrl: './test-theme-scope.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
     imports: [

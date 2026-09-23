@@ -1,0 +1,28 @@
+// Обвязка витрины: узел со своей темой внутри страницы с другой. Своего цвета коробки не
+// рисуют — он приходит из набора, и ровно этим местный кусок и проверяется.
+.app-theme-scope {
+    &__box {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: var(--rt-space-12);
+        border: 1px solid var(--rt-color-border-subtle);
+        border-radius: var(--rt-radius-md);
+        background-color: var(--rt-color-bg-page);
+        color: var(--rt-color-text-primary);
+        gap: var(--rt-space-8);
+
+        // Ширину внутренняя коробка берёт растяжкой по поперечной оси, а не долей от ширины:
+        // внешняя — колонка с прижатыми к началу детьми, сжатая по содержимому, и доля считается
+        // не от неё. Внутренняя вылезала за правый край ровно на отступ и наезжала на соседнюю
+        // ячейку ряда.
+        &--inner {
+            align-self: stretch;
+            background-color: var(--rt-color-bg-surface);
+        }
+    }
+
+    &__text {
+        font-size: var(--rt-text-sm);
+    }
+}

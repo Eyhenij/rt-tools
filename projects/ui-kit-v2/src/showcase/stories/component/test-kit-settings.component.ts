@@ -23,45 +23,8 @@ import { StoryPresetsComponent } from '../../story-presets.component';
  */
 @Component({
     selector: 'app-kit-settings',
-    template: `
-        <app-story-presets caption="Умолчание из настроек и слово разметки — в обоих наборах">
-            <ng-template>
-                <div class="app-kit-settings__cases">
-                    <div class="app-kit-settings__case">
-                        <button rtButton label="Сохранить"></button>
-                        <span class="app-kit-settings__label">Разметка молчит: вид и размер из настроек</span>
-                    </div>
-
-                    <div class="app-kit-settings__case">
-                        <button rtButton label="Сохранить" size="md" appearance="filled"></button>
-                        <span class="app-kit-settings__label">Разметка сказала своё: настройки перебиты</span>
-                    </div>
-                </div>
-            </ng-template>
-        </app-story-presets>
-    `,
-    styles: [
-        `
-            .app-kit-settings__cases {
-                display: flex;
-                flex-direction: column;
-                gap: var(--rt-space-16);
-                align-items: flex-start;
-            }
-
-            .app-kit-settings__case {
-                display: flex;
-                flex-direction: column;
-                gap: var(--rt-space-8);
-                align-items: flex-start;
-            }
-
-            .app-kit-settings__label {
-                color: var(--rt-color-text-muted);
-                font-size: var(--rt-text-2xs);
-            }
-        `,
-    ],
+    templateUrl: './test-kit-settings.component.html',
+    styleUrl: './test-kit-settings.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
     imports: [
