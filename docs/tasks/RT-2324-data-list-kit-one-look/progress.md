@@ -61,8 +61,10 @@ Rewritten by every session, not appended to.
   (`fill` or `outline`, anything else becomes `outline`) for the search, and `filterAppearance`
   (default `outline`) for the filter fields; the search is `mat-form-field` with a search prefix
   icon and a clear button. `rt-data-list` has no such input, and `rt-input` draws one look. Not in
-  the plan: goes into the agreement before any code, and the owner is asked whether both looks are
-  needed or the one the application passes. Affected stage of the plan: none yet.
+  the plan: goes into the agreement before any code. The owner answered: «нужны оба вида для
+  материального инпута» — written into the agreement as a rule; it reverses the `table-full-port`
+  rule «the family takes no field-look input». The work is outside the plan's stages and is done
+  after stage 4, before the paired frames. Affected stage of the plan: none — added after 4.
 
 ## Sessions
 
@@ -137,7 +139,8 @@ are missing — the style check before sending names them) and the panel spec, t
   even inside a heredoc; texts with that word are written by the file tools.
 - The second kit showcase on 6007 was raised by this session in dev mode from the RT-1882 branch
   for the owner and may still be running.
-- The search field look (`fill` / `outline`) is an open remark of the owner, written in the
-  decisions — ask them before coding it.
+- The search field look is decided by the owner — both `fill` and `outline`, by the inputs
+  `appearance` and `filterAppearance` as in the first kit; it is a rule of the agreement now. Not
+  asked again.
 - The four diverged frames lie in `projects/ui-kit-v2/.storybook/__snapshots__/__diff_output__/`,
   outside history.
