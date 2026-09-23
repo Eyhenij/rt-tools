@@ -8,7 +8,7 @@ import { TestRtDataListMatrixComponent } from './component/test-data-list-matrix
  * неотличимо от отсутствующего.
  */
 export default {
-    title: 'Organisms/DynamicList/DataList',
+    title: 'Organisms/Data/DataList',
     component: TestRtDataListMatrixComponent,
     parameters: {
         controls: { disable: true },

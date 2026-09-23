@@ -21,7 +21,7 @@ When the header and the rows are drawn
 Then the checkbox centre and the cell centre match, in the header and in every row
 
 Not covered: layout is not computed in the test environment. Closed by the frame
-`organisms-dynamiclist-datalist--material-theme`: header checkbox 230.5 against header 230.5, row
+`organisms-data-datalist--material-theme`: header checkbox 230.5 against header 230.5, row
 checkbox 278.5 against row 278.5.
 
 ### SC-UKV-358 — the header and the fill search follow the Material theme of the page
@@ -32,5 +32,5 @@ Then the header is 44 px filled `#e8e0eb`, the fill search is 51 px filled `#e8e
 `#49454e` underline — the first kit's numbers
 
 Not covered: colours of a theme are not computed in the test environment. Closed by the frame
-`organisms-dynamiclist-datalist--material-theme`; the names themselves are held by the preset test of
+`organisms-data-datalist--material-theme`; the names themselves are held by the preset test of
 `SC-UKV-355`.

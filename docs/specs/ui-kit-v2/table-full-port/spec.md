@@ -356,7 +356,8 @@ flags. The selection lives while the screen is open and is not saved.
 | a narrow screen                         | the table scrolls sideways; no hints; the compact pagination bar   |
 
 The showcase gets stories of its own, apart from the stories of `rt-table` and `rt-dynamic-list`:
-the table under "Organisms/Table/DataTable", the list under "Organisms/Data/DataList". Each has
+the table under "Organisms/Data/DataTable", the list under "Organisms/Data/DataList", next to
+`rt-dynamic-list` in one group. Each has
 `Overview`, `Playground`, then one story per axis — `Columns` (every column type, the dash, a cut
 value, icons on both sides by the kit's map and by an icon template, copy), `Sort`, `Filters` (every filter type, operators), `Selection`
 (none, some and all of the page; switched off), `SingleSelection`, `RowEvents` (press, double

@@ -12,7 +12,7 @@ import { TestRtDataTableMatrixComponent } from './component/test-data-table-matr
  * таблицы самой такой оси не существует.
  */
 export default {
-    title: 'Organisms/DynamicList/DataTable',
+    title: 'Organisms/Data/DataTable',
     component: TestRtDataTableMatrixComponent,
     parameters: {
         controls: { disable: true },
