@@ -36,6 +36,25 @@ export const CHAT_MESSAGES_SEGMENT: string = 'messages';
 /** Хвост адреса смены состояния разговора. */
 export const CHAT_STATE_SEGMENT: string = 'state';
 
+/** Адрес обмена подписи потребителя на признак встраиваемой страницы. */
+export const CHAT_EMBEDDED_ENTRY_PATH: string = '/api/chat/embedded/entry';
+
+/** Адрес операций встраиваемой страницы: список переписок, лента, ответ, состояние. */
+export const CHAT_EMBEDDED_PATH: string = '/api/chat/embedded/conversations';
+
+/**
+ * Ответ на обмен подписи: чем встраиваемой странице зваться дальше и до какой минуты.
+ *
+ * Лежит в общем слое, а не рядом с операцией: его читают обе стороны обмена, и вторая копия полей
+ * разошлась бы с первой молча.
+ */
+export interface IChatEntryOpened {
+    /** Признак страницы: его страница шлёт с каждой операцией. */
+    readonly sign: string;
+    /** Минута, после которой признак не принимается: страница берёт новый, не спрашивая человека. */
+    readonly expiresAt: string;
+}
+
 /** Адрес потока событий оператора. */
 export const CHAT_STREAM_PATH: string = '/api/chat/conversations/stream';
 

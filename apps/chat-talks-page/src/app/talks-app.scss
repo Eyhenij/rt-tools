@@ -9,7 +9,8 @@
     }
 
     &__waiting,
-    &__refused {
+    &__refused,
+    &__talks {
         margin: 0;
         font-size: var(--rt-font-size-md);
     }

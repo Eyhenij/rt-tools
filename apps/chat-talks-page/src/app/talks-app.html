@@ -1,9 +1,13 @@
 <ng-container rtBlock="talks-page">
     <main rtElem="frame">
-        @if (entry()) {
-        <p rtElem="waiting">Переписки открываются…</p>
-        } @else {
+        @if (!entry) {
         <p rtElem="refused">Страница переписок не открылась</p>
+        } @else if (state() === refused) {
+        <p rtElem="refused">{{ refusalWords() }}</p>
+        } @else if (state() === opened) {
+        <p rtElem="talks">Переписки открыты</p>
+        } @else {
+        <p rtElem="waiting">Переписки открываются…</p>
         }
     </main>
 </ng-container>

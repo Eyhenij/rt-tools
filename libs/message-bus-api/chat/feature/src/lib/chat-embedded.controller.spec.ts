@@ -2,7 +2,6 @@ import { ForbiddenException, HttpException, NotFoundException, UnauthorizedExcep
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import { OPERATION_ACCESS } from '@rt/message-bus-api/access/util';
-import { IChatEntryOpened } from '@rt/message-bus-api/chat/api';
 import { IChatConversationListRow, IChatMessageListRow } from '@rt/message-bus-api/chat/data-access';
 import {
     CHAT_ENTRY_SIGN_LIFETIME_MS,
@@ -12,7 +11,7 @@ import {
     chatEntrySignRead,
     IChatEntrySign,
 } from '@rt/message-bus-api/chat/util';
-import { EChatTalkState, ERefusal, IPage } from '@rt/message-bus-common';
+import { EChatTalkState, ERefusal, IChatEntryOpened, IPage } from '@rt/message-bus-common';
 
 import { ChatEmbeddedController, IChatEmbeddedRequest } from './chat-embedded.controller';
 import { ChatHookSpy } from './chat-hook.double';
