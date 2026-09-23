@@ -6,7 +6,7 @@ branches of the epic that have not been merged yet.
 
 While a scenario is not closed by a test, it carries the mark "Not covered" with a reason. Nothing
 here is covered yet: there is no code at all — neither the settings, nor the third state of the
-theme, nor the palettes, nor the local piece.
+theme, nor the local piece.
 
 ## The settings
 
@@ -123,95 +123,9 @@ keeping or written to it
 
 Not covered: the behaviour without a window is not checked for the third state yet.
 
-## The colour set
-
-### SC-UKV-343 — a registered palette put on recolours the roles
-
-Given the application has registered a palette of its own by the six roles of the kit and put it on
-When the kit draws an action, a link and the ring of the focus
-Then all three take their colour from the steps of that palette
-
-Not covered: there are no palettes in the second kit yet.
-
-### SC-UKV-344 — a palette writes the steps and does not touch the appointments
-
-Given a palette is registered and put on
-When the page is looked at in both themes
-Then the appointments and the answers of the dark theme stay the ones the kit declares, and only the
-steps of the six roles carry the colours of the palette
-
-Not covered: there are no palettes in the second kit yet.
-
-### SC-UKV-345 — a palette with a role the kit does not know is refused by name
-
-Given a palette names a role that is not among the six of the kit
-When the application registers it
-Then the registration refuses, naming the palette and that role, and not a line of it reaches the
-document
-
-Not covered: there are no palettes in the second kit yet.
-
-### SC-UKV-346 — a step outside the row of the role is refused by name
-
-Given a palette names a step the kit does not declare for that role
-When the application registers it
-Then the registration refuses, naming the palette, the role and the step, and not a line of it
-reaches the document
-
-Not covered: there are no palettes in the second kit yet.
-
-### SC-UKV-347 — a registration does not put the palette on
-
-Given the kit draws by its own steps
-When the application registers a palette and says nothing more
-Then the page keeps the colours of the kit until the palette is put on by a separate word
-
-Not covered: there are no palettes in the second kit yet.
-
-### SC-UKV-348 — a second registration under one name replaces the first
-
-Given a palette has been registered under a name and put on
-When the application registers another palette under the same name
-Then the page takes the colours of the second one, and one rule of that name stands at the root
-
-Not covered: there are no palettes in the second kit yet.
-
-### SC-UKV-349 — the name of the chosen palette outlives a reload
-
-Given the application has registered a palette and put it on
-When the page is reloaded and the application registers the same palette again at the start
-Then the page is drawn in the colours of that palette without anyone choosing it a second time
-
-Not covered: there are no palettes in the second kit yet.
-
-### SC-UKV-350 — a remembered name nobody registered leaves the kit on its own steps
-
-Given the keeping of the device holds the name of a palette, and this time the application has
-registered nothing
-When the first painting goes
-Then the kit draws by its own steps, and the remembered name is not forgotten
-
-Not covered: there are no palettes in the second kit yet.
-
-### SC-UKV-351 — clearing returns the steps of the kit and forgets the name
-
-Given a palette is put on
-When the application clears the choice of the palette
-Then the page returns to the steps of the kit and the remembered name is removed from the keeping
-
-Not covered: there are no palettes in the second kit yet.
-
-### SC-UKV-352 — a registration without a window writes nothing and refuses nothing
-
-Given the painting goes on the server, where there is no window
-When the application registers a palette
-Then nothing is written to the document and the painting is not interrupted
-
-Not covered: there are no palettes in the second kit yet.
-
 ## The local piece of the theme
 
-### SC-UKV-353 — a dark node inside a light page draws its subtree dark
+### SC-UKV-343 — a dark node inside a light page draws its subtree dark
 
 Given the page is drawn light and one node carries the mark of the dark theme
 When the kit draws the same component inside that node and outside it
@@ -220,7 +134,7 @@ it is light, and the sign at the root of the page does not change
 
 Not covered: there is no local piece of the theme yet.
 
-### SC-UKV-354 — a light node inside a dark page draws its subtree light
+### SC-UKV-344 — a light node inside a dark page draws its subtree light
 
 Given the page is drawn dark and one node carries the mark of the light theme
 When the kit draws the same component inside that node and outside it
@@ -229,7 +143,7 @@ does not change
 
 Not covered: there is no local piece of the theme yet.
 
-### SC-UKV-355 — the opposite mark inside a marked node returns the set back
+### SC-UKV-345 — the opposite mark inside a marked node returns the set back
 
 Given a node carries the mark of the dark theme and inside it another node carries the mark of the
 light one
@@ -238,7 +152,7 @@ Then it is drawn light whole, exactly as it is drawn on a light page
 
 Not covered: there is no local piece of the theme yet.
 
-### SC-UKV-356 — a mark repeated inside a node of the same mark changes nothing
+### SC-UKV-346 — a mark repeated inside a node of the same mark changes nothing
 
 Given a node carries the mark of the dark theme and inside it another node carries the same mark
 When the kit draws a component inside the inner node
@@ -246,7 +160,7 @@ Then it is drawn the same as inside the outer node alone
 
 Not covered: there is no local piece of the theme yet.
 
-### SC-UKV-357 — a mark taken off returns the subtree to the theme of the page
+### SC-UKV-347 — a mark taken off returns the subtree to the theme of the page
 
 Given a node carries the mark of the dark theme inside a light page
 When the mark is emptied on the live page
@@ -254,7 +168,7 @@ Then the subtree is drawn in the theme of the page and no sign is left on the no
 
 Not covered: there is no local piece of the theme yet.
 
-### SC-UKV-358 — the local piece touches neither the choice nor the keeping
+### SC-UKV-348 — the local piece touches neither the choice nor the keeping
 
 Given the page is drawn light and a node carries the mark of the dark theme
 When the page is reloaded
@@ -264,12 +178,11 @@ Not covered: there is no local piece of the theme yet.
 
 ## The showcase
 
-### SC-UKV-359 — the frame of the showcase shows the node in both themes and under a palette
+### SC-UKV-349 — the frame of the showcase shows the node in both halves
 
-Given the showcase shows one node of the kit three times: in the light half, in the dark half and
-under a registered palette
+Given the showcase shows one node of the kit twice: in the light half and in the dark half
 When the frame of that story is taken
 Then it is compared with the reference of the second kit alone — the showcase of the first kit shows
 this family in no story, and there is no second frame to hold it against
 
-Not covered: there is no story of the theme and the palettes yet.
+Not covered: there is no story of the theme and the local piece yet.

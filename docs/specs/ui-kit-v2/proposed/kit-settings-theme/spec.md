@@ -1,36 +1,32 @@
 # The settings of the kit and the theme
 
 **Status:** proposed · **Revision:** 2026-09-23 · **Scenario prefix:** `SC-UKV`
-**Depends on:** the design of the kit — [the sign of the theme at the root of the page and the
-scale of the colour](../../tokens/spec.md); the service of the platform and the storage of the
-core package; the handing out of the labels of the kit as the sample of the form
+**Depends on:** the design of the kit — [the sign of the theme at the root of the page and the two
+sets of the properties it switches](../../tokens/spec.md); the service of the platform and the
+storage of the core package; the handing out of the labels of the kit as the sample of the form
 **Laws:** `frontend-application`, `verifiability`, `reuse-first`
 **Procedures:** none
 
 ## Why
 
-An application sets the look of the kit at the start: in which theme the first painting goes, by
-which palette the roles are coloured, what a button and a curtain look like where nobody said
-otherwise. The second kit has half of that. It has a theme service with two states and a handing
-out of the labels; it has no settings of its own at all, so an application that wants every curtain
-to ignore Escape or every button to be large repeats that at every call and differs from itself in
-the one place that was missed.
+An application sets the look of the kit at the start: in which theme the first painting goes, what a
+button and a curtain look like where nobody said otherwise. The second kit has half of that. It has
+a theme service with two states and a handing out of the labels; it has no settings of its own at
+all, so an application that wants every curtain to ignore Escape or every button to be large repeats
+that at every call and differs from itself in the one place that was missed.
 
-The theme of the second kit cannot do three things the first one can: follow the setting of the
-machine, take a palette from the application at run time, and stand on one node apart from the
-page — a dark card inside a light page. All three are the same subject as the settings: the theme
-takes its start value from them.
+The theme of the second kit cannot do two things the first one can: follow the setting of the machine
+and stand on one node apart from the page — a dark card inside a light page. Both are the same
+subject as the settings: the theme takes its start value from them.
 
-The subdomain names what the application sets, in which order the answers are picked, what survives
-a reload and where the kit is obliged to refuse loudly instead of drawing something nobody asked
-for.
+The subdomain names what the application sets, in which order the answers are picked, what survives a
+reload and what the kit does where there is no window to ask.
 
 ## Terminology
 
 - **The settings of the kit** — one object the application hands the kit at the start: the common
   defaults and the defaults of the nodes. Every field of it is optional.
-- **A common default** — a value that holds for the whole kit: the theme of the start and the name
-  of the colour set.
+- **A common default** — a value that holds for the whole kit: today it is the theme of the start.
 - **A default of a node** — a value that holds for one family of the kit: the button, the curtain.
 - **An input at the place** — what the markup of the application says at one call of a node.
 - **The snapshot of the start** — the settings as the kit reads them: once, at the moment a node is
@@ -40,21 +36,14 @@ for.
   `rt-theme-dark` equal to it. The sign is declared by [the design of the
   kit](../../tokens/spec.md); this subdomain says who puts it and when.
 - **The setting of the machine** — what the browser answers about the dark look being preferred.
-- **A colour set, a palette** — the steps of the six roles of the kit, given by the application
-  under a name of its own: the brand, success, the warning, the danger, the reference, the neutral.
-- **A step of the scale** — a token carrying a value. An appointment refers to a step; the boundary
-  between the two is drawn by [the design of the kit](../../tokens/spec.md).
-- **A row of a role** — the steps the kit declares for that role. A number outside the row colours
-  nothing: no appointment refers to it.
 - **A local piece of the theme** — a subtree drawn in a theme of its own while the page around it
   stays in the theme of the page.
 
 ### What it is called in the interface
 
-A person sees no settings, no palette and no name of a role. They see the page in the light or the
-dark look, the colours of the palette their application registered, and the look of a button and a
-curtain the application chose for the whole kit. The only handle they touch is the switch of the
-theme.
+A person sees no settings at all. They see the page in the light or the dark look, a card that keeps
+its own look inside a page of the other one, and the look of a button and a curtain the application
+chose for the whole kit. The only handle they touch is the switch of the theme.
 
 ## Rules
 
@@ -122,39 +111,6 @@ theme.
   sign.** A painting on the server has no machine to ask and no device to remember: it goes in the
   light look, and the choice arrives when the browser takes the page over.
 
-### The colour set
-
-- **A registered palette writes the steps of the scale and never the appointments.** The value lives
-  in the step, the appointment refers to it — that is the boundary [the design of the
-  kit](../../tokens/spec.md) stands on. A palette allowed to write an appointment would repaint one
-  place and leave the dark answer of the same appointment as it was.
-
-- **A palette names only the six roles of the kit and only the steps of their rows.** The roles are
-  the brand, success, the warning, the danger, the reference and the neutral; the steps are the ones
-  the kit declares for that role.
-
-- **A palette that named something else is refused by name, and nothing of it reaches the
-  document.** An unknown role and a step outside the row are named in the refusal together with the
-  name of the palette. A palette accepted in part paints half the screen and leaves the other half
-  on the former colours — and it is read as a defect of the design, not as a mistake in the call.
-
-- **Registering a palette does not put it on.** An application registers what it may need and
-  chooses what stands now by a separate word; a registration that paints at once takes from it the
-  right to prepare two palettes and switch between them.
-
-- **A palette registered a second time under one name replaces the first one, and one rule stands at
-  the root.** Two rules of one name leave the outcome to the order of the two calls, and that order
-  is decided by whichever module was loaded first.
-
-- **The name of the chosen palette survives a reload; the palette itself does not.** The colours
-  belong to the application, and it registers them at every start. A remembered name nobody
-  registered this time leaves the kit on its own steps, and the name is not forgotten because the
-  application may register it a moment later.
-
-- **A registration where there is no window writes nothing and refuses nothing.** The palette
-  reaches the page when the browser takes it over; a refusal here would fell the painting on the
-  server for a reason that has nothing to do with the painting.
-
 ### The local piece of the theme
 
 - **A node carrying a theme of its own draws its subtree in it, and the page around it stays as it
@@ -203,17 +159,28 @@ theme.
   — the curtain closes — and the settings only give the application one place to change it.
 - **The settings and the theme of the first kit.** It keeps its own settings, its own service, its
   own keys of the keeping and its own sign at the root; nothing is shared with it.
-- **The half of the colour set that works at the build.** In the first kit a palette is a pair: the
-  service that lays the rule at run time and a mixin of the styles that emits the same rule while
-  the styles are built, and the two are held at parity by hand. The second kit has no such mixin and
-  cannot have one in that shape: its design layer is not written by hand but put together by a
-  generator from a source of its own. A palette known at the build is therefore an ability of that
-  generator, and it is work of its own. Carried over here is the run-time half alone: the
-  application names its palette at the start, and it lays down as a rule.
+- **The colour set set from code.** In the first kit an application registers a palette of its own by
+  a name and puts it on by a call; in the second kit it does not, and this work does not bring that
+  over. The palette of the second kit is closed: the colours live in its own layer of tokens, a
+  component takes them by a token, and an application that needs a colour of its own answers it by
+  overriding the property of the kit's block with its own styles — not by a handing out over the
+  roles.
+
+    This is not a decision of this work. The kit has decided it three times already, and each time on
+    its own skin: [the design of the kit](../../tokens/spec.md) rejects the setting of the design by
+    code outright, the agreement about the set of the design of this same epic repeats the rejection
+    for a second layer of colours, and two families carried over by this same epic — the
+    badge of the sign and the bar of the actions — were carried over without a colour of their own for
+    the same reason: the palette is closed, and that is exactly what the layer of the tokens exists
+    for. A fourth road built for the same need would leave the kit with two answers to one question.
+
+    What stays here is what the theme service already does with colour: nothing. It puts the sign of
+    the theme, and which colours the sign switches is the word of the layer of the tokens.
+
 - **A frame of the showcase of the first kit for a comparison.** There is nothing to compare
-  against: the showcase of the first kit shows neither its theme, nor its local piece, nor its
-  colour sets — there is not a single story about that family in it. The second kit takes a frame of
-  its own, and the pair of frames the card of the task asks for does not exist.
+  against: the showcase of the first kit shows neither its theme nor its local piece — there is not a
+  single story about that family in it. The second kit takes a frame of its own, and the pair of
+  frames the card of the task asks for does not exist.
 
 ## Contract
 
@@ -221,31 +188,26 @@ The application hands the kit its settings by one environment handing out at the
 it hands over the labels. Every field is optional, and the handing out itself is optional.
 
 The service of the theme gives outward: the chosen theme, the look it resolved to, the setting of
-the choice, the switching between the two looks, the registration of a palette under a name, the
-putting on of a palette and the clearing of it back to the steps of the kit. The local piece of the
-theme is a mark the application puts on a node of its markup.
+the choice and the switching between the two looks. The local piece of the theme is a mark the
+application puts on a node of its markup.
 
-Nothing else leaves the subdomain. The sign at the root of the page, the keys of the keeping and the
-names of the steps are not a surface to be set from outside: they are named here so that whoever
-reads the design of the kit sees the same words.
+Nothing else leaves the subdomain. The sign at the root of the page and the key of the keeping are
+not a surface to be set from outside: they are named here so that whoever reads the design of the
+kit sees the same words.
 
 ### Refusal codes
 
-Not applicable: the kit declares no named codes. The one place that refuses is the registration of a
-palette — it refuses by an error naming the palette and the role or the step that was not
-recognised.
+Not applicable: the kit declares no named codes, and nothing in this subdomain refuses. A theme the
+kit does not know, whether it came from the keeping or from the settings, is not a refusal — it is
+ignored, and the next answer of the order is taken.
 
 ## Data
 
-The kit keeps two things, each on the device and each under a key of its own namespace: the chosen
-theme — the light one, the dark one or "follow the machine" — and the name of the chosen palette.
-Both outlive a reload, a sign-in and a sign-out: the theme belongs to the device, not to the person.
+The kit keeps one thing, on the device and under a key of its own namespace: the chosen theme — the
+light one, the dark one or "follow the machine". It outlives a reload, a sign-in and a sign-out: the
+theme belongs to the device, not to the person.
 
-The palette itself is not kept: its colours belong to the application, and it registers them at
-every start. The settings are not kept at all — they arrive from the code of the application.
-
-A palette is the six roles, and a role is the steps of its row with a colour at each. A row that
-names a step the kit does not declare is not a partial palette but a mistake in the call.
+The settings are not kept at all — they arrive from the code of the application at every start.
 
 ## Screens and states
 
@@ -258,8 +220,6 @@ names a step the kit does not declare is not a partial palette but a mistake in 
 | "follow the machine" is chosen, the machine prefers the dark | the dark look; the kept choice stays "follow the machine"                         |
 | the setting of the machine changes while the page is open    | the look changes with it, nothing else is asked                                   |
 | there is no window                                           | no sign at the root, the light output                                             |
-| a palette is registered and put on                           | the six roles are recoloured, the appointments and the dark answers stay          |
-| a name of a palette is remembered, nobody registered it      | the steps of the kit; the name is kept                                            |
 | a node carries a theme of its own                            | its subtree in that theme, the rest of the page as it was                         |
 
 ## Cross-cutting requirements
@@ -292,9 +252,9 @@ apart, and a choice made in one does not move the other.
   every switch. Rejected: a family carried over apart, the way the table was carried over — there
   the road is lawful because the application chooses which table to put, and the service of the
   theme it does not choose.
-- **The palette moves over to the names of the second kit.** The roles are the same six; the steps
-  are named the way the second kit names them. Rejected: bringing the row of the first kit into the
-  second — that is a second set of steps about one and the same thing.
+- **The colour set stays out of the work, and the border above says why.** The road of the first kit
+  — a palette registered from code — is closed in the second kit by a decision written down three
+  times over, and this work does not reopen it.
 - **The settings get common defaults and defaults of the nodes without the field of Material.** The
   word of the owner. Of the nodes, the button and the curtain stay.
 - **A default of a node reaches the node through the value its input starts with, counted from the
@@ -327,11 +287,6 @@ apart, and a choice made in one does not move the other.
 - **How the switch of the theme shows three states.** Carried over from the grill: it has two
   positions, and there will be three states. It does not hold the work — until the answer, the third
   state is set by the settings alone.
-- **Whether the registration of a palette at run time falls under the road [the design of the
-  kit](../../tokens/spec.md) rejected.** That subdomain rejected "the setting of the design by code"
-  — a handing out and an object of settings over the roles in the styles. A palette is not that: it
-  writes the steps of the scale, the same layer the declaration of the brand writes by hand. The
-  difference is named here, and the word is the owner's before the merge.
 - **Which agreement carries the edit that makes the sign answer at a node, not at the root alone.**
   Today both sets of the properties answer the root of the page and nothing else, so the local piece
   has nothing to lean on until a rule answers the sign at an ordinary node. The price of that edit is

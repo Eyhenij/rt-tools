@@ -25,13 +25,6 @@ instruction to look for it.
 | a kept word the kit does not know is ignored                    | the same file — the same reading                                                                                                                                                            |
 | the machine is followed while the page is open                  | the same file — the subscription to the answer of the browser about the dark look                                                                                                           |
 | without a window nothing is read, written or put at the root    | the same file — the service of the platform of the core package is already asked there                                                                                                      |
-| a palette writes the steps, not the appointments                | the same file — the rule it lays down names only the steps of the roles                                                                                                                     |
-| the six roles and the rows of their steps                       | `projects/ui-kit-v2/src/styles/tokens.scale-color.mjs` — the rows the check is made against                                                                                                 |
-| a palette that named something else is refused by name          | the same service — the checking before a line reaches the document                                                                                                                          |
-| a registration does not put the palette on                      | the same service — two words instead of one                                                                                                                                                 |
-| a second registration under one name replaces the first         | the same service — one rule of that name at the root                                                                                                                                        |
-| the name outlives the reload, the palette does not              | the same service and the same registry of the keys                                                                                                                                          |
-| a registration without a window writes nothing                  | the same service                                                                                                                                                                            |
 | a node carrying a theme of its own, in both directions          | a new mark of the markup next to the service of the theme; the set it leans on lives in `projects/ui-kit-v2/src/styles/_theme-dark.scss` and `projects/ui-kit-v2/src/styles/_semantic.scss` |
 | the mark switches the whole set of the properties               | the same two mixins, emitted for a node by `tools/build-tokens-v2.mjs` from `projects/ui-kit-v2/src/styles/tokens.source.mjs`                                                               |
 | the nearer mark wins, a repeated one changes nothing            | the same rules of the styles — the sign at the node is read by the cascade, not by code                                                                                                     |
@@ -61,10 +54,10 @@ exist whole, but today they are emitted for the root of the page alone.
 
 ## Scenario — test
 
-- **`SC-UKV-330`**…**`SC-UKV-359`** — there is no test for any of them: neither the settings, nor the
-  third state of the theme, nor the palettes, nor the local piece, nor the story of the showcase
-  exist yet. Each scenario carries the mark "Not covered" with its own reason.
+- **`SC-UKV-330`**…**`SC-UKV-349`** — twenty scenarios, and there is no test for any of them:
+  neither the settings, nor the third state of the theme, nor the local piece, nor the story of the
+  showcase exist yet. Each scenario carries the mark "Not covered" with its own reason.
 
-The frame of the showcase is a scenario on its own — `SC-UKV-359`. It is taken against the reference
-of the second kit alone: the showcase of the first kit has no story of its theme, its local piece or
-its colour sets at all, so the pair of frames the card of the task asks for cannot be taken.
+The frame of the showcase is a scenario on its own — `SC-UKV-349`. It is taken against the reference
+of the second kit alone: the showcase of the first kit has no story of its theme or its local piece
+at all, so the pair of frames the card of the task asks for cannot be taken.
