@@ -21,12 +21,13 @@ space and its own operators.
 
 ## Terminology
 
-| Term                   | What it is                                                                                      |
-| ---------------------- | ----------------------------------------------------------------------------------------------- |
-| The embedded page      | The section of the talks drawn inside the admin of the consumer                                 |
-| The secret of the site | The value the consumer keeps on its server; the service holds its own copy beside the site      |
-| The signature          | The sign the consumer makes over the key of the site and the minute with the secret of the site |
-| The sign of the page   | What the service gives out in exchange for a signature; the operations are called under it      |
+| Term                           | What it is                                                                                       |
+| ------------------------------ | ------------------------------------------------------------------------------------------------ |
+| The embedded page              | The section of the talks drawn inside the admin of the consumer                                  |
+| The secret of the site         | The value the consumer keeps on its server; the service holds its own copy beside the site       |
+| The signature                  | The sign the consumer makes over the key of the site and the minute with the secret of the site  |
+| The sign of the page           | What the service gives out in exchange for a signature; the operations are called under it       |
+| The script of the installation | One file of the service that the admin of the consumer loads; it declares the tag of the section |
 
 ### What it is called in the interface
 
@@ -56,6 +57,18 @@ by the words «Страница переписок не открылась», th
   feed of one talk, the answer and the closing of a talk. The screens are drawn by the ready-made
   pieces of the kit — the list and the chat — the same ones the panel is drawn by.
 - **The page carries no choice of a site.** The site is named by the key it was embedded with.
+
+**How the page is installed.**
+
+- **The page is installed by one script and one tag.** The admin of the consumer loads the script of
+  the service and puts the tag with the key of the site. Nothing else is asked of it: neither a
+  build of its own, nor a dependency, nor a page of its own.
+- **The section stands in a frame, and the styles of the two sides never meet.** The page lives at
+  the service, and the tag opens it in a frame. So the look of the kit does not reach the admin of
+  the consumer, and its own look does not reach the page.
+- **The signature travels to the frame by a message, not by the address.** The address is seen in
+  the logs of a proxy and in the history of the browser, and the signature is a secret of five
+  minutes.
 
 **The answer.**
 
@@ -155,3 +168,6 @@ embeds the page as many times, and the pages know nothing of one another.
 - 2026-09-23 — the text is written before the code, by the first task of the epic RT-2309.
 - 2026-09-23 — the entry and the operations behind it are written by the task RT-2312; the codes of
   the refusals are named in the table above.
+- 2026-09-23 — the page is drawn by the task RT-2313; the installation into a foreign admin and the
+  sample of the consumer on the stand are written by the task RT-2314, and the rules of the
+  installation are added above.
