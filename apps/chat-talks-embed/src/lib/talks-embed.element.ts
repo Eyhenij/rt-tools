@@ -11,7 +11,7 @@
  * Решения — разбор признаков, адрес рамки, чужое сообщение, ответ сервера — лежат рядом чистыми
  * функциями и проверяются вызовом: внутри элемента их проверял бы только поднятый браузер.
  */
-import { IChatPageSignature } from '@rt/message-bus-common';
+import { CHAT_TAG_SERVICE_ATTRIBUTE, CHAT_TAG_SITE_ATTRIBUTE, IChatPageSignature } from '@rt/message-bus-common';
 
 import {
     ITalksEmbed,
@@ -25,10 +25,8 @@ import {
 /** Имя тега: им админка потребителя ставит раздел переписок. */
 export const TALKS_TAG: string = 'rt-chat-talks';
 
-/** Признаки тега: ключ площадки, точка выдачи подписи, адрес сервиса и путь страницы. */
-const SITE_ATTRIBUTE: string = 'site';
+/** Признаки тега, кроме общих с виджетом: точка выдачи подписи и путь страницы. */
 const SIGN_URL_ATTRIBUTE: string = 'sign-url';
-const SERVICE_ATTRIBUTE: string = 'service';
 const PAGE_ATTRIBUTE: string = 'page';
 
 /** Слово человеку, когда тег поставлен без ключа площадки или без точки выдачи подписи. */
@@ -83,9 +81,9 @@ export class TalksEmbedElement extends HTMLElement {
 
         this.#embed = talksEmbedOf(
             {
-                site: this.getAttribute(SITE_ATTRIBUTE) ?? '',
+                site: this.getAttribute(CHAT_TAG_SITE_ATTRIBUTE) ?? '',
                 signUrl: this.getAttribute(SIGN_URL_ATTRIBUTE) ?? '',
-                service: this.getAttribute(SERVICE_ATTRIBUTE) ?? '',
+                service: this.getAttribute(CHAT_TAG_SERVICE_ATTRIBUTE) ?? '',
                 page: this.getAttribute(PAGE_ATTRIBUTE) ?? '',
             },
             SCRIPT_SOURCE
