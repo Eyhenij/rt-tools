@@ -16,6 +16,7 @@ to the public entry that calls it.
 - **The family carries no Material of any kind.** — `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table.component.ts:imports`; scenario —
 - **Every colour of the family comes from an appointment of the kit, except the style line a column gives its icon.** — `projects/ui-kit-v2/src/lib/components/data-table/cell/rt-data-table-cell.component.ts:iconStyle`; scenario `SC-UKV-265`
 - **An application moves a screen from the first kit's table without editing its column declarations, its bindings or its saved settings.** — `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table.model.ts:Column`; scenario `SC-UKV-317`
+- **The family has frames paired with the first kit's: the table, the list, the settings panel and the themes.** — `tools/kit-shot-pairs.json:table`; scenario `SC-UKV-353`
 
 ### Columns and cells
 
@@ -52,7 +53,7 @@ to the public entry that calls it.
 - **An empty value removes the column's condition, and a value on a column without a condition adds one.** — `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-filter.logic.ts:dataTableFiltersWithValue`; scenario `SC-UKV-303`
 - **A column with operators shows the current operator and offers the rest.** — `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-filter.logic.ts:dataTableFiltersWithOperator`; scenario `SC-UKV-304`
 - **The family keeps no conditions of its own and narrows no rows.** — `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table.component.ts:filterChange`; scenario `SC-UKV-303`
-- **The family takes no field-look input.** — `projects/ui-kit-v2/src/lib/components/data-table/filter-cell/rt-data-table-filter-cell.component.html:size`; scenario —
+- **The search and the filter fields draw one of the two Material field looks, `outline` or `fill`, each set by an input of its own.** — `projects/ui-kit-v2/src/lib/components/data-list/rt-data-list.component.ts:filterAppearance`; scenario `SC-UKV-354`
 
 ### Rows and presses
 
@@ -110,6 +111,7 @@ to the public entry that calls it.
 
 - **The toolbar's "Table configuration" button opens the settings panel on the right side.** — `projects/ui-kit-v2/src/lib/components/data-list/rt-data-list.component.ts:onOpenSettings`; scenario `SC-UKV-268`
 - **The panel reorders columns by dragging and hides or shows each by its eye button.** — `projects/ui-kit-v2/src/lib/components/data-list/settings/rt-data-list-settings-aside.component.html:data-list-settings-columns`; scenario `SC-UKV-307`
+- **The list's panel keeps the second kit's side-panel shell and draws its content in the first kit's look.** — `projects/ui-kit-v2/src/lib/components/data-list/settings/rt-data-list-settings-aside.component.ts:onDrop`; scenario `SC-UKV-352`
 - **The panel carries two switches — the vertical and the horizontal scrollbar.** — `projects/ui-kit-v2/src/lib/components/data-list/settings/rt-data-list-settings-aside.component.html:data-list-settings-vertical`; scenario `SC-UKV-268`
 - **The panel's save is unavailable until something in it changed; cancel closes it and changes nothing.** — `projects/ui-kit-v2/src/lib/components/data-list/rt-data-list-settings.logic.ts:dataListSettingsChanged`; scenario `SC-UKV-306`
 - **Saved settings are kept in the browser's database under the table's storage key and come back when the table is opened again.** — `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-config.service.ts:initConfig`; scenario `SC-UKV-271`
@@ -129,6 +131,7 @@ to the public entry that calls it.
 - **The list takes the switch of the pagination bar and passes it nowhere.** — `projects/ui-kit-v2/src/lib/components/data-list/rt-data-list.component.ts:isPaginationShown`; scenario —
 - **The application's toolbar selectors and actions stand in the toolbar next to the kit's controls.** — `projects/ui-kit-v2/src/lib/components/data-list/rt-data-list-toolbar.directive.ts:RtDataListToolbarSelectorsDirective`; scenario —
 - **The placeholder replaces the table when there are no rows and no conditions.** — `projects/ui-kit-v2/src/lib/components/data-list/rt-data-list.component.ts:isPlaceholderShown`; scenario `SC-UKV-309`
+- **The toolbar yields its width in a narrow column: the search shrinks, and nothing of the toolbar leaves the list's box.** — `projects/ui-kit-v2/src/lib/components/data-list/toolbar/rt-data-list-toolbar.component.scss:contain`; scenario `SC-UKV-351`
 - **The first loading replaces the list with a spinner; a later fetching keeps the rows under a spinner with a backdrop.** — `projects/ui-kit-v2/src/lib/components/data-list/rt-data-list.component.html:data-list-fetching`; scenario `SC-UKV-316`
 
 ### The pagination bar

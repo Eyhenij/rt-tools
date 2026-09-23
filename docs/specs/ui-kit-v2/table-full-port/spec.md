@@ -81,8 +81,8 @@ The words are the first kit's; the kit's dictionary gives them in all eight lang
 - **The family stands next to `rt-table` and `rt-dynamic-list` and changes neither.** A screen
   drawn with the second kit's table looks and behaves the same before and after this work.
 - **The family carries no Material of any kind.** No import of `@angular/material` — the kit's
-  lint ban on it covers every file of the second kit — no Material Symbols font, and no input or
-  output that exists only because Material has it. Every control the first kit took from Material
+  lint ban on it covers every file of the second kit — and no Material Symbols font. The two field
+  looks keep Material's names and are drawn by the kit's own fields. Every control the first kit took from Material
   is the kit's own component: the checkbox, the radio button, the icon, the icon button, the menu,
   the tooltip, the input, the select, the date picker, the toggle switch and the side panel.
 - **Every colour of the family comes from an appointment of the kit, except the style line a
@@ -90,8 +90,9 @@ The words are the first kit's; the kit's dictionary gives them in all eight lang
   the dark theme repaints it without a rule of its own; the column's style line is drawn as given.
 - **An application moves a screen from the first kit's table without editing its column
   declarations, its bindings or its saved settings.** Only the names of the components and
-  directives change, and a screen that set the Material field-look inputs drops them — the one
-  named exception.
+  directives change.
+- **The family has frames paired with the first kit's: the table, the list, the settings panel and
+  the themes.**
 
 ### Columns and cells
 
@@ -157,9 +158,10 @@ The words are the first kit's; the kit's dictionary gives them in all eight lang
   operator of a column with neither a condition nor a value asks nothing.
 - **The family keeps no conditions of its own and narrows no rows.** The application answers with
   new rows.
-- **The family takes no field-look input.** The first kit's `appearance` and `filterAppearance`
-  chose between the Material field looks "fill" and "outline"; they are not carried over, and the
-  kit's input draws its one look.
+- **The search and the filter fields draw one of the two Material field looks, `outline` or
+  `fill`, each set by an input of its own.** The list takes `appearance` for its search and
+  `filterAppearance` for its filter fields, the table `filterAppearance`; both default to `outline`,
+  as in the first kit.
 
 ### Rows and presses
 
@@ -245,6 +247,9 @@ The words are the first kit's; the kit's dictionary gives them in all eight lang
 - **The toolbar's "Table configuration" button opens the settings panel on the right side.** A
   second press while it is open opens nothing.
 - **The panel reorders columns by dragging and hides or shows each by its eye button.**
+- **The list's panel keeps the second kit's side-panel shell and draws its content in the first
+  kit's look.** A caption under the title, each switch left of its label, a column as a filled
+  plaque: the four-arrow handle, a divider, the name, a divider and the eye button.
 - **The panel carries two switches — the vertical and the horizontal scrollbar.**
 - **The panel's save is unavailable until something in it changed; cancel closes it and changes
   nothing.**
@@ -276,6 +281,8 @@ The words are the first kit's; the kit's dictionary gives them in all eight lang
   controls.**
 - **The placeholder replaces the table when there are no rows and no conditions.** With
   conditions and no rows the table stays with its filter row, so the person can change them.
+- **The toolbar yields its width in a narrow column: the search shrinks, and nothing of the
+  toolbar leaves the list's box.**
 - **The first loading replaces the list with a spinner; a later fetching keeps the rows under a
   spinner with a backdrop.**
 
@@ -406,8 +413,8 @@ table that applied it last decides it for all.
   `Q-TP-14`, `Q-TP-15`, `Q-TP-20`, `Q-TP-21` and `Q-TP-22`; the list below keeps them for that
   discussion.
 - **There is no Material in the family.** The owner's word "there must be no Material!" It
-  reverses `Q-TP-12`: the field-look inputs are not carried over, the one exception to a move
-  without edits.
+  reverses `Q-TP-12` for the library; the field-look inputs came back by the later word and are
+  drawn by the kit's own fields.
 - **Icons of the column declarations are drawn by the kit's own set.** The owner's word "by the
   kit's set" closes `Q-TP-13`. The price is named in the rules: a first-kit name without a pair in
   the kit's map draws nothing until the application renames it or the map is extended.
@@ -439,6 +446,17 @@ table that applied it last decides it for all.
 - `Q-TP-22` — an empty list or object in a ready cell gets no dash, while the copy button counts
   both as empty.
 
+- **The field looks are carried over after all.** The owner's word of 23 September 2026 — "both
+  looks are needed for the Material field" — reverses the first answer. The look is an input of
+  each of the four filter fields, not of the shared form-control base: five other fields would
+  take an input they do not draw.
+- **The list's settings panel is its own; the shared `rt-table-settings-panel` is not edited.** The
+  second kit's own table draws with it, and its look is the second kit's. Rejected: repainting it —
+  that table would change its look unasked.
+- **The kit's own icon set is not redrawn after the first kit.** The first kit's look in the second
+  kit is the Material set, where the family's icons already match; only the four-arrow handle was
+  missing and was drawn into both sets.
+
 ## Open questions
 
 - **`Q-TP-17` — `Q-DL-1` of the list of records.** The grill closed it by "selection in the kit";
@@ -446,6 +464,10 @@ table that applied it last decides it for all.
   outside this family.
 
 ## History of changes
+
+- 23 September 2026 — task RT-2324 by the owner's remarks on the showcase: the list's settings
+  panel in the first kit's look, the four-arrow handle, the toolbar yielding width, the two field
+  looks, the paired frames; scenarios `SC-UKV-351`–`SC-UKV-354`.
 
 - 2026-09-22 — the agreement is written before the code, task RT-2316.
 - 2026-09-22 — rewritten by the owner's word: a separate family with the first kit's look, not
