@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtDataListComponent } from './component/test-data-list.component';
 
 export default {
-    title: 'Organisms/DataList/DataList',
+    title: 'Organisms/DynamicList/DataList',
     component: TestRtDataListComponent,
     argTypes: {
         filtersShown: { control: { type: 'boolean' } },
