@@ -15,6 +15,7 @@ import {
     appendOperatorMessage,
     conversationOfSites,
     findSiteById,
+    IChatOwnedTalk,
     IChatMessageListRow,
     IChatSiteRow,
     setConversationState,
@@ -25,13 +26,6 @@ import { EChatTalkState, ERefusal, refusalBody } from '@rt/message-bus-common';
 
 import { ChatHookService } from './chat-hook.service';
 import { ChatSubscribersService } from './chat-subscribers.service';
-
-/** Переписка, какой её видит отвечающий: чья она и в каком состоянии. */
-export interface IChatTalkRow {
-    readonly id: string;
-    readonly siteId: string;
-    readonly state: string;
-}
 
 /** Ответ на смену состояния переписки. */
 export interface IChatStateChanged {
@@ -63,8 +57,8 @@ export class ChatTalkService {
     }
 
     /** Переписка своего сайта. Чужая и несуществующая отвечают одинаково. */
-    public async own(sites: readonly string[], id: string): Promise<IChatTalkRow> {
-        const found: IChatTalkRow | null = await conversationOfSites(this.#prisma, sites, id);
+    public async own(sites: readonly string[], id: string): Promise<IChatOwnedTalk> {
+        const found: IChatOwnedTalk | null = await conversationOfSites(this.#prisma, sites, id);
 
         if (!found) {
             throw new NotFoundException(refusalBody(ERefusal.ChatConversationNotFound));
@@ -75,7 +69,7 @@ export class ChatTalkService {
 
     /** Реплика отвечающего в свою переписку: она же уходит событием тем, кто смотрит на разговор. */
     public async answer(sites: readonly string[], id: string, text: string, at: Date): Promise<IChatMessageListRow> {
-        const talk: IChatTalkRow = await this.own(sites, id);
+        const talk: IChatOwnedTalk = await this.own(sites, id);
         const fault: EChatTextFault | null = chatTextFault(text);
 
         if (fault === EChatTextFault.Empty) {
@@ -104,7 +98,7 @@ export class ChatTalkService {
 
     /** Смена состояния своей переписки: закрыть разговор или открыть его снова. */
     public async state(sites: readonly string[], id: string, asked: EChatTalkState): Promise<IChatStateChanged> {
-        const talk: IChatTalkRow = await this.own(sites, id);
+        const talk: IChatOwnedTalk = await this.own(sites, id);
         const changed: IChatStateChanged = await setConversationState(this.#prisma, id, asked);
 
         if (asked === EChatTalkState.Closed) {
