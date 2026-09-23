@@ -18,7 +18,17 @@ import { TestRtDataListSettingsComponent } from './test-data-list-settings.compo
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
 export type TDataListMatrixPart =
-    'loading' | 'placeholder' | 'pagination' | 'filters' | 'appearance' | 'selection' | 'settings' | 'narrow' | 'presets' | 'themes';
+    | 'loading'
+    | 'placeholder'
+    | 'pagination'
+    | 'filters'
+    | 'appearance'
+    | 'selection'
+    | 'settings'
+    | 'narrow'
+    | 'presets'
+    | 'themes'
+    | 'material-theme';
 
 /** Случай оси загрузки: первая загрузка и дозагрузка порознь не различаются. */
 interface ILoadingCase {
@@ -226,6 +236,23 @@ const NARROW_CASES: readonly { readonly name: string }[] = [{ name: '360 px — 
                         <app-data-list-cell storageKey="story-list-presets" [columns]="columns" [rows]="rows" [page]="pageOne" />
                     </ng-template>
                 </app-story-presets>
+            }
+
+            @case ('material-theme') {
+                <!-- Фиолетовая тема Material объявлена витриной обычными свойствами — пакета Material у
+                     второго кита нет. Свой набор имён Material не читает и остаётся прежним. -->
+                <div data-showcase-material-theme="violet">
+                    <app-story-presets caption="Список под фиолетовой темой Material, как на витрине первого кита">
+                        <ng-template>
+                            <app-data-list-cell
+                                storageKey="story-list-material-theme"
+                                appearance="fill"
+                                [columns]="columns"
+                                [rows]="rows"
+                                [page]="pageOne" />
+                        </ng-template>
+                    </app-story-presets>
+                </div>
             }
 
             @case ('themes') {

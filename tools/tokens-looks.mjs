@@ -52,11 +52,28 @@ export function mixinBody(text, name) {
     return text.slice(start, end < 0 ? undefined : end);
 }
 
+/**
+ * A Material name with a fallback: `var(--mat-sys-primary, #4284d7)`. The material preset reads
+ * the theme of the page this way, and a page without one gets the fallback. The checks judge the kit
+ * on its own, so the value they see is the fallback.
+ */
+const MATERIAL_THEME_RE = /^var\(\s*--mat-[a-z0-9-]+\s*,\s*(.+)\)$/;
+
+/** A value with its Material names unwrapped, name by name, down to the kit's own fallback. */
+export function withoutMaterial(value) {
+    let result = value;
+    while (MATERIAL_THEME_RE.test(result)) {
+        result = result.replace(MATERIAL_THEME_RE, '$1').trim();
+    }
+
+    return result;
+}
+
 /** The declarations of a piece of text: name → value and the mark of a shared colour. */
 export function declarations(text) {
     const map = new Map();
     for (const match of text.matchAll(DECLARATION_RE)) {
-        map.set(match[1], { value: match[2].trim().replace(/\s+/g, ' '), shared: match[3]?.trim() || null });
+        map.set(match[1], { value: withoutMaterial(match[2].trim().replace(/\s+/g, ' ')), shared: match[3]?.trim() || null });
     }
 
     return map;
@@ -111,9 +128,10 @@ export function parseColor(text) {
 
 /** A value's colour: a reference goes further along the chain, a literal is parsed on the spot. */
 export function colorOfValue(value, look, seen) {
-    const link = linkOf(value);
+    // The source of a counted shade may itself be a Material name with a fallback.
+    const link = linkOf(withoutMaterial(value));
 
-    return link ? colorOf(link, look, seen) : parseColor(value);
+    return link ? colorOf(link, look, seen) : parseColor(withoutMaterial(value));
 }
 
 /** A name's colour in a look: by the chain of references down to a literal. */

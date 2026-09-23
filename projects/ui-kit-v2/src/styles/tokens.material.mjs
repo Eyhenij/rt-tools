@@ -10,6 +10,17 @@
    через ссылку, и это выводит сама; остальным нужна причина в поле `presetShared` рядом с именем
    в базовом наборе.
 
+   Марка, ошибка, подложка, обратная подложка и заливка поля читают тему Material, если она есть
+   на странице, — те же системные имена, что у первого кита: `var(--mat-sys-primary, <ступень>)`.
+   Запасным стоит ступень шкалы, и страница без темы Material получает прежний вид; зависимости от
+   Material у кита нет — неизвестное свойство браузер заменяет запасным значением. Имена стоят в
+   назначениях, а не в шкале: назначения объявляются на узле с признаком набора, и тема Material,
+   объявленная на контейнере, доходит до них; ступень шкалы вычислена на корне и её не видит.
+   Наведение и нажатие считаются от того же имени, что и цвет покоя, — иначе перекрашенная марка
+   темнела бы под курсором к старому синему. Заливка
+   поля сперва спрашивает свойство залитого поля Material — им первый кит красит шапку таблицы, и
+   его объявляет и тема, собранная без системных имён.
+
    Значения выбираются из ступеней материальной шкалы (`tokens.scale-material.mjs`), а не
    пишутся кодами цвета: ступень правится в одном месте, а назначение говорит роль. */
 
@@ -19,16 +30,19 @@ export const material = [
         name: `--rt-color-bg-page`,
         value: `var(--rt-mat-neutral-5)`,
     },
-    { name: `--rt-color-bg-surface`, value: `var(--rt-mat-neutral-0)` },
+    { name: `--rt-color-bg-surface`, value: `var(--mat-sys-surface, var(--rt-mat-neutral-0))` },
     { name: `--rt-color-bg-surface-subtle`, value: `var(--rt-mat-overlay-black-4)` },
-    { name: `--rt-color-bg-surface-subtle-2`, value: `var(--rt-mat-neutral-15)` },
+    {
+        name: `--rt-color-bg-surface-subtle-2`,
+        value: `var(--mat-form-field-filled-container-color, var(--mat-sys-surface-variant, var(--rt-mat-neutral-15)))`,
+    },
     { name: `--rt-color-bg-hover`, value: `var(--rt-mat-neutral-10)` },
     { name: `--rt-color-bg-subtle`, value: `var(--rt-mat-neutral-10)` },
     { name: `--rt-color-bg-overlay`, value: `var(--rt-mat-overlay-black-32)` },
-    { name: `--rt-color-bg-inverse`, value: `var(--rt-mat-neutral-100)` },
+    { name: `--rt-color-bg-inverse`, value: `var(--mat-sys-inverse-surface, var(--rt-mat-neutral-100))` },
     {
         name: `--rt-color-bg-nav`,
-        value: `var(--rt-mat-navy-100)`,
+        value: `var(--mat-sys-primary, var(--rt-mat-navy-100))`,
         note: `марка первого кита: обвязка тёмная в обоих наборах`,
     },
     { name: `--rt-color-bg-page-auth`, value: `var(--rt-mat-neutral-5)` },
@@ -43,8 +57,8 @@ export const material = [
     { name: `--rt-color-text-muted`, value: `var(--rt-mat-neutral-60)` },
     { name: `--rt-color-text-disabled`, value: `var(--rt-mat-neutral-40)` },
     { name: `--rt-color-text-inverse`, value: `var(--rt-mat-neutral-0)` },
-    { name: `--rt-color-text-link`, value: `var(--rt-mat-blue-100)` },
-    { name: `--rt-color-text-link-hover`, value: `var(--rt-mat-blue-hover)` },
+    { name: `--rt-color-text-link`, value: `var(--mat-sys-primary, var(--rt-mat-blue-100))` },
+    { name: `--rt-color-text-link-hover`, value: `color-mix(in srgb, var(--mat-sys-primary, var(--rt-mat-blue-100)) 90%, #000)` },
 
     {
         lead: `    /* Рамки */`,
@@ -64,12 +78,18 @@ export const material = [
         lead: `    /* Действие: подложка, наведение, нажатие, подпись на них и цвет роли на поверхности */`,
         space: true,
         name: `--rt-color-action-primary`,
-        value: `var(--rt-mat-blue-100)`,
+        value: `var(--mat-sys-primary, var(--rt-mat-blue-100))`,
     },
-    { name: `--rt-color-action-primary-hover`, value: `var(--rt-mat-blue-hover)` },
-    { name: `--rt-color-action-primary-active`, value: `var(--rt-mat-blue-active)` },
-    { name: `--rt-color-action-primary-subtle`, value: `var(--rt-mat-overlay-blue-8)` },
-    { name: `--rt-color-action-primary-soft`, value: `var(--rt-mat-overlay-blue-24)` },
+    { name: `--rt-color-action-primary-hover`, value: `color-mix(in srgb, var(--mat-sys-primary, var(--rt-mat-blue-100)) 90%, #000)` },
+    { name: `--rt-color-action-primary-active`, value: `color-mix(in srgb, var(--mat-sys-primary, var(--rt-mat-blue-100)) 80%, #000)` },
+    {
+        name: `--rt-color-action-primary-subtle`,
+        value: `color-mix(in srgb, var(--mat-sys-primary, var(--rt-mat-blue-100)) 8%, transparent)`,
+    },
+    {
+        name: `--rt-color-action-primary-soft`,
+        value: `color-mix(in srgb, var(--mat-sys-primary, var(--rt-mat-blue-100)) 24%, transparent)`,
+    },
     { name: `--rt-color-action-on-primary`, value: `var(--rt-mat-neutral-0)` },
 
     {
@@ -99,18 +119,18 @@ export const material = [
 
     {
         name: `--rt-color-action-danger`,
-        value: `var(--rt-mat-red-100)`,
+        value: `var(--mat-sys-error, var(--rt-mat-red-100))`,
     },
-    { name: `--rt-color-action-danger-hover`, value: `var(--rt-mat-red-hover)` },
-    { name: `--rt-color-action-danger-active`, value: `var(--rt-mat-red-active)` },
+    { name: `--rt-color-action-danger-hover`, value: `color-mix(in srgb, var(--mat-sys-error, var(--rt-mat-red-100)) 90%, #000)` },
+    { name: `--rt-color-action-danger-active`, value: `color-mix(in srgb, var(--mat-sys-error, var(--rt-mat-red-100)) 80%, #000)` },
     { name: `--rt-color-action-on-danger`, value: `var(--rt-mat-neutral-0)` },
 
     {
         name: `--rt-color-action-info`,
-        value: `var(--rt-mat-blue-100)`,
+        value: `var(--mat-sys-primary, var(--rt-mat-blue-100))`,
     },
-    { name: `--rt-color-action-info-hover`, value: `var(--rt-mat-blue-hover)` },
-    { name: `--rt-color-action-info-active`, value: `var(--rt-mat-blue-active)` },
+    { name: `--rt-color-action-info-hover`, value: `color-mix(in srgb, var(--mat-sys-primary, var(--rt-mat-blue-100)) 90%, #000)` },
+    { name: `--rt-color-action-info-active`, value: `color-mix(in srgb, var(--mat-sys-primary, var(--rt-mat-blue-100)) 80%, #000)` },
     { name: `--rt-color-action-on-info`, value: `var(--rt-mat-neutral-0)` },
 
     {
@@ -128,11 +148,11 @@ export const material = [
     { name: `--rt-color-state-warning`, value: `var(--rt-mat-orange-100)` },
     { name: `--rt-color-state-warning-bg`, value: `var(--rt-mat-orange-5)` },
     { name: `--rt-color-state-warning-text`, value: `var(--rt-mat-orange-100)` },
-    { name: `--rt-color-state-danger`, value: `var(--rt-mat-red-100)` },
-    { name: `--rt-color-state-danger-bg`, value: `var(--rt-mat-red-10)` },
-    { name: `--rt-color-state-error-text`, value: `var(--rt-mat-red-100)` },
-    { name: `--rt-color-state-info`, value: `var(--rt-mat-blue-100)` },
-    { name: `--rt-color-state-info-bg`, value: `var(--rt-mat-blue-20)` },
+    { name: `--rt-color-state-danger`, value: `var(--mat-sys-error, var(--rt-mat-red-100))` },
+    { name: `--rt-color-state-danger-bg`, value: `var(--mat-sys-error-container, var(--rt-mat-red-10))` },
+    { name: `--rt-color-state-error-text`, value: `var(--mat-sys-error, var(--rt-mat-red-100))` },
+    { name: `--rt-color-state-info`, value: `var(--mat-sys-primary, var(--rt-mat-blue-100))` },
+    { name: `--rt-color-state-info-bg`, value: `var(--mat-sys-primary-container, var(--rt-mat-blue-20))` },
 
     {
         lead: `    /* Рельса шагов */`,

@@ -46,3 +46,9 @@ export const Narrow: TStory = { args: { part: 'narrow' } };
 export const Presets: TStory = { args: { part: 'presets' } };
 
 export const Themes: TStory = { args: { part: 'themes' } };
+
+/**
+ * Тема Material со страницы: материальный набор берёт её цвета, как первый кит. Тема та же, что на
+ * витрине первого кита, — фиолетовая палитра Material.
+ */
+export const MaterialTheme: TStory = { args: { part: 'material-theme' } };

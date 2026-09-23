@@ -15,6 +15,7 @@
 | набор собирается из источника                                  | `tools/build-tokens-v2.mjs`                                            |
 | ссылка набора на необъявленное имя                             | `tools/check-tokens-graph.mjs`                                         |
 | значения снимаются с первого кита                              | `projects/ui-kit/src/styles/base/_tokens.scss` — читается, не правится |
+| тема Material со страницы читается с запасным кодом            | `projects/ui-kit-v2/src/styles/tokens.material.mjs`                    |
 | значок приходит своим рисунком                                 | набор значков `projects/ui-kit-v2/src/assets/icons`                    |
 | материальный рисунок значка                                    | набор `projects/ui-kit-v2/src/assets/icons-material`                   |
 | набор рисунков выбирается вместе с набором оформления          | `projects/ui-kit-v2/src/lib/components/icon/rt-icon.component.ts`      |
@@ -78,3 +79,4 @@
 - **`SC-UKV-126`** — теста нет
 - **`SC-UKV-127`** — теста нет
 - **`SC-UKV-128`** — теста нет
+- **`SC-UKV-355`** — `projects/ui-kit-v2/src/styles/preset-material.theme.spec.ts`

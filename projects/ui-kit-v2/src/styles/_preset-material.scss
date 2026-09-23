@@ -15,14 +15,14 @@
 @mixin rt-preset-material-tokens {
     /* Подложки */
     --rt-color-bg-page: var(--rt-mat-neutral-5);
-    --rt-color-bg-surface: var(--rt-mat-neutral-0);
+    --rt-color-bg-surface: var(--mat-sys-surface, var(--rt-mat-neutral-0));
     --rt-color-bg-surface-subtle: var(--rt-mat-overlay-black-4);
-    --rt-color-bg-surface-subtle-2: var(--rt-mat-neutral-15);
+    --rt-color-bg-surface-subtle-2: var(--mat-form-field-filled-container-color, var(--mat-sys-surface-variant, var(--rt-mat-neutral-15)));
     --rt-color-bg-hover: var(--rt-mat-neutral-10);
     --rt-color-bg-subtle: var(--rt-mat-neutral-10);
     --rt-color-bg-overlay: var(--rt-mat-overlay-black-32);
-    --rt-color-bg-inverse: var(--rt-mat-neutral-100);
-    --rt-color-bg-nav: var(--rt-mat-navy-100); /* марка первого кита: обвязка тёмная в обоих наборах */
+    --rt-color-bg-inverse: var(--mat-sys-inverse-surface, var(--rt-mat-neutral-100));
+    --rt-color-bg-nav: var(--mat-sys-primary, var(--rt-mat-navy-100)); /* марка первого кита: обвязка тёмная в обоих наборах */
     --rt-color-bg-page-auth: var(--rt-mat-neutral-5);
     --rt-color-bg-surface-auth-card: var(--rt-mat-neutral-0);
 
@@ -31,8 +31,8 @@
     --rt-color-text-muted: var(--rt-mat-neutral-60);
     --rt-color-text-disabled: var(--rt-mat-neutral-40);
     --rt-color-text-inverse: var(--rt-mat-neutral-0);
-    --rt-color-text-link: var(--rt-mat-blue-100);
-    --rt-color-text-link-hover: var(--rt-mat-blue-hover);
+    --rt-color-text-link: var(--mat-sys-primary, var(--rt-mat-blue-100));
+    --rt-color-text-link-hover: color-mix(in srgb, var(--mat-sys-primary, var(--rt-mat-blue-100)) 90%, #000);
 
     /* Рамки */
     --rt-color-border-default: var(--rt-mat-neutral-25);
@@ -41,11 +41,11 @@
     --rt-color-border-focus: var(--rt-mat-blue-40); /* кольцо фокуса первого кита светлее его действия */
 
     /* Действие: подложка, наведение, нажатие, подпись на них и цвет роли на поверхности */
-    --rt-color-action-primary: var(--rt-mat-blue-100);
-    --rt-color-action-primary-hover: var(--rt-mat-blue-hover);
-    --rt-color-action-primary-active: var(--rt-mat-blue-active);
-    --rt-color-action-primary-subtle: var(--rt-mat-overlay-blue-8);
-    --rt-color-action-primary-soft: var(--rt-mat-overlay-blue-24);
+    --rt-color-action-primary: var(--mat-sys-primary, var(--rt-mat-blue-100));
+    --rt-color-action-primary-hover: color-mix(in srgb, var(--mat-sys-primary, var(--rt-mat-blue-100)) 90%, #000);
+    --rt-color-action-primary-active: color-mix(in srgb, var(--mat-sys-primary, var(--rt-mat-blue-100)) 80%, #000);
+    --rt-color-action-primary-subtle: color-mix(in srgb, var(--mat-sys-primary, var(--rt-mat-blue-100)) 8%, transparent);
+    --rt-color-action-primary-soft: color-mix(in srgb, var(--mat-sys-primary, var(--rt-mat-blue-100)) 24%, transparent);
     --rt-color-action-on-primary: var(--rt-mat-neutral-0);
     --rt-color-action-secondary: var(--rt-mat-neutral-60);
     --rt-color-action-secondary-hover: var(--rt-mat-neutral-hover);
@@ -60,13 +60,13 @@
     --rt-color-action-warning-hover: var(--rt-mat-orange-hover);
     --rt-color-action-warning-active: var(--rt-mat-orange-active);
     --rt-color-action-on-warning: var(--rt-mat-neutral-0);
-    --rt-color-action-danger: var(--rt-mat-red-100);
-    --rt-color-action-danger-hover: var(--rt-mat-red-hover);
-    --rt-color-action-danger-active: var(--rt-mat-red-active);
+    --rt-color-action-danger: var(--mat-sys-error, var(--rt-mat-red-100));
+    --rt-color-action-danger-hover: color-mix(in srgb, var(--mat-sys-error, var(--rt-mat-red-100)) 90%, #000);
+    --rt-color-action-danger-active: color-mix(in srgb, var(--mat-sys-error, var(--rt-mat-red-100)) 80%, #000);
     --rt-color-action-on-danger: var(--rt-mat-neutral-0);
-    --rt-color-action-info: var(--rt-mat-blue-100);
-    --rt-color-action-info-hover: var(--rt-mat-blue-hover);
-    --rt-color-action-info-active: var(--rt-mat-blue-active);
+    --rt-color-action-info: var(--mat-sys-primary, var(--rt-mat-blue-100));
+    --rt-color-action-info-hover: color-mix(in srgb, var(--mat-sys-primary, var(--rt-mat-blue-100)) 90%, #000);
+    --rt-color-action-info-active: color-mix(in srgb, var(--mat-sys-primary, var(--rt-mat-blue-100)) 80%, #000);
     --rt-color-action-on-info: var(--rt-mat-neutral-0);
     --rt-color-action-disabled: var(--rt-mat-neutral-25);
 
@@ -76,11 +76,11 @@
     --rt-color-state-warning: var(--rt-mat-orange-100);
     --rt-color-state-warning-bg: var(--rt-mat-orange-5);
     --rt-color-state-warning-text: var(--rt-mat-orange-100);
-    --rt-color-state-danger: var(--rt-mat-red-100);
-    --rt-color-state-danger-bg: var(--rt-mat-red-10);
-    --rt-color-state-error-text: var(--rt-mat-red-100);
-    --rt-color-state-info: var(--rt-mat-blue-100);
-    --rt-color-state-info-bg: var(--rt-mat-blue-20);
+    --rt-color-state-danger: var(--mat-sys-error, var(--rt-mat-red-100));
+    --rt-color-state-danger-bg: var(--mat-sys-error-container, var(--rt-mat-red-10));
+    --rt-color-state-error-text: var(--mat-sys-error, var(--rt-mat-red-100));
+    --rt-color-state-info: var(--mat-sys-primary, var(--rt-mat-blue-100));
+    --rt-color-state-info-bg: var(--mat-sys-primary-container, var(--rt-mat-blue-20));
 
     /* Рельса шагов */
     --rt-color-stepper-track: var(--rt-mat-neutral-30);
