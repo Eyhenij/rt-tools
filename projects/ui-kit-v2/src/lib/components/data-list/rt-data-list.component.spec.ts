@@ -6,7 +6,8 @@ import { EFilterOperatorType, IFilterModel, IPageModel } from '@rt-tools/utils';
 import { provideRtKitLabels, TRtKitLabelKey, TRtKitLabelParams } from '../../i18n';
 import { createRtFixture, el, qa, textOf } from '../../../testing/rt-kit-testing';
 import { RtDataTableConfigService } from '../data-table/rt-data-table-config.service';
-import { ERtDataTableColumnType, IRtDataTable } from '../data-table/rt-data-table.model';
+import { ERtDataTableColumnType, ERtDataTableFilterType, IRtDataTable } from '../data-table/rt-data-table.model';
+import { IRtInput } from '../input/rt-input.model';
 import { RtDataListComponent } from './rt-data-list.component';
 
 interface IEntity extends Record<string, unknown> {
@@ -23,6 +24,7 @@ const COLUMNS: Array<IRtDataTable.Column<IEntity>> = [
         type: ERtDataTableColumnType.TEXT,
         copyable: false,
         filterable: true,
+        filterType: ERtDataTableFilterType.TEXT,
         header: { align: 'left', label: 'Название' },
     },
 ];
@@ -69,7 +71,9 @@ const PAGE: IPageModel = { pageNumber: 1, pageSize: 10, totalCount: 0, hasPrev: 
             [currentSortModel]="null"
             [filterModel]="filters()"
             [loading]="loading()"
-            [fetching]="fetching()" />
+            [fetching]="fetching()"
+            [appearance]="appearance()"
+            [filterAppearance]="filterAppearance()" />
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [RtDataListComponent],
@@ -79,6 +83,8 @@ class DataListHostComponent {
     public readonly filters: WritableSignal<Array<IFilterModel<'title'>>> = signal<Array<IFilterModel<'title'>>>([]);
     public readonly loading: WritableSignal<boolean> = signal(false);
     public readonly fetching: WritableSignal<boolean> = signal(false);
+    public readonly appearance: WritableSignal<IRtInput.Appearance> = signal<IRtInput.Appearance>('outline');
+    public readonly filterAppearance: WritableSignal<IRtInput.Appearance> = signal<IRtInput.Appearance>('outline');
     public readonly page: IPageModel = PAGE;
 }
 
@@ -143,6 +149,26 @@ class SecondListComponent {
 class TwoListsHostComponent {}
 
 describe('RtDataListComponent', () => {
+    it('SC-UKV-354 — вид поиска и вид полей отбора задаются порознь и доходят до полей', async (): Promise<void> => {
+        const fixture: ComponentFixture<DataListHostComponent> = await setup((host: DataListHostComponent): void => {
+            host.rows.set(ROWS);
+        });
+        const isFill: (anchor: string) => boolean | undefined = (anchor: string): boolean | undefined =>
+            (qa(fixture, anchor)?.nativeElement as HTMLElement | undefined)?.className.includes('--appearance--fill');
+
+        expect([isFill('data-list-search'), isFill('data-table-filter-input')]).toEqual([false, false]);
+
+        fixture.componentInstance.appearance.set('fill');
+        fixture.detectChanges();
+
+        expect([isFill('data-list-search'), isFill('data-table-filter-input')]).toEqual([true, false]);
+
+        fixture.componentInstance.filterAppearance.set('fill');
+        fixture.detectChanges();
+
+        expect([isFill('data-list-search'), isFill('data-table-filter-input')]).toEqual([true, true]);
+    });
+
     it('SC-UKV-309 — заглушка стоит только без строк и без условий отбора', async (): Promise<void> => {
         const fixture: ComponentFixture<DataListHostComponent> = await setup();
 

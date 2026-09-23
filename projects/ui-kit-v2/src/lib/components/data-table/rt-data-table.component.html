@@ -55,6 +55,7 @@
                                     [defaultFilterOperator]="column.defaultFilterOperator"
                                     [filterOperators]="column.filterOperators"
                                     [filterSelectOptions]="column.filterSelectOptions"
+                                    [appearance]="filterAppearance()"
                                     (filterChange)="onFilterChange($event)" />
                             }
                         </th>

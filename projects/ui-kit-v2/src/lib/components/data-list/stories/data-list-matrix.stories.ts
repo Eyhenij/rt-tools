@@ -28,6 +28,9 @@ export const Pagination: TStory = { args: { part: 'pagination' } };
 
 export const Filters: TStory = { args: { part: 'filters' } };
 
+/** Вид `fill` у поиска и полей отбора; вид `outline` показывает история строки отбора. */
+export const Appearance: TStory = { args: { part: 'appearance' } };
+
 /** «Отметить все», счётчик вместо него и выбор по одной. */
 export const Selection: TStory = { args: { part: 'selection' } };
 

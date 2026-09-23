@@ -13,6 +13,7 @@ import {
 import { IFilterModel, IPageModel, ISortModel, TNullable } from '@rt-tools/utils';
 
 import { RtDataTableConfigService } from '../../../data-table/rt-data-table-config.service';
+import { IRtInput } from '../../../input/rt-input.model';
 import { IRtDataTable } from '../../../data-table/rt-data-table.model';
 import { ITestDataTableRow } from '../../../data-table/stories/component/test-data-table.rows';
 import { RtDataListComponent } from '../../rt-data-list.component';
@@ -38,6 +39,8 @@ import { RtDataListSelectorsDirective } from '../../rt-data-list-selectors.direc
             [currentSortModel]="sort()"
             [filterModel]="filters()"
             [isFiltersShown]="filtersShown()"
+            [appearance]="appearance()"
+            [filterAppearance]="appearance()"
             [loading]="loading()"
             [fetching]="fetching()"
             [isSelectAllSelectorShown]="selectAllShown()"
@@ -59,6 +62,7 @@ export class TestRtDataListCellComponent implements OnInit {
     public readonly page: InputSignal<IPageModel> = input.required<IPageModel>();
     public readonly sort: InputSignal<TNullable<ISortModel<'title'>>> = input<TNullable<ISortModel<'title'>>>(null);
     public readonly filters: InputSignal<Array<IFilterModel<'title' | 'city'>>> = input<Array<IFilterModel<'title' | 'city'>>>([]);
+    public readonly appearance: InputSignal<IRtInput.Appearance> = input<IRtInput.Appearance>('outline');
     public readonly filtersShown: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });

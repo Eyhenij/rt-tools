@@ -25,6 +25,7 @@ import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { RT_KIT_LABELS, TRtKitLabelMap, rtKitLabel } from '../../i18n';
 import { RtFormControlBase } from '../form-control/rt-form-control.base';
+import { IRtInput } from '../input/rt-input.model';
 import { RtIconComponent, IRtIcon } from '../icon';
 import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
 import { RtInputComponent } from '../input/rt-input.component';
@@ -90,6 +91,7 @@ function nextPanelId(): number {
         '[class.rt-select--readonly]': 'isReadonly()',
         '[class.rt-select--invalid]': 'isInvalid()',
         '[class.rt-select--borderless]': '!bordered()',
+        '[class.rt-select--appearance--fill]': "appearance() === 'fill'",
         '[class.rt-select--size--sm]': "size() === 'sm'",
         '[class.rt-select--size--lg]': "size() === 'lg'",
         '[class.rt-select--with-icon-left]': '!!iconLeft()',
@@ -148,6 +150,9 @@ export class RtSelectComponent<TValue> extends RtFormControlBase<TValue | null> 
         label: this.selectedLabel(),
         isDisabled: this.isDisabled(),
     }));
+
+    /** Вид рамки: `outline` — рамка со всех сторон, `fill` — залитое поле с чертой снизу. */
+    public readonly appearance: InputSignal<IRtInput.Appearance> = input<IRtInput.Appearance>('outline');
 
     public readonly displayText: Signal<string> = computed((): string => this.selectedLabel());
 

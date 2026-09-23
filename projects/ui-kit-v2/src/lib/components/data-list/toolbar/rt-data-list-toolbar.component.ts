@@ -22,6 +22,7 @@ import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Observable, timer } from 'rxjs';
 import { debounce, distinctUntilChanged, map, tap } from 'rxjs/operators';
+import { IRtInput } from '../../input/rt-input.model';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 import { TNullable } from '@rt-tools/utils';
@@ -108,6 +109,9 @@ export class RtDataListToolbarComponent {
     );
 
     protected readonly hasSelectors: Signal<boolean> = computed(() => this.isMultiSelect() || !!this.toolbarSelectorsTpl());
+
+    /** Вид поля поиска: `outline` — рамка со всех сторон, `fill` — залитое поле с чертой снизу. */
+    public readonly searchAppearance: InputSignal<IRtInput.Appearance> = input<IRtInput.Appearance>('outline');
 
     public readonly isFiltersShown: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
         transform: booleanAttribute,

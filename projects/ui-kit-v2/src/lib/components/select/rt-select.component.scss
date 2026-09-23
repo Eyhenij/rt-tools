@@ -14,6 +14,16 @@
             border-color: transparent;
         }
 
+        /* Вид «fill» — залитое поле с чертой снизу, как у материального поля первого кита.
+           Объявлен до блоков состояний: фокус, ошибка и «только чтение» идут ниже и
+           перекрывают его рамку. */
+        &--appearance--fill &__trigger {
+            border-color: transparent;
+            border-radius: var(--rt-input-radius) var(--rt-input-radius) 0 0;
+            border-bottom-color: var(--rt-input-color-border);
+            background-color: var(--rt-color-bg-subtle);
+        }
+
         &__trigger {
             display: flex;
             width: 100%;

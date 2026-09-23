@@ -15,7 +15,7 @@ import { RtSelectComponent } from '../../rt-select.component';
 import { IRtSelect } from '../../rt-select.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TSelectMatrixPart = 'size' | 'filling' | 'bordered' | 'states' | 'presets' | 'themes' | 'panel';
+export type TSelectMatrixPart = 'size' | 'filling' | 'bordered' | 'appearance' | 'states' | 'presets' | 'themes' | 'panel';
 
 /** Что показывает открытая панель: обычный список, список с фильтром, пустой набор. */
 export type TSelectPanelCase = 'options' | 'filter' | 'empty';
@@ -32,6 +32,11 @@ interface ISelectBorderedCase {
     readonly name: string;
     readonly bordered: boolean;
     readonly control: FormControl<string | null>;
+}
+
+/** Два вида материального поля: рамка со всех сторон и залитое поле с чертой снизу. */
+interface ISelectAppearanceCase extends Omit<ISelectBorderedCase, 'bordered'> {
+    readonly appearance: IRtInput.Appearance;
 }
 
 /** Состояние, которое задаётся не псевдоклассом, а значением, формой или обёрткой. */
@@ -131,6 +136,22 @@ function invalid(): FormControl<string | null> {
                                     [bordered]="borderedCase.bordered"
                                     [options]="options"
                                     [formControl]="borderedCase.control" />
+                            </ng-template>
+                        </app-story-row>
+                    </ng-template>
+                </app-story-presets>
+            }
+
+            @case ('appearance') {
+                <app-story-presets caption="Вид поля в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="appearanceCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
+                            <ng-template let-appearanceCase>
+                                <rt-select
+                                    [ariaLabel]="appearanceCase.name"
+                                    [appearance]="appearanceCase.appearance"
+                                    [options]="options"
+                                    [formControl]="appearanceCase.control" />
                             </ng-template>
                         </app-story-row>
                     </ng-template>
@@ -286,6 +307,11 @@ export class TestRtSelectMatrixComponent {
     public readonly borderedCases: readonly ISelectBorderedCase[] = [
         { name: 'с рамкой', bordered: true, control: chosen('msk') },
         { name: 'без рамки', bordered: false, control: chosen('msk') },
+    ];
+
+    public readonly appearanceCases: readonly ISelectAppearanceCase[] = [
+        { name: 'outline', appearance: 'outline', control: chosen('msk') },
+        { name: 'fill', appearance: 'fill', control: chosen('msk') },
     ];
 
     public readonly stateCases: readonly ISelectStateCase[] = [

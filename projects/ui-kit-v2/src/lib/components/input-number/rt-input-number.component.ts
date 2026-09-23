@@ -22,6 +22,7 @@ import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { RT_KIT_LABELS, TRtKitLabelMap } from '../../i18n';
 import { RtFormControlBase } from '../form-control/rt-form-control.base';
+import { IRtInput } from '../input/rt-input.model';
 import { RtIconComponent, IRtIcon } from '../icon';
 import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
 
@@ -133,6 +134,7 @@ function formatNumber(
         '[class.rt-input-number--invalid]': 'isInvalid()',
         '[class.rt-input-number--readonly]': 'isReadonly()',
         '[class.rt-input-number--borderless]': '!bordered()',
+        '[class.rt-input-number--appearance--fill]': "appearance() === 'fill'",
         '[class.rt-input-number--size--sm]': "size() === 'sm'",
         '[class.rt-input-number--size--lg]': "size() === 'lg'",
         '(mousedown)': 'onHostMousedown($event)',
@@ -166,6 +168,9 @@ export class RtInputNumberComponent extends RtFormControlBase<number | null> {
     protected readonly hasValue: Signal<boolean> = computed(
         (): boolean => this.displayValue() !== '' && this.value() !== null && this.value() !== 0
     );
+
+    /** Вид рамки: `outline` — рамка со всех сторон, `fill` — залитое поле с чертой снизу. */
+    public readonly appearance: InputSignal<IRtInput.Appearance> = input<IRtInput.Appearance>('outline');
 
     public readonly displayText: Signal<string> = computed((): string => this.displayValue());
 
