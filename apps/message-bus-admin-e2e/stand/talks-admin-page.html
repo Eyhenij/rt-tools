@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ru">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Админка потребителя с разделом переписок</title>
+        <style>
+            /*
+             * Стили админки нарочно красят всё подряд: так видно, что до страницы переписок они не
+             * достают. Страница стоит в рамке, и ни эти правила туда, ни её правила сюда не идут.
+             */
+            body {
+                margin: 0;
+                padding: 24px;
+                background: #f5f3ff;
+                color: #4c1d95;
+                font-family: Georgia, 'Times New Roman', serif;
+            }
+
+            button {
+                padding: 16px;
+                border: 4px dashed #7c3aed;
+                background: #ddd6fe;
+                color: #4c1d95;
+                font-family: inherit;
+                font-size: 20px;
+            }
+
+            rt-chat-talks {
+                display: block;
+                block-size: 32rem;
+                margin-block-start: 24px;
+                border: 1px solid #c4b5fd;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Админка потребителя</h1>
+        <p>Эта админка о переписках ничего не знает: она подключает один скрипт и ставит один тег.</p>
+        <button type="button">Кнопка админки</button>
+
+        <script src="__SERVICE__/talks.js"></script>
+        <script>
+            /*
+             * Ключ площадки приезжает в адресе страницы — тем же способом, что и на странице с
+             * виджетом. Точка выдачи подписи стоит на этом же адресе: её держит сама админка.
+             */
+            const talks = document.createElement('rt-chat-talks');
+
+            talks.setAttribute('site', new URLSearchParams(location.search).get('site') ?? '');
+            talks.setAttribute('sign-url', '/internal/chat-sign');
+            document.body.append(talks);
+        </script>
+    </body>
+</html>

@@ -12,7 +12,15 @@
  * Решения — годность реплики, адрес сервиса, слово о часах — лежат рядом чистыми функциями и
  * проверяются вызовом: внутри элемента их проверял бы только поднятый браузер.
  */
-import { CHAT_SIDE_VISITOR, ERefusal, IChatMessageRow, IChatSiteLookRow, IPage } from '@rt/message-bus-common';
+import {
+    CHAT_SIDE_VISITOR,
+    CHAT_TAG_SERVICE_ATTRIBUTE,
+    CHAT_TAG_SITE_ATTRIBUTE,
+    ERefusal,
+    IChatMessageRow,
+    IChatSiteLookRow,
+    IPage,
+} from '@rt/message-bus-common';
 
 import { askOwnFeed, askSiteLook, IWidgetSigns, sendRemark, startTalk, streamAddress, WidgetRefusal } from './chat-widget.api';
 import {
@@ -28,10 +36,6 @@ import { WIDGET_WORDS } from './chat-widget.words';
 
 /** Имя тега: им страница потребителя ставит виджет. */
 export const WIDGET_TAG: string = 'rt-chat-widget';
-
-/** Признак тега с ключом площадки и признак с адресом сервиса. */
-const SITE_ATTRIBUTE: string = 'site';
-const SERVICE_ATTRIBUTE: string = 'service';
 
 /** Кнопка сворачивания: она стоит в обеих раскладках панели. */
 function closeButton(): string {
@@ -104,9 +108,9 @@ export class ChatWidgetElement extends HTMLElement {
 
     public connectedCallback(): void {
         this.#signs = {
-            service: widgetServiceOrigin(this.getAttribute(SERVICE_ATTRIBUTE) ?? '', SCRIPT_SOURCE),
-            site: this.getAttribute(SITE_ATTRIBUTE) ?? '',
-            visitor: read(widgetStorageKey(this.getAttribute(SITE_ATTRIBUTE) ?? '')),
+            service: widgetServiceOrigin(this.getAttribute(CHAT_TAG_SERVICE_ATTRIBUTE) ?? '', SCRIPT_SOURCE),
+            site: this.getAttribute(CHAT_TAG_SITE_ATTRIBUTE) ?? '',
+            visitor: read(widgetStorageKey(this.getAttribute(CHAT_TAG_SITE_ATTRIBUTE) ?? '')),
             conversation: '',
         };
 

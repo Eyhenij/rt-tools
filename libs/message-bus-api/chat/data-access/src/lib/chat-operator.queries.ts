@@ -120,12 +120,19 @@ export async function conversationsPage(
     return { total, rows: listed, page: asked.page, size: asked.size };
 }
 
+/** Переписка своего сайта, как её видит отвечающий: чья она и в каком состоянии. */
+export interface IChatOwnedTalk {
+    readonly id: string;
+    readonly siteId: string;
+    readonly state: string;
+}
+
 /** Переписка одного из сайтов оператора. Пусто — её нет или она чужая: ответ один на две причины. */
 export async function conversationOfSites(
     prisma: PrismaService,
     sites: readonly string[],
     conversationId: string
-): Promise<{ id: string; siteId: string; state: string } | null> {
+): Promise<IChatOwnedTalk | null> {
     if (sites.length === 0) {
         return null;
     }

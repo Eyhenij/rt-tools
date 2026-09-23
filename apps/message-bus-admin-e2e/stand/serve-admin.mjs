@@ -10,6 +10,7 @@
  * прямой ссылкой, и раздача, ответившая на него отказом, показала бы приёмник неповинным в
  * поломке, которой нет.
  */
+import { createHmac } from 'node:crypto';
 import { createReadStream, existsSync, readFile, statSync } from 'node:fs';
 import { createServer, request as httpRequest } from 'node:http';
 import { extname, join, normalize } from 'node:path';
@@ -32,6 +33,26 @@ const BROWSER_DIR = join(ROOT, 'dist/apps/message-bus-admin/browser');
  */
 const WIDGET_FILE = join(ROOT, 'dist/apps/chat-widget/widget.js');
 const WIDGET_PAGE = fileURLToPath(new URL('./widget-page.html', import.meta.url));
+
+/**
+ * Встраиваемая страница переписок, её скрипт установки и админка потребителя.
+ *
+ * Страница отдаётся с адреса админки стенда: сайт чата принимает обращения с адресов своего
+ * списка, и она стоит там же, откуда приехал скрипт. Админка потребителя — на чужом порту: ради
+ * неё работа и затеяна, и для браузера это другой адрес.
+ */
+const TALKS_SCRIPT = join(ROOT, 'dist/apps/chat-talks-embed/talks.js');
+const TALKS_DIR = join(ROOT, 'dist/apps/chat-talks-page/browser');
+const TALKS_ADMIN_PAGE = fileURLToPath(new URL('./talks-admin-page.html', import.meta.url));
+
+/** Путь, по которому у стенда лежит страница переписок. Тот же, что у скрипта установки умолчанием. */
+const TALKS_PATH = '/talks/';
+
+/** Адрес админки потребителя на чужом порту: на ней стоит встроенный раздел переписок. */
+const EMBED_PAGE_PATH = '/embedded-talks';
+
+/** Адрес точки потребителя, которая выдаёт подпись входа. */
+const SIGN_PATH = '/internal/chat-sign';
 
 /**
  * Страница чужого адреса: она поднимается своим портом, и для браузера это другой адрес.
@@ -100,6 +121,32 @@ function sendFile(response, path) {
     createReadStream(path).pipe(response);
 }
 
+/** Файл страницы переписок по адресу запроса; пусто — такого файла нет, и адрес ведёт в страницу. */
+function talksFileOf(url) {
+    const tail = normalize(decodeURIComponent(new URL(url, 'http://localhost').pathname.slice(TALKS_PATH.length)));
+    const path = join(TALKS_DIR, tail);
+
+    if (!path.startsWith(TALKS_DIR) || !existsSync(path) || !statSync(path).isFile()) {
+        return '';
+    }
+
+    return path;
+}
+
+/**
+ * Подпись входа: её считает сервер потребителя своей тайной площадки.
+ *
+ * Здесь она считается тем же приёмом, каким её ждёт сервис: ключ площадки и минута, склеенные
+ * точкой. Тайна лежит на этой стороне и в страницу не попадает — образец ровно об этом.
+ */
+function sendSignature(response) {
+    const at = Date.now();
+    const signature = createHmac('sha256', CHAT.embed.secret).update(`${CHAT.embed.key}.${at}`).digest('hex');
+
+    response.writeHead(200, { 'content-type': MEDIA['.json'] });
+    response.end(JSON.stringify({ at, signature }));
+}
+
 /**
  * Проброс запроса приёмнику.
  *
@@ -160,6 +207,18 @@ createServer((request, response) => {
         return;
     }
 
+    if (url === '/talks.js') {
+        sendFile(response, TALKS_SCRIPT);
+
+        return;
+    }
+
+    if (url.startsWith(TALKS_PATH)) {
+        sendFile(response, talksFileOf(url) || join(TALKS_DIR, 'index.html'));
+
+        return;
+    }
+
     const file = fileOf(url);
 
     sendFile(response, file || join(BROWSER_DIR, 'index.html'));
@@ -174,16 +233,25 @@ createServer((request, response) => {
  * которого приехал сам скрипт, — и обращения уйдут на тот адрес, на который они и должны уйти.
  */
 createServer((request, response) => {
-    // Кроме самой страницы, по этому адресу нет ничего: обращение виджета, ушедшее сюда вместо
-    // сервиса, иначе получило бы страницу вместо ответа и выглядело бы не отказом, а пустотой.
-    if ((request.url ?? '/').split('?')[0] !== '/') {
-        response.writeHead(404, { 'content-type': 'text/plain; charset=utf-8' });
-        response.end('на этом адресе стоит одна страница');
+    const path = (request.url ?? '/').split('?')[0];
+
+    // Точка выдачи подписи: она стоит на стороне потребителя, и тайна площадки лежит здесь же.
+    if (path === SIGN_PATH) {
+        sendSignature(response);
 
         return;
     }
 
-    readFile(FOREIGN_PAGE, 'utf8', (fault, page) => {
+    // Кроме двух страниц, по этому адресу нет ничего: обращение виджета, ушедшее сюда вместо
+    // сервиса, иначе получило бы страницу вместо ответа и выглядело бы не отказом, а пустотой.
+    if (path !== '/' && path !== EMBED_PAGE_PATH) {
+        response.writeHead(404, { 'content-type': 'text/plain; charset=utf-8' });
+        response.end('на этом адресе стоят две страницы');
+
+        return;
+    }
+
+    readFile(path === EMBED_PAGE_PATH ? TALKS_ADMIN_PAGE : FOREIGN_PAGE, 'utf8', (fault, page) => {
         if (fault) {
             response.writeHead(500, { 'content-type': 'text/plain; charset=utf-8' });
             response.end('страницы чужого адреса нет на месте');

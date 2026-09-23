@@ -80,11 +80,31 @@ process.on('SIGINT', () => {
 
 await run(
     'npx',
-    ['nx', 'run-many', '-t', 'build', '-p', 'message-bus', 'message-bus-admin', 'chat-widget', '--configuration', 'production'],
+    [
+        'nx',
+        'run-many',
+        '-t',
+        'build',
+        '-p',
+        'message-bus',
+        'message-bus-admin',
+        'chat-widget',
+        'chat-talks-embed',
+        '--configuration',
+        'production',
+    ],
     {
         NX_SKIP_NX_INSTALL_CHECK: 'true',
     }
 );
+
+/*
+ * Страница переписок собирается отдельно: раздача стенда отдаёт её из подпути, и адреса её файлов
+ * считаются от него. Собранная с корневым началом, она просит их у корня — то есть у админки.
+ */
+await run('npx', ['nx', 'build', 'chat-talks-page', '--configuration', 'production', '--base-href', '/talks/'], {
+    NX_SKIP_NX_INSTALL_CHECK: 'true',
+});
 
 await prepareDatabase();
 
