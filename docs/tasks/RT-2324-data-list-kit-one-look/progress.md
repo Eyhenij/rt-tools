@@ -5,14 +5,14 @@
 Rewritten by every session, not appended to.
 
 - **State:** `этап-идёт`
-- **Stage:** 2 of 5 — The theme stories do not overlap (reopened; stage 4 begun in parallel)
+- **Stage:** 4 of 5 — The settings panel content looks as in the first kit
 - **Done:** stages 1–3 committed. Stage 4 begun in `3937433fe` and not checked: the settings
   panel markup and the pure move and toggle functions are in, the plaque styles are not written, the
   panel spec is not rewritten. The toolbar fix is half done — see the decision about `min-width`.
-- **Next step:** make the list toolbar fit a 352 px pane without `min-width: 0` on the right bar of
-  `rt-toolbar` — trace what holds 256 px with the measuring script, the search likely; then write the
-  plaque styles and the panel spec, run `pnpm exec nx test @rt-tools/ui-kit-v2`, then
-  `node tools/visual-gate.mjs ui-kit-v2` and re-take the diverged frames one by one after looking.
+- **Next step:** run `node tools/visual-gate.mjs ui-kit-v2` on the tip and read which frames moved
+  (expected: `Toolbar → Fill` back to its reference; `DataList → Narrow`, `Themes`, `Settings`
+  changed for the better); then the stage 4 plaque styles and the panel spec; then the two field
+  looks.
 - **Uncommitted:** nothing.
 - **Waiting for the owner:** no.
 - **Not pushed:** the branch is local only; the push gate would refuse it on the snapshots and the panel spec.
@@ -26,11 +26,11 @@ Rewritten by every session, not appended to.
 - [x] 1.2 The icons of both kits listed glyph against glyph
 - [x] 1.3 The settings panel of both kits compared element by element
 - [x] 1.4 The agreement written in `proposed/data-list-kit-one-look`
-- [>] 2.1 The pane of the theme wrapper keeps its content inside
-- [ ] 2.2 The fix measured on a narrow canvas
+- [x] 2.1 The pane of the theme wrapper keeps its content inside
+- [x] 2.2 The fix measured on a narrow canvas
 - [x] 3.1 Missing glyphs drawn into the kit set
 - [x] 3.2 The family's icon mapping switched to them
-- [ ] 4.1 The panel content rebuilt by the first kit's layout inside `rt-aside`
+- [>] 4.1 The panel content rebuilt by the first kit's layout inside `rt-aside`
 - [ ] 4.2 The tests of the panel brought to the new markup
 - [ ] 5.1 The family's references re-taken after being looked at
 - [ ] 5.2 The pairs written into `tools/kit-shot-pairs.json`
@@ -91,6 +91,9 @@ Rewritten by every session, not appended to.
   four frames — `Toolbar → Fill` for the worse (the button past the edge), `DataList → Narrow`,
   `Themes`, `Settings` for the better (the search no longer leaves the box).
 - Stage 4 begun in `3937433fe`; the branch is local only.
+- Stage 2 closed by `contain: inline-size` on the list search: the input's own width had held the
+  right bar at 256 px. Measured by the image browser on the built showcase: 0 px past the pane for
+  both theme stories at 600, 900 and 1280 px, with the shared bar keeping its min-content width.
 
 ## Handover of the session
 
@@ -121,8 +124,7 @@ The progress and the plan come by the hook. The grill lies next to them; the agr
 
 ### Done and the next step
 
-Done: stages 1 and 3; stage 2 reopened; stage 4 begun. Next: the toolbar fit without
-`min-width: 0` on the shared bar, then the stage 4 styles (rules for `columns` and `column-label`
+Done: stages 1–3; stage 4 begun. Next: the snapshot run on the tip, then the stage 4 styles (rules for `columns` and `column-label`
 are missing — the style check before sending names them) and the panel spec, then the snapshot run.
 
 ### What to keep in mind
