@@ -1,0 +1,15 @@
+<app-story-row caption="Местный кусок темы" slotWidth="16rem" [items]="items" [itemLabel]="labelOf">
+    <ng-template let-item>
+        <div class="app-theme-scope__box" [rtTheme]="item.outer">
+            <span class="app-theme-scope__text">Снаружи</span>
+            <!-- eslint-disable-next-line @angular-eslint/template/elements-content -->
+            <button rtButton label="Сохранить" size="sm"></button>
+
+            <div class="app-theme-scope__box app-theme-scope__box--inner" [rtTheme]="item.inner">
+                <span class="app-theme-scope__text">Внутри</span>
+                <!-- eslint-disable-next-line @angular-eslint/template/elements-content -->
+                <button rtButton label="Сохранить" size="sm" appearance="outlined"></button>
+            </div>
+        </div>
+    </ng-template>
+</app-story-row>

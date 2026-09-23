@@ -29,7 +29,7 @@ ref.afterClosed().subscribe((result?: ITour): void => …);
 | ---------------------------------------- | ----------------------------------------- |
 | `data`                                   | `null` — доезжает токеном `RT_ASIDE_DATA` |
 | `position`                               | `'right'`                                 |
-| `closeOnBackdropClick` / `closeOnEscape` | `true`                                    |
+| `closeOnBackdropClick` / `closeOnEscape` | `true`; второе — из настроек кита         |
 | `backdropClass` / `panelClass`           | `rt-aside-backdrop` / `rt-aside-overlay`  |
 
 ## Главное, что нужно знать

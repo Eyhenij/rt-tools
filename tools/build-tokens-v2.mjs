@@ -57,11 +57,44 @@ const PREAMBLE = {
 
    The preset rule is declared before the dark theme on purpose: the root signs have equal
    specificity, and the order in the file is the only thing by which the dark theme wins over the preset. */`,
+
+    scope: `/* A local piece of the theme: the sign answers on an ordinary node too, not at the root of the page
+   alone. A dark card inside a light page, a light card inside a dark one, and either of them inside
+   a page of the styling set.
+
+   Every rule here declares the whole set of the assignments on one node rather than only the
+   difference from the page. That is not a repetition: the value of a property that refers to another
+   one is resolved where it is declared, not where it is read. A node carrying only the difference
+   inherits the rest from the root already resolved — by the values of the root — and the piece comes
+   out half of one theme and half of the other, whole and green in the frame.
+
+   The root is cut out of every rule by \`:not(:root)\`: there the layers already lie in the right
+   order, and laying the base over them once more would wipe the set on a dark page.
+
+   The file stands last in the aggregator: its rules are stronger than the root ones by their place,
+   not by specificity, and a piece must win over the page around it. */`,
 };
 
 const COARSE_NOTE = `/* On touch devices an input is not smaller than 16px: WebKit (all of iOS, Chrome included)
    zooms the page on focusing a field with font-size < 16px — hence the horizontal
    shift of the layout. The desktop keeps the dense 14px. */`;
+
+/* The sign of the theme answers on an ordinary node too, not at the root of the page alone: that is
+   what a local piece of the theme stands on — a dark card inside a light page and a light card
+   inside a dark one. The whole set goes over together, because a piece repainting the ground alone
+   reads as a defect of the layout at the first shadow left from the other theme.
+
+   The properties of a custom property are inherited, so a node carrying the sign wins over what it
+   inherited from the root, and the nearer sign wins over the farther one by the same rule. */
+const SCOPE_NOTE = {
+    light: `/* A light piece inside a page of another theme. */`,
+    dark: `/* A dark piece inside a page of another theme. The light base goes under the dark answers, exactly
+   as it lies under them at the root: a piece carrying the dark answers alone would inherit the rest
+   from the root already resolved by the light values, and come out half dark. */`,
+    preset: `/* A piece inside a page of the styling set, and a piece carrying the set itself. The set lies over
+   the light base and under the dark answers — the same order the root has, and there the order is
+   what the dark theme wins over the set by. */`,
+};
 
 const errors = [];
 function fail(message) {
@@ -165,6 +198,19 @@ const files = {
         `${BANNER}\n\n${PREAMBLE.material}\n\n@mixin rt-preset-material-tokens {\n${renderNodes(material)}\n}\n\n` +
         `:root[data-preset='material'],\n[data-preset='material'],\n.rt-preset-material {\n` +
         `    @include rt-preset-material-tokens;\n}\n`,
+
+    [`${stylesDir}/_theme-scope.scss`]:
+        `${BANNER}\n\n${PREAMBLE.scope}\n\n@use './semantic' as semantic;\n@use './theme-dark' as dark;\n` +
+        `@use './preset-material' as material;\n\n` +
+        `${SCOPE_NOTE.light}\n[data-theme='light']:not(:root) {\n    @include semantic.rt-theme-light-tokens;\n}\n\n` +
+        `${SCOPE_NOTE.dark}\n[data-theme='dark']:not(:root) {\n    @include semantic.rt-theme-light-tokens;\n` +
+        `    @include dark.rt-theme-dark-tokens;\n}\n\n` +
+        `${SCOPE_NOTE.preset}\n[data-preset='material'][data-theme='light']:not(:root),\n` +
+        `[data-preset='material'] [data-theme='light']:not(:root) {\n` +
+        `    @include semantic.rt-theme-light-tokens;\n    @include material.rt-preset-material-tokens;\n}\n\n` +
+        `[data-preset='material'][data-theme='dark']:not(:root),\n[data-preset='material'] [data-theme='dark']:not(:root) {\n` +
+        `    @include semantic.rt-theme-light-tokens;\n    @include material.rt-preset-material-tokens;\n` +
+        `    @include dark.rt-theme-dark-tokens;\n}\n`,
 
     [typesFile]: renderTypes(),
 };
