@@ -18,6 +18,7 @@ import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 import { IPageModel } from '@rt-tools/utils';
 
 import { RT_KIT_LABELS, TRtKitLabelMap, TRtKitLabelParams, rtKitLabel } from '../../i18n';
+import { IRtIcon } from '../icon/rt-icon.model';
 import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
 import { RtSelectComponent } from '../select/rt-select.component';
 import { IRtSelect } from '../select/rt-select.model';
@@ -78,6 +79,12 @@ export class RtPaginationComponent {
     public readonly pageModel: InputSignal<IPageModel> = input.required<IPageModel>();
 
     public readonly perPageOptions: InputSignal<ReadonlyArray<number>> = input<ReadonlyArray<number>>([20, 50, 100]);
+
+    /** Значок стрелки «назад»: вид первого кита рисует стрелку, а не шеврон. */
+    public readonly prevIcon: InputSignal<IRtIcon.Name> = input<IRtIcon.Name>('chevron-left');
+
+    /** Значок стрелки «вперёд». */
+    public readonly nextIcon: InputSignal<IRtIcon.Name> = input<IRtIcon.Name>('chevron-right');
 
     public readonly loading: InputSignalWithTransform<boolean, unknown> = input(false, {
         transform: booleanAttribute,

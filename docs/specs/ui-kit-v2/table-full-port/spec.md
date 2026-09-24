@@ -292,10 +292,10 @@ The words are the first kit's; the kit's dictionary gives them in all eight lang
 - **The bar is hidden while all records fit into the smallest offered page size.**
 - **The page sizes offered are 10, 20, 40 and 50, each only while half of it does not exceed the
   number of records, and the current size always.**
-- **Up to six pages are all shown; beyond that the first, the last and the neighbours of the
-  current one are shown with dividers between them.**
+- **The first, the last and the neighbours of the current page are shown, with gaps between
+  them.**
 - **The arrows and the numbers ask for a page only when there is one to go to.**
-- **An arrow or a page number asks for its page on any key pressed on it, Tab included.**
+- **An arrow or a page number is a button: it asks for its page on a click, Enter or Space.**
 - **A change of the page size asks for the page that keeps the person at the same distance from
   the end of the list.**
 
@@ -303,8 +303,8 @@ The words are the first kit's; the kit's dictionary gives them in all eight lang
 
 - **Below the kit's threshold the table keeps its columns and scrolls sideways; it never turns into
   cards.**
-- **Below the threshold no hint of the family is shown, the pagination bar shows only the current
-  number, and the toolbar puts the search on a line of its own.**
+- **Below the threshold no hint of the family is shown, the pagination bar narrower than 460 px shows
+  «page N of M» between the arrows, and the toolbar puts the search on a line of its own.**
 
 ## What is out of scope
 
@@ -467,6 +467,9 @@ table that applied it last decides it for all.
 
 ## History of changes
 
+- 24 September 2026 — task RT-2332: the list draws the kit's `rt-pagination` instead of its own
+  bar, after «нужно все чтобы таблица юзала уже компоненты второго кита». The page numbers and the
+  keys follow the kit's bar. The narrow bar shows «page N of M».
 - 23 September 2026 — task RT-2324 by the owner's remarks on the showcase: the list's settings
   panel in the first kit's look, the four-arrow handle, the toolbar yielding width, the two field
   looks, the paired frames; scenarios `SC-UKV-351`–`SC-UKV-354`.

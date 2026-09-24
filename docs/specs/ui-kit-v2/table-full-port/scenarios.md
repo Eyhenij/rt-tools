@@ -365,14 +365,14 @@ Covered: `projects/ui-kit-v2/src/lib/components/data-list/toolbar/rt-data-list-t
 Given a page model of 8 records and the page size 10
 When the list is drawn
 Then no pagination bar is drawn
-Covered: `projects/ui-kit-v2/src/lib/components/data-list/pagination/rt-data-list-pagination.component.spec.ts`.
+Covered: `projects/ui-kit-v2/src/lib/components/data-list/rt-data-list.pagination.spec.ts`.
 
 ### SC-UKV-312 — a change of the page size keeps the distance from the end
 
 Given 100 records, page size 10 and the eighth page shown
 When a person chooses the page size 20
 Then the application is asked for page 4 of size 20
-Covered: `projects/ui-kit-v2/src/lib/components/data-list/pagination/rt-data-list-pagination.component.spec.ts`.
+Covered: `projects/ui-kit-v2/src/lib/components/data-list/rt-data-list.pagination.spec.ts`.
 
 ### SC-UKV-313 — a narrow screen scrolls the table sideways instead of drawing cards
 

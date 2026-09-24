@@ -40,6 +40,7 @@ export interface IRtIconMaterialEntry {
 export const iconMaterialMap: readonly IRtIconMaterialEntry[] = [
     { from: 'add', to: 'ico-plus', why: 'простой плюс есть только в своей рисовке — во фрейме плюс лишь в круге и в составных' },
     { from: 'arrow_back', to: 'arrow-left', why: 'стрелка влево, один в один' },
+    { from: 'arrow_forward', to: 'arrow-right', why: 'стрелка вправо, один в один' },
     { from: 'backup', to: 'cloud-upload', why: 'у Material backup — облако со стрелкой вверх, это оно и есть' },
     { from: 'block', to: 'ban', why: 'круг с перечёркиванием, один в один' },
     { from: 'chevron_left', to: 'chevron-left', why: SAME_NAME },

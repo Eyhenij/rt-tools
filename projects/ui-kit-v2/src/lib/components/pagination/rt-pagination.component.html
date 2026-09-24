@@ -13,9 +13,9 @@
         <nav rtElem="compact" qa-dataid="pagination-compact" [attr.aria-label]="t().uiPagination">
             <rt-icon-button
                 qa-dataid="pagination-compact-prev"
-                icon="chevron-left"
                 variant="ghost"
                 size="sm"
+                [icon]="prevIcon()"
                 [ariaLabel]="t().uiPrevPage"
                 [tooltip]="t().uiBack"
                 [disabled]="isFirst() || loading()"
@@ -27,9 +27,9 @@
 
             <rt-icon-button
                 qa-dataid="pagination-compact-next"
-                icon="chevron-right"
                 variant="ghost"
                 size="sm"
+                [icon]="nextIcon()"
                 [ariaLabel]="t().uiNextPage"
                 [tooltip]="t().uiForward"
                 [disabled]="isLast() || loading()"
@@ -39,9 +39,9 @@
         <nav rtElem="nav" qa-dataid="pagination-nav" [attr.aria-label]="t().uiPagination">
             <rt-icon-button
                 qa-dataid="pagination-prev"
-                icon="chevron-left"
                 variant="ghost"
                 size="sm"
+                [icon]="prevIcon()"
                 [ariaLabel]="t().uiPrevPage"
                 [tooltip]="t().uiBack"
                 [disabled]="isFirst() || loading()"
@@ -67,9 +67,9 @@
 
             <rt-icon-button
                 qa-dataid="pagination-next"
-                icon="chevron-right"
                 variant="ghost"
                 size="sm"
+                [icon]="nextIcon()"
                 [ariaLabel]="t().uiNextPage"
                 [tooltip]="t().uiForward"
                 [disabled]="isLast() || loading()"

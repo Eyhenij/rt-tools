@@ -41,7 +41,8 @@ import {
 import { IRtDataTable, RT_PRESET_MATERIAL_CLASS, TRtDataTableFilters } from '../data-table/rt-data-table.model';
 import { RtEmptyStateComponent } from '../empty-state/rt-empty-state.component';
 import { RtSpinnerComponent } from '../spinner/rt-spinner.component';
-import { RtDataListPaginationComponent } from './pagination/rt-data-list-pagination.component';
+import { RtPaginationComponent } from '../pagination/rt-pagination.component';
+import { dataListPageAfterSizeChange, dataListPageSizes } from './rt-data-list-pagination.logic';
 import { RtDataListSettingsAsideComponent } from './settings/rt-data-list-settings-aside.component';
 import { RtDataListToolbarComponent } from './toolbar/rt-data-list-toolbar.component';
 import {
@@ -75,7 +76,7 @@ const SCROLLBAR_HIDDEN: string = '0';
     encapsulation: ViewEncapsulation.None,
     imports: [
         // components
-        RtDataListPaginationComponent,
+        RtPaginationComponent,
         RtDataListToolbarComponent,
         RtDataTableComponent,
         RtEmptyStateComponent,
@@ -134,6 +135,9 @@ export class RtDataListComponent<
     protected readonly isPlaceholderShown: Signal<boolean> = computed(() => !this.entities().length && !this.filterModel().length);
 
     protected readonly isFiltersEmpty: Signal<boolean> = computed(() => !this.filterModel().length);
+
+    /** Размеры страницы, которые предлагает полоса: те же, что у первого кита. */
+    protected readonly pageSizes: Signal<number[]> = computed(() => dataListPageSizes(this.pageModel()));
 
     /**
      * Вид семьи. Материальный набор стоит на самом узле, а не на странице: семья выглядит как первый
@@ -299,8 +303,13 @@ export class RtDataListComponent<
         this.filterChange.emit(filterModel);
     }
 
-    protected onPageModelChange(pageModel: Partial<IPageModel>): void {
-        this.pageModelChange.emit(pageModel);
+    protected onPageNumber(pageNumber: number): void {
+        this.pageModelChange.emit({ pageNumber });
+    }
+
+    /** Новый размер страницы: человек остаётся на том же расстоянии от конца списка, как в первом ките. */
+    protected onPageSize(pageSize: number): void {
+        this.pageModelChange.emit(dataListPageAfterSizeChange(this.pageModel(), pageSize));
     }
 
     protected onSearchChange(search: string): void {
