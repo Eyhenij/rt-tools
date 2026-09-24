@@ -167,8 +167,10 @@ sign-out or fill it with defaults.
   menu's.
 - **The block with nothing to show takes no place.** No heading over an empty group: the stars on
   the rows already say how to fill it.
-- **While the search query is not empty, the block is hidden.** The search belongs to the section;
-  a found row and a favourite row of the same item side by side would read as two different things.
+- **While the search query is not empty, the block shows only the favourites that match it.** The
+  rows are chosen by the same rule as the list, and the block stands expanded for the search. A
+  block with no matching row is not drawn. The menu input `isFavoritesSearchShown`, `true` by
+  default, turns this off: with `false` the block is hidden while the search holds text.
 - **A row of the block opens its item the same way as the row in the list does.** The same address,
   the same output to the consumer, the same closing of an unpinned submenu.
 - **A row of the block is marked active by the same rule as the row in the list.** The person must
@@ -233,8 +235,8 @@ sign-out or fill it with defaults.
   `favoritesCollapsed`, the ids of the strip items whose block is collapsed; the service gives them
   as a signal and writes the state of one section by `setFavoritesCollapsed`. The block of one
   section may be collapsed while another's is expanded.
-- **The search leaves the collapsed state as it was.** The block is not drawn while the search holds
-  text, so nothing of it is expanded for the search and nothing stored changes.
+- **The search leaves the collapsed state as it was.** The block expanded for the search is not a
+  choice of the person, and nothing stored changes; an emptied query returns the stored state.
 - **The labels of the toggle are two more labels of the provider settings.** `expand` and `collapse`
   name the next press for the screen reader.
 - **The hidden row buttons give up their width at rest unless the menu keeps it.** By default the
@@ -437,4 +439,6 @@ One settings object per application key, and in it one list per menu id.
   keeps the former look. The owner's word: the number of rows is shown always, on a collapsed block
   or never by the menu input `favoritesCount`. Scenario SC-UK-141 added. The owner's word: the
   block is a folder with a star — the folder panel and its look, shared in one styles file; the
-  star keeps the theme colour. SC-UK-137 is covered by pressing the keys.
+  star keeps the theme colour. SC-UK-137 is covered by pressing the keys. The owner's word: the
+  search shows the matching favourites, which `isFavoritesSearchShown` turns off; SC-UK-82 now
+  promises that.

@@ -163,6 +163,8 @@ export class TestSideMenuWrapperComponent {
     public favoriteActionsReserve: ISideMenu.FavoriteActionsReserve = 'none';
     /** Когда заголовок блока избранного показывает число строк. */
     public favoritesCount: ISideMenu.FavoritesCount = 'collapsed';
+    /** Блок избранного при поиске показывает совпавшие строки. */
+    public isFavoritesSearchShown: boolean = true;
     public isSubMenuXScrollEnabled: boolean = true;
     public isMainMenuIconsOutlined: boolean = false;
     public isSubMenuIconsOutlined: boolean = false;

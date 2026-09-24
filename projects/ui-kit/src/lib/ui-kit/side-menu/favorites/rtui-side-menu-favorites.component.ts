@@ -29,6 +29,7 @@ import { BlockDirective, BreakpointService, ElemDirective, ModDirective, RtIconO
 import { RtuiSideMenuSubItemComponent } from '../menu-sub-item/rtui-side-menu-sub-item.component';
 import { RtuiSubMenuHoldService } from '../menu/rtui-sub-menu-hold.service';
 import { IRtuiSideMenuHost, ISideMenu, RTUI_SIDE_MENU } from '../side-menu.types';
+import { filterSubMenuItems } from '../side-menu.logic';
 import { favoritesSection, findFavoriteItems, isDroppedOutside } from './favorites.logic';
 import { RtuiSideMenuSettingsService } from '../settings/rtui-side-menu-settings.service';
 
@@ -90,14 +91,16 @@ export class RtuiSideMenuFavoritesComponent {
     );
 
     protected readonly favorites: RtuiSideMenuSettingsService | null = inject(RtuiSideMenuSettingsService, { optional: true });
+    /** В поиске что-то набрано: блок показывает совпавшие строки раскрытым, сохранённое не трогая. */
+    protected readonly searching: Signal<boolean> = computed((): boolean => this.#menu.subMenuQuery().trim() !== '');
     protected readonly rows: Signal<ISideMenu.Item[]> = computed((): ISideMenu.Item[] => {
         const section: ISideMenu.Item | null = this.#section();
 
-        if (!this.favorites || !section || this.#menu.subMenuQuery().trim() !== '') {
+        if (!this.favorites || !section || (this.searching() && !this.#menu.isFavoritesSearchShown())) {
             return [];
         }
 
-        return findFavoriteItems([section], this.favorites.ids(this.#menu.menuId())());
+        return filterSubMenuItems(findFavoriteItems([section], this.favorites.ids(this.#menu.menuId())()), this.#menu.subMenuQuery());
     });
     /** Ручки строк по порядку: стрелка возвращает фокус на ручку переставленной строки. */
     protected readonly handles: Signal<ReadonlyArray<ElementRef<HTMLElement>>> = viewChildren<string, ElementRef<HTMLElement>>('handle', {
@@ -105,14 +108,13 @@ export class RtuiSideMenuFavoritesComponent {
     });
     /**
      * Блок раздела свёрнут: заголовок и черта остаются, строк нет. Состояние своё у каждого раздела
-     * и лежит в настройках меню. Поиск его не трогает — пока в поиске что-то набрано, блока нет.
+     * и лежит в настройках меню. Поиск его не меняет: на время поиска блок стоит раскрытым.
      */
     protected readonly collapsed: Signal<boolean> = computed((): boolean => {
         const section: ISideMenu.Item | null = this.#section();
 
         return !!this.favorites && !!section && this.favorites.favoritesCollapsed(this.#menu.menuId())().includes(section.id);
     });
-    /** Номер списка строк: заголовок-переключатель называет его в `aria-controls`. */
     /** Заголовок показывает число строк: всегда, у свёрнутого блока или никогда — по входу меню. */
     protected readonly countShown: Signal<boolean> = computed((): boolean => {
         const mode: ISideMenu.FavoritesCount = this.#menu.favoritesCount();
@@ -207,7 +209,7 @@ export class RtuiSideMenuFavoritesComponent {
     public onExpandedChange(expanded: boolean): void {
         const section: ISideMenu.Item | null = this.#section();
 
-        if (this.favorites && section && expanded === this.collapsed()) {
+        if (this.favorites && section && !this.searching() && expanded === this.collapsed()) {
             this.favorites.setFavoritesCollapsed(this.#menu.menuId(), section.id, !expanded);
         }
     }

@@ -207,17 +207,26 @@ describe('RtuiSideMenuComponent — избранное', () => {
         expect(fixture.nativeElement.querySelector(BLOCK)).toBeNull();
     });
 
-    it('SC-UK-82 — запрос в поиске прячет блок, пустой запрос возвращает', () => {
-        const { fixture } = withFavorites(['rates']);
+    it('SC-UK-82 — при поиске блок показывает совпавшие строки, без совпадений его нет, вход прячет его', () => {
+        const { fixture, host, favorites } = withFavorites(['rates']);
 
         hoverFirstItem(fixture);
         expect(blockRowIds(fixture)).toEqual(['rates']);
 
+        favorites.setFavoritesCollapsed(DEFAULT_MENU_ID, 'refs', true);
         typeInSearch(fixture, 'Кур');
-        expect(fixture.nativeElement.querySelector(BLOCK)).toBeNull();
+        expect(blockRowIds(fixture)).toEqual(['rates']);
+        expect(favorites.settings(DEFAULT_MENU_ID)().favoritesCollapsed).toEqual(['refs']);
+
+        typeInSearch(fixture, 'нет такого');
+        expect(fixture.nativeElement.querySelector(BLOCK_TITLE)).toBeNull();
+
+        host.searchShown.set(false);
+        typeInSearch(fixture, 'Кур');
+        expect(fixture.nativeElement.querySelector(BLOCK_TITLE)).toBeNull();
 
         typeInSearch(fixture, '');
-        expect(blockRowIds(fixture)).toEqual(['rates']);
+        expect(fixture.nativeElement.querySelector(BLOCK_TITLE)).not.toBeNull();
     });
 
     it('SC-UK-83 — строка блока открывает свой пункт так же, как строка списка', () => {

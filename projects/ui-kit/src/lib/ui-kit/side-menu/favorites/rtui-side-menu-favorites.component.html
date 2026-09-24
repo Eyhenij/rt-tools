@@ -9,7 +9,7 @@
         <mat-expansion-panel
             #panel
             rtBlock="rtui-side-menu-expand-sub-item"
-            [expanded]="!collapsed()"
+            [expanded]="!collapsed() || searching()"
             (expandedChange)="onExpandedChange($event)">
             <mat-expansion-panel-header
                 rtBlock="rtui-side-menu-expand-sub-item-header"

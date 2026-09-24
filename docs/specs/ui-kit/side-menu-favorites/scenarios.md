@@ -91,11 +91,13 @@ Given the service with a list whose ids the menu does not have
 When the submenu is drawn
 Then there is no favourites block and no heading of it
 
-### SC-UK-82 — a query in the search hides the block
+### SC-UK-82 — the search shows the matching favourites, and the input hides the block
 
-Given the service with `a` in the list and an open submenu
-When a query is typed into the search field
-Then the block is gone, and it is back when the query is emptied
+Given the service with `a` in the list, the block collapsed and an open submenu
+When a query matching `a` is typed, then a query matching nothing, then `isFavoritesSearchShown` is
+`false`
+Then the block stands expanded with the row `a` and the stored collapsed state stays; with no match
+there is no block; with the input off there is no block; an emptied query brings the block back
 
 ### SC-UK-83 — a row of the block opens its item as the list row does
 

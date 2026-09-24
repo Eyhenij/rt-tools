@@ -28,6 +28,8 @@ export interface IRtuiSideMenuHost {
     readonly menuId: Signal<string>;
     /** Когда заголовок блока избранного показывает число строк. */
     readonly favoritesCount: Signal<ISideMenu.FavoritesCount>;
+    /** Блок избранного при поиске показывает совпавшие строки; выключен — блока на время поиска нет. */
+    readonly isFavoritesSearchShown: Signal<boolean>;
     /** Указатель ушёл с панели; без пункта — то же, что уход мышью. */
     toggleSubMenu(item?: ISideMenu.Item): void;
 }

@@ -291,6 +291,10 @@ export class RtuiSideMenuComponent implements IRtuiSideMenuHost {
         ISideMenu.FavoritesCount,
         string | undefined
     >('collapsed', { transform: normalizeFavoritesCount });
+    /** Блок избранного при поиске показывает совпавшие строки; `false` прячет его на время поиска. */
+    public isFavoritesSearchShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
+        transform: booleanAttribute,
+    });
     public isSubMenuXScrollEnabled: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
         transform: booleanAttribute,
     });
