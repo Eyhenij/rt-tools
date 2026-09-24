@@ -24,6 +24,9 @@
 - The owner's word about the design is a task setting: what the owner compares is the first kit's
   showcase, and it diverges from the first kit's own setup instructions — so the owner is asked
   which one the second kit follows.
+- A search over specs, plans, the archive and the rules finds no decision about the reference
+  drawing. The material preset agreement says only that no icon font goes into the kit — the
+  drawings are files either way, so it does not decide the question.
 
 ## Questions and answers
 
