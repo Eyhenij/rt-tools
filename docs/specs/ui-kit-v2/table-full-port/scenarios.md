@@ -379,7 +379,7 @@ Covered: `projects/ui-kit-v2/src/lib/components/data-list/pagination/rt-data-lis
 Given a data list of eight columns on a screen below the kit's threshold
 When it is drawn
 Then the rows stay a table wider than the screen, it scrolls sideways, and no hint opens on hover
-Not covered: a frame at that width is impossible — the kit's threshold is a media query over the window width, and the showing's window is never narrow. The substance of the scenario is held by the frame of a narrow box, where no card view switches on and the eight columns stay a table clipped by it: `projects/ui-kit-v2/.storybook/__snapshots__/organisms-datalist-datalist--narrow.png`; the sideways scroll itself is the table's own `overflow: auto` and is held by reading.
+Not covered: a frame at that width is impossible — the kit's threshold is a media query over the window width, and the showing's window is never narrow. The substance of the scenario is held by the frame of a narrow box, where no card view switches on and the eight columns stay a table clipped by it: `projects/ui-kit-v2/.storybook/__snapshots__/organisms-dynamiclist-datalist--narrow.png`; the sideways scroll itself is the table's own `overflow: auto` and is held by reading.
 
 ### SC-UKV-314 — the counter stands in place of a hidden select all
 
@@ -450,3 +450,31 @@ Given a list whose page holds no rows and no row is marked
 When the page arrives and the page state is recomputed
 Then the page checkbox is checked and not indeterminate — the first kit answers the same, because "no row is left unmarked" holds over an empty page
 Covered: `projects/ui-kit-v2/src/lib/components/data-list/rt-data-list-selectors.directive.spec.ts`.
+
+### SC-UKV-351 — the list's theme story reads on a narrow canvas
+
+Given the list's theme story open on a canvas 900 px wide
+When the showcase draws both halves of every set
+Then no node of a half passes its right edge
+Not covered: passing the edge shows only in the raster, and a call does not read the raster. It is held by the measurement at three canvas widths and by the frame `projects/ui-kit-v2/.storybook/__snapshots__/organisms-dynamiclist-datalist--themes.png`.
+
+### SC-UKV-352 — the settings panel draws the first kit's look
+
+Given the list's settings panel open on columns one of which is hidden
+When the panel is drawn
+Then the title has a caption under it, each switch stands left of its label, and each column is a plaque with a handle, its name and an eye button, the hidden one marked
+Covered: `projects/ui-kit-v2/src/lib/components/data-list/settings/rt-data-list-settings-aside.component.spec.ts`.
+
+### SC-UKV-353 — the family has paired frames with the first kit
+
+Given the list of the two kits' paired frames
+When the pairs check reads the table family
+Then frames of both kits are named for it and no reason "not moved yet" is written
+Not covered: the promise is about a list of frames, not about a call. It is held by `tools/check-kit-shot-pairs.mjs`.
+
+### SC-UKV-354 — the look of the search and of the filter fields are set apart
+
+Given a list with the filter row
+When the application gives the search the look `fill` and leaves the filter fields at their default
+Then the search is a filled field with an underline and the filter fields are outlined; the filter fields change look only by their own input
+Covered: `projects/ui-kit-v2/src/lib/components/data-list/rt-data-list.component.spec.ts`.

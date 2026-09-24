@@ -18,7 +18,7 @@ import { TestRtDataListSettingsComponent } from './test-data-list-settings.compo
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
 export type TDataListMatrixPart =
-    'loading' | 'placeholder' | 'pagination' | 'filters' | 'selection' | 'settings' | 'narrow' | 'presets' | 'themes';
+    'loading' | 'placeholder' | 'pagination' | 'filters' | 'appearance' | 'selection' | 'settings' | 'narrow' | 'presets' | 'themes';
 
 /** Случай оси загрузки: первая загрузка и дозагрузка порознь не различаются. */
 interface ILoadingCase {
@@ -162,6 +162,21 @@ const NARROW_CASES: readonly { readonly name: string }[] = [{ name: '360 px — 
                 </app-story-presets>
             }
 
+            @case ('appearance') {
+                <app-story-presets caption="Поиск и поля отбора в виде fill в обоих наборах">
+                    <ng-template>
+                        <app-data-list-cell
+                            storageKey="story-list-appearance"
+                            appearance="fill"
+                            [columns]="filterColumns"
+                            [rows]="rows"
+                            [page]="pageOne"
+                            [filtersShown]="true"
+                            [filters]="setFilters" />
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('selection') {
                 <app-story-presets caption="Выбор записей в обоих наборах">
                     <ng-template>
@@ -214,9 +229,9 @@ const NARROW_CASES: readonly { readonly name: string }[] = [{ name: '360 px — 
             }
 
             @case ('themes') {
-                <app-story-presets caption="Список в обеих темах в обоих наборах">
+                <app-story-presets caption="Список в обеих темах в обоих наборах" fill>
                     <ng-template>
-                        <app-story-themes>
+                        <app-story-themes fill>
                             <ng-template>
                                 <app-data-list-cell storageKey="story-list-themes" [columns]="columns" [rows]="rows" [page]="pageOne" />
                             </ng-template>

@@ -101,6 +101,29 @@
       "kitOne": ["components-aside--aside", "components-aside--aside-opened"],
       "kitTwo": ["organisms-aside-aside--layout", "organisms-aside-aside--size", "organisms-aside-aside--themes"],
       "reason": ""
+    },
+    {
+      "family": "table",
+      "title": "Таблица и список записей",
+      "task": "RT-2316",
+      "kitOne": [
+        "components-dynamiclist--few-items",
+        "components-dynamiclist--many-items",
+        "components-dynamiclist--no-items",
+        "components-table--copy-button-on-hover",
+        "components-table--few-items",
+        "components-table--many-items"
+      ],
+      "kitTwo": [
+        "organisms-dynamiclist-datalist--filters",
+        "organisms-dynamiclist-datalist--placeholder",
+        "organisms-dynamiclist-datalist--settings",
+        "organisms-dynamiclist-datalist--themes",
+        "organisms-dynamiclist-datatable--columns",
+        "organisms-dynamiclist-datatable--filters",
+        "organisms-dynamiclist-datatable--themes"
+      ],
+      "reason": ""
     }
   ]
 }

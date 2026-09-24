@@ -17,6 +17,7 @@ import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { RT_KIT_LABELS, TRtKitLabelMap } from '../../i18n';
 import { RtFormControlBase } from '../form-control/rt-form-control.base';
+import { IRtInput } from '../input/rt-input.model';
 import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
 import { IRtDatePicker } from './rt-date-picker.model';
 
@@ -55,6 +56,7 @@ const BEM_BLOCK: string = 'rt-date-picker';
         '[class.rt-date-picker--invalid]': 'isInvalid()',
         '[class.rt-date-picker--readonly]': 'isReadonly()',
         '[class.rt-date-picker--borderless]': '!bordered()',
+        '[class.rt-date-picker--appearance--fill]': "appearance() === 'fill'",
         '[class.rt-date-picker--size--sm]': "size() === 'sm'",
         '[class.rt-date-picker--size--lg]': "size() === 'lg'",
     },
@@ -67,6 +69,9 @@ export class RtDatePickerComponent extends RtFormControlBase<string> {
     protected readonly fieldEl: Signal<ElementRef<HTMLInputElement> | undefined> = viewChild<ElementRef<HTMLInputElement>>('fieldEl');
 
     protected readonly hasValue: Signal<boolean> = computed((): boolean => this.value() !== '');
+
+    /** Вид рамки: `outline` — рамка со всех сторон, `fill` — залитое поле с чертой снизу. */
+    public readonly appearance: InputSignal<IRtInput.Appearance> = input<IRtInput.Appearance>('outline');
 
     public readonly displayText: Signal<string> = computed((): string => this.#format(this.value(), this.type()));
 

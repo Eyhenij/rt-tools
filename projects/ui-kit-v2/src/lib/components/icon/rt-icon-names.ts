@@ -49,6 +49,7 @@ export const iconsName = [
     'arrow-up-left',
     'arrow-up-long',
     'arrow-up-right',
+    'arrows',
     'arrows-h',
     'arrows-v',
     'at',

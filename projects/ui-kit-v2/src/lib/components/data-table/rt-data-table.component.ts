@@ -27,6 +27,7 @@ import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 import { EFilterOperatorType, ISortModel, TNullable, transformArrayInput } from '@rt-tools/utils';
 
 import { rtKitLabel } from '../../i18n';
+import { IRtInput } from '../input/rt-input.model';
 import { RtCheckboxComponent } from '../checkbox/rt-checkbox.component';
 import { RtMenuComponent } from '../menu/rt-menu.component';
 import { RtRadioButtonComponent } from '../radio-button/rt-radio-button.component';
@@ -106,6 +107,9 @@ export class RtDataTableComponent<
     );
 
     /** Колонки — из службы настроек: их порядок и видимость помнит она. */
+    /** Вид полей отбора: `outline` — рамка со всех сторон, `fill` — залитое поле с чертой снизу. */
+    public readonly filterAppearance: InputSignal<IRtInput.Appearance> = input<IRtInput.Appearance>('outline');
+
     public readonly columns: Signal<Array<IRtDataTable.Column<ENTITY_TYPE>>> = computed(() => this.#configService.tableConfig().columns);
 
     public readonly isTableRowsClickable: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {

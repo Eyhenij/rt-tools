@@ -63,7 +63,11 @@ export const iconMaterialMap: readonly IRtIconMaterialEntry[] = [
     { from: 'more_horiz', to: 'ellipsis-h', why: 'три точки по горизонтали' },
     { from: 'more_vert', to: 'ellipsis-v', why: 'три точки по вертикали' },
     { from: 'open_in_new', to: 'external-link', why: 'квадрат со стрелкой наружу' },
-    { from: 'open_with', to: null, why: 'четырёх стрелок из центра в наборе нет — нужен рисунок' },
+    {
+        from: 'open_with',
+        to: 'arrows',
+        why: 'четыре стрелки из центра; рисунок дорисован — им панель колонок первого кита показывает ручку перетаскивания',
+    },
     { from: 'person', to: 'user', why: 'силуэт человека, один в один; есть двойник ico-user' },
     { from: 'refresh', to: 'refresh', why: SAME_NAME },
     { from: 'search', to: 'search', why: `${SAME_NAME}; есть двойник ico-search` },

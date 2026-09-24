@@ -15,6 +15,7 @@ import {
 } from '@angular/core';
 import { TitleCasePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { IRtInput } from '../../input/rt-input.model';
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { EFilterOperatorType, IFilterModel, TFilterOperatorType, transformArrayInput } from '@rt-tools/utils';
@@ -145,6 +146,9 @@ export class RtDataTableFilterCellComponent<KEY extends string = string> {
     );
 
     /** Колонка, по которой отбирает ячейка. */
+    /** Вид полей отбора: `outline` — рамка со всех сторон, `fill` — залитое поле с чертой снизу. */
+    public readonly appearance: InputSignal<IRtInput.Appearance> = input<IRtInput.Appearance>('outline');
+
     public readonly filterProperty: InputSignal<KEY> = input.required<KEY>();
     public readonly filterType: InputSignal<IRtDataTable.FilterType> = input.required<IRtDataTable.FilterType>();
 

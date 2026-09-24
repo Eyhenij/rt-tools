@@ -8,7 +8,7 @@ import { TestRtDataListMatrixComponent } from './component/test-data-list-matrix
  * неотличимо от отсутствующего.
  */
 export default {
-    title: 'Organisms/DataList/DataList',
+    title: 'Organisms/DynamicList/DataList',
     component: TestRtDataListMatrixComponent,
     parameters: {
         controls: { disable: true },
@@ -27,6 +27,9 @@ export const Placeholder: TStory = { args: { part: 'placeholder' } };
 export const Pagination: TStory = { args: { part: 'pagination' } };
 
 export const Filters: TStory = { args: { part: 'filters' } };
+
+/** Вид `fill` у поиска и полей отбора; вид `outline` показывает история строки отбора. */
+export const Appearance: TStory = { args: { part: 'appearance' } };
 
 /** «Отметить все», счётчик вместо него и выбор по одной. */
 export const Selection: TStory = { args: { part: 'selection' } };

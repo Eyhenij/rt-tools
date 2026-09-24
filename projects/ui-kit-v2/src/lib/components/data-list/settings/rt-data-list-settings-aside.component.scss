@@ -1,11 +1,21 @@
 @layer rt-kit.components {
-    /* rt-data-list-settings-aside — панель настройки колонок первого кита. Промежуток между
-       признаками полос прокрутки и списком колонок 16px — ступень md шкалы. */
+    /* rt-data-list-settings-aside — панель настройки колонок в виде первого кита: подпись под
+       заголовком, переключатель слева от своей подписи, колонки залитыми плашками с ручкой ✥ и
+       глазом через черты. Промежутки 8px и 16px — ступени sm и md шкалы. */
 
     .rt-data-list-settings-aside {
+        --rt-data-list-settings-aside-radius: var(--rt-radius-md);
+        --rt-data-list-settings-aside-divider-width: var(--rt-border-width-thin);
+
         display: flex;
         flex-direction: column;
         gap: var(--rt-space-md);
+
+        &__hint {
+            margin: 0;
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-sm);
+        }
 
         &__switches {
             display: flex;
@@ -18,13 +28,68 @@
         &__switch-row {
             display: flex;
             align-items: center;
-            justify-content: space-between;
             gap: var(--rt-space-md);
         }
 
         &__switch-label {
             color: var(--rt-color-text-primary);
             font-size: var(--rt-text-sm);
+        }
+
+        &__columns {
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+            margin: 0;
+            gap: var(--rt-space-sm);
+            list-style: none;
+        }
+
+        /* Плашка колонки: залита, без рамки — так рисует список первого кита. */
+        &__column {
+            display: flex;
+            align-items: center;
+            border-radius: var(--rt-data-list-settings-aside-radius);
+            background-color: var(--rt-color-bg-subtle);
+            gap: var(--rt-space-sm);
+            padding-inline-end: var(--rt-space-sm);
+
+            &--hidden {
+                color: var(--rt-color-text-muted);
+            }
+        }
+
+        /* Ручка и черта справа от неё — одна кнопка: черта отделяет её от имени, как в первом
+           ките. Черта — рамка, а не полоса шириной в ступень рамки. */
+        &__handle {
+            display: inline-flex;
+            align-items: center;
+            align-self: stretch;
+            justify-content: center;
+            padding: 0 var(--rt-space-sm);
+            border: none;
+            border-right: var(--rt-data-list-settings-aside-divider-width) solid var(--rt-color-border-subtle);
+            background: transparent;
+            color: inherit;
+            cursor: grab;
+
+            &:disabled {
+                cursor: default;
+            }
+        }
+
+        &__column-label {
+            overflow: hidden;
+            min-width: 0;
+            flex: 1 1 auto;
+            font-size: var(--rt-text-sm);
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        &__toggle {
+            border-left: var(--rt-data-list-settings-aside-divider-width) solid var(--rt-color-border-subtle);
+            padding-inline-start: var(--rt-space-sm);
         }
     }
 }

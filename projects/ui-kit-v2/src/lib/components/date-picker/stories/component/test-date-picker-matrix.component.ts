@@ -15,7 +15,7 @@ import { RtDatePickerComponent } from '../../rt-date-picker.component';
 const SAMPLE_DATE: string = '2026-03-15';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TDatePickerMatrixPart = 'size' | 'type' | 'filling' | 'bordered' | 'states' | 'presets' | 'themes';
+export type TDatePickerMatrixPart = 'size' | 'type' | 'filling' | 'bordered' | 'appearance' | 'states' | 'presets' | 'themes';
 
 /** Случай с подписью и своим значением — ISO-строкой, ровно такой, какую отдаёт нативное поле. */
 interface IDatePickerCase {
@@ -31,6 +31,11 @@ interface IDatePickerTypeCase extends IDatePickerCase {
 /** Рамка покоя: снята она или нет. */
 interface IDatePickerBorderedCase extends IDatePickerCase {
     readonly bordered: boolean;
+}
+
+/** Два вида материального поля: рамка со всех сторон и залитое поле с чертой снизу. */
+interface IDatePickerAppearanceCase extends Omit<IDatePickerBorderedCase, 'bordered'> {
+    readonly appearance: IRtInput.Appearance;
 }
 
 /** Отключённость — единственное, что светло-тёмная пара меняет от ячейки к ячейке. */
@@ -118,6 +123,21 @@ function invalid(): FormControl<string> {
                                     [bordered]="borderedCase.bordered"
                                     [ariaLabel]="borderedCase.name"
                                     [formControl]="borderedCase.control" />
+                            </ng-template>
+                        </app-story-row>
+                    </ng-template>
+                </app-story-presets>
+            }
+
+            @case ('appearance') {
+                <app-story-presets caption="Вид поля в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="appearanceCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
+                            <ng-template let-appearanceCase>
+                                <rt-date-picker
+                                    [appearance]="appearanceCase.appearance"
+                                    [ariaLabel]="appearanceCase.name"
+                                    [formControl]="appearanceCase.control" />
                             </ng-template>
                         </app-story-row>
                     </ng-template>
@@ -226,6 +246,11 @@ export class TestRtDatePickerMatrixComponent {
     public readonly borderedCases: readonly IDatePickerBorderedCase[] = [
         { name: 'с рамкой', bordered: true, control: iso(SAMPLE_DATE) },
         { name: 'без рамки', bordered: false, control: iso(SAMPLE_DATE) },
+    ];
+
+    public readonly appearanceCases: readonly IDatePickerAppearanceCase[] = [
+        { name: 'outline', appearance: 'outline', control: iso(SAMPLE_DATE) },
+        { name: 'fill', appearance: 'fill', control: iso(SAMPLE_DATE) },
     ];
 
     public readonly stateCases: readonly IDatePickerStateCase[] = [

@@ -45,3 +45,33 @@ export function dataListSettingsChanged<ENTITY_TYPE>(
 ): boolean {
     return dataListSettingsShape(saved) !== dataListSettingsShape(current);
 }
+
+/**
+ * Колонка перетащена на новое место — новый порядок пунктов. Индексы — по всему списку, как их
+ * отдаёт перетаскивание; место, совпавшее со старым, возвращает тот же список.
+ */
+export function dataListMoveItem(
+    items: ReadonlyArray<IRtTable.ColumnSettingItem>,
+    from: number,
+    to: number
+): ReadonlyArray<IRtTable.ColumnSettingItem> {
+    if (from === to || !items[from]) {
+        return items;
+    }
+    const next: IRtTable.ColumnSettingItem[] = [...items];
+    const moved: IRtTable.ColumnSettingItem = next.splice(from, 1)[0];
+
+    next.splice(Math.min(Math.max(to, 0), next.length), 0, moved);
+
+    return next;
+}
+
+/** Видимость колонки переключена кнопкой-глазом. Закреплённую колонку кнопка не трогает. */
+export function dataListToggleHidden(
+    items: ReadonlyArray<IRtTable.ColumnSettingItem>,
+    key: string
+): ReadonlyArray<IRtTable.ColumnSettingItem> {
+    return items.map((item: IRtTable.ColumnSettingItem) =>
+        item.key === key && item.locked !== true ? { ...item, hidden: !item.hidden } : item
+    );
+}

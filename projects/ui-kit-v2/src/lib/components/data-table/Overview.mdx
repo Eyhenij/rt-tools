@@ -1,6 +1,6 @@
 import { Meta, Title } from '@storybook/addon-docs/blocks';
 
-<Meta title="Organisms/DataTable/DataTable/Overview" />
+<Meta title="Organisms/DynamicList/DataTable/Overview" />
 
 <Title>DataTable — `rt-data-table`</Title>
 
@@ -96,26 +96,27 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Рядом
 
-- [`rt-data-list`](./?path=/docs/organisms-datalist-datalist--docs) — список вокруг этой таблицы:
+- [`rt-data-list`](./?path=/docs/organisms-dynamiclist-datalist-overview--docs) — список вокруг этой таблицы:
   полоса действий, страницы, настройка колонок.
 - [`rt-table`](./?path=/docs/organisms-table-table--docs) — таблица без наследства первого кита.
 
 ## Входы
 
-| вход                        | тип                  | умолчание      | что делает                                           |
-| --------------------------- | -------------------- | -------------- | ---------------------------------------------------- |
-| `entities`                  | `ENTITY[]`           | **обязателен** | строки, которые таблица рисует                       |
-| `currentSortModel`          | `ISortModel \| null` | **обязателен** | нынешний порядок: по нему рисуются стрелки шапки     |
-| `filterModel`               | `IFilterModel[]`     | `[]`           | нынешние условия отбора                              |
-| `keyExp`                    | `keyof ENTITY`       | `'id'`         | чем различаются строки: им идёт слежение и отметки   |
-| `isFiltersShown`            | `boolean`            | `false`        | показывать ли строку отбора                          |
-| `isTableRowsClickable`      | `boolean`            | `false`        | отзывается ли строка на нажатие                      |
-| `entity`                    | `ENTITY`             | **обязателен** | запись строки — вход директивы нажатия строки        |
-| `isTableRowClickable`       | `boolean`            | `true`         | отзывается ли эта строка — вход директивы нажатия    |
-| `isMultiSelect`             | `boolean`            | `true`         | выбор многих или по одной — вход директивы выбора    |
-| `isSelectorColumnShown`     | `boolean`            | `false`        | показывать ли колонку выбора — вход директивы выбора |
-| `isSelectorsColumnDisabled` | `boolean`            | `false`        | недоступна ли колонка выбора — вход директивы выбора |
-| `selectedEntitiesKeys`      | `Array<ENTITY[KEY]>` | `[]`           | отметки, названные заранее — вход директивы выбора   |
+| вход                        | тип                   | умолчание      | что делает                                                             |
+| --------------------------- | --------------------- | -------------- | ---------------------------------------------------------------------- |
+| `filterAppearance`          | `'outline' \| 'fill'` | `'outline'`    | вид полей отбора: рамка со всех сторон или залитое поле с чертой снизу |
+| `entities`                  | `ENTITY[]`            | **обязателен** | строки, которые таблица рисует                                         |
+| `currentSortModel`          | `ISortModel \| null`  | **обязателен** | нынешний порядок: по нему рисуются стрелки шапки                       |
+| `filterModel`               | `IFilterModel[]`      | `[]`           | нынешние условия отбора                                                |
+| `keyExp`                    | `keyof ENTITY`        | `'id'`         | чем различаются строки: им идёт слежение и отметки                     |
+| `isFiltersShown`            | `boolean`             | `false`        | показывать ли строку отбора                                            |
+| `isTableRowsClickable`      | `boolean`             | `false`        | отзывается ли строка на нажатие                                        |
+| `entity`                    | `ENTITY`              | **обязателен** | запись строки — вход директивы нажатия строки                          |
+| `isTableRowClickable`       | `boolean`             | `true`         | отзывается ли эта строка — вход директивы нажатия                      |
+| `isMultiSelect`             | `boolean`             | `true`         | выбор многих или по одной — вход директивы выбора                      |
+| `isSelectorColumnShown`     | `boolean`             | `false`        | показывать ли колонку выбора — вход директивы выбора                   |
+| `isSelectorsColumnDisabled` | `boolean`             | `false`        | недоступна ли колонка выбора — вход директивы выбора                   |
+| `selectedEntitiesKeys`      | `Array<ENTITY[KEY]>`  | `[]`           | отметки, названные заранее — вход директивы выбора                     |
 
 ## Выходы
 

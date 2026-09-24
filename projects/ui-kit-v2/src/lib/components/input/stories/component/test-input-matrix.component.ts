@@ -12,7 +12,7 @@ import { RtInputComponent } from '../../rt-input.component';
 import { IRtInput } from '../../rt-input.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TInputMatrixPart = 'size' | 'type' | 'icons' | 'filling' | 'bordered' | 'states' | 'presets' | 'themes';
+export type TInputMatrixPart = 'size' | 'type' | 'icons' | 'filling' | 'bordered' | 'appearance' | 'states' | 'presets' | 'themes';
 
 /** Тип поля вместе с правдоподобным значением: пустое поле всех четырёх типов выглядит одинаково. */
 interface IInputTypeCase {
@@ -53,6 +53,11 @@ interface IInputBorderedCase {
     readonly name: string;
     readonly bordered: boolean;
     readonly control: FormControl<string>;
+}
+
+/** Два вида материального поля: рамка со всех сторон и залитое поле с чертой снизу. */
+interface IInputAppearanceCase extends Omit<IInputBorderedCase, 'bordered'> {
+    readonly appearance: IRtInput.Appearance;
 }
 
 /** Что показывает светло-тёмная пара: обычное поле, заполненное, ошибка и отключённое. */
@@ -164,6 +169,21 @@ function invalid(): FormControl<string> {
                                     [bordered]="borderedCase.bordered"
                                     [ariaLabel]="borderedCase.name"
                                     [formControl]="borderedCase.control" />
+                            </ng-template>
+                        </app-story-row>
+                    </ng-template>
+                </app-story-presets>
+            }
+
+            @case ('appearance') {
+                <app-story-presets caption="Вид поля в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="appearanceCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
+                            <ng-template let-appearanceCase>
+                                <rt-input
+                                    [appearance]="appearanceCase.appearance"
+                                    [ariaLabel]="appearanceCase.name"
+                                    [formControl]="appearanceCase.control" />
                             </ng-template>
                         </app-story-row>
                     </ng-template>
@@ -298,6 +318,11 @@ export class TestRtInputMatrixComponent {
     public readonly borderedCases: readonly IInputBorderedCase[] = [
         { name: 'с рамкой', bordered: true, control: filled('Москва') },
         { name: 'без рамки', bordered: false, control: filled('Москва') },
+    ];
+
+    public readonly appearanceCases: readonly IInputAppearanceCase[] = [
+        { name: 'outline', appearance: 'outline', control: filled('Москва') },
+        { name: 'fill', appearance: 'fill', control: filled('Москва') },
     ];
 
     public readonly stateCases: readonly IInputStateCase[] = [

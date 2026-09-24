@@ -12,7 +12,8 @@ import { IRtInput } from '../../../input/rt-input.model';
 import { RtInputNumberComponent } from '../../rt-input-number.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TInputNumberMatrixPart = 'size' | 'prefix' | 'fraction' | 'filling' | 'bordered' | 'states' | 'presets' | 'themes';
+export type TInputNumberMatrixPart =
+    'size' | 'prefix' | 'fraction' | 'filling' | 'bordered' | 'appearance' | 'states' | 'presets' | 'themes';
 
 /** Случай с подписью и своим значением: у числового поля значение приходит только формой. */
 interface IInputNumberCase {
@@ -35,6 +36,11 @@ interface IInputNumberFractionCase extends IInputNumberCase {
 /** Рамка покоя: снята она или нет. */
 interface IInputNumberBorderedCase extends IInputNumberCase {
     readonly bordered: boolean;
+}
+
+/** Два вида материального поля: рамка со всех сторон и залитое поле с чертой снизу. */
+interface IInputNumberAppearanceCase extends Omit<IInputNumberBorderedCase, 'bordered'> {
+    readonly appearance: IRtInput.Appearance;
 }
 
 /** Отключённость — единственное, что светло-тёмная пара меняет от ячейки к ячейке. */
@@ -141,6 +147,21 @@ function invalid(): FormControl<number | null> {
                                     [bordered]="borderedCase.bordered"
                                     [ariaLabel]="borderedCase.name"
                                     [formControl]="borderedCase.control" />
+                            </ng-template>
+                        </app-story-row>
+                    </ng-template>
+                </app-story-presets>
+            }
+
+            @case ('appearance') {
+                <app-story-presets caption="Вид поля в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="appearanceCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
+                            <ng-template let-appearanceCase>
+                                <rt-input-number
+                                    [appearance]="appearanceCase.appearance"
+                                    [ariaLabel]="appearanceCase.name"
+                                    [formControl]="appearanceCase.control" />
                             </ng-template>
                         </app-story-row>
                     </ng-template>
@@ -259,6 +280,11 @@ export class TestRtInputNumberMatrixComponent {
     public readonly borderedCases: readonly IInputNumberBorderedCase[] = [
         { name: 'с рамкой', bordered: true, control: amount(1500) },
         { name: 'без рамки', bordered: false, control: amount(1500) },
+    ];
+
+    public readonly appearanceCases: readonly IInputNumberAppearanceCase[] = [
+        { name: 'outline', appearance: 'outline', control: amount(1500) },
+        { name: 'fill', appearance: 'fill', control: amount(1500) },
     ];
 
     public readonly stateCases: readonly IInputNumberStateCase[] = [

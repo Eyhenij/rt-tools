@@ -1,7 +1,8 @@
+import { CdkDrag, CdkDragDrop, CdkDragHandle, CdkDropList } from '@angular/cdk/drag-drop';
 import { ChangeDetectionStrategy, Component, computed, inject, Signal, signal, ViewEncapsulation, WritableSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import { BlockDirective, ElemDirective } from '@rt-tools/core';
+import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { rtKitLabel } from '../../../i18n';
 import { RtAsideRef } from '../../aside/rt-aside-ref';
@@ -11,10 +12,17 @@ import { RtAsideFooterComponent } from '../../aside/footer/rt-aside-footer.compo
 import { RtAsideHeaderComponent } from '../../aside/header/rt-aside-header.component';
 import { RtButtonDirective } from '../../button/rt-button.directive';
 import { IRtDataTable } from '../../data-table/rt-data-table.model';
-import { RtTableSettingsPanelComponent } from '../../table/settings-panel/rt-table-settings-panel.component';
+import { RtIconButtonComponent } from '../../icon-button/rt-icon-button.component';
+import { RtIconComponent } from '../../icon/rt-icon.component';
 import { IRtTable } from '../../table/rt-table.model';
 import { RtToggleSwitchComponent } from '../../toggle-switch/rt-toggle-switch.component';
-import { dataListColumnsFromItems, dataListSettingItems, dataListSettingsChanged } from '../rt-data-list-settings.logic';
+import {
+    dataListColumnsFromItems,
+    dataListMoveItem,
+    dataListSettingItems,
+    dataListSettingsChanged,
+    dataListToggleHidden,
+} from '../rt-data-list-settings.logic';
 
 const BEM_BLOCK: string = 'rt-data-list-settings-aside';
 
@@ -37,13 +45,18 @@ const BEM_BLOCK: string = 'rt-data-list-settings-aside';
         RtAsideComponent,
         RtAsideFooterComponent,
         RtAsideHeaderComponent,
-        RtTableSettingsPanelComponent,
+        RtIconButtonComponent,
+        RtIconComponent,
         RtToggleSwitchComponent,
 
         // directives
         BlockDirective,
+        CdkDrag,
+        CdkDragHandle,
+        CdkDropList,
         ElemDirective,
         FormsModule,
+        ModDirective,
         RtButtonDirective,
     ],
     host: { class: BEM_BLOCK },
@@ -61,6 +74,11 @@ export class RtDataListSettingsAsideComponent<ENTITY_TYPE = Record<string, unkno
     protected readonly horizontalLabel: Signal<string> = rtKitLabel('dataListHorizontalScrollbar');
     protected readonly saveLabel: Signal<string> = rtKitLabel('uiSave');
     protected readonly cancelLabel: Signal<string> = rtKitLabel('uiCancel');
+    protected readonly dragLabel: Signal<string> = rtKitLabel('uiDragColumn');
+    protected readonly showColumnLabel: Signal<string> = rtKitLabel('uiShowColumn');
+    protected readonly hideColumnLabel: Signal<string> = rtKitLabel('uiHideColumn');
+    protected readonly showLabel: Signal<string> = rtKitLabel('uiShow');
+    protected readonly hideLabel: Signal<string> = rtKitLabel('uiHide');
 
     protected readonly items: WritableSignal<ReadonlyArray<IRtTable.ColumnSettingItem>> = signal(dataListSettingItems(this.#saved.columns));
 
@@ -74,6 +92,14 @@ export class RtDataListSettingsAsideComponent<ENTITY_TYPE = Record<string, unkno
     }));
 
     protected readonly isChanged: Signal<boolean> = computed(() => dataListSettingsChanged(this.#saved, this.config()));
+
+    protected onDrop(event: CdkDragDrop<unknown>): void {
+        this.items.set(dataListMoveItem(this.items(), event.previousIndex, event.currentIndex));
+    }
+
+    protected onToggleHidden(key: string): void {
+        this.items.set(dataListToggleHidden(this.items(), key));
+    }
 
     protected onSave(): void {
         this.#asideRef.close(this.config());
