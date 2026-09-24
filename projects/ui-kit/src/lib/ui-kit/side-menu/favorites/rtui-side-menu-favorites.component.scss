@@ -99,13 +99,10 @@
             cursor: grabbing;
         }
 
-        // Ручка видна так же, как кнопка «убрать»: под наведением и фокусом своей строки, на узком
-        // экране и там, где указатель не умеет наводиться, — всегда. Прячется прозрачностью, а не
-        // снятием с раскладки: кнопка остаётся на месте и достижима клавишей Tab.
-        &--always {
-            opacity: 1;
-        }
-
+        // Ручка видна так же, как кнопка «убрать»: под наведением и фокусом своей строки, а там, где
+        // указатель не умеет наводиться, — всегда. Решает способ нажатия, а не ширина: узкое окно с
+        // мышью наводится так же, как широкое. Прячется прозрачностью, а не снятием с раскладки:
+        // кнопка остаётся на месте и достижима клавишей Tab.
         @media (hover: none) {
             opacity: 1;
         }
@@ -160,7 +157,7 @@
 @media (hover: hover) {
     :host-context(.rtui-side-menu--favorite-actions-none)
         .rtui-side-menu-favorites__row:not(:hover, :has(:focus-visible))
-        .rtui-side-menu-favorites__handle:not(.rtui-side-menu-favorites__handle--always) {
+        .rtui-side-menu-favorites__handle {
         overflow: hidden;
         width: 0;
         padding: 0;

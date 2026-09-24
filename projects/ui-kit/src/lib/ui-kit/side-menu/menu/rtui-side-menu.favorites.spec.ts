@@ -19,7 +19,6 @@ import {
     typeInSearch,
 } from './side-menu.harness';
 import {
-    ALWAYS,
     block,
     BLOCK,
     BLOCK_ROW,
@@ -314,7 +313,7 @@ describe('RtuiSideMenuComponent — избранное', () => {
         expect(star.classList).not.toContain('rtui-side-menu-sub-item-title__favorite--remove');
     });
 
-    it('SC-UK-86 — на узком экране блок стоит под полем поиска, звёзды видны без наведения', () => {
+    it('SC-UK-86 — на узком экране блок стоит под полем поиска, со звёздами и кнопками «убрать»', () => {
         // Подпункт меряет экран своим экземпляром службы, и узкий экран ему подменяется отдельно.
         const narrow: BreakpointServiceStub = new BreakpointServiceStub();
         narrow.narrow.set(true);
@@ -331,8 +330,8 @@ describe('RtuiSideMenuComponent — избранное', () => {
         expect(favoritesBlock).not.toBeNull();
         expect(blockRowIds(fixture)).toEqual(['rates']);
         expect(search.compareDocumentPosition(favoritesBlock)).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
-        expect(fixture.nativeElement.querySelector(`${STAR}.${ALWAYS}`)).not.toBeNull();
-        expect(fixture.nativeElement.querySelector(`${REMOVE}.${ALWAYS}`)).not.toBeNull();
+        expect(fixture.nativeElement.querySelector(STAR)).not.toBeNull();
+        expect(fixture.nativeElement.querySelector(REMOVE)).not.toBeNull();
         expect(tooltip(fixture, STAR).disabled).toBe(true);
 
         const back: Element | undefined = Array.from(fixture.nativeElement.querySelectorAll('rtui-side-menu-sub-item')).find(
@@ -372,7 +371,6 @@ describe('RtuiSideMenuComponent — избранное', () => {
 
         expect(listRow(fixture, 'rates').querySelector(STAR)?.classList).toContain(ON);
         expect(listRow(fixture, 'pie').querySelector(STAR)?.classList).not.toContain(ON);
-        expect(listRow(fixture, 'pie').querySelector(STAR)?.classList).not.toContain(ALWAYS);
     });
 
     it('SC-UK-90 — фокус на звезде держит подменю, открытое наведением', () => {

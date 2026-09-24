@@ -145,12 +145,14 @@ export const SubMenuFavorites: TStory = {
     },
 };
 
-/** Узкий экран: тот же блок под полем поиска, полые звёзды и кнопки «убрать» видны без наведения. */
+/** Узкое окно: тот же блок под полем поиска; кнопки строки ждут наведения, на телефоне видны всегда. */
 export const SubMenuFavoritesMobile: TStory = {
     globals: { viewport: { value: 'narrow' } },
-    // Снимок берёт узкое окно сам: витринный размер кадр не меняет, а в окне 1280 px кнопки
-    // «убрать» и ручки прячутся до наведения и в кадр не попадают.
-    parameters: { snapshotViewport: { width: 360, height: 780 } },
+    // Снимок берёт узкое окно сам: витринный размер кадр не меняет. Кнопки видны всегда только без
+    // мыши, а браузер снимка наводится, и подменить ему признак `hover` не удалось ни подменой
+    // медиазапроса, ни касанием вместо мыши. Поэтому кадр показывает узкое окно с мышью: кнопки
+    // первой строки блока — под наведением. Телефон проверяется на телефоне.
+    parameters: { snapshotViewport: { width: 360, height: 780 }, snapshotHover: '[qa-dataid="side-menu-favorite-row"]' },
     play: openNarrowFavorites,
     args: {
         menuItems: FAVORITES_MENU,
@@ -170,7 +172,7 @@ const CUSTOM_ICONS: IRtuiSideMenuSettingsConfig = {
     icons: { remove: { glyph: 'close' }, drag: { glyph: 'drag_indicator', rotate: 0 } },
 };
 
-/** Узкий экран со значками из настроек: кнопки «убрать» и ручки видны без наведения. */
+/** Узкое окно со значками из настроек: крестик и ручка без поворота у строки под наведением. */
 export const SubMenuFavoritesCustomIcons: TStory = {
     ...SubMenuFavoritesMobile,
     decorators: [applicationConfig({ providers: [{ provide: RTUI_SIDE_MENU_SETTINGS_CONFIG, useValue: CUSTOM_ICONS }] })],
@@ -197,9 +199,10 @@ const FAVORITES_MENU_GALLERY_DISABLED: ISideMenu.Item[] = FAVORITES_MENU.map((it
         : item
 );
 
-/** Узкий экран, где звёзды видны без наведения: у «Gallery» звезды нет, у соседей она на месте. */
+/** Узкое окно, указатель на строке «Gallery»: звезда у неё не появляется, остаётся только «+». */
 export const SubMenuFavoritesDisabledStar: TStory = {
     ...SubMenuFavoritesMobile,
+    parameters: { ...SubMenuFavoritesMobile.parameters, snapshotHover: 'mat-list-item[id="102"]' },
     args: { ...SubMenuFavoritesMobile.args, menuItems: FAVORITES_MENU_GALLERY_DISABLED },
 };
 
