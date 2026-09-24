@@ -5,7 +5,7 @@
 - **State:** `этап-идёт`
 - **Stage:** 5 of 5 — the showcase and the checks
 - **Done:** the spec, the disabled star, the collapsible block, the width reserve; 201 side-menu tests pass
-- **Next step:** stories for the collapsed block, the reserve and the disabled star
+- **Next step:** the push gate set
 - **Uncommitted:** nothing
 - **Waiting for the owner:** no; the owner's word: «доделай до остановки нужно срочно взять другую задачу»
 - **PR:** not open yet
@@ -27,12 +27,13 @@
 - [x] 4.1 The menu input `favoriteActionsReserve` and its host mark
 - [x] 4.2 Styles of the star, the remove button and the handle without the reserve
 - [x] 4.3 Tests for the mark
-- [>] 5.1 Stories for the collapsed block, the reserve and the disabled star
-- [ ] 5.2 Showcase frames taken and read by eye
-- [ ] 5.3 The push gate set run
+- [x] 5.1 Stories for the collapsed block, the reserve and the disabled star
+- [x] 5.2 Showcase frames taken and read by eye
+- [>] 5.3 The push gate set run
 
 ## Decisions along the way
 
+- **The chevron is `keyboard_arrow_down`, not `expand_more`** — the showcase font is a subset, and that glyph is already in it. Affected stage of the plan: 3.
 - **The service does not refuse a flagged id** — it keeps ids only and cannot see the item; the rule now says the person cannot add such an item, the application may. Affected stage of the plan: 2.
 - **Scenarios start at SC-UK-134, not 125** — `npm run spec:next-id SC-UK` names 125…133 taken elsewhere. Affected stage of the plan: 1.
 
@@ -45,3 +46,9 @@
   without tests — what stages 2–4 bring; no other divergence of the subdomain.
 - Stages 2–4: `pnpm exec nx test @rt-tools/ui-kit --testFile=side-menu` — 201 passed in 10 suites;
   lint, typecheck and build of `@rt-tools/ui-kit` green.
+- Stage 5: nine showcase frames of favourites taken on 6006 and read by eye — the chevron stands in
+  the star column (x 287 wide, 200 narrow), a collapsed block reads "Favourites (4)" with its
+  divider, without the reserve a long label runs to x 303 against 235/265 with it, under the hover
+  it shrinks back and the row keeps its height; Gallery has no star. `pnpm run test:visual`: 92 of
+  97 match; the five that do not — the first kit's table and dynamic list, 0.02–0.05 % — were taken
+  by the runner, which smooths text differently (`49f2bc188`), and the branch does not touch them.

@@ -159,6 +159,8 @@ export class TestSideMenuWrapperComponent {
     public subMenuWidth: number | null | undefined = undefined;
     /** Номер меню, под которым кит хранит его настройки. */
     public menuId: string = DEFAULT_MENU_ID;
+    /** Место под скрытые кнопки избранного: `none` отдаёт их ширину подписи. */
+    public favoriteActionsReserve: ISideMenu.FavoriteActionsReserve = 'always';
     public isSubMenuXScrollEnabled: boolean = true;
     public isMainMenuIconsOutlined: boolean = false;
     public isSubMenuIconsOutlined: boolean = false;

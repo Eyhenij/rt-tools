@@ -45,7 +45,7 @@
             width: var(--rt-spacing-24);
             height: var(--rt-spacing-24);
             flex: 0 0 auto;
-            margin-right: calc(var(--rt-side-menu-favorite-action-size, calc(var(--rt-spacing-16) * 2)) / 2 + var(--rt-spacing-12));
+            margin-right: calc(var(--rt-side-menu-favorite-action-size, calc(var(--rt-spacing-16) * 2)) / 2 + var(--rt-spacing-4));
             margin-left: auto;
             font-size: var(--rt-spacing-24);
             rotate: 180deg;

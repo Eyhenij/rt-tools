@@ -181,3 +181,89 @@ export const SubMenuFavoritesRemoveHover: TStory = {
     ...SubMenuFavorites,
     parameters: { snapshotHover: '[qa-dataid="side-menu-favorite-remove"]' },
 };
+
+/**
+ * Тот же «Content», где у корня раздела «Gallery» звезда снята флагом `favoriteDisabled`: страница
+ * раздела — не содержимое, выбирать её незачем.
+ */
+const FAVORITES_MENU_GALLERY_DISABLED: ISideMenu.Item[] = FAVORITES_MENU.map((item: ISideMenu.Item): ISideMenu.Item =>
+    item.id === 1
+        ? {
+              ...item,
+              submenu: (item.submenu ?? []).map((sub: ISideMenu.Item): ISideMenu.Item =>
+                  sub.id === 102 ? { ...sub, favoriteDisabled: true } : sub
+              ),
+          }
+        : item
+);
+
+/** Узкий экран, где звёзды видны без наведения: у «Gallery» звезды нет, у соседей она на месте. */
+export const SubMenuFavoritesDisabledStar: TStory = {
+    ...SubMenuFavoritesMobile,
+    args: { ...SubMenuFavoritesMobile.args, menuItems: FAVORITES_MENU_GALLERY_DISABLED },
+};
+
+/**
+ * Свёрнутый блок «Content»: заголовок с числом строк, шевроном вниз и чертой под ним. Настройки
+ * лежат под своим ключом витрины — свёрнутое здесь не сворачивает блок соседних историй.
+ */
+const COLLAPSED_KEY: string = 'rtui-showcase-side-menu-collapsed';
+
+export const SubMenuFavoritesCollapsed: TStory = {
+    ...SubMenuFavorites,
+    decorators: [
+        applicationConfig({
+            providers: [
+                { provide: RTUI_SIDE_MENU_SETTINGS_CONFIG, useValue: { storageKey: COLLAPSED_KEY } },
+                provideAppInitializer((): void => {
+                    const settings: RtuiSideMenuSettingsService = inject(RtuiSideMenuSettingsService);
+
+                    if (!settings.settings(SHOWCASE_MENU_ID)().favoritesCollapsed) {
+                        settings.setFavoritesCollapsed(SHOWCASE_MENU_ID, 1, true);
+                    }
+                }),
+            ],
+        }),
+    ],
+};
+
+/** Длинные подписи двух разделов «Content»: по ним видно, где подпись обрезается многоточием. */
+const LONG_TITLES: Readonly<Record<number, string>> = {
+    3: 'Learn — guides, tutorials and onboarding',
+    5: 'Press release and media kit for partners',
+};
+
+const FAVORITES_MENU_LONG: ISideMenu.Item[] = FAVORITES_MENU_GALLERY_DISABLED.map((item: ISideMenu.Item): ISideMenu.Item =>
+    item.id === 1
+        ? {
+              ...item,
+              submenu: (item.submenu ?? []).map((sub: ISideMenu.Item): ISideMenu.Item =>
+                  LONG_TITLES[Number(sub.id)] ? { ...sub, name: LONG_TITLES[Number(sub.id)] } : sub
+              ),
+          }
+        : item
+);
+
+/**
+ * Длинные подписи с местом под скрытые кнопки, как по умолчанию: многоточие встаёт перед
+ * невидимыми звездой, «убрать» и ручкой. Пара к истории без запаса места.
+ */
+export const SubMenuFavoritesLongTitles: TStory = {
+    ...SubMenuFavorites,
+    args: { ...SubMenuFavorites.args, menuItems: FAVORITES_MENU_LONG },
+};
+
+/**
+ * Те же подписи в меню с `favoriteActionsReserve="none"`: в покое подпись идёт до правого края или
+ * до «+» — полые звёзды, «убрать» и ручки ширины не занимают. У «Gallery» звезда снята флагом.
+ */
+export const SubMenuFavoritesNoReserve: TStory = {
+    ...SubMenuFavoritesLongTitles,
+    args: { ...SubMenuFavoritesLongTitles.args, favoriteActionsReserve: 'none' },
+};
+
+/** То же меню, указатель на длинной строке блока: «убрать» и ручка встали на место, подпись сжалась. */
+export const SubMenuFavoritesNoReserveHover: TStory = {
+    ...SubMenuFavoritesNoReserve,
+    parameters: { snapshotHover: '[qa-dataid="side-menu-favorite-row"][data-id="5"]' },
+};
