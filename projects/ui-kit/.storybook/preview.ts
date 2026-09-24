@@ -1,5 +1,7 @@
+import { inject, provideAppInitializer } from '@angular/core';
+import { MatIconRegistry } from '@angular/material/icon';
 import { faker } from '@faker-js/faker';
-import type { Preview } from '@storybook/angular';
+import { applicationConfig, type Preview } from '@storybook/angular';
 
 import { setupTokenCopy } from './token-copy';
 
@@ -10,6 +12,18 @@ setupTokenCopy();
 faker.seed(20260808);
 
 const preview: Preview = {
+    // Значки — шрифтом Material Symbols, как README кита велит приложению: директива значка ставит
+    // ему толщину 700 и заливку. Старый Material Icons ось толщины не читает, и витрина рисовала
+    // значки тоньше, чем их видит приложение.
+    decorators: [
+        applicationConfig({
+            providers: [
+                provideAppInitializer((): void => {
+                    inject(MatIconRegistry).setDefaultFontSetClass('material-symbols-outlined');
+                }),
+            ],
+        }),
+    ],
     parameters: {
         // Узкий экран кит определяет сам — службой точек перелома, а она читает ширину окна
         // показа. Рамка кадра поэтому и есть единственный способ перешагнуть этот порог из
