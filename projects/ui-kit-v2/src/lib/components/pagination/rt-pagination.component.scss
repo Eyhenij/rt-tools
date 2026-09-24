@@ -116,11 +116,12 @@
             gap: var(--rt-pagination-per-page-gap);
         }
 
-        // Подпись не переносится: в узкой полосе «На странице:» ломалась на две строки.
+        // Свой вид переносит подпись: на узком экране поле иначе уходит за край. Материальный набор
+        // держит её в строку, как первый кит.
         &__per-page-label {
             color: var(--rt-color-text-muted);
             font-size: var(--rt-text-sm);
-            white-space: nowrap;
+            white-space: var(--rt-pagination-per-page-label-white-space);
         }
     }
 

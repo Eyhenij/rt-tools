@@ -137,6 +137,10 @@ export const lightLists = [
         value: `var(--rt-space-sm)`,
     },
     {
+        name: `--rt-pagination-per-page-label-white-space`,
+        value: `normal`,
+    },
+    {
         name: `--rt-pagination-field-height`,
         value: `var(--rt-input-height-md)`,
     },
