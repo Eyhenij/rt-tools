@@ -103,6 +103,9 @@ export const NESTED_ITEMS: ISideMenu.Item[] = [
             [subMenuMode]="mode()"
             [subMenuWidth]="width()"
             [menuId]="menuId()"
+            [favoriteActionsReserve]="reserve()"
+            [favoritesCount]="count()"
+            [isFavoritesSearchShown]="searchShown()"
             (subMenuWidthChange)="width.set($event)" />
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -114,6 +117,9 @@ export class HostComponent {
     public readonly mode: WritableSignal<ISideMenu.SubMenuMode | undefined> = signal('hover');
     public readonly width: WritableSignal<number | null | undefined> = signal(null);
     public readonly menuId: WritableSignal<string> = signal(DEFAULT_MENU_ID);
+    public readonly reserve: WritableSignal<string | undefined> = signal(undefined);
+    public readonly count: WritableSignal<string | undefined> = signal(undefined);
+    public readonly searchShown: WritableSignal<boolean> = signal(true);
 }
 
 export interface ISetup {

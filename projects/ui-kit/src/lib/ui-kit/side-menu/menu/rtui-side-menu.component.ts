@@ -35,6 +35,9 @@ import {
     clampSubMenuWidth,
     drawnSubMenuWidth,
     filterSubMenuItems,
+    normalizeFavoriteActionsReserve,
+    normalizeFavoritesCount,
+    pinnedSubMenuItems,
     subMenuIdsToExpand,
     SUB_MENU_WIDTH_MAX,
     SUB_MENU_WIDTH_MIN,
@@ -75,6 +78,8 @@ const BEM_BLOCK: string = 'rtui-side-menu';
         // Раскладка хоста меняется только у закреплённой моды: у всех, кто ставит меню
         // по-старому, она обязана остаться прежней до пикселя.
         '[class.rtui-side-menu--pinned]': 'isPinned()',
+        // Отметку читают стили строк подменю: скрытые кнопки избранного отдают ширину подписи.
+        '[class.rtui-side-menu--favorite-actions-none]': "favoriteActionsReserve() === 'none'",
         // Ширина подменю приходит переменной оформления: правило стилей стоит на ней в трёх
         // местах разом, и правка одной переменной двигает их все.
         '[style.--rt-side-menu-sub-menu-dragged-width]': 'subMenuWidthStyle()',
@@ -150,10 +155,7 @@ export class RtuiSideMenuComponent implements IRtuiSideMenuHost {
         clearQuery: (): void => this.onSubMenuSearch(''),
     });
 
-    /**
-     * Человек работает с полем поиска, и подменю держится открытым, пока он не уйдёт нажатием
-     * наружу: иначе на полпути от полосы к полю подменю, живущее наведением, исчезало.
-     */
+    /** Человек в поле поиска: подменю держится открытым до нажатия снаружи, иначе исчезало на полпути. */
     readonly #searchHeld: WritableSignal<boolean> = signal(false);
     /** Мода и ширина в работе: вход приложения, иначе сохранённые под номером меню. */
     readonly #mode: Signal<ISideMenu.SubMenuMode> = computed(
@@ -163,28 +165,10 @@ export class RtuiSideMenuComponent implements IRtuiSideMenuHost {
         (): number | null => this.subMenuWidth() ?? this.#settings?.subMenuWidth(this.menuId())() ?? null
     );
 
-    /**
-     * Что показывает закреплённое подменю: выбранный человеком раздел, а пока выбора нет — раздел
-     * активного адреса. Выбор впереди активности: иначе до соседнего раздела не добраться вовсе.
-     * Ставит и снимает выбор `#pickPinnedSubMenu`.
-     */
-    readonly #pinnedSubMenu: Signal<ISideMenu.Item[]> = computed((): ISideMenu.Item[] => {
-        if (!this.isPinned()) {
-            return [];
-        }
-
-        const picked: TNullable<ISideMenu.Item[]> = this.selectedSubMenu();
-
-        if (picked?.length) {
-            return picked;
-        }
-
-        const active: Array<string | number> = this.activeMenuIds();
-        const activeItem: TNullable<ISideMenu.Item> =
-            this.menuItems().find((item: ISideMenu.Item): boolean => active.includes(item.id) && !!item.submenu?.length) ?? null;
-
-        return activeItem?.submenu ?? [];
-    });
+    /** Что показывает закреплённое подменю — счёт в `pinnedSubMenuItems`; выбор ставит `#pickPinnedSubMenu`. */
+    readonly #pinnedSubMenu: Signal<ISideMenu.Item[]> = computed((): ISideMenu.Item[] =>
+        this.isPinned() ? pinnedSubMenuItems(this.selectedSubMenu(), this.activeMenuIds(), this.menuItems()) : []
+    );
 
     /**
      * Натянутая ширина панели. Своего выбора нет — переменная не ставится, и ширину берёт набор
@@ -235,13 +219,9 @@ export class RtuiSideMenuComponent implements IRtuiSideMenuHost {
     );
 
     /**
-     * Какие папки подменю стоят раскрытыми. Публично: подпункт берёт раскрытость отсюда — своей у
-     * него нет, а его собственная разметка вложена в него же на любую глубину.
-     *
-     * Пустой запрос отдаёт прежнюю раскрытость, ту, что была до набора: раскрытым остаётся только
-     * раздел текущего адреса. Непустой добавляет к ней все папки, в которых нашлось совпадение, —
-     * иначе результат поиска лежит за закрытым заголовком и человеку нужно нажать ещё раз, чтобы
-     * увидеть то, что он уже нашёл.
+     * Какие папки подменю раскрыты. Публично: своей раскрытости у подпункта нет. Пустой запрос
+     * оставляет раздел текущего адреса; непустой добавляет папки с совпадением — иначе найденное
+     * лежит за закрытым заголовком.
      */
     public readonly expandedMenuIds: Signal<Array<string | number>> = computed((): Array<string | number> => {
         const active: Array<string | number> = this.activeMenuIds();
@@ -283,6 +263,23 @@ export class RtuiSideMenuComponent implements IRtuiSideMenuHost {
     /** Под каким номером меню хранит свои настройки: у двух меню приложения — два номера. */
     public menuId: InputSignalWithTransform<string, string | null | undefined> = input<string, string | null | undefined>(DEFAULT_MENU_ID, {
         transform: normalizeMenuId,
+    });
+    /**
+     * Место под кнопки избранного, ждущие наведения: `none` (умолчание) — в покое ширины не занимают,
+     * `always` — держат её и в покое. Незнакомое значение и пустой атрибут — `none`.
+     */
+    public favoriteActionsReserve: InputSignalWithTransform<ISideMenu.FavoriteActionsReserve, string | undefined> = input<
+        ISideMenu.FavoriteActionsReserve,
+        string | undefined
+    >('none', { transform: normalizeFavoriteActionsReserve });
+    /** Число строк в заголовке избранного: `collapsed`, по умолчанию, — у свёрнутого блока; `always`; `never`. */
+    public favoritesCount: InputSignalWithTransform<ISideMenu.FavoritesCount, string | undefined> = input<
+        ISideMenu.FavoritesCount,
+        string | undefined
+    >('collapsed', { transform: normalizeFavoritesCount });
+    /** Блок избранного при поиске показывает совпавшие строки; `false` прячет его на время поиска. */
+    public isFavoritesSearchShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
+        transform: booleanAttribute,
     });
     public isSubMenuXScrollEnabled: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
         transform: booleanAttribute,

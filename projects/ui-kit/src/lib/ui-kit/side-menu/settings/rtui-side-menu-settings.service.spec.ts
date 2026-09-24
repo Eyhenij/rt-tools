@@ -273,6 +273,8 @@ describe('RtuiSideMenuSettingsService', (): void => {
             add: 'Add to favourites',
             remove: 'Remove from favourites',
             drag: 'Hold button to drag',
+            expand: 'Expand favourites',
+            collapse: 'Collapse favourites',
         });
     });
 
@@ -313,5 +315,37 @@ describe('RtuiSideMenuSettingsService', (): void => {
 
         expect(service.icons.drag.rotate).toBe(0);
         expect(service.icons.remove.rotate).toBe(0);
+    });
+
+    it('SC-UK-138 — свёрнутый блок записан под своим разделом и переживает новый сервис', (): void => {
+        const storage: MemoryStorage = new MemoryStorage();
+        const first: RtuiSideMenuSettingsService = createService(storage);
+        first.add(MENU, 'a');
+        first.setFavoritesCollapsed(MENU, 'cargo', true);
+        first.setFavoritesCollapsed(MENU, 'trees', true);
+        first.setFavoritesCollapsed(MENU, 'trees', false);
+
+        expect(stored(storage)).toEqual({ [MENU]: { favorites: ['a'], favoritesCollapsed: ['cargo'] } });
+        expect(createService(storage).favoritesCollapsed(MENU)()).toEqual(['cargo']);
+        expect(createService(storage).favoritesCollapsed('other')()).toEqual([]);
+    });
+
+    it('SC-UK-138 — сломанный список свёрнутых читается пустым, соседние поля остаются', (): void => {
+        const storage: MemoryStorage = new MemoryStorage();
+        storage.setItem(SIDE_MENU_SETTINGS_KEY, JSON.stringify({ [MENU]: { favorites: ['a'], favoritesCollapsed: 'cargo' } }));
+
+        const service: RtuiSideMenuSettingsService = createService(storage);
+
+        expect(service.favoritesCollapsed(MENU)()).toEqual([]);
+        expect(service.ids(MENU)()).toEqual(['a']);
+    });
+
+    it('SC-UK-139 — подписи переключателя по умолчанию и из настроек', (): void => {
+        expect(createService(null).labels).toEqual(
+            expect.objectContaining({ expand: 'Expand favourites', collapse: 'Collapse favourites' })
+        );
+        expect(createService(null, { labels: { expand: 'Развернуть', collapse: ' ' } }).labels).toEqual(
+            expect.objectContaining({ expand: 'Развернуть', collapse: 'Collapse favourites' })
+        );
     });
 });

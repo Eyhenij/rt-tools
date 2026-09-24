@@ -91,11 +91,13 @@ Given the service with a list whose ids the menu does not have
 When the submenu is drawn
 Then there is no favourites block and no heading of it
 
-### SC-UK-82 — a query in the search hides the block
+### SC-UK-82 — the search shows the matching favourites, and the input hides the block
 
-Given the service with `a` in the list and an open submenu
-When a query is typed into the search field
-Then the block is gone, and it is back when the query is emptied
+Given the service with `a` in the list, the block collapsed and an open submenu
+When a query matching `a` is typed, then a query matching nothing, then `isFavoritesSearchShown` is
+`false`
+Then the block stands expanded with the row `a` and the stored collapsed state stays; with no match
+there is no block; with the input off there is no block; an emptied query brings the block back
 
 ### SC-UK-83 — a row of the block opens its item as the list row does
 
@@ -122,9 +124,8 @@ carry these labels
 
 Given a narrow screen, the service with `a` in the list and an open submenu
 When the submenu is drawn
-Then the block with the row `a` stands under the search field, the hollow stars and the remove
-buttons are shown without a hover, their tooltips are off, and the row back to the main list carries
-no star
+Then the block with the row `a` stands under the search field, the rows carry the hollow stars and
+the remove buttons, their tooltips are off, and the row back to the main list carries no star
 
 ### SC-UK-87 — a drop keeps the places of the ids the menu does not have
 
@@ -379,3 +380,61 @@ star of a list row keeps its colours
 Coverage: partial — the spec checks the mark the styles read, not the colour itself: the spec
 environment applies no component styles and has no hover. The colour is shown by the showcase frame
 of the pointer on the remove button.
+
+### SC-UK-134 — a flagged item draws no star and is not a candidate
+
+Given a flagged section with the submenu items `a` and `b`, `b` flagged `favoriteDisabled`
+When the submenu is drawn
+Then the row `a` carries a star and the row `b` carries none; `isFavoriteCandidate(b)` is false
+
+### SC-UK-135 — a stored id of a flagged item stays out of the block
+
+Given the list holds `a` and `b`, and `b` is flagged `favoriteDisabled`
+When the block of the section is drawn
+Then it shows only `a`, and the list still holds `b`
+
+### SC-UK-136 — the heading collapses the block and keeps the divider
+
+Given the block of a section with `a` and `b`
+When the person presses the heading
+Then the rows are gone, the heading reads "Favourites (2)", carries `aria-expanded="false"` and
+names the list by `aria-controls`, and the divider under the block stays; a second press brings the
+rows back
+
+### SC-UK-137 — Enter and Space switch the heading
+
+Given the block of a section with `a`, its heading focused
+When the person presses Enter, then Space
+Then the block collapses and expands again; the heading is a button in the Tab order
+
+### SC-UK-138 — the collapsed state is kept per section under the menu id
+
+Given two flagged strip items `s1` and `s2` with favourites in both
+When the block of `s1` is collapsed
+Then the settings of the menu hold `favoritesCollapsed: ['s1']`, the block of `s2` stays expanded,
+and a service created anew reads `s1` collapsed
+
+### SC-UK-139 — the toggle is named by the labels of the settings
+
+Given the service provided with `labels.expand` and `labels.collapse`
+When the block is expanded, then collapsed
+Then the heading's `aria-label` is the collapse label, then the expand label; without them it is
+"Collapse favourites" and "Expand favourites"
+
+### SC-UK-140 — the menu gives up the width of hidden row buttons unless the input keeps it
+
+Given the menu without `favoriteActionsReserve`
+When the submenu is drawn
+Then the menu host carries the mark the styles read to take the width from hidden buttons; with
+`always` it carries none, and an unknown value reads as `none`
+
+Coverage: partial — the spec checks the mark, not the width: the spec environment applies no
+component styles and has no hover. The width is shown by the showcase frames of a row at rest and
+under the pointer.
+
+### SC-UK-141 — the input decides when the heading shows the number of rows
+
+Given the block with two rows
+When the menu has no `favoritesCount`, then `always`, then `never`
+Then the heading shows "(2)" only when collapsed, then on the expanded and the collapsed block,
+then never; an unknown value reads as `collapsed`
