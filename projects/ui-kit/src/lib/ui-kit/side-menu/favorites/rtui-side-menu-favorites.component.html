@@ -16,7 +16,7 @@
             <mat-icon rtElem="title-icon" aria-hidden="true" [rtIconOutlined]="false">star</mat-icon>
             <span rtElem="title-text">
                 {{ favorites.labels.title }}
-                @if (collapsed()) {
+                @if (countShown()) {
                     ({{ rows().length }})
                 }
             </span>

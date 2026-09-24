@@ -26,6 +26,8 @@ export interface IRtuiSideMenuHost {
     readonly subMenuQuery: Signal<string>;
     /** Номер меню, под которым лежат его настройки: избранное читается и пишется по нему. */
     readonly menuId: Signal<string>;
+    /** Когда заголовок блока избранного показывает число строк. */
+    readonly favoritesCount: Signal<ISideMenu.FavoritesCount>;
     /** Указатель ушёл с панели; без пункта — то же, что уход мышью. */
     toggleSubMenu(item?: ISideMenu.Item): void;
 }
@@ -53,6 +55,12 @@ export namespace ISideMenu {
      * `none` — в покое ширины не занимает, и подпись идёт до края.
      */
     export type FavoriteActionsReserve = 'always' | 'none';
+
+    /**
+     * Число строк в заголовке блока избранного: `always` — всегда; `collapsed` — только у свёрнутого
+     * блока; `never` — никогда.
+     */
+    export type FavoritesCount = 'always' | 'collapsed' | 'never';
 
     export interface Settings {
         favorites?: FavoriteId[];

@@ -432,3 +432,10 @@ Then the menu host carries the mark the styles read to take the width from hidde
 Coverage: partial — the spec checks the mark, not the width: the spec environment applies no
 component styles and has no hover. The width is shown by the showcase frames of a row at rest and
 under the pointer.
+
+### SC-UK-141 — the input decides when the heading shows the number of rows
+
+Given the block with two rows
+When the menu has no `favoritesCount`, then `always`, then `never`
+Then the heading shows "(2)" only when collapsed, then on the expanded and the collapsed block,
+then never; an unknown value reads as `collapsed`

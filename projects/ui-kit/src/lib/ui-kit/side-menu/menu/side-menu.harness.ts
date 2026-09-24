@@ -79,6 +79,7 @@ export const NESTED_ITEMS: ISideMenu.Item[] = [
             [subMenuWidth]="width()"
             [menuId]="menuId()"
             [favoriteActionsReserve]="reserve()"
+            [favoritesCount]="count()"
             (subMenuWidthChange)="width.set($event)" />
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -91,6 +92,7 @@ export class HostComponent {
     public readonly width: WritableSignal<number | null | undefined> = signal(null);
     public readonly menuId: WritableSignal<string> = signal(DEFAULT_MENU_ID);
     public readonly reserve: WritableSignal<string | undefined> = signal(undefined);
+    public readonly count: WritableSignal<string | undefined> = signal(undefined);
 }
 
 export interface ISetup {

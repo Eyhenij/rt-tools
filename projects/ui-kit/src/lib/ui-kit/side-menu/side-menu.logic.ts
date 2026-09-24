@@ -275,3 +275,8 @@ export function stepSubMenuHighlight(
 export function normalizeFavoriteActionsReserve(value: string | undefined): ISideMenu.FavoriteActionsReserve {
     return value === 'always' ? 'always' : 'none';
 }
+
+/** Число строк в заголовке избранного из входа меню: незнакомое значение и пустой атрибут — `collapsed`. */
+export function normalizeFavoritesCount(value: string | undefined): ISideMenu.FavoritesCount {
+    return value === 'always' || value === 'never' ? value : 'collapsed';
+}

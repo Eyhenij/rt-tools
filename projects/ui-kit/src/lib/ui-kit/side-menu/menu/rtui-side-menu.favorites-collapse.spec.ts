@@ -1,6 +1,6 @@
 import { ComponentFixture } from '@angular/core/testing';
 
-import { normalizeFavoriteActionsReserve } from '../side-menu.logic';
+import { normalizeFavoriteActionsReserve, normalizeFavoritesCount } from '../side-menu.logic';
 import { DEFAULT_MENU_ID } from '../settings/side-menu-settings.logic';
 import { ISideMenu } from '../side-menu.types';
 import { HostComponent, installFontsStub, ISetup, NESTED_ITEMS, setup } from './side-menu.harness';
@@ -154,6 +154,41 @@ describe('RtuiSideMenuComponent — сворачивание избранног�
         fixture.detectChanges();
 
         expect(menuHost.classList).toContain(mark);
+    });
+
+    it('SC-UK-141 — число строк в заголовке: у свёрнутого блока по умолчанию, всегда или никогда по входу', () => {
+        const { fixture, host } = withFavorites(['a', 'b'], { items: SECTIONS });
+
+        hoverItem(fixture, 0);
+
+        expect(titleText(fixture)).toBe('Favourites');
+
+        host.count.set('always');
+        fixture.detectChanges();
+
+        expect(titleText(fixture)).toBe('Favourites (2)');
+
+        toggle(fixture);
+
+        expect(titleText(fixture)).toBe('Favourites (2)');
+
+        host.count.set('never');
+        fixture.detectChanges();
+
+        expect(titleText(fixture)).toBe('Favourites');
+
+        host.count.set(undefined);
+        fixture.detectChanges();
+
+        expect(titleText(fixture)).toBe('Favourites (2)');
+    });
+
+    it('SC-UK-141 — незнакомое значение и пустой атрибут читаются как collapsed', () => {
+        expect(normalizeFavoritesCount('always')).toBe('always');
+        expect(normalizeFavoritesCount('never')).toBe('never');
+        expect(normalizeFavoritesCount('')).toBe('collapsed');
+        expect(normalizeFavoritesCount(undefined)).toBe('collapsed');
+        expect(normalizeFavoritesCount('sometimes')).toBe('collapsed');
     });
 
     it('SC-UK-140 — незнакомое значение и пустой атрибут читаются как none', () => {

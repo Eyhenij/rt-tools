@@ -223,6 +223,9 @@ sign-out or fill it with defaults.
   list by `aria-controls`. The chevron stands on the right, in the column of the stars, the same as
   the chevron of a folder. A collapsed block keeps its heading and its divider and hides the rows;
   the heading then shows the number of rows: "Favourites (5)". The block is expanded by default.
+- **The menu input `favoritesCount` decides when the heading shows the number of rows.** `collapsed`,
+  the default, shows it on a collapsed block only; `always` shows it on an expanded one too;
+  `never` does not show it. An unknown value and an empty attribute read as `collapsed`.
 - **The block opens and closes with the motion of a folder.** The height runs from zero to its own
   and back, and the chevron turns, in the time and curve of the folder panel under it. A person who
   asks the system for less motion gets the block at once.
@@ -301,6 +304,7 @@ The public surface:
 | `setSubMenuMode`, `setSubMenuWidth` `(menuId, …)`     | write the mode, write the width brought within the submenu's limits                                                                                                  |
 | `settings(menuId)`, `deleteSettings(menuId)`          | the whole settings of a menu as a signal; deletes them, called only by the application                                                                               |
 | `ISideMenu.Item.favoriteDisabled`                     | the flag of a submenu item taking its star away                                                                                                                      |
+| `favoritesCount` of `rtui-side-menu`                  | `collapsed` by default: the number of rows on a collapsed heading; `always`; `never`                                                                                 |
 | `favoriteActionsReserve` of `rtui-side-menu`          | `none` by default: hidden row buttons take their width only when shown; `always`: they keep it at rest too                                                           |
 | `favoritesCollapsed(menuId)`                          | the ids of the strip items whose block is collapsed, as a signal                                                                                                     |
 | `setFavoritesCollapsed(menuId, sectionId, collapsed)` | writes the collapsed state of one section's block                                                                                                                    |
@@ -430,4 +434,5 @@ One settings object per application key, and in it one list per menu id.
   hover; SC-UK-86 no longer says they show without a hover. The block opens and closes with the
   motion of a folder, by the owner's word. The owner's word again: the label takes the place of the
   hidden buttons by default — `favoriteActionsReserve` is `none` without the input, and `always`
-  keeps the former look.
+  keeps the former look. The owner's word: the number of rows is shown always, on a collapsed block
+  or never by the menu input `favoritesCount`. Scenario SC-UK-141 added.

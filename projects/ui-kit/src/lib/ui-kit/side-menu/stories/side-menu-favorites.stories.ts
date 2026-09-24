@@ -242,6 +242,18 @@ export const SubMenuFavoritesCollapsed: TStory = {
     ],
 };
 
+/** Развёрнутый блок с `favoritesCount="always"`: число строк стоит в заголовке и у развёрнутого блока. */
+export const SubMenuFavoritesCountAlways: TStory = {
+    ...SubMenuFavorites,
+    args: { ...SubMenuFavorites.args, favoritesCount: 'always' },
+};
+
+/** Свёрнутый блок с `favoritesCount="never"`: заголовок без числа строк. */
+export const SubMenuFavoritesCollapsedNoCount: TStory = {
+    ...SubMenuFavoritesCollapsed,
+    args: { ...SubMenuFavoritesCollapsed.args, favoritesCount: 'never' },
+};
+
 /** Длинные подписи двух разделов «Content»: по ним видно, где подпись обрезается многоточием. */
 const LONG_TITLES: Readonly<Record<number, string>> = {
     3: 'Learn — guides, tutorials and onboarding',

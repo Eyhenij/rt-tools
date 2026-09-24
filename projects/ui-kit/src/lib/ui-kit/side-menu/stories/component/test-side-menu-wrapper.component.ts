@@ -161,6 +161,8 @@ export class TestSideMenuWrapperComponent {
     public menuId: string = DEFAULT_MENU_ID;
     /** Место под скрытые кнопки избранного: `always` держит их ширину и в покое. */
     public favoriteActionsReserve: ISideMenu.FavoriteActionsReserve = 'none';
+    /** Когда заголовок блока избранного показывает число строк. */
+    public favoritesCount: ISideMenu.FavoritesCount = 'collapsed';
     public isSubMenuXScrollEnabled: boolean = true;
     public isMainMenuIconsOutlined: boolean = false;
     public isSubMenuIconsOutlined: boolean = false;

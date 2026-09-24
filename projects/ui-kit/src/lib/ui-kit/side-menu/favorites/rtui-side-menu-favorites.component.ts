@@ -110,6 +110,12 @@ export class RtuiSideMenuFavoritesComponent {
         return !!this.favorites && !!section && this.favorites.favoritesCollapsed(this.#menu.menuId())().includes(section.id);
     });
     /** Номер списка строк: заголовок-переключатель называет его в `aria-controls`. */
+    /** Заголовок показывает число строк: всегда, у свёрнутого блока или никогда — по входу меню. */
+    protected readonly countShown: Signal<boolean> = computed((): boolean => {
+        const mode: ISideMenu.FavoritesCount = this.#menu.favoritesCount();
+
+        return mode === 'always' || (mode === 'collapsed' && this.collapsed());
+    });
     protected readonly listId: string = inject(_IdGenerator).getId('rtui-side-menu-favorites-list-');
     /**
      * Блок двигается только после нажатия на заголовок. Подменю, открывшееся с развёрнутым блоком,

@@ -35,6 +35,7 @@ import {
     clampSubMenuWidth,
     filterSubMenuItems,
     normalizeFavoriteActionsReserve,
+    normalizeFavoritesCount,
     subMenuIdsToExpand,
     SUB_MENU_WIDTH_MIN,
 } from '../side-menu.logic';
@@ -285,6 +286,11 @@ export class RtuiSideMenuComponent implements IRtuiSideMenuHost {
         ISideMenu.FavoriteActionsReserve,
         string | undefined
     >('none', { transform: normalizeFavoriteActionsReserve });
+    /** Число строк в заголовке избранного: `collapsed`, по умолчанию, — у свёрнутого блока; `always`; `never`. */
+    public favoritesCount: InputSignalWithTransform<ISideMenu.FavoritesCount, string | undefined> = input<
+        ISideMenu.FavoritesCount,
+        string | undefined
+    >('collapsed', { transform: normalizeFavoritesCount });
     public isSubMenuXScrollEnabled: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
         transform: booleanAttribute,
     });
