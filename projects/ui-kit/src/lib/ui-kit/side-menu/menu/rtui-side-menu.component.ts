@@ -277,14 +277,14 @@ export class RtuiSideMenuComponent implements IRtuiSideMenuHost {
         transform: normalizeMenuId,
     });
     /**
-     * Место под кнопки избранного, ждущие наведения: `always` — держат ширину, как прежде; `none` —
-     * в покое ширины не занимают, и подпись идёт до края. Незнакомое значение и пустой атрибут —
-     * то же, что `always`: поведение других потребителей не меняется молча.
+     * Место под кнопки избранного, ждущие наведения: `none`, по умолчанию, — в покое ширины не
+     * занимают, и подпись идёт до края, а под наведением сжимается перед кнопками; `always` —
+     * держат ширину и в покое. Незнакомое значение и пустой атрибут — то же, что `none`.
      */
     public favoriteActionsReserve: InputSignalWithTransform<ISideMenu.FavoriteActionsReserve, string | undefined> = input<
         ISideMenu.FavoriteActionsReserve,
         string | undefined
-    >('always', { transform: normalizeFavoriteActionsReserve });
+    >('none', { transform: normalizeFavoriteActionsReserve });
     public isSubMenuXScrollEnabled: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
         transform: booleanAttribute,
     });

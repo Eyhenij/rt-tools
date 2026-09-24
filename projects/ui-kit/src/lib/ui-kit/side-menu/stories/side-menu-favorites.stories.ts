@@ -186,9 +186,14 @@ export const SubMenuFavoritesCustomIcons: TStory = {
     decorators: [applicationConfig({ providers: [{ provide: RTUI_SIDE_MENU_SETTINGS_CONFIG, useValue: CUSTOM_ICONS }] })],
 };
 
-/** Указатель на кнопке «убрать»: корзина красная, цвет приложение задаёт свойством `--rt-side-menu-favorite-remove-hover-color`. */
+/**
+ * Указатель на кнопке «убрать»: корзина красная, цвет приложение задаёт свойством
+ * `--rt-side-menu-favorite-remove-hover-color`. Меню держит место под кнопки: без наведения на строку
+ * у кнопки нет ширины, и навести указатель прямо на неё нечем.
+ */
 export const SubMenuFavoritesRemoveHover: TStory = {
     ...SubMenuFavorites,
+    args: { ...SubMenuFavorites.args, favoriteActionsReserve: 'always' },
     parameters: { snapshotHover: '[qa-dataid="side-menu-favorite-remove"]' },
 };
 
@@ -256,25 +261,25 @@ const FAVORITES_MENU_LONG: ISideMenu.Item[] = FAVORITES_MENU_GALLERY_DISABLED.ma
 );
 
 /**
- * Длинные подписи с местом под скрытые кнопки, как по умолчанию: многоточие встаёт перед
- * невидимыми звездой, «убрать» и ручкой. Пара к истории без запаса места.
+ * Длинные подписи в меню по умолчанию: в покое подпись идёт до правого края или до «+» — полые
+ * звёзды, «убрать» и ручки ширины не занимают. У «Gallery» звезда снята флагом.
  */
 export const SubMenuFavoritesLongTitles: TStory = {
     ...SubMenuFavorites,
     args: { ...SubMenuFavorites.args, menuItems: FAVORITES_MENU_LONG },
 };
 
-/**
- * Те же подписи в меню с `favoriteActionsReserve="none"`: в покое подпись идёт до правого края или
- * до «+» — полые звёзды, «убрать» и ручки ширины не занимают. У «Gallery» звезда снята флагом.
- */
-export const SubMenuFavoritesNoReserve: TStory = {
+/** То же меню, указатель на длинной строке блока: «убрать» и ручка встали на место, подпись сжалась. */
+export const SubMenuFavoritesLongTitlesHover: TStory = {
     ...SubMenuFavoritesLongTitles,
-    args: { ...SubMenuFavoritesLongTitles.args, favoriteActionsReserve: 'none' },
+    parameters: { snapshotHover: '[qa-dataid="side-menu-favorite-row"][data-id="5"]' },
 };
 
-/** То же меню, указатель на длинной строке блока: «убрать» и ручка встали на место, подпись сжалась. */
-export const SubMenuFavoritesNoReserveHover: TStory = {
-    ...SubMenuFavoritesNoReserve,
-    parameters: { snapshotHover: '[qa-dataid="side-menu-favorite-row"][data-id="5"]' },
+/**
+ * Те же подписи в меню с `favoriteActionsReserve="always"`: скрытые кнопки держат место и в покое,
+ * и многоточие встаёт перед ними — прежний вид для приложения, которому он нужен.
+ */
+export const SubMenuFavoritesReserveAlways: TStory = {
+    ...SubMenuFavoritesLongTitles,
+    args: { ...SubMenuFavoritesLongTitles.args, favoriteActionsReserve: 'always' },
 };

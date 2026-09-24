@@ -52,7 +52,7 @@ given from the root of the tree.
 - **The collapsed state is kept per strip item under the menu's id.** — `projects/ui-kit/src/lib/ui-kit/side-menu/settings/rtui-side-menu-settings.service.ts:setFavoritesCollapsed`, the reading — `projects/ui-kit/src/lib/ui-kit/side-menu/settings/side-menu-settings.logic.ts:normalizeSettings`
 - **The search leaves the collapsed state as it was.** — `projects/ui-kit/src/lib/ui-kit/side-menu/favorites/rtui-side-menu-favorites.component.ts:rows`
 - **The labels of the toggle are two more labels of the provider settings.** — `projects/ui-kit/src/lib/ui-kit/side-menu/settings/rtui-side-menu-settings.service.ts:DEFAULT_LABELS`
-- **The hidden row buttons keep their width unless the menu gives it up.** — `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.ts:favoriteActionsReserve`, the styles — `projects/ui-kit/src/lib/ui-kit/side-menu/menu-sub-item/rtui-side-menu-sub-item.component.scss:favorite-actions-none`
+- **The hidden row buttons give up their width at rest unless the menu keeps it.** — `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.ts:favoriteActionsReserve`, the styles — `projects/ui-kit/src/lib/ui-kit/side-menu/menu-sub-item/rtui-side-menu-sub-item.component.scss:favorite-actions-none`
 
 The scenarios of the subdomain are bound to the tests by the number in the title of a test, not by a table
 here: the bond is checked both ways by the checking of the specs.

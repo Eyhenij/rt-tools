@@ -422,12 +422,12 @@ When the block is expanded, then collapsed
 Then the heading's `aria-label` is the collapse label, then the expand label; without them it is
 "Collapse favourites" and "Expand favourites"
 
-### SC-UK-140 — the menu gives up the width of hidden row buttons by the input
+### SC-UK-140 — the menu gives up the width of hidden row buttons unless the input keeps it
 
-Given the menu with `favoriteActionsReserve="none"`
+Given the menu without `favoriteActionsReserve`
 When the submenu is drawn
-Then the menu host carries the mark the styles read to take the width from hidden buttons; without
-the input it carries none
+Then the menu host carries the mark the styles read to take the width from hidden buttons; with
+`always` it carries none, and an unknown value reads as `none`
 
 Coverage: partial — the spec checks the mark, not the width: the spec environment applies no
 component styles and has no hover. The width is shown by the showcase frames of a row at rest and

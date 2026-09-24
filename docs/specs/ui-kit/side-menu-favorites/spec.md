@@ -234,11 +234,12 @@ sign-out or fill it with defaults.
   text, so nothing of it is expanded for the search and nothing stored changes.
 - **The labels of the toggle are two more labels of the provider settings.** `expand` and `collapse`
   name the next press for the screen reader.
-- **The hidden row buttons keep their width unless the menu gives it up.** By default the menu input
-  `favoriteActionsReserve` is `always`, and a hidden star, remove button and handle take their place
-  as before. With `none` a hidden button takes no width at rest, so the label runs to the right edge
-  or to the consumer's button; under the hover and the keyboard focus of its row the button takes
-  its width, and only the right edge of the label moves. The button stays in the Tab order. The
+- **The hidden row buttons give up their width at rest unless the menu keeps it.** By default the
+  menu input `favoriteActionsReserve` is `none`: a hidden star, remove button and handle take no
+  width at rest, so the label runs to the right edge or to the consumer's button; under the hover
+  and the keyboard focus of its row the button takes its width, and only the right edge of the label
+  moves. With `always` the hidden buttons keep their place at rest too, and the label ends in front
+  of them. An unknown value and an empty attribute read as `none`. The button stays in the Tab order. The
   filled star, a screen without hover and the dragged row keep their buttons; a narrow window with a
   mouse gives the width up the same as a wide one.
 
@@ -300,7 +301,7 @@ The public surface:
 | `setSubMenuMode`, `setSubMenuWidth` `(menuId, …)`     | write the mode, write the width brought within the submenu's limits                                                                                                  |
 | `settings(menuId)`, `deleteSettings(menuId)`          | the whole settings of a menu as a signal; deletes them, called only by the application                                                                               |
 | `ISideMenu.Item.favoriteDisabled`                     | the flag of a submenu item taking its star away                                                                                                                      |
-| `favoriteActionsReserve` of `rtui-side-menu`          | `always` by default: hidden row buttons keep their width; `none`: they take it only when shown                                                                       |
+| `favoriteActionsReserve` of `rtui-side-menu`          | `none` by default: hidden row buttons take their width only when shown; `always`: they keep it at rest too                                                           |
 | `favoritesCollapsed(menuId)`                          | the ids of the strip items whose block is collapsed, as a signal                                                                                                     |
 | `setFavoritesCollapsed(menuId, sectionId, collapsed)` | writes the collapsed state of one section's block                                                                                                                    |
 | `SIDE_MENU_SETTINGS_KEY`, `DEFAULT_MENU_ID`           | the storage key and the menu id by default                                                                                                                           |
@@ -427,4 +428,6 @@ One settings object per application key, and in it one list per menu id.
   `favoriteActionsReserve="none"`. Scenarios SC-UK-134…SC-UK-140 added. The owner's word: the row
   buttons show at rest by the pointer, not by the width — a narrow window with a mouse shows them on
   hover; SC-UK-86 no longer says they show without a hover. The block opens and closes with the
-  motion of a folder, by the owner's word.
+  motion of a folder, by the owner's word. The owner's word again: the label takes the place of the
+  hidden buttons by default — `favoriteActionsReserve` is `none` without the input, and `always`
+  keeps the former look.

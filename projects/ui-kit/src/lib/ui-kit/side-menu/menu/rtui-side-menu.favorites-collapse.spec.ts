@@ -137,29 +137,29 @@ describe('RtuiSideMenuComponent — сворачивание избранног�
         expect(title(fixture).getAttribute('aria-label')).toBe('Expand favourites');
     });
 
-    it('SC-UK-140 — вход none ставит на меню отметку для стилей, без входа отметки нет', () => {
+    it('SC-UK-140 — без входа меню отдаёт ширину скрытых кнопок, вход always её держит', () => {
         const { fixture, host }: ISetup = setup('hover', [], false, NESTED_ITEMS);
         const menuHost: HTMLElement = fixture.nativeElement.querySelector('rtui-side-menu') as HTMLElement;
         const mark: string = 'rtui-side-menu--favorite-actions-none';
 
         expect(menuHost.classList).toContain('rtui-side-menu');
-        expect(menuHost.classList).not.toContain(mark);
-
-        host.reserve.set('none');
-        fixture.detectChanges();
-
         expect(menuHost.classList).toContain(mark);
 
         host.reserve.set('always');
         fixture.detectChanges();
 
         expect(menuHost.classList).not.toContain(mark);
+
+        host.reserve.set('none');
+        fixture.detectChanges();
+
+        expect(menuHost.classList).toContain(mark);
     });
 
-    it('SC-UK-140 — незнакомое значение и пустой атрибут читаются как always', () => {
-        expect(normalizeFavoriteActionsReserve('none')).toBe('none');
-        expect(normalizeFavoriteActionsReserve('')).toBe('always');
-        expect(normalizeFavoriteActionsReserve(undefined)).toBe('always');
-        expect(normalizeFavoriteActionsReserve('reserve')).toBe('always');
+    it('SC-UK-140 — незнакомое значение и пустой атрибут читаются как none', () => {
+        expect(normalizeFavoriteActionsReserve('always')).toBe('always');
+        expect(normalizeFavoriteActionsReserve('')).toBe('none');
+        expect(normalizeFavoriteActionsReserve(undefined)).toBe('none');
+        expect(normalizeFavoriteActionsReserve('reserve')).toBe('none');
     });
 });

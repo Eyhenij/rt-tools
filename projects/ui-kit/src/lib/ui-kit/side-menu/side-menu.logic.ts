@@ -269,9 +269,9 @@ export function stepSubMenuHighlight(
 }
 
 /**
- * Место под скрытые кнопки избранного из входа меню. Только `none` отдаёт ширину: незнакомое
- * значение и пустой атрибут читаются как `always`, и меню у других потребителей не меняется.
+ * Место под скрытые кнопки избранного из входа меню. Только `always` держит ширину: незнакомое
+ * значение и пустой атрибут читаются как `none`, как меню без входа, — подпись идёт до края.
  */
 export function normalizeFavoriteActionsReserve(value: string | undefined): ISideMenu.FavoriteActionsReserve {
-    return value === 'none' ? 'none' : 'always';
+    return value === 'always' ? 'always' : 'none';
 }
