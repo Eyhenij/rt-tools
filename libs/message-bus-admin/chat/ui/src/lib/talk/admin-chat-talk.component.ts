@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, InputSignal, Signal } from '@angular/core';
-import { chatMomentText, EChatSide, IChat } from '@rt/message-bus-admin/chat/util';
+import { chatMomentText, chatTalkClosed, EChatSide, IChat } from '@rt/message-bus-admin/chat/util';
 import { AdminLocaleService, AdminTextService } from '@rt/message-bus-admin/common/core/util';
-import { EChatTalkState } from '@rt/message-bus-common';
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
+import { IRtTag, RtTagComponent } from '@rt-tools/ui-kit-v2';
 
 const BEM_BLOCK: string = 'admin-chat-talk';
 
@@ -24,6 +24,9 @@ const BEM_BLOCK: string = 'admin-chat-talk';
         // rt-tools
         BlockDirective,
         ElemDirective,
+
+        // components
+        RtTagComponent,
     ],
     host: { class: BEM_BLOCK, 'qa-dataid': 'chat-talk' },
 })
@@ -33,7 +36,15 @@ export class AdminChatTalkComponent {
 
     /** Слово состояния: живой или закрытый. Оба лежат в словаре — на экране их читает человек. */
     protected readonly stateLabel: Signal<string> = computed((): string =>
-        this.#text.text(this.talk().state === EChatTalkState.Closed ? 'chatStateClosed' : 'chatStateLive')
+        this.#text.text(chatTalkClosed(this.talk()) ? 'chatStateClosed' : 'chatStateLive')
+    );
+
+    /**
+     * Цвет тега состояния. Живой разговор ждёт ответа и назван цветом внимания, закрытый —
+     * спокойным: над полусотней строк состояние читается цветом раньше, чем словом.
+     */
+    protected readonly stateSeverity: Signal<IRtTag.Severity> = computed((): IRtTag.Severity =>
+        chatTalkClosed(this.talk()) ? 'secondary' : 'success'
     );
 
     /** Минута последней реплики словами языка экрана. */

@@ -1,6 +1,6 @@
 <ng-container rtBlock="admin-chat-talk">
     <span rtElem="site">{{ talk().siteId }}</span>
-    <span rtElem="state">{{ stateLabel() }}</span>
+    <rt-tag rtElem="state" qa-dataid="chat-talk-state-mark" [severity]="stateSeverity()" [value]="stateLabel()" />
     <span rtElem="last">{{ sideLabel() }}: {{ talk().lastMessage }}</span>
     <span rtElem="at">{{ momentText() }}</span>
 </ng-container>

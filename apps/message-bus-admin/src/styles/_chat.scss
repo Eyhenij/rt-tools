@@ -86,9 +86,9 @@
         white-space: nowrap;
     }
 
+    /* Состояние — тег кита: над полусотней строк оно читается цветом раньше, чем словом */
     &__state {
-        color: var(--rt-color-text-muted);
-        font-size: var(--rt-text-sm);
+        justify-self: end;
     }
 
     &__last {
