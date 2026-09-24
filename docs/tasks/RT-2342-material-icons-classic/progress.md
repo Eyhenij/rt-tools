@@ -5,7 +5,7 @@
 - **State:** `этап-идёт`
 - **Stage:** 2 of 2 — Frames and handing over
 - **Done:** the icons of both kits measured; under Material Symbols the first kit's toolbar matches the second kit's crop
-- **Next step:** write the reference drawing into the spec
+- **Next step:** take the task folder apart and open the PR into the epic branch
 - **Uncommitted:** no
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -16,8 +16,8 @@
 - [x] 1.2 Set the showcase icon registry to `material-symbols-outlined`
 - [x] 1.3 Compare the list toolbar and rows of both kits on a crop
 - [x] 2.1 Look at the diverged first kit frames and re-take them in the image
-- [>] 2.2 Write the reference drawing into the spec
-- [ ] 2.3 Open the PR into the epic branch
+- [x] 2.2 Write the reference drawing into the spec
+- [>] 2.3 Open the PR into the epic branch
 
 ## Decisions along the way
 
