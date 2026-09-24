@@ -1,7 +1,7 @@
 # The embedded page of the talks
 
-**Status:** proposed · **Revision:** 2026-09-23 · **Scenario prefix:** `SC-CH`
-**Depends on:** `chat` (the conversation, the message and the key of the site), `chat/operator-reading` (the reading of the lists and the answer), `chat/event-stream` (the stream)
+**Status:** in force · **Revision:** 2026-09-24 · **Scenario prefix:** `SC-CH`
+**Depends on:** `chat` (the conversation, the message and the key of the site), `chat/operator-reading` (the reading of the lists and the answer), `chat/event-stream` (the stream), `chat/talks-workspace` (the layout of the screen)
 **Laws:** `access`, `reuse-first`, `lists`, `verifiability`
 **Procedures:** none — the operations are declared by the controllers of the chat
 
@@ -28,12 +28,15 @@ space and its own operators.
 | The signature                  | The sign the consumer makes over the key of the site and the minute with the secret of the site  |
 | The sign of the page           | What the service gives out in exchange for a signature; the operations are called under it       |
 | The script of the installation | One file of the service that the admin of the consumer loads; it declares the tag of the section |
+| The details                    | The right column of the page: the properties of the chosen talk and the actions over it          |
 
 ### What it is called in the interface
 
-The section is named «Переписки» inside the admin of the consumer. The refusal of the entry is said
-by the words «Страница переписок не открылась», the expiry of the sign — «Вход устарел, обновите
-страницу».
+The section is named «Переписки» inside the admin of the consumer. A row of the list carries the
+site, the last remark and the minute of it, and the state of a talk stands in it as a mark — «Живой»
+or «Закрытый». The details are headed «Разговор», and the action over a talk is «Закрыть разговор»
+or «Открыть снова». The refusal of the entry is said by the words «Страница переписок не открылась»,
+the expiry of the sign — «Вход устарел, обновите страницу».
 
 ## Rules
 
@@ -54,8 +57,8 @@ by the words «Страница переписок не открылась», th
 **What the page shows.**
 
 - **The page shows the same as the panel of the operator, for one site.** The list of the talks, the
-  feed of one talk, the answer and the closing of a talk. The screens are drawn by the ready-made
-  pieces of the kit — the list and the chat — the same ones the panel is drawn by.
+  feed of one talk, the answer and the closing of a talk. Both screens stand on the workspace of the
+  kit and take the same parts; the subdomain about the workspace says how they are laid out.
 - **The page carries no choice of a site.** The site is named by the key it was embedded with.
 
 **How the page is installed.**
@@ -117,7 +120,7 @@ entry ended.
 | The entry is going on | the place of the list with the sign of waiting                                |
 | The entry is refused  | «Страница переписок не открылась» and the reason in the words of the consumer |
 | There are no talks    | the empty state of the list of the kit                                        |
-| The talks are there   | the list, the feed of the chosen talk, the box of the answer                  |
+| The talks are there   | the list, the feed of the chosen talk, the box of the answer, the details     |
 | The sign expired      | «Вход устарел, обновите страницу», the list stays on the screen               |
 
 ## Cross-cutting requirements
@@ -140,7 +143,7 @@ indexed.
 
 ### Mobile layout
 
-The list and the feed stand one above the other on a narrow screen, as they do in the panel of the
+On a narrow screen the workspace shows one column at a time, as it does in the panel of the
 operator; the box of the answer stays at the bottom of the feed. The width is taken from the place
 the consumer embedded the page into, not from the width of the window.
 
@@ -171,3 +174,6 @@ embeds the page as many times, and the pages know nothing of one another.
 - 2026-09-23 — the page is drawn by the task RT-2313; the installation into a foreign admin and the
   sample of the consumer on the stand are written by the task RT-2314, and the rules of the
   installation are added above.
+- 2026-09-24 — the page is laid out by the workspace of the kit by the task RT-2338 of the epic
+  RT-2335: the three columns, the details with the properties and the action, the mark of the state
+  in the row. The text takes the status of a spec in force: everything it promises is written.

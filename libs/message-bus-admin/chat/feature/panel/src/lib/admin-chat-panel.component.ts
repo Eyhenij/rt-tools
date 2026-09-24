@@ -163,7 +163,12 @@ export class AdminChatPanelComponent {
         close: this.#text.text('chatClose'),
         reopen: this.#text.text('chatReopen'),
         untitled: this.#text.text('chatTalkUntitled'),
+        sideOperator: this.#text.text('chatSideOperator'),
+        sideVisitor: this.#text.text('chatSideVisitor'),
     }));
+
+    /** Язык экрана: им строка списка называет минуту последней реплики. */
+    protected readonly locale: Signal<string> = computed((): string => this.#locale.tag());
 
     /** Заголовок панели подробностей. */
     protected readonly detailsTitle: Signal<string> = computed((): string => this.#text.text('chatTalkDetails'));

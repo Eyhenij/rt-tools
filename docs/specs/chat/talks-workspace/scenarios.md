@@ -28,5 +28,3 @@ title of the talk, the details. The widths of the columns are remembered under t
 
 The page in a foreign admin shows the same three columns, assembled from the same parts, and
 remembers its widths under a key of its own — not the one of the panel.
-
-Не покрыто: the page is assembled by the task RT-2338, and the scenario is closed by its spec.

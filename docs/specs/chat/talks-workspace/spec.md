@@ -1,6 +1,6 @@
 # The talks open as a workspace
 
-**Status:** proposed · **Revision:** 2026-09-24 · **Scenario prefix:** `SC-CH`
+**Status:** in force · **Revision:** 2026-09-24 · **Scenario prefix:** `SC-CH`
 **Depends on:** `chat/operator-panel` (the screen of the operator), `chat/embedded-talks` (the page in a foreign admin)
 **Laws:** `reuse-first`, `lists`, `frontend-application`, `verifiability`
 **Procedures:** none — the screens are assembled from the operations already declared
@@ -161,3 +161,5 @@ The details show one talk — the chosen one. Two talks open at once are not a s
 ## History of changes
 
 - 2026-09-24 — the text is written before the code, by the task RT-2336 of the epic RT-2335.
+- 2026-09-24 — the code of both screens is written, and the text moves into the domain by the task
+  RT-2338 of the same epic.

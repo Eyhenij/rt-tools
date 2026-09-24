@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { EChatSide, IChat } from '@rt/message-bus-admin/chat/util';
+import { EChatSide, IChat, IChatTalkWords } from '@rt/message-bus-admin/chat/util';
 import { EChatTalkState } from '@rt/message-bus-common';
 import { provideRtStorage, provideRtUtils } from '@rt-tools/core';
 
@@ -8,6 +8,20 @@ import { AdminChatTalkComponent } from './admin-chat-talk.component';
 
 /** Минута последней реплики: часы машины в спеке не читаются. */
 const AT: string = '2026-09-20T10:00:00.000Z';
+
+/** Слова экрана. На экране их даёт словарь, здесь — вход компонента. */
+const WORDS: IChatTalkWords = {
+    site: 'Площадка',
+    state: 'Состояние',
+    lastMessageAt: 'Последняя реплика',
+    stateLive: 'Живой',
+    stateClosed: 'Закрытый',
+    close: 'Закрыть разговор',
+    reopen: 'Открыть снова',
+    untitled: 'Разговор без реплик',
+    sideOperator: 'Оператор',
+    sideVisitor: 'Посетитель',
+};
 
 /** Разговор строки. Состояние называется доводом: о нём и спрашивают. */
 function talk(state: EChatTalkState): IChat.Talk.State {
@@ -37,6 +51,7 @@ describe('AdminChatTalkComponent', () => {
 
         fixture = TestBed.createComponent(AdminChatTalkComponent);
         fixture.componentRef.setInput('talk', talk(EChatTalkState.Live));
+        fixture.componentRef.setInput('words', WORDS);
         fixture.detectChanges();
     });
 
@@ -62,5 +77,13 @@ describe('AdminChatTalkComponent', () => {
 
         expect(row.textContent).toContain('площадка-1');
         expect(row.textContent).toContain('Посетитель: где мой заказ?');
+    });
+
+    it('слова строки приходят входом, а не словарём одного из экранов', () => {
+        fixture.componentRef.setInput('words', { ...WORDS, stateLive: 'Open', sideVisitor: 'Visitor' });
+        fixture.detectChanges();
+
+        expect(markOf(fixture).textContent?.trim()).toBe('Open');
+        expect((fixture.nativeElement as HTMLElement).textContent).toContain('Visitor: где мой заказ?');
     });
 });

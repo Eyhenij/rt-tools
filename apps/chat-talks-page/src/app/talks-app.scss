@@ -1,44 +1,17 @@
+/*
+ * Встраиваемая страница переписок: рабочий стол набора занимает рамку целиком.
+ *
+ * Колонки рисует стол — их тянут мышью и клавиатурой, ширины он же помнит своим ключом. Здесь
+ * остаётся только высота: рамка задана админкой потребителя, и стол занимает её всю.
+ */
 .talks-page {
     display: block;
     block-size: 100%;
 
     &__screen {
-        display: grid;
+        display: block;
         background: var(--rt-color-bg-surface);
         block-size: 100%;
-        gap: var(--rt-space-4);
-        grid-template-columns: minmax(0, 20rem) minmax(0, 1fr);
-    }
-
-    &__talks,
-    &__feed {
-        display: flex;
-        flex-direction: column;
-        min-block-size: 0;
-    }
-
-    &__thread {
-        min-block-size: 0;
-    }
-
-    /* Строка списка — готовая часть набора, и она сама стоит рядом: место берётся долей */
-    &__row {
-        display: flex;
-        flex: 1 1 auto;
-        justify-content: space-between;
-        margin: 0;
-        gap: var(--rt-space-2);
-        min-inline-size: 0;
-    }
-
-    &__row-text {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-    &__row-state {
-        color: var(--rt-color-text-muted);
     }
 
     &__title {
@@ -51,13 +24,5 @@
         padding: var(--rt-space-4);
         margin: 0;
         color: var(--rt-color-text-primary);
-    }
-
-    /* Узкий экран: список и лента встают друг под другом, как в панели оператора */
-    @media (width <= 48rem) {
-        &__screen {
-            grid-template-columns: minmax(0, 1fr);
-            grid-template-rows: minmax(0, 18rem) minmax(0, 1fr);
-        }
     }
 }

@@ -69,7 +69,9 @@ silent about.
   path through `projects/*` instead of an alias, the input and output decorators instead of the
   reactive ones.
 - Of the package bundles this tree declares two. `angular` goes over the whole tree, `ui-kit-v2`
-  over the area `apps/message-bus-admin` and `libs/message-bus-admin`. The area is not a detail
+  over the area `apps/chat-talks-page`, `apps/message-bus-admin` and `libs/message-bus-admin`. The
+  embedded page stands in the area because it draws the same screen as the panel by the same
+  ready-made pieces; outside it the check kept silent about the page. The area is not a detail
   here. The tree writes the second kit as well, and a bundle declared without an area would advise
   calling the kit on the kit's own files: the sign is right and pointed the wrong way. The bundles
   of the first kit, of the core, of the storage and of the utilities are not declared for the same

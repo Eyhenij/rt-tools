@@ -21,7 +21,7 @@
             </ng-template>
 
             <ng-template let-row [rtThreadListRow]="talkRows()">
-                <admin-chat-talk [talk]="row" />
+                <admin-chat-talk [locale]="locale()" [talk]="row" [words]="talkWords()" />
             </ng-template>
         </rt-thread-list>
     </ng-template>
