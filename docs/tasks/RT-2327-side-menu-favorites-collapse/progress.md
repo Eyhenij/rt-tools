@@ -3,19 +3,19 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 1 of 5 — the spec
-- **Done:** the task, the branch and the folder
-- **Next step:** write the rules into the spec
-- **Uncommitted:** the task folder
+- **Stage:** 2 of 5 — the disabled star
+- **Done:** the spec: rules, scenarios SC-UK-134…SC-UK-140, bindings
+- **Next step:** the flag `favoriteDisabled` in the item type
+- **Uncommitted:** nothing
 - **Waiting for the owner:** no; the owner's word: «доделай до остановки нужно срочно взять другую задачу»
 - **PR:** not open yet
 
 ## Steps
 
-- [>] 1.1 Rules for the disabled star, the collapsible block and the width reserve written into the spec
-- [ ] 1.2 Scenarios SC-UK-125 and further written into the scenarios
-- [ ] 1.3 Bindings written into the implementation list
-- [ ] 2.1 The flag `favoriteDisabled` added to the item type
+- [x] 1.1 Rules for the disabled star, the collapsible block and the width reserve written into the spec
+- [x] 1.2 Scenarios SC-UK-125 and further written into the scenarios
+- [x] 1.3 Bindings written into the implementation list
+- [>] 2.1 The flag `favoriteDisabled` added to the item type
 - [ ] 2.2 The candidate check and the block lookup skip the flagged item
 - [ ] 2.3 The row template draws no star for the flagged item
 - [ ] 2.4 Tests for the logic and the row
@@ -33,8 +33,12 @@
 
 ## Decisions along the way
 
+- **Scenarios start at SC-UK-134, not 125** — `npm run spec:next-id SC-UK` names 125…133 taken elsewhere. Affected stage of the plan: 1.
+
 ## Sessions
 
 ### 2026-09-24
 
 - Task #2327 extended with points 1 and 2, branch from `origin/main`, folder written.
+- Stage 1: `npm run check:specs` names the six new bindings without code and SC-UK-134…SC-UK-140
+  without tests — what stages 2–4 bring; no other divergence of the subdomain.

@@ -1,6 +1,6 @@
 # Favourites of the side menu
 
-**Status:** in force · **Revision:** 2026-09-22 · **Scenario prefix:** `SC-UK`
+**Status:** in force · **Revision:** 2026-09-24 · **Scenario prefix:** `SC-UK`
 **Depends on:** the second level of the side menu — the favourites block stands in its submenu
 **Laws:** `frontend-application`, `reuse-first`, `navigation`
 **Procedures:** none
@@ -211,6 +211,29 @@ sign-out or fill it with defaults.
   would stay red under it.
 - **On a narrow screen the block stands the same, under the search of the submenu.** The same rows,
   the same buttons, the same handle: the split between the two layouts would be a second favourites.
+- **An item flagged `favoriteDisabled` is not a favourite candidate.** Its row draws no star in
+  either mode and keeps no place for one; the service does not add it; its id already stored stays
+  in the list and does not reach the block. The flag is for rows with an address that are not
+  content — the section's own page, a dashboard link, a "Create" action.
+- **The heading of the block is a toggle that collapses the block and expands it.** It is a button
+  in the Tab order: a click, Enter and Space switch it; it carries `aria-expanded` and names the
+  list by `aria-controls`. The chevron stands on the right, in the column of the stars, the same as
+  the chevron of a folder. A collapsed block keeps its heading and its divider and hides the rows;
+  the heading then shows the number of rows: "Favourites (5)". The block is expanded by default.
+- **The collapsed state is kept per strip item under the menu's id.** The settings hold
+  `favoritesCollapsed`, the ids of the strip items whose block is collapsed; the service gives them
+  as a signal and writes the state of one section by `setFavoritesCollapsed`. The block of one
+  section may be collapsed while another's is expanded.
+- **The search leaves the collapsed state as it was.** The block is not drawn while the search holds
+  text, so nothing of it is expanded for the search and nothing stored changes.
+- **The labels of the toggle are two more labels of the provider settings.** `expand` and `collapse`
+  name the next press for the screen reader.
+- **The hidden row buttons keep their width unless the menu gives it up.** By default the menu input
+  `favoriteActionsReserve` is `always`, and a hidden star, remove button and handle take their place
+  as before. With `none` a hidden button takes no width at rest, so the label runs to the right edge
+  or to the consumer's button; under the hover and the keyboard focus of its row the button takes
+  its width, and only the right edge of the label moves. The button stays in the Tab order. The
+  filled star, the narrow screen, a screen without hover and the dragged row keep their buttons.
 
 ## What is out of scope
 
@@ -240,35 +263,40 @@ Not applicable: the service refuses nothing — a broken record reads as an empt
 One record of the browser storage: the key named by the provider, `rtui-side-menu` by default. The
 value is a JSON object with the settings of every menu under its id; the settings hold `favorites`,
 an array of ids, each a string or a number, in the order of the list, `subMenuMode`, `hover` or
-`pinned`, and `subMenuWidth`, a number of pixels. A change reads the record, edits one field of one
-menu and writes the object back.
+`pinned`, `subMenuWidth`, the width in pixels, and `favoritesCollapsed`, the ids of the strip items
+whose favourites block is collapsed. A change reads the record, edits one field of one menu and
+writes the object back.
 
 ```json
 {
-    "user-a": { "favorites": [2, 7, 9], "subMenuMode": "pinned", "subMenuWidth": 320 },
+    "user-a": { "favorites": [2, 7, 9], "subMenuMode": "pinned", "subMenuWidth": 320, "favoritesCollapsed": ["reports"] },
     "user-b": { "favorites": ["reports"] }
 }
 ```
 
 The public surface:
 
-| Name                                              | What it is                                                                                                                                     |
-| ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| `provideRtuiSideMenuSettings(config?)`            | the providers of the service; `config.storageKey`, `config.labels` with `title`, `add`, `remove`, `drag`, `config.icons` with `remove`, `drag` |
-| `--rt-side-menu-favorites-title-color`            | the colour of the heading's label, set by the application on an ancestor of the menu                                                           |
-| `ISideMenu.Item.favorites`                        | the flag of a strip item switching its favourites on; off by default                                                                           |
-| `--rt-side-menu-favorite-color`                   | the colour of the filled star and of the heading's star, set by the application on an ancestor of the menu                                     |
-| `menuId` of `rtui-side-menu`                      | the id the menu keeps its settings under; `default` when none or an empty one is given                                                         |
-| `RtuiSideMenuSettingsService.ids(menuId)`         | the whole list of a menu as a read-only signal, ids hidden from every block included                                                           |
-| `menuIds`                                         | the ids of the menus whose settings are stored, as a signal                                                                                    |
-| `has`, `add`, `remove`, `toggle` `(menuId, id)`   | a check and three edits of one id; adding an id already in the list does nothing                                                               |
-| `move(menuId, from, to)`                          | moves an entry between two places of the list                                                                                                  |
-| `moveVisible(menuId, visibleIds, from, to)`       | moves between places of the shown ids only: the shown ones swap among themselves, the hidden ones stay where they stood                        |
-| `set(menuId, ids)`, `clear(menuId)`               | replaces the list whole, empties it                                                                                                            |
-| `subMenuMode(menuId)`, `subMenuWidth(menuId)`     | the stored mode, `hover` when none, and the stored width, empty when none, as signals                                                          |
-| `setSubMenuMode`, `setSubMenuWidth` `(menuId, …)` | write the mode, write the width brought within the submenu's limits                                                                            |
-| `settings(menuId)`, `deleteSettings(menuId)`      | the whole settings of a menu as a signal; deletes them, called only by the application                                                         |
-| `SIDE_MENU_SETTINGS_KEY`, `DEFAULT_MENU_ID`       | the storage key and the menu id by default                                                                                                     |
+| Name                                                  | What it is                                                                                                                                                           |
+| ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `provideRtuiSideMenuSettings(config?)`                | the providers of the service; `config.storageKey`, `config.labels` with `title`, `add`, `remove`, `drag`, `expand`, `collapse`, `config.icons` with `remove`, `drag` |
+| `--rt-side-menu-favorites-title-color`                | the colour of the heading's label, set by the application on an ancestor of the menu                                                                                 |
+| `ISideMenu.Item.favorites`                            | the flag of a strip item switching its favourites on; off by default                                                                                                 |
+| `--rt-side-menu-favorite-color`                       | the colour of the filled star and of the heading's star, set by the application on an ancestor of the menu                                                           |
+| `menuId` of `rtui-side-menu`                          | the id the menu keeps its settings under; `default` when none or an empty one is given                                                                               |
+| `RtuiSideMenuSettingsService.ids(menuId)`             | the whole list of a menu as a read-only signal, ids hidden from every block included                                                                                 |
+| `menuIds`                                             | the ids of the menus whose settings are stored, as a signal                                                                                                          |
+| `has`, `add`, `remove`, `toggle` `(menuId, id)`       | a check and three edits of one id; adding an id already in the list does nothing                                                                                     |
+| `move(menuId, from, to)`                              | moves an entry between two places of the list                                                                                                                        |
+| `moveVisible(menuId, visibleIds, from, to)`           | moves between places of the shown ids only: the shown ones swap among themselves, the hidden ones stay where they stood                                              |
+| `set(menuId, ids)`, `clear(menuId)`                   | replaces the list whole, empties it                                                                                                                                  |
+| `subMenuMode(menuId)`, `subMenuWidth(menuId)`         | the stored mode, `hover` when none, and the stored width, empty when none, as signals                                                                                |
+| `setSubMenuMode`, `setSubMenuWidth` `(menuId, …)`     | write the mode, write the width brought within the submenu's limits                                                                                                  |
+| `settings(menuId)`, `deleteSettings(menuId)`          | the whole settings of a menu as a signal; deletes them, called only by the application                                                                               |
+| `ISideMenu.Item.favoriteDisabled`                     | the flag of a submenu item taking its star away                                                                                                                      |
+| `favoriteActionsReserve` of `rtui-side-menu`          | `always` by default: hidden row buttons keep their width; `none`: they take it only when shown                                                                       |
+| `favoritesCollapsed(menuId)`                          | the ids of the strip items whose block is collapsed, as a signal                                                                                                     |
+| `setFavoritesCollapsed(menuId, sectionId, collapsed)` | writes the collapsed state of one section's block                                                                                                                    |
+| `SIDE_MENU_SETTINGS_KEY`, `DEFAULT_MENU_ID`           | the storage key and the menu id by default                                                                                                                           |
 
 ## Screens and states
 
@@ -279,14 +307,15 @@ The public surface:
 | service, a flagged section, empty list    | hollow stars on hover, no block                       |
 | service, favourites of the open section   | the block with their rows over the list               |
 | service, none of them in the open section | no block                                              |
+| the block collapsed                       | the heading with the count and the divider, no rows   |
 | a query in the search                     | the block is hidden, the stars stay on the found rows |
 
 ## Cross-cutting requirements
 
 ### Locales
 
-The four labels — the heading, "Add to favourites", "Remove from favourites", "Hold button to
-drag" — are sewn in in English and replaced by `config.labels`. There are no dictionary keys: the first kit has no
+The six labels — the heading, "Add to favourites", "Remove from favourites", "Hold button to
+drag", "Expand favourites", "Collapse favourites" — are sewn in in English and replaced by `config.labels`. There are no dictionary keys: the first kit has no
 dictionary.
 
 ### SEO
@@ -385,3 +414,6 @@ One settings object per application key, and in it one list per menu id.
   `config.icons`, a glyph and a turn each; the default remove icon is the trash can. Scenarios
   SC-UK-121…SC-UK-123 added, SC-UK-95 names the icon by the settings. The remove icon turns red
   under the pointer, the colour is a property of the application. Scenario SC-UK-124 added.
+- 2026-09-24 — RT-2327, the consumer's request: a row flagged `favoriteDisabled` has no star; the
+  heading of the block collapses it, per strip item; the hidden row buttons give up their width by
+  `favoriteActionsReserve="none"`. Scenarios SC-UK-134…SC-UK-140 added.
