@@ -188,13 +188,12 @@ export const SubMenuFavoritesCustomIcons: TStory = {
 
 /**
  * Указатель на кнопке «убрать»: корзина красная, цвет приложение задаёт свойством
- * `--rt-side-menu-favorite-remove-hover-color`. Меню держит место под кнопки: без наведения на строку
- * у кнопки нет ширины, и навести указатель прямо на неё нечем.
+ * `--rt-side-menu-favorite-remove-hover-color`. Без наведения на строку у кнопки нет ширины, поэтому
+ * указатель наводится сначала на строку, затем на кнопку.
  */
 export const SubMenuFavoritesRemoveHover: TStory = {
     ...SubMenuFavorites,
-    args: { ...SubMenuFavorites.args, favoriteActionsReserve: 'always' },
-    parameters: { snapshotHover: '[qa-dataid="side-menu-favorite-remove"]' },
+    parameters: { snapshotHover: ['[qa-dataid="side-menu-favorite-row"]', '[qa-dataid="side-menu-favorite-remove"]'] },
 };
 
 /**

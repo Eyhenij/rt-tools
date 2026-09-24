@@ -361,10 +361,14 @@ const config: TestRunnerConfig = {
         // полный снимок перекладывает страницу заново, и наведение, разыгранное событием,
         // до кадра не доживает.
         const story: Awaited<ReturnType<typeof getStoryContext>> = await getStoryContext(page, context);
-        const hovered: string | undefined = story.parameters?.snapshotHover as string | undefined;
+        // Список селекторов наводится по порядку: кнопка, у которой без наведения на её строку нет
+        // ширины, наводится вторым шагом, после строки.
+        const hovered: string | string[] | undefined = story.parameters?.snapshotHover as string | string[] | undefined;
 
         if (hovered) {
-            await page.locator(hovered).first().hover();
+            for (const selector of ([] as string[]).concat(hovered)) {
+                await page.locator(selector).first().hover();
+            }
         } else {
             // Указатель переживает переход к следующей истории и наводится уже на её
             // разметку: снимок соседа приходит с проявившейся кнопкой, которой там не ждут.
