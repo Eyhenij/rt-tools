@@ -92,10 +92,14 @@ Nothing new is shown to a person: the list keeps its labels, only its look follo
   buttons and a 32 px line between the groups. The application's own buttons in that row get the same
   look. The icon button takes it through its own properties, whose defaults leave its look as it was.
 
+- **The page strip under the list is the kit's page strip, and the material preset gives it the first
+  kit's look.** Pages are 34 px boxes in a grey frame rounded by 12 px. The current page is filled
+  grey with a white number. The arrows are framed the same way and point with arrows, not chevrons.
+  The range label is hidden, and the page size field stands next to the numbers without a fill. The
+  own preset keeps the strip as it was.
+
 ## What is out of scope
 
-- **The paginator.** Its arrows, its current page and its page size field differ from the first kit;
-  filed as RT-2332.
 - **The font.** The first kit ships no font: its showcase sets Roboto on the page, and an application
   does the same with the second kit's font handle.
 - **The floating bar of selected records.** The application places it in both kits; the second
@@ -157,7 +161,7 @@ Not applicable: the family holds no data of a workspace.
 
 ## Open questions
 
-- Whether the icon button gets a raised round look for the toolbar. Asked in RT-2331.
+- None.
 
 ## History of changes
 
@@ -172,3 +176,5 @@ Not applicable: the family holds no data of a workspace.
   первого кита конфиг колонок он выглядит как асайл второго кита».
 - 2026-09-24 — the action buttons above the table are the first kit's small raised buttons, taken
   from RT-2331 into this work after «экшены в первом ките фаб кнопки отличаются от второго кита????».
+- 2026-09-24 — the page strip under the list is the kit's strip with the first kit's look. RT-2332
+  took it from «out of scope» after «нужно все чтобы таблица юзала уже компоненты второго кита».

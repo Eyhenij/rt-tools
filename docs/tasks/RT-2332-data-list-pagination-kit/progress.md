@@ -19,8 +19,8 @@
 - [ ] 2.2 Remove `rt-data-list-pagination` with its spec and the logic nothing calls any more
 - [ ] 2.3 Move the list's specs to the kit strip's anchors
 - [ ] 3.1 Look at the diverged frames and re-take them in the image
-- [>] 3.2 Move the page strip from «out of scope» to the rules of the spec, with its binding
-- [ ] 3.3 Open the PR into RT-2330 as a draft
+- [x] 3.2 Move the page strip from «out of scope» to the rules of the spec, with its binding
+- [>] 3.3 Open the PR into RT-2330 as a draft
 
 ## Decisions along the way
 
