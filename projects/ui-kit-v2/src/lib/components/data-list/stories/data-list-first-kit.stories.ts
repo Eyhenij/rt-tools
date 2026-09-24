@@ -11,7 +11,7 @@ import { TEST_PEOPLE } from './component/test-data-list-people';
  * открываются поверх страницы. Витрина добавляет только фиолетовую тему первого кита.
  */
 export default {
-    title: 'Organisms/First Kit Table/DataList',
+    title: 'Organisms/Material Dynamic List/DataList',
     component: TestRtDataListFirstKitComponent,
     globals: { preset: 'first-kit-theme' },
     argTypes: {
