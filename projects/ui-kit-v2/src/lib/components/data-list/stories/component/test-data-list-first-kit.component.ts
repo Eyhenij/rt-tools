@@ -42,61 +42,7 @@ import { ITestPerson, TEST_PEOPLE_COLUMNS } from './test-data-list-people';
  */
 @Component({
     selector: 'app-data-list-first-kit',
-    template: `
-        <app-story-row slotWidth="72rem" [caption]="caption()" [items]="captions">
-            <ng-template>
-                <!-- Коробка даёт списку ширину ячейки: без неё таблица растягивает список по своим колонкам, и
-                     ряд обрезает его левый край вместе с колонкой выбора. -->
-                <div style="inline-size: 100%; min-inline-size: 0; overflow: hidden">
-                    <rt-data-list
-                        rtDataListSelectors
-                        keyExp="id"
-                        [tableConfigStorageKey]="storageKey()"
-                        [entities]="rows()"
-                        [pageModel]="page()"
-                        [currentSortModel]="sort"
-                        [isFiltersShown]="filtersShown()"
-                        [isTableRowsClickable]="true"
-                        [isMultiSelect]="multiSelect()"
-                        [selectedEntitiesKeys]="selectedIds()">
-                        <ng-template rtDataListToolbarSelectors>
-                            <rt-toggle-switch ariaLabel="Toggle example" [ngModel]="false" />
-                            <span>Toggle example</span>
-                        </ng-template>
-
-                        <ng-template rtDataListToolbarActions>
-                            <rt-icon-button icon="user" ariaLabel="Create Customer" />
-                            <rt-icon-button icon="info-circle" ariaLabel="Info" />
-                        </ng-template>
-
-                        <ng-container *rtDataListCustomCells="{ button: buttonCell, active: toggleCell, image: imageCell }" />
-
-                        <ng-template #buttonCell let-row>
-                            <rt-icon-button rtDataTableStopRowClick [icon]="row.button" [ariaLabel]="row.button" />
-                        </ng-template>
-
-                        <ng-template #toggleCell let-row>
-                            <rt-toggle-switch rtDataTableStopRowClick ariaLabel="Active" [disabled]="true" [ngModel]="row.active" />
-                        </ng-template>
-
-                        <ng-template #imageCell let-row>
-                            <img alt="image" width="100" height="40" [src]="row.image" />
-                        </ng-template>
-
-                        <ng-template rtDataListAdditionalRowActions>
-                            <rt-icon-button icon="info-circle" ariaLabel="Info" />
-                            <rt-icon-button icon="external-link" ariaLabel="Open in new tab" />
-                        </ng-template>
-
-                        <ng-template rtDataListRowActions>
-                            <rt-menu-item label="Edit" icon="pencil" />
-                            <rt-menu-item label="Delete" icon="trash" />
-                        </ng-template>
-                    </rt-data-list>
-                </div>
-            </ng-template>
-        </app-story-row>
-    `,
+    templateUrl: './test-data-list-first-kit.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // components
