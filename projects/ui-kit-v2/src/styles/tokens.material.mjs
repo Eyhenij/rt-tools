@@ -214,13 +214,13 @@ export const material = [
     { name: `--rt-list-settings-icon-color`, value: `var(--mat-sys-on-surface-variant, var(--rt-mat-neutral-60))` },
 
     {
-        lead: `    /* Переключатель первого кита — свой, не Material: серый трек в рамке и графитовый
-       включённый. Тёмная тема отвечает на эти имена своими цветами. */`,
+        lead: `    /* Переключатель первого кита — свой, не Material: серый трек в рамке, включённый — в цвете
+       действия темы, как у кнопки. Тёмная тема отвечает на эти имена своими цветами. */`,
         space: true,
         name: `--rt-toggle-color-track`,
         value: `var(--rt-mat-neutral-20)`,
     },
-    { name: `--rt-toggle-color-track-on`, value: `var(--rt-mat-neutral-80)` },
+    { name: `--rt-toggle-color-track-on`, value: `var(--rt-color-action-primary)` },
     { name: `--rt-toggle-color-border`, value: `var(--rt-mat-neutral-30)` },
 
     {

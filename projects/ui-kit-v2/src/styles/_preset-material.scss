@@ -116,10 +116,10 @@
     --rt-list-settings-item-bg: var(--mat-option-selected-state-layer-color, var(--mat-sys-secondary-container, var(--rt-mat-neutral-10)));
     --rt-list-settings-icon-color: var(--mat-sys-on-surface-variant, var(--rt-mat-neutral-60));
 
-    /* Переключатель первого кита — свой, не Material: серый трек в рамке и графитовый
-       включённый. Тёмная тема отвечает на эти имена своими цветами. */
+    /* Переключатель первого кита — свой, не Material: серый трек в рамке, включённый — в цвете
+       действия темы, как у кнопки. Тёмная тема отвечает на эти имена своими цветами. */
     --rt-toggle-color-track: var(--rt-mat-neutral-20);
-    --rt-toggle-color-track-on: var(--rt-mat-neutral-80);
+    --rt-toggle-color-track-on: var(--rt-color-action-primary);
     --rt-toggle-color-border: var(--rt-mat-neutral-30);
 
     /* Кнопка и поле первого кита скруглены заметно сильнее: 1.5rem против 10px.
