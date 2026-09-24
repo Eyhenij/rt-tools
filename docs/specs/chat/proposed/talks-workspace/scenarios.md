@@ -6,7 +6,7 @@ numbers up to `SC-CH-93` are taken by the neighbouring subdomains.
 ### SC-CH-94 — the row of the list shows the state as a mark
 
 A row of the list carries the last remark of the talk and the mark of its state. A live talk is
-marked «Живой», a closed one «Закрыт»; the mark stands apart from the text of the remark, not inside
+marked «Живой», a closed one «Закрытый»; the mark stands apart from the text of the remark, not inside
 it.
 
 ### SC-CH-95 — the details show the properties of the chosen talk
@@ -17,7 +17,7 @@ no talk chosen the column holds nothing.
 ### SC-CH-96 — the talk is closed from the details, and the row follows
 
 The action «Закрыть разговор» stands in the details. Pressed, it makes the action say «Открыть
-снова» and the mark in the row say «Закрыт». No action over the talk stands in the feed.
+снова» and the mark in the row say «Закрытый». No action over the talk stands in the feed.
 
 ### SC-CH-97 — the panel of the operator lays the talks out by the workspace
 

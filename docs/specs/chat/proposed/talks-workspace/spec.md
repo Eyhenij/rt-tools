@@ -41,7 +41,7 @@ workspace of the kit lays them out.
 
 The details are headed «Разговор». Its properties are named «Площадка», «Состояние», «Последняя
 реплика». The actions are «Закрыть разговор» and «Открыть снова». The mark of a live talk says
-«Живой», of a closed one «Закрыт». The title of the feed is the last remark of the talk, cut to one
+«Живой», of a closed one «Закрытый». The title of the feed is the last remark of the talk, cut to one
 line.
 
 ## Rules
@@ -117,7 +117,7 @@ person at the screen and travel nowhere.
 | No talk chosen     | the list, the feed with its own hint, the details empty                                                |
 | A talk is chosen   | the list with the row marked, the feed with the title, the details with the properties and the actions |
 | The talk is live   | the mark «Живой» in the row, the action «Закрыть разговор» in the details                              |
-| The talk is closed | the mark «Закрыт» in the row, the action «Открыть снова» in the details                                |
+| The talk is closed | the mark «Закрытый» in the row, the action «Открыть снова» in the details                              |
 | The list is empty  | the empty state of the list of the kit, the details empty                                              |
 
 ## Cross-cutting requirements

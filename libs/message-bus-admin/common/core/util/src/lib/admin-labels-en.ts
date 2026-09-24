@@ -60,6 +60,11 @@ export const ADMIN_LABELS_EN: Record<TAdminLabelKey, string> = Object.freeze({
     chatStateClosed: 'Closed',
     chatClose: 'Close the talk',
     chatReopen: 'Open again',
+    chatTalkDetails: 'The talk',
+    chatTalkSite: 'Site',
+    chatTalkState: 'State',
+    chatTalkLastMessageAt: 'Last remark',
+    chatTalkUntitled: 'A talk with no remarks',
     chatFilterSite: 'Site',
     chatFilterSiteAll: 'All sites',
 
