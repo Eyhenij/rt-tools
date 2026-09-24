@@ -1,3 +1,4 @@
+import { _IdGenerator } from '@angular/cdk/a11y';
 import { CdkDrag, CdkDragDrop, CdkDragEnd, CdkDragHandle, CdkDropList } from '@angular/cdk/drag-drop';
 import {
     afterNextRender,
@@ -99,6 +100,17 @@ export class RtuiSideMenuFavoritesComponent {
     protected readonly handles: Signal<ReadonlyArray<ElementRef<HTMLElement>>> = viewChildren<string, ElementRef<HTMLElement>>('handle', {
         read: ElementRef,
     });
+    /**
+     * Блок раздела свёрнут: заголовок и черта остаются, строк нет. Состояние своё у каждого раздела
+     * и лежит в настройках меню. Поиск его не трогает — пока в поиске что-то набрано, блока нет.
+     */
+    protected readonly collapsed: Signal<boolean> = computed((): boolean => {
+        const section: ISideMenu.Item | null = this.#section();
+
+        return !!this.favorites && !!section && this.favorites.favoritesCollapsed(this.#menu.menuId())().includes(section.id);
+    });
+    /** Номер списка строк: заголовок-переключатель называет его в `aria-controls`. */
+    protected readonly listId: string = inject(_IdGenerator).getId('rtui-side-menu-favorites-list-');
     /** Узкий экран: подсказка у ручки не показывается — наводиться там нечем. */
     protected readonly narrow: Signal<boolean> = computed((): boolean => !!this.#breakpoints.isMobile());
 
@@ -178,6 +190,15 @@ export class RtuiSideMenuFavoritesComponent {
 
         this.#move(index, target);
         afterNextRender(() => this.handles()[target]?.nativeElement.focus(), { injector: this.#injector });
+    }
+
+    /** Заголовок нажат: блок раздела сворачивается или разворачивается, и выбор ложится в настройки меню. */
+    public onToggleCollapsed(): void {
+        const section: ISideMenu.Item | null = this.#section();
+
+        if (this.favorites && section) {
+            this.favorites.setFavoritesCollapsed(this.#menu.menuId(), section.id, !this.collapsed());
+        }
     }
 
     /** Снимает удержание, если строку тянули; без тяги удержание не трогает — его мог поставить фокус. */

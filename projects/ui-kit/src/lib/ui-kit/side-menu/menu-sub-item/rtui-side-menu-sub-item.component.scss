@@ -252,3 +252,23 @@
         }
     }
 }
+
+// Меню с `favoriteActionsReserve="none"`: кнопка избранного, ждущая наведения, в покое не
+// занимает ширины, и подпись идёт до правого края или до кнопки потребителя. Под наведением и
+// фокусом клавиатуры строки правило не действует, и кнопка встаёт на своё место — сдвигается
+// только правый край подписи, высота строки та же. Кнопка остаётся в порядке Tab: она сжата, а не
+// снята с раскладки. Закрашенная звезда, узкий экран и экран без наведения держат место, как
+// прежде: там кнопка видна всегда.
+@media (hover: hover) {
+    :host-context(.rtui-side-menu--favorite-actions-none)
+        .rtui-side-menu-sub-item:not(:hover, :has(:focus-visible))
+        .rtui-side-menu-sub-item-title__favorite:not(
+            .rtui-side-menu-sub-item-title__favorite--on,
+            .rtui-side-menu-sub-item-title__favorite--always
+        ) {
+        overflow: hidden;
+        width: 0;
+        padding: 0;
+        margin-left: 0;
+    }
+}

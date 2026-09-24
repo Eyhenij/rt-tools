@@ -48,8 +48,16 @@ export namespace ISideMenu {
      * Настройки одного меню под его номером в хранилище. Незнакомые поля кит не удаляет: их могло
      * положить приложение или следующая версия кита.
      */
+    /**
+     * Место под скрытые кнопки строки: `always` — кнопка, ждущая наведения, держит свою ширину;
+     * `none` — в покое ширины не занимает, и подпись идёт до края.
+     */
+    export type FavoriteActionsReserve = 'always' | 'none';
+
     export interface Settings {
         favorites?: FavoriteId[];
+        /** Пункты полосы, чей блок избранного свёрнут; блок по умолчанию развёрнут. */
+        favoritesCollapsed?: Array<Item['id']>;
         subMenuMode?: SubMenuMode;
         subMenuWidth?: number;
         [field: string]: unknown;
@@ -64,6 +72,11 @@ export namespace ISideMenu {
         submenu?: Item[];
         /** Избранное в подменю этого пункта полосы. По умолчанию выключено. */
         favorites?: boolean;
+        /**
+         * Пункт со ссылкой, который в избранное не ставится: своя страница раздела, дашборд,
+         * действие «Создать». Звезды у него нет, и номер, сохранённый раньше, в блок не попадает.
+         */
+        favoriteDisabled?: boolean;
         iconButton?: {
             icon: string;
             data?: ItemData;

@@ -96,6 +96,25 @@ describe('findFavoriteItems', (): void => {
 });
 
 describe('isFavoriteCandidate', (): void => {
+    it('SC-UK-134 — пункт со ссылкой и флагом favoriteDisabled в избранном стоять не может', (): void => {
+        expect(isFavoriteCandidate({ id: 'create', link: '/create', favoriteDisabled: true })).toBe(false);
+        expect(isFavoriteCandidate({ id: 'create', link: '/create', favoriteDisabled: false })).toBe(true);
+    });
+
+    it('SC-UK-135 — номер пункта с флагом favoriteDisabled в блок не попадает', (): void => {
+        const menu: ISideMenu.Item[] = [
+            {
+                id: 'cargo',
+                submenu: [
+                    { id: 'a', link: '/a' },
+                    { id: 'b', link: '/b', favoriteDisabled: true },
+                ],
+            },
+        ];
+
+        expect(findFavoriteItems(menu, ['b', 'a']).map((item: ISideMenu.Item): ISideMenu.FavoriteId => item.id)).toEqual(['a']);
+    });
+
     it('SC-UK-76 — пункт со ссылкой может стоять в избранном, папка и строка возврата — нет', (): void => {
         expect(isFavoriteCandidate({ id: 'a', link: '/a' })).toBe(true);
         expect(isFavoriteCandidate({ id: 'folder', submenu: [] })).toBe(false);

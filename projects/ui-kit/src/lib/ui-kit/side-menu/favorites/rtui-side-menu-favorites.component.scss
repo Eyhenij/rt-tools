@@ -4,8 +4,9 @@
     // Блок отделён от списка раздела чертой: без неё строка избранного и строка того же пункта
     // в списке стоят подряд и читаются как повтор. Отступ под чертой даёт верхний отступ самого
     // списка, 8 px: свой отступ здесь удвоил бы его. Черта и отступы — те же, что у разделителей
-    // пунктов подменю у потребителей: 8 px, приглушённая черта, 8 px.
-    &:has(.rtui-side-menu-favorites__list) {
+    // пунктов подменю у потребителей: 8 px, приглушённая черта, 8 px. Свёрнутый блок держит черту:
+    // по ней заголовок отделён от списка раздела так же, как развёрнутый блок.
+    &:has(.rtui-side-menu-favorites__title) {
         padding-bottom: var(--rt-side-menu-favorites-divider-gap, var(--rt-spacing-8));
         border-bottom: 1px solid var(--rt-side-menu-favorites-divider-color, var(--rt-border-neutral-subtle));
     }
@@ -13,14 +14,45 @@
     .rtui-side-menu-favorites {
         // Заголовок: подпись и звезда. Звезда красится тем же цветом, что и закрашенные звёзды
         // списка; цвет и размер подписи и звезды приложение задаёт своими свойствами.
+        // Заголовок — кнопка-переключатель без своего вида кнопки: шрифт, цвет и отступы те же, что
+        // у прежнего заголовка, фон и рамка сняты. Фокус клавиатуры отмечен той же рамкой, что и
+        // пункт под подсветкой.
         &__title {
             display: flex;
+            width: 100%;
             align-items: center;
-            padding: var(--rt-spacing-8) var(--rt-spacing-16) var(--rt-spacing-4);
+            padding: var(--rt-spacing-8) 0 var(--rt-spacing-4) var(--rt-spacing-16);
+            border: 0;
+            border-radius: var(--rt-radius-xl);
+            background: none;
             color: var(--rt-side-menu-favorites-title-color, var(--rt-text-base-secondary));
+            cursor: pointer;
+            font: inherit;
             font-size: var(--rt-side-menu-favorites-title-font-size, var(--rt-font-size-sm));
             font-weight: var(--rt-font-weight-semibold);
             gap: var(--rt-spacing-6);
+            text-align: start;
+
+            &:focus-visible {
+                outline: 2px solid var(--rt-border-focus);
+                outline-offset: -2px;
+            }
+        }
+
+        // Шеврон стоит у правого края, в столбце звёзд: его центр — там же, где центр значка кнопки
+        // звезды, как у шеврона папки. Развёрнутый блок смотрит шевроном вверх, свёрнутый — вниз.
+        &__chevron {
+            width: var(--rt-spacing-24);
+            height: var(--rt-spacing-24);
+            flex: 0 0 auto;
+            margin-right: calc(var(--rt-side-menu-favorite-action-size, calc(var(--rt-spacing-16) * 2)) / 2 + var(--rt-spacing-12));
+            margin-left: auto;
+            font-size: var(--rt-spacing-24);
+            rotate: 180deg;
+
+            &--collapsed {
+                rotate: 0deg;
+            }
         }
 
         &__title-icon {
@@ -104,7 +136,7 @@
 
 // На узком экране под блоком не список со своим отступом, а сами пункты раздела вплотную:
 // отступ под чертой блок ставит сам.
-:host-context(.rtui-mobile-side-menu-list__sub):has(.rtui-side-menu-favorites__list) {
+:host-context(.rtui-mobile-side-menu-list__sub):has(.rtui-side-menu-favorites__title) {
     margin-bottom: var(--rt-spacing-8);
 }
 
@@ -120,4 +152,17 @@
 
 .rtui-side-menu-favorites__row.cdk-drag-placeholder {
     opacity: 0;
+}
+
+// Меню с `favoriteActionsReserve="none"`: ручка, ждущая наведения, в покое не занимает ширины —
+// так же, как кнопка «убрать» в стилях подпункта. Строка в руке живёт в оверлее, вне меню, и
+// правило до неё не доходит: там ручка видна, как прежде.
+@media (hover: hover) {
+    :host-context(.rtui-side-menu--favorite-actions-none)
+        .rtui-side-menu-favorites__row:not(:hover, :has(:focus-visible))
+        .rtui-side-menu-favorites__handle:not(.rtui-side-menu-favorites__handle--always) {
+        overflow: hidden;
+        width: 0;
+        padding: 0;
+    }
 }

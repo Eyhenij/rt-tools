@@ -212,9 +212,10 @@ sign-out or fill it with defaults.
 - **On a narrow screen the block stands the same, under the search of the submenu.** The same rows,
   the same buttons, the same handle: the split between the two layouts would be a second favourites.
 - **An item flagged `favoriteDisabled` is not a favourite candidate.** Its row draws no star in
-  either mode and keeps no place for one; the service does not add it; its id already stored stays
-  in the list and does not reach the block. The flag is for rows with an address that are not
-  content — the section's own page, a dashboard link, a "Create" action.
+  either mode and keeps no place for one, so the person cannot add it; its id already stored stays
+  in the list and does not reach the block. The service keeps ids only and does not judge them: an
+  id the application adds itself is its own choice. The flag is for rows with an address that are
+  not content — the section's own page, a dashboard link, a "Create" action.
 - **The heading of the block is a toggle that collapses the block and expands it.** It is a button
   in the Tab order: a click, Enter and Space switch it; it carries `aria-expanded` and names the
   list by `aria-controls`. The chevron stands on the right, in the column of the stars, the same as

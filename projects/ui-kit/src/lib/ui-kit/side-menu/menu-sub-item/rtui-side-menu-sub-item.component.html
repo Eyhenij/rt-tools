@@ -64,7 +64,7 @@
                                 {{ favorites.icons.remove.glyph }}
                             </mat-icon>
                         </button>
-                    } @else if (favoritesOn() && favorites && item.link?.trim()) {
+                    } @else if (favoritesOn() && favorites && item.link?.trim() && !item.favoriteDisabled) {
                         <!--
                             Звезда — у пункта со своим адресом в разделе, где приложение включило
                             избранное. Полая — не в избранном, закрашенная цветом темы — в нём.

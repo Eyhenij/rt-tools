@@ -31,7 +31,13 @@ import { BlockDirective, BreakpointService, ElemDirective, ModDirective } from '
 import { TNullable } from '@rt-tools/utils';
 import { transformArrayInput } from '@rt-tools/utils';
 import { RtIconOutlinedDirective, RtNavigationDirective, RtScrollToElementDirective } from '@rt-tools/core';
-import { clampSubMenuWidth, filterSubMenuItems, subMenuIdsToExpand, SUB_MENU_WIDTH_MIN } from '../side-menu.logic';
+import {
+    clampSubMenuWidth,
+    filterSubMenuItems,
+    normalizeFavoriteActionsReserve,
+    subMenuIdsToExpand,
+    SUB_MENU_WIDTH_MIN,
+} from '../side-menu.logic';
 import { IRtuiSideMenuHost, ISideMenu, RTUI_SIDE_MENU } from '../side-menu.types';
 import {
     RtuiScrollableContainerComponent,
@@ -68,6 +74,8 @@ const BEM_BLOCK: string = 'rtui-side-menu';
         // Раскладка хоста меняется только у закреплённой моды: у всех, кто ставит меню
         // по-старому, она обязана остаться прежней до пикселя.
         '[class.rtui-side-menu--pinned]': 'isPinned()',
+        // Отметку читают стили строк подменю: скрытые кнопки избранного отдают ширину подписи.
+        '[class.rtui-side-menu--favorite-actions-none]': "favoriteActionsReserve() === 'none'",
         // Ширина подменю приходит переменной оформления: правило стилей стоит на ней в трёх
         // местах разом, и правка одной переменной двигает их все.
         '[style.--rt-side-menu-sub-menu-dragged-width]': 'subMenuWidthStyle()',
@@ -268,6 +276,15 @@ export class RtuiSideMenuComponent implements IRtuiSideMenuHost {
     public menuId: InputSignalWithTransform<string, string | null | undefined> = input<string, string | null | undefined>(DEFAULT_MENU_ID, {
         transform: normalizeMenuId,
     });
+    /**
+     * Место под кнопки избранного, ждущие наведения: `always` — держат ширину, как прежде; `none` —
+     * в покое ширины не занимают, и подпись идёт до края. Незнакомое значение и пустой атрибут —
+     * то же, что `always`: поведение других потребителей не меняется молча.
+     */
+    public favoriteActionsReserve: InputSignalWithTransform<ISideMenu.FavoriteActionsReserve, string | undefined> = input<
+        ISideMenu.FavoriteActionsReserve,
+        string | undefined
+    >('always', { transform: normalizeFavoriteActionsReserve });
     public isSubMenuXScrollEnabled: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
         transform: booleanAttribute,
     });
