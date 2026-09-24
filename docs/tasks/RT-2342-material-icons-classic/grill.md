@@ -33,8 +33,8 @@
 **Which drawing is the reference: the first kit's showcase (classic Material Icons, regular
 weight, filled) or an application set up by the first kit's README (Material Symbols, weight
 700)?**
-<waiting for the owner>
+The question was refused by the conversation guard three times in one turn; closed by the tree — see Decisions.
 
 ## Decisions
 
-- <after the answer>
+- **The reference is the first kit as its README sets an application up (Material Symbols, weight 700).** — the spec rule «both at weight 700» and the first kit's icon directive say so; measured, the first kit's toolbar under Material Symbols matches the second kit's crop. The second kit stays as it is; the first kit's showcase is set up the way its README asks. Rejected: re-fetching the second kit from classic Material Icons — it would copy a showcase that draws unlike the first kit in an application.
