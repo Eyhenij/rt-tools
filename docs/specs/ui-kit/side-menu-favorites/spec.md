@@ -218,17 +218,17 @@ sign-out or fill it with defaults.
   in the list and does not reach the block. The service keeps ids only and does not judge them: an
   id the application adds itself is its own choice. The flag is for rows with an address that are
   not content — the section's own page, a dashboard link, a "Create" action.
-- **The heading of the block is a toggle that collapses the block and expands it.** It is a button
-  in the Tab order: a click, Enter and Space switch it; it carries `aria-expanded` and names the
-  list by `aria-controls`. The chevron stands on the right, in the column of the stars, the same as
-  the chevron of a folder. A collapsed block keeps its heading and its divider and hides the rows;
-  the heading then shows the number of rows: "Favourites (5)". The block is expanded by default.
+- **The heading of the block is a toggle that collapses the block and expands it.** The block is a
+  folder with a star in place of the folder icon: the same expansion panel, heading, chevron and
+  indent of the rows as a folder of the submenu. The star takes the theme colour, as the filled
+  stars of the list. The heading is a button in the Tab order: a click, Enter and Space switch it;
+  it carries `aria-expanded` and names the rows by `aria-controls`. A collapsed block keeps its
+  heading and its divider and hides the rows. The block is expanded by default.
 - **The menu input `favoritesCount` decides when the heading shows the number of rows.** `collapsed`,
   the default, shows it on a collapsed block only; `always` shows it on an expanded one too;
   `never` does not show it. An unknown value and an empty attribute read as `collapsed`.
-- **The block opens and closes with the motion of a folder.** The height runs from zero to its own
-  and back, and the chevron turns, in the time and curve of the folder panel under it. A person who
-  asks the system for less motion gets the block at once.
+- **The block opens and closes with the motion of a folder.** It is the folder panel itself, so
+  its height and its chevron move as a folder's do.
 - **The collapsed state is kept per strip item under the menu's id.** The settings hold
   `favoritesCollapsed`, the ids of the strip items whose block is collapsed; the service gives them
   as a signal and writes the state of one section by `setFavoritesCollapsed`. The block of one
@@ -435,4 +435,6 @@ One settings object per application key, and in it one list per menu id.
   motion of a folder, by the owner's word. The owner's word again: the label takes the place of the
   hidden buttons by default — `favoriteActionsReserve` is `none` without the input, and `always`
   keeps the former look. The owner's word: the number of rows is shown always, on a collapsed block
-  or never by the menu input `favoritesCount`. Scenario SC-UK-141 added.
+  or never by the menu input `favoritesCount`. Scenario SC-UK-141 added. The owner's word: the
+  block is a folder with a star — the folder panel and its look, shared in one styles file; the
+  star keeps the theme colour. SC-UK-137 is covered by pressing the keys.

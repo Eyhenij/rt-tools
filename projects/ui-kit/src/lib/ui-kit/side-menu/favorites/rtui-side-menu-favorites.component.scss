@@ -1,138 +1,39 @@
+@use '../menu-sub-item/folder-panel';
+
 :host {
     display: block;
+
+    // Блок — папка со звездой: та же панель раскрытия Material, что у папки подменю, с тем же
+    // заголовком, шевроном и движением. Оформление папки общее — оно лежит одним файлом рядом с
+    // подпунктом.
+    &::ng-deep {
+        @include folder-panel.panel-overrides;
+    }
+
+    @include folder-panel.folder;
 
     // Блок отделён от списка раздела чертой: без неё строка избранного и строка того же пункта
     // в списке стоят подряд и читаются как повтор. Отступ под чертой даёт верхний отступ самого
     // списка, 8 px: свой отступ здесь удвоил бы его. Черта и отступы — те же, что у разделителей
     // пунктов подменю у потребителей: 8 px, приглушённая черта, 8 px. Свёрнутый блок держит черту:
     // по ней заголовок отделён от списка раздела так же, как развёрнутый блок.
-    &:has(.rtui-side-menu-favorites__title) {
+    &:has(.rtui-side-menu-expand-sub-item) {
         padding-bottom: var(--rt-side-menu-favorites-divider-gap, var(--rt-spacing-8));
         border-bottom: 1px solid var(--rt-side-menu-favorites-divider-color, var(--rt-border-neutral-subtle));
     }
 
-    .rtui-side-menu-favorites {
-        // Заголовок: подпись и звезда. Звезда красится тем же цветом, что и закрашенные звёзды
-        // списка; цвет и размер подписи и звезды приложение задаёт своими свойствами.
-        // Заголовок — кнопка-переключатель без своего вида кнопки: шрифт, цвет и отступы те же, что
-        // у прежнего заголовка, фон и рамка сняты. Фокус клавиатуры отмечен той же рамкой, что и
-        // пункт под подсветкой.
-        &__title {
-            display: flex;
-            width: 100%;
-            align-items: center;
-            padding: var(--rt-spacing-8) 0 var(--rt-spacing-4) var(--rt-spacing-16);
-            border: 0;
-            border-radius: var(--rt-radius-xl);
-            background: none;
-            color: var(--rt-side-menu-favorites-title-color, var(--rt-text-base-secondary));
-            cursor: pointer;
-            font: inherit;
-            font-size: var(--rt-side-menu-favorites-title-font-size, var(--rt-font-size-sm));
-            font-weight: var(--rt-font-weight-semibold);
-            gap: var(--rt-spacing-6);
-            text-align: start;
-
-            &:focus-visible {
-                outline: 2px solid var(--rt-border-focus);
-                outline-offset: -2px;
-            }
-        }
-
-        // Шеврон стоит у правого края, в столбце звёзд: его центр — там же, где центр значка кнопки
-        // звезды, как у шеврона папки. Развёрнутый блок смотрит шевроном вверх, свёрнутый — вниз.
-        &__chevron {
-            width: var(--rt-spacing-24);
-            height: var(--rt-spacing-24);
-            flex: 0 0 auto;
-            margin-right: calc(var(--rt-side-menu-favorite-action-size, calc(var(--rt-spacing-16) * 2)) / 2 + var(--rt-spacing-4));
-            margin-left: auto;
-            font-size: var(--rt-spacing-24);
-            rotate: 180deg;
-            transition: rotate var(--rt-side-menu-favorites-motion);
-
-            &--collapsed {
-                rotate: 0deg;
-            }
-        }
-
-        &__title-icon {
-            width: var(--rt-side-menu-favorites-title-icon-size, var(--rt-icon-size-sm));
-            height: var(--rt-side-menu-favorites-title-icon-size, var(--rt-icon-size-sm));
-            color: var(
-                --rt-side-menu-favorite-color,
-                var(--mat-sys-primary, var(--mat-button-filled-container-color, var(--rt-icon-accent-primary)))
-            );
-            font-size: var(--rt-side-menu-favorites-title-icon-size, var(--rt-icon-size-sm));
-        }
-
-        &__title-text {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        // Тело блока — сетка в одну строку: высоту строки сетка умеет вести от нуля до своей, а
-        // `height: auto` — нет. Обрезка стоит только на время движения: в покое она срезала бы
-        // рамку фокуса у крайних строк. Столбец сетки не шире блока: по умолчанию он растёт по
-        // содержимому, и длинная подпись выносила строку за край панели вместо многоточия.
-        &__body {
-            display: grid;
-            grid-template-columns: minmax(0, 1fr);
-            grid-template-rows: 1fr;
-
-            &--enter,
-            &--leave {
-                overflow: hidden;
-            }
-
-            &--enter {
-                animation: rtui-side-menu-favorites-open var(--rt-side-menu-favorites-motion);
-            }
-
-            // Закрытие — свои ключевые кадры, а не открытие задом наперёд: класс открытия бывает
-            // ещё на месте, когда приходит класс закрытия, и анимацию с тем же именем браузер не
-            // запускает заново — блок исчезал без движения.
-            &--leave {
-                animation: rtui-side-menu-favorites-close var(--rt-side-menu-favorites-motion);
-            }
-        }
-
-        &__list {
-            min-height: 0;
-            padding: 0;
-        }
-    }
-}
-
-// Движение то же, что у папки подменю, — панели раскрытия Material: 225 мс и её кривая. Своего
-// значения в шкале кита нет: у шкалы `--rt-transition-*` другие длительность и кривая, и блок
-// двигался бы не в такт папке под ним. Кто просит меньше движения, получает блок сразу.
-:host {
-    --rt-side-menu-favorites-motion: 225ms cubic-bezier(0.4, 0, 0.2, 1);
-
-    @media (prefers-reduced-motion: reduce) {
-        --rt-side-menu-favorites-motion: 0s;
-    }
-}
-
-@keyframes rtui-side-menu-favorites-open {
-    from {
-        grid-template-rows: 0fr;
+    // Звезда стоит на месте значка папки и красится цветом темы, как закрашенные звёзды списка, —
+    // и под наведением тоже. Селектор той же силы, что у значка папки, иначе папка перекрашивает её.
+    .rtui-side-menu-expand-sub-item .rtui-side-menu-expand-sub-item-header .rtui-side-menu-expand-sub-item-header__icon--star,
+    .rtui-side-menu-expand-sub-item .rtui-side-menu-expand-sub-item-header:hover .rtui-side-menu-expand-sub-item-header__icon--star {
+        color: var(
+            --rt-side-menu-favorite-color,
+            var(--mat-sys-primary, var(--mat-button-filled-container-color, var(--rt-icon-accent-primary)))
+        );
     }
 
-    to {
-        grid-template-rows: 1fr;
-    }
-}
-
-@keyframes rtui-side-menu-favorites-close {
-    from {
-        grid-template-rows: 1fr;
-    }
-
-    to {
-        grid-template-rows: 0fr;
+    .rtui-side-menu-favorites__list {
+        padding: 0;
     }
 }
 
@@ -192,7 +93,7 @@
 
 // На узком экране под блоком не список со своим отступом, а сами пункты раздела вплотную:
 // отступ под чертой блок ставит сам.
-:host-context(.rtui-mobile-side-menu-list__sub):has(.rtui-side-menu-favorites__title) {
+:host-context(.rtui-mobile-side-menu-list__sub):has(.rtui-side-menu-expand-sub-item) {
     margin-bottom: var(--rt-spacing-8);
 }
 

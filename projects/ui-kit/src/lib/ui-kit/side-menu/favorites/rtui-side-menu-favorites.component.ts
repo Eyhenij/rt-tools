@@ -1,4 +1,3 @@
-import { _IdGenerator } from '@angular/cdk/a11y';
 import { CdkDrag, CdkDragDrop, CdkDragEnd, CdkDragHandle, CdkDropList } from '@angular/cdk/drag-drop';
 import {
     afterNextRender,
@@ -21,8 +20,9 @@ import {
     WritableSignal,
 } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIcon } from '@angular/material/icon';
-import { MatNavList } from '@angular/material/list';
+import { MatListItemIcon, MatListItemTitle, MatNavList } from '@angular/material/list';
 import { MatTooltip } from '@angular/material/tooltip';
 
 import { BlockDirective, BreakpointService, ElemDirective, ModDirective, RtIconOutlinedDirective } from '@rt-tools/core';
@@ -60,7 +60,10 @@ const SUB_MENU_PANEL: string = '.rtui-sub-side-menu-content';
         CdkDrag,
         CdkDragHandle,
         MatIcon,
+        MatExpansionModule,
         MatIconButton,
+        MatListItemIcon,
+        MatListItemTitle,
         MatNavList,
         MatTooltip,
 
@@ -116,12 +119,6 @@ export class RtuiSideMenuFavoritesComponent {
 
         return mode === 'always' || (mode === 'collapsed' && this.collapsed());
     });
-    protected readonly listId: string = inject(_IdGenerator).getId('rtui-side-menu-favorites-list-');
-    /**
-     * Блок двигается только после нажатия на заголовок. Подменю, открывшееся с развёрнутым блоком,
-     * рисует его сразу, как папки: иначе блок выезжал бы при каждом открытии раздела.
-     */
-    protected readonly motion: WritableSignal<boolean> = signal(false);
     /** Узкий экран: подсказка у ручки не показывается — наводиться там нечем. */
     protected readonly narrow: Signal<boolean> = computed((): boolean => !!this.#breakpoints.isMobile());
 
@@ -203,13 +200,15 @@ export class RtuiSideMenuFavoritesComponent {
         afterNextRender(() => this.handles()[target]?.nativeElement.focus(), { injector: this.#injector });
     }
 
-    /** Заголовок нажат: блок раздела сворачивается или разворачивается, и выбор ложится в настройки меню. */
-    public onToggleCollapsed(): void {
+    /**
+     * Панель раскрыта или свёрнута: выбор ложится в настройки меню. Панель сообщает и о значении,
+     * пришедшем из настроек, — его записывать незачем.
+     */
+    public onExpandedChange(expanded: boolean): void {
         const section: ISideMenu.Item | null = this.#section();
 
-        if (this.favorites && section) {
-            this.motion.set(true);
-            this.favorites.setFavoritesCollapsed(this.#menu.menuId(), section.id, !this.collapsed());
+        if (this.favorites && section && expanded === this.collapsed()) {
+            this.favorites.setFavoritesCollapsed(this.#menu.menuId(), section.id, !expanded);
         }
     }
 

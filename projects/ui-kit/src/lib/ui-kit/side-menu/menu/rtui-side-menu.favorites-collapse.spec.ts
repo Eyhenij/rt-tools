@@ -25,12 +25,12 @@ const WITH_DISABLED: ISideMenu.Item[] = SECTIONS.map((section: ISideMenu.Item): 
         : section
 );
 
-function title(fixture: ComponentFixture<HostComponent>): HTMLButtonElement {
-    return fixture.nativeElement.querySelector(BLOCK_TITLE) as HTMLButtonElement;
+function title(fixture: ComponentFixture<HostComponent>): HTMLElement {
+    return fixture.nativeElement.querySelector(BLOCK_TITLE) as HTMLElement;
 }
 
 function titleText(fixture: ComponentFixture<HostComponent>): string {
-    const text: Element | null = title(fixture).querySelector('.rtui-side-menu-favorites__title-text');
+    const text: Element | null = title(fixture).querySelector('.rtui-side-menu-expand-sub-item-header__title');
 
     return (text?.textContent ?? '').replace(/\s+/g, ' ').trim();
 }
@@ -67,8 +67,7 @@ describe('RtuiSideMenuComponent — сворачивание избранног�
         const list: HTMLElement = fixture.nativeElement.querySelector(BLOCK) as HTMLElement;
 
         expect(title(fixture).getAttribute('aria-expanded')).toBe('true');
-        expect(title(fixture).getAttribute('aria-controls')).toBe(list.id);
-        expect(list.id).not.toBe('');
+        expect(document.getElementById(title(fixture).getAttribute('aria-controls') ?? '')?.contains(list)).toBe(true);
         expect(titleText(fixture)).toBe('Favourites');
 
         toggle(fixture);
@@ -84,14 +83,25 @@ describe('RtuiSideMenuComponent — сворачивание избранног�
         expect(title(fixture).getAttribute('aria-expanded')).toBe('true');
     });
 
-    it('SC-UK-137 — заголовок — кнопка в порядке Tab: Enter и Space ей даёт сам браузер', () => {
+    it('SC-UK-137 — Enter сворачивает блок, Space разворачивает; заголовок — кнопка в порядке Tab', () => {
         const { fixture } = withFavorites(['a'], { items: SECTIONS });
 
         hoverItem(fixture, 0);
 
-        expect(title(fixture).tagName).toBe('BUTTON');
-        expect(title(fixture).type).toBe('button');
+        expect(title(fixture).getAttribute('role')).toBe('button');
         expect(title(fixture).tabIndex).toBe(0);
+
+        title(fixture).dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', keyCode: 13, bubbles: true }));
+        fixture.detectChanges();
+
+        expect(title(fixture).getAttribute('aria-expanded')).toBe('false');
+        expect(blockRowIds(fixture)).toEqual([]);
+
+        title(fixture).dispatchEvent(new KeyboardEvent('keydown', { key: ' ', keyCode: 32, bubbles: true }));
+        fixture.detectChanges();
+
+        expect(title(fixture).getAttribute('aria-expanded')).toBe('true');
+        expect(blockRowIds(fixture)).toEqual(['a']);
     });
 
     it('SC-UK-138 — свёрнут блок одного раздела, блок соседнего развёрнут', () => {

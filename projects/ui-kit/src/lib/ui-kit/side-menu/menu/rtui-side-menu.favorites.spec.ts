@@ -253,9 +253,9 @@ describe('RtuiSideMenuComponent — избранное', () => {
 
         hoverFirstItem(fixture);
 
-        expect((fixture.nativeElement.querySelector('.rtui-side-menu-favorites__title-text') as HTMLElement).textContent?.trim()).toBe(
-            'Избранное'
-        );
+        expect(
+            (fixture.nativeElement.querySelector('.rtui-side-menu-expand-sub-item-header__title') as HTMLElement).textContent?.trim()
+        ).toBe('Избранное');
         expect(listRow(fixture, 'rates').querySelector(STAR)?.getAttribute('aria-label')).toBe('Убрать из избранного');
         expect(fixture.nativeElement.querySelector(REMOVE)?.getAttribute('aria-label')).toBe('Убрать из избранного');
         expect(fixture.nativeElement.querySelector(HANDLE)?.getAttribute('aria-label')).toBe('Потяните за кнопку');

@@ -403,10 +403,7 @@ rows back
 
 Given the block of a section with `a`, its heading focused
 When the person presses Enter, then Space
-Then the block collapses and expands again; the heading is a button, so the keys are its own
-
-Coverage: partial — the spec checks that the heading is a button in the Tab order; the spec
-environment does not turn Enter and Space into a click, the browser does.
+Then the block collapses and expands again; the heading is a button in the Tab order
 
 ### SC-UK-138 — the collapsed state is kept per section under the menu id
 
