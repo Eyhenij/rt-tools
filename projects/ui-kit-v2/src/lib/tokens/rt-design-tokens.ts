@@ -349,6 +349,29 @@ export type TRtDesignTokenName =
     | '--rt-overlay-white-40'
     | '--rt-overlay-white-50'
     | '--rt-overlay-white-8'
+    | '--rt-pagination-arrow-color'
+    | '--rt-pagination-arrow-radius'
+    | '--rt-pagination-arrow-shadow'
+    | '--rt-pagination-arrow-size'
+    | '--rt-pagination-box-color-border'
+    | '--rt-pagination-box-color-text'
+    | '--rt-pagination-box-current-color-bg'
+    | '--rt-pagination-box-current-color-border'
+    | '--rt-pagination-box-current-color-text'
+    | '--rt-pagination-box-current-font-weight'
+    | '--rt-pagination-box-radius'
+    | '--rt-pagination-box-size'
+    | '--rt-pagination-field-color-bg'
+    | '--rt-pagination-field-color-border'
+    | '--rt-pagination-field-color-text'
+    | '--rt-pagination-field-height'
+    | '--rt-pagination-field-padding-x'
+    | '--rt-pagination-field-radius'
+    | '--rt-pagination-gap'
+    | '--rt-pagination-justify'
+    | '--rt-pagination-nav-gap'
+    | '--rt-pagination-per-page-gap'
+    | '--rt-pagination-range-display'
     | '--rt-profile-avatar-font-size'
     | '--rt-profile-avatar-size'
     | '--rt-profile-item-content-gap'
@@ -832,6 +855,29 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-overlay-white-40',
     '--rt-overlay-white-50',
     '--rt-overlay-white-8',
+    '--rt-pagination-arrow-color',
+    '--rt-pagination-arrow-radius',
+    '--rt-pagination-arrow-shadow',
+    '--rt-pagination-arrow-size',
+    '--rt-pagination-box-color-border',
+    '--rt-pagination-box-color-text',
+    '--rt-pagination-box-current-color-bg',
+    '--rt-pagination-box-current-color-border',
+    '--rt-pagination-box-current-color-text',
+    '--rt-pagination-box-current-font-weight',
+    '--rt-pagination-box-radius',
+    '--rt-pagination-box-size',
+    '--rt-pagination-field-color-bg',
+    '--rt-pagination-field-color-border',
+    '--rt-pagination-field-color-text',
+    '--rt-pagination-field-height',
+    '--rt-pagination-field-padding-x',
+    '--rt-pagination-field-radius',
+    '--rt-pagination-gap',
+    '--rt-pagination-justify',
+    '--rt-pagination-nav-gap',
+    '--rt-pagination-per-page-gap',
+    '--rt-pagination-range-display',
     '--rt-profile-avatar-font-size',
     '--rt-profile-avatar-size',
     '--rt-profile-item-content-gap',

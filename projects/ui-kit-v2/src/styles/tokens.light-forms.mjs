@@ -248,6 +248,111 @@ export const lightForms = [
         dark: `var(--rt-color-text-primary)`,
     },
     {
+        lead: `    /* Полоса страниц rt-pagination: ячейка страницы, текущая страница, стрелки, подпись
+       диапазона и поле размера. Свой вид — прежние значения; материальный набор делает из них
+       полосу первого кита. */`,
+        space: true,
+        name: `--rt-pagination-justify`,
+        value: `space-between`,
+    },
+    {
+        name: `--rt-pagination-gap`,
+        value: `var(--rt-space-md)`,
+    },
+    {
+        name: `--rt-pagination-nav-gap`,
+        value: `var(--rt-space-xs)`,
+    },
+    {
+        name: `--rt-pagination-range-display`,
+        value: `inline`,
+    },
+    {
+        name: `--rt-pagination-box-size`,
+        value: `var(--rt-space-xl)`,
+    },
+    {
+        name: `--rt-pagination-box-radius`,
+        value: `var(--rt-radius-md)`,
+    },
+    {
+        name: `--rt-pagination-box-color-border`,
+        value: `var(--rt-color-border-default)`,
+        dark: `var(--rt-color-border-default)`,
+    },
+    {
+        name: `--rt-pagination-box-color-text`,
+        value: `var(--rt-color-text-primary)`,
+        dark: `var(--rt-color-text-primary)`,
+    },
+    {
+        name: `--rt-pagination-box-current-color-bg`,
+        value: `var(--rt-color-bg-surface-subtle)`,
+        dark: `var(--rt-color-bg-surface-subtle)`,
+    },
+    {
+        name: `--rt-pagination-box-current-color-text`,
+        value: `var(--rt-color-text-primary)`,
+        dark: `var(--rt-color-text-primary)`,
+    },
+    {
+        name: `--rt-pagination-box-current-color-border`,
+        value: `var(--rt-color-border-strong)`,
+        dark: `var(--rt-color-border-strong)`,
+    },
+    {
+        name: `--rt-pagination-box-current-font-weight`,
+        value: `var(--rt-font-weight-semibold)`,
+    },
+    {
+        name: `--rt-pagination-arrow-size`,
+        value: `var(--rt-control-height-sm)`,
+    },
+    {
+        name: `--rt-pagination-arrow-radius`,
+        value: `var(--rt-radius-md)`,
+    },
+    {
+        name: `--rt-pagination-arrow-shadow`,
+        value: `var(--rt-shadow-none)`,
+    },
+    {
+        name: `--rt-pagination-arrow-color`,
+        value: `var(--rt-color-text-primary)`,
+        dark: `var(--rt-color-text-primary)`,
+    },
+    {
+        name: `--rt-pagination-per-page-gap`,
+        value: `var(--rt-space-sm)`,
+    },
+    {
+        name: `--rt-pagination-field-height`,
+        value: `var(--rt-input-height-md)`,
+    },
+    {
+        name: `--rt-pagination-field-radius`,
+        value: `var(--rt-input-radius)`,
+    },
+    {
+        name: `--rt-pagination-field-color-border`,
+        value: `var(--rt-input-color-border)`,
+        dark: `var(--rt-input-color-border)`,
+    },
+    {
+        name: `--rt-pagination-field-padding-x`,
+        value: `var(--rt-input-padding-x)`,
+    },
+    {
+        name: `--rt-pagination-field-color-bg`,
+        value: `var(--rt-input-color-bg)`,
+        dark: `var(--rt-input-color-bg)`,
+    },
+    {
+        name: `--rt-pagination-field-color-text`,
+        value: `var(--rt-input-color-text)`,
+        dark: `var(--rt-input-color-text)`,
+    },
+    {
         lead: `    /* Скругление контрола — назначение, а не ступень на месте. Кнопка, поле ввода и
        всё, что стоит с ними в строке, берут его отсюда: набор оформления живёт слоем
        назначений и до ступени, взятой компонентом напрямую, не достаёт. */`,

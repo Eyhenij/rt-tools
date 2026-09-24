@@ -129,6 +129,33 @@
     --rt-list-action-color-bg-hover: transparent;
     --rt-list-selector-label-color: var(--rt-mat-neutral-60);
 
+    /* Полоса страниц первого кита: ячейки 34px в серой рамке со скруглением 12px, промежуток 8px,
+       текущая залита серым с белой цифрой, стрелки такими же ячейками. Подписи диапазона нет,
+       номера и выбор размера стоят рядом через 32px, поле размера 32px высотой. */
+    --rt-pagination-justify: flex-start;
+    --rt-pagination-gap: var(--rt-space-xl);
+    --rt-pagination-nav-gap: var(--rt-space-sm);
+    --rt-pagination-range-display: none;
+    --rt-pagination-box-size: calc(var(--rt-space-xl) + 2 * var(--rt-border-width-thin));
+    --rt-pagination-box-radius: calc(var(--rt-radius-lg) + var(--rt-radius-xs));
+    --rt-pagination-box-color-border: var(--rt-mat-neutral-30);
+    --rt-pagination-box-color-text: var(--rt-mat-neutral-60);
+    --rt-pagination-box-current-color-bg: var(--rt-mat-neutral-60);
+    --rt-pagination-box-current-color-text: var(--rt-mat-neutral-0);
+    --rt-pagination-box-current-color-border: var(--rt-mat-neutral-30);
+    --rt-pagination-box-current-font-weight: var(--rt-font-weight-regular);
+    --rt-pagination-arrow-size: calc(var(--rt-space-xl) + 2 * var(--rt-border-width-thin));
+    --rt-pagination-arrow-radius: calc(var(--rt-radius-lg) + var(--rt-radius-xs));
+    --rt-pagination-arrow-shadow: inset 0 0 0 var(--rt-border-width-thin) var(--rt-mat-neutral-30);
+    --rt-pagination-arrow-color: var(--rt-mat-neutral-60);
+    --rt-pagination-per-page-gap: calc(var(--rt-space-sm) + var(--rt-space-xs));
+    --rt-pagination-field-height: var(--rt-control-height-sm);
+    --rt-pagination-field-radius: calc(var(--rt-radius-lg) + var(--rt-radius-xs));
+    --rt-pagination-field-color-border: var(--rt-mat-neutral-30);
+    --rt-pagination-field-padding-x: var(--rt-space-sm);
+    --rt-pagination-field-color-bg: transparent;
+    --rt-pagination-field-color-text: var(--rt-mat-neutral-60);
+
     /* Переключатель первого кита — свой, не Material: серый трек в рамке, включённый — в цвете
        действия темы, как у кнопки. Тёмная тема отвечает на эти имена своими цветами. */
     --rt-toggle-color-track: var(--rt-mat-neutral-20);

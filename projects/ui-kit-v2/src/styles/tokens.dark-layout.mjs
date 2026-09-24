@@ -100,6 +100,33 @@ export const darkLayout = [
         name: `--rt-list-selector-label-color`,
     },
     {
+        name: `--rt-pagination-box-color-border`,
+    },
+    {
+        name: `--rt-pagination-box-color-text`,
+    },
+    {
+        name: `--rt-pagination-box-current-color-bg`,
+    },
+    {
+        name: `--rt-pagination-box-current-color-text`,
+    },
+    {
+        name: `--rt-pagination-box-current-color-border`,
+    },
+    {
+        name: `--rt-pagination-arrow-color`,
+    },
+    {
+        name: `--rt-pagination-field-color-border`,
+    },
+    {
+        name: `--rt-pagination-field-color-bg`,
+    },
+    {
+        name: `--rt-pagination-field-color-text`,
+    },
+    {
         name: `--rt-input-icon-color`,
     },
     {

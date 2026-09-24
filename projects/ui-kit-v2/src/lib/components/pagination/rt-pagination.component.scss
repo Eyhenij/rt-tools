@@ -1,22 +1,35 @@
 @layer rt-kit.components {
     .rt-pagination {
-        --rt-pagination-page-radius: var(--rt-radius-md);
+        --rt-pagination-page-radius: var(--rt-pagination-box-radius);
         --rt-pagination-page-border-width: var(--rt-border-width-thin);
         --rt-pagination-focus-shadow: var(--rt-shadow-focus-ring);
         --rt-pagination-transition-duration: var(--rt-duration-fast);
 
         display: flex;
         align-items: center;
-        justify-content: space-between;
+        justify-content: var(--rt-pagination-justify);
         padding: var(--rt-space-4) var(--rt-space-xs);
 
         // Адаптив завязан на собственную ширину компонента, а не на viewport:
         // в узком контейнере (зажатая таблица / aside) числовая полоса прячется,
         // показывается compact-форма «‹ Стр. N из M ›».
         container-type: inline-size;
-        gap: var(--rt-space-md);
+        gap: var(--rt-pagination-gap);
+
+        // Стрелки — кнопки-значки кита; ячейкой полосы их делают её имена: размер, скругление,
+        // рамка тенью и цвет значка. Свой вид оставляет их прежними кнопками-значками.
+        rt-icon-button {
+            --rt-icon-button-color: var(--rt-pagination-arrow-color);
+        }
+
+        .rt-icon-button {
+            --rt-icon-button-size: var(--rt-pagination-arrow-size);
+            --rt-icon-button-square-radius: var(--rt-pagination-arrow-radius);
+            --rt-icon-button-shadow: var(--rt-pagination-arrow-shadow);
+        }
 
         &__range {
+            display: var(--rt-pagination-range-display);
             color: var(--rt-color-text-muted);
             font-size: var(--rt-text-sm);
             white-space: nowrap;
@@ -25,7 +38,7 @@
         &__nav {
             display: flex;
             align-items: center;
-            gap: var(--rt-space-xs);
+            gap: var(--rt-pagination-nav-gap);
         }
 
         // Compact-форма по умолчанию скрыта — показывается только в узком контейнере.
@@ -42,14 +55,18 @@
         }
 
         &__page {
-            min-width: var(--rt-space-xl);
-            height: var(--rt-space-xl);
+            min-width: var(--rt-pagination-box-size);
+            height: var(--rt-pagination-box-size);
             padding: 0 var(--rt-space-sm);
-            border: var(--rt-pagination-page-border-width) solid var(--rt-color-border-default);
+            border: var(--rt-pagination-page-border-width) solid var(--rt-pagination-box-color-border);
             border-radius: var(--rt-pagination-page-radius);
             background: transparent;
-            color: var(--rt-color-text-primary);
+            color: var(--rt-pagination-box-color-text);
             cursor: pointer;
+
+            // Кнопке браузер даёт свой шрифт, а не шрифт страницы.
+            font: inherit;
+            font-size: var(--rt-text-sm);
             transition:
                 background-color var(--rt-pagination-transition-duration) ease,
                 border-color var(--rt-pagination-transition-duration) ease,
@@ -67,9 +84,10 @@
             }
 
             &--current {
-                border-color: var(--rt-color-border-strong);
-                background: var(--rt-color-bg-surface-subtle);
-                font-weight: var(--rt-font-weight-semibold);
+                border-color: var(--rt-pagination-box-current-color-border);
+                background: var(--rt-pagination-box-current-color-bg);
+                color: var(--rt-pagination-box-current-color-text);
+                font-weight: var(--rt-pagination-box-current-font-weight);
             }
 
             &:disabled {
@@ -83,15 +101,26 @@
             color: var(--rt-color-text-muted);
         }
 
+        // Поле размера — выпадающий список кита; высоту, скругление, рамку и отступ ему дают имена
+        // полосы через свойства поля.
         &__per-page {
+            --rt-input-height: var(--rt-pagination-field-height);
+            --rt-input-radius: var(--rt-pagination-field-radius);
+            --rt-input-color-border: var(--rt-pagination-field-color-border);
+            --rt-input-padding-x: var(--rt-pagination-field-padding-x);
+            --rt-input-color-bg: var(--rt-pagination-field-color-bg);
+            --rt-input-color-text: var(--rt-pagination-field-color-text);
+
             display: flex;
             align-items: center;
-            gap: var(--rt-space-sm);
+            gap: var(--rt-pagination-per-page-gap);
         }
 
+        // Подпись не переносится: в узкой полосе «На странице:» ломалась на две строки.
         &__per-page-label {
             color: var(--rt-color-text-muted);
             font-size: var(--rt-text-sm);
+            white-space: nowrap;
         }
     }
 
