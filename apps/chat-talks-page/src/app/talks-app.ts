@@ -11,18 +11,34 @@ import {
     WritableSignal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { chatKitTalks, chatKitThread, IChat, IChatKitTalkRow, IChatSideLabels } from '@rt/message-bus-admin/chat/util';
+import { AdminChatTalkComponent } from '@rt/message-bus-admin/chat/ui';
+import {
+    chatKitTalks,
+    chatKitThread,
+    chatTalkActions,
+    chatTalkDetailRows,
+    chatTalkStateAfter,
+    chatTalkTitle,
+    IChat,
+    IChatKitTalkRow,
+    IChatSideLabels,
+    IChatTalkWords,
+} from '@rt/message-bus-admin/chat/util';
 import { EChatTalkState, IPage } from '@rt/message-bus-common';
 import { BlockDirective, ElemDirective, WINDOW } from '@rt-tools/core';
 import {
     IRtChat,
     IRtThreadList,
-    RtButtonDirective,
+    IRtWorkspaceDetails,
     RtChatComponent,
-    RtEmptyStateComponent,
     RtThreadListComponent,
     RtThreadListRowDirective,
     RtThreadListSearchDirective,
+    RtWorkspaceAsideDirective,
+    RtWorkspaceCenterDirective,
+    RtWorkspaceComponent,
+    RtWorkspaceDetailsComponent,
+    RtWorkspaceListDirective,
 } from '@rt-tools/ui-kit-v2';
 import { catchError, concatMap, EMPTY, Observable, Subject, switchMap } from 'rxjs';
 
@@ -41,6 +57,26 @@ const PAGE_FEED_SIZE: number = 100;
 
 /** Подписи сторон для треда набора: набор о сторонах этого домена не знает ничего. */
 const SIDE_LABELS: IChatSideLabels = { operator: TALKS_WORDS.sideOperator, visitor: TALKS_WORDS.sideVisitor };
+
+/** Ключ, под которым стол помнит ширины колонок страницы: он свой, не ключ панели оператора. */
+const WORKSPACE_STORAGE_KEY: string = 'talks-page-workspace';
+
+/** Язык, которым страница называет минуту последней реплики. Пока он один. */
+const PAGE_LOCALE: string = 'ru-RU';
+
+/** Слова страницы о разговоре: их берут общие части раздела. */
+const TALK_WORDS: IChatTalkWords = {
+    site: TALKS_WORDS.detailsSite,
+    state: TALKS_WORDS.detailsState,
+    lastMessageAt: TALKS_WORDS.detailsLastMessageAt,
+    stateLive: TALKS_WORDS.stateLive,
+    stateClosed: TALKS_WORDS.stateClosed,
+    close: TALKS_WORDS.close,
+    reopen: TALKS_WORDS.reopen,
+    untitled: TALKS_WORDS.untitled,
+    sideOperator: TALKS_WORDS.sideOperator,
+    sideVisitor: TALKS_WORDS.sideVisitor,
+};
 
 /**
  * Страница переписок, как её видит человек потребителя.
@@ -64,14 +100,18 @@ const SIDE_LABELS: IChatSideLabels = { operator: TALKS_WORDS.sideOperator, visit
     styleUrl: './talks-app.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
+        AdminChatTalkComponent,
         BlockDirective,
         ElemDirective,
-        RtButtonDirective,
         RtChatComponent,
-        RtEmptyStateComponent,
         RtThreadListComponent,
         RtThreadListRowDirective,
         RtThreadListSearchDirective,
+        RtWorkspaceAsideDirective,
+        RtWorkspaceCenterDirective,
+        RtWorkspaceComponent,
+        RtWorkspaceDetailsComponent,
+        RtWorkspaceListDirective,
     ],
 })
 export class TalksApp implements OnInit {
@@ -112,10 +152,24 @@ export class TalksApp implements OnInit {
         (): IChat.Talk.State | null => this.#rows().find((row: IChat.Talk.State): boolean => row.id === this.chosen()) ?? null
     );
 
-    /** Подпись кнопки состояния: закрыть живой разговор или открыть закрытый снова. */
-    public readonly stateLabel: Signal<string> = computed((): string =>
-        this.talk()?.state === EChatTalkState.Closed ? TALKS_WORDS.reopen : TALKS_WORDS.close
+    /** Заголовок ленты — последняя реплика разговора одной строкой. */
+    public readonly feedTitle: Signal<string> = computed((): string => chatTalkTitle(this.talk(), TALK_WORDS));
+
+    /** Свойства выбранного разговора: площадка, состояние и минута последней реплики. */
+    public readonly detailRows: Signal<readonly IRtWorkspaceDetails.Row[]> = computed((): readonly IRtWorkspaceDetails.Row[] =>
+        chatTalkDetailRows(this.talk(), TALK_WORDS, PAGE_LOCALE)
     );
+
+    /** Действия над разговором: закрыть живой или открыть закрытый снова. */
+    public readonly talkActions: Signal<readonly IRtWorkspaceDetails.Action[]> = computed((): readonly IRtWorkspaceDetails.Action[] =>
+        chatTalkActions(this.talk(), TALK_WORDS)
+    );
+
+    /** Слова о разговоре для строки списка: строка берёт их доводом, а не словарём админки. */
+    public readonly talkWords: IChatTalkWords = TALK_WORDS;
+
+    /** Ключ, под которым стол помнит ширины колонок страницы. */
+    public readonly workspaceStorageKey: string = WORKSPACE_STORAGE_KEY;
 
     public readonly talksReading: Signal<boolean> = this.#talksReading.asReadonly();
     public readonly feedReading: Signal<boolean> = this.#feedReading.asReadonly();
@@ -214,12 +268,22 @@ export class TalksApp implements OnInit {
         }
     }
 
-    /** Закрыть разговор или открыть его снова. */
-    public changeState(): void {
-        const talk: IChat.Talk.State | null = this.talk();
+    /** Нажатое действие подробностей: закрыть разговор или открыть его снова. */
+    public changeState(action: string): void {
+        if (this.talk()) {
+            this.#stateSource.next(chatTalkStateAfter(action));
+        }
+    }
 
-        if (talk) {
-            this.#stateSource.next(talk.state === EChatTalkState.Closed ? EChatTalkState.Live : EChatTalkState.Closed);
+    /**
+     * Перечитать ленту открытого разговора.
+     *
+     * Своего потока событий у страницы нет вовсе: реплики посетителя приезжают только чтением, и
+     * без этой кнопки человек потребителя перезагружал бы страницу.
+     */
+    public refreshFeed(): void {
+        if (this.chosen()) {
+            this.#feedSource.next(this.chosen());
         }
     }
 

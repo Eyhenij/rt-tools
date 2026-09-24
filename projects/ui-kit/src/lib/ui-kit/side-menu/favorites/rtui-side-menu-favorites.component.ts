@@ -20,14 +20,16 @@ import {
     WritableSignal,
 } from '@angular/core';
 import { MatIconButton } from '@angular/material/button';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIcon } from '@angular/material/icon';
-import { MatNavList } from '@angular/material/list';
+import { MatListItemIcon, MatListItemTitle, MatNavList } from '@angular/material/list';
 import { MatTooltip } from '@angular/material/tooltip';
 
 import { BlockDirective, BreakpointService, ElemDirective, ModDirective, RtIconOutlinedDirective } from '@rt-tools/core';
 import { RtuiSideMenuSubItemComponent } from '../menu-sub-item/rtui-side-menu-sub-item.component';
 import { RtuiSubMenuHoldService } from '../menu/rtui-sub-menu-hold.service';
 import { IRtuiSideMenuHost, ISideMenu, RTUI_SIDE_MENU } from '../side-menu.types';
+import { filterSubMenuItems } from '../side-menu.logic';
 import { favoritesSection, findFavoriteItems, isDroppedOutside } from './favorites.logic';
 import { RtuiSideMenuSettingsService } from '../settings/rtui-side-menu-settings.service';
 
@@ -59,7 +61,10 @@ const SUB_MENU_PANEL: string = '.rtui-sub-side-menu-content';
         CdkDrag,
         CdkDragHandle,
         MatIcon,
+        MatExpansionModule,
         MatIconButton,
+        MatListItemIcon,
+        MatListItemTitle,
         MatNavList,
         MatTooltip,
 
@@ -86,18 +91,35 @@ export class RtuiSideMenuFavoritesComponent {
     );
 
     protected readonly favorites: RtuiSideMenuSettingsService | null = inject(RtuiSideMenuSettingsService, { optional: true });
+    /** В поиске что-то набрано: блок показывает совпавшие строки раскрытым, сохранённое не трогая. */
+    protected readonly searching: Signal<boolean> = computed((): boolean => this.#menu.subMenuQuery().trim() !== '');
     protected readonly rows: Signal<ISideMenu.Item[]> = computed((): ISideMenu.Item[] => {
         const section: ISideMenu.Item | null = this.#section();
 
-        if (!this.favorites || !section || this.#menu.subMenuQuery().trim() !== '') {
+        if (!this.favorites || !section || (this.searching() && !this.#menu.isFavoritesSearchShown())) {
             return [];
         }
 
-        return findFavoriteItems([section], this.favorites.ids(this.#menu.menuId())());
+        return filterSubMenuItems(findFavoriteItems([section], this.favorites.ids(this.#menu.menuId())()), this.#menu.subMenuQuery());
     });
     /** Ручки строк по порядку: стрелка возвращает фокус на ручку переставленной строки. */
     protected readonly handles: Signal<ReadonlyArray<ElementRef<HTMLElement>>> = viewChildren<string, ElementRef<HTMLElement>>('handle', {
         read: ElementRef,
+    });
+    /**
+     * Блок раздела свёрнут: заголовок и черта остаются, строк нет. Состояние своё у каждого раздела
+     * и лежит в настройках меню. Поиск его не меняет: на время поиска блок стоит раскрытым.
+     */
+    protected readonly collapsed: Signal<boolean> = computed((): boolean => {
+        const section: ISideMenu.Item | null = this.#section();
+
+        return !!this.favorites && !!section && this.favorites.favoritesCollapsed(this.#menu.menuId())().includes(section.id);
+    });
+    /** Заголовок показывает число строк: всегда, у свёрнутого блока или никогда — по входу меню. */
+    protected readonly countShown: Signal<boolean> = computed((): boolean => {
+        const mode: ISideMenu.FavoritesCount = this.#menu.favoritesCount();
+
+        return mode === 'always' || (mode === 'collapsed' && this.collapsed());
     });
     /** Узкий экран: подсказка у ручки не показывается — наводиться там нечем. */
     protected readonly narrow: Signal<boolean> = computed((): boolean => !!this.#breakpoints.isMobile());
@@ -178,6 +200,18 @@ export class RtuiSideMenuFavoritesComponent {
 
         this.#move(index, target);
         afterNextRender(() => this.handles()[target]?.nativeElement.focus(), { injector: this.#injector });
+    }
+
+    /**
+     * Панель раскрыта или свёрнута: выбор ложится в настройки меню. Панель сообщает и о значении,
+     * пришедшем из настроек, — его записывать незачем.
+     */
+    public onExpandedChange(expanded: boolean): void {
+        const section: ISideMenu.Item | null = this.#section();
+
+        if (this.favorites && section && !this.searching() && expanded === this.collapsed()) {
+            this.favorites.setFavoritesCollapsed(this.#menu.menuId(), section.id, !expanded);
+        }
     }
 
     /** Снимает удержание, если строку тянули; без тяги удержание не трогает — его мог поставить фокус. */

@@ -33,6 +33,9 @@ export interface IChatTalkWords {
     readonly reopen: string;
     /** Чем зовётся разговор, у которого последняя реплика пуста. */
     readonly untitled: string;
+    /** Как зовутся стороны разговора в строке списка. */
+    readonly sideOperator: string;
+    readonly sideVisitor: string;
 }
 
 /** Закрыт ли разговор. Слово состояния читается в трёх местах, и судится оно одним. */

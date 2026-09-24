@@ -1,3 +1,5 @@
+@use 'folder-panel';
+
 :host {
     // Хост пункта — блок шириной своего места. Строкой он не сжимается по ширине вовсе, и
     // ограничение пункта внутри него ничего не решает: список растягивается по хосту, а хост —
@@ -7,21 +9,7 @@
     max-width: 100%;
 
     &::ng-deep {
-        // Set expansion panel header padding
-        .mat-expansion-indicator {
-            padding: 0 var(--rt-spacing-24);
-        }
-
-        // Set expansion panel body padding
-        .mat-expansion-panel-body {
-            padding: 0 0 0 var(--rt-spacing-16);
-        }
-
-        // Set expansion panel transparent container
-        --mat-expansion-container-background-color: transparent;
-
-        // Set permanent expansion header height
-        --mat-expansion-header-expanded-state-height: var(--mat-expansion-header-collapsed-state-height);
+        @include folder-panel.panel-overrides;
     }
 
     // Пункт занимает ширину панели и не больше её: панель знает, насколько широка, — её двигают
@@ -127,11 +115,10 @@
                 margin-left: var(--rt-spacing-4);
                 opacity: 0;
 
-                // Узкий экран отмечает порог сервиса кита, а не медиазапрос: порог настраивается
-                // приложением, и число в стилях с ним разошлось бы. На узком экране рисуется своя
-                // ветка разметки, и наводиться там нечем.
-                &--on,
-                &--always {
+                // Видимость решает способ нажатия, а не ширина экрана: узкое окно с мышью наводится
+                // так же, как широкое, и кнопки там ждут наведения. Без мыши кнопки видны всегда —
+                // правило `(hover: none)` ниже.
+                &--on {
                     opacity: 1;
                 }
 
@@ -186,69 +173,22 @@
         }
     }
 
-    .rtui-side-menu-expand-sub-item {
+    @include folder-panel.folder;
+}
+
+// Меню с `favoriteActionsReserve="none"`: кнопка избранного, ждущая наведения, в покое не
+// занимает ширины, и подпись идёт до правого края или до кнопки потребителя. Под наведением и
+// фокусом клавиатуры строки правило не действует, и кнопка встаёт на своё место — сдвигается
+// только правый край подписи, высота строки та же. Кнопка остаётся в порядке Tab: она сжата, а не
+// снята с раскладки. Закрашенная звезда и экран без наведения держат место, как прежде: там
+// кнопка видна всегда.
+@media (hover: hover) {
+    :host-context(.rtui-side-menu--favorite-actions-none)
+        .rtui-side-menu-sub-item:not(:hover, :has(:focus-visible))
+        .rtui-side-menu-sub-item-title__favorite:not(.rtui-side-menu-sub-item-title__favorite--on) {
+        overflow: hidden;
+        width: 0;
         padding: 0;
-
-        // Set expand sub item header border like menu item border
-        border-radius: var(--rt-radius-xl);
-        box-shadow: none;
-
-        // Нижний предел ширины действует, пока для него есть место. Вложенный пункт стоит с
-        // отступом своего уровня, и предел, взятый числом, выносил бы его правый край за панель
-        // ровно на этот отступ: ширину такой пункт оправдывает, а человек видит строку, уходящую
-        // под край панели.
-        &--fixed {
-            min-width: min(var(--rt-side-menu-sub-menu-item-width), 100%);
-        }
-
-        .rtui-side-menu-expand-sub-item-header {
-            max-width: 100%;
-            padding: 0;
-
-            // В разделе с избранным шеврон папки стоит в одном столбце со звёздами: центр значка
-            // кнопки звезды левее центра шеврона на половину её размера без половины шеврона в 24 px.
-            // Сдвиг — внешним отступом: раскрытая папка поворачивает значок вместе с его внутренними
-            // отступами, и неравный внутренний отступ уходил бы на другую сторону.
-            &--favorites ::ng-deep .mat-expansion-indicator {
-                margin-right: calc(var(--rt-side-menu-favorite-action-size, calc(var(--rt-spacing-16) * 2)) / 2 - var(--rt-spacing-12));
-            }
-
-            &--activated {
-                background-color: var(--mat-list-active-indicator-color);
-            }
-
-            // Отметка подсветки — та же, что у пункта со ссылкой: заголовок папки попадает под
-            // ходьбу стрелками наравне с ним.
-            &--highlighted {
-                border-radius: var(--rt-radius-xl);
-                outline: 2px solid var(--rt-border-focus);
-                outline-offset: -2px;
-            }
-
-            &__icon {
-                color: var(--mdc-list-list-item-leading-icon-color);
-                margin-inline: var(--mat-list-list-item-leading-icon-start-space) var(--mat-list-list-item-leading-icon-end-space);
-            }
-
-            &__title {
-                font-size: var(--rt-side-menu-sub-menu-item-title-font-size);
-            }
-
-            // Отметка совпавшего — та же, что у пункта со ссылкой: заголовок раздела попадает
-            // в отобранный список наравне с ним, и разное оформление одного и того же читалось
-            // бы как разный смысл.
-            &__match {
-                border-radius: var(--rt-radius-xs);
-                background-color: var(--rt-bg-accent-highlight);
-                color: var(--rt-text-accent-highlight);
-                font-weight: var(--rt-font-weight-semibold);
-            }
-
-            &:hover {
-                .rtui-side-menu-expand-sub-item-header__icon {
-                    color: var(--mdc-list-list-item-hover-leading-icon-color);
-                }
-            }
-        }
+        margin-left: 0;
     }
 }

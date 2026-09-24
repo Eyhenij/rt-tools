@@ -14,7 +14,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting, TestRequest } from '@angular/common/http/testing';
 import { EnvironmentInjector, provideZonelessChangeDetection, runInInjectionContext } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { IRtChat } from '@rt-tools/ui-kit-v2';
+import { IRtChat, IRtWorkspaceDetails } from '@rt-tools/ui-kit-v2';
 import { WINDOW } from '@rt-tools/core';
 import { IChatKitTalkRow } from '@rt/message-bus-admin/chat/util';
 import {
@@ -179,9 +179,10 @@ describe('экран встраиваемой страницы переписо�
         app.choose('talk-1');
         feedRead('talk-1').flush(pageOf([messageRow()]));
 
-        expect(app.stateLabel()).toBe(TALKS_WORDS.close);
+        // действие живого разговора зовёт закрыть его, и стоит оно в подробностях
+        expect(app.talkActions().map((action: IRtWorkspaceDetails.Action): string => action.label)).toEqual([TALKS_WORDS.close]);
 
-        app.changeState();
+        app.changeState(app.talkActions()[0].id);
 
         const changed: TestRequest = http.expectOne(`${SERVICE}${CHAT_EMBEDDED_PATH}/talk-1/state`);
 
@@ -190,6 +191,6 @@ describe('экран встраиваемой страницы переписо�
         talksRead().flush(pageOf([talkRow({ state: EChatTalkState.Closed })]));
 
         expect(app.talk()?.state).toBe(EChatTalkState.Closed);
-        expect(app.stateLabel()).toBe(TALKS_WORDS.reopen);
+        expect(app.talkActions().map((action: IRtWorkspaceDetails.Action): string => action.label)).toEqual([TALKS_WORDS.reopen]);
     });
 });

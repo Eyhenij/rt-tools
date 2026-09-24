@@ -19,7 +19,6 @@ import {
     typeInSearch,
 } from './side-menu.harness';
 import {
-    ALWAYS,
     block,
     BLOCK,
     BLOCK_ROW,
@@ -208,17 +207,26 @@ describe('RtuiSideMenuComponent — избранное', () => {
         expect(fixture.nativeElement.querySelector(BLOCK)).toBeNull();
     });
 
-    it('SC-UK-82 — запрос в поиске прячет блок, пустой запрос возвращает', () => {
-        const { fixture } = withFavorites(['rates']);
+    it('SC-UK-82 — при поиске блок показывает совпавшие строки, без совпадений его нет, вход прячет его', () => {
+        const { fixture, host, favorites } = withFavorites(['rates']);
 
         hoverFirstItem(fixture);
         expect(blockRowIds(fixture)).toEqual(['rates']);
 
+        favorites.setFavoritesCollapsed(DEFAULT_MENU_ID, 'refs', true);
         typeInSearch(fixture, 'Кур');
-        expect(fixture.nativeElement.querySelector(BLOCK)).toBeNull();
+        expect(blockRowIds(fixture)).toEqual(['rates']);
+        expect(favorites.settings(DEFAULT_MENU_ID)().favoritesCollapsed).toEqual(['refs']);
+
+        typeInSearch(fixture, 'нет такого');
+        expect(fixture.nativeElement.querySelector(BLOCK_TITLE)).toBeNull();
+
+        host.searchShown.set(false);
+        typeInSearch(fixture, 'Кур');
+        expect(fixture.nativeElement.querySelector(BLOCK_TITLE)).toBeNull();
 
         typeInSearch(fixture, '');
-        expect(blockRowIds(fixture)).toEqual(['rates']);
+        expect(fixture.nativeElement.querySelector(BLOCK_TITLE)).not.toBeNull();
     });
 
     it('SC-UK-83 — строка блока открывает свой пункт так же, как строка списка', () => {
@@ -254,9 +262,9 @@ describe('RtuiSideMenuComponent — избранное', () => {
 
         hoverFirstItem(fixture);
 
-        expect((fixture.nativeElement.querySelector('.rtui-side-menu-favorites__title-text') as HTMLElement).textContent?.trim()).toBe(
-            'Избранное'
-        );
+        expect(
+            (fixture.nativeElement.querySelector('.rtui-side-menu-expand-sub-item-header__title') as HTMLElement).textContent?.trim()
+        ).toBe('Избранное');
         expect(listRow(fixture, 'rates').querySelector(STAR)?.getAttribute('aria-label')).toBe('Убрать из избранного');
         expect(fixture.nativeElement.querySelector(REMOVE)?.getAttribute('aria-label')).toBe('Убрать из избранного');
         expect(fixture.nativeElement.querySelector(HANDLE)?.getAttribute('aria-label')).toBe('Потяните за кнопку');
@@ -314,7 +322,7 @@ describe('RtuiSideMenuComponent — избранное', () => {
         expect(star.classList).not.toContain('rtui-side-menu-sub-item-title__favorite--remove');
     });
 
-    it('SC-UK-86 — на узком экране блок стоит под полем поиска, звёзды видны без наведения', () => {
+    it('SC-UK-86 — на узком экране блок стоит под полем поиска, со звёздами и кнопками «убрать»', () => {
         // Подпункт меряет экран своим экземпляром службы, и узкий экран ему подменяется отдельно.
         const narrow: BreakpointServiceStub = new BreakpointServiceStub();
         narrow.narrow.set(true);
@@ -331,8 +339,8 @@ describe('RtuiSideMenuComponent — избранное', () => {
         expect(favoritesBlock).not.toBeNull();
         expect(blockRowIds(fixture)).toEqual(['rates']);
         expect(search.compareDocumentPosition(favoritesBlock)).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
-        expect(fixture.nativeElement.querySelector(`${STAR}.${ALWAYS}`)).not.toBeNull();
-        expect(fixture.nativeElement.querySelector(`${REMOVE}.${ALWAYS}`)).not.toBeNull();
+        expect(fixture.nativeElement.querySelector(STAR)).not.toBeNull();
+        expect(fixture.nativeElement.querySelector(REMOVE)).not.toBeNull();
         expect(tooltip(fixture, STAR).disabled).toBe(true);
 
         const back: Element | undefined = Array.from(fixture.nativeElement.querySelectorAll('rtui-side-menu-sub-item')).find(
@@ -372,7 +380,6 @@ describe('RtuiSideMenuComponent — избранное', () => {
 
         expect(listRow(fixture, 'rates').querySelector(STAR)?.classList).toContain(ON);
         expect(listRow(fixture, 'pie').querySelector(STAR)?.classList).not.toContain(ON);
-        expect(listRow(fixture, 'pie').querySelector(STAR)?.classList).not.toContain(ALWAYS);
     });
 
     it('SC-UK-90 — фокус на звезде держит подменю, открытое наведением', () => {
