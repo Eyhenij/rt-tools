@@ -149,6 +149,7 @@
     --rt-pagination-arrow-shadow: inset 0 0 0 var(--rt-border-width-thin) var(--rt-mat-neutral-30);
     --rt-pagination-arrow-color: var(--rt-mat-neutral-60);
     --rt-pagination-per-page-gap: calc(var(--rt-space-sm) + var(--rt-space-xs));
+    --rt-pagination-per-page-label-white-space: nowrap;
     --rt-pagination-field-height: var(--rt-control-height-sm);
     --rt-pagination-field-radius: calc(var(--rt-radius-lg) + var(--rt-radius-xs));
     --rt-pagination-field-color-border: var(--rt-mat-neutral-30);

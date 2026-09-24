@@ -254,6 +254,7 @@ export const material = [
     { name: `--rt-pagination-arrow-shadow`, value: `inset 0 0 0 var(--rt-border-width-thin) var(--rt-mat-neutral-30)` },
     { name: `--rt-pagination-arrow-color`, value: `var(--rt-mat-neutral-60)` },
     { name: `--rt-pagination-per-page-gap`, value: `calc(var(--rt-space-sm) + var(--rt-space-xs))` },
+    { name: `--rt-pagination-per-page-label-white-space`, value: `nowrap` },
     { name: `--rt-pagination-field-height`, value: `var(--rt-control-height-sm)` },
     { name: `--rt-pagination-field-radius`, value: `calc(var(--rt-radius-lg) + var(--rt-radius-xs))` },
     { name: `--rt-pagination-field-color-border`, value: `var(--rt-mat-neutral-30)` },

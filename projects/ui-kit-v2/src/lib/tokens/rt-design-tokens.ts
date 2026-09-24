@@ -371,6 +371,7 @@ export type TRtDesignTokenName =
     | '--rt-pagination-justify'
     | '--rt-pagination-nav-gap'
     | '--rt-pagination-per-page-gap'
+    | '--rt-pagination-per-page-label-white-space'
     | '--rt-pagination-range-display'
     | '--rt-profile-avatar-font-size'
     | '--rt-profile-avatar-size'
@@ -877,6 +878,7 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-pagination-justify',
     '--rt-pagination-nav-gap',
     '--rt-pagination-per-page-gap',
+    '--rt-pagination-per-page-label-white-space',
     '--rt-pagination-range-display',
     '--rt-profile-avatar-font-size',
     '--rt-profile-avatar-size',
