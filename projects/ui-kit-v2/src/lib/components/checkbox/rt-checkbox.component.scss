@@ -15,7 +15,7 @@
         --rt-checkbox-focus-shadow: var(--rt-shadow-focus-ring);
         --rt-checkbox-box-radius: var(--rt-radius-sm);
         --rt-checkbox-transition-duration: var(--rt-duration-fast);
-        --rt-checkbox-label-color: var(--rt-color-text-primary);
+        --rt-checkbox-color-label: var(--rt-color-text-primary);
 
         display: inline-flex;
         align-items: center;
@@ -65,7 +65,7 @@
         }
 
         &__label {
-            color: var(--rt-checkbox-label-color);
+            color: var(--rt-checkbox-color-label);
             font-size: var(--rt-text-sm);
             user-select: none;
 
