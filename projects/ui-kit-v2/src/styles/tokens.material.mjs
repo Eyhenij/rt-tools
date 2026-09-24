@@ -214,6 +214,23 @@ export const material = [
     { name: `--rt-list-settings-icon-color`, value: `var(--mat-sys-on-surface-variant, var(--rt-mat-neutral-60))` },
 
     {
+        lead: `    /* Кнопки действий панели списка — mat-mini-fab первого кита: круг без заливки с подъёмом 6,
+       под указателем подъём 8 и тёмный значок вместо серого; значок 24px, промежуток 16px. */`,
+        space: true,
+        name: `--rt-list-action-gap`,
+        value: `var(--rt-space-md)`,
+    },
+    { name: `--rt-list-action-divider-height`, value: `var(--rt-size-8)` },
+    { name: `--rt-list-action-radius`, value: `var(--rt-radius-full)` },
+    { name: `--rt-list-action-shadow`, value: `var(--rt-mat-shadow-fab)` },
+    { name: `--rt-list-action-shadow-hover`, value: `var(--rt-mat-shadow-fab-hover)` },
+    { name: `--rt-list-action-icon-size`, value: `var(--rt-size-6)` },
+    { name: `--rt-list-action-color`, value: `var(--rt-mat-neutral-60)` },
+    { name: `--rt-list-action-color-hover`, value: `var(--rt-mat-neutral-100)` },
+    { name: `--rt-list-action-color-bg-hover`, value: `transparent` },
+    { name: `--rt-list-selector-label-color`, value: `var(--rt-mat-neutral-60)` },
+
+    {
         lead: `    /* Переключатель первого кита — свой, не Material: серый трек в рамке, включённый — в цвете
        действия темы, как у кнопки. Тёмная тема отвечает на эти имена своими цветами. */`,
         space: true,

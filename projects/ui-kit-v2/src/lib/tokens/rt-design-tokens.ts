@@ -200,6 +200,15 @@ export type TRtDesignTokenName =
     | '--rt-leading-snug'
     | '--rt-leading-tight'
     | '--rt-letter-spacing-wide'
+    | '--rt-list-action-color'
+    | '--rt-list-action-color-bg-hover'
+    | '--rt-list-action-color-hover'
+    | '--rt-list-action-divider-height'
+    | '--rt-list-action-gap'
+    | '--rt-list-action-icon-size'
+    | '--rt-list-action-radius'
+    | '--rt-list-action-shadow'
+    | '--rt-list-action-shadow-hover'
     | '--rt-list-search-color-bg'
     | '--rt-list-search-color-border'
     | '--rt-list-search-color-placeholder'
@@ -211,6 +220,7 @@ export type TRtDesignTokenName =
     | '--rt-list-search-padding-x'
     | '--rt-list-search-radius'
     | '--rt-list-search-width'
+    | '--rt-list-selector-label-color'
     | '--rt-list-settings-icon-color'
     | '--rt-list-settings-item-bg'
     | '--rt-mat-blue-100'
@@ -265,6 +275,8 @@ export type TRtDesignTokenName =
     | '--rt-mat-red-80'
     | '--rt-mat-red-active'
     | '--rt-mat-red-hover'
+    | '--rt-mat-shadow-fab'
+    | '--rt-mat-shadow-fab-hover'
     | '--rt-nav-caret-size'
     | '--rt-nav-color-disabled'
     | '--rt-nav-color-focus'
@@ -671,6 +683,15 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-leading-snug',
     '--rt-leading-tight',
     '--rt-letter-spacing-wide',
+    '--rt-list-action-color',
+    '--rt-list-action-color-bg-hover',
+    '--rt-list-action-color-hover',
+    '--rt-list-action-divider-height',
+    '--rt-list-action-gap',
+    '--rt-list-action-icon-size',
+    '--rt-list-action-radius',
+    '--rt-list-action-shadow',
+    '--rt-list-action-shadow-hover',
     '--rt-list-search-color-bg',
     '--rt-list-search-color-border',
     '--rt-list-search-color-placeholder',
@@ -682,6 +703,7 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-list-search-padding-x',
     '--rt-list-search-radius',
     '--rt-list-search-width',
+    '--rt-list-selector-label-color',
     '--rt-list-settings-icon-color',
     '--rt-list-settings-item-bg',
     '--rt-mat-blue-100',
@@ -736,6 +758,8 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-mat-red-80',
     '--rt-mat-red-active',
     '--rt-mat-red-hover',
+    '--rt-mat-shadow-fab',
+    '--rt-mat-shadow-fab-hover',
     '--rt-nav-caret-size',
     '--rt-nav-color-disabled',
     '--rt-nav-color-focus',

@@ -88,6 +88,18 @@ export const darkLayout = [
         name: `--rt-list-settings-icon-color`,
     },
     {
+        name: `--rt-list-action-color`,
+    },
+    {
+        name: `--rt-list-action-color-hover`,
+    },
+    {
+        name: `--rt-list-action-color-bg-hover`,
+    },
+    {
+        name: `--rt-list-selector-label-color`,
+    },
+    {
         name: `--rt-input-icon-color`,
     },
     {

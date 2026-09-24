@@ -8,11 +8,14 @@
         display: inline-block;
     }
 
+    /* Корень — `<button>`, а кнопке браузер даёт свой шрифт, а не шрифт страницы: `font: inherit`
+       возвращает метке шрифт окружения, без него она рисовалась системным Arial. */
     rt-checkbox .rt-checkbox {
         --rt-checkbox-focus-radius: var(--rt-radius-sm);
         --rt-checkbox-focus-shadow: var(--rt-shadow-focus-ring);
         --rt-checkbox-box-radius: var(--rt-radius-sm);
         --rt-checkbox-transition-duration: var(--rt-duration-fast);
+        --rt-checkbox-label-color: var(--rt-color-text-primary);
 
         display: inline-flex;
         align-items: center;
@@ -20,6 +23,7 @@
         border: none;
         background: none;
         cursor: pointer;
+        font: inherit;
         gap: var(--rt-space-sm);
         text-align: start;
 
@@ -61,7 +65,7 @@
         }
 
         &__label {
-            color: var(--rt-color-text-primary);
+            color: var(--rt-checkbox-label-color);
             font-size: var(--rt-text-sm);
             user-select: none;
 

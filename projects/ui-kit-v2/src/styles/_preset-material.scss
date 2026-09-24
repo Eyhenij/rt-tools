@@ -116,6 +116,19 @@
     --rt-list-settings-item-bg: var(--mat-option-selected-state-layer-color, var(--mat-sys-secondary-container, var(--rt-mat-neutral-10)));
     --rt-list-settings-icon-color: var(--mat-sys-on-surface-variant, var(--rt-mat-neutral-60));
 
+    /* Кнопки действий панели списка — mat-mini-fab первого кита: круг без заливки с подъёмом 6,
+       под указателем подъём 8 и тёмный значок вместо серого; значок 24px, промежуток 16px. */
+    --rt-list-action-gap: var(--rt-space-md);
+    --rt-list-action-divider-height: var(--rt-size-8);
+    --rt-list-action-radius: var(--rt-radius-full);
+    --rt-list-action-shadow: var(--rt-mat-shadow-fab);
+    --rt-list-action-shadow-hover: var(--rt-mat-shadow-fab-hover);
+    --rt-list-action-icon-size: var(--rt-size-6);
+    --rt-list-action-color: var(--rt-mat-neutral-60);
+    --rt-list-action-color-hover: var(--rt-mat-neutral-100);
+    --rt-list-action-color-bg-hover: transparent;
+    --rt-list-selector-label-color: var(--rt-mat-neutral-60);
+
     /* Переключатель первого кита — свой, не Material: серый трек в рамке, включённый — в цвете
        действия темы, как у кнопки. Тёмная тема отвечает на эти имена своими цветами. */
     --rt-toggle-color-track: var(--rt-mat-neutral-20);

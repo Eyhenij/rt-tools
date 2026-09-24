@@ -253,6 +253,22 @@
     --rt-list-settings-item-bg: var(--rt-color-bg-subtle);
     --rt-list-settings-icon-color: var(--rt-color-text-muted);
 
+    /* Кнопки действий на панели списка — свои и приложения. Свой вид оставляет их кнопками-
+       значками без подъёма; материальный набор делает из них круглые кнопки действия первого кита. */
+    --rt-list-action-gap: var(--rt-space-sm);
+    --rt-list-action-divider-height: var(--rt-size-5);
+    --rt-list-action-radius: var(--rt-radius-md);
+    --rt-list-action-shadow: var(--rt-shadow-none);
+    --rt-list-action-shadow-hover: var(--rt-shadow-none);
+    --rt-list-action-icon-size: var(--rt-size-5);
+    --rt-list-action-color: var(--rt-color-text-primary);
+    --rt-list-action-color-hover: var(--rt-color-text-primary);
+    --rt-list-action-color-bg-hover: var(--rt-icon-button-color-bg-hover);
+
+    /* Подпись флажка «отметить все» на панели списка: свой вид — текст, материальный набор —
+       приглушённый серый первого кита. */
+    --rt-list-selector-label-color: var(--rt-color-text-primary);
+
     /* Скругление контрола — назначение, а не ступень на месте. Кнопка, поле ввода и
        всё, что стоит с ними в строке, берут его отсюда: набор оформления живёт слоем
        назначений и до ступени, взятой компонентом напрямую, не достаёт. */

@@ -198,6 +198,56 @@ export const lightForms = [
         dark: `var(--rt-color-text-muted)`,
     },
     {
+        lead: `    /* Кнопки действий на панели списка — свои и приложения. Свой вид оставляет их кнопками-
+       значками без подъёма; материальный набор делает из них круглые кнопки действия первого кита. */`,
+        space: true,
+        name: `--rt-list-action-gap`,
+        value: `var(--rt-space-sm)`,
+    },
+    {
+        name: `--rt-list-action-divider-height`,
+        value: `var(--rt-size-5)`,
+    },
+    {
+        name: `--rt-list-action-radius`,
+        value: `var(--rt-radius-md)`,
+    },
+    {
+        name: `--rt-list-action-shadow`,
+        value: `var(--rt-shadow-none)`,
+    },
+    {
+        name: `--rt-list-action-shadow-hover`,
+        value: `var(--rt-shadow-none)`,
+    },
+    {
+        name: `--rt-list-action-icon-size`,
+        value: `var(--rt-size-5)`,
+    },
+    {
+        name: `--rt-list-action-color`,
+        value: `var(--rt-color-text-primary)`,
+        dark: `var(--rt-color-text-primary)`,
+    },
+    {
+        name: `--rt-list-action-color-hover`,
+        value: `var(--rt-color-text-primary)`,
+        dark: `var(--rt-color-text-primary)`,
+    },
+    {
+        name: `--rt-list-action-color-bg-hover`,
+        value: `var(--rt-icon-button-color-bg-hover)`,
+        dark: `var(--rt-icon-button-color-bg-hover)`,
+    },
+    {
+        lead: `    /* Подпись флажка «отметить все» на панели списка: свой вид — текст, материальный набор —
+       приглушённый серый первого кита. */`,
+        space: true,
+        name: `--rt-list-selector-label-color`,
+        value: `var(--rt-color-text-primary)`,
+        dark: `var(--rt-color-text-primary)`,
+    },
+    {
         lead: `    /* Скругление контрола — назначение, а не ступень на месте. Кнопка, поле ввода и
        всё, что стоит с ними в строке, берут его отсюда: набор оформления живёт слоем
        назначений и до ступени, взятой компонентом напрямую, не достаёт. */`,
