@@ -90,8 +90,11 @@
                 animation: rtui-side-menu-favorites-open var(--rt-side-menu-favorites-motion);
             }
 
+            // Закрытие — свои ключевые кадры, а не открытие задом наперёд: класс открытия бывает
+            // ещё на месте, когда приходит класс закрытия, и анимацию с тем же именем браузер не
+            // запускает заново — блок исчезал без движения.
             &--leave {
-                animation: rtui-side-menu-favorites-open var(--rt-side-menu-favorites-motion) reverse;
+                animation: rtui-side-menu-favorites-close var(--rt-side-menu-favorites-motion);
             }
         }
 
@@ -120,6 +123,16 @@
 
     to {
         grid-template-rows: 1fr;
+    }
+}
+
+@keyframes rtui-side-menu-favorites-close {
+    from {
+        grid-template-rows: 1fr;
+    }
+
+    to {
+        grid-template-rows: 0fr;
     }
 }
 

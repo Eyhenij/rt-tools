@@ -111,6 +111,11 @@ export class RtuiSideMenuFavoritesComponent {
     });
     /** Номер списка строк: заголовок-переключатель называет его в `aria-controls`. */
     protected readonly listId: string = inject(_IdGenerator).getId('rtui-side-menu-favorites-list-');
+    /**
+     * Блок двигается только после нажатия на заголовок. Подменю, открывшееся с развёрнутым блоком,
+     * рисует его сразу, как папки: иначе блок выезжал бы при каждом открытии раздела.
+     */
+    protected readonly motion: WritableSignal<boolean> = signal(false);
     /** Узкий экран: подсказка у ручки не показывается — наводиться там нечем. */
     protected readonly narrow: Signal<boolean> = computed((): boolean => !!this.#breakpoints.isMobile());
 
@@ -197,6 +202,7 @@ export class RtuiSideMenuFavoritesComponent {
         const section: ISideMenu.Item | null = this.#section();
 
         if (this.favorites && section) {
+            this.motion.set(true);
             this.favorites.setFavoritesCollapsed(this.#menu.menuId(), section.id, !this.collapsed());
         }
     }
