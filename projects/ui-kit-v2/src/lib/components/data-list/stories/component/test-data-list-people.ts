@@ -132,7 +132,7 @@ export const TEST_PEOPLE_COLUMNS: Array<IRtDataTable.Column<ITestPerson>> = [
         ...sorted('name'),
         copyable: true,
         header: { align: 'left', label: 'Name', icon: { glyph: 'info', color: 'neutral', placement: 'right' } },
-        icon: { glyph: 'priority_high', color: 'neutral', placement: 'right' },
+        icon: { glyph: 'info', color: 'neutral', placement: 'right' },
         width: '200px',
         minWidth: '200px',
         filterType: ERtDataTableFilterType.TEXT,
@@ -142,7 +142,7 @@ export const TEST_PEOPLE_COLUMNS: Array<IRtDataTable.Column<ITestPerson>> = [
         ...sorted('email'),
         copyable: true,
         header: { align: 'left', label: 'Email', icon: { glyph: 'email', color: 'neutral', placement: 'left' } },
-        icon: { glyph: 'priority_high', color: 'neutral', placement: 'left' },
+        icon: { glyph: 'info', color: 'neutral', placement: 'left' },
         width: '200px',
         minWidth: '200px',
         filterType: ERtDataTableFilterType.TEXT,
@@ -150,7 +150,7 @@ export const TEST_PEOPLE_COLUMNS: Array<IRtDataTable.Column<ITestPerson>> = [
     }),
     column('status', 'Status', ERtDataTableColumnType.TEXT, {
         ...sorted('status'),
-        icon: { glyph: 'circle', color: 'neutral', placement: 'left' },
+        icon: { glyph: 'info', color: 'neutral', placement: 'left' },
         iconTransform: (value: ITestPerson[keyof ITestPerson]): string =>
             `color: ${STATUS_COLORS[value as TTestPersonStatus]}; font-size: 0.5rem; width: 0.5rem; height: 0.5rem`,
         minWidth: '120px',
@@ -175,7 +175,7 @@ export const TEST_PEOPLE_COLUMNS: Array<IRtDataTable.Column<ITestPerson>> = [
     }),
     column('sex', 'Sex', ERtDataTableColumnType.TEXT, {
         ...sorted('sex'),
-        header: { align: 'left', label: 'Sex', icon: { glyph: 'wc', color: 'neutral', placement: 'left' } },
+        header: { align: 'left', label: 'Sex', icon: { glyph: 'person', color: 'neutral', placement: 'left' } },
         width: '150px',
         minWidth: '100px',
     }),
