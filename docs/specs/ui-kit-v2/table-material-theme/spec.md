@@ -86,10 +86,14 @@ Nothing new is shown to a person: the list keeps its labels, only its look follo
   draws it: `'FILL' 1` without the flag, `'FILL' 0` with it, both at weight 700. The material set
   keeps both drawings at that weight; the own set draws the icon one way.
 
+- **The action buttons above the table are the first kit's small raised buttons in the material
+  preset.** A 40 px circle with no fill, raised by the Material level 6 shadow and by level 8 under the
+  pointer, a 24 px icon in the grey of the first kit that darkens under the pointer, 16 px between the
+  buttons and a 32 px line between the groups. The application's own buttons in that row get the same
+  look. The icon button takes it through its own properties, whose defaults leave its look as it was.
+
 ## What is out of scope
 
-- **The round buttons above the table.** The first kit draws them as small raised Material buttons;
-  that is a look of the icon button, filed as RT-2331.
 - **The paginator.** Its arrows, its current page and its page size field differ from the first kit;
   filed as RT-2332.
 - **The font.** The first kit ships no font: its showcase sets Roboto on the page, and an application
@@ -166,3 +170,5 @@ Not applicable: the family holds no data of a workspace.
   как в первом ките».
 - 2026-09-23 — the column settings panel draws the first kit's panel, after «что с асайдом на таблице
   первого кита конфиг колонок он выглядит как асайл второго кита».
+- 2026-09-24 — the action buttons above the table are the first kit's small raised buttons, taken
+  from RT-2331 into this work after «экшены в первом ките фаб кнопки отличаются от второго кита????».
