@@ -1,3 +1,19 @@
+## [0.9.1](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.9.0...rt-tools@0.9.1) (2026-09-24)
+
+### Bug Fixes
+
+- **rt:ui-kit:** сворачивание избранного всегда идёт с движением, открытие раздела — без ([653fd95](https://github.com/Eyhenij/rt-tools/commit/653fd95489c0f85087b4fc7508dc25ac847f6268))
+- **rt:ui-kit:** узкое окно с мышью прячет кнопки строки избранного до наведения ([ee05b82](https://github.com/Eyhenij/rt-tools/commit/ee05b82fdd26de2a854954024b40a12bdac58814))
+
+### Features
+
+- **rt:ui-kit:** блок избранного — папка со звездой вместо значка папки ([e628146](https://github.com/Eyhenij/rt-tools/commit/e6281469bd48db444d9c1f91ffdd6b229770f559))
+- **rt:ui-kit:** блок избранного раскрывается и сворачивается движением папки ([ce78a1e](https://github.com/Eyhenij/rt-tools/commit/ce78a1e05e6958a5d8b001dd8d613ff2dca1f39d))
+- **rt:ui-kit:** избранное бокового меню сворачивается, звезду можно снять с пункта ([3766c11](https://github.com/Eyhenij/rt-tools/commit/3766c11fafadec88476bc441e4d7ca9b7a925e8b))
+- **rt:ui-kit:** подпись избранного по умолчанию занимает место скрытых кнопок ([2dde660](https://github.com/Eyhenij/rt-tools/commit/2dde6608c1414ae18b94c91a0e45ae6581d21151))
+- **rt:ui-kit:** поиск показывает совпавшие строки избранного, вход меню это отключает ([a996ba3](https://github.com/Eyhenij/rt-tools/commit/a996ba38e71c0b72d80cd67f7b1fd4a3701e4aa2))
+- **rt:ui-kit:** число избранного в заголовке — всегда, у свёрнутого блока или никогда ([e0b793e](https://github.com/Eyhenij/rt-tools/commit/e0b793ea873b2e82fef505160993649abed096d9))
+
 # [0.9.0](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.8.0...rt-tools@0.9.0) (2026-09-22)
 
 ### Bug Fixes
