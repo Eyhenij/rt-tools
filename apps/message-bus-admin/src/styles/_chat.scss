@@ -1,65 +1,14 @@
 /**
- * Раздел чата: список переписок слева, лента разговора справа, поле набора под лентой.
+ * Раздел чата: рабочий стол кита — список переписок, лента разговора, свойства разговора.
  *
- * Раскладка объявлена здесь, а не в стилях экрана: она — раскладка страницы, а экран вне кита
- * своих стилей не держит. На узком экране столбцы встают друг под друга, и лента идёт первой:
- * ради неё экран и открывают.
- *
- * Лента прокручивается внутри себя, оставляя поле набора на месте: разговоры разной длины, и
- * уехавшее вниз поле оператор искал бы прокруткой после каждой реплики.
+ * Колонки рисует стол: их тянут мышью и клавиатурой, ширины он же помнит. Здесь остаётся только
+ * высота раздела — стол занимает её целиком, и без неё он схлопнулся бы по содержимому.
  */
 
-@use '../../../../projects/ui-kit-v2/src/styles/breakpoints' as bp;
-
 .admin-chat {
-    display: grid;
-    min-height: 60vh;
-    gap: var(--rt-space-md);
-    grid-template-columns: minmax(260px, 1fr) 2fr;
-
-    @media (max-width: bp.$rt-bp-md) {
-        grid-template-columns: 1fr;
-    }
-
-    &__talks {
-        display: flex;
-        overflow: hidden;
-        min-width: 0;
-        flex-direction: column;
-        border: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
-        border-radius: var(--rt-radius-lg);
-        background: var(--rt-color-bg-surface);
-
-        @media (max-width: bp.$rt-bp-md) {
-            max-height: 40vh;
-            order: 2;
-        }
-    }
-
-    &__feed {
-        display: flex;
-        min-width: 0;
-        flex-direction: column;
-        padding: var(--rt-space-md);
-        border: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
-        border-radius: var(--rt-radius-lg);
-        background: var(--rt-color-bg-surface);
-        gap: var(--rt-space-sm);
-
-        @media (max-width: bp.$rt-bp-md) {
-            order: 1;
-        }
-    }
-
-    &__state {
-        align-self: flex-start;
-    }
-
-    &__thread {
-        display: block;
-        min-height: 0;
-        flex: 1;
-    }
+    display: block;
+    block-size: 100%;
+    min-block-size: 60vh;
 }
 
 /**

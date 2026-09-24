@@ -24,8 +24,6 @@ The action «Закрыть разговор» stands in the details. Pressed, i
 The screen of the operator shows three columns: the list with the narrowings, the feed with the
 title of the talk, the details. The widths of the columns are remembered under the key of the panel.
 
-Не покрыто: the screen is assembled by the task RT-2337, and the scenario is closed by its spec.
-
 ### SC-CH-98 — the embedded page lays the talks out by the same workspace
 
 The page in a foreign admin shows the same three columns, assembled from the same parts, and
