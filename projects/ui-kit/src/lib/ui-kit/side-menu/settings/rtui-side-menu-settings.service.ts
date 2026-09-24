@@ -32,6 +32,10 @@ export interface IRtuiSideMenuFavoritesLabels {
     readonly add: string;
     readonly remove: string;
     readonly drag: string;
+    /** Имя заголовка блока, пока блок свёрнут: следующее нажатие его развернёт. */
+    readonly expand: string;
+    /** Имя заголовка блока, пока блок развёрнут. */
+    readonly collapse: string;
 }
 
 /** Значок кнопки избранного: глиф набора Material Symbols и поворот. */
@@ -58,6 +62,8 @@ const DEFAULT_LABELS: IRtuiSideMenuFavoritesLabels = {
     add: 'Add to favourites',
     remove: 'Remove from favourites',
     drag: 'Hold button to drag',
+    expand: 'Expand favourites',
+    collapse: 'Collapse favourites',
 };
 
 const DEFAULT_ICONS: IRtuiSideMenuFavoritesIcons = {
@@ -112,6 +118,7 @@ export class RtuiSideMenuSettingsService {
     readonly #favorites: Map<string, Signal<ReadonlyArray<ISideMenu.FavoriteId>>> = new Map();
     readonly #modes: Map<string, Signal<ISideMenu.SubMenuMode>> = new Map();
     readonly #widths: Map<string, Signal<number | null>> = new Map();
+    readonly #collapsed: Map<string, Signal<ReadonlyArray<ISideMenu.Item['id']>>> = new Map();
     /** Последняя известная запись: ею сервис живёт, пока хранилище недоступно. */
     #record: TSideMenuSettingsRecord = this.#load() ?? {};
     /** Последняя запись в хранилище не удалась — оно полно, и правда лежит в памяти. */
@@ -162,6 +169,26 @@ export class RtuiSideMenuSettingsService {
     /** Ширина закреплённого подменю; ничего не выбрано — пусто, и ширину ставит оформление. */
     public subMenuWidth(menuId: string): Signal<number | null> {
         return cached(this.#widths, menuId, (id: string): number | null => this.#settings()[id]?.subMenuWidth ?? null);
+    }
+
+    /** Пункты полосы, чей блок избранного свёрнут; ничего не свёрнуто — пустой список. */
+    public favoritesCollapsed(menuId: string): Signal<ReadonlyArray<ISideMenu.Item['id']>> {
+        return cached(
+            this.#collapsed,
+            menuId,
+            (id: string): ReadonlyArray<ISideMenu.Item['id']> => this.#settings()[id]?.favoritesCollapsed ?? []
+        );
+    }
+
+    /** Сворачивает или разворачивает блок одного раздела; остальные разделы остаются как были. */
+    public setFavoritesCollapsed(menuId: string, sectionId: ISideMenu.Item['id'], collapsed: boolean): void {
+        this.#update(menuId, (current: ISideMenu.Settings): Partial<ISideMenu.Settings> => {
+            const others: Array<ISideMenu.Item['id']> = (current.favoritesCollapsed ?? []).filter(
+                (id: ISideMenu.Item['id']): boolean => id !== sectionId
+            );
+
+            return { favoritesCollapsed: collapsed ? [...others, sectionId] : others };
+        });
     }
 
     public setSubMenuMode(menuId: string, mode: ISideMenu.SubMenuMode): void {

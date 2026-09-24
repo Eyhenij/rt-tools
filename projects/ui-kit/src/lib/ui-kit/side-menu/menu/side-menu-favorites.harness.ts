@@ -25,7 +25,6 @@ export const BLOCK_ROW: string = '[qa-dataid="side-menu-favorite-row"]';
 export const REMOVE: string = '[qa-dataid="side-menu-favorite-remove"]';
 export const HANDLE: string = '[qa-dataid="side-menu-favorite-handle"]';
 export const ON: string = 'rtui-side-menu-sub-item-title__favorite--on';
-export const ALWAYS: string = 'rtui-side-menu-sub-item-title__favorite--always';
 
 /** Три раздела полосы с подменю: избранное включено у двух первых, у третьего оно выключено. */
 export const SECTIONS: ISideMenu.Item[] = [

@@ -31,7 +31,14 @@ import { BlockDirective, BreakpointService, ElemDirective, ModDirective } from '
 import { TNullable } from '@rt-tools/utils';
 import { transformArrayInput } from '@rt-tools/utils';
 import { RtIconOutlinedDirective, RtNavigationDirective, RtScrollToElementDirective } from '@rt-tools/core';
-import { clampSubMenuWidth, filterSubMenuItems, subMenuIdsToExpand, SUB_MENU_WIDTH_MIN } from '../side-menu.logic';
+import {
+    clampSubMenuWidth,
+    filterSubMenuItems,
+    normalizeFavoriteActionsReserve,
+    normalizeFavoritesCount,
+    subMenuIdsToExpand,
+    SUB_MENU_WIDTH_MIN,
+} from '../side-menu.logic';
 import { IRtuiSideMenuHost, ISideMenu, RTUI_SIDE_MENU } from '../side-menu.types';
 import {
     RtuiScrollableContainerComponent,
@@ -68,6 +75,8 @@ const BEM_BLOCK: string = 'rtui-side-menu';
         // Раскладка хоста меняется только у закреплённой моды: у всех, кто ставит меню
         // по-старому, она обязана остаться прежней до пикселя.
         '[class.rtui-side-menu--pinned]': 'isPinned()',
+        // Отметку читают стили строк подменю: скрытые кнопки избранного отдают ширину подписи.
+        '[class.rtui-side-menu--favorite-actions-none]': "favoriteActionsReserve() === 'none'",
         // Ширина подменю приходит переменной оформления: правило стилей стоит на ней в трёх
         // местах разом, и правка одной переменной двигает их все.
         '[style.--rt-side-menu-sub-menu-dragged-width]': 'subMenuWidthStyle()',
@@ -267,6 +276,24 @@ export class RtuiSideMenuComponent implements IRtuiSideMenuHost {
     /** Под каким номером меню хранит свои настройки: у двух меню приложения — два номера. */
     public menuId: InputSignalWithTransform<string, string | null | undefined> = input<string, string | null | undefined>(DEFAULT_MENU_ID, {
         transform: normalizeMenuId,
+    });
+    /**
+     * Место под кнопки избранного, ждущие наведения: `none`, по умолчанию, — в покое ширины не
+     * занимают, и подпись идёт до края, а под наведением сжимается перед кнопками; `always` —
+     * держат ширину и в покое. Незнакомое значение и пустой атрибут — то же, что `none`.
+     */
+    public favoriteActionsReserve: InputSignalWithTransform<ISideMenu.FavoriteActionsReserve, string | undefined> = input<
+        ISideMenu.FavoriteActionsReserve,
+        string | undefined
+    >('none', { transform: normalizeFavoriteActionsReserve });
+    /** Число строк в заголовке избранного: `collapsed`, по умолчанию, — у свёрнутого блока; `always`; `never`. */
+    public favoritesCount: InputSignalWithTransform<ISideMenu.FavoritesCount, string | undefined> = input<
+        ISideMenu.FavoritesCount,
+        string | undefined
+    >('collapsed', { transform: normalizeFavoritesCount });
+    /** Блок избранного при поиске показывает совпавшие строки; `false` прячет его на время поиска. */
+    public isFavoritesSearchShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
+        transform: booleanAttribute,
     });
     public isSubMenuXScrollEnabled: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
         transform: booleanAttribute,

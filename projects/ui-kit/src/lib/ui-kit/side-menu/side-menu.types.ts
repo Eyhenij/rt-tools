@@ -26,6 +26,10 @@ export interface IRtuiSideMenuHost {
     readonly subMenuQuery: Signal<string>;
     /** Номер меню, под которым лежат его настройки: избранное читается и пишется по нему. */
     readonly menuId: Signal<string>;
+    /** Когда заголовок блока избранного показывает число строк. */
+    readonly favoritesCount: Signal<ISideMenu.FavoritesCount>;
+    /** Блок избранного при поиске показывает совпавшие строки; выключен — блока на время поиска нет. */
+    readonly isFavoritesSearchShown: Signal<boolean>;
     /** Указатель ушёл с панели; без пункта — то же, что уход мышью. */
     toggleSubMenu(item?: ISideMenu.Item): void;
 }
@@ -48,8 +52,22 @@ export namespace ISideMenu {
      * Настройки одного меню под его номером в хранилище. Незнакомые поля кит не удаляет: их могло
      * положить приложение или следующая версия кита.
      */
+    /**
+     * Место под скрытые кнопки строки: `always` — кнопка, ждущая наведения, держит свою ширину;
+     * `none` — в покое ширины не занимает, и подпись идёт до края.
+     */
+    export type FavoriteActionsReserve = 'always' | 'none';
+
+    /**
+     * Число строк в заголовке блока избранного: `always` — всегда; `collapsed` — только у свёрнутого
+     * блока; `never` — никогда.
+     */
+    export type FavoritesCount = 'always' | 'collapsed' | 'never';
+
     export interface Settings {
         favorites?: FavoriteId[];
+        /** Пункты полосы, чей блок избранного свёрнут; блок по умолчанию развёрнут. */
+        favoritesCollapsed?: Array<Item['id']>;
         subMenuMode?: SubMenuMode;
         subMenuWidth?: number;
         [field: string]: unknown;
@@ -64,6 +82,11 @@ export namespace ISideMenu {
         submenu?: Item[];
         /** Избранное в подменю этого пункта полосы. По умолчанию выключено. */
         favorites?: boolean;
+        /**
+         * Пункт со ссылкой, который в избранное не ставится: своя страница раздела, дашборд,
+         * действие «Создать». Звезды у него нет, и номер, сохранённый раньше, в блок не попадает.
+         */
+        favoriteDisabled?: boolean;
         iconButton?: {
             icon: string;
             data?: ItemData;

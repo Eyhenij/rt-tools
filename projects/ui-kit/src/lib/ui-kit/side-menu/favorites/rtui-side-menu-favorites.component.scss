@@ -1,47 +1,39 @@
+@use '../menu-sub-item/folder-panel';
+
 :host {
     display: block;
+
+    // Блок — папка со звездой: та же панель раскрытия Material, что у папки подменю, с тем же
+    // заголовком, шевроном и движением. Оформление папки общее — оно лежит одним файлом рядом с
+    // подпунктом.
+    &::ng-deep {
+        @include folder-panel.panel-overrides;
+    }
+
+    @include folder-panel.folder;
 
     // Блок отделён от списка раздела чертой: без неё строка избранного и строка того же пункта
     // в списке стоят подряд и читаются как повтор. Отступ под чертой даёт верхний отступ самого
     // списка, 8 px: свой отступ здесь удвоил бы его. Черта и отступы — те же, что у разделителей
-    // пунктов подменю у потребителей: 8 px, приглушённая черта, 8 px.
-    &:has(.rtui-side-menu-favorites__list) {
+    // пунктов подменю у потребителей: 8 px, приглушённая черта, 8 px. Свёрнутый блок держит черту:
+    // по ней заголовок отделён от списка раздела так же, как развёрнутый блок.
+    &:has(.rtui-side-menu-expand-sub-item) {
         padding-bottom: var(--rt-side-menu-favorites-divider-gap, var(--rt-spacing-8));
         border-bottom: 1px solid var(--rt-side-menu-favorites-divider-color, var(--rt-border-neutral-subtle));
     }
 
-    .rtui-side-menu-favorites {
-        // Заголовок: подпись и звезда. Звезда красится тем же цветом, что и закрашенные звёзды
-        // списка; цвет и размер подписи и звезды приложение задаёт своими свойствами.
-        &__title {
-            display: flex;
-            align-items: center;
-            padding: var(--rt-spacing-8) var(--rt-spacing-16) var(--rt-spacing-4);
-            color: var(--rt-side-menu-favorites-title-color, var(--rt-text-base-secondary));
-            font-size: var(--rt-side-menu-favorites-title-font-size, var(--rt-font-size-sm));
-            font-weight: var(--rt-font-weight-semibold);
-            gap: var(--rt-spacing-6);
-        }
+    // Звезда стоит на месте значка папки и красится цветом темы, как закрашенные звёзды списка, —
+    // и под наведением тоже. Селектор той же силы, что у значка папки, иначе папка перекрашивает её.
+    .rtui-side-menu-expand-sub-item .rtui-side-menu-expand-sub-item-header .rtui-side-menu-expand-sub-item-header__icon--star,
+    .rtui-side-menu-expand-sub-item .rtui-side-menu-expand-sub-item-header:hover .rtui-side-menu-expand-sub-item-header__icon--star {
+        color: var(
+            --rt-side-menu-favorite-color,
+            var(--mat-sys-primary, var(--mat-button-filled-container-color, var(--rt-icon-accent-primary)))
+        );
+    }
 
-        &__title-icon {
-            width: var(--rt-side-menu-favorites-title-icon-size, var(--rt-icon-size-sm));
-            height: var(--rt-side-menu-favorites-title-icon-size, var(--rt-icon-size-sm));
-            color: var(
-                --rt-side-menu-favorite-color,
-                var(--mat-sys-primary, var(--mat-button-filled-container-color, var(--rt-icon-accent-primary)))
-            );
-            font-size: var(--rt-side-menu-favorites-title-icon-size, var(--rt-icon-size-sm));
-        }
-
-        &__title-text {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        &__list {
-            padding: 0;
-        }
+    .rtui-side-menu-favorites__list {
+        padding: 0;
     }
 }
 
@@ -67,13 +59,10 @@
             cursor: grabbing;
         }
 
-        // Ручка видна так же, как кнопка «убрать»: под наведением и фокусом своей строки, на узком
-        // экране и там, где указатель не умеет наводиться, — всегда. Прячется прозрачностью, а не
-        // снятием с раскладки: кнопка остаётся на месте и достижима клавишей Tab.
-        &--always {
-            opacity: 1;
-        }
-
+        // Ручка видна так же, как кнопка «убрать»: под наведением и фокусом своей строки, а там, где
+        // указатель не умеет наводиться, — всегда. Решает способ нажатия, а не ширина: узкое окно с
+        // мышью наводится так же, как широкое. Прячется прозрачностью, а не снятием с раскладки:
+        // кнопка остаётся на месте и достижима клавишей Tab.
         @media (hover: none) {
             opacity: 1;
         }
@@ -104,7 +93,7 @@
 
 // На узком экране под блоком не список со своим отступом, а сами пункты раздела вплотную:
 // отступ под чертой блок ставит сам.
-:host-context(.rtui-mobile-side-menu-list__sub):has(.rtui-side-menu-favorites__list) {
+:host-context(.rtui-mobile-side-menu-list__sub):has(.rtui-side-menu-expand-sub-item) {
     margin-bottom: var(--rt-spacing-8);
 }
 
@@ -120,4 +109,17 @@
 
 .rtui-side-menu-favorites__row.cdk-drag-placeholder {
     opacity: 0;
+}
+
+// Меню с `favoriteActionsReserve="none"`: ручка, ждущая наведения, в покое не занимает ширины —
+// так же, как кнопка «убрать» в стилях подпункта. Строка в руке живёт в оверлее, вне меню, и
+// правило до неё не доходит: там ручка видна, как прежде.
+@media (hover: hover) {
+    :host-context(.rtui-side-menu--favorite-actions-none)
+        .rtui-side-menu-favorites__row:not(:hover, :has(:focus-visible))
+        .rtui-side-menu-favorites__handle {
+        overflow: hidden;
+        width: 0;
+        padding: 0;
+    }
 }
