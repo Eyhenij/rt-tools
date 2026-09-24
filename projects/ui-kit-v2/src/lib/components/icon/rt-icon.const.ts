@@ -20,5 +20,8 @@ export const RT_ICON_SYMBOL_ID_PREFIX: string = 'rt-icon-';
  */
 export const RT_ICON_MATERIAL_SYMBOL_ID_PREFIX: string = 'rt-icon-material-';
 
+/** Префикс `id` залитых рисунков материального набора: у имени их два, и `id` у каждого свой. */
+export const RT_ICON_MATERIAL_FILL_SYMBOL_ID_PREFIX: string = 'rt-icon-material-fill-';
+
 /** Селекторы, которыми страница объявляет материальный набор. */
 export const RT_ICON_MATERIAL_PRESET_SELECTOR: string = "[data-preset='material'],.rt-preset-material";

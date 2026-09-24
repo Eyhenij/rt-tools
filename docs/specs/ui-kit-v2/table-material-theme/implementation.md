@@ -18,3 +18,4 @@ tree, or the tree holds what the spec is silent about.
 - **The underline of a fill field has a colour name of its own.** — `projects/ui-kit-v2/src/styles/tokens.material.mjs:rt-color-field-fill-underline` — scenario `SC-UKV-358`
 - **The column settings panel of the list draws the first kit's panel in the material preset.** — `projects/ui-kit-v2/src/lib/components/data-list/rt-data-list.component.ts:backdropClass` — scenario `SC-UKV-362`
 - **A node carrying the preset declares the light base under the set.** — `tools/build-tokens-v2.mjs:presetNode` — no scenario: the look of a resolved colour is held by the showcase frames
+- **An icon of a column is filled unless its declaration says outlined.** — `projects/ui-kit-v2/src/lib/components/data-table/header-cell/rt-data-table-header-cell.component.html:fill` — scenario `SC-UKV-363`

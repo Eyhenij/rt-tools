@@ -15,6 +15,12 @@ export namespace IRtIcon {
     /** Набор рисунков: свой набор кита либо материальный. */
     export type Preset = 'base' | 'material';
 
+    /**
+     * Рисунок, за которым идёт реестр: свой, материальный контурный или материальный залитый.
+     * Заливка есть только у материального набора — так её рисует первый кит.
+     */
+    export type Drawing = Preset | 'material-fill';
+
     /** Семантические цвета. Маппинг на CSS-переменные `--rt-icon-color-*` — в `rt-icon.component.ts`. */
     export type Color = 'current' | 'muted' | 'info' | 'success' | 'warning' | 'danger' | 'inverse';
 }

@@ -68,3 +68,11 @@ When the column settings panel is opened
 Then the panel and the backdrop under it carry the material preset
 
 Covered by the component test of the list.
+
+### SC-UKV-363 — an icon of a column is filled unless it is declared outlined
+
+Given a header icon declared without the outlined flag and another declared with it
+When the table is drawn
+Then the first icon asks for the filled drawing and the second for the outlined one
+
+Covered by the component test of the header cell.

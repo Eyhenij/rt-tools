@@ -60,6 +60,10 @@ the screen.
   roads would mean two outcomes at the waiting of the snapshots, and both would have to be held by
   checks.
 
+- **A filled material drawing that did not arrive is closed by the outlined one of the same set.**
+  The material set keeps two drawings per name, outlined and filled; a filled file the application
+  did not publish falls back to the outlined one, and only after it to the kit's own.
+
 ## What is out of scope
 
 - A ready sprite in the package and a list of the names as a parameter of the intake — both ways were

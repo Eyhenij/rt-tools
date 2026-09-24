@@ -162,9 +162,15 @@ interface IIconCategoryGroup {
                 <app-story-presets caption="Материальный набор целиком в обоих наборах">
                     <ng-template>
                         <div data-preset="material">
-                            <app-story-row [items]="materialDrawn">
+                            <app-story-row caption="Контурный рисунок" [items]="materialDrawn">
                                 <ng-template let-name>
                                     <rt-icon size="lg" [name]="name" />
+                                </ng-template>
+                            </app-story-row>
+
+                            <app-story-row caption="Залитый рисунок — вход fill" [items]="materialDrawn">
+                                <ng-template let-name>
+                                    <rt-icon size="lg" fill [name]="name" />
                                 </ng-template>
                             </app-story-row>
                         </div>

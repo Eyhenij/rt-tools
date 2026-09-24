@@ -102,6 +102,15 @@ describe('RtDataTableHeaderCellComponent', () => {
         expect(qa(fixture, 'data-table-header-prefix')).not.toBeNull();
     });
 
+    it('SC-UKV-363 — значок колонки залит, пока объявление не скажет «контурный»', () => {
+        const fillOf: (fixture: ComponentFixture<HeaderHostComponent>) => boolean = (
+            fixture: ComponentFixture<HeaderHostComponent>
+        ): boolean => fixture.debugElement.query(By.directive(RtIconComponent)).componentInstance.fill();
+
+        expect(fillOf(setup({ icon: { glyph: 'info', placement: 'left' } }))).toBe(true);
+        expect(fillOf(setup({ icon: { glyph: 'info', placement: 'left', outlined: true } }))).toBe(false);
+    });
+
     it('SC-UKV-321 — шаблон значка рисует значок шапки и получает имя и колонку', () => {
         const fixture: ComponentFixture<HeaderHostComponent> = setup({ icon: { glyph: 'info', placement: 'right' } }, true);
 

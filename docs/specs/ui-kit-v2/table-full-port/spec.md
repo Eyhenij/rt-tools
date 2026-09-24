@@ -131,8 +131,9 @@ The words are the first kit's; the kit's dictionary gives them in all eight lang
 
 - **An icon a column declaration names, in its header or its cells, is drawn by the kit's own icon
   set through the kit's map of first-kit names; nothing is drawn by a font.** The declaration keeps
-  the first kit's name; the map gives it the kit's drawing. The icon's "outlined" flag is accepted
-  and changes nothing: the kit's set has one drawing per name.
+  the first kit's name; the map gives it the kit's drawing. Without the icon's "outlined" flag the
+  icon is filled, as the first kit draws it; the flag gives the outlined drawing. Only the material
+  set has both drawings — the own set draws a name one way.
 - **The application can hand the family an icon template by the directive `rtDataTableIcon`,
   placed inside `rt-data-table` or inside `rt-data-list`, which hands it to its table.** The
   template receives the icon name, the column and, in a cell, the row; it draws whatever the

@@ -82,6 +82,10 @@ Nothing new is shown to a person: the list keeps its labels, only its look follo
   names, and a name that refers to one of them stays resolved at the page root: the text button of
   the panel kept the base blue while the brand beside it followed the theme.
 
+- **An icon of a column is filled unless its declaration says outlined.** That is how the first kit
+  draws it: `'FILL' 1` without the flag, `'FILL' 0` with it, both at weight 700. The material set
+  keeps both drawings at that weight; the own set draws the icon one way.
+
 ## What is out of scope
 
 - **The round buttons above the table.** The first kit draws them as small raised Material buttons;
