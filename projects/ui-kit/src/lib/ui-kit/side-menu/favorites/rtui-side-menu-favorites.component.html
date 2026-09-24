@@ -27,62 +27,69 @@
     }
 
     @if (favorites && rows().length && !collapsed()) {
-        <mat-nav-list
-            rtElem="list"
-            qa-dataid="side-menu-favorites"
-            cdkDropList
-            cdkDropListLockAxis="y"
-            [id]="listId"
-            [cdkDropListData]="rows()"
-            [attr.aria-label]="favorites.labels.title"
-            (cdkDropListDropped)="onDrop($event)">
-            @for (item of rows(); track item.id) {
-                <div
-                    rtElem="row"
-                    qa-dataid="side-menu-favorite-row"
-                    cdkDrag
-                    [attr.data-id]="item.id"
-                    (cdkDragStarted)="onDragStart(item.id)"
-                    (cdkDragEnded)="onDragEnd($event)">
-                    <!--
+        <!--
+            Блок раскрывается и сворачивается так же, как папка: высота едет от нуля до своей и
+            обратно. Список при этом живёт и уходит из разметки, как раньше: свёрнутый блок строк
+            не держит, и Tab по ним не ходит.
+        -->
+        <div rtElem="body" animate.enter="rtui-side-menu-favorites__body--enter" animate.leave="rtui-side-menu-favorites__body--leave">
+            <mat-nav-list
+                rtElem="list"
+                qa-dataid="side-menu-favorites"
+                cdkDropList
+                cdkDropListLockAxis="y"
+                [id]="listId"
+                [cdkDropListData]="rows()"
+                [attr.aria-label]="favorites.labels.title"
+                (cdkDropListDropped)="onDrop($event)">
+                @for (item of rows(); track item.id) {
+                    <div
+                        rtElem="row"
+                        qa-dataid="side-menu-favorite-row"
+                        cdkDrag
+                        [attr.data-id]="item.id"
+                        (cdkDragStarted)="onDragStart(item.id)"
+                        (cdkDragEnded)="onDragEnd($event)">
+                        <!--
                         Ручка стоит внутри пункта, последней после кнопки «убрать»: подсветка пункта
                         накрывает и её. Строку тянут только за ручку: остальная строка — ссылка, и
                         строку, которую тянут всем телом, не нажать без дрожи. Значок — две стрелки
                         наружу, повёрнутые стилями на четверть оборота. С клавиатуры строку
                         переставляют стрелки на ручке: перетаскивание CDK клавиш не знает.
                     -->
-                    <rtui-side-menu-sub-item
-                        rtElem="item"
-                        [item]="item"
-                        [inFavorites]="true"
-                        [isSubMenuIconsOutlined]="isSubMenuIconsOutlined()"
-                        [isSubMenuButtonIconsOutlined]="isSubMenuButtonIconsOutlined()"
-                        [isSubMenuTooltipsShown]="isSubMenuTooltipsShown()"
-                        (clickSubMenuAction)="clickSubMenuAction.emit($event)"
-                        (clickSubMenuAdditionalAction)="clickSubMenuAdditionalAction.emit($event)">
-                        <button
-                            #handle
-                            rtuiSideMenuSubItemAction
-                            cdkDragHandle
-                            mat-icon-button
-                            type="button"
-                            rtElem="handle"
-                            qa-dataid="side-menu-favorite-handle"
-                            matTooltipPosition="above"
-                            aria-keyshortcuts="ArrowUp ArrowDown"
-                            [matTooltip]="favorites.labels.drag"
-                            [matTooltipDisabled]="narrow()"
-                            [attr.aria-label]="favorites.labels.drag"
-                            (click)="$event.stopPropagation()"
-                            (keydown.arrowup)="onHandleKey($event, $index, -1)"
-                            (keydown.arrowdown)="onHandleKey($event, $index, 1)">
-                            <mat-icon rtElem="handle-icon" [rtIconOutlined]="true" [style.rotate.deg]="favorites.icons.drag.rotate">
-                                {{ favorites.icons.drag.glyph }}
-                            </mat-icon>
-                        </button>
-                    </rtui-side-menu-sub-item>
-                </div>
-            }
-        </mat-nav-list>
+                        <rtui-side-menu-sub-item
+                            rtElem="item"
+                            [item]="item"
+                            [inFavorites]="true"
+                            [isSubMenuIconsOutlined]="isSubMenuIconsOutlined()"
+                            [isSubMenuButtonIconsOutlined]="isSubMenuButtonIconsOutlined()"
+                            [isSubMenuTooltipsShown]="isSubMenuTooltipsShown()"
+                            (clickSubMenuAction)="clickSubMenuAction.emit($event)"
+                            (clickSubMenuAdditionalAction)="clickSubMenuAdditionalAction.emit($event)">
+                            <button
+                                #handle
+                                rtuiSideMenuSubItemAction
+                                cdkDragHandle
+                                mat-icon-button
+                                type="button"
+                                rtElem="handle"
+                                qa-dataid="side-menu-favorite-handle"
+                                matTooltipPosition="above"
+                                aria-keyshortcuts="ArrowUp ArrowDown"
+                                [matTooltip]="favorites.labels.drag"
+                                [matTooltipDisabled]="narrow()"
+                                [attr.aria-label]="favorites.labels.drag"
+                                (click)="$event.stopPropagation()"
+                                (keydown.arrowup)="onHandleKey($event, $index, -1)"
+                                (keydown.arrowdown)="onHandleKey($event, $index, 1)">
+                                <mat-icon rtElem="handle-icon" [rtIconOutlined]="true" [style.rotate.deg]="favorites.icons.drag.rotate">
+                                    {{ favorites.icons.drag.glyph }}
+                                </mat-icon>
+                            </button>
+                        </rtui-side-menu-sub-item>
+                    </div>
+                }
+            </mat-nav-list>
+        </div>
     }
 </ng-container>

@@ -223,6 +223,9 @@ sign-out or fill it with defaults.
   list by `aria-controls`. The chevron stands on the right, in the column of the stars, the same as
   the chevron of a folder. A collapsed block keeps its heading and its divider and hides the rows;
   the heading then shows the number of rows: "Favourites (5)". The block is expanded by default.
+- **The block opens and closes with the motion of a folder.** The height runs from zero to its own
+  and back, and the chevron turns, in the time and curve of the folder panel under it. A person who
+  asks the system for less motion gets the block at once.
 - **The collapsed state is kept per strip item under the menu's id.** The settings hold
   `favoritesCollapsed`, the ids of the strip items whose block is collapsed; the service gives them
   as a signal and writes the state of one section by `setFavoritesCollapsed`. The block of one
@@ -423,4 +426,5 @@ One settings object per application key, and in it one list per menu id.
   heading of the block collapses it, per strip item; the hidden row buttons give up their width by
   `favoriteActionsReserve="none"`. Scenarios SC-UK-134…SC-UK-140 added. The owner's word: the row
   buttons show at rest by the pointer, not by the width — a narrow window with a mouse shows them on
-  hover; SC-UK-86 no longer says they show without a hover.
+  hover; SC-UK-86 no longer says they show without a hover. The block opens and closes with the
+  motion of a folder, by the owner's word.

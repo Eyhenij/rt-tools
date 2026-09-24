@@ -33,14 +33,22 @@ const FAVORITE_SECTIONS: ReadonlyArray<ISideMenu.Item['id']> = [1, 24];
 /**
  * «Content» с папками: разделы макетов и навигации лежат во вложенных папках. Первый пункт — корень
  * раздела, как «Gallery» у потребителя; у него и у части разделов кнопка «+» создания записи, как у
- * пунктов потребителя: видно, как «+» уживается со звездой, а в блоке — с «убрать» и ручкой.
+ * пунктов потребителя: видно, как «+» уживается со звездой, а в блоке — с «убрать» и ручкой. Два
+ * раздела с длинной подписью, с «+» и без, показывают многоточие и в списке, и в блоке.
  */
 const CONTENT_WITH_FOLDERS: ISideMenu.Item[] = [
     { id: 102, icon: 'photo_library', name: 'Gallery', link: '/content', iconButton: { icon: 'add', data: '/content' } },
     { id: 2, name: 'News', link: '/content/news', iconButton: { icon: 'add', data: '/content/news' } },
+    {
+        id: 103,
+        name: 'Quarterly reports for regional partners and distributors',
+        link: '/content/quarterly-reports',
+        iconButton: { icon: 'add', data: '/content/quarterly-reports' },
+    },
     { id: 3, name: 'Learn', link: '/content/learn' },
     { id: 4, name: 'Review', link: '/content/review' },
     { id: 5, name: 'Press release', link: '/content/press-release' },
+    { id: 104, name: 'Internal announcements archive for the whole organisation', link: '/content/announcements' },
     {
         id: 100,
         icon: 'folder',
@@ -73,7 +81,7 @@ const FAVORITES_MENU: ISideMenu.Item[] = MENU_ITEMS.map((item: ISideMenu.Item): 
 const SHOWCASE_KEY: string = 'rtui-showcase-side-menu';
 /** Номер меню витрины: под ним в объекте настроек лежит его избранное. */
 const SHOWCASE_MENU_ID: string = 'showcase';
-const SEEDED_IDS: number[] = [2, 7, 9, 27, 31, 5];
+const SEEDED_IDS: number[] = [2, 7, 9, 27, 31, 5, 103, 104];
 
 export default {
     title: 'Components/SideMenu/Favorites',
