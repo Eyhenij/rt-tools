@@ -382,3 +382,32 @@ export function subMenuWidthByKey(key: string, width: number): number | null {
             return null;
     }
 }
+
+/**
+ * Место под скрытые кнопки избранного из входа меню. Только `always` держит ширину: незнакомое
+ * значение и пустой атрибут читаются как `none`, как меню без входа, — подпись идёт до края.
+ */
+export function normalizeFavoriteActionsReserve(value: string | undefined): ISideMenu.FavoriteActionsReserve {
+    return value === 'always' ? 'always' : 'none';
+}
+
+/** Число строк в заголовке избранного из входа меню: незнакомое значение и пустой атрибут — `collapsed`. */
+export function normalizeFavoritesCount(value: string | undefined): ISideMenu.FavoritesCount {
+    return value === 'always' || value === 'never' ? value : 'collapsed';
+}
+
+/**
+ * Что показывает закреплённое подменю: выбранный человеком раздел, а пока выбора нет — раздел
+ * активного адреса. Выбор впереди активности: иначе до соседнего раздела не добраться вовсе.
+ */
+export function pinnedSubMenuItems(
+    picked: ISideMenu.Item[] | null | undefined,
+    activeIds: ReadonlyArray<string | number>,
+    items: ReadonlyArray<ISideMenu.Item>
+): ISideMenu.Item[] {
+    if (picked?.length) {
+        return picked;
+    }
+
+    return items.find((item: ISideMenu.Item): boolean => activeIds.includes(item.id) && !!item.submenu?.length)?.submenu ?? [];
+}

@@ -33,14 +33,22 @@ const FAVORITE_SECTIONS: ReadonlyArray<ISideMenu.Item['id']> = [1, 24];
 /**
  * «Content» с папками: разделы макетов и навигации лежат во вложенных папках. Первый пункт — корень
  * раздела, как «Gallery» у потребителя; у него и у части разделов кнопка «+» создания записи, как у
- * пунктов потребителя: видно, как «+» уживается со звездой, а в блоке — с «убрать» и ручкой.
+ * пунктов потребителя: видно, как «+» уживается со звездой, а в блоке — с «убрать» и ручкой. Два
+ * раздела с длинной подписью, с «+» и без, показывают многоточие и в списке, и в блоке.
  */
 const CONTENT_WITH_FOLDERS: ISideMenu.Item[] = [
     { id: 102, icon: 'photo_library', name: 'Gallery', link: '/content', iconButton: { icon: 'add', data: '/content' } },
     { id: 2, name: 'News', link: '/content/news', iconButton: { icon: 'add', data: '/content/news' } },
+    {
+        id: 103,
+        name: 'Quarterly reports for regional partners and distributors',
+        link: '/content/quarterly-reports',
+        iconButton: { icon: 'add', data: '/content/quarterly-reports' },
+    },
     { id: 3, name: 'Learn', link: '/content/learn' },
     { id: 4, name: 'Review', link: '/content/review' },
     { id: 5, name: 'Press release', link: '/content/press-release' },
+    { id: 104, name: 'Internal announcements archive for the whole organisation', link: '/content/announcements' },
     {
         id: 100,
         icon: 'folder',
@@ -73,7 +81,7 @@ const FAVORITES_MENU: ISideMenu.Item[] = MENU_ITEMS.map((item: ISideMenu.Item): 
 const SHOWCASE_KEY: string = 'rtui-showcase-side-menu';
 /** Номер меню витрины: под ним в объекте настроек лежит его избранное. */
 const SHOWCASE_MENU_ID: string = 'showcase';
-const SEEDED_IDS: number[] = [2, 7, 9, 27, 31, 5];
+const SEEDED_IDS: number[] = [2, 7, 9, 27, 31, 5, 103, 104];
 
 export default {
     title: 'Components/SideMenu/Favorites',
@@ -145,12 +153,14 @@ export const SubMenuFavorites: TStory = {
     },
 };
 
-/** Узкий экран: тот же блок под полем поиска, полые звёзды и кнопки «убрать» видны без наведения. */
+/** Узкое окно: тот же блок под полем поиска; кнопки строки ждут наведения, на телефоне видны всегда. */
 export const SubMenuFavoritesMobile: TStory = {
     globals: { viewport: { value: 'narrow' } },
-    // Снимок берёт узкое окно сам: витринный размер кадр не меняет, а в окне 1280 px кнопки
-    // «убрать» и ручки прячутся до наведения и в кадр не попадают.
-    parameters: { snapshotViewport: { width: 360, height: 780 } },
+    // Снимок берёт узкое окно сам: витринный размер кадр не меняет. Кнопки видны всегда только без
+    // мыши, а браузер снимка наводится, и подменить ему признак `hover` не удалось ни подменой
+    // медиазапроса, ни касанием вместо мыши. Поэтому кадр показывает узкое окно с мышью: кнопки
+    // первой строки блока — под наведением. Телефон проверяется на телефоне.
+    parameters: { snapshotViewport: { width: 360, height: 780 }, snapshotHover: '[qa-dataid="side-menu-favorite-row"]' },
     play: openNarrowFavorites,
     args: {
         menuItems: FAVORITES_MENU,
@@ -170,14 +180,117 @@ const CUSTOM_ICONS: IRtuiSideMenuSettingsConfig = {
     icons: { remove: { glyph: 'close' }, drag: { glyph: 'drag_indicator', rotate: 0 } },
 };
 
-/** Узкий экран со значками из настроек: кнопки «убрать» и ручки видны без наведения. */
+/** Узкое окно со значками из настроек: крестик и ручка без поворота у строки под наведением. */
 export const SubMenuFavoritesCustomIcons: TStory = {
     ...SubMenuFavoritesMobile,
     decorators: [applicationConfig({ providers: [{ provide: RTUI_SIDE_MENU_SETTINGS_CONFIG, useValue: CUSTOM_ICONS }] })],
 };
 
-/** Указатель на кнопке «убрать»: корзина красная, цвет приложение задаёт свойством `--rt-side-menu-favorite-remove-hover-color`. */
+/**
+ * Указатель на кнопке «убрать»: корзина красная, цвет приложение задаёт свойством
+ * `--rt-side-menu-favorite-remove-hover-color`. Без наведения на строку у кнопки нет ширины, поэтому
+ * указатель наводится сначала на строку, затем на кнопку.
+ */
 export const SubMenuFavoritesRemoveHover: TStory = {
     ...SubMenuFavorites,
-    parameters: { snapshotHover: '[qa-dataid="side-menu-favorite-remove"]' },
+    parameters: { snapshotHover: ['[qa-dataid="side-menu-favorite-row"]', '[qa-dataid="side-menu-favorite-remove"]'] },
+};
+
+/**
+ * Тот же «Content», где у корня раздела «Gallery» звезда снята флагом `favoriteDisabled`: страница
+ * раздела — не содержимое, выбирать её незачем.
+ */
+const FAVORITES_MENU_GALLERY_DISABLED: ISideMenu.Item[] = FAVORITES_MENU.map((item: ISideMenu.Item): ISideMenu.Item =>
+    item.id === 1
+        ? {
+              ...item,
+              submenu: (item.submenu ?? []).map((sub: ISideMenu.Item): ISideMenu.Item =>
+                  sub.id === 102 ? { ...sub, favoriteDisabled: true } : sub
+              ),
+          }
+        : item
+);
+
+/** Узкое окно, указатель на строке «Gallery»: звезда у неё не появляется, остаётся только «+». */
+export const SubMenuFavoritesDisabledStar: TStory = {
+    ...SubMenuFavoritesMobile,
+    parameters: { ...SubMenuFavoritesMobile.parameters, snapshotHover: 'mat-list-item[id="102"]' },
+    args: { ...SubMenuFavoritesMobile.args, menuItems: FAVORITES_MENU_GALLERY_DISABLED },
+};
+
+/**
+ * Свёрнутый блок «Content»: заголовок с числом строк, шевроном вниз и чертой под ним. Настройки
+ * лежат под своим ключом витрины — свёрнутое здесь не сворачивает блок соседних историй.
+ */
+const COLLAPSED_KEY: string = 'rtui-showcase-side-menu-collapsed';
+
+export const SubMenuFavoritesCollapsed: TStory = {
+    ...SubMenuFavorites,
+    decorators: [
+        applicationConfig({
+            providers: [
+                { provide: RTUI_SIDE_MENU_SETTINGS_CONFIG, useValue: { storageKey: COLLAPSED_KEY } },
+                provideAppInitializer((): void => {
+                    const settings: RtuiSideMenuSettingsService = inject(RtuiSideMenuSettingsService);
+
+                    if (!settings.settings(SHOWCASE_MENU_ID)().favoritesCollapsed) {
+                        settings.setFavoritesCollapsed(SHOWCASE_MENU_ID, 1, true);
+                    }
+                }),
+            ],
+        }),
+    ],
+};
+
+/** Развёрнутый блок с `favoritesCount="always"`: число строк стоит в заголовке и у развёрнутого блока. */
+export const SubMenuFavoritesCountAlways: TStory = {
+    ...SubMenuFavorites,
+    args: { ...SubMenuFavorites.args, favoritesCount: 'always' },
+};
+
+/** Свёрнутый блок с `favoritesCount="never"`: заголовок без числа строк. */
+export const SubMenuFavoritesCollapsedNoCount: TStory = {
+    ...SubMenuFavoritesCollapsed,
+    args: { ...SubMenuFavoritesCollapsed.args, favoritesCount: 'never' },
+};
+
+/** Длинные подписи двух разделов «Content»: по ним видно, где подпись обрезается многоточием. */
+const LONG_TITLES: Readonly<Record<number, string>> = {
+    3: 'Learn — guides, tutorials and onboarding',
+    5: 'Press release and media kit for partners',
+};
+
+const FAVORITES_MENU_LONG: ISideMenu.Item[] = FAVORITES_MENU_GALLERY_DISABLED.map((item: ISideMenu.Item): ISideMenu.Item =>
+    item.id === 1
+        ? {
+              ...item,
+              submenu: (item.submenu ?? []).map((sub: ISideMenu.Item): ISideMenu.Item =>
+                  LONG_TITLES[Number(sub.id)] ? { ...sub, name: LONG_TITLES[Number(sub.id)] } : sub
+              ),
+          }
+        : item
+);
+
+/**
+ * Длинные подписи в меню по умолчанию: в покое подпись идёт до правого края или до «+» — полые
+ * звёзды, «убрать» и ручки ширины не занимают. У «Gallery» звезда снята флагом.
+ */
+export const SubMenuFavoritesLongTitles: TStory = {
+    ...SubMenuFavorites,
+    args: { ...SubMenuFavorites.args, menuItems: FAVORITES_MENU_LONG },
+};
+
+/** То же меню, указатель на длинной строке блока: «убрать» и ручка встали на место, подпись сжалась. */
+export const SubMenuFavoritesLongTitlesHover: TStory = {
+    ...SubMenuFavoritesLongTitles,
+    parameters: { snapshotHover: '[qa-dataid="side-menu-favorite-row"][data-id="5"]' },
+};
+
+/**
+ * Те же подписи в меню с `favoriteActionsReserve="always"`: скрытые кнопки держат место и в покое,
+ * и многоточие встаёт перед ними — прежний вид для приложения, которому он нужен.
+ */
+export const SubMenuFavoritesReserveAlways: TStory = {
+    ...SubMenuFavoritesLongTitles,
+    args: { ...SubMenuFavoritesLongTitles.args, favoriteActionsReserve: 'always' },
 };

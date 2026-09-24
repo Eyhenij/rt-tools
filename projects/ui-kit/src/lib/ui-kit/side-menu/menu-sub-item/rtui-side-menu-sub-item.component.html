@@ -54,7 +54,7 @@
                             rtElem="favorite"
                             qa-dataid="side-menu-favorite-remove"
                             matTooltipPosition="above"
-                            [rtMod]="{ always: narrow(), remove: true }"
+                            [rtMod]="{ remove: true }"
                             [matTooltip]="favorites.labels.remove"
                             [matTooltipDisabled]="narrow()"
                             [attr.aria-label]="favorites.labels.remove"
@@ -64,7 +64,7 @@
                                 {{ favorites.icons.remove.glyph }}
                             </mat-icon>
                         </button>
-                    } @else if (favoritesOn() && favorites && item.link?.trim()) {
+                    } @else if (favoritesOn() && favorites && item.link?.trim() && !item.favoriteDisabled) {
                         <!--
                             Звезда — у пункта со своим адресом в разделе, где приложение включило
                             избранное. Полая — не в избранном, закрашенная цветом темы — в нём.
@@ -81,7 +81,7 @@
                             rtElem="favorite"
                             qa-dataid="side-menu-favorite-star"
                             matTooltipPosition="above"
-                            [rtMod]="{ on: isFavorite, always: narrow() }"
+                            [rtMod]="{ on: isFavorite }"
                             [matTooltip]="isFavorite ? favorites.labels.remove : favorites.labels.add"
                             [matTooltipDisabled]="narrow()"
                             [attr.aria-label]="isFavorite ? favorites.labels.remove : favorites.labels.add"

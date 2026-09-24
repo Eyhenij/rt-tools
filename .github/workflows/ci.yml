@@ -55,6 +55,9 @@ jobs:
             LC_ALL: en_US.UTF-8
             E2E_API_PORT: 3320
             E2E_ADMIN_PORT: 4320
+            # Страница чужого адреса — четвёртый порт стенда. Без своего имени она садилась на
+            # локальное умолчание 4311 и падала с EADDRINUSE, пока на машине стоял местный стенд.
+            E2E_FOREIGN_PORT: 4321
             E2E_DATABASE: message_bus_e2e_ci
 
         steps:
