@@ -1,6 +1,7 @@
 import { EFilterOperatorType, EListSortOrder } from '@rt-tools/utils';
 
 import { ERtDataTableColumnType, ERtDataTableFilterType, IRtDataTable } from '../../../data-table/rt-data-table.model';
+import { TRtDesignTokenName } from '../../../../tokens/rt-design-tokens';
 
 /**
  * Люди истории «как в первом ките»: тот же состав колонок, что у списка первого кита на его
@@ -43,10 +44,23 @@ const ITEMS: readonly string[] = ['Заявка', 'Договор', 'Счёт', 
  * Картинки строк встроены в адрес, а не берутся из сети: витрина отрезана от чужой сети, и
  * картинка извне дала бы пустое место в кадре.
  */
-const IMAGE_COLORS: readonly string[] = ['#4284d7', '#01af8d', '#ef7128', '#eb5055', '#6d96e8'];
+/**
+ * Цвета картинок — ступени материальной шкалы кита, те же, что стоят на картинках витрины первого
+ * кита. Картинка встроена в адрес и свойств страницы не видит, поэтому ступень читается у корня
+ * страницы в момент сборки данных, а не повторяется кодом цвета.
+ */
+const IMAGE_STEPS: readonly TRtDesignTokenName[] = [
+    '--rt-mat-blue-100',
+    '--rt-mat-green-100',
+    '--rt-mat-orange-100',
+    '--rt-mat-red-100',
+    '--rt-mat-blue-60',
+];
 
 function imageOf(index: number): string {
-    const color: string = IMAGE_COLORS[index % IMAGE_COLORS.length];
+    const color: string = getComputedStyle(document.documentElement)
+        .getPropertyValue(IMAGE_STEPS[index % IMAGE_STEPS.length])
+        .trim();
     const svg: string = `<svg xmlns="http://www.w3.org/2000/svg" width="100" height="40"><rect width="100" height="40" fill="${color}"/></svg>`;
 
     return `data:image/svg+xml;base64,${btoa(svg)}`;

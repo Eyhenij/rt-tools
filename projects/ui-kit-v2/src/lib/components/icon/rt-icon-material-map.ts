@@ -49,6 +49,7 @@ export const iconMaterialMap: readonly IRtIconMaterialEntry[] = [
     { from: 'delete', to: 'trash', why: 'корзина, один в один; есть двойник ico-trash' },
     { from: 'delete_forever', to: null, why: 'корзины с крестом в наборе нет — нужен рисунок' },
     { from: 'done', to: 'check', why: 'галочка, один в один; есть двойник ico-check' },
+    { from: 'email', to: 'email', why: 'конверт, один в один' },
     { from: 'download', to: 'ico-download', why: 'простая стрелка вниз есть только в своей рисовке — во фрейме лишь облако' },
     {
         from: 'drag_handle',

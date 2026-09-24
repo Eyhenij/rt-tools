@@ -7,6 +7,9 @@ import { TEST_PEOPLE } from './component/test-data-list-people';
  * Весь список с тем же наполнением, что у истории списка первого кита на его витрине: многими
  * записями, немногими и без записей. Две витрины кладут рядом и сравнивают.
  *
+ * Экспорты названы с приставкой `FirstKit`: имя экспорта у двух китов общим быть не должно,
+ * а на витрине история зовётся как у первого кита.
+ *
  * Вид первого кита список ставит на себя сам и отдаёт его боковой панели и меню строки, которые
  * открываются поверх страницы. Витрина добавляет только фиолетовую тему первого кита.
  */
@@ -25,7 +28,8 @@ type TStory = StoryObj<TestRtDataListFirstKitComponent>;
 
 const FEW: typeof TEST_PEOPLE = TEST_PEOPLE.slice(0, 11);
 
-export const ManyItems: TStory = {
+export const FirstKitManyItems: TStory = {
+    name: 'ManyItems',
     args: {
         caption: 'Много записей, как у первого кита',
         storageKey: 'story-list-first-kit-many',
@@ -37,7 +41,8 @@ export const ManyItems: TStory = {
     },
 };
 
-export const FewItems: TStory = {
+export const FirstKitFewItems: TStory = {
+    name: 'FewItems',
     args: {
         caption: 'Немного записей, как у первого кита',
         storageKey: 'story-list-first-kit-few',
@@ -49,7 +54,8 @@ export const FewItems: TStory = {
     },
 };
 
-export const NoItems: TStory = {
+export const FirstKitNoItems: TStory = {
+    name: 'NoItems',
     args: {
         caption: 'Без записей, как у первого кита',
         storageKey: 'story-list-first-kit-none',

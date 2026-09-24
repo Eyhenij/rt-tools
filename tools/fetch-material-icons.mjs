@@ -33,6 +33,8 @@ const ENTRY_RE = /\{\s*from:\s*'([^']+)'\s*,\s*to:\s*(?:'([^']+)'|null)/g;
 const RENAMED = {
     // Ценник: старое имя `local_offer`, нынешнее `sell`.
     local_offer: 'sell',
+    // Конверт: старое имя `email`, нынешнее `mail`.
+    email: 'mail',
 };
 
 /**
