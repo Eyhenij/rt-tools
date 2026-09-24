@@ -1,11 +1,12 @@
-<ng-container rtBlock="admin-chat">
-    <section rtElem="talks" qa-dataid="chat-talks">
+<rt-workspace [hasActive]="!!talk()" [storageKey]="workspaceStorageKey">
+    <ng-template rtWorkspaceList>
         <!--
             Список переписок — готовый список кита: выбор строки, заглушки чтения и пустое
             состояние он умеет сам. Поле поиска кит рисует всегда, а поиска по тексту переписок у
             приёмника нет, и его место занято сужением по сайту.
         -->
         <rt-thread-list
+            qa-dataid="chat-talks"
             [activeId]="chosen()"
             [emptyText]="talksEmpty()"
             [loading]="talksReading()"
@@ -23,39 +24,41 @@
                 <admin-chat-talk [talk]="row" />
             </ng-template>
         </rt-thread-list>
-    </section>
+    </ng-template>
 
-    <section rtElem="feed" qa-dataid="chat-feed">
-        @if (chosen()) {
-            <button
-                rtButton
-                rtElem="state"
-                qa-dataid="chat-talk-state"
-                type="button"
-                appearance="text"
-                [attr.aria-label]="stateLabel()"
-                [label]="stateLabel()"
-                (click)="changeState()"></button>
+    <ng-template rtWorkspaceCenter>
+        <!--
+            Лента и поле ответа — готовый чат кита: тред, состояния своей реплики и повтор
+            отбитой он уже умеет. Про невыбранный разговор он говорит сам своей подписью, и
+            второго пустого состояния рядом не ставится.
 
-            <!--
-                Лента и поле ответа — готовый чат кита: тред, состояния своей реплики и повтор
-                отбитой он уже умеет. Про пустой разговор он говорит сам — своей подписью.
+            `hasThread` стоит по выбранному разговору: без него кит прячет и ленту, и поле
+            ответа — оператор не написал бы в пустой разговор первым.
+        -->
+        <rt-chat
+            canReply
+            fill
+            showRefresh
+            qa-dataid="chat-feed"
+            [emptyHint]="feedUnchosen()"
+            [hasThread]="!!talk()"
+            [loading]="feedReading()"
+            [messages]="thread()"
+            [placeholder]="sendPlaceholder()"
+            [title]="feedTitle()"
+            (refresh)="refreshFeed()"
+            (retryMessage)="again($event)"
+            (send)="send($event)" />
+    </ng-template>
 
-                `hasThread` стоит всегда: разговор здесь уже выбран, а без этого входа кит прячет
-                и ленту, и поле ответа — оператор не написал бы в пустой разговор первым.
-            -->
-            <rt-chat
-                canReply
-                fill
-                hasThread
-                rtElem="thread"
-                [loading]="feedReading()"
-                [messages]="thread()"
-                [placeholder]="sendPlaceholder()"
-                (retryMessage)="again($event)"
-                (send)="send($event)" />
-        } @else {
-            <rt-empty-state qa-dataid="chat-feed-unchosen" [title]="feedUnchosen()" />
-        }
-    </section>
-</ng-container>
+    <ng-template rtWorkspaceAside>
+        <!-- Свойства разговора и действия над ним: действие — не реплика, и в ленте ему не место -->
+        <rt-workspace-details
+            qa-dataid="chat-talk-details"
+            [actions]="talkActions()"
+            [loading]="talksReading()"
+            [rows]="detailRows()"
+            [title]="talk() ? detailsTitle() : null"
+            (actionClicked)="changeState($event)" />
+    </ng-template>
+</rt-workspace>

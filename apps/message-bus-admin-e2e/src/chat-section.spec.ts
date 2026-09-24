@@ -62,6 +62,11 @@ async function feedTexts(page: Page): Promise<string[]> {
     return (await qa(page, 'chat-message-text').allTextContents()).map((text: string): string => text.trim());
 }
 
+/** Действие над разговором в панели подробностей: его подписью и находят. */
+function talkAction(page: Page, name: string): Locator {
+    return qa(page, 'workspace-details-action').filter({ hasText: name });
+}
+
 /** Выбрать значение отбора по его подписи. */
 async function pick(page: Page, filter: string, name: string): Promise<void> {
     await qa(page, filter).click();
@@ -94,6 +99,30 @@ test.describe('раздел чата', () => {
         await talks(page).first().click();
         await expect(qa(page, 'chat-message-text').first()).toBeVisible();
         await expectScreen(page, 'chat-section');
+    });
+
+    test('SC-CH-97 — раздел разложен рабочим столом: список, лента, подробности разговора', async ({ page }: { page: Page }) => {
+        await openSection(page, 'chat');
+        await talks(page).first().click();
+
+        // три колонки стола: список слева, лента в середине, свойства разговора справа
+        await expect(qa(page, 'chat-talks')).toBeVisible();
+        await expect(qa(page, 'chat-feed')).toBeVisible();
+        await expect(qa(page, 'chat-talk-details')).toBeVisible();
+
+        // свойства называют площадку и состояние, а действие стоит здесь же, не в ленте
+        const details: string = (await qa(page, 'chat-talk-details').textContent()) ?? '';
+
+        expect(details).toContain('Площадка');
+        expect(details).toContain('Состояние');
+
+        // действие над разговором ровно одно, и подписано оно по состоянию выбранного
+        await expect(qa(page, 'workspace-details-action')).toHaveCount(1);
+        await expect(qa(page, 'workspace-details-action')).toHaveText(/Закрыть разговор|Открыть снова/);
+        await expect(qa(page, 'chat-feed').locator('[qa-dataid="workspace-details-action"]')).toHaveCount(0);
+
+        // ширины колонок стол помнит сам: ручки между колонками — полноценные разделители
+        await expect(page.getByRole('separator')).toHaveCount(2);
     });
 
     test('SC-CH-37 — без единого права раздела чата нет в шапке, и адрес его не открывается', async ({ page }: { page: Page }) => {
@@ -206,7 +235,7 @@ test.describe('раздел чата', () => {
         await expect(talks(page)).toHaveCount(CHAT.talks.filter((talk): boolean => !talk.closed).length);
 
         await talks(page).first().click();
-        await qa(page, 'chat-talk-state').click();
+        await talkAction(page, 'Закрыть разговор').click();
 
         await expect(talks(page)).toHaveCount(CHAT.talks.filter((talk): boolean => !talk.closed).length - 1);
 
