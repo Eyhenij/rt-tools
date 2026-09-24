@@ -144,8 +144,9 @@ sign-out or fill it with defaults.
 
 - **The hollow star and the remove button show on hover and on focus inside their row; the
   filled star always shows.** Stars on every row of a long list read as noise; the chosen ones must be visible at a
-  glance. Where the pointer cannot hover — a narrow screen, a touch screen by `(hover: none)` — the
-  hollow star and the remove button show always. The focus shows them only from the keyboard: a
+  glance. Where the pointer cannot hover — a touch screen by `(hover: none)` — the hollow star, the
+  remove button and the handle show always. The pointer decides, not the width: a narrow window with
+  a mouse shows them on hover, the same as a wide one. The focus shows them only from the keyboard: a
   button pressed by the mouse keeps the focus, and a star removed by a click would stay visible
   after the pointer left.
 - **The star carries a tooltip and an accessible name: "Add to favourites" or "Remove from
@@ -211,6 +212,7 @@ sign-out or fill it with defaults.
   would stay red under it.
 - **On a narrow screen the block stands the same, under the search of the submenu.** The same rows,
   the same buttons, the same handle: the split between the two layouts would be a second favourites.
+  Whether the buttons show at rest is decided by the pointer, as on a wide screen.
 - **An item flagged `favoriteDisabled` is not a favourite candidate.** Its row draws no star in
   either mode and keeps no place for one, so the person cannot add it; its id already stored stays
   in the list and does not reach the block. The service keeps ids only and does not judge them: an
@@ -234,7 +236,8 @@ sign-out or fill it with defaults.
   as before. With `none` a hidden button takes no width at rest, so the label runs to the right edge
   or to the consumer's button; under the hover and the keyboard focus of its row the button takes
   its width, and only the right edge of the label moves. The button stays in the Tab order. The
-  filled star, the narrow screen, a screen without hover and the dragged row keep their buttons.
+  filled star, a screen without hover and the dragged row keep their buttons; a narrow window with a
+  mouse gives the width up the same as a wide one.
 
 ## What is out of scope
 
@@ -326,7 +329,8 @@ Not applicable: the kit has no pages of its own.
 ### Mobile layout
 
 The block stands in the narrow layout of the submenu under the search field, with the same rows,
-buttons and handles; the hollow star and the remove button show always, since there is no hover.
+buttons and handles. Whether the buttons show at rest follows the pointer: on a touch screen they
+show always, in a narrow window with a mouse they show on hover.
 
 ### Several objects
 
@@ -417,4 +421,6 @@ One settings object per application key, and in it one list per menu id.
   under the pointer, the colour is a property of the application. Scenario SC-UK-124 added.
 - 2026-09-24 — RT-2327, the consumer's request: a row flagged `favoriteDisabled` has no star; the
   heading of the block collapses it, per strip item; the hidden row buttons give up their width by
-  `favoriteActionsReserve="none"`. Scenarios SC-UK-134…SC-UK-140 added.
+  `favoriteActionsReserve="none"`. Scenarios SC-UK-134…SC-UK-140 added. The owner's word: the row
+  buttons show at rest by the pointer, not by the width — a narrow window with a mouse shows them on
+  hover; SC-UK-86 no longer says they show without a hover.

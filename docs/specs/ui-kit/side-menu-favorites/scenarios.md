@@ -122,9 +122,8 @@ carry these labels
 
 Given a narrow screen, the service with `a` in the list and an open submenu
 When the submenu is drawn
-Then the block with the row `a` stands under the search field, the hollow stars and the remove
-buttons are shown without a hover, their tooltips are off, and the row back to the main list carries
-no star
+Then the block with the row `a` stands under the search field, the rows carry the hollow stars and
+the remove buttons, their tooltips are off, and the row back to the main list carries no star
 
 ### SC-UK-87 — a drop keeps the places of the ids the menu does not have
 
