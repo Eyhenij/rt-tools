@@ -267,3 +267,16 @@ export function stepSubMenuHighlight(
 
     return walk[next].id;
 }
+
+/**
+ * Место под скрытые кнопки избранного из входа меню. Только `always` держит ширину: незнакомое
+ * значение и пустой атрибут читаются как `none`, как меню без входа, — подпись идёт до края.
+ */
+export function normalizeFavoriteActionsReserve(value: string | undefined): ISideMenu.FavoriteActionsReserve {
+    return value === 'always' ? 'always' : 'none';
+}
+
+/** Число строк в заголовке избранного из входа меню: незнакомое значение и пустой атрибут — `collapsed`. */
+export function normalizeFavoritesCount(value: string | undefined): ISideMenu.FavoritesCount {
+    return value === 'always' || value === 'never' ? value : 'collapsed';
+}

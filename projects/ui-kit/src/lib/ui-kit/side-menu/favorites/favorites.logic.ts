@@ -65,9 +65,12 @@ export function moveVisibleFavorite(
     });
 }
 
-/** Может ли пункт стоять в избранном: ссылка есть — может; папка без ссылки никуда не ведёт. */
+/**
+ * Может ли пункт стоять в избранном: ссылка есть — может; папка без ссылки никуда не ведёт, а
+ * пункт с флагом `favoriteDisabled` приложение исключило само.
+ */
 export function isFavoriteCandidate(item: ISideMenu.Item): boolean {
-    return Boolean(item.link?.trim());
+    return Boolean(item.link?.trim()) && !item.favoriteDisabled;
 }
 
 function collectLinkedItems(items: ReadonlyArray<ISideMenu.Item>, byId: Map<ISideMenu.FavoriteId, ISideMenu.Item>): void {

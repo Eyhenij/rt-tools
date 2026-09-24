@@ -44,12 +44,20 @@ export function normalizeSettings(value: unknown): ISideMenu.Settings {
 
     const settings: ISideMenu.Settings = { ...value };
     const favorites: unknown = value['favorites'];
+    const collapsed: unknown = value['favoritesCollapsed'];
     const width: unknown = value['subMenuWidth'];
 
     if (Array.isArray(favorites)) {
         settings.favorites = normalizeFavorites(favorites);
     } else {
         delete settings.favorites;
+    }
+
+    // Свёрнутые разделы — такие же номера пунктов, что и избранное, и очищаются так же.
+    if (Array.isArray(collapsed)) {
+        settings.favoritesCollapsed = normalizeFavorites(collapsed);
+    } else {
+        delete settings.favoritesCollapsed;
     }
 
     if (!isSubMenuMode(value['subMenuMode'])) {
