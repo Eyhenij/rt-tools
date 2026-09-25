@@ -4,8 +4,10 @@
 // ширины полей рассчитаны под Montserrat, и вид разъезжался там, где никто ничего не правил.
 // Кадры витрины это скрывали: они снимались на машине, где Montserrat установлен.
 // Файлы лежат рядом, в `assets/fonts`, и уезжают в пакет тем же путём, что набор значков. Адрес
-// здесь относительный: сборка потребителя разрешает `url()` от места этого файла, и в собранном
-// пакете каталоги лежат так же, как в исходниках.
+// относительный: сборка потребителя разрешает `url()` от места файла стилей. Исходники партиалов
+// лежат в пакете в `src/styles`, и им подходит адрес по умолчанию. Собранный `styles/tokens.css`
+// лежит на каталог выше исходников, поэтому его сборка задаёт `$rt-fonts-url` своим входом —
+// с прежним адресом сборка приложения не находила ни одного файла.
 // Объявления стоят вне слоя каскада намеренно: `@font-face` — не правило оформления, спорить ему
 // не с чем, и слой на него не действует.
 // Начертание одно на все насыщенности: переменный шрифт несёт ось веса целиком, и четыре
@@ -14,12 +16,14 @@
 // Подмножества разделены по диапазонам знаков: браузер качает только те, чьи знаки на странице
 // встретились. Русской странице достаются кириллица и латиница, а латинское расширение не едет.
 
+$rt-fonts-url: '../assets/fonts' !default;
+
 @font-face {
     font-display: swap;
     font-family: Montserrat;
     font-style: normal;
     font-weight: 100 900;
-    src: url('../assets/fonts/montserrat-cyrillic-ext-wght-normal.woff2') format('woff2-variations');
+    src: url('#{$rt-fonts-url}/montserrat-cyrillic-ext-wght-normal.woff2') format('woff2-variations');
     unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
 }
 
@@ -28,7 +32,7 @@
     font-family: Montserrat;
     font-style: italic;
     font-weight: 100 900;
-    src: url('../assets/fonts/montserrat-cyrillic-ext-wght-italic.woff2') format('woff2-variations');
+    src: url('#{$rt-fonts-url}/montserrat-cyrillic-ext-wght-italic.woff2') format('woff2-variations');
     unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
 }
 
@@ -37,7 +41,7 @@
     font-family: Montserrat;
     font-style: normal;
     font-weight: 100 900;
-    src: url('../assets/fonts/montserrat-cyrillic-wght-normal.woff2') format('woff2-variations');
+    src: url('#{$rt-fonts-url}/montserrat-cyrillic-wght-normal.woff2') format('woff2-variations');
     unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
 }
 
@@ -46,7 +50,7 @@
     font-family: Montserrat;
     font-style: italic;
     font-weight: 100 900;
-    src: url('../assets/fonts/montserrat-cyrillic-wght-italic.woff2') format('woff2-variations');
+    src: url('#{$rt-fonts-url}/montserrat-cyrillic-wght-italic.woff2') format('woff2-variations');
     unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
 }
 
@@ -55,7 +59,7 @@
     font-family: Montserrat;
     font-style: normal;
     font-weight: 100 900;
-    src: url('../assets/fonts/montserrat-latin-ext-wght-normal.woff2') format('woff2-variations');
+    src: url('#{$rt-fonts-url}/montserrat-latin-ext-wght-normal.woff2') format('woff2-variations');
     unicode-range:
         U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF,
         U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
@@ -66,7 +70,7 @@
     font-family: Montserrat;
     font-style: italic;
     font-weight: 100 900;
-    src: url('../assets/fonts/montserrat-latin-ext-wght-italic.woff2') format('woff2-variations');
+    src: url('#{$rt-fonts-url}/montserrat-latin-ext-wght-italic.woff2') format('woff2-variations');
     unicode-range:
         U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF,
         U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
@@ -77,7 +81,7 @@
     font-family: Montserrat;
     font-style: normal;
     font-weight: 100 900;
-    src: url('../assets/fonts/montserrat-latin-wght-normal.woff2') format('woff2-variations');
+    src: url('#{$rt-fonts-url}/montserrat-latin-wght-normal.woff2') format('woff2-variations');
     unicode-range:
         U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191,
         U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
@@ -88,7 +92,7 @@
     font-family: Montserrat;
     font-style: italic;
     font-weight: 100 900;
-    src: url('../assets/fonts/montserrat-latin-wght-italic.woff2') format('woff2-variations');
+    src: url('#{$rt-fonts-url}/montserrat-latin-wght-italic.woff2') format('woff2-variations');
     unicode-range:
         U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191,
         U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
