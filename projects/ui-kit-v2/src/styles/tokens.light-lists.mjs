@@ -51,8 +51,7 @@ export const lightLists = [
         dark: `var(--rt-icon-button-color-bg-hover)`,
     },
     {
-        lead: `    /* Значки в таблице списка — кнопки строки отбора и действия строки. Свой вид оставляет их
-       как есть; материальный набор даёт им 24px и серый темы, как у первого кита. */`,
+        lead: `    /* Значки, кнопки и копирование таблицы списка: материальный набор рисует их, как первый кит. */`,
         space: true,
         name: `--rt-list-table-icon-size`,
         value: `0px`,
@@ -63,8 +62,6 @@ export const lightLists = [
         dark: `var(--rt-color-text-primary)`,
     },
     {
-        lead: `    /* Кнопки этих значков: свой вид — прежняя квадратная кнопка в 40px, материальный набор —
-       круглая в 36px, как кнопка-значок Material у первого кита. */`,
         name: `--rt-list-table-button-size`,
         value: `var(--rt-control-height-md)`,
     },
@@ -73,33 +70,6 @@ export const lightLists = [
         value: `var(--rt-radius-md)`,
     },
     {
-        lead: `    /* Поле строки отбора: свой вид — малое поле кита, материальный набор — обведённое поле
-       Material первого кита в 52px, как поиск списка. */`,
-        name: `--rt-list-filter-field-height`,
-        value: `var(--rt-input-height-sm)`,
-    },
-    {
-        name: `--rt-list-filter-field-font-size`,
-        value: `var(--rt-input-font-size)`,
-    },
-    {
-        name: `--rt-list-filter-field-color-border`,
-        value: `var(--rt-input-color-border)`,
-        dark: `var(--rt-input-color-border)`,
-    },
-    {
-        name: `--rt-list-filter-field-color-bg`,
-        value: `var(--rt-input-color-bg)`,
-        dark: `var(--rt-input-color-bg)`,
-    },
-    {
-        name: `--rt-list-filter-field-color-placeholder`,
-        value: `var(--rt-input-color-text-placeholder)`,
-        dark: `var(--rt-input-color-text-placeholder)`,
-    },
-    {
-        lead: `    /* Кнопка копирования в ячейке: свой вид — прежняя кнопка-значок в 32px, материальный набор —
-       плашка первого кита в 24px с заливкой контейнера темы и серым значком, тёмным под указателем. */`,
         name: `--rt-list-copy-button-size`,
         value: `var(--rt-control-height-sm)`,
     },
@@ -119,11 +89,6 @@ export const lightLists = [
     },
     {
         name: `--rt-list-copy-button-color`,
-        value: `var(--rt-color-text-primary)`,
-        dark: `var(--rt-color-text-primary)`,
-    },
-    {
-        name: `--rt-list-copy-button-color-hover`,
         value: `var(--rt-color-text-primary)`,
         dark: `var(--rt-color-text-primary)`,
     },

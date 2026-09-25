@@ -10,14 +10,14 @@
         justify-content: flex-start;
         gap: var(--rt-space-sm);
 
-        // Высоту, шрифт и цвета поле берёт из имён строки отбора: материальный набор делает из них
-        // обведённое поле Material первого кита в 52px, свой вид оставляет малое поле.
+        // Поле отбора первого кита — то же обведённое поле Material, что поиск списка, и берёт его
+        // имена: материальный набор даёт ему 52px, шрифт 16px и цвета темы, свой вид — малое поле.
         &__field {
-            --rt-input-height-sm: var(--rt-list-filter-field-height);
-            --rt-input-font-size: var(--rt-list-filter-field-font-size);
-            --rt-input-color-border: var(--rt-list-filter-field-color-border);
-            --rt-input-color-bg: var(--rt-list-filter-field-color-bg);
-            --rt-input-color-text-placeholder: var(--rt-list-filter-field-color-placeholder);
+            --rt-input-height-sm: var(--rt-list-search-height);
+            --rt-input-font-size: var(--rt-list-search-font-size);
+            --rt-input-color-border: var(--rt-list-search-color-border);
+            --rt-input-color-bg: var(--rt-list-search-color-bg);
+            --rt-input-color-text-placeholder: var(--rt-list-search-color-placeholder);
 
             min-width: 0;
             flex-grow: 1;

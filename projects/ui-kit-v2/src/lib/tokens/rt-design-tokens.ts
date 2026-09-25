@@ -212,14 +212,8 @@ export type TRtDesignTokenName =
     | '--rt-list-copy-button-bg'
     | '--rt-list-copy-button-bg-hover'
     | '--rt-list-copy-button-color'
-    | '--rt-list-copy-button-color-hover'
     | '--rt-list-copy-button-radius'
     | '--rt-list-copy-button-size'
-    | '--rt-list-filter-field-color-bg'
-    | '--rt-list-filter-field-color-border'
-    | '--rt-list-filter-field-color-placeholder'
-    | '--rt-list-filter-field-font-size'
-    | '--rt-list-filter-field-height'
     | '--rt-list-search-color-bg'
     | '--rt-list-search-color-border'
     | '--rt-list-search-color-placeholder'
@@ -734,14 +728,8 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-list-copy-button-bg',
     '--rt-list-copy-button-bg-hover',
     '--rt-list-copy-button-color',
-    '--rt-list-copy-button-color-hover',
     '--rt-list-copy-button-radius',
     '--rt-list-copy-button-size',
-    '--rt-list-filter-field-color-bg',
-    '--rt-list-filter-field-color-border',
-    '--rt-list-filter-field-color-placeholder',
-    '--rt-list-filter-field-font-size',
-    '--rt-list-filter-field-height',
     '--rt-list-search-color-bg',
     '--rt-list-search-color-border',
     '--rt-list-search-color-placeholder',

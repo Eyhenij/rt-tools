@@ -100,15 +100,6 @@ export const darkLayout = [
         name: `--rt-list-table-icon-color`,
     },
     {
-        name: `--rt-list-filter-field-color-border`,
-    },
-    {
-        name: `--rt-list-filter-field-color-bg`,
-    },
-    {
-        name: `--rt-list-filter-field-color-placeholder`,
-    },
-    {
         name: `--rt-list-copy-button-bg`,
     },
     {
@@ -116,9 +107,6 @@ export const darkLayout = [
     },
     {
         name: `--rt-list-copy-button-color`,
-    },
-    {
-        name: `--rt-list-copy-button-color-hover`,
     },
     {
         name: `--rt-list-selector-label-color`,
