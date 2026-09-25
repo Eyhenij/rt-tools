@@ -138,6 +138,8 @@
 
     /* Полоса действий висит над концом строки и проявляется наведением; там, где наведения нет,
        она видна всегда. Левый край растворяется в фоне — приём первого кита. */
+    // Полоса действий занимает строку целиком: строка с картинкой или длинной подписью выше обычной,
+    // и полоса высотой в обычную строку оставляла её низ открытым.
     .rt-data-table-actions {
         position: absolute;
         z-index: var(--rt-z-base);
@@ -145,7 +147,7 @@
         right: 0;
         display: flex;
         width: 100%;
-        height: var(--rt-data-table-row-height);
+        height: 100%;
         align-items: center;
         justify-content: flex-end;
         pointer-events: none;
@@ -156,7 +158,7 @@
             display: flex;
             overflow: hidden;
             width: fit-content;
-            height: calc(var(--rt-data-table-row-height) - var(--rt-data-table-border-width) * 2);
+            height: calc(100% - var(--rt-data-table-border-width) * 2);
             align-items: center;
             justify-content: flex-end;
             padding: 0 var(--rt-space-xs) 0 var(--rt-space-5);
