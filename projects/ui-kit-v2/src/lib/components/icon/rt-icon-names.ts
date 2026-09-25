@@ -354,6 +354,7 @@ export const iconsName = [
     'user',
     'user-edit',
     'user-minus',
+    'user-off',
     'user-plus',
     'users',
     'video',
