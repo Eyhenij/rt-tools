@@ -1,8 +1,11 @@
 <app-story-row slotWidth="calc(100vw - 2rem)" [caption]="caption()" [items]="captions">
     <ng-template>
         <!-- Коробка даёт списку ширину ячейки: без неё таблица растягивает список по своим колонкам, и
-             ряд обрезает его левый край вместе с колонкой выбора. -->
-        <div style="inline-size: 100%; min-inline-size: 0; overflow: hidden">
+             ряд обрезает его левый край вместе с колонкой выбора. Высота — окно без рамки ряда
+             (подпись над ячейкой, подпись под ней, отступ ряда и поля страницы — 13rem), как у
+             истории первого кита: список держит высоту, прокручивается только таблица, а полоса
+             страниц и полоса прокрутки всегда на виду. -->
+        <div style="inline-size: 100%; min-inline-size: 0; block-size: calc(100dvh - 13rem); overflow: hidden">
             <rt-data-list
                 rtDataListSelectors
                 keyExp="id"
