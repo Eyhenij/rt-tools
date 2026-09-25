@@ -27,6 +27,12 @@
             font-size: var(--rt-text-sm);
         }
 
+        /* Подпись сохранения — прописными, подпись отмены — как написана: так подвал панели
+           рисует первый кит. */
+        &__save {
+            text-transform: uppercase;
+        }
+
         &__columns {
             display: flex;
             flex-direction: column;

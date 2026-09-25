@@ -1,16 +1,29 @@
+import { TitleCasePipe } from '@angular/common';
+
+import { BreakStringPipe } from '@rt-tools/core';
+
 import { IRtDataTable } from '../data-table/rt-data-table.model';
 import { IRtTable } from '../table/rt-table.model';
 
+const breakString: BreakStringPipe = new BreakStringPipe();
+const titleCase: TitleCasePipe = new TitleCasePipe();
+
 /**
  * Колонки — в пункты готового редактора списка колонок кита. Подпись берётся так же, как её
- * берёт первый кит: имя для настроек, а без него — имя свойства.
+ * берёт первый кит: имя для настроек, а без него — имя свойства, разбитое по словам и с
+ * заглавных: `userIcon` → «User Icon».
  */
 export function dataListSettingItems<ENTITY_TYPE>(columns: ReadonlyArray<IRtDataTable.Column<ENTITY_TYPE>>): IRtTable.ColumnSettingItem[] {
-    return columns.map((column: IRtDataTable.Column<ENTITY_TYPE>) => ({
-        key: String(column.propName),
-        label: column.displayName ?? String(column.propName),
-        hidden: !!column.hidden,
-    }));
+    return columns.map((column: IRtDataTable.Column<ENTITY_TYPE>): IRtTable.ColumnSettingItem => {
+        const propName: string = String(column.propName);
+        const isNamed: boolean = !!column.displayName?.length && column.displayName !== propName;
+
+        return {
+            key: propName,
+            label: isNamed ? String(column.displayName) : titleCase.transform(breakString.transform(propName)),
+            hidden: !!column.hidden,
+        };
+    });
 }
 
 /** Обратно: порядок и видимость из пунктов редактора — в описания колонок. */

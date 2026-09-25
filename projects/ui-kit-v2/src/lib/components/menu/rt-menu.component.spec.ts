@@ -210,6 +210,24 @@ describe('RtMenuItemComponent', (): void => {
         expect(hostClasses(setupItem({ label: 'Удалить', danger: true }))).toContain('rt-menu-item--danger');
     });
 
+    it('пункт-согласие помечается модификатором зелёного тона', (): void => {
+        expect(hostClasses(setupItem({ label: 'Принять', success: true }))).toContain('rt-menu-item--success');
+    });
+
+    it('имя значка Material рисуется парой из набора кита, а своя иконка сильнее', (): void => {
+        const byGlyph: ComponentFixture<RtMenuItemComponent> = setupItem({ label: 'Принять', glyph: 'done' });
+        const byIcon: ComponentFixture<RtMenuItemComponent> = setupItem({ label: 'Принять', glyph: 'done', icon: 'ico-eye' });
+        const unknown: ComponentFixture<RtMenuItemComponent> = setupItem({ label: 'Принять', glyph: 'no_such_glyph' });
+
+        const iconRef: (fixture: ComponentFixture<RtMenuItemComponent>) => string | null | undefined = (
+            fixture: ComponentFixture<RtMenuItemComponent>
+        ): string | null | undefined =>
+            (fixture.nativeElement as HTMLElement).querySelector('.rt-menu-item__icon use')?.getAttribute('href');
+
+        expect([iconRef(byGlyph), iconRef(byIcon)]).toEqual(['#rt-icon-check', '#rt-icon-ico-eye']);
+        expect(el(unknown, '.rt-menu-item__icon')).toBeNull();
+    });
+
     it('иконка рисуется слева от подписи, когда задана', (): void => {
         const fixture: ComponentFixture<RtMenuItemComponent> = setupItem({ label: 'Открыть', icon: 'ico-eye' });
 

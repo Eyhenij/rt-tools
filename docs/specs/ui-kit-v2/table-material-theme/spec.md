@@ -38,8 +38,8 @@ Nothing new is shown to a person: the list keeps its labels, only its look follo
   gives `own`, the second kit's look; the `look` input on the spot beats the settings.
 
 - **The default look of the list search and the filter fields is set by the kit settings.**
-  `dataList.appearance` and `dataList.filterAppearance`; the kit's own defaults are `fill` and
-  `outline`, the first kit's.
+  `dataList.appearance` and `dataList.filterAppearance`. The kit's own default of the search is
+  `fill`; the filter fields given no look of their own take the look of the search.
 
 - **The table header in the material preset is filled with the colour of the Material fill field.**
   The name is `--rt-color-table-head-bg`; the preset reads `--mat-form-field-filled-container-color`,
@@ -64,7 +64,8 @@ Nothing new is shown to a person: the list keeps its labels, only its look follo
   and the gap — whose defaults are its former values.
 
 - **The list search is drawn fill when the look is not given.** The first kit's field takes the fill
-  look of Material when nothing is said; the filter fields stay outline by default in both kits.
+  look of Material when nothing is said, and the filter fields given no look of their own follow
+  it: the owner saw them filled in the first kit's list of an application.
 
 - **The underline of a fill field has a colour name of its own.** The name is
   `--rt-color-field-fill-underline`; the material preset reads `--mat-sys-on-surface-variant` for
@@ -132,7 +133,8 @@ Nothing new is shown to a person: the list keeps its labels, only its look follo
 The list and the table get the input `look` (`'material' | 'own'`), the menu gets `panelClass`, the
 aside header gets `subtitle`.
 The kit settings get the sections `dataTable` (`look`) and `dataList` (`appearance`,
-`filterAppearance`). The default of `appearance` of the list stays `fill`.
+`filterAppearance`). The default of `appearance` of the list stays `fill`; `filterAppearance` has
+no default of its own and takes `appearance`.
 
 ### Refusal codes
 

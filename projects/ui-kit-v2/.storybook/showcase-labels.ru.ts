@@ -96,6 +96,7 @@ export const RT_KIT_LABELS_RU: Readonly<Record<TRtKitLabelKey, string>> = {
     uiCopy: 'Скопировать',
     uiCurrentStage: 'Текущий этап',
     uiDetails: 'Детали',
+    uiDiscardChanges: 'Отменить изменения',
     uiDownload: 'Скачать',
     uiDownloadFile: 'Скачать: {{name}}',
     uiDragColumn: 'Перетащить колонку',

@@ -120,7 +120,7 @@ describe('RtDataTableHeaderCellComponent', () => {
 
     it('класс шапки из описания колонки стоит на блоке подписи, как в первом ките', () => {
         const fixture: ComponentFixture<HeaderHostComponent> = setup({ className: 'user-column' });
-        const text: HTMLElement = qa(fixture, 'data-table-header-text').nativeElement;
+        const text: HTMLElement = qa(fixture, 'data-table-header-text')?.nativeElement;
 
         expect(text.classList).toContain('user-column');
         expect(text.classList).toContain('rt-data-table-header-cell__text');
