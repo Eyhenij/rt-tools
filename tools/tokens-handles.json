@@ -13,6 +13,8 @@
     "--rt-workspace-list-size": "the width of the workspace's list",
     "--rt-page-header-bg": "the backdrop of the page header; the default is the kit's navigation panel backdrop",
     "--rt-data-table-scrollbar-vertical-width": "the width of the data table's vertical scrollbar; the list writes it on the page root by the saved setting, and the default is the step --rt-size-3",
-    "--rt-data-table-scrollbar-horizontal-height": "the same for the horizontal one"
+    "--rt-data-table-scrollbar-horizontal-height": "the same for the horizontal one",
+    "--rt-data-table-scrollbar-width": "the standard scrollbar-width of the data table; the list writes none when both bars are hidden and auto when one is, and without it the table keeps the kit's thin bar",
+    "--rt-data-table-scrollbar-color": "the standard scrollbar-color of the data table; the list writes auto when one bar is hidden, so Chrome reads ::-webkit-scrollbar"
   }
 }

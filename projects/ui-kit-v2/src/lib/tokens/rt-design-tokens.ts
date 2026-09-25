@@ -503,8 +503,10 @@ export type TRtDesignTokenName =
 /** The name of a consumer's handle — a property the kit deliberately does not declare. */
 export type TRtConsumerHandleName =
     | '--rt-aside-width'
+    | '--rt-data-table-scrollbar-color'
     | '--rt-data-table-scrollbar-horizontal-height'
     | '--rt-data-table-scrollbar-vertical-width'
+    | '--rt-data-table-scrollbar-width'
     | '--rt-dialog-width'
     | '--rt-header-content-max-width'
     | '--rt-header-height'
@@ -1020,8 +1022,10 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
 /** All the consumer's handles: the value comes from the application, until then the fallback works. */
 export const RT_CONSUMER_HANDLE_NAMES: readonly TRtConsumerHandleName[] = [
     '--rt-aside-width',
+    '--rt-data-table-scrollbar-color',
     '--rt-data-table-scrollbar-horizontal-height',
     '--rt-data-table-scrollbar-vertical-width',
+    '--rt-data-table-scrollbar-width',
     '--rt-dialog-width',
     '--rt-header-content-max-width',
     '--rt-header-height',
