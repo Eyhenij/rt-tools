@@ -28,4 +28,4 @@
 
 ## Рядом
 
-- [`rt-rich-editor`](../rich-editor/CONTEXT.md) — редактор, который эту модель производит.
+- [`rt-rich-editor`](../../../../rich-editor/src/lib/components/rich-editor/CONTEXT.md) — редактор, который эту модель производит.

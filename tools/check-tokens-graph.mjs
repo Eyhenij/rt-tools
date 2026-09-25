@@ -38,6 +38,8 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
 /** The kit whose graph is judged, and the kit whose names collisions are matched against. */
 const KIT = 'projects/ui-kit-v2/src';
+/** The second entry of the package keeps its components apart. */
+const SECOND_ENTRY = 'projects/ui-kit-v2/rich-editor/src';
 const OTHER_KIT = 'projects/ui-kit/src';
 const HANDLES_FILE = 'tools/tokens-handles.json';
 const THEMING_DOC = 'projects/ui-kit-v2/docs/Theming.mdx';
@@ -67,7 +69,7 @@ function scssFiles(dir) {
 const read = (path) => readFileSync(join(ROOT, path), 'utf8');
 const namesIn = (text, regexp) => [...text.matchAll(regexp)].map((match) => match[1]);
 
-const files = scssFiles(KIT);
+const files = [...scssFiles(KIT), ...scssFiles(SECOND_ENTRY)];
 const declared = new Set();
 const references = [];
 

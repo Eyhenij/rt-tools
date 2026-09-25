@@ -5,7 +5,7 @@
     "declarationMap": false,
     "rootDir": ".."
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "rich-editor/src/**/*.ts"],
   "angularCompilerOptions": {
     "extendedDiagnostics": {
       "checks": {

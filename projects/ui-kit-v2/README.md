@@ -14,8 +14,14 @@
 pnpm add @rt-tools/ui-kit-v2 @rt-tools/core @rt-tools/utils
 ```
 
-`quill` нужен только тем, кто ставит `rt-rich-editor`: редактор грузит его динамически, и без
-пакета остальной кит работает.
+`quill` нужен только тем, кто ставит редактор текста. Он и два компонента на нём — поле ввода
+сообщения и чат — стоят отдельным входом `@rt-tools/ui-kit-v2/rich-editor`:
+
+```typescript
+import { RtChatComponent, RtMessageComposerComponent, RtRichEditorComponent } from '@rt-tools/ui-kit-v2/rich-editor';
+```
+
+Основной вход quill не называет, и приложение без этих трёх компонентов собирается без него.
 
 ## Подключение
 

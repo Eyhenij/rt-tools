@@ -8,7 +8,7 @@
     "rootDir": ".."
   },
   "exclude": ["**/*.spec.ts", "**/*.stories.ts", "**/*.stories.js", "**/stories/**", "src/testing/**", "src/showcase/**"],
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "rich-editor/src/**/*.ts"],
   "angularCompilerOptions": {
     "extendedDiagnostics": {
       "checks": {

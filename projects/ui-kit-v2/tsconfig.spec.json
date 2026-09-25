@@ -13,6 +13,8 @@
       "@rt-tools/core": ["../core/src/index.ts"],
       "@rt-tools/store": ["../store/src/index.ts"],
       "@rt-tools/utils": ["../utils/src/index.ts"],
+      "@rt-tools/ui-kit-v2": ["src/public-api.ts"],
+      "@rt-tools/ui-kit-v2/rich-editor": ["rich-editor/src/public-api.ts"],
       "@angular/core/testing": ["../../node_modules/@angular/core/types/testing.d.ts"],
       "@angular/cdk/*": ["../../node_modules/@angular/cdk/types/*.d.ts"]
     },
@@ -27,6 +29,8 @@
     "src/**/*.d.ts",
     "src/testing/**/*.ts",
     "src/showcase/**/*.ts",
-    "src/**/stories/**/*.ts"
+    "src/**/stories/**/*.ts",
+    "rich-editor/src/**/*.spec.ts",
+    "rich-editor/src/**/stories/**/*.ts"
   ]
 }

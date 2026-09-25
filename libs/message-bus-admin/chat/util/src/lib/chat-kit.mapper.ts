@@ -13,7 +13,7 @@
  * Подпись автора приезжает доводом: набор подписей экрана переключается в попапе профиля, и второе
  * чтение того же выбора разошлось бы с первым.
  */
-import { ERtChatMessageStatus, IRtChat } from '@rt-tools/ui-kit-v2';
+import { ERtChatMessageStatus, IRtChat } from '@rt-tools/ui-kit-v2/rich-editor';
 
 import { EChatSendState, EChatSide, IChat } from './chat.model';
 

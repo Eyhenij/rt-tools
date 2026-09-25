@@ -30,10 +30,8 @@ import { AdminLocaleService, AdminTextService } from '@rt/message-bus-admin/comm
 import { WINDOW } from '@rt-tools/core';
 import { CHAT_STREAM_PATH, IChatMessageEventRow } from '@rt/message-bus-common';
 import {
-    IRtChat,
     IRtThreadList,
     IRtWorkspaceDetails,
-    RtChatComponent,
     RtThreadListComponent,
     RtThreadListFiltersDirective,
     RtThreadListRowDirective,
@@ -44,6 +42,7 @@ import {
     RtWorkspaceDetailsComponent,
     RtWorkspaceListDirective,
 } from '@rt-tools/ui-kit-v2';
+import { IRtChat, RtChatComponent } from '@rt-tools/ui-kit-v2/rich-editor';
 
 const BEM_BLOCK: string = 'admin-chat';
 

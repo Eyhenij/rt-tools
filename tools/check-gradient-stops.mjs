@@ -35,7 +35,7 @@ import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
 import { LOOKS, colorOf, parseColor } from './tokens-looks.mjs';
 
 /** Where the kit's gradients live: the components' styles and the styling layer itself. */
-const ROOTS = ['projects/ui-kit-v2/src/lib', 'projects/ui-kit-v2/src/styles'];
+const ROOTS = ['projects/ui-kit-v2/src/lib', 'projects/ui-kit-v2/rich-editor/src/lib', 'projects/ui-kit-v2/src/styles'];
 
 const GRADIENT_RE = /\b(?:repeating-)?(?:linear|radial|conic)-gradient\(/g;
 const VAR_RE = /^var\(\s*(--rt-[a-z0-9-]+)\s*\)$/;

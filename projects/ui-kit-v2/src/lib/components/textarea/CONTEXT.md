@@ -35,4 +35,4 @@
 
 ## Рядом
 
-- [`rt-rich-editor`](../rich-editor/CONTEXT.md) — когда нужна разметка внутри текста.
+- [`rt-rich-editor`](../../../../rich-editor/src/lib/components/rich-editor/CONTEXT.md) — когда нужна разметка внутри текста.

@@ -21,7 +21,14 @@ const config: StorybookConfig = {
     // `../src/**/*.mdx` — страница-обзор компонента лежит рядом с ним, как лежит его
     // CONTEXT.md: документ, уехавший от того, что описывает, расходится с ним молча.
     // Foundation-страницы остаются в ../docs — они не про конкретный компонент.
-    stories: ['../docs/**/*.mdx', '../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
+    // `../rich-editor/src` — второй вход пакета, компоненты на quill; их страницы стоят в той же витрине.
+    stories: [
+        '../docs/**/*.mdx',
+        '../src/**/*.mdx',
+        '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)',
+        '../rich-editor/src/**/*.mdx',
+        '../rich-editor/src/**/*.stories.@(js|jsx|mjs|ts|tsx)',
+    ],
     addons: [
         // Без него hover/focus-visible/active не увидеть глазами: они стилизованы в 27 SCSS
         // кита, а мышь в статичной сетке не наведёшь. Аддон переписывает CSS на лету —

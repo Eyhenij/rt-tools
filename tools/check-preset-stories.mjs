@@ -38,7 +38,9 @@ import { join, relative } from 'node:path';
 
 import { allowlistOf, baselineOf, parseAllowlist, ROOT, skipUnless } from './rt-kit-checks.config.mjs';
 
+/** The families of both entries of the package: the second one keeps its components apart. */
 const COMPONENTS = 'projects/ui-kit-v2/src/lib/components';
+const SECOND_ENTRY = 'projects/ui-kit-v2/rich-editor/src/lib/components';
 const PRESET_SOURCE = 'projects/ui-kit-v2/src/styles/tokens.material.mjs';
 const STYLES = 'projects/ui-kit-v2/src/styles';
 const PRESET_PART = "part: 'presets'";
@@ -119,17 +121,21 @@ function reachesPreset(read, own) {
 
     return false;
 }
-const root = join(ROOT, COMPONENTS);
-const families = readdirSync(root)
-    .filter((entry) => statSync(join(root, entry)).isDirectory())
-    .sort();
+const familyDirs = new Map(
+    [COMPONENTS, SECOND_ENTRY].flatMap((dir) =>
+        readdirSync(join(ROOT, dir))
+            .filter((entry) => statSync(join(ROOT, dir, entry)).isDirectory())
+            .map((entry) => [entry, join(ROOT, dir, entry)])
+    )
+);
+const families = [...familyDirs.keys()].sort();
 
 const touched = [];
 const untouched = [];
 const shows = new Set();
 
 for (const family of families) {
-    const files = filesOf(join(root, family));
+    const files = filesOf(familyDirs.get(family));
     const styles = files.filter((file) => file.endsWith('.scss')).map((file) => readFileSync(file, 'utf8'));
     const stories = files.filter((file) => file.endsWith('.stories.ts')).map((file) => readFileSync(file, 'utf8'));
     const own = new Map();
@@ -162,10 +168,10 @@ const problems = [
     ...(pageReadsList ? [] : [`${DOC_PAGE}: the page no longer reads ${ALLOWLIST}, and the reasons reach a reader of the showcase from nowhere`]),
     ...missing
         .filter((family) => !list.debt.has(family))
-        .map((family) => `${relative(ROOT, join(root, family))}: the preset rewrites what these styles read, and no story shows both halves`),
+        .map((family) => `${relative(ROOT, familyDirs.get(family))}: the preset rewrites what these styles read, and no story shows both halves`),
     ...untouched
         .filter((family) => !shows.has(family) && !list.accepted.has(family))
-        .map((family) => `${relative(ROOT, join(root, family))}: the preset touches nothing here — name it in «accepted» of ${ALLOWLIST} with a reason, or show the pair`),
+        .map((family) => `${relative(ROOT, familyDirs.get(family))}: the preset touches nothing here — name it in «accepted» of ${ALLOWLIST} with a reason, or show the pair`),
     ...[...list.debt.keys()]
         .filter((family) => !missing.includes(family))
         .map((family) => `${family}: it stands in the debt of ${ALLOWLIST}, and the pair is already shown or the preset no longer touches it — remove the line`),
