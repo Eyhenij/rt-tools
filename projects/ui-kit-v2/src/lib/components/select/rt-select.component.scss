@@ -179,6 +179,21 @@
             transform: rotate(180deg);
         }
 
+        /* Под материальным набором стрелка — залитый треугольник mat-select первого кита, 10 на 5 px,
+           и открытое поле его не переворачивает. Свой вид кита остаётся с шевроном. Размер значок
+           ставит себе встроенным стилем, поэтому треугольник задан пределами, а не шириной. */
+        :is(.rt-preset-material, [data-preset='material']) &__chevron {
+            max-width: 10px;
+            max-height: 5px;
+            background-color: currentcolor;
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+            transform: none;
+
+            svg {
+                display: none;
+            }
+        }
+
         /* Panel рендерится в CDK Overlay (body) — позиционирование на CDK,
            здесь только chrome. Глобальный класс (ViewEncapsulation.None). */
         &__panel {
