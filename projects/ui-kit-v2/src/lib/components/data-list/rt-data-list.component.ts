@@ -50,6 +50,7 @@ import {
     RtDataListCustomCellsDirective,
     RtDataListRowActionsDirective,
 } from './rt-data-list.directive';
+import { dataListScrollbarStandard, IRtDataListScrollbarStandard } from './rt-data-list-scrollbar.logic';
 import { RtDataListToolbarActionsDirective, RtDataListToolbarSelectorsDirective } from './rt-data-list-toolbar.directive';
 
 const BEM_BLOCK: string = 'rt-data-list';
@@ -270,6 +271,14 @@ export class RtDataListComponent<
                 '--rt-data-table-scrollbar-horizontal-height',
                 config.isHorizontalScrollbarShown ? SCROLLBAR_SIZE : SCROLLBAR_HIDDEN
             );
+
+            const standard: IRtDataListScrollbarStandard = dataListScrollbarStandard(
+                config.isVerticalScrollbarShown,
+                config.isHorizontalScrollbarShown
+            );
+
+            this.#setOrRemove('--rt-data-table-scrollbar-width', standard.width);
+            this.#setOrRemove('--rt-data-table-scrollbar-color', standard.color);
         });
 
         this.#openSettingsSource
@@ -338,5 +347,14 @@ export class RtDataListComponent<
 
     protected onRowDoubleClick(row: ENTITY_TYPE): void {
         this.rowDoubleClick.emit(row);
+    }
+
+    #setOrRemove(property: string, value: string | null): void {
+        if (value === null) {
+            this.#pageRoot.style.removeProperty(property);
+            return;
+        }
+
+        this.#pageRoot.style.setProperty(property, value);
     }
 }

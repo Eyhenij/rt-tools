@@ -48,7 +48,7 @@ export const appConfig: ApplicationConfig = {
 объявляя своё после `tokens.css`.
 
 Приложение, которое переезжает с `@rt-tools/ui-kit` и пока держит оба кита, подключает ещё один
-файл — `tokens.coexist.css`:
+файл — файл совместимости, он лежит рядом с `tokens.css`:
 
 ```scss
 @use '@rt-tools/ui-kit-v2/styles/tokens.coexist.css';
@@ -84,6 +84,10 @@ export const appConfig: ApplicationConfig = {
     }
 }
 ```
+
+Туда же кладётся своя полоса прокрутки приложения — правила `::-webkit-scrollbar`,
+`scrollbar-width` и `scrollbar-color`. Объявленные вне слоя, они перебивают полосы кита: таблица
+перестаёт прятать полосу, которую человек выключил в настройке колонок.
 
 Иконки лежат отдельными файлами в `node_modules/@rt-tools/ui-kit-v2/src/assets/icons`: сборка
 копирует каталог в свою статику, а `provideRtIcons('/icons')` называет адрес, по которому он
@@ -157,7 +161,12 @@ export const appConfig: ApplicationConfig = {
 - `_mixins.scss` — миксины поверхности карточки и её заголовка;
 - `_login.scss` — раскладка страницы входа.
 
-Всё, кроме `_breakpoints.scss`, собирает `_index.scss` — из него и собран `tokens.css`. Пороги и
+`_coexist.scss` — ступени второго кита на узле материального набора на время переезда с первого
+кита. Его собирает тот же генератор из источника шкалы, а файл совместимости собран из него
+отдельно.
+
+Всё, кроме `_breakpoints.scss` и `_coexist.scss`, собирает `_index.scss` — из него и собран
+`tokens.css`. Пороги и
 миксины подключаются партиалами напрямую:
 
 ```scss

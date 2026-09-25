@@ -341,11 +341,13 @@ describe('RtDataListComponent', () => {
         ]);
 
         expect(scrollbarSizes()).toEqual({ vertical: '0', horizontal: '0' });
+        expect(document.documentElement.style.getPropertyValue('--rt-data-table-scrollbar-width')).toBe('none');
 
         stub.tableConfig.set({ isVerticalScrollbarShown: true, isHorizontalScrollbarShown: true, columns: COLUMNS });
         fixture.detectChanges();
 
         expect(scrollbarSizes()).toEqual({ vertical: 'var(--rt-size-3)', horizontal: 'var(--rt-size-3)' });
+        expect(document.documentElement.style.getPropertyValue('--rt-data-table-scrollbar-width')).toBe('');
     });
 
     it('SC-UKV-273 — выбор полос, сохранённый одним списком, достаётся каждому списку страницы', async (): Promise<void> => {

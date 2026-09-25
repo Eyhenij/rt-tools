@@ -28,7 +28,7 @@ to the public entry that calls it.
 - **A copyable ready cell carries a copy button, revealed while the pointer is over the cell.** — `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-cell.logic.ts:dataTableCopyButtonSide`; scenario `SC-UKV-264`
 - **A copyable ready cell whose value is absent, an empty string, an empty list or an empty object has no copy button.** — `projects/ui-kit-v2/src/lib/components/data-table/cell/rt-data-table-cell.component.ts:copyable`; scenario `SC-UKV-266`
 - **A press on the copy button copies the shown value and the button says "Copied!" for two seconds.** — `projects/ui-kit-v2/src/lib/components/data-table/cell/rt-data-table-cell.component.ts:onCopy`; scenarios `SC-UKV-308`, `SC-UKV-264`
-- **A column's width and minimum width, when declared, are the width of its cells.** — `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table.component.html:width`; scenario —
+- **A column's width and minimum width, when declared, are the width of its ready cells; a custom column gets no width, as in the first kit.** — `projects/ui-kit-v2/src/lib/components/data-table/cell/rt-data-table-cell.component.ts:width`; scenario —
 
 ### The header
 
@@ -119,7 +119,7 @@ to the public entry that calls it.
 - **Saved settings whose set of columns differs from the declared one are dropped, and the table is drawn by the declaration.** — `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-config.service.ts:comparePropNames`; scenario `SC-UKV-272`
 - **Settings the first kit saved under a storage key are read by the family under the same key.** — `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table.model.ts:Config`; scenario `SC-UKV-317`
 - **A table with no saved settings shows the horizontal scrollbar and hides the vertical one.** — `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-config.service.ts:tableConfig`; scenario `SC-UKV-269`
-- **A hidden scrollbar hides the bar, not the scrolling.** — `projects/ui-kit-v2/src/lib/components/data-list/rt-data-list.component.ts:SCROLLBAR_HIDDEN`; scenario `SC-UKV-270`
+- **A hidden scrollbar hides the bar, not the scrolling.** — `projects/ui-kit-v2/src/lib/components/data-list/rt-data-list.component.ts:SCROLLBAR_HIDDEN`, `projects/ui-kit-v2/src/lib/components/data-list/rt-data-list-scrollbar.logic.ts:dataListScrollbarStandard`; scenario `SC-UKV-270`
 - **The scrollbar choice is applied to the whole page: every table of the family on it shows the choice last applied.** — `projects/ui-kit-v2/src/lib/components/data-list/rt-data-list.component.ts:SCROLLBAR_SIZE`; scenario `SC-UKV-273`
 - **A hidden column draws neither its cell nor its filter cell.** — `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table.component.ts:visibleColumns`; scenario `SC-UKV-305`
 

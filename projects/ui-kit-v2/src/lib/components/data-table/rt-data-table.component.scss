@@ -25,6 +25,13 @@
         width: 100%;
         height: 100%;
 
+        /* Стандартные свойства полосы тоже приходят с корня. Chrome при заданном стандартном
+           свойстве не читает `::-webkit-scrollbar`, и нулевой размер оттуда полосу не прятал: список
+           ставит `none`, когда скрыты обе полосы, и `auto`, когда одна. Без его выбора — тихая
+           полоса основы кита, повторённая здесь с теми же приметами наведения и фокуса. */
+        scrollbar-color: var(--rt-data-table-scrollbar-color, transparent transparent);
+        scrollbar-width: var(--rt-data-table-scrollbar-width, thin);
+
         /* Размер полос прокрутки приходит с корня страницы: туда его ставит список по
            сохранённой настройке. Своего объявления на блоке нет намеренно — оно победило бы
            унаследованное, и выбор человека до таблицы не дошёл бы. Без списка полосы кита
@@ -32,6 +39,15 @@
         &::-webkit-scrollbar {
             width: var(--rt-data-table-scrollbar-vertical-width, var(--rt-size-3));
             height: var(--rt-data-table-scrollbar-horizontal-height, var(--rt-size-3));
+        }
+
+        &:hover,
+        &:focus-within {
+            scrollbar-color: var(--rt-data-table-scrollbar-color, var(--rt-color-border-default) transparent);
+        }
+
+        @media (hover: none) {
+            scrollbar-color: var(--rt-data-table-scrollbar-color, var(--rt-color-border-default) transparent);
         }
 
         &__table {
