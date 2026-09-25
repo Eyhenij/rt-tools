@@ -91,13 +91,30 @@ test.describe('встраиваемая страница переписок', ()
         await openConsumerAdmin(page);
         await rows(page).first().click();
 
-        // положительная пара: до нажатия разговор живой, и кнопка предлагает его закрыть
-        await expect(qaInside(page, 'talks-state')).toHaveText('Закрыть разговор');
-        await expect(rows(page).first().locator('[qa-dataid="talks-row-state"]')).toHaveText('Живой');
+        // положительная пара: до нажатия разговор живой, и действие предлагает его закрыть
+        await expect(qaInside(page, 'workspace-details-action')).toHaveText('Закрыть разговор');
+        await expect(rows(page).first().locator('[qa-dataid="chat-talk-state-mark"]')).toHaveText('Живой');
 
-        await qaInside(page, 'talks-state').click();
+        await qaInside(page, 'workspace-details-action').click();
 
-        await expect(qaInside(page, 'talks-state')).toHaveText('Открыть снова');
-        await expect(rows(page).first().locator('[qa-dataid="talks-row-state"]')).toHaveText('Закрыт');
+        await expect(qaInside(page, 'workspace-details-action')).toHaveText('Открыть снова');
+        await expect(rows(page).first().locator('[qa-dataid="chat-talk-state-mark"]')).toHaveText('Закрытый');
+    });
+
+    test('SC-CH-98 — страница разложена тем же рабочим столом, что и панель оператора', async ({ page }: { page: Page }) => {
+        await openConsumerAdmin(page);
+        await rows(page).first().click();
+
+        // три колонки стола внутри рамки: список, лента, свойства разговора
+        await expect(qaInside(page, 'talks-feed')).toBeVisible();
+        await expect(qaInside(page, 'talks-details')).toBeVisible();
+
+        const details: string = (await qaInside(page, 'talks-details').textContent()) ?? '';
+
+        expect(details).toContain('Площадка');
+        expect(details).toContain('Состояние');
+
+        // ширины колонок стол помнит своим ключом, и ручки между колонками — разделители
+        await expect(inside(page).locator('[role="separator"]')).toHaveCount(2);
     });
 });

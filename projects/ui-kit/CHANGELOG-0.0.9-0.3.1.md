@@ -1,7 +1,7 @@
-# Журнал кита: линия 0.0.x
+# Журнал кита: выпуски 0.0.9–0.3.1
 
-Выпуски `0.0.x` и записи прежней линии рядом с ними — как они стояли в `CHANGELOG.md`.
-Живая линия — `CHANGELOG.md` рядом: файл вырос за предел длины, и хвост вынесен сюда целиком, без правок.
+Выпуски живой линии номеров от `0.0.9` до `0.3.1`. Свежие выпуски — в `CHANGELOG.md` рядом: файл
+вырос за предел длины, и эти выпуски вынесены сюда целиком, без правок.
 
 ## [0.3.1](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.3.0...rt-tools@0.3.1) (2026-08-02)
 
@@ -194,3 +194,5 @@ Claude-Session: https://claude.ai/code/session_01CkpaW5obf3ezRvTHYaDw2i
 ### Features
 
 - **rt:ui-kit:** add custom sorting into dynamic selector component ([2051d89](https://github.com/Eyhenij/rt-tools/commit/2051d89))
+
+Выпуски прежней линии номеров — `0.1.x`–`0.3.x` — лежат в `CHANGELOG-0.1-0.3.md` рядом.

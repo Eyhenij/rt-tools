@@ -13,7 +13,20 @@ import { RT_KIT_LABELS_EN, TRtKitLabelKey, TRtKitTranslator } from '@rt-tools/ui
 
 /** Ключи подписей страницы: набор закрыт, и слово вне его на экран не попадает. */
 export type TTalksWord =
-    'talksEmpty' | 'feedUnchosen' | 'answerPlaceholder' | 'close' | 'reopen' | 'sideOperator' | 'sideVisitor' | 'stateLive' | 'stateClosed';
+    | 'talksEmpty'
+    | 'feedUnchosen'
+    | 'answerPlaceholder'
+    | 'close'
+    | 'reopen'
+    | 'sideOperator'
+    | 'sideVisitor'
+    | 'stateLive'
+    | 'stateClosed'
+    | 'detailsTitle'
+    | 'detailsSite'
+    | 'detailsState'
+    | 'detailsLastMessageAt'
+    | 'untitled';
 
 /** Подписи страницы: их читает человек потребителя. Набор полон по ключам. */
 export const TALKS_WORDS: Readonly<Record<TTalksWord, string>> = {
@@ -25,7 +38,12 @@ export const TALKS_WORDS: Readonly<Record<TTalksWord, string>> = {
     sideOperator: 'Мы',
     sideVisitor: 'Посетитель',
     stateLive: 'Живой',
-    stateClosed: 'Закрыт',
+    stateClosed: 'Закрытый',
+    detailsTitle: 'Разговор',
+    detailsSite: 'Площадка',
+    detailsState: 'Состояние',
+    detailsLastMessageAt: 'Последняя реплика',
+    untitled: 'Разговор без реплик',
 };
 
 /**

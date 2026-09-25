@@ -13,26 +13,45 @@ import {
 } from '@angular/core';
 import { ChatFeedStore, ChatTalksStore } from '@rt/message-bus-admin/chat/data-access';
 import { AdminChatSiteFilterComponent, AdminChatStateFilterComponent, AdminChatTalkComponent } from '@rt/message-bus-admin/chat/ui';
-import { ChatMessageMapper, chatKitTalks, chatKitThread, IChat, IChatKitTalkRow, IChatSideLabels } from '@rt/message-bus-admin/chat/util';
-import { AdminTextService } from '@rt/message-bus-admin/common/core/util';
-import { BlockDirective, ElemDirective, WINDOW } from '@rt-tools/core';
-import { CHAT_STREAM_PATH, EChatTalkState, IChatMessageEventRow } from '@rt/message-bus-common';
+import {
+    ChatMessageMapper,
+    chatKitTalks,
+    chatKitThread,
+    chatTalkActions,
+    chatTalkDetailRows,
+    chatTalkStateAfter,
+    chatTalkTitle,
+    IChat,
+    IChatKitTalkRow,
+    IChatSideLabels,
+    IChatTalkWords,
+} from '@rt/message-bus-admin/chat/util';
+import { AdminLocaleService, AdminTextService } from '@rt/message-bus-admin/common/core/util';
+import { WINDOW } from '@rt-tools/core';
+import { CHAT_STREAM_PATH, IChatMessageEventRow } from '@rt/message-bus-common';
 import {
     IRtChat,
     IRtThreadList,
-    RtButtonDirective,
+    IRtWorkspaceDetails,
     RtChatComponent,
-    RtEmptyStateComponent,
     RtThreadListComponent,
     RtThreadListFiltersDirective,
     RtThreadListRowDirective,
     RtThreadListSearchDirective,
+    RtWorkspaceAsideDirective,
+    RtWorkspaceCenterDirective,
+    RtWorkspaceComponent,
+    RtWorkspaceDetailsComponent,
+    RtWorkspaceListDirective,
 } from '@rt-tools/ui-kit-v2';
 
 const BEM_BLOCK: string = 'admin-chat';
 
 /** Сколько переписок читается за раз: список идёт страницей, как и в остальных разделах. */
 const TALKS_PAGE_SIZE: number = 50;
+
+/** Ключ, под которым рабочий стол помнит ширины колонок этого раздела. */
+const WORKSPACE_STORAGE_KEY: string = 'admin-chat-workspace';
 
 /**
  * Раздел чата: список переписок слева, лента выбранного разговора справа, поле набора под лентой.
@@ -54,21 +73,20 @@ const TALKS_PAGE_SIZE: number = 50;
     templateUrl: './admin-chat-panel.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
-        // rt-tools
-        BlockDirective,
-        ElemDirective,
-
         // components
         AdminChatSiteFilterComponent,
         AdminChatStateFilterComponent,
         AdminChatTalkComponent,
-        RtButtonDirective,
         RtChatComponent,
-        RtEmptyStateComponent,
         RtThreadListComponent,
         RtThreadListFiltersDirective,
         RtThreadListRowDirective,
         RtThreadListSearchDirective,
+        RtWorkspaceAsideDirective,
+        RtWorkspaceCenterDirective,
+        RtWorkspaceComponent,
+        RtWorkspaceDetailsComponent,
+        RtWorkspaceListDirective,
     ],
     host: { class: BEM_BLOCK },
 })
@@ -79,7 +97,11 @@ export class AdminChatPanelComponent {
     // Тип сужен приведением: средство потока объявлено у глобального объекта, а не у окна
     readonly #window: Window & typeof globalThis = inject(WINDOW) as Window & typeof globalThis;
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
+    readonly #locale: AdminLocaleService = inject(AdminLocaleService);
     readonly #mapper: ChatMessageMapper = new ChatMessageMapper();
+
+    /** Ключ, под которым стол помнит ширины колонок этого раздела. */
+    protected readonly workspaceStorageKey: string = WORKSPACE_STORAGE_KEY;
 
     protected readonly rows: Signal<readonly IChat.Talk.State[]> = this.#talks.rows;
 
@@ -131,9 +153,37 @@ export class AdminChatPanelComponent {
         (): IChat.Talk.State | null => this.rows().find((row: IChat.Talk.State): boolean => row.id === this.chosen()) ?? null
     );
 
-    /** Подпись кнопки состояния: закрыть живой разговор или открыть закрытый снова. */
-    protected readonly stateLabel: Signal<string> = computed((): string =>
-        this.#text.text(this.talk()?.state === EChatTalkState.Closed ? 'chatReopen' : 'chatClose')
+    /** Слова, которыми рабочий стол говорит о разговоре: их берут общие части раздела. */
+    protected readonly talkWords: Signal<IChatTalkWords> = computed((): IChatTalkWords => ({
+        site: this.#text.text('chatTalkSite'),
+        state: this.#text.text('chatTalkState'),
+        lastMessageAt: this.#text.text('chatTalkLastMessageAt'),
+        stateLive: this.#text.text('chatStateLive'),
+        stateClosed: this.#text.text('chatStateClosed'),
+        close: this.#text.text('chatClose'),
+        reopen: this.#text.text('chatReopen'),
+        untitled: this.#text.text('chatTalkUntitled'),
+        sideOperator: this.#text.text('chatSideOperator'),
+        sideVisitor: this.#text.text('chatSideVisitor'),
+    }));
+
+    /** Язык экрана: им строка списка называет минуту последней реплики. */
+    protected readonly locale: Signal<string> = computed((): string => this.#locale.tag());
+
+    /** Заголовок панели подробностей. */
+    protected readonly detailsTitle: Signal<string> = computed((): string => this.#text.text('chatTalkDetails'));
+
+    /** Заголовок ленты — последняя реплика разговора одной строкой. */
+    protected readonly feedTitle: Signal<string> = computed((): string => chatTalkTitle(this.talk(), this.talkWords()));
+
+    /** Свойства выбранного разговора: площадка, состояние и минута последней реплики. */
+    protected readonly detailRows: Signal<readonly IRtWorkspaceDetails.Row[]> = computed((): readonly IRtWorkspaceDetails.Row[] =>
+        chatTalkDetailRows(this.talk(), this.talkWords(), this.#locale.tag())
+    );
+
+    /** Действия над разговором: закрыть живой или открыть закрытый снова. */
+    protected readonly talkActions: Signal<readonly IRtWorkspaceDetails.Action[]> = computed((): readonly IRtWorkspaceDetails.Action[] =>
+        chatTalkActions(this.talk(), this.talkWords())
     );
 
     constructor() {
@@ -172,15 +222,30 @@ export class AdminChatPanelComponent {
         this.#feed.read(talkId);
     }
 
-    /** Закрыть разговор или открыть его снова: список перечитывается ответом сервиса. */
-    protected changeState(): void {
+    /**
+     * Перечитать ленту открытого разговора.
+     *
+     * Реплики приезжают потоком событий, и рукой ленту обновлять обычно незачем. Кнопка стоит на
+     * случай оборванного потока: он рвётся молча, и без неё оператор перезагружал бы страницу.
+     */
+    protected refreshFeed(): void {
+        if (this.chosen()) {
+            this.#feed.read(this.chosen());
+        }
+    }
+
+    /**
+     * Нажатое действие подробностей: закрыть разговор или открыть его снова. Список
+     * перечитывается ответом сервиса.
+     */
+    protected changeState(action: string): void {
         const talk: IChat.Talk.State | null = this.talk();
 
         if (!talk) {
             return;
         }
 
-        this.#talks.changeState(talk.id, talk.state === EChatTalkState.Closed ? EChatTalkState.Live : EChatTalkState.Closed);
+        this.#talks.changeState(talk.id, chatTalkStateAfter(action));
     }
 
     /** Ответить посетителю. Пустая реплика не уходит: отбивать её обращением к сервису незачем. */

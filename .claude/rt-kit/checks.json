@@ -28,6 +28,7 @@
             {
                 "name": "ui-kit-v2",
                 "roots": [
+                    "apps/chat-talks-page",
                     "apps/message-bus-admin",
                     "libs/message-bus-admin"
                 ]

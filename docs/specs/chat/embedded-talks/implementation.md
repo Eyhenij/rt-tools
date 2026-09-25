@@ -9,7 +9,7 @@ task RT-2314 is the installation into a foreign admin and the sample of a signin
 - **The signature carries the minute and lives by it.** — `libs/message-bus-api/chat/util/src/lib/chat-entry.logic.ts:chatEntryMinuteFits` — the minute goes into the signature itself and is allowed a spread in both directions. Outside it the entry is refused.
 - **The sign of the page is given for a time and is asked for anew.** — `apps/chat-talks-page/src/app/talks-entry.service.ts:refused` — an expired sign is refused by a code of its own. On that code the page asks for a new signature, and the person types nothing.
 - **The sign of the page opens one site.** — `libs/message-bus-api/chat/feature/src/lib/chat-embedded.controller.ts:#site` — every operation reads the site out of the sign and is given that site alone. A talk of a neighbouring site answers as not found.
-- **The page shows the same as the panel of the operator, for one site.** — `apps/chat-talks-page/src/app/talks-app.ts:TalksApp` — the list and the chat of the kit, the same ones the panel is drawn by.
+- **The page shows the same as the panel of the operator, for one site.** — `apps/chat-talks-page/src/app/talks-app.ts:TalksApp` — the workspace of the kit with the same three columns. The row, the properties and the actions come from the chat libraries.
 - **The page carries no choice of a site.** — `apps/chat-talks-page/src/app/talks-api.service.ts:talks` — the request of the list carries the sign alone. The site is named by the sign, and the page has no selector.
 - **The page is installed by one script and one tag.** — `apps/chat-talks-embed/src/lib/talks-embed.element.ts:TalksEmbedElement` — the tag `rt-chat-talks` with the key of the site and the address of the signing point. Nothing else is asked of the admin.
 - **The section stands in a frame, and the styles of the two sides never meet.** — `apps/chat-talks-embed/src/lib/talks-embed.logic.ts:talksEmbedFrameSrc` — the address of the frame carries the key of the site and the address of the admin. The page opens inside it.
@@ -23,8 +23,10 @@ service signs its outward calls with it, and a second secret is not created: tha
 on the server of the consumer and is kept there for the same purpose. The sign of the page is a
 short-lived token of the service, not the session cookie of the intake. It travels in the field
 `sign` — in the query of the reads, in the body of the writes, the same way the token of the visitor
-travels. The ready-made pieces are the list `rt-thread-list` and the chat `rt-chat` of the second
-kit — the very ones the panel of the operator is drawn by. The page itself is a build of its own
+travels. The ready-made pieces are the workspace `rt-workspace` with its details `rt-workspace-details`, the
+list `rt-thread-list`, the chat `rt-chat` and the tag `rt-tag` of the second kit — the very ones the
+panel of the operator is drawn by. The widths of the columns the page remembers under the key
+`talks-page-workspace`, its own: the panel has a key of its own. The page itself is a build of its own
 beside the widget of the visitor, and the widget is the sample of such a build.
 
 ## What is not checked here

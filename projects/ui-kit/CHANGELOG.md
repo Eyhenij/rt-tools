@@ -309,5 +309,3 @@ Claude-Session: https://claude.ai/code/session_01EZAAnW4RMcCah7RZeXPsHs
     - `TABLE_COLUMN_TYPES_ENUM` → `ETableColumnTypes`
     - `TEXT_CELL_COLOR_ENUM` → `ETextCellColor`
     - `TOGGLE_SIZE_TYPE_ENUM` → `EToggleSizeType`
-
-Выпуски линии `0.0.x` — в `CHANGELOG-0.0.md` рядом, прежней линии `0.1.x`–`0.3.x` — в `CHANGELOG-0.1-0.3.md`.
