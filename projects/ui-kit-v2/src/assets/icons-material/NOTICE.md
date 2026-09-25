@@ -1,8 +1,10 @@
 # Material drawings of the second icon set
 
 The files next to this notice come from Google's Material Symbols — the `materialsymbolsoutlined`
-family, size 24, weight 700, in two drawings: outlined and filled (`FILL 1`) — and are licensed under
-Apache License 2.0. Weight 700 and the two drawings are how the first kit draws its icons by the font. The upstream project is Google's
+family, optical size 48, weight 700, in two drawings: outlined and filled (`FILL 1`) — and are
+licensed under Apache License 2.0. Optical size 48, weight 700 and the two drawings are how the first
+kit draws its icons by the font; optical size 24 draws the strokes a quarter thicker. They are shown
+at 24 px. The upstream project is Google's
 material-design-icons repository on GitHub; its license text lives there. The name is written
 without backticks on purpose: it is a project on a foreign host, not a path in this tree, and the
 address check judges a backticked name as a path here.

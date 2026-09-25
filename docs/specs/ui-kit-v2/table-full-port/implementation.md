@@ -68,6 +68,7 @@ to the public entry that calls it.
 - **A table with a row menu or inline actions draws the actions strip over the end of every row and an "Actions" header cell as wide as the strip.** — `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table.component.ts:ngAfterViewChecked`; scenarios `SC-UKV-259`, `SC-UKV-260`
 - **Inline actions stand before the row menu button.** — `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table.component.html:data-table-actions`; scenarios `SC-UKV-259`, `SC-UKV-260`
 - **The strip is revealed while the pointer is over its row and while the row's menu is open.** — `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table.component.scss:.rt-data-table-actions`; scenario `SC-UKV-259`
+- **The strip is as high as its row.** — `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table.component.scss:rt-data-table-actions` — no scenario: the height is held by a measurement of a row with a picture
 - **A row whose menu is open is marked as the active row until the menu closes.** — `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table.component.ts:activeRowIndex`; scenario `SC-UKV-261`
 - **A press on an inline action reaches the row unless the application stops it itself.** — `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table.component.html:data-table-row-menu`; scenario `SC-UKV-261`
 

@@ -14,5 +14,16 @@
             min-width: 0;
             flex-grow: 1;
         }
+
+        // Кнопки вида сравнения и очистки берут размер и цвет значков таблицы: материальный набор
+        // рисует их, как первый кит, свой вид оставляет прежними.
+        rt-icon-button {
+            --rt-icon-button-color: var(--rt-list-table-icon-color);
+        }
+
+        .rt-icon-button__icon {
+            min-width: var(--rt-list-table-icon-size);
+            min-height: var(--rt-list-table-icon-size);
+        }
     }
 }

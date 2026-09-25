@@ -97,6 +97,9 @@ export const darkLayout = [
         name: `--rt-list-action-color-bg-hover`,
     },
     {
+        name: `--rt-list-table-icon-color`,
+    },
+    {
         name: `--rt-list-selector-label-color`,
     },
     {

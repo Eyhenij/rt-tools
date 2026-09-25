@@ -329,6 +329,11 @@
     --rt-list-action-color-hover: var(--rt-color-text-primary);
     --rt-list-action-color-bg-hover: var(--rt-icon-button-color-bg-hover);
 
+    /* Значки в таблице списка — кнопки строки отбора и действия строки. Свой вид оставляет их
+       как есть; материальный набор даёт им 24px и серый темы, как у первого кита. */
+    --rt-list-table-icon-size: 0px;
+    --rt-list-table-icon-color: var(--rt-color-text-primary);
+
     /* Подпись флажка «отметить все» на панели списка: свой вид — текст, материальный набор —
        приглушённый серый первого кита. */
     --rt-list-selector-label-color: var(--rt-color-text-primary);

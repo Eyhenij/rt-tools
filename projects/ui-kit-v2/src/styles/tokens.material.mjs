@@ -226,6 +226,8 @@ export const material = [
     { name: `--rt-list-action-shadow-hover`, value: `var(--rt-mat-shadow-fab-hover)` },
     { name: `--rt-list-action-icon-size`, value: `var(--rt-size-6)` },
     { name: `--rt-list-action-color`, value: `var(--rt-mat-neutral-60)` },
+    { name: `--rt-list-table-icon-size`, value: `var(--rt-size-6)` },
+    { name: `--rt-list-table-icon-color`, value: `var(--mat-sys-on-surface-variant, var(--rt-mat-neutral-30))` },
     { name: `--rt-list-action-color-hover`, value: `var(--rt-mat-neutral-100)` },
     { name: `--rt-list-action-color-bg-hover`, value: `transparent` },
     { name: `--rt-list-selector-label-color`, value: `var(--rt-mat-neutral-60)` },

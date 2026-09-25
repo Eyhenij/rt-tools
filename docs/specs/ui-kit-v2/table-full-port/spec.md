@@ -183,6 +183,8 @@ The words are the first kit's; the kit's dictionary gives them in all eight lang
   still draws the strip.
 - **The strip is revealed while the pointer is over its row and while the row's menu is open.** On
   a device without hover it is always shown.
+- **The strip is as high as its row.** A row taller than the ordinary one — with a picture or a
+  wrapped label — is covered to its bottom, as in the first kit.
 - **A row whose menu is open is marked as the active row until the menu closes.**
 - **A press on an inline action reaches the row unless the application stops it itself.** Only the
   row menu button is stopped by the table.
@@ -467,6 +469,8 @@ table that applied it last decides it for all.
 
 ## History of changes
 
+- 25 September 2026 — task RT-2345: the actions strip takes the height of its row. The owner: «эшены
+  строки не занимают всю высоту строки».
 - 24 September 2026 — task RT-2332: the list draws the kit's `rt-pagination` instead of its own
   bar, after «нужно все чтобы таблица юзала уже компоненты второго кита». The page numbers and the
   keys follow the kit's bar. The narrow bar shows «page N of M».
