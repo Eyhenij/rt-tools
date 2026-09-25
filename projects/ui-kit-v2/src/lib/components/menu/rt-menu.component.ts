@@ -1,5 +1,6 @@
+import { FocusKeyManager } from '@angular/cdk/a11y';
 import { BooleanInput } from '@angular/cdk/coercion';
-import { ConnectedPosition, OverlayModule } from '@angular/cdk/overlay';
+import { CdkConnectedOverlay, CdkOverlayOrigin, ConnectedPosition, OverlayModule } from '@angular/cdk/overlay';
 import {
     booleanAttribute,
     ChangeDetectionStrategy,
@@ -12,6 +13,7 @@ import {
     OutputEmitterRef,
     Signal,
     signal,
+    viewChild,
     ViewEncapsulation,
     WritableSignal,
 } from '@angular/core';
@@ -98,6 +100,12 @@ const POSITION_ABOVE_START: ConnectedPosition = {
 export class RtMenuComponent {
     readonly #t_uiActions: Signal<string> = rtKitLabel('uiActions');
 
+    /** Ход стрелками по пунктам открытой панели; у закрытой его нет. */
+    #keyManager: FocusKeyManager<IRtMenu.Focusable> | null = null;
+
+    protected readonly overlay: Signal<CdkConnectedOverlay> = viewChild.required(CdkConnectedOverlay);
+    protected readonly trigger: Signal<CdkOverlayOrigin> = viewChild.required(CdkOverlayOrigin);
+
     protected readonly isOpen: WritableSignal<boolean> = signal<boolean>(false);
 
     protected readonly ariaText: Signal<string> = computed((): string => this.ariaLabel() || this.#t_uiActions());
@@ -143,14 +151,56 @@ export class RtMenuComponent {
         this.#setOpen(false);
     }
 
+    /**
+     * Панель легла на страницу — фокус уходит на первый пункт, как у меню Material. Пункты берутся
+     * из разметки панели, а не запросом компонентов: таблица кладёт их шаблоном приложения, и
+     * запрос содержимого меню их не видит.
+     */
+    protected onAttach(): void {
+        const nodes: HTMLElement[] = Array.from(
+            this.overlay().overlayRef.overlayElement.querySelectorAll<HTMLElement>('[role="menuitem"]')
+        );
+        const focusables: IRtMenu.Focusable[] = nodes.map((node: HTMLElement): IRtMenu.Focusable => ({
+            disabled: node.getAttribute('aria-disabled') === 'true',
+            focus: (): void => node.focus(),
+        }));
+
+        this.#keyManager = new FocusKeyManager<IRtMenu.Focusable>(focusables).withWrap().withHomeAndEnd();
+        this.#keyManager.setFirstItemActive();
+    }
+
+    /** Выбранный пункт закрывает панель и возвращает фокус кнопке, откуда меню открыли. */
+    protected onSelect(): void {
+        this.close();
+        this.#focusTrigger();
+    }
+
     protected onKeydown(event: KeyboardEvent): void {
         if (event.key === 'Escape') {
             this.close();
+            this.#focusTrigger();
+            return;
         }
+
+        if (event.key === 'Tab') {
+            // Tab уводит фокус со страницы меню дальше по порядку — панель за ним не остаётся.
+            this.close();
+            return;
+        }
+
+        this.#keyManager?.onKeydown(event);
+    }
+
+    #focusTrigger(): void {
+        this.trigger().elementRef.nativeElement.querySelector('button')?.focus();
     }
 
     #setOpen(open: boolean): void {
         if (open !== this.isOpen()) {
+            if (!open) {
+                this.#keyManager?.destroy();
+                this.#keyManager = null;
+            }
             this.isOpen.set(open);
             this.openedChange.emit(open);
         }
