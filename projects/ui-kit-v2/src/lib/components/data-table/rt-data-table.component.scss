@@ -1,6 +1,6 @@
 @layer rt-kit.components {
     /* rt-data-table — таблица первого кита во втором. Размеры первого кита положены на шкалу:
-       высота строки 48px — ступень роста контрола lg, поля ячейки 10px округлены к ступени sm,
+       высота строки 48px — ступень роста контрола lg, поля ячейки 10px собраны из ступеней 2 и 0-5,
        место под полосу действий 64px — ступень 3xl, поля ячейки отбора 4px и 8px — ступени xs и
        sm. Подпись шапки 16px — ступень md при межстрочном tight, значение строки 14px — sm.
        Шапка стоит над строками ярусом sticky шкалы, полоса действий — ярусом base: она в
@@ -10,6 +10,7 @@
         --rt-data-table-row-height: var(--rt-control-height-lg);
         --rt-data-table-head-height: calc(var(--rt-control-height-lg) - var(--rt-space-1));
         --rt-data-table-border-width: var(--rt-border-width-thin);
+        --rt-data-table-cell-padding: calc(var(--rt-space-2) + var(--rt-space-0-5));
         --rt-data-table-row-transition-duration: var(--rt-duration-base);
 
         /* Шапку перекрашивает приложение, как в первом ките: цвет и насыщенность подписи, фон
@@ -87,7 +88,7 @@
         &__cell {
             width: fit-content;
             height: 100%;
-            padding: var(--rt-space-sm);
+            padding: var(--rt-data-table-cell-padding);
 
             &--head {
                 position: relative;
