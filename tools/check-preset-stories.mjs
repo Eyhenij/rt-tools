@@ -40,7 +40,7 @@ import { allowlistOf, baselineOf, parseAllowlist, ROOT, skipUnless } from './rt-
 
 /** The families of both entries of the package: the second one keeps its components apart. */
 const COMPONENTS = 'projects/ui-kit-v2/src/lib/components';
-const SECOND_ENTRY = 'projects/ui-kit-v2/rich-editor/src/lib/components';
+const SECOND_ENTRY = 'projects/ui-kit-v2/src/rich-editor/lib/components';
 const PRESET_SOURCE = 'projects/ui-kit-v2/src/styles/tokens.material.mjs';
 const STYLES = 'projects/ui-kit-v2/src/styles';
 const PRESET_PART = "part: 'presets'";
@@ -122,7 +122,9 @@ function reachesPreset(read, own) {
     return false;
 }
 const familyDirs = new Map(
-    [COMPONENTS, SECOND_ENTRY].flatMap((dir) =>
+    [COMPONENTS, SECOND_ENTRY]
+        .filter((dir) => existsSync(join(ROOT, dir)))
+        .flatMap((dir) =>
         readdirSync(join(ROOT, dir))
             .filter((entry) => statSync(join(ROOT, dir, entry)).isDirectory())
             .map((entry) => [entry, join(ROOT, dir, entry)])

@@ -30,7 +30,7 @@
       "@rt-tools/utils": ["projects/utils/src/index.ts"],
       "@rt-tools/ui-kit": ["projects/ui-kit/src/public-api.ts"],
       "@rt-tools/ui-kit-v2": ["projects/ui-kit-v2/src/public-api.ts"],
-      "@rt-tools/ui-kit-v2/rich-editor": ["projects/ui-kit-v2/rich-editor/src/public-api.ts"],
+      "@rt-tools/ui-kit-v2/rich-editor": ["projects/ui-kit-v2/src/rich-editor/public-api.ts"],
       "@rt-tools/agent-kit/cargo": ["projects/agent-kit/src/lib/cargo.ts"],
       "@rt/message-bus-api/chat/util": ["./libs/message-bus-api/chat/util/src/index.ts"],
       "@rt/message-bus-api/chat/data-access": ["./libs/message-bus-api/chat/data-access/src/index.ts"],

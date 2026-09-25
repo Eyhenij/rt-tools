@@ -1,8 +1,8 @@
 import { DebugElement } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
 
-import { QuillMock } from '../../../../../src/testing/quill-mock';
-import { createRtFixture, el, hostClasses, qa, qaAll, textOf } from '../../../../../src/testing/rt-kit-testing';
+import { QuillMock } from '../../../../testing/quill-mock';
+import { createRtFixture, el, hostClasses, qa, qaAll, textOf } from '../../../../testing/rt-kit-testing';
 import { ERtChatMessageStatus, IRtChat } from './rt-chat.model';
 import { RtChatComponent } from './rt-chat.component';
 

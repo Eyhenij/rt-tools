@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
-import { StoryPresetsComponent } from '../../../../../../../src/showcase/story-presets.component';
+import { StoryPresetsComponent } from '../../../../../../showcase/story-presets.component';
 import { RtChatComponent } from '../../rt-chat.component';
 import { IRtChat } from '../../rt-chat.model';
 import { TRtRichEditorToolbar } from '../../../rich-editor/rt-rich-editor.component';

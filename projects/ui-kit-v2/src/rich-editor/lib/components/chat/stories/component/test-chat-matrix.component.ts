@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
-import { StoryRowComponent } from '../../../../../../../src/showcase/story-row.component';
-import { StoryPresetsComponent } from '../../../../../../../src/showcase/story-presets.component';
-import { StoryThemesComponent } from '../../../../../../../src/showcase/story-themes.component';
-import { RtMenuItemComponent } from '../../../../../../../src/lib/components/menu/rt-menu-item.component';
+import { StoryRowComponent } from '../../../../../../showcase/story-row.component';
+import { StoryPresetsComponent } from '../../../../../../showcase/story-presets.component';
+import { StoryThemesComponent } from '../../../../../../showcase/story-themes.component';
+import { RtMenuItemComponent } from '../../../../../../lib/components/menu/rt-menu-item.component';
 import { RtChatMessageActionsDirective } from '../../rt-chat-message-actions.directive';
 import { RtChatComponent } from '../../rt-chat.component';
 import { ERtChatMessageStatus, IRtChat } from '../../rt-chat.model';

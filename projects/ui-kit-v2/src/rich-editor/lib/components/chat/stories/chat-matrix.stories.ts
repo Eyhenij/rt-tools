@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/angular';
 
-import { storyPseudoParameters, storyWidthAtLeast } from '../../../../../../src/showcase';
+import { storyPseudoParameters, storyWidthAtLeast } from '../../../../../showcase';
 import { TestRtChatMatrixComponent } from './component/test-chat-matrix.component';
 
 /**

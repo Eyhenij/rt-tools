@@ -26,7 +26,7 @@ const ROOT = process.cwd();
 
 /** Where the families of the second kit lie. */
 /** The families of both entries of the package: the second one keeps its components apart. */
-const FAMILY_DIRS = ['projects/ui-kit-v2/src/lib/components', 'projects/ui-kit-v2/rich-editor/src/lib/components'];
+const FAMILY_DIRS = ['projects/ui-kit-v2/src/lib/components', 'projects/ui-kit-v2/src/rich-editor/lib/components'];
 
 /** The list of what does not reach the showcase, with a reason for each. */
 const ALLOWLIST = 'tools/kit-coverage-allowlist.json';
@@ -78,7 +78,7 @@ const PLAYGROUND = 'export const Playground:';
 
 
 const familyDirs = new Map(
-    FAMILY_DIRS.flatMap((root) =>
+    FAMILY_DIRS.filter((root) => existsSync(join(ROOT, root))).flatMap((root) =>
         readdirSync(join(ROOT, root), { withFileTypes: true })
             .filter((entry) => entry.isDirectory())
             .map((entry) => [entry.name, join(ROOT, root, entry.name)])
@@ -167,8 +167,8 @@ for (const family of Object.keys(accepted)) {
  * a story. Asked apart because the family answer said yes about thirty components that had no
  * story at all — every one of them lay inside a family that reaches the showcase.
  */
-const declared = FAMILY_DIRS.flatMap((dir) => declarationsOf(ROOT, dir));
-const subjects = storySubjectsOf(ROOT, [...FAMILY_DIRS, 'projects/ui-kit-v2/src/showcase']);
+const declared = FAMILY_DIRS.filter((dir) => existsSync(join(ROOT, dir))).flatMap((dir) => declarationsOf(ROOT, dir));
+const subjects = storySubjectsOf(ROOT, [...FAMILY_DIRS.filter((dir) => existsSync(join(ROOT, dir))), 'projects/ui-kit-v2/src/showcase']);
 const storyless = declared.filter((item) => !subjects.has(item.name));
 const storylessSelectors = new Set(storyless.map((item) => item.selector));
 

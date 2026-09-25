@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/angular';
 
-import { storySnapshotSkip } from '../../../../../../src/showcase';
+import { storySnapshotSkip } from '../../../../../showcase';
 import { TestRtRichEditorComponent } from './component/test-rich-editor.component';
 
 export default {

@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 
-import { STORY_FIELD_WIDTH_WIDE } from '../../../../../../../src/showcase/story-metrics';
-import { StoryRowComponent } from '../../../../../../../src/showcase/story-row.component';
-import { StoryPresetsComponent } from '../../../../../../../src/showcase/story-presets.component';
-import { StoryThemesComponent } from '../../../../../../../src/showcase/story-themes.component';
-import { IQuillDelta } from '../../../../../../../src/lib/util';
-import { RtFieldComponent } from '../../../../../../../src/lib/components/field/rt-field.component';
+import { STORY_FIELD_WIDTH_WIDE } from '../../../../../../showcase/story-metrics';
+import { StoryRowComponent } from '../../../../../../showcase/story-row.component';
+import { StoryPresetsComponent } from '../../../../../../showcase/story-presets.component';
+import { StoryThemesComponent } from '../../../../../../showcase/story-themes.component';
+import { IQuillDelta } from '../../../../../../lib/util';
+import { RtFieldComponent } from '../../../../../../lib/components/field/rt-field.component';
 import { TRtRichEditorToolbar, RtRichEditorComponent } from '../../rt-rich-editor.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */

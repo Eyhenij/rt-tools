@@ -1,7 +1,7 @@
 import { ComponentFixture } from '@angular/core/testing';
 
-import { QuillMock } from '../../../../../src/testing/quill-mock';
-import { createRtFixture, el, hostClasses, qa, qaAll, setInputs } from '../../../../../src/testing/rt-kit-testing';
+import { QuillMock } from '../../../../testing/quill-mock';
+import { createRtFixture, el, hostClasses, qa, qaAll, setInputs } from '../../../../testing/rt-kit-testing';
 
 // Редактор с разметкой грузит Quill динамическим импортом, а он в jsdom не
 // поднимается. Подменяем сам модуль — проверяется обвязка кита, не редактор.

@@ -72,7 +72,7 @@ export default {
             // У всех компонентов этого кита ViewEncapsulation.None, поэтому `:host`
             // не совпадает ни с чем: правило, написанное через него, будет мёртвым,
             // и молча. Хост адресуется классом блока либо именем элемента.
-            files: ['projects/ui-kit-v2/src/lib/**/*.scss', 'projects/ui-kit-v2/rich-editor/src/lib/**/*.scss'],
+            files: ['projects/ui-kit-v2/src/lib/**/*.scss', 'projects/ui-kit-v2/src/rich-editor/lib/**/*.scss'],
             rules: {
                 'rt-tools/no-host-selector': true,
             },

@@ -208,11 +208,11 @@
       "reason": "a showcase story's wrapper: the story aims at the wrapper rather than at the kit's component — the component's input is a signal one, and there is nothing to bind a changeable showcase value to it with",
       "task": "RT-476"
     },
-    "inline-template ×1 @ projects/ui-kit-v2/rich-editor/src/lib/components/chat/stories/component/test-chat-matrix.component.ts": {
+    "inline-template ×1 @ projects/ui-kit-v2/src/rich-editor/lib/components/chat/stories/component/test-chat-matrix.component.ts": {
       "reason": "a showcase story's wrapper: the story aims at the wrapper rather than at the kit's component — the component's input is a signal one, and there is nothing to bind a changeable showcase value to it with",
       "task": "RT-476"
     },
-    "inline-template ×1 @ projects/ui-kit-v2/rich-editor/src/lib/components/chat/stories/component/test-chat.component.ts": {
+    "inline-template ×1 @ projects/ui-kit-v2/src/rich-editor/lib/components/chat/stories/component/test-chat.component.ts": {
       "reason": "a showcase story's wrapper: the story aims at the wrapper rather than at the kit's component — the component's input is a signal one, and there is nothing to bind a changeable showcase value to it with",
       "task": "RT-476"
     },
@@ -500,11 +500,11 @@
       "reason": "a showcase story's wrapper: the story aims at the wrapper rather than at the kit's component — the component's input is a signal one, and there is nothing to bind a changeable showcase value to it with",
       "task": "RT-476"
     },
-    "inline-template ×1 @ projects/ui-kit-v2/rich-editor/src/lib/components/message-composer/stories/component/test-message-composer-matrix.component.ts": {
+    "inline-template ×1 @ projects/ui-kit-v2/src/rich-editor/lib/components/message-composer/stories/component/test-message-composer-matrix.component.ts": {
       "reason": "a showcase story's wrapper: the story aims at the wrapper rather than at the kit's component — the component's input is a signal one, and there is nothing to bind a changeable showcase value to it with",
       "task": "RT-476"
     },
-    "inline-template ×1 @ projects/ui-kit-v2/rich-editor/src/lib/components/message-composer/stories/component/test-message-composer.component.ts": {
+    "inline-template ×1 @ projects/ui-kit-v2/src/rich-editor/lib/components/message-composer/stories/component/test-message-composer.component.ts": {
       "reason": "a showcase story's wrapper: the story aims at the wrapper rather than at the kit's component — the component's input is a signal one, and there is nothing to bind a changeable showcase value to it with",
       "task": "RT-476"
     },
@@ -588,11 +588,11 @@
       "reason": "a showcase story's wrapper: the story aims at the wrapper rather than at the kit's component — the component's input is a signal one, and there is nothing to bind a changeable showcase value to it with",
       "task": "RT-476"
     },
-    "inline-template ×1 @ projects/ui-kit-v2/rich-editor/src/lib/components/rich-editor/stories/component/test-rich-editor-matrix.component.ts": {
+    "inline-template ×1 @ projects/ui-kit-v2/src/rich-editor/lib/components/rich-editor/stories/component/test-rich-editor-matrix.component.ts": {
       "reason": "a showcase story's wrapper: the story aims at the wrapper rather than at the kit's component — the component's input is a signal one, and there is nothing to bind a changeable showcase value to it with",
       "task": "RT-476"
     },
-    "inline-template ×1 @ projects/ui-kit-v2/rich-editor/src/lib/components/rich-editor/stories/component/test-rich-editor.component.ts": {
+    "inline-template ×1 @ projects/ui-kit-v2/src/rich-editor/lib/components/rich-editor/stories/component/test-rich-editor.component.ts": {
       "reason": "a showcase story's wrapper: the story aims at the wrapper rather than at the kit's component — the component's input is a signal one, and there is nothing to bind a changeable showcase value to it with",
       "task": "RT-476"
     },

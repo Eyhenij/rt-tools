@@ -185,7 +185,7 @@ When the run of the snapshots reaches that story
 Then the frame is shot after the component took the sign of the unfinishedness off itself, not by a
 counting of the time
 
-Covered: `projects/ui-kit-v2/rich-editor/src/lib/components/rich-editor/rt-rich-editor.component.spec.ts`.
+Covered: `projects/ui-kit-v2/src/rich-editor/lib/components/rich-editor/rt-rich-editor.component.spec.ts`.
 
 ### SC-UKV-54 — an opened panel lives until the frame
 

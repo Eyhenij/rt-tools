@@ -34,7 +34,7 @@
  *
  * A non-zero exit code and a list of the divergences.
  */
-import { readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join, relative, resolve } from 'node:path';
 
 import { ROOT, allowlistOf, baselineOf, parseAllowlist } from './rt-kit-checks.config.mjs';
@@ -43,7 +43,7 @@ import { ROOT, allowlistOf, baselineOf, parseAllowlist } from './rt-kit-checks.c
  * The set of component styles and the styling layer declaring the order of the sublayers. The
  * package has two entries, and the components of the second one lie in their own directory.
  */
-const COMPONENTS = ['projects/ui-kit-v2/src/lib', 'projects/ui-kit-v2/rich-editor/src/lib'];
+const COMPONENTS = ['projects/ui-kit-v2/src/lib', 'projects/ui-kit-v2/src/rich-editor/lib'];
 const STYLES = 'projects/ui-kit-v2/src/styles';
 const LAYERS_FILE = join(STYLES, '_layers.scss');
 const ALLOWLIST = allowlistOf('cascade-layer');
@@ -119,7 +119,9 @@ const scssIn = (dir) => {
     return out;
 };
 
-const files = COMPONENTS.flatMap((dir) => scssIn(dir)).sort();
+const files = COMPONENTS.filter((dir) => existsSync(resolve(ROOT, dir)))
+    .flatMap((dir) => scssIn(dir))
+    .sort();
 
 for (const file of files) {
     const text = readFileSync(resolve(ROOT, file), 'utf8');

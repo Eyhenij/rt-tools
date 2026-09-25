@@ -34,7 +34,7 @@ export default {
         // The second entry of the package imports the first by its name; the specs run both from
         // the working tree, so the name leads to the sources, not to a built copy.
         '^@rt-tools/ui-kit-v2$': '<rootDir>/src/public-api.ts',
-        '^@rt-tools/ui-kit-v2/rich-editor$': '<rootDir>/rich-editor/src/public-api.ts',
+        '^@rt-tools/ui-kit-v2/rich-editor$': '<rootDir>/src/rich-editor/public-api.ts',
         // @rt-tools/utils writes explicit .js extensions on its relative imports so its ESM output
         // is loadable by Node. Jest resolves the TypeScript sources, so the extension is stripped.
         '^(\\.{1,2}/.*)\\.js$': '$1',

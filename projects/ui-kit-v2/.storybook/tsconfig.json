@@ -6,5 +6,5 @@
     "rootDir": "../.."
   },
   "exclude": ["../src/test-setup.ts", "../src/**/*.spec.ts"],
-  "include": ["../src/**/*.stories.*", "../rich-editor/src/**/*.stories.*", "../docs/**/*.ts", "./preview.ts", "./main.ts"]
+  "include": ["../src/**/*.stories.*", "../docs/**/*.ts", "./preview.ts", "./main.ts"]
 }

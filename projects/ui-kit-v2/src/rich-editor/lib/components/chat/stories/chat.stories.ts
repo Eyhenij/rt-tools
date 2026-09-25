@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/angular';
 
-import { storyWidthAtLeast } from '../../../../../../src/showcase';
+import { storyWidthAtLeast } from '../../../../../showcase';
 import { CHAT_MESSAGES } from './component/chat.fixture';
 import { TestRtChatComponent } from './component/test-chat.component';
 

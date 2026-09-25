@@ -8,7 +8,7 @@
 </rt-field>
 ```
 
-Свои входы поверх общих из [`RtFormControlBase`](../../../../../src/lib/components/form-control/CONTEXT.md):
+Свои входы поверх общих из [`RtFormControlBase`](../../../../lib/components/form-control/CONTEXT.md):
 
 | вход          | тип                    | умолчание |
 | ------------- | ---------------------- | --------- |
@@ -31,6 +31,6 @@
 
 ## Рядом
 
-- [`rt-delta-view`](../../../../../src/lib/components/delta-view/CONTEXT.md) — показ той же модели без редактирования.
+- [`rt-delta-view`](../../../../lib/components/delta-view/CONTEXT.md) — показ той же модели без редактирования.
 - [`rt-message-composer`](../message-composer/CONTEXT.md) — использует редактор в режиме
   форматирования.

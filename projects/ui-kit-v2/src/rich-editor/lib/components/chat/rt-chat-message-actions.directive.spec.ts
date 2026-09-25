@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, signal, WritableSignal } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
 
-import { QuillMock } from '../../../../../src/testing/quill-mock';
-import { createRtFixture, qa, qaAll } from '../../../../../src/testing/rt-kit-testing';
-import { RtMenuItemComponent } from '../../../../../src/lib/components/menu/rt-menu-item.component';
+import { QuillMock } from '../../../../testing/quill-mock';
+import { createRtFixture, qa, qaAll } from '../../../../testing/rt-kit-testing';
+import { RtMenuItemComponent } from '../../../../lib/components/menu/rt-menu-item.component';
 import { RtChatMessageActionsDirective } from './rt-chat-message-actions.directive';
 import { RtChatComponent } from './rt-chat.component';
 import { IRtChat } from './rt-chat.model';

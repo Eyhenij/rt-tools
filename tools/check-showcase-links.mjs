@@ -25,8 +25,6 @@ import { storyNameFromExport, toId } from 'storybook/internal/csf';
 import { allowlistOf, parseAllowlist, ROOT, skipUnless } from './rt-kit-checks.config.mjs';
 
 const SOURCE = 'projects/ui-kit-v2/src';
-/** The second entry of the package: its pages stand in the same showcase. */
-const SECOND_ENTRY = 'projects/ui-kit-v2/rich-editor/src';
 const ALLOWLIST = allowlistOf('showcase-links');
 
 /** How a link to a page of the showcase is written: `./?path=/docs/<address>`. */
@@ -55,7 +53,7 @@ function filesOf(dir) {
     return found;
 }
 
-const files = [...filesOf(join(ROOT, SOURCE)), ...filesOf(join(ROOT, SECOND_ENTRY))];
+const files = filesOf(join(ROOT, SOURCE));
 const pages = new Set();
 const links = [];
 

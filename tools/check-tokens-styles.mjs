@@ -40,7 +40,7 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
 /** The set the check judges. Named by the agreement and repeated in the config next to it. */
 /** Component styles of both entries of the package. */
-const FILES = 'projects/ui-kit-v2/{src,rich-editor/src}/lib/**/*.scss';
+const FILES = 'projects/ui-kit-v2/src/{lib,rich-editor/lib}/**/*.scss';
 const CONFIG_FILE = join(ROOT, 'tools/stylelint-tokens.config.mjs');
 const ALLOWLIST = allowlistOf('tokens-styles');
 

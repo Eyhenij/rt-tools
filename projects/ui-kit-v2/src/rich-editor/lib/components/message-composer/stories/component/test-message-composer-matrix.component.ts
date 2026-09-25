@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
-import { StoryRowComponent } from '../../../../../../../src/showcase/story-row.component';
-import { StoryPresetsComponent } from '../../../../../../../src/showcase/story-presets.component';
-import { StoryThemesComponent } from '../../../../../../../src/showcase/story-themes.component';
+import { StoryRowComponent } from '../../../../../../showcase/story-row.component';
+import { StoryPresetsComponent } from '../../../../../../showcase/story-presets.component';
+import { StoryThemesComponent } from '../../../../../../showcase/story-themes.component';
 import { RtMessageComposerComponent } from '../../rt-message-composer.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */

@@ -2,10 +2,10 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 
-import { QuillMock, quillInstances, resetQuillInstances } from '../../../../../src/testing/quill-mock';
-import { createRtFixture, hostClasses, qa, textOf } from '../../../../../src/testing/rt-kit-testing';
-import { IQuillDelta } from '../../../../../src/lib/util';
-import { RtFieldComponent } from '../../../../../src/lib/components/field/rt-field.component';
+import { QuillMock, quillInstances, resetQuillInstances } from '../../../../testing/quill-mock';
+import { createRtFixture, hostClasses, qa, textOf } from '../../../../testing/rt-kit-testing';
+import { IQuillDelta } from '../../../../lib/util';
+import { RtFieldComponent } from '../../../../lib/components/field/rt-field.component';
 import { RtRichEditorComponent } from './rt-rich-editor.component';
 
 // Сам Quill в jsdom не поднимается — подменяем модуль целиком. `__esModule`
