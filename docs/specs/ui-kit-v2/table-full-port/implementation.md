@@ -136,14 +136,14 @@ to the public entry that calls it.
 
 ### The pagination bar
 
-- **The bar is hidden while all records fit into the smallest offered page size.** — `projects/ui-kit-v2/src/lib/components/data-list/rt-data-list-pagination.logic.ts:dataListPaginationShown`; scenario `SC-UKV-311`
+- **The bar is hidden while all records fit into the smallest offered page size.** — `projects/ui-kit-v2/src/lib/components/pagination/rt-pagination.component.ts:isVisible`; scenario `SC-UKV-311`
 - **The page sizes offered are 10, 20, 40 and 50, each only while half of it does not exceed the number of records, and the current size always.** — `projects/ui-kit-v2/src/lib/components/data-list/rt-data-list-pagination.logic.ts:dataListPageSizes`; scenario —
-- **Up to six pages are all shown; beyond that the first, the last and the neighbours of the current one are shown with dividers between them.** — `projects/ui-kit-v2/src/lib/components/data-list/rt-data-list-pagination.logic.ts:dataListPageNumbers`; scenario —
-- **The arrows and the numbers ask for a page only when there is one to go to.** — `projects/ui-kit-v2/src/lib/components/data-list/rt-data-list-pagination.logic.ts:dataListPageReachable`; scenario —
-- **An arrow or a page number asks for its page on any key pressed on it, Tab included.** — `projects/ui-kit-v2/src/lib/components/data-list/pagination/rt-data-list-pagination.component.html:keydown`; scenario —
-- **A change of the page size asks for the page that keeps the person at the same distance from the end of the list.** — `projects/ui-kit-v2/src/lib/components/data-list/rt-data-list-pagination.logic.ts:dataListPageAfterSizeChange`; scenario `SC-UKV-312`
+- **The first, the last and the neighbours of the current page are shown, with gaps between them.** — `projects/ui-kit-v2/src/lib/components/pagination/rt-pagination.logic.ts:pageItemsOf`; scenario —
+- **The arrows and the numbers ask for a page only when there is one to go to.** — `projects/ui-kit-v2/src/lib/components/pagination/rt-pagination.component.ts:goTo`; scenario —
+- **An arrow or a page number is a button: it asks for its page on a click, Enter or Space.** — `projects/ui-kit-v2/src/lib/components/pagination/rt-pagination.component.html:goTo`; scenario —
+- **A change of the page size asks for the page that keeps the person at the same distance from the end of the list.** — `projects/ui-kit-v2/src/lib/components/data-list/rt-data-list.component.ts:onPageSize`; scenario `SC-UKV-312`
 
 ### The narrow screen
 
 - **Below the kit's threshold the table keeps its columns and scrolls sideways; it never turns into cards.** — `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table.component.scss:.rt-data-table`; scenario `SC-UKV-313`
-- **Below the threshold no hint of the family is shown, the pagination bar shows only the current number, and the toolbar puts the search on a line of its own.** — `projects/ui-kit-v2/src/lib/components/data-list/pagination/rt-data-list-pagination.component.ts:narrow`; scenario `SC-UKV-313`
+- **Below the threshold no hint of the family is shown, the pagination bar narrower than 460 px shows «page N of M» between the arrows, and the toolbar puts the search on a line of its own.** — `projects/ui-kit-v2/src/lib/components/pagination/rt-pagination.component.html:compact`; scenario `SC-UKV-313`

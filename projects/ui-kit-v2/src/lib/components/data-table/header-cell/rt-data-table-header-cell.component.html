@@ -3,7 +3,7 @@
         @if (iconTemplate(); as template) {
             <ng-container [ngTemplateOutlet]="template" [ngTemplateOutletContext]="iconContext()" />
         } @else if (kitIcon(); as name) {
-            <rt-icon size="lg" [name]="name" />
+            <rt-icon size="lg" [name]="name" [fill]="icon()?.outlined !== true" />
         }
     </ng-template>
 

@@ -65,7 +65,9 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 Бокс, галочка и подпись — элементы блока `rt-checkbox`; заливка отмеченного и смешанного берётся
 из `--rt-color-action-primary`, кольцо фокуса — из `--rt-shadow-focus-ring`. Галочка и прочерк
-нарисованы [`rt-icon`](./?path=/docs/atoms-icon-overview--docs) (`check` и `minus`).
+нарисованы [`rt-icon`](./?path=/docs/atoms-icon-overview--docs) (`check` и `minus`). Цвет подписи —
+`--rt-checkbox-color-label`, по умолчанию цвет текста. Шрифт флажок берёт у окружения: корень — кнопка,
+и без `font: inherit` браузер дал бы подписи свой системный шрифт.
 
 ## Входы
 

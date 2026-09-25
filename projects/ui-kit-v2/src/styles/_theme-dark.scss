@@ -42,11 +42,36 @@
 
     /* Input border видим в dark (в light — transparent). */
     --rt-input-color-border: var(--rt-charcoal-border);
+    --rt-list-search-color-border: var(--rt-input-color-border);
+    --rt-list-search-color-bg: var(--rt-input-color-bg);
+    --rt-list-search-icon-color: var(--rt-input-icon-color);
+    --rt-list-search-color-placeholder: var(--rt-input-color-text-placeholder);
+    --rt-list-settings-item-bg: var(--rt-color-bg-subtle);
+    --rt-list-settings-icon-color: var(--rt-color-text-muted);
+    --rt-list-action-color: var(--rt-color-text-primary);
+    --rt-list-action-color-hover: var(--rt-color-text-primary);
+    --rt-list-action-color-bg-hover: var(--rt-icon-button-color-bg-hover);
+    --rt-list-selector-label-color: var(--rt-color-text-primary);
+    --rt-pagination-box-color-border: var(--rt-color-border-default);
+    --rt-pagination-box-color-text: var(--rt-color-text-primary);
+    --rt-pagination-box-current-color-bg: var(--rt-color-bg-surface-subtle);
+    --rt-pagination-box-current-color-text: var(--rt-color-text-primary);
+    --rt-pagination-box-current-color-border: var(--rt-color-border-strong);
+    --rt-pagination-arrow-color: var(--rt-color-text-primary);
+    --rt-pagination-field-color-border: var(--rt-input-color-border);
+    --rt-pagination-field-color-bg: var(--rt-input-color-bg);
+    --rt-pagination-field-color-text: var(--rt-input-color-text);
+    --rt-input-icon-color: var(--rt-neutral-600);
 
     /* Stepper — в dark рельса уходит от яркого синего к приглушённому серо-синему
        (текущий шаг остаётся янтарным из light-семантики). */
     --rt-color-stepper-track: var(--rt-navy-600);
     --rt-color-stepper-progress: var(--rt-slate-300);
+
+    /* Шапка таблицы — та же подложка роли, что в светлой: ответ стоит, чтобы тёмная тема
+       выигрывала у материального набора и на этом имени. */
+    --rt-color-table-head-bg: var(--rt-color-bg-surface-subtle);
+    --rt-color-field-fill-underline: var(--rt-color-border-strong);
 
     /* Навигация — вся шкала серых разворачивается: подложка уходит глубже
        поверхности, а приглушённые подписи становятся светлее фона, а не темнее.
@@ -107,6 +132,8 @@
        общий bg-surface на обоих слил бы их в один силуэт. Тень на графите
        не работает, роль разделителя берёт на себя контраст. */
     --rt-toggle-color-track: var(--rt-charcoal-950);
+    --rt-toggle-color-track-on: var(--rt-color-action-primary);
+    --rt-toggle-color-border: var(--rt-color-border-strong);
     --rt-toggle-color-thumb: var(--rt-neutral-50);
     --rt-toggle-shadow-thumb: var(--rt-shadow-none);
 

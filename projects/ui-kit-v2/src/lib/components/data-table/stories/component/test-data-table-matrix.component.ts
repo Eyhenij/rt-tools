@@ -105,7 +105,7 @@ const CLICKABLE_CASES: readonly { readonly name: string; readonly clickable: boo
     template: `
         @switch (part) {
             @case ('columns') {
-                <app-story-presets caption="Все виды колонок в обоих наборах">
+                <app-story-presets single caption="Все виды колонок">
                     <ng-template>
                         <app-data-table-cell storageKey="story-columns" [columns]="allColumns" [rows]="rows" />
                     </ng-template>
@@ -113,7 +113,7 @@ const CLICKABLE_CASES: readonly { readonly name: string; readonly clickable: boo
             }
 
             @case ('sort') {
-                <app-story-presets caption="Порядок строк в обоих наборах">
+                <app-story-presets single caption="Порядок строк">
                     <ng-template>
                         <app-story-row [items]="sortCases" [itemLabel]="caseLabel">
                             <ng-template let-item>
@@ -129,7 +129,7 @@ const CLICKABLE_CASES: readonly { readonly name: string; readonly clickable: boo
             }
 
             @case ('filters') {
-                <app-story-presets caption="Строка отбора в обоих наборах">
+                <app-story-presets single caption="Строка отбора">
                     <ng-template>
                         <app-story-row [items]="filterCases" [itemLabel]="caseLabel">
                             <ng-template let-item>
@@ -146,7 +146,7 @@ const CLICKABLE_CASES: readonly { readonly name: string; readonly clickable: boo
             }
 
             @case ('selection') {
-                <app-story-presets caption="Колонка выбора строк в обоих наборах">
+                <app-story-presets single caption="Колонка выбора строк">
                     <ng-template>
                         <app-story-row [items]="selectionCases" [itemLabel]="caseLabel">
                             <ng-template let-item>
@@ -164,7 +164,7 @@ const CLICKABLE_CASES: readonly { readonly name: string; readonly clickable: boo
             }
 
             @case ('actions') {
-                <app-story-presets caption="Полоса действий строки в обоих наборах">
+                <app-story-presets single caption="Полоса действий строки">
                     <ng-template>
                         <app-story-row [items]="actionCases" [itemLabel]="caseLabel">
                             <ng-template let-item>
@@ -181,7 +181,7 @@ const CLICKABLE_CASES: readonly { readonly name: string; readonly clickable: boo
             }
 
             @case ('clickable') {
-                <app-story-presets caption="Нажимаемость строки в обоих наборах">
+                <app-story-presets single caption="Нажимаемость строки">
                     <ng-template>
                         <app-story-row [items]="clickableCases" [itemLabel]="caseLabel">
                             <ng-template let-item>
@@ -197,15 +197,15 @@ const CLICKABLE_CASES: readonly { readonly name: string; readonly clickable: boo
             }
 
             @case ('presets') {
-                <app-story-presets caption="Таблица в обоих наборах">
-                    <ng-template>
-                        <app-data-table-cell storageKey="story-presets" [columns]="shortColumns" [rows]="rows" />
+                <app-story-row caption="Таблица в виде первого кита и в своём виде второго кита" slotWidth="28rem" [items]="looks">
+                    <ng-template let-look>
+                        <app-data-table-cell [storageKey]="'story-presets-' + look" [look]="look" [columns]="shortColumns" [rows]="rows" />
                     </ng-template>
-                </app-story-presets>
+                </app-story-row>
             }
 
             @case ('themes') {
-                <app-story-presets caption="Таблица в обеих темах в обоих наборах">
+                <app-story-presets single caption="Таблица в обеих темах">
                     <ng-template>
                         <app-story-themes>
                             <ng-template>
@@ -227,6 +227,9 @@ const CLICKABLE_CASES: readonly { readonly name: string; readonly clickable: boo
     ],
 })
 export class TestRtDataTableMatrixComponent {
+    /** Два вида семьи: вид первого кита стоит по умолчанию, свой вид второго кита задаётся входом. */
+    protected readonly looks: readonly IRtDataTable.Look[] = ['material', 'own'];
+
     public part: TDataTableMatrixPart = 'columns';
 
     public readonly rows: ITestDataTableRow[] = TEST_DATA_TABLE_ROWS;

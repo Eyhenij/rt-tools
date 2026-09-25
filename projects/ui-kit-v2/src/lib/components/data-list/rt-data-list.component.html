@@ -42,6 +42,7 @@
         } @else {
             <div rtElem="content">
                 <rt-data-table
+                    [look]="look()"
                     [keyExp]="keyExp()"
                     [entities]="entities()"
                     [currentSortModel]="currentSortModel()"
@@ -79,7 +80,13 @@
                 </rt-data-table>
             </div>
 
-            <rt-data-list-pagination [currentPageModel]="pageModel()" (pageModelChange)="onPageModelChange($event)" />
+            <rt-pagination
+                [pageModel]="pageModel()"
+                [perPageOptions]="pageSizes()"
+                [prevIcon]="look() === 'material' ? 'arrow-left' : 'chevron-left'"
+                [nextIcon]="look() === 'material' ? 'arrow-right' : 'chevron-right'"
+                (pageChange)="onPageNumber($event)"
+                (perPageChange)="onPageSize($event)" />
         }
     </ng-container>
 }

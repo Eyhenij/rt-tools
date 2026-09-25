@@ -70,6 +70,66 @@ export const darkLayout = [
         name: `--rt-input-color-border`,
     },
     {
+        name: `--rt-list-search-color-border`,
+    },
+    {
+        name: `--rt-list-search-color-bg`,
+    },
+    {
+        name: `--rt-list-search-icon-color`,
+    },
+    {
+        name: `--rt-list-search-color-placeholder`,
+    },
+    {
+        name: `--rt-list-settings-item-bg`,
+    },
+    {
+        name: `--rt-list-settings-icon-color`,
+    },
+    {
+        name: `--rt-list-action-color`,
+    },
+    {
+        name: `--rt-list-action-color-hover`,
+    },
+    {
+        name: `--rt-list-action-color-bg-hover`,
+    },
+    {
+        name: `--rt-list-selector-label-color`,
+    },
+    {
+        name: `--rt-pagination-box-color-border`,
+    },
+    {
+        name: `--rt-pagination-box-color-text`,
+    },
+    {
+        name: `--rt-pagination-box-current-color-bg`,
+    },
+    {
+        name: `--rt-pagination-box-current-color-text`,
+    },
+    {
+        name: `--rt-pagination-box-current-color-border`,
+    },
+    {
+        name: `--rt-pagination-arrow-color`,
+    },
+    {
+        name: `--rt-pagination-field-color-border`,
+    },
+    {
+        name: `--rt-pagination-field-color-bg`,
+    },
+    {
+        name: `--rt-pagination-field-color-text`,
+    },
+    {
+        name: `--rt-input-icon-color`,
+    },
+    {
         lead: `    /* Stepper — в dark рельса уходит от яркого синего к приглушённому серо-синему
        (текущий шаг остаётся янтарным из light-семантики). */`,
         space: true,
@@ -77,6 +137,15 @@ export const darkLayout = [
     },
     {
         name: `--rt-color-stepper-progress`,
+    },
+    {
+        lead: `    /* Шапка таблицы — та же подложка роли, что в светлой: ответ стоит, чтобы тёмная тема
+       выигрывала у материального набора и на этом имени. */`,
+        space: true,
+        name: `--rt-color-table-head-bg`,
+    },
+    {
+        name: `--rt-color-field-fill-underline`,
     },
     {
         lead: `    /* Навигация — вся шкала серых разворачивается: подложка уходит глубже
@@ -188,6 +257,12 @@ export const darkLayout = [
        не работает, роль разделителя берёт на себя контраст. */`,
         space: true,
         name: `--rt-toggle-color-track`,
+    },
+    {
+        name: `--rt-toggle-color-track-on`,
+    },
+    {
+        name: `--rt-toggle-color-border`,
     },
     {
         name: `--rt-toggle-color-thumb`,

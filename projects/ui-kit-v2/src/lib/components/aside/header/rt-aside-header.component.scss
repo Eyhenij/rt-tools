@@ -3,13 +3,20 @@
        Селекторы префиксованы `.rt-aside-header`. */
 
     .rt-aside-header {
+        --rt-aside-header-title-size: var(--rt-text-xl);
+        --rt-aside-header-title-weight: var(--rt-font-weight-bold);
+        --rt-aside-header-subtitle-size: var(--rt-text-sm);
+        --rt-aside-header-gap: var(--rt-space-sm);
+        --rt-aside-header-min-height: auto;
+
         padding: var(--rt-aside-inset);
 
         &__content {
             display: flex;
             min-width: 0;
+            min-height: var(--rt-aside-header-min-height);
             align-items: center;
-            gap: var(--rt-space-sm);
+            gap: var(--rt-aside-header-gap);
         }
 
         &__back {
@@ -41,7 +48,8 @@
             min-width: 0;
             margin: 0;
             color: var(--rt-color-text-primary);
-            font-size: var(--rt-text-xl);
+            font-size: var(--rt-aside-header-title-size);
+            font-weight: var(--rt-aside-header-title-weight);
 
             /* Ellipsis для длинного заголовка: skeleton-wrapper рендерит `{{ title }}`
                как ng-content внутри inline-flex; чтобы `text-overflow: ellipsis`
@@ -53,6 +61,14 @@
                 text-overflow: ellipsis;
                 white-space: nowrap;
             }
+        }
+
+        /* Подпись под заголовком переносится, а не режется: это фраза, а не имя. */
+        &__subtitle {
+            margin: 0;
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-aside-header-subtitle-size);
+            line-height: var(--rt-leading-snug);
         }
 
         /* Ряд бэйджей под title — переносится на новую строку при нехватке ширины. */

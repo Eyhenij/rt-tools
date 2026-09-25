@@ -84,6 +84,7 @@ export type TRtDesignTokenName =
     | '--rt-color-border-focus'
     | '--rt-color-border-strong'
     | '--rt-color-border-subtle'
+    | '--rt-color-field-fill-underline'
     | '--rt-color-skeleton-base'
     | '--rt-color-skeleton-wave'
     | '--rt-color-state-danger'
@@ -100,6 +101,7 @@ export type TRtDesignTokenName =
     | '--rt-color-stepper-current-subtle'
     | '--rt-color-stepper-progress'
     | '--rt-color-stepper-track'
+    | '--rt-color-table-head-bg'
     | '--rt-color-text-disabled'
     | '--rt-color-text-inverse'
     | '--rt-color-text-link'
@@ -178,10 +180,13 @@ export type TRtDesignTokenName =
     | '--rt-input-focus-shadow'
     | '--rt-input-focus-shadow-error'
     | '--rt-input-font-size'
+    | '--rt-input-gap'
     | '--rt-input-height'
     | '--rt-input-height-lg'
     | '--rt-input-height-md'
     | '--rt-input-height-sm'
+    | '--rt-input-icon-color'
+    | '--rt-input-icon-size'
     | '--rt-input-line-height'
     | '--rt-input-max-width'
     | '--rt-input-padding-x'
@@ -195,6 +200,29 @@ export type TRtDesignTokenName =
     | '--rt-leading-snug'
     | '--rt-leading-tight'
     | '--rt-letter-spacing-wide'
+    | '--rt-list-action-color'
+    | '--rt-list-action-color-bg-hover'
+    | '--rt-list-action-color-hover'
+    | '--rt-list-action-divider-height'
+    | '--rt-list-action-gap'
+    | '--rt-list-action-icon-size'
+    | '--rt-list-action-radius'
+    | '--rt-list-action-shadow'
+    | '--rt-list-action-shadow-hover'
+    | '--rt-list-search-color-bg'
+    | '--rt-list-search-color-border'
+    | '--rt-list-search-color-placeholder'
+    | '--rt-list-search-font-size'
+    | '--rt-list-search-gap'
+    | '--rt-list-search-height'
+    | '--rt-list-search-icon-color'
+    | '--rt-list-search-icon-size'
+    | '--rt-list-search-padding-x'
+    | '--rt-list-search-radius'
+    | '--rt-list-search-width'
+    | '--rt-list-selector-label-color'
+    | '--rt-list-settings-icon-color'
+    | '--rt-list-settings-item-bg'
     | '--rt-mat-blue-100'
     | '--rt-mat-blue-20'
     | '--rt-mat-blue-40'
@@ -247,6 +275,8 @@ export type TRtDesignTokenName =
     | '--rt-mat-red-80'
     | '--rt-mat-red-active'
     | '--rt-mat-red-hover'
+    | '--rt-mat-shadow-fab'
+    | '--rt-mat-shadow-fab-hover'
     | '--rt-nav-caret-size'
     | '--rt-nav-color-disabled'
     | '--rt-nav-color-focus'
@@ -319,6 +349,30 @@ export type TRtDesignTokenName =
     | '--rt-overlay-white-40'
     | '--rt-overlay-white-50'
     | '--rt-overlay-white-8'
+    | '--rt-pagination-arrow-color'
+    | '--rt-pagination-arrow-radius'
+    | '--rt-pagination-arrow-shadow'
+    | '--rt-pagination-arrow-size'
+    | '--rt-pagination-box-color-border'
+    | '--rt-pagination-box-color-text'
+    | '--rt-pagination-box-current-color-bg'
+    | '--rt-pagination-box-current-color-border'
+    | '--rt-pagination-box-current-color-text'
+    | '--rt-pagination-box-current-font-weight'
+    | '--rt-pagination-box-radius'
+    | '--rt-pagination-box-size'
+    | '--rt-pagination-field-color-bg'
+    | '--rt-pagination-field-color-border'
+    | '--rt-pagination-field-color-text'
+    | '--rt-pagination-field-height'
+    | '--rt-pagination-field-padding-x'
+    | '--rt-pagination-field-radius'
+    | '--rt-pagination-gap'
+    | '--rt-pagination-justify'
+    | '--rt-pagination-nav-gap'
+    | '--rt-pagination-per-page-gap'
+    | '--rt-pagination-per-page-label-white-space'
+    | '--rt-pagination-range-display'
     | '--rt-profile-avatar-font-size'
     | '--rt-profile-avatar-size'
     | '--rt-profile-item-content-gap'
@@ -537,6 +591,7 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-color-border-focus',
     '--rt-color-border-strong',
     '--rt-color-border-subtle',
+    '--rt-color-field-fill-underline',
     '--rt-color-skeleton-base',
     '--rt-color-skeleton-wave',
     '--rt-color-state-danger',
@@ -553,6 +608,7 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-color-stepper-current-subtle',
     '--rt-color-stepper-progress',
     '--rt-color-stepper-track',
+    '--rt-color-table-head-bg',
     '--rt-color-text-disabled',
     '--rt-color-text-inverse',
     '--rt-color-text-link',
@@ -631,10 +687,13 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-input-focus-shadow',
     '--rt-input-focus-shadow-error',
     '--rt-input-font-size',
+    '--rt-input-gap',
     '--rt-input-height',
     '--rt-input-height-lg',
     '--rt-input-height-md',
     '--rt-input-height-sm',
+    '--rt-input-icon-color',
+    '--rt-input-icon-size',
     '--rt-input-line-height',
     '--rt-input-max-width',
     '--rt-input-padding-x',
@@ -648,6 +707,29 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-leading-snug',
     '--rt-leading-tight',
     '--rt-letter-spacing-wide',
+    '--rt-list-action-color',
+    '--rt-list-action-color-bg-hover',
+    '--rt-list-action-color-hover',
+    '--rt-list-action-divider-height',
+    '--rt-list-action-gap',
+    '--rt-list-action-icon-size',
+    '--rt-list-action-radius',
+    '--rt-list-action-shadow',
+    '--rt-list-action-shadow-hover',
+    '--rt-list-search-color-bg',
+    '--rt-list-search-color-border',
+    '--rt-list-search-color-placeholder',
+    '--rt-list-search-font-size',
+    '--rt-list-search-gap',
+    '--rt-list-search-height',
+    '--rt-list-search-icon-color',
+    '--rt-list-search-icon-size',
+    '--rt-list-search-padding-x',
+    '--rt-list-search-radius',
+    '--rt-list-search-width',
+    '--rt-list-selector-label-color',
+    '--rt-list-settings-icon-color',
+    '--rt-list-settings-item-bg',
     '--rt-mat-blue-100',
     '--rt-mat-blue-20',
     '--rt-mat-blue-40',
@@ -700,6 +782,8 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-mat-red-80',
     '--rt-mat-red-active',
     '--rt-mat-red-hover',
+    '--rt-mat-shadow-fab',
+    '--rt-mat-shadow-fab-hover',
     '--rt-nav-caret-size',
     '--rt-nav-color-disabled',
     '--rt-nav-color-focus',
@@ -772,6 +856,30 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-overlay-white-40',
     '--rt-overlay-white-50',
     '--rt-overlay-white-8',
+    '--rt-pagination-arrow-color',
+    '--rt-pagination-arrow-radius',
+    '--rt-pagination-arrow-shadow',
+    '--rt-pagination-arrow-size',
+    '--rt-pagination-box-color-border',
+    '--rt-pagination-box-color-text',
+    '--rt-pagination-box-current-color-bg',
+    '--rt-pagination-box-current-color-border',
+    '--rt-pagination-box-current-color-text',
+    '--rt-pagination-box-current-font-weight',
+    '--rt-pagination-box-radius',
+    '--rt-pagination-box-size',
+    '--rt-pagination-field-color-bg',
+    '--rt-pagination-field-color-border',
+    '--rt-pagination-field-color-text',
+    '--rt-pagination-field-height',
+    '--rt-pagination-field-padding-x',
+    '--rt-pagination-field-radius',
+    '--rt-pagination-gap',
+    '--rt-pagination-justify',
+    '--rt-pagination-nav-gap',
+    '--rt-pagination-per-page-gap',
+    '--rt-pagination-per-page-label-white-space',
+    '--rt-pagination-range-display',
     '--rt-profile-avatar-font-size',
     '--rt-profile-avatar-size',
     '--rt-profile-item-content-gap',

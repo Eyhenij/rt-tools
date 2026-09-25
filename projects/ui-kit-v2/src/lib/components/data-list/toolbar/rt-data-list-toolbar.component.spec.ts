@@ -4,6 +4,7 @@ import { ComponentFixture } from '@angular/core/testing';
 import { TNullable } from '@rt-tools/utils';
 
 import { createRtFixture, el, qa, textOf } from '../../../../testing/rt-kit-testing';
+import { IRtInput } from '../../input/rt-input.model';
 import { RtDataListToolbarActionsDirective, RtDataListToolbarSelectorsDirective } from '../rt-data-list-toolbar.directive';
 import { RtDataListToolbarComponent } from './rt-data-list-toolbar.component';
 
@@ -11,6 +12,7 @@ import { RtDataListToolbarComponent } from './rt-data-list-toolbar.component';
     selector: 'rt-test-data-list-toolbar-host',
     template: `
         <rt-data-list-toolbar
+            [searchAppearance]="searchAppearance()"
             [isFiltersShown]="filtersShown()"
             [isFiltersEmpty]="filtersEmpty()"
             [isPlaceholderShown]="placeholderShown()"
@@ -35,6 +37,7 @@ import { RtDataListToolbarComponent } from './rt-data-list-toolbar.component';
     imports: [RtDataListToolbarComponent, RtDataListToolbarActionsDirective, RtDataListToolbarSelectorsDirective],
 })
 class ToolbarHostComponent {
+    public readonly searchAppearance: WritableSignal<IRtInput.Appearance> = signal<IRtInput.Appearance>('outline');
     public readonly filtersShown: WritableSignal<boolean> = signal(false);
     public readonly filtersEmpty: WritableSignal<boolean> = signal(true);
     public readonly placeholderShown: WritableSignal<boolean> = signal(false);
@@ -91,6 +94,17 @@ describe('RtDataListToolbarComponent', () => {
 
         expect(fixture.componentInstance.searches).toEqual(['анн']);
     });
+
+    it.each(['outline', 'fill'] as const)(
+        'SC-UKV-356 — поиск в виде %s одного размера: высоту ему даёт набор оформления, а не вид',
+        (appearance: IRtInput.Appearance) => {
+            const fixture: ComponentFixture<ToolbarHostComponent> = setup((host: ToolbarHostComponent): void =>
+                host.searchAppearance.set(appearance)
+            );
+
+            expect(el(fixture, '[qa-dataid="data-list-search"]')?.nativeElement.classList).toContain('rt-input--size--sm');
+        }
+    );
 
     it('очищенное поле спрашивает пустой поиск сразу, а тот же текст — не спрашивает вовсе', () => {
         const fixture: ComponentFixture<ToolbarHostComponent> = setup();

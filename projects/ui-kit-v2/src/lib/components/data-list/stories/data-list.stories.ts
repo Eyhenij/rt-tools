@@ -4,7 +4,9 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtDataListComponent } from './component/test-data-list.component';
 
 export default {
-    title: 'Organisms/DynamicList/DataList',
+    title: 'Organisms/Material Dynamic List/DataList',
+    // Тема первого кита на всю страницу: таблица первого кита рисуется как на его витрине.
+    globals: { preset: 'first-kit-theme' },
     component: TestRtDataListComponent,
     argTypes: {
         filtersShown: { control: { type: 'boolean' } },

@@ -131,8 +131,9 @@ The words are the first kit's; the kit's dictionary gives them in all eight lang
 
 - **An icon a column declaration names, in its header or its cells, is drawn by the kit's own icon
   set through the kit's map of first-kit names; nothing is drawn by a font.** The declaration keeps
-  the first kit's name; the map gives it the kit's drawing. The icon's "outlined" flag is accepted
-  and changes nothing: the kit's set has one drawing per name.
+  the first kit's name; the map gives it the kit's drawing. Without the icon's "outlined" flag the
+  icon is filled, as the first kit draws it; the flag gives the outlined drawing. Only the material
+  set has both drawings — the own set draws a name one way.
 - **The application can hand the family an icon template by the directive `rtDataTableIcon`,
   placed inside `rt-data-table` or inside `rt-data-list`, which hands it to its table.** The
   template receives the icon name, the column and, in a cell, the row; it draws whatever the
@@ -291,10 +292,10 @@ The words are the first kit's; the kit's dictionary gives them in all eight lang
 - **The bar is hidden while all records fit into the smallest offered page size.**
 - **The page sizes offered are 10, 20, 40 and 50, each only while half of it does not exceed the
   number of records, and the current size always.**
-- **Up to six pages are all shown; beyond that the first, the last and the neighbours of the
-  current one are shown with dividers between them.**
+- **The first, the last and the neighbours of the current page are shown, with gaps between
+  them.**
 - **The arrows and the numbers ask for a page only when there is one to go to.**
-- **An arrow or a page number asks for its page on any key pressed on it, Tab included.**
+- **An arrow or a page number is a button: it asks for its page on a click, Enter or Space.**
 - **A change of the page size asks for the page that keeps the person at the same distance from
   the end of the list.**
 
@@ -302,8 +303,8 @@ The words are the first kit's; the kit's dictionary gives them in all eight lang
 
 - **Below the kit's threshold the table keeps its columns and scrolls sideways; it never turns into
   cards.**
-- **Below the threshold no hint of the family is shown, the pagination bar shows only the current
-  number, and the toolbar puts the search on a line of its own.**
+- **Below the threshold no hint of the family is shown, the pagination bar narrower than 460 px shows
+  «page N of M» between the arrows, and the toolbar puts the search on a line of its own.**
 
 ## What is out of scope
 
@@ -356,7 +357,8 @@ flags. The selection lives while the screen is open and is not saved.
 | a narrow screen                         | the table scrolls sideways; no hints; the compact pagination bar   |
 
 The showcase gets stories of its own, apart from the stories of `rt-table` and `rt-dynamic-list`:
-the table under "Organisms/Table/DataTable", the list under "Organisms/Data/DataList". Each has
+the table under "Organisms/Material Dynamic List/DataTable", the list under "Organisms/Material Dynamic List/DataList", next to
+`rt-dynamic-list` in one group. Each has
 `Overview`, `Playground`, then one story per axis — `Columns` (every column type, the dash, a cut
 value, icons on both sides by the kit's map and by an icon template, copy), `Sort`, `Filters` (every filter type, operators), `Selection`
 (none, some and all of the page; switched off), `SingleSelection`, `RowEvents` (press, double
@@ -465,6 +467,9 @@ table that applied it last decides it for all.
 
 ## History of changes
 
+- 24 September 2026 — task RT-2332: the list draws the kit's `rt-pagination` instead of its own
+  bar, after «нужно все чтобы таблица юзала уже компоненты второго кита». The page numbers and the
+  keys follow the kit's bar. The narrow bar shows «page N of M».
 - 23 September 2026 — task RT-2324 by the owner's remarks on the showcase: the list's settings
   panel in the first kit's look, the four-arrow handle, the toolbar yielding width, the two field
   looks, the paired frames; scenarios `SC-UKV-351`–`SC-UKV-354`.

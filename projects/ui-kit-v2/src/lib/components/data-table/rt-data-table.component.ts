@@ -26,6 +26,8 @@ import { FormsModule } from '@angular/forms';
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 import { EFilterOperatorType, ISortModel, TNullable, transformArrayInput } from '@rt-tools/utils';
 
+import { IRtKitConfig } from '../../config/rt-kit-config.model';
+import { rtKitDefault } from '../../config/rt-kit-config.providers';
 import { rtKitLabel } from '../../i18n';
 import { IRtInput } from '../input/rt-input.model';
 import { RtCheckboxComponent } from '../checkbox/rt-checkbox.component';
@@ -43,7 +45,7 @@ import {
 import { RtDataTableConfigService } from './rt-data-table-config.service';
 import { RtDataTableIconDirective } from './rt-data-table-icon.directive';
 import { RT_DATA_TABLE_ROW_HOST, RtDataTableRowClickDirective } from './rt-data-table-row-click.directive';
-import { ERtDataTableColumnType, IRtDataTable, TRtDataTableFilters } from './rt-data-table.model';
+import { ERtDataTableColumnType, IRtDataTable, RT_PRESET_MATERIAL_CLASS, TRtDataTableFilters } from './rt-data-table.model';
 
 const BEM_BLOCK: string = 'rt-data-table';
 
@@ -78,7 +80,7 @@ const BEM_BLOCK: string = 'rt-data-table';
         NgTemplateOutlet,
         RtDataTableRowClickDirective,
     ],
-    host: { class: BEM_BLOCK },
+    host: { class: BEM_BLOCK, '[class.rt-preset-material]': "look() === 'material'" },
     providers: [{ provide: RT_DATA_TABLE_ROW_HOST, useExisting: forwardRef(() => RtDataTableComponent) }],
 })
 export class RtDataTableComponent<
@@ -88,12 +90,22 @@ export class RtDataTableComponent<
 > implements AfterViewChecked {
     readonly #configService: RtDataTableConfigService<ENTITY_TYPE> = inject(RtDataTableConfigService);
 
+    /* Вид считается из настроек при объявлении входа: вход в разметке по-прежнему перебивает всё. */
+    readonly #look: IRtDataTable.Look = rtKitDefault(
+        'dataTable',
+        (it: IRtKitConfig.DataTable): IRtDataTable.Look | undefined => it.look,
+        'material'
+    );
+
     /** Полоса действий и две ячейки, которым она отдаёт свою ширину, — приём первого кита. */
     protected readonly rowActionsRef: Signal<TNullable<ElementRef<HTMLElement>>> = viewChild<ElementRef<HTMLElement>>('rowActions');
     protected readonly headerSpacerRef: Signal<TNullable<ElementRef<HTMLElement>>> = viewChild<ElementRef<HTMLElement>>('headerSpacer');
     protected readonly rowSpacerRef: Signal<TNullable<ElementRef<HTMLElement>>> = viewChild<ElementRef<HTMLElement>>('rowSpacer');
 
     protected readonly columnTypes: typeof ERtDataTableColumnType = ERtDataTableColumnType;
+
+    /** Классы меню строки: оно открывается поверх страницы и вид семьи получает от неё. */
+    protected readonly menuPanelClass: Signal<string[]> = computed(() => (this.look() === 'material' ? [RT_PRESET_MATERIAL_CLASS] : []));
 
     protected readonly actionsLabel: Signal<string> = rtKitLabel('dataTableActions');
     protected readonly selectRowLabel: Signal<string> = rtKitLabel('dataTableSelectRow');
@@ -108,6 +120,12 @@ export class RtDataTableComponent<
 
     /** Колонки — из службы настроек: их порядок и видимость помнит она. */
     /** Вид полей отбора: `outline` — рамка со всех сторон, `fill` — залитое поле с чертой снизу. */
+    /**
+     * Вид семьи. Материальный набор стоит на самом узле, а не на странице: семья выглядит как первый
+     * кит, где бы её ни поставили, и соседи на странице своего вида не теряют.
+     */
+    public readonly look: InputSignal<IRtDataTable.Look> = input<IRtDataTable.Look>(this.#look);
+
     public readonly filterAppearance: InputSignal<IRtInput.Appearance> = input<IRtInput.Appearance>('outline');
 
     public readonly columns: Signal<Array<IRtDataTable.Column<ENTITY_TYPE>>> = computed(() => this.#configService.tableConfig().columns);

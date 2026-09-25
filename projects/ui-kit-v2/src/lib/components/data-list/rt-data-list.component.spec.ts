@@ -1,14 +1,17 @@
 import { ChangeDetectionStrategy, Component, EnvironmentProviders, Provider, Signal, signal, WritableSignal } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
+import { EMPTY, Observable } from 'rxjs';
 
 import { EFilterOperatorType, IFilterModel, IPageModel } from '@rt-tools/utils';
 
+import { provideRtKit } from '../../config/rt-kit-config.providers';
 import { provideRtKitLabels, TRtKitLabelKey, TRtKitLabelParams } from '../../i18n';
 import { createRtFixture, el, qa, textOf } from '../../../testing/rt-kit-testing';
 import { RtDataTableConfigService } from '../data-table/rt-data-table-config.service';
-import { ERtDataTableColumnType, ERtDataTableFilterType, IRtDataTable } from '../data-table/rt-data-table.model';
+import { ERtDataTableColumnType, ERtDataTableFilterType, IRtDataTable, RT_PRESET_MATERIAL_CLASS } from '../data-table/rt-data-table.model';
 import { IRtInput } from '../input/rt-input.model';
 import { RtDataListComponent } from './rt-data-list.component';
+import { IRtAsideConfig, RtAsideService } from '../aside/rt-aside.service';
 
 interface IEntity extends Record<string, unknown> {
     id: number;
@@ -148,7 +151,103 @@ class SecondListComponent {
 })
 class TwoListsHostComponent {}
 
+/** Список без указанного вида — так его объявляет приложение, которое полагается на умолчание. */
+@Component({
+    selector: 'rt-test-default-look-host',
+    template: `
+        <rt-data-list tableConfigStorageKey="default-look" isFiltersShown [entities]="rows" [pageModel]="page" [currentSortModel]="null" />
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtDataListComponent],
+    providers: [{ provide: RtDataTableConfigService, useValue: CONFIG_STUB }],
+})
+class DefaultLookHostComponent {
+    public readonly rows: IEntity[] = ROWS;
+    public readonly page: IPageModel = PAGE;
+}
+
+/** Список без указанного вида, нарисованный с записями и, по желанию, с настройками кита. */
+async function drawDefaultLook(extra: Array<EnvironmentProviders | Provider> = []): Promise<ComponentFixture<DefaultLookHostComponent>> {
+    const fixture: ComponentFixture<DefaultLookHostComponent> = createRtFixture(
+        DefaultLookHostComponent,
+        {},
+        { providers: extra, skipInitialDetect: true }
+    );
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    return fixture;
+}
+
+/** Стоит ли на узле класс материального набора — признак вида первого кита. */
+function hasClass(fixture: ComponentFixture<unknown>, selector: string): boolean {
+    return (el(fixture, selector)?.nativeElement as HTMLElement).classList.contains(RT_PRESET_MATERIAL_CLASS);
+}
+
 describe('RtDataListComponent', () => {
+    it('SC-UKV-359 — без указанного вида поиск залит, как у поля Material первого кита, а поля отбора в рамке', async (): Promise<void> => {
+        const fixture: ComponentFixture<DefaultLookHostComponent> = createRtFixture(
+            DefaultLookHostComponent,
+            {},
+            { skipInitialDetect: true }
+        );
+
+        fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
+
+        const isFill: (anchor: string) => boolean | undefined = (anchor: string): boolean | undefined =>
+            (qa(fixture, anchor)?.nativeElement as HTMLElement | undefined)?.className.includes('--appearance--fill');
+
+        expect([isFill('data-list-search'), isFill('data-table-filter-input')]).toEqual([true, false]);
+    });
+
+    it('SC-UKV-360 — без настроек список и его таблица стоят в виде первого кита', async (): Promise<void> => {
+        const fixture: ComponentFixture<DefaultLookHostComponent> = await drawDefaultLook();
+
+        expect([hasClass(fixture, 'rt-data-list'), hasClass(fixture, 'rt-data-table')]).toEqual([true, true]);
+    });
+
+    it('SC-UKV-360 — свой вид второго кита задаётся настройками кита', async (): Promise<void> => {
+        const fixture: ComponentFixture<DefaultLookHostComponent> = await drawDefaultLook([
+            provideRtKit({ components: { dataTable: { look: 'own' } } }),
+        ]);
+
+        expect([hasClass(fixture, 'rt-data-list'), hasClass(fixture, 'rt-data-table')]).toEqual([false, false]);
+    });
+
+    it('SC-UKV-362 — панель колонок и подложка под ней получают набор вида первого кита', async (): Promise<void> => {
+        const opened: IRtAsideConfig[] = [];
+        const aside: unknown = {
+            open: (_component: unknown, config?: IRtAsideConfig): { afterClosed: () => Observable<never> } => {
+                opened.push(config ?? {});
+
+                return { afterClosed: (): Observable<never> => EMPTY };
+            },
+        };
+        const fixture: ComponentFixture<DefaultLookHostComponent> = await drawDefaultLook([{ provide: RtAsideService, useValue: aside }]);
+
+        (qa(fixture, 'data-list-table-config')?.nativeElement as HTMLElement).querySelector('button')?.click();
+        fixture.detectChanges();
+
+        expect([opened[0]?.panelClass, opened[0]?.backdropClass]).toEqual([
+            RT_PRESET_MATERIAL_CLASS,
+            ['rt-aside-backdrop', RT_PRESET_MATERIAL_CLASS],
+        ]);
+    });
+
+    it('SC-UKV-361 — вид поиска и полей отбора по умолчанию задаётся настройками кита', async (): Promise<void> => {
+        const fixture: ComponentFixture<DefaultLookHostComponent> = await drawDefaultLook([
+            provideRtKit({ components: { dataList: { appearance: 'outline', filterAppearance: 'fill' } } }),
+        ]);
+        const isFill: (anchor: string) => boolean | undefined = (anchor: string): boolean | undefined =>
+            (qa(fixture, anchor)?.nativeElement as HTMLElement | undefined)?.className.includes('--appearance--fill');
+
+        expect([isFill('data-list-search'), isFill('data-table-filter-input')]).toEqual([false, true]);
+    });
+
     it('SC-UKV-354 — вид поиска и вид полей отбора задаются порознь и доходят до полей', async (): Promise<void> => {
         const fixture: ComponentFixture<DataListHostComponent> = await setup((host: DataListHostComponent): void => {
             host.rows.set(ROWS);

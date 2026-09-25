@@ -365,21 +365,21 @@ Covered: `projects/ui-kit-v2/src/lib/components/data-list/toolbar/rt-data-list-t
 Given a page model of 8 records and the page size 10
 When the list is drawn
 Then no pagination bar is drawn
-Covered: `projects/ui-kit-v2/src/lib/components/data-list/pagination/rt-data-list-pagination.component.spec.ts`.
+Covered: `projects/ui-kit-v2/src/lib/components/data-list/rt-data-list.pagination.spec.ts`.
 
 ### SC-UKV-312 — a change of the page size keeps the distance from the end
 
 Given 100 records, page size 10 and the eighth page shown
 When a person chooses the page size 20
 Then the application is asked for page 4 of size 20
-Covered: `projects/ui-kit-v2/src/lib/components/data-list/pagination/rt-data-list-pagination.component.spec.ts`.
+Covered: `projects/ui-kit-v2/src/lib/components/data-list/rt-data-list.pagination.spec.ts`.
 
 ### SC-UKV-313 — a narrow screen scrolls the table sideways instead of drawing cards
 
 Given a data list of eight columns on a screen below the kit's threshold
 When it is drawn
 Then the rows stay a table wider than the screen, it scrolls sideways, and no hint opens on hover
-Not covered: a frame at that width is impossible — the kit's threshold is a media query over the window width, and the showing's window is never narrow. The substance of the scenario is held by the frame of a narrow box, where no card view switches on and the eight columns stay a table clipped by it: `projects/ui-kit-v2/.storybook/__snapshots__/organisms-dynamiclist-datalist--narrow.png`; the sideways scroll itself is the table's own `overflow: auto` and is held by reading.
+Not covered: a frame at that width is impossible — the kit's threshold is a media query over the window width, and the showing's window is never narrow. The substance of the scenario is held by the frame of a narrow box, where no card view switches on and the eight columns stay a table clipped by it: `projects/ui-kit-v2/.storybook/__snapshots__/organisms-material-dynamic-list-datalist--narrow.png`; the sideways scroll itself is the table's own `overflow: auto` and is held by reading.
 
 ### SC-UKV-314 — the counter stands in place of a hidden select all
 
@@ -456,7 +456,7 @@ Covered: `projects/ui-kit-v2/src/lib/components/data-list/rt-data-list-selectors
 Given the list's theme story open on a canvas 900 px wide
 When the showcase draws both halves of every set
 Then no node of a half passes its right edge
-Not covered: passing the edge shows only in the raster, and a call does not read the raster. It is held by the measurement at three canvas widths and by the frame `projects/ui-kit-v2/.storybook/__snapshots__/organisms-dynamiclist-datalist--themes.png`.
+Not covered: passing the edge shows only in the raster, and a call does not read the raster. It is held by the measurement at three canvas widths and by the frame `projects/ui-kit-v2/.storybook/__snapshots__/organisms-material-dynamic-list-datalist--themes.png`.
 
 ### SC-UKV-352 — the settings panel draws the first kit's look
 

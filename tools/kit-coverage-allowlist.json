@@ -54,7 +54,6 @@
     "[rtDataTableRowClick]": "projects/ui-kit-v2/src/lib/components/data-table/stories/data-table-matrix.stories.ts",
     "rt-data-table[rtDataTableSelectors]": "projects/ui-kit-v2/src/lib/components/data-table/stories/data-table-matrix.stories.ts",
     "rt-data-list-toolbar": "projects/ui-kit-v2/src/lib/components/data-list/stories/data-list-matrix.stories.ts",
-    "rt-data-list-pagination": "projects/ui-kit-v2/src/lib/components/data-list/stories/data-list-matrix.stories.ts",
     "rt-data-list-settings-aside": "projects/ui-kit-v2/src/lib/components/data-list/stories/data-list-matrix.stories.ts",
     "rt-data-list[rtDataListSelectors]": "projects/ui-kit-v2/src/lib/components/data-list/stories/data-list-matrix.stories.ts"
   },

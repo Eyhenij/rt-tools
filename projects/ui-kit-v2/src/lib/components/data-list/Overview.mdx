@@ -1,6 +1,6 @@
 import { Meta, Title } from '@storybook/addon-docs/blocks';
 
-<Meta title="Organisms/DynamicList/DataList/Overview" />
+<Meta title="Organisms/Material Dynamic List/DataList/Overview" />
 
 <Title>DataList — `rt-data-list`</Title>
 
@@ -28,7 +28,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 ## Когда не применять
 
 - **Одна таблица без поиска, страниц и настройки колонок** —
-  [`rt-data-table`](./?path=/docs/organisms-dynamiclist-datatable-overview--docs).
+  [`rt-data-table`](./?path=/docs/organisms-material-dynamic-list-datatable-overview--docs).
 - **Новый экран без наследства первого кита** — [`rt-table`](./?path=/docs/organisms-table-table--docs).
 
 ## Оси
@@ -86,38 +86,50 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Оформление
 
-Обе темы стоят рядом в истории `Themes`, оба набора оформления — в `Presets` и в каждой матрице.
+По умолчанию список рисуется видом первого кита: материальный набор стоит на нём самом, и боковая
+панель колонок и меню строки получают его же. Свой вид второго кита задаёт вход `look` или раздел
+`dataTable` настроек кита; вид поиска и полей отбора по умолчанию — раздел `dataList`. Панель
+колонок в виде первого кита повторяет его панель: подпись в шапке, переключатели в цвете темы, лиловые
+плашки колонок, кнопки-таблетки и подложка без размытия. Кнопки действий на панели списка в этом
+виде — круглые кнопки действия первого кита с подъёмом, значком 24px и промежутком 16px, подпись
+«отметить все» — серая; имена для них — `--rt-list-action-*` и `--rt-list-selector-label-color`. Оба вида
+стоят рядом в истории `Presets`, обе темы — в `Themes`; остальные истории показывают вид по
+умолчанию под фиолетовой темой первого кита, как его витрина.
+
+Истории `ManyItems`, `FewItems` и `NoItems` показывают весь список с тем же наполнением, что у
+списка первого кита на его витрине: те же колонки, свои ячейки, кнопки в панели, действия строки.
 
 ## Рядом
 
-- [`rt-data-table`](./?path=/docs/organisms-dynamiclist-datatable-overview--docs) — таблица внутри этого списка.
+- [`rt-data-table`](./?path=/docs/organisms-material-dynamic-list-datatable-overview--docs) — таблица внутри этого списка.
 - [`rt-table`](./?path=/docs/organisms-table-table--docs) — таблица без наследства первого кита.
 
 ## Входы
 
-| вход                        | тип                   | умолчание      | что делает                                                             |
-| --------------------------- | --------------------- | -------------- | ---------------------------------------------------------------------- |
-| `appearance`                | `'outline' \| 'fill'` | `'outline'`    | вид поля поиска: рамка со всех сторон или залитое поле с чертой снизу  |
-| `filterAppearance`          | `'outline' \| 'fill'` | `'outline'`    | вид полей отбора: рамка со всех сторон или залитое поле с чертой снизу |
-| `tableConfigStorageKey`     | `string`              | **обязателен** | ключ, под которым лежит настройка колонок                              |
-| `entities`                  | `ENTITY[]`            | **обязателен** | записи нынешней страницы                                               |
-| `pageModel`                 | `IPageModel`          | **обязателен** | нынешняя страница: номер, размер, всего записей                        |
-| `currentSortModel`          | `ISortModel \| null`  | **обязателен** | нынешний порядок                                                       |
-| `filterModel`               | `IFilterModel[]`      | `[]`           | нынешние условия отбора                                                |
-| `searchTerm`                | `string \| null`      | `''`           | что стоит в поле поиска                                                |
-| `keyExp`                    | `keyof ENTITY`        | `'id'`         | чем различаются записи                                                 |
-| `loading`                   | `boolean`             | `false`        | первая загрузка: вместо списка крутилка                                |
-| `fetching`                  | `boolean`             | `false`        | дозагрузка: крутилка поверх строк                                      |
-| `isTableRowsClickable`      | `boolean`             | `false`        | отзывается ли строка на нажатие                                        |
-| `isFiltersShown`            | `boolean`             | `false`        | показывать ли строку отбора                                            |
-| `isRefreshButtonShown`      | `boolean`             | `true`         | показывать ли кнопку обновления                                        |
-| `isTableConfigButtonShown`  | `boolean`             | `true`         | показывать ли кнопку настройки колонок                                 |
-| `isPaginationShown`         | `boolean`             | `true`         | принят ради переезда без правок и ничего не меняет                     |
-| `isMultiSelect`             | `boolean`             | `true`         | выбор многих или по одной — вход директивы выбора                      |
-| `isMultiSelectExtendedMod`  | `boolean`             | `true`         | отмечать ли не пришедшие страницы — вход директивы выбора              |
-| `isSelectAllSelectorShown`  | `boolean`             | `true`         | показывать ли «отметить все» — вход директивы выбора                   |
-| `isSelectorsColumnDisabled` | `boolean`             | `false`        | недоступна ли колонка выбора — вход директивы выбора                   |
-| `selectedEntitiesKeys`      | `Array<ENTITY[KEY]>`  | `[]`           | отметки, названные заранее — вход директивы выбора                     |
+| вход                        | тип                   | умолчание      | что делает                                                                           |
+| --------------------------- | --------------------- | -------------- | ------------------------------------------------------------------------------------ |
+| `look`                      | `'material' \| 'own'` | `'material'`   | вид семьи: как в первом ките или свой вид второго кита; умолчание — из настроек кита |
+| `appearance`                | `'outline' \| 'fill'` | `'fill'`       | вид поля поиска; умолчание — из настроек кита, как у первого кита                    |
+| `filterAppearance`          | `'outline' \| 'fill'` | `'outline'`    | вид полей отбора: рамка со всех сторон или залитое поле с чертой снизу               |
+| `tableConfigStorageKey`     | `string`              | **обязателен** | ключ, под которым лежит настройка колонок                                            |
+| `entities`                  | `ENTITY[]`            | **обязателен** | записи нынешней страницы                                                             |
+| `pageModel`                 | `IPageModel`          | **обязателен** | нынешняя страница: номер, размер, всего записей                                      |
+| `currentSortModel`          | `ISortModel \| null`  | **обязателен** | нынешний порядок                                                                     |
+| `filterModel`               | `IFilterModel[]`      | `[]`           | нынешние условия отбора                                                              |
+| `searchTerm`                | `string \| null`      | `''`           | что стоит в поле поиска                                                              |
+| `keyExp`                    | `keyof ENTITY`        | `'id'`         | чем различаются записи                                                               |
+| `loading`                   | `boolean`             | `false`        | первая загрузка: вместо списка крутилка                                              |
+| `fetching`                  | `boolean`             | `false`        | дозагрузка: крутилка поверх строк                                                    |
+| `isTableRowsClickable`      | `boolean`             | `false`        | отзывается ли строка на нажатие                                                      |
+| `isFiltersShown`            | `boolean`             | `false`        | показывать ли строку отбора                                                          |
+| `isRefreshButtonShown`      | `boolean`             | `true`         | показывать ли кнопку обновления                                                      |
+| `isTableConfigButtonShown`  | `boolean`             | `true`         | показывать ли кнопку настройки колонок                                               |
+| `isPaginationShown`         | `boolean`             | `true`         | принят ради переезда без правок и ничего не меняет                                   |
+| `isMultiSelect`             | `boolean`             | `true`         | выбор многих или по одной — вход директивы выбора                                    |
+| `isMultiSelectExtendedMod`  | `boolean`             | `true`         | отмечать ли не пришедшие страницы — вход директивы выбора                            |
+| `isSelectAllSelectorShown`  | `boolean`             | `true`         | показывать ли «отметить все» — вход директивы выбора                                 |
+| `isSelectorsColumnDisabled` | `boolean`             | `false`        | недоступна ли колонка выбора — вход директивы выбора                                 |
+| `selectedEntitiesKeys`      | `Array<ENTITY[KEY]>`  | `[]`           | отметки, названные заранее — вход директивы выбора                                   |
 
 ## Выходы
 

@@ -41,3 +41,21 @@ body {
     background-color: var(--rt-color-bg-page);
     color: var(--rt-color-text-primary);
 }
+
+/* Фиолетовая тема Material — та, что стоит на витрине первого кита (`mat.$violet-palette`,
+   Material 22). Объявлена обычными свойствами: пакета Material у второго кита нет, и витрина
+   показывает, что набор читает тему по именам, а не по библиотеке. Значения сняты со сборки
+   `mat.theme` с этой палитрой. */
+[data-showcase-material-theme='violet'] {
+    --mat-sys-primary: #7d00fa;
+    --mat-sys-primary-container: #ecdcff;
+    --mat-sys-secondary-container: #eadef7;
+    --mat-sys-error: #ba1a1a;
+    --mat-sys-error-container: #ffdad6;
+    --mat-sys-surface: #fef8fc;
+    --mat-sys-surface-variant: #e8e0eb;
+    --mat-sys-inverse-surface: #323033;
+    --mat-sys-on-surface-variant: #49454e;
+    --mat-sys-outline: #7b757f;
+    --mat-form-field-filled-container-color: #e8e0eb;
+}

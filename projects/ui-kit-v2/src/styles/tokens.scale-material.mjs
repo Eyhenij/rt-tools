@@ -151,4 +151,16 @@ export const scaleMaterial = [
         name: `--rt-mat-neutral-active`,
         value: `color-mix(in srgb, var(--rt-mat-neutral-60) 80%, #000)`,
     },
+
+    {
+        lead: `    /* Материальный набор: тени круглой кнопки действия первого кита — подъём 6 в покое и 8 под
+       указателем, как у mat-mini-fab. Составное значение — ступень целиком, по частям не собирается. */`,
+        space: true,
+        name: `--rt-mat-shadow-fab`,
+        value: `0 3px 5px -1px rgb(0 0 0 / 20%), 0 6px 10px 0 rgb(0 0 0 / 14%), 0 1px 18px 0 rgb(0 0 0 / 12%)`,
+    },
+    {
+        name: `--rt-mat-shadow-fab-hover`,
+        value: `0 5px 5px -3px rgb(0 0 0 / 20%), 0 8px 10px 1px rgb(0 0 0 / 14%), 0 3px 14px 2px rgb(0 0 0 / 12%)`,
+    },
 ];

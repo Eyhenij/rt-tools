@@ -42,6 +42,8 @@
                `box-shadow` целиком и тень покоя на это время снимает — списком они встанут
                только тогда, когда покой перестанет быть `none`. */
             --rt-icon-button-shadow: var(--rt-shadow-none);
+            --rt-icon-button-shadow-hover: var(--rt-icon-button-shadow);
+            --rt-icon-button-color-hover: var(--rt-icon-button-color);
             --rt-icon-button-transition-duration: var(--rt-duration-fast);
 
             position: relative;
@@ -96,9 +98,16 @@
                 border-radius: var(--rt-icon-button-square-radius);
             }
 
+            /* Подъём под указателем — ручка для потребителя, как тень покоя; по умолчанию равен
+               тени покоя, и кнопка без подъёма под указателем не меняется. */
+            &:hover:not(:disabled) {
+                box-shadow: var(--rt-icon-button-shadow-hover);
+            }
+
             &--ghost {
                 &:hover:not(:disabled) {
                     background-color: var(--rt-icon-button-color-bg-hover);
+                    color: var(--rt-icon-button-color-hover);
                 }
 
                 &.rt-icon-button--active {

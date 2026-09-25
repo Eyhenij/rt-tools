@@ -90,6 +90,12 @@ export class RtAsideHeaderComponent {
     public readonly overline: InputSignal<string | null> = input<string | null>(null);
 
     /**
+     * Приглушённая подпись ПОД заголовком: что делается в панели. Null (дефолт) —
+     * строки нет. Как надзаголовок, в skeleton-режиме не участвует.
+     */
+    public readonly subtitle: InputSignal<string | null> = input<string | null>(null);
+
+    /**
      * Ряд бэйджей (`rt-tag`) под заголовком — контекст сущности (статус, метка
      * записи и т.п.). Пустой массив (дефолт) — ряд не рендерится. Async-данные:
      * потребитель отдаёт `[]` пока сущность не зарезолвилась.

@@ -15,14 +15,14 @@
 @mixin rt-preset-material-tokens {
     /* Подложки */
     --rt-color-bg-page: var(--rt-mat-neutral-5);
-    --rt-color-bg-surface: var(--rt-mat-neutral-0);
+    --rt-color-bg-surface: var(--mat-sys-surface, var(--rt-mat-neutral-0));
     --rt-color-bg-surface-subtle: var(--rt-mat-overlay-black-4);
-    --rt-color-bg-surface-subtle-2: var(--rt-mat-neutral-15);
+    --rt-color-bg-surface-subtle-2: var(--mat-form-field-filled-container-color, var(--mat-sys-surface-variant, var(--rt-mat-neutral-15)));
     --rt-color-bg-hover: var(--rt-mat-neutral-10);
     --rt-color-bg-subtle: var(--rt-mat-neutral-10);
     --rt-color-bg-overlay: var(--rt-mat-overlay-black-32);
-    --rt-color-bg-inverse: var(--rt-mat-neutral-100);
-    --rt-color-bg-nav: var(--rt-mat-navy-100); /* марка первого кита: обвязка тёмная в обоих наборах */
+    --rt-color-bg-inverse: var(--mat-sys-inverse-surface, var(--rt-mat-neutral-100));
+    --rt-color-bg-nav: var(--mat-sys-primary, var(--rt-mat-navy-100)); /* марка первого кита: обвязка тёмная в обоих наборах */
     --rt-color-bg-page-auth: var(--rt-mat-neutral-5);
     --rt-color-bg-surface-auth-card: var(--rt-mat-neutral-0);
 
@@ -31,8 +31,8 @@
     --rt-color-text-muted: var(--rt-mat-neutral-60);
     --rt-color-text-disabled: var(--rt-mat-neutral-40);
     --rt-color-text-inverse: var(--rt-mat-neutral-0);
-    --rt-color-text-link: var(--rt-mat-blue-100);
-    --rt-color-text-link-hover: var(--rt-mat-blue-hover);
+    --rt-color-text-link: var(--mat-sys-primary, var(--rt-mat-blue-100));
+    --rt-color-text-link-hover: color-mix(in srgb, var(--mat-sys-primary, var(--rt-mat-blue-100)) 90%, #000);
 
     /* Рамки */
     --rt-color-border-default: var(--rt-mat-neutral-25);
@@ -41,11 +41,11 @@
     --rt-color-border-focus: var(--rt-mat-blue-40); /* кольцо фокуса первого кита светлее его действия */
 
     /* Действие: подложка, наведение, нажатие, подпись на них и цвет роли на поверхности */
-    --rt-color-action-primary: var(--rt-mat-blue-100);
-    --rt-color-action-primary-hover: var(--rt-mat-blue-hover);
-    --rt-color-action-primary-active: var(--rt-mat-blue-active);
-    --rt-color-action-primary-subtle: var(--rt-mat-overlay-blue-8);
-    --rt-color-action-primary-soft: var(--rt-mat-overlay-blue-24);
+    --rt-color-action-primary: var(--mat-sys-primary, var(--rt-mat-blue-100));
+    --rt-color-action-primary-hover: color-mix(in srgb, var(--mat-sys-primary, var(--rt-mat-blue-100)) 90%, #000);
+    --rt-color-action-primary-active: color-mix(in srgb, var(--mat-sys-primary, var(--rt-mat-blue-100)) 80%, #000);
+    --rt-color-action-primary-subtle: color-mix(in srgb, var(--mat-sys-primary, var(--rt-mat-blue-100)) 8%, transparent);
+    --rt-color-action-primary-soft: color-mix(in srgb, var(--mat-sys-primary, var(--rt-mat-blue-100)) 24%, transparent);
     --rt-color-action-on-primary: var(--rt-mat-neutral-0);
     --rt-color-action-secondary: var(--rt-mat-neutral-60);
     --rt-color-action-secondary-hover: var(--rt-mat-neutral-hover);
@@ -60,13 +60,13 @@
     --rt-color-action-warning-hover: var(--rt-mat-orange-hover);
     --rt-color-action-warning-active: var(--rt-mat-orange-active);
     --rt-color-action-on-warning: var(--rt-mat-neutral-0);
-    --rt-color-action-danger: var(--rt-mat-red-100);
-    --rt-color-action-danger-hover: var(--rt-mat-red-hover);
-    --rt-color-action-danger-active: var(--rt-mat-red-active);
+    --rt-color-action-danger: var(--mat-sys-error, var(--rt-mat-red-100));
+    --rt-color-action-danger-hover: color-mix(in srgb, var(--mat-sys-error, var(--rt-mat-red-100)) 90%, #000);
+    --rt-color-action-danger-active: color-mix(in srgb, var(--mat-sys-error, var(--rt-mat-red-100)) 80%, #000);
     --rt-color-action-on-danger: var(--rt-mat-neutral-0);
-    --rt-color-action-info: var(--rt-mat-blue-100);
-    --rt-color-action-info-hover: var(--rt-mat-blue-hover);
-    --rt-color-action-info-active: var(--rt-mat-blue-active);
+    --rt-color-action-info: var(--mat-sys-primary, var(--rt-mat-blue-100));
+    --rt-color-action-info-hover: color-mix(in srgb, var(--mat-sys-primary, var(--rt-mat-blue-100)) 90%, #000);
+    --rt-color-action-info-active: color-mix(in srgb, var(--mat-sys-primary, var(--rt-mat-blue-100)) 80%, #000);
     --rt-color-action-on-info: var(--rt-mat-neutral-0);
     --rt-color-action-disabled: var(--rt-mat-neutral-25);
 
@@ -76,11 +76,11 @@
     --rt-color-state-warning: var(--rt-mat-orange-100);
     --rt-color-state-warning-bg: var(--rt-mat-orange-5);
     --rt-color-state-warning-text: var(--rt-mat-orange-100);
-    --rt-color-state-danger: var(--rt-mat-red-100);
-    --rt-color-state-danger-bg: var(--rt-mat-red-10);
-    --rt-color-state-error-text: var(--rt-mat-red-100);
-    --rt-color-state-info: var(--rt-mat-blue-100);
-    --rt-color-state-info-bg: var(--rt-mat-blue-20);
+    --rt-color-state-danger: var(--mat-sys-error, var(--rt-mat-red-100));
+    --rt-color-state-danger-bg: var(--mat-sys-error-container, var(--rt-mat-red-10));
+    --rt-color-state-error-text: var(--mat-sys-error, var(--rt-mat-red-100));
+    --rt-color-state-info: var(--mat-sys-primary, var(--rt-mat-blue-100));
+    --rt-color-state-info-bg: var(--mat-sys-primary-container, var(--rt-mat-blue-20));
 
     /* Рельса шагов */
     --rt-color-stepper-track: var(--rt-mat-neutral-30);
@@ -89,6 +89,79 @@
        рамку, — вид под набором от разведения концов не поехал. */
     --rt-color-skeleton-base: var(--rt-mat-neutral-10);
     --rt-color-skeleton-wave: var(--rt-mat-neutral-25);
+
+    /* Шапка таблицы первого кита залита тем же цветом, что залитое поле Material. */
+    --rt-color-table-head-bg: var(--mat-form-field-filled-container-color, var(--mat-sys-surface-variant, var(--rt-mat-overlay-black-4)));
+
+    /* Черта снизу у залитого поля Material — цвет on-surface-variant темы. */
+    --rt-color-field-fill-underline: var(--mat-sys-on-surface-variant, var(--rt-mat-neutral-30));
+
+    /* Поиск списка первого кита — обведённое или залитое поле Material при плотности −1:
+       52px, скругление 4px, рамка цвета outline темы, внутри прозрачное. Ступени 52px нет, высота собрана из ступени
+       xl без ступени 1. */
+    --rt-list-search-height: calc(var(--rt-control-height-xl) - var(--rt-space-1));
+    --rt-list-search-radius: var(--rt-radius-sm);
+    --rt-list-search-color-border: var(--mat-sys-outline, var(--rt-mat-neutral-25));
+    --rt-list-search-color-bg: transparent;
+    --rt-list-search-width: calc(var(--rt-size-64) + var(--rt-size-24));
+    --rt-list-search-padding-x: calc(var(--rt-space-2) + var(--rt-space-1) - var(--rt-border-width-thin));
+    --rt-list-search-gap: var(--rt-space-4);
+    --rt-list-search-font-size: var(--rt-text-md);
+    --rt-list-search-icon-size: var(--rt-size-6);
+    --rt-list-search-icon-color: var(--mat-sys-on-surface-variant, var(--rt-mat-neutral-30));
+    --rt-list-search-color-placeholder: var(--mat-sys-on-surface-variant, var(--rt-mat-neutral-30));
+
+    /* Панель настройки колонок первого кита: плашка колонки залита цветом выбранного пункта
+       Material, значки — в тоне on-surface-variant темы. Сняты с панели на витрине первого кита. */
+    --rt-list-settings-item-bg: var(--mat-option-selected-state-layer-color, var(--mat-sys-secondary-container, var(--rt-mat-neutral-10)));
+    --rt-list-settings-icon-color: var(--mat-sys-on-surface-variant, var(--rt-mat-neutral-60));
+
+    /* Кнопки действий панели списка — mat-mini-fab первого кита: круг без заливки с подъёмом 6,
+       под указателем подъём 8 и тёмный значок вместо серого; значок 24px, промежуток 16px. */
+    --rt-list-action-gap: var(--rt-space-md);
+    --rt-list-action-divider-height: var(--rt-size-8);
+    --rt-list-action-radius: var(--rt-radius-full);
+    --rt-list-action-shadow: var(--rt-mat-shadow-fab);
+    --rt-list-action-shadow-hover: var(--rt-mat-shadow-fab-hover);
+    --rt-list-action-icon-size: var(--rt-size-6);
+    --rt-list-action-color: var(--rt-mat-neutral-60);
+    --rt-list-action-color-hover: var(--rt-mat-neutral-100);
+    --rt-list-action-color-bg-hover: transparent;
+    --rt-list-selector-label-color: var(--rt-mat-neutral-60);
+
+    /* Полоса страниц первого кита: ячейки 34px в серой рамке со скруглением 12px, промежуток 8px,
+       текущая залита серым с белой цифрой, стрелки такими же ячейками. Подписи диапазона нет,
+       номера и выбор размера стоят рядом через 32px, поле размера 32px высотой. */
+    --rt-pagination-justify: flex-start;
+    --rt-pagination-gap: var(--rt-space-xl);
+    --rt-pagination-nav-gap: var(--rt-space-sm);
+    --rt-pagination-range-display: none;
+    --rt-pagination-box-size: calc(var(--rt-space-xl) + 2 * var(--rt-border-width-thin));
+    --rt-pagination-box-radius: calc(var(--rt-radius-lg) + var(--rt-radius-xs));
+    --rt-pagination-box-color-border: var(--rt-mat-neutral-30);
+    --rt-pagination-box-color-text: var(--rt-mat-neutral-60);
+    --rt-pagination-box-current-color-bg: var(--rt-mat-neutral-60);
+    --rt-pagination-box-current-color-text: var(--rt-mat-neutral-0);
+    --rt-pagination-box-current-color-border: var(--rt-mat-neutral-30);
+    --rt-pagination-box-current-font-weight: var(--rt-font-weight-regular);
+    --rt-pagination-arrow-size: calc(var(--rt-space-xl) + 2 * var(--rt-border-width-thin));
+    --rt-pagination-arrow-radius: calc(var(--rt-radius-lg) + var(--rt-radius-xs));
+    --rt-pagination-arrow-shadow: inset 0 0 0 var(--rt-border-width-thin) var(--rt-mat-neutral-30);
+    --rt-pagination-arrow-color: var(--rt-mat-neutral-60);
+    --rt-pagination-per-page-gap: calc(var(--rt-space-sm) + var(--rt-space-xs));
+    --rt-pagination-per-page-label-white-space: nowrap;
+    --rt-pagination-field-height: var(--rt-control-height-sm);
+    --rt-pagination-field-radius: calc(var(--rt-radius-lg) + var(--rt-radius-xs));
+    --rt-pagination-field-color-border: var(--rt-mat-neutral-30);
+    --rt-pagination-field-padding-x: var(--rt-space-sm);
+    --rt-pagination-field-color-bg: transparent;
+    --rt-pagination-field-color-text: var(--rt-mat-neutral-60);
+
+    /* Переключатель первого кита — свой, не Material: серый трек в рамке, включённый — в цвете
+       действия темы, как у кнопки. Тёмная тема отвечает на эти имена своими цветами. */
+    --rt-toggle-color-track: var(--rt-mat-neutral-20);
+    --rt-toggle-color-track-on: var(--rt-color-action-primary);
+    --rt-toggle-color-border: var(--rt-mat-neutral-30);
 
     /* Кнопка и поле первого кита скруглены заметно сильнее: 1.5rem против 10px.
        Значение снято числом — ссылки на токены первого кита во второй кит не едут. */

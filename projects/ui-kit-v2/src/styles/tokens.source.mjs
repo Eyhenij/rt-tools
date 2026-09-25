@@ -31,12 +31,13 @@ import { scaleMaterial } from './tokens.scale-material.mjs';
 import { lightColor } from './tokens.light-color.mjs';
 import { lightParts } from './tokens.light-parts.mjs';
 import { lightForms } from './tokens.light-forms.mjs';
+import { lightLists } from './tokens.light-lists.mjs';
 import { lightNavigation } from './tokens.light-navigation.mjs';
 import { lightField } from './tokens.light-field.mjs';
 
 export const scale = [...scaleColor, ...scaleMetrics, ...scaleEffects, ...scaleMaterial];
 
-export const light = [...lightColor, ...lightParts, ...lightForms, ...lightNavigation, ...lightField];
+export const light = [...lightColor, ...lightParts, ...lightForms, ...lightLists, ...lightNavigation, ...lightField];
 
 export { darkLayout } from './tokens.dark-layout.mjs';
 export { coarsePointer } from './tokens.coarse-pointer.mjs';

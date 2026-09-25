@@ -129,6 +129,7 @@
                                         rtElem="action"
                                         qa-dataid="data-table-row-menu"
                                         icon="ellipsis-v"
+                                        [panelClass]="menuPanelClass()"
                                         [attr.rt-data-table-stop-row-click]="''"
                                         [ariaLabel]="actionsLabel()"
                                         (openedChange)="onMenuOpenedChange(index, $event)">

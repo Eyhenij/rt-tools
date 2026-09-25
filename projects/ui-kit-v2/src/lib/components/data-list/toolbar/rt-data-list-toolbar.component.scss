@@ -15,6 +15,10 @@
             display: flex;
             align-items: center;
             gap: var(--rt-space-md);
+
+            .rt-checkbox {
+                --rt-checkbox-color-label: var(--rt-list-selector-label-color);
+            }
         }
 
         &__counter {
@@ -30,27 +34,68 @@
             gap: var(--rt-space-md);
         }
 
+        // Кнопки действий — свои и приложения — берут вид из имён действий списка: материальный
+        // набор делает из них круглые кнопки действия первого кита, свой оставляет кнопками-значками.
+        // Значок растёт наименьшим размером: свой размер значок кнопки ставит в разметке.
         &__actions {
             display: flex;
             align-items: center;
-            gap: var(--rt-space-sm);
+            gap: var(--rt-list-action-gap);
+
+            rt-icon-button {
+                --rt-icon-button-color: var(--rt-list-action-color);
+            }
+
+            .rt-icon-button {
+                --rt-icon-button-square-radius: var(--rt-list-action-radius);
+                --rt-icon-button-shadow: var(--rt-list-action-shadow);
+                --rt-icon-button-shadow-hover: var(--rt-list-action-shadow-hover);
+                --rt-icon-button-color-hover: var(--rt-list-action-color-hover);
+                --rt-icon-button-color-bg-hover: var(--rt-list-action-color-bg-hover);
+            }
+
+            .rt-icon-button__icon {
+                min-width: var(--rt-list-action-icon-size);
+                min-height: var(--rt-list-action-icon-size);
+            }
         }
 
         /* Черта отделяет действия приложения от кнопок кита: это рамка, а не полоса шириной в
            ступень рамки — ступени рамок размеров не задают. */
         &__divider {
-            height: var(--rt-size-5);
+            height: var(--rt-list-action-divider-height);
             border-left: var(--rt-data-list-toolbar-divider-width) solid var(--rt-color-border-subtle);
+        }
+
+        // Правая часть тулбара списка занимает всё место после левой, а не ширину своего содержимого:
+        // у поиска содержимого для счёта нет (он сжимаемый), и по содержимому часть сжалась бы до
+        // кнопок. Общий тулбар кита правую часть не растягивает — это правило только списка.
+        .rt-toolbar__bar--right {
+            flex-grow: 1;
         }
 
         // Поиск стоит на своей ширине, пока ему хватает места, и уступает, когда не хватает:
         // узкая колонка бывает и на широком окне, где запрос по ширине окна ниже не сработает.
         // Своей наименьшей ширины у поиска нет: поле ввода внутри несёт собственную, и она держала
         // правую часть тулбара на 256 px в колонке 222 px. Ширину решает место, а не содержимое.
+        // 240px — исходный размер во флексе, а не ширина: заданная ширина браузер считает наименьшим
+        // размером поля, и в колонке 322 px правая часть держала все 240 px и вылезала за край.
+        // Высоту, скругление и рамку поле поиска берёт из имён поиска списка: материальный набор
+        // делает из них поле Material первого кита, свой набор оставляет поле как есть.
         &__search {
-            width: var(--rt-size-60);
+            --rt-input-height-sm: var(--rt-list-search-height);
+            --rt-input-radius: var(--rt-list-search-radius);
+            --rt-input-color-border: var(--rt-list-search-color-border);
+            --rt-input-color-bg: var(--rt-list-search-color-bg);
+            --rt-input-padding-x: var(--rt-list-search-padding-x);
+            --rt-input-gap: var(--rt-list-search-gap);
+            --rt-input-font-size: var(--rt-list-search-font-size);
+            --rt-input-icon-size: var(--rt-list-search-icon-size);
+            --rt-input-icon-color: var(--rt-list-search-icon-color);
+            --rt-input-color-text-placeholder: var(--rt-list-search-color-placeholder);
+
             min-width: 0;
-            flex-shrink: 1;
+            flex: 0 1 var(--rt-list-search-width);
             contain: inline-size;
         }
 
@@ -60,7 +105,7 @@
             }
 
             &__search {
-                width: 100%;
+                flex-basis: 100%;
             }
         }
     }
