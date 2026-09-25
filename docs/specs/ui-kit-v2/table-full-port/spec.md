@@ -161,8 +161,8 @@ The words are the first kit's; the kit's dictionary gives them in all eight lang
   new rows.
 - **The search and the filter fields draw one of the two Material field looks, `outline` or
   `fill`, each set by an input of its own.** The list takes `appearance` for its search and
-  `filterAppearance` for its filter fields, the table `filterAppearance`. The table defaults to
-  `outline`; the list gives its filter fields the look of its search unless told otherwise.
+  `filterAppearance` for its filter fields, the table `filterAppearance`; both default to `outline`,
+  as in the first kit.
 
 ### Rows and presses
 

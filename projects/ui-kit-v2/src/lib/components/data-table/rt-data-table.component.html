@@ -18,12 +18,7 @@
                 }
 
                 @for (column of visibleColumns(); track column.propName) {
-                    <th
-                        rtElem="cell"
-                        qa-dataid="data-table-header-cell"
-                        [rtMod]="{ head: true, sortable: !!column.sorting }"
-                        [style.width]="column.width"
-                        [style.min-width]="column.minWidth">
+                    <th rtElem="cell" qa-dataid="data-table-header-cell" [rtMod]="{ head: true, sortable: !!column.sorting }">
                         <rt-data-table-header-cell
                             [headerModel]="column.header"
                             [sortModel]="column.sorting"
@@ -99,12 +94,7 @@
                     }
 
                     @for (column of visibleColumns(); track column.propName) {
-                        <td
-                            rtElem="cell"
-                            qa-dataid="data-table-cell"
-                            [rtMod]="{ copyable: !!column.copyable }"
-                            [style.width]="column.width"
-                            [style.min-width]="column.minWidth">
+                        <td rtElem="cell" qa-dataid="data-table-cell" [rtMod]="{ copyable: !!column.copyable }">
                             @if (column.type === columnTypes.CUSTOM) {
                                 <ng-container
                                     [ngTemplateOutlet]="customCellsTpl()?.getTemplateByPropName(column.propName) ?? null"

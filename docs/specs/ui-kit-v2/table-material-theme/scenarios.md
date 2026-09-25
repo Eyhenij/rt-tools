@@ -37,11 +37,11 @@ Not covered: colours of a theme are not computed in the test environment. Closed
 `organisms-material-dynamic-list-datalist--material-theme`; the names themselves are held by the preset test of
 `SC-UKV-355`.
 
-### SC-UKV-359 — the list search is fill when the look is not given, and the filter fields follow it
+### SC-UKV-359 — the list search is fill when the look is not given
 
-Given a list whose `appearance` and `filterAppearance` are not given
+Given a list whose `appearance` is not given
 When the list is drawn with records
-Then the search and the filter fields are in the `fill` look
+Then the search is in the `fill` look and the filter fields in the `outline` look
 
 Covered by the component test of the list.
 

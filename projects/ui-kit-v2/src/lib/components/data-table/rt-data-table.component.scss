@@ -13,10 +13,11 @@
         --rt-data-table-row-transition-duration: var(--rt-duration-base);
 
         /* Шапку перекрашивает приложение, как в первом ките: цвет и насыщенность подписи, фон
-           строки отбора. */
+           строки отбора. Фон строки отбора, как в первом ките, считается от фона шапки: половина
+           шапки, половина поверхности — перекрашенная шапка тянет строку отбора за собой. */
         --rt-data-table-head-color: var(--rt-color-text-primary);
         --rt-data-table-head-font-weight: var(--rt-font-weight-medium);
-        --rt-data-table-filter-bg: var(--rt-color-bg-surface);
+        --rt-data-table-filter-bg: color-mix(in srgb, var(--rt-color-table-head-bg), var(--rt-color-bg-surface) 50%);
 
         display: block;
         overflow: auto;

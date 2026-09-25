@@ -187,7 +187,7 @@ function hasClass(fixture: ComponentFixture<unknown>, selector: string): boolean
 }
 
 describe('RtDataListComponent', () => {
-    it('SC-UKV-359 — без указанного вида поиск залит, как у поля Material первого кита, и поля отбора за ним', async (): Promise<void> => {
+    it('SC-UKV-359 — без указанного вида поиск залит, как у поля Material первого кита, а поля отбора в рамке', async (): Promise<void> => {
         const fixture: ComponentFixture<DefaultLookHostComponent> = createRtFixture(
             DefaultLookHostComponent,
             {},
@@ -201,7 +201,7 @@ describe('RtDataListComponent', () => {
         const isFill: (anchor: string) => boolean | undefined = (anchor: string): boolean | undefined =>
             (qa(fixture, anchor)?.nativeElement as HTMLElement | undefined)?.className.includes('--appearance--fill');
 
-        expect([isFill('data-list-search'), isFill('data-table-filter-input')]).toEqual([true, true]);
+        expect([isFill('data-list-search'), isFill('data-table-filter-input')]).toEqual([true, false]);
     });
 
     it('SC-UKV-360 — без настроек список и его таблица стоят в виде первого кита', async (): Promise<void> => {
