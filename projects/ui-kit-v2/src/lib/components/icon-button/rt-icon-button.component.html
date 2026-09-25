@@ -14,7 +14,7 @@
     @if (loading()) {
         <rt-icon rtElem="spinner" name="spinner" color="current" [size]="resolvedIconSize()" />
     } @else {
-        <rt-icon rtElem="icon" [color]="iconColor()" [name]="icon()" [size]="resolvedIconSize()" />
+        <rt-icon rtElem="icon" [color]="iconColor()" [name]="icon()" [size]="resolvedIconSize()" [fill]="iconFill()" />
     }
     @if (indicator()) {
         <span rtElem="indicator" aria-hidden="true"></span>

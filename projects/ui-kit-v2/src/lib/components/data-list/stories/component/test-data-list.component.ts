@@ -26,6 +26,7 @@ import { TestRtDataListCellComponent } from './test-data-list-cell.component';
             [rows]="rows"
             [page]="page"
             [filtersShown]="filtersShown"
+            [iconsOutlined]="iconsOutlined"
             [loading]="loading"
             [fetching]="fetching"
             [selectAllShown]="selectAllShown"
@@ -38,6 +39,7 @@ export class TestRtDataListComponent {
     public rows: ITestDataTableRow[] = TEST_DATA_TABLE_ROWS;
     public page: IPageModel = { pageNumber: 1, pageSize: 10, totalCount: 27, hasPrev: false, hasNext: true };
     public filtersShown: boolean = false;
+    public iconsOutlined: boolean = true;
     public loading: boolean = false;
     public fetching: boolean = false;
     public selectAllShown: boolean = true;

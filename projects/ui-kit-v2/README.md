@@ -14,8 +14,14 @@
 pnpm add @rt-tools/ui-kit-v2 @rt-tools/core @rt-tools/utils
 ```
 
-`quill` нужен только тем, кто ставит `rt-rich-editor`: редактор грузит его динамически, и без
-пакета остальной кит работает.
+`quill` нужен только тем, кто ставит редактор текста. Он и два компонента на нём — поле ввода
+сообщения и чат — стоят отдельным входом `@rt-tools/ui-kit-v2/rich-editor`:
+
+```typescript
+import { RtChatComponent, RtMessageComposerComponent, RtRichEditorComponent } from '@rt-tools/ui-kit-v2/rich-editor';
+```
+
+Основной вход quill не называет, и приложение без этих трёх компонентов собирается без него.
 
 ## Подключение
 
@@ -46,6 +52,20 @@ export const appConfig: ApplicationConfig = {
 
 ```scss
 @import 'quill/dist/quill.snow.css' layer(rt-kit.vendor);
+```
+
+Сброс приложения вида `* { margin: 0; padding: 0; }` вне слоя выигрывает у кита по тому же
+правилу. Он обнуляет поля компонентов: ячейки таблицы, пункты меню и кнопки теряют отступы.
+Сброс кладётся в тот же подслой `vendor`. Подслой нижний, и кит перебивает сброс своими
+правилами, а остальная вёрстка приложения получает его как прежде:
+
+```scss
+@layer rt-kit.vendor {
+    * {
+        margin: 0;
+        padding: 0;
+    }
+}
 ```
 
 Иконки лежат отдельными файлами в `node_modules/@rt-tools/ui-kit-v2/src/assets/icons`: сборка

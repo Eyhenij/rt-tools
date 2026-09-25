@@ -14,7 +14,8 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting, TestRequest } from '@angular/common/http/testing';
 import { EnvironmentInjector, provideZonelessChangeDetection, runInInjectionContext } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { IRtChat, IRtWorkspaceDetails } from '@rt-tools/ui-kit-v2';
+import { IRtWorkspaceDetails } from '@rt-tools/ui-kit-v2';
+import { IRtChat } from '@rt-tools/ui-kit-v2/rich-editor';
 import { WINDOW } from '@rt-tools/core';
 import { IChatKitTalkRow } from '@rt/message-bus-admin/chat/util';
 import {

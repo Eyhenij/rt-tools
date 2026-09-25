@@ -47,3 +47,6 @@ tag/
 | переписка                | `chat`, `message`, `message-composer`                                                                                             |
 | файлы                    | `file-card`, `file-list`, `file-drop`, `download-link`                                                                            |
 | прочее                   | `card`, `note`, `empty-state`, `tabs`, `stepper`, `logo`, `theme-toggle`, `notifications-bell`, `collapsible-text`, `counter-row` |
+
+`rich-editor`, `message-composer` и `chat` работают на quill и лежат во втором входе пакета —
+`@rt-tools/ui-kit-v2/rich-editor`, каталог `src/rich-editor/`. Основной вход их не отдаёт.

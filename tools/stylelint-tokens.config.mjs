@@ -19,7 +19,7 @@ export default {
     overrides: [
         ...(base.overrides ?? []),
         {
-            files: ['projects/ui-kit-v2/src/lib/**/*.scss'],
+            files: ['projects/ui-kit-v2/src/lib/**/*.scss', 'projects/ui-kit-v2/src/rich-editor/lib/**/*.scss'],
             rules: {
                 'color-no-hex': true,
 

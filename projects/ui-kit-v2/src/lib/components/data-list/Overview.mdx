@@ -106,30 +106,31 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Входы
 
-| вход                        | тип                   | умолчание      | что делает                                                                           |
-| --------------------------- | --------------------- | -------------- | ------------------------------------------------------------------------------------ |
-| `look`                      | `'material' \| 'own'` | `'material'`   | вид семьи: как в первом ките или свой вид второго кита; умолчание — из настроек кита |
-| `appearance`                | `'outline' \| 'fill'` | `'fill'`       | вид поля поиска; умолчание — из настроек кита, как у первого кита                    |
-| `filterAppearance`          | `'outline' \| 'fill'` | `'outline'`    | вид полей отбора: рамка со всех сторон или залитое поле с чертой снизу               |
-| `tableConfigStorageKey`     | `string`              | **обязателен** | ключ, под которым лежит настройка колонок                                            |
-| `entities`                  | `ENTITY[]`            | **обязателен** | записи нынешней страницы                                                             |
-| `pageModel`                 | `IPageModel`          | **обязателен** | нынешняя страница: номер, размер, всего записей                                      |
-| `currentSortModel`          | `ISortModel \| null`  | **обязателен** | нынешний порядок                                                                     |
-| `filterModel`               | `IFilterModel[]`      | `[]`           | нынешние условия отбора                                                              |
-| `searchTerm`                | `string \| null`      | `''`           | что стоит в поле поиска                                                              |
-| `keyExp`                    | `keyof ENTITY`        | `'id'`         | чем различаются записи                                                               |
-| `loading`                   | `boolean`             | `false`        | первая загрузка: вместо списка крутилка                                              |
-| `fetching`                  | `boolean`             | `false`        | дозагрузка: крутилка поверх строк                                                    |
-| `isTableRowsClickable`      | `boolean`             | `false`        | отзывается ли строка на нажатие                                                      |
-| `isFiltersShown`            | `boolean`             | `false`        | показывать ли строку отбора                                                          |
-| `isRefreshButtonShown`      | `boolean`             | `true`         | показывать ли кнопку обновления                                                      |
-| `isTableConfigButtonShown`  | `boolean`             | `true`         | показывать ли кнопку настройки колонок                                               |
-| `isPaginationShown`         | `boolean`             | `true`         | принят ради переезда без правок и ничего не меняет                                   |
-| `isMultiSelect`             | `boolean`             | `true`         | выбор многих или по одной — вход директивы выбора                                    |
-| `isMultiSelectExtendedMod`  | `boolean`             | `true`         | отмечать ли не пришедшие страницы — вход директивы выбора                            |
-| `isSelectAllSelectorShown`  | `boolean`             | `true`         | показывать ли «отметить все» — вход директивы выбора                                 |
-| `isSelectorsColumnDisabled` | `boolean`             | `false`        | недоступна ли колонка выбора — вход директивы выбора                                 |
-| `selectedEntitiesKeys`      | `Array<ENTITY[KEY]>`  | `[]`           | отметки, названные заранее — вход директивы выбора                                   |
+| вход                            | тип                   | умолчание      | что делает                                                                                         |
+| ------------------------------- | --------------------- | -------------- | -------------------------------------------------------------------------------------------------- |
+| `look`                          | `'material' \| 'own'` | `'material'`   | вид семьи: как в первом ките или свой вид второго кита; умолчание — из настроек кита               |
+| `appearance`                    | `'outline' \| 'fill'` | `'fill'`       | вид поля поиска; умолчание — из настроек кита, как у первого кита                                  |
+| `filterAppearance`              | `'outline' \| 'fill'` | вид поиска     | вид полей отбора: рамка со всех сторон или залитое поле с чертой снизу; не заданный — как у поиска |
+| `isToolbarActionsIconsOutlined` | `boolean`             | `true`         | контурные значки кнопок полосы: очистки отбора, обновления и настройки колонок; `false` — залитые  |
+| `tableConfigStorageKey`         | `string`              | **обязателен** | ключ, под которым лежит настройка колонок                                                          |
+| `entities`                      | `ENTITY[]`            | **обязателен** | записи нынешней страницы                                                                           |
+| `pageModel`                     | `IPageModel`          | **обязателен** | нынешняя страница: номер, размер, всего записей                                                    |
+| `currentSortModel`              | `ISortModel \| null`  | **обязателен** | нынешний порядок                                                                                   |
+| `filterModel`                   | `IFilterModel[]`      | `[]`           | нынешние условия отбора                                                                            |
+| `searchTerm`                    | `string \| null`      | `''`           | что стоит в поле поиска                                                                            |
+| `keyExp`                        | `keyof ENTITY`        | `'id'`         | чем различаются записи                                                                             |
+| `loading`                       | `boolean`             | `false`        | первая загрузка: вместо списка крутилка                                                            |
+| `fetching`                      | `boolean`             | `false`        | дозагрузка: крутилка поверх строк                                                                  |
+| `isTableRowsClickable`          | `boolean`             | `false`        | отзывается ли строка на нажатие                                                                    |
+| `isFiltersShown`                | `boolean`             | `false`        | показывать ли строку отбора                                                                        |
+| `isRefreshButtonShown`          | `boolean`             | `true`         | показывать ли кнопку обновления                                                                    |
+| `isTableConfigButtonShown`      | `boolean`             | `true`         | показывать ли кнопку настройки колонок                                                             |
+| `isPaginationShown`             | `boolean`             | `true`         | принят ради переезда без правок и ничего не меняет                                                 |
+| `isMultiSelect`                 | `boolean`             | `true`         | выбор многих или по одной — вход директивы выбора                                                  |
+| `isMultiSelectExtendedMod`      | `boolean`             | `true`         | отмечать ли не пришедшие страницы — вход директивы выбора                                          |
+| `isSelectAllSelectorShown`      | `boolean`             | `true`         | показывать ли «отметить все» — вход директивы выбора                                               |
+| `isSelectorsColumnDisabled`     | `boolean`             | `false`        | недоступна ли колонка выбора — вход директивы выбора                                               |
+| `selectedEntitiesKeys`          | `Array<ENTITY[KEY]>`  | `[]`           | отметки, названные заранее — вход директивы выбора                                                 |
 
 ## Выходы
 

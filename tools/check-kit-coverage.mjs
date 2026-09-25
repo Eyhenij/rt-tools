@@ -25,7 +25,8 @@ import { declarationsOf, storySubjectsOf } from './kit-coverage-components.mjs';
 const ROOT = process.cwd();
 
 /** Where the families of the second kit lie. */
-const FAMILIES = 'projects/ui-kit-v2/src/lib/components';
+/** The families of both entries of the package: the second one keeps its components apart. */
+const FAMILY_DIRS = ['projects/ui-kit-v2/src/lib/components', 'projects/ui-kit-v2/src/rich-editor/lib/components'];
 
 /** The list of what does not reach the showcase, with a reason for each. */
 const ALLOWLIST = 'tools/kit-coverage-allowlist.json';
@@ -76,9 +77,14 @@ const noPlayground = list.noPlayground ?? {};
 const PLAYGROUND = 'export const Playground:';
 
 
-const families = readdirSync(join(ROOT, FAMILIES), { withFileTypes: true })
-    .filter((entry) => entry.isDirectory())
-    .map((entry) => entry.name);
+const familyDirs = new Map(
+    FAMILY_DIRS.filter((root) => existsSync(join(ROOT, root))).flatMap((root) =>
+        readdirSync(join(ROOT, root), { withFileTypes: true })
+            .filter((entry) => entry.isDirectory())
+            .map((entry) => [entry.name, join(ROOT, root, entry.name)])
+    )
+);
+const families = [...familyDirs.keys()];
 
 const problems = [];
 let shown = 0;
@@ -92,7 +98,7 @@ function hasPlayground(dir) {
 }
 
 for (const family of families) {
-    const dir = join(ROOT, FAMILIES, family);
+    const dir = familyDirs.get(family);
     const hasOverview = existsSync(join(dir, OVERVIEW));
     const hasStories = existsSync(join(dir, STORIES));
     const reason = accepted[family];
@@ -161,8 +167,8 @@ for (const family of Object.keys(accepted)) {
  * a story. Asked apart because the family answer said yes about thirty components that had no
  * story at all — every one of them lay inside a family that reaches the showcase.
  */
-const declared = declarationsOf(ROOT, FAMILIES);
-const subjects = storySubjectsOf(ROOT, [FAMILIES, 'projects/ui-kit-v2/src/showcase']);
+const declared = FAMILY_DIRS.filter((dir) => existsSync(join(ROOT, dir))).flatMap((dir) => declarationsOf(ROOT, dir));
+const subjects = storySubjectsOf(ROOT, [...FAMILY_DIRS.filter((dir) => existsSync(join(ROOT, dir))), 'projects/ui-kit-v2/src/showcase']);
 const storyless = declared.filter((item) => !subjects.has(item.name));
 const storylessSelectors = new Set(storyless.map((item) => item.selector));
 

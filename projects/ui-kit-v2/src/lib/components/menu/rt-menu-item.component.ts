@@ -2,6 +2,7 @@ import { BooleanInput } from '@angular/cdk/coercion';
 import {
     booleanAttribute,
     ChangeDetectionStrategy,
+    computed,
     Component,
     DestroyRef,
     ElementRef,
@@ -23,6 +24,7 @@ import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { rtKitLabel } from '../../i18n';
 import { RtDialogService } from '../dialog/rt-dialog.service';
 import { RtIconComponent } from '../icon/rt-icon.component';
+import { iconMaterialMap, IRtIconMaterialEntry } from '../icon/rt-icon-material-map';
 import { IRtIcon } from '../icon/rt-icon.model';
 import { RtTooltipDirective } from '../tooltip/rt-tooltip.directive';
 import { RtMenuConfirmDialogComponent } from './rt-menu-confirm-dialog.component';
@@ -72,6 +74,7 @@ const BEM_BLOCK: string = 'rt-menu-item';
         class: BEM_BLOCK,
         role: 'menuitem',
         '[class.rt-menu-item--danger]': 'danger()',
+        '[class.rt-menu-item--success]': 'success()',
         '[class.rt-menu-item--disabled]': 'disabled()',
         '[attr.aria-disabled]': "disabled() ? 'true' : null",
         '[attr.tabindex]': 'disabled() ? null : 0',
@@ -90,6 +93,13 @@ export class RtMenuItemComponent {
     readonly #t_uiConfirm: Signal<string> = rtKitLabel('uiConfirm');
     readonly #t_uiCancel: Signal<string> = rtKitLabel('uiCancel');
 
+    /** Значок пункта: свой `icon`, а без него — пара имени Material из перечня кита. */
+    protected readonly iconName: Signal<IRtIcon.Name | null> = computed((): IRtIcon.Name | null => {
+        const glyph: string | null = this.glyph();
+
+        return this.icon() ?? (glyph ? (iconMaterialMap.find((entry: IRtIconMaterialEntry) => entry.from === glyph)?.to ?? null) : null);
+    });
+
     /** Иконка слева от лейбла. `null` — без иконки. */
     public readonly icon: InputSignal<IRtIcon.Name | null> = input<IRtIcon.Name | null>(null);
 
@@ -100,6 +110,17 @@ export class RtMenuItemComponent {
     public readonly danger: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
+
+    /** Пункт-согласие (например «Принять») — зелёный текст и иконка, как тон `success` пунктов первого кита. */
+    public readonly success: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+
+    /**
+     * Имя значка Material, как его пишет пункт меню первого кита (`check_circle`). Рисует его набор
+     * кита через перечень соответствий; `icon` сильнее, а имя без пары рисует пункт без значка.
+     */
+    public readonly glyph: InputSignal<string | null> = input<string | null>(null);
 
     /** Недоступный пункт — приглушён, не эмитит `(selected)` и не закрывает меню. */
     public readonly disabled: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {

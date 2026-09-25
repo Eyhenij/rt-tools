@@ -10,6 +10,7 @@ export default {
     component: TestRtDataListComponent,
     argTypes: {
         filtersShown: { control: { type: 'boolean' } },
+        iconsOutlined: { control: { type: 'boolean' } },
         loading: { control: { type: 'boolean' } },
         fetching: { control: { type: 'boolean' } },
         selectAllShown: { control: { type: 'boolean' } },
@@ -26,6 +27,7 @@ export const Playground: TStory = {
     parameters: storySnapshotSkip('значения по умолчанию уже стоят ячейкой в матрице этого компонента'),
     args: {
         filtersShown: false,
+        iconsOutlined: true,
         loading: false,
         fetching: false,
         selectAllShown: true,

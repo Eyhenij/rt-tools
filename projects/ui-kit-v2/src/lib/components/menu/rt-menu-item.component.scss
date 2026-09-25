@@ -46,6 +46,14 @@
             }
         }
 
+        &--success {
+            color: var(--rt-color-state-success);
+
+            .rt-menu-item__icon {
+                color: var(--rt-color-state-success);
+            }
+        }
+
         &--disabled {
             color: var(--rt-color-text-muted);
             cursor: default;

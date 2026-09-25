@@ -40,6 +40,7 @@
                         <rt-icon-button
                             qa-dataid="data-list-clear-filters"
                             variant="ghost"
+                            [iconFill]="!isToolbarActionsIconsOutlined()"
                             [icon]="clearFiltersIcon"
                             [ariaLabel]="clearFiltersLabel()"
                             [tooltip]="clearFiltersLabel()"
@@ -51,6 +52,7 @@
                         <rt-icon-button
                             qa-dataid="data-list-refresh"
                             variant="ghost"
+                            [iconFill]="!isToolbarActionsIconsOutlined()"
                             [icon]="refreshIcon"
                             [ariaLabel]="refreshLabel()"
                             [tooltip]="refreshLabel()"
@@ -61,6 +63,7 @@
                         <rt-icon-button
                             qa-dataid="data-list-table-config"
                             variant="ghost"
+                            [iconFill]="!isToolbarActionsIconsOutlined()"
                             [icon]="tableConfigIcon"
                             [ariaLabel]="tableConfigLabel()"
                             [tooltip]="tableConfigLabel()"

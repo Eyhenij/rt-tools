@@ -41,6 +41,8 @@ import { join, relative } from 'node:path';
 import { allowlistOf, baselineOf, parseAllowlist, ROOT, skipUnless } from './rt-kit-checks.config.mjs';
 
 const KIT = 'projects/ui-kit-v2/src/lib';
+/** The second entry of the package keeps its components apart. */
+const SECOND_ENTRY = 'projects/ui-kit-v2/src/rich-editor/lib';
 const ALLOWLIST = allowlistOf('boolean-inputs');
 /** The framework's own coercion; the kit is held to it and to no other. */
 const COERCION = /\btransform\s*:\s*booleanAttribute\b/;
@@ -125,7 +127,7 @@ function inputsOf(path) {
     return found;
 }
 
-const files = sourcesOf(join(ROOT, KIT));
+const files = [...sourcesOf(join(ROOT, KIT)), ...(existsSync(join(ROOT, SECOND_ENTRY)) ? sourcesOf(join(ROOT, SECOND_ENTRY)) : [])];
 const list = parseAllowlist('boolean-inputs');
 
 const bare = [];

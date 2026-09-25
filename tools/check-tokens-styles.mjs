@@ -39,7 +39,8 @@ import { allowlistOf, baselineOf, parseAllowlist } from './rt-kit-checks.config.
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
 /** The set the check judges. Named by the agreement and repeated in the config next to it. */
-const FILES = 'projects/ui-kit-v2/src/lib/**/*.scss';
+/** Component styles of both entries of the package. */
+const FILES = 'projects/ui-kit-v2/src/{lib,rich-editor/lib}/**/*.scss';
 const CONFIG_FILE = join(ROOT, 'tools/stylelint-tokens.config.mjs');
 const ALLOWLIST = allowlistOf('tokens-styles');
 

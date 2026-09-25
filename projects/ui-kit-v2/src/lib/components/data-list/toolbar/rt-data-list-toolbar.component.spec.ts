@@ -1,9 +1,11 @@
-import { ChangeDetectionStrategy, Component, signal, Signal, viewChild, WritableSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DebugElement, signal, Signal, viewChild, WritableSignal } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 
 import { TNullable } from '@rt-tools/utils';
 
 import { createRtFixture, el, qa, textOf } from '../../../../testing/rt-kit-testing';
+import { RtIconButtonComponent } from '../../icon-button/rt-icon-button.component';
 import { IRtInput } from '../../input/rt-input.model';
 import { RtDataListToolbarActionsDirective, RtDataListToolbarSelectorsDirective } from '../rt-data-list-toolbar.directive';
 import { RtDataListToolbarComponent } from './rt-data-list-toolbar.component';
@@ -16,6 +18,7 @@ import { RtDataListToolbarComponent } from './rt-data-list-toolbar.component';
             [isFiltersShown]="filtersShown()"
             [isFiltersEmpty]="filtersEmpty()"
             [isPlaceholderShown]="placeholderShown()"
+            [isToolbarActionsIconsOutlined]="outlined()"
             (searchChange)="searches.push($event)"
             (refreshAction)="refreshes = refreshes + 1"
             (clearFiltersAction)="cleared = cleared + 1"
@@ -41,6 +44,7 @@ class ToolbarHostComponent {
     public readonly filtersShown: WritableSignal<boolean> = signal(false);
     public readonly filtersEmpty: WritableSignal<boolean> = signal(true);
     public readonly placeholderShown: WritableSignal<boolean> = signal(false);
+    public readonly outlined: WritableSignal<boolean> = signal(true);
     public readonly withActions: WritableSignal<boolean> = signal(false);
     public readonly withSelectors: WritableSignal<boolean> = signal(false);
     public readonly searches: string[] = [];
@@ -134,6 +138,23 @@ describe('RtDataListToolbarComponent', () => {
         press(fixture, 'data-list-clear-filters');
 
         expect(fixture.componentInstance.cleared).toBe(1);
+    });
+
+    it('значки кнопок полосы контурные, а с isToolbarActionsIconsOutlined = false — залитые, как у первого кита', () => {
+        const fills: (fixture: ComponentFixture<ToolbarHostComponent>) => boolean[] = (
+            fixture: ComponentFixture<ToolbarHostComponent>
+        ): boolean[] =>
+            fixture.debugElement
+                .queryAll(By.directive(RtIconButtonComponent))
+                .map((button: DebugElement): boolean => (button.componentInstance as RtIconButtonComponent).iconFill());
+        const fixture: ComponentFixture<ToolbarHostComponent> = setup((host: ToolbarHostComponent): void => host.filtersShown.set(true));
+
+        expect(fills(fixture)).toEqual([false, false, false]);
+
+        fixture.componentInstance.outlined.set(false);
+        fixture.detectChanges();
+
+        expect(fills(fixture)).toEqual([true, true, true]);
     });
 
     it('обновление и настройка колонок просят приложение', () => {

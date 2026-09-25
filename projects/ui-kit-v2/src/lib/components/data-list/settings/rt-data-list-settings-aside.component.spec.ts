@@ -155,4 +155,21 @@ describe('RtDataListSettingsAsideComponent', () => {
         expect(dataListToggleHidden(items, 'a')[0].hidden).toBe(true);
         expect(dataListToggleHidden(items, 'b')[1].hidden).toBe(false);
     });
+
+    it('колонка без имени называется именем свойства по словам и с заглавных, как в первом ките', () => {
+        const unnamed: IRtDataTable.Column<IEntity> = { ...columnOf('title', ''), propName: 'userIcon' };
+        const plain: IRtDataTable.Column<IEntity> = columnOf('email', 'email');
+        const labels: string[] = dataListSettingItems([unnamed, plain, columnOf('id', 'Номер')]).map(
+            (item: IRtTable.ColumnSettingItem) => item.label
+        );
+
+        expect(labels).toEqual(['User Icon', 'Email', 'Номер']);
+    });
+
+    it('подвал панели: «Discard Changes» как написано и сохранение прописными, как в первом ките', () => {
+        const fixture: ComponentFixture<RtDataListSettingsAsideComponent<IEntity>> = setup();
+
+        expect(textOf(el(fixture, '[qa-dataid="data-list-settings-cancel"]')?.nativeElement)).toBe('Discard Changes');
+        expect(saveButton(fixture).classList.contains('rt-data-list-settings-aside__save')).toBe(true);
+    });
 });
