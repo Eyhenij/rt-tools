@@ -333,6 +333,25 @@
        как есть; материальный набор даёт им 24px и серый темы, как у первого кита. */
     --rt-list-table-icon-size: 0px;
     --rt-list-table-icon-color: var(--rt-color-text-primary);
+    /* Кнопки этих значков: свой вид — прежняя квадратная кнопка в 40px, материальный набор —
+       круглая в 36px, как кнопка-значок Material у первого кита. */
+    --rt-list-table-button-size: var(--rt-control-height-md);
+    --rt-list-table-button-radius: var(--rt-radius-md);
+    /* Поле строки отбора: свой вид — малое поле кита, материальный набор — обведённое поле
+       Material первого кита в 52px, как поиск списка. */
+    --rt-list-filter-field-height: var(--rt-input-height-sm);
+    --rt-list-filter-field-font-size: var(--rt-input-font-size);
+    --rt-list-filter-field-color-border: var(--rt-input-color-border);
+    --rt-list-filter-field-color-bg: var(--rt-input-color-bg);
+    --rt-list-filter-field-color-placeholder: var(--rt-input-color-text-placeholder);
+    /* Кнопка копирования в ячейке: свой вид — прежняя кнопка-значок в 32px, материальный набор —
+       плашка первого кита в 24px с заливкой контейнера темы и серым значком, тёмным под указателем. */
+    --rt-list-copy-button-size: var(--rt-control-height-sm);
+    --rt-list-copy-button-radius: var(--rt-radius-md);
+    --rt-list-copy-button-bg: transparent;
+    --rt-list-copy-button-bg-hover: var(--rt-icon-button-color-bg-hover);
+    --rt-list-copy-button-color: var(--rt-color-text-primary);
+    --rt-list-copy-button-color-hover: var(--rt-color-text-primary);
 
     /* Подпись флажка «отметить все» на панели списка: свой вид — текст, материальный набор —
        приглушённый серый первого кита. */

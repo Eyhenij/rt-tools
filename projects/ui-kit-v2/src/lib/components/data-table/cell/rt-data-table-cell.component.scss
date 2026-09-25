@@ -1,10 +1,8 @@
-@use '../../../../styles/breakpoints' as bp;
-
 @layer rt-kit.components {
     /* rt-data-table-cell — готовая ячейка таблицы первого кита. Размеры первого кита лежат на
        шкале: промежуток и поля 8px — ступень sm, отступ кнопки копирования 4px — ступень xs,
        значок 24px — размер lg набора. Кнопка копирования стоит поверх края ячейки и
-       проявляется наведением; на узком экране наведения нет, и она видна всегда. */
+       проявляется наведением; где наведения нет, она видна всегда. */
 
     .rt-data-table-cell {
         --rt-data-table-cell-transition-duration: var(--rt-duration-fast);
@@ -56,8 +54,23 @@
             transition: visibility var(--rt-data-table-cell-transition-duration) linear;
             visibility: hidden;
 
-            @media (width <= #{bp.$rt-bp-lg}) {
+            // Постоянно видна там, где наведения нет, — а не по ширине окна: у первого кита она
+            // появлялась сама только на телефоне, а порог узкого экрана второго кита 1080px, и на
+            // ноутбуке с боковой панелью кнопки стояли во всех ячейках сразу.
+            @media (hover: none) {
                 visibility: visible;
+            }
+
+            // Вид — через кнопки списка: материальный набор рисует плашку первого кита.
+            --rt-icon-button-color: var(--rt-list-copy-button-color);
+
+            .rt-icon-button {
+                --rt-icon-button-size: var(--rt-list-copy-button-size);
+                --rt-icon-button-square-radius: var(--rt-list-copy-button-radius);
+                --rt-icon-button-color-hover: var(--rt-list-copy-button-color-hover);
+                --rt-icon-button-color-bg-hover: var(--rt-list-copy-button-bg-hover);
+
+                background-color: var(--rt-list-copy-button-bg);
             }
 
             &--position--left {
