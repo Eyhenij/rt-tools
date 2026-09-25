@@ -81,6 +81,20 @@ export const appConfig: ApplicationConfig = {
 }
 ```
 
+Приложение, которое объявляет материальный набор оформления, публикует и второй набор значков —
+рисунки Material из `src/assets/icons-material`. Его адрес по умолчанию `/icons-material`, свой
+называется вторым аргументом: `provideRtIcons('/icons', '/icons-material')`. Без этой записи
+кит рисует свои значки и под материальным набором: пустого места не будет, но и рисунка Material
+тоже.
+
+```json
+{
+    "glob": "**/*.svg",
+    "input": "node_modules/@rt-tools/ui-kit-v2/src/assets/icons-material",
+    "output": "icons-material"
+}
+```
+
 Шрифт кит везёт сам. Начертания Montserrat лежат в
 `node_modules/@rt-tools/ui-kit-v2/src/assets/fonts`, объявления `@font-face` — в слое оформления,
 и адрес в них относительный: сборка приложения разрешает его от места файла стилей и уносит
