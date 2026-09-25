@@ -4,9 +4,10 @@
 
 - **State:** `этап-идёт`
 - **Stage:** 1 of 2 — Measure and fix
-- **Done:** all eleven items of the owner's second list are sorted out; the code, specs and texts
-  are committed.
-- **Next step:** retake the frames of both showcases and of the admin panel.
+- **Done:** thirteen items of the owner's third list of fourteen are done and committed; the
+  second kit's frames are retaken, 642 of 642 on a second pass.
+- **Next step:** retake the admin panel frames that show the page strip label, then the answer
+  about the text editor's library.
 - **Uncommitted:** no.
 - **Waiting for the owner:** no.
 - **PR:** not open yet.
@@ -39,6 +40,14 @@
 - **The reset is solved by a technique of the application, not by a build without layers.** The
   reset goes into the sublayer `rt-kit.vendor`, and the README says so. Whether a build without
   layers is still wanted is asked of the owner. Affected stage of the plan: 1.
+- **The owner's third list adds three items.** The list takes `isToolbarActionsIconsOutlined`, the
+  selection directive gives its flag under the first kit's name `isMultiSelectExtendedModEnabled`,
+  and the package's built styles find the fonts. The fourth — the text editor's library breaks an
+  application's build — is asked of the owner: the fix changes how the editor is imported.
+  Affected stage of the plan: 1.
+- **The row menu takes any markup already, but not Material's menu item.** It projects its content
+  whole; `mat-menu-item` needs Material's own menu above it. The owner's fallback — the success
+  tone and a Material glyph on the kit's item — is done. Affected stage of the plan: 1.
 - **The browser measurement is not taken.** The pinned browser profile of this machine is not set,
   and the rule stops work through the browser. Affected stage of the plan: 1.
 
@@ -48,3 +57,4 @@
 
 - The task is taken from the owner's list of nine items.
 - The owner's second list of eleven items is done in two commits.
+- The owner's third list of fourteen: items 12 and 13 and the fonts of item 14 are done.
