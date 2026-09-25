@@ -42,6 +42,7 @@ import { RtDataListSelectorsDirective } from '../../rt-data-list-selectors.direc
             [look]="look()"
             [appearance]="appearance()"
             [filterAppearance]="filterAppearance()"
+            [isToolbarActionsIconsOutlined]="iconsOutlined()"
             [loading]="loading()"
             [fetching]="fetching()"
             [isSelectAllSelectorShown]="selectAllShown()"
@@ -66,6 +67,9 @@ export class TestRtDataListCellComponent implements OnInit {
     public readonly look: InputSignal<IRtDataTable.Look> = input<IRtDataTable.Look>('material');
     public readonly appearance: InputSignal<IRtInput.Appearance> = input<IRtInput.Appearance>('fill');
     public readonly filterAppearance: InputSignal<IRtInput.Appearance> = input<IRtInput.Appearance>('outline');
+    public readonly iconsOutlined: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
+        transform: booleanAttribute,
+    });
     public readonly filtersShown: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });

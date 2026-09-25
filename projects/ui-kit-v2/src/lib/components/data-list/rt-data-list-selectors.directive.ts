@@ -105,6 +105,9 @@ export class RtDataListSelectorsDirective<
     /** Отмечены все записи, включая не пришедшие страницы. */
     public readonly isAcrossPagesEnabled: Signal<boolean> = this.#isAcrossPagesEnabled.asReadonly();
 
+    /** Тот же признак под именем первого кита: приложение, читавшее его там, переезжает без правок. */
+    public readonly isMultiSelectExtendedModEnabled: Signal<boolean> = this.isAcrossPagesEnabled;
+
     constructor() {
         /* Отметки ведёт директива, а рисуют их панель действий и таблица списка. */
         effect(() => {

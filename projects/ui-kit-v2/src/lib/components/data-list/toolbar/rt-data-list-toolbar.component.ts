@@ -135,6 +135,11 @@ export class RtDataListToolbarComponent {
     });
 
     /** Что уже набрано в поиске: приложение ставит это при первом рисовании. */
+    /** Контурные значки кнопок полосы — очистки отбора, обновления и настройки колонок, как у первого кита. */
+    public readonly isToolbarActionsIconsOutlined: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
+        transform: booleanAttribute,
+    });
+
     public readonly searchTerm: InputSignal<TNullable<string>> = input<TNullable<string>>('');
 
     public readonly searchChange: OutputEmitterRef<string> = output<string>();

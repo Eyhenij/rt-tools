@@ -162,6 +162,11 @@ export class RtDataListComponent<
         this.#filterAppearance
     );
 
+    /** Контурные значки кнопок полосы: очистки отбора, обновления и настройки колонок, как у первого кита. */
+    public readonly isToolbarActionsIconsOutlined: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
+        transform: booleanAttribute,
+    });
+
     public readonly tableConfigStorageKey: InputSignal<string> = input.required<string>();
 
     public readonly entities: InputSignalWithTransform<ENTITY_TYPE[], ENTITY_TYPE[] | null | undefined> = input.required<

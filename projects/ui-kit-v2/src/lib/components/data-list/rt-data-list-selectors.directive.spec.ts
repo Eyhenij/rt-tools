@@ -184,6 +184,16 @@ describe('RtDataListSelectorsDirective', () => {
         expect(selectors(fixture).isAllEntitiesSelected()).toBe(false);
     });
 
+    it('признак всех страниц читается и под именем первого кита isMultiSelectExtendedModEnabled', async (): Promise<void> => {
+        const fixture: ComponentFixture<SelectorsHostComponent> = await setup();
+
+        expect([selectors(fixture).isAcrossPagesEnabled(), selectors(fixture).isMultiSelectExtendedModEnabled()]).toEqual([false, false]);
+
+        await click(fixture, selectAll(fixture));
+
+        expect([selectors(fixture).isAcrossPagesEnabled(), selectors(fixture).isMultiSelectExtendedModEnabled()]).toEqual([true, true]);
+    });
+
     it('SC-UKV-255 — снятое «отметить все» убирает и отметки, и отметку всех страниц', async (): Promise<void> => {
         const fixture: ComponentFixture<SelectorsHostComponent> = await setup();
 
