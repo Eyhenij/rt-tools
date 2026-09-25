@@ -1,4 +1,4 @@
-import { APIRequestContext, expect, Page, test } from '@playwright/test';
+import { APIRequestContext, expect, Locator, Page, test } from '@playwright/test';
 import { createHmac } from 'node:crypto';
 
 import { ADMIN_ORIGIN, CHAT } from '../stand/stand.mjs';
@@ -88,10 +88,12 @@ test.describe('вызовы наружу', () => {
 
         await openSection(panel, 'chat');
         await qa(panel, 'chat-talk').first().click();
-        // кнопка состояния закрывает живой разговор и после закрытия зовёт открыть его снова
-        await expect(qa(panel, 'chat-talk-state')).toHaveText('Закрыть разговор');
-        await qa(panel, 'chat-talk-state').click();
-        await expect(qa(panel, 'chat-talk-state')).toHaveText('Открыть снова');
+        // действие подробностей закрывает живой разговор и после закрытия зовёт открыть его снова
+        const action: Locator = qa(panel, 'workspace-details-action');
+
+        await expect(action).toHaveText('Закрыть разговор');
+        await action.click();
+        await expect(action).toHaveText('Открыть снова');
         await panel.close();
 
         const body: IHookBody = JSON.parse((await waitCall(request, 'closing')).body) as IHookBody;

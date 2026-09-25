@@ -1,13 +1,16 @@
 # The panel of the operator
 
-**Status:** in force · **Revision:** 2026-09-21 · **Scenario prefix:** `SC-CH`
-**Depends on:** `chat` (the conversation and the message), `chat/operator-reading` (the operator and their sites), `chat/event-stream` (the stream)
+**Status:** in force · **Revision:** 2026-09-24 · **Scenario prefix:** `SC-CH`
+**Depends on:** `chat` (the conversation and the message), `chat/operator-reading` (the operator and their sites), `chat/event-stream` (the stream), `chat/talks-workspace` (the layout of the screen)
 **Laws:** `access`, `navigation`, `reuse-first`, `lists`, `verifiability`
 **Procedures:** none — the operations are declared by the controllers of the chat
 
 A subdomain of the chat: the screen the operator answers a visitor from. The taking in of a remark
 is described by the spec of the domain, the sites of an operator and the reading of the lists by the
 subdomain about their reading, and the arrival of a new remark by the subdomain about the stream.
+How a talk is laid out on the screen — the three columns, the row of the list, the properties and
+the actions — is described by the subdomain about the workspace, one text for this screen and for
+the embedded page.
 
 ## Why
 
@@ -17,20 +20,22 @@ nothing at all. The visitor writes into a chat nobody answers.
 
 ## Terminology
 
-| Term            | What it is                                                                               |
-| --------------- | ---------------------------------------------------------------------------------------- |
-| The panel       | The section of the admin application where the operator reads the talks and answers them |
-| The list        | The conversations of the sites the operator answers for, the freshest talk first         |
-| The feed        | The messages of one conversation, oldest first, both sides in one thread                 |
-| The sending box | The field the operator writes an answer in                                               |
-| The sent remark | An answer shown in the feed before the service has answered about it                     |
+| Term            | What it is                                                                                |
+| --------------- | ----------------------------------------------------------------------------------------- |
+| The panel       | The section of the admin application where the operator reads the talks and answers them  |
+| The list        | The conversations of the sites the operator answers for, the freshest talk first          |
+| The feed        | The messages of one conversation, oldest first, both sides in one thread                  |
+| The sending box | The field the operator writes an answer in                                                |
+| The sent remark | An answer shown in the feed before the service has answered about it                      |
+| The details     | The right column of the screen: the properties of the chosen talk and the actions over it |
 
 ### What it is called in the interface
 
-The section is named "Чат" in the menu and in the title of the tab. The list is headed by the name
-of the site and the minute of the last message; the state of a talk is said by the words "живой"
-and "закрытый". The sending box carries the placeholder "Ответ посетителю", and the refusal of a
-send — "Реплика не ушла".
+The section is named "Чат" in the menu and in the title of the tab. A row of the list carries the
+name of the site, the last remark and the minute of it; the state of a talk stands in the row as a
+mark — "Живой" or "Закрытый". The details are headed "Разговор", and the action over a talk is
+"Закрыть разговор" or "Открыть снова". The sending box carries the placeholder "Ответ посетителю",
+and the refusal of a send — "Реплика не ушла".
 
 ## Rules
 
@@ -130,11 +135,12 @@ chat, and the sent remark lives in the memory of the open screen until the servi
 | The list of talks | is being read       | the waiting of the kit in place of the rows                     |
 | The list of talks | empty               | the words that there are no talks; for a non-operator the same  |
 | The list of talks | read                | the rows, the freshest first, with the narrowings above them    |
-| The feed          | no talk chosen      | the words that a talk is to be chosen                           |
+| The feed          | no talk chosen      | the words that a talk is to be chosen, and the details empty    |
 | The feed          | is being read       | the waiting of the kit in place of the messages                 |
 | The feed          | read                | the messages of both sides in one thread, oldest first          |
 | The sending box   | the remark is sent  | the remark in the feed, marked as not confirmed by the service  |
 | The sending box   | the send is refused | the remark in the feed, marked as refused, and the text is kept |
+| The details       | a talk is chosen    | the site, the state, the minute of the last remark, one action  |
 
 ## Cross-cutting requirements
 
@@ -150,8 +156,8 @@ Not applicable: the admin application is closed by an entry and is not indexed.
 
 ### Mobile layout
 
-The list and the feed stand one above the other on a narrow screen, as the sections of the admin
-application already do; the sending box stays at the bottom of the feed.
+On a narrow screen the workspace shows one column at a time and gives the bar for moving between
+them; the sending box stays at the bottom of the feed.
 
 ### Several objects
 
@@ -187,3 +193,7 @@ site is named in every row, and the narrowing by site is a narrowing, not the on
   the sending, and the scenarios `SC-CH-80` … `SC-CH-82`.
 - 2026-09-21 — the list of the talks is drawn by the ready-made list of the kit by the task RT-2293:
   the rules stayed as they were, and the companion names what the row of the list holds now.
+- 2026-09-24 — the screen is laid out by the workspace of the kit by the task RT-2337 of the epic
+  RT-2335: the three columns, the details with the properties and the action, the mark of the state
+  in the row. The rules of the layout live in the subdomain about the workspace, one text for both
+  screens.

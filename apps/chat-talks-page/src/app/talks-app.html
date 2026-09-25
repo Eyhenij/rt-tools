@@ -5,63 +5,67 @@
     <p rtElem="refused" qa-dataid="talks-refused">{{ refusalWords() }}</p>
     } @if (state() === opened || talkRows().length) {
     <main rtElem="screen" qa-dataid="talks-screen">
-        <section rtElem="talks">
-            <!--
-                        Список переписок — готовый список набора: выбор строки, заглушки чтения и
-                        пустое состояние он умеет сам. Поля поиска и отбора страница не показывает:
-                        поиска по тексту у сервиса нет, а площадка у страницы одна.
-                    -->
-            <rt-thread-list
-                [activeId]="chosen()"
-                [emptyText]="words['talksEmpty']"
-                [loading]="talksReading()"
-                [rows]="talkRows()"
-                (selectRow)="choose($event)">
-                <!-- Место поиска занято названием раздела: поиска по тексту у сервиса нет -->
-                <ng-template rtThreadListSearch>
-                    <p rtElem="title">Переписки</p>
-                </ng-template>
+        <!--
+            Рабочий стол набора — тот же, которым собрана панель оператора: список, лента,
+            свойства разговора. Ключ ширин свой: страница стоит в чужой админке, и ширины, которые
+            там выставил человек, не ширины панели.
+        -->
+        <rt-workspace [hasActive]="!!talk()" [storageKey]="workspaceStorageKey">
+            <ng-template rtWorkspaceList>
+                <!--
+                    Список переписок — готовый список набора: выбор строки, заглушки чтения и
+                    пустое состояние он умеет сам. Поля поиска и отбора страница не показывает:
+                    поиска по тексту у сервиса нет, а площадка у страницы одна.
+                -->
+                <rt-thread-list
+                    [activeId]="chosen()"
+                    [emptyText]="words['talksEmpty']"
+                    [loading]="talksReading()"
+                    [rows]="talkRows()"
+                    (selectRow)="choose($event)">
+                    <!-- Место поиска занято названием раздела: поиска по тексту у сервиса нет -->
+                    <ng-template rtThreadListSearch>
+                        <p rtElem="title">Переписки</p>
+                    </ng-template>
 
-                <ng-template let-row [rtThreadListRow]="talkRows()">
-                    <p rtElem="row">
-                        <span rtElem="row-text">{{ row.lastMessage }}</span>
-                        <span rtElem="row-state" qa-dataid="talks-row-state">
-                            {{ row.state === closed ? words['stateClosed'] : words['stateLive'] }}
-                        </span>
-                    </p>
-                </ng-template>
-            </rt-thread-list>
-        </section>
+                    <ng-template let-row [rtThreadListRow]="talkRows()">
+                        <admin-chat-talk [talk]="row" [words]="talkWords" />
+                    </ng-template>
+                </rt-thread-list>
+            </ng-template>
 
-        <section rtElem="feed">
-            @if (chosen()) {
-            <button
-                rtButton
-                rtElem="state"
-                qa-dataid="talks-state"
-                type="button"
-                appearance="text"
-                [attr.aria-label]="stateLabel()"
-                [label]="stateLabel()"
-                (click)="changeState()"></button>
+            <ng-template rtWorkspaceCenter>
+                <!--
+                    Лента и поле ответа — готовый чат набора: тред, состояния своей реплики и
+                    повтор отбитой он уже умеет. Про невыбранный разговор он говорит сам своей
+                    подписью.
+                -->
+                <rt-chat
+                    canReply
+                    fill
+                    showRefresh
+                    qa-dataid="talks-feed"
+                    [emptyHint]="words['feedUnchosen']"
+                    [hasThread]="!!talk()"
+                    [loading]="feedReading()"
+                    [messages]="thread()"
+                    [placeholder]="words['answerPlaceholder']"
+                    [title]="feedTitle()"
+                    (refresh)="refreshFeed()"
+                    (send)="send($event)" />
+            </ng-template>
 
-            <!--
-                            Лента и поле ответа — готовый чат набора: тред, состояния своей реплики
-                            и повтор отбитой он уже умеет.
-                        -->
-            <rt-chat
-                canReply
-                fill
-                hasThread
-                rtElem="thread"
-                [loading]="feedReading()"
-                [messages]="thread()"
-                [placeholder]="words['answerPlaceholder']"
-                (send)="send($event)" />
-            } @else {
-            <rt-empty-state [title]="words['feedUnchosen']" />
-            }
-        </section>
+            <ng-template rtWorkspaceAside>
+                <!-- Свойства разговора и действия над ним: действие — не реплика, и в ленте ему не место -->
+                <rt-workspace-details
+                    qa-dataid="talks-details"
+                    [actions]="talkActions()"
+                    [loading]="talksReading()"
+                    [rows]="detailRows()"
+                    [title]="talk() ? words['detailsTitle'] : null"
+                    (actionClicked)="changeState($event)" />
+            </ng-template>
+        </rt-workspace>
     </main>
     } @else if (state() !== refused) {
     <p rtElem="waiting">Переписки открываются…</p>

@@ -66,6 +66,11 @@ export const ADMIN_LABELS = {
     chatStateClosed: 'Закрытый',
     chatClose: 'Закрыть разговор',
     chatReopen: 'Открыть снова',
+    chatTalkDetails: 'Разговор',
+    chatTalkSite: 'Площадка',
+    chatTalkState: 'Состояние',
+    chatTalkLastMessageAt: 'Последняя реплика',
+    chatTalkUntitled: 'Разговор без реплик',
     chatFilterSite: 'Сайт',
     chatFilterSiteAll: 'Все сайты',
 
