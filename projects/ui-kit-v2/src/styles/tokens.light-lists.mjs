@@ -51,14 +51,44 @@ export const lightLists = [
         dark: `var(--rt-icon-button-color-bg-hover)`,
     },
     {
-        lead: `    /* Значки в таблице списка — кнопки строки отбора и действия строки. Свой вид оставляет их
-       как есть; материальный набор даёт им 24px и серый темы, как у первого кита. */`,
+        lead: `    /* Значки, кнопки и копирование таблицы списка: материальный набор рисует их, как первый кит. */`,
         space: true,
         name: `--rt-list-table-icon-size`,
         value: `0px`,
     },
     {
         name: `--rt-list-table-icon-color`,
+        value: `var(--rt-color-text-primary)`,
+        dark: `var(--rt-color-text-primary)`,
+    },
+    {
+        name: `--rt-list-table-button-size`,
+        value: `var(--rt-control-height-md)`,
+    },
+    {
+        name: `--rt-list-table-button-radius`,
+        value: `var(--rt-radius-md)`,
+    },
+    {
+        name: `--rt-list-copy-button-size`,
+        value: `var(--rt-control-height-sm)`,
+    },
+    {
+        name: `--rt-list-copy-button-radius`,
+        value: `var(--rt-radius-md)`,
+    },
+    {
+        name: `--rt-list-copy-button-bg`,
+        value: `transparent`,
+        dark: `transparent`,
+    },
+    {
+        name: `--rt-list-copy-button-bg-hover`,
+        value: `var(--rt-icon-button-color-bg-hover)`,
+        dark: `var(--rt-icon-button-color-bg-hover)`,
+    },
+    {
+        name: `--rt-list-copy-button-color`,
         value: `var(--rt-color-text-primary)`,
         dark: `var(--rt-color-text-primary)`,
     },

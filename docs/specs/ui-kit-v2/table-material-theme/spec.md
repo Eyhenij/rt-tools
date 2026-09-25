@@ -93,6 +93,21 @@ Nothing new is shown to a person: the list keeps its labels, only its look follo
   material preset.** That is the first kit's Material icon button: `--mat-sys-on-surface-variant`,
   24 px. The own preset keeps them as they were.
 
+- **The buttons of the filter row and of the row actions are round and 36 px in the material
+  preset.** That is the first kit's Material icon button. The own preset keeps the square 40 px one.
+
+- **The fields of the filter row are the first kit's outlined Material field in the material
+  preset.** They are 52 px, like the list search, with the outline colour of the theme, no fill and
+  a 16 px text. The own preset keeps the small field of the kit.
+
+- **The copy button of a cell is the first kit's plate in the material preset.** It is 24 px with a
+  5 px corner, filled with the theme's primary container; the icon is grey and turns dark under the
+  pointer. The own preset keeps the ghost icon button.
+
+- **The copy button of a cell stays hidden until its cell is hovered, whatever the window width.**
+  It is shown all the time only where there is no hover. A width threshold showed it in every cell
+  of a laptop window next to a side panel, while the first kit kept it hidden there.
+
 - **The action buttons above the table are the first kit's small raised buttons in the material
   preset.** A 40 px circle with no fill, raised by the Material level 6 shadow and by level 8 under the
   pointer, a 24 px icon in the grey of the first kit that darkens under the pointer, 16 px between the
@@ -191,3 +206,9 @@ Not applicable: the family holds no data of a workspace.
 - 2026-09-25 — the material icon set is drawn at optical size 48, and the table icons are 24 px in
   the grey of the theme. The owner: «сравнил сторибуки динамик листа 1 и 2, во втором иконки толще
   блядь ну я же просил сравнить!!!!».
+- 2026-09-25 — task RT-2345: the table buttons are round and 36 px, the copy button is the first
+  kit's plate and hides until hover. The owner: «кгопки экшенов и кнопки фильтов во втором ките
+  квадратные а в первом круглые?» and «сравни кнопки копировать содержимсое ячейки их стиль цвета в
+  первом ките и отображаются они только на ховер а не постоянно».
+- 2026-09-25 — task RT-2345: the fields of the filter row are 52 px outlined Material fields. Found
+  by measuring the filter row after the buttons: 60.5 px in the first kit, 44.5 px in the second.

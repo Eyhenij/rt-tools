@@ -183,9 +183,14 @@
             position: sticky;
         }
 
-        // Действия строки — меню кита и кнопки приложения — берут размер и цвет значков таблицы.
+        // Действия строки — меню кита и кнопки приложения — берут размер, форму и цвет кнопок таблицы.
         rt-icon-button {
             --rt-icon-button-color: var(--rt-list-table-icon-color);
+        }
+
+        .rt-icon-button {
+            --rt-icon-button-size: var(--rt-list-table-button-size);
+            --rt-icon-button-square-radius: var(--rt-list-table-button-radius);
         }
 
         .rt-icon-button__icon {

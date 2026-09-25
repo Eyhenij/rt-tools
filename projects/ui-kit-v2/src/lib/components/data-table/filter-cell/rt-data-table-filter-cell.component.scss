@@ -10,15 +10,28 @@
         justify-content: flex-start;
         gap: var(--rt-space-sm);
 
+        // Поле отбора первого кита — то же обведённое поле Material, что поиск списка, и берёт его
+        // имена: материальный набор даёт ему 52px, шрифт 16px и цвета темы, свой вид — малое поле.
         &__field {
+            --rt-input-height-sm: var(--rt-list-search-height);
+            --rt-input-font-size: var(--rt-list-search-font-size);
+            --rt-input-color-border: var(--rt-list-search-color-border);
+            --rt-input-color-bg: var(--rt-list-search-color-bg);
+            --rt-input-color-text-placeholder: var(--rt-list-search-color-placeholder);
+
             min-width: 0;
             flex-grow: 1;
         }
 
-        // Кнопки вида сравнения и очистки берут размер и цвет значков таблицы: материальный набор
-        // рисует их, как первый кит, свой вид оставляет прежними.
+        // Кнопки вида сравнения и очистки берут размер, форму и цвет кнопок таблицы: материальный
+        // набор рисует их, как первый кит, свой вид оставляет прежними.
         rt-icon-button {
             --rt-icon-button-color: var(--rt-list-table-icon-color);
+        }
+
+        .rt-icon-button {
+            --rt-icon-button-size: var(--rt-list-table-button-size);
+            --rt-icon-button-square-radius: var(--rt-list-table-button-radius);
         }
 
         .rt-icon-button__icon {
