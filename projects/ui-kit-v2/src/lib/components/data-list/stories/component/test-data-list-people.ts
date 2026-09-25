@@ -14,7 +14,7 @@ import { TRtDesignTokenName } from '../../../../tokens/rt-design-tokens';
 
 export type TTestPersonStatus = 'active' | 'inactive' | 'invited' | 'deleted';
 
-export type TTestPersonButton = 'plus-circle' | 'close' | 'user' | 'check';
+export type TTestPersonButton = 'ico-plus' | 'close' | 'user' | 'check';
 
 export interface ITestPerson extends Record<string, unknown> {
     readonly id: number;
@@ -36,8 +36,12 @@ export interface ITestPerson extends Record<string, unknown> {
 const FIRST_NAMES: readonly string[] = ['Анна', 'Борис', 'Вера', 'Глеб', 'Дарья', 'Егор', 'Жанна', 'Захар', 'Инна', 'Кирилл'];
 const LAST_NAMES: readonly string[] = ['Орлова', 'Соколов', 'Лебедева', 'Воронов', 'Зайцева', 'Волков', 'Белова', 'Козлов'];
 const STATUSES: readonly TTestPersonStatus[] = ['active', 'inactive', 'invited', 'deleted'];
-/** Значки кнопки в ячейке: у первого кита там имена Material, здесь — их пары из набора кита. */
-const BUTTONS: readonly TTestPersonButton[] = ['plus-circle', 'close', 'user', 'check'];
+/**
+ * Значки кнопки в ячейке — пары имён Material первого кита (`add`, `clear`, `person`) по перечню
+ * соответствий: так материальный набор рисует те же рисунки. `save` пары в ките нет, вместо него
+ * галочка.
+ */
+const BUTTONS: readonly TTestPersonButton[] = ['ico-plus', 'close', 'user', 'check'];
 const ITEMS: readonly string[] = ['Заявка', 'Договор', 'Счёт', 'Акт', 'Отчёт'];
 
 /**

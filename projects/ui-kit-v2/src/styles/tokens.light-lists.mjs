@@ -51,6 +51,18 @@ export const lightLists = [
         dark: `var(--rt-icon-button-color-bg-hover)`,
     },
     {
+        lead: `    /* Значки в таблице списка — кнопки строки отбора и действия строки. Свой вид оставляет их
+       как есть; материальный набор даёт им 24px и серый темы, как у первого кита. */`,
+        space: true,
+        name: `--rt-list-table-icon-size`,
+        value: `0px`,
+    },
+    {
+        name: `--rt-list-table-icon-color`,
+        value: `var(--rt-color-text-primary)`,
+        dark: `var(--rt-color-text-primary)`,
+    },
+    {
         lead: `    /* Подпись флажка «отметить все» на панели списка: свой вид — текст, материальный набор —
        приглушённый серый первого кита. */`,
         space: true,

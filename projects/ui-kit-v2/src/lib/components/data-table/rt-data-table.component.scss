@@ -181,6 +181,16 @@
             position: sticky;
         }
 
+        // Действия строки — меню кита и кнопки приложения — берут размер и цвет значков таблицы.
+        rt-icon-button {
+            --rt-icon-button-color: var(--rt-list-table-icon-color);
+        }
+
+        .rt-icon-button__icon {
+            min-width: var(--rt-list-table-icon-size);
+            min-height: var(--rt-list-table-icon-size);
+        }
+
         @media (hover: hover) {
             &--hidden {
                 visibility: hidden;

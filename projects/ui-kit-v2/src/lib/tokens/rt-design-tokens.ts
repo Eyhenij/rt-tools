@@ -223,6 +223,8 @@ export type TRtDesignTokenName =
     | '--rt-list-selector-label-color'
     | '--rt-list-settings-icon-color'
     | '--rt-list-settings-item-bg'
+    | '--rt-list-table-icon-color'
+    | '--rt-list-table-icon-size'
     | '--rt-mat-blue-100'
     | '--rt-mat-blue-20'
     | '--rt-mat-blue-40'
@@ -730,6 +732,8 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-list-selector-label-color',
     '--rt-list-settings-icon-color',
     '--rt-list-settings-item-bg',
+    '--rt-list-table-icon-color',
+    '--rt-list-table-icon-size',
     '--rt-mat-blue-100',
     '--rt-mat-blue-20',
     '--rt-mat-blue-40',

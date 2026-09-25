@@ -84,9 +84,14 @@ Nothing new is shown to a person: the list keeps its labels, only its look follo
 
 - **An icon of a column is filled unless its declaration says outlined.** That is how the first kit
   draws it: `'FILL' 1` without the flag, `'FILL' 0` with it, both at weight 700. The material set
-  keeps both drawings at that weight; the own set draws the icon one way. The reference is the
+  keeps both drawings at that weight and at optical size 48, as the first kit sets it; optical size
+  24 draws the strokes a quarter thicker. The own set draws the icon one way. The reference is the
   first kit as its README sets an application up, with Material Symbols; the old Material Icons
   font ignores the weight and draws thinner.
+
+- **The icons of the filter row and of the row actions are 24 px in the grey of the theme in the
+  material preset.** That is the first kit's Material icon button: `--mat-sys-on-surface-variant`,
+  24 px. The own preset keeps them as they were.
 
 - **The action buttons above the table are the first kit's small raised buttons in the material
   preset.** A 40 px circle with no fill, raised by the Material level 6 shadow and by level 8 under the
@@ -183,3 +188,6 @@ Not applicable: the family holds no data of a workspace.
 - 2026-09-24 — the reference icon drawing is the first kit set up by its README, after «иконкидинамик
   листа во втором ките толще чем иконки динамик листа в первом ките, сверь иконки». RT-2342 moved the
   first kit's showcase to Material Symbols; the second kit's icons stayed as they were.
+- 2026-09-25 — the material icon set is drawn at optical size 48, and the table icons are 24 px in
+  the grey of the theme. The owner: «сравнил сторибуки динамик листа 1 и 2, во втором иконки толще
+  блядь ну я же просил сравнить!!!!».
