@@ -26,6 +26,13 @@ const BANNER = `/* Built by the generator \`tools/build-tokens-v2.mjs\` from \`t
    an edit on the spot is lost on the next build, and \`pnpm run check:tokens-build\` names it. */`;
 
 const PREAMBLE = {
+    coexist: `/* Coexistence with the first kit for the time of migration. The first kit declares ten steps of the
+   same names on the page root with its own values, and an application holding both kits gets them
+   inside the second kit's components: a 4px rounding becomes 8px. Here the second kit's values stand
+   on the preset node, and the preset is drawn by its own scale whatever lies on the root.
+
+   The application includes it only while it holds the first kit, and removes it together with it:
+   the values repeat the scale, so without the first kit the look does not change. */`,
     primitives: `/* The scale steps — the values the assignment layer chooses from. The only place in the kit where
    a colour code and a size as a number are lawful by definition. */`,
     semantic: `/* The light theme's assignments.
@@ -186,6 +193,28 @@ for (const node of light) {
     }
 }
 
+// The steps the first kit declares on the page root under the same names with its own values. The
+// application moving from one kit to the other holds both, the first kit's file comes later, and inside
+// the second kit's components its steps win. The coexistence file declares the second kit's values on
+// the preset node — whatever stands on the root, the preset is drawn by its own scale. The list goes
+// together with the first kit: when it leaves the tree, the file and this list leave with it.
+const COEXIST_NAMES = [
+    '--rt-radius-xs',
+    '--rt-radius-sm',
+    '--rt-radius-md',
+    '--rt-radius-lg',
+    '--rt-radius-xl',
+    '--rt-radius-2xl',
+    '--rt-radius-full',
+    '--rt-shadow-sm',
+    '--rt-shadow-md',
+    '--rt-shadow-lg',
+];
+const coexistNodes = COEXIST_NAMES.map((name) => scale.find((node) => node.name === name));
+COEXIST_NAMES.forEach((name, index) => {
+    if (!coexistNodes[index]) fail(`the coexistence file names '${name}', which the scale does not declare`);
+});
+
 if (errors.length > 0) {
     console.error(`build-tokens-v2: refusals ${errors.length}, what is built is not rewritten\n`);
     for (const message of errors) console.error(`  ${message}`);
@@ -236,6 +265,14 @@ const files = {
         `.rt-preset-material[data-theme='dark']:not(:root),\n.rt-preset-material [data-theme='dark']:not(:root) {\n` +
         `    @include semantic.rt-theme-light-tokens;\n    @include material.rt-preset-material-tokens;\n` +
         `    @include dark.rt-theme-dark-tokens;\n}\n`,
+
+    [`${stylesDir}/_coexist.scss`]:
+        `${BANNER}\n\n${PREAMBLE.coexist}\n\n[data-preset='material']:not(:root),\n.rt-preset-material:not(:root) {\n` +
+        coexistNodes
+            .filter(Boolean)
+            .map((node) => `    ${node.name}:${node.value.includes('\n') ? `\n        ${node.value}` : ` ${node.value}`};`)
+            .join('\n') +
+        `\n}\n`,
 
     [typesFile]: renderTypes(),
 };

@@ -102,7 +102,7 @@
     "preinstall": "npx only-allow pnpm",
     "build:tokens": "sass --no-source-map projects/ui-kit/src/styles/tokens.scss dist/ui-kit/styles/tokens.css",
     "build:tokens-source": "node tools/build-tokens-v2.mjs",
-    "build:tokens-v2": "sass --no-source-map --load-path=projects/ui-kit-v2/src/styles projects/ui-kit-v2/src/styles/tokens.package.scss dist/ui-kit-v2/styles/tokens.css"
+    "build:tokens-v2": "sass --no-source-map --load-path=projects/ui-kit-v2/src/styles projects/ui-kit-v2/src/styles/tokens.package.scss dist/ui-kit-v2/styles/tokens.css && sass --no-source-map --load-path=projects/ui-kit-v2/src/styles projects/ui-kit-v2/src/styles/tokens.coexist.scss dist/ui-kit-v2/styles/tokens.coexist.css"
   },
   "private": true,
   "repository": {
