@@ -59,3 +59,36 @@ body {
     --mat-sys-outline: #7b757f;
     --mat-form-field-filled-container-color: #e8e0eb;
 }
+
+/* Та же тема в тёмном виде — сборка `mat.theme` с `theme-type: dark`. Настоящая тема Material
+   отвечает тёмной сама, и набор под тёмной темой берёт её цвета: без этого правила тёмная половина
+   пары читала бы светлые значения. Светлый кусок внутри тёмного возвращает светлые. */
+[data-showcase-material-theme='violet'][data-theme='dark'],
+[data-showcase-material-theme='violet'] [data-theme='dark'],
+[data-theme='dark'] [data-showcase-material-theme='violet'] {
+    --mat-sys-primary: #d5baff;
+    --mat-sys-primary-container: #5f00c0;
+    --mat-sys-secondary-container: #4b4357;
+    --mat-sys-error: #ffb4ab;
+    --mat-sys-error-container: #93000a;
+    --mat-sys-surface: #151316;
+    --mat-sys-surface-variant: #49454e;
+    --mat-sys-inverse-surface: #e6e1e6;
+    --mat-sys-on-surface-variant: #e8e0eb;
+    --mat-sys-outline: #958e99;
+    --mat-form-field-filled-container-color: #49454e;
+}
+
+[data-showcase-material-theme='violet'] [data-theme='light'] {
+    --mat-sys-primary: #7d00fa;
+    --mat-sys-primary-container: #ecdcff;
+    --mat-sys-secondary-container: #eadef7;
+    --mat-sys-error: #ba1a1a;
+    --mat-sys-error-container: #ffdad6;
+    --mat-sys-surface: #fef8fc;
+    --mat-sys-surface-variant: #e8e0eb;
+    --mat-sys-inverse-surface: #323033;
+    --mat-sys-on-surface-variant: #49454e;
+    --mat-sys-outline: #7b757f;
+    --mat-form-field-filled-container-color: #e8e0eb;
+}

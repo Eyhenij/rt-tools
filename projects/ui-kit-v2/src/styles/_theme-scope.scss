@@ -58,6 +58,7 @@ html.rt-theme-dark .rt-preset-material {
     @include semantic.rt-theme-light-tokens;
     @include material.rt-preset-material-tokens;
     @include dark.rt-theme-dark-tokens;
+    @include material.rt-preset-material-dark-tokens;
 }
 
 [data-theme='dark'] [data-theme='light'] [data-preset='material'],
@@ -86,4 +87,15 @@ html.rt-theme-dark [data-theme='light'] .rt-preset-material {
     @include semantic.rt-theme-light-tokens;
     @include material.rt-preset-material-tokens;
     @include dark.rt-theme-dark-tokens;
+    @include material.rt-preset-material-dark-tokens;
+}
+
+/* The set and a dark theme both on the page root. The dark answers come after the set there by order,
+   and this rule lays the Material chains back over them: it is heavier than both root rules, so the
+   order of the files does not decide. */
+:root[data-theme='dark'][data-preset='material'],
+:root[data-theme='dark'].rt-preset-material,
+html.rt-theme-dark[data-preset='material'],
+html.rt-theme-dark.rt-preset-material {
+    @include material.rt-preset-material-dark-tokens;
 }
