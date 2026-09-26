@@ -5,7 +5,11 @@
     // двигается только цвет, поэтому раскладка стоит на месте.
     // Стандартные свойства объявлены рядом с псевдоэлементами: одни понимает одна ветка
     // браузеров, другие — другая, и написанные порознь они расходятся видом.
-    * {
+    // Правила стоят только на узлах кита — у них класс с приставкой `rt-`. Стандартное свойство,
+    // поставленное всем узлам, выключает в Chrome `::-webkit-scrollbar` у всего приложения, а
+    // псевдоэлементы на всех узлах красили бы полосы приложения видом кита. Вес селектора нулевой,
+    // и своё правило приложения перебивает его без счёта.
+    :where([class^='rt-'], [class*=' rt-']) {
         scrollbar-color: transparent transparent;
         scrollbar-width: thin;
     }
@@ -13,39 +17,39 @@
     // Проявляется ползунок наведением на саму зону, а не на себя: навести на невидимое нечем.
     // Фокус внутри зоны показывает его наравне — прокрутка с клавиатуры идёт без указателя, и
     // человек иначе не видит ни того, где он в списке, ни того, что список прокручивается.
-    *:hover,
-    *:focus-within {
+    :where([class^='rt-'], [class*=' rt-']):hover,
+    :where([class^='rt-'], [class*=' rt-']):focus-within {
         scrollbar-color: var(--rt-color-border-default) transparent;
     }
 
-    ::-webkit-scrollbar {
+    :where([class^='rt-'], [class*=' rt-'])::-webkit-scrollbar {
         width: 12px;
     }
 
-    ::-webkit-scrollbar:horizontal {
+    :where([class^='rt-'], [class*=' rt-'])::-webkit-scrollbar:horizontal {
         height: 12px;
     }
 
-    ::-webkit-scrollbar-thumb {
+    :where([class^='rt-'], [class*=' rt-'])::-webkit-scrollbar-thumb {
         border: var(--rt-border-width-thick) solid transparent;
         border-radius: var(--rt-radius-md);
         background: transparent;
         background-clip: content-box;
     }
 
-    *:hover::-webkit-scrollbar-thumb,
-    *:focus-within::-webkit-scrollbar-thumb {
+    :where([class^='rt-'], [class*=' rt-']):hover::-webkit-scrollbar-thumb,
+    :where([class^='rt-'], [class*=' rt-']):focus-within::-webkit-scrollbar-thumb {
         background: var(--rt-color-border-default);
         background-clip: content-box;
     }
 
-    ::-webkit-scrollbar-thumb:hover {
+    :where([class^='rt-'], [class*=' rt-'])::-webkit-scrollbar-thumb:hover {
         border: var(--rt-border-width-medium) solid transparent;
         background: var(--rt-color-border-strong);
         background-clip: content-box;
     }
 
-    ::-webkit-scrollbar-track:hover {
+    :where([class^='rt-'], [class*=' rt-'])::-webkit-scrollbar-track:hover {
         border: var(--rt-border-width-thin) solid var(--rt-color-bg-subtle);
     }
 
@@ -53,11 +57,11 @@
     // экране указателя нет вовсе, а признак прокручиваемости зоны нужен ровно так же.
     // Ветка hover-none: наведения на этом экране не бывает.
     @media (hover: none) {
-        * {
+        :where([class^='rt-'], [class*=' rt-']) {
             scrollbar-color: var(--rt-color-border-default) transparent;
         }
 
-        ::-webkit-scrollbar-thumb {
+        :where([class^='rt-'], [class*=' rt-'])::-webkit-scrollbar-thumb {
             background: var(--rt-color-border-default);
             background-clip: content-box;
         }
