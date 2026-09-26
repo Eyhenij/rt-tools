@@ -230,6 +230,7 @@ export type TRtDesignTokenName =
     | '--rt-list-settings-item-bg'
     | '--rt-list-table-button-radius'
     | '--rt-list-table-button-size'
+    | '--rt-list-table-head-divider-color'
     | '--rt-list-table-icon-color'
     | '--rt-list-table-icon-size'
     | '--rt-mat-blue-100'
@@ -750,6 +751,7 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-list-settings-item-bg',
     '--rt-list-table-button-radius',
     '--rt-list-table-button-size',
+    '--rt-list-table-head-divider-color',
     '--rt-list-table-icon-color',
     '--rt-list-table-icon-size',
     '--rt-mat-blue-100',

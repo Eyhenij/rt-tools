@@ -332,6 +332,7 @@
     /* Значки, кнопки и копирование таблицы списка: материальный набор рисует их, как первый кит. */
     --rt-list-table-icon-size: 0px;
     --rt-list-table-icon-color: var(--rt-color-text-primary);
+    --rt-list-table-head-divider-color: var(--rt-color-border-strong);
     --rt-list-table-button-size: var(--rt-control-height-md);
     --rt-list-table-button-radius: var(--rt-radius-md);
     --rt-list-copy-button-size: var(--rt-control-height-sm);

@@ -62,6 +62,11 @@ export const lightLists = [
         dark: `var(--rt-color-text-primary)`,
     },
     {
+        name: `--rt-list-table-head-divider-color`,
+        value: `var(--rt-color-border-strong)`,
+        dark: `var(--rt-color-border-strong)`,
+    },
+    {
         name: `--rt-list-table-button-size`,
         value: `var(--rt-control-height-md)`,
     },

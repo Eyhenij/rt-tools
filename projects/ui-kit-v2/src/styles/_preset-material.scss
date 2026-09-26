@@ -127,6 +127,7 @@
     --rt-list-action-color: var(--rt-mat-neutral-60);
     --rt-list-table-icon-size: var(--rt-size-6);
     --rt-list-table-icon-color: var(--mat-sys-on-surface-variant, var(--rt-mat-neutral-30));
+    --rt-list-table-head-divider-color: var(--mat-sys-outline, var(--rt-mat-neutral-30));
     --rt-list-table-button-size: calc(var(--rt-size-8) + var(--rt-size-1));
     --rt-list-table-button-radius: var(--rt-radius-full);
     --rt-list-copy-button-size: var(--rt-size-6);
@@ -200,6 +201,7 @@
     --rt-list-settings-item-bg: var(--mat-option-selected-state-layer-color, var(--mat-sys-secondary-container, var(--rt-color-bg-subtle)));
     --rt-list-settings-icon-color: var(--mat-sys-on-surface-variant, var(--rt-color-text-muted));
     --rt-list-table-icon-color: var(--mat-sys-on-surface-variant, var(--rt-color-text-primary));
+    --rt-list-table-head-divider-color: var(--mat-sys-outline, var(--rt-color-border-strong));
     --rt-list-copy-button-bg: var(--mat-sys-primary-container, transparent);
     --rt-list-copy-button-bg-hover: var(--mat-sys-primary-container, var(--rt-icon-button-color-bg-hover));
 }

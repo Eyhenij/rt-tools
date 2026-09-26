@@ -228,6 +228,7 @@ export const material = [
     { name: `--rt-list-action-color`, value: `var(--rt-mat-neutral-60)` },
     { name: `--rt-list-table-icon-size`, value: `var(--rt-size-6)` },
     { name: `--rt-list-table-icon-color`, value: `var(--mat-sys-on-surface-variant, var(--rt-mat-neutral-30))` },
+    { name: `--rt-list-table-head-divider-color`, value: `var(--mat-sys-outline, var(--rt-mat-neutral-30))` },
     { name: `--rt-list-table-button-size`, value: `calc(var(--rt-size-8) + var(--rt-size-1))` },
     { name: `--rt-list-table-button-radius`, value: `var(--rt-radius-full)` },
     { name: `--rt-list-copy-button-size`, value: `var(--rt-size-6)` },
