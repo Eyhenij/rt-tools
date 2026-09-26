@@ -332,6 +332,7 @@
     /* Значки, кнопки и копирование таблицы списка: материальный набор рисует их, как первый кит. */
     --rt-list-table-icon-size: 0px;
     --rt-list-table-icon-color: var(--rt-color-text-primary);
+    --rt-list-table-head-divider-color: var(--rt-color-border-strong);
     --rt-list-table-button-size: var(--rt-control-height-md);
     --rt-list-table-button-radius: var(--rt-radius-md);
     --rt-list-copy-button-size: var(--rt-control-height-sm);
@@ -487,13 +488,4 @@
 
 :root {
     @include rt-theme-light-tokens;
-}
-
-/* On touch devices an input is not smaller than 16px: WebKit (all of iOS, Chrome included)
-   zooms the page on focusing a field with font-size < 16px — hence the horizontal
-   shift of the layout. The desktop keeps the dense 14px. */
-@media (pointer: coarse) {
-    :root {
-        --rt-input-font-size: var(--rt-text-md);
-    }
 }

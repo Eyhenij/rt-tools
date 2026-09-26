@@ -100,6 +100,9 @@ export const darkLayout = [
         name: `--rt-list-table-icon-color`,
     },
     {
+        name: `--rt-list-table-head-divider-color`,
+    },
+    {
         name: `--rt-list-copy-button-bg`,
     },
     {
