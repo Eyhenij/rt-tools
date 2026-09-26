@@ -224,6 +224,13 @@ The sections below are this tree's articles: the law's technique is named by the
   dark theme's. A preset declared after it would silently repaint the dark theme with light values.
   <!-- rt-when: *.scss *.css *.mjs -->
 
+- **A preset name read from a foreign theme keeps that theme's reference under the dark theme too.**
+  The foreign theme answers dark by itself, and the kit's dark answer laid over it draws the fields
+  unlike the page around them. The last fallback of the reference becomes the dark answer of the same
+  name, so without the foreign theme the dark look stays as it was to the dot. A mixed value has no
+  fallback to swap and stays on the dark answer.
+  <!-- rt-when: *.scss *.css *.mjs -->
+
 - **A preset's silence about a colour is named as a reason, and the silence that needs no reason is
   derived rather than written by hand.** A colour name the preset does not mention keeps the base
   colour, and in the source a deliberate sharing looks exactly like a forgotten name — both are a

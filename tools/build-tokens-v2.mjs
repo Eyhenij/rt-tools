@@ -69,6 +69,11 @@ const PREAMBLE = {
    The preset rule is declared before the dark theme on purpose: the root signs have equal
    specificity, and the order in the file is the only thing by which the dark theme wins over the preset. */`,
 
+    materialDark: `/* The preset under a dark theme: the names the preset reads from Material keep the Material chain,
+   and its last fallback is the dark answer. Material switches its own colours with the application's
+   theme, so the search, the fields and the pagination follow the page; without Material the look is
+   the former dark one. A name mixed by \`color-mix\` has no fallback to swap and stays on its dark answer. */`,
+
     scope: `/* A local piece of the theme: the sign answers on an ordinary node too, not at the root of the page
    alone. A dark card inside a light page, a light card inside a dark one, and either of them inside
    a page of the styling set.
@@ -113,6 +118,9 @@ const SCOPE_NOTE = {
    dark text in a dark piece. The node therefore declares the whole set in the order the root has —
    light base, the set, the dark answers. A light piece between the dark one and the node answers
    with the light base and the set; one level of such nesting is told apart, the next is not. */`,
+    presetRootDark: `/* The set and a dark theme both on the page root. The dark answers come after the set there by order,
+   and this rule lays the Material chains back over them: it is heavier than both root rules, so the
+   order of the files does not decide. */`,
     preset: `/* A piece inside a page of the styling set, and a piece carrying the set itself. The set lies over
    the light base and under the dark answers — the same order the root has, and there the order is
    what the dark theme wins over the set by. */`,
@@ -219,6 +227,22 @@ COEXIST_NAMES.forEach((name, index) => {
     if (!coexistNodes[index]) fail(`the coexistence file names '${name}', which the scale does not declare`);
 });
 
+// The preset under a dark theme. A preset name read from Material by a chain `var(--mat-…)` follows the
+// application's Material theme, and that theme answers dark by itself — the kit's graphite answer laid
+// over it drew the search, the filter fields and the pagination unlike the page around them. So such a
+// name keeps its chain under a dark theme too, and the last fallback of the chain — the light step —
+// becomes the dark answer of the same name: without Material on the page the look is the former dark one
+// to the dot. A name mixed by `color-mix` stays on its dark answer: there is no fallback to swap there.
+const darkByName = new Map(darkNodes.filter((n) => n.name).map((n) => [n.name, n.value]));
+const LIGHT_STEP = /var\(--rt-mat-[\w-]+\)/g;
+const materialDark = material
+    .filter((node) => node.name && node.value.startsWith('var(--mat-') && darkByName.has(node.name))
+    .map((node) => {
+        const steps = node.value.match(LIGHT_STEP) ?? [];
+        if (steps.length !== 1) fail(`the preset chain of '${node.name}' has ${steps.length} light steps, one is expected`);
+        return { name: node.name, value: node.value.replace(LIGHT_STEP, darkByName.get(node.name)) };
+    });
+
 if (errors.length > 0) {
     console.error(`build-tokens-v2: refusals ${errors.length}, what is built is not rewritten\n`);
     for (const message of errors) console.error(`  ${message}`);
@@ -240,6 +264,7 @@ const files = {
 
     [`${stylesDir}/_preset-material.scss`]:
         `${BANNER}\n\n${PREAMBLE.material}\n\n@mixin rt-preset-material-tokens {\n${renderNodes(material)}\n}\n\n` +
+        `${PREAMBLE.materialDark}\n@mixin rt-preset-material-dark-tokens {\n${renderNodes(materialDark)}\n}\n\n` +
         `:root[data-preset='material'],\n[data-preset='material'],\n.rt-preset-material {\n` +
         `    @include rt-preset-material-tokens;\n}\n`,
 
@@ -255,7 +280,7 @@ const files = {
         `[data-theme='dark'] .rt-preset-material,\nhtml.rt-theme-dark [data-preset='material'],\n` +
         `html.rt-theme-dark .rt-preset-material {\n` +
         `    @include semantic.rt-theme-light-tokens;\n    @include material.rt-preset-material-tokens;\n` +
-        `    @include dark.rt-theme-dark-tokens;\n}\n\n` +
+        `    @include dark.rt-theme-dark-tokens;\n    @include material.rt-preset-material-dark-tokens;\n}\n\n` +
         `[data-theme='dark'] [data-theme='light'] [data-preset='material'],\n` +
         `[data-theme='dark'] [data-theme='light'] .rt-preset-material,\n` +
         `html.rt-theme-dark [data-theme='light'] [data-preset='material'],\n` +
@@ -268,7 +293,10 @@ const files = {
         `[data-preset='material'][data-theme='dark']:not(:root),\n[data-preset='material'] [data-theme='dark']:not(:root),\n` +
         `.rt-preset-material[data-theme='dark']:not(:root),\n.rt-preset-material [data-theme='dark']:not(:root) {\n` +
         `    @include semantic.rt-theme-light-tokens;\n    @include material.rt-preset-material-tokens;\n` +
-        `    @include dark.rt-theme-dark-tokens;\n}\n`,
+        `    @include dark.rt-theme-dark-tokens;\n    @include material.rt-preset-material-dark-tokens;\n}\n\n` +
+        `${SCOPE_NOTE.presetRootDark}\n:root[data-theme='dark'][data-preset='material'],\n:root[data-theme='dark'].rt-preset-material,\n` +
+        `html.rt-theme-dark[data-preset='material'],\nhtml.rt-theme-dark.rt-preset-material {\n` +
+        `    @include material.rt-preset-material-dark-tokens;\n}\n`,
 
     [`${stylesDir}/_coexist.scss`]:
         `${BANNER}\n\n${PREAMBLE.coexist}\n\n[data-preset='material']:is(:root, :not(:root)),\n.rt-preset-material:is(:root, :not(:root)) {\n` +

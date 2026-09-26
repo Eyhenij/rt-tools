@@ -177,6 +177,33 @@
     --rt-radius-control: 1.5rem;
 }
 
+/* The preset under a dark theme: the names the preset reads from Material keep the Material chain,
+   and its last fallback is the dark answer. Material switches its own colours with the application's
+   theme, so the search, the fields and the pagination follow the page; without Material the look is
+   the former dark one. A name mixed by `color-mix` has no fallback to swap and stays on its dark answer. */
+@mixin rt-preset-material-dark-tokens {
+    --rt-color-bg-surface: var(--mat-sys-surface, var(--rt-charcoal-800));
+    --rt-color-bg-surface-subtle-2: var(--mat-form-field-filled-container-color, var(--mat-sys-surface-variant, var(--rt-charcoal-950)));
+    --rt-color-bg-inverse: var(--mat-sys-inverse-surface, var(--rt-neutral-0));
+    --rt-color-text-link: var(--mat-sys-primary, var(--rt-brand-300));
+    --rt-color-state-danger-bg: var(--mat-sys-error-container, color-mix(in srgb, var(--rt-danger-500) 12%, transparent));
+    --rt-color-state-error-text: var(--mat-sys-error, var(--rt-danger-500));
+    --rt-color-state-info-bg: var(--mat-sys-primary-container, color-mix(in srgb, var(--rt-info-500) 12%, transparent));
+    --rt-color-table-head-bg: var(
+        --mat-form-field-filled-container-color,
+        var(--mat-sys-surface-variant, var(--rt-color-bg-surface-subtle))
+    );
+    --rt-color-field-fill-underline: var(--mat-sys-on-surface-variant, var(--rt-color-border-strong));
+    --rt-list-search-color-border: var(--mat-sys-outline, var(--rt-input-color-border));
+    --rt-list-search-icon-color: var(--mat-sys-on-surface-variant, var(--rt-input-icon-color));
+    --rt-list-search-color-placeholder: var(--mat-sys-on-surface-variant, var(--rt-input-color-text-placeholder));
+    --rt-list-settings-item-bg: var(--mat-option-selected-state-layer-color, var(--mat-sys-secondary-container, var(--rt-color-bg-subtle)));
+    --rt-list-settings-icon-color: var(--mat-sys-on-surface-variant, var(--rt-color-text-muted));
+    --rt-list-table-icon-color: var(--mat-sys-on-surface-variant, var(--rt-color-text-primary));
+    --rt-list-copy-button-bg: var(--mat-sys-primary-container, transparent);
+    --rt-list-copy-button-bg-hover: var(--mat-sys-primary-container, var(--rt-icon-button-color-bg-hover));
+}
+
 :root[data-preset='material'],
 [data-preset='material'],
 .rt-preset-material {
