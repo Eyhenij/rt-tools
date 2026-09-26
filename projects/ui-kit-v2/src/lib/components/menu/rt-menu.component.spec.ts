@@ -185,6 +185,80 @@ describe('RtMenuComponent', (): void => {
             expect(panel()).toBeNull();
         });
     });
+
+    describe('клавиатура, как у меню Material', (): void => {
+        /** Код клавиши браузер ставит сам, и ход стрелками CDK читает именно его, а не `key`. */
+        const KEY_CODES: Readonly<Record<string, number>> = { Tab: 9, Escape: 27, ArrowUp: 38, ArrowDown: 40 };
+
+        function press(fixture: ComponentFixture<MenuHostComponent>, key: string): void {
+            panel()?.dispatchEvent(new KeyboardEvent('keydown', { key, keyCode: KEY_CODES[key], bubbles: true }));
+            fixture.detectChanges();
+        }
+
+        function trigger(fixture: ComponentFixture<MenuHostComponent>): HTMLElement | undefined {
+            return el(fixture, '[qa-dataid="menu-trigger"] button')?.nativeElement;
+        }
+
+        it('открытая панель переносит фокус на первый пункт', (): void => {
+            const fixture: ComponentFixture<MenuHostComponent> = setup();
+
+            openMenu(fixture);
+
+            expect(document.activeElement).toBe(items()[0]);
+        });
+
+        it('стрелки ведут фокус по пунктам и с последнего возвращают на первый', (): void => {
+            const fixture: ComponentFixture<MenuHostComponent> = setup();
+            openMenu(fixture);
+
+            press(fixture, 'ArrowDown');
+            const second: Element | null = document.activeElement;
+            press(fixture, 'ArrowDown');
+            const wrapped: Element | null = document.activeElement;
+            press(fixture, 'ArrowUp');
+
+            expect([second, wrapped, document.activeElement]).toEqual([items()[1], items()[0], items()[1]]);
+        });
+
+        it('отключённый пункт стрелки пропускают', (): void => {
+            const fixture: ComponentFixture<MenuHostComponent> = setup();
+            fixture.componentInstance.itemDisabled.set(true);
+            fixture.detectChanges();
+            openMenu(fixture);
+
+            press(fixture, 'ArrowDown');
+
+            expect(document.activeElement).toBe(items()[0]);
+        });
+
+        it('Escape закрывает панель и возвращает фокус кнопке', (): void => {
+            const fixture: ComponentFixture<MenuHostComponent> = setup();
+            openMenu(fixture);
+
+            press(fixture, 'Escape');
+
+            expect([panel(), document.activeElement]).toEqual([null, trigger(fixture)]);
+        });
+
+        it('выбор пункта с клавиатуры возвращает фокус кнопке', (): void => {
+            const fixture: ComponentFixture<MenuHostComponent> = setup();
+            openMenu(fixture);
+
+            items()[0].dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+            fixture.detectChanges();
+
+            expect([fixture.componentInstance.picked, document.activeElement]).toEqual([1, trigger(fixture)]);
+        });
+
+        it('Tab закрывает панель', (): void => {
+            const fixture: ComponentFixture<MenuHostComponent> = setup();
+            openMenu(fixture);
+
+            press(fixture, 'Tab');
+
+            expect(panel()).toBeNull();
+        });
+    });
 });
 
 describe('RtMenuItemComponent', (): void => {
@@ -217,6 +291,7 @@ describe('RtMenuItemComponent', (): void => {
     it('имя значка Material рисуется парой из набора кита, а своя иконка сильнее', (): void => {
         const byGlyph: ComponentFixture<RtMenuItemComponent> = setupItem({ label: 'Принять', glyph: 'done' });
         const byIcon: ComponentFixture<RtMenuItemComponent> = setupItem({ label: 'Принять', glyph: 'done', icon: 'ico-eye' });
+        const inactive: ComponentFixture<RtMenuItemComponent> = setupItem({ label: 'Сделать неактивным', glyph: 'person_off' });
         const unknown: ComponentFixture<RtMenuItemComponent> = setupItem({ label: 'Принять', glyph: 'no_such_glyph' });
 
         const iconRef: (fixture: ComponentFixture<RtMenuItemComponent>) => string | null | undefined = (
@@ -224,7 +299,7 @@ describe('RtMenuItemComponent', (): void => {
         ): string | null | undefined =>
             (fixture.nativeElement as HTMLElement).querySelector('.rt-menu-item__icon use')?.getAttribute('href');
 
-        expect([iconRef(byGlyph), iconRef(byIcon)]).toEqual(['#rt-icon-check', '#rt-icon-ico-eye']);
+        expect([iconRef(byGlyph), iconRef(byIcon), iconRef(inactive)]).toEqual(['#rt-icon-check', '#rt-icon-ico-eye', '#rt-icon-user-off']);
         expect(el(unknown, '.rt-menu-item__icon')).toBeNull();
     });
 

@@ -1,0 +1,24 @@
+/* Built by the generator `tools/build-tokens-v2.mjs` from `tokens.source.mjs` — edited there, not here:
+   an edit on the spot is lost on the next build, and `pnpm run check:tokens-build` names it. */
+
+/* Coexistence with the first kit for the time of migration. The first kit declares ten steps of the
+   same names on the page root with its own values, and an application holding both kits gets them
+   inside the second kit's components: a 4px rounding becomes 8px. Here the second kit's values stand
+   on the preset node, and the preset is drawn by its own scale whatever lies on the root.
+
+   The application includes it only while it holds the first kit, and removes it together with it:
+   the values repeat the scale, so without the first kit the look does not change. */
+
+[data-preset='material']:not(:root),
+.rt-preset-material:not(:root) {
+    --rt-radius-xs: 2px;
+    --rt-radius-sm: 4px;
+    --rt-radius-md: 8px;
+    --rt-radius-lg: 10px;
+    --rt-radius-xl: 15px;
+    --rt-radius-2xl: 20px;
+    --rt-radius-full: 9999px;
+    --rt-shadow-sm: 0 1px 2px rgb(0 0 0 / 5%);
+    --rt-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 10%), 0 2px 4px -2px rgb(0 0 0 / 6%);
+    --rt-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 10%), 0 4px 6px -4px rgb(0 0 0 / 6%);
+}

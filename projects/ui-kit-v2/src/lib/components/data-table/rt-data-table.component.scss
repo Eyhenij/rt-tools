@@ -1,6 +1,6 @@
 @layer rt-kit.components {
     /* rt-data-table — таблица первого кита во втором. Размеры первого кита положены на шкалу:
-       высота строки 48px — ступень роста контрола lg, поля ячейки 10px округлены к ступени sm,
+       высота строки 48px — ступень роста контрола lg, поля ячейки 10px собраны из ступеней 2 и 0-5,
        место под полосу действий 64px — ступень 3xl, поля ячейки отбора 4px и 8px — ступени xs и
        sm. Подпись шапки 16px — ступень md при межстрочном tight, значение строки 14px — sm.
        Шапка стоит над строками ярусом sticky шкалы, полоса действий — ярусом base: она в
@@ -10,18 +10,27 @@
         --rt-data-table-row-height: var(--rt-control-height-lg);
         --rt-data-table-head-height: calc(var(--rt-control-height-lg) - var(--rt-space-1));
         --rt-data-table-border-width: var(--rt-border-width-thin);
+        --rt-data-table-cell-padding: calc(var(--rt-space-2) + var(--rt-space-0-5));
         --rt-data-table-row-transition-duration: var(--rt-duration-base);
 
         /* Шапку перекрашивает приложение, как в первом ките: цвет и насыщенность подписи, фон
-           строки отбора. */
+           строки отбора. Фон строки отбора, как в первом ките, считается от фона шапки: половина
+           шапки, половина поверхности — перекрашенная шапка тянет строку отбора за собой. */
         --rt-data-table-head-color: var(--rt-color-text-primary);
         --rt-data-table-head-font-weight: var(--rt-font-weight-medium);
-        --rt-data-table-filter-bg: var(--rt-color-bg-surface);
+        --rt-data-table-filter-bg: color-mix(in srgb, var(--rt-color-table-head-bg), var(--rt-color-bg-surface) 50%);
 
         display: block;
         overflow: auto;
         width: 100%;
         height: 100%;
+
+        /* Стандартные свойства полосы тоже приходят с корня. Chrome при заданном стандартном
+           свойстве не читает `::-webkit-scrollbar`, и нулевой размер оттуда полосу не прятал: список
+           ставит `none`, когда скрыты обе полосы, и `auto`, когда одна. Без его выбора — тихая
+           полоса основы кита, повторённая здесь с теми же приметами наведения и фокуса. */
+        scrollbar-color: var(--rt-data-table-scrollbar-color, transparent transparent);
+        scrollbar-width: var(--rt-data-table-scrollbar-width, thin);
 
         /* Размер полос прокрутки приходит с корня страницы: туда его ставит список по
            сохранённой настройке. Своего объявления на блоке нет намеренно — оно победило бы
@@ -30,6 +39,15 @@
         &::-webkit-scrollbar {
             width: var(--rt-data-table-scrollbar-vertical-width, var(--rt-size-3));
             height: var(--rt-data-table-scrollbar-horizontal-height, var(--rt-size-3));
+        }
+
+        &:hover,
+        &:focus-within {
+            scrollbar-color: var(--rt-data-table-scrollbar-color, var(--rt-color-border-default) transparent);
+        }
+
+        @media (hover: none) {
+            scrollbar-color: var(--rt-data-table-scrollbar-color, var(--rt-color-border-default) transparent);
         }
 
         &__table {
@@ -86,7 +104,7 @@
         &__cell {
             width: fit-content;
             height: 100%;
-            padding: var(--rt-space-sm);
+            padding: var(--rt-data-table-cell-padding);
 
             &--head {
                 position: relative;

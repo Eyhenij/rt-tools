@@ -21,6 +21,12 @@ export namespace IRtMenu {
         readonly cancelLabel: string;
         readonly tone: ConfirmTone;
     }
+
+    /** Пункт панели для хода стрелками: его узел и признак, что его пропускают. */
+    export interface Focusable {
+        readonly disabled: boolean;
+        focus(): void;
+    }
 }
 
 /**

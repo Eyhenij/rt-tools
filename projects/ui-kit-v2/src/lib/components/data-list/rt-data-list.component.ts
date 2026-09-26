@@ -50,6 +50,7 @@ import {
     RtDataListCustomCellsDirective,
     RtDataListRowActionsDirective,
 } from './rt-data-list.directive';
+import { dataListScrollbarStandard, IRtDataListScrollbarStandard } from './rt-data-list-scrollbar.logic';
 import { RtDataListToolbarActionsDirective, RtDataListToolbarSelectorsDirective } from './rt-data-list-toolbar.directive';
 
 const BEM_BLOCK: string = 'rt-data-list';
@@ -114,10 +115,10 @@ export class RtDataListComponent<
         (it: IRtKitConfig.DataList): IRtInput.Appearance | undefined => it.appearance,
         'fill'
     );
-    readonly #filterAppearance: IRtInput.Appearance | undefined = rtKitDefault<'dataList', IRtInput.Appearance | undefined>(
+    readonly #filterAppearance: IRtInput.Appearance = rtKitDefault(
         'dataList',
         (it: IRtKitConfig.DataList): IRtInput.Appearance | undefined => it.filterAppearance,
-        undefined
+        'outline'
     );
     readonly #configService: RtDataTableConfigService<ENTITY_TYPE> = inject(RtDataTableConfigService);
     readonly #pageRoot: HTMLElement = inject(DOCUMENT).documentElement;
@@ -134,11 +135,6 @@ export class RtDataListComponent<
     /** Заглушку показывают, когда нет ни строк, ни условий отбора. */
     protected readonly isPlaceholderShown: Signal<boolean> = computed(() => !this.entities().length && !this.filterModel().length);
 
-    /** Вид полей отбора, который получает таблица: свой, а без него — вид поиска. */
-    protected readonly filterFieldAppearance: Signal<IRtInput.Appearance> = computed(
-        (): IRtInput.Appearance => this.filterAppearance() ?? this.appearance()
-    );
-
     protected readonly isFiltersEmpty: Signal<boolean> = computed(() => !this.filterModel().length);
 
     /** Размеры страницы, которые предлагает полоса: те же, что у первого кита. */
@@ -154,13 +150,10 @@ export class RtDataListComponent<
     public readonly appearance: InputSignal<IRtInput.Appearance> = input<IRtInput.Appearance>(this.#appearance);
 
     /**
-     * Вид полей отбора: `outline` — рамка со всех сторон, `fill` — залитое поле с чертой снизу. Не
-     * заданный ни входом, ни настройками кита, он берётся из `appearance`: поля отбора выглядят
-     * как поле поиска того же списка.
+     * Вид полей отбора: `outline` — рамка со всех сторон, `fill` — залитое поле с чертой снизу. От
+     * `appearance` он не зависит: у первого кита поля отбора обведены, какой бы ни был поиск.
      */
-    public readonly filterAppearance: InputSignal<IRtInput.Appearance | undefined> = input<IRtInput.Appearance | undefined>(
-        this.#filterAppearance
-    );
+    public readonly filterAppearance: InputSignal<IRtInput.Appearance> = input<IRtInput.Appearance>(this.#filterAppearance);
 
     /** Контурные значки кнопок полосы: очистки отбора, обновления и настройки колонок, как у первого кита. */
     public readonly isToolbarActionsIconsOutlined: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
@@ -278,6 +271,14 @@ export class RtDataListComponent<
                 '--rt-data-table-scrollbar-horizontal-height',
                 config.isHorizontalScrollbarShown ? SCROLLBAR_SIZE : SCROLLBAR_HIDDEN
             );
+
+            const standard: IRtDataListScrollbarStandard = dataListScrollbarStandard(
+                config.isVerticalScrollbarShown,
+                config.isHorizontalScrollbarShown
+            );
+
+            this.#setOrRemove('--rt-data-table-scrollbar-width', standard.width);
+            this.#setOrRemove('--rt-data-table-scrollbar-color', standard.color);
         });
 
         this.#openSettingsSource
@@ -346,5 +347,14 @@ export class RtDataListComponent<
 
     protected onRowDoubleClick(row: ENTITY_TYPE): void {
         this.rowDoubleClick.emit(row);
+    }
+
+    #setOrRemove(property: string, value: string | null): void {
+        if (value === null) {
+            this.#pageRoot.style.removeProperty(property);
+            return;
+        }
+
+        this.#pageRoot.style.setProperty(property, value);
     }
 }

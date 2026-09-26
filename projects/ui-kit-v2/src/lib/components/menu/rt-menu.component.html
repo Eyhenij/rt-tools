@@ -18,10 +18,11 @@
     [cdkConnectedOverlayPositions]="overlayPositions()"
     [cdkConnectedOverlayPanelClass]="panelClass()"
     (backdropClick)="close()"
+    (attach)="onAttach()"
     (detach)="close()"
     (overlayKeydown)="onKeydown($event)">
     <ng-container rtBlock="rt-menu">
-        <div rtElem="panel" qa-dataid="menu-panel" role="menu" (rtMenuSelect)="close()">
+        <div rtElem="panel" qa-dataid="menu-panel" role="menu" (rtMenuSelect)="onSelect()">
             <ng-content />
         </div>
     </ng-container>

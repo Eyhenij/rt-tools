@@ -115,7 +115,7 @@ The words are the first kit's; the kit's dictionary gives them in all eight lang
   has no copy button.**
 - **A press on the copy button copies the shown value and the button says "Copied!" for two
   seconds.** A value that is neither text nor a number is copied as its JSON form. The press does not reach the row.
-- **A column's width and minimum width, when declared, are the width of its cells.**
+- **A column's width and minimum width, when declared, are the width of its ready cells; a custom column gets no width, as in the first kit.**
 
 ### The header
 
@@ -161,8 +161,8 @@ The words are the first kit's; the kit's dictionary gives them in all eight lang
   new rows.
 - **The search and the filter fields draw one of the two Material field looks, `outline` or
   `fill`, each set by an input of its own.** The list takes `appearance` for its search and
-  `filterAppearance` for its filter fields, the table `filterAppearance`. The table defaults to
-  `outline`; the list gives its filter fields the look of its search unless told otherwise.
+  `filterAppearance` for its filter fields, the table `filterAppearance`; both default to `outline`,
+  as in the first kit.
 
 ### Rows and presses
 
