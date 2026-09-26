@@ -31,6 +31,10 @@ const PREAMBLE = {
    inside the second kit's components: a 4px rounding becomes 8px. Here the second kit's values stand
    on the preset node, and the preset is drawn by its own scale whatever lies on the root.
 
+   The selector outweighs the first kit's root by one step wherever the preset flag stands, the page
+   root included: there both kits declare the steps on the same node, and without the extra weight
+   the order of inclusion decides.
+
    The application includes it only while it holds the first kit, and removes it together with it:
    the values repeat the scale, so without the first kit the look does not change. */`,
     primitives: `/* The scale steps — the values the assignment layer chooses from. The only place in the kit where
@@ -267,7 +271,7 @@ const files = {
         `    @include dark.rt-theme-dark-tokens;\n}\n`,
 
     [`${stylesDir}/_coexist.scss`]:
-        `${BANNER}\n\n${PREAMBLE.coexist}\n\n[data-preset='material']:not(:root),\n.rt-preset-material:not(:root) {\n` +
+        `${BANNER}\n\n${PREAMBLE.coexist}\n\n[data-preset='material']:is(:root, :not(:root)),\n.rt-preset-material:is(:root, :not(:root)) {\n` +
         coexistNodes
             .filter(Boolean)
             .map((node) => `    ${node.name}:${node.value.includes('\n') ? `\n        ${node.value}` : ` ${node.value}`};`)
