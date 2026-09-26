@@ -516,6 +516,7 @@ export type TRtConsumerHandleName =
     | '--rt-logo-wordmark'
     | '--rt-logo-wordmark-dark'
     | '--rt-page-header-bg'
+    | '--rt-table-actions-bg'
     | '--rt-workspace-aside-size'
     | '--rt-workspace-list-size';
 
@@ -1036,6 +1037,7 @@ export const RT_CONSUMER_HANDLE_NAMES: readonly TRtConsumerHandleName[] = [
     '--rt-logo-wordmark',
     '--rt-logo-wordmark-dark',
     '--rt-page-header-bg',
+    '--rt-table-actions-bg',
     '--rt-workspace-aside-size',
     '--rt-workspace-list-size',
 ];

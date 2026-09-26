@@ -15,6 +15,8 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import * as prettier from 'prettier';
+
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const stylesDir = resolve(root, 'projects/ui-kit-v2/src/styles');
 const typesFile = resolve(root, 'projects/ui-kit-v2/src/lib/tokens/rt-design-tokens.ts');
@@ -332,6 +334,14 @@ function renderTypes() {
         handleNames.map((name) => `    '${name}',`).join('\n') +
         `\n];\n`
     );
+}
+
+// What is built passes through the formatter the tree runs on commit: otherwise the formatter wraps a
+// long line in the committed file, and the next check reads the wrap as a hand edit.
+for (const path of Object.keys(files)) {
+    if (!path.endsWith('.scss')) continue;
+    const options = (await prettier.resolveConfig(path)) ?? {};
+    files[path] = await prettier.format(files[path], { ...options, filepath: path });
 }
 
 const check = process.argv.includes('--check');

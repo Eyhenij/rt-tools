@@ -164,7 +164,12 @@
        она видна всегда. Левый край растворяется в фоне — приём первого кита. */
     // Полоса действий занимает строку целиком: строка с картинкой или длинной подписью выше обычной,
     // и полоса высотой в обычную строку оставляла её низ открытым.
+    // Фон полосы — ручка приложения `--rt-table-actions-bg`, как
+    // `--rt-table-actions-container-background-color` первого кита: полоса стоит на фоне строки, а
+    // фон строки приложение задаёт своим. Без ручки полоса берёт фон поверхности.
     .rt-data-table-actions {
+        --rt-data-table-actions-bg: var(--rt-table-actions-bg, var(--rt-color-bg-surface));
+
         position: absolute;
         z-index: var(--rt-z-base);
         top: 0;
@@ -189,9 +194,9 @@
             background: linear-gradient(
                 to right,
                 transparent 0%,
-                color-mix(in srgb, var(--rt-color-bg-surface) 30%, transparent) 10%,
-                var(--rt-color-bg-surface) 20%,
-                var(--rt-color-bg-surface) 100%
+                color-mix(in srgb, var(--rt-data-table-actions-bg) 30%, transparent) 10%,
+                var(--rt-data-table-actions-bg) 20%,
+                var(--rt-data-table-actions-bg) 100%
             );
             gap: var(--rt-space-xs);
             pointer-events: none;
