@@ -1,0 +1,11 @@
+/* Built by the generator `tools/build-tokens-v2.mjs` from `tokens.source.mjs` — edited there, not here:
+   an edit on the spot is lost on the next build, and `pnpm run check:tokens-build` names it. */
+
+/* On touch devices an input is not smaller than 16px: WebKit (all of iOS, Chrome included)
+   zooms the page on focusing a field with font-size < 16px — hence the horizontal
+   shift of the layout. The desktop keeps the dense 14px. */
+@media (pointer: coarse) {
+    :root {
+        --rt-input-font-size: var(--rt-text-md);
+    }
+}

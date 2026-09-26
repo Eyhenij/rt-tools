@@ -256,7 +256,13 @@ const files = {
 
     [`${stylesDir}/_semantic.scss`]:
         `${BANNER}\n\n${PREAMBLE.semantic}\n\n@mixin rt-theme-light-tokens {\n${renderNodes(light)}\n}\n\n` +
-        `:root {\n    @include rt-theme-light-tokens;\n}\n\n${COARSE_NOTE}\n@media (pointer: coarse) {\n    :root {\n` +
+        `:root {\n    @include rt-theme-light-tokens;\n}\n`,
+
+    // The coarse pointer lives in a file of its own: together with the light set the file outgrew the
+    // length limit. The aggregator forwards it right after the light set — the query rule has the
+    // same weight as the root one and wins by coming later.
+    [`${stylesDir}/_coarse-pointer.scss`]:
+        `${BANNER}\n\n${COARSE_NOTE}\n@media (pointer: coarse) {\n    :root {\n` +
         coarsePointer.map((token) => `        ${token.name}: ${token.value};`).join('\n') +
         `\n    }\n}\n`,
 

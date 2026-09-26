@@ -167,6 +167,7 @@ export const appConfig: ApplicationConfig = {
   `pnpm run build:tokens-source` и руками не правятся;
 - `_primitives.scss` — шкалы: нейтральные и цветные ряды, отступы, радиусы, тени, типографика;
 - `_semantic.scss` — назначения поверх шкал (`--rt-color-bg-surface`, `--rt-color-text-muted`);
+- `_coarse-pointer.scss` — поправка назначений для сенсорного экрана: поле ввода не мельче 16px;
 - `_theme-dark.scss` — переопределения назначений для `[data-theme='dark']`;
 - `_theme-dark-rules.scss` — правила тёмной темы, которые свойств не объявляют: подложка экранов
   входа и инверсия логотипа;
