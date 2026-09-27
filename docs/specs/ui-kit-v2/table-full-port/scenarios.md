@@ -478,3 +478,10 @@ Given a list with the filter row
 When the application gives the search the look `fill` and leaves the filter fields at their default
 Then the search is a filled field with an underline and the filter fields are outlined; the filter fields change look only by their own input
 Covered: `projects/ui-kit-v2/src/lib/components/data-list/rt-data-list.component.spec.ts`.
+
+### SC-UKV-365 — the switch of the pagination bar hides it
+
+Given a list with more records than fit on one page
+When the application sets `isPaginationShown` to false
+Then the pagination bar is not in the markup, and it comes back once the switch is on again
+Covered: `projects/ui-kit-v2/src/lib/components/data-list/rt-data-list.pagination.spec.ts`.

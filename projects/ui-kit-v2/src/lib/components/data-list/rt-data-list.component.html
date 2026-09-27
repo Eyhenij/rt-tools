@@ -81,13 +81,15 @@
                 </rt-data-table>
             </div>
 
-            <rt-pagination
-                [pageModel]="pageModel()"
-                [perPageOptions]="pageSizes()"
-                [prevIcon]="look() === 'material' ? 'arrow-left' : 'chevron-left'"
-                [nextIcon]="look() === 'material' ? 'arrow-right' : 'chevron-right'"
-                (pageChange)="onPageNumber($event)"
-                (perPageChange)="onPageSize($event)" />
+            @if (isPaginationShown()) {
+                <rt-pagination
+                    [pageModel]="pageModel()"
+                    [perPageOptions]="pageSizes()"
+                    [prevIcon]="look() === 'material' ? 'arrow-left' : 'chevron-left'"
+                    [nextIcon]="look() === 'material' ? 'arrow-right' : 'chevron-right'"
+                    (pageChange)="onPageNumber($event)"
+                    (perPageChange)="onPageSize($event)" />
+            }
         }
     </ng-container>
 }

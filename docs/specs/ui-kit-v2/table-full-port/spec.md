@@ -279,8 +279,8 @@ The words are the first kit's; the kit's dictionary gives them in all eight lang
 - **The clear-filters button is shown while the filter row is, and is unavailable while no
   condition is set.**
 - **Refresh asks the application to reload.**
-- **The list takes the switch of the pagination bar and passes it nowhere.** The bar is drawn by
-  its own rules whatever the switch says, and refresh never clears the search.
+- **The list draws the pagination bar only while its switch is on.** Switched off, the bar is not
+  in the markup at all; switched on, it follows its own rules. Refresh never clears the search.
 - **The application's toolbar selectors and actions stand in the toolbar next to the kit's
   controls.**
 - **The placeholder replaces the table when there are no rows and no conditions.** With
@@ -447,7 +447,7 @@ table that applied it last decides it for all.
 - `Q-TP-14` — a press on an inline action reaches the row unless the application stops it.
 - `Q-TP-15` — the right pointer button activates a row too.
 - `Q-TP-20` — the exclusions outlive the unchecking of select all.
-- `Q-TP-21` — the list's pagination switch reaches nothing, and refresh never clears the search.
+- `Q-TP-21` — refresh never clears the search.
 - `Q-TP-22` — an empty list or object in a ready cell gets no dash, while the copy button counts
   both as empty.
 

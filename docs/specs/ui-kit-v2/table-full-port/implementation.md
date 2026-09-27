@@ -129,7 +129,7 @@ to the public entry that calls it.
 - **The search field is shown while there are rows, and on the placeholder only when the search holds text or was touched.** — `projects/ui-kit-v2/src/lib/components/data-list/toolbar/rt-data-list-toolbar.component.ts:isSearchShown`; scenario —
 - **The clear-filters button is shown while the filter row is, and is unavailable while no condition is set.** — `projects/ui-kit-v2/src/lib/components/data-list/toolbar/rt-data-list-toolbar.component.html:data-list-clear-filters`; scenario —
 - **Refresh asks the application to reload.** — `projects/ui-kit-v2/src/lib/components/data-list/rt-data-list.component.ts:refresh`; scenario —
-- **The list takes the switch of the pagination bar and passes it nowhere.** — `projects/ui-kit-v2/src/lib/components/data-list/rt-data-list.component.ts:isPaginationShown`; scenario —
+- **The list draws the pagination bar only while its switch is on.** — `projects/ui-kit-v2/src/lib/components/data-list/rt-data-list.component.ts:isPaginationShown`; scenario `SC-UKV-365`
 - **The application's toolbar selectors and actions stand in the toolbar next to the kit's controls.** — `projects/ui-kit-v2/src/lib/components/data-list/rt-data-list-toolbar.directive.ts:RtDataListToolbarSelectorsDirective`; scenario —
 - **The placeholder replaces the table when there are no rows and no conditions.** — `projects/ui-kit-v2/src/lib/components/data-list/rt-data-list.component.ts:isPlaceholderShown`; scenario `SC-UKV-309`
 - **The toolbar yields its width in a narrow column: the search shrinks, and nothing of the toolbar leaves the list's box.** — `projects/ui-kit-v2/src/lib/components/data-list/toolbar/rt-data-list-toolbar.component.scss:contain`; scenario `SC-UKV-351`

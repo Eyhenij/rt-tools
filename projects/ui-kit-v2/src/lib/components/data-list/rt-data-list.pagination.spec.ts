@@ -37,6 +37,7 @@ function pageOf(patch: Partial<IPageModel>): IPageModel {
         <rt-data-list
             tableConfigStorageKey="pages"
             [look]="look()"
+            [isPaginationShown]="paginationShown()"
             [entities]="rows"
             [pageModel]="page()"
             [currentSortModel]="null"
@@ -50,6 +51,7 @@ class PagesHostComponent {
     public readonly rows: IEntity[] = [{ id: 1, title: 'Анна' }];
     public readonly page: WritableSignal<IPageModel> = signal(pageOf({}));
     public readonly look: WritableSignal<IRtDataTable.Look> = signal<IRtDataTable.Look>('material');
+    public readonly paginationShown: WritableSignal<boolean> = signal(true);
     public readonly asked: Array<Partial<IPageModel>> = [];
 }
 
@@ -86,6 +88,22 @@ describe('RtDataListComponent — полоса страниц', () => {
         expect(stripShown(fixture)).toBe(false);
 
         fixture.componentInstance.page.set(pageOf({ totalCount: 11 }));
+        fixture.detectChanges();
+
+        expect(stripShown(fixture)).toBe(true);
+    });
+
+    it('SC-UKV-365 — выключенный признак полосы страниц убирает её из разметки, включённый возвращает', async (): Promise<void> => {
+        const fixture: ComponentFixture<PagesHostComponent> = await setup(pageOf({}));
+
+        expect(stripShown(fixture)).toBe(true);
+
+        fixture.componentInstance.paginationShown.set(false);
+        fixture.detectChanges();
+
+        expect(el(fixture, 'rt-pagination')).toBeNull();
+
+        fixture.componentInstance.paginationShown.set(true);
         fixture.detectChanges();
 
         expect(stripShown(fixture)).toBe(true);
