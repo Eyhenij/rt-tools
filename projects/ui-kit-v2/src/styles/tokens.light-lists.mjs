@@ -215,6 +215,25 @@ export const lightLists = [
         dark: `var(--rt-input-color-text)`,
     },
     {
+        lead: `    /* Отступы вокруг тулбара списка и нижний отступ содержимого. Свой вид держит полосу с отступом
+       8px сверху и снизу вплотную к таблице; материальный набор даёт 16px сверху и 16px до таблицы. */`,
+        space: true,
+        name: `--rt-list-toolbar-padding-top`,
+        value: `var(--rt-space-2)`,
+    },
+    {
+        name: `--rt-list-toolbar-padding-bottom`,
+        value: `var(--rt-space-2)`,
+    },
+    {
+        name: `--rt-list-toolbar-gap`,
+        value: `0px`,
+    },
+    {
+        name: `--rt-list-content-padding-bottom`,
+        value: `0px`,
+    },
+    {
         lead: `    /* Пустой список — заглушка rt-empty-state. Свой вид держит значок в сером круге и заголовок
        среднего размера; материальный набор даёт значок 48px без круга и крупный заголовок первого кита. */`,
         space: true,

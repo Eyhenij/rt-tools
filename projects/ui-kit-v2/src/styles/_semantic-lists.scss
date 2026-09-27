@@ -60,6 +60,13 @@
     --rt-pagination-field-color-bg: var(--rt-input-color-bg);
     --rt-pagination-field-color-text: var(--rt-input-color-text);
 
+    /* Отступы вокруг тулбара списка и нижний отступ содержимого. Свой вид держит полосу с отступом
+       8px сверху и снизу вплотную к таблице; материальный набор даёт 16px сверху и 16px до таблицы. */
+    --rt-list-toolbar-padding-top: var(--rt-space-2);
+    --rt-list-toolbar-padding-bottom: var(--rt-space-2);
+    --rt-list-toolbar-gap: 0px;
+    --rt-list-content-padding-bottom: 0px;
+
     /* Пустой список — заглушка rt-empty-state. Свой вид держит значок в сером круге и заголовок
        среднего размера; материальный набор даёт значок 48px без круга и крупный заголовок первого кита. */
     --rt-list-empty-icon-wrap-size: var(--rt-size-16);

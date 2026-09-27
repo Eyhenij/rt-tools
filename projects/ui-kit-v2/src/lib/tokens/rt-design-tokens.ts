@@ -209,6 +209,7 @@ export type TRtDesignTokenName =
     | '--rt-list-action-radius'
     | '--rt-list-action-shadow'
     | '--rt-list-action-shadow-hover'
+    | '--rt-list-content-padding-bottom'
     | '--rt-list-copy-button-bg'
     | '--rt-list-copy-button-bg-hover'
     | '--rt-list-copy-button-color'
@@ -238,6 +239,9 @@ export type TRtDesignTokenName =
     | '--rt-list-table-head-divider-color'
     | '--rt-list-table-icon-color'
     | '--rt-list-table-icon-size'
+    | '--rt-list-toolbar-gap'
+    | '--rt-list-toolbar-padding-bottom'
+    | '--rt-list-toolbar-padding-top'
     | '--rt-mat-blue-100'
     | '--rt-mat-blue-20'
     | '--rt-mat-blue-40'
@@ -735,6 +739,7 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-list-action-radius',
     '--rt-list-action-shadow',
     '--rt-list-action-shadow-hover',
+    '--rt-list-content-padding-bottom',
     '--rt-list-copy-button-bg',
     '--rt-list-copy-button-bg-hover',
     '--rt-list-copy-button-color',
@@ -764,6 +769,9 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-list-table-head-divider-color',
     '--rt-list-table-icon-color',
     '--rt-list-table-icon-size',
+    '--rt-list-toolbar-gap',
+    '--rt-list-toolbar-padding-bottom',
+    '--rt-list-toolbar-padding-top',
     '--rt-mat-blue-100',
     '--rt-mat-blue-20',
     '--rt-mat-blue-40',
