@@ -4,6 +4,10 @@
             <ng-container [ngTemplateOutlet]="template" [ngTemplateOutletContext]="iconContext()" />
         } @else if (kitIcon(); as name) {
             <rt-icon size="lg" [name]="name" [fill]="icon()?.outlined !== true" [style]="iconStyle()" />
+        } @else if (glyph(); as name) {
+            <span rtElem="glyph" aria-hidden="true" qa-dataid="data-table-cell-glyph" [rtMod]="glyphMods()" [style]="iconStyle()">
+                {{ name }}
+            </span>
         }
     </ng-template>
 

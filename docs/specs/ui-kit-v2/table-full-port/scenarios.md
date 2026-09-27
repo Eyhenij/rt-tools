@@ -416,11 +416,11 @@ When the data table is drawn
 Then both are the kit's icons of the paired names, and no icon font is asked for
 Covered: `projects/ui-kit-v2/src/lib/components/data-table/cell/rt-data-table-cell.component.spec.ts`.
 
-### SC-UKV-319 — an icon name without a pair in the map draws no icon
+### SC-UKV-319 — an icon name without a pair in the map is drawn as a Material Symbols glyph
 
 Given a cell icon declared by a first-kit name that has no pair in the kit's map, and no icon template
 When the data table is drawn
-Then the cell shows its value with no icon beside it
+Then the cell shows its value with the name beside it as a Material Symbols glyph, and no kit icon
 Covered: `projects/ui-kit-v2/src/lib/components/data-table/cell/rt-data-table-cell.component.spec.ts`.
 
 ### SC-UKV-320 — an icon template draws the icon of a cell

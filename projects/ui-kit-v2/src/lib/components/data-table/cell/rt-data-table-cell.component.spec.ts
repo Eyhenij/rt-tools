@@ -228,10 +228,11 @@ describe('RtDataTableCellComponent', () => {
         expect(kitIconNames(fixture)).toEqual(['copy']);
     });
 
-    it('SC-UKV-319 — имя без пары в перечне значка не рисует, значение остаётся', () => {
+    it('SC-UKV-319 — имя без пары в перечне рисуется глифом Material Symbols, значение остаётся', () => {
         const fixture: ComponentFixture<CellHostComponent> = setup({ icon: { glyph: 'delete_forever', placement: 'left' } });
 
         expect(kitIconNames(fixture)).toEqual([]);
+        expect(textOf(qa(fixture, 'data-table-cell-glyph'))).toBe('delete_forever');
         expect(cellText(fixture)).toBe('Тур в Сочи');
     });
 

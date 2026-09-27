@@ -6,6 +6,7 @@
 
     .rt-data-table-cell {
         --rt-data-table-cell-transition-duration: var(--rt-duration-fast);
+        --rt-data-table-cell-glyph-size: var(--rt-size-6);
 
         position: relative;
         display: flex;
@@ -13,6 +14,27 @@
         height: 100%;
         align-items: center;
         gap: var(--rt-space-sm);
+
+        /* Глиф Material Symbols для имени без пары в перечне соответствий — лигатура шрифта,
+           которую подключает приложение. Размер 24px — размер lg значка кита. */
+        &__glyph {
+            display: inline-block;
+            overflow: hidden;
+            width: var(--rt-data-table-cell-glyph-size);
+            font-family: 'Material Symbols Outlined', sans-serif;
+            font-feature-settings: 'liga';
+            font-size: var(--rt-data-table-cell-glyph-size);
+            font-style: normal;
+            font-weight: normal;
+            letter-spacing: normal;
+            line-height: 1;
+            text-transform: none;
+            white-space: nowrap;
+
+            &--filled {
+                font-variation-settings: 'FILL' 1;
+            }
+        }
 
         &__prefix,
         &__suffix {

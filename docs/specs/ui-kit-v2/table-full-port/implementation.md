@@ -43,7 +43,7 @@ to the public entry that calls it.
 - **An icon a column declaration names, in its header or its cells, is drawn by the kit's own icon set through the kit's map of first-kit names; nothing is drawn by a font.** — `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-cell.logic.ts:dataTableIconName`; scenario `SC-UKV-318`
 - **The application can hand the family an icon template by the directive `rtDataTableIcon`, placed inside `rt-data-table` or inside `rt-data-list`, which hands it to its table.** — `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-icon.directive.ts:RtDataTableIconDirective`; scenarios `SC-UKV-320`, `SC-UKV-321`
 - **When an icon template is given, it draws every header and cell icon a column declaration names, and the kit's map is not asked.** — `projects/ui-kit-v2/src/lib/components/data-table/cell/rt-data-table-cell.component.ts:iconTemplate`; scenario `SC-UKV-322`
-- **Without an icon template, a name with no pair in the map draws no icon.** — `projects/ui-kit-v2/src/lib/components/data-table/cell/rt-data-table-cell.component.ts:kitIcon`; scenario `SC-UKV-319`
+- **Without an icon template, a name with no pair in the map is drawn as a Material Symbols glyph.** — `projects/ui-kit-v2/src/lib/components/data-table/cell/rt-data-table-cell.component.ts:glyph`; scenario `SC-UKV-319`
 - **A column of the type "custom" is the second way: the whole cell, its icon included, is the application's template.** — `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-cells.directive.ts:RtDataTableCustomCellsDirective`; scenario `SC-UKV-267`
 
 ### The filter row

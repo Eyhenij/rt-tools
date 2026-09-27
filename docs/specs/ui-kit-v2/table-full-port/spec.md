@@ -140,10 +140,11 @@ The words are the first kit's; the kit's dictionary gives them in all eight lang
   application wants — its own `rt-icon`, a picture, anything.
 - **When an icon template is given, it draws every header and cell icon a column declaration
   names, and the kit's map is not asked.** This is the way out for a name the map does not pair.
-- **Without an icon template, a name with no pair in the map draws no icon.** The value and the
-  label are drawn as usual. The application then gives an icon template, renames the icon, or the
-  map and the set are extended by the map's own rule: each first-kit name has one pair, and a name
-  without a pair stands in the map with a reason.
+- **Without an icon template, a name with no pair in the map is drawn as a Material Symbols glyph.**
+  The first kit drew any Material glyph, and the cell does the same by the font's ligature. The kit
+  does not ship the font: the glyph shows where the application includes it, and without the font
+  the name itself stands in the icon's place. A pair in the map still wins, so a named icon keeps
+  the kit's drawing.
 - **A column of the type "custom" is the second way: the whole cell, its icon included, is the
   application's template.** The family draws no ready cell and no declared icon in such a cell.
 
