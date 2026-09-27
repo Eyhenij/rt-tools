@@ -93,6 +93,19 @@ describe('RtConfirmDirective', (): void => {
         expect(fixture.componentInstance.confirm()?.isOpen()).toBe(true);
     });
 
+    it('SC-UKV-372 — панель, открытая под признаком набора, несёт класс набора, без признака — нет', (): void => {
+        const plain: ComponentFixture<ConfirmHostComponent> = setup();
+        openPanel(plain);
+        expect(document.querySelector('.rt-confirm-popover-panel')?.classList.contains('rt-preset-material')).toBe(false);
+        plain.destroy();
+
+        const fixture: ComponentFixture<ConfirmHostComponent> = setup();
+        (fixture.nativeElement as HTMLElement).setAttribute('data-preset', 'material');
+        openPanel(fixture);
+
+        expect(document.querySelector('.rt-confirm-popover-panel')?.classList.contains('rt-preset-material')).toBe(true);
+    });
+
     it('пустой вопрос не открывает ничего — подтверждать нечего', (): void => {
         const fixture: ComponentFixture<ConfirmHostComponent> = setup({ message: '   ' });
 
