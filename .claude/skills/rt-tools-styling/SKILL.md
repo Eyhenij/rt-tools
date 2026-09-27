@@ -209,6 +209,19 @@ The sections below are this tree's articles: the law's technique is named by the
   a container is what lets two presets stand side by side on one page.
   <!-- rt-when: *.scss *.css *.html -->
 
+    - **A preset scoped to a container does not reach an overlay pane.** A menu, a select panel, a
+      tooltip, a confirmation, a dialog and a side panel are drawn at the end of the page, outside
+      the node carrying the flag, and take the base look under any preset — the build, the styles
+      linter and a frame all pass that. The overlay reads the flag above the node it opens from and
+      puts the preset class on its own pane; a service with no node of its own reads it above the
+      node in focus.
+
+- **The dark theme declares `color-scheme: dark`, and a light island declares `light`.** A foreign
+  theme answering by `light-dark()` resolves by the colour scheme, not by the kit's flag: without
+  the declaration the application's colours stay light inside the kit's dark theme. The build emits
+  it with the dark set, so it is edited in the generator, not in the built file.
+  <!-- rt-when: *.scss *.css *.mjs -->
+
 - **A theme or a preset scoped to a node declares the whole set of the assignments on that node,
   not the difference from the page.** A reference of a property resolves where it is declared, not
   where it is read: an assignment left at the root keeps resolving against the values of the root,

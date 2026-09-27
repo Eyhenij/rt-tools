@@ -189,9 +189,11 @@ something else.
 - **The flag `-t` breaks the run's environment exactly the same way.** A selection by story name does
   not work — neither at the second showcase nor at the first. A pointed re-take selects **story files
   by path** (Jest's positional sample), not stories by name.
-- **The path sample goes into the shell as it is.** Brackets and a vertical bar in it drop the launch
-  (`syntax error near unexpected token`): the run builds the command as a string. The sample is
-  written as a plain piece of a path — `tag`, `components/button`.
+- **The path sample is a Jest regex, and the second kit's harness quotes it for the shell itself.**
+  `test-storybook` builds the Jest command as a string, so an unquoted sample with brackets or a bar
+  dropped the launch (`syntax error near unexpected token`). The sample is passed bare —
+  `'components/(tag|badge)/stories/'` — and not wrapped in a second pair of quotes. The first kit's
+  command has no such quoting: there the sample stays a plain piece of a path.
 - **A missing reference is not taken up silently.** The second showcase's harness refuses: the
   comparison library would by default append the file and pass green, that is, the run would be green
   exactly because there was nothing to compare with.

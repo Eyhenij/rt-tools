@@ -33,6 +33,11 @@ of the second kit's styles and sorts a name into three states; the list of handl
   there.
 - **A name used by both kits is refused.** The styles file included later wins, and an application
   with two kits gets what neither of them counted on.
+- **A preset value that must hold a fixed number takes a preset step of its own, not a shared scale
+  name.** The first kit declares `--rt-radius-*` and `--rt-shadow-*` on the page root with its own
+  numbers, and the coexistence file restores the second kit's values only on the preset node. A
+  preset value built from those names draws the first kit's numbers outside that node — on an
+  overlay pane always. Such a value takes a `--rt-mat-radius-*` or `--rt-mat-shadow-*` step.
 - **The first kit's scale names are read by expanding the loop, not by a literal search.** The first
   kit declares radii, shadows and the other scales by `@each $token, $value in $<map>` with
   `--rt-<scale>-#{$token}` inside. The check expands one interpolation at the end of a name over the
