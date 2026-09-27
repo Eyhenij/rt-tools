@@ -111,6 +111,20 @@ export class RtDataTableCellComponent<T = Record<string, unknown>> {
         return icon ? dataTableIconName(icon.glyph) : null;
     });
 
+    /**
+     * Имя без пары в перечне соответствий: его ячейка рисует глифом шрифта Material Symbols, как
+     * первый кит рисовал любой глиф. Шрифт кит не везёт — глиф виден там, где шрифт подключило
+     * приложение, а без шрифта на месте значка стоит его имя.
+     */
+    protected readonly glyph: Signal<string | null> = computed(() => {
+        const icon: IRtDataTable.Icon | null = this.icon();
+
+        return icon && !this.kitIcon() ? icon.glyph : null;
+    });
+
+    /** Залитый глиф — как залитый значок набора: контурным его делает `outlined` колонки. */
+    protected readonly glyphMods: Signal<Record<string, boolean>> = computed(() => ({ filled: this.icon()?.outlined !== true }));
+
     protected readonly iconContext: Signal<IRtDataTableIconContext<T> | null> = computed(() => {
         const icon: IRtDataTable.Icon | null = this.icon();
 

@@ -10,6 +10,13 @@
 
         display: block;
         width: 100%;
+        margin-bottom: var(--rt-list-toolbar-gap);
+
+        // Отступы полосы берутся из имён списка: материальный набор даёт 16px сверху и 16px до таблицы.
+        .rt-toolbar {
+            --rt-toolbar-padding-top: var(--rt-list-toolbar-padding-top);
+            --rt-toolbar-padding-bottom: var(--rt-list-toolbar-padding-bottom);
+        }
 
         &__selectors {
             display: flex;

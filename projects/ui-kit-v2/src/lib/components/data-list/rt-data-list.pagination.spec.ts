@@ -37,6 +37,7 @@ function pageOf(patch: Partial<IPageModel>): IPageModel {
         <rt-data-list
             tableConfigStorageKey="pages"
             [look]="look()"
+            [isPaginationShown]="paginationShown()"
             [entities]="rows"
             [pageModel]="page()"
             [currentSortModel]="null"
@@ -50,6 +51,7 @@ class PagesHostComponent {
     public readonly rows: IEntity[] = [{ id: 1, title: 'Анна' }];
     public readonly page: WritableSignal<IPageModel> = signal(pageOf({}));
     public readonly look: WritableSignal<IRtDataTable.Look> = signal<IRtDataTable.Look>('material');
+    public readonly paginationShown: WritableSignal<boolean> = signal(true);
     public readonly asked: Array<Partial<IPageModel>> = [];
 }
 
@@ -89,6 +91,55 @@ describe('RtDataListComponent — полоса страниц', () => {
         fixture.detectChanges();
 
         expect(stripShown(fixture)).toBe(true);
+    });
+
+    it('SC-UKV-365 — выключенный признак полосы страниц убирает её из разметки, включённый возвращает', async (): Promise<void> => {
+        const fixture: ComponentFixture<PagesHostComponent> = await setup(pageOf({}));
+
+        expect(stripShown(fixture)).toBe(true);
+
+        fixture.componentInstance.paginationShown.set(false);
+        fixture.detectChanges();
+
+        expect(el(fixture, 'rt-pagination')).toBeNull();
+
+        fixture.componentInstance.paginationShown.set(true);
+        fixture.detectChanges();
+
+        expect(stripShown(fixture)).toBe(true);
+    });
+
+    it('SC-UKV-366 — под материальным набором одна страница рисуется номером со стрелками, свой вид полосы номеров не рисует', async (): Promise<void> => {
+        const single: IPageModel = pageOf({ totalCount: 15, pageSize: 20, hasNext: false });
+        const material: ComponentFixture<PagesHostComponent> = await setup(single);
+
+        expect(qaAll(material, 'pagination-page').map((item: DebugElement): string => textOf(item))).toEqual(['1']);
+        expect(qa(material, 'pagination-prev')).not.toBeNull();
+        expect(qa(material, 'pagination-next')).not.toBeNull();
+
+        material.componentInstance.look.set('own');
+        material.detectChanges();
+
+        expect(stripShown(material)).toBe(true);
+        expect(qa(material, 'pagination-nav')).toBeNull();
+    });
+
+    it('SC-UKV-366 — под материальным набором номера стоят на семи местах', async (): Promise<void> => {
+        const fixture: ComponentFixture<PagesHostComponent> = await setup(pageOf({ totalCount: 130 }));
+
+        expect(qaAll(fixture, 'pagination-page').map((item: DebugElement): string => textOf(item))).toEqual([
+            '1',
+            '2',
+            '3',
+            '11',
+            '12',
+            '13',
+        ]);
+
+        fixture.componentInstance.look.set('own');
+        fixture.detectChanges();
+
+        expect(qaAll(fixture, 'pagination-page').map((item: DebugElement): string => textOf(item))).toEqual(['1', '2', '13']);
     });
 
     it('SC-UKV-312 — смена размера страницы держит человека на том же расстоянии от конца', async (): Promise<void> => {

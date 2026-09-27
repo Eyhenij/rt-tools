@@ -202,8 +202,8 @@ export class RtDataListComponent<
     });
 
     /**
-     * Признак полосы страниц первый кит принимал и никуда не передавал: полоса рисуется по своим
-     * правилам. Принят здесь ради переезда без правок и так же ничего не меняет.
+     * Признак полосы страниц: выключенный убирает полосу из разметки, включённый оставляет её
+     * правилам самой полосы. Первый кит признак принимал и никуда не передавал.
      */
     public readonly isPaginationShown: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
         transform: booleanAttribute,

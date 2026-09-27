@@ -43,7 +43,7 @@ to the public entry that calls it.
 - **An icon a column declaration names, in its header or its cells, is drawn by the kit's own icon set through the kit's map of first-kit names; nothing is drawn by a font.** — `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-cell.logic.ts:dataTableIconName`; scenario `SC-UKV-318`
 - **The application can hand the family an icon template by the directive `rtDataTableIcon`, placed inside `rt-data-table` or inside `rt-data-list`, which hands it to its table.** — `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-icon.directive.ts:RtDataTableIconDirective`; scenarios `SC-UKV-320`, `SC-UKV-321`
 - **When an icon template is given, it draws every header and cell icon a column declaration names, and the kit's map is not asked.** — `projects/ui-kit-v2/src/lib/components/data-table/cell/rt-data-table-cell.component.ts:iconTemplate`; scenario `SC-UKV-322`
-- **Without an icon template, a name with no pair in the map draws no icon.** — `projects/ui-kit-v2/src/lib/components/data-table/cell/rt-data-table-cell.component.ts:kitIcon`; scenario `SC-UKV-319`
+- **Without an icon template, a name with no pair in the map is drawn as a Material Symbols glyph.** — `projects/ui-kit-v2/src/lib/components/data-table/cell/rt-data-table-cell.component.ts:glyph`; scenario `SC-UKV-319`
 - **A column of the type "custom" is the second way: the whole cell, its icon included, is the application's template.** — `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-cells.directive.ts:RtDataTableCustomCellsDirective`; scenario `SC-UKV-267`
 
 ### The filter row
@@ -129,7 +129,7 @@ to the public entry that calls it.
 - **The search field is shown while there are rows, and on the placeholder only when the search holds text or was touched.** — `projects/ui-kit-v2/src/lib/components/data-list/toolbar/rt-data-list-toolbar.component.ts:isSearchShown`; scenario —
 - **The clear-filters button is shown while the filter row is, and is unavailable while no condition is set.** — `projects/ui-kit-v2/src/lib/components/data-list/toolbar/rt-data-list-toolbar.component.html:data-list-clear-filters`; scenario —
 - **Refresh asks the application to reload.** — `projects/ui-kit-v2/src/lib/components/data-list/rt-data-list.component.ts:refresh`; scenario —
-- **The list takes the switch of the pagination bar and passes it nowhere.** — `projects/ui-kit-v2/src/lib/components/data-list/rt-data-list.component.ts:isPaginationShown`; scenario —
+- **The list draws the pagination bar only while its switch is on.** — `projects/ui-kit-v2/src/lib/components/data-list/rt-data-list.component.ts:isPaginationShown`; scenario `SC-UKV-365`
 - **The application's toolbar selectors and actions stand in the toolbar next to the kit's controls.** — `projects/ui-kit-v2/src/lib/components/data-list/rt-data-list-toolbar.directive.ts:RtDataListToolbarSelectorsDirective`; scenario —
 - **The placeholder replaces the table when there are no rows and no conditions.** — `projects/ui-kit-v2/src/lib/components/data-list/rt-data-list.component.ts:isPlaceholderShown`; scenario `SC-UKV-309`
 - **The toolbar yields its width in a narrow column: the search shrinks, and nothing of the toolbar leaves the list's box.** — `projects/ui-kit-v2/src/lib/components/data-list/toolbar/rt-data-list-toolbar.component.scss:contain`; scenario `SC-UKV-351`

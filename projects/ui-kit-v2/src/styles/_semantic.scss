@@ -8,6 +8,8 @@
    pair «light ↔ dark» cannot be shown while the application stands in the dark theme —
    the container would inherit the dark values, and both halves would show the same. */
 
+@use './semantic-lists' as lists;
+
 @mixin rt-theme-light-tokens {
     /* Background */
     --rt-color-bg-page: var(--rt-neutral-50);
@@ -317,62 +319,6 @@
        отступы бегунка с иконками пришлось бы пересчитывать на её толщину. */
     --rt-toggle-shadow-border: inset 0 0 0 var(--rt-border-width-thin) var(--rt-toggle-color-border);
 
-    /* Кнопки действий на панели списка — свои и приложения. Свой вид оставляет их кнопками-
-       значками без подъёма; материальный набор делает из них круглые кнопки действия первого кита. */
-    --rt-list-action-gap: var(--rt-space-sm);
-    --rt-list-action-divider-height: var(--rt-size-5);
-    --rt-list-action-radius: var(--rt-radius-md);
-    --rt-list-action-shadow: var(--rt-shadow-none);
-    --rt-list-action-shadow-hover: var(--rt-shadow-none);
-    --rt-list-action-icon-size: var(--rt-size-5);
-    --rt-list-action-color: var(--rt-color-text-primary);
-    --rt-list-action-color-hover: var(--rt-color-text-primary);
-    --rt-list-action-color-bg-hover: var(--rt-icon-button-color-bg-hover);
-
-    /* Значки, кнопки и копирование таблицы списка: материальный набор рисует их, как первый кит. */
-    --rt-list-table-icon-size: 0px;
-    --rt-list-table-icon-color: var(--rt-color-text-primary);
-    --rt-list-table-head-divider-color: var(--rt-color-border-strong);
-    --rt-list-table-button-size: var(--rt-control-height-md);
-    --rt-list-table-button-radius: var(--rt-radius-md);
-    --rt-list-copy-button-size: var(--rt-control-height-sm);
-    --rt-list-copy-button-radius: var(--rt-radius-md);
-    --rt-list-copy-button-bg: transparent;
-    --rt-list-copy-button-bg-hover: var(--rt-icon-button-color-bg-hover);
-    --rt-list-copy-button-color: var(--rt-color-text-primary);
-
-    /* Подпись флажка «отметить все» на панели списка: свой вид — текст, материальный набор —
-       приглушённый серый первого кита. */
-    --rt-list-selector-label-color: var(--rt-color-text-primary);
-
-    /* Полоса страниц rt-pagination: ячейка страницы, текущая страница, стрелки, подпись
-       диапазона и поле размера. Свой вид — прежние значения; материальный набор делает из них
-       полосу первого кита. */
-    --rt-pagination-justify: space-between;
-    --rt-pagination-gap: var(--rt-space-md);
-    --rt-pagination-nav-gap: var(--rt-space-xs);
-    --rt-pagination-range-display: inline;
-    --rt-pagination-box-size: var(--rt-space-xl);
-    --rt-pagination-box-radius: var(--rt-radius-md);
-    --rt-pagination-box-color-border: var(--rt-color-border-default);
-    --rt-pagination-box-color-text: var(--rt-color-text-primary);
-    --rt-pagination-box-current-color-bg: var(--rt-color-bg-surface-subtle);
-    --rt-pagination-box-current-color-text: var(--rt-color-text-primary);
-    --rt-pagination-box-current-color-border: var(--rt-color-border-strong);
-    --rt-pagination-box-current-font-weight: var(--rt-font-weight-semibold);
-    --rt-pagination-arrow-size: var(--rt-control-height-sm);
-    --rt-pagination-arrow-radius: var(--rt-radius-md);
-    --rt-pagination-arrow-shadow: var(--rt-shadow-none);
-    --rt-pagination-arrow-color: var(--rt-color-text-primary);
-    --rt-pagination-per-page-gap: var(--rt-space-sm);
-    --rt-pagination-per-page-label-white-space: normal;
-    --rt-pagination-field-height: var(--rt-input-height-md);
-    --rt-pagination-field-radius: var(--rt-input-radius);
-    --rt-pagination-field-color-border: var(--rt-input-color-border);
-    --rt-pagination-field-padding-x: var(--rt-input-padding-x);
-    --rt-pagination-field-color-bg: var(--rt-input-color-bg);
-    --rt-pagination-field-color-text: var(--rt-input-color-text);
-
     /* Навигация (rt-page-header). Шапка — отдельная плашка; отступ от краёв
        страницы задаёт тот, кто её ставит. */
     --rt-nav-header-padding: var(--rt-space-2) var(--rt-space-4);
@@ -484,6 +430,8 @@
     --rt-field-value-font-size: var(--rt-text-sm);
     --rt-field-value-color: var(--rt-color-text-primary);
     --rt-field-value-empty-color: var(--rt-color-text-muted);
+
+    @include lists.rt-theme-light-list-tokens;
 }
 
 :root {

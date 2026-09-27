@@ -140,10 +140,11 @@ The words are the first kit's; the kit's dictionary gives them in all eight lang
   application wants — its own `rt-icon`, a picture, anything.
 - **When an icon template is given, it draws every header and cell icon a column declaration
   names, and the kit's map is not asked.** This is the way out for a name the map does not pair.
-- **Without an icon template, a name with no pair in the map draws no icon.** The value and the
-  label are drawn as usual. The application then gives an icon template, renames the icon, or the
-  map and the set are extended by the map's own rule: each first-kit name has one pair, and a name
-  without a pair stands in the map with a reason.
+- **Without an icon template, a name with no pair in the map is drawn as a Material Symbols glyph.**
+  The first kit drew any Material glyph, and the cell does the same by the font's ligature. The kit
+  does not ship the font: the glyph shows where the application includes it, and without the font
+  the name itself stands in the icon's place. A pair in the map still wins, so a named icon keeps
+  the kit's drawing.
 - **A column of the type "custom" is the second way: the whole cell, its icon included, is the
   application's template.** The family draws no ready cell and no declared icon in such a cell.
 
@@ -278,8 +279,8 @@ The words are the first kit's; the kit's dictionary gives them in all eight lang
 - **The clear-filters button is shown while the filter row is, and is unavailable while no
   condition is set.**
 - **Refresh asks the application to reload.**
-- **The list takes the switch of the pagination bar and passes it nowhere.** The bar is drawn by
-  its own rules whatever the switch says, and refresh never clears the search.
+- **The list draws the pagination bar only while its switch is on.** Switched off, the bar is not
+  in the markup at all; switched on, it follows its own rules. Refresh never clears the search.
 - **The application's toolbar selectors and actions stand in the toolbar next to the kit's
   controls.**
 - **The placeholder replaces the table when there are no rows and no conditions.** With
@@ -446,7 +447,7 @@ table that applied it last decides it for all.
 - `Q-TP-14` — a press on an inline action reaches the row unless the application stops it.
 - `Q-TP-15` — the right pointer button activates a row too.
 - `Q-TP-20` — the exclusions outlive the unchecking of select all.
-- `Q-TP-21` — the list's pagination switch reaches nothing, and refresh never clears the search.
+- `Q-TP-21` — refresh never clears the search.
 - `Q-TP-22` — an empty list or object in a ready cell gets no dash, while the copy button counts
   both as empty.
 

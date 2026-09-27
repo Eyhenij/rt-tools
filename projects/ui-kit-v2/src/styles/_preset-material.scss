@@ -137,6 +137,14 @@
     --rt-list-copy-button-color: var(--rt-mat-neutral-60);
     --rt-list-action-color-hover: var(--rt-mat-neutral-100);
     --rt-list-action-color-bg-hover: transparent;
+    --rt-list-toolbar-padding-top: var(--rt-space-4);
+    --rt-list-toolbar-padding-bottom: 0px;
+    --rt-list-toolbar-gap: var(--rt-space-4);
+    --rt-list-empty-icon-wrap-size: var(--rt-size-12);
+    --rt-list-empty-icon-wrap-bg: transparent;
+    --rt-list-empty-icon-size: var(--rt-size-12);
+    --rt-list-empty-title-size: var(--rt-text-3xl);
+    --rt-list-empty-title-weight: var(--rt-font-weight-regular);
     --rt-list-selector-label-color: var(--rt-mat-neutral-60);
 
     /* Полоса страниц первого кита: ячейки 34px в серой рамке со скруглением 12px, промежуток 8px,

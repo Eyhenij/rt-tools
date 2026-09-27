@@ -1,5 +1,9 @@
 @layer rt-kit.components {
     .rt-toolbar {
+        /* Отступ полосы сверху и снизу — свойства блока: обёртка переставляет их снаружи. */
+        --rt-toolbar-padding-top: var(--rt-space-2);
+        --rt-toolbar-padding-bottom: var(--rt-space-2);
+
         display: block;
 
         &__bars {
@@ -8,7 +12,7 @@
             flex-direction: row;
             align-items: center;
             justify-content: space-between;
-            padding: var(--rt-space-2) 0;
+            padding: var(--rt-toolbar-padding-top) 0 var(--rt-toolbar-padding-bottom);
             gap: var(--rt-space-2);
         }
 

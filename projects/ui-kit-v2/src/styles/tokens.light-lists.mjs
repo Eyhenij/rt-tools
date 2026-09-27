@@ -214,4 +214,46 @@ export const lightLists = [
         value: `var(--rt-input-color-text)`,
         dark: `var(--rt-input-color-text)`,
     },
+    {
+        lead: `    /* Отступы вокруг тулбара списка и нижний отступ содержимого. Свой вид держит полосу с отступом
+       8px сверху и снизу вплотную к таблице; материальный набор даёт 16px сверху и 16px до таблицы. */`,
+        space: true,
+        name: `--rt-list-toolbar-padding-top`,
+        value: `var(--rt-space-2)`,
+    },
+    {
+        name: `--rt-list-toolbar-padding-bottom`,
+        value: `var(--rt-space-2)`,
+    },
+    {
+        name: `--rt-list-toolbar-gap`,
+        value: `0px`,
+    },
+    {
+        name: `--rt-list-content-padding-bottom`,
+        value: `0px`,
+    },
+    {
+        lead: `    /* Пустой список — заглушка rt-empty-state. Свой вид держит значок в сером круге и заголовок
+       среднего размера; материальный набор даёт значок 48px без круга и крупный заголовок первого кита. */`,
+        space: true,
+        name: `--rt-list-empty-icon-wrap-size`,
+        value: `var(--rt-size-16)`,
+    },
+    {
+        name: `--rt-list-empty-icon-wrap-bg`,
+        value: `var(--rt-color-bg-subtle)`,
+    },
+    {
+        name: `--rt-list-empty-icon-size`,
+        value: `var(--rt-size-8)`,
+    },
+    {
+        name: `--rt-list-empty-title-size`,
+        value: `var(--rt-text-md)`,
+    },
+    {
+        name: `--rt-list-empty-title-weight`,
+        value: `var(--rt-font-weight-medium)`,
+    },
 ];
