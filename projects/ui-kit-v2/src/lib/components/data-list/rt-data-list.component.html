@@ -85,6 +85,7 @@
                 <rt-pagination
                     [pageModel]="pageModel()"
                     [perPageOptions]="pageSizes()"
+                    [numbering]="look() === 'material' ? 'seven' : 'neighbours'"
                     [prevIcon]="look() === 'material' ? 'arrow-left' : 'chevron-left'"
                     [nextIcon]="look() === 'material' ? 'arrow-right' : 'chevron-right'"
                     (pageChange)="onPageNumber($event)"

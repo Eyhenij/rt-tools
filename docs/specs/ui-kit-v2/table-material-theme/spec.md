@@ -119,6 +119,11 @@ Nothing new is shown to a person: the list keeps its labels, only its look follo
   grey with a white number. The arrows are framed the same way and point with arrows, not chevrons.
   The range label is hidden, and the page size field stands next to the numbers without a fill. The
   own preset keeps the strip as it was.
+- **Under the material preset the page strip counts numbers on seven places and keeps its arrows on
+  a single page.** Near an edge it shows three numbers on each side, `1 2 3 … 11 12 13`; in the
+  middle, the first, the neighbours of the current and the last. A single page is the number 1
+  between two arrows. The own preset keeps the edges and the neighbours, and on a single page it
+  draws no numbers.
 
 ## What is out of scope
 

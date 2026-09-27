@@ -76,3 +76,11 @@ When the table is drawn
 Then the first icon asks for the filled drawing and the second for the outlined one
 
 Covered by the component test of the header cell.
+
+### SC-UKV-366 — the page strip under the preset counts seven places
+
+Given a list under the material preset
+When it has one page, and then thirteen pages with the first one open
+Then the strip draws the number 1 between two arrows, and then `1 2 3 … 11 12 13`; the own look draws no numbers on one page and `1 2 … 13` on thirteen
+
+Covered by the pagination test of the list and by the test of the numbering.

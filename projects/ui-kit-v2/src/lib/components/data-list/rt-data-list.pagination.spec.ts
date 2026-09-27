@@ -109,6 +109,39 @@ describe('RtDataListComponent — полоса страниц', () => {
         expect(stripShown(fixture)).toBe(true);
     });
 
+    it('SC-UKV-366 — под материальным набором одна страница рисуется номером со стрелками, свой вид полосы номеров не рисует', async (): Promise<void> => {
+        const single: IPageModel = pageOf({ totalCount: 15, pageSize: 20, hasNext: false });
+        const material: ComponentFixture<PagesHostComponent> = await setup(single);
+
+        expect(qaAll(material, 'pagination-page').map((item: DebugElement): string => textOf(item))).toEqual(['1']);
+        expect(qa(material, 'pagination-prev')).not.toBeNull();
+        expect(qa(material, 'pagination-next')).not.toBeNull();
+
+        material.componentInstance.look.set('own');
+        material.detectChanges();
+
+        expect(stripShown(material)).toBe(true);
+        expect(qa(material, 'pagination-nav')).toBeNull();
+    });
+
+    it('SC-UKV-366 — под материальным набором номера стоят на семи местах', async (): Promise<void> => {
+        const fixture: ComponentFixture<PagesHostComponent> = await setup(pageOf({ totalCount: 130 }));
+
+        expect(qaAll(fixture, 'pagination-page').map((item: DebugElement): string => textOf(item))).toEqual([
+            '1',
+            '2',
+            '3',
+            '11',
+            '12',
+            '13',
+        ]);
+
+        fixture.componentInstance.look.set('own');
+        fixture.detectChanges();
+
+        expect(qaAll(fixture, 'pagination-page').map((item: DebugElement): string => textOf(item))).toEqual(['1', '2', '13']);
+    });
+
     it('SC-UKV-312 — смена размера страницы держит человека на том же расстоянии от конца', async (): Promise<void> => {
         const fixture: ComponentFixture<PagesHostComponent> = await setup(pageOf({ pageNumber: 8, hasPrev: true }));
 
