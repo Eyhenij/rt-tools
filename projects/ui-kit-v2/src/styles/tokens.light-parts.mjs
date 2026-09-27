@@ -155,4 +155,39 @@ export const lightParts = [
         name: `--rt-overlay-tooltip-shadow`,
         value: `var(--rt-shadow-md)`,
     },
+    {
+        lead: `    /* Меню и выпадающий список: фон, отступ и вес подписей меню, красный опасного пункта, пункт
+       списка и отметка выбранного. Свой вид держит прежние значения; материальный набор — первого кита. */`,
+        space: true,
+        name: `--rt-overlay-menu-bg`,
+        value: `var(--rt-color-bg-surface)`,
+    },
+    {
+        name: `--rt-overlay-menu-padding-y`,
+        value: `var(--rt-space-xs)`,
+    },
+    {
+        name: `--rt-overlay-menu-item-weight`,
+        value: `var(--rt-font-weight-regular)`,
+    },
+    {
+        name: `--rt-overlay-menu-danger-color`,
+        value: `var(--rt-color-state-error-text)`,
+    },
+    {
+        name: `--rt-overlay-select-option-font-size`,
+        value: `var(--rt-input-font-size)`,
+    },
+    {
+        name: `--rt-overlay-select-selected-bg`,
+        value: `var(--rt-color-action-primary-subtle)`,
+    },
+    {
+        name: `--rt-overlay-select-selected-weight`,
+        value: `var(--rt-font-weight-semibold)`,
+    },
+    {
+        name: `--rt-overlay-select-check-display`,
+        value: `none`,
+    },
 ];

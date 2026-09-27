@@ -100,3 +100,19 @@ When the row menu, the dropdown list and a tooltip open
 Then the menu and the tooltip are rounded by 4 px, the list only at its lower corners, and the menu and the list carry the Material level 2 shadow
 
 Not covered: the promise is about the computed corners and shadows of overlay panels, not about a call. It is held by the preset source and by the showcase frames of the menu, the select and the tooltip.
+
+### SC-UKV-369 — a panel opened under the preset mark carries the preset
+
+Given a button inside a container the application marked with the material preset
+When a tooltip, a menu or a dropdown list opens from it
+Then its panel at the end of the page carries the preset class, and a panel opened outside such a container does not
+
+Covered by the test of the preset helper and by the tooltip directive test.
+
+### SC-UKV-370 — the dropdown list marks the selected option with a check
+
+Given a dropdown list with a selected option
+When the list opens
+Then the selected option carries a check mark and the others do not; the own preset hides the mark, the material preset shows it
+
+Covered by the select component test for the mark; its visibility by look is held by the preset source.

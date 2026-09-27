@@ -370,10 +370,18 @@ export type TRtDesignTokenName =
     | '--rt-overlay-brand-24'
     | '--rt-overlay-brand-8'
     | '--rt-overlay-danger-16'
+    | '--rt-overlay-menu-bg'
+    | '--rt-overlay-menu-danger-color'
+    | '--rt-overlay-menu-item-weight'
+    | '--rt-overlay-menu-padding-y'
     | '--rt-overlay-menu-radius'
     | '--rt-overlay-menu-shadow'
     | '--rt-overlay-navy-70'
+    | '--rt-overlay-select-check-display'
+    | '--rt-overlay-select-option-font-size'
     | '--rt-overlay-select-radius'
+    | '--rt-overlay-select-selected-bg'
+    | '--rt-overlay-select-selected-weight'
     | '--rt-overlay-select-shadow'
     | '--rt-overlay-tooltip-radius'
     | '--rt-overlay-tooltip-shadow'
@@ -914,10 +922,18 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-overlay-brand-24',
     '--rt-overlay-brand-8',
     '--rt-overlay-danger-16',
+    '--rt-overlay-menu-bg',
+    '--rt-overlay-menu-danger-color',
+    '--rt-overlay-menu-item-weight',
+    '--rt-overlay-menu-padding-y',
     '--rt-overlay-menu-radius',
     '--rt-overlay-menu-shadow',
     '--rt-overlay-navy-70',
+    '--rt-overlay-select-check-display',
+    '--rt-overlay-select-option-font-size',
     '--rt-overlay-select-radius',
+    '--rt-overlay-select-selected-bg',
+    '--rt-overlay-select-selected-weight',
     '--rt-overlay-select-shadow',
     '--rt-overlay-tooltip-radius',
     '--rt-overlay-tooltip-shadow',

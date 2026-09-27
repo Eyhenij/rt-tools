@@ -195,6 +195,18 @@
     --rt-overlay-select-shadow: var(--mat-sys-level2, var(--rt-mat-shadow-level-2));
     --rt-overlay-tooltip-radius: var(--rt-mat-radius-4);
     --rt-overlay-tooltip-shadow: none;
+
+    /* Меню строки — mat-menu первого кита: фон контейнера Material, отступ 8px сверху и снизу,
+       подписи весом 500, опасный пункт красным первого кита. Выпадающий список — mat-select: пункты
+       16px, выбранный — фон текста 12% без жирного и с галочкой. */
+    --rt-overlay-menu-bg: var(--mat-menu-container-color, var(--rt-mat-neutral-0));
+    --rt-overlay-menu-padding-y: var(--rt-space-sm);
+    --rt-overlay-menu-item-weight: var(--rt-font-weight-medium);
+    --rt-overlay-menu-danger-color: var(--rt-mat-red-100);
+    --rt-overlay-select-option-font-size: var(--rt-text-md);
+    --rt-overlay-select-selected-bg: color-mix(in srgb, var(--mat-sys-on-surface, var(--rt-mat-neutral-100)) 12%, transparent);
+    --rt-overlay-select-selected-weight: var(--rt-font-weight-regular);
+    --rt-overlay-select-check-display: inline-flex;
 }
 
 /* The preset under a dark theme: the names the preset reads from Material keep the Material chain,
@@ -234,6 +246,8 @@
     --rt-pagination-box-current-color-bg: var(--rt-mat-neutral-40);
     --rt-pagination-box-current-color-text: var(--rt-mat-neutral-0);
     --rt-pagination-box-current-color-border: var(--rt-mat-dark-30);
+    --rt-overlay-menu-bg: var(--mat-menu-container-color, var(--rt-color-bg-surface));
+    --rt-overlay-select-selected-bg: color-mix(in srgb, var(--mat-sys-on-surface, var(--rt-mat-neutral-0)) 12%, transparent);
 }
 
 :root[data-preset='material'],

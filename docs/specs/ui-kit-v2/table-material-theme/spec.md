@@ -118,6 +118,18 @@ Nothing new is shown to a person: the list keeps its labels, only its look follo
   own steps: the first kit declares the kit's radius steps on the page root with its own values. The
   own preset keeps the kit's steps.
 
+- **A panel opened from inside a material preset container carries the preset itself.** A menu, a
+  dropdown list, a popover and a tooltip lie at the end of the page, outside the container the
+  application marked, and the preset assignments do not reach them there. The panel takes the preset
+  class when the mark stands above the node it opens from; the kit reads the application's mark and
+  never sets its own.
+
+- **Under the material preset the row menu, the dropdown list and the tooltip draw the first kit's
+  look.** The menu panel takes the colour of Material's menu container, white where the theme sets
+  none, 8 px above and below, labels of weight 500 and the first kit's red for a dangerous item. The
+  list options are 16 px; the selected one is filled with the text colour at 12 %, is not bold and
+  carries a check mark. A tooltip without a given side stands under its button.
+
 - **The copy button of a cell stays hidden until its cell is hovered, whatever the window width.**
   It is shown all the time only where there is no hover. A width threshold showed it in every cell
   of a laptop window next to a side panel, while the first kit kept it hidden there.

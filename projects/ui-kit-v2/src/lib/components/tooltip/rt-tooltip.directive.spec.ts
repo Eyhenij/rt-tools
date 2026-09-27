@@ -21,6 +21,15 @@ class TooltipHostComponent {
     public readonly placement: WritableSignal<IRtTooltip.Placement> = signal<IRtTooltip.Placement>('top');
 }
 
+@Component({
+    selector: 'rt-tooltip-preset-host',
+    template:
+        '<div class="rt-preset-material"><button type="button" qa-dataid="tooltip-host" rtTooltip="Удалить строку">Кнопка</button></div>',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtTooltipDirective],
+})
+class TooltipPresetHostComponent {}
+
 function setup(text: string | null | undefined = 'Удалить строку'): ComponentFixture<TooltipHostComponent> {
     const fixture: ComponentFixture<TooltipHostComponent> = createRtFixture(TooltipHostComponent, {}, { skipInitialDetect: true });
     fixture.componentInstance.text.set(text);
@@ -34,6 +43,19 @@ function hover(fixture: ComponentFixture<TooltipHostComponent>, event: 'mouseent
 }
 
 describe('RtTooltipDirective', (): void => {
+    it('SC-UKV-369 — подсказка под признаком набора несёт класс набора на своей панели', (): void => {
+        jest.useFakeTimers();
+        const fixture: ComponentFixture<TooltipPresetHostComponent> = createRtFixture(TooltipPresetHostComponent);
+
+        el(fixture, '[qa-dataid="tooltip-host"]')?.nativeElement.dispatchEvent(new Event('mouseenter'));
+        jest.advanceTimersByTime(300);
+        fixture.detectChanges();
+
+        expect(tip()).not.toBeNull();
+        expect(tip()?.closest('.cdk-overlay-pane')?.classList.contains('rt-preset-material')).toBe(true);
+        jest.useRealTimers();
+    });
+
     beforeEach((): void => {
         jest.useFakeTimers();
     });

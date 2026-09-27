@@ -317,4 +317,24 @@ export const material = [
     { name: `--rt-overlay-select-shadow`, value: `var(--mat-sys-level2, var(--rt-mat-shadow-level-2))` },
     { name: `--rt-overlay-tooltip-radius`, value: `var(--rt-mat-radius-4)` },
     { name: `--rt-overlay-tooltip-shadow`, value: `none` },
+    {
+        lead: `    /* Меню строки — mat-menu первого кита: фон контейнера Material, отступ 8px сверху и снизу,
+       подписи весом 500, опасный пункт красным первого кита. Выпадающий список — mat-select: пункты
+       16px, выбранный — фон текста 12% без жирного и с галочкой. */`,
+        space: true,
+        name: `--rt-overlay-menu-bg`,
+        value: `var(--mat-menu-container-color, var(--rt-mat-neutral-0))`,
+        dark: `var(--mat-menu-container-color, var(--rt-color-bg-surface))`,
+    },
+    { name: `--rt-overlay-menu-padding-y`, value: `var(--rt-space-sm)` },
+    { name: `--rt-overlay-menu-item-weight`, value: `var(--rt-font-weight-medium)` },
+    { name: `--rt-overlay-menu-danger-color`, value: `var(--rt-mat-red-100)` },
+    { name: `--rt-overlay-select-option-font-size`, value: `var(--rt-text-md)` },
+    {
+        name: `--rt-overlay-select-selected-bg`,
+        value: `color-mix(in srgb, var(--mat-sys-on-surface, var(--rt-mat-neutral-100)) 12%, transparent)`,
+        dark: `color-mix(in srgb, var(--mat-sys-on-surface, var(--rt-mat-neutral-0)) 12%, transparent)`,
+    },
+    { name: `--rt-overlay-select-selected-weight`, value: `var(--rt-font-weight-regular)` },
+    { name: `--rt-overlay-select-check-display`, value: `inline-flex` },
 ];

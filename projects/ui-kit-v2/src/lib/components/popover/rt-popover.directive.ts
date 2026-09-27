@@ -32,6 +32,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { map, merge, Observable, Subject, switchMap } from 'rxjs';
 
+import { materialPresetClassesOf } from '../../util/material-preset';
 import { IRtPopover } from './rt-popover.model';
 
 const HOVER_CLOSE_DELAY_MS: number = 100;
@@ -362,7 +363,8 @@ export class RtPopoverDirective implements OnDestroy {
     #resolvePanelClasses(): string[] {
         const base: string = 'rt-popover-panel';
         const extra: string = this.panelClass().trim();
-        return extra ? [base, ...extra.split(/\s+/)] : [base];
+        const preset: string[] = materialPresetClassesOf(this.#elementRef.nativeElement);
+        return extra ? [base, ...extra.split(/\s+/), ...preset] : [base, ...preset];
     }
 
     #scheduleHoverClose(): void {

@@ -9,6 +9,7 @@ import {
 import { ComponentPortal } from '@angular/cdk/portal';
 import { ComponentRef, Directive, ElementRef, inject, input, InputSignal, InputSignalWithTransform, OnDestroy } from '@angular/core';
 
+import { materialPresetClassesOf } from '../../util/material-preset';
 import { RtTooltipComponent } from './rt-tooltip.component';
 import { IRtTooltip } from './rt-tooltip.model';
 
@@ -63,7 +64,10 @@ export class RtTooltipDirective implements OnDestroy {
         transform: (value: string | null | undefined): string => value ?? '',
     });
 
-    public readonly placement: InputSignal<IRtTooltip.Placement> = input<IRtTooltip.Placement>('top', { alias: 'rtTooltipPlacement' });
+    /** Сторона подсказки. Не задана — сверху, а под материальным набором снизу, как у первого кита. */
+    public readonly placement: InputSignal<IRtTooltip.Placement | null> = input<IRtTooltip.Placement | null>(null, {
+        alias: 'rtTooltipPlacement',
+    });
 
     public ngOnDestroy(): void {
         this.#clearTimer();
@@ -113,7 +117,9 @@ export class RtTooltipDirective implements OnDestroy {
             overlayY: 'top',
             offsetY: 6,
         };
-        const positions: ConnectedPosition[] = this.placement() === 'top' ? [above, below] : [below, above];
+        const presetClasses: string[] = materialPresetClassesOf(this.#elementRef.nativeElement);
+        const placement: IRtTooltip.Placement = this.placement() ?? (presetClasses.length > 0 ? 'bottom' : 'top');
+        const positions: ConnectedPosition[] = placement === 'top' ? [above, below] : [below, above];
 
         const positionStrategy: FlexibleConnectedPositionStrategy = this.#overlay
             .position()
@@ -127,7 +133,7 @@ export class RtTooltipDirective implements OnDestroy {
             positionStrategy,
             scrollStrategy: this.#scrollStrategies.reposition(),
             hasBackdrop: false,
-            panelClass: 'rt-tooltip-panel',
+            panelClass: ['rt-tooltip-panel', ...presetClasses],
         });
         this.#overlayRef = this.#overlay.create(config);
         return this.#overlayRef;
