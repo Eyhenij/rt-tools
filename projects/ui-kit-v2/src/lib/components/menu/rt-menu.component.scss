@@ -10,9 +10,9 @@
         &__panel {
             /* Панель рисуется в CDK Overlay, вне поддерева блока: свойство
                объявляется на ней самой — с корня блока оно бы не докатилось. */
-            --rt-menu-panel-radius: var(--rt-radius-md);
+            --rt-menu-panel-radius: var(--rt-overlay-menu-radius);
             --rt-menu-panel-border-width: var(--rt-border-width-thin);
-            --rt-menu-panel-shadow: var(--rt-shadow-lg);
+            --rt-menu-panel-shadow: var(--rt-overlay-menu-shadow);
 
             display: flex;
             min-width: 180px;

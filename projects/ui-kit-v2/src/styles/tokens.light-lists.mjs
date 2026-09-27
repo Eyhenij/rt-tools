@@ -256,4 +256,10 @@ export const lightLists = [
         name: `--rt-list-empty-title-weight`,
         value: `var(--rt-font-weight-medium)`,
     },
+    {
+        lead: `    /* Плашка колонки в панели настройки списка под материальным набором: скругление первого кита. */`,
+        space: true,
+        name: `--rt-list-settings-item-radius`,
+        value: `var(--rt-radius-sm)`,
+    },
 ];

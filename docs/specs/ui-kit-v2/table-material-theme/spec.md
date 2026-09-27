@@ -111,6 +111,13 @@ Nothing new is shown to a person: the list keeps its labels, only its look follo
   fields have no fill; the page boxes, the row lines and the disabled button take the first kit's
   dark palette. The own preset keeps the graphite of the dark theme.
 
+- **Under the material preset the panels above the page take the first kit's corners and
+  elevation.** The row menu and the tooltip are rounded by 4 px, the dropdown list only at its lower
+  corners, a column plaque of the settings panel and the copy button by 5 px. The menu and the list
+  are raised by Material level 2, the tooltip has no shadow. The preset takes these numbers from its
+  own steps: the first kit declares the kit's radius steps on the page root with its own values. The
+  own preset keeps the kit's steps.
+
 - **The copy button of a cell stays hidden until its cell is hovered, whatever the window width.**
   It is shown all the time only where there is no hover. A width threshold showed it in every cell
   of a laptop window next to a side panel, while the first kit kept it hidden there.

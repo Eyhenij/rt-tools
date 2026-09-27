@@ -131,7 +131,8 @@
     --rt-list-table-button-size: calc(var(--rt-size-8) + var(--rt-size-1));
     --rt-list-table-button-radius: var(--rt-radius-full);
     --rt-list-copy-button-size: var(--rt-size-6);
-    --rt-list-copy-button-radius: calc((var(--rt-radius-sm) + var(--rt-radius-ms)) / 2);
+    --rt-list-copy-button-radius: var(--rt-mat-radius-5);
+    --rt-list-settings-item-radius: var(--rt-mat-radius-5);
     --rt-list-copy-button-bg: var(--mat-fab-small-container-color, var(--rt-mat-neutral-0));
     --rt-list-copy-button-bg-hover: var(--mat-fab-small-container-color, var(--rt-mat-neutral-0));
     --rt-list-copy-button-color: var(--rt-mat-neutral-60);
@@ -184,6 +185,16 @@
     /* Кнопка и поле первого кита скруглены заметно сильнее: 1.5rem против 10px.
        Значение снято числом — ссылки на токены первого кита во второй кит не едут. */
     --rt-radius-control: 1.5rem;
+
+    /* Панели над страницей — скругления и подъём первого кита: меню 4px, выпадающий список
+       скруглён только снизу, подсказка 4px без тени. Тень — подъём 2 Material, как у mat-menu и
+       mat-select. */
+    --rt-overlay-menu-radius: var(--rt-mat-radius-4);
+    --rt-overlay-menu-shadow: var(--mat-sys-level2, var(--rt-mat-shadow-level-2));
+    --rt-overlay-select-radius: 0 0 var(--rt-mat-radius-4) var(--rt-mat-radius-4);
+    --rt-overlay-select-shadow: var(--mat-sys-level2, var(--rt-mat-shadow-level-2));
+    --rt-overlay-tooltip-radius: var(--rt-mat-radius-4);
+    --rt-overlay-tooltip-shadow: none;
 }
 
 /* The preset under a dark theme: the names the preset reads from Material keep the Material chain,

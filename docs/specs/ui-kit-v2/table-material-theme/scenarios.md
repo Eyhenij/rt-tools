@@ -92,3 +92,11 @@ When it is drawn
 Then the filter fields have no fill, the page boxes and the row lines take the first kit's dark palette, and the Material colours of the page resolve dark
 
 Not covered: the promise is about the resolved colours in a look, not about a call. It is held by `tools/check-tokens-theme.mjs` and by the dark preset frames of the list.
+
+### SC-UKV-368 — the panels above the page take the first kit's corners under the preset
+
+Given a page under the material preset where the first kit declares its radius steps on the root
+When the row menu, the dropdown list and a tooltip open
+Then the menu and the tooltip are rounded by 4 px, the list only at its lower corners, and the menu and the list carry the Material level 2 shadow
+
+Not covered: the promise is about the computed corners and shadows of overlay panels, not about a call. It is held by the preset source and by the showcase frames of the menu, the select and the tooltip.

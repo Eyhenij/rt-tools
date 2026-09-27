@@ -199,7 +199,8 @@
         &__panel {
             /* Панель рисуется в CDK Overlay, вне поддерева блока: свойство
                объявляется на ней самой — с корня блока оно бы не докатилось. */
-            --rt-select-panel-shadow: var(--rt-shadow-md);
+            --rt-select-panel-shadow: var(--rt-overlay-select-shadow);
+            --rt-select-panel-radius: var(--rt-overlay-select-radius);
 
             /* Без предела панель открывается целиком, без прокрутки внутри: содержимое
                должно помещаться. Предел назначает потребитель — тогда и появляется
@@ -213,7 +214,7 @@
             max-height: var(--rt-select-panel-max-height);
             box-sizing: border-box;
             border: var(--rt-input-border-width) solid var(--rt-color-border-subtle);
-            border-radius: var(--rt-input-radius);
+            border-radius: var(--rt-select-panel-radius);
             background-color: var(--rt-color-bg-surface);
             box-shadow: var(--rt-select-panel-shadow);
             overflow-y: auto;

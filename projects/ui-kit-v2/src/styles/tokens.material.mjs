@@ -237,7 +237,8 @@ export const material = [
     { name: `--rt-list-table-button-size`, value: `calc(var(--rt-size-8) + var(--rt-size-1))` },
     { name: `--rt-list-table-button-radius`, value: `var(--rt-radius-full)` },
     { name: `--rt-list-copy-button-size`, value: `var(--rt-size-6)` },
-    { name: `--rt-list-copy-button-radius`, value: `calc((var(--rt-radius-sm) + var(--rt-radius-ms)) / 2)` },
+    { name: `--rt-list-copy-button-radius`, value: `var(--rt-mat-radius-5)` },
+    { name: `--rt-list-settings-item-radius`, value: `var(--rt-mat-radius-5)` },
     { name: `--rt-list-copy-button-bg`, value: `var(--mat-fab-small-container-color, var(--rt-mat-neutral-0))` },
     { name: `--rt-list-copy-button-bg-hover`, value: `var(--mat-fab-small-container-color, var(--rt-mat-neutral-0))` },
     { name: `--rt-list-copy-button-color`, value: `var(--rt-mat-neutral-60)` },
@@ -302,4 +303,18 @@ export const material = [
         name: `--rt-radius-control`,
         value: `1.5rem`,
     },
+
+    {
+        lead: `    /* Панели над страницей — скругления и подъём первого кита: меню 4px, выпадающий список
+       скруглён только снизу, подсказка 4px без тени. Тень — подъём 2 Material, как у mat-menu и
+       mat-select. */`,
+        space: true,
+        name: `--rt-overlay-menu-radius`,
+        value: `var(--rt-mat-radius-4)`,
+    },
+    { name: `--rt-overlay-menu-shadow`, value: `var(--mat-sys-level2, var(--rt-mat-shadow-level-2))` },
+    { name: `--rt-overlay-select-radius`, value: `0 0 var(--rt-mat-radius-4) var(--rt-mat-radius-4)` },
+    { name: `--rt-overlay-select-shadow`, value: `var(--mat-sys-level2, var(--rt-mat-shadow-level-2))` },
+    { name: `--rt-overlay-tooltip-radius`, value: `var(--rt-mat-radius-4)` },
+    { name: `--rt-overlay-tooltip-shadow`, value: `none` },
 ];

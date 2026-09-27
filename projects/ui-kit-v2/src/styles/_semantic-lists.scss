@@ -74,4 +74,7 @@
     --rt-list-empty-icon-size: var(--rt-size-8);
     --rt-list-empty-title-size: var(--rt-text-md);
     --rt-list-empty-title-weight: var(--rt-font-weight-medium);
+
+    /* Плашка колонки в панели настройки списка под материальным набором: скругление первого кита. */
+    --rt-list-settings-item-radius: var(--rt-radius-sm);
 }

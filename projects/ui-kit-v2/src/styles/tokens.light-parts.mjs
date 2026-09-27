@@ -128,4 +128,31 @@ export const lightParts = [
         value: `var(--rt-neutral-50)`,
         dark: `var(--rt-charcoal-border)`,
     },
+    {
+        lead: `    /* Панели над страницей — меню, выпадающий список, подсказка: скругление и тень. Свой вид
+       держит ступени кита; материальный набор даёт числа и подъём первого кита. */`,
+        space: true,
+        name: `--rt-overlay-menu-radius`,
+        value: `var(--rt-radius-md)`,
+    },
+    {
+        name: `--rt-overlay-menu-shadow`,
+        value: `var(--rt-shadow-lg)`,
+    },
+    {
+        name: `--rt-overlay-select-radius`,
+        value: `var(--rt-input-radius)`,
+    },
+    {
+        name: `--rt-overlay-select-shadow`,
+        value: `var(--rt-shadow-md)`,
+    },
+    {
+        name: `--rt-overlay-tooltip-radius`,
+        value: `var(--rt-radius-sm)`,
+    },
+    {
+        name: `--rt-overlay-tooltip-shadow`,
+        value: `var(--rt-shadow-md)`,
+    },
 ];
