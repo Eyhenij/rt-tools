@@ -190,4 +190,8 @@ export const lightParts = [
         name: `--rt-overlay-select-check-display`,
         value: `none`,
     },
+    {
+        name: `--rt-overlay-menu-current-bg`,
+        value: `var(--rt-color-bg-hover)`,
+    },
 ];

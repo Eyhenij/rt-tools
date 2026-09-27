@@ -220,6 +220,9 @@ export type TRtDesignTokenName =
     | '--rt-list-empty-icon-wrap-size'
     | '--rt-list-empty-title-size'
     | '--rt-list-empty-title-weight'
+    | '--rt-list-filter-line-height'
+    | '--rt-list-placeholder-grow'
+    | '--rt-list-placeholder-min-height'
     | '--rt-list-search-color-bg'
     | '--rt-list-search-color-border'
     | '--rt-list-search-color-placeholder'
@@ -371,6 +374,7 @@ export type TRtDesignTokenName =
     | '--rt-overlay-brand-8'
     | '--rt-overlay-danger-16'
     | '--rt-overlay-menu-bg'
+    | '--rt-overlay-menu-current-bg'
     | '--rt-overlay-menu-danger-color'
     | '--rt-overlay-menu-item-weight'
     | '--rt-overlay-menu-padding-y'
@@ -772,6 +776,9 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-list-empty-icon-wrap-size',
     '--rt-list-empty-title-size',
     '--rt-list-empty-title-weight',
+    '--rt-list-filter-line-height',
+    '--rt-list-placeholder-grow',
+    '--rt-list-placeholder-min-height',
     '--rt-list-search-color-bg',
     '--rt-list-search-color-border',
     '--rt-list-search-color-placeholder',
@@ -923,6 +930,7 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-overlay-brand-8',
     '--rt-overlay-danger-16',
     '--rt-overlay-menu-bg',
+    '--rt-overlay-menu-current-bg',
     '--rt-overlay-menu-danger-color',
     '--rt-overlay-menu-item-weight',
     '--rt-overlay-menu-padding-y',

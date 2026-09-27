@@ -1,11 +1,12 @@
 <ng-container rtBlock="rt-data-table-filter-cell">
     @if (filterOperators().length) {
-        <rt-menu qa-dataid="data-table-filter-operator" [icon]="operatorIcon()" [ariaLabel]="operatorLabel()">
+        <rt-menu qa-dataid="data-table-filter-operator" align="start" [icon]="operatorIcon()" [ariaLabel]="operatorLabel()">
             @for (item of operatorItems(); track item.operator) {
                 <rt-menu-item
                     qa-dataid="data-table-filter-operator-item"
                     [icon]="item.icon"
                     [label]="item.label"
+                    [current]="item.current"
                     (selected)="onOperatorChange(item.operator)" />
             }
         </rt-menu>

@@ -239,6 +239,7 @@ export const material = [
     { name: `--rt-list-copy-button-size`, value: `var(--rt-size-6)` },
     { name: `--rt-list-copy-button-radius`, value: `var(--rt-mat-radius-5)` },
     { name: `--rt-list-settings-item-radius`, value: `var(--rt-mat-radius-5)` },
+    { name: `--rt-list-filter-line-height`, value: `var(--rt-size-6)` },
     { name: `--rt-list-copy-button-bg`, value: `var(--mat-fab-small-container-color, var(--rt-mat-neutral-0))` },
     { name: `--rt-list-copy-button-bg-hover`, value: `var(--mat-fab-small-container-color, var(--rt-mat-neutral-0))` },
     { name: `--rt-list-copy-button-color`, value: `var(--rt-mat-neutral-60)` },
@@ -337,4 +338,9 @@ export const material = [
     },
     { name: `--rt-overlay-select-selected-weight`, value: `var(--rt-font-weight-regular)` },
     { name: `--rt-overlay-select-check-display`, value: `inline-flex` },
+    {
+        name: `--rt-overlay-menu-current-bg`,
+        value: `color-mix(in srgb, var(--mat-sys-on-surface, var(--rt-mat-neutral-100)) 12%, transparent)`,
+        dark: `color-mix(in srgb, var(--mat-sys-on-surface, var(--rt-mat-neutral-0)) 12%, transparent)`,
+    },
 ];

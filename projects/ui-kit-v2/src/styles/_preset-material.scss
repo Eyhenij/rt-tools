@@ -133,6 +133,7 @@
     --rt-list-copy-button-size: var(--rt-size-6);
     --rt-list-copy-button-radius: var(--rt-mat-radius-5);
     --rt-list-settings-item-radius: var(--rt-mat-radius-5);
+    --rt-list-filter-line-height: var(--rt-size-6);
     --rt-list-copy-button-bg: var(--mat-fab-small-container-color, var(--rt-mat-neutral-0));
     --rt-list-copy-button-bg-hover: var(--mat-fab-small-container-color, var(--rt-mat-neutral-0));
     --rt-list-copy-button-color: var(--rt-mat-neutral-60);
@@ -207,6 +208,7 @@
     --rt-overlay-select-selected-bg: color-mix(in srgb, var(--mat-sys-on-surface, var(--rt-mat-neutral-100)) 12%, transparent);
     --rt-overlay-select-selected-weight: var(--rt-font-weight-regular);
     --rt-overlay-select-check-display: inline-flex;
+    --rt-overlay-menu-current-bg: color-mix(in srgb, var(--mat-sys-on-surface, var(--rt-mat-neutral-100)) 12%, transparent);
 }
 
 /* The preset under a dark theme: the names the preset reads from Material keep the Material chain,
@@ -248,6 +250,7 @@
     --rt-pagination-box-current-color-border: var(--rt-mat-dark-30);
     --rt-overlay-menu-bg: var(--mat-menu-container-color, var(--rt-color-bg-surface));
     --rt-overlay-select-selected-bg: color-mix(in srgb, var(--mat-sys-on-surface, var(--rt-mat-neutral-0)) 12%, transparent);
+    --rt-overlay-menu-current-bg: color-mix(in srgb, var(--mat-sys-on-surface, var(--rt-mat-neutral-0)) 12%, transparent);
 }
 
 :root[data-preset='material'],

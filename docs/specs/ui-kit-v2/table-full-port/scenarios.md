@@ -485,3 +485,10 @@ Given a list with more records than fit on one page
 When the application sets `isPaginationShown` to false
 Then the pagination bar is not in the markup, and it comes back once the switch is on again
 Covered: `projects/ui-kit-v2/src/lib/components/data-list/rt-data-list.pagination.spec.ts`.
+
+### SC-UKV-371 — the operator menu marks the current operator
+
+Given a column with the operators "Equal" and "Contains", "Equal" being current
+When a person opens its operator menu
+Then the menu opens from the left edge of the button and lists both operators, "Equal" marked as current
+Covered: `projects/ui-kit-v2/src/lib/components/data-table/filter-cell/rt-data-table-filter-cell.component.spec.ts`.

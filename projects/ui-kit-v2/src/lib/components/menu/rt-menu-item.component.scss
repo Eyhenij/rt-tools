@@ -7,6 +7,7 @@
         --rt-menu-item-transition-duration: var(--rt-duration-fast);
         --rt-menu-item-weight: var(--rt-overlay-menu-item-weight);
         --rt-menu-item-danger-color: var(--rt-overlay-menu-danger-color);
+        --rt-menu-item-current-bg: var(--rt-overlay-menu-current-bg);
 
         display: flex;
         width: 100%;
@@ -39,6 +40,10 @@
         &__label {
             flex: 1 1 auto;
             white-space: nowrap;
+        }
+
+        &--current {
+            background: var(--rt-menu-item-current-bg);
         }
 
         &--danger {
