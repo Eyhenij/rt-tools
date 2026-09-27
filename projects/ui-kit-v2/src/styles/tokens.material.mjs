@@ -52,11 +52,15 @@ export const material = [
         lead: `    /* Текст */`,
         space: true,
         name: `--rt-color-text-primary`,
-        value: `var(--rt-mat-neutral-100)`,
+        value: `var(--mat-sys-on-surface, var(--rt-mat-neutral-100))`,
     },
     { name: `--rt-color-text-muted`, value: `var(--rt-mat-neutral-60)` },
-    { name: `--rt-color-text-disabled`, value: `var(--rt-mat-neutral-40)` },
-    { name: `--rt-color-text-inverse`, value: `var(--rt-mat-neutral-0)` },
+    {
+        name: `--rt-color-text-disabled`,
+        value: `color-mix(in srgb, var(--mat-sys-on-surface, var(--rt-mat-neutral-100)) 38%, transparent)`,
+        dark: `color-mix(in srgb, var(--mat-sys-on-surface, var(--rt-mat-neutral-0)) 38%, transparent)`,
+    },
+    { name: `--rt-color-text-inverse`, value: `var(--mat-sys-inverse-on-surface, var(--rt-mat-neutral-0))` },
     { name: `--rt-color-text-link`, value: `var(--mat-sys-primary, var(--rt-mat-blue-100))` },
     { name: `--rt-color-text-link-hover`, value: `color-mix(in srgb, var(--mat-sys-primary, var(--rt-mat-blue-100)) 90%, #000)` },
 
@@ -67,7 +71,7 @@ export const material = [
         value: `var(--rt-mat-neutral-25)`,
     },
     { name: `--rt-color-border-strong`, value: `var(--rt-mat-neutral-30)` },
-    { name: `--rt-color-border-subtle`, value: `var(--rt-mat-neutral-20)` },
+    { name: `--rt-color-border-subtle`, value: `var(--rt-mat-neutral-20)`, dark: `var(--rt-mat-dark-20)` },
     {
         name: `--rt-color-border-focus`,
         value: `var(--rt-mat-blue-40)`,
@@ -135,7 +139,8 @@ export const material = [
 
     {
         name: `--rt-color-action-disabled`,
-        value: `var(--rt-mat-neutral-25)`,
+        value: `color-mix(in srgb, var(--mat-sys-on-surface, var(--rt-mat-neutral-100)) 12%, transparent)`,
+        dark: `color-mix(in srgb, var(--mat-sys-on-surface, var(--rt-mat-neutral-0)) 12%, transparent)`,
     },
 
     {
@@ -193,7 +198,7 @@ export const material = [
     },
     { name: `--rt-list-search-radius`, value: `var(--rt-radius-sm)` },
     { name: `--rt-list-search-color-border`, value: `var(--mat-sys-outline, var(--rt-mat-neutral-25))` },
-    { name: `--rt-list-search-color-bg`, value: `transparent` },
+    { name: `--rt-list-search-color-bg`, value: `transparent`, dark: `transparent` },
     /* The search field of the first kit's list, measured on its showcase: 22rem wide, the icon of 24px
        12px in from the edge, 16px from the icon to a 16px text, icon and text in the variant tone. */
     { name: `--rt-list-search-width`, value: `calc(var(--rt-size-64) + var(--rt-size-24))` },
@@ -233,8 +238,8 @@ export const material = [
     { name: `--rt-list-table-button-radius`, value: `var(--rt-radius-full)` },
     { name: `--rt-list-copy-button-size`, value: `var(--rt-size-6)` },
     { name: `--rt-list-copy-button-radius`, value: `calc((var(--rt-radius-sm) + var(--rt-radius-ms)) / 2)` },
-    { name: `--rt-list-copy-button-bg`, value: `var(--mat-sys-primary-container, var(--rt-mat-blue-20))` },
-    { name: `--rt-list-copy-button-bg-hover`, value: `var(--mat-sys-primary-container, var(--rt-mat-blue-20))` },
+    { name: `--rt-list-copy-button-bg`, value: `var(--mat-fab-small-container-color, var(--rt-mat-neutral-0))` },
+    { name: `--rt-list-copy-button-bg-hover`, value: `var(--mat-fab-small-container-color, var(--rt-mat-neutral-0))` },
     { name: `--rt-list-copy-button-color`, value: `var(--rt-mat-neutral-60)` },
     { name: `--rt-list-action-color-hover`, value: `var(--rt-mat-neutral-100)` },
     { name: `--rt-list-action-color-bg-hover`, value: `transparent` },
@@ -261,11 +266,11 @@ export const material = [
     { name: `--rt-pagination-range-display`, value: `none` },
     { name: `--rt-pagination-box-size`, value: `calc(var(--rt-space-xl) + 2 * var(--rt-border-width-thin))` },
     { name: `--rt-pagination-box-radius`, value: `calc(var(--rt-radius-lg) + var(--rt-radius-xs))` },
-    { name: `--rt-pagination-box-color-border`, value: `var(--rt-mat-neutral-30)` },
-    { name: `--rt-pagination-box-color-text`, value: `var(--rt-mat-neutral-60)` },
-    { name: `--rt-pagination-box-current-color-bg`, value: `var(--rt-mat-neutral-60)` },
-    { name: `--rt-pagination-box-current-color-text`, value: `var(--rt-mat-neutral-0)` },
-    { name: `--rt-pagination-box-current-color-border`, value: `var(--rt-mat-neutral-30)` },
+    { name: `--rt-pagination-box-color-border`, value: `var(--rt-mat-neutral-30)`, dark: `var(--rt-mat-dark-30)` },
+    { name: `--rt-pagination-box-color-text`, value: `var(--rt-mat-neutral-60)`, dark: `var(--rt-mat-neutral-40)` },
+    { name: `--rt-pagination-box-current-color-bg`, value: `var(--rt-mat-neutral-60)`, dark: `var(--rt-mat-neutral-40)` },
+    { name: `--rt-pagination-box-current-color-text`, value: `var(--rt-mat-neutral-0)`, dark: `var(--rt-mat-neutral-0)` },
+    { name: `--rt-pagination-box-current-color-border`, value: `var(--rt-mat-neutral-30)`, dark: `var(--rt-mat-dark-30)` },
     { name: `--rt-pagination-box-current-font-weight`, value: `var(--rt-font-weight-regular)` },
     { name: `--rt-pagination-arrow-size`, value: `calc(var(--rt-space-xl) + 2 * var(--rt-border-width-thin))` },
     { name: `--rt-pagination-arrow-radius`, value: `calc(var(--rt-radius-lg) + var(--rt-radius-xs))` },

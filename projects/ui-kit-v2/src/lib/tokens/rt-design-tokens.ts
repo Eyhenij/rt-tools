@@ -249,6 +249,10 @@ export type TRtDesignTokenName =
     | '--rt-mat-blue-80'
     | '--rt-mat-blue-active'
     | '--rt-mat-blue-hover'
+    | '--rt-mat-dark-10'
+    | '--rt-mat-dark-20'
+    | '--rt-mat-dark-30'
+    | '--rt-mat-dark-40'
     | '--rt-mat-green-10'
     | '--rt-mat-green-100'
     | '--rt-mat-green-20'
@@ -779,6 +783,10 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-mat-blue-80',
     '--rt-mat-blue-active',
     '--rt-mat-blue-hover',
+    '--rt-mat-dark-10',
+    '--rt-mat-dark-20',
+    '--rt-mat-dark-30',
+    '--rt-mat-dark-40',
     '--rt-mat-green-10',
     '--rt-mat-green-100',
     '--rt-mat-green-20',

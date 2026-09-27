@@ -33,6 +33,15 @@ export const scaleMaterial = [
     { name: `--rt-mat-neutral-60`, value: `#747474` },
     { name: `--rt-mat-neutral-80`, value: `#323033` },
     { name: `--rt-mat-neutral-100`, value: `#181818` },
+    {
+        lead: `    /* Тёмные нейтральные первого кита: рамки и фон его тёмной темы */`,
+        space: true,
+        name: `--rt-mat-dark-10`,
+        value: `#2e2d31`,
+    },
+    { name: `--rt-mat-dark-20`, value: `#3f3e43` },
+    { name: `--rt-mat-dark-30`, value: `#4a494e` },
+    { name: `--rt-mat-dark-40`, value: `#5c5b60` },
 
     {
         lead: `    /* Материальный набор: синий — действие, ссылка, кольцо фокуса */`,

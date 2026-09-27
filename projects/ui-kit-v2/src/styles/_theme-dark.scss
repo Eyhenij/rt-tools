@@ -16,6 +16,9 @@
    a pair is visible right there rather than caught by matching two files. */
 
 @mixin rt-theme-dark-tokens {
+    /* The Material colours of the page are resolved dark under the kit's dark theme. */
+    color-scheme: dark;
+
     /* Background — тёплый графит */
     --rt-color-bg-page: var(--rt-charcoal-900);
     --rt-color-bg-surface: var(--rt-charcoal-800);

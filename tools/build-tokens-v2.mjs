@@ -242,9 +242,12 @@ COEXIST_NAMES.forEach((name, index) => {
 // to the dot. A name mixed by `color-mix` stays on its dark answer: there is no fallback to swap there.
 const darkByName = new Map(darkNodes.filter((n) => n.name).map((n) => [n.name, n.value]));
 const LIGHT_STEP = /var\(--rt-mat-[\w-]+\)/g;
+// A preset name whose look in the dark comes from the first kit's own dark palette rather than from
+// Material carries that value in the field `dark`, and it goes into the same dark preset set as is.
 const materialDark = material
-    .filter((node) => node.name && node.value.startsWith('var(--mat-') && darkByName.has(node.name))
+    .filter((node) => node.name && (node.dark !== undefined || (node.value.startsWith('var(--mat-') && darkByName.has(node.name))))
     .map((node) => {
+        if (node.dark !== undefined) return { name: node.name, value: node.dark };
         const steps = node.value.match(LIGHT_STEP) ?? [];
         if (steps.length !== 1) fail(`the preset chain of '${node.name}' has ${steps.length} light steps, one is expected`);
         return { name: node.name, value: node.value.replace(LIGHT_STEP, darkByName.get(node.name)) };
@@ -255,6 +258,11 @@ if (errors.length > 0) {
     for (const message of errors) console.error(`  ${message}`);
     process.exit(1);
 }
+
+// The dark theme declares the dark colour scheme. An application's Material theme declares its system
+// colours by \`light-dark()\`, and without the scheme they resolved light inside the kit's dark theme: the
+// filter fields under the dark preset drew the light outline of Material.
+const COLOR_SCHEME_NOTE = `    /* The Material colours of the page are resolved dark under the kit's dark theme. */`;
 
 const files = {
     [`${stylesDir}/_primitives.scss`]: `${BANNER}\n\n${PREAMBLE.primitives}\n\n:root {\n${renderNodes(scale)}\n}\n`,
@@ -279,7 +287,7 @@ const files = {
         `\n    }\n}\n`,
 
     [`${stylesDir}/_theme-dark.scss`]:
-        `${BANNER}\n\n${PREAMBLE.dark}\n\n@mixin rt-theme-dark-tokens {\n${renderNodes(darkNodes)}\n}\n\n` +
+        `${BANNER}\n\n${PREAMBLE.dark}\n\n@mixin rt-theme-dark-tokens {\n${COLOR_SCHEME_NOTE}\n    color-scheme: dark;\n\n${renderNodes(darkNodes)}\n}\n\n` +
         `:root[data-theme='dark'],\nhtml.rt-theme-dark {\n    @include rt-theme-dark-tokens;\n}\n`,
 
     [`${stylesDir}/_preset-material.scss`]:
@@ -291,7 +299,7 @@ const files = {
     [`${stylesDir}/_theme-scope.scss`]:
         `${BANNER}\n\n${PREAMBLE.scope}\n\n@use './semantic' as semantic;\n@use './theme-dark' as dark;\n` +
         `@use './preset-material' as material;\n\n` +
-        `${SCOPE_NOTE.light}\n[data-theme='light']:not(:root) {\n    @include semantic.rt-theme-light-tokens;\n}\n\n` +
+        `${SCOPE_NOTE.light}\n[data-theme='light']:not(:root) {\n    color-scheme: light;\n\n    @include semantic.rt-theme-light-tokens;\n}\n\n` +
         `${SCOPE_NOTE.dark}\n[data-theme='dark']:not(:root) {\n    @include semantic.rt-theme-light-tokens;\n` +
         `    @include dark.rt-theme-dark-tokens;\n}\n\n` +
         `${SCOPE_NOTE.presetNode}\n[data-preset='material']:not(:root),\n.rt-preset-material:not(:root) {\n` +

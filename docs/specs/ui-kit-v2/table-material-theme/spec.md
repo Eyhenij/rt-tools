@@ -101,8 +101,15 @@ Nothing new is shown to a person: the list keeps its labels, only its look follo
   a 16 px text. The own preset keeps the small field of the kit.
 
 - **The copy button of a cell is the first kit's plate in the material preset.** It is 24 px with a
-  5 px corner, filled with the theme's primary container; the icon is grey and turns dark under the
+  5 px corner, filled with the colour of Material's small action button — the same variable the
+  first kit reads, white where the theme sets none; the icon is grey and turns dark under the
   pointer. The own preset keeps the ghost icon button.
+
+- **Under the dark theme the material preset draws what the first kit draws in its dark theme.**
+  Text and outlines follow the dark colours of Material: the kit's dark theme declares the dark
+  colour scheme, so a Material theme declared by `light-dark()` resolves dark inside it. The filter
+  fields have no fill; the page boxes, the row lines and the disabled button take the first kit's
+  dark palette. The own preset keeps the graphite of the dark theme.
 
 - **The copy button of a cell stays hidden until its cell is hovered, whatever the window width.**
   It is shown all the time only where there is no hover. A width threshold showed it in every cell

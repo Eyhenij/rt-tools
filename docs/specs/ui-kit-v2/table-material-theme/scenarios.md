@@ -84,3 +84,11 @@ When it has one page, and then thirteen pages with the first one open
 Then the strip draws the number 1 between two arrows, and then `1 2 3 … 11 12 13`; the own look draws no numbers on one page and `1 2 … 13` on thirteen
 
 Covered by the pagination test of the list and by the test of the numbering.
+
+### SC-UKV-367 — the dark preset takes the first kit's dark colours
+
+Given the list under the material preset and the dark theme
+When it is drawn
+Then the filter fields have no fill, the page boxes and the row lines take the first kit's dark palette, and the Material colours of the page resolve dark
+
+Not covered: the promise is about the resolved colours in a look, not about a call. It is held by `tools/check-tokens-theme.mjs` and by the dark preset frames of the list.
