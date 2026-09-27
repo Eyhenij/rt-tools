@@ -4,7 +4,13 @@
        Палитра приглушённая (как rt-note), центрированная вертикальная стопка. */
 
     .rt-empty-state {
+        /* Свои свойства блока — круг под значком, значок и заголовок; обёртка переставляет их снаружи. */
         --rt-empty-state-icon-radius: var(--rt-radius-full);
+        --rt-empty-state-icon-wrap-size: var(--rt-size-16);
+        --rt-empty-state-icon-wrap-bg: var(--rt-color-bg-subtle);
+        --rt-empty-state-icon-size: var(--rt-size-8);
+        --rt-empty-state-title-size: var(--rt-text-md);
+        --rt-empty-state-title-weight: var(--rt-font-weight-medium);
 
         display: flex;
         flex-direction: column;
@@ -25,21 +31,29 @@
 
         &__icon-wrap {
             display: flex;
-            width: 64px;
-            height: 64px;
+            width: var(--rt-empty-state-icon-wrap-size);
+            height: var(--rt-empty-state-icon-wrap-size);
             align-items: center;
             justify-content: center;
             border-radius: var(--rt-empty-state-icon-radius);
             margin-bottom: var(--rt-space-xs);
-            background: var(--rt-color-bg-subtle);
+            background: var(--rt-empty-state-icon-wrap-bg);
             color: var(--rt-color-text-muted);
+
+            /* rt-icon ставит размер строкой стиля — свойство блока берёт верх через min и max. */
+            .rt-icon {
+                min-width: var(--rt-empty-state-icon-size);
+                max-width: var(--rt-empty-state-icon-size);
+                min-height: var(--rt-empty-state-icon-size);
+                max-height: var(--rt-empty-state-icon-size);
+            }
         }
 
         &__title {
             margin: 0;
             color: var(--rt-color-text-primary);
-            font-size: var(--rt-text-md);
-            font-weight: var(--rt-font-weight-medium);
+            font-size: var(--rt-empty-state-title-size);
+            font-weight: var(--rt-empty-state-title-weight);
         }
 
         &__description {

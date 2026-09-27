@@ -238,6 +238,11 @@ export const material = [
     { name: `--rt-list-copy-button-color`, value: `var(--rt-mat-neutral-60)` },
     { name: `--rt-list-action-color-hover`, value: `var(--rt-mat-neutral-100)` },
     { name: `--rt-list-action-color-bg-hover`, value: `transparent` },
+    { name: `--rt-list-empty-icon-wrap-size`, value: `var(--rt-size-12)` },
+    { name: `--rt-list-empty-icon-wrap-bg`, value: `transparent` },
+    { name: `--rt-list-empty-icon-size`, value: `var(--rt-size-12)` },
+    { name: `--rt-list-empty-title-size`, value: `var(--rt-text-3xl)` },
+    { name: `--rt-list-empty-title-weight`, value: `var(--rt-font-weight-regular)` },
     { name: `--rt-list-selector-label-color`, value: `var(--rt-mat-neutral-60)` },
 
     {

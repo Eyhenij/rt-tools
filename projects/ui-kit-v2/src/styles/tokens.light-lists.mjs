@@ -214,4 +214,27 @@ export const lightLists = [
         value: `var(--rt-input-color-text)`,
         dark: `var(--rt-input-color-text)`,
     },
+    {
+        lead: `    /* Пустой список — заглушка rt-empty-state. Свой вид держит значок в сером круге и заголовок
+       среднего размера; материальный набор даёт значок 48px без круга и крупный заголовок первого кита. */`,
+        space: true,
+        name: `--rt-list-empty-icon-wrap-size`,
+        value: `var(--rt-size-16)`,
+    },
+    {
+        name: `--rt-list-empty-icon-wrap-bg`,
+        value: `var(--rt-color-bg-subtle)`,
+    },
+    {
+        name: `--rt-list-empty-icon-size`,
+        value: `var(--rt-size-8)`,
+    },
+    {
+        name: `--rt-list-empty-title-size`,
+        value: `var(--rt-text-md)`,
+    },
+    {
+        name: `--rt-list-empty-title-weight`,
+        value: `var(--rt-font-weight-medium)`,
+    },
 ];

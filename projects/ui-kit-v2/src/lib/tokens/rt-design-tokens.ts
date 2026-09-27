@@ -214,6 +214,11 @@ export type TRtDesignTokenName =
     | '--rt-list-copy-button-color'
     | '--rt-list-copy-button-radius'
     | '--rt-list-copy-button-size'
+    | '--rt-list-empty-icon-size'
+    | '--rt-list-empty-icon-wrap-bg'
+    | '--rt-list-empty-icon-wrap-size'
+    | '--rt-list-empty-title-size'
+    | '--rt-list-empty-title-weight'
     | '--rt-list-search-color-bg'
     | '--rt-list-search-color-border'
     | '--rt-list-search-color-placeholder'
@@ -735,6 +740,11 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-list-copy-button-color',
     '--rt-list-copy-button-radius',
     '--rt-list-copy-button-size',
+    '--rt-list-empty-icon-size',
+    '--rt-list-empty-icon-wrap-bg',
+    '--rt-list-empty-icon-wrap-size',
+    '--rt-list-empty-title-size',
+    '--rt-list-empty-title-weight',
     '--rt-list-search-color-bg',
     '--rt-list-search-color-border',
     '--rt-list-search-color-placeholder',
