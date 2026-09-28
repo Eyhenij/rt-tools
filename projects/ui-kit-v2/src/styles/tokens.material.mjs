@@ -350,6 +350,8 @@ export const material = [
     { name: `--rt-overlay-menu-item-padding-y`, value: `0px` },
     { name: `--rt-overlay-menu-item-padding-x`, value: `var(--rt-size-3)` },
     { name: `--rt-overlay-menu-item-icon-size`, value: `var(--rt-size-6)` },
+    { name: `--rt-overlay-menu-sm-item-min-height`, value: `var(--rt-mat-menu-sm-item-height)` },
+    { name: `--rt-overlay-menu-sm-item-icon-size`, value: `var(--rt-mat-menu-sm-icon-size)` },
     { name: `--rt-overlay-menu-danger-label-color`, value: `var(--rt-color-text-primary)` },
     { name: `--rt-overlay-select-option-min-height`, value: `var(--rt-size-12)` },
     { name: `--rt-overlay-select-panel-border-width`, value: `0px` },

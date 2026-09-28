@@ -269,6 +269,8 @@ export type TRtDesignTokenName =
     | '--rt-mat-green-active'
     | '--rt-mat-green-hover'
     | '--rt-mat-menu-min-width'
+    | '--rt-mat-menu-sm-icon-size'
+    | '--rt-mat-menu-sm-item-height'
     | '--rt-mat-navy-100'
     | '--rt-mat-neutral-0'
     | '--rt-mat-neutral-10'
@@ -390,6 +392,8 @@ export type TRtDesignTokenName =
     | '--rt-overlay-menu-padding-y'
     | '--rt-overlay-menu-radius'
     | '--rt-overlay-menu-shadow'
+    | '--rt-overlay-menu-sm-item-icon-size'
+    | '--rt-overlay-menu-sm-item-min-height'
     | '--rt-overlay-navy-70'
     | '--rt-overlay-select-check-display'
     | '--rt-overlay-select-option-font-size'
@@ -839,6 +843,8 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-mat-green-active',
     '--rt-mat-green-hover',
     '--rt-mat-menu-min-width',
+    '--rt-mat-menu-sm-icon-size',
+    '--rt-mat-menu-sm-item-height',
     '--rt-mat-navy-100',
     '--rt-mat-neutral-0',
     '--rt-mat-neutral-10',
@@ -960,6 +966,8 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-overlay-menu-padding-y',
     '--rt-overlay-menu-radius',
     '--rt-overlay-menu-shadow',
+    '--rt-overlay-menu-sm-item-icon-size',
+    '--rt-overlay-menu-sm-item-min-height',
     '--rt-overlay-navy-70',
     '--rt-overlay-select-check-display',
     '--rt-overlay-select-option-font-size',

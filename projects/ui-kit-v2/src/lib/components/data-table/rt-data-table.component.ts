@@ -45,7 +45,13 @@ import {
 import { RtDataTableConfigService } from './rt-data-table-config.service';
 import { RtDataTableIconDirective } from './rt-data-table-icon.directive';
 import { RT_DATA_TABLE_ROW_HOST, RtDataTableRowClickDirective } from './rt-data-table-row-click.directive';
-import { ERtDataTableColumnType, IRtDataTable, RT_PRESET_MATERIAL_CLASS, TRtDataTableFilters } from './rt-data-table.model';
+import {
+    ERtDataTableColumnType,
+    IRtDataTable,
+    RT_DATA_TABLE_PRESET_FROM_HOST,
+    RT_PRESET_MATERIAL_CLASS,
+    TRtDataTableFilters,
+} from './rt-data-table.model';
 
 const BEM_BLOCK: string = 'rt-data-table';
 
@@ -80,7 +86,7 @@ const BEM_BLOCK: string = 'rt-data-table';
         NgTemplateOutlet,
         RtDataTableRowClickDirective,
     ],
-    host: { class: BEM_BLOCK, '[class.rt-preset-material]': "look() === 'material'" },
+    host: { class: BEM_BLOCK, '[class.rt-preset-material]': "look() === 'material' && !presetFromHost" },
     providers: [{ provide: RT_DATA_TABLE_ROW_HOST, useExisting: forwardRef(() => RtDataTableComponent) }],
 })
 export class RtDataTableComponent<
@@ -103,6 +109,9 @@ export class RtDataTableComponent<
     protected readonly rowSpacerRef: Signal<TNullable<ElementRef<HTMLElement>>> = viewChild<ElementRef<HTMLElement>>('rowSpacer');
 
     protected readonly columnTypes: typeof ERtDataTableColumnType = ERtDataTableColumnType;
+
+    /** Набор даёт узел вокруг — список; тогда класс набора на самой таблице не ставится. */
+    protected readonly presetFromHost: boolean = inject(RT_DATA_TABLE_PRESET_FROM_HOST, { optional: true }) ?? false;
 
     /** Классы меню строки: оно открывается поверх страницы и вид семьи получает от неё. */
     protected readonly menuPanelClass: Signal<string[]> = computed(() => (this.look() === 'material' ? [RT_PRESET_MATERIAL_CLASS] : []));

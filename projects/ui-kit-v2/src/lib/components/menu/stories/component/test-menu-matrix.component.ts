@@ -86,8 +86,11 @@ interface IMenuTriggerCase {
             }
 
             @case ('panel') {
-                <div class="app-menu-matrix__panel-slot" [class.app-menu-matrix__panel-slot--end]="align === 'end'">
-                    <rt-menu ariaLabel="Действия со строкой" [align]="align" [attr.data-story-trigger]="triggerAttribute">
+                <div
+                    class="app-menu-matrix__panel-slot"
+                    [class.app-menu-matrix__panel-slot--end]="align === 'end'"
+                    [class.rt-preset-material]="material">
+                    <rt-menu ariaLabel="Действия со строкой" [align]="align" [size]="size" [attr.data-story-trigger]="triggerAttribute">
                         <rt-menu-item label="Открыть" icon="ico-eye" />
                         <rt-menu-item label="Изменить" icon="ico-edit" />
                         <rt-menu-item label="Скопировать" icon="ico-copy" [disabled]="true" />
@@ -130,6 +133,9 @@ interface IMenuTriggerCase {
 export class TestRtMenuMatrixComponent {
     public part: TMenuMatrixPart = 'trigger';
     public align: IRtMenu.Align = 'end';
+    public size: IRtMenu.Size = 'md';
+    /** Панель открывается из контейнера материального набора: размеры пункта различает только он. */
+    public material: boolean = false;
 
     public readonly triggerAttribute: string = STORY_TRIGGER_ATTRIBUTE;
     public readonly states: readonly IStoryState[] = STORY_STATES;

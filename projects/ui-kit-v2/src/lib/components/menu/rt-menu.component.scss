@@ -25,6 +25,13 @@
             border-radius: var(--rt-menu-panel-radius);
             background: var(--rt-menu-panel-bg);
             box-shadow: var(--rt-menu-panel-shadow);
+
+            /* Компактная панель переназначает пунктам высоту и размер значка: пункт читает их из
+               этих имён, а панель лежит над пунктами. */
+            &--size--sm {
+                --rt-overlay-menu-item-min-height: var(--rt-overlay-menu-sm-item-min-height);
+                --rt-overlay-menu-item-icon-size: var(--rt-overlay-menu-sm-item-icon-size);
+            }
         }
     }
 }

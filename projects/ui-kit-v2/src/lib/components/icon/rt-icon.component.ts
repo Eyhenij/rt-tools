@@ -32,8 +32,10 @@ const SIZES: Readonly<Record<IRtIcon.Size, number>> = Object.freeze({
     '2xl': 40,
 });
 
-const COLORS: Readonly<Record<IRtIcon.Color, string>> = Object.freeze({
-    current: 'currentColor',
+/* Без переданного цвета значок цвета не пишет: `currentColor` строкой стиля перебивал правило
+   стилей, которое красит значок снаружи, — значок опасного пункта меню оставался цвета текста. */
+const COLORS: Readonly<Record<IRtIcon.Color, string | null>> = Object.freeze({
+    current: null,
     // Приглушённый тон можно переназначить свойством сверху: поле ввода называет так тон своего
     // значка в наборе оформления. Цвет стоит встроенным стилем, и правилом его не перебить.
     muted: 'var(--rt-icon-color-muted, var(--rt-neutral-600))',
@@ -101,7 +103,7 @@ export class RtIconComponent {
 
     protected readonly sizePx: Signal<number> = computed((): number => SIZES[this.size()]);
 
-    protected readonly colorValue: Signal<string> = computed((): string => COLORS[this.color()]);
+    protected readonly colorValue: Signal<string | null> = computed((): string | null => COLORS[this.color()]);
 
     protected readonly rotateStyle: Signal<string | null> = computed((): string | null => {
         const r: number | null = this.rotate();

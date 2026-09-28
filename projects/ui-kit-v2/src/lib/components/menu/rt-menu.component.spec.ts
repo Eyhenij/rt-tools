@@ -18,7 +18,7 @@ function items(): HTMLElement[] {
 @Component({
     selector: 'rt-menu-host',
     template: `
-        <rt-menu [ariaLabel]="ariaLabel()" [align]="align()" [disabled]="disabled()" (openedChange)="opened.push($event)">
+        <rt-menu [ariaLabel]="ariaLabel()" [align]="align()" [size]="size()" [disabled]="disabled()" (openedChange)="opened.push($event)">
             <rt-menu-item label="Открыть" icon="ico-eye" (selected)="picked = picked + 1" />
             <rt-menu-item label="Удалить" icon="ico-trash" [danger]="true" [disabled]="itemDisabled()" (selected)="removed = removed + 1" />
         </rt-menu>
@@ -29,6 +29,7 @@ function items(): HTMLElement[] {
 class MenuHostComponent {
     public readonly ariaLabel: WritableSignal<string> = signal<string>('');
     public readonly align: WritableSignal<IRtMenu.Align> = signal<IRtMenu.Align>('end');
+    public readonly size: WritableSignal<IRtMenu.Size> = signal<IRtMenu.Size>('md');
     public readonly disabled: WritableSignal<boolean> = signal<boolean>(false);
     public readonly itemDisabled: WritableSignal<boolean> = signal<boolean>(false);
     public readonly opened: boolean[] = [];
@@ -86,6 +87,19 @@ describe('RtMenuComponent', (): void => {
         openMenu(fixture);
 
         expect(Array.from((el(fixture, 'rt-menu')?.nativeElement as HTMLElement).classList)).toContain('rt-menu--open');
+    });
+
+    it('компактное меню помечает панель модификатором размера, обычное — своим', (): void => {
+        const fixture: ComponentFixture<MenuHostComponent> = setup();
+
+        openMenu(fixture);
+        const regular: boolean | undefined = panel()?.classList.contains('rt-menu__panel--size--md');
+        openMenu(fixture);
+        fixture.componentInstance.size.set('sm');
+        fixture.detectChanges();
+        openMenu(fixture);
+
+        expect([regular, panel()?.classList.contains('rt-menu__panel--size--sm')]).toEqual([true, true]);
     });
 
     it('панель объявлена меню для скринридера', (): void => {

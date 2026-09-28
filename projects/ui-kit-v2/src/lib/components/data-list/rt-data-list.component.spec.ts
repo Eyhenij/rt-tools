@@ -204,10 +204,10 @@ describe('RtDataListComponent', () => {
         expect([isFill('data-list-search'), isFill('data-table-filter-input')]).toEqual([true, false]);
     });
 
-    it('SC-UKV-360 — без настроек список и его таблица стоят в виде первого кита', async (): Promise<void> => {
+    it('SC-UKV-360 — без настроек список стоит в виде первого кита, а таблица берёт набор от списка без своего класса', async (): Promise<void> => {
         const fixture: ComponentFixture<DefaultLookHostComponent> = await drawDefaultLook();
 
-        expect([hasClass(fixture, 'rt-data-list'), hasClass(fixture, 'rt-data-table')]).toEqual([true, true]);
+        expect([hasClass(fixture, 'rt-data-list'), hasClass(fixture, 'rt-data-table')]).toEqual([true, false]);
     });
 
     it('SC-UKV-360 — свой вид второго кита задаётся настройками кита', async (): Promise<void> => {

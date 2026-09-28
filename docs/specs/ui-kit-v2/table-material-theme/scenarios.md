@@ -49,7 +49,8 @@ Covered by the component test of the list.
 
 Given a list whose look is not given
 When the list is drawn with no kit settings, and then with `dataTable.look` set to `own`
-Then the list and its table carry the material preset in the first case and do not in the second
+Then the list carries the material preset in the first case and does not in the second, and the table
+inside takes the preset from the list without a class of its own in both
 
 Covered by the component test of the list.
 
