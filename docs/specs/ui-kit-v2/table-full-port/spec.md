@@ -158,8 +158,8 @@ The words are the first kit's; the kit's dictionary gives them in all eight lang
   commits on choosing a date, a select filter on choosing an option.
 - **An empty value removes the column's condition, and a value on a column without a condition
   adds one.** The whole set of conditions goes to the application at every change.
-- **A column with operators shows the current operator and offers all of them, the current one
-  marked.** The menu opens from the left edge of its button, so it does not cover the side menu on
+- **A column with operators shows the current operator on its button and offers the others, as the
+  first kit does.** The menu opens from the left edge of its button, so it does not cover the side menu on
   the left of the page. Changing the operator of a column with neither a condition nor a value
   asks nothing.
 - **The family keeps no conditions of its own and narrows no rows.** The application answers with

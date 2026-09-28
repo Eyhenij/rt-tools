@@ -105,9 +105,9 @@ describe('RtDataTableFilterCellComponent', () => {
 
         const items: HTMLElement[] = openOperators(fixture);
 
-        expect(items.map((item: HTMLElement) => item.textContent?.trim())).toEqual(['Equal', 'Contains']);
+        expect(items.map((item: HTMLElement) => item.textContent?.trim())).toEqual(['Contains']);
 
-        items[1].click();
+        items[0].click();
         fixture.detectChanges();
 
         expect(fixture.componentInstance.sent).toEqual([]);
@@ -122,22 +122,19 @@ describe('RtDataTableFilterCellComponent', () => {
         );
         const items: HTMLElement[] = openOperators(fixture);
 
-        expect(items.map((item: HTMLElement) => item.textContent?.trim())).toEqual(['Equal', 'Not equal', 'Less than']);
+        expect(items.map((item: HTMLElement) => item.textContent?.trim())).toEqual(['Not equal', 'Less than']);
 
-        items[2].click();
+        items[1].click();
         fixture.detectChanges();
 
         expect(fixture.componentInstance.sent).toEqual([[{ propertyName: 'name', operatorType: 'lessThan', value: 'ann' }]]);
     });
 
-    it('SC-UKV-371 — меню вида открывается от левого края и подсвечивает нынешний вид', () => {
+    it('SC-UKV-371 — меню вида открывается от левого края и нынешний вид в нём не выводит', () => {
         const fixture: ComponentFixture<FilterHostComponent> = setup('text', [EFilterOperatorType.EQUALS, EFilterOperatorType.CONTAINS]);
         const items: HTMLElement[] = openOperators(fixture);
 
-        expect(items.length).toBe(2);
-        expect(items[0].getAttribute('aria-current')).toBe('true');
-        expect(items[0].classList.contains('rt-menu-item--current')).toBe(true);
-        expect(items[1].getAttribute('aria-current')).toBeNull();
+        expect(items.map((item: HTMLElement) => item.textContent?.trim())).toEqual(['Contains']);
         expect(el(fixture, '[qa-dataid="data-table-filter-operator"]')?.componentInstance.align()).toBe('start');
     });
 
