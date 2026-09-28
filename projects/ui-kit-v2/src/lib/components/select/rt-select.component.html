@@ -80,6 +80,9 @@
                         [attr.aria-disabled]="!!opt.disabled"
                         (click)="select(opt)">
                         {{ opt.label }}
+                        @if (opt.value === value()) {
+                            <rt-icon rtElem="check" name="check" size="sm" aria-hidden="true" />
+                        }
                     </li>
                 } @empty {
                     <li rtElem="empty">{{ t().uiNoOptions }}</li>

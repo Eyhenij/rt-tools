@@ -101,8 +101,34 @@ Nothing new is shown to a person: the list keeps its labels, only its look follo
   a 16 px text. The own preset keeps the small field of the kit.
 
 - **The copy button of a cell is the first kit's plate in the material preset.** It is 24 px with a
-  5 px corner, filled with the theme's primary container; the icon is grey and turns dark under the
+  5 px corner, filled with the colour of Material's small action button — the same variable the
+  first kit reads, white where the theme sets none; the icon is grey and turns dark under the
   pointer. The own preset keeps the ghost icon button.
+
+- **Under the dark theme the material preset draws what the first kit draws in its dark theme.**
+  Text and outlines follow the dark colours of Material: the kit's dark theme declares the dark
+  colour scheme, so a Material theme declared by `light-dark()` resolves dark inside it. The filter
+  fields have no fill; the page boxes, the row lines and the disabled button take the first kit's
+  dark palette. The own preset keeps the graphite of the dark theme.
+
+- **Under the material preset the panels above the page take the first kit's corners and
+  elevation.** The row menu and the tooltip are rounded by 4 px, the dropdown list only at its lower
+  corners, a column plaque of the settings panel and the copy button by 5 px. The menu and the list
+  are raised by Material level 2, the tooltip has no shadow. The preset takes these numbers from its
+  own steps: the first kit declares the kit's radius steps on the page root with its own values. The
+  own preset keeps the kit's steps.
+
+- **A panel opened from inside a material preset container carries the preset itself.** A menu, a
+  dropdown list, a popover and a tooltip lie at the end of the page, outside the container the
+  application marked, and the preset assignments do not reach them there. The panel takes the preset
+  class when the mark stands above the node it opens from; the kit reads the application's mark and
+  never sets its own.
+
+- **Under the material preset the row menu, the dropdown list and the tooltip draw the first kit's
+  look.** The menu panel takes the colour of Material's menu container, white where the theme sets
+  none, 8 px above and below, labels of weight 500 and the first kit's red for a dangerous item. The
+  list options are 16 px; the selected one is filled with the text colour at 12 %, is not bold and
+  carries a check mark. A tooltip without a given side stands under its button.
 
 - **The copy button of a cell stays hidden until its cell is hovered, whatever the window width.**
   It is shown all the time only where there is no hover. A width threshold showed it in every cell

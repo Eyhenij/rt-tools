@@ -38,6 +38,7 @@
 | `label`                               | `string`                             | `''`                              |
 | `icon`                                | `IRtIcon.Name \| null`               | `null`                            |
 | `danger` / `disabled`                 | `boolean`                            | `false`                           |
+| `current`                             | `boolean`                            | `false`                           |
 | `tooltip`                             | `string`                             | — (через `[rtTooltip]` на host-е) |
 | `confirmMessage`                      | `string`                             | `''`                              |
 | `confirmTitle`                        | `string \| null`                     | `null`                            |

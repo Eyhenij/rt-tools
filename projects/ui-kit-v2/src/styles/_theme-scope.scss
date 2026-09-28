@@ -23,6 +23,8 @@
 
 /* A light piece inside a page of another theme. */
 [data-theme='light']:not(:root) {
+    color-scheme: light;
+
     @include semantic.rt-theme-light-tokens;
 }
 

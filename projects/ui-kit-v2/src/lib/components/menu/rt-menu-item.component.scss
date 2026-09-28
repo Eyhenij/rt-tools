@@ -5,6 +5,9 @@
     .rt-menu-item {
         --rt-menu-item-radius: var(--rt-radius-sm);
         --rt-menu-item-transition-duration: var(--rt-duration-fast);
+        --rt-menu-item-weight: var(--rt-overlay-menu-item-weight);
+        --rt-menu-item-danger-color: var(--rt-overlay-menu-danger-color);
+        --rt-menu-item-current-bg: var(--rt-overlay-menu-current-bg);
 
         display: flex;
         width: 100%;
@@ -15,6 +18,7 @@
         color: var(--rt-color-text-primary);
         cursor: pointer;
         font-size: var(--rt-text-sm);
+        font-weight: var(--rt-menu-item-weight);
         gap: var(--rt-space-sm);
         text-align: start;
         transition: background-color var(--rt-menu-item-transition-duration) ease;
@@ -38,11 +42,15 @@
             white-space: nowrap;
         }
 
+        &--current {
+            background: var(--rt-menu-item-current-bg);
+        }
+
         &--danger {
-            color: var(--rt-color-state-error-text);
+            color: var(--rt-menu-item-danger-color);
 
             .rt-menu-item__icon {
-                color: var(--rt-color-state-error-text);
+                color: var(--rt-menu-item-danger-color);
             }
         }
 

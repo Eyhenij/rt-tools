@@ -199,7 +199,12 @@
         &__panel {
             /* Панель рисуется в CDK Overlay, вне поддерева блока: свойство
                объявляется на ней самой — с корня блока оно бы не докатилось. */
-            --rt-select-panel-shadow: var(--rt-shadow-md);
+            --rt-select-panel-shadow: var(--rt-overlay-select-shadow);
+            --rt-select-panel-radius: var(--rt-overlay-select-radius);
+            --rt-select-option-font-size: var(--rt-overlay-select-option-font-size);
+            --rt-select-selected-bg: var(--rt-overlay-select-selected-bg);
+            --rt-select-selected-weight: var(--rt-overlay-select-selected-weight);
+            --rt-select-check-display: var(--rt-overlay-select-check-display);
 
             /* Без предела панель открывается целиком, без прокрутки внутри: содержимое
                должно помещаться. Предел назначает потребитель — тогда и появляется
@@ -213,7 +218,7 @@
             max-height: var(--rt-select-panel-max-height);
             box-sizing: border-box;
             border: var(--rt-input-border-width) solid var(--rt-color-border-subtle);
-            border-radius: var(--rt-input-radius);
+            border-radius: var(--rt-select-panel-radius);
             background-color: var(--rt-color-bg-surface);
             box-shadow: var(--rt-select-panel-shadow);
             overflow-y: auto;
@@ -231,10 +236,14 @@
         }
 
         &__option {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             padding: var(--rt-space-sm) var(--rt-space-md);
             color: var(--rt-color-text-primary);
             cursor: pointer;
-            font-size: var(--rt-input-font-size);
+            font-size: var(--rt-select-option-font-size);
+            gap: var(--rt-space-sm);
 
             &:hover,
             &--active {
@@ -242,8 +251,8 @@
             }
 
             &--selected {
-                background-color: var(--rt-color-action-primary-subtle);
-                font-weight: var(--rt-font-weight-semibold);
+                background-color: var(--rt-select-selected-bg);
+                font-weight: var(--rt-select-selected-weight);
             }
 
             &--disabled {
@@ -254,6 +263,12 @@
                     background-color: transparent;
                 }
             }
+        }
+
+        /* Отметка выбранного пункта — у mat-select первого кита; свой вид её не рисует. */
+        &__check {
+            display: var(--rt-select-check-display);
+            flex-shrink: 0;
         }
 
         &__empty {

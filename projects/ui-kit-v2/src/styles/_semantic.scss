@@ -194,6 +194,27 @@
     --rt-color-skeleton-base: var(--rt-neutral-100);
     --rt-color-skeleton-wave: var(--rt-neutral-50);
 
+    /* Панели над страницей — меню, выпадающий список, подсказка: скругление и тень. Свой вид
+       держит ступени кита; материальный набор даёт числа и подъём первого кита. */
+    --rt-overlay-menu-radius: var(--rt-radius-md);
+    --rt-overlay-menu-shadow: var(--rt-shadow-lg);
+    --rt-overlay-select-radius: var(--rt-input-radius);
+    --rt-overlay-select-shadow: var(--rt-shadow-md);
+    --rt-overlay-tooltip-radius: var(--rt-radius-sm);
+    --rt-overlay-tooltip-shadow: var(--rt-shadow-md);
+
+    /* Меню и выпадающий список: фон, отступ и вес подписей меню, красный опасного пункта, пункт
+       списка и отметка выбранного. Свой вид держит прежние значения; материальный набор — первого кита. */
+    --rt-overlay-menu-bg: var(--rt-color-bg-surface);
+    --rt-overlay-menu-padding-y: var(--rt-space-xs);
+    --rt-overlay-menu-item-weight: var(--rt-font-weight-regular);
+    --rt-overlay-menu-danger-color: var(--rt-color-state-error-text);
+    --rt-overlay-select-option-font-size: var(--rt-input-font-size);
+    --rt-overlay-select-selected-bg: var(--rt-color-action-primary-subtle);
+    --rt-overlay-select-selected-weight: var(--rt-font-weight-semibold);
+    --rt-overlay-select-check-display: none;
+    --rt-overlay-menu-current-bg: var(--rt-color-bg-hover);
+
     /* Spacing aliases — named semantic aliases на primitive numeric scale */
     --rt-space-2xs: var(--rt-space-0-5); /* 2px */
     --rt-space-xs: var(--rt-space-1); /* 4px */

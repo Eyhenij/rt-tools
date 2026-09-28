@@ -16,8 +16,8 @@
         &__loading,
         &__placeholder {
             display: flex;
-            min-height: var(--rt-size-60);
-            flex-grow: 1;
+            min-height: var(--rt-list-placeholder-min-height);
+            flex-grow: var(--rt-list-placeholder-grow);
             align-items: center;
             justify-content: center;
         }

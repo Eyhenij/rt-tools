@@ -194,6 +194,17 @@ describe('RtSelectComponent', (): void => {
             expect(options()[0].getAttribute('aria-selected')).toBe('true');
             expect(options()[0].classList.contains('rt-select__option--selected')).toBe(true);
         });
+
+        it('SC-UKV-370 — у выбранной опции есть галочка, у остальных нет', (): void => {
+            const fixture: ComponentFixture<RtSelectComponent<string>> = setup();
+            open(fixture);
+            options()[1].click();
+            fixture.detectChanges();
+            open(fixture);
+
+            expect(options()[1].querySelector('.rt-select__check')).not.toBeNull();
+            expect(options()[0].querySelector('.rt-select__check')).toBeNull();
+        });
     });
 
     describe('клавиатура', (): void => {

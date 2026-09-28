@@ -76,6 +76,8 @@ const BEM_BLOCK: string = 'rt-menu-item';
         '[class.rt-menu-item--danger]': 'danger()',
         '[class.rt-menu-item--success]': 'success()',
         '[class.rt-menu-item--disabled]': 'disabled()',
+        '[class.rt-menu-item--current]': 'current()',
+        '[attr.aria-current]': "current() ? 'true' : null",
         '[attr.aria-disabled]': "disabled() ? 'true' : null",
         '[attr.tabindex]': 'disabled() ? null : 0',
         '(click)': 'onActivate($event)',
@@ -121,6 +123,11 @@ export class RtMenuItemComponent {
      * кита через перечень соответствий; `icon` сильнее, а имя без пары рисует пункт без значка.
      */
     public readonly glyph: InputSignal<string | null> = input<string | null>(null);
+
+    /** Пункт — нынешнее значение выбора, который открыл меню: подсвечен фоном и объявлен скринридеру. */
+    public readonly current: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
 
     /** Недоступный пункт — приглушён, не эмитит `(selected)` и не закрывает меню. */
     public readonly disabled: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {

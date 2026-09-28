@@ -256,4 +256,26 @@ export const lightLists = [
         name: `--rt-list-empty-title-weight`,
         value: `var(--rt-font-weight-medium)`,
     },
+    {
+        lead: `    /* Плашка колонки в панели настройки списка под материальным набором: скругление первого кита. */`,
+        space: true,
+        name: `--rt-list-settings-item-radius`,
+        value: `var(--rt-radius-sm)`,
+    },
+    {
+        lead: `    /* Строка поля в фильтре и место под заглушку и крутилку пустого списка. Свой вид держит
+       строку по размеру шрифта и заглушку во всю высоту списка; материальный набор даёт строку 24px,
+       как у поля Material первого кита. */`,
+        space: true,
+        name: `--rt-list-filter-line-height`,
+        value: `var(--rt-leading-none)`,
+    },
+    {
+        name: `--rt-list-placeholder-min-height`,
+        value: `var(--rt-size-60)`,
+    },
+    {
+        name: `--rt-list-placeholder-grow`,
+        value: `1`,
+    },
 ];

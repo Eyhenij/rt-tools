@@ -6,6 +6,8 @@ import {
     ChangeDetectionStrategy,
     Component,
     computed,
+    ElementRef,
+    inject,
     input,
     InputSignal,
     InputSignalWithTransform,
@@ -21,6 +23,7 @@ import {
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
 import { rtKitLabel } from '../../i18n';
+import { materialPresetClassesOf } from '../../util/material-preset';
 import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
 import { IRtIcon } from '../icon/rt-icon.model';
 import { IRtMenu } from './rt-menu.model';
@@ -98,6 +101,7 @@ const POSITION_ABOVE_START: ConnectedPosition = {
     },
 })
 export class RtMenuComponent {
+    readonly #host: ElementRef<HTMLElement> = inject<ElementRef<HTMLElement>>(ElementRef);
     readonly #t_uiActions: Signal<string> = rtKitLabel('uiActions');
 
     /** Ход стрелками по пунктам открытой панели; у закрытой его нет. */
@@ -107,6 +111,15 @@ export class RtMenuComponent {
     protected readonly trigger: Signal<CdkOverlayOrigin> = viewChild.required(CdkOverlayOrigin);
 
     protected readonly isOpen: WritableSignal<boolean> = signal<boolean>(false);
+
+    /** Класс набора, найденный над меню при открытии: панель лежит вне контейнера с признаком. */
+    protected readonly presetClasses: WritableSignal<string[]> = signal<string[]>([]);
+
+    /** Классы панели: заданные входом и класс набора. */
+    protected readonly panelClasses: Signal<string[]> = computed((): string[] => {
+        const own: string | string[] = this.panelClass();
+        return [...(Array.isArray(own) ? own : own.split(/\s+/).filter(Boolean)), ...this.presetClasses()];
+    });
 
     protected readonly ariaText: Signal<string> = computed((): string => this.ariaLabel() || this.#t_uiActions());
 
@@ -200,6 +213,9 @@ export class RtMenuComponent {
             if (!open) {
                 this.#keyManager?.destroy();
                 this.#keyManager = null;
+            }
+            if (open) {
+                this.presetClasses.set(materialPresetClassesOf(this.#host.nativeElement));
             }
             this.isOpen.set(open);
             this.openedChange.emit(open);

@@ -33,6 +33,15 @@ export const scaleMaterial = [
     { name: `--rt-mat-neutral-60`, value: `#747474` },
     { name: `--rt-mat-neutral-80`, value: `#323033` },
     { name: `--rt-mat-neutral-100`, value: `#181818` },
+    {
+        lead: `    /* Тёмные нейтральные первого кита: рамки и фон его тёмной темы */`,
+        space: true,
+        name: `--rt-mat-dark-10`,
+        value: `#2e2d31`,
+    },
+    { name: `--rt-mat-dark-20`, value: `#3f3e43` },
+    { name: `--rt-mat-dark-30`, value: `#4a494e` },
+    { name: `--rt-mat-dark-40`, value: `#5c5b60` },
 
     {
         lead: `    /* Материальный набор: синий — действие, ссылка, кольцо фокуса */`,
@@ -163,4 +172,19 @@ export const scaleMaterial = [
         name: `--rt-mat-shadow-fab-hover`,
         value: `0 5px 5px -3px rgb(0 0 0 / 20%), 0 8px 10px 1px rgb(0 0 0 / 14%), 0 3px 14px 2px rgb(0 0 0 / 12%)`,
     },
+    {
+        lead: `    /* Материальный набор: подъём 2 Material — тень меню и выпадающего списка первого кита */`,
+        space: true,
+        name: `--rt-mat-shadow-level-2`,
+        value: `0 3px 3px -2px rgb(0 0 0 / 20%), 0 3px 4px 0 rgb(0 0 0 / 14%), 0 1px 8px 0 rgb(0 0 0 / 12%)`,
+    },
+    {
+        lead: `    /* Материальный набор: скругления первого кита. Свои ступени, а не --rt-radius-*: первый кит
+       объявляет те же имена на корне страницы своими значениями, и без файла совместимости набор
+       рисовал бы его числа вместо своих. */`,
+        space: true,
+        name: `--rt-mat-radius-4`,
+        value: `4px`,
+    },
+    { name: `--rt-mat-radius-5`, value: `5px` },
 ];

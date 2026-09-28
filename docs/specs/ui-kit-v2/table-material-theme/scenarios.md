@@ -84,3 +84,35 @@ When it has one page, and then thirteen pages with the first one open
 Then the strip draws the number 1 between two arrows, and then `1 2 3 … 11 12 13`; the own look draws no numbers on one page and `1 2 … 13` on thirteen
 
 Covered by the pagination test of the list and by the test of the numbering.
+
+### SC-UKV-367 — the dark preset takes the first kit's dark colours
+
+Given the list under the material preset and the dark theme
+When it is drawn
+Then the filter fields have no fill, the page boxes and the row lines take the first kit's dark palette, and the Material colours of the page resolve dark
+
+Not covered: the promise is about the resolved colours in a look, not about a call. It is held by `tools/check-tokens-theme.mjs` and by the dark preset frames of the list.
+
+### SC-UKV-368 — the panels above the page take the first kit's corners under the preset
+
+Given a page under the material preset where the first kit declares its radius steps on the root
+When the row menu, the dropdown list and a tooltip open
+Then the menu and the tooltip are rounded by 4 px, the list only at its lower corners, and the menu and the list carry the Material level 2 shadow
+
+Not covered: the promise is about the computed corners and shadows of overlay panels, not about a call. It is held by the preset source and by the showcase frames of the menu, the select and the tooltip.
+
+### SC-UKV-369 — a panel opened under the preset mark carries the preset
+
+Given a button inside a container the application marked with the material preset
+When a tooltip, a menu or a dropdown list opens from it
+Then its panel at the end of the page carries the preset class, and a panel opened outside such a container does not
+
+Covered by the test of the preset helper and by the tooltip directive test.
+
+### SC-UKV-370 — the dropdown list marks the selected option with a check
+
+Given a dropdown list with a selected option
+When the list opens
+Then the selected option carries a check mark and the others do not; the own preset hides the mark, the material preset shows it
+
+Covered by the select component test for the mark; its visibility by look is held by the preset source.

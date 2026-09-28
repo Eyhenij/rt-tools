@@ -199,7 +199,7 @@
     /* Плашка колонки в виде первого кита — и в панели, и тянутая: тянутая лежит в конце страницы
        и несёт класс набора на себе, поэтому цель правила — сама плашка, а не панель вокруг. */
     .rt-data-list-settings-aside__column:is(.rt-preset-material, .rt-preset-material *, [data-preset='material'] *) {
-        --rt-data-list-settings-aside-radius: var(--rt-radius-sm);
+        --rt-data-list-settings-aside-radius: var(--rt-list-settings-item-radius);
         --rt-data-list-settings-aside-drag-shadow: var(--rt-shadow-xl);
         --rt-data-list-settings-aside-column-height: 48px;
         --rt-data-list-settings-aside-control-size: 36px;
