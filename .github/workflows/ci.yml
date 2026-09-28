@@ -119,6 +119,10 @@ jobs:
             # `DOCKER_HOST` не для красоты: свой каталог уносит с собой и текущий контекст, а без
             # него клиент идёт в общесистемный сокет, которого на машине с настольным клиентом
             # нет вовсе, и отвечает «нет такого файла» на что угодно.
+            #
+            # Сокет берётся тот, что есть на машине: настольного клиента, иначе colima, иначе
+            # остаётся `DOCKER_HOST`, заданный раннеру. Лежащий демон называется словами — что
+            # поднять и какой сокет спрошен, — а не голым отказом клиента.
             - name: Докер без помощника ключей
               if: steps.scope.outputs.docs_only != 'true'
               run: |
@@ -126,9 +130,20 @@ jobs:
                   mkdir -p "$dir"
                   printf '{}' > "$dir/config.json"
                   echo "DOCKER_CONFIG=$dir" >> "$GITHUB_ENV"
-                  echo "DOCKER_HOST=unix://$HOME/.docker/run/docker.sock" >> "$GITHUB_ENV"
-                  DOCKER_CONFIG="$dir" DOCKER_HOST="unix://$HOME/.docker/run/docker.sock" \
-                      docker info --format 'демон: {{.ServerVersion}}'
+                  host="${DOCKER_HOST:-}"
+                  for sock in "$HOME/.docker/run/docker.sock" "$HOME/.colima/default/docker.sock"; do
+                      if [ -S "$sock" ]; then
+                          host="unix://$sock"
+                          break
+                      fi
+                  done
+                  if [ -n "$host" ]; then
+                      echo "DOCKER_HOST=$host" >> "$GITHUB_ENV"
+                  fi
+                  if ! DOCKER_CONFIG="$dir" DOCKER_HOST="$host" docker info --format 'демон: {{.ServerVersion}}'; then
+                      echo "::error::Демон докера не отвечает (сокет: ${host:-по умолчанию клиента}). Подними Docker Desktop или colima (colima start) на машине раннера и перезапусти прогон."
+                      exit 1
+                  fi
 
             # Сценарии гардов дерева. Гард — единственная часть слоя правил, которую исполняет
             # машина: ошибка в нём молчит, потому что сломанный гард пропускает ход, а пропуск
@@ -315,7 +330,7 @@ jobs:
                   if [ "$(docker inspect --format '{{.State.Health.Status}}' "$db" 2>/dev/null || echo none)" != healthy ]; then
                       echo '::error::База стенда не поднялась. Ниже — её лог и занятое место: набор дальше не идёт, и красное в нём было бы не про правку.'
                       docker logs --tail 20 "$db" 2>&1 || true
-                      docker system df
+                      docker system df || true
                       exit 1
                   fi
 
@@ -437,4 +452,6 @@ jobs:
                   # есть ещё и предел размера — он держит его в берегах независимо от возраста.
                   docker builder prune --force --max-used-space 10GB >/dev/null 2>&1 || true
 
-                  docker system df
+                  # Сводка места — справка, а не проверка: лежащий демон уже назван шагом выше,
+                  # и второй отказ здесь только прячет первый.
+                  docker system df || true

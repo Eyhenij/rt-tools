@@ -1,7 +1,7 @@
 import type { TestContext, TestRunnerConfig } from '@storybook/test-runner';
 import { getStoryContext } from '@storybook/test-runner';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
-import { copyFileSync, existsSync, mkdirSync, writeFileSync } from 'node:fs';
+import { appendFileSync, copyFileSync, existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import type { Page, Route } from 'playwright';
 
 /**
@@ -22,8 +22,33 @@ const SNAPSHOT_DIR: string = `${process.cwd()}/projects/ui-kit/.storybook/__snap
  */
 const FAILURE_THRESHOLD: number = 0.0002;
 
-/** Семейства значков, которыми рисуются истории. Кадр без любого из них сравнивать не с чем. */
-const ICON_FONTS: readonly string[] = ['Material Icons', 'Material Icons Outlined'];
+/**
+ * Семейства значков, которыми рисуются истории. Кадр без любого из них сравнивать не с чем.
+ * Третье — то, которым рисует `mat-icon`: показ переключает его реестр на
+ * `material-symbols-outlined`.
+ */
+const ICON_FONTS: readonly string[] = ['Material Icons', 'Material Icons Outlined', 'Material Symbols Outlined'];
+
+/**
+ * Куда обвязка пишет имена открытых историй. Реестр создаёт и читает `tools/visual-gate.mjs`:
+ * эталон, которому нет истории, вечно зелен — прогон его не открывает.
+ */
+const TAKEN_REGISTRY: string | undefined = process.env.RT_SNAPSHOT_REGISTRY;
+
+/** Состояние снимков Jest: флаг `-u` команды пересъёмки лежит в нём как `all`. */
+interface ISnapshotRunState {
+    snapshotState?: { _updateSnapshot?: string };
+}
+
+/**
+ * Идёт ли пересъёмка: только в этом заходе эталону позволено появиться на диске. Её называет
+ * либо переменная, как у второго кита, либо флаг `-u` самой команды `test:visual:update`.
+ */
+function updating(): boolean {
+    const state: ISnapshotRunState = expect.getState() as ISnapshotRunState;
+
+    return process.env.RT_SNAPSHOT_UPDATE === '1' || state.snapshotState?._updateSnapshot === 'all';
+}
 
 /**
  * Сколько ждать перерисовку значков после того, как шрифт встал. Не мерило готовности, а
@@ -273,6 +298,11 @@ const config: TestRunnerConfig = {
     },
 
     async preVisit(page: Page, context: TestContext): Promise<void> {
+        // История записывается до отрисовки: упавшая раньше кадра остаётся своей, а не сиротой.
+        if (TAKEN_REGISTRY !== undefined) {
+            appendFileSync(TAKEN_REGISTRY, `${context.id}\n`);
+        }
+
         await cutOffNetwork(page);
 
         // Содержимое в перекрытии живёт вне потока страницы, и полный снимок его не
@@ -401,6 +431,16 @@ const config: TestRunnerConfig = {
         await painted(page, PAINTED_FRAMES);
 
         const shot: { image: Buffer; attempts: number; settled: boolean } = await stableShot(page);
+
+        // Библиотека сверки при отсутствующем эталоне вне конвейера молча дописывает файл и проходит
+        // зелёной: прогон зелен ровно потому, что сверять было не с чем. Эталон появляется только в
+        // заходе пересъёмки, и только намеренно.
+        if (!updating() && !existsSync(`${SNAPSHOT_DIR}/${context.id}.png`)) {
+            throw new Error(
+                `${context.id}: эталона нет. Сними его намеренно: node tools/visual-gate.mjs ui-kit --update '<образец пути файла историй>' — ` +
+                    'молча он не появляется, иначе прогон зелен из-за отсутствия сверки.'
+            );
+        }
 
         try {
             expect(shot.image).toMatchImageSnapshot({

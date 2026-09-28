@@ -37,8 +37,11 @@ const STORY = 'components-button--matrix';
 /** The same frame size as the harness's: the page height is counted from it. */
 const VIEWPORT = { width: 1280, height: 720 };
 
-/** The same icon families the harness waits for. */
-const ICON_FONTS = ['Material Icons', 'Material Icons Outlined'];
+/**
+ * The same icon families the harness waits for. The third is the one `mat-icon` draws with: the
+ * showcase's preview switches its registry to `material-symbols-outlined`.
+ */
+const ICON_FONTS = ['Material Icons', 'Material Icons Outlined', 'Material Symbols Outlined'];
 
 /** The same pause after the motion is muted as the harness's. */
 const SETTLE_MS = 150;
