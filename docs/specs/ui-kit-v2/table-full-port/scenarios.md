@@ -492,3 +492,10 @@ Given a column with the operators "Equal" and "Contains", "Equal" being current
 When a person opens its operator menu
 Then the menu opens from the left edge of the button and lists both operators, "Equal" marked as current
 Covered: `projects/ui-kit-v2/src/lib/components/data-table/filter-cell/rt-data-table-filter-cell.component.spec.ts`.
+
+### SC-UKV-373 — the column header draws an icon name without a pair as a glyph
+
+Given a header icon declared by a first-kit name that has no pair in the kit's map, and no icon template
+When the data table is drawn
+Then the header shows the name as a Material Symbols glyph, and no kit icon
+Covered: `projects/ui-kit-v2/src/lib/components/data-table/header-cell/rt-data-table-header-cell.component.spec.ts`.

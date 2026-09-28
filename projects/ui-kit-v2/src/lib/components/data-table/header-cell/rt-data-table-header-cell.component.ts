@@ -84,6 +84,16 @@ export class RtDataTableHeaderCellComponent<T = Record<string, unknown>> {
         return icon ? dataTableIconName(icon.glyph) : null;
     });
 
+    /** Имя без пары в перечне шапка рисует глифом Material Symbols — так же, как ячейка. */
+    protected readonly glyph: Signal<string | null> = computed(() => {
+        const icon: IRtDataTable.Icon | null = this.icon();
+
+        return icon && !this.kitIcon() ? icon.glyph : null;
+    });
+
+    /** Залитый глиф — как залитый значок набора: контурным его делает `outlined` колонки. */
+    protected readonly glyphMods: Signal<Record<string, boolean>> = computed(() => ({ filled: this.icon()?.outlined !== true }));
+
     protected readonly iconContext: Signal<IRtDataTableIconContext<T> | null> = computed(() => {
         const icon: IRtDataTable.Icon | null = this.icon();
         const column: IRtDataTable.Column<T> | null = this.column();
