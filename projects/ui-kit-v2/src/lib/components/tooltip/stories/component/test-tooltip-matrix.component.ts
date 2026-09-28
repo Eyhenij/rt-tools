@@ -73,7 +73,8 @@ interface ITooltipTextCase {
                 <app-story-presets caption="Длина текста в обоих наборах">
                     <ng-template>
                         <div class="app-tooltip-matrix__room">
-                            <app-story-row [items]="textCases" [itemLabel]="caseLabel">
+                            <!-- Ячейка шириной с панель подсказки: со шрифтом кита длинная панель заходила на короткую. -->
+                            <app-story-row slotWidth="15rem" [items]="textCases" [itemLabel]="caseLabel">
                                 <ng-template let-textCase>
                                     <button
                                         rtButton
