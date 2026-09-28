@@ -205,6 +205,8 @@
             --rt-select-selected-bg: var(--rt-overlay-select-selected-bg);
             --rt-select-selected-weight: var(--rt-overlay-select-selected-weight);
             --rt-select-check-display: var(--rt-overlay-select-check-display);
+            --rt-select-option-min-height: var(--rt-overlay-select-option-min-height);
+            --rt-select-panel-border-width: var(--rt-overlay-select-panel-border-width);
 
             /* Без предела панель открывается целиком, без прокрутки внутри: содержимое
                должно помещаться. Предел назначает потребитель — тогда и появляется
@@ -217,7 +219,7 @@
             width: 100%;
             max-height: var(--rt-select-panel-max-height);
             box-sizing: border-box;
-            border: var(--rt-input-border-width) solid var(--rt-color-border-subtle);
+            border: var(--rt-select-panel-border-width) solid var(--rt-color-border-subtle);
             border-radius: var(--rt-select-panel-radius);
             background-color: var(--rt-color-bg-surface);
             box-shadow: var(--rt-select-panel-shadow);
@@ -237,6 +239,8 @@
 
         &__option {
             display: flex;
+            min-height: var(--rt-select-option-min-height);
+            box-sizing: border-box;
             align-items: center;
             justify-content: space-between;
             padding: var(--rt-space-sm) var(--rt-space-md);

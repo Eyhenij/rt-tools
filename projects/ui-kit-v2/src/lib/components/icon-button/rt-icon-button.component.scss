@@ -169,9 +169,15 @@
                 }
             }
 
+            /* Цвет неактивной кнопки ставится значку: по умолчанию `currentcolor`, то есть цвет самой
+               кнопки, и свой вид остаётся прежним. */
             &:disabled {
                 cursor: not-allowed;
-                opacity: 0.5;
+                opacity: var(--rt-icon-button-disabled-opacity);
+
+                .rt-icon {
+                    color: var(--rt-icon-button-disabled-color);
+                }
             }
 
             &:focus-visible {

@@ -8,12 +8,18 @@
         --rt-menu-item-weight: var(--rt-overlay-menu-item-weight);
         --rt-menu-item-danger-color: var(--rt-overlay-menu-danger-color);
         --rt-menu-item-current-bg: var(--rt-overlay-menu-current-bg);
+        --rt-menu-item-min-height: var(--rt-overlay-menu-item-min-height);
+        --rt-menu-item-padding-y: var(--rt-overlay-menu-item-padding-y);
+        --rt-menu-item-padding-x: var(--rt-overlay-menu-item-padding-x);
+        --rt-menu-item-icon-size: var(--rt-overlay-menu-item-icon-size);
+        --rt-menu-item-danger-label-color: var(--rt-overlay-menu-danger-label-color);
 
         display: flex;
         width: 100%;
+        min-height: var(--rt-menu-item-min-height);
         box-sizing: border-box;
         align-items: center;
-        padding: var(--rt-space-sm) var(--rt-space-md);
+        padding: var(--rt-menu-item-padding-y) var(--rt-menu-item-padding-x);
         border-radius: var(--rt-menu-item-radius);
         color: var(--rt-color-text-primary);
         cursor: pointer;
@@ -32,7 +38,11 @@
             outline: none;
         }
 
+        /* Значок кит рисует размером sm строкой стиля; нижняя граница размера её перебивает, когда
+           больше, — так набор растит значок пункта до значка первого кита. */
         &__icon {
+            min-width: var(--rt-menu-item-icon-size);
+            min-height: var(--rt-menu-item-icon-size);
             flex-shrink: 0;
             color: var(--rt-color-text-muted);
         }
@@ -47,7 +57,7 @@
         }
 
         &--danger {
-            color: var(--rt-menu-item-danger-color);
+            color: var(--rt-menu-item-danger-label-color);
 
             .rt-menu-item__icon {
                 color: var(--rt-menu-item-danger-color);

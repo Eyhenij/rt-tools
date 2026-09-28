@@ -154,6 +154,8 @@
        номера и выбор размера стоят рядом через 32px, поле размера 32px высотой. */
     --rt-pagination-justify: flex-start;
     --rt-pagination-gap: var(--rt-space-xl);
+    --rt-pagination-padding-y: var(--rt-space-sm);
+    --rt-pagination-padding-x: 0px;
     --rt-pagination-nav-gap: var(--rt-space-sm);
     --rt-pagination-range-display: none;
     --rt-pagination-box-size: calc(var(--rt-space-xl) + 2 * var(--rt-border-width-thin));
@@ -209,6 +211,16 @@
     --rt-overlay-select-selected-weight: var(--rt-font-weight-regular);
     --rt-overlay-select-check-display: inline-flex;
     --rt-overlay-menu-current-bg: color-mix(in srgb, var(--mat-sys-on-surface, var(--rt-mat-neutral-100)) 12%, transparent);
+    --rt-overlay-menu-min-width: var(--rt-mat-menu-min-width);
+    --rt-overlay-menu-item-min-height: var(--rt-size-12);
+    --rt-overlay-menu-item-padding-y: 0px;
+    --rt-overlay-menu-item-padding-x: var(--rt-size-3);
+    --rt-overlay-menu-item-icon-size: var(--rt-size-6);
+    --rt-overlay-menu-danger-label-color: var(--rt-color-text-primary);
+    --rt-overlay-select-option-min-height: var(--rt-size-12);
+    --rt-overlay-select-panel-border-width: 0px;
+    --rt-icon-button-disabled-opacity: 1;
+    --rt-icon-button-disabled-color: var(--rt-color-text-disabled);
 }
 
 /* The preset under a dark theme: the names the preset reads from Material keep the Material chain,

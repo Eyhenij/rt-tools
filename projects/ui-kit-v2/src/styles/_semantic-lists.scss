@@ -36,6 +36,8 @@
        диапазона и поле размера. Свой вид — прежние значения; материальный набор делает из них
        полосу первого кита. */
     --rt-pagination-justify: space-between;
+    --rt-pagination-padding-y: var(--rt-space-4);
+    --rt-pagination-padding-x: var(--rt-space-xs);
     --rt-pagination-gap: var(--rt-space-md);
     --rt-pagination-nav-gap: var(--rt-space-xs);
     --rt-pagination-range-display: inline;

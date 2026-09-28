@@ -114,6 +114,14 @@ export const lightLists = [
         value: `space-between`,
     },
     {
+        name: `--rt-pagination-padding-y`,
+        value: `var(--rt-space-4)`,
+    },
+    {
+        name: `--rt-pagination-padding-x`,
+        value: `var(--rt-space-xs)`,
+    },
+    {
         name: `--rt-pagination-gap`,
         value: `var(--rt-space-md)`,
     },
