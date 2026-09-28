@@ -145,6 +145,8 @@ The words are the first kit's; the kit's dictionary gives them in all eight lang
   does not ship the font: the glyph shows where the application includes it, and without the font
   the name itself stands in the icon's place. A pair in the map still wins, so a named icon keeps
   the kit's drawing.
+
+- **The column header draws a name with no pair the same way.** A glyph, not an empty place.
 - **A column of the type "custom" is the second way: the whole cell, its icon included, is the
   application's template.** The family draws no ready cell and no declared icon in such a cell.
 
