@@ -121,6 +121,23 @@ describe('SC-UK-126 — отнятый средой указатель конч�
 
         expect(host.width()).toBe(200);
     });
+
+    it('потеря захвата без отпускания кончает тягу так же', () => {
+        const { fixture, host }: ISetup = setup('pinned', ['refs']);
+
+        host.width.set(200);
+        fixture.detectChanges();
+
+        const handle: HTMLElement = resizer(fixture) as HTMLElement;
+
+        pointer(handle, 'pointerdown', 200);
+        pointer(handle, 'pointermove', 280);
+        pointer(handle, 'lostpointercapture', 280);
+        pointer(handle, 'pointermove', 400);
+        fixture.detectChanges();
+
+        expect(host.width()).toBe(280);
+    });
 });
 
 describe('SC-UK-127 — начало и конец тяги уходят наружу', () => {
@@ -152,6 +169,29 @@ describe('SC-UK-127 — начало и конец тяги уходят нар�
         expect(started).not.toHaveBeenCalled();
         expect(ended).not.toHaveBeenCalled();
     });
+
+    it('не основная кнопка тягу не начинает и умолчания не отменяет', () => {
+        const { fixture, host }: ISetup = setup('pinned', ['refs']);
+        const started: jest.Mock = jest.fn();
+        const handle: HTMLElement = resizer(fixture) as HTMLElement;
+        const press: PointerEvent = new PointerEvent('pointerdown', {
+            bubbles: true,
+            cancelable: true,
+            pointerId: 1,
+            clientX: 200,
+            button: 2,
+        });
+
+        host.width.set(200);
+        fixture.detectChanges();
+        menu(fixture).subMenuResizeStart.subscribe(started);
+
+        handle.dispatchEvent(press);
+        pointer(handle, 'pointermove', 400);
+        fixture.detectChanges();
+
+        expect([started.mock.calls.length, press.defaultPrevented, host.width()]).toEqual([0, false, 200]);
+    });
 });
 
 describe('SC-UK-128 — отнятая средой тяга тоже кончается наружу', () => {
@@ -168,6 +208,42 @@ describe('SC-UK-128 — отнятая средой тяга тоже конча
         fixture.detectChanges();
 
         expect(ended).toHaveBeenCalledTimes(1);
+    });
+
+    it('потеря захвата после отпускания второго конца не даёт', () => {
+        const { fixture }: ISetup = setup('pinned', ['refs']);
+        const ended: jest.Mock = jest.fn();
+        const handle: HTMLElement = resizer(fixture) as HTMLElement;
+
+        menu(fixture).subMenuResizeEnd.subscribe(ended);
+
+        pointer(handle, 'pointerdown', 200);
+        pointer(handle, 'pointerup', 280);
+        pointer(handle, 'lostpointercapture', 280);
+        fixture.detectChanges();
+
+        expect(ended).toHaveBeenCalledTimes(1);
+    });
+
+    it('меню, разрушенное посреди тяги, отдаёт наружу её конец и снимает слушателей', () => {
+        const { fixture, host }: ISetup = setup('pinned', ['refs']);
+        const ended: jest.Mock = jest.fn();
+        const widths: jest.Mock = jest.fn();
+        const handle: HTMLElement = resizer(fixture) as HTMLElement;
+
+        host.width.set(200);
+        fixture.detectChanges();
+        // Подписка снаружи дерева вида: слушатель обёртки снимается вместе с ней раньше меню.
+        menu(fixture).subMenuResizeEnd.subscribe(ended);
+        menu(fixture).subMenuWidthChange.subscribe(widths);
+
+        pointer(handle, 'pointerdown', 200);
+        pointer(handle, 'pointermove', 280);
+        fixture.destroy();
+        pointer(handle, 'pointermove', 400);
+        pointer(handle, 'pointerup', 400);
+
+        expect([ended.mock.calls.length, widths.mock.calls]).toEqual([1, [[280]]]);
     });
 });
 

@@ -303,7 +303,9 @@ export function startSubMenuWidthDrag(
 ): (() => void) | null {
     const handle: EventTarget | null = event.currentTarget;
 
-    if (!(handle instanceof HTMLElement)) {
+    // Тянет только основная кнопка: правая открывает меню среды, и тяга, начатая ею, не знала бы
+    // конца — отпускание правой кнопки над меню среды ручке не приходит.
+    if (!(handle instanceof HTMLElement) || event.button !== 0) {
         return null;
     }
 
@@ -322,11 +324,15 @@ export function startSubMenuWidthDrag(
     });
     const stopUp: () => void = listen(handle, 'pointerup', (): void => hooks.onEnd());
     const stopCancel: () => void = listen(handle, 'pointercancel', (): void => hooks.onEnd());
+    // Захват снимается и без отпускания — ручку убрали из разметки, среда отдала указатель
+    // другому; тогда ни отпускания, ни отмены ручка уже не услышит, и конец тяги — сама потеря.
+    const stopLost: () => void = listen(handle, 'lostpointercapture', (): void => hooks.onEnd());
 
     return (): void => {
         stopMove();
         stopUp();
         stopCancel();
+        stopLost();
 
         if (typeof handle.releasePointerCapture === 'function' && handle.hasPointerCapture(pointerId)) {
             handle.releasePointerCapture(pointerId);

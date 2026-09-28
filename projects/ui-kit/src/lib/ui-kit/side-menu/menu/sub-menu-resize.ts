@@ -1,4 +1,4 @@
-import { computed, signal, Signal, WritableSignal } from '@angular/core';
+import { computed, DestroyRef, signal, Signal, WritableSignal } from '@angular/core';
 
 import { clampSubMenuWidth, reportedSubMenuWidth, startSubMenuWidthDrag, subMenuWidthByKey, TPointerListen } from '../side-menu.logic';
 
@@ -48,9 +48,15 @@ export class SubMenuResize {
         return width === null ? null : clampSubMenuWidth(width);
     });
 
-    constructor(listen: TPointerListen, hooks: ISubMenuResizeHooks) {
+    /**
+     * Меню, разрушенное посреди тяги, кончает её здесь же: слушатели и захват снимаются, а конец
+     * тяги уходит потребителю — иначе накрытие чужих кадров, снимаемое по концу, осталось бы стоять.
+     * Разрушение подписывается раньше выходов меню, пока они ещё живы.
+     */
+    constructor(listen: TPointerListen, hooks: ISubMenuResizeHooks, destroyRef?: DestroyRef) {
         this.#listen = listen;
         this.#hooks = hooks;
+        destroyRef?.onDestroy((): void => this.finish());
     }
 
     /** Тяга идёт. Второе нажатие при начатой тяге ничего не начинает: указатель уже захвачен. */

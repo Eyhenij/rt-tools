@@ -5,6 +5,7 @@ import {
     Component,
     computed,
     contentChild,
+    DestroyRef,
     Directive,
     ElementRef,
     inject,
@@ -139,7 +140,8 @@ export class RtuiSideMenuComponent implements IRtuiSideMenuHost {
             ended: (): void => this.subMenuResizeEnd.emit(),
             panel: (): HTMLElement | null => this.subMenuPanelRef()?.nativeElement ?? null,
             namedWidth: (): number | null => this.#width(),
-        }
+        },
+        inject(DestroyRef)
     );
 
     /** Подменю открыл указатель. У закреплённой моды открытость считается не так. */
@@ -418,7 +420,8 @@ export class RtuiSideMenuComponent implements IRtuiSideMenuHost {
 
     /** Взята ручка правого края. Механика тяги — `SubMenuResize` и логика рядом. */
     public onResizeStart(event: PointerEvent): void {
-        if (!this.isPinned() || this.#resize.running) {
+        // Не основная кнопка тягу не начинает и умолчания своего не теряет.
+        if (!this.isPinned() || this.#resize.running || event.button !== 0) {
             return;
         }
 

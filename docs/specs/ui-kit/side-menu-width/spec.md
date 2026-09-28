@@ -47,7 +47,9 @@ counts itself, and where the limits of each lie.
   by the mouse alone. The capture keeps the movement and the release on the handle itself: listeners
   put on the document lose the movement the minute the pointer goes over a frame of a foreign
   address, and the panel stays stuck at the width of that minute. A pointer the environment takes
-  away — a gesture of the system, a call — ends the pull the same way a release does.
+  away — a gesture of the system, a call, a capture lost without a release — ends the pull the same
+  way a release does. Only the main button begins a pull: the release of another one may never
+  reach the handle.
 
 - **The beginning and the end of the pull go outward as events of their own.** A consumer does what
   the kit has no business doing for them: they put a cover over a frame of a foreign address, change
@@ -55,7 +57,8 @@ counts itself, and where the limits of each lie.
   minute the pull begins and the minute it ends is the only thing they lack for that. Without those
   events the only sign left them is the class of the handle — the kit's own matter, which the first
   rename inside the kit takes away silently. The end comes about at a release and at a pointer taken
-  away alike: a consumer who put a cover up at the beginning must take it down in both cases.
+  away alike, and at the menu taken off the page in the middle of a pull: a consumer who put a
+  cover up at the beginning must take it down in every case.
 
 - **The number that goes outward is the one the panel is drawn by.** The lower limit of the width
   belongs to the design, not to the kit: a panel is never narrower than the width the consumer set
@@ -74,14 +77,14 @@ counts itself, and where the limits of each lie.
   the ask to the end of the gesture because there is a gesture; here there is none. The events of
   the beginning and the end of the pull do not come about from a key either: a consumer covers a
   frame of a foreign address for the time a hand leads the pointer, and a key leads nothing.
-      <!-- rt-when: *.ts *.html -->
+  <!-- rt-when: *.ts *.html -->
 
 - **The reader names the current width and both its limits.** A handle that says only "separator"
   tells a person nothing about what the keys under their fingers will do, and nothing about where
   the width already stands. The numbers are the kit's own count — the width the consumer named or
   the one the hand pulled to. The consumer named none and nothing was pulled — there is no number,
   and the kit does not invent one: a number made up would name a width the panel is not drawn by.
-      <!-- rt-when: *.ts *.html -->
+  <!-- rt-when: *.ts *.html -->
 
 ## What is out of scope
 
