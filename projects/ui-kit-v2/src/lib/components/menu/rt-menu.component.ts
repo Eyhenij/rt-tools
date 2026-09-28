@@ -20,7 +20,7 @@ import {
     WritableSignal,
 } from '@angular/core';
 
-import { BlockDirective, ElemDirective } from '@rt-tools/core';
+import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { rtKitLabel } from '../../i18n';
 import { materialPresetClassesOf } from '../../util/material-preset';
@@ -94,6 +94,7 @@ const POSITION_ABOVE_START: ConnectedPosition = {
         RtIconButtonComponent,
         BlockDirective,
         ElemDirective,
+        ModDirective,
     ],
     host: {
         class: BEM_BLOCK,
@@ -145,6 +146,9 @@ export class RtMenuComponent {
      * не доходят: семья, нарисованная своим набором, отдаёт его панели этим входом.
      */
     public readonly panelClass: InputSignal<string | string[]> = input<string | string[]>([]);
+
+    /** Размер панели: компактная — у меню действий строки таблицы. */
+    public readonly size: InputSignal<IRtMenu.Size> = input<IRtMenu.Size>('md');
 
     /** Триггер отключён — меню не открыть. */
     public readonly disabled: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {

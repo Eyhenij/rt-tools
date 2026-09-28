@@ -56,3 +56,24 @@ export const PanelAlignStart: TStory = {
         await openStoryOverlay(canvasElement);
     },
 };
+
+/**
+ * Панель под материальным набором в обычном размере: пункт 48, значок 24 — как меню оператора
+ * первого кита. Пара к компактной ниже.
+ */
+export const PanelMaterial: TStory = {
+    parameters: { snapshot: { fullPage: true } },
+    args: { part: 'panel', align: 'start', material: true },
+    play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
+        await openStoryOverlay(canvasElement);
+    },
+};
+
+/** Компактная панель под материальным набором: пункт 38, значок 13 — как меню строки первого кита. */
+export const PanelMaterialCompact: TStory = {
+    parameters: { snapshot: { fullPage: true } },
+    args: { part: 'panel', align: 'start', material: true, size: 'sm' },
+    play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
+        await openStoryOverlay(canvasElement);
+    },
+};

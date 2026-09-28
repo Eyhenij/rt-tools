@@ -218,6 +218,14 @@ export const lightParts = [
         value: `var(--rt-size-4)`,
     },
     {
+        name: `--rt-overlay-menu-sm-item-min-height`,
+        value: `var(--rt-overlay-menu-item-min-height)`,
+    },
+    {
+        name: `--rt-overlay-menu-sm-item-icon-size`,
+        value: `var(--rt-overlay-menu-item-icon-size)`,
+    },
+    {
         name: `--rt-overlay-menu-danger-label-color`,
         value: `var(--rt-overlay-menu-danger-color)`,
     },

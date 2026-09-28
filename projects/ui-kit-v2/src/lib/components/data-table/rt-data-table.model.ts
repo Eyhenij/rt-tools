@@ -6,6 +6,7 @@
  * рисует: экран приложения переезжает без правок описаний колонок и сохранённых настроек,
  * меняются только имена. Значения перечислений те же строки, что в первом ките.
  */
+import { InjectionToken } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
 import { IFilterModel, ISortModel, TFilterOperatorType } from '@rt-tools/utils';
@@ -48,6 +49,13 @@ export type TRtDataTableFilters<T> = Array<IFilterModel<Extract<keyof T, string>
  * поверх страницы: вне хоста признак вида до них иначе не доходит.
  */
 export const RT_PRESET_MATERIAL_CLASS: string = 'rt-preset-material';
+
+/**
+ * Набор оформления таблице даёт узел вокруг неё. Так делает список: класс набора стоит на нём, и
+ * таблица внутри себе класс не ставит. Поставь она его, кусок набора объявил бы на ней весь набор
+ * назначений заново, и значение, заданное приложением на списке, до таблицы бы не дошло.
+ */
+export const RT_DATA_TABLE_PRESET_FROM_HOST: InjectionToken<boolean> = new InjectionToken<boolean>('RT_DATA_TABLE_PRESET_FROM_HOST');
 
 export namespace IRtDataTable {
     /**

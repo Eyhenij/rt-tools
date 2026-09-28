@@ -162,6 +162,14 @@ Nothing new is shown to a person: the list keeps its labels, only its look follo
   middle, the first, the neighbours of the current and the last. A single page is the number 1
   between two arrows. The own preset keeps the edges and the neighbours, and on a single page it
   draws no numbers.
+- **A table inside a list takes the preset from the list and carries no preset class of its own.**
+  A class on the table would declare the whole preset again on it, and a value the application set on
+  the list would not reach the table. A table standing alone carries the class as before.
+- **The row menu of the table opens compact.** Under the material preset its item is 38 px high with
+  a 13 px icon, as the row menu of the first kit; any other menu keeps 48 px and 24 px. The own
+  preset draws both menus alike.
+- **An icon given no colour writes no colour of its own.** It takes the colour of its parent, and a
+  rule around it paints it: the icon of a danger menu item is red.
 
 ## What is out of scope
 

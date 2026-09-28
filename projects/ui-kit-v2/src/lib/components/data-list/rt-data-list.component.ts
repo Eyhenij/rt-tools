@@ -38,7 +38,12 @@ import {
     RtDataTableCustomCellsDirective,
     RtDataTableRowActionsDirective,
 } from '../data-table/rt-data-table-cells.directive';
-import { IRtDataTable, RT_PRESET_MATERIAL_CLASS, TRtDataTableFilters } from '../data-table/rt-data-table.model';
+import {
+    IRtDataTable,
+    RT_DATA_TABLE_PRESET_FROM_HOST,
+    RT_PRESET_MATERIAL_CLASS,
+    TRtDataTableFilters,
+} from '../data-table/rt-data-table.model';
 import { RtEmptyStateComponent } from '../empty-state/rt-empty-state.component';
 import { RtSpinnerComponent } from '../spinner/rt-spinner.component';
 import { RtPaginationComponent } from '../pagination/rt-pagination.component';
@@ -95,6 +100,7 @@ const SCROLLBAR_HIDDEN: string = '0';
         RtDataTableRowActionsDirective,
     ],
     host: { class: BEM_BLOCK, '[class.rt-preset-material]': "look() === 'material'" },
+    providers: [{ provide: RT_DATA_TABLE_PRESET_FROM_HOST, useValue: true }],
 })
 export class RtDataListComponent<
     ENTITY_TYPE extends Record<string, unknown>,
