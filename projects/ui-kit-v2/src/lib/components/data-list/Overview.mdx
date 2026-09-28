@@ -117,7 +117,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | `pageModel`                     | `IPageModel`          | **обязателен** | нынешняя страница: номер, размер, всего записей                                                   |
 | `currentSortModel`              | `ISortModel \| null`  | **обязателен** | нынешний порядок                                                                                  |
 | `filterModel`                   | `IFilterModel[]`      | `[]`           | нынешние условия отбора                                                                           |
-| `searchTerm`                    | `string \| null`      | `''`           | что стоит в поле поиска                                                                           |
+| `searchTerm`                    | `string \| null`      | `''`           | что стоит в поле поиска; поле следует за входом при каждой смене                                  |
 | `keyExp`                        | `keyof ENTITY`        | `'id'`         | чем различаются записи                                                                            |
 | `loading`                       | `boolean`             | `false`        | первая загрузка: вместо списка крутилка                                                           |
 | `fetching`                      | `boolean`             | `false`        | дозагрузка: крутилка поверх строк                                                                 |

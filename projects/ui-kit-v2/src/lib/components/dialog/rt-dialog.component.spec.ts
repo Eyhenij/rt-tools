@@ -175,6 +175,44 @@ describe('RtDialogService', (): void => {
 
         expect(panel()).not.toBeNull();
     });
+
+    describe('тема куска', (): void => {
+        /** Кнопка, от которой открывают диалог: стоит в фокусе в момент открытия. */
+        function focusButtonIn(markup: string): HTMLElement {
+            const page: HTMLElement = document.createElement('div');
+            page.innerHTML = markup;
+            document.body.appendChild(page);
+            (page.querySelector('button') as HTMLButtonElement).focus();
+            return page;
+        }
+
+        afterEach((): void => {
+            document.documentElement.removeAttribute('data-theme');
+        });
+
+        it('диалог, открытый кнопкой из тёмного куска, несёт тему куска на коробке', (): void => {
+            const page: HTMLElement = focusButtonIn('<section data-theme="dark"><button type="button">Открыть</button></section>');
+
+            service().open(DialogContentComponent, { data: '…' });
+            render();
+
+            expect(panel()?.closest('.cdk-overlay-pane')?.getAttribute('data-theme')).toBe('dark');
+            page.remove();
+        });
+
+        it('тема корня страницы на коробку не копируется', (): void => {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            const page: HTMLElement = focusButtonIn('<section><button type="button">Открыть</button></section>');
+
+            service().open(DialogContentComponent, { data: '…' });
+            render();
+
+            const pane: Element | null | undefined = panel()?.closest('.cdk-overlay-pane');
+            expect(pane).not.toBeNull();
+            expect(pane?.hasAttribute('data-theme')).toBe(false);
+            page.remove();
+        });
+    });
 });
 
 describe('RtDialogHeaderComponent', (): void => {

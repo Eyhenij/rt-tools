@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, DebugElement, signal, WritableSignal } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -28,6 +28,22 @@ class FormHostComponent {
     public readonly moscow: ICity = MOSCOW;
     public readonly sochi: ICity = SOCHI;
     public readonly control: FormControl<ICity | null> = new FormControl<ICity | null>(null);
+}
+
+/** Две радиокнопки на общей модели шаблонной формы. */
+@Component({
+    selector: 'rt-radio-button-model-host',
+    template: `
+        <rt-radio-button label="Москва" [value]="moscow" [(ngModel)]="city" />
+        <rt-radio-button label="Сочи" [value]="sochi" [(ngModel)]="city" />
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtRadioButtonComponent, FormsModule],
+})
+class ModelHostComponent {
+    public readonly moscow: ICity = MOSCOW;
+    public readonly sochi: ICity = SOCHI;
+    public city: ICity | null = null;
 }
 
 /** Контрол создан отключённым — форма скажет об этом раньше первого рендера. */
@@ -89,6 +105,10 @@ function key<T>(fixture: ComponentFixture<T>, name: string): KeyboardEvent {
     fixture.detectChanges();
 
     return event;
+}
+
+function attrs<T>(fixture: ComponentFixture<T>, name: string): (string | null)[] {
+    return qaAll(fixture, 'radio-button-control').map((node: DebugElement): string | null => node.attributes[name] ?? null);
 }
 
 describe('RtRadioButtonComponent', (): void => {
@@ -160,6 +180,30 @@ describe('RtRadioButtonComponent', (): void => {
             press(fixture, qaAll(fixture, 'radio-button-control')[0]);
 
             expect(fixture.componentInstance.control.touched).toBe(true);
+        });
+
+        it('SC-UKV-373 — выбор другой радиокнопки того же контрола снимает точку с прежней', (): void => {
+            const fixture: ComponentFixture<FormHostComponent> = createRtFixture(FormHostComponent);
+
+            press(fixture, qaAll(fixture, 'radio-button-control')[0]);
+            press(fixture, qaAll(fixture, 'radio-button-control')[1]);
+
+            expect(fixture.componentInstance.control.value).toBe(SOCHI);
+            expect(attrs(fixture, 'aria-checked')).toEqual(['false', 'true']);
+        });
+
+        it('SC-UKV-373 — на общей модели шаблонной формы прежняя радиокнопка тоже гаснет', async (): Promise<void> => {
+            const fixture: ComponentFixture<ModelHostComponent> = createRtFixture(ModelHostComponent);
+            await fixture.whenStable();
+
+            press(fixture, qaAll(fixture, 'radio-button-control')[0]);
+            await fixture.whenStable();
+            press(fixture, qaAll(fixture, 'radio-button-control')[1]);
+            await fixture.whenStable();
+            fixture.detectChanges();
+
+            expect(fixture.componentInstance.city).toBe(SOCHI);
+            expect(attrs(fixture, 'aria-checked')).toEqual(['false', 'true']);
         });
     });
 

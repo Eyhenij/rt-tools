@@ -95,6 +95,37 @@ describe('RtDataTableHeaderCellComponent', () => {
         expect(fixture.componentInstance.asked.map((sort: ISortModel<string>) => sort.sortDirection)).toEqual(['asc', 'desc', 'asc']);
     });
 
+    it('сортируемая шапка просит порядок и с клавиатуры — Enter и пробелом', () => {
+        const fixture: ComponentFixture<HeaderHostComponent> = setup();
+        const host: HTMLElement = fixture.debugElement.query(By.directive(RtDataTableHeaderCellComponent)).nativeElement;
+        const space: KeyboardEvent = new KeyboardEvent('keydown', { key: ' ', bubbles: true, cancelable: true });
+
+        host.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+        fixture.detectChanges();
+        host.dispatchEvent(space);
+        fixture.detectChanges();
+
+        expect(fixture.componentInstance.asked.map((sort: ISortModel<string>) => sort.sortDirection)).toEqual(['asc', 'desc']);
+        expect(space.defaultPrevented).toBe(true);
+    });
+
+    it('в порядок обхода встаёт только сортируемая шапка', () => {
+        const fixture: ComponentFixture<HeaderHostComponent> = setup();
+        const host: HTMLElement = fixture.debugElement.query(By.directive(RtDataTableHeaderCellComponent)).nativeElement;
+
+        expect(host.getAttribute('tabindex')).toBe('0');
+        expect(host.getAttribute('role')).toBe('button');
+
+        fixture.componentInstance.column.set({ ...columnOf({}), sorting: undefined });
+        fixture.detectChanges();
+        host.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+        fixture.detectChanges();
+
+        expect(host.getAttribute('tabindex')).toBeNull();
+        expect(host.getAttribute('role')).toBeNull();
+        expect(fixture.componentInstance.asked).toEqual([]);
+    });
+
     it('SC-UKV-318 — имя значка шапки первого кита рисует набор кита', () => {
         const fixture: ComponentFixture<HeaderHostComponent> = setup({ icon: { glyph: 'info', placement: 'left' } });
 

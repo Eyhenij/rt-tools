@@ -89,6 +89,15 @@ Then the action carries no such modifier, and its label is never taken away
 
 Covered by the component test of the bar.
 
+### SC-UKV-375 — an action with an icon is named by its label
+
+Given a bar with an action that has an icon and a label, and one that has a label alone
+When it is drawn under any pointer
+Then the button with the icon carries its label as its name, so it keeps the name where the label
+is taken away; the button without an icon needs none and carries none
+
+Covered by the component test of the bar.
+
 ### SC-UKV-209 — the labels come from the dictionary of the kit
 
 Given a bar raised with the label set of the kit

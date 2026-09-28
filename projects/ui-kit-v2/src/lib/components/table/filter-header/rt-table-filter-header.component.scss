@@ -8,8 +8,6 @@
         --rt-table-filter-header-operator-color-set: var(--rt-color-text-primary);
         --rt-table-filter-header-operator-bg-hover: var(--rt-color-bg-subtle);
         --rt-table-filter-header-operator-focus-shadow: var(--rt-shadow-focus-ring);
-        --rt-table-filter-header-menu-radius: var(--rt-radius-md);
-        --rt-table-filter-header-menu-shadow: var(--rt-shadow-card);
 
         // Ширина — от шапки колонки, а не от содержимого: ячейка, меряющая себя содержимым,
         // отдаёт полю ровно столько, сколько поле попросило само, и выбор из списка с пустым
@@ -61,7 +59,12 @@
             flex: none;
         }
 
+        // Список рисуется в слое CDK, вне хоста: токены хоста туда не наследуются, поэтому
+        // ручки меню объявлены на самой панели списка.
         &__operators {
+            --rt-table-filter-header-menu-radius: var(--rt-radius-md);
+            --rt-table-filter-header-menu-shadow: var(--rt-shadow-card);
+
             display: flex;
             flex-direction: column;
             padding: var(--rt-space-1);

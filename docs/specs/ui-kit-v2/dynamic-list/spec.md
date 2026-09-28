@@ -56,8 +56,9 @@ no toolbar and no dynamic list: they see the section they came to — orders, st
   records at all is the state of the section; none under the filter is the state of the filter, and
   from there a person is shown the way back — the clearing of what they set.
 
-- **The pages are drawn only where there is more than one.** A row of numbers under a list of three
-  records is noise.
+- **The pages are drawn while there are more records than the smallest page size.** A row of numbers under a list of three
+  records is noise, and a bar hidden by the page count alone takes the size choice with it: whoever
+  picked the largest size could not go back to a smaller one.
 
 - **The consumer's own markup goes into the toolbar by two inputs, and neither of them is the
   search.** The left side takes the selectors, the right side the actions; the search field belongs

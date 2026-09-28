@@ -43,9 +43,9 @@ Then the empty place carries the clearing of the filter
 
 Covered by the component spec of the dynamic list family.
 
-### SC-UKV-170 — one page draws no pages
+### SC-UKV-170 — a list within the smallest page size draws no pages
 
-Given a list of records that fits in one page
+Given a list with no more records than the smallest page size
 When it is drawn
 Then the pagination is not in the markup
 

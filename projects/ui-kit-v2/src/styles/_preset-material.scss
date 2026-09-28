@@ -73,6 +73,7 @@
     /* Состояния: цвет роли и её светлая подложка */
     --rt-color-state-success: var(--rt-mat-green-100);
     --rt-color-state-success-bg: var(--rt-mat-green-10);
+    --rt-color-state-success-text: var(--rt-mat-green-120);
     --rt-color-state-warning: var(--rt-mat-orange-100);
     --rt-color-state-warning-bg: var(--rt-mat-orange-5);
     --rt-color-state-warning-text: var(--rt-mat-orange-100);
@@ -108,8 +109,8 @@
     --rt-list-search-gap: var(--rt-space-4);
     --rt-list-search-font-size: var(--rt-text-md);
     --rt-list-search-icon-size: var(--rt-size-6);
-    --rt-list-search-icon-color: var(--mat-sys-on-surface-variant, var(--rt-mat-neutral-30));
-    --rt-list-search-color-placeholder: var(--mat-sys-on-surface-variant, var(--rt-mat-neutral-30));
+    --rt-list-search-icon-color: var(--mat-sys-on-surface-variant, var(--rt-mat-neutral-60));
+    --rt-list-search-color-placeholder: var(--mat-sys-on-surface-variant, var(--rt-mat-neutral-60));
 
     /* Панель настройки колонок первого кита: плашка колонки залита цветом выбранного пункта
        Material, значки — в тоне on-surface-variant темы. Сняты с панели на витрине первого кита. */
@@ -126,7 +127,7 @@
     --rt-list-action-icon-size: var(--rt-size-6);
     --rt-list-action-color: var(--rt-mat-neutral-60);
     --rt-list-table-icon-size: var(--rt-size-6);
-    --rt-list-table-icon-color: var(--mat-sys-on-surface-variant, var(--rt-mat-neutral-30));
+    --rt-list-table-icon-color: var(--mat-sys-on-surface-variant, var(--rt-mat-neutral-60));
     --rt-list-table-head-divider-color: var(--mat-sys-outline, var(--rt-mat-neutral-30));
     --rt-list-table-button-size: calc(var(--rt-size-8) + var(--rt-size-1));
     --rt-list-table-button-radius: var(--rt-radius-full);
@@ -263,6 +264,7 @@
     --rt-pagination-box-current-color-bg: var(--rt-mat-neutral-40);
     --rt-pagination-box-current-color-text: var(--rt-mat-neutral-0);
     --rt-pagination-box-current-color-border: var(--rt-mat-dark-30);
+    --rt-pagination-arrow-shadow: inset 0 0 0 var(--rt-border-width-thin) var(--rt-mat-dark-30);
     --rt-overlay-menu-bg: var(--mat-menu-container-color, var(--rt-color-bg-surface));
     --rt-overlay-select-selected-bg: color-mix(in srgb, var(--mat-sys-on-surface, var(--rt-mat-neutral-0)) 12%, transparent);
     --rt-overlay-menu-current-bg: color-mix(in srgb, var(--mat-sys-on-surface, var(--rt-mat-neutral-0)) 12%, transparent);

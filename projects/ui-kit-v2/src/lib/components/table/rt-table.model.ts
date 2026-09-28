@@ -44,6 +44,8 @@ export namespace IRtTable {
     export interface FilterCell {
         key: string;
         filter: IRtTable.ColumnFilter | null;
+        /** Ячейка колонки действий строки: она нулевая, как шапка и ячейки этой колонки. */
+        actions: boolean;
     }
 
     /** Каким видом колонка отбирает: вид решает, какую готовую часть кита позовёт шапка. */

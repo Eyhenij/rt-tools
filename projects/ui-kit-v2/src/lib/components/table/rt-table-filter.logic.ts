@@ -1,5 +1,6 @@
 import { EFilterOperatorType, IFilterModel, TFilterOperatorType } from '@rt-tools/utils';
 
+import { RT_TABLE_ROW_ACTIONS_COLUMN } from './rt-table-columns.logic';
 import { IRtTable } from './rt-table.model';
 
 /** Значение условия в том виде, в каком оно хранится и сверяется. */
@@ -94,7 +95,8 @@ export function startOperatorOf(
  *
  * У колонки без объявленного отбора ячейка пустая, и место своё она держит: убрать её значило бы
  * сдвинуть все следующие ячейки на одну колонку влево — поле города встало бы под шапкой цены.
- * Колонка действий строки приходит сюда тем же путём, последней, и отбора у неё нет никогда.
+ * Колонка действий строки приходит сюда тем же путём, последней, и отбора у неё нет никогда; её
+ * ячейка помечена, чтобы строка отбора не дала ширины колонке, которая места не занимает.
  */
 export function filterCellsOf(
     columns: ReadonlyArray<string>,
@@ -103,6 +105,6 @@ export function filterCellsOf(
     return columns.map((key: string): IRtTable.FilterCell => {
         const column: IRtTable.ColumnConfig | undefined = config.find((item: IRtTable.ColumnConfig): boolean => item.key === key);
 
-        return { key, filter: column?.filter ?? null };
+        return { key, filter: column?.filter ?? null, actions: key === RT_TABLE_ROW_ACTIONS_COLUMN };
     });
 }

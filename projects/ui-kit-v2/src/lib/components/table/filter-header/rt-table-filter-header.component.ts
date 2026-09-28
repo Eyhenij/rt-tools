@@ -10,8 +10,11 @@ import {
     effect,
     inject,
     input,
+    linkedSignal,
     output,
     untracked,
+    viewChild,
+    WritableSignal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -60,6 +63,15 @@ const OPERATOR_LABELS: Readonly<Record<TFilterOperatorType, TRtKitLabelKey>> = O
  * набор условий, уходящий на каждый знак, спрашивает сервер по букве.
  */
 const INSTANT_KINDS: ReadonlySet<IRtTable.FilterKind> = new Set<IRtTable.FilterKind>(['select', 'date']);
+
+/** Одно и то же условие: колонка, вид сравнения и значение совпадают. */
+function sameFilter(a: IFilterModel<string> | null, b: IFilterModel<string> | null): boolean {
+    if (a === null || b === null) {
+        return a === b;
+    }
+
+    return a.propertyName === b.propertyName && a.operatorType === b.operatorType && a.value === b.value;
+}
 
 /** Один вид сравнения в списке: сам вид и его подпись из словаря. */
 interface IOperatorView {
@@ -139,10 +151,25 @@ export class RtTableFilterHeaderComponent {
     /** Значение ведёт форма: поля кита берут его только так. */
     protected readonly control: FormControl<TRtTableFilterInput> = new FormControl<TRtTableFilterInput>('');
 
-    /** Условие по этой колонке либо `null`: по нему видно и значение, и вид сравнения. */
-    protected readonly own: Signal<IFilterModel<string> | null> = computed((): IFilterModel<string> | null =>
-        filterOf(this.filters(), this.propertyName())
+    /**
+     * Условие по этой колонке либо `null`: по нему видно и значение, и вид сравнения. Сверяется по
+     * содержимому, а не по ссылке: перемена соседней колонки приносит новый набор, и условие этой
+     * колонки, пересобранное потребителем тем же, переменой не считается.
+     */
+    protected readonly own: Signal<IFilterModel<string> | null> = computed(
+        (): IFilterModel<string> | null => filterOf(this.filters(), this.propertyName()),
+        { equal: sameFilter }
     );
+
+    /**
+     * Вид сравнения, выбранный здесь, пока значения нет: условия ещё нет, и хранить выбор, кроме
+     * самой ячейки, негде. Без него выбор терялся бы, и введённое значение уходило бы с видом по
+     * умолчанию. Условие этой колонки, пришедшее снаружи, выбор сбрасывает — вид берётся из него.
+     */
+    protected readonly chosenOperator: WritableSignal<TFilterOperatorType | null> = linkedSignal<
+        IFilterModel<string> | null,
+        TFilterOperatorType | null
+    >({ source: this.own, computation: (): TFilterOperatorType | null => null });
 
     protected readonly value: Signal<TRtTableFilterValue> = computed((): TRtTableFilterValue => this.own()?.value ?? '');
 
@@ -150,6 +177,12 @@ export class RtTableFilterHeaderComponent {
     protected readonly clearable: Signal<boolean> = computed((): boolean => this.value() !== '');
 
     protected readonly operator: Signal<TFilterOperatorType> = computed((): TFilterOperatorType => {
+        const chosen: TFilterOperatorType | null = this.chosenOperator();
+
+        if (chosen !== null) {
+            return chosen;
+        }
+
         const own: IFilterModel<string> | null = this.own();
 
         return own !== null ? own.operatorType : startOperatorOf(this.filter()?.operators, this.filter()?.startOperator);
@@ -168,6 +201,9 @@ export class RtTableFilterHeaderComponent {
     protected readonly clearLabel: Signal<string> = rtKitLabel('uiClear');
     protected readonly filtersLabel: Signal<string> = rtKitLabel('uiFilters');
 
+    /** Список видов сравнения открыт в слое; выбор пункта закрывает его отсюда — сам пункт не умеет. */
+    protected readonly operatorPopover: Signal<RtPopoverDirective | undefined> = viewChild(RtPopoverDirective);
+
     /** Список видов сравнения с подписями: шаблон читает готовое, а не зовёт словарь сам. */
     protected readonly operatorViews: Signal<readonly IOperatorView[]> = computed((): readonly IOperatorView[] =>
         this.operators().map((type: TFilterOperatorType): IOperatorView => ({ type, label: this.#operatorLabels[type]() }))
@@ -175,6 +211,12 @@ export class RtTableFilterHeaderComponent {
 
     /** Подпись текущего вида сравнения — её несёт кнопка, открывающая список. */
     protected readonly operatorLabel: Signal<string> = computed((): string => this.#operatorLabels[this.operator()]());
+
+    /**
+     * Имя кнопки для скринридера: что она открывает и какой вид стоит сейчас. Одно «Фильтры»
+     * не отличало бы кнопку одной колонки от другой и не говорило бы, какой вид выбран.
+     */
+    protected readonly operatorAriaLabel: Signal<string> = computed((): string => `${this.filtersLabel()}: ${this.operatorLabel()}`);
 
     /** Сообщает ли этот вид сразу: у выбора и даты недописанного состояния нет. */
     protected readonly instant: Signal<boolean> = computed((): boolean => INSTANT_KINDS.has(this.filter()?.kind ?? 'text'));
@@ -221,6 +263,8 @@ export class RtTableFilterHeaderComponent {
     }
 
     protected onOperator(operatorType: TFilterOperatorType): void {
+        this.operatorPopover()?.close();
+        this.chosenOperator.set(operatorType);
         this.#report(filtersWithOperator(this.filters(), this.propertyName(), operatorType));
     }
 

@@ -21,7 +21,8 @@ Covered by the component spec of the area.
 
 ### SC-UKV-150 — the sign stands without a single movement of a hand
 
-Given a scroll area asked for the sign, whose content does not fit the body at the first paint
+Given a scroll area asked for the sign, whose content does not fit the body at the first paint or
+stops fitting later, when items arrive or grow
 When it is drawn and nobody has scrolled
 Then the strip with the icon is in the markup
 

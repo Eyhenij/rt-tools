@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, WritableSignal } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
 
 import { createRtFixture, el, qa, textOf } from '../../../testing/rt-kit-testing';
@@ -47,6 +47,31 @@ class ScrollAreaHostComponent {
 class ScrollAreaHintHostComponent {
     public isScrollHintShown: boolean = true;
     public hasFooter: boolean = false;
+}
+
+/** Область, чей список дорастает после первого показа: пункты приходят позже, как с сервера. */
+@Component({
+    selector: 'rt-scroll-area-growing-host',
+    template: `
+        <rt-scroll-area [isScrollHintShown]="true">
+            <ng-container *rtScrollAreaContent>
+                <ul qa-dataid="growing-list">
+                    @for (item of items(); track item) {
+                        <li>{{ item }}</li>
+                    }
+                </ul>
+            </ng-container>
+            @if (hasFooter()) {
+                <ng-container *rtScrollAreaFooter><span>подвал</span></ng-container>
+            }
+        </rt-scroll-area>
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtScrollAreaComponent, RtScrollAreaContentDirective, RtScrollAreaFooterDirective],
+})
+class ScrollAreaGrowingHostComponent {
+    public readonly items: WritableSignal<number[]> = signal<number[]>([1]);
+    public readonly hasFooter: WritableSignal<boolean> = signal<boolean>(true);
 }
 
 interface ISizes {
@@ -210,17 +235,93 @@ describe('RtScrollAreaComponent', (): void => {
          */
         let notifySize: (() => void) | null = null;
 
+        /** Узлы, за размером которых наблюдатель следит сейчас. */
+        let observed: Set<Element> = new Set<Element>();
+
         beforeEach((): void => {
             notifySize = null;
+            observed = new Set<Element>();
             (globalThis as unknown as { ResizeObserver: unknown }).ResizeObserver = class {
                 constructor(callback: () => void) {
                     notifySize = callback;
                 }
 
-                public observe(): void {}
+                public observe(target: Element): void {
+                    observed.add(target);
+                }
 
-                public disconnect(): void {}
+                public disconnect(): void {
+                    observed.clear();
+                }
             };
+        });
+
+        /** Высоты тела ставятся руками: разметка в спеке не рисуется. */
+        function size(body: HTMLElement, scrollHeight: number, clientHeight: number): void {
+            Object.defineProperty(body, 'scrollHeight', { value: scrollHeight, configurable: true });
+            Object.defineProperty(body, 'clientHeight', { value: clientHeight, configurable: true });
+        }
+
+        /** Наблюдатель состава зовёт обратный вызов задачей микроочереди — её надо дождаться. */
+        async function settle(fixture: ComponentFixture<unknown>): Promise<void> {
+            await Promise.resolve();
+            fixture.detectChanges();
+        }
+
+        it('SC-UKV-150 — список дорос после показа: признак встаёт без движения руки', async (): Promise<void> => {
+            const fixture: ComponentFixture<ScrollAreaGrowingHostComponent> = createRtFixture(ScrollAreaGrowingHostComponent);
+            const body: HTMLElement = qa(fixture, 'scroll-area-body')?.nativeElement as HTMLElement;
+            size(body, 200, 200);
+            notifySize?.();
+            fixture.detectChanges();
+            expect(qa(fixture, 'scroll-area-scroll-hint')).toBeNull();
+
+            // Пришли пункты: высота тела та же, выросло содержимое под ним.
+            size(body, 600, 200);
+            fixture.componentInstance.items.set([1, 2, 3, 4, 5]);
+            fixture.detectChanges();
+            await settle(fixture);
+
+            expect(qa(fixture, 'scroll-area-scroll-hint')).not.toBeNull();
+        });
+
+        it('SC-UKV-150 — под наблюдением размера стоит и содержимое тела, а не одно тело', (): void => {
+            const fixture: ComponentFixture<ScrollAreaGrowingHostComponent> = createRtFixture(ScrollAreaGrowingHostComponent);
+            const body: HTMLElement = qa(fixture, 'scroll-area-body')?.nativeElement as HTMLElement;
+            const list: HTMLElement = qa(fixture, 'growing-list')?.nativeElement as HTMLElement;
+
+            expect([observed.has(body), observed.has(list)]).toEqual([true, true]);
+
+            // Строка пункта выросла по высоте, состав не менялся: сообщает наблюдатель размера.
+            size(body, 600, 200);
+            notifySize?.();
+            fixture.detectChanges();
+
+            expect(qa(fixture, 'scroll-area-scroll-hint')).not.toBeNull();
+        });
+
+        it('SC-UKV-153 — пересозданный подвал встаёт под наблюдение заново', (): void => {
+            const fixture: ComponentFixture<ScrollAreaGrowingHostComponent> = createRtFixture(ScrollAreaGrowingHostComponent);
+            const first: HTMLElement = qa(fixture, 'scroll-area-footer')?.nativeElement as HTMLElement;
+            expect(observed.has(first)).toBe(true);
+
+            fixture.componentInstance.hasFooter.set(false);
+            fixture.detectChanges();
+            fixture.componentInstance.hasFooter.set(true);
+            fixture.detectChanges();
+            const second: HTMLElement = qa(fixture, 'scroll-area-footer')?.nativeElement as HTMLElement;
+
+            expect(second).not.toBe(first);
+            expect([observed.has(first), observed.has(second)]).toEqual([false, true]);
+        });
+
+        it('разрушенная область снимает наблюдение', (): void => {
+            const fixture: ComponentFixture<ScrollAreaGrowingHostComponent> = createRtFixture(ScrollAreaGrowingHostComponent);
+            expect(observed.size).toBeGreaterThan(0);
+
+            fixture.destroy();
+
+            expect(observed.size).toBe(0);
         });
 
         afterEach((): void => {

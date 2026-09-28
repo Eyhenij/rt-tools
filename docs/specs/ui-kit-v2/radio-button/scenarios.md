@@ -194,3 +194,11 @@ When the assistive means read it
 Then they read that name together with the role and the choice
 
 Covered: `projects/ui-kit-v2/src/lib/components/radio-button/rt-radio-button.component.spec.ts`.
+
+### SC-UKV-373 — choosing another radio button of the control takes the dot off the first
+
+Given two radio buttons are bound to one control of a form, reactive or template
+When the person presses the first and then the second
+Then the control holds the value of the second, and only the second is declared chosen
+
+Covered: `projects/ui-kit-v2/src/lib/components/radio-button/rt-radio-button.component.spec.ts`.

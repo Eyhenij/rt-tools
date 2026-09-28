@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, signal, Signal, WritableSignal } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 
 import { IPageModel } from '@rt-tools/utils';
 
@@ -13,6 +15,19 @@ const ONE_PAGE: IPageModel = { pageNumber: 1, pageSize: 20, totalCount: 3 };
 
 /** Три страницы: ряд номеров нужен. */
 const THREE_PAGES: IPageModel = { pageNumber: 1, pageSize: 20, totalCount: 55 };
+
+/** Всё легло на одну страницу крупного размера, но записей больше наименьшего размера страницы. */
+const ONE_LARGE_PAGE: IPageModel = { pageNumber: 1, pageSize: 50, totalCount: 30 };
+
+/** Стили семьи: ярусы вертушки и области записей jsdom не считает, их читают из источника. */
+const STYLES: string = readFileSync(join(__dirname, 'rt-dynamic-list.component.scss'), 'utf8');
+
+/** Объявления одного элемента блока — от его открывающей скобки до первой закрывающей. */
+function rulesOf(element: string): string {
+    const start: number = STYLES.indexOf(`&__${element} {`);
+
+    return start < 0 ? '' : STYLES.slice(start, STYLES.indexOf('}', start));
+}
 
 /** Ожидание поиска кита с запасом: оператор один на кит, и его задержка тут не переписывается. */
 const SEARCH_SETTLE_MS: number = 1000;
@@ -41,6 +56,10 @@ class DynamicListHostComponent {
 
 function setup(inputs: Readonly<Record<string, unknown>> = {}): ComponentFixture<RtDynamicListComponent> {
     return createRtFixture(RtDynamicListComponent, inputs);
+}
+
+function searchInput(fixture: ComponentFixture<unknown>): HTMLInputElement {
+    return el(fixture, 'input')?.nativeElement as HTMLInputElement;
 }
 
 function buttonOf(fixture: ComponentFixture<unknown>, id: string): HTMLButtonElement | null {
@@ -95,6 +114,60 @@ describe('RtDynamicListComponent', (): void => {
 
             expect(heard).toEqual(['сте']);
         });
+
+        it('поиск потребителя ставится в поле при каждой смене и эхом ему не возвращается', (): void => {
+            jest.useFakeTimers();
+
+            const fixture: ComponentFixture<RtDynamicListComponent> = setup({ searchTerm: 'стенд' });
+            const heard: string[] = [];
+
+            fixture.componentInstance.searchChange.subscribe((value: string): void => {
+                heard.push(value);
+            });
+
+            expect(searchInput(fixture).value).toBe('стенд');
+
+            setInputs(fixture, { searchTerm: 'заказ' });
+            fixture.detectChanges();
+
+            expect(searchInput(fixture).value).toBe('заказ');
+
+            setInputs(fixture, { searchTerm: '' });
+            fixture.detectChanges();
+            jest.advanceTimersByTime(SEARCH_SETTLE_MS);
+            jest.useRealTimers();
+
+            expect(searchInput(fixture).value).toBe('');
+            expect(heard).toEqual([]);
+        });
+
+        it('сброс отбора очищает поле поиска и сообщает потребителю пустой поиск', (): void => {
+            jest.useFakeTimers();
+
+            const fixture: ComponentFixture<RtDynamicListComponent> = setup({ showClearFilters: true, filtered: true });
+            const heard: string[] = [];
+            let cleared: number = 0;
+
+            fixture.componentInstance.searchChange.subscribe((value: string): void => {
+                heard.push(value);
+            });
+            fixture.componentInstance.filtersCleared.subscribe((): void => {
+                cleared += 1;
+            });
+
+            searchInput(fixture).value = 'стенд';
+            searchInput(fixture).dispatchEvent(new Event('input'));
+            jest.advanceTimersByTime(SEARCH_SETTLE_MS);
+
+            buttonOf(fixture, 'dynamic-list-clear-filters')?.click();
+            fixture.detectChanges();
+            jest.advanceTimersByTime(SEARCH_SETTLE_MS);
+            jest.useRealTimers();
+
+            expect(searchInput(fixture).value).toBe('');
+            expect(heard).toEqual(['стенд', '']);
+            expect(cleared).toBe(1);
+        });
     });
 
     describe('пустое место', (): void => {
@@ -113,7 +186,7 @@ describe('RtDynamicListComponent', (): void => {
     });
 
     describe('страницы', (): void => {
-        it('SC-UKV-170 — под списком в одну страницу ряда номеров нет', (): void => {
+        it('SC-UKV-170 — под списком не длиннее наименьшего размера страницы ряда номеров нет', (): void => {
             const fixture: ComponentFixture<RtDynamicListComponent> = setup({ pageModel: ONE_PAGE });
 
             expect(qa(fixture, 'dynamic-list-pagination')).toBeNull();
@@ -122,6 +195,35 @@ describe('RtDynamicListComponent', (): void => {
             fixture.detectChanges();
 
             expect(qa(fixture, 'dynamic-list-pagination')).not.toBeNull();
+        });
+
+        it('выбравший крупный размер страницы, при котором всё легло на одну, видит полосу и может вернуть размер поменьше', (): void => {
+            const fixture: ComponentFixture<RtDynamicListComponent> = setup({ pageModel: ONE_LARGE_PAGE });
+
+            expect(qa(fixture, 'dynamic-list-pagination')).not.toBeNull();
+            expect((qa(fixture, 'dynamic-list-pagination')?.nativeElement as HTMLElement).style.display).not.toBe('none');
+        });
+    });
+
+    describe('выбор', (): void => {
+        it('флажок «выбрать все» остаётся на месте, когда выбрано что-то, и рядом с ним стоит счётчик', (): void => {
+            const fixture: ComponentFixture<RtDynamicListComponent> = setup({ selectable: true, selectedCount: 0 });
+
+            expect(qa(fixture, 'dynamic-list-select-all')).not.toBeNull();
+            expect(qa(fixture, 'dynamic-list-selected-count')).toBeNull();
+
+            setInputs(fixture, { selectedCount: 2, someSelected: true });
+            fixture.detectChanges();
+
+            expect(qa(fixture, 'dynamic-list-select-all')).not.toBeNull();
+            expect(textOf(qa(fixture, 'dynamic-list-selected-count'))).toContain('2');
+        });
+    });
+
+    describe('подгрузка', (): void => {
+        it('вертушка подгрузки стоит над областью записей: та замкнута в свой ярус и шапку таблицы над вертушкой не поднимает', (): void => {
+            expect(rulesOf('veil')).toContain('z-index: 1;');
+            expect(rulesOf('content')).toContain('isolation: isolate;');
         });
     });
 

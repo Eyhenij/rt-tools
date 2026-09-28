@@ -133,6 +133,13 @@ const SCOPE_NOTE = {
    what the dark theme wins over the set by. */`,
 };
 
+/* Every piece closes with the coarse pointer's override. The piece lays out the light set on its own node,
+   and a name that refers to the input's font size — the option of a list, the search of a list panel —
+   is resolved there too; without the override after the set a touch screen got the dense desktop
+   size inside any piece, and WebKit zoomed the page on focusing such a field. The override goes after
+   the set in the same rule, so it wins by order at the same weight whatever rule the node matches. */
+const COARSE_INCLUDE = `    @include coarse.rt-coarse-pointer-tokens;\n`;
+
 const errors = [];
 function fail(message) {
     errors.push(message);
@@ -281,10 +288,13 @@ const files = {
     // The coarse pointer lives in a file of its own: together with the light set the file outgrew the
     // length limit. The aggregator forwards it right after the light set — the query rule has the
     // same weight as the root one and wins by coming later.
+    //
+    // The body is carried into a mixin: a local piece of the theme lays out the light set again on its
+    // own node, and without the override after it the piece returned to the dense desktop value.
     [`${stylesDir}/_coarse-pointer.scss`]:
-        `${BANNER}\n\n${COARSE_NOTE}\n@media (pointer: coarse) {\n    :root {\n` +
+        `${BANNER}\n\n${COARSE_NOTE}\n@mixin rt-coarse-pointer-tokens {\n    @media (pointer: coarse) {\n` +
         coarsePointer.map((token) => `        ${token.name}: ${token.value};`).join('\n') +
-        `\n    }\n}\n`,
+        `\n    }\n}\n\n:root {\n    @include rt-coarse-pointer-tokens;\n}\n`,
 
     [`${stylesDir}/_theme-dark.scss`]:
         `${BANNER}\n\n${PREAMBLE.dark}\n\n@mixin rt-theme-dark-tokens {\n${COLOR_SCHEME_NOTE}\n    color-scheme: dark;\n\n${renderNodes(darkNodes)}\n}\n\n` +
@@ -298,30 +308,30 @@ const files = {
 
     [`${stylesDir}/_theme-scope.scss`]:
         `${BANNER}\n\n${PREAMBLE.scope}\n\n@use './semantic' as semantic;\n@use './theme-dark' as dark;\n` +
-        `@use './preset-material' as material;\n\n` +
-        `${SCOPE_NOTE.light}\n[data-theme='light']:not(:root) {\n    color-scheme: light;\n\n    @include semantic.rt-theme-light-tokens;\n}\n\n` +
+        `@use './preset-material' as material;\n@use './coarse-pointer' as coarse;\n\n` +
+        `${SCOPE_NOTE.light}\n[data-theme='light']:not(:root) {\n    color-scheme: light;\n\n    @include semantic.rt-theme-light-tokens;\n${COARSE_INCLUDE}}\n\n` +
         `${SCOPE_NOTE.dark}\n[data-theme='dark']:not(:root) {\n    @include semantic.rt-theme-light-tokens;\n` +
-        `    @include dark.rt-theme-dark-tokens;\n}\n\n` +
+        `    @include dark.rt-theme-dark-tokens;\n${COARSE_INCLUDE}}\n\n` +
         `${SCOPE_NOTE.presetNode}\n[data-preset='material']:not(:root),\n.rt-preset-material:not(:root) {\n` +
-        `    @include semantic.rt-theme-light-tokens;\n    @include material.rt-preset-material-tokens;\n}\n\n` +
+        `    @include semantic.rt-theme-light-tokens;\n    @include material.rt-preset-material-tokens;\n${COARSE_INCLUDE}}\n\n` +
         `${SCOPE_NOTE.presetOnDark}\n[data-theme='dark'] [data-preset='material'],\n` +
         `[data-theme='dark'] .rt-preset-material,\nhtml.rt-theme-dark [data-preset='material'],\n` +
         `html.rt-theme-dark .rt-preset-material {\n` +
         `    @include semantic.rt-theme-light-tokens;\n    @include material.rt-preset-material-tokens;\n` +
-        `    @include dark.rt-theme-dark-tokens;\n    @include material.rt-preset-material-dark-tokens;\n}\n\n` +
+        `    @include dark.rt-theme-dark-tokens;\n    @include material.rt-preset-material-dark-tokens;\n${COARSE_INCLUDE}}\n\n` +
         `[data-theme='dark'] [data-theme='light'] [data-preset='material'],\n` +
         `[data-theme='dark'] [data-theme='light'] .rt-preset-material,\n` +
         `html.rt-theme-dark [data-theme='light'] [data-preset='material'],\n` +
         `html.rt-theme-dark [data-theme='light'] .rt-preset-material {\n` +
-        `    @include semantic.rt-theme-light-tokens;\n    @include material.rt-preset-material-tokens;\n}\n\n` +
+        `    @include semantic.rt-theme-light-tokens;\n    @include material.rt-preset-material-tokens;\n${COARSE_INCLUDE}}\n\n` +
         `${SCOPE_NOTE.preset}\n[data-preset='material'][data-theme='light']:not(:root),\n` +
         `[data-preset='material'] [data-theme='light']:not(:root),\n` +
         `.rt-preset-material[data-theme='light']:not(:root),\n.rt-preset-material [data-theme='light']:not(:root) {\n` +
-        `    @include semantic.rt-theme-light-tokens;\n    @include material.rt-preset-material-tokens;\n}\n\n` +
+        `    @include semantic.rt-theme-light-tokens;\n    @include material.rt-preset-material-tokens;\n${COARSE_INCLUDE}}\n\n` +
         `[data-preset='material'][data-theme='dark']:not(:root),\n[data-preset='material'] [data-theme='dark']:not(:root),\n` +
         `.rt-preset-material[data-theme='dark']:not(:root),\n.rt-preset-material [data-theme='dark']:not(:root) {\n` +
         `    @include semantic.rt-theme-light-tokens;\n    @include material.rt-preset-material-tokens;\n` +
-        `    @include dark.rt-theme-dark-tokens;\n    @include material.rt-preset-material-dark-tokens;\n}\n\n` +
+        `    @include dark.rt-theme-dark-tokens;\n    @include material.rt-preset-material-dark-tokens;\n${COARSE_INCLUDE}}\n\n` +
         `${SCOPE_NOTE.presetRootDark}\n:root[data-theme='dark'][data-preset='material'],\n:root[data-theme='dark'].rt-preset-material,\n` +
         `html.rt-theme-dark[data-preset='material'],\nhtml.rt-theme-dark.rt-preset-material {\n` +
         `    @include material.rt-preset-material-dark-tokens;\n}\n`,

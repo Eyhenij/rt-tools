@@ -27,6 +27,11 @@ const BEM_BLOCK: string = 'rt-action-bar';
 interface IActionView {
     readonly action: IRtActionBar.Action;
     readonly modifiers: Readonly<Record<string, boolean>>;
+    /**
+     * Имя кнопки для вспомогательных средств — у действия со значком. На грубом указателе подпись
+     * снята правилом стиля, а значок немой: без имени кнопка осталась бы безымянной.
+     */
+    readonly ariaLabel: string | null;
 }
 
 /**
@@ -83,6 +88,7 @@ export class RtActionBarComponent {
         this.config().actions.map((action: IRtActionBar.Action): IActionView => ({
             action,
             modifiers: { danger: action.look === 'danger', withIcon: !!action.icon },
+            ariaLabel: action.icon ? action.label : null,
         }))
     );
 

@@ -178,4 +178,43 @@ describe('RtTooltipDirective', (): void => {
 
         expect(document.querySelectorAll('rt-tooltip').length).toBe(1);
     });
+
+    describe('тема куска', (): void => {
+        function show(fixture: ComponentFixture<TooltipHostComponent>): void {
+            hover(fixture, 'mouseenter');
+            jest.advanceTimersByTime(300);
+            fixture.detectChanges();
+        }
+
+        afterEach((): void => {
+            document.documentElement.removeAttribute('data-theme');
+        });
+
+        it('подсказка из тёмного куска несёт тему куска на коробке и снимает её, когда кусок ушёл', (): void => {
+            const fixture: ComponentFixture<TooltipHostComponent> = setup();
+            (fixture.nativeElement as HTMLElement).setAttribute('data-theme', 'dark');
+
+            show(fixture);
+            expect(tip()?.closest('.cdk-overlay-pane')?.getAttribute('data-theme')).toBe('dark');
+
+            hover(fixture, 'mouseleave');
+            (fixture.nativeElement as HTMLElement).removeAttribute('data-theme');
+            show(fixture);
+
+            const pane: Element | null | undefined = tip()?.closest('.cdk-overlay-pane');
+            expect(pane).not.toBeNull();
+            expect(pane?.hasAttribute('data-theme')).toBe(false);
+        });
+
+        it('тема корня страницы на коробку не копируется', (): void => {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            const fixture: ComponentFixture<TooltipHostComponent> = setup();
+
+            show(fixture);
+
+            const pane: Element | null | undefined = tip()?.closest('.cdk-overlay-pane');
+            expect(pane).not.toBeNull();
+            expect(pane?.hasAttribute('data-theme')).toBe(false);
+        });
+    });
 });

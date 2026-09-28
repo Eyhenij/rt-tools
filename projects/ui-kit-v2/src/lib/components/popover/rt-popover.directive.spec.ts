@@ -223,6 +223,30 @@ describe('RtPopoverDirective', (): void => {
             expect(panel()?.classList.contains('rt-menu-panel')).toBe(true);
             expect(panel()?.classList.contains('narrow')).toBe(true);
         });
+
+        it('панель из куска `rtTheme` несёт тему куска и снимает её, когда куска больше нет', (): void => {
+            const fixture: ComponentFixture<PopoverHostComponent> = setup();
+            const host: HTMLElement = fixture.nativeElement as HTMLElement;
+            host.setAttribute('data-theme', 'dark');
+
+            clickTrigger(fixture);
+            expect(panel()?.getAttribute('data-theme')).toBe('dark');
+
+            clickTrigger(fixture);
+            host.removeAttribute('data-theme');
+            clickTrigger(fixture);
+            expect(panel()?.hasAttribute('data-theme')).toBe(false);
+        });
+
+        it('тема корня страницы на панель не переносится — панель наследует её и так', (): void => {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            const fixture: ComponentFixture<PopoverHostComponent> = setup();
+
+            clickTrigger(fixture);
+
+            expect(panel()?.hasAttribute('data-theme')).toBe(false);
+            document.documentElement.removeAttribute('data-theme');
+        });
     });
     describe('ширина панели', (): void => {
         /** Коробка панели живёт в оверлее CDK: у неё свой элемент, и размер ставится на него. */

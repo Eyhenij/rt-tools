@@ -141,6 +141,60 @@ describe('RtTableFilterHeaderComponent', (): void => {
         expect(reported[0][0]).toEqual({ propertyName: 'title', operatorType: EFilterOperatorType.CONTAINS, value: 'Сочи' });
     });
 
+    it('выбор вида сравнения в списке закрывает список', (): void => {
+        create();
+
+        qa(fixture, 'table-filter-operator')?.nativeElement.click();
+        fixture.detectChanges();
+
+        const items: HTMLElement[] = Array.from(document.querySelectorAll<HTMLElement>('[qa-dataid="table-filter-operator-item"]'));
+
+        expect(items.length).toBeGreaterThan(1);
+
+        items[2].click();
+        fixture.detectChanges();
+
+        expect(document.querySelectorAll('[qa-dataid="table-filter-operators"]')).toHaveLength(0);
+    });
+
+    it('вид сравнения, выбранный до значения, уходит вместе с введённым значением', (): void => {
+        create({ filters: [OTHER] });
+
+        chooseOperator(EFilterOperatorType.CONTAINS);
+
+        expect(qa(fixture, 'table-filter-operator')?.nativeElement.textContent.trim()).toBe('Contains');
+
+        setInputs(fixture, { filters: [{ ...OTHER, value: 'Москва' }] });
+        fixture.detectChanges();
+        type('Сочи');
+        commit();
+
+        expect(reported).toHaveLength(1);
+        expect(reported[0]).toContainEqual({ propertyName: 'title', operatorType: EFilterOperatorType.CONTAINS, value: 'Сочи' });
+    });
+
+    it('условие своей колонки, пришедшее снаружи, сбрасывает вид, выбранный здесь', (): void => {
+        create();
+
+        chooseOperator(EFilterOperatorType.CONTAINS);
+        setInputs(fixture, { filters: [{ ...filterOfTitle('Сочи'), operatorType: EFilterOperatorType.NOT_EQUALS }] });
+        fixture.detectChanges();
+        type('Москва');
+        commit();
+
+        expect(reported[0]).toEqual([{ propertyName: 'title', operatorType: EFilterOperatorType.NOT_EQUALS, value: 'Москва' }]);
+    });
+
+    it('кнопка вида сравнения называет для скринридера нынешний вид', (): void => {
+        create({ filters: [{ ...filterOfTitle('Сочи'), operatorType: EFilterOperatorType.CONTAINS }] });
+
+        const label: string = qa(fixture, 'table-filter-operator')?.nativeElement.getAttribute('aria-label');
+        const text: string = qa(fixture, 'table-filter-operator')?.nativeElement.textContent.trim();
+
+        expect(text).not.toBe('');
+        expect(label).toContain(text);
+    });
+
     it('SC-UKV-223: дата сверяется в том виде, в каком хранится', (): void => {
         const day: Date = new Date('2026-09-18T00:00:00.000Z');
 

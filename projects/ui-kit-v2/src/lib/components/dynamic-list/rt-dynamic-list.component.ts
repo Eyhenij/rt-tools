@@ -7,6 +7,7 @@ import {
     computed,
     contentChild,
     DestroyRef,
+    effect,
     inject,
     input,
     InputSignal,
@@ -16,12 +17,13 @@ import {
     output,
     OutputEmitterRef,
     Signal,
+    untracked,
     ViewEncapsulation,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-import { distinctUntilChanged, map } from 'rxjs';
+import { filter, map } from 'rxjs';
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { IPageModel, TNullable } from '@rt-tools/utils';
@@ -41,8 +43,11 @@ import { IRtDynamicList } from './rt-dynamic-list.model';
 
 const BEM_BLOCK: string = 'rt-dynamic-list';
 
-/** Меньше этого числа страниц ряд номеров не рисуется: под списком из трёх записей он — шум. */
-const MIN_PAGES_TO_SHOW: number = 2;
+/**
+ * Размеры страницы, которые предлагает полоса страниц. Семья передаёт их полосе сама: по наименьшему
+ * из них она решает, рисовать ли полосу, и то же решение принимает полоса у себя.
+ */
+const PER_PAGE_OPTIONS: ReadonlyArray<number> = [20, 50, 100];
 
 /**
  * Список записей со своей панелью инструментов.
@@ -85,9 +90,17 @@ const MIN_PAGES_TO_SHOW: number = 2;
 export class RtDynamicListComponent implements OnInit {
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
 
+    /**
+     * Последнее, что знают и потребитель, и поле: отправленное потребителю или поставленное им самим.
+     * Одно и то же дважды не спрашивается, а поставленное потребителем не возвращается ему эхом.
+     */
+    #lastSearch: string = '';
+
     protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
 
     protected readonly searchControl: FormControl<string> = new FormControl<string>('', { nonNullable: true });
+
+    protected readonly perPageOptions: ReadonlyArray<number> = PER_PAGE_OPTIONS;
 
     protected readonly selectorsTpl: Signal<TNullable<RtDynamicListToolbarSelectorsDirective>> = contentChild(
         RtDynamicListToolbarSelectorsDirective
@@ -122,7 +135,11 @@ export class RtDynamicListComponent implements OnInit {
         return this.emptyReason() === 'filter' ? this.t().uiNothingFound : this.t().uiNoRows;
     });
 
-    /** Ряд номеров рисуется только там, где страниц больше одной. */
+    /**
+     * Полоса страниц рисуется, пока записей больше наименьшего размера страницы — то же правило, что у
+     * самой полосы. Число страниц при нынешнем размере тут не решает: выбравший крупный размер, при
+     * котором всё легло на одну страницу, иначе терял вместе с полосой и дорогу к размеру поменьше.
+     */
     protected readonly isPaginationShown: Signal<boolean> = computed((): boolean => {
         const page: TNullable<IPageModel> = this.pageModel();
 
@@ -130,7 +147,7 @@ export class RtDynamicListComponent implements OnInit {
             return false;
         }
 
-        return Math.ceil(page.totalCount / Math.max(page.pageSize, 1)) >= MIN_PAGES_TO_SHOW;
+        return page.totalCount > Math.min(...PER_PAGE_OPTIONS);
     });
 
     /**
@@ -214,6 +231,9 @@ export class RtDynamicListComponent implements OnInit {
 
     public readonly emptyDescription: InputSignal<string | null> = input<string | null>(null);
 
+    /** Поиск потребителя: поле следует за ним при каждой смене и потребителю его не возвращает. */
+    public readonly searchTerm: InputSignal<TNullable<string>> = input<TNullable<string>>('');
+
     public readonly searchChange: OutputEmitterRef<string> = output<string>();
 
     public readonly refreshed: OutputEmitterRef<void> = output<void>();
@@ -228,6 +248,22 @@ export class RtDynamicListComponent implements OnInit {
 
     public readonly allSelectedChange: OutputEmitterRef<boolean> = output<boolean>();
 
+    constructor() {
+        // Поиск потребителя ставится в поле при каждой его смене. Поле, где уже набрано то же самое,
+        // не трогается: ответ потребителя на набранное иначе сбивал бы каретку под рукой человека.
+        effect((): void => {
+            const term: string = this.searchTerm() ?? '';
+
+            untracked((): void => {
+                this.#lastSearch = term.trim();
+
+                if (this.searchControl.value.trim() !== this.#lastSearch) {
+                    this.searchControl.setValue(term, { emitEvent: false });
+                }
+            });
+        });
+    }
+
     public ngOnInit(): void {
         // Дебаунс непустого ввода; очистка крестиком применяется сразу — так же, как в списке
         // переписок: оператор один на кит, и два разных ожидания разошлись бы молча.
@@ -235,13 +271,28 @@ export class RtDynamicListComponent implements OnInit {
             .pipe(
                 map((value: string): string => value.trim()),
                 searchDebounce(),
-                distinctUntilChanged(),
+                filter((value: string): boolean => value !== this.#lastSearch),
                 takeUntilDestroyed(this.#destroyRef)
             )
-            .subscribe((value: string): void => this.searchChange.emit(value));
+            .subscribe((value: string): void => {
+                this.#lastSearch = value;
+                this.searchChange.emit(value);
+            });
     }
 
     protected onSelectAll(checked: boolean): void {
         this.allSelectedChange.emit(checked);
+    }
+
+    /**
+     * Сброс отбора снимает и поиск: пустой ответ под поиском — тоже ответ под отбором, и дорога назад
+     * без очистки поля вела бы к тому же пустому ответу. Очистка уходит потребителю обычным путём.
+     */
+    protected onClearFilters(): void {
+        if (this.searchControl.value) {
+            this.searchControl.setValue('');
+        }
+
+        this.filtersCleared.emit();
     }
 }

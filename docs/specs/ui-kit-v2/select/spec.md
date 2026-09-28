@@ -76,9 +76,11 @@ a list: a field, a badge, an icon, a pill with a name.
   it draws. The former behaviour stays reachable by an input: a field-shaped trigger and a panel of
   its exact width are a pair a consumer may want kept.
 
-- **The panel opens whole, without a scroll of its own.** A list scrolled inside a box hides how
-  much there is. No height limit is set by default; a consumer who needs one sets it, and the scroll
-  appears with it — only they know what stands around the panel.
+- **The panel stops at the kit's height limit, and a long list scrolls inside it.** Without a
+  limit a long list ran past the bottom edge of the screen, and the options below the edge could
+  not be reached. By default the panel takes the kit's limit, 256px, from the styles. A consumer
+  sets their own limit as a length, or takes the limit off with `none` for a short list that must
+  open whole.
 
 - **The move by keys stays visible, and its outline follows the content of the button.** Taking the
   field's ring off takes the only sign of focus with it, and a person moving by the keyboard is left

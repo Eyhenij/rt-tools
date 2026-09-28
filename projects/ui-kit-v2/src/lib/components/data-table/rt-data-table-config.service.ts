@@ -2,7 +2,7 @@ import { DestroyRef, Injectable, Signal, WritableSignal, inject, signal } from '
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { Observable, Subject } from 'rxjs';
-import { concatMap, map, switchMap, take } from 'rxjs/operators';
+import { concatMap, map, switchMap, take, takeUntil } from 'rxjs/operators';
 
 import { IDBStorageService } from '@rt-tools/core';
 import { areArraysEqual, TNullable } from '@rt-tools/utils';
@@ -52,6 +52,9 @@ export class RtDataTableConfigService<ENTITY_TYPE> {
     /** Просьбы прочитать сохранённую настройку. */
     readonly #readSource: Subject<IConfigRead<ENTITY_TYPE>> = new Subject<IConfigRead<ENTITY_TYPE>>();
 
+    /** Настройку поменяли здесь: чтение, начатое раньше, отвечать уже не должно. */
+    readonly #updatedSource: Subject<void> = new Subject<void>();
+
     /** Просьбы записать и снять настройку — один источник на оба действия. */
     readonly #writeSource: Subject<TConfigWrite<ENTITY_TYPE>> = new Subject<TConfigWrite<ENTITY_TYPE>>();
 
@@ -66,9 +69,10 @@ export class RtDataTableConfigService<ENTITY_TYPE> {
      * Потоки чтения и записи объявлены один раз, а методы только толкают в них просьбы.
      *
      * Чтение — `switchMap`: отвечает последний вызов, потому что настройка, прочитанная под
-     * прежний состав столбцов, к нынешнему уже не относится. Запись и снятие — один поток и
-     * `concatMap`: разведённые по двум, они теряют порядок между собой, и снятие, обогнавшее
-     * запись, оставляет в хранилище снятое.
+     * прежний состав столбцов, к нынешнему уже не относится. Чтение, ещё не вернувшееся к
+     * `updateConfig`, гасится им: иначе прочитанное позже затёрло бы то, что поменяли после.
+     * Запись и снятие — один поток и `concatMap`: разведённые по двум, они теряют порядок между
+     * собой, и снятие, обогнавшее запись, оставляет в хранилище снятое.
      */
     constructor() {
         this.#readSource
@@ -76,6 +80,7 @@ export class RtDataTableConfigService<ENTITY_TYPE> {
                 switchMap((read: IConfigRead<ENTITY_TYPE>): Observable<IRtDataTable.Config.Data<ENTITY_TYPE>> =>
                     this.#iDBStorageService.get(read.storageKey).pipe(
                         take(1),
+                        takeUntil(this.#updatedSource),
                         map((savedConfig: TNullable<IStoredConfig<ENTITY_TYPE>>): IRtDataTable.Config.Data<ENTITY_TYPE> =>
                             this.#configOf(read.config, savedConfig)
                         )
@@ -100,6 +105,7 @@ export class RtDataTableConfigService<ENTITY_TYPE> {
     }
 
     public updateConfig(storageKey: string, config: IRtDataTable.Config.Data<ENTITY_TYPE>): void {
+        this.#updatedSource.next();
         this.#writeSource.next({ kind: 'set', storageKey, config });
         this.#tableConfig.set(config);
     }

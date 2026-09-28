@@ -32,7 +32,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { map, merge, Observable, Subject, switchMap } from 'rxjs';
 
-import { materialPresetClassesOf } from '../../util/material-preset';
+import { carryThemeScope, materialPresetClassesOf } from '../../util/material-preset';
 import { IRtPopover } from './rt-popover.model';
 
 const HOVER_CLOSE_DELAY_MS: number = 100;
@@ -202,6 +202,9 @@ export class RtPopoverDirective implements OnDestroy {
             auto: {},
         };
         overlayRef.updateSize(sizeByWidth[this.width()]);
+        // Тема куска `rtTheme` вокруг host'а едет на коробку панели: панель лежит в конце
+        // страницы, и без этого список из тёмной карточки рисовался темой страницы.
+        carryThemeScope(overlayRef.overlayElement, this.#elementRef.nativeElement);
         const portal: TemplatePortal<unknown> = new TemplatePortal(this.template() as TemplateRef<unknown>, this.#viewContainerRef, {
             $implicit: this.context(),
         });

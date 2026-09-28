@@ -1,6 +1,9 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { join } from 'node:path';
+
+import * as sass from 'sass';
 
 import { createRtFixture, el, hostClasses, qa, textOf } from '../../../testing/rt-kit-testing';
 import { RtSelectTriggerDirective } from '../select/rt-select-trigger.directive';
@@ -17,6 +20,17 @@ const OPTIONS: ReadonlyArray<IRtSelect.Option<string>> = [
 /** Панель списка живёт в оверлее CDK — ищем её в документе. */
 function options(): HTMLElement[] {
     return Array.from(document.querySelectorAll('[qa-dataid="multiselect-option"]'));
+}
+
+/**
+ * Правило панели из собранных стилей. Стили компонента в спеку не приезжают, а предел высоты по
+ * умолчанию живёт только в них: без него длинный список уходил за нижний край экрана.
+ */
+function panelRule(): string {
+    const css: string = sass.compile(join(__dirname, 'rt-multiselect.component.scss')).css;
+    const at: number = css.indexOf('.rt-multiselect__panel {');
+
+    return at < 0 ? '' : css.slice(at, css.indexOf('}', at));
 }
 
 function panel(): HTMLElement | null {
@@ -56,6 +70,23 @@ function chipLabels<T>(fixture: ComponentFixture<T>): string[] {
 describe('RtMultiselectComponent', (): void => {
     it('несёт свой BEM-блок', (): void => {
         expect(hostClasses(setup())).toContain('rt-multiselect');
+    });
+
+    it('SC-UKV-179: без назначенного предела панель берёт предел кита и прокручивается внутри', (): void => {
+        const fixture: ComponentFixture<RtMultiselectComponent<string>> = setup();
+
+        open(fixture);
+
+        expect(panel()?.style.getPropertyValue('--rt-multiselect-panel-max-height')).toBe('');
+        expect(panelRule()).toContain('--rt-multiselect-panel-max-height: var(--rt-input-panel-max-height);');
+        expect(panelRule()).toContain('max-height: var(--rt-multiselect-panel-max-height);');
+        expect(panelRule()).toContain('overflow-y: auto;');
+    });
+
+    it('SC-UKV-179: назначенный предел и `none` ложатся на саму панель', (): void => {
+        open(setup({ panelMaxHeight: 'none' }));
+
+        expect(panel()?.style.getPropertyValue('--rt-multiselect-panel-max-height')).toBe('none');
     });
 
     it('без выбора показывает переведённую подсказку', (): void => {

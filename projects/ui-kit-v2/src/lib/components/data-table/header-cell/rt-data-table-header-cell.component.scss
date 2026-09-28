@@ -7,14 +7,22 @@
     .rt-data-table-header-cell {
         --rt-data-table-header-cell-arrow-side: var(--rt-border-width-thick);
         --rt-data-table-header-cell-arrow-height: var(--rt-size-1);
+        --rt-data-table-header-cell-focus-shadow: var(--rt-shadow-focus-ring);
 
         display: flex;
         align-items: center;
         justify-content: space-between;
         cursor: pointer;
 
-        &:hover .rt-data-table-header-cell__arrows {
+        // Фокус с клавиатуры показывает то же, что наведение: стрелки порядка и кольцо фокуса.
+        &:hover .rt-data-table-header-cell__arrows,
+        &:focus-visible .rt-data-table-header-cell__arrows {
             visibility: visible;
+        }
+
+        &:focus-visible {
+            box-shadow: var(--rt-data-table-header-cell-focus-shadow);
+            outline: none;
         }
 
         &__label {

@@ -94,6 +94,24 @@ describe('RtActionBarComponent', (): void => {
         expect(classesOf(qa(fixture, 'action-bar-action'))).toContain('rt-action-bar__action--with-icon');
     });
 
+    it('SC-UKV-375 — действие со значком названо подписью и там, где подпись снята', (): void => {
+        // На грубом указателе подпись снимается правилом стиля целиком, а значок немой: имя кнопке
+        // даёт атрибут. Действию без значка он не нужен — его подпись видна всегда.
+        const fixture: ComponentFixture<RtActionBarComponent> = setup(
+            config({
+                actions: [
+                    { label: 'Удалить', icon: 'trash' },
+                    { label: 'Архив', icon: 'trash', menu: [{ label: 'В архив' }] },
+                    { label: 'Скачать' },
+                ],
+            })
+        );
+
+        expect(
+            qaAll(fixture, 'action-bar-action').map((node: DebugElement): string | null => node.attributes['aria-label'] ?? null)
+        ).toEqual(['Удалить', 'Архив', null]);
+    });
+
     it('SC-UKV-208 — у действия без значка такого модификатора нет', (): void => {
         const fixture: ComponentFixture<RtActionBarComponent> = setup(config({ actions: [{ label: 'Удалить' }] }));
 

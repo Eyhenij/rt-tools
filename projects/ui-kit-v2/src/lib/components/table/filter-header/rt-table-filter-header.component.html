@@ -9,7 +9,7 @@
             type="button"
             rtElem="operator"
             qa-dataid="table-filter-operator"
-            [attr.aria-label]="filtersLabel()"
+            [attr.aria-label]="operatorAriaLabel()"
             [rtMod]="{ set: clearable() }"
             [rtPopover]="operatorsTpl">
             {{ operatorLabel() }}

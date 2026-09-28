@@ -163,6 +163,43 @@ describe('RtDataTableSelectorsDirective', () => {
         expect(rowCheckbox(fixture, 0).getAttribute('aria-checked')).toBe('true');
     });
 
+    it('новая страница пересчитывает флажок страницы по своим строкам', async () => {
+        const fixture: ComponentFixture<SelectorsHostComponent> = setup();
+
+        pageCheckbox(fixture).click();
+        fixture.detectChanges();
+
+        expect(selectors(fixture).isPageEntitiesSelected()).toBe(true);
+
+        fixture.componentInstance.rows.set(PAGE_TWO);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
+
+        expect(selectors(fixture).isPageEntitiesSelected()).toBe(false);
+        expect(selectors(fixture).isPageEntitiesIndeterminate()).toBe(false);
+        expect(pageCheckbox(fixture).getAttribute('aria-checked')).toBe('false');
+
+        fixture.componentInstance.rows.set(PAGE_ONE);
+        fixture.detectChanges();
+
+        expect(selectors(fixture).isPageEntitiesSelected()).toBe(true);
+        expect(selectors(fixture).isPageEntitiesIndeterminate()).toBe(false);
+    });
+
+    it('страница с частью отмеченных строк по возвращении на неё промежуточна, а не отмечена', () => {
+        const fixture: ComponentFixture<SelectorsHostComponent> = setup();
+
+        markRow(fixture, 0);
+        fixture.componentInstance.rows.set(PAGE_TWO);
+        fixture.detectChanges();
+        fixture.componentInstance.rows.set(PAGE_ONE);
+        fixture.detectChanges();
+
+        expect(selectors(fixture).isPageEntitiesSelected()).toBe(false);
+        expect(selectors(fixture).isPageEntitiesIndeterminate()).toBe(true);
+    });
+
     it('SC-UKV-243 — снятие выбора не оставляет ни отметок, ни отмеченного флажка', async () => {
         const fixture: ComponentFixture<SelectorsHostComponent> = setup();
 

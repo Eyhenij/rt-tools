@@ -99,39 +99,36 @@ export class RtScrollAreaComponent {
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
 
     /**
-     * Наблюдатель за размером тела и подвала. Событие прокрутки приходит только после движения
-     * руки, а список не влезает уже в первую минуту показа: без наблюдателя признак появлялся бы
-     * у того, кто и так догадался прокрутить, и молчал у того, кому он нужен.
+     * Наблюдатель за размером тела, его содержимого и подвала. Событие прокрутки приходит только
+     * после движения руки, а список не влезает уже в первую минуту показа: без наблюдателя признак
+     * появлялся бы у того, кто и так догадался прокрутить, и молчал у того, кому он нужен.
      */
     #sizeWatch: TNullable<ResizeObserver> = null;
 
+    /**
+     * Наблюдатель за составом тела. Тело — окно постоянной высоты, и когда список дорастает под ним,
+     * размер тела не меняется: наблюдатель размера молчит. Пришедшие узлы ставятся под наблюдение
+     * размера здесь же — их высота меняется и после того, как они легли.
+     */
+    #contentWatch: TNullable<MutationObserver> = null;
+
+    /** Узлы, за которыми наблюдают сейчас: пересозданное тело или подвал ставятся под наблюдение заново. */
+    #watchedBody: HTMLElement | null = null;
+    #watchedFooter: HTMLElement | null = null;
+
     constructor() {
         afterRenderEffect((): void => {
-            const body: TNullable<ElementRef<HTMLElement>> = this.bodyRef();
+            const body: HTMLElement | null = this.bodyRef()?.nativeElement ?? null;
+            const footer: HTMLElement | null = this.footerRef()?.nativeElement ?? null;
 
             this.onBodyScroll();
 
-            if (!body || this.#sizeWatch || typeof ResizeObserver === 'undefined') {
-                return;
-            }
-
-            this.#sizeWatch = new ResizeObserver((): void => this.onBodyScroll());
-            this.#sizeWatch.observe(body.nativeElement);
-
-            const footer: TNullable<ElementRef<HTMLElement>> = this.footerRef();
-
-            // Подвал наблюдается наравне с телом: его высота меняется своим содержимым, а от неё
-            // считается подъём полосы. Не наблюдавшаяся, она осталась бы стоять по прежней высоте
-            // подвала и наехала бы на его первую строку.
-            if (footer) {
-                this.#sizeWatch.observe(footer.nativeElement);
+            if (body !== this.#watchedBody || footer !== this.#watchedFooter) {
+                this.#watch(body, footer);
             }
         });
 
-        this.#destroyRef.onDestroy((): void => {
-            this.#sizeWatch?.disconnect();
-            this.#sizeWatch = null;
-        });
+        this.#destroyRef.onDestroy((): void => this.#unwatch());
     }
 
     /**
@@ -185,5 +182,61 @@ export class RtScrollAreaComponent {
         const paddingTop: number = parseFloat(getComputedStyle(node).paddingTop) || 0;
 
         this.hintBottom.set(Math.max(node.offsetHeight - paddingTop, 0));
+    }
+
+    /** Ставит под наблюдение нынешние тело и подвал; прежние наблюдатели снимаются. */
+    #watch(body: HTMLElement | null, footer: HTMLElement | null): void {
+        this.#unwatch();
+        this.#watchedBody = body;
+        this.#watchedFooter = footer;
+
+        if (!body) {
+            return;
+        }
+
+        if (typeof ResizeObserver !== 'undefined') {
+            this.#sizeWatch = new ResizeObserver((): void => this.onBodyScroll());
+            this.#observeSizes();
+        }
+
+        if (typeof MutationObserver !== 'undefined') {
+            this.#contentWatch = new MutationObserver((): void => {
+                this.#observeSizes();
+                this.onBodyScroll();
+            });
+            this.#contentWatch.observe(body, { childList: true, subtree: true, characterData: true });
+        }
+    }
+
+    /**
+     * Размер наблюдается у тела, у каждого его прямого потомка и у подвала. Подвал — наравне с
+     * телом: от его высоты считается подъём полосы, и не наблюдавшаяся, она осталась бы стоять по
+     * прежней высоте подвала и наехала бы на его первую строку.
+     */
+    #observeSizes(): void {
+        const watch: TNullable<ResizeObserver> = this.#sizeWatch;
+        const body: HTMLElement | null = this.#watchedBody;
+
+        if (!watch || !body) {
+            return;
+        }
+
+        // Состав тела сменился — ушедшие узлы снимаются вместе со всеми, пришедшие ставятся заново.
+        watch.disconnect();
+        watch.observe(body);
+        Array.from(body.children).forEach((child: Element): void => watch.observe(child));
+
+        if (this.#watchedFooter) {
+            watch.observe(this.#watchedFooter);
+        }
+    }
+
+    #unwatch(): void {
+        this.#sizeWatch?.disconnect();
+        this.#sizeWatch = null;
+        this.#contentWatch?.disconnect();
+        this.#contentWatch = null;
+        this.#watchedBody = null;
+        this.#watchedFooter = null;
     }
 }

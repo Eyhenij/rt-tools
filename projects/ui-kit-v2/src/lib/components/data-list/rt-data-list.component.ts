@@ -66,6 +66,17 @@ const SCROLLBAR_SIZE: string = 'var(--rt-size-3)';
 /** Скрытая полоса — нулевой размер: прокрутка остаётся, видно её не будет. */
 const SCROLLBAR_HIDDEN: string = '0';
 
+/** Свойства полос прокрутки, которые список ставит на корень страницы и снимает, уходя. */
+const SCROLLBAR_PROPERTIES: ReadonlyArray<string> = [
+    '--rt-data-table-scrollbar-vertical-width',
+    '--rt-data-table-scrollbar-horizontal-height',
+    '--rt-data-table-scrollbar-width',
+    '--rt-data-table-scrollbar-color',
+];
+
+/** Сколько живых списков держат полосы на корне каждой страницы: снимает их только последний. */
+const SCROLLBAR_HOLDERS: WeakMap<HTMLElement, number> = new WeakMap<HTMLElement, number>();
+
 /**
  * Список записей первого кита во втором: панель действий, таблица, полоса страниц, заглушка
  * пустого списка и вид загрузки.
@@ -285,6 +296,22 @@ export class RtDataListComponent<
 
             this.#setOrRemove('--rt-data-table-scrollbar-width', standard.width);
             this.#setOrRemove('--rt-data-table-scrollbar-color', standard.color);
+        });
+
+        /* Последний ушедший список уносит выбор с корня: иначе полосы, скрытые настройкой списка,
+           оставались бы скрытыми у каждой таблицы страницы и после него. Пока на странице живёт
+           другой список, свойства остаются — они общие для всех списков страницы. */
+        SCROLLBAR_HOLDERS.set(this.#pageRoot, (SCROLLBAR_HOLDERS.get(this.#pageRoot) ?? 0) + 1);
+        this.#destroyRef.onDestroy((): void => {
+            const left: number = (SCROLLBAR_HOLDERS.get(this.#pageRoot) ?? 1) - 1;
+
+            SCROLLBAR_HOLDERS.set(this.#pageRoot, left);
+            if (left > 0) {
+                return;
+            }
+            SCROLLBAR_PROPERTIES.forEach((property: string): void => {
+                this.#pageRoot.style.removeProperty(property);
+            });
         });
 
         this.#openSettingsSource

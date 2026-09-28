@@ -9,7 +9,7 @@ import {
 import { ComponentPortal } from '@angular/cdk/portal';
 import { ComponentRef, Directive, ElementRef, inject, input, InputSignal, InputSignalWithTransform, OnDestroy } from '@angular/core';
 
-import { materialPresetClassesOf } from '../../util/material-preset';
+import { carryThemeScope, materialPresetClassesOf } from '../../util/material-preset';
 import { RtTooltipComponent } from './rt-tooltip.component';
 import { IRtTooltip } from './rt-tooltip.model';
 
@@ -93,6 +93,8 @@ export class RtTooltipDirective implements OnDestroy {
             return;
         }
         const overlayRef: OverlayRef = this.#ensureOverlay();
+        // Коробка переживает закрытие, а кусок темы вокруг host'а мог смениться — переносим на каждом показе.
+        carryThemeScope(overlayRef.overlayElement, this.#elementRef.nativeElement);
         const portal: ComponentPortal<RtTooltipComponent> = new ComponentPortal(RtTooltipComponent);
         this.#tooltipRef = overlayRef.attach(portal);
         this.#tooltipRef.instance.text.set(this.text());

@@ -63,6 +63,9 @@ next to it and a cross to let them all go.
   condition there is styling that rode into the code. The action says by a modifier that it has an
   icon, and the rule reaches the label by that. An action with no icon keeps its label under any
   pointer: shown by nothing at all, it cannot be pressed on purpose.
+- **An action with an icon carries its label as its name for a reader who hears the screen.** The
+  media query takes the label away whole, and the icon says nothing: without the name the button
+  is read as a nameless one exactly where the label is gone.
 - **Every label of the bar comes from the dictionary of the kit.** The count, the name of the cross
   for a reader who hears the screen — all of it. The first kit glued the count out of English words
   in its own template, and a consumer in another locale had no way to reach them.

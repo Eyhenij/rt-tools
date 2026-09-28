@@ -29,8 +29,8 @@ const BEM_BLOCK: string = 'rt-data-table-header-cell';
  * Ячейка шапки `rt-data-table` — шапка первого кита без Material.
  *
  * Нажатие на шапку сортируемой колонки просит порядок: по возрастанию, затем по убыванию, и так
- * по кругу — снятия порядка нет. Стрелки порядка видны при наведении и у колонки, по которой
- * порядок стоит. Значок шапки — набором кита по имени первого кита либо шаблоном приложения.
+ * по кругу — снятия порядка нет. С клавиатуры то же делают Enter и пробел. Стрелки порядка видны
+ * при наведении, при фокусе и у колонки, по которой порядок стоит. Значок шапки — набором кита по имени первого кита либо шаблоном приложения.
  */
 @Component({
     selector: 'rt-data-table-header-cell',
@@ -55,10 +55,17 @@ const BEM_BLOCK: string = 'rt-data-table-header-cell';
     host: {
         class: BEM_BLOCK,
         '[style.text-align]': 'headerModel().align',
+        '[attr.tabindex]': 'sortable() ? 0 : null',
+        '[attr.role]': 'sortable() ? "button" : null',
         '(click)': 'onClick()',
+        '(keydown.enter)': 'onKey($event)',
+        '(keydown.space)': 'onKey($event)',
     },
 })
 export class RtDataTableHeaderCellComponent<T = Record<string, unknown>> {
+    /** Шапка сортируемой колонки нажимается и с клавиатуры: у неё фокус и роль кнопки. */
+    protected readonly sortable: Signal<boolean> = computed(() => !!this.sortModel()?.propertyName);
+
     protected readonly active: Signal<boolean> = computed(() => dataTableSortActive(this.sortModel(), this.currentSortModel()));
 
     protected readonly labelMods: Signal<Record<string, string>> = computed(() => ({ align: this.headerModel().align }));
@@ -114,6 +121,14 @@ export class RtDataTableHeaderCellComponent<T = Record<string, unknown>> {
     > | null>(null);
 
     public readonly sortChange: OutputEmitterRef<ISortModel<string>> = output<ISortModel<string>>();
+
+    /** Enter и пробел просят порядок так же, как нажатие; пробел иначе прокрутил бы страницу. */
+    protected onKey(event: Event): void {
+        if (this.sortable()) {
+            event.preventDefault();
+            this.onClick();
+        }
+    }
 
     protected onClick(): void {
         const propertyName: TNullable<string> = this.sortModel()?.propertyName;

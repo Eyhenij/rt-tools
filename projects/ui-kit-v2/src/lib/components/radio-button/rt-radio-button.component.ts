@@ -1,10 +1,14 @@
 import { BooleanInput } from '@angular/cdk/coercion';
 import {
+    afterNextRender,
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
     computed,
+    DestroyRef,
     forwardRef,
+    inject,
+    Injector,
     input,
     InputSignal,
     InputSignalWithTransform,
@@ -15,7 +19,8 @@ import {
     ViewEncapsulation,
     WritableSignal,
 } from '@angular/core';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { AbstractControl, ControlValueAccessor, NG_VALUE_ACCESSOR, NgControl } from '@angular/forms';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
@@ -40,6 +45,9 @@ function checkedAttribute(value: BooleanInput | null | undefined): boolean | nul
  *
  * Отключение складывается из входа `disabled` и слова формы: форма зовёт `setDisabledState`
  * раньше первого обновления вида, и один общий signal затёр бы её слово.
+ *
+ * Каждая радиокнопка — свой `ControlValueAccessor`, и значение, отданное одной, форма соседям на
+ * том же контроле не пишет: поэтому модель берётся и у самого контрола.
  */
 @Component({
     selector: 'rt-radio-button',
@@ -65,6 +73,9 @@ function checkedAttribute(value: BooleanInput | null | undefined): boolean | nul
     },
 })
 export class RtRadioButtonComponent implements ControlValueAccessor {
+    readonly #injector: Injector = inject(Injector);
+    readonly #destroyRef: DestroyRef = inject(DestroyRef);
+
     #onChange: (value: unknown) => void = (): void => undefined;
     #onTouched: () => void = (): void => undefined;
 
@@ -106,6 +117,19 @@ export class RtRadioButtonComponent implements ControlValueAccessor {
 
     /** Радиокнопка стала выбранной. */
     public readonly checkedChange: OutputEmitterRef<boolean> = output<boolean>();
+
+    constructor() {
+        // Связь с формой спрашивается после первой отрисовки: директива формы на этом же узле
+        // берёт радиокнопку своим accessor, и спросить директиву в конструкторе — круговая
+        // зависимость, а до её первого прогона контрола у неё ещё нет.
+        afterNextRender((): void => {
+            const control: AbstractControl | null = this.#injector.get(NgControl, null, { self: true, optional: true })?.control ?? null;
+
+            // Значение, отданное соседкой, форма этой радиокнопке не пишет — модель берётся у самого
+            // контрола, иначе точка осталась бы у двух сразу.
+            control?.valueChanges.pipe(takeUntilDestroyed(this.#destroyRef)).subscribe((value: unknown): void => this.#model.set(value));
+        });
+    }
 
     public writeValue(value: unknown): void {
         this.#model.set(value);

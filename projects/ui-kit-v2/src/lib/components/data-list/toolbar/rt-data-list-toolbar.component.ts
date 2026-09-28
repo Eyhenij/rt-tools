@@ -5,6 +5,7 @@ import {
     computed,
     contentChild,
     DestroyRef,
+    effect,
     inject,
     input,
     InputSignal,
@@ -14,6 +15,7 @@ import {
     signal,
     Signal,
     TemplateRef,
+    untracked,
     ViewEncapsulation,
     WritableSignal,
 } from '@angular/core';
@@ -21,7 +23,7 @@ import { NgTemplateOutlet } from '@angular/common';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Observable, timer } from 'rxjs';
-import { debounce, distinctUntilChanged, map, tap } from 'rxjs/operators';
+import { debounce, filter, map, tap } from 'rxjs/operators';
 import { IRtInput } from '../../input/rt-input.model';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
@@ -81,6 +83,12 @@ function iconOf(glyph: string, fallback: IRtIcon.Name): IRtIcon.Name {
 export class RtDataListToolbarComponent {
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
 
+    /**
+     * Последнее, что знают и приложение, и поле: отправленное приложению или поставленное им самим.
+     * Одно и то же дважды не спрашивается, а поставленное приложением не возвращается ему эхом.
+     */
+    #lastSearch: string = '';
+
     protected readonly clearFiltersLabel: Signal<string> = rtKitLabel('dataListClearFilters');
     protected readonly refreshLabel: Signal<string> = rtKitLabel('dataListRefresh');
     protected readonly tableConfigLabel: Signal<string> = rtKitLabel('dataListTableConfig');
@@ -103,9 +111,12 @@ export class RtDataListToolbarComponent {
     /** В поле уже набирали — тогда на заглушке оно остаётся видимым и пустым. */
     readonly #isSearchTouched: WritableSignal<boolean> = signal(false);
 
-    /** Поле поиска видно, пока есть строки, а на заглушке — только когда в нём что-то было. */
+    /**
+     * Поле поиска видно, пока есть строки, а на заглушке — только когда поиск был: в поле что-то
+     * набирали или приложение само поставило непустой поиск, не нашедший строк.
+     */
     protected readonly isSearchShown: Signal<boolean> = computed(
-        () => !this.isPlaceholderShown() || !!this.#searchText() || this.#isSearchTouched()
+        () => !this.isPlaceholderShown() || !!this.#searchText() || this.#isSearchTouched() || !!this.searchTerm()?.trim()
     );
 
     protected readonly hasSelectors: Signal<boolean> = computed(() => this.isMultiSelect() || !!this.toolbarSelectorsTpl());
@@ -134,12 +145,12 @@ export class RtDataListToolbarComponent {
         transform: booleanAttribute,
     });
 
-    /** Что уже набрано в поиске: приложение ставит это при первом рисовании. */
     /** Контурные значки кнопок полосы — очистки отбора, обновления и настройки колонок, как у первого кита. */
     public readonly isToolbarActionsIconsOutlined: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
         transform: booleanAttribute,
     });
 
+    /** Поиск приложения: поле следует за ним при каждой смене, а не только при первом рисовании. */
     public readonly searchTerm: InputSignal<TNullable<string>> = input<TNullable<string>>('');
 
     public readonly searchChange: OutputEmitterRef<string> = output<string>();
@@ -166,7 +177,21 @@ export class RtDataListToolbarComponent {
     public readonly searchControl: FormControl<TNullable<string>> = new FormControl<TNullable<string>>(null);
 
     constructor() {
-        this.searchControl.setValue(this.searchTerm(), { emitEvent: false });
+        /* Поиск приложения ставится в поле при каждой его смене и приложению не возвращается. Поле,
+           где уже набрано то же самое, не трогается: иначе ответ приложения на набранное сбивал бы
+           каретку и хвостовые пробелы под рукой человека. */
+        effect(() => {
+            const term: string = this.searchTerm() ?? '';
+
+            untracked(() => {
+                this.#lastSearch = term.trim();
+
+                if ((this.searchControl.value ?? '').trim() !== this.#lastSearch) {
+                    this.searchControl.setValue(term, { emitEvent: false });
+                    this.#searchText.set(term);
+                }
+            });
+        });
 
         /* Набранное уходит приложению, когда человек перестал печатать; пустое — сразу, иначе
            очистка поля ждала бы полсекунды. Одно и то же дважды не спрашивается. */
@@ -178,10 +203,13 @@ export class RtDataListToolbarComponent {
                 }),
                 debounce((value: TNullable<string>): Observable<number> => timer(value ? SEARCH_DELAY_MS : 0)),
                 map((value: TNullable<string>) => (value ?? '').trim()),
-                distinctUntilChanged(),
+                filter((value: string) => value !== this.#lastSearch),
                 takeUntilDestroyed(this.#destroyRef)
             )
-            .subscribe((value: string) => this.searchChange.emit(value));
+            .subscribe((value: string) => {
+                this.#lastSearch = value;
+                this.searchChange.emit(value);
+            });
     }
 
     /** Отметить все записи; метод ставит директива выбора списка. */

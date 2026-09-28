@@ -23,7 +23,7 @@ import {
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { rtKitLabel } from '../../i18n';
-import { materialPresetClassesOf } from '../../util/material-preset';
+import { carryThemeScope, materialPresetClassesOf } from '../../util/material-preset';
 import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
 import { IRtIcon } from '../icon/rt-icon.model';
 import { IRtMenu } from './rt-menu.model';
@@ -174,9 +174,14 @@ export class RtMenuComponent {
      * запрос содержимого меню их не видит.
      */
     protected onAttach(): void {
-        const nodes: HTMLElement[] = Array.from(
-            this.overlay().overlayRef.overlayElement.querySelectorAll<HTMLElement>('[role="menuitem"]')
-        );
+        const pane: HTMLElement = this.overlay().overlayRef.overlayElement;
+
+        // Тема куска `rtTheme` вокруг меню едет на коробку панели, как у поповера и подсказки:
+        // панель лежит в конце страницы, и без этого меню из тёмной карточки рисовалось темой
+        // страницы. Зовётся на каждом открытии — кусок вокруг кнопки мог смениться.
+        carryThemeScope(pane, this.trigger().elementRef.nativeElement);
+
+        const nodes: HTMLElement[] = Array.from(pane.querySelectorAll<HTMLElement>('[role="menuitem"]'));
         const focusables: IRtMenu.Focusable[] = nodes.map((node: HTMLElement): IRtMenu.Focusable => ({
             disabled: node.getAttribute('aria-disabled') === 'true',
             focus: (): void => node.focus(),
@@ -200,8 +205,12 @@ export class RtMenuComponent {
         }
 
         if (event.key === 'Tab') {
-            // Tab уводит фокус со страницы меню дальше по порядку — панель за ним не остаётся.
+            // Tab уводит фокус дальше по порядку — панель за ним не остаётся. Панель лежит в конце
+            // страницы, и без возврата Tab ушёл бы с неё в никуда: фокус ставится на кнопку, а
+            // умолчание клавиши не отменяется — браузер ведёт его от кнопки к следующему, как у
+            // меню Material.
             this.close();
+            this.#focusTrigger();
             return;
         }
 

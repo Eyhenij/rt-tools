@@ -1,3 +1,4 @@
+import { DOCUMENT } from '@angular/common';
 import { PLATFORM_ID, ApplicationRef } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 
@@ -136,6 +137,28 @@ describe('тема кита', (): void => {
         expect(kept()).toBeNull();
         // Машину спрашивать некого: вывод остаётся светлым.
         expect(theme.current()).toBe('light');
+    });
+
+    it('SC-UKV-342 — документ без окна не роняет службу при создании', (): void => {
+        // Серверный документ бывает без окна вовсе; фабрика окна бросает на таком, и служба,
+        // взявшая окно полем, падала бы раньше первой строки своей работы.
+        const detached: Document = document.implementation.createHTMLDocument('');
+
+        for (const platform of ['server', 'browser']) {
+            TestBed.resetTestingModule();
+            TestBed.configureTestingModule({
+                providers: [
+                    ...provideRtKitTesting(),
+                    provideRtKit({ global: { theme: 'auto' } }),
+                    { provide: PLATFORM_ID, useValue: platform },
+                    { provide: DOCUMENT, useValue: detached },
+                ],
+            });
+
+            const theme: ThemeService = TestBed.inject(ThemeService);
+
+            expect([detached.defaultView, theme.choice(), theme.current()]).toEqual([null, 'auto', 'light']);
+        }
     });
 
     it('SC-UKV-350 — окно без умения спросить машину не роняет службу', (): void => {

@@ -1,6 +1,6 @@
 # The radio button
 
-**Status:** in force · **Revision:** 22 September 2026 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 28 September 2026 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the design of the kit — the colours come from its appointments; the material
 preset — it repaints the radio button without a rule of its own; a boolean input and the bare
 attribute — `disabled` and `card` take the bare attribute as truth
@@ -76,6 +76,9 @@ radio button.
 - **The radio button is one stop of the keyboard focus, the unavailable one included.** The sample
   keeps an unavailable radio button reachable by Tab and says it is unavailable; the neighbouring
   checkbox does the opposite, and the family follows the sample.
+- **Choosing one radio button of a control takes the choice off the rest bound to the same
+  control.** The form does not write a value given by one accessor into the others, so each radio
+  button follows the control itself.
 - **The focus reached from the keyboard is visible by the ring of the kit; the focus from a press
   is not.** The sample has no ring of its own; without one a person moving by Tab does not see
   where they are.
@@ -170,10 +173,11 @@ container gives it.
 
 ### Several objects
 
-Several radio buttons stand for one model, and choosing one must take the choice off the rest. How
-exactly that is held is an open question: the framework's forms do not write a value that came from
-one accessor back into the other accessors bound to the same control, and the sample has no group
-that would do it instead.
+Several radio buttons stand for one model, and choosing one takes the choice off the rest. The
+framework's forms do not write a value that came from one accessor back into the other accessors
+bound to the same control, so every radio button bound to a control follows the changes of the
+control itself. The template binding with a model per radio button reaches the same by change
+detection.
 
 ## Decisions
 
@@ -193,15 +197,13 @@ that would do it instead.
   unavailable one stays in the order of Tab; a choice by a key reports nothing outward; the dimming
   is the kit's step; no group; the rim that is not chosen takes the strong neutral border under the
   material preset.
+- **The radio button follows the bound control, not only what the form writes into it.** Closes
+  `Q-RB-1`. Rejected: a registry of values by the pattern of the framework's own radio buttons — it
+  needs a shared name, which the family does not have.
 
 ## Open questions
 
-- **Q-RB-1** — several radio buttons on one control of a reactive form. A press on one gives its value to the
-  control, but the neighbours bound to the same control are not told, and the one chosen before may
-  keep its dot. The template binding of the form rewrites every radio button by change detection;
-  the reactive one does not. Whether the family needs a registry of its own, a group, or a word in
-  its description that one model is shared through the template binding — the table does not meet
-  it: it gives the choice by the input.
+None.
 
 ## History of changes
 
@@ -209,3 +211,5 @@ that would do it instead.
   owner's sample.
 - 22 September 2026 — the agreement merged into the spec of the second kit as a subdomain of its own;
   the open question got the number `Q-RB-1`.
+- 28 September 2026 — by the review: radio buttons of one control take the choice off one another,
+  `Q-RB-1` closed.

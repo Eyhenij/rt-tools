@@ -28,7 +28,7 @@ import { map, merge, Observable, Subject, switchMap, takeUntil } from 'rxjs';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { materialPresetClassesOf } from '../../util/material-preset';
+import { carryThemeScope, materialPresetClassesOf } from '../../util/material-preset';
 import { RtToasterComponent } from '../toast/rt-toaster.component';
 import { RtContainerStateService } from './rt-container-state.service';
 import {
@@ -216,6 +216,8 @@ export class RtContainerComponent {
         }
 
         this.#blockScroll.enable();
+        // Коробка постоянная и лежит в конце страницы, а кусок темы вокруг контейнера мог смениться.
+        carryThemeScope(overlayRef.overlayElement, this.#host.nativeElement);
 
         this.#renderer.removeClass(overlayRef.overlayElement, 'rt-aside-overlay--entering');
         this.#renderer.removeClass(overlayRef.overlayElement, 'rt-aside-overlay--leaving');

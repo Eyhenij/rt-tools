@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, signal, Signal, WritableSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DebugElement, signal, Signal, WritableSignal } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
@@ -174,6 +174,26 @@ describe('RtDataTableComponent', () => {
         table.onSortChange({ propertyName: 'phone', sortDirection: EListSortOrder.ASC });
 
         expect(fixture.componentInstance.asked).toEqual([{ propertyName: 'title', sortDirection: 'asc' }]);
+    });
+
+    it('шапка сортируемой колонки называет скринридеру порядок, у прочих атрибута нет', () => {
+        const fixture: ComponentFixture<TableHostComponent> = setup();
+        const ariaSorts: () => Array<string | null> = (): Array<string | null> =>
+            qaAll(fixture, 'data-table-header-cell').map((cell: DebugElement): string | null =>
+                cell.nativeElement.getAttribute('aria-sort')
+            );
+
+        expect(ariaSorts()).toEqual(['none', null]);
+
+        fixture.componentInstance.sort.set({ propertyName: 'title', sortDirection: EListSortOrder.ASC });
+        fixture.detectChanges();
+
+        expect(ariaSorts()).toEqual(['ascending', null]);
+
+        fixture.componentInstance.sort.set({ propertyName: 'title', sortDirection: EListSortOrder.DESC });
+        fixture.detectChanges();
+
+        expect(ariaSorts()).toEqual(['descending', null]);
     });
 
     it('SC-UKV-322 — шаблон значка приложения рисует значок шапки вместо набора кита', () => {

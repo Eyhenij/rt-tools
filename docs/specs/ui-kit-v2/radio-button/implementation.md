@@ -21,6 +21,7 @@ calls it.
 - **Space and Enter choose the radio button from the keyboard.** — `projects/ui-kit-v2/src/lib/components/radio-button/rt-radio-button.component.ts:onKeydown`; scenarios `SC-UKV-287`, `SC-UKV-288`
 - **The radio button names its role, its choice and its unavailability to the assistive means.** — `projects/ui-kit-v2/src/lib/components/radio-button/rt-radio-button.component.html:aria-checked`; scenario `SC-UKV-289`
 - **The radio button is one stop of the keyboard focus, the unavailable one included.** — `projects/ui-kit-v2/src/lib/components/radio-button/rt-radio-button.component.html:tabindex`; scenario `SC-UKV-290`
+- **Choosing one radio button of a control takes the choice off the rest bound to the same control.** — `projects/ui-kit-v2/src/lib/components/radio-button/rt-radio-button.component.ts:valueChanges`; scenario `SC-UKV-373`
 - **The focus reached from the keyboard is visible by the ring of the kit; the focus from a press is not.** — `projects/ui-kit-v2/src/lib/components/radio-button/rt-radio-button.component.scss:focus-visible`; scenario `SC-UKV-291`
 - **The label and the explanation are texts given by the caller, and each is drawn only when given.** — `projects/ui-kit-v2/src/lib/components/radio-button/rt-radio-button.component.html:description`; scenarios `SC-UKV-292`, `SC-UKV-293`
 - **The explanation is smaller than the label and drawn in the muted colour.** — `projects/ui-kit-v2/src/lib/components/radio-button/rt-radio-button.component.scss:text-muted`; scenario `SC-UKV-293`
@@ -39,5 +40,4 @@ button family in both presets and both themes.
 
 ## What is not decided yet
 
-Several radio buttons on one control of a reactive form — the open question `Q-RB-1` of the spec
-next to it; the table does not meet it, it gives the choice by the input.
+Nothing: `Q-RB-1` is closed by the decision in the spec next to it.

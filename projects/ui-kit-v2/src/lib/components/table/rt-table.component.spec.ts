@@ -409,6 +409,25 @@ describe('RtTableComponent', (): void => {
         });
     });
 
+    it('ячейка колонки действий в строке отбора нулевая, как её шапка, а у прочих ячеек этой пометки нет', (): void => {
+        const fixture: ComponentFixture<TableFilterHostComponent> = createRtFixture(TableFilterHostComponent);
+
+        fixture.detectChanges();
+        fixture.componentInstance.showRowActions.set(true);
+        fixture.detectChanges();
+
+        const cells: DebugElement[] = qaAll(fixture, 'table-filter-cell');
+        const last: HTMLElement = cells[cells.length - 1].nativeElement;
+
+        expect(last.classList).toContain('rt-table__filter-cell--actions');
+        expect(last.getAttribute('aria-hidden')).toBe('true');
+        expect(
+            cells
+                .slice(0, -1)
+                .filter((cell: DebugElement): boolean => cell.nativeElement.classList.contains('rt-table__filter-cell--actions'))
+        ).toHaveLength(0);
+    });
+
     it('смена источника перерисовывает и строки, и карточки', (): void => {
         const fixture: ComponentFixture<TableHostComponent> = render(setupNarrow());
 

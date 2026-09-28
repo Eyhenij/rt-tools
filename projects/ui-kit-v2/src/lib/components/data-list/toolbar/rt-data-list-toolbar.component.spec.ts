@@ -19,6 +19,7 @@ import { RtDataListToolbarComponent } from './rt-data-list-toolbar.component';
             [isFiltersEmpty]="filtersEmpty()"
             [isPlaceholderShown]="placeholderShown()"
             [isToolbarActionsIconsOutlined]="outlined()"
+            [searchTerm]="term()"
             (searchChange)="searches.push($event)"
             (refreshAction)="refreshes = refreshes + 1"
             (clearFiltersAction)="cleared = cleared + 1"
@@ -47,6 +48,7 @@ class ToolbarHostComponent {
     public readonly outlined: WritableSignal<boolean> = signal(true);
     public readonly withActions: WritableSignal<boolean> = signal(false);
     public readonly withSelectors: WritableSignal<boolean> = signal(false);
+    public readonly term: WritableSignal<string> = signal('');
     public readonly searches: string[] = [];
     public refreshes: number = 0;
     public cleared: number = 0;
@@ -74,6 +76,10 @@ function typeSearch(fixture: ComponentFixture<ToolbarHostComponent>, text: strin
     field.value = text;
     field.dispatchEvent(new Event('input'));
     fixture.detectChanges();
+}
+
+function searchValue(fixture: ComponentFixture<ToolbarHostComponent>): string {
+    return (el(fixture, '[qa-dataid="data-list-search"] [qa-dataid="input-control"]')?.nativeElement as HTMLInputElement).value;
 }
 
 function press(fixture: ComponentFixture<ToolbarHostComponent>, anchor: string): void {
@@ -203,5 +209,58 @@ describe('RtDataListToolbarComponent', () => {
         fixture.detectChanges();
 
         expect(qa(fixture, 'data-list-search')).not.toBeNull();
+    });
+
+    it('поиск приложения ставится в поле при каждой смене и приложению эхом не возвращается', () => {
+        const fixture: ComponentFixture<ToolbarHostComponent> = setup();
+
+        fixture.componentInstance.term.set('анна');
+        fixture.detectChanges();
+
+        expect(searchValue(fixture)).toBe('анна');
+
+        fixture.componentInstance.term.set('');
+        fixture.detectChanges();
+        jest.advanceTimersByTime(500);
+
+        expect(searchValue(fixture)).toBe('');
+        expect(fixture.componentInstance.searches).toEqual([]);
+    });
+
+    it('после сброса поиска приложением тот же текст, набранный заново, снова спрашивают', () => {
+        const fixture: ComponentFixture<ToolbarHostComponent> = setup();
+
+        typeSearch(fixture, 'анна');
+        jest.advanceTimersByTime(500);
+        fixture.componentInstance.term.set('анна');
+        fixture.detectChanges();
+        fixture.componentInstance.term.set('');
+        fixture.detectChanges();
+        typeSearch(fixture, 'анна');
+        jest.advanceTimersByTime(500);
+
+        expect(fixture.componentInstance.searches).toEqual(['анна', 'анна']);
+    });
+
+    it('ответ приложения тем же поиском не трогает набранное в поле', () => {
+        const fixture: ComponentFixture<ToolbarHostComponent> = setup();
+
+        typeSearch(fixture, 'анна ');
+        jest.advanceTimersByTime(500);
+        fixture.componentInstance.term.set('анна');
+        fixture.detectChanges();
+
+        expect(searchValue(fixture)).toBe('анна ');
+    });
+
+    it('на заглушке поле поиска видно, когда непустой поиск поставило само приложение', () => {
+        const fixture: ComponentFixture<ToolbarHostComponent> = setup((host: ToolbarHostComponent) => host.placeholderShown.set(true));
+
+        expect(qa(fixture, 'data-list-search')).toBeNull();
+
+        fixture.componentInstance.term.set('анна');
+        fixture.detectChanges();
+
+        expect(searchValue(fixture)).toBe('анна');
     });
 });

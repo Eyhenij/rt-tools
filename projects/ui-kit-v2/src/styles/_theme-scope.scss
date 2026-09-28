@@ -20,12 +20,14 @@
 @use './semantic' as semantic;
 @use './theme-dark' as dark;
 @use './preset-material' as material;
+@use './coarse-pointer' as coarse;
 
 /* A light piece inside a page of another theme. */
 [data-theme='light']:not(:root) {
     color-scheme: light;
 
     @include semantic.rt-theme-light-tokens;
+    @include coarse.rt-coarse-pointer-tokens;
 }
 
 /* A dark piece inside a page of another theme. The light base goes under the dark answers, exactly
@@ -34,6 +36,7 @@
 [data-theme='dark']:not(:root) {
     @include semantic.rt-theme-light-tokens;
     @include dark.rt-theme-dark-tokens;
+    @include coarse.rt-coarse-pointer-tokens;
 }
 
 /* A node carrying the set on a light page. The set alone rewrites only its own names, and a name
@@ -45,6 +48,7 @@
 .rt-preset-material:not(:root) {
     @include semantic.rt-theme-light-tokens;
     @include material.rt-preset-material-tokens;
+    @include coarse.rt-coarse-pointer-tokens;
 }
 
 /* A piece carrying the set under a dark theme — of the page or of a piece around it. A component
@@ -61,6 +65,7 @@ html.rt-theme-dark .rt-preset-material {
     @include material.rt-preset-material-tokens;
     @include dark.rt-theme-dark-tokens;
     @include material.rt-preset-material-dark-tokens;
+    @include coarse.rt-coarse-pointer-tokens;
 }
 
 [data-theme='dark'] [data-theme='light'] [data-preset='material'],
@@ -69,6 +74,7 @@ html.rt-theme-dark [data-theme='light'] [data-preset='material'],
 html.rt-theme-dark [data-theme='light'] .rt-preset-material {
     @include semantic.rt-theme-light-tokens;
     @include material.rt-preset-material-tokens;
+    @include coarse.rt-coarse-pointer-tokens;
 }
 
 /* A piece inside a page of the styling set, and a piece carrying the set itself. The set lies over
@@ -80,6 +86,7 @@ html.rt-theme-dark [data-theme='light'] .rt-preset-material {
 .rt-preset-material [data-theme='light']:not(:root) {
     @include semantic.rt-theme-light-tokens;
     @include material.rt-preset-material-tokens;
+    @include coarse.rt-coarse-pointer-tokens;
 }
 
 [data-preset='material'][data-theme='dark']:not(:root),
@@ -90,6 +97,7 @@ html.rt-theme-dark [data-theme='light'] .rt-preset-material {
     @include material.rt-preset-material-tokens;
     @include dark.rt-theme-dark-tokens;
     @include material.rt-preset-material-dark-tokens;
+    @include coarse.rt-coarse-pointer-tokens;
 }
 
 /* The set and a dark theme both on the page root. The dark answers come after the set there by order,

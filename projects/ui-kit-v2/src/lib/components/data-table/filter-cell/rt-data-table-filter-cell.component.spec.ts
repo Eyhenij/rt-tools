@@ -114,6 +114,24 @@ describe('RtDataTableFilterCellComponent', () => {
         expect(operatorHint(fixture)).toBe('Contains');
     });
 
+    it('вид, выбранный в пустой колонке, переживает перемену условия чужой колонки', () => {
+        const fixture: ComponentFixture<FilterHostComponent> = setup('text', [EFilterOperatorType.EQUALS, EFilterOperatorType.CONTAINS]);
+
+        openOperators(fixture)[0].click();
+        fixture.detectChanges();
+
+        expect(operatorHint(fixture)).toBe('Contains');
+
+        fixture.componentInstance.filters.set([{ propertyName: 'city', operatorType: EFilterOperatorType.EQUALS, value: 'Сочи' }]);
+        fixture.detectChanges();
+
+        expect(operatorHint(fixture)).toBe('Contains');
+
+        pressEnter(fixture, typeInto(fixture, 'input-control', 'ann'));
+
+        expect(fixture.componentInstance.sent.at(-1)).toContainEqual({ propertyName: 'name', operatorType: 'contains', value: 'ann' });
+    });
+
     it('смена вида у колонки с условием отдаёт набор с новым видом', () => {
         const fixture: ComponentFixture<FilterHostComponent> = setup(
             'text',

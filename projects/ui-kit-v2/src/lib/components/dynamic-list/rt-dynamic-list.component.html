@@ -15,18 +15,18 @@
                 @if (selectable() || selectorsTpl()) {
                     <div rtElem="selectors" qa-dataid="dynamic-list-selectors">
                         @if (selectable()) {
+                            <rt-checkbox
+                                qa-dataid="dynamic-list-select-all"
+                                [ariaLabel]="t().uiSelectAll"
+                                [ngModel]="allSelected()"
+                                [indeterminate]="!allSelected() && someSelected()"
+                                [disabled]="selectAllDisabled()"
+                                (ngModelChange)="onSelectAll($event)" />
+
                             @if (selectedCount()) {
                                 <span rtElem="counter" qa-dataid="dynamic-list-selected-count">
                                     {{ selectedLabel() }}
                                 </span>
-                            } @else {
-                                <rt-checkbox
-                                    qa-dataid="dynamic-list-select-all"
-                                    [ariaLabel]="t().uiSelectAll"
-                                    [ngModel]="allSelected()"
-                                    [indeterminate]="!allSelected() && someSelected()"
-                                    [disabled]="selectAllDisabled()"
-                                    (ngModelChange)="onSelectAll($event)" />
                             }
                         }
 
@@ -50,7 +50,7 @@
                                 [ariaLabel]="t().uiClearFilters"
                                 [tooltip]="t().uiClearFilters"
                                 [disabled]="!filtered()"
-                                (clicked)="filtersCleared.emit()" />
+                                (clicked)="onClearFilters()" />
                         }
 
                         @if (showRefresh()) {
@@ -104,7 +104,7 @@
                         size="sm"
                         [label]="t().uiClearFilters"
                         [attr.aria-label]="t().uiClearFilters"
-                        (click)="filtersCleared.emit()"></button>
+                        (click)="onClearFilters()"></button>
                 }
             </rt-empty-state>
         } @else {
@@ -117,6 +117,7 @@
                     rtElem="pagination"
                     qa-dataid="dynamic-list-pagination"
                     [pageModel]="pageModel()!"
+                    [perPageOptions]="perPageOptions"
                     [loading]="fetching()"
                     (pageChange)="pageChange.emit($event)"
                     (perPageChange)="perPageChange.emit($event)" />

@@ -102,8 +102,9 @@ Given a choice from a list whose trigger is narrower than the options
 When the list is opened
 Then the panel's box is given the trigger's width as its lower bound and no fixed width
 
-### SC-UKV-179 — the panel gets no scroll of its own unless a limit is set
+### SC-UKV-179 — the panel stops at the kit's height limit unless the consumer sets another
 
 Given a choice from a list with no height limit set
 When the list is opened
-Then the panel carries no height limit, and a limit set by the consumer lands on the panel itself
+Then the panel takes the kit's limit from the styles and a long list scrolls inside it, a limit
+set by the consumer lands on the panel itself, and `none` takes the limit off

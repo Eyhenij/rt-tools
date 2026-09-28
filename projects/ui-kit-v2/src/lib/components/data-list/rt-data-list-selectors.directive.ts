@@ -176,6 +176,12 @@ export class RtDataListSelectorsDirective<
 
     /** «Отметить все»: отмечает все пришедшие строки, а в разведённом виде — и будущие страницы. */
     public toggleAllEntities(checked: boolean): void {
+        /* «Отметить все», поставленное заново, начинает с чистого листа: исключения прошлого
+           раза иначе приходили бы неотмеченными и под новым «все». */
+        if (checked) {
+            this.#excludedEntities.set([]);
+        }
+
         this.#isAllEntitiesSelected.set(checked);
 
         if (this.isMultiSelectExtendedMod()) {

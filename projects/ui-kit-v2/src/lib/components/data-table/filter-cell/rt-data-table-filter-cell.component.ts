@@ -57,6 +57,11 @@ const OPERATOR_LABELS: Readonly<Partial<Record<TFilterOperatorType, TRtKitLabelK
     [EFilterOperatorType.LESS_THAN]: 'dataTableFilterOperatorLessThan',
 };
 
+/** Одно и то же условие: колонка, вид сравнения и значение совпадают. */
+function sameFilter<KEY extends string>(a: IFilterModel<KEY>, b: IFilterModel<KEY>): boolean {
+    return a.propertyName === b.propertyName && a.operatorType === b.operatorType && a.value === b.value;
+}
+
 interface IOperatorItem {
     operator: TFilterOperatorType;
     icon: IRtIcon.Name;
@@ -106,10 +111,19 @@ export class RtDataTableFilterCellComponent<KEY extends string = string> {
     protected readonly selectPlaceholder: Signal<string> = rtKitLabel('dataTableFilterSelectPlaceholder');
     protected readonly clearLabel: Signal<string> = rtKitLabel('dataTableFilterClear');
 
-    /** Условие колонки: из набора приложения, а вид сравнения без условия помнит сама ячейка. */
-    protected readonly currentFilter: WritableSignal<IFilterModel<KEY>> = linkedSignal(() =>
-        dataTableColumnFilter(this.filterModel(), this.filterProperty(), dataTableDefaultOperator(this.defaultFilterOperator()))
+    /**
+     * Условие своей колонки из набора приложения. Сверяется по содержимому: набор меняется целиком
+     * и по чужой колонке, а своё условие при этом остаётся тем же — и выбранный здесь вид
+     * сравнения пустой колонки сбрасывать нечем.
+     */
+    readonly #ownFilter: Signal<IFilterModel<KEY>> = computed(
+        (): IFilterModel<KEY> =>
+            dataTableColumnFilter(this.filterModel(), this.filterProperty(), dataTableDefaultOperator(this.defaultFilterOperator())),
+        { equal: sameFilter }
     );
+
+    /** Условие колонки: из набора приложения, а вид сравнения без условия помнит сама ячейка. */
+    protected readonly currentFilter: WritableSignal<IFilterModel<KEY>> = linkedSignal((): IFilterModel<KEY> => this.#ownFilter());
 
     protected readonly hasValue: Signal<boolean> = computed(() => !!this.currentFilter().value);
 

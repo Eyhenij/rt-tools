@@ -8,7 +8,7 @@ import { EMPTY, map, merge, mergeMap, Observable, Subject, takeUntil } from 'rxj
 
 import { IRtKitConfig } from '../../config/rt-kit-config.model';
 import { rtKitDefault } from '../../config/rt-kit-config.providers';
-import { materialPresetClassesOfFocus } from '../../util/material-preset';
+import { carryThemeScopeOfFocus, materialPresetClassesOfFocus } from '../../util/material-preset';
 import { RtAsideRef } from './rt-aside-ref';
 import { RT_ASIDE_DATA } from './rt-aside.tokens';
 
@@ -184,6 +184,8 @@ export class RtAsideService {
         };
 
         const overlayRef: OverlayRef = this.#overlay.create(overlayConfig);
+        // До attach: содержимое панели может забрать фокус, и кусок темы у кнопки будет потерян.
+        carryThemeScopeOfFocus(overlayRef.overlayElement, this.#document);
         const asideRef: RtAsideRef<TResult> = new RtAsideRef<TResult>(overlayRef, this.#renderer);
 
         // Сами close-подписки объявлены один раз в конструкторе — здесь только

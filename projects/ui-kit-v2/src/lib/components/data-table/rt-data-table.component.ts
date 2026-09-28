@@ -44,6 +44,7 @@ import {
 } from './rt-data-table-cells.directive';
 import { RtDataTableConfigService } from './rt-data-table-config.service';
 import { RtDataTableIconDirective } from './rt-data-table-icon.directive';
+import { dataTableAriaSort, TRtDataTableAriaSort } from './rt-data-table-sort.logic';
 import { RT_DATA_TABLE_ROW_HOST, RtDataTableRowClickDirective } from './rt-data-table-row-click.directive';
 import {
     ERtDataTableColumnType,
@@ -125,6 +126,16 @@ export class RtDataTableComponent<
 
     protected readonly visibleColumns: Signal<Array<IRtDataTable.Column<ENTITY_TYPE>>> = computed(() =>
         this.columns().filter((column: IRtDataTable.Column<ENTITY_TYPE>) => !column.hidden)
+    );
+
+    /** `aria-sort` каждой показанной колонки по её имени: шаблон читает готовое, а не зовёт расчёт. */
+    protected readonly ariaSorts: Signal<Readonly<Record<string, TRtDataTableAriaSort | null>>> = computed(() =>
+        Object.fromEntries(
+            this.visibleColumns().map((column: IRtDataTable.Column<ENTITY_TYPE>): [string, TRtDataTableAriaSort | null] => [
+                column.propName,
+                dataTableAriaSort(column.sorting, this.currentSortModel()),
+            ])
+        )
     );
 
     /** Колонки — из службы настроек: их порядок и видимость помнит она. */

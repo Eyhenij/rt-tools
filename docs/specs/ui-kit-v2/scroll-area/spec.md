@@ -47,7 +47,9 @@ fading edge with a small arrow they can press to jump to the end.
 - **The sign appears before the first movement of a hand.** A scroll event arrives only after
   someone scrolls; a list that does not fit is already not fitting at the first paint. Tied to the
   event alone, the sign would appear to whoever had guessed to scroll and stay silent for whoever
-  needs it. The area watches the size of the body and of the footer instead.
+  needs it. The area watches the size of the body, of its content and of the footer instead, and
+  the make-up of the body: a list that grows after the first paint does not change the height of
+  the body, only what lies under it. A body or a footer drawn anew is watched anew.
 
 - **The sign is switched off by default and is asked for by an input.** Dozens of screens draw the
   area, and a sign standing unconditionally would shift the look of every one of them.

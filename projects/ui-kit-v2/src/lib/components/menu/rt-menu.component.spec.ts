@@ -102,6 +102,41 @@ describe('RtMenuComponent', (): void => {
         expect([regular, panel()?.classList.contains('rt-menu__panel--size--sm')]).toEqual([true, true]);
     });
 
+    describe('тема куска', (): void => {
+        /** Коробка панели оверлея — на неё переносится тема куска. */
+        function pane(): HTMLElement | null {
+            return panel()?.closest('.cdk-overlay-pane') ?? null;
+        }
+
+        it('панель меню из куска `rtTheme` несёт тему куска и снимает её, когда куска больше нет', (): void => {
+            const fixture: ComponentFixture<MenuHostComponent> = setup();
+            const piece: HTMLElement = fixture.nativeElement as HTMLElement;
+            piece.setAttribute('data-theme', 'dark');
+
+            openMenu(fixture);
+            expect(pane()?.getAttribute('data-theme')).toBe('dark');
+
+            openMenu(fixture);
+            piece.removeAttribute('data-theme');
+            openMenu(fixture);
+            expect(pane()?.hasAttribute('data-theme')).toBe(false);
+        });
+
+        it('тема корня страницы на панель не копируется', (): void => {
+            document.documentElement.setAttribute('data-theme', 'dark');
+
+            try {
+                const fixture: ComponentFixture<MenuHostComponent> = setup();
+                openMenu(fixture);
+
+                expect(pane()).not.toBeNull();
+                expect(pane()?.hasAttribute('data-theme')).toBe(false);
+            } finally {
+                document.documentElement.removeAttribute('data-theme');
+            }
+        });
+    });
+
     it('панель объявлена меню для скринридера', (): void => {
         const fixture: ComponentFixture<MenuHostComponent> = setup();
 
@@ -271,6 +306,17 @@ describe('RtMenuComponent', (): void => {
             press(fixture, 'Tab');
 
             expect(panel()).toBeNull();
+        });
+
+        it('Tab возвращает фокус кнопке и не отменяет свой ход дальше по странице', (): void => {
+            const fixture: ComponentFixture<MenuHostComponent> = setup();
+            openMenu(fixture);
+            const event: KeyboardEvent = new KeyboardEvent('keydown', { key: 'Tab', keyCode: 9, bubbles: true, cancelable: true });
+
+            panel()?.dispatchEvent(event);
+            fixture.detectChanges();
+
+            expect([panel(), document.activeElement, event.defaultPrevented]).toEqual([null, trigger(fixture), false]);
         });
     });
 });

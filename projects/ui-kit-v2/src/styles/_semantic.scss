@@ -138,6 +138,11 @@
     /* State */
     --rt-color-state-success: var(--rt-success-500); /* rt-theme-shared: цвет статуса один в обеих темах */
     --rt-color-state-success-bg: var(--rt-success-50);
+
+    /* Подпись успеха на поверхности — пункт меню, строка статуса. Сам статус как текст порога
+       контраста не берёт ни на белом, ни на графите: он для значка и заливки. Пара к
+       warning-text и error-text. */
+    --rt-color-state-success-text: var(--rt-success-600);
     --rt-color-state-warning: var(--rt-warning-500); /* rt-theme-shared: цвет статуса один в обеих темах */
     --rt-color-state-warning-bg: var(--rt-warning-50);
 

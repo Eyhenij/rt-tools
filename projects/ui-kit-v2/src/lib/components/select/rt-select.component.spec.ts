@@ -1,6 +1,9 @@
 import { signal, ChangeDetectionStrategy, Component, WritableSignal } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { join } from 'node:path';
+
+import * as sass from 'sass';
 
 import { createRtFixture, el, hostClasses, qa, setInputs, textOf } from '../../../testing/rt-kit-testing';
 import { RtSelectTriggerDirective } from './rt-select-trigger.directive';
@@ -16,6 +19,18 @@ const OPTIONS: ReadonlyArray<IRtSelect.Option<string>> = [
 /** Панель списка живёт в оверлее CDK — ищем её в документе. */
 function options(): HTMLElement[] {
     return Array.from(document.querySelectorAll('[qa-dataid="select-option"]'));
+}
+
+/**
+ * Правило панели из собранных стилей семьи. Стили компонента в спеку не приезжают, а предел высоты
+ * по умолчанию живёт только в них: без него длинный список уходил за нижний край экрана, и ни один
+ * тест этого не видел.
+ */
+function panelRule(): string {
+    const css: string = sass.compile(join(__dirname, 'rt-select.component.scss')).css;
+    const at: number = css.indexOf('.rt-select__panel {');
+
+    return at < 0 ? '' : css.slice(at, css.indexOf('}', at));
 }
 
 function panel(): HTMLElement | null {
@@ -114,12 +129,23 @@ describe('RtSelectComponent', (): void => {
             expect(panel()?.getAttribute('role')).toBe('listbox');
         });
 
-        it('SC-UKV-179: без назначенного предела панель не несёт ограничения высоты', (): void => {
+        it('SC-UKV-179: без назначенного предела панель берёт предел кита из стилей, а не строкой', (): void => {
             const fixture: ComponentFixture<RtSelectComponent<string>> = setup();
 
             open(fixture);
 
             expect(panel()?.style.getPropertyValue('--rt-select-panel-max-height')).toBe('');
+            expect(panelRule()).toContain('--rt-select-panel-max-height: var(--rt-input-panel-max-height);');
+            expect(panelRule()).toContain('max-height: var(--rt-select-panel-max-height);');
+            expect(panelRule()).toContain('overflow-y: auto;');
+        });
+
+        it('SC-UKV-179: `none` снимает предел кита для короткого списка', (): void => {
+            const fixture: ComponentFixture<RtSelectComponent<string>> = setup({ panelMaxHeight: 'none' });
+
+            open(fixture);
+
+            expect(panel()?.style.getPropertyValue('--rt-select-panel-max-height')).toBe('none');
         });
 
         it('SC-UKV-179: назначенный предел ложится на саму панель', (): void => {

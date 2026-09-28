@@ -234,9 +234,26 @@
             min-height: var(--rt-list-table-icon-size);
         }
 
+        /* Полоса прячется прозрачностью, а не `visibility`: скрытая так кнопка остаётся в порядке
+           обхода, и фокус с клавиатуры до неё доходит — фокус внутри строки полосу и показывает.
+           Нажатий прозрачная полоса не ловит, пока её не видно. */
         @media (hover: hover) {
             &--hidden {
-                visibility: hidden;
+                opacity: 0;
+            }
+
+            &--hidden &__container > * {
+                pointer-events: none;
+            }
+
+            .rt-data-table__row:hover &--hidden,
+            .rt-data-table__row:focus-within &--hidden {
+                opacity: 1;
+            }
+
+            .rt-data-table__row:hover &--hidden &__container > *,
+            .rt-data-table__row:focus-within &--hidden &__container > * {
+                pointer-events: auto;
             }
         }
     }

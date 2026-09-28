@@ -4,8 +4,12 @@
 /* On touch devices an input is not smaller than 16px: WebKit (all of iOS, Chrome included)
    zooms the page on focusing a field with font-size < 16px — hence the horizontal
    shift of the layout. The desktop keeps the dense 14px. */
-@media (pointer: coarse) {
-    :root {
+@mixin rt-coarse-pointer-tokens {
+    @media (pointer: coarse) {
         --rt-input-font-size: var(--rt-text-md);
     }
+}
+
+:root {
+    @include rt-coarse-pointer-tokens;
 }

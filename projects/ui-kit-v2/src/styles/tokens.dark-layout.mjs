@@ -307,6 +307,9 @@ export const darkLayout = [
         name: `--rt-color-state-warning-text`,
     },
     {
+        name: `--rt-color-state-success-text`,
+    },
+    {
         name: `--rt-color-state-info-bg`,
     },
     {

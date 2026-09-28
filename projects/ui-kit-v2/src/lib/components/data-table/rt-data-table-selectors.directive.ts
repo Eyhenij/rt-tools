@@ -11,6 +11,7 @@ import {
     OnInit,
     Signal,
     signal,
+    untracked,
     WritableSignal,
 } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
@@ -93,6 +94,13 @@ export class RtDataTableSelectorsDirective<
         effect(() => this.#table.isMultiSelect.set(this.isMultiSelect()));
         effect(() => this.#table.isSelectorsColumnShown.set(this.isSelectorColumnShown()));
         effect(() => this.#table.isSelectorsColumnDisabled.set(this.isSelectorsColumnDisabled()));
+
+        /* Новая страница — новый флажок страницы: он считается по её строкам, а не остаётся от
+           прежней. Отметки читаются без слежки — пересчёт идёт только на смену строк. */
+        effect(() => {
+            this.#table.entities();
+            untracked(() => this.setExistingEntitiesState());
+        });
     }
 
     public ngOnInit(): void {
@@ -157,13 +165,18 @@ export class RtDataTableSelectorsDirective<
         this.#isPageEntitiesIndeterminate.set(false);
     }
 
-    /** Пересчитать флажок страницы по показанным строкам. */
+    /**
+     * Пересчитать флажок страницы по показанным строкам: отмечен, когда отмечены все строки
+     * страницы, промежуточен, когда отмечена часть. Отметки других страниц здесь не в счёт.
+     */
     public setExistingEntitiesState(): void {
         const page: ENTITY_TYPE[] = this.#table.entities();
         const keys: ENTITY_TYPE[KEY][] = this.selectedEntitiesIds();
 
-        this.#isPageEntitiesSelected.set(dataTableAllOnPage(page, keys, this.#keyExp()));
-        this.#isPageEntitiesIndeterminate.set(dataTableAnyOnPage(page, keys, this.#keyExp()));
+        const all: boolean = !!page.length && dataTableAllOnPage(page, keys, this.#keyExp());
+
+        this.#isPageEntitiesSelected.set(all);
+        this.#isPageEntitiesIndeterminate.set(!all && dataTableAnyOnPage(page, keys, this.#keyExp()));
     }
 
     #keyExp(): KEY {

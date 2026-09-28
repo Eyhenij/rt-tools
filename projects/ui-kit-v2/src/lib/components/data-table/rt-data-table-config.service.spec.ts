@@ -154,6 +154,33 @@ describe('RtDataTableConfigService', () => {
         expect(propNames(service.tableConfig())).toEqual(['title']);
     });
 
+    it('чтение, вернувшееся после правки настройки, правку не затирает', () => {
+        service.initConfig('orders', [columnOf('id', 'Номер'), columnOf('title', 'Название')]);
+        service.updateConfig('orders', {
+            isVerticalScrollbarShown: true,
+            isHorizontalScrollbarShown: false,
+            columns: [{ ...columnOf('title', 'Название'), orderIndex: 0 }],
+        });
+
+        storage.reads[0].next(undefined);
+
+        expect(propNames(service.tableConfig())).toEqual(['title']);
+        expect(service.tableConfig().isVerticalScrollbarShown).toBe(true);
+    });
+
+    it('чтение, начатое после правки, отвечает как обычно', () => {
+        service.updateConfig('orders', {
+            isVerticalScrollbarShown: true,
+            isHorizontalScrollbarShown: false,
+            columns: [{ ...columnOf('title', 'Название'), orderIndex: 0 }],
+        });
+        service.initConfig('orders', [columnOf('id', 'Номер')]);
+
+        storage.reads[0].next(undefined);
+
+        expect(propNames(service.tableConfig())).toEqual(['id']);
+    });
+
     it('не пускает снятие вперёд записи, которая ещё не ответила', () => {
         service.updateConfig('orders', {
             isVerticalScrollbarShown: false,

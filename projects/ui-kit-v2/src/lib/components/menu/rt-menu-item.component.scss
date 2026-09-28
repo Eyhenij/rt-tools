@@ -13,6 +13,7 @@
         --rt-menu-item-padding-x: var(--rt-overlay-menu-item-padding-x);
         --rt-menu-item-icon-size: var(--rt-overlay-menu-item-icon-size);
         --rt-menu-item-danger-label-color: var(--rt-overlay-menu-danger-label-color);
+        --rt-menu-item-success-color: var(--rt-color-state-success-text);
 
         display: flex;
         width: 100%;
@@ -67,11 +68,13 @@
             }
         }
 
+        /* Подпись и значок — текстовой ступенью успеха: сам статус как текст 14px порога
+           контраста не берёт ни в одном наборе. */
         &--success {
-            color: var(--rt-color-state-success);
+            color: var(--rt-menu-item-success-color);
 
             .rt-menu-item__icon {
-                color: var(--rt-color-state-success);
+                color: var(--rt-menu-item-success-color);
             }
         }
 

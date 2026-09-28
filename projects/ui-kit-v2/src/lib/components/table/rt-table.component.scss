@@ -84,6 +84,14 @@
             vertical-align: middle;
         }
 
+        /* Ячейка колонки действий в строке отбора — нулевая, как её шапка: иначе поля и рамка
+           дали бы колонке ширину, а плавающая кнопка места в раскладке не занимает. */
+        &__filter-cell--actions {
+            width: 0;
+            padding: 0;
+            border: none;
+        }
+
         &__actions-header.cdk-header-cell {
             width: 0;
             padding: 0;

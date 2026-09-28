@@ -237,4 +237,26 @@ describe('RtDataListSelectorsDirective', () => {
         expect(selectors(fixture).isPageEntitiesSelected()).toBe(true);
         expect(selectors(fixture).isPageEntitiesIndeterminate()).toBe(false);
     });
+
+    it('«отметить все», поставленное заново, начинает без исключений прошлого раза', async (): Promise<void> => {
+        const fixture: ComponentFixture<SelectorsHostComponent> = await setup();
+
+        await click(fixture, selectAll(fixture));
+        await click(fixture, rowCheckbox(fixture, 1));
+
+        expect(selectors(fixture).excludedEntitiesIds()).toEqual([2]);
+        expect(selectAll(fixture).getAttribute('aria-checked')).not.toBe('true');
+
+        // Флажок уже не отмечен: одно нажатие ставит «отметить все» заново.
+        await click(fixture, selectAll(fixture));
+
+        expect(selectors(fixture).excludedEntitiesIds()).toEqual([]);
+        expect(selectors(fixture).isAllEntitiesSelected()).toBe(true);
+
+        await goToPage(fixture, PAGE_TWO, 2);
+        await goToPage(fixture, PAGE_ONE, 1);
+
+        expect(selectors(fixture).selectedEntitiesIds()).toEqual([1, 2, 3, 4, 5]);
+        expect(rowCheckbox(fixture, 1).getAttribute('aria-checked')).toBe('true');
+    });
 });

@@ -15,6 +15,7 @@
                         rtElem="action"
                         qa-dataid="action-bar-action"
                         [rtMod]="view.modifiers"
+                        [attr.aria-label]="view.ariaLabel"
                         [rtPopover]="menuTpl"
                         [rtPopoverContext]="view.action.menu">
                         <ng-container *ngTemplateOutlet="actionFace; context: { $implicit: view.action }" />
@@ -25,6 +26,7 @@
                         rtElem="action"
                         qa-dataid="action-bar-action"
                         [rtMod]="view.modifiers"
+                        [attr.aria-label]="view.ariaLabel"
                         (click)="onAction(view.action)">
                         <ng-container *ngTemplateOutlet="actionFace; context: { $implicit: view.action }" />
                     </button>

@@ -1,5 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import { computed, DestroyRef, effect, Injectable, Signal, WritableSignal, inject, signal } from '@angular/core';
+import { computed, DestroyRef, effect, Injectable, Injector, Signal, WritableSignal, inject, signal } from '@angular/core';
 
 import { PlatformService, StorageService, WINDOW } from '@rt-tools/core';
 
@@ -28,7 +28,12 @@ export class ThemeService {
     readonly #storage: StorageService = inject(StorageService);
     readonly #document: Document = inject(DOCUMENT);
     readonly #platform: PlatformService = inject(PlatformService);
-    readonly #window: Window & typeof globalThis = inject(WINDOW) as Window & typeof globalThis;
+    /**
+     * Окно берётся не полем, а в `#watchMachine`, под проверкой среды: фабрика `WINDOW` бросает
+     * там, где у документа нет окна, — служба корневая, и упав при создании, она роняла бы
+     * серверную прорисовку каждой страницы с компонентом кита.
+     */
+    readonly #injector: Injector = inject(Injector);
     readonly #config: IRtKitConfig.Config = inject(RT_KIT_CONFIG);
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
 
@@ -91,9 +96,11 @@ export class ThemeService {
      * странице, и выбор обязан идти за ней без перезагрузки.
      */
     #watchMachine(): void {
-        if (!this.#platform.isPlatformBrowser) {
+        if (!this.#platform.isPlatformBrowser || !this.#document.defaultView) {
             return;
         }
+
+        const view: Window & typeof globalThis = this.#injector.get(WINDOW) as Window & typeof globalThis;
 
         /*
          * Спросить машину умеет не всякое окно, назвавшееся браузерным: среда тестов потребителя
@@ -101,11 +108,11 @@ export class ThemeService {
          * один компонент кита, и чинить это потребителю нечем. Проверка среды тут не поможет: она
          * отвечает про место прорисовки, а вопрос — про умение самого окна.
          */
-        if (typeof this.#window.matchMedia !== 'function') {
+        if (typeof view.matchMedia !== 'function') {
             return;
         }
 
-        const query: MediaQueryList = this.#window.matchMedia(DARK_QUERY);
+        const query: MediaQueryList = view.matchMedia(DARK_QUERY);
         this.#machinePrefersDark.set(query.matches);
 
         const listener: (event: MediaQueryListEvent) => void = (event: MediaQueryListEvent): void => {

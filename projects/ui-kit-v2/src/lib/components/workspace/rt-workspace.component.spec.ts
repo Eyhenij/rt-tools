@@ -172,6 +172,26 @@ describe('RtWorkspaceComponent', (): void => {
             expect(widthVar(fixture, '--rt-workspace-list-size')).toBe('240px');
         });
 
+        it('без панели подробностей список растёт на её место: ширина соседки не вычитается', (): void => {
+            const fixture: ComponentFixture<WorkspaceNoAsideHostComponent> = createRtFixture(WorkspaceNoAsideHostComponent);
+            // 1000 − 360 на середину = 640 на список; с вычтенной несуществующей правой панелью
+            // (360 по умолчанию) осталось бы 280, и шаг стрелки упёрся бы в него.
+            Object.defineProperty(root(fixture), 'clientWidth', { value: 1000, configurable: true });
+
+            key(fixture, 'workspace-handle-list', 'ArrowRight');
+
+            expect(widthVar(fixture, '--rt-workspace-list-size')).toBe('336px');
+        });
+
+        it('с объявленной панелью подробностей её ширина вычитается, как прежде', (): void => {
+            const fixture: ComponentFixture<WorkspaceHostComponent> = setup();
+            Object.defineProperty(root(fixture), 'clientWidth', { value: 1000, configurable: true });
+
+            key(fixture, 'workspace-handle-list', 'ArrowRight');
+
+            expect(widthVar(fixture, '--rt-workspace-list-size')).toBe('280px');
+        });
+
         it('двойной клик по ручке возвращает умолчание', (): void => {
             const fixture: ComponentFixture<WorkspaceHostComponent> = setup();
             key(fixture, 'workspace-handle-list', 'ArrowRight');

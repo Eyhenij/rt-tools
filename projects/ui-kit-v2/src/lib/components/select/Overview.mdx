@@ -150,12 +150,14 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 Там же виды кнопки — [`Buttons`](./?path=/story/molecules-forms-selecttrigger--buttons) — и панель:
 [длинный список](./?path=/story/molecules-forms-selecttrigger--panel-long),
 [длинные подписи](./?path=/story/molecules-forms-selecttrigger--panel-wide),
-[назначенный предел высоты](./?path=/story/molecules-forms-selecttrigger--panel-capped) и
+[свой предел высоты](./?path=/story/molecules-forms-selecttrigger--panel-capped) и
 [прежняя ширина по полю](./?path=/story/molecules-forms-selecttrigger--panel-by-trigger).
 
-Панель при этом не мерится кнопкой: её ширина не меньше кнопки и дальше растёт по содержимому,
-а прокрутки внутри нет вовсе — содержимое помещается целиком. Прежнее поведение возвращает вход
-`panelWidth`, предел высоты назначает `panelMaxHeight`, и с ним появляется прокрутка.
+Панель при этом не мерится кнопкой: её ширина не меньше кнопки и дальше растёт по содержимому.
+Прежнее поведение возвращает вход `panelWidth`. По высоте панель упирается в предел кита
+`--rt-input-panel-max-height`, и длинный список прокручивается внутри неё: без предела он уходил
+за нижний край экрана. Вход `panelMaxHeight` ставит свой предел, а `none` снимает его — для
+короткого списка, который должен открываться целиком.
 
 ## Рядом
 

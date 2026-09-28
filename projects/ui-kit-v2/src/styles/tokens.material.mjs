@@ -150,6 +150,7 @@ export const material = [
         value: `var(--rt-mat-green-100)`,
     },
     { name: `--rt-color-state-success-bg`, value: `var(--rt-mat-green-10)` },
+    { name: `--rt-color-state-success-text`, value: `var(--rt-mat-green-120)` },
     { name: `--rt-color-state-warning`, value: `var(--rt-mat-orange-100)` },
     { name: `--rt-color-state-warning-bg`, value: `var(--rt-mat-orange-5)` },
     { name: `--rt-color-state-warning-text`, value: `var(--rt-mat-orange-100)` },
@@ -200,14 +201,17 @@ export const material = [
     { name: `--rt-list-search-color-border`, value: `var(--mat-sys-outline, var(--rt-mat-neutral-25))` },
     { name: `--rt-list-search-color-bg`, value: `transparent`, dark: `transparent` },
     /* The search field of the first kit's list, measured on its showcase: 22rem wide, the icon of 24px
-       12px in from the edge, 16px from the icon to a 16px text, icon and text in the variant tone. */
+       12px in from the edge, 16px from the icon to a 16px text, icon and text in the variant tone.
+       Without a Material theme on the page the variant tone falls back to `neutral-60`, the step the
+       settings icons already take: `neutral-30` gave 1.5:1 on white, and the placeholder and the icons
+       of the search and of the table were not read at all. */
     { name: `--rt-list-search-width`, value: `calc(var(--rt-size-64) + var(--rt-size-24))` },
     { name: `--rt-list-search-padding-x`, value: `calc(var(--rt-space-2) + var(--rt-space-1) - var(--rt-border-width-thin))` },
     { name: `--rt-list-search-gap`, value: `var(--rt-space-4)` },
     { name: `--rt-list-search-font-size`, value: `var(--rt-text-md)` },
     { name: `--rt-list-search-icon-size`, value: `var(--rt-size-6)` },
-    { name: `--rt-list-search-icon-color`, value: `var(--mat-sys-on-surface-variant, var(--rt-mat-neutral-30))` },
-    { name: `--rt-list-search-color-placeholder`, value: `var(--mat-sys-on-surface-variant, var(--rt-mat-neutral-30))` },
+    { name: `--rt-list-search-icon-color`, value: `var(--mat-sys-on-surface-variant, var(--rt-mat-neutral-60))` },
+    { name: `--rt-list-search-color-placeholder`, value: `var(--mat-sys-on-surface-variant, var(--rt-mat-neutral-60))` },
 
     {
         lead: `    /* Панель настройки колонок первого кита: плашка колонки залита цветом выбранного пункта
@@ -232,7 +236,7 @@ export const material = [
     { name: `--rt-list-action-icon-size`, value: `var(--rt-size-6)` },
     { name: `--rt-list-action-color`, value: `var(--rt-mat-neutral-60)` },
     { name: `--rt-list-table-icon-size`, value: `var(--rt-size-6)` },
-    { name: `--rt-list-table-icon-color`, value: `var(--mat-sys-on-surface-variant, var(--rt-mat-neutral-30))` },
+    { name: `--rt-list-table-icon-color`, value: `var(--mat-sys-on-surface-variant, var(--rt-mat-neutral-60))` },
     { name: `--rt-list-table-head-divider-color`, value: `var(--mat-sys-outline, var(--rt-mat-neutral-30))` },
     { name: `--rt-list-table-button-size`, value: `calc(var(--rt-size-8) + var(--rt-size-1))` },
     { name: `--rt-list-table-button-radius`, value: `var(--rt-radius-full)` },
@@ -278,7 +282,11 @@ export const material = [
     { name: `--rt-pagination-box-current-font-weight`, value: `var(--rt-font-weight-regular)` },
     { name: `--rt-pagination-arrow-size`, value: `calc(var(--rt-space-xl) + 2 * var(--rt-border-width-thin))` },
     { name: `--rt-pagination-arrow-radius`, value: `calc(var(--rt-radius-lg) + var(--rt-radius-xs))` },
-    { name: `--rt-pagination-arrow-shadow`, value: `inset 0 0 0 var(--rt-border-width-thin) var(--rt-mat-neutral-30)` },
+    {
+        name: `--rt-pagination-arrow-shadow`,
+        value: `inset 0 0 0 var(--rt-border-width-thin) var(--rt-mat-neutral-30)`,
+        dark: `inset 0 0 0 var(--rt-border-width-thin) var(--rt-mat-dark-30)`,
+    },
     { name: `--rt-pagination-arrow-color`, value: `var(--rt-mat-neutral-60)` },
     { name: `--rt-pagination-per-page-gap`, value: `calc(var(--rt-space-sm) + var(--rt-space-xs))` },
     { name: `--rt-pagination-per-page-label-white-space`, value: `nowrap` },

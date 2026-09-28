@@ -16,6 +16,7 @@ tree, or the tree holds what the spec is silent about.
 - **The bar stays in the markup for exactly as long as its leaving lasts.** — `projects/ui-kit-v2/src/lib/components/action-bar/rt-action-bar.model.ts:RT_ACTION_BAR_LEAVE_MS` — scenario `SC-UKV-206`
 - **The bar is pinned above the page by the holder, and the layer number comes from the scale.** — `projects/ui-kit-v2/src/lib/components/action-bar/rt-action-bar-holder.component.scss:z-index` — seen by the frame of the story of the holder
 - **An action with an icon lets its label be taken away where the pointer is coarse, and the markup carries both.** — `projects/ui-kit-v2/src/lib/components/action-bar/rt-action-bar.component.scss:media` — scenarios `SC-UKV-207`, `SC-UKV-208`
+- **An action with an icon carries its label as its name for a reader who hears the screen.** — `projects/ui-kit-v2/src/lib/components/action-bar/rt-action-bar.component.ts:ariaLabel` — scenario `SC-UKV-375`
 - **Every label of the bar comes from the dictionary of the kit.** — `projects/ui-kit-v2/src/lib/components/action-bar/rt-action-bar.component.ts:countText` — scenario `SC-UKV-209`
 - **The bar has a limit of its width, and the row of actions that did not fit it wraps.** — `projects/ui-kit-v2/src/lib/components/action-bar/rt-action-bar.component.scss:flex-wrap` — scenario `SC-UKV-210`
 - **A single action wider than the place has its label wrapped, and the bar draws that label itself.** — `projects/ui-kit-v2/src/lib/components/action-bar/rt-action-bar.component.scss:overflow-wrap` — scenario `SC-UKV-213`

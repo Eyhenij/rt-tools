@@ -94,6 +94,7 @@ export type TRtDesignTokenName =
     | '--rt-color-state-info-bg'
     | '--rt-color-state-success'
     | '--rt-color-state-success-bg'
+    | '--rt-color-state-success-text'
     | '--rt-color-state-warning'
     | '--rt-color-state-warning-bg'
     | '--rt-color-state-warning-text'
@@ -262,6 +263,7 @@ export type TRtDesignTokenName =
     | '--rt-mat-dark-40'
     | '--rt-mat-green-10'
     | '--rt-mat-green-100'
+    | '--rt-mat-green-120'
     | '--rt-mat-green-20'
     | '--rt-mat-green-40'
     | '--rt-mat-green-60'
@@ -512,6 +514,7 @@ export type TRtDesignTokenName =
     | '--rt-space-xl'
     | '--rt-space-xs'
     | '--rt-success-100'
+    | '--rt-success-400'
     | '--rt-success-50'
     | '--rt-success-500'
     | '--rt-success-600'
@@ -668,6 +671,7 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-color-state-info-bg',
     '--rt-color-state-success',
     '--rt-color-state-success-bg',
+    '--rt-color-state-success-text',
     '--rt-color-state-warning',
     '--rt-color-state-warning-bg',
     '--rt-color-state-warning-text',
@@ -836,6 +840,7 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-mat-dark-40',
     '--rt-mat-green-10',
     '--rt-mat-green-100',
+    '--rt-mat-green-120',
     '--rt-mat-green-20',
     '--rt-mat-green-40',
     '--rt-mat-green-60',
@@ -1086,6 +1091,7 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-space-xl',
     '--rt-space-xs',
     '--rt-success-100',
+    '--rt-success-400',
     '--rt-success-50',
     '--rt-success-500',
     '--rt-success-600',

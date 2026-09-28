@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, EnvironmentProviders, Provider, Signal, signal, WritableSignal } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { EMPTY, Observable } from 'rxjs';
 
 import { EFilterOperatorType, IFilterModel, IPageModel } from '@rt-tools/utils';
@@ -59,6 +61,16 @@ function scrollbarSizes(): { vertical: string; horizontal: string } {
         vertical: style.getPropertyValue('--rt-data-table-scrollbar-vertical-width'),
         horizontal: style.getPropertyValue('--rt-data-table-scrollbar-horizontal-height'),
     };
+}
+
+/** Стили списка: ярусы подложки и области таблицы разметка в jsdom не считает, их читают из источника. */
+const STYLES: string = readFileSync(join(__dirname, 'rt-data-list.component.scss'), 'utf8');
+
+/** Объявления одного элемента блока — от его открывающей скобки до первой закрывающей. */
+function rulesOf(element: string): string {
+    const start: number = STYLES.indexOf(`&__${element} {`);
+
+    return start < 0 ? '' : STYLES.slice(start, STYLES.indexOf('}', start));
 }
 
 const PAGE: IPageModel = { pageNumber: 1, pageSize: 10, totalCount: 0, hasPrev: false, hasNext: false };
@@ -150,6 +162,22 @@ class SecondListComponent {
     imports: [FirstListComponent, SecondListComponent],
 })
 class TwoListsHostComponent {}
+
+/** Два списка, второй из которых уходит по сигналу — как при смене раздела рядом с первым. */
+@Component({
+    selector: 'rt-test-leaving-list-host',
+    template: `
+        <rt-test-first-list />
+        @if (isSecondShown()) {
+            <rt-test-second-list />
+        }
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [FirstListComponent, SecondListComponent],
+})
+class LeavingListHostComponent {
+    public readonly isSecondShown: WritableSignal<boolean> = signal(true);
+}
 
 /** Список без указанного вида — так его объявляет приложение, которое полагается на умолчание. */
 @Component({
@@ -365,5 +393,55 @@ describe('RtDataListComponent', () => {
 
         expect(scrollbarSizes().horizontal).toBe('0');
         expect(SECOND_STUB.tableConfig().isHorizontalScrollbarShown).toBe(true);
+    });
+
+    it('ушедший список снимает с корня страницы все четыре свойства полос', async (): Promise<void> => {
+        const fixture: ComponentFixture<DataListHostComponent> = await setup(undefined, [
+            { provide: RtDataTableConfigService, useValue: configStub(false, true) },
+        ]);
+        const style: CSSStyleDeclaration = document.documentElement.style;
+        const properties: string[] = [
+            '--rt-data-table-scrollbar-vertical-width',
+            '--rt-data-table-scrollbar-horizontal-height',
+            '--rt-data-table-scrollbar-width',
+            '--rt-data-table-scrollbar-color',
+        ];
+
+        expect(properties.map((property: string): string => style.getPropertyValue(property))).toEqual([
+            '0',
+            'var(--rt-size-3)',
+            'auto',
+            'auto',
+        ]);
+
+        fixture.destroy();
+
+        expect(properties.map((property: string): string => style.getPropertyValue(property))).toEqual(['', '', '', '']);
+    });
+
+    it('пока на странице живёт другой список, ушедший полосы с корня не снимает', async (): Promise<void> => {
+        const fixture: ComponentFixture<LeavingListHostComponent> = createRtFixture(
+            LeavingListHostComponent,
+            {},
+            { skipInitialDetect: true }
+        );
+        const style: CSSStyleDeclaration = document.documentElement.style;
+
+        fixture.detectChanges();
+        await fixture.whenStable();
+        expect(style.getPropertyValue('--rt-data-table-scrollbar-vertical-width')).toBe('0');
+
+        fixture.componentInstance.isSecondShown.set(false);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        expect(style.getPropertyValue('--rt-data-table-scrollbar-vertical-width')).toBe('0');
+
+        fixture.destroy();
+        expect(style.getPropertyValue('--rt-data-table-scrollbar-vertical-width')).toBe('');
+    });
+
+    it('подложка дозагрузки стоит ярусом sticky, а область таблицы замкнута в свой ярус и шапку над подложкой не поднимает', (): void => {
+        expect(rulesOf('fetching')).toContain('z-index: var(--rt-z-sticky);');
+        expect(rulesOf('content')).toContain('isolation: isolate;');
     });
 });

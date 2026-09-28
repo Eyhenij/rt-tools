@@ -18,7 +18,11 @@
                 }
 
                 @for (column of visibleColumns(); track column.propName) {
-                    <th rtElem="cell" qa-dataid="data-table-header-cell" [rtMod]="{ head: true, sortable: !!column.sorting }">
+                    <th
+                        rtElem="cell"
+                        qa-dataid="data-table-header-cell"
+                        [attr.aria-sort]="ariaSorts()[column.propName]"
+                        [rtMod]="{ head: true, sortable: !!column.sorting }">
                         <rt-data-table-header-cell
                             [headerModel]="column.header"
                             [sortModel]="column.sorting"
