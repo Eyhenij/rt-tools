@@ -80,3 +80,12 @@ When the label of the icon is read
 Then it is the label of the kit's set, not a string written into the class
 
 Covered by the component spec of the area.
+
+### SC-UKV-381 — an area not asked for the sign watches nothing
+
+Given a scroll area not asked for the sign
+When it is drawn, then asked for the sign, then no longer asked
+Then no size or make-up observer is set while the sign is off, both are set when it turns on, and
+both are taken off when it turns off
+
+Covered by the component spec of the area.

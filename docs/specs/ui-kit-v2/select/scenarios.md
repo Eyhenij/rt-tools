@@ -108,3 +108,13 @@ Given a choice from a list with no height limit set
 When the list is opened
 Then the panel takes the kit's limit from the styles and a long list scrolls inside it, a limit
 set by the consumer lands on the panel itself, and `none` takes the limit off
+
+### SC-UKV-382 — the option reached by keys is scrolled into the panel
+
+Given an open choice from a list, a multiselect or an autocomplete whose options run past the panel's
+height limit
+When the person moves the highlight by the arrow keys
+Then after each move the highlighted option is scrolled into the visible part of the panel, just
+enough to stand in it
+
+Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-active-option.spec.ts` — one spec for the three families.

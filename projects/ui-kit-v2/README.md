@@ -26,12 +26,17 @@ import { RtChatComponent, RtMessageComposerComponent, RtRichEditorComponent } fr
 ## Подключение
 
 ```typescript
+import { provideRtIDBStorage } from '@rt-tools/core';
 import { provideRtIcons } from '@rt-tools/ui-kit-v2';
 
 export const appConfig: ApplicationConfig = {
-    providers: [provideHttpClient(), provideRtIcons()],
+    providers: [provideHttpClient(), provideRtIcons(), provideRtIDBStorage()],
 };
 ```
+
+`provideRtIDBStorage()` нужен `rt-data-table`, `rt-data-list` и `rt-table`: они хранят настройку
+колонок в базе браузера. Без него страница с ними пустая, а в консоли стоит
+`NG0201: No provider found for _IDBStorageService`.
 
 Оформление — одной строкой в точке входа приложения; в пакете лежит и собранный CSS со всеми
 свойствами, и исходники партиалов:

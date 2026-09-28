@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, DebugElement, signal, WritableSignal } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -44,6 +44,50 @@ class ModelHostComponent {
     public readonly moscow: ICity = MOSCOW;
     public readonly sochi: ICity = SOCHI;
     public city: ICity | null = null;
+}
+
+type TCityGroup = FormGroup<{ city: FormControl<ICity | null> }>;
+
+function cityGroup(): TCityGroup {
+    return new FormGroup({ city: new FormControl<ICity | null>(null) });
+}
+
+/** Группа формы подменяется целиком: `formControlName` перепривязывается к контролу новой группы. */
+@Component({
+    selector: 'rt-radio-button-group-swap-host',
+    template: `
+        <form [formGroup]="group()">
+            <rt-radio-button formControlName="city" [value]="moscow" />
+            <rt-radio-button formControlName="city" [value]="sochi" />
+        </form>
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtRadioButtonComponent, ReactiveFormsModule],
+})
+class GroupSwapHostComponent {
+    public readonly moscow: ICity = MOSCOW;
+    public readonly sochi: ICity = SOCHI;
+    public readonly first: TCityGroup = cityGroup();
+    public readonly second: TCityGroup = cityGroup();
+    public readonly group: WritableSignal<TCityGroup> = signal<TCityGroup>(this.first);
+}
+
+/** Контрол `[formControl]` подменяется сигналом. */
+@Component({
+    selector: 'rt-radio-button-control-swap-host',
+    template: `
+        <rt-radio-button [formControl]="control()" [value]="moscow" />
+        <rt-radio-button [formControl]="control()" [value]="sochi" />
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtRadioButtonComponent, ReactiveFormsModule],
+})
+class ControlSwapHostComponent {
+    public readonly moscow: ICity = MOSCOW;
+    public readonly sochi: ICity = SOCHI;
+    public readonly first: FormControl<ICity | null> = new FormControl<ICity | null>(null);
+    public readonly second: FormControl<ICity | null> = new FormControl<ICity | null>(null);
+    public readonly control: WritableSignal<FormControl<ICity | null>> = signal<FormControl<ICity | null>>(this.first);
 }
 
 /** Контрол создан отключённым — форма скажет об этом раньше первого рендера. */
@@ -203,6 +247,58 @@ describe('RtRadioButtonComponent', (): void => {
             fixture.detectChanges();
 
             expect(fixture.componentInstance.city).toBe(SOCHI);
+            expect(attrs(fixture, 'aria-checked')).toEqual(['false', 'true']);
+        });
+    });
+
+    describe('смена контрола', (): void => {
+        it('SC-UKV-380 — после смены группы значение прежней точку не зажигает, нажатия идут в новую', (): void => {
+            const fixture: ComponentFixture<GroupSwapHostComponent> = createRtFixture(GroupSwapHostComponent);
+            const host: GroupSwapHostComponent = fixture.componentInstance;
+
+            host.group.set(host.second);
+            fixture.detectChanges();
+            host.first.controls.city.setValue(MOSCOW);
+            fixture.detectChanges();
+
+            expect(attrs(fixture, 'aria-checked')).toEqual(['false', 'false']);
+
+            press(fixture, qaAll(fixture, 'radio-button-control')[0]);
+            press(fixture, qaAll(fixture, 'radio-button-control')[1]);
+
+            expect(host.second.controls.city.value).toBe(SOCHI);
+            expect(host.first.controls.city.value).toBe(MOSCOW);
+            expect(attrs(fixture, 'aria-checked')).toEqual(['false', 'true']);
+        });
+
+        it('SC-UKV-380 — после смены группы значение новой, записанное формой, зажигает свою точку', (): void => {
+            const fixture: ComponentFixture<GroupSwapHostComponent> = createRtFixture(GroupSwapHostComponent);
+            const host: GroupSwapHostComponent = fixture.componentInstance;
+
+            host.group.set(host.second);
+            fixture.detectChanges();
+            host.second.controls.city.setValue(SOCHI);
+            fixture.detectChanges();
+
+            expect(attrs(fixture, 'aria-checked')).toEqual(['false', 'true']);
+        });
+
+        it('SC-UKV-380 — после смены контрола сигналом значение прежнего точку не зажигает, нажатия идут в новый', (): void => {
+            const fixture: ComponentFixture<ControlSwapHostComponent> = createRtFixture(ControlSwapHostComponent);
+            const host: ControlSwapHostComponent = fixture.componentInstance;
+
+            host.control.set(host.second);
+            fixture.detectChanges();
+            host.first.setValue(MOSCOW);
+            fixture.detectChanges();
+
+            expect(attrs(fixture, 'aria-checked')).toEqual(['false', 'false']);
+
+            press(fixture, qaAll(fixture, 'radio-button-control')[0]);
+            press(fixture, qaAll(fixture, 'radio-button-control')[1]);
+
+            expect(host.second.value).toBe(SOCHI);
+            expect(host.first.value).toBe(MOSCOW);
             expect(attrs(fixture, 'aria-checked')).toEqual(['false', 'true']);
         });
     });

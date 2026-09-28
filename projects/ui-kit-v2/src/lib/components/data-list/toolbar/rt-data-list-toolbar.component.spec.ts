@@ -253,6 +253,39 @@ describe('RtDataListToolbarComponent', () => {
         expect(searchValue(fixture)).toBe('анна ');
     });
 
+    it('запоздалое эхо отправленного поиска не стирает дописанное, а новый поиск приложения ставится', () => {
+        const fixture: ComponentFixture<ToolbarHostComponent> = setup();
+
+        typeSearch(fixture, 'foo');
+        jest.advanceTimersByTime(500);
+        typeSearch(fixture, 'foob');
+        fixture.componentInstance.term.set('foo');
+        fixture.detectChanges();
+
+        expect(searchValue(fixture)).toBe('foob');
+
+        jest.advanceTimersByTime(500);
+
+        expect(fixture.componentInstance.searches).toEqual(['foo', 'foob']);
+
+        fixture.componentInstance.term.set('');
+        fixture.detectChanges();
+
+        expect(searchValue(fixture)).toBe('');
+    });
+
+    it('набранное, которое приложение заменило своим поиском до конца задержки, приложению не уходит', () => {
+        const fixture: ComponentFixture<ToolbarHostComponent> = setup();
+
+        typeSearch(fixture, 'анн');
+        fixture.componentInstance.term.set('борис');
+        fixture.detectChanges();
+        jest.advanceTimersByTime(500);
+
+        expect(searchValue(fixture)).toBe('борис');
+        expect(fixture.componentInstance.searches).toEqual([]);
+    });
+
     it('на заглушке поле поиска видно, когда непустой поиск поставило само приложение', () => {
         const fixture: ComponentFixture<ToolbarHostComponent> = setup((host: ToolbarHostComponent) => host.placeholderShown.set(true));
 

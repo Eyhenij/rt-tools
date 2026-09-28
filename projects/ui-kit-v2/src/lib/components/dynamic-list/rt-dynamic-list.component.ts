@@ -249,17 +249,19 @@ export class RtDynamicListComponent implements OnInit {
     public readonly allSelectedChange: OutputEmitterRef<boolean> = output<boolean>();
 
     constructor() {
-        // Поиск потребителя ставится в поле при каждой его смене. Поле, где уже набрано то же самое,
-        // не трогается: ответ потребителя на набранное иначе сбивал бы каретку под рукой человека.
+        // Поиск потребителя ставится в поле, только когда он отличается от последнего, что список
+        // отправил или поставил сам. Эхо отправленного — даже запоздалое, когда человек уже дописал
+        // дальше, — поле не трогает: иначе оно стирало бы набранное и сбивало каретку.
         effect((): void => {
             const term: string = this.searchTerm() ?? '';
 
             untracked((): void => {
-                this.#lastSearch = term.trim();
-
-                if (this.searchControl.value.trim() !== this.#lastSearch) {
-                    this.searchControl.setValue(term, { emitEvent: false });
+                if (term.trim() === this.#lastSearch) {
+                    return;
                 }
+
+                this.#lastSearch = term.trim();
+                this.searchControl.setValue(term, { emitEvent: false });
             });
         });
     }
@@ -271,6 +273,8 @@ export class RtDynamicListComponent implements OnInit {
             .pipe(
                 map((value: string): string => value.trim()),
                 searchDebounce(),
+                // Набранное, которое потребитель или сброс отбора успели заменить, уже не в поле.
+                filter((value: string): boolean => value === this.searchControl.value.trim()),
                 filter((value: string): boolean => value !== this.#lastSearch),
                 takeUntilDestroyed(this.#destroyRef)
             )
@@ -286,13 +290,13 @@ export class RtDynamicListComponent implements OnInit {
 
     /**
      * Сброс отбора снимает и поиск: пустой ответ под поиском — тоже ответ под отбором, и дорога назад
-     * без очистки поля вела бы к тому же пустому ответу. Очистка уходит потребителю обычным путём.
+     * без очистки поля вела бы к тому же пустому ответу. Поле очищается молча: `filtersCleared`
+     * уже значит «и поиск снят», и отдельный пустой `searchChange` заставил бы потребителя
+     * запрашивать список дважды.
      */
     protected onClearFilters(): void {
-        if (this.searchControl.value) {
-            this.searchControl.setValue('');
-        }
-
+        this.#lastSearch = '';
+        this.searchControl.setValue('', { emitEvent: false });
         this.filtersCleared.emit();
     }
 }

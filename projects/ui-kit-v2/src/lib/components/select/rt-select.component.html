@@ -17,7 +17,7 @@
         [attr.aria-expanded]="isOpen()"
         [attr.aria-invalid]="isInvalid() || null"
         [attr.aria-controls]="panelId"
-        [attr.aria-activedescendant]="isOpen() && activeIndex() >= 0 ? panelId + '-opt-' + activeIndex() : null"
+        [attr.aria-activedescendant]="activeOptionId()"
         [disabled]="isDisabled()"
         (keydown)="onTriggerKeydown($event)"
         (rtPopoverClosed)="onClosed()">

@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, DebugElement, signal, Signal, WritableSignal } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 
 import { EListSortOrder, IFilterModel, ISortModel, TNullable } from '@rt-tools/utils';
 
@@ -17,6 +19,8 @@ interface IEntity extends Record<string, unknown> {
     title: string;
     email: string;
 }
+
+const STYLES: string = readFileSync(join(__dirname, 'rt-data-table.component.scss'), 'utf8');
 
 const ROWS: IEntity[] = [
     { id: 1, title: 'Анна', email: 'a@rt' },
@@ -228,6 +232,18 @@ describe('RtDataTableComponent', () => {
 
         expect(fixture.componentInstance.pressed).toEqual([]);
         expect(qaAll(fixture, 'data-table-row')[0].nativeElement.className).toContain('rt-data-table__row--active');
+    });
+
+    it('SC-UKV-259 — полосу действий открывает наведение и фокус с клавиатуры, а фокус после мыши — нет', () => {
+        // Стили кита в спеке не применяются — правило читается из исходника. Сначала — что блок
+        // открытия найден, потом — что фокус после мыши его не открывает.
+        const hover: RegExpMatchArray | null = STYLES.match(/@media \(hover: hover\) \{[\s\S]*?\n {8}\}\n/);
+
+        expect(hover?.[0]).toMatch(
+            /\.rt-data-table__row:hover &--hidden,\s*\.rt-data-table__row:has\(:focus-visible\) &--hidden \{\s*opacity: 1;/
+        );
+        expect(hover?.[0]).toMatch(/\.rt-data-table__row:has\(:focus-visible\) &--hidden &__container > \* \{\s*pointer-events: auto;/);
+        expect(STYLES).not.toContain(':focus-within &--hidden');
     });
 
     it('SC-UKV-259 — пункты меню строки приходят шаблоном приложения', () => {

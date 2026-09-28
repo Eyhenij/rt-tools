@@ -1,6 +1,5 @@
 import { BooleanInput } from '@angular/cdk/coercion';
 import {
-    afterNextRender,
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
@@ -21,6 +20,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractControl, ControlValueAccessor, NG_VALUE_ACCESSOR, NgControl } from '@angular/forms';
+import { distinctUntilChanged, EMPTY, Observable, Subject, switchMap } from 'rxjs';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
@@ -79,6 +79,14 @@ export class RtRadioButtonComponent implements ControlValueAccessor {
     #onChange: (value: unknown) => void = (): void => undefined;
     #onTouched: () => void = (): void => undefined;
 
+    /**
+     * Контрол, к которому радиокнопка привязана сейчас. Директива формы меняет его, не пересоздавая
+     * себя: `[formControl]` получил другой контрол, `[formGroup]` — другую группу. Слушать надо
+     * только нынешний — прежний, оставшись под подпиской, зажёг бы точку из мёртвой формы, и
+     * нажатие по ней уже не дошло бы до живой.
+     */
+    readonly #controlSource: Subject<AbstractControl | null> = new Subject<AbstractControl | null>();
+
     /** Модель, записанная формой. */
     readonly #model: WritableSignal<unknown> = signal<unknown>(null);
 
@@ -119,24 +127,31 @@ export class RtRadioButtonComponent implements ControlValueAccessor {
     public readonly checkedChange: OutputEmitterRef<boolean> = output<boolean>();
 
     constructor() {
-        // Связь с формой спрашивается после первой отрисовки: директива формы на этом же узле
-        // берёт радиокнопку своим accessor, и спросить директиву в конструкторе — круговая
-        // зависимость, а до её первого прогона контрола у неё ещё нет.
-        afterNextRender((): void => {
-            const control: AbstractControl | null = this.#injector.get(NgControl, null, { self: true, optional: true })?.control ?? null;
-
-            // Значение, отданное соседкой, форма этой радиокнопке не пишет — модель берётся у самого
-            // контрола, иначе точка осталась бы у двух сразу.
-            control?.valueChanges.pipe(takeUntilDestroyed(this.#destroyRef)).subscribe((value: unknown): void => this.#model.set(value));
-        });
+        // Значение, отданное соседкой, форма этой радиокнопке не пишет — модель берётся у самого
+        // контрола, иначе точка осталась бы у двух сразу. Подписка идёт за сменой контрола и
+        // бросает прежний.
+        this.#controlSource
+            .pipe(
+                distinctUntilChanged(),
+                switchMap((control: AbstractControl | null): Observable<unknown> => control?.valueChanges ?? EMPTY),
+                takeUntilDestroyed(this.#destroyRef)
+            )
+            .subscribe((value: unknown): void => this.#model.set(value));
     }
 
     public writeValue(value: unknown): void {
         this.#model.set(value);
     }
 
+    /**
+     * Директива формы зовёт это при каждой привязке к контролу — и первой, и после смены контрола,
+     * — уже поставив новый контрол себе. Здесь радиокнопка и узнаёт, кого слушать. Спросить
+     * директиву в конструкторе нельзя: она берёт радиокнопку своим accessor, и это круговая
+     * зависимость.
+     */
     public registerOnChange(fn: (value: unknown) => void): void {
         this.#onChange = fn;
+        this.#controlSource.next(this.#injector.get(NgControl, null, { self: true, optional: true })?.control ?? null);
     }
 
     public registerOnTouched(fn: () => void): void {

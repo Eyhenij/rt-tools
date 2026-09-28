@@ -235,8 +235,11 @@
         }
 
         /* Полоса прячется прозрачностью, а не `visibility`: скрытая так кнопка остаётся в порядке
-           обхода, и фокус с клавиатуры до неё доходит — фокус внутри строки полосу и показывает.
-           Нажатий прозрачная полоса не ловит, пока её не видно. */
+           обхода, и фокус с клавиатуры до неё доходит — фокус с клавиатуры внутри строки полосу и
+           показывает. Фокус после мыши — не повод: меню строки, закрывшись, возвращает фокус на
+           свою кнопку, нажатие ставит его на флажок строки, и полоса, открытая по `:focus-within`,
+           висела бы над строкой, от которой указатель давно ушёл. Нажатий прозрачная полоса не
+           ловит, пока её не видно. */
         @media (hover: hover) {
             &--hidden {
                 opacity: 0;
@@ -247,12 +250,12 @@
             }
 
             .rt-data-table__row:hover &--hidden,
-            .rt-data-table__row:focus-within &--hidden {
+            .rt-data-table__row:has(:focus-visible) &--hidden {
                 opacity: 1;
             }
 
             .rt-data-table__row:hover &--hidden &__container > *,
-            .rt-data-table__row:focus-within &--hidden &__container > * {
+            .rt-data-table__row:has(:focus-visible) &--hidden &__container > * {
                 pointer-events: auto;
             }
         }

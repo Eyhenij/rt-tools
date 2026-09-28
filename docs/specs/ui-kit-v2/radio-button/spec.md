@@ -79,6 +79,9 @@ radio button.
 - **Choosing one radio button of a control takes the choice off the rest bound to the same
   control.** The form does not write a value given by one accessor into the others, so each radio
   button follows the control itself.
+- **A radio button follows only the control it is bound to now.** The form directive changes the
+  control without making itself anew — `[formControl]` gets another control, `[formGroup]` another
+  group. A value written into the former control lights no dot, and a press goes to the current one.
 - **The focus reached from the keyboard is visible by the ring of the kit; the focus from a press
   is not.** The sample has no ring of its own; without one a person moving by Tab does not see
   where they are.

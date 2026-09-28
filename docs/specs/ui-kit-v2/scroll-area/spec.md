@@ -54,6 +54,10 @@ fading edge with a small arrow they can press to jump to the end.
 - **The sign is switched off by default and is asked for by an input.** Dozens of screens draw the
   area, and a sign standing unconditionally would shift the look of every one of them.
 
+- **An area not asked for the sign watches nothing.** The make-up observer follows every edit under
+  the body, and each of its calls reads the layout: an area drawing no sign would pay that on every
+  screen for nothing. The observers are set when the input turns on and taken off when it turns off.
+
 - **The sign goes away when the body is scrolled to the bottom, with a whole point of slack.** A
   fractional row height leaves a remainder at which the scroll is already at the very bottom and the
   difference is still above zero: without the slack the sign would hang for good.

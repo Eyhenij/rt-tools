@@ -177,19 +177,20 @@ export class RtDataListToolbarComponent {
     public readonly searchControl: FormControl<TNullable<string>> = new FormControl<TNullable<string>>(null);
 
     constructor() {
-        /* Поиск приложения ставится в поле при каждой его смене и приложению не возвращается. Поле,
-           где уже набрано то же самое, не трогается: иначе ответ приложения на набранное сбивал бы
-           каретку и хвостовые пробелы под рукой человека. */
+        /* Поиск приложения ставится в поле, только когда он отличается от последнего, что панель
+           отправила или поставила сама. Эхо отправленного — даже запоздалое, когда человек уже
+           дописал дальше, — поле не трогает: иначе оно стирало бы набранное и сбивало каретку. */
         effect(() => {
             const term: string = this.searchTerm() ?? '';
 
             untracked(() => {
-                this.#lastSearch = term.trim();
-
-                if ((this.searchControl.value ?? '').trim() !== this.#lastSearch) {
-                    this.searchControl.setValue(term, { emitEvent: false });
-                    this.#searchText.set(term);
+                if (term.trim() === this.#lastSearch) {
+                    return;
                 }
+
+                this.#lastSearch = term.trim();
+                this.searchControl.setValue(term, { emitEvent: false });
+                this.#searchText.set(term);
             });
         });
 
@@ -203,6 +204,8 @@ export class RtDataListToolbarComponent {
                 }),
                 debounce((value: TNullable<string>): Observable<number> => timer(value ? SEARCH_DELAY_MS : 0)),
                 map((value: TNullable<string>) => (value ?? '').trim()),
+                // Набранное, которое приложение успело заменить своим поиском, уже не в поле.
+                filter((value: string) => value === (this.searchControl.value ?? '').trim()),
                 filter((value: string) => value !== this.#lastSearch),
                 takeUntilDestroyed(this.#destroyRef)
             )

@@ -74,6 +74,21 @@ class ScrollAreaGrowingHostComponent {
     public readonly hasFooter: WritableSignal<boolean> = signal<boolean>(true);
 }
 
+/** Признак включается и выключается сигналом после показа. */
+@Component({
+    selector: 'rt-scroll-area-toggle-host',
+    template: `
+        <rt-scroll-area [isScrollHintShown]="isScrollHintShown()">
+            <ng-container *rtScrollAreaContent><span>тело</span></ng-container>
+        </rt-scroll-area>
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtScrollAreaComponent, RtScrollAreaContentDirective],
+})
+class ScrollAreaToggleHostComponent {
+    public readonly isScrollHintShown: WritableSignal<boolean> = signal<boolean>(false);
+}
+
 interface ISizes {
     scrollHeight: number;
     clientHeight: number;
@@ -238,12 +253,17 @@ describe('RtScrollAreaComponent', (): void => {
         /** Узлы, за размером которых наблюдатель следит сейчас. */
         let observed: Set<Element> = new Set<Element>();
 
+        /** Сколько наблюдателей размера создано. */
+        let sizeWatchers: number = 0;
+
         beforeEach((): void => {
             notifySize = null;
             observed = new Set<Element>();
+            sizeWatchers = 0;
             (globalThis as unknown as { ResizeObserver: unknown }).ResizeObserver = class {
                 constructor(callback: () => void) {
                     notifySize = callback;
+                    sizeWatchers += 1;
                 }
 
                 public observe(target: Element): void {
@@ -313,6 +333,50 @@ describe('RtScrollAreaComponent', (): void => {
 
             expect(second).not.toBe(first);
             expect([observed.has(first), observed.has(second)]).toEqual([false, true]);
+        });
+
+        it('SC-UKV-381 — без признака область не наблюдает ничего, включение ставит наблюдателей, выключение снимает', (): void => {
+            const contentWatch: jest.SpyInstance = jest.spyOn(MutationObserver.prototype, 'observe');
+            const contentUnwatch: jest.SpyInstance = jest.spyOn(MutationObserver.prototype, 'disconnect');
+            const fixture: ComponentFixture<ScrollAreaToggleHostComponent> = createRtFixture(ScrollAreaToggleHostComponent);
+            const body: HTMLElement = qa(fixture, 'scroll-area-body')?.nativeElement as HTMLElement;
+
+            // Тело нарисовано, а наблюдателей нет ни одного.
+            expect(body).toBeTruthy();
+            expect([sizeWatchers, observed.size, contentWatch.mock.calls.length]).toEqual([0, 0, 0]);
+
+            fixture.componentInstance.isScrollHintShown.set(true);
+            fixture.detectChanges();
+
+            expect(sizeWatchers).toBe(1);
+            expect(observed.has(body)).toBe(true);
+            expect(contentWatch).toHaveBeenCalledWith(body, { childList: true, subtree: true, characterData: true });
+
+            fixture.componentInstance.isScrollHintShown.set(false);
+            fixture.detectChanges();
+
+            expect(observed.size).toBe(0);
+            expect(contentUnwatch).toHaveBeenCalled();
+
+            contentWatch.mockRestore();
+            contentUnwatch.mockRestore();
+        });
+
+        it('SC-UKV-381 — без признака прокрутка раскладку не читает', (): void => {
+            const fixture: ComponentFixture<ScrollAreaToggleHostComponent> = createRtFixture(ScrollAreaToggleHostComponent);
+            const body: HTMLElement = qa(fixture, 'scroll-area-body')?.nativeElement as HTMLElement;
+            const reads: jest.Mock = jest.fn((): number => 600);
+
+            Object.defineProperty(body, 'scrollHeight', { get: reads, configurable: true });
+            body.dispatchEvent(new Event('scroll'));
+            fixture.detectChanges();
+
+            expect(reads).not.toHaveBeenCalled();
+
+            fixture.componentInstance.isScrollHintShown.set(true);
+            fixture.detectChanges();
+
+            expect(reads).toHaveBeenCalled();
         });
 
         it('разрушенная область снимает наблюдение', (): void => {

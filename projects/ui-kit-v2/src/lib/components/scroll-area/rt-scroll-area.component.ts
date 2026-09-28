@@ -116,14 +116,27 @@ export class RtScrollAreaComponent {
     #watchedBody: HTMLElement | null = null;
     #watchedFooter: HTMLElement | null = null;
 
+    /** Наблюдение поставлено: тело и подвал могут быть и пустыми, флаг отличает «снято» от «нечего смотреть». */
+    #isWatching: boolean = false;
+
     constructor() {
+        // Наблюдатели живут, только пока признак включён: выключенный признак ничего не рисует, а
+        // наблюдатель состава с поддеревом заставлял бы браузер пересчитывать раскладку на каждую
+        // правку внутри тела у каждой области экрана. Включение ставит их, выключение снимает.
         afterRenderEffect((): void => {
             const body: HTMLElement | null = this.bodyRef()?.nativeElement ?? null;
             const footer: HTMLElement | null = this.footerRef()?.nativeElement ?? null;
 
+            if (!this.isScrollHintShown()) {
+                this.#unwatch();
+                this.hasMoreBelow.set(false);
+
+                return;
+            }
+
             this.onBodyScroll();
 
-            if (body !== this.#watchedBody || footer !== this.#watchedFooter) {
+            if (!this.#isWatching || body !== this.#watchedBody || footer !== this.#watchedFooter) {
                 this.#watch(body, footer);
             }
         });
@@ -150,6 +163,11 @@ export class RtScrollAreaComponent {
     }
 
     public onBodyScroll(): void {
+        // Выключенный признак не рисуется, и замер для него — чтение раскладки на каждое движение.
+        if (!this.isScrollHintShown()) {
+            return;
+        }
+
         this.#measureHintBottom();
 
         const body: TNullable<ElementRef<HTMLElement>> = this.bodyRef();
@@ -189,6 +207,7 @@ export class RtScrollAreaComponent {
         this.#unwatch();
         this.#watchedBody = body;
         this.#watchedFooter = footer;
+        this.#isWatching = true;
 
         if (!body) {
             return;
@@ -238,5 +257,6 @@ export class RtScrollAreaComponent {
         this.#contentWatch = null;
         this.#watchedBody = null;
         this.#watchedFooter = null;
+        this.#isWatching = false;
     }
 }

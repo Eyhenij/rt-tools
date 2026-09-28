@@ -24,6 +24,7 @@ import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
 import { RtIconComponent } from '../icon/rt-icon.component';
 import { RtPopoverDirective } from '../popover/rt-popover.directive';
 import { IRtPopover } from '../popover/rt-popover.model';
+import { rtScrollActiveOptionIntoView } from '../select/rt-select-active-option';
 import { RtSelectTriggerDirective } from '../select/rt-select-trigger.directive';
 import { IRtSelect } from '../select/rt-select.model';
 import { RtTagComponent } from '../tag/rt-tag.component';
@@ -108,6 +109,11 @@ export class RtMultiselectComponent<TValue> extends RtFormControlBase<ReadonlyAr
 
     protected readonly isOpen: Signal<boolean> = computed((): boolean => this.popover().isOpen());
 
+    /** Идентификатор подсвеченной опции — тот же, что уходит в `aria-activedescendant`. */
+    protected readonly activeOptionId: Signal<string | null> = computed((): string | null =>
+        this.isOpen() && this.activeIndex() >= 0 ? `${this.panelId}-opt-${this.activeIndex()}` : null
+    );
+
     /**
      * Своя разметка указателя, если потребитель её объявил. Маркер тот же, что у выбора одного
      * значения: семьи отличаются только разметкой внутри кнопки.
@@ -161,6 +167,12 @@ export class RtMultiselectComponent<TValue> extends RtFormControlBase<ReadonlyAr
      * на саму панель: она рисуется в наложении, вне поддерева блока.
      */
     public readonly panelMaxHeight: InputSignal<string | null> = input<string | null>(null);
+
+    constructor() {
+        super();
+        // Подсветка, сдвинутая клавишами, не уходит за край панели с пределом высоты.
+        rtScrollActiveOptionIntoView(this.activeOptionId);
+    }
 
     public override setDisabledState(disabled: boolean): void {
         super.setDisabledState(disabled);

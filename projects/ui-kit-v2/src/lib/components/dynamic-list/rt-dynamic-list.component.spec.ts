@@ -141,7 +141,38 @@ describe('RtDynamicListComponent', (): void => {
             expect(heard).toEqual([]);
         });
 
-        it('сброс отбора очищает поле поиска и сообщает потребителю пустой поиск', (): void => {
+        it('запоздалое эхо отправленного поиска не стирает дописанное, а новый поиск потребителя ставится', (): void => {
+            jest.useFakeTimers();
+
+            const fixture: ComponentFixture<RtDynamicListComponent> = setup({});
+            const heard: string[] = [];
+
+            fixture.componentInstance.searchChange.subscribe((value: string): void => {
+                heard.push(value);
+            });
+
+            searchInput(fixture).value = 'foo';
+            searchInput(fixture).dispatchEvent(new Event('input'));
+            jest.advanceTimersByTime(SEARCH_SETTLE_MS);
+            searchInput(fixture).value = 'foob';
+            searchInput(fixture).dispatchEvent(new Event('input'));
+            setInputs(fixture, { searchTerm: 'foo' });
+            fixture.detectChanges();
+
+            expect(searchInput(fixture).value).toBe('foob');
+
+            jest.advanceTimersByTime(SEARCH_SETTLE_MS);
+
+            expect(heard).toEqual(['foo', 'foob']);
+
+            setInputs(fixture, { searchTerm: '' });
+            fixture.detectChanges();
+            jest.useRealTimers();
+
+            expect(searchInput(fixture).value).toBe('');
+        });
+
+        it('сброс отбора молча очищает поле поиска: потребитель слышит только filtersCleared', (): void => {
             jest.useFakeTimers();
 
             const fixture: ComponentFixture<RtDynamicListComponent> = setup({ showClearFilters: true, filtered: true });
@@ -165,8 +196,16 @@ describe('RtDynamicListComponent', (): void => {
             jest.useRealTimers();
 
             expect(searchInput(fixture).value).toBe('');
-            expect(heard).toEqual(['стенд', '']);
+            expect(heard).toEqual(['стенд']);
             expect(cleared).toBe(1);
+
+            jest.useFakeTimers();
+            searchInput(fixture).value = 'стенд';
+            searchInput(fixture).dispatchEvent(new Event('input'));
+            jest.advanceTimersByTime(SEARCH_SETTLE_MS);
+            jest.useRealTimers();
+
+            expect(heard).toEqual(['стенд', 'стенд']);
         });
     });
 

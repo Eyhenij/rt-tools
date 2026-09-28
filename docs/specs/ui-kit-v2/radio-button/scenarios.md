@@ -202,3 +202,11 @@ When the person presses the first and then the second
 Then the control holds the value of the second, and only the second is declared chosen
 
 Covered: `projects/ui-kit-v2/src/lib/components/radio-button/rt-radio-button.component.spec.ts`.
+
+### SC-UKV-380 — a radio button whose control was replaced follows only the new one
+
+Given two radio buttons bound to one control, and the form then gives them another control — another group under `[formGroup]` or another control under `[formControl]`
+When the former control gets a value, and then the person presses the first radio button and the second
+Then the value of the former control lights no dot, and the new control holds the value of the second with only the second declared chosen
+
+Covered: `projects/ui-kit-v2/src/lib/components/radio-button/rt-radio-button.component.spec.ts`.

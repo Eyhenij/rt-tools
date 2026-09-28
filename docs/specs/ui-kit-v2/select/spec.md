@@ -82,6 +82,12 @@ a list: a field, a badge, an icon, a pill with a name.
   sets their own limit as a length, or takes the limit off with `none` for a short list that must
   open whole.
 
+- **The option reached by keys is scrolled into the panel.** The keys move the highlight while the
+  focus stays on the field, and the browser does not scroll the panel for a highlight: past the
+  height limit the highlight left the visible part, and Enter chose an option the person did not
+  see. Each move scrolls the panel just enough for the highlighted option to stand inside it. The
+  same holds at the multiselect and at the autocomplete.
+
 - **The move by keys stays visible, and its outline follows the content of the button.** Taking the
   field's ring off takes the only sign of focus with it, and a person moving by the keyboard is left
   with nothing.
@@ -90,7 +96,8 @@ a list: a field, a badge, an icon, a pill with a name.
 
 - The look of the consumer's trigger: the kit gives no badge, no pill and no icon trigger of its own.
 - What is drawn inside the panel: the option row, the filter line and the empty state belong to
-  the families themselves and do not change here. Only the panel's size is spoken of above.
+  the families themselves and do not change here. Only the panel's size and the scroll to the
+  option reached by keys are spoken of above.
 - The row of actions of the table and the filter cell of its header: they are consumers of this
   input, and they arrive with the task that carries the dynamic list over.
 
@@ -154,3 +161,5 @@ None.
 ## History of changes
 
 - 2026-09-15 — written by the task RT-2152, which gives the families a trigger of the consumer's own.
+- 2026-09-28 — the option reached by keys is scrolled into the panel, at the autocomplete too; the
+  review of the epic RT-1870.
