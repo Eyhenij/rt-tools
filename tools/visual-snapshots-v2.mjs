@@ -159,7 +159,9 @@ if (updateAll) {
     // is no good here at all: with it the run's environment creates no page, and all the files fall
     // with `Cannot read properties of undefined (reading 'goto')` — the same at the first kit.
     // Checked flag by flag: `-u` works, `-t` breaks.
-    runnerArgs.push('--', '-u', updateOne);
+    // `test-storybook` hands Jest a command string for the shell, so the sample is quoted for it
+    // here: brackets and a bar in a regex sample would otherwise drop the launch.
+    runnerArgs.push('--', '-u', `'${updateOne.replaceAll("'", "'\\''")}'`);
 }
 
 const run = spawnSync('pnpm', ['exec', ...runnerArgs], {
