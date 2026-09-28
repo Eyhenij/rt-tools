@@ -237,4 +237,8 @@ export const lightParts = [
         name: `--rt-icon-button-disabled-color`,
         value: `currentcolor`,
     },
+    {
+        name: `--rt-icon-button-disabled-fill`,
+        value: `100%`,
+    },
 ];

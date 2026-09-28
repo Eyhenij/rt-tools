@@ -163,6 +163,7 @@ export type TRtDesignTokenName =
     | '--rt-gray-350'
     | '--rt-icon-button-color-bg-hover'
     | '--rt-icon-button-disabled-color'
+    | '--rt-icon-button-disabled-fill'
     | '--rt-icon-button-disabled-opacity'
     | '--rt-info-50'
     | '--rt-info-500'
@@ -732,6 +733,7 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-gray-350',
     '--rt-icon-button-color-bg-hover',
     '--rt-icon-button-disabled-color',
+    '--rt-icon-button-disabled-fill',
     '--rt-icon-button-disabled-opacity',
     '--rt-info-50',
     '--rt-info-500',

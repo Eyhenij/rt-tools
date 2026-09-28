@@ -355,4 +355,5 @@ export const material = [
     { name: `--rt-overlay-select-panel-border-width`, value: `0px` },
     { name: `--rt-icon-button-disabled-opacity`, value: `1` },
     { name: `--rt-icon-button-disabled-color`, value: `var(--rt-color-text-disabled)` },
+    { name: `--rt-icon-button-disabled-fill`, value: `0%` },
 ];
