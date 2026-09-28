@@ -102,7 +102,7 @@ describe('RtDataTableHeaderCellComponent', () => {
         expect(qa(fixture, 'data-table-header-prefix')).not.toBeNull();
     });
 
-    it('SC-UKV-373 — имя без пары в перечне шапка рисует глифом Material Symbols', () => {
+    it('SC-UKV-319 — имя без пары в перечне шапка рисует глифом Material Symbols', () => {
         const fixture: ComponentFixture<HeaderHostComponent> = setup({ icon: { glyph: 'delete_forever', placement: 'left' } });
 
         expect(fixture.debugElement.query(By.directive(RtIconComponent))).toBeNull();
