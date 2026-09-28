@@ -1,10 +1,12 @@
 import { ComponentType, Overlay, OverlayRef } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
+import { DOCUMENT } from '@angular/common';
 import { inject, Injectable, Injector, Signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { EMPTY, map, merge, mergeMap, Observable, Subject, takeUntil } from 'rxjs';
 
+import { materialPresetClassesOfFocus } from '../../util/material-preset';
 import { RtDialogRef } from './rt-dialog-ref';
 import { RT_DIALOG_DATA } from './rt-dialog.tokens';
 
@@ -96,6 +98,7 @@ interface IRtDialogOpenContext {
 export class RtDialogService {
     readonly #overlay: Overlay = inject(Overlay);
     readonly #injector: Injector = inject(Injector);
+    readonly #document: Document = inject(DOCUMENT);
 
     readonly #openSource: Subject<IRtDialogOpenContext> = new Subject<IRtDialogOpenContext>();
 
@@ -154,7 +157,7 @@ export class RtDialogService {
             scrollStrategy: this.#overlay.scrollStrategies.block(),
             hasBackdrop: true,
             backdropClass: config?.backdropClass ?? 'rt-dialog-backdrop',
-            panelClass: config?.panelClass ?? 'rt-dialog-overlay',
+            panelClass: [config?.panelClass ?? 'rt-dialog-overlay', materialPresetClassesOfFocus(this.#document)].flat(),
             disposeOnNavigation: true,
         });
 

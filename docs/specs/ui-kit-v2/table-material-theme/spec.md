@@ -124,6 +124,12 @@ Nothing new is shown to a person: the list keeps its labels, only its look follo
   class when the mark stands above the node it opens from; the kit reads the application's mark and
   never sets its own.
 
+- **A confirmation, a dialog and a side panel carry the preset the same way.** The confirmation and
+  the container's right panel read the mark above their own node. A dialog and a side panel are
+  opened by a service with no node of their own, and they read the mark above the node in focus at
+  the moment of opening — the pressed button. A panel opened without a press takes the preset only
+  from the application's `panelClass`.
+
 - **Under the material preset the row menu, the dropdown list and the tooltip draw the first kit's
   look.** The menu panel takes the colour of Material's menu container, white where the theme sets
   none, 8 px above and below, labels of weight 500 and the first kit's red for a dangerous item. The

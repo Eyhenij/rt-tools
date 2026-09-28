@@ -116,3 +116,11 @@ When the list opens
 Then the selected option carries a check mark and the others do not; the own preset hides the mark, the material preset shows it
 
 Covered by the select component test for the mark; its visibility by look is held by the preset source.
+
+### SC-UKV-372 — a confirmation, a dialog and a side panel carry the preset
+
+Given a button inside a container the application marked with the material preset
+When a confirmation opens from it, or a dialog or a side panel opens by pressing it
+Then the panel at the end of the page carries the preset class, and one opened outside such a container does not
+
+Covered by the confirmation directive test and by the test of the focus helper the dialog and the side panel call.

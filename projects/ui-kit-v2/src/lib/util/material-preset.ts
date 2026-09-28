@@ -13,3 +13,13 @@ export const RT_MATERIAL_PRESET_CLASS: string = 'rt-preset-material';
 export function materialPresetClassesOf(origin: Element): string[] {
     return origin.closest(RT_MATERIAL_PRESET_SELECTOR) ? [RT_MATERIAL_PRESET_CLASS] : [];
 }
+
+/**
+ * Классы набора для панели, которую открывает сервис без узла-источника: диалог, боковая панель.
+ * Источником служит узел в фокусе в момент открытия — нажатая кнопка. Панель, открытая не по
+ * нажатию, набор от фокуса не берёт; для неё остаётся `panelClass` приложения.
+ */
+export function materialPresetClassesOfFocus(document: Document): string[] {
+    const focused: Element | null = document.activeElement;
+    return focused ? materialPresetClassesOf(focused) : [];
+}

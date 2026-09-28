@@ -31,6 +31,7 @@ import { map, merge, Observable, Subject, switchMap } from 'rxjs';
 
 import { setRtComponentInputs } from '@rt-tools/core';
 
+import { materialPresetClassesOf } from '../../util/material-preset';
 import { RtConfirmPopoverComponent } from './rt-confirm-popover.component';
 import { IRtConfirmPopover } from './rt-confirm-popover.model';
 
@@ -243,7 +244,7 @@ export class RtConfirmDirective implements OnDestroy {
             positionStrategy,
             scrollStrategy: this.#scrollStrategies.reposition(),
             hasBackdrop: false,
-            panelClass: 'rt-confirm-popover-panel',
+            panelClass: ['rt-confirm-popover-panel', ...materialPresetClassesOf(this.#elementRef.nativeElement)],
         });
         const overlayRef: OverlayRef = this.#overlay.create(config);
 
