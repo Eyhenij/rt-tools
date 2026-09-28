@@ -13,6 +13,9 @@
         --rt-data-table-cell-padding: calc(var(--rt-space-2) + var(--rt-space-0-5));
         --rt-data-table-row-transition-duration: var(--rt-duration-base);
 
+        /* Нижний отступ списка стоит внутри прокрутки: таблица и есть область прокрутки. */
+        --rt-data-table-padding-bottom: var(--rt-list-content-padding-bottom);
+
         /* Шапку перекрашивает приложение, как в первом ките: цвет и насыщенность подписи, фон
            строки отбора. Фон строки отбора, как в первом ките, считается от фона шапки: половина
            шапки, половина поверхности — перекрашенная шапка тянет строку отбора за собой. */
@@ -24,6 +27,8 @@
         overflow: auto;
         width: 100%;
         height: 100%;
+        box-sizing: border-box;
+        padding-bottom: var(--rt-data-table-padding-bottom);
 
         /* Стандартные свойства полосы тоже приходят с корня. Chrome при заданном стандартном
            свойстве не читает `::-webkit-scrollbar`, и нулевой размер оттуда полосу не прятал: список

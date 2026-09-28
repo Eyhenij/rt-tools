@@ -187,4 +187,5 @@ export const scaleMaterial = [
         value: `4px`,
     },
     { name: `--rt-mat-radius-5`, value: `5px` },
+    { name: `--rt-mat-menu-min-width`, value: `112px` },
 ];

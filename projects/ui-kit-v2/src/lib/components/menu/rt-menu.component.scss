@@ -15,9 +15,10 @@
             --rt-menu-panel-shadow: var(--rt-overlay-menu-shadow);
             --rt-menu-panel-bg: var(--rt-overlay-menu-bg);
             --rt-menu-panel-padding-y: var(--rt-overlay-menu-padding-y);
+            --rt-menu-panel-min-width: var(--rt-overlay-menu-min-width);
 
             display: flex;
-            min-width: 180px;
+            min-width: var(--rt-menu-panel-min-width);
             flex-direction: column;
             padding: var(--rt-menu-panel-padding-y) var(--rt-space-xs);
             border: var(--rt-menu-panel-border-width) solid var(--rt-color-border-subtle);

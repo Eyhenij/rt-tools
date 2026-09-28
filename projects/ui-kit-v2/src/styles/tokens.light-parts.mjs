@@ -194,4 +194,51 @@ export const lightParts = [
         name: `--rt-overlay-menu-current-bg`,
         value: `var(--rt-color-bg-hover)`,
     },
+    {
+        lead: `    /* Размеры меню и выпадающего списка, рамка панели списка и неактивная кнопка-значок. Свой вид
+       держит прежние значения; материальный набор — числа первого кита. */`,
+        space: true,
+        name: `--rt-overlay-menu-min-width`,
+        value: `180px`,
+    },
+    {
+        name: `--rt-overlay-menu-item-min-height`,
+        value: `auto`,
+    },
+    {
+        name: `--rt-overlay-menu-item-padding-y`,
+        value: `var(--rt-space-sm)`,
+    },
+    {
+        name: `--rt-overlay-menu-item-padding-x`,
+        value: `var(--rt-space-md)`,
+    },
+    {
+        name: `--rt-overlay-menu-item-icon-size`,
+        value: `var(--rt-size-4)`,
+    },
+    {
+        name: `--rt-overlay-menu-danger-label-color`,
+        value: `var(--rt-overlay-menu-danger-color)`,
+    },
+    {
+        name: `--rt-overlay-select-option-min-height`,
+        value: `auto`,
+    },
+    {
+        name: `--rt-overlay-select-panel-border-width`,
+        value: `var(--rt-input-border-width)`,
+    },
+    {
+        name: `--rt-icon-button-disabled-opacity`,
+        value: `0.5`,
+    },
+    {
+        name: `--rt-icon-button-disabled-color`,
+        value: `currentcolor`,
+    },
+    {
+        name: `--rt-icon-button-disabled-fill`,
+        value: `100%`,
+    },
 ];

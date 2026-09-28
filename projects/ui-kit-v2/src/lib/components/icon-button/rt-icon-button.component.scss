@@ -46,6 +46,10 @@
             --rt-icon-button-color-hover: var(--rt-icon-button-color);
             --rt-icon-button-transition-duration: var(--rt-duration-fast);
 
+            /* Заливка покоя — своим свойством: неактивная кнопка берёт из неё долю, которую задаёт
+               набор оформления. */
+            --rt-icon-button-bg: transparent;
+
             position: relative;
             display: inline-flex;
             width: var(--rt-icon-button-size);
@@ -54,7 +58,7 @@
             justify-content: center;
             padding: 0;
             border: 0;
-            background: transparent;
+            background-color: var(--rt-icon-button-bg);
             box-shadow: var(--rt-icon-button-shadow);
             color: var(--rt-icon-button-color);
             cursor: pointer;
@@ -116,7 +120,8 @@
             }
 
             &--primary {
-                background-color: var(--rt-color-action-primary);
+                --rt-icon-button-bg: var(--rt-color-action-primary);
+
                 color: var(--rt-color-action-on-primary);
 
                 &:hover:not(:disabled) {
@@ -125,7 +130,8 @@
             }
 
             &--secondary {
-                background-color: var(--rt-color-bg-surface-subtle);
+                --rt-icon-button-bg: var(--rt-color-bg-surface-subtle);
+
                 color: var(--rt-color-text-primary);
 
                 &:hover:not(:disabled) {
@@ -169,9 +175,18 @@
                 }
             }
 
+            /* Цвет неактивной кнопки ставится рисунку значка: по умолчанию `currentcolor`, то есть цвет
+               значка, и свой вид остаётся прежним. Не самому значку — цвет он ставит себе встроенным
+               стилем, и правилом его не перебить. Заливка остаётся долей заливки покоя: по умолчанию
+               вся, и свой вид прежний. */
             &:disabled {
+                background-color: color-mix(in srgb, var(--rt-icon-button-bg) var(--rt-icon-button-disabled-fill), transparent);
                 cursor: not-allowed;
-                opacity: 0.5;
+                opacity: var(--rt-icon-button-disabled-opacity);
+
+                .rt-icon svg {
+                    color: var(--rt-icon-button-disabled-color);
+                }
             }
 
             &:focus-visible {

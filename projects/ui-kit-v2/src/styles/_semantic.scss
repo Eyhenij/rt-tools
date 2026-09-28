@@ -215,6 +215,20 @@
     --rt-overlay-select-check-display: none;
     --rt-overlay-menu-current-bg: var(--rt-color-bg-hover);
 
+    /* Размеры меню и выпадающего списка, рамка панели списка и неактивная кнопка-значок. Свой вид
+       держит прежние значения; материальный набор — числа первого кита. */
+    --rt-overlay-menu-min-width: 180px;
+    --rt-overlay-menu-item-min-height: auto;
+    --rt-overlay-menu-item-padding-y: var(--rt-space-sm);
+    --rt-overlay-menu-item-padding-x: var(--rt-space-md);
+    --rt-overlay-menu-item-icon-size: var(--rt-size-4);
+    --rt-overlay-menu-danger-label-color: var(--rt-overlay-menu-danger-color);
+    --rt-overlay-select-option-min-height: auto;
+    --rt-overlay-select-panel-border-width: var(--rt-input-border-width);
+    --rt-icon-button-disabled-opacity: 0.5;
+    --rt-icon-button-disabled-color: currentcolor;
+    --rt-icon-button-disabled-fill: 100%;
+
     /* Spacing aliases — named semantic aliases на primitive numeric scale */
     --rt-space-2xs: var(--rt-space-0-5); /* 2px */
     --rt-space-xs: var(--rt-space-1); /* 4px */

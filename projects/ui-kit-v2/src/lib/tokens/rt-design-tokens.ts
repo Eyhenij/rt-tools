@@ -162,6 +162,9 @@ export type TRtDesignTokenName =
     | '--rt-font-weight-semibold'
     | '--rt-gray-350'
     | '--rt-icon-button-color-bg-hover'
+    | '--rt-icon-button-disabled-color'
+    | '--rt-icon-button-disabled-fill'
+    | '--rt-icon-button-disabled-opacity'
     | '--rt-info-50'
     | '--rt-info-500'
     | '--rt-info-600'
@@ -265,6 +268,7 @@ export type TRtDesignTokenName =
     | '--rt-mat-green-80'
     | '--rt-mat-green-active'
     | '--rt-mat-green-hover'
+    | '--rt-mat-menu-min-width'
     | '--rt-mat-navy-100'
     | '--rt-mat-neutral-0'
     | '--rt-mat-neutral-10'
@@ -376,13 +380,21 @@ export type TRtDesignTokenName =
     | '--rt-overlay-menu-bg'
     | '--rt-overlay-menu-current-bg'
     | '--rt-overlay-menu-danger-color'
+    | '--rt-overlay-menu-danger-label-color'
+    | '--rt-overlay-menu-item-icon-size'
+    | '--rt-overlay-menu-item-min-height'
+    | '--rt-overlay-menu-item-padding-x'
+    | '--rt-overlay-menu-item-padding-y'
     | '--rt-overlay-menu-item-weight'
+    | '--rt-overlay-menu-min-width'
     | '--rt-overlay-menu-padding-y'
     | '--rt-overlay-menu-radius'
     | '--rt-overlay-menu-shadow'
     | '--rt-overlay-navy-70'
     | '--rt-overlay-select-check-display'
     | '--rt-overlay-select-option-font-size'
+    | '--rt-overlay-select-option-min-height'
+    | '--rt-overlay-select-panel-border-width'
     | '--rt-overlay-select-radius'
     | '--rt-overlay-select-selected-bg'
     | '--rt-overlay-select-selected-weight'
@@ -415,6 +427,8 @@ export type TRtDesignTokenName =
     | '--rt-pagination-gap'
     | '--rt-pagination-justify'
     | '--rt-pagination-nav-gap'
+    | '--rt-pagination-padding-x'
+    | '--rt-pagination-padding-y'
     | '--rt-pagination-per-page-gap'
     | '--rt-pagination-per-page-label-white-space'
     | '--rt-pagination-range-display'
@@ -718,6 +732,9 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-font-weight-semibold',
     '--rt-gray-350',
     '--rt-icon-button-color-bg-hover',
+    '--rt-icon-button-disabled-color',
+    '--rt-icon-button-disabled-fill',
+    '--rt-icon-button-disabled-opacity',
     '--rt-info-50',
     '--rt-info-500',
     '--rt-info-600',
@@ -821,6 +838,7 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-mat-green-80',
     '--rt-mat-green-active',
     '--rt-mat-green-hover',
+    '--rt-mat-menu-min-width',
     '--rt-mat-navy-100',
     '--rt-mat-neutral-0',
     '--rt-mat-neutral-10',
@@ -932,13 +950,21 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-overlay-menu-bg',
     '--rt-overlay-menu-current-bg',
     '--rt-overlay-menu-danger-color',
+    '--rt-overlay-menu-danger-label-color',
+    '--rt-overlay-menu-item-icon-size',
+    '--rt-overlay-menu-item-min-height',
+    '--rt-overlay-menu-item-padding-x',
+    '--rt-overlay-menu-item-padding-y',
     '--rt-overlay-menu-item-weight',
+    '--rt-overlay-menu-min-width',
     '--rt-overlay-menu-padding-y',
     '--rt-overlay-menu-radius',
     '--rt-overlay-menu-shadow',
     '--rt-overlay-navy-70',
     '--rt-overlay-select-check-display',
     '--rt-overlay-select-option-font-size',
+    '--rt-overlay-select-option-min-height',
+    '--rt-overlay-select-panel-border-width',
     '--rt-overlay-select-radius',
     '--rt-overlay-select-selected-bg',
     '--rt-overlay-select-selected-weight',
@@ -971,6 +997,8 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-pagination-gap',
     '--rt-pagination-justify',
     '--rt-pagination-nav-gap',
+    '--rt-pagination-padding-x',
+    '--rt-pagination-padding-y',
     '--rt-pagination-per-page-gap',
     '--rt-pagination-per-page-label-white-space',
     '--rt-pagination-range-display',

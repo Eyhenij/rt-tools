@@ -136,6 +136,12 @@ Nothing new is shown to a person: the list keeps its labels, only its look follo
   list options are 16 px; the selected one is filled with the text colour at 12 %, is not bold and
   carries a check mark. A tooltip without a given side stands under its button.
 
+- **Under the material preset the menu, the dropdown list, the page bar and a disabled icon button
+  take the first kit's sizes.** A menu item and a list option are 48 px high, the menu panel starts
+  at 112 px and its item icon is 24 px; only the icon of a dangerous item is red. The list panel has
+  no border. The page bar has 8 px above and below and no side offset. A disabled icon button draws
+  its icon in the text colour at 38 % instead of fading. The own preset keeps its sizes.
+
 - **The copy button of a cell stays hidden until its cell is hovered, whatever the window width.**
   It is shown all the time only where there is no hover. A width threshold showed it in every cell
   of a laptop window next to a side panel, while the first kit kept it hidden there.
