@@ -61,7 +61,6 @@ interface IOperatorItem {
     operator: TFilterOperatorType;
     icon: IRtIcon.Name;
     label: string;
-    current: boolean;
 }
 
 /**
@@ -128,19 +127,21 @@ export class RtDataTableFilterCellComponent<KEY extends string = string> {
         this.#operatorLabel(this.#translate(), this.currentFilter().operatorType)
     );
 
-    /** Пункты меню — предложенные колонкой виды в порядке первого кита; нынешний подсвечен. */
+    /**
+     * Пункты меню — предложенные колонкой виды в порядке первого кита, кроме нынешнего: его первый кит
+     * в меню не выводит, нынешний вид показывает кнопка.
+     */
     protected readonly operatorItems: Signal<IOperatorItem[]> = computed(() => {
         const translate: TRtKitTranslator = this.#translate();
         const current: TFilterOperatorType = this.currentFilter().operatorType;
 
-        return DATA_TABLE_FILTER_MENU_OPERATORS.filter((operator: TFilterOperatorType) => this.filterOperators().includes(operator)).map(
-            (operator: TFilterOperatorType) => ({
-                operator,
-                icon: this.#operatorIcon(operator),
-                label: this.#operatorLabel(translate, operator),
-                current: operator === current,
-            })
-        );
+        return DATA_TABLE_FILTER_MENU_OPERATORS.filter(
+            (operator: TFilterOperatorType) => operator !== current && this.filterOperators().includes(operator)
+        ).map((operator: TFilterOperatorType) => ({
+            operator,
+            icon: this.#operatorIcon(operator),
+            label: this.#operatorLabel(translate, operator),
+        }));
     });
 
     protected readonly selectOptions: Signal<IRtSelect.Option<string>[]> = computed(() =>
