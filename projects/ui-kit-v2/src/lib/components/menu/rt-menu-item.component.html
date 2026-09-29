@@ -1,5 +1,9 @@
 <ng-container rtBlock="rt-menu-item">
-    @if (iconName(); as name) {
+    @if (ownIcon(); as own) {
+        <span rtElem="icon" qa-dataid="menu-item-own-icon" aria-hidden="true" [rtMod]="{ own: true }">
+            <ng-container [ngTemplateOutlet]="own.templateRef" />
+        </span>
+    } @else if (iconName(); as name) {
         <rt-icon rtElem="icon" size="sm" [name]="name" />
     }
 
