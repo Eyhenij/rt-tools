@@ -97,6 +97,16 @@ describe('RtMultiselectComponent', (): void => {
         expect(textOf(qa(setup({ placeholder: 'Города' }), 'multiselect-placeholder'))).toBe('Города');
     });
 
+    it('SC-UKV-407 — иконка слева встаёт в указатель перед подсказкой, а без входа её нет', (): void => {
+        expect(qa(setup(), 'multiselect-icon-left')).toBeNull();
+
+        const fixture: ComponentFixture<RtMultiselectComponent<string>> = setup({ iconLeft: 'ico-search' });
+        const icon: HTMLElement = qa(fixture, 'multiselect-icon-left')?.nativeElement as HTMLElement;
+
+        expect((qa(fixture, 'multiselect-icon-left')?.componentInstance as { name: () => string }).name()).toBe('ico-search');
+        expect(icon.nextElementSibling?.getAttribute('qa-dataid')).toBe('multiselect-placeholder');
+    });
+
     describe('выбор', (): void => {
         it('клик по опции добавляет её к выбранному, не закрывая список', (): void => {
             // Множественный выбор закрываться после каждого клика не должен —

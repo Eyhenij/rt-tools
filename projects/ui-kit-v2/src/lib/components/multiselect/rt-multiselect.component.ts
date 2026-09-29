@@ -22,6 +22,7 @@ import { RT_KIT_LABELS, TRtKitLabelMap, rtKitLabel } from '../../i18n';
 import { RtFormControlBase } from '../form-control/rt-form-control.base';
 import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
 import { RtIconComponent } from '../icon/rt-icon.component';
+import { IRtIcon } from '../icon/rt-icon.model';
 import { RtPopoverDirective } from '../popover/rt-popover.directive';
 import { IRtPopover } from '../popover/rt-popover.model';
 import { RtRadiusDirective } from '../radius/rt-radius.directive';
@@ -152,6 +153,9 @@ export class RtMultiselectComponent<TValue> extends RtFormControlBase<ReadonlyAr
     /** Пусто — берётся переведённая подпись по умолчанию */
     public readonly placeholder: InputSignal<string> = input<string>('');
     public readonly maxChips: InputSignal<number> = input<number>(3);
+
+    /** Иконка слева в указателе — та же, что у `rt-select`: перед подсказкой или чипами. */
+    public readonly iconLeft: InputSignal<IRtIcon.Name | null> = input<IRtIcon.Name | null>(null);
 
     /**
      * Чем мерится панель. По умолчанию она не уже кнопки и дальше растёт по содержимому:
