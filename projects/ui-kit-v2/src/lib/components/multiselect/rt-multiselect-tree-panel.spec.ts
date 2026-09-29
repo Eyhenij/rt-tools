@@ -38,6 +38,15 @@ function open<T>(fixture: ComponentFixture<T>): void {
     fixture.detectChanges();
 }
 
+/** Что семья отдала форме — тем же путём, каким его видит `formControl`. */
+function changesOf<T>(fixture: ComponentFixture<RtMultiselectComponent<T>>): unknown[] {
+    const changes: unknown[] = [];
+    fixture.componentInstance.registerOnChange((value: unknown): void => {
+        changes.push(value);
+    });
+    return changes;
+}
+
 function click<T>(fixture: ComponentFixture<T>, row: HTMLElement): void {
     row.click();
     fixture.detectChanges();
@@ -55,13 +64,13 @@ describe('RtMultiselectComponent — дерево опций', (): void => {
 
     it('SC-UKV-412 — клик по ветке выбирает её включённые листья без неё самой, повторный снимает', (): void => {
         const fixture: ComponentFixture<RtMultiselectComponent<string>> = setup();
+        const changes: unknown[] = changesOf(fixture);
         open(fixture);
 
         click(fixture, rows()[0]);
-        expect(fixture.componentInstance.value()).toEqual(['msk', 'tvr']);
-
         click(fixture, rows()[0]);
-        expect(fixture.componentInstance.value()).toEqual([]);
+
+        expect(changes).toEqual([['msk', 'tvr'], []]);
     });
 
     it('SC-UKV-413 — флажок ветки выводится из её листьев: частичный, включённый, выключенный', (): void => {
@@ -85,6 +94,7 @@ describe('RtMultiselectComponent — дерево опций', (): void => {
 
     it('клик по стрелке раскрывает ветку и ничего не выбирает', (): void => {
         const fixture: ComponentFixture<RtMultiselectComponent<string>> = setup();
+        const changes: unknown[] = changesOf(fixture);
         open(fixture);
         expect(rows().length).toBe(2);
 
@@ -92,7 +102,7 @@ describe('RtMultiselectComponent — дерево опций', (): void => {
         fixture.detectChanges();
 
         expect(rows().length).toBe(5);
-        expect(fixture.componentInstance.value()).toEqual([]);
+        expect(changes).toEqual([]);
     });
 
     it('SC-UKV-417 — фишка берёт подпись листа из глубины дерева', (): void => {

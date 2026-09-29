@@ -51,6 +51,15 @@ function key<T>(fixture: ComponentFixture<T>, name: string): void {
     fixture.detectChanges();
 }
 
+/** Что семья отдала форме — тем же путём, каким его видит `formControl`. */
+function changesOf<T>(fixture: ComponentFixture<RtSelectComponent<T>>): unknown[] {
+    const changes: unknown[] = [];
+    fixture.componentInstance.registerOnChange((value: unknown): void => {
+        changes.push(value);
+    });
+    return changes;
+}
+
 function activeValue(): string | null {
     return document.querySelector('.rt-select__option--active')?.getAttribute('data-value') ?? null;
 }
@@ -68,6 +77,7 @@ describe('RtSelectComponent — дерево опций', (): void => {
 
     it('SC-UKV-410 — клик по стрелке раскрывает и сворачивает ветку, ничего не выбирая', (): void => {
         const fixture: ComponentFixture<RtSelectComponent<string>> = setup();
+        const changes: unknown[] = changesOf(fixture);
         open(fixture);
         expect(values()).toEqual(['ru', 'msq']);
 
@@ -75,7 +85,7 @@ describe('RtSelectComponent — дерево опций', (): void => {
         fixture.detectChanges();
 
         expect(values()).toEqual(['ru', 'msk', 'tvr', 'msq']);
-        expect(fixture.componentInstance.value()).toBeNull();
+        expect(changes).toEqual([]);
         expect(document.querySelector('.rt-select__panel')).not.toBeNull();
         expect(rows()[1].getAttribute('aria-level')).toBe('2');
 
@@ -87,12 +97,13 @@ describe('RtSelectComponent — дерево опций', (): void => {
 
     it('SC-UKV-411 — клик по подписи ветки выбирает саму ветку', (): void => {
         const fixture: ComponentFixture<RtSelectComponent<string>> = setup();
+        const changes: unknown[] = changesOf(fixture);
         open(fixture);
 
         rows()[0].click();
         fixture.detectChanges();
 
-        expect(fixture.componentInstance.value()).toBe('ru');
+        expect(changes).toEqual(['ru']);
         expect(fixture.componentInstance.displayText()).toBe('Россия');
     });
 
