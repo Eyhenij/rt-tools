@@ -1,4 +1,5 @@
 import { BooleanInput } from '@angular/cdk/coercion';
+import { NgTemplateOutlet } from '@angular/common';
 import {
     booleanAttribute,
     ChangeDetectionStrategy,
@@ -16,6 +17,7 @@ import {
     ViewEncapsulation,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { RouterLink } from '@angular/router';
 
 import { mergeMap, Observable, Subject } from 'rxjs';
 
@@ -63,6 +65,8 @@ const BEM_BLOCK: string = 'rt-menu-item';
         RtIconComponent,
         BlockDirective,
         ElemDirective,
+        NgTemplateOutlet,
+        RouterLink,
     ],
     hostDirectives: [
         {
@@ -72,15 +76,17 @@ const BEM_BLOCK: string = 'rt-menu-item';
     ],
     host: {
         class: BEM_BLOCK,
-        role: 'menuitem',
+        '[attr.role]': "isLink() ? 'none' : 'menuitem'",
         '[class.rt-menu-item--danger]': 'danger()',
         '[class.rt-menu-item--success]': 'success()',
         '[class.rt-menu-item--disabled]': 'disabled()',
         '[class.rt-menu-item--current]': 'current()',
-        '[attr.aria-current]': "current() ? 'true' : null",
-        '[attr.aria-disabled]': "disabled() ? 'true' : null",
-        '[attr.tabindex]': 'disabled() ? null : 0',
+        '[class.rt-menu-item--link]': 'isLink()',
+        '[attr.aria-current]': "current() && !isLink() ? 'true' : null",
+        '[attr.aria-disabled]': "disabled() && !isLink() ? 'true' : null",
+        '[attr.tabindex]': 'disabled() || isLink() ? null : 0',
         '(click)': 'onActivate($event)',
+        '(auxclick)': 'onAuxClick($event)',
         '(keydown.enter)': 'onKey($event)',
         '(keydown.space)': 'onKey($event)',
     },
@@ -101,6 +107,14 @@ export class RtMenuItemComponent {
 
         return this.icon() ?? (glyph ? (iconMaterialMap.find((entry: IRtIconMaterialEntry) => entry.from === glyph)?.to ?? null) : null);
     });
+
+    /** Пункт — ссылка: задан `link`. Роль пункта меню и фокус тогда несёт ссылка внутри. */
+    protected readonly isLink: Signal<boolean> = computed((): boolean => this.link() !== null);
+
+    /** Адрес для ссылки: у недоступного пункта его нет, и ссылка не переходит. */
+    protected readonly linkTarget: Signal<RouterLink['routerLink']> = computed((): RouterLink['routerLink'] =>
+        this.disabled() ? null : this.link()
+    );
 
     /** Иконка слева от лейбла. `null` — без иконки. */
     public readonly icon: InputSignal<IRtIcon.Name | null> = input<IRtIcon.Name | null>(null);
@@ -153,6 +167,13 @@ export class RtMenuItemComponent {
     /** Тон подтверждающей кнопки в модалке. */
     public readonly confirmTone: InputSignal<IRtMenu.ConfirmTone> = input<IRtMenu.ConfirmTone>('danger');
 
+    /**
+     * Команды маршрута приложения, как у `routerLink`. Задан — пункт рисует ссылку с `href`: Enter и
+     * клик переходят по ней, а Ctrl/Cmd-click, Shift-click и средняя кнопка открывают новую вкладку
+     * или окно силами браузера. Меню закрывается во всех этих случаях; подтверждение не спрашивается.
+     */
+    public readonly link: InputSignal<RouterLink['routerLink']> = input<RouterLink['routerLink']>(null);
+
     /** Пункт выбран (клик/Enter/Space и не `disabled`; после подтверждения, если задано). */
     public readonly selected: OutputEmitterRef<void> = output<void>();
 
@@ -184,7 +205,7 @@ export class RtMenuItemComponent {
             return;
         }
         const message: string = this.confirmMessage().trim();
-        if (message !== '') {
+        if (message !== '' && !this.isLink()) {
             // Не закрываем меню сразу: оно остаётся открытым под backdrop'ом
             // модалки, чтобы пункт пережил решение пользователя (отмена → меню
             // снова видно). Подтверждение коммитит выбор.
@@ -195,9 +216,31 @@ export class RtMenuItemComponent {
     }
 
     protected onKey(event: Event): void {
+        if (this.isLink()) {
+            this.#onLinkKey(event);
+            return;
+        }
         // Space иначе проскроллит страницу — гасим дефолт перед активацией.
         event.preventDefault();
         this.onActivate(event);
+    }
+
+    /** Средняя кнопка не даёт `click`: вкладку открывает браузер, а меню закрываем сами. */
+    protected onAuxClick(event: MouseEvent): void {
+        if (this.isLink() && event.button === 1 && !this.disabled()) {
+            this.#commitSelection();
+        }
+    }
+
+    /**
+     * Enter на ссылке браузер сам превращает в `click`, и переход делает `routerLink`. Пробел ссылка
+     * не нажимает — его переводим в тот же `click`, погасив прокрутку страницы.
+     */
+    #onLinkKey(event: Event): void {
+        if (event instanceof KeyboardEvent && event.key === ' ') {
+            event.preventDefault();
+            this.#elementRef.nativeElement.querySelector<HTMLElement>('a')?.click();
+        }
     }
 
     #openConfirm(message: string): void {
