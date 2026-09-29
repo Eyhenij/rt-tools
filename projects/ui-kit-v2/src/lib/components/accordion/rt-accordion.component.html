@@ -1,0 +1,28 @@
+<ng-container rtBlock="rt-accordion">
+    @for (item of items(); track $index; let index = $index) {
+        <div rtElem="item" [rtMod]="{ open: open().has(index) }">
+            <h3 rtElem="heading">
+                <button
+                    rtElem="toggle"
+                    qa-dataid="accordion-toggle"
+                    type="button"
+                    [id]="idBase + '-toggle-' + index"
+                    [attr.aria-expanded]="open().has(index)"
+                    [attr.aria-controls]="idBase + '-panel-' + index"
+                    (click)="toggle(index)">
+                    <span rtElem="title">{{ item.title }}</span>
+                    <rt-icon rtElem="chevron" name="chevron-down" size="sm" aria-hidden="true" />
+                </button>
+            </h3>
+            <div
+                rtElem="panel"
+                qa-dataid="accordion-panel"
+                role="region"
+                [id]="idBase + '-panel-' + index"
+                [attr.aria-labelledby]="idBase + '-toggle-' + index"
+                [hidden]="!open().has(index)">
+                <p rtElem="text">{{ item.text }}</p>
+            </div>
+        </div>
+    }
+</ng-container>

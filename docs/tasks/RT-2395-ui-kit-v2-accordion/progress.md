@@ -5,9 +5,9 @@
 Rewritten by every session, not appended to.
 
 - **State:** `этап-идёт`
-- **Stage:** 1 of 4 — the agreement and the component
-- **Done:** the task, the branch, the grill, the plan and the agreement in `docs/specs/ui-kit-v2/proposed/accordion/`
-- **Next step:** the pure functions of the opening with their test
+- **Stage:** 2 of 4 — the subdomain spec
+- **Done:** stage 1 — the agreement, the component with its logic, spec and `CONTEXT.md`, the export
+- **Next step:** merge the agreement into the subdomain `docs/specs/ui-kit-v2/accordion/`
 - **Uncommitted:** nothing of this task
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -15,10 +15,10 @@ Rewritten by every session, not appended to.
 ## Steps
 
 - `[x]` 1.0 Write the agreement
-- `[>]` 1.1 Write the open-state decision as pure functions with a unit test
-- `[ ]` 1.2 Write the component in three files
-- `[ ]` 1.3 Write the component spec and export the component
-- `[ ]` 2.1 Merge the agreement into the subdomain
+- `[x]` 1.1 Write the open-state decision as pure functions with a unit test
+- `[x]` 1.2 Write the component in three files
+- `[x]` 1.3 Write the component spec and export the component
+- `[>]` 2.1 Merge the agreement into the subdomain
 - `[ ]` 2.2 Add the subdomain to the tables and the family to the map
 - `[ ]` 2.3 Put the scenario numbers into the test titles
 - `[ ]` 3.1 Write `CONTEXT.md` and `Overview.mdx`
@@ -40,3 +40,5 @@ Rewritten by every session, not appended to.
 - The task RT-2395 was created outside an epic by the owner's word; the branch was taken from the
   fresh `origin/main`.
 - The next scenario number was asked by `pnpm run spec:next-id UKV`: «the next free is SC-UKV-394».
+- Stage 1: `pnpm exec nx test @rt-tools/ui-kit-v2 --testFile=accordion` — «Tests: 16 passed, 16 total»;
+  eslint and stylelint over the family report nothing.
