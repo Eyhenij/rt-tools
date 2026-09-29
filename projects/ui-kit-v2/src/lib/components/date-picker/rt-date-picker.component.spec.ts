@@ -63,6 +63,17 @@ describe('RtDatePickerComponent', (): void => {
         expect(field(setup({ type: 'datetime-local' })).getAttribute('placeholder')).toBe('YYYY-MM-DDTHH:mm');
     });
 
+    it('пустое поле показывает форму значения при наведении, заполненное — нет', (): void => {
+        const fixture: ComponentFixture<DatePickerHostComponent> = setupHost();
+
+        expect(field(fixture).getAttribute('title')).toBe('YYYY-MM-DD');
+
+        fixture.componentInstance.control.setValue('2026-03-15');
+        fixture.detectChanges();
+
+        expect(field(fixture).hasAttribute('title')).toBe(false);
+    });
+
     describe('набор текста', (): void => {
         it('SC-UKV-419 — текст формы значения в границах становится значением', (): void => {
             const fixture: ComponentFixture<RtDatePickerComponent> = setup({ min: '2026-01-01', max: '2026-12-31' });

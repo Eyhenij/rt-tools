@@ -104,6 +104,8 @@ export class RtDatePickerComponent extends RtFormControlBase<string> {
     );
 
     protected readonly hasValue: Signal<boolean> = computed((): boolean => this.value() !== '');
+    /** Подсказка обрезается многоточием в узком поле, поэтому шаблон целиком виден при наведении. */
+    protected readonly shapeTitle: Signal<string | null> = computed((): string | null => (this.hasValue() ? null : this.shape()));
 
     /** Вид рамки: `outline` — рамка со всех сторон, `fill` — залитое поле с чертой снизу. */
     public readonly appearance: InputSignal<IRtInput.Appearance> = input<IRtInput.Appearance>('outline');

@@ -94,6 +94,7 @@
             color: inherit;
             font: inherit;
             outline: none;
+            text-overflow: ellipsis;
 
             &:disabled {
                 cursor: not-allowed;
