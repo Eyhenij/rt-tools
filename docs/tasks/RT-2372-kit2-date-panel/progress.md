@@ -5,18 +5,18 @@
 Rewritten by every session, not appended to.
 
 - **State:** `этап-идёт`
-- **Stage:** 1 of 7 — Agreement
-- **Done:** branch from `RT-2369-kit2-option-tree`, task in «In progress», folder, plan
-- **Next step:** the date-panel subdomain spec
-- **Uncommitted:** the task folder
+- **Stage:** 2 of 7 — Date logic
+- **Done:** branch, folder, plan; the subdomain spec, scenarios `SC-UKV-418`…`SC-UKV-429` and bindings
+- **Next step:** the pure date logic module
+- **Uncommitted:** none
 - **Waiting for the owner:** no
 - **PR:** not open yet
 
 ## Steps
 
-- [>] 1.1 Write the date-panel subdomain spec
-- [ ] 1.2 Write its scenarios and binding lines
-- [ ] 2.1 Write the pure module for the value strings, the month grid, the bounds and the time columns
+- [x] 1.1 Write the date-panel subdomain spec
+- [x] 1.2 Write its scenarios and binding lines
+- [>] 2.1 Write the pure module for the value strings, the month grid, the bounds and the time columns
 - [ ] 2.2 Cover it by its spec
 - [ ] 3.1 Give `rt-calendar` a chosen day, the today mark and the keys of a grid
 - [ ] 3.2 Cover the new states and keys by its spec
@@ -39,6 +39,9 @@ Rewritten by every session, not appended to.
   it. Affected stage of the plan: 5.
 - **The labels «Сегодня», «Сейчас», «Готово», «Применить», «Дата», «Время», month and year paging are
   new kit labels** — none exists in the English set. Affected stage of the plan: 4.
+
+- **The spec check names the bindings and the scenarios of this subdomain as divergences until the code
+  lands** — they point at the module, the panel and the field of stages 2–5. Affected stage of the plan: 1.
 
 ## Sessions
 
