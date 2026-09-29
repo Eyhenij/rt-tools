@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 
+import { STORY_OPTION_TREE } from '../../../../../showcase/story-option-tree';
 import { STORY_FIELD_WIDTH } from '../../../../../showcase/story-metrics';
 import { STORY_TRIGGER_ATTRIBUTE } from '../../../../../showcase/story-overlay';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
@@ -16,7 +17,7 @@ import { RtMultiselectComponent } from '../../rt-multiselect.component';
 export type TMultiselectMatrixPart = 'size' | 'chips' | 'bordered' | 'states' | 'presets' | 'themes' | 'panel';
 
 /** Что показывает открытая панель: набор вариантов или его отсутствие. */
-export type TMultiselectPanelCase = 'options' | 'empty';
+export type TMultiselectPanelCase = 'options' | 'empty' | 'tree';
 
 /** Наполненность триггера: сколько фишек влезло и с какого места пошёл счётчик `+N`. */
 interface IMultiselectChipsCase {
@@ -220,8 +221,8 @@ function invalid(): FormControl<readonly string[] | null> {
                         ariaLabel="Открытый список"
                         placeholder="Выберите города"
                         [attr.data-story-trigger]="triggerAttribute"
-                        [options]="panel === 'empty' ? noOptions : options"
-                        [formControl]="panelControl" />
+                        [options]="panel === 'empty' ? noOptions : panel === 'tree' ? treeOptions : options"
+                        [formControl]="panel === 'tree' ? treeControl : panelControl" />
                 </div>
             }
         }
@@ -273,6 +274,12 @@ export class TestRtMultiselectMatrixComponent {
 
     /** Выбор ряда размеров: фишка нужна, чтобы высота триггера мерилась по содержимому. */
     public readonly sizeControl: FormControl<readonly string[] | null> = chosen(['msk']);
+
+    /** Дерево опций: ветки, листья и отключённый лист на трёх уровнях. */
+    public readonly treeOptions: ReadonlyArray<IRtSelect.Option<string>> = STORY_OPTION_TREE;
+
+    /** Часть листьев выбрана: у ветки над ними флажок в промежуточном состоянии, у полной — включён. */
+    public readonly treeControl: FormControl<readonly string[] | null> = chosen(['msk', 'spb', 'kgd']);
 
     /** Выбор открытой панели: по нему видно, чем отмеченная опция отличается от прочих. */
     public readonly panelControl: FormControl<readonly string[] | null> = chosen(['spb', 'nsk']);

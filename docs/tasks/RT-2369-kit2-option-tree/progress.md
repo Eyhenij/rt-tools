@@ -7,7 +7,7 @@ Rewritten by every session, not appended to.
 - **State:** `этап-идёт`
 - **Stage:** 5 of 6 — Showcase and docs
 - **Done:** branch from `RT-2368-kit2-search-icon`, task in «In progress», folder, plan
-- **Next step:** the tree in the stories of both families
+- **Next step:** re-take the snapshots
 - **Uncommitted:** the task folder
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -24,9 +24,9 @@ Rewritten by every session, not appended to.
 - [x] 4.1 Draw the tree in the multiselect panel with the derived parent checkbox
 - [x] 4.2 Choose leaves by a parent and look chip labels up in the tree
 - [x] 4.3 Cover the multiselect scenarios by its component spec
-- [>] 5.1 Show the tree in the stories of both families
-- [ ] 5.2 Document the tree on the overview pages and in the component contexts
-- [ ] 5.3 Re-take the snapshots
+- [x] 5.1 Show the tree in the stories of both families
+- [x] 5.2 Document the tree on the overview pages and in the component contexts
+- [>] 5.3 Re-take the snapshots
 - [ ] 6.1 Run the full set of checks
 
 ## Decisions along the way
