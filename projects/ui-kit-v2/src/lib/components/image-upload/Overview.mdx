@@ -1,0 +1,84 @@
+import { Meta, Title } from '@storybook/addon-docs/blocks';
+
+<Meta title="Organisms/ImageUpload/Overview" />
+
+<Title>ImageUpload — `rt-image-upload`</Title>
+
+Загрузчик одного изображения. Одно место, в котором по очереди стоят зона загрузки, обрезка и сама
+картинка: выбранный файл открывает обрезку, «Применить» ставит результат на место зоны, а нажатие
+на картинку выбирает другой файл.
+
+```html
+<rt-image-upload downloadable fileName="logo.png" [imageUrl]="logoUrl" (imageChanged)="upload($event)" />
+```
+
+## Когда применять
+
+- Логотип, аватар, обложка: одна картинка, которую человек меняет на месте.
+
+## Когда не применять
+
+- **Несколько файлов** — [`rt-file-input`](./?path=/docs/molecules-forms-fileinput-overview--docs) со списком.
+- **Обрезка уже выбранного файла без загрузки** — [`rt-image-cropper`](./?path=/docs/organisms-imagecropper-overview--docs).
+
+## Оси
+
+| ось        | значения                 | умолчание |
+| ---------- | ------------------------ | --------- |
+| скачивание | без кнопки, с кнопкой    | без       |
+| применение | кнопками, автоприменение | кнопками  |
+
+**Оси, которых не видно.** `ratio`, `round`, `format` и `quality` уходят в обрезку и показаны в её
+матрице.
+
+## Состояния
+
+| состояние  | чем задаётся           | что видно                                 |
+| ---------- | ---------------------- | ----------------------------------------- |
+| пусто      | нет `imageUrl` и файла | зона загрузки с кнопкой «Выбрать файл»    |
+| обрезка    | файл выбран или брошен | обрезка, под ней «Отмена» и «Применить»   |
+| картинка   | есть `imageUrl`        | картинка, по запросу — кнопка скачивания  |
+| загрузка   | вход `loading`         | индикатор кита                            |
+| недоступен | вход `disabled`        | зона и картинка не берут файлов и нажатий |
+
+**Наведение и фокус** на картинке — приглушение и кольцо фокуса кита; в кадре их не держит ни один
+вход.
+
+## Доступность
+
+- Картинка — кнопка: берёт фокус, Enter и пробел открывают выбор файла, подсказка называет действие.
+- Все тексты — подписи кита: `uiImageUploadDrop`, `uiImageUploadChoose`, `uiImageUploadChange`,
+  `uiImageUploadCancel`, `uiImageUploadApply`, `uiImageUploadImage`, `uiDownload`.
+
+## Оформление
+
+Зона загрузки — `rt-empty-state` с пунктирной рамкой внутри `rt-file-drop`. Высота картинки
+ограничена свойством `--rt-image-upload-image-max-height`.
+
+## Входы
+
+| вход           | тип                                 | умолчание                    |
+| -------------- | ----------------------------------- | ---------------------------- |
+| `imageUrl`     | `string \| null`                    | `null`                       |
+| `fileName`     | `string`                            | `'image'`                    |
+| `tooltip`      | `string`                            | `''` → `uiImageUploadChange` |
+| `downloadable` | `boolean`                           | `false`                      |
+| `autoApply`    | `boolean`                           | `false`                      |
+| `loading`      | `boolean`                           | `false`                      |
+| `disabled`     | `boolean`                           | `false`                      |
+| `ratio`        | `number \| null`                    | `null`                       |
+| `round`        | `boolean`                           | `false`                      |
+| `format`       | `'png' \| 'jpeg' \| 'webp' \| null` | `null`                       |
+| `quality`      | `number`                            | `92`                         |
+
+## Выходы
+
+| выход          | тип    | когда                                             |
+| -------------- | ------ | ------------------------------------------------- |
+| `imageChanged` | `File` | «Применить», а при `autoApply` — каждый результат |
+| `downloaded`   | `void` | нажата кнопка скачивания                          |
+
+## Рядом
+
+- [`rt-image-cropper`](./?path=/docs/organisms-imagecropper-overview--docs) — обрезка сама по себе.
+- [`rt-file-drop`](./?path=/docs/organisms-filedrop-overview--docs) — приём файла перетаскиванием.

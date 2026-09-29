@@ -12,6 +12,7 @@ The scenarios live in the subdomains, each at its own rules:
 | [The settings of the kit and the theme](kit-settings-theme/scenarios.md) | `SC-UKV-330`…`SC-UKV-350`                            |
 | [The accordion](accordion/scenarios.md)                                  | `SC-UKV-394`…`SC-UKV-405`                            |
 | [The image cropper](image-cropper/scenarios.md)                          | `SC-UKV-383`…`SC-UKV-393`, `SC-UKV-406`…`SC-UKV-410` |
+| [The image uploader](image-upload/scenarios.md)                          | `SC-UKV-411`…`SC-UKV-421`                            |
 
 The prefix is shared across the domain, and the numbers were not recounted at the move: the number
 ties a scenario to the title of its test.

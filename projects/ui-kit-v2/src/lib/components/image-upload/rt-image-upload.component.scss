@@ -1,0 +1,57 @@
+@layer rt-kit.components {
+    /* rt-image-upload — одно место загрузчика (ViewEncapsulation.None, класс блока на host).
+       Место берёт ширину коробки: обрезка внутри меряет поле по ней. */
+
+    .rt-image-upload {
+        --rt-image-upload-image-max-height: var(--rt-size-100);
+        --rt-image-upload-image-radius: var(--rt-radius-md);
+        --rt-image-upload-focus-shadow: var(--rt-shadow-focus-ring);
+        --rt-image-upload-hover-opacity: 0.85;
+
+        display: block;
+        width: 100%;
+
+        &__loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--rt-space-xl);
+        }
+
+        &__actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: var(--rt-space-sm);
+            gap: var(--rt-space-sm);
+        }
+
+        &__preview {
+            position: relative;
+            display: inline-flex;
+            max-width: 100%;
+            align-items: flex-start;
+            gap: var(--rt-space-xs);
+        }
+
+        &__image {
+            display: block;
+            max-width: 100%;
+            max-height: var(--rt-image-upload-image-max-height);
+            border-radius: var(--rt-image-upload-image-radius);
+            object-fit: contain;
+
+            &--active {
+                cursor: pointer;
+
+                &:hover {
+                    opacity: var(--rt-image-upload-hover-opacity);
+                }
+
+                &:focus-visible {
+                    box-shadow: var(--rt-image-upload-focus-shadow);
+                    outline: none;
+                }
+            }
+        }
+    }
+}

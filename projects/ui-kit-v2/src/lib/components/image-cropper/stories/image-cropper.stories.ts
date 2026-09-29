@@ -7,7 +7,6 @@ export default {
     title: 'Organisms/ImageCropper',
     component: TestRtImageCropperComponent,
     argTypes: {
-        mode: { control: { type: 'inline-radio' }, options: ['button', 'dropzone'] },
         placeholder: { control: { type: 'text' } },
         ratio: { control: { type: 'number', min: 0.2, max: 5, step: 0.1 } },
         round: { control: { type: 'boolean' } },
@@ -27,7 +26,6 @@ type TStory = StoryObj<TestRtImageCropperComponent>;
 export const Playground: TStory = {
     parameters: storySnapshotSkip('сценарий работы с кнопками и выбором файла — кадры семьи снимает её матрица'),
     args: {
-        mode: 'button',
         placeholder: '',
         ratio: null,
         round: false,
@@ -65,21 +63,10 @@ async function takeDemoImage({ canvasElement }: { canvasElement: HTMLElement }):
 }
 
 /**
- * Режим кнопки после нажатия «Демо-картинка 1200×800»: в поле картинка и рамка. Жест делает
+ * Песочница после нажатия «Демо-картинка 1200×800»: в поле картинка и рамка. Жест делает
  * `play`, и он же падает, если рамки нет или поле сжато, — нажатие проверяется, а не предполагается.
  */
 export const DemoImage: TStory = {
     args: { ...Playground.args },
-    play: takeDemoImage,
-};
-
-/** Режим зоны загрузки, как у первого кита: пунктирная зона с кнопкой, пока файла нет */
-export const Dropzone: TStory = {
-    args: { ...Playground.args, mode: 'dropzone' },
-};
-
-/** Режим зоны загрузки после демо-картинки: зона уступила место обрезке */
-export const DropzoneDemoImage: TStory = {
-    args: { ...Playground.args, mode: 'dropzone' },
     play: takeDemoImage,
 };

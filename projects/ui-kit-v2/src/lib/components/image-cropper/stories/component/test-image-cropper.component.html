@@ -1,9 +1,9 @@
 <!-- Один показ, без пары наборов: это сценарий работы, а не сравнение вида; набор переключается
      на панели витрины, пары наборов показывают матрицы семьи. `fill` отдаёт показу ширину
      половины: без неё поле обрезки, которое берёт ширину коробки, сжимается в ноль. -->
-<app-story-presets single fill [caption]="caption()">
+<app-story-presets single fill caption="Выбрать изображение, обрезать, применить">
     <ng-template>
-        <app-story-row [items]="toolbar()" [itemLabel]="noLabel">
+        <app-story-row [items]="toolbar" [itemLabel]="noLabel">
             <ng-template let-tool>
                 @if (tool === 'choose') {
                     <rt-file-input accept="image/*" buttonLabel="Выбрать изображение" [formControl]="picker" />
@@ -19,27 +19,19 @@
             </ng-template>
         </app-story-row>
 
-        @if (showDropzone()) {
-            <rt-file-drop accept="image/*" qa-dataid="image-cropper-story-dropzone" (filesDropped)="choose($event[0])">
-                <rt-empty-state framed icon="cloud-upload" title="Перетащите изображение сюда или">
-                    <rt-file-input accept="image/*" buttonLabel="Выбрать файл" [formControl]="picker" />
-                </rt-empty-state>
-            </rt-file-drop>
-        } @else {
-            <rt-file-drop accept="image/*" (filesDropped)="choose($event[0])">
-                <rt-image-cropper
-                    [file]="file()"
-                    [placeholder]="placeholder"
-                    [ratio]="ratio"
-                    [round]="round"
-                    [minSize]="minSize"
-                    [format]="format"
-                    [quality]="quality"
-                    [disabled]="disabled"
-                    (cropped)="onCropped($event)"
-                    (loadFailed)="onFailed()" />
-            </rt-file-drop>
-        }
+        <rt-file-drop accept="image/*" (filesDropped)="choose($event[0])">
+            <rt-image-cropper
+                [file]="file()"
+                [placeholder]="placeholder"
+                [ratio]="ratio"
+                [round]="round"
+                [minSize]="minSize"
+                [format]="format"
+                [quality]="quality"
+                [disabled]="disabled"
+                (cropped)="onCropped($event)"
+                (loadFailed)="onFailed()" />
+        </rt-file-drop>
 
         @if (file()) {
             <app-story-row [items]="actions" [itemLabel]="noLabel">
@@ -61,7 +53,8 @@
 
         <p>{{ summary() }}</p>
         @if (applied(); as src) {
-            <!-- Картинка в абзаце: `fill` растягивает детей показа, и голая картинка ушла бы на всю ширину -->
+            <!-- Картинка в абзаце: `fill` растягивает детей показа, и голая картинка ушла бы на всю ширину.
+                 Картинку на месте зоны показывает загрузчик `rt-image-upload`, здесь — только файл обрезки. -->
             <p><img alt="Применённый результат" width="160" [src]="src" /></p>
         }
     </ng-template>
