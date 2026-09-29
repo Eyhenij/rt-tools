@@ -1,13 +1,13 @@
 # The side menu
 
-**Status:** proposed · **Revision:** 29 September 2026 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 29 September 2026 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the storage of `@rt-tools/core` — the mode and the width of the submenu are kept in
 it
 **Laws:** `frontend-application`, `verifiability`, `reuse-first`
 **Procedures:** none
 
-A subdomain of the second kit's spec, written before the code by task RT-1883. It merges into the
-spec of the second kit by the last commit of the PR, with the scenario numbers it has now.
+A subdomain of the second kit's spec, written before the code by task RT-1883 and merged with the
+scenario numbers it had as an agreement.
 
 ## Why
 
