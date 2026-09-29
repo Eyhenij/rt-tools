@@ -1,0 +1,34 @@
+import { Meta, StoryObj } from '@storybook/angular';
+
+import { TestRtDynamicSelectorMatrixComponent } from './component/test-dynamic-selector-matrix.component';
+
+/**
+ * Матрицы состояний — то, чего не показывает `Playground`: все значения оси сразу. Контролов нет
+ * намеренно: состояние, до которого надо доехать переключателем, при беглом просмотре неотличимо
+ * от отсутствующего.
+ *
+ * Наведение, фокус и нажатие рисуют кнопки строки и полосы — `rt-icon-button` и `[rtButton]`; их
+ * состояния показаны в их собственных семьях, и своих у списка нет.
+ */
+export default {
+    title: 'Organisms/Forms/DynamicSelector',
+    component: TestRtDynamicSelectorMatrixComponent,
+    parameters: {
+        controls: { disable: true },
+    },
+} as Meta<TestRtDynamicSelectorMatrixComponent>;
+
+type TStory = StoryObj<TestRtDynamicSelectorMatrixComponent>;
+
+export const Rows: TStory = { args: { part: 'rows' } };
+
+export const Invitation: TStory = { args: { part: 'invitation' } };
+
+export const States: TStory = { args: { part: 'states' } };
+
+/** Окно выбора стоит в разметке: в оверлее открытое окно было бы одно, а случаев шесть. */
+export const Popup: TStory = { args: { part: 'popup' } };
+
+export const Input: TStory = { args: { part: 'input' } };
+
+export const Themes: TStory = { args: { part: 'themes' } };

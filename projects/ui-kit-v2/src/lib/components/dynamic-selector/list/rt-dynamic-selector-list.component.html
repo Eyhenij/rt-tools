@@ -9,15 +9,16 @@
                     [rtMod]="{ locked: row.locked }"
                     [cdkDragDisabled]="!draggable() || disabled()">
                     @if (draggable()) {
-                        <rt-icon-button
-                            rtElem="handle"
-                            cdkDragHandle
-                            qa-dataid="dynamic-selector-drag"
-                            icon="arrows"
-                            size="sm"
-                            [ariaLabel]="dragLabel()"
-                            [tooltip]="isNarrow() ? '' : dragLabel()"
-                            [disabled]="disabled()" />
+                        <span rtElem="handle">
+                            <rt-icon-button
+                                cdkDragHandle
+                                qa-dataid="dynamic-selector-drag"
+                                icon="arrows"
+                                size="sm"
+                                [ariaLabel]="dragLabel()"
+                                [tooltip]="isNarrow() ? '' : dragLabel()"
+                                [disabled]="disabled()" />
+                        </span>
                     }
 
                     @if (editedIndex() === index) {
@@ -93,6 +94,7 @@
                 qa-dataid="dynamic-selector-reset"
                 icon="refresh"
                 size="sm"
+                [iconColor]="resetDisabled() || disabled() ? 'muted' : 'current'"
                 [ariaLabel]="resetLabel()"
                 [tooltip]="isNarrow() ? '' : resetLabel()"
                 [disabled]="resetDisabled() || disabled()"

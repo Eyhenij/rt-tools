@@ -97,9 +97,10 @@
             padding-inline: var(--rt-space-md);
         }
 
+        // Шаг строки снят с первого кита: флажок и по отступу сверху и снизу — около 36px.
         &__row {
             display: block;
-            padding-block: var(--rt-space-2xs);
+            padding-block: var(--rt-space-sm);
 
             &--separated {
                 border-bottom: var(--rt-dynamic-selector-popup-border-width) solid var(--rt-color-border-subtle);
