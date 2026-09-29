@@ -7,6 +7,9 @@
     .rt-calendar {
         --rt-calendar-day-radius: var(--rt-radius-md);
 
+        /* Наименьшая высота дня: панель поля даты поднимает её до размера под палец. */
+        --rt-calendar-day-size: auto;
+
         display: block;
 
         &__header {
@@ -28,13 +31,33 @@
         }
 
         &__month-title {
+            display: block;
+            width: 100%;
+            padding: 0;
+            border: none;
             margin: 0 0 var(--rt-space-2);
+            background: none;
             color: var(--rt-color-text-primary);
+            font: inherit;
             font-weight: var(--rt-font-weight-semibold);
             text-align: center;
 
             &:first-letter {
                 text-transform: uppercase;
+            }
+
+            &:is(button) {
+                border-radius: var(--rt-calendar-day-radius);
+                cursor: pointer;
+
+                &:hover {
+                    color: var(--rt-color-text-link);
+                }
+
+                &:focus-visible {
+                    outline: var(--rt-focus-ring-width) solid var(--rt-focus-ring-color);
+                    outline-offset: var(--rt-focus-ring-offset);
+                }
             }
         }
 
@@ -55,6 +78,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
             padding: var(--rt-space-2) var(--rt-space-0-5);
             border: none;
             border-radius: var(--rt-calendar-day-radius);
@@ -63,8 +87,9 @@
             cursor: pointer;
             font: inherit;
             gap: var(--rt-space-0-5);
+            min-block-size: var(--rt-calendar-day-size);
 
-            &:hover:not(:disabled, [data-state='start'], [data-state='end'], [data-state='in-range']) {
+            &:hover:not(:disabled, [data-state='start'], [data-state='end'], [data-state='in-range'], [data-state='chosen']) {
                 background: var(--rt-color-bg-subtle);
             }
 
@@ -84,8 +109,18 @@
                 text-decoration: line-through;
             }
 
+            &[data-today] {
+                box-shadow: inset 0 0 0 var(--rt-border-width-thin) var(--rt-color-action-primary);
+            }
+
+            &:focus-visible {
+                outline: var(--rt-focus-ring-width) solid var(--rt-focus-ring-color);
+                outline-offset: var(--rt-focus-ring-offset);
+            }
+
             &[data-state='start'],
-            &[data-state='end'] {
+            &[data-state='end'],
+            &[data-state='chosen'] {
                 background: var(--rt-color-action-primary);
                 color: var(--rt-color-action-on-primary);
             }

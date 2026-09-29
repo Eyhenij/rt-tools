@@ -24,7 +24,13 @@
     <div rtElem="months" qa-dataid="calendar-months">
         @for (month of months(); track month.key) {
             <div rtElem="month" qa-dataid="calendar-month">
-                <p rtElem="month-title" qa-dataid="calendar-month-title">{{ month.label }}</p>
+                @if (titleAction()) {
+                    <button rtElem="month-title" qa-dataid="calendar-month-title" type="button" (click)="titleClick.emit(month)">
+                        {{ month.label }}
+                    </button>
+                } @else {
+                    <p rtElem="month-title" qa-dataid="calendar-month-title">{{ month.label }}</p>
+                }
                 <div rtElem="grid" qa-dataid="calendar-grid">
                     @for (weekday of weekdayLabels(); track $index) {
                         <span rtElem="weekday" qa-dataid="calendar-weekday">{{ weekday }}</span>
@@ -35,12 +41,18 @@
                     }
                     @for (day of month.days; track day.key) {
                         <button
+                            #dayButton
                             rtElem="day"
                             qa-dataid="calendar-day"
                             type="button"
                             [attr.data-iso]="day.key"
                             [attr.data-state]="day.state"
+                            [attr.data-today]="day.today ? '' : null"
+                            [attr.aria-current]="day.today ? 'date' : null"
+                            [attr.aria-pressed]="day.state === chosenState ? true : null"
+                            [attr.tabindex]="rovingKey() === null ? null : day.key === rovingKey() ? 0 : -1"
                             [disabled]="day.disabled"
+                            (keydown)="onDayKey($event, day)"
                             (click)="onDayClick(day)">
                             <span rtElem="day-num" qa-dataid="calendar-day-num">{{ day.dayOfMonth }}</span>
                             @if (sublabelsLoading()) {

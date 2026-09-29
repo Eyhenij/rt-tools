@@ -20,8 +20,12 @@
 | `canPrev` / `canNext`             | `boolean`           | `false`        |
 | `prevAriaLabel` / `nextAriaLabel` | `string`            | `''`           |
 | `sublabelsLoading`                | `boolean`           | `false`        |
+| `grid`                            | `boolean`           | `false`        |
+| `activeKey`                       | `string \| null`    | `null`         |
+| `titleAction`                     | `boolean`           | `false`        |
 
-Выходы: `prevMonth`, `nextMonth`, `dayClick`. Слот `[calendarHint]` — подсказка в шапке.
+Выходы: `prevMonth`, `nextMonth`, `dayClick`, `gridKey`, `titleClick`. Слот `[calendarHint]` —
+подсказка в шапке.
 
 ## Главное, что нужно знать
 
@@ -32,6 +36,11 @@
 
 **Это не поле ввода.** Значение он не хранит и в форму не пишет; для ввода даты есть
 [`rt-date-picker`](../date-picker/CONTEXT.md).
+
+**Одиночный выбор и клавиши — по входам.** День с `state: chosen` залит, день с `today: true`
+обведён рамкой. Вход `grid` оставляет в обходе Tab один день и отдаёт стрелки, PageUp/PageDown,
+Home и End событием `gridKey`; куда встать, решает потребитель и ставит `activeKey`. Так
+календарь держит панель поля даты и остаётся без своей логики дат.
 
 ## Края
 

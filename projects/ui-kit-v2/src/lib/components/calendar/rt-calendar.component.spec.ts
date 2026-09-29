@@ -146,6 +146,94 @@ describe('RtCalendarComponent', (): void => {
         });
     });
 
+    describe('одиночный выбор и сетка', (): void => {
+        const SINGLE: ReadonlyArray<IRtCalendar.Month> = [
+            {
+                key: '2026-03',
+                label: 'Март 2026',
+                leadingBlanks: [],
+                days: [
+                    day(1, { sublabel: '' }),
+                    day(2, { sublabel: '', today: true }),
+                    day(3, { sublabel: '', state: ERtCalendarDayState.Chosen }),
+                ],
+            },
+        ];
+
+        it('SC-UKV-422 — сегодняшний день обведён, выбранный залит, и оба знака видны по атрибутам', (): void => {
+            const fixture: ComponentFixture<RtCalendarComponent> = setup({ months: SINGLE });
+            const [first, today, chosen]: HTMLButtonElement[] = days(fixture);
+
+            expect(today.hasAttribute('data-today')).toBe(true);
+            expect(today.getAttribute('aria-current')).toBe('date');
+            expect(first.hasAttribute('data-today')).toBe(false);
+            expect(chosen.getAttribute('data-state')).toBe('chosen');
+            expect(chosen.getAttribute('aria-pressed')).toBe('true');
+            expect(first.getAttribute('aria-pressed')).toBeNull();
+        });
+
+        it('без режима сетки каждый день обходится Tab, а стрелки не перехватываются', (): void => {
+            const fixture: ComponentFixture<RtCalendarComponent> = setup({ months: SINGLE });
+            const keys: jest.Mock = jest.fn();
+            fixture.componentInstance.gridKey.subscribe(keys);
+            const event: KeyboardEvent = new KeyboardEvent('keydown', { key: 'ArrowRight', cancelable: true });
+
+            days(fixture)[0].dispatchEvent(event);
+
+            expect(days(fixture).map((button: HTMLButtonElement): string | null => button.getAttribute('tabindex'))).toEqual([
+                null,
+                null,
+                null,
+            ]);
+            expect(keys).not.toHaveBeenCalled();
+            expect(event.defaultPrevented).toBe(false);
+        });
+
+        it('SC-UKV-427 — в режиме сетки в обходе Tab один день, клавиша уходит наружу, фокус встаёт на activeKey', async (): Promise<void> => {
+            const fixture: ComponentFixture<RtCalendarComponent> = setup({ months: SINGLE, grid: true });
+            document.body.appendChild(fixture.nativeElement as HTMLElement);
+            const keys: IRtCalendar.GridKey[] = [];
+            fixture.componentInstance.gridKey.subscribe((value: IRtCalendar.GridKey): void => {
+                keys.push(value);
+            });
+
+            // Выбранный день важнее сегодняшнего.
+            expect(days(fixture).map((button: HTMLButtonElement): string | null => button.getAttribute('tabindex'))).toEqual([
+                '-1',
+                '-1',
+                '0',
+            ]);
+
+            const event: KeyboardEvent = new KeyboardEvent('keydown', { key: 'ArrowLeft', cancelable: true });
+            days(fixture)[2].dispatchEvent(event);
+            expect(event.defaultPrevented).toBe(true);
+            expect(keys[0].key).toBe('ArrowLeft');
+            expect(keys[0].day.key).toBe('2026-03-03');
+
+            fixture.componentRef.setInput('activeKey', '2026-03-02');
+            fixture.detectChanges();
+            await fixture.whenStable();
+
+            expect(days(fixture)[1].getAttribute('tabindex')).toBe('0');
+            expect(document.activeElement).toBe(days(fixture)[1]);
+            (fixture.nativeElement as HTMLElement).remove();
+        });
+
+        it('SC-UKV-421 — заголовок-кнопка отдаёт свой месяц наружу', (): void => {
+            const fixture: ComponentFixture<RtCalendarComponent> = setup({ months: SINGLE, titleAction: true });
+            const titles: IRtCalendar.Month[] = [];
+            fixture.componentInstance.titleClick.subscribe((value: IRtCalendar.Month): void => {
+                titles.push(value);
+            });
+
+            const title: HTMLElement = qa(fixture, 'calendar-month-title')?.nativeElement as HTMLElement;
+            expect(title.tagName).toBe('BUTTON');
+            title.click();
+
+            expect(titles.map((month: IRtCalendar.Month): string => month.key)).toEqual(['2026-03']);
+        });
+    });
+
     it('пустой набор месяцев рисует пустую сетку', (): void => {
         const fixture: ComponentFixture<RtCalendarComponent> = setup({ months: [] });
 

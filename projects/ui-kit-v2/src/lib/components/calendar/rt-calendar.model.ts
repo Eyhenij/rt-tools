@@ -32,6 +32,12 @@ export namespace IRtCalendar {
         today?: boolean;
     }
 
+    /** Клавиша сетки, нажатая на дне. */
+    export interface GridKey {
+        key: string;
+        day: Day;
+    }
+
     /** View-модель месяца: подпись, пустые ячейки до первого дня, дни. */
     export interface Month {
         key: string;

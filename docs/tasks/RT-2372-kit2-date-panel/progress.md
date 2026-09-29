@@ -5,9 +5,9 @@
 Rewritten by every session, not appended to.
 
 - **State:** `этап-идёт`
-- **Stage:** 3 of 7 — The calendar
-- **Done:** branch, folder, plan; the subdomain spec, scenarios `SC-UKV-418`…`SC-UKV-429` and bindings; the pure date module with 8 tests
-- **Next step:** the chosen day, the today mark and the grid keys in `rt-calendar`
+- **Stage:** 4 of 7 — The panel
+- **Done:** branch, folder, plan; the subdomain spec, scenarios `SC-UKV-418`…`SC-UKV-429` and bindings; the pure date module with 8 tests; the calendar with the chosen day, the today mark, the title button and the grid mode
+- **Next step:** the panel component `rt-date-panel`
 - **Uncommitted:** none
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -18,9 +18,9 @@ Rewritten by every session, not appended to.
 - [x] 1.2 Write its scenarios and binding lines
 - [x] 2.1 Write the pure module for the value strings, the month grid, the bounds and the time columns
 - [x] 2.2 Cover it by its spec
-- [>] 3.1 Give `rt-calendar` a chosen day, the today mark and the keys of a grid
-- [ ] 3.2 Cover the new states and keys by its spec
-- [ ] 4.1 Write the panel component for the three types with the month and year choice and the footer
+- [x] 3.1 Give `rt-calendar` a chosen day, the today mark and the keys of a grid
+- [x] 3.2 Cover the new states and keys by its spec
+- [>] 4.1 Write the panel component for the three types with the month and year choice and the footer
 - [ ] 4.2 Cover the panel by its spec
 - [ ] 5.1 Replace the browser popup in `rt-date-picker` by the panel in a popover or a bottom sheet
 - [ ] 5.2 Cover typing, bounds and opening by the field spec
@@ -42,6 +42,9 @@ Rewritten by every session, not appended to.
 
 - **The spec check names the bindings and the scenarios of this subdomain as divergences until the code
   lands** — they point at the module, the panel and the field of stages 2–5. Affected stage of the plan: 1.
+
+- **The calendar keys are opt-in by the input `grid`** — the range calendar of an application keeps
+  every day in the Tab order and gets no keys it does not handle. Affected stage of the plan: 3.
 
 ## Sessions
 
