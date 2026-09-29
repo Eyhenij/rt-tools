@@ -29,6 +29,7 @@
             transition: background-color var(--rt-side-menu-sub-item-transition-duration) ease;
 
             &:hover,
+            &:active,
             &--highlighted {
                 background: var(--rt-color-bg-hover);
             }

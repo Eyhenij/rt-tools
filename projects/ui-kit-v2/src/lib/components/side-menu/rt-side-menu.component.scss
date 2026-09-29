@@ -20,13 +20,23 @@
         position: relative;
         display: flex;
         height: 100%;
-        background: var(--rt-color-bg-nav);
         color: var(--rt-color-text-primary);
 
+        /* Полоса — область прокрутки, а та растягивает себя на всю ширину своим правилом того же
+           веса. Основа гибкой строки сильнее ширины, и полоса держит свою, в каком бы порядке ни
+           пришли стили. */
         &__rail {
-            width: var(--rt-side-menu-rail-width);
+            max-width: var(--rt-side-menu-rail-width);
             height: 100%;
-            flex-shrink: 0;
+            box-sizing: border-box;
+            flex: 0 0 var(--rt-side-menu-rail-width);
+            border-right: var(--rt-side-menu-panel-border-width) solid var(--rt-color-border-default);
+            background: var(--rt-color-bg-surface);
+
+            /* Отступ области прокрутки оставлял подписи 56 пикселей из 88, и слово рвалось посреди. */
+            .rt-scroll-area__body {
+                padding-inline: var(--rt-space-1);
+            }
         }
 
         &__rail-list {
@@ -59,7 +69,8 @@
                 }
             }
 
-            &:hover .rt-side-menu__rail-icon {
+            &:hover .rt-side-menu__rail-icon,
+            &:active .rt-side-menu__rail-icon {
                 background: var(--rt-color-bg-hover);
             }
 
@@ -85,7 +96,6 @@
             font-size: var(--rt-text-xs);
             line-height: var(--rt-leading-snug);
             overflow-wrap: anywhere;
-            padding-inline: var(--rt-space-1);
             text-align: center;
         }
 
@@ -190,6 +200,7 @@
         &__mobile {
             width: 100%;
             height: 100%;
+            background: var(--rt-color-bg-surface);
         }
 
         &__mobile-list,

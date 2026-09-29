@@ -1,16 +1,18 @@
-/* Коробка показа: даёт меню высоту и становится местом отсчёта для панели и подложки. Свойство
-   `contain` делает её содержащим блоком и для фиксированной подложки, и оно же обрезает. */
-.app-side-menu-cell {
-    width: 28rem;
-    height: 24rem;
-    border: 1px dashed var(--rt-color-border-subtle);
-    background: var(--rt-color-bg-page);
-    contain: paint;
+@layer rt-kit.components {
+    /* Коробка показа: даёт меню высоту и становится местом отсчёта для панели и подложки. Свойство
+       `contain` делает её содержащим блоком и для фиксированной подложки, и оно же обрезает. */
+    .app-side-menu-cell {
+        width: 36rem;
+        height: 24rem;
+        border: 1px dashed var(--rt-color-border-subtle);
+        background: var(--rt-color-bg-page);
+        contain: paint;
 
-    &__slot {
-        padding: var(--rt-space-sm);
-        color: var(--rt-color-text-muted);
-        font-size: var(--rt-text-xs);
-        text-align: center;
+        &__slot {
+            padding: var(--rt-space-sm) 0;
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-xs);
+            text-align: center;
+        }
     }
 }

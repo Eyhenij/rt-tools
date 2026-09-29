@@ -5,6 +5,7 @@ import { TestRtSideMenuComponent } from './component/test-side-menu.component';
 export default {
     title: 'Organisms/Navigation/SideMenu',
     component: TestRtSideMenuComponent,
+    parameters: { snapshot: { fullPage: true } },
     argTypes: {
         items: { control: 'object' },
         activeIds: { control: 'object' },
