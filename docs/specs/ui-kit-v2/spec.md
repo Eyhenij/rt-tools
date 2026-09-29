@@ -57,6 +57,7 @@ agreement about their own subject and describe the surface of a component, not a
 | [The settings of the kit and the theme](kit-settings-theme/spec.md)       | what an application sets the look of the kit at the start by, the three states of the theme, a node with a theme of its own     |
 | [One rounding input](radius-scale/spec.md)                                | the scale of steps, the default of the mockup, the step on the host and the components without the input                        |
 | [The accordion](accordion/spec.md)                                        | a list of headed items whose texts open on a press, independently of one another                                                |
+| [A tree of options](option-tree/spec.md)                                  | options with children in the select and the multiselect: levels, arrows, what a click, a key and the filter do                  |
 
 ## What is out of scope
 
