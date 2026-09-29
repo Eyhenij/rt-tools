@@ -1,3 +1,10 @@
+# [0.13.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2@0.12.0...rt-ui-kit-v2@0.13.0) (2026-09-29)
+
+### Features
+
+- **rt:ui-kit-v2:** аккордеон rt-accordion ([be14c7d](https://github.com/Eyhenij/rt-tools/commit/be14c7d4f22d0495728df389492161f1124caf68))
+- **rt:ui-kit-v2:** витрина аккордеона ([96e305b](https://github.com/Eyhenij/rt-tools/commit/96e305b3788ed0454849926491e81bbe4510b3b6))
+
 # [0.12.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2@0.11.0...rt-ui-kit-v2@0.12.0) (2026-09-29)
 
 ### Bug Fixes
