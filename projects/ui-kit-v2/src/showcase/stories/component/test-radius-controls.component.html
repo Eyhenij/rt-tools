@@ -1,8 +1,8 @@
 <app-story-grid
     caption="Контролы × шаг скругления, первый столбец — умолчание компонента"
-    slotWidth="200px"
+    slotWidth="160px"
     [rows]="rows"
-    [columns]="columns"
+    [columns]="columns()"
     [columnLabel]="columnLabel">
     <ng-template let-row let-col="col">
         <div class="app-radius__cell">
@@ -11,7 +11,7 @@
                     <button rtButton label="Сохранить" aria-label="Сохранить" [radius]="col"></button>
                 }
                 @case ('icon-button') {
-                    <rt-icon-button icon="bell" ariaLabel="Уведомления" appearance="secondary" [radius]="col" />
+                    <rt-icon-button icon="bell" ariaLabel="Уведомления" variant="secondary" [radius]="col" />
                 }
                 @case ('split-button') {
                     <rt-split-button label="Сохранить" [menuItems]="menuItems" [radius]="col" />
@@ -38,7 +38,7 @@
                     <rt-input placeholder="Имя" [radius]="col" />
                 }
                 @case ('textarea') {
-                    <rt-textarea placeholder="Комментарий" [radius]="col" />
+                    <rt-textarea placeholder="Текст" [radius]="col" />
                 }
                 @case ('input-number') {
                     <rt-input-number [radius]="col" />

@@ -32,8 +32,8 @@ export type TSkeletonMatrixPart = 'shape' | 'radius' | 'animation' | 'presets' |
             }
 
             @case ('radius') {
-                <app-story-grid caption="Фигура × скругление" [rows]="shapes" [columns]="radii" [columnLabel]="radiusLabel">
-                    <ng-template let-shape let-radius="col">
+                <app-story-grid caption="Скругление × фигура" [rows]="radii" [columns]="shapes" [rowLabel]="radiusLabel">
+                    <ng-template let-radius let-shape="col">
                         <rt-skeleton width="120px" height="24px" size="lg" [shape]="shape" [radius]="radius" />
                     </ng-template>
                 </app-story-grid>

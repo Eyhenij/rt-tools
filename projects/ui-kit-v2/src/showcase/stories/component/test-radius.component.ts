@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, input, InputSignal, ViewEncapsulation } from '@angular/core';
 
+import { TRtRadiusPart } from './test-radius-columns';
 import { TestRtRadiusControlsComponent } from './test-radius-controls.component';
 import { TestRtRadiusSurfacesComponent } from './test-radius-surfaces.component';
 
@@ -25,4 +26,7 @@ export type TRtRadiusGroup = 'controls' | 'surfaces';
 export class TestRtRadiusComponent {
     /** Какие компоненты показывает сетка. */
     public readonly group: InputSignal<TRtRadiusGroup> = input<TRtRadiusGroup>('controls');
+
+    /** Какая часть шкалы идёт столбцами. */
+    public readonly part: InputSignal<TRtRadiusPart> = input<TRtRadiusPart>('small');
 }

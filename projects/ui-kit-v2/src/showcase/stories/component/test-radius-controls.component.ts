@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, InputSignal, Signal, ViewEncapsulation } from '@angular/core';
 
 import { RtAutocompleteComponent } from '../../../lib/components/autocomplete/rt-autocomplete.component';
 import { RtButtonDirective } from '../../../lib/components/button/rt-button.directive';
@@ -18,7 +18,7 @@ import { RtTextareaComponent } from '../../../lib/components/textarea/rt-textare
 import { RtToggleButtonGroupComponent } from '../../../lib/components/toggle-button-group/rt-toggle-button-group.component';
 import { RtToggleSwitchComponent } from '../../../lib/components/toggle-switch/rt-toggle-switch.component';
 import { StoryGridComponent } from '../../story-grid.component';
-import { RT_RADIUS_COLUMNS, radiusColumnLabel, TRtRadiusColumn } from './test-radius-columns';
+import { RT_RADIUS_PARTS, radiusColumnLabel, TRtRadiusColumn, TRtRadiusPart } from './test-radius-columns';
 
 /** Контролы сетки скруглений, по строке на компонент. */
 const ROWS: readonly string[] = [
@@ -73,7 +73,9 @@ const ROWS: readonly string[] = [
 export class TestRtRadiusControlsComponent {
     protected readonly rows: readonly string[] = ROWS;
 
-    protected readonly columns: readonly TRtRadiusColumn[] = RT_RADIUS_COLUMNS;
+    protected readonly columns: Signal<readonly TRtRadiusColumn[]> = computed(
+        (): readonly TRtRadiusColumn[] => RT_RADIUS_PARTS[this.part()]
+    );
 
     protected readonly columnLabel: (col: TRtRadiusColumn) => string = radiusColumnLabel;
 
@@ -83,4 +85,7 @@ export class TestRtRadiusControlsComponent {
     ];
 
     protected readonly menuItems: readonly IRtSplitButton.MenuItem[] = [];
+
+    /** Какая часть шкалы идёт столбцами. */
+    public readonly part: InputSignal<TRtRadiusPart> = input<TRtRadiusPart>('small');
 }
