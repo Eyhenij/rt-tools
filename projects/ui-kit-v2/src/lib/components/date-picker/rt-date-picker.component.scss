@@ -100,8 +100,17 @@
             }
         }
 
-        &__clear {
+        &__clear,
+        &__open {
             flex-shrink: 0;
+        }
+
+        /* Поверхность панели в поповере: она рисуется в CDK Overlay, вне поддерева блока. */
+        &__popup {
+            border: var(--rt-overlay-select-panel-border-width) solid var(--rt-color-border-subtle);
+            border-radius: var(--rt-overlay-select-radius);
+            background-color: var(--rt-color-bg-surface);
+            box-shadow: var(--rt-overlay-select-shadow);
         }
 
         /* Шаг входа `radius` переназначает скругление поля; панель в оверлее держит своё. */

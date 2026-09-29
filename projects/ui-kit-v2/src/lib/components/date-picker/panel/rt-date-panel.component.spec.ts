@@ -1,7 +1,7 @@
 import { DebugElement, LOCALE_ID } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
 
-import { createRtFixture, el, qa, qaAll, textOf } from '../../../testing/rt-kit-testing';
+import { createRtFixture, el, qa, qaAll, textOf } from '../../../../testing/rt-kit-testing';
 import { RtDatePanelComponent } from './rt-date-panel.component';
 
 interface IPanel {

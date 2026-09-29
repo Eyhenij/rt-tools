@@ -24,13 +24,13 @@ import {
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, TRtKitLabelMap } from '../../i18n';
-import { RtButtonDirective } from '../button/rt-button.directive';
-import { RtCalendarComponent } from '../calendar/rt-calendar.component';
-import { IRtCalendar } from '../calendar/rt-calendar.model';
-import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
-import { RtToggleButtonGroupComponent } from '../toggle-button-group/rt-toggle-button-group.component';
-import { IRtToggleButtonGroup } from '../toggle-button-group/rt-toggle-button-group.model';
+import { RT_KIT_LABELS, TRtKitLabelMap } from '../../../i18n';
+import { RtButtonDirective } from '../../button/rt-button.directive';
+import { RtCalendarComponent } from '../../calendar/rt-calendar.component';
+import { IRtCalendar } from '../../calendar/rt-calendar.model';
+import { RtIconButtonComponent } from '../../icon-button/rt-icon-button.component';
+import { RtToggleButtonGroupComponent } from '../../toggle-button-group/rt-toggle-button-group.component';
+import { IRtToggleButtonGroup } from '../../toggle-button-group/rt-toggle-button-group.model';
 import {
     rtDateAddMonths,
     rtDateCanPage,
@@ -45,8 +45,8 @@ import {
     rtDateTimeColumns,
     rtDateWeekdays,
     rtDateWrite,
-} from './rt-date-panel.logic';
-import { IRtDatePicker } from './rt-date-picker.model';
+} from '../rt-date-panel.logic';
+import { IRtDatePicker } from '../rt-date-picker.model';
 
 const BEM_BLOCK: string = 'rt-date-panel';
 const MONTH_LEN: number = 7;
@@ -84,6 +84,7 @@ type TTab = 'date' | 'time';
         class: BEM_BLOCK,
         '[class.rt-date-panel--sheet]': 'sheet()',
         '[class.rt-date-panel--with-time]': "type() !== 'date'",
+        '(keydown.escape)': 'closed.emit()',
     },
 })
 export class RtDatePanelComponent {
