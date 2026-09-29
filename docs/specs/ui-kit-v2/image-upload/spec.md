@@ -29,12 +29,12 @@ file opens the cropper. The second kit gets the same uploader, built on its own 
 
 ### What it is called in the interface
 
-| In the agreement | On the screen                                                           |
-| ---------------- | ----------------------------------------------------------------------- |
-| the drop zone    | a dashed frame with a cloud, a line of text and a button to choose      |
-| the cropper      | the image with the frame, and the buttons «Cancel» and «Apply» under it |
-| the image        | the picture itself; a hint names what a press does                      |
-| download         | a small button with an arrow down next to the picture                   |
+| In the agreement | On the screen                                                              |
+| ---------------- | -------------------------------------------------------------------------- |
+| the drop zone    | a dashed frame with a cloud, a line of text and a button to choose         |
+| the cropper      | the image with the frame, and the buttons «Cancel» and «Apply» under it    |
+| the image        | the picture itself; a hint names what a press does                         |
+| download         | a small button with an arrow down over the top right corner of the picture |
 
 ## Rules
 
@@ -80,13 +80,13 @@ the image is replaced or the component goes away.
 
 ## Screens and states
 
-| State       | What is seen                                           |
-| ----------- | ------------------------------------------------------ |
-| empty       | the drop zone                                          |
-| cropping    | the cropper, «Cancel» and «Apply» under it             |
-| image       | the picture; the download button next to it when asked |
-| loading     | the kit's spinner                                      |
-| unavailable | as empty or image, taking no files and no press        |
+| State       | What is seen                                              |
+| ----------- | --------------------------------------------------------- |
+| empty       | the drop zone                                             |
+| cropping    | the cropper, «Cancel» and «Apply» under it                |
+| image       | the picture; the download button in its corner when asked |
+| loading     | the kit's spinner                                         |
+| unavailable | as empty or image, taking no files and no press           |
 
 ## Cross-cutting requirements
 
