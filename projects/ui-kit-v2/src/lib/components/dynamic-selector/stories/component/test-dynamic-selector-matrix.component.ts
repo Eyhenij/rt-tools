@@ -4,14 +4,16 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
+import { RtIconButtonComponent } from '../../../icon-button/rt-icon-button.component';
 import { RtDynamicInputComponent } from '../../dynamic-input/rt-dynamic-input.component';
 import { RtDynamicSelectorPopupComponent } from '../../popup/rt-dynamic-selector-popup.component';
 import { RtDynamicSelectorComponent } from '../../rt-dynamic-selector.component';
+import { RtDynamicSelectorRowControlsDirective, RtDynamicSelectorRowTitleDirective } from '../../rt-dynamic-selector.directives';
 import { IRtDynamicSelector } from '../../rt-dynamic-selector.model';
 import { IStoryPerson, STORY_PEOPLE } from './test-dynamic-selector.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TDynamicSelectorMatrixPart = 'rows' | 'invitation' | 'states' | 'popup' | 'input' | 'themes';
+export type TDynamicSelectorMatrixPart = 'rows' | 'templates' | 'invitation' | 'states' | 'popup' | 'input' | 'presets' | 'themes';
 
 /** Случай списка выбранного: что показано строками и что с ними можно сделать. */
 interface IRowsCase {
@@ -84,6 +86,29 @@ function texts(values: string[]): FormControl<string[] | null> {
                                     [formControl]="rowsCase.control" />
                             </ng-template>
                         </app-story-row>
+                    </ng-template>
+                </app-story-presets>
+            }
+
+            @case ('templates') {
+                <app-story-presets caption="Свои кнопки и название строки в обоих наборах">
+                    <ng-template>
+                        <div [style.width]="fieldWidth">
+                            <rt-dynamic-selector
+                                keyExp="id"
+                                displayExp="name"
+                                ariaLabel="Команда"
+                                [entities]="people"
+                                [formControl]="templatesControl">
+                                <ng-template rtDynamicSelectorRowTitle let-person>
+                                    <strong>{{ person.name }}</strong>
+                                    · #{{ person.id }}
+                                </ng-template>
+                                <ng-template rtDynamicSelectorRowControls>
+                                    <rt-icon-button icon="info" size="sm" ariaLabel="О сотруднике" />
+                                </ng-template>
+                            </rt-dynamic-selector>
+                        </div>
                     </ng-template>
                 </app-story-presets>
             }
@@ -163,6 +188,24 @@ function texts(values: string[]): FormControl<string[] | null> {
                 </app-story-presets>
             }
 
+            @case ('presets') {
+                <app-story-presets caption="Список и окно в обоих наборах">
+                    <ng-template>
+                        <div class="app-dynamic-selector-matrix__theme-cell">
+                            <rt-dynamic-selector
+                                keyExp="id"
+                                displayExp="name"
+                                ariaLabel="Команда"
+                                draggable
+                                [entities]="people"
+                                [readonlyKeys]="themeReadonly"
+                                [formControl]="presetsControl" />
+                            <rt-dynamic-selector-popup keyExp="id" displayExp="name" [entities]="people" [pinnedKeys]="themePinned" />
+                        </div>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-presets caption="Список и окно в обеих темах в обоих наборах">
                     <ng-template>
@@ -205,6 +248,9 @@ function texts(values: string[]): FormControl<string[] | null> {
 
         // components
         RtDynamicInputComponent,
+        RtDynamicSelectorRowControlsDirective,
+        RtDynamicSelectorRowTitleDirective,
+        RtIconButtonComponent,
         RtDynamicSelectorComponent,
         RtDynamicSelectorPopupComponent,
 
@@ -303,6 +349,8 @@ export class TestRtDynamicSelectorMatrixComponent {
     public readonly themeReadonly: readonly number[] = [1];
     public readonly themePinned: readonly number[] = [1];
     public readonly themeControl: FormControl<number[] | null> = chosen([1, 2]);
+    public readonly presetsControl: FormControl<number[] | null> = chosen([1, 2]);
+    public readonly templatesControl: FormControl<number[] | null> = chosen([4, 5]);
 
     /** Подпись случая: у всех наборов этой матрицы имя лежит в одном поле. */
     public readonly caseLabel: (value: { readonly name: string }) => string = (value: { readonly name: string }): string => value.name;
