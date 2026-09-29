@@ -10,6 +10,15 @@
         /* Наименьшая высота дня: панель поля даты поднимает её до размера под палец. */
         --rt-calendar-day-size: auto;
 
+        /* Где число стоит в клетке по высоте: сверху, чтобы подписи ряда шли одной строкой. */
+        --rt-calendar-day-justify: flex-start;
+
+        /* Число колонок сетки месяцев: два месяца рядом. Панель поля даты ставит одну колонку. */
+        --rt-calendar-month-count: 2;
+
+        /* Рамка сегодняшнего дня: тонкая линия цвета действия внутри клетки. */
+        --rt-calendar-today-ring: inset 0 0 0 var(--rt-border-width-thin) var(--rt-color-action-primary);
+
         display: block;
 
         &__header {
@@ -24,10 +33,17 @@
             flex: 0 0 auto;
         }
 
+        /* Заголовок в шапке стоит между стрелками и не держит нижнего отступа сетки. */
+        &__header &__month-title {
+            width: auto;
+            padding: var(--rt-space-1) var(--rt-space-2);
+            margin: 0;
+        }
+
         &__months {
             display: grid;
             gap: var(--rt-space-6);
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(var(--rt-calendar-month-count), 1fr);
         }
 
         &__month-title {
@@ -78,7 +94,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: var(--rt-calendar-day-justify);
             padding: var(--rt-space-2) var(--rt-space-0-5);
             border: none;
             border-radius: var(--rt-calendar-day-radius);
@@ -93,8 +109,12 @@
                 background: var(--rt-color-bg-subtle);
             }
 
+            /* Выключенный день приглушён сам, без состояния: границы панели поля даты выключают
+               дни, не называя их прошедшими. */
             &:disabled {
+                color: var(--rt-color-text-muted);
                 cursor: not-allowed;
+                opacity: 0.45;
             }
 
             &[data-state='past'],
@@ -110,7 +130,7 @@
             }
 
             &[data-today] {
-                box-shadow: inset 0 0 0 var(--rt-border-width-thin) var(--rt-color-action-primary);
+                box-shadow: var(--rt-calendar-today-ring);
             }
 
             &:focus-visible {

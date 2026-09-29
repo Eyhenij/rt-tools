@@ -22,7 +22,7 @@
 | `sublabelsLoading`                | `boolean`           | `false`        |
 | `grid`                            | `boolean`           | `false`        |
 | `activeKey`                       | `string \| null`    | `null`         |
-| `titleAction`                     | `boolean`           | `false`        |
+| `titleAction` / `headerTitle`     | `boolean`           | `false`        |
 
 Выходы: `prevMonth`, `nextMonth`, `dayClick`, `gridKey`, `titleClick`. Слот `[calendarHint]` —
 подсказка в шапке.

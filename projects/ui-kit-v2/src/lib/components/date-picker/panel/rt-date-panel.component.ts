@@ -89,13 +89,12 @@ type TTab = 'date' | 'time';
 })
 export class RtDatePanelComponent {
     readonly #locale: string = inject(LOCALE_ID);
-    /** Минута открытия панели: от неё считается «сегодня». */
+    /** Минута открытия панели: от неё считается «сегодня», когда вход `now` не задан. */
     readonly #openedAt: Date = new Date();
     readonly #firstDay: number = rtDateFirstDay(this.#locale);
 
     protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
     protected readonly weekdays: readonly string[] = rtDateWeekdays(this.#locale);
-    protected readonly today: string = rtDateNow(this.#openedAt, 1).day;
 
     protected readonly timeCells: Signal<readonly ElementRef<HTMLButtonElement>[]> =
         viewChildren<ElementRef<HTMLButtonElement>>('timeCell');
@@ -104,13 +103,17 @@ export class RtDatePanelComponent {
     protected readonly tab: WritableSignal<TTab> = signal<TTab>('date');
     protected readonly activeKey: WritableSignal<string | null> = signal<string | null>(null);
 
+    protected readonly today: Signal<string> = computed((): string => rtDateNow(this.now() ?? this.#openedAt, 1).day);
+
     protected readonly draftDay: WritableSignal<string | null> = linkedSignal(
         (): string | null => rtDateSplit(this.value(), this.type()).day
     );
     protected readonly draftTime: WritableSignal<string | null> = linkedSignal(
         (): string | null => rtDateSplit(this.value(), this.type()).time
     );
-    protected readonly shownMonth: WritableSignal<string> = linkedSignal((): string => (this.draftDay() ?? this.today).slice(0, MONTH_LEN));
+    protected readonly shownMonth: WritableSignal<string> = linkedSignal((): string =>
+        (this.draftDay() ?? this.today()).slice(0, MONTH_LEN)
+    );
     protected readonly year: WritableSignal<number> = linkedSignal((): number => Number(this.shownMonth().slice(0, YEAR_LEN)));
 
     protected readonly split: Signal<boolean> = computed((): boolean => this.sheet() && this.type() === 'datetime-local');
@@ -124,7 +127,7 @@ export class RtDatePanelComponent {
     protected readonly months: Signal<IRtCalendar.Month[]> = computed((): IRtCalendar.Month[] => [
         rtDateMonth(this.shownMonth(), {
             locale: this.#locale,
-            today: this.today,
+            today: this.today(),
             chosen: this.draftDay(),
             min: this.min(),
             max: this.max(),
@@ -149,7 +152,7 @@ export class RtDatePanelComponent {
         rtDateTimeColumns({ step: this.minuteStep(), hour: this.draftHour(), day: this.draftDay(), min: this.min(), max: this.max() })
     );
 
-    protected readonly todayOff: Signal<boolean> = computed((): boolean => !rtDateInBounds(this.today, this.min(), this.max()));
+    protected readonly todayOff: Signal<boolean> = computed((): boolean => !rtDateInBounds(this.today(), this.min(), this.max()));
     /** Черновик собирается в значение и лежит в границах. */
     protected readonly canApply: Signal<boolean> = computed((): boolean => this.#draftValue() !== '');
     protected readonly tabs: Signal<IRtToggleButtonGroup.Option<TTab>[]> = computed((): IRtToggleButtonGroup.Option<TTab>[] => [
@@ -172,17 +175,26 @@ export class RtDatePanelComponent {
         transform: booleanAttribute,
     });
 
+    /**
+     * Момент, от которого считаются «сегодня» и «Сейчас». Поле его не задаёт — панель читает часы
+     * сама; задаёт витрина, чтобы кадр не менялся день ото дня.
+     */
+    public readonly now: InputSignal<Date | null> = input<Date | null>(null);
+
     /** Готовое значение: панель просит поле его записать. */
     public readonly picked: OutputEmitterRef<string> = output<string>();
     /** Панель просит закрыть себя. */
     public readonly closed: OutputEmitterRef<void> = output<void>();
 
     constructor() {
-        // Колонки времени прокручены к выбранному часу и минуте, когда их показали.
+        // Колонки времени прокручены так, что выбранный час и минута стоят посередине. Прокрутка
+        // задаётся самой колонке: `scrollIntoView` двигал бы и страницу под поповером.
         afterRenderEffect((): void => {
             for (const cell of this.timeCells()) {
-                if (cell.nativeElement.getAttribute('aria-pressed') === 'true') {
-                    cell.nativeElement.scrollIntoView?.({ block: 'nearest' });
+                const node: HTMLButtonElement = cell.nativeElement;
+                const column: HTMLElement | null = node.parentElement;
+                if (column !== null && node.getAttribute('aria-pressed') === 'true') {
+                    column.scrollTop = node.offsetTop - (column.clientHeight - node.offsetHeight) / 2;
                 }
             }
         });
@@ -199,12 +211,12 @@ export class RtDatePanelComponent {
 
     protected pickToday(): void {
         if (!this.todayOff()) {
-            this.#emit(this.today);
+            this.#emit(this.today());
         }
     }
 
     protected pickNow(): void {
-        const now: IRtDatePicker.Moment = rtDateNow(new Date(), this.minuteStep());
+        const now: IRtDatePicker.Moment = rtDateNow(this.now() ?? new Date(), this.minuteStep());
         this.draftTime.set(now.time);
         if (this.type() === 'datetime-local') {
             this.draftDay.set(now.day);

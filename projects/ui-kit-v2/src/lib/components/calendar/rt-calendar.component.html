@@ -9,6 +9,9 @@
             [ariaLabel]="prevAriaLabel()"
             [disabled]="!canPrev()"
             (clicked)="prevMonth.emit()" />
+        @if (headerTitle() && months()[0]; as first) {
+            <ng-container *ngTemplateOutlet="titleTpl; context: { $implicit: first }" />
+        }
         <ng-content select="[calendarHint]" />
         <rt-icon-button
             rtElem="nav"
@@ -24,12 +27,8 @@
     <div rtElem="months" qa-dataid="calendar-months">
         @for (month of months(); track month.key) {
             <div rtElem="month" qa-dataid="calendar-month">
-                @if (titleAction()) {
-                    <button rtElem="month-title" qa-dataid="calendar-month-title" type="button" (click)="titleClick.emit(month)">
-                        {{ month.label }}
-                    </button>
-                } @else {
-                    <p rtElem="month-title" qa-dataid="calendar-month-title">{{ month.label }}</p>
+                @if (!headerTitle()) {
+                    <ng-container *ngTemplateOutlet="titleTpl; context: { $implicit: month }" />
                 }
                 <div rtElem="grid" qa-dataid="calendar-grid">
                     @for (weekday of weekdayLabels(); track $index) {
@@ -73,4 +72,14 @@
     </div>
 
     <ng-content />
+
+    <ng-template #titleTpl let-month>
+        @if (titleAction()) {
+            <button rtElem="month-title" qa-dataid="calendar-month-title" type="button" (click)="titleClick.emit(month)">
+                {{ month.label }}
+            </button>
+        } @else {
+            <p rtElem="month-title" qa-dataid="calendar-month-title">{{ month.label }}</p>
+        }
+    </ng-template>
 </ng-container>

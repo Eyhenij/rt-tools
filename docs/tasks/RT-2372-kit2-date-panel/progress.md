@@ -5,9 +5,9 @@
 Rewritten by every session, not appended to.
 
 - **State:** `этап-идёт`
-- **Stage:** 6 of 7 — Showcase and docs
-- **Done:** branch, folder, plan; the subdomain spec, scenarios `SC-UKV-418`…`SC-UKV-429` and bindings; the pure date module with 8 tests; the calendar with the chosen day, the today mark, the title button and the grid mode; the panel `rt-date-panel` with 11 tests and the kit labels; the field opens it in a popover or the bottom sheet, typing is read by the module
-- **Next step:** the stories of the panel for the three types and the narrow screen
+- **Stage:** 7 of 7 — Closing
+- **Done:** branch, folder, plan; the subdomain spec, scenarios `SC-UKV-418`…`SC-UKV-429` and bindings; the pure date module with 8 tests; the calendar with the chosen day, the today mark, the title button and the grid mode; the panel `rt-date-panel` with 11 tests and the kit labels; the field opens it in a popover or the bottom sheet, typing is read by the module; the stories `Panel*`, the texts of the field and the calendar, the snapshots — 661 of 661 on the second run
+- **Next step:** the full set of checks
 - **Uncommitted:** none
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -24,10 +24,10 @@ Rewritten by every session, not appended to.
 - [x] 4.2 Cover the panel by its spec
 - [x] 5.1 Replace the browser popup in `rt-date-picker` by the panel in a popover or a bottom sheet
 - [x] 5.2 Cover typing, bounds and opening by the field spec
-- [>] 6.1 Show the panel of the three types and the narrow screen in the stories
-- [ ] 6.2 Rewrite the overview page and the context of the field and the calendar
-- [ ] 6.3 Re-take the snapshots
-- [ ] 7.1 Run the full set of checks
+- [x] 6.1 Show the panel of the three types and the narrow screen in the stories
+- [x] 6.2 Rewrite the overview page and the context of the field and the calendar
+- [x] 6.3 Re-take the snapshots
+- [>] 7.1 Run the full set of checks
 
 ## Decisions along the way
 
@@ -45,6 +45,15 @@ Rewritten by every session, not appended to.
 
 - **The calendar keys are opt-in by the input `grid`** — the range calendar of an application keeps
   every day in the Tab order and gets no keys it does not handle. Affected stage of the plan: 3.
+
+- **The panel takes the moment by the input `now`** — the field does not pass it and the panel reads
+  the clock; the showcase pins it, or the today frame would change day by day. Affected stage of the
+  plan: 6.
+- **The calendar keeps two columns and its top alignment by default** — the panel sets one column and
+  a centred day on its own calendar node; a first attempt changed every one-month calendar and the
+  sublabel rows, and the frames showed it. Affected stage of the plan: 6.
+- **A disabled day is muted by itself** — the range calendar muted it by the state `past`, the bounds
+  of the panel name no state. Affected stage of the plan: 6.
 
 ## Sessions
 

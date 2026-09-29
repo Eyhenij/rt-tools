@@ -1,4 +1,5 @@
 import { BooleanInput } from '@angular/cdk/coercion';
+import { NgTemplateOutlet } from '@angular/common';
 import {
     afterRenderEffect,
     booleanAttribute,
@@ -38,6 +39,9 @@ const GRID_KEYS: ReadonlySet<string> = new Set(['ArrowLeft', 'ArrowRight', 'Arro
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
     imports: [
+        // angular
+        NgTemplateOutlet,
+
         // rt-tools
         BlockDirective,
         ElemDirective,
@@ -105,6 +109,10 @@ export class RtCalendarComponent {
     public readonly activeKey: InputSignal<string | null> = input<string | null>(null);
     /** Заголовок месяца — кнопка, что шлёт `titleClick`: так consumer открывает выбор месяца. */
     public readonly titleAction: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+    /** Заголовок первого месяца стоит в шапке между стрелками, а не над сеткой. */
+    public readonly headerTitle: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
 

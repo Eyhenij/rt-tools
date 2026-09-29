@@ -186,6 +186,12 @@ describe('RtDatePanelComponent', (): void => {
         expect(qa(fixture, 'date-panel-time')).not.toBeNull();
     });
 
+    it('SC-UKV-422 — the input now sets today and the moment of «Now»', (): void => {
+        const { fixture }: IPanel = setup({ type: 'date', value: '2026-03-15', now: new Date(2026, 2, 10, 18, 44) });
+
+        expect(el(fixture, '[qa-dataid="calendar-day"][data-today]')?.nativeElement.getAttribute('data-iso')).toBe('2026-03-10');
+    });
+
     it('SC-UKV-429 — the weekday names follow the locale of the application', (): void => {
         const { fixture }: IPanel = setup({ type: 'date', value: '2026-09-15' });
 

@@ -234,6 +234,13 @@ describe('RtCalendarComponent', (): void => {
         });
     });
 
+    it('headerTitle ставит заголовок первого месяца в шапку между стрелками', (): void => {
+        const fixture: ComponentFixture<RtCalendarComponent> = setup({ headerTitle: true });
+
+        expect(el(fixture, '[qa-dataid="calendar-month"] [qa-dataid="calendar-month-title"]')).toBeNull();
+        expect(textOf(el(fixture, '.rt-calendar__header [qa-dataid="calendar-month-title"]'))).toBe('Март 2026');
+    });
+
     it('пустой набор месяцев рисует пустую сетку', (): void => {
         const fixture: ComponentFixture<RtCalendarComponent> = setup({ months: [] });
 
