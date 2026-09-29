@@ -47,6 +47,21 @@ export function normalizeSideMenuSettings(value: unknown): IRtSideMenu.Settings 
     return settings;
 }
 
+/** Запись хранилища как объект. Не JSON, не объект, пустое хранилище — одинаково пустая запись. */
+export function parseSideMenuSettingsRecord(raw: string | null): TRtSideMenuSettingsRecord {
+    if (raw === null) {
+        return {};
+    }
+
+    try {
+        const value: unknown = JSON.parse(raw);
+
+        return isRecord(value) ? value : {};
+    } catch {
+        return {};
+    }
+}
+
 /**
  * Настройки всех меню из записи. Меню, чьё значение не объект, пропускается: сломанный угол одного
  * меню не стирает соседние.

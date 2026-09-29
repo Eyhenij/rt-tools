@@ -32,7 +32,7 @@ Given the person pinned the submenu and dragged it to 300 pixels
 When the page reloads
 Then the submenu stands pinned, 300 pixels wide
 
-Не покрыто: the settings service is not written yet.
+Covered: `projects/ui-kit-v2/src/lib/components/side-menu/rt-side-menu-settings.service.spec.ts`.
 
 ### SC-UKV-410 — a broken storage record does not erase its neighbour
 
