@@ -6,8 +6,8 @@ Rewritten by every session, not appended to.
 
 - **State:** `этап-идёт`
 - **Stage:** 3 of 4 — the showcase
-- **Done:** stages 1 and 2 — the component, and the subdomain `docs/specs/ui-kit-v2/accordion/` with its binding
-- **Next step:** `Overview.mdx` and the stories
+- **Done:** stages 1 and 2; `Overview.mdx`, `Playground` and the matrices
+- **Next step:** read the taken frames of `molecules-accordion--*` by eye and commit them
 - **Uncommitted:** nothing of this task
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -21,9 +21,9 @@ Rewritten by every session, not appended to.
 - `[x]` 2.1 Merge the agreement into the subdomain
 - `[x]` 2.2 Add the subdomain to the tables and the family to the map
 - `[x]` 2.3 Put the scenario numbers into the test titles
-- `[>]` 3.1 Write `CONTEXT.md` and `Overview.mdx`
-- `[ ]` 3.2 Write the stories and their wrappers
-- `[ ]` 3.3 Shoot the snapshot references and read them
+- `[x]` 3.1 Write `CONTEXT.md` and `Overview.mdx`
+- `[x]` 3.2 Write the stories and their wrappers
+- `[>]` 3.3 Shoot the snapshot references and read them
 - `[ ]` 4.1 Run the push check set
 - `[ ]` 4.2 Take the folder apart and open the PR
 
@@ -32,6 +32,11 @@ Rewritten by every session, not appended to.
 - **29 September 2026. The plan header names the draft, not the spec.** The first version of the
   header named the subdomain spec directly; before the first commit it was changed to the draft in
   `proposed/`, as the rule of work conduct asks for work that changes behaviour.
+
+- **29 September 2026. The package README is not edited.** It names no component by name, and the
+  changelog is assembled by the publishing run; the footprint line about it is empty.
+- **29 September 2026. The `Opening` axis shows the first, the third and no item open.** Several
+  open items come only from presses; the spec says so, and `Playground` shows them.
 
 ## Session entries
 
@@ -44,3 +49,6 @@ Rewritten by every session, not appended to.
   eslint and stylelint over the family report nothing.
 - Stage 2: `pnpm run check:specs` names no line about the accordion; the scenario numbers stood in
   the test titles from stage 1.
+- Stage 3: `pnpm run test:stories:v2` — «There are no empty showings and no drawing errors: 629
+  stories and 86 overview pages»; `node tools/verify-ui-kit-v2-docs.cjs` — «Overview pages matched: 81,
+  no divergences».

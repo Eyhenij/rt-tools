@@ -100,8 +100,9 @@ Not applicable: the accordion keeps only the set of open positions.
 | empty list              | nothing is drawn                                            |
 
 The showcase gets the family's set: `Overview`, `Playground`, one story per axis — `Opening` (the
-first open, none open, several open) and `Length` (a short heading, a heading that wraps, a long
-text) — then `Themes` and `Presets`.
+first open, the third open, none open) and `Length` (a short heading, a heading that wraps, a long
+text) — then `States`, `Presets` and `Themes`. Several open items come only from presses, and
+`Playground` shows them.
 
 ## Cross-cutting requirements
 
