@@ -278,8 +278,8 @@ export class TestRtMultiselectMatrixComponent {
     /** Дерево опций: ветки, листья и отключённый лист на трёх уровнях. */
     public readonly treeOptions: ReadonlyArray<IRtSelect.Option<string>> = STORY_OPTION_TREE;
 
-    /** Часть листьев выбрана: у ветки над ними флажок в промежуточном состоянии, у полной — включён. */
-    public readonly treeControl: FormControl<readonly string[] | null> = chosen(['msk', 'spb', 'kgd']);
+    /** Все листья области выбраны — её флажок включён, у округа над ней выбрана часть — промежуточный. */
+    public readonly treeControl: FormControl<readonly string[] | null> = chosen(['msk', 'khi']);
 
     /** Выбор открытой панели: по нему видно, чем отмеченная опция отличается от прочих. */
     public readonly panelControl: FormControl<readonly string[] | null> = chosen(['spb', 'nsk']);

@@ -5,9 +5,9 @@
 Rewritten by every session, not appended to.
 
 - **State:** `этап-идёт`
-- **Stage:** 5 of 6 — Showcase and docs
+- **Stage:** 6 of 6 — Closing
 - **Done:** branch from `RT-2368-kit2-search-icon`, task in «In progress», folder, plan
-- **Next step:** re-take the snapshots
+- **Next step:** the full set of checks
 - **Uncommitted:** the task folder
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -26,8 +26,8 @@ Rewritten by every session, not appended to.
 - [x] 4.3 Cover the multiselect scenarios by its component spec
 - [x] 5.1 Show the tree in the stories of both families
 - [x] 5.2 Document the tree on the overview pages and in the component contexts
-- [>] 5.3 Re-take the snapshots
-- [ ] 6.1 Run the full set of checks
+- [x] 5.3 Re-take the snapshots
+- [>] 6.1 Run the full set of checks
 
 ## Decisions along the way
 
