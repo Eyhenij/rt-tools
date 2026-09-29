@@ -39,24 +39,7 @@ const ROWS: readonly ICardRow[] = [
  */
 @Component({
     selector: 'app-table-card-focus',
-    template: `
-        <app-story-presets caption="Первая карточка под фокусом с клавиши">
-            <ng-template>
-                <table rt-table ariaLabel="Договоры" clickable [dataSource]="rows" [columns]="columns">
-                    <ng-container cdkColumnDef="title">
-                        <th *cdkHeaderCellDef cdk-header-cell>Договор</th>
-                        <td *cdkCellDef="let row" cdk-cell>{{ row.title }}</td>
-                    </ng-container>
-                    <ng-container cdkColumnDef="city">
-                        <th *cdkHeaderCellDef cdk-header-cell>Город</th>
-                        <td *cdkCellDef="let row" cdk-cell>{{ row.city }}</td>
-                    </ng-container>
-                    <tr *cdkHeaderRowDef="columns" cdk-header-row></tr>
-                    <tr *cdkRowDef="let row; columns: columns" cdk-row rtTableRow></tr>
-                </table>
-            </ng-template>
-        </app-story-presets>
-    `,
+    templateUrl: './test-table-card-focus.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [{ provide: BreakpointsService, useValue: { narrow: signal<boolean>(true) } }],
     imports: [
