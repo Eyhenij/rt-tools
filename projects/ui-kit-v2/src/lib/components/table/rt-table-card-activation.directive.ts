@@ -17,7 +17,7 @@ const ACTIVATE: string = 'activate($event)';
 @Directive({
     selector: '[rtTableCardActivation]',
     host: {
-        '[attr.tabindex]': 'enabled() ? 0 : null',
+        '[attr.tabindex]': 'rtTableCardActivationEnabled() ? 0 : null',
         '(click)': ACTIVATE,
         '(keydown.enter)': ACTIVATE,
         '(keydown.space)': ACTIVATE,
@@ -27,16 +27,15 @@ export class RtTableCardActivationDirective {
     readonly #card: HTMLElement = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
 
     /** Номер карточки — он же номер строки, которую она показывает */
-    public readonly index: InputSignal<number> = input.required<number>({ alias: 'rtTableCardActivation' });
+    public readonly rtTableCardActivation: InputSignal<number> = input.required<number>();
 
     /** Карточка отзывается на нажатие */
-    public readonly enabled: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
-        alias: 'rtTableCardActivationEnabled',
+    public readonly rtTableCardActivationEnabled: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
         transform: booleanAttribute,
     });
 
     protected activate(event: Event): void {
-        if (!this.enabled() || isFromInteractive(event.target)) {
+        if (!this.rtTableCardActivationEnabled() || isFromInteractive(event.target)) {
             return;
         }
         if (event instanceof KeyboardEvent) {
@@ -45,7 +44,7 @@ export class RtTableCardActivationDirective {
         }
         const host: Element | null = this.#card.closest('rt-table, table[rt-table]');
         if (host !== null) {
-            cardRowOf(host, this.index())?.click();
+            cardRowOf(host, this.rtTableCardActivation())?.click();
         }
     }
 }
