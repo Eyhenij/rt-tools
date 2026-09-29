@@ -1,7 +1,7 @@
 # План
 
 **Задача:** RT-1883 · **Ветка:** RT-1883-kit2-side-menu
-**Spec:** `projects/ui-kit-v2/src/lib/components/side-menu/CONTEXT.md`
+**Draft:** `docs/specs/ui-kit-v2/proposed/side-menu/spec.md`
 **Behaviour:** changes
 
 После записи этот файл не правится. Пересмотр этапа уходит в ход работ решением по пути.
