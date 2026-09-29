@@ -54,9 +54,9 @@ export class RtSubMenuKeyboard {
 
                 return true;
             case 'ArrowRight':
-                return this.#setFolderOpen(current, true);
+                return this.setFolderOpen(current, true);
             case 'ArrowLeft':
-                return this.#setFolderOpen(current, false);
+                return this.setFolderOpen(current, false);
             case 'Enter':
                 return this.#enter(current);
             case 'Escape':
@@ -81,10 +81,11 @@ export class RtSubMenuKeyboard {
             return true;
         }
 
-        return this.#setFolderOpen(item, true);
+        return this.setFolderOpen(item, true);
     }
 
-    #setFolderOpen(item: IRtSideMenu.Item | null, open: boolean): boolean {
+    /** Раскрыть или свернуть папку: стрелкой, Enter или нажатием её заголовка. */
+    public setFolderOpen(item: IRtSideMenu.Item | null, open: boolean): boolean {
         if (item === null || !item.submenu?.length) {
             return false;
         }
