@@ -14,8 +14,11 @@
         --rt-side-menu-panel-border-width: var(--rt-border-width-thin);
         --rt-side-menu-transition-duration: var(--rt-duration-fast);
 
+        /* Натянутую рукой ширину ставит привязка хоста; без неё панель берёт ширину оформления. */
+        --rt-side-menu-panel-dragged-width: 0px;
+
         /* Ширина панели: наибольшее из оформления и натянутой рукой. */
-        --rt-side-menu-panel-shown-width: max(var(--rt-side-menu-panel-width), var(--rt-side-menu-panel-dragged-width, 0px));
+        --rt-side-menu-panel-shown-width: max(var(--rt-side-menu-panel-width), var(--rt-side-menu-panel-dragged-width));
 
         position: relative;
         display: flex;

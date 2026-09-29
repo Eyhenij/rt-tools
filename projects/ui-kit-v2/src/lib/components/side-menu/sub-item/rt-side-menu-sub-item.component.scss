@@ -9,6 +9,9 @@
         display: block;
 
         &__row {
+            /* Глубину вложения ставит шаблон на саму строку; здесь — значение строки верхнего уровня. */
+            --rt-side-menu-sub-item-depth: 0;
+
             display: flex;
             width: 100%;
             min-height: var(--rt-control-height-md);
@@ -23,7 +26,7 @@
             font-size: var(--rt-text-sm);
             gap: var(--rt-space-sm);
             padding-block: var(--rt-space-2);
-            padding-inline: calc(var(--rt-space-md) * (1 + var(--rt-side-menu-sub-item-depth, 0))) var(--rt-space-sm);
+            padding-inline: calc(var(--rt-space-md) * (1 + var(--rt-side-menu-sub-item-depth))) var(--rt-space-sm);
             text-align: start;
             text-decoration: none;
             transition: background-color var(--rt-side-menu-sub-item-transition-duration) ease;

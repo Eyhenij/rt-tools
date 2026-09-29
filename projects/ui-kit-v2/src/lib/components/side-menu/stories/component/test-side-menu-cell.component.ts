@@ -1,5 +1,6 @@
 import {
     afterNextRender,
+    booleanAttribute,
     ChangeDetectionStrategy,
     Component,
     ElementRef,
@@ -7,6 +8,7 @@ import {
     Injector,
     input,
     InputSignal,
+    InputSignalWithTransform,
     Signal,
     viewChild,
 } from '@angular/core';
@@ -47,7 +49,7 @@ export class TestRtSideMenuCellComponent {
     /** Запрос, набранный в поле поиска. */
     public readonly query: InputSignal<string> = input<string>('');
     /** Шапка и подвал полосы. */
-    public readonly slots: InputSignal<boolean> = input<boolean>(false);
+    public readonly slots: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, { transform: booleanAttribute });
 
     constructor() {
         afterNextRender((): void => {
