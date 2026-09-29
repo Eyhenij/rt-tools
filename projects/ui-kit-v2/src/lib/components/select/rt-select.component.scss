@@ -242,6 +242,9 @@
         }
 
         &__option {
+            /* Уровень строки в дереве ставит разметка на саму строку; ноль — строка верхнего уровня. */
+            --rt-select-tree-level: 0;
+
             display: flex;
             min-height: var(--rt-select-option-min-height);
             box-sizing: border-box;
@@ -252,7 +255,7 @@
             cursor: pointer;
             font-size: var(--rt-select-option-font-size);
             gap: var(--rt-space-sm);
-            padding-inline-start: calc(var(--rt-space-md) + var(--rt-select-tree-indent) * var(--rt-select-tree-level, 0));
+            padding-inline-start: calc(var(--rt-space-md) + var(--rt-select-tree-indent) * var(--rt-select-tree-level));
 
             &:hover,
             &--active {
