@@ -6,10 +6,10 @@ Rewritten by every session, not appended to.
 
 - **State:** `этап-идёт`
 - **Stage:** 5 of 6 — The showcase and the texts
-- **Done:** exploration, grill, plan, the agreement `docs/specs/ui-kit-v2/proposed/radius-scale/`, the step type, `RtRadiusDirective`, the mixin `radius-steps`, their specs; the tag, icon button, button and skeleton folded into `radius`, the kit's callers moved; the twelve controls and nineteen surfaces take the input, the contract spec of SC-UKV-388–390 lists them; the defaults match the mockup (151 suites, 1954 tests green)
-- **Next step:** the showcase page with every component at every step; then the stories of the four folded components move to `radius`
+- **Done:** exploration, grill, plan, the agreement `docs/specs/ui-kit-v2/proposed/radius-scale/`, the step type, `RtRadiusDirective`, the mixin `radius-steps`, their specs; the tag, icon button, button and skeleton folded into `radius`, the kit's callers moved; the twelve controls and nineteen surfaces take the input, the contract spec of SC-UKV-388–390 lists them; the defaults match the mockup (151 suites, 1954 tests green); the showcase page `Foundation/Radius` and the stories of the four folded components are on `radius`, the sweep is clean (624 stories, 85 pages)
+- **Next step:** the component descriptions, the README and the changelog; the preset-stories check waits for the owner's word on the `radius` entry
 - **Uncommitted:** none
-- **Waiting for the owner:** no
+- **Waiting for the owner:** the word on naming `radius` in the accepted list of the preset-stories check
 - **PR:** not open yet
 
 ## Steps
@@ -27,9 +27,9 @@ Rewritten by every session, not appended to.
 - [x] 4.1 Controls: split button, toggle group, toggle switch, checkbox, radio card, input, textarea, input number, select, multiselect, autocomplete, date picker
 - [x] 4.2 Surfaces: card, dialog, confirm popover, bottom sheet, toast, tooltip, message, note, menu, file card, file drop, markdown text, money list, action bar, stepper, table, photo viewer, calendar, pagination, section nav, header, notifications bell, thread list, empty state
 - [x] 4.3 Defaults brought to the mockup and off-scale values replaced by steps
-- [>] 5.1 A showcase page with every component at every step
-- [ ] 5.2 The stories of the four folded components moved to `radius`
-- [ ] 5.3 The component descriptions, the README and the changelog brought up to date
+- [x] 5.1 A showcase page with every component at every step
+- [x] 5.2 The stories of the four folded components moved to `radius`
+- [>] 5.3 The component descriptions, the README and the changelog brought up to date
 - [ ] 5.4 The snapshots re-taken
 - [ ] 6.1 The agreement merged into the domain spec
 - [ ] 6.2 The full set of checks run

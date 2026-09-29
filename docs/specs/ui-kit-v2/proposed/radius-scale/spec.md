@@ -69,6 +69,11 @@ own and lets any instance take any step: the kit promises the same by one input.
 
 - **The rounding of overlay panels.** A select panel, a menu, a tooltip and a dropdown are separate
   parts in the mockup with rounding of their own; the input of the field does not reach them.
+- **The components a directive or a service draws in an overlay.** The confirmation, the toast, the
+  tooltip and the photo viewer have no tag in the consumer's template, so there is nowhere to name
+  a step.
+- **The table.** Its wide view has no corners, and the card of the narrow view takes the input by
+  a task of its own.
 - **The material look.** It keeps its own control rounding; that look is drawn apart.
 - **The shared style layer.** Forms, the sign-in screen and the scrollbar are not components and
   take no input.
