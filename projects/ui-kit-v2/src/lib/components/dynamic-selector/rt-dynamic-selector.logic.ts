@@ -127,3 +127,38 @@ export function renameDynamicText(values: ReadonlyArray<string>, previous: strin
 
     return values.map((value: string): string => (value === previous ? text : value));
 }
+
+/** Ключ последней видимой закреплённой строки: под ней стоит разделитель. Порядок строк не меняется. */
+export function lastPinnedDynamicKey<T, K>(rows: ReadonlyArray<T>, pinnedKeys: ReadonlyArray<K>, keyOf: (item: T) => K): K | null {
+    for (let index: number = rows.length - 1; index >= 0; index -= 1) {
+        const key: K = keyOf(rows[index]);
+
+        if (pinnedKeys.includes(key)) {
+            return key;
+        }
+    }
+
+    return null;
+}
+
+/**
+ * Строки всплывающего выбора во время поиска: отмеченные раньше стоят над найденными и не пропадают
+ * оттого, что запрос перестал с ними совпадать. Без запроса отмеченные остаются на своих местах.
+ */
+export function dynamicPopupRows<T, K>(
+    offered: ReadonlyArray<T>,
+    found: ReadonlyArray<T>,
+    ticked: ReadonlyArray<K>,
+    keyOf: (item: T) => K,
+    query: string
+): IRtDynamicSelector.PopupRows<T> {
+    if (query.trim() === '') {
+        return { ticked: [], found: [...found] };
+    }
+
+    const tickedRows: T[] = ticked
+        .map((key: K): T | undefined => offered.find((item: T): boolean => keyOf(item) === key))
+        .filter((item: T | undefined): item is T => item !== undefined);
+
+    return { ticked: tickedRows, found: found.filter((item: T): boolean => !ticked.includes(keyOf(item))) };
+}

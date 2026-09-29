@@ -3,6 +3,8 @@ import {
     clearDynamicKeys,
     dynamicSelectAllState,
     dynamicSelectorMatches,
+    dynamicPopupRows,
+    lastPinnedDynamicKey,
     moveDynamicKey,
     renameDynamicText,
     sameDynamicKeys,
@@ -101,5 +103,24 @@ describe('rt-dynamic-selector.logic', (): void => {
         expect(renameDynamicText(['a', 'b'], 'a', ' c ')).toEqual(['c', 'b']);
         expect(renameDynamicText(['a', 'b'], 'a', 'b')).toEqual(['a', 'b']);
         expect(renameDynamicText(['a', 'b'], 'a', '  ')).toEqual(['a', 'b']);
+    });
+
+    it('SC-UKV-451 — the divider goes under the last visible pinned row, the order stays', (): void => {
+        expect(lastPinnedDynamicKey(ITEMS, [3, 1], keyOf)).toBe(3);
+        expect(lastPinnedDynamicKey(ITEMS, [9], keyOf)).toBeNull();
+    });
+
+    it('SC-UKV-442 — during a search the ticked rows stand above the found ones and do not vanish', (): void => {
+        const rows: { ticked: ReadonlyArray<IItem>; found: ReadonlyArray<IItem> } = dynamicPopupRows(
+            ITEMS,
+            [ITEMS[1], ITEMS[2]],
+            [1, 3],
+            keyOf,
+            'март'
+        );
+
+        expect(rows.ticked.map(keyOf)).toEqual([1, 3]);
+        expect(rows.found.map(keyOf)).toEqual([2]);
+        expect(dynamicPopupRows(ITEMS, ITEMS, [1], keyOf, '').ticked).toEqual([]);
     });
 });
