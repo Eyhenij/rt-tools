@@ -50,6 +50,7 @@ jobs:
               run: |
                   node update-version-ui-kit-v2.cjs ${{ github.event.inputs.version }}
                   pnpm run changelog:ui-kit-v2
+                  node tools/changelog-split.mjs projects/ui-kit-v2/CHANGELOG.md
                   VERSION=$(jq -r .version projects/ui-kit-v2/package.json)
                   echo "VERSION=$VERSION" >> $GITHUB_ENV
 
