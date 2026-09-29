@@ -7,7 +7,7 @@ Rewritten by every session, not appended to.
 - **State:** `этап-идёт`
 - **Stage:** 5 of 6 — The showcase and the texts
 - **Done:** exploration, grill, plan, the agreement `docs/specs/ui-kit-v2/proposed/radius-scale/`, the step type, `RtRadiusDirective`, the mixin `radius-steps`, their specs; the tag, icon button, button and skeleton folded into `radius`, the kit's callers moved; the twelve controls and nineteen surfaces take the input, the contract spec of SC-UKV-388–390 lists them; the defaults match the mockup (151 suites, 1954 tests green); the showcase page `Foundation/Radius` and the stories of the four folded components are on `radius`, the sweep is clean (624 stories, 85 pages)
-- **Next step:** the component descriptions, the README and the changelog
+- **Next step:** the snapshots re-taken: the new `Foundation/Radius` frames, the renamed `Radius` stories, the moved defaults; the orphaned `Rounded`/`Shape` references removed
 - **Uncommitted:** none
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -29,12 +29,14 @@ Rewritten by every session, not appended to.
 - [x] 4.3 Defaults brought to the mockup and off-scale values replaced by steps
 - [x] 5.1 A showcase page with every component at every step
 - [x] 5.2 The stories of the four folded components moved to `radius`
-- [>] 5.3 The component descriptions, the README and the changelog brought up to date
-- [ ] 5.4 The snapshots re-taken
+- [x] 5.3 The component descriptions, the README and the changelog brought up to date
+- [>] 5.4 The snapshots re-taken
 - [ ] 6.1 The agreement merged into the domain spec
 - [ ] 6.2 The full set of checks run
 
 ## Decisions along the way
+
+- **The changelog is not edited by hand** — the release writes it from the commit messages, and the fold commit carries the breaking-change footer. Affected stage of the plan: 5.
 
 - **`radius` stands in the accepted list of the preset-stories check** — the folder has no styles of its own, so the pair would show two equal halves; the owner gave the word on 29.09. Affected stage of the plan: 5.
 

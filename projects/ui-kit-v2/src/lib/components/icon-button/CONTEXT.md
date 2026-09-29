@@ -12,7 +12,7 @@
 | `size`                                          | `'sm' \| 'md' \| 'lg' \| 'xl' \| '2xl'`                                     | `'md'`                       |
 | `iconSize`                                      | `IRtIcon.Size \| null`                                                      | `null` → от размера кнопки   |
 | `iconColor`                                     | `IRtIcon.Color`                                                             | `'current'`                  |
-| `shape`                                         | `'circle' \| 'square'`                                                      | `'square'`                   |
+| `radius`                                        | `TRtRadius \| null` — шаг общей шкалы                                       | `null` → `md`                |
 | `type`                                          | `'button' \| 'submit'`                                                      | `'button'`                   |
 | `tooltip`                                       | `string`                                                                    | `''` (пусто → подсказки нет) |
 | `tabIndex`                                      | `number`                                                                    | `0`                          |

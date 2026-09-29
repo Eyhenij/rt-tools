@@ -18,7 +18,7 @@
 | `theme`       | `'primary' \| 'secondary' \| 'success' \| 'warning' \| 'danger' \| 'info'` | `'primary'`                   |
 | `appearance`  | `'filled' \| 'outlined' \| 'text'`                                         | настройки кита или `'filled'` |
 | `size`        | `'sm' \| 'md' \| 'lg' \| 'xl' \| '2xl'` (30 / 40 / 50 / 60 / 70 px)        | настройки кита или `'md'`     |
-| `rounded`     | `boolean`                                                                  | настройки кита или `false`    |
+| `radius`      | `TRtRadius \| null` — шаг общей шкалы                                      | настройки кита или `null`     |
 | `loading`     | `boolean`                                                                  | `false`                       |
 | `loadingIcon` | `string \| null`                                                           | `null` → встроенное кольцо    |
 
