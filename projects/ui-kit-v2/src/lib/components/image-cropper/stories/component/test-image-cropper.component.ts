@@ -1,5 +1,8 @@
 import { DOCUMENT } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal, WritableSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, Signal, signal, WritableSignal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+
+import { from } from 'rxjs';
 
 import { WINDOW } from '@rt-tools/core';
 
@@ -7,19 +10,15 @@ import { StoryPresetsComponent } from '../../../../../showcase/story-presets.com
 import { RtFileDropComponent } from '../../../file-drop';
 import { RtImageCropperComponent } from '../../rt-image-cropper.component';
 import { IRtImageCropper } from '../../rt-image-cropper.model';
-
-/** Размер нарисованного исходника: шире поля, чтобы вписывание было видно */
-const SAMPLE_WIDTH: number = 1200;
-const SAMPLE_HEIGHT: number = 800;
+import { drawStoryCropperSample } from './story-cropper-sample';
 
 /**
  * Демонстрационная обёртка для витрины: держит изменяемое состояние, на которое
  * Storybook вешает контролы. Входы кита сигнальные и извне не пишутся — поэтому
  * история целится сюда, а не в сам компонент. В пакет обёртка не уезжает.
  *
- * Исходник рисуется холстом на месте: витрина не ходит в сеть, а файл из дерева
- * пришлось бы держать ради одной истории. Своё фото бросается на поле — оно
- * обёрнуто зоной перетаскивания кита. Под полем — то, что отдал компонент.
+ * Своё фото бросается на поле — оно обёрнуто зоной перетаскивания кита. Под полем —
+ * то, что отдал компонент.
  */
 @Component({
     selector: 'app-image-cropper',
@@ -72,11 +71,14 @@ const SAMPLE_HEIGHT: number = 800;
 export class TestRtImageCropperComponent {
     readonly #window: Window & typeof globalThis = inject(WINDOW) as Window & typeof globalThis;
 
-    readonly #document: Document = inject(DOCUMENT);
-
     #previewUrl: string | null = null;
 
-    public readonly file: WritableSignal<Blob | null> = signal(null);
+    /** Нарисованный исходник — пока на поле не бросили своё фото */
+    readonly #sample: Signal<File | null> = toSignal(from(drawStoryCropperSample(inject(DOCUMENT), this.#window)), { initialValue: null });
+
+    readonly #dropped: WritableSignal<File | null> = signal(null);
+
+    public readonly file: Signal<Blob | null> = computed((): Blob | null => this.#dropped() ?? this.#sample());
 
     public readonly summary: WritableSignal<string> = signal('Результата ещё нет');
 
@@ -90,12 +92,11 @@ export class TestRtImageCropperComponent {
     public disabled: boolean = false;
 
     constructor() {
-        this.#drawSample();
         inject(DestroyRef).onDestroy((): void => this.#setPreview(null));
     }
 
     public onDropped(files: File[]): void {
-        this.file.set(files[0] ?? null);
+        this.#dropped.set(files[0] ?? null);
     }
 
     public onCropped(result: IRtImageCropper.Result): void {
@@ -117,47 +118,5 @@ export class TestRtImageCropperComponent {
         }
         this.#previewUrl = url;
         this.preview.set(url);
-    }
-
-    /** Картинка с сеткой и кругами: по ней видно, что вырезано и не искажено ли */
-    #drawSample(): void {
-        const canvas: HTMLCanvasElement = this.#document.createElement('canvas');
-        canvas.width = SAMPLE_WIDTH;
-        canvas.height = SAMPLE_HEIGHT;
-        const context: CanvasRenderingContext2D | null = canvas.getContext('2d');
-        if (context === null) {
-            return;
-        }
-        const gradient: CanvasGradient = context.createLinearGradient(0, 0, SAMPLE_WIDTH, SAMPLE_HEIGHT);
-        gradient.addColorStop(0, '#1e3a8a');
-        gradient.addColorStop(1, '#f59e0b');
-        context.fillStyle = gradient;
-        context.fillRect(0, 0, SAMPLE_WIDTH, SAMPLE_HEIGHT);
-        context.strokeStyle = 'rgba(255, 255, 255, 0.35)';
-        for (let x: number = 0; x <= SAMPLE_WIDTH; x += 100) {
-            context.beginPath();
-            context.moveTo(x, 0);
-            context.lineTo(x, SAMPLE_HEIGHT);
-            context.stroke();
-        }
-        for (let y: number = 0; y <= SAMPLE_HEIGHT; y += 100) {
-            context.beginPath();
-            context.moveTo(0, y);
-            context.lineTo(SAMPLE_WIDTH, y);
-            context.stroke();
-        }
-        context.fillStyle = 'rgba(255, 255, 255, 0.85)';
-        context.beginPath();
-        context.arc(SAMPLE_WIDTH / 2, SAMPLE_HEIGHT / 2, 200, 0, Math.PI * 2);
-        context.fill();
-        context.fillStyle = '#111827';
-        context.font = 'bold 64px sans-serif';
-        context.textAlign = 'center';
-        context.fillText('1200 × 800', SAMPLE_WIDTH / 2, SAMPLE_HEIGHT / 2 + 22);
-        canvas.toBlob((blob: Blob | null): void => {
-            if (blob !== null && this.file() === null) {
-                this.file.set(new this.#window.File([blob], 'sample.png', { type: 'image/png' }));
-            }
-        }, 'image/png');
     }
 }

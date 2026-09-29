@@ -4,15 +4,15 @@
        выглядят. */
 
     .rt-image-cropper {
-        --rt-image-cropper-height: calc(var(--rt-size-100) * 3);
+        --rt-image-cropper-height: calc(var(--rt-size-20) * 4);
         --rt-image-cropper-radius: var(--rt-radius-md);
         --rt-image-cropper-frame-radius: var(--rt-radius-none);
         --rt-image-cropper-field-bg: var(--rt-color-bg-subtle);
         --rt-image-cropper-shade: var(--rt-overlay-black-50);
         --rt-image-cropper-rim-width: var(--rt-border-width-thin);
         --rt-image-cropper-rim-color: var(--rt-overlay-white-50);
-        --rt-image-cropper-handle-size: var(--rt-size-12);
-        --rt-image-cropper-handle-bg: var(--rt-color-bg-surface);
+        --rt-image-cropper-handle-size: var(--rt-size-3);
+        --rt-image-cropper-handle-bg: var(--rt-color-action-on-primary);
         --rt-image-cropper-handle-border: var(--rt-color-border-strong);
         --rt-image-cropper-focus-shadow: var(--rt-shadow-focus-ring);
         --rt-image-cropper-refusal-color: var(--rt-color-text-muted);
@@ -87,7 +87,6 @@
             border: var(--rt-image-cropper-rim-width) solid var(--rt-image-cropper-handle-border);
             background: var(--rt-image-cropper-handle-bg);
             touch-action: none;
-            translate: -50% -50%;
 
             &:focus-visible {
                 box-shadow: var(--rt-image-cropper-focus-shadow);
@@ -104,42 +103,49 @@
                 top: 0;
                 left: 50%;
                 cursor: ns-resize;
+                translate: -50% 0;
             }
 
             &--side--ne {
                 top: 0;
                 left: 100%;
                 cursor: nesw-resize;
+                translate: -100% 0;
             }
 
             &--side--e {
                 top: 50%;
                 left: 100%;
                 cursor: ew-resize;
+                translate: -100% -50%;
             }
 
             &--side--se {
                 top: 100%;
                 left: 100%;
                 cursor: nwse-resize;
+                translate: -100% -100%;
             }
 
             &--side--s {
                 top: 100%;
                 left: 50%;
                 cursor: ns-resize;
+                translate: -50% -100%;
             }
 
             &--side--sw {
                 top: 100%;
                 left: 0;
                 cursor: nesw-resize;
+                translate: 0 -100%;
             }
 
             &--side--w {
                 top: 50%;
                 left: 0;
                 cursor: ew-resize;
+                translate: 0 -50%;
             }
         }
 
@@ -160,7 +166,7 @@
 
         /* Палец крупнее указателя: ручки растут по способу нажатия, а не по ширине экрана. */
         @media (pointer: coarse) {
-            --rt-image-cropper-handle-size: var(--rt-size-24);
+            --rt-image-cropper-handle-size: var(--rt-size-6);
         }
     }
 }
