@@ -28,30 +28,8 @@ export const STORY_PEOPLE: readonly IStoryPerson[] = [
  */
 @Component({
     selector: 'app-dynamic-selector',
-    template: `
-        <div class="app-dynamic-selector__slot">
-            <rt-dynamic-selector
-                keyExp="id"
-                displayExp="name"
-                ariaLabel="Команда"
-                invitationIcon="users"
-                invitationDescription="В команде пока никого нет"
-                [entities]="people"
-                [mode]="mode"
-                [draggable]="draggable"
-                [readonlyKeys]="readonlyKeys"
-                [invitation]="invitation"
-                [multiToggleShown]="multiToggleShown"
-                [formControl]="control" />
-        </div>
-    `,
-    styles: `
-        /* Окно выбора ложится под поле: запас снизу держит его в пределах окна витрины. */
-        .app-dynamic-selector__slot {
-            width: 30rem;
-            padding-bottom: 32rem;
-        }
-    `,
+    templateUrl: './test-dynamic-selector.component.html',
+    styleUrl: './test-dynamic-selector.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // angular
