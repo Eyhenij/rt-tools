@@ -6,6 +6,11 @@
         --rt-side-menu-sub-item-radius: var(--rt-radius-full);
         --rt-side-menu-sub-item-transition-duration: var(--rt-duration-fast);
 
+        /* Маркер совпадения поиска — жёлтая подложка с тёмной подписью в обеих темах, как у первого кита. */
+        --rt-side-menu-sub-item-match-bg: var(--rt-yellow-400);
+        --rt-side-menu-sub-item-match-color: var(--rt-neutral-950);
+        --rt-side-menu-sub-item-match-radius: var(--rt-radius-xs);
+
         display: block;
 
         &__row {
@@ -68,8 +73,9 @@
         }
 
         &__match {
-            color: var(--rt-color-action-primary-on-surface);
-            font-weight: var(--rt-font-weight-bold);
+            border-radius: var(--rt-side-menu-sub-item-match-radius);
+            background: var(--rt-side-menu-sub-item-match-bg);
+            color: var(--rt-side-menu-sub-item-match-color);
         }
 
         &__action {
