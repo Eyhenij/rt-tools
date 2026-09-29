@@ -7,9 +7,9 @@ Rewritten by every session, not appended to.
 - **State:** `этап-идёт`
 - **Stage:** 5 of 6 — The showcase and the texts
 - **Done:** exploration, grill, plan, the agreement `docs/specs/ui-kit-v2/proposed/radius-scale/`, the step type, `RtRadiusDirective`, the mixin `radius-steps`, their specs; the tag, icon button, button and skeleton folded into `radius`, the kit's callers moved; the twelve controls and nineteen surfaces take the input, the contract spec of SC-UKV-388–390 lists them; the defaults match the mockup (151 suites, 1954 tests green); the showcase page `Foundation/Radius` and the stories of the four folded components are on `radius`, the sweep is clean (624 stories, 85 pages)
-- **Next step:** the component descriptions, the README and the changelog; the preset-stories check waits for the owner's word on the `radius` entry
+- **Next step:** the component descriptions, the README and the changelog
 - **Uncommitted:** none
-- **Waiting for the owner:** the word on naming `radius` in the accepted list of the preset-stories check
+- **Waiting for the owner:** no
 - **PR:** not open yet
 
 ## Steps
@@ -35,6 +35,8 @@ Rewritten by every session, not appended to.
 - [ ] 6.2 The full set of checks run
 
 ## Decisions along the way
+
+- **`radius` stands in the accepted list of the preset-stories check** — the folder has no styles of its own, so the pair would show two equal halves; the owner gave the word on 29.09. Affected stage of the plan: 5.
 
 - **The confirmation, the toast, the tooltip and the photo viewer take no input** — a directive or a service draws them in an overlay, and the consumer writes no tag to name a step on; the agreement keeps overlay panels out. Affected stage of the plan: 4.
 - **The table takes no input in this task** — its wide view has no corners (the mockup gives it `none`), and its component file stands at the length limit; the narrow card gets the input after the file is split, a task to be filed at closing. Affected stage of the plan: 4.
