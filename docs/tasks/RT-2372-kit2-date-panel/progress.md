@@ -5,9 +5,9 @@
 Rewritten by every session, not appended to.
 
 - **State:** `этап-идёт`
-- **Stage:** 4 of 7 — The panel
-- **Done:** branch, folder, plan; the subdomain spec, scenarios `SC-UKV-418`…`SC-UKV-429` and bindings; the pure date module with 8 tests; the calendar with the chosen day, the today mark, the title button and the grid mode
-- **Next step:** the panel component `rt-date-panel`
+- **Stage:** 5 of 7 — The field
+- **Done:** branch, folder, plan; the subdomain spec, scenarios `SC-UKV-418`…`SC-UKV-429` and bindings; the pure date module with 8 tests; the calendar with the chosen day, the today mark, the title button and the grid mode; the panel `rt-date-panel` with 11 tests and the kit labels
+- **Next step:** the field opens the panel in a popover or the bottom sheet
 - **Uncommitted:** none
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -20,9 +20,9 @@ Rewritten by every session, not appended to.
 - [x] 2.2 Cover it by its spec
 - [x] 3.1 Give `rt-calendar` a chosen day, the today mark and the keys of a grid
 - [x] 3.2 Cover the new states and keys by its spec
-- [>] 4.1 Write the panel component for the three types with the month and year choice and the footer
-- [ ] 4.2 Cover the panel by its spec
-- [ ] 5.1 Replace the browser popup in `rt-date-picker` by the panel in a popover or a bottom sheet
+- [x] 4.1 Write the panel component for the three types with the month and year choice and the footer
+- [x] 4.2 Cover the panel by its spec
+- [>] 5.1 Replace the browser popup in `rt-date-picker` by the panel in a popover or a bottom sheet
 - [ ] 5.2 Cover typing, bounds and opening by the field spec
 - [ ] 6.1 Show the panel of the three types and the narrow screen in the stories
 - [ ] 6.2 Rewrite the overview page and the context of the field and the calendar

@@ -69,6 +69,11 @@ function isTime(text: string): boolean {
     return match !== null && Number(match[1]) < 24 && Number(match[2]) < 60;
 }
 
+/** Время `HH:mm` из часа и минуты. */
+export function rtDateTime(hour: number, minute: number): string {
+    return `${pad(hour)}:${pad(minute)}`;
+}
+
 /** Первый день недели локали: 1 — понедельник … 7 — воскресенье. */
 export function rtDateFirstDay(locale: string): number {
     const info: TLocaleWithWeek = new Intl.Locale(locale);
