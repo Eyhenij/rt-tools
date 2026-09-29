@@ -15,6 +15,8 @@ export enum ERtCalendarDayState {
     Start = 'start',
     End = 'end',
     InRange = 'in-range',
+    /** Выбранный день одиночного выбора — залит. */
+    Chosen = 'chosen',
 }
 
 export namespace IRtCalendar {
@@ -26,6 +28,8 @@ export namespace IRtCalendar {
         sublabel: string;
         state: ERtCalendarDayState;
         disabled: boolean;
+        /** Сегодняшний день — обведён рамкой поверх любого состояния. */
+        today?: boolean;
     }
 
     /** View-модель месяца: подпись, пустые ячейки до первого дня, дни. */

@@ -5,9 +5,9 @@
 Rewritten by every session, not appended to.
 
 - **State:** `этап-идёт`
-- **Stage:** 2 of 7 — Date logic
-- **Done:** branch, folder, plan; the subdomain spec, scenarios `SC-UKV-418`…`SC-UKV-429` and bindings
-- **Next step:** the pure date logic module
+- **Stage:** 3 of 7 — The calendar
+- **Done:** branch, folder, plan; the subdomain spec, scenarios `SC-UKV-418`…`SC-UKV-429` and bindings; the pure date module with 8 tests
+- **Next step:** the chosen day, the today mark and the grid keys in `rt-calendar`
 - **Uncommitted:** none
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -16,9 +16,9 @@ Rewritten by every session, not appended to.
 
 - [x] 1.1 Write the date-panel subdomain spec
 - [x] 1.2 Write its scenarios and binding lines
-- [>] 2.1 Write the pure module for the value strings, the month grid, the bounds and the time columns
-- [ ] 2.2 Cover it by its spec
-- [ ] 3.1 Give `rt-calendar` a chosen day, the today mark and the keys of a grid
+- [x] 2.1 Write the pure module for the value strings, the month grid, the bounds and the time columns
+- [x] 2.2 Cover it by its spec
+- [>] 3.1 Give `rt-calendar` a chosen day, the today mark and the keys of a grid
 - [ ] 3.2 Cover the new states and keys by its spec
 - [ ] 4.1 Write the panel component for the three types with the month and year choice and the footer
 - [ ] 4.2 Cover the panel by its spec
