@@ -1,6 +1,9 @@
 <ng-container rtBlock="rt-image-cropper">
     <div #field rtElem="field" qa-dataid="image-cropper-field">
         @switch (state()) {
+            @case ('empty') {
+                <p rtElem="placeholder" qa-dataid="image-cropper-placeholder">{{ placeholderText() }}</p>
+            }
             @case ('loading') {
                 <rt-spinner rtElem="spinner" qa-dataid="image-cropper-spinner" />
             }

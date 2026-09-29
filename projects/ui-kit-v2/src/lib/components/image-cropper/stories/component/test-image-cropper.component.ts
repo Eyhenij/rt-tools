@@ -1,13 +1,15 @@
 import { DOCUMENT } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, Signal, signal, WritableSignal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-
-import { from } from 'rxjs';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal, WritableSignal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 import { WINDOW } from '@rt-tools/core';
 
 import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
+import { StoryRowComponent } from '../../../../../showcase/story-row.component';
+import { RtButtonDirective } from '../../../button';
 import { RtFileDropComponent } from '../../../file-drop';
+import { RtFileInputComponent } from '../../../file-input';
 import { RtImageCropperComponent } from '../../rt-image-cropper.component';
 import { IRtImageCropper } from '../../rt-image-cropper.model';
 import { drawStoryCropperSample } from './story-cropper-sample';
@@ -17,38 +19,51 @@ import { drawStoryCropperSample } from './story-cropper-sample';
  * Storybook вешает контролы. Входы кита сигнальные и извне не пишутся — поэтому
  * история целится сюда, а не в сам компонент. В пакет обёртка не уезжает.
  *
- * Своё фото бросается на поле — оно обёрнуто зоной перетаскивания кита. Под полем —
- * то, что отдал компонент.
+ * Показ повторяет то, как обрезкой пользуется приложение: файл выбирают кнопкой или бросают на
+ * поле, рамку двигают, «Применить» берёт последний отданный файл, «Отмена» возвращает пустое поле.
  */
 @Component({
     selector: 'app-image-cropper',
     templateUrl: './test-image-cropper.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
+        // angular
+        ReactiveFormsModule,
+
         // components
+        RtButtonDirective,
         RtFileDropComponent,
+        RtFileInputComponent,
         RtImageCropperComponent,
 
         // showcase
         StoryPresetsComponent,
+        StoryRowComponent,
     ],
 })
 export class TestRtImageCropperComponent {
     readonly #window: Window & typeof globalThis = inject(WINDOW) as Window & typeof globalThis;
 
-    #previewUrl: string | null = null;
+    readonly #document: Document = inject(DOCUMENT);
 
-    /** Нарисованный исходник — пока на поле не бросили своё фото */
-    readonly #sample: Signal<File | null> = toSignal(from(drawStoryCropperSample(inject(DOCUMENT), this.#window)), { initialValue: null });
+    #appliedUrl: string | null = null;
 
-    readonly #dropped: WritableSignal<File | null> = signal(null);
+    public readonly toolbar: readonly string[] = ['choose', 'sample'];
 
-    public readonly file: Signal<Blob | null> = computed((): Blob | null => this.#dropped() ?? this.#sample());
+    public readonly actions: readonly string[] = ['cancel', 'apply'];
 
-    public readonly summary: WritableSignal<string> = signal('Результата ещё нет');
+    public readonly picker: FormControl<File[]> = new FormControl<File[]>([], { nonNullable: true });
 
-    public readonly preview: WritableSignal<string | null> = signal(null);
+    public readonly file: WritableSignal<Blob | null> = signal(null);
 
+    /** Последний файл, отданный обрезкой, — его и берёт «Применить» */
+    public readonly cropped: WritableSignal<IRtImageCropper.Result | null> = signal(null);
+
+    public readonly applied: WritableSignal<string | null> = signal(null);
+
+    public readonly summary: WritableSignal<string> = signal('Выберите изображение кнопкой, бросьте его на поле или возьмите пример.');
+
+    public placeholder: string = '';
     public ratio: number | null = null;
     public round: boolean = false;
     public minSize: number = 16;
@@ -57,31 +72,62 @@ export class TestRtImageCropperComponent {
     public disabled: boolean = false;
 
     constructor() {
-        inject(DestroyRef).onDestroy((): void => this.#setPreview(null));
+        this.picker.valueChanges.pipe(takeUntilDestroyed()).subscribe((files: File[]): void => {
+            if (files.length > 0) {
+                this.choose(files[0]);
+                this.picker.setValue([], { emitEvent: false });
+            }
+        });
+        inject(DestroyRef).onDestroy((): void => this.#setApplied(null));
     }
 
-    public onDropped(files: File[]): void {
-        this.#dropped.set(files[0] ?? null);
+    /** Подписей под кнопками ряда нет: кнопка называет себя сама */
+    public readonly noLabel: () => string = (): string => '';
+
+    public choose(file: File | undefined): void {
+        this.file.set(file ?? null);
+        this.cropped.set(null);
+    }
+
+    public takeSample(): void {
+        void drawStoryCropperSample(this.#document, this.#window).then((sample: File | null): void => this.choose(sample ?? undefined));
     }
 
     public onCropped(result: IRtImageCropper.Result): void {
+        this.cropped.set(result);
         const { frame, file }: IRtImageCropper.Result = result;
         this.summary.set(
-            `${file.name} · ${file.type} · ${frame.width}×${frame.height} с точки ${frame.x}, ${frame.y} · ${Math.round(file.size / 1024)} КБ`
+            `Рамка ${frame.width}×${frame.height} с точки ${frame.x}, ${frame.y} · ${file.type} · ${Math.round(file.size / 1024)} КБ. «Применить» возьмёт этот файл.`
         );
-        this.#setPreview(this.#window.URL.createObjectURL(file));
     }
 
     public onFailed(): void {
-        this.summary.set('Исходник не прочитался');
-        this.#setPreview(null);
+        this.cropped.set(null);
+        this.summary.set('Файл не прочитался как изображение.');
     }
 
-    #setPreview(url: string | null): void {
-        if (this.#previewUrl !== null) {
-            this.#window.URL.revokeObjectURL(this.#previewUrl);
+    public cancel(): void {
+        this.choose(undefined);
+        this.summary.set('Отменено. Выберите изображение заново.');
+    }
+
+    public apply(): void {
+        const result: IRtImageCropper.Result | null = this.cropped();
+        if (result === null) {
+            return;
         }
-        this.#previewUrl = url;
-        this.preview.set(url);
+        this.#setApplied(this.#window.URL.createObjectURL(result.file));
+        this.choose(undefined);
+        this.summary.set(
+            `Применено: ${result.file.name}, ${result.frame.width}×${result.frame.height}. Так приложение получает готовый файл.`
+        );
+    }
+
+    #setApplied(url: string | null): void {
+        if (this.#appliedUrl !== null) {
+            this.#window.URL.revokeObjectURL(this.#appliedUrl);
+        }
+        this.#appliedUrl = url;
+        this.applied.set(url);
     }
 }

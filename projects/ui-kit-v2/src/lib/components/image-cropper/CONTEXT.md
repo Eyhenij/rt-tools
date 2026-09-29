@@ -7,15 +7,16 @@
 <rt-image-cropper round format="webp" [file]="photo" [ratio]="1" [quality]="85" (cropped)="save($event.file)" (loadFailed)="warn()" />
 ```
 
-| вход       | тип                                 | умолчание |
-| ---------- | ----------------------------------- | --------- |
-| `file`     | `Blob \| null`                      | `null`    |
-| `ratio`    | `number \| null`                    | `null`    |
-| `round`    | `boolean`                           | `false`   |
-| `minSize`  | `number`                            | `16`      |
-| `format`   | `'png' \| 'jpeg' \| 'webp' \| null` | `null`    |
-| `quality`  | `number`                            | `92`      |
-| `disabled` | `boolean`                           | `false`   |
+| вход          | тип                                 | умолчание                          |
+| ------------- | ----------------------------------- | ---------------------------------- |
+| `placeholder` | `string`                            | `''` → `uiImageCropperPlaceholder` |
+| `file`        | `Blob \| null`                      | `null`                             |
+| `ratio`       | `number \| null`                    | `null`                             |
+| `round`       | `boolean`                           | `false`                            |
+| `minSize`     | `number`                            | `16`                               |
+| `format`      | `'png' \| 'jpeg' \| 'webp' \| null` | `null`                             |
+| `quality`     | `number`                            | `92`                               |
+| `disabled`    | `boolean`                           | `false`                            |
 
 Выходы: `cropped` (`{ file, frame }`), `loadFailed`.
 

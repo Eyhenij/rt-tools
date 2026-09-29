@@ -181,12 +181,21 @@ describe('RtImageCropperComponent', (): void => {
         expect(qa(fixture, 'image-cropper-frame')).toBeNull();
     });
 
-    it('без исходника поле пустое', (): void => {
+    it('SC-UKV-410 — без исходника в поле подсказка кита, а не рамка', (): void => {
         const fixture: ComponentFixture<RtImageCropperComponent> = createRtFixture(RtImageCropperComponent);
 
+        expect(textOf(qa(fixture, 'image-cropper-placeholder'))).toBe('Choose an image to crop');
         expect(qa(fixture, 'image-cropper-spinner')).toBeNull();
         expect(qa(fixture, 'image-cropper-frame')).toBeNull();
         expect(qa(fixture, 'image-cropper-refusal')).toBeNull();
+    });
+
+    it('SC-UKV-410 — своя подсказка приложения заменяет подпись кита', (): void => {
+        const fixture: ComponentFixture<RtImageCropperComponent> = createRtFixture(RtImageCropperComponent, {
+            placeholder: 'Перетащите аватар',
+        });
+
+        expect(textOf(qa(fixture, 'image-cropper-placeholder'))).toBe('Перетащите аватар');
     });
 
     it('SC-UKV-383 — исходник шире поля лежит в нём целиком и по центру', (): void => {

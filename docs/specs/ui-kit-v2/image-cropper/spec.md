@@ -68,6 +68,8 @@ on top: a fixed ratio and a round mask for an avatar.
   Without a chosen format the format of the source is taken, and png when it is none of the three.
 - **The round look is a mask on the screen, and the result stays the square the frame cuts.** The
   application rounds the picture where it shows it; a jpeg has nothing to be transparent with.
+- **An empty cropper shows the placeholder, the application's own text or the kit's label.** The
+  person sees where the image goes before choosing it.
 - **A source that cannot be read gives the refusal and no frame.** The caller is told by an output.
 - **An unavailable cropper changes the frame neither by the pointer nor by keys.** It keeps showing
   the frame it had.
@@ -96,7 +98,7 @@ Not applicable: the cropper keeps nothing.
 
 | State       | What is seen                                               |
 | ----------- | ---------------------------------------------------------- |
-| no source   | the empty field                                            |
+| no source   | the placeholder                                            |
 | loading     | the kit's spinner in the middle of the field               |
 | refusal     | the refusal text in the middle of the field                |
 | ready       | the image fitted into the field, the frame and its handles |
@@ -107,7 +109,7 @@ Not applicable: the cropper keeps nothing.
 
 ### Locales
 
-The names of the frame, of the eight handles and the refusal text are keys of the kit's labels in
+The names of the frame, of the eight handles, the placeholder and the refusal text are keys of the kit's labels in
 the `rtKit` namespace. The kit carries the English default; the application gives the rest by its
 translator, and the showcase carries the Russian set.
 

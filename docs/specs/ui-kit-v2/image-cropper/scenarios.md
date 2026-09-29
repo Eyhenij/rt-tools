@@ -104,3 +104,10 @@ Then the frame stays where it was and no result is given
 Given a ready frame
 When the assistive means read it
 Then the frame and each of the eight handles carry a name from the kit's labels
+
+### SC-UKV-410 — an empty cropper shows the placeholder
+
+Given no source
+When the cropper is drawn
+Then the kit's placeholder label stands in the field.
+And a placeholder given by the application replaces it.

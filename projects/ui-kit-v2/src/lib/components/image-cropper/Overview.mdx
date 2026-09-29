@@ -61,15 +61,16 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Входы
 
-| вход       | тип                                 | умолчание |
-| ---------- | ----------------------------------- | --------- |
-| `file`     | `Blob \| null`                      | `null`    |
-| `ratio`    | `number \| null`                    | `null`    |
-| `round`    | `boolean`                           | `false`   |
-| `minSize`  | `number`                            | `16`      |
-| `format`   | `'png' \| 'jpeg' \| 'webp' \| null` | `null`    |
-| `quality`  | `number`                            | `92`      |
-| `disabled` | `boolean`                           | `false`   |
+| вход          | тип                                 | умолчание                          |
+| ------------- | ----------------------------------- | ---------------------------------- |
+| `placeholder` | `string`                            | `''` → `uiImageCropperPlaceholder` |
+| `file`        | `Blob \| null`                      | `null`                             |
+| `ratio`       | `number \| null`                    | `null`                             |
+| `round`       | `boolean`                           | `false`                            |
+| `minSize`     | `number`                            | `16`                               |
+| `format`      | `'png' \| 'jpeg' \| 'webp' \| null` | `null`                             |
+| `quality`     | `number`                            | `92`                               |
+| `disabled`    | `boolean`                           | `false`                            |
 
 Без `format` берётся формат исходника, а если он не png, jpeg или webp — png. `quality` — в
 процентах, для jpeg и webp.

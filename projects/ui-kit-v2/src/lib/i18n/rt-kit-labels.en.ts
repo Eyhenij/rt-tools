@@ -130,6 +130,7 @@ export const RT_KIT_LABELS_EN = {
     uiImageCropperHandleSe: 'Bottom right corner of the crop frame',
     uiImageCropperHandleSw: 'Bottom left corner of the crop frame',
     uiImageCropperHandleW: 'Left edge of the crop frame',
+    uiImageCropperPlaceholder: 'Choose an image to crop',
     uiImageCropperRefusal: 'The image could not be read',
     uiInviteUser: 'Invite user',
     uiItemsPerPage: 'Items per page',

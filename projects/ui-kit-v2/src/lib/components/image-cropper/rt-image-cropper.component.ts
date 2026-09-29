@@ -163,6 +163,9 @@ export class RtImageCropperComponent {
 
     protected readonly state: WritableSignal<TCropperState> = signal('empty');
 
+    /** Текст пустого поля: свой, если задан, иначе подпись кита */
+    protected readonly placeholderText: Signal<string> = computed((): string => this.placeholder() || this.t().uiImageCropperPlaceholder);
+
     /** Адрес исходника для картинки в поле */
     protected readonly url: WritableSignal<string | null> = signal(null);
 
@@ -177,7 +180,10 @@ export class RtImageCropperComponent {
         frameInField(this.#frame(), this.#fit())
     );
 
-    /** Исходник: файл, который надо обрезать; пусто — поле пустое */
+    /** Подсказка пустого поля; пусто — подпись кита `uiImageCropperPlaceholder` */
+    public readonly placeholder: InputSignal<string> = input<string>('');
+
+    /** Исходник: файл, который надо обрезать; пусто — поле с подсказкой */
     public readonly file: InputSignal<Blob | null> = input<Blob | null>(null);
 
     /** Пропорция рамки, ширина к высоте; пусто — рамка свободная */

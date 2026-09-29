@@ -126,6 +126,7 @@ export const RT_KIT_LABELS_RU: Readonly<Record<TRtKitLabelKey, string>> = {
     uiImageCropperHandleSe: 'Правый нижний угол рамки',
     uiImageCropperHandleSw: 'Левый нижний угол рамки',
     uiImageCropperHandleW: 'Левая сторона рамки',
+    uiImageCropperPlaceholder: 'Выберите изображение для обрезки',
     uiImageCropperRefusal: 'Изображение не удалось прочитать',
     uiInviteUser: 'Пригласить пользователя',
     uiItemsPerPage: 'Элементов на странице',
