@@ -6,8 +6,8 @@ Rewritten by every session, not appended to.
 
 - **State:** `этап-идёт`
 - **Stage:** 6 of 6 — Closing
-- **Done:** exploration, grill, plan, the agreement `docs/specs/ui-kit-v2/proposed/radius-scale/`, the step type, `RtRadiusDirective`, the mixin `radius-steps`, their specs; the tag, icon button, button and skeleton folded into `radius`, the kit's callers moved; the twelve controls and nineteen surfaces take the input, the contract spec of SC-UKV-388–390 lists them; the defaults match the mockup (151 suites, 1954 tests green); the showcase page `Foundation/Radius` and the stories of the four folded components are on `radius`, the sweep is clean (624 stories, 85 pages); the snapshots re-taken and confirmed by a second raising (628 stories, 649 frames)
-- **Next step:** the agreement merged into the domain spec as the subdomain `radius-scale`; then the full checks
+- **Done:** exploration, grill, plan, the subdomain `docs/specs/ui-kit-v2/radius-scale/`, the step type, `RtRadiusDirective`, the mixin `radius-steps`, their specs; the tag, icon button, button and skeleton folded into `radius`, the kit's callers moved; the twelve controls and nineteen surfaces take the input, the contract spec of SC-UKV-388–390 lists them; the defaults match the mockup (151 suites, 1954 tests green); the showcase page `Foundation/Radius` and the stories of the four folded components are on `radius`, the sweep is clean (624 stories, 85 pages); the snapshots re-taken and confirmed by a second raising (628 stories, 649 frames)
+- **Next step:** the full set of checks; then the folder taken apart, the push and the PR into the epic branch
 - **Uncommitted:** none
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -31,8 +31,8 @@ Rewritten by every session, not appended to.
 - [x] 5.2 The stories of the four folded components moved to `radius`
 - [x] 5.3 The component descriptions, the README and the changelog brought up to date
 - [x] 5.4 The snapshots re-taken
-- [>] 6.1 The agreement merged into the domain spec
-- [ ] 6.2 The full set of checks run
+- [x] 6.1 The agreement merged into the domain spec
+- [>] 6.2 The full set of checks run
 
 ## Decisions along the way
 

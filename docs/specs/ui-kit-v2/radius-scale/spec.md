@@ -1,13 +1,13 @@
 # One rounding input for the second kit
 
-**Status:** proposed · **Revision:** 2026-09-29 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 2026-09-29 · **Scenario prefix:** `SC-UKV`
 **Depends on:** `docs/specs/ui-kit-v2/tokens` (the scale of steps and the component's own properties),
 `docs/specs/ui-kit-v2/tag` (the tag's shape gives way to the input)
 **Laws:** `frontend-application`, `reuse-first`, `verifiability`
 **Procedures:** none
 
-A product agreement written before the code. It merges into the spec of the second kit as a
-subdomain by the last commit of the PR, with the same scenario numbers.
+A subdomain of the second kit about the one input every component with a surface takes its
+rounding by: the scale, the default, the attribute on the host and what stays without the input.
 
 ## Why
 
@@ -163,3 +163,5 @@ The subdomain has no open questions.
 
 - 2026-09-29 — the agreement was written for RT-2371: the kit had one scale and no way to give a
   component a step of it.
+- 2026-09-29 — the agreement merged into the spec of the second kit as a subdomain by RT-2371,
+  with the same scenario numbers.
