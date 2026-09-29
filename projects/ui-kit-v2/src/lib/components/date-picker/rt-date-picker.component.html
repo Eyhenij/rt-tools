@@ -59,7 +59,7 @@
         </ng-template>
 
         @if (narrow()) {
-            <rt-bottom-sheet rtElem="sheet" qa-dataid="date-picker-sheet" [open]="sheetOpen()" (openChange)="sheetOpen.set($event)">
+            <rt-bottom-sheet qa-dataid="date-picker-sheet" [open]="sheetOpen()" (openChange)="sheetOpen.set($event)">
                 @if (sheetOpen()) {
                     <rt-date-panel
                         sheet
