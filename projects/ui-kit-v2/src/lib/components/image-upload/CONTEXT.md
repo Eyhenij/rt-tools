@@ -42,6 +42,15 @@
 **`autoApply` убирает кнопки:** каждый результат обрезки сразу становится картинкой и уходит
 приложению, а обрезка остаётся открытой.
 
+## Оформление снаружи
+
+Свойства блока: `--rt-image-upload-image-max-height`, `--rt-image-upload-image-radius`,
+`--rt-image-upload-hover-opacity`, `--rt-image-upload-focus-shadow`,
+`--rt-image-upload-download-inset`, `--rt-image-upload-download-bg`,
+`--rt-image-upload-download-radius`. Они объявлены на самом блоке, поэтому переопределяются
+правилом на `.rt-image-upload`, а не на `:root`. Зона загрузки берёт свойства
+`--rt-empty-state-frame-*`, обрезка — `--rt-image-cropper-*`.
+
 ## Края
 
 - Брошенный файл не-изображение пропускается, зона остаётся как была.
