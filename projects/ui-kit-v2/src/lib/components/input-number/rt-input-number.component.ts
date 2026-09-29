@@ -25,6 +25,7 @@ import { RtFormControlBase } from '../form-control/rt-form-control.base';
 import { IRtInput } from '../input/rt-input.model';
 import { RtIconComponent, IRtIcon } from '../icon';
 import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
+import { RtRadiusDirective } from '../radius/rt-radius.directive';
 
 const BEM_BLOCK: string = 'rt-input-number';
 
@@ -128,6 +129,7 @@ function formatNumber(
         // Алиас базового токена — для contentChild(RtFormControlBase) в rt-field.
         { provide: RtFormControlBase, useExisting: forwardRef(() => RtInputNumberComponent) },
     ],
+    hostDirectives: [{ directive: RtRadiusDirective, inputs: ['radius'] }],
     host: {
         class: BEM_BLOCK,
         '[class.rt-input-number--disabled]': 'isDisabled()',

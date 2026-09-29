@@ -28,6 +28,7 @@ import { RtFormControlBase } from '../form-control/rt-form-control.base';
 import { RtIconComponent, IRtIcon } from '../icon';
 import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
 import { RtPopoverDirective } from '../popover/rt-popover.directive';
+import { RtRadiusDirective } from '../radius/rt-radius.directive';
 import { rtScrollActiveOptionIntoView } from '../select/rt-select-active-option';
 import { IRtAutocomplete } from './rt-autocomplete.model';
 
@@ -74,6 +75,7 @@ function nextPanelId(): number {
         // Алиас базового токена — для contentChild(RtFormControlBase) в rt-field.
         { provide: RtFormControlBase, useExisting: forwardRef(() => RtAutocompleteComponent) },
     ],
+    hostDirectives: [{ directive: RtRadiusDirective, inputs: ['radius'] }],
     host: {
         class: BEM_BLOCK,
         '[class.rt-autocomplete--open]': 'isOpen()',

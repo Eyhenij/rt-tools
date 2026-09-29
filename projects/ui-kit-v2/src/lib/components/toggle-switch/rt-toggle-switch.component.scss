@@ -1,3 +1,5 @@
+@use '../../../styles/mixins' as kv;
+
 @layer rt-kit.components {
     /* rt-toggle-switch — переключатель в common/ui. ViewEncapsulation.None.
        Хост адресуется по имени элемента, а не по классу блока: класс `.rt-toggle-switch` висит
@@ -6,6 +8,9 @@
 
     rt-toggle-switch {
         display: inline-flex;
+
+        /* Шаг входа `radius` переназначает скругление дорожки, ручка идёт за ней. */
+        @include kv.radius-steps('--rt-toggle-radius', '> .rt-toggle-switch');
     }
 
     rt-toggle-switch .rt-toggle-switch {

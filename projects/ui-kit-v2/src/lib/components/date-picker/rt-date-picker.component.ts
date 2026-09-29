@@ -19,6 +19,7 @@ import { RT_KIT_LABELS, TRtKitLabelMap } from '../../i18n';
 import { RtFormControlBase } from '../form-control/rt-form-control.base';
 import { IRtInput } from '../input/rt-input.model';
 import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
+import { RtRadiusDirective } from '../radius/rt-radius.directive';
 import { IRtDatePicker } from './rt-date-picker.model';
 
 const BEM_BLOCK: string = 'rt-date-picker';
@@ -50,6 +51,7 @@ const BEM_BLOCK: string = 'rt-date-picker';
         // Алиас базового токена — для contentChild(RtFormControlBase) в rt-field.
         { provide: RtFormControlBase, useExisting: forwardRef(() => RtDatePickerComponent) },
     ],
+    hostDirectives: [{ directive: RtRadiusDirective, inputs: ['radius'] }],
     host: {
         class: BEM_BLOCK,
         '[class.rt-date-picker--disabled]': 'isDisabled()',
