@@ -1,4 +1,4 @@
-import { signal, ChangeDetectionStrategy, Component, WritableSignal } from '@angular/core';
+import { getDebugNode, signal, ChangeDetectionStrategy, Component, WritableSignal } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { join } from 'node:path';
@@ -298,6 +298,16 @@ describe('RtSelectComponent', (): void => {
 
             const search: HTMLInputElement | null = document.querySelector('.rt-select__filter input');
             expect(search?.placeholder).toBe('Search');
+        });
+
+        it('SC-UKV-406 — поле поиска несёт лупу слева', (): void => {
+            const fixture: ComponentFixture<RtSelectComponent<string>> = setup({ filter: true });
+
+            open(fixture);
+
+            const icon: Element | null = document.querySelector('.rt-select__filter .rt-input__icon-left');
+            expect(icon).not.toBeNull();
+            expect((getDebugNode(icon)?.componentInstance as { name: () => string }).name()).toBe('ico-search');
         });
 
         it('оставляет только совпадающие опции', (): void => {

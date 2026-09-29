@@ -13,6 +13,7 @@
 | `options`     | `ReadonlyArray<{ label, value, disabled? }>` (тот же тип, что у `rt-select`) | `[]`                    |
 | `placeholder` | `string`                                                                     | `''` → `uiSelectValues` |
 | `maxChips`    | `number`                                                                     | `3`                     |
+| `iconLeft`    | `IRtIcon.Name \| null` (тот же вход, что у `rt-select`)                      | `null`                  |
 
 Значение — `ReadonlyArray<TValue>`. Отдельного выхода выбора нет: значение едет только формой.
 

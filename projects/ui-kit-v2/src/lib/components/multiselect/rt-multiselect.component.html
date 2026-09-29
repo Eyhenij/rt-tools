@@ -29,6 +29,9 @@
         @if (triggerTpl(); as tpl) {
             <ng-container [ngTemplateOutlet]="tpl.templateRef" [ngTemplateOutletContext]="{ $implicit: triggerState() }" />
         } @else {
+            @if (iconLeft(); as left) {
+                <rt-icon rtElem="icon-left" qa-dataid="multiselect-icon-left" size="sm" color="muted" [name]="left" />
+            }
             @if (value().length === 0) {
                 <span rtElem="placeholder" qa-dataid="multiselect-placeholder">{{ placeholderText() }}</span>
             } @else {

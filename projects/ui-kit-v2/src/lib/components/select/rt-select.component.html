@@ -54,7 +54,11 @@
         <div rtElem="panel" role="listbox" [style.--rt-select-panel-max-height]="panelMaxHeight()" [attr.aria-label]="ariaLabel()">
             @if (filter()) {
                 <div rtElem="filter">
-                    <rt-input [placeholder]="filterPlaceholderText()" [ngModel]="filterTerm()" (ngModelChange)="setFilter($event)" />
+                    <rt-input
+                        iconLeft="ico-search"
+                        [placeholder]="filterPlaceholderText()"
+                        [ngModel]="filterTerm()"
+                        (ngModelChange)="setFilter($event)" />
                 </div>
             }
             <!--

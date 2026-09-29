@@ -110,6 +110,16 @@ function invalid(): FormControl<readonly string[] | null> {
                                     [formControl]="chipsCase.control" />
                             </ng-template>
                         </app-story-row>
+
+                        <app-story-row caption="Иконка слева" [items]="iconCases" [itemLabel]="iconLabel" [slotWidth]="fieldWidth">
+                            <ng-template let-withIcon>
+                                <rt-multiselect
+                                    ariaLabel="Иконка слева"
+                                    placeholder="Выберите города"
+                                    [iconLeft]="withIcon ? 'ico-search' : null"
+                                    [options]="options" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
                 </app-story-presets>
             }
@@ -295,6 +305,10 @@ export class TestRtMultiselectMatrixComponent {
         { name: 'ошибка', disabled: false, control: invalid() },
         { name: 'отключено', disabled: true, control: chosen(['msk']) },
     ];
+
+    public readonly iconCases: readonly boolean[] = [false, true];
+
+    public readonly iconLabel: (value: boolean) => string = (value: boolean): string => (value ? 'с иконкой' : 'без иконки');
 
     /** Подпись случая: у всех наборов этой матрицы имя лежит в одном поле. */
     public readonly caseLabel: (value: { readonly name: string }) => string = (value: { readonly name: string }): string => value.name;
