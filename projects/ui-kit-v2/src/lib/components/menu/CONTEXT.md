@@ -45,6 +45,7 @@
 | `confirmLabel` / `confirmCancelLabel` | `string`                             | `''` → словарь кита               |
 | `confirmTone`                         | `'danger' \| 'warning' \| 'primary'` | `'danger'`                        |
 | `link`                                | `RouterLink['routerLink']`           | `null`                            |
+| `fill`                                | `boolean`                            | `false`                           |
 
 | выход      | тип    |
 | ---------- | ------ |
@@ -79,6 +80,11 @@ Ctrl/Cmd-click, Shift-click и средняя кнопка открывают н
     <ng-template rtMenuItemIcon><svg viewBox="0 0 24 24">…</svg></ng-template>
 </rt-menu-item>
 ```
+
+**Залитый значок пункта — вход `fill`.** Он уходит в `fill` значка: в материальном наборе пункт
+рисует залитый рисунок, как пункты меню первого кита, а свой набор рисует значок одним рисунком.
+Без входа значок контурный. Свой значок `rtMenuItemIcon` приложение рисует само, и заливка его не
+касается.
 
 ## Края
 
