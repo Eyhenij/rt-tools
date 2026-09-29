@@ -21,29 +21,22 @@ The snapshot of every story of the first kit is matched against the reference ne
 The comparison threshold is held at zero, so that a small edit does not pass silently. What that
 costs depends on the kit, and the two are no longer alike.
 
-The second kit's frames are taken by a browser raised in an image, and the showcase is built and
-served as files: `node tools/visual-gate.mjs ui-kit-v2`, and a re-take by the same command with
-`--update`. The image is one on any machine, so its references are matched everywhere — on the
-developer's machine and in the pipeline alike. A re-take by any other road writes the raster of the
-machine that took it, and the run refuses to start without the image's address for exactly that
-reason. The development server is not shot at all: from the image it reloads the page without end,
-and the runner's injected script does not survive a single reload.
+Both kits' frames are taken by a browser raised in an image, and each showcase is built and served
+as files: `node tools/visual-gate.mjs ui-kit` and `node tools/visual-gate.mjs ui-kit-v2`, a re-take
+by the same command with `--update`. The image is one on any machine, so the references are matched
+everywhere — on the developer's machine and in the pipeline alike. A re-take by any other road
+writes the raster of the machine that took it, and the run refuses to start without the image's
+address for exactly that reason. The development server is not shot at all: from the image it
+reloads the page without end, and the runner's injected script does not survive a single reload.
 
-The first kit's frames are still taken by the machine's own browser, and they are therefore matched
-only in the pipeline, on its runner — another machine. A change of machine or of browser version
-means re-taking all of its references rather than sorting out divergences.
+The showcase is served on the machine's own network name, not on the loopback: inside the image
+`localhost` is the image's own. A harness that cuts the shot off from a foreign network counts that
+address as its own — otherwise it severs every lazy chunk of the very showcase it is shooting, and
+the run comes back with a `ChunkLoadError` at every story.
 
-**A first-kit reference is taken from the runner's frame, not from a local re-take.** The local
-run is a look: it shows whether the frame holds what it should, and nothing more. The push gate
-does not match first-kit frames at all, so a local re-take passes it and goes red in the pipeline
-on dense text — a table and a list diverged by 0.02–0.05 %, letter edges only. The order is:
-look at the new frame locally, push, and take the reference from the `visual-diffs` artifact of
-the red run — each failed frame is three panels, and the right one is the runner's. A frame the
-local look did not see is not taken from the artifact either.
-
-Two traits of the machine are taken out of that dependence at the second kit — the timezone and the
-browser's language. The timezone is set by the run's settings file, the language by the arguments of
-the browser in the image; the list of what is undetermined says how.
+Two traits of the machine are taken out of that dependence at both kits — the timezone and the
+browser's language. The timezone is set by the run's settings file next to the showcase, the
+language by the arguments of the browser in the image; the list of what is undetermined says how.
 
 ## A state that is not in the frame
 
@@ -196,9 +189,11 @@ something else.
 - **The flag `-t` breaks the run's environment exactly the same way.** A selection by story name does
   not work — neither at the second showcase nor at the first. A pointed re-take selects **story files
   by path** (Jest's positional sample), not stories by name.
-- **The path sample goes into the shell as it is.** Brackets and a vertical bar in it drop the launch
-  (`syntax error near unexpected token`): the run builds the command as a string. The sample is
-  written as a plain piece of a path — `tag`, `components/button`.
+- **The path sample is a Jest regex, and the second kit's harness quotes it for the shell itself.**
+  `test-storybook` builds the Jest command as a string, so an unquoted sample with brackets or a bar
+  dropped the launch (`syntax error near unexpected token`). The sample is passed bare —
+  `'components/(tag|badge)/stories/'` — and not wrapped in a second pair of quotes. The first kit's
+  command has no such quoting: there the sample stays a plain piece of a path.
 - **A missing reference is not taken up silently.** The second showcase's harness refuses: the
   comparison library would by default append the file and pass green, that is, the run would be green
   exactly because there was nothing to compare with.

@@ -10,6 +10,25 @@
 
 export const lightParts = [
     {
+        lead: `    /* Data table (rt-data-table) — заливка шапки. Своё имя, а не подложка роли: в материальном
+       наборе шапка залита цветом залитого поля, как у первого кита, а подложка роли остаётся
+       серой у всех остальных частей кита. Тёмная тема отвечает на имя сама: без ответа она
+       уступила бы его материальному набору, и тёмная шапка получила бы светлую заливку. */`,
+        space: true,
+        name: `--rt-color-table-head-bg`,
+        value: `var(--rt-color-bg-surface-subtle)`,
+        dark: `var(--rt-color-bg-surface-subtle)`,
+    },
+    {
+        lead: `    /* Залитое поле (вид fill у поля ввода, числа, даты и выбора) — черта снизу. Своё имя,
+       а не рамка роли: в материальном наборе она берёт цвет черты поля Material, а рамка роли
+       остаётся светлой у всех остальных частей кита. Тёмная тема отвечает на имя сама. */`,
+        space: true,
+        name: `--rt-color-field-fill-underline`,
+        value: `var(--rt-color-border-strong)`,
+        dark: `var(--rt-color-border-strong)`,
+    },
+    {
         lead: `    /* Stepper (rt-stepper) — рельса прогресса. Текущий шаг — янтарный (одинаков
        в обеих темах); трек/прогресс переопределяются в dark на приглушённые. */`,
         space: true,
@@ -108,5 +127,126 @@ export const lightParts = [
         name: `--rt-color-skeleton-wave`,
         value: `var(--rt-neutral-50)`,
         dark: `var(--rt-charcoal-border)`,
+    },
+    {
+        lead: `    /* Панели над страницей — меню, выпадающий список, подсказка: скругление и тень. Свой вид
+       держит ступени кита; материальный набор даёт числа и подъём первого кита. */`,
+        space: true,
+        name: `--rt-overlay-menu-radius`,
+        value: `var(--rt-radius-md)`,
+    },
+    {
+        name: `--rt-overlay-menu-shadow`,
+        value: `var(--rt-shadow-lg)`,
+    },
+    {
+        name: `--rt-overlay-select-radius`,
+        value: `var(--rt-input-radius)`,
+    },
+    {
+        name: `--rt-overlay-select-shadow`,
+        value: `var(--rt-shadow-md)`,
+    },
+    {
+        name: `--rt-overlay-tooltip-radius`,
+        value: `var(--rt-radius-sm)`,
+    },
+    {
+        name: `--rt-overlay-tooltip-shadow`,
+        value: `var(--rt-shadow-md)`,
+    },
+    {
+        lead: `    /* Меню и выпадающий список: фон, отступ и вес подписей меню, красный опасного пункта, пункт
+       списка и отметка выбранного. Свой вид держит прежние значения; материальный набор — первого кита. */`,
+        space: true,
+        name: `--rt-overlay-menu-bg`,
+        value: `var(--rt-color-bg-surface)`,
+    },
+    {
+        name: `--rt-overlay-menu-padding-y`,
+        value: `var(--rt-space-xs)`,
+    },
+    {
+        name: `--rt-overlay-menu-item-weight`,
+        value: `var(--rt-font-weight-regular)`,
+    },
+    {
+        name: `--rt-overlay-menu-danger-color`,
+        value: `var(--rt-color-state-error-text)`,
+    },
+    {
+        name: `--rt-overlay-select-option-font-size`,
+        value: `var(--rt-input-font-size)`,
+    },
+    {
+        name: `--rt-overlay-select-selected-bg`,
+        value: `var(--rt-color-action-primary-subtle)`,
+    },
+    {
+        name: `--rt-overlay-select-selected-weight`,
+        value: `var(--rt-font-weight-semibold)`,
+    },
+    {
+        name: `--rt-overlay-select-check-display`,
+        value: `none`,
+    },
+    {
+        name: `--rt-overlay-menu-current-bg`,
+        value: `var(--rt-color-bg-hover)`,
+    },
+    {
+        lead: `    /* Размеры меню и выпадающего списка, рамка панели списка и неактивная кнопка-значок. Свой вид
+       держит прежние значения; материальный набор — числа первого кита. */`,
+        space: true,
+        name: `--rt-overlay-menu-min-width`,
+        value: `180px`,
+    },
+    {
+        name: `--rt-overlay-menu-item-min-height`,
+        value: `auto`,
+    },
+    {
+        name: `--rt-overlay-menu-item-padding-y`,
+        value: `var(--rt-space-sm)`,
+    },
+    {
+        name: `--rt-overlay-menu-item-padding-x`,
+        value: `var(--rt-space-md)`,
+    },
+    {
+        name: `--rt-overlay-menu-item-icon-size`,
+        value: `var(--rt-size-4)`,
+    },
+    {
+        name: `--rt-overlay-menu-sm-item-min-height`,
+        value: `var(--rt-overlay-menu-item-min-height)`,
+    },
+    {
+        name: `--rt-overlay-menu-sm-item-icon-size`,
+        value: `var(--rt-overlay-menu-item-icon-size)`,
+    },
+    {
+        name: `--rt-overlay-menu-danger-label-color`,
+        value: `var(--rt-overlay-menu-danger-color)`,
+    },
+    {
+        name: `--rt-overlay-select-option-min-height`,
+        value: `auto`,
+    },
+    {
+        name: `--rt-overlay-select-panel-border-width`,
+        value: `var(--rt-input-border-width)`,
+    },
+    {
+        name: `--rt-icon-button-disabled-opacity`,
+        value: `0.5`,
+    },
+    {
+        name: `--rt-icon-button-disabled-color`,
+        value: `currentcolor`,
+    },
+    {
+        name: `--rt-icon-button-disabled-fill`,
+        value: `100%`,
     },
 ];

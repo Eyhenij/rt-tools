@@ -45,6 +45,22 @@ export default [
         },
     },
     {
+        // Второй вход пакета второго кита берёт первый по имени пакета: сборщик пакета собирает
+        // входы порознь, и относительный путь в первый вход он отвергает. Файл входа лежит не над
+        // исходниками, поэтому правило само второй вход не узнаёт — исключение названо здесь.
+        files: ['projects/ui-kit-v2/src/rich-editor/**/*.ts'],
+        rules: {
+            '@nx/enforce-module-boundaries': [
+                'error',
+                {
+                    enforceBuildableLibDependency: true,
+                    allow: ['@rt-tools/ui-kit-v2', '@rt-tools/agent-kit/cargo', '^.*/eslint(\\.base)?\\.config\\.[cm]?[jt]s$'],
+                    depConstraints: allBoundaries,
+                },
+            ],
+        },
+    },
+    {
         files: ['**/*.ts'],
         ignores: ['**/*.spec.ts', '**/*.test.ts'],
         plugins: {

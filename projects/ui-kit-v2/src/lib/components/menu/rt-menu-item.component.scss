@@ -5,16 +5,27 @@
     .rt-menu-item {
         --rt-menu-item-radius: var(--rt-radius-sm);
         --rt-menu-item-transition-duration: var(--rt-duration-fast);
+        --rt-menu-item-weight: var(--rt-overlay-menu-item-weight);
+        --rt-menu-item-danger-color: var(--rt-overlay-menu-danger-color);
+        --rt-menu-item-current-bg: var(--rt-overlay-menu-current-bg);
+        --rt-menu-item-min-height: var(--rt-overlay-menu-item-min-height);
+        --rt-menu-item-padding-y: var(--rt-overlay-menu-item-padding-y);
+        --rt-menu-item-padding-x: var(--rt-overlay-menu-item-padding-x);
+        --rt-menu-item-icon-size: var(--rt-overlay-menu-item-icon-size);
+        --rt-menu-item-danger-label-color: var(--rt-overlay-menu-danger-label-color);
+        --rt-menu-item-success-color: var(--rt-color-state-success-text);
 
         display: flex;
         width: 100%;
+        min-height: var(--rt-menu-item-min-height);
         box-sizing: border-box;
         align-items: center;
-        padding: var(--rt-space-sm) var(--rt-space-md);
+        padding: var(--rt-menu-item-padding-y) var(--rt-menu-item-padding-x);
         border-radius: var(--rt-menu-item-radius);
         color: var(--rt-color-text-primary);
         cursor: pointer;
         font-size: var(--rt-text-sm);
+        font-weight: var(--rt-menu-item-weight);
         gap: var(--rt-space-sm);
         text-align: start;
         transition: background-color var(--rt-menu-item-transition-duration) ease;
@@ -28,7 +39,14 @@
             outline: none;
         }
 
+        /* Значок кит рисует размером sm строкой стиля. Границы размера её перебивают: нижняя — когда
+           больше, верхняя — когда меньше. Так набор растит значок пункта до значка первого кита и
+           ужимает значок компактного пункта. */
         &__icon {
+            min-width: var(--rt-menu-item-icon-size);
+            max-width: var(--rt-menu-item-icon-size);
+            min-height: var(--rt-menu-item-icon-size);
+            max-height: var(--rt-menu-item-icon-size);
             flex-shrink: 0;
             color: var(--rt-color-text-muted);
         }
@@ -38,11 +56,25 @@
             white-space: nowrap;
         }
 
+        &--current {
+            background: var(--rt-menu-item-current-bg);
+        }
+
         &--danger {
-            color: var(--rt-color-state-error-text);
+            color: var(--rt-menu-item-danger-label-color);
 
             .rt-menu-item__icon {
-                color: var(--rt-color-state-error-text);
+                color: var(--rt-menu-item-danger-color);
+            }
+        }
+
+        /* Подпись и значок — текстовой ступенью успеха: сам статус как текст 14px порога
+           контраста не берёт ни в одном наборе. */
+        &--success {
+            color: var(--rt-menu-item-success-color);
+
+            .rt-menu-item__icon {
+                color: var(--rt-menu-item-success-color);
             }
         }
 

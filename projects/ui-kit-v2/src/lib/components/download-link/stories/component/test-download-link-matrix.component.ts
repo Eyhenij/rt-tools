@@ -23,19 +23,27 @@ export type TDownloadLinkMatrixPart = 'label' | 'states' | 'presets' | 'themes';
     template: `
         @switch (part) {
             @case ('label') {
-                <app-story-row caption="Подпись" [items]="labels">
-                    <ng-template let-label>
-                        <rt-download-link [label]="label" />
+                <app-story-presets caption="Подпись в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="labels">
+                            <ng-template let-label>
+                                <rt-download-link [label]="label" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('states') {
-                <app-story-row caption="Взаимодействие" [items]="states" [itemLabel]="stateLabel">
-                    <ng-template let-state>
-                        <rt-download-link label="Договор.pdf" [attr.data-story-state]="state.state" />
+                <app-story-presets caption="Взаимодействие в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="states" [itemLabel]="stateLabel">
+                            <ng-template let-state>
+                                <rt-download-link label="Договор.pdf" [attr.data-story-state]="state.state" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('presets') {
@@ -47,11 +55,15 @@ export type TDownloadLinkMatrixPart = 'label' | 'states' | 'presets' | 'themes';
             }
 
             @case ('themes') {
-                <app-story-themes caption="Кнопка в обеих темах">
+                <app-story-presets caption="Кнопка в обеих темах и обоих наборах">
                     <ng-template>
-                        <rt-download-link label="Договор.pdf" />
+                        <app-story-themes>
+                            <ng-template>
+                                <rt-download-link label="Договор.pdf" />
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
             }
         }
     `,

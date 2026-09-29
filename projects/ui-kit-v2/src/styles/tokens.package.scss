@@ -1,0 +1,6 @@
+// Вход сборки `styles/tokens.css` пакета. Файл лежит на каталог выше исходников партиалов, и
+// адрес начертаний ему нужен свой: шрифты в пакете лежат в `src/assets/fonts`.
+@use 'fonts' with (
+    $rt-fonts-url: '../src/assets/fonts'
+);
+@use 'index';

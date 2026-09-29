@@ -10,18 +10,28 @@
         &__panel {
             /* Панель рисуется в CDK Overlay, вне поддерева блока: свойство
                объявляется на ней самой — с корня блока оно бы не докатилось. */
-            --rt-menu-panel-radius: var(--rt-radius-md);
+            --rt-menu-panel-radius: var(--rt-overlay-menu-radius);
             --rt-menu-panel-border-width: var(--rt-border-width-thin);
-            --rt-menu-panel-shadow: var(--rt-shadow-lg);
+            --rt-menu-panel-shadow: var(--rt-overlay-menu-shadow);
+            --rt-menu-panel-bg: var(--rt-overlay-menu-bg);
+            --rt-menu-panel-padding-y: var(--rt-overlay-menu-padding-y);
+            --rt-menu-panel-min-width: var(--rt-overlay-menu-min-width);
 
             display: flex;
-            min-width: 180px;
+            min-width: var(--rt-menu-panel-min-width);
             flex-direction: column;
-            padding: var(--rt-space-xs);
+            padding: var(--rt-menu-panel-padding-y) var(--rt-space-xs);
             border: var(--rt-menu-panel-border-width) solid var(--rt-color-border-subtle);
             border-radius: var(--rt-menu-panel-radius);
-            background: var(--rt-color-bg-surface);
+            background: var(--rt-menu-panel-bg);
             box-shadow: var(--rt-menu-panel-shadow);
+
+            /* Компактная панель переназначает пунктам высоту и размер значка: пункт читает их из
+               этих имён, а панель лежит над пунктами. */
+            &--size--sm {
+                --rt-overlay-menu-item-min-height: var(--rt-overlay-menu-sm-item-min-height);
+                --rt-overlay-menu-item-icon-size: var(--rt-overlay-menu-sm-item-icon-size);
+            }
         }
     }
 }

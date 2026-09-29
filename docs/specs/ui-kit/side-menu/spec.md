@@ -121,11 +121,6 @@ the kit does not count.
   the drawer of the framework, which puts it over its container rather than into the flow; a panel put into
   the flow makes the container twice as tall as the screen, and then one bringing of the active item into
   view scrolls the container together with the panel.
-- **The handle of the pull is caught wider than it is visible.** The zone of the catching and the visible
-  strip are two different numbers: into four pixels the cursor does not land at the first try, and a miss
-  past the handle lands into the panel, that is, instead of a pull a person presses an item. The zone is
-  three times wider and stands at the centre of the former place, and the strip inside it is painted at a
-  hovering — a zone painted whole would read as another design.
 
 ## What is out of scope
 
@@ -208,6 +203,10 @@ The subdomain has no open questions.
   limit. The rules, the scenarios and the bindings about the second level of the side menu moved as they
   were: the scenario numbers were not recounted.
 - 2026-09-09 — the submenu stopped drifting upwards at a walk of the strip (RT-1975).
+- 2026-09-17 — the pull of the width moved onto pointer events with a capture, and its beginning
+  and end went outward as events of their own, and the number going outward stopped lying about
+  the width of the panel; the width began to change from the keyboard, and the reader began to
+  name it (RT-2142).
 - 2026-09-21 — the mode and the width moved into the menu's settings under its id (RT-2291); the fixed
   keys `rtui-side-menu-sub-menu-mode` and `-width` are no longer read by the kit.
 - 2026-09-21 — the pinned submenu lost its rounded corners: the corner cut the scroll hint (RT-2291).

@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { RtCardComponent } from '../../rt-card.component';
 
 /**
@@ -10,12 +11,19 @@ import { RtCardComponent } from '../../rt-card.component';
 @Component({
     selector: 'app-card',
     template: `
-        <rt-card [header]="header" [ariaLabel]="ariaLabel" [clickable]="clickable" />
+        <app-story-presets fill caption="Карточка в обоих наборах">
+            <ng-template>
+                <rt-card [header]="header" [ariaLabel]="ariaLabel" [clickable]="clickable" />
+            </ng-template>
+        </app-story-presets>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // components
         RtCardComponent,
+
+        // showcase
+        StoryPresetsComponent,
     ],
 })
 export class TestRtCardComponent {

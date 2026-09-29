@@ -88,14 +88,15 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Входы
 
-| вход             | тип                                         | умолчание |
-| ---------------- | ------------------------------------------- | --------- |
-| `type`           | `'text' \| 'password' \| 'email' \| 'time'` | `'text'`  |
-| `placeholder`    | `string`                                    | `''`      |
-| `iconLeft`       | `IRtIcon.Name \| null`                      | `null`    |
-| `iconRight`      | `IRtIcon.Name \| null`                      | `null`    |
-| `passwordToggle` | `boolean`                                   | `false`   |
-| `autocomplete`   | `string \| null`                            | `null`    |
+| вход             | тип                                         | умолчание   |
+| ---------------- | ------------------------------------------- | ----------- |
+| `appearance`     | `'outline' \| 'fill'`                       | `'outline'` |
+| `type`           | `'text' \| 'password' \| 'email' \| 'time'` | `'text'`    |
+| `placeholder`    | `string`                                    | `''`        |
+| `iconLeft`       | `IRtIcon.Name \| null`                      | `null`      |
+| `iconRight`      | `IRtIcon.Name \| null`                      | `null`      |
+| `passwordToggle` | `boolean`                                   | `false`     |
+| `autocomplete`   | `string \| null`                            | `null`      |
 
 **Крестик очистки и переключатель пароля делят один постфикс.** На поле пароля с включённым
 переключателем крестика не будет: показать оба некуда.

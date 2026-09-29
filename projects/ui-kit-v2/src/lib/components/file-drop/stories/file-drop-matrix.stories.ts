@@ -44,7 +44,17 @@ export const Zones: TStory = {
     },
 };
 
-export const Presets: TStory = { args: { part: 'presets' } };
+/**
+ * Подсказка в обоих наборах. Без функции `play` перетаскивание не начиналось, и показ,
+ * названный подсказкой, показывал одно содержимое области: подсветку рисует не вход, а признак,
+ * который компонент поднимает сам.
+ */
+export const Presets: TStory = {
+    args: { part: 'presets' },
+    play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
+        await startStoryFileDrag(canvasElement);
+    },
+};
 
 export const Themes: TStory = {
     args: { part: 'themes' },

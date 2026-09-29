@@ -9,7 +9,7 @@
  * There is no check of its own here and no output: the module only reads the styling layer and
  * answers. Whoever calls it decides what counts as a divergence.
  */
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { ROOT } from './rt-kit-checks.config.mjs';
@@ -18,6 +18,7 @@ import { ROOT } from './rt-kit-checks.config.mjs';
 export const STYLES = 'projects/ui-kit-v2/src/styles';
 
 const LIGHT_MIXIN = 'rt-theme-light-tokens';
+const LIGHT_LIST_MIXIN = 'rt-theme-light-list-tokens';
 const DARK_MIXIN = 'rt-theme-dark-tokens';
 const PRESET_MIXIN = 'rt-preset-material-tokens';
 
@@ -52,18 +53,41 @@ export function mixinBody(text, name) {
     return text.slice(start, end < 0 ? undefined : end);
 }
 
+/**
+ * A Material name with a fallback: `var(--mat-sys-primary, #4284d7)`. The material preset reads
+ * the theme of the page this way, and a page without one gets the fallback. The checks judge the kit
+ * on its own, so the value they see is the fallback.
+ */
+const MATERIAL_THEME_RE = /^var\(\s*--mat-[a-z0-9-]+\s*,\s*(.+)\)$/;
+
+/** A value with its Material names unwrapped, name by name, down to the kit's own fallback. */
+export function withoutMaterial(value) {
+    let result = value;
+    while (MATERIAL_THEME_RE.test(result)) {
+        result = result.replace(MATERIAL_THEME_RE, '$1').trim();
+    }
+
+    return result;
+}
+
 /** The declarations of a piece of text: name → value and the mark of a shared colour. */
 export function declarations(text) {
     const map = new Map();
     for (const match of text.matchAll(DECLARATION_RE)) {
-        map.set(match[1], { value: match[2].trim().replace(/\s+/g, ' '), shared: match[3]?.trim() || null });
+        map.set(match[1], { value: withoutMaterial(match[2].trim().replace(/\s+/g, ' ')), shared: match[3]?.trim() || null });
     }
 
     return map;
 }
 
 export const primitives = declarations(read(`${STYLES}/_primitives.scss`));
-export const light = declarations(mixinBody(read(`${STYLES}/_semantic.scss`), LIGHT_MIXIN));
+// The light mixin includes the list assignments from a file of their own: the light set outgrew the
+// length limit. A tree without that file has the whole set in the first one.
+const LIGHT_LISTS = `${STYLES}/_semantic-lists.scss`;
+export const light = new Map([
+    ...declarations(mixinBody(read(`${STYLES}/_semantic.scss`), LIGHT_MIXIN)),
+    ...(existsSync(join(ROOT, LIGHT_LISTS)) ? declarations(mixinBody(read(LIGHT_LISTS), LIGHT_LIST_MIXIN)) : []),
+]);
 export const dark = declarations(mixinBody(read(`${STYLES}/_theme-dark.scss`), DARK_MIXIN));
 export const preset = declarations(mixinBody(read(`${STYLES}/_preset-material.scss`), PRESET_MIXIN));
 
@@ -111,9 +135,10 @@ export function parseColor(text) {
 
 /** A value's colour: a reference goes further along the chain, a literal is parsed on the spot. */
 export function colorOfValue(value, look, seen) {
-    const link = linkOf(value);
+    // The source of a counted shade may itself be a Material name with a fallback.
+    const link = linkOf(withoutMaterial(value));
 
-    return link ? colorOf(link, look, seen) : parseColor(value);
+    return link ? colorOf(link, look, seen) : parseColor(withoutMaterial(value));
 }
 
 /** A name's colour in a look: by the chain of references down to a literal. */

@@ -96,6 +96,37 @@ The five refuted candidates cost about two hours.
   its hot update answers with a four hundred, and the count of the showing roots is zero. Five runs
   of the window probe against such a showcase gave five refusals, three runs against a freshly
   raised one gave three green. No edit in the tree caused either.
+- **What the overview pages hid.** Three foundation pages of the second showcase drew
+  `In HTML, <p> cannot be a descendant of <p>` — the intro was written as a block-level `<p>`, and
+  MDX parses such content as markup and wraps the text in a paragraph of its own. The sweep took
+  529 of the index's 608 entries and never opened one of the 79 overview pages; the input-table
+  audit next to it reads files rather than the browser. It was found by a one-off probe, not by a
+  check of the tree.
+- **The false empties of the first sweep edit.** Reaching for the root by a chain of selectors gave
+  95 findings out of 608, and 92 of them were stories that draw. Both containers stand in the markup
+  of any page at once, and the idle one measures zero — the chain returned it. The first guess, a
+  stale showcase, was disproved by the same command on the previous sweep: green on the very same
+  raised showcase.
+- **What each kind of screen-frame divergence means.** A unit or two per channel on the anti-aliased
+  corners is colour, not layout: the browser takes the profile from the machine's display, and the
+  profile is named explicitly. A shift of the whole frame by a pixel is width: the table lays the
+  columns out by content, and a value computed from the current moment moves the frame whole. A
+  changed order of the rows is the seeding: the record key is created anew by every run, and the
+  handing out by it is random.
+
+## A frame that moved with no edit
+
+- **The message field flipped between 192 and 195 points for months, and three tasks paid for it.**
+  Each re-taking of the references was green on the showcase it was taken from and red on the next
+  one. The digit advance measured 8.668 in both states, so the font was suspected and cleared twice
+  over. The cause was a size the kit never declared: the `textarea` had no width, and the browser
+  computes such a width from the number of columns and the average character width of the first
+  available family. That is a different quantity from the digit advance, which is why measuring the
+  digit saw nothing. The probe that tells the states apart is a bare `textarea cols=20` with
+  `system-ui`: 158 points in one raising, 161 in another.
+
+- **A rearrangement of the stories in a file moves frames nobody edited.** A story taller than the
+  window is shot with the page shifted, the page keeps the shift, and the next story is shot by it.
 
 ## A re-take confirmed by one raising reached the main branch
 

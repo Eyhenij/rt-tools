@@ -71,59 +71,79 @@ const AUDIT: IRtWorkspaceDetails.Audit = {
     template: `
         @switch (part) {
             @case ('blocks') {
-                <app-story-row caption="Какие блоки заданы" slotWidth="20rem" [items]="blockCases" [itemLabel]="caseLabel">
-                    <ng-template let-item>
-                        <rt-workspace-details
-                            title="Договор №2024-118"
-                            [entityId]="118"
-                            [rows]="item.rows"
-                            [money]="item.money"
-                            [toggles]="item.toggles" />
+                <app-story-presets caption="Какие блоки заданы в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="20rem" [items]="blockCases" [itemLabel]="caseLabel">
+                            <ng-template let-item>
+                                <rt-workspace-details
+                                    title="Договор №2024-118"
+                                    [entityId]="118"
+                                    [rows]="item.rows"
+                                    [money]="item.money"
+                                    [toggles]="item.toggles" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('tabs') {
-                <app-story-row caption="Когда появляются вкладки" slotWidth="20rem" [items]="tabCases" [itemLabel]="caseLabel">
-                    <ng-template let-item>
-                        <rt-workspace-details
-                            title="Договор №2024-118"
-                            [entityId]="118"
-                            [rows]="rows"
-                            [audit]="item.audit"
-                            [transition]="item.transition" />
+                <app-story-presets caption="Когда появляются вкладки в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="20rem" [items]="tabCases" [itemLabel]="caseLabel">
+                            <ng-template let-item>
+                                <rt-workspace-details
+                                    title="Договор №2024-118"
+                                    [entityId]="118"
+                                    [rows]="rows"
+                                    [audit]="item.audit"
+                                    [transition]="item.transition" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('loading') {
-                <app-story-row caption="Загрузка и занятость" slotWidth="20rem" [items]="loadingCases" [itemLabel]="caseLabel">
-                    <ng-template let-item>
-                        <rt-workspace-details
-                            title="Договор №2024-118"
-                            [entityId]="118"
-                            [rows]="rows"
-                            [money]="money"
-                            [loading]="item.loading"
-                            [busy]="item.busy" />
+                <app-story-presets caption="Загрузка и занятость в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="20rem" [items]="loadingCases" [itemLabel]="caseLabel">
+                            <ng-template let-item>
+                                <rt-workspace-details
+                                    title="Договор №2024-118"
+                                    [entityId]="118"
+                                    [rows]="rows"
+                                    [money]="money"
+                                    [loading]="item.loading"
+                                    [busy]="item.busy" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('actions') {
-                <app-story-row caption="Кнопки действий" slotWidth="20rem" [items]="actionCases" [itemLabel]="caseLabel">
-                    <ng-template let-item>
-                        <rt-workspace-details title="Договор №2024-118" [entityId]="118" [rows]="rows" [actions]="item.actions" />
+                <app-story-presets caption="Кнопки действий в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="20rem" [items]="actionCases" [itemLabel]="caseLabel">
+                            <ng-template let-item>
+                                <rt-workspace-details title="Договор №2024-118" [entityId]="118" [rows]="rows" [actions]="item.actions" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('audit') {
-                <app-story-row caption="История событий" slotWidth="20rem" [items]="auditCases" [itemLabel]="caseLabel">
-                    <ng-template let-item>
-                        <rt-workspace-details title="Договор №2024-118" [entityId]="118" [rows]="rows" [audit]="item.audit" />
+                <app-story-presets caption="История событий в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="20rem" [items]="auditCases" [itemLabel]="caseLabel">
+                            <ng-template let-item>
+                                <rt-workspace-details title="Договор №2024-118" [entityId]="118" [rows]="rows" [audit]="item.audit" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('presets') {
@@ -143,19 +163,23 @@ const AUDIT: IRtWorkspaceDetails.Audit = {
             }
 
             @case ('themes') {
-                <app-story-themes caption="Панель в обеих темах">
+                <app-story-presets caption="Панель в обеих темах в обоих наборах">
                     <ng-template>
-                        <div style="width: 20rem">
-                            <rt-workspace-details
-                                title="Договор №2024-118"
-                                [entityId]="118"
-                                [rows]="rows"
-                                [money]="money"
-                                [toggles]="toggles"
-                                [actions]="actions" />
-                        </div>
+                        <app-story-themes>
+                            <ng-template>
+                                <div style="width: 20rem">
+                                    <rt-workspace-details
+                                        title="Договор №2024-118"
+                                        [entityId]="118"
+                                        [rows]="rows"
+                                        [money]="money"
+                                        [toggles]="toggles"
+                                        [actions]="actions" />
+                                </div>
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
             }
         }
     `,

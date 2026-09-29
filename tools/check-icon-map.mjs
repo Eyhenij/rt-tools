@@ -70,7 +70,11 @@ const svgNames = (dir) =>
     );
 
 const files = svgNames(ASSETS_DIR);
-const material = svgNames(MATERIAL_DIR);
+// Материальный набор хранит на имя два рисунка: контурный `<имя>.svg` и залитый `<имя>.fill.svg`.
+const FILL_SUFFIX = '.fill';
+const materialFiles = svgNames(MATERIAL_DIR);
+const material = new Set([...materialFiles].filter((name) => !name.endsWith(FILL_SUFFIX)));
+const materialFilled = new Set([...materialFiles].filter((name) => name.endsWith(FILL_SUFFIX)).map((name) => name.slice(0, -FILL_SUFFIX.length)));
 
 const entries = [...readFileSync(MAP_FILE, 'utf8').matchAll(ENTRY_RE)].map((match) => ({
     from: match[1],
@@ -95,10 +99,11 @@ for (const { from, to, why } of entries) {
     else if (!files.has(to)) problems.push(`${from} → ${to}: имя в союзе есть, а файла рисунка нет`);
 
     if (!material.has(to)) problems.push(`${from} → ${to}: рисунка Material нет — набор выкачивается tools/fetch-material-icons.mjs`);
+    if (!materialFilled.has(to)) problems.push(`${from} → ${to}: залитого рисунка Material нет — набор выкачивается tools/fetch-material-icons.mjs`);
 }
 
 const paired = new Set(entries.filter((entry) => entry.to !== null).map((entry) => entry.to));
-for (const drawn of material) {
+for (const drawn of new Set([...material, ...materialFilled])) {
     if (!paired.has(drawn)) problems.push(`${drawn}: рисунок Material лежит, а пары на него в перечне нет`);
 }
 

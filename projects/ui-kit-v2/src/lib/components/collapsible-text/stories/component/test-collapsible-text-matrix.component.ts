@@ -37,37 +37,53 @@ const SHORT: string = 'Подписан 14 марта.';
     template: `
         @switch (part) {
             @case ('clamp') {
-                <app-story-row caption="Предел строк" slotWidth="18rem" [items]="clamps" [itemLabel]="caseLabel">
-                    <ng-template let-item>
-                        <rt-collapsible-text [paragraphs]="item.paragraphs" [clampLines]="item.clampLines" />
+                <app-story-presets caption="Предел строк в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="18rem" [items]="clamps" [itemLabel]="caseLabel">
+                            <ng-template let-item>
+                                <rt-collapsible-text [paragraphs]="item.paragraphs" [clampLines]="item.clampLines" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('paragraphs') {
-                <app-story-row caption="Число абзацев" slotWidth="18rem" [items]="paragraphCases" [itemLabel]="caseLabel">
-                    <ng-template let-item>
-                        <rt-collapsible-text [paragraphs]="item.paragraphs" [clampLines]="item.clampLines" />
+                <app-story-presets caption="Число абзацев в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="18rem" [items]="paragraphCases" [itemLabel]="caseLabel">
+                            <ng-template let-item>
+                                <rt-collapsible-text [paragraphs]="item.paragraphs" [clampLines]="item.clampLines" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('width') {
-                <app-story-row caption="Ширина колонки решает, будет ли кнопка" [items]="widths">
-                    <ng-template let-width>
-                        <div [style.width]="width">
-                            <rt-collapsible-text [paragraphs]="longParagraph" [clampLines]="3" />
-                        </div>
+                <app-story-presets caption="Ширина колонки решает, будет ли кнопка в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="widths">
+                            <ng-template let-width>
+                                <div [style.width]="width">
+                                    <rt-collapsible-text [paragraphs]="longParagraph" [clampLines]="3" />
+                                </div>
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('edges') {
-                <app-story-row caption="Края" slotWidth="18rem" [items]="edges" [itemLabel]="caseLabel">
-                    <ng-template let-item>
-                        <rt-collapsible-text [paragraphs]="item.paragraphs" [clampLines]="item.clampLines" />
+                <app-story-presets caption="Края в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="18rem" [items]="edges" [itemLabel]="caseLabel">
+                            <ng-template let-item>
+                                <rt-collapsible-text [paragraphs]="item.paragraphs" [clampLines]="item.clampLines" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('presets') {
@@ -81,13 +97,17 @@ const SHORT: string = 'Подписан 14 марта.';
             }
 
             @case ('themes') {
-                <app-story-themes caption="Текст в обеих темах">
+                <app-story-presets caption="Текст в обеих темах в обоих наборах">
                     <ng-template>
-                        <div style="width: 18rem">
-                            <rt-collapsible-text [paragraphs]="longParagraph" [clampLines]="3" />
-                        </div>
+                        <app-story-themes>
+                            <ng-template>
+                                <div style="width: 18rem">
+                                    <rt-collapsible-text [paragraphs]="longParagraph" [clampLines]="3" />
+                                </div>
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
             }
         }
     `,

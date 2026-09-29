@@ -26,6 +26,80 @@ A rule under the "Law on verifiability", the section about showing a visible sta
   coverage.
 - **A story that draws an empty collection is not coverage.** First plausible data, then the
   matrix.
+- **The arg-driven page is called `Playground` everywhere, and a family without one names its
+  reason.** Called by two names, it is found at an unfamiliar family by guessing. The name is one,
+  and a family that cannot have such a page — its content arrives as projected templates, and the
+  showcase substitutes values rather than markup — is told from a family that simply lacks it only
+  by reading. So the reason is written twice: in words on the family's overview page, and in the
+  list the count reads, so that the sum is checked by a command and not from memory.
+- **A component is counted apart from its family, and a component the family shows is not
+  covered by that.** A family reaches the showcase by an overview page and a stories folder.
+  Everything inside it then counts as shown, including a component that is the subject of no
+  story and gets into a frame only inside a neighbour's wrapper. The two counts diverged by
+  thirty where the family count was green.
+- **A component shown inside a neighbour's story is named, not left to be guessed.** A pair
+  belongs in one frame — a projected hint against a string one — and pulled apart it shows
+  neither side against the other. Which story shows it is written down, so that the day the
+  neighbour's story is rewritten the count says so.
+- **A styling preset wraps the whole matrix as a pair of halves; it never becomes an axis inside
+  it.** A preset is a second layer of assignments over the same markup and the same sizes. Crossed
+  with an axis it doubles every cell, and two halves of one row then read as two values of that
+  axis instead of one showing under two sets.
+- **The pair belongs to every story of a family the preset touches, not to one story of the ten.**
+  A single preset story shows the pair on the values it picked itself, and every other axis of that
+  component stays shown in one set: a preset repainting the pressed look, the loading look or the
+  round shape has nowhere to be seen.
+- **The halves wrap by the width of their own content, not by a threshold in a length unit.** A
+  grid of fixed columns cuts a wide matrix at the same column in both halves at once, and a
+  clipping equal on both sides reads as intended rather than as a defect.
+- **A component that does not give its width to its host collapses in a half, and the row cell is
+  then given a width by name.** The half is twice as narrow as the page, and a host whose content
+  lies outside its own box reports nothing to shrink by: the cells keep their place, the content
+  slides onto the neighbour, and the frame is whole and green. The cure is the row's own cell width,
+  not a threshold on the pair.
+- **A showing of one instance asks the pair for the width of its half.** Standing alone, such a
+  showing took the width of the page, and the half shrinks its content to its own width: the
+  pagination host measured eight points and drew the collapsed form instead of the numbers. It is asked by name, because the half
+  shrinks deliberately — a bare button stretched across it would look unlike the same button in the
+  matrix next door.
+- **A showing that gets no pair says why, in the markup next to it.** Three reasons are lawful: the
+  second half doubles a listing and adds no sighting, the showing carries the frame root itself and
+  the pair would take it away, or the component is pinned to the window and leaves the half whole.
+  The last one costs both halves at once: they stay empty, and the two instances lie one over the
+  other outside the frame. Left silent, such a showing is indistinguishable from one the wave
+  forgot.
+- **A component pinned to the window needs a box that is its containing block, and a relative box
+  is not one.** Such a component counts its place from the window whatever stands above it in the
+  markup: the sheet drew itself across the whole window and put its panel a point below the bottom
+  edge, while the box it was written into kept two points of width and one dashed line in the frame.
+  The box becomes a containing block by a property of its own, and the one chosen also clips — so it
+  replaces the box's clipping rather than standing next to it. Raising the node into a layer of its
+  own does the same and costs the rasterisation of every label in the frame.
+- **A component that takes its size from its parent is given one by a box of the showing, not by a
+  rule on its block class.** Such a component measures by its content where nothing sizes it: the
+  chat came out 37 points tall in a cell of 352 and left loose pieces in the frame — an empty-state
+  pill, an input field, two bubbles — with no frame of a chat anywhere. Where the host is declared
+  `display: contents`, the rule does not even reach: the height lands on a host that is no box, it
+  measures 0 by 0, and the content spills into the cell and is cut by its edge. The box takes the
+  height instead, because the host between them is not a box; the frame then takes its full height
+  from the box. Its width goes to the whole cell for the same reason a single instance asks the
+  pair for the width of its half.
+- **The surface under such a component is the box too, when the component takes its background
+  from the consumer.** Drawn on the page ground, it reads as loose parts rather than a component
+  with a boundary, and no frame says where it ends. In the showing the consumer is the box.
+- **The width of a cell is measured again the day the component learns to shrink into it.** Until
+  then the component kept the width of its content and the number on the cell only fenced the
+  neighbours; with a declared fate for what does not fit it takes exactly that number, and one
+  chosen for the former behaviour leaves the text gone. In a cell of 272 the large card of a file
+  with three buttons drew the icon and the badge and no name at all — the frame is whole and green,
+  and the showing says nothing about what the component is for. The number comes from a measurement
+  of the widest cell of that matrix, not from one width for the whole family: a row of one button
+  and a row of three need different ones.
+- **A component whose height comes from the window is shown inside a box that clips.** The shot
+  widens the window to what is drawn, and such a component grows with it: one frame came out seven
+  thousand points tall under a box of two hundred and ninety. The box is the screen of the showing,
+  and its clipping is what makes it one; the component's own rule is not overridden — for an
+  application it is right.
 - **The grid is drawn by the shared showing harness, not by the markup of every story.**
   Otherwise the same thing is shown in seventy ways and diverges at the first edit.
 - **A provider without which the component does not come up stands in `preview.ts`, not as one
@@ -41,8 +115,7 @@ A rule under the "Law on verifiability", the section about showing a visible sta
 - **A link between the showcase's pages dies with a rename of a section.** The address is not a path
   in the tree: it comes from the page's title. So the address check does not see such a link. A dead
   one looks exactly like a live one. The page is drawn whole, and the miss shows only to whoever
-  pressed it. Laying the sections out by the levels of atomic design killed every link of the kit at
-  once, 346 of them, and nothing turned red. The addresses are derived by the showcase's own helper.
+  pressed it. The addresses are derived by the showcase's own helper.
   A rule written out next to the check diverges on the first title with a capital letter in the
   middle of a word.
 - **A link to a family that has not migrated is not written at all.** An address that will exist some
@@ -145,7 +218,7 @@ Required per component — a missing entry is a defect, not a preference:
 | Story / page       | What it must show                                                                                                                                                                                                                                         |
 | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `Overview` (MDX)   | Purpose, when to use / when not to use, axis tables, states table, accessibility, theming, related components, and a hand-written input/output table. `compodoc` is deliberately off — `tools/verify-ui-kit-v2-docs.cjs` is what keeps that table honest. |
-| `Playground`       | The single arg-driven story (today's `Default`, renamed).                                                                                                                                                                                                 |
+| `Playground`       | The single arg-driven story. One name for the whole kit — see the article about it below.                                                                                                                                                                  |
 | one story per axis | Every value of that axis, laid out at once and labelled.                                                                                                                                                                                                  |
 | `States`           | `default`, `hover`, `focus-visible`, `active`, `disabled`, plus `loading` / `readonly` where the component has them.                                                                                                                                      |
 | `Themes`           | Light and dark side by side.                                                                                                                                                                                                                              |
@@ -156,7 +229,7 @@ Rules that decide what goes in a matrix:
   grid because the pair changes how each reads; `size × theme` does not. The full
   cartesian product is explicitly rejected — see ADR 0002 decision 3.
 - **An axis you cannot show is declared, not skipped.** Say so in `Overview` with
-  the reason; a silent gap looks exactly like coverage.
+  the reason.
 - **A story that renders an empty collection is not coverage.** Ten stories
   currently pass an empty array and paint nothing (`UI-KIT-V2-ISSUES.md` §2.3);
   seed a realistic fixture instead.
@@ -191,8 +264,7 @@ Rules that decide what goes in a matrix:
   frame before the font. The class rule next to the family repeats the whole set the other families
   carry there: `font-size: 24px`, `line-height: 1`, `letter-spacing`, `text-transform`, `display`,
   `white-space`, the ligatures and smoothing. A class with the family alone takes the host's font
-  size and line height, and the icons shift inside their buttons. No frame catches the shift while
-  the references are taken with it; the owner found it by eye.
+  size and line height, and the icons shift inside their buttons.
 - **The first showcase's Material Symbols file is a subset by icon names, and a glyph outside it
   draws a stray shape, not the word.** A story naming a new glyph gets it only after the subset is
   fetched again with the whole old list of names plus the new one. The ligatures of the old and the

@@ -4,6 +4,7 @@ import { DOCUMENT, NgTemplateOutlet } from '@angular/common';
 import {
     ChangeDetectionStrategy,
     Component,
+    ElementRef,
     InputSignal,
     OutputEmitterRef,
     Renderer2,
@@ -27,6 +28,7 @@ import { map, merge, Observable, Subject, switchMap, takeUntil } from 'rxjs';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
+import { carryThemeScope, materialPresetClassesOf } from '../../util/material-preset';
 import { RtToasterComponent } from '../toast/rt-toaster.component';
 import { RtContainerStateService } from './rt-container-state.service';
 import {
@@ -84,6 +86,7 @@ const BEM_BLOCK: string = 'rt-container';
 })
 export class RtContainerComponent {
     readonly #overlay: Overlay = inject(Overlay);
+    readonly #host: ElementRef<HTMLElement> = inject<ElementRef<HTMLElement>>(ElementRef);
     readonly #vcr: ViewContainerRef = inject(ViewContainerRef);
     readonly #scrollStrategies: ScrollStrategyOptions = inject(ScrollStrategyOptions);
     readonly #blockScroll: BlockScrollStrategy = this.#scrollStrategies.block();
@@ -213,6 +216,8 @@ export class RtContainerComponent {
         }
 
         this.#blockScroll.enable();
+        // Коробка постоянная и лежит в конце страницы, а кусок темы вокруг контейнера мог смениться.
+        carryThemeScope(overlayRef.overlayElement, this.#host.nativeElement);
 
         this.#renderer.removeClass(overlayRef.overlayElement, 'rt-aside-overlay--entering');
         this.#renderer.removeClass(overlayRef.overlayElement, 'rt-aside-overlay--leaving');
@@ -291,7 +296,12 @@ export class RtContainerComponent {
             scrollStrategy: this.#overlay.scrollStrategies.noop(),
             hasBackdrop: true,
             backdropClass: 'rt-aside-backdrop',
-            panelClass: ['rt-aside-overlay', 'rt-aside-overlay--position-right', 'rt-aside-overlay--entering'],
+            panelClass: [
+                'rt-aside-overlay',
+                'rt-aside-overlay--position-right',
+                'rt-aside-overlay--entering',
+                ...materialPresetClassesOf(this.#host.nativeElement),
+            ],
             disposeOnNavigation: false,
         };
 

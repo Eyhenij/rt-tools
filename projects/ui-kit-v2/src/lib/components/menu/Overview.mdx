@@ -45,6 +45,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | иконка триггера | умолчание (`ellipsis-h`), своя                                   | `ellipsis-h` |
 | недоступность   | доступен, недоступен                                             | доступен     |
 | сторона панели  | `end`, `start`                                                   | `end`        |
+| размер панели   | `md`, `sm`                                                       | `md`         |
 | виды пунктов    | обычный, с иконкой, деструктивный, недоступный, с подтверждением | —            |
 
 **Оси, которых не видно.** `ariaLabel` уходит в атрибут и в подсказку на триггере; пустое
@@ -54,6 +55,10 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 backdrop'ом, и жест по второму триггеру достаётся этому backdrop'у: первое меню закрывается,
 второе не открывается. Поэтому сторона раскрытия показана двумя историями (`PanelAlignEnd` и
 `PanelAlignStart`), а виды пунктов — набором внутри одной панели.
+
+**Размер панели виден только под материальным набором.** Свой вид рисует обе панели одинаково, а
+под набором у компактной пункт 38 и значок 13 против 48 и 24. Пара показана двумя историями
+(`PanelMaterial` и `PanelMaterialCompact`): компактным открывается меню строки таблицы.
 
 ## Состояния
 
@@ -78,6 +83,10 @@ backdrop'ом, и жест по второму триггеру достаётс
 - Панель объявлена `role="menu"`, пункт — `role="menuitem"`.
 - `Escape` закрывает панель; недоступный пункт выпадает из таб-порядка и помечается
   `aria-disabled`.
+- Клавиатура — как у меню Material. Открытая панель переносит фокус на первый пункт, стрелки
+  вверх и вниз ведут по пунктам по кругу, `Home` и `End` ставят на первый и последний,
+  недоступный пункт пропускается. `Escape` и выбор пункта возвращают фокус на триггер, `Tab`
+  закрывает панель и уводит фокус дальше.
 
 ## Оформление
 
@@ -97,9 +106,14 @@ backdrop'ом, и жест по второму триггеру достаётс
 | `icon`               | оба            | `IRtIcon.Name` / `\| null` у пункта  | `'ellipsis-h'` / `null` |
 | `ariaLabel`          | `rt-menu`      | `string`                             | `''` → `uiActions`      |
 | `align`              | `rt-menu`      | `'start' \| 'end'`                   | `'end'`                 |
+| `panelClass`         | `rt-menu`      | `string \| string[]`                 | `[]`                    |
+| `size`               | `rt-menu`      | `'md' \| 'sm'`                       | `'md'`                  |
 | `disabled`           | оба            | `boolean`                            | `false`                 |
 | `label`              | `rt-menu-item` | `string`                             | `''`                    |
 | `danger`             | `rt-menu-item` | `boolean`                            | `false`                 |
+| `success`            | `rt-menu-item` | `boolean`                            | `false`                 |
+| `glyph`              | `rt-menu-item` | `string \| null`                     | `null`                  |
+| `current`            | `rt-menu-item` | `boolean`                            | `false`                 |
 | `confirmMessage`     | `rt-menu-item` | `string`                             | `''`                    |
 | `confirmTitle`       | `rt-menu-item` | `string \| null`                     | `null`                  |
 | `confirmLabel`       | `rt-menu-item` | `string`                             | `''` → словарь кита     |

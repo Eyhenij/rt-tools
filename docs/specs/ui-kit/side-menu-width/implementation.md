@@ -1,0 +1,14 @@
+# What it is carried out by — the width of a pinned panel of the side menu
+
+The rule of the subdomain is on the left, the place where it is carried out is on the right. The paths are
+given from the root of the tree.
+
+- **The pull is caught by pointer events, and the handle holds the pointer by a capture.** — `projects/ui-kit/src/lib/ui-kit/side-menu/side-menu.logic.ts:startSubMenuWidthDrag` — the listeners hang on the handle itself and are held there by the capture; the component only calls it — `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.ts:onResizeStart`
+- **The beginning and the end of the pull go outward as events of their own.** — `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.ts:subMenuResizeStart` — next to it `subMenuResizeEnd`; both are asked for by `projects/ui-kit/src/lib/ui-kit/side-menu/menu/sub-menu-resize.ts:SubMenuResize`, which holds the pull and tells a release from a pointer taken away by nothing: the end comes about alike
+- **The number that goes outward is the one the panel is drawn by.** — `projects/ui-kit/src/lib/ui-kit/side-menu/side-menu.logic.ts:reportedSubMenuWidth` — the greater of the pulled number and the measurement of the panel; the measurement itself is `projects/ui-kit/src/lib/ui-kit/side-menu/side-menu.logic.ts:drawnSubMenuWidth`, and it is taken before the pulled width is reset — reset first, the panel is redrawn and there is nothing left to measure
+- **The width is changed from the keyboard, and the handle stands in the walk by the tab key.** — `projects/ui-kit/src/lib/ui-kit/side-menu/menu/sub-menu-resize.ts:pressKey` — which key gives which width is counted by `projects/ui-kit/src/lib/ui-kit/side-menu/side-menu.logic.ts:subMenuWidthByKey`, the step is `projects/ui-kit/src/lib/ui-kit/side-menu/side-menu.logic.ts:SUB_MENU_WIDTH_STEP`, and the walk itself is the `tabindex` of the handle in `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.html`
+- **The reader names the current width and both its limits.** — `projects/ui-kit/src/lib/ui-kit/side-menu/menu/sub-menu-resize.ts:valueNow` — the number itself; the limits go from `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.ts:resizeValueMin` and `resizeValueMax`, and all three are absent from the markup while there is no number
+- **The handle of the pull is caught wider than it is visible.** — `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.scss:resizer` — the zone of the catching, the visible strip and the overhang are declared by properties of the menu's own; the pseudo-element inside the zone is painted
+
+The scenarios of the subdomain are bound to the tests by the number in the title of a test, not by a table
+here: the bond is checked both ways by the checking of the specs.

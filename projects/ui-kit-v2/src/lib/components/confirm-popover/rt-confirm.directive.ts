@@ -31,6 +31,7 @@ import { map, merge, Observable, Subject, switchMap } from 'rxjs';
 
 import { setRtComponentInputs } from '@rt-tools/core';
 
+import { carryThemeScope, materialPresetClassesOf } from '../../util/material-preset';
 import { RtConfirmPopoverComponent } from './rt-confirm-popover.component';
 import { IRtConfirmPopover } from './rt-confirm-popover.model';
 
@@ -172,6 +173,8 @@ export class RtConfirmDirective implements OnDestroy {
             return;
         }
         const overlayRef: OverlayRef = this.#ensureOverlay();
+        // Коробка переживает закрытие, а кусок темы вокруг host'а мог смениться — переносим на каждом открытии.
+        carryThemeScope(overlayRef.overlayElement, this.#elementRef.nativeElement);
         const portal: ComponentPortal<RtConfirmPopoverComponent> = new ComponentPortal(RtConfirmPopoverComponent);
         this.#panelRef = overlayRef.attach(portal);
         // Одним набором, а не пятью строками с именами: имя, написанное строкой, не проверяет
@@ -243,7 +246,7 @@ export class RtConfirmDirective implements OnDestroy {
             positionStrategy,
             scrollStrategy: this.#scrollStrategies.reposition(),
             hasBackdrop: false,
-            panelClass: 'rt-confirm-popover-panel',
+            panelClass: ['rt-confirm-popover-panel', ...materialPresetClassesOf(this.#elementRef.nativeElement)],
         });
         const overlayRef: OverlayRef = this.#overlay.create(config);
 

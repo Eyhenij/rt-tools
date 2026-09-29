@@ -25,7 +25,7 @@ export default {
 
 type TStory = StoryObj<TestRtTabComponent>;
 
-export const Default: TStory = {
+export const Playground: TStory = {
     args: {
         id: 'first',
         label: 'Сохранить',

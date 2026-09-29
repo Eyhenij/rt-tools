@@ -5,7 +5,12 @@ import { TestBed } from '@angular/core/testing';
 import { PlatformService } from '@rt-tools/core';
 
 import { provideRtKitTesting } from '../../../testing/rt-kit-testing';
-import { RT_ICON_MATERIAL_SYMBOL_ID_PREFIX, RT_ICON_SPRITE_ID, RT_ICON_SYMBOL_ID_PREFIX } from './rt-icon.const';
+import {
+    RT_ICON_MATERIAL_FILL_SYMBOL_ID_PREFIX,
+    RT_ICON_MATERIAL_SYMBOL_ID_PREFIX,
+    RT_ICON_SPRITE_ID,
+    RT_ICON_SYMBOL_ID_PREFIX,
+} from './rt-icon.const';
 import { IRtIcon } from './rt-icon.model';
 import { RtIconRegistry } from './rt-icon.registry';
 
@@ -89,6 +94,17 @@ describe('RtIconRegistry', (): void => {
         harness.http.expectOne('/icons/close.svg').flush(SVG);
 
         expect(symbolsInSprite()).toEqual([`${RT_ICON_MATERIAL_SYMBOL_ID_PREFIX}close`]);
+    });
+
+    it('SC-UKV-364 — не приехавший залитый рисунок закрывается контурным того же набора', (): void => {
+        const harness: IHarness = setup();
+
+        harness.registry.request('close', 'material-fill');
+        harness.http.expectOne('/icons-material/close.fill.svg').flush('нет такого файла', { status: 404, statusText: 'Not Found' });
+        harness.http.expectOne('/icons-material/close.svg').flush(SVG);
+
+        harness.http.verify();
+        expect(symbolsInSprite()).toEqual([`${RT_ICON_MATERIAL_FILL_SYMBOL_ID_PREFIX}close`]);
     });
 
     it('SC-UKV-60 — отказ своего имени вторым запросом не закрывается', (): void => {

@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { RtThreadListComponent } from '../../rt-thread-list.component';
 
 /**
@@ -10,20 +11,27 @@ import { RtThreadListComponent } from '../../rt-thread-list.component';
 @Component({
     selector: 'app-thread-list',
     template: `
-        <rt-thread-list
-            [rows]="rows"
-            [activeId]="activeId"
-            [searchPlaceholder]="searchPlaceholder"
-            [emptyText]="emptyText"
-            [loading]="loading"
-            [fetching]="fetching"
-            [hasMore]="hasMore"
-            [filtersActive]="filtersActive" />
+        <app-story-presets fill caption="Список бесед в обоих наборах">
+            <ng-template>
+                <rt-thread-list
+                    [rows]="rows"
+                    [activeId]="activeId"
+                    [searchPlaceholder]="searchPlaceholder"
+                    [emptyText]="emptyText"
+                    [loading]="loading"
+                    [fetching]="fetching"
+                    [hasMore]="hasMore"
+                    [filtersActive]="filtersActive" />
+            </ng-template>
+        </app-story-presets>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // components
         RtThreadListComponent,
+
+        // showcase
+        StoryPresetsComponent,
     ],
 })
 export class TestRtThreadListComponent {

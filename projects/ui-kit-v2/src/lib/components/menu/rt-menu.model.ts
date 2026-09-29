@@ -6,6 +6,12 @@ export namespace IRtMenu {
     /** Горизонтальное выравнивание панели относительно триггера. */
     export type Align = 'start' | 'end';
 
+    /**
+     * Размер панели: `md` — обычный, `sm` — компактный, как меню действий строки в первом ките. Под
+     * материальным набором у компактного пункт ниже и значок мельче; свой вид их не различает.
+     */
+    export type Size = 'md' | 'sm';
+
     /** Тон подтверждающей кнопки в confirm-модалке пункта меню. */
     export type ConfirmTone = 'danger' | 'warning' | 'primary';
 
@@ -20,6 +26,12 @@ export namespace IRtMenu {
         readonly confirmLabel: string;
         readonly cancelLabel: string;
         readonly tone: ConfirmTone;
+    }
+
+    /** Пункт панели для хода стрелками: его узел и признак, что его пропускают. */
+    export interface Focusable {
+        readonly disabled: boolean;
+        focus(): void;
     }
 }
 

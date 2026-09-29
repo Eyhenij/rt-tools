@@ -63,6 +63,7 @@ const BEM_BLOCK: string = 'rt-input';
         '[class.rt-input--invalid]': 'isInvalid()',
         '[class.rt-input--readonly]': 'isReadonly()',
         '[class.rt-input--borderless]': '!bordered()',
+        '[class.rt-input--appearance--fill]': "appearance() === 'fill'",
         '[class.rt-input--size--sm]': "size() === 'sm'",
         '[class.rt-input--size--lg]': "size() === 'lg'",
         '[class.rt-input--with-icon-left]': '!!iconLeft()',
@@ -94,6 +95,9 @@ export class RtInputComponent extends RtFormControlBase<string> {
     protected readonly passwordToggleIcon: Signal<IRtIcon.Name> = computed((): IRtIcon.Name =>
         this.isPasswordVisible() ? 'ico-eyeClose' : 'ico-eye'
     );
+
+    /** Вид рамки: `outline` — рамка со всех сторон, `fill` — залитое поле с чертой снизу. */
+    public readonly appearance: InputSignal<IRtInput.Appearance> = input<IRtInput.Appearance>('outline');
 
     public readonly displayText: Signal<string> = computed((): string => this.value());
 

@@ -95,6 +95,19 @@ export const lightForms = [
         value: `var(--rt-color-text-muted)`,
     },
     {
+        name: `--rt-input-icon-color`,
+        value: `var(--rt-neutral-600)`,
+        dark: `var(--rt-neutral-600)`,
+    },
+    {
+        name: `--rt-input-icon-size`,
+        value: `var(--rt-size-4)`,
+    },
+    {
+        name: `--rt-input-gap`,
+        value: `var(--rt-space-sm)`,
+    },
+    {
         lead: `    /* Sizes (single-line height scale) */`,
         space: true,
         name: `--rt-input-height-sm`,
@@ -118,6 +131,71 @@ export const lightForms = [
         space: true,
         name: `--rt-input-max-width`,
         value: `var(--rt-control-max-width)`,
+    },
+    {
+        lead: `    /* Поиск списка (rt-data-list). Свои имена, а не имена поля: в материальном наборе поиск
+       списка — поле Material первого кита, 52px высотой, со скруглением 4px и рамкой цвета
+       outline темы, а остальные поля набора остаются полями первого кита вне Material. */`,
+        space: true,
+        name: `--rt-list-search-height`,
+        value: `var(--rt-input-height-sm)`,
+    },
+    {
+        name: `--rt-list-search-radius`,
+        value: `var(--rt-input-radius)`,
+    },
+    {
+        name: `--rt-list-search-color-border`,
+        value: `var(--rt-input-color-border)`,
+        dark: `var(--rt-input-color-border)`,
+    },
+    {
+        name: `--rt-list-search-color-bg`,
+        value: `var(--rt-input-color-bg)`,
+        dark: `var(--rt-input-color-bg)`,
+    },
+    {
+        name: `--rt-list-search-width`,
+        value: `var(--rt-size-60)`,
+    },
+    {
+        name: `--rt-list-search-padding-x`,
+        value: `var(--rt-input-padding-x)`,
+    },
+    {
+        name: `--rt-list-search-gap`,
+        value: `var(--rt-input-gap)`,
+    },
+    {
+        name: `--rt-list-search-font-size`,
+        value: `var(--rt-input-font-size)`,
+    },
+    {
+        name: `--rt-list-search-icon-size`,
+        value: `var(--rt-input-icon-size)`,
+    },
+    {
+        name: `--rt-list-search-icon-color`,
+        value: `var(--rt-input-icon-color)`,
+        dark: `var(--rt-input-icon-color)`,
+    },
+    {
+        name: `--rt-list-search-color-placeholder`,
+        value: `var(--rt-input-color-text-placeholder)`,
+        dark: `var(--rt-input-color-text-placeholder)`,
+    },
+    {
+        lead: `    /* Панель настройки колонок списка — заливка плашки колонки и тон значков на ней.
+       Свой вид берёт подложку и приглушённый текст; материальный набор отдаёт их теме. */`,
+        space: true,
+        name: `--rt-list-settings-item-bg`,
+        value: `var(--rt-color-bg-subtle)`,
+        dark: `var(--rt-color-bg-subtle)`,
+    },
+    {
+        name: `--rt-list-settings-icon-color`,
+        value: `var(--rt-color-text-muted)`,
+        dark: `var(--rt-color-text-muted)`,
     },
     {
         lead: `    /* Скругление контрола — назначение, а не ступень на месте. Кнопка, поле ввода и
@@ -275,10 +353,12 @@ export const lightForms = [
     {
         name: `--rt-toggle-color-track-on`,
         value: `var(--rt-color-action-primary)`,
+        dark: `var(--rt-color-action-primary)`,
     },
     {
         name: `--rt-toggle-color-border`,
         value: `var(--rt-color-border-strong)`,
+        dark: `var(--rt-color-border-strong)`,
     },
     {
         name: `--rt-toggle-color-thumb`,

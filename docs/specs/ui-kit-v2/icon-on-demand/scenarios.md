@@ -74,3 +74,10 @@ Not covered: it cannot be closed by a test with an identifier — it is checked 
 snapshots, and its tests are created by the stories of the showcase and carry no identifier. Checked on
 the spot: the gate of the snapshots of the second kit passed on a growing sprite — 450 cases, 458
 references agreed — while the probe of the markups diverged from the first pair.
+
+### SC-UKV-364 — a filled material drawing that did not arrive is closed by the outlined one
+
+Given the page declared the material preset, and the application did not publish the filled drawing
+When the page draws a filled icon
+Then the request goes to the outlined material drawing after the refusal, and the icon is drawn by it
+Covered: `projects/ui-kit-v2/src/lib/components/icon/rt-icon.registry.spec.ts`.

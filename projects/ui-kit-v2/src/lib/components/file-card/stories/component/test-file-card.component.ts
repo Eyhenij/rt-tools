@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { RtFileCardComponent } from '../../rt-file-card.component';
 import { IRtFileCard } from '../../rt-file-card.model';
 
@@ -11,19 +12,26 @@ import { IRtFileCard } from '../../rt-file-card.model';
 @Component({
     selector: 'app-file-card',
     template: `
-        <rt-file-card
-            [name]="name"
-            [sizeBytes]="sizeBytes"
-            [size]="size"
-            [showDownload]="showDownload"
-            [showRemove]="showRemove"
-            [showRename]="showRename"
-            [disabled]="disabled" />
+        <app-story-presets fill caption="Карточка файла в обоих наборах">
+            <ng-template>
+                <rt-file-card
+                    [name]="name"
+                    [sizeBytes]="sizeBytes"
+                    [size]="size"
+                    [showDownload]="showDownload"
+                    [showRemove]="showRemove"
+                    [showRename]="showRename"
+                    [disabled]="disabled" />
+            </ng-template>
+        </app-story-presets>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // components
         RtFileCardComponent,
+
+        // showcase
+        StoryPresetsComponent,
     ],
 })
 export class TestRtFileCardComponent {

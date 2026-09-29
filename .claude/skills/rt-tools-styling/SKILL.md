@@ -112,6 +112,22 @@ The sections below are this tree's articles: the law's technique is named by the
       declaration lives on the block itself and beats everything that came by inheritance from
       above.
 
+- **A query about the size of a box is asked of a box whose size does not come from its content.**
+  The sign that opens such a query also contains the element in both directions: an element whose
+  height comes from what the consumer put inside it collapses to nothing under it, and the frame
+  comes out empty rather than red. The host of a component that wraps the consumer's content is
+  therefore never the container; a part of the component sized by its own placement is — an overlay
+  pinned to the host by all four edges measures by the host whatever stands inside it.
+    - **A query does not reach the box of its own container, so the room around the inner part is
+      given to that part.** Written as a padding of the container, it stays at its full value while
+      everything the query reassigns has already shrunk — and on a low box the padding alone eats
+      all the room there was. The room moves onto the inner part as its own offset from the
+      container's edges, and then the query reaches it.
+    - **What the query reassigns is the component's own properties, not the rules themselves.** The
+      default of each is the step that stood in that place, so the look does not move by a pixel
+      where the query does not fire, and a diverged frame means the query fired where it should not
+      have.
+
 - **State outweighs styling.**
     - **The state block stands below every styling variant and palette of the same block.** Being
       disabled, loading and read-only cancel the fill, the outline and the label colour; the
@@ -193,9 +209,39 @@ The sections below are this tree's articles: the law's technique is named by the
   a container is what lets two presets stand side by side on one page.
   <!-- rt-when: *.scss *.css *.html -->
 
+    - **A preset scoped to a container does not reach an overlay pane.** A menu, a select panel, a
+      tooltip, a confirmation, a dialog and a side panel are drawn at the end of the page, outside
+      the node carrying the flag, and take the base look under any preset — the build, the styles
+      linter and a frame all pass that. The overlay reads the flag above the node it opens from and
+      puts the preset class on its own pane; a service with no node of its own reads it above the
+      node in focus.
+
+- **The dark theme declares `color-scheme: dark`, and a light island declares `light`.** A foreign
+  theme answering by `light-dark()` resolves by the colour scheme, not by the kit's flag: without
+  the declaration the application's colours stay light inside the kit's dark theme. The build emits
+  it with the dark set, so it is edited in the generator, not in the built file.
+  <!-- rt-when: *.scss *.css *.mjs -->
+
+- **A theme or a preset scoped to a node declares the whole set of the assignments on that node,
+  not the difference from the page.** A reference of a property resolves where it is declared, not
+  where it is read: an assignment left at the root keeps resolving against the values of the root,
+  and the island comes out half applied — a ground from one look, a shadow from the other. Nothing
+  catches that but the eyes. The build assembles it, the styles linter judges the properties, and a
+  frame shows a half-applied island as a lawful one; it cost 314 diverged frames in one run and 38
+  in the next. The root is cut out of every rule of the island, so the layering of the page stays
+  as it was.
+  <!-- rt-when: *.scss *.css *.mjs -->
+
 - **The dark theme wins over a preset, and it wins by the order in the file, not by specificity.**
   Both flags sit on the same root with equal specificity, so the preset rule is emitted before the
   dark theme's. A preset declared after it would silently repaint the dark theme with light values.
+  <!-- rt-when: *.scss *.css *.mjs -->
+
+- **A preset name read from a foreign theme keeps that theme's reference under the dark theme too.**
+  The foreign theme answers dark by itself, and the kit's dark answer laid over it draws the fields
+  unlike the page around them. The last fallback of the reference becomes the dark answer of the same
+  name, so without the foreign theme the dark look stays as it was to the dot. A mixed value has no
+  fallback to swap and stays on the dark answer.
   <!-- rt-when: *.scss *.css *.mjs -->
 
 - **A preset's silence about a colour is named as a reason, and the silence that needs no reason is

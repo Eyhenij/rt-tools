@@ -92,7 +92,7 @@ test.describe('оболочка админки', () => {
         await qa(page, 'profile-language').locator('[qa-dataid="toggle-button-group-option"][data-value="en"]').click();
 
         // У подписи «строк на странице» своего якоря кит не ставит — берём её классом блока
-        await expect(page.locator('.rt-pagination__per-page-label')).toHaveText(/Per page/);
+        await expect(page.locator('.rt-pagination__per-page-label')).toHaveText(/Items per page/);
 
         await page.reload();
         await expect(qa(page, SECTION.postmortems.table)).toBeVisible();
@@ -127,7 +127,7 @@ test.describe('оболочка админки', () => {
         await expect(qa(page, 'header-nav-item').first()).toContainText('Incident analyses');
 
         // Подписи кита: своего якоря у подписи «строк на странице» он не ставит — берём её классом
-        await expect(page.locator('.rt-pagination__per-page-label')).toHaveText(/Per page/);
+        await expect(page.locator('.rt-pagination__per-page-label')).toHaveText(/Items per page/);
 
         // Признак языка документа идёт за выбором: русский текст под английским признаком
         // синтезатор речи читает по английским правилам

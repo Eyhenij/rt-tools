@@ -1,0 +1,447 @@
+import { ChangeDetectionStrategy, Component, EnvironmentProviders, Provider, Signal, signal, WritableSignal } from '@angular/core';
+import { ComponentFixture } from '@angular/core/testing';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { EMPTY, Observable } from 'rxjs';
+
+import { EFilterOperatorType, IFilterModel, IPageModel } from '@rt-tools/utils';
+
+import { provideRtKit } from '../../config/rt-kit-config.providers';
+import { provideRtKitLabels, TRtKitLabelKey, TRtKitLabelParams } from '../../i18n';
+import { createRtFixture, el, qa, textOf } from '../../../testing/rt-kit-testing';
+import { RtDataTableConfigService } from '../data-table/rt-data-table-config.service';
+import { ERtDataTableColumnType, ERtDataTableFilterType, IRtDataTable, RT_PRESET_MATERIAL_CLASS } from '../data-table/rt-data-table.model';
+import { IRtInput } from '../input/rt-input.model';
+import { RtDataListComponent } from './rt-data-list.component';
+import { IRtAsideConfig, RtAsideService } from '../aside/rt-aside.service';
+
+interface IEntity extends Record<string, unknown> {
+    id: number;
+    title: string;
+}
+
+const ROWS: IEntity[] = [{ id: 1, title: 'Анна' }];
+
+const COLUMNS: Array<IRtDataTable.Column<IEntity>> = [
+    {
+        align: 'left',
+        propName: 'title',
+        type: ERtDataTableColumnType.TEXT,
+        copyable: false,
+        filterable: true,
+        filterType: ERtDataTableFilterType.TEXT,
+        header: { align: 'left', label: 'Название' },
+    },
+];
+
+/** Двойник службы настроек: заглушка и вид загрузки от состава колонок не зависят. */
+interface IConfigStub {
+    tableConfig: WritableSignal<IRtDataTable.Config.Data<IEntity>>;
+    updateConfig: () => void;
+}
+
+function configStub(vertical: boolean = false, horizontal: boolean = true): IConfigStub {
+    return {
+        tableConfig: signal<IRtDataTable.Config.Data<IEntity>>({
+            isVerticalScrollbarShown: vertical,
+            isHorizontalScrollbarShown: horizontal,
+            columns: COLUMNS,
+        }),
+        updateConfig: (): void => undefined,
+    };
+}
+
+const CONFIG_STUB: IConfigStub = configStub();
+
+/** Размер полос список ставит на корень страницы — оттуда его наследует таблица. */
+function scrollbarSizes(): { vertical: string; horizontal: string } {
+    const style: CSSStyleDeclaration = document.documentElement.style;
+
+    return {
+        vertical: style.getPropertyValue('--rt-data-table-scrollbar-vertical-width'),
+        horizontal: style.getPropertyValue('--rt-data-table-scrollbar-horizontal-height'),
+    };
+}
+
+/** Стили списка: ярусы подложки и области таблицы разметка в jsdom не считает, их читают из источника. */
+const STYLES: string = readFileSync(join(__dirname, 'rt-data-list.component.scss'), 'utf8');
+
+/** Объявления одного элемента блока — от его открывающей скобки до первой закрывающей. */
+function rulesOf(element: string): string {
+    const start: number = STYLES.indexOf(`&__${element} {`);
+
+    return start < 0 ? '' : STYLES.slice(start, STYLES.indexOf('}', start));
+}
+
+const PAGE: IPageModel = { pageNumber: 1, pageSize: 10, totalCount: 0, hasPrev: false, hasNext: false };
+
+@Component({
+    selector: 'rt-test-data-list-host',
+    template: `
+        <rt-data-list
+            tableConfigStorageKey="orders"
+            isFiltersShown
+            [entities]="rows()"
+            [pageModel]="page"
+            [currentSortModel]="null"
+            [filterModel]="filters()"
+            [loading]="loading()"
+            [fetching]="fetching()"
+            [appearance]="appearance()"
+            [filterAppearance]="filterAppearance()" />
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtDataListComponent],
+})
+class DataListHostComponent {
+    public readonly rows: WritableSignal<IEntity[]> = signal<IEntity[]>([]);
+    public readonly filters: WritableSignal<Array<IFilterModel<'title'>>> = signal<Array<IFilterModel<'title'>>>([]);
+    public readonly loading: WritableSignal<boolean> = signal(false);
+    public readonly fetching: WritableSignal<boolean> = signal(false);
+    public readonly appearance: WritableSignal<IRtInput.Appearance> = signal<IRtInput.Appearance>('outline');
+    public readonly filterAppearance: WritableSignal<IRtInput.Appearance> = signal<IRtInput.Appearance>('outline');
+    public readonly page: IPageModel = PAGE;
+}
+
+async function setup(
+    patch: (host: DataListHostComponent) => void = (): void => undefined,
+    extra: Array<EnvironmentProviders | Provider> = []
+): Promise<ComponentFixture<DataListHostComponent>> {
+    const fixture: ComponentFixture<DataListHostComponent> = createRtFixture(
+        DataListHostComponent,
+        {},
+        { providers: [{ provide: RtDataTableConfigService, useValue: CONFIG_STUB }, ...extra], skipInitialDetect: true }
+    );
+
+    patch(fixture.componentInstance);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    return fixture;
+}
+
+/* Два списка на одной странице: у каждого своя служба настроек и свой ключ хранения — так их
+   объявляет приложение. Выбор полос при этом общий, и это приём первого кита. */
+const FIRST_STUB: IConfigStub = configStub(false, true);
+const SECOND_STUB: IConfigStub = configStub(false, true);
+
+@Component({
+    selector: 'rt-test-first-list',
+    template: `
+        <rt-data-list tableConfigStorageKey="first" [entities]="[]" [pageModel]="page" [currentSortModel]="null" />
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtDataListComponent],
+    providers: [{ provide: RtDataTableConfigService, useValue: FIRST_STUB }],
+})
+class FirstListComponent {
+    public readonly page: IPageModel = PAGE;
+}
+
+@Component({
+    selector: 'rt-test-second-list',
+    template: `
+        <rt-data-list tableConfigStorageKey="second" [entities]="[]" [pageModel]="page" [currentSortModel]="null" />
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtDataListComponent],
+    providers: [{ provide: RtDataTableConfigService, useValue: SECOND_STUB }],
+})
+class SecondListComponent {
+    public readonly page: IPageModel = PAGE;
+}
+
+@Component({
+    selector: 'rt-test-two-lists-host',
+    template: `
+        <rt-test-first-list />
+        <rt-test-second-list />
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [FirstListComponent, SecondListComponent],
+})
+class TwoListsHostComponent {}
+
+/** Два списка, второй из которых уходит по сигналу — как при смене раздела рядом с первым. */
+@Component({
+    selector: 'rt-test-leaving-list-host',
+    template: `
+        <rt-test-first-list />
+        @if (isSecondShown()) {
+            <rt-test-second-list />
+        }
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [FirstListComponent, SecondListComponent],
+})
+class LeavingListHostComponent {
+    public readonly isSecondShown: WritableSignal<boolean> = signal(true);
+}
+
+/** Список без указанного вида — так его объявляет приложение, которое полагается на умолчание. */
+@Component({
+    selector: 'rt-test-default-look-host',
+    template: `
+        <rt-data-list tableConfigStorageKey="default-look" isFiltersShown [entities]="rows" [pageModel]="page" [currentSortModel]="null" />
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtDataListComponent],
+    providers: [{ provide: RtDataTableConfigService, useValue: CONFIG_STUB }],
+})
+class DefaultLookHostComponent {
+    public readonly rows: IEntity[] = ROWS;
+    public readonly page: IPageModel = PAGE;
+}
+
+/** Список без указанного вида, нарисованный с записями и, по желанию, с настройками кита. */
+async function drawDefaultLook(extra: Array<EnvironmentProviders | Provider> = []): Promise<ComponentFixture<DefaultLookHostComponent>> {
+    const fixture: ComponentFixture<DefaultLookHostComponent> = createRtFixture(
+        DefaultLookHostComponent,
+        {},
+        { providers: extra, skipInitialDetect: true }
+    );
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    return fixture;
+}
+
+/** Стоит ли на узле класс материального набора — признак вида первого кита. */
+function hasClass(fixture: ComponentFixture<unknown>, selector: string): boolean {
+    return (el(fixture, selector)?.nativeElement as HTMLElement).classList.contains(RT_PRESET_MATERIAL_CLASS);
+}
+
+describe('RtDataListComponent', () => {
+    it('SC-UKV-359 — без указанного вида поиск залит, как у поля Material первого кита, а поля отбора в рамке', async (): Promise<void> => {
+        const fixture: ComponentFixture<DefaultLookHostComponent> = createRtFixture(
+            DefaultLookHostComponent,
+            {},
+            { skipInitialDetect: true }
+        );
+
+        fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
+
+        const isFill: (anchor: string) => boolean | undefined = (anchor: string): boolean | undefined =>
+            (qa(fixture, anchor)?.nativeElement as HTMLElement | undefined)?.className.includes('--appearance--fill');
+
+        expect([isFill('data-list-search'), isFill('data-table-filter-input')]).toEqual([true, false]);
+    });
+
+    it('SC-UKV-360 — без настроек список стоит в виде первого кита, а таблица берёт набор от списка без своего класса', async (): Promise<void> => {
+        const fixture: ComponentFixture<DefaultLookHostComponent> = await drawDefaultLook();
+
+        expect([hasClass(fixture, 'rt-data-list'), hasClass(fixture, 'rt-data-table')]).toEqual([true, false]);
+    });
+
+    it('SC-UKV-360 — свой вид второго кита задаётся настройками кита', async (): Promise<void> => {
+        const fixture: ComponentFixture<DefaultLookHostComponent> = await drawDefaultLook([
+            provideRtKit({ components: { dataTable: { look: 'own' } } }),
+        ]);
+
+        expect([hasClass(fixture, 'rt-data-list'), hasClass(fixture, 'rt-data-table')]).toEqual([false, false]);
+    });
+
+    it('SC-UKV-362 — панель колонок и подложка под ней получают набор вида первого кита', async (): Promise<void> => {
+        const opened: IRtAsideConfig[] = [];
+        const aside: unknown = {
+            open: (_component: unknown, config?: IRtAsideConfig): { afterClosed: () => Observable<never> } => {
+                opened.push(config ?? {});
+
+                return { afterClosed: (): Observable<never> => EMPTY };
+            },
+        };
+        const fixture: ComponentFixture<DefaultLookHostComponent> = await drawDefaultLook([{ provide: RtAsideService, useValue: aside }]);
+
+        (qa(fixture, 'data-list-table-config')?.nativeElement as HTMLElement).querySelector('button')?.click();
+        fixture.detectChanges();
+
+        expect([opened[0]?.panelClass, opened[0]?.backdropClass]).toEqual([
+            RT_PRESET_MATERIAL_CLASS,
+            ['rt-aside-backdrop', RT_PRESET_MATERIAL_CLASS],
+        ]);
+    });
+
+    it('SC-UKV-361 — вид поиска и полей отбора по умолчанию задаётся настройками кита', async (): Promise<void> => {
+        const fixture: ComponentFixture<DefaultLookHostComponent> = await drawDefaultLook([
+            provideRtKit({ components: { dataList: { appearance: 'outline', filterAppearance: 'fill' } } }),
+        ]);
+        const isFill: (anchor: string) => boolean | undefined = (anchor: string): boolean | undefined =>
+            (qa(fixture, anchor)?.nativeElement as HTMLElement | undefined)?.className.includes('--appearance--fill');
+
+        expect([isFill('data-list-search'), isFill('data-table-filter-input')]).toEqual([false, true]);
+    });
+
+    it('SC-UKV-354 — вид поиска и вид полей отбора задаются порознь и доходят до полей', async (): Promise<void> => {
+        const fixture: ComponentFixture<DataListHostComponent> = await setup((host: DataListHostComponent): void => {
+            host.rows.set(ROWS);
+        });
+        const isFill: (anchor: string) => boolean | undefined = (anchor: string): boolean | undefined =>
+            (qa(fixture, anchor)?.nativeElement as HTMLElement | undefined)?.className.includes('--appearance--fill');
+
+        expect([isFill('data-list-search'), isFill('data-table-filter-input')]).toEqual([false, false]);
+
+        fixture.componentInstance.appearance.set('fill');
+        fixture.detectChanges();
+
+        expect([isFill('data-list-search'), isFill('data-table-filter-input')]).toEqual([true, false]);
+
+        fixture.componentInstance.filterAppearance.set('fill');
+        fixture.detectChanges();
+
+        expect([isFill('data-list-search'), isFill('data-table-filter-input')]).toEqual([true, true]);
+    });
+
+    it('SC-UKV-309 — заглушка стоит только без строк и без условий отбора', async (): Promise<void> => {
+        const fixture: ComponentFixture<DataListHostComponent> = await setup();
+
+        expect(textOf(qa(fixture, 'data-list-placeholder'))).toContain('No Data Found');
+        expect(qa(fixture, 'data-table-filter-row')).toBeNull();
+
+        fixture.componentInstance.filters.set([{ propertyName: 'title', value: 'Анна', operatorType: EFilterOperatorType.CONTAINS }]);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
+
+        expect(qa(fixture, 'data-list-placeholder')).toBeNull();
+        expect(qa(fixture, 'data-table-filter-row')).not.toBeNull();
+    });
+
+    it('SC-UKV-316 — первая загрузка и дозагрузка выглядят по-разному', async (): Promise<void> => {
+        const fixture: ComponentFixture<DataListHostComponent> = await setup((host: DataListHostComponent) => host.loading.set(true));
+
+        expect(qa(fixture, 'data-list-loading')).not.toBeNull();
+        expect(qa(fixture, 'data-table-row')).toBeNull();
+
+        fixture.componentInstance.loading.set(false);
+        fixture.componentInstance.rows.set(ROWS);
+        fixture.componentInstance.fetching.set(true);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
+
+        expect(qa(fixture, 'data-list-loading')).toBeNull();
+        expect(qa(fixture, 'data-list-fetching')).not.toBeNull();
+        expect(qa(fixture, 'data-table-row')).not.toBeNull();
+    });
+
+    it('SC-UKV-315 — слова семьи идут за языком страницы', async (): Promise<void> => {
+        /* Немецкий словарь приложения: кит своего языка не знает, и каждое слово идёт через него. */
+        const german: Readonly<Partial<Record<TRtKitLabelKey, string>>> = {
+            dataListPlaceholder: 'Keine Daten gefunden',
+            dataListRefresh: 'Aktualisieren',
+            dataListSearchPlaceholder: 'Suchen...',
+            dataTableFilterValuePlaceholder: 'Wert eingeben',
+        };
+        const translator: Signal<(key: TRtKitLabelKey, params?: TRtKitLabelParams) => string> = signal(
+            (key: TRtKitLabelKey): string => german[key] ?? key
+        );
+        const fixture: ComponentFixture<DataListHostComponent> = await setup(
+            (host: DataListHostComponent) => host.rows.set(ROWS),
+            [provideRtKitLabels({ translator })]
+        );
+
+        expect(el(fixture, '[qa-dataid="data-list-search"] input')?.nativeElement.placeholder).toBe('Suchen...');
+        expect(el(fixture, '[qa-dataid="data-list-refresh"] button')?.nativeElement.getAttribute('aria-label')).toBe('Aktualisieren');
+
+        fixture.componentInstance.rows.set([]);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
+
+        expect(textOf(qa(fixture, 'data-list-placeholder'))).toContain('Keine Daten gefunden');
+    });
+
+    it('SC-UKV-269 — размер полос идёт с корня страницы: горизонтальная видна, вертикальной нет', async (): Promise<void> => {
+        await setup();
+
+        expect(scrollbarSizes()).toEqual({ vertical: '0', horizontal: 'var(--rt-size-3)' });
+    });
+
+    it('SC-UKV-270 — скрытая полоса — это нулевой размер, а не запрет прокрутки', async (): Promise<void> => {
+        const stub: IConfigStub = configStub(false, false);
+        const fixture: ComponentFixture<DataListHostComponent> = await setup(undefined, [
+            { provide: RtDataTableConfigService, useValue: stub },
+        ]);
+
+        expect(scrollbarSizes()).toEqual({ vertical: '0', horizontal: '0' });
+        expect(document.documentElement.style.getPropertyValue('--rt-data-table-scrollbar-width')).toBe('none');
+
+        stub.tableConfig.set({ isVerticalScrollbarShown: true, isHorizontalScrollbarShown: true, columns: COLUMNS });
+        fixture.detectChanges();
+
+        expect(scrollbarSizes()).toEqual({ vertical: 'var(--rt-size-3)', horizontal: 'var(--rt-size-3)' });
+        expect(document.documentElement.style.getPropertyValue('--rt-data-table-scrollbar-width')).toBe('');
+    });
+
+    it('SC-UKV-273 — выбор полос, сохранённый одним списком, достаётся каждому списку страницы', async (): Promise<void> => {
+        const fixture: ComponentFixture<TwoListsHostComponent> = createRtFixture(TwoListsHostComponent, {}, { skipInitialDetect: true });
+
+        fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
+
+        expect(scrollbarSizes().horizontal).toBe('var(--rt-size-3)');
+
+        // Человек спрятал горизонтальную полосу у первого списка и сохранил.
+        FIRST_STUB.tableConfig.set({ isVerticalScrollbarShown: false, isHorizontalScrollbarShown: false, columns: COLUMNS });
+        fixture.detectChanges();
+
+        expect(scrollbarSizes().horizontal).toBe('0');
+        expect(SECOND_STUB.tableConfig().isHorizontalScrollbarShown).toBe(true);
+    });
+
+    it('ушедший список снимает с корня страницы все четыре свойства полос', async (): Promise<void> => {
+        const fixture: ComponentFixture<DataListHostComponent> = await setup(undefined, [
+            { provide: RtDataTableConfigService, useValue: configStub(false, true) },
+        ]);
+        const style: CSSStyleDeclaration = document.documentElement.style;
+        const properties: string[] = [
+            '--rt-data-table-scrollbar-vertical-width',
+            '--rt-data-table-scrollbar-horizontal-height',
+            '--rt-data-table-scrollbar-width',
+            '--rt-data-table-scrollbar-color',
+        ];
+
+        expect(properties.map((property: string): string => style.getPropertyValue(property))).toEqual([
+            '0',
+            'var(--rt-size-3)',
+            'auto',
+            'auto',
+        ]);
+
+        fixture.destroy();
+
+        expect(properties.map((property: string): string => style.getPropertyValue(property))).toEqual(['', '', '', '']);
+    });
+
+    it('пока на странице живёт другой список, ушедший полосы с корня не снимает', async (): Promise<void> => {
+        const fixture: ComponentFixture<LeavingListHostComponent> = createRtFixture(
+            LeavingListHostComponent,
+            {},
+            { skipInitialDetect: true }
+        );
+        const style: CSSStyleDeclaration = document.documentElement.style;
+
+        fixture.detectChanges();
+        await fixture.whenStable();
+        expect(style.getPropertyValue('--rt-data-table-scrollbar-vertical-width')).toBe('0');
+
+        fixture.componentInstance.isSecondShown.set(false);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        expect(style.getPropertyValue('--rt-data-table-scrollbar-vertical-width')).toBe('0');
+
+        fixture.destroy();
+        expect(style.getPropertyValue('--rt-data-table-scrollbar-vertical-width')).toBe('');
+    });
+
+    it('подложка дозагрузки стоит ярусом sticky, а область таблицы замкнута в свой ярус и шапку над подложкой не поднимает', (): void => {
+        expect(rulesOf('fetching')).toContain('z-index: var(--rt-z-sticky);');
+        expect(rulesOf('content')).toContain('isolation: isolate;');
+    });
+});

@@ -1,0 +1,105 @@
+@layer rt-kit.components {
+    /* rt-radio-button — радиокнопка. ViewEncapsulation.None, как у галочки: класс блока висит и на
+       хосте, и на корне шаблона, поэтому правила блока вложены в хост. Размеры образца лежат на
+       шкале кита: кружок 16px — ступень габарита, точка 6px округлена к ближней ступени 8px,
+       поля карточки 12 и 16px — к ступеням отступа 8 и 16px. Текст выравнивается по началу, что бы
+       ни стояло вокруг: ячейка, центрующая текст, уводила пояснение под середину подписи. */
+
+    rt-radio-button {
+        display: inline-block;
+    }
+
+    rt-radio-button .rt-radio-button {
+        --rt-radio-button-size: var(--rt-size-4);
+        --rt-radio-button-dot-size: var(--rt-size-2);
+        --rt-radio-button-rim-width: var(--rt-border-width-medium);
+        --rt-radio-button-round: var(--rt-radius-full);
+        --rt-radio-button-focus-radius: var(--rt-radius-sm);
+        --rt-radio-button-focus-shadow: var(--rt-shadow-focus-ring);
+        --rt-radio-button-card-radius: var(--rt-radius-md);
+        --rt-radio-button-card-border-width: var(--rt-border-width-thin);
+        --rt-radio-button-transition-duration: var(--rt-duration-fast);
+
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        gap: var(--rt-space-sm);
+        text-align: start;
+
+        &:focus-visible {
+            border-radius: var(--rt-radio-button-focus-radius);
+            box-shadow: var(--rt-radio-button-focus-shadow);
+            outline: 2px solid transparent;
+            outline-offset: 2px;
+        }
+
+        &__indicator {
+            display: inline-flex;
+            width: var(--rt-radio-button-size);
+            height: var(--rt-radio-button-size);
+            flex-shrink: 0;
+            align-items: center;
+            justify-content: center;
+            border: var(--rt-radio-button-rim-width) solid var(--rt-color-border-strong);
+            border-radius: var(--rt-radio-button-round);
+            transition: border-color var(--rt-radio-button-transition-duration) ease;
+        }
+
+        &__dot {
+            width: var(--rt-radio-button-dot-size);
+            height: var(--rt-radio-button-dot-size);
+            border-radius: var(--rt-radio-button-round);
+            background: var(--rt-color-action-primary);
+        }
+
+        &__content {
+            display: flex;
+            min-width: 0;
+            flex: 1;
+            flex-direction: column;
+            gap: var(--rt-space-xs);
+        }
+
+        &__label {
+            color: var(--rt-color-text-primary);
+            font-size: var(--rt-text-sm);
+            user-select: none;
+        }
+
+        &__description {
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-xs);
+        }
+
+        /* Элемент адресуется классом, а не вторым `&`: родитель составной, и второй `&`
+           развернулся бы в селектор вложенной радиокнопки — так уже промахнулась галочка. */
+        &--checked .rt-radio-button__indicator {
+            border-color: var(--rt-color-action-primary);
+        }
+
+        &--card {
+            flex-direction: row-reverse;
+            align-items: flex-start;
+            justify-content: space-between;
+            padding: var(--rt-space-sm) var(--rt-space-md);
+            border: var(--rt-radio-button-card-border-width) solid var(--rt-color-border-subtle);
+            border-radius: var(--rt-radio-button-card-radius);
+            transition: border-color var(--rt-radio-button-transition-duration) ease;
+        }
+
+        &--card .rt-radio-button__label {
+            font-weight: var(--rt-font-weight-medium);
+        }
+
+        &--card.rt-radio-button--checked {
+            border-color: var(--rt-color-action-primary);
+        }
+
+        /* Состояние стоит ниже вида: отключение гасит карточку и выбор, обратного не бывает. */
+        &--disabled {
+            cursor: not-allowed;
+            opacity: var(--rt-opacity-disabled);
+            pointer-events: none;
+        }
+    }
+}

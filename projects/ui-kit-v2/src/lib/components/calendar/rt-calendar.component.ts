@@ -44,8 +44,12 @@ export class RtCalendarComponent {
 
     public readonly months: InputSignal<readonly IRtCalendar.Month[]> = input.required<readonly IRtCalendar.Month[]>();
     public readonly weekdayLabels: InputSignal<readonly string[]> = input.required<readonly string[]>();
-    public readonly canPrev: InputSignal<boolean> = input<boolean>(false);
-    public readonly canNext: InputSignal<boolean> = input<boolean>(false);
+    public readonly canPrev: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+    public readonly canNext: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
     /** Локализованные aria-подписи кнопок навигации — задаёт consumer. */
     public readonly prevAriaLabel: InputSignal<string> = input<string>('');
     public readonly nextAriaLabel: InputSignal<string> = input<string>('');

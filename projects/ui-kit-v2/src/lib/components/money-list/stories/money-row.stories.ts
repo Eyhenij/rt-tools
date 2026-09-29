@@ -15,7 +15,7 @@ export default {
 
 type TStory = StoryObj<TestRtMoneyRowComponent>;
 
-export const Default: TStory = {
+export const Playground: TStory = {
     args: {
         label: 'Сохранить',
         total: false,

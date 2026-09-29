@@ -33,6 +33,15 @@ export const scaleMaterial = [
     { name: `--rt-mat-neutral-60`, value: `#747474` },
     { name: `--rt-mat-neutral-80`, value: `#323033` },
     { name: `--rt-mat-neutral-100`, value: `#181818` },
+    {
+        lead: `    /* Тёмные нейтральные первого кита: рамки и фон его тёмной темы */`,
+        space: true,
+        name: `--rt-mat-dark-10`,
+        value: `#2e2d31`,
+    },
+    { name: `--rt-mat-dark-20`, value: `#3f3e43` },
+    { name: `--rt-mat-dark-30`, value: `#4a494e` },
+    { name: `--rt-mat-dark-40`, value: `#5c5b60` },
 
     {
         lead: `    /* Материальный набор: синий — действие, ссылка, кольцо фокуса */`,
@@ -82,6 +91,14 @@ export const scaleMaterial = [
     { name: `--rt-mat-green-60`, value: `#46c4c0` },
     { name: `--rt-mat-green-80`, value: `#21b18e` },
     { name: `--rt-mat-green-100`, value: `#01af8d` },
+    {
+        lead: `    /* Своей тёмной ступени зелёного у первого кита нет, а его 100 на белом даёт 2.8:1 — подпись
+       успеха ею не читается. Ступень 120 взята от 100 двумя шагами светлоты вниз (OKLCH, тон и
+       цветность те же): это ближайшая к виду первого кита ступень, что берёт порог текста. */`,
+        space: true,
+        name: `--rt-mat-green-120`,
+        value: `#008465`,
+    },
 
     {
         lead: `    /* Материальный набор: марка первого кита и подложка его обвязки */`,
@@ -151,4 +168,34 @@ export const scaleMaterial = [
         name: `--rt-mat-neutral-active`,
         value: `color-mix(in srgb, var(--rt-mat-neutral-60) 80%, #000)`,
     },
+
+    {
+        lead: `    /* Материальный набор: тени круглой кнопки действия первого кита — подъём 6 в покое и 8 под
+       указателем, как у mat-mini-fab. Составное значение — ступень целиком, по частям не собирается. */`,
+        space: true,
+        name: `--rt-mat-shadow-fab`,
+        value: `0 3px 5px -1px rgb(0 0 0 / 20%), 0 6px 10px 0 rgb(0 0 0 / 14%), 0 1px 18px 0 rgb(0 0 0 / 12%)`,
+    },
+    {
+        name: `--rt-mat-shadow-fab-hover`,
+        value: `0 5px 5px -3px rgb(0 0 0 / 20%), 0 8px 10px 1px rgb(0 0 0 / 14%), 0 3px 14px 2px rgb(0 0 0 / 12%)`,
+    },
+    {
+        lead: `    /* Материальный набор: подъём 2 Material — тень меню и выпадающего списка первого кита */`,
+        space: true,
+        name: `--rt-mat-shadow-level-2`,
+        value: `0 3px 3px -2px rgb(0 0 0 / 20%), 0 3px 4px 0 rgb(0 0 0 / 14%), 0 1px 8px 0 rgb(0 0 0 / 12%)`,
+    },
+    {
+        lead: `    /* Материальный набор: скругления первого кита. Свои ступени, а не --rt-radius-*: первый кит
+       объявляет те же имена на корне страницы своими значениями, и без файла совместимости набор
+       рисовал бы его числа вместо своих. */`,
+        space: true,
+        name: `--rt-mat-radius-4`,
+        value: `4px`,
+    },
+    { name: `--rt-mat-radius-5`, value: `5px` },
+    { name: `--rt-mat-menu-min-width`, value: `112px` },
+    { name: `--rt-mat-menu-sm-item-height`, value: `38px` },
+    { name: `--rt-mat-menu-sm-icon-size`, value: `13px` },
 ];

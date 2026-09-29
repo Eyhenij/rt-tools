@@ -84,6 +84,7 @@ export type TRtDesignTokenName =
     | '--rt-color-border-focus'
     | '--rt-color-border-strong'
     | '--rt-color-border-subtle'
+    | '--rt-color-field-fill-underline'
     | '--rt-color-skeleton-base'
     | '--rt-color-skeleton-wave'
     | '--rt-color-state-danger'
@@ -93,6 +94,7 @@ export type TRtDesignTokenName =
     | '--rt-color-state-info-bg'
     | '--rt-color-state-success'
     | '--rt-color-state-success-bg'
+    | '--rt-color-state-success-text'
     | '--rt-color-state-warning'
     | '--rt-color-state-warning-bg'
     | '--rt-color-state-warning-text'
@@ -100,6 +102,7 @@ export type TRtDesignTokenName =
     | '--rt-color-stepper-current-subtle'
     | '--rt-color-stepper-progress'
     | '--rt-color-stepper-track'
+    | '--rt-color-table-head-bg'
     | '--rt-color-text-disabled'
     | '--rt-color-text-inverse'
     | '--rt-color-text-link'
@@ -160,6 +163,9 @@ export type TRtDesignTokenName =
     | '--rt-font-weight-semibold'
     | '--rt-gray-350'
     | '--rt-icon-button-color-bg-hover'
+    | '--rt-icon-button-disabled-color'
+    | '--rt-icon-button-disabled-fill'
+    | '--rt-icon-button-disabled-opacity'
     | '--rt-info-50'
     | '--rt-info-500'
     | '--rt-info-600'
@@ -178,10 +184,13 @@ export type TRtDesignTokenName =
     | '--rt-input-focus-shadow'
     | '--rt-input-focus-shadow-error'
     | '--rt-input-font-size'
+    | '--rt-input-gap'
     | '--rt-input-height'
     | '--rt-input-height-lg'
     | '--rt-input-height-md'
     | '--rt-input-height-sm'
+    | '--rt-input-icon-color'
+    | '--rt-input-icon-size'
     | '--rt-input-line-height'
     | '--rt-input-max-width'
     | '--rt-input-padding-x'
@@ -195,6 +204,52 @@ export type TRtDesignTokenName =
     | '--rt-leading-snug'
     | '--rt-leading-tight'
     | '--rt-letter-spacing-wide'
+    | '--rt-list-action-color'
+    | '--rt-list-action-color-bg-hover'
+    | '--rt-list-action-color-hover'
+    | '--rt-list-action-divider-height'
+    | '--rt-list-action-gap'
+    | '--rt-list-action-icon-size'
+    | '--rt-list-action-radius'
+    | '--rt-list-action-shadow'
+    | '--rt-list-action-shadow-hover'
+    | '--rt-list-content-padding-bottom'
+    | '--rt-list-copy-button-bg'
+    | '--rt-list-copy-button-bg-hover'
+    | '--rt-list-copy-button-color'
+    | '--rt-list-copy-button-radius'
+    | '--rt-list-copy-button-size'
+    | '--rt-list-empty-icon-size'
+    | '--rt-list-empty-icon-wrap-bg'
+    | '--rt-list-empty-icon-wrap-size'
+    | '--rt-list-empty-title-size'
+    | '--rt-list-empty-title-weight'
+    | '--rt-list-filter-line-height'
+    | '--rt-list-placeholder-grow'
+    | '--rt-list-placeholder-min-height'
+    | '--rt-list-search-color-bg'
+    | '--rt-list-search-color-border'
+    | '--rt-list-search-color-placeholder'
+    | '--rt-list-search-font-size'
+    | '--rt-list-search-gap'
+    | '--rt-list-search-height'
+    | '--rt-list-search-icon-color'
+    | '--rt-list-search-icon-size'
+    | '--rt-list-search-padding-x'
+    | '--rt-list-search-radius'
+    | '--rt-list-search-width'
+    | '--rt-list-selector-label-color'
+    | '--rt-list-settings-icon-color'
+    | '--rt-list-settings-item-bg'
+    | '--rt-list-settings-item-radius'
+    | '--rt-list-table-button-radius'
+    | '--rt-list-table-button-size'
+    | '--rt-list-table-head-divider-color'
+    | '--rt-list-table-icon-color'
+    | '--rt-list-table-icon-size'
+    | '--rt-list-toolbar-gap'
+    | '--rt-list-toolbar-padding-bottom'
+    | '--rt-list-toolbar-padding-top'
     | '--rt-mat-blue-100'
     | '--rt-mat-blue-20'
     | '--rt-mat-blue-40'
@@ -202,14 +257,22 @@ export type TRtDesignTokenName =
     | '--rt-mat-blue-80'
     | '--rt-mat-blue-active'
     | '--rt-mat-blue-hover'
+    | '--rt-mat-dark-10'
+    | '--rt-mat-dark-20'
+    | '--rt-mat-dark-30'
+    | '--rt-mat-dark-40'
     | '--rt-mat-green-10'
     | '--rt-mat-green-100'
+    | '--rt-mat-green-120'
     | '--rt-mat-green-20'
     | '--rt-mat-green-40'
     | '--rt-mat-green-60'
     | '--rt-mat-green-80'
     | '--rt-mat-green-active'
     | '--rt-mat-green-hover'
+    | '--rt-mat-menu-min-width'
+    | '--rt-mat-menu-sm-icon-size'
+    | '--rt-mat-menu-sm-item-height'
     | '--rt-mat-navy-100'
     | '--rt-mat-neutral-0'
     | '--rt-mat-neutral-10'
@@ -239,6 +302,8 @@ export type TRtDesignTokenName =
     | '--rt-mat-overlay-black-4'
     | '--rt-mat-overlay-blue-24'
     | '--rt-mat-overlay-blue-8'
+    | '--rt-mat-radius-4'
+    | '--rt-mat-radius-5'
     | '--rt-mat-red-10'
     | '--rt-mat-red-100'
     | '--rt-mat-red-20'
@@ -247,6 +312,9 @@ export type TRtDesignTokenName =
     | '--rt-mat-red-80'
     | '--rt-mat-red-active'
     | '--rt-mat-red-hover'
+    | '--rt-mat-shadow-fab'
+    | '--rt-mat-shadow-fab-hover'
+    | '--rt-mat-shadow-level-2'
     | '--rt-nav-caret-size'
     | '--rt-nav-color-disabled'
     | '--rt-nav-color-focus'
@@ -313,12 +381,63 @@ export type TRtDesignTokenName =
     | '--rt-overlay-brand-24'
     | '--rt-overlay-brand-8'
     | '--rt-overlay-danger-16'
+    | '--rt-overlay-menu-bg'
+    | '--rt-overlay-menu-current-bg'
+    | '--rt-overlay-menu-danger-color'
+    | '--rt-overlay-menu-danger-label-color'
+    | '--rt-overlay-menu-item-icon-size'
+    | '--rt-overlay-menu-item-min-height'
+    | '--rt-overlay-menu-item-padding-x'
+    | '--rt-overlay-menu-item-padding-y'
+    | '--rt-overlay-menu-item-weight'
+    | '--rt-overlay-menu-min-width'
+    | '--rt-overlay-menu-padding-y'
+    | '--rt-overlay-menu-radius'
+    | '--rt-overlay-menu-shadow'
+    | '--rt-overlay-menu-sm-item-icon-size'
+    | '--rt-overlay-menu-sm-item-min-height'
     | '--rt-overlay-navy-70'
+    | '--rt-overlay-select-check-display'
+    | '--rt-overlay-select-option-font-size'
+    | '--rt-overlay-select-option-min-height'
+    | '--rt-overlay-select-panel-border-width'
+    | '--rt-overlay-select-radius'
+    | '--rt-overlay-select-selected-bg'
+    | '--rt-overlay-select-selected-weight'
+    | '--rt-overlay-select-shadow'
+    | '--rt-overlay-tooltip-radius'
+    | '--rt-overlay-tooltip-shadow'
     | '--rt-overlay-white-25'
     | '--rt-overlay-white-4'
     | '--rt-overlay-white-40'
     | '--rt-overlay-white-50'
     | '--rt-overlay-white-8'
+    | '--rt-pagination-arrow-color'
+    | '--rt-pagination-arrow-radius'
+    | '--rt-pagination-arrow-shadow'
+    | '--rt-pagination-arrow-size'
+    | '--rt-pagination-box-color-border'
+    | '--rt-pagination-box-color-text'
+    | '--rt-pagination-box-current-color-bg'
+    | '--rt-pagination-box-current-color-border'
+    | '--rt-pagination-box-current-color-text'
+    | '--rt-pagination-box-current-font-weight'
+    | '--rt-pagination-box-radius'
+    | '--rt-pagination-box-size'
+    | '--rt-pagination-field-color-bg'
+    | '--rt-pagination-field-color-border'
+    | '--rt-pagination-field-color-text'
+    | '--rt-pagination-field-height'
+    | '--rt-pagination-field-padding-x'
+    | '--rt-pagination-field-radius'
+    | '--rt-pagination-gap'
+    | '--rt-pagination-justify'
+    | '--rt-pagination-nav-gap'
+    | '--rt-pagination-padding-x'
+    | '--rt-pagination-padding-y'
+    | '--rt-pagination-per-page-gap'
+    | '--rt-pagination-per-page-label-white-space'
+    | '--rt-pagination-range-display'
     | '--rt-profile-avatar-font-size'
     | '--rt-profile-avatar-size'
     | '--rt-profile-item-content-gap'
@@ -395,6 +514,7 @@ export type TRtDesignTokenName =
     | '--rt-space-xl'
     | '--rt-space-xs'
     | '--rt-success-100'
+    | '--rt-success-400'
     | '--rt-success-50'
     | '--rt-success-500'
     | '--rt-success-600'
@@ -439,7 +559,12 @@ export type TRtDesignTokenName =
 
 /** The name of a consumer's handle — a property the kit deliberately does not declare. */
 export type TRtConsumerHandleName =
+    | '--rt-aside-bg'
     | '--rt-aside-width'
+    | '--rt-data-table-scrollbar-color'
+    | '--rt-data-table-scrollbar-horizontal-height'
+    | '--rt-data-table-scrollbar-vertical-width'
+    | '--rt-data-table-scrollbar-width'
     | '--rt-dialog-width'
     | '--rt-header-content-max-width'
     | '--rt-header-height'
@@ -448,6 +573,7 @@ export type TRtConsumerHandleName =
     | '--rt-logo-wordmark'
     | '--rt-logo-wordmark-dark'
     | '--rt-page-header-bg'
+    | '--rt-table-actions-bg'
     | '--rt-workspace-aside-size'
     | '--rt-workspace-list-size';
 
@@ -535,6 +661,7 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-color-border-focus',
     '--rt-color-border-strong',
     '--rt-color-border-subtle',
+    '--rt-color-field-fill-underline',
     '--rt-color-skeleton-base',
     '--rt-color-skeleton-wave',
     '--rt-color-state-danger',
@@ -544,6 +671,7 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-color-state-info-bg',
     '--rt-color-state-success',
     '--rt-color-state-success-bg',
+    '--rt-color-state-success-text',
     '--rt-color-state-warning',
     '--rt-color-state-warning-bg',
     '--rt-color-state-warning-text',
@@ -551,6 +679,7 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-color-stepper-current-subtle',
     '--rt-color-stepper-progress',
     '--rt-color-stepper-track',
+    '--rt-color-table-head-bg',
     '--rt-color-text-disabled',
     '--rt-color-text-inverse',
     '--rt-color-text-link',
@@ -611,6 +740,9 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-font-weight-semibold',
     '--rt-gray-350',
     '--rt-icon-button-color-bg-hover',
+    '--rt-icon-button-disabled-color',
+    '--rt-icon-button-disabled-fill',
+    '--rt-icon-button-disabled-opacity',
     '--rt-info-50',
     '--rt-info-500',
     '--rt-info-600',
@@ -629,10 +761,13 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-input-focus-shadow',
     '--rt-input-focus-shadow-error',
     '--rt-input-font-size',
+    '--rt-input-gap',
     '--rt-input-height',
     '--rt-input-height-lg',
     '--rt-input-height-md',
     '--rt-input-height-sm',
+    '--rt-input-icon-color',
+    '--rt-input-icon-size',
     '--rt-input-line-height',
     '--rt-input-max-width',
     '--rt-input-padding-x',
@@ -646,6 +781,52 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-leading-snug',
     '--rt-leading-tight',
     '--rt-letter-spacing-wide',
+    '--rt-list-action-color',
+    '--rt-list-action-color-bg-hover',
+    '--rt-list-action-color-hover',
+    '--rt-list-action-divider-height',
+    '--rt-list-action-gap',
+    '--rt-list-action-icon-size',
+    '--rt-list-action-radius',
+    '--rt-list-action-shadow',
+    '--rt-list-action-shadow-hover',
+    '--rt-list-content-padding-bottom',
+    '--rt-list-copy-button-bg',
+    '--rt-list-copy-button-bg-hover',
+    '--rt-list-copy-button-color',
+    '--rt-list-copy-button-radius',
+    '--rt-list-copy-button-size',
+    '--rt-list-empty-icon-size',
+    '--rt-list-empty-icon-wrap-bg',
+    '--rt-list-empty-icon-wrap-size',
+    '--rt-list-empty-title-size',
+    '--rt-list-empty-title-weight',
+    '--rt-list-filter-line-height',
+    '--rt-list-placeholder-grow',
+    '--rt-list-placeholder-min-height',
+    '--rt-list-search-color-bg',
+    '--rt-list-search-color-border',
+    '--rt-list-search-color-placeholder',
+    '--rt-list-search-font-size',
+    '--rt-list-search-gap',
+    '--rt-list-search-height',
+    '--rt-list-search-icon-color',
+    '--rt-list-search-icon-size',
+    '--rt-list-search-padding-x',
+    '--rt-list-search-radius',
+    '--rt-list-search-width',
+    '--rt-list-selector-label-color',
+    '--rt-list-settings-icon-color',
+    '--rt-list-settings-item-bg',
+    '--rt-list-settings-item-radius',
+    '--rt-list-table-button-radius',
+    '--rt-list-table-button-size',
+    '--rt-list-table-head-divider-color',
+    '--rt-list-table-icon-color',
+    '--rt-list-table-icon-size',
+    '--rt-list-toolbar-gap',
+    '--rt-list-toolbar-padding-bottom',
+    '--rt-list-toolbar-padding-top',
     '--rt-mat-blue-100',
     '--rt-mat-blue-20',
     '--rt-mat-blue-40',
@@ -653,14 +834,22 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-mat-blue-80',
     '--rt-mat-blue-active',
     '--rt-mat-blue-hover',
+    '--rt-mat-dark-10',
+    '--rt-mat-dark-20',
+    '--rt-mat-dark-30',
+    '--rt-mat-dark-40',
     '--rt-mat-green-10',
     '--rt-mat-green-100',
+    '--rt-mat-green-120',
     '--rt-mat-green-20',
     '--rt-mat-green-40',
     '--rt-mat-green-60',
     '--rt-mat-green-80',
     '--rt-mat-green-active',
     '--rt-mat-green-hover',
+    '--rt-mat-menu-min-width',
+    '--rt-mat-menu-sm-icon-size',
+    '--rt-mat-menu-sm-item-height',
     '--rt-mat-navy-100',
     '--rt-mat-neutral-0',
     '--rt-mat-neutral-10',
@@ -690,6 +879,8 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-mat-overlay-black-4',
     '--rt-mat-overlay-blue-24',
     '--rt-mat-overlay-blue-8',
+    '--rt-mat-radius-4',
+    '--rt-mat-radius-5',
     '--rt-mat-red-10',
     '--rt-mat-red-100',
     '--rt-mat-red-20',
@@ -698,6 +889,9 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-mat-red-80',
     '--rt-mat-red-active',
     '--rt-mat-red-hover',
+    '--rt-mat-shadow-fab',
+    '--rt-mat-shadow-fab-hover',
+    '--rt-mat-shadow-level-2',
     '--rt-nav-caret-size',
     '--rt-nav-color-disabled',
     '--rt-nav-color-focus',
@@ -764,12 +958,63 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-overlay-brand-24',
     '--rt-overlay-brand-8',
     '--rt-overlay-danger-16',
+    '--rt-overlay-menu-bg',
+    '--rt-overlay-menu-current-bg',
+    '--rt-overlay-menu-danger-color',
+    '--rt-overlay-menu-danger-label-color',
+    '--rt-overlay-menu-item-icon-size',
+    '--rt-overlay-menu-item-min-height',
+    '--rt-overlay-menu-item-padding-x',
+    '--rt-overlay-menu-item-padding-y',
+    '--rt-overlay-menu-item-weight',
+    '--rt-overlay-menu-min-width',
+    '--rt-overlay-menu-padding-y',
+    '--rt-overlay-menu-radius',
+    '--rt-overlay-menu-shadow',
+    '--rt-overlay-menu-sm-item-icon-size',
+    '--rt-overlay-menu-sm-item-min-height',
     '--rt-overlay-navy-70',
+    '--rt-overlay-select-check-display',
+    '--rt-overlay-select-option-font-size',
+    '--rt-overlay-select-option-min-height',
+    '--rt-overlay-select-panel-border-width',
+    '--rt-overlay-select-radius',
+    '--rt-overlay-select-selected-bg',
+    '--rt-overlay-select-selected-weight',
+    '--rt-overlay-select-shadow',
+    '--rt-overlay-tooltip-radius',
+    '--rt-overlay-tooltip-shadow',
     '--rt-overlay-white-25',
     '--rt-overlay-white-4',
     '--rt-overlay-white-40',
     '--rt-overlay-white-50',
     '--rt-overlay-white-8',
+    '--rt-pagination-arrow-color',
+    '--rt-pagination-arrow-radius',
+    '--rt-pagination-arrow-shadow',
+    '--rt-pagination-arrow-size',
+    '--rt-pagination-box-color-border',
+    '--rt-pagination-box-color-text',
+    '--rt-pagination-box-current-color-bg',
+    '--rt-pagination-box-current-color-border',
+    '--rt-pagination-box-current-color-text',
+    '--rt-pagination-box-current-font-weight',
+    '--rt-pagination-box-radius',
+    '--rt-pagination-box-size',
+    '--rt-pagination-field-color-bg',
+    '--rt-pagination-field-color-border',
+    '--rt-pagination-field-color-text',
+    '--rt-pagination-field-height',
+    '--rt-pagination-field-padding-x',
+    '--rt-pagination-field-radius',
+    '--rt-pagination-gap',
+    '--rt-pagination-justify',
+    '--rt-pagination-nav-gap',
+    '--rt-pagination-padding-x',
+    '--rt-pagination-padding-y',
+    '--rt-pagination-per-page-gap',
+    '--rt-pagination-per-page-label-white-space',
+    '--rt-pagination-range-display',
     '--rt-profile-avatar-font-size',
     '--rt-profile-avatar-size',
     '--rt-profile-item-content-gap',
@@ -846,6 +1091,7 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-space-xl',
     '--rt-space-xs',
     '--rt-success-100',
+    '--rt-success-400',
     '--rt-success-50',
     '--rt-success-500',
     '--rt-success-600',
@@ -891,7 +1137,12 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
 
 /** All the consumer's handles: the value comes from the application, until then the fallback works. */
 export const RT_CONSUMER_HANDLE_NAMES: readonly TRtConsumerHandleName[] = [
+    '--rt-aside-bg',
     '--rt-aside-width',
+    '--rt-data-table-scrollbar-color',
+    '--rt-data-table-scrollbar-horizontal-height',
+    '--rt-data-table-scrollbar-vertical-width',
+    '--rt-data-table-scrollbar-width',
     '--rt-dialog-width',
     '--rt-header-content-max-width',
     '--rt-header-height',
@@ -900,6 +1151,7 @@ export const RT_CONSUMER_HANDLE_NAMES: readonly TRtConsumerHandleName[] = [
     '--rt-logo-wordmark',
     '--rt-logo-wordmark-dark',
     '--rt-page-header-bg',
+    '--rt-table-actions-bg',
     '--rt-workspace-aside-size',
     '--rt-workspace-list-size',
 ];

@@ -14,7 +14,7 @@ export default {
 
 type TStory = StoryObj<TestRtHeaderComponent>;
 
-export const Default: TStory = {
+export const Playground: TStory = {
     args: {
         canGoBack: false,
         showInvite: false,

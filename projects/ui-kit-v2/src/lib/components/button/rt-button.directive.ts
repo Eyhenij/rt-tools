@@ -17,6 +17,8 @@ import {
     untracked,
 } from '@angular/core';
 
+import { IRtKitConfig } from '../../config/rt-kit-config.model';
+import { rtKitDefault } from '../../config/rt-kit-config.providers';
 import { RtIconRegistry, IRtIcon } from '../icon';
 import { RtRippleDirective } from '../ripple';
 import { IButton } from './rt-button.model';
@@ -56,6 +58,18 @@ export class RtButtonDirective {
     readonly #doc: Document = inject(DOCUMENT);
     readonly #iconRegistry: RtIconRegistry = inject(RtIconRegistry);
 
+    /* С чего стартуют три входа, которые приложение вправе задать киту разом. Значение считается
+       из настроек при объявлении входа: так публичный вид входа не меняется — ни тип, ни имя, — а
+       вход, написанный в разметке, по-прежнему перебивает всё. Цена — настройки читаются один раз,
+       когда узел создан. */
+    readonly #appearance: IButton.Appearance = rtKitDefault(
+        'button',
+        (it: IRtKitConfig.Button): IButton.Appearance | undefined => it.appearance,
+        'filled'
+    );
+    readonly #size: IButton.Size = rtKitDefault('button', (it: IRtKitConfig.Button): IButton.Size | undefined => it.size, 'md');
+    readonly #rounded: boolean = rtKitDefault('button', (it: IRtKitConfig.Button): boolean | undefined => it.rounded, false);
+
     #iconEl: HTMLElement | null = null;
     #labelEl: HTMLElement | null = null;
     #spinnerEl: HTMLElement | null = null;
@@ -71,12 +85,12 @@ export class RtButtonDirective {
     public readonly iconPos: InputSignal<IButton.IconPos> = input<IButton.IconPos>('left');
     /** Семантическая палитра. */
     public readonly theme: InputSignal<IButton.Theme> = input<IButton.Theme>('primary');
-    /** Внешний вид (filled / outlined / text). */
-    public readonly appearance: InputSignal<IButton.Appearance> = input<IButton.Appearance>('filled');
-    /** Размер. */
-    public readonly size: InputSignal<IButton.Size> = input<IButton.Size>('md');
-    /** Скруглённые углы (по умолчанию false — квадратная кнопка с radius из --rt-btn-radius). */
-    public readonly rounded: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+    /** Внешний вид (filled / outlined / text). Умолчание — из настроек кита. */
+    public readonly appearance: InputSignal<IButton.Appearance> = input<IButton.Appearance>(this.#appearance);
+    /** Размер. Умолчание — из настроек кита. */
+    public readonly size: InputSignal<IButton.Size> = input<IButton.Size>(this.#size);
+    /** Скруглённые углы (умолчание — из настроек кита; без них квадратная, с radius из --rt-btn-radius). */
+    public readonly rounded: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(this.#rounded, {
         transform: booleanAttribute,
     });
     /** Состояние загрузки: показывает спиннер вместо иконки, блокирует клики. */

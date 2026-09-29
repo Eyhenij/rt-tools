@@ -48,35 +48,51 @@ const STEPS_FIVE: readonly IRtStepper.Step[] = [
     template: `
         @switch (part) {
             @case ('position') {
-                <app-story-row caption="Положение шага" slotWidth="26rem" [items]="positions" [itemLabel]="caseLabel">
-                    <ng-template let-item>
-                        <rt-stepper [steps]="item.steps" [currentIndex]="item.currentIndex" />
+                <app-story-presets caption="Положение шага в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="26rem" [items]="positions" [itemLabel]="caseLabel">
+                            <ng-template let-item>
+                                <rt-stepper [steps]="item.steps" [currentIndex]="item.currentIndex" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('length') {
-                <app-story-row caption="Длина набора" slotWidth="26rem" [items]="lengths" [itemLabel]="caseLabel">
-                    <ng-template let-item>
-                        <rt-stepper [steps]="item.steps" [currentIndex]="item.currentIndex" />
+                <app-story-presets caption="Длина набора в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="26rem" [items]="lengths" [itemLabel]="caseLabel">
+                            <ng-template let-item>
+                                <rt-stepper [steps]="item.steps" [currentIndex]="item.currentIndex" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('description') {
-                <app-story-row caption="Описание шага" slotWidth="26rem" [items]="descriptions" [itemLabel]="caseLabel">
-                    <ng-template let-item>
-                        <rt-stepper [steps]="item.steps" [currentIndex]="item.currentIndex" />
+                <app-story-presets caption="Описание шага в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="26rem" [items]="descriptions" [itemLabel]="caseLabel">
+                            <ng-template let-item>
+                                <rt-stepper [steps]="item.steps" [currentIndex]="item.currentIndex" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('edges') {
-                <app-story-row caption="Края" slotWidth="26rem" [items]="edges" [itemLabel]="caseLabel">
-                    <ng-template let-item>
-                        <rt-stepper [steps]="item.steps" [currentIndex]="item.currentIndex" />
+                <app-story-presets caption="Края в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="26rem" [items]="edges" [itemLabel]="caseLabel">
+                            <ng-template let-item>
+                                <rt-stepper [steps]="item.steps" [currentIndex]="item.currentIndex" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('presets') {
@@ -90,13 +106,17 @@ const STEPS_FIVE: readonly IRtStepper.Step[] = [
             }
 
             @case ('themes') {
-                <app-story-themes caption="Полоса в обеих темах">
+                <app-story-presets caption="Полоса в обеих темах в обоих наборах">
                     <ng-template>
-                        <div style="width: 26rem">
-                            <rt-stepper [steps]="stepsThree" [currentIndex]="1" />
-                        </div>
+                        <app-story-themes>
+                            <ng-template>
+                                <div style="width: 26rem">
+                                    <rt-stepper [steps]="stepsThree" [currentIndex]="1" />
+                                </div>
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
             }
         }
     `,

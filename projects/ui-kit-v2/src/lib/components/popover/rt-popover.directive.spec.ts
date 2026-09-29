@@ -22,6 +22,7 @@ function panelText(): string {
             qa-dataid="popover-trigger"
             [rtPopover]="tpl"
             [rtPopoverTrigger]="trigger()"
+            [rtPopoverWidth]="width()"
             [rtPopoverDisabled]="disabled()"
             [rtPopoverPanelClass]="panelClass()"
             (rtPopoverOpened)="openedCount = openedCount + 1"
@@ -38,6 +39,7 @@ function panelText(): string {
 class PopoverHostComponent {
     public readonly popover: Signal<RtPopoverDirective | undefined> = viewChild(RtPopoverDirective);
     public readonly trigger: WritableSignal<IRtPopover.Trigger> = signal<IRtPopover.Trigger>('click');
+    public readonly width: WritableSignal<IRtPopover.Width> = signal<IRtPopover.Width>('auto');
     public readonly disabled: WritableSignal<boolean> = signal<boolean>(false);
     public readonly panelClass: WritableSignal<string> = signal<string>('');
     public openedCount: number = 0;
@@ -46,6 +48,7 @@ class PopoverHostComponent {
 
 interface IHostPatch {
     trigger?: IRtPopover.Trigger;
+    width?: IRtPopover.Width;
     disabled?: boolean;
     panelClass?: string;
 }
@@ -54,6 +57,9 @@ function setup(patch: IHostPatch = {}): ComponentFixture<PopoverHostComponent> {
     const fixture: ComponentFixture<PopoverHostComponent> = createRtFixture(PopoverHostComponent, {}, { skipInitialDetect: true });
     if (patch.trigger !== undefined) {
         fixture.componentInstance.trigger.set(patch.trigger);
+    }
+    if (patch.width !== undefined) {
+        fixture.componentInstance.width.set(patch.width);
     }
     if (patch.disabled !== undefined) {
         fixture.componentInstance.disabled.set(patch.disabled);
@@ -216,6 +222,63 @@ describe('RtPopoverDirective', (): void => {
             expect(panel()?.classList.contains('rt-popover-panel')).toBe(true);
             expect(panel()?.classList.contains('rt-menu-panel')).toBe(true);
             expect(panel()?.classList.contains('narrow')).toBe(true);
+        });
+
+        it('панель из куска `rtTheme` несёт тему куска и снимает её, когда куска больше нет', (): void => {
+            const fixture: ComponentFixture<PopoverHostComponent> = setup();
+            const host: HTMLElement = fixture.nativeElement as HTMLElement;
+            host.setAttribute('data-theme', 'dark');
+
+            clickTrigger(fixture);
+            expect(panel()?.getAttribute('data-theme')).toBe('dark');
+
+            clickTrigger(fixture);
+            host.removeAttribute('data-theme');
+            clickTrigger(fixture);
+            expect(panel()?.hasAttribute('data-theme')).toBe(false);
+        });
+
+        it('тема корня страницы на панель не переносится — панель наследует её и так', (): void => {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            const fixture: ComponentFixture<PopoverHostComponent> = setup();
+
+            clickTrigger(fixture);
+
+            expect(panel()?.hasAttribute('data-theme')).toBe(false);
+            document.documentElement.removeAttribute('data-theme');
+        });
+    });
+    describe('ширина панели', (): void => {
+        /** Коробка панели живёт в оверлее CDK: у неё свой элемент, и размер ставится на него. */
+        function pane(): HTMLElement | null {
+            return document.querySelector('.cdk-overlay-pane');
+        }
+
+        it('SC-UKV-178: панель не мерится указателем — его ширина идёт нижней границей', (): void => {
+            const fixture: ComponentFixture<PopoverHostComponent> = setup({ width: 'trigger-min' });
+
+            clickTrigger(fixture);
+
+            expect(pane()?.style.minWidth).not.toBe('');
+            expect(pane()?.style.width).toBe('');
+        });
+
+        it('по указателю ширина ставится ровно, без нижней границы', (): void => {
+            const fixture: ComponentFixture<PopoverHostComponent> = setup({ width: 'trigger' });
+
+            clickTrigger(fixture);
+
+            expect(pane()?.style.width).not.toBe('');
+            expect(pane()?.style.minWidth).toBe('');
+        });
+
+        it('по содержимому размер не ставится вовсе', (): void => {
+            const fixture: ComponentFixture<PopoverHostComponent> = setup({ width: 'auto' });
+
+            clickTrigger(fixture);
+
+            expect(pane()?.style.width).toBe('');
+            expect(pane()?.style.minWidth).toBe('');
         });
     });
 });
