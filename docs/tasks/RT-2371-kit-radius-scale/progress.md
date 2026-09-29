@@ -5,18 +5,18 @@
 Rewritten by every session, not appended to.
 
 - **State:** `этап-идёт`
-- **Stage:** 1 of 6 — The agreement
-- **Done:** exploration, grill, plan
-- **Next step:** write the feature spec of the one rounding input
-- **Uncommitted:** grill, plan, progress
+- **Stage:** 2 of 6 — The shared mechanism
+- **Done:** exploration, grill, plan, the agreement `docs/specs/ui-kit-v2/proposed/radius-scale/`
+- **Next step:** add the step type and the host directive
+- **Uncommitted:** none
 - **Waiting for the owner:** no
 - **PR:** not open yet
 
 ## Steps
 
-- [>] 1.1 Write the feature spec of the one rounding input
-- [ ] 1.2 Write its scenarios and the binding table
-- [ ] 2.1 Add the step type and the host directive with the `radius` input
+- [x] 1.1 Write the feature spec of the one rounding input
+- [x] 1.2 Write its scenarios and the binding table
+- [>] 2.1 Add the step type and the host directive with the `radius` input
 - [ ] 2.2 Add the SCSS mixin that maps a step to the component's own property
 - [ ] 2.3 Cover the directive with a unit spec
 - [ ] 3.1 Fold the tag's `shape` and `radius` into `radius`
