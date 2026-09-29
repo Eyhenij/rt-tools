@@ -1,13 +1,13 @@
 # The accordion
 
-**Status:** proposed · **Revision:** 29 September 2026 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 29 September 2026 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the icon of the kit — the arrow of an item is its `chevron-down`; the design of the
 kit — the line, the type and the spaces come from its appointments
 **Laws:** `frontend-application`, `verifiability`, `reuse-first`
 **Procedures:** none
 
-An agreement for a subdomain of the second kit's spec, written before the code by task RT-2395.
-It merges into the spec of the second kit with the scenario numbers it has here.
+A subdomain of the second kit's spec, written before the code by task RT-2395 and merged with the
+scenario numbers it had as an agreement.
 
 ## Why
 
@@ -140,3 +140,4 @@ None.
 ## History of changes
 
 - 29 September 2026 — the agreement was written by the grilling of the owner's request.
+- 29 September 2026 — the agreement merged into the spec of the second kit as a subdomain of its own.
