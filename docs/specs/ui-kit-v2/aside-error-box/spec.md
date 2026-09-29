@@ -1,12 +1,12 @@
 # The request error of a side panel
 
-**Status:** proposed · **Revision:** 29 September 2026 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 30 September 2026 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the side panel of the second kit — the box stands inside `rt-aside`
 **Laws:** `frontend-application`, `verifiability`, `reuse-first`
 **Procedures:** none
 
-A subdomain of the second kit's spec, written before the code by task RT-2424. It merges into the
-spec of the second kit by the last commit of the PR, with the scenario numbers it has now.
+A subdomain of the second kit's spec, written before the code by task RT-2424 and merged with the
+scenario numbers it had as an agreement.
 
 ## Why
 
@@ -113,3 +113,7 @@ None.
 ## History of changes
 
 - 29 September 2026 — the agreement was written by the grilling of the owner's request.
+- 30 September 2026 — the label wraps instead of being cut: a cut label needs a tooltip in a pair,
+  and the tooltip mode for a cut text had not reached this branch.
+- 30 September 2026 — the agreement was merged into the spec of the second kit together with the
+  code. The scenarios kept their numbers.

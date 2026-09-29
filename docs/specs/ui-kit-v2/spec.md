@@ -56,6 +56,7 @@ agreement about their own subject and describe the surface of a component, not a
 | [A boolean input and the bare attribute](boolean-input-attribute/spec.md) | what a boolean input of the kit accepts, and which input is boolean by declared type alone                                      |
 | [The settings of the kit and the theme](kit-settings-theme/spec.md)       | what an application sets the look of the kit at the start by, the three states of the theme, a node with a theme of its own     |
 | [The accordion](accordion/spec.md)                                        | a list of headed items whose texts open on a press, independently of one another                                                |
+| [The request error of a side panel](aside-error-box/spec.md)              | where a failed request is shown in a panel and what its copy button puts into the clipboard                                     |
 
 ## What is out of scope
 
