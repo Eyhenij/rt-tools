@@ -5,9 +5,9 @@
 Rewritten by every session, not appended to.
 
 - **State:** `этап-идёт`
-- **Stage:** 3 of 4 — Showcase and docs
+- **Stage:** 4 of 4 — Closing
 - **Done:** branch from `RT-2371-kit-radius-scale`, task in «In progress», folder, plan
-- **Next step:** the multiselect icon in the matrix and the input table
+- **Next step:** the full set of checks
 - **Uncommitted:** the task folder
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -19,9 +19,9 @@ Rewritten by every session, not appended to.
 - [x] 2.1 Put the magnifier into the select filter
 - [x] 2.2 Add `iconLeft` to the multiselect
 - [x] 2.3 Cover both scenarios by the component specs
-- [>] 3.1 Show the multiselect icon in the matrix and document the input
-- [ ] 3.2 Re-take the snapshots
-- [ ] 4.1 Run the full set of checks
+- [x] 3.1 Show the multiselect icon in the matrix and document the input
+- [x] 3.2 Re-take the snapshots
+- [>] 4.1 Run the full set of checks
 
 ## Decisions along the way
 
