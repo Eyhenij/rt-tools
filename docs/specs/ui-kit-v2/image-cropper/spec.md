@@ -136,3 +136,9 @@ Not applicable.
 ## Open questions
 
 None.
+
+## History of changes
+
+- 29 September 2026 — the agreement was written before the code, the task RT-2397. The accordion
+  was merged first and took `SC-UKV-394`…`SC-UKV-405`, so the last four scenarios of the family
+  took `SC-UKV-406`…`SC-UKV-409`.
