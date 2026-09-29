@@ -1,0 +1,37 @@
+@layer rt-kit.components {
+    /* rt-aside-error-box — строка ошибки запроса под шапкой панели. ViewEncapsulation.None.
+       Вид первого кита: тонкая рамка цвета опасности, надпись слева, текстовая кнопка справа. */
+
+    .rt-aside-error-box {
+        --rt-aside-error-box-min-height: 2rem;
+        --rt-aside-error-box-border-width: 1px;
+        --rt-aside-error-box-radius: var(--rt-radius-md);
+
+        display: block;
+        min-width: 0;
+
+        &__frame {
+            display: flex;
+            min-width: 0;
+            min-height: var(--rt-aside-error-box-min-height);
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--rt-space-2);
+            border: var(--rt-aside-error-box-border-width) solid var(--rt-color-state-danger);
+            border-radius: var(--rt-aside-error-box-radius);
+            gap: var(--rt-space-2);
+        }
+
+        /* Надпись переносится, а не режется: кнопка держит ширину, текст переводов бывает длиннее. */
+        &__title {
+            min-width: 0;
+            color: var(--rt-color-state-danger);
+            font-size: var(--rt-text-md);
+            overflow-wrap: anywhere;
+        }
+
+        &__copy {
+            flex-shrink: 0;
+        }
+    }
+}

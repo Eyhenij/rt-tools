@@ -88,8 +88,8 @@ Not applicable: the kit lives inside an application behind a sign-in.
 
 ### Mobile layout
 
-The panel is full width on a narrow screen, and the box keeps one row: the label shrinks with an
-ellipsis, the button keeps its width.
+The panel is full width on a narrow screen. The button keeps its width, and the label wraps
+instead of being cut: a translated label may be longer than the English one.
 
 ### Several objects
 
