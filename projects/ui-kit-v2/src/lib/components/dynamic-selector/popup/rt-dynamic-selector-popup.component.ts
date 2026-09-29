@@ -99,7 +99,7 @@ export class RtDynamicSelectorPopupComponent<TEntity extends object> implements 
     protected readonly ticked: WritableSignal<unknown[]> = signal<unknown[]>([]);
     protected readonly query: WritableSignal<string> = signal<string>('');
     /** Выбор нескольких включён: без него простое нажатие оставляет одну отметку. */
-    protected readonly isMultiOn: WritableSignal<boolean> = signal<boolean>(true);
+    protected readonly isMultiOn: WritableSignal<boolean> = signal<boolean>(false);
 
     /** Найденные строки: местный поиск отбирает сам, серверный отдаёт запрос наружу. */
     protected readonly found: Signal<TEntity[]> = computed((): TEntity[] => {
