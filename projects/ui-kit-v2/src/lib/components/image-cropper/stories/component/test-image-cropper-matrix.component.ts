@@ -45,87 +45,7 @@ interface IImageCropperStateCase {
  */
 @Component({
     selector: 'app-image-cropper-matrix',
-    template: `
-        @switch (part) {
-            @case ('ratios') {
-                <app-story-presets caption="Пропорции рамки в обоих наборах">
-                    <ng-template>
-                        <app-story-row [items]="ratioCases" [itemLabel]="caseLabel" [slotWidth]="cellWidth">
-                            <ng-template let-ratioCase>
-                                <rt-image-cropper class="app-image-cropper-matrix__cropper" [file]="sample()" [ratio]="ratioCase.ratio" />
-                            </ng-template>
-                        </app-story-row>
-                    </ng-template>
-                </app-story-presets>
-            }
-
-            @case ('looks') {
-                <app-story-presets caption="Вид рамки в обоих наборах">
-                    <ng-template>
-                        <app-story-row [items]="lookCases" [itemLabel]="caseLabel" [slotWidth]="cellWidth">
-                            <ng-template let-lookCase>
-                                <rt-image-cropper class="app-image-cropper-matrix__cropper" [file]="sample()" [round]="lookCase.round" />
-                            </ng-template>
-                        </app-story-row>
-                    </ng-template>
-                </app-story-presets>
-            }
-
-            @case ('states') {
-                <app-story-presets caption="Состояния поля в обоих наборах">
-                    <ng-template>
-                        <app-story-row [items]="stateCases()" [itemLabel]="caseLabel" [slotWidth]="cellWidth">
-                            <ng-template let-stateCase>
-                                <rt-image-cropper
-                                    class="app-image-cropper-matrix__cropper"
-                                    [file]="stateCase.file"
-                                    [ratio]="1"
-                                    [disabled]="stateCase.disabled" />
-                            </ng-template>
-                        </app-story-row>
-                    </ng-template>
-                </app-story-presets>
-            }
-
-            @case ('presets') {
-                <app-story-presets caption="Обрезка в обоих наборах">
-                    <ng-template>
-                        <div class="app-image-cropper-matrix__pane">
-                            <rt-image-cropper class="app-image-cropper-matrix__cropper" [file]="sample()" [ratio]="1" />
-                        </div>
-                    </ng-template>
-                </app-story-presets>
-            }
-
-            @case ('themes') {
-                <app-story-presets caption="Обрезка в обеих темах в обоих наборах">
-                    <ng-template>
-                        <app-story-themes>
-                            <ng-template>
-                                <div class="app-image-cropper-matrix__pane">
-                                    <rt-image-cropper class="app-image-cropper-matrix__cropper" round [file]="sample()" />
-                                </div>
-                            </ng-template>
-                        </app-story-themes>
-                    </ng-template>
-                </app-story-presets>
-            }
-        }
-    `,
-    styles: `
-        /* Ячейка ряда центрирует содержимое, а поле обрезки берёт ширину коробки: без ширины
-           оно схлопнулось бы в ноль и рамки не было бы видно. Высота поля — его собственное
-           свойство, в матрице поле ниже умолчания, чтобы ряд помещался в кадр. */
-        .app-image-cropper-matrix__cropper {
-            --rt-image-cropper-height: 9rem;
-
-            width: 100%;
-        }
-
-        .app-image-cropper-matrix__pane {
-            width: 16rem;
-        }
-    `,
+    templateUrl: './test-image-cropper-matrix.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // components
@@ -149,7 +69,7 @@ export class TestRtImageCropperMatrixComponent {
         initialValue: null,
     });
 
-    /** Ширина ячейки: поле тянется на всю ширину родителя и по содержимому схлопнулось бы. */
+    /** Ширина ячейки: поле берёт ширину коробки, и ячейка её задаёт. */
     public readonly cellWidth: string = '14rem';
 
     public readonly ratioCases: readonly IImageCropperRatioCase[] = [

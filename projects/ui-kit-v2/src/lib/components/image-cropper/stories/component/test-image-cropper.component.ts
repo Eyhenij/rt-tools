@@ -22,42 +22,7 @@ import { drawStoryCropperSample } from './story-cropper-sample';
  */
 @Component({
     selector: 'app-image-cropper',
-    template: `
-        <app-story-presets fill caption="Обрезка изображения в обоих наборах">
-            <ng-template>
-                <rt-file-drop accept="image/*" (filesDropped)="onDropped($event)">
-                    <rt-image-cropper
-                        [file]="file()"
-                        [ratio]="ratio"
-                        [round]="round"
-                        [minSize]="minSize"
-                        [format]="format"
-                        [quality]="quality"
-                        [disabled]="disabled"
-                        (cropped)="onCropped($event)"
-                        (loadFailed)="onFailed()" />
-                </rt-file-drop>
-                <p class="app-image-cropper__result">{{ summary() }}</p>
-                @if (preview(); as src) {
-                    <img class="app-image-cropper__preview" alt="" [src]="src" />
-                }
-            </ng-template>
-        </app-story-presets>
-    `,
-    styles: `
-        /* Подпись и превью — демонстрационные: сам компонент отдаёт только файл. */
-        .app-image-cropper__result {
-            margin: var(--rt-space-sm) 0;
-            color: var(--rt-color-text-muted);
-            font-size: var(--rt-text-sm);
-        }
-
-        .app-image-cropper__preview {
-            max-width: 12rem;
-            max-height: 8rem;
-            border: 1px solid var(--rt-color-border-subtle);
-        }
-    `,
+    templateUrl: './test-image-cropper.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // components

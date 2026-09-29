@@ -18,7 +18,21 @@
         --rt-image-cropper-refusal-color: var(--rt-color-text-muted);
         --rt-image-cropper-disabled-opacity: 0.5;
 
+        /* Где лежат картинка и рамка, компонент ставит на host пикселями поля; здесь — значения
+           до первого замера, чтобы у каждого свойства было объявление. */
+        --rt-image-cropper-image-x: 0;
+        --rt-image-cropper-image-y: 0;
+        --rt-image-cropper-image-width: 0;
+        --rt-image-cropper-image-height: 0;
+        --rt-image-cropper-frame-x: 0;
+        --rt-image-cropper-frame-y: 0;
+        --rt-image-cropper-frame-width: 0;
+        --rt-image-cropper-frame-height: 0;
+
+        /* Поле берёт ширину своей коробки: в ячейке, которая центрирует содержимое, блок без
+           ширины схлопнулся бы в ноль. */
         display: block;
+        width: 100%;
 
         &__field {
             position: relative;
