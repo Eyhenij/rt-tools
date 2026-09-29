@@ -5,6 +5,7 @@
         --rt-accordion-focus-shadow: var(--rt-shadow-focus-ring);
 
         display: block;
+        width: 100%;
 
         &__item {
             border-bottom: var(--rt-accordion-border-width) solid var(--rt-color-border-subtle);

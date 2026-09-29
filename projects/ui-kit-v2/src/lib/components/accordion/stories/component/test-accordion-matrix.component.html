@@ -38,9 +38,9 @@
     @case ('presets') {
         <app-story-presets caption="Аккордеон в обоих наборах">
             <ng-template>
-                <app-story-row slotWidth="22rem" [items]="[items]">
-                    <ng-template let-list>
-                        <rt-accordion [items]="list" />
+                <app-story-row slotWidth="22rem" [items]="single" [itemLabel]="lengthLabel">
+                    <ng-template let-single>
+                        <rt-accordion [items]="single.items" />
                     </ng-template>
                 </app-story-row>
             </ng-template>
@@ -52,9 +52,9 @@
             <ng-template>
                 <app-story-themes>
                     <ng-template>
-                        <app-story-row slotWidth="22rem" [items]="[items]">
-                            <ng-template let-list>
-                                <rt-accordion [items]="list" />
+                        <app-story-row slotWidth="22rem" [items]="single" [itemLabel]="lengthLabel">
+                            <ng-template let-single>
+                                <rt-accordion [items]="single.items" />
                             </ng-template>
                         </app-story-row>
                     </ng-template>

@@ -80,6 +80,9 @@ export class TestRtAccordionMatrixComponent {
         { name: 'длинный ответ', items: [{ title: ITEMS[0].title, text: LONG_TEXT }] },
     ];
 
+    /** Одна ячейка ряда: ряд задаёт ей ширину и подпись. */
+    public readonly single: readonly IAccordionLengthCase[] = [{ name: 'три вопроса, первый раскрыт', items: ITEMS }];
+
     public readonly openingLabel: (value: IAccordionOpeningCase) => string = (value: IAccordionOpeningCase): string => value.name;
     public readonly lengthLabel: (value: IAccordionLengthCase) => string = (value: IAccordionLengthCase): string => value.name;
 }
