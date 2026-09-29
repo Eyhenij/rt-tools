@@ -63,6 +63,12 @@ describe('RtDatePickerComponent', (): void => {
         expect(field(setup({ type: 'datetime-local' })).getAttribute('placeholder')).toBe('YYYY-MM-DDTHH:mm');
     });
 
+    it('ширина поля в знаках равна длине формы значения', (): void => {
+        expect(field(setup()).getAttribute('size')).toBe('10');
+        expect(field(setup({ type: 'time' })).getAttribute('size')).toBe('5');
+        expect(field(setup({ type: 'datetime-local' })).getAttribute('size')).toBe('16');
+    });
+
     it('пустое поле показывает форму значения при наведении, заполненное — нет', (): void => {
         const fixture: ComponentFixture<DatePickerHostComponent> = setupHost();
 

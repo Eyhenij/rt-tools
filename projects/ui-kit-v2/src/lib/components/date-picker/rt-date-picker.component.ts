@@ -105,6 +105,11 @@ export class RtDatePickerComponent extends RtFormControlBase<string> {
 
     protected readonly hasValue: Signal<boolean> = computed((): boolean => this.value() !== '');
     /** Подсказка обрезается многоточием в узком поле, поэтому шаблон целиком виден при наведении. */
+    /**
+     * Ширина поля в знаках — по длине формы значения. Без неё текстовое поле берёт от браузера
+     * двадцать знаков и в строке отборов потребителя занимает место вдвое шире значения.
+     */
+    protected readonly fieldSize: Signal<number> = computed((): number => this.shape().length);
     protected readonly shapeTitle: Signal<string | null> = computed((): string | null => (this.hasValue() ? null : this.shape()));
 
     /** Вид рамки: `outline` — рамка со всех сторон, `fill` — залитое поле с чертой снизу. */
