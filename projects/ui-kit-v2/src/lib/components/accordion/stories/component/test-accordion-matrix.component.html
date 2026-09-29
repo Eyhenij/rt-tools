@@ -1,0 +1,65 @@
+@switch (part) {
+    @case ('opening') {
+        <app-story-presets caption="Раскрытие при входе в обоих наборах">
+            <ng-template>
+                <app-story-row slotWidth="22rem" [items]="openings" [itemLabel]="openingLabel">
+                    <ng-template let-opening>
+                        <rt-accordion [items]="items" [openIndex]="opening.openIndex" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('length') {
+        <app-story-presets caption="Длина заголовка и ответа в обоих наборах">
+            <ng-template>
+                <app-story-row slotWidth="22rem" [items]="lengths" [itemLabel]="lengthLabel">
+                    <ng-template let-length>
+                        <rt-accordion [items]="length.items" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('states') {
+        <app-story-presets caption="Взаимодействие в обоих наборах">
+            <ng-template>
+                <app-story-row slotWidth="22rem" [items]="states" [itemLabel]="stateLabel">
+                    <ng-template let-state>
+                        <rt-accordion [items]="items" [openIndex]="null" [attr.data-story-state]="state.state" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('presets') {
+        <app-story-presets caption="Аккордеон в обоих наборах">
+            <ng-template>
+                <app-story-row slotWidth="22rem" [items]="single" [itemLabel]="lengthLabel">
+                    <ng-template let-single>
+                        <rt-accordion [items]="single.items" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('themes') {
+        <app-story-presets caption="Аккордеон в обеих темах в обоих наборах">
+            <ng-template>
+                <app-story-themes>
+                    <ng-template>
+                        <app-story-row slotWidth="22rem" [items]="single" [itemLabel]="lengthLabel">
+                            <ng-template let-single>
+                                <rt-accordion [items]="single.items" />
+                            </ng-template>
+                        </app-story-row>
+                    </ng-template>
+                </app-story-themes>
+            </ng-template>
+        </app-story-presets>
+    }
+}
