@@ -69,7 +69,7 @@ function stored(storage: Storage, key: string = ERtStorageKeys.SideMenu): unknow
 }
 
 describe('RtSideMenuSettingsService', (): void => {
-    it('SC-UKV-409 — режим и ширина переживают новый сервис над тем же хранилищем', (): void => {
+    it('SC-UKV-433 — режим и ширина переживают новый сервис над тем же хранилищем', (): void => {
         const storage: MemoryStorage = new MemoryStorage();
         const first: RtSideMenuSettingsService = createService(storage);
 
@@ -106,7 +106,7 @@ describe('RtSideMenuSettingsService', (): void => {
         expect(createService(storage).subMenuMode(MENU)()).toBe('hover');
     });
 
-    it('SC-UKV-410 — сломанная запись читается пустой, сломанная ширина не стирает режим', (): void => {
+    it('SC-UKV-434 — сломанная запись читается пустой, сломанная ширина не стирает режим', (): void => {
         const storage: MemoryStorage = new MemoryStorage();
 
         storage.setItem(ERtStorageKeys.SideMenu, '{not json');

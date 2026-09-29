@@ -22,13 +22,13 @@ describe('номер меню', (): void => {
 });
 
 describe('настройки одного меню', (): void => {
-    it('SC-UKV-410 — нечисловая ширина не стирает закреплённый режим', (): void => {
+    it('SC-UKV-434 — нечисловая ширина не стирает закреплённый режим', (): void => {
         const settings: IRtSideMenu.Settings = normalizeSideMenuSettings({ subMenuMode: 'pinned', subMenuWidth: 'пошире' });
 
         expect(settings).toEqual({ subMenuMode: 'pinned' });
     });
 
-    it('SC-UKV-410 — незнакомый режим читается как отсутствие выбора', (): void => {
+    it('SC-UKV-434 — незнакомый режим читается как отсутствие выбора', (): void => {
         expect(normalizeSideMenuSettings({ subMenuMode: 'sideways', subMenuWidth: 300 })).toEqual({ subMenuWidth: 300 });
     });
 
@@ -47,7 +47,7 @@ describe('настройки одного меню', (): void => {
 });
 
 describe('запись всех меню', (): void => {
-    it('SC-UKV-410 — сломанное меню пропускается, соседнее читается', (): void => {
+    it('SC-UKV-434 — сломанное меню пропускается, соседнее читается', (): void => {
         const record: TRtSideMenuSettingsRecord = { main: { subMenuMode: 'pinned' }, broken: 'пошире' };
 
         expect(readSideMenuSettings(record)).toEqual({ main: { subMenuMode: 'pinned' } });

@@ -89,7 +89,7 @@ const MATCHING_FOLDER: ReadonlyArray<IRtSideMenu.Item> = [
 ];
 
 describe('filterSideMenuItems — спуск внутрь папок', (): void => {
-    it('SC-UKV-406 — совпал пункт внутри папки: папка остаётся, и в ней только совпавшее', (): void => {
+    it('SC-UKV-430 — совпал пункт внутри папки: папка остаётся, и в ней только совпавшее', (): void => {
         const found: IRtSideMenu.Item[] = filterSideMenuItems(NESTED, 'круговая');
 
         expect(found.length).toBe(1);
@@ -123,7 +123,7 @@ describe('filterSideMenuItems — спуск внутрь папок', (): void 
         expect(found[0].submenu?.map((item: IRtSideMenu.Item): string => String(item.id))).toEqual(['weekly', 'monthly']);
     });
 
-    it('SC-UKV-407 — совпала подпись папки, а внутри никто: папка стоит одной строкой', (): void => {
+    it('SC-UKV-431 — совпала подпись папки, а внутри никто: папка стоит одной строкой', (): void => {
         // Её искали по имени, и она должна найтись; детей, в которых запроса нет, при ней не будет.
         const found: IRtSideMenu.Item[] = filterSideMenuItems(NESTED, 'сохранён');
 
@@ -181,29 +181,29 @@ describe('sideMenuIdsToExpand', (): void => {
 });
 
 describe('ширина подменю', (): void => {
-    it('SC-UKV-411 — ширина уже предела приводится к нижнему пределу', (): void => {
+    it('SC-UKV-435 — ширина уже предела приводится к нижнему пределу', (): void => {
         expect(clampSideMenuWidth(10)).toBe(RT_SIDE_MENU_WIDTH_MIN);
     });
 
-    it('SC-UKV-411 — ширина шире предела приводится к верхнему пределу', (): void => {
+    it('SC-UKV-435 — ширина шире предела приводится к верхнему пределу', (): void => {
         expect(clampSideMenuWidth(5000)).toBe(RT_SIDE_MENU_WIDTH_MAX);
     });
 
-    it('SC-UKV-411 — ширина внутри пределов остаётся своей', (): void => {
+    it('SC-UKV-435 — ширина внутри пределов остаётся своей', (): void => {
         expect(clampSideMenuWidth(RT_SIDE_MENU_WIDTH_MIN + 40)).toBe(RT_SIDE_MENU_WIDTH_MIN + 40);
     });
 
-    it('SC-UKV-411 — стрелка вправо у верхнего предела упирается в него, а не проскакивает', (): void => {
+    it('SC-UKV-435 — стрелка вправо у верхнего предела упирается в него, а не проскакивает', (): void => {
         expect(sideMenuWidthByKey('ArrowRight', 470)).toBe(RT_SIDE_MENU_WIDTH_MAX);
     });
 
-    it('SC-UKV-411 — стрелка влево сужает на шаг, Home и End ведут к пределам', (): void => {
+    it('SC-UKV-435 — стрелка влево сужает на шаг, Home и End ведут к пределам', (): void => {
         expect(sideMenuWidthByKey('ArrowLeft', 300)).toBe(284);
         expect(sideMenuWidthByKey('Home', 300)).toBe(RT_SIDE_MENU_WIDTH_MIN);
         expect(sideMenuWidthByKey('End', 300)).toBe(RT_SIDE_MENU_WIDTH_MAX);
     });
 
-    it('SC-UKV-411 — клавиша не о ширине ширины не даёт', (): void => {
+    it('SC-UKV-435 — клавиша не о ширине ширины не даёт', (): void => {
         expect(sideMenuWidthByKey('Tab', 300)).toBeNull();
     });
 });
@@ -250,7 +250,7 @@ describe('отметка совпавшего в подписи', () => {
 });
 
 describe('walkSideMenuItems', (): void => {
-    it('SC-UKV-408 — закрытая папка стоит в списке одной строкой', (): void => {
+    it('SC-UKV-432 — закрытая папка стоит в списке одной строкой', (): void => {
         expect(walkSideMenuItems(NESTED, []).map((item: IRtSideMenu.Item): string | number => item.id)).toEqual([
             'dashboard',
             'create',

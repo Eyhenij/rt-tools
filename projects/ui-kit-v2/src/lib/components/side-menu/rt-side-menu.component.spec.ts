@@ -128,7 +128,7 @@ describe('RtSideMenuComponent', (): void => {
         expect(qa(fixture, 'side-menu-panel')).toBeNull();
     });
 
-    it('SC-UKV-406 — поиск спускается в папку и отмечает совпавшее', (): void => {
+    it('SC-UKV-430 — поиск спускается в папку и отмечает совпавшее', (): void => {
         const { fixture } = setup();
 
         hoverReports(fixture);
@@ -203,7 +203,7 @@ describe('RtSideMenuComponent', (): void => {
         expect(clicked).toEqual([]);
     });
 
-    it('SC-UKV-408 — стрелка вниз в поле поиска подсвечивает первую строку', (): void => {
+    it('SC-UKV-432 — стрелка вниз в поле поиска подсвечивает первую строку', (): void => {
         const { fixture } = setup();
 
         hoverReports(fixture);
@@ -217,7 +217,7 @@ describe('RtSideMenuComponent', (): void => {
         expect(fixture.componentInstance.highlightedMenuId()).toBe('sales');
     });
 
-    it('SC-UKV-409 — закрепление пишется в настройки и уходит наружу', (): void => {
+    it('SC-UKV-433 — закрепление пишется в настройки и уходит наружу', (): void => {
         const { fixture } = setup({ menuId: 'main' });
         const modes: IRtSideMenu.SubMenuMode[] = [];
 
@@ -240,7 +240,7 @@ describe('RtSideMenuComponent', (): void => {
         expect(qa(fixture, 'side-menu-resize')).not.toBeNull();
     });
 
-    it('SC-UKV-411 — стрелка на ручке ширины шагает и просит ширину наружу', (): void => {
+    it('SC-UKV-435 — стрелка на ручке ширины шагает и просит ширину наружу', (): void => {
         const { fixture } = setup({ subMenuMode: 'pinned', subMenuWidth: 470, activeMenuIds: ['reports'] });
         const widths: number[] = [];
 
