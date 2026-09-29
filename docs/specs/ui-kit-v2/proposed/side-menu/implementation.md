@@ -1,11 +1,12 @@
-# Привязка — боковое меню
+# What it is carried out by — the side menu
 
-Кода ещё нет, поэтому привязок вида `файл:символ` здесь нет: место исполнения появится вместе с
-кодом. Здесь — только предвиденные места.
+The component is not written yet, so the rules that live in it have no binding here: the place
+appears together with the code. Below are the foreseen places.
 
-| Правило                             | Где предвидится                                                     |
-| ----------------------------------- | ------------------------------------------------------------------- |
-| поиск, раскрытие, подсветка, ширина | логика бокового меню в `projects/ui-kit-v2/src/lib/components/`     |
-| настройки меню в хранилище          | сервис настроек бокового меню там же                                |
-| активность, режим подменю, клавиши  | компонент `rt-side-menu`                                            |
-| образец поведения                   | `projects/ui-kit/src/lib/ui-kit/side-menu/` — читается, не правится |
+| Rule                                         | Where it is foreseen                                                             |
+| -------------------------------------------- | -------------------------------------------------------------------------------- |
+| search, opening, highlight, width            | `projects/ui-kit-v2/src/lib/components/side-menu/rt-side-menu.logic.ts`          |
+| the settings record of a menu                | `projects/ui-kit-v2/src/lib/components/side-menu/rt-side-menu-settings.logic.ts` |
+| the keyboard walk                            | `projects/ui-kit-v2/src/lib/components/side-menu/rt-side-menu-keyboard.ts`       |
+| activity, submenu mode, the settings service | the component `rt-side-menu`                                                     |
+| the sample of the behaviour                  | `projects/ui-kit/src/lib/ui-kit/side-menu/` — read, not edited                   |

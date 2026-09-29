@@ -13,7 +13,7 @@ import { IRtSideMenu } from './rt-side-menu.model';
  * Отобранная папка — новый объект: правка на месте переписала бы набор потребителя, и стёртый
  * запрос вернул бы урезанное меню.
  */
-export function filterSubMenuItems(items: ReadonlyArray<IRtSideMenu.Item>, query: string): IRtSideMenu.Item[] {
+export function filterSideMenuItems(items: ReadonlyArray<IRtSideMenu.Item>, query: string): IRtSideMenu.Item[] {
     const needle: string = query.trim().toLowerCase();
 
     if (needle === '') {
@@ -22,7 +22,7 @@ export function filterSubMenuItems(items: ReadonlyArray<IRtSideMenu.Item>, query
 
     return items.reduce((kept: IRtSideMenu.Item[], item: IRtSideMenu.Item): IRtSideMenu.Item[] => {
         const isFolder: boolean = Boolean(item.submenu?.length);
-        const inside: IRtSideMenu.Item[] = isFolder ? filterSubMenuItems(item.submenu ?? [], query) : [];
+        const inside: IRtSideMenu.Item[] = isFolder ? filterSideMenuItems(item.submenu ?? [], query) : [];
 
         if (inside.length) {
             kept.push({ ...item, submenu: inside });
@@ -42,10 +42,10 @@ export function filterSubMenuItems(items: ReadonlyArray<IRtSideMenu.Item>, query
  * Папки отобранного списка — те, что должны стоять раскрытыми. Возвращаются номера, а не пункты:
  * отобранный список пересобирается на каждую букву запроса, и ссылка на пункт этого не переживает.
  */
-export function subMenuIdsToExpand(items: ReadonlyArray<IRtSideMenu.Item>): Array<string | number> {
+export function sideMenuIdsToExpand(items: ReadonlyArray<IRtSideMenu.Item>): Array<string | number> {
     return items.reduce((ids: Array<string | number>, item: IRtSideMenu.Item): Array<string | number> => {
         if (item.submenu?.length) {
-            ids.push(item.id, ...subMenuIdsToExpand(item.submenu));
+            ids.push(item.id, ...sideMenuIdsToExpand(item.submenu));
         }
 
         return ids;
@@ -56,15 +56,15 @@ export function subMenuIdsToExpand(items: ReadonlyArray<IRtSideMenu.Item>): Arra
  * Пределы ширины подменю в пикселях. Уже нижнего не помещается ни одна подпись пункта, шире
  * верхнего подменю закрывает содержимое страницы.
  */
-export const SUB_MENU_WIDTH_MIN: number = 120;
-export const SUB_MENU_WIDTH_MAX: number = 480;
+export const RT_SIDE_MENU_WIDTH_MIN: number = 120;
+export const RT_SIDE_MENU_WIDTH_MAX: number = 480;
 
 /** Шаг ширины с клавиатуры: стрелку держат нажатой, и крупный шаг проскакивал бы подпись целиком. */
-export const SUB_MENU_WIDTH_STEP: number = 16;
+export const RT_SIDE_MENU_WIDTH_STEP: number = 16;
 
 /** Приведение ширины к пределам. */
-export function clampSubMenuWidth(width: number): number {
-    return Math.min(SUB_MENU_WIDTH_MAX, Math.max(SUB_MENU_WIDTH_MIN, width));
+export function clampSideMenuWidth(width: number): number {
+    return Math.min(RT_SIDE_MENU_WIDTH_MAX, Math.max(RT_SIDE_MENU_WIDTH_MIN, width));
 }
 
 /**
@@ -73,7 +73,7 @@ export function clampSubMenuWidth(width: number): number {
  * Отмечаются все вхождения: отмеченное одно первое читается как «второго нет». Сравнение без учёта
  * регистра, а куски режутся из оригинала — приведение к нижнему регистру переписало бы названия.
  */
-export function splitSubMenuTitle(name: string, query: string): IRtSideMenu.TitlePart[] {
+export function splitSideMenuTitle(name: string, query: string): IRtSideMenu.TitlePart[] {
     if (name === '') {
         return [];
     }
@@ -108,12 +108,12 @@ export function splitSubMenuTitle(name: string, query: string): IRtSideMenu.Titl
  * Пункты подменю в том порядке, в каком они стоят на экране. Внутрь папки список спускается, только
  * если та раскрыта: ходьба стрелками идёт по видимому, а не по всему набору.
  */
-export function walkSubMenuItems(items: ReadonlyArray<IRtSideMenu.Item>, expandedIds: ReadonlyArray<string | number>): IRtSideMenu.Item[] {
+export function walkSideMenuItems(items: ReadonlyArray<IRtSideMenu.Item>, expandedIds: ReadonlyArray<string | number>): IRtSideMenu.Item[] {
     return items.reduce((walk: IRtSideMenu.Item[], item: IRtSideMenu.Item): IRtSideMenu.Item[] => {
         walk.push(item);
 
         if (item.submenu?.length && expandedIds.includes(item.id)) {
-            walk.push(...walkSubMenuItems(item.submenu, expandedIds));
+            walk.push(...walkSideMenuItems(item.submenu, expandedIds));
         }
 
         return walk;
@@ -125,7 +125,7 @@ export function walkSubMenuItems(items: ReadonlyArray<IRtSideMenu.Item>, expande
  * на каждую букву запроса. Без подсветки вниз берёт первый пункт, вверх — последний. У краёв ходьба
  * останавливается: заворот уводил бы взгляд через всю панель.
  */
-export function stepSubMenuHighlight(
+export function stepSideMenuHighlight(
     walk: ReadonlyArray<IRtSideMenu.Item>,
     highlightedId: string | number | null,
     step: number
@@ -159,7 +159,7 @@ export interface IRtSubMenuWidthDragHooks {
  *
  * Возвращает снятие слушателей. Пустое значение — тянуть нечем.
  */
-export function startSubMenuWidthDrag(
+export function startSideMenuWidthDrag(
     event: PointerEvent,
     startWidth: number,
     listen: TRtPointerListen,
@@ -182,7 +182,7 @@ export function startSubMenuWidthDrag(
 
     const stopMove: () => void = listen(handle, 'pointermove', (moveEvent: PointerEvent): void => {
         if (moveEvent.pointerId === pointerId) {
-            hooks.onWidth(clampSubMenuWidth(startWidth + moveEvent.clientX - startX));
+            hooks.onWidth(clampSideMenuWidth(startWidth + moveEvent.clientX - startX));
         }
     });
     const stopUp: () => void = listen(handle, 'pointerup', (): void => hooks.onEnd());
@@ -206,18 +206,18 @@ export function startSubMenuWidthDrag(
  * Ширина, которой панель нарисована. Панели нет или раскладка не посчитана — нижний предел: с нуля
  * тяга уводила бы ширину в отрицательные числа.
  */
-export function drawnSubMenuWidth(panel: HTMLElement | null): number {
+export function drawnSideMenuWidth(panel: HTMLElement | null): number {
     const width: number = panel?.getBoundingClientRect().width ?? 0;
 
-    return width > 0 ? width : SUB_MENU_WIDTH_MIN;
+    return width > 0 ? width : RT_SIDE_MENU_WIDTH_MIN;
 }
 
 /**
  * Число, которое уходит наружу по концу тяги: большее из натянутого и нарисованного. Нижний предел
  * держит оформление, и панель не бывает уже его, даже если рука ушла левее.
  */
-export function reportedSubMenuWidth(dragged: number, panel: HTMLElement | null): number {
-    return Math.max(dragged, drawnSubMenuWidth(panel));
+export function reportedSideMenuWidth(dragged: number, panel: HTMLElement | null): number {
+    return Math.max(dragged, drawnSideMenuWidth(panel));
 }
 
 /**
@@ -225,16 +225,16 @@ export function reportedSubMenuWidth(dragged: number, panel: HTMLElement | null)
  * иначе ручка съедала бы табуляцию. Влево значит уже при любом направлении письма: ручка стоит у
  * правого края панели.
  */
-export function subMenuWidthByKey(key: string, width: number): number | null {
+export function sideMenuWidthByKey(key: string, width: number): number | null {
     switch (key) {
         case 'ArrowRight':
-            return clampSubMenuWidth(width + SUB_MENU_WIDTH_STEP);
+            return clampSideMenuWidth(width + RT_SIDE_MENU_WIDTH_STEP);
         case 'ArrowLeft':
-            return clampSubMenuWidth(width - SUB_MENU_WIDTH_STEP);
+            return clampSideMenuWidth(width - RT_SIDE_MENU_WIDTH_STEP);
         case 'Home':
-            return SUB_MENU_WIDTH_MIN;
+            return RT_SIDE_MENU_WIDTH_MIN;
         case 'End':
-            return SUB_MENU_WIDTH_MAX;
+            return RT_SIDE_MENU_WIDTH_MAX;
         default:
             return null;
     }
@@ -244,7 +244,7 @@ export function subMenuWidthByKey(key: string, width: number): number | null {
  * Что показывает закреплённое подменю: выбранный человеком раздел, а пока выбора нет — раздел
  * активного адреса. Выбор впереди активности: иначе до соседнего раздела не добраться.
  */
-export function pinnedSubMenuItems(
+export function pinnedSideMenuItems(
     picked: IRtSideMenu.Item[] | null | undefined,
     activeIds: ReadonlyArray<string | number>,
     items: ReadonlyArray<IRtSideMenu.Item>

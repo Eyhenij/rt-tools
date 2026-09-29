@@ -1,10 +1,10 @@
 import { isRecord } from '@rt-tools/utils';
 
-import { clampSubMenuWidth } from './rt-side-menu.logic';
+import { clampSideMenuWidth } from './rt-side-menu.logic';
 import { IRtSideMenu } from './rt-side-menu.model';
 
 /** Номер меню, которому приложение своего не задало. */
-export const RT_SIDE_MENU_DEFAULT_ID: string = 'default';
+export const RT_SIDE_MENU_DEFAULT_ID: string = 'main';
 
 /**
  * Номер меню, под которым лежат его настройки. Пустой — тот же, что не заданный: атрибут без
@@ -39,7 +39,7 @@ export function normalizeSideMenuSettings(value: unknown): IRtSideMenu.Settings 
     }
 
     if (typeof width === 'number' && Number.isFinite(width)) {
-        settings.subMenuWidth = clampSubMenuWidth(width);
+        settings.subMenuWidth = clampSideMenuWidth(width);
     } else {
         delete settings.subMenuWidth;
     }

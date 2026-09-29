@@ -1,42 +1,51 @@
-# Сценарии — боковое меню
+# Scenarios — the side menu
 
-Номера продолжают нумерацию второго кита и после вливания не меняются. Пока сценарий не покрыт,
-он несёт пометку «Не покрыто» с причиной.
+The numbers continue the numbering of the second kit and do not change after the merge.
 
-### SC-UKV-406 — поиск спускается внутрь папок
+### SC-UKV-406 — the search goes down into folders
 
-Дано в подменю папка «Отчёты» с пунктом «Выручка»
-Когда человек набирает «выр»
-Тогда в выдаче стоит папка «Отчёты» с одним пунктом «Выручка»
+Given the submenu holds the folder «Отчёты» with the item «Выручка»
+When the person types «выр»
+Then the result holds the folder «Отчёты» with the one item «Выручка»
 
-### SC-UKV-407 — папка, совпавшая по имени, стоит без детей
+Covered: `projects/ui-kit-v2/src/lib/components/side-menu/rt-side-menu.logic.spec.ts`.
 
-Дано в подменю папка «Отчёты» с пунктом «Выручка»
-Когда человек набирает «отч»
-Тогда в выдаче стоит папка «Отчёты» без пунктов внутри
+### SC-UKV-407 — a folder matched by its name stands without children
 
-### SC-UKV-408 — стрелки ходят по видимым строкам
+Given the submenu holds the folder «Отчёты» with the item «Выручка»
+When the person types «отч»
+Then the result holds the folder «Отчёты» with no items inside
 
-Дано подменю со свёрнутой папкой и пунктом под ней
-Когда человек жмёт стрелку вниз в поле поиска дважды
-Тогда подсветка проходит папку и встаёт на пункт под ней, минуя строки папки
+Covered: `projects/ui-kit-v2/src/lib/components/side-menu/rt-side-menu.logic.spec.ts`.
 
-### SC-UKV-409 — режим и ширина переживают перезагрузку
+### SC-UKV-408 — the arrows walk the visible rows
 
-Дано человек закрепил подменю и потянул его до 300 пикселей
-Когда страница перезагружается
-Тогда подменю стоит закреплённым шириной 300 пикселей
+Given the submenu holds a closed folder and an item under it
+When the person presses the down arrow in the search field twice
+Then the highlight passes the folder and lands on the item under it, skipping the folder's rows
 
-Не покрыто: сервиса настроек ещё нет.
+Covered: `projects/ui-kit-v2/src/lib/components/side-menu/rt-side-menu.logic.spec.ts`.
 
-### SC-UKV-410 — сломанная запись хранилища не стирает соседнее
+### SC-UKV-409 — the mode and the width survive a reload
 
-Дано под номером меню лежит нечисловая ширина и закреплённый режим
-Когда меню читает свои настройки
-Тогда режим закреплён, а ширину ставит оформление
+Given the person pinned the submenu and dragged it to 300 pixels
+When the page reloads
+Then the submenu stands pinned, 300 pixels wide
 
-### SC-UKV-411 — ширина с клавиатуры ходит шагом и держит пределы
+Не покрыто: the settings service is not written yet.
 
-Дано ручка ширины в фокусе, подменю шириной 470 пикселей
-Когда человек жмёт стрелку вправо
-Тогда ширина становится 480, а не 486
+### SC-UKV-410 — a broken storage record does not erase its neighbour
+
+Given the record of a menu holds a non-numeric width and the pinned mode
+When the menu reads its settings
+Then the mode is pinned, and the design sets the width
+
+Covered: `projects/ui-kit-v2/src/lib/components/side-menu/rt-side-menu-settings.logic.spec.ts`.
+
+### SC-UKV-411 — the keyboard width steps and keeps the limits
+
+Given the width handle is in focus, the submenu 470 pixels wide
+When the person presses the right arrow
+Then the width becomes 480, not 486
+
+Covered: `projects/ui-kit-v2/src/lib/components/side-menu/rt-side-menu.logic.spec.ts`.

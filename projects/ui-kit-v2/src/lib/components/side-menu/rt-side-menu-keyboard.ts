@@ -1,6 +1,6 @@
 import { signal, Signal, WritableSignal } from '@angular/core';
 
-import { stepSubMenuHighlight, walkSubMenuItems } from './rt-side-menu.logic';
+import { stepSideMenuHighlight, walkSideMenuItems } from './rt-side-menu.logic';
 import { IRtSideMenu } from './rt-side-menu.model';
 
 /** Что клавиатура просит у меню: открыть пункт и стереть запрос. Сама она ни того, ни другого не умеет. */
@@ -44,13 +44,13 @@ export class RtSubMenuKeyboard {
 
     /** Нажата клавиша в поле поиска. Отвечает, съедена ли она: только съеденная отменяет умолчание. */
     public press(key: string, items: ReadonlyArray<IRtSideMenu.Item>, expandedIds: ReadonlyArray<string | number>): boolean {
-        const walk: IRtSideMenu.Item[] = walkSubMenuItems(items, expandedIds);
+        const walk: IRtSideMenu.Item[] = walkSideMenuItems(items, expandedIds);
         const current: IRtSideMenu.Item | null = walk.find((item: IRtSideMenu.Item): boolean => item.id === this.#highlightedId()) ?? null;
 
         switch (key) {
             case 'ArrowDown':
             case 'ArrowUp':
-                this.#highlightedId.set(stepSubMenuHighlight(walk, this.#highlightedId(), key === 'ArrowDown' ? 1 : -1));
+                this.#highlightedId.set(stepSideMenuHighlight(walk, this.#highlightedId(), key === 'ArrowDown' ? 1 : -1));
 
                 return true;
             case 'ArrowRight':

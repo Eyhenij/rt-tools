@@ -7,7 +7,7 @@ import {
     RT_SIDE_MENU_DEFAULT_ID,
     TRtSideMenuSettingsRecord,
 } from './rt-side-menu-settings.logic';
-import { SUB_MENU_WIDTH_MAX } from './rt-side-menu.logic';
+import { RT_SIDE_MENU_WIDTH_MAX } from './rt-side-menu.logic';
 import { IRtSideMenu } from './rt-side-menu.model';
 
 describe('номер меню', (): void => {
@@ -33,7 +33,7 @@ describe('настройки одного меню', (): void => {
     });
 
     it('ширина из хранилища приводится к пределам', (): void => {
-        expect(normalizeSideMenuSettings({ subMenuWidth: 5000 }).subMenuWidth).toBe(SUB_MENU_WIDTH_MAX);
+        expect(normalizeSideMenuSettings({ subMenuWidth: 5000 }).subMenuWidth).toBe(RT_SIDE_MENU_WIDTH_MAX);
     });
 
     it('незнакомые поля остаются: их могло положить приложение', (): void => {
