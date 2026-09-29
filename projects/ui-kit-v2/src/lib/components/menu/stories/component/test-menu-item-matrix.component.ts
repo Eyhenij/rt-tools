@@ -15,7 +15,7 @@ import { RtMenuItemIconDirective } from '../../rt-menu-item-icon.directive';
 import { RtMenuItemComponent } from '../../rt-menu-item.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TMenuItemMatrixPart = 'kinds' | 'states' | 'presets' | 'themes';
+export type TMenuItemMatrixPart = 'kinds' | 'own-icon' | 'states' | 'presets' | 'themes';
 
 /** Вид пункта: иконка, тон и недоступность вместе — порознь они не бывают. */
 interface IMenuItemKindCase {
@@ -57,12 +57,14 @@ interface IMenuItemKindCase {
                                     [confirmMessage]="kindCase.confirmMessage" />
                             </ng-template>
                         </app-story-row>
+                    </ng-template>
+                </app-story-presets>
+            }
 
-                        <app-story-row
-                            caption="Свой значок приложения"
-                            [items]="ownIconCases"
-                            [itemLabel]="caseLabel"
-                            [slotWidth]="itemWidth">
+            @case ('own-icon') {
+                <app-story-presets caption="Свой значок приложения в трёх тонах в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="ownIconCases" [itemLabel]="caseLabel" [slotWidth]="itemWidth">
                             <ng-template let-ownCase>
                                 <rt-menu-item [label]="ownCase.label" [danger]="ownCase.danger" [success]="ownCase.success">
                                     <ng-template rtMenuItemIcon>
