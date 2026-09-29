@@ -1,8 +1,12 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { join } from 'node:path';
+
+import * as sass from 'sass';
 
 import { createRtFixture, el, hostClasses, qa, textOf } from '../../../testing/rt-kit-testing';
+import { RtSelectTriggerDirective } from '../select/rt-select-trigger.directive';
 import { IRtSelect } from '../select/rt-select.model';
 import { RtMultiselectComponent } from './rt-multiselect.component';
 
@@ -16,6 +20,17 @@ const OPTIONS: ReadonlyArray<IRtSelect.Option<string>> = [
 /** Панель списка живёт в оверлее CDK — ищем её в документе. */
 function options(): HTMLElement[] {
     return Array.from(document.querySelectorAll('[qa-dataid="multiselect-option"]'));
+}
+
+/**
+ * Правило панели из собранных стилей. Стили компонента в спеку не приезжают, а предел высоты по
+ * умолчанию живёт только в них: без него длинный список уходил за нижний край экрана.
+ */
+function panelRule(): string {
+    const css: string = sass.compile(join(__dirname, 'rt-multiselect.component.scss')).css;
+    const at: number = css.indexOf('.rt-multiselect__panel {');
+
+    return at < 0 ? '' : css.slice(at, css.indexOf('}', at));
 }
 
 function panel(): HTMLElement | null {
@@ -55,6 +70,23 @@ function chipLabels<T>(fixture: ComponentFixture<T>): string[] {
 describe('RtMultiselectComponent', (): void => {
     it('несёт свой BEM-блок', (): void => {
         expect(hostClasses(setup())).toContain('rt-multiselect');
+    });
+
+    it('SC-UKV-179: без назначенного предела панель берёт предел кита и прокручивается внутри', (): void => {
+        const fixture: ComponentFixture<RtMultiselectComponent<string>> = setup();
+
+        open(fixture);
+
+        expect(panel()?.style.getPropertyValue('--rt-multiselect-panel-max-height')).toBe('');
+        expect(panelRule()).toContain('--rt-multiselect-panel-max-height: var(--rt-input-panel-max-height);');
+        expect(panelRule()).toContain('max-height: var(--rt-multiselect-panel-max-height);');
+        expect(panelRule()).toContain('overflow-y: auto;');
+    });
+
+    it('SC-UKV-179: назначенный предел и `none` ложатся на саму панель', (): void => {
+        open(setup({ panelMaxHeight: 'none' }));
+
+        expect(panel()?.style.getPropertyValue('--rt-multiselect-panel-max-height')).toBe('none');
     });
 
     it('без выбора показывает переведённую подсказку', (): void => {
@@ -271,5 +303,48 @@ describe('RtMultiselectComponent', (): void => {
         open(fixture);
 
         expect(document.querySelector('[qa-dataid="multiselect-empty"]')?.textContent?.trim()).toBe('No options');
+    });
+});
+
+/**
+ * Хозяин со своей разметкой указателя: маркер тот же, что у выбора одного значения — проверяется,
+ * что вход один на обе семьи.
+ */
+@Component({
+    selector: 'rt-multiselect-trigger-host',
+    template: `
+        <rt-multiselect [options]="opts">
+            <ng-template rtSelectTrigger let-state>
+                <span class="own-trigger" [attr.data-count]="state.value.length">{{ state.label || 'ничего' }}</span>
+            </ng-template>
+        </rt-multiselect>
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtMultiselectComponent, RtSelectTriggerDirective],
+})
+class MultiselectTriggerHostComponent {
+    public readonly opts: ReadonlyArray<IRtSelect.Option<string>> = OPTIONS;
+}
+
+describe('RtMultiselectComponent — свой указатель', (): void => {
+    it('SC-UKV-163 — тот же вход служит выбору нескольких значений', (): void => {
+        const fixture: ComponentFixture<MultiselectTriggerHostComponent> = createRtFixture(MultiselectTriggerHostComponent);
+        const own: HTMLElement | null = fixture.nativeElement.querySelector('.own-trigger');
+        const button: HTMLButtonElement = fixture.nativeElement.querySelector('[qa-dataid="multiselect-trigger"]') as HTMLButtonElement;
+
+        expect(own).not.toBeNull();
+        expect(button.contains(own)).toBe(true);
+        expect(fixture.nativeElement.querySelector('[qa-dataid="multiselect-placeholder"]')).toBeNull();
+        expect(own?.getAttribute('data-count')).toBe('0');
+
+        button.click();
+        fixture.detectChanges();
+        options()[0].click();
+        fixture.detectChanges();
+
+        const after: HTMLElement | null = fixture.nativeElement.querySelector('.own-trigger');
+
+        expect(after?.getAttribute('data-count')).toBe('1');
+        expect(textOf(after)).toBe('Москва');
     });
 });

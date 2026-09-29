@@ -5,6 +5,7 @@ import {
     Component,
     computed,
     contentChild,
+    DestroyRef,
     Directive,
     ElementRef,
     inject,
@@ -33,10 +34,13 @@ import { transformArrayInput } from '@rt-tools/utils';
 import { RtIconOutlinedDirective, RtNavigationDirective, RtScrollToElementDirective } from '@rt-tools/core';
 import {
     clampSubMenuWidth,
+    drawnSubMenuWidth,
     filterSubMenuItems,
     normalizeFavoriteActionsReserve,
     normalizeFavoritesCount,
+    pinnedSubMenuItems,
     subMenuIdsToExpand,
+    SUB_MENU_WIDTH_MAX,
     SUB_MENU_WIDTH_MIN,
 } from '../side-menu.logic';
 import { IRtuiSideMenuHost, ISideMenu, RTUI_SIDE_MENU } from '../side-menu.types';
@@ -49,11 +53,11 @@ import {
 import { RtuiButtonComponent } from '../../buttons/unified-button/rtui-button.component';
 import { RtuiClearButtonComponent } from '../../table/components/clear-search-button/rtui-clear-button.component';
 import { RtuiSideMenuSubItemComponent } from '../menu-sub-item/rtui-side-menu-sub-item.component';
+import { SubMenuResize } from './sub-menu-resize';
 import { pressSubMenuRow, SubMenuKeyboard } from './sub-menu-keyboard';
 import { RtuiSubMenuHoldService } from './rtui-sub-menu-hold.service';
 import { RtuiSideMenuFavoritesComponent } from '../favorites/rtui-side-menu-favorites.component';
 import { DEFAULT_MENU_ID, normalizeMenuId } from '../settings/side-menu-settings.logic';
-import { SubMenuResize } from './sub-menu-resize';
 import { RtuiSideMenuSettingsService } from '../settings/rtui-side-menu-settings.service';
 
 @Directive({
@@ -123,15 +127,22 @@ export class RtuiSideMenuComponent implements IRtuiSideMenuHost {
     /** Настройки меню, если приложение их включило: мода и ширина хранятся там под `menuId`. */
     readonly #settings: RtuiSideMenuSettingsService | null = inject(RtuiSideMenuSettingsService, { optional: true });
 
-    /** Тяга правого края: натянутая ширина уходит в настройки меню и наружу. */
-    readonly #resize: SubMenuResize = new SubMenuResize({
-        listen: (event: 'mousemove' | 'mouseup', handler: (event: MouseEvent) => void): (() => void) =>
-            this.#renderer.listen('document', event, handler),
-        finish: (width: number): void => {
-            this.#settings?.setSubMenuWidth(this.menuId(), width);
-            this.subMenuWidthChange.emit(width);
+    /** Тяга ширины: просьба уходит одна, на отпускании — в настройки меню и наружу. */
+    readonly #resize: SubMenuResize = new SubMenuResize(
+        (target: HTMLElement, name: string, handler: (event: PointerEvent) => void): (() => void) =>
+            this.#renderer.listen(target, name, handler),
+        {
+            askWidth: (width: number): void => {
+                this.#settings?.setSubMenuWidth(this.menuId(), width);
+                this.subMenuWidthChange.emit(width);
+            },
+            started: (): void => this.subMenuResizeStart.emit(),
+            ended: (): void => this.subMenuResizeEnd.emit(),
+            panel: (): HTMLElement | null => this.subMenuPanelRef()?.nativeElement ?? null,
+            namedWidth: (): number | null => this.#width(),
         },
-    });
+        inject(DestroyRef)
+    );
 
     /** Подменю открыл указатель. У закреплённой моды открытость считается не так. */
     readonly #hoverOpened: WritableSignal<boolean> = signal(false);
@@ -146,10 +157,7 @@ export class RtuiSideMenuComponent implements IRtuiSideMenuHost {
         clearQuery: (): void => this.onSubMenuSearch(''),
     });
 
-    /**
-     * Человек работает с полем поиска, и подменю держится открытым, пока он не уйдёт нажатием
-     * наружу: иначе на полпути от полосы к полю подменю, живущее наведением, исчезало.
-     */
+    /** Человек в поле поиска: подменю держится открытым до нажатия снаружи, иначе исчезало на полпути. */
     readonly #searchHeld: WritableSignal<boolean> = signal(false);
     /** Мода и ширина в работе: вход приложения, иначе сохранённые под номером меню. */
     readonly #mode: Signal<ISideMenu.SubMenuMode> = computed(
@@ -159,44 +167,29 @@ export class RtuiSideMenuComponent implements IRtuiSideMenuHost {
         (): number | null => this.subMenuWidth() ?? this.#settings?.subMenuWidth(this.menuId())() ?? null
     );
 
-    /**
-     * Что показывает закреплённое подменю: выбранный человеком раздел, а пока выбора нет — раздел
-     * активного адреса. Выбор впереди активности: иначе до соседнего раздела не добраться вовсе.
-     * Ставит и снимает выбор `#pickPinnedSubMenu`.
-     */
-    readonly #pinnedSubMenu: Signal<ISideMenu.Item[]> = computed((): ISideMenu.Item[] => {
-        if (!this.isPinned()) {
-            return [];
-        }
-
-        const picked: TNullable<ISideMenu.Item[]> = this.selectedSubMenu();
-
-        if (picked?.length) {
-            return picked;
-        }
-
-        const active: Array<string | number> = this.activeMenuIds();
-        const activeItem: TNullable<ISideMenu.Item> =
-            this.menuItems().find((item: ISideMenu.Item): boolean => active.includes(item.id) && !!item.submenu?.length) ?? null;
-
-        return activeItem?.submenu ?? [];
-    });
+    /** Что показывает закреплённое подменю — счёт в `pinnedSubMenuItems`; выбор ставит `#pickPinnedSubMenu`. */
+    readonly #pinnedSubMenu: Signal<ISideMenu.Item[]> = computed((): ISideMenu.Item[] =>
+        this.isPinned() ? pinnedSubMenuItems(this.selectedSubMenu(), this.activeMenuIds(), this.menuItems()) : []
+    );
 
     /**
-     * Натянутая ширина панели. Своего выбора нет — переменная не ставится вовсе, и ширину берёт
-     * набор токенов: своё число здесь подменило бы его молча.
-     * Кладётся своим свойством, а не тем, каким ширину задаёт
-     * потребитель: панель берёт наибольшее из двух, и заданная оформлением ширина остаётся нижним
-     * пределом сама по себе. Числом в ките этот предел назвать нечем — ширину знает потребитель.
+     * Натянутая ширина панели. Своего выбора нет — переменная не ставится, и ширину берёт набор
+     * токенов. Кладётся своим свойством: панель берёт наибольшее из двух, и ширина оформления
+     * остаётся нижним пределом — числом в ките его назвать нечем.
      */
     protected readonly subMenuWidthStyle: Signal<string | null> = computed((): string | null => {
-        const width: number | null = this.#resize.width() ?? this.#width();
+        const width: number | null = this.#resize.draggedWidth() ?? this.#width();
 
         return width === null ? null : `${clampSubMenuWidth(width)}px`;
     });
 
     /** Экран узкий: замер кита, и другого источника у этого признака нет. */
     protected readonly narrow: Signal<boolean> = computed(() => !!this.#breakpoints.isMobile());
+
+    /** Ширина и пределы для диктора. Счёт — в `SubMenuResize`: числа знает тяга, а не разметка. */
+    protected readonly resizeValueNow: Signal<number | null> = this.#resize.valueNow;
+    protected readonly resizeValueMin: number = SUB_MENU_WIDTH_MIN;
+    protected readonly resizeValueMax: number = SUB_MENU_WIDTH_MAX;
 
     /** Подписи зашиты: словаря у кита нет, и кнопка возврата рядом названа тем же способом. */
     protected readonly searchLabel: string = 'Search';
@@ -228,13 +221,9 @@ export class RtuiSideMenuComponent implements IRtuiSideMenuHost {
     );
 
     /**
-     * Какие папки подменю стоят раскрытыми. Публично: подпункт берёт раскрытость отсюда — своей у
-     * него нет, а его собственная разметка вложена в него же на любую глубину.
-     *
-     * Пустой запрос отдаёт прежнюю раскрытость, ту, что была до набора: раскрытым остаётся только
-     * раздел текущего адреса. Непустой добавляет к ней все папки, в которых нашлось совпадение, —
-     * иначе результат поиска лежит за закрытым заголовком и человеку нужно нажать ещё раз, чтобы
-     * увидеть то, что он уже нашёл.
+     * Какие папки подменю раскрыты. Публично: своей раскрытости у подпункта нет. Пустой запрос
+     * оставляет раздел текущего адреса; непустой добавляет папки с совпадением — иначе найденное
+     * лежит за закрытым заголовком.
      */
     public readonly expandedMenuIds: Signal<Array<string | number>> = computed((): Array<string | number> => {
         const active: Array<string | number> = this.activeMenuIds();
@@ -278,9 +267,8 @@ export class RtuiSideMenuComponent implements IRtuiSideMenuHost {
         transform: normalizeMenuId,
     });
     /**
-     * Место под кнопки избранного, ждущие наведения: `none`, по умолчанию, — в покое ширины не
-     * занимают, и подпись идёт до края, а под наведением сжимается перед кнопками; `always` —
-     * держат ширину и в покое. Незнакомое значение и пустой атрибут — то же, что `none`.
+     * Место под кнопки избранного, ждущие наведения: `none` (умолчание) — в покое ширины не занимают,
+     * `always` — держат её и в покое. Незнакомое значение и пустой атрибут — `none`.
      */
     public favoriteActionsReserve: InputSignalWithTransform<ISideMenu.FavoriteActionsReserve, string | undefined> = input<
         ISideMenu.FavoriteActionsReserve,
@@ -319,6 +307,15 @@ export class RtuiSideMenuComponent implements IRtuiSideMenuHost {
     public readonly subMenuModeChange: OutputEmitterRef<ISideMenu.SubMenuMode> = output<ISideMenu.SubMenuMode>();
     /** Натянутая ширина — так же, как мода. */
     public readonly subMenuWidthChange: OutputEmitterRef<number> = output<number>();
+    /**
+     * Начало и конец тяги. Потребитель делает по ним то, чего киту делать не след: накрывает кадр
+     * чужого адреса, меняет курсор всей страницы, придерживает перекладку того, что правее панели.
+     * Без этих событий ему остаётся класс ручки — внутреннее дело кита, которое первое же
+     * переименование внутри уносит молча. Конец приходит и на отпускании, и на отнятом указателе:
+     * накрывший на начале снимает накрытие в обоих случаях.
+     */
+    public readonly subMenuResizeStart: OutputEmitterRef<void> = output<void>();
+    public readonly subMenuResizeEnd: OutputEmitterRef<void> = output<void>();
     public readonly closeMobileMenuAction: OutputEmitterRef<void> = output<void>();
     public readonly clickSubMenuAction: OutputEmitterRef<{ item: ISideMenu.Item; event: MouseEvent }> = output<{
         item: ISideMenu.Item;
@@ -421,15 +418,26 @@ export class RtuiSideMenuComponent implements IRtuiSideMenuHost {
         this.subMenuModeChange.emit(mode);
     }
 
-    /** Взята ручка правого края закреплённого подменю. */
-    public onResizeStart(event: MouseEvent): void {
-        if (!this.isPinned() || this.#resize.isActive()) {
+    /** Взята ручка правого края. Механика тяги — `SubMenuResize` и логика рядом. */
+    public onResizeStart(event: PointerEvent): void {
+        // Не основная кнопка тягу не начинает и умолчания своего не теряет.
+        if (!this.isPinned() || this.#resize.running || event.button !== 0) {
             return;
         }
 
         // Иначе указатель выделяет подписи пунктов, и тяга выглядит выделением текста.
         event.preventDefault();
-        this.#resize.start(event.clientX, this.#width() ?? this.#measureSubMenuWidth());
+
+        this.#resize.start(event, this.#width() ?? drawnSubMenuWidth(this.subMenuPanelRef()?.nativeElement ?? null));
+    }
+
+    /** Нажата клавиша на ручке. Умолчание отменяется только у съеденной: ручка не ест табуляцию. */
+    public onResizeKeydown(event: KeyboardEvent): void {
+        const from: number = this.#width() ?? drawnSubMenuWidth(this.subMenuPanelRef()?.nativeElement ?? null);
+
+        if (this.isPinned() && this.#resize.pressKey(event.key, from)) {
+            event.preventDefault();
+        }
     }
 
     public onSubMenuSearch(query: string): void {
@@ -488,13 +496,5 @@ export class RtuiSideMenuComponent implements IRtuiSideMenuHost {
         } else {
             // Пункт без разделов и без своего адреса: нажимать в нём нечего, и выбор остаётся прежним.
         }
-    }
-
-    /** Ширина, от которой отсчитывается тяга, когда своего выбора ещё нет: та, что нарисована. */
-    #measureSubMenuWidth(): number {
-        const panel: ElementRef<HTMLElement> | null = this.subMenuPanelRef() ?? null;
-        const width: number = panel?.nativeElement.getBoundingClientRect().width ?? 0;
-
-        return width > 0 ? width : SUB_MENU_WIDTH_MIN;
     }
 }

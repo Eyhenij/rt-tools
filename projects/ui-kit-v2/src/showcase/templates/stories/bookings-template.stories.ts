@@ -222,6 +222,55 @@ export const EditSaved: TStory = {
 };
 
 /**
+ * Панель настройки колонок раскрыта. Показывает единственный компонент кита, которому кадра до
+ * сих пор не доставалось: список колонок с ручками переноса и выключателями, шапку панели и
+ * кнопки сброса и записи под ним.
+ *
+ * Своей истории у панели нет и быть не может: она живёт адресом и рисуется в правом сайднаве
+ * каркаса, а таблицу, чьи колонки она правит, берёт из реестра. Вне целого экрана ей неоткуда
+ * взять ни то, ни другое — поэтому её показывает эта история, а перечень покрытия называет её
+ * по имени.
+ */
+export const ColumnSettings: TStory = {
+    decorators: [fixture(SHORT_BOOKINGS)],
+
+    // Узел панели назван съёмке: кадр с закрытой панелью иначе неотличим от исправной истории,
+    // у которой панели и не должно быть, — а закрывать себя сама эта панель уже умела.
+    parameters: { ...SCREEN_PARAMETERS, snapshot: { fullPage: true, overlay: 'rt-table-settings-aside' } },
+    play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
+        // Адрес показа возвращается на место в конце по той же причине, что и у истории правки:
+        // панель живёт своим адресом, и оставленный адрес открыл бы её на следующих историях.
+        const showcaseHref: string = window.location.href;
+
+        await awaitScreen(canvasElement, (root: HTMLElement): boolean => root.querySelector(LIST_READY_SELECTOR) !== null);
+
+        // Нажимается внутренняя кнопка, а не хост компонента: обработчик кита висит на ней, и
+        // нажатие из кода по хосту не делает ничего — замер на поднятой витрине дал ноль
+        // открытых панелей по хосту и одну по кнопке.
+        const settings: HTMLElement | null = canvasElement.querySelector(
+            '[qa-dataid="bookings-column-settings"] [qa-dataid="icon-button-control"]'
+        );
+
+        if (settings === null) {
+            window.history.replaceState(null, '', showcaseHref);
+            throw new Error('Кнопка настройки колонок в тулбаре не отрисована');
+        }
+
+        settings.click();
+
+        // Ждётся не панель, а её строки: пустой список колонок выглядит в кадре такой же целой
+        // панелью, и отличить его от полного было бы нечем.
+        await requireScreen(
+            document.body,
+            (root: HTMLElement): boolean => root.querySelector('[qa-dataid="table-settings-row"]') !== null,
+            'список колонок в панели настройки'
+        );
+
+        window.history.replaceState(null, '', showcaseHref);
+    },
+};
+
+/**
  * Панель второго уровня раскрыта. Кит открывает её наведением на раздел, а нажатие остаётся
  * запасным путём для касания — им и пользуется история: наведение, разыгранное из кода, до кадра
  * не доживает.

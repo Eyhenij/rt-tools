@@ -1,5 +1,7 @@
+import { BooleanInput } from '@angular/cdk/coercion';
 import {
     afterNextRender,
+    booleanAttribute,
     ChangeDetectionStrategy,
     Component,
     computed,
@@ -30,9 +32,13 @@ const SIZES: Readonly<Record<IRtIcon.Size, number>> = Object.freeze({
     '2xl': 40,
 });
 
-const COLORS: Readonly<Record<IRtIcon.Color, string>> = Object.freeze({
-    current: 'currentColor',
-    muted: 'var(--rt-neutral-600)',
+/* Без переданного цвета значок цвета не пишет: `currentColor` строкой стиля перебивал правило
+   стилей, которое красит значок снаружи, — значок опасного пункта меню оставался цвета текста. */
+const COLORS: Readonly<Record<IRtIcon.Color, string | null>> = Object.freeze({
+    current: null,
+    // Приглушённый тон можно переназначить свойством сверху: поле ввода называет так тон своего
+    // значка в наборе оформления. Цвет стоит встроенным стилем, и правилом его не перебить.
+    muted: 'var(--rt-icon-color-muted, var(--rt-neutral-600))',
     info: 'var(--rt-color-state-info)',
     success: 'var(--rt-color-state-success)',
     warning: 'var(--rt-color-state-warning)',
@@ -76,7 +82,7 @@ export class RtIconComponent {
      */
     readonly #preset: WritableSignal<IRtIcon.Preset> = signal<IRtIcon.Preset>('base');
 
-    protected readonly href: Signal<string> = computed((): string => this.#registry.symbolHref(this.name(), this.preset()));
+    protected readonly href: Signal<string> = computed((): string => this.#registry.symbolHref(this.name(), this.drawing()));
 
     /**
      * Набор, которым рисуется этот значок. Материальный закрывает не все имена кита — он слой
@@ -87,9 +93,17 @@ export class RtIconComponent {
         this.#preset() === 'material' && iconMaterialDrawn.has(this.name()) ? 'material' : 'base'
     );
 
+    /** Рисунок значка: залитый бывает только у материального набора, свой набор заливки не знает. */
+    protected readonly drawing: Signal<IRtIcon.Drawing> = computed((): IRtIcon.Drawing => {
+        if (this.preset() === 'base') {
+            return 'base';
+        }
+        return this.fill() ? 'material-fill' : 'material';
+    });
+
     protected readonly sizePx: Signal<number> = computed((): number => SIZES[this.size()]);
 
-    protected readonly colorValue: Signal<string> = computed((): string => COLORS[this.color()]);
+    protected readonly colorValue: Signal<string | null> = computed((): string | null => COLORS[this.color()]);
 
     protected readonly rotateStyle: Signal<string | null> = computed((): string | null => {
         const r: number | null = this.rotate();
@@ -101,6 +115,14 @@ export class RtIconComponent {
     public readonly size: InputSignal<IRtIcon.Size> = input<IRtIcon.Size>('md');
 
     public readonly color: InputSignal<IRtIcon.Color> = input<IRtIcon.Color>('current');
+
+    /**
+     * Залитый рисунок вместо контурного — как `FILL 1` у значка первого кита. Действует в
+     * материальном наборе; свой набор рисует значок одним рисунком. Дефолт `false`.
+     */
+    public readonly fill: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
 
     public readonly rotate: InputSignalWithTransform<number | null, TRotateInput> = input<number | null, TRotateInput>(null, {
         transform: (v: TRotateInput): number | null => {
@@ -115,7 +137,7 @@ export class RtIconComponent {
         // Значок едет по запросу имени, а не вперёд всем набором: страница платит за то, что
         // нарисовала. Смена имени просит новое — прежний символ остаётся в спрайте.
         effect((): void => {
-            this.#registry.request(this.name(), this.preset());
+            this.#registry.request(this.name(), this.drawing());
         });
 
         // Разметка над значком видна только в браузере и только после первой отрисовки:

@@ -40,37 +40,52 @@ interface IFileDropDraggingCase {
     template: `
         @switch (part) {
             @case ('resting') {
-                <app-story-row caption="Область в покое" [items]="restingCases" [itemLabel]="caseLabel" [slotWidth]="areaWidth">
-                    <ng-template let-restingCase>
-                        <rt-file-drop class="app-file-drop-matrix__area" [disabled]="restingCase.disabled">
-                            <div class="app-file-drop-matrix__content">Форма заявки</div>
-                        </rt-file-drop>
+                <app-story-presets caption="Область в покое в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="restingCases" [itemLabel]="caseLabel" [slotWidth]="areaWidth">
+                            <ng-template let-restingCase>
+                                <rt-file-drop class="app-file-drop-matrix__area" [disabled]="restingCase.disabled">
+                                    <div class="app-file-drop-matrix__content">Форма заявки</div>
+                                </rt-file-drop>
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('dragging') {
-                <app-story-row caption="Под перетаскиванием" [items]="draggingCases" [itemLabel]="caseLabel" [slotWidth]="areaWidth">
-                    <ng-template let-draggingCase>
-                        <rt-file-drop
-                            class="app-file-drop-matrix__area"
-                            [attr.data-story-drag]="dragAttribute"
-                            [disabled]="draggingCase.disabled"
-                            [overlayLabel]="draggingCase.overlayLabel">
-                            <div class="app-file-drop-matrix__content">Форма заявки</div>
-                        </rt-file-drop>
+                <app-story-presets caption="Под перетаскиванием в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="draggingCases" [itemLabel]="caseLabel" [slotWidth]="areaWidth">
+                            <ng-template let-draggingCase>
+                                <rt-file-drop
+                                    class="app-file-drop-matrix__area"
+                                    [attr.data-story-drag]="dragAttribute"
+                                    [disabled]="draggingCase.disabled"
+                                    [overlayLabel]="draggingCase.overlayLabel">
+                                    <div class="app-file-drop-matrix__content">Форма заявки</div>
+                                </rt-file-drop>
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('zones') {
-                <app-story-row caption="Зоны под перетаскиванием" [items]="zoneCases" [itemLabel]="caseLabel" [slotWidth]="areaWidth">
-                    <ng-template let-zoneCase>
-                        <rt-file-drop class="app-file-drop-matrix__area" [attr.data-story-drag]="dragAttribute" [zones]="zoneCase.zones">
-                            <div class="app-file-drop-matrix__content app-file-drop-matrix__content--tall">Форма заявки</div>
-                        </rt-file-drop>
+                <app-story-presets caption="Зоны под перетаскиванием в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="zoneCases" [itemLabel]="caseLabel" [slotWidth]="areaWidth">
+                            <ng-template let-zoneCase>
+                                <rt-file-drop
+                                    class="app-file-drop-matrix__area"
+                                    [attr.data-story-drag]="dragAttribute"
+                                    [zones]="zoneCase.zones">
+                                    <div class="app-file-drop-matrix__content app-file-drop-matrix__content--tall">Форма заявки</div>
+                                </rt-file-drop>
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('presets') {
@@ -86,15 +101,19 @@ interface IFileDropDraggingCase {
             }
 
             @case ('themes') {
-                <app-story-themes caption="Подсказка в обеих темах">
+                <app-story-presets caption="Подсказка в обеих темах в обоих наборах">
                     <ng-template>
-                        <div class="app-file-drop-matrix__pane">
-                            <rt-file-drop [attr.data-story-drag]="dragAttribute">
-                                <div class="app-file-drop-matrix__content">Форма заявки</div>
-                            </rt-file-drop>
-                        </div>
+                        <app-story-themes>
+                            <ng-template>
+                                <div class="app-file-drop-matrix__pane">
+                                    <rt-file-drop [attr.data-story-drag]="dragAttribute">
+                                        <div class="app-file-drop-matrix__content">Форма заявки</div>
+                                    </rt-file-drop>
+                                </div>
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
             }
         }
     `,

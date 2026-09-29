@@ -22,6 +22,10 @@
                 </rt-skeleton-wrapper>
             </h2>
 
+            @if (subtitle(); as subtitleText) {
+                <p rtElem="subtitle" qa-dataid="aside-subtitle">{{ subtitleText }}</p>
+            }
+
             @if (badges().length > 0) {
                 <div rtElem="badges">
                     @for (badge of badges(); track badge.value) {

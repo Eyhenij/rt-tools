@@ -16,12 +16,14 @@ import { RtMenuItemComponent } from '../../rt-menu-item.component';
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
 export type TMenuItemMatrixPart = 'kinds' | 'states' | 'presets' | 'themes';
 
-/** Вид пункта: иконка, деструктивность и недоступность вместе — порознь они не бывают. */
+/** Вид пункта: иконка, тон и недоступность вместе — порознь они не бывают. */
 interface IMenuItemKindCase {
     readonly name: string;
     readonly label: string;
     readonly icon: IRtIcon.Name | null;
     readonly danger: boolean;
+    readonly success?: boolean;
+    readonly glyph?: string;
     readonly disabled: boolean;
     readonly confirmMessage: string;
 }
@@ -40,30 +42,44 @@ interface IMenuItemKindCase {
     template: `
         @switch (part) {
             @case ('kinds') {
-                <app-story-row caption="Вид пункта" [items]="kindCases" [itemLabel]="caseLabel" [slotWidth]="itemWidth">
-                    <ng-template let-kindCase>
-                        <rt-menu-item
-                            [label]="kindCase.label"
-                            [icon]="kindCase.icon"
-                            [danger]="kindCase.danger"
-                            [disabled]="kindCase.disabled"
-                            [confirmMessage]="kindCase.confirmMessage" />
+                <app-story-presets caption="Вид пункта в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="kindCases" [itemLabel]="caseLabel" [slotWidth]="itemWidth">
+                            <ng-template let-kindCase>
+                                <rt-menu-item
+                                    [label]="kindCase.label"
+                                    [icon]="kindCase.icon"
+                                    [danger]="kindCase.danger"
+                                    [success]="kindCase.success ?? false"
+                                    [glyph]="kindCase.glyph ?? null"
+                                    [disabled]="kindCase.disabled"
+                                    [confirmMessage]="kindCase.confirmMessage" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('states') {
-                <app-story-row caption="Взаимодействие" [items]="states" [itemLabel]="stateLabel" [slotWidth]="itemWidth">
-                    <ng-template let-state>
-                        <rt-menu-item label="Открыть" icon="ico-eye" [attr.data-story-state]="state.state" />
-                    </ng-template>
-                </app-story-row>
+                <app-story-presets caption="Взаимодействие в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="states" [itemLabel]="stateLabel" [slotWidth]="itemWidth">
+                            <ng-template let-state>
+                                <rt-menu-item label="Открыть" icon="ico-eye" [attr.data-story-state]="state.state" />
+                            </ng-template>
+                        </app-story-row>
 
-                <app-story-row caption="Наведение на недоступный" [items]="disabledStates" [itemLabel]="stateLabel" [slotWidth]="itemWidth">
-                    <ng-template let-state>
-                        <rt-menu-item label="Удалить" icon="ico-trash" [disabled]="true" [attr.data-story-state]="state.state" />
+                        <app-story-row
+                            caption="Наведение на недоступный"
+                            [items]="disabledStates"
+                            [itemLabel]="stateLabel"
+                            [slotWidth]="itemWidth">
+                            <ng-template let-state>
+                                <rt-menu-item label="Удалить" icon="ico-trash" [disabled]="true" [attr.data-story-state]="state.state" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('presets') {
@@ -74,6 +90,8 @@ interface IMenuItemKindCase {
                                 [label]="kindCase.label"
                                 [icon]="kindCase.icon"
                                 [danger]="kindCase.danger"
+                                [success]="kindCase.success ?? false"
+                                [glyph]="kindCase.glyph ?? null"
                                 [disabled]="kindCase.disabled" />
                         }
                     </ng-template>
@@ -81,17 +99,23 @@ interface IMenuItemKindCase {
             }
 
             @case ('themes') {
-                <app-story-themes caption="Виды пунктов в обеих темах">
+                <app-story-presets caption="Виды пунктов в обеих темах в обоих наборах">
                     <ng-template>
-                        @for (kindCase of kindCases; track kindCase.name) {
-                            <rt-menu-item
-                                [label]="kindCase.label"
-                                [icon]="kindCase.icon"
-                                [danger]="kindCase.danger"
-                                [disabled]="kindCase.disabled" />
-                        }
+                        <app-story-themes>
+                            <ng-template>
+                                @for (kindCase of kindCases; track kindCase.name) {
+                                    <rt-menu-item
+                                        [label]="kindCase.label"
+                                        [icon]="kindCase.icon"
+                                        [danger]="kindCase.danger"
+                                        [success]="kindCase.success ?? false"
+                                        [glyph]="kindCase.glyph ?? null"
+                                        [disabled]="kindCase.disabled" />
+                                }
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
             }
         }
     `,
@@ -123,6 +147,16 @@ export class TestRtMenuItemMatrixComponent {
         { name: 'обычный', label: 'Открыть', icon: null, danger: false, disabled: false, confirmMessage: '' },
         { name: 'с иконкой', label: 'Открыть', icon: 'ico-eye', danger: false, disabled: false, confirmMessage: '' },
         { name: 'деструктивный', label: 'Удалить', icon: 'ico-trash', danger: true, disabled: false, confirmMessage: '' },
+        {
+            name: 'согласие, значок Material',
+            label: 'Принять',
+            icon: null,
+            glyph: 'done',
+            danger: false,
+            success: true,
+            disabled: false,
+            confirmMessage: '',
+        },
         { name: 'недоступный', label: 'Удалить', icon: 'ico-trash', danger: false, disabled: true, confirmMessage: '' },
         {
             name: 'с подтверждением',

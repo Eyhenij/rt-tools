@@ -26,111 +26,133 @@ export type TTabsMatrixPart = 'direction' | 'title' | 'tabState' | 'stretch' | '
     template: `
         @switch (part) {
             @case ('direction') {
-                <app-story-row caption="Раскладка" slotWidth="24rem" [items]="directions" [itemLabel]="directionLabel">
-                    <ng-template let-direction>
-                        <rt-tabs activeId="overview" [direction]="direction">
-                            <ng-template rtTab="overview" label="Обзор">Сводка по договору</ng-template>
-                            <ng-template rtTab="members" label="Участники">Список участников</ng-template>
-                            <ng-template rtTab="history" label="История">Журнал изменений</ng-template>
-                        </rt-tabs>
+                <app-story-presets caption="Раскладка в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="24rem" [items]="directions" [itemLabel]="directionLabel">
+                            <ng-template let-direction>
+                                <rt-tabs activeId="overview" [direction]="direction">
+                                    <ng-template rtTab="overview" label="Обзор">Сводка по договору</ng-template>
+                                    <ng-template rtTab="members" label="Участники">Список участников</ng-template>
+                                    <ng-template rtTab="history" label="История">Журнал изменений</ng-template>
+                                </rt-tabs>
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('title') {
-                <app-story-row caption="Заголовок вкладки" slotWidth="24rem" [items]="titles">
-                    <ng-template let-title>
-                        @switch (title) {
-                            @case ('только подпись') {
-                                <rt-tabs activeId="a">
-                                    <ng-template rtTab="a" label="Обзор">Содержимое</ng-template>
-                                    <ng-template rtTab="b" label="Участники">Содержимое</ng-template>
-                                </rt-tabs>
-                            }
-                            @case ('с иконкой') {
-                                <rt-tabs activeId="a">
-                                    <ng-template rtTab="a" label="Обзор" icon="ico-listing">Содержимое</ng-template>
-                                    <ng-template rtTab="b" label="Участники" icon="ico-users">Содержимое</ng-template>
-                                </rt-tabs>
-                            }
-                            @case ('со значком') {
-                                <rt-tabs activeId="a">
-                                    <ng-template rtTab="a" label="Обзор" [badge]="3">Содержимое</ng-template>
-                                    <ng-template rtTab="b" label="Участники" badge="99+">Содержимое</ng-template>
-                                </rt-tabs>
-                            }
-                            @case ('иконка и значок') {
-                                <rt-tabs activeId="a">
-                                    <ng-template rtTab="a" label="Обзор" icon="ico-listing" [badge]="3">Содержимое</ng-template>
-                                    <ng-template rtTab="b" label="Задачи" icon="list" iconColor="warning" badge="12">
-                                        Содержимое
-                                    </ng-template>
-                                </rt-tabs>
-                            }
-                        }
+                <app-story-presets caption="Заголовок вкладки в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="24rem" [items]="titles">
+                            <ng-template let-title>
+                                @switch (title) {
+                                    @case ('только подпись') {
+                                        <rt-tabs activeId="a">
+                                            <ng-template rtTab="a" label="Обзор">Содержимое</ng-template>
+                                            <ng-template rtTab="b" label="Участники">Содержимое</ng-template>
+                                        </rt-tabs>
+                                    }
+                                    @case ('с иконкой') {
+                                        <rt-tabs activeId="a">
+                                            <ng-template rtTab="a" label="Обзор" icon="ico-listing">Содержимое</ng-template>
+                                            <ng-template rtTab="b" label="Участники" icon="ico-users">Содержимое</ng-template>
+                                        </rt-tabs>
+                                    }
+                                    @case ('со значком') {
+                                        <rt-tabs activeId="a">
+                                            <ng-template rtTab="a" label="Обзор" [badge]="3">Содержимое</ng-template>
+                                            <ng-template rtTab="b" label="Участники" badge="99+">Содержимое</ng-template>
+                                        </rt-tabs>
+                                    }
+                                    @case ('иконка и значок') {
+                                        <rt-tabs activeId="a">
+                                            <ng-template rtTab="a" label="Обзор" icon="ico-listing" [badge]="3">Содержимое</ng-template>
+                                            <ng-template rtTab="b" label="Задачи" icon="list" iconColor="warning" badge="12">
+                                                Содержимое
+                                            </ng-template>
+                                        </rt-tabs>
+                                    }
+                                }
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('tabState') {
-                <div style="width: 34rem">
-                    <rt-tabs activeId="active">
-                        <ng-template rtTab="active" label="Активная">Содержимое активной вкладки</ng-template>
-                        <ng-template rtTab="plain" label="Обычная">Содержимое</ng-template>
-                        <ng-template rtTab="off" disabled label="Отключённая">Сюда не попасть</ng-template>
-                        <ng-template rtTab="bad" invalid label="С ошибкой" invalidMessage="Не заполнено два поля">Содержимое</ng-template>
-                        <ng-template rtTab="badge" label="Со значком" [badge]="7">Содержимое</ng-template>
-                        <ng-template rtTab="gone" hidden label="Скрытая — её в полосе нет">Содержимое</ng-template>
-                    </rt-tabs>
-                </div>
+                <app-story-presets caption="Состояния вкладок в обоих наборах">
+                    <ng-template>
+                        <div style="width: 34rem">
+                            <rt-tabs activeId="active">
+                                <ng-template rtTab="active" label="Активная">Содержимое активной вкладки</ng-template>
+                                <ng-template rtTab="plain" label="Обычная">Содержимое</ng-template>
+                                <ng-template rtTab="off" disabled label="Отключённая">Сюда не попасть</ng-template>
+                                <ng-template rtTab="bad" invalid label="С ошибкой" invalidMessage="Не заполнено два поля">
+                                    Содержимое
+                                </ng-template>
+                                <ng-template rtTab="badge" label="Со значком" [badge]="7">Содержимое</ng-template>
+                                <ng-template rtTab="gone" hidden label="Скрытая — её в полосе нет">Содержимое</ng-template>
+                            </rt-tabs>
+                        </div>
+                    </ng-template>
+                </app-story-presets>
             }
 
             @case ('stretch') {
-                <app-story-row caption="Растяжение по ширине" slotWidth="24rem" [items]="stretches" [itemLabel]="stretchLabel">
-                    <ng-template let-value>
-                        <rt-tabs activeId="a" [stretch]="value">
-                            <ng-template rtTab="a" label="Обзор">Содержимое</ng-template>
-                            <ng-template rtTab="b" label="Участники">Содержимое</ng-template>
-                            <ng-template rtTab="c" label="История">Содержимое</ng-template>
-                        </rt-tabs>
+                <app-story-presets caption="Растяжение по ширине в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="24rem" [items]="stretches" [itemLabel]="stretchLabel">
+                            <ng-template let-value>
+                                <rt-tabs activeId="a" [stretch]="value">
+                                    <ng-template rtTab="a" label="Обзор">Содержимое</ng-template>
+                                    <ng-template rtTab="b" label="Участники">Содержимое</ng-template>
+                                    <ng-template rtTab="c" label="История">Содержимое</ng-template>
+                                </rt-tabs>
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('edges') {
-                <app-story-row caption="Края" slotWidth="24rem" [items]="edges">
-                    <ng-template let-edge>
-                        @switch (edge) {
-                            @case ('ни одной вкладки') {
-                                <rt-tabs />
-                            }
-                            @case ('одна вкладка') {
-                                <rt-tabs activeId="only">
-                                    <ng-template rtTab="only" label="Обзор">Содержимое</ng-template>
-                                </rt-tabs>
-                            }
-                            @case ('неизвестный activeId') {
-                                <rt-tabs activeId="нет-такой">
-                                    <ng-template rtTab="a" label="Обзор">Откат на первую доступную</ng-template>
-                                    <ng-template rtTab="b" label="Участники">Содержимое</ng-template>
-                                </rt-tabs>
-                            }
-                            @case ('активная отключена') {
-                                <rt-tabs activeId="off">
-                                    <ng-template rtTab="off" disabled label="Отключённая">Активной стать не может</ng-template>
-                                    <ng-template rtTab="b" label="Участники">Содержимое</ng-template>
-                                </rt-tabs>
-                            }
-                            @case ('вкладок больше ширины') {
-                                <rt-tabs activeId="t1">
-                                    @for (index of many; track index) {
-                                        <ng-template [rtTab]="'t' + index" [label]="'Раздел ' + index">Содержимое</ng-template>
+                <app-story-presets caption="Края в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="24rem" [items]="edges">
+                            <ng-template let-edge>
+                                @switch (edge) {
+                                    @case ('ни одной вкладки') {
+                                        <rt-tabs />
                                     }
-                                </rt-tabs>
-                            }
-                        }
+                                    @case ('одна вкладка') {
+                                        <rt-tabs activeId="only">
+                                            <ng-template rtTab="only" label="Обзор">Содержимое</ng-template>
+                                        </rt-tabs>
+                                    }
+                                    @case ('неизвестный activeId') {
+                                        <rt-tabs activeId="нет-такой">
+                                            <ng-template rtTab="a" label="Обзор">Откат на первую доступную</ng-template>
+                                            <ng-template rtTab="b" label="Участники">Содержимое</ng-template>
+                                        </rt-tabs>
+                                    }
+                                    @case ('активная отключена') {
+                                        <rt-tabs activeId="off">
+                                            <ng-template rtTab="off" disabled label="Отключённая">Активной стать не может</ng-template>
+                                            <ng-template rtTab="b" label="Участники">Содержимое</ng-template>
+                                        </rt-tabs>
+                                    }
+                                    @case ('вкладок больше ширины') {
+                                        <rt-tabs activeId="t1">
+                                            @for (index of many; track index) {
+                                                <ng-template [rtTab]="'t' + index" [label]="'Раздел ' + index">Содержимое</ng-template>
+                                            }
+                                        </rt-tabs>
+                                    }
+                                }
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('presets') {
@@ -148,17 +170,21 @@ export type TTabsMatrixPart = 'direction' | 'title' | 'tabState' | 'stretch' | '
             }
 
             @case ('themes') {
-                <app-story-themes caption="Вкладки в обеих темах">
+                <app-story-presets caption="Вкладки в обеих темах в обоих наборах">
                     <ng-template>
-                        <div style="width: 24rem">
-                            <rt-tabs activeId="a">
-                                <ng-template rtTab="a" label="Обзор" icon="ico-listing">Содержимое</ng-template>
-                                <ng-template rtTab="b" label="Участники" [badge]="3">Содержимое</ng-template>
-                                <ng-template rtTab="c" disabled label="Отключённая">Содержимое</ng-template>
-                            </rt-tabs>
-                        </div>
+                        <app-story-themes>
+                            <ng-template>
+                                <div style="width: 24rem">
+                                    <rt-tabs activeId="a">
+                                        <ng-template rtTab="a" label="Обзор" icon="ico-listing">Содержимое</ng-template>
+                                        <ng-template rtTab="b" label="Участники" [badge]="3">Содержимое</ng-template>
+                                        <ng-template rtTab="c" disabled label="Отключённая">Содержимое</ng-template>
+                                    </rt-tabs>
+                                </div>
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
             }
         }
     `,

@@ -181,6 +181,7 @@ node tools/check-preset-stories.mjs
 node tools/check-showcase-links.mjs
 node tools/check-kit-shot-pairs.mjs
 node tools/check-kit-coverage.mjs
+node tools/check-boolean-inputs.mjs
 node tools/check-tokens-styles.mjs
 node tools/check-cascade-layer.mjs
 node tools/check-format-ignore.mjs
@@ -241,9 +242,21 @@ EOF
             ;;
     esac
 
-    case " $_touched " in *' receiver '*) printf '%s\n%s\n%s\n' "$e2e" "$img_api" "$img_web" ;; esac
-    case " $_touched " in *' kit1 '*) printf '%s\n' "$shot_v1" ;; esac
-    case " $_touched " in *' kit2 '*) printf '%s\n' "$shot_v2" ;; esac
+    # Шаги собираются в строку и печатаются без повторов: сквозной набор админки зовут два
+    # предмета сразу — приёмник и второй кит, — а тронуты они бывают вместе. Напечатанный дважды,
+    # он и прогонялся бы дважды: четыре лишние минуты на каждой такой отправке.
+    {
+        case " $_touched " in *' receiver '*) printf '%s\n%s\n%s\n' "$e2e" "$img_api" "$img_web" ;; esac
+        case " $_touched " in *' kit1 '*) printf '%s\n' "$shot_v1" ;; esac
+    # Второй кит рисует не только свою витрину. Админка подключает его набор стилей одной строкой
+    # в своём корневом файле оформления, поэтому правка кита меняет каждый её экран — и кадры этих
+    # экранов обязаны сличиться здесь, а не через день у соседней ветки. Цена молчания замерена:
+    # работа RT-1993 привезла гарнитуру, пересняла 600 кадров витрины и ушла зелёной по своему
+    # признаку, а экраны админки не сличались ни разу — 23 кадра разошлись и держали отправку у
+    # всех веток эпика (задача RT-2257). Образы сюда не идут: правка кита их не ломает, а сквозной
+    # набор собирает прод-сборку сам.
+        case " $_touched " in *' kit2 '*) printf '%s\n%s\n' "$shot_v2" "$e2e" ;; esac
+    } | awk '!seen[$0]++'
 }
 
 # The heavy steps of this tree past the package default: the showcase snapshots raise a showcase

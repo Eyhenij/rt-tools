@@ -93,6 +93,51 @@ describe('RtConfirmDirective', (): void => {
         expect(fixture.componentInstance.confirm()?.isOpen()).toBe(true);
     });
 
+    it('SC-UKV-372 — панель, открытая под признаком набора, несёт класс набора, без признака — нет', (): void => {
+        const plain: ComponentFixture<ConfirmHostComponent> = setup();
+        openPanel(plain);
+        expect(document.querySelector('.rt-confirm-popover-panel')?.classList.contains('rt-preset-material')).toBe(false);
+        plain.destroy();
+
+        const fixture: ComponentFixture<ConfirmHostComponent> = setup();
+        (fixture.nativeElement as HTMLElement).setAttribute('data-preset', 'material');
+        openPanel(fixture);
+
+        expect(document.querySelector('.rt-confirm-popover-panel')?.classList.contains('rt-preset-material')).toBe(true);
+    });
+
+    describe('тема куска', (): void => {
+        afterEach((): void => {
+            document.documentElement.removeAttribute('data-theme');
+        });
+
+        it('панель из тёмного куска несёт тему куска на коробке и снимает её, когда кусок ушёл', (): void => {
+            const fixture: ComponentFixture<ConfirmHostComponent> = setup();
+            (fixture.nativeElement as HTMLElement).setAttribute('data-theme', 'dark');
+
+            openPanel(fixture);
+            expect(document.querySelector('.rt-confirm-popover-panel')?.getAttribute('data-theme')).toBe('dark');
+
+            button('confirm-cancel')?.click();
+            fixture.detectChanges();
+            (fixture.nativeElement as HTMLElement).removeAttribute('data-theme');
+            openPanel(fixture);
+
+            expect(panel()).not.toBeNull();
+            expect(document.querySelector('.rt-confirm-popover-panel')?.hasAttribute('data-theme')).toBe(false);
+        });
+
+        it('тема корня страницы на коробку не копируется', (): void => {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            const fixture: ComponentFixture<ConfirmHostComponent> = setup();
+
+            openPanel(fixture);
+
+            expect(panel()).not.toBeNull();
+            expect(document.querySelector('.rt-confirm-popover-panel')?.hasAttribute('data-theme')).toBe(false);
+        });
+    });
+
     it('пустой вопрос не открывает ничего — подтверждать нечего', (): void => {
         const fixture: ComponentFixture<ConfirmHostComponent> = setup({ message: '   ' });
 

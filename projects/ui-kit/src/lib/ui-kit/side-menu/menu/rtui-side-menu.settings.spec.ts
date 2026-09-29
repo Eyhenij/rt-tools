@@ -4,9 +4,10 @@ import { LOCAL_STORAGE } from '@rt-tools/core';
 import { provideRtuiSideMenuSettings, RtuiSideMenuSettingsService } from '../settings/rtui-side-menu-settings.service';
 import { DEFAULT_MENU_ID, SIDE_MENU_SETTINGS_KEY } from '../settings/side-menu-settings.logic';
 import { MemoryStorage } from '../settings/storage.harness';
-import { HostComponent, installFontsStub, ISetup, pin, setup } from './side-menu.harness';
+import { HostComponent, installFontsStub, installPointerEventStub, ISetup, pin, pointer, setup } from './side-menu.harness';
 
 beforeAll(installFontsStub);
+beforeAll(installPointerEventStub);
 
 // Закреплённое подменю доводит активный пункт до видимой части, а движок тестов прокрутки не знает.
 beforeAll((): void => {
@@ -62,9 +63,9 @@ describe('RtuiSideMenuComponent — настройки меню', () => {
         const { fixture } = withSettings(storage, 'user-a');
         const handle: HTMLElement = (fixture.nativeElement as HTMLElement).querySelector('[qa-dataid="side-menu-resize"]') as HTMLElement;
 
-        handle.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, clientX: 0 }));
-        document.dispatchEvent(new MouseEvent('mousemove', { bubbles: true, clientX: 50 }));
-        document.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, clientX: 50 }));
+        pointer(handle, 'pointerdown', 0);
+        pointer(handle, 'pointermove', 50);
+        pointer(handle, 'pointerup', 50);
         fixture.detectChanges();
 
         expect(stored(storage)).toEqual({ 'user-a': { subMenuMode: 'pinned', subMenuWidth: 350 } });

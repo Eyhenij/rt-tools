@@ -1,0 +1,36 @@
+import { Meta, StoryObj } from '@storybook/angular';
+
+import { storySnapshotSkip } from '../../../../showcase';
+import { TestRtDataListComponent } from './component/test-data-list.component';
+
+export default {
+    title: 'Organisms/Material Dynamic List/DataList',
+    // Тема первого кита на всю страницу: таблица первого кита рисуется как на его витрине.
+    globals: { preset: 'first-kit-theme' },
+    component: TestRtDataListComponent,
+    argTypes: {
+        filtersShown: { control: { type: 'boolean' } },
+        iconsOutlined: { control: { type: 'boolean' } },
+        loading: { control: { type: 'boolean' } },
+        fetching: { control: { type: 'boolean' } },
+        selectAllShown: { control: { type: 'boolean' } },
+        multiSelect: { control: { type: 'boolean' } },
+        rows: { control: false },
+        page: { control: false },
+        columns: { control: false },
+    },
+} as Meta<TestRtDataListComponent>;
+
+type TStory = StoryObj<TestRtDataListComponent>;
+
+export const Playground: TStory = {
+    parameters: storySnapshotSkip('значения по умолчанию уже стоят ячейкой в матрице этого компонента'),
+    args: {
+        filtersShown: false,
+        iconsOutlined: true,
+        loading: false,
+        fetching: false,
+        selectAllShown: true,
+        multiSelect: true,
+    },
+};

@@ -71,14 +71,12 @@ describe('RtIconComponent', (): void => {
     });
 
     describe('цвет', (): void => {
-        it('без входа наследует цвет текста', (): void => {
-            // jsdom приводит ключевые слова CSS к нижнему регистру — сравнение
-            // без учёта регистра, иначе проверка ловила бы поведение jsdom.
-            expect(hostStyle(setup(), 'color').toLowerCase()).toBe('currentcolor');
+        it('без входа цвета не пишет — наследует цвет текста, и правило стилей снаружи его достаёт', (): void => {
+            expect(hostStyle(setup(), 'color')).toBe('');
         });
 
         it.each<[IRtIcon.Color, string]>([
-            ['muted', 'var(--rt-neutral-600)'],
+            ['muted', 'var(--rt-icon-color-muted, var(--rt-neutral-600))'],
             ['info', 'var(--rt-color-state-info)'],
             ['success', 'var(--rt-color-state-success)'],
             ['warning', 'var(--rt-color-state-warning)'],

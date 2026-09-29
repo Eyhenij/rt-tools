@@ -1,6 +1,6 @@
 <ng-container rtBlock="rt-menu-item">
-    @if (icon(); as iconName) {
-        <rt-icon rtElem="icon" size="sm" [name]="iconName" />
+    @if (iconName(); as name) {
+        <rt-icon rtElem="icon" size="sm" [name]="name" />
     }
 
     <span rtElem="label" qa-dataid="menu-item-label">{{ label() }}</span>

@@ -25,7 +25,7 @@ export default {
 
 type TStory = StoryObj<TestRtWorkspaceDetailsComponent>;
 
-export const Default: TStory = {
+export const Playground: TStory = {
     parameters: storySnapshotSkip(
         'обёртка отдаёт пустыми `rows`, `money`, `toggles` и `actions`, и карточка рисует один заголовок; пустой показ покрытием не считается, наполнение — волна покрытия составных компонентов'
     ),

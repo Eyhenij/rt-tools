@@ -18,10 +18,11 @@ import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 import { IPageModel } from '@rt-tools/utils';
 
 import { RT_KIT_LABELS, TRtKitLabelMap, TRtKitLabelParams, rtKitLabel } from '../../i18n';
+import { IRtIcon } from '../icon/rt-icon.model';
 import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
 import { RtSelectComponent } from '../select/rt-select.component';
 import { IRtSelect } from '../select/rt-select.model';
-import { lastPageOf, pageItemsOf, rangeFromOf, rangeToOf } from './rt-pagination.logic';
+import { lastPageOf, pageItemsOf, pageSlotsOf, rangeFromOf, rangeToOf } from './rt-pagination.logic';
 import { IRtPagination } from './rt-pagination.model';
 
 const BEM_BLOCK: string = 'rt-pagination';
@@ -79,6 +80,15 @@ export class RtPaginationComponent {
 
     public readonly perPageOptions: InputSignal<ReadonlyArray<number>> = input<ReadonlyArray<number>>([20, 50, 100]);
 
+    /** Значок стрелки «назад»: вид первого кита рисует стрелку, а не шеврон. */
+    public readonly prevIcon: InputSignal<IRtIcon.Name> = input<IRtIcon.Name>('chevron-left');
+
+    /** Значок стрелки «вперёд». */
+    public readonly nextIcon: InputSignal<IRtIcon.Name> = input<IRtIcon.Name>('chevron-right');
+
+    /** Счёт номеров: список под материальным набором просит семь мест первого кита. */
+    public readonly numbering: InputSignal<IRtPagination.Numbering> = input<IRtPagination.Numbering>('neighbours');
+
     public readonly loading: InputSignalWithTransform<boolean, unknown> = input(false, {
         transform: booleanAttribute,
     });
@@ -111,9 +121,9 @@ export class RtPaginationComponent {
 
     public readonly rangeTo: Signal<number> = computed((): number => rangeToOf(this.pageModel()));
 
-    /** Полоса номеров страниц с разрывами «…». Пуста при единственной странице. */
+    /** Полоса номеров страниц с разрывами «…». По соседям пуста при единственной странице. */
     public readonly pageItems: Signal<ReadonlyArray<IRtPagination.PageItem>> = computed((): ReadonlyArray<IRtPagination.PageItem> =>
-        pageItemsOf(this.pageModel(), NEIGHBOURS)
+        this.numbering() === 'seven' ? pageSlotsOf(this.pageModel()) : pageItemsOf(this.pageModel(), NEIGHBOURS)
     );
 
     public goTo(pageNumber: number): void {

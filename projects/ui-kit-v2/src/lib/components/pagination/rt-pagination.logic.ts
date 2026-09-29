@@ -48,3 +48,39 @@ export function pageItemsOf(page: IPageModel, neighbours: number): ReadonlyArray
 
     return items;
 }
+
+/** Номера с `from` по `to` включительно. */
+function pagesBetween(from: number, to: number): number[] {
+    return Array.from({ length: to - from + 1 }, (_value: unknown, index: number): number => from + index);
+}
+
+/**
+ * Полоса номеров первого кита — семь мест: до шести страниц видны все, дальше края по три
+ * (`1 2 3 … 11 12 13`) или первая, соседи открытой и последняя (`1 … 6 7 8 … 13`); у края разрыв
+ * съезжает на одно место за открытой страницей. Одна страница — один номер.
+ */
+export function pageSlotsOf(page: IPageModel): ReadonlyArray<IRtPagination.PageItem> {
+    const lastPage: number = lastPageOf(page);
+    const current: number = page.pageNumber;
+
+    if (lastPage <= 6) {
+        return pagesBetween(1, lastPage);
+    }
+    if (current < 3 || current > lastPage - 2) {
+        return [...pagesBetween(1, 3), 'gap', ...pagesBetween(lastPage - 2, lastPage)];
+    }
+    if (current === 3) {
+        return [...pagesBetween(1, 4), 'gap', ...pagesBetween(lastPage - 1, lastPage)];
+    }
+    if (current === 4) {
+        return [...pagesBetween(1, 5), 'gap', lastPage];
+    }
+    if (current <= lastPage - 4) {
+        return [1, 'gap', current - 1, current, current + 1, 'gap', lastPage];
+    }
+    if (current === lastPage - 3) {
+        return [1, 'gap', ...pagesBetween(lastPage - 4, lastPage)];
+    }
+
+    return [1, 2, 'gap', ...pagesBetween(lastPage - 3, lastPage)];
+}

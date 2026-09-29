@@ -3,7 +3,7 @@
 
     <span rtElem="text">
         <span rtElem="title" qa-dataid="file-card-title" [rtTooltip]="title()">{{ title() }}</span>
-        <span rtElem="name" qa-dataid="file-card-name">{{ name() | rtTruncateMiddle }}</span>
+        <span rtElem="name" qa-dataid="file-card-name" [rtTooltip]="name()">{{ name() | rtTruncateMiddle }}</span>
     </span>
 
     <span rtElem="meta">

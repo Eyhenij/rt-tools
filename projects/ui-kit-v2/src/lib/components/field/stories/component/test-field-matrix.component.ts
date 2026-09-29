@@ -88,74 +88,110 @@ function failing(validators: ValidatorFn[] = [Validators.required], value: strin
     template: `
         @switch (part) {
             @case ('anatomy') {
-                <app-story-row caption="Анатомия" [items]="anatomyCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
-                    <ng-template let-anatomyCase>
-                        <rt-field [label]="anatomyCase.label" [hint]="anatomyCase.hint" [help]="anatomyCase.help">
-                            <rt-input placeholder="Москва" [formControl]="anatomyCase.control" />
-                        </rt-field>
+                <app-story-presets caption="Анатомия в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="anatomyCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
+                            <ng-template let-anatomyCase>
+                                <rt-field [label]="anatomyCase.label" [hint]="anatomyCase.hint" [help]="anatomyCase.help">
+                                    <rt-input placeholder="Москва" [formControl]="anatomyCase.control" />
+                                </rt-field>
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('required') {
-                <app-story-row caption="Обязательность" [items]="requiredCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
-                    <ng-template let-requiredCase>
-                        <rt-field label="Город" [hideRequiredMark]="requiredCase.hideRequiredMark">
-                            <rt-input placeholder="Москва" [formControl]="requiredCase.control" />
-                        </rt-field>
+                <app-story-presets caption="Обязательность в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="requiredCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
+                            <ng-template let-requiredCase>
+                                <rt-field label="Город" [hideRequiredMark]="requiredCase.hideRequiredMark">
+                                    <rt-input placeholder="Москва" [formControl]="requiredCase.control" />
+                                </rt-field>
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('error') {
-                <app-story-row caption="Ошибка" [items]="errorCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
-                    <ng-template let-errorCase>
-                        <rt-field label="Почта" [hint]="errorCase.hint" [errors]="errorCase.errors" [reserveHintSpace]="errorCase.reserve">
-                            <rt-input type="email" placeholder="ivanov@example.com" [formControl]="errorCase.control" />
-                        </rt-field>
+                <app-story-presets caption="Ошибка в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="errorCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
+                            <ng-template let-errorCase>
+                                <rt-field
+                                    label="Почта"
+                                    [hint]="errorCase.hint"
+                                    [errors]="errorCase.errors"
+                                    [reserveHintSpace]="errorCase.reserve">
+                                    <rt-input type="email" placeholder="ivanov@example.com" [formControl]="errorCase.control" />
+                                </rt-field>
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('hint') {
-                <app-story-row caption="Подсказка" [items]="hintCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
-                    <ng-template let-hintCase>
-                        @if (hintCase.projected) {
-                            <rt-field label="Пароль">
-                                <rt-input type="password" [passwordToggle]="true" [formControl]="hintCase.control" />
-                                <span rtFieldHint>
-                                    Не короче
-                                    <strong>восьми</strong>
-                                    символов
-                                </span>
-                            </rt-field>
-                        } @else {
-                            <rt-field label="Пароль" hint="Не короче восьми символов">
-                                <rt-input type="password" [passwordToggle]="true" [formControl]="hintCase.control" />
-                            </rt-field>
-                        }
+                <app-story-presets caption="Подсказка в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="hintCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
+                            <ng-template let-hintCase>
+                                @if (hintCase.projected) {
+                                    <rt-field label="Пароль">
+                                        <rt-input type="password" [passwordToggle]="true" [formControl]="hintCase.control" />
+                                        <span rtFieldHint>
+                                            Не короче
+                                            <strong>восьми</strong>
+                                            символов
+                                        </span>
+                                    </rt-field>
+                                } @else {
+                                    <rt-field label="Пароль" hint="Не короче восьми символов">
+                                        <rt-input type="password" [passwordToggle]="true" [formControl]="hintCase.control" />
+                                    </rt-field>
+                                }
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('modes') {
-                <app-story-row caption="Режимы" [items]="modeCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
-                    <ng-template let-modeCase>
-                        <rt-field label="Город" hint="Как в адресе доставки" [readonly]="modeCase.readonly" [loading]="modeCase.loading">
-                            <rt-input placeholder="Москва" [formControl]="modeCase.control" />
-                        </rt-field>
+                <app-story-presets caption="Режимы в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="modeCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
+                            <ng-template let-modeCase>
+                                <rt-field
+                                    label="Город"
+                                    hint="Как в адресе доставки"
+                                    [readonly]="modeCase.readonly"
+                                    [loading]="modeCase.loading">
+                                    <rt-input placeholder="Москва" [formControl]="modeCase.control" />
+                                </rt-field>
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('states') {
-                <app-story-row caption="Строка сообщений" [items]="stateCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
-                    <ng-template let-stateCase>
-                        <rt-field label="Почта" [hint]="stateCase.hint" [errors]="stateCase.errors" [reserveHintSpace]="stateCase.reserve">
-                            <rt-input type="email" placeholder="ivanov@example.com" [formControl]="stateCase.control" />
-                        </rt-field>
+                <app-story-presets caption="Строка сообщений в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="stateCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
+                            <ng-template let-stateCase>
+                                <rt-field
+                                    label="Почта"
+                                    [hint]="stateCase.hint"
+                                    [errors]="stateCase.errors"
+                                    [reserveHintSpace]="stateCase.reserve">
+                                    <rt-input type="email" placeholder="ivanov@example.com" [formControl]="stateCase.control" />
+                                </rt-field>
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('presets') {
@@ -178,22 +214,26 @@ function failing(validators: ValidatorFn[] = [Validators.required], value: strin
             }
 
             @case ('themes') {
-                <app-story-themes caption="Поле в обеих темах">
+                <app-story-presets caption="Поле в обеих темах в обоих наборах">
                     <ng-template>
-                        <rt-field label="Город" hint="Как в адресе доставки">
-                            <rt-input placeholder="Москва" [formControl]="themeNormal" />
-                        </rt-field>
-                        <rt-field label="Почта" [errors]="emailErrors">
-                            <rt-input type="email" [formControl]="themeInvalid" />
-                        </rt-field>
-                        <rt-field label="Город" [readonly]="true">
-                            <rt-input [formControl]="themeReadonly" />
-                        </rt-field>
-                        <rt-field label="Город" hint="Как в адресе доставки" [loading]="true">
-                            <rt-input [formControl]="themeLoading" />
-                        </rt-field>
+                        <app-story-themes>
+                            <ng-template>
+                                <rt-field label="Город" hint="Как в адресе доставки">
+                                    <rt-input placeholder="Москва" [formControl]="themeNormal" />
+                                </rt-field>
+                                <rt-field label="Почта" [errors]="emailErrors">
+                                    <rt-input type="email" [formControl]="themeInvalid" />
+                                </rt-field>
+                                <rt-field label="Город" [readonly]="true">
+                                    <rt-input [formControl]="themeReadonly" />
+                                </rt-field>
+                                <rt-field label="Город" hint="Как в адресе доставки" [loading]="true">
+                                    <rt-input [formControl]="themeLoading" />
+                                </rt-field>
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
             }
         }
     `,

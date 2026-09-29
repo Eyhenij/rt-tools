@@ -29,9 +29,10 @@ theme is obliged to say and in which place a check is obliged to refuse instead 
   application, and while there is none, a spare value works. The width of a panel, the height of a header
   and the face of a logo are handles.
 - **A dead reference** — an address to a token that is declared by no layer and is not named a handle.
-- **The sign of the theme** — `data-theme='dark'` at the root of the page and the class `rt-theme-dark`
-  equal to it. The sign is put by the service of the theme of the kit, the set of the tokens does not
-  depend on it.
+- **The sign of the theme** — `data-theme='dark'` and the class `rt-theme-dark` equal to it. At the root of
+  the page the sign is put by the service of the theme of the kit; at a node inside the page it is put by the
+  mark of the markup, and that is the word of [the settings of the kit and the theme](../kit-settings-theme/spec.md).
+  The set of the tokens does not depend on either.
 - **The completeness of the dark theme** — a property of the set: every colour appointment of the light
   theme has either an override in the dark one or a named reason why the colour is one in both themes.
 - **The threshold of the contrast** — the ratio of the brightnesses of a text and its ground, below which
@@ -200,9 +201,10 @@ appointments of the light theme, the overrides of the dark one. It is plugged in
 of the layers the kit does not promise. The names it is put together from the kit gives out by code as well —
 by a list and by a type.
 
-The dark theme is switched on by the sign of the theme at the root of the page — by the attribute or by the
-class equal to it. The sign is put by the service of the theme of the kit; the consumer has the right to put it
-themselves.
+The dark theme is switched on by the sign of the theme — by the attribute or by the class equal to it. At the
+root of the page the sign is put by the service of the theme of the kit, and the consumer has the right to put
+it themselves. A node inside the page carries a sign of its own, and then the subtree under it is drawn in that
+theme while the page around stays as it was.
 
 The brand the consumer sets by a declaration of the steps of the brand after the plugging in of the file of the
 tokens. Nothing besides those declarations is demanded of them: the appointments, the transparent shades and the
@@ -226,7 +228,7 @@ Not applicable: the checks answer with a code of return and a list of the places
 The design has no storage of its own. The tokens are the text of three files of styles put together from the
 source and reaching the consumer as one file; the steps of the brand the consumer keeps at home. The choice of the
 theme is kept by the service of the theme by a key of the device: the set of the tokens does not depend on the
-place of the keeping, it depends only on the sign of the theme at the root of the page.
+place of the keeping, it depends only on the sign of the theme nearest above the node being drawn.
 
 The lists of what is accepted are files of the repository next to their own checks. They are read at every run and
 are edited only by a shrinking.

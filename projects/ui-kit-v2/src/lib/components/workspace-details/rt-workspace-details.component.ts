@@ -1,17 +1,20 @@
+import { BooleanInput } from '@angular/cdk/coercion';
 import { DecimalPipe, NgTemplateOutlet } from '@angular/common';
 import {
+    booleanAttribute,
+    ChangeDetectionStrategy,
+    Component,
     computed,
     effect,
     inject,
     input,
-    output,
-    signal,
-    untracked,
-    ChangeDetectionStrategy,
-    Component,
     InputSignal,
+    InputSignalWithTransform,
+    output,
     OutputEmitterRef,
+    signal,
     Signal,
+    untracked,
     ViewEncapsulation,
     WritableSignal,
 } from '@angular/core';
@@ -135,9 +138,13 @@ export class RtWorkspaceDetailsComponent {
 
     public readonly entityId: InputSignal<number | null> = input<number | null>(null);
 
-    public readonly loading: InputSignal<boolean> = input<boolean>(false);
+    public readonly loading: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
 
-    public readonly busy: InputSignal<boolean> = input<boolean>(false);
+    public readonly busy: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
 
     public readonly rows: InputSignal<readonly IRtWorkspaceDetails.Row[]> = input<readonly IRtWorkspaceDetails.Row[]>([]);
 

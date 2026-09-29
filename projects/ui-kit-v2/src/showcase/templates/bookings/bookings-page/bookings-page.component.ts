@@ -15,6 +15,7 @@ import { EListSortOrder, ISortModel } from '@rt-tools/utils';
 import { RtButtonDirective } from '../../../../lib/components/button/rt-button.directive';
 import { RtEmptyStateComponent } from '../../../../lib/components/empty-state/rt-empty-state.component';
 import { RtFieldComponent } from '../../../../lib/components/field/rt-field.component';
+import { RtTableSettingsRegistry } from '../../../../lib/components/table/rt-table-settings.registry';
 import { RtFilterControlComponent } from '../../../../lib/components/filter-control/rt-filter-control.component';
 import { IRtFilterControl } from '../../../../lib/components/filter-control/rt-filter-control.model';
 import { RtIconButtonComponent } from '../../../../lib/components/icon-button/rt-icon-button.component';
@@ -204,6 +205,7 @@ export class BookingsPageComponent implements IListPage.Host<IBooking.State, EBo
     readonly #transloco: TranslocoService = inject(TranslocoService);
     readonly #router: Router = inject(Router);
     readonly #route: ActivatedRoute = inject(ActivatedRoute);
+    readonly #tableSettings: RtTableSettingsRegistry = inject(RtTableSettingsRegistry);
     readonly #notificationBus: NotificationBus = inject(NotificationBus);
 
     /** Смена состояния заявки: запросы идут по одному, в порядке нажатий. */
@@ -352,6 +354,12 @@ export class BookingsPageComponent implements IListPage.Host<IBooking.State, EBo
     }
 
     public openColumnSettings(): void {
+        // Активная таблица называется до перехода, а не после: без этого панель ищет её сама и
+        // берёт единственную зарегистрированную. На витрине истории одного файла живут на одной
+        // странице подряд, и в этот миг регистрация успевает смениться — панель открывается и
+        // тут же закрывает себя. Кит требует ровно этого от потребителя, а экран здесь и есть
+        // образец потребителя.
+        this.#tableSettings.setActive(BOOKINGS_TABLE_ID);
         void this.#router.navigate([{ outlets: { ro: ['table-settings'] } }], { relativeTo: this.#route });
     }
 

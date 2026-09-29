@@ -12,7 +12,8 @@ import { IRtInput } from '../../../input/rt-input.model';
 import { RtInputNumberComponent } from '../../rt-input-number.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TInputNumberMatrixPart = 'size' | 'prefix' | 'fraction' | 'filling' | 'bordered' | 'states' | 'presets' | 'themes';
+export type TInputNumberMatrixPart =
+    'size' | 'prefix' | 'fraction' | 'filling' | 'bordered' | 'appearance' | 'states' | 'presets' | 'themes';
 
 /** Случай с подписью и своим значением: у числового поля значение приходит только формой. */
 interface IInputNumberCase {
@@ -35,6 +36,11 @@ interface IInputNumberFractionCase extends IInputNumberCase {
 /** Рамка покоя: снята она или нет. */
 interface IInputNumberBorderedCase extends IInputNumberCase {
     readonly bordered: boolean;
+}
+
+/** Два вида материального поля: рамка со всех сторон и залитое поле с чертой снизу. */
+interface IInputNumberAppearanceCase extends Omit<IInputNumberBorderedCase, 'bordered'> {
+    readonly appearance: IRtInput.Appearance;
 }
 
 /** Отключённость — единственное, что светло-тёмная пара меняет от ячейки к ячейке. */
@@ -77,78 +83,121 @@ function invalid(): FormControl<number | null> {
     template: `
         @switch (part) {
             @case ('size') {
-                <app-story-row caption="Размер" [items]="sizes" [slotWidth]="fieldWidth">
-                    <ng-template let-size>
-                        <rt-input-number placeholder="0" ariaLabel="Размер" [size]="size" />
+                <app-story-presets caption="Размер в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="sizes" [slotWidth]="fieldWidth">
+                            <ng-template let-size>
+                                <rt-input-number placeholder="0" ariaLabel="Размер" [size]="size" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('prefix') {
-                <app-story-row caption="Иконка и префикс" [items]="prefixCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
-                    <ng-template let-prefixCase>
-                        <rt-input-number
-                            [iconLeft]="prefixCase.iconLeft"
-                            [prefix]="prefixCase.prefix"
-                            [ariaLabel]="prefixCase.name"
-                            [formControl]="prefixCase.control" />
+                <app-story-presets caption="Иконка и префикс в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="prefixCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
+                            <ng-template let-prefixCase>
+                                <rt-input-number
+                                    [iconLeft]="prefixCase.iconLeft"
+                                    [prefix]="prefixCase.prefix"
+                                    [ariaLabel]="prefixCase.name"
+                                    [formControl]="prefixCase.control" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('fraction') {
-                <app-story-row caption="Дробная часть" [items]="fractionCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
-                    <ng-template let-fractionCase>
-                        <rt-input-number
-                            [minFractionDigits]="fractionCase.minFractionDigits"
-                            [maxFractionDigits]="fractionCase.maxFractionDigits"
-                            [ariaLabel]="fractionCase.name"
-                            [formControl]="fractionCase.control" />
+                <app-story-presets caption="Дробная часть в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="fractionCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
+                            <ng-template let-fractionCase>
+                                <rt-input-number
+                                    [minFractionDigits]="fractionCase.minFractionDigits"
+                                    [maxFractionDigits]="fractionCase.maxFractionDigits"
+                                    [ariaLabel]="fractionCase.name"
+                                    [formControl]="fractionCase.control" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('filling') {
-                <app-story-row caption="Наполненность и очистка" [items]="fillingCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
-                    <ng-template let-fillingCase>
-                        <rt-input-number placeholder="0" [ariaLabel]="fillingCase.name" [formControl]="fillingCase.control" />
+                <app-story-presets caption="Наполненность и очистка в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="fillingCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
+                            <ng-template let-fillingCase>
+                                <rt-input-number placeholder="0" [ariaLabel]="fillingCase.name" [formControl]="fillingCase.control" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('bordered') {
-                <app-story-row caption="Рамка" [items]="borderedCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
-                    <ng-template let-borderedCase>
-                        <rt-input-number
-                            [bordered]="borderedCase.bordered"
-                            [ariaLabel]="borderedCase.name"
-                            [formControl]="borderedCase.control" />
+                <app-story-presets caption="Рамка в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="borderedCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
+                            <ng-template let-borderedCase>
+                                <rt-input-number
+                                    [bordered]="borderedCase.bordered"
+                                    [ariaLabel]="borderedCase.name"
+                                    [formControl]="borderedCase.control" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
+            }
+
+            @case ('appearance') {
+                <app-story-presets caption="Вид поля в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="appearanceCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
+                            <ng-template let-appearanceCase>
+                                <rt-input-number
+                                    [appearance]="appearanceCase.appearance"
+                                    [ariaLabel]="appearanceCase.name"
+                                    [formControl]="appearanceCase.control" />
+                            </ng-template>
+                        </app-story-row>
+                    </ng-template>
+                </app-story-presets>
             }
 
             @case ('states') {
-                <app-story-row caption="Взаимодействие" [items]="states" [itemLabel]="stateLabel" [slotWidth]="fieldWidth">
-                    <ng-template let-state>
-                        <rt-input-number placeholder="0" ariaLabel="Состояние" [attr.data-story-state]="state.state" />
-                    </ng-template>
-                </app-story-row>
+                <app-story-presets caption="Взаимодействие в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="states" [itemLabel]="stateLabel" [slotWidth]="fieldWidth">
+                            <ng-template let-state>
+                                <rt-input-number placeholder="0" ariaLabel="Состояние" [attr.data-story-state]="state.state" />
+                            </ng-template>
+                        </app-story-row>
 
-                <app-story-row caption="Значение, форма и обёртка" [items]="stateCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
-                    <ng-template let-stateCase>
-                        @if (stateCase.flat) {
-                            <rt-field [readonly]="true">
-                                <rt-input-number prefix="₽" [ariaLabel]="stateCase.name" [formControl]="stateCase.control" />
-                            </rt-field>
-                        } @else {
-                            <rt-input-number
-                                placeholder="0"
-                                [disabled]="stateCase.disabled"
-                                [ariaLabel]="stateCase.name"
-                                [formControl]="stateCase.control" />
-                        }
+                        <app-story-row
+                            caption="Значение, форма и обёртка"
+                            [items]="stateCases"
+                            [itemLabel]="caseLabel"
+                            [slotWidth]="fieldWidth">
+                            <ng-template let-stateCase>
+                                @if (stateCase.flat) {
+                                    <rt-field [readonly]="true">
+                                        <rt-input-number prefix="₽" [ariaLabel]="stateCase.name" [formControl]="stateCase.control" />
+                                    </rt-field>
+                                } @else {
+                                    <rt-input-number
+                                        placeholder="0"
+                                        [disabled]="stateCase.disabled"
+                                        [ariaLabel]="stateCase.name"
+                                        [formControl]="stateCase.control" />
+                                }
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('presets') {
@@ -167,18 +216,22 @@ function invalid(): FormControl<number | null> {
             }
 
             @case ('themes') {
-                <app-story-themes caption="Поле в обеих темах">
+                <app-story-presets caption="Поле в обеих темах в обоих наборах">
                     <ng-template>
-                        @for (themeCase of themeCases; track themeCase.name) {
-                            <rt-input-number
-                                placeholder="0"
-                                prefix="₽"
-                                [disabled]="themeCase.disabled"
-                                [ariaLabel]="themeCase.name"
-                                [formControl]="themeCase.control" />
-                        }
+                        <app-story-themes>
+                            <ng-template>
+                                @for (themeCase of themeCases; track themeCase.name) {
+                                    <rt-input-number
+                                        placeholder="0"
+                                        prefix="₽"
+                                        [disabled]="themeCase.disabled"
+                                        [ariaLabel]="themeCase.name"
+                                        [formControl]="themeCase.control" />
+                                }
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
             }
         }
     `,
@@ -227,6 +280,11 @@ export class TestRtInputNumberMatrixComponent {
     public readonly borderedCases: readonly IInputNumberBorderedCase[] = [
         { name: 'с рамкой', bordered: true, control: amount(1500) },
         { name: 'без рамки', bordered: false, control: amount(1500) },
+    ];
+
+    public readonly appearanceCases: readonly IInputNumberAppearanceCase[] = [
+        { name: 'outline', appearance: 'outline', control: amount(1500) },
+        { name: 'fill', appearance: 'fill', control: amount(1500) },
     ];
 
     public readonly stateCases: readonly IInputNumberStateCase[] = [

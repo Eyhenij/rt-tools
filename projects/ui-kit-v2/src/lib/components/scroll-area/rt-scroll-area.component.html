@@ -1,0 +1,43 @@
+<ng-container rtBlock="rt-scroll-area">
+    @if (headerTpl()) {
+        <div rtElem="header" qa-dataid="scroll-area-header">
+            <ng-container [ngTemplateOutlet]="headerTpl()?.templateRef ?? null" />
+        </div>
+    }
+
+    @if (contentTpl()) {
+        <div #body rtElem="body" qa-dataid="scroll-area-body" (scroll)="onBodyScroll()">
+            <ng-container [ngTemplateOutlet]="contentTpl()?.templateRef ?? null" />
+        </div>
+    }
+
+    @if (footerTpl()) {
+        <div #foot rtElem="footer" qa-dataid="scroll-area-footer">
+            <ng-container [ngTemplateOutlet]="footerTpl()?.templateRef ?? null" />
+        </div>
+    }
+
+    <!--
+        Признак того, что снизу осталось непоказанное: край списка, ровно обрезанный подвалом,
+        читается как конец списка, и человек считает, что пункт пропал. Полоса живёт на хосте, а
+        не внутри тела: тело обрезает всё по своему краю, и полоса обрывалась бы на верхнем
+        отступе подвала — между ней и разделителем, который потребитель рисует первой строкой
+        подвала, оставалась бы полоса чистого фона.
+    -->
+    @if (isScrollHintShown() && hasMoreBelow()) {
+        <div rtElem="scroll-hint" qa-dataid="scroll-area-scroll-hint" [style.bottom.px]="hintBottom()">
+            <rt-icon
+                rtElem="scroll-hint-icon"
+                qa-dataid="scroll-area-scroll-hint-icon"
+                name="chevron-down"
+                size="md"
+                role="button"
+                tabindex="0"
+                rtTooltipPlacement="top"
+                [rtTooltip]="t().uiScrollDown"
+                [attr.aria-label]="t().uiScrollDown"
+                (click)="onScrollHintClick($event)"
+                (keydown.enter)="onScrollHintClick($event)" />
+        </div>
+    }
+</ng-container>

@@ -1,69 +1,127 @@
-import { signal, Signal, WritableSignal } from '@angular/core';
+import { computed, DestroyRef, signal, Signal, WritableSignal } from '@angular/core';
 
-import { clampSubMenuWidth } from '../side-menu.logic';
+import { clampSubMenuWidth, reportedSubMenuWidth, startSubMenuWidthDrag, subMenuWidthByKey, TPointerListen } from '../side-menu.logic';
 
-/** Что тяга просит у меню: слушать документ и принять натянутую ширину. */
+/**
+ * Что тяга просит у меню. Сама она ни о ширине не помнит, ни наружу говорить не умеет: ширину
+ * хранит потребитель, а события наружу отдаёт компонент.
+ */
 export interface ISubMenuResizeHooks {
-    listen: (event: 'mousemove' | 'mouseup', handler: (event: MouseEvent) => void) => () => void;
-    finish: (width: number) => void;
+    /** Ширина, о которой меню просит потребителя по концу тяги. */
+    askWidth: (width: number) => void;
+    /** Начало и конец тяги для потребителя: по ним он накрывает чужие кадры и снимает накрытие. */
+    started: () => void;
+    ended: () => void;
+    /** Панель подменю — по ней замеряется нарисованная ширина. Пустая, пока панели нет. */
+    panel: () => HTMLElement | null;
+    /** Ширина, названная потребителем. Пустая — ширину ставит оформление, и кит её не знает. */
+    namedWidth: () => number | null;
 }
 
 /**
- * Тяга правого края закреплённого подменю.
+ * Тяга ширины закреплённого подменю.
  *
- * Лежит отдельно от меню, как и ходьба клавиатурой: файл меню упёрся в предел длины. Слушатели
- * вешаются на документ — рука уходит с узкой полоски ручки в первое же движение, и слушатель на
- * ней самой терял бы тягу сразу. Ширина, пока край держат, живёт здесь; наружу она уходит одной
- * просьбой на отпускании: вход потребителя за каждым движением мыши не угнаться, а хранилище
- * незачем писать сотней раз.
+ * Лежит отдельно от меню по той же причине, что и ходьба с клавиатуры рядом: файл меню упёрся в
+ * предел длины, а состояний здесь два — натянутая ширина и снятие слушателей.
+ *
+ * Механика самих событий — `startSubMenuWidthDrag` в логике рядом: она чистая и проверяется
+ * вызовом. Здесь держится только то, что живёт дольше одного события.
  */
 export class SubMenuResize {
-    readonly #width: WritableSignal<number | null> = signal(null);
+    /** Натянутая ширина. Пустая — тяги нет, и ширину ставит потребитель или оформление. */
+    readonly #draggedWidth: WritableSignal<number | null> = signal(null);
+    readonly #listen: TPointerListen;
     readonly #hooks: ISubMenuResizeHooks;
-    /** Снятие слушателей документа; пусто, пока край не держат. */
+
     #stop: (() => void) | null = null;
 
-    /** Ширина под рукой; пусто, пока край не держат. */
-    public readonly width: Signal<number | null> = this.#width.asReadonly();
+    public readonly draggedWidth: Signal<number | null> = this.#draggedWidth.asReadonly();
 
-    constructor(hooks: ISubMenuResizeHooks) {
+    /**
+     * Ширина для диктора. Только то, что кит знает сам: натянутое или названное потребителем. Не
+     * названо ничего и ничего не тянули — числа нет, и кит его не выдумывает: выдуманное назвало бы
+     * ширину, которой панель не нарисована.
+     */
+    public readonly valueNow: Signal<number | null> = computed((): number | null => {
+        const width: number | null = this.#draggedWidth() ?? this.#hooks.namedWidth();
+
+        return width === null ? null : clampSubMenuWidth(width);
+    });
+
+    /**
+     * Меню, разрушенное посреди тяги, кончает её здесь же: слушатели и захват снимаются, а конец
+     * тяги уходит потребителю — иначе накрытие чужих кадров, снимаемое по концу, осталось бы стоять.
+     * Разрушение подписывается раньше выходов меню, пока они ещё живы.
+     */
+    constructor(listen: TPointerListen, hooks: ISubMenuResizeHooks, destroyRef?: DestroyRef) {
+        this.#listen = listen;
         this.#hooks = hooks;
+        destroyRef?.onDestroy((): void => this.finish());
     }
 
-    public isActive(): boolean {
+    /** Тяга идёт. Второе нажатие при начатой тяге ничего не начинает: указатель уже захвачен. */
+    public get running(): boolean {
         return this.#stop !== null;
     }
 
-    /** Край взят в точке `startX`, а панель в этот миг шириной `startWidth`. */
-    public start(startX: number, startWidth: number): void {
-        if (this.isActive()) {
+    /**
+     * Нажата клавиша на ручке. Просьба о ширине уходит наружу сразу: тяга держит просьбу до конца
+     * жеста, потому что жест есть, — здесь его нет. Начала и конца тяги клавиша не рождает:
+     * потребитель накрывает чужой кадр на время, пока рука ведёт указатель, а клавиша не ведёт.
+     *
+     * Отрицательный ответ значит, что клавиша не о ширине, и умолчание у неё не отменяется: иначе
+     * ручка съела бы переход по табуляции и всё, что на ней не написано.
+     */
+    public pressKey(key: string, from: number): boolean {
+        const width: number | null = subMenuWidthByKey(key, from);
+
+        if (width === null) {
+            return false;
+        }
+
+        this.#hooks.askWidth(width);
+
+        return true;
+    }
+
+    public start(event: PointerEvent, startWidth: number): void {
+        if (this.running) {
             return;
         }
 
-        const stopMove: () => void = this.#hooks.listen('mousemove', (event: MouseEvent): void => {
-            this.#width.set(clampSubMenuWidth(startWidth + event.clientX - startX));
+        const stop: (() => void) | null = startSubMenuWidthDrag(event, startWidth, this.#listen, {
+            onWidth: (width: number): void => this.#draggedWidth.set(width),
+            onEnd: (): void => this.finish(),
         });
-        const stopUp: () => void = this.#hooks.listen('mouseup', (): void => this.#finish());
 
-        this.#stop = (): void => {
-            stopMove();
-            stopUp();
-            this.#stop = null;
-        };
+        if (stop !== null) {
+            this.#stop = stop;
+            this.#hooks.started();
+        }
     }
 
     /**
-     * Конец тяги. Уходит натянутая ширина, а не нарисованная: нижний предел держит оформление, и
-     * замерить применённое можно только после раскладки. Край отпустили, не сдвинув, — уходить нечему.
+     * Конец тяги. Наружу уходит то число, которым панель нарисована: нижний предел держит
+     * оформление — панель не бывает уже той ширины, какую задал потребитель, — и узнать его можно
+     * одним замером, своего числа у кита нет. Хранит выбор человека потребитель.
      */
-    #finish(): void {
-        const width: number | null = this.#width();
+    public finish(): void {
+        if (!this.running) {
+            return;
+        }
+
+        // Замер идёт до сброса натянутой ширины: сбросив её, панель перерисуют, и мерить будет нечего.
+        const width: number | null = this.#draggedWidth();
+        const drawn: number | null = width === null ? null : reportedSubMenuWidth(width, this.#hooks.panel());
 
         this.#stop?.();
-        this.#width.set(null);
+        this.#stop = null;
+        this.#draggedWidth.set(null);
 
-        if (width !== null) {
-            this.#hooks.finish(width);
+        if (drawn !== null) {
+            this.#hooks.askWidth(drawn);
         }
+
+        this.#hooks.ended();
     }
 }

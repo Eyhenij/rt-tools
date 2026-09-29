@@ -33,7 +33,21 @@ const ENTRY_RE = /\{\s*from:\s*'([^']+)'\s*,\s*to:\s*(?:'([^']+)'|null)/g;
 const RENAMED = {
     // Ценник: старое имя `local_offer`, нынешнее `sell`.
     local_offer: 'sell',
+    // Конверт: старое имя `email`, нынешнее `mail`.
+    email: 'mail',
 };
+
+/**
+ * Два рисунка на имя — контурный и залитый, оба толщиной 700 и оптического размера 48: так первый
+ * кит рисует значки шрифтом Material Symbols (`'FILL' 0|1, 'wght' 700, 'opsz' 48`). Оптический
+ * размер 24 рисует линии на четверть толще — полоса `drag_handle` 126 единиц против 94, и список
+ * второго кита выходил заметно жирнее первого. Залитый лежит рядом с суффиксом `.fill`.
+ */
+const OPTICAL_SIZE = '48px';
+const DRAWINGS = [
+    { variant: 'wght700', suffix: '' },
+    { variant: 'wght700fill1', suffix: '.fill' },
+];
 
 async function pairs() {
     const src = await readFile(MAP_FILE, 'utf8');
@@ -52,7 +66,10 @@ async function pairs() {
  * срезает, оставляя одно тело.
  */
 function paint(raw) {
-    return raw.replace(/<path\b(?![^>]*\bfill=)/g, '<path fill="currentColor"');
+    return raw
+        .replace(/<path\b(?![^>]*\bfill=)/g, '<path fill="currentColor"')
+        .replace(/\bwidth="48"/, 'width="24"')
+        .replace(/\bheight="48"/, 'height="24"');
 }
 
 async function main() {
@@ -62,16 +79,18 @@ async function main() {
     const failed = [];
     for (const { material, kit } of list) {
         const symbol = RENAMED[material] ?? material;
-        const url = `${BASE}/${symbol}/materialsymbolsoutlined/${symbol}_24px.svg`;
-        const answer = await fetch(url);
-        if (!answer.ok) {
-            failed.push(`${material} — ${answer.status}`);
-            continue;
+        for (const drawing of DRAWINGS) {
+            const url = `${BASE}/${symbol}/materialsymbolsoutlined/${symbol}_${drawing.variant}_${OPTICAL_SIZE}.svg`;
+            const answer = await fetch(url);
+            if (!answer.ok) {
+                failed.push(`${material} ${drawing.variant} — ${answer.status}`);
+                continue;
+            }
+            const raw = await answer.text();
+            // Имя файла — имя КИТА: реестр просит значок именем кита, а какое имя Material его
+            // закрыло, знает перечень соответствий.
+            await writeFile(join(OUT_DIR, `${kit}${drawing.suffix}.svg`), `${paint(raw.trim())}\n`, 'utf8');
         }
-        const raw = await answer.text();
-        // Имя файла — имя КИТА: реестр просит значок именем кита, а какое имя Material его
-        // закрыло, знает перечень соответствий.
-        await writeFile(join(OUT_DIR, `${kit}.svg`), `${paint(raw.trim())}\n`, 'utf8');
     }
 
     if (failed.length > 0) {
@@ -79,7 +98,7 @@ async function main() {
         process.exit(1);
     }
 
-    console.log(`fetch-material-icons: рисунков ${list.length}, все легли в assets/icons-material`);
+    console.log(`fetch-material-icons: имён ${list.length}, рисунков ${list.length * DRAWINGS.length}, все легли в assets/icons-material`);
 }
 
 await main();

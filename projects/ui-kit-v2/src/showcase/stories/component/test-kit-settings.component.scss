@@ -1,0 +1,21 @@
+// Обвязка витрины: умолчания, заданные киту одной раздачей на старте.
+.app-kit-settings {
+    &__cases {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--rt-space-16);
+    }
+
+    &__case {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--rt-space-8);
+    }
+
+    &__label {
+        color: var(--rt-color-text-muted);
+        font-size: var(--rt-text-2xs);
+    }
+}

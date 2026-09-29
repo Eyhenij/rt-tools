@@ -24,6 +24,13 @@
         background-color: var(--rt-color-bg-surface);
         gap: var(--rt-file-card-gap);
 
+        /* Карточка берёт ширину места, которое ей дали, и не растёт за него. В ячейке сетки
+           элемент по умолчанию не ужимается ниже своего содержимого — min-inline-size снимает
+           этот пол, max-inline-size держит верх. Без пары карточка мерилась 613 при ячейке 272
+           и ложилась на соседнюю. */
+        max-inline-size: 100%;
+        min-inline-size: 0;
+
         &--sm {
             --rt-file-card-padding-block: var(--rt-space-xs);
             --rt-file-card-padding-inline: var(--rt-space-sm);
@@ -74,9 +81,16 @@
             white-space: nowrap;
         }
 
+        /* Имя приходит от потребителя, и его длину кит не выбирает. Без судьбы того, что не
+           влезло, имя переносилось на вторую строку, растило строку карточки и уезжало под
+           плашку веса: ни имени, ни веса было не прочесть. Одна строка с многоточием — то же,
+           что уже стоит у заголовка над ним; целое имя показывает подсказка. */
         &__name {
+            overflow: hidden;
             color: var(--rt-color-text-muted);
             font-size: var(--rt-file-card-name-size);
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         &__meta {

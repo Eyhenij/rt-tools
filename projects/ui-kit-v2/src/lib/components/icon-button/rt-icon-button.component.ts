@@ -111,6 +111,14 @@ export class RtIconButtonComponent {
      */
     public readonly iconColor: InputSignal<IRtIcon.Color> = input<IRtIcon.Color>('current');
 
+    /**
+     * Залитый рисунок значка вместо контурного — как `fill` у `rt-icon`. Рисует его материальный
+     * набор; значок своего набора один и от признака не меняется.
+     */
+    public readonly iconFill: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+
     /** Размер квадрата. */
     public readonly size: InputSignal<IRtIconButton.Size> = input<IRtIconButton.Size>('md');
 

@@ -42,7 +42,13 @@
                `box-shadow` целиком и тень покоя на это время снимает — списком они встанут
                только тогда, когда покой перестанет быть `none`. */
             --rt-icon-button-shadow: var(--rt-shadow-none);
+            --rt-icon-button-shadow-hover: var(--rt-icon-button-shadow);
+            --rt-icon-button-color-hover: var(--rt-icon-button-color);
             --rt-icon-button-transition-duration: var(--rt-duration-fast);
+
+            /* Заливка покоя — своим свойством: неактивная кнопка берёт из неё долю, которую задаёт
+               набор оформления. */
+            --rt-icon-button-bg: transparent;
 
             position: relative;
             display: inline-flex;
@@ -52,7 +58,7 @@
             justify-content: center;
             padding: 0;
             border: 0;
-            background: transparent;
+            background-color: var(--rt-icon-button-bg);
             box-shadow: var(--rt-icon-button-shadow);
             color: var(--rt-icon-button-color);
             cursor: pointer;
@@ -96,9 +102,16 @@
                 border-radius: var(--rt-icon-button-square-radius);
             }
 
+            /* Подъём под указателем — ручка для потребителя, как тень покоя; по умолчанию равен
+               тени покоя, и кнопка без подъёма под указателем не меняется. */
+            &:hover:not(:disabled) {
+                box-shadow: var(--rt-icon-button-shadow-hover);
+            }
+
             &--ghost {
                 &:hover:not(:disabled) {
                     background-color: var(--rt-icon-button-color-bg-hover);
+                    color: var(--rt-icon-button-color-hover);
                 }
 
                 &.rt-icon-button--active {
@@ -107,7 +120,8 @@
             }
 
             &--primary {
-                background-color: var(--rt-color-action-primary);
+                --rt-icon-button-bg: var(--rt-color-action-primary);
+
                 color: var(--rt-color-action-on-primary);
 
                 &:hover:not(:disabled) {
@@ -116,7 +130,8 @@
             }
 
             &--secondary {
-                background-color: var(--rt-color-bg-surface-subtle);
+                --rt-icon-button-bg: var(--rt-color-bg-surface-subtle);
+
                 color: var(--rt-color-text-primary);
 
                 &:hover:not(:disabled) {
@@ -160,9 +175,18 @@
                 }
             }
 
+            /* Цвет неактивной кнопки ставится рисунку значка: по умолчанию `currentcolor`, то есть цвет
+               значка, и свой вид остаётся прежним. Не самому значку — переданный цвет он ставит себе
+               встроенным стилем, и правилом его не перебить. Заливка остаётся долей заливки покоя: по умолчанию
+               вся, и свой вид прежний. */
             &:disabled {
+                background-color: color-mix(in srgb, var(--rt-icon-button-bg) var(--rt-icon-button-disabled-fill), transparent);
                 cursor: not-allowed;
-                opacity: 0.5;
+                opacity: var(--rt-icon-button-disabled-opacity);
+
+                .rt-icon svg {
+                    color: var(--rt-icon-button-disabled-color);
+                }
             }
 
             &:focus-visible {

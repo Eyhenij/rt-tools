@@ -1,0 +1,57 @@
+@layer rt-kit.components {
+    /* rt-data-list — список записей первого кита. Полоса действий и полоса страниц стоят по краям,
+       таблица занимает остальное и прокручивается сама. Крутилка дозагрузки лежит поверх списка
+       ярусом sticky шкалы, а область таблицы замкнута в свой ярус: шапка таблицы стоит тем же
+       ярусом sticky и идёт в разметке позже, и без замыкания рисовалась бы поверх подложки. */
+
+    /* Ширина — вся колонка, как у хоста первого кита: без неё список в колонке с
+       `align-items: flex-start` сжимался до своего содержимого. */
+    .rt-data-list {
+        position: relative;
+        display: flex;
+        width: 100%;
+        height: 100%;
+        min-height: 0;
+        flex-direction: column;
+
+        &__loading,
+        &__placeholder {
+            display: flex;
+            min-height: var(--rt-list-placeholder-min-height);
+            flex-grow: var(--rt-list-placeholder-grow);
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Заглушка пустого списка берёт размеры и подложку из назначений списка — их переставляет набор. */
+        &__placeholder .rt-empty-state {
+            --rt-empty-state-icon-wrap-size: var(--rt-list-empty-icon-wrap-size);
+            --rt-empty-state-icon-wrap-bg: var(--rt-list-empty-icon-wrap-bg);
+            --rt-empty-state-icon-size: var(--rt-list-empty-icon-size);
+            --rt-empty-state-title-size: var(--rt-list-empty-title-size);
+            --rt-empty-state-title-weight: var(--rt-list-empty-title-weight);
+        }
+
+        /* Крутилка дозагрузки: строки под ней остаются видны сквозь подложку. */
+        &__fetching {
+            position: absolute;
+            z-index: var(--rt-z-sticky);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: color-mix(in srgb, var(--rt-color-bg-page) 60%, transparent);
+            inset: 0;
+        }
+
+        /* Свой ярус: ярусы шапки и полосы действий таблицы считаются внутри него и над крутилкой
+           дозагрузки не поднимаются. */
+        &__content {
+            display: flex;
+            overflow: hidden;
+            min-height: 0;
+            flex-direction: column;
+            flex-grow: 1;
+            isolation: isolate;
+        }
+    }
+}

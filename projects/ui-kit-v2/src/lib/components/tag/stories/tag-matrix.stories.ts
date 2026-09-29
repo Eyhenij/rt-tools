@@ -19,6 +19,10 @@ type TStory = StoryObj<TestRtTagMatrixComponent>;
 
 export const Severity: TStory = { args: { part: 'severity' } };
 
+export const Size: TStory = { args: { part: 'size' } };
+
+export const Overflow: TStory = { args: { part: 'overflow' } };
+
 export const Shape: TStory = { args: { part: 'shape' } };
 
 export const Radius: TStory = { args: { part: 'radius' } };

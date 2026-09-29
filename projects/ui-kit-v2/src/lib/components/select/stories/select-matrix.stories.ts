@@ -25,6 +25,8 @@ export const Filling: TStory = { args: { part: 'filling' } };
 
 export const Bordered: TStory = { args: { part: 'bordered' } };
 
+export const Appearance: TStory = { args: { part: 'appearance' } };
+
 /**
  * Рамку и кольцо рисует `<button>` внутри хоста, а признак стоит на хосте — аддону передан
  * спуск до него: без него класс лёг бы на элемент, у которого этих правил нет.

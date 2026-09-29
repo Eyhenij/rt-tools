@@ -22,7 +22,7 @@ export default {
 
 type TStory = StoryObj<TestRtFileCardComponent>;
 
-export const Default: TStory = {
+export const Playground: TStory = {
     args: {
         name: 'Название',
         sizeBytes: null,

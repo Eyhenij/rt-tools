@@ -175,5 +175,32 @@ describe('RtContainerComponent', (): void => {
             expect(containerOf(fixture).rightOpen()).toBe(true);
             expect(opened).not.toHaveBeenCalled();
         });
+
+        describe('тема куска', (): void => {
+            afterEach((): void => {
+                document.documentElement.removeAttribute('data-theme');
+            });
+
+            it('панель каркаса из тёмного куска несёт тему куска на коробке', (): void => {
+                const fixture: ComponentFixture<ContainerRightHostComponent> = createRtFixture(ContainerRightHostComponent);
+                (fixture.nativeElement as HTMLElement).setAttribute('data-theme', 'dark');
+
+                containerOf(fixture).openRight();
+                fixture.detectChanges();
+
+                expect(document.querySelector('.rt-aside-overlay')?.getAttribute('data-theme')).toBe('dark');
+            });
+
+            it('тема корня страницы на коробку не копируется', (): void => {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                const fixture: ComponentFixture<ContainerRightHostComponent> = createRtFixture(ContainerRightHostComponent);
+
+                containerOf(fixture).openRight();
+                fixture.detectChanges();
+
+                expect(document.querySelector('.rt-aside-overlay')).not.toBeNull();
+                expect(document.querySelector('.rt-aside-overlay')?.hasAttribute('data-theme')).toBe(false);
+            });
+        });
     });
 });

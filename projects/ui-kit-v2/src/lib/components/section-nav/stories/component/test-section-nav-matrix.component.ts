@@ -36,35 +36,51 @@ const ITEMS: readonly IRtSectionNav.Item[] = [
     template: `
         @switch (part) {
             @case ('active') {
-                <app-story-row caption="Где стоит подсветка" slotWidth="18rem" [items]="actives" [itemLabel]="caseLabel">
-                    <ng-template let-item>
-                        <rt-section-nav [items]="item.items" />
+                <app-story-presets caption="Где стоит подсветка в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="18rem" [items]="actives" [itemLabel]="caseLabel">
+                            <ng-template let-item>
+                                <rt-section-nav [items]="item.items" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('length') {
-                <app-story-row caption="Длина набора" slotWidth="18rem" [items]="lengths" [itemLabel]="caseLabel">
-                    <ng-template let-item>
-                        <rt-section-nav [items]="item.items" />
+                <app-story-presets caption="Длина набора в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="18rem" [items]="lengths" [itemLabel]="caseLabel">
+                            <ng-template let-item>
+                                <rt-section-nav [items]="item.items" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('states') {
-                <app-story-row caption="Взаимодействие" slotWidth="18rem" [items]="states" [itemLabel]="stateLabel">
-                    <ng-template let-state>
-                        <rt-section-nav [items]="itemsPlain" [attr.data-story-state]="state.state" />
+                <app-story-presets caption="Взаимодействие в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="18rem" [items]="states" [itemLabel]="stateLabel">
+                            <ng-template let-state>
+                                <rt-section-nav [items]="itemsPlain" [attr.data-story-state]="state.state" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('edges') {
-                <app-story-row caption="Края" slotWidth="18rem" [items]="edges" [itemLabel]="caseLabel">
-                    <ng-template let-item>
-                        <rt-section-nav [items]="item.items" />
+                <app-story-presets caption="Края в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="18rem" [items]="edges" [itemLabel]="caseLabel">
+                            <ng-template let-item>
+                                <rt-section-nav [items]="item.items" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('presets') {
@@ -78,13 +94,17 @@ const ITEMS: readonly IRtSectionNav.Item[] = [
             }
 
             @case ('themes') {
-                <app-story-themes caption="Навигация в обеих темах">
+                <app-story-presets caption="Навигация в обеих темах в обоих наборах">
                     <ng-template>
-                        <div style="width: 18rem">
-                            <rt-section-nav [items]="items" />
-                        </div>
+                        <app-story-themes>
+                            <ng-template>
+                                <div style="width: 18rem">
+                                    <rt-section-nav [items]="items" />
+                                </div>
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
             }
         }
     `,

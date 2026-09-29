@@ -105,48 +105,60 @@ class WelcomeDialogEmptyComponent {}
     template: `
         @switch (part) {
             @case ('text') {
-                <app-story-row caption="Из чего собран текст" slotWidth="24rem" [items]="textCases" [itemLabel]="caseLabel">
-                    <ng-template let-item>
-                        @switch (item.kind) {
-                            @case ('full') {
-                                <app-welcome-dialog-full />
-                            }
-                            @case ('title-only') {
-                                <app-welcome-dialog-title-only />
-                            }
-                        }
+                <app-story-presets caption="Из чего собран текст в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="24rem" [items]="textCases" [itemLabel]="caseLabel">
+                            <ng-template let-item>
+                                @switch (item.kind) {
+                                    @case ('full') {
+                                        <app-welcome-dialog-full />
+                                    }
+                                    @case ('title-only') {
+                                        <app-welcome-dialog-title-only />
+                                    }
+                                }
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('cta') {
-                <app-story-row caption="Подпись кнопки" slotWidth="24rem" [items]="ctaCases" [itemLabel]="caseLabel">
-                    <ng-template let-item>
-                        @switch (item.kind) {
-                            @case ('default') {
-                                <app-welcome-dialog-full />
-                            }
-                            @case ('custom') {
-                                <app-welcome-dialog-custom-cta />
-                            }
-                        }
+                <app-story-presets caption="Подпись кнопки в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="24rem" [items]="ctaCases" [itemLabel]="caseLabel">
+                            <ng-template let-item>
+                                @switch (item.kind) {
+                                    @case ('default') {
+                                        <app-welcome-dialog-full />
+                                    }
+                                    @case ('custom') {
+                                        <app-welcome-dialog-custom-cta />
+                                    }
+                                }
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('edges') {
-                <app-story-row caption="Края" slotWidth="24rem" [items]="edgeCases" [itemLabel]="caseLabel">
-                    <ng-template let-item>
-                        @switch (item.kind) {
-                            @case ('empty') {
-                                <app-welcome-dialog-empty />
-                            }
-                            @case ('title-only') {
-                                <app-welcome-dialog-title-only />
-                            }
-                        }
+                <app-story-presets caption="Края в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="24rem" [items]="edgeCases" [itemLabel]="caseLabel">
+                            <ng-template let-item>
+                                @switch (item.kind) {
+                                    @case ('empty') {
+                                        <app-welcome-dialog-empty />
+                                    }
+                                    @case ('title-only') {
+                                        <app-welcome-dialog-title-only />
+                                    }
+                                }
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('presets') {
@@ -158,11 +170,15 @@ class WelcomeDialogEmptyComponent {}
             }
 
             @case ('themes') {
-                <app-story-themes caption="Окно приветствия в обеих темах">
+                <app-story-presets caption="Окно приветствия в обеих темах в обоих наборах">
                     <ng-template>
-                        <app-welcome-dialog-full />
+                        <app-story-themes>
+                            <ng-template>
+                                <app-welcome-dialog-full />
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
             }
         }
     `,

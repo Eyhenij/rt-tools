@@ -98,15 +98,11 @@ silent about.
 
 ## About the showcase snapshots
 
-- **A first-kit reference is pinned to the machine that judges it, and that is the pipeline's
-  runner, not the developer's machine.** The runner stands on another machine: the first step of
-  the run log names it (`Runner name`), and its work directory lies under another account. The first
-  kit's showcase shoots with the machine's own browser, so the push gate here does not match its
-  frames at all — it prints that they are matched in the pipeline only. A reference taken here
-  diverges there on dense text by a few hundredths of a percent, while the layout is the same. So a
-  first-kit reference is taken from the runner's frame: the `visual-diffs` artifact of the run holds
-  each failed frame as three panels, and the right one is what the runner drew. The second kit
-  shoots in a browser image and matches on both machines.
+- **A showcase reference is taken in the browser image, and it matches on any machine.** Both kits
+  shoot in the image, so a reference taken here matches the pipeline's runner, which stands on
+  another machine: the first step of the run log names it (`Runner name`). A frame shot by the
+  machine's own browser diverges there on dense text by a few hundredths of a percent while the
+  layout is the same, so such a frame is never committed as a reference.
 - **A snapshot and a measurement answer different questions.** A measurement of computed values
   says only what it was asked about; a snapshot catches everything visible, but fires on a shift
   of one pixel too. One does not replace the other.

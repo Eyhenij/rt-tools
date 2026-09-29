@@ -12,3 +12,5 @@ export * from './rt-table.model';
 export * from './rt-table-settings.registry';
 export * from './settings-aside/rt-table-settings-aside.component';
 export * from './settings-panel/rt-table-settings-panel.component';
+export * from './filter-header/rt-table-filter-header.component';
+export * from './rt-table-filter.logic';

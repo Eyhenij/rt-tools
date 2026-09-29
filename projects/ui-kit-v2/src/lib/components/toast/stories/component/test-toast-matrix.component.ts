@@ -41,80 +41,91 @@ const noop: () => void = (): void => undefined;
     template: `
         @switch (part) {
             @case ('severity') {
-                <app-story-grid
-                    caption="Важность × заливка"
-                    slotWidth="22rem"
-                    [rows]="severities"
-                    [columns]="fills"
-                    [columnLabel]="fillLabel">
-                    <ng-template let-severity let-filled="col">
-                        <div style="position: relative; display: block; min-block-size: 5.5rem; width: 100%">
-                            <rt-toast
-                                [toast]="toastOf(severity, filled)"
-                                [index]="0"
-                                [totalToasts]="1"
-                                [heights]="heights"
-                                [expanded]="false"
-                                [interacting]="true"
-                                [visibleToasts]="3"
-                                [duration]="0" />
-                        </div>
+                <app-story-presets caption="Важность × заливка в обоих наборах">
+                    <ng-template>
+                        <app-story-grid slotWidth="22rem" [rows]="severities" [columns]="fills" [columnLabel]="fillLabel">
+                            <ng-template let-severity let-filled="col">
+                                <div style="position: relative; display: block; min-block-size: 5.5rem; width: 100%">
+                                    <rt-toast
+                                        [toast]="toastOf(severity, filled)"
+                                        [index]="0"
+                                        [totalToasts]="1"
+                                        [heights]="heights"
+                                        [expanded]="false"
+                                        [interacting]="true"
+                                        [visibleToasts]="3"
+                                        [duration]="0" />
+                                </div>
+                            </ng-template>
+                        </app-story-grid>
                     </ng-template>
-                </app-story-grid>
+                </app-story-presets>
             }
 
             @case ('parts') {
-                <app-story-row caption="Из чего собран" slotWidth="22rem" [items]="partCases" [itemLabel]="partLabel">
-                    <ng-template let-item>
-                        <div style="position: relative; display: block; min-block-size: 5.5rem; width: 100%">
-                            <rt-toast
-                                [toast]="item.toast"
-                                [index]="0"
-                                [totalToasts]="1"
-                                [heights]="heights"
-                                [expanded]="false"
-                                [interacting]="true"
-                                [visibleToasts]="3"
-                                [duration]="0" />
-                        </div>
+                <app-story-presets caption="Из чего собран в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="22rem" [items]="partCases" [itemLabel]="partLabel">
+                            <ng-template let-item>
+                                <div style="position: relative; display: block; min-block-size: 5.5rem; width: 100%">
+                                    <rt-toast
+                                        [toast]="item.toast"
+                                        [index]="0"
+                                        [totalToasts]="1"
+                                        [heights]="heights"
+                                        [expanded]="false"
+                                        [interacting]="true"
+                                        [visibleToasts]="3"
+                                        [duration]="0" />
+                                </div>
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('actions') {
-                <app-story-row caption="Кнопки действий" slotWidth="22rem" [items]="actionCases" [itemLabel]="partLabel">
-                    <ng-template let-item>
-                        <div style="position: relative; display: block; min-block-size: 5.5rem; width: 100%">
-                            <rt-toast
-                                [toast]="item.toast"
-                                [index]="0"
-                                [totalToasts]="1"
-                                [heights]="heights"
-                                [expanded]="false"
-                                [interacting]="true"
-                                [visibleToasts]="3"
-                                [duration]="0" />
-                        </div>
+                <app-story-presets caption="Кнопки действий в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="22rem" [items]="actionCases" [itemLabel]="partLabel">
+                            <ng-template let-item>
+                                <div style="position: relative; display: block; min-block-size: 5.5rem; width: 100%">
+                                    <rt-toast
+                                        [toast]="item.toast"
+                                        [index]="0"
+                                        [totalToasts]="1"
+                                        [heights]="heights"
+                                        [expanded]="false"
+                                        [interacting]="true"
+                                        [visibleToasts]="3"
+                                        [duration]="0" />
+                                </div>
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('edges') {
-                <app-story-row caption="Края" slotWidth="22rem" [items]="edgeCases" [itemLabel]="partLabel">
-                    <ng-template let-item>
-                        <div style="position: relative; display: block; min-block-size: 5.5rem; width: 100%">
-                            <rt-toast
-                                [toast]="item.toast"
-                                [index]="0"
-                                [totalToasts]="1"
-                                [heights]="heights"
-                                [expanded]="false"
-                                [interacting]="true"
-                                [visibleToasts]="3"
-                                [duration]="0" />
-                        </div>
+                <app-story-presets caption="Края в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="22rem" [items]="edgeCases" [itemLabel]="partLabel">
+                            <ng-template let-item>
+                                <div style="position: relative; display: block; min-block-size: 5.5rem; width: 100%">
+                                    <rt-toast
+                                        [toast]="item.toast"
+                                        [index]="0"
+                                        [totalToasts]="1"
+                                        [heights]="heights"
+                                        [expanded]="false"
+                                        [interacting]="true"
+                                        [visibleToasts]="3"
+                                        [duration]="0" />
+                                </div>
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('presets') {
@@ -140,25 +151,29 @@ const noop: () => void = (): void => undefined;
             }
 
             @case ('themes') {
-                <app-story-themes caption="Плашки в обеих темах">
+                <app-story-presets caption="Плашки в обеих темах в обоих наборах">
                     <ng-template>
-                        <div style="display: grid; gap: 0.5rem; width: 20rem">
-                            @for (severity of severities; track severity) {
-                                <div style="position: relative; display: block; min-block-size: 5.5rem; width: 100%">
-                                    <rt-toast
-                                        [toast]="toastOf(severity, false)"
-                                        [index]="0"
-                                        [totalToasts]="1"
-                                        [heights]="heights"
-                                        [expanded]="false"
-                                        [interacting]="true"
-                                        [visibleToasts]="3"
-                                        [duration]="0" />
+                        <app-story-themes>
+                            <ng-template>
+                                <div style="display: grid; gap: 0.5rem; width: 20rem">
+                                    @for (severity of severities; track severity) {
+                                        <div style="position: relative; display: block; min-block-size: 5.5rem; width: 100%">
+                                            <rt-toast
+                                                [toast]="toastOf(severity, false)"
+                                                [index]="0"
+                                                [totalToasts]="1"
+                                                [heights]="heights"
+                                                [expanded]="false"
+                                                [interacting]="true"
+                                                [visibleToasts]="3"
+                                                [duration]="0" />
+                                        </div>
+                                    }
                                 </div>
-                            }
-                        </div>
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
             }
         }
     `,

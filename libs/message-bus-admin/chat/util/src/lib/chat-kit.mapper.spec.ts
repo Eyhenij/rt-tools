@@ -1,5 +1,5 @@
 import { EChatTalkState } from '@rt/message-bus-common';
-import { ERtChatMessageStatus, IRtChat } from '@rt-tools/ui-kit-v2';
+import { ERtChatMessageStatus, IRtChat } from '@rt-tools/ui-kit-v2/rich-editor';
 
 import { chatKitMessage, chatKitTalk, chatKitTalks, chatKitThread, IChatKitTalkRow, IChatSideLabels } from './chat-kit.mapper';
 import { EChatSendState, EChatSide, IChat } from './chat.model';

@@ -1,23 +1,25 @@
+import { BooleanInput } from '@angular/cdk/coercion';
 import { NgTemplateOutlet } from '@angular/common';
 import {
-    computed,
-    contentChild,
-    effect,
-    inject,
-    input,
-    numberAttribute,
-    output,
-    signal,
-    untracked,
+    booleanAttribute,
     ChangeDetectionStrategy,
     Component,
+    computed,
+    contentChild,
     DestroyRef,
+    effect,
     ElementRef,
+    inject,
+    input,
     InputSignal,
     InputSignalWithTransform,
+    numberAttribute,
+    output,
     OutputEmitterRef,
     Renderer2,
+    signal,
     Signal,
+    untracked,
     ViewEncapsulation,
     WritableSignal,
 } from '@angular/core';
@@ -104,7 +106,9 @@ export class RtWorkspaceComponent implements IRtWorkspace.PanelApi {
 
     public readonly storageKey: InputSignal<string | null> = input<string | null>(null);
 
-    public readonly hasActive: InputSignal<boolean> = input<boolean>(false);
+    public readonly hasActive: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
 
     public readonly listMinWidth: InputSignalWithTransform<number, number | string> = input<number, number | string>(240, {
         transform: numberAttribute,
@@ -243,11 +247,22 @@ export class RtWorkspaceComponent implements IRtWorkspace.PanelApi {
     #clampWidth(kind: IRtWorkspace.PanelKind, rawWidth: number): number {
         const min: number = kind === 'list' ? this.listMinWidth() : this.asideMinWidth();
         const configMax: number = kind === 'list' ? this.listMaxWidth() : this.asideMaxWidth();
-        const otherWidth: number = kind === 'list' ? this.asideWidth() : this.listWidth();
+        // Место соседней панели вычитается, только когда она объявлена: без её слота ширина
+        // соседки — число из умолчаний, а места она не занимает вовсе.
+        const otherWidth: number = this.#occupiedWidth(kind === 'list' ? 'aside' : 'list');
         const hostWidth: number = this.#hostRef.nativeElement.clientWidth;
         const available: number = hostWidth > 0 ? hostWidth - otherWidth - this.centerMinWidth() : Number.POSITIVE_INFINITY;
         const max: number = Math.max(min, Math.min(configMax, available));
         return Math.round(Math.min(max, Math.max(min, rawWidth)));
+    }
+
+    /** Сколько ширины занимает панель: необъявленная не занимает ничего. */
+    #occupiedWidth(kind: IRtWorkspace.PanelKind): number {
+        if (kind === 'list') {
+            return this.listSlot() ? this.listWidth() : 0;
+        }
+
+        return this.asideSlot() ? this.asideWidth() : 0;
     }
 
     #stopDragging(): void {

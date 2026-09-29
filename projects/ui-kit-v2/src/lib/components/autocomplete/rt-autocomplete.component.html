@@ -19,7 +19,7 @@
             [attr.aria-invalid]="isInvalid() || null"
             [attr.aria-autocomplete]="'list'"
             [attr.aria-controls]="panelId"
-            [attr.aria-activedescendant]="isOpen() && activeIndex() >= 0 ? panelId + '-opt-' + activeIndex() : null"
+            [attr.aria-activedescendant]="activeOptionId()"
             [placeholder]="placeholder()"
             [value]="inputText()"
             [disabled]="isDisabled()"

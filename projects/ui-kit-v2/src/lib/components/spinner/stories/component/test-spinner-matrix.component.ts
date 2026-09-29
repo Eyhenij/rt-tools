@@ -23,21 +23,29 @@ export type TSpinnerMatrixPart = 'color' | 'diameter' | 'presets' | 'themes';
     template: `
         @switch (part) {
             @case ('color') {
-                <app-story-row caption="Палитра" [items]="colors">
-                    <ng-template let-color>
-                        <span class="app-spinner-matrix__pad" [class.app-spinner-matrix__pad--primary]="color === 'on-primary'">
-                            <rt-spinner [color]="color" />
-                        </span>
+                <app-story-presets caption="Палитра в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="colors">
+                            <ng-template let-color>
+                                <span class="app-spinner-matrix__pad" [class.app-spinner-matrix__pad--primary]="color === 'on-primary'">
+                                    <rt-spinner [color]="color" />
+                                </span>
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('diameter') {
-                <app-story-row caption="Диаметр" [items]="diameters" [itemLabel]="diameterLabel">
-                    <ng-template let-diameter>
-                        <rt-spinner [diameter]="diameter" />
+                <app-story-presets caption="Диаметр в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="diameters" [itemLabel]="diameterLabel">
+                            <ng-template let-diameter>
+                                <rt-spinner [diameter]="diameter" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('presets') {
@@ -53,15 +61,19 @@ export type TSpinnerMatrixPart = 'color' | 'diameter' | 'presets' | 'themes';
             }
 
             @case ('themes') {
-                <app-story-themes caption="Палитра в обеих темах">
+                <app-story-presets caption="Палитра в обеих темах в обоих наборах">
                     <ng-template>
-                        @for (color of colors; track color) {
-                            <span class="app-spinner-matrix__pad" [class.app-spinner-matrix__pad--primary]="color === 'on-primary'">
-                                <rt-spinner [color]="color" />
-                            </span>
-                        }
+                        <app-story-themes>
+                            <ng-template>
+                                @for (color of colors; track color) {
+                                    <span class="app-spinner-matrix__pad" [class.app-spinner-matrix__pad--primary]="color === 'on-primary'">
+                                        <rt-spinner [color]="color" />
+                                    </span>
+                                }
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
             }
         }
     `,

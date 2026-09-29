@@ -37,60 +37,74 @@ interface IDialogPartsCase {
     template: `
         @switch (part) {
             @case ('size') {
-                <app-story-row caption="Размер" [items]="sizes">
-                    <ng-template let-size>
-                        <rt-dialog [size]="size" [ariaLabel]="'Окно ' + size">
-                            <rt-dialog-header title="Удалить запись?" />
-                            <p class="app-dialog-matrix__text">Действие необратимо: запись исчезнет вместе с приложенными файлами.</p>
-                            <rt-dialog-footer>
-                                <button
-                                    rtButton
-                                    type="button"
-                                    theme="secondary"
-                                    appearance="text"
-                                    label="Отмена"
-                                    aria-label="Отмена"></button>
-                                <button rtButton type="button" theme="danger" label="Удалить" aria-label="Удалить"></button>
-                            </rt-dialog-footer>
-                        </rt-dialog>
+                <app-story-presets caption="Размер в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="sizes">
+                            <ng-template let-size>
+                                <rt-dialog [size]="size" [ariaLabel]="'Окно ' + size">
+                                    <rt-dialog-header title="Удалить запись?" />
+                                    <p class="app-dialog-matrix__text">
+                                        Действие необратимо: запись исчезнет вместе с приложенными файлами.
+                                    </p>
+                                    <rt-dialog-footer>
+                                        <button
+                                            rtButton
+                                            type="button"
+                                            theme="secondary"
+                                            appearance="text"
+                                            label="Отмена"
+                                            aria-label="Отмена"></button>
+                                        <button rtButton type="button" theme="danger" label="Удалить" aria-label="Удалить"></button>
+                                    </rt-dialog-footer>
+                                </rt-dialog>
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('width') {
-                <app-story-row caption="Своя ширина поверх размера" [items]="widths">
-                    <ng-template let-width>
-                        <rt-dialog size="md" ariaLabel="Окно своей ширины" [width]="width">
-                            <rt-dialog-header title="Удалить запись?" />
-                            <p class="app-dialog-matrix__text">Ширина задана входом и перекрывает размер.</p>
-                        </rt-dialog>
+                <app-story-presets caption="Своя ширина поверх размера в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="widths">
+                            <ng-template let-width>
+                                <rt-dialog size="md" ariaLabel="Окно своей ширины" [width]="width">
+                                    <rt-dialog-header title="Удалить запись?" />
+                                    <p class="app-dialog-matrix__text">Ширина задана входом и перекрывает размер.</p>
+                                </rt-dialog>
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('parts') {
-                <app-story-row caption="Наполнение окна" [items]="partsCases" [itemLabel]="caseLabel">
-                    <ng-template let-partsCase>
-                        <rt-dialog size="sm" [ariaLabel]="partsCase.name">
-                            @if (partsCase.header) {
-                                <rt-dialog-header title="Удалить запись?" />
-                            }
-                            <p class="app-dialog-matrix__text">Действие необратимо.</p>
-                            @if (partsCase.footer) {
-                                <rt-dialog-footer>
-                                    <button
-                                        rtButton
-                                        type="button"
-                                        theme="secondary"
-                                        appearance="text"
-                                        label="Отмена"
-                                        aria-label="Отмена"></button>
-                                    <button rtButton type="button" theme="danger" label="Удалить" aria-label="Удалить"></button>
-                                </rt-dialog-footer>
-                            }
-                        </rt-dialog>
+                <app-story-presets caption="Наполнение окна в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="partsCases" [itemLabel]="caseLabel">
+                            <ng-template let-partsCase>
+                                <rt-dialog size="sm" [ariaLabel]="partsCase.name">
+                                    @if (partsCase.header) {
+                                        <rt-dialog-header title="Удалить запись?" />
+                                    }
+                                    <p class="app-dialog-matrix__text">Действие необратимо.</p>
+                                    @if (partsCase.footer) {
+                                        <rt-dialog-footer>
+                                            <button
+                                                rtButton
+                                                type="button"
+                                                theme="secondary"
+                                                appearance="text"
+                                                label="Отмена"
+                                                aria-label="Отмена"></button>
+                                            <button rtButton type="button" theme="danger" label="Удалить" aria-label="Удалить"></button>
+                                        </rt-dialog-footer>
+                                    }
+                                </rt-dialog>
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('presets') {
@@ -115,24 +129,28 @@ interface IDialogPartsCase {
             }
 
             @case ('themes') {
-                <app-story-themes caption="Окно в обеих темах">
+                <app-story-presets caption="Окно в обеих темах в обоих наборах">
                     <ng-template>
-                        <rt-dialog size="sm" ariaLabel="Удаление">
-                            <rt-dialog-header title="Удалить запись?" />
-                            <p class="app-dialog-matrix__text">Действие необратимо.</p>
-                            <rt-dialog-footer>
-                                <button
-                                    rtButton
-                                    type="button"
-                                    theme="secondary"
-                                    appearance="text"
-                                    label="Отмена"
-                                    aria-label="Отмена"></button>
-                                <button rtButton type="button" theme="danger" label="Удалить" aria-label="Удалить"></button>
-                            </rt-dialog-footer>
-                        </rt-dialog>
+                        <app-story-themes>
+                            <ng-template>
+                                <rt-dialog size="sm" ariaLabel="Удаление">
+                                    <rt-dialog-header title="Удалить запись?" />
+                                    <p class="app-dialog-matrix__text">Действие необратимо.</p>
+                                    <rt-dialog-footer>
+                                        <button
+                                            rtButton
+                                            type="button"
+                                            theme="secondary"
+                                            appearance="text"
+                                            label="Отмена"
+                                            aria-label="Отмена"></button>
+                                        <button rtButton type="button" theme="danger" label="Удалить" aria-label="Удалить"></button>
+                                    </rt-dialog-footer>
+                                </rt-dialog>
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
             }
         }
     `,

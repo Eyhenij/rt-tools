@@ -1,5 +1,9 @@
 @layer rt-kit.components {
     .rt-toolbar {
+        /* Отступ полосы сверху и снизу — свойства блока: обёртка переставляет их снаружи. */
+        --rt-toolbar-padding-top: var(--rt-space-2);
+        --rt-toolbar-padding-bottom: var(--rt-space-2);
+
         display: block;
 
         &__bars {
@@ -8,7 +12,7 @@
             flex-direction: row;
             align-items: center;
             justify-content: space-between;
-            padding: var(--rt-space-2) 0;
+            padding: var(--rt-toolbar-padding-top) 0 var(--rt-toolbar-padding-bottom);
             gap: var(--rt-space-2);
         }
 
@@ -40,7 +44,10 @@
             &--right {
                 // Прижатие к правому краю даже когда right — единственный бар
                 // (нет left/center, которые бы вытолкнули его через space-between).
-                flex: 0 0 auto;
+                // Бар сжимается, когда места меньше, чем контента, но не уже своего наименьшего
+                // содержимого: не сжимаясь, он в узкой колонке выходил за край тулбара на соседей
+                // (поиск списка — на 197 px), а сжатый до нуля выталкивал за край кнопку.
+                flex: 0 1 auto;
                 margin-left: auto;
                 gap: var(--rt-space-sm);
             }

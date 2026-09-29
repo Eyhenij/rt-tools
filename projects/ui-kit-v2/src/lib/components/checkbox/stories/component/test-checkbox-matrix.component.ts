@@ -47,49 +47,63 @@ function checked(value: boolean): FormControl<boolean> {
     template: `
         @switch (part) {
             @case ('value') {
-                <app-story-row caption="Положение" [items]="valueCases" [itemLabel]="caseLabel">
-                    <ng-template let-valueCase>
-                        <rt-checkbox
-                            [ariaLabel]="valueCase.name"
-                            [indeterminate]="valueCase.indeterminate"
-                            [formControl]="valueCase.control" />
+                <app-story-presets caption="Положение в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="valueCases" [itemLabel]="caseLabel">
+                            <ng-template let-valueCase>
+                                <rt-checkbox
+                                    [ariaLabel]="valueCase.name"
+                                    [indeterminate]="valueCase.indeterminate"
+                                    [formControl]="valueCase.control" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('label') {
-                <app-story-row caption="Подпись" [items]="labelCases" [itemLabel]="caseLabel">
-                    <ng-template let-labelCase>
-                        @if (labelCase.text) {
-                            <rt-checkbox [ariaLabel]="labelCase.name" [formControl]="labelCase.control">{{ labelCase.text }}</rt-checkbox>
-                        } @else {
-                            <rt-checkbox [ariaLabel]="labelCase.name" [formControl]="labelCase.control" />
-                        }
+                <app-story-presets caption="Подпись в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="labelCases" [itemLabel]="caseLabel">
+                            <ng-template let-labelCase>
+                                @if (labelCase.text) {
+                                    <rt-checkbox [ariaLabel]="labelCase.name" [formControl]="labelCase.control">
+                                        {{ labelCase.text }}
+                                    </rt-checkbox>
+                                } @else {
+                                    <rt-checkbox [ariaLabel]="labelCase.name" [formControl]="labelCase.control" />
+                                }
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('states') {
-                <app-story-row caption="Взаимодействие" [items]="states" [itemLabel]="stateLabel">
-                    <ng-template let-state>
-                        <rt-checkbox ariaLabel="Состояние" [attr.data-story-state]="state.state">Согласен с условиями</rt-checkbox>
-                    </ng-template>
-                </app-story-row>
+                <app-story-presets caption="Взаимодействие в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="states" [itemLabel]="stateLabel">
+                            <ng-template let-state>
+                                <rt-checkbox ariaLabel="Состояние" [attr.data-story-state]="state.state">Согласен с условиями</rt-checkbox>
+                            </ng-template>
+                        </app-story-row>
 
-                <app-story-grid
-                    caption="Положение × отключённость"
-                    [rows]="valueCases"
-                    [columns]="switches"
-                    [rowLabel]="caseLabel"
-                    [columnLabel]="switchLabel">
-                    <ng-template let-valueCase let-off="col">
-                        <rt-checkbox
-                            [ariaLabel]="valueCase.name"
-                            [disabled]="off"
-                            [indeterminate]="valueCase.indeterminate"
-                            [formControl]="valueCase.control" />
+                        <app-story-grid
+                            caption="Положение × отключённость"
+                            [rows]="valueCases"
+                            [columns]="switches"
+                            [rowLabel]="caseLabel"
+                            [columnLabel]="switchLabel">
+                            <ng-template let-valueCase let-off="col">
+                                <rt-checkbox
+                                    [ariaLabel]="valueCase.name"
+                                    [disabled]="off"
+                                    [indeterminate]="valueCase.indeterminate"
+                                    [formControl]="valueCase.control" />
+                            </ng-template>
+                        </app-story-grid>
                     </ng-template>
-                </app-story-grid>
+                </app-story-presets>
             }
 
             @case ('presets') {
@@ -108,18 +122,22 @@ function checked(value: boolean): FormControl<boolean> {
             }
 
             @case ('themes') {
-                <app-story-themes caption="Положения в обеих темах">
+                <app-story-presets caption="Положения в обеих темах в обоих наборах">
                     <ng-template>
-                        @for (valueCase of valueCases; track valueCase.name) {
-                            <rt-checkbox
-                                [ariaLabel]="valueCase.name"
-                                [indeterminate]="valueCase.indeterminate"
-                                [formControl]="valueCase.control">
-                                {{ valueCase.name }}
-                            </rt-checkbox>
-                        }
+                        <app-story-themes>
+                            <ng-template>
+                                @for (valueCase of valueCases; track valueCase.name) {
+                                    <rt-checkbox
+                                        [ariaLabel]="valueCase.name"
+                                        [indeterminate]="valueCase.indeterminate"
+                                        [formControl]="valueCase.control">
+                                        {{ valueCase.name }}
+                                    </rt-checkbox>
+                                }
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
             }
         }
     `,

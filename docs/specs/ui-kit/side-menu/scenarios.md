@@ -234,36 +234,6 @@ browser does not stop the work and leaves the former mode
 
 Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/side-menu.logic.spec.ts`.
 
-### SC-UK-33 — the width of the submenu does not go past the limits
-
-Given a person pulls the edge of a pinned submenu
-When the hand leads the edge narrower than the lower limit or wider than the upper one
-Then the width is taken as the limit one: narrower than the lower one not a single label of an item fits,
-wider than the upper one the submenu covers the content of the page the menu was opened for
-
-Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/side-menu.logic.spec.ts`.
-
-### SC-UK-34 — the chosen width outlives a reload
-
-Given a person stretched the pinned submenu
-When the page is reloaded
-Then the submenu is of the same width: the width is a setting of a person and is kept by the same technique
-as the mode; there is no saved choice, the value is not a number or the storage is closed by the settings of
-the browser — the width is put by the design, and a number of one's own instead of it would substitute the
-value from the set of the tokens
-
-Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/side-menu.logic.spec.ts`.
-
-### SC-UK-35 — the edge of a pinned submenu is pulled by the pointer
-
-Given a pinned submenu
-When a person takes its right edge and leads it by the pointer
-Then the panel goes after the hand within the limits of the width, and at the release the width goes away
-as a request outward — it is kept by the consumer, as the mode is; an unpinned submenu has no handle at all:
-it lives by the hovering and leaves the screen before the hand reaches the edge
-
-Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
-
 ### SC-UK-36 — in a filtered label what it coincided by is marked
 
 Given a person typed a query in the search of the submenu
@@ -285,18 +255,6 @@ diverges from the ready one at the very first edit of the kit, and there is nobo
 button of the clearing is not visible at an empty query and brings the full list back
 
 Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
-
-### SC-UK-38 — the submenu is never narrower than the width set by the design
-
-Given the consumer set the width of the submenu by their own design
-When a person pulls the edge of the panel to the left further than that width
-Then the panel stops at the set width and does not become narrower: the lower limit is held by the design
-itself, not by a number in the kit — the width is known by the consumer, and a number of one's own would
-diverge from it at every second one. The pull to the right widens the panel as before
-
-Not covered: the limit is held by the rule `max(...)` in the design, and the styles of a component are not
-applied in a spec — the width of the panel there is zero. Taken by a measurement in the browser: the width
-set by the design is 240 pixels, the pull to the left leaves 240, the pull to the right gives 358.
 
 ### SC-UK-39 — the work with the field holds an unpinned submenu open
 
@@ -439,23 +397,6 @@ apart
 Not covered: the cutting by the corner is visible only on a drawn panel, and a spec does not know the sizes
 of the panel — its height there is zero. The measurement in an ordinary browser: the bottom of the list is
 415 at the lower edge of the panel of 431, the reserve is 16 pixels — exactly the radius.
-
-### SC-UK-49 — the handle of the pull is caught by the cursor wider than it is visible
-
-Given a panel of a submenu whose edge is pulled by the cursor
-When a person leads the cursor to its edge
-Then the handle is caught by a zone three times wider than the visible strip, and the strip itself stands in
-the same place and of the same width: landing into four pixels does not work at the first try, and a miss
-past the handle lands into the panel — that is, instead of a pull a person presses an item. The strip inside
-the zone is painted at a hovering, not the whole zone: painted whole, it would read as another design, not as
-the same one with a bigger target
-
-Not covered: the handle stands at the edge of a drawn panel, and the styles of a component are not applied in
-a spec — the panel there has a zero width, and there is nothing to measure. Closed by the show
-`MenuResizerGrab` (`projects/ui-kit/src/lib/ui-kit/side-menu/stories/side-menu.stories.ts`): it measures the
-width of the node of the handle, the width of the visible strip and the place of its right edge. The
-measurement in an ordinary browser: the zone of the catching is 12 pixels against the former 4, the strip is
-still 4, its right edge is 328 at the right edge of the panel of 328.
 
 ### SC-UK-50 — a pinned panel has nothing to show: it takes no place
 
