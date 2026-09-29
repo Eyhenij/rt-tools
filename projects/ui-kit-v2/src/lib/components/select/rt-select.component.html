@@ -20,6 +20,7 @@
         [attr.aria-activedescendant]="activeOptionId()"
         [disabled]="isDisabled()"
         (keydown)="onTriggerKeydown($event)"
+        (rtPopoverOpened)="onOpened()"
         (rtPopoverClosed)="onClosed()">
         <!--
             Разметка указателя: своя, если потребитель её объявил, иначе зашитая китом. Она встаёт
@@ -68,23 +69,41 @@
             -->
             <!-- eslint-disable @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
             <ul rtElem="list">
-                @for (opt of filteredOptions(); track opt.value; let i = $index) {
+                @for (row of rows(); track row.option.value; let i = $index) {
                     <li
                         rtElem="option"
                         qa-dataid="select-option"
                         role="option"
                         [id]="panelId + '-opt-' + i"
-                        [attr.data-value]="opt.value"
+                        [attr.data-value]="row.option.value"
+                        [attr.aria-level]="isTree() ? row.level + 1 : null"
+                        [style.--rt-select-tree-level]="row.level"
                         [rtMod]="{
-                            selected: opt.value === value(),
+                            selected: row.option.value === value(),
                             active: i === activeIndex(),
-                            disabled: !!opt.disabled,
+                            disabled: !!row.option.disabled,
                         }"
-                        [attr.aria-selected]="opt.value === value()"
-                        [attr.aria-disabled]="!!opt.disabled"
-                        (click)="select(opt)">
-                        {{ opt.label }}
-                        @if (opt.value === value()) {
+                        [attr.aria-selected]="row.option.value === value()"
+                        [attr.aria-disabled]="!!row.option.disabled"
+                        (click)="select(row.option)">
+                        @if (isTree()) {
+                            @if (row.branch) {
+                                <button
+                                    rtElem="toggle"
+                                    qa-dataid="select-option-toggle"
+                                    type="button"
+                                    tabindex="-1"
+                                    [attr.aria-label]="row.open ? t().uiCollapse : t().uiExpand"
+                                    [attr.aria-expanded]="row.open"
+                                    (click)="toggleBranch($event, row.option.value)">
+                                    <rt-icon size="sm" color="muted" [name]="row.open ? 'chevron-down' : 'chevron-right'" />
+                                </button>
+                            } @else {
+                                <span rtElem="toggle-space"></span>
+                            }
+                        }
+                        <span rtElem="option-label">{{ row.option.label }}</span>
+                        @if (row.option.value === value()) {
                             <rt-icon rtElem="check" name="check" size="sm" aria-hidden="true" />
                         }
                     </li>

@@ -193,6 +193,7 @@
             /* Панель рисуется в CDK Overlay, вне поддерева блока: свойство
                объявляется на ней самой — с корня блока оно бы не докатилось. */
             --rt-multiselect-panel-shadow: var(--rt-shadow-md);
+            --rt-multiselect-tree-indent: var(--rt-space-lg);
 
             /* Предел высоты по умолчанию — предел кита: длинный список прокручивается внутри
                панели, а не уходит за нижний край экрана. Вход `panelMaxHeight` ставит свой
@@ -219,6 +220,9 @@
         }
 
         &__option {
+            /* Уровень строки в дереве ставит разметка на саму строку; ноль — строка верхнего уровня. */
+            --rt-multiselect-tree-level: 0;
+
             display: flex;
             align-items: center;
             padding: var(--rt-space-sm) var(--rt-space-md);
@@ -226,6 +230,7 @@
             cursor: pointer;
             font-size: var(--rt-input-font-size);
             gap: var(--rt-space-sm);
+            padding-inline-start: calc(var(--rt-space-md) + var(--rt-multiselect-tree-indent) * var(--rt-multiselect-tree-level));
 
             &:hover,
             &--active {
@@ -245,6 +250,25 @@
                     background-color: transparent;
                 }
             }
+        }
+
+        /* Стрелка ветки и пустое место под неё у листа: шаг отступа равен их ширине с зазором,
+           и стрелка дочерней строки встаёт под подписью родителя. */
+        &__toggle,
+        &__toggle-space {
+            display: inline-flex;
+            flex-shrink: 0;
+            block-size: var(--rt-input-icon-size);
+            inline-size: var(--rt-input-icon-size);
+        }
+
+        &__toggle {
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            border: 0;
+            background: transparent;
+            cursor: pointer;
         }
 
         &__checkbox {

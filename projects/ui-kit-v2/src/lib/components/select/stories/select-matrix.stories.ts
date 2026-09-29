@@ -73,3 +73,15 @@ export const PanelEmpty: TStory = {
         await openStoryOverlay(canvasElement, { key: 'ArrowDown' });
     },
 };
+
+/**
+ * Дерево опций: выбранный лист на третьем уровне, поэтому обе ветки над ним раскрыты, а соседняя
+ * ветка свёрнута. У ветки стрелка, у листа — пустое место под неё, строка отступает по уровню.
+ */
+export const PanelTree: TStory = {
+    parameters: { snapshot: { fullPage: true } },
+    args: { part: 'panel', panel: 'tree' },
+    play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
+        await openStoryOverlay(canvasElement, { key: 'ArrowDown' });
+    },
+};

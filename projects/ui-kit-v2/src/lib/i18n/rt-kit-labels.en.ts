@@ -104,6 +104,7 @@ export const RT_KIT_LABELS_EN = {
     uiDownload: 'Download',
     uiDownloadFile: 'Download: {{name}}',
     uiDragColumn: 'Drag column',
+    uiExpand: 'Expand',
     uiFileDropOverlay: 'Drop the files to attach them',
     uiFilterChoose: 'Choose',
     uiFilterContains: 'Contains',

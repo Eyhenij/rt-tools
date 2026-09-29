@@ -1,12 +1,12 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
+import { rtTreeFind } from '../select/rt-select-tree';
 import { IRtSelect } from '../select/rt-select.model';
 
-/** Лейбл опции по её value для отображения чипа выбранного значения. */
+/** Лейбл опции по её value для отображения чипа выбранного значения — на любой глубине дерева. */
 @Pipe({ name: 'rtMultiselectLabel' })
 export class RtMultiselectLabelPipe implements PipeTransform {
     public transform<TValue>(value: TValue, options: ReadonlyArray<IRtSelect.Option<TValue>>): string {
-        const match: IRtSelect.Option<TValue> | undefined = options.find((o: IRtSelect.Option<TValue>): boolean => o.value === value);
-        return match?.label ?? String(value);
+        return rtTreeFind(options, value)?.label ?? String(value);
     }
 }
