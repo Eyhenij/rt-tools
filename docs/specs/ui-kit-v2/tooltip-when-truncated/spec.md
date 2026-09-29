@@ -1,12 +1,12 @@
 # The tooltip of a cut text
 
-**Status:** proposed · **Revision:** 29 September 2026 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 29 September 2026 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the tooltip of the second kit — the mode is an input of `[rtTooltip]`
 **Laws:** `frontend-application`, `verifiability`, `reuse-first`
 **Procedures:** none
 
-A subdomain of the second kit's spec, written before the code by task RT-2423. It merges into the
-spec of the second kit by the last commit of the PR, with the scenario numbers it has now.
+A subdomain of the second kit's spec, written before the code by task RT-2423 and merged with the
+scenario numbers it had as an agreement.
 
 ## Why
 
@@ -101,3 +101,5 @@ None.
 ## History of changes
 
 - 29 September 2026 — the agreement was written by the grilling of the owner's request.
+- 29 September 2026 — the agreement was merged into the spec of the second kit together with the
+  code. The scenarios kept their numbers.
