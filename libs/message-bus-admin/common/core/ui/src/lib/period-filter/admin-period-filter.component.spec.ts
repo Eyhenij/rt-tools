@@ -1,16 +1,22 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { provideRtIDBStorage, provideRtStorage, provideRtUtils } from '@rt-tools/core';
+import { RtDatePickerComponent } from '@rt-tools/ui-kit-v2';
 
 import { AdminPeriodFilterComponent, IAdminPeriod } from './admin-period-filter.component';
 
-/** Человек выбирает день: нативное поле выбора дня отдаёт строку `ГГГГ-ММ-ДД`. */
+/** Человек набирает день в поле строкой `ГГГГ-ММ-ДД` — той же, что ставит панель выбора дня. */
 function pick(fixture: ComponentFixture<AdminPeriodFilterComponent>, qaId: string, day: string): void {
     const field: HTMLInputElement = fixture.debugElement.query(By.css(`[qa-dataid="${qaId}"] input`)).nativeElement;
 
     field.value = day;
     field.dispatchEvent(new Event('input'));
     fixture.detectChanges();
+}
+
+/** Границы дня живут во входах поля: панель выключает дни за ними. */
+function picker(fixture: ComponentFixture<AdminPeriodFilterComponent>, qaId: string): RtDatePickerComponent {
+    return fixture.debugElement.query(By.css(`[qa-dataid="${qaId}"]`)).componentInstance as RtDatePickerComponent;
 }
 
 describe('AdminPeriodFilterComponent', () => {
@@ -63,7 +69,7 @@ describe('AdminPeriodFilterComponent', () => {
 
         expect(from.value).toBe('2026-08-01');
         expect(to.value).toBe('2026-08-31');
-        expect(to.min).toBe('2026-08-01');
-        expect(from.max).toBe('2026-08-31');
+        expect(picker(fixture, 'list-period-to').min()).toBe('2026-08-01');
+        expect(picker(fixture, 'list-period-from').max()).toBe('2026-08-31');
     });
 });
