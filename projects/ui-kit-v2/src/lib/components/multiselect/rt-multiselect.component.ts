@@ -27,6 +27,16 @@ import { RtPopoverDirective } from '../popover/rt-popover.directive';
 import { IRtPopover } from '../popover/rt-popover.model';
 import { RtRadiusDirective } from '../radius/rt-radius.directive';
 import { rtScrollActiveOptionIntoView } from '../select/rt-select-active-option';
+import {
+    rtTreeBranchState,
+    rtTreeFind,
+    rtTreeIsTree,
+    rtTreeLeaves,
+    rtTreeOpenFor,
+    rtTreeRows,
+    rtTreeSideKey,
+    rtTreeToggle,
+} from '../select/rt-select-tree';
 import { RtSelectTriggerDirective } from '../select/rt-select-trigger.directive';
 import { IRtSelect } from '../select/rt-select.model';
 import { RtTagComponent } from '../tag/rt-tag.component';
@@ -109,6 +119,21 @@ export class RtMultiselectComponent<TValue> extends RtFormControlBase<ReadonlyAr
     protected readonly triggerEl: Signal<ElementRef<HTMLButtonElement> | undefined> = viewChild<ElementRef<HTMLButtonElement>>('triggerEl');
 
     protected readonly activeIndex: WritableSignal<number> = signal<number>(-1);
+    /** Раскрытые ветки дерева. Живут, пока открыта панель: при открытии раскрыты ветки над выбранным. */
+    protected readonly openBranches: WritableSignal<ReadonlySet<TValue>> = signal<ReadonlySet<TValue>>(new Set<TValue>());
+
+    /** Дерево ли список: тогда у строк есть место под стрелку и отступ по уровню. */
+    protected readonly isTree: Signal<boolean> = computed((): boolean => rtTreeIsTree(this.options()));
+
+    /** Видимые строки: плоский список — как прежде, дерево — по раскрытым веткам. */
+    protected readonly rows: Signal<ReadonlyArray<IRtSelect.Row<TValue>>> = computed((): ReadonlyArray<IRtSelect.Row<TValue>> =>
+        rtTreeRows(this.options(), this.openBranches())
+    );
+
+    /** Флажок каждой строки: у листа — выбран ли он, у ветки — выведен из её включённых листьев. */
+    protected readonly rowChecks: Signal<ReadonlyArray<IRtSelect.TBranchState>> = computed((): ReadonlyArray<IRtSelect.TBranchState> =>
+        this.rows().map((row: IRtSelect.Row<TValue>): IRtSelect.TBranchState => this.#checkOf(row))
+    );
 
     protected readonly isOpen: Signal<boolean> = computed((): boolean => this.popover().isOpen());
 
@@ -196,14 +221,20 @@ export class RtMultiselectComponent<TValue> extends RtFormControlBase<ReadonlyAr
     }
 
     protected labelOf(value: TValue): string {
-        const match: IRtSelect.Option<TValue> | undefined = this.options().find(
-            (o: IRtSelect.Option<TValue>): boolean => o.value === value
-        );
-        return match?.label ?? String(value);
+        return rtTreeFind(this.options(), value)?.label ?? String(value);
     }
 
     protected isSelected(value: TValue): boolean {
         return this.value().includes(value);
+    }
+
+    protected onOpened(): void {
+        this.openBranches.set(rtTreeOpenFor(this.options(), this.value()));
+    }
+
+    protected toggleBranch(event: Event, value: TValue): void {
+        event.stopPropagation();
+        this.openBranches.update((open: ReadonlySet<TValue>): ReadonlySet<TValue> => rtTreeToggle(open, value));
     }
 
     protected onClosed(): void {
@@ -211,14 +242,20 @@ export class RtMultiselectComponent<TValue> extends RtFormControlBase<ReadonlyAr
         this.markTouched();
     }
 
+    /**
+     * Лист переключается сам. Ветка выбирает все свои включённые листья или снимает их, когда
+     * выбраны все; своё значение ветки в выбор не пишется.
+     */
     protected toggleOption(opt: IRtSelect.Option<TValue>): void {
         if (opt.disabled || this.isDisabled()) {
             return;
         }
+        const leaves: ReadonlyArray<TValue> = rtTreeLeaves(opt);
         const current: ReadonlyArray<TValue> = this.value();
-        const next: ReadonlyArray<TValue> = this.isSelected(opt.value)
-            ? current.filter((v: TValue): boolean => v !== opt.value)
-            : [...current, opt.value];
+        const clearing: boolean = rtTreeBranchState(opt, current) === 'all';
+        const next: ReadonlyArray<TValue> = clearing
+            ? current.filter((v: TValue): boolean => !leaves.includes(v))
+            : [...current, ...leaves.filter((leaf: TValue): boolean => !current.includes(leaf))];
         this.value.set(next);
         this.emitChange([...next]);
     }
@@ -267,13 +304,36 @@ export class RtMultiselectComponent<TValue> extends RtFormControlBase<ReadonlyAr
                 event.preventDefault();
                 this.popover().close();
                 break;
+            case 'ArrowRight':
+            case 'ArrowLeft':
+                event.preventDefault();
+                this.#sideKey(event.key);
+                break;
             default:
                 break;
         }
     }
 
+    #checkOf(row: IRtSelect.Row<TValue>): IRtSelect.TBranchState {
+        if (row.branch) {
+            return rtTreeBranchState(row.option, this.value());
+        }
+        return this.value().includes(row.option.value) ? 'all' : 'none';
+    }
+
+    #sideKey(key: string): void {
+        const answer: IRtSelect.SideKeyAnswer<TValue> = rtTreeSideKey(this.rows(), this.activeIndex(), key);
+        const toggle: TValue | null = answer.toggle;
+        if (toggle !== null) {
+            this.openBranches.update((open: ReadonlySet<TValue>): ReadonlySet<TValue> => rtTreeToggle(open, toggle));
+        }
+        this.activeIndex.set(answer.index);
+    }
+
     #moveActive(delta: number): void {
-        const opts: ReadonlyArray<IRtSelect.Option<TValue>> = this.options();
+        const opts: ReadonlyArray<IRtSelect.Option<TValue>> = this.rows().map(
+            (row: IRtSelect.Row<TValue>): IRtSelect.Option<TValue> => row.option
+        );
         if (opts.length === 0) {
             this.activeIndex.set(-1);
             return;
@@ -289,7 +349,9 @@ export class RtMultiselectComponent<TValue> extends RtFormControlBase<ReadonlyAr
     }
 
     #toggleActive(): void {
-        const opts: ReadonlyArray<IRtSelect.Option<TValue>> = this.options();
+        const opts: ReadonlyArray<IRtSelect.Option<TValue>> = this.rows().map(
+            (row: IRtSelect.Row<TValue>): IRtSelect.Option<TValue> => row.option
+        );
         const index: number = this.activeIndex();
         if (index >= 0 && index < opts.length) {
             this.toggleOption(opts[index]);
