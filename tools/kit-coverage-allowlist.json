@@ -55,7 +55,8 @@
     "rt-data-table[rtDataTableSelectors]": "projects/ui-kit-v2/src/lib/components/data-table/stories/data-table-matrix.stories.ts",
     "rt-data-list-toolbar": "projects/ui-kit-v2/src/lib/components/data-list/stories/data-list-matrix.stories.ts",
     "rt-data-list-settings-aside": "projects/ui-kit-v2/src/lib/components/data-list/stories/data-list-matrix.stories.ts",
-    "rt-data-list[rtDataListSelectors]": "projects/ui-kit-v2/src/lib/components/data-list/stories/data-list-matrix.stories.ts"
+    "rt-data-list[rtDataListSelectors]": "projects/ui-kit-v2/src/lib/components/data-list/stories/data-list-matrix.stories.ts",
+    "rt-aside-error-box": "projects/ui-kit-v2/src/lib/components/aside/stories/aside-matrix.stories.ts"
   },
   "noPlayground": {
     "toolbar": "Содержимое панели приходит проекцией шаблонов в три места, и страница с входами их не задаёт: витрина умеет подставлять значения, а не разметку. Единственный вход — плотность — показан своей осью."

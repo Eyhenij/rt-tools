@@ -10,7 +10,7 @@ import { RtAsideHeaderComponent } from '../../header/rt-aside-header.component';
 import { TRtAsideContentLayout, TRtAsideSize, RtAsideComponent } from '../../rt-aside.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TAsideMatrixPart = 'size' | 'width' | 'layout' | 'presets' | 'themes';
+export type TAsideMatrixPart = 'size' | 'width' | 'layout' | 'error' | 'presets' | 'themes';
 
 /** Раскладка содержимого: с вкладками содержимое не прокручивается целиком, а отдаёт прокрутку внутрь. */
 interface IAsideLayoutCase {
@@ -106,6 +106,39 @@ interface IAsideLayoutCase {
                     </app-story-presets>
                 }
 
+                @case ('error') {
+                    <app-story-presets caption="Ошибка запроса в обеих темах в обоих наборах">
+                        <ng-template>
+                            <app-story-themes>
+                                <ng-template>
+                                    <div class="app-aside-matrix__box app-aside-matrix__box--tall">
+                                        <rt-aside size="sm" ariaLabel="Карточка тура" [requestError]="requestError">
+                                            <rt-aside-header title="Тур в Сочи" overline="Заявка № 1024" />
+                                            <rt-aside-section heading="Клиент">Иванов Иван Иванович</rt-aside-section>
+                                            <rt-aside-footer>
+                                                <button
+                                                    rtButton
+                                                    asideDismiss
+                                                    type="button"
+                                                    theme="secondary"
+                                                    appearance="text"
+                                                    label="Закрыть"
+                                                    aria-label="Закрыть"></button>
+                                                <button
+                                                    rtButton
+                                                    asidePrimary
+                                                    type="button"
+                                                    label="Сохранить"
+                                                    aria-label="Сохранить"></button>
+                                            </rt-aside-footer>
+                                        </rt-aside>
+                                    </div>
+                                </ng-template>
+                            </app-story-themes>
+                        </ng-template>
+                    </app-story-presets>
+                }
+
                 @case ('presets') {
                     <app-story-presets caption="Панель в обоих наборах">
                         <ng-template>
@@ -181,6 +214,12 @@ interface IAsideLayoutCase {
             inline-size: 100%;
             block-size: 20rem;
         }
+
+        /* Блок ошибки забирает высоту у зоны содержимого: в ящике 20rem раздел «Клиент» срезался
+           краем прокрутки. Ящик выше ровно на блок ошибки с его отступом. */
+        .app-aside-matrix__box--tall {
+            block-size: 24rem;
+        }
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
@@ -204,6 +243,9 @@ export class TestRtAsideMatrixComponent {
 
     /** Своя ширина: вход перекрывает размер, и рядом видно, что размер он и правда перекрывает. */
     public readonly widths: readonly string[] = ['260px', '420px'];
+
+    /** Ошибка неудавшегося сохранения: её содержимое уходит только в копию, на экране его нет. */
+    public readonly requestError: Readonly<Record<string, unknown>> = { status: 500, message: 'Internal Server Error' };
 
     public readonly layoutCases: readonly IAsideLayoutCase[] = [
         { name: 'обычная', layout: 'default' },
