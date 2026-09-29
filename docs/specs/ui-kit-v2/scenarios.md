@@ -11,6 +11,7 @@ The scenarios live in the subdomains, each at its own rules:
 | [The actions at a reply](chat-actions/scenarios.md)                      | `SC-UKV-73`…`SC-UKV-76`              |
 | [The settings of the kit and the theme](kit-settings-theme/scenarios.md) | `SC-UKV-330`…`SC-UKV-350`            |
 | [One rounding input](radius-scale/scenarios.md)                          | `SC-UKV-383`…`SC-UKV-393`            |
+| [The accordion](accordion/scenarios.md)                                  | `SC-UKV-394`…`SC-UKV-405`            |
 
 The prefix is shared across the domain, and the numbers were not recounted at the move: the number
 ties a scenario to the title of its test.
