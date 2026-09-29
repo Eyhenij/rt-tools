@@ -5,20 +5,39 @@ import { Component, Type } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { createRtFixture, provideRtKitTesting } from '../../../testing/rt-kit-testing';
+import { RtActionBarComponent } from '../action-bar/rt-action-bar.component';
 import { RtAutocompleteComponent } from '../autocomplete/rt-autocomplete.component';
+import { RtBottomSheetComponent } from '../bottom-sheet/rt-bottom-sheet.component';
 import { RtButtonDirective } from '../button/rt-button.directive';
+import { RtCalendarComponent } from '../calendar/rt-calendar.component';
+import { RtCardComponent } from '../card/rt-card.component';
 import { RtCheckboxComponent } from '../checkbox/rt-checkbox.component';
 import { RtDatePickerComponent } from '../date-picker/rt-date-picker.component';
+import { RtDialogComponent } from '../dialog/rt-dialog.component';
+import { RtEmptyStateComponent } from '../empty-state/rt-empty-state.component';
+import { RtFileCardComponent } from '../file-card/rt-file-card.component';
+import { RtFileDropComponent } from '../file-drop/rt-file-drop.component';
+import { RtHeaderComponent } from '../header/rt-header.component';
 import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
 import { RtInputNumberComponent } from '../input-number/rt-input-number.component';
 import { RtInputComponent } from '../input/rt-input.component';
+import { RtMarkdownTextComponent } from '../markdown-text/rt-markdown-text.component';
+import { RtMenuItemComponent } from '../menu/rt-menu-item.component';
+import { RtMessageComponent } from '../message/rt-message.component';
+import { RtMoneyListComponent } from '../money-list/rt-money-list.component';
 import { RtMultiselectComponent } from '../multiselect/rt-multiselect.component';
+import { RtNoteComponent } from '../note/rt-note.component';
+import { RtNotificationsBellComponent } from '../notifications-bell/rt-notifications-bell.component';
+import { RtPaginationComponent } from '../pagination/rt-pagination.component';
 import { RtRadioButtonComponent } from '../radio-button/rt-radio-button.component';
+import { RtSectionNavComponent } from '../section-nav/rt-section-nav.component';
 import { RtSelectComponent } from '../select/rt-select.component';
 import { RtSkeletonComponent } from '../skeleton/rt-skeleton.component';
 import { RtSplitButtonComponent } from '../split-button/rt-split-button.component';
+import { RtStepperComponent } from '../stepper/rt-stepper.component';
 import { RtTagComponent } from '../tag/rt-tag.component';
 import { RtTextareaComponent } from '../textarea/rt-textarea.component';
+import { RtThreadListComponent } from '../thread-list/rt-thread-list.component';
 import { RtToggleButtonGroupComponent } from '../toggle-button-group/rt-toggle-button-group.component';
 import { RtToggleSwitchComponent } from '../toggle-switch/rt-toggle-switch.component';
 
@@ -124,6 +143,57 @@ const SURFACES: readonly ISurface[] = [
         styles: 'date-picker/rt-date-picker.component.scss',
         draw: (): HTMLElement => drawn(RtDatePickerComponent),
     },
+    {
+        name: 'action-bar',
+        styles: 'action-bar/rt-action-bar.component.scss',
+        draw: (): HTMLElement => drawn(RtActionBarComponent, { config: { selected: 1, total: 2, actions: [] } }),
+    },
+    {
+        name: 'bottom-sheet',
+        styles: 'bottom-sheet/rt-bottom-sheet.component.scss',
+        draw: (): HTMLElement => drawn(RtBottomSheetComponent, { open: true }),
+    },
+    {
+        name: 'calendar',
+        styles: 'calendar/rt-calendar.component.scss',
+        draw: (): HTMLElement => drawn(RtCalendarComponent, { months: [], weekdayLabels: [] }),
+    },
+    { name: 'card', styles: 'card/rt-card.component.scss', draw: (): HTMLElement => drawn(RtCardComponent) },
+    { name: 'dialog', styles: 'dialog/rt-dialog.component.scss', draw: (): HTMLElement => drawn(RtDialogComponent) },
+    { name: 'empty-state', styles: 'empty-state/rt-empty-state.component.scss', draw: (): HTMLElement => drawn(RtEmptyStateComponent) },
+    {
+        name: 'file-card',
+        styles: 'file-card/rt-file-card.component.scss',
+        draw: (): HTMLElement => drawn(RtFileCardComponent, { name: 'Договор.pdf' }),
+    },
+    { name: 'file-drop', styles: 'file-drop/rt-file-drop.component.scss', draw: (): HTMLElement => drawn(RtFileDropComponent) },
+    { name: 'header', styles: 'header/rt-header.component.scss', draw: (): HTMLElement => drawn(RtHeaderComponent) },
+    {
+        name: 'markdown-text',
+        styles: 'markdown-text/rt-markdown-text.component.scss',
+        draw: (): HTMLElement => drawn(RtMarkdownTextComponent, { text: 'Текст' }),
+    },
+    { name: 'menu-item', styles: 'menu/rt-menu-item.component.scss', draw: (): HTMLElement => drawn(RtMenuItemComponent) },
+    { name: 'message', styles: 'message/rt-message.component.scss', draw: (): HTMLElement => drawn(RtMessageComponent) },
+    { name: 'money-list', styles: 'money-list/rt-money-list.component.scss', draw: (): HTMLElement => drawn(RtMoneyListComponent) },
+    { name: 'note', styles: 'note/rt-note.component.scss', draw: (): HTMLElement => drawn(RtNoteComponent) },
+    {
+        name: 'notifications-bell',
+        styles: 'notifications-bell/rt-notifications-bell.component.scss',
+        draw: (): HTMLElement => drawn(RtNotificationsBellComponent),
+    },
+    {
+        name: 'pagination',
+        styles: 'pagination/rt-pagination.component.scss',
+        draw: (): HTMLElement => drawn(RtPaginationComponent, { pageModel: { pageNumber: 1, pageSize: 20, totalCount: 100 } }),
+    },
+    {
+        name: 'section-nav',
+        styles: 'section-nav/rt-section-nav.component.scss',
+        draw: (): HTMLElement => drawn(RtSectionNavComponent, { items: [] }),
+    },
+    { name: 'stepper', styles: 'stepper/rt-stepper.component.scss', draw: (): HTMLElement => drawn(RtStepperComponent, { steps: [] }) },
+    { name: 'thread-list', styles: 'thread-list/rt-thread-list.component.scss', draw: (): HTMLElement => drawn(RtThreadListComponent) },
 ];
 
 /** Все файлы стилей в папке компонентов кита, со вложенными. */

@@ -1,3 +1,5 @@
+@use '../../../styles/mixins' as kv;
+
 @layer rt-kit.components {
     .rt-pagination {
         --rt-pagination-page-radius: var(--rt-pagination-box-radius);
@@ -123,6 +125,9 @@
             font-size: var(--rt-text-sm);
             white-space: var(--rt-pagination-per-page-label-white-space);
         }
+
+        /* Шаг входа `radius` переназначает скругление страницы; стрелки и поле держат своё. */
+        @include kv.radius-steps('--rt-pagination-page-radius');
     }
 
     // Узкий контейнер: прячем числовую полосу и диапазон, показываем compact-форму.

@@ -1,3 +1,5 @@
+@use '../../../styles/mixins' as kv;
+
 @layer rt-kit.components {
     /* rt-file-card — ViewEncapsulation.None, плоский `.rt-file-card` (как rt-file-input/rt-icon).
        Host-класс ставится через @Component host:{class}. */
@@ -112,5 +114,8 @@
         &__action {
             flex-shrink: 0;
         }
+
+        /* Шаг входа `radius` переназначает скругление карточки; значок держит своё. */
+        @include kv.radius-steps('--rt-file-card-radius');
     }
 }

@@ -1,3 +1,5 @@
+@use '../../../styles/mixins' as kv;
+
 @layer rt-kit.components {
     /* rt-note — тихая информационная заметка в common/ui (ViewEncapsulation.None).
        Селектор bare `.rt-note` (класс на host) — `:host` в None light-DOM не матчит.
@@ -13,5 +15,8 @@
         color: var(--rt-color-text-muted);
         font-size: var(--rt-text-sm);
         line-height: var(--rt-leading-normal);
+
+        /* Шаг входа `radius` переназначает скругление заметки. */
+        @include kv.radius-steps('--rt-note-radius');
     }
 }

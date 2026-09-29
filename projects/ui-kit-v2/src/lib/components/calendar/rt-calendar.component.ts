@@ -15,6 +15,7 @@ import {
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
 import { RtIconButtonComponent } from '../icon-button';
+import { RtRadiusDirective } from '../radius/rt-radius.directive';
 import { RtSkeletonComponent } from '../skeleton';
 import { IRtCalendar } from './rt-calendar.model';
 
@@ -35,6 +36,7 @@ const BEM_BLOCK: string = 'rt-calendar';
         RtIconButtonComponent,
         RtSkeletonComponent,
     ],
+    hostDirectives: [{ directive: RtRadiusDirective, inputs: ['radius'] }],
     host: {
         class: BEM_BLOCK,
     },

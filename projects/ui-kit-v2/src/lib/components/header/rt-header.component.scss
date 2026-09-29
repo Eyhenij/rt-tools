@@ -1,3 +1,5 @@
+@use '../../../styles/mixins' as kv;
+
 @layer rt-kit.components {
     .rt-header {
         --rt-header-radius: var(--rt-radius-lg);
@@ -58,6 +60,9 @@
             flex: 1 0 0;
             align-items: center;
         }
+
+        /* Шаг входа `radius` переназначает скругление нижних углов. */
+        @include kv.radius-steps('--rt-header-radius');
     }
 
     /* dark override: подложка обвязки — своё назначение, а не ступень шкалы. */

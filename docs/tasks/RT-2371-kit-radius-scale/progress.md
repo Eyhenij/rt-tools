@@ -5,9 +5,9 @@
 Rewritten by every session, not appended to.
 
 - **State:** `этап-идёт`
-- **Stage:** 4 of 6 — The input on the rest of the components
-- **Done:** exploration, grill, plan, the agreement `docs/specs/ui-kit-v2/proposed/radius-scale/`, the step type, `RtRadiusDirective`, the mixin `radius-steps`, their specs; the tag, icon button, button and skeleton folded into `radius`, the kit's callers moved; the twelve controls take the input, the contract spec of SC-UKV-388–390 lists them (151 suites, 1916 tests green)
-- **Next step:** the surfaces take the input — card first, each added to `SURFACES` of the contract spec; the stories still use the old inputs and wait for stage 5
+- **Stage:** 5 of 6 — The showcase and the texts
+- **Done:** exploration, grill, plan, the agreement `docs/specs/ui-kit-v2/proposed/radius-scale/`, the step type, `RtRadiusDirective`, the mixin `radius-steps`, their specs; the tag, icon button, button and skeleton folded into `radius`, the kit's callers moved; the twelve controls and nineteen surfaces take the input, the contract spec of SC-UKV-388–390 lists them; the defaults match the mockup (151 suites, 1954 tests green)
+- **Next step:** the showcase page with every component at every step; then the stories of the four folded components move to `radius`
 - **Uncommitted:** none
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -25,9 +25,9 @@ Rewritten by every session, not appended to.
 - [x] 3.4 Fold the skeleton's `borderRadius` into `radius`, the wrapper too
 - [x] 3.5 Move the kit's own callers to the new input
 - [x] 4.1 Controls: split button, toggle group, toggle switch, checkbox, radio card, input, textarea, input number, select, multiselect, autocomplete, date picker
-- [>] 4.2 Surfaces: card, dialog, confirm popover, bottom sheet, toast, tooltip, message, note, menu, file card, file drop, markdown text, money list, action bar, stepper, table, photo viewer, calendar, pagination, section nav, header, notifications bell, thread list, empty state
-- [ ] 4.3 Defaults brought to the mockup and off-scale values replaced by steps
-- [ ] 5.1 A showcase page with every component at every step
+- [x] 4.2 Surfaces: card, dialog, confirm popover, bottom sheet, toast, tooltip, message, note, menu, file card, file drop, markdown text, money list, action bar, stepper, table, photo viewer, calendar, pagination, section nav, header, notifications bell, thread list, empty state
+- [x] 4.3 Defaults brought to the mockup and off-scale values replaced by steps
+- [>] 5.1 A showcase page with every component at every step
 - [ ] 5.2 The stories of the four folded components moved to `radius`
 - [ ] 5.3 The component descriptions, the README and the changelog brought up to date
 - [ ] 5.4 The snapshots re-taken
@@ -35,6 +35,9 @@ Rewritten by every session, not appended to.
 - [ ] 6.2 The full set of checks run
 
 ## Decisions along the way
+
+- **The confirmation, the toast, the tooltip and the photo viewer take no input** — a directive or a service draws them in an overlay, and the consumer writes no tag to name a step on; the agreement keeps overlay panels out. Affected stage of the plan: 4.
+- **The table takes no input in this task** — its wide view has no corners (the mockup gives it `none`), and its component file stands at the length limit; the narrow card gets the input after the file is split, a task to be filed at closing. Affected stage of the plan: 4.
 
 - **A field takes its own property with the shared field rounding as its default** — `--rt-input-radius` is the kit-level name of all fields, so the input's own property is `--rt-input-box-radius`, the others `--rt-<block>-radius`. Affected stage of the plan: 4.
 - **The toggle group's track is `md` and its segments `ms` on every size** — the mockup gives these two steps; the size tiers of 10 and 12px are gone, 12px was off the scale. Affected stage of the plan: 4.

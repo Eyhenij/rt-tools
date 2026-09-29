@@ -1,3 +1,5 @@
+@use '../../../styles/mixins' as kv;
+
 @layer rt-kit.components {
     /* rt-calendar — ViewEncapsulation.None: правила таргетируют BEM-класс блока.
        `.rt-calendar` — сам хост (шаблон начинается с ng-container, класс ставит host). */
@@ -129,5 +131,8 @@
                 font-size: var(--rt-text-3xs);
             }
         }
+
+        /* Шаг входа `radius` переназначает скругление дня. */
+        @include kv.radius-steps('--rt-calendar-day-radius');
     }
 }
