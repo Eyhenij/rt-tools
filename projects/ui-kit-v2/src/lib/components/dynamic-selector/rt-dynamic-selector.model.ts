@@ -14,6 +14,36 @@ export namespace IRtDynamicSelector {
         readonly found: ReadonlyArray<T>;
     }
 
+    /** Строка всплывающего выбора, готовая для разметки. */
+    export interface PopupRow<T> {
+        readonly entity: T;
+        readonly key: unknown;
+        readonly label: string;
+        readonly ticked: boolean;
+        /** Под строкой стоит разделитель. */
+        readonly separated: boolean;
+    }
+
+    /** Строка списка выбранного, готовая для разметки. */
+    export interface ListRow<T> {
+        readonly item: T;
+        readonly key: unknown;
+        readonly label: string;
+        /** Строку нельзя убрать из списка. */
+        readonly locked: boolean;
+    }
+
+    /** Перенос строки списка выбранного: откуда и куда. */
+    export interface Move {
+        readonly from: number;
+        readonly to: number;
+    }
+
+    /** Обстановка шаблона строки, который принёс вызывающий. */
+    export interface RowContext<T> {
+        readonly $implicit: T;
+    }
+
     /** Правка строки поля списка строк: прежнее значение и новое. */
     export interface TextEdit {
         readonly previous: string;

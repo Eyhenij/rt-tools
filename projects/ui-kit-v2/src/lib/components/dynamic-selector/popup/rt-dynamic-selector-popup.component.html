@@ -1,0 +1,109 @@
+<ng-container rtBlock="rt-dynamic-selector-popup">
+    <div rtElem="head">
+        <rt-input
+            rtElem="search"
+            qa-dataid="dynamic-selector-search"
+            iconLeft="search"
+            [placeholder]="searchLabel()"
+            [ngModel]="query()"
+            (ngModelChange)="onQueryChange($event)" />
+
+        @if (isMultiToggleVisible() || isSelectAllShown()) {
+            <div rtElem="controls">
+                @if (isMultiToggleVisible()) {
+                    <div rtElem="multi">
+                        <rt-toggle-switch
+                            qa-dataid="dynamic-selector-multi"
+                            [ariaLabel]="multiLabel()"
+                            [ngModel]="isMultiOn()"
+                            [ngModelOptions]="{ standalone: true }"
+                            (ngModelChange)="onMultiToggle($event)" />
+                        <span rtElem="multi-label">{{ multiLabel() }}</span>
+                        <rt-icon rtElem="multi-hint-icon" name="info" size="sm" [rtTooltip]="multiHintLabel()" />
+                        <span rtElem="multi-hint">{{ multiHintLabel() }}</span>
+                    </div>
+                }
+
+                @if (isSelectAllShown()) {
+                    <rt-checkbox
+                        rtElem="select-all"
+                        qa-dataid="dynamic-selector-select-all"
+                        [indeterminate]="selectAllState() === 'some'"
+                        [ngModel]="selectAllState() === 'all'"
+                        [ngModelOptions]="{ standalone: true }"
+                        (ngModelChange)="onSelectAll($event)">
+                        {{ selectAllLabel() }}
+                    </rt-checkbox>
+                }
+            </div>
+        }
+    </div>
+
+    @if (loading()) {
+        <div rtElem="state" qa-dataid="dynamic-selector-loading">
+            <rt-spinner [diameter]="24" />
+        </div>
+    } @else if (hasRows()) {
+        <div rtElem="list" qa-dataid="dynamic-selector-options">
+            @for (row of rowItems(); track row.key) {
+                <div rtElem="row" [rtMod]="{ separated: row.separated }">
+                    @if (isSingle()) {
+                        <rt-radio-button
+                            rtElem="option"
+                            qa-dataid="dynamic-selector-option"
+                            [value]="row.key"
+                            [checked]="row.ticked"
+                            [label]="row.label"
+                            (checkedChange)="onRadioChange(row.entity)" />
+                    } @else {
+                        <rt-checkbox
+                            rtElem="option"
+                            qa-dataid="dynamic-selector-option"
+                            [ngModel]="row.ticked"
+                            [ngModelOptions]="{ standalone: true }"
+                            (click)="onRowClick($event, row.entity)">
+                            {{ row.label }}
+                        </rt-checkbox>
+                    }
+                </div>
+            }
+
+            <div rtElem="sentinel" rtInfiniteScroll [disabled]="!lazyLoad() || fetching()" (loadMore)="loadMore.emit()"></div>
+
+            @if (fetching()) {
+                <div rtElem="fetching" qa-dataid="dynamic-selector-fetching">
+                    <rt-spinner [diameter]="20" />
+                </div>
+            }
+        </div>
+    } @else {
+        <rt-empty-state rtElem="empty" qa-dataid="dynamic-selector-no-results" icon="search" [title]="noResultsLabel()" />
+    }
+
+    <div rtElem="foot" [rtMod]="{ nav: isNavShown() }">
+        @if (isNavShown()) {
+            <a rtElem="nav" qa-dataid="dynamic-selector-nav" [routerLink]="navigateLink()" [rtTooltip]="navigateTitle()">
+                {{ navigateTitle() }}
+            </a>
+        }
+
+        <div rtElem="actions">
+            <button
+                rtButton
+                appearance="text"
+                type="button"
+                qa-dataid="dynamic-selector-cancel"
+                [label]="cancelLabel()"
+                [attr.aria-label]="cancelLabel()"
+                (click)="onCancel()"></button>
+            <button
+                rtButton
+                type="button"
+                qa-dataid="dynamic-selector-apply"
+                [label]="applyLabel()"
+                [attr.aria-label]="applyLabel()"
+                [disabled]="isApplyDisabled()"
+                (click)="onApply()"></button>
+        </div>
+    </div>
+</ng-container>
