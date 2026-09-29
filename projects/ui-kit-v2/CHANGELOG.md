@@ -1,3 +1,10 @@
+## [0.13.1](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2@0.13.0...rt-ui-kit-v2@0.13.1) (2026-09-29)
+
+### Bug Fixes
+
+- **rt:ui-kit-v2:** журнал изменений разделён, выпуск делит его сам ([d4fb2c4](https://github.com/Eyhenij/rt-tools/commit/d4fb2c4c7240b320fd57fc2e37f50a6b48e88950))
+- **rt:ui-kit-v2:** флажок не меняет высоту при отметке ([ebf7fc9](https://github.com/Eyhenij/rt-tools/commit/ebf7fc955a30809ca34482d90ed322a77477fb60))
+
 # [0.13.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2@0.12.0...rt-ui-kit-v2@0.13.0) (2026-09-29)
 
 ### Features
