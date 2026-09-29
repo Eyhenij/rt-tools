@@ -11,6 +11,7 @@ import {
 } from '../../../../../showcase/story-states';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { IRtIcon } from '../../../icon/rt-icon.model';
+import { RtMenuItemIconDirective } from '../../rt-menu-item-icon.directive';
 import { RtMenuItemComponent } from '../../rt-menu-item.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
@@ -54,6 +55,22 @@ interface IMenuItemKindCase {
                                     [glyph]="kindCase.glyph ?? null"
                                     [disabled]="kindCase.disabled"
                                     [confirmMessage]="kindCase.confirmMessage" />
+                            </ng-template>
+                        </app-story-row>
+
+                        <app-story-row
+                            caption="Свой значок приложения"
+                            [items]="ownIconCases"
+                            [itemLabel]="caseLabel"
+                            [slotWidth]="itemWidth">
+                            <ng-template let-ownCase>
+                                <rt-menu-item [label]="ownCase.label" [danger]="ownCase.danger" [success]="ownCase.success">
+                                    <ng-template rtMenuItemIcon>
+                                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                                            <path fill="currentColor" [attr.d]="ownIconPath" />
+                                        </svg>
+                                    </ng-template>
+                                </rt-menu-item>
                             </ng-template>
                         </app-story-row>
                     </ng-template>
@@ -123,6 +140,7 @@ interface IMenuItemKindCase {
     imports: [
         // components
         RtMenuItemComponent,
+        RtMenuItemIconDirective,
 
         // showcase
         StoryPresetsComponent,
@@ -167,6 +185,17 @@ export class TestRtMenuItemMatrixComponent {
             confirmMessage: 'Удалить запись? Действие необратимо.',
         },
     ];
+
+    /** Свой значок в трёх тонах: он красится цветом тона, как значок кита. */
+    public readonly ownIconCases: readonly { name: string; label: string; danger: boolean; success: boolean }[] = [
+        { name: 'обычный', label: 'Сделать активным', danger: false, success: false },
+        { name: 'деструктивный', label: 'Отключить', danger: true, success: false },
+        { name: 'согласие', label: 'Принять', danger: false, success: true },
+    ];
+
+    /** Рисунок своего значка — человек с галочкой, которого нет в наборе кита. */
+    public readonly ownIconPath: string =
+        'M9 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm0 2c-3.3 0-7 1.6-7 4v2h10.5a6 6 0 0 1 .9-5.6A12 12 0 0 0 9 14Zm8.3 6.2-3-3 1.4-1.4 1.6 1.6 3.9-3.9 1.4 1.4-5.3 5.3Z';
 
     /** Подпись случая: у всех наборов этой матрицы имя лежит в одном поле. */
     public readonly caseLabel: (value: { readonly name: string }) => string = (value: { readonly name: string }): string => value.name;
