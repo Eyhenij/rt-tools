@@ -33,48 +33,71 @@ const PER_PAGE: readonly number[] = [20, 50, 100];
  */
 @Component({
     selector: 'app-pagination-matrix',
+    // Ширина ячейки ряда задана нарочно: хост полосы в узком ряду схлопывается в ноль, содержимое
+    // выходит за него, и в половине пары случаи наезжают друг на друга. Своя ширина ячейки
+    // заставляет ряд переноситься, а не сжимать полосу.
     template: `
         @switch (part) {
             @case ('position') {
-                <app-story-row caption="Где стоит открытая страница" [items]="positions" [itemLabel]="caseLabel">
-                    <ng-template let-item>
-                        <rt-pagination [pageModel]="item.pageModel" [perPageOptions]="perPage" />
+                <app-story-presets caption="Где стоит открытая страница в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="20rem" [items]="positions" [itemLabel]="caseLabel">
+                            <ng-template let-item>
+                                <rt-pagination [pageModel]="item.pageModel" [perPageOptions]="perPage" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('total') {
-                <app-story-row caption="Сколько страниц всего" [items]="totals" [itemLabel]="caseLabel">
-                    <ng-template let-item>
-                        <rt-pagination [pageModel]="item.pageModel" [perPageOptions]="perPage" />
+                <app-story-presets caption="Сколько страниц всего в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="20rem" [items]="totals" [itemLabel]="caseLabel">
+                            <ng-template let-item>
+                                <rt-pagination [pageModel]="item.pageModel" [perPageOptions]="perPage" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('loading') {
-                <app-story-row caption="Загрузка" [items]="loadings" [itemLabel]="loadingLabel">
-                    <ng-template let-value>
-                        <rt-pagination [pageModel]="middle" [perPageOptions]="perPage" [loading]="value" />
+                <app-story-presets caption="Загрузка в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="20rem" [items]="loadings" [itemLabel]="loadingLabel">
+                            <ng-template let-value>
+                                <rt-pagination [pageModel]="middle" [perPageOptions]="perPage" [loading]="value" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('container') {
-                <app-story-row caption="Ширина контейнера" [items]="containerWidths" [itemLabel]="containerLabel">
-                    <ng-template let-width>
-                        <div style="container-type: inline-size" [style.width]="width">
-                            <rt-pagination [pageModel]="middle" [perPageOptions]="perPage" />
-                        </div>
+                <app-story-presets caption="Ширина контейнера в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="containerWidths" [itemLabel]="containerLabel">
+                            <ng-template let-width>
+                                <div style="container-type: inline-size" [style.width]="width">
+                                    <rt-pagination [pageModel]="middle" [perPageOptions]="perPage" />
+                                </div>
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('edges') {
-                <app-story-row caption="Края" [items]="edges" [itemLabel]="caseLabel">
-                    <ng-template let-item>
-                        <rt-pagination [pageModel]="item.pageModel" [perPageOptions]="perPage" />
+                <app-story-presets caption="Края в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="20rem" [items]="edges" [itemLabel]="caseLabel">
+                            <ng-template let-item>
+                                <rt-pagination [pageModel]="item.pageModel" [perPageOptions]="perPage" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('presets') {
@@ -86,11 +109,15 @@ const PER_PAGE: readonly number[] = [20, 50, 100];
             }
 
             @case ('themes') {
-                <app-story-themes caption="Полоса в обеих темах">
+                <app-story-presets caption="Полоса в обеих темах в обоих наборах">
                     <ng-template>
-                        <rt-pagination [pageModel]="middle" [perPageOptions]="perPage" />
+                        <app-story-themes>
+                            <ng-template>
+                                <rt-pagination [pageModel]="middle" [perPageOptions]="perPage" />
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
             }
         }
     `,

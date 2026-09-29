@@ -1,6 +1,8 @@
+import { NgTemplateOutlet } from '@angular/common';
 import {
     booleanAttribute,
     computed,
+    contentChild,
     forwardRef,
     inject,
     input,
@@ -23,10 +25,14 @@ import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { RT_KIT_LABELS, TRtKitLabelMap, rtKitLabel } from '../../i18n';
 import { RtFormControlBase } from '../form-control/rt-form-control.base';
+import { IRtInput } from '../input/rt-input.model';
 import { RtIconComponent, IRtIcon } from '../icon';
 import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
 import { RtInputComponent } from '../input/rt-input.component';
 import { RtPopoverDirective } from '../popover/rt-popover.directive';
+import { IRtPopover } from '../popover/rt-popover.model';
+import { rtScrollActiveOptionIntoView } from './rt-select-active-option';
+import { RtSelectTriggerDirective } from './rt-select-trigger.directive';
 import { IRtSelect } from './rt-select.model';
 
 const BEM_BLOCK: string = 'rt-select';
@@ -64,6 +70,7 @@ function nextPanelId(): number {
     imports: [
         // Angular
         FormsModule,
+        NgTemplateOutlet,
 
         // standalone components / directives
         RtIconButtonComponent,
@@ -85,6 +92,7 @@ function nextPanelId(): number {
         '[class.rt-select--readonly]': 'isReadonly()',
         '[class.rt-select--invalid]': 'isInvalid()',
         '[class.rt-select--borderless]': '!bordered()',
+        '[class.rt-select--appearance--fill]': "appearance() === 'fill'",
         '[class.rt-select--size--sm]': "size() === 'sm'",
         '[class.rt-select--size--lg]': "size() === 'lg'",
         '[class.rt-select--with-icon-left]': '!!iconLeft()',
@@ -108,6 +116,17 @@ export class RtSelectComponent<TValue> extends RtFormControlBase<TValue | null> 
 
     protected readonly isOpen: Signal<boolean> = computed((): boolean => this.popover().isOpen());
 
+    /** Идентификатор подсвеченной опции — тот же, что уходит в `aria-activedescendant`. */
+    protected readonly activeOptionId: Signal<string | null> = computed((): string | null =>
+        this.isOpen() && this.activeIndex() >= 0 ? `${this.panelId}-opt-${this.activeIndex()}` : null
+    );
+
+    /**
+     * Своя разметка указателя, если потребитель её объявил. Не объявил — кит рисует свою, и ни один
+     * нынешний потребитель не двигается.
+     */
+    protected readonly triggerTpl: Signal<RtSelectTriggerDirective<TValue> | undefined> = contentChild(RtSelectTriggerDirective);
+
     protected readonly hasValue: Signal<boolean> = computed((): boolean => this.value() !== null);
 
     protected readonly selectedLabel: Signal<string> = computed((): string => {
@@ -130,6 +149,17 @@ export class RtSelectComponent<TValue> extends RtFormControlBase<TValue | null> 
         }
     );
 
+    /** Три значения, которые кит отдаёт своей разметке указателя, и не больше. */
+    protected readonly triggerState: Signal<IRtSelect.TriggerState<TValue>> = computed((): IRtSelect.TriggerState<TValue> => ({
+        isOpen: this.isOpen(),
+        value: this.value(),
+        label: this.selectedLabel(),
+        isDisabled: this.isDisabled(),
+    }));
+
+    /** Вид рамки: `outline` — рамка со всех сторон, `fill` — залитое поле с чертой снизу. */
+    public readonly appearance: InputSignal<IRtInput.Appearance> = input<IRtInput.Appearance>('outline');
+
     public readonly displayText: Signal<string> = computed((): string => this.selectedLabel());
 
     public readonly options: InputSignal<ReadonlyArray<IRtSelect.Option<TValue>>> = input<ReadonlyArray<IRtSelect.Option<TValue>>>([]);
@@ -145,7 +175,30 @@ export class RtSelectComponent<TValue> extends RtFormControlBase<TValue | null> 
     /** Пусто — берётся переведённая подпись по умолчанию */
     public readonly filterPlaceholder: InputSignal<string> = input<string>('');
 
+    /**
+     * Чем мерится панель. По умолчанию она не уже кнопки и дальше растёт по содержимому:
+     * со своим указателем кнопка бывает узкой, и панель по её ширине давила бы содержимое.
+     * `trigger` возвращает прежнее — ровно по кнопке, `auto` пускает панель по содержимому
+     * целиком. Предел высоты назначается входом `panelMaxHeight`.
+     */
+    public readonly panelWidth: InputSignal<IRtPopover.Width> = input<IRtPopover.Width>('trigger-min');
+
+    /**
+     * Предел высоты панели — длина как в стилях, например `20rem`. Пусто — предел кита
+     * `--rt-input-panel-max-height`, и длинный список прокручивается внутри панели: без предела
+     * он уходил за нижний край экрана, и пункты за краем были недостижимы. `none` снимает предел —
+     * для короткого списка, который должен открываться целиком, без прокрутки. Значение ставится
+     * на саму панель: она рисуется в наложении, вне поддерева блока.
+     */
+    public readonly panelMaxHeight: InputSignal<string | null> = input<string | null>(null);
+
     public readonly selectionChange: OutputEmitterRef<TValue | null> = output<TValue | null>();
+
+    constructor() {
+        super();
+        // Подсветка, сдвинутая клавишами, не уходит за край панели с пределом высоты.
+        rtScrollActiveOptionIntoView(this.activeOptionId);
+    }
 
     public override setDisabledState(disabled: boolean): void {
         super.setDisabledState(disabled);

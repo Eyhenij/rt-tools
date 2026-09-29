@@ -373,6 +373,15 @@ export const lightColor = [
         dark: `color-mix(in srgb, var(--rt-success-500) 12%, transparent)`,
     },
     {
+        lead: `    /* Подпись успеха на поверхности — пункт меню, строка статуса. Сам статус как текст порога
+       контраста не берёт ни на белом, ни на графите: он для значка и заливки. Пара к
+       warning-text и error-text. */`,
+        space: true,
+        name: `--rt-color-state-success-text`,
+        value: `var(--rt-success-600)`,
+        dark: `var(--rt-success-400)`,
+    },
+    {
         name: `--rt-color-state-warning`,
         value: `var(--rt-warning-500)`,
         note: `rt-theme-shared: цвет статуса один в обеих темах`,

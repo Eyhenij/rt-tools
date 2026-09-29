@@ -1,13 +1,15 @@
+import { BooleanInput } from '@angular/cdk/coercion';
 import { DOCUMENT } from '@angular/common';
 import {
-    inject,
-    input,
-    output,
-    signal,
+    booleanAttribute,
     ChangeDetectionStrategy,
     Component,
-    InputSignal,
+    inject,
+    input,
+    InputSignalWithTransform,
+    output,
     OutputEmitterRef,
+    signal,
     Signal,
     ViewEncapsulation,
     WritableSignal,
@@ -58,7 +60,9 @@ export class RtBottomSheetComponent {
     protected readonly dragDeltaY: WritableSignal<number> = signal<number>(0);
     protected readonly dragging: WritableSignal<boolean> = signal<boolean>(false);
 
-    public readonly open: InputSignal<boolean> = input.required<boolean>();
+    public readonly open: InputSignalWithTransform<boolean, BooleanInput> = input.required<boolean, BooleanInput>({
+        transform: booleanAttribute,
+    });
     public readonly openChange: OutputEmitterRef<boolean> = output<boolean>();
 
     protected onDragStart(event: PointerEvent): void {

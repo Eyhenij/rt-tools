@@ -3,8 +3,8 @@
        Тёмная инверсная подложка (theme-aware пара bg-inverse / text-inverse). */
 
     .rt-tooltip {
-        --rt-tooltip-radius: var(--rt-radius-sm);
-        --rt-tooltip-shadow: var(--rt-shadow-md);
+        --rt-tooltip-radius: var(--rt-overlay-tooltip-radius);
+        --rt-tooltip-shadow: var(--rt-overlay-tooltip-shadow);
 
         display: block;
         max-width: 240px;

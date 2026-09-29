@@ -32,6 +32,9 @@
     "./styles/tokens.css": {
       "default": "./styles/tokens.css"
     },
+    "./styles/tokens.coexist.css": {
+      "default": "./styles/tokens.coexist.css"
+    },
     "./styles/*": {
       "sass": "./src/styles/_*.scss",
       "default": "./src/styles/_*.scss"

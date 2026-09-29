@@ -21,7 +21,7 @@ export default {
 
 type TStory = StoryObj<TestRtWorkspaceComponent>;
 
-export const Default: TStory = {
+export const Playground: TStory = {
     parameters: storySnapshotSkip(
         'обёртка не заполняет ни одной зоны, и в кадре только разделители колонок; пустой показ покрытием не считается, наполнение — волна покрытия составных компонентов'
     ),

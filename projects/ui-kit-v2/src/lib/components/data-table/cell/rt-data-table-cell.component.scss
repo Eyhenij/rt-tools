@@ -1,0 +1,115 @@
+@layer rt-kit.components {
+    /* rt-data-table-cell — готовая ячейка таблицы первого кита. Размеры первого кита лежат на
+       шкале: промежуток и поля 8px — ступень sm, отступ кнопки копирования 4px — ступень xs,
+       значок 24px — размер lg набора. Кнопка копирования стоит поверх края ячейки и
+       проявляется наведением; где наведения нет, она видна всегда. */
+
+    .rt-data-table-cell {
+        --rt-data-table-cell-transition-duration: var(--rt-duration-fast);
+        --rt-data-table-cell-glyph-size: var(--rt-size-6);
+
+        position: relative;
+        display: flex;
+        width: 100%;
+        height: 100%;
+        align-items: center;
+        gap: var(--rt-space-sm);
+
+        /* Глиф Material Symbols для имени без пары в перечне соответствий — лигатура шрифта,
+           которую подключает приложение. Размер 24px — размер lg значка кита. */
+        &__glyph {
+            display: inline-block;
+            overflow: hidden;
+            width: var(--rt-data-table-cell-glyph-size);
+            font-family: 'Material Symbols Outlined', sans-serif;
+            font-feature-settings: 'liga';
+            font-size: var(--rt-data-table-cell-glyph-size);
+            font-style: normal;
+            font-weight: var(--rt-font-weight-regular);
+            letter-spacing: normal;
+            line-height: 1;
+            text-transform: none;
+            white-space: nowrap;
+
+            &--filled {
+                font-variation-settings: 'FILL' 1;
+            }
+        }
+
+        &__prefix,
+        &__suffix {
+            display: inline-flex;
+            min-width: fit-content;
+            flex: 0 0 auto;
+        }
+
+        /* Значение длиннее места обрезается многоточием: раскладка fixed даёт тексту ширину
+           ячейки, а не ширину значения. Подсказку с целым значением получает только обрезанное. */
+        &__title {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+
+            &--align--left {
+                text-align: left;
+            }
+
+            &--align--center {
+                text-align: center;
+            }
+
+            &--align--right {
+                text-align: right;
+            }
+        }
+
+        &__text {
+            overflow: hidden;
+            width: 100%;
+            padding: var(--rt-space-sm) var(--rt-space-sm) var(--rt-space-sm) 0;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        &__copy-button {
+            position: absolute;
+            transition: visibility var(--rt-data-table-cell-transition-duration) linear;
+            visibility: hidden;
+
+            // Постоянно видна там, где наведения нет, — а не по ширине окна: у первого кита она
+            // появлялась сама только на телефоне, а порог узкого экрана второго кита 1080px, и на
+            // ноутбуке с боковой панелью кнопки стояли во всех ячейках сразу.
+            @media (hover: none) {
+                visibility: visible;
+            }
+
+            // Вид — через кнопки списка: материальный набор рисует плашку первого кита.
+            --rt-icon-button-color: var(--rt-list-copy-button-color);
+
+            .rt-icon-button {
+                --rt-icon-button-size: var(--rt-list-copy-button-size);
+                --rt-icon-button-square-radius: var(--rt-list-copy-button-radius);
+                --rt-icon-button-color-hover: var(--rt-color-text-primary);
+                --rt-icon-button-color-bg-hover: var(--rt-list-copy-button-bg-hover);
+
+                background-color: var(--rt-list-copy-button-bg);
+            }
+
+            &--position--left {
+                left: var(--rt-space-xs);
+            }
+
+            &--position--right {
+                right: var(--rt-space-xs);
+            }
+
+            &--complete {
+                cursor: not-allowed;
+            }
+
+            &--visible {
+                visibility: visible;
+            }
+        }
+    }
+}

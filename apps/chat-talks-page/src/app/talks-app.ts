@@ -27,10 +27,8 @@ import {
 import { EChatTalkState, IPage } from '@rt/message-bus-common';
 import { BlockDirective, ElemDirective, WINDOW } from '@rt-tools/core';
 import {
-    IRtChat,
     IRtThreadList,
     IRtWorkspaceDetails,
-    RtChatComponent,
     RtThreadListComponent,
     RtThreadListRowDirective,
     RtThreadListSearchDirective,
@@ -40,6 +38,7 @@ import {
     RtWorkspaceDetailsComponent,
     RtWorkspaceListDirective,
 } from '@rt-tools/ui-kit-v2';
+import { IRtChat, RtChatComponent } from '@rt-tools/ui-kit-v2/rich-editor';
 import { catchError, concatMap, EMPTY, Observable, Subject, switchMap } from 'rxjs';
 
 import { TalksApiService } from './talks-api.service';

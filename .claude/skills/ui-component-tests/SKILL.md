@@ -46,22 +46,25 @@ Four checks do not replace one another, and the choice between them is not a mat
   answer whether there is anything in the frame at all. Between "the run passed" and "what was shown
   is shown" there is nothing in this tree but the sweep — `pnpm run test:stories:v2`, sorted out in
   the pattern `ui-component-tests-visual`.
+- **The sweep opens the overview pages too, and by the same call.** Nothing else opens them at all,
+  so an error there stays invisible while every check of the tree is green. A sweep of their own
+  would part from this one at the first edit of a wait.
+- **The showing root is chosen by the mode, not by the first node a chain of selectors finds.** Both
+  containers stand in the markup of any page at once, and the idle one has zero area: a chain
+  returns it and calls an empty frame on a page that drew everything.
 - **A check written for the wave judges the wrap, not the sighting.** It answers the question it was
   written to ask — every showing of one instance carries the pair — and stays green where the pair
   shows nothing: the frame root has an area, so the showing counts as drawn while both halves are
-  empty. Of nineteen showings its "no findings" one was rejected by the eye over the frames. Such a
+  empty. Such a
   check narrows what has to be looked at; it never replaces the look.
 - **A state invisible in the frame is not checked by a snapshot.** A button under hover, a panel in
   an overlay, the branch after a file is chosen — they exist in the markup and not in the snapshot.
   Such a state gets a story of its own rather than being credited with a neighbour's coverage.
 - **A state's sign is checked by the same thing a person sees it by: a frame or a measurement of
   the raster, not by the value of a written style.** A style set on a node proves only that it was
-  set; whether it applied depends on what the showing registered — a pair of icons differed by the
-  fill axis of a variable font over a static set, one glyph for two values.
+  set; whether it applied depends on what the showing registered.
 - **If there is a pair of states, both must be in the frame.** A reference showing one side of a
-  pair says nothing about the pair itself and stays green under any breakage of it: three taken
-  frames showed the pinned mode, and the outline icon never got into a frame — neither in the right
-  look nor in the wrong one.
+  pair says nothing about the pair itself and stays green under any breakage of it.
 - **A styling edit that passed the snapshots without divergences is half checked.** A small element
   takes hundredths of a frame; the comparison threshold can let it through. The sign is the share of
   the divergence, not the colour of the run.
@@ -84,16 +87,14 @@ Four checks do not replace one another, and the choice between them is not a mat
   itself; an indirect sign is taken only when there is no direct one, and then it is named together
   with what it does not cover.
 - **An arrived resource and the component that noticed it are not the same, and both are waited
-  for.** The font came up, while the icon component learns of it by its own signal and keeps itself
-  invisible until the redraw: between the two lies a whole race, and the frame lands in it. A wait
-  that knows only the cause lets the shot go into that gap; a wait that knows only the consequence
-  stays silent where there was no cause at all. Both are waited for, and each with its own refusal —
-  by it one sees at once where the breakage is: in the serving of the resource or in the component
-  that did not notice it.
+  for.** The font came up, while the icon component learns of it by its own signal and stays
+  invisible until the redraw: between the two lies a race, and the frame lands in it. A wait knowing
+  only the cause shoots into that gap; one knowing only the consequence stays silent where there was
+  no cause. Each gets its own refusal, and it names which half broke.
 - **A settled layout is not yet a drawn page, and the frame is taken after two in a row match.** The
   harness can wait for the sizes, the fonts, the network's silence and finished animations, and the
-  frame still diverges by sub-pixel halos on the labels: the rasterisation differs there, and the
-  browser gives no "the page is drawn" event at all. Two identical frames in a row say the same
+  frame still diverges by sub-pixel halos on the labels, and the browser gives no "the page is
+  drawn" event. Two identical frames in a row say the same
   thing and are checked directly.
 - **A settled page and a drawn page are different, and the frame waits for the second.** An
   animation frame's handler runs **before** the drawing, so a wait spinning such a cycle lets the
@@ -102,6 +103,12 @@ Four checks do not replace one another, and the choice between them is not a mat
   each other no worse than two late ones. So what is waited for is the drawing itself —
   a nested pair of animation-frame calls, the second of which stands already past the drawn frame. A
   probe of its own guards the rollback, not the snapshots.
+- **A value that comes from the machine is caught by two raisings of the showcase, not by one run.**
+  Inside one raising it stands still, so a repeated run on the same showcase confirms nothing.
+
+- **A size the kit did not declare is taken from the browser's default, and that default is not a
+  constant.** A frame that moved with no edit is asked first whether the kit declared that size.
+
 - **A divergence that falls out rarely leaves evidence, otherwise there is nothing to sort out.**
   The harness puts the difference frame and the run's conditions — the matching attempt, the window
   and page sizes, the point density, the worker's number — into a directory outside the repository,
@@ -113,8 +120,7 @@ Four checks do not replace one another, and the choice between them is not a mat
   of curing it: the shift is steady. The cure is the reverse order: the window is widened
   **before** the frame, the showing is waited for settled, and an ordinary frame is taken. In the reference `100vh` and `100vw` of such a story are
   then computed from the widened window.
-- **A frame of a node beyond the window is cured the same way.** The article above reads as being
-  about a whole page. A node taller than the window goes past its bounds no less. The window is
+- **A frame of a node beyond the window is cured the same way.** A node taller than the window goes past its bounds no less. The window is
   widened to the node being shot, not to the page: the page happens to be higher than the node, and a superfluous growth changes everything computed from the window at
   stories that did not ask for it.
 - **The trace of such a shot is left at the story after the tall one.** The page keeps the shift, so
@@ -126,13 +132,9 @@ Four checks do not replace one another, and the choice between them is not a mat
   the snapshot then diverges where nobody touched the layout. An article about it is too little: the
   harness fails the run on a request beyond the local machine instead.
 - **A settled showing and a state that came about are not the same, and a story is waited for by the
-  second.** The harness judges the frame by the network's silence and the motionless size of the
-  node being shot, while a screen with skeletons has a size just as motionless as a screen with a
-  list: three references in a row pinned the skeletons and came out indistinguishable from one
-  another. The sign of a state that came about is known only to the story itself — the node that
-  exists in that state and the node that no longer does — so it is the story that waits for it by a
-  `play` step, before the shot. The shared harness has nowhere to take that sign from: every story
-  has its own.
+  second.** A screen with skeletons has a size as motionless as a screen with a list, so the shared
+  harness cannot tell them apart. The sign of the state is known only to the story — the node that
+  exists in it and the node that no longer does — and the story waits for it by a `play` step.
 - **An overlay opened by a story lives to the frame only where that is declared.** There is nothing
   to tell such a frame from a story that should have no panel at all — it is green and looks whole.
   So a story names the overlay's node as a shot parameter: the harness mutes the pointer leaving on
@@ -168,11 +170,16 @@ Four checks do not replace one another, and the choice between them is not a mat
   batch only for stories that have already been looked over.
 - **A re-taken reference is confirmed by a second raising before it is committed.** A frame taken
   once says what the machine drew in that minute, not what it draws, and nothing in the browser's
-  configuration pins the difference. Otherwise a whole re-take reaches the main branch and turns
-  every branch that merges it red — the cold part holds the count.
+  configuration pins the difference. Otherwise an unsteady re-take reaches the main branch.
 
 - **A reference is re-taken deliberately and one at a time.** Re-taking everything at once erases
   the divergence that was not expected too.
+- **A reference is taken from the same showcase the gate raises.** The tree assembles two, and at
+  one markup their raster differs by a point or two. From the wrong one a reference comes out green
+  here and red at the gate.
+- **A frame is taken by the drawn span, not by the node's box.** A node shot clips the border box:
+  a cell sticking out of the grid is cut in silence, alike in both halves of a pair. The span is
+  clipped by whatever scrolls, and the window grows to its edges — never to a pinned width.
 - **A one-off check script does not travel into the repository.** It lives in a temporary directory:
   it is the proof of one edit, not a check of the tree. A check that will be called on the next wave
   too is no one-off script: its place is next to the snapshot runner, as a separate command.
@@ -199,13 +206,8 @@ Four checks do not replace one another, and the choice between them is not a mat
   all.
 - **What drifts in a screen frame is removed by name, not covered by a threshold.** A threshold lets
   an eaten padding through together with the drifting value, so it is held at zero and the cause is
-  looked for to the end. The order of sorting out is one — compare the frames pixel by pixel and see
-  where exactly they diverged and by how much. A unit or two per channel on the anti-aliased corners
-  is colour, not layout: the browser takes the profile from the machine's display, and the profile
-  is named explicitly. A shift of the whole frame by a pixel is width: the table lays the columns
-  out by content, and a value computed from the current moment moves the frame whole. The order of
-  the rows is the seeding: the record key is created anew by every run, and the handing out by it is
-  random.
+  looked for to the end. The order of sorting out is one: compare the frames pixel by pixel and see
+  where exactly they diverged and by how much. What each kind of divergence means — the cold part.
 - **A mask covers the content but not the width.** A column under a mask takes its place as before,
   and a drifting value inside it moves its neighbours past the mask. What drifts is cured in the
   seeding — by a constant value — and then no mask is needed at all.

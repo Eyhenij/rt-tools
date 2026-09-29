@@ -13,4 +13,10 @@ export namespace IRtInput {
 
     /** Размерный вариант поля (высота). Общий для всего input-семейства. */
     export type Size = 'sm' | 'md' | 'lg';
+
+    /**
+     * Вид рамки поля — два вида материального поля первого кита. `outline` — рамка со всех
+     * сторон, `fill` — залитое поле с чертой снизу.
+     */
+    export type Appearance = 'outline' | 'fill';
 }

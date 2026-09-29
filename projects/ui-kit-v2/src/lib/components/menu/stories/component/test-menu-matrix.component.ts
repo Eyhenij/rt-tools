@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { STORY_TRIGGER_ATTRIBUTE } from '../../../../../showcase/story-overlay';
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { IStoryState, STORY_STATES, storyStateLabel } from '../../../../../showcase/story-states';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
@@ -37,44 +38,59 @@ interface IMenuTriggerCase {
     template: `
         @switch (part) {
             @case ('trigger') {
-                <app-story-row caption="Триггер" [items]="triggerCases" [itemLabel]="caseLabel">
-                    <ng-template let-triggerCase>
-                        <rt-menu [icon]="triggerCase.icon" [disabled]="triggerCase.disabled" [ariaLabel]="triggerCase.name">
-                            <rt-menu-item label="Открыть" icon="ico-eye" />
-                        </rt-menu>
+                <app-story-presets caption="Триггер в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="triggerCases" [itemLabel]="caseLabel">
+                            <ng-template let-triggerCase>
+                                <rt-menu [icon]="triggerCase.icon" [disabled]="triggerCase.disabled" [ariaLabel]="triggerCase.name">
+                                    <rt-menu-item label="Открыть" icon="ico-eye" />
+                                </rt-menu>
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('states') {
-                <app-story-row caption="Взаимодействие с триггером" [items]="states" [itemLabel]="stateLabel">
-                    <ng-template let-state>
-                        <rt-menu ariaLabel="Действия" [attr.data-story-state]="state.state">
-                            <rt-menu-item label="Открыть" icon="ico-eye" />
-                        </rt-menu>
+                <app-story-presets caption="Взаимодействие с триггером в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="states" [itemLabel]="stateLabel">
+                            <ng-template let-state>
+                                <rt-menu ariaLabel="Действия" [attr.data-story-state]="state.state">
+                                    <rt-menu-item label="Открыть" icon="ico-eye" />
+                                </rt-menu>
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('themes') {
-                <app-story-themes caption="Триггер в обеих темах">
+                <app-story-presets caption="Триггер в обеих темах в обоих наборах">
                     <ng-template>
-                        <rt-menu ariaLabel="Действия">
-                            <rt-menu-item label="Открыть" icon="ico-eye" />
-                        </rt-menu>
-                        <rt-menu icon="ico-edit" ariaLabel="Правка">
-                            <rt-menu-item label="Изменить" icon="ico-edit" />
-                        </rt-menu>
-                        <rt-menu ariaLabel="Недоступно" [disabled]="true">
-                            <rt-menu-item label="Открыть" icon="ico-eye" />
-                        </rt-menu>
+                        <app-story-themes>
+                            <ng-template>
+                                <rt-menu ariaLabel="Действия">
+                                    <rt-menu-item label="Открыть" icon="ico-eye" />
+                                </rt-menu>
+                                <rt-menu icon="ico-edit" ariaLabel="Правка">
+                                    <rt-menu-item label="Изменить" icon="ico-edit" />
+                                </rt-menu>
+                                <rt-menu ariaLabel="Недоступно" [disabled]="true">
+                                    <rt-menu-item label="Открыть" icon="ico-eye" />
+                                </rt-menu>
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
             }
 
             @case ('panel') {
-                <div class="app-menu-matrix__panel-slot" [class.app-menu-matrix__panel-slot--end]="align === 'end'">
-                    <rt-menu ariaLabel="Действия со строкой" [align]="align" [attr.data-story-trigger]="triggerAttribute">
+                <div
+                    class="app-menu-matrix__panel-slot"
+                    [class.app-menu-matrix__panel-slot--end]="align === 'end'"
+                    [class.rt-preset-material]="material">
+                    <rt-menu ariaLabel="Действия со строкой" [align]="align" [size]="size" [attr.data-story-trigger]="triggerAttribute">
                         <rt-menu-item label="Открыть" icon="ico-eye" />
                         <rt-menu-item label="Изменить" icon="ico-edit" />
                         <rt-menu-item label="Скопировать" icon="ico-copy" [disabled]="true" />
@@ -108,6 +124,8 @@ interface IMenuTriggerCase {
         RtMenuItemComponent,
 
         // showcase
+
+        StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
     ],
@@ -115,6 +133,9 @@ interface IMenuTriggerCase {
 export class TestRtMenuMatrixComponent {
     public part: TMenuMatrixPart = 'trigger';
     public align: IRtMenu.Align = 'end';
+    public size: IRtMenu.Size = 'md';
+    /** Панель открывается из контейнера материального набора: размеры пункта различает только он. */
+    public material: boolean = false;
 
     public readonly triggerAttribute: string = STORY_TRIGGER_ATTRIBUTE;
     public readonly states: readonly IStoryState[] = STORY_STATES;

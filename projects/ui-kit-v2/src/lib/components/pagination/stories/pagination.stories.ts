@@ -15,7 +15,7 @@ export default {
 
 type TStory = StoryObj<TestRtPaginationComponent>;
 
-export const Default: TStory = {
+export const Playground: TStory = {
     args: {
         pageModel: { pageNumber: 1, pageSize: 20, totalCount: 137 },
         perPageOptions: [20, 50, 100],

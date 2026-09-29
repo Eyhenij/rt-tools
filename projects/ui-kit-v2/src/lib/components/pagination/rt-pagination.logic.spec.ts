@@ -1,6 +1,6 @@
 import { IPageModel } from '@rt-tools/utils';
 
-import { lastPageOf, pageItemsOf, rangeFromOf, rangeToOf } from './rt-pagination.logic';
+import { lastPageOf, pageItemsOf, pageSlotsOf, rangeFromOf, rangeToOf } from './rt-pagination.logic';
 
 function page(overrides: Partial<IPageModel> = {}): IPageModel {
     return { pageNumber: 1, pageSize: 20, totalCount: 100, ...overrides };
@@ -47,5 +47,36 @@ describe('pageItemsOf', () => {
 
     it('соседние номера идут без разрыва', () => {
         expect(pageItemsOf(page({ pageNumber: 2, totalCount: 80 }), 1)).toEqual([1, 2, 3, 4]);
+    });
+});
+
+/** Номера полосы по семи местам на странице `pageNumber` из `lastPage`. */
+function slotsAt(pageNumber: number, lastPage: number): ReadonlyArray<number | 'gap'> {
+    return pageSlotsOf(page({ pageNumber, totalCount: lastPage * 20 }));
+}
+
+describe('pageSlotsOf', () => {
+    it('SC-UKV-366 — одна страница — один номер', () => {
+        expect(pageSlotsOf(page({ totalCount: 15 }))).toEqual([1]);
+    });
+
+    it('до шести страниц видны все номера', () => {
+        expect(slotsAt(4, 6)).toEqual([1, 2, 3, 4, 5, 6]);
+    });
+
+    it('SC-UKV-366 — у края по три номера с каждой стороны', () => {
+        expect(slotsAt(1, 13)).toEqual([1, 2, 3, 'gap', 11, 12, 13]);
+        expect(slotsAt(13, 13)).toEqual([1, 2, 3, 'gap', 11, 12, 13]);
+    });
+
+    it('в середине — первая, соседи открытой и последняя', () => {
+        expect(slotsAt(7, 13)).toEqual([1, 'gap', 6, 7, 8, 'gap', 13]);
+    });
+
+    it('разрыв съезжает за открытую страницу у края', () => {
+        expect(slotsAt(3, 13)).toEqual([1, 2, 3, 4, 'gap', 12, 13]);
+        expect(slotsAt(4, 13)).toEqual([1, 2, 3, 4, 5, 'gap', 13]);
+        expect(slotsAt(10, 13)).toEqual([1, 'gap', 9, 10, 11, 12, 13]);
+        expect(slotsAt(11, 13)).toEqual([1, 2, 'gap', 10, 11, 12, 13]);
     });
 });

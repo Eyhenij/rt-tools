@@ -5,6 +5,7 @@ import {
     Overlay,
     OverlayConfig,
     OverlayRef,
+    OverlaySizeConfig,
     ScrollStrategyOptions,
 } from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
@@ -31,6 +32,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { map, merge, Observable, Subject, switchMap } from 'rxjs';
 
+import { carryThemeScope, materialPresetClassesOf } from '../../util/material-preset';
 import { IRtPopover } from './rt-popover.model';
 
 const HOVER_CLOSE_DELAY_MS: number = 100;
@@ -59,7 +61,8 @@ const FIT_VIEWPORT_MIN_HEIGHT_PX: number = 120;
  *
  * `open()/close()/toggle()/isOpen()` публичны во ВСЕХ режимах — `trigger` лишь
  * определяет авто-listener'ы. `width: 'trigger'` синхронизирует ширину панели с
- * host'ом (dropdown'ы), `'auto'` — content-sized (тултипы).
+ * host'ом (dropdown'ы), `'trigger-min'` не даёт панели стать уже host'а и дальше пускает
+ * её по содержимому, `'auto'` — content-sized (тултипы).
  */
 @Directive({
     selector: '[rtPopover]',
@@ -192,9 +195,16 @@ export class RtPopoverDirective implements OnDestroy {
             return;
         }
         const overlayRef: OverlayRef = this.#ensureOverlay();
-        if (this.width() === 'trigger') {
-            overlayRef.updateSize({ width: this.#elementRef.nativeElement.offsetWidth });
-        }
+        const hostWidth: number = this.#elementRef.nativeElement.offsetWidth;
+        const sizeByWidth: Record<IRtPopover.Width, OverlaySizeConfig> = {
+            trigger: { width: hostWidth },
+            'trigger-min': { minWidth: hostWidth },
+            auto: {},
+        };
+        overlayRef.updateSize(sizeByWidth[this.width()]);
+        // Тема куска `rtTheme` вокруг host'а едет на коробку панели: панель лежит в конце
+        // страницы, и без этого список из тёмной карточки рисовался темой страницы.
+        carryThemeScope(overlayRef.overlayElement, this.#elementRef.nativeElement);
         const portal: TemplatePortal<unknown> = new TemplatePortal(this.template() as TemplateRef<unknown>, this.#viewContainerRef, {
             $implicit: this.context(),
         });
@@ -356,7 +366,8 @@ export class RtPopoverDirective implements OnDestroy {
     #resolvePanelClasses(): string[] {
         const base: string = 'rt-popover-panel';
         const extra: string = this.panelClass().trim();
-        return extra ? [base, ...extra.split(/\s+/)] : [base];
+        const preset: string[] = materialPresetClassesOf(this.#elementRef.nativeElement);
+        return extra ? [base, ...extra.split(/\s+/), ...preset] : [base, ...preset];
     }
 
     #scheduleHoverClose(): void {

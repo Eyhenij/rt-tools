@@ -1,0 +1,308 @@
+import {
+    ChangeDetectionStrategy,
+    Component,
+    DestroyRef,
+    InputSignal,
+    OutputEmitterRef,
+    Signal,
+    ViewEncapsulation,
+    computed,
+    effect,
+    inject,
+    input,
+    linkedSignal,
+    output,
+    untracked,
+    viewChild,
+    WritableSignal,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+
+import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
+import { EFilterOperatorType, IFilterModel, TFilterOperatorType } from '@rt-tools/utils';
+
+import { TRtKitLabelKey } from '../../../i18n/rt-kit-labels.model';
+import { rtKitLabel } from '../../../i18n/rt-kit-labels.providers';
+
+import { RtDatePickerComponent } from '../../date-picker/rt-date-picker.component';
+import { RtIconButtonComponent } from '../../icon-button/rt-icon-button.component';
+import { RtInputNumberComponent } from '../../input-number/rt-input-number.component';
+import { RtInputComponent } from '../../input/rt-input.component';
+import { RtMenuItemComponent } from '../../menu/rt-menu-item.component';
+import { RtPopoverDirective } from '../../popover/rt-popover.directive';
+import { IRtSelect } from '../../select/rt-select.model';
+import { RtSelectComponent } from '../../select/rt-select.component';
+import {
+    TRtTableFilterInput,
+    TRtTableFilterValue,
+    filterOf,
+    filterValueOf,
+    filtersWithOperator,
+    filtersWithValue,
+    startOperatorOf,
+} from '../rt-table-filter.logic';
+import { IRtTable } from '../rt-table.model';
+
+const BEM_BLOCK: string = 'rt-table-filter-header';
+
+/** Ключ подписи для каждого вида сравнения: имена операторов даёт словарь кита, а не шаблон. */
+const OPERATOR_LABELS: Readonly<Record<TFilterOperatorType, TRtKitLabelKey>> = Object.freeze({
+    [EFilterOperatorType.EQUALS]: 'uiFilterEquals',
+    [EFilterOperatorType.NOT_EQUALS]: 'uiFilterNotEquals',
+    [EFilterOperatorType.CONTAINS]: 'uiFilterContains',
+    [EFilterOperatorType.STARTS_WITH]: 'uiFilterStartsWith',
+    [EFilterOperatorType.ENDS_WITH]: 'uiFilterEndsWith',
+    [EFilterOperatorType.GREATER_THAN]: 'uiFilterGreaterThan',
+    [EFilterOperatorType.LESS_THAN]: 'uiFilterLessThan',
+});
+
+/**
+ * Виды, у которых недописанного состояния нет вовсе: выбор и дата готовы в ту же минуту, что и
+ * сделаны, и ждать ухода из поля значило бы задержать ответ на ровном месте. Текст и число ждут:
+ * набор условий, уходящий на каждый знак, спрашивает сервер по букве.
+ */
+const INSTANT_KINDS: ReadonlySet<IRtTable.FilterKind> = new Set<IRtTable.FilterKind>(['select', 'date']);
+
+/** Одно и то же условие: колонка, вид сравнения и значение совпадают. */
+function sameFilter(a: IFilterModel<string> | null, b: IFilterModel<string> | null): boolean {
+    if (a === null || b === null) {
+        return a === b;
+    }
+
+    return a.propertyName === b.propertyName && a.operatorType === b.operatorType && a.value === b.value;
+}
+
+/** Один вид сравнения в списке: сам вид и его подпись из словаря. */
+interface IOperatorView {
+    readonly type: TFilterOperatorType;
+    readonly label: string;
+}
+
+/** Виды сравнения по порядку: колонка разрешает своё подмножество, порядок берётся отсюда. */
+const ALL_OPERATORS: readonly TFilterOperatorType[] = Object.freeze([
+    EFilterOperatorType.EQUALS,
+    EFilterOperatorType.NOT_EQUALS,
+    EFilterOperatorType.CONTAINS,
+    EFilterOperatorType.STARTS_WITH,
+    EFilterOperatorType.ENDS_WITH,
+    EFilterOperatorType.GREATER_THAN,
+    EFilterOperatorType.LESS_THAN,
+]);
+
+/**
+ * Отбор в шапке столбца таблицы.
+ *
+ * Стоит рядом с именем колонки: сужение, живущее в стороне от того, что сужает, не даёт увидеть,
+ * какая колонка сузила список — человек читает короткий список и не узнаёт, почему он короткий.
+ *
+ * Своих полей не рисует ни одного: вид отбора решает, какую готовую часть кита позвать. Поля кита
+ * ведутся формой, поэтому значение идёт через `FormControl`, а не входом со своим выходом.
+ *
+ * Наружу уходит весь набор условий, а не одно изменившееся: потребитель спрашивает сервер набором,
+ * и, получив одно условие, держал бы вторую копию набора — две копии расходятся молча. Строк
+ * семейство не отбирает: строки принадлежат тому, кто держит список.
+ */
+@Component({
+    selector: 'rt-table-filter-header',
+    templateUrl: './rt-table-filter-header.component.html',
+    styleUrl: './rt-table-filter-header.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    encapsulation: ViewEncapsulation.None,
+    imports: [
+        // angular
+        ReactiveFormsModule,
+
+        // rt-tools
+        BlockDirective,
+        ElemDirective,
+        ModDirective,
+
+        // components
+        RtDatePickerComponent,
+        RtIconButtonComponent,
+        RtInputComponent,
+        RtInputNumberComponent,
+        RtMenuItemComponent,
+        RtPopoverDirective,
+        RtSelectComponent,
+    ],
+    host: {
+        class: BEM_BLOCK,
+    },
+})
+export class RtTableFilterHeaderComponent {
+    readonly #destroyRef: DestroyRef = inject(DestroyRef);
+
+    /**
+     * Подпись каждого вида сравнения — своим сигналом словаря. Семь сигналов, а не один по
+     * текущему виду: список показывает их все сразу, и подпись невыбранного вида нужна так же.
+     */
+    readonly #operatorLabels: Readonly<Record<TFilterOperatorType, Signal<string>>> = Object.freeze({
+        [EFilterOperatorType.EQUALS]: rtKitLabel(OPERATOR_LABELS[EFilterOperatorType.EQUALS]),
+        [EFilterOperatorType.NOT_EQUALS]: rtKitLabel(OPERATOR_LABELS[EFilterOperatorType.NOT_EQUALS]),
+        [EFilterOperatorType.CONTAINS]: rtKitLabel(OPERATOR_LABELS[EFilterOperatorType.CONTAINS]),
+        [EFilterOperatorType.STARTS_WITH]: rtKitLabel(OPERATOR_LABELS[EFilterOperatorType.STARTS_WITH]),
+        [EFilterOperatorType.ENDS_WITH]: rtKitLabel(OPERATOR_LABELS[EFilterOperatorType.ENDS_WITH]),
+        [EFilterOperatorType.GREATER_THAN]: rtKitLabel(OPERATOR_LABELS[EFilterOperatorType.GREATER_THAN]),
+        [EFilterOperatorType.LESS_THAN]: rtKitLabel(OPERATOR_LABELS[EFilterOperatorType.LESS_THAN]),
+    });
+
+    /** Значение ведёт форма: поля кита берут его только так. */
+    protected readonly control: FormControl<TRtTableFilterInput> = new FormControl<TRtTableFilterInput>('');
+
+    /**
+     * Условие по этой колонке либо `null`: по нему видно и значение, и вид сравнения. Сверяется по
+     * содержимому, а не по ссылке: перемена соседней колонки приносит новый набор, и условие этой
+     * колонки, пересобранное потребителем тем же, переменой не считается.
+     */
+    protected readonly own: Signal<IFilterModel<string> | null> = computed(
+        (): IFilterModel<string> | null => filterOf(this.filters(), this.propertyName()),
+        { equal: sameFilter }
+    );
+
+    /**
+     * Вид сравнения, выбранный здесь, пока значения нет: условия ещё нет, и хранить выбор, кроме
+     * самой ячейки, негде. Без него выбор терялся бы, и введённое значение уходило бы с видом по
+     * умолчанию. Условие этой колонки, пришедшее снаружи, выбор сбрасывает — вид берётся из него.
+     */
+    protected readonly chosenOperator: WritableSignal<TFilterOperatorType | null> = linkedSignal<
+        IFilterModel<string> | null,
+        TFilterOperatorType | null
+    >({ source: this.own, computation: (): TFilterOperatorType | null => null });
+
+    protected readonly value: Signal<TRtTableFilterValue> = computed((): TRtTableFilterValue => this.own()?.value ?? '');
+
+    /** Очистка видна только там, где есть что очищать. */
+    protected readonly clearable: Signal<boolean> = computed((): boolean => this.value() !== '');
+
+    protected readonly operator: Signal<TFilterOperatorType> = computed((): TFilterOperatorType => {
+        const chosen: TFilterOperatorType | null = this.chosenOperator();
+
+        if (chosen !== null) {
+            return chosen;
+        }
+
+        const own: IFilterModel<string> | null = this.own();
+
+        return own !== null ? own.operatorType : startOperatorOf(this.filter()?.operators, this.filter()?.startOperator);
+    });
+
+    /** Виды сравнения, которые разрешила колонка; молчит колонка — разрешены все. */
+    protected readonly operators: Signal<readonly TFilterOperatorType[]> = computed((): readonly TFilterOperatorType[] => {
+        const allowed: readonly TFilterOperatorType[] | undefined = this.filter()?.operators;
+
+        return allowed !== undefined && allowed.length > 0 ? allowed : ALL_OPERATORS;
+    });
+
+    protected readonly chooseLabel: Signal<string> = rtKitLabel('uiFilterChoose');
+    protected readonly valueLabel: Signal<string> = rtKitLabel('uiFilterValue');
+
+    protected readonly clearLabel: Signal<string> = rtKitLabel('uiClear');
+    protected readonly filtersLabel: Signal<string> = rtKitLabel('uiFilters');
+
+    /** Список видов сравнения открыт в слое; выбор пункта закрывает его отсюда — сам пункт не умеет. */
+    protected readonly operatorPopover: Signal<RtPopoverDirective | undefined> = viewChild(RtPopoverDirective);
+
+    /** Список видов сравнения с подписями: шаблон читает готовое, а не зовёт словарь сам. */
+    protected readonly operatorViews: Signal<readonly IOperatorView[]> = computed((): readonly IOperatorView[] =>
+        this.operators().map((type: TFilterOperatorType): IOperatorView => ({ type, label: this.#operatorLabels[type]() }))
+    );
+
+    /** Подпись текущего вида сравнения — её несёт кнопка, открывающая список. */
+    protected readonly operatorLabel: Signal<string> = computed((): string => this.#operatorLabels[this.operator()]());
+
+    /**
+     * Имя кнопки для скринридера: что она открывает и какой вид стоит сейчас. Одно «Фильтры»
+     * не отличало бы кнопку одной колонки от другой и не говорило бы, какой вид выбран.
+     */
+    protected readonly operatorAriaLabel: Signal<string> = computed((): string => `${this.filtersLabel()}: ${this.operatorLabel()}`);
+
+    /** Сообщает ли этот вид сразу: у выбора и даты недописанного состояния нет. */
+    protected readonly instant: Signal<boolean> = computed((): boolean => INSTANT_KINDS.has(this.filter()?.kind ?? 'text'));
+
+    protected readonly options: Signal<ReadonlyArray<IRtSelect.Option<string | number>>> = computed(
+        (): ReadonlyArray<IRtSelect.Option<string | number>> =>
+            (this.filter()?.options ?? []).map((option: IRtTable.FilterOption): IRtSelect.Option<string | number> => ({
+                value: option.value,
+                label: option.label,
+            }))
+    );
+
+    /** Ключ колонки — тот же, что в `cdkColumnDef` и в `[columnsConfig]`. */
+    public readonly propertyName: InputSignal<string> = input.required<string>();
+
+    /**
+     * Чем колонка отбирает. Объявляет колонка, а не угадывает значение; колонка, которая молчит,
+     * не отбирает вовсе — решает это сама ячейка, а не тот, кто её ставит: иначе обещание держал
+     * бы каждый потребитель по-своему.
+     */
+    public readonly filter: InputSignal<IRtTable.ColumnFilter | null> = input<IRtTable.ColumnFilter | null>(null);
+
+    /** Текущий набор условий — весь, по всем колонкам сразу. */
+    public readonly filters: InputSignal<readonly IFilterModel<string>[]> = input<readonly IFilterModel<string>[]>([]);
+
+    public readonly filtersChange: OutputEmitterRef<readonly IFilterModel<string>[]> = output<readonly IFilterModel<string>[]>();
+
+    constructor() {
+        this.control.valueChanges
+            .pipe(takeUntilDestroyed(this.#destroyRef))
+            .subscribe((value: TRtTableFilterInput): void => this.#onValue(value));
+
+        // Набор условий меняется и снаружи — соседняя колонка, очистка всех сразу. Поле идёт
+        // следом, и запись в него молчит: иначе она вернулась бы сюда же переменой значения.
+        effect((): void => {
+            const value: TRtTableFilterValue = this.value();
+
+            untracked((): void => {
+                if (filterValueOf(this.control.value) !== value) {
+                    this.control.setValue(value, { emitEvent: false });
+                }
+            });
+        });
+    }
+
+    protected onOperator(operatorType: TFilterOperatorType): void {
+        this.operatorPopover()?.close();
+        this.chosenOperator.set(operatorType);
+        this.#report(filtersWithOperator(this.filters(), this.propertyName(), operatorType));
+    }
+
+    protected onClear(): void {
+        const instant: boolean = this.instant();
+
+        this.control.setValue('');
+
+        // У мгновенного вида о снятии сообщила сама перемена значения; у остальных — здесь:
+        // очистку нажали, ждать ухода из поля нечего.
+        if (!instant) {
+            this.onCommit();
+        }
+    }
+
+    /** Уход из поля и Enter: набранное значение уходит наружу разом, а не по знаку. */
+    protected onCommit(): void {
+        this.#commit(this.control.value);
+    }
+
+    #onValue(value: TRtTableFilterInput): void {
+        if (this.instant()) {
+            this.#commit(value);
+        }
+    }
+
+    #commit(value: TRtTableFilterInput): void {
+        this.#report(filtersWithValue(this.filters(), this.propertyName(), this.operator(), filterValueOf(value)));
+    }
+
+    /**
+     * Наружу уходит только изменившийся набор. Прежний приходит тем же объектом, и по этому
+     * признаку видно, что менять было нечего: повтор того же значения и смена вида сравнения
+     * без значения не сообщают ничего.
+     */
+    #report(next: readonly IFilterModel<string>[]): void {
+        if (next !== this.filters()) {
+            this.filtersChange.emit(next);
+        }
+    }
+}

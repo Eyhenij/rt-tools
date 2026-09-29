@@ -28,6 +28,7 @@ import { RtFormControlBase } from '../form-control/rt-form-control.base';
 import { RtIconComponent, IRtIcon } from '../icon';
 import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
 import { RtPopoverDirective } from '../popover/rt-popover.directive';
+import { rtScrollActiveOptionIntoView } from '../select/rt-select-active-option';
 import { IRtAutocomplete } from './rt-autocomplete.model';
 
 const BEM_BLOCK: string = 'rt-autocomplete';
@@ -98,6 +99,11 @@ export class RtAutocompleteComponent<TItem> extends RtFormControlBase<TItem | nu
 
     protected readonly isOpen: Signal<boolean> = computed((): boolean => this.popover().isOpen());
 
+    /** Идентификатор подсвеченной опции — тот же, что уходит в `aria-activedescendant`. */
+    protected readonly activeOptionId: Signal<string | null> = computed((): string | null =>
+        this.isOpen() && this.activeIndex() >= 0 ? `${this.panelId}-opt-${this.activeIndex()}` : null
+    );
+
     protected readonly hasValue: Signal<boolean> = computed((): boolean => this.inputText() !== '');
 
     public readonly displayText: Signal<string> = computed((): string => this.displayWith()(this.value()));
@@ -125,6 +131,12 @@ export class RtAutocompleteComponent<TItem> extends RtFormControlBase<TItem | nu
     public readonly complete: OutputEmitterRef<IRtAutocomplete.CompleteEvent> = output<IRtAutocomplete.CompleteEvent>();
 
     public readonly itemSelect: OutputEmitterRef<TItem> = output<TItem>();
+
+    constructor() {
+        super();
+        // Подсветка, сдвинутая клавишами, не уходит за край панели с пределом высоты.
+        rtScrollActiveOptionIntoView(this.activeOptionId);
+    }
 
     public override writeValue(value: TItem | null): void {
         super.writeValue(value);

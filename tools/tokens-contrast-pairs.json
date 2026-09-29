@@ -107,6 +107,11 @@
       "where": "an error of the sign-in form"
     },
     {
+      "text": "--rt-color-state-success-text",
+      "bg": "--rt-color-bg-surface",
+      "where": "the success item of a menu"
+    },
+    {
       "text": "--rt-chat-bubble-in-author",
       "bg": "--rt-chat-bubble-in-bg",
       "where": "the author of an incoming message"

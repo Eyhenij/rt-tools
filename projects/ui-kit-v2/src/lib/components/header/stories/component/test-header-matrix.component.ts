@@ -28,46 +28,53 @@ export type THeaderMatrixPart = 'back' | 'invite' | 'bell' | 'presets' | 'themes
     template: `
         @switch (part) {
             @case ('back') {
-                <app-story-grid
-                    caption="Кнопка «назад» × приглашение"
-                    [rows]="backs"
-                    [columns]="invites"
-                    [rowLabel]="backLabel"
-                    [columnLabel]="inviteLabel">
-                    <ng-template let-back let-invite="col">
-                        <rt-header [canGoBack]="back" [showInvite]="invite" />
+                <app-story-presets caption="Кнопка «назад» × приглашение в обоих наборах">
+                    <ng-template>
+                        <app-story-grid [rows]="backs" [columns]="invites" [rowLabel]="backLabel" [columnLabel]="inviteLabel">
+                            <ng-template let-back let-invite="col">
+                                <rt-header [canGoBack]="back" [showInvite]="invite" />
+                            </ng-template>
+                        </app-story-grid>
                     </ng-template>
-                </app-story-grid>
+                </app-story-presets>
             }
 
             @case ('invite') {
-                <app-story-row caption="Приглашение" [items]="invites" [itemLabel]="inviteLabel">
-                    <ng-template let-value>
-                        <rt-header canGoBack [showInvite]="value" />
+                <app-story-presets caption="Приглашение в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="invites" [itemLabel]="inviteLabel">
+                            <ng-template let-value>
+                                <rt-header canGoBack [showInvite]="value" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('bell') {
-                <app-story-row caption="Колокольчик проекцией" [items]="bells">
-                    <ng-template let-bell>
-                        @switch (bell) {
-                            @case ('без колокольчика') {
-                                <rt-header canGoBack />
-                            }
-                            @case ('всё прочитано') {
-                                <rt-header canGoBack>
-                                    <rt-notifications-bell rtHeaderBell ariaLabel="Уведомления" />
-                                </rt-header>
-                            }
-                            @case ('есть непрочитанные') {
-                                <rt-header canGoBack>
-                                    <rt-notifications-bell rtHeaderBell unread ariaLabel="Уведомления" />
-                                </rt-header>
-                            }
-                        }
+                <app-story-presets caption="Колокольчик проекцией в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="bells">
+                            <ng-template let-bell>
+                                @switch (bell) {
+                                    @case ('без колокольчика') {
+                                        <rt-header canGoBack />
+                                    }
+                                    @case ('всё прочитано') {
+                                        <rt-header canGoBack>
+                                            <rt-notifications-bell rtHeaderBell ariaLabel="Уведомления" />
+                                        </rt-header>
+                                    }
+                                    @case ('есть непрочитанные') {
+                                        <rt-header canGoBack>
+                                            <rt-notifications-bell rtHeaderBell unread ariaLabel="Уведомления" />
+                                        </rt-header>
+                                    }
+                                }
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('presets') {
@@ -81,13 +88,17 @@ export type THeaderMatrixPart = 'back' | 'invite' | 'bell' | 'presets' | 'themes
             }
 
             @case ('themes') {
-                <app-story-themes caption="Шапка в обеих темах">
+                <app-story-presets caption="Шапка в обеих темах в обоих наборах">
                     <ng-template>
-                        <rt-header canGoBack showInvite>
-                            <rt-notifications-bell rtHeaderBell unread ariaLabel="Уведомления" />
-                        </rt-header>
+                        <app-story-themes>
+                            <ng-template>
+                                <rt-header canGoBack showInvite>
+                                    <rt-notifications-bell rtHeaderBell unread ariaLabel="Уведомления" />
+                                </rt-header>
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
             }
         }
     `,

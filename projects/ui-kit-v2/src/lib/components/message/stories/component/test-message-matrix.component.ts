@@ -24,59 +24,75 @@ export type TMessageMatrixPart = 'severity' | 'icon' | 'closable' | 'content' | 
     template: `
         @switch (part) {
             @case ('severity') {
-                <app-story-row caption="Важность" slotWidth="22rem" [items]="severities">
-                    <ng-template let-severity>
-                        <rt-message [severity]="severity">Договор подписан обеими сторонами</rt-message>
+                <app-story-presets caption="Важность в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="22rem" [items]="severities">
+                            <ng-template let-severity>
+                                <rt-message [severity]="severity">Договор подписан обеими сторонами</rt-message>
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('icon') {
-                <app-story-grid caption="Важность × иконка" slotWidth="20rem" [rows]="severities" [columns]="iconCases">
-                    <ng-template let-severity let-iconCase="col">
-                        <rt-message
-                            [severity]="severity"
-                            [icon]="iconCase === 'своя иконка' ? 'star' : null"
-                            [hideIcon]="iconCase === 'без иконки'">
-                            Договор подписан
-                        </rt-message>
+                <app-story-presets caption="Важность × иконка в обоих наборах">
+                    <ng-template>
+                        <app-story-grid slotWidth="20rem" [rows]="severities" [columns]="iconCases">
+                            <ng-template let-severity let-iconCase="col">
+                                <rt-message
+                                    [severity]="severity"
+                                    [icon]="iconCase === 'своя иконка' ? 'star' : null"
+                                    [hideIcon]="iconCase === 'без иконки'">
+                                    Договор подписан
+                                </rt-message>
+                            </ng-template>
+                        </app-story-grid>
                     </ng-template>
-                </app-story-grid>
+                </app-story-presets>
             }
 
             @case ('closable') {
-                <app-story-row caption="Кнопка закрытия" slotWidth="22rem" [items]="closables" [itemLabel]="closableLabel">
-                    <ng-template let-value>
-                        <rt-message severity="info" [closable]="value">Договор подписан обеими сторонами</rt-message>
+                <app-story-presets caption="Кнопка закрытия в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="22rem" [items]="closables" [itemLabel]="closableLabel">
+                            <ng-template let-value>
+                                <rt-message severity="info" [closable]="value">Договор подписан обеими сторонами</rt-message>
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('content') {
-                <app-story-row caption="Чем наполнено" slotWidth="22rem" [items]="contents">
-                    <ng-template let-content>
-                        @switch (content) {
-                            @case ('одна строка') {
-                                <rt-message severity="info">Договор подписан</rt-message>
-                            }
-                            @case ('несколько строк') {
-                                <rt-message severity="warning">
-                                    Срок действия договора истекает через тридцать дней. Продление происходит автоматически, если ни одна из
-                                    сторон не заявила об отказе.
-                                </rt-message>
-                            }
-                            @case ('с разметкой') {
-                                <rt-message severity="danger">
-                                    Не удалось сохранить:
-                                    <a href="#">открыть журнал</a>
-                                </rt-message>
-                            }
-                            @case ('пусто') {
-                                <rt-message severity="info" />
-                            }
-                        }
+                <app-story-presets caption="Чем наполнено в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="22rem" [items]="contents">
+                            <ng-template let-content>
+                                @switch (content) {
+                                    @case ('одна строка') {
+                                        <rt-message severity="info">Договор подписан</rt-message>
+                                    }
+                                    @case ('несколько строк') {
+                                        <rt-message severity="warning">
+                                            Срок действия договора истекает через тридцать дней. Продление происходит автоматически, если ни
+                                            одна из сторон не заявила об отказе.
+                                        </rt-message>
+                                    }
+                                    @case ('с разметкой') {
+                                        <rt-message severity="danger">
+                                            Не удалось сохранить:
+                                            <a href="#">открыть журнал</a>
+                                        </rt-message>
+                                    }
+                                    @case ('пусто') {
+                                        <rt-message severity="info" />
+                                    }
+                                }
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('presets') {
@@ -92,15 +108,19 @@ export type TMessageMatrixPart = 'severity' | 'icon' | 'closable' | 'content' | 
             }
 
             @case ('themes') {
-                <app-story-themes caption="Сообщения в обеих темах">
+                <app-story-presets caption="Сообщения в обеих темах в обоих наборах">
                     <ng-template>
-                        <div style="display: grid; gap: 0.5rem; width: 20rem">
-                            @for (severity of severities; track severity) {
-                                <rt-message [severity]="severity">Договор подписан</rt-message>
-                            }
-                        </div>
+                        <app-story-themes>
+                            <ng-template>
+                                <div style="display: grid; gap: 0.5rem; width: 20rem">
+                                    @for (severity of severities; track severity) {
+                                        <rt-message [severity]="severity">Договор подписан</rt-message>
+                                    }
+                                </div>
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
             }
         }
     `,

@@ -85,9 +85,9 @@
     "serve:api": "DATABASE_URL=postgresql://message_bus:message_bus@localhost:55432/message_bus nx serve message-bus",
     "serve:admin": "nx serve message-bus-admin",
     "serve:stand": "node apps/message-bus-admin-e2e/stand/up.mjs",
-    "storybook:ui-kit-v1": "nx run @rt-tools/ui-kit:storybook --verbose",
+    "storybook:ui-kit-v1": "node tools/showcase-cache-clean.mjs && nx run @rt-tools/ui-kit:storybook --verbose",
     "build-storybook:ui-kit-v1": "nx run @rt-tools/ui-kit:build-storybook --verbose",
-    "storybook:ui-kit-v2": "nx run @rt-tools/ui-kit-v2:storybook --verbose",
+    "storybook:ui-kit-v2": "node tools/showcase-cache-clean.mjs && nx run @rt-tools/ui-kit-v2:storybook --verbose",
     "build-storybook:ui-kit-v2": "nx run @rt-tools/ui-kit-v2:build-storybook --verbose",
     "graph": "pnpx nx dep-graph",
     "changelog:core": "conventional-changelog -p angular -i projects/core/CHANGELOG.md -s -k projects/core/package.json --commit-path projects/core --tag-prefix rt-core@ && node tools/fold-unreleased-changelog.cjs projects/core/CHANGELOG.md",
@@ -102,7 +102,7 @@
     "preinstall": "npx only-allow pnpm",
     "build:tokens": "sass --no-source-map projects/ui-kit/src/styles/tokens.scss dist/ui-kit/styles/tokens.css",
     "build:tokens-source": "node tools/build-tokens-v2.mjs",
-    "build:tokens-v2": "sass --no-source-map --load-path=projects/ui-kit-v2/src/styles projects/ui-kit-v2/src/styles/_index.scss dist/ui-kit-v2/styles/tokens.css"
+    "build:tokens-v2": "sass --no-source-map --load-path=projects/ui-kit-v2/src/styles projects/ui-kit-v2/src/styles/tokens.package.scss dist/ui-kit-v2/styles/tokens.css && sass --no-source-map --load-path=projects/ui-kit-v2/src/styles projects/ui-kit-v2/src/styles/tokens.coexist.scss dist/ui-kit-v2/styles/tokens.coexist.css"
   },
   "private": true,
   "repository": {
@@ -164,6 +164,7 @@
     "@eslint/eslintrc": "3.3.7",
     "@eslint/js": "9.39.5",
     "@faker-js/faker": "10.5.0",
+    "@fontsource-variable/montserrat": "5.3.0",
     "@jsverse/transloco": "8.4.0",
     "@nestjs/schematics": "11.1.0",
     "@nestjs/testing": "11.2.3",

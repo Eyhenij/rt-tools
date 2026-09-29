@@ -21,6 +21,15 @@ class TooltipHostComponent {
     public readonly placement: WritableSignal<IRtTooltip.Placement> = signal<IRtTooltip.Placement>('top');
 }
 
+@Component({
+    selector: 'rt-tooltip-preset-host',
+    template:
+        '<div class="rt-preset-material"><button type="button" qa-dataid="tooltip-host" rtTooltip="Удалить строку">Кнопка</button></div>',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtTooltipDirective],
+})
+class TooltipPresetHostComponent {}
+
 function setup(text: string | null | undefined = 'Удалить строку'): ComponentFixture<TooltipHostComponent> {
     const fixture: ComponentFixture<TooltipHostComponent> = createRtFixture(TooltipHostComponent, {}, { skipInitialDetect: true });
     fixture.componentInstance.text.set(text);
@@ -34,6 +43,19 @@ function hover(fixture: ComponentFixture<TooltipHostComponent>, event: 'mouseent
 }
 
 describe('RtTooltipDirective', (): void => {
+    it('SC-UKV-369 — подсказка под признаком набора несёт класс набора на своей панели', (): void => {
+        jest.useFakeTimers();
+        const fixture: ComponentFixture<TooltipPresetHostComponent> = createRtFixture(TooltipPresetHostComponent);
+
+        el(fixture, '[qa-dataid="tooltip-host"]')?.nativeElement.dispatchEvent(new Event('mouseenter'));
+        jest.advanceTimersByTime(300);
+        fixture.detectChanges();
+
+        expect(tip()).not.toBeNull();
+        expect(tip()?.closest('.cdk-overlay-pane')?.classList.contains('rt-preset-material')).toBe(true);
+        jest.useRealTimers();
+    });
+
     beforeEach((): void => {
         jest.useFakeTimers();
     });
@@ -155,5 +177,44 @@ describe('RtTooltipDirective', (): void => {
         fixture.detectChanges();
 
         expect(document.querySelectorAll('rt-tooltip').length).toBe(1);
+    });
+
+    describe('тема куска', (): void => {
+        function show(fixture: ComponentFixture<TooltipHostComponent>): void {
+            hover(fixture, 'mouseenter');
+            jest.advanceTimersByTime(300);
+            fixture.detectChanges();
+        }
+
+        afterEach((): void => {
+            document.documentElement.removeAttribute('data-theme');
+        });
+
+        it('подсказка из тёмного куска несёт тему куска на коробке и снимает её, когда кусок ушёл', (): void => {
+            const fixture: ComponentFixture<TooltipHostComponent> = setup();
+            (fixture.nativeElement as HTMLElement).setAttribute('data-theme', 'dark');
+
+            show(fixture);
+            expect(tip()?.closest('.cdk-overlay-pane')?.getAttribute('data-theme')).toBe('dark');
+
+            hover(fixture, 'mouseleave');
+            (fixture.nativeElement as HTMLElement).removeAttribute('data-theme');
+            show(fixture);
+
+            const pane: Element | null | undefined = tip()?.closest('.cdk-overlay-pane');
+            expect(pane).not.toBeNull();
+            expect(pane?.hasAttribute('data-theme')).toBe(false);
+        });
+
+        it('тема корня страницы на коробку не копируется', (): void => {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            const fixture: ComponentFixture<TooltipHostComponent> = setup();
+
+            show(fixture);
+
+            const pane: Element | null | undefined = tip()?.closest('.cdk-overlay-pane');
+            expect(pane).not.toBeNull();
+            expect(pane?.hasAttribute('data-theme')).toBe(false);
+        });
     });
 });

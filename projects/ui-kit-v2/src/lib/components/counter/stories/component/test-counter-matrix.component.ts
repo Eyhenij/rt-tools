@@ -39,36 +39,48 @@ function count(value: number): FormControl<number> {
     template: `
         @switch (part) {
             @case ('bounds') {
-                <app-story-row caption="Положение между границами" [items]="boundCases" [itemLabel]="caseLabel">
-                    <ng-template let-boundCase>
-                        <rt-counter
-                            [ariaLabel]="boundCase.name"
-                            [min]="boundCase.min"
-                            [max]="boundCase.max"
-                            [formControl]="boundCase.control" />
+                <app-story-presets caption="Положение между границами в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="boundCases" [itemLabel]="caseLabel">
+                            <ng-template let-boundCase>
+                                <rt-counter
+                                    [ariaLabel]="boundCase.name"
+                                    [min]="boundCase.min"
+                                    [max]="boundCase.max"
+                                    [formControl]="boundCase.control" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('value') {
-                <app-story-row caption="Разрядность значения" [items]="valueCases" [itemLabel]="caseLabel">
-                    <ng-template let-valueCase>
-                        <rt-counter [ariaLabel]="valueCase.name" [max]="valueCase.max" [formControl]="valueCase.control" />
+                <app-story-presets caption="Разрядность значения в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="valueCases" [itemLabel]="caseLabel">
+                            <ng-template let-valueCase>
+                                <rt-counter [ariaLabel]="valueCase.name" [max]="valueCase.max" [formControl]="valueCase.control" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('states') {
-                <app-story-row caption="Состояния" [items]="stateCases" [itemLabel]="caseLabel">
-                    <ng-template let-stateCase>
-                        <rt-counter
-                            [ariaLabel]="stateCase.name"
-                            [min]="stateCase.min"
-                            [max]="stateCase.max"
-                            [disabled]="stateCase.disabled"
-                            [formControl]="stateCase.control" />
+                <app-story-presets caption="Состояния в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="stateCases" [itemLabel]="caseLabel">
+                            <ng-template let-stateCase>
+                                <rt-counter
+                                    [ariaLabel]="stateCase.name"
+                                    [min]="stateCase.min"
+                                    [max]="stateCase.max"
+                                    [disabled]="stateCase.disabled"
+                                    [formControl]="stateCase.control" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('presets') {
@@ -87,18 +99,22 @@ function count(value: number): FormControl<number> {
             }
 
             @case ('themes') {
-                <app-story-themes caption="Счётчик в обеих темах">
+                <app-story-presets caption="Счётчик в обеих темах в обоих наборах">
                     <ng-template>
-                        @for (stateCase of stateCases; track stateCase.name) {
-                            <rt-counter
-                                [ariaLabel]="stateCase.name"
-                                [min]="stateCase.min"
-                                [max]="stateCase.max"
-                                [disabled]="stateCase.disabled"
-                                [formControl]="stateCase.control" />
-                        }
+                        <app-story-themes>
+                            <ng-template>
+                                @for (stateCase of stateCases; track stateCase.name) {
+                                    <rt-counter
+                                        [ariaLabel]="stateCase.name"
+                                        [min]="stateCase.min"
+                                        [max]="stateCase.max"
+                                        [disabled]="stateCase.disabled"
+                                        [formControl]="stateCase.control" />
+                                }
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
             }
         }
     `,

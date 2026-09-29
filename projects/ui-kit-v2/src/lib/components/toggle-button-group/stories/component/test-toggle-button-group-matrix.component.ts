@@ -70,73 +70,112 @@ const VIEW: ReadonlyArray<IRtToggleButtonGroup.Option> = [
     template: `
         @switch (part) {
             @case ('size') {
-                <app-story-row caption="Размер" [items]="sizes">
-                    <ng-template let-size>
-                        <rt-toggle-button-group ariaLabel="Период" value="week" [options]="period" [size]="size" />
+                <app-story-presets caption="Размер в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="sizes">
+                            <ng-template let-size>
+                                <rt-toggle-button-group ariaLabel="Период" value="week" [options]="period" [size]="size" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('options') {
-                <app-story-row caption="Наполнение сегментов" [items]="optionCases" [itemLabel]="caseLabel">
-                    <ng-template let-optionCase>
-                        <rt-toggle-button-group [ariaLabel]="optionCase.name" [options]="optionCase.options" [value]="optionCase.value" />
+                <app-story-presets caption="Наполнение сегментов в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="optionCases" [itemLabel]="caseLabel">
+                            <ng-template let-optionCase>
+                                <rt-toggle-button-group
+                                    [ariaLabel]="optionCase.name"
+                                    [options]="optionCase.options"
+                                    [value]="optionCase.value" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('value') {
-                <app-story-row caption="Выбранный сегмент" [items]="valueCases" [itemLabel]="caseLabel">
-                    <ng-template let-valueCase>
-                        <rt-toggle-button-group [ariaLabel]="valueCase.name" [options]="period" [value]="valueCase.value" />
+                <app-story-presets caption="Выбранный сегмент в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="valueCases" [itemLabel]="caseLabel">
+                            <ng-template let-valueCase>
+                                <rt-toggle-button-group [ariaLabel]="valueCase.name" [options]="period" [value]="valueCase.value" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('fullWidth') {
-                <app-story-row caption="Ширина" [items]="widthNames" [slotWidth]="groupWidth">
-                    <ng-template let-widthName>
-                        <rt-toggle-button-group
-                            ariaLabel="Период"
-                            value="week"
-                            [options]="period"
-                            [fullWidth]="widthName === 'fullWidth'" />
+                <app-story-presets caption="Ширина в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="widthNames" [slotWidth]="groupWidth">
+                            <ng-template let-widthName>
+                                <rt-toggle-button-group
+                                    ariaLabel="Период"
+                                    value="week"
+                                    [options]="period"
+                                    [fullWidth]="widthName === 'fullWidth'" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('multiple') {
-                <app-story-row caption="Множественный выбор" [items]="multipleCases" [itemLabel]="caseLabel">
-                    <ng-template let-multipleCase>
-                        <rt-toggle-button-group
-                            multiple
-                            [ariaLabel]="multipleCase.name"
-                            [options]="period"
-                            [values]="multipleCase.values" />
+                <app-story-presets caption="Множественный выбор в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="multipleCases" [itemLabel]="caseLabel">
+                            <ng-template let-multipleCase>
+                                <rt-toggle-button-group
+                                    multiple
+                                    [ariaLabel]="multipleCase.name"
+                                    [options]="period"
+                                    [values]="multipleCase.values" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('disabledOption') {
-                <app-story-row caption="Недоступный сегмент" [items]="disabledCases" [itemLabel]="caseLabel">
-                    <ng-template let-disabledCase>
-                        <rt-toggle-button-group ariaLabel="Период" value="day" [options]="disabledCase.options" />
+                <app-story-presets caption="Недоступный сегмент в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="disabledCases" [itemLabel]="caseLabel">
+                            <ng-template let-disabledCase>
+                                <rt-toggle-button-group ariaLabel="Период" value="day" [options]="disabledCase.options" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('states') {
-                <app-story-row caption="Взаимодействие с сегментом" [items]="states" [itemLabel]="stateLabel">
-                    <ng-template let-state>
-                        <rt-toggle-button-group ariaLabel="Период" value="week" [options]="period" [attr.data-story-state]="state.state" />
-                    </ng-template>
-                </app-story-row>
+                <app-story-presets caption="Взаимодействие с сегментом в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="states" [itemLabel]="stateLabel">
+                            <ng-template let-state>
+                                <rt-toggle-button-group
+                                    ariaLabel="Период"
+                                    value="week"
+                                    [options]="period"
+                                    [attr.data-story-state]="state.state" />
+                            </ng-template>
+                        </app-story-row>
 
-                <app-story-row caption="Отключение" [items]="valueCases" [itemLabel]="caseLabel">
-                    <ng-template let-valueCase>
-                        <rt-toggle-button-group disabled [ariaLabel]="valueCase.name" [options]="period" [value]="valueCase.value" />
+                        <app-story-row caption="Отключение" [items]="valueCases" [itemLabel]="caseLabel">
+                            <ng-template let-valueCase>
+                                <rt-toggle-button-group
+                                    disabled
+                                    [ariaLabel]="valueCase.name"
+                                    [options]="period"
+                                    [value]="valueCase.value" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('presets') {
@@ -150,13 +189,17 @@ const VIEW: ReadonlyArray<IRtToggleButtonGroup.Option> = [
             }
 
             @case ('themes') {
-                <app-story-themes caption="Группа в обеих темах">
+                <app-story-presets caption="Группа в обеих темах и обоих наборах">
                     <ng-template>
-                        <rt-toggle-button-group ariaLabel="Период" value="week" [options]="period" />
-                        <rt-toggle-button-group ariaLabel="Вид" value="grid" [options]="view" />
-                        <rt-toggle-button-group disabled ariaLabel="Отключена" value="week" [options]="period" />
+                        <app-story-themes>
+                            <ng-template>
+                                <rt-toggle-button-group ariaLabel="Период" value="week" [options]="period" />
+                                <rt-toggle-button-group ariaLabel="Вид" value="grid" [options]="view" />
+                                <rt-toggle-button-group disabled ariaLabel="Отключена" value="week" [options]="period" />
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
             }
         }
     `,

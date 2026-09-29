@@ -8,6 +8,8 @@
    pair «light ↔ dark» cannot be shown while the application stands in the dark theme —
    the container would inherit the dark values, and both halves would show the same. */
 
+@use './semantic-lists' as lists;
+
 @mixin rt-theme-light-tokens {
     /* Background */
     --rt-color-bg-page: var(--rt-neutral-50);
@@ -136,6 +138,11 @@
     /* State */
     --rt-color-state-success: var(--rt-success-500); /* rt-theme-shared: цвет статуса один в обеих темах */
     --rt-color-state-success-bg: var(--rt-success-50);
+
+    /* Подпись успеха на поверхности — пункт меню, строка статуса. Сам статус как текст порога
+       контраста не берёт ни на белом, ни на графите: он для значка и заливки. Пара к
+       warning-text и error-text. */
+    --rt-color-state-success-text: var(--rt-success-600);
     --rt-color-state-warning: var(--rt-warning-500); /* rt-theme-shared: цвет статуса один в обеих темах */
     --rt-color-state-warning-bg: var(--rt-warning-50);
 
@@ -147,6 +154,17 @@
     --rt-color-state-error-text: var(--rt-danger-600);
     --rt-color-state-info: var(--rt-info-500); /* rt-theme-shared: цвет статуса один в обеих темах */
     --rt-color-state-info-bg: var(--rt-info-50);
+
+    /* Data table (rt-data-table) — заливка шапки. Своё имя, а не подложка роли: в материальном
+       наборе шапка залита цветом залитого поля, как у первого кита, а подложка роли остаётся
+       серой у всех остальных частей кита. Тёмная тема отвечает на имя сама: без ответа она
+       уступила бы его материальному набору, и тёмная шапка получила бы светлую заливку. */
+    --rt-color-table-head-bg: var(--rt-color-bg-surface-subtle);
+
+    /* Залитое поле (вид fill у поля ввода, числа, даты и выбора) — черта снизу. Своё имя,
+       а не рамка роли: в материальном наборе она берёт цвет черты поля Material, а рамка роли
+       остаётся светлой у всех остальных частей кита. Тёмная тема отвечает на имя сама. */
+    --rt-color-field-fill-underline: var(--rt-color-border-strong);
 
     /* Stepper (rt-stepper) — рельса прогресса. Текущий шаг — янтарный (одинаков
        в обеих темах); трек/прогресс переопределяются в dark на приглушённые. */
@@ -181,6 +199,43 @@
     --rt-color-skeleton-base: var(--rt-neutral-100);
     --rt-color-skeleton-wave: var(--rt-neutral-50);
 
+    /* Панели над страницей — меню, выпадающий список, подсказка: скругление и тень. Свой вид
+       держит ступени кита; материальный набор даёт числа и подъём первого кита. */
+    --rt-overlay-menu-radius: var(--rt-radius-md);
+    --rt-overlay-menu-shadow: var(--rt-shadow-lg);
+    --rt-overlay-select-radius: var(--rt-input-radius);
+    --rt-overlay-select-shadow: var(--rt-shadow-md);
+    --rt-overlay-tooltip-radius: var(--rt-radius-sm);
+    --rt-overlay-tooltip-shadow: var(--rt-shadow-md);
+
+    /* Меню и выпадающий список: фон, отступ и вес подписей меню, красный опасного пункта, пункт
+       списка и отметка выбранного. Свой вид держит прежние значения; материальный набор — первого кита. */
+    --rt-overlay-menu-bg: var(--rt-color-bg-surface);
+    --rt-overlay-menu-padding-y: var(--rt-space-xs);
+    --rt-overlay-menu-item-weight: var(--rt-font-weight-regular);
+    --rt-overlay-menu-danger-color: var(--rt-color-state-error-text);
+    --rt-overlay-select-option-font-size: var(--rt-input-font-size);
+    --rt-overlay-select-selected-bg: var(--rt-color-action-primary-subtle);
+    --rt-overlay-select-selected-weight: var(--rt-font-weight-semibold);
+    --rt-overlay-select-check-display: none;
+    --rt-overlay-menu-current-bg: var(--rt-color-bg-hover);
+
+    /* Размеры меню и выпадающего списка, рамка панели списка и неактивная кнопка-значок. Свой вид
+       держит прежние значения; материальный набор — числа первого кита. */
+    --rt-overlay-menu-min-width: 180px;
+    --rt-overlay-menu-item-min-height: auto;
+    --rt-overlay-menu-item-padding-y: var(--rt-space-sm);
+    --rt-overlay-menu-item-padding-x: var(--rt-space-md);
+    --rt-overlay-menu-item-icon-size: var(--rt-size-4);
+    --rt-overlay-menu-sm-item-min-height: var(--rt-overlay-menu-item-min-height);
+    --rt-overlay-menu-sm-item-icon-size: var(--rt-overlay-menu-item-icon-size);
+    --rt-overlay-menu-danger-label-color: var(--rt-overlay-menu-danger-color);
+    --rt-overlay-select-option-min-height: auto;
+    --rt-overlay-select-panel-border-width: var(--rt-input-border-width);
+    --rt-icon-button-disabled-opacity: 0.5;
+    --rt-icon-button-disabled-color: currentcolor;
+    --rt-icon-button-disabled-fill: 100%;
+
     /* Spacing aliases — named semantic aliases на primitive numeric scale */
     --rt-space-2xs: var(--rt-space-0-5); /* 2px */
     --rt-space-xs: var(--rt-space-1); /* 4px */
@@ -208,6 +263,9 @@
     --rt-input-color-border-error: var(--rt-color-state-danger);
     --rt-input-color-text: var(--rt-color-text-primary);
     --rt-input-color-text-placeholder: var(--rt-color-text-muted);
+    --rt-input-icon-color: var(--rt-neutral-600);
+    --rt-input-icon-size: var(--rt-size-4);
+    --rt-input-gap: var(--rt-space-sm);
 
     /* Sizes (single-line height scale) */
     --rt-input-height-sm: var(--rt-control-height-sm);
@@ -218,6 +276,26 @@
     /* Кап ширины одиночного контрола (input/select) в тулбарах list-страниц —
        внутри flex-баров контрол без ограничения растягивается на всю строку. */
     --rt-input-max-width: var(--rt-control-max-width);
+
+    /* Поиск списка (rt-data-list). Свои имена, а не имена поля: в материальном наборе поиск
+       списка — поле Material первого кита, 52px высотой, со скруглением 4px и рамкой цвета
+       outline темы, а остальные поля набора остаются полями первого кита вне Material. */
+    --rt-list-search-height: var(--rt-input-height-sm);
+    --rt-list-search-radius: var(--rt-input-radius);
+    --rt-list-search-color-border: var(--rt-input-color-border);
+    --rt-list-search-color-bg: var(--rt-input-color-bg);
+    --rt-list-search-width: var(--rt-size-60);
+    --rt-list-search-padding-x: var(--rt-input-padding-x);
+    --rt-list-search-gap: var(--rt-input-gap);
+    --rt-list-search-font-size: var(--rt-input-font-size);
+    --rt-list-search-icon-size: var(--rt-input-icon-size);
+    --rt-list-search-icon-color: var(--rt-input-icon-color);
+    --rt-list-search-color-placeholder: var(--rt-input-color-text-placeholder);
+
+    /* Панель настройки колонок списка — заливка плашки колонки и тон значков на ней.
+       Свой вид берёт подложку и приглушённый текст; материальный набор отдаёт их теме. */
+    --rt-list-settings-item-bg: var(--rt-color-bg-subtle);
+    --rt-list-settings-icon-color: var(--rt-color-text-muted);
 
     /* Скругление контрола — назначение, а не ступень на месте. Кнопка, поле ввода и
        всё, что стоит с ними в строке, берут его отсюда: набор оформления живёт слоем
@@ -394,17 +472,10 @@
     --rt-field-value-font-size: var(--rt-text-sm);
     --rt-field-value-color: var(--rt-color-text-primary);
     --rt-field-value-empty-color: var(--rt-color-text-muted);
+
+    @include lists.rt-theme-light-list-tokens;
 }
 
 :root {
     @include rt-theme-light-tokens;
-}
-
-/* On touch devices an input is not smaller than 16px: WebKit (all of iOS, Chrome included)
-   zooms the page on focusing a field with font-size < 16px — hence the horizontal
-   shift of the layout. The desktop keeps the dense 14px. */
-@media (pointer: coarse) {
-    :root {
-        --rt-input-font-size: var(--rt-text-md);
-    }
 }

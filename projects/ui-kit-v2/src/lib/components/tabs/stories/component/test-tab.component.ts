@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, TemplateRef } from '@angular/core';
 
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { RtTabDirective } from '../../rt-tab.directive';
 import { RtTabsComponent } from '../../rt-tabs.component';
 import { IRtTabs } from '../../rt-tabs.model';
@@ -18,31 +19,38 @@ import { IRtIcon } from '../../../icon/rt-icon.model';
 @Component({
     selector: 'app-tab',
     template: `
-        <rt-tabs [activeId]="id">
-            <ng-template
-                [rtTab]="id"
-                [label]="label"
-                [titleTemplate]="titleTemplate"
-                [icon]="icon"
-                [iconColor]="iconColor"
-                [badge]="badge"
-                [badgeTitle]="badgeTitle"
-                [badgeAriaLabel]="badgeAriaLabel"
-                [disabled]="disabled"
-                [hidden]="hidden"
-                [invalid]="invalid"
-                [invalidMessage]="invalidMessage">
-                Содержимое вкладки
-            </ng-template>
+        <app-story-presets fill caption="Вкладка в обоих наборах">
+            <ng-template>
+                <rt-tabs [activeId]="id">
+                    <ng-template
+                        [rtTab]="id"
+                        [label]="label"
+                        [titleTemplate]="titleTemplate"
+                        [icon]="icon"
+                        [iconColor]="iconColor"
+                        [badge]="badge"
+                        [badgeTitle]="badgeTitle"
+                        [badgeAriaLabel]="badgeAriaLabel"
+                        [disabled]="disabled"
+                        [hidden]="hidden"
+                        [invalid]="invalid"
+                        [invalidMessage]="invalidMessage">
+                        Содержимое вкладки
+                    </ng-template>
 
-            <ng-template rtTab="second" label="Соседняя">Содержимое соседней вкладки</ng-template>
-        </rt-tabs>
+                    <ng-template rtTab="second" label="Соседняя">Содержимое соседней вкладки</ng-template>
+                </rt-tabs>
+            </ng-template>
+        </app-story-presets>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // components
         RtTabsComponent,
         RtTabDirective,
+
+        // showcase
+        StoryPresetsComponent,
     ],
 })
 export class TestRtTabComponent {

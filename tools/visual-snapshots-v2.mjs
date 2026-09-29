@@ -27,6 +27,8 @@ import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSy
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
+import { ensureIndex } from './showcase-probe.mjs';
+
 /** The address of an already raised showcase: the run raises none of its own. */
 const URL = process.env.STORYBOOK_URL ?? 'http://localhost:6007';
 
@@ -52,6 +54,10 @@ function fail(message) {
  */
 async function requireOwnShowcase() {
     let index;
+
+    // The same as in the sweep: an index the showcase lost is brought back before the run reads
+    // it, so that a red run means a divergence of the frames and nothing else.
+    await ensureIndex(URL);
 
     try {
         const response = await fetch(`${URL}/index.json`);
@@ -153,7 +159,9 @@ if (updateAll) {
     // is no good here at all: with it the run's environment creates no page, and all the files fall
     // with `Cannot read properties of undefined (reading 'goto')` — the same at the first kit.
     // Checked flag by flag: `-u` works, `-t` breaks.
-    runnerArgs.push('--', '-u', updateOne);
+    // `test-storybook` hands Jest a command string for the shell, so the sample is quoted for it
+    // here: brackets and a bar in a regex sample would otherwise drop the launch.
+    runnerArgs.push('--', '-u', `'${updateOne.replaceAll("'", "'\\''")}'`);
 }
 
 const run = spawnSync('pnpm', ['exec', ...runnerArgs], {

@@ -101,16 +101,20 @@ export const scaleMetrics = [
     {
         lead: `    /* Typography — font-family */
 
-    /* Noto-начертания идут после Montserrat запасными: они подхватывают тайский,
-       хангыль и деванагари, которых в основном шрифте нет, и не трогают латиницу
-       с кириллицей — браузер берёт из них только недостающие знаки. */`,
+    /* Montserrat кит везёт сам — объявления в \`_fonts.scss\`, файлы в \`assets/fonts\`.
+       Остальные имена здесь не стоят: названное, но не привезённое семейство кит
+       обещает и не даёт, и у потребителя рисуется то, что случайно стоит на машине
+       читателя. Письменности, которых в Montserrat нет — тайская, хангыль,
+       деванагари, — добавляются потребителем: как, сказано в README кита.
+       Одноширинного начертания кит тоже не везёт, поэтому называет только
+       системные. */`,
         space: true,
         name: `--rt-font-family-sans`,
-        value: `'Montserrat', 'Noto Sans Thai', 'Noto Sans KR', 'Noto Sans Devanagari', system-ui, sans-serif`,
+        value: `'Montserrat', system-ui, sans-serif`,
     },
     {
         name: `--rt-font-family-mono`,
-        value: `'JetBrains Mono', ui-monospace, monospace`,
+        value: `ui-monospace, monospace`,
     },
     {
         lead: `    /* Typography — text size scale */

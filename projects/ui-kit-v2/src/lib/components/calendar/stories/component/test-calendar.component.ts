@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { RtCalendarComponent } from '../../rt-calendar.component';
 import { IRtCalendar } from '../../rt-calendar.model';
 
@@ -11,19 +12,26 @@ import { IRtCalendar } from '../../rt-calendar.model';
 @Component({
     selector: 'app-calendar',
     template: `
-        <rt-calendar
-            [months]="months"
-            [weekdayLabels]="weekdayLabels"
-            [canPrev]="canPrev"
-            [canNext]="canNext"
-            [prevAriaLabel]="prevAriaLabel"
-            [nextAriaLabel]="nextAriaLabel"
-            [sublabelsLoading]="sublabelsLoading" />
+        <app-story-presets fill caption="Календарь в обоих наборах">
+            <ng-template>
+                <rt-calendar
+                    [months]="months"
+                    [weekdayLabels]="weekdayLabels"
+                    [canPrev]="canPrev"
+                    [canNext]="canNext"
+                    [prevAriaLabel]="prevAriaLabel"
+                    [nextAriaLabel]="nextAriaLabel"
+                    [sublabelsLoading]="sublabelsLoading" />
+            </ng-template>
+        </app-story-presets>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // components
         RtCalendarComponent,
+
+        // showcase
+        StoryPresetsComponent,
     ],
 })
 export class TestRtCalendarComponent {

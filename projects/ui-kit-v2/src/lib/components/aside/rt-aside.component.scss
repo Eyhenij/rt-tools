@@ -44,7 +44,11 @@
         flex-direction: column;
         padding: 0;
         border: none;
-        background: var(--rt-color-bg-surface);
+
+        /* Фон панели — ручка приложения, как `--rt-aside-host-background-color` первого кита. Кит
+           её не объявляет: панель живёт в слое поверх страницы, и приложение задаёт фон с корня.
+           Без неё панель берёт фон поверхности, который материальный набор красит своим. */
+        background: var(--rt-aside-bg, var(--rt-color-bg-surface));
         color: var(--rt-color-text-primary);
 
         /* Header / footer всегда видны, контентная часть скроллится при overflow.

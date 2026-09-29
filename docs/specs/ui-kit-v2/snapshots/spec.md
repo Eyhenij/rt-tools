@@ -70,6 +70,13 @@ as an attachment.
   area of the frame: in a page where a grid takes a small share, a cell that went wrong passes silently.
   The area of the frame decides that more surely than a picking of a number.
 
+- **The frame takes the span of what is drawn, not the box of the root of the show.** A shot by the node
+  cuts exactly the border box, so a cell standing out of the grid leaves the frame in silence — alike in
+  both halves of a pair, which reads as intended. The span is measured to the edges of what is drawn and
+  cut by every ancestor that scrolls or hides its overflow: what the browser itself does not draw has no
+  business in the frame either. A width the story named as a threshold is never widened for the span —
+  there the widening replaces the very side of the threshold the story asked to check.
+
 - **Any frame beyond the bounds of the window is shot by a window widened to it, not by a shooting past
   those bounds.** A shooting past the bounds of the window not only shoots the page but touches it: the
   browser substitutes the window for the time of the frame, the page gets a `resize`, and what is counted
@@ -190,6 +197,28 @@ as an attachment.
   A showcase goes stale by itself: after a switch of the branch its hot update loses a chunk, every story hangs
   at preparing for ever, and no edit in the tree caused it. A probe that dies there with a bare failure of a
   wait speaks of its own code, and the push gate then refuses a push for a reason that is not true.
+
+- **A showcase that lost its story index is brought back by its consumer before the run reads it.**
+  A parse of one story file can fail on a file being written under the watcher, and the indexer keeps that
+  failure as the file's entry: from that second the whole index is refused rather than the file's own stories.
+  The entry is dropped by one thing only — a watcher event over that same file — so the consumer pokes the
+  files the refusal names. A showcase beyond bringing back refuses the run by the index, not by the frames.
+
+- **The sweep over the stories survives a showing that did not open.** One showing out of six
+  hundred carries away the whole sweep, and about the rest it says nothing — neither how many passed
+  nor where the frame is empty. What it waits for is the appearance of the root, not silence of the
+  network: the showcase in development mode holds the hot reload stream open.
+
+- **The showcase starts over a cache without hot update leftovers.** They pile up unremoved, and a
+  showcase started over them serves a runtime asking for an update of a hash that is gone: every story
+  hangs at preparing while the story index is whole. Neither a page reload nor a restart cures it.
+
+- **A frame never reads a size the kit did not declare.** A control without a declared width gets one
+  from the browser's own default, and that default is computed from the average character width of
+  the first available family — a quantity that is not the digit advance and does not hold between
+  raisings of the showcase. The message field stood so for months: 192 points against 195, four
+  frames flipping whichever way the references were taken, three tasks paying for it. The size is
+  declared by the kit, and then the frame no longer depends on what the machine resolved.
 
 Below are the rules of the design of the kit: in the same list, because the binding to the code is read by a
 machine, and a heading inside a list breaks its reading off.

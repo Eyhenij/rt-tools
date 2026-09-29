@@ -19,6 +19,26 @@
 
     <ng-container headerRowOutlet />
 
+    @if (showFilters()) {
+        <tr rtElem="filter-row" qa-dataid="table-filter-row">
+            @for (cell of filterCells(); track cell.key) {
+                <th
+                    rtElem="filter-cell"
+                    qa-dataid="table-filter-cell"
+                    [rtMod]="{ actions: cell.actions }"
+                    [attr.aria-hidden]="cell.actions || null">
+                    @if (cell.filter) {
+                        <rt-table-filter-header
+                            [propertyName]="cell.key"
+                            [filter]="cell.filter"
+                            [filters]="filters()"
+                            (filtersChange)="reportFilters($event)" />
+                    }
+                </th>
+            }
+        </tr>
+    }
+
     @if (isInitialLoading()) {
         @for (i of skeletonRowIndexes(); track i) {
             <tr rtElem="skeleton-row" qa-dataid="table-skeleton-row">

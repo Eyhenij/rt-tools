@@ -1,0 +1,69 @@
+@layer rt-kit.components {
+    .rt-scroll-area {
+        --rt-scroll-area-hint-height: var(--rt-space-10);
+        --rt-scroll-area-hint-color: var(--rt-color-bg-surface);
+        --rt-scroll-area-hint-radius: var(--rt-radius-full);
+
+        // Полоса растушёвки считает своё место от хоста: тело обрезает всё по своему краю, а
+        // полоса обязана дойти до содержимого подвала.
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        block-size: 100%;
+        inline-size: 100%;
+        min-block-size: 0;
+
+        &__header {
+            flex: 0 0 auto;
+            padding: var(--rt-space-2) var(--rt-space-4);
+        }
+
+        &__body {
+            display: flex;
+            overflow: auto;
+            flex: 1 1 auto;
+            flex-direction: column;
+            padding: var(--rt-space-4);
+            min-block-size: 0;
+        }
+
+        &__footer {
+            flex: 0 0 auto;
+            padding: var(--rt-space-4);
+        }
+
+        // Полоса стоит поверх стыка тела и подвала и не ловит указатель: под ней живой список,
+        // и перехваченное нажатие уводило бы человека мимо пункта. Значок ловит его сам — иначе
+        // подсказку не прочитать. Места в колонке полоса не занимает: занятое, оно отодвинуло бы
+        // последний пункт от края у каждого потребителя области.
+        &__scroll-hint {
+            position: absolute;
+            z-index: 1;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+
+            // Растушёвка красится фоном темы, а не уходит в `transparent`: прозрачный — это
+            // чёрный с нулевой прозрачностью, и на тёмной теме такой градиент идёт через грязь.
+            // Начало берётся тем же цветом с нулевой прозрачностью — переход остаётся чистым в
+            // обеих темах, а потребитель, перекрасивший область, получает свой цвет даром.
+            background: linear-gradient(to bottom, rgb(from var(--rt-scroll-area-hint-color) r g b / 0%), var(--rt-scroll-area-hint-color));
+            block-size: var(--rt-scroll-area-hint-height);
+            inset-inline: 0;
+            pointer-events: none;
+        }
+
+        // Значок сидит на своей подложке: без неё он ложится поверх растворяющегося содержимого
+        // и читается как его часть — на кадре его не отличить от полустёртого пункта.
+        &__scroll-hint-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--rt-scroll-area-hint-radius);
+            background-color: var(--rt-color-bg-surface);
+            color: var(--rt-color-text-muted);
+            cursor: pointer;
+            pointer-events: auto;
+        }
+    }
+}

@@ -1,0 +1,263 @@
+@layer rt-kit.components {
+    /* rt-data-table — таблица первого кита во втором. Размеры первого кита положены на шкалу:
+       высота строки 48px — ступень роста контрола lg, поля ячейки 10px собраны из ступеней 2 и 0-5,
+       место под полосу действий 64px — ступень 3xl, поля ячейки отбора 4px и 8px — ступени xs и
+       sm. Подпись шапки 16px — ступень md при межстрочном tight, значение строки 14px — sm.
+       Шапка стоит над строками ярусом sticky шкалы, полоса действий — ярусом base: она в
+       разметке идёт после ячеек и потому рисуется поверх них. */
+
+    .rt-data-table {
+        --rt-data-table-row-height: var(--rt-control-height-lg);
+        --rt-data-table-head-height: calc(var(--rt-control-height-lg) - var(--rt-space-1));
+        --rt-data-table-border-width: var(--rt-border-width-thin);
+        --rt-data-table-cell-padding: calc(var(--rt-space-2) + var(--rt-space-0-5));
+        --rt-data-table-row-transition-duration: var(--rt-duration-base);
+
+        /* Нижний отступ списка стоит внутри прокрутки: таблица и есть область прокрутки. */
+        --rt-data-table-padding-bottom: var(--rt-list-content-padding-bottom);
+
+        /* Шапку перекрашивает приложение, как в первом ките: цвет и насыщенность подписи, фон
+           строки отбора. Фон строки отбора, как в первом ките, считается от фона шапки: половина
+           шапки, половина поверхности — перекрашенная шапка тянет строку отбора за собой. */
+        --rt-data-table-head-color: var(--rt-color-text-primary);
+        --rt-data-table-head-font-weight: var(--rt-font-weight-medium);
+        --rt-data-table-filter-bg: color-mix(in srgb, var(--rt-color-table-head-bg), var(--rt-color-bg-surface) 50%);
+
+        display: block;
+        overflow: auto;
+        width: 100%;
+        height: 100%;
+        box-sizing: border-box;
+        padding-bottom: var(--rt-data-table-padding-bottom);
+
+        /* Стандартные свойства полосы тоже приходят с корня. Chrome при заданном стандартном
+           свойстве не читает `::-webkit-scrollbar`, и нулевой размер оттуда полосу не прятал: список
+           ставит `none`, когда скрыты обе полосы, и `auto`, когда одна. Без его выбора — тихая
+           полоса основы кита, повторённая здесь с теми же приметами наведения и фокуса. */
+        scrollbar-color: var(--rt-data-table-scrollbar-color, transparent transparent);
+        scrollbar-width: var(--rt-data-table-scrollbar-width, thin);
+
+        /* Размер полос прокрутки приходит с корня страницы: туда его ставит список по
+           сохранённой настройке. Своего объявления на блоке нет намеренно — оно победило бы
+           унаследованное, и выбор человека до таблицы не дошёл бы. Без списка полосы кита
+           обычные: запасное значение — та же ступень, что в основе. */
+        &::-webkit-scrollbar {
+            width: var(--rt-data-table-scrollbar-vertical-width, var(--rt-size-3));
+            height: var(--rt-data-table-scrollbar-horizontal-height, var(--rt-size-3));
+        }
+
+        &:hover,
+        &:focus-within {
+            scrollbar-color: var(--rt-data-table-scrollbar-color, var(--rt-color-border-default) transparent);
+        }
+
+        @media (hover: none) {
+            scrollbar-color: var(--rt-data-table-scrollbar-color, var(--rt-color-border-default) transparent);
+        }
+
+        &__table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            position: sticky;
+            z-index: var(--rt-z-sticky);
+            top: 0;
+
+            /* Шапка первого кита — 44px: ступени такой нет, и она собрана из ступени lg без ступени 1.
+               Высоту держит строка, а не поля ячейки: поля первого кита 10px на шкалу не ложатся. */
+            tr:first-child {
+                height: var(--rt-data-table-head-height);
+            }
+
+            tr:last-child {
+                border-bottom: var(--rt-data-table-border-width) solid var(--rt-color-border-default);
+            }
+        }
+
+        tbody {
+            font-size: var(--rt-text-sm);
+        }
+
+        &__row {
+            height: var(--rt-data-table-row-height);
+            border-bottom: var(--rt-data-table-border-width) solid var(--rt-color-border-subtle);
+            color: var(--rt-color-text-primary);
+            transform: translate(0);
+
+            &:hover {
+                border-bottom-color: var(--rt-color-state-info);
+                transition: border-bottom-color var(--rt-data-table-row-transition-duration);
+            }
+
+            &:hover .rt-data-table-actions {
+                visibility: visible;
+            }
+
+            &--active {
+                border-bottom-color: var(--rt-color-state-info);
+            }
+
+            &--clickable {
+                cursor: pointer;
+            }
+        }
+
+        /* Ячейка шапки не ловит указатель вовсе: у первого кита нажимаются только сортируемая
+           ячейка, ячейка отбора и ячейка выбора. */
+        &__cell {
+            width: fit-content;
+            height: 100%;
+            padding: var(--rt-data-table-cell-padding);
+
+            &--head {
+                position: relative;
+                background-color: var(--rt-color-table-head-bg);
+                color: var(--rt-data-table-head-color);
+                font-size: var(--rt-text-md);
+                font-weight: var(--rt-data-table-head-font-weight);
+                line-height: var(--rt-leading-tight);
+                pointer-events: none;
+                text-align: start;
+            }
+
+            &--sortable,
+            &--selectable,
+            &--filterable {
+                pointer-events: auto;
+            }
+
+            /* Чекбокс и радиокнопка — строчные хосты: в строке текста они встают на базовую линию,
+               и место под выносными поднимает их на 2px над серединой ячейки. Блочный хост строки
+               текста не заводит, и ячейка ставит его по своей середине. */
+            &--selectable > rt-checkbox,
+            &--selectable > rt-radio-button {
+                display: flex;
+            }
+
+            &--filterable {
+                padding: var(--rt-space-xs) var(--rt-space-sm);
+                background-color: var(--rt-data-table-filter-bg);
+            }
+
+            /* Поля отбора первого кита — обведённые поля Material со скруглением 4px, а не
+               скругление контрола материального набора: то круглее, и поля выходили таблетками. */
+            :is(.rt-preset-material, [data-preset='material']) &--filterable {
+                --rt-input-radius: var(--rt-radius-sm);
+            }
+
+            /* Разделитель между ячейками шапки — полоса в половину высоты, как у первого кита. Цвет —
+               имя таблицы списка: материальный набор берёт его из темы Material, иначе под тёмной
+               темой Material разделитель сливается с фоном шапки. */
+            &--head:not(:last-child, .rt-data-table__cell--selectable, .rt-data-table__cell--empty):after {
+                position: absolute;
+                top: 25%;
+                right: 0;
+                height: 50%;
+                border-right: var(--rt-data-table-border-width) solid var(--rt-list-table-head-divider-color);
+                content: '';
+                pointer-events: none;
+            }
+
+            /* Место под полосу действий: ширину ячейке ставит сама таблица по ширине полосы. */
+            &--spacer {
+                padding: 0;
+            }
+        }
+    }
+
+    /* Полоса действий висит над концом строки и проявляется наведением; там, где наведения нет,
+       она видна всегда. Левый край растворяется в фоне — приём первого кита. */
+    // Полоса действий занимает строку целиком: строка с картинкой или длинной подписью выше обычной,
+    // и полоса высотой в обычную строку оставляла её низ открытым.
+    // Фон полосы — ручка приложения `--rt-table-actions-bg`, как
+    // `--rt-table-actions-container-background-color` первого кита: полоса стоит на фоне строки, а
+    // фон строки приложение задаёт своим. Без ручки полоса берёт фон поверхности.
+    .rt-data-table-actions {
+        --rt-data-table-actions-bg: var(--rt-table-actions-bg, var(--rt-color-bg-surface));
+
+        position: absolute;
+        z-index: var(--rt-z-base);
+        top: 0;
+        right: 0;
+        display: flex;
+        width: 100%;
+        height: 100%;
+        align-items: center;
+        justify-content: flex-end;
+        pointer-events: none;
+
+        &__container {
+            position: sticky;
+            right: 0;
+            display: flex;
+            overflow: hidden;
+            width: fit-content;
+            height: calc(100% - var(--rt-data-table-border-width) * 2);
+            align-items: center;
+            justify-content: flex-end;
+            padding: 0 var(--rt-space-xs) 0 var(--rt-space-5);
+            background: linear-gradient(
+                to right,
+                transparent 0%,
+                color-mix(in srgb, var(--rt-data-table-actions-bg) 30%, transparent) 10%,
+                var(--rt-data-table-actions-bg) 20%,
+                var(--rt-data-table-actions-bg) 100%
+            );
+            gap: var(--rt-space-xs);
+            pointer-events: none;
+        }
+
+        /* Сама полоса указателя не ловит — нажатие сквозь неё доходит до строки; ловят его
+           кнопки, которые в ней стоят: и меню строки, и действия приложения рядом с ним. */
+        &__container > * {
+            pointer-events: auto;
+        }
+
+        &__action {
+            position: sticky;
+        }
+
+        // Действия строки — меню кита и кнопки приложения — берут размер, форму и цвет кнопок таблицы.
+        rt-icon-button {
+            --rt-icon-button-color: var(--rt-list-table-icon-color);
+        }
+
+        .rt-icon-button {
+            --rt-icon-button-size: var(--rt-list-table-button-size);
+            --rt-icon-button-square-radius: var(--rt-list-table-button-radius);
+        }
+
+        .rt-icon-button__icon {
+            min-width: var(--rt-list-table-icon-size);
+            min-height: var(--rt-list-table-icon-size);
+        }
+
+        /* Полоса прячется прозрачностью, а не `visibility`: скрытая так кнопка остаётся в порядке
+           обхода, и фокус с клавиатуры до неё доходит — фокус с клавиатуры внутри строки полосу и
+           показывает. Фокус после мыши — не повод: меню строки, закрывшись, возвращает фокус на
+           свою кнопку, нажатие ставит его на флажок строки, и полоса, открытая по `:focus-within`,
+           висела бы над строкой, от которой указатель давно ушёл. Нажатий прозрачная полоса не
+           ловит, пока её не видно. */
+        @media (hover: hover) {
+            &--hidden {
+                opacity: 0;
+            }
+
+            &--hidden &__container > * {
+                pointer-events: none;
+            }
+
+            .rt-data-table__row:hover &--hidden,
+            .rt-data-table__row:has(:focus-visible) &--hidden {
+                opacity: 1;
+            }
+
+            .rt-data-table__row:hover &--hidden &__container > *,
+            .rt-data-table__row:has(:focus-visible) &--hidden &__container > * {
+                pointer-events: auto;
+            }
+        }
+    }
+}

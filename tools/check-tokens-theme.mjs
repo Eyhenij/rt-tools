@@ -53,7 +53,8 @@ import {
     read,
 } from './tokens-looks.mjs';
 
-const COMPONENTS = 'projects/ui-kit-v2/src/lib';
+/** Component styles of both entries of the package. */
+const COMPONENTS = ['projects/ui-kit-v2/src/lib', 'projects/ui-kit-v2/src/rich-editor/lib'];
 const PAIRS_FILE = 'tools/tokens-contrast-pairs.json';
 const COLORS_DOC = 'projects/ui-kit-v2/docs/Colors.mdx';
 const ALLOWLIST = allowlistOf('tokens-theme');
@@ -184,7 +185,7 @@ for (const [name] of dark) {
 }
 
 /** 4. A dark answer in a component's styles, past the styling layer. */
-for (const path of scssFiles(COMPONENTS)) {
+for (const path of COMPONENTS.filter((dir) => existsSync(join(ROOT, dir))).flatMap((dir) => scssFiles(dir))) {
     const text = read(path);
     const block = path.split('/').pop().replace(/^_?rt-/, '').replace(/\.component\.scss$/, '');
     for (const match of text.matchAll(/(?:^|\n)([^\n{]*(?:data-theme|rt-theme-dark)[^\n{]*)\{([^}]*)\}/g)) {

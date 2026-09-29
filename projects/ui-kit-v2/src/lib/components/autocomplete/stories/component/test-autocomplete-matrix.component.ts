@@ -85,78 +85,98 @@ function invalid(): FormControl<string | null> {
     template: `
         @switch (part) {
             @case ('size') {
-                <app-story-row caption="Размер" [items]="sizes" [slotWidth]="fieldWidth">
-                    <ng-template let-size>
-                        <rt-autocomplete
-                            ariaLabel="Размер"
-                            placeholder="Начните вводить город"
-                            [size]="size"
-                            [suggestions]="suggestions"
-                            [displayWith]="displayWith" />
+                <app-story-presets caption="Размер в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="sizes" [slotWidth]="fieldWidth">
+                            <ng-template let-size>
+                                <rt-autocomplete
+                                    ariaLabel="Размер"
+                                    placeholder="Начните вводить город"
+                                    [size]="size"
+                                    [suggestions]="suggestions"
+                                    [displayWith]="displayWith" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('filling') {
-                <app-story-row caption="Наполненность и иконка" [items]="fillingCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
-                    <ng-template let-fillingCase>
-                        <rt-autocomplete
-                            placeholder="Начните вводить город"
-                            [ariaLabel]="fillingCase.name"
-                            [iconLeft]="fillingCase.iconLeft ? 'ico-search' : null"
-                            [suggestions]="suggestions"
-                            [displayWith]="displayWith"
-                            [formControl]="fillingCase.control" />
+                <app-story-presets caption="Наполненность и иконка в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="fillingCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
+                            <ng-template let-fillingCase>
+                                <rt-autocomplete
+                                    placeholder="Начните вводить город"
+                                    [ariaLabel]="fillingCase.name"
+                                    [iconLeft]="fillingCase.iconLeft ? 'ico-search' : null"
+                                    [suggestions]="suggestions"
+                                    [displayWith]="displayWith"
+                                    [formControl]="fillingCase.control" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('bordered') {
-                <app-story-row caption="Рамка" [items]="borderedCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
-                    <ng-template let-borderedCase>
-                        <rt-autocomplete
-                            [ariaLabel]="borderedCase.name"
-                            [bordered]="borderedCase.bordered"
-                            [suggestions]="suggestions"
-                            [displayWith]="displayWith"
-                            [formControl]="borderedCase.control" />
+                <app-story-presets caption="Рамка в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="borderedCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
+                            <ng-template let-borderedCase>
+                                <rt-autocomplete
+                                    [ariaLabel]="borderedCase.name"
+                                    [bordered]="borderedCase.bordered"
+                                    [suggestions]="suggestions"
+                                    [displayWith]="displayWith"
+                                    [formControl]="borderedCase.control" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('states') {
-                <app-story-row caption="Взаимодействие" [items]="states" [itemLabel]="stateLabel" [slotWidth]="fieldWidth">
-                    <ng-template let-state>
-                        <rt-autocomplete
-                            ariaLabel="Состояние"
-                            placeholder="Начните вводить город"
-                            [suggestions]="suggestions"
-                            [displayWith]="displayWith"
-                            [attr.data-story-state]="state.state" />
-                    </ng-template>
-                </app-story-row>
-
-                <app-story-row caption="Значение, форма и обёртка" [items]="stateCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
-                    <ng-template let-stateCase>
-                        @if (stateCase.flat) {
-                            <rt-field [readonly]="true">
+                <app-story-presets caption="Взаимодействие в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="states" [itemLabel]="stateLabel" [slotWidth]="fieldWidth">
+                            <ng-template let-state>
                                 <rt-autocomplete
-                                    [ariaLabel]="stateCase.name"
+                                    ariaLabel="Состояние"
+                                    placeholder="Начните вводить город"
                                     [suggestions]="suggestions"
                                     [displayWith]="displayWith"
-                                    [formControl]="stateCase.control" />
-                            </rt-field>
-                        } @else {
-                            <rt-autocomplete
-                                placeholder="Начните вводить город"
-                                [ariaLabel]="stateCase.name"
-                                [disabled]="stateCase.disabled"
-                                [suggestions]="suggestions"
-                                [displayWith]="displayWith"
-                                [formControl]="stateCase.control" />
-                        }
+                                    [attr.data-story-state]="state.state" />
+                            </ng-template>
+                        </app-story-row>
+
+                        <app-story-row
+                            caption="Значение, форма и обёртка"
+                            [items]="stateCases"
+                            [itemLabel]="caseLabel"
+                            [slotWidth]="fieldWidth">
+                            <ng-template let-stateCase>
+                                @if (stateCase.flat) {
+                                    <rt-field [readonly]="true">
+                                        <rt-autocomplete
+                                            [ariaLabel]="stateCase.name"
+                                            [suggestions]="suggestions"
+                                            [displayWith]="displayWith"
+                                            [formControl]="stateCase.control" />
+                                    </rt-field>
+                                } @else {
+                                    <rt-autocomplete
+                                        placeholder="Начните вводить город"
+                                        [ariaLabel]="stateCase.name"
+                                        [disabled]="stateCase.disabled"
+                                        [suggestions]="suggestions"
+                                        [displayWith]="displayWith"
+                                        [formControl]="stateCase.control" />
+                                }
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('presets') {
@@ -177,20 +197,24 @@ function invalid(): FormControl<string | null> {
             }
 
             @case ('themes') {
-                <app-story-themes caption="Поле в обеих темах">
+                <app-story-presets caption="Поле в обеих темах в обоих наборах">
                     <ng-template>
-                        @for (themeCase of themeCases; track themeCase.name) {
-                            <rt-autocomplete
-                                placeholder="Начните вводить город"
-                                iconLeft="ico-search"
-                                [ariaLabel]="themeCase.name"
-                                [disabled]="themeCase.disabled"
-                                [suggestions]="suggestions"
-                                [displayWith]="displayWith"
-                                [formControl]="themeCase.control" />
-                        }
+                        <app-story-themes>
+                            <ng-template>
+                                @for (themeCase of themeCases; track themeCase.name) {
+                                    <rt-autocomplete
+                                        placeholder="Начните вводить город"
+                                        iconLeft="ico-search"
+                                        [ariaLabel]="themeCase.name"
+                                        [disabled]="themeCase.disabled"
+                                        [suggestions]="suggestions"
+                                        [displayWith]="displayWith"
+                                        [formControl]="themeCase.control" />
+                                }
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
             }
 
             @case ('panel') {

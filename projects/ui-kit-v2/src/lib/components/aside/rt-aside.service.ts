@@ -1,10 +1,14 @@
 import { ComponentType, Overlay, OverlayConfig, OverlayRef, PositionStrategy } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
+import { DOCUMENT } from '@angular/common';
 import { inject, Injectable, Injector, Renderer2, RendererFactory2, Signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { EMPTY, map, merge, mergeMap, Observable, Subject, takeUntil } from 'rxjs';
 
+import { IRtKitConfig } from '../../config/rt-kit-config.model';
+import { rtKitDefault } from '../../config/rt-kit-config.providers';
+import { carryThemeScopeOfFocus, materialPresetClassesOfFocus } from '../../util/material-preset';
 import { RtAsideRef } from './rt-aside-ref';
 import { RT_ASIDE_DATA } from './rt-aside.tokens';
 
@@ -97,11 +101,17 @@ interface IRtAsideOpenContext {
 export class RtAsideService {
     readonly #overlay: Overlay = inject(Overlay);
     readonly #injector: Injector = inject(Injector);
+    readonly #document: Document = inject(DOCUMENT);
     // Renderer2 нужен для манипуляции CSS-классами на overlay.hostElement.
     // В service нет ComponentRef, поэтому Renderer2 берём через factory.
     readonly #renderer: Renderer2 = inject(RendererFactory2).createRenderer(null, null);
 
     readonly #openSource: Subject<IRtAsideOpenContext> = new Subject<IRtAsideOpenContext>();
+
+    /* Закрывает ли `Escape` штору, когда вызов об этом промолчал. Умолчание кита — закрывает;
+       приложению, которому это мешает, иначе пришлось бы писать отказ на каждом вызове, и
+       забытый вызов отличался бы от остальных. */
+    readonly #closeOnEscape: boolean = rtKitDefault('aside', (it: IRtKitConfig.Aside): boolean | undefined => it.closeOnEscape, true);
 
     constructor() {
         // Per-open close-подписки (backdrop / ESC) живут в одном постоянном
@@ -157,7 +167,12 @@ export class RtAsideService {
                 ? this.#overlay.position().global().right('0').top('0')
                 : this.#overlay.position().global().left('0').top('0');
 
-        const panelClasses: string[] = ['rt-aside-overlay', `rt-aside-overlay--position-${position}`, 'rt-aside-overlay--entering'];
+        const panelClasses: string[] = [
+            'rt-aside-overlay',
+            `rt-aside-overlay--position-${position}`,
+            'rt-aside-overlay--entering',
+            ...materialPresetClassesOfFocus(this.#document),
+        ];
 
         const overlayConfig: OverlayConfig = {
             positionStrategy,
@@ -169,6 +184,8 @@ export class RtAsideService {
         };
 
         const overlayRef: OverlayRef = this.#overlay.create(overlayConfig);
+        // До attach: содержимое панели может забрать фокус, и кусок темы у кнопки будет потерян.
+        carryThemeScopeOfFocus(overlayRef.overlayElement, this.#document);
         const asideRef: RtAsideRef<TResult> = new RtAsideRef<TResult>(overlayRef, this.#renderer);
 
         // Сами close-подписки объявлены один раз в конструкторе — здесь только
@@ -177,7 +194,7 @@ export class RtAsideService {
             overlayRef,
             asideRef,
             closeOnBackdropClick: config?.closeOnBackdropClick !== false,
-            closeOnEscape: config?.closeOnEscape !== false,
+            closeOnEscape: config?.closeOnEscape ?? this.#closeOnEscape,
         });
 
         const injector: Injector = Injector.create({

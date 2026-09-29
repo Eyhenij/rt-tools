@@ -119,6 +119,10 @@ jobs:
             # `DOCKER_HOST` не для красоты: свой каталог уносит с собой и текущий контекст, а без
             # него клиент идёт в общесистемный сокет, которого на машине с настольным клиентом
             # нет вовсе, и отвечает «нет такого файла» на что угодно.
+            #
+            # Сокет берётся тот, что есть на машине: настольного клиента, иначе colima, иначе
+            # остаётся `DOCKER_HOST`, заданный раннеру. Лежащий демон называется словами — что
+            # поднять и какой сокет спрошен, — а не голым отказом клиента.
             - name: Докер без помощника ключей
               if: steps.scope.outputs.docs_only != 'true'
               run: |
@@ -126,9 +130,20 @@ jobs:
                   mkdir -p "$dir"
                   printf '{}' > "$dir/config.json"
                   echo "DOCKER_CONFIG=$dir" >> "$GITHUB_ENV"
-                  echo "DOCKER_HOST=unix://$HOME/.docker/run/docker.sock" >> "$GITHUB_ENV"
-                  DOCKER_CONFIG="$dir" DOCKER_HOST="unix://$HOME/.docker/run/docker.sock" \
-                      docker info --format 'демон: {{.ServerVersion}}'
+                  host="${DOCKER_HOST:-}"
+                  for sock in "$HOME/.docker/run/docker.sock" "$HOME/.colima/default/docker.sock"; do
+                      if [ -S "$sock" ]; then
+                          host="unix://$sock"
+                          break
+                      fi
+                  done
+                  if [ -n "$host" ]; then
+                      echo "DOCKER_HOST=$host" >> "$GITHUB_ENV"
+                  fi
+                  if ! DOCKER_CONFIG="$dir" DOCKER_HOST="$host" docker info --format 'демон: {{.ServerVersion}}'; then
+                      echo "::error::Демон докера не отвечает (сокет: ${host:-по умолчанию клиента}). Подними Docker Desktop или colima (colima start) на машине раннера и перезапусти прогон."
+                      exit 1
+                  fi
 
             # Сценарии гардов дерева. Гард — единственная часть слоя правил, которую исполняет
             # машина: ошибка в нём молчит, потому что сломанный гард пропускает ход, а пропуск
@@ -258,6 +273,12 @@ jobs:
             - name: Kit two coverage
               run: node tools/check-kit-coverage.mjs
 
+            # Логический вход без превращения строки в истину собирается, проходит типы и линтер:
+            # голый атрибут даёт ему пустую строку, а это ложь. Промах виден только потребителю,
+            # который написал привычную форму, — держать его нечем, кроме этой проверки.
+            - name: Boolean inputs of kit two
+              run: node tools/check-boolean-inputs.mjs
+
             # `typecheck` проверяет типы там, где их не проверяет ничто другое:
             # Jest транспилирует спеки без проверки типов, а ESLint здесь не
             # type-aware, так что спека могла годами гонять форму, которой по
@@ -309,30 +330,23 @@ jobs:
                   if [ "$(docker inspect --format '{{.State.Health.Status}}' "$db" 2>/dev/null || echo none)" != healthy ]; then
                       echo '::error::База стенда не поднялась. Ниже — её лог и занятое место: набор дальше не идёт, и красное в нём было бы не про правку.'
                       docker logs --tail 20 "$db" 2>&1 || true
-                      docker system df
+                      docker system df || true
                       exit 1
                   fi
 
                   pnpm exec nx run message-bus-admin-e2e:e2e
 
             # Снимки первой витрины: измерение вычисленных значений отвечает только на заданный
-            # вопрос, а снимок ловит всё видимое разом. Кадры этой витрины снимает браузер самой
-            # машины, и потому судятся они здесь — там, где сняты. Вторая витрина и экраны
-            # админки давно ушли на браузер из образа; первый кит по решению эпика «Один кит» не
-            # правится вовсе, включая витрину, и увести его туда же — слово владельца.
-            #
-            # Порт свой: раннер делит машину с разработчиком, и прогон, прибитый к 6006,
-            # подцепил бы витрину, поднятую руками, вместо своей.
+            # вопрос, а снимок ловит всё видимое разом. Кадры снимает браузер из образа — тот же,
+            # что у второй витрины и у экранов админки, — и потому судятся они всюду: и здесь, и
+            # у разработчика перед отправкой. Витрину поднимает сама команда, свободным портом:
+            # прибитый к 6006 подцепил бы витрину, поднятую руками, вместо своей.
             - name: Visual tests
               if: steps.scope.outputs.docs_only != 'true'
               run: |
+                  # Пробы обвязки ходят к витрине браузером самой машины, и он ставится здесь же.
                   node node_modules/.pnpm/playwright@*/node_modules/playwright/cli.js install chromium
-                  pnpm exec nx run @rt-tools/ui-kit:storybook --port 6106 --no-open > /tmp/storybook-ci.log 2>&1 &
-                  for _ in $(seq 1 120); do
-                      curl -sf http://localhost:6106/index.json > /dev/null && break
-                      sleep 2
-                  done
-                  STORYBOOK_URL=http://localhost:6106 pnpm run test:visual
+                  node tools/visual-gate.mjs ui-kit
 
             - name: Upload visual diffs
               if: failure()
@@ -438,4 +452,6 @@ jobs:
                   # есть ещё и предел размера — он держит его в берегах независимо от возраста.
                   docker builder prune --force --max-used-space 10GB >/dev/null 2>&1 || true
 
-                  docker system df
+                  # Сводка места — справка, а не проверка: лежащий демон уже назван шагом выше,
+                  # и второй отказ здесь только прячет первый.
+                  docker system df || true

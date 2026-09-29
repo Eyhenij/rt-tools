@@ -23,40 +23,52 @@ export type TAsideSectionMatrixPart = 'heading' | 'content' | 'stack' | 'presets
     template: `
         @switch (part) {
             @case ('heading') {
-                <app-story-row caption="Заголовок" slotWidth="18rem" [items]="headings" [itemLabel]="headingLabel">
-                    <ng-template let-value>
-                        <rt-aside-section [heading]="value">Договор №2024-118 от 14 марта</rt-aside-section>
+                <app-story-presets caption="Заголовок в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="18rem" [items]="headings" [itemLabel]="headingLabel">
+                            <ng-template let-value>
+                                <rt-aside-section [heading]="value">Договор №2024-118 от 14 марта</rt-aside-section>
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('content') {
-                <app-story-row caption="Чем наполнен" slotWidth="18rem" [items]="contents">
-                    <ng-template let-content>
-                        @switch (content) {
-                            @case ('строка') {
-                                <rt-aside-section heading="Договор">№2024-118</rt-aside-section>
-                            }
-                            @case ('несколько абзацев') {
-                                <rt-aside-section heading="Условия">
-                                    <p>Продление автоматическое.</p>
-                                    <p>Отказ — за тридцать дней до конца срока.</p>
-                                </rt-aside-section>
-                            }
-                            @case ('пусто') {
-                                <rt-aside-section heading="Комментарий" />
-                            }
-                        }
+                <app-story-presets caption="Чем наполнен в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="18rem" [items]="contents">
+                            <ng-template let-content>
+                                @switch (content) {
+                                    @case ('строка') {
+                                        <rt-aside-section heading="Договор">№2024-118</rt-aside-section>
+                                    }
+                                    @case ('несколько абзацев') {
+                                        <rt-aside-section heading="Условия">
+                                            <p>Продление автоматическое.</p>
+                                            <p>Отказ — за тридцать дней до конца срока.</p>
+                                        </rt-aside-section>
+                                    }
+                                    @case ('пусто') {
+                                        <rt-aside-section heading="Комментарий" />
+                                    }
+                                }
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
-                </app-story-row>
+                </app-story-presets>
             }
 
             @case ('stack') {
-                <div style="width: 18rem">
-                    <rt-aside-section heading="Договор">№2024-118</rt-aside-section>
-                    <rt-aside-section heading="Стороны">ООО «Ромашка» и ИП Иванов</rt-aside-section>
-                    <rt-aside-section>Раздел без заголовка идёт тем же отступом</rt-aside-section>
-                </div>
+                <app-story-presets caption="Разделы подряд в обоих наборах">
+                    <ng-template>
+                        <div style="width: 18rem">
+                            <rt-aside-section heading="Договор">№2024-118</rt-aside-section>
+                            <rt-aside-section heading="Стороны">ООО «Ромашка» и ИП Иванов</rt-aside-section>
+                            <rt-aside-section>Раздел без заголовка идёт тем же отступом</rt-aside-section>
+                        </div>
+                    </ng-template>
+                </app-story-presets>
             }
 
             @case ('presets') {
@@ -70,13 +82,17 @@ export type TAsideSectionMatrixPart = 'heading' | 'content' | 'stack' | 'presets
             }
 
             @case ('themes') {
-                <app-story-themes caption="Раздел в обеих темах">
+                <app-story-presets caption="Раздел в обеих темах в обоих наборах">
                     <ng-template>
-                        <div style="width: 18rem">
-                            <rt-aside-section heading="Договор">№2024-118 от 14 марта</rt-aside-section>
-                        </div>
+                        <app-story-themes>
+                            <ng-template>
+                                <div style="width: 18rem">
+                                    <rt-aside-section heading="Договор">№2024-118 от 14 марта</rt-aside-section>
+                                </div>
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
-                </app-story-themes>
+                </app-story-presets>
             }
         }
     `,

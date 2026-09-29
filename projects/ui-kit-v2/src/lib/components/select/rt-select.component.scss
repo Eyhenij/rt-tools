@@ -1,6 +1,8 @@
 @layer rt-kit.components {
     .rt-select {
+        --rt-select-fill-radius: var(--rt-radius-sm);
         --rt-select-caret-transition-duration: var(--rt-duration-fast);
+        --rt-select-own-outline-width: var(--rt-border-width-medium);
 
         position: relative;
         display: block;
@@ -11,6 +13,17 @@
            (равная специфичность) идут ниже по source-order и перекрывают рамку. */
         &--borderless &__trigger {
             border-color: transparent;
+        }
+
+        /* Вид «fill» — залитое поле с чертой снизу, как у материального поля первого кита: скругление
+           у него своё и малое — скругление поля бывает «таблеткой», а у залитого поля низ прямой.
+           Объявлен до блоков состояний: фокус, ошибка и «только чтение» идут ниже и
+           перекрывают его рамку. */
+        &--appearance--fill &__trigger {
+            border-color: transparent;
+            border-radius: var(--rt-select-fill-radius) var(--rt-select-fill-radius) 0 0;
+            border-bottom-color: var(--rt-color-field-fill-underline);
+            background-color: var(--rt-color-bg-surface-subtle-2);
         }
 
         &__trigger {
@@ -49,8 +62,46 @@
             }
         }
 
+        /* Свой указатель потребителя: полевой вид кнопки снимается — ground, рамка, высота и
+           отступы. Останется он — значок или метка потребителя окажутся внутри чужого поля, и
+           вход теряет смысл. Поведение при этом на кнопке, снимается только вид.
+
+           Ширина входит в полевой вид наравне с рамкой: поле берёт всю ширину хозяина, а разметка
+           потребителя уже. В покое этого не видно — фон и рамка сняты, — а на нажатии полевое
+           кольцо обводит кнопку, и она оказывается шире нарисованного: 240 точек против метки в
+           134. Поэтому кнопка меряется своим содержимым, а полевые состояния — кольцо на фокусе и
+           рамка открытого списка — на своём указателе не рисуются вовсе. Открытость потребитель
+           рисует сам: обстановка шаблона несёт её признаком. */
+        &__trigger--own {
+            width: auto;
+            min-height: 0;
+            padding: 0;
+            border-color: transparent;
+            background-color: transparent;
+
+            &:focus {
+                border-color: transparent;
+                box-shadow: none;
+            }
+
+            /* Ход клавишами остаётся видимым: снять полевое кольцо значит снять единственную
+               примету фокуса. Обводка идёт по содержимому кнопки — кнопка теперь по нему и
+               меряется. :focus-visible, а не :focus: щелчку мышью примета не нужна, её даёт
+               разметка потребителя. */
+            &:focus-visible {
+                outline: var(--rt-select-own-outline-width) solid var(--rt-input-color-border-focus);
+                outline-offset: var(--rt-input-focus-outline-offset);
+            }
+        }
+
         &--open &__trigger {
             border-color: var(--rt-input-color-border-focus);
+        }
+
+        /* Рамка открытого списка — тот же полевой вид, только приходит позже. Правило выше бьёт
+           объявление у --own по силе, поэтому снимается отдельной строкой. */
+        &--open &__trigger--own {
+            border-color: transparent;
         }
 
         &--invalid &__trigger {
@@ -58,6 +109,16 @@
 
             &:focus {
                 box-shadow: var(--rt-input-focus-shadow-error);
+            }
+        }
+
+        /* Рамка ошибки — тоже полевой вид. Неверность своего указателя потребитель показывает
+           своей разметкой: чужая красная рамка легла бы вокруг его метки. */
+        &--invalid &__trigger--own {
+            border-color: transparent;
+
+            &:focus {
+                box-shadow: none;
             }
         }
 
@@ -118,18 +179,48 @@
             transform: rotate(180deg);
         }
 
+        /* Под материальным набором стрелка — залитый треугольник mat-select первого кита, 10 на 5 px,
+           и открытое поле его не переворачивает. Свой вид кита остаётся с шевроном. Размер значок
+           ставит себе встроенным стилем, поэтому треугольник задан пределами, а не шириной. */
+        :is(.rt-preset-material, [data-preset='material']) &__chevron {
+            max-width: 10px;
+            max-height: 5px;
+            background-color: currentcolor;
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+            transform: none;
+
+            svg {
+                display: none;
+            }
+        }
+
         /* Panel рендерится в CDK Overlay (body) — позиционирование на CDK,
            здесь только chrome. Глобальный класс (ViewEncapsulation.None). */
         &__panel {
             /* Панель рисуется в CDK Overlay, вне поддерева блока: свойство
                объявляется на ней самой — с корня блока оно бы не докатилось. */
-            --rt-select-panel-shadow: var(--rt-shadow-md);
+            --rt-select-panel-shadow: var(--rt-overlay-select-shadow);
+            --rt-select-panel-radius: var(--rt-overlay-select-radius);
+            --rt-select-option-font-size: var(--rt-overlay-select-option-font-size);
+            --rt-select-selected-bg: var(--rt-overlay-select-selected-bg);
+            --rt-select-selected-weight: var(--rt-overlay-select-selected-weight);
+            --rt-select-check-display: var(--rt-overlay-select-check-display);
+            --rt-select-option-min-height: var(--rt-overlay-select-option-min-height);
+            --rt-select-panel-border-width: var(--rt-overlay-select-panel-border-width);
 
+            /* Предел высоты по умолчанию — предел кита: длинный список прокручивается внутри
+               панели, а не уходит за нижний край экрана. Вход `panelMaxHeight` ставит свой
+               предел на саму панель, а `none` снимает его для короткого списка. */
+            --rt-select-panel-max-height: var(--rt-input-panel-max-height);
+
+            /* Ширина берётся от коробки наложения: её нижнюю границу ставит указатель,
+               а выше она растёт по содержимому. Без этой строки панель мерилась бы
+               содержимым внутри коробки и не дотягивалась до ширины поля. */
             width: 100%;
-            max-height: var(--rt-input-panel-max-height);
+            max-height: var(--rt-select-panel-max-height);
             box-sizing: border-box;
-            border: var(--rt-input-border-width) solid var(--rt-color-border-subtle);
-            border-radius: var(--rt-input-radius);
+            border: var(--rt-select-panel-border-width) solid var(--rt-color-border-subtle);
+            border-radius: var(--rt-select-panel-radius);
             background-color: var(--rt-color-bg-surface);
             box-shadow: var(--rt-select-panel-shadow);
             overflow-y: auto;
@@ -147,10 +238,16 @@
         }
 
         &__option {
+            display: flex;
+            min-height: var(--rt-select-option-min-height);
+            box-sizing: border-box;
+            align-items: center;
+            justify-content: space-between;
             padding: var(--rt-space-sm) var(--rt-space-md);
             color: var(--rt-color-text-primary);
             cursor: pointer;
-            font-size: var(--rt-input-font-size);
+            font-size: var(--rt-select-option-font-size);
+            gap: var(--rt-space-sm);
 
             &:hover,
             &--active {
@@ -158,8 +255,8 @@
             }
 
             &--selected {
-                background-color: var(--rt-color-action-primary-subtle);
-                font-weight: var(--rt-font-weight-semibold);
+                background-color: var(--rt-select-selected-bg);
+                font-weight: var(--rt-select-selected-weight);
             }
 
             &--disabled {
@@ -170,6 +267,12 @@
                     background-color: transparent;
                 }
             }
+        }
+
+        /* Отметка выбранного пункта — у mat-select первого кита; свой вид её не рисует. */
+        &__check {
+            display: var(--rt-select-check-display);
+            flex-shrink: 0;
         }
 
         &__empty {

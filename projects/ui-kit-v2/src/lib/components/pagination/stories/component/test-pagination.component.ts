@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { IPageModel } from '@rt-tools/utils';
 
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { RtPaginationComponent } from '../../rt-pagination.component';
 
 /**
@@ -12,12 +13,19 @@ import { RtPaginationComponent } from '../../rt-pagination.component';
 @Component({
     selector: 'app-pagination',
     template: `
-        <rt-pagination [pageModel]="pageModel" [perPageOptions]="perPageOptions" [loading]="loading" />
+        <app-story-presets fill caption="Полоса листания в обоих наборах">
+            <ng-template>
+                <rt-pagination [pageModel]="pageModel" [perPageOptions]="perPageOptions" [loading]="loading" />
+            </ng-template>
+        </app-story-presets>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // components
         RtPaginationComponent,
+
+        // showcase
+        StoryPresetsComponent,
     ],
 })
 export class TestRtPaginationComponent {

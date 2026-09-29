@@ -185,7 +185,7 @@ When the run of the snapshots reaches that story
 Then the frame is shot after the component took the sign of the unfinishedness off itself, not by a
 counting of the time
 
-Covered: `projects/ui-kit-v2/src/lib/components/rich-editor/rt-rich-editor.component.spec.ts`.
+Covered: `projects/ui-kit-v2/src/rich-editor/lib/components/rich-editor/rt-rich-editor.component.spec.ts`.
 
 ### SC-UKV-54 — an opened panel lives until the frame
 
@@ -236,3 +236,57 @@ Covered by `tools/tests/showcase-probe.test.sh` — ten outcomes over a substitu
 the set is not seen by the gatherer of the coverage. Checked on the spot: a page holding the sign of
 preparing and one refused request got out of both probes of the second showcase the same named refusal and
 the code one, in place of the former bare failure of the wait.
+
+### SC-UKV-142 — a consumer brings back a story index the showcase lost
+
+Given a raised showcase whose indexer kept a failed parse of a story file, so that `/index.json` answers
+with a refusal naming that file, while the file itself lies in the tree whole
+When the sweep over the stories or the snapshot run reads the index of that showcase
+Then every file the refusal names is poked so that the showcase's watcher fires over it. The index is
+waited for up to half a minute, and the run goes on over the one that came back, saying aloud that it did.
+An index that did not come back leaves the run with a refusal naming those files. A refusal naming no file
+at all refuses at once rather than waiting
+
+Covered by `tools/tests/showcase-probe.test.sh` — eleven outcomes over a substituted index, without a
+showcase; the set is not seen by the gatherer of the coverage. Checked on the spot: a story file spoilt
+under a raised showcase dropped `/index.json` to a refusal, and the return of the file brought the index
+back to 200 — that is the very event the poke stands in place of.
+
+### SC-UKV-143 — the showcase starts over a cache without hot update leftovers
+
+Given a showcase build cache holding files of past hot updates next to the compiled bundles
+When the showcase is raised by the tree's command
+Then the leftovers are removed before the start and the bundles stay, and how many were removed is
+said aloud. A cache that is not there at all is not a refusal: the call goes before every raising
+
+Covered by `tools/tests/showcase-cache-clean.test.sh` — four outcomes over a substituted cache,
+without a showcase. Checked on the spot: over a cache with 5860 leftovers every story hung at
+preparing with a 404 on `runtime_main.<hash>.hot-update.json`, and neither a page reload nor a
+restart of the showcase cured it; after the removal the same story drew three showing roots with
+no refused requests.
+
+### SC-UKV-144 — the sweep over the stories survives a showing that did not open
+
+Given a raised showcase and a showing that does not open — its page hangs, or the root of the showing
+never appears
+When the sweep over all the stories reaches that showing
+Then the sweep records it as a finding naming how many showing roots the page held, whether the story
+is at preparing and which requests the showcase refused, and goes on to the rest. The wait for the
+showing is the load event and the appearance of the root rather than silence of the network: the
+showcase in development mode holds the hot reload stream open. The drawing is waited for by the
+measurement itself, so a story whose content arrives a moment later is not called empty
+
+Covered by `tools/tests/showcase-probe.test.sh` — four outcomes of the shared wait with the exit
+switched off, over a substituted page. Checked on the spot: the sweep over the raised showcase walked
+546 stories and 79 overview pages whole, with no empty showings.
+
+### SC-UKV-180 — the frame does not depend on a size the kit did not declare
+
+Given the message field inside a showing whose cell has a width
+When the field is measured
+Then its width equals the cell's, and the browser's default size by the number of columns does not
+reach it
+
+Not covered: a style that applied is told from one that was only written by the drawn frame, and the
+spec environment applies no styles at all. Closed by the seven reference frames of the family, taken
+at the width of the showing's cell.

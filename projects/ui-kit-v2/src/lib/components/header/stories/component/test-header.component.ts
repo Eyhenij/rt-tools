@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { RtHeaderComponent } from '../../rt-header.component';
 
 /**
@@ -10,12 +11,19 @@ import { RtHeaderComponent } from '../../rt-header.component';
 @Component({
     selector: 'app-header',
     template: `
-        <rt-header [canGoBack]="canGoBack" [showInvite]="showInvite" />
+        <app-story-presets fill caption="Шапка в обоих наборах">
+            <ng-template>
+                <rt-header [canGoBack]="canGoBack" [showInvite]="showInvite" />
+            </ng-template>
+        </app-story-presets>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // components
         RtHeaderComponent,
+
+        // showcase
+        StoryPresetsComponent,
     ],
 })
 export class TestRtHeaderComponent {

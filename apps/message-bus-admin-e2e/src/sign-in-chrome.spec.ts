@@ -42,7 +42,7 @@ test.describe('тема и язык на экране входа', () => {
         await expect(qa(page, SECTION.postmortems.table)).toBeVisible();
 
         // Выбор пережил вход: подписи кита и имя раздела идут на выбранном языке
-        await expect(page.locator('.rt-pagination__per-page-label')).toHaveText(/Per page/);
+        await expect(page.locator('.rt-pagination__per-page-label')).toHaveText(/Items per page/);
         await expect(page.getByRole('heading', { name: 'Incident analyses' })).toBeVisible();
 
         // Время админка рисует сама, и вид его один на оба языка: день, месяц, год и минуты цифрами

@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { RtCollapsibleTextComponent } from '../../rt-collapsible-text.component';
 
 /**
@@ -10,12 +11,19 @@ import { RtCollapsibleTextComponent } from '../../rt-collapsible-text.component'
 @Component({
     selector: 'app-collapsible-text',
     template: `
-        <rt-collapsible-text [paragraphs]="paragraphs" [clampLines]="clampLines" />
+        <app-story-presets fill caption="Свёрнутый текст в обоих наборах">
+            <ng-template>
+                <rt-collapsible-text [paragraphs]="paragraphs" [clampLines]="clampLines" />
+            </ng-template>
+        </app-story-presets>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // components
         RtCollapsibleTextComponent,
+
+        // showcase
+        StoryPresetsComponent,
     ],
 })
 export class TestRtCollapsibleTextComponent {

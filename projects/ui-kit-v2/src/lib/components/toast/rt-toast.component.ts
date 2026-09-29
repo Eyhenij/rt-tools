@@ -1,18 +1,21 @@
+import { BooleanInput } from '@angular/cdk/coercion';
 import {
-    computed,
-    effect,
-    inject,
-    input,
-    output,
-    signal,
     AfterViewInit,
+    booleanAttribute,
     ChangeDetectionStrategy,
     Component,
+    computed,
+    effect,
     ElementRef,
     HostBinding,
+    inject,
+    input,
     InputSignal,
+    InputSignalWithTransform,
     OnDestroy,
+    output,
     OutputEmitterRef,
+    signal,
     Signal,
     ViewEncapsulation,
     WritableSignal,
@@ -104,11 +107,17 @@ export class RtToastComponent implements AfterViewInit, OnDestroy {
 
     public readonly heights: InputSignal<IRtToaster.Height[]> = input.required<IRtToaster.Height[]>();
 
-    public readonly expanded: InputSignal<boolean> = input.required<boolean>();
+    public readonly expanded: InputSignalWithTransform<boolean, BooleanInput> = input.required<boolean, BooleanInput>({
+        transform: booleanAttribute,
+    });
 
-    public readonly expandByDefault: InputSignal<boolean> = input<boolean>(false);
+    public readonly expandByDefault: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
 
-    public readonly interacting: InputSignal<boolean> = input<boolean>(false);
+    public readonly interacting: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
 
     public readonly position: InputSignal<IRtToaster.Position> = input<IRtToaster.Position>('bottom-right');
 
