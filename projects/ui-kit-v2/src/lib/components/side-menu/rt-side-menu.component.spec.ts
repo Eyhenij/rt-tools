@@ -16,7 +16,7 @@ class StubBreakpointsService {
 }
 
 const ITEMS: IRtSideMenu.Item[] = [
-    { id: 'home', icon: 'home', name: 'Главная', link: '/home' },
+    { id: 'home', icon: 'users', name: 'Главная', link: '/home' },
     {
         id: 'reports',
         icon: 'chart-bar',
@@ -28,7 +28,7 @@ const ITEMS: IRtSideMenu.Item[] = [
                 name: 'Финансы',
                 submenu: [{ id: 'revenue', name: 'Выручка', link: '/reports/finance/revenue' }],
             },
-            { id: 'stock', name: 'Склад', link: '/reports/stock', iconButton: { icon: 'plus', data: 'new-stock' } },
+            { id: 'stock', name: 'Склад', link: '/reports/stock', iconButton: { icon: 'ico-plus', data: 'new-stock' } },
         ],
     },
 ];
