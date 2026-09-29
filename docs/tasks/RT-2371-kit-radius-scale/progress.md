@@ -5,9 +5,9 @@
 Rewritten by every session, not appended to.
 
 - **State:** `этап-идёт`
-- **Stage:** 2 of 6 — The shared mechanism
-- **Done:** exploration, grill, plan, the agreement `docs/specs/ui-kit-v2/proposed/radius-scale/`
-- **Next step:** add the step type and the host directive
+- **Stage:** 3 of 6 — The old shape inputs folded
+- **Done:** exploration, grill, plan, the agreement `docs/specs/ui-kit-v2/proposed/radius-scale/`, the step type, `RtRadiusDirective`, the mixin `radius-steps`, their specs (150 suites green)
+- **Next step:** fold the tag's `shape` and `radius` into `radius`
 - **Uncommitted:** none
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -16,10 +16,10 @@ Rewritten by every session, not appended to.
 
 - [x] 1.1 Write the feature spec of the one rounding input
 - [x] 1.2 Write its scenarios and the binding table
-- [>] 2.1 Add the step type and the host directive with the `radius` input
-- [ ] 2.2 Add the SCSS mixin that maps a step to the component's own property
-- [ ] 2.3 Cover the directive with a unit spec
-- [ ] 3.1 Fold the tag's `shape` and `radius` into `radius`
+- [x] 2.1 Add the step type and the host directive with the `radius` input
+- [x] 2.2 Add the SCSS mixin that maps a step to the component's own property
+- [x] 2.3 Cover the directive with a unit spec
+- [>] 3.1 Fold the tag's `shape` and `radius` into `radius`
 - [ ] 3.2 Fold the icon button's `shape` into `radius`
 - [ ] 3.3 Fold the button's `rounded` and its kit setting into `radius`
 - [ ] 3.4 Fold the skeleton's `borderRadius` into `radius`, the wrapper too

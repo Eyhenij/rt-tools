@@ -19,3 +19,31 @@
     letter-spacing: var(--rt-letter-spacing-wide);
     line-height: var(--rt-leading-snug);
 }
+
+/// Шаги скругления кита — те же, что у типа `TRtRadius`.
+$radius-steps: none, xs, sm, ms, md, lg, xl, 2xl, full;
+
+/// Правила шагов входа `radius` для одного компонента.
+///
+/// Ставится внутрь правила хоста (`rt-card { … }`). На каждый шаг выходит правило
+/// хоста с атрибутом `data-rt-radius`, которое переназначает собственное свойство
+/// скругления компонента — и больше ничего: поверхность берёт углы из того же
+/// свойства, и переопределение этого свойства приложением по-прежнему сильнее кита.
+///
+/// $property — собственное свойство скругления, `--rt-card-radius`.
+/// $surface  — где это свойство объявлено, от хоста: `'> .rt-card'` для корня шаблона,
+///             пусто — если на самом хосте. Только прямой ребёнок: потомок задел бы
+///             вложенный компонент того же рода.
+@mixin radius-steps($property, $surface: null) {
+    @each $step in $radius-steps {
+        @if $surface {
+            &[data-rt-radius='#{$step}'] #{$surface} {
+                #{$property}: var(--rt-radius-#{$step});
+            }
+        } @else {
+            &[data-rt-radius='#{$step}'] {
+                #{$property}: var(--rt-radius-#{$step});
+            }
+        }
+    }
+}

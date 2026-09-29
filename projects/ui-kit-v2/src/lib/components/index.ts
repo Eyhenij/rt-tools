@@ -60,6 +60,7 @@ export * from './pagination/rt-pagination.component';
 export * from './pagination/rt-pagination.model';
 export * from './popover';
 export * from './radio-button';
+export * from './radius';
 export * from './ripple';
 export * from './section-nav';
 export * from './scroll-area';
