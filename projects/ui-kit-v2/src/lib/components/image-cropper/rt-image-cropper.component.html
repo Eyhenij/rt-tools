@@ -1,0 +1,43 @@
+<ng-container rtBlock="rt-image-cropper">
+    <div #field rtElem="field" qa-dataid="image-cropper-field">
+        @switch (state()) {
+            @case ('loading') {
+                <rt-spinner rtElem="spinner" qa-dataid="image-cropper-spinner" />
+            }
+            @case ('refusal') {
+                <p rtElem="refusal" qa-dataid="image-cropper-refusal">{{ t().uiImageCropperRefusal }}</p>
+            }
+            @case ('ready') {
+                <img rtElem="image" qa-dataid="image-cropper-image" alt="" draggable="false" [src]="url()" />
+                <div
+                    rtElem="frame"
+                    qa-dataid="image-cropper-frame"
+                    role="group"
+                    [attr.aria-label]="t().uiImageCropperFrame"
+                    [attr.aria-disabled]="disabled() || null"
+                    [attr.tabindex]="disabled() ? -1 : 0"
+                    (pointerdown)="onPointerDown($event, null)"
+                    (pointermove)="onPointerMove($event)"
+                    (pointerup)="onPointerUp($event)"
+                    (pointercancel)="onPointerUp($event)"
+                    (keydown)="onKeyDown($event, null)">
+                    @for (handle of handles; track handle) {
+                        <span
+                            rtElem="handle"
+                            role="button"
+                            [attr.qa-dataid]="'image-cropper-handle-' + handle"
+                            [rtMod]="{ side: handle }"
+                            [attr.aria-label]="t()[handleLabels[handle]]"
+                            [attr.aria-disabled]="disabled() || null"
+                            [attr.tabindex]="disabled() ? -1 : 0"
+                            (pointerdown)="onPointerDown($event, handle)"
+                            (pointermove)="onPointerMove($event)"
+                            (pointerup)="onPointerUp($event)"
+                            (pointercancel)="onPointerUp($event)"
+                            (keydown)="onKeyDown($event, handle)"></span>
+                    }
+                </div>
+            }
+        }
+    </div>
+</ng-container>

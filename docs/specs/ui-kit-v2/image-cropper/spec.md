@@ -62,8 +62,8 @@ on top: a fixed ratio and a round mask for an avatar.
   press is one pixel of the field, with Shift ten.
 - **The pointer and the finger act the same.** A drag started by either follows it outside the field
   and ends when it is released.
-- **The result is given after every finished change of the frame, not during a drag.** One drag is
-  one result.
+- **The result is given once the source is read and after every finished change of the frame, not
+  during a drag.** One drag is one result; the caller has a file even when nobody moves the frame.
 - **The result is a file of the chosen format and quality, cut out in the pixels of the source.**
   Without a chosen format the format of the source is taken, and png when it is none of the three.
 - **The round look is a mask on the screen, and the result stays the square the frame cuts.** The
@@ -108,7 +108,8 @@ Not applicable: the cropper keeps nothing.
 ### Locales
 
 The names of the frame, of the eight handles and the refusal text are keys of the kit's labels in
-the `rtKit` namespace, in all eight languages of the kit.
+the `rtKit` namespace. The kit carries the English default; the application gives the rest by its
+translator, and the showcase carries the Russian set.
 
 ### SEO
 

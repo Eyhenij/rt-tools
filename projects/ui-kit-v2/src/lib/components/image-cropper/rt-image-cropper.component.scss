@@ -1,0 +1,166 @@
+@layer rt-kit.components {
+    /* rt-image-cropper — обрезка изображения (ViewEncapsulation.None). Где лежат картинка и
+       рамка, считает компонент и кладёт на host пикселями поля; здесь только то, как они
+       выглядят. */
+
+    .rt-image-cropper {
+        --rt-image-cropper-height: calc(var(--rt-size-100) * 3);
+        --rt-image-cropper-radius: var(--rt-radius-md);
+        --rt-image-cropper-frame-radius: var(--rt-radius-none);
+        --rt-image-cropper-field-bg: var(--rt-color-bg-subtle);
+        --rt-image-cropper-shade: var(--rt-overlay-black-50);
+        --rt-image-cropper-rim-width: var(--rt-border-width-thin);
+        --rt-image-cropper-rim-color: var(--rt-overlay-white-50);
+        --rt-image-cropper-handle-size: var(--rt-size-12);
+        --rt-image-cropper-handle-bg: var(--rt-color-bg-surface);
+        --rt-image-cropper-handle-border: var(--rt-color-border-strong);
+        --rt-image-cropper-focus-shadow: var(--rt-shadow-focus-ring);
+        --rt-image-cropper-refusal-color: var(--rt-color-text-muted);
+        --rt-image-cropper-disabled-opacity: 0.5;
+
+        display: block;
+
+        &__field {
+            position: relative;
+            overflow: hidden;
+            height: var(--rt-image-cropper-height);
+            border-radius: var(--rt-image-cropper-radius);
+            background: var(--rt-image-cropper-field-bg);
+            user-select: none;
+        }
+
+        &__spinner {
+            position: absolute;
+            inset: 50% auto auto 50%;
+            translate: -50% -50%;
+        }
+
+        &__refusal {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--rt-space-md);
+            margin: 0;
+            color: var(--rt-image-cropper-refusal-color);
+            inset: 0;
+            text-align: center;
+        }
+
+        &__image {
+            position: absolute;
+            top: var(--rt-image-cropper-image-y);
+            left: var(--rt-image-cropper-image-x);
+            width: var(--rt-image-cropper-image-width);
+            max-width: none;
+            height: var(--rt-image-cropper-image-height);
+            image-orientation: from-image;
+            pointer-events: none;
+        }
+
+        &__frame {
+            position: absolute;
+            top: var(--rt-image-cropper-frame-y);
+            left: var(--rt-image-cropper-frame-x);
+            width: var(--rt-image-cropper-frame-width);
+            height: var(--rt-image-cropper-frame-height);
+            box-sizing: border-box;
+            border: var(--rt-image-cropper-rim-width) solid var(--rt-image-cropper-rim-color);
+            border-radius: var(--rt-image-cropper-frame-radius);
+            cursor: move;
+
+            /* Затемнение всего, что вне рамки: обводка шире любого поля, а поле его обрезает.
+               Обводка повторяет скругление, поэтому в круглом виде светлое место — круг. */
+            outline: 100vmax solid var(--rt-image-cropper-shade);
+            touch-action: none;
+
+            &:focus-visible {
+                box-shadow: var(--rt-image-cropper-focus-shadow);
+            }
+        }
+
+        &__handle {
+            position: absolute;
+            width: var(--rt-image-cropper-handle-size);
+            height: var(--rt-image-cropper-handle-size);
+            box-sizing: border-box;
+            border: var(--rt-image-cropper-rim-width) solid var(--rt-image-cropper-handle-border);
+            background: var(--rt-image-cropper-handle-bg);
+            touch-action: none;
+            translate: -50% -50%;
+
+            &:focus-visible {
+                box-shadow: var(--rt-image-cropper-focus-shadow);
+                outline: none;
+            }
+
+            &--side--nw {
+                top: 0;
+                left: 0;
+                cursor: nwse-resize;
+            }
+
+            &--side--n {
+                top: 0;
+                left: 50%;
+                cursor: ns-resize;
+            }
+
+            &--side--ne {
+                top: 0;
+                left: 100%;
+                cursor: nesw-resize;
+            }
+
+            &--side--e {
+                top: 50%;
+                left: 100%;
+                cursor: ew-resize;
+            }
+
+            &--side--se {
+                top: 100%;
+                left: 100%;
+                cursor: nwse-resize;
+            }
+
+            &--side--s {
+                top: 100%;
+                left: 50%;
+                cursor: ns-resize;
+            }
+
+            &--side--sw {
+                top: 100%;
+                left: 0;
+                cursor: nesw-resize;
+            }
+
+            &--side--w {
+                top: 50%;
+                left: 0;
+                cursor: ew-resize;
+            }
+        }
+
+        &--round {
+            --rt-image-cropper-frame-radius: var(--rt-radius-full);
+        }
+
+        /* Недоступность ниже вида: она отменяет курсоры и приглушает картинку при любом виде. */
+        &--disabled &__frame,
+        &--disabled &__handle {
+            cursor: default;
+        }
+
+        &--disabled &__handle,
+        &--disabled &__image {
+            opacity: var(--rt-image-cropper-disabled-opacity);
+        }
+
+        /* Палец крупнее указателя: ручки растут по способу нажатия, а не по ширине экрана. */
+        @media (pointer: coarse) {
+            --rt-image-cropper-handle-size: var(--rt-size-24);
+        }
+    }
+}
