@@ -62,3 +62,17 @@ Address: the tree, `.claude/rt-kit/overrides/rules/testing.md`, a pitfall.
 - The input table check does not recognise `model()`; it needs a code fix.
 - The end-to-end frame of the access panel was red on the main branch and was fixed in the branch
   itself.
+
+## RT-2349 — the review of 29 September 2026
+
+The table card that opens a record on a narrow screen. `rt-tools-storybook` and
+`rt-tools-styling` were loaded; neither named the trap below.
+
+### 1 · A state class misses a node drawn after the resize
+
+Address: the tree, `.claude/skills/rt-tools-storybook/SKILL.md`, next to the article about the
+three kinds of threshold.
+
+> The showcase hands out interaction states once, when the story renders. The narrow frame resizes
+> the window after that, and a node the breakpoints service draws only then gets no state class. A
+> state of such a node is shown by a wrapper that answers "narrow" from the first render.
