@@ -20,8 +20,19 @@
     line-height: var(--rt-leading-snug);
 }
 
-/// Шаги скругления кита — те же, что у типа `TRtRadius`.
-$radius-steps: none, xs, sm, ms, md, lg, xl, 2xl, full;
+/// Шаги скругления кита и их токены — те же шаги, что у типа `TRtRadius`. Токены названы
+/// целиком, а не склеены из шага: проверка графа токенов ищет имя, а не его начало.
+$radius-steps: (
+    none: var(--rt-radius-none),
+    xs: var(--rt-radius-xs),
+    sm: var(--rt-radius-sm),
+    ms: var(--rt-radius-ms),
+    md: var(--rt-radius-md),
+    lg: var(--rt-radius-lg),
+    xl: var(--rt-radius-xl),
+    2xl: var(--rt-radius-2xl),
+    full: var(--rt-radius-full),
+);
 
 /// Правила шагов входа `radius` для одного компонента.
 ///
@@ -35,14 +46,14 @@ $radius-steps: none, xs, sm, ms, md, lg, xl, 2xl, full;
 ///             пусто — если на самом хосте. Только прямой ребёнок: потомок задел бы
 ///             вложенный компонент того же рода.
 @mixin radius-steps($property, $surface: null) {
-    @each $step in $radius-steps {
+    @each $step, $token in $radius-steps {
         @if $surface {
             &[data-rt-radius='#{$step}'] #{$surface} {
-                #{$property}: var(--rt-radius-#{$step});
+                #{$property}: $token;
             }
         } @else {
             &[data-rt-radius='#{$step}'] {
-                #{$property}: var(--rt-radius-#{$step});
+                #{$property}: $token;
             }
         }
     }

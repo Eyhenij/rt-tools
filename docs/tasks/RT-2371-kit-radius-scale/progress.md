@@ -46,3 +46,45 @@ Rewritten by every session, not appended to.
 - Branch `RT-2371-kit-radius-scale` taken from `RT-2370-figma-fields-and-talks`; task moved to
   «In progress». Exploration: 77 component directories, 49 with an own radius property, 4 with old
   shape inputs, no shared mechanism.
+
+## Handover of the session
+
+Put together by a hook before the compaction of the context (auto).
+
+**Working tree:** /Users/eyhenij/WebstormProjects/rt-tools
+**Branch:** RT-2371-kit-radius-scale
+
+### Where we stand at the minute of the compaction
+
+- **State:** `этап-идёт`
+- **Stage:** 4 of 6 — The input on the rest of the components
+- **Next step:** the controls take the input — split button first; the stories still use the old inputs and wait for stage 5
+- **PR:** not open yet
+
+The progress in full — `docs/tasks/RT-2371-kit-radius-scale/progress.md`; the plan lies next to it.
+
+### Uncommitted
+
+```
+ M ../../styles/_mixins.scss
+```
+
+### Commits over the main branch
+
+```
+d377d4fdd feat(rt:ui-kit-v2): старые входы формы свёрнуты в общий вход radius
+84c7318cc feat(rt:ui-kit-v2): общий вход скругления radius и правила его шагов
+29ddc4eb0 docs(rt:ui-kit-v2): договорённость об одном входе скругления
+fe079c723 docs(rt:ui-kit-v2): план задачи RT-2371 о единой шкале скруглений
+eeb37b874 docs(rt:ui-kit-v2): папка задачи RT-2371 о единой шкале скруглений
+0e875248d docs(rt:ui-kit-v2): эпик RT-2370 взят в работу, ветки задач стоят стопкой
+0b8ab7c6f docs(rt:agent-kit): копия rt-tools снова записана за эпиком RT-2370
+f2780c7ca Merge remote-tracking branch 'origin/main' into RT-2370-figma-fields-and-talks
+977ec342f docs(rt:ui-kit-v2): в плане эпика записан конец работы по макетам узкого экрана
+fa11492c8 docs(rt:ui-kit-v2): в плане эпика записано слово владельца о начале кода
+f5c807bdd docs(rt:ui-kit-v2): в эпик добавлены скругления и пикеры дат
+80cb4c3bc docs(rt:ui-kit-v2): замысел эпика о полях, списках и переписке по макету
+```
+
+Written by a hook before the compaction of the context. Everything standing here is checked
+against the tree: a handover retells what was written and describes the minute it was put together.
