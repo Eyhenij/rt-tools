@@ -1,5 +1,8 @@
+@use '../../../styles/mixins' as kv;
+
 @layer rt-kit.components {
     .rt-multiselect {
+        --rt-multiselect-radius: var(--rt-input-radius);
         --rt-multiselect-caret-transition-duration: var(--rt-duration-fast);
         --rt-multiselect-own-outline-width: var(--rt-border-width-medium);
 
@@ -22,7 +25,7 @@
             align-items: center;
             padding: var(--rt-input-padding-y) var(--rt-input-padding-x);
             border: var(--rt-input-border-width) solid var(--rt-input-color-border);
-            border-radius: var(--rt-input-radius);
+            border-radius: var(--rt-multiselect-radius);
             background-color: var(--rt-input-color-bg);
             color: var(--rt-input-color-text);
             cursor: pointer;
@@ -259,5 +262,8 @@
             color: var(--rt-input-color-text-placeholder);
             font-style: italic;
         }
+
+        /* Шаг входа `radius` переназначает скругление поля; панель в оверлее держит своё. */
+        @include kv.radius-steps('--rt-multiselect-radius');
     }
 }

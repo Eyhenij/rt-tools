@@ -9,7 +9,8 @@ import {
     ViewEncapsulation,
 } from '@angular/core';
 
-import { RtSkeletonComponent, TRtSkeletonRadius, TRtSkeletonShape, TRtSkeletonSize } from '../skeleton/rt-skeleton.component';
+import { TRtRadius } from '../radius/rt-radius.model';
+import { RtSkeletonComponent, TRtSkeletonShape, TRtSkeletonSize } from '../skeleton/rt-skeleton.component';
 
 const BEM_BLOCK: string = 'rt-skeleton-wrapper';
 
@@ -45,8 +46,8 @@ export class RtSkeletonWrapperComponent {
 
     public readonly size: InputSignal<TRtSkeletonSize> = input<TRtSkeletonSize>('md');
 
-    /** Как у `rt-skeleton`: `null` — «по фигуре», а не «без скругления». */
-    public readonly borderRadius: InputSignal<TRtSkeletonRadius | null> = input<TRtSkeletonRadius | null>(null);
+    /** Шаг скругления заглушки, передаётся в `rt-skeleton`. Пусто — скругление заглушки по умолчанию. */
+    public readonly radius: InputSignal<TRtRadius | null> = input<TRtRadius | null>(null);
 
     public readonly animation: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
         transform: booleanAttribute,

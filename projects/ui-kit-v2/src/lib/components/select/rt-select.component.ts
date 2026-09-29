@@ -31,6 +31,7 @@ import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
 import { RtInputComponent } from '../input/rt-input.component';
 import { RtPopoverDirective } from '../popover/rt-popover.directive';
 import { IRtPopover } from '../popover/rt-popover.model';
+import { RtRadiusDirective } from '../radius/rt-radius.directive';
 import { rtScrollActiveOptionIntoView } from './rt-select-active-option';
 import { RtSelectTriggerDirective } from './rt-select-trigger.directive';
 import { IRtSelect } from './rt-select.model';
@@ -85,6 +86,7 @@ function nextPanelId(): number {
         // Алиас базового токена — для contentChild(RtFormControlBase) в rt-field.
         { provide: RtFormControlBase, useExisting: forwardRef(() => RtSelectComponent) },
     ],
+    hostDirectives: [{ directive: RtRadiusDirective, inputs: ['radius'] }],
     host: {
         class: BEM_BLOCK,
         '[class.rt-select--open]': 'isOpen()',

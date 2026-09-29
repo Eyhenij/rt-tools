@@ -9,7 +9,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ```html
 <rt-tag value="Активен" severity="success" />
-<rt-tag value="Черновик" shape="square" appearance="outlined" />
+<rt-tag value="Черновик" radius="sm" appearance="outlined" />
 <rt-tag value="Метка" [closable]="true" (closed)="remove()" />
 ```
 
@@ -31,8 +31,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | ----------- | -------------------------------------------------------------- | ------------ |
 | палитра     | `neutral`, `info`, `success`, `warning`, `danger`, `secondary` | `neutral`    |
 | внешний вид | `solid`, `outlined`                                            | `solid`      |
-| форма       | `pill`, `square`                                               | `pill`       |
-| скругление  | по форме, `none`, `sm`, `md`, `lg`, `full`                     | по форме     |
+| скругление  | умолчание `full`, `none`…`full` — шаг общей шкалы              | `full`       |
 | размер      | `sm`, `md`, `lg`                                               | `md`         |
 | иконки      | нет, слева, справа, с обеих сторон                             | нет          |
 | крестик     | без крестика, с крестиком                                      | без крестика |
@@ -59,9 +58,9 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Оформление
 
-Модификаторы выводятся BEM-директивами: `rt-tag--severity--success`, `rt-tag--shape--square`,
-булев `closable` даёт `rt-tag--closable` без значения. Вход `radius` перебивает скругление,
-заданное формой; без него класс скругления не выводится вовсе.
+Модификаторы выводятся BEM-директивами: `rt-tag--severity--success`, булев `closable` даёт
+`rt-tag--closable` без значения. Вход `radius` ставит на хост атрибут шага, без него пилюля
+скруглена полностью.
 
 **Подпись, которой не хватило места, урезается многоточием и получает подсказку с целым
 значением.** Ширину пилюле даёт потребитель: шире отведённого места она не становится ни от
@@ -70,17 +69,16 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Входы
 
-| вход         | тип                                                                        | умолчание      |
-| ------------ | -------------------------------------------------------------------------- | -------------- |
-| `value`      | `string`                                                                   | **обязателен** |
-| `severity`   | `'info' \| 'success' \| 'warning' \| 'danger' \| 'secondary' \| 'neutral'` | `'neutral'`    |
-| `size`       | `'sm' \| 'md' \| 'lg'`                                                     | `'md'`         |
-| `shape`      | `'pill' \| 'square'`                                                       | `'pill'`       |
-| `appearance` | `'solid' \| 'outlined'`                                                    | `'solid'`      |
-| `radius`     | `'none' \| 'sm' \| 'md' \| 'lg' \| 'full' \| null`                         | `null`         |
-| `icon`       | `IRtIcon.Name \| null`                                                     | `null`         |
-| `iconEnd`    | `IRtIcon.Name \| null`                                                     | `null`         |
-| `closable`   | `boolean`                                                                  | `false`        |
+| вход         | тип                                                                        | умолчание       |
+| ------------ | -------------------------------------------------------------------------- | --------------- |
+| `value`      | `string`                                                                   | **обязателен**  |
+| `severity`   | `'info' \| 'success' \| 'warning' \| 'danger' \| 'secondary' \| 'neutral'` | `'neutral'`     |
+| `size`       | `'sm' \| 'md' \| 'lg'`                                                     | `'md'`          |
+| `appearance` | `'solid' \| 'outlined'`                                                    | `'solid'`       |
+| `radius`     | `TRtRadius \| null` — шаг общей шкалы                                      | `null` → `full` |
+| `icon`       | `IRtIcon.Name \| null`                                                     | `null`          |
+| `iconEnd`    | `IRtIcon.Name \| null`                                                     | `null`          |
+| `closable`   | `boolean`                                                                  | `false`         |
 
 ## Выходы
 

@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RtTagComponent } from '../../rt-tag.component';
 import { IRtTag } from '../../rt-tag.model';
 import { IRtIcon } from '../../../icon/rt-icon.model';
+import { TRtRadius } from '../../../radius/rt-radius.model';
 
 /**
  * Демонстрационная обёртка для витрины: держит изменяемое состояние, на которое
@@ -15,7 +16,6 @@ import { IRtIcon } from '../../../icon/rt-icon.model';
         <rt-tag
             [value]="value"
             [severity]="severity"
-            [shape]="shape"
             [appearance]="appearance"
             [radius]="radius"
             [icon]="icon"
@@ -31,9 +31,8 @@ import { IRtIcon } from '../../../icon/rt-icon.model';
 export class TestRtTagComponent {
     public value: string = 'Значение';
     public severity: IRtTag.Severity = 'neutral';
-    public shape: IRtTag.Shape = 'pill';
     public appearance: IRtTag.Appearance = 'solid';
-    public radius: IRtTag.Radius | null = null;
+    public radius: TRtRadius | null = null;
     public icon: IRtIcon.Name | null = null;
     public iconEnd: IRtIcon.Name | null = null;
     public closable: boolean = false;

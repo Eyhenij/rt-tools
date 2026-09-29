@@ -1,6 +1,7 @@
 import { IButton } from '../components/button/rt-button.model';
 import { IRtDataTable } from '../components/data-table/rt-data-table.model';
 import { IRtInput } from '../components/input/rt-input.model';
+import { TRtRadius } from '../components/radius/rt-radius.model';
 import { ITheme } from '../platform/theme.model';
 
 /**
@@ -20,7 +21,8 @@ export namespace IRtKitConfig {
     export interface Button {
         appearance?: IButton.Appearance;
         size?: IButton.Size;
-        rounded?: boolean;
+        /** Шаг скругления всех кнопок, пока на кнопке не назван свой. */
+        radius?: TRtRadius;
     }
 
     /** Умолчания шторы. */

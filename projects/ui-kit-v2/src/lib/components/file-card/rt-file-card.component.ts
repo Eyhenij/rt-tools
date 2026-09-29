@@ -23,6 +23,7 @@ import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
 import { IRtIconButton } from '../icon-button/rt-icon-button.model';
 import { RtIconComponent } from '../icon/rt-icon.component';
 import { IRtIcon } from '../icon/rt-icon.model';
+import { RtRadiusDirective } from '../radius/rt-radius.directive';
 import { RtTooltipDirective } from '../tooltip/rt-tooltip.directive';
 import { deriveFileTitle, getFileTypeIcon } from './file-card.helper';
 import { IRtFileCard } from './rt-file-card.model';
@@ -74,6 +75,7 @@ const ACTION_SIZES: Readonly<Record<IRtFileCard.Size, IRtIconButton.Size>> = {
         // pipes
         RtTruncateMiddlePipe,
     ],
+    hostDirectives: [{ directive: RtRadiusDirective, inputs: ['radius'] }],
     host: {
         class: BEM_BLOCK,
         '[class.rt-file-card--sm]': "size() === 'sm'",

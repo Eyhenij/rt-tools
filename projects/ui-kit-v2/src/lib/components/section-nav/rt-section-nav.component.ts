@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, input, InputSignal, output, OutputE
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { RtIconComponent } from '../icon';
+import { RtRadiusDirective } from '../radius/rt-radius.directive';
 import { IRtSectionNav } from './rt-section-nav.model';
 
 const BEM_BLOCK: string = 'rt-section-nav';
@@ -14,6 +15,7 @@ const BEM_BLOCK: string = 'rt-section-nav';
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
     imports: [RtIconComponent, BlockDirective, ElemDirective, ModDirective],
+    hostDirectives: [{ directive: RtRadiusDirective, inputs: ['radius'] }],
     host: {
         class: BEM_BLOCK,
         role: 'navigation',

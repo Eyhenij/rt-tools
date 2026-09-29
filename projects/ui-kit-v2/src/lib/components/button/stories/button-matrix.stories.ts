@@ -24,7 +24,7 @@ export const Size: TStory = { args: { part: 'size' } };
 
 export const Icon: TStory = { args: { part: 'icon' } };
 
-export const Rounded: TStory = { args: { part: 'rounded' } };
+export const Radius: TStory = { args: { part: 'radius' } };
 
 export const Loading: TStory = { args: { part: 'loading' } };
 

@@ -1,3 +1,5 @@
+@use '../../../styles/mixins' as kv;
+
 @layer rt-kit.components {
     /* rt-card — контейнер карточки в common/ui. ViewEncapsulation.None.
        Хост адресуется по имени элемента, а не по классу блока: класс `.rt-card` висит
@@ -64,5 +66,8 @@
                 }
             }
         }
+
+        /* Шаг входа `radius` переназначает скругление карточки. */
+        @include kv.radius-steps('--rt-card-radius', '> .rt-card');
     }
 }

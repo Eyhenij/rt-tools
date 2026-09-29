@@ -1,0 +1,61 @@
+<app-story-grid
+    caption="Контролы × шаг скругления, первый столбец — умолчание компонента"
+    slotWidth="160px"
+    [rows]="rows"
+    [columns]="columns()"
+    [columnLabel]="columnLabel">
+    <ng-template let-row let-col="col">
+        <div class="app-radius__cell">
+            @switch (row) {
+                @case ('button') {
+                    <button rtButton label="Сохранить" aria-label="Сохранить" [radius]="col"></button>
+                }
+                @case ('icon-button') {
+                    <rt-icon-button icon="bell" ariaLabel="Уведомления" variant="secondary" [radius]="col" />
+                }
+                @case ('split-button') {
+                    <rt-split-button label="Сохранить" [menuItems]="menuItems" [radius]="col" />
+                }
+                @case ('tag') {
+                    <rt-tag value="Оплачен" severity="success" [radius]="col" />
+                }
+                @case ('skeleton') {
+                    <rt-skeleton width="160px" height="24px" [radius]="col" />
+                }
+                @case ('toggle-button-group') {
+                    <rt-toggle-button-group [options]="options" [radius]="col" />
+                }
+                @case ('toggle-switch') {
+                    <rt-toggle-switch [radius]="col" />
+                }
+                @case ('checkbox') {
+                    <rt-checkbox [radius]="col">Согласен</rt-checkbox>
+                }
+                @case ('radio-button') {
+                    <rt-radio-button label="Курьер" card [value]="1" [radius]="col" />
+                }
+                @case ('input') {
+                    <rt-input placeholder="Имя" [radius]="col" />
+                }
+                @case ('textarea') {
+                    <rt-textarea placeholder="Текст" [radius]="col" />
+                }
+                @case ('input-number') {
+                    <rt-input-number [radius]="col" />
+                }
+                @case ('select') {
+                    <rt-select placeholder="Город" [options]="options" [radius]="col" />
+                }
+                @case ('multiselect') {
+                    <rt-multiselect placeholder="Города" [options]="options" [radius]="col" />
+                }
+                @case ('autocomplete') {
+                    <rt-autocomplete placeholder="Город" [suggestions]="[]" [radius]="col" />
+                }
+                @case ('date-picker') {
+                    <rt-date-picker [radius]="col" />
+                }
+            }
+        </div>
+    </ng-template>
+</app-story-grid>

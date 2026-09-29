@@ -19,6 +19,7 @@ import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { RtIconComponent } from '../icon/rt-icon.component';
 import { IRtIcon } from '../icon/rt-icon.model';
+import { RtRadiusDirective } from '../radius/rt-radius.directive';
 import { IRtToggleSwitch } from './rt-toggle-switch.model';
 
 const BEM_BLOCK: string = 'rt-toggle-switch';
@@ -66,6 +67,7 @@ const BEM_BLOCK: string = 'rt-toggle-switch';
             multi: true,
         },
     ],
+    hostDirectives: [{ directive: RtRadiusDirective, inputs: ['radius'] }],
     host: {
         class: BEM_BLOCK,
     },

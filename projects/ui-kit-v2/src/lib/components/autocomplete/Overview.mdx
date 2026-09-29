@@ -94,15 +94,16 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Входы
 
-| вход           | тип                                         | умолчание            |
-| -------------- | ------------------------------------------- | -------------------- |
-| `suggestions`  | `ReadonlyArray<TItem>`                      | `[]`                 |
-| `displayWith`  | `(item: TItem \| null) => string`           | `String(item ?? '')` |
-| `placeholder`  | `string`                                    | `''`                 |
-| `minLength`    | `number`                                    | `1`                  |
-| `iconLeft`     | `IRtIcon.Name \| null`                      | `null`               |
-| `openOnFocus`  | `boolean`                                   | `false`              |
-| `itemTemplate` | `TemplateRef<{ $implicit: TItem }> \| null` | `null`               |
+| вход           | тип                                         | умолчание                 |
+| -------------- | ------------------------------------------- | ------------------------- |
+| `suggestions`  | `ReadonlyArray<TItem>`                      | `[]`                      |
+| `displayWith`  | `(item: TItem \| null) => string`           | `String(item ?? '')`      |
+| `placeholder`  | `string`                                    | `''`                      |
+| `minLength`    | `number`                                    | `1`                       |
+| `iconLeft`     | `IRtIcon.Name \| null`                      | `null`                    |
+| `openOnFocus`  | `boolean`                                   | `false`                   |
+| `itemTemplate` | `TemplateRef<{ $implicit: TItem }> \| null` | `null`                    |
+| `radius`       | `TRtRadius \| null`                         | `null` → скругление полей |
 
 ## Входы от основы полей
 

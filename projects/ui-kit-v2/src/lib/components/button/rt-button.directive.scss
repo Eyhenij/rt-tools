@@ -1,3 +1,5 @@
+@use '../../../styles/mixins' as kv;
+
 @layer rt-kit.components {
     .rt-button {
         /* Высота приходит общей шкалой контролов, а не своим числом: кнопка, поле и
@@ -215,10 +217,6 @@
             --rt-btn-color: var(--rt-color-action-info-on-surface);
         }
 
-        &--rounded {
-            --rt-btn-radius: 999px;
-        }
-
         &--sm {
             --rt-btn-height: var(--rt-control-height-sm);
             --rt-btn-padding: 0 0.875rem;
@@ -257,9 +255,9 @@
             gap: 0;
         }
 
-        &--icon-only#{&}--rounded {
-            --rt-btn-radius: 50%;
-        }
+        /* Шаг входа `radius` переназначает собственное свойство кнопки. Класс блока стоит на
+           самом хосте, поэтому правило шага — на нём же. */
+        @include kv.radius-steps('--rt-btn-radius');
 
         &--loading {
             cursor: wait;

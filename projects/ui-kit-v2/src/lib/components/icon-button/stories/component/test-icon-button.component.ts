@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { RtIconButtonComponent } from '../../rt-icon-button.component';
 import { IRtIcon } from '../../../icon/rt-icon.model';
+import { TRtRadius } from '../../../radius/rt-radius.model';
 import { IRtIconButton } from '../../rt-icon-button.model';
 
 /**
@@ -19,7 +20,7 @@ import { IRtIconButton } from '../../rt-icon-button.model';
             [iconColor]="iconColor"
             [size]="size"
             [iconSize]="iconSize"
-            [shape]="shape"
+            [radius]="radius"
             [type]="type"
             [tooltip]="tooltip"
             [tabIndex]="tabIndex"
@@ -41,7 +42,7 @@ export class TestRtIconButtonComponent {
     public iconColor: IRtIcon.Color = 'current';
     public size: IRtIconButton.Size = 'md';
     public iconSize: IRtIcon.Size | null = null;
-    public shape: IRtIconButton.Shape = 'square';
+    public radius: TRtRadius | null = null;
     public type: IRtIconButton.Type = 'button';
     public tooltip: string = '';
     public tabIndex: number = 0;

@@ -1,3 +1,5 @@
+@use '../../../styles/mixins' as kv;
+
 @layer rt-kit.components {
     /* rt-money-list — финансовый блок на подложке (ViewEncapsulation.None).
        Селектор bare `.rt-money-list` (класс на host). */
@@ -11,5 +13,8 @@
         border-radius: var(--rt-money-list-radius);
         background: var(--rt-color-bg-subtle);
         gap: var(--rt-space-xs);
+
+        /* Шаг входа `radius` переназначает скругление списка. */
+        @include kv.radius-steps('--rt-money-list-radius');
     }
 }

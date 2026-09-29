@@ -18,6 +18,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { RtIconComponent } from '../icon/rt-icon.component';
+import { RtRadiusDirective } from '../radius/rt-radius.directive';
 
 const BEM_BLOCK: string = 'rt-checkbox';
 
@@ -63,6 +64,7 @@ const BEM_BLOCK: string = 'rt-checkbox';
             multi: true,
         },
     ],
+    hostDirectives: [{ directive: RtRadiusDirective, inputs: ['radius'] }],
     host: {
         class: BEM_BLOCK,
     },

@@ -5,7 +5,7 @@
             qa-dataid="calendar-prev-month"
             icon="chevron-left"
             variant="secondary"
-            shape="circle"
+            radius="full"
             [ariaLabel]="prevAriaLabel()"
             [disabled]="!canPrev()"
             (clicked)="prevMonth.emit()" />
@@ -15,7 +15,7 @@
             qa-dataid="calendar-next-month"
             icon="chevron-right"
             variant="secondary"
-            shape="circle"
+            radius="full"
             [ariaLabel]="nextAriaLabel()"
             [disabled]="!canNext()"
             (clicked)="nextMonth.emit()" />
@@ -48,7 +48,7 @@
                                     rtElem="day-sublabel"
                                     qa-dataid="calendar-day-price-skeleton"
                                     width="80%"
-                                    borderRadius="sm"
+                                    radius="sm"
                                     [height]="sublabelSkeletonHeight" />
                             } @else if (day.sublabel) {
                                 <span rtElem="day-sublabel" qa-dataid="calendar-day-price">{{ day.sublabel }}</span>

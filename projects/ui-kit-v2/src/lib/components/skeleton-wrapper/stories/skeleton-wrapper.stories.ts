@@ -1,6 +1,7 @@
 import { Meta, StoryObj } from '@storybook/angular';
 
 import { storySnapshotSkip } from '../../../../showcase';
+import { RT_RADIUS_STEPS } from '../../radius/rt-radius.model';
 import { TestRtSkeletonWrapperComponent } from './component/test-skeleton-wrapper.component';
 
 export default {
@@ -17,8 +18,8 @@ export default {
             options: ['sm', 'md', 'lg'],
             control: { type: 'select' },
         },
-        borderRadius: {
-            options: ['xs', 'sm', 'md', 'lg', 'xl'],
+        radius: {
+            options: [null, ...RT_RADIUS_STEPS],
             control: { type: 'select' },
         },
         animation: { control: { type: 'boolean' } },
@@ -35,7 +36,7 @@ export const Playground: TStory = {
         height: '15px',
         shape: 'rectangle',
         size: 'md',
-        borderRadius: 'xl',
+        radius: null,
         animation: true,
         isLoading: false,
     },

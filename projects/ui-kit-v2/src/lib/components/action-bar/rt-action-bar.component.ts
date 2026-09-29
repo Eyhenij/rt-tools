@@ -19,6 +19,7 @@ import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
 import { RtIconComponent } from '../icon/rt-icon.component';
 import { RtMenuItemComponent } from '../menu/rt-menu-item.component';
 import { RtPopoverDirective } from '../popover/rt-popover.directive';
+import { RtRadiusDirective } from '../radius/rt-radius.directive';
 import { IRtActionBar } from './rt-action-bar.model';
 
 const BEM_BLOCK: string = 'rt-action-bar';
@@ -63,6 +64,7 @@ interface IActionView {
         ElemDirective,
         ModDirective,
     ],
+    hostDirectives: [{ directive: RtRadiusDirective, inputs: ['radius'] }],
     host: {
         class: BEM_BLOCK,
         role: 'toolbar',

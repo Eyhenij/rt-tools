@@ -1,7 +1,7 @@
 import { ComponentFixture } from '@angular/core/testing';
 
 import { createRtFixture, hostClasses } from '../../../testing/rt-kit-testing';
-import { TRtSkeletonRadius, TRtSkeletonShape, TRtSkeletonSize, RtSkeletonComponent } from './rt-skeleton.component';
+import { TRtSkeletonShape, TRtSkeletonSize, RtSkeletonComponent } from './rt-skeleton.component';
 
 function setup(inputs: Readonly<Record<string, unknown>> = {}): ComponentFixture<RtSkeletonComponent> {
     return createRtFixture(RtSkeletonComponent, inputs);
@@ -44,25 +44,20 @@ describe('RtSkeletonComponent', (): void => {
 
             expect(style(fixture, 'width')).toBe('20px');
             expect(style(fixture, 'height')).toBe('20px');
-            expect(style(fixture, 'border-radius')).toBe('50%');
         });
 
-        it('квадрат тоже берёт сторону от размера, а без входа скругляется скромно', (): void => {
-            // Пилюля из квадрата не квадрат, поэтому умолчание у него своё —
-            // но это именно умолчание, а не запрет.
+        it('квадрат тоже берёт сторону от размера', (): void => {
             const fixture: ComponentFixture<RtSkeletonComponent> = setup({ shape: 'square', size: 'sm' });
 
             expect(style(fixture, 'width')).toBe('10px');
             expect(style(fixture, 'height')).toBe('10px');
-            expect(style(fixture, 'border-radius')).toBe('4px');
         });
 
-        it('заданное скругление квадрат слушается', (): void => {
-            expect(style(setup({ shape: 'square', borderRadius: 'xl' }), 'border-radius')).toBe('999px');
-        });
+        it('SC-UKV-393 — круг с названным шагом остаётся кругом', (): void => {
+            const fixture: ComponentFixture<RtSkeletonComponent> = setup({ shape: 'circle', radius: 'xs' });
 
-        it('круг скругление не слушается — иначе он перестанет быть кругом', (): void => {
-            expect(style(setup({ shape: 'circle', borderRadius: 'xs' }), 'border-radius')).toBe('50%');
+            expect(hostClasses(fixture)).toContain('rt-skeleton--circle');
+            expect((fixture.nativeElement as HTMLElement).getAttribute('data-rt-radius')).toBe('xs');
         });
 
         it('прямоугольник слушается ширины и высоты', (): void => {
@@ -84,18 +79,9 @@ describe('RtSkeletonComponent', (): void => {
     });
 
     describe('скругление', (): void => {
-        it.each<[TRtSkeletonRadius, string]>([
-            ['xs', '2px'],
-            ['sm', '4px'],
-            ['md', '6px'],
-            ['lg', '10px'],
-            ['xl', '999px'],
-        ])('шаг %s даёт радиус %s', (borderRadius: TRtSkeletonRadius, expected: string): void => {
-            expect(style(setup({ borderRadius }), 'border-radius')).toBe(expected);
-        });
-
-        it('без входа прямоугольник полностью скруглён', (): void => {
-            expect(style(setup(), 'border-radius')).toBe('999px');
+        it('названный шаг ложится на хост, без входа шага нет', (): void => {
+            expect((setup().nativeElement as HTMLElement).hasAttribute('data-rt-radius')).toBe(false);
+            expect((setup({ radius: 'lg' }).nativeElement as HTMLElement).getAttribute('data-rt-radius')).toBe('lg');
         });
     });
 

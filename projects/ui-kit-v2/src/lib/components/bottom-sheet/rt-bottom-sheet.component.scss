@@ -1,3 +1,5 @@
+@use '../../../styles/mixins' as kv;
+
 @layer rt-kit.components {
     /* rt-bottom-sheet — ViewEncapsulation.None: правила таргетируют BEM-класс блока.
        `.rt-bottom-sheet` — сам хост (шаблон начинается с ng-container, класс и
@@ -74,5 +76,8 @@
                 transform: translateY(0);
             }
         }
+
+        /* Шаг входа `radius` переназначает скругление панели. */
+        @include kv.radius-steps('--rt-bottom-sheet-radius');
     }
 }

@@ -12,6 +12,7 @@ import {
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
+import { RtRadiusDirective } from '../radius/rt-radius.directive';
 import { IRtStepper } from './rt-stepper.model';
 
 const BEM_BLOCK: string = 'rt-stepper';
@@ -41,6 +42,7 @@ const BEM_BLOCK: string = 'rt-stepper';
         ElemDirective,
         ModDirective,
     ],
+    hostDirectives: [{ directive: RtRadiusDirective, inputs: ['radius'] }],
     host: {
         class: BEM_BLOCK,
     },

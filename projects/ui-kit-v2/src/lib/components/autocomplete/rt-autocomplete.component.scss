@@ -1,5 +1,9 @@
+@use '../../../styles/mixins' as kv;
+
 @layer rt-kit.components {
     .rt-autocomplete {
+        --rt-autocomplete-radius: var(--rt-input-radius);
+
         position: relative;
         display: block;
         width: 100%;
@@ -14,7 +18,7 @@
             align-items: center;
             padding: var(--rt-input-padding-y) var(--rt-input-padding-x);
             border: var(--rt-input-border-width) solid var(--rt-input-color-border);
-            border-radius: var(--rt-input-radius);
+            border-radius: var(--rt-autocomplete-radius);
             background-color: var(--rt-input-color-bg);
             color: var(--rt-input-color-text);
             cursor: text;
@@ -145,5 +149,8 @@
             color: var(--rt-input-color-text-placeholder);
             font-style: italic;
         }
+
+        /* Шаг входа `radius` переназначает скругление поля; панель в оверлее держит своё. */
+        @include kv.radius-steps('--rt-autocomplete-radius');
     }
 }

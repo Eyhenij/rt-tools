@@ -20,6 +20,7 @@ import { IPageModel } from '@rt-tools/utils';
 import { RT_KIT_LABELS, TRtKitLabelMap, TRtKitLabelParams, rtKitLabel } from '../../i18n';
 import { IRtIcon } from '../icon/rt-icon.model';
 import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
+import { RtRadiusDirective } from '../radius/rt-radius.directive';
 import { RtSelectComponent } from '../select/rt-select.component';
 import { IRtSelect } from '../select/rt-select.model';
 import { lastPageOf, pageItemsOf, pageSlotsOf, rangeFromOf, rangeToOf } from './rt-pagination.logic';
@@ -45,6 +46,7 @@ const NEIGHBOURS: number = 1; // соседей вокруг открытой с
         ElemDirective,
         ModDirective,
     ],
+    hostDirectives: [{ directive: RtRadiusDirective, inputs: ['radius'] }],
     host: {
         class: BEM_BLOCK,
         '[style.display]': "isVisible() ? null : 'none'",

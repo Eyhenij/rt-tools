@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { RtButtonDirective } from '../../rt-button.directive';
+import { TRtRadius } from '../../../radius/rt-radius.model';
 import { IButton } from '../../rt-button.model';
 
 /**
@@ -22,7 +23,7 @@ import { IButton } from '../../rt-button.model';
             [theme]="theme"
             [appearance]="appearance"
             [size]="size"
-            [rounded]="rounded"
+            [radius]="radius"
             [loading]="loading"
             [loadingIcon]="loadingIcon"></button>
     `,
@@ -39,7 +40,7 @@ export class TestRtButtonComponent {
     public theme: IButton.Theme = 'primary';
     public appearance: IButton.Appearance = 'filled';
     public size: IButton.Size = 'md';
-    public rounded: boolean = false;
+    public radius: TRtRadius | null = null;
     public loading: boolean = false;
     public loadingIcon: string | null = null;
 }
