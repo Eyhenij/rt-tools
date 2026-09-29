@@ -61,7 +61,9 @@ export class TestRtImageCropperComponent {
 
     public readonly applied: WritableSignal<string | null> = signal(null);
 
-    public readonly summary: WritableSignal<string> = signal('Выберите изображение кнопкой, бросьте его на поле или возьмите пример.');
+    public readonly summary: WritableSignal<string> = signal(
+        'Выберите изображение кнопкой, бросьте его на поле или подставьте демо-картинку.'
+    );
 
     public placeholder: string = '';
     public ratio: number | null = null;
