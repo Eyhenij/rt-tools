@@ -210,6 +210,7 @@
             --rt-select-check-display: var(--rt-overlay-select-check-display);
             --rt-select-option-min-height: var(--rt-overlay-select-option-min-height);
             --rt-select-panel-border-width: var(--rt-overlay-select-panel-border-width);
+            --rt-select-tree-indent: var(--rt-space-lg);
 
             /* Предел высоты по умолчанию — предел кита: длинный список прокручивается внутри
                панели, а не уходит за нижний край экрана. Вход `panelMaxHeight` ставит свой
@@ -251,6 +252,7 @@
             cursor: pointer;
             font-size: var(--rt-select-option-font-size);
             gap: var(--rt-space-sm);
+            padding-inline-start: calc(var(--rt-space-md) + var(--rt-select-tree-indent) * var(--rt-select-tree-level, 0));
 
             &:hover,
             &--active {
@@ -270,6 +272,30 @@
                     background-color: transparent;
                 }
             }
+        }
+
+        &__option-label {
+            min-width: 0;
+            flex: 1 1 auto;
+        }
+
+        /* Стрелка ветки и пустое место под неё у листа: шаг отступа равен их ширине с зазором,
+           и стрелка дочерней строки встаёт под подписью родителя. */
+        &__toggle,
+        &__toggle-space {
+            display: inline-flex;
+            flex-shrink: 0;
+            block-size: var(--rt-input-icon-size);
+            inline-size: var(--rt-input-icon-size);
+        }
+
+        &__toggle {
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            border: 0;
+            background: transparent;
+            cursor: pointer;
         }
 
         /* Отметка выбранного пункта — у mat-select первого кита; свой вид её не рисует. */

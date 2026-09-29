@@ -33,6 +33,7 @@ import { RtPopoverDirective } from '../popover/rt-popover.directive';
 import { IRtPopover } from '../popover/rt-popover.model';
 import { RtRadiusDirective } from '../radius/rt-radius.directive';
 import { rtScrollActiveOptionIntoView } from './rt-select-active-option';
+import { rtTreeFind, rtTreeIsTree, rtTreeOpenFor, rtTreeRows, rtTreeSideKey, rtTreeToggle } from './rt-select-tree';
 import { RtSelectTriggerDirective } from './rt-select-trigger.directive';
 import { IRtSelect } from './rt-select.model';
 
@@ -115,6 +116,8 @@ export class RtSelectComponent<TValue> extends RtFormControlBase<TValue | null> 
 
     protected readonly filterTerm: WritableSignal<string> = signal<string>('');
     protected readonly activeIndex: WritableSignal<number> = signal<number>(-1);
+    /** Раскрытые ветки дерева. Живут, пока открыта панель: при открытии раскрыты ветки над выбранным. */
+    protected readonly openBranches: WritableSignal<ReadonlySet<TValue>> = signal<ReadonlySet<TValue>>(new Set<TValue>());
 
     protected readonly isOpen: Signal<boolean> = computed((): boolean => this.popover().isOpen());
 
@@ -136,19 +139,15 @@ export class RtSelectComponent<TValue> extends RtFormControlBase<TValue | null> 
         if (v === null) {
             return '';
         }
-        const match: IRtSelect.Option<TValue> | undefined = this.options().find((o: IRtSelect.Option<TValue>): boolean => o.value === v);
-        return match?.label ?? '';
+        return rtTreeFind(this.options(), v)?.label ?? '';
     });
 
-    protected readonly filteredOptions: Signal<ReadonlyArray<IRtSelect.Option<TValue>>> = computed(
-        (): ReadonlyArray<IRtSelect.Option<TValue>> => {
-            const term: string = this.filterTerm().toLowerCase().trim();
-            const all: ReadonlyArray<IRtSelect.Option<TValue>> = this.options();
-            if (!term) {
-                return all;
-            }
-            return all.filter((o: IRtSelect.Option<TValue>): boolean => o.label.toLowerCase().includes(term));
-        }
+    /** Дерево ли список: тогда у строк есть место под стрелку и отступ по уровню. */
+    protected readonly isTree: Signal<boolean> = computed((): boolean => rtTreeIsTree(this.options()));
+
+    /** Видимые строки: плоский список — как прежде, дерево — по раскрытым веткам и поисковому слову. */
+    protected readonly rows: Signal<ReadonlyArray<IRtSelect.Row<TValue>>> = computed((): ReadonlyArray<IRtSelect.Row<TValue>> =>
+        rtTreeRows(this.options(), this.openBranches(), this.filterTerm())
     );
 
     /** Три значения, которые кит отдаёт своей разметке указателя, и не больше. */
@@ -225,6 +224,16 @@ export class RtSelectComponent<TValue> extends RtFormControlBase<TValue | null> 
         this.selectionChange.emit(null);
     }
 
+    protected onOpened(): void {
+        const v: TValue | null = this.value();
+        this.openBranches.set(rtTreeOpenFor(this.options(), v === null ? [] : [v]));
+    }
+
+    protected toggleBranch(event: Event, value: TValue): void {
+        event.stopPropagation();
+        this.openBranches.update((open: ReadonlySet<TValue>): ReadonlySet<TValue> => rtTreeToggle(open, value));
+    }
+
     protected onClosed(): void {
         // Закрытие (outside-click / Escape / выбор) = пользователь увёл фокус.
         this.filterTerm.set('');
@@ -281,13 +290,29 @@ export class RtSelectComponent<TValue> extends RtFormControlBase<TValue | null> 
                 event.preventDefault();
                 this.popover().close();
                 break;
+            case 'ArrowRight':
+            case 'ArrowLeft':
+                event.preventDefault();
+                this.#sideKey(event.key);
+                break;
             default:
                 break;
         }
     }
 
+    #sideKey(key: string): void {
+        const answer: IRtSelect.SideKeyAnswer<TValue> = rtTreeSideKey(this.rows(), this.activeIndex(), key);
+        const toggle: TValue | null = answer.toggle;
+        if (toggle !== null) {
+            this.openBranches.update((open: ReadonlySet<TValue>): ReadonlySet<TValue> => rtTreeToggle(open, toggle));
+        }
+        this.activeIndex.set(answer.index);
+    }
+
     #moveActive(delta: number): void {
-        const opts: ReadonlyArray<IRtSelect.Option<TValue>> = this.filteredOptions();
+        const opts: ReadonlyArray<IRtSelect.Option<TValue>> = this.rows().map(
+            (row: IRtSelect.Row<TValue>): IRtSelect.Option<TValue> => row.option
+        );
         if (opts.length === 0) {
             this.activeIndex.set(-1);
             return;
@@ -303,7 +328,9 @@ export class RtSelectComponent<TValue> extends RtFormControlBase<TValue | null> 
     }
 
     #selectActive(): void {
-        const opts: ReadonlyArray<IRtSelect.Option<TValue>> = this.filteredOptions();
+        const opts: ReadonlyArray<IRtSelect.Option<TValue>> = this.rows().map(
+            (row: IRtSelect.Row<TValue>): IRtSelect.Option<TValue> => row.option
+        );
         const index: number = this.activeIndex();
         if (index >= 0 && index < opts.length) {
             this.select(opts[index]);
