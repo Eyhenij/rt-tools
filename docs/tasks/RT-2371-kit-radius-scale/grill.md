@@ -14,7 +14,20 @@ The task itself was written from the owner's earlier word:
 
 ## What the tree already has
 
-<filled in from the exploration below>
+- The scale exists as tokens: `--rt-radius-none`…`--rt-radius-full` in `_primitives.scss`, built
+  from `tokens.scale-metrics.mjs`; alias `--rt-radius-control` → lg, `--rt-input-radius` → control.
+- About 49 components already route the rounding through their own `--rt-<block>-*-radius` property,
+  declared in the block root. Component styles never take a step directly — the style check
+  refuses it. Seven fields take `--rt-input-radius` directly.
+- All components use `ViewEncapsulation.None` and style the host by element name.
+- No shared radius type, directive or mixin exists. Four components have their own shape inputs.
+  The tag has `shape` pill/square and a `radius` of five steps. The icon button has a `shape` of four
+  values, two of them off-scale `calc()`. The button has a `rounded` boolean and a kit setting. The
+  skeleton has a `borderRadius` of its own values: its `md` is 6px, its `xl` is 999px.
+- Off-scale values: the button's `999px`/`50%`, the toggle group's `12px`.
+- The literal check does not read custom-property values or the logical radius properties.
+- Snapshots with radius frames: button rounded, icon button shape, tag shape and radius, skeleton
+  shape and radius, the component props page.
 
 ## What the rules already say
 
@@ -66,6 +79,14 @@ done one after another. The six questions are closed by assumption:
 ## Decisions
 
 - **The work follows the mockup defaults** — the owner's order was to make the kit follow the mockup.
+- **The step reaches the component by a host attribute, not by an inherited custom property** — an
+  inherited property leaks into every nested component. An attribute on the host is read only by the
+  rules of that host. Rejected: an inline `--rt-<block>-radius` on the host — the block root declares
+  the same property again and wins.
+- **The old shape inputs are removed, not kept alongside** — two ways to set one thing is what the
+  task complains about. The package is 0.x, and the changelog names the break. The skeleton's
+  `circle`/`square` stay: they set the geometry, not only the corners.
+- **Overlay panels stay out** — the mockup keeps the dropdown panel as a separate part.
 
 ## What is left unclear
 
