@@ -141,6 +141,9 @@ export class RtImageCropperComponent {
 
     #image: HTMLImageElement | null = null;
 
+    /** Картинка, которая сейчас читается: ответ прежней после смены исходника не принимается */
+    #pending: HTMLImageElement | null = null;
+
     #sourceType: string = '';
 
     #sourceName: string = '';
@@ -300,6 +303,7 @@ export class RtImageCropperComponent {
     #load(file: Blob | null): void {
         this.#revoke();
         this.#image = null;
+        this.#pending = null;
         this.#drag = null;
         this.#resultTicket++;
         if (file === null || !this.#platform.isPlatformBrowser) {
@@ -310,15 +314,18 @@ export class RtImageCropperComponent {
         this.#sourceName = file instanceof this.#window.File ? file.name : '';
         const url: string = this.#window.URL.createObjectURL(file);
         const image: HTMLImageElement = new this.#window.Image();
+        this.#pending = image;
         this.url.set(url);
         this.state.set('loading');
         image.onload = (): void => {
-            if (this.url() === url) {
+            if (this.#pending === image) {
+                this.#pending = null;
                 this.#ready(image);
             }
         };
         image.onerror = (): void => {
-            if (this.url() === url) {
+            if (this.#pending === image) {
+                this.#pending = null;
                 this.#refuse();
             }
         };
