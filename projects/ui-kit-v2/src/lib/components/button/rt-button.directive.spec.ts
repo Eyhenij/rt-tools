@@ -1,7 +1,9 @@
 import { ChangeDetectionStrategy, Component, WritableSignal, signal } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
 
+import { provideRtKit } from '../../config/rt-kit-config.providers';
 import { classesOf, createRtFixture, el, textOf } from '../../../testing/rt-kit-testing';
+import { TRtRadius } from '../radius/rt-radius.model';
 import { RtButtonDirective } from './rt-button.directive';
 import { IButton } from './rt-button.model';
 
@@ -24,7 +26,7 @@ const modifiersOf: (node: HTMLElement) => string[] = (node: HTMLElement): string
             [theme]="theme()"
             [appearance]="appearance()"
             [size]="size()"
-            [rounded]="rounded()"
+            [radius]="radius()"
             [loading]="loading()"
             [loadingIcon]="loadingIcon()"
             [pressed]="pressed()"
@@ -40,7 +42,7 @@ class ButtonHostComponent {
     public readonly theme: WritableSignal<IButton.Theme> = signal<IButton.Theme>('primary');
     public readonly appearance: WritableSignal<IButton.Appearance> = signal<IButton.Appearance>('filled');
     public readonly size: WritableSignal<IButton.Size> = signal<IButton.Size>('md');
-    public readonly rounded: WritableSignal<boolean> = signal<boolean>(false);
+    public readonly radius: WritableSignal<TRtRadius | null> = signal<TRtRadius | null>(null);
     public readonly loading: WritableSignal<boolean> = signal<boolean>(false);
     public readonly loadingIcon: WritableSignal<string | null> = signal<string | null>(null);
     public readonly pressed: WritableSignal<boolean | null> = signal<boolean | null>(null);
@@ -197,13 +199,30 @@ describe('RtButtonDirective', (): void => {
             expect(classesOf(button(fixture))).toContain(`rt-button--${size}`);
         });
 
-        it('скруглённая форма выводит свой класс', (): void => {
+        it('названный шаг скругления ложится на кнопку, без него шага нет', (): void => {
             const fixture: ComponentFixture<ButtonHostComponent> = setup();
 
-            fixture.componentInstance.rounded.set(true);
+            expect(button(fixture).hasAttribute('data-rt-radius')).toBe(false);
+
+            fixture.componentInstance.radius.set('full');
             fixture.detectChanges();
 
-            expect(classesOf(button(fixture))).toContain('rt-button--rounded');
+            expect(button(fixture).getAttribute('data-rt-radius')).toBe('full');
+        });
+
+        it('SC-UKV-392 — шаг по умолчанию берётся из настройки кита, шаг на кнопке сильнее', (): void => {
+            const fixture: ComponentFixture<ButtonHostComponent> = createRtFixture(
+                ButtonHostComponent,
+                {},
+                { providers: [provideRtKit({ components: { button: { radius: 'full' } } })] }
+            );
+
+            expect(button(fixture).getAttribute('data-rt-radius')).toBe('full');
+
+            fixture.componentInstance.radius.set('sm');
+            fixture.detectChanges();
+
+            expect(button(fixture).getAttribute('data-rt-radius')).toBe('sm');
         });
     });
 

@@ -1,4 +1,5 @@
 import { IRtIcon } from '../../icon';
+import { TRtRadius } from '../../radius/rt-radius.model';
 import { IRtTag } from '../../tag/rt-tag.model';
 
 /**
@@ -15,10 +16,8 @@ export namespace IRtAsideHeader {
         severity?: IRtTag.Severity;
         /** Вид заливки. Дефолт потребления — `solid`. */
         appearance?: IRtTag.Appearance;
-        /** Форма. Дефолт потребления — `pill`. */
-        shape?: IRtTag.Shape;
-        /** Переопределение скругления поверх `shape`. */
-        radius?: IRtTag.Radius | null;
+        /** Шаг скругления метки. Пусто — `md`. */
+        radius?: TRtRadius | null;
         /** Префикс-иконка. */
         icon?: IRtIcon.Name | null;
         /**

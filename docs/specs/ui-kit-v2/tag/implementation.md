@@ -6,7 +6,7 @@ paths are given from the root of the tree.
 - **A tag without a label does not exist, and the label arrives by a required input.** — `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.ts:value`
 - **The palette is a closed set of meanings, and the default is the neutral one.** — `projects/ui-kit-v2/src/lib/components/tag/rt-tag.model.ts:Severity`. The default stands at `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.ts:severity`
 - **The palette is doubled by an attribute of the markup.** — `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.html:data-severity`
-- **The shape sets the rounding, and a rounding named apart beats the shape.** — `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.scss:radius--full`. The shape assigns the property of the rounding, and the rules naming it stand below
+- **The rounding is a step of the kit's one rounding input, and the pill is fully rounded by default.** — `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.ts:RtRadiusDirective`. The default stands at `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.scss:--rt-tag-radius`
 - **The outlined appearance is declared below every palette.** — `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.scss:appearance--outlined`
 - **An icon stands on either side of the label, and both sides live together.** — `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.ts:iconEnd`. Next to it stands `icon`, and the markup draws them on their own sides
 - **The cross does not close the tag: it reports a press.** — `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.ts:closed`

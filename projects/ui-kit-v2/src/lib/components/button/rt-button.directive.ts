@@ -19,6 +19,8 @@ import {
 
 import { IRtKitConfig } from '../../config/rt-kit-config.model';
 import { rtKitDefault } from '../../config/rt-kit-config.providers';
+import { RtRadiusDirective } from '../radius/rt-radius.directive';
+import { RT_RADIUS_DEFAULT, TRtRadius } from '../radius/rt-radius.model';
 import { RtIconRegistry, IRtIcon } from '../icon';
 import { RtRippleDirective } from '../ripple';
 import { IButton } from './rt-button.model';
@@ -50,7 +52,19 @@ const LOADING_FADE_OUT_BUFFER_MS: number = 50;
  */
 @Directive({
     selector: 'button[rtButton], a[rtButton]',
-    hostDirectives: [{ directive: RtRippleDirective, inputs: ['rippleDisabled'] }],
+    hostDirectives: [
+        { directive: RtRippleDirective, inputs: ['rippleDisabled'] },
+        { directive: RtRadiusDirective, inputs: ['radius'] },
+    ],
+    /* Шаг скругления без входа берётся из настроек кита: приложение, скруглившее все кнопки разом,
+       называет шаг один раз, а вход на кнопке по-прежнему сильнее. */
+    providers: [
+        {
+            provide: RT_RADIUS_DEFAULT,
+            useFactory: (): TRtRadius | null =>
+                rtKitDefault('button', (it: IRtKitConfig.Button): TRtRadius | null | undefined => it.radius, null),
+        },
+    ],
 })
 export class RtButtonDirective {
     readonly #el: ElementRef<HTMLButtonElement | HTMLAnchorElement> = inject<ElementRef<HTMLButtonElement | HTMLAnchorElement>>(ElementRef);
@@ -68,7 +82,6 @@ export class RtButtonDirective {
         'filled'
     );
     readonly #size: IButton.Size = rtKitDefault('button', (it: IRtKitConfig.Button): IButton.Size | undefined => it.size, 'md');
-    readonly #rounded: boolean = rtKitDefault('button', (it: IRtKitConfig.Button): boolean | undefined => it.rounded, false);
 
     #iconEl: HTMLElement | null = null;
     #labelEl: HTMLElement | null = null;
@@ -89,10 +102,6 @@ export class RtButtonDirective {
     public readonly appearance: InputSignal<IButton.Appearance> = input<IButton.Appearance>(this.#appearance);
     /** Размер. Умолчание — из настроек кита. */
     public readonly size: InputSignal<IButton.Size> = input<IButton.Size>(this.#size);
-    /** Скруглённые углы (умолчание — из настроек кита; без них квадратная, с radius из --rt-btn-radius). */
-    public readonly rounded: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(this.#rounded, {
-        transform: booleanAttribute,
-    });
     /** Состояние загрузки: показывает спиннер вместо иконки, блокирует клики. */
     public readonly loading: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
@@ -149,7 +158,6 @@ export class RtButtonDirective {
             [`${BEM_BLOCK}--${theme}`]: theme !== 'primary',
             [`${BEM_BLOCK}--outlined`]: appearance === 'outlined',
             [`${BEM_BLOCK}--text`]: appearance === 'text',
-            [`${BEM_BLOCK}--rounded`]: this.rounded(),
             [`${BEM_BLOCK}--loading`]: this.loading(),
             [`${BEM_BLOCK}--icon-only`]: this.isIconOnly(),
             [`${BEM_BLOCK}--${size}`]: size !== 'md',
