@@ -11,7 +11,7 @@ import { IRtDatePicker } from './rt-date-picker.model';
 
 const DAY_RE: RegExp = /^(\d{4})-(\d{2})-(\d{2})$/;
 const TIME_RE: RegExp = /^(\d{2}):(\d{2})$/;
-const DAY_MS: number = 86_400_000;
+const DAY_LENGTH_MS: number = 86_400_000;
 const WEEK: number = 7;
 const DAY_LEN: number = 10;
 const MONTH_LEN: number = 7;
@@ -167,7 +167,7 @@ export function rtDateMonth(month: string, ctx: IRtDatePicker.MonthContext): IRt
     const weekday: number = new Date(first).getUTCDay() || WEEK;
     const blanks: number = (weekday - rtDateFirstDay(ctx.locale) + WEEK) % WEEK;
     const days: IRtCalendar.Day[] = Array.from({ length: daysInMonth(y, m) }, (_: unknown, i: number): IRtCalendar.Day =>
-        dayCell(msToDay(first + i * DAY_MS), ctx)
+        dayCell(msToDay(first + i * DAY_LENGTH_MS), ctx)
     );
     const leadingBlanks: number[] = Array.from({ length: blanks }, (_: unknown, i: number): number => i);
     return { key: month, label: monthTitle(month, ctx.locale), leadingBlanks, days };
@@ -179,7 +179,7 @@ export function rtDateWeekdays(locale: string): string[] {
     // 2024-01-01 — понедельник.
     const monday: number = Date.UTC(2024, 0, 1);
     const shift: number = rtDateFirstDay(locale) - 1;
-    return Array.from({ length: WEEK }, (_: unknown, i: number): string => format.format(monday + ((i + shift) % WEEK) * DAY_MS));
+    return Array.from({ length: WEEK }, (_: unknown, i: number): string => format.format(monday + ((i + shift) % WEEK) * DAY_LENGTH_MS));
 }
 
 /** Двенадцать месяцев года для выбора месяца; месяц за границей выключен. */
@@ -235,16 +235,16 @@ const MONTH_KEYS: Readonly<Record<string, number>> = { PageUp: -1, PageDown: 1 }
 function keyTarget(key: string, day: string, firstDay: number): string | null {
     const ms: number = dayToMs(day);
     if (key in DAY_KEYS) {
-        return msToDay(ms + DAY_KEYS[key] * DAY_MS);
+        return msToDay(ms + DAY_KEYS[key] * DAY_LENGTH_MS);
     }
     if (key in MONTH_KEYS) {
         return shiftMonth(day, MONTH_KEYS[key]);
     }
     const offset: number = ((new Date(ms).getUTCDay() || WEEK) - firstDay + WEEK) % WEEK;
     if (key === 'Home') {
-        return msToDay(ms - offset * DAY_MS);
+        return msToDay(ms - offset * DAY_LENGTH_MS);
     }
-    return key === 'End' ? msToDay(ms + (WEEK - 1 - offset) * DAY_MS) : null;
+    return key === 'End' ? msToDay(ms + (WEEK - 1 - offset) * DAY_LENGTH_MS) : null;
 }
 
 /**

@@ -8,7 +8,7 @@ import { TestRtDatePanelMatrixComponent } from './component/test-date-panel-matr
  * 10 марта 2026 года, его задаёт вход панели `now`.
  */
 export default {
-    title: 'Molecules/Forms/DatePicker',
+    title: 'Molecules/Forms/DatePanel',
     component: TestRtDatePanelMatrixComponent,
     parameters: {
         controls: { disable: true },
@@ -18,13 +18,13 @@ export default {
 type TStory = StoryObj<TestRtDatePanelMatrixComponent>;
 
 /** Дата, время и дата со временем: месяц, колонки часов и минут, подвал по типу. */
-export const Panel: TStory = { args: { part: 'types' } };
+export const Types: TStory = { args: { part: 'types' } };
 
 /** Дни и время за границами выключены, листание упирается в месяц границы, «Сегодня» выключено. */
-export const PanelBounds: TStory = { args: { part: 'bounds' } };
+export const Bounds: TStory = { args: { part: 'bounds' } };
 
 /** Выбор месяца и года: его открывает нажатие на заголовок месяца, и `play` нажимает его сам. */
-export const PanelMonths: TStory = {
+export const Months: TStory = {
     args: { part: 'months' },
     play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
         for (const title of Array.from(canvasElement.querySelectorAll<HTMLButtonElement>('[qa-dataid="calendar-month-title"]'))) {
@@ -34,13 +34,13 @@ export const PanelMonths: TStory = {
             requestAnimationFrame((): void => resolve());
         });
         if (canvasElement.querySelector('[qa-dataid="date-panel-months"]') === null) {
-            throw new Error('PanelMonths: the choice of months did not open');
+            throw new Error('DatePanel/Months: the choice of months did not open');
         }
     },
 };
 
 /** Раскладка нижней шторки: дни под палец, у даты со временем — переключатель «Дата | Время». */
-export const PanelSheet: TStory = { args: { part: 'sheet' } };
+export const Sheet: TStory = { args: { part: 'sheet' } };
 
 /** Светлая и тёмная темы рядом. */
-export const PanelThemes: TStory = { args: { part: 'themes' } };
+export const Themes: TStory = { args: { part: 'themes' } };
