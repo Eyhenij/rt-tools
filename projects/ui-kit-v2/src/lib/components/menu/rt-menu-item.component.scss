@@ -73,6 +73,31 @@
             white-space: nowrap;
         }
 
+        /* Пункт-ссылка: кликабельной зоной и узлом фокуса служит ссылка внутри, поэтому поля и
+           раскладка пункта переезжают на неё, а хост остаётся рамкой подсветки. */
+        &--link {
+            padding: 0;
+        }
+
+        &__link {
+            display: flex;
+            min-width: 0;
+            min-height: var(--rt-menu-item-min-height);
+            box-sizing: border-box;
+            flex: 1 1 auto;
+            align-items: center;
+            padding: var(--rt-menu-item-padding-y) var(--rt-menu-item-padding-x);
+            border-radius: var(--rt-menu-item-radius);
+            color: inherit;
+            gap: var(--rt-space-sm);
+            text-decoration: none;
+
+            &:focus-visible {
+                background: var(--rt-color-bg-hover);
+                outline: none;
+            }
+        }
+
         &--current {
             background: var(--rt-menu-item-current-bg);
         }
