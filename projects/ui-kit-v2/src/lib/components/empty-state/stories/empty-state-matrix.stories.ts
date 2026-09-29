@@ -21,6 +21,8 @@ export const Parts: TStory = { args: { part: 'parts' } };
 
 export const Slots: TStory = { args: { part: 'slots' } };
 
+export const Frame: TStory = { args: { part: 'frame' } };
+
 export const Presets: TStory = { args: { part: 'presets' } };
 
 export const Themes: TStory = { args: { part: 'themes' } };

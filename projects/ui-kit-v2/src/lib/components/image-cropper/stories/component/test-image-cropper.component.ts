@@ -1,5 +1,16 @@
 import { DOCUMENT } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal, WritableSignal } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    DestroyRef,
+    inject,
+    input,
+    InputSignal,
+    Signal,
+    signal,
+    WritableSignal,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
@@ -8,11 +19,15 @@ import { WINDOW } from '@rt-tools/core';
 import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { RtButtonDirective } from '../../../button';
+import { RtEmptyStateComponent } from '../../../empty-state';
 import { RtFileDropComponent } from '../../../file-drop';
 import { RtFileInputComponent } from '../../../file-input';
 import { RtImageCropperComponent } from '../../rt-image-cropper.component';
 import { IRtImageCropper } from '../../rt-image-cropper.model';
 import { drawStoryCropperSample } from './story-cropper-sample';
+
+/** Как приложение предлагает выбрать файл: кнопкой над полем или зоной, куда его бросают */
+export type TImageCropperStoryMode = 'button' | 'dropzone';
 
 /**
  * Демонстрационная обёртка для витрины: держит изменяемое состояние, на которое
@@ -21,6 +36,8 @@ import { drawStoryCropperSample } from './story-cropper-sample';
  *
  * Показ повторяет то, как обрезкой пользуется приложение: файл выбирают кнопкой или бросают на
  * поле, рамку двигают, «Применить» берёт последний отданный файл, «Отмена» возвращает пустое поле.
+ * В режиме `dropzone` пустое состояние — зона загрузки, как у первого кита, а обрезка появляется,
+ * когда файл выбран.
  */
 @Component({
     selector: 'app-image-cropper',
@@ -32,6 +49,7 @@ import { drawStoryCropperSample } from './story-cropper-sample';
 
         // components
         RtButtonDirective,
+        RtEmptyStateComponent,
         RtFileDropComponent,
         RtFileInputComponent,
         RtImageCropperComponent,
@@ -48,7 +66,16 @@ export class TestRtImageCropperComponent {
 
     #appliedUrl: string | null = null;
 
-    public readonly toolbar: readonly string[] = ['choose', 'sample'];
+    public readonly mode: InputSignal<TImageCropperStoryMode> = input<TImageCropperStoryMode>('button');
+
+    /** В режиме зоны кнопка выбора живёт в самой зоне, над полем остаётся только демо-картинка */
+    public readonly toolbar: Signal<readonly string[]> = computed((): readonly string[] =>
+        this.mode() === 'dropzone' ? ['sample'] : ['choose', 'sample']
+    );
+
+    public readonly caption: Signal<string> = computed((): string =>
+        this.mode() === 'dropzone' ? 'Зона загрузки, затем обрезка' : 'Выбрать изображение кнопкой, обрезать, применить'
+    );
 
     public readonly actions: readonly string[] = ['cancel', 'apply'];
 
@@ -64,6 +91,9 @@ export class TestRtImageCropperComponent {
     public readonly summary: WritableSignal<string> = signal(
         'Выберите изображение кнопкой, бросьте его на поле или подставьте демо-картинку.'
     );
+
+    /** Зона загрузки стоит, пока файла нет; с файлом её место занимает обрезка */
+    public readonly showDropzone: Signal<boolean> = computed((): boolean => this.mode() === 'dropzone' && this.file() === null);
 
     public placeholder: string = '';
     public ratio: number | null = null;

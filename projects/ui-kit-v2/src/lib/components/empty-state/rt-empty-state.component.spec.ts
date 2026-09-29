@@ -35,6 +35,11 @@ describe('RtEmptyStateComponent', (): void => {
         expect(qa(fixture, 'empty-state-description')).toBeNull();
     });
 
+    it('без framed рамки нет, с framed — модификатор рамки на блоке', (): void => {
+        expect(hostClasses(setup())).not.toContain('rt-empty-state--framed');
+        expect(hostClasses(setup({ framed: true }))).toContain('rt-empty-state--framed');
+    });
+
     describe('заголовок и описание', (): void => {
         it('заголовок рисуется, когда он задан', (): void => {
             expect(textOf(qa(setup({ title: 'Файлов нет' }), 'empty-state-title'))).toBe('Файлов нет');

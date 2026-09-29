@@ -7,6 +7,7 @@ export default {
     title: 'Organisms/ImageCropper',
     component: TestRtImageCropperComponent,
     argTypes: {
+        mode: { control: { type: 'inline-radio' }, options: ['button', 'dropzone'] },
         placeholder: { control: { type: 'text' } },
         ratio: { control: { type: 'number', min: 0.2, max: 5, step: 0.1 } },
         round: { control: { type: 'boolean' } },
@@ -26,6 +27,7 @@ type TStory = StoryObj<TestRtImageCropperComponent>;
 export const Playground: TStory = {
     parameters: storySnapshotSkip('сценарий работы с кнопками и выбором файла — кадры семьи снимает её матрица'),
     args: {
+        mode: 'button',
         placeholder: '',
         ratio: null,
         round: false,
@@ -34,4 +36,50 @@ export const Playground: TStory = {
         quality: 92,
         disabled: false,
     },
+};
+
+/** Сколько ждём появления рамки после нажатия: картинка рисуется и читается за доли секунды */
+const DEMO_WAIT_MS: number = 5000;
+
+/**
+ * Нажимает «Демо-картинка 1200×800» и ждёт рамку в поле ненулевой ширины. Одного появления рамки
+ * мало: поле, сжатое раскладкой в ноль, рисует рамку 2×2, и человек не видит ничего.
+ */
+async function takeDemoImage({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> {
+    const button: HTMLButtonElement | null = canvasElement.querySelector('button[aria-label^="Демо-картинка"]');
+    if (button === null) {
+        throw new Error('Кнопки «Демо-картинка» в истории нет');
+    }
+    button.click();
+    const started: number = Date.now();
+    while (canvasElement.querySelector('[qa-dataid="image-cropper-frame"]') === null) {
+        if (Date.now() - started > DEMO_WAIT_MS) {
+            throw new Error(`Рамка не появилась за ${DEMO_WAIT_MS} мс`);
+        }
+        await new Promise((resolve: (value: unknown) => void): unknown => setTimeout(resolve, 50));
+    }
+    const field: HTMLElement | null = canvasElement.querySelector('[qa-dataid="image-cropper-field"]');
+    if (field === null || field.clientWidth < 200) {
+        throw new Error(`Поле обрезки сжато раскладкой: ширина ${field?.clientWidth ?? 'поля нет'}`);
+    }
+}
+
+/**
+ * Режим кнопки после нажатия «Демо-картинка 1200×800»: в поле картинка и рамка. Жест делает
+ * `play`, и он же падает, если рамки нет или поле сжато, — нажатие проверяется, а не предполагается.
+ */
+export const DemoImage: TStory = {
+    args: { ...Playground.args },
+    play: takeDemoImage,
+};
+
+/** Режим зоны загрузки, как у первого кита: пунктирная зона с кнопкой, пока файла нет */
+export const Dropzone: TStory = {
+    args: { ...Playground.args, mode: 'dropzone' },
+};
+
+/** Режим зоны загрузки после демо-картинки: зона уступила место обрезке */
+export const DropzoneDemoImage: TStory = {
+    args: { ...Playground.args, mode: 'dropzone' },
+    play: takeDemoImage,
 };
