@@ -32,7 +32,10 @@
             font-size: var(--rt-text-sm);
             gap: var(--rt-space-sm);
             padding-block: var(--rt-space-2);
-            padding-inline: var(--rt-space-md) var(--rt-space-sm);
+
+            /* Звезда заголовка стоит левее подписей строк, почти у края, как у первого кита: так
+               рядом со столбцом шевронов умещается и число строк. */
+            padding-inline: var(--rt-space-1) var(--rt-space-sm);
             text-align: start;
             transition: background-color var(--rt-side-menu-favorites-transition-duration) ease;
 
@@ -60,9 +63,13 @@
             white-space: nowrap;
         }
 
+        /* Шеврон — в столбце кнопок строк, по центру ширины маленькой кнопки, как шеврон папки. */
         &__chevron {
+            display: inline-flex;
             flex-shrink: 0;
+            justify-content: center;
             color: var(--rt-color-text-muted);
+            inline-size: var(--rt-control-height-sm);
             transition: transform var(--rt-side-menu-favorites-transition-duration) ease;
 
             &--open {

@@ -18,7 +18,7 @@
                     ({{ rows().length }})
                 }
             </span>
-            <rt-icon rtElem="chevron" size="sm" name="chevron-down" [rtMod]="{ open: expanded() }" />
+            <span rtElem="chevron" aria-hidden="true" [rtMod]="{ open: expanded() }"><rt-icon size="sm" name="chevron-down" /></span>
         </button>
 
         @if (expanded()) {
@@ -57,6 +57,7 @@
                                 rtElem="handle"
                                 qa-dataid="side-menu-favorite-handle"
                                 size="sm"
+                                shape="circle"
                                 aria-keyshortcuts="ArrowUp ArrowDown"
                                 [icon]="dragIcon"
                                 [ariaLabel]="dragLabel()"

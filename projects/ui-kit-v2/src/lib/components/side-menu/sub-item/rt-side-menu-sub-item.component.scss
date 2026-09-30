@@ -78,8 +78,21 @@
             color: var(--rt-side-menu-sub-item-match-color);
         }
 
+        /* Кнопка потребителя — круг, как у первого кита: рамка круга прозрачна в покое и
+           проявляется под указателем. Рамка — обводкой, а не границей: граница раздвинула бы
+           кнопку, и «+» ушёл бы со столбца шевронов. */
         &__action {
+            --rt-side-menu-sub-item-action-ring-width: var(--rt-border-width-thin);
+            --rt-side-menu-sub-item-action-radius: var(--rt-radius-full);
+
             flex-shrink: 0;
+            border-radius: var(--rt-side-menu-sub-item-action-radius);
+            outline: var(--rt-side-menu-sub-item-action-ring-width) solid transparent;
+            outline-offset: calc(var(--rt-side-menu-sub-item-action-ring-width) * -1);
+
+            &:hover {
+                outline-color: var(--rt-color-border-strong);
+            }
         }
 
         /* Кнопка избранного: звезда у пункта раздела и «убрать» у строки блока. Закрашенная звезда
@@ -118,9 +131,14 @@
             opacity: 1;
         }
 
+        /* Шеврон стоит в столбце кнопок строки — по центру ширины маленькой кнопки, как у первого
+           кита: шеврон папки и «+» соседних строк на одной вертикали. */
         &__chevron {
+            display: inline-flex;
             flex-shrink: 0;
+            justify-content: center;
             color: var(--rt-color-text-muted);
+            inline-size: var(--rt-control-height-sm);
             transition: transform var(--rt-side-menu-sub-item-transition-duration) ease;
 
             &--open {

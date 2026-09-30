@@ -39,6 +39,7 @@
                         rtElem="favorite"
                         qa-dataid="side-menu-favorite-remove"
                         size="sm"
+                        shape="circle"
                         [rtMod]="{ remove: true }"
                         [icon]="favoritesIcons.remove"
                         [ariaLabel]="removeLabel()"
@@ -50,6 +51,7 @@
                         rtElem="favorite"
                         qa-dataid="side-menu-favorite-star"
                         size="sm"
+                        shape="circle"
                         [rtMod]="{ on: isFavorite }"
                         [icon]="isFavorite ? 'star-fill' : 'star'"
                         [iconFill]="isFavorite"
@@ -67,6 +69,7 @@
                         rtElem="action"
                         qa-dataid="side-menu-sub-item-action"
                         size="sm"
+                        shape="circle"
                         [icon]="row.iconButton.icon"
                         [ariaLabel]="row.name ?? ''"
                         (clicked)="onClickSubMenuAdditional(row, $event)" />
@@ -102,7 +105,7 @@
                 </span>
 
                 @if (row.submenu.length) {
-                    <rt-icon rtElem="chevron" size="sm" name="chevron-down" [rtMod]="{ open: isOpen }" />
+                    <span rtElem="chevron" aria-hidden="true" [rtMod]="{ open: isOpen }"><rt-icon size="sm" name="chevron-down" /></span>
                 }
             </button>
 
