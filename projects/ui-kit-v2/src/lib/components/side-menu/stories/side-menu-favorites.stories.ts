@@ -1,18 +1,12 @@
-import { EnvironmentProviders, inject, provideAppInitializer, Provider } from '@angular/core';
 import { applicationConfig, Args, Meta, moduleMetadata, StoryObj } from '@storybook/angular';
 
-import {
-    IRtSideMenuSettingsConfig,
-    provideRtSideMenuSettings,
-    RT_SIDE_MENU_SETTINGS_CONFIG,
-    RtSideMenuSettingsService,
-} from '../rt-side-menu-settings.service';
+import { IRtSideMenuSettingsConfig, RT_SIDE_MENU_SETTINGS_CONFIG } from '../rt-side-menu-settings.service';
 import {
     FAVORITES_STORY_ACTIVE,
     FAVORITES_STORY_ITEMS,
     FAVORITES_STORY_ITEMS_GALLERY_DISABLED,
     FAVORITES_STORY_ITEMS_LONG,
-    FAVORITES_STORY_SEEDED_IDS,
+    sideMenuFavoritesStoryProviders,
 } from './component/side-menu-favorites-story-data';
 import { TestRtSideMenuMobileComponent } from './component/test-side-menu-mobile.component';
 import { TestRtSideMenuComponent } from './component/test-side-menu.component';
@@ -31,6 +25,10 @@ import { openMobileSection } from './side-menu.play';
  *
  * Строки под указателем снимаются, как у первого кита, настоящим наведением: узлы называет параметр
  * съёмки `snapshot.hover`.
+ *
+ * Пар наборов здесь нет: истории повторяют страницы первого кита во весь экран, и вторая половина
+ * раздвоила бы и страницу, и наводимые узлы. Избранное в обоих наборах показывает история
+ * `Favorites` матрицы меню.
  */
 const SHOWCASE_KEY: string = 'rt-showcase-side-menu-favorites';
 /** Свёрнутое живёт под своим ключом: свёрнутое здесь не сворачивает блок соседних историй. */
@@ -38,28 +36,12 @@ const COLLAPSED_KEY: string = 'rt-showcase-side-menu-favorites-collapsed';
 const SHOWCASE_MENU_ID: string = 'favorites-showcase';
 const RADIO: string = 'inline-radio';
 
-/** Настройки меню витрины и заполнение пустого списка при подъёме. */
-function favoritesProviders(config: IRtSideMenuSettingsConfig, collapsed: boolean = false): Array<Provider | EnvironmentProviders> {
-    return [
-        provideRtSideMenuSettings(config),
-        provideAppInitializer((): void => {
-            const settings: RtSideMenuSettingsService = inject(RtSideMenuSettingsService);
-
-            if (!settings.favoriteIds(SHOWCASE_MENU_ID)().length) {
-                settings.setFavorites(SHOWCASE_MENU_ID, FAVORITES_STORY_SEEDED_IDS);
-            }
-
-            if (collapsed && settings.settings(SHOWCASE_MENU_ID)().favoritesCollapsed === undefined) {
-                settings.setFavoritesCollapsed(SHOWCASE_MENU_ID, 1, true);
-            }
-        }),
-    ];
-}
-
 export default {
     title: 'Organisms/Navigation/SideMenu/Favorites',
     component: TestRtSideMenuComponent,
-    decorators: [applicationConfig({ providers: favoritesProviders({ storageKey: SHOWCASE_KEY }) })],
+    decorators: [
+        applicationConfig({ providers: sideMenuFavoritesStoryProviders({ storageKey: SHOWCASE_KEY }, [{ id: SHOWCASE_MENU_ID }]) }),
+    ],
     parameters: { layout: 'fullscreen', snapshot: { fullPage: true } },
     argTypes: {
         mode: { control: RADIO, options: ['hover', 'pinned'] },
@@ -133,7 +115,11 @@ export const SubMenuFavoritesDisabledStar: TStory = {
 /** Свёрнутый блок «Content»: заголовок с числом строк, шевроном вниз и чертой под ним. */
 export const SubMenuFavoritesCollapsed: TStory = {
     args: PINNED_ARGS,
-    decorators: [applicationConfig({ providers: favoritesProviders({ storageKey: COLLAPSED_KEY }, true) })],
+    decorators: [
+        applicationConfig({
+            providers: sideMenuFavoritesStoryProviders({ storageKey: COLLAPSED_KEY }, [{ id: SHOWCASE_MENU_ID, collapsed: true }]),
+        }),
+    ],
 };
 
 /** Развёрнутый блок с `favoritesCount="always"`: число строк стоит в заголовке и у развёрнутого блока. */

@@ -6,12 +6,19 @@ import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { IStoryState, STORY_STATES, storyStateLabel } from '../../../../../showcase/story-states';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { IRtSideMenu } from '../../rt-side-menu.model';
+import {
+    FAVORITES_STORY_ACTIVE,
+    FAVORITES_STORY_ITEMS,
+    FAVORITES_STORY_ITEMS_LONG,
+    SIDE_MENU_MATRIX_FAVORITES_COLLAPSED,
+    SIDE_MENU_MATRIX_FAVORITES_OPEN,
+} from './side-menu-favorites-story-data';
 import { SIDE_MENU_STORY_DEEP_ACTIVE, SIDE_MENU_STORY_ITEMS } from './side-menu-story-data';
 import { TestRtSideMenuCellComponent } from './test-side-menu-cell.component';
 import { TestRtSideMenuNarrowCellComponent } from './test-side-menu-narrow-cell.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TSideMenuMatrixPart = 'modes' | 'search' | 'folders' | 'states' | 'narrow' | 'edges' | 'presets' | 'themes';
+export type TSideMenuMatrixPart = 'modes' | 'search' | 'folders' | 'favorites' | 'states' | 'narrow' | 'edges' | 'presets' | 'themes';
 
 /** Случай ячейки: подпись и то, до чего ячейка доводит меню. */
 export interface ISideMenuCase {
@@ -23,6 +30,8 @@ export interface ISideMenuCase {
     readonly openId?: string | number | null;
     readonly query?: string;
     readonly slots?: boolean;
+    readonly menuId?: string;
+    readonly favoritesCount?: IRtSideMenu.FavoritesCount;
 }
 
 /**
@@ -66,6 +75,32 @@ export class TestRtSideMenuMatrixComponent {
     public readonly folders: readonly ISideMenuCase[] = [
         { name: 'папка свёрнута', openId: 24 },
         { name: 'папка раскрыта адресом', activeIds: SIDE_MENU_STORY_DEEP_ACTIVE, mode: 'pinned' },
+    ];
+
+    /** Избранное в закреплённом подменю «Content»: у раскрытого и свёрнутого блока свои номера меню. */
+    public readonly favorites: readonly ISideMenuCase[] = [
+        {
+            name: 'блок раскрыт',
+            items: FAVORITES_STORY_ITEMS,
+            activeIds: FAVORITES_STORY_ACTIVE,
+            mode: 'pinned',
+            menuId: SIDE_MENU_MATRIX_FAVORITES_OPEN,
+        },
+        {
+            name: 'блок свёрнут, число строк',
+            items: FAVORITES_STORY_ITEMS,
+            activeIds: FAVORITES_STORY_ACTIVE,
+            mode: 'pinned',
+            menuId: SIDE_MENU_MATRIX_FAVORITES_COLLAPSED,
+        },
+        {
+            name: 'длинные подписи, число всегда',
+            items: FAVORITES_STORY_ITEMS_LONG,
+            activeIds: FAVORITES_STORY_ACTIVE,
+            mode: 'pinned',
+            menuId: SIDE_MENU_MATRIX_FAVORITES_OPEN,
+            favoritesCount: 'always',
+        },
     ];
 
     public readonly narrows: readonly ISideMenuCase[] = [

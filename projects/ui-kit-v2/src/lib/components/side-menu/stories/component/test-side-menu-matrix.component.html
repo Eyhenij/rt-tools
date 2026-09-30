@@ -35,6 +35,18 @@
         </app-story-presets>
     }
 
+    @case ('favorites') {
+        <app-story-presets caption="Избранное в обоих наборах">
+            <ng-template>
+                <app-story-row [items]="favorites" [itemLabel]="caseLabel">
+                    <ng-template let-item>
+                        <ng-container [ngTemplateOutlet]="cellTpl" [ngTemplateOutletContext]="{ $implicit: item }" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
     @case ('states') {
         <app-story-presets caption="Взаимодействие с пунктами полосы и строками подменю в обоих наборах">
             <ng-template>
@@ -104,5 +116,7 @@
         [width]="item.width ?? null"
         [openId]="item.openId ?? null"
         [query]="item.query ?? ''"
-        [slots]="item.slots ?? false" />
+        [slots]="item.slots ?? false"
+        [menuId]="item.menuId ?? null"
+        [favoritesCount]="item.favoritesCount ?? 'collapsed'" />
 </ng-template>

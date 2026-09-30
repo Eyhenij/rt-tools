@@ -1,3 +1,6 @@
+import { EnvironmentProviders, inject, provideAppInitializer, Provider } from '@angular/core';
+
+import { IRtSideMenuSettingsConfig, provideRtSideMenuSettings, RtSideMenuSettingsService } from '../../rt-side-menu-settings.service';
 import { IRtSideMenu } from '../../rt-side-menu.model';
 import { SIDE_MENU_STORY_ITEMS } from './side-menu-story-data';
 
@@ -84,3 +87,44 @@ export const FAVORITES_STORY_SEEDED_IDS: readonly IRtSideMenu.FavoriteId[] = [2,
 
 /** Открыто на «Sidebar» во вложенной папке «Content»: папки раскрыты, блок и звёзды видны. */
 export const FAVORITES_STORY_ACTIVE: ReadonlyArray<IRtSideMenu.Item['id']> = [1, 100, 101, 9];
+
+/** Меню витрины с избранным: номер меню и свёрнут ли в нём блок раздела «Content». */
+export interface ISideMenuFavoritesStoryMenu {
+    readonly id: string;
+    readonly collapsed?: boolean;
+    /** Чем заполнить пустой список; без него — разделы обоих пунктов. */
+    readonly favorites?: readonly IRtSideMenu.FavoriteId[];
+}
+
+/**
+ * Настройки меню витрины и заполнение при подъёме. Пустой список избранного каждого меню получает
+ * разделы из обоих пунктов, в том числе лежащие в папках, — иначе кадр показывал бы подменю без
+ * блока. Свёрнутость ставится, только пока её не выбрал человек: выбранное переживает перезагрузку.
+ */
+export function sideMenuFavoritesStoryProviders(
+    config: IRtSideMenuSettingsConfig,
+    menus: readonly ISideMenuFavoritesStoryMenu[]
+): Array<Provider | EnvironmentProviders> {
+    return [
+        provideRtSideMenuSettings(config),
+        provideAppInitializer((): void => {
+            const settings: RtSideMenuSettingsService = inject(RtSideMenuSettingsService);
+
+            for (const menu of menus) {
+                if (!settings.favoriteIds(menu.id)().length) {
+                    settings.setFavorites(menu.id, menu.favorites ?? FAVORITES_STORY_SEEDED_IDS);
+                }
+
+                if (menu.collapsed && settings.settings(menu.id)().favoritesCollapsed === undefined) {
+                    settings.setFavoritesCollapsed(menu.id, 1, true);
+                }
+            }
+        }),
+    ];
+}
+
+/** Номера меню ячеек избранного в матрице меню: раскрытый блок и свёрнутый. */
+export const SIDE_MENU_MATRIX_FAVORITES_OPEN: string = 'favorites-matrix-open';
+export const SIDE_MENU_MATRIX_FAVORITES_COLLAPSED: string = 'favorites-matrix-collapsed';
+/** Три строки блока в ячейке матрицы: под ними видны черта и список раздела. */
+export const SIDE_MENU_MATRIX_FAVORITES: readonly IRtSideMenu.FavoriteId[] = [2, 5, 103];

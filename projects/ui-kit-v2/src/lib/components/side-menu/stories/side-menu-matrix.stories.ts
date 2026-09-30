@@ -1,6 +1,12 @@
-import { Meta, StoryObj } from '@storybook/angular';
+import { applicationConfig, Meta, StoryObj } from '@storybook/angular';
 
 import { storyPseudoParameters } from '../../../../showcase/story-states';
+import {
+    SIDE_MENU_MATRIX_FAVORITES,
+    SIDE_MENU_MATRIX_FAVORITES_COLLAPSED,
+    SIDE_MENU_MATRIX_FAVORITES_OPEN,
+    sideMenuFavoritesStoryProviders,
+} from './component/side-menu-favorites-story-data';
 import { TestRtSideMenuMatrixComponent } from './component/test-side-menu-matrix.component';
 
 /**
@@ -26,6 +32,22 @@ export const Modes: TStory = { args: { part: 'modes' } };
 export const Search: TStory = { args: { part: 'search' } };
 
 export const Folders: TStory = { args: { part: 'folders' } };
+
+/**
+ * Избранное в обоих наборах — пара к живым историям избранного, которые повторяют страницы первого
+ * кита во весь экран. Список ячеек живёт под своим ключом хранилища витрины.
+ */
+export const Favorites: TStory = {
+    args: { part: 'favorites' },
+    decorators: [
+        applicationConfig({
+            providers: sideMenuFavoritesStoryProviders({ storageKey: 'rt-showcase-side-menu-matrix-favorites' }, [
+                { id: SIDE_MENU_MATRIX_FAVORITES_OPEN, favorites: SIDE_MENU_MATRIX_FAVORITES },
+                { id: SIDE_MENU_MATRIX_FAVORITES_COLLAPSED, collapsed: true, favorites: SIDE_MENU_MATRIX_FAVORITES },
+            ]),
+        }),
+    ],
+};
 
 /**
  * Наведение и фокус стилизованы у пункта полосы и у строки подменю, а не у хоста меню: аддон

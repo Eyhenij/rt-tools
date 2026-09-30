@@ -5,7 +5,7 @@
 - **State:** `этап-идёт`
 - **Stage:** 2 of 5 — The narrow screen as a live menu; stage 3 done ahead of it by the owner's word
 - **Done:** stage 1 — seventeen live stories on the first kit's data; stage 3 — favourites without Material and their eleven stories; the folders and the favourites block moved onto the new `rt-expansion-panel`, frames unchanged to the pixel
-- **Next step:** show the owner the panel and the menu on it, add the preset pairs to the favourites stories, then compare the narrow layout with the first kit's Mobile by measurement
+- **Next step:** compare the narrow layout with the first kit's Mobile by measurement (2.1)
 - **Uncommitted:** nothing
 - **Waiting for the owner:** no; every port is shown before a push — «я просил каждый перенесенный из первого кита модуль показывать мне перед отправкой в пр!!!»
 - **PR:** not open yet
@@ -98,3 +98,7 @@
   `width: 100%`, as the accordion has. The panel writes its own state, so the favourites block
   keeps its expanded state in a linked signal: a collapse during search stays local and returns to
   the saved choice when the search ends.
+- Then: the favourites got their preset pair — a `Favorites` story in the menu matrix, three
+  cells (open, collapsed with the count, long titles) seeded with three rows so the divider shows.
+  The live full-page favourites stories stay unpaired, the reason written at them and in the
+  Overview. The Overview lost two stale lines: favourites «not ported yet» and the lock icon.

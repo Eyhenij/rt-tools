@@ -48,6 +48,11 @@ export class TestRtSideMenuCellComponent {
     public readonly openId: InputSignal<string | number | null> = input<string | number | null>(null);
     /** Запрос, набранный в поле поиска. */
     public readonly query: InputSignal<string> = input<string>('');
+    /** Номер меню в настройках: у ячеек с избранным свой список, у остальных — общий. */
+    public readonly menuId: InputSignal<string | null> = input<string | null>(null);
+    public readonly favoritesCount: InputSignal<IRtSideMenu.FavoritesCount> = input<IRtSideMenu.FavoritesCount>('collapsed');
+    public readonly favoriteActionsReserve: InputSignal<IRtSideMenu.FavoriteActionsReserve> =
+        input<IRtSideMenu.FavoriteActionsReserve>('none');
     /** Шапка и подвал полосы. */
     public readonly slots: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, { transform: booleanAttribute });
 

@@ -1,5 +1,12 @@
 <div class="app-side-menu-cell">
-    <rt-side-menu [menuItems]="items()" [activeMenuIds]="activeIds()" [subMenuMode]="mode()" [subMenuWidth]="width()">
+    <rt-side-menu
+        [menuItems]="items()"
+        [menuId]="menuId()"
+        [favoritesCount]="favoritesCount()"
+        [favoriteActionsReserve]="favoriteActionsReserve()"
+        [activeMenuIds]="activeIds()"
+        [subMenuMode]="mode()"
+        [subMenuWidth]="width()">
         @if (slots()) {
             <ng-template rtSideMenuHeader>
                 <div class="app-side-menu-cell__slot">Лого</div>
