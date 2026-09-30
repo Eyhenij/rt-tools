@@ -2,10 +2,12 @@
     /* Меню во всю высоту окна и с тенью у края, как в истории первого кита: подменю выезжает над
        страницей, и край меню виден на любом фоне. */
     .app-side-menu {
+        --rt-side-menu-story-shadow: var(--rt-shadow-lg);
+
         display: flex;
         width: fit-content;
         height: 100vh;
-        box-shadow: var(--rt-shadow-lg);
+        box-shadow: var(--rt-side-menu-story-shadow);
 
         /* Низкий экран первого кита: окно высотой 360. */
         &--short {

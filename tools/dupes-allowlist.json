@@ -16,6 +16,10 @@
       "reason": "a showcase story heading: the kits have showcases of their own, and the story names match by the agreement of showing",
       "task": "RT-1880"
     },
+    "export DefaultActiveMenu @ projects/ui-kit, projects/ui-kit-v2": {
+      "reason": "a showcase story heading: the second kit shows every state of the first kit side menu under the same story name, so the owner compares the two frames side by side",
+      "task": "RT-2440"
+    },
     "export Header @ projects/ui-kit, projects/ui-kit-v2": {
       "reason": "a showcase story heading: the kits have showcases of their own, and the story names match by the agreement of showing",
       "task": "RT-764"
@@ -24,9 +28,29 @@
       "reason": "the second kit carries an event bus of its own so as not to depend on the core",
       "task": "RT-764"
     },
+    "export MenuResizerGrab @ projects/ui-kit, projects/ui-kit-v2": {
+      "reason": "a showcase story heading: the second kit shows every state of the first kit side menu under the same story name, so the owner compares the two frames side by side",
+      "task": "RT-2440"
+    },
+    "export MenuScrollHint @ projects/ui-kit, projects/ui-kit-v2": {
+      "reason": "a showcase story heading: the second kit shows every state of the first kit side menu under the same story name, so the owner compares the two frames side by side",
+      "task": "RT-2440"
+    },
+    "export MenuScrollbar @ projects/ui-kit, projects/ui-kit-v2": {
+      "reason": "a showcase story heading: the second kit shows every state of the first kit side menu under the same story name, so the owner compares the two frames side by side",
+      "task": "RT-2440"
+    },
     "export MessageBus @ projects/core, projects/ui-kit-v2": {
       "reason": "the second kit carries an event bus of its own so as not to depend on the core",
       "task": "RT-764"
+    },
+    "export Mobile @ projects/ui-kit, projects/ui-kit-v2": {
+      "reason": "a showcase story heading: the second kit shows every state of the first kit side menu under the same story name, so the owner compares the two frames side by side",
+      "task": "RT-2440"
+    },
+    "export MobileActiveMenu @ projects/ui-kit, projects/ui-kit-v2": {
+      "reason": "a showcase story heading: the second kit shows every state of the first kit side menu under the same story name, so the owner compares the two frames side by side",
+      "task": "RT-2440"
     },
     "export Pagination @ projects/ui-kit, projects/ui-kit-v2": {
       "reason": "the first kit's table moved into the second as a family of its own by the owner's word — a separate family next to `rt-table`, not a replacement, with the first kit's behaviour copied as it is; two kits stand side by side in one application and share no code: their own selectors, their own styling token set, their own component list",
@@ -51,6 +75,46 @@
     "export SIGN_IN_PATH @ apps/message-bus-admin-e2e, libs/message-bus-admin/auth/util": {
       "reason": "the end-to-end suite declares the entry address and the node search by values of its own deliberately: taken out of the lib under check, they would be green at any value",
       "task": "RT-764"
+    },
+    "export SubMenuFolderMatchedAlone @ projects/ui-kit, projects/ui-kit-v2": {
+      "reason": "a showcase story heading: the second kit shows every state of the first kit side menu under the same story name, so the owner compares the two frames side by side",
+      "task": "RT-2440"
+    },
+    "export SubMenuHeldBySearch @ projects/ui-kit, projects/ui-kit-v2": {
+      "reason": "a showcase story heading: the second kit shows every state of the first kit side menu under the same story name, so the owner compares the two frames side by side",
+      "task": "RT-2440"
+    },
+    "export SubMenuHovered @ projects/ui-kit, projects/ui-kit-v2": {
+      "reason": "a showcase story heading: the second kit shows every state of the first kit side menu under the same story name, so the owner compares the two frames side by side",
+      "task": "RT-2440"
+    },
+    "export SubMenuKeepsItsPlace @ projects/ui-kit, projects/ui-kit-v2": {
+      "reason": "a showcase story heading: the second kit shows every state of the first kit side menu under the same story name, so the owner compares the two frames side by side",
+      "task": "RT-2440"
+    },
+    "export SubMenuKeyboardHighlight @ projects/ui-kit, projects/ui-kit-v2": {
+      "reason": "a showcase story heading: the second kit shows every state of the first kit side menu under the same story name, so the owner compares the two frames side by side",
+      "task": "RT-2440"
+    },
+    "export SubMenuLongTitle @ projects/ui-kit, projects/ui-kit-v2": {
+      "reason": "a showcase story heading: the second kit shows every state of the first kit side menu under the same story name, so the owner compares the two frames side by side",
+      "task": "RT-2440"
+    },
+    "export SubMenuPinned @ projects/ui-kit, projects/ui-kit-v2": {
+      "reason": "a showcase story heading: the second kit shows every state of the first kit side menu under the same story name, so the owner compares the two frames side by side",
+      "task": "RT-2440"
+    },
+    "export SubMenuSearchEmpty @ projects/ui-kit, projects/ui-kit-v2": {
+      "reason": "a showcase story heading: the second kit shows every state of the first kit side menu under the same story name, so the owner compares the two frames side by side",
+      "task": "RT-2440"
+    },
+    "export SubMenuSearchMatches @ projects/ui-kit, projects/ui-kit-v2": {
+      "reason": "a showcase story heading: the second kit shows every state of the first kit side menu under the same story name, so the owner compares the two frames side by side",
+      "task": "RT-2440"
+    },
+    "export SubMenuWide @ projects/ui-kit, projects/ui-kit-v2": {
+      "reason": "a showcase story heading: the second kit shows every state of the first kit side menu under the same story name, so the owner compares the two frames side by side",
+      "task": "RT-2440"
     },
     "export comparePropNames @ projects/ui-kit, projects/ui-kit-v2": {
       "reason": "the first kit's table moved into the second as a family of its own by the owner's word — a separate family next to `rt-table`, not a replacement, with the first kit's behaviour copied as it is; two kits stand side by side in one application and share no code: their own selectors, their own styling token set, their own component list",

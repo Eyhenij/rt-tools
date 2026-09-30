@@ -1,7 +1,7 @@
 import { IRtSideMenu } from '../../rt-side-menu.model';
 
 /** Длинное имя пункта: им показывают, как меню переносит текст. */
-const LONG_ITEM_NAME: string = 'Item 2 Lorem Ipsum is simply dummy text of the printing and typesetting industry';
+const longItemName: string = 'Item 2 Lorem Ipsum is simply dummy text of the printing and typesetting industry';
 
 /**
  * Пункты меню витрины — те же, что в истории бокового меню первого кита: те же разделы, подписи,
@@ -59,7 +59,12 @@ export const SIDE_MENU_STORY_ITEMS: readonly IRtSideMenu.Item[] = [
                 name: 'Level 1 Lorem Ipsum is simply dummy text of the printing and typesetting industry',
                 submenu: [
                     { id: 27, name: 'Item 1', link: '/test/level1/1', iconButton: { icon: 'ico-plus', data: 'data' } },
-                    { id: 28, name: LONG_ITEM_NAME, link: '/test/level1/2', iconButton: { icon: 'pencil', data: 'data' } },
+                    {
+                        id: 28,
+                        name: longItemName,
+                        link: '/test/level1/2',
+                        iconButton: { icon: 'pencil', data: 'data' },
+                    },
                     {
                         id: 29,
                         icon: 'folder',
@@ -71,7 +76,11 @@ export const SIDE_MENU_STORY_ITEMS: readonly IRtSideMenu.Item[] = [
                                 link: '/test/level1/level2/1',
                                 iconButton: { icon: 'ico-plus', data: 'data' },
                             },
-                            { id: 31, name: LONG_ITEM_NAME, link: '/test/level1/level2/2' },
+                            {
+                                id: 31,
+                                name: longItemName,
+                                link: '/test/level1/level2/2',
+                            },
                             {
                                 id: 32,
                                 icon: 'info-circle',
@@ -90,7 +99,11 @@ export const SIDE_MENU_STORY_ITEMS: readonly IRtSideMenu.Item[] = [
                                         link: '/test/level1/level2/level3/1',
                                         iconButton: { icon: 'ico-plus', data: 'data' },
                                     },
-                                    { id: 35, name: LONG_ITEM_NAME, link: '/test/level1/level2/level3/2' },
+                                    {
+                                        id: 35,
+                                        name: longItemName,
+                                        link: '/test/level1/level2/level3/2',
+                                    },
                                 ],
                             },
                         ],
