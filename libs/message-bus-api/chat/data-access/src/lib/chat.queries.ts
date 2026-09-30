@@ -196,12 +196,15 @@ export interface IChatVisitorTalkRow {
     readonly lastMessageSide: string;
     /** Имя того, кто ответил последним. Пусто — названного ответа ещё не было. */
     readonly operatorName: string;
+    /** Минута закрытия. Пусто — обращение живое. */
+    readonly closedAt: Date | null;
 }
 
 interface IStoredVisitorTalk {
     readonly id: string;
     readonly state: string;
     readonly lastMessageAt: Date;
+    readonly closedAt: Date | null;
     readonly messages: readonly { readonly side: string; readonly text: string }[];
 }
 
@@ -222,6 +225,7 @@ export async function visitorConversations(prisma: PrismaService, siteId: string
                     id: true,
                     state: true,
                     lastMessageAt: true,
+                    closedAt: true,
                     messages: { orderBy: { takenAt: 'desc' }, take: 1, select: { side: true, text: true } },
                 },
             },
@@ -245,6 +249,7 @@ export async function visitorConversations(prisma: PrismaService, siteId: string
         id: talk.id,
         state: talk.state,
         lastMessageAt: talk.lastMessageAt,
+        closedAt: talk.closedAt,
         lastMessage: talk.messages[0]?.text ?? '',
         lastMessageSide: talk.messages[0]?.side ?? '',
         operatorName: named.find((row: { conversationId: string }): boolean => row.conversationId === talk.id)?.authorName ?? '',
@@ -267,7 +272,7 @@ export async function appendVisitorMessage(prisma: PrismaService, conversationId
             data: { conversationId, text, side: 'visitor', takenAt: at },
             select: { id: true, takenAt: true },
         }),
-        prisma.chatConversation.update({ where: { id: conversationId }, data: { lastMessageAt: at, state: 'live' } }),
+        prisma.chatConversation.update({ where: { id: conversationId }, data: { lastMessageAt: at, state: 'live', closedAt: null } }),
     ]);
 
     return message;

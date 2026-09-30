@@ -153,4 +153,6 @@ export interface IChatVisitorTalkListRow {
     readonly lastMessageSide: string;
     /** Имя того, кто ответил последним. Пусто — названного ответа ещё не было. */
     readonly operatorName: string;
+    /** Минута закрытия. Пусто — разговор живой. */
+    readonly closedAt: string | null;
 }

@@ -34,7 +34,8 @@ button of sending — "Отправить". A remark past the limit gets "Реп
 сервис"; a refused sending gets "Реплика не ушла". Outside the hours of answer the widget says
 "Ответим в рабочие часы". An unknown or switched-off site gets "Чат недоступен". The list of talks
 is headed "Ваши обращения" and ends with the button "Новое обращение"; a closed talk carries the
-mark "Закрыто"; under the name of the operator stands "Служба поддержки".
+mark "Закрыто"; under the name of the operator stands "Служба поддержки". A closed talk ends with the line "Разговор
+завершён" and its time, and its field says "Новый вопрос? Напишите нам".
 
 ## Rules
 
@@ -79,6 +80,13 @@ mark "Закрыто"; under the name of the operator stands "Служба по�
 - **An answer of the operator arrives in the open widget without a reload.** The stream of the
   events is subscribed to by the sign of the visitor and carries the events of their conversations
   alone; an answer to another talk marks it unread in the list.
+- **A closed talk says so under its thread, and the closing arrives without a reload.** The line
+  "Разговор завершён" names the minute of the closing. Without it the visitor writes on into a talk
+  nobody waits for.
+- **The next remark from a closed talk starts a new talk.** The closed one stays closed and is read
+  from the list: the operator closed it on purpose, and a new question is a new talk for them too.
+  The service still reopens a closed talk a remark reaches; the widget does not write there any
+  more.
 - **Outside the hours of answer the remark is taken in all the same, and the widget says when the
   answer comes.** A chat that refuses at night looks broken; a chat that stays silent about the
   hours promises an answer it will not give.
@@ -171,18 +179,19 @@ starts, the minute it ends and the time zone they are counted in.
 
 ## Screens and states
 
-| Screen     | State                  | What is shown                                                       |
-| ---------- | ---------------------- | ------------------------------------------------------------------- |
-| The bubble | folded                 | the round button in the corner; on a narrow screen the same         |
-| The widget | the site is unknown    | the words that the chat is unavailable and a hint, without a field  |
-| The widget | no talk yet            | the greeting, the hours of answer and the field of the first remark |
-| The widget | the list of talks      | the rows of the talks, the latest first, and the new-talk button    |
-| The widget | a talk without answer  | the common icon, "Поддержка" and the hours in the head              |
-| The widget | a talk with an answer  | the initials, the name and "Служба поддержки" in the head           |
-| The widget | the talk is read       | the messages of both sides, oldest first, and the field             |
-| The widget | the remark is sent     | the remark in the thread, marked as not confirmed by the service    |
-| The widget | the sending is refused | the words of the refusal, and the text stays in the field           |
-| The widget | outside the hours      | the same as the two above plus the words about the hours of answer  |
+| Screen     | State                  | What is shown                                                             |
+| ---------- | ---------------------- | ------------------------------------------------------------------------- |
+| The bubble | folded                 | the round button in the corner; on a narrow screen the same               |
+| The widget | the site is unknown    | the words that the chat is unavailable and a hint, without a field        |
+| The widget | no talk yet            | the greeting, the hours of answer and the field of the first remark       |
+| The widget | the list of talks      | the rows of the talks, the latest first, and the new-talk button          |
+| The widget | a talk without answer  | the common icon, "Поддержка" and the hours in the head                    |
+| The widget | a talk with an answer  | the initials, the name and "Служба поддержки" in the head                 |
+| The widget | a closed talk          | the thread, the line of the closing with its time, the new-question field |
+| The widget | the talk is read       | the messages of both sides, oldest first, and the field                   |
+| The widget | the remark is sent     | the remark in the thread, marked as not confirmed by the service          |
+| The widget | the sending is refused | the words of the refusal, and the text stays in the field                 |
+| The widget | outside the hours      | the same as the two above plus the words about the hours of answer        |
 
 ## Cross-cutting requirements
 
@@ -219,6 +228,8 @@ One page belongs to one site. A visitor writing from two sites has two signs and
 - **The operator is named by the name of the account, under one word for the role, by initials.**
   Rejected: a name for the visitors and a position on the account — an edit of the accounts screen
   nobody asked for; a photo — the service keeps no files.
+- **The next remark from a closed talk starts a new talk.** Rejected: reopening the same one. With
+  a list of talks the reopening mixes a new question into an answer the operator already closed.
 - **The unread mark lives in the browser.** Rejected: a reading of the visitor in the storage — a
   table for a dot on one screen.
 - **The messages of the own conversation are read by an operation of its own, closed by the sign of
@@ -239,3 +250,5 @@ One page belongs to one site. A visitor writing from two sites has two signs and
   button, the blue head, the bubbles, the capsule field; scenarios SC-CH-99…SC-CH-102.
 - 2026-09-30 — the list of the visitor's talks, the new talk and the name of the operator by the
   task RT-2367; scenarios SC-CH-107…SC-CH-111.
+- 2026-09-30 — the closed talk and the next remark after it by the task RT-2364; scenarios
+  SC-CH-112 and SC-CH-113.

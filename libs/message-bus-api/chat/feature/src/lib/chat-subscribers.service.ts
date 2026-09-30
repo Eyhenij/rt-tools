@@ -12,12 +12,12 @@
 import { Injectable } from '@nestjs/common';
 import { interval, map, merge, Observable, Subscriber } from 'rxjs';
 
-import { IChatMessageEvent } from '@rt/message-bus-api/chat/api';
+import { IChatClosingEvent, IChatMessageEvent } from '@rt/message-bus-api/chat/api';
 import { CHAT_BEAT_MS, eventReaches, IChatEventAddress, IChatSubscription } from '@rt/message-bus-api/chat/util';
 
-/** Кадр потока: событие с репликой или сердцебиение, у которого тела нет. */
+/** Кадр потока: событие с репликой, закрытие разговора или сердцебиение, у которого тела нет. */
 export interface IChatFrame {
-    readonly data: IChatMessageEvent | string;
+    readonly data: IChatMessageEvent | IChatClosingEvent | string;
     readonly type?: string;
 }
 
@@ -67,6 +67,20 @@ export class ChatSubscribersService {
         for (const open of this.#open.values()) {
             if (eventReaches(open.subscription, address)) {
                 open.push({ data: event });
+            }
+        }
+    }
+
+    /**
+     * Разнести закрытие разговора: оно доходит только до потока его посетителя.
+     *
+     * Поток оператора его не получает: состояние сменила сама панель, и второй раз ей об этом
+     * говорить не нужно. Кадр идёт своим видом — `closing`, реплику виджет по нему не рисует.
+     */
+    public sendClosing(address: IChatEventAddress, event: IChatClosingEvent): void {
+        for (const open of this.#open.values()) {
+            if (open.subscription.visitorId && eventReaches(open.subscription, address)) {
+                open.push({ type: 'closing', data: event });
             }
         }
     }

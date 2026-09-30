@@ -204,15 +204,21 @@ export async function appendOperatorMessage(
     return message;
 }
 
-/** Смена состояния переписки. Зовётся после того, как переписка признана своей. */
+/**
+ * Смена состояния переписки. Зовётся после того, как переписка признана своей.
+ *
+ * Закрытие ставит минуту закрытия, открытие снимает её: черта «Разговор завершён» в виджете
+ * называет эту минуту, и у открытой снова переписки её быть не должно.
+ */
 export async function setConversationState(
     prisma: PrismaService,
     conversationId: string,
-    state: EChatTalkState
-): Promise<{ id: string; state: string }> {
+    state: EChatTalkState,
+    at: Date
+): Promise<{ id: string; state: string; visitorId: string; closedAt: Date | null }> {
     return prisma.chatConversation.update({
         where: { id: conversationId },
-        data: { state },
-        select: { id: true, state: true },
+        data: { state, closedAt: state === EChatTalkState.Closed ? at : null },
+        select: { id: true, state: true, visitorId: true, closedAt: true },
     });
 }

@@ -129,6 +129,24 @@ describe('обращения посетителя', () => {
         expect(page.rows.every((row: IChatMessageListRow): boolean => !JSON.stringify(row).includes('account-1'))).toBe(true);
     });
 
+    it('SC-CH-115 — список называет минуту закрытия, а открытая снова переписка её теряет', async (): Promise<void> => {
+        const started: IChatConversationStarted = await intake.start({ site: 'live-key' }, from(), AT);
+        const asked: { site: string; visitor: string } = { site: 'live-key', visitor: started.visitorToken };
+
+        await intake.take({ ...asked, conversation: started.conversationId, text: 'вопрос' }, from(), AT);
+        await talks.state(['site-1'], started.conversationId, EChatTalkState.Closed, ANSWERED);
+
+        const closed: IChatVisitorTalkRow[] = await intake.talks(asked, from());
+
+        expect(closed[0]).toMatchObject({ id: started.conversationId, state: 'closed', closedAt: ANSWERED });
+
+        await intake.take({ ...asked, conversation: started.conversationId, text: 'ещё вопрос' }, from(), LATER);
+
+        const reopened: IChatVisitorTalkRow[] = await intake.talks(asked, from());
+
+        expect(reopened[0]).toMatchObject({ id: started.conversationId, state: 'live', closedAt: null });
+    });
+
     it('SC-CH-52 — названное обращение читается и после того, как у посетителя появилось новое', async (): Promise<void> => {
         const first: IChatConversationStarted = await intake.start({ site: 'live-key' }, from(), AT);
 

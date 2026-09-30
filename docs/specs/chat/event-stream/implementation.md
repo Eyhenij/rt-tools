@@ -7,7 +7,8 @@ or the code holds what the spec is silent about.
 - **The stream carries the events of the messages, and the messages themselves are written by the operations of the taking in.** — `libs/message-bus-api/chat/feature/src/lib/chat-intake.controller.ts:take`
 - **An event carries the message whole, not a sign that something has changed.** — `libs/message-bus-api/chat/api/src/lib/chat.events.ts:IChatMessageEvent`
 - **While there are no events the service sends a heartbeat.** — `libs/message-bus-api/chat/feature/src/lib/chat-subscribers.service.ts:stream`
-- **The stream of a visitor is closed by their sign, and it carries the events of their conversation alone.** — `libs/message-bus-api/chat/feature/src/lib/chat-intake.controller.ts:stream`
+- **The stream of a visitor is closed by their sign, and it carries the events of their conversations alone.** — `libs/message-bus-api/chat/feature/src/lib/chat-intake.controller.ts:stream` — the visitor is matched by `eventReaches`
+- **The closing of a conversation reaches the stream of its visitor as an event of its own kind.** — `libs/message-bus-api/chat/feature/src/lib/chat-talk.service.ts:state` — the frame is sent by `ChatSubscribersService.sendClosing`
 - **The stream of an operator is closed by their entry, and it carries the events of the sites they answer for.** — `libs/message-bus-api/chat/feature/src/lib/chat-read.controller.ts:stream`
 - **A person who is not an operator of the chat gets an open stream with no events.** — `libs/message-bus-api/chat/util/src/lib/chat-stream.logic.ts:eventReaches`
 - **A broken stream is restored by the screen, and the service does not keep it.** — `libs/message-bus-api/chat/feature/src/lib/chat-subscribers.service.ts:ChatSubscribersService`

@@ -299,6 +299,7 @@ export class ChatWidgetElement extends HTMLElement {
             lastMessage: message.text,
             lastMessageSide: message.side,
             operatorName: message.authorName || (known?.operatorName ?? ''),
+            closedAt: known?.closedAt ?? null,
         };
 
         this.#talks = [touched, ...this.#talks.filter((talk: IChatVisitorTalkListRow): boolean => talk.id !== id)];

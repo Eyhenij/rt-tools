@@ -160,7 +160,7 @@ is obliged to refuse instead of staying silent:
 | The space        | The name; the minute of the creation                                                                                                                                                      |
 | The site         | The space, the name, the key, the allowed addresses, the sign of being switched on. The greeting and the hours of answer. The address of the call outward, its secret and the agreed time |
 | The visitor      | The site, the sign the service issued, the minute of the first turning                                                                                                                    |
-| The conversation | The site, the visitor, the minute of the creation and of the last message                                                                                                                 |
+| The conversation | The site, the visitor, the minute of the creation, of the last message and of the closing                                                                                                 |
 | The message      | The conversation, who wrote it — the visitor or the operator — the text, the minute of the taking in. The name of the account for an answer written from the panel                        |
 
 The key of the site and the sign of the visitor are kept as they are given out: the key is open by
@@ -237,3 +237,4 @@ both. A request that names a conversation of a foreign site is refused as a not-
   record of the site gained the address of the call outward, its secret and the agreed time.
 - 2026-09-30 — a visitor holds several conversations and reads their list, and an answer keeps the
   name of the account that wrote it, by the task RT-2367.
+- 2026-09-30 — the conversation keeps the minute of its closing, by the task RT-2364.

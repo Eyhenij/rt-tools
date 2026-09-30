@@ -59,6 +59,7 @@ describe('решения виджета', () => {
             lastMessage: 'отвечаю',
             lastMessageSide: 'operator',
             operatorName: 'Анна Смирнова',
+            closedAt: null,
         };
 
         expect(widgetUnread(answered, '')).toBe(true);
