@@ -11,7 +11,7 @@ import { RtTooltipDirective } from '../../rt-tooltip.directive';
 import { IRtTooltip } from '../../rt-tooltip.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TTooltipMatrixPart = 'placement' | 'text' | 'hosts' | 'presets' | 'themes';
+export type TTooltipMatrixPart = 'placement' | 'text' | 'hosts' | 'truncated' | 'presets' | 'themes';
 
 /** Сторона вместе с подписью: значение оси — строка, а подпись должна называть её по-русски. */
 interface ITooltipPlacementCase {
@@ -23,6 +23,13 @@ interface ITooltipPlacementCase {
 interface ITooltipTextCase {
     readonly name: string;
     readonly text: string;
+}
+
+/** Случай режима «только у обрезанного текста»: обрезан ли текст ячейки и включён ли режим. */
+interface ITooltipTruncatedCase {
+    readonly name: string;
+    readonly text: string;
+    readonly whenTruncated: boolean;
 }
 
 /**
@@ -134,6 +141,27 @@ interface ITooltipTextCase {
                 </app-story-presets>
             }
 
+            @case ('truncated') {
+                <app-story-presets caption="Подсказка только у обрезанного текста в обоих наборах">
+                    <ng-template>
+                        <div class="app-tooltip-matrix__room">
+                            <app-story-row slotWidth="15rem" [items]="truncatedCases" [itemLabel]="caseLabel">
+                                <ng-template let-truncatedCase>
+                                    <span
+                                        class="app-tooltip-matrix__cell"
+                                        rtTooltipPlacement="bottom"
+                                        [attr.data-story-trigger]="triggerAttribute"
+                                        [rtTooltip]="truncatedCase.text"
+                                        [rtTooltipWhenTruncated]="truncatedCase.whenTruncated">
+                                        {{ truncatedCase.text }}
+                                    </span>
+                                </ng-template>
+                            </app-story-row>
+                        </div>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('presets') {
                 <app-story-presets caption="Панель подсказки в обоих наборах">
                     <ng-template>
@@ -160,6 +188,19 @@ interface ITooltipTextCase {
            и на подпись значения оси. */
         .app-tooltip-matrix__room {
             padding: 4rem 0;
+        }
+
+        /* Ячейка таблицы в миниатюре: одна строка, многоточие у того, что не поместилось. */
+        .app-tooltip-matrix__cell {
+            display: block;
+            overflow: hidden;
+            width: 10rem;
+
+            /* Панель открывается вниз и ложилась на подпись случая под ячейкой. Отступ — на её
+               высоту с зазором, и подпись уходит под панель. */
+            margin-block-end: 2.25rem;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -198,6 +239,13 @@ export class TestRtTooltipMatrixComponent implements AfterViewInit {
     ];
 
     public readonly hostCases: readonly string[] = ['кнопка', 'иконочная кнопка', 'пустой текст'];
+
+    /** Подсказку получает только первая ячейка: вторая помещается, у третьей режим выключен. */
+    public readonly truncatedCases: readonly ITooltipTruncatedCase[] = [
+        { name: 'обрезан, режим', text: 'Договор поставки № 2026-114', whenTruncated: true },
+        { name: 'целиком, режим', text: 'Договор № 7', whenTruncated: true },
+        { name: 'целиком, без режима', text: 'Договор № 8', whenTruncated: false },
+    ];
 
     public ngAfterViewInit(): void {
         for (const panel of this.panels()) {
