@@ -40,7 +40,10 @@
             display: flex;
             flex-direction: column;
             border-bottom: var(--rt-dynamic-selector-popup-border-width) solid var(--rt-color-border-subtle);
-            gap: var(--rt-space-2xs);
+
+            /* Строка переключателя и «Выбрать все» — два разных решения; при зазоре 2xs флажок
+               прилипал к переключателю и читался его частью. */
+            gap: var(--rt-space-sm);
             padding-block-end: var(--rt-space-sm);
         }
 

@@ -19,7 +19,7 @@
                             [ngModelOptions]="{ standalone: true }"
                             (ngModelChange)="onMultiToggle($event)" />
                         <span rtElem="multi-label">{{ multiLabel() }}</span>
-                        <rt-icon rtElem="multi-hint-icon" name="info" size="sm" [rtTooltip]="multiHintLabel()" />
+                        <rt-icon rtElem="multi-hint-icon" name="info-circle" size="sm" [rtTooltip]="multiHintLabel()" />
                         <span rtElem="multi-hint">{{ multiHintLabel() }}</span>
                     </div>
                 }
