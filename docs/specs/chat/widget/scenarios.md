@@ -155,6 +155,22 @@ the name of the account and "Служба поддержки"; the bubble names 
 
 Covered by the end-to-end spec of the widget and the spec of the widget logic.
 
+### SC-CH-112 — the closing reaches the open talk and ends its thread
+
+Given an open widget with a talk the visitor wrote in
+When the operator closes the talk in the panel
+Then without a reload the thread ends with "Разговор завершён" and the time, and the field says
+"Новый вопрос? Напишите нам"
+
+Covered by the end-to-end spec of the widget.
+
+### SC-CH-113 — the next remark from a closed talk starts a new one
+
+Given an open widget with a talk the operator closed
+When the visitor sends a remark
+Then the remark stands alone in a new talk, and the list shows the old talk closed and the new one
+live
+
 ### SC-CH-116 — the second remark goes into the same talk
 
 Given an open widget with a talk the visitor wrote in

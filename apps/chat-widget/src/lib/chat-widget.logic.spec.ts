@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
     EWidgetHoursWord,
+    widgetClosedTalks,
     widgetDayText,
     widgetFirstName,
     widgetHoursText,
@@ -59,6 +60,7 @@ describe('решения виджета', () => {
             lastMessage: 'отвечаю',
             lastMessageSide: 'operator',
             operatorName: 'Анна Смирнова',
+            closedAt: null,
         };
 
         expect(widgetUnread(answered, '')).toBe(true);
@@ -88,5 +90,22 @@ describe('решения виджета', () => {
         expect(widgetDayText(new Date(2026, 8, 29, 23, 0).toISOString(), now, 'Вчера')).toBe('Вчера');
         expect(widgetDayText(new Date(2026, 8, 24, 9, 0).toISOString(), now, 'Вчера')).toBe('24 сент.');
         expect(widgetDayText('не время', now, 'Вчера')).toBe('');
+    });
+
+    it('SC-CH-112 — закрытие помечает строку своего обращения и не трогает остальные', () => {
+        const row: (id: string) => IChatVisitorTalkListRow = (id: string): IChatVisitorTalkListRow => ({
+            id,
+            state: 'live',
+            lastMessageAt: '2026-09-20T10:30:00.000Z',
+            lastMessage: 'вопрос',
+            lastMessageSide: 'visitor',
+            operatorName: '',
+            closedAt: null,
+        });
+        const talks: IChatVisitorTalkListRow[] = widgetClosedTalks([row('talk-1'), row('talk-2')], 'talk-1', '2026-09-20T10:50:00.000Z');
+
+        expect(talks[0]).toMatchObject({ id: 'talk-1', state: 'closed', closedAt: '2026-09-20T10:50:00.000Z' });
+        expect(talks[1]).toEqual(row('talk-2'));
+        expect(widgetClosedTalks([row('talk-2')], 'talk-9', '2026-09-20T10:50:00.000Z')).toEqual([row('talk-2')]);
     });
 });

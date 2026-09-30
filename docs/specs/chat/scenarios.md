@@ -115,3 +115,10 @@ Given an operator answered from the panel, and the embedded page answered the sa
 When the widget reads the messages of that talk
 Then the answer from the panel carries the name of the account, and the answer from the embedded
 page carries no name; the identifier of the account is in neither
+
+### SC-CH-115 — the list names the minute of the closing, and a reopened talk loses it
+
+Given a talk the operator closed
+When the widget reads the list, and then the visitor writes into that talk
+Then the list names the minute of the closing, and after the remark the talk is live with no
+minute of the closing

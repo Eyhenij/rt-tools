@@ -41,6 +41,8 @@ export interface IDoubleConversation {
     state: string;
     /** Минута последнего будильника. Пусто — переписка не будила никого ни разу. */
     wokeAt?: Date | null;
+    /** Минута закрытия. Пусто — переписка живая. */
+    closedAt?: Date | null;
 }
 
 /** Оператор и сайт, за который он отвечает. */
@@ -211,6 +213,7 @@ export class ChatPrismaDouble {
                 )
                 .map((row: IDoubleConversation): Record<string, unknown> => ({
                     ...row,
+                    closedAt: row.closedAt ?? null,
                     messages: this.messages
                         .filter((message: IDoubleMessage): boolean => message.conversationId === row.id)
                         .sort((first: IDoubleMessage, second: IDoubleMessage): number => second.takenAt.getTime() - first.takenAt.getTime())
@@ -291,10 +294,11 @@ export class ChatPrismaDouble {
 
     #touch(args: Record<string, unknown>): IDoubleConversation | null {
         const where: { id: string } = args['where'] as { id: string };
-        const data: { lastMessageAt?: Date; state?: string; wokeAt?: Date | null } = args['data'] as {
+        const data: { lastMessageAt?: Date; state?: string; wokeAt?: Date | null; closedAt?: Date | null } = args['data'] as {
             lastMessageAt?: Date;
             state?: string;
             wokeAt?: Date | null;
+            closedAt?: Date | null;
         };
         const conversation: IDoubleConversation | undefined = this.conversations.find(
             (row: IDoubleConversation): boolean => row.id === where.id
@@ -314,6 +318,10 @@ export class ChatPrismaDouble {
 
         if ('wokeAt' in data) {
             conversation.wokeAt = data.wokeAt ?? null;
+        }
+
+        if ('closedAt' in data) {
+            conversation.closedAt = data.closedAt ?? null;
         }
 
         return conversation;

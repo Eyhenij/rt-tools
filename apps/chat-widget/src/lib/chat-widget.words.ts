@@ -27,7 +27,9 @@ export type TWidgetWord =
     | 'role'
     | 'back'
     | 'yesterday'
-    | 'unread';
+    | 'unread'
+    | 'ended'
+    | 'newQuestion';
 
 export const WIDGET_WORDS: Readonly<Record<TWidgetWord, string>> = Object.freeze({
     /** Заголовок шапки и имя круглой кнопки: у кнопки нет слова, и имя читает голос экрана. */
@@ -55,4 +57,8 @@ export const WIDGET_WORDS: Readonly<Record<TWidgetWord, string>> = Object.freeze
     yesterday: 'Вчера',
     /** Имя точки непрочитанного для голоса экрана. */
     unread: 'Есть новый ответ',
+    /** Черта под лентой закрытого разговора; за ней — минута закрытия. */
+    ended: 'Разговор завершён',
+    /** Подсказка поля в закрытом разговоре: реплика отсюда заводит новое обращение. */
+    newQuestion: 'Новый вопрос? Напишите нам',
 });

@@ -16,6 +16,7 @@ import {
     CHAT_SIDE_VISITOR,
     CHAT_TAG_SERVICE_ATTRIBUTE,
     CHAT_TAG_SITE_ATTRIBUTE,
+    EChatTalkState,
     ERefusal,
     IChatMessageRow,
     IChatSiteLookRow,
@@ -29,14 +30,16 @@ import {
     EWidgetHoursWord,
     widgetHoursText,
     widgetHoursWord,
+    widgetClosedTalks,
     widgetLastAuthor,
     widgetSeenKey,
     widgetSendable,
     widgetServiceOrigin,
     widgetStorageKey,
 } from './chat-widget.logic';
+import { read, readSeen, write } from './chat-widget.storage';
 import { WIDGET_STYLES } from './chat-widget.styles';
-import { escaped, remarks, talkHead, talksList, titleHead } from './chat-widget.view';
+import { endedLine, escaped, remarks, talkHead, talksList, titleHead } from './chat-widget.view';
 import { WIDGET_WORDS } from './chat-widget.words';
 
 /** Имя тега: им страница потребителя ставит виджет. */
@@ -78,35 +81,6 @@ function scriptSource(): string {
  */
 const SCRIPT_SOURCE: string = scriptSource();
 
-/** Чтение хранилища браузера: закрытое хранилище — не отказ, а посетитель без признака. */
-function read(key: string): string {
-    try {
-        return localStorage.getItem(key) ?? '';
-    } catch {
-        return '';
-    }
-}
-
-/** Запись в хранилище. Не записалась — разговор живёт до перезагрузки страницы, и это не отказ. */
-function write(key: string, value: string): void {
-    try {
-        localStorage.setItem(key, value);
-    } catch {
-        return;
-    }
-}
-
-/** Минуты, когда посетитель видел обращения. Испорченная запись читается как пустая. */
-function readSeen(key: string): Record<string, string> {
-    try {
-        const parsed: unknown = JSON.parse(read(key) || '{}');
-
-        return parsed && typeof parsed === 'object' ? (parsed as Record<string, string>) : {};
-    } catch {
-        return {};
-    }
-}
-
 export class ChatWidgetElement extends HTMLElement {
     readonly #root: ShadowRoot = this.attachShadow({ mode: 'open' });
 
@@ -116,6 +90,8 @@ export class ChatWidgetElement extends HTMLElement {
     #talks: IChatVisitorTalkListRow[] = [];
     #seen: Record<string, string> = {};
     #screen: EWidgetScreen = EWidgetScreen.Talk;
+    /** Открытое обращение закрыто, и минута его закрытия. Пусто — разговор живой. */
+    #closed: { at: string } | null = null;
     #open: boolean = false;
     #live: boolean = true;
     #fault: string = '';
@@ -185,7 +161,10 @@ export class ChatWidgetElement extends HTMLElement {
 
         const page: IPage<IChatMessageRow> = await askOwnFeed(this.#signs);
 
+        const row: IChatVisitorTalkListRow | undefined = this.#talks.find((talk: IChatVisitorTalkListRow): boolean => talk.id === id);
+
         this.#messages = [...page.rows];
+        this.#closed = row?.state === EChatTalkState.Closed ? { at: row.closedAt ?? '' } : null;
         this.#screen = EWidgetScreen.Talk;
         this.#markSeen();
         this.#draw();
@@ -195,6 +174,7 @@ export class ChatWidgetElement extends HTMLElement {
     async #back(): Promise<void> {
         this.#signs = { ...this.#signs, conversation: '' };
         this.#messages = [];
+        this.#closed = null;
         this.#fault = '';
         this.#screen = EWidgetScreen.Talks;
         this.#talks = await askTalks(this.#signs).catch((): IChatVisitorTalkListRow[] => this.#talks);
@@ -205,6 +185,7 @@ export class ChatWidgetElement extends HTMLElement {
     #fresh(): void {
         this.#signs = { ...this.#signs, conversation: '' };
         this.#messages = [];
+        this.#closed = null;
         this.#fault = '';
         this.#screen = EWidgetScreen.Talk;
         this.#draw();
@@ -215,6 +196,9 @@ export class ChatWidgetElement extends HTMLElement {
      *
      * Посетитель с признаком и без открытой переписки пришёл сюда кнопкой «Новое обращение»:
      * заведение уходит с отметкой нового, иначе сервис вернул бы последнее обращение.
+     *
+     * Реплика из закрытого обращения заводит новое: оператор закрыл разговор нарочно, и новый
+     * вопрос для него — новый разговор. Закрытое остаётся в списке как было.
      */
     async #say(text: string): Promise<void> {
         if (!widgetSendable(text) || !this.#live) {
@@ -222,6 +206,12 @@ export class ChatWidgetElement extends HTMLElement {
         }
 
         this.#fault = '';
+
+        if (this.#closed) {
+            this.#signs = { ...this.#signs, conversation: '' };
+            this.#messages = [];
+            this.#closed = null;
+        }
 
         try {
             if (!this.#signs.conversation) {
@@ -259,6 +249,20 @@ export class ChatWidgetElement extends HTMLElement {
 
         this.#stream = new EventSource(streamAddress(this.#signs));
         this.#stream.addEventListener('message', (event: MessageEvent<string>): void => this.#arrived(event.data));
+        this.#stream.addEventListener('closing', (event: MessageEvent<string>): void => this.#ended(event.data));
+    }
+
+    /** Пришедшее потоком закрытие: строка списка помечается, а открытое обращение получает черту. */
+    #ended(raw: string): void {
+        const event: { conversationId: string; closedAt: string } = JSON.parse(raw) as { conversationId: string; closedAt: string };
+
+        this.#talks = widgetClosedTalks(this.#talks, event.conversationId, event.closedAt);
+
+        if (this.#screen === EWidgetScreen.Talk && event.conversationId === this.#signs.conversation) {
+            this.#closed = { at: event.closedAt };
+        }
+
+        this.#draw();
     }
 
     /**
@@ -299,6 +303,7 @@ export class ChatWidgetElement extends HTMLElement {
             lastMessage: message.text,
             lastMessageSide: message.side,
             operatorName: message.authorName || (known?.operatorName ?? ''),
+            closedAt: known?.closedAt ?? null,
         };
 
         this.#talks = [touched, ...this.#talks.filter((talk: IChatVisitorTalkListRow): boolean => talk.id !== id)];
@@ -359,13 +364,15 @@ export class ChatWidgetElement extends HTMLElement {
             </div>`;
         }
 
+        const placeholder: string = this.#closed ? WIDGET_WORDS.newQuestion : WIDGET_WORDS.placeholder;
+
         return `<div class="panel" qa-dataid="widget-panel">
             ${this.#talkHead()}
             <div class="feed" data-part="feed" qa-dataid="widget-feed">${this.#feed()}</div>
             ${this.#fault ? `<div class="fault" data-part="fault" qa-dataid="widget-fault">${this.#fault}</div>` : ''}
             <form class="send" data-act="send">
                 <div class="field" qa-dataid="widget-field">
-                    <input aria-label="${WIDGET_WORDS.placeholder}" data-part="text" placeholder="${WIDGET_WORDS.placeholder}" qa-dataid="widget-text" />
+                    <input aria-label="${placeholder}" data-part="text" placeholder="${placeholder}" qa-dataid="widget-text" />
                     <button aria-label="${WIDGET_WORDS.send}" qa-dataid="widget-send" type="submit">${WIDGET_ICON_ARROW_UP}</button>
                 </div>
             </form>
@@ -407,7 +414,7 @@ export class ChatWidgetElement extends HTMLElement {
             ? `<div class="note" qa-dataid="widget-hours"><span class="note-icon">${WIDGET_ICON_INFO}</span>${hours}</div>`
             : '';
 
-        return note + remarks(this.#messages);
+        return note + remarks(this.#messages) + (this.#closed ? endedLine(this.#closed.at) : '');
     }
 
     /** Слово о часах ответа: часы не названы — виджет о них молчит. */

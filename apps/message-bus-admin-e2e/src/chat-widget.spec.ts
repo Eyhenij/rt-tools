@@ -37,7 +37,22 @@ async function say(page: Page, text: string): Promise<void> {
     await qa(page, 'widget-send').click();
 }
 
+/** Сколько тестов этого набора уже получили свой адрес посетителя. */
+let visitors: number = 0;
+
 test.describe('виджет посетителя', () => {
+    /**
+     * У каждого теста свой адрес посетителя, как у живых посетителей разных страниц.
+     *
+     * Сервис ограничивает заведение разговоров числом в минуту с одного адреса. Весь набор идёт с
+     * одной машины, и без своего адреса тесты виджета упирались бы в этот предел вместе с
+     * остальными спеками. Предел на один адрес при этом остаётся прежним.
+     */
+    test.beforeEach(async ({ page }: { page: Page }): Promise<void> => {
+        visitors += 1;
+        await page.setExtraHTTPHeaders({ 'x-forwarded-for': `198.51.100.${visitors}` });
+    });
+
     test('SC-CH-49, SC-CH-50 — виджет встаёт на странице и здоровается словами площадки', async ({ page }: { page: Page }) => {
         await page.goto(widgetPage(CHAT.widget.key));
 
@@ -217,6 +232,77 @@ test.describe('виджет посетителя', () => {
         // открытое обращение прочитано: строка на месте, а точки больше нет
         await expect(qa(page, 'widget-talk')).toHaveCount(1);
         await expect(qa(page, 'widget-talk-unread')).toHaveCount(0);
+    });
+
+    test('SC-CH-112, SC-CH-113 — закрытие приходит в открытый разговор, следующая реплика заводит новый', async ({
+        page,
+        context,
+    }): Promise<void> => {
+        await page.goto(widgetPage(CHAT.widget.key));
+        await unfold(page);
+        await say(page, 'Разговор, который закроют в панели');
+        await expect(qa(page, 'widget-message')).toHaveCount(1);
+        await expect(qa(page, 'widget-ended')).toHaveCount(0);
+
+        const panel: Page = await context.newPage();
+
+        await openSection(panel, 'chat');
+        await qa(panel, 'chat-talk').filter({ hasText: 'Разговор, который закроют в панели' }).first().click();
+
+        const action: Locator = qa(panel, 'workspace-details-action');
+
+        await expect(action).toHaveText('Закрыть разговор');
+        await action.click();
+        await expect(action).toHaveText('Открыть снова');
+        await panel.close();
+
+        // без перезагрузки: черта с минутой закрытия встаёт под лентой, поле зовёт с новым вопросом
+        await expect(qa(page, 'widget-ended')).toHaveText(/^Разговор завершён · \d{2}:\d{2}$/);
+        await expect(qa(page, 'widget-text')).toHaveAttribute('placeholder', 'Новый вопрос? Напишите нам');
+
+        await say(page, 'Ещё один вопрос');
+
+        // реплика одна в новом разговоре, черты больше нет
+        await expect(qa(page, 'widget-message')).toHaveCount(1);
+        await expect(qa(page, 'widget-message')).toHaveText('Ещё один вопрос');
+        await expect(qa(page, 'widget-ended')).toHaveCount(0);
+        await expect(qa(page, 'widget-text')).toHaveAttribute('placeholder', 'Напишите нам');
+
+        await qa(page, 'widget-back').click();
+
+        await expect(qa(page, 'widget-talk')).toHaveCount(2);
+        await expect(qa(page, 'widget-talk').nth(0)).toContainText('Ещё один вопрос');
+        await expect(qa(page, 'widget-talk').nth(0).locator('[qa-dataid="widget-talk-closed"]')).toHaveCount(0);
+        await expect(qa(page, 'widget-talk').nth(1)).toContainText('Разговор, который закроют в панели');
+        await expect(qa(page, 'widget-talk').nth(1).locator('[qa-dataid="widget-talk-closed"]')).toHaveText('Закрыто');
+    });
+
+    test('SC-CH-112 — закрытое обращение из засева кончается чертой с минутой закрытия', async ({ page }: { page: Page }) => {
+        const visitor: typeof CHAT.returning = CHAT.returning;
+
+        await page.addInitScript(([key, token]: [string, string]): void => localStorage.setItem(key, token), [
+            `rt-chat:${CHAT.widgetClosed.key}`,
+            visitor.token,
+        ] as [string, string]);
+        await page.goto(widgetPage(CHAT.widgetClosed.key));
+        await unfold(page);
+        await qa(page, 'widget-talk').nth(1).click();
+
+        await expect(qa(page, 'widget-title')).toHaveText(visitor.talks[1].author);
+        await expect(qa(page, 'widget-message')).toHaveCount(2);
+        await expect(qa(page, 'widget-ended')).toHaveText(/^Разговор завершён · \d{2}:\d{2}$/);
+        await expect(qa(page, 'widget-text')).toHaveAttribute('placeholder', 'Новый вопрос? Напишите нам');
+
+        // черта по макету: текст 12 px среднего веса приглушённым цветом, линии в 1 px цвета границы
+        const ended: Locator = qa(page, 'widget-ended');
+
+        await expect(ended).toHaveCSS('font-size', '12px');
+        await expect(ended).toHaveCSS('font-weight', '500');
+        await expect(ended).toHaveCSS('color', 'rgb(103, 103, 103)');
+        await expect(ended.locator('.ended-rule').first()).toHaveCSS('height', '1px');
+        await expect(ended.locator('.ended-rule').first()).toHaveCSS('background-color', 'rgb(224, 224, 224)');
+
+        await expectScreen(page, 'widget-talk-closed', { mask: [page.locator('rt-chat-widget .note')] });
     });
 
     test('SC-CH-99 — свёрнутый виджет — круглая кнопка, открытый — окно 380 px под синей шапкой', async ({ page }: { page: Page }) => {
