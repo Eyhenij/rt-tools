@@ -1,0 +1,18 @@
+<ng-container rtBlock="rt-aside-error-box">
+    <div rtElem="frame" qa-dataid="aside-error-box">
+        <span rtElem="title" qa-dataid="aside-error-title">{{ title() }}</span>
+
+        <button
+            rtButton
+            rtElem="copy"
+            qa-dataid="aside-error-copy"
+            type="button"
+            theme="secondary"
+            appearance="text"
+            size="sm"
+            [label]="buttonLabel()"
+            [icon]="buttonIcon()"
+            [attr.aria-label]="buttonLabel()"
+            (click)="onCopy()"></button>
+    </div>
+</ng-container>

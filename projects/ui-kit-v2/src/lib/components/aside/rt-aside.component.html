@@ -7,6 +7,10 @@
     [attr.aria-label]="ariaLabel()">
     <ng-content select="rt-aside-header" />
 
+    @if (hasRequestError()) {
+        <rt-aside-error-box rtElem="error" [error]="requestError()" />
+    }
+
     <div rtElem="content" qa-dataid="aside-content">
         <ng-content />
     </div>

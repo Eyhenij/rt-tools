@@ -15,6 +15,8 @@
  */
 // eslint-disable-next-line @typescript-eslint/typedef -- аннотация стёрла бы литеральный тип, на котором стоит TRtKitLabelKey
 export const RT_KIT_LABELS_EN = {
+    asideCopyErrorInfo: 'Copy error info',
+    asideRequestError: 'Request Error',
     bottomSheetClose: 'Close',
     chatAttachAria: 'Attach a file',
     chatAttachTooltip: 'Attach a file',
@@ -53,6 +55,19 @@ export const RT_KIT_LABELS_EN = {
     dataListSettingsTitle: 'Edit table configuration',
     dataListTableConfig: 'Table configuration',
     dataListVerticalScrollbar: 'Vertical scrollbar shown',
+    dynamicInputPlaceholder: 'Type and press Enter',
+    dynamicSelectorAdd: 'Add',
+    dynamicSelectorApply: 'Apply',
+    dynamicSelectorClear: 'Clear list',
+    dynamicSelectorDrag: 'Hold to drag',
+    dynamicSelectorEdit: 'Edit',
+    dynamicSelectorMulti: 'Multi selection',
+    dynamicSelectorMultiHint: 'Hold Ctrl or Cmd to tick several rows',
+    dynamicSelectorNoResults: 'No results',
+    dynamicSelectorNothingToChoose: 'There are no available items to choose',
+    dynamicSelectorRemove: 'Remove the item',
+    dynamicSelectorReset: 'Reset to initial list',
+    dynamicSelectorSearch: 'Search...',
     dataTableActions: 'Actions',
     dataTableCopied: 'Copied!',
     dataTableCopy: 'Copy',

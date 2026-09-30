@@ -24,6 +24,7 @@ ref.afterClosed().subscribe((result?: ITour): void => …);
 | `contentLayout` | `'default' \| 'tabs'`  | `'default'` |
 | `width`         | `string \| null`       | `null`      |
 | `ariaLabel`     | `string \| null`       | `null`      |
+| `requestError`  | `unknown`              | `null`      |
 
 | настройка `open()`                       | умолчание                                 |
 | ---------------------------------------- | ----------------------------------------- |
@@ -54,6 +55,10 @@ ref.afterClosed().subscribe((result?: ITour): void => …);
 
 **`disableClose`** на `RtAsideRef` держит панель под кликом по подложке и под Escape — ставится
 самим содержимым, когда в форме есть несохранённое.
+
+**Ошибку запроса показывает сама панель.** Вход `requestError` ставит между шапкой и содержимым
+блок `rt-aside-error-box` с кнопкой копирования ошибки; `null` и `undefined` его убирают. Своя
+разметка ошибки в содержимом панели не пишется.
 
 **На экране до 768 точек панель во всё окно.** Ширину держит `--rt-aside-narrow-width`, по
 умолчанию `100dvw`; размер и `width` там не действуют. Коробка, в которую панель поставлена

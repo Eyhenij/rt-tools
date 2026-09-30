@@ -1,0 +1,19 @@
+@layer rt-kit.components {
+    /* rt-dynamic-input — поле списка строк. ViewEncapsulation.None.
+       Строки и полосу рисует список семьи; здесь — поле набора и приглашение под ним. */
+
+    .rt-dynamic-input {
+        display: flex;
+        width: 100%;
+        flex-direction: column;
+        gap: var(--rt-space-sm);
+
+        &__field {
+            display: block;
+        }
+
+        &__invitation {
+            display: block;
+        }
+    }
+}

@@ -11,6 +11,8 @@ import { TRtKitLabelKey } from '../src/lib/i18n';
  * продукта не достаются.
  */
 export const RT_KIT_LABELS_RU: Readonly<Record<TRtKitLabelKey, string>> = {
+    asideCopyErrorInfo: 'Скопировать ошибку',
+    asideRequestError: 'Ошибка запроса',
     bottomSheetClose: 'Закрыть',
     chatAttachAria: 'Прикрепить файл',
     chatAttachTooltip: 'Прикрепить файл',
@@ -49,6 +51,19 @@ export const RT_KIT_LABELS_RU: Readonly<Record<TRtKitLabelKey, string>> = {
     dataListSettingsTitle: 'Настройка таблицы',
     dataListTableConfig: 'Настроить колонки',
     dataListVerticalScrollbar: 'Показывать полосу прокрутки по вертикали',
+    dynamicInputPlaceholder: 'Введите и нажмите Enter',
+    dynamicSelectorAdd: 'Добавить',
+    dynamicSelectorApply: 'Применить',
+    dynamicSelectorClear: 'Очистить список',
+    dynamicSelectorDrag: 'Удерживайте, чтобы перетащить',
+    dynamicSelectorEdit: 'Изменить',
+    dynamicSelectorMulti: 'Выбор нескольких',
+    dynamicSelectorMultiHint: 'Удерживайте Ctrl или Cmd, чтобы отметить несколько строк',
+    dynamicSelectorNoResults: 'Ничего не найдено',
+    dynamicSelectorNothingToChoose: 'Выбирать не из чего',
+    dynamicSelectorRemove: 'Убрать из списка',
+    dynamicSelectorReset: 'Вернуть исходный список',
+    dynamicSelectorSearch: 'Поиск...',
     dataTableActions: 'Действия',
     dataTableCopied: 'Скопировано',
     dataTableCopy: 'Скопировать',

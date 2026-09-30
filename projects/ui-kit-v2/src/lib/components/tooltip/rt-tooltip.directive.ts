@@ -8,11 +8,22 @@ import {
     ScrollStrategyOptions,
 } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
-import { ComponentRef, Directive, ElementRef, inject, input, InputSignal, InputSignalWithTransform, OnDestroy } from '@angular/core';
+import {
+    booleanAttribute,
+    ComponentRef,
+    Directive,
+    ElementRef,
+    inject,
+    input,
+    InputSignal,
+    InputSignalWithTransform,
+    OnDestroy,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { carryThemeScope, materialPresetClassesOf } from '../../util/material-preset';
 import { RtTooltipComponent } from './rt-tooltip.component';
+import { isTooltipTextCut } from './rt-tooltip.logic';
 import { IRtTooltip } from './rt-tooltip.model';
 
 const SHOW_DELAY_MS: number = 300;
@@ -73,6 +84,16 @@ export class RtTooltipDirective implements OnDestroy {
         alias: 'rtTooltipPlacement',
     });
 
+    /**
+     * Подсказка только у обрезанного текста: хост меряется в момент показа, и подсказка не
+     * появляется, пока его содержимое помещается целиком. Мерить заранее не нужно — показ идёт
+     * только отсюда, и признак в эту минуту всегда свежий.
+     */
+    public readonly whenTruncated: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
+        alias: 'rtTooltipWhenTruncated',
+        transform: booleanAttribute,
+    });
+
     constructor() {
         this.#focusMonitor
             .monitor(this.#elementRef, true)
@@ -105,7 +126,7 @@ export class RtTooltipDirective implements OnDestroy {
     }
 
     #attach(): void {
-        if (this.text().trim() === '') {
+        if (this.text().trim() === '' || (this.whenTruncated() && !isTooltipTextCut(this.#elementRef.nativeElement))) {
             return;
         }
         const overlayRef: OverlayRef = this.#ensureOverlay();
