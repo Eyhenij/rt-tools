@@ -67,6 +67,7 @@ svg {
     display: flex;
     width: 380px;
     height: min(600px, calc(100vh - 48px));
+    box-sizing: border-box;
     flex-direction: column;
     border: 1px solid var(--rt-chat-line);
     border-radius: var(--rt-chat-radius);
