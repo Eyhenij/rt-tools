@@ -50,6 +50,7 @@ jobs:
               run: |
                   node update-version-utils.cjs ${{ github.event.inputs.version }}
                   pnpm run changelog:utils
+                  node tools/changelog-split.mjs projects/utils/CHANGELOG.md
                   VERSION=$(jq -r .version projects/utils/package.json)
                   echo "VERSION=$VERSION" >> $GITHUB_ENV
 
