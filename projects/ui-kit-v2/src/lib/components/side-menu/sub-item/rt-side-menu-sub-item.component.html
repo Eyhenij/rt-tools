@@ -4,11 +4,16 @@
         @let isActive = menuRef.activeMenuIds().includes(row.id);
         @let isHighlighted = !inFavorites() && menuRef.highlightedMenuId() === row.id;
         @if (row.link) {
-            <!-- Строка блока избранного без номера: по номеру клавиатура нажимает строку списка. -->
+            <!--
+                Строка блока избранного без номера: по номеру клавиатура нажимает строку списка. И без
+                родного перетаскивания ссылки: нажатие на ручку внутри строки браузер забирал себе,
+                и перетаскивание CDK не начиналось.
+            -->
             <a
                 rtElem="row"
                 qa-dataid="side-menu-sub-item"
                 [id]="inFavorites() ? null : row.id"
+                [attr.draggable]="inFavorites() ? 'false' : null"
                 [routerLink]="row.link"
                 [style.--rt-side-menu-sub-item-depth]="depth"
                 [rtMod]="{ active: isActive, highlighted: isHighlighted }"
