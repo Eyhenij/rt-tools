@@ -15,7 +15,7 @@ import { RtMenuItemIconDirective } from '../../rt-menu-item-icon.directive';
 import { RtMenuItemComponent } from '../../rt-menu-item.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TMenuItemMatrixPart = 'kinds' | 'own-icon' | 'states' | 'presets' | 'themes';
+export type TMenuItemMatrixPart = 'kinds' | 'fill' | 'own-icon' | 'states' | 'presets' | 'themes';
 
 /** Вид пункта: иконка, тон и недоступность вместе — порознь они не бывают. */
 interface IMenuItemKindCase {
@@ -55,6 +55,22 @@ interface IMenuItemKindCase {
                                     [glyph]="kindCase.glyph ?? null"
                                     [disabled]="kindCase.disabled"
                                     [confirmMessage]="kindCase.confirmMessage" />
+                            </ng-template>
+                        </app-story-row>
+                    </ng-template>
+                </app-story-presets>
+            }
+
+            @case ('fill') {
+                <app-story-presets caption="Контурные и залитые значки в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="fillCases" [itemLabel]="caseLabel" [slotWidth]="itemWidth">
+                            <ng-template let-fillCase>
+                                <rt-menu-item
+                                    [label]="fillCase.label"
+                                    [icon]="fillCase.icon"
+                                    [danger]="fillCase.danger"
+                                    [fill]="fillCase.fill" />
                             </ng-template>
                         </app-story-row>
                     </ng-template>
@@ -195,6 +211,14 @@ export class TestRtMenuItemMatrixComponent {
             disabled: false,
             confirmMessage: 'Удалить запись? Действие необратимо.',
         },
+    ];
+
+    /** Пункты меню строки контурными и залитыми: заливку видно только в материальном наборе. */
+    public readonly fillCases: readonly { name: string; label: string; icon: IRtIcon.Name; danger: boolean; fill: boolean }[] = [
+        { name: 'контурный', label: 'Изменить', icon: 'pencil', danger: false, fill: false },
+        { name: 'залитый', label: 'Изменить', icon: 'pencil', danger: false, fill: true },
+        { name: 'залитый', label: 'Карточка', icon: 'user', danger: false, fill: true },
+        { name: 'залитый, деструктивный', label: 'Удалить', icon: 'trash', danger: true, fill: true },
     ];
 
     /** Свой значок в трёх тонах: он красится цветом тона, как значок кита. */

@@ -144,6 +144,15 @@ export class RtMenuItemComponent {
      */
     public readonly glyph: InputSignal<string | null> = input<string | null>(null);
 
+    /**
+     * Залитый значок вместо контурного — как значки пунктов меню первого кита. Уходит в `fill`
+     * значка: действует в материальном наборе, свой набор рисует значок одним рисунком. Свой
+     * значок `rtMenuItemIcon` приложение рисует само, и заливка его не касается.
+     */
+    public readonly fill: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+
     /** Пункт — нынешнее значение выбора, который открыл меню: подсвечен фоном и объявлен скринридеру. */
     public readonly current: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,

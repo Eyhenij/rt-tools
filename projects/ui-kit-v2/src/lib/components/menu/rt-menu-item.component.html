@@ -20,7 +20,7 @@
                 <ng-container [ngTemplateOutlet]="own.templateRef" />
             </span>
         } @else if (iconName(); as name) {
-            <rt-icon rtElem="icon" size="sm" [name]="name" />
+            <rt-icon rtElem="icon" size="sm" [name]="name" [fill]="fill()" />
         }
 
         <span rtElem="label" qa-dataid="menu-item-label">{{ label() }}</span>
