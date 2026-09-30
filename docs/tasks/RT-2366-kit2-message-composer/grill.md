@@ -57,10 +57,16 @@ have recommended:
   the mockup has no frame of it.
 - **Does it need an edit of a law or a rule** — closed by assumption: no.
 
+- **Do the chat screens switch to the new field** — asked along the way: the panel «Чат» of the
+  admin and the page «Переписка» draw the chat's own old field, not `rt-message-composer`. The
+  owner's answer: «Включить на двух экранах».
+
 ## Decisions
 
 - **The capsule is the composer's own look, not a new component** — the task asks to redraw
   `rt-message-composer`. Rejected: a second composer next to the old one.
+- **The two chat screens take the new field by `richComposer`** — the owner's answer. Rejected: making
+  it the chat's default, which touches every consumer of the chat.
 - **The focus is the fields' border and ring** — the mockup says «как у полей кита».
 
 ## What is left unclear

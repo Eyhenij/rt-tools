@@ -80,8 +80,8 @@ test.describe('встраиваемая страница переписок', ()
 
         expect(await feedTexts(page)).toEqual([CHAT.embed.talks[1].text]);
 
-        await inside(page).locator('[qa-dataid="chat-composer-input"]').fill('Ответ из админки потребителя');
-        await inside(page).locator('[qa-dataid="chat-composer-send"]').click();
+        await inside(page).locator('[qa-dataid="message-composer-input"]').fill('Ответ из админки потребителя');
+        await inside(page).locator('[qa-dataid="message-composer-send"]').click();
 
         await expect(inside(page).locator('[qa-dataid="chat-message-text"]')).toHaveCount(2);
         expect(await feedTexts(page)).toEqual([CHAT.embed.talks[1].text, 'Ответ из админки потребителя']);
