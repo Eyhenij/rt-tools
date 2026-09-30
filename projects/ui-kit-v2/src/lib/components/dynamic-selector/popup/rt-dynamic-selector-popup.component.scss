@@ -1,0 +1,170 @@
+@use '../../../../styles/breakpoints' as bp;
+
+@layer rt-kit.components {
+    /* rt-dynamic-selector-popup — панель выбора в CDK Overlay. ViewEncapsulation.None.
+       Размер и вид сняты с кадров первого кита: 20rem на 30rem, поверхность с рамкой и тенью. */
+
+    .rt-dynamic-selector-popup {
+        --rt-dynamic-selector-popup-width: calc(var(--rt-size-40) * 2);
+        --rt-dynamic-selector-popup-max-height: calc(var(--rt-size-100) + var(--rt-size-20));
+        --rt-dynamic-selector-popup-radius: var(--rt-radius-md);
+        --rt-dynamic-selector-popup-border-width: var(--rt-border-width-thin);
+        --rt-dynamic-selector-popup-shadow: var(--rt-shadow-lg);
+
+        display: flex;
+        width: var(--rt-dynamic-selector-popup-width);
+        max-width: calc(100vw - var(--rt-space-md) * 2);
+        max-height: var(--rt-dynamic-selector-popup-max-height);
+        box-sizing: border-box;
+        flex-direction: column;
+        border: var(--rt-dynamic-selector-popup-border-width) solid var(--rt-color-border-subtle);
+        border-radius: var(--rt-dynamic-selector-popup-radius);
+        background: var(--rt-color-bg-surface);
+        box-shadow: var(--rt-dynamic-selector-popup-shadow);
+        color: var(--rt-color-text-primary);
+        gap: var(--rt-space-sm);
+        padding-block: var(--rt-space-md);
+
+        &__head {
+            display: flex;
+            flex-direction: column;
+            gap: var(--rt-space-sm);
+            padding-inline: var(--rt-space-md);
+        }
+
+        &__search {
+            display: block;
+        }
+
+        &__controls {
+            display: flex;
+            flex-direction: column;
+            border-bottom: var(--rt-dynamic-selector-popup-border-width) solid var(--rt-color-border-subtle);
+
+            /* Строка переключателя и «Выбрать все» — два разных решения; при зазоре 2xs флажок
+               прилипал к переключателю и читался его частью. */
+            gap: var(--rt-space-sm);
+            padding-block-end: var(--rt-space-sm);
+        }
+
+        &__multi {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: var(--rt-space-2xs) var(--rt-space-sm);
+        }
+
+        &__multi-label {
+            font-size: var(--rt-text-sm);
+        }
+
+        &__multi-hint-icon {
+            color: var(--rt-color-text-muted);
+        }
+
+        // На широком экране подсказка стоит значком со всплывающей подсказкой, на узком — текстом.
+        &__multi-hint {
+            display: none;
+            flex-basis: 100%;
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-xs);
+        }
+
+        @media (width <= #{bp.$rt-bp-lg}) {
+            &__multi-hint {
+                display: block;
+            }
+
+            &__multi-hint-icon {
+                display: none;
+            }
+        }
+
+        &__select-all {
+            display: block;
+        }
+
+        &__state {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--rt-space-md);
+        }
+
+        &__list {
+            display: flex;
+            min-height: 0;
+            flex: 1 1 auto;
+            flex-direction: column;
+            overflow-y: auto;
+            padding-inline: var(--rt-space-md);
+        }
+
+        // Шаг строки снят с первого кита: флажок и по отступу сверху и снизу — около 36px.
+        &__row {
+            display: block;
+            padding-block: var(--rt-space-sm);
+
+            &--separated {
+                border-bottom: var(--rt-dynamic-selector-popup-border-width) solid var(--rt-color-border-subtle);
+                margin-block-end: var(--rt-space-2xs);
+                padding-block-end: var(--rt-space-sm);
+            }
+        }
+
+        // Длинная подпись строки переносится: обрезка спрятала бы, какую запись человек отмечает.
+        &__option {
+            display: block;
+            overflow-wrap: anywhere;
+        }
+
+        &__sentinel {
+            min-height: var(--rt-size-1);
+        }
+
+        &__fetching {
+            display: flex;
+            justify-content: center;
+            padding-block: var(--rt-space-sm);
+        }
+
+        &__empty {
+            display: block;
+            padding-inline: var(--rt-space-md);
+        }
+
+        &__foot {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            border-top: var(--rt-dynamic-selector-popup-border-width) solid var(--rt-color-border-subtle);
+            gap: var(--rt-space-sm);
+            padding-block-start: var(--rt-space-sm);
+            padding-inline: var(--rt-space-md);
+
+            &--nav {
+                justify-content: space-between;
+            }
+        }
+
+        // Длинное название ссылки обрезается многоточием, а целиком читается во всплывающей подсказке.
+        &__nav {
+            overflow: hidden;
+            min-width: 0;
+            color: var(--rt-color-text-link);
+            font-size: var(--rt-text-sm);
+            text-overflow: ellipsis;
+            white-space: nowrap;
+
+            &:hover {
+                color: var(--rt-color-text-link-hover);
+            }
+        }
+
+        &__actions {
+            display: flex;
+            flex: 0 0 auto;
+            gap: var(--rt-space-sm);
+        }
+    }
+}
