@@ -195,6 +195,10 @@ interface ITooltipTruncatedCase {
             display: block;
             overflow: hidden;
             width: 10rem;
+
+            /* Панель открывается вниз и ложилась на подпись случая под ячейкой. Отступ — на её
+               высоту с зазором, и подпись уходит под панель. */
+            margin-block-end: 2.25rem;
             text-overflow: ellipsis;
             white-space: nowrap;
         }
