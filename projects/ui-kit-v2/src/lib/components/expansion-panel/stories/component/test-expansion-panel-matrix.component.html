@@ -1,0 +1,110 @@
+<ng-container rtBlock="app-expansion-panel-demo">
+    @switch (part) {
+        @case ('appearance') {
+            <app-story-presets caption="Вид панели в обоих наборах">
+                <ng-template>
+                    <app-story-row slotWidth="22rem" [items]="appearances" [itemLabel]="appearanceLabel">
+                        <ng-template let-appearance>
+                            <rt-expansion-panel [appearance]="appearance.appearance" [expanded]="true">
+                                <rt-icon rtElem="icon" size="sm" name="user" />
+                                <span rtElem="title" rtTooltipWhenTruncated [rtTooltip]="title">{{ title }}</span>
+                                <ng-template rtExpansionPanelContent>
+                                    <p rtElem="text">{{ text }}</p>
+                                </ng-template>
+                            </rt-expansion-panel>
+                        </ng-template>
+                    </app-story-row>
+                </ng-template>
+            </app-story-presets>
+        }
+        @case ('opening') {
+            <app-story-presets caption="Раскрытие и шеврон в обоих наборах">
+                <ng-template>
+                    <app-story-row slotWidth="22rem" [items]="openings" [itemLabel]="openingLabel">
+                        <ng-template let-opening>
+                            <rt-expansion-panel [expanded]="opening.expanded" [hideToggle]="opening.hideToggle">
+                                <rt-icon rtElem="icon" size="sm" name="user" />
+                                <span rtElem="title" rtTooltipWhenTruncated [rtTooltip]="title">{{ title }}</span>
+                                <ng-template rtExpansionPanelContent>
+                                    <p rtElem="text">{{ text }}</p>
+                                </ng-template>
+                            </rt-expansion-panel>
+                        </ng-template>
+                    </app-story-row>
+                </ng-template>
+            </app-story-presets>
+        }
+        @case ('length') {
+            <app-story-presets caption="Длина заголовка и тела в обоих наборах">
+                <ng-template>
+                    <app-story-row slotWidth="22rem" [items]="lengths" [itemLabel]="lengthLabel">
+                        <ng-template let-length>
+                            <rt-expansion-panel [expanded]="true">
+                                <rt-icon rtElem="icon" size="sm" name="user" />
+                                <span rtElem="title" rtTooltipWhenTruncated [rtTooltip]="length.title">{{ length.title }}</span>
+                                <ng-template rtExpansionPanelContent>
+                                    <p rtElem="text">{{ length.text }}</p>
+                                </ng-template>
+                            </rt-expansion-panel>
+                        </ng-template>
+                    </app-story-row>
+                </ng-template>
+            </app-story-presets>
+        }
+        @case ('states') {
+            <app-story-presets caption="Взаимодействие в обоих наборах">
+                <ng-template>
+                    <app-story-row slotWidth="22rem" [items]="states" [itemLabel]="stateLabel">
+                        <ng-template let-state>
+                            <rt-expansion-panel [disabled]="state.disabled" [attr.data-story-state]="state.state">
+                                <rt-icon rtElem="icon" size="sm" name="user" />
+                                <span rtElem="title" rtTooltipWhenTruncated [rtTooltip]="title">{{ title }}</span>
+                                <ng-template rtExpansionPanelContent>
+                                    <p rtElem="text">{{ text }}</p>
+                                </ng-template>
+                            </rt-expansion-panel>
+                        </ng-template>
+                    </app-story-row>
+                </ng-template>
+            </app-story-presets>
+        }
+        @case ('presets') {
+            <app-story-presets caption="Панель в обоих наборах">
+                <ng-template>
+                    <app-story-row slotWidth="22rem" [items]="single" [itemLabel]="openingLabel">
+                        <ng-template let-single>
+                            <rt-expansion-panel [expanded]="single.expanded">
+                                <rt-icon rtElem="icon" size="sm" name="user" />
+                                <span rtElem="title" rtTooltipWhenTruncated [rtTooltip]="title">{{ title }}</span>
+                                <ng-template rtExpansionPanelContent>
+                                    <p rtElem="text">{{ text }}</p>
+                                </ng-template>
+                            </rt-expansion-panel>
+                        </ng-template>
+                    </app-story-row>
+                </ng-template>
+            </app-story-presets>
+        }
+        @case ('themes') {
+            <app-story-presets caption="Панель в обеих темах в обоих наборах">
+                <ng-template>
+                    <app-story-themes>
+                        <ng-template>
+                            <app-story-row slotWidth="22rem" [items]="single" [itemLabel]="openingLabel">
+                                <ng-template let-single>
+                                    <rt-expansion-panel [expanded]="single.expanded">
+                                        <rt-icon rtElem="icon" size="sm" name="user" />
+                                        <span rtElem="title" rtTooltipWhenTruncated [rtTooltip]="title">{{ title }}</span>
+                                        <ng-template rtExpansionPanelContent>
+                                            <p rtElem="text">{{ text }}</p>
+                                        </ng-template>
+                                    </rt-expansion-panel>
+                                </ng-template>
+                            </app-story-row>
+                        </ng-template>
+                    </app-story-themes>
+                </ng-template>
+            </app-story-presets>
+        }
+    }
+</ng-container>

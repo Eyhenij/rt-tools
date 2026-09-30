@@ -409,11 +409,12 @@ export class RtSideMenuComponent implements IRtSideMenuHost {
         this.subMenuQuery.set('');
     }
 
-    /** Строка ищется по номеру среди строк панели и нажимается как мышью. */
+    /**
+     * Строка ищется по номеру среди узлов панели с id и нажимается как мышью: у ссылки номер стоит
+     * на ней самой, у папки — на кнопке заголовка её раскрывающейся панели.
+     */
     #pressRow(item: IRtSideMenu.Item): void {
-        const rows: HTMLElement[] = Array.from(
-            this.panelRef()?.nativeElement.querySelectorAll<HTMLElement>('.rt-side-menu-sub-item__row') ?? []
-        );
+        const rows: HTMLElement[] = Array.from(this.panelRef()?.nativeElement.querySelectorAll<HTMLElement>('[id]') ?? []);
 
         rows.find((row: HTMLElement): boolean => row.id === String(item.id))?.click();
     }

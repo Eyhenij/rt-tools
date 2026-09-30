@@ -82,24 +82,26 @@
             </a>
         } @else if (row.submenu) {
             <!--
-            Папка рисуется и с пустым составом: отбор оставляет так ту, что совпала подписью. Шеврона
-            у такой папки нет — раскрывать нечего, и стрелка обещала бы содержимое.
-        -->
+                Папка — раскрывающаяся панель кита. Рисуется и с пустым составом: отбор оставляет так
+                ту, что совпала подписью. Шеврона у такой папки нет — раскрывать нечего. Раскрытие
+                держит меню: панель сообщает о нажатии, меню переключает папку. Кнопке заголовка
+                отдан номер пункта — по нему клавиатура меню нажимает строку.
+            -->
             @let isOpen = menuRef.expandedMenuIds().includes(row.id);
-            <button
-                type="button"
-                rtElem="row"
-                qa-dataid="side-menu-folder"
-                [id]="row.id"
+            <rt-expansion-panel
+                rtElem="folder"
+                appearance="plain"
+                [headerId]="'' + row.id"
+                [hideToggle]="!row.submenu.length"
+                [expanded]="isOpen"
                 [style.--rt-side-menu-sub-item-depth]="depth"
-                [rtMod]="{ folder: true, active: isActive, highlighted: isHighlighted }"
-                [attr.aria-expanded]="row.submenu.length ? isOpen : null"
-                (click)="onToggleFolder(row)">
+                [rtMod]="{ highlighted: isHighlighted }"
+                (expandedChange)="onToggleFolder(row)">
                 @if (row.icon) {
                     <rt-icon rtElem="icon" size="sm" [name]="row.icon" />
                 }
 
-                <span rtElem="title" [rtTooltip]="row.name">
+                <span rtElem="title" qa-dataid="side-menu-folder" [rtTooltip]="row.name">
                     @for (part of row.name | rtSideMenuTitleParts: menuRef.subMenuQuery(); track $index) {
                         @if (part.matched) {
                             <span rtElem="match">{{ part.text }}</span>
@@ -109,18 +111,14 @@
                     }
                 </span>
 
-                @if (row.submenu.length) {
-                    <span rtElem="chevron" aria-hidden="true" [rtMod]="{ open: isOpen }"><rt-icon size="sm" name="chevron-down" /></span>
-                }
-            </button>
-
-            @if (isOpen && row.submenu.length) {
-                <div rtElem="children" role="group">
-                    @for (child of row.submenu; track child.id) {
-                        <ng-container [ngTemplateOutlet]="rowTpl" [ngTemplateOutletContext]="{ $implicit: child, depth: depth + 1 }" />
-                    }
-                </div>
-            }
+                <ng-template rtExpansionPanelContent>
+                    <div rtElem="children" role="group">
+                        @for (child of row.submenu; track child.id) {
+                            <ng-container [ngTemplateOutlet]="rowTpl" [ngTemplateOutletContext]="{ $implicit: child, depth: depth + 1 }" />
+                        }
+                    </div>
+                </ng-template>
+            </rt-expansion-panel>
         }
     </ng-template>
 </ng-container>

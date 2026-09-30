@@ -4,8 +4,8 @@
 
 - **State:** `этап-идёт`
 - **Stage:** 2 of 5 — The narrow screen as a live menu; stage 3 done ahead of it by the owner's word
-- **Done:** stage 1 — seventeen live stories on the first kit's data; stage 3 — favourites without Material and their eleven stories, 11 frames looked at and taken
-- **Next step:** show the owner the favourites pairs, then compare the narrow layout with the first kit's Mobile by measurement
+- **Done:** stage 1 — seventeen live stories on the first kit's data; stage 3 — favourites without Material and their eleven stories; the folders and the favourites block moved onto the new `rt-expansion-panel`, frames unchanged to the pixel
+- **Next step:** show the owner the panel and the menu on it, add the preset pairs to the favourites stories, then compare the narrow layout with the first kit's Mobile by measurement
 - **Uncommitted:** nothing
 - **Waiting for the owner:** no; every port is shown before a push — «я просил каждый перенесенный из первого кита модуль показывать мне перед отправкой в пр!!!»
 - **PR:** not open yet
@@ -59,6 +59,13 @@
   to the frame. The parameter hovers the named nodes after the window is fitted, right before the
   shot. Affected stage: 3.
 
+- **The folders and the favourites block stand on a new `rt-expansion-panel`.** The owner asked
+  what plays the first kit's Material expansion panels and chose «Завести rt-expansion-panel
+  (Recommended)»: a kit primitive of its own — a header button, a chevron column that can be hidden,
+  an animated opening, `aria-expanded` with a labelled region — which the submenu folders and the
+  favourites block move onto and other places of the kit may take. The primitive is created by the
+  owner's word, as `reuse-first` demands. Affected stage: 3.
+
 ## Sessions
 
 ### 2026-09-30
@@ -79,3 +86,15 @@
   match.
 - Stumbled on: a `:not(:hover, :has(...))` width rule was not recomputed by the browser on hover —
   replaced by a plain rule that gives the width back.
+
+### 30 September 2026 — the expansion panel
+
+- Done: `rt-expansion-panel` in the second kit — header button, hideable chevron, two-way
+  `expanded`, a lazy body template, motion of the height by CSS; spec SC-UKV-472…478, seven
+  tests; Overview, CONTEXT, six matrix frames looked at and taken. The submenu folders and the
+  favourites block stand on it; three menu frames retaken from scratch match the old ones to the
+  pixel, 47 menu frames pass, 2170 kit tests pass.
+- Stumbled on: a collapsed card shrank to its content in a centred story cell — the host got
+  `width: 100%`, as the accordion has. The panel writes its own state, so the favourites block
+  keeps its expanded state in a linked signal: a collapse during search stays local and returns to
+  the saved choice when the search ends.

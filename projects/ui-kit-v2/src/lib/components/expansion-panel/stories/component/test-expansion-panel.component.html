@@ -1,0 +1,29 @@
+<app-story-presets fill caption="Панели в обоих наборах">
+    <ng-template>
+        <ng-container rtBlock="app-expansion-panel-demo">
+            <div rtElem="stack">
+                <rt-expansion-panel [appearance]="appearance" [expanded]="expanded" [disabled]="disabled" [hideToggle]="hideToggle">
+                    <rt-icon rtElem="icon" size="sm" name="user" />
+                    <span rtElem="title" rtTooltipWhenTruncated rtTooltip="Личные данные">Личные данные</span>
+                    <ng-template rtExpansionPanelContent>
+                        <p rtElem="text">Имя, телефон и адрес доставки. Их видит только курьер, который везёт заказ.</p>
+                    </ng-template>
+                </rt-expansion-panel>
+                <rt-expansion-panel [appearance]="appearance" [disabled]="disabled" [hideToggle]="hideToggle">
+                    <rt-icon rtElem="icon" size="sm" name="lock" />
+                    <span rtElem="title" rtTooltipWhenTruncated rtTooltip="Вход и пароль">Вход и пароль</span>
+                    <ng-template rtExpansionPanelContent>
+                        <p rtElem="text">Пароль меняется по ссылке из письма; старый перестаёт действовать сразу.</p>
+                    </ng-template>
+                </rt-expansion-panel>
+                <rt-expansion-panel [appearance]="appearance" [disabled]="disabled" [hideToggle]="hideToggle">
+                    <rt-icon rtElem="icon" size="sm" name="users" />
+                    <span rtElem="title" rtTooltipWhenTruncated rtTooltip="Доступ для семьи">Доступ для семьи</span>
+                    <ng-template rtExpansionPanelContent>
+                        <p rtElem="text">До четырёх человек видят заказы и оформляют их с общего адреса.</p>
+                    </ng-template>
+                </rt-expansion-panel>
+            </div>
+        </ng-container>
+    </ng-template>
+</app-story-presets>

@@ -48,7 +48,7 @@
             }
 
             /* Активна строка со ссылкой; у папки активность видна по её раскрытым пунктам. */
-            &--active:not(.rt-side-menu-sub-item__row--folder) {
+            &--active {
                 background: var(--rt-color-action-primary-subtle);
                 color: var(--rt-color-action-primary-on-surface);
             }
@@ -131,19 +131,25 @@
             opacity: 1;
         }
 
-        /* Шеврон стоит в столбце кнопок строки — по центру ширины маленькой кнопки, как у первого
-           кита: шеврон папки и «+» соседних строк на одной вертикали. */
-        &__chevron {
-            display: inline-flex;
-            flex-shrink: 0;
-            justify-content: center;
-            color: var(--rt-color-text-muted);
-            inline-size: var(--rt-control-height-sm);
-            transition: transform var(--rt-side-menu-sub-item-transition-duration) ease;
+        /* Папка — раскрывающаяся панель кита в простом виде. Её заголовок оформлен как строка со
+           ссылкой: те же высота, скругление, отступ глубины и подсветка ходьбы стрелками; шеврон
+           панели стоит в столбце кнопок строк, и «+» соседних строк с ним на одной вертикали.
+           Свойства переназначены правилом двух классов: так они сильнее значений самой панели,
+           объявленных на том же узле, а вложенная папка объявляет свои заново. */
+        &__folder.rt-expansion-panel {
+            --rt-expansion-panel-duration: var(--rt-side-menu-sub-item-transition-duration);
+            --rt-expansion-panel-header-radius: var(--rt-side-menu-sub-item-radius);
+            --rt-expansion-panel-header-min-height: var(--rt-control-height-md);
+            --rt-expansion-panel-header-padding-block: var(--rt-space-2);
+            --rt-expansion-panel-header-padding-start: calc(var(--rt-space-md) * (1 + var(--rt-side-menu-sub-item-depth)));
+            --rt-expansion-panel-header-padding-end: var(--rt-space-sm);
+            --rt-expansion-panel-header-gap: var(--rt-space-sm);
+            --rt-expansion-panel-header-font-size: var(--rt-text-sm);
+            --rt-expansion-panel-header-bg: transparent;
+        }
 
-            &--open {
-                transform: rotate(180deg);
-            }
+        &__folder--highlighted.rt-expansion-panel {
+            --rt-expansion-panel-header-bg: var(--rt-color-bg-hover);
         }
 
         &__children {

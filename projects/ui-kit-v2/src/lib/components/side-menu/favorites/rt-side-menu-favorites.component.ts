@@ -8,6 +8,7 @@ import {
     ElementRef,
     inject,
     Injector,
+    linkedSignal,
     output,
     OutputEmitterRef,
     Signal,
@@ -21,6 +22,7 @@ import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { rtKitLabel } from '../../../i18n';
 import { BreakpointsService } from '../../../platform/breakpoints.service';
+import { RtExpansionPanelComponent, RtExpansionPanelContentDirective } from '../../expansion-panel';
 import { IRtIcon, RtIconComponent } from '../../icon';
 import { RtIconButtonComponent } from '../../icon-button';
 import { sideMenuFavoritesSection, findSideMenuFavoriteItems, isSideMenuDropOutside } from '../rt-side-menu-favorites.logic';
@@ -36,8 +38,8 @@ const SUB_MENU_PANEL: string = '.rt-side-menu__panel';
 
 /**
  * Блок избранного вверху подменю: выбранные человеком разделы в порядке его списка. Перенос блока
- * первого кита на части второго, без Material: заголовок — кнопка со звездой и шевроном, строки
- * тянутся за ручку перетаскиванием CDK.
+ * первого кита на части второго, без Material: блок — раскрывающаяся панель кита, как папка
+ * подменю, строки тянутся за ручку перетаскиванием CDK.
  *
  * Строки собираются из пунктов самого меню, а не из хранилища: подпись следует языку пунктов, адрес
  * — объявлению. Номер без пункта в меню не показывается, но из списка не уходит. Строку рисует тот же
@@ -63,8 +65,10 @@ const SUB_MENU_PANEL: string = '.rt-side-menu__panel';
         BlockDirective,
         ElemDirective,
         ModDirective,
+        RtExpansionPanelContentDirective,
 
         // components
+        RtExpansionPanelComponent,
         RtIconButtonComponent,
         RtIconComponent,
         RtSideMenuSubItemComponent,
@@ -103,12 +107,20 @@ export class RtSideMenuFavoritesComponent {
 
         return !!section && !!this.#settings?.favoritesCollapsed(this.#menu.menuId())().includes(section.id);
     });
-    protected readonly expanded: Signal<boolean> = computed((): boolean => !this.collapsed() || this.searching());
+    /**
+     * Раскрытие панели блока. Начинается заново с сохранённого выбора при каждой его смене и при
+     * входе в поиск и выходе из него: свёрнутый в поиске блок — выбор на время поиска, он не
+     * сохраняется и с концом поиска возвращается к сохранённому.
+     */
+    protected readonly open: WritableSignal<boolean> = linkedSignal({
+        source: (): { collapsed: boolean; searching: boolean } => ({ collapsed: this.collapsed(), searching: this.searching() }),
+        computation: (state: { collapsed: boolean; searching: boolean }): boolean => !state.collapsed || state.searching,
+    });
     /** Заголовок показывает число строк: всегда, у свёрнутого блока или никогда — по входу меню. */
     protected readonly countShown: Signal<boolean> = computed((): boolean => {
         const mode: IRtSideMenu.FavoritesCount = this.#menu.favoritesCount();
 
-        return mode === 'always' || (mode === 'collapsed' && !this.expanded());
+        return mode === 'always' || (mode === 'collapsed' && !this.open());
     });
     /** Ручки строк по порядку: стрелка возвращает фокус на ручку переставленной строки. */
     protected readonly handles: Signal<ReadonlyArray<ElementRef<HTMLElement>>> = viewChildren<string, ElementRef<HTMLElement>>('handle', {
@@ -137,12 +149,12 @@ export class RtSideMenuFavoritesComponent {
         inject(DestroyRef).onDestroy((): void => this.#release());
     }
 
-    /** Заголовок нажат: выбор ложится в настройки меню. Во время поиска блок стоит раскрытым. */
-    public onToggle(): void {
+    /** Заголовок нажат: выбор ложится в настройки меню. Во время поиска он не сохраняется. */
+    public onToggle(expanded: boolean): void {
         const section: IRtSideMenu.Item | null = this.#section();
 
         if (this.#settings && section && !this.searching()) {
-            this.#settings.setFavoritesCollapsed(this.#menu.menuId(), section.id, !this.collapsed());
+            this.#settings.setFavoritesCollapsed(this.#menu.menuId(), section.id, !expanded);
         }
     }
 

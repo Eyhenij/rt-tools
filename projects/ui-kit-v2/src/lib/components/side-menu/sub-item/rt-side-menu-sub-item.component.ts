@@ -17,6 +17,7 @@ import { RouterLink } from '@angular/router';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
+import { RtExpansionPanelComponent, RtExpansionPanelContentDirective } from '../../expansion-panel';
 import { RtIconComponent } from '../../icon';
 import { RtIconButtonComponent } from '../../icon-button';
 import { rtKitLabel } from '../../../i18n';
@@ -53,6 +54,8 @@ const FAVORITE_BUTTON: string = '.rt-side-menu-sub-item__favorite button';
         BlockDirective,
         ElemDirective,
         ModDirective,
+        RtExpansionPanelComponent,
+        RtExpansionPanelContentDirective,
         RtIconComponent,
         RtIconButtonComponent,
         RtTooltipDirective,

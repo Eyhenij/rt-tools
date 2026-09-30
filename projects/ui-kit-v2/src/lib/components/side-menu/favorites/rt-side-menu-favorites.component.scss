@@ -1,52 +1,34 @@
 @layer rt-kit.components {
     /* rt-side-menu-favorites — блок избранного вверху подменю. ViewEncapsulation.None.
-       Заголовок оформлен как строка папки подменю; строки — те же подпункты, что в списке. */
+       Блок — раскрывающаяся панель кита, оформленная как папка подменю; строки — те же подпункты,
+       что в списке. */
 
     .rt-side-menu-favorites {
         --rt-side-menu-favorites-radius: var(--rt-radius-full);
         --rt-side-menu-favorites-divider-width: var(--rt-border-width-thin);
-        --rt-side-menu-favorites-transition-duration: var(--rt-duration-fast);
 
         display: block;
 
         /* Блок отделён от списка раздела чертой: без неё строка избранного и строка того же пункта
            в списке стоят подряд и читаются как повтор. Свёрнутый блок держит черту так же. */
-        &:has(.rt-side-menu-favorites__header) {
+        &:has(.rt-side-menu-favorites__panel) {
             border-bottom: var(--rt-side-menu-favorites-divider-width) solid var(--rt-color-border-subtle);
             margin-block-end: var(--rt-space-sm);
             padding-block-end: var(--rt-space-sm);
         }
 
-        &__header {
-            display: flex;
-            width: 100%;
-            min-height: var(--rt-control-height-md);
-            box-sizing: border-box;
-            align-items: center;
-            border: 0;
-            border-radius: var(--rt-side-menu-favorites-radius);
-            background: transparent;
-            color: var(--rt-color-text-primary);
-            cursor: pointer;
-            font: inherit;
-            font-size: var(--rt-text-sm);
-            gap: var(--rt-space-sm);
-            padding-block: var(--rt-space-2);
-
-            /* Звезда заголовка стоит левее подписей строк, почти у края, как у первого кита: так
-               рядом со столбцом шевронов умещается и число строк. */
-            padding-inline: var(--rt-space-1) var(--rt-space-sm);
-            text-align: start;
-            transition: background-color var(--rt-side-menu-favorites-transition-duration) ease;
-
-            &:hover {
-                background: var(--rt-color-bg-hover);
-            }
-
-            &:focus-visible {
-                outline: var(--rt-focus-ring-width) solid var(--rt-focus-ring-color);
-                outline-offset: calc(var(--rt-focus-ring-width) * -1);
-            }
+        /* Заголовок панели — как у папки подменю. Звезда стоит левее подписей строк, почти у края,
+           как у первого кита: так рядом со столбцом шевронов умещается и число строк. Свойства
+           переназначены правилом двух классов: так они сильнее значений самой панели на том же узле. */
+        &__panel.rt-expansion-panel {
+            --rt-expansion-panel-duration: var(--rt-duration-fast);
+            --rt-expansion-panel-header-radius: var(--rt-side-menu-favorites-radius);
+            --rt-expansion-panel-header-min-height: var(--rt-control-height-md);
+            --rt-expansion-panel-header-padding-block: var(--rt-space-2);
+            --rt-expansion-panel-header-padding-start: var(--rt-space-1);
+            --rt-expansion-panel-header-padding-end: var(--rt-space-sm);
+            --rt-expansion-panel-header-gap: var(--rt-space-sm);
+            --rt-expansion-panel-header-font-size: var(--rt-text-sm);
         }
 
         /* Звезда стоит на месте значка папки и красится цветом темы, как закрашенные звёзды списка. */
@@ -61,20 +43,6 @@
             flex: 1 1 auto;
             text-overflow: ellipsis;
             white-space: nowrap;
-        }
-
-        /* Шеврон — в столбце кнопок строк, по центру ширины маленькой кнопки, как шеврон папки. */
-        &__chevron {
-            display: inline-flex;
-            flex-shrink: 0;
-            justify-content: center;
-            color: var(--rt-color-text-muted);
-            inline-size: var(--rt-control-height-sm);
-            transition: transform var(--rt-side-menu-favorites-transition-duration) ease;
-
-            &--open {
-                transform: rotate(180deg);
-            }
         }
 
         &__list {

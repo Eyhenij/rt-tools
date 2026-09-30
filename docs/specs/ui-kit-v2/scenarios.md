@@ -11,6 +11,7 @@ The scenarios live in the subdomains, each at its own rules:
 | [The actions at a reply](chat-actions/scenarios.md)                      | `SC-UKV-73`…`SC-UKV-76`                              |
 | [The settings of the kit and the theme](kit-settings-theme/scenarios.md) | `SC-UKV-330`…`SC-UKV-350`                            |
 | [The accordion](accordion/scenarios.md)                                  | `SC-UKV-394`…`SC-UKV-405`                            |
+| [The expansion panel](expansion-panel/scenarios.md)                      | `SC-UKV-472`…`SC-UKV-478`                            |
 | [The image cropper](image-cropper/scenarios.md)                          | `SC-UKV-383`…`SC-UKV-393`, `SC-UKV-406`…`SC-UKV-410` |
 | [The image uploader](image-upload/scenarios.md)                          | `SC-UKV-411`…`SC-UKV-421`                            |
 | [The tooltip of a cut text](tooltip-when-truncated/scenarios.md)         | `SC-UKV-458`…`SC-UKV-461`                            |

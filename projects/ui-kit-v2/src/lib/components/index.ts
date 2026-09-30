@@ -32,6 +32,7 @@ export * from './download-link';
 export * from './dynamic-list';
 export * from './dynamic-selector';
 export * from './empty-state';
+export * from './expansion-panel';
 export * from './field';
 export * from './file-card';
 export * from './file-drop';
