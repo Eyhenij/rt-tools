@@ -58,7 +58,7 @@ describe('rt-date-range.logic', (): void => {
         expect(rtRangeParse('31.02.2026 — 01.03.2026', RU)).toBeNull();
     });
 
-    it('SC-UKV-472 — выбранное начало залито, а до дня под указателем тянется будущий диапазон', (): void => {
+    it('SC-UKV-472 — выбранное начало залито, а до дня под указателем тянется светлый будущий диапазон', (): void => {
         const started: IRtCalendar.Month = rtRangeMonth('2026-10', { ...CTX, start: '2026-10-12' });
         expect(stateOf(started, '2026-10-12')).toBe(ERtCalendarDayState.Chosen);
         expect(stateOf(started, '2026-10-13')).toBe(ERtCalendarDayState.Free);
@@ -66,11 +66,11 @@ describe('rt-date-range.logic', (): void => {
         const hovered: IRtCalendar.Month = rtRangeMonth('2026-10', { ...CTX, start: '2026-10-12', hover: '2026-10-19' });
         expect(stateOf(hovered, '2026-10-12')).toBe(ERtCalendarDayState.Start);
         expect(stateOf(hovered, '2026-10-13')).toBe(ERtCalendarDayState.InRange);
-        expect(stateOf(hovered, '2026-10-19')).toBe(ERtCalendarDayState.End);
+        expect(stateOf(hovered, '2026-10-19')).toBe(ERtCalendarDayState.InRange);
         expect(stateOf(hovered, '2026-10-20')).toBe(ERtCalendarDayState.Free);
 
         const back: IRtCalendar.Month = rtRangeMonth('2026-10', { ...CTX, start: '2026-10-12', hover: '2026-10-10' });
-        expect(stateOf(back, '2026-10-10')).toBe(ERtCalendarDayState.Start);
+        expect(stateOf(back, '2026-10-10')).toBe(ERtCalendarDayState.InRange);
         expect(stateOf(back, '2026-10-12')).toBe(ERtCalendarDayState.End);
     });
 

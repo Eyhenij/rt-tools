@@ -1,0 +1,83 @@
+@switch (part) {
+    @case ('selected') {
+        <app-story-presets caption="Выбранный диапазон в обоих наборах">
+            <ng-template>
+                <app-story-row [items]="selectedCases" [itemLabel]="caseLabel">
+                    <ng-template let-selectedCase>
+                        <div [style]="surface">
+                            <rt-date-range-panel [value]="selectedCase.value" [now]="now" />
+                        </div>
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('selecting') {
+        <app-story-presets caption="Выбор даты окончания в обоих наборах">
+            <ng-template>
+                <app-story-row [items]="selectingCases" [itemLabel]="caseLabel">
+                    <ng-template let-selectingCase>
+                        <div [style]="surface">
+                            <rt-date-range-panel [value]="selectingCase.value" [now]="now" />
+                        </div>
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('bounds') {
+        <app-story-presets caption="Границы min и max в обоих наборах">
+            <ng-template>
+                <app-story-row [items]="boundCases" [itemLabel]="caseLabel">
+                    <ng-template let-boundCase>
+                        <div [style]="surface">
+                            <rt-date-range-panel [value]="boundCase.value" [min]="boundCase.min" [max]="boundCase.max" [now]="now" />
+                        </div>
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('sheet') {
+        <!--
+            Раскладка нижней шторки: панель на ширине телефона. Шторку саму по себе показывает
+            её история; здесь — что в неё кладёт поле: один месяц, варианты строкой сверху и дни
+            под палец.
+        -->
+        <app-story-presets caption="Раскладка шторки в обоих наборах">
+            <ng-template>
+                <app-story-row [items]="sheetCases" [itemLabel]="caseLabel">
+                    <ng-template let-sheetCase>
+                        <div [style]="sheetBox">
+                            <rt-date-range-panel sheet [value]="sheetCase.value" [now]="now" />
+                        </div>
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('themes') {
+        <!--
+            Пара тем показывает раскладку шторки: половина темы уже широкой панели с двумя месяцами,
+            и та легла бы на соседнюю половину. Шторка сжимается по ширине половины, а цвета у обеих
+            раскладок одни и те же — варианты, дни, черты и подвал.
+        -->
+        <app-story-presets caption="Панель в обеих темах в обоих наборах">
+            <ng-template>
+                <app-story-themes fill>
+                    <ng-template>
+                        @for (themeCase of themeCases; track themeCase.name) {
+                            <div [style]="surface">
+                                <rt-date-range-panel sheet [value]="themeCase.value" [now]="now" />
+                            </div>
+                        }
+                    </ng-template>
+                </app-story-themes>
+            </ng-template>
+        </app-story-presets>
+    }
+}

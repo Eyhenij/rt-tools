@@ -47,6 +47,8 @@
         /* Свойство ставится на сам узел календаря — корень его блока объявляет своё. */
         & &__calendar {
             --rt-calendar-day-justify: center;
+            --rt-calendar-column-gap: 0;
+            --rt-calendar-range-inner-radius: 0;
 
             flex: 1 1 auto;
             min-inline-size: calc(var(--rt-size-10) * 14 + var(--rt-space-6));

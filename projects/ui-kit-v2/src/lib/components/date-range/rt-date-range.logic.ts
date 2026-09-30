@@ -79,7 +79,8 @@ export function rtRangeInBounds(range: IRtDateRange.Value, min: string | null, m
 
 /**
  * Месяц `YYYY-MM` для календаря: дни черновика — начало, конец и дни между ними. Пока выбрано только
- * начало, будущий диапазон тянется до дня под указателем.
+ * начало, будущий диапазон тянется до дня под указателем, и этот день светлый, как дни между краями:
+ * залит только выбранный край.
  */
 export function rtRangeMonth(month: string, ctx: IRtDateRange.MonthContext): IRtCalendar.Month {
     const base: IRtCalendar.Month = rtDateMonth(month, { locale: ctx.locale, today: ctx.today, chosen: null, min: ctx.min, max: ctx.max });
@@ -87,9 +88,13 @@ export function rtRangeMonth(month: string, ctx: IRtDateRange.MonthContext): IRt
     const range: IRtDateRange.Value | null = ctx.start === null || other === null ? null : rtRangeOrder(ctx.start, other);
     const low: string | null = range?.start ?? ctx.start;
     const high: string | null = range?.end ?? null;
+    const preview: string | null = ctx.end === null && ctx.hover !== ctx.start ? ctx.hover : null;
     return {
         ...base,
-        days: base.days.map((day: IRtCalendar.Day): IRtCalendar.Day => ({ ...day, state: dayState(day.key, low, high) })),
+        days: base.days.map((day: IRtCalendar.Day): IRtCalendar.Day => {
+            const state: ERtCalendarDayState = dayState(day.key, low, high);
+            return { ...day, state: day.key === preview ? ERtCalendarDayState.InRange : state };
+        }),
     };
 }
 

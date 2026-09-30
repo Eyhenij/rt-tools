@@ -82,7 +82,7 @@ describe('RtDateRangePanelComponent', (): void => {
         day(fixture, '2026-10-19')?.nativeElement.dispatchEvent(new MouseEvent('mouseenter'));
         fixture.detectChanges();
         expect(stateOf(fixture, '2026-10-13')).toBe('in-range');
-        expect(stateOf(fixture, '2026-10-19')).toBe('end');
+        expect(stateOf(fixture, '2026-10-19')).toBe('in-range');
 
         press(fixture, day(fixture, '2026-10-15'));
         expect(stateOf(fixture, '2026-10-12')).toBe('start');
