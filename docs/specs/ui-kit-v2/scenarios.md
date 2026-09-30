@@ -13,6 +13,7 @@ The scenarios live in the subdomains, each at its own rules:
 | [The accordion](accordion/scenarios.md)                                  | `SC-UKV-394`…`SC-UKV-405`                            |
 | [The image cropper](image-cropper/scenarios.md)                          | `SC-UKV-383`…`SC-UKV-393`, `SC-UKV-406`…`SC-UKV-410` |
 | [The image uploader](image-upload/scenarios.md)                          | `SC-UKV-411`…`SC-UKV-421`                            |
+| [The request error of a side panel](aside-error-box/scenarios.md)        | `SC-UKV-462`…`SC-UKV-466`                            |
 | [The dynamic selectors](dynamic-selectors/scenarios.md)                  | `SC-UKV-436`…`SC-UKV-457`                            |
 | [The side menu](side-menu/scenarios.md)                                  | `SC-UKV-430`…`SC-UKV-435`                            |
 
