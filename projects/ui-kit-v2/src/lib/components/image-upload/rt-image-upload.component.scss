@@ -7,7 +7,7 @@
         --rt-image-upload-image-radius: var(--rt-radius-md);
         --rt-image-upload-focus-shadow: var(--rt-shadow-focus-ring);
         --rt-image-upload-hover-opacity: 0.85;
-        --rt-image-upload-download-inset: var(--rt-space-xs);
+        --rt-image-upload-download-overhang: var(--rt-space-sm);
         --rt-image-upload-download-bg: color-mix(in srgb, var(--rt-color-bg-surface) 75%, transparent);
         --rt-image-upload-download-radius: var(--rt-radius-md);
 
@@ -28,23 +28,29 @@
             gap: var(--rt-space-sm);
         }
 
-        /* Кнопка скачивания лежит на картинке в правом верхнем углу, как у первого кита:
-           превью — якорь, а кнопка отложена от его углов. */
+        /* Кнопка скачивания заходит за правый верхний угол картинки, как у первого кита: у превью
+           отступ вокруг картинки, а кнопка стоит в углу превью и накрывает край картинки. */
         &__preview {
             position: relative;
             display: inline-block;
             max-width: 100%;
+            box-sizing: border-box;
+            padding: var(--rt-image-upload-download-overhang);
         }
 
         &__download {
             position: absolute;
-            top: var(--rt-image-upload-download-inset);
-            right: var(--rt-image-upload-download-inset);
+            top: 0;
+            right: 0;
             border-radius: var(--rt-image-upload-download-radius);
             /* stylelint-disable-next-line property-no-vendor-prefix -- Safari < 18 */
             -webkit-backdrop-filter: blur(8px);
             backdrop-filter: blur(8px);
             background: var(--rt-image-upload-download-bg);
+
+            &--round {
+                --rt-image-upload-download-radius: var(--rt-radius-full);
+            }
         }
 
         &__image {

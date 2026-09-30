@@ -99,6 +99,9 @@ export class RtImageUploadComponent {
     /** Подсказка над картинкой: своя приложения или подпись кита */
     protected readonly hint: Signal<string> = computed((): string => this.tooltip() || this.t().uiImageUploadChange);
 
+    /** Круглая ли кнопка скачивания: подложка под размытием повторяет её скругление */
+    protected readonly downloadRound: Signal<boolean> = computed((): boolean => this.downloadShape() === 'circle');
+
     /**
      * Адрес текущей картинки: данный приложением или сделанный под применённый файл. Новый адрес от
      * приложения снова берёт верх над применённым.
@@ -118,6 +121,9 @@ export class RtImageUploadComponent {
     public readonly downloadable: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
+
+    /** Форма кнопки скачивания; она заходит за правый верхний угол картинки при любой форме */
+    public readonly downloadShape: InputSignal<IRtImageUpload.DownloadShape> = input<IRtImageUpload.DownloadShape>('circle');
 
     /** Без кнопок «Отмена» и «Применить»: каждый результат обрезки применяется сразу */
     public readonly autoApply: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {

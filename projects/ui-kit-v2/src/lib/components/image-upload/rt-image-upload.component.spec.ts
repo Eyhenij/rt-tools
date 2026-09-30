@@ -4,6 +4,7 @@ import { By } from '@angular/platform-browser';
 
 import { createRtFixture, fileListOf, qa, setInputs } from '../../../testing/rt-kit-testing';
 import { RtFileDropComponent } from '../file-drop';
+import { RtIconButtonComponent } from '../icon-button';
 import { IRtImageCropper, RtImageCropperComponent } from '../image-cropper';
 import { RtTooltipDirective } from '../tooltip';
 import { RtImageUploadComponent } from './rt-image-upload.component';
@@ -256,6 +257,21 @@ describe('RtImageUploadComponent', (): void => {
         const { fixture } = setup({ imageUrl: 'https://example.test/logo.png' });
 
         expect(qa(fixture, 'image-upload-download')).toBeNull();
+    });
+
+    it('SC-UKV-489 — кнопка скачивания круглая по умолчанию и квадратная по просьбе', (): void => {
+        const { fixture } = setup({ imageUrl: 'https://example.test/logo.png', downloadable: true });
+        const round: DebugElement | null = qa(fixture, 'image-upload-download');
+
+        expect((round?.componentInstance as RtIconButtonComponent).shape()).toBe('circle');
+        expect((round?.nativeElement as HTMLElement).classList).toContain('rt-image-upload__download--round');
+
+        setInputs(fixture, { downloadShape: 'square' });
+        fixture.detectChanges();
+        const square: DebugElement | null = qa(fixture, 'image-upload-download');
+
+        expect((square?.componentInstance as RtIconButtonComponent).shape()).toBe('square');
+        expect((square?.nativeElement as HTMLElement).classList).not.toContain('rt-image-upload__download--round');
     });
 
     it('SC-UKV-419 — недоступный загрузчик не открывает выбор и не берёт файлов', (): void => {
