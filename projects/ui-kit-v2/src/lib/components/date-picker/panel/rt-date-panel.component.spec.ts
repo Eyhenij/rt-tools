@@ -1,6 +1,7 @@
-import { DebugElement, LOCALE_ID } from '@angular/core';
+import { signal, DebugElement } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
 
+import { RT_KIT_LOCALE } from '../../../i18n';
 import { createRtFixture, el, qa, qaAll, textOf } from '../../../../testing/rt-kit-testing';
 import { RtDatePanelComponent } from './rt-date-panel.component';
 
@@ -12,7 +13,7 @@ interface IPanel {
 
 function setup(inputs: Readonly<Record<string, unknown>>): IPanel {
     const fixture: ComponentFixture<RtDatePanelComponent> = createRtFixture(RtDatePanelComponent, inputs, {
-        providers: [{ provide: LOCALE_ID, useValue: 'ru' }],
+        providers: [{ provide: RT_KIT_LOCALE, useValue: signal('ru') }],
     });
     const picked: string[] = [];
     const closed: jest.Mock = jest.fn();

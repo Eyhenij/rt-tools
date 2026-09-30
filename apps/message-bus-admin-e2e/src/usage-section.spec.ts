@@ -30,6 +30,11 @@ function dayOf(moment: Date): string {
     return moment.toISOString().slice(0, 10);
 }
 
+/** Тот же день, каким его показывает поле периода: русская локаль админки пишет `ДД.ММ.ГГГГ`. */
+function shownDayOf(moment: Date): string {
+    return dayOf(moment).split('-').reverse().join('.');
+}
+
 /** Строки одного списка сводки: название и число. */
 async function barListTexts(page: Page, list: string, part: 'title' | 'value'): Promise<string[]> {
     return qa(page, list).locator(`[qa-dataid="bar-list-row-${part}"]`).allTextContents();
@@ -46,8 +51,8 @@ test.describe('раздел использования', () => {
         await expect(page.getByRole('heading', { name: SECTION.usage.title })).toBeVisible();
         await expect(rowsOf(page, 'usage')).toHaveCount(5);
         await expect(qa(page, 'list-tree-filter')).toBeVisible();
-        await expect(qa(page, 'list-period-from').locator('input')).toHaveValue('2026-08-01');
-        await expect(qa(page, 'list-period-to').locator('input')).toHaveValue('2026-08-31');
+        await expect(qa(page, 'list-period-from').locator('input')).toHaveValue('01.08.2026');
+        await expect(qa(page, 'list-period-to').locator('input')).toHaveValue('31.08.2026');
         await expect(qa(page, 'pagination-range')).toContainText('из 5');
         await expect(pageQa(page, 'usage', 'columns')).toBeVisible();
 
@@ -167,8 +172,8 @@ test.describe('раздел использования', () => {
         await seven.click();
 
         await expect(seven).toHaveAttribute('aria-pressed', 'true');
-        await expect(qa(page, 'list-period-from').locator('input')).toHaveValue(dayOf(new Date(now.getTime() - 6 * DAY_MS)));
-        await expect(qa(page, 'list-period-to').locator('input')).toHaveValue(dayOf(now));
+        await expect(qa(page, 'list-period-from').locator('input')).toHaveValue(shownDayOf(new Date(now.getTime() - 6 * DAY_MS)));
+        await expect(qa(page, 'list-period-to').locator('input')).toHaveValue(shownDayOf(now));
         expect(queryOf(page).get('from')).toBe(dayOf(new Date(now.getTime() - 6 * DAY_MS)));
         expect(queryOf(page).get('to')).toBe(dayOf(now));
         // строки стенда лежат в прошлом: за последнюю неделю их нет, и сводка говорит об этом словами

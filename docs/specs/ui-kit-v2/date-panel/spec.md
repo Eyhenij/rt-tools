@@ -35,9 +35,15 @@ kit. The mockup draws a panel of its own for all three types, the same in every 
 - **The value keeps its shape: `YYYY-MM-DD`, `HH:mm` or `YYYY-MM-DDTHH:mm`, and `''` when empty.**
   It is the string the browser's input gave, so no consumer moves.
 
-- **The field takes typed text in the shape of the value.** A string that reads as a value within the
-  bounds becomes the value. Any other text leaves the value as it was and marks the field invalid;
-  nothing is corrected silently.
+- **The field shows the date in the order of the interface language.** Under `ru` the text is
+  `01.08.2026`, under `en-US` it is `08/01/2026`; the time is `HH:mm` in every language. The hint in
+  the empty field is the same shape in the kit's letters, `дд.мм.гггг` under the Russian labels.
+  Only the text in the field changes: the value of the form stays the ISO string.
+
+- **Typed text becomes the value only when it reads as one within the bounds.** The text is read in
+  the order of the interface language, and the value shape is read too, so a pasted `2026-08-01`
+  works. Any other text leaves the value as it was and marks the field invalid; nothing is
+  corrected silently.
 
 - **The panel opens by the button at the end of the field and closes by Escape or a click outside.**
   A click into the text does not open it: the person may be typing.
@@ -75,7 +81,6 @@ kit. The mockup draws a panel of its own for all three types, the same in every 
 
 - The date range field — task RT-2373.
 - Seconds: the mockup has none.
-- Typing in the application's local date format: the field reads the shape of the value only.
 
 ## Contract
 
@@ -105,8 +110,9 @@ None of its own. The draft lives while the panel is open and is dropped when it 
 ### Locales
 
 The names of months and weekdays come from the application's locale by the browser's date
-formatting. The buttons carry the kit's labels, English in the package and translated by the
-consumer's translator.
+formatting. The order of day, month and year in the text of the field comes from the same
+locale; the letters of the hint are the kit's labels. The buttons carry the kit's labels, English
+in the package and translated by the consumer's translator.
 
 ### SEO
 
@@ -136,3 +142,5 @@ None.
 
 - 2026-09-29 — written by the task RT-2372 of the epic RT-2370, which gives the field a panel of its
   own.
+- 2026-09-30 — the field shows and reads the date in the order of the interface language, as the
+  mockup of the range field shows it.

@@ -12,7 +12,6 @@ import {
     ElementRef,
     InputSignal,
     InputSignalWithTransform,
-    LOCALE_ID,
     Signal,
     ViewEncapsulation,
     WritableSignal,
@@ -20,7 +19,7 @@ import {
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, TRtKitLabelMap } from '../../i18n';
+import { RT_KIT_LABELS, RT_KIT_LOCALE, TRtKitLabelMap } from '../../i18n';
 import { BreakpointsService } from '../../platform';
 import { RtBottomSheetComponent } from '../bottom-sheet/rt-bottom-sheet.component';
 import { RtFormControlBase } from '../form-control/rt-form-control.base';
@@ -30,17 +29,11 @@ import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
 import { RtPopoverDirective } from '../popover/rt-popover.directive';
 import { RtRadiusDirective } from '../radius/rt-radius.directive';
 import { RtDatePanelComponent } from './panel/rt-date-panel.component';
-import { rtDateInBounds, rtDateRead } from './rt-date-panel.logic';
+import { rtDateInBounds } from './rt-date-panel.logic';
 import { IRtDatePicker } from './rt-date-picker.model';
+import { rtDateLayout, rtDateParse, rtDateShape, rtDateText } from './rt-date-text.logic';
 
 const BEM_BLOCK: string = 'rt-date-picker';
-
-/** Подсказка формы значения по типу — её же поле читает при наборе. */
-const SHAPES: Readonly<Record<IRtDatePicker.Type, string>> = {
-    date: 'YYYY-MM-DD',
-    time: 'HH:mm',
-    'datetime-local': 'YYYY-MM-DDTHH:mm',
-};
 
 /**
  * Поле даты, времени или даты со временем со своей панелью кита, визуально и по токенам
@@ -49,9 +42,10 @@ const SHAPES: Readonly<Record<IRtDatePicker.Type, string>> = {
  * CVA через общий `RtFormControlBase`: clearable, авто-подсветка invalid, read-only
  * представление (значение форматируется через Intl).
  *
- * `value` — строка формы нативного input'а (`YYYY-MM-DD`, `YYYY-MM-DDTHH:mm`, `HH:mm`). Текст
- * набирается в той же форме; нечитаемый или лежащий за границами оставляет значение прежним
- * и помечает поле ошибкой.
+ * `value` — строка формы нативного input'а (`YYYY-MM-DD`, `YYYY-MM-DDTHH:mm`, `HH:mm`). Текст в
+ * поле — дата в порядке языка интерфейса (`01.08.2026` под `ru`), время `HH:mm`; набирается так же,
+ * вставленная форма значения тоже читается. Нечитаемый или лежащий за границами текст оставляет
+ * значение прежним и помечает поле ошибкой.
  */
 @Component({
     selector: 'rt-date-picker',
@@ -86,7 +80,10 @@ const SHAPES: Readonly<Record<IRtDatePicker.Type, string>> = {
     },
 })
 export class RtDatePickerComponent extends RtFormControlBase<string> {
-    readonly #locale: string = inject(LOCALE_ID);
+    /** Локаль кита: приложение, меняющее язык на ходу, меняет её, и текст поля пересчитывается. */
+    readonly #locale: Signal<string> = inject(RT_KIT_LOCALE);
+    /** Порядок дня, месяца и года в тексте поля — по локали кита. */
+    readonly #layout: Signal<IRtDatePicker.TextLayout> = computed((): IRtDatePicker.TextLayout => rtDateLayout(this.#locale()));
 
     protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
     /** Узкий экран: панель открывается в нижней шторке, а не в поповере. */
@@ -98,18 +95,33 @@ export class RtDatePickerComponent extends RtFormControlBase<string> {
     /** Набранный текст не читается как значение в границах: поле помечено ошибкой. */
     protected readonly textInvalid: WritableSignal<boolean> = signal(false);
     protected readonly sheetOpen: WritableSignal<boolean> = signal(false);
-    protected readonly shape: Signal<string> = computed((): string => SHAPES[this.type()]);
+    /** Подсказка формы текста буквами кита: `дд.мм.гггг` под русскими метками. */
+    protected readonly shape: Signal<string> = computed((): string => {
+        const labels: TRtKitLabelMap = this.t();
+        return rtDateShape(this.type(), this.#layout(), {
+            day: labels.uiShapeDay,
+            month: labels.uiShapeMonth,
+            year: labels.uiShapeYear,
+            hour: labels.uiShapeHour,
+            minute: labels.uiShapeMinute,
+        });
+    });
+    /**
+     * Текст в поле — значение в порядке языка интерфейса. Не строку форма кладёт мимо контракта
+     * (например `Date`), и поле показывает её пустой, как показывало браузерное.
+     */
+    protected readonly text: Signal<string> = computed((): string => this.#text(this.value()));
     protected readonly openIcon: Signal<IRtIcon.Name> = computed((): IRtIcon.Name =>
         this.type() === 'time' ? 'ico-time' : 'ico-calendar'
     );
 
     protected readonly hasValue: Signal<boolean> = computed((): boolean => this.value() !== '');
-    /** Подсказка обрезается многоточием в узком поле, поэтому шаблон целиком виден при наведении. */
     /**
      * Ширина поля в знаках — по длине формы значения. Без неё текстовое поле берёт от браузера
      * двадцать знаков и в строке отборов потребителя занимает место вдвое шире значения.
      */
     protected readonly fieldSize: Signal<number> = computed((): number => this.shape().length);
+    /** Подсказка обрезается многоточием в узком поле, поэтому шаблон целиком виден при наведении. */
     protected readonly shapeTitle: Signal<string | null> = computed((): string | null => (this.hasValue() ? null : this.shape()));
 
     /** Вид рамки: `outline` — рамка со всех сторон, `fill` — залитое поле с чертой снизу. */
@@ -151,7 +163,7 @@ export class RtDatePickerComponent extends RtFormControlBase<string> {
             this.#commit('');
             return;
         }
-        const read: string | null = rtDateRead(text, this.type());
+        const read: string | null = rtDateParse(text, this.type(), this.#layout());
         if (read === null || !rtDateInBounds(read, this.min(), this.max())) {
             this.textInvalid.set(true);
             return;
@@ -191,8 +203,12 @@ export class RtDatePickerComponent extends RtFormControlBase<string> {
         this.textInvalid.set(false);
         const node: HTMLInputElement | undefined = this.fieldEl()?.nativeElement;
         if (node !== undefined) {
-            node.value = value;
+            node.value = this.#text(value);
         }
+    }
+
+    #text(value: unknown): string {
+        return typeof value === 'string' ? rtDateText(value, this.type(), this.#layout()) : '';
     }
 
     /**
@@ -208,7 +224,7 @@ export class RtDatePickerComponent extends RtFormControlBase<string> {
         if (Number.isNaN(parsed)) {
             return value;
         }
-        return new Intl.DateTimeFormat(this.#locale, this.#formatOptions(type)).format(new Date(parsed));
+        return new Intl.DateTimeFormat(this.#locale(), this.#formatOptions(type)).format(new Date(parsed));
     }
 
     #formatOptions(type: IRtDatePicker.Type): Intl.DateTimeFormatOptions {

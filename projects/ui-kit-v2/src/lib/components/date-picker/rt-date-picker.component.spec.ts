@@ -1,13 +1,14 @@
-import { ChangeDetectionStrategy, Component, LOCALE_ID, Provider } from '@angular/core';
+import { signal, ChangeDetectionStrategy, Component, Provider } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
+import { RT_KIT_LOCALE } from '../../i18n';
 import { BreakpointsService } from '../../platform';
 import { createRtFixture, el, hostClasses, qa, textOf } from '../../../testing/rt-kit-testing';
 import { RtDatePickerComponent } from './rt-date-picker.component';
 
 /** Плоский вид зависит от локали — прибиваем её, иначе проверялась бы среда. */
-const RU_LOCALE: Provider = { provide: LOCALE_ID, useValue: 'ru' };
+const RU_LOCALE: Provider = { provide: RT_KIT_LOCALE, useValue: signal('ru') };
 
 @Component({
     selector: 'rt-date-picker-host',
@@ -56,11 +57,11 @@ describe('RtDatePickerComponent', (): void => {
         expect(hostClasses(setup())).toContain('rt-date-picker');
     });
 
-    it('поле текстовое, подсказка показывает форму значения по типу', (): void => {
+    it('SC-UKV-430 — поле текстовое, подсказка показывает форму текста в порядке локали', (): void => {
         expect(field(setup()).getAttribute('type')).toBe('text');
-        expect(field(setup()).getAttribute('placeholder')).toBe('YYYY-MM-DD');
-        expect(field(setup({ type: 'time' })).getAttribute('placeholder')).toBe('HH:mm');
-        expect(field(setup({ type: 'datetime-local' })).getAttribute('placeholder')).toBe('YYYY-MM-DDTHH:mm');
+        expect(field(setup()).getAttribute('placeholder')).toBe('dd.mm.yyyy');
+        expect(field(setup({ type: 'time' })).getAttribute('placeholder')).toBe('hh:mm');
+        expect(field(setup({ type: 'datetime-local' })).getAttribute('placeholder')).toBe('dd.mm.yyyy hh:mm');
     });
 
     it('ширина поля в знаках равна длине формы значения', (): void => {
@@ -72,7 +73,7 @@ describe('RtDatePickerComponent', (): void => {
     it('пустое поле показывает форму значения при наведении, заполненное — нет', (): void => {
         const fixture: ComponentFixture<DatePickerHostComponent> = setupHost();
 
-        expect(field(fixture).getAttribute('title')).toBe('YYYY-MM-DD');
+        expect(field(fixture).getAttribute('title')).toBe('dd.mm.yyyy');
 
         fixture.componentInstance.control.setValue('2026-03-15');
         fixture.detectChanges();
@@ -81,16 +82,18 @@ describe('RtDatePickerComponent', (): void => {
     });
 
     describe('набор текста', (): void => {
-        it('SC-UKV-419 — текст формы значения в границах становится значением', (): void => {
+        it('SC-UKV-419 — текст в порядке локали и вставленная форма значения становятся значением', (): void => {
             const fixture: ComponentFixture<RtDatePickerComponent> = setup({ min: '2026-01-01', max: '2026-12-31' });
             const changes: string[] = [];
             fixture.componentInstance.registerOnChange((value: string): void => {
                 changes.push(value);
             });
 
-            type(fixture, '2026-03-15');
+            type(fixture, '15.03.2026');
+            type(fixture, '2026-04-01');
 
-            expect(changes).toEqual(['2026-03-15']);
+            expect(changes).toEqual(['2026-03-15', '2026-04-01']);
+            expect(field(fixture).value).toBe('01.04.2026');
             expect(hostClasses(fixture)).not.toContain('rt-date-picker--invalid');
         });
 
@@ -173,7 +176,7 @@ describe('RtDatePickerComponent', (): void => {
             fixture.detectChanges();
 
             expect(fixture.componentInstance.control.value).toBe('2026-03-20');
-            expect(field(fixture).value).toBe('2026-03-20');
+            expect(field(fixture).value).toBe('20.03.2026');
             expect(popup()).toBeNull();
         });
 
@@ -212,13 +215,13 @@ describe('RtDatePickerComponent', (): void => {
             expect(fixture.componentInstance.control.value).toBe('2026-03-15');
         });
 
-        it('значение формы отражается в поле', (): void => {
+        it('SC-UKV-430 — значение формы стоит в поле в порядке локали', (): void => {
             const fixture: ComponentFixture<DatePickerHostComponent> = setupHost();
 
             fixture.componentInstance.control.setValue('2026-03-15');
             fixture.detectChanges();
 
-            expect(field(fixture).value).toBe('2026-03-15');
+            expect(field(fixture).value).toBe('15.03.2026');
         });
 
         it('уход фокуса помечает контрол тронутым', (): void => {

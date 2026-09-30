@@ -3,6 +3,24 @@ export namespace IRtDatePicker {
     /** Тип значения: дата, время или дата со временем. */
     export type Type = 'date' | 'datetime-local' | 'time';
 
+    /** Часть даты в тексте поля. */
+    export type DatePart = 'day' | 'month' | 'year';
+
+    /** Как дата пишется в тексте поля по локали: порядок частей и знак между ними. */
+    export interface TextLayout {
+        order: readonly DatePart[];
+        separator: string;
+    }
+
+    /** Буквы подсказки формы текста: `дд`, `мм`, `гггг`, `чч`, `мм` под русскими метками. */
+    export interface ShapeLetters {
+        day: string;
+        month: string;
+        year: string;
+        hour: string;
+        minute: string;
+    }
+
     /** Ячейка колонки часов или минут. */
     export interface TimeCell {
         value: number;

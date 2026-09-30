@@ -15,7 +15,6 @@ import {
     ElementRef,
     InputSignal,
     InputSignalWithTransform,
-    LOCALE_ID,
     OutputEmitterRef,
     Signal,
     ViewEncapsulation,
@@ -24,7 +23,7 @@ import {
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, TRtKitLabelMap } from '../../../i18n';
+import { RT_KIT_LABELS, RT_KIT_LOCALE, TRtKitLabelMap } from '../../../i18n';
 import { RtButtonDirective } from '../../button/rt-button.directive';
 import { RtCalendarComponent } from '../../calendar/rt-calendar.component';
 import { IRtCalendar } from '../../calendar/rt-calendar.model';
@@ -88,13 +87,14 @@ type TTab = 'date' | 'time';
     },
 })
 export class RtDatePanelComponent {
-    readonly #locale: string = inject(LOCALE_ID);
+    /** Локаль кита: названия месяцев, дней недели и первый день недели идут по ней. */
+    readonly #locale: Signal<string> = inject(RT_KIT_LOCALE);
     /** Минута открытия панели: от неё считается «сегодня», когда вход `now` не задан. */
     readonly #openedAt: Date = new Date();
-    readonly #firstDay: number = rtDateFirstDay(this.#locale);
+    readonly #firstDay: Signal<number> = computed((): number => rtDateFirstDay(this.#locale()));
 
     protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
-    protected readonly weekdays: readonly string[] = rtDateWeekdays(this.#locale);
+    protected readonly weekdays: Signal<readonly string[]> = computed((): readonly string[] => rtDateWeekdays(this.#locale()));
 
     protected readonly timeCells: Signal<readonly ElementRef<HTMLButtonElement>[]> =
         viewChildren<ElementRef<HTMLButtonElement>>('timeCell');
@@ -126,7 +126,7 @@ export class RtDatePanelComponent {
 
     protected readonly months: Signal<IRtCalendar.Month[]> = computed((): IRtCalendar.Month[] => [
         rtDateMonth(this.shownMonth(), {
-            locale: this.#locale,
+            locale: this.#locale(),
             today: this.today(),
             chosen: this.draftDay(),
             min: this.min(),
@@ -137,7 +137,7 @@ export class RtDatePanelComponent {
     protected readonly canNext: Signal<boolean> = computed((): boolean => rtDateCanPage(this.shownMonth(), 1, this.min(), this.max()));
 
     protected readonly monthCells: Signal<IRtDatePicker.MonthCell[]> = computed((): IRtDatePicker.MonthCell[] =>
-        rtDateMonths(this.year(), this.#locale, this.min(), this.max())
+        rtDateMonths(this.year(), this.#locale(), this.min(), this.max())
     );
     protected readonly canPrevYear: Signal<boolean> = computed((): boolean =>
         rtDateInBounds(String(this.year() - 1), this.min(), this.max())
@@ -232,7 +232,7 @@ export class RtDatePanelComponent {
     }
 
     protected onGridKey(event: IRtCalendar.GridKey): void {
-        const next: string | null = rtDateGridKey(event.key, event.day.key, this.#firstDay, this.min(), this.max());
+        const next: string | null = rtDateGridKey(event.key, event.day.key, this.#firstDay(), this.min(), this.max());
         if (next !== null) {
             this.shownMonth.set(next.slice(0, MONTH_LEN));
             this.activeKey.set(next);
