@@ -1,0 +1,81 @@
+<ng-container rtBlock="rt-dynamic-selector">
+    @if (isNothingToChoose()) {
+        <rt-empty-state rtElem="nothing" qa-dataid="dynamic-selector-nothing" icon="warning" [title]="nothingToChooseLabel()" />
+    } @else {
+        <div
+            rtElem="anchor"
+            rtPopoverTrigger="manual"
+            [rtPopover]="popupTpl"
+            [rtPopoverDisabled]="isDisabled()"
+            (rtPopoverClosed)="onClosed()">
+            <rt-dynamic-selector-list
+                [rows]="rows()"
+                [draggable]="draggable()"
+                [disabled]="isDisabled()"
+                [actionsShown]="!invitation()"
+                [resetDisabled]="isResetDisabled()"
+                [clearDisabled]="isClearDisabled()"
+                [titleTpl]="titleTpl()"
+                [controlsTpl]="controlsTpl()"
+                (removed)="onRemoved($event)"
+                (moved)="onMoved($event)"
+                (resetClicked)="onReset()"
+                (cleared)="onCleared()">
+                @if (isAddShown()) {
+                    <button
+                        rtButton
+                        theme="secondary"
+                        appearance="text"
+                        type="button"
+                        qa-dataid="dynamic-selector-add"
+                        [label]="addTitle()"
+                        [attr.aria-label]="addTitle()"
+                        [disabled]="isDisabled()"
+                        (click)="onAdd()"></button>
+                }
+            </rt-dynamic-selector-list>
+
+            @if (invitation()) {
+                <rt-empty-state
+                    rtElem="invitation"
+                    qa-dataid="dynamic-selector-invitation"
+                    [icon]="invitationIcon()"
+                    [description]="invitationDescription()">
+                    @if (hasOffer()) {
+                        <button
+                            rtButton
+                            appearance="outlined"
+                            type="button"
+                            qa-dataid="dynamic-selector-invitation-add"
+                            [label]="addTitle()"
+                            [attr.aria-label]="addTitle()"
+                            [disabled]="isDisabled()"
+                            (click)="onAdd()"></button>
+                    }
+                </rt-empty-state>
+            }
+        </div>
+    }
+
+    <ng-template #popupTpl>
+        <rt-dynamic-selector-popup
+            [entities]="offered()"
+            [keyExp]="keyExp()"
+            [displayExp]="displayExp()"
+            [mode]="mode()"
+            [multiToggleShown]="multiToggleShown()"
+            [selectAllShown]="selectAllShown()"
+            [localSearch]="localSearch()"
+            [lazyLoad]="lazyLoad()"
+            [loading]="loading()"
+            [fetching]="fetching()"
+            [pinnedKeys]="pinnedKeys()"
+            [navigateTitle]="navigateTitle()"
+            [navigateLink]="navigateLink()"
+            (applied)="onApplied($event)"
+            (cancelled)="onCancelled()"
+            (searchChange)="searchChange.emit($event)"
+            (loadMore)="loadMore.emit()"
+            (temporaryChoiceChange)="temporaryChoiceChange.emit($event)" />
+    </ng-template>
+</ng-container>
