@@ -11,6 +11,9 @@
         --rt-image-cropper-shade: var(--rt-overlay-black-50);
         --rt-image-cropper-rim-width: var(--rt-border-width-thin);
         --rt-image-cropper-rim-color: var(--rt-overlay-white-50);
+        --rt-image-cropper-dash-style: none;
+        --rt-image-cropper-dash-color: transparent;
+        --rt-image-cropper-dash-opacity: 1;
         --rt-image-cropper-handle-size: var(--rt-size-3);
         --rt-image-cropper-handle-bg: var(--rt-color-action-on-primary);
         --rt-image-cropper-handle-border: var(--rt-color-border-strong);
@@ -89,6 +92,18 @@
             outline: 100vmax solid var(--rt-image-cropper-shade);
             touch-action: none;
 
+            /* Пунктир поверх светлой линии рамки; в своём наборе его нет, материальный рисует
+               его, как обрезка первого кита. */
+            &:after {
+                position: absolute;
+                border: var(--rt-image-cropper-rim-width) var(--rt-image-cropper-dash-style) var(--rt-image-cropper-dash-color);
+                border-radius: inherit;
+                content: '';
+                inset: calc(-1 * var(--rt-image-cropper-rim-width));
+                opacity: var(--rt-image-cropper-dash-opacity);
+                pointer-events: none;
+            }
+
             &:focus-visible {
                 box-shadow: var(--rt-image-cropper-focus-shadow);
             }
@@ -161,6 +176,24 @@
                 left: 0;
                 cursor: ew-resize;
                 translate: 0 -50%;
+            }
+        }
+
+        /* Материальный набор повторяет обрезку первого кита: поле без подложки и скругления,
+           светлая вуаль вокруг рамки, пунктир по рамке и мелкие тёмные ручки. */
+        :is(.rt-preset-material, [data-preset='material']) & {
+            --rt-image-cropper-radius: var(--rt-radius-none);
+            --rt-image-cropper-field-bg: transparent;
+            --rt-image-cropper-shade: var(--rt-overlay-white-25);
+            --rt-image-cropper-dash-style: dashed;
+            --rt-image-cropper-dash-color: var(--rt-mat-dark-40);
+            --rt-image-cropper-dash-opacity: 0.75;
+            --rt-image-cropper-handle-size: var(--rt-size-2);
+            --rt-image-cropper-handle-bg: var(--rt-mat-dark-40);
+            --rt-image-cropper-handle-border: var(--rt-overlay-white-50);
+
+            @media (pointer: coarse) {
+                --rt-image-cropper-handle-size: var(--rt-size-6);
             }
         }
 
