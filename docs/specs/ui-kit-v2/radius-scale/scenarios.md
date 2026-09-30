@@ -99,3 +99,11 @@ When it is drawn
 Then it stays a circle, and the step is used by the rectangle only
 
 Covered: `projects/ui-kit-v2/src/lib/components/skeleton/rt-skeleton.component.spec.ts`.
+
+### SC-UKV-489 — the table rounds the card of its narrow view and not the wide view
+
+Given a table with a named step
+When it is drawn on a narrow screen and on a wide one
+Then the cards of the narrow view take the corners of the step, and the wide view keeps no corners
+
+Covered: `projects/ui-kit-v2/src/lib/components/table/rt-table.component.spec.ts`.
