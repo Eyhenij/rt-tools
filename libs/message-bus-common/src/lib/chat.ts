@@ -123,6 +123,11 @@ export interface IChatMessageRow {
     readonly side: string;
     readonly text: string;
     readonly takenAt: string;
+    /**
+     * Имя учётной записи, написавшей ответ. Пусто или нет поля — реплика посетителя или ответ без
+     * учётной записи; поля нет у строк, которые экран собирает сам, не спрашивая сервис.
+     */
+    readonly authorName?: string;
 }
 
 /** Событие потока: пришедшая реплика целиком. */
@@ -132,4 +137,20 @@ export interface IChatMessageEventRow {
     readonly side: string;
     readonly text: string;
     readonly takenAt: string;
+    /** Имя учётной записи, написавшей ответ. Пусто — реплика посетителя или ответ без учётной записи. */
+    readonly authorName?: string;
+}
+
+/** Обращение посетителя в списке виджета «Ваши обращения». */
+export interface IChatVisitorTalkListRow {
+    readonly id: string;
+    /** Состояние разговора: живой или закрытый. */
+    readonly state: string;
+    /** Минута последней реплики — ею же упорядочен список, свежие первыми. */
+    readonly lastMessageAt: string;
+    /** Последняя реплика. Пусто — в обращении ещё не писали. */
+    readonly lastMessage: string;
+    readonly lastMessageSide: string;
+    /** Имя того, кто ответил последним. Пусто — названного ответа ещё не было. */
+    readonly operatorName: string;
 }

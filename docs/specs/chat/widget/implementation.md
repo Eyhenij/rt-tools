@@ -10,14 +10,20 @@ or the code holds what the spec is silent about.
 - **A page whose address is not in the list of the site gets no chat.** — `libs/message-bus-api/chat/util/src/lib/chat-origin.logic.ts:originAllowed`
 - **Before the first remark the widget shows the greeting of the site and the hours of answer.** — `apps/chat-widget/src/lib/chat-widget.api.ts:askSiteLook`
 - **The conversation is created by the first remark, not by the opening of the widget.** — `apps/chat-widget/src/lib/chat-widget.api.ts:startTalk`
-- **A returning visitor sees their earlier talk.** — `apps/chat-widget/src/lib/chat-widget.logic.ts:widgetStorageKey`
+- **A returning visitor opens the widget on the list of their talks.** — `apps/chat-widget/src/lib/chat-widget.element.ts:#home` — the sign is kept under `widgetStorageKey`
+- **A new talk is started by the button under the list.** — `apps/chat-widget/src/lib/chat-widget.element.ts:#fresh` — the first remark goes with the mark `fresh` from `#say`
+- **A talk opened from the list goes back to it by the arrow of the head.** — `apps/chat-widget/src/lib/chat-widget.element.ts:#back`
+- **An answer is unread until the visitor opens its talk, and the mark lives in the browser.** — `apps/chat-widget/src/lib/chat-widget.logic.ts:widgetUnread` — the minutes lie under `widgetSeenKey`, written by `#markSeen`. Scenario `SC-CH-110`
 - **Both sides stand in one thread, oldest first.** — `libs/message-bus-api/chat/feature/src/lib/chat-intake.controller.ts:mine`
 - **An answer of the operator arrives in the open widget without a reload.** — `apps/chat-widget/src/lib/chat-widget.element.ts:#listen`
 - **Outside the hours of answer the remark is taken in all the same, and the widget says when the answer comes.** — `libs/message-bus-api/chat/util/src/lib/chat-hours.logic.ts:chatAnswersAt`
 - **On a narrow screen the widget takes the whole screen, on a wide one it stands in the corner.** — `apps/chat-widget/src/lib/chat-widget.styles.ts:WIDGET_STYLES`
 - **The widget is folded into a bubble and unfolded by a press.** — `apps/chat-widget/src/lib/chat-widget.element.ts:#bubble`
 - **A remark of any length keeps the thread within its width.** — `apps/chat-widget/src/lib/chat-widget.styles.ts:WIDGET_STYLES`
-- **The folded widget is a round button with an icon, and the open one is a window of 380 px with a head of the accent colour.** — `apps/chat-widget/src/lib/chat-widget.element.ts:#bubble` — the head is drawn by `head`, the sizes and colours stand in `WIDGET_STYLES`. Scenario `SC-CH-99`
+- **The folded widget is a round button with an icon, and the open one is a window of 380 px with a head of the accent colour.** — `apps/chat-widget/src/lib/chat-widget.element.ts:#bubble` — the head is drawn by `titleHead` of `chat-widget.view.ts`, the sizes and colours stand in `WIDGET_STYLES`. Scenario `SC-CH-99`
+- **A row of the list names the operator, the last remark, its time, the unread dot and the closed mark.** — `apps/chat-widget/src/lib/chat-widget.view.ts:talksList` — the day by `widgetDayText`. Scenario `SC-CH-107`
+- **The head of a talk names the operator who answered last.** — `apps/chat-widget/src/lib/chat-widget.view.ts:talkHead` — the name by `widgetLastAuthor`, the circle by `widgetInitials`. Scenario `SC-CH-111`
+- **The bubble of an answer names the first word of the operator's name.** — `apps/chat-widget/src/lib/chat-widget.view.ts:remarks` — the word by `widgetFirstName`. Scenario `SC-CH-111`
 - **The remarks of the two sides are bubbles on the two sides of the thread.** — `apps/chat-widget/src/lib/chat-widget.logic.ts:widgetTimeText` — the time of a bubble; the side is the attribute the styles place it by. Scenario `SC-CH-100`
 - **Before the first remark the greeting and the hours stand in one card; outside the hours a talk gets a note above the thread.** — `apps/chat-widget/src/lib/chat-widget.element.ts:#feed` — the card before the first remark, the note by the word of the hours. Scenario `SC-CH-101`
 - **The field is a capsule, and in focus it draws the ring of the fields of the tree.** — `apps/chat-widget/src/lib/chat-widget.styles.ts:WIDGET_STYLES` — the ring under `:focus-within` of the capsule, the pale button under `:placeholder-shown`. Scenario `SC-CH-102`

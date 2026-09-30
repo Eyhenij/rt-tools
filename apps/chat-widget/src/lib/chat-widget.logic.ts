@@ -5,7 +5,7 @@
  * до того, как что-то нарисовать. Оставшись внутри элемента, каждое из них проверялось бы только
  * поднятым браузером.
  */
-import { IChatSiteLookRow } from '@rt/message-bus-common';
+import { CHAT_SIDE_OPERATOR, IChatMessageRow, IChatSiteLookRow, IChatVisitorTalkListRow } from '@rt/message-bus-common';
 
 /** Минута суток часами и минутами. */
 function clockOf(minutes: number): string {
@@ -81,4 +81,82 @@ export function widgetTimeText(takenAt: string): string {
     }
 
     return clockOf(moment.getHours() * 60 + moment.getMinutes());
+}
+
+/** Под каким именем в хранилище браузера лежат минуты, когда посетитель последний раз видел обращения. */
+export function widgetSeenKey(siteKey: string): string {
+    return `rt-chat-seen:${siteKey}`;
+}
+
+/**
+ * Непрочитан ли ответ в обращении.
+ *
+ * Непрочитан, когда последняя реплика — ответ, и она свежее минуты, когда посетитель последний раз
+ * видел это обращение. Не видел ни разу — ответ непрочитан. Своя реплика посетителя точки не
+ * ставит: её он читал, когда писал.
+ */
+export function widgetUnread(talk: IChatVisitorTalkListRow, seenAt: string): boolean {
+    if (talk.lastMessageSide !== CHAT_SIDE_OPERATOR) {
+        return false;
+    }
+
+    const seen: number = new Date(seenAt).getTime();
+
+    return Number.isNaN(seen) || new Date(talk.lastMessageAt).getTime() > seen;
+}
+
+/** Инициалы для круга аватара: первые буквы двух первых слов имени, заглавными. */
+export function widgetInitials(name: string): string {
+    return name
+        .trim()
+        .split(/\s+/)
+        .slice(0, 2)
+        .map((word: string): string => word.charAt(0))
+        .join('')
+        .toUpperCase();
+}
+
+/** Первое слово имени: им подписан пузырь ответа, как в макете — «Анна». */
+export function widgetFirstName(name: string): string {
+    return name.trim().split(/\s+/)[0] ?? '';
+}
+
+/** Имя того, кто ответил последним в ленте. Пусто — названного ответа ещё не было. */
+export function widgetLastAuthor(messages: readonly IChatMessageRow[]): string {
+    for (let index: number = messages.length - 1; index >= 0; index -= 1) {
+        const author: string = messages[index].authorName ?? '';
+
+        if (author) {
+            return author;
+        }
+    }
+
+    return '';
+}
+
+/**
+ * Когда была последняя реплика, словами строки списка.
+ *
+ * Сегодня — часами и минутами, вчера — словом дня, раньше — числом и месяцем: «24 сент.». Минута
+ * «сейчас» приезжает доводом, а не читается часами внутри: решение проверяется вызовом.
+ */
+export function widgetDayText(takenAt: string, now: Date, yesterday: string): string {
+    const moment: Date = new Date(takenAt);
+
+    if (Number.isNaN(moment.getTime())) {
+        return '';
+    }
+
+    const day: (at: Date) => number = (at: Date): number => new Date(at.getFullYear(), at.getMonth(), at.getDate()).getTime();
+    const daysAgo: number = Math.round((day(now) - day(moment)) / 86_400_000);
+
+    if (daysAgo <= 0) {
+        return widgetTimeText(takenAt);
+    }
+
+    if (daysAgo === 1) {
+        return yesterday;
+    }
+
+    return new Intl.DateTimeFormat('ru-RU', { day: 'numeric', month: 'short' }).format(moment);
 }

@@ -5,9 +5,9 @@
 Rewritten by every session, not appended to.
 
 - **State:** `этап-идёт`
-- **Stage:** 3 of 5 — The widget
-- **Done:** the spec of the chat and of the widget, the service: several talks, the list, the name of the answer
-- **Next step:** the list screen of the widget, the head of a talk, the unread mark
+- **Stage:** 5 of 5 — Closing
+- **Done:** the spec, the service, the widget list and head, the end-to-end checks and three frames
+- **Next step:** run `pnpm run check:all`, take the folder apart, open the PR
 - **Uncommitted:** nothing
 - **Waiting for the owner:** the proposals of the rules reviews of RT-2373, RT-2366 and RT-2365
 - **PR:** not open yet
@@ -19,12 +19,12 @@ Rewritten by every session, not appended to.
 - [x] 2.1 Give the visitor the list of their talks and a way to start a new one
 - [x] 2.2 Give the site the operator's name and role at an answer
 - [x] 2.3 Cover the procedures by the service tests
-- [>] 3.1 Draw the list screen and the new-talk button
-- [ ] 3.2 Draw the head of a talk with the back arrow, the avatar, the name and the role
-- [ ] 3.3 Cover the new logic by the widget tests
-- [ ] 4.1 Write the end-to-end checks of the list and of the head
-- [ ] 4.2 Compare with the mockup frames and take the frames
-- [ ] 5.1 Run the full set of checks
+- [x] 3.1 Draw the list screen and the new-talk button
+- [x] 3.2 Draw the head of a talk with the back arrow, the avatar, the name and the role
+- [x] 3.3 Cover the new logic by the widget tests
+- [x] 4.1 Write the end-to-end checks of the list and of the head
+- [x] 4.2 Compare with the mockup frames and take the frames
+- [>] 5.1 Run the full set of checks
 
 ## Decisions along the way
 
@@ -32,7 +32,9 @@ Rewritten by every session, not appended to.
   the chat does not touch the tables of the intake.
 - The stream of the widget is subscribed by the visitor, not by one talk: an answer to another talk
   marks it unread in the list.
-- The widget subdomain keeps its seven new rules unbound until the widget stage writes their code.
+- The list frame is taken on a seeded visitor of the site outside the hours: talks made by the run
+  carry the minute of the run, and the operator of the stand does not answer for that site.
+- A closed talk shows the mark «Закрыто» and never the unread dot.
 
 ## Sessions
 

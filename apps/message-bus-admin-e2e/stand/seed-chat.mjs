@@ -94,6 +94,43 @@ function recordsSql() {
     ].join('\n');
 }
 
+/**
+ * Вернувшийся посетитель и его обращения: кладутся прямым запросом.
+ *
+ * Приём выдаёт признак посетителя сам и каждый раз новый, а кадр списка открывается постоянным
+ * признаком из хранилища браузера — такого приём не умеет. Времена стоят от минуты засева, имя
+ * отвечавшего — в колонке ответа, как его пишет панель.
+ */
+function returningSql() {
+    const site = CHAT.widgetClosed.id;
+    const visitor = CHAT.returning;
+    const at = (day, minute = 0) => `TIMESTAMP '${FIRST_MOMENT}' + (${day} * INTERVAL '1 day') + (${minute} * INTERVAL '1 minute')`;
+    const lines = [
+        `INSERT INTO "chat_visitor" ("id", "siteId", "token", "firstSeenAt") VALUES`,
+        `    ('${visitor.id}', '${site}', '${visitor.token}', TIMESTAMP '${FIRST_MOMENT}');`,
+    ];
+
+    for (const asked of visitor.talks) {
+        const last = asked.answer ? at(asked.day, 5) : at(asked.day);
+
+        lines.push(
+            `INSERT INTO "chat_conversation" ("id", "siteId", "visitorId", "createdAt", "lastMessageAt", "state") VALUES`,
+            `    ('${asked.id}', '${site}', '${visitor.id}', ${at(asked.day)}, ${last}, '${asked.closed ? 'closed' : 'live'}');`,
+            `INSERT INTO "chat_message" ("id", "conversationId", "side", "text", "takenAt") VALUES`,
+            `    ('${asked.id}-question', '${asked.id}', 'visitor', '${asked.text}', ${at(asked.day)});`
+        );
+
+        if (asked.answer) {
+            lines.push(
+                `INSERT INTO "chat_message" ("id", "conversationId", "side", "text", "takenAt", "authorName") VALUES`,
+                `    ('${asked.id}-answer', '${asked.id}', 'operator', '${asked.answer}', ${last}, '${asked.author}');`
+            );
+        }
+    }
+
+    return lines.join('\n');
+}
+
 /** Оператор набора: он отвечает за первый сайт и не отвечает за соседский. */
 function operatorSql(accountName) {
     return [
@@ -114,6 +151,7 @@ function operatorSql(accountName) {
 export async function seedChat(sql, accountName) {
     await sql(recordsSql());
     await sql(operatorSql(accountName));
+    await sql(returningSql());
 
     const own = [];
 
