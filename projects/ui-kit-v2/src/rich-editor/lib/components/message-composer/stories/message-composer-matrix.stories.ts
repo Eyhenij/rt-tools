@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/angular';
 
+import { storyPseudoParameters } from '../../../../../showcase/story-states';
 import { TestRtMessageComposerMatrixComponent } from './component/test-message-composer-matrix.component';
 
 /**
@@ -17,13 +18,19 @@ export default {
 
 type TStory = StoryObj<TestRtMessageComposerMatrixComponent>;
 
-export const State: TStory = { args: { part: 'state' } };
+/** Фокус капсулы рисует аддон псевдосостояний: признак стоит на хосте, правило — на капсуле. */
+export const State: TStory = {
+    args: { part: 'state' },
+    parameters: { pseudo: storyPseudoParameters('.rt-message-composer__capsule') },
+};
 
 export const Attachments: TStory = { args: { part: 'attachments' } };
 
 export const Formatting: TStory = { args: { part: 'formatting' } };
 
 export const Rows: TStory = { args: { part: 'rows' } };
+
+export const Hint: TStory = { args: { part: 'hint' } };
 
 export const Presets: TStory = { args: { part: 'presets' } };
 
