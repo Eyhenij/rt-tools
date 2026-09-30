@@ -80,6 +80,17 @@ button of sending — "Отправить". A remark past the limit gets "Реп
   is not given away to a window nobody opened.
 - **A remark of any length keeps the thread within its width.** Long words and addresses are broken,
   not let out past the edge: the widget stands in a foreign layout and has no right to stretch it.
+- **The folded widget is a round button with an icon, and the open one is a window of 380 px with a
+  head of the accent colour.** The head carries the title and the cross; the look repeats the
+  mockup by the widget's own values, because the kit does not travel with it.
+- **The remarks of the two sides are bubbles on the two sides of the thread.** The visitor's stand
+  on the right, the support's on the left; each names its side and the time it was taken in.
+- **Before the first remark the greeting and the hours stand in one card; outside the hours a talk
+  gets a note above the thread.** Inside the hours a going talk shows no hours at all: the visitor
+  already knows the answer comes.
+- **The field is a capsule, and in focus it draws the ring of the fields of the tree.** The send
+  button beside it is pale while the field is empty and stays pressable: an empty remark is not
+  sent by the check of the widget, not by a switched-off button.
 
 **The refusals.**
 
@@ -142,7 +153,7 @@ starts, the minute it ends and the time zone they are counted in.
 | Screen     | State                  | What is shown                                                       |
 | ---------- | ---------------------- | ------------------------------------------------------------------- |
 | The bubble | folded                 | the round button in the corner; on a narrow screen the same         |
-| The widget | the site is unknown    | the words that the chat is unavailable, without a field             |
+| The widget | the site is unknown    | the words that the chat is unavailable and a hint, without a field  |
 | The widget | no talk yet            | the greeting, the hours of answer and the field of the first remark |
 | The widget | the talk is read       | the messages of both sides, oldest first, and the field             |
 | The widget | the remark is sent     | the remark in the thread, marked as not confirmed by the service    |
@@ -197,3 +208,5 @@ One page belongs to one site. A visitor writing from two sites has two signs and
 - 2026-09-20 — written before the code by the task RT-2182 of the epic RT-2177.
 - 2026-09-21 — merged into the domain as a subdomain by the same task; the scenario SC-CH-61 about
   the width of a long remark was added by the work itself.
+- 2026-09-30 — the look follows the mockup by the task RT-2365 of the epic RT-2370: the round
+  button, the blue head, the bubbles, the capsule field; scenarios SC-CH-99…SC-CH-102.

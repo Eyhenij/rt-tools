@@ -16,13 +16,14 @@ export type TWidgetWord =
     | 'sideVisitor'
     | 'sideOperator'
     | 'unavailable'
+    | 'unavailableHint'
     | 'answering'
     | 'later'
     | 'sendFailed'
     | 'tooLong';
 
 export const WIDGET_WORDS: Readonly<Record<TWidgetWord, string>> = Object.freeze({
-    /** Подпись свёрнутого виджета: её читает и тот, кто пользуется голосом экрана. */
+    /** Заголовок шапки и имя круглой кнопки: у кнопки нет слова, и имя читает голос экрана. */
     bubble: 'Чат с поддержкой',
     close: 'Свернуть чат',
     placeholder: 'Напишите нам',
@@ -30,6 +31,8 @@ export const WIDGET_WORDS: Readonly<Record<TWidgetWord, string>> = Object.freeze
     sideVisitor: 'Вы',
     sideOperator: 'Поддержка',
     unavailable: 'Чат недоступен',
+    /** Пояснение под словом о недоступном чате: куда идти посетителю, раз здесь не ответят. */
+    unavailableHint: 'Напишите нам другим способом — контакты есть на сайте.',
     answering: 'Отвечаем сейчас',
     later: 'Ответим в рабочие часы',
     sendFailed: 'Реплика не ушла',

@@ -66,3 +66,19 @@ export function widgetHoursWord(look: IChatSiteLookRow): EWidgetHoursWord {
 export function widgetHoursText(look: IChatSiteLookRow): string {
     return `${clockOf(look.answerFrom)}–${clockOf(look.answerTo)}`;
 }
+
+/**
+ * Время реплики часами и минутами в поясе посетителя: «12:40».
+ *
+ * Сервис отдаёт минуту приёма строкой ISO. Нечитаемая строка даёт пустое время, а не «NaN:NaN»:
+ * пузырь без времени читается лучше, чем с мусором.
+ */
+export function widgetTimeText(takenAt: string): string {
+    const moment: Date = new Date(takenAt);
+
+    if (Number.isNaN(moment.getTime())) {
+        return '';
+    }
+
+    return clockOf(moment.getHours() * 60 + moment.getMinutes());
+}

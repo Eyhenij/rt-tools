@@ -17,6 +17,10 @@ or the code holds what the spec is silent about.
 - **On a narrow screen the widget takes the whole screen, on a wide one it stands in the corner.** — `apps/chat-widget/src/lib/chat-widget.styles.ts:WIDGET_STYLES`
 - **The widget is folded into a bubble and unfolded by a press.** — `apps/chat-widget/src/lib/chat-widget.element.ts:#bubble`
 - **A remark of any length keeps the thread within its width.** — `apps/chat-widget/src/lib/chat-widget.styles.ts:WIDGET_STYLES`
+- **The folded widget is a round button with an icon, and the open one is a window of 380 px with a head of the accent colour.** — `apps/chat-widget/src/lib/chat-widget.element.ts:#bubble` — the head is drawn by `head`, the sizes and colours stand in `WIDGET_STYLES`. Scenario `SC-CH-99`
+- **The remarks of the two sides are bubbles on the two sides of the thread.** — `apps/chat-widget/src/lib/chat-widget.logic.ts:widgetTimeText` — the time of a bubble; the side is the attribute the styles place it by. Scenario `SC-CH-100`
+- **Before the first remark the greeting and the hours stand in one card; outside the hours a talk gets a note above the thread.** — `apps/chat-widget/src/lib/chat-widget.element.ts:#feed` — the card before the first remark, the note by the word of the hours. Scenario `SC-CH-101`
+- **The field is a capsule, and in focus it draws the ring of the fields of the tree.** — `apps/chat-widget/src/lib/chat-widget.styles.ts:WIDGET_STYLES` — the ring under `:focus-within` of the capsule, the pale button under `:placeholder-shown`. Scenario `SC-CH-102`
 - **The limit of the length is named by the service and arrives in the answer of the refusal.** — `apps/chat-widget/src/lib/chat-widget.api.ts:WidgetRefusal`
 - **A remark without text is not sent at all.** — `apps/chat-widget/src/lib/chat-widget.logic.ts:widgetSendable`
 - **A refused remark stays in the field.** — `apps/chat-widget/src/lib/chat-widget.element.ts:#say`
