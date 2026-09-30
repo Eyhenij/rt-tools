@@ -1,3 +1,5 @@
+@use '../../../styles/mixins' as kv;
+
 @layer rt-kit.components {
     /* rt-table — common/ui таблица поверх cdk-table. ViewEncapsulation.None:
        классы доступны без scope-attrs, токены --rt-* наследуются. */
@@ -276,6 +278,13 @@
                 flex-direction: column;
                 gap: var(--rt-space-sm);
             }
+
+            /* Фон у каждой карточки свой, а хост без фона: иначе скруглённый угол карточки
+               стоит на белом квадрате хоста, и на странице другого цвета угол видно. Пустая
+               таблица карточек не рисует и держит свою панель заглушки. */
+            &:not(.rt-table--empty) {
+                background: transparent;
+            }
         }
 
         &__card {
@@ -334,6 +343,9 @@
                 width: 80%;
             }
         }
+
+        /* Шаг входа `radius` переназначает скругление карточки узкого вида; у широкого вида углов нет. */
+        @include kv.radius-steps('--rt-table-card-radius');
     }
 
     /* В тёмной теме таблица сливается с фоном контента (bg-page), а не поднимается

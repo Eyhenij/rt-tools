@@ -9,6 +9,7 @@ paths are given from the root of the tree.
 - **The step reaches the component by an attribute on its host, not by an inherited property.** — `projects/ui-kit-v2/src/lib/components/radius/rt-radius.directive.ts:data-rt-radius`
 - **The rule of a step reassigns the component's own property and nothing else.** — `projects/ui-kit-v2/src/styles/_mixins.scss:radius-steps`
 - **A component whose surface lives in several parts gives the step to its main surface.** — `projects/ui-kit-v2/src/styles/_mixins.scss:radius-steps`. Each component names the one own property it gives the step to
+- **The table gives the step to the card of its narrow view.** — `projects/ui-kit-v2/src/lib/components/table/rt-table.component.scss:rt-table` — the step reassigns `--rt-table-card-radius`, and the wide view takes no corners from it
 - **No rounding of a component stands off the scale.** — `projects/ui-kit-v2/src/lib/components/radius/rt-radius-contract.spec.ts:off-scale`
 - **The old shape inputs are gone, and their values map onto the steps.** — `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.ts:RtRadiusDirective`. The same host directive stands on the icon button, the button and the skeleton
 - **The skeleton keeps its geometry apart from the corners.** — `projects/ui-kit-v2/src/lib/components/skeleton/rt-skeleton.component.ts:shape`

@@ -290,3 +290,14 @@ reach it
 Not covered: a style that applied is told from one that was only written by the drawn frame, and the
 spec environment applies no styles at all. Closed by the seven reference frames of the family, taken
 at the width of the showing's cell.
+
+### SC-UKV-490 — a frame of a grid wider than the window holds every column
+
+Given a grid of the showcase with ten columns of 160px, wider than the base window
+When its frame is taken
+Then the frame shows all ten columns: the grid does not scroll its matrix inside itself, and the
+window grows to the right edge of the grid
+
+Covered by `projects/ui-kit-v2/src/showcase/story-grid.component.spec.ts` — the styles of the grid
+declare no scroll or clipping, so no ancestor inside the grid cuts the span. That the window then grows
+is closed by the two frames of the radius grid: the controls and the surfaces, ten columns each.

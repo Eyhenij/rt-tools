@@ -2,7 +2,7 @@
     caption="Поверхности × шаг скругления, первый столбец — умолчание компонента"
     slotWidth="160px"
     [rows]="rows"
-    [columns]="columns()"
+    [columns]="columns"
     [columnLabel]="columnLabel">
     <ng-template let-row let-col="col">
         <div class="app-radius__cell">
@@ -35,6 +35,9 @@
                 }
                 @case ('empty-state') {
                     <rt-empty-state icon="calendar" title="Пусто" [radius]="col" />
+                }
+                @case ('table') {
+                    <app-radius-table-card [radius]="col" />
                 }
             }
         </div>

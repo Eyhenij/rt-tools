@@ -55,6 +55,10 @@ own and lets any instance take any step: the kit promises the same by one input.
 - **A component whose surface lives in several parts gives the step to its main surface.** Inner
   parts — a badge, a dot, a focus ring — keep their own rounding: they are separate parts in the
   mockup, and a step for the whole box does not fit a dot.
+- **The table gives the step to the card of its narrow view.** The wide view keeps no corners: the
+  mockup draws it with the step `none`, and a rounded grid of rows would cut its outer cells.
+  The host of the narrow view has no fill of its own while it draws cards: otherwise the rounded
+  corner of a card stands on a white square.
 - **No rounding of a component stands off the scale.** A literal like `999px` or `12px` in a place
   of a step looks right on one screen and diverges from the neighbour that took the step.
 - **The old shape inputs are gone, and their values map onto the steps.** The tag's `shape` and
@@ -72,8 +76,6 @@ own and lets any instance take any step: the kit promises the same by one input.
 - **The components a directive or a service draws in an overlay.** The confirmation, the toast, the
   tooltip and the photo viewer have no tag in the consumer's template, so there is nowhere to name
   a step.
-- **The table.** Its wide view has no corners, and the card of the narrow view takes the input by
-  a task of its own.
 - **The material look.** It keeps its own control rounding; that look is drawn apart.
 - **The shared style layer.** Forms, the sign-in screen and the scrollbar are not components and
   take no input.
@@ -165,3 +167,4 @@ The subdomain has no open questions.
   component a step of it.
 - 2026-09-29 — the agreement merged into the spec of the second kit as a subdomain by RT-2371,
   with the same scenario numbers.
+- 2026-09-30 — the table takes the input for the card of its narrow view, by RT-2398.

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input, InputSignal, Signal, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
 
 import { RtCardComponent } from '../../../lib/components/card/rt-card.component';
 import { RtEmptyStateComponent } from '../../../lib/components/empty-state/rt-empty-state.component';
@@ -13,7 +13,8 @@ import { IRtSectionNav } from '../../../lib/components/section-nav/rt-section-na
 import { RtStepperComponent } from '../../../lib/components/stepper/rt-stepper.component';
 import { IRtStepper } from '../../../lib/components/stepper/rt-stepper.model';
 import { StoryGridComponent } from '../../story-grid.component';
-import { RT_RADIUS_PARTS, radiusColumnLabel, TRtRadiusColumn, TRtRadiusPart } from './test-radius-columns';
+import { TestRtRadiusTableCardComponent } from './test-radius-table-card.component';
+import { RT_RADIUS_COLUMNS, radiusColumnLabel, TRtRadiusColumn } from './test-radius-columns';
 
 /** Поверхности сетки скруглений, по строке на компонент. */
 const ROWS: readonly string[] = [
@@ -26,6 +27,7 @@ const ROWS: readonly string[] = [
     'stepper',
     'section-nav',
     'empty-state',
+    'table',
 ];
 
 /**
@@ -52,14 +54,13 @@ const ROWS: readonly string[] = [
 
         RtSectionNavComponent,
         RtStepperComponent,
+        TestRtRadiusTableCardComponent,
     ],
 })
 export class TestRtRadiusSurfacesComponent {
     protected readonly rows: readonly string[] = ROWS;
 
-    protected readonly columns: Signal<readonly TRtRadiusColumn[]> = computed(
-        (): readonly TRtRadiusColumn[] => RT_RADIUS_PARTS[this.part()]
-    );
+    protected readonly columns: readonly TRtRadiusColumn[] = RT_RADIUS_COLUMNS;
 
     protected readonly columnLabel: (col: TRtRadiusColumn) => string = radiusColumnLabel;
 
@@ -71,7 +72,4 @@ export class TestRtRadiusSurfacesComponent {
     protected readonly tiles: readonly IRtSectionNav.Item[] = [{ id: 'orders', icon: 'calendar', label: 'Заказы', active: true }];
 
     protected readonly code: string = '```\npnpm run build\n```';
-
-    /** Какая часть шкалы идёт столбцами. */
-    public readonly part: InputSignal<TRtRadiusPart> = input<TRtRadiusPart>('small');
 }
