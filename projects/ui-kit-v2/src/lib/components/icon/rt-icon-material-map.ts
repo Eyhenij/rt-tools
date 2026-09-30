@@ -72,6 +72,7 @@ export const iconMaterialMap: readonly IRtIconMaterialEntry[] = [
     },
     { from: 'person', to: 'user', why: 'силуэт человека, один в один; есть двойник ico-user' },
     { from: 'person_off', to: 'user-off', why: 'силуэт человека, перечёркнутый наискось; рисунок дорисован по слову владельца' },
+    { from: 'push_pin', to: 'pin', why: 'канцелярская булавка; рисунок дорисован — ею первый кит закрепляет подменю' },
     { from: 'refresh', to: 'refresh', why: SAME_NAME },
     { from: 'search', to: 'search', why: `${SAME_NAME}; есть двойник ico-search` },
     { from: 'settings', to: 'cog', why: 'шестерёнка, один в один' },
