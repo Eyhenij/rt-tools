@@ -1,0 +1,142 @@
+@layer rt-kit.components {
+    /* rt-side-menu-favorites — блок избранного вверху подменю. ViewEncapsulation.None.
+       Заголовок оформлен как строка папки подменю; строки — те же подпункты, что в списке. */
+
+    .rt-side-menu-favorites {
+        --rt-side-menu-favorites-radius: var(--rt-radius-full);
+        --rt-side-menu-favorites-divider-width: var(--rt-border-width-thin);
+        --rt-side-menu-favorites-transition-duration: var(--rt-duration-fast);
+
+        display: block;
+
+        /* Блок отделён от списка раздела чертой: без неё строка избранного и строка того же пункта
+           в списке стоят подряд и читаются как повтор. Свёрнутый блок держит черту так же. */
+        &:has(.rt-side-menu-favorites__header) {
+            border-bottom: var(--rt-side-menu-favorites-divider-width) solid var(--rt-color-border-subtle);
+            margin-block-end: var(--rt-space-sm);
+            padding-block-end: var(--rt-space-sm);
+        }
+
+        &__header {
+            display: flex;
+            width: 100%;
+            min-height: var(--rt-control-height-md);
+            box-sizing: border-box;
+            align-items: center;
+            border: 0;
+            border-radius: var(--rt-side-menu-favorites-radius);
+            background: transparent;
+            color: var(--rt-color-text-primary);
+            cursor: pointer;
+            font: inherit;
+            font-size: var(--rt-text-sm);
+            gap: var(--rt-space-sm);
+            padding-block: var(--rt-space-2);
+            padding-inline: var(--rt-space-md) var(--rt-space-sm);
+            text-align: start;
+            transition: background-color var(--rt-side-menu-favorites-transition-duration) ease;
+
+            &:hover {
+                background: var(--rt-color-bg-hover);
+            }
+
+            &:focus-visible {
+                outline: var(--rt-focus-ring-width) solid var(--rt-focus-ring-color);
+                outline-offset: calc(var(--rt-focus-ring-width) * -1);
+            }
+        }
+
+        /* Звезда стоит на месте значка папки и красится цветом темы, как закрашенные звёзды списка. */
+        &__star {
+            flex-shrink: 0;
+            color: var(--rt-color-action-primary);
+        }
+
+        &__title {
+            overflow: hidden;
+            min-width: 0;
+            flex: 1 1 auto;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        &__chevron {
+            flex-shrink: 0;
+            color: var(--rt-color-text-muted);
+            transition: transform var(--rt-side-menu-favorites-transition-duration) ease;
+
+            &--open {
+                transform: rotate(180deg);
+            }
+        }
+
+        &__list {
+            display: flex;
+            flex-direction: column;
+        }
+
+        &__item {
+            min-width: 0;
+            flex: 1 1 auto;
+        }
+    }
+
+    /* Строка и ручка объявлены вне корня блока: строку в руке CDK выносит в конец страницы, и правило
+       из корня до неё не доходит. */
+    .rt-side-menu-favorites__row {
+        display: flex;
+        align-items: center;
+
+        &.cdk-drag-preview {
+            --rt-side-menu-favorites-drag-radius: var(--rt-radius-full);
+            --rt-side-menu-favorites-drag-shadow: var(--rt-shadow-md);
+
+            border-radius: var(--rt-side-menu-favorites-drag-radius);
+            background: var(--rt-color-bg-surface);
+            box-shadow: var(--rt-side-menu-favorites-drag-shadow);
+        }
+
+        &.cdk-drag-placeholder {
+            opacity: 0;
+        }
+    }
+
+    /* Ручка видна так же, как «убрать»: под наведением и фокусом клавиатуры своей строки, а где
+       указатель не умеет наводиться, — всегда. Прячется прозрачностью: остаётся в порядке Tab. */
+    .rt-side-menu-favorites__handle {
+        flex-shrink: 0;
+        cursor: grab;
+        opacity: 0;
+
+        &:active {
+            cursor: grabbing;
+        }
+
+        @media (hover: none) {
+            opacity: 1;
+        }
+    }
+
+    .rt-side-menu-favorites__row:hover .rt-side-menu-favorites__handle,
+    .rt-side-menu-favorites__row:has(:focus-visible) .rt-side-menu-favorites__handle,
+    .rt-side-menu-favorites__row.cdk-drag-preview .rt-side-menu-favorites__handle {
+        opacity: 1;
+    }
+
+    /* Меню с `favoriteActionsReserve="none"`: ручка, ждущая наведения, в покое не занимает ширины. */
+    @media (hover: hover) {
+        .rt-side-menu--favorite-actions-none .rt-side-menu-favorites__handle {
+            overflow: hidden;
+            width: 0;
+            margin-inline-start: calc(var(--rt-space-sm) * -1);
+        }
+
+        /* Возврат места — прямым правилом: отрицание с `:has()` браузер при наведении не пересчитывал. */
+        .rt-side-menu--favorite-actions-none .rt-side-menu-favorites__row:hover .rt-side-menu-favorites__handle,
+        .rt-side-menu--favorite-actions-none .rt-side-menu-favorites__row:has(:focus-visible) .rt-side-menu-favorites__handle {
+            overflow: visible;
+            width: auto;
+            margin-inline-start: 0;
+        }
+    }
+}

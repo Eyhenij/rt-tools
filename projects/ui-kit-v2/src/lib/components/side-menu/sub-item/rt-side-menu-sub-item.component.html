@@ -2,12 +2,13 @@
     <ng-container [ngTemplateOutlet]="rowTpl" [ngTemplateOutletContext]="{ $implicit: item(), depth: 0 }" />
     <ng-template #rowTpl let-row let-depth="depth">
         @let isActive = menuRef.activeMenuIds().includes(row.id);
-        @let isHighlighted = menuRef.highlightedMenuId() === row.id;
+        @let isHighlighted = !inFavorites() && menuRef.highlightedMenuId() === row.id;
         @if (row.link) {
+            <!-- Строка блока избранного без номера: по номеру клавиатура нажимает строку списка. -->
             <a
                 rtElem="row"
                 qa-dataid="side-menu-sub-item"
-                [id]="row.id"
+                [id]="inFavorites() ? null : row.id"
                 [routerLink]="row.link"
                 [style.--rt-side-menu-sub-item-depth]="depth"
                 [rtMod]="{ active: isActive, highlighted: isHighlighted }"
@@ -28,6 +29,39 @@
                     }
                 </span>
 
+                <!--
+                    Строка блока несёт «убрать», а не звезду: всё в блоке уже в избранном. Звезда —
+                    у пункта со своим адресом в разделе с избранным: полая — не в избранном,
+                    закрашенная цветом темы — в нём. Имя кнопки называет следующее нажатие.
+                -->
+                @if (inFavorites() && favoritesIcons) {
+                    <rt-icon-button
+                        rtElem="favorite"
+                        qa-dataid="side-menu-favorite-remove"
+                        size="sm"
+                        [rtMod]="{ remove: true }"
+                        [icon]="favoritesIcons.remove"
+                        [ariaLabel]="removeLabel()"
+                        [tooltip]="narrow() ? '' : removeLabel()"
+                        (clicked)="onRemoveFavorite(row, $event)" />
+                } @else if (favoritesOn() && !row.favoriteDisabled) {
+                    @let isFavorite = favoriteIds().includes(row.id);
+                    <rt-icon-button
+                        rtElem="favorite"
+                        qa-dataid="side-menu-favorite-star"
+                        size="sm"
+                        [rtMod]="{ on: isFavorite }"
+                        [icon]="isFavorite ? 'star-fill' : 'star'"
+                        [iconFill]="isFavorite"
+                        [ariaLabel]="isFavorite ? removeLabel() : addLabel()"
+                        [tooltip]="narrow() ? '' : isFavorite ? removeLabel() : addLabel()"
+                        (clicked)="onToggleFavorite(row, $event)" />
+                }
+
+                <!-- Действия, которые строке передаёт владелец: блок избранного кладёт сюда ручку. -->
+                <ng-content select="[rtSideMenuSubItemAction]" />
+
+                <!-- Кнопка потребителя видна всегда и стоит последней: кнопки избранного встают перед ней. -->
                 @if (row.iconButton?.icon) {
                     <rt-icon-button
                         rtElem="action"

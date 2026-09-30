@@ -1,0 +1,73 @@
+<ng-container rtBlock="rt-side-menu-favorites">
+    @if (rows().length) {
+        <!--
+            Заголовок — как у папки подменю, со звездой вместо значка папки. Имя кнопки называет
+            следующее нажатие; число строк — по входу меню.
+        -->
+        <button
+            type="button"
+            rtElem="header"
+            qa-dataid="side-menu-favorites-title"
+            [attr.aria-expanded]="expanded()"
+            [attr.aria-label]="expanded() ? collapseLabel() : expandLabel()"
+            (click)="onToggle()">
+            <rt-icon rtElem="star" size="sm" name="star-fill" [fill]="true" />
+            <span rtElem="title">
+                {{ titleLabel() }}
+                @if (countShown()) {
+                    ({{ rows().length }})
+                }
+            </span>
+            <rt-icon rtElem="chevron" size="sm" name="chevron-down" [rtMod]="{ open: expanded() }" />
+        </button>
+
+        @if (expanded()) {
+            <div
+                rtElem="list"
+                role="group"
+                qa-dataid="side-menu-favorites"
+                cdkDropList
+                cdkDropListLockAxis="y"
+                [cdkDropListData]="rows()"
+                [attr.aria-label]="titleLabel()"
+                (cdkDropListDropped)="onDrop($event)">
+                @for (item of rows(); track item.id) {
+                    <div
+                        rtElem="row"
+                        qa-dataid="side-menu-favorite-row"
+                        cdkDrag
+                        [attr.data-id]="item.id"
+                        (cdkDragStarted)="onDragStart()"
+                        (cdkDragEnded)="onDragEnd($event)">
+                        <!--
+                            Ручка стоит внутри строки, последней перед кнопкой потребителя. Строку тянут
+                            только за ручку: остальная строка — ссылка. С клавиатуры строку переставляют
+                            стрелки на ручке: перетаскивание CDK клавиш не знает.
+                        -->
+                        <rt-side-menu-sub-item
+                            rtElem="item"
+                            [item]="item"
+                            [inFavorites]="true"
+                            (clickSubMenuAction)="clickSubMenuAction.emit($event)"
+                            (clickSubMenuAdditionalAction)="clickSubMenuAdditionalAction.emit($event)">
+                            <rt-icon-button
+                                #handle
+                                rtSideMenuSubItemAction
+                                cdkDragHandle
+                                rtElem="handle"
+                                qa-dataid="side-menu-favorite-handle"
+                                size="sm"
+                                aria-keyshortcuts="ArrowUp ArrowDown"
+                                [icon]="dragIcon"
+                                [ariaLabel]="dragLabel()"
+                                [tooltip]="narrow() ? '' : dragLabel()"
+                                (clicked)="onHandleClick($event)"
+                                (keydown.arrowup)="onHandleKey($event, $index, -1)"
+                                (keydown.arrowdown)="onHandleKey($event, $index, 1)" />
+                        </rt-side-menu-sub-item>
+                    </div>
+                }
+            </div>
+        }
+    }
+</ng-container>

@@ -6,7 +6,7 @@ import { join } from 'node:path';
 import type { Page } from 'playwright';
 
 import { conditionsOfPage, keepEvidence } from './snapshot-evidence.ts';
-import { quiet, ROOT_SELECTOR } from './snapshot-wait.ts';
+import { quiet, ROOT_SELECTOR, settled } from './snapshot-wait.ts';
 import { STORY_SNAPSHOT_VIEWPORT } from '../src/showcase/story-snapshot.ts';
 
 /**
@@ -72,6 +72,7 @@ interface ISnapshotParameters {
     widths?: readonly number[];
     fullPage?: boolean;
     overlay?: string;
+    hover?: string | readonly string[];
 }
 
 /** Записать снятый кадр в реестр, чтобы сверка каталога знала, что он ожидаем. */
@@ -297,11 +298,39 @@ async function fitViewportToSpan(page: Page, identifier: string, selector: strin
  * Кадр берётся по корню, а не по всей странице: порог считается от площади кадра, и в странице,
  * где сетка занимает малую долю, поехавшая ячейка проходит молча.
  */
-async function shoot(page: Page, identifier: string, fullPage: boolean, pinnedWidth?: number): Promise<void> {
+/**
+ * Наводит настоящий указатель на названные историей узлы — после того как окно встало под кадр:
+ * подгонка окна уводит указатель в угол, и наведение, поставленное раньше, до кадра не доживало.
+ * Не найденный узел — отказ словами: кадр без наведения неотличим от покоя.
+ */
+async function hoverBeforeShot(page: Page, identifier: string, hover: string | readonly string[] | undefined): Promise<void> {
+    if (hover === undefined) {
+        return;
+    }
+
+    for (const selector of ([] as string[]).concat(hover)) {
+        if ((await page.locator(selector).count()) === 0) {
+            throw new Error(`${identifier}: история просила навести указатель на ${selector}, а узла нет. Кадр не снимается.`);
+        }
+
+        await page.locator(selector).first().hover();
+    }
+
+    await settled(page);
+}
+
+async function shoot(
+    page: Page,
+    identifier: string,
+    fullPage: boolean,
+    pinnedWidth?: number,
+    hover?: string | readonly string[]
+): Promise<void> {
     let image: Buffer;
 
     if (fullPage) {
         await fitViewportToPage(page, identifier);
+        await hoverBeforeShot(page, identifier, hover);
         image = await page.screenshot();
     } else {
         if ((await page.locator(ROOT_SELECTOR).count()) === 0) {
@@ -335,6 +364,7 @@ async function shoot(page: Page, identifier: string, fullPage: boolean, pinnedWi
             height: Math.max(1, Math.min(Math.ceil(span.y + span.height), view.height) - y),
         };
 
+        await hoverBeforeShot(page, identifier, hover);
         image = await page.screenshot({ clip });
     }
 
@@ -410,7 +440,7 @@ const config: TestRunnerConfig = {
 
         await quiet(page, context.id);
         await requireOpenedOverlay(page, context.id, snapshot.overlay);
-        await shoot(page, context.id, snapshot.fullPage === true);
+        await shoot(page, context.id, snapshot.fullPage === true, undefined, snapshot.hover);
 
         // Кадр порога — по одному на каждый порог, который называет сам компонент. Один общий
         // дополнительный кадр оставил бы две ветки раскладки непроверенными и показал бы их

@@ -1,6 +1,9 @@
 <ng-container rtBlock="app-side-menu">
     <rt-side-menu
         [menuItems]="items()"
+        [menuId]="menuId()"
+        [favoritesCount]="favoritesCount()"
+        [favoriteActionsReserve]="favoriteActionsReserve()"
         [activeMenuIds]="activeIds()"
         [subMenuMode]="shownMode()"
         [subMenuWidth]="shownWidth()"

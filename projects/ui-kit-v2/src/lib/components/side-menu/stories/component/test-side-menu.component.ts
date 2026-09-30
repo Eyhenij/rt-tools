@@ -60,6 +60,11 @@ export class TestRtSideMenuComponent {
     public readonly activeIds: InputSignal<ReadonlyArray<string | number>> = input<ReadonlyArray<string | number>>([]);
     public readonly mode: InputSignal<IRtSideMenu.SubMenuMode> = input<IRtSideMenu.SubMenuMode>('hover');
     public readonly width: InputSignal<number | null> = input<number | null>(null);
+    /** Номер меню в настройках: истории избранного держат список под своим номером. */
+    public readonly menuId: InputSignal<string> = input<string>('main');
+    public readonly favoritesCount: InputSignal<IRtSideMenu.FavoritesCount> = input<IRtSideMenu.FavoritesCount>('collapsed');
+    public readonly favoriteActionsReserve: InputSignal<IRtSideMenu.FavoriteActionsReserve> =
+        input<IRtSideMenu.FavoriteActionsReserve>('none');
 
     /** Низкий экран: в полный рост списки влезают целиком, и признаку прокрутки взяться неоткуда. */
     public readonly short: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, { transform: booleanAttribute });

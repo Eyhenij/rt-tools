@@ -90,3 +90,20 @@ export async function holdBySearch(canvas: HTMLElement): Promise<void> {
         throw new Error('Фокус в поле поиска, а панель не встала удержанной');
     }
 }
+
+/** Узкий экран: раздел открывается нажатием его пункта в списке, ждётся подменю с полем поиска. */
+export async function openMobileSection(canvas: HTMLElement, name: string = 'Content'): Promise<void> {
+    const item: HTMLElement | null = await waitFor<HTMLElement>(
+        (): HTMLElement | null =>
+            Array.from(canvas.querySelectorAll<HTMLElement>('[qa-dataid="side-menu-item"]')).find(
+                (node: HTMLElement): boolean => node.textContent?.trim() === name
+            ) ?? null
+    );
+
+    if (item === null) {
+        throw new Error(`Пункта «${name}» в узком меню нет: открывать нечего`);
+    }
+
+    item.click();
+    await field(canvas);
+}

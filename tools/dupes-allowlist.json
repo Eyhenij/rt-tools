@@ -159,6 +159,54 @@
     "value login__viewport @ BEM_BLOCK @ libs/message-bus-admin/auth/feature/setup ~ BEM_BLOCK @ libs/message-bus-admin/auth/feature/sign-in": {
       "reason": "two screens stand on one kit block of the sign-in, and each names its host class next to its own decorator: a shared constant would be a lib for one string",
       "task": "RT-1902"
+    },
+    "export SubMenuFavorites @ projects/ui-kit, projects/ui-kit-v2": {
+      "reason": "a showcase story heading: the second kit shows every favourites state of the first kit side menu under the same story name, so the owner compares the two frames side by side",
+      "task": "RT-2440"
+    },
+    "export SubMenuFavoritesCollapsed @ projects/ui-kit, projects/ui-kit-v2": {
+      "reason": "a showcase story heading: the second kit shows every favourites state of the first kit side menu under the same story name, so the owner compares the two frames side by side",
+      "task": "RT-2440"
+    },
+    "export SubMenuFavoritesCollapsedNoCount @ projects/ui-kit, projects/ui-kit-v2": {
+      "reason": "a showcase story heading: the second kit shows every favourites state of the first kit side menu under the same story name, so the owner compares the two frames side by side",
+      "task": "RT-2440"
+    },
+    "export SubMenuFavoritesCountAlways @ projects/ui-kit, projects/ui-kit-v2": {
+      "reason": "a showcase story heading: the second kit shows every favourites state of the first kit side menu under the same story name, so the owner compares the two frames side by side",
+      "task": "RT-2440"
+    },
+    "export SubMenuFavoritesCustomIcons @ projects/ui-kit, projects/ui-kit-v2": {
+      "reason": "a showcase story heading: the second kit shows every favourites state of the first kit side menu under the same story name, so the owner compares the two frames side by side",
+      "task": "RT-2440"
+    },
+    "export SubMenuFavoritesDisabledStar @ projects/ui-kit, projects/ui-kit-v2": {
+      "reason": "a showcase story heading: the second kit shows every favourites state of the first kit side menu under the same story name, so the owner compares the two frames side by side",
+      "task": "RT-2440"
+    },
+    "export SubMenuFavoritesLongTitles @ projects/ui-kit, projects/ui-kit-v2": {
+      "reason": "a showcase story heading: the second kit shows every favourites state of the first kit side menu under the same story name, so the owner compares the two frames side by side",
+      "task": "RT-2440"
+    },
+    "export SubMenuFavoritesLongTitlesHover @ projects/ui-kit, projects/ui-kit-v2": {
+      "reason": "a showcase story heading: the second kit shows every favourites state of the first kit side menu under the same story name, so the owner compares the two frames side by side",
+      "task": "RT-2440"
+    },
+    "export SubMenuFavoritesMobile @ projects/ui-kit, projects/ui-kit-v2": {
+      "reason": "a showcase story heading: the second kit shows every favourites state of the first kit side menu under the same story name, so the owner compares the two frames side by side",
+      "task": "RT-2440"
+    },
+    "export SubMenuFavoritesRemoveHover @ projects/ui-kit, projects/ui-kit-v2": {
+      "reason": "a showcase story heading: the second kit shows every favourites state of the first kit side menu under the same story name, so the owner compares the two frames side by side",
+      "task": "RT-2440"
+    },
+    "export SubMenuFavoritesReserveAlways @ projects/ui-kit, projects/ui-kit-v2": {
+      "reason": "a showcase story heading: the second kit shows every favourites state of the first kit side menu under the same story name, so the owner compares the two frames side by side",
+      "task": "RT-2440"
+    },
+    "table LONG_TITLES @ projects/ui-kit ~ LONG_TITLES @ projects/ui-kit-v2": {
+      "reason": "the showcase data of the favourites stories: the second kit takes the first kit long titles as they are, so the owner compares the two frames row by row",
+      "task": "RT-2440"
     }
   },
   "debt": {}

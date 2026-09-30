@@ -139,6 +139,11 @@
         }
 
         <div rtElem="sub-list">
+            <!-- Блок избранного раздела: сам решает, есть ли ему что показать, и без строк места не занимает. -->
+            <rt-side-menu-favorites
+                (clickSubMenuAction)="onClickSubMenu($event)"
+                (clickSubMenuAdditionalAction)="onClickSubMenuAdditional($event)" />
+
             @for (item of visibleSubMenuItems(); track item.id) {
                 <rt-side-menu-sub-item
                     [item]="item"

@@ -1,5 +1,6 @@
 import { NgTemplateOutlet } from '@angular/common';
 import {
+    booleanAttribute,
     ChangeDetectionStrategy,
     Component,
     computed,
@@ -38,6 +39,7 @@ import {
     RtScrollAreaHeaderDirective,
 } from '../scroll-area';
 import { RtTooltipDirective } from '../tooltip';
+import { RtSideMenuFavoritesComponent } from './favorites/rt-side-menu-favorites.component';
 import { RtSubMenuKeyboard } from './rt-side-menu-keyboard';
 import { RtSideMenuResize } from './rt-side-menu-resize';
 import { normalizeSideMenuId, RT_SIDE_MENU_DEFAULT_ID } from './rt-side-menu-settings.logic';
@@ -70,6 +72,8 @@ const BEM_BLOCK: string = 'rt-side-menu';
         '[class.rt-side-menu--pinned]': 'isPinned()',
         // Натянутая ширина подменю приходит своим свойством: панель берёт наибольшее из него и ширины оформления.
         '[style.--rt-side-menu-panel-dragged-width]': 'panelWidthStyle()',
+        // Кнопки избранного, ждущие наведения, в покое ширины не занимают.
+        '[class.rt-side-menu--favorite-actions-none]': "favoriteActionsReserve() === 'none'",
     },
     templateUrl: './rt-side-menu.component.html',
     styleUrls: ['./rt-side-menu.component.scss'],
@@ -91,6 +95,7 @@ const BEM_BLOCK: string = 'rt-side-menu';
         RtScrollAreaFooterDirective,
         RtScrollAreaHeaderDirective,
         RtTooltipDirective,
+        RtSideMenuFavoritesComponent,
         RtSideMenuSubItemComponent,
     ],
 })
@@ -127,6 +132,8 @@ export class RtSideMenuComponent implements IRtSideMenuHost {
     readonly #hoverOpened: WritableSignal<boolean> = signal(false);
     /** Человек в поле поиска: подменю держится открытым до нажатия снаружи. */
     readonly #searchHeld: WritableSignal<boolean> = signal(false);
+    /** Строку избранного тянут: уход указателя за панель подменю не закрывает. */
+    readonly #dragHeld: WritableSignal<boolean> = signal(false);
     /** Режим и ширина в работе: вход приложения, иначе сохранённые под номером меню. */
     readonly #mode: Signal<IRtSideMenu.SubMenuMode> = computed(
         (): IRtSideMenu.SubMenuMode => this.subMenuMode() ?? this.#settings?.subMenuMode(this.menuId())() ?? 'hover'
@@ -171,10 +178,6 @@ export class RtSideMenuComponent implements IRtSideMenuHost {
     protected readonly subMenuOpened: Signal<boolean> = computed((): boolean =>
         this.isPinned() ? this.#pinnedSubMenu().length > 0 : this.#hoverOpened()
     );
-    /** Набор, который подменю наполняет сейчас, до отбора поиском. */
-    protected readonly shownSubMenu: Signal<IRtSideMenu.Item[]> = computed((): IRtSideMenu.Item[] =>
-        this.isPinned() ? this.#pinnedSubMenu() : (this.selectedSubMenu() ?? [])
-    );
     protected readonly visibleSubMenuItems: Signal<IRtSideMenu.Item[]> = computed((): IRtSideMenu.Item[] =>
         filterSideMenuItems(this.shownSubMenu(), this.subMenuQuery())
     );
@@ -188,6 +191,10 @@ export class RtSideMenuComponent implements IRtSideMenuHost {
         return selected ? [selected.id] : this.activeMenuIds();
     });
 
+    /** Набор, который подменю наполняет сейчас, до отбора поиском. */
+    public readonly shownSubMenu: Signal<IRtSideMenu.Item[]> = computed((): IRtSideMenu.Item[] =>
+        this.isPinned() ? this.#pinnedSubMenu() : (this.selectedSubMenu() ?? [])
+    );
     public readonly selectedItem: WritableSignal<IRtSideMenu.Item | null> = signal(null);
     public readonly selectedSubMenu: WritableSignal<IRtSideMenu.Item[] | null> = signal(null);
     /** Что набрано в поиске: строка берёт запрос отсюда, чтобы отметить совпавшее. */
@@ -218,6 +225,16 @@ export class RtSideMenuComponent implements IRtSideMenuHost {
         RT_SIDE_MENU_DEFAULT_ID,
         { transform: normalizeSideMenuId }
     );
+
+    /** Число строк в заголовке блока избранного: всегда, у свёрнутого блока или никогда. */
+    public readonly favoritesCount: InputSignal<IRtSideMenu.FavoritesCount> = input<IRtSideMenu.FavoritesCount>('collapsed');
+    /** Место под кнопки избранного, ждущие наведения: держать всегда или отдавать подписи. */
+    public readonly favoriteActionsReserve: InputSignal<IRtSideMenu.FavoriteActionsReserve> =
+        input<IRtSideMenu.FavoriteActionsReserve>('none');
+    /** Поиск показывает совпавшие строки избранного; выключено — на время поиска блока нет. */
+    public readonly isFavoritesSearchShown: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
+        transform: booleanAttribute,
+    });
 
     public readonly subMenuModeChange: OutputEmitterRef<IRtSideMenu.SubMenuMode> = output<IRtSideMenu.SubMenuMode>();
     public readonly subMenuWidthChange: OutputEmitterRef<number> = output<number>();
@@ -294,7 +311,7 @@ export class RtSideMenuComponent implements IRtSideMenuHost {
 
     /** Наведение на пункт полосы открывает его подменю; уход указателя с панели — без пункта. */
     public toggleSubMenu(item?: IRtSideMenu.Item): void {
-        if (this.isPinned() || (item === undefined && this.#searchHeld())) {
+        if (this.isPinned() || (item === undefined && (this.#searchHeld() || this.#dragHeld()))) {
             return;
         }
 
@@ -316,6 +333,10 @@ export class RtSideMenuComponent implements IRtSideMenuHost {
         this.#hoverOpened.set(false);
         this.#searchHeld.set(false);
         this.#keyboard.reset();
+    }
+
+    public holdSubMenu(held: boolean): void {
+        this.#dragHeld.set(held);
     }
 
     public toggleFolder(item: IRtSideMenu.Item): void {

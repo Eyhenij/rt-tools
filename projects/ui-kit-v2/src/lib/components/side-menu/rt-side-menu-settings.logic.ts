@@ -1,5 +1,6 @@
 import { isRecord } from '@rt-tools/utils';
 
+import { normalizeSideMenuFavorites } from './rt-side-menu-favorites.logic';
 import { clampSideMenuWidth } from './rt-side-menu.logic';
 import { IRtSideMenu } from './rt-side-menu.model';
 
@@ -24,7 +25,7 @@ function isSubMenuMode(value: unknown): value is IRtSideMenu.SubMenuMode {
 /**
  * Настройки одного меню из того, что лежит под его номером. Недопустимое поле читается как
  * отсутствие значения, соседние поля остаются: сломанная ширина не стирает режим. Незнакомые поля
- * не удаляются. Ширина приводится к пределам подменю.
+ * не удаляются. Ширина приводится к пределам подменю, списки избранного — к номерам без повторов.
  */
 export function normalizeSideMenuSettings(value: unknown): IRtSideMenu.Settings {
     if (!isRecord(value)) {
@@ -33,6 +34,8 @@ export function normalizeSideMenuSettings(value: unknown): IRtSideMenu.Settings 
 
     const settings: IRtSideMenu.Settings = { ...value };
     const width: unknown = value['subMenuWidth'];
+    const favorites: unknown = value['favorites'];
+    const collapsed: unknown = value['favoritesCollapsed'];
 
     if (!isSubMenuMode(value['subMenuMode'])) {
         delete settings.subMenuMode;
@@ -42,6 +45,19 @@ export function normalizeSideMenuSettings(value: unknown): IRtSideMenu.Settings 
         settings.subMenuWidth = clampSideMenuWidth(width);
     } else {
         delete settings.subMenuWidth;
+    }
+
+    // Список — только строки и числа без повторов; не массив читается отсутствием списка.
+    if (Array.isArray(favorites)) {
+        settings.favorites = normalizeSideMenuFavorites(favorites);
+    } else {
+        delete settings.favorites;
+    }
+
+    if (Array.isArray(collapsed)) {
+        settings.favoritesCollapsed = normalizeSideMenuFavorites(collapsed);
+    } else {
+        delete settings.favoritesCollapsed;
     }
 
     return settings;

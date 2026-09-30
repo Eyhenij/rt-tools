@@ -49,3 +49,43 @@ When the person presses the right arrow
 Then the width becomes 480, not 486
 
 Covered: `projects/ui-kit-v2/src/lib/components/side-menu/rt-side-menu.logic.spec.ts`.
+
+### SC-UKV-467 — a broken favourites record reads without foreign values
+
+Given the storage record of a menu holds a favourites list with a null, an object and a repeat
+When the menu reads its settings
+Then the list keeps only strings and numbers, each once, in the former order, and 1 and "1" stay two ids
+
+Covered: `projects/ui-kit-v2/src/lib/components/side-menu/rt-side-menu-favorites.logic.spec.ts`.
+
+### SC-UKV-468 — a dragged favourite takes its new place and hidden ids keep theirs
+
+Given the list holds an id whose item the menu does not show
+When the person drags a row of the block to another place
+Then the visible ids swap places among themselves, and the hidden id stays in its cell of the list
+
+Covered: `projects/ui-kit-v2/src/lib/components/side-menu/rt-side-menu-favorites.logic.spec.ts`.
+
+### SC-UKV-469 — the block shows the favourites of the open section in the order of the list
+
+Given the list holds ids of two sections, one of them lying in a folder, and an id the menu lacks
+When the person opens one section
+Then the block shows only that section's items, folders included, in the order of the list, without the missing id
+
+Covered: `projects/ui-kit-v2/src/lib/components/side-menu/rt-side-menu-favorites.logic.spec.ts`.
+
+### SC-UKV-470 — a star stands on items with an address only
+
+Given a section holds items with an address, a folder and an item marked `favoriteDisabled`
+When the submenu of the section is shown
+Then only the items with an address and without the mark carry a star
+
+Covered: `projects/ui-kit-v2/src/lib/components/side-menu/rt-side-menu-favorites.logic.spec.ts`.
+
+### SC-UKV-471 — favourites stand only in a section that turned them on
+
+Given one rail item carries the `favorites` flag and its neighbour does not
+When the submenu of either is shown, including after the application passed the menu anew as new objects
+Then the block and the stars stand only in the section with the flag
+
+Covered: `projects/ui-kit-v2/src/lib/components/side-menu/rt-side-menu-favorites.logic.spec.ts`.

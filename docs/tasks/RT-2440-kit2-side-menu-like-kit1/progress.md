@@ -3,10 +3,10 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 2 of 5 — The narrow screen as a live menu
-- **Done:** stage 1 — seventeen live stories on the first kit's data, the matrices moved to the same data, 25 frames looked at and taken
-- **Next step:** compare the narrow layout with the first kit's Mobile by measurement
-- **Uncommitted:** nothing beyond the task folder
+- **Stage:** 2 of 5 — The narrow screen as a live menu; stage 3 done ahead of it by the owner's word
+- **Done:** stage 1 — seventeen live stories on the first kit's data; stage 3 — favourites without Material and their eleven stories, 11 frames looked at and taken
+- **Next step:** show the owner the favourites pairs, then compare the narrow layout with the first kit's Mobile by measurement
+- **Uncommitted:** nothing
 - **Waiting for the owner:** no; every port is shown before a push — «я просил каждый перенесенный из первого кита модуль показывать мне перед отправкой в пр!!!»
 - **PR:** not open yet
 
@@ -19,10 +19,10 @@
 - [>] 2.1 Compare the second kit's narrow layout with the first kit's Mobile by measurement
 - [ ] 2.2 Close what differs in the component
 - [ ] 2.3 Show the narrow menu live at phone width in its own stories
-- [ ] 3.1 Port the favorites logic and its spec
-- [ ] 3.2 Port the favorites block into the menu without Material
-- [ ] 3.3 Add the favorites stories after the first kit's eleven
-- [ ] 3.4 Write the scenarios and their tests
+- [x] 3.1 Port the favorites logic and its spec
+- [x] 3.2 Port the favorites block into the menu without Material
+- [x] 3.3 Add the favorites stories after the first kit's eleven
+- [x] 3.4 Write the scenarios and their tests
 - [ ] 4.1 Declare `[data-rt-scheme]` over the brand ramp in the kit's styles, the material preset too
 - [ ] 4.2 Add a scheme switch to the showcase toolbar
 - [ ] 4.3 Show the menu under a scheme in a story
@@ -49,6 +49,16 @@
   pair. The side menu takes the same three, with the same pure functions, rather than a technique
   of its own. Affected stage of the plan: 3, next to the favorites, whose rows carry icons too.
 
+- **Stage 3 went before stage 2 by the owner's word.** «почему нет сторис во втором ките с
+  избранным разделом??????» — the favourites were ported at once, the narrow comparison waits. The
+  owner also said the side menu port had to be one task: «сайд меню перенос это должна была быть
+  одна задача!!!» — the favourites stay in RT-2440, no task of their own. Affected stage: 2 and 3.
+
+- **The second kit's snapshot harness learned a real hover, `snapshot.hover`.** The first kit's
+  «…Hover» favourites stories are shot under the pointer; a focus set by a story step did not live
+  to the frame. The parameter hovers the named nodes after the window is fitted, right before the
+  shot. Affected stage: 3.
+
 ## Sessions
 
 ### 2026-09-30
@@ -60,3 +70,12 @@
   stories, the matrices on the same data; `visual-gate side-menu` — 25 of 25 passed after retaking.
 - Stumbled on: the wrapper's styles did not reach its host under emulated encapsulation, so the
   frame grew to 916 instead of 720; a `render` with `component` is ignored by the showcase.
+
+### 2026-09-30 (continued)
+
+- Stage 3: the favourites logic and 17 tests, the settings service, the block `rt-side-menu-favorites`
+  on CDK drag and kit buttons, the star and «убрать» in the row, labels in English and Russian,
+  scenarios SC-UKV-467…471, the Overview; 11 favourites frames taken, 713 of 713 frames of the kit
+  match.
+- Stumbled on: a `:not(:hover, :has(...))` width rule was not recomputed by the browser on hover —
+  replaced by a plain rule that gives the width back.

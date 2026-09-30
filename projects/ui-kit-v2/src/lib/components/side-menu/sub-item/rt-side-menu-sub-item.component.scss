@@ -82,6 +82,42 @@
             flex-shrink: 0;
         }
 
+        /* Кнопка избранного: звезда у пункта раздела и «убрать» у строки блока. Закрашенная звезда
+           видна всегда — выбранное читается с одного взгляда; остальные — под наведением и фокусом
+           клавиатуры своей строки, а где указатель не умеет наводиться, — всегда. Прячется
+           прозрачностью: кнопка остаётся на месте и в порядке Tab. */
+        &__favorite {
+            flex-shrink: 0;
+            opacity: 0;
+
+            &--on {
+                --rt-icon-button-color: var(--rt-color-action-primary);
+
+                opacity: 1;
+            }
+
+            /* Корзина под указателем и под фокусом клавиатуры краснеет: нажатие убирает пункт. */
+            @media (hover: hover) {
+                &--remove:hover {
+                    --rt-icon-button-color: var(--rt-color-state-danger);
+                }
+            }
+
+            &--remove:has(:focus-visible) {
+                --rt-icon-button-color: var(--rt-color-state-danger);
+            }
+
+            @media (hover: none) {
+                opacity: 1;
+            }
+        }
+
+        &__row:hover &__favorite,
+        &__row:focus-visible &__favorite,
+        &__row:has(:focus-visible) &__favorite {
+            opacity: 1;
+        }
+
         &__chevron {
             flex-shrink: 0;
             color: var(--rt-color-text-muted);
@@ -95,6 +131,29 @@
         &__children {
             display: flex;
             flex-direction: column;
+        }
+    }
+
+    /* Меню с `favoriteActionsReserve="none"`: кнопка избранного, ждущая наведения, в покое не
+       занимает ширины, и подпись идёт до края или до кнопки потребителя; отступ ряда перед ней
+       снимается тоже. Закрашенная звезда и экран без наведения держат место: там кнопка видна
+       всегда. Сжата, а не снята с раскладки: остаётся в порядке Tab. */
+    @media (hover: hover) {
+        .rt-side-menu--favorite-actions-none .rt-side-menu-sub-item__favorite:not(.rt-side-menu-sub-item__favorite--on) {
+            overflow: hidden;
+            width: 0;
+            margin-inline-start: calc(var(--rt-space-sm) * -1);
+        }
+
+        /* Возврат места — прямым правилом, а не отрицанием в правиле выше: `:hover` внутри
+           `:not()` рядом с `:has()` браузер при наведении не пересчитывал, и кнопка оставалась
+           без ширины под указателем. */
+        .rt-side-menu--favorite-actions-none .rt-side-menu-sub-item__row:hover .rt-side-menu-sub-item__favorite,
+        .rt-side-menu--favorite-actions-none .rt-side-menu-sub-item__row:focus-visible .rt-side-menu-sub-item__favorite,
+        .rt-side-menu--favorite-actions-none .rt-side-menu-sub-item__row:has(:focus-visible) .rt-side-menu-sub-item__favorite {
+            overflow: visible;
+            width: auto;
+            margin-inline-start: 0;
         }
     }
 }

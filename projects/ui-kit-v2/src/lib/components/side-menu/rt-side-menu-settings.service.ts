@@ -14,6 +14,8 @@ import {
 import { LOCAL_STORAGE, PlatformService, WINDOW } from '@rt-tools/core';
 
 import { ERtStorageKeys } from '../../platform/storage-keys.enum';
+import { IRtIcon } from '../icon';
+import { moveVisibleSideMenuFavorite, normalizeSideMenuFavorites } from './rt-side-menu-favorites.logic';
 import {
     normalizeSideMenuId,
     normalizeSideMenuSettings,
@@ -26,10 +28,21 @@ import {
 import { clampSideMenuWidth } from './rt-side-menu.logic';
 import { IRtSideMenu } from './rt-side-menu.model';
 
+/** Значки кнопок строки избранного: «убрать» и ручка перетаскивания. */
+export interface IRtSideMenuFavoritesIcons {
+    readonly remove: IRtIcon.Name;
+    readonly drag: IRtIcon.Name;
+}
+
 export interface IRtSideMenuSettingsConfig {
     /** Свой ключ хранилища, если приложению нужен не общий ключ кита. */
     readonly storageKey?: string;
+    /** Свои значки кнопок избранного; не названный берётся из набора кита. */
+    readonly icons?: Partial<IRtSideMenuFavoritesIcons>;
 }
+
+/** Корзина и вертикальная двойная стрелка — те же знаки, что у первого кита. */
+const DEFAULT_FAVORITES_ICONS: IRtSideMenuFavoritesIcons = { remove: 'trash', drag: 'arrows-v' };
 
 export const RT_SIDE_MENU_SETTINGS_CONFIG: InjectionToken<IRtSideMenuSettingsConfig> = new InjectionToken<IRtSideMenuSettingsConfig>(
     'RT_SIDE_MENU_SETTINGS_CONFIG'
@@ -49,7 +62,8 @@ function cached<T>(cache: Map<string, Signal<T>>, menuId: string, read: (menuId:
 }
 
 /**
- * Настройки боковых меню в хранилище браузера: режим и ширина подменю под номером каждого меню.
+ * Настройки боковых меню в хранилище браузера: режим и ширина подменю, избранное и свёрнутые блоки
+ * избранного под номером каждого меню.
  *
  * Перед каждой записью ключ читается заново: соседняя вкладка или приложение могли записать своё,
  * и запись из копии затёрла бы их. Правится одно поле одного меню, остальное уходит как лежало.
@@ -70,11 +84,16 @@ export class RtSideMenuSettingsService {
     readonly #menus: Map<string, Signal<IRtSideMenu.Settings>> = new Map();
     readonly #modes: Map<string, Signal<IRtSideMenu.SubMenuMode>> = new Map();
     readonly #widths: Map<string, Signal<number | null>> = new Map();
+    readonly #favorites: Map<string, Signal<ReadonlyArray<IRtSideMenu.FavoriteId>>> = new Map();
+    readonly #collapsed: Map<string, Signal<ReadonlyArray<IRtSideMenu.Item['id']>>> = new Map();
     /** Последняя известная запись: ею сервис живёт, пока хранилище недоступно. */
     #record: TRtSideMenuSettingsRecord = this.#load() ?? {};
     /** Последняя запись в хранилище не удалась — оно полно, и правда лежит в памяти. */
     #unsaved: boolean = false;
     readonly #settings: WritableSignal<Readonly<Record<string, IRtSideMenu.Settings>>> = signal(readSideMenuSettings(this.#record));
+
+    /** Значки кнопок избранного: из настроек провайдера, иначе из набора кита. */
+    public readonly favoritesIcons: IRtSideMenuFavoritesIcons = { ...DEFAULT_FAVORITES_ICONS, ...this.#config.icons };
 
     /** Номера меню, чьи настройки лежат в хранилище. */
     public readonly menuIds: Signal<string[]> = computed((): string[] => Object.keys(this.#settings()));
@@ -109,6 +128,57 @@ export class RtSideMenuSettingsService {
         return cached(this.#widths, menuId, (id: string): number | null => this.#settings()[id]?.subMenuWidth ?? null);
     }
 
+    /** Избранное меню в порядке списка; пусто — пустой список. */
+    public favoriteIds(menuId: string): Signal<ReadonlyArray<IRtSideMenu.FavoriteId>> {
+        return cached(
+            this.#favorites,
+            menuId,
+            (id: string): ReadonlyArray<IRtSideMenu.FavoriteId> => this.#settings()[id]?.favorites ?? []
+        );
+    }
+
+    /** Пункты полосы, чей блок избранного свёрнут; ничего не свёрнуто — пустой список. */
+    public favoritesCollapsed(menuId: string): Signal<ReadonlyArray<IRtSideMenu.Item['id']>> {
+        return cached(
+            this.#collapsed,
+            menuId,
+            (id: string): ReadonlyArray<IRtSideMenu.Item['id']> => this.#settings()[id]?.favoritesCollapsed ?? []
+        );
+    }
+
+    /** Сворачивает или разворачивает блок одного раздела; остальные разделы остаются как были. */
+    public setFavoritesCollapsed(menuId: string, sectionId: IRtSideMenu.Item['id'], collapsed: boolean): void {
+        const current: ReadonlyArray<IRtSideMenu.Item['id']> = this.#freshSettings(menuId).favoritesCollapsed ?? [];
+        const others: Array<IRtSideMenu.Item['id']> = current.filter((id: IRtSideMenu.Item['id']): boolean => id !== sectionId);
+
+        this.#update(menuId, { favoritesCollapsed: collapsed ? [...others, sectionId] : others });
+    }
+
+    /** Звезда: нет в списке — встаёт последним, есть — уходит. */
+    public toggleFavorite(menuId: string, id: IRtSideMenu.FavoriteId): void {
+        this.#updateFavorites(menuId, (ids: IRtSideMenu.FavoriteId[]): IRtSideMenu.FavoriteId[] =>
+            ids.includes(id) ? ids.filter((kept: IRtSideMenu.FavoriteId): boolean => kept !== id) : [...ids, id]
+        );
+    }
+
+    public removeFavorite(menuId: string, id: IRtSideMenu.FavoriteId): void {
+        this.#updateFavorites(menuId, (ids: IRtSideMenu.FavoriteId[]): IRtSideMenu.FavoriteId[] =>
+            ids.filter((kept: IRtSideMenu.FavoriteId): boolean => kept !== id)
+        );
+    }
+
+    /** Перенос строки блока: места в блоке, скрытые номера остаются на своих. */
+    public moveVisibleSideMenuFavorite(menuId: string, visibleIds: ReadonlyArray<IRtSideMenu.FavoriteId>, from: number, to: number): void {
+        this.#updateFavorites(menuId, (ids: IRtSideMenu.FavoriteId[]): IRtSideMenu.FavoriteId[] =>
+            moveVisibleSideMenuFavorite(ids, visibleIds, from, to)
+        );
+    }
+
+    /** Список целиком: приложение заводит избранное само, например по умолчанию для роли. */
+    public setFavorites(menuId: string, ids: ReadonlyArray<IRtSideMenu.FavoriteId>): void {
+        this.#updateFavorites(menuId, (): IRtSideMenu.FavoriteId[] => normalizeSideMenuFavorites(ids));
+    }
+
     public setSubMenuMode(menuId: string, mode: IRtSideMenu.SubMenuMode): void {
         this.#update(menuId, { subMenuMode: mode });
     }
@@ -128,6 +198,15 @@ export class RtSideMenuSettingsService {
         const id: string = normalizeSideMenuId(menuId);
 
         this.#commit(patchSideMenuSettings(record, id, { ...normalizeSideMenuSettings(record[id]), ...patch }));
+    }
+
+    /** Список правится по свежей записи хранилища: соседняя вкладка могла его поменять. */
+    #updateFavorites(menuId: string, next: (ids: IRtSideMenu.FavoriteId[]) => IRtSideMenu.FavoriteId[]): void {
+        this.#update(menuId, { favorites: next([...(this.#freshSettings(menuId).favorites ?? [])]) });
+    }
+
+    #freshSettings(menuId: string): IRtSideMenu.Settings {
+        return normalizeSideMenuSettings(this.#fresh()[normalizeSideMenuId(menuId)]);
     }
 
     #commit(record: TRtSideMenuSettingsRecord): void {
