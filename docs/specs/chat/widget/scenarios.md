@@ -171,4 +171,10 @@ When the visitor sends a remark
 Then the remark stands alone in a new talk, and the list shows the old talk closed and the new one
 live
 
+### SC-CH-116 — the second remark goes into the same talk
+
+Given an open widget with a talk the visitor wrote in
+When the visitor sends one more remark
+Then the remark stands in the same thread after the first one, and the field is empty again
+
 Covered by the end-to-end spec of the widget.

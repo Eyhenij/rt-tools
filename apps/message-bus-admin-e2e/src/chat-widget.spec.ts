@@ -73,6 +73,19 @@ test.describe('виджет посетителя', () => {
         expect(kept).toBeTruthy();
     });
 
+    test('SC-CH-116 — вторая реплика уходит в тот же разговор', async ({ page }: { page: Page }) => {
+        await page.goto(widgetPage(CHAT.widget.key));
+        await unfold(page);
+        await say(page, 'Первая реплика разговора');
+        await expect(qa(page, 'widget-message')).toHaveCount(1);
+
+        await say(page, 'Вторая реплика разговора');
+
+        await expect(qa(page, 'widget-message')).toHaveCount(2);
+        expect(await feedTexts(page)).toEqual(['Первая реплика разговора', 'Вторая реплика разговора']);
+        await expect(qa(page, 'widget-text')).toHaveValue('');
+    });
+
     test('SC-CH-52 — вернувшийся посетитель попадает в свою переписку', async ({ page }: { page: Page }) => {
         await page.goto(widgetPage(CHAT.widget.key));
         await unfold(page);

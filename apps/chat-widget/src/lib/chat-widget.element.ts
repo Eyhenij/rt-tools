@@ -445,7 +445,8 @@ export class ChatWidgetElement extends HTMLElement {
         this.#root.querySelector('[data-act="send"]')?.addEventListener('submit', (event: Event): void => {
             event.preventDefault();
 
-            const field: HTMLInputElement | null = this.#root.querySelector('[data-part="text"]');
+            // поле ищется по тегу: ту же метку части несёт текст каждого пузыря ленты
+            const field: HTMLInputElement | null = this.#root.querySelector<HTMLInputElement>('input[data-part="text"]');
 
             if (field) {
                 void this.#say(field.value);
