@@ -1,0 +1,7 @@
+@layer rt-kit.components {
+    /* Окно выбора ложится под поле: запас снизу держит его в пределах окна витрины. */
+    .app-dynamic-selector__slot {
+        width: 30rem;
+        padding-bottom: calc(var(--rt-size-64) * 2);
+    }
+}

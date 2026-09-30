@@ -1,0 +1,8 @@
+@layer rt-kit.components {
+    .app-dynamic-selector-matrix__theme-cell {
+        display: flex;
+        width: 22rem;
+        flex-direction: column;
+        gap: var(--rt-space-4);
+    }
+}

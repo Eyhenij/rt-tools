@@ -1,11 +1,13 @@
 import { Meta, StoryObj } from '@storybook/angular';
 
-import { storySnapshotSkip } from '../../../../showcase';
+import { drawStoryCropperSample } from '../../image-cropper/stories/component/story-cropper-sample';
 import { TestRtImageUploadComponent } from './component/test-image-upload.component';
 
 export default {
     title: 'Organisms/ImageUpload',
     component: TestRtImageUploadComponent,
+    // Загрузчик показан сам по себе, как в истории первого кита, без сетки витрины: кадр — вся страница.
+    parameters: { snapshot: { fullPage: true } },
     argTypes: {
         fileName: { control: { type: 'text' } },
         tooltip: { control: { type: 'text' } },
@@ -23,11 +25,10 @@ export default {
 type TStory = StoryObj<TestRtImageUploadComponent>;
 
 /**
- * Сценарий работы: бросить изображение на зону или выбрать кнопкой, обрезать, применить — картинка
- * встаёт на место зоны; нажатие на неё выбирает другой файл.
+ * Загрузчик с текущей картинкой, как в истории первого кита: нажатие на картинку выбирает файл,
+ * за выбором идут обрезка и «Отмена» с «Применить», кнопка в углу скачивает картинку.
  */
 export const Playground: TStory = {
-    parameters: storySnapshotSkip('сценарий работы с выбором файла — кадры семьи снимают её матрица и истории с жестом'),
     args: {
         fileName: 'logo.png',
         tooltip: '',
@@ -55,34 +56,38 @@ async function waitFor(what: string, ready: () => boolean): Promise<void> {
     }
 }
 
-function button(root: HTMLElement, label: string): HTMLButtonElement {
-    const found: HTMLButtonElement | null = root.querySelector(`button[aria-label="${label}"]`);
-    if (found === null) {
-        throw new Error(`Кнопки «${label}» в истории нет`);
-    }
-    return found;
-}
-
-/** Бросает демо-картинку и ждёт обрезку в поле ненулевой ширины на месте зоны */
+/**
+ * Отдаёт загрузчику нарисованный файл через его поле выбора — так же, как файл выбирает человек,
+ * и ждёт обрезку в поле ненулевой ширины на месте картинки.
+ */
 async function openCropper({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> {
-    button(canvasElement, 'Бросить демо-картинку').click();
+    const input: HTMLInputElement | null = canvasElement.querySelector('[qa-dataid="image-upload-native"]');
+    const view: (Window & typeof globalThis) | null = canvasElement.ownerDocument.defaultView;
+    if (input === null || view === null) {
+        throw new Error('Поля выбора файла в истории нет');
+    }
+    const sample: File | null = await drawStoryCropperSample(canvasElement.ownerDocument, view);
+    if (sample === null) {
+        throw new Error('Демо-картинка не нарисовалась');
+    }
+    const transfer: DataTransfer = new view.DataTransfer();
+    transfer.items.add(sample);
+    input.files = transfer.files;
+    input.dispatchEvent(new view.Event('change', { bubbles: true }));
     await waitFor('рамка обрезки', (): boolean => canvasElement.querySelector('[qa-dataid="image-cropper-frame"]') !== null);
     const field: HTMLElement | null = canvasElement.querySelector('[qa-dataid="image-cropper-field"]');
     if (field === null || field.clientWidth < 200) {
         throw new Error(`Поле обрезки сжато раскладкой: ширина ${field?.clientWidth ?? 'поля нет'}`);
     }
-    if (canvasElement.querySelector('[qa-dataid="image-upload-drop"]') !== null) {
-        throw new Error('Зона загрузки осталась рядом с обрезкой');
-    }
 }
 
-/** Файл брошен: на месте зоны обрезка, под ней «Отмена» и «Применить» */
+/** Файл выбран: на месте картинки обрезка, под ней «Отмена» и «Применить» */
 export const Cropping: TStory = {
     args: { ...Playground.args },
     play: openCropper,
 };
 
-/** «Применить»: картинка встала на место зоны, зоны больше нет */
+/** «Применить»: обрезанная картинка встала на место прежней, обрезки больше нет */
 export const Applied: TStory = {
     args: { ...Playground.args },
     play: async (context: { canvasElement: HTMLElement }): Promise<void> => {
@@ -91,7 +96,7 @@ export const Applied: TStory = {
         const apply: HTMLButtonElement = root.querySelector('[qa-dataid="image-upload-apply"]') as HTMLButtonElement;
         await waitFor('доступная «Применить»', (): boolean => !apply.disabled);
         apply.click();
-        await waitFor('картинка на месте зоны', (): boolean => {
+        await waitFor('картинка на месте обрезки', (): boolean => {
             const image: HTMLImageElement | null = root.querySelector('[qa-dataid="image-upload-image"]');
             return image !== null && image.complete && image.naturalWidth > 0;
         });

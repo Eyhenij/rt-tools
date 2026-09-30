@@ -1,0 +1,58 @@
+<ng-container rtBlock="rt-dynamic-input">
+    <rt-dynamic-selector-list
+        [rows]="rows()"
+        [draggable]="draggable()"
+        [editable]="editable()"
+        [disabled]="isDisabled()"
+        [actionsShown]="!isInvitationShown()"
+        [resetDisabled]="isResetDisabled()"
+        [clearDisabled]="isClearDisabled()"
+        [controlsTpl]="controlsTpl()"
+        (removed)="onRemoved($event)"
+        (moved)="onMoved($event)"
+        (edited)="onEdited($event)"
+        (resetClicked)="onReset()"
+        (cleared)="onCleared()">
+        @if (isAddShown()) {
+            <button
+                rtButton
+                appearance="text"
+                type="button"
+                qa-dataid="dynamic-input-add"
+                [label]="addTitle()"
+                [attr.aria-label]="addTitle()"
+                [disabled]="isDisabled()"
+                (click)="onAdd()"></button>
+        }
+    </rt-dynamic-selector-list>
+
+    @if (isFieldShown()) {
+        <rt-input
+            #field
+            rtElem="field"
+            qa-dataid="dynamic-input-field"
+            [placeholder]="fieldPlaceholder()"
+            [ngModel]="draft()"
+            (ngModelChange)="draft.set($event ?? '')"
+            (keydown.enter)="onCommit()"
+            (focusout)="onCommit()" />
+    }
+
+    @if (isInvitationShown()) {
+        <rt-empty-state
+            rtElem="invitation"
+            qa-dataid="dynamic-input-invitation"
+            [icon]="invitationIcon()"
+            [description]="invitationDescription()">
+            <button
+                rtButton
+                appearance="outlined"
+                type="button"
+                qa-dataid="dynamic-input-invitation-add"
+                [label]="addTitle()"
+                [attr.aria-label]="addTitle()"
+                [disabled]="isDisabled()"
+                (click)="onAdd()"></button>
+        </rt-empty-state>
+    }
+</ng-container>
