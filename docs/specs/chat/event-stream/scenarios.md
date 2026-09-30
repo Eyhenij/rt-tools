@@ -50,3 +50,10 @@ Then the service does not write into the closed stream, and the subscriber is no
 Given a screen that has the messages up to a minute, and messages that arrived after it
 When it asks for what was missed by that minute
 Then the messages after that minute come back, and the ones before it do not
+
+### SC-CH-114 — the closing reaches the stream of the visitor and not the stream of the operator
+
+Given an open stream of the visitor and an open stream of the operator of the site
+When the operator closes the talk of that visitor
+Then the stream of the visitor gets the closing with the talk and its minute, and the stream of
+the operator gets nothing

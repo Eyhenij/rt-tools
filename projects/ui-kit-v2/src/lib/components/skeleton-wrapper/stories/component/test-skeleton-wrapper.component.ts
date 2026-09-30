@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RtSkeletonWrapperComponent } from '../../rt-skeleton-wrapper.component';
 import { TRtSkeletonShape } from '../../../skeleton/rt-skeleton.component';
 import { TRtSkeletonSize } from '../../../skeleton/rt-skeleton.component';
-import { TRtSkeletonRadius } from '../../../skeleton/rt-skeleton.component';
+import { TRtRadius } from '../../../radius/rt-radius.model';
 
 /**
  * Демонстрационная обёртка для витрины: держит изменяемое состояние, на которое
@@ -18,7 +18,7 @@ import { TRtSkeletonRadius } from '../../../skeleton/rt-skeleton.component';
             [height]="height"
             [shape]="shape"
             [size]="size"
-            [borderRadius]="borderRadius"
+            [radius]="radius"
             [animation]="animation"
             [isLoading]="isLoading" />
     `,
@@ -33,7 +33,7 @@ export class TestRtSkeletonWrapperComponent {
     public height: string = '15px';
     public shape: TRtSkeletonShape = 'rectangle';
     public size: TRtSkeletonSize = 'md';
-    public borderRadius: TRtSkeletonRadius = 'xl';
+    public radius: TRtRadius | null = null;
     public animation: boolean = true;
     public isLoading: boolean = false;
 }

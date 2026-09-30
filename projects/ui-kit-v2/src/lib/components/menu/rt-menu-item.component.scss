@@ -1,3 +1,5 @@
+@use '../../../styles/mixins' as kv;
+
 @layer rt-kit.components {
     /* rt-menu-item — пункт меню rt-menu. ViewEncapsulation.None.
        Host (`<rt-menu-item>`) несёт класс блока и сам является кликабельной зоной. */
@@ -87,5 +89,8 @@
                 background: transparent;
             }
         }
+
+        /* Шаг входа `radius` переназначает скругление пункта. */
+        @include kv.radius-steps('--rt-menu-item-radius');
     }
 }

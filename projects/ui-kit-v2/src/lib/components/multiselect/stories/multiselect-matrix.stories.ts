@@ -62,3 +62,15 @@ export const PanelEmpty: TStory = {
         await openStoryOverlay(canvasElement, { key: 'ArrowDown' });
     },
 };
+
+/**
+ * Дерево опций: в области выбраны все листья — её флажок включён, у округа над ней выбрана часть —
+ * промежуточный. Ветки над выбранным раскрыты при открытии, соседний округ свёрнут.
+ */
+export const PanelTree: TStory = {
+    parameters: { snapshot: { fullPage: true } },
+    args: { part: 'panel', panel: 'tree' },
+    play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
+        await openStoryOverlay(canvasElement, { key: 'ArrowDown' });
+    },
+};

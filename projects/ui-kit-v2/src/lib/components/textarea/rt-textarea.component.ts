@@ -18,6 +18,7 @@ import {
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { RtFormControlBase } from '../form-control/rt-form-control.base';
+import { RtRadiusDirective } from '../radius/rt-radius.directive';
 
 const BEM_BLOCK: string = 'rt-textarea';
 
@@ -50,6 +51,7 @@ export type TRtTextareaResize = 'none' | 'vertical';
         // Алиас базового токена — для contentChild(RtFormControlBase) в rt-field.
         { provide: RtFormControlBase, useExisting: forwardRef(() => RtTextareaComponent) },
     ],
+    hostDirectives: [{ directive: RtRadiusDirective, inputs: ['radius'] }],
     host: {
         class: BEM_BLOCK,
         '[class.rt-textarea--size--sm]': "size() === 'sm'",

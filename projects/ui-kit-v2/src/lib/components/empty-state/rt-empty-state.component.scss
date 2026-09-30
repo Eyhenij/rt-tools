@@ -1,3 +1,5 @@
+@use '../../../styles/mixins' as kv;
+
 @layer rt-kit.components {
     /* rt-empty-state — заглушка пустого состояния в common/ui (ViewEncapsulation.None).
        Селектор bare `.rt-empty-state` (класс на host) — `:host` в None light-DOM не матчит.
@@ -72,5 +74,8 @@
 
             margin-top: var(--rt-space-sm);
         }
+
+        /* Шаг входа `radius` переназначает скругление подложки значка. */
+        @include kv.radius-steps('--rt-empty-state-icon-radius');
     }
 }

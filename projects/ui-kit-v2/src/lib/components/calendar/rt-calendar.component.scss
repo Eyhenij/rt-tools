@@ -1,9 +1,29 @@
+@use '../../../styles/mixins' as kv;
+
 @layer rt-kit.components {
     /* rt-calendar — ViewEncapsulation.None: правила таргетируют BEM-класс блока.
        `.rt-calendar` — сам хост (шаблон начинается с ng-container, класс ставит host). */
 
     .rt-calendar {
         --rt-calendar-day-radius: var(--rt-radius-md);
+
+        /* Наименьшая высота дня: панель поля даты поднимает её до размера под палец. */
+        --rt-calendar-day-size: auto;
+
+        /* Где число стоит в клетке по высоте: сверху, чтобы подписи ряда шли одной строкой. */
+        --rt-calendar-day-justify: flex-start;
+
+        /* Число колонок сетки месяцев: два месяца рядом. Панель поля даты ставит одну колонку. */
+        --rt-calendar-month-count: 2;
+
+        /* Зазор между колонками дней. Поле диапазона ставит ноль, и полоса диапазона идёт сплошной. */
+        --rt-calendar-column-gap: var(--rt-space-0-5);
+
+        /* Скругление внутренних углов диапазона: у дней между краями и у стыков начала и конца. */
+        --rt-calendar-range-inner-radius: var(--rt-calendar-day-radius);
+
+        /* Рамка сегодняшнего дня: тонкая линия цвета действия внутри клетки. */
+        --rt-calendar-today-ring: inset 0 0 0 var(--rt-border-width-thin) var(--rt-color-action-primary);
 
         display: block;
 
@@ -19,26 +39,53 @@
             flex: 0 0 auto;
         }
 
+        /* Заголовок в шапке стоит между стрелками и не держит нижнего отступа сетки. */
+        &__header &__month-title {
+            width: auto;
+            padding: var(--rt-space-1) var(--rt-space-2);
+            margin: 0;
+        }
+
         &__months {
             display: grid;
             gap: var(--rt-space-6);
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(var(--rt-calendar-month-count), 1fr);
         }
 
         &__month-title {
+            display: block;
+            width: 100%;
+            padding: 0;
+            border: none;
             margin: 0 0 var(--rt-space-2);
+            background: none;
             color: var(--rt-color-text-primary);
+            font: inherit;
             font-weight: var(--rt-font-weight-semibold);
             text-align: center;
 
             &:first-letter {
                 text-transform: uppercase;
             }
+
+            &:is(button) {
+                border-radius: var(--rt-calendar-day-radius);
+                cursor: pointer;
+
+                &:hover {
+                    color: var(--rt-color-text-link);
+                }
+
+                &:focus-visible {
+                    outline: var(--rt-focus-ring-width) solid var(--rt-focus-ring-color);
+                    outline-offset: var(--rt-focus-ring-offset);
+                }
+            }
         }
 
         &__grid {
             display: grid;
-            gap: var(--rt-space-0-5);
+            gap: var(--rt-space-0-5) var(--rt-calendar-column-gap);
             grid-template-columns: repeat(7, 1fr);
         }
 
@@ -53,6 +100,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: var(--rt-calendar-day-justify);
             padding: var(--rt-space-2) var(--rt-space-0-5);
             border: none;
             border-radius: var(--rt-calendar-day-radius);
@@ -61,13 +109,18 @@
             cursor: pointer;
             font: inherit;
             gap: var(--rt-space-0-5);
+            min-block-size: var(--rt-calendar-day-size);
 
-            &:hover:not(:disabled, [data-state='start'], [data-state='end'], [data-state='in-range']) {
+            &:hover:not(:disabled, [data-state='start'], [data-state='end'], [data-state='in-range'], [data-state='chosen']) {
                 background: var(--rt-color-bg-subtle);
             }
 
+            /* Выключенный день приглушён сам, без состояния: границы панели поля даты выключают
+               дни, не называя их прошедшими. */
             &:disabled {
+                color: var(--rt-color-text-muted);
                 cursor: not-allowed;
+                opacity: 0.45;
             }
 
             &[data-state='past'],
@@ -82,13 +135,34 @@
                 text-decoration: line-through;
             }
 
+            &[data-today] {
+                box-shadow: var(--rt-calendar-today-ring);
+            }
+
+            &:focus-visible {
+                outline: var(--rt-focus-ring-width) solid var(--rt-focus-ring-color);
+                outline-offset: var(--rt-focus-ring-offset);
+            }
+
             &[data-state='start'],
-            &[data-state='end'] {
+            &[data-state='end'],
+            &[data-state='chosen'] {
                 background: var(--rt-color-action-primary);
                 color: var(--rt-color-action-on-primary);
             }
 
+            &[data-state='start'] {
+                border-end-end-radius: var(--rt-calendar-range-inner-radius);
+                border-start-end-radius: var(--rt-calendar-range-inner-radius);
+            }
+
+            &[data-state='end'] {
+                border-end-start-radius: var(--rt-calendar-range-inner-radius);
+                border-start-start-radius: var(--rt-calendar-range-inner-radius);
+            }
+
             &[data-state='in-range'] {
+                border-radius: var(--rt-calendar-range-inner-radius);
                 background: var(--rt-color-action-primary-soft);
                 color: var(--rt-color-text-link);
                 font-weight: var(--rt-font-weight-semibold);
@@ -129,5 +203,8 @@
                 font-size: var(--rt-text-3xs);
             }
         }
+
+        /* Шаг входа `radius` переназначает скругление дня. */
+        @include kv.radius-steps('--rt-calendar-day-radius');
     }
 }

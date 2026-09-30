@@ -41,6 +41,8 @@ export interface IDoubleConversation {
     state: string;
     /** Минута последнего будильника. Пусто — переписка не будила никого ни разу. */
     wokeAt?: Date | null;
+    /** Минута закрытия. Пусто — переписка живая. */
+    closedAt?: Date | null;
 }
 
 /** Оператор и сайт, за который он отвечает. */
@@ -56,6 +58,8 @@ export interface IDoubleMessage {
     readonly side: string;
     readonly text: string;
     readonly takenAt: Date;
+    /** Имя учётной записи ответа. Пусто — реплика посетителя или ответ без учётной записи. */
+    readonly authorName?: string;
 }
 
 /** Вызов наружу в памяти спеки: по нему видно, что ушло и чем кончилось. */
@@ -124,6 +128,7 @@ export class ChatPrismaDouble {
     public get chatConversation(): Record<string, (args: Record<string, unknown>) => Promise<unknown>> {
         return {
             update: async (args: Record<string, unknown>): Promise<unknown> => this.#touch(args),
+            create: async (args: Record<string, unknown>): Promise<unknown> => this.#startTalk(args),
             findMany: async (args: Record<string, unknown>): Promise<unknown> => this.#conversationsFound(args),
             count: async (args: Record<string, unknown>): Promise<number> => this.#conversationsOf(args).length,
             findFirst: async (args: Record<string, unknown>): Promise<unknown> => this.#oneConversation(args),
@@ -184,7 +189,11 @@ export class ChatPrismaDouble {
         };
     }
 
-    #visitor(args: Record<string, unknown>): { id: string; conversations: IDoubleConversation[] } | null {
+    /**
+     * Посетитель вместе с его переписками, свежие первыми, как их просит запрос. Список обращений
+     * просит у каждой ещё и последнюю реплику — она кладётся рядом.
+     */
+    #visitor(args: Record<string, unknown>): { id: string; conversations: Record<string, unknown>[] } | null {
         const key: IVisitorKey['siteId_token'] = (args['where'] as IVisitorKey).siteId_token;
         const visitor: IDoubleVisitor | undefined = this.visitors.find(
             (row: IDoubleVisitor): boolean => row.siteId === key.siteId && row.token === key.token
@@ -196,8 +205,44 @@ export class ChatPrismaDouble {
 
         return {
             id: visitor.id,
-            conversations: this.conversations.filter((row: IDoubleConversation): boolean => row.visitorId === visitor.id),
+            conversations: this.conversations
+                .filter((row: IDoubleConversation): boolean => row.visitorId === visitor.id)
+                .sort(
+                    (first: IDoubleConversation, second: IDoubleConversation): number =>
+                        second.lastMessageAt.getTime() - first.lastMessageAt.getTime()
+                )
+                .map((row: IDoubleConversation): Record<string, unknown> => ({
+                    ...row,
+                    closedAt: row.closedAt ?? null,
+                    messages: this.messages
+                        .filter((message: IDoubleMessage): boolean => message.conversationId === row.id)
+                        .sort((first: IDoubleMessage, second: IDoubleMessage): number => second.takenAt.getTime() - first.takenAt.getTime())
+                        .slice(0, 1),
+                })),
         };
+    }
+
+    /** Новое обращение посетителя, который уже есть. */
+    #startTalk(args: Record<string, unknown>): IDoubleConversation {
+        const data: { siteId: string; visitorId: string; lastMessageAt: Date } = args['data'] as {
+            siteId: string;
+            visitorId: string;
+            lastMessageAt: Date;
+        };
+
+        this.#issued += 1;
+
+        const conversation: IDoubleConversation = {
+            id: `conversation-${this.#issued}`,
+            siteId: data.siteId,
+            visitorId: data.visitorId,
+            lastMessageAt: data.lastMessageAt,
+            state: 'live',
+        };
+
+        this.conversations.push(conversation);
+
+        return conversation;
     }
 
     #start(args: Record<string, unknown>): { conversations: IDoubleConversation[] } {
@@ -239,6 +284,7 @@ export class ChatPrismaDouble {
             side: data['side'] as string,
             text: data['text'] as string,
             takenAt: data['takenAt'] as Date,
+            authorName: (data['authorName'] as string | undefined) ?? '',
         };
 
         this.messages.push(message);
@@ -248,10 +294,11 @@ export class ChatPrismaDouble {
 
     #touch(args: Record<string, unknown>): IDoubleConversation | null {
         const where: { id: string } = args['where'] as { id: string };
-        const data: { lastMessageAt?: Date; state?: string; wokeAt?: Date | null } = args['data'] as {
+        const data: { lastMessageAt?: Date; state?: string; wokeAt?: Date | null; closedAt?: Date | null } = args['data'] as {
             lastMessageAt?: Date;
             state?: string;
             wokeAt?: Date | null;
+            closedAt?: Date | null;
         };
         const conversation: IDoubleConversation | undefined = this.conversations.find(
             (row: IDoubleConversation): boolean => row.id === where.id
@@ -271,6 +318,10 @@ export class ChatPrismaDouble {
 
         if ('wokeAt' in data) {
             conversation.wokeAt = data.wokeAt ?? null;
+        }
+
+        if ('closedAt' in data) {
+            conversation.closedAt = data.closedAt ?? null;
         }
 
         return conversation;
@@ -424,8 +475,21 @@ export class ChatPrismaDouble {
             .sort((first: IDoubleMessage, second: IDoubleMessage): number => first.takenAt.getTime() - second.takenAt.getTime());
     }
 
-    /** Страница сообщений одной переписки. */
+    /**
+     * Два чтения сообщений разведены по отбору: страница одной переписки и названные ответы
+     * набора переписок — их читает список обращений посетителя, свежие первыми.
+     */
     #messagesPage(args: Record<string, unknown>): IDoubleMessage[] {
+        const where: { conversationId: string | { in: string[] } } = args['where'] as { conversationId: string | { in: string[] } };
+
+        if (typeof where.conversationId !== 'string') {
+            const ids: readonly string[] = where.conversationId.in;
+
+            return this.messages
+                .filter((row: IDoubleMessage): boolean => ids.includes(row.conversationId) && Boolean(row.authorName))
+                .sort((first: IDoubleMessage, second: IDoubleMessage): number => second.takenAt.getTime() - first.takenAt.getTime());
+        }
+
         const skip: number = (args['skip'] as number) ?? 0;
         const take: number = (args['take'] as number) ?? this.messages.length;
 

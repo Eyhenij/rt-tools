@@ -1,3 +1,5 @@
+@use '../../../styles/mixins' as kv;
+
 @layer rt-kit.components {
     /* rt-section-nav — ViewEncapsulation.None: правила таргетируют BEM-класс блока.
        `.rt-section-nav` — сам хост (шаблон начинается с ng-container, класс ставит host). */
@@ -53,6 +55,9 @@
             letter-spacing: var(--rt-letter-spacing-wide);
             line-height: var(--rt-leading-snug);
         }
+
+        /* Шаг входа `radius` переназначает скругление плитки. */
+        @include kv.radius-steps('--rt-section-nav-tile-radius');
     }
 
     /* Тёмная тема: активная плитка на тёмной поверхности берёт свой фон.

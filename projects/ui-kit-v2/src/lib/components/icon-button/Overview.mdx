@@ -31,7 +31,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | палитра       | `ghost`, `primary`, `secondary`, `danger`, `success`, `warning` | `ghost`   |
 | размер        | `sm` 32, `md` 40, `lg` 48, `xl` 56, `2xl` 64 px                 | `md`      |
 | размер иконки | от кнопки (`null`), `xs`…`2xl`                                  | от кнопки |
-| форма         | `square`, `rounded-sm`, `rounded-lg`, `circle`                  | `square`  |
+| скругление    | умолчание `md`, `none`…`full` — шаг общей шкалы                 | `md`      |
 | признаки      | обычная, нажата, с точкой, загрузка, отключена                  | обычная   |
 
 Перемножены палитра с формой (у круглой кнопки заливка читается иначе) и признак с палитрой.
@@ -94,7 +94,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | `iconSize`  | `IRtIcon.Size \| null`                                                      | `null` → от размера кнопки  |
 | `iconColor` | `IRtIcon.Color`                                                             | `'current'`                 |
 | `iconFill`  | `boolean`                                                                   | `false`                     |
-| `shape`     | `'square' \| 'rounded-sm' \| 'rounded-lg' \| 'circle'`                      | `'square'`                  |
+| `radius`    | `TRtRadius \| null` — шаг общей шкалы                                       | `null` → `md`               |
 | `type`      | `'button' \| 'submit'`                                                      | `'button'`                  |
 | `tooltip`   | `string`                                                                    | `''` — пусто, подсказки нет |
 | `tabIndex`  | `number`                                                                    | `0`                         |

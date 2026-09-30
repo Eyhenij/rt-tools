@@ -1,3 +1,5 @@
+@use '../../../styles/mixins' as kv;
+
 @layer rt-kit.components {
     /* rt-split-button — основной CTA + каретка с меню второстепенных действий.
        ViewEncapsulation.None: селекторы префиксованы `.rt-split-button`. Меню
@@ -8,6 +10,10 @@
         --rt-split-button-caret-transition-duration: var(--rt-duration-fast);
 
         display: inline-flex;
+
+        /* Шаг входа `radius` переназначает скругление обеих кнопок контрола: лицо и каретка —
+           одна поверхность. */
+        @include kv.radius-steps('--rt-btn-radius', '> .rt-split-button__control > .rt-button');
 
         /* Контрол — origin popover'а (width="trigger" берёт его ширину) и flex-ряд
            лица + каретки. */

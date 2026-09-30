@@ -1,3 +1,5 @@
+@use '../../../styles/mixins' as kv;
+
 @layer rt-kit.components {
     /* rt-file-drop — зона перетаскивания файлов в common/ui (ViewEncapsulation.None).
        Селектор bare `.rt-file-drop` (класс на host) — `:host` в None light-DOM не матчит.
@@ -113,6 +115,9 @@
             font-size: var(--rt-text-sm);
             opacity: 0.8;
         }
+
+        /* Шаг входа `radius` переназначает скругление зоны. */
+        @include kv.radius-steps('--rt-file-drop-radius');
     }
 
     /* Сжатый вид подсказки. Слова подсказки пишет сам кит, и на низкой области они не

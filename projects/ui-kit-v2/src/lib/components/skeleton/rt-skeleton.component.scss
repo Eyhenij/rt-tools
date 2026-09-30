@@ -1,3 +1,5 @@
+@use '../../../styles/mixins' as kv;
+
 @layer rt-kit.components {
     .rt-skeleton {
         --rt-skeleton-wave-duration: 2.5s;
@@ -24,8 +26,12 @@
         }
 
         &--square {
-            border-radius: 0;
+            border-radius: var(--rt-skeleton-radius);
         }
+
+        /* Шаг входа `radius` переназначает скругление прямоугольника и квадрата; круг берёт своё
+           свойство и шагом не задевается. */
+        @include kv.radius-steps('--rt-skeleton-radius');
 
         &--sm {
             min-width: 10px;

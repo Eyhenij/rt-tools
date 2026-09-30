@@ -22,6 +22,7 @@ import {
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { rtKitLabel } from '../../i18n';
+import { RtRadiusDirective } from '../radius/rt-radius.directive';
 import { IRtFileDrop } from './rt-file-drop.model';
 
 const BEM_BLOCK: string = 'rt-file-drop';
@@ -67,6 +68,7 @@ const DRAG_LEAVE_DEBOUNCE_MS: number = 80;
         ElemDirective,
         ModDirective,
     ],
+    hostDirectives: [{ directive: RtRadiusDirective, inputs: ['radius'] }],
     host: {
         class: BEM_BLOCK,
     },

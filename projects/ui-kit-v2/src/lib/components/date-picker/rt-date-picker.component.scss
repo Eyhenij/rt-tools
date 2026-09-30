@@ -1,5 +1,8 @@
+@use '../../../styles/mixins' as kv;
+
 @layer rt-kit.components {
     .rt-date-picker {
+        --rt-date-picker-radius: var(--rt-input-radius);
         --rt-date-picker-fill-radius: var(--rt-radius-sm);
 
         position: relative;
@@ -10,7 +13,7 @@
         align-items: center;
         padding: var(--rt-input-padding-y) var(--rt-input-padding-x);
         border: var(--rt-input-border-width) solid var(--rt-input-color-border);
-        border-radius: var(--rt-input-radius);
+        border-radius: var(--rt-date-picker-radius);
         background-color: var(--rt-input-color-bg);
         color: var(--rt-input-color-text);
         cursor: text;
@@ -91,14 +94,27 @@
             color: inherit;
             font: inherit;
             outline: none;
+            text-overflow: ellipsis;
 
             &:disabled {
                 cursor: not-allowed;
             }
         }
 
-        &__clear {
+        &__clear,
+        &__open {
             flex-shrink: 0;
         }
+
+        /* Поверхность панели в поповере: она рисуется в CDK Overlay, вне поддерева блока. */
+        &__popup {
+            border: var(--rt-overlay-select-panel-border-width) solid var(--rt-color-border-subtle);
+            border-radius: var(--rt-overlay-select-radius);
+            background-color: var(--rt-color-bg-surface);
+            box-shadow: var(--rt-overlay-select-shadow);
+        }
+
+        /* Шаг входа `radius` переназначает скругление поля; панель в оверлее держит своё. */
+        @include kv.radius-steps('--rt-date-picker-radius');
     }
 }

@@ -5,11 +5,12 @@ import { StoryPresetsComponent } from '../../../../../showcase/story-presets.com
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { IRtIcon } from '../../../icon';
+import { RT_RADIUS_STEPS, TRtRadius } from '../../../radius/rt-radius.model';
 import { RtTagComponent } from '../../rt-tag.component';
 import { IRtTag } from '../../rt-tag.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TTagMatrixPart = 'severity' | 'size' | 'overflow' | 'shape' | 'radius' | 'icon' | 'closable' | 'presets' | 'themes';
+export type TTagMatrixPart = 'severity' | 'size' | 'overflow' | 'radius' | 'icon' | 'closable' | 'presets' | 'themes';
 
 /** Случай усечения — не значение оси, а пара «подпись и место, которое ей дали». */
 interface ITagOverflowCase {
@@ -87,26 +88,14 @@ interface ITagIconCase {
                 </app-story-presets>
             }
 
-            @case ('shape') {
-                <app-story-presets caption="Форма в обоих наборах">
+            @case ('radius') {
+                <app-story-presets caption="Шаги скругления в обоих наборах">
                     <ng-template>
-                        <app-story-row [items]="shapes">
-                            <ng-template let-shape>
-                                <rt-tag value="Активен" severity="success" [shape]="shape" />
+                        <app-story-row [items]="radii" [itemLabel]="radiusLabel">
+                            <ng-template let-radius>
+                                <rt-tag value="Активен" severity="info" [radius]="radius" />
                             </ng-template>
                         </app-story-row>
-                    </ng-template>
-                </app-story-presets>
-            }
-
-            @case ('radius') {
-                <app-story-presets caption="Форма × скругление в обоих наборах">
-                    <ng-template>
-                        <app-story-grid [rows]="shapes" [columns]="radii" [columnLabel]="radiusLabel">
-                            <ng-template let-shape let-radius="col">
-                                <rt-tag value="Активен" severity="info" [shape]="shape" [radius]="radius" />
-                            </ng-template>
-                        </app-story-grid>
                     </ng-template>
                 </app-story-presets>
             }
@@ -177,7 +166,6 @@ export class TestRtTagMatrixComponent {
 
     public readonly severities: readonly IRtTag.Severity[] = ['neutral', 'info', 'success', 'warning', 'danger', 'secondary'];
     public readonly appearances: readonly IRtTag.Appearance[] = ['solid', 'outlined'];
-    public readonly shapes: readonly IRtTag.Shape[] = ['pill', 'square'];
     public readonly closables: readonly boolean[] = [false, true];
     public readonly sizes: readonly IRtTag.Size[] = ['sm', 'md', 'lg'];
 
@@ -191,8 +179,8 @@ export class TestRtTagMatrixComponent {
         { name: 'места совсем мало', value: 'Ожидает подтверждения оплаты', width: 80 },
     ];
 
-    /** `null` — не отсутствие значения, а «радиус по форме»: у него своя ячейка. */
-    public readonly radii: readonly (IRtTag.Radius | null)[] = [null, 'none', 'sm', 'md', 'lg', 'full'];
+    /** `null` — не отсутствие значения, а умолчание метки: у него своя ячейка. */
+    public readonly radii: readonly (TRtRadius | null)[] = [null, ...RT_RADIUS_STEPS];
 
     public readonly iconCases: readonly ITagIconCase[] = [
         { name: 'без иконок', icon: null, iconEnd: null },
@@ -201,8 +189,7 @@ export class TestRtTagMatrixComponent {
         { name: 'с обеих сторон', icon: 'check', iconEnd: 'arrow-right' },
     ];
 
-    public readonly radiusLabel: (value: IRtTag.Radius | null) => string = (value: IRtTag.Radius | null): string =>
-        value === null ? 'по форме' : value;
+    public readonly radiusLabel: (value: TRtRadius | null) => string = (value: TRtRadius | null): string => value ?? 'по умолчанию';
 
     public readonly closableLabel: (value: boolean) => string = (value: boolean): string => (value ? 'с крестиком' : 'без крестика');
 

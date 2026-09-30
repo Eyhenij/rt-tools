@@ -21,7 +21,7 @@ promises, so that the next pill is asked for from it rather than written beside 
 | -------------- | ------------------------------------------------------------------------------- |
 | The pill       | The root of the tag's markup: the label, the icons and the cross inside one box |
 | The palette    | The closed set of meanings the pill is painted by: a state, not a colour        |
-| The shape      | Whether the pill is fully rounded or a square with a small rounding             |
+| The rounding   | The step of the scale the corners of the pill take; fully rounded by default    |
 | The appearance | Whether the pill is filled or drawn by an outline alone                         |
 | The size       | The step of the padding, the type size and the icon of the pill                 |
 | The cross      | The button at the right edge; it reports a press and removes nothing            |
@@ -47,9 +47,9 @@ promises, so that the next pill is asked for from it rather than written beside 
 - **The palette is doubled by an attribute of the markup.** A check and a style from outside find
   the pill by it without leaning on a class of the block: a BEM class changes together with the
   layout, and the attribute says the meaning.
-- **The shape sets the rounding, and a rounding named apart beats the shape.** They are sorted out
-  by the order of the rules in the file rather than by specificity: an explicit rounding stands
-  below and wins. A consumer who named neither gets the rounding of the shape.
+- **The rounding is a step of the kit's one rounding input, and the pill is fully rounded by
+  default.** The former shape and rounding inputs gave two ways to set one thing and a rule which
+  one wins; the one input of the kit leaves neither.
 - **The outlined appearance is declared below every palette.** A palette sets a background, and an
   appearance declared above it would be overridden by that background silently — the pill would
   stay filled while the markup asks for an outline.
@@ -121,8 +121,7 @@ The tag has no records of the storage of its own: everything it draws arrives by
 | a label and nothing else           | a grey fully rounded pill with the word inside it          |
 | a palette is named                 | the pill and the word take the colours of that state       |
 | the appearance is the outlined one | a transparent pill with an outline of the palette's colour |
-| the shape is the square one        | a pill with a small rounding                               |
-| a rounding is named apart          | that rounding, whatever the shape says                     |
+| a step of the rounding is named    | the corners of that step                                   |
 | an icon is named                   | the icon before the word, after it, or both at once        |
 | the cross is asked for             | a small cross at the right edge; a press goes outward      |
 | a size is named                    | the padding, the type size and the icon move to that step  |
@@ -176,3 +175,5 @@ The subdomain has no open questions.
   (RT-1879). Two articles about the width were appended by the frame of the showcase: the cutting
   did not work with the cutting rules already right, and neither the unit test nor a frame of the
   tag alone said so.
+- 2026-09-29 — the shape and the rounding of the tag gave way to the kit's one rounding input
+  (RT-2371); the scenario SC-UKV-186 about the rounding coming from the shape is removed.

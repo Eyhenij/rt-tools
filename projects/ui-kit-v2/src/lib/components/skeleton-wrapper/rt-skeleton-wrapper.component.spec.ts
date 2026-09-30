@@ -72,9 +72,16 @@ describe('RtSkeletonWrapperComponent', (): void => {
         });
 
         it('форма и скругление тоже прокидываются', (): void => {
-            const fixture: ComponentFixture<RtSkeletonWrapperComponent> = setup({ isLoading: true, shape: 'circle', size: 'lg' });
+            const fixture: ComponentFixture<RtSkeletonWrapperComponent> = setup({
+                isLoading: true,
+                shape: 'circle',
+                size: 'lg',
+                radius: 'sm',
+            });
+            const placeholder: HTMLElement = qa(fixture, 'skeleton-wrapper-placeholder')?.nativeElement as HTMLElement;
 
-            expect(placeholderStyle(fixture, 'border-radius')).toBe('50%');
+            expect(placeholder.classList).toContain('rt-skeleton--circle');
+            expect(placeholder.getAttribute('data-rt-radius')).toBe('sm');
             expect(placeholderStyle(fixture, 'width')).toBe('20px');
         });
 

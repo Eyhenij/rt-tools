@@ -6,12 +6,12 @@
 <rt-skeleton-wrapper width="240px" height="16px" [isLoading]="!tour()">{{ tour()?.title }}</rt-skeleton-wrapper>
 ```
 
-| вход                                            | тип                                           | умолчание |
-| ----------------------------------------------- | --------------------------------------------- | --------- |
-| `isLoading`                                     | `boolean`                                     | `false`   |
-| `width`                                         | `string`                                      | `'100%'`  |
-| `height`                                        | `string`                                      | `'15px'`  |
-| `shape` / `size` / `borderRadius` / `animation` | как у [`rt-skeleton`](../skeleton/CONTEXT.md) |           |
+| вход                                      | тип                                           | умолчание |
+| ----------------------------------------- | --------------------------------------------- | --------- |
+| `isLoading`                               | `boolean`                                     | `false`   |
+| `width`                                   | `string`                                      | `'100%'`  |
+| `height`                                  | `string`                                      | `'15px'`  |
+| `shape` / `size` / `radius` / `animation` | как у [`rt-skeleton`](../skeleton/CONTEXT.md) |           |
 
 ## Главное, что нужно знать
 

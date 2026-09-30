@@ -1,3 +1,5 @@
+@use '../../../styles/mixins' as kv;
+
 @layer rt-kit.components {
     .rt-markdown-text {
         --rt-markdown-text-radius: var(--rt-radius-sm);
@@ -126,5 +128,8 @@
             color: var(--rt-color-text-link);
             text-decoration: underline;
         }
+
+        /* Шаг входа `radius` переназначает скругление блоков кода. */
+        @include kv.radius-steps('--rt-markdown-text-radius');
     }
 }

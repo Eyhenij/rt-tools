@@ -1,3 +1,5 @@
+@use '../../../styles/mixins' as kv;
+
 @layer rt-kit.components {
     /* rt-tag — status pill в common/ui. ViewEncapsulation.None.
        Хост адресуется по имени элемента, а не по классу блока: класс `.rt-tag` висит
@@ -13,7 +15,7 @@
         max-width: 100%;
 
         .rt-tag {
-            --rt-tag-radius: var(--rt-radius-md);
+            --rt-tag-radius: var(--rt-radius-full);
             --rt-tag-border-width: var(--rt-border-width-thin);
 
             display: inline-flex;
@@ -46,35 +48,6 @@
                 padding: var(--rt-space-2) var(--rt-space-4);
                 font-size: var(--rt-text-md);
                 gap: var(--rt-space-2);
-            }
-
-            &--shape--pill {
-                --rt-tag-radius: var(--rt-radius-full);
-            }
-
-            &--shape--square {
-                --rt-tag-radius: var(--rt-radius-sm);
-            }
-
-            /* Явный radius переопределяет shape — правила идут позже по порядку. */
-            &--radius--none {
-                --rt-tag-radius: var(--rt-radius-none);
-            }
-
-            &--radius--sm {
-                --rt-tag-radius: var(--rt-radius-sm);
-            }
-
-            &--radius--md {
-                --rt-tag-radius: var(--rt-radius-md);
-            }
-
-            &--radius--lg {
-                --rt-tag-radius: var(--rt-radius-lg);
-            }
-
-            &--radius--full {
-                --rt-tag-radius: var(--rt-radius-full);
             }
 
             &--severity--info {
@@ -137,5 +110,8 @@
                 margin-inline-start: var(--rt-space-0-5);
             }
         }
+
+        /* Шаг входа `radius` переназначает собственное свойство пилюли. */
+        @include kv.radius-steps('--rt-tag-radius', '> .rt-tag');
     }
 }

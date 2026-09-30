@@ -24,7 +24,7 @@ Then the remark stands in the thread, and the sign of the visitor lies in the st
 ### SC-CH-52 — a returning visitor sees their earlier talk
 
 Given a browser that holds the sign of the visitor of that site
-When the page with the widget is opened again
+When the page with the widget is opened again, and the visitor opens their talk from the list
 Then the messages of that same conversation stand in the thread, oldest first
 
 ### SC-CH-53 — the answer of the operator arrives in the open widget
@@ -80,3 +80,101 @@ Then the look of the widget stays its own
 Given an open widget on a wide screen
 When the visitor sends a remark of one long word
 Then the remark is broken by the width of the thread and goes past no edge of the widget
+
+### SC-CH-99 — the folded widget is a round button, and the open one is 380 px wide
+
+Given a page with the widget on a wide screen
+When the visitor unfolds the bubble
+Then the bubble was a circle with an icon, and the window is 380 px wide under a head of the accent colour
+
+Covered by the end-to-end spec of the widget.
+
+### SC-CH-100 — the remarks of the two sides stand on the two sides of the thread
+
+Given an open widget with a remark of the visitor and an answer of the support
+When the thread is drawn
+Then the visitor's bubble stands at the right edge, the support's at the left, and each names its time
+
+Covered by the end-to-end spec of the widget and the spec of the widget logic.
+
+### SC-CH-101 — the hours stand in the greeting card, and outside the hours above the thread
+
+Given a site outside its hours
+When the visitor opens the widget, then sends a remark
+Then the hours stand in the greeting card first, and in a note above the thread after the remark
+
+Covered by the end-to-end spec of the widget.
+
+### SC-CH-102 — the field draws the ring of the fields in focus
+
+Given an open widget
+When the visitor puts the focus into the field
+Then the capsule of the field draws the focus border and the ring
+
+Covered by the end-to-end spec of the widget.
+
+### SC-CH-107 — a visitor with talks opens the widget on the list of them
+
+Given a visitor with two talks on the site, one of them closed by the operator
+When the visitor unfolds the widget
+Then the list "Ваши обращения" shows both, the latest first, the closed one with the mark
+"Закрыто", and the button "Новое обращение" stands under the list
+
+Covered by the end-to-end spec of the widget.
+
+### SC-CH-108 — the new-talk button starts a second talk
+
+Given a visitor with a talk on the site
+When the visitor presses "Новое обращение" and sends a remark
+Then the remark stands alone in a new talk, and the list shows two talks
+
+Covered by the end-to-end spec of the widget.
+
+### SC-CH-109 — the arrow of the head leads back to the list
+
+Given a talk opened from the list
+When the visitor presses the arrow of the head
+Then the list of the talks stands in the widget again
+
+Covered by the end-to-end spec of the widget.
+
+### SC-CH-110 — an answer to a talk not opened carries the unread dot
+
+Given a visitor looking at the list of their talks
+When the operator answers one of them
+Then the row of that talk carries the dot, and the dot is gone after the talk is opened
+
+Covered by the end-to-end spec of the widget and the spec of the widget logic.
+
+### SC-CH-111 — the head and the bubble name the operator who answered
+
+Given a talk without an answer
+When an operator answers it from the panel
+Then the head showed "Поддержка" and the hours before, and after the answer shows the initials,
+the name of the account and "Служба поддержки"; the bubble names the first word of the name
+
+Covered by the end-to-end spec of the widget and the spec of the widget logic.
+
+### SC-CH-112 — the closing reaches the open talk and ends its thread
+
+Given an open widget with a talk the visitor wrote in
+When the operator closes the talk in the panel
+Then without a reload the thread ends with "Разговор завершён" and the time, and the field says
+"Новый вопрос? Напишите нам"
+
+Covered by the end-to-end spec of the widget.
+
+### SC-CH-113 — the next remark from a closed talk starts a new one
+
+Given an open widget with a talk the operator closed
+When the visitor sends a remark
+Then the remark stands alone in a new talk, and the list shows the old talk closed and the new one
+live
+
+### SC-CH-116 — the second remark goes into the same talk
+
+Given an open widget with a talk the visitor wrote in
+When the visitor sends one more remark
+Then the remark stands in the same thread after the first one, and the field is empty again
+
+Covered by the end-to-end spec of the widget.

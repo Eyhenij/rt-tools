@@ -4,7 +4,8 @@ import { StoryGridComponent } from '../../../../../showcase/story-grid.component
 import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
-import { TRtSkeletonRadius, TRtSkeletonShape, TRtSkeletonSize, RtSkeletonComponent } from '../../rt-skeleton.component';
+import { RT_RADIUS_STEPS, TRtRadius } from '../../../radius/rt-radius.model';
+import { TRtSkeletonShape, TRtSkeletonSize, RtSkeletonComponent } from '../../rt-skeleton.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
 export type TSkeletonMatrixPart = 'shape' | 'radius' | 'animation' | 'presets' | 'themes';
@@ -31,9 +32,9 @@ export type TSkeletonMatrixPart = 'shape' | 'radius' | 'animation' | 'presets' |
             }
 
             @case ('radius') {
-                <app-story-grid caption="Фигура × скругление" [rows]="shapes" [columns]="radii" [columnLabel]="radiusLabel">
-                    <ng-template let-shape let-radius="col">
-                        <rt-skeleton width="120px" height="24px" size="lg" [shape]="shape" [borderRadius]="radius" />
+                <app-story-grid caption="Скругление × фигура" [rows]="radii" [columns]="shapes" [rowLabel]="radiusLabel">
+                    <ng-template let-radius let-shape="col">
+                        <rt-skeleton width="120px" height="24px" size="lg" [shape]="shape" [radius]="radius" />
                     </ng-template>
                 </app-story-grid>
             }
@@ -86,12 +87,11 @@ export class TestRtSkeletonMatrixComponent {
     public readonly sizes: readonly TRtSkeletonSize[] = ['sm', 'md', 'lg'];
 
     /** `null` — не отсутствие значения, а «по фигуре»: у него своя ячейка. */
-    public readonly radii: readonly (TRtSkeletonRadius | null)[] = [null, 'xs', 'sm', 'md', 'lg', 'xl'];
+    public readonly radii: readonly (TRtRadius | null)[] = [null, ...RT_RADIUS_STEPS];
 
     public readonly animations: readonly boolean[] = [true, false];
 
-    public readonly radiusLabel: (value: TRtSkeletonRadius | null) => string = (value: TRtSkeletonRadius | null): string =>
-        value === null ? 'по фигуре' : value;
+    public readonly radiusLabel: (value: TRtRadius | null) => string = (value: TRtRadius | null): string => value ?? 'по фигуре';
 
     public readonly animationLabel: (value: boolean) => string = (value: boolean): string => (value ? 'включено' : 'выключено');
 }

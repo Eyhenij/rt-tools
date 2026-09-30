@@ -26,6 +26,7 @@ import { RT_KIT_LABELS, TRtKitLabelMap } from '../../i18n';
 import { RtIconComponent, IRtIcon } from '../icon';
 import { RtTooltipDirective } from '../tooltip/rt-tooltip.directive';
 import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
+import { RtRadiusDirective } from '../radius/rt-radius.directive';
 import { IRtTag } from './rt-tag.model';
 
 const BEM_BLOCK: string = 'rt-tag';
@@ -36,7 +37,7 @@ const ICON_BY_SIZE: Readonly<Record<IRtTag.Size, IRtIcon.Size>> = { sm: 'xs', md
 /**
  * Status/label pill для отображения статусов и счётчиков.
  * Поддерживает 6 severity-вариантов (`info` / `success` / `warning` / `danger` /
- * `secondary` / `neutral`), 2 формы (`pill` / `square`) и опциональный close-control
+ * `secondary` / `neutral`), любой шаг скругления входом `radius` и опциональный close-control
  * (рендерит `rt-icon-button` с иконкой `ico-close` и emits `closed` MouseEvent).
  *
  * Все цвета — через семантические `--rt-color-state-*` токены; layout через
@@ -58,6 +59,7 @@ const ICON_BY_SIZE: Readonly<Record<IRtTag.Size, IRtIcon.Size>> = { sm: 'xs', md
         ElemDirective,
         ModDirective,
     ],
+    hostDirectives: [{ directive: RtRadiusDirective, inputs: ['radius'] }],
     host: {
         class: BEM_BLOCK,
     },
@@ -88,14 +90,8 @@ export class RtTagComponent implements OnDestroy {
      */
     public readonly size: InputSignal<IRtTag.Size> = input<IRtTag.Size>('md');
 
-    /** Форма tag'а. По умолчанию `pill` (фуллскруглённый). */
-    public readonly shape: InputSignal<IRtTag.Shape> = input<IRtTag.Shape>('pill');
-
     /** Вид заливки. По умолчанию `solid`; `outlined` — прозрачный фон + рамка. */
     public readonly appearance: InputSignal<IRtTag.Appearance> = input<IRtTag.Appearance>('solid');
-
-    /** Переопределение скругления поверх `shape`. `null` — радиус по `shape`. */
-    public readonly radius: InputSignal<IRtTag.Radius | null> = input<IRtTag.Radius | null>(null);
 
     /** Префикс-иконка слева от текста. `null` (дефолт) — без иконки. */
     public readonly icon: InputSignal<IRtIcon.Name | null> = input<IRtIcon.Name | null>(null);

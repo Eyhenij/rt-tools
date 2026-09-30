@@ -1,0 +1,45 @@
+<app-story-grid
+    caption="Поверхности × шаг скругления, первый столбец — умолчание компонента"
+    slotWidth="160px"
+    [rows]="rows"
+    [columns]="columns"
+    [columnLabel]="columnLabel">
+    <ng-template let-row let-col="col">
+        <div class="app-radius__cell">
+            @switch (row) {
+                @case ('card') {
+                    <rt-card header="Заказ" [radius]="col">12:00</rt-card>
+                }
+                @case ('message') {
+                    <rt-message severity="info" [radius]="col">Оплачено</rt-message>
+                }
+                @case ('note') {
+                    <rt-note [radius]="col">Тариф сменится</rt-note>
+                }
+                @case ('file-card') {
+                    <rt-file-card name="Договор.pdf" size="sm" [radius]="col" />
+                }
+                @case ('markdown-text') {
+                    <rt-markdown-text [text]="code" [radius]="col" />
+                }
+                @case ('money-list') {
+                    <rt-money-list [radius]="col">
+                        <rt-money-row label="Работы">120 ₽</rt-money-row>
+                    </rt-money-list>
+                }
+                @case ('stepper') {
+                    <rt-stepper [steps]="steps" [currentIndex]="0" [radius]="col" />
+                }
+                @case ('section-nav') {
+                    <rt-section-nav [items]="tiles" [radius]="col" />
+                }
+                @case ('empty-state') {
+                    <rt-empty-state icon="calendar" title="Пусто" [radius]="col" />
+                }
+                @case ('table') {
+                    <app-radius-table-card [radius]="col" />
+                }
+            }
+        </div>
+    </ng-template>
+</app-story-grid>

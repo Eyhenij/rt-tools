@@ -1,0 +1,120 @@
+@use '../../../styles/mixins' as kv;
+
+@layer rt-kit.components {
+    .rt-date-range {
+        --rt-date-range-radius: var(--rt-input-radius);
+        --rt-date-range-fill-radius: var(--rt-radius-sm);
+
+        position: relative;
+        display: inline-flex;
+        width: 100%;
+        min-height: var(--rt-input-height);
+        box-sizing: border-box;
+        align-items: center;
+        padding: var(--rt-input-padding-y) var(--rt-input-padding-x);
+        border: var(--rt-input-border-width) solid var(--rt-input-color-border);
+        border-radius: var(--rt-date-range-radius);
+        background-color: var(--rt-input-color-bg);
+        color: var(--rt-input-color-text);
+        cursor: text;
+        font-size: var(--rt-input-font-size);
+        gap: var(--rt-space-sm);
+        line-height: var(--rt-input-line-height);
+        transition: var(--rt-input-transition);
+
+        &:focus-within {
+            border-color: var(--rt-input-color-border-focus);
+            box-shadow: var(--rt-input-focus-shadow);
+            outline: 2px solid transparent;
+            outline-offset: var(--rt-input-focus-outline-offset);
+        }
+
+        /* bordered=false: снимаем только resting-рамку; invalid/focus/readonly идут
+           ниже по source-order и перекрывают её своей рамкой. */
+        &--borderless {
+            border-color: transparent;
+        }
+
+        /* Вид «fill» — залитое поле с чертой снизу, как у материального поля первого кита: скругление
+           у него своё и малое — скругление поля бывает «таблеткой», а у залитого поля низ прямой.
+           Объявлен до блоков состояний: фокус, ошибка и «только чтение» идут ниже и
+           перекрывают его рамку. */
+        &--appearance--fill {
+            border-color: transparent;
+            border-radius: var(--rt-date-range-fill-radius) var(--rt-date-range-fill-radius) 0 0;
+            border-bottom-color: var(--rt-color-field-fill-underline);
+            background-color: var(--rt-color-bg-surface-subtle-2);
+        }
+
+        &--invalid {
+            border-color: var(--rt-input-color-border-error);
+
+            &:focus-within {
+                box-shadow: var(--rt-input-focus-shadow-error);
+            }
+        }
+
+        &--disabled {
+            cursor: not-allowed;
+            opacity: var(--rt-input-disabled-opacity);
+        }
+
+        &--size--sm {
+            min-height: var(--rt-input-height-sm);
+        }
+
+        &--size--lg {
+            min-height: var(--rt-input-height-lg);
+        }
+
+        /* Read-only: дата как плоский текст — снимаем рамку/фон/паддинги. */
+        &--readonly {
+            padding-right: 0;
+            padding-left: 0;
+            border-color: transparent;
+            background-color: transparent;
+            cursor: default;
+        }
+
+        &__readonly {
+            color: var(--rt-field-value-color);
+            font-size: var(--rt-field-value-font-size);
+
+            &--empty {
+                color: var(--rt-field-value-empty-color);
+            }
+        }
+
+        &__field {
+            min-width: 0;
+            flex: 1 1 auto;
+            padding: 0;
+            border: none;
+            background: transparent;
+            color: inherit;
+            font: inherit;
+            outline: none;
+            text-overflow: ellipsis;
+
+            &:disabled {
+                cursor: not-allowed;
+            }
+        }
+
+        &__clear,
+        &__open {
+            flex-shrink: 0;
+        }
+
+        /* Поверхность панели в поповере: она рисуется в CDK Overlay, вне поддерева блока. */
+        &__popup {
+            border: var(--rt-overlay-select-panel-border-width) solid var(--rt-color-border-subtle);
+            border-radius: var(--rt-overlay-select-radius);
+            background-color: var(--rt-color-bg-surface);
+            box-shadow: var(--rt-overlay-select-shadow);
+        }
+
+        /* Шаг входа `radius` переназначает скругление поля; панель в оверлее держит своё. */
+        @include kv.radius-steps('--rt-date-range-radius');
+    }
+}

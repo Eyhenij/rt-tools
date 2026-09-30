@@ -41,19 +41,11 @@ Covered: `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.spec.ts`.
 
 ## The shape, the appearance and the rounding
 
-### SC-UKV-185 — a tag without inputs is a fully rounded filled pill
+### SC-UKV-185 — a tag without inputs is a filled pill
 
-Given a tag without inputs of the shape and of the appearance
+Given a tag without an input of the appearance
 When it is drawn
-Then it is fully rounded and filled
-
-Covered: `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.spec.ts`.
-
-### SC-UKV-186 — without an input there is no modifier of the rounding: it comes from the shape
-
-Given a tag without an input of the rounding
-When it is drawn
-Then no modifier of the rounding is put out at all, and the rounding comes from the shape
+Then it is filled
 
 Covered: `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.spec.ts`.
 

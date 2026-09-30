@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RtSkeletonComponent } from '../../rt-skeleton.component';
 import { TRtSkeletonShape } from '../../rt-skeleton.component';
 import { TRtSkeletonSize } from '../../rt-skeleton.component';
-import { TRtSkeletonRadius } from '../../rt-skeleton.component';
+import { TRtRadius } from '../../../radius/rt-radius.model';
 
 /**
  * Демонстрационная обёртка для витрины: держит изменяемое состояние, на которое
@@ -13,13 +13,7 @@ import { TRtSkeletonRadius } from '../../rt-skeleton.component';
 @Component({
     selector: 'app-skeleton',
     template: `
-        <rt-skeleton
-            [shape]="shape"
-            [size]="size"
-            [width]="width"
-            [height]="height"
-            [borderRadius]="borderRadius"
-            [animation]="animation" />
+        <rt-skeleton [shape]="shape" [size]="size" [width]="width" [height]="height" [radius]="radius" [animation]="animation" />
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
@@ -32,6 +26,6 @@ export class TestRtSkeletonComponent {
     public size: TRtSkeletonSize = 'md';
     public width: string = '100%';
     public height: string = '';
-    public borderRadius: TRtSkeletonRadius = 'xl';
+    public radius: TRtRadius | null = null;
     public animation: boolean = true;
 }

@@ -7,16 +7,20 @@
  * бы до экрана.
  */
 
-/** Откуда событие: переписка, в которой появилась реплика, и сайт этой переписки. */
+/** Откуда событие: переписка, в которой появилась реплика, её посетитель и её сайт. */
 export interface IChatEventAddress {
     readonly conversationId: string;
+    readonly visitorId: string;
     readonly siteId: string;
 }
 
-/** Чем закрыта подписка: переписка посетителя или набор сайтов оператора. */
+/** Чем закрыта подписка: посетитель или набор сайтов оператора. */
 export interface IChatSubscription {
-    /** Переписка посетителя. Пусто — подписка не его, а оператора. */
-    readonly conversationId: string | null;
+    /**
+     * Посетитель: его виджет видит события всех его обращений — ответ в обращение, которое сейчас
+     * не открыто, помечает его в списке. Пусто — подписка не его, а оператора.
+     */
+    readonly visitorId: string | null;
     /** Сайты оператора. Пусто — он не оператор чата, и событий ему не приходит вовсе. */
     readonly siteIds: readonly string[];
 }
@@ -29,10 +33,10 @@ export interface IChatSubscription {
  */
 export const CHAT_BEAT_MS: number = 30_000;
 
-/** Доходит ли событие до подписки. Подписка посетителя видит свою переписку, оператор — свои сайты. */
+/** Доходит ли событие до подписки. Подписка посетителя видит свои обращения, оператор — свои сайты. */
 export function eventReaches(subscription: IChatSubscription, address: IChatEventAddress): boolean {
-    if (subscription.conversationId) {
-        return subscription.conversationId === address.conversationId;
+    if (subscription.visitorId) {
+        return subscription.visitorId === address.visitorId;
     }
 
     return subscription.siteIds.includes(address.siteId);

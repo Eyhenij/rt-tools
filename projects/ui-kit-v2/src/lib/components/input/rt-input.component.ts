@@ -23,6 +23,7 @@ import { RT_KIT_LABELS, TRtKitLabelMap } from '../../i18n';
 import { RtFormControlBase } from '../form-control/rt-form-control.base';
 import { RtIconComponent, IRtIcon } from '../icon';
 import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
+import { RtRadiusDirective } from '../radius/rt-radius.directive';
 import { IRtInput } from './rt-input.model';
 
 const BEM_BLOCK: string = 'rt-input';
@@ -57,6 +58,7 @@ const BEM_BLOCK: string = 'rt-input';
         // contentChild(RtFormControlBase) (query по абстрактному классу).
         { provide: RtFormControlBase, useExisting: forwardRef(() => RtInputComponent) },
     ],
+    hostDirectives: [{ directive: RtRadiusDirective, inputs: ['radius'] }],
     host: {
         class: BEM_BLOCK,
         '[class.rt-input--disabled]': 'isDisabled()',

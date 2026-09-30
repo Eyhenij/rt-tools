@@ -1,3 +1,5 @@
+@use '../../../styles/mixins' as kv;
+
 @layer rt-kit.components {
     /* rt-stepper — линейный прогресс-степпер в common/ui. ViewEncapsulation.None.
        Хост адресуется по имени элемента, а не по классу блока: класс `.rt-stepper` висит
@@ -122,5 +124,8 @@
                 }
             }
         }
+
+        /* Шаг входа `radius` переназначает скругление точек шагов. */
+        @include kv.radius-steps('--rt-stepper-radius', '> .rt-stepper');
     }
 }

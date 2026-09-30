@@ -118,3 +118,20 @@ Then after each move the highlighted option is scrolled into the visible part of
 enough to stand in it
 
 Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-active-option.spec.ts` — one spec for the three families.
+
+### SC-UKV-406 — the filter line of the select panel shows the magnifier
+
+Given a select with the filter switched on
+When its panel is opened
+Then the filter line carries the magnifier icon on the left
+
+Covered by the component spec of the select family.
+
+### SC-UKV-407 — the multiselect draws an icon on the left of its trigger
+
+Given a multiselect with `iconLeft` set
+When it is drawn
+Then the icon stands in the trigger before the placeholder or the chips, and without the input
+there is no icon
+
+Covered by the component spec of the multiselect family.

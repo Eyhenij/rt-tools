@@ -17,6 +17,7 @@ import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 import { RT_KIT_LABELS, TRtKitLabelMap } from '../../i18n';
 import { RtIconButtonComponent } from '../icon-button';
 import { RtLogoComponent } from '../logo';
+import { RtRadiusDirective } from '../radius/rt-radius.directive';
 
 const BEM_BLOCK: string = 'rt-header';
 
@@ -53,6 +54,7 @@ const BEM_BLOCK: string = 'rt-header';
         ElemDirective,
         ModDirective,
     ],
+    hostDirectives: [{ directive: RtRadiusDirective, inputs: ['radius'] }],
     host: {
         class: BEM_BLOCK,
     },

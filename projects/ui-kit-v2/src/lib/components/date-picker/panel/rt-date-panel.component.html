@@ -1,0 +1,156 @@
+<ng-container rtBlock="rt-date-panel">
+    @if (split()) {
+        <rt-toggle-button-group
+            rtElem="tabs"
+            qa-dataid="date-panel-tabs"
+            fullWidth
+            [ariaLabel]="t().uiDate + ' | ' + t().uiTime"
+            [options]="tabs()"
+            [value]="tab()"
+            (valueChange)="tab.set($event)" />
+    }
+
+    <div rtElem="body">
+        @if (showDate()) {
+            @if (view() === 'days') {
+                <rt-calendar
+                    rtElem="calendar"
+                    qa-dataid="date-panel-calendar"
+                    grid
+                    titleAction
+                    headerTitle
+                    [months]="months()"
+                    [weekdayLabels]="weekdays()"
+                    [canPrev]="canPrev()"
+                    [canNext]="canNext()"
+                    [activeKey]="activeKey()"
+                    [prevAriaLabel]="t().uiPrevMonth"
+                    [nextAriaLabel]="t().uiNextMonth"
+                    (prevMonth)="page(-1)"
+                    (nextMonth)="page(1)"
+                    (dayClick)="pickDay($event)"
+                    (gridKey)="onGridKey($event)"
+                    (titleClick)="openMonths()" />
+            } @else {
+                <div rtElem="months" qa-dataid="date-panel-months" role="group" [attr.aria-label]="t().uiChooseMonth">
+                    <div rtElem="months-header">
+                        <rt-icon-button
+                            qa-dataid="date-panel-prev-year"
+                            icon="chevron-left"
+                            variant="secondary"
+                            radius="full"
+                            [ariaLabel]="t().uiPrevYear"
+                            [disabled]="!canPrevYear()"
+                            (clicked)="pageYear(-1)" />
+                        <span rtElem="year" qa-dataid="date-panel-year">{{ year() }}</span>
+                        <rt-icon-button
+                            qa-dataid="date-panel-next-year"
+                            icon="chevron-right"
+                            variant="secondary"
+                            radius="full"
+                            [ariaLabel]="t().uiNextYear"
+                            [disabled]="!canNextYear()"
+                            (clicked)="pageYear(1)" />
+                    </div>
+                    <div rtElem="month-grid">
+                        @for (cell of monthCells(); track cell.key) {
+                            <button
+                                rtElem="cell"
+                                qa-dataid="date-panel-month"
+                                type="button"
+                                [attr.data-key]="cell.key"
+                                [attr.aria-pressed]="cell.key === shownMonth()"
+                                [disabled]="cell.disabled"
+                                (click)="pickMonth(cell)">
+                                {{ cell.label }}
+                            </button>
+                        }
+                    </div>
+                </div>
+            }
+        }
+
+        @if (showTime()) {
+            <div rtElem="time" qa-dataid="date-panel-time">
+                <div rtElem="column" qa-dataid="date-panel-hours" role="group" [attr.aria-label]="t().uiHours">
+                    @for (cell of columns().hours; track cell.value) {
+                        <button
+                            #timeCell
+                            rtElem="cell"
+                            qa-dataid="date-panel-hour"
+                            type="button"
+                            [attr.aria-pressed]="cell.value === draftHour()"
+                            [disabled]="cell.disabled"
+                            (click)="pickHour(cell.value)">
+                            {{ cell.label }}
+                        </button>
+                    }
+                </div>
+                <div rtElem="column" qa-dataid="date-panel-minutes" role="group" [attr.aria-label]="t().uiMinutes">
+                    @for (cell of columns().minutes; track cell.value) {
+                        <button
+                            #timeCell
+                            rtElem="cell"
+                            qa-dataid="date-panel-minute"
+                            type="button"
+                            [attr.aria-pressed]="cell.value === draftMinute()"
+                            [disabled]="cell.disabled"
+                            (click)="pickMinute(cell.value)">
+                            {{ cell.label }}
+                        </button>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+
+    <div rtElem="footer">
+        @switch (type()) {
+            @case ('date') {
+                <button
+                    rtButton
+                    qa-dataid="date-panel-today"
+                    theme="secondary"
+                    appearance="text"
+                    size="sm"
+                    type="button"
+                    [label]="t().uiToday"
+                    [attr.aria-label]="t().uiToday"
+                    [disabled]="todayOff()"
+                    (click)="pickToday()"></button>
+            }
+            @case ('time') {
+                <button
+                    rtButton
+                    qa-dataid="date-panel-now"
+                    theme="secondary"
+                    appearance="text"
+                    size="sm"
+                    type="button"
+                    [label]="t().uiNow"
+                    [attr.aria-label]="t().uiNow"
+                    (click)="pickNow()"></button>
+                <button
+                    rtButton
+                    qa-dataid="date-panel-done"
+                    size="sm"
+                    type="button"
+                    [label]="t().uiDone"
+                    [attr.aria-label]="t().uiDone"
+                    [disabled]="!canApply()"
+                    (click)="apply()"></button>
+            }
+            @default {
+                <button
+                    rtButton
+                    qa-dataid="date-panel-apply"
+                    size="sm"
+                    type="button"
+                    [label]="t().uiApply"
+                    [attr.aria-label]="t().uiApply"
+                    [disabled]="!canApply()"
+                    (click)="apply()"></button>
+            }
+        }
+    </div>
+</ng-container>
