@@ -37,7 +37,22 @@ async function say(page: Page, text: string): Promise<void> {
     await qa(page, 'widget-send').click();
 }
 
+/** Сколько тестов этого набора уже получили свой адрес посетителя. */
+let visitors: number = 0;
+
 test.describe('виджет посетителя', () => {
+    /**
+     * У каждого теста свой адрес посетителя, как у живых посетителей разных страниц.
+     *
+     * Сервис ограничивает заведение разговоров числом в минуту с одного адреса. Весь набор идёт с
+     * одной машины, и без своего адреса тесты виджета упирались бы в этот предел вместе с
+     * остальными спеками. Предел на один адрес при этом остаётся прежним.
+     */
+    test.beforeEach(async ({ page }: { page: Page }): Promise<void> => {
+        visitors += 1;
+        await page.setExtraHTTPHeaders({ 'x-forwarded-for': `198.51.100.${visitors}` });
+    });
+
     test('SC-CH-49, SC-CH-50 — виджет встаёт на странице и здоровается словами площадки', async ({ page }: { page: Page }) => {
         await page.goto(widgetPage(CHAT.widget.key));
 
