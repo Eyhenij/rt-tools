@@ -58,6 +58,9 @@
         }
 
         &__input {
+            /* Автовысота CDK пишет в height высоту самого текста: при border-box её съели бы
+               отступы, и уже вторая строка уезжала бы под верхний край. */
+            box-sizing: content-box;
             flex: 1 1 auto;
             border: 0;
             margin: 0;
@@ -68,6 +71,10 @@
             inline-size: 100%;
             line-height: var(--rt-leading-normal);
 
+            /* Отступ от скрепки — внешний: замер автовысоты CDK обнуляет боковой padding поля,
+               и на замере текст ложился бы в меньшее число строк, чем на экране. */
+            margin-inline-start: calc(var(--rt-space-1) * 1.5);
+
             /* Своего размера поле ввода хозяину не отдаёт: иначе его ширина по `cols`
                по-прежнему участвовала бы в измерении. */
             min-inline-size: 0;
@@ -75,8 +82,13 @@
 
             /* Одна строка текста по высоте равна круглой кнопке: отступ добирает разницу. */
             padding-block: calc((var(--rt-control-height-md) - 1lh) / 2);
-            padding-inline: calc(var(--rt-space-1) * 1.5) 0;
             resize: none;
+
+            /* Место под ползунок держится всегда, и на замере автовысоты тоже: иначе появившийся
+               ползунок сужал бы поле, текст ложился бы ещё на строку, и верхняя уезжала бы. */
+            scrollbar-color: var(--rt-color-border-default) transparent;
+            scrollbar-gutter: stable;
+            scrollbar-width: thin;
 
             &::placeholder {
                 color: var(--rt-input-color-text-placeholder);

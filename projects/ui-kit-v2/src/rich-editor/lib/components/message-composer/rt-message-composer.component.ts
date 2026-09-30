@@ -23,7 +23,7 @@ import {
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
-import { BlockDirective, ElemDirective, ModDirective, TBemModifiers } from '@rt-tools/core';
+import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { IQuillDelta, RT_KIT_LABELS, RtFileCardComponent, RtIconButtonComponent, rtKitLabel, TRtKitLabelMap } from '@rt-tools/ui-kit-v2';
 
@@ -123,7 +123,7 @@ export class RtMessageComposerComponent {
         (): boolean => this.#multiRow() || this.formatting() || (this.attachments() && this.files().length > 0)
     );
 
-    protected readonly capsuleMods: Signal<TBemModifiers> = computed((): TBemModifiers => ({
+    protected readonly capsuleMods: Signal<Record<string, boolean>> = computed((): Record<string, boolean> => ({
         tall: this.tall(),
         disabled: this.disabled(),
     }));
