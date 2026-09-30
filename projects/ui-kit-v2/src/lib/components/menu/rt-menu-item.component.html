@@ -1,7 +1,24 @@
 <ng-container rtBlock="rt-menu-item">
-    @if (iconName(); as name) {
-        <rt-icon rtElem="icon" size="sm" [name]="name" />
+    @if (isLink()) {
+        <a
+            rtElem="link"
+            role="menuitem"
+            qa-dataid="menu-item-link"
+            [routerLink]="linkTarget()"
+            [attr.aria-current]="current() ? 'true' : null"
+            [attr.aria-disabled]="disabled() ? 'true' : null"
+            [attr.tabindex]="disabled() ? null : 0">
+            <ng-container [ngTemplateOutlet]="content" />
+        </a>
+    } @else {
+        <ng-container [ngTemplateOutlet]="content" />
     }
 
-    <span rtElem="label" qa-dataid="menu-item-label">{{ label() }}</span>
+    <ng-template #content>
+        @if (iconName(); as name) {
+            <rt-icon rtElem="icon" size="sm" [name]="name" />
+        }
+
+        <span rtElem="label" qa-dataid="menu-item-label">{{ label() }}</span>
+    </ng-template>
 </ng-container>

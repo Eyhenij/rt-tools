@@ -78,6 +78,12 @@ interface IMenuItemKindCase {
                                 <rt-menu-item label="Удалить" icon="ico-trash" [disabled]="true" [attr.data-story-state]="state.state" />
                             </ng-template>
                         </app-story-row>
+
+                        <app-story-row caption="Пункт-ссылка" [items]="states" [itemLabel]="stateLabel" [slotWidth]="itemWidth">
+                            <ng-template let-state>
+                                <rt-menu-item label="Карточка" icon="ico-eye" [link]="userLink" [attr.data-story-state]="state.state" />
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
                 </app-story-presets>
             }
@@ -142,6 +148,9 @@ export class TestRtMenuItemMatrixComponent {
     public readonly disabledStates: readonly IStoryState[] = [STORY_STATE_DEFAULT, STORY_STATE_HOVER];
 
     public readonly stateLabel: (value: IStoryState) => string = storyStateLabel;
+
+    /** Адрес пункта-ссылки: страница записи приложения. */
+    public readonly userLink: readonly (string | number)[] = ['/users', 7];
 
     public readonly kindCases: readonly IMenuItemKindCase[] = [
         { name: 'обычный', label: 'Открыть', icon: null, danger: false, disabled: false, confirmMessage: '' },
