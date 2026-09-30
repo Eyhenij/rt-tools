@@ -1,0 +1,84 @@
+<ng-container rtBlock="rt-side-menu-sub-item">
+    <ng-container [ngTemplateOutlet]="rowTpl" [ngTemplateOutletContext]="{ $implicit: item(), depth: 0 }" />
+    <ng-template #rowTpl let-row let-depth="depth">
+        @let isActive = menuRef.activeMenuIds().includes(row.id);
+        @let isHighlighted = menuRef.highlightedMenuId() === row.id;
+        @if (row.link) {
+            <a
+                rtElem="row"
+                qa-dataid="side-menu-sub-item"
+                [id]="row.id"
+                [routerLink]="row.link"
+                [style.--rt-side-menu-sub-item-depth]="depth"
+                [rtMod]="{ active: isActive, highlighted: isHighlighted }"
+                [attr.aria-current]="isActive ? 'page' : null"
+                (click)="onClickSubMenu(row, $event)">
+                @if (row.icon) {
+                    <rt-icon rtElem="icon" size="sm" [name]="row.icon" />
+                }
+
+                <span rtElem="title" [rtTooltip]="row.name">
+                    <!-- Кусок без отметки тоже узел: голая интерполяция разрывала бы подпись пробелами. -->
+                    @for (part of row.name | rtSideMenuTitleParts: menuRef.subMenuQuery(); track $index) {
+                        @if (part.matched) {
+                            <span rtElem="match">{{ part.text }}</span>
+                        } @else {
+                            <span rtElem="part">{{ part.text }}</span>
+                        }
+                    }
+                </span>
+
+                @if (row.iconButton?.icon) {
+                    <rt-icon-button
+                        rtElem="action"
+                        qa-dataid="side-menu-sub-item-action"
+                        size="sm"
+                        [icon]="row.iconButton.icon"
+                        [ariaLabel]="row.name ?? ''"
+                        (clicked)="onClickSubMenuAdditional(row, $event)" />
+                }
+            </a>
+        } @else if (row.submenu) {
+            <!--
+            Папка рисуется и с пустым составом: отбор оставляет так ту, что совпала подписью. Шеврона
+            у такой папки нет — раскрывать нечего, и стрелка обещала бы содержимое.
+        -->
+            @let isOpen = menuRef.expandedMenuIds().includes(row.id);
+            <button
+                type="button"
+                rtElem="row"
+                qa-dataid="side-menu-folder"
+                [id]="row.id"
+                [style.--rt-side-menu-sub-item-depth]="depth"
+                [rtMod]="{ folder: true, active: isActive, highlighted: isHighlighted }"
+                [attr.aria-expanded]="row.submenu.length ? isOpen : null"
+                (click)="onToggleFolder(row)">
+                @if (row.icon) {
+                    <rt-icon rtElem="icon" size="sm" [name]="row.icon" />
+                }
+
+                <span rtElem="title" [rtTooltip]="row.name">
+                    @for (part of row.name | rtSideMenuTitleParts: menuRef.subMenuQuery(); track $index) {
+                        @if (part.matched) {
+                            <span rtElem="match">{{ part.text }}</span>
+                        } @else {
+                            <span rtElem="part">{{ part.text }}</span>
+                        }
+                    }
+                </span>
+
+                @if (row.submenu.length) {
+                    <rt-icon rtElem="chevron" size="sm" name="chevron-down" [rtMod]="{ open: isOpen }" />
+                }
+            </button>
+
+            @if (isOpen && row.submenu.length) {
+                <div rtElem="children" role="group">
+                    @for (child of row.submenu; track child.id) {
+                        <ng-container [ngTemplateOutlet]="rowTpl" [ngTemplateOutletContext]="{ $implicit: child, depth: depth + 1 }" />
+                    }
+                </div>
+            }
+        }
+    </ng-template>
+</ng-container>

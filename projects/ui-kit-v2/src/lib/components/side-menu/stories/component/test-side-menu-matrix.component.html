@@ -1,0 +1,108 @@
+@switch (part) {
+    @case ('modes') {
+        <app-story-presets caption="Режимы подменю в обоих наборах">
+            <ng-template>
+                <app-story-row [items]="modes" [itemLabel]="caseLabel">
+                    <ng-template let-item>
+                        <ng-container [ngTemplateOutlet]="cellTpl" [ngTemplateOutletContext]="{ $implicit: item }" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('search') {
+        <app-story-presets caption="Поиск по подменю в обоих наборах">
+            <ng-template>
+                <app-story-row [items]="searches" [itemLabel]="caseLabel">
+                    <ng-template let-item>
+                        <ng-container [ngTemplateOutlet]="cellTpl" [ngTemplateOutletContext]="{ $implicit: item }" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('folders') {
+        <app-story-presets caption="Папки подменю в обоих наборах">
+            <ng-template>
+                <app-story-row [items]="folders" [itemLabel]="caseLabel">
+                    <ng-template let-item>
+                        <ng-container [ngTemplateOutlet]="cellTpl" [ngTemplateOutletContext]="{ $implicit: item }" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('states') {
+        <app-story-presets caption="Взаимодействие с пунктами полосы и строками подменю в обоих наборах">
+            <ng-template>
+                <app-story-row [items]="states" [itemLabel]="stateLabel">
+                    <ng-template let-state>
+                        <app-side-menu-cell mode="pinned" [items]="items" [activeIds]="['reports']" [attr.data-story-state]="state.state" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('narrow') {
+        <app-story-presets caption="Узкий экран в обоих наборах">
+            <ng-template>
+                <app-story-row [items]="narrows" [itemLabel]="caseLabel">
+                    <ng-template let-item>
+                        <app-side-menu-narrow-cell
+                            [items]="item.items ?? items"
+                            [activeIds]="item.activeIds ?? []"
+                            [openId]="item.openId ?? null"
+                            [slots]="item.slots ?? false" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('edges') {
+        <app-story-presets caption="Края в обоих наборах">
+            <ng-template>
+                <app-story-row [items]="edges" [itemLabel]="caseLabel">
+                    <ng-template let-item>
+                        <ng-container [ngTemplateOutlet]="cellTpl" [ngTemplateOutletContext]="{ $implicit: item }" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('presets') {
+        <app-story-presets caption="Меню в обоих наборах">
+            <ng-template>
+                <app-side-menu-cell mode="pinned" [items]="items" [activeIds]="['reports', 'sales']" [slots]="true" />
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('themes') {
+        <app-story-presets caption="Меню в обеих темах в обоих наборах">
+            <ng-template>
+                <app-story-themes fill>
+                    <ng-template>
+                        <app-side-menu-cell mode="pinned" [items]="items" [activeIds]="['reports', 'sales']" />
+                    </ng-template>
+                </app-story-themes>
+            </ng-template>
+        </app-story-presets>
+    }
+}
+
+<ng-template #cellTpl let-item>
+    <app-side-menu-cell
+        [items]="item.items ?? items"
+        [activeIds]="item.activeIds ?? []"
+        [mode]="item.mode ?? 'hover'"
+        [width]="item.width ?? null"
+        [openId]="item.openId ?? null"
+        [query]="item.query ?? ''"
+        [slots]="item.slots ?? false" />
+</ng-template>
