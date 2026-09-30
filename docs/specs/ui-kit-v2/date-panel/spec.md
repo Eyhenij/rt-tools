@@ -79,7 +79,7 @@ kit. The mockup draws a panel of its own for all three types, the same in every 
 
 ## What is out of scope
 
-- The date range field — task RT-2373.
+- The date range field — the subdomain `date-range` next to this one.
 - Seconds: the mockup has none.
 
 ## Contract

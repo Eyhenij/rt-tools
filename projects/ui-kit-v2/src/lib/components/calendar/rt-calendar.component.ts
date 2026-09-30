@@ -122,6 +122,8 @@ export class RtCalendarComponent {
     /** Клавиша сетки на дне: куда перевести фокус, решает consumer. */
     public readonly gridKey: OutputEmitterRef<IRtCalendar.GridKey> = output<IRtCalendar.GridKey>();
     public readonly titleClick: OutputEmitterRef<IRtCalendar.Month> = output<IRtCalendar.Month>();
+    /** День под указателем или с фокусом; `null` — указатель ушёл с месяцев. По нему рисуется будущий диапазон. */
+    public readonly dayHover: OutputEmitterRef<IRtCalendar.Day | null> = output<IRtCalendar.Day | null>();
 
     constructor() {
         afterRenderEffect((): void => {
@@ -142,6 +144,12 @@ export class RtCalendarComponent {
         event.preventDefault();
         this.#keyed.set(true);
         this.gridKey.emit({ key: event.key, day });
+    }
+
+    protected onDayHover(day: IRtCalendar.Day): void {
+        if (!day.disabled) {
+            this.dayHover.emit(day);
+        }
     }
 
     protected onDayClick(day: IRtCalendar.Day): void {

@@ -13,6 +13,9 @@
  *
  * Места вида `{{name}}` заполняются параметрами — их принимает `rtKitLabel()`.
  */
+/** Число дней во множественном числе: в английском формы «few» и «many» совпадают с «other». */
+const COUNT_DAYS: string = '{{count}} days';
+
 // eslint-disable-next-line @typescript-eslint/typedef -- аннотация стёрла бы литеральный тип, на котором стоит TRtKitLabelKey
 export const RT_KIT_LABELS_EN = {
     bottomSheetClose: 'Close',
@@ -102,6 +105,10 @@ export const RT_KIT_LABELS_EN = {
     uiCopy: 'Copy',
     uiCurrentStage: 'Current stage',
     uiDate: 'Date',
+    uiDaysFew: COUNT_DAYS,
+    uiDaysMany: COUNT_DAYS,
+    uiDaysOne: '{{count}} day',
+    uiDaysOther: COUNT_DAYS,
     uiDetails: 'Details',
     uiDiscardChanges: 'Discard Changes',
     uiDone: 'Done',
@@ -129,6 +136,9 @@ export const RT_KIT_LABELS_EN = {
     uiHours: 'Hours',
     uiInviteUser: 'Invite user',
     uiItemsPerPage: 'Items per page',
+    uiLast30Days: 'Last 30 days',
+    uiLast7Days: 'Last 7 days',
+    uiLastMonth: 'Last month',
     uiLiveOnSite: 'On the site now',
     uiLoadMore: 'Load more',
     uiMainNav: 'Main navigation',
@@ -153,19 +163,24 @@ export const RT_KIT_LABELS_EN = {
     uiPageOf: 'Page {{page}} of {{last}}',
     uiPagination: 'Pagination',
     uiPerPage: 'Items per page:',
+    uiPeriod: 'Period',
     uiPickAgent: 'Select an agent',
     uiPickAnotherAgent: 'Select a different agent',
+    uiPickEndDate: 'Pick the end date',
+    uiPickStartDate: 'Pick the start date',
     uiPickTransition: 'Select a transition',
     uiPrevMonth: 'Previous month',
     uiPrevPage: 'Previous page',
     uiPrevYear: 'Previous year',
     uiProfile: 'Profile',
+    uiQuickRanges: 'Quick ranges',
     uiRangeEmpty: '0 of 0',
     uiRangeOf: '{{from}}–{{to}} of {{total}}',
     uiRemove: 'Delete',
     uiRename: 'Rename',
     uiReplace: 'Replace',
     uiReplaceAgentTitle: 'Replace agent',
+    uiReset: 'Reset',
     uiResetDefaults: 'Reset to defaults',
     uiResizeDetails: 'Resize details pane',
     uiResizeList: 'Resize list pane',
@@ -195,6 +210,7 @@ export const RT_KIT_LABELS_EN = {
     uiTabInvalid: 'This tab contains errors',
     uiTargetStage: 'Target stage',
     uiTargetStageRequired: 'Select a target stage.',
+    uiThisMonth: 'This month',
     uiThreadListEmptyHint: 'New threads will appear here.',
     uiTime: 'Time',
     uiToList: 'To list',
@@ -206,4 +222,5 @@ export const RT_KIT_LABELS_EN = {
     uiUnsavedTitle: 'Unsaved changes',
     uiWelcomeAria: 'Welcome message for a new user',
     uiYearOverYear: 'YoY',
+    uiYesterday: 'Yesterday',
 } as const;

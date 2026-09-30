@@ -16,6 +16,12 @@
         /* Число колонок сетки месяцев: два месяца рядом. Панель поля даты ставит одну колонку. */
         --rt-calendar-month-count: 2;
 
+        /* Зазор между колонками дней. Поле диапазона ставит ноль, и полоса диапазона идёт сплошной. */
+        --rt-calendar-column-gap: var(--rt-space-0-5);
+
+        /* Скругление внутренних углов диапазона: у дней между краями и у стыков начала и конца. */
+        --rt-calendar-range-inner-radius: var(--rt-calendar-day-radius);
+
         /* Рамка сегодняшнего дня: тонкая линия цвета действия внутри клетки. */
         --rt-calendar-today-ring: inset 0 0 0 var(--rt-border-width-thin) var(--rt-color-action-primary);
 
@@ -79,7 +85,7 @@
 
         &__grid {
             display: grid;
-            gap: var(--rt-space-0-5);
+            gap: var(--rt-space-0-5) var(--rt-calendar-column-gap);
             grid-template-columns: repeat(7, 1fr);
         }
 
@@ -145,7 +151,18 @@
                 color: var(--rt-color-action-on-primary);
             }
 
+            &[data-state='start'] {
+                border-end-end-radius: var(--rt-calendar-range-inner-radius);
+                border-start-end-radius: var(--rt-calendar-range-inner-radius);
+            }
+
+            &[data-state='end'] {
+                border-end-start-radius: var(--rt-calendar-range-inner-radius);
+                border-start-start-radius: var(--rt-calendar-range-inner-radius);
+            }
+
             &[data-state='in-range'] {
+                border-radius: var(--rt-calendar-range-inner-radius);
                 background: var(--rt-color-action-primary-soft);
                 color: var(--rt-color-text-link);
                 font-weight: var(--rt-font-weight-semibold);
