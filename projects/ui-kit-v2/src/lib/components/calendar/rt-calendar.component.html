@@ -24,7 +24,7 @@
             (clicked)="nextMonth.emit()" />
     </div>
 
-    <div rtElem="months" qa-dataid="calendar-months">
+    <div rtElem="months" qa-dataid="calendar-months" (mouseleave)="dayHover.emit(null)">
         @for (month of months(); track month.key) {
             <div rtElem="month" qa-dataid="calendar-month">
                 @if (!headerTitle()) {
@@ -52,6 +52,8 @@
                             [attr.tabindex]="rovingKey() === null ? null : day.key === rovingKey() ? 0 : -1"
                             [disabled]="day.disabled"
                             (keydown)="onDayKey($event, day)"
+                            (mouseenter)="onDayHover(day)"
+                            (focus)="onDayHover(day)"
                             (click)="onDayClick(day)">
                             <span rtElem="day-num" qa-dataid="calendar-day-num">{{ day.dayOfMonth }}</span>
                             @if (sublabelsLoading()) {

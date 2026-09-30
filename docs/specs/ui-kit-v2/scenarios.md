@@ -15,6 +15,7 @@ The scenarios live in the subdomains, each at its own rules:
 | [A tree of options](option-tree/scenarios.md)                            | `SC-UKV-408`…`SC-UKV-417`            |
 | [The panel of the date field](date-panel/scenarios.md)                   | `SC-UKV-418`…`SC-UKV-429`            |
 | [The text of the date field](date-panel/scenarios.md)                    | `SC-UKV-467`                         |
+| [The date range field](date-range/scenarios.md)                          | `SC-UKV-468`…`SC-UKV-478`            |
 
 The prefix is shared across the domain, and the numbers were not recounted at the move: the number
 ties a scenario to the title of its test.

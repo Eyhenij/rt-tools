@@ -1,0 +1,66 @@
+<ng-container rtBlock="rt-date-range-panel">
+    @if (sheet()) {
+        <p rtElem="title" qa-dataid="date-range-title">{{ t().uiPeriod }}</p>
+    }
+
+    <div rtElem="body">
+        <div rtElem="presets" qa-dataid="date-range-presets" role="group" [attr.aria-label]="t().uiQuickRanges">
+            @for (item of presets(); track item.cell.preset) {
+                <button
+                    rtButton
+                    rtElem="preset"
+                    qa-dataid="date-range-preset"
+                    type="button"
+                    size="sm"
+                    [theme]="item.chosen ? 'primary' : 'secondary'"
+                    [appearance]="sheet() ? 'outlined' : 'text'"
+                    [attr.data-preset]="item.cell.preset"
+                    [label]="item.label"
+                    [attr.aria-label]="item.label"
+                    [pressed]="item.chosen"
+                    [disabled]="item.cell.disabled"
+                    (click)="pickPreset(item.cell)"></button>
+            }
+        </div>
+
+        <rt-calendar
+            rtElem="calendar"
+            qa-dataid="date-range-calendar"
+            grid
+            [months]="months()"
+            [weekdayLabels]="weekdays()"
+            [canPrev]="canPrev()"
+            [canNext]="canNext()"
+            [activeKey]="activeKey()"
+            [prevAriaLabel]="t().uiPrevMonth"
+            [nextAriaLabel]="t().uiNextMonth"
+            (prevMonth)="page(-1)"
+            (nextMonth)="page(1)"
+            (dayClick)="pickDay($event)"
+            (dayHover)="onHover($event)"
+            (gridKey)="onGridKey($event)" />
+    </div>
+
+    <div rtElem="footer">
+        <span rtElem="summary" qa-dataid="date-range-summary" aria-live="polite">{{ summary() }}</span>
+        <button
+            rtButton
+            qa-dataid="date-range-reset"
+            theme="primary"
+            appearance="text"
+            size="sm"
+            type="button"
+            [label]="t().uiReset"
+            [attr.aria-label]="t().uiReset"
+            (click)="reset()"></button>
+        <button
+            rtButton
+            qa-dataid="date-range-apply"
+            size="sm"
+            type="button"
+            [label]="t().uiApply"
+            [attr.aria-label]="t().uiApply"
+            [disabled]="draft() === null"
+            (click)="apply()"></button>
+    </div>
+</ng-container>

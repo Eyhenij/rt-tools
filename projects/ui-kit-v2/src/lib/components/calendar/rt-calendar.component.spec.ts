@@ -113,6 +113,20 @@ describe('RtCalendarComponent', (): void => {
         });
     });
 
+    it('SC-UKV-472 — наведение отдаёт день наружу, уход с месяцев — пусто, выключенный день молчит', (): void => {
+        const fixture: ComponentFixture<RtCalendarComponent> = setup();
+        const hovered: (string | null)[] = [];
+        fixture.componentInstance.dayHover.subscribe((value: IRtCalendar.Day | null): void => {
+            hovered.push(value?.key ?? null);
+        });
+
+        days(fixture)[0].dispatchEvent(new MouseEvent('mouseenter'));
+        days(fixture)[1].dispatchEvent(new MouseEvent('mouseenter'));
+        qa(fixture, 'calendar-months')?.nativeElement.dispatchEvent(new MouseEvent('mouseleave'));
+
+        expect(hovered).toEqual(['2026-03-01', null]);
+    });
+
     describe('переключение месяцев', (): void => {
         it('без разрешения стрелки отключены', (): void => {
             const fixture: ComponentFixture<RtCalendarComponent> = setup();

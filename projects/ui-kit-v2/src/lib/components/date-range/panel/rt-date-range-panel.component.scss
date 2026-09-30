@@ -1,0 +1,101 @@
+@layer rt-kit.components {
+    /* rt-date-range-panel — ViewEncapsulation.None: правила таргетируют BEM-класс блока, класс ставит host. */
+
+    .rt-date-range-panel {
+        /* Размер дня в шторке: под палец. */
+        --rt-date-range-panel-sheet-day-size: calc(var(--rt-size-10) + var(--rt-size-1));
+
+        /* Толщина черты между вариантами и месяцами и над подвалом. */
+        --rt-date-range-panel-divider-width: var(--rt-border-width-thin);
+
+        display: flex;
+        flex-direction: column;
+        padding: var(--rt-space-4);
+        gap: var(--rt-space-4);
+
+        &__title {
+            margin: 0;
+            color: var(--rt-color-text-primary);
+            font-size: var(--rt-text-lg);
+            font-weight: var(--rt-font-weight-semibold);
+            text-align: center;
+        }
+
+        &__body {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--rt-space-4);
+        }
+
+        /* Варианты стоят колонкой слева, отделённые от месяцев чертой. */
+        &__presets {
+            display: flex;
+            flex: 0 0 auto;
+            flex-direction: column;
+            align-self: stretch;
+            padding-right: var(--rt-space-4);
+            border-right: var(--rt-date-range-panel-divider-width) solid var(--rt-color-border-subtle);
+            gap: var(--rt-space-1);
+        }
+
+        /* Вариант в колонке — строка текста, прижатая влево, а не кнопка по центру. */
+        &__preset {
+            justify-content: flex-start;
+            white-space: nowrap;
+        }
+
+        /* Свойство ставится на сам узел календаря — корень его блока объявляет своё. */
+        & &__calendar {
+            --rt-calendar-day-justify: center;
+
+            flex: 1 1 auto;
+            min-inline-size: calc(var(--rt-size-10) * 14 + var(--rt-space-6));
+        }
+
+        &__footer {
+            display: flex;
+            align-items: center;
+            padding-top: var(--rt-space-2);
+            border-top: var(--rt-date-range-panel-divider-width) solid var(--rt-color-border-subtle);
+            gap: var(--rt-space-2);
+        }
+
+        &__summary {
+            flex: 1 1 auto;
+            color: var(--rt-color-text-secondary);
+            font-size: var(--rt-text-sm);
+        }
+
+        /* Нижняя шторка: варианты строкой сверху с прокруткой вбок, один месяц, дни под палец. */
+        &--sheet {
+            padding-inline: 0;
+        }
+
+        &--sheet &__body {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        &--sheet &__presets {
+            flex-direction: row;
+            padding-right: 0;
+            padding-bottom: var(--rt-space-1);
+            border-right: none;
+            gap: var(--rt-space-2);
+            overflow-x: auto;
+            overscroll-behavior-x: contain;
+            scrollbar-width: none;
+        }
+
+        &--sheet &__preset {
+            flex: 0 0 auto;
+        }
+
+        &--sheet &__calendar {
+            --rt-calendar-month-count: 1;
+            --rt-calendar-day-size: var(--rt-date-range-panel-sheet-day-size);
+
+            min-inline-size: 0;
+        }
+    }
+}
