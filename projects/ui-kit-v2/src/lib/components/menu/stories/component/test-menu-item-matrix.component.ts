@@ -11,10 +11,11 @@ import {
 } from '../../../../../showcase/story-states';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { IRtIcon } from '../../../icon/rt-icon.model';
+import { RtMenuItemIconDirective } from '../../rt-menu-item-icon.directive';
 import { RtMenuItemComponent } from '../../rt-menu-item.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TMenuItemMatrixPart = 'kinds' | 'states' | 'presets' | 'themes';
+export type TMenuItemMatrixPart = 'kinds' | 'fill' | 'own-icon' | 'states' | 'presets' | 'themes';
 
 /** Вид пункта: иконка, тон и недоступность вместе — порознь они не бывают. */
 interface IMenuItemKindCase {
@@ -60,6 +61,40 @@ interface IMenuItemKindCase {
                 </app-story-presets>
             }
 
+            @case ('fill') {
+                <app-story-presets caption="Контурные и залитые значки в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="fillCases" [itemLabel]="caseLabel" [slotWidth]="itemWidth">
+                            <ng-template let-fillCase>
+                                <rt-menu-item
+                                    [label]="fillCase.label"
+                                    [icon]="fillCase.icon"
+                                    [danger]="fillCase.danger"
+                                    [fill]="fillCase.fill" />
+                            </ng-template>
+                        </app-story-row>
+                    </ng-template>
+                </app-story-presets>
+            }
+
+            @case ('own-icon') {
+                <app-story-presets caption="Свой значок приложения в трёх тонах в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="ownIconCases" [itemLabel]="caseLabel" [slotWidth]="itemWidth">
+                            <ng-template let-ownCase>
+                                <rt-menu-item [label]="ownCase.label" [danger]="ownCase.danger" [success]="ownCase.success">
+                                    <ng-template rtMenuItemIcon>
+                                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                                            <path fill="currentColor" [attr.d]="ownIconPath" />
+                                        </svg>
+                                    </ng-template>
+                                </rt-menu-item>
+                            </ng-template>
+                        </app-story-row>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('states') {
                 <app-story-presets caption="Взаимодействие в обоих наборах">
                     <ng-template>
@@ -76,6 +111,12 @@ interface IMenuItemKindCase {
                             [slotWidth]="itemWidth">
                             <ng-template let-state>
                                 <rt-menu-item label="Удалить" icon="ico-trash" [disabled]="true" [attr.data-story-state]="state.state" />
+                            </ng-template>
+                        </app-story-row>
+
+                        <app-story-row caption="Пункт-ссылка" [items]="states" [itemLabel]="stateLabel" [slotWidth]="itemWidth">
+                            <ng-template let-state>
+                                <rt-menu-item label="Карточка" icon="ico-eye" [link]="userLink" [attr.data-story-state]="state.state" />
                             </ng-template>
                         </app-story-row>
                     </ng-template>
@@ -123,6 +164,7 @@ interface IMenuItemKindCase {
     imports: [
         // components
         RtMenuItemComponent,
+        RtMenuItemIconDirective,
 
         // showcase
         StoryPresetsComponent,
@@ -142,6 +184,9 @@ export class TestRtMenuItemMatrixComponent {
     public readonly disabledStates: readonly IStoryState[] = [STORY_STATE_DEFAULT, STORY_STATE_HOVER];
 
     public readonly stateLabel: (value: IStoryState) => string = storyStateLabel;
+
+    /** Адрес пункта-ссылки: страница записи приложения. */
+    public readonly userLink: readonly (string | number)[] = ['/users', 7];
 
     public readonly kindCases: readonly IMenuItemKindCase[] = [
         { name: 'обычный', label: 'Открыть', icon: null, danger: false, disabled: false, confirmMessage: '' },
@@ -167,6 +212,25 @@ export class TestRtMenuItemMatrixComponent {
             confirmMessage: 'Удалить запись? Действие необратимо.',
         },
     ];
+
+    /** Пункты меню строки контурными и залитыми: заливку видно только в материальном наборе. */
+    public readonly fillCases: readonly { name: string; label: string; icon: IRtIcon.Name; danger: boolean; fill: boolean }[] = [
+        { name: 'контурный', label: 'Изменить', icon: 'pencil', danger: false, fill: false },
+        { name: 'залитый', label: 'Изменить', icon: 'pencil', danger: false, fill: true },
+        { name: 'залитый', label: 'Карточка', icon: 'user', danger: false, fill: true },
+        { name: 'залитый, деструктивный', label: 'Удалить', icon: 'trash', danger: true, fill: true },
+    ];
+
+    /** Свой значок в трёх тонах: он красится цветом тона, как значок кита. */
+    public readonly ownIconCases: readonly { name: string; label: string; danger: boolean; success: boolean }[] = [
+        { name: 'обычный', label: 'Сделать активным', danger: false, success: false },
+        { name: 'деструктивный', label: 'Отключить', danger: true, success: false },
+        { name: 'согласие', label: 'Принять', danger: false, success: true },
+    ];
+
+    /** Рисунок своего значка — человек с галочкой, которого нет в наборе кита. */
+    public readonly ownIconPath: string =
+        'M9 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm0 2c-3.3 0-7 1.6-7 4v2h10.5a6 6 0 0 1 .9-5.6A12 12 0 0 0 9 14Zm8.3 6.2-3-3 1.4-1.4 1.6 1.6 3.9-3.9 1.4 1.4-5.3 5.3Z';
 
     /** Подпись случая: у всех наборов этой матрицы имя лежит в одном поле. */
     public readonly caseLabel: (value: { readonly name: string }) => string = (value: { readonly name: string }): string => value.name;

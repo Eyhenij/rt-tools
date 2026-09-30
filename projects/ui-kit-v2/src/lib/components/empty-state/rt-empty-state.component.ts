@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, Component, input, InputSignal, ViewEncapsulation } from '@angular/core';
+import { BooleanInput } from '@angular/cdk/coercion';
+import {
+    booleanAttribute,
+    ChangeDetectionStrategy,
+    Component,
+    input,
+    InputSignal,
+    InputSignalWithTransform,
+    ViewEncapsulation,
+} from '@angular/core';
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
@@ -31,6 +40,7 @@ const BEM_BLOCK: string = 'rt-empty-state';
     ],
     host: {
         class: BEM_BLOCK,
+        '[class.rt-empty-state--framed]': 'framed()',
     },
 })
 export class RtEmptyStateComponent {
@@ -39,4 +49,9 @@ export class RtEmptyStateComponent {
     public readonly title: InputSignal<string> = input<string>('');
 
     public readonly description: InputSignal<string | null> = input<string | null>(null);
+
+    /** Пунктирная рамка вокруг заглушки — так она читается как зона, куда бросают файл. */
+    public readonly framed: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
 }

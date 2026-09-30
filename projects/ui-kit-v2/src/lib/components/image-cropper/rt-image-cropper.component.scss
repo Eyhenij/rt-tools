@@ -1,0 +1,220 @@
+@layer rt-kit.components {
+    /* rt-image-cropper — обрезка изображения (ViewEncapsulation.None). Где лежат картинка и
+       рамка, считает компонент и кладёт на host пикселями поля; здесь только то, как они
+       выглядят. */
+
+    .rt-image-cropper {
+        --rt-image-cropper-height: calc(var(--rt-size-20) * 4);
+        --rt-image-cropper-radius: var(--rt-radius-md);
+        --rt-image-cropper-frame-radius: var(--rt-radius-none);
+        --rt-image-cropper-field-bg: var(--rt-color-bg-subtle);
+        --rt-image-cropper-shade: var(--rt-overlay-black-50);
+        --rt-image-cropper-rim-width: var(--rt-border-width-thin);
+        --rt-image-cropper-rim-color: var(--rt-overlay-white-50);
+        --rt-image-cropper-dash-style: none;
+        --rt-image-cropper-dash-color: transparent;
+        --rt-image-cropper-dash-opacity: 1;
+        --rt-image-cropper-handle-size: var(--rt-size-3);
+        --rt-image-cropper-handle-bg: var(--rt-color-action-on-primary);
+        --rt-image-cropper-handle-border: var(--rt-color-border-strong);
+        --rt-image-cropper-focus-shadow: var(--rt-shadow-focus-ring);
+        --rt-image-cropper-text-color: var(--rt-color-text-muted);
+        --rt-image-cropper-disabled-opacity: 0.5;
+
+        /* Где лежат картинка и рамка, компонент ставит на host пикселями поля; здесь — значения
+           до первого замера, чтобы у каждого свойства было объявление. */
+        --rt-image-cropper-image-x: 0;
+        --rt-image-cropper-image-y: 0;
+        --rt-image-cropper-image-width: 0;
+        --rt-image-cropper-image-height: 0;
+        --rt-image-cropper-frame-x: 0;
+        --rt-image-cropper-frame-y: 0;
+        --rt-image-cropper-frame-width: 0;
+        --rt-image-cropper-frame-height: 0;
+
+        /* Поле берёт ширину своей коробки: в ячейке, которая центрирует содержимое, блок без
+           ширины схлопнулся бы в ноль. */
+        display: block;
+        width: 100%;
+
+        &__field {
+            position: relative;
+            overflow: hidden;
+            height: var(--rt-image-cropper-height);
+            border-radius: var(--rt-image-cropper-radius);
+            background: var(--rt-image-cropper-field-bg);
+            user-select: none;
+        }
+
+        &__spinner {
+            position: absolute;
+            inset: 50% auto auto 50%;
+            translate: -50% -50%;
+        }
+
+        &__placeholder,
+        &__refusal {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--rt-space-md);
+            margin: 0;
+            color: var(--rt-image-cropper-text-color);
+            inset: 0;
+            text-align: center;
+        }
+
+        &__image {
+            position: absolute;
+            top: var(--rt-image-cropper-image-y);
+            left: var(--rt-image-cropper-image-x);
+            width: var(--rt-image-cropper-image-width);
+            max-width: none;
+            height: var(--rt-image-cropper-image-height);
+            image-orientation: from-image;
+            pointer-events: none;
+        }
+
+        &__frame {
+            position: absolute;
+            top: var(--rt-image-cropper-frame-y);
+            left: var(--rt-image-cropper-frame-x);
+            width: var(--rt-image-cropper-frame-width);
+            height: var(--rt-image-cropper-frame-height);
+            box-sizing: border-box;
+            border: var(--rt-image-cropper-rim-width) solid var(--rt-image-cropper-rim-color);
+            border-radius: var(--rt-image-cropper-frame-radius);
+            cursor: move;
+
+            /* Затемнение всего, что вне рамки: обводка шире любого поля, а поле его обрезает.
+               Обводка повторяет скругление, поэтому в круглом виде светлое место — круг. */
+            outline: 100vmax solid var(--rt-image-cropper-shade);
+            touch-action: none;
+
+            /* Пунктир поверх светлой линии рамки; в своём наборе его нет, материальный рисует
+               его, как обрезка первого кита. */
+            &:after {
+                position: absolute;
+                border: var(--rt-image-cropper-rim-width) var(--rt-image-cropper-dash-style) var(--rt-image-cropper-dash-color);
+                border-radius: inherit;
+                content: '';
+                inset: calc(-1 * var(--rt-image-cropper-rim-width));
+                opacity: var(--rt-image-cropper-dash-opacity);
+                pointer-events: none;
+            }
+
+            &:focus-visible {
+                box-shadow: var(--rt-image-cropper-focus-shadow);
+            }
+        }
+
+        &__handle {
+            position: absolute;
+            width: var(--rt-image-cropper-handle-size);
+            height: var(--rt-image-cropper-handle-size);
+            box-sizing: border-box;
+            border: var(--rt-image-cropper-rim-width) solid var(--rt-image-cropper-handle-border);
+            background: var(--rt-image-cropper-handle-bg);
+            touch-action: none;
+
+            &:focus-visible {
+                box-shadow: var(--rt-image-cropper-focus-shadow);
+                outline: none;
+            }
+
+            &--side--nw {
+                top: 0;
+                left: 0;
+                cursor: nwse-resize;
+            }
+
+            &--side--n {
+                top: 0;
+                left: 50%;
+                cursor: ns-resize;
+                translate: -50% 0;
+            }
+
+            &--side--ne {
+                top: 0;
+                left: 100%;
+                cursor: nesw-resize;
+                translate: -100% 0;
+            }
+
+            &--side--e {
+                top: 50%;
+                left: 100%;
+                cursor: ew-resize;
+                translate: -100% -50%;
+            }
+
+            &--side--se {
+                top: 100%;
+                left: 100%;
+                cursor: nwse-resize;
+                translate: -100% -100%;
+            }
+
+            &--side--s {
+                top: 100%;
+                left: 50%;
+                cursor: ns-resize;
+                translate: -50% -100%;
+            }
+
+            &--side--sw {
+                top: 100%;
+                left: 0;
+                cursor: nesw-resize;
+                translate: 0 -100%;
+            }
+
+            &--side--w {
+                top: 50%;
+                left: 0;
+                cursor: ew-resize;
+                translate: 0 -50%;
+            }
+        }
+
+        /* Материальный набор повторяет обрезку первого кита: поле без подложки и скругления,
+           светлая вуаль вокруг рамки, пунктир по рамке и мелкие тёмные ручки. */
+        :is(.rt-preset-material, [data-preset='material']) & {
+            --rt-image-cropper-radius: var(--rt-radius-none);
+            --rt-image-cropper-field-bg: transparent;
+            --rt-image-cropper-shade: var(--rt-overlay-white-25);
+            --rt-image-cropper-dash-style: dashed;
+            --rt-image-cropper-dash-color: var(--rt-mat-dark-40);
+            --rt-image-cropper-dash-opacity: 0.75;
+            --rt-image-cropper-handle-size: var(--rt-size-2);
+            --rt-image-cropper-handle-bg: var(--rt-mat-dark-40);
+            --rt-image-cropper-handle-border: var(--rt-overlay-white-50);
+
+            @media (pointer: coarse) {
+                --rt-image-cropper-handle-size: var(--rt-size-6);
+            }
+        }
+
+        &--round {
+            --rt-image-cropper-frame-radius: var(--rt-radius-full);
+        }
+
+        /* Недоступность ниже вида: она отменяет курсоры и приглушает картинку при любом виде. */
+        &--disabled &__frame,
+        &--disabled &__handle {
+            cursor: default;
+        }
+
+        &--disabled &__handle,
+        &--disabled &__image {
+            opacity: var(--rt-image-cropper-disabled-opacity);
+        }
+
+        /* Палец крупнее указателя: ручки растут по способу нажатия, а не по ширине экрана. */
+        @media (pointer: coarse) {
+            --rt-image-cropper-handle-size: var(--rt-size-6);
+        }
+    }
+}

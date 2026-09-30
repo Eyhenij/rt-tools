@@ -1,33 +1,39 @@
 import { BooleanInput } from '@angular/cdk/coercion';
+import { NgTemplateOutlet } from '@angular/common';
 import {
     booleanAttribute,
     ChangeDetectionStrategy,
     computed,
     Component,
+    contentChild,
     DestroyRef,
+    effect,
     ElementRef,
     inject,
     input,
     InputSignal,
     InputSignalWithTransform,
+    isDevMode,
     output,
     OutputEmitterRef,
     Signal,
     ViewEncapsulation,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { RouterLink } from '@angular/router';
 
 import { mergeMap, Observable, Subject } from 'rxjs';
 
-import { BlockDirective, ElemDirective } from '@rt-tools/core';
+import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { rtKitLabel } from '../../i18n';
 import { RtDialogService } from '../dialog/rt-dialog.service';
 import { RtIconComponent } from '../icon/rt-icon.component';
-import { iconMaterialMap, IRtIconMaterialEntry } from '../icon/rt-icon-material-map';
 import { IRtIcon } from '../icon/rt-icon.model';
 import { RtTooltipDirective } from '../tooltip/rt-tooltip.directive';
 import { RtMenuConfirmDialogComponent } from './rt-menu-confirm-dialog.component';
+import { RtMenuItemIconDirective } from './rt-menu-item-icon.directive';
+import { menuItemIconName, unpairedGlyph } from './rt-menu-item.logic';
 import { RT_MENU_SELECT_EVENT, IRtMenu } from './rt-menu.model';
 
 const BEM_BLOCK: string = 'rt-menu-item';
@@ -63,6 +69,9 @@ const BEM_BLOCK: string = 'rt-menu-item';
         RtIconComponent,
         BlockDirective,
         ElemDirective,
+        ModDirective,
+        NgTemplateOutlet,
+        RouterLink,
     ],
     hostDirectives: [
         {
@@ -72,15 +81,17 @@ const BEM_BLOCK: string = 'rt-menu-item';
     ],
     host: {
         class: BEM_BLOCK,
-        role: 'menuitem',
+        '[attr.role]': "isLink() ? 'none' : 'menuitem'",
         '[class.rt-menu-item--danger]': 'danger()',
         '[class.rt-menu-item--success]': 'success()',
         '[class.rt-menu-item--disabled]': 'disabled()',
         '[class.rt-menu-item--current]': 'current()',
-        '[attr.aria-current]': "current() ? 'true' : null",
-        '[attr.aria-disabled]': "disabled() ? 'true' : null",
-        '[attr.tabindex]': 'disabled() ? null : 0',
+        '[class.rt-menu-item--link]': 'isLink()',
+        '[attr.aria-current]': "current() && !isLink() ? 'true' : null",
+        '[attr.aria-disabled]': "disabled() && !isLink() ? 'true' : null",
+        '[attr.tabindex]': 'disabled() || isLink() ? null : 0',
         '(click)': 'onActivate($event)',
+        '(auxclick)': 'onAuxClick($event)',
         '(keydown.enter)': 'onKey($event)',
         '(keydown.space)': 'onKey($event)',
     },
@@ -95,12 +106,21 @@ export class RtMenuItemComponent {
     readonly #t_uiConfirm: Signal<string> = rtKitLabel('uiConfirm');
     readonly #t_uiCancel: Signal<string> = rtKitLabel('uiCancel');
 
-    /** Значок пункта: свой `icon`, а без него — пара имени Material из перечня кита. */
-    protected readonly iconName: Signal<IRtIcon.Name | null> = computed((): IRtIcon.Name | null => {
-        const glyph: string | null = this.glyph();
+    /** Свой значок приложения — `<ng-template rtMenuItemIcon>` внутри пункта. */
+    protected readonly ownIcon: Signal<RtMenuItemIconDirective | undefined> = contentChild(RtMenuItemIconDirective);
 
-        return this.icon() ?? (glyph ? (iconMaterialMap.find((entry: IRtIconMaterialEntry) => entry.from === glyph)?.to ?? null) : null);
-    });
+    /** Значок пункта: свой `icon`, а без него — пара имени Material из перечня кита. */
+    protected readonly iconName: Signal<IRtIcon.Name | null> = computed((): IRtIcon.Name | null =>
+        menuItemIconName(this.icon(), this.glyph())
+    );
+
+    /** Пункт — ссылка: задан `link`. Роль пункта меню и фокус тогда несёт ссылка внутри. */
+    protected readonly isLink: Signal<boolean> = computed((): boolean => this.link() !== null);
+
+    /** Адрес для ссылки: у недоступного пункта его нет, и ссылка не переходит. */
+    protected readonly linkTarget: Signal<RouterLink['routerLink']> = computed((): RouterLink['routerLink'] =>
+        this.disabled() ? null : this.link()
+    );
 
     /** Иконка слева от лейбла. `null` — без иконки. */
     public readonly icon: InputSignal<IRtIcon.Name | null> = input<IRtIcon.Name | null>(null);
@@ -123,6 +143,15 @@ export class RtMenuItemComponent {
      * кита через перечень соответствий; `icon` сильнее, а имя без пары рисует пункт без значка.
      */
     public readonly glyph: InputSignal<string | null> = input<string | null>(null);
+
+    /**
+     * Залитый значок вместо контурного — как значки пунктов меню первого кита. Уходит в `fill`
+     * значка: действует в материальном наборе, свой набор рисует значок одним рисунком. Свой
+     * значок `rtMenuItemIcon` приложение рисует само, и заливка его не касается.
+     */
+    public readonly fill: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
 
     /** Пункт — нынешнее значение выбора, который открыл меню: подсвечен фоном и объявлен скринридеру. */
     public readonly current: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
@@ -153,10 +182,31 @@ export class RtMenuItemComponent {
     /** Тон подтверждающей кнопки в модалке. */
     public readonly confirmTone: InputSignal<IRtMenu.ConfirmTone> = input<IRtMenu.ConfirmTone>('danger');
 
+    /**
+     * Команды маршрута приложения, как у `routerLink`. Задан — пункт рисует ссылку с `href`: Enter и
+     * клик переходят по ней, а Ctrl/Cmd-click, Shift-click и средняя кнопка открывают новую вкладку
+     * или окно силами браузера. Меню закрывается во всех этих случаях; подтверждение не спрашивается.
+     */
+    public readonly link: InputSignal<RouterLink['routerLink']> = input<RouterLink['routerLink']>(null);
+
     /** Пункт выбран (клик/Enter/Space и не `disabled`; после подтверждения, если задано). */
     public readonly selected: OutputEmitterRef<void> = output<void>();
 
     constructor() {
+        // Имя Material без пары рисует пункт без значка, и пропуск без предупреждения не заметен.
+        if (isDevMode()) {
+            effect((): void => {
+                const glyph: string | null = unpairedGlyph(this.icon(), this.glyph(), this.ownIcon() !== undefined);
+                if (glyph !== null) {
+                    // eslint-disable-next-line no-console -- предупреждение разработчику приложения: другого канала у кита нет
+                    console.warn(
+                        `rt-menu-item «${this.label()}»: у значка Material «${glyph}» нет пары в перечне кита. ` +
+                            'Задайте icon или свой значок через <ng-template rtMenuItemIcon>.'
+                    );
+                }
+            });
+        }
+
         // Подписка на результат confirm-модалки объявлена один раз: #openConfirm
         // эмитит данные модалки, mergeMap открывает её и ждёт afterClosed()
         // (одноразовый стрим — комплитится при закрытии модалки).
@@ -184,7 +234,7 @@ export class RtMenuItemComponent {
             return;
         }
         const message: string = this.confirmMessage().trim();
-        if (message !== '') {
+        if (message !== '' && !this.isLink()) {
             // Не закрываем меню сразу: оно остаётся открытым под backdrop'ом
             // модалки, чтобы пункт пережил решение пользователя (отмена → меню
             // снова видно). Подтверждение коммитит выбор.
@@ -195,9 +245,31 @@ export class RtMenuItemComponent {
     }
 
     protected onKey(event: Event): void {
+        if (this.isLink()) {
+            this.#onLinkKey(event);
+            return;
+        }
         // Space иначе проскроллит страницу — гасим дефолт перед активацией.
         event.preventDefault();
         this.onActivate(event);
+    }
+
+    /** Средняя кнопка не даёт `click`: вкладку открывает браузер, а меню закрываем сами. */
+    protected onAuxClick(event: MouseEvent): void {
+        if (this.isLink() && event.button === 1 && !this.disabled()) {
+            this.#commitSelection();
+        }
+    }
+
+    /**
+     * Enter на ссылке браузер сам превращает в `click`, и переход делает `routerLink`. Пробел ссылка
+     * не нажимает — его переводим в тот же `click`, погасив прокрутку страницы.
+     */
+    #onLinkKey(event: Event): void {
+        if (event instanceof KeyboardEvent && event.key === ' ') {
+            event.preventDefault();
+            this.#elementRef.nativeElement.querySelector<HTMLElement>('a')?.click();
+        }
     }
 
     #openConfirm(message: string): void {
