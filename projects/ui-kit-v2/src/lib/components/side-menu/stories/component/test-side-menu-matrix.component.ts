@@ -24,27 +24,38 @@ export interface ISideMenuCase {
     readonly slots?: boolean;
 }
 
+/**
+ * Значки пунктов взяты из тех, у которых есть рисунок Material: под материальным набором меню
+ * рисует их залитыми, как первый кит. Значок без такого рисунка остаётся своим, контурным, и
+ * полоса выходила разнобойной — шестерёнка залитая, соседи тонкие.
+ */
 export const SIDE_MENU_ITEMS: readonly IRtSideMenu.Item[] = [
-    { id: 'home', icon: 'cog', name: 'Главная', link: '/home' },
+    { id: 'home', icon: 'cog', name: 'Настройки', link: '/home' },
     {
         id: 'reports',
-        icon: 'chart-bar',
+        icon: 'table',
         name: 'Отчёты',
         submenu: [
-            { id: 'sales', icon: 'wallet', name: 'Продажи', link: '/reports/sales' },
+            { id: 'sales', icon: 'tag', name: 'Продажи', link: '/reports/sales' },
             {
                 id: 'finance',
-                icon: 'folder',
+                icon: 'bars',
                 name: 'Финансы',
                 submenu: [
                     { id: 'revenue', name: 'Выручка', link: '/reports/finance/revenue' },
                     { id: 'costs', name: 'Расходы', link: '/reports/finance/costs' },
                 ],
             },
-            { id: 'stock', icon: 'box', name: 'Остатки на складах', link: '/reports/stock', iconButton: { icon: 'ico-plus', data: 'new' } },
+            {
+                id: 'stock',
+                icon: 'info-circle',
+                name: 'Остатки на складах',
+                link: '/reports/stock',
+                iconButton: { icon: 'ico-plus', data: 'new' },
+            },
         ],
     },
-    { id: 'people', icon: 'users', name: 'Сотрудники', link: '/people' },
+    { id: 'people', icon: 'user', name: 'Сотрудники', link: '/people' },
 ];
 
 /**

@@ -3,6 +3,10 @@
        `contain` делает её содержащим блоком и для фиксированной подложки, и оно же обрезает. */
     .app-side-menu-cell {
         width: 36rem;
+
+        /* Половина темы уже 36rem: без предела коробка вылезала за её край, и край кадра резал
+           меню. Предел берёт ширину половины, а вне пары тем коробка остаётся в 36rem. */
+        max-width: 100%;
         height: 24rem;
         border: 1px dashed var(--rt-color-border-subtle);
         background: var(--rt-color-bg-page);
