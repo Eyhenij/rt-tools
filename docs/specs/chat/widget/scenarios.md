@@ -154,3 +154,11 @@ Then the head showed "Поддержка" and the hours before, and after the an
 the name of the account and "Служба поддержки"; the bubble names the first word of the name
 
 Covered by the end-to-end spec of the widget and the spec of the widget logic.
+
+### SC-CH-116 — the second remark goes into the same talk
+
+Given an open widget with a talk the visitor wrote in
+When the visitor sends one more remark
+Then the remark stands in the same thread after the first one, and the field is empty again
+
+Covered by the end-to-end spec of the widget.
