@@ -33,7 +33,14 @@ The review was made in the background after both PRs opened (#2426, #2429).
   rules layer — hook `grill-gate.sh`, its refusal text, and rule `turn-conduct`, the article about a
   turn with a question to the owner.
 
+## The owner's word
+
+- **None of the five findings becomes a rules edit.** The owner answered on 30 September that the
+  port has to be done right, the first kit will be removed after it, and these rules matter only
+  for the port. The findings stay here as the practice of this epic: frames are measured, the first
+  kit's frame is the sample, the showcase is restarted after a checkout.
+- **RT-2428 is closed as filed by mistake**, by the owner's word of the same day.
+
 ## Left unresolved
 
-- **All five findings above** — wait for the owner's word on which become edits; the owner was
-  reviewing the ports when they were written.
+- Nothing of this review.
