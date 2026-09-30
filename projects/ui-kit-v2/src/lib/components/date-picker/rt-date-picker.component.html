@@ -6,15 +6,19 @@
             #fieldEl
             rtElem="field"
             qa-dataid="date-picker-control"
-            [type]="type()"
-            [value]="value()"
+            type="text"
+            inputmode="numeric"
+            autocomplete="off"
+            spellcheck="false"
+            [value]="text()"
             [disabled]="isDisabled()"
+            [attr.placeholder]="shape()"
+            [attr.title]="shapeTitle()"
+            [attr.size]="fieldSize()"
             [attr.id]="effectiveControlId()"
             [attr.aria-label]="ariaLabel()"
-            [attr.aria-invalid]="isInvalid() || null"
-            [attr.min]="min()"
-            [attr.max]="max()"
-            (input)="onInput($event)"
+            [attr.aria-invalid]="isInvalid() || textInvalid() || null"
+            (input)="onTyped($event)"
             (blur)="onBlur()" />
         @if (showClearButton()) {
             <rt-icon-button
@@ -27,6 +31,48 @@
                 [ariaLabel]="t().uiClear"
                 [tabIndex]="-1"
                 (clicked)="clear($event)" />
+        }
+        <rt-icon-button
+            rtElem="open"
+            qa-dataid="date-picker-open"
+            size="sm"
+            variant="ghost"
+            iconColor="muted"
+            rtPopoverAlign="end"
+            [icon]="openIcon()"
+            [ariaLabel]="t().uiOpenCalendar"
+            [disabled]="isDisabled()"
+            [rtPopover]="panelTpl"
+            [rtPopoverDisabled]="narrow() || isDisabled()"
+            (clicked)="openPanel()" />
+
+        <ng-template #panelTpl>
+            <div rtElem="popup" qa-dataid="date-picker-popup">
+                <rt-date-panel
+                    [type]="type()"
+                    [value]="value()"
+                    [min]="min()"
+                    [max]="max()"
+                    [minuteStep]="minuteStep()"
+                    (picked)="onPicked($event)"
+                    (closed)="closePanel()" />
+            </div>
+        </ng-template>
+
+        @if (narrow()) {
+            <rt-bottom-sheet qa-dataid="date-picker-sheet" [open]="sheetOpen()" (openChange)="sheetOpen.set($event)">
+                @if (sheetOpen()) {
+                    <rt-date-panel
+                        sheet
+                        [type]="type()"
+                        [value]="value()"
+                        [min]="min()"
+                        [max]="max()"
+                        [minuteStep]="minuteStep()"
+                        (picked)="onPicked($event)"
+                        (closed)="closePanel()" />
+                }
+            </rt-bottom-sheet>
         }
     }
 </ng-container>
