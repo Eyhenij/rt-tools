@@ -1,5 +1,7 @@
 import { Directive, output, OutputEmitterRef } from '@angular/core';
 
+import { isFromInteractive } from './rt-table-row.logic';
+
 /**
  * Делает строку таблицы (`<tr cdk-row>`) активируемой — общий паттерн «клик по
  * строке открывает деталь/асайд». Инкапсулирует доступность: строка становится
@@ -23,27 +25,18 @@ export class RtTableRowDirective {
     public readonly activated: OutputEmitterRef<void> = output<void>();
 
     protected onClick(event: MouseEvent): void {
-        if (this.#fromInteractive(event)) {
+        if (isFromInteractive(event.target)) {
             return;
         }
         this.activated.emit();
     }
 
     protected onKey(event: Event): void {
-        if (this.#fromInteractive(event)) {
+        if (isFromInteractive(event.target)) {
             return;
         }
         // Space иначе проскроллит страницу — гасим дефолт перед активацией.
         event.preventDefault();
         this.activated.emit();
-    }
-
-    /** `true`, если событие пришло из интерактивного потомка строки. */
-    #fromInteractive(event: Event): boolean {
-        const target: HTMLElement | null = event.target as HTMLElement | null;
-        if (target === null) {
-            return false;
-        }
-        return target.closest("button, a, input, select, textarea, label, [role='button'], [role='switch']") !== null;
     }
 }

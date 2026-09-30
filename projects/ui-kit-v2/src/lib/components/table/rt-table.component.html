@@ -93,8 +93,13 @@
                         [description]="emptyDescription()" />
                 }
             } @else {
-                @for (row of cardRows(); track row) {
-                    <article rtElem="card" qa-dataid="table-card" role="listitem">
+                @for (row of cardRows(); track row; let index = $index) {
+                    <article
+                        rtElem="card"
+                        qa-dataid="table-card"
+                        role="listitem"
+                        [rtTableCardActivation]="index"
+                        [rtTableCardActivationEnabled]="clickable()">
                         @if (cardTemplate()?.template; as tpl) {
                             <ng-container [ngTemplateOutlet]="tpl" [ngTemplateOutletContext]="{ $implicit: row }" />
                         } @else {
