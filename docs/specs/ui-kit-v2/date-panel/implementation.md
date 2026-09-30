@@ -8,7 +8,7 @@ A rule without a line and a line without a rule is a divergence: the spec promis
 the tree, or the tree holds what the spec is silent about.
 
 - **The value keeps its shape: `YYYY-MM-DD`, `HH:mm` or `YYYY-MM-DDTHH:mm`, and `''` when empty.** — `projects/ui-kit-v2/src/lib/components/date-picker/rt-date-panel.logic.ts:rtDateWrite` — the panel writes every choice through it. Scenario `SC-UKV-418`
-- **The field shows the date in the order of the interface language.** — `projects/ui-kit-v2/src/lib/components/date-picker/rt-date-text.logic.ts:rtDateText` — the field writes its text through it, in the order `rtDateLayout` takes from the locale. Scenario `SC-UKV-430`
+- **The field shows the date in the order of the interface language.** — `projects/ui-kit-v2/src/lib/components/date-picker/rt-date-text.logic.ts:rtDateText` — the field writes its text through it, in the order `rtDateLayout` takes from the locale. Scenario `SC-UKV-467`
 - **Typed text becomes the value only when it reads as one within the bounds.** — `projects/ui-kit-v2/src/lib/components/date-picker/rt-date-picker.component.ts:onTyped` — the text is read by `rtDateParse` and checked against the bounds. Scenario `SC-UKV-419`
 - **The panel opens by the button at the end of the field and closes by Escape or a click outside.** — `projects/ui-kit-v2/src/lib/components/date-picker/rt-date-picker.component.ts:openPanel` — the button calls it; the text input does not. Scenario `SC-UKV-420`
 - **The date panel shows a month with paging, and its title opens a choice of month and year.** — `projects/ui-kit-v2/src/lib/components/date-picker/panel/rt-date-panel.component.ts:openMonths` — the calendar's title click switches the panel to the months. Scenario `SC-UKV-421`

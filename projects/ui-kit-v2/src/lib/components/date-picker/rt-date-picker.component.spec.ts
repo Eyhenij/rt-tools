@@ -57,7 +57,7 @@ describe('RtDatePickerComponent', (): void => {
         expect(hostClasses(setup())).toContain('rt-date-picker');
     });
 
-    it('SC-UKV-430 — поле текстовое, подсказка показывает форму текста в порядке локали', (): void => {
+    it('SC-UKV-467 — поле текстовое, подсказка показывает форму текста в порядке локали', (): void => {
         expect(field(setup()).getAttribute('type')).toBe('text');
         expect(field(setup()).getAttribute('placeholder')).toBe('dd.mm.yyyy');
         expect(field(setup({ type: 'time' })).getAttribute('placeholder')).toBe('hh:mm');
@@ -215,7 +215,7 @@ describe('RtDatePickerComponent', (): void => {
             expect(fixture.componentInstance.control.value).toBe('2026-03-15');
         });
 
-        it('SC-UKV-430 — значение формы стоит в поле в порядке локали', (): void => {
+        it('SC-UKV-467 — значение формы стоит в поле в порядке локали', (): void => {
             const fixture: ComponentFixture<DatePickerHostComponent> = setupHost();
 
             fixture.componentInstance.control.setValue('2026-03-15');

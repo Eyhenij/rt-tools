@@ -105,7 +105,7 @@ Then its title and weekday names are the Russian ones and the week starts on Mon
 
 Covered by the spec of the date logic module.
 
-### SC-UKV-430 — the field shows and reads the date in the order of the interface language
+### SC-UKV-467 — the field shows and reads the date in the order of the interface language
 
 Given the application's locale `ru` and a date field with the value `2026-08-01`
 When the field is drawn, and then the person types `15.08.2026`
