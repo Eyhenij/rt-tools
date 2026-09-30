@@ -41,6 +41,14 @@
   have no filled pair in the kit's set, so they stay outlined; the first kit draws them all filled.
   Named to the owner, not closed here. Affected stage of the plan: 1.
 
+- **A side menu icon outside the kit's set gets the technique of RT-2412.** The owner asked how
+  such icons reach the menu and pointed at the ticket. Today `rt-side-menu` hands `item.icon`
+  straight to `rt-icon`: a Material name from the first kit's data draws nothing and says nothing.
+  `rt-menu-item` already solved this under RT-2412 — a Material name through
+  `rt-icon-material-map.ts`, an own icon by a template, a dev-mode warning for a name without a
+  pair. The side menu takes the same three, with the same pure functions, rather than a technique
+  of its own. Affected stage of the plan: 3, next to the favorites, whose rows carry icons too.
+
 ## Sessions
 
 ### 2026-09-30
