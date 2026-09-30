@@ -10,7 +10,7 @@ import { RtEmptyStateComponent } from '../../rt-empty-state.component';
 const EMPTY_TITLE: string = 'Файлов нет';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TEmptyStateMatrixPart = 'parts' | 'slots' | 'presets' | 'themes';
+export type TEmptyStateMatrixPart = 'parts' | 'slots' | 'frame' | 'presets' | 'themes';
 
 /** Случай состава: какие из необязательных частей заполнены. */
 interface IEmptyStatePartsCase {
@@ -72,6 +72,20 @@ interface IEmptyStatePartsCase {
                 </app-story-presets>
             }
 
+            @case ('frame') {
+                <app-story-presets caption="Рамка зоны загрузки в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="frameCases">
+                            <ng-template let-frameCase>
+                                <rt-empty-state icon="cloud-upload" title="Перетащите файл сюда или" [framed]="frameCase === 'framed'">
+                                    <button rtButton appearance="outlined" label="Выбрать файл" aria-label="Выбрать файл"></button>
+                                </rt-empty-state>
+                            </ng-template>
+                        </app-story-row>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('presets') {
                 <app-story-presets caption="Заглушка в обоих наборах">
                     <ng-template>
@@ -123,6 +137,8 @@ export class TestRtEmptyStateMatrixComponent {
     ];
 
     public readonly slotCases: readonly string[] = ['без проекции', 'действие', 'картинка и действие'];
+
+    public readonly frameCases: readonly string[] = ['без рамки', 'framed'];
 
     public readonly partsCaseLabel: (value: IEmptyStatePartsCase) => string = (value: IEmptyStatePartsCase): string => value.name;
 }

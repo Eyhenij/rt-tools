@@ -50,6 +50,7 @@ jobs:
               run: |
                   node update-version-store.cjs ${{ github.event.inputs.version }}
                   pnpm run changelog:store
+                  node tools/changelog-split.mjs projects/store/CHANGELOG.md
                   VERSION=$(jq -r .version projects/store/package.json)
                   echo "VERSION=$VERSION" >> $GITHUB_ENV
 

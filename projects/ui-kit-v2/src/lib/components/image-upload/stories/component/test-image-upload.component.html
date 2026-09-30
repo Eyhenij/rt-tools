@@ -1,0 +1,44 @@
+<!-- Один показ, без пары наборов: это сценарий работы, а не сравнение вида. `fill` отдаёт
+     загрузчику ширину половины: обрезка внутри берёт ширину коробки. -->
+<app-story-presets single fill caption="Загрузчик: зона, обрезка, картинка на месте зоны">
+    <ng-template>
+        <app-story-row [items]="toolbar" [itemLabel]="noLabel">
+            <ng-template let-tool>
+                @if (tool === 'drop') {
+                    <button
+                        rtButton
+                        appearance="outlined"
+                        type="button"
+                        label="Бросить демо-картинку"
+                        aria-label="Бросить демо-картинку"
+                        (click)="dropSample()"></button>
+                } @else {
+                    <button
+                        rtButton
+                        appearance="text"
+                        type="button"
+                        label="Сбросить картинку"
+                        aria-label="Сбросить картинку"
+                        (click)="reset()"></button>
+                }
+            </ng-template>
+        </app-story-row>
+
+        <rt-image-upload
+            [imageUrl]="imageUrl"
+            [fileName]="fileName"
+            [tooltip]="tooltip"
+            [downloadable]="downloadable"
+            [autoApply]="autoApply"
+            [loading]="loading"
+            [disabled]="disabled"
+            [ratio]="ratio"
+            [round]="round"
+            [format]="format"
+            [quality]="quality"
+            (imageChanged)="onChanged($event)"
+            (downloaded)="summary.set('Картинка скачана.')" />
+
+        <p>{{ summary() }}</p>
+    </ng-template>
+</app-story-presets>
