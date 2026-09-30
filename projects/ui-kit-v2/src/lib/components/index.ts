@@ -42,6 +42,8 @@ export * from './form-control';
 export * from './header';
 export * from './icon';
 export * from './icon-button';
+export * from './image-cropper';
+export * from './image-upload';
 export * from './info-item';
 export * from './input';
 export * from './input-number';

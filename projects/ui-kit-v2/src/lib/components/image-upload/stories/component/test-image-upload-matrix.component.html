@@ -1,0 +1,45 @@
+@switch (part) {
+    @case ('states') {
+        <app-story-presets caption="Состояния загрузчика в обоих наборах">
+            <ng-template>
+                <app-story-row [items]="stateCases()" [itemLabel]="caseLabel" [slotWidth]="cellWidth">
+                    <ng-template let-stateCase>
+                        <rt-image-upload
+                            [imageUrl]="stateCase.imageUrl"
+                            [downloadable]="stateCase.downloadable"
+                            [loading]="stateCase.loading"
+                            [disabled]="stateCase.disabled" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('presets') {
+        <app-story-presets caption="Загрузчик в обоих наборах">
+            <ng-template>
+                <app-story-row [items]="presetCases()" [itemLabel]="caseLabel" [slotWidth]="cellWidth">
+                    <ng-template let-presetCase>
+                        <rt-image-upload downloadable [imageUrl]="presetCase.imageUrl" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('themes') {
+        <app-story-presets caption="Загрузчик в обеих темах в обоих наборах">
+            <ng-template>
+                <app-story-themes>
+                    <ng-template>
+                        <app-story-row [items]="presetCases()" [itemLabel]="caseLabel" [slotWidth]="cellWidth">
+                            <ng-template let-themeCase>
+                                <rt-image-upload downloadable [imageUrl]="themeCase.imageUrl" />
+                            </ng-template>
+                        </app-story-row>
+                    </ng-template>
+                </app-story-themes>
+            </ng-template>
+        </app-story-presets>
+    }
+}

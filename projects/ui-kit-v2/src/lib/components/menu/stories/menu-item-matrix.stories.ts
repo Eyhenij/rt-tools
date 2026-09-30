@@ -22,13 +22,31 @@ type TStory = StoryObj<TestRtMenuItemMatrixComponent>;
 export const Kinds: TStory = { args: { part: 'kinds' } };
 
 /**
+ * Фокус пункта-ссылки стоит на ссылке внутри, а сам хост фокуса не получает: признак фокуса у
+ * такого пункта спускается до ссылки и хост не красит.
+ */
+const LINK_PSEUDO_PARAMETERS: Readonly<Record<string, string | readonly string[]>> = {
+    ...storyPseudoParameters(),
+    focusVisible: [
+        "[data-story-state='focus-visible']:not(.rt-menu-item--link)",
+        storyPseudoParameters('.rt-menu-item__link')['focusVisible'],
+    ],
+};
+
+/**
+ * Контурные и залитые значки пункта. Заливку рисует только материальный набор: в своём наборе у
+ * значка один рисунок, и обе половины ряда выглядят одинаково намеренно.
+ */
+export const Fill: TStory = { args: { part: 'fill' } };
+
+/**
  * Стилизован сам хост пункта, поэтому спуск аддону не нужен: признак и правила стоят на одном
  * элементе. Второй ряд показывает, что у недоступного пункта наведение намеренно ничего не
- * красит.
+ * красит. Третий — пункт-ссылка: наведение красит хост, а фокус — ссылку внутри.
  */
 export const States: TStory = {
     args: { part: 'states' },
-    parameters: { pseudo: storyPseudoParameters() },
+    parameters: { pseudo: LINK_PSEUDO_PARAMETERS },
 };
 
 export const Presets: TStory = { args: { part: 'presets' } };

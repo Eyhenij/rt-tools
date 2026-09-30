@@ -1,3 +1,4 @@
+import { FocusMonitor, FocusOrigin } from '@angular/cdk/a11y';
 import {
     ConnectedPosition,
     FlexibleConnectedPositionStrategy,
@@ -8,6 +9,7 @@ import {
 } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
 import { ComponentRef, Directive, ElementRef, inject, input, InputSignal, InputSignalWithTransform, OnDestroy } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { carryThemeScope, materialPresetClassesOf } from '../../util/material-preset';
 import { RtTooltipComponent } from './rt-tooltip.component';
@@ -22,8 +24,10 @@ const VIEWPORT_MARGIN: number = 8;
  * (авто-flip у края viewport, reposition при скролле), так что подсказка не
  * режется `overflow: hidden` предками (таблицы, aside, карточки).
  *
- * Триггеры: `mouseenter`/`focusin` показывают (с задержкой `SHOW_DELAY_MS`),
- * `mouseleave`/`focusout`/`click` прячут. Пустой текст → no-op (директива
+ * Триггеры: `mouseenter` и фокус с клавиатуры показывают (с задержкой `SHOW_DELAY_MS`),
+ * `mouseleave`/`focusout`/`click` прячут. Фокус, поставленный мышью или кодом, подсказку не
+ * показывает, как у Material: меню возвращает фокус кнопке после выбора пункта мышью, и
+ * подсказка кнопки всплывала поверх того, что пункт открыл. Пустой текст → no-op (директива
  * выключена), поэтому её можно безусловно вешать на icon-кнопки и включать
  * выставлением строки.
  *
@@ -39,7 +43,6 @@ const VIEWPORT_MARGIN: number = 8;
     host: {
         '(mouseenter)': 'show()',
         '(mouseleave)': 'hide()',
-        '(focusin)': 'show()',
         '(focusout)': 'hide()',
         '(click)': 'hide()',
     },
@@ -48,6 +51,7 @@ export class RtTooltipDirective implements OnDestroy {
     readonly #overlay: Overlay = inject(Overlay);
     readonly #elementRef: ElementRef<HTMLElement> = inject<ElementRef<HTMLElement>>(ElementRef);
     readonly #scrollStrategies: ScrollStrategyOptions = inject(ScrollStrategyOptions);
+    readonly #focusMonitor: FocusMonitor = inject(FocusMonitor);
 
     #overlayRef: OverlayRef | null = null;
     #tooltipRef: ComponentRef<RtTooltipComponent> | null = null;
@@ -69,7 +73,19 @@ export class RtTooltipDirective implements OnDestroy {
         alias: 'rtTooltipPlacement',
     });
 
+    constructor() {
+        this.#focusMonitor
+            .monitor(this.#elementRef, true)
+            .pipe(takeUntilDestroyed())
+            .subscribe((origin: FocusOrigin): void => {
+                if (origin === 'keyboard') {
+                    this.show();
+                }
+            });
+    }
+
     public ngOnDestroy(): void {
+        this.#focusMonitor.stopMonitoring(this.#elementRef);
         this.#clearTimer();
         this.#disposeOverlay();
     }

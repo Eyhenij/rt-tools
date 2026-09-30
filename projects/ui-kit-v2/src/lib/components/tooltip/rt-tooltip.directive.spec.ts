@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, WritableSignal, signal } from '@angular/core';
-import { ComponentFixture } from '@angular/core/testing';
+import { FocusMonitor } from '@angular/cdk/a11y';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { createRtFixture, el } from '../../../testing/rt-kit-testing';
 import { RtTooltipDirective } from './rt-tooltip.directive';
@@ -35,6 +36,12 @@ function setup(text: string | null | undefined = 'Удалить строку'):
     fixture.componentInstance.text.set(text);
     fixture.detectChanges();
     return fixture;
+}
+
+/** Фокус тем путём, каким его ставит человек или код: FocusMonitor различает их по источнику */
+function focusVia(fixture: ComponentFixture<TooltipHostComponent>, origin: 'keyboard' | 'mouse' | 'program'): void {
+    TestBed.inject(FocusMonitor).focusVia(el(fixture, '[qa-dataid="tooltip-host"]')?.nativeElement as HTMLElement, origin);
+    fixture.detectChanges();
 }
 
 function hover(fixture: ComponentFixture<TooltipHostComponent>, event: 'mouseenter' | 'mouseleave' | 'focusin' | 'focusout'): void {
@@ -102,16 +109,31 @@ describe('RtTooltipDirective', (): void => {
     it('фокус с клавиатуры показывает подсказку так же, как наведение', (): void => {
         const fixture: ComponentFixture<TooltipHostComponent> = setup();
 
-        hover(fixture, 'focusin');
+        focusVia(fixture, 'keyboard');
         jest.advanceTimersByTime(300);
         fixture.detectChanges();
 
         expect(tip()).not.toBeNull();
     });
 
+    it('фокус, поставленный мышью или кодом, подсказку не показывает — меню возвращает его кнопке после выбора', (): void => {
+        const fixture: ComponentFixture<TooltipHostComponent> = setup();
+
+        focusVia(fixture, 'program');
+        jest.advanceTimersByTime(300);
+        fixture.detectChanges();
+        expect(tip()).toBeNull();
+
+        hover(fixture, 'focusout');
+        focusVia(fixture, 'mouse');
+        jest.advanceTimersByTime(300);
+        fixture.detectChanges();
+        expect(tip()).toBeNull();
+    });
+
     it('потеря фокуса прячет подсказку', (): void => {
         const fixture: ComponentFixture<TooltipHostComponent> = setup();
-        hover(fixture, 'focusin');
+        focusVia(fixture, 'keyboard');
         jest.advanceTimersByTime(300);
         fixture.detectChanges();
 
