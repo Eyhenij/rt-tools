@@ -99,8 +99,17 @@
             --rt-side-menu-favorites-drag-shadow: var(--rt-shadow-md);
 
             border-radius: var(--rt-side-menu-favorites-drag-radius);
-            background: var(--rt-color-bg-surface);
             box-shadow: var(--rt-side-menu-favorites-drag-shadow);
+        }
+
+        /* Фон строки в руке — на строке внутри превью, а не на самом превью: CDK выносит превью в
+           верхний слой как `popover` и ставит ему встроенный прозрачный фон, который правило
+           класса не перебивает. */
+        &.cdk-drag-preview .rt-side-menu-favorites__item {
+            min-width: 0;
+            flex: 1 1 auto;
+            border-radius: var(--rt-side-menu-favorites-drag-radius);
+            background: var(--rt-color-bg-surface);
         }
 
         &.cdk-drag-placeholder {
