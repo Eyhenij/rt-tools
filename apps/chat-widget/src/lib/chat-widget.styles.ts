@@ -318,6 +318,21 @@ svg {
     gap: 8px;
 }
 
+.ended {
+    display: flex;
+    align-items: center;
+    color: var(--rt-chat-muted);
+    font-size: 12px;
+    font-weight: 500;
+    gap: 8px;
+}
+
+.ended-rule {
+    height: 1px;
+    flex: 1;
+    background: var(--rt-chat-line);
+}
+
 .message {
     display: flex;
     width: fit-content;

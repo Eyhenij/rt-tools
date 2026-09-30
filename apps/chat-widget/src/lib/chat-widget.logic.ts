@@ -5,7 +5,7 @@
  * до того, как что-то нарисовать. Оставшись внутри элемента, каждое из них проверялось бы только
  * поднятым браузером.
  */
-import { CHAT_SIDE_OPERATOR, IChatMessageRow, IChatSiteLookRow, IChatVisitorTalkListRow } from '@rt/message-bus-common';
+import { CHAT_SIDE_OPERATOR, EChatTalkState, IChatMessageRow, IChatSiteLookRow, IChatVisitorTalkListRow } from '@rt/message-bus-common';
 
 /** Минута суток часами и минутами. */
 function clockOf(minutes: number): string {
@@ -103,6 +103,21 @@ export function widgetUnread(talk: IChatVisitorTalkListRow, seenAt: string): boo
     const seen: number = new Date(seenAt).getTime();
 
     return Number.isNaN(seen) || new Date(talk.lastMessageAt).getTime() > seen;
+}
+
+/**
+ * Список обращений после пришедшего закрытия: строка закрытого обращения получает состояние и
+ * минуту закрытия. Обращения, которого в списке нет, закрытие не добавляет — его строку принесёт
+ * следующее чтение списка.
+ */
+export function widgetClosedTalks(
+    talks: readonly IChatVisitorTalkListRow[],
+    conversationId: string,
+    closedAt: string
+): IChatVisitorTalkListRow[] {
+    return talks.map((talk: IChatVisitorTalkListRow): IChatVisitorTalkListRow =>
+        talk.id === conversationId ? { ...talk, closedAt, state: EChatTalkState.Closed } : talk
+    );
 }
 
 /** Инициалы для круга аватара: первые буквы двух первых слов имени, заглавными. */

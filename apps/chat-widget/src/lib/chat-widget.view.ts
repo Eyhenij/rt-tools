@@ -123,3 +123,13 @@ export function remarks(messages: readonly IChatMessageRow[]): string {
         )
         .join('');
 }
+
+/** Черта под лентой закрытого разговора. Минуты закрытия нет — черта стоит без неё. */
+export function endedLine(closedAt: string): string {
+    const time: string = widgetTimeText(closedAt);
+
+    const text: string = time ? `${WIDGET_WORDS.ended} · ${time}` : WIDGET_WORDS.ended;
+
+    // без переносов между частями: текст черты читается ровно словами, без пробелов разметки
+    return `<div class="ended" qa-dataid="widget-ended"><span class="ended-rule"></span><span>${text}</span><span class="ended-rule"></span></div>`;
+}

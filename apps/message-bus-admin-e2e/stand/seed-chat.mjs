@@ -112,10 +112,12 @@ function returningSql() {
 
     for (const asked of visitor.talks) {
         const last = asked.answer ? at(asked.day, 5) : at(asked.day);
+        // закрытое обращение закрыто через пять минут после ответа: минуту называет черта под лентой
+        const closedAt = asked.closed ? at(asked.day, 10) : 'NULL';
 
         lines.push(
-            `INSERT INTO "chat_conversation" ("id", "siteId", "visitorId", "createdAt", "lastMessageAt", "state") VALUES`,
-            `    ('${asked.id}', '${site}', '${visitor.id}', ${at(asked.day)}, ${last}, '${asked.closed ? 'closed' : 'live'}');`,
+            `INSERT INTO "chat_conversation" ("id", "siteId", "visitorId", "createdAt", "lastMessageAt", "state", "closedAt") VALUES`,
+            `    ('${asked.id}', '${site}', '${visitor.id}', ${at(asked.day)}, ${last}, '${asked.closed ? 'closed' : 'live'}', ${closedAt});`,
             `INSERT INTO "chat_message" ("id", "conversationId", "side", "text", "takenAt") VALUES`,
             `    ('${asked.id}-question', '${asked.id}', 'visitor', '${asked.text}', ${at(asked.day)});`
         );
