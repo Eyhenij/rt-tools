@@ -3,20 +3,20 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 1 of 5 — Stories on the first kit's data, live
-- **Done:** the grill and the plan are written; the first and second kit frames are compared
-- **Next step:** carry the first kit's menu data into the second kit's story data
+- **Stage:** 2 of 5 — The narrow screen as a live menu
+- **Done:** stage 1 — seventeen live stories on the first kit's data, the matrices moved to the same data, 25 frames looked at and taken
+- **Next step:** compare the narrow layout with the first kit's Mobile by measurement
 - **Uncommitted:** nothing beyond the task folder
 - **Waiting for the owner:** no; every port is shown before a push — «я просил каждый перенесенный из первого кита модуль показывать мне перед отправкой в пр!!!»
 - **PR:** not open yet
 
 ## Steps
 
-- [>] 1.1 Carry the first kit's menu data into the second kit's story data with kit icons
-- [ ] 1.2 Make Playground a full-height live menu like the first kit's Default
-- [ ] 1.3 Add a story per first-kit menu state
-- [ ] 1.4 Look at every pair of frames, kit one next to kit two
-- [ ] 2.1 Compare the second kit's narrow layout with the first kit's Mobile by measurement
+- [x] 1.1 Carry the first kit's menu data into the second kit's story data with kit icons
+- [x] 1.2 Make Playground a full-height live menu like the first kit's Default
+- [x] 1.3 Add a story per first-kit menu state
+- [x] 1.4 Look at every pair of frames, kit one next to kit two
+- [>] 2.1 Compare the second kit's narrow layout with the first kit's Mobile by measurement
 - [ ] 2.2 Close what differs in the component
 - [ ] 2.3 Show the narrow menu live at phone width in its own stories
 - [ ] 3.1 Port the favorites logic and its spec
@@ -37,6 +37,10 @@
   `--rt-brand-*`, so a scheme block overriding that ramp repaints the menu the way the first kit's
   `[data-rt-scheme]` does. Affected stage of the plan: 4.
 
+- **Under the material preset only the cog is filled.** The other icons of the first kit's data
+  have no filled pair in the kit's set, so they stay outlined; the first kit draws them all filled.
+  Named to the owner, not closed here. Affected stage of the plan: 1.
+
 ## Sessions
 
 ### 2026-09-30
@@ -44,3 +48,7 @@
 - Task RT-2440 created from the owner's remarks on #2421; the branch taken from the epic branch.
 - Frames compared: the first kit's menu is live and full height with eleven sections, the second
   kit's stories are small static boxes with three placeholder sections.
+- Stage 1: the story data `side-menu-story-data.ts`, the live wrapper and its phone twin, 17
+  stories, the matrices on the same data; `visual-gate side-menu` — 25 of 25 passed after retaking.
+- Stumbled on: the wrapper's styles did not reach its host under emulated encapsulation, so the
+  frame grew to 916 instead of 720; a `render` with `component` is ignored by the showcase.
