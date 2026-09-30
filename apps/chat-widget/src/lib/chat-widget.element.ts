@@ -30,16 +30,21 @@ import {
     widgetSendable,
     widgetServiceOrigin,
     widgetStorageKey,
+    widgetTimeText,
 } from './chat-widget.logic';
+import { WIDGET_ICON_ARROW_UP, WIDGET_ICON_CLOCK, WIDGET_ICON_CLOSE, WIDGET_ICON_COMMENTS, WIDGET_ICON_INFO } from './chat-widget.icons';
 import { WIDGET_STYLES } from './chat-widget.styles';
 import { WIDGET_WORDS } from './chat-widget.words';
 
 /** Имя тега: им страница потребителя ставит виджет. */
 export const WIDGET_TAG: string = 'rt-chat-widget';
 
-/** Кнопка сворачивания: она стоит в обеих раскладках панели. */
-function closeButton(): string {
-    return `<button aria-label="${WIDGET_WORDS.close}" data-act="close" type="button">×</button>`;
+/** Шапка панели: заголовок и крестик. Она одна и в живом чате, и в недоступном. */
+function head(): string {
+    return `<div class="head">
+        <span class="title">${WIDGET_WORDS.bubble}</span>
+        <button aria-label="${WIDGET_WORDS.close}" class="close" data-act="close" qa-dataid="widget-close" type="button">${WIDGET_ICON_CLOSE}</button>
+    </div>`;
 }
 
 /** Слово об отказе: предел длины называет сервис, и он приезжает в ответе. */
@@ -225,42 +230,67 @@ export class ChatWidgetElement extends HTMLElement {
     }
 
     #bubble(): string {
-        return `<button class="bubble" data-act="open" qa-dataid="widget-bubble" type="button">${WIDGET_WORDS.bubble}</button>`;
+        return `<button aria-label="${WIDGET_WORDS.bubble}" class="bubble" data-act="open" qa-dataid="widget-bubble" type="button">${WIDGET_ICON_COMMENTS}</button>`;
     }
 
     #panel(): string {
         if (!this.#live) {
-            return `<div class="panel" qa-dataid="widget-panel"><div class="head"><span qa-dataid="widget-unavailable">${WIDGET_WORDS.unavailable}</span>${closeButton()}</div></div>`;
+            return `<div class="panel" qa-dataid="widget-panel">
+                ${head()}
+                <div class="unavailable">
+                    <span class="unavailable-icon">${WIDGET_ICON_COMMENTS}</span>
+                    <span class="unavailable-title" qa-dataid="widget-unavailable">${WIDGET_WORDS.unavailable}</span>
+                    <span class="unavailable-hint">${WIDGET_WORDS.unavailableHint}</span>
+                </div>
+            </div>`;
         }
 
         return `<div class="panel" qa-dataid="widget-panel">
-            <div class="head">
-                <span class="hours" qa-dataid="widget-hours">${this.#hours()}</span>
-                ${closeButton()}
-            </div>
+            ${head()}
             <div class="feed" data-part="feed" qa-dataid="widget-feed">${this.#feed()}</div>
             ${this.#fault ? `<div class="fault" data-part="fault" qa-dataid="widget-fault">${this.#fault}</div>` : ''}
             <form class="send" data-act="send">
-                <input aria-label="${WIDGET_WORDS.placeholder}" data-part="text" placeholder="${WIDGET_WORDS.placeholder}" qa-dataid="widget-text" />
-                <button qa-dataid="widget-send" type="submit">${WIDGET_WORDS.send}</button>
+                <div class="field" qa-dataid="widget-field">
+                    <input aria-label="${WIDGET_WORDS.placeholder}" data-part="text" placeholder="${WIDGET_WORDS.placeholder}" qa-dataid="widget-text" />
+                    <button aria-label="${WIDGET_WORDS.send}" qa-dataid="widget-send" type="submit">${WIDGET_ICON_ARROW_UP}</button>
+                </div>
             </form>
         </div>`;
     }
 
-    /** Лента или приветствие: до первой реплики показывать нечего, кроме слов площадки. */
+    /**
+     * Лента или приветствие.
+     *
+     * До первой реплики — карточка со словами площадки и часами ответа. В идущем разговоре часы
+     * нужны только вне рабочего времени: тогда над лентой встаёт плашка о том, когда ответят.
+     */
     #feed(): string {
+        const hours: string = this.#hours();
+
         if (this.#messages.length === 0) {
-            return `<p class="greeting" data-part="greeting" qa-dataid="widget-greeting">${escaped(this.#look?.greeting ?? '')}</p>`;
+            return `<div class="greeting">
+                <p class="greeting-text" data-part="greeting" qa-dataid="widget-greeting">${escaped(this.#look?.greeting ?? '')}</p>
+                ${hours ? `<span class="hours" qa-dataid="widget-hours"><span class="hours-icon">${WIDGET_ICON_CLOCK}</span>${hours}</span>` : ''}
+            </div>`;
         }
 
-        return this.#messages
-            .map(
-                (message: IChatMessageRow): string => `<div class="message" data-side="${message.side}">
+        const later: boolean = this.#look !== null && widgetHoursWord(this.#look) === EWidgetHoursWord.Later;
+        const note: string = later
+            ? `<div class="note" qa-dataid="widget-hours"><span class="note-icon">${WIDGET_ICON_INFO}</span>${hours}</div>`
+            : '';
+
+        return (
+            note +
+            this.#messages
+                .map(
+                    (message: IChatMessageRow): string => `<div class="message" data-side="${message.side}" qa-dataid="widget-remark">
                     <span class="side">${message.side === CHAT_SIDE_VISITOR ? WIDGET_WORDS.sideVisitor : WIDGET_WORDS.sideOperator}</span>
                     <span data-part="text" qa-dataid="widget-message">${escaped(message.text)}</span>
+                    <span class="time">${widgetTimeText(message.takenAt)}</span>
                 </div>`
-            )
-            .join('');
+                )
+                .join('')
+        );
     }
 
     /** Слово о часах ответа: часы не названы — виджет о них молчит. */

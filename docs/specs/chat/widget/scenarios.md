@@ -80,3 +80,35 @@ Then the look of the widget stays its own
 Given an open widget on a wide screen
 When the visitor sends a remark of one long word
 Then the remark is broken by the width of the thread and goes past no edge of the widget
+
+### SC-CH-99 — the folded widget is a round button, and the open one is 380 px wide
+
+Given a page with the widget on a wide screen
+When the visitor unfolds the bubble
+Then the bubble was a circle with an icon, and the window is 380 px wide under a head of the accent colour
+
+Covered by the end-to-end spec of the widget.
+
+### SC-CH-100 — the remarks of the two sides stand on the two sides of the thread
+
+Given an open widget with a remark of the visitor and an answer of the support
+When the thread is drawn
+Then the visitor's bubble stands at the right edge, the support's at the left, and each names its time
+
+Covered by the end-to-end spec of the widget and the spec of the widget logic.
+
+### SC-CH-101 — the hours stand in the greeting card, and outside the hours above the thread
+
+Given a site outside its hours
+When the visitor opens the widget, then sends a remark
+Then the hours stand in the greeting card first, and in a note above the thread after the remark
+
+Covered by the end-to-end spec of the widget.
+
+### SC-CH-102 — the field draws the ring of the fields in focus
+
+Given an open widget
+When the visitor puts the focus into the field
+Then the capsule of the field draws the focus border and the ring
+
+Covered by the end-to-end spec of the widget.

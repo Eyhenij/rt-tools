@@ -8,6 +8,7 @@ import {
     widgetSendable,
     widgetServiceOrigin,
     widgetStorageKey,
+    widgetTimeText,
 } from './chat-widget.logic';
 
 /** Площадка с названными часами: девять утра — шесть вечера. */
@@ -37,5 +38,11 @@ describe('решения виджета', () => {
         expect(widgetHoursWord({ ...WITH_HOURS, answering: false })).toBe(EWidgetHoursWord.Later);
         expect(widgetHoursWord({ ...WITH_HOURS, answerFrom: 0, answerTo: 0, answering: true })).toBe(EWidgetHoursWord.Silent);
         expect(widgetHoursText(WITH_HOURS)).toBe('09:00–18:00');
+    });
+
+    it('SC-CH-100 — пузырь называет время приёма часами и минутами в поясе посетителя', () => {
+        expect(widgetTimeText(new Date(2026, 8, 19, 12, 40).toISOString())).toBe('12:40');
+        expect(widgetTimeText(new Date(2026, 8, 19, 9, 5).toISOString())).toBe('09:05');
+        expect(widgetTimeText('не время')).toBe('');
     });
 });

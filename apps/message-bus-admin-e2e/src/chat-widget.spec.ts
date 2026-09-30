@@ -85,7 +85,42 @@ test.describe('виджет посетителя', () => {
         expect(await feedTexts(page)).toEqual(['Реплика до перезагрузки']);
     });
 
-    test('SC-CH-53 — ответ оператора приходит в открытый виджет без перезагрузки', async ({ page, context }): Promise<void> => {
+    test('SC-CH-99 — свёрнутый виджет — круглая кнопка, открытый — окно 380 px под синей шапкой', async ({ page }: { page: Page }) => {
+        await page.goto(widgetPage(CHAT.widget.key));
+
+        const bubble: Locator = qa(page, 'widget-bubble');
+        const round: IBox | null = await bubble.boundingBox();
+
+        expect(round?.width).toBe(56);
+        expect(round?.height).toBe(56);
+        await expect(bubble).toHaveCSS('border-radius', '50%');
+        await expect(bubble.locator('svg')).toBeVisible();
+
+        await unfold(page);
+
+        const panel: IBox | null = await qa(page, 'widget-panel').boundingBox();
+
+        expect(panel?.width).toBe(380);
+        await expect(page.locator('rt-chat-widget .head')).toHaveCSS('background-color', 'rgb(21, 93, 252)');
+        await expect(qa(page, 'widget-close')).toBeVisible();
+    });
+
+    test('SC-CH-102 — поле рисует кольцо в фокусе', async ({ page }: { page: Page }) => {
+        await page.goto(widgetPage(CHAT.widget.key));
+        await unfold(page);
+
+        const field: Locator = qa(page, 'widget-field');
+
+        // положительная пара: без фокуса кольца нет, и только фокус его рисует
+        await expect(field).toHaveCSS('box-shadow', 'none');
+
+        await qa(page, 'widget-text').focus();
+
+        await expect(field).toHaveCSS('border-top-color', 'rgb(21, 93, 252)');
+        await expect(field).toHaveCSS('box-shadow', 'rgba(21, 93, 252, 0.24) 0px 0px 0px 3px');
+    });
+
+    test('SC-CH-53, SC-CH-100 — ответ оператора приходит в открытый виджет без перезагрузки', async ({ page, context }): Promise<void> => {
         await page.goto(widgetPage(CHAT.widget.key));
         await unfold(page);
         await say(page, 'Вопрос оператору');
@@ -101,6 +136,15 @@ test.describe('виджет посетителя', () => {
         await panel.close();
 
         await expect(qa(page, 'widget-message').last()).toHaveText('Отвечаю посетителю');
+
+        // реплика посетителя стоит у правого края ленты, ответ поддержки — у левого
+        const feed: IBox | null = await qa(page, 'widget-feed').boundingBox();
+        const own: IBox | null = await qa(page, 'widget-remark').first().boundingBox();
+        const answer: IBox | null = await qa(page, 'widget-remark').last().boundingBox();
+
+        expect((own?.x ?? 0) + (own?.width ?? 0)).toBeCloseTo((feed?.x ?? 0) + (feed?.width ?? 0) - 16, 0);
+        expect(answer?.x ?? 0).toBeCloseTo((feed?.x ?? 0) + 16, 0);
+        await expect(qa(page, 'widget-remark').last()).toContainText(/\d{2}:\d{2}/);
     });
 
     test('SC-CH-54 — реплика длиннее предела отбита, и предел назван сервисом', async ({ page }: { page: Page }) => {
@@ -130,15 +174,18 @@ test.describe('виджет посетителя', () => {
         await expect(qa(page, 'widget-text')).toHaveCount(0);
     });
 
-    test('SC-CH-58 — вне часов ответа реплика всё равно принята, и виджет говорит о часах', async ({ page }: { page: Page }) => {
+    test('SC-CH-58, SC-CH-101 — вне часов ответа реплика всё равно принята, и виджет говорит о часах', async ({ page }: { page: Page }) => {
         await page.goto(widgetPage(CHAT.widgetClosed.key));
         await unfold(page);
 
-        await expect(qa(page, 'widget-hours')).toContainText('Ответим в рабочие часы');
+        // до первой реплики часы стоят в карточке приветствия
+        await expect(page.locator('rt-chat-widget .greeting [qa-dataid="widget-hours"]')).toContainText('Ответим в рабочие часы');
 
         await say(page, 'Пишу ночью');
 
         await expect(qa(page, 'widget-message')).toHaveCount(1);
+        // после неё — заметкой над лентой
+        await expect(page.locator('rt-chat-widget .note[qa-dataid="widget-hours"]')).toContainText('Ответим в рабочие часы');
     });
 
     test('SC-CH-60 — стили страницы до виджета не достают', async ({ page }: { page: Page }) => {
@@ -154,7 +201,7 @@ test.describe('виджет посетителя', () => {
         // страница красит свои поля крупно и рамкой: до виджета это не доходит
         expect(measured.page).toBe('28px');
         expect(measured.widget).toBe('14px');
-        await expect(field).toHaveCSS('border-style', 'solid');
+        await expect(qa(page, 'widget-field')).toHaveCSS('border-style', 'solid');
     });
 
     test('SC-CH-61 — длинная реплика остаётся внутри ширины виджета', async ({ page }: { page: Page }) => {
