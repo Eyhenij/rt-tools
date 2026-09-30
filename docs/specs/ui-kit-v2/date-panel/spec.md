@@ -36,7 +36,7 @@ kit. The mockup draws a panel of its own for all three types, the same in every 
   It is the string the browser's input gave, so no consumer moves.
 
 - **The field shows the date in the order of the interface language.** Under `ru` the text is
-  `01.08.2026`, under `en-US` it is `08/01/2026`; the time is `HH:mm` in every language. The hint in
+  `01.08.2026`, under `en-US` it is «08/01/2026»; the time is `HH:mm` in every language. The hint in
   the empty field is the same shape in the kit's letters, `дд.мм.гггг` under the Russian labels.
   Only the text in the field changes: the value of the form stays the ISO string.
 
