@@ -24,6 +24,7 @@ export const RT_KIT_LABELS_EN = {
     chatAttachmentFallback: 'Attachment',
     chatCollapse: 'Collapse chat',
     chatComposerAria: 'Message input',
+    chatComposerHint: 'Enter to send, Shift + Enter for a new line',
     chatDeleteAria: 'Delete message',
     chatDeleteTooltip: 'Delete',
     chatDropOverlay: 'Drop the files to attach them to your message',

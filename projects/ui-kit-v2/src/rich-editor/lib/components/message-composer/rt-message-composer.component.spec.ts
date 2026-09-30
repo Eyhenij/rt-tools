@@ -1,4 +1,6 @@
+import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 import { ComponentFixture } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 
 import { QuillMock } from '../../../../testing/quill-mock';
 import { createRtFixture, el, hostClasses, qa, qaAll, setInputs } from '../../../../testing/rt-kit-testing';
@@ -34,12 +36,50 @@ function sendButton(fixture: ComponentFixture<RtMessageComposerComponent>): HTML
     return el(fixture, '[qa-dataid="message-composer-send"] [qa-dataid="icon-button-control"]')?.nativeElement as HTMLButtonElement;
 }
 
+function capsule(fixture: ComponentFixture<RtMessageComposerComponent>): HTMLElement {
+    return qa(fixture, 'message-composer-capsule')?.nativeElement as HTMLElement;
+}
+
 describe('RtMessageComposerComponent', (): void => {
     it('несёт свой BEM-блок и рисует поле ввода', (): void => {
         const fixture: ComponentFixture<RtMessageComposerComponent> = setup();
 
         expect(hostClasses(fixture)).toContain('rt-message-composer');
         expect(field(fixture).placeholder).toBe('Type a message');
+    });
+
+    it('SC-UKV-480 — скрепка и отправка — круглые кнопки кита, скрепка приглушённая', (): void => {
+        const fixture: ComponentFixture<RtMessageComposerComponent> = setup({ attachments: true });
+        const attach: HTMLElement = qa(fixture, 'message-composer-attach')?.nativeElement as HTMLElement;
+        const send: HTMLElement = qa(fixture, 'message-composer-send')?.nativeElement as HTMLElement;
+
+        expect(attach.getAttribute('data-rt-radius')).toBe('full');
+        expect(send.getAttribute('data-rt-radius')).toBe('full');
+        expect(capsule(fixture).contains(attach)).toBe(true);
+        expect(capsule(fixture).contains(send)).toBe(true);
+        expect(qa(setup(), 'message-composer-attach')).toBeNull();
+    });
+
+    it('SC-UKV-481 — капсула становится высокой с файлом и в режиме форматирования', (): void => {
+        const tall: string = 'rt-message-composer__capsule--tall';
+        const fixture: ComponentFixture<RtMessageComposerComponent> = setup({ attachments: true });
+        expect(capsule(fixture).classList).not.toContain(tall);
+
+        setInputs(fixture, { droppedFiles: [file('Договор.pdf')] });
+        fixture.detectChanges();
+
+        expect(capsule(fixture).classList).toContain(tall);
+        expect(capsule(setup({ formatting: true })).classList).toContain(tall);
+    });
+
+    it('SC-UKV-482 — поле растёт до maxRows строк, дальше прокрутка', (): void => {
+        const fixture: ComponentFixture<RtMessageComposerComponent> = setup({ minRows: 1, maxRows: 6 });
+        const autosize: CdkTextareaAutosize = fixture.debugElement
+            .query(By.directive(CdkTextareaAutosize))
+            .injector.get(CdkTextareaAutosize);
+
+        expect(autosize.minRows).toBe(1);
+        expect(autosize.maxRows).toBe(6);
     });
 
     it('своя подсказка перебивает переведённую', (): void => {
@@ -82,7 +122,7 @@ describe('RtMessageComposerComponent', (): void => {
             expect(field(fixture).value).toBe('');
         });
 
-        it('Enter отправляет, Shift+Enter переносит строку', (): void => {
+        it('SC-UKV-486 — Enter отправляет, Shift+Enter переносит строку', (): void => {
             const fixture: ComponentFixture<RtMessageComposerComponent> = setup();
             const sent: jest.Mock = jest.fn();
             fixture.componentInstance.submitted.subscribe(sent);
@@ -97,7 +137,16 @@ describe('RtMessageComposerComponent', (): void => {
             expect(sent).toHaveBeenCalledTimes(1);
         });
 
-        it('во время отправки поле и кнопка заблокированы', (): void => {
+        it('SC-UKV-486 — строка про Enter стоит под капсулой только со входом hint', (): void => {
+            const fixture: ComponentFixture<RtMessageComposerComponent> = setup({ hint: true });
+            const hint: HTMLElement = qa(fixture, 'message-composer-hint')?.nativeElement as HTMLElement;
+
+            expect(hint.textContent?.trim()).toBe('Enter to send, Shift + Enter for a new line');
+            expect(capsule(fixture).contains(hint)).toBe(false);
+            expect(qa(setup(), 'message-composer-hint')).toBeNull();
+        });
+
+        it('SC-UKV-483 — во время отправки поле и кнопка заблокированы, стрелку сменяет индикатор', (): void => {
             // Иначе второе сообщение ушло бы поверх ещё не доставленного.
             const fixture: ComponentFixture<RtMessageComposerComponent> = setup();
             type(fixture, 'Привет');
@@ -107,6 +156,21 @@ describe('RtMessageComposerComponent', (): void => {
 
             expect(sendButton(fixture).disabled).toBe(true);
             expect(field(fixture).disabled).toBe(true);
+            expect(el(fixture, '[qa-dataid="message-composer-send"] .rt-icon-button__spinner')).not.toBeNull();
+        });
+
+        it('SC-UKV-485 — выключенное поле бледное и ничего не принимает', (): void => {
+            const fixture: ComponentFixture<RtMessageComposerComponent> = setup({ attachments: true, disabled: true });
+            const sent: jest.Mock = jest.fn();
+            fixture.componentInstance.submitted.subscribe(sent);
+
+            field(fixture).dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+            fixture.detectChanges();
+
+            expect(field(fixture).disabled).toBe(true);
+            expect(sendButton(fixture).disabled).toBe(true);
+            expect(capsule(fixture).classList).toContain('rt-message-composer__capsule--disabled');
+            expect(sent).not.toHaveBeenCalled();
         });
     });
 
@@ -152,7 +216,7 @@ describe('RtMessageComposerComponent', (): void => {
             expect(qa(fixture, 'message-composer-file')).toBeNull();
         });
 
-        it('файлы уезжают вместе с сообщением и поле очищается', (): void => {
+        it('SC-UKV-487 — файлы стоят в капсуле, уезжают вместе с сообщением и поле очищается', (): void => {
             const fixture: ComponentFixture<RtMessageComposerComponent> = setup({ attachments: true });
             const sent: IRtMessageComposer.SubmitPayload[] = [];
             fixture.componentInstance.submitted.subscribe((payload: IRtMessageComposer.SubmitPayload): void => {
@@ -161,6 +225,7 @@ describe('RtMessageComposerComponent', (): void => {
             setInputs(fixture, { droppedFiles: [file('Договор.pdf')] });
             fixture.detectChanges();
             type(fixture, 'Смотрите вложение');
+            expect(capsule(fixture).contains(qa(fixture, 'message-composer-files')?.nativeElement as HTMLElement)).toBe(true);
 
             sendButton(fixture).click();
             fixture.detectChanges();
@@ -171,11 +236,12 @@ describe('RtMessageComposerComponent', (): void => {
     });
 
     describe('режим форматирования', (): void => {
-        it('подменяет простое поле редактором с разметкой', (): void => {
+        it('SC-UKV-488 — редактор с разметкой стоит в той же капсуле вместо простого поля', (): void => {
             const fixture: ComponentFixture<RtMessageComposerComponent> = setup({ formatting: true });
 
-            expect(qa(fixture, 'message-composer-rich')).not.toBeNull();
+            expect(capsule(fixture).contains(qa(fixture, 'message-composer-rich')?.nativeElement as HTMLElement)).toBe(true);
             expect(qa(fixture, 'message-composer-input')).toBeNull();
+            expect(qa(fixture, 'message-composer-send')).not.toBeNull();
         });
 
         it('пустой редактор отправить нельзя', (): void => {

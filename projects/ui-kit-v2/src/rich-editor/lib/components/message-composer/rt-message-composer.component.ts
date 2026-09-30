@@ -8,6 +8,7 @@ import {
     input,
     numberAttribute,
     output,
+    signal,
     viewChild,
     ChangeDetectionStrategy,
     Component,
@@ -17,11 +18,12 @@ import {
     OutputEmitterRef,
     Signal,
     ViewEncapsulation,
+    WritableSignal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
-import { BlockDirective, ElemDirective } from '@rt-tools/core';
+import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { IQuillDelta, RT_KIT_LABELS, RtFileCardComponent, RtIconButtonComponent, rtKitLabel, TRtKitLabelMap } from '@rt-tools/ui-kit-v2';
 
@@ -30,6 +32,14 @@ import { IRtMessageComposer } from './rt-message-composer.model';
 
 const BEM_BLOCK: string = 'rt-message-composer';
 
+/** Текст в поле выше полутора строк — он перенёсся, и капсула берёт скругление высокой. */
+function rtComposerWraps(node: HTMLTextAreaElement): boolean {
+    const style: CSSStyleDeclaration = getComputedStyle(node);
+    const line: number = parseFloat(style.lineHeight) || parseFloat(style.fontSize) * 1.5;
+    const text: number = node.clientHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom);
+    return text > line * 1.5;
+}
+
 interface IComposerFormShape {
     message: FormControl<string>;
     files: FormControl<File[]>;
@@ -37,9 +47,9 @@ interface IComposerFormShape {
 }
 
 /**
- * Композер сообщения: авто-растущая textarea сверху, под разделительной линией —
- * ряд контролов (слева — прикрепить файл, справа — отправить). Презентационный,
- * без data-access: наружу торчит только `submitted` с текстом и файлами.
+ * Композер сообщения — капсула: слева круглая кнопка вложения, по центру авто-растущая
+ * textarea, справа круглая кнопка отправки; вложения стоят внутри капсулы над строкой.
+ * Презентационный, без data-access: наружу торчит только `submitted` с текстом и файлами.
  *
  * Отправка — `Enter` (без Shift) или клик по иконке; `Shift+Enter` — перенос
  * строки. Кнопка отправки активна, пока есть непустой текст или вложения.
@@ -63,6 +73,7 @@ interface IComposerFormShape {
         RtRichEditorComponent,
         BlockDirective,
         ElemDirective,
+        ModDirective,
     ],
     host: {
         class: BEM_BLOCK,
@@ -73,11 +84,17 @@ export class RtMessageComposerComponent {
 
     readonly #t_chatPlaceholder: Signal<string> = rtKitLabel('chatPlaceholder');
 
+    /** Текст перенёсся на вторую строку — меряется по высоте textarea после отрисовки. */
+    readonly #multiRow: WritableSignal<boolean> = signal(false);
+
     protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
 
     protected readonly placeholderText: Signal<string> = computed((): string => this.placeholder() || this.#t_chatPlaceholder());
 
     protected readonly fileInput: Signal<ElementRef<HTMLInputElement> | undefined> = viewChild<ElementRef<HTMLInputElement>>('fileEl');
+
+    protected readonly textInput: Signal<ElementRef<HTMLTextAreaElement> | undefined> =
+        viewChild<ElementRef<HTMLTextAreaElement>>('textEl');
 
     protected readonly form: FormGroup<IComposerFormShape> = new FormGroup<IComposerFormShape>({
         message: new FormControl<string>('', { nonNullable: true }),
@@ -101,18 +118,33 @@ export class RtMessageComposerComponent {
         return hasText || hasFiles;
     });
 
+    /** Капсула выше одной строки: перенос текста, вложения или режим форматирования. */
+    protected readonly tall: Signal<boolean> = computed(
+        (): boolean => this.#multiRow() || this.formatting() || (this.attachments() && this.files().length > 0)
+    );
+
+    protected readonly capsuleMods: Signal<Record<string, boolean>> = computed((): Record<string, boolean> => ({
+        tall: this.tall(),
+        disabled: this.disabled(),
+    }));
+
     /** Текст-подсказка textarea. Пусто — берётся переведённое умолчание. */
     public readonly placeholder: InputSignal<string> = input<string>('');
 
     /** Фильтр типов для file-input (`.pdf,.doc,...`). */
     public readonly accept: InputSignal<string> = input<string>('');
 
+    /** Строка под капсулой про Enter и Shift + Enter. */
+    public readonly hint: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+
     /** Показывать кнопку вложения и список файлов. */
     public readonly attachments: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
 
-    /** Отправка в процессе — блокирует submit и показывает её недоступность. */
+    /** Отправка в процессе — блокирует submit, кнопка отправки крутит индикатор. */
     public readonly sending: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
@@ -159,6 +191,18 @@ export class RtMessageComposerComponent {
             if (!blocked && this.form.disabled) {
                 this.form.enable({ emitEvent: false });
             }
+        });
+
+        // Поле пересоздаётся при смене режима форматирования: наблюдатель идёт за текущим узлом.
+        effect((onCleanup: (fn: () => void) => void): void => {
+            const node: HTMLTextAreaElement | undefined = this.textInput()?.nativeElement;
+            if (!node || typeof ResizeObserver === 'undefined') {
+                this.#multiRow.set(false);
+                return;
+            }
+            const observer: ResizeObserver = new ResizeObserver((): void => this.#multiRow.set(rtComposerWraps(node)));
+            observer.observe(node);
+            onCleanup((): void => observer.disconnect());
         });
 
         effect((): void => {

@@ -17,6 +17,7 @@ export const RT_KIT_LABELS_RU: Readonly<Record<TRtKitLabelKey, string>> = {
     chatAttachmentFallback: 'Вложение',
     chatCollapse: 'Свернуть чат',
     chatComposerAria: 'Поле ввода сообщения',
+    chatComposerHint: 'Enter — отправить, Shift + Enter — новая строка',
     chatDeleteAria: 'Удалить сообщение',
     chatDeleteTooltip: 'Удалить',
     chatDropOverlay: 'Отпустите файлы, чтобы прикрепить к сообщению',
