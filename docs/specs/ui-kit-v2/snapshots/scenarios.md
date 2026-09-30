@@ -300,4 +300,4 @@ window grows to the right edge of the grid
 
 Covered by `projects/ui-kit-v2/src/showcase/story-grid.component.spec.ts` — the styles of the grid
 declare no scroll or clipping, so no ancestor inside the grid cuts the span. That the window then grows
-is closed by the frames of `Foundation/Radius`: the controls and the surfaces, ten columns each.
+is closed by the two frames of the radius grid: the controls and the surfaces, ten columns each.
