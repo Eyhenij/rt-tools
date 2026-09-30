@@ -5,12 +5,15 @@ import {
     ChangeDetectionStrategy,
     computed,
     Component,
+    contentChild,
     DestroyRef,
+    effect,
     ElementRef,
     inject,
     input,
     InputSignal,
     InputSignalWithTransform,
+    isDevMode,
     output,
     OutputEmitterRef,
     Signal,
@@ -21,15 +24,16 @@ import { RouterLink } from '@angular/router';
 
 import { mergeMap, Observable, Subject } from 'rxjs';
 
-import { BlockDirective, ElemDirective } from '@rt-tools/core';
+import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { rtKitLabel } from '../../i18n';
 import { RtDialogService } from '../dialog/rt-dialog.service';
 import { RtIconComponent } from '../icon/rt-icon.component';
-import { iconMaterialMap, IRtIconMaterialEntry } from '../icon/rt-icon-material-map';
 import { IRtIcon } from '../icon/rt-icon.model';
 import { RtTooltipDirective } from '../tooltip/rt-tooltip.directive';
 import { RtMenuConfirmDialogComponent } from './rt-menu-confirm-dialog.component';
+import { RtMenuItemIconDirective } from './rt-menu-item-icon.directive';
+import { menuItemIconName, unpairedGlyph } from './rt-menu-item.logic';
 import { RT_MENU_SELECT_EVENT, IRtMenu } from './rt-menu.model';
 
 const BEM_BLOCK: string = 'rt-menu-item';
@@ -65,6 +69,7 @@ const BEM_BLOCK: string = 'rt-menu-item';
         RtIconComponent,
         BlockDirective,
         ElemDirective,
+        ModDirective,
         NgTemplateOutlet,
         RouterLink,
     ],
@@ -101,12 +106,13 @@ export class RtMenuItemComponent {
     readonly #t_uiConfirm: Signal<string> = rtKitLabel('uiConfirm');
     readonly #t_uiCancel: Signal<string> = rtKitLabel('uiCancel');
 
-    /** Значок пункта: свой `icon`, а без него — пара имени Material из перечня кита. */
-    protected readonly iconName: Signal<IRtIcon.Name | null> = computed((): IRtIcon.Name | null => {
-        const glyph: string | null = this.glyph();
+    /** Свой значок приложения — `<ng-template rtMenuItemIcon>` внутри пункта. */
+    protected readonly ownIcon: Signal<RtMenuItemIconDirective | undefined> = contentChild(RtMenuItemIconDirective);
 
-        return this.icon() ?? (glyph ? (iconMaterialMap.find((entry: IRtIconMaterialEntry) => entry.from === glyph)?.to ?? null) : null);
-    });
+    /** Значок пункта: свой `icon`, а без него — пара имени Material из перечня кита. */
+    protected readonly iconName: Signal<IRtIcon.Name | null> = computed((): IRtIcon.Name | null =>
+        menuItemIconName(this.icon(), this.glyph())
+    );
 
     /** Пункт — ссылка: задан `link`. Роль пункта меню и фокус тогда несёт ссылка внутри. */
     protected readonly isLink: Signal<boolean> = computed((): boolean => this.link() !== null);
@@ -178,6 +184,20 @@ export class RtMenuItemComponent {
     public readonly selected: OutputEmitterRef<void> = output<void>();
 
     constructor() {
+        // Имя Material без пары рисует пункт без значка, и пропуск без предупреждения не заметен.
+        if (isDevMode()) {
+            effect((): void => {
+                const glyph: string | null = unpairedGlyph(this.icon(), this.glyph(), this.ownIcon() !== undefined);
+                if (glyph !== null) {
+                    // eslint-disable-next-line no-console -- предупреждение разработчику приложения: другого канала у кита нет
+                    console.warn(
+                        `rt-menu-item «${this.label()}»: у значка Material «${glyph}» нет пары в перечне кита. ` +
+                            'Задайте icon или свой значок через <ng-template rtMenuItemIcon>.'
+                    );
+                }
+            });
+        }
+
         // Подписка на результат confirm-модалки объявлена один раз: #openConfirm
         // эмитит данные модалки, mergeMap открывает её и ждёт afterClosed()
         // (одноразовый стрим — комплитится при закрытии модалки).
