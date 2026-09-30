@@ -110,6 +110,165 @@ svg {
     background: rgb(255 255 255 / 16%);
 }
 
+.head .close[data-act='back'] {
+    margin-left: -8px;
+}
+
+.person {
+    display: flex;
+    min-width: 0;
+    flex: 1;
+    flex-direction: column;
+}
+
+.role {
+    overflow: hidden;
+    color: rgb(255 255 255 / 80%);
+    font-size: 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.avatar {
+    display: flex;
+    width: 40px;
+    height: 40px;
+    box-sizing: border-box;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--rt-chat-note);
+    color: var(--rt-chat-accent);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.avatar_support {
+    padding: 10px;
+    background: #dbe6ff;
+}
+
+.avatar_head {
+    width: 36px;
+    height: 36px;
+    background: var(--rt-chat-on-accent);
+}
+
+.avatar_head.avatar_support {
+    padding: 9px;
+    background: #0a1a3a;
+    color: var(--rt-chat-on-accent);
+}
+
+.talks {
+    display: flex;
+    min-height: 0;
+    flex: 1;
+    flex-direction: column;
+    padding: 8px;
+    gap: 4px;
+    overflow-y: auto;
+}
+
+.talk {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    padding: 10px 12px;
+    border: none;
+    border-radius: 12px;
+    background: none;
+    color: inherit;
+    gap: 12px;
+    text-align: left;
+}
+
+.talk:hover {
+    background: var(--rt-chat-line);
+}
+
+.talk-body {
+    display: flex;
+    min-width: 0;
+    flex: 1;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.talk-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.talk-name {
+    min-width: 0;
+    flex: 1;
+    font-weight: 500;
+}
+
+.talk-time {
+    flex: none;
+    color: var(--rt-chat-muted);
+    font-size: 12px;
+}
+
+.talk-time_unread {
+    color: var(--rt-chat-accent);
+}
+
+.talk-last {
+    min-width: 0;
+    flex: 1;
+    overflow: hidden;
+    color: var(--rt-chat-muted);
+    font-size: 13px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.dot {
+    width: 6px;
+    height: 6px;
+    flex: none;
+    border-radius: 50%;
+    background: var(--rt-chat-accent);
+}
+
+.closed {
+    flex: none;
+    padding: 1px 8px;
+    border-radius: 999px;
+    background: var(--rt-chat-line);
+    color: var(--rt-chat-ink);
+    font-size: 13px;
+}
+
+.talks-foot {
+    padding: 12px;
+    border-top: 1px solid var(--rt-chat-line);
+}
+
+.fresh {
+    display: flex;
+    width: 100%;
+    height: 40px;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 8px;
+    background: var(--rt-chat-accent);
+    color: var(--rt-chat-on-accent);
+    font-weight: 500;
+    gap: 8px;
+}
+
+.fresh-icon {
+    width: 16px;
+    height: 16px;
+}
+
 .feed {
     display: flex;
     min-height: 0;

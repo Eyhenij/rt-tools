@@ -20,7 +20,14 @@ export type TWidgetWord =
     | 'answering'
     | 'later'
     | 'sendFailed'
-    | 'tooLong';
+    | 'tooLong'
+    | 'talks'
+    | 'newTalk'
+    | 'closedMark'
+    | 'role'
+    | 'back'
+    | 'yesterday'
+    | 'unread';
 
 export const WIDGET_WORDS: Readonly<Record<TWidgetWord, string>> = Object.freeze({
     /** Заголовок шапки и имя круглой кнопки: у кнопки нет слова, и имя читает голос экрана. */
@@ -37,4 +44,15 @@ export const WIDGET_WORDS: Readonly<Record<TWidgetWord, string>> = Object.freeze
     later: 'Ответим в рабочие часы',
     sendFailed: 'Реплика не ушла',
     tooLong: 'Реплика длиннее, чем принимает сервис',
+    /** Заголовок списка обращений посетителя. */
+    talks: 'Ваши обращения',
+    newTalk: 'Новое обращение',
+    /** Метка закрытого обращения в строке списка. */
+    closedMark: 'Закрыто',
+    /** Строка под именем сотрудника в шапке обращения: должности в данных нет, слово одно на всех. */
+    role: 'Служба поддержки',
+    back: 'К обращениям',
+    yesterday: 'Вчера',
+    /** Имя точки непрочитанного для голоса экрана. */
+    unread: 'Есть новый ответ',
 });

@@ -68,7 +68,13 @@ export class ChatTalkService {
     }
 
     /** Реплика отвечающего в свою переписку: она же уходит событием тем, кто смотрит на разговор. */
-    public async answer(sites: readonly string[], id: string, text: string, at: Date): Promise<IChatMessageListRow> {
+    public async answer(
+        sites: readonly string[],
+        id: string,
+        text: string,
+        at: Date,
+        authorName: string = ''
+    ): Promise<IChatMessageListRow> {
         const talk: IChatOwnedTalk = await this.own(sites, id);
         const fault: EChatTextFault | null = chatTextFault(text);
 
@@ -80,16 +86,17 @@ export class ChatTalkService {
             throw new BadRequestException(refusalBody(ERefusal.ChatTextTooLong, { limit: CHAT_TEXT_LIMIT }));
         }
 
-        const message: IChatMessageListRow = await appendOperatorMessage(this.#prisma, talk.id, text, at);
+        const message: IChatMessageListRow = await appendOperatorMessage(this.#prisma, talk.id, text, at, authorName);
 
         this.#subscribers.send(
-            { conversationId: talk.id, siteId: talk.siteId },
+            { conversationId: talk.id, visitorId: talk.visitorId, siteId: talk.siteId },
             {
                 text,
                 conversationId: talk.id,
                 messageId: message.id,
                 side: message.side,
                 takenAt: message.takenAt.toISOString(),
+                authorName: message.authorName,
             }
         );
 

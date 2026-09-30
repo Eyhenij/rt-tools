@@ -11,11 +11,11 @@ When the widget calls the creation of a conversation by the key of the site with
 Then the answer carries the identifier of the conversation and the sign of the visitor, and both
 lie in the storage
 
-### SC-CH-2 — the second creation with the same sign gives back the live conversation
+### SC-CH-2 — the second creation with the same sign gives back the latest conversation
 
 Given the visitor already has a conversation on this site
-When the widget calls the creation again with their sign
-Then the same conversation comes back, and a second one is not created
+When the widget calls the creation again with their sign and without the mark of a new talk
+Then the latest conversation comes back, and a second one is not created
 
 ### SC-CH-3 — an unknown key of the site is refused
 
@@ -89,3 +89,29 @@ Then neither the conversations nor the messages of that site are left in the sto
 Given the storage of the node with the tables of the intake and of the chat
 When the migration of the chat is applied
 Then the tables of the cargo, of the accounts and of the rights of the intake stay as they were
+
+### SC-CH-103 — the mark of a new talk starts a second conversation of the same visitor
+
+Given the visitor already has a conversation on this site
+When the widget calls the creation with their sign and the mark of a new talk
+Then a second conversation of the same visitor is created, and the sign stays the same
+
+### SC-CH-104 — the visitor reads the list of their conversations, the latest first
+
+Given the visitor has two conversations on this site, one of them closed
+When the widget reads the list by their sign
+Then both come back, the latest first, each with its last remark, its minute, its state and the
+name of the operator who answered last
+
+### SC-CH-105 — a foreign sign reads no list
+
+Given a sign no visitor of this site holds
+When the widget reads the list by that sign
+Then the service refuses as a not-found conversation
+
+### SC-CH-106 — an answer from the panel carries the name of its account, an answer without one none
+
+Given an operator answered from the panel, and the embedded page answered the same talk
+When the widget reads the messages of that talk
+Then the answer from the panel carries the name of the account, and the answer from the embedded
+page carries no name; the identifier of the account is in neither

@@ -31,6 +31,7 @@ import { ChatWakeService } from './chat-wake.service';
  */
 const OPEN_PATHS: readonly string[] = [
     'chat/conversations',
+    'chat/visitor-conversations',
     'chat/site',
     'chat/messages',
     'chat/stream',

@@ -9,7 +9,9 @@ or the code holds what the spec is silent about.
 - **The operations of the widget are called from the addresses of the list of the site.** — `libs/message-bus-api/chat/util/src/lib/chat-origin.logic.ts:originAllowed`
 - **An empty list of the addresses refuses everything.** — `libs/message-bus-api/chat/util/src/lib/chat-origin.logic.ts:originAllowed`
 - **The visitor is recognised by a sign the service issues, not by what the page passes.** — `libs/message-bus-api/chat/util/src/lib/chat-visitor.util.ts:issueVisitorToken`
-- **A visitor has one live conversation per site.** — `libs/message-bus-api/chat/data-access/src/lib/chat.queries.ts:findConversationByVisitorToken`
+- **A visitor may hold several conversations on a site, and a new one is started only at their asking.** — `libs/message-bus-api/chat/feature/src/lib/chat-intake.controller.ts:start` — the latest by `findConversationByVisitorToken`, a new one by `startVisitorConversation` at the mark `fresh`
+- **The visitor reads the list of their own conversations only.** — `libs/message-bus-api/chat/data-access/src/lib/chat.queries.ts:visitorConversations`
+- **An answer of the operator keeps the name of the account that wrote it.** — `libs/message-bus-api/chat/data-access/src/lib/chat-operator.queries.ts:appendOperatorMessage` — the name comes from `libs/message-bus-api/chat/feature/src/lib/chat-read.controller.ts:answer`; the embedded page passes none
 - **A remark is taken into the conversation of its visitor only.** — `libs/message-bus-api/chat/feature/src/lib/chat-intake.controller.ts:take`
 - **The order of the messages is set by the minute of the taking in by the service.** — `libs/message-bus-api/chat/data-access/src/lib/chat.queries.ts:appendVisitorMessage`
 - **The stream from one visitor is held by a limit of the frequency.** — `libs/message-bus-api/access/util/src/lib/rate-limit.util.ts:rateVerdict`

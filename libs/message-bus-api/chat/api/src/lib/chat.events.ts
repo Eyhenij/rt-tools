@@ -17,4 +17,6 @@ export interface IChatMessageEvent {
     readonly text: string;
     /** Минута приёма сервисом: она же задаёт порядок сообщений в переписке. */
     readonly takenAt: string;
+    /** Имя учётной записи, написавшей ответ. Пусто — реплика посетителя или ответ без учётной записи. */
+    readonly authorName: string;
 }
