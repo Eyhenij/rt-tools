@@ -33,36 +33,34 @@ export interface IStoryCell<ROW, COL> {
         @if (caption()) {
             <h3 class="app-story-grid__caption">{{ caption() }}</h3>
         }
-        <div class="app-story-grid__scroll">
-            <table class="app-story-grid__table">
-                <thead>
+        <table class="app-story-grid__table">
+            <thead>
+                <tr>
+                    <td class="app-story-grid__corner"></td>
+                    @for (col of columns(); track $index) {
+                        <th scope="col" class="app-story-grid__head">{{ columnLabel()(col) }}</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @for (row of rows(); track $index) {
                     <tr>
-                        <td class="app-story-grid__corner"></td>
+                        <th scope="row" class="app-story-grid__head app-story-grid__head--row">{{ rowLabel()(row) }}</th>
                         @for (col of columns(); track $index) {
-                            <th scope="col" class="app-story-grid__head">{{ columnLabel()(col) }}</th>
+                            <td class="app-story-grid__cell">
+                                <div class="app-story-grid__slot" [style.inline-size]="slotWidth()">
+                                    @if (cell(); as template) {
+                                        <ng-container
+                                            [ngTemplateOutlet]="template"
+                                            [ngTemplateOutletContext]="{ $implicit: row, col: col }" />
+                                    }
+                                </div>
+                            </td>
                         }
                     </tr>
-                </thead>
-                <tbody>
-                    @for (row of rows(); track $index) {
-                        <tr>
-                            <th scope="row" class="app-story-grid__head app-story-grid__head--row">{{ rowLabel()(row) }}</th>
-                            @for (col of columns(); track $index) {
-                                <td class="app-story-grid__cell">
-                                    <div class="app-story-grid__slot" [style.inline-size]="slotWidth()">
-                                        @if (cell(); as template) {
-                                            <ng-container
-                                                [ngTemplateOutlet]="template"
-                                                [ngTemplateOutletContext]="{ $implicit: row, col: col }" />
-                                        }
-                                    </div>
-                                </td>
-                            }
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
+                }
+            </tbody>
+        </table>
     `,
     styleUrl: './story-grid.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,

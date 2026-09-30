@@ -7,8 +7,8 @@ import { TestRtRadiusComponent } from './component/test-radius.component';
  * лежит при обвязке показа, а не в папке одного компонента. Договор о покрытии состояний к ней не
  * относится — у входа нет своих состояний, а оси его компонентов показаны в их семьях.
  *
- * Десять столбцов не влезают в кадр, поэтому каждая сетка идёт тремя историями: умолчание с
- * малыми шагами, средние шаги и большие шаги.
+ * Каждая сетка идёт одной историей на всю шкалу: десять столбцов шире окна, и кадр раздвигает окно
+ * до правого края сетки.
  *
  * Без сетки остались компоненты, у которых шаг негде назвать или его не видно в ячейке: диалог и
  * нижняя панель стоят поверх страницы, шапка и список бесед тянутся на весь экран, календарю нужен
@@ -26,14 +26,6 @@ export default {
 
 type TStory = StoryObj<TestRtRadiusComponent>;
 
-export const Controls: TStory = { args: { group: 'controls', part: 'small' } };
+export const Controls: TStory = { args: { group: 'controls' } };
 
-export const ControlsMiddle: TStory = { args: { group: 'controls', part: 'middle' } };
-
-export const ControlsLarge: TStory = { args: { group: 'controls', part: 'large' } };
-
-export const Surfaces: TStory = { args: { group: 'surfaces', part: 'small' } };
-
-export const SurfacesMiddle: TStory = { args: { group: 'surfaces', part: 'middle' } };
-
-export const SurfacesLarge: TStory = { args: { group: 'surfaces', part: 'large' } };
+export const Surfaces: TStory = { args: { group: 'surfaces' } };
