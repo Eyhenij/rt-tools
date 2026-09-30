@@ -11,6 +11,8 @@ import { TRtKitLabelKey } from '../src/lib/i18n';
  * продукта не достаются.
  */
 export const RT_KIT_LABELS_RU: Readonly<Record<TRtKitLabelKey, string>> = {
+    asideCopyErrorInfo: 'Скопировать ошибку',
+    asideRequestError: 'Ошибка запроса',
     bottomSheetClose: 'Закрыть',
     chatAttachAria: 'Прикрепить файл',
     chatAttachTooltip: 'Прикрепить файл',

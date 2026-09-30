@@ -15,6 +15,8 @@
  */
 // eslint-disable-next-line @typescript-eslint/typedef -- аннотация стёрла бы литеральный тип, на котором стоит TRtKitLabelKey
 export const RT_KIT_LABELS_EN = {
+    asideCopyErrorInfo: 'Copy error info',
+    asideRequestError: 'Request Error',
     bottomSheetClose: 'Close',
     chatAttachAria: 'Attach a file',
     chatAttachTooltip: 'Attach a file',
