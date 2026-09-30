@@ -1,0 +1,22 @@
+import { iconMaterialMap, IRtIconMaterialEntry } from '../icon/rt-icon-material-map';
+import { IRtIcon } from '../icon/rt-icon.model';
+
+/** Значок пункта: свой `icon`, а без него — пара имени Material из перечня кита. */
+export function menuItemIconName(icon: IRtIcon.Name | null, glyph: string | null): IRtIcon.Name | null {
+    if (icon !== null) {
+        return icon;
+    }
+    return glyph ? (iconMaterialMap.find((entry: IRtIconMaterialEntry): boolean => entry.from === glyph)?.to ?? null) : null;
+}
+
+/**
+ * Имя Material, о котором пункт должен предупредить: у него нет пары в перечне кита, а ни `icon`,
+ * ни своего значка нет. Тогда пункт рисуется без значка, и без предупреждения пропуск не заметен.
+ * `null` — предупреждать не о чем.
+ */
+export function unpairedGlyph(icon: IRtIcon.Name | null, glyph: string | null, hasOwnIcon: boolean): string | null {
+    if (!glyph || hasOwnIcon || menuItemIconName(icon, glyph) !== null) {
+        return null;
+    }
+    return glyph;
+}

@@ -1,0 +1,95 @@
+<ng-container rtBlock="rt-image-upload">
+    <input
+        #picker
+        hidden
+        type="file"
+        accept="image/*"
+        qa-dataid="image-upload-native"
+        [disabled]="disabled()"
+        (change)="onPicked($event)" />
+
+    @switch (state()) {
+        @case ('loading') {
+            <div rtElem="loading" qa-dataid="image-upload-loading">
+                <rt-spinner />
+            </div>
+        }
+        @case ('cropping') {
+            <rt-image-cropper
+                qa-dataid="image-upload-cropper"
+                [file]="source()"
+                [ratio]="ratio()"
+                [round]="round()"
+                [format]="format()"
+                [quality]="quality()"
+                (cropped)="onCropped($event)"
+                (loadFailed)="cancel()" />
+
+            @if (!autoApply()) {
+                <div rtElem="actions">
+                    <button
+                        rtButton
+                        appearance="text"
+                        type="button"
+                        qa-dataid="image-upload-cancel"
+                        [label]="t().uiImageUploadCancel"
+                        [attr.aria-label]="t().uiImageUploadCancel"
+                        (click)="cancel()"></button>
+                    <button
+                        rtButton
+                        type="button"
+                        qa-dataid="image-upload-apply"
+                        [label]="t().uiImageUploadApply"
+                        [attr.aria-label]="t().uiImageUploadApply"
+                        [disabled]="!result()"
+                        (click)="apply()"></button>
+                </div>
+            }
+        }
+        @case ('image') {
+            <rt-file-drop accept="image/*" [disabled]="disabled()" (filesDropped)="choose($event[0])">
+                <div rtElem="preview">
+                    <img
+                        rtElem="image"
+                        role="button"
+                        qa-dataid="image-upload-image"
+                        [attr.tabindex]="disabled() ? -1 : 0"
+                        [attr.aria-disabled]="disabled()"
+                        [attr.alt]="t().uiImageUploadImage"
+                        [rtTooltip]="disabled() ? '' : hint()"
+                        [rtMod]="{ active: !disabled() }"
+                        [src]="image()"
+                        (click)="pick()"
+                        (keydown.enter)="pick()"
+                        (keydown.space)="onSpace($event)" />
+
+                    @if (downloadable()) {
+                        <rt-icon-button
+                            rtElem="download"
+                            icon="ico-download"
+                            qa-dataid="image-upload-download"
+                            [ariaLabel]="t().uiDownload"
+                            [tooltip]="t().uiDownload"
+                            (click)="download()" />
+                    }
+                </div>
+            </rt-file-drop>
+        }
+        @default {
+            <rt-file-drop accept="image/*" qa-dataid="image-upload-drop" [disabled]="disabled()" (filesDropped)="choose($event[0])">
+                <rt-empty-state framed icon="cloud-upload" [title]="t().uiImageUploadDrop">
+                    <button
+                        rtButton
+                        appearance="outlined"
+                        type="button"
+                        icon="ico-upload"
+                        qa-dataid="image-upload-choose"
+                        [label]="t().uiImageUploadChoose"
+                        [attr.aria-label]="t().uiImageUploadChoose"
+                        [disabled]="disabled()"
+                        (click)="pick()"></button>
+                </rt-empty-state>
+            </rt-file-drop>
+        }
+    }
+</ng-container>
