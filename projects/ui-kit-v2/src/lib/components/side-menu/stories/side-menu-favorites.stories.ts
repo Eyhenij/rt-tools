@@ -1,5 +1,6 @@
 import { applicationConfig, Args, Meta, moduleMetadata, StoryObj } from '@storybook/angular';
 
+import { IStorySnapshotParameters, STORY_PHONE_VIEWPORT } from '../../../../showcase/story-snapshot';
 import { IRtSideMenuSettingsConfig, RT_SIDE_MENU_SETTINGS_CONFIG } from '../rt-side-menu-settings.service';
 import {
     FAVORITES_STORY_ACTIVE,
@@ -59,9 +60,10 @@ const PINNED_ARGS: NonNullable<TStory['args']> = {
     mode: 'pinned',
 };
 
-/** Меню телефона: та же история на обёртке с узким экраном, раздел открыт нажатием. */
+/** Меню телефона: та же история в окне телефона, как у первого кита, раздел открыт нажатием. */
 const MOBILE_IMPORTS: ReturnType<typeof moduleMetadata> = moduleMetadata({ imports: [TestRtSideMenuMobileComponent] });
-const MOBILE: Pick<TStory, 'decorators' | 'render'> = {
+const MOBILE: Pick<TStory, 'decorators' | 'render' | 'globals'> = {
+    globals: { viewport: { value: 'narrow' } },
     decorators: [MOBILE_IMPORTS],
     render: (args: Args): { props: Args; template: string } => ({
         props: args,
@@ -72,8 +74,13 @@ const MOBILE: Pick<TStory, 'decorators' | 'render'> = {
 const FIRST_ROW: string = '.rt-side-menu-favorites__row';
 
 /** Кадр целой страницы с указателем на названных узлах, по порядку. */
-function hovered(...hover: string[]): { snapshot: { fullPage: boolean; hover: string[] } } {
+function hovered(...hover: string[]): { snapshot: IStorySnapshotParameters } {
     return { snapshot: { fullPage: true, hover } };
+}
+
+/** То же в окне телефона. */
+function hoveredOnPhone(...hover: string[]): { snapshot: IStorySnapshotParameters } {
+    return { snapshot: { hover, fullPage: true, viewport: STORY_PHONE_VIEWPORT } };
 }
 
 /** Закреплённое подменю «Content», открытое на «Sidebar» во вложенной папке: папки раскрыты, блок и звёзды видны. */
@@ -83,7 +90,7 @@ export const SubMenuFavorites: TStory = { args: PINNED_ARGS };
 export const SubMenuFavoritesMobile: TStory = {
     ...MOBILE,
     args: PINNED_ARGS,
-    parameters: hovered(FIRST_ROW),
+    parameters: hoveredOnPhone(FIRST_ROW),
     play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => openMobileSection(canvasElement),
 };
 
@@ -108,7 +115,7 @@ export const SubMenuFavoritesRemoveHover: TStory = {
 export const SubMenuFavoritesDisabledStar: TStory = {
     ...MOBILE,
     args: { ...PINNED_ARGS, items: FAVORITES_STORY_ITEMS_GALLERY_DISABLED },
-    parameters: hovered('.rt-side-menu-sub-item__row[id="102"]'),
+    parameters: hoveredOnPhone('.rt-side-menu-sub-item__row[id="102"]'),
     play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => openMobileSection(canvasElement),
 };
 

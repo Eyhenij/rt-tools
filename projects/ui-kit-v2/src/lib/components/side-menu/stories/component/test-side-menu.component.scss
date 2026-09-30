@@ -19,7 +19,7 @@
             width: 100%;
             align-items: center;
             justify-content: center;
-            padding: var(--rt-space-sm) 0 var(--rt-space-md);
+            padding: var(--rt-space-md) 0;
             border-bottom: 1px solid var(--rt-color-border-subtle);
             color: var(--rt-color-text-primary);
             cursor: pointer;
@@ -30,7 +30,7 @@
             width: 100%;
             flex-direction: column;
             align-items: center;
-            padding-top: var(--rt-space-sm);
+            padding-top: calc(var(--rt-space-sm) + var(--rt-space-xs));
             border-top: 1px solid var(--rt-color-border-subtle);
             color: var(--rt-color-text-primary);
             gap: var(--rt-space-sm);

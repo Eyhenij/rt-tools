@@ -1,8 +1,7 @@
-import { ChangeDetectionStrategy, Component, signal, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
-import { BreakpointsService } from '../../../../platform/breakpoints.service';
 import { RtButtonDirective } from '../../../button';
 import { RtIconComponent } from '../../../icon';
 import { RtSideMenuFooterDirective, RtSideMenuHeaderDirective } from '../../rt-side-menu.directives';
@@ -11,8 +10,8 @@ import { TestRtSideMenuComponent } from './test-side-menu.component';
 
 /**
  * То же живое меню на экране телефона — как истории `Mobile` и `Mobile active menu` первого кита.
- * Узкий экран задан службой точек перехода, а не шириной окна: кадр снимается в окне 1280, и
- * порог 1080 по ширине окна в нём не сработал бы.
+ * Узкий экран кит определяет сам, по ширине окна: истории ставят окно телефона и в витрине, и в
+ * кадре. Обёртка отдельная, потому что её история рисует меню своим шаблоном.
  *
  * В пакет не уезжает: `tsconfig.lib.json` исключает папки историй.
  */
@@ -34,7 +33,6 @@ import { TestRtSideMenuComponent } from './test-side-menu.component';
         RtIconComponent,
         RtSideMenuComponent,
     ],
-    providers: [{ provide: BreakpointsService, useValue: { narrow: signal<boolean>(true) } }],
     host: { class: 'app-side-menu' },
 })
 export class TestRtSideMenuMobileComponent extends TestRtSideMenuComponent {}

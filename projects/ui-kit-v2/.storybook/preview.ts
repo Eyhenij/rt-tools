@@ -207,6 +207,13 @@ const preview: Preview = {
         labels: 'ru',
     },
     parameters: {
+        // Окно телефона — как у первого кита: история телефонного меню берёт его через
+        // `globals.viewport`, и узкий экран кит определяет сам, по ширине окна.
+        viewport: {
+            options: {
+                narrow: { name: 'Узкий экран', styles: { width: '360px', height: '780px' } },
+            },
+        },
         controls: {
             matchers: {
                 color: /(background|color)$/i,

@@ -3,9 +3,9 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 2 of 5 — The narrow screen as a live menu; stage 3 done ahead of it by the owner's word
-- **Done:** stage 1 — seventeen live stories on the first kit's data; stage 3 — favourites without Material and their eleven stories; the folders and the favourites block moved onto the new `rt-expansion-panel`, frames unchanged to the pixel
-- **Next step:** compare the narrow layout with the first kit's Mobile by measurement (2.1)
+- **Stage:** 4 of 5 — Colour scheme; stages 1, 2 and 3 done
+- **Done:** stage 1 — seventeen live stories on the first kit's data; stage 3 — favourites without Material and their eleven stories; the folders and the favourites block moved onto the new `rt-expansion-panel`, frames unchanged to the pixel; stage 2 — the phone menu matches the first kit's Mobile by measurement
+- **Next step:** declare `[data-rt-scheme]` over the brand ramp (4.1)
 - **Uncommitted:** nothing
 - **Waiting for the owner:** no; every port is shown before a push — «я просил каждый перенесенный из первого кита модуль показывать мне перед отправкой в пр!!!»
 - **PR:** not open yet
@@ -16,14 +16,14 @@
 - [x] 1.2 Make Playground a full-height live menu like the first kit's Default
 - [x] 1.3 Add a story per first-kit menu state
 - [x] 1.4 Look at every pair of frames, kit one next to kit two
-- [>] 2.1 Compare the second kit's narrow layout with the first kit's Mobile by measurement
-- [ ] 2.2 Close what differs in the component
-- [ ] 2.3 Show the narrow menu live at phone width in its own stories
+- [x] 2.1 Compare the second kit's narrow layout with the first kit's Mobile by measurement
+- [x] 2.2 Close what differs in the component
+- [x] 2.3 Show the narrow menu live at phone width in its own stories
 - [x] 3.1 Port the favorites logic and its spec
 - [x] 3.2 Port the favorites block into the menu without Material
 - [x] 3.3 Add the favorites stories after the first kit's eleven
 - [x] 3.4 Write the scenarios and their tests
-- [ ] 4.1 Declare `[data-rt-scheme]` over the brand ramp in the kit's styles, the material preset too
+- [>] 4.1 Declare `[data-rt-scheme]` over the brand ramp in the kit's styles, the material preset too
 - [ ] 4.2 Add a scheme switch to the showcase toolbar
 - [ ] 4.3 Show the menu under a scheme in a story
 - [ ] 5.1 Bring the spec, scenarios, overview and context of the menu up to what was done
@@ -66,6 +66,12 @@
   favourites block move onto and other places of the kit may take. The primitive is created by the
   owner's word, as `reuse-first` demands. Affected stage: 3.
 
+- **The second kit's snapshot harness learned the story's own window, `snapshot.viewport`.** The
+  first kit shoots its Mobile stories in a 360 by 780 window; the second shot every story at 1280
+  and faked the narrow screen by substituting the breakpoints service. Now the phone stories name
+  the window, the kit finds the narrow screen by itself, and the showcase gets the same window in
+  its viewport toolbar. Affected stage: 2.
+
 ## Sessions
 
 ### 2026-09-30
@@ -102,3 +108,14 @@
   cells (open, collapsed with the count, long titles) seeded with three rows so the divider shows.
   The live full-page favourites stories stay unpaired, the reason written at them and in the
   Overview. The Overview lost two stale lines: favourites «not ported yet» and the lock icon.
+
+### 30 September 2026 — the narrow screen
+
+- Done: the phone stories are shot in a 360 by 780 window, like the first kit's. Measured on the
+  raster of both Mobile active menu frames: the column is 240 wide, the active pill spans 8–231,
+  the icon starts at 24, the label at 56, the section arrow is an arrow as in the first kit; the
+  header divider stands at 64, the first row at 118, the active row at 586, the footer divider at
+  679 and «Logout» at 745 — all equal. The header and footer of the story wrapper moved by 8 and 4
+  pixels to get there, which retook 27 live frames; each looked at and confirmed by a second run.
+- Stumbled on: the narrow column grew to its longest label — a flex item's automatic minimum is its
+  content; zeroed.

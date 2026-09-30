@@ -224,7 +224,8 @@
         <span rtElem="mobile-title" [rtTooltip]="item.name">{{ item.name }}</span>
 
         @if (item.submenu?.length) {
-            <rt-icon rtElem="mobile-chevron" size="sm" name="chevron-right" />
+            <!-- Стрелка раздела, как у первого кита: нажатие уводит в подменю, а не раскрывает на месте. -->
+            <rt-icon rtElem="mobile-chevron" size="sm" name="arrow-right" />
         }
     </ng-template>
 </ng-container>

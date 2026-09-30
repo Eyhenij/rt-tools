@@ -1,5 +1,6 @@
 import { Args, Meta, moduleMetadata, StoryObj } from '@storybook/angular';
 
+import { STORY_PHONE_VIEWPORT } from '../../../../showcase/story-snapshot';
 import { SIDE_MENU_STORY_DEEP_ACTIVE } from './component/side-menu-story-data';
 import { TestRtSideMenuMobileComponent } from './component/test-side-menu-mobile.component';
 import { TestRtSideMenuComponent } from './component/test-side-menu.component';
@@ -28,8 +29,13 @@ type TStory = StoryObj<TestRtSideMenuComponent>;
 /** Подменю, открытое наведением, гаснет, когда обвязка уводит указатель: история называет панель. */
 const HOVERED: { snapshot: { fullPage: boolean; overlay: string } } = { snapshot: { fullPage: true, overlay: SIDE_MENU_PANEL } };
 
-/** Меню телефона: та же история на обёртке с узким экраном. */
-const MOBILE: Pick<TStory, 'decorators' | 'render'> = {
+/**
+ * Меню телефона: та же история в окне телефона, как `Mobile` первого кита, — 360 на 780. Узкий экран
+ * кит определяет сам, по ширине окна; в витрине окно ставит панель размеров окна.
+ */
+const MOBILE: Pick<TStory, 'decorators' | 'render' | 'globals' | 'parameters'> = {
+    globals: { viewport: { value: 'narrow' } },
+    parameters: { snapshot: { fullPage: true, viewport: STORY_PHONE_VIEWPORT } },
     decorators: [moduleMetadata({ imports: [TestRtSideMenuMobileComponent] })],
     render: (args: Args): { props: Args; template: string } => ({
         props: args,

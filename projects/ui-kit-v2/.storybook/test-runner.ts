@@ -73,6 +73,7 @@ interface ISnapshotParameters {
     fullPage?: boolean;
     overlay?: string;
     hover?: string | readonly string[];
+    viewport?: { readonly width: number; readonly height: number };
 }
 
 /** Записать снятый кадр в реестр, чтобы сверка каталога знала, что он ожидаем. */
@@ -425,7 +426,9 @@ const config: TestRunnerConfig = {
             await freezeHover(page);
         }
 
-        await page.setViewportSize(VIEWPORT);
+        // Окно, которое назвала история, — окно её базового кадра: телефонное меню снимается в
+        // телефонном окне, и порог узкого экрана срабатывает сам, как у человека.
+        await page.setViewportSize(snapshot.viewport ?? VIEWPORT);
     },
 
     async postVisit(page: Page, context: TestContext): Promise<void> {
