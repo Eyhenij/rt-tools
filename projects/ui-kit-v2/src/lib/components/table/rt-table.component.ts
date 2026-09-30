@@ -50,6 +50,7 @@ import { BreakpointsService } from '../../platform';
 import { RtEmptyStateComponent } from '../empty-state/rt-empty-state.component';
 import { IRtIcon } from '../icon/rt-icon.model';
 import { RtMenuComponent } from '../menu/rt-menu.component';
+import { RtRadiusDirective } from '../radius/rt-radius.directive';
 import { RtSkeletonComponent } from '../skeleton/rt-skeleton.component';
 import { RtSpinnerComponent } from '../spinner/rt-spinner.component';
 import { RtTableFilterHeaderComponent } from './filter-header/rt-table-filter-header.component';
@@ -114,6 +115,7 @@ const DEFAULT_EMPTY_KEY: TRtKitLabelKey = 'uiNoRows';
         // pipes
         RtRowHasActionsPipe,
     ],
+    hostDirectives: [{ directive: RtRadiusDirective, inputs: ['radius'] }],
     providers: [
         {
             provide: CDK_TABLE,

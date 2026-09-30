@@ -36,6 +36,9 @@
                 @case ('empty-state') {
                     <rt-empty-state icon="calendar" title="Пусто" [radius]="col" />
                 }
+                @case ('table') {
+                    <app-radius-table-card [radius]="col" />
+                }
             }
         </div>
     </ng-template>

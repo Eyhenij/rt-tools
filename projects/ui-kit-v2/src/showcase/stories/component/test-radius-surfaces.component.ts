@@ -13,6 +13,7 @@ import { IRtSectionNav } from '../../../lib/components/section-nav/rt-section-na
 import { RtStepperComponent } from '../../../lib/components/stepper/rt-stepper.component';
 import { IRtStepper } from '../../../lib/components/stepper/rt-stepper.model';
 import { StoryGridComponent } from '../../story-grid.component';
+import { TestRtRadiusTableCardComponent } from './test-radius-table-card.component';
 import { RT_RADIUS_PARTS, radiusColumnLabel, TRtRadiusColumn, TRtRadiusPart } from './test-radius-columns';
 
 /** Поверхности сетки скруглений, по строке на компонент. */
@@ -26,6 +27,7 @@ const ROWS: readonly string[] = [
     'stepper',
     'section-nav',
     'empty-state',
+    'table',
 ];
 
 /**
@@ -52,6 +54,7 @@ const ROWS: readonly string[] = [
 
         RtSectionNavComponent,
         RtStepperComponent,
+        TestRtRadiusTableCardComponent,
     ],
 })
 export class TestRtRadiusSurfacesComponent {

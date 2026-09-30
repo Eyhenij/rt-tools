@@ -1,6 +1,17 @@
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 
+import {
+    CdkCell,
+    CdkCellDef,
+    CdkColumnDef,
+    CdkHeaderCell,
+    CdkHeaderCellDef,
+    CdkHeaderRow,
+    CdkHeaderRowDef,
+    CdkRow,
+    CdkRowDef,
+} from '@angular/cdk/table';
 import { Component, Type } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
@@ -35,6 +46,7 @@ import { RtSelectComponent } from '../select/rt-select.component';
 import { RtSkeletonComponent } from '../skeleton/rt-skeleton.component';
 import { RtSplitButtonComponent } from '../split-button/rt-split-button.component';
 import { RtStepperComponent } from '../stepper/rt-stepper.component';
+import { RtTableComponent } from '../table/rt-table.component';
 import { RtTagComponent } from '../tag/rt-tag.component';
 import { RtTextareaComponent } from '../textarea/rt-textarea.component';
 import { RtThreadListComponent } from '../thread-list/rt-thread-list.component';
@@ -69,12 +81,50 @@ function drawn<T>(component: Type<T>, inputs: Readonly<Record<string, unknown>> 
     return fixture.nativeElement as HTMLElement;
 }
 
+@Component({
+    selector: 'rt-radius-table-host',
+    imports: [
+        RtTableComponent,
+        CdkColumnDef,
+        CdkHeaderCellDef,
+        CdkHeaderCell,
+        CdkCellDef,
+        CdkCell,
+        CdkHeaderRowDef,
+        CdkHeaderRow,
+        CdkRowDef,
+        CdkRow,
+    ],
+    template: `
+        <table rt-table radius="lg" [dataSource]="rows" [columns]="columns">
+            <ng-container cdkColumnDef="title">
+                <th *cdkHeaderCellDef cdk-header-cell>Название</th>
+                <td *cdkCellDef="let row" cdk-cell>{{ row }}</td>
+            </ng-container>
+            <tr *cdkHeaderRowDef="columns" cdk-header-row></tr>
+            <tr *cdkRowDef="let row; columns: columns" cdk-row></tr>
+        </table>
+    `,
+})
+class TableHostComponent {
+    public readonly rows: readonly string[] = ['Тур'];
+    public readonly columns: readonly string[] = ['title'];
+}
+
 /** Кнопка — директива на чужом теге: рисуется внутри своего хоста. */
 function drawnButton(): HTMLElement {
     TestBed.configureTestingModule({ imports: [ButtonHostComponent], providers: provideRtKitTesting() });
     const fixture: ComponentFixture<ButtonHostComponent> = TestBed.createComponent(ButtonHostComponent);
     fixture.detectChanges();
     return (fixture.nativeElement as HTMLElement).querySelector('button') as HTMLElement;
+}
+
+/** Таблице CDK без описаний строк рисовать нечего: она рисуется внутри своего хоста. */
+function drawnTable(): HTMLElement {
+    TestBed.configureTestingModule({ imports: [TableHostComponent], providers: provideRtKitTesting() });
+    const fixture: ComponentFixture<TableHostComponent> = TestBed.createComponent(TableHostComponent);
+    fixture.detectChanges();
+    return (fixture.nativeElement as HTMLElement).querySelector('table') as HTMLElement;
 }
 
 const OPTIONS: readonly { label: string; value: string }[] = [
@@ -194,6 +244,7 @@ const SURFACES: readonly ISurface[] = [
     },
     { name: 'stepper', styles: 'stepper/rt-stepper.component.scss', draw: (): HTMLElement => drawn(RtStepperComponent, { steps: [] }) },
     { name: 'thread-list', styles: 'thread-list/rt-thread-list.component.scss', draw: (): HTMLElement => drawn(RtThreadListComponent) },
+    { name: 'table', styles: 'table/rt-table.component.scss', draw: drawnTable },
 ];
 
 /** Все файлы стилей в папке компонентов кита, со вложенными. */

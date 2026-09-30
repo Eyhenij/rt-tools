@@ -57,6 +57,8 @@ own and lets any instance take any step: the kit promises the same by one input.
   mockup, and a step for the whole box does not fit a dot.
 - **The table gives the step to the card of its narrow view.** The wide view keeps no corners: the
   mockup draws it with the step `none`, and a rounded grid of rows would cut its outer cells.
+  The host of the narrow view has no fill of its own while it draws cards: otherwise the rounded
+  corner of a card stands on a white square.
 - **No rounding of a component stands off the scale.** A literal like `999px` or `12px` in a place
   of a step looks right on one screen and diverges from the neighbour that took the step.
 - **The old shape inputs are gone, and their values map onto the steps.** The tag's `shape` and

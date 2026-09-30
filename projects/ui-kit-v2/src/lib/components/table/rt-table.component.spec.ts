@@ -1,3 +1,6 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
 import {
     CdkCell,
     CdkCellDef,
@@ -16,6 +19,7 @@ import { BreakpointsService } from '../../platform';
 import { classesOf, createRtFixture, el, qa, qaAll, textOf } from '../../../testing/rt-kit-testing';
 import { EFilterOperatorType, IFilterModel } from '@rt-tools/utils';
 
+import { TRtRadius } from '../radius/rt-radius.model';
 import { IRtTable } from './rt-table.model';
 import { RtTableComponent } from './rt-table.component';
 
@@ -43,6 +47,7 @@ const COLUMNS: ReadonlyArray<string> = ['title', 'city'];
             [columns]="columns"
             [density]="density()"
             [cards]="cards()"
+            [radius]="radius()"
             [loading]="loading()"
             [fetching]="fetching()"
             [emptyMessage]="emptyMessage()">
@@ -77,6 +82,7 @@ class TableHostComponent {
     public readonly rows: WritableSignal<ReadonlyArray<ITourRow>> = signal<ReadonlyArray<ITourRow>>(ROWS);
     public readonly density: WritableSignal<IRtTable.Density> = signal<IRtTable.Density>('default');
     public readonly cards: WritableSignal<boolean> = signal<boolean>(true);
+    public readonly radius: WritableSignal<TRtRadius | null> = signal<TRtRadius | null>(null);
     public readonly loading: WritableSignal<boolean> = signal<boolean>(false);
     public readonly fetching: WritableSignal<boolean> = signal<boolean>(false);
     public readonly emptyMessage: WritableSignal<string> = signal<string>('');
@@ -313,6 +319,36 @@ describe('RtTableComponent', (): void => {
                 'title',
                 'city',
             ]);
+        });
+
+        it('SC-UKV-489 — шаг скругления стоит на хосте узкого показа', (): void => {
+            const fixture: ComponentFixture<TableHostComponent> = setupNarrow();
+            fixture.componentInstance.radius.set('lg');
+            render(fixture);
+
+            expect(qa(fixture, 'table-cards')).not.toBeNull();
+            expect(table(fixture).getAttribute('data-rt-radius')).toBe('lg');
+        });
+
+        it('SC-UKV-489 — шаг скругления стоит на хосте широкого показа', (): void => {
+            const fixture: ComponentFixture<TableHostComponent> = setup();
+            fixture.componentInstance.radius.set('lg');
+            render(fixture);
+
+            expect(qa(fixture, 'table-cards')).toBeNull();
+            expect(table(fixture).getAttribute('data-rt-radius')).toBe('lg');
+        });
+
+        it('SC-UKV-489 — шаг достаётся только карточке узкого показа: у широкого показа углов нет', (): void => {
+            const css: string = readFileSync(join(__dirname, 'rt-table.component.scss'), 'utf8');
+            const users: string[] = css.split('\n').filter((line: string): boolean => line.includes('var(--rt-table-card-radius)'));
+
+            // положительная половина: свойство карточки вообще читается, и читает его одна рамка карточки
+            expect(users).toEqual(['            border-radius: var(--rt-table-card-radius);']);
+            expect(css).toMatch(/&__card \{[^}]*border-radius: var\(--rt-table-card-radius\)/);
+            expect(css).toContain("@include kv.radius-steps('--rt-table-card-radius');");
+            // хост карточного вида без фона, кроме пустой таблицы: угол карточки не стоит на белом квадрате
+            expect(css).toMatch(/&:not\(\.rt-table--empty\) \{\s*background: transparent;/);
         });
 
         it('карточки выключаются входом даже на узком экране', (): void => {
