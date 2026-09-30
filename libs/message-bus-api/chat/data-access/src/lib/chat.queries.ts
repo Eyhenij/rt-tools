@@ -110,18 +110,52 @@ export async function liveSiteOrigins(prisma: PrismaService): Promise<string[]> 
     return sites.flatMap((site: { origins: string[] }): string[] => site.origins);
 }
 
-/** Переписка посетителя на этом сайте по его признаку. Пусто — признак чужой или не выдавался. */
+/** Поля переписки, которыми на неё ссылаются. */
+const CONVERSATION_FIELDS: Readonly<Record<keyof IChatConversationRow, true>> = { id: true, siteId: true, visitorId: true };
+
+/** Посетитель сайта по признаку вместе с его переписками, свежие первыми. Пусто — признак чужой. */
+async function visitorWithTalks(
+    prisma: PrismaService,
+    siteId: string,
+    token: string
+): Promise<{ id: string; conversations: IChatConversationRow[] } | null> {
+    return prisma.chatVisitor.findUnique({
+        where: { siteId_token: { siteId, token } },
+        select: { id: true, conversations: { orderBy: { lastMessageAt: 'desc' }, select: CONVERSATION_FIELDS } },
+    });
+}
+
+/**
+ * Последняя переписка посетителя на этом сайте по его признаку. Пусто — признак чужой или не
+ * выдавался.
+ */
 export async function findConversationByVisitorToken(
     prisma: PrismaService,
     siteId: string,
     token: string
 ): Promise<IChatConversationRow | null> {
-    const visitor: { id: string; conversations: IChatConversationRow[] } | null = await prisma.chatVisitor.findUnique({
-        where: { siteId_token: { siteId, token } },
-        select: { id: true, conversations: { select: { id: true, siteId: true, visitorId: true } } },
-    });
+    const visitor: { conversations: IChatConversationRow[] } | null = await visitorWithTalks(prisma, siteId, token);
 
     return visitor?.conversations[0] ?? null;
+}
+
+/** Названная переписка посетителя. Пусто — признак чужой или переписка не его. */
+export async function findVisitorConversation(
+    prisma: PrismaService,
+    siteId: string,
+    token: string,
+    conversationId: string
+): Promise<IChatConversationRow | null> {
+    const visitor: { conversations: IChatConversationRow[] } | null = await visitorWithTalks(prisma, siteId, token);
+
+    return visitor?.conversations.find((talk: IChatConversationRow): boolean => talk.id === conversationId) ?? null;
+}
+
+/** Признак записи посетителя сайта. Пусто — признак чужой или не выдавался. */
+export async function findVisitorId(prisma: PrismaService, siteId: string, token: string): Promise<string | null> {
+    const visitor: { id: string } | null = await visitorWithTalks(prisma, siteId, token);
+
+    return visitor?.id ?? null;
 }
 
 /** Посетитель и его переписка одной сделкой. Признак выдаёт зовущий: его же он вернёт виджету. */
@@ -133,10 +167,88 @@ export async function startConversation(prisma: PrismaService, siteId: string, t
             firstSeenAt: at,
             conversations: { create: { siteId, createdAt: at, lastMessageAt: at } },
         },
-        select: { conversations: { select: { id: true, siteId: true, visitorId: true } } },
+        select: { conversations: { select: CONVERSATION_FIELDS } },
     });
 
     return { conversation: visitor.conversations[0], visitorToken: token };
+}
+
+/** Новое обращение посетителя, который уже есть: его заводит только просьба посетителя. */
+export async function startVisitorConversation(
+    prisma: PrismaService,
+    siteId: string,
+    visitorId: string,
+    at: Date
+): Promise<IChatConversationRow> {
+    return prisma.chatConversation.create({
+        data: { siteId, visitorId, createdAt: at, lastMessageAt: at },
+        select: CONVERSATION_FIELDS,
+    });
+}
+
+/** Строка списка обращений посетителя: чем её показать в виджете. */
+export interface IChatVisitorTalkRow {
+    readonly id: string;
+    readonly state: string;
+    readonly lastMessageAt: Date;
+    /** Последняя реплика обращения. Пусто — обращение заведено, но в нём ещё не писали. */
+    readonly lastMessage: string;
+    readonly lastMessageSide: string;
+    /** Имя того, кто ответил последним. Пусто — названного ответа ещё не было. */
+    readonly operatorName: string;
+}
+
+interface IStoredVisitorTalk {
+    readonly id: string;
+    readonly state: string;
+    readonly lastMessageAt: Date;
+    readonly messages: readonly { readonly side: string; readonly text: string }[];
+}
+
+/**
+ * Обращения посетителя на сайте, свежие первыми. Пусто — признак чужой: чужой посетитель и
+ * посетитель без обращений различаются, первый получает отказ.
+ *
+ * Имя отвечавшего читается вторым запросом, одним на все обращения: последняя реплика и последний
+ * названный ответ — разные сообщения, и одно чтение сообщений их не достаёт.
+ */
+export async function visitorConversations(prisma: PrismaService, siteId: string, token: string): Promise<IChatVisitorTalkRow[] | null> {
+    const visitor: { conversations: IStoredVisitorTalk[] } | null = await prisma.chatVisitor.findUnique({
+        where: { siteId_token: { siteId, token } },
+        select: {
+            conversations: {
+                orderBy: { lastMessageAt: 'desc' },
+                select: {
+                    id: true,
+                    state: true,
+                    lastMessageAt: true,
+                    messages: { orderBy: { takenAt: 'desc' }, take: 1, select: { side: true, text: true } },
+                },
+            },
+        },
+    });
+
+    if (!visitor) {
+        return null;
+    }
+
+    const named: { conversationId: string; authorName: string }[] = await prisma.chatMessage.findMany({
+        where: {
+            conversationId: { in: visitor.conversations.map((talk: IStoredVisitorTalk): string => talk.id) },
+            authorName: { not: '' },
+        },
+        orderBy: { takenAt: 'desc' },
+        select: { conversationId: true, authorName: true },
+    });
+
+    return visitor.conversations.map((talk: IStoredVisitorTalk): IChatVisitorTalkRow => ({
+        id: talk.id,
+        state: talk.state,
+        lastMessageAt: talk.lastMessageAt,
+        lastMessage: talk.messages[0]?.text ?? '',
+        lastMessageSide: talk.messages[0]?.side ?? '',
+        operatorName: named.find((row: { conversationId: string }): boolean => row.conversationId === talk.id)?.authorName ?? '',
+    }));
 }
 
 /**

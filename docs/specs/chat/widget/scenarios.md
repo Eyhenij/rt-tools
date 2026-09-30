@@ -24,7 +24,7 @@ Then the remark stands in the thread, and the sign of the visitor lies in the st
 ### SC-CH-52 — a returning visitor sees their earlier talk
 
 Given a browser that holds the sign of the visitor of that site
-When the page with the widget is opened again
+When the page with the widget is opened again, and the visitor opens their talk from the list
 Then the messages of that same conversation stand in the thread, oldest first
 
 ### SC-CH-53 — the answer of the operator arrives in the open widget
@@ -112,3 +112,45 @@ When the visitor puts the focus into the field
 Then the capsule of the field draws the focus border and the ring
 
 Covered by the end-to-end spec of the widget.
+
+### SC-CH-107 — a visitor with talks opens the widget on the list of them
+
+Given a visitor with two talks on the site, one of them closed by the operator
+When the visitor unfolds the widget
+Then the list "Ваши обращения" shows both, the latest first, the closed one with the mark
+"Закрыто", and the button "Новое обращение" stands under the list
+
+Covered by the end-to-end spec of the widget.
+
+### SC-CH-108 — the new-talk button starts a second talk
+
+Given a visitor with a talk on the site
+When the visitor presses "Новое обращение" and sends a remark
+Then the remark stands alone in a new talk, and the list shows two talks
+
+Covered by the end-to-end spec of the widget.
+
+### SC-CH-109 — the arrow of the head leads back to the list
+
+Given a talk opened from the list
+When the visitor presses the arrow of the head
+Then the list of the talks stands in the widget again
+
+Covered by the end-to-end spec of the widget.
+
+### SC-CH-110 — an answer to a talk not opened carries the unread dot
+
+Given a visitor looking at the list of their talks
+When the operator answers one of them
+Then the row of that talk carries the dot, and the dot is gone after the talk is opened
+
+Covered by the end-to-end spec of the widget and the spec of the widget logic.
+
+### SC-CH-111 — the head and the bubble name the operator who answered
+
+Given a talk without an answer
+When an operator answers it from the panel
+Then the head showed "Поддержка" and the hours before, and after the answer shows the initials,
+the name of the account and "Служба поддержки"; the bubble names the first word of the name
+
+Covered by the end-to-end spec of the widget and the spec of the widget logic.

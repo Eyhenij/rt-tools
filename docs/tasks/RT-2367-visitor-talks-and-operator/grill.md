@@ -45,14 +45,47 @@ The task itself, as written in the queue:
 - The chat service: `libs/message-bus-api/chat/` — `api`, `data-access`, `feature`, `util`.
 - The widget: `apps/chat-widget/src/lib/`.
 - The specs: `docs/specs/chat/spec.md` and the subdomains, the widget in `docs/specs/chat/widget/`.
+- The storage allows one conversation per visitor for all time: `visitorId` of the conversation is
+  unique, and a visitor record exists per site.
+- A message keeps its side only; the answer of an operator does not keep the account behind it. The
+  embedded talks page answers by the sign of the site, without any account.
+- The account has a name and a role of rights; it has no photo and no position. The receiver has no
+  file storage.
+- A remark of the visitor reopens a closed conversation. The open API of the widget gives no state
+  of a conversation.
+
+## What the documents already say
+
+- The epic plan: the ninth task (RT-2364) decides what the visitor sees after a talk is closed and
+  where the next remark goes — this task does not decide it.
+- The widget spec keeps the open question whether the widget names the operator who answers.
+- The epic plan names «имя с фото сотрудника», while every mockup frame draws initials.
 
 ## Questions and answers
 
-Filled after the exploration of the data model.
+The owner answered the recommended option in every menu of this epic and ordered the tasks to be
+done one after another. The menu of this task was refused twice by the grill guard, which reads
+every question after the first menu as answered. The questions are closed by assumption, each by
+the option the menu recommended:
+
+- **Where the operator's name comes from** — closed by assumption: the name of the account that
+  answered. Answers from the embedded page and answers written before this work say «Поддержка».
+- **What stands under the name** — closed by assumption: one word «Служба поддержки» for everyone;
+  no position is added to the data.
+- **The avatar** — closed by assumption: initials of the name, as in the mockup; no photo, the
+  receiver has no file storage.
+- **Does it need an edit of a law or a rule** — closed by assumption: no.
 
 ## Decisions
 
+- **A visitor has many talks on a site.** The unique mark on the visitor of a conversation goes; a
+  new talk is started by the button «Новое обращение»; the first remark keeps starting a talk when
+  the visitor has none.
+- **An answer keeps the account that wrote it.** The name reaches the widget with every message of
+  the operator's side.
+- **The list gives each talk its last remark, its time, its state and whether it has an unread
+  answer.** What counts as read is decided in the agreement.
+
 ## What is left unclear
 
-- Where the name and the role of the operator come from, and how the visitor's talks are listed —
-  the exploration of the data model goes on.
+- How the widget knows an answer is unread: the storage keeps no mark of reading by the visitor.

@@ -1,6 +1,6 @@
 # The widget of the visitor
 
-**Status:** in force · **Revision:** 2026-09-21 · **Scenario prefix:** `SC-CH`
+**Status:** in force · **Revision:** 2026-09-30 · **Scenario prefix:** `SC-CH`
 **Depends on:** `chat` (the site, the visitor and the taking in), `chat/event-stream` (the stream), `chat/operator-panel` (the answer of the operator)
 **Laws:** `frontend-application`, `access`, `reuse-first`, `verifiability`
 **Procedures:** none — the operations are declared by the controller of the taking in
@@ -32,7 +32,9 @@ The words of the widget are its own: the host page is of any tongue, and the ser
 codes, not with text. The field of the first remark carries the placeholder "Напишите нам", the
 button of sending — "Отправить". A remark past the limit gets "Реплика длиннее, чем принимает
 сервис"; a refused sending gets "Реплика не ушла". Outside the hours of answer the widget says
-"Ответим в рабочие часы". An unknown or switched-off site gets "Чат недоступен".
+"Ответим в рабочие часы". An unknown or switched-off site gets "Чат недоступен". The list of talks
+is headed "Ваши обращения" and ends with the button "Новое обращение"; a closed talk carries the
+mark "Закрыто"; under the name of the operator stands "Служба поддержки".
 
 ## Rules
 
@@ -59,15 +61,24 @@ button of sending — "Отправить". A remark past the limit gets "Реп
 - **The conversation is created by the first remark, not by the opening of the widget.** A widget
   opened and left alone creates nothing: otherwise the list of the operator fills with talks nobody
   wrote in.
-- **A returning visitor sees their earlier talk.** The sign of the visitor lies in the storage of
-  the browser under the key of the site, and by it the widget reads the messages of its own
-  conversation. A visitor whose browser lost the sign starts a new talk — the service has no other
-  way to recognise them.
+- **A returning visitor opens the widget on the list of their talks.** The sign of the visitor
+  lies in the storage of the browser under the key of the site, and by it the widget reads the
+  list. A visitor whose browser lost the sign starts a new talk — the service has no other way to
+  recognise them.
+- **A new talk is started by the button under the list.** It opens an empty talk with the greeting,
+  and the first remark creates the conversation with the mark of a new talk: a talk the visitor did
+  not ask for is never started.
+- **A talk opened from the list goes back to it by the arrow of the head.** The list is the home of
+  a visitor with talks; without the way back the other talks are out of reach.
+- **An answer is unread until the visitor opens its talk, and the mark lives in the browser.** The
+  widget keeps the minute each talk was last seen next to the sign; a talk whose last answer is
+  newer carries the dot. The service keeps no reading of the visitor: a second device shows the dot
+  again, and that costs less than a table nobody else reads.
 - **Both sides stand in one thread, oldest first.** The same order the panel of the operator shows:
   two orders of one talk would make the two sides read it differently.
 - **An answer of the operator arrives in the open widget without a reload.** The stream of the
-  events is subscribed to by the sign of the visitor and carries the events of their conversation
-  alone.
+  events is subscribed to by the sign of the visitor and carries the events of their conversations
+  alone; an answer to another talk marks it unread in the list.
 - **Outside the hours of answer the remark is taken in all the same, and the widget says when the
   answer comes.** A chat that refuses at night looks broken; a chat that stays silent about the
   hours promises an answer it will not give.
@@ -88,6 +99,14 @@ button of sending — "Отправить". A remark past the limit gets "Реп
 - **Before the first remark the greeting and the hours stand in one card; outside the hours a talk
   gets a note above the thread.** Inside the hours a going talk shows no hours at all: the visitor
   already knows the answer comes.
+- **A row of the list names the operator, the last remark, its time, the unread dot and the closed
+  mark.** A row without a named answer says "Поддержка" by the common icon; the time of today is
+  the hour, of yesterday "Вчера", earlier the day and the month.
+- **The head of a talk names the operator who answered last.** The initials in a circle, the name
+  and "Служба поддержки"; before a named answer — the common icon, "Поддержка" and the hours.
+  There is no photo: the service keeps no files, and the mockup draws the initials.
+- **The bubble of an answer names the first word of the operator's name.** An answer without a name
+  says "Поддержка", as before.
 - **The field is a capsule, and in focus it draws the ring of the fields of the tree.** The send
   button beside it is pale while the field is empty and stays pressable: an empty remark is not
   sent by the check of the widget, not by a switched-off button.
@@ -116,17 +135,19 @@ button of sending — "Отправить". A remark past the limit gets "Реп
 
 ## Contract
 
-| Operation                    | What it does                                                       |
-| ---------------------------- | ------------------------------------------------------------------ |
-| GET /api/chat/site           | the greeting, the hours of answer and whether the site is on       |
-| GET /api/chat/messages       | the messages of the own conversation of the visitor, by their sign |
-| POST /api/chat/conversations | creates the conversation and gives out the sign of the visitor     |
-| POST /api/chat/messages      | takes in the remark of the visitor                                 |
-| GET /api/chat/stream         | the stream of the events of the own conversation of the visitor    |
+| Operation                           | What it does                                                       |
+| ----------------------------------- | ------------------------------------------------------------------ |
+| GET /api/chat/site                  | the greeting, the hours of answer and whether the site is on       |
+| GET /api/chat/messages              | the messages of the own conversation of the visitor, by their sign |
+| POST /api/chat/conversations        | creates the conversation and gives out the sign of the visitor     |
+| POST /api/chat/messages             | takes in the remark of the visitor                                 |
+| GET /api/chat/stream                | the stream of the events of the own conversations of the visitor   |
+| GET /api/chat/visitor-conversations | the list of the talks of the visitor, the latest first             |
 
-The last three exist and are described by the spec of the domain; the first two arrive by this work.
-All five are open operations: they are closed by the key of the site and by the list of the
-addresses, and the two that speak of one conversation — by the sign of the visitor as well.
+All six are open operations: they are closed by the key of the site and by the list of the
+addresses, and those that speak of the visitor's talks — by the sign of the visitor as well. An
+answer of the operator in the messages and in the stream carries the name of its account when it
+has one.
 
 ### Refusal codes
 
@@ -143,8 +164,8 @@ the taking in already uses, and the widget words them itself.
 
 ## Data
 
-The widget keeps one thing of its own: the sign of the visitor in the storage of the browser, under
-a key derived from the key of the site. Everything else lives in the storage of the service. The
+The widget keeps two things of its own in the storage of the browser, under a key derived from the
+key of the site: the sign of the visitor and the minute each talk was last seen. Everything else lives in the storage of the service. The
 record of the site gains two fields: the greeting and the hours of answer — the minute the answer
 starts, the minute it ends and the time zone they are counted in.
 
@@ -155,6 +176,9 @@ starts, the minute it ends and the time zone they are counted in.
 | The bubble | folded                 | the round button in the corner; on a narrow screen the same         |
 | The widget | the site is unknown    | the words that the chat is unavailable and a hint, without a field  |
 | The widget | no talk yet            | the greeting, the hours of answer and the field of the first remark |
+| The widget | the list of talks      | the rows of the talks, the latest first, and the new-talk button    |
+| The widget | a talk without answer  | the common icon, "Поддержка" and the hours in the head              |
+| The widget | a talk with an answer  | the initials, the name and "Служба поддержки" in the head           |
 | The widget | the talk is read       | the messages of both sides, oldest first, and the field             |
 | The widget | the remark is sent     | the remark in the thread, marked as not confirmed by the service    |
 | The widget | the sending is refused | the words of the refusal, and the text stays in the field           |
@@ -192,14 +216,17 @@ One page belongs to one site. A visitor writing from two sites has two signs and
 - **The hours of answer are one interval for every day.** Rejected: a week of intervals — nobody has
   asked for days off, and the pair of numbers is replaced by a table without touching what the
   widget shows.
+- **The operator is named by the name of the account, under one word for the role, by initials.**
+  Rejected: a name for the visitors and a position on the account — an edit of the accounts screen
+  nobody asked for; a photo — the service keeps no files.
+- **The unread mark lives in the browser.** Rejected: a reading of the visitor in the storage — a
+  table for a dot on one screen.
 - **The messages of the own conversation are read by an operation of its own, closed by the sign of
   the visitor.** Rejected: giving the visitor the reading of the operator — that one is closed by an
   entry and answers for the sites of a person, and a visitor has neither.
 
 ## Open questions
 
-- Whether the widget shows the name of the operator who answers. The storage keeps the side of a
-  message, not the person behind it; nobody has asked for the name yet.
 - Whether a page may put the widget in without a tag, by the script alone. Two ways of putting it in
   would diverge; the tag is chosen because the page decides where the widget stands.
 
@@ -210,3 +237,5 @@ One page belongs to one site. A visitor writing from two sites has two signs and
   the width of a long remark was added by the work itself.
 - 2026-09-30 — the look follows the mockup by the task RT-2365 of the epic RT-2370: the round
   button, the blue head, the bubbles, the capsule field; scenarios SC-CH-99…SC-CH-102.
+- 2026-09-30 — the list of the visitor's talks, the new talk and the name of the operator by the
+  task RT-2367; scenarios SC-CH-107…SC-CH-111.

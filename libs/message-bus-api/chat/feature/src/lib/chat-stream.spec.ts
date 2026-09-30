@@ -104,6 +104,7 @@ describe('поток событий чата', () => {
             side: 'visitor',
             text: 'здравствуйте',
             takenAt: AT.toISOString(),
+            authorName: '',
         });
 
         watched.open.unsubscribe();

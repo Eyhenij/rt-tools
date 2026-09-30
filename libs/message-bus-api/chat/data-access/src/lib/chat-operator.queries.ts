@@ -28,6 +28,8 @@ export interface IChatMessageListRow {
     readonly side: string;
     readonly text: string;
     readonly takenAt: Date;
+    /** Имя учётной записи, написавшей ответ. Пусто — реплика посетителя или ответ без учётной записи. */
+    readonly authorName: string;
 }
 
 /** Чем сужен список переписок: сайтом и состоянием, оба необязательны. */
@@ -125,6 +127,8 @@ export interface IChatOwnedTalk {
     readonly id: string;
     readonly siteId: string;
     readonly state: string;
+    /** Посетитель переписки: по нему событие находит поток его виджета. */
+    readonly visitorId: string;
 }
 
 /** Переписка одного из сайтов оператора. Пусто — её нет или она чужая: ответ один на две причины. */
@@ -139,7 +143,7 @@ export async function conversationOfSites(
 
     return prisma.chatConversation.findFirst({
         where: { id: conversationId, siteId: { in: [...sites] } },
-        select: { id: true, siteId: true, state: true },
+        select: { id: true, siteId: true, state: true, visitorId: true },
     });
 }
 
@@ -165,7 +169,7 @@ export async function messagesPage(
             orderBy: { takenAt: 'asc' },
             skip: pageSkip(asked),
             take: asked.size,
-            select: { id: true, side: true, text: true, takenAt: true },
+            select: { id: true, side: true, text: true, takenAt: true, authorName: true },
         }),
         prisma.chatMessage.count({ where }),
     ]);
@@ -186,12 +190,13 @@ export async function appendOperatorMessage(
     prisma: PrismaService,
     conversationId: string,
     text: string,
-    at: Date
+    at: Date,
+    authorName: string = ''
 ): Promise<IChatMessageListRow> {
     const [message]: [IChatMessageListRow, unknown] = await prisma.$transaction([
         prisma.chatMessage.create({
-            data: { conversationId, text, side: 'operator', takenAt: at },
-            select: { id: true, side: true, text: true, takenAt: true },
+            data: { conversationId, text, authorName, side: 'operator', takenAt: at },
+            select: { id: true, side: true, text: true, takenAt: true, authorName: true },
         }),
         prisma.chatConversation.update({ where: { id: conversationId }, data: { lastMessageAt: at, wokeAt: null } }),
     ]);

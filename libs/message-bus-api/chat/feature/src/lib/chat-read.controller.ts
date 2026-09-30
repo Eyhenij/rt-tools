@@ -110,7 +110,7 @@ export class ChatReadController {
     @SessionOperation()
     @Sse()
     public async stream(@Req() request: IAccountBearingRequest): Promise<Observable<IChatFrame>> {
-        return this.#subscribers.stream({ conversationId: null, siteIds: await this.#sites(request) });
+        return this.#subscribers.stream({ visitorId: null, siteIds: await this.#sites(request) });
     }
 
     /**
@@ -134,7 +134,8 @@ export class ChatReadController {
         const fields: Record<string, unknown> = (body ?? {}) as Record<string, unknown>;
         const text: string = typeof fields['text'] === 'string' ? fields['text'].trim() : '';
 
-        return this.#talks.answer(await this.#sites(request), id, text, at);
+        // имя вошедшего уходит с ответом: посетитель видит, кто ему отвечает
+        return this.#talks.answer(await this.#sites(request), id, text, at, accountOf(request).name);
     }
 
     /** Смена состояния переписки: закрыть разговор или открыть его снова. */
