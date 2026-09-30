@@ -1,49 +1,42 @@
 @layer rt-kit.components {
     .rt-message-composer {
-        --rt-message-composer-radius: var(--rt-radius-md);
+        --rt-message-composer-radius: var(--rt-radius-full);
+        --rt-message-composer-tall-radius: var(--rt-radius-2xl);
         --rt-message-composer-border-width: var(--rt-border-width-thin);
-        --rt-message-composer-divider-width: var(--rt-border-width-thin);
 
         display: flex;
         flex-direction: column;
-        padding: var(--rt-space-4);
-        border: var(--rt-message-composer-border-width) solid var(--rt-color-border-default);
-        border-radius: var(--rt-message-composer-radius);
-        background: var(--rt-color-bg-surface);
-        gap: var(--rt-space-2);
+        gap: calc(var(--rt-space-1) * 1.5);
 
         /* Ширина приходит от хозяина, а не от содержимого. Без этой строки её задавала textarea
            без объявленной ширины: такую браузер считает от средней ширины знака первого
            доступного начертания, и величина гуляла между поднятиями витрины — 158 против 161. */
         inline-size: 100%;
 
-        &:focus-within {
-            border-color: var(--rt-color-border-strong);
-        }
+        &__capsule {
+            display: flex;
+            flex-direction: column;
+            padding: calc(var(--rt-space-1) * 1.5);
+            border: var(--rt-message-composer-border-width) solid var(--rt-input-color-border);
+            border-radius: var(--rt-message-composer-radius);
+            background: var(--rt-input-color-bg);
+            gap: calc(var(--rt-space-1) * 1.5);
 
-        &__input {
-            padding: 0;
-            border: 0;
-            margin: 0;
-            background: transparent;
-            color: inherit;
-            font: inherit;
-            font-size: var(--rt-text-sm);
-            inline-size: 100%;
-            line-height: var(--rt-leading-snug);
-
-            /* Своего размера поле ввода хозяину не отдаёт: иначе его ширина по `cols`
-               по-прежнему участвовала бы в измерении. */
-            min-inline-size: 0;
-            outline: 0;
-            resize: none;
-
-            &::placeholder {
-                color: var(--rt-color-text-muted);
+            // Фокус — как у полей кита: поверхность, рамка фокуса и кольцо.
+            &:focus-within {
+                border-color: var(--rt-input-color-border-focus);
+                background: var(--rt-color-bg-surface);
+                box-shadow: var(--rt-input-focus-shadow);
             }
 
-            &:disabled {
-                cursor: not-allowed;
+            // Выше одной строки капсула берёт шаг скругления 20: полное скругление
+            // на высокой капсуле срезало бы углы текста и карточек.
+            &--tall {
+                --rt-message-composer-radius: var(--rt-message-composer-tall-radius);
+            }
+
+            &--disabled {
+                background: var(--rt-input-color-bg-disabled);
             }
         }
 
@@ -53,22 +46,61 @@
             gap: var(--rt-space-1);
         }
 
-        // Разделитель тянется на всю ширину бокса — компенсируем горизонтальный padding.
-        &__divider {
-            background: var(--rt-color-border-default);
-            block-size: var(--rt-message-composer-divider-width);
-            margin-inline: calc(-1 * var(--rt-space-4));
+        &__rich {
+            inline-size: 100%;
         }
 
-        &__controls {
+        // Кнопки прижаты к низу: растущий текст поднимает капсулу, а не их.
+        &__row {
             display: flex;
-            align-items: center;
+            align-items: flex-end;
             gap: var(--rt-space-2);
         }
 
-        // Кнопка отправки всегда у правого края, даже когда attach скрыт.
+        &__input {
+            flex: 1 1 auto;
+            border: 0;
+            margin: 0;
+            background: transparent;
+            color: var(--rt-input-color-text);
+            font: inherit;
+            font-size: var(--rt-input-font-size);
+            inline-size: 100%;
+            line-height: var(--rt-leading-normal);
+
+            /* Своего размера поле ввода хозяину не отдаёт: иначе его ширина по `cols`
+               по-прежнему участвовала бы в измерении. */
+            min-inline-size: 0;
+            outline: 0;
+
+            /* Одна строка текста по высоте равна круглой кнопке: отступ добирает разницу. */
+            padding-block: calc((var(--rt-control-height-md) - 1lh) / 2);
+            padding-inline: calc(var(--rt-space-1) * 1.5) 0;
+            resize: none;
+
+            &::placeholder {
+                color: var(--rt-input-color-text-placeholder);
+            }
+
+            &:disabled {
+                cursor: not-allowed;
+
+                &::placeholder {
+                    color: var(--rt-color-text-disabled);
+                }
+            }
+        }
+
+        // Кнопка отправки всегда у правого края: и без скрепки, и в режиме форматирования.
         &__send {
             margin-inline-start: auto;
+        }
+
+        &__hint {
+            margin: 0;
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-xs);
+            line-height: var(--rt-leading-snug);
         }
     }
 }

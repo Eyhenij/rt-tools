@@ -60,6 +60,7 @@ agreement about their own subject and describe the surface of a component, not a
 | [A tree of options](option-tree/spec.md)                                  | options with children in the select and the multiselect: levels, arrows, what a click, a key and the filter do                  |
 | [The panel of the date field](date-panel/spec.md)                         | the kit's own panel of a date, a time and a date with time: month, columns, bounds, keys, narrow screen                         |
 | [The date range field](date-range/spec.md)                                | a form field of a period: two months, presets, the hover preview, the summary, bounds, keys, narrow screen                      |
+| [The message field](message-composer/spec.md)                             | the capsule a chat message is typed in: round buttons, growth, send states, focus, files, the hint                              |
 
 ## What is out of scope
 
