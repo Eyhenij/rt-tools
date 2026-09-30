@@ -65,6 +65,7 @@ export * from './popover';
 export * from './radio-button';
 export * from './ripple';
 export * from './section-nav';
+export * from './side-menu';
 export * from './scroll-area';
 export * from './select';
 export * from './skeleton';

@@ -57,6 +57,7 @@ agreement about their own subject and describe the surface of a component, not a
 | [The settings of the kit and the theme](kit-settings-theme/spec.md)       | what an application sets the look of the kit at the start by, the three states of the theme, a node with a theme of its own     |
 | [The accordion](accordion/spec.md)                                        | a list of headed items whose texts open on a press, independently of one another                                                |
 | [The tooltip of a cut text](tooltip-when-truncated/spec.md)               | the mode where the tooltip shows only over a text that did not fit its node                                                     |
+| [The side menu](side-menu/spec.md)                                        | a rail of sections with the submenu of a section beside it: hover or pinning, search, folders, width                            |
 
 ## What is out of scope
 

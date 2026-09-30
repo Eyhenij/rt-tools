@@ -12,4 +12,7 @@ export enum ERtStorageKeys {
 
     /** Префикс, а не полный ключ: итоговый вид — `rt.table.columns.<tableId>`. */
     TableColumnsPrefix = 'rt.table.columns.',
+
+    /** Настройки боковых меню: один объект, в нём каждое меню под своим номером. */
+    SideMenu = 'rt.side-menu',
 }

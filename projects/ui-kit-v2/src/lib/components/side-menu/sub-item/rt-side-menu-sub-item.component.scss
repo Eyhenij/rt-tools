@@ -1,0 +1,100 @@
+@layer rt-kit.components {
+    /* rt-side-menu-sub-item — строка подменю бокового меню. ViewEncapsulation.None.
+       Host несёт класс блока; строка — ссылка или кнопка папки. */
+
+    .rt-side-menu-sub-item {
+        --rt-side-menu-sub-item-radius: var(--rt-radius-full);
+        --rt-side-menu-sub-item-transition-duration: var(--rt-duration-fast);
+
+        /* Маркер совпадения поиска — жёлтая подложка с тёмной подписью в обеих темах, как у первого кита. */
+        --rt-side-menu-sub-item-match-bg: var(--rt-yellow-400);
+        --rt-side-menu-sub-item-match-color: var(--rt-neutral-950);
+        --rt-side-menu-sub-item-match-radius: var(--rt-radius-xs);
+
+        display: block;
+
+        &__row {
+            /* Глубину вложения ставит шаблон на саму строку; здесь — значение строки верхнего уровня. */
+            --rt-side-menu-sub-item-depth: 0;
+
+            display: flex;
+            width: 100%;
+            min-height: var(--rt-control-height-md);
+            box-sizing: border-box;
+            align-items: center;
+            border: 0;
+            border-radius: var(--rt-side-menu-sub-item-radius);
+            background: transparent;
+            color: var(--rt-color-text-primary);
+            cursor: pointer;
+            font: inherit;
+            font-size: var(--rt-text-sm);
+            gap: var(--rt-space-sm);
+            padding-block: var(--rt-space-2);
+            padding-inline: calc(var(--rt-space-md) * (1 + var(--rt-side-menu-sub-item-depth))) var(--rt-space-sm);
+            text-align: start;
+            text-decoration: none;
+            transition: background-color var(--rt-side-menu-sub-item-transition-duration) ease;
+
+            &:hover,
+            &:active,
+            &--highlighted {
+                background: var(--rt-color-bg-hover);
+            }
+
+            &:focus-visible {
+                outline: var(--rt-focus-ring-width) solid var(--rt-focus-ring-color);
+                outline-offset: calc(var(--rt-focus-ring-width) * -1);
+            }
+
+            /* Активна строка со ссылкой; у папки активность видна по её раскрытым пунктам. */
+            &--active:not(.rt-side-menu-sub-item__row--folder) {
+                background: var(--rt-color-action-primary-subtle);
+                color: var(--rt-color-action-primary-on-surface);
+            }
+        }
+
+        &__icon {
+            flex-shrink: 0;
+            color: inherit;
+        }
+
+        /* Подпись режется многоточием, полное имя — в подсказке. */
+        &__title {
+            overflow: hidden;
+            min-width: 0;
+            flex: 1 1 auto;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        &__part {
+            color: inherit;
+        }
+
+        &__match {
+            border-radius: var(--rt-side-menu-sub-item-match-radius);
+            background: var(--rt-side-menu-sub-item-match-bg);
+            color: var(--rt-side-menu-sub-item-match-color);
+        }
+
+        &__action {
+            flex-shrink: 0;
+        }
+
+        &__chevron {
+            flex-shrink: 0;
+            color: var(--rt-color-text-muted);
+            transition: transform var(--rt-side-menu-sub-item-transition-duration) ease;
+
+            &--open {
+                transform: rotate(180deg);
+            }
+        }
+
+        &__children {
+            display: flex;
+            flex-direction: column;
+        }
+    }
+}

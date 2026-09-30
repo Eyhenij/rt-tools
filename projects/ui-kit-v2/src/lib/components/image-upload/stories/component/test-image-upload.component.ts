@@ -1,19 +1,26 @@
-import { DOCUMENT } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, Signal, signal, viewChild, WritableSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
-import { WINDOW } from '@rt-tools/core';
-
-import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
-import { StoryRowComponent } from '../../../../../showcase/story-row.component';
-import { RtButtonDirective } from '../../../button';
 import { IRtImageCropper } from '../../../image-cropper';
-import { drawStoryCropperSample } from '../../../image-cropper/stories/component/story-cropper-sample';
 import { RtImageUploadComponent } from '../../rt-image-upload.component';
 
 /**
- * Демонстрационная обёртка загрузчика: держит изменяемое состояние, на которое Storybook вешает
- * контролы. «Бросить демо-картинку» отдаёт загрузчику нарисованный файл так же, как его отдаёт
- * брошенный на зону, — посмотреть обрезку можно без своего файла. В пакет обёртка не уезжает.
+ * Картинка встроена в адрес, а не берётся из сети: внешний источник отдаёт каждый раз новое
+ * изображение, и кадр витрины плыл бы при неизменном компоненте. Тот же рисунок, что в истории
+ * загрузчика первого кита, — их удобно сравнивать рядом.
+ */
+export const STORY_UPLOAD_IMAGE: string =
+    'data:image/svg+xml;base64,' +
+    btoa(
+        '<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">' +
+            '<rect width="200" height="200" fill="#4284d7"/>' +
+            '<circle cx="100" cy="78" r="34" fill="#fff"/>' +
+            '<path d="M40 170c0-33 27-52 60-52s60 19 60 52z" fill="#fff"/>' +
+            '</svg>'
+    );
+
+/**
+ * Обёртка загрузчика для витрины: держит изменяемое состояние, на которое Storybook вешает
+ * контролы, и больше ничего — как история загрузчика первого кита. В пакет не уезжает.
  */
 @Component({
     selector: 'app-image-upload',
@@ -21,28 +28,11 @@ import { RtImageUploadComponent } from '../../rt-image-upload.component';
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // components
-        RtButtonDirective,
         RtImageUploadComponent,
-
-        // showcase
-        StoryPresetsComponent,
-        StoryRowComponent,
     ],
 })
 export class TestRtImageUploadComponent {
-    readonly #window: Window & typeof globalThis = inject(WINDOW) as Window & typeof globalThis;
-
-    readonly #document: Document = inject(DOCUMENT);
-
-    protected readonly upload: Signal<RtImageUploadComponent> = viewChild.required(RtImageUploadComponent);
-
-    public readonly toolbar: readonly string[] = ['drop', 'reset'];
-
-    public readonly summary: WritableSignal<string> = signal(
-        'Бросьте изображение на зону, выберите его кнопкой или бросьте демо-картинку.'
-    );
-
-    public imageUrl: string | null = null;
+    public imageUrl: string | null = STORY_UPLOAD_IMAGE;
     public fileName: string = 'logo.png';
     public tooltip: string = '';
     public downloadable: boolean = true;
@@ -54,23 +44,8 @@ export class TestRtImageUploadComponent {
     public format: IRtImageCropper.Format | null = null;
     public quality: number = 92;
 
-    /** Подписей под кнопками ряда нет: кнопка называет себя сама */
-    public readonly noLabel: () => string = (): string => '';
-
-    public dropSample(): void {
-        void drawStoryCropperSample(this.#document, this.#window).then((sample: File | null): void => this.upload().choose(sample));
-    }
-
-    /**
-     * Загрузчик держит применённую картинку, пока приложение не даст новый адрес. Пустая строка —
-     * новый адрес без картинки: при `null` на входе ничего не поменялось бы, и картинка осталась бы.
-     */
-    public reset(): void {
-        this.imageUrl = this.imageUrl === '' ? null : '';
-        this.summary.set('Картинка сброшена: на месте снова зона загрузки.');
-    }
-
-    public onChanged(file: File): void {
-        this.summary.set(`Приложение получило ${file.name}: ${file.type}, ${Math.round(file.size / 1024)} КБ.`);
+    public imageChanged(file: File): void {
+        // eslint-disable-next-line no-console
+        console.log('image changed:', file);
     }
 }

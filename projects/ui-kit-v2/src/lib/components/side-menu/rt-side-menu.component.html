@@ -1,0 +1,224 @@
+<ng-container rtBlock="rt-side-menu">
+    @if (narrow()) {
+        <!-- Узкий экран: один столбец — главные пункты или подменю выбранного раздела с кнопкой назад. -->
+        <rt-scroll-area rtElem="mobile" [isScrollHintShown]="true">
+            @if (headerTpl(); as header) {
+                <ng-container *rtScrollAreaHeader>
+                    <ng-container [ngTemplateOutlet]="header" />
+                </ng-container>
+            }
+
+            <ng-container *rtScrollAreaContent>
+                @if (selectedSubMenu()?.length) {
+                    <div rtElem="mobile-sub">
+                        <button type="button" rtElem="back" qa-dataid="side-menu-back" (click)="onBackToMainMenu()">
+                            <rt-icon rtElem="back-icon" size="sm" name="arrow-left" />
+                            <span rtElem="back-label">{{ backLabel() }}</span>
+                        </button>
+
+                        <ng-container [ngTemplateOutlet]="subMenuTpl" />
+                    </div>
+                } @else {
+                    <nav rtElem="mobile-list">
+                        @for (item of menuItems(); track item.id) {
+                            <ng-container [ngTemplateOutlet]="mobileItemTpl" [ngTemplateOutletContext]="{ $implicit: item }" />
+                        }
+                    </nav>
+                }
+            </ng-container>
+
+            @if (footerTpl(); as footer) {
+                <ng-container *rtScrollAreaFooter>
+                    <ng-container [ngTemplateOutlet]="footer" />
+                </ng-container>
+            }
+        </rt-scroll-area>
+    } @else {
+        <rt-scroll-area rtElem="rail" [isScrollHintShown]="true">
+            @if (headerTpl(); as header) {
+                <ng-container *rtScrollAreaHeader>
+                    <ng-container [ngTemplateOutlet]="header" />
+                </ng-container>
+            }
+
+            <ng-container *rtScrollAreaContent>
+                <nav rtElem="rail-list">
+                    @for (item of menuItems(); track item.id) {
+                        <ng-container [ngTemplateOutlet]="railItemTpl" [ngTemplateOutletContext]="{ $implicit: item }" />
+                    }
+                </nav>
+            </ng-container>
+
+            @if (footerTpl(); as footer) {
+                <ng-container *rtScrollAreaFooter>
+                    <ng-container [ngTemplateOutlet]="footer" />
+                </ng-container>
+            }
+        </rt-scroll-area>
+
+        @if (subMenuOpened()) {
+            @if (isSearchHeld()) {
+                <!-- Подложка незакреплённой панели: подменю, взятое полем поиска, закрывает нажатие снаружи. -->
+                <div
+                    rtElem="backdrop"
+                    qa-dataid="side-menu-backdrop"
+                    tabindex="-1"
+                    (click)="closeSubMenu()"
+                    (keydown.escape)="closeSubMenu()"></div>
+            }
+
+            <div
+                #panel
+                rtElem="panel"
+                qa-dataid="side-menu-panel"
+                [rtMod]="{ pinned: isPinned(), held: isSearchHeld() }"
+                (mouseleave)="toggleSubMenu()">
+                <div rtElem="panel-head">
+                    <rt-input
+                        rtElem="search"
+                        qa-dataid="side-menu-search"
+                        size="sm"
+                        iconLeft="search"
+                        [placeholder]="searchLabel()"
+                        [ariaLabel]="searchLabel()"
+                        [formControl]="searchControl"
+                        (focusin)="onSearchHold()"
+                        (keydown)="onSearchKeydown($event)" />
+
+                    <rt-icon-button
+                        rtElem="pin"
+                        qa-dataid="side-menu-pin"
+                        size="sm"
+                        [icon]="isPinned() ? 'lock' : 'lock-open'"
+                        [active]="isPinned()"
+                        [ariaLabel]="isPinned() ? unpinLabel() : pinLabel()"
+                        [tooltip]="isPinned() ? unpinLabel() : pinLabel()"
+                        (clicked)="onSubMenuModeToggle()" />
+                </div>
+
+                <rt-scroll-area rtElem="panel-body">
+                    <ng-container *rtScrollAreaContent>
+                        <ng-container [ngTemplateOutlet]="subMenuTpl" />
+                    </ng-container>
+                </rt-scroll-area>
+            </div>
+
+            @if (isPinned()) {
+                <!-- Ручка есть только у закреплённого подменю: незакреплённое уходит раньше, чем до края доедет рука. -->
+                <div
+                    rtElem="resizer"
+                    qa-dataid="side-menu-resize"
+                    role="separator"
+                    aria-orientation="vertical"
+                    tabindex="0"
+                    [attr.aria-label]="resizeLabel()"
+                    [attr.aria-valuenow]="resizeValueNow()"
+                    [attr.aria-valuemin]="resizeValueNow() === null ? null : resizeValueMin"
+                    [attr.aria-valuemax]="resizeValueNow() === null ? null : resizeValueMax"
+                    (pointerdown)="onResizeStart($event)"
+                    (keydown)="onResizeKeydown($event)"></div>
+            }
+        }
+    }
+    <ng-template #subMenuTpl>
+        @if (narrow()) {
+            <rt-input
+                rtElem="search"
+                qa-dataid="side-menu-search"
+                size="sm"
+                iconLeft="search"
+                [placeholder]="searchLabel()"
+                [ariaLabel]="searchLabel()"
+                [formControl]="searchControl"
+                (keydown)="onSearchKeydown($event)" />
+        }
+
+        @if (isNothingFound()) {
+            <div rtElem="empty" qa-dataid="side-menu-empty">{{ nothingFoundLabel() }}</div>
+        }
+
+        <div rtElem="sub-list">
+            @for (item of visibleSubMenuItems(); track item.id) {
+                <rt-side-menu-sub-item
+                    [item]="item"
+                    (clickSubMenuAction)="onClickSubMenu($event)"
+                    (clickSubMenuAdditionalAction)="onClickSubMenuAdditional($event)" />
+            }
+        </div>
+    </ng-template>
+
+    <ng-template #railItemTpl let-item>
+        @let isActive = activeRailIds().includes(item.id);
+        @if (item.link) {
+            <a
+                rtElem="rail-item"
+                qa-dataid="side-menu-item"
+                [routerLink]="item.link"
+                [rtMod]="{ active: isActive }"
+                [attr.aria-current]="isActive ? 'page' : null"
+                (mouseenter)="toggleSubMenu(item)"
+                (click)="onClickMenu(item)">
+                <ng-container [ngTemplateOutlet]="railItemBodyTpl" [ngTemplateOutletContext]="{ $implicit: item }" />
+            </a>
+        } @else {
+            <button
+                type="button"
+                rtElem="rail-item"
+                qa-dataid="side-menu-item"
+                [rtMod]="{ active: isActive }"
+                [attr.aria-expanded]="item.submenu?.length ? subMenuOpened() && selectedItem() === item : null"
+                (mouseenter)="toggleSubMenu(item)"
+                (click)="onClickMenu(item)">
+                <ng-container [ngTemplateOutlet]="railItemBodyTpl" [ngTemplateOutletContext]="{ $implicit: item }" />
+            </button>
+        }
+    </ng-template>
+
+    <ng-template #railItemBodyTpl let-item>
+        @if (item.icon) {
+            <span rtElem="rail-icon">
+                <rt-icon [name]="item.icon" />
+            </span>
+        }
+
+        @if (item.name) {
+            <span rtElem="rail-title">{{ item.name }}</span>
+        }
+    </ng-template>
+
+    <ng-template #mobileItemTpl let-item>
+        @let isActive = activeRailIds().includes(item.id);
+        @if (item.link && !item.submenu?.length) {
+            <a
+                rtElem="mobile-item"
+                qa-dataid="side-menu-item"
+                [routerLink]="item.link"
+                [rtMod]="{ active: isActive }"
+                [attr.aria-current]="isActive ? 'page' : null"
+                (click)="onClickMenu(item)">
+                <ng-container [ngTemplateOutlet]="mobileItemBodyTpl" [ngTemplateOutletContext]="{ $implicit: item }" />
+            </a>
+        } @else {
+            <button
+                type="button"
+                rtElem="mobile-item"
+                qa-dataid="side-menu-item"
+                [rtMod]="{ active: isActive }"
+                (click)="onClickMenu(item)">
+                <ng-container [ngTemplateOutlet]="mobileItemBodyTpl" [ngTemplateOutletContext]="{ $implicit: item }" />
+            </button>
+        }
+    </ng-template>
+
+    <ng-template #mobileItemBodyTpl let-item>
+        @if (item.icon) {
+            <rt-icon rtElem="mobile-icon" [name]="item.icon" />
+        }
+
+        <span rtElem="mobile-title" [rtTooltip]="item.name">{{ item.name }}</span>
+
+        @if (item.submenu?.length) {
+            <rt-icon rtElem="mobile-chevron" size="sm" name="chevron-right" />
+        }
+    </ng-template>
+</ng-container>
