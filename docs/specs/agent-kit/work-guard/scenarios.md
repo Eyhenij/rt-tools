@@ -152,3 +152,20 @@ When application code is edited
 Then the guard stays silent: the requirement is lifted by that very commit
 
 Covered: `projects/agent-kit/tests/task-flow-guard.test.sh`.
+
+### SC-AK-1177 — a file in conflict of a standing merge is edited without a task folder
+
+Given main is merged into a branch with no task folder, and the merge stopped on a conflict in
+application code
+When the file in conflict is edited
+Then the guard stays silent: the resolution is the merge itself. A folder made up for the epic
+branch would be the very edit the rule forbids in it
+
+### SC-AK-1178 — the exception is the conflict, not the branch
+
+Given the same branch
+When a code file outside the conflict is edited during the merge, or the file in conflict after the
+merge is aborted
+Then the guard refuses as before
+
+Covered: `projects/agent-kit/tests/task-flow-guard.test.sh`.

@@ -315,6 +315,37 @@ report "SC-AK-667 — папка, заведённая в историю, пра
     "$(edit_at "$IN_TREE_ONLY")" PASS
 rm -rf "$IN_TREE_ONLY"
 
+# --- SC-AK-1177…1178 — разрешение конфликта слияния на ветке без папки задачи ----------------
+#
+# Главная вливается в ветку эпика, пока идёт работа, а папки задачи у ветки эпика нет по правилу:
+# она держит слияния, а не свои правки. Конфликт без исключения остаётся без законного выхода.
+OTHER='libs/site/x/ui/src/lib/b.component.ts'
+edit_path_at() {
+    local out
+    out="$(CLAUDE_PROJECT_DIR="$1" jq -n --arg f "$1/$2" --arg d "$1" \
+        '{session_id:"tests",tool_name:"Edit",tool_input:{file_path:$f},cwd:$d}' \
+        | CLAUDE_PROJECT_DIR="$1" "$HOOKS/task-flow-guard.sh" 2>/dev/null)"
+    [ -z "$out" ] && { printf 'PASS'; return 0; }
+    printf '%s' "$out" | jq -r '.hookSpecificOutput.permissionDecision // "PASS"' 2>/dev/null
+}
+
+MERGING="$(fixture_repo_branched main RT-50-epic)"
+git -C "$MERGING" checkout -q main
+fixture_commit "$MERGING" "$OTHER" 'export class B {}' 'feat: соседний файл'
+fixture_commit "$MERGING" "$COMP" 'export class A { main = 1; }' 'feat: правка в главной'
+git -C "$MERGING" checkout -q RT-50-epic
+fixture_commit "$MERGING" "$COMP" 'export class A { epic = 1; }' 'feat: слияние задачи эпика'
+git -C "$MERGING" -c user.name=probe -c user.email=probe@example.com -c commit.gpgsign=false \
+    merge -q main --no-edit >/dev/null 2>&1
+report "SC-AK-1177 — файл в конфликте слияния правится без папки задачи" \
+    "$(edit_path_at "$MERGING" "$COMP")" PASS
+report "SC-AK-1178 — код вне конфликта в том же слиянии отбивается" \
+    "$(edit_path_at "$MERGING" "$OTHER")" deny
+git -C "$MERGING" merge --abort >/dev/null 2>&1
+report "SC-AK-1178 — без идущего слияния тот же файл отбивается" \
+    "$(edit_path_at "$MERGING" "$COMP")" deny
+rm -rf "$MERGING"
+
 # --- отказ в пользу работы ----------------------------------------------------------------
 # Сломанный гард не должен мешать работать: любой неразобранный вход пропускается.
 exit_code_of() {

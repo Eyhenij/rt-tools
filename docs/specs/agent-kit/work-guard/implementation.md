@@ -8,6 +8,7 @@ statement: a removed statement is removed together with its line.
 - **The refusal names the mandatory action of the state that is declared.** — `projects/agent-kit/assets/hooks/task-flow-guard.sh:state_action`
 - **A folder taken apart by a commit of the branch lifts the requirement of the plan.** — `projects/agent-kit/assets/hooks/task-flow-guard.sh:folder_archived`
 - **The task folder goes into the branch by a commit, it does not live in one working tree.** — `projects/agent-kit/assets/hooks/task-flow-guard.sh:in_tree`
+- **A file in conflict while a merge stands is resolved without a task folder.** — `projects/agent-kit/assets/hooks/task-flow-guard.sh:merge_conflict_only`; scenarios SC-AK-1177, SC-AK-1178
 - **The agreement is demanded by the paths of the edit, not by an appraisal of the task.** — `projects/agent-kit/assets/hooks/task-flow-context.sh:rt_tf_candidates`
 - **The agreement is named by one of two kinds — a draft in the "proposed" directory or a domain spec.** — `projects/agent-kit/assets/hooks/task-flow-draft-guard.sh:draft`
 - **A named agreement must exist on the disk or in the history of the branch.** — `projects/agent-kit/assets/hooks/task-flow-draft-guard.sh:draft_path`

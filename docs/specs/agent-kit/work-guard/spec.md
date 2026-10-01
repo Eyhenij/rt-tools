@@ -68,6 +68,10 @@ turn.
   change of behaviour.
 - **A laid-out rules layer is judged on a par with application code.** It is covered by the paths of
   the code nowhere, and its sign is its own — the layout header at the start of the file.
+- **A file in conflict while a merge stands is resolved without a task folder.** The epic branch
+  carries no folder by the rule. Main is merged into it while the work runs, and a refused conflict
+  has no lawful way out. A resolved file and any other code file of the same merge are judged as
+  before.
 
 - **The keys of the task folder are read under two names, English and Russian.** The samples of a
   task folder in the package carry the English keys — `## Where we stand`, `**State:**`, `**Draft:**`,
@@ -134,3 +138,5 @@ None.
 - 2026-08-27 — the subdomain was split out of the spec of the guards: the scenario file had outgrown
   the length limit, and the subject in it was double — the guard judging the place of an edit and the
   guard judging the progress of the work.
+- 2026-10-01 — a file in conflict of a standing merge is let through without a task folder. The
+  merge of main into an epic branch stopped on the guard's refusal (RT-2458).

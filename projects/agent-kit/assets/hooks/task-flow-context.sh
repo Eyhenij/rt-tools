@@ -24,6 +24,7 @@
 # branch with history; otherwise a non-zero code, and the guard exits silently.
 #
 #   RT_TF_PATH        — the application-code path because of which the guard judges at all
+#   RT_TF_CANDIDATES  — every path the call writes, one per line, as named in the call
 #   RT_TF_BRANCH      — the current branch of the edit's working directory
 #   RT_TF_ROOT        — the root of the working tree
 #   RT_TF_TASKS_DIR   — the task folders directory, as the tree names it
@@ -174,6 +175,7 @@ rt_task_flow_context() {
 $rt_tf_candidates
 EOF
     [ -z "$RT_TF_PATH" ] && return 1
+    RT_TF_CANDIDATES="$rt_tf_candidates"
 
     # The branch is looked at where the edit will go: a worktree has one of its own.
     rt_tf_workdir="$(rt_hook_cwd)"
