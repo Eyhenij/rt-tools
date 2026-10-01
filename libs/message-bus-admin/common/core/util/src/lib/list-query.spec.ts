@@ -158,8 +158,8 @@ describe('listQueryParams', () => {
     it('SC-MB-224 — снятый отбор по состоянию уходит из адреса пустотой', () => {
         const query: IAdminListQuery = listQueryOf({ state: 'fixed' }, SORTABLE);
 
-        expect(listQueryParams(query, SORTABLE).state).toBe('fixed');
-        expect(listQueryParams({ ...query, state: '' }, SORTABLE).state).toBeNull();
+        expect(listQueryParams(query, SORTABLE)['state']).toBe('fixed');
+        expect(listQueryParams({ ...query, state: '' }, SORTABLE)['state']).toBeNull();
     });
 
     it('SC-MB-225 — оба отбора стоят в адресе рядом, а не вместо друг друга', () => {
@@ -177,8 +177,8 @@ describe('listQueryParams', () => {
     it('SC-MB-242 — снятый отбор по версии уходит из адреса пустотой', () => {
         const query: IAdminListQuery = listQueryOf({ version: '0.9.0' }, SORTABLE);
 
-        expect(listQueryParams(query, SORTABLE).version).toBe('0.9.0');
-        expect(listQueryParams({ ...query, version: '' }, SORTABLE).version).toBeNull();
+        expect(listQueryParams(query, SORTABLE)['version']).toBe('0.9.0');
+        expect(listQueryParams({ ...query, version: '' }, SORTABLE)['version']).toBeNull();
     });
 
     it('разобранное и собранное сходятся: адрес переживает круг', () => {

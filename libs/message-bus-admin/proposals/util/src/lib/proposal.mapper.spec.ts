@@ -12,6 +12,8 @@ function apiShort(patch: Partial<IProposal.Short.Api> = {}): IProposal.Short.Api
         address: 'Ловушки',
         state: 'in_work',
         releaseVersion: null,
+        quarantineNote: null,
+        closedByPublisher: false,
         arrivedAt: '2026-08-14T21:30:00.000Z',
         ...patch,
     };
@@ -92,7 +94,7 @@ describe('ProposalMapper', () => {
     const mapper: ProposalMapper = new ProposalMapper();
 
     it('запись целиком повторяет строку списка и добавляет текст и месяц', () => {
-        const entity: IProposal.State = mapper.mapFrom({ ...apiShort(), text: 'ловушку стоит назвать', month: '2026-08' });
+        const entity: IProposal.State = mapper.mapFrom({ ...apiShort(), text: 'ловушку стоит назвать', month: '2026-08', fixNote: null });
 
         expect(entity.resource).toBe('rules/lists.md');
         expect(entity.address).toBe('Ловушки');
@@ -111,7 +113,7 @@ describe('ProposalMapper', () => {
 
     it('разметка, приехавшая с дерева, доезжает до экрана как есть', () => {
         const raw: string = '<script>alert(1)</script>';
-        const entity: IProposal.State = mapper.mapFrom({ ...apiShort(), text: raw, month: '2026-08' });
+        const entity: IProposal.State = mapper.mapFrom({ ...apiShort(), text: raw, month: '2026-08', fixNote: null });
 
         expect(entity.text).toBe(raw);
     });
@@ -133,6 +135,7 @@ describe('ProposalMapper', () => {
             ...apiShort(),
             text: 'предложение',
             month: '2026-08',
+            fixNote: null,
             releaseVersion: 'rt-agent-kit@0.10.1',
         });
 
@@ -140,7 +143,13 @@ describe('ProposalMapper', () => {
     });
 
     it('SC-MB-206 — запись без версии читается пустой строкой, а не пустотой', () => {
-        const entity: IProposal.State = mapper.mapFrom({ ...apiShort(), text: 'предложение', month: '2026-08', releaseVersion: null });
+        const entity: IProposal.State = mapper.mapFrom({
+            ...apiShort(),
+            text: 'предложение',
+            month: '2026-08',
+            fixNote: null,
+            releaseVersion: null,
+        });
 
         expect(entity.releaseVersion).toBe('');
     });

@@ -44,6 +44,11 @@ function apiOne(patch: Partial<IProposal.Api> = {}): IProposal.Api {
         arrivedAt: '2026-08-14T21:30:00.000Z',
         text: 'ловушку стоит назвать',
         month: '2026-08',
+        state: 'new',
+        releaseVersion: null,
+        quarantineNote: null,
+        closedByPublisher: false,
+        fixNote: null,
         ...patch,
     };
 }
