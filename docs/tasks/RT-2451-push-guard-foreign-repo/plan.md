@@ -28,10 +28,8 @@
 ### 1. The same repository is told by the shared `.git` directory
 
 - **Steps:**
-    1. Push guard: a second copy is the same shared `.git` directory with another root; another
-       repository is not judged
-    2. Delivery guard: the task state and the branch form are asked of the tree of execution when
-       it is another repository
+    1. Push guard: a second copy is the same shared `.git` directory with another root; another repository is not judged
+    2. Delivery guard: the task state and the branch form are asked of the tree of execution when it is another repository
     3. Tests for both guards: a real second copy refused, another repository passes
 - **Readiness sign:** all three suites print `0 провалов`
 - **Verified by:** `bash projects/agent-kit/tests/git-guard-push-tests.test.sh && bash projects/agent-kit/tests/git-guards.test.sh && bash projects/agent-kit/tests/git-guards-readiness.test.sh` — each prints `0 провалов`
