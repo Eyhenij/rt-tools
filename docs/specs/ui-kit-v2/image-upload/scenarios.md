@@ -53,6 +53,12 @@ Given the picture and the download button asked for
 When the button is pressed
 Then the current image is saved under the file name
 
+### SC-UKV-489 — the download button lies over the corner, round or square
+
+Given the picture and the download button asked for
+When the application asks for no form, or for the square one
+Then the button is round, or square, and it reaches past the picture's top right edges
+
 ### SC-UKV-419 — an unavailable uploader changes nothing
 
 Given an unavailable uploader

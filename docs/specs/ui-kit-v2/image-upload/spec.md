@@ -1,6 +1,6 @@
 # The image uploader
 
-**Status:** in force · **Revision:** 29 September 2026 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 30 September 2026 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the image cropper — it cuts the chosen file; the drop zone and the empty state of the
 kit — the empty uploader is built of them; the labels of the kit — every text of the uploader is its
 key
@@ -29,12 +29,12 @@ file opens the cropper. The second kit gets the same uploader, built on its own 
 
 ### What it is called in the interface
 
-| In the agreement | On the screen                                                              |
-| ---------------- | -------------------------------------------------------------------------- |
-| the drop zone    | a dashed frame with a cloud, a line of text and a button to choose         |
-| the cropper      | the image with the frame, and the buttons «Cancel» and «Apply» under it    |
-| the image        | the picture itself; a hint names what a press does                         |
-| download         | a small button with an arrow down over the top right corner of the picture |
+| In the agreement | On the screen                                                                             |
+| ---------------- | ----------------------------------------------------------------------------------------- |
+| the drop zone    | a dashed frame with a cloud, a line of text and a button to choose                        |
+| the cropper      | the image with the frame, and the buttons «Cancel» and «Apply» under it                   |
+| the image        | the picture itself; a hint names what a press does                                        |
+| download         | a small button with an arrow down over the top right corner of the picture, past its edge |
 
 ## Rules
 
@@ -53,6 +53,8 @@ file opens the cropper. The second kit gets the same uploader, built on its own 
   action.
 - **The download button saves the current image under the file name.** It is shown only where the
   application asked for it.
+- **The download button reaches past the picture's top right corner, round or square.** It lies
+  over the edge as in the first kit. Round is the default, and the application may ask for square.
 - **An unavailable uploader changes nothing.** The drop zone takes no files, the image takes no press,
   and download stays.
 - **While the application loads, the place shows the kit's spinner.**
@@ -123,3 +125,5 @@ None.
 
 - 29 September 2026 — the agreement was written before the code, in the branch of RT-2397 at the
   owner's word.
+- 30 September 2026 — the download button reaches past the picture's corner and is round or
+  square. Task RT-2436, at the owner's word.

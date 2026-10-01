@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { IRtImageCropper } from '../../../image-cropper';
 import { RtImageUploadComponent } from '../../rt-image-upload.component';
+import { IRtImageUpload } from '../../rt-image-upload.model';
 
 /**
  * Картинка встроена в адрес, а не берётся из сети: внешний источник отдаёт каждый раз новое
@@ -36,6 +37,7 @@ export class TestRtImageUploadComponent {
     public fileName: string = 'logo.png';
     public tooltip: string = '';
     public downloadable: boolean = true;
+    public downloadShape: IRtImageUpload.DownloadShape = 'circle';
     public autoApply: boolean = false;
     public loading: boolean = false;
     public disabled: boolean = false;

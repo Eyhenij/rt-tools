@@ -11,6 +11,7 @@ import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { drawStoryCropperSample } from '../../../image-cropper/stories/component/story-cropper-sample';
 import { RtImageUploadComponent } from '../../rt-image-upload.component';
+import { IRtImageUpload } from '../../rt-image-upload.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
 export type TImageUploadMatrixPart = 'states' | 'presets' | 'themes';
@@ -20,6 +21,7 @@ interface IImageUploadStateCase {
     readonly name: string;
     readonly imageUrl: string | null;
     readonly downloadable: boolean;
+    readonly downloadShape: IRtImageUpload.DownloadShape;
     readonly loading: boolean;
     readonly disabled: boolean;
 }
@@ -66,12 +68,34 @@ export class TestRtImageUploadMatrixComponent {
     public readonly cellWidth: string = '18rem';
 
     public readonly stateCases: Signal<readonly IImageUploadStateCase[]> = computed((): readonly IImageUploadStateCase[] => [
-        { name: 'пусто', imageUrl: null, downloadable: false, loading: false, disabled: false },
-        { name: 'картинка', imageUrl: this.#url(), downloadable: false, loading: false, disabled: false },
-        { name: 'со скачиванием', imageUrl: this.#url(), downloadable: true, loading: false, disabled: false },
-        { name: 'загрузка', imageUrl: this.#url(), downloadable: false, loading: true, disabled: false },
-        { name: 'недоступен, пусто', imageUrl: null, downloadable: false, loading: false, disabled: true },
-        { name: 'недоступен, картинка', imageUrl: this.#url(), downloadable: true, loading: false, disabled: true },
+        { name: 'пусто', imageUrl: null, downloadable: false, downloadShape: 'circle', loading: false, disabled: false },
+        { name: 'картинка', imageUrl: this.#url(), downloadable: false, downloadShape: 'circle', loading: false, disabled: false },
+        {
+            name: 'скачивание, круглая',
+            imageUrl: this.#url(),
+            downloadable: true,
+            downloadShape: 'circle',
+            loading: false,
+            disabled: false,
+        },
+        {
+            name: 'скачивание, квадратная',
+            imageUrl: this.#url(),
+            downloadable: true,
+            downloadShape: 'square',
+            loading: false,
+            disabled: false,
+        },
+        { name: 'загрузка', imageUrl: this.#url(), downloadable: false, downloadShape: 'circle', loading: true, disabled: false },
+        { name: 'недоступен, пусто', imageUrl: null, downloadable: false, downloadShape: 'circle', loading: false, disabled: true },
+        {
+            name: 'недоступен, картинка',
+            imageUrl: this.#url(),
+            downloadable: true,
+            downloadShape: 'circle',
+            loading: false,
+            disabled: true,
+        },
     ]);
 
     public readonly presetCases: Signal<readonly { readonly name: string; readonly imageUrl: string | null }[]> = computed(
