@@ -112,6 +112,20 @@ const applyPreset: (preset: string) => void = (preset: string): void => {
     }
 };
 
+/**
+ * Схема цвета — имя в `<html data-rt-scheme>`, как у первого кита. Схема перекрашивает шкалу марки и
+ * синий шаг материального набора, поэтому идёт в обоих наборах и в обеих темах.
+ */
+const applyScheme: (scheme: string) => void = (scheme: string): void => {
+    const root: HTMLElement = document.documentElement;
+
+    if (scheme === 'default') {
+        root.removeAttribute('data-rt-scheme');
+    } else {
+        root.setAttribute('data-rt-scheme', scheme);
+    }
+};
+
 const preview: Preview = {
     decorators: [
         applicationConfig({
@@ -154,6 +168,7 @@ const preview: Preview = {
         (story: TDecoratorStory, context: TDecoratorContext): ReturnType<Decorator> => {
             applyTheme(String(context.globals['theme'] ?? 'light'));
             applyPreset(String(context.globals['preset'] ?? 'own'));
+            applyScheme(String(context.globals['scheme'] ?? 'default'));
             showcaseLabelsLang.set(String(context.globals['labels'] ?? 'ru'));
 
             return story();
@@ -188,6 +203,18 @@ const preview: Preview = {
                 dynamicTitle: true,
             },
         },
+        scheme: {
+            description: 'Схема цвета — пишется в `<html data-rt-scheme>`',
+            toolbar: {
+                title: 'Схема',
+                icon: 'contrast',
+                items: [
+                    { value: 'default', title: 'Без схемы — цвет марки кита' },
+                    { value: 'teal', title: 'Бирюзовая' },
+                ],
+                dynamicTitle: true,
+            },
+        },
         labels: {
             description: 'Язык подписей кита: русский набор витрины или английское умолчание кита',
             toolbar: {
@@ -204,6 +231,7 @@ const preview: Preview = {
     initialGlobals: {
         theme: 'light',
         preset: 'own',
+        scheme: 'default',
         labels: 'ru',
     },
     parameters: {

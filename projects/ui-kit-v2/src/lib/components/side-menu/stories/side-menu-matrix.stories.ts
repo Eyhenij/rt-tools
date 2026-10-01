@@ -68,4 +68,11 @@ export const Edges: TStory = { args: { part: 'edges' } };
 
 export const Presets: TStory = { args: { part: 'presets' } };
 
+/**
+ * Меню под схемой цвета — бирюзовой схемой витрины на `<html>`, в обоих наборах: активный пункт,
+ * подложка строки и звезда берут цвет схемы. Схема отвечает только на корне страницы, поэтому меню
+ * без схемы стоит рядом в истории `Presets`, а не в этом же кадре.
+ */
+export const Scheme: TStory = { args: { part: 'presets' }, globals: { scheme: 'teal' } };
+
 export const Themes: TStory = { args: { part: 'themes' } };

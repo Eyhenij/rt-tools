@@ -3,9 +3,9 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 4 of 5 — Colour scheme; stages 1, 2 and 3 done
-- **Done:** stage 1 — seventeen live stories on the first kit's data; stage 3 — favourites without Material and their eleven stories; the folders and the favourites block moved onto the new `rt-expansion-panel`, frames unchanged to the pixel; stage 2 — the phone menu matches the first kit's Mobile by measurement
-- **Next step:** declare `[data-rt-scheme]` over the brand ramp (4.1)
+- **Stage:** 5 of 5 — Texts, frames, showing; stages 1–4 done
+- **Done:** stage 1 — live stories on the first kit's data; stage 2 — the phone menu matches the first kit's Mobile by measurement; stage 3 — favourites on the new `rt-expansion-panel`, with their preset pair; stage 4 — `[data-rt-scheme]` by the mixin `rt-color-scheme`, a scheme toolbar, the `Scheme` story
+- **Next step:** 5.1 — bring the texts up: the tokens subdomain spec and the theming Overview must name `rt-color-scheme` and `data-rt-scheme`; the side menu spec and scenarios must name favourites, the panel folders and the phone column; then 5.2–5.4
 - **Uncommitted:** nothing
 - **Waiting for the owner:** no; every port is shown before a push — «я просил каждый перенесенный из первого кита модуль показывать мне перед отправкой в пр!!!»
 - **PR:** not open yet
@@ -23,10 +23,10 @@
 - [x] 3.2 Port the favorites block into the menu without Material
 - [x] 3.3 Add the favorites stories after the first kit's eleven
 - [x] 3.4 Write the scenarios and their tests
-- [>] 4.1 Declare `[data-rt-scheme]` over the brand ramp in the kit's styles, the material preset too
-- [ ] 4.2 Add a scheme switch to the showcase toolbar
-- [ ] 4.3 Show the menu under a scheme in a story
-- [ ] 5.1 Bring the spec, scenarios, overview and context of the menu up to what was done
+- [x] 4.1 Declare `[data-rt-scheme]` over the brand ramp in the kit's styles, the material preset too
+- [x] 4.2 Add a scheme switch to the showcase toolbar
+- [x] 4.3 Show the menu under a scheme in a story
+- [>] 5.1 Bring the spec, scenarios, overview and context of the menu up to what was done
 - [ ] 5.2 Take the new frames after looking at them
 - [ ] 5.3 Run the whole check set
 - [ ] 5.4 Show the owner the pairs of links before any push
@@ -71,6 +71,13 @@
   and faked the narrow screen by substituting the breakpoints service. Now the phone stories name
   the window, the kit finds the narrow screen by itself, and the showcase gets the same window in
   its viewport toolbar. Affected stage: 2.
+
+- **A scheme answers on the root only, and the default menu stands in `Presets`, not in the same
+  frame.** A step referred to by an assignment is resolved where the assignment is declared — on the
+  root — so a scheme on an inner node would keep the old accent. The done sign wants «the menu under a
+  scheme next to the default one»: the `Scheme` story and the `Presets` story stand side by side in
+  the list. A Material theme of an application still wins in the material set: its
+  `--mat-sys-primary` stands before the step. Affected stage: 4.
 
 ## Sessions
 
@@ -119,3 +126,11 @@
   pixels to get there, which retook 27 live frames; each looked at and confirmed by a second run.
 - Stumbled on: the narrow column grew to its longest label — a flex item's automatic minimum is its
   content; zeroed.
+
+### 1 October 2026 — the colour scheme
+
+- Done: `projects/ui-kit-v2/src/styles/_color-scheme.scss` — the mixin `rt-color-scheme($name,
+$ramp)` emits `:root[data-rt-scheme]` with the brand ramp and the material blue step; the showcase
+  declares a teal scheme with it, the toolbar «Схема» writes the attribute, the `Scheme` story shows
+  the menu teal in both sets. 2170 kit tests, lint, token build and cascade layer checks pass.
+- Not done: no test compiles the mixin yet, and no text names it — both belong to 5.1.
