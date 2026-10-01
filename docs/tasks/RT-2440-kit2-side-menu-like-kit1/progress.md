@@ -134,3 +134,42 @@ $ramp)` emits `:root[data-rt-scheme]` with the brand ramp and the material blue 
   declares a teal scheme with it, the toolbar «Схема» writes the attribute, the `Scheme` story shows
   the menu teal in both sets. 2170 kit tests, lint, token build and cascade layer checks pass.
 - Not done: no test compiles the mixin yet, and no text names it — both belong to 5.1.
+
+## Handover of the session
+
+### Work
+
+Work: RT-2440 «Боковое меню второго кита как в первом». Working tree —
+/Users/sviatoslavkhutornoy/WebstormProjects/rt-tools, branch RT-2440-kit2-side-menu-like-kit1
+(taken from the epic branch RT-2353-one-kit-part-2, in progress). PR: not open.
+
+The progress and the plan arrive at session start through the hook. The grill lies in the task
+folder and is read when the reason for a decision is unclear.
+
+Done: stages 1–4 of the plan, all committed locally, nothing pushed — the last work commit is
+c6744d6e5. Next step: stage 5 — 5.1 texts (see «Next step» above), 5.2 frames, 5.3
+`pnpm run check:all`, 5.4 links to the owner.
+
+What to keep in mind in this session:
+
+- nothing is pushed and no PR is opened until the owner says «отправляй» / «открывай»; every port
+  from the first kit is shown to them first, the reply leads with :6007 links and the :6006
+  counterpart;
+- the pinned browser profile is not set up on this machine, so Chrome is not driven; frames are
+  looked at through `node tools/visual-gate.mjs ui-kit-v2 --update '<path sample>'`, and measured on
+  the raster with a pixel script kept in the scratchpad, not in the tree;
+- in update mode a frame within the threshold is not rewritten — delete the reference first to
+  retake;
+- the showcases run as background tasks on 6006 and 6007; colima is up — stop it after the frames
+  are done, the local database goes down with it;
+- `rt-color-scheme` has no compile test yet; the tokens spec and the theming page get an article and
+  a scenario for it in 5.1;
+- the favourites, the expansion panel and the phone menu were shown to the owner; the scheme was not
+  yet.
+
+### Epic RT-2353 — «Один кит, часть 2»
+
+| #   | Task                                                         | State       |
+| --- | ------------------------------------------------------------ | ----------- |
+| …   | earlier ports of the epic                                    | merged      |
+| …   | **RT-2440 — the side menu of the second kit like the first** | in progress |
