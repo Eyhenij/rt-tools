@@ -5,7 +5,7 @@
 - **State:** `этап-идёт`
 - **Stage:** 5 of 5 — Texts, frames, showing; stages 1–4 done
 - **Done:** stage 1 — live stories on the first kit's data; stage 2 — the phone menu matches the first kit's Mobile by measurement; stage 3 — favourites on the new `rt-expansion-panel`, with their preset pair; stage 4 — `[data-rt-scheme]` by the mixin `rt-color-scheme`, a scheme toolbar, the `Scheme` story
-- **Next step:** 5.1 — bring the texts up: the tokens subdomain spec and the theming Overview must name `rt-color-scheme` and `data-rt-scheme`; the side menu spec and scenarios must name favourites, the panel folders and the phone column; then 5.2–5.4
+- **Next step:** 5.3 — `pnpm run check:all`, then 5.4 — the links to the owner; the owner looks at the showcase before any push
 - **Uncommitted:** nothing
 - **Waiting for the owner:** no; every port is shown before a push — «я просил каждый перенесенный из первого кита модуль показывать мне перед отправкой в пр!!!»
 - **PR:** not open yet
@@ -26,9 +26,9 @@
 - [x] 4.1 Declare `[data-rt-scheme]` over the brand ramp in the kit's styles, the material preset too
 - [x] 4.2 Add a scheme switch to the showcase toolbar
 - [x] 4.3 Show the menu under a scheme in a story
-- [>] 5.1 Bring the spec, scenarios, overview and context of the menu up to what was done
-- [ ] 5.2 Take the new frames after looking at them
-- [ ] 5.3 Run the whole check set
+- [x] 5.1 Bring the spec, scenarios, overview and context of the menu up to what was done
+- [x] 5.2 Take the new frames after looking at them
+- [>] 5.3 Run the whole check set
 - [ ] 5.4 Show the owner the pairs of links before any push
 
 ## Decisions along the way

@@ -9,6 +9,7 @@ tree, or the tree holds what the spec is silent about.
 
 - **The consumer repaints the kit by declarations over it and does not fork the kit.** — the steps of the brand in `projects/ui-kit-v2/src/styles/tokens.scale-color.mjs:rt-brand-500`; a page of the showcase shows the kit on a foreign mark — `projects/ui-kit-v2/docs/Theming.mdx:rt-brand-500`; scenario `SC-UKV-35`
 - **The brand is declared by a line of the steps 50…950.** — the same line in the source of the design — `projects/ui-kit-v2/src/styles/tokens.scale-color.mjs:rt-brand-950`; scenario `SC-UKV-35`
+- **A colour scheme rewrites the brand line and the blue step of the material set on the root.** — `projects/ui-kit-v2/src/styles/_color-scheme.scss:rt-color-scheme`; scenario `SC-UKV-479`
 - **A palette holds one role, and the row at the palettes is common.** — the backing of the harness went away by a palette of its own — `projects/ui-kit-v2/src/styles/tokens.scale-color.mjs:rt-navy-900`; scenario `SC-UKV-35`
 - **The steps of a palette go by an even row, they are not picked by the place.** — the rows of the neutral and of the brand in the source of the design — `projects/ui-kit-v2/src/styles/tokens.scale-color.mjs:rt-neutral-500`; scenario `SC-UKV-35`
 - **A transparent shade is counted from its own step, it does not repeat its code of the colour.** — the shades of the brand and of the statuses are counted by a mixing — `projects/ui-kit-v2/src/styles/tokens.scale-effects.mjs:color-mix`; scenario `SC-UKV-36`

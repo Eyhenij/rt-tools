@@ -13,6 +13,11 @@ paths are given from the root of the tree.
 - **The keyboard walks the visible rows.** — `projects/ui-kit-v2/src/lib/components/side-menu/rt-side-menu-keyboard.ts:RtSubMenuKeyboard`. The rows are walked by `projects/ui-kit-v2/src/lib/components/side-menu/rt-side-menu.logic.ts:walkSideMenuItems`
 - **The width of the submenu is dragged by a handle between 120 and 480 pixels.** — `projects/ui-kit-v2/src/lib/components/side-menu/rt-side-menu.logic.ts:clampSideMenuWidth`. The keyboard step stands at `projects/ui-kit-v2/src/lib/components/side-menu/rt-side-menu.logic.ts:sideMenuWidthByKey`
 - **An empty `menuId` reads as an unset one — the id `main`.** — `projects/ui-kit-v2/src/lib/components/side-menu/rt-side-menu-settings.logic.ts:normalizeSideMenuId`
+- **Favourites stand only in the submenu of an item that turned them on, and only with the menu settings.** — `projects/ui-kit-v2/src/lib/components/side-menu/rt-side-menu-favorites.logic.ts:sideMenuFavoritesSection`
+- **A star stands on items with an address; a row of the block carries «remove» and a drag handle.** — `projects/ui-kit-v2/src/lib/components/side-menu/rt-side-menu-favorites.logic.ts:isSideMenuFavoriteCandidate`
+- **The favourites and the collapsed blocks are kept in the menu settings under its id.** — `projects/ui-kit-v2/src/lib/components/side-menu/rt-side-menu-settings.service.ts:toggleFavorite`
+- **A folder of the submenu and the favourites block are expansion panels of the kit.** — `projects/ui-kit-v2/src/lib/components/side-menu/sub-item/rt-side-menu-sub-item.component.html:rt-expansion-panel`
+- **On a narrow screen the menu is one column 240 pixels wide.** — `projects/ui-kit-v2/src/lib/components/side-menu/rt-side-menu.component.scss:rt-side-menu-mobile-width`
 
 The scenarios of the subdomain are bound to the tests by the number in the title of a test, not by a
 table here: the bond is checked both ways by the checking of the specs.
