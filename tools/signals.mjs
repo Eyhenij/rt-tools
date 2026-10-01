@@ -1,4 +1,4 @@
-// rt-kit v0.29.2 · checks/signals.mjs · f94196cace88 · правится надстройкой, не здесь
+// rt-kit v0.29.3 · checks/signals.mjs · f94196cace88 · правится надстройкой, не здесь
 /**
  * The sign bundles of uniformity: what the tree declared as its own and what is read alongside it.
  *
