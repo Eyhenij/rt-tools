@@ -12,7 +12,7 @@ import { IRolesStorage, IStoredEdit, signedInAs, rolesStorage } from './roles-st
 describe('AccountsAccessController', (): void => {
     it('SC-MB-382 — чтение и замена доступа закрыты правом на роли', (): void => {
         ['read', 'replace'].forEach((method: string): void => {
-            const handler: unknown = Reflect.get(AccountsAccessController.prototype, method);
+            const handler: object = Reflect.get(AccountsAccessController.prototype, method);
 
             expect(Reflect.getMetadata(OPERATION_ACCESS, handler)).toBe('permission');
             expect(Reflect.getMetadata(OPERATION_RIGHT, handler)).toBe('roles:manage');

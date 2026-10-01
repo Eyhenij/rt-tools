@@ -68,6 +68,7 @@ describe('cargoStateData', () => {
         state: ECargoState.Released,
         fixNote,
         releaseVersion,
+        quarantineNote: null,
     });
 
     it('SC-MB-193 — версия выпуска ложится в запись вместе с состоянием', () => {

@@ -108,7 +108,7 @@ function requestOf(id: string, name: string): IAccountBearingRequest {
 describe('AccountsManageController', (): void => {
     it('SC-MB-369 — все три операции закрыты правом на правку людей', (): void => {
         ['create', 'replacePassword', 'disable'].forEach((method: string): void => {
-            const handler: unknown = Reflect.get(AccountsManageController.prototype, method);
+            const handler: object = Reflect.get(AccountsManageController.prototype, method);
 
             expect(Reflect.getMetadata(OPERATION_ACCESS, handler)).toBe('permission');
             expect(Reflect.getMetadata(OPERATION_RIGHT, handler)).toBe('accounts:manage');

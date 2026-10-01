@@ -4,7 +4,7 @@ kind: pattern
 rule: git-workflow
 description: Pattern of rule git-workflow. Load for creating a task and a branch, commit and push — the creation command with all four steps, moving the column, merging two tasks into one, working as the machine account, skipping the document requirement. Opening a PR — pattern git-workflow-pr.
 ---
-<!-- rt-kit v0.29.1 · patterns/git-workflow-commit.github.md · 5e12f72925ea · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.2 · patterns/git-workflow-commit.github.md · 4d8b2e23a980 · правится надстройкой, не здесь -->
 
 # Task, branch and commit
 
@@ -232,6 +232,10 @@ Docs-skip: правка только в тестах хука, зеркала у
 
 ## Common misses
 
+- **An amend goes through the same hooks as a commit.** The flag that skips the commit hooks is not
+  used for any edit, a one-letter typo in the subject included. The gate before a push does not
+  read commit messages, so a message the hook never saw reaches the host unchecked. A commit that
+  skipped the hooks is redone without the flag before the push.
 - **An audit right after adding answers "no" when the card already stands.** The work queue gives
   out a new item not in the same second it was created, and the last step reads it by the next
   call. The answer to this is to reread the whole queue, not to create the card a second time: two

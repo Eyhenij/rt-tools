@@ -1,4 +1,4 @@
-<!-- rt-kit v0.29.1 · templates/implementation.md · 5539a41f6a7f · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.2 · templates/implementation.md · 5539a41f6a7f · правится надстройкой, не здесь -->
 # <имя-правила> — what is this tree's own
 
 Names and bindings of this tree under the rule `SKILL.md` next to it.

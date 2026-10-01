@@ -77,6 +77,11 @@ The sections below are this tree's articles: the law's technique is named by the
       see a literal in a scale or in an assignment at all: six transparent shades repeating the
       colour codes of their steps as channel triples were found by reading, not by a run. A green
       run means "the components' styles are clean", not "no literals are left".
+    - **A green token-styles run does not say the name exists.** stylelint and
+      `check:tokens-styles` judge the shape of a value, not whether the name is declared, and a
+      snapshot of an undeclared colour shows an inherited one that looks plausible. A new
+      `var(--rt-…)` reference is checked by `pnpm run check:tokens-graph` before the commit: it
+      runs only in the push gate, not in `check:all`.
 
 - **Between a step and a place stands the component's own property.** It is judged by that same
   check — `pnpm run check:tokens-styles`: the rule `declaration-property-value-disallowed-list`

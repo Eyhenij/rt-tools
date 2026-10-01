@@ -1,6 +1,6 @@
 # The tree a command runs in
 
-**Status:** in force · **Revision:** 2026-09-10 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 2026-10-01 · **Scenario prefix:** `SC-AK`
 **Depends on:** none
 **Laws:** `delivery`
 **Procedures:** none
@@ -21,6 +21,9 @@ The subdomain names where the tree of execution is taken from and what is judged
 - **The tree of the session** — the one the session was started in; its profile is loaded by every
   guard.
 - **The tree of execution** — the one the command names by a move at the start of the call.
+- **A second copy** — another working copy of the same repository: the same shared `.git`
+  directory under another root.
+- **Another repository** — a tree of execution whose shared `.git` directory is not the session's.
 - **The form of a branch name** — the profile function answering whether the name is fit.
 
 ### What it is called in the interface
@@ -39,14 +42,26 @@ own turn.
 - **A second working copy is for reading, and a sending call goes from the copy of the session.**
   The gate of the checks runs its set where the session was started: from a second copy a foreign
   tree is judged, and the contribution actually leaving passes unchecked.
+- **A second copy is told by the shared `.git` directory, not by the root.** The root of another
+  repository differs from the session root always: judged by the root, a session of one tree
+  could not send a branch into another repository at all.
+- **A sending call in another repository is not judged by the gate of the checks.** The set of
+  this tree says nothing about a foreign one.
+- **The task is asked of the work queue of the repository the command runs in.** A branch created
+  in another repository carries the number of a task of that repository; the session's queue does
+  not have it or has a different one under it.
+- **A second copy of the same repository is asked of the session's profile and queue.** The shared
+  `.git` directory is one, and so are the work queue and the profile.
+- **A request opened in another repository is judged by the branch of that repository.** The
+  branch of the session tree names a different task or none.
 - **A tree that declared no profile is not judged by the form at all.** A foreign tree is not
   accountable to this guard, and a refusal on a lawful name has no bypass.
 
 ## What is out of scope
 
 - The readiness of the work going on now — the subdomain of the delivery guards.
-- The state of the task and the column — they are asked of the work queue of the tree the session
-  stands in, and a neighbouring tree has a queue of its own.
+- The freshness of the base and the commit signature at branch creation — they are asked of the
+  session copy; a base named for another repository is unknown there and is not judged.
 
 ## Contract
 
@@ -85,9 +100,11 @@ Not applicable: the guard judges one command of one turn.
 
 ## Decisions
 
-- **Only the form of the name is judged by the foreign profile.** The state of the task and the
-  freshness of the base are asked of the work queue and the remote of this tree, and a neighbouring
-  tree has its own.
+- **The form of the name, the task and the branch are judged by the foreign profile; the base is
+  not.** The task key and the work queue belong to the repository the command runs in: asked of the
+  session, the number of a lawful branch pointed to a task that is not there. The base and the
+  signature stay with the session copy: no case of a refusal on them has come up, and the guard is
+  at its length limit.
 - **The subdomain lives apart from the delivery guards.** The scenario file of the neighbouring
   subdomain outgrew the length limit, and the subject is separate.
 
@@ -97,5 +114,8 @@ None.
 
 ## History of changes
 
+- 2026-10-01 — a second copy is told by the shared `.git` directory. A push into another repository
+  is no longer refused as a call from a second copy, and the task of a branch in another repository
+  is asked of that repository.
 - 2026-09-10 — the subdomain was created together with the tier: a lawful name of a neighbouring
   tree used to stop the work whole.

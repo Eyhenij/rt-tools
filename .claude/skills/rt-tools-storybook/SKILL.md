@@ -70,15 +70,12 @@ A rule under the "Law on verifiability", the section about showing a visible sta
   forgot.
 - **A component pinned to the window needs a box that is its containing block, and a relative box
   is not one.** Such a component counts its place from the window whatever stands above it in the
-  markup: the sheet drew itself across the whole window and put its panel a point below the bottom
-  edge, while the box it was written into kept two points of width and one dashed line in the frame.
-  The box becomes a containing block by a property of its own, and the one chosen also clips — so it
+  markup, and the box it was written into stays an empty line in the frame. The box becomes a containing block by a property of its own, and the one chosen also clips — so it
   replaces the box's clipping rather than standing next to it. Raising the node into a layer of its
   own does the same and costs the rasterisation of every label in the frame.
 - **A component that takes its size from its parent is given one by a box of the showing, not by a
-  rule on its block class.** Such a component measures by its content where nothing sizes it: the
-  chat came out 37 points tall in a cell of 352 and left loose pieces in the frame — an empty-state
-  pill, an input field, two bubbles — with no frame of a chat anywhere. Where the host is declared
+  rule on its block class.** Such a component measures by its content where nothing sizes it and
+  leaves loose pieces in the frame. Where the host is declared
   `display: contents`, the rule does not even reach: the height lands on a host that is no box, it
   measures 0 by 0, and the content spills into the cell and is cut by its edge. The box takes the
   height instead, because the host between them is not a box; the frame then takes its full height
@@ -90,9 +87,7 @@ A rule under the "Law on verifiability", the section about showing a visible sta
 - **The width of a cell is measured again the day the component learns to shrink into it.** Until
   then the component kept the width of its content and the number on the cell only fenced the
   neighbours; with a declared fate for what does not fit it takes exactly that number, and one
-  chosen for the former behaviour leaves the text gone. In a cell of 272 the large card of a file
-  with three buttons drew the icon and the badge and no name at all — the frame is whole and green,
-  and the showing says nothing about what the component is for. The number comes from a measurement
+  chosen for the former behaviour leaves the text gone while the frame stays green. The number comes from a measurement
   of the widest cell of that matrix, not from one width for the whole family: a row of one button
   and a row of three need different ones.
 - **A component whose height comes from the window is shown inside a box that clips.** The shot
@@ -225,14 +220,9 @@ Required per component — a missing entry is a defect, not a preference:
 
 Rules that decide what goes in a matrix:
 
-- **Cross axes only when they visually interact.** `theme × appearance` earns a
-  grid because the pair changes how each reads; `size × theme` does not. The full
-  cartesian product is explicitly rejected — see ADR 0002 decision 3.
-- **An axis you cannot show is declared, not skipped.** Say so in `Overview` with
-  the reason.
-- **A story that renders an empty collection is not coverage.** Ten stories
-  currently pass an empty array and paint nothing (`UI-KIT-V2-ISSUES.md` §2.3);
-  seed a realistic fixture instead.
+- **The crossing, the declared axis and the empty collection** — the articles at the top of this
+  rule. `theme × appearance` earns a grid, `size × theme` does not (ADR 0002 decision 3); an axis
+  that cannot be shown is declared in `Overview` with the reason.
 - **A foundation-level story lives next to the showing harness rather than in a component's
   folder, and the coverage contract does not apply to it.** It shows a technique shared by the
   whole kit — it has neither input axes nor states, and there is nothing to demand `Playground`,
@@ -258,6 +248,11 @@ Rules that decide what goes in a matrix:
   `process.env.RT_SNAPSHOT_RUN` instead of `process.env['RT_SNAPSHOT_RUN']` passed `check:all`
   whole and was refused only by `pnpm run build-storybook:ui-kit-v2`. An edit in `.storybook/` is
   confirmed by a showcase build, not by a sweeping run of the checks.
+- **Text typed in `play` is measured with whatever font is loaded at that moment.** The snapshot
+  harness waits for `document.fonts.ready` before the shot, not before `play`: a component that
+  sizes itself from its text — autosize, a `ResizeObserver` — measures with the fallback font and
+  keeps that size once the real one arrives. A story step that types or measures awaits
+  `document.fonts.ready` first.
 - **An icon font of the first showcase is declared in `.storybook/preview-head.html`, not in a
   showcase stylesheet.** The font file lies in the tree and is served by the showcase itself. A
   `@font-face` in `storybook.scss` arrives later than the page head, and the paint probe catches the

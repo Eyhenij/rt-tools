@@ -1,6 +1,7 @@
 import { DebugElement } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
+import { ECargoState } from '@rt/message-bus-common';
 import { IPostmortem } from '@rt/message-bus-admin/postmortems/util';
 import { provideRtStorage, provideRtUtils } from '@rt-tools/core';
 
@@ -16,6 +17,9 @@ function entityOf(patch: Partial<IPostmortem.State> = {}): IPostmortem.State {
         fixNote: '',
         releaseVersion: '',
         text: '# Разбор',
+        state: ECargoState.New,
+        quarantineNote: '',
+        closedByPublisher: false,
         ...patch,
     };
 }

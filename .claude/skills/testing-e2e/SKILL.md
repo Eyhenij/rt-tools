@@ -4,7 +4,7 @@ kind: pattern
 rule: testing
 description: Pattern of rule testing. Load when editing and running end-to-end tests in apps/site-e2e and apps/admin-e2e — what an end-to-end test closes, ready-made run commands, a stand from the production build behind real nginx, test switches. Not for unit tests — that is pattern testing-unit.
 ---
-<!-- rt-kit v0.29.1 · patterns/testing-e2e.md · 1b7d6ae51796 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.2 · patterns/testing-e2e.md · e0c7d1a81ae1 · правится надстройкой, не здесь -->
 
 # End-to-end tests
 
@@ -27,6 +27,12 @@ Hence the method: clicks on the same elements the owner clicks, several in a row
 between them. Entering by a direct address raises the application anew, it has no accumulated state,
 and the pass reads as "the defect is not confirmed". That is how a panel that got stuck in the
 address on leaving for a neighbouring section went out to production.
+
+An action that adds a node to the page — sending a message, adding a row, attaching a file — is
+done at least twice in one test. The first time the page holds only the node the action needs; the
+second time it also holds the one the first action added, and a query that matched by a shared mark
+now finds the wrong node. One send per test passes against a handler that breaks on every second
+send.
 
 Elements are found by `qa-dataid`: classes change together with the layout, and a search by role
 and text breaks on translations.
@@ -125,6 +131,11 @@ been pressed at all. The popup is closed and its absence awaited by the same pai
 
 ## Common misses
 
+- **A service limit per client address counts the whole suite as one client.** Every test goes from
+  one machine, so a limit on requests per minute is reached by the sum of the tests, not by any one
+  of them. Adding tests pushes old ones into refusal (429): a run of one spec stays green, and only
+  the full set shows it. Each test that opens a new record gets its own client address; the limit
+  itself is not raised for the suite.
 - **Take the rendering server port with care:** the developer's stand goes by the same name
   `ssr:<rendering port>` through `host-gateway`, and while a foreign process hangs on it, the stand
   serves a foreign build.
@@ -172,3 +183,8 @@ in `apps/message-bus-admin-e2e/stand/stand.mjs`.
 
 There is no site and no rendering server in this tree, so the lines of the pattern about them are
 not carried out here.
+
+The receiver counts a client that has no visitor sign yet by its address, read from
+`x-forwarded-for`, and takes no more than `CHAT_RATE_LIMIT` requests per minute from it. Each widget test in
+`apps/message-bus-admin-e2e/src/chat-widget.spec.ts` sets its own address through
+`page.setExtraHTTPHeaders`, and a new widget test does the same.

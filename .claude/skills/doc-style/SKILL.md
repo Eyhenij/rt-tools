@@ -4,7 +4,7 @@ kind: rule
 law: project-documentation
 description: Rule under the project-documentation law. Load when editing any .md including specs, and also code comments, commit bodies and PR descriptions. Names the path check, the pairs of an edit and its document, and what nothing checks in this tree. Ready-made wording is in pattern doc-style-write.
 ---
-<!-- rt-kit v0.29.1 · rules/doc-style.md · 53b478fed2bb · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.2 · rules/doc-style.md · 2e6c72282991 · правится надстройкой, не здесь -->
 
 # Project texts — how it works here
 
@@ -20,7 +20,7 @@ together with the rule.
 | In the law                      | Here                                                                                                                                  |
 | ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
 | document                        | any `.md` outside `docs/archive/`, plus code comments, commit bodies and PR descriptions                                              |
-| a path named in a document      | a string with an extension in backticks — that is what the check looks for                                                            |
+| a path named in a document      | a string in backticks with a slash or a file extension — that is what the check looks for. A name with a slash that is no address, such as a story title, goes without backticks |
 | the change a document describes | a pair from `docs-guard`: a rule and its mirror, a `.proto` and a spec, a hook and its scenarios, a moved file and both libs' READMEs |
 | description of the past         | `docs/archive/` — excluded from the path check entirely                                                                               |
 

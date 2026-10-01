@@ -181,18 +181,18 @@ fault() {
 # shellcheck disable=SC1090
 [ -f "$rt_hooks_dir/git-guard-delivery-epic.sh" ] && . "$rt_hooks_dir/git-guard-delivery-epic.sh" 2>/dev/null
 
+# Another repository the command runs in answers for the name form, the task and the branch.
+# shellcheck disable=SC1090
+[ -f "$rt_hooks_dir/git-guard-delivery-tree.sh" ] && . "$rt_hooks_dir/git-guard-delivery-tree.sh" 2>/dev/null
+command -v rt_delivery_branch_form_ok >/dev/null 2>&1 || rt_delivery_branch_form_ok() { rt_task_branch_ok "$1"; }
+command -v rt_delivery_task_state >/dev/null 2>&1 || rt_delivery_task_state() { (cd "$root" && rt_task_state "$1"); }
+command -v rt_delivery_current_branch >/dev/null 2>&1 || rt_delivery_current_branch() { git branch --show-current 2>/dev/null; }
+
 # A conflicting PR of one's own: the same technique as with the folder and the signature. The helper
 # is called before all the tiers below and judges not the readiness of this work but the right to
 # take the next one: while what was handed over conflicts, it is fixed by the first action of the
 # turn. No helper — the tier is not judged, and the work goes on.
 # shellcheck disable=SC1090
-# The tree the command runs in: the form of a branch name is judged by its profile, not by the
-# profile of the tree the session was started from. No helper — the form is judged as before.
-# shellcheck disable=SC1090
-[ -f "$rt_hooks_dir/git-guard-delivery-tree.sh" ] && . "$rt_hooks_dir/git-guard-delivery-tree.sh" 2>/dev/null
-command -v rt_delivery_branch_form_ok >/dev/null 2>&1 \
-    || rt_delivery_branch_form_ok() { rt_task_branch_ok "$1"; }
-
 [ -f "$rt_hooks_dir/git-guard-delivery-conflict.sh" ] && . "$rt_hooks_dir/git-guard-delivery-conflict.sh" 2>/dev/null
 command -v rt_delivery_note_out >/dev/null 2>&1 && trap rt_delivery_note_out EXIT
 command -v rt_delivery_conflict >/dev/null 2>&1 && rt_delivery_conflict
@@ -215,7 +215,7 @@ check_task() {
     # lifts it.
     judge_column="${3:-no}"
     rt_needs rt_task_state git-guard-delivery || return 0
-    state="$(cd "$root" && rt_task_state "$number" 2>/dev/null)" || return 0
+    state="$(rt_delivery_task_state "$number" 2>/dev/null)" || return 0
     [ -z "$state" ] && return 0
 
     printf '%s' "$state" | jq -e '.exists' >/dev/null 2>&1 \
@@ -345,12 +345,12 @@ printf '%s' "$cmd" \
     | grep -qE "${RT_CMD_BOUND}(gh[[:space:]]+pr[[:space:]]+create|glab[[:space:]]+mr[[:space:]]+create|az[[:space:]]+repos[[:space:]]+pr[[:space:]]+create)([[:space:]]|\$)" \
     || exit 0
 
-branch="$(git branch --show-current 2>/dev/null)"
+branch="$(rt_delivery_current_branch)"
 [ -z "$branch" ] && exit 0   # a detached HEAD is not about this case
 
 # A local branch without a number is lawful, and a PR from it is not: an edit that travels to the
 # main branch starts from a task. This is the only place where a task-less branch runs into a wall.
-rt_task_branch_ok "$branch" \
+rt_delivery_branch_form_ok "$branch" \
     || deny "BLOCKED: a request from the branch «${branch}», with no task standing behind it. An edit begins with a task visible in the work queue: create it — ${task_new} — and move the work into a branch with its number."
 
 number="$(rt_task_branch_number "$branch")"

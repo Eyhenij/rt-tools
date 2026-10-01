@@ -231,6 +231,10 @@ Docs-skip: правка только в тестах хука, зеркала у
 
 ## Common misses
 
+- **An amend goes through the same hooks as a commit.** The flag that skips the commit hooks is not
+  used for any edit, a one-letter typo in the subject included. The gate before a push does not
+  read commit messages, so a message the hook never saw reaches the host unchecked. A commit that
+  skipped the hooks is redone without the flag before the push.
 - **An audit right after adding answers "no" when the card already stands.** The work queue gives
   out a new item not in the same second it was created, and the last step reads it by the next
   call. The answer to this is to reread the whole queue, not to create the card a second time: two
