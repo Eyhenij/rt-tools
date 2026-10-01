@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.29.3 · hooks/task-flow-guard.sh · f90c1bb8f6d7 · правится надстройкой, не здесь
+# rt-kit v0.29.3 · hooks/task-flow-guard.sh · c0d7c60dbb35 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/task-flow-context.sh, hooks/profile-check.sh, hooks/deny-tail.sh
 # PreToolUse guard for Edit|Write|MultiEdit: code is not written before the plan.
@@ -52,6 +52,33 @@ dir="$RT_TF_DIR"
 plan="$RT_TF_PLAN"
 
 deny() { rt_task_flow_deny "$@"; }
+
+# Resolving a merge conflict is the merge itself, not an edit of the product. Main is merged into
+# the epic branch while the work runs, and that branch carries no task folder by the rule — it holds
+# merges, not edits of its own. Refused here, the conflict has no lawful way out: a folder made up
+# for the epic branch would be the very edit the rule forbids in it. So a call passes while a merge
+# stands and every code path it writes is still unmerged. A file already resolved and added, and
+# any other code file of the same merge, is judged as before: the exception is the conflict, not
+# the branch.
+merge_conflict_only() {
+    git -C "$root" rev-parse -q --verify MERGE_HEAD >/dev/null 2>&1 || return 1
+    seen=0
+    while IFS= read -r candidate; do
+        [ -z "$candidate" ] && continue
+        case "$candidate" in
+            /*) ;;
+            *) candidate="${CLAUDE_PROJECT_DIR:-.}/$candidate" ;;
+        esac
+        rt_is_app_code "$candidate" || rt_tf_laid_out "$candidate" || continue
+        [ -n "$(git -C "$root" ls-files -u -- "$candidate" 2>/dev/null | head -1)" ] || return 1
+        seen=1
+    done <<EOF
+${RT_TF_CANDIDATES:-$RT_TF_PATH}
+EOF
+    [ "$seen" = 1 ]
+}
+
+merge_conflict_only && exit 0
 
 if rt_needs rt_task_branch_ok task-flow-guard && ! rt_task_branch_ok "$branch"; then
     deny "BLOCKED by task-flow: an edit of code goes in a branch for a task, and the current branch is '${branch}'. Create a task (npm run task:new -- --title '…' --slug <slug>) and a branch under its number, then repeat. The rule is task-flow."
