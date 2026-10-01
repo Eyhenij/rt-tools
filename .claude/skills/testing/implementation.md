@@ -115,8 +115,11 @@ silent about.
 - `pnpm test` — all packages; `pnpm exec nx test @rt-tools/<package> --testFile=<path>` — one file.
 - `pnpm exec nx run message-bus-admin-e2e:e2e` — the admin panel's end-to-end suite; it raises the
   stand itself and needs only the database container up.
-- `pnpm exec nx run @rt-tools/ui-kit-v2:typecheck` — the types of the specs: Jest does not check
-  them, and the linter here does not look at types.
+- `pnpm exec nx affected -t typecheck` — the types of the specs. Neither Jest nor Vitest checks
+  them, and the linter here does not look at types: a spec object with a renamed field stays green
+  in `test` until this target. The receiver's libs on Vitest have no such target, and their specs
+  are type-checked by nothing — `pnpm exec nx show project message-bus-api-chat-feature` lists only
+  `lint` and `test`.
 - `pnpm exec nx run @rt-tools/ui-kit-v2:verify` — the audit of the input tables against the
   components.
 - The pipeline runs `nx affected -t lint test build` against the main branch

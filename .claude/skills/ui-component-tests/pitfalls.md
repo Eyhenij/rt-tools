@@ -37,6 +37,10 @@ cases needed by whoever sorts out a red snapshot, not by whoever writes a spec.
 - **An overlay going out before the frame.** The kit's panel, menu and popup, opened by hover, go out
   with a delay after the pointer leaves, and preparing the frame takes the pointer away: the panel
   managed to close between the story's step and the shot.
+- **A tooltip raised by focus, not by the pointer.** The access panel's frame caught the row
+  button's "Действия" tooltip now and then: the row menu closed, returned focus to its button, and
+  the tooltip rose after the delay. The pointer was already in the corner, so every pointer-side
+  cure changed nothing; blurring the focused button before the shot removed it.
 - **What drifts in a screen frame.** Of the three divergences in the admin panel's suite not one was
   a screen defect: the colour from the display profile, the column width from the value of the
   current moment, the order of the rows from the seeding.

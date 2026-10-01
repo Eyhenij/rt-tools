@@ -258,6 +258,15 @@ Rules that decide what goes in a matrix:
   `process.env.RT_SNAPSHOT_RUN` instead of `process.env['RT_SNAPSHOT_RUN']` passed `check:all`
   whole and was refused only by `pnpm run build-storybook:ui-kit-v2`. An edit in `.storybook/` is
   confirmed by a showcase build, not by a sweeping run of the checks.
+- **Text typed in `play` is measured with whatever font is loaded at that moment.** The snapshot
+  harness waits for `document.fonts.ready` before the shot, not before `play`: a component that
+  sizes itself from its text — autosize, a `ResizeObserver` — measures with the fallback font and
+  keeps that size once the real one arrives. A story step that types or measures awaits
+  `document.fonts.ready` first.
+- **The themes pair still has a fixed 18rem track.** A component wider than half the page — a
+  two-month panel — overflows its half in `Themes` while the presets pair wraps it. Until the
+  themes pair is moved onto the presets row, such a story shows the narrow layout and says why in
+  its markup.
 - **An icon font of the first showcase is declared in `.storybook/preview-head.html`, not in a
   showcase stylesheet.** The font file lies in the tree and is served by the showcase itself. A
   `@font-face` in `storybook.scss` arrives later than the page head, and the paint probe catches the

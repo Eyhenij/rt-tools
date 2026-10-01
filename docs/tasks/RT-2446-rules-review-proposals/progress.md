@@ -3,21 +3,21 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 1 of 4 — Texts of this tree
-- **Done:** the task, the branch, the grill and the plan
-- **Next step:** the rule ui-component-tests
-- **Uncommitted:** the task folder, the row of this copy in the table of assignments
+- **Stage:** 2 of 4 — Texts of the package
+- **Done:** the task, the plan, the texts of this tree
+- **Next step:** the package rules spec-driven and doc-style
+- **Uncommitted:** nothing
 - **Waiting for the owner:** no
 - **PR:** not open yet
 
 ## Steps
 
-- [>] 1.1 Edit the rule ui-component-tests: the order, the commands, three pitfalls and the cold part
-- [ ] 1.2 Edit the showcase rule and its companion: fonts in play, the themes pair
-- [ ] 1.3 Edit the styling rule and its companion: the token graph check
-- [ ] 1.4 Edit the re-take pattern, the testing companion and the spec-driven companion
-- [ ] 1.5 Append the address limit to the end-to-end override
-- [ ] 2.1 Edit the package rules spec-driven and doc-style
+- [x] 1.1 Edit the rule ui-component-tests: the order, the commands, three pitfalls and the cold part
+- [x] 1.2 Edit the showcase rule and its companion: fonts in play, the themes pair
+- [x] 1.3 Edit the styling rule and its companion: the token graph check
+- [x] 1.4 Edit the re-take pattern, the testing companion and the spec-driven companion
+- [x] 1.5 Append the address limit to the end-to-end override
+- [>] 2.1 Edit the package rules spec-driven and doc-style
 - [ ] 2.2 Edit the package patterns task-flow-start, testing-e2e and git-workflow-commit
 - [ ] 2.3 Lay out the package
 - [ ] 3.1 Write the guard of the flag that skips the commit checks
@@ -27,6 +27,9 @@
 - [ ] 4.2 Take the task folder apart into the archive
 
 ## Decisions along the way
+
+- **The binding line for the token graph check is not added.** The review asked for a line for a nested item, and the companion binds only top-level articles; the line of the article itself now names both checks. Affected stage of the plan: 1.
+- **The address limit in the override is worded by the code.** The review spoke of new conversations; the receiver counts requests of a client without a visitor sign by its address. Affected stage of the plan: 1.
 
 ## Sessions
 

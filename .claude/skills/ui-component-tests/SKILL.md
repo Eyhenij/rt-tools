@@ -233,7 +233,9 @@ Four checks do not replace one another, and the choice between them is not a mat
 2. A story for every visible state not yet in a frame — the pattern `ui-component-tests-visual`.
 3. A sweep over the stories and a look at the frames by eye — before the first taking of references,
    otherwise the shot pins down emptiness.
-4. A run of the specs, then the snapshots, then the measurement — if the edit is about layout.
+4. A run of the specs, then `pnpm exec nx run @rt-tools/ui-kit-v2:typecheck`, then the snapshots,
+   then the measurement — if the edit is about layout. Jest compiles without checking types: an
+   import of a symbol that does not exist passes a green spec run.
 5. A number in the PR: how many tests ran, how many snapshots matched, what the measurement showed.
 
 ## Commands
@@ -241,7 +243,7 @@ Four checks do not replace one another, and the choice between them is not a mat
 ```bash
 pnpm exec nx test @rt-tools/ui-kit --testFile=<path>   # one spec file
 pnpm test                                              # the specs of all packages
-pnpm exec nx run @rt-tools/ui-kit-v2:typecheck         # the types of the specs: Jest does not look at them
+pnpm exec nx run @rt-tools/ui-kit-v2:typecheck         # the types of the component and its specs: Jest checks neither
 pnpm run check:affected                                # the same as the guard asks before a push
 ```
 
@@ -276,6 +278,11 @@ The second showcase's agreement is `docs/specs/ui-kit-v2/`; the story parameters
   restarted, the code is not edited.
 - **The pointer outlives the move between stories.** A hover from one arrives in the next one's
   snapshot: a story without a hover takes the pointer away into a corner.
+- **A focused button outlives the pointer taken away.** The kit's tooltip opens on focus as well as
+  on hover, and a closed menu returns focus to the button that opened it: the tooltip rises over it
+  after a delay and lands in the frame by a race. Taking the pointer into a corner does not hide
+  it — only losing focus does, so `expectScreen` blurs a focused button or link before the shot. A
+  field keeps its focus: that focus is part of what the frame shows.
 - **A story's values arrive at the wrapper later than its `ngOnInit`.** An initial state computed in
   the hook by the story's value is computed by the field's default. The needed state is reached by a
   click in `play`, not by an input.
@@ -290,9 +297,20 @@ The second showcase's agreement is `docs/specs/ui-kit-v2/`; the story parameters
   left.** The specs create their own records — an issued invitation, a person's sign-in — and their
   times lawfully land on the run day. So the seeding's self-check stands inside the seeding itself
   rather than after the suite: run from outside, it turns red on what the specs did themselves.
+- **A frame without a reference in the end-to-end suite is written by Playwright on the first run.**
+  The config leaves `updateSnapshots` at its default, so a missing reference fails the run once and
+  the shot becomes the reference: the second run is green against whatever was shot. Unlike the
+  second showcase's harness, nothing refuses here. The written file is looked at against the mockup
+  before it is kept, and the index is read before the commit — the new PNG can arrive in it without
+  an explicit `git add`.
 - **Sorting out a failed snapshot starts with the share of the divergence and the area.** A red run
   comes both from a shift of one pixel and from a lost block — by eye on the picture that is
   indistinguishable.
+- **The snapshot container draws a fallback family without its semibold face.** A text set by family
+  name with a system fallback and no font file comes out regular in the frame, however its weight is
+  declared — the browser has no heavier face to pick. A title that is bold in the mockup and regular
+  in the frame is not a defect: the weight is checked by the computed `font-weight` in the
+  end-to-end spec, not by the picture, and the divergence is named in the task record.
 
 ## Patterns
 

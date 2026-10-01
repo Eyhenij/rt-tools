@@ -15,3 +15,8 @@ in `apps/message-bus-admin-e2e/stand/stand.mjs`.
 
 There is no site and no rendering server in this tree, so the lines of the pattern about them are
 not carried out here.
+
+The receiver counts a client that has no visitor sign yet by its address, read from
+`x-forwarded-for`, and takes no more than `CHAT_RATE_LIMIT` requests per minute from it. Each widget test in
+`apps/message-bus-admin-e2e/src/chat-widget.spec.ts` sets its own address through
+`page.setExtraHTTPHeaders`, and a new widget test does the same.
