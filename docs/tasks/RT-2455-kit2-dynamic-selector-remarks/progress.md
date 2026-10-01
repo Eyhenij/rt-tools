@@ -2,12 +2,12 @@
 
 ## Where we stand
 
-- **State:** `этап-идёт`
+- **State:** `этапы-кончились`
 - **Stage:** 2 of 2 — texts, showcase and snapshots
 - **Done:** the three remarks in code with specs SC-UKV-535, SC-UKV-536; spec rules, the overview and the ButtonRadius story
-- **Next step:** the owner looks at the showcase, then the snapshots are retaken
+- **Next step:** the suite, then the folder is taken apart
 - **Uncommitted:** no
-- **Waiting for the owner:** a look at the showcase before the PR
+- **Waiting for the owner:** nothing — the owner accepted the showcase: «Ок, открывай»
 - **PR:** not open yet
 
 ## Steps
@@ -16,8 +16,8 @@
 - [x] 1.2 Add the button rounding input with the full step by default and pass it to every icon button of the list
 - [x] 1.3 Anchor the popup to the add button pressed
 - [x] 2.1 Rules and scenarios in the spec, the input in the overview and the component context
-- [>] 2.2 A story axis for the button rounding and retaken snapshots of the selector
-- [ ] 2.3 Show the owner the showcase
+- [x] 2.2 A story axis for the button rounding and retaken snapshots of the selector
+- [x] 2.3 Show the owner the showcase
 
 ## Decisions along the way
 
