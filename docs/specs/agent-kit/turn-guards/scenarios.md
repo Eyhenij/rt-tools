@@ -346,6 +346,25 @@ Then the call passes: the analysis of a request goes by questions about differen
 
 Covered: `projects/agent-kit/tests/grill-gate.test.sh`.
 
+### SC-AK-1168 — a loaded rule and a subagent report are not the owner's remark
+
+Given the owner's last remark has nothing in common with the new menu, and after it the record holds
+a loaded rule or a subagent report marked `isMeta` that shares the menu's words
+When the executor sends this menu
+Then the call passes: the menu is compared with what the owner wrote, and the rule loaded before
+the question counts as read in this turn
+
+Covered: `projects/agent-kit/tests/grill-gate.test.sh`.
+
+### SC-AK-1169 — the keys of the menu are not words of its topic
+
+Given the owner's remark shares with the new menu only the field names of the menu call —
+`question`, `label`, `description`
+When the executor sends this menu
+Then the call passes: the words are taken from the questions and the options, not from the call
+
+Covered: `projects/agent-kit/tests/grill-gate.test.sh`.
+
 ### SC-AK-1134 — two answers «recommended» in a row close the remaining questions by assumption
 
 Given the owner took the recommended option on the last two menus of the record

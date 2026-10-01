@@ -226,8 +226,6 @@ expect_stop "SC-AK-756 — без правок в ходу прежний при
         "$(tool_result)" \
         "$(reply 'Как быть с этим?')")")" PASS
 
-suite_result "гард разговора"
-
 # --- SC-AK-818 — на этот вопрос владелец уже отвечал --------------------------------------
 # Указание владельца действует до его отмены, и новый факт против него — строка в ответе о цене,
 # а не новый вопрос. Признак судит общие слова темы вопроса и последней реплики владельца, и
@@ -258,6 +256,57 @@ expect_ask "SC-AK-818 — первый вопрос захода не судит
         "$(say "$SAID_RULE")" \
         "$(uses Skill "$LOADED")")" \
         'Сплошная проверка единообразия гоняется каждый раз?')" PASS
+
+# --- SC-AK-1168 — загруженное правило и отчёт субагента репликой владельца не считаются ------
+# Текст правила и отчёт субагента приходят в запись с ролью `user` и пометкой `isMeta`. Принятые
+# за ввод, они вставали «последней репликой владельца», и новый вопрос совпадал с ними словами.
+meta() { jq -c -n --arg t "$1" '{type:"user",isMeta:true,message:{content:[{type:"text",text:$t}]}}'; }
+SAID_OTHER='заголовок панели переносим строкой'
+
+expect_ask "SC-AK-1168 — текст загруженного правила не встаёт репликой владельца" \
+    "$(input_ask_text "$(transcript \
+        "$(say "$SAID_RULE")" \
+        "$(uses AskUserQuestion '{"questions":[]}')" \
+        "$(say "$SAID_OTHER")" \
+        "$(uses Skill "$LOADED")" \
+        "$(meta "$SAID_RULE")")" \
+        'Сплошная проверка единообразия гоняется каждый раз?')" PASS
+
+expect_ask "SC-AK-1168 — отчёт субагента не встаёт репликой владельца" \
+    "$(input_ask_text "$(transcript \
+        "$(say "$SAID_RULE")" \
+        "$(uses AskUserQuestion '{"questions":[]}')" \
+        "$(say "$SAID_OTHER")" \
+        "$(uses Skill "$LOADED")" \
+        "$(uses Agent '{"prompt":"разбор"}')" "$(tool_result)" \
+        "$(meta "[Subagent hand-back] $SAID_RULE")")" \
+        'Сплошная проверка единообразия гоняется каждый раз?')" PASS
+
+# --- SC-AK-1169 — поля вызова меню словами его темы не считаются ----------------------------
+# Слова брались из меню целиком, вместе с именами полей: английский текст совпадал с любым
+# вызовом по двум словам из трёх ещё до смысла.
+input_ask_menu() {
+    jq -n --arg p "$1" --arg q "$2" \
+        '{session_id:"tests",transcript_path:$p,tool_name:"AskUserQuestion",
+          tool_input:{questions:[{question:$q,header:"Шапка",multiSelect:false,
+            options:[{label:"Строкой",description:"перенос"},{label:"Многоточием",description:"обрезка"}]}]}}'
+}
+
+expect_ask "SC-AK-1169 — имена полей меню с репликой не совпадают" \
+    "$(input_ask_menu "$(transcript \
+        "$(say "$SAID_RULE")" \
+        "$(uses AskUserQuestion '{"questions":[]}')" \
+        "$(say 'the question, the label and the description of options')" \
+        "$(uses Skill "$LOADED")")" \
+        'Заголовок панели как показывать?')" PASS
+
+expect_ask "SC-AK-1169 — слова вариантов меню судятся наравне с вопросом" \
+    "$(input_ask_menu "$(transcript \
+        "$(say "$SAID_RULE")" \
+        "$(uses AskUserQuestion '{"questions":[]}')" \
+        "$(say 'Заголовок показывать: перенос нужен, обрезка нет')" \
+        "$(uses Skill "$LOADED")")" \
+        'Заголовок как показывать?')" DENY
 
 # --- SC-AK-1134 — два ответа «рекомендованный» подряд закрывают меню -----------------------
 # Владелец отвечал рекомендованным на четыре меню подряд, пятое закрыл именем готового модуля.
@@ -303,3 +352,7 @@ out="$(input_ask_text "$(transcript \
 out="$(printf '%s' "$out" | "$HOOKS/grill-gate.sh" 2>/dev/null | jq -r '.hookSpecificOutput.permissionDecisionReason // ""')"
 if printf '%s' "$out" | grep -q 'go on with the work'; then got="есть"; else got="нет"; fi
 report "SC-AK-818 — отказ велит продолжать работу" "$got" "есть"
+
+# Итог стоит последней строкой: стоявший в середине, он не считал сценарии ниже себя, и их провал
+# печатался, но прогон не ронял.
+suite_result "гард разговора"
