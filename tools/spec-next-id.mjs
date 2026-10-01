@@ -19,7 +19,7 @@
 import { execFileSync } from 'node:child_process';
 
 const WANT = process.argv[2]?.toUpperCase().replace(/^SC-|-$/g, '') ?? '';
-const HEADING = /\bSC-([A-Z]{2,4})-(\d{1,3})\b/g;
+const HEADING = /\bSC-([A-Z]{2,4})-(\d+)\b/g;
 
 function git(args) {
     return execFileSync('git', args, { encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 });
@@ -41,7 +41,7 @@ function main() {
     for (const ref of branches()) {
         let text = '';
         try {
-            text = git(['grep', '-h', '-oE', 'SC-[A-Z]{2,4}-[0-9]{1,3}', ref, '--', 'docs']);
+            text = git(['grep', '-h', '-oE', 'SC-[A-Z]{2,4}-[0-9]+', ref, '--', 'docs']);
         } catch {
             // A branch without a single scenario is a lawful case: `git grep` gives a non-zero code.
             continue;
