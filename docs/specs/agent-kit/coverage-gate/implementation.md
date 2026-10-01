@@ -7,6 +7,6 @@ Every statement of the spec and the place it is carried out.
 - **The reading is asked from the command that prints the measure, not written a second time.** — `projects/agent-kit/assets/checks/check-spec-coverage.mjs:ENTRY` — the entry is called as a child process; scenario `SC-AK-1147`
 - **The refusal names the count and prints the resources, a line each.** — `projects/agent-kit/assets/checks/check-spec-coverage.mjs:console` — the count and the list; scenario `SC-AK-1148`
 - **A tree that declared no directories of package sources is not judged.** — `projects/agent-kit/assets/checks/check-spec-coverage.mjs:packageDirs` — an empty list lets the push through; scenario `SC-AK-1149`
-- **The directories of portable texts are not package sources.** — `projects/agent-kit/assets/checks/specs-for.mjs:packageDirs` — scenario `SC-AK-1170`
+- **The directories of portable texts are not package sources.** — `projects/agent-kit/assets/checks/specs-for.mjs:packageDirs` — scenario `SC-AK-1177`
 - **A tree with no entry into the specs laid out is not judged either, and the check says so.** — `projects/agent-kit/assets/checks/check-spec-coverage.mjs:existsSync` — the entry is looked for on the disk; scenario `SC-AK-1150`
 - **The check judges the tree, and the entry judges one resource.** — `projects/agent-kit/assets/checks/specs-for.mjs:entry` — the entry answers about one name; scenario `SC-AK-1147`

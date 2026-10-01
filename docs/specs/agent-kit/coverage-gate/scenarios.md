@@ -35,7 +35,7 @@ Then it answers zero and says there is nothing to ask with
 
 Covered: `projects/agent-kit/tests/spec-coverage.test.sh`.
 
-### SC-AK-1170 — portable texts of a consumer are not judged
+### SC-AK-1177 — portable texts of a consumer are not judged
 
 Given a tree that declared directories of portable texts and no directories of package sources
 When the check is run
