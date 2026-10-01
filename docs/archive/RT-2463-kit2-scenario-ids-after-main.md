@@ -18,3 +18,7 @@ divergences: 43 duplicated identifiers and one «Not covered» mark answered by 
   once and never reused; a block keeps a subdomain's scenarios readable as a range.
 - **Only files of the four epic subdomains are edited** — the same numbers stand in main's
   subdomains, and a replacement over the whole tree would move theirs too.
+
+## Decisions along the way
+
+- **The uploader's download button takes `radius` instead of `shape`** — main folded the icon button's `shape` into the shared `radius` input, and the epic's uploader still bound `shape`: two specs fell with NG0303. The uploader's own `downloadShape` input stays; a circle maps to the `full` step. Affected stage of the plan: 1.
