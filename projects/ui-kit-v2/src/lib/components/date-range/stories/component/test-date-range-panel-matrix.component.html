@@ -62,17 +62,16 @@
 
     @case ('themes') {
         <!--
-            Пара тем показывает раскладку шторки: половина темы уже широкой панели с двумя месяцами,
-            и та легла бы на соседнюю половину. Шторка сжимается по ширине половины, а цвета у обеих
-            раскладок одни и те же — варианты, дни, черты и подвал.
+            Пара тем показывает широкую панель с двумя месяцами: половина не уже своего содержимого,
+            и там, где две панели рядом не помещаются, половины встают одна под другой.
         -->
         <app-story-presets caption="Панель в обеих темах в обоих наборах">
             <ng-template>
-                <app-story-themes fill>
+                <app-story-themes>
                     <ng-template>
                         @for (themeCase of themeCases; track themeCase.name) {
                             <div [style]="surface">
-                                <rt-date-range-panel sheet [value]="themeCase.value" [now]="now" />
+                                <rt-date-range-panel [value]="themeCase.value" [now]="now" />
                             </div>
                         }
                     </ng-template>
