@@ -1,0 +1,39 @@
+@layer rt-kit.components {
+    /* Меню во всю высоту окна и с тенью у края, как в истории первого кита: подменю выезжает над
+       страницей, и край меню виден на любом фоне. */
+    .app-side-menu {
+        --rt-side-menu-story-shadow: var(--rt-shadow-lg);
+
+        display: flex;
+        width: fit-content;
+        height: 100vh;
+        box-shadow: var(--rt-side-menu-story-shadow);
+
+        /* Низкий экран первого кита: окно высотой 360. */
+        &--short {
+            height: 22.5rem;
+        }
+
+        &__header {
+            display: flex;
+            width: 100%;
+            align-items: center;
+            justify-content: center;
+            padding: var(--rt-space-md) 0;
+            border-bottom: 1px solid var(--rt-color-border-subtle);
+            color: var(--rt-color-text-primary);
+            cursor: pointer;
+        }
+
+        &__footer {
+            display: flex;
+            width: 100%;
+            flex-direction: column;
+            align-items: center;
+            padding-top: calc(var(--rt-space-sm) + var(--rt-space-xs));
+            border-top: 1px solid var(--rt-color-border-subtle);
+            color: var(--rt-color-text-primary);
+            gap: var(--rt-space-sm);
+        }
+    }
+}

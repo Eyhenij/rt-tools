@@ -2,19 +2,25 @@
     <ng-container [ngTemplateOutlet]="rowTpl" [ngTemplateOutletContext]="{ $implicit: item(), depth: 0 }" />
     <ng-template #rowTpl let-row let-depth="depth">
         @let isActive = menuRef.activeMenuIds().includes(row.id);
-        @let isHighlighted = menuRef.highlightedMenuId() === row.id;
+        @let isHighlighted = !inFavorites() && menuRef.highlightedMenuId() === row.id;
         @if (row.link) {
+            <!--
+                Строка блока избранного без номера: по номеру клавиатура нажимает строку списка. И без
+                родного перетаскивания ссылки: нажатие на ручку внутри строки браузер забирал себе,
+                и перетаскивание CDK не начиналось.
+            -->
             <a
                 rtElem="row"
                 qa-dataid="side-menu-sub-item"
-                [id]="row.id"
+                [id]="inFavorites() ? null : row.id"
+                [attr.draggable]="inFavorites() ? 'false' : null"
                 [routerLink]="row.link"
                 [style.--rt-side-menu-sub-item-depth]="depth"
                 [rtMod]="{ active: isActive, highlighted: isHighlighted }"
                 [attr.aria-current]="isActive ? 'page' : null"
                 (click)="onClickSubMenu(row, $event)">
                 @if (row.icon) {
-                    <rt-icon rtElem="icon" size="sm" [name]="row.icon" />
+                    <ng-container [ngTemplateOutlet]="iconTpl" [ngTemplateOutletContext]="{ $implicit: row }" />
                 }
 
                 <span rtElem="title" [rtTooltip]="row.name">
@@ -28,36 +34,74 @@
                     }
                 </span>
 
+                <!--
+                    Строка блока несёт «убрать», а не звезду: всё в блоке уже в избранном. Звезда —
+                    у пункта со своим адресом в разделе с избранным: полая — не в избранном,
+                    закрашенная цветом темы — в нём. Имя кнопки называет следующее нажатие.
+                -->
+                @if (inFavorites() && favoritesIcons) {
+                    <rt-icon-button
+                        rtElem="favorite"
+                        qa-dataid="side-menu-favorite-remove"
+                        size="sm"
+                        shape="circle"
+                        [rtMod]="{ remove: true }"
+                        [icon]="favoritesIcons.remove"
+                        [ariaLabel]="removeLabel()"
+                        [tooltip]="narrow() ? '' : removeLabel()"
+                        (clicked)="onRemoveFavorite(row, $event)" />
+                } @else if (favoritesOn() && !row.favoriteDisabled) {
+                    @let isFavorite = favoriteIds().includes(row.id);
+                    <rt-icon-button
+                        rtElem="favorite"
+                        qa-dataid="side-menu-favorite-star"
+                        size="sm"
+                        shape="circle"
+                        [rtMod]="{ on: isFavorite }"
+                        [icon]="isFavorite ? 'star-fill' : 'star'"
+                        [iconFill]="isFavorite"
+                        [ariaLabel]="isFavorite ? removeLabel() : addLabel()"
+                        [tooltip]="narrow() ? '' : isFavorite ? removeLabel() : addLabel()"
+                        (clicked)="onToggleFavorite(row, $event)" />
+                }
+
+                <!-- Действия, которые строке передаёт владелец: блок избранного кладёт сюда ручку. -->
+                <ng-content select="[rtSideMenuSubItemAction]" />
+
+                <!-- Кнопка потребителя видна всегда и стоит последней: кнопки избранного встают перед ней. -->
                 @if (row.iconButton?.icon) {
                     <rt-icon-button
                         rtElem="action"
                         qa-dataid="side-menu-sub-item-action"
                         size="sm"
-                        [icon]="row.iconButton.icon"
+                        shape="circle"
+                        [icon]="(row.iconButton.icon | rtSideMenuIcon) ?? row.iconButton.icon"
                         [ariaLabel]="row.name ?? ''"
                         (clicked)="onClickSubMenuAdditional(row, $event)" />
                 }
             </a>
         } @else if (row.submenu) {
             <!--
-            Папка рисуется и с пустым составом: отбор оставляет так ту, что совпала подписью. Шеврона
-            у такой папки нет — раскрывать нечего, и стрелка обещала бы содержимое.
-        -->
+                Папка — раскрывающаяся панель кита. Рисуется и с пустым составом: отбор оставляет так
+                ту, что совпала подписью. Шеврона у такой папки нет — раскрывать нечего. Раскрытие
+                держит меню: панель сообщает о нажатии, меню переключает папку. Кнопке заголовка
+                отдан номер пункта — по нему клавиатура меню нажимает строку.
+            -->
             @let isOpen = menuRef.expandedMenuIds().includes(row.id);
-            <button
-                type="button"
-                rtElem="row"
-                qa-dataid="side-menu-folder"
-                [id]="row.id"
+            <rt-expansion-panel
+                rtElem="folder"
+                appearance="plain"
+                [headerId]="'' + row.id"
+                [hideToggle]="!row.submenu.length"
+                [expanded]="isOpen"
                 [style.--rt-side-menu-sub-item-depth]="depth"
-                [rtMod]="{ folder: true, active: isActive, highlighted: isHighlighted }"
-                [attr.aria-expanded]="row.submenu.length ? isOpen : null"
-                (click)="onToggleFolder(row)">
+                [rtMod]="{ highlighted: isHighlighted }"
+                (expandedChange)="onToggleFolder(row)">
                 @if (row.icon) {
-                    <rt-icon rtElem="icon" size="sm" [name]="row.icon" />
+                    <ng-container [ngTemplateOutlet]="iconTpl" [ngTemplateOutletContext]="{ $implicit: row }" />
                 }
 
-                <span rtElem="title" [rtTooltip]="row.name">
+                <span rtElem="title" qa-dataid="side-menu-folder" [rtTooltip]="row.name">
                     @for (part of row.name | rtSideMenuTitleParts: menuRef.subMenuQuery(); track $index) {
                         @if (part.matched) {
                             <span rtElem="match">{{ part.text }}</span>
@@ -67,18 +111,26 @@
                     }
                 </span>
 
-                @if (row.submenu.length) {
-                    <rt-icon rtElem="chevron" size="sm" name="chevron-down" [rtMod]="{ open: isOpen }" />
-                }
-            </button>
+                <ng-template rtExpansionPanelContent>
+                    <div rtElem="children" role="group">
+                        @for (child of row.submenu; track child.id) {
+                            <ng-container [ngTemplateOutlet]="rowTpl" [ngTemplateOutletContext]="{ $implicit: child, depth: depth + 1 }" />
+                        }
+                    </div>
+                </ng-template>
+            </rt-expansion-panel>
+        }
+    </ng-template>
 
-            @if (isOpen && row.submenu.length) {
-                <div rtElem="children" role="group">
-                    @for (child of row.submenu; track child.id) {
-                        <ng-container [ngTemplateOutlet]="rowTpl" [ngTemplateOutletContext]="{ $implicit: child, depth: depth + 1 }" />
-                    }
-                </div>
-            }
+    <!-- Значок строки: имя кита или пара имени Material, а имя, которого кит не рисует, — свой шаблон меню. -->
+    <ng-template #iconTpl let-row>
+        @let kitIcon = row.icon | rtSideMenuIcon;
+        @if (kitIcon) {
+            <rt-icon rtElem="icon" size="sm" [name]="kitIcon" />
+        } @else if (menuRef.ownIconTpl(); as own) {
+            <span rtElem="own-icon" qa-dataid="side-menu-own-icon" aria-hidden="true">
+                <ng-container [ngTemplateOutlet]="own" [ngTemplateOutletContext]="{ $implicit: row }" />
+            </span>
         }
     </ng-template>
 </ng-container>

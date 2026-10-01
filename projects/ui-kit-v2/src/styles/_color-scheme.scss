@@ -1,0 +1,50 @@
+@use 'sass:map';
+@use 'sass:list';
+@use 'sass:meta';
+
+/* A colour scheme — the brand ramp under its own name, switched on by `data-rt-scheme` on `<html>`,
+   as in the first kit.
+
+   The scheme rewrites the steps, not the assignments: the accent of the own set derives from
+   `--rt-brand-*`, the accent of the material set from `--rt-mat-blue-100`, and the dark theme refers to
+   the same steps. So one ramp repaints every look the kit is drawn in, and the names the components
+   read stay untouched.
+
+   The scheme answers on the root only. A value referring to a step is resolved where it is declared,
+   and the assignments are declared on the root: a scheme on an inner node would change the steps under
+   assignments already resolved, and the piece would keep the old accent.
+
+   A Material theme of the application wins over the scheme in the material set: its `--mat-sys-primary`
+   stands in front of the step in that set's assignments.
+
+   Usage:
+     @use '@rt-tools/ui-kit-v2/styles/color-scheme' as rt;
+     @include rt.rt-color-scheme('teal', (50: #e6f4f3, …, 500: #008582, …, 950: #00201f));
+*/
+
+$brand-steps: (50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950);
+
+@mixin rt-color-scheme($name, $ramp) {
+    @if meta.type-of($name) != 'string' {
+        @error 'rt-color-scheme: the name must be a string, got #{meta.type-of($name)}.';
+    }
+
+    @if meta.type-of($ramp) != 'map' or not map.has-key($ramp, 500) {
+        @error 'rt-color-scheme("#{$name}"): the ramp is a map of (step: colour) and holds at least the step 500 — the brand colour.';
+    }
+
+    @each $step, $value in $ramp {
+        @if not list.index($brand-steps, $step) {
+            @error 'rt-color-scheme("#{$name}"): unknown step #{$step}. Allowed: #{$brand-steps}.';
+        }
+    }
+
+    /* `:root[…]` (0,2,0) outranks the steps on `:root` (0,1,0) whatever the order of the sources. */
+    :root[data-rt-scheme='#{$name}'] {
+        @each $step, $value in $ramp {
+            --rt-brand-#{$step}: #{$value};
+        }
+
+        --rt-mat-blue-100: #{map.get($ramp, 500)};
+    }
+}

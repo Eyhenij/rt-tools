@@ -13,7 +13,7 @@ import {
     viewChild,
 } from '@angular/core';
 
-import { RtSideMenuFooterDirective, RtSideMenuHeaderDirective } from '../../rt-side-menu.directives';
+import { RtSideMenuFooterDirective, RtSideMenuHeaderDirective, RtSideMenuIconDirective } from '../../rt-side-menu.directives';
 import { RtSideMenuComponent } from '../../rt-side-menu.component';
 import { IRtSideMenu } from '../../rt-side-menu.model';
 
@@ -32,7 +32,7 @@ import { IRtSideMenu } from '../../rt-side-menu.model';
     templateUrl: './test-side-menu-cell.component.html',
     styleUrls: ['./test-side-menu-cell.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [RtSideMenuComponent, RtSideMenuHeaderDirective, RtSideMenuFooterDirective],
+    imports: [RtSideMenuComponent, RtSideMenuHeaderDirective, RtSideMenuFooterDirective, RtSideMenuIconDirective],
 })
 export class TestRtSideMenuCellComponent {
     readonly #host: ElementRef<HTMLElement> = inject(ElementRef);
@@ -48,8 +48,15 @@ export class TestRtSideMenuCellComponent {
     public readonly openId: InputSignal<string | number | null> = input<string | number | null>(null);
     /** Запрос, набранный в поле поиска. */
     public readonly query: InputSignal<string> = input<string>('');
+    /** Номер меню в настройках: у ячеек с избранным свой список, у остальных — общий. */
+    public readonly menuId: InputSignal<string | null> = input<string | null>(null);
+    public readonly favoritesCount: InputSignal<IRtSideMenu.FavoritesCount> = input<IRtSideMenu.FavoritesCount>('collapsed');
+    public readonly favoriteActionsReserve: InputSignal<IRtSideMenu.FavoriteActionsReserve> =
+        input<IRtSideMenu.FavoriteActionsReserve>('none');
     /** Шапка и подвал полосы. */
     public readonly slots: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, { transform: booleanAttribute });
+    /** Свой значок меню для имён, которых кит не рисует. */
+    public readonly ownIcon: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, { transform: booleanAttribute });
 
     constructor() {
         afterNextRender((): void => {

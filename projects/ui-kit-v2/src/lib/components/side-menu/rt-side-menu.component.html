@@ -89,7 +89,8 @@
                         rtElem="pin"
                         qa-dataid="side-menu-pin"
                         size="sm"
-                        [icon]="isPinned() ? 'lock' : 'lock-open'"
+                        icon="pin"
+                        [iconFill]="isPinned()"
                         [active]="isPinned()"
                         [ariaLabel]="isPinned() ? unpinLabel() : pinLabel()"
                         [tooltip]="isPinned() ? unpinLabel() : pinLabel()"
@@ -138,6 +139,11 @@
         }
 
         <div rtElem="sub-list">
+            <!-- Блок избранного раздела: сам решает, есть ли ему что показать, и без строк места не занимает. -->
+            <rt-side-menu-favorites
+                (clickSubMenuAction)="onClickSubMenu($event)"
+                (clickSubMenuAdditionalAction)="onClickSubMenuAdditional($event)" />
+
             @for (item of visibleSubMenuItems(); track item.id) {
                 <rt-side-menu-sub-item
                     [item]="item"
@@ -176,8 +182,16 @@
 
     <ng-template #railItemBodyTpl let-item>
         @if (item.icon) {
+            <!-- Имя Material первого кита рисуется своей парой; имя, которого кит не рисует, — своим шаблоном меню. -->
+            @let kitIcon = item.icon | rtSideMenuIcon;
             <span rtElem="rail-icon">
-                <rt-icon [name]="item.icon" />
+                @if (kitIcon) {
+                    <rt-icon [name]="kitIcon" />
+                } @else if (ownIconTpl(); as own) {
+                    <span rtElem="own-icon" qa-dataid="side-menu-own-icon" aria-hidden="true">
+                        <ng-container [ngTemplateOutlet]="own" [ngTemplateOutletContext]="{ $implicit: item }" />
+                    </span>
+                }
             </span>
         }
 
@@ -212,13 +226,21 @@
 
     <ng-template #mobileItemBodyTpl let-item>
         @if (item.icon) {
-            <rt-icon rtElem="mobile-icon" [name]="item.icon" />
+            @let kitIcon = item.icon | rtSideMenuIcon;
+            @if (kitIcon) {
+                <rt-icon rtElem="mobile-icon" [name]="kitIcon" />
+            } @else if (ownIconTpl(); as own) {
+                <span rtElem="own-icon" qa-dataid="side-menu-own-icon" aria-hidden="true">
+                    <ng-container [ngTemplateOutlet]="own" [ngTemplateOutletContext]="{ $implicit: item }" />
+                </span>
+            }
         }
 
         <span rtElem="mobile-title" [rtTooltip]="item.name">{{ item.name }}</span>
 
         @if (item.submenu?.length) {
-            <rt-icon rtElem="mobile-chevron" size="sm" name="chevron-right" />
+            <!-- Стрелка раздела, как у первого кита: нажатие уводит в подменю, а не раскрывает на месте. -->
+            <rt-icon rtElem="mobile-chevron" size="sm" name="arrow-right" />
         }
     </ng-template>
 </ng-container>

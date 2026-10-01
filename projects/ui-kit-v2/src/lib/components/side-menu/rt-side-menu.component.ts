@@ -1,15 +1,18 @@
 import { NgTemplateOutlet } from '@angular/common';
 import {
+    booleanAttribute,
     ChangeDetectionStrategy,
     Component,
     computed,
     contentChild,
     DestroyRef,
     ElementRef,
+    effect,
     inject,
     input,
     InputSignal,
     InputSignalWithTransform,
+    isDevMode,
     output,
     OutputEmitterRef,
     Renderer2,
@@ -38,11 +41,19 @@ import {
     RtScrollAreaHeaderDirective,
 } from '../scroll-area';
 import { RtTooltipDirective } from '../tooltip';
+import { RtSideMenuFavoritesComponent } from './favorites/rt-side-menu-favorites.component';
 import { RtSubMenuKeyboard } from './rt-side-menu-keyboard';
 import { RtSideMenuResize } from './rt-side-menu-resize';
 import { normalizeSideMenuId, RT_SIDE_MENU_DEFAULT_ID } from './rt-side-menu-settings.logic';
 import { RtSideMenuSettingsService } from './rt-side-menu-settings.service';
-import { RtSideMenuFooterDirective, RtSideMenuHeaderDirective } from './rt-side-menu.directives';
+import { unpairedSideMenuIcons } from './rt-side-menu-icon.logic';
+import { RtSideMenuIconPipe } from './rt-side-menu-icon.pipe';
+import {
+    IRtSideMenuIconContext,
+    RtSideMenuFooterDirective,
+    RtSideMenuHeaderDirective,
+    RtSideMenuIconDirective,
+} from './rt-side-menu.directives';
 import {
     clampSideMenuWidth,
     drawnSideMenuWidth,
@@ -70,6 +81,8 @@ const BEM_BLOCK: string = 'rt-side-menu';
         '[class.rt-side-menu--pinned]': 'isPinned()',
         // Натянутая ширина подменю приходит своим свойством: панель берёт наибольшее из него и ширины оформления.
         '[style.--rt-side-menu-panel-dragged-width]': 'panelWidthStyle()',
+        // Кнопки избранного, ждущие наведения, в покое ширины не занимают.
+        '[class.rt-side-menu--favorite-actions-none]': "favoriteActionsReserve() === 'none'",
     },
     templateUrl: './rt-side-menu.component.html',
     styleUrls: ['./rt-side-menu.component.scss'],
@@ -91,6 +104,8 @@ const BEM_BLOCK: string = 'rt-side-menu';
         RtScrollAreaFooterDirective,
         RtScrollAreaHeaderDirective,
         RtTooltipDirective,
+        RtSideMenuFavoritesComponent,
+        RtSideMenuIconPipe,
         RtSideMenuSubItemComponent,
     ],
 })
@@ -127,6 +142,8 @@ export class RtSideMenuComponent implements IRtSideMenuHost {
     readonly #hoverOpened: WritableSignal<boolean> = signal(false);
     /** Человек в поле поиска: подменю держится открытым до нажатия снаружи. */
     readonly #searchHeld: WritableSignal<boolean> = signal(false);
+    /** Строку избранного тянут: уход указателя за панель подменю не закрывает. */
+    readonly #dragHeld: WritableSignal<boolean> = signal(false);
     /** Режим и ширина в работе: вход приложения, иначе сохранённые под номером меню. */
     readonly #mode: Signal<IRtSideMenu.SubMenuMode> = computed(
         (): IRtSideMenu.SubMenuMode => this.subMenuMode() ?? this.#settings?.subMenuMode(this.menuId())() ?? 'hover'
@@ -171,10 +188,6 @@ export class RtSideMenuComponent implements IRtSideMenuHost {
     protected readonly subMenuOpened: Signal<boolean> = computed((): boolean =>
         this.isPinned() ? this.#pinnedSubMenu().length > 0 : this.#hoverOpened()
     );
-    /** Набор, который подменю наполняет сейчас, до отбора поиском. */
-    protected readonly shownSubMenu: Signal<IRtSideMenu.Item[]> = computed((): IRtSideMenu.Item[] =>
-        this.isPinned() ? this.#pinnedSubMenu() : (this.selectedSubMenu() ?? [])
-    );
     protected readonly visibleSubMenuItems: Signal<IRtSideMenu.Item[]> = computed((): IRtSideMenu.Item[] =>
         filterSideMenuItems(this.shownSubMenu(), this.subMenuQuery())
     );
@@ -188,6 +201,10 @@ export class RtSideMenuComponent implements IRtSideMenuHost {
         return selected ? [selected.id] : this.activeMenuIds();
     });
 
+    /** Набор, который подменю наполняет сейчас, до отбора поиском. */
+    public readonly shownSubMenu: Signal<IRtSideMenu.Item[]> = computed((): IRtSideMenu.Item[] =>
+        this.isPinned() ? this.#pinnedSubMenu() : (this.selectedSubMenu() ?? [])
+    );
     public readonly selectedItem: WritableSignal<IRtSideMenu.Item | null> = signal(null);
     public readonly selectedSubMenu: WritableSignal<IRtSideMenu.Item[] | null> = signal(null);
     /** Что набрано в поиске: строка берёт запрос отсюда, чтобы отметить совпавшее. */
@@ -219,6 +236,16 @@ export class RtSideMenuComponent implements IRtSideMenuHost {
         { transform: normalizeSideMenuId }
     );
 
+    /** Число строк в заголовке блока избранного: всегда, у свёрнутого блока или никогда. */
+    public readonly favoritesCount: InputSignal<IRtSideMenu.FavoritesCount> = input<IRtSideMenu.FavoritesCount>('collapsed');
+    /** Место под кнопки избранного, ждущие наведения: держать всегда или отдавать подписи. */
+    public readonly favoriteActionsReserve: InputSignal<IRtSideMenu.FavoriteActionsReserve> =
+        input<IRtSideMenu.FavoriteActionsReserve>('none');
+    /** Поиск показывает совпавшие строки избранного; выключено — на время поиска блока нет. */
+    public readonly isFavoritesSearchShown: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
+        transform: booleanAttribute,
+    });
+
     public readonly subMenuModeChange: OutputEmitterRef<IRtSideMenu.SubMenuMode> = output<IRtSideMenu.SubMenuMode>();
     public readonly subMenuWidthChange: OutputEmitterRef<number> = output<number>();
     /** Начало и конец тяги: по ним потребитель накрывает чужие кадры и снимает накрытие. */
@@ -233,6 +260,10 @@ export class RtSideMenuComponent implements IRtSideMenuHost {
         data: IRtSideMenu.ItemData | undefined;
         event: MouseEvent;
     }>();
+    /** Свой значок пунктов, чьё имя кит не рисует; подпункты читают его через токен меню. */
+    public readonly ownIconTpl: Signal<TemplateRef<IRtSideMenuIconContext> | undefined> = contentChild(RtSideMenuIconDirective, {
+        read: TemplateRef,
+    });
 
     constructor() {
         this.searchControl.valueChanges.pipe(takeUntilDestroyed()).subscribe((query: string | null): void => {
@@ -241,6 +272,21 @@ export class RtSideMenuComponent implements IRtSideMenuHost {
             // Видимый список пересобрался: подсветка и раскрытое стрелками к нему больше не относятся.
             this.#keyboard.reset();
         });
+
+        // Имя без значка кита и без пары рисует пункт без значка, и пропуск без предупреждения не заметен.
+        if (isDevMode()) {
+            effect((): void => {
+                const unpaired: string[] = unpairedSideMenuIcons(this.menuItems(), this.ownIconTpl() !== undefined);
+                if (unpaired.length) {
+                    const names: string = unpaired.map((name: string): string => `«${name}»`).join(', ');
+                    // eslint-disable-next-line no-console -- предупреждение разработчику приложения: другого канала у кита нет
+                    console.warn(
+                        `rt-side-menu «${this.menuId()}»: значков ${names} нет ни в наборе кита, ни в перечне имён Material. ` +
+                            'Задайте имя кита или свой значок через <ng-template rtSideMenuIcon>.'
+                    );
+                }
+            });
+        }
     }
 
     public onClickMenu(item: IRtSideMenu.Item): void {
@@ -294,7 +340,7 @@ export class RtSideMenuComponent implements IRtSideMenuHost {
 
     /** Наведение на пункт полосы открывает его подменю; уход указателя с панели — без пункта. */
     public toggleSubMenu(item?: IRtSideMenu.Item): void {
-        if (this.isPinned() || (item === undefined && this.#searchHeld())) {
+        if (this.isPinned() || (item === undefined && (this.#searchHeld() || this.#dragHeld()))) {
             return;
         }
 
@@ -316,6 +362,10 @@ export class RtSideMenuComponent implements IRtSideMenuHost {
         this.#hoverOpened.set(false);
         this.#searchHeld.set(false);
         this.#keyboard.reset();
+    }
+
+    public holdSubMenu(held: boolean): void {
+        this.#dragHeld.set(held);
     }
 
     public toggleFolder(item: IRtSideMenu.Item): void {
@@ -388,11 +438,12 @@ export class RtSideMenuComponent implements IRtSideMenuHost {
         this.subMenuQuery.set('');
     }
 
-    /** Строка ищется по номеру среди строк панели и нажимается как мышью. */
+    /**
+     * Строка ищется по номеру среди узлов панели с id и нажимается как мышью: у ссылки номер стоит
+     * на ней самой, у папки — на кнопке заголовка её раскрывающейся панели.
+     */
     #pressRow(item: IRtSideMenu.Item): void {
-        const rows: HTMLElement[] = Array.from(
-            this.panelRef()?.nativeElement.querySelectorAll<HTMLElement>('.rt-side-menu-sub-item__row') ?? []
-        );
+        const rows: HTMLElement[] = Array.from(this.panelRef()?.nativeElement.querySelectorAll<HTMLElement>('[id]') ?? []);
 
         rows.find((row: HTMLElement): boolean => row.id === String(item.id))?.click();
     }

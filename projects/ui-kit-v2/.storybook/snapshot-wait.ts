@@ -79,7 +79,7 @@ const PENDING_SELECTOR: string = '[data-rt-pending]';
  * Ждётся именно тот узел, который снимается: страница целиком успокаивается и тогда, когда
  * внутри корня показа ещё пусто.
  */
-async function settled(page: Page): Promise<void> {
+export async function settled(page: Page): Promise<void> {
     if ((await page.locator(ROOT_SELECTOR).count()) === 0) {
         return;
     }

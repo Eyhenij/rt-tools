@@ -1,1 +1,33 @@
-<app-side-menu-cell [items]="items" [activeIds]="activeIds" [mode]="mode" [width]="width" [slots]="true" />
+<ng-container rtBlock="app-side-menu">
+    <rt-side-menu
+        [menuItems]="items()"
+        [menuId]="menuId()"
+        [favoritesCount]="favoritesCount()"
+        [favoriteActionsReserve]="favoriteActionsReserve()"
+        [activeMenuIds]="activeIds()"
+        [subMenuMode]="shownMode()"
+        [subMenuWidth]="shownWidth()"
+        (subMenuModeChange)="shownMode.set($event)"
+        (subMenuWidthChange)="shownWidth.set($event)"
+        (clickSubMenuAction)="onSubMenu($event)"
+        (clickSubMenuAdditionalAction)="onSubMenuAdditional($event)"
+        (closeMobileMenuAction)="closeMobileMenu()">
+        <ng-template rtSideMenuHeader>
+            <a
+                rtElem="header"
+                tabindex="0"
+                qa-dataid="side-menu-story-header"
+                (click)="closeMobileMenu()"
+                (keydown.enter)="closeMobileMenu()">
+                <rt-icon name="info-circle" size="lg" />
+            </a>
+        </ng-template>
+
+        <ng-template rtSideMenuFooter>
+            <div rtElem="footer">
+                <rt-icon name="user" size="lg" />
+                <button type="button" rtButton appearance="text" qa-dataid="side-menu-story-logout" (click)="logout()">Logout</button>
+            </div>
+        </ng-template>
+    </rt-side-menu>
+</ng-container>

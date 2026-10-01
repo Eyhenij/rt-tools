@@ -59,6 +59,10 @@ threshold.
   mark past the line, and not a single step of the line is derived by a computing from another one: the
   hovering and the press are steps of their own, not a lightened main one. Only the transparent shades are
   computed.
+- **A colour scheme rewrites the brand line and the blue step of the material set on the root.** The
+  application declares it by the scheme mixin under its own name, and `data-rt-scheme` on `<html>`
+  switches it on. The accent follows in both sets and both themes, and the names the components read stay
+  untouched. An inner node does not take a scheme: the appointments are resolved on the root.
 
 - **A palette holds one role, and the row at the palettes is common.** The row is eleven steps 50…950; a
   palette in which the colour of the mark, the ground of a correspondence and the dark backing of the
