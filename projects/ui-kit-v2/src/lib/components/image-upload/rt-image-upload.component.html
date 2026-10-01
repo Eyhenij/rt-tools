@@ -68,6 +68,8 @@
                             rtElem="download"
                             icon="ico-download"
                             qa-dataid="image-upload-download"
+                            [shape]="downloadShape()"
+                            [rtMod]="{ round: downloadRound() }"
                             [ariaLabel]="t().uiDownload"
                             [tooltip]="t().uiDownload"
                             (click)="download()" />

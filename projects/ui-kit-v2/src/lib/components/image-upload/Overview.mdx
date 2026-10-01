@@ -23,10 +23,11 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Оси
 
-| ось        | значения                 | умолчание |
-| ---------- | ------------------------ | --------- |
-| скачивание | без кнопки, с кнопкой    | без       |
-| применение | кнопками, автоприменение | кнопками  |
+| ось                     | значения                 | умолчание |
+| ----------------------- | ------------------------ | --------- |
+| скачивание              | без кнопки, с кнопкой    | без       |
+| форма кнопки скачивания | круглая, квадратная      | круглая   |
+| применение              | кнопками, автоприменение | кнопками  |
 
 **Оси, которых не видно.** `ratio`, `round`, `format` и `quality` уходят в обрезку и показаны в её
 матрице.
@@ -53,27 +54,29 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 ## Оформление
 
 Зона загрузки — `rt-empty-state` с пунктирной рамкой внутри `rt-file-drop`. Кнопка скачивания
-лежит на картинке в правом верхнем углу, на размытой подложке. Высота картинки
+лежит на правом верхнем углу картинки и заходит за её край, как в первом ките, на размытой
+подложке. Она круглая, а по входу `downloadShape` — квадратная. Высота картинки
 ограничена свойством `--rt-image-upload-image-max-height`. Остальные свойства блока —
 `--rt-image-upload-image-radius`, `--rt-image-upload-hover-opacity`, `--rt-image-upload-focus-shadow`,
-`--rt-image-upload-download-inset`, `--rt-image-upload-download-bg` и
+`--rt-image-upload-download-overhang`, `--rt-image-upload-download-bg` и
 `--rt-image-upload-download-radius`; их переопределяют правилом на `.rt-image-upload`.
 
 ## Входы
 
-| вход           | тип                                 | умолчание                    |
-| -------------- | ----------------------------------- | ---------------------------- |
-| `imageUrl`     | `string \| null`                    | `null`                       |
-| `fileName`     | `string`                            | `'image'`                    |
-| `tooltip`      | `string`                            | `''` → `uiImageUploadChange` |
-| `downloadable` | `boolean`                           | `false`                      |
-| `autoApply`    | `boolean`                           | `false`                      |
-| `loading`      | `boolean`                           | `false`                      |
-| `disabled`     | `boolean`                           | `false`                      |
-| `ratio`        | `number \| null`                    | `null`                       |
-| `round`        | `boolean`                           | `false`                      |
-| `format`       | `'png' \| 'jpeg' \| 'webp' \| null` | `null`                       |
-| `quality`      | `number`                            | `92`                         |
+| вход            | тип                                 | умолчание                    |
+| --------------- | ----------------------------------- | ---------------------------- |
+| `imageUrl`      | `string \| null`                    | `null`                       |
+| `fileName`      | `string`                            | `'image'`                    |
+| `tooltip`       | `string`                            | `''` → `uiImageUploadChange` |
+| `downloadable`  | `boolean`                           | `false`                      |
+| `downloadShape` | `'circle' \| 'square'`              | `'circle'`                   |
+| `autoApply`     | `boolean`                           | `false`                      |
+| `loading`       | `boolean`                           | `false`                      |
+| `disabled`      | `boolean`                           | `false`                      |
+| `ratio`         | `number \| null`                    | `null`                       |
+| `round`         | `boolean`                           | `false`                      |
+| `format`        | `'png' \| 'jpeg' \| 'webp' \| null` | `null`                       |
+| `quality`       | `number`                            | `92`                         |
 
 ## Выходы
 
