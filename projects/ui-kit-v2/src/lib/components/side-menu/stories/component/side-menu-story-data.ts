@@ -117,3 +117,27 @@ export const SIDE_MENU_STORY_ITEMS: readonly IRtSideMenu.Item[] = [
 
 /** Путь до самого глубокого пункта: так первый кит показывает активное меню. */
 export const SIDE_MENU_STORY_DEEP_ACTIVE: ReadonlyArray<string | number> = [24, 26, 29, 33, 35];
+
+/**
+ * Меню с именами значков Material первого кита как есть — проверка значков вне набора. «Настройки»
+ * и кнопки строк рисуются парами из перечня кита, «Папка» — именем кита; «Главная», «Отчёты»,
+ * «Дашборды» и «Мониторинг» — имена без пары: без своего шаблона на их месте пусто, со своим —
+ * значок приложения.
+ */
+export const SIDE_MENU_ICONS_STORY_ITEMS: readonly IRtSideMenu.Item[] = [
+    {
+        id: 501,
+        icon: 'home',
+        name: 'Главная',
+        submenu: [
+            { id: 511, icon: 'insert_chart', name: 'Отчёты', link: '/reports', iconButton: { icon: 'arrow_forward' } },
+            { id: 512, icon: 'dashboard', name: 'Дашборды', link: '/dashboards', iconButton: { icon: 'add' } },
+            { id: 513, icon: 'monitoring', name: 'Мониторинг', link: '/monitoring' },
+            { id: 514, icon: 'folder', name: 'Папка', submenu: [{ id: 515, name: 'Вложенный отчёт', link: '/reports/nested' }] },
+        ],
+    },
+    { id: 502, icon: 'settings', name: 'Настройки', link: '/settings' },
+    { id: 503, icon: 'dashboard', name: 'Дашборды', link: '/dashboards' },
+];
+
+export const SIDE_MENU_ICONS_STORY_ACTIVE: ReadonlyArray<string | number> = [501, 511];

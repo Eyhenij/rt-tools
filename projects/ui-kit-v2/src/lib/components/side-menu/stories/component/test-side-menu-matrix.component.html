@@ -35,6 +35,18 @@
         </app-story-presets>
     }
 
+    @case ('icons') {
+        <app-story-presets caption="Значки вне набора кита в обоих наборах">
+            <ng-template>
+                <app-story-row [items]="icons" [itemLabel]="caseLabel">
+                    <ng-template let-item>
+                        <ng-container [ngTemplateOutlet]="cellTpl" [ngTemplateOutletContext]="{ $implicit: item }" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
     @case ('favorites') {
         <app-story-presets caption="Избранное в обоих наборах">
             <ng-template>
@@ -118,5 +130,6 @@
         [query]="item.query ?? ''"
         [slots]="item.slots ?? false"
         [menuId]="item.menuId ?? null"
-        [favoritesCount]="item.favoritesCount ?? 'collapsed'" />
+        [favoritesCount]="item.favoritesCount ?? 'collapsed'"
+        [ownIcon]="item.ownIcon ?? false" />
 </ng-template>

@@ -182,8 +182,16 @@
 
     <ng-template #railItemBodyTpl let-item>
         @if (item.icon) {
+            <!-- Имя Material первого кита рисуется своей парой; имя, которого кит не рисует, — своим шаблоном меню. -->
+            @let kitIcon = item.icon | rtSideMenuIcon;
             <span rtElem="rail-icon">
-                <rt-icon [name]="item.icon" />
+                @if (kitIcon) {
+                    <rt-icon [name]="kitIcon" />
+                } @else if (ownIconTpl(); as own) {
+                    <span rtElem="own-icon" qa-dataid="side-menu-own-icon" aria-hidden="true">
+                        <ng-container [ngTemplateOutlet]="own" [ngTemplateOutletContext]="{ $implicit: item }" />
+                    </span>
+                }
             </span>
         }
 
@@ -218,7 +226,14 @@
 
     <ng-template #mobileItemBodyTpl let-item>
         @if (item.icon) {
-            <rt-icon rtElem="mobile-icon" [name]="item.icon" />
+            @let kitIcon = item.icon | rtSideMenuIcon;
+            @if (kitIcon) {
+                <rt-icon rtElem="mobile-icon" [name]="kitIcon" />
+            } @else if (ownIconTpl(); as own) {
+                <span rtElem="own-icon" qa-dataid="side-menu-own-icon" aria-hidden="true">
+                    <ng-container [ngTemplateOutlet]="own" [ngTemplateOutletContext]="{ $implicit: item }" />
+                </span>
+            }
         }
 
         <span rtElem="mobile-title" [rtTooltip]="item.name">{{ item.name }}</span>

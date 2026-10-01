@@ -25,6 +25,7 @@ import { BreakpointsService } from '../../../platform/breakpoints.service';
 import { RtTooltipDirective } from '../../tooltip';
 import { sideMenuFavoritesSection } from '../rt-side-menu-favorites.logic';
 import { RtSideMenuSettingsService } from '../rt-side-menu-settings.service';
+import { RtSideMenuIconPipe } from '../rt-side-menu-icon.pipe';
 import { RtSideMenuTitlePartsPipe } from '../rt-side-menu-title-parts.pipe';
 import { IRtSideMenu } from '../rt-side-menu.model';
 import { IRtSideMenuHost, RT_SIDE_MENU } from '../rt-side-menu.tokens';
@@ -60,6 +61,7 @@ const FAVORITE_BUTTON: string = '.rt-side-menu-sub-item__favorite button';
         RtIconButtonComponent,
         RtTooltipDirective,
         RtSideMenuTitlePartsPipe,
+        RtSideMenuIconPipe,
     ],
 })
 export class RtSideMenuSubItemComponent {

@@ -12,6 +12,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 <rt-side-menu menuId="main" [menuItems]="sections()" [activeMenuIds]="activeIds()">
     <ng-template rtSideMenuHeader>…</ng-template>
     <ng-template rtSideMenuFooter>…</ng-template>
+    <ng-template rtSideMenuIcon let-item>…</ng-template>
 </rt-side-menu>
 ```
 
@@ -51,6 +52,13 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 тянутся за ручку и переставляются стрелками на ней, «убрать» снимает пункт. Список и свёрнутые блоки
 лежат в тех же настройках меню; без `provideRtSideMenuSettings()` ни звёзд, ни блока нет. Пункт с
 `favoriteDisabled` звезды не получает. Значки «убрать» и ручки меняются настройкой `icons`.
+
+**Значки — имя кита или имя Material первого кита.** Имя Material рисуется своей парой из перечня
+кита, как у `rt-menu`; так же — значок кнопки строки. Имя, которого кит не рисует, берёт свой
+шаблон меню `<ng-template rtSideMenuIcon let-item>`: он один на меню, получает пункт и встаёт на
+место значка его размером и цветом строки. Значок, который кит рисует сам, шаблон не перебивает.
+Имя без значка в режиме разработки названо в предупреждении консоли; кнопка строки шаблона не
+берёт, и о ней предупреждение есть всегда. Всё вместе — в истории `Icons`.
 
 ## Края
 

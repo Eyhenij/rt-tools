@@ -13,7 +13,7 @@ import {
     viewChild,
 } from '@angular/core';
 
-import { RtSideMenuFooterDirective, RtSideMenuHeaderDirective } from '../../rt-side-menu.directives';
+import { RtSideMenuFooterDirective, RtSideMenuHeaderDirective, RtSideMenuIconDirective } from '../../rt-side-menu.directives';
 import { RtSideMenuComponent } from '../../rt-side-menu.component';
 import { IRtSideMenu } from '../../rt-side-menu.model';
 
@@ -32,7 +32,7 @@ import { IRtSideMenu } from '../../rt-side-menu.model';
     templateUrl: './test-side-menu-cell.component.html',
     styleUrls: ['./test-side-menu-cell.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [RtSideMenuComponent, RtSideMenuHeaderDirective, RtSideMenuFooterDirective],
+    imports: [RtSideMenuComponent, RtSideMenuHeaderDirective, RtSideMenuFooterDirective, RtSideMenuIconDirective],
 })
 export class TestRtSideMenuCellComponent {
     readonly #host: ElementRef<HTMLElement> = inject(ElementRef);
@@ -55,6 +55,8 @@ export class TestRtSideMenuCellComponent {
         input<IRtSideMenu.FavoriteActionsReserve>('none');
     /** Шапка и подвал полосы. */
     public readonly slots: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, { transform: booleanAttribute });
+    /** Свой значок меню для имён, которых кит не рисует. */
+    public readonly ownIcon: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, { transform: booleanAttribute });
 
     constructor() {
         afterNextRender((): void => {

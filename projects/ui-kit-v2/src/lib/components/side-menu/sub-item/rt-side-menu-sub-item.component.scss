@@ -59,6 +59,26 @@
             color: inherit;
         }
 
+        /* Свой значок приложения: коробка держит размер значка строки и её цвет, рисунок внутри
+           занимает её целиком и красится через currentColor. */
+        &__own-icon {
+            --rt-side-menu-sub-item-own-icon-size: var(--rt-size-4);
+
+            display: inline-flex;
+            width: var(--rt-side-menu-sub-item-own-icon-size);
+            height: var(--rt-side-menu-sub-item-own-icon-size);
+            flex-shrink: 0;
+            align-items: center;
+            justify-content: center;
+            color: inherit;
+            line-height: 1;
+
+            > * {
+                max-width: 100%;
+                max-height: 100%;
+            }
+        }
+
         /* Подпись режется многоточием, полное имя — в подсказке. */
         &__title {
             overflow: hidden;

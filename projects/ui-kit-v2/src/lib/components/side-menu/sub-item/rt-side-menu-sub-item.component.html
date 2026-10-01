@@ -20,7 +20,7 @@
                 [attr.aria-current]="isActive ? 'page' : null"
                 (click)="onClickSubMenu(row, $event)">
                 @if (row.icon) {
-                    <rt-icon rtElem="icon" size="sm" [name]="row.icon" />
+                    <ng-container [ngTemplateOutlet]="iconTpl" [ngTemplateOutletContext]="{ $implicit: row }" />
                 }
 
                 <span rtElem="title" [rtTooltip]="row.name">
@@ -75,7 +75,7 @@
                         qa-dataid="side-menu-sub-item-action"
                         size="sm"
                         shape="circle"
-                        [icon]="row.iconButton.icon"
+                        [icon]="(row.iconButton.icon | rtSideMenuIcon) ?? row.iconButton.icon"
                         [ariaLabel]="row.name ?? ''"
                         (clicked)="onClickSubMenuAdditional(row, $event)" />
                 }
@@ -98,7 +98,7 @@
                 [rtMod]="{ highlighted: isHighlighted }"
                 (expandedChange)="onToggleFolder(row)">
                 @if (row.icon) {
-                    <rt-icon rtElem="icon" size="sm" [name]="row.icon" />
+                    <ng-container [ngTemplateOutlet]="iconTpl" [ngTemplateOutletContext]="{ $implicit: row }" />
                 }
 
                 <span rtElem="title" qa-dataid="side-menu-folder" [rtTooltip]="row.name">
@@ -119,6 +119,18 @@
                     </div>
                 </ng-template>
             </rt-expansion-panel>
+        }
+    </ng-template>
+
+    <!-- Значок строки: имя кита или пара имени Material, а имя, которого кит не рисует, — свой шаблон меню. -->
+    <ng-template #iconTpl let-row>
+        @let kitIcon = row.icon | rtSideMenuIcon;
+        @if (kitIcon) {
+            <rt-icon rtElem="icon" size="sm" [name]="kitIcon" />
+        } @else if (menuRef.ownIconTpl(); as own) {
+            <span rtElem="own-icon" qa-dataid="side-menu-own-icon" aria-hidden="true">
+                <ng-container [ngTemplateOutlet]="own" [ngTemplateOutletContext]="{ $implicit: row }" />
+            </span>
         }
     </ng-template>
 </ng-container>

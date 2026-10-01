@@ -13,12 +13,18 @@ import {
     SIDE_MENU_MATRIX_FAVORITES_COLLAPSED,
     SIDE_MENU_MATRIX_FAVORITES_OPEN,
 } from './side-menu-favorites-story-data';
-import { SIDE_MENU_STORY_DEEP_ACTIVE, SIDE_MENU_STORY_ITEMS } from './side-menu-story-data';
+import {
+    SIDE_MENU_ICONS_STORY_ACTIVE,
+    SIDE_MENU_ICONS_STORY_ITEMS,
+    SIDE_MENU_STORY_DEEP_ACTIVE,
+    SIDE_MENU_STORY_ITEMS,
+} from './side-menu-story-data';
 import { TestRtSideMenuCellComponent } from './test-side-menu-cell.component';
 import { TestRtSideMenuNarrowCellComponent } from './test-side-menu-narrow-cell.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TSideMenuMatrixPart = 'modes' | 'search' | 'folders' | 'favorites' | 'states' | 'narrow' | 'edges' | 'presets' | 'themes';
+export type TSideMenuMatrixPart =
+    'modes' | 'search' | 'folders' | 'favorites' | 'states' | 'narrow' | 'edges' | 'icons' | 'presets' | 'themes';
 
 /** Случай ячейки: подпись и то, до чего ячейка доводит меню. */
 export interface ISideMenuCase {
@@ -32,6 +38,7 @@ export interface ISideMenuCase {
     readonly slots?: boolean;
     readonly menuId?: string;
     readonly favoritesCount?: IRtSideMenu.FavoritesCount;
+    readonly ownIcon?: boolean;
 }
 
 /**
@@ -100,6 +107,23 @@ export class TestRtSideMenuMatrixComponent {
             mode: 'pinned',
             menuId: SIDE_MENU_MATRIX_FAVORITES_OPEN,
             favoritesCount: 'always',
+        },
+    ];
+
+    /** Имена Material первого кита как есть: без своего значка меню и с ним. */
+    public readonly icons: readonly ISideMenuCase[] = [
+        {
+            name: 'имена Material, без своего значка',
+            items: SIDE_MENU_ICONS_STORY_ITEMS,
+            activeIds: SIDE_MENU_ICONS_STORY_ACTIVE,
+            mode: 'pinned',
+        },
+        {
+            name: 'со своим значком меню',
+            items: SIDE_MENU_ICONS_STORY_ITEMS,
+            activeIds: SIDE_MENU_ICONS_STORY_ACTIVE,
+            mode: 'pinned',
+            ownIcon: true,
         },
     ];
 

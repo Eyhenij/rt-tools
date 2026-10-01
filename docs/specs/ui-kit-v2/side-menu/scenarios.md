@@ -89,3 +89,27 @@ When the submenu of either is shown, including after the application passed the 
 Then the block and the stars stand only in the section with the flag
 
 Covered: `projects/ui-kit-v2/src/lib/components/side-menu/rt-side-menu-favorites.logic.spec.ts`.
+
+### SC-UKV-480 — a Material name of the first kit is drawn by its pair
+
+Given items carry a kit name, a first-kit Material name with a pair and a name the kit does not draw
+When the menu draws their icons
+Then the kit name stands as is, the Material name by its pair, and the third gets no kit icon
+
+Covered: `projects/ui-kit-v2/src/lib/components/side-menu/rt-side-menu-icon.logic.spec.ts`, `projects/ui-kit-v2/src/lib/components/side-menu/rt-side-menu-icon.component.spec.ts`.
+
+### SC-UKV-481 — a name the kit does not draw takes the own icon template
+
+Given the menu carries a `rtSideMenuIcon` template and items with and without a kit icon
+When the menu is drawn
+Then only the item without a kit icon shows the template, which receives that item
+
+Covered: `projects/ui-kit-v2/src/lib/components/side-menu/rt-side-menu-icon.component.spec.ts`.
+
+### SC-UKV-482 — a name left without an icon is named in a warning
+
+Given items and row buttons carry names the kit does not draw
+When the menu is drawn in development, with and without its own template
+Then the warning names each such name once; the template silences the items but not the buttons
+
+Covered: `projects/ui-kit-v2/src/lib/components/side-menu/rt-side-menu-icon.logic.spec.ts`, `projects/ui-kit-v2/src/lib/components/side-menu/rt-side-menu-icon.component.spec.ts`.

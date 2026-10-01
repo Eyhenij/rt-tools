@@ -66,6 +66,13 @@ export const Narrow: TStory = { args: { part: 'narrow' } };
 
 export const Edges: TStory = { args: { part: 'edges' } };
 
+/**
+ * Значки вне набора: имена Material первого кита как есть. Имя с парой рисуется значком кита, имя без
+ * пары без своего шаблона стоит пустым местом, а со своим шаблоном `rtSideMenuIcon` — значком
+ * приложения.
+ */
+export const Icons: TStory = { args: { part: 'icons' } };
+
 export const Presets: TStory = { args: { part: 'presets' } };
 
 /**

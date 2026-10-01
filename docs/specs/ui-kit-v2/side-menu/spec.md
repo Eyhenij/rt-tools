@@ -66,6 +66,12 @@ side menu stands next to it as a component of its own.
 - **A star stands on items with an address; a row of the block carries «remove» and a drag handle.** The handle moves a row by dragging and by the arrows on it. A row dropped outside the block changes nothing.
 - **The favourites and the collapsed blocks are kept in the menu settings under its id.** A broken record reads without foreign values. A collapse made during a search is not kept.
 - **A folder of the submenu and the favourites block are expansion panels of the kit.** They open with motion and name their state to the assistive means the same way. The row look stays the menu's own.
+- **An item icon is drawn by a kit name or by the pair of a first-kit Material name.** The same
+  pairs serve `rt-menu`. The button of a row resolves its name the same way.
+- **A name the kit does not draw takes the menu's own icon template.** The template is one per menu
+  and gets the item. It never replaces an icon the kit draws.
+- **A name left without an icon is named in a warning while the application is developed.** A
+  button name is named always: a button takes no template.
 - **On a narrow screen the menu is one column 240 pixels wide.** A long label is cut, not widening the menu. The rows stand eight pixels from the edge, as in the first kit's phone menu.
 
 ## What is out of scope
@@ -129,6 +135,9 @@ Several menus on one page keep their settings apart by their ids.
   перенос это должна была быть одна задача!!!».
 - **The folders and the favourites block stand on `rt-expansion-panel`.** The owner chose a kit
   primitive of its own over two copies of a button with a chevron inside the menu.
+- **Icons outside the set reach the menu the way they reach `rt-menu`.** The owner asked how such
+  icons get in and pointed at that task. The menu keeps its items as data, so the own icon is one
+  template for all items rather than one per item.
 - **The separate storage keys of the first kit for the mode and the width are not ported.** The
   second kit keeps its storage keys in one registry, and the mode and the width live in the record
   of the menu under its id.
@@ -142,3 +151,5 @@ None.
 - 29 September 2026 — the agreement was written by the grilling of the owner's request.
 - 1 October 2026 — favourites, the folders on the expansion panel and the phone column joined by
   task RT-2440.
+- 1 October 2026 — icons outside the set: Material names by the kit's pairs, an own icon template,
+  a warning in development; task RT-2440.

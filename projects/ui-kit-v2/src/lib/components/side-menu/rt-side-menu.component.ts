@@ -7,10 +7,12 @@ import {
     contentChild,
     DestroyRef,
     ElementRef,
+    effect,
     inject,
     input,
     InputSignal,
     InputSignalWithTransform,
+    isDevMode,
     output,
     OutputEmitterRef,
     Renderer2,
@@ -44,7 +46,14 @@ import { RtSubMenuKeyboard } from './rt-side-menu-keyboard';
 import { RtSideMenuResize } from './rt-side-menu-resize';
 import { normalizeSideMenuId, RT_SIDE_MENU_DEFAULT_ID } from './rt-side-menu-settings.logic';
 import { RtSideMenuSettingsService } from './rt-side-menu-settings.service';
-import { RtSideMenuFooterDirective, RtSideMenuHeaderDirective } from './rt-side-menu.directives';
+import { unpairedSideMenuIcons } from './rt-side-menu-icon.logic';
+import { RtSideMenuIconPipe } from './rt-side-menu-icon.pipe';
+import {
+    IRtSideMenuIconContext,
+    RtSideMenuFooterDirective,
+    RtSideMenuHeaderDirective,
+    RtSideMenuIconDirective,
+} from './rt-side-menu.directives';
 import {
     clampSideMenuWidth,
     drawnSideMenuWidth,
@@ -96,6 +105,7 @@ const BEM_BLOCK: string = 'rt-side-menu';
         RtScrollAreaHeaderDirective,
         RtTooltipDirective,
         RtSideMenuFavoritesComponent,
+        RtSideMenuIconPipe,
         RtSideMenuSubItemComponent,
     ],
 })
@@ -250,6 +260,10 @@ export class RtSideMenuComponent implements IRtSideMenuHost {
         data: IRtSideMenu.ItemData | undefined;
         event: MouseEvent;
     }>();
+    /** Свой значок пунктов, чьё имя кит не рисует; подпункты читают его через токен меню. */
+    public readonly ownIconTpl: Signal<TemplateRef<IRtSideMenuIconContext> | undefined> = contentChild(RtSideMenuIconDirective, {
+        read: TemplateRef,
+    });
 
     constructor() {
         this.searchControl.valueChanges.pipe(takeUntilDestroyed()).subscribe((query: string | null): void => {
@@ -258,6 +272,21 @@ export class RtSideMenuComponent implements IRtSideMenuHost {
             // Видимый список пересобрался: подсветка и раскрытое стрелками к нему больше не относятся.
             this.#keyboard.reset();
         });
+
+        // Имя без значка кита и без пары рисует пункт без значка, и пропуск без предупреждения не заметен.
+        if (isDevMode()) {
+            effect((): void => {
+                const unpaired: string[] = unpairedSideMenuIcons(this.menuItems(), this.ownIconTpl() !== undefined);
+                if (unpaired.length) {
+                    const names: string = unpaired.map((name: string): string => `«${name}»`).join(', ');
+                    // eslint-disable-next-line no-console -- предупреждение разработчику приложения: другого канала у кита нет
+                    console.warn(
+                        `rt-side-menu «${this.menuId()}»: значков ${names} нет ни в наборе кита, ни в перечне имён Material. ` +
+                            'Задайте имя кита или свой значок через <ng-template rtSideMenuIcon>.'
+                    );
+                }
+            });
+        }
     }
 
     public onClickMenu(item: IRtSideMenu.Item): void {

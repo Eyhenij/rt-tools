@@ -5,7 +5,7 @@
 - **State:** `этап-идёт`
 - **Stage:** 5 of 5 — Texts, frames, showing; stages 1–4 done
 - **Done:** stage 1 — live stories on the first kit's data; stage 2 — the phone menu matches the first kit's Mobile by measurement; stage 3 — favourites on the new `rt-expansion-panel`, with their preset pair; stage 4 — `[data-rt-scheme]` by the mixin `rt-color-scheme`, a scheme toolbar, the `Scheme` story
-- **Next step:** 5.3 — `pnpm run check:all`, then 5.4 — the links to the owner; the owner looks at the showcase before any push
+- **Next step:** 5.4 — at the showing the owner asked «что с иконками?»: the RT-2412 technique for icons outside the set is carried into the menu, then the links again
 - **Uncommitted:** nothing
 - **Waiting for the owner:** no; every port is shown before a push — «я просил каждый перенесенный из первого кита модуль показывать мне перед отправкой в пр!!!»
 - **PR:** not open yet
@@ -28,10 +28,15 @@
 - [x] 4.3 Show the menu under a scheme in a story
 - [x] 5.1 Bring the spec, scenarios, overview and context of the menu up to what was done
 - [x] 5.2 Take the new frames after looking at them
-- [>] 5.3 Run the whole check set
-- [ ] 5.4 Show the owner the pairs of links before any push
+- [x] 5.3 Run the whole check set
+- [>] 5.4 Show the owner the pairs of links before any push
 
 ## Decisions along the way
+
+- **The icon technique of RT-2412 is done inside step 5.4, not as a step of its own.** It was
+  decided along the way and no plan step names it; the plan is not edited, so the work stands under
+  the showing that surfaced it: «что с иконками?». A name with no kit icon and no pair takes the
+  menu's own icon template, given once for all items; the template does not override a drawn icon.
 
 - **The colour scheme is declared over the brand ramp.** The second kit's accent derives from
   `--rt-brand-*`, so a scheme block overriding that ramp repaints the menu the way the first kit's
@@ -135,6 +140,16 @@ $ramp)` emits `:root[data-rt-scheme]` with the brand ramp and the material blue 
   the menu teal in both sets. 2170 kit tests, lint, token build and cascade layer checks pass.
 - Not done: no test compiles the mixin yet, and no text names it — both belong to 5.1.
 
+### 1 October 2026 — icons outside the set
+
+- Done: `sideMenuIconName` resolves an item and a row button by a kit name or the kit's pair of a
+  Material name; `<ng-template rtSideMenuIcon let-item>` draws a name the kit lacks; a dev warning
+  names what is left. Scenarios SC-UKV-480…482, eight tests; the `Icons` matrix story shows both
+  cases in both sets, frame looked at.
+- Found: an application menu passes ten names to items and row buttons, and the kit draws four;
+  its own header and footer use twelve more, and the kit draws two. The rest need the template or
+  new drawings. Named to the owner.
+
 ## Handover of the session
 
 Put together by a hook before the compaction of the context (auto).
@@ -146,7 +161,7 @@ Put together by a hook before the compaction of the context (auto).
 
 - **State:** `этап-идёт`
 - **Stage:** 5 of 5 — Texts, frames, showing; stages 1–4 done
-- **Next step:** 5.3 — `pnpm run check:all`, then 5.4 — the links to the owner; the owner looks at the showcase before any push
+- **Next step:** 5.4 — at the showing the owner asked «что с иконками?»: the RT-2412 technique for icons outside the set is carried into the menu, then the links again
 - **PR:** not open yet
 
 The progress in full — `docs/tasks/RT-2440-kit2-side-menu-like-kit1/progress.md`; the plan lies next to it.

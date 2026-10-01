@@ -66,7 +66,8 @@
     "[rtSideMenuHeader]": "projects/ui-kit-v2/src/lib/components/side-menu/stories/side-menu-matrix.stories.ts",
     "[rtSideMenuFooter]": "projects/ui-kit-v2/src/lib/components/side-menu/stories/side-menu-matrix.stories.ts",
     "rt-side-menu-sub-item": "projects/ui-kit-v2/src/lib/components/side-menu/stories/side-menu-matrix.stories.ts",
-    "rt-side-menu-favorites": "projects/ui-kit-v2/src/lib/components/side-menu/stories/side-menu-favorites.stories.ts"
+    "rt-side-menu-favorites": "projects/ui-kit-v2/src/lib/components/side-menu/stories/side-menu-favorites.stories.ts",
+    "ng-template[rtSideMenuIcon]": "projects/ui-kit-v2/src/lib/components/side-menu/stories/side-menu-matrix.stories.ts"
   },
   "noPlayground": {
     "toolbar": "Содержимое панели приходит проекцией шаблонов в три места, и страница с входами их не задаёт: витрина умеет подставлять значения, а не разметку. Единственный вход — плотность — показан своей осью."

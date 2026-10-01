@@ -17,6 +17,9 @@ paths are given from the root of the tree.
 - **A star stands on items with an address; a row of the block carries «remove» and a drag handle.** — `projects/ui-kit-v2/src/lib/components/side-menu/rt-side-menu-favorites.logic.ts:isSideMenuFavoriteCandidate`
 - **The favourites and the collapsed blocks are kept in the menu settings under its id.** — `projects/ui-kit-v2/src/lib/components/side-menu/rt-side-menu-settings.service.ts:toggleFavorite`
 - **A folder of the submenu and the favourites block are expansion panels of the kit.** — `projects/ui-kit-v2/src/lib/components/side-menu/sub-item/rt-side-menu-sub-item.component.html:rt-expansion-panel`
+- **An item icon is drawn by a kit name or by the pair of a first-kit Material name.** — `projects/ui-kit-v2/src/lib/components/side-menu/rt-side-menu-icon.logic.ts:sideMenuIconName`
+- **A name the kit does not draw takes the menu's own icon template.** — `projects/ui-kit-v2/src/lib/components/side-menu/rt-side-menu.directives.ts:RtSideMenuIconDirective`
+- **A name left without an icon is named in a warning while the application is developed.** — `projects/ui-kit-v2/src/lib/components/side-menu/rt-side-menu-icon.logic.ts:unpairedSideMenuIcons`
 - **On a narrow screen the menu is one column 240 pixels wide.** — `projects/ui-kit-v2/src/lib/components/side-menu/rt-side-menu.component.scss:rt-side-menu-mobile-width`
 
 The scenarios of the subdomain are bound to the tests by the number in the title of a test, not by a
