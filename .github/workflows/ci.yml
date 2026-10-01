@@ -59,6 +59,11 @@ jobs:
             # локальное умолчание 4311 и падала с EADDRINUSE, пока на машине стоял местный стенд.
             E2E_FOREIGN_PORT: 4321
             E2E_DATABASE: message_bus_e2e_ci
+            # Браузер снимков — свой контейнер и свой порт. С умолчанием `rt-tools-shot` и 43210
+            # шаг снимков и местная проверка перед отправкой делили один контейнер: второй запуск
+            # перезапускал его, и первый падал с ECONNRESET посреди прогона.
+            E2E_SHOT_CONTAINER: rt-tools-shot-ci
+            E2E_SHOT_PORT: 43220
 
         steps:
             - uses: actions/checkout@v7

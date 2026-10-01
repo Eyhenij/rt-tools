@@ -165,6 +165,9 @@ frames are looked at by eye, and only then are the references taken.
    re-taking everything at once erases the divergence that was not expected as well.
 4. **"Couldn't find story … after HMR"** — a trace of the hot reload: the showcase is restarted, the
    code is not edited.
+5. **`ECONNRESET` to `ws://localhost:<port>/shot`** — a second run on the same machine restarted the
+   shot container. The pipeline has a container and a port of its own; a local run waits for the
+   other local run to end.
 
 The difference between two references is read by cutting one area out of both files and enlarging it
 — by a one-off script in a temporary directory; it does not travel into the repository.
@@ -209,6 +212,9 @@ something else.
   taken, and its reference reads as orphaned. Eight such stood next to fifteen divergences and went
   away together with them, without a single file deleted. So the orphan list is read after the
   divergences are cured, not before: deleted on sight, those references would have to be taken anew.
+  The same cause inflates a pointed re-take: it rewrites every frame of the sampled files, including
+  second-width frames the fallen run never reached. The list of rewritten references is checked
+  against the divergence list before the commit, and a reference outside it is looked at as new.
 - **A divergence only in native controls after a browser raise is the browser, not the layout.**
   A newer Playwright brings a newer Chromium, and the textarea grip, the scrollbar and the focus
   ring are drawn a pixel differently on stories nobody edited. The sign: the difference frames
