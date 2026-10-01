@@ -4,15 +4,7 @@
 
 > замечания 1 при драге фон прозрачный, кнопки квадратные (нужно опционально по умолчанию круглые), при нажатии добавить попап открывается вдали от кнопки
 
-## What the tree already has
-
-- The row in flight is drawn by CDK in the top layer as a `popover` with a built-in transparent
-  background a class rule does not override; the side menu favourites fixed the same by a
-  background on an element inside the preview.
-- The icon buttons of the list carry no rounding, so they take the icon button's default `md` step.
-  Main brought the shared rounding input `radius` (`TRtRadius`) on every kit component.
-- The popup is a `rtPopover` on the `anchor` element that wraps the whole list, so it opens under
-  the whole block rather than under the button pressed.
+The owner looked at the showcase before the PR and answered «Ок, открывай».
 
 ## Decisions
 
@@ -21,5 +13,14 @@
   of its own — main folded such inputs into `radius`.
 - **The popup opens from the add button pressed** — each of the two add buttons carries the popover
   itself. Rejected: an origin input on the popover — the popover anchors to its host by design.
-- **The row in flight gets its background from a layer inside the preview** — the inline background
-  CDK sets on the preview beats any class rule.
+
+## Decisions along the way
+
+- **The row in flight is fixed outside the cascade layer** — CDK resets `background`, `color` and
+  `padding` of `.cdk-drag-preview` in its layer `cdk-resets`, which comes after the kit's layer and
+  wins. The grill planned a background element inside the preview; a rule outside the layer turned
+  out to be enough.
+- **Nine frames moved by the main merge are retaken in this branch** — main changed the width of the
+  theme pair halves on the showcase and the default rounding of icon buttons, and the epic's frames
+  of the side menu, the aside, the expansion panel, the cropper and the table cards diverged. The
+  owner: «Переснять здесь».
