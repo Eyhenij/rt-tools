@@ -34,7 +34,7 @@ MAP
 
 # --- SC-AK-1147 — непокрытых нет: проверка молчит и пропускает ---------------------------------
 sc_config '{
-    "portableDirs": ["pkg/assets"]
+    "packageDirs": ["pkg/assets"]
 }'
 report "SC-AK-1147 — при полном покрытии отправка идёт" "$(sc_code)" 0
 report "SC-AK-1147 — сказано, что покрыто всё" "$(sc_says | grep -c 'spoken of by a spec')" 1
@@ -48,15 +48,22 @@ rm -f "$SC_TREE/pkg/assets/hooks/b-guard.sh"
 
 # --- SC-AK-1149 — дерево без объявленных папок пакета не судится --------------------------------
 sc_config '{
-    "portableDirs": []
+    "packageDirs": []
 }'
 printf 'deny() { :; }\n' > "$SC_TREE/pkg/assets/hooks/c-guard.sh"
 report "SC-AK-1149 — дерево без папок пакета пропущено" "$(sc_code)" 0
 report "SC-AK-1149 — сказано, почему пропущено" "$(sc_says | grep -c 'nothing to judge')" 1
 
-# --- SC-AK-1150 — входа в спеки нет: проверка говорит об этом вслух ------------------------------
+# --- SC-AK-1170 — переносимый текст потребителя не судится ---------------------------------------
 sc_config '{
     "portableDirs": ["pkg/assets"]
+}'
+report "SC-AK-1170 — папки переносимого текста не судятся" "$(sc_code)" 0
+report "SC-AK-1170 — сказано, почему пропущено" "$(sc_says | grep -c 'nothing to judge')" 1
+
+# --- SC-AK-1150 — входа в спеки нет: проверка говорит об этом вслух ------------------------------
+sc_config '{
+    "packageDirs": ["pkg/assets"]
 }'
 mv "$SC_TREE/tools/specs-for.mjs" "$SC_TREE/specs-for.away"
 report "SC-AK-1150 — без входа в спеки отправка идёт" "$(sc_code)" 0

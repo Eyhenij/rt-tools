@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.29.1 · checks/specs-for.mjs · 1946334e363c · правится надстройкой, не здесь
+// rt-kit v0.29.1 · checks/specs-for.mjs · 5184492c7a98 · правится надстройкой, не здесь
 /**
  * The entry into the specs by the name of a resource: which spec speaks of this file and what
  * exactly it says about it.
@@ -119,7 +119,7 @@ function carried() {
         }
     };
 
-    CONFIG.portableDirs.forEach(collect);
+    (CONFIG.packageDirs ?? []).forEach(collect);
 
     return found;
 }
