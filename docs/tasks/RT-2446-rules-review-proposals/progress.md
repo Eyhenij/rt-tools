@@ -3,9 +3,9 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 2 of 4 — Texts of the package
-- **Done:** the task, the plan, the texts of this tree
-- **Next step:** the package rules spec-driven and doc-style
+- **Stage:** 3 of 4 — The guard
+- **Done:** the task, the plan, the texts of this tree and of the package
+- **Next step:** write the guard of the flag that skips the commit checks
 - **Uncommitted:** nothing
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -17,10 +17,10 @@
 - [x] 1.3 Edit the styling rule and its companion: the token graph check
 - [x] 1.4 Edit the re-take pattern, the testing companion and the spec-driven companion
 - [x] 1.5 Append the address limit to the end-to-end override
-- [>] 2.1 Edit the package rules spec-driven and doc-style
-- [ ] 2.2 Edit the package patterns task-flow-start, testing-e2e and git-workflow-commit
-- [ ] 2.3 Lay out the package
-- [ ] 3.1 Write the guard of the flag that skips the commit checks
+- [x] 2.1 Edit the package rules spec-driven and doc-style
+- [x] 2.2 Edit the package patterns task-flow-start, testing-e2e and git-workflow-commit
+- [x] 2.3 Lay out the package
+- [>] 3.1 Write the guard of the flag that skips the commit checks
 - [ ] 3.2 Write its scenarios
 - [ ] 3.3 Lay out the guard
 - [ ] 4.1 Run the full suite
@@ -30,6 +30,9 @@
 
 - **The binding line for the token graph check is not added.** The review asked for a line for a nested item, and the companion binds only top-level articles; the line of the article itself now names both checks. Affected stage of the plan: 1.
 - **The address limit in the override is worded by the code.** The review spoke of new conversations; the receiver counts requests of a client without a visitor sign by its address. Affected stage of the plan: 1.
+- **The amend article names what the gate does not read.** The push gate does not read commit messages, so a message the hook never saw reaches the host unchecked. Affected stage of the plan: 2.
+- **Five texts are shortened to fit the size limit.** The rules ui-component-tests and rt-tools-storybook and the pattern task-flow-start grew past the limit; arguments and incident history were cut, the statements stayed. Affected stage of the plan: 2.
+- **The expired archive records are removed in this branch.** The owner's word: «Коммитом в RT-2446». Affected stage of the plan: 2.
 
 ## Sessions
 

@@ -140,9 +140,8 @@ Four checks do not replace one another, and the choice between them is not a mat
   So a story names the overlay's node as a shot parameter: the harness mutes the pointer leaving on
   its page and refuses when it does not find the promised node by the moment of the frame.
 - **A wait removed from the harness is guarded by a probe, not by the snapshot run.** The run
-  matches a frame against a reference, and the reference was taken by that same harness: remove the
-  wait from it and both the frame and the reference move the same way, after which the run is
-  eternally green on the miss. So such a wait is guarded directly: the probe reads whether the call
+  matches a frame against a reference taken by that same harness, so both move together and the run
+  stays green on the miss. So such a wait is guarded directly: the probe reads whether the call
   stands in the harness and whether it stands after the shot, then holds back what is awaited on its
   approach and matches the frame before the wait against the frame after it. The first half catches
   a rollback by an edit, the second a rollback in substance: the call is in place, and it waits for
@@ -180,15 +179,12 @@ Four checks do not replace one another, and the choice between them is not a mat
 - **A frame is taken by the drawn span, not by the node's box.** A node shot clips the border box:
   a cell sticking out of the grid is cut in silence, alike in both halves of a pair. The span is
   clipped by whatever scrolls, and the window grows to its edges — never to a pinned width.
-- **A one-off check script does not travel into the repository.** It lives in a temporary directory:
-  it is the proof of one edit, not a check of the tree. A check that will be called on the next wave
-  too is no one-off script: its place is next to the snapshot runner, as a separate command.
+- **A one-off check script does not travel into the repository.** It lives in a temporary directory.
+  A check called on the next wave too lives next to the snapshot runner, as a separate command.
 - **A branch the spec does not reach is named in the PR.** A silent gap looks the same as coverage.
 - **An application screen is closed by an end-to-end suite frame, not by a showcase story.** A story
-  shows a component apart from the application: with its own inputs, on its own background, without
-  the dictionary, the store and the route. A screen is assembled from components, and what a person
-  sees more often diverges between them — in the layout, in the container's paddings, in the order
-  of the blocks — than inside one. So a screen is shot where a user opens it: on a production build
+  shows a component without the dictionary, the store and the route, while a screen diverges more
+  often between its components than inside one. So a screen is shot where a user opens it: on a production build
   behind a stand, as a whole page, by the same path of clicks as the other end-to-end specs, and
   next to them — in that screen's spec rather than in a separate file "about snapshots". A window
   frame instead of a whole page clips a panel that went past the bottom edge, and the loss of half
@@ -278,39 +274,26 @@ The second showcase's agreement is `docs/specs/ui-kit-v2/`; the story parameters
   restarted, the code is not edited.
 - **The pointer outlives the move between stories.** A hover from one arrives in the next one's
   snapshot: a story without a hover takes the pointer away into a corner.
-- **A focused button outlives the pointer taken away.** The kit's tooltip opens on focus as well as
-  on hover, and a closed menu returns focus to the button that opened it: the tooltip rises over it
-  after a delay and lands in the frame by a race. Taking the pointer into a corner does not hide
-  it — only losing focus does, so `expectScreen` blurs a focused button or link before the shot. A
-  field keeps its focus: that focus is part of what the frame shows.
+- **A focused button outlives the pointer taken away.** The kit's tooltip opens on focus too, and a
+  closed menu returns focus to its button, so `expectScreen` blurs a focused button or link before
+  the shot. A field keeps its focus: that focus is part of the frame.
 - **A story's values arrive at the wrapper later than its `ngOnInit`.** An initial state computed in
   the hook by the story's value is computed by the field's default. The needed state is reached by a
   click in `play`, not by an input.
-- **A series of runs does not tolerate edits of the tree under it.** The showcase is held by hot
-  reloading: a file edited in the middle of a series changes what is being shot — and what gets shot
-  is no longer what was measured. The sign is a single divergence in the middle of a series that
-  does not repeat on a clean restart; merging the main branch, a commit and a restore from the stash
-  count as an edit on a par with editing. It costs a whole series: a divergence caught that way
-  reads as a defect, and the next session fixes what was not broken. A series is run on a motionless
-  tree, and one touched by an edit is restarted clean, its former count being no good.
-- **The stand's database outlives a run, and its state after the suite is not what the seeding
-  left.** The specs create their own records — an issued invitation, a person's sign-in — and their
-  times lawfully land on the run day. So the seeding's self-check stands inside the seeding itself
-  rather than after the suite: run from outside, it turns red on what the specs did themselves.
+- **A series of runs does not tolerate edits of the tree under it.** Hot reloading shoots the edited
+  file, not the measured one; a merge, a commit and a stash restore count as edits. A series runs on
+  a motionless tree, and one touched by an edit is restarted clean.
+- **The stand's database outlives a run.** The specs create records dated by the run day, so the
+  seeding's self-check stands inside the seeding, not after the suite.
 - **A frame without a reference in the end-to-end suite is written by Playwright on the first run.**
-  The config leaves `updateSnapshots` at its default, so a missing reference fails the run once and
-  the shot becomes the reference: the second run is green against whatever was shot. Unlike the
-  second showcase's harness, nothing refuses here. The written file is looked at against the mockup
-  before it is kept, and the index is read before the commit — the new PNG can arrive in it without
-  an explicit `git add`.
+  `updateSnapshots` stays at its default, so the second run is green against whatever was shot. The
+  file is looked at against the mockup, and the index is read before the commit.
 - **Sorting out a failed snapshot starts with the share of the divergence and the area.** A red run
   comes both from a shift of one pixel and from a lost block — by eye on the picture that is
   indistinguishable.
-- **The snapshot container draws a fallback family without its semibold face.** A text set by family
-  name with a system fallback and no font file comes out regular in the frame, however its weight is
-  declared — the browser has no heavier face to pick. A title that is bold in the mockup and regular
-  in the frame is not a defect: the weight is checked by the computed `font-weight` in the
-  end-to-end spec, not by the picture, and the divergence is named in the task record.
+- **The snapshot container draws a fallback family without its semibold face.** A title bold in the
+  mockup and regular in the frame is not a defect: the weight is checked by the computed
+  `font-weight` in the end-to-end spec, and the divergence is named in the task record.
 
 ## Patterns
 
