@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.29.1 · hooks/git-guard-delivery-draft.sh · 63e26aa8e710 · правится надстройкой, не здесь
+# rt-kit v0.29.2 · hooks/git-guard-delivery-draft.sh · 63e26aa8e710 · правится надстройкой, не здесь
 # Leaving draft, for the delivery guard: does the PR have a review, does it conflict, and was it
 # opened by the right account.
 #

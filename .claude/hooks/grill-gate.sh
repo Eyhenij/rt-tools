@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.29.1 · hooks/grill-gate.sh · 8930de732ddd · правится надстройкой, не здесь
+# rt-kit v0.29.2 · hooks/grill-gate.sh · 8930de732ddd · правится надстройкой, не здесь
 # Requires: hooks/deny-tail.sh
 # rt-hook: Stop
 # The conversation guard: the owner is not asked a question until the laws and rules have been read

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.29.1 · checks/archive-prune.mjs · aa0193a492f1 · правится надстройкой, не здесь
+// rt-kit v0.29.2 · checks/archive-prune.mjs · aa0193a492f1 · правится надстройкой, не здесь
 /**
  * The prune of the archive by the term.
  *
