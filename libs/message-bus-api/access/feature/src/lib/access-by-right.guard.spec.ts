@@ -127,7 +127,7 @@ function reflector(access: TOperationAccess | undefined, right: TRight | undefin
 
             return key === OPERATION_RIGHT ? right : undefined;
         },
-    } as Reflector;
+    } as unknown as Reflector;
 }
 
 function guardWith(double: PrismaDouble): AccessGuard {

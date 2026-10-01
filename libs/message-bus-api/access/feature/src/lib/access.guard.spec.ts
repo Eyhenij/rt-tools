@@ -132,7 +132,7 @@ function contextOf(request: TRequest): ExecutionContext {
 function reflector(access: TOperationAccess | undefined): Reflector {
     return {
         getAllAndOverride: (key: string): TOperationAccess | undefined => (key === OPERATION_ACCESS ? access : undefined),
-    } as Reflector;
+    } as unknown as Reflector;
 }
 
 function guardWith(access: TOperationAccess | undefined): AccessGuard {

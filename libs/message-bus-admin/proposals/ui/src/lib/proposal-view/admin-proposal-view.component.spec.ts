@@ -1,6 +1,7 @@
 import { DebugElement } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
+import { ECargoState } from '@rt/message-bus-common';
 import { IProposal } from '@rt/message-bus-admin/proposals/util';
 import { provideRtStorage, provideRtUtils } from '@rt-tools/core';
 
@@ -17,6 +18,9 @@ function entityOf(patch: Partial<IProposal.State> = {}): IProposal.State {
         releaseVersion: '',
         text: 'ловушку стоит назвать',
         month: '2026-08',
+        state: ECargoState.New,
+        quarantineNote: '',
+        closedByPublisher: false,
         ...patch,
     };
 }

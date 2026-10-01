@@ -11,6 +11,8 @@ function apiShort(patch: Partial<IPostmortem.Short.Api> = {}): IPostmortem.Short
         file: '2026-08-14-incident.md',
         state: 'in_work',
         releaseVersion: null,
+        quarantineNote: null,
+        closedByPublisher: false,
         arrivedAt: '2026-08-14T21:30:00.000Z',
         updatedAt: '2026-08-15T06:00:00.000Z',
         ...patch,
@@ -86,7 +88,7 @@ describe('PostmortemMapper', () => {
     const mapper: PostmortemMapper = new PostmortemMapper();
 
     it('запись целиком повторяет строку списка и добавляет текст', () => {
-        const entity: IPostmortem.State = mapper.mapFrom({ ...apiShort(), text: '# Разбор\nупало ночью' });
+        const entity: IPostmortem.State = mapper.mapFrom({ ...apiShort(), text: '# Разбор\nупало ночью', fixNote: null });
 
         expect(entity.file).toBe('2026-08-14-incident.md');
         expect(entity.tree.name).toBe('Приёмник');
@@ -102,7 +104,7 @@ describe('PostmortemMapper', () => {
 
     it('разметка, приехавшая с дерева, доезжает до экрана как есть', () => {
         const raw: string = '<script>alert(1)</script>';
-        const entity: IPostmortem.State = mapper.mapFrom({ ...apiShort(), text: raw });
+        const entity: IPostmortem.State = mapper.mapFrom({ ...apiShort(), text: raw, fixNote: null });
 
         expect(entity.text).toBe(raw);
     });
@@ -120,13 +122,18 @@ describe('PostmortemMapper', () => {
     });
 
     it('SC-MB-205 — версия выпуска доезжает до экрана как есть', () => {
-        const entity: IPostmortem.State = mapper.mapFrom({ ...apiShort(), text: '# Разбор', releaseVersion: 'rt-agent-kit@0.10.1' });
+        const entity: IPostmortem.State = mapper.mapFrom({
+            ...apiShort(),
+            text: '# Разбор',
+            fixNote: null,
+            releaseVersion: 'rt-agent-kit@0.10.1',
+        });
 
         expect(entity.releaseVersion).toBe('rt-agent-kit@0.10.1');
     });
 
     it('SC-MB-206 — запись без версии читается пустой строкой, а не пустотой', () => {
-        const entity: IPostmortem.State = mapper.mapFrom({ ...apiShort(), text: '# Разбор', releaseVersion: null });
+        const entity: IPostmortem.State = mapper.mapFrom({ ...apiShort(), text: '# Разбор', fixNote: null, releaseVersion: null });
 
         expect(entity.releaseVersion).toBe('');
     });

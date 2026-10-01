@@ -52,7 +52,7 @@ class PrismaDouble {
         const created: IRecordRow = {
             id: `record-${this.#nextId++}`,
             summary: null,
-            ...(args['create'] as Omit<IRecordRow, 'id'>),
+            ...(args['create'] as Omit<IRecordRow, 'id' | 'summary'> & Partial<Pick<IRecordRow, 'summary'>>),
         };
         this.rows.push(created);
 
