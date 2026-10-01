@@ -37,6 +37,7 @@ describe('cargoCloseData', () => {
             state: ECargoState.Released,
             fixNote: null,
             releaseVersion: 'rt-agent-kit@0.17.0',
+            quarantineNote: null,
         };
 
         expect(cargoCloseData(ask)).toEqual({

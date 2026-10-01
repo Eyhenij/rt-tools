@@ -10,8 +10,9 @@ import {
 } from '@rt/message-bus-api/accounts/util';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 
-import { AuthController, ISessionAnswer } from './auth.controller';
+import { AuthController } from './auth.controller';
 import { LoginAttemptsService } from './login-attempts.service';
+import { ISessionAnswer } from './sign-in-issue';
 
 /** Учётная запись в хранилище: то же, что в схеме, — двойник ничего не досочиняет. */
 interface IAccountRow {

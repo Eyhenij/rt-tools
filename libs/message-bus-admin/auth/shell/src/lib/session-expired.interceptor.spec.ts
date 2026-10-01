@@ -17,7 +17,7 @@ const SESSION_PATH: string = '/api/auth/session';
 @Component({ selector: 'admin-test-screen', template: '', changeDetection: ChangeDetectionStrategy.OnPush })
 class ScreenComponent {}
 
-const SESSION: IAdminSession = { name: 'owner' };
+const SESSION: IAdminSession = { name: 'owner', rights: [] };
 
 describe('sessionExpiredInterceptor', () => {
     let http: HttpTestingController;

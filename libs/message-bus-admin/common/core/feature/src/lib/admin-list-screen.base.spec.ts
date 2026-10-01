@@ -47,6 +47,7 @@ class TestScreenComponent extends AdminListScreenBase<IRow> {
     protected readonly store: TestListStore = inject(TestListStore);
     protected readonly sortable: readonly string[] = ['arrivedAt', 'updatedAt'];
     protected readonly tableId: string = 'admin-test';
+    protected readonly qaPrefix: string = 'admin-test';
 
     constructor() {
         super();

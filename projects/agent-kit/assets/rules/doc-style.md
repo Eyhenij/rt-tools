@@ -19,7 +19,7 @@ together with the rule.
 | In the law                      | Here                                                                                                                                  |
 | ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
 | document                        | any `.md` outside `docs/archive/`, plus code comments, commit bodies and PR descriptions                                              |
-| a path named in a document      | a string with an extension in backticks — that is what the check looks for                                                            |
+| a path named in a document      | a string in backticks with a slash or a file extension — that is what the check looks for. A name with a slash that is no address, such as a story title, goes without backticks |
 | the change a document describes | a pair from `docs-guard`: a rule and its mirror, a `.proto` and a spec, a hook and its scenarios, a moved file and both libs' READMEs |
 | description of the past         | `docs/archive/` — excluded from the path check entirely                                                                               |
 

@@ -23,7 +23,7 @@ the server side does not know it at all.
 - **a fixture builder** — a local `setup()` in the first kit; `createRtFixture(...)` in the second
 - **the list of a component's behaviours** — `CONTEXT.md` next to a second-kit component — the sections "Главное, что нужно знать" and "Края"
 - **the mark of what is not covered** — a line in `UI-KIT-V2-ISSUES.md`
-- **the type check of the specs** — the target `typecheck` of the second kit: `tsc --noEmit` over `tsconfig.spec.json`
+- **the type check of the specs** — the target `typecheck`: `tsc --noEmit` over `tsconfig.spec.json`; at the receiver's libs it is inferred by `tools/nx-plugins/spec-typecheck.cjs` for every project with a Vitest config and a spec settings file
 
 ## Where it lives
 
@@ -115,8 +115,10 @@ silent about.
 - `pnpm test` — all packages; `pnpm exec nx test @rt-tools/<package> --testFile=<path>` — one file.
 - `pnpm exec nx run message-bus-admin-e2e:e2e` — the admin panel's end-to-end suite; it raises the
   stand itself and needs only the database container up.
-- `pnpm exec nx run @rt-tools/ui-kit-v2:typecheck` — the types of the specs: Jest does not check
-  them, and the linter here does not look at types.
+- `pnpm exec nx affected -t typecheck` — the types of the specs. Neither Jest nor Vitest checks
+  them, and the linter here does not look at types: a spec object with a renamed field stays green
+  in `test` until this target. A lib created later gets the target by the same two signs, without
+  a line in its project file: `pnpm exec nx show projects --with-target typecheck` lists it.
 - `pnpm exec nx run @rt-tools/ui-kit-v2:verify` — the audit of the input tables against the
   components.
 - The pipeline runs `nx affected -t lint test build` against the main branch
