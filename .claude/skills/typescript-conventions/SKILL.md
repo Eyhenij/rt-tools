@@ -4,7 +4,7 @@ kind: rule
 law: code-structure
 description: Rule under the code-structure law. Load when editing any .ts except a component, service, directive, pipe, guard or interceptor — strict typing, access modifiers, file names, prefixes, no casting in a mapper. Pattern ts-procedure.
 ---
-<!-- rt-kit v0.29.1 · rules/typescript-conventions.md · c9c509405efe · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.2 · rules/typescript-conventions.md · c9c509405efe · правится надстройкой, не здесь -->
 
 # Code structure — how it works here
 

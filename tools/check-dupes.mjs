@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.29.1 · checks/check-dupes.mjs · c9d11abdf649 · правится надстройкой, не здесь
+// rt-kit v0.29.2 · checks/check-dupes.mjs · c9d11abdf649 · правится надстройкой, не здесь
 /**
  * A check that a pattern is not written a second time.
  *

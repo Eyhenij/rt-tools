@@ -1,3 +1,13 @@
+## [0.29.2](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.29.1...rt-agent-kit@0.29.2) (2026-10-01)
+
+### Bug Fixes
+
+- **rt:agent-kit:** проверки отправки и поставки отличают чужой репозиторий от второй копии ([936edec](https://github.com/Eyhenij/rt-tools/commit/936edecc1fa855ad6fc5f3bb417cb624093d74c3))
+
+### Features
+
+- **rt:agent-kit:** проверка запрещает коммит и отправку в обход хуков гита ([d6f5311](https://github.com/Eyhenij/rt-tools/commit/d6f531102b9acb156128b1ce379a76e2b297282f))
+
 ## [0.29.1](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.29.0...rt-agent-kit@0.29.1) (2026-10-01)
 
 ### Bug Fixes

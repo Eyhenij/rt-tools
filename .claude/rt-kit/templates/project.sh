@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.29.1 · templates/project.sh · 8ccfe107787d · правится надстройкой, не здесь
+# rt-kit v0.29.2 · templates/project.sh · 8ccfe107787d · правится надстройкой, не здесь
 # Tree profile override: the commands, stands and "edit — document" pairs of this repository.
 #
 # Copy to `.claude/rt-kit/project.sh` and add your own. The file is optional: without it the
