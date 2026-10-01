@@ -11,8 +11,8 @@ statement: a removed statement is removed together with its line.
 - **A name matched by nothing ends with a refusal, not with an empty answer.** — `projects/agent-kit/assets/checks/specs-for.mjs:entry` — code one and the name that was looked for; scenario `SC-AK-943`
 - **A gap in the specs is told from a name the package does not carry, and by the exit code.** — `projects/agent-kit/assets/checks/specs-for.mjs:absent` — the carried file gets its own code and the count of such resources; scenario `SC-AK-989`
 - **Called without a name, the command names the resources no spec speaks of.** — `projects/agent-kit/assets/checks/specs-for.mjs:uncovered` — scenario `SC-AK-945`
-- **The uncovered are counted by what the package carries, not by the files the bindings name.** — `projects/agent-kit/assets/checks/specs-for.mjs:carried` — the directories of the sources of portable texts named by the tree; scenario `SC-AK-946`
+- **The uncovered are counted by what the package carries, not by the files the bindings name.** — `projects/agent-kit/assets/checks/specs-for.mjs:carried` — the directories of the package sources named by the tree; scenario `SC-AK-946`
 
 The names of this tree: the command is `npm run specs:for`, the laid-out copy is
-`tools/specs-for.mjs`, the sources of what is carried are named by the key `portableDirs` in
+`tools/specs-for.mjs`, the sources of what is carried are named by the key `packageDirs` in
 `.claude/rt-kit/checks.json`.
