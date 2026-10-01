@@ -4,7 +4,7 @@ kind: rule
 law: delivery
 description: Rule under the delivery law for a tree on GitHub — the part about the rollout. Load when an edit goes to production — merge into the main branch, the pipeline, images and tags, storage migrations. Patterns git-workflow-migration, -restart, -docker, -secrets. Task and branch — rule git-workflow.
 ---
-<!-- rt-kit v0.29.2 · rules/deploy-flow.github.md · 8e00d8ca5bc9 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.3 · rules/deploy-flow.github.md · 8e00d8ca5bc9 · правится надстройкой, не здесь -->
 
 # Rollout — how it works here
 

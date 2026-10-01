@@ -1,3 +1,9 @@
+## [0.29.3](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.29.2...rt-agent-kit@0.29.3) (2026-10-01)
+
+### Bug Fixes
+
+- **rt:agent-kit:** проверка покрытия судит папки пакета, а не переносимый текст ([142c8fe](https://github.com/Eyhenij/rt-tools/commit/142c8fe01d772c03517507044d5360cc6bc1d043))
+
 ## [0.29.2](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.29.1...rt-agent-kit@0.29.2) (2026-10-01)
 
 ### Bug Fixes
