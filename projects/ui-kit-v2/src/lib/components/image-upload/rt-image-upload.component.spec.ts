@@ -4,7 +4,7 @@ import { By } from '@angular/platform-browser';
 
 import { createRtFixture, fileListOf, qa, setInputs } from '../../../testing/rt-kit-testing';
 import { RtFileDropComponent } from '../file-drop';
-import { RtIconButtonComponent } from '../icon-button';
+import { RtRadiusDirective } from '../radius/rt-radius.directive';
 import { IRtImageCropper, RtImageCropperComponent } from '../image-cropper';
 import { RtTooltipDirective } from '../tooltip';
 import { RtImageUploadComponent } from './rt-image-upload.component';
@@ -102,7 +102,7 @@ function pickerClicks(fixture: ComponentFixture<RtImageUploadComponent>): jest.S
 }
 
 describe('RtImageUploadComponent', (): void => {
-    it('SC-UKV-412 — без картинки и исходника место — зона загрузки с кнопкой', (): void => {
+    it('SC-UKV-508 — без картинки и исходника место — зона загрузки с кнопкой', (): void => {
         const { fixture } = setup();
 
         expect(qa(fixture, 'image-upload-drop')).not.toBeNull();
@@ -110,7 +110,7 @@ describe('RtImageUploadComponent', (): void => {
         expect(qa(fixture, 'image-upload-image')).toBeNull();
     });
 
-    it('SC-UKV-413 — брошенное изображение открывает обрезку, файл другого типа — нет', (): void => {
+    it('SC-UKV-509 — брошенное изображение открывает обрезку, файл другого типа — нет', (): void => {
         const { fixture } = setup();
 
         drop(fixture, new File(['x'], 'a.pdf', { type: 'application/pdf' }));
@@ -121,7 +121,7 @@ describe('RtImageUploadComponent', (): void => {
         expect(qa(fixture, 'image-upload-drop')).toBeNull();
     });
 
-    it('SC-UKV-413 — файл, выбранный кнопкой, открывает обрезку', (): void => {
+    it('SC-UKV-509 — файл, выбранный кнопкой, открывает обрезку', (): void => {
         const { fixture } = setup();
         const input: HTMLInputElement = qa(fixture, 'image-upload-native')?.nativeElement as HTMLInputElement;
         Object.defineProperty(input, 'files', { configurable: true, value: fileListOf([image()]) });
@@ -132,7 +132,7 @@ describe('RtImageUploadComponent', (): void => {
         expect(qa(fixture, 'image-upload-cropper')).not.toBeNull();
     });
 
-    it('SC-UKV-411 — при картинке и исходнике видна только обрезка', (): void => {
+    it('SC-UKV-507 — при картинке и исходнике видна только обрезка', (): void => {
         const { fixture } = setup({ imageUrl: 'https://example.test/logo.png' });
 
         drop(fixture, image());
@@ -142,7 +142,7 @@ describe('RtImageUploadComponent', (): void => {
         expect(qa(fixture, 'image-upload-drop')).toBeNull();
     });
 
-    it('SC-UKV-414 — «Применить» ставит результат на место и отдаёт файл приложению', (): void => {
+    it('SC-UKV-510 — «Применить» ставит результат на место и отдаёт файл приложению', (): void => {
         const { fixture, applied } = setup({ fileName: 'logo.png' });
         drop(fixture, image());
         crop(fixture);
@@ -156,7 +156,7 @@ describe('RtImageUploadComponent', (): void => {
         expect(url).toBe(srcOf(fixture));
     });
 
-    it('SC-UKV-414 — новый применённый файл отпускает адрес прежнего', (): void => {
+    it('SC-UKV-510 — новый применённый файл отпускает адрес прежнего', (): void => {
         const { fixture } = setup({ fileName: 'logo.png' });
         drop(fixture, image());
         crop(fixture);
@@ -171,14 +171,14 @@ describe('RtImageUploadComponent', (): void => {
         expect(srcOf(fixture)).not.toBe(first);
     });
 
-    it('SC-UKV-414 — «Применить» недоступна, пока обрезка не отдала результат', (): void => {
+    it('SC-UKV-510 — «Применить» недоступна, пока обрезка не отдала результат', (): void => {
         const { fixture } = setup();
         drop(fixture, image());
 
         expect((qa(fixture, 'image-upload-apply')?.nativeElement as HTMLButtonElement).disabled).toBe(true);
     });
 
-    it('SC-UKV-415 — «Отмена» возвращает прежнюю картинку и ничего не отдаёт', (): void => {
+    it('SC-UKV-511 — «Отмена» возвращает прежнюю картинку и ничего не отдаёт', (): void => {
         const { fixture, applied } = setup({ imageUrl: 'https://example.test/logo.png' });
         drop(fixture, image());
         crop(fixture);
@@ -191,7 +191,7 @@ describe('RtImageUploadComponent', (): void => {
         );
     });
 
-    it('SC-UKV-416 — при автоприменении кнопок нет, и каждый результат уходит сразу', (): void => {
+    it('SC-UKV-512 — при автоприменении кнопок нет, и каждый результат уходит сразу', (): void => {
         const { fixture, applied } = setup({ autoApply: true });
         drop(fixture, image());
 
@@ -206,7 +206,7 @@ describe('RtImageUploadComponent', (): void => {
         expect(released).toContain(own[0]);
     });
 
-    it('SC-UKV-417 — нажатие и Enter на картинке открывают выбор файла', (): void => {
+    it('SC-UKV-513 — нажатие и Enter на картинке открывают выбор файла', (): void => {
         const { fixture } = setup({ imageUrl: 'https://example.test/logo.png' });
         const clicks: jest.SpyInstance = pickerClicks(fixture);
         const img: HTMLElement = qa(fixture, 'image-upload-image')?.nativeElement as HTMLElement;
@@ -219,7 +219,7 @@ describe('RtImageUploadComponent', (): void => {
         expect(img.getAttribute('role')).toBe('button');
     });
 
-    it('SC-UKV-418 — скачивание сохраняет картинку под именем файла', (): void => {
+    it('SC-UKV-514 — скачивание сохраняет картинку под именем файла', (): void => {
         const { fixture } = setup({ imageUrl: 'https://example.test/logo.png', downloadable: true, fileName: 'logo.png' });
         const links: HTMLAnchorElement[] = [];
         const click: jest.SpyInstance = jest.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(function (
@@ -241,7 +241,7 @@ describe('RtImageUploadComponent', (): void => {
         click.mockRestore();
     });
 
-    it('SC-UKV-414 — новый адрес от приложения берёт верх над применённым', (): void => {
+    it('SC-UKV-510 — новый адрес от приложения берёт верх над применённым', (): void => {
         const { fixture } = setup();
         drop(fixture, image());
         crop(fixture);
@@ -253,28 +253,28 @@ describe('RtImageUploadComponent', (): void => {
         expect(srcOf(fixture)).toBe('https://example.test/saved.png');
     });
 
-    it('SC-UKV-418 — без просьбы приложения кнопки скачивания нет', (): void => {
+    it('SC-UKV-514 — без просьбы приложения кнопки скачивания нет', (): void => {
         const { fixture } = setup({ imageUrl: 'https://example.test/logo.png' });
 
         expect(qa(fixture, 'image-upload-download')).toBeNull();
     });
 
-    it('SC-UKV-489 — кнопка скачивания круглая по умолчанию и квадратная по просьбе', (): void => {
+    it('SC-UKV-518 — кнопка скачивания круглая по умолчанию и квадратная по просьбе', (): void => {
         const { fixture } = setup({ imageUrl: 'https://example.test/logo.png', downloadable: true });
         const round: DebugElement | null = qa(fixture, 'image-upload-download');
 
-        expect((round?.componentInstance as RtIconButtonComponent).shape()).toBe('circle');
+        expect(round?.injector.get(RtRadiusDirective).step()).toBe('full');
         expect((round?.nativeElement as HTMLElement).classList).toContain('rt-image-upload__download--round');
 
         setInputs(fixture, { downloadShape: 'square' });
         fixture.detectChanges();
         const square: DebugElement | null = qa(fixture, 'image-upload-download');
 
-        expect((square?.componentInstance as RtIconButtonComponent).shape()).toBe('square');
+        expect(square?.injector.get(RtRadiusDirective).step()).toBeNull();
         expect((square?.nativeElement as HTMLElement).classList).not.toContain('rt-image-upload__download--round');
     });
 
-    it('SC-UKV-419 — недоступный загрузчик не открывает выбор и не берёт файлов', (): void => {
+    it('SC-UKV-515 — недоступный загрузчик не открывает выбор и не берёт файлов', (): void => {
         const { fixture } = setup({ imageUrl: 'https://example.test/logo.png', disabled: true });
         const clicks: jest.SpyInstance = pickerClicks(fixture);
 
@@ -286,14 +286,14 @@ describe('RtImageUploadComponent', (): void => {
         expect(qa(fixture, 'image-upload-cropper')).toBeNull();
     });
 
-    it('SC-UKV-420 — пока приложение загружает, на месте индикатор', (): void => {
+    it('SC-UKV-516 — пока приложение загружает, на месте индикатор', (): void => {
         const { fixture } = setup({ imageUrl: 'https://example.test/logo.png', loading: true });
 
         expect(qa(fixture, 'image-upload-loading')).not.toBeNull();
         expect(qa(fixture, 'image-upload-image')).toBeNull();
     });
 
-    it('SC-UKV-421 — тексты — подписи кита, а подсказка приложения заменяет свою', (): void => {
+    it('SC-UKV-517 — тексты — подписи кита, а подсказка приложения заменяет свою', (): void => {
         const { fixture } = setup({ imageUrl: 'https://example.test/logo.png' });
         const tooltip: () => string = (): string =>
             fixture.debugElement.query(By.directive(RtTooltipDirective)).injector.get(RtTooltipDirective).text();

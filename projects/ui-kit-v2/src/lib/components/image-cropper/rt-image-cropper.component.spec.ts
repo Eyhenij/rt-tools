@@ -181,7 +181,7 @@ describe('RtImageCropperComponent', (): void => {
         expect(qa(fixture, 'image-cropper-frame')).toBeNull();
     });
 
-    it('SC-UKV-410 — без исходника в поле подсказка кита, а не рамка', (): void => {
+    it('SC-UKV-506 — без исходника в поле подсказка кита, а не рамка', (): void => {
         const fixture: ComponentFixture<RtImageCropperComponent> = createRtFixture(RtImageCropperComponent);
 
         expect(textOf(qa(fixture, 'image-cropper-placeholder'))).toBe('Choose an image to crop');
@@ -190,7 +190,7 @@ describe('RtImageCropperComponent', (): void => {
         expect(qa(fixture, 'image-cropper-refusal')).toBeNull();
     });
 
-    it('SC-UKV-410 — своя подсказка приложения заменяет подпись кита', (): void => {
+    it('SC-UKV-506 — своя подсказка приложения заменяет подпись кита', (): void => {
         const fixture: ComponentFixture<RtImageCropperComponent> = createRtFixture(RtImageCropperComponent, {
             placeholder: 'Перетащите аватар',
         });
@@ -198,7 +198,7 @@ describe('RtImageCropperComponent', (): void => {
         expect(textOf(qa(fixture, 'image-cropper-placeholder'))).toBe('Перетащите аватар');
     });
 
-    it('SC-UKV-383 — исходник шире поля лежит в нём целиком и по центру', (): void => {
+    it('SC-UKV-491 — исходник шире поля лежит в нём целиком и по центру', (): void => {
         const { fixture }: ISetup = setup();
 
         expect(hostVar(fixture, 'image-x')).toBe(0);
@@ -207,13 +207,13 @@ describe('RtImageCropperComponent', (): void => {
         expect(hostVar(fixture, 'image-height')).toBe(100);
     });
 
-    it('SC-UKV-385 — с пропорцией один к одному рамка встаёт квадратом посередине', (): void => {
+    it('SC-UKV-493 — с пропорцией один к одному рамка встаёт квадратом посередине', (): void => {
         const { fixture }: ISetup = setup({ ratio: 1 });
 
         expect(frameBox(fixture)).toEqual({ x: 50, y: 50, width: 100, height: 100 });
     });
 
-    it('SC-UKV-393 — после прочтения приходит файл формата исходника во весь исходник', (): void => {
+    it('SC-UKV-501 — после прочтения приходит файл формата исходника во весь исходник', (): void => {
         const { results }: ISetup = setup();
 
         expect(results).toHaveLength(1);
@@ -223,7 +223,7 @@ describe('RtImageCropperComponent', (): void => {
         expect(cuts[0]).toMatchObject({ width: 400, height: 200 });
     });
 
-    it('SC-UKV-393 — jpeg с качеством 80 режется в пикселях исходника', (): void => {
+    it('SC-UKV-501 — jpeg с качеством 80 режется в пикселях исходника', (): void => {
         const { fixture, results }: ISetup = setup({ format: 'jpeg', quality: 80, ratio: 1 });
 
         press(fixture, 'image-cropper-frame', 'ArrowRight');
@@ -235,7 +235,7 @@ describe('RtImageCropperComponent', (): void => {
         expect(cuts[cuts.length - 1]).toEqual({ width: 200, height: 200, type: 'image/jpeg', quality: 0.8 });
     });
 
-    it('SC-UKV-392 — один жест из десяти движений даёт один результат, после отпускания', (): void => {
+    it('SC-UKV-500 — один жест из десяти движений даёт один результат, после отпускания', (): void => {
         const { fixture, results }: ISetup = setup({ ratio: 1 });
         results.length = 0;
 
@@ -245,7 +245,7 @@ describe('RtImageCropperComponent', (): void => {
         expect(results[0].frame.x).toBe(40);
     });
 
-    it('SC-UKV-388 — сдвиг изнутри двигает рамку, правый нижний угол растягивает её', (): void => {
+    it('SC-UKV-496 — сдвиг изнутри двигает рамку, правый нижний угол растягивает её', (): void => {
         const { fixture }: ISetup = setup({ ratio: 1 });
 
         drag(fixture, 'image-cropper-frame', [-20, 0]);
@@ -258,7 +258,7 @@ describe('RtImageCropperComponent', (): void => {
         expect(box.width).toBe(90);
     });
 
-    it('SC-UKV-391 — палец тянет рамку за поле, и она останавливается у края', (): void => {
+    it('SC-UKV-499 — палец тянет рамку за поле, и она останавливается у края', (): void => {
         const { fixture, results }: ISetup = setup({ ratio: 1 });
         results.length = 0;
 
@@ -268,7 +268,7 @@ describe('RtImageCropperComponent', (): void => {
         expect(results).toHaveLength(1);
     });
 
-    it('SC-UKV-390 — стрелка двигает рамку на пиксель поля, со Shift — на десять', (): void => {
+    it('SC-UKV-498 — стрелка двигает рамку на пиксель поля, со Shift — на десять', (): void => {
         const { fixture }: ISetup = setup({ ratio: 1 });
 
         press(fixture, 'image-cropper-frame', 'ArrowLeft');
@@ -278,7 +278,7 @@ describe('RtImageCropperComponent', (): void => {
         expect(frameBox(fixture).x).toBe(39);
     });
 
-    it('SC-UKV-390 — стрелка на ручке растягивает рамку', (): void => {
+    it('SC-UKV-498 — стрелка на ручке растягивает рамку', (): void => {
         const { fixture }: ISetup = setup();
 
         press(fixture, 'image-cropper-handle-e', 'ArrowLeft', true);
@@ -286,14 +286,14 @@ describe('RtImageCropperComponent', (): void => {
         expect(frameBox(fixture)).toEqual({ x: 0, y: 50, width: 190, height: 100 });
     });
 
-    it('SC-UKV-406 — круглый вид держит один к одному и отдаёт квадрат', (): void => {
+    it('SC-UKV-502 — круглый вид держит один к одному и отдаёт квадрат', (): void => {
         const { fixture, results }: ISetup = setup({ round: true, ratio: 16 / 9 });
 
         expect(hostClasses(fixture)).toContain('rt-image-cropper--round');
         expect(results[0].frame).toEqual({ x: 100, y: 0, width: 200, height: 200 });
     });
 
-    it('SC-UKV-407 — нечитаемый исходник показывает отказ без рамки и сообщает наружу', (): void => {
+    it('SC-UKV-503 — нечитаемый исходник показывает отказ без рамки и сообщает наружу', (): void => {
         const failures: number[] = [];
         const fixture: ComponentFixture<RtImageCropperComponent> = createRtFixture(RtImageCropperComponent, {
             file: source('notes.txt', 'text/plain'),
@@ -310,7 +310,7 @@ describe('RtImageCropperComponent', (): void => {
         expect(failures).toHaveLength(1);
     });
 
-    it('SC-UKV-408 — недоступная обрезка не двигает рамку ни указателем, ни клавишами', (): void => {
+    it('SC-UKV-504 — недоступная обрезка не двигает рамку ни указателем, ни клавишами', (): void => {
         const { fixture, results }: ISetup = setup({ ratio: 1 });
         results.length = 0;
         setInputs(fixture, { disabled: true });
@@ -325,7 +325,7 @@ describe('RtImageCropperComponent', (): void => {
         expect(target(fixture, 'image-cropper-frame').getAttribute('aria-disabled')).toBe('true');
     });
 
-    it('SC-UKV-409 — рамка и восемь ручек называют себя подписями кита', (): void => {
+    it('SC-UKV-505 — рамка и восемь ручек называют себя подписями кита', (): void => {
         const { fixture }: ISetup = setup();
 
         expect(target(fixture, 'image-cropper-frame').getAttribute('aria-label')).toBe('Crop frame');

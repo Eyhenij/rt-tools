@@ -46,7 +46,7 @@ function press(fixture: ComponentFixture<ExpansionPanelHostComponent>): void {
 }
 
 describe('RtExpansionPanelComponent', (): void => {
-    it('SC-UKV-472 — рисует заголовок из содержимого и шеврон, тело свёрнутой панели не рисует', (): void => {
+    it('SC-UKV-519 — рисует заголовок из содержимого и шеврон, тело свёрнутой панели не рисует', (): void => {
         const fixture: ComponentFixture<ExpansionPanelHostComponent> = setup();
 
         expect(textOf(header(fixture))).toBe('Доставка');
@@ -55,7 +55,7 @@ describe('RtExpansionPanelComponent', (): void => {
         expect(qa(fixture, 'host-lazy')).toBeNull();
     });
 
-    it('SC-UKV-473 — нажатие раскрывает свёрнутую панель, повторное сворачивает, владелец слышит оба', (): void => {
+    it('SC-UKV-520 — нажатие раскрывает свёрнутую панель, повторное сворачивает, владелец слышит оба', (): void => {
         const fixture: ComponentFixture<ExpansionPanelHostComponent> = setup();
 
         press(fixture);
@@ -67,7 +67,7 @@ describe('RtExpansionPanelComponent', (): void => {
         expect(qa(fixture, 'host-lazy')).toBeNull();
     });
 
-    it('SC-UKV-474 — владелец раскрывает и сворачивает панель своим значением', (): void => {
+    it('SC-UKV-521 — владелец раскрывает и сворачивает панель своим значением', (): void => {
         const fixture: ComponentFixture<ExpansionPanelHostComponent> = setup();
 
         fixture.componentInstance.expanded.set(true);
@@ -79,7 +79,7 @@ describe('RtExpansionPanelComponent', (): void => {
         expect(qa(fixture, 'host-eager')).toBeNull();
     });
 
-    it('SC-UKV-475 — недоступная панель не раскрывается нажатием', (): void => {
+    it('SC-UKV-522 — недоступная панель не раскрывается нажатием', (): void => {
         const fixture: ComponentFixture<ExpansionPanelHostComponent> = setup();
 
         fixture.componentInstance.disabled.set(true);
@@ -90,7 +90,7 @@ describe('RtExpansionPanelComponent', (): void => {
         expect(fixture.componentInstance.expanded()).toBe(false);
     });
 
-    it('SC-UKV-476 — hideToggle убирает шеврон, заголовок нажимается как прежде', (): void => {
+    it('SC-UKV-523 — hideToggle убирает шеврон, заголовок нажимается как прежде', (): void => {
         const fixture: ComponentFixture<ExpansionPanelHostComponent> = setup();
 
         fixture.componentInstance.hideToggle.set(true);
@@ -101,7 +101,7 @@ describe('RtExpansionPanelComponent', (): void => {
         expect(fixture.componentInstance.expanded()).toBe(true);
     });
 
-    it('SC-UKV-477 — заголовок называет раскрытие и тело, тело — регион с подписью по заголовку', (): void => {
+    it('SC-UKV-524 — заголовок называет раскрытие и тело, тело — регион с подписью по заголовку', (): void => {
         const fixture: ComponentFixture<ExpansionPanelHostComponent> = setup();
 
         expect(header(fixture).getAttribute('aria-expanded')).toBe('false');
@@ -116,7 +116,7 @@ describe('RtExpansionPanelComponent', (): void => {
         expect(body.getAttribute('aria-labelledby')).toBe(header(fixture).id);
     });
 
-    it('SC-UKV-478 — id заголовка берётся из входа, а без него свой и у двух панелей разный', (): void => {
+    it('SC-UKV-525 — id заголовка берётся из входа, а без него свой и у двух панелей разный', (): void => {
         const fixture: ComponentFixture<ExpansionPanelHostComponent> = setup();
 
         expect(header(fixture, 0).id).not.toBe('');
