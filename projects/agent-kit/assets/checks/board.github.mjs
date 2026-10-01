@@ -169,7 +169,7 @@ export function pullState(ref, options) {
     const target = ref === undefined || ref === null || `${ref}`.trim() === '' ? [] : [`${ref}`.trim()];
     let pull;
     try {
-        pull = ghJson(['pr', 'view', ...target, '--json', 'number,isDraft,reviewRequests,latestReviews,author,mergeable'], options);
+        pull = ghJson(['pr', 'view', ...target, '--json', 'number,isDraft,reviewRequests,latestReviews,author,mergeable,headRefName'], options);
     } catch (error) {
         if (error instanceof OfflineError) {
             throw error;
@@ -194,6 +194,9 @@ export function pullState(ref, options) {
         // author. Only a direct "conflicting" is judged: `UNKNOWN` means the hosting is still
         // computing, and reading it as a conflict would mean refusing work on every fresh head.
         conflicting: pull.mergeable === 'CONFLICTING',
+        // The head branch: the folder guard judges the branch of the named PR, not the checked-out
+        // one — the lower PR of a stack is lifted from the upper branch.
+        branch: pull.headRefName ?? null,
     };
 }
 
