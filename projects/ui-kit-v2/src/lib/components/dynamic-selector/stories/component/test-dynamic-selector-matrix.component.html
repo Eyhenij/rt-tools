@@ -18,6 +18,25 @@
         </app-story-presets>
     }
 
+    @case ('radius') {
+        <app-story-presets caption="Скругление кнопок-иконок в обоих наборах">
+            <ng-template>
+                <app-story-row [items]="radiusCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
+                    <ng-template let-radiusCase>
+                        <rt-dynamic-selector
+                            keyExp="id"
+                            displayExp="name"
+                            draggable
+                            [ariaLabel]="radiusCase.name"
+                            [entities]="people"
+                            [buttonRadius]="radiusCase.buttonRadius"
+                            [formControl]="radiusCase.control" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
     @case ('templates') {
         <app-story-presets caption="Свои кнопки и название строки в обоих наборах">
             <ng-template>

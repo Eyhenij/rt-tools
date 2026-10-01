@@ -51,6 +51,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | список выбранного | значение формы                      | строки с корзиной, под ними «Add», сброс и очистка               |
 | только для чтения | `readonlyKeys`                      | корзина строки выключена                                         |
 | перетаскивание    | `draggable`                         | ручка в начале каждой строки                                     |
+| скругление кнопок | `buttonRadius`                      | кнопки-иконки круглые, по шагу — с другим скруглением            |
 | приглашение       | `invitation`                        | значок, описание и кнопка вместо полосы кнопок                   |
 | нечего выбрать    | пустое значение и нечего предложить | значок предупреждения и «There are no available items to choose» |
 | отключено         | `disabled` или форма                | кнопки, корзины, правка и перетаскивание выключены               |
@@ -93,6 +94,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | `readonlyKeys`          | оба      | `ReadonlyArray`              | `[]`         |
 | `pinnedKeys`            | селектор | `ReadonlyArray<unknown>`     | `[]`         |
 | `draggable`             | оба      | `boolean`                    | `false`      |
+| `buttonRadius`          | оба      | `TRtRadius \| null`          | `'full'`     |
 | `invitation`            | оба      | `boolean`                    | `false`      |
 | `invitationIcon`        | оба      | `IRtIcon.Name \| null`       | `null`       |
 | `invitationDescription` | оба      | `string`                     | `''`         |

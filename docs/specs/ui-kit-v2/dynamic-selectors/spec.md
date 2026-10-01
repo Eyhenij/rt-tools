@@ -104,6 +104,13 @@ stands next to it as components of its own, drawn on the parts of the second kit
   popup the same as the add button.
 - **A disabled selector keeps the add, reset and clear buttons off.** The row delete, the row edit
   and the dragging are off as well.
+- **The icon buttons of the list are round unless the caller names another rounding step.** The step
+  comes from the shared rounding scale; the add button keeps its own look.
+- **The popup opens from the add button that was pressed.** The add button of the row of buttons and
+  the button of the invitation each carry the popup, so it stands under the button rather than under
+  the whole list.
+- **A dragged row keeps its background and paddings in flight.** The row in flight leaves the list
+  for the end of the page, where the drag library resets its background and paddings.
 - **A key no entity holds stays in the value and draws no row.**
 - **An empty array written by the form empties the chosen list.**
 - **The popup footer shows a navigation link when the caller names its title and address.**
@@ -231,3 +238,5 @@ owner's review.
 - 29 September 2026 — the agreement was written by the grilling of the owner's request.
 - 29 September 2026 — the agreement was merged into the spec of the second kit together with the
   code. The scenarios kept their numbers.
+- 1 October 2026 — the owner's remarks (RT-2455): round icon buttons by default, the popup at the
+  add button pressed, the background of the row in flight.

@@ -7,7 +7,7 @@ import {
     model,
     output,
     signal,
-    viewChild,
+    viewChildren,
     ChangeDetectionStrategy,
     Component,
     InputSignal,
@@ -28,6 +28,7 @@ import { RtEmptyStateComponent } from '../empty-state/rt-empty-state.component';
 import { RtFormControlBase } from '../form-control/rt-form-control.base';
 import { IRtIcon } from '../icon/rt-icon.model';
 import { RtPopoverDirective } from '../popover/rt-popover.directive';
+import { TRtRadius } from '../radius/rt-radius.model';
 import { RtDynamicSelectorListComponent } from './list/rt-dynamic-selector-list.component';
 import { RtDynamicSelectorPopupComponent } from './popup/rt-dynamic-selector-popup.component';
 import { RtDynamicSelectorRowControlsDirective, RtDynamicSelectorRowTitleDirective } from './rt-dynamic-selector.directives';
@@ -81,7 +82,8 @@ export class RtDynamicSelectorComponent<TEntity extends object> extends RtFormCo
     protected readonly addLabel: Signal<string> = rtKitLabel('dynamicSelectorAdd');
     protected readonly nothingToChooseLabel: Signal<string> = rtKitLabel('dynamicSelectorNothingToChoose');
 
-    protected readonly popover: Signal<RtPopoverDirective | undefined> = viewChild(RtPopoverDirective);
+    /** Всплывающий выбор открывается от нажатой кнопки добавления: у полосы и у приглашения — свой. */
+    protected readonly popovers: Signal<readonly RtPopoverDirective[]> = viewChildren(RtPopoverDirective);
     protected readonly rowTitle: Signal<RtDynamicSelectorRowTitleDirective<TEntity> | undefined> =
         contentChild<RtDynamicSelectorRowTitleDirective<TEntity>>(RtDynamicSelectorRowTitleDirective);
     protected readonly rowControls: Signal<RtDynamicSelectorRowControlsDirective<TEntity> | undefined> = contentChild<
@@ -145,6 +147,8 @@ export class RtDynamicSelectorComponent<TEntity extends object> extends RtFormCo
     public readonly draggable: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
         transform: booleanAttribute,
     });
+    /** Шаг скругления кнопок-иконок списка; по умолчанию они круглые. */
+    public readonly buttonRadius: InputSignal<TRtRadius | null> = input<TRtRadius | null>('full');
     /** Приглашение вместо полосы кнопок: значок, описание и кнопка добавления. */
     public readonly invitation: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
         transform: booleanAttribute,
@@ -196,14 +200,14 @@ export class RtDynamicSelectorComponent<TEntity extends object> extends RtFormCo
         this.#initial.set([...this.value()]);
     }
 
-    protected onAdd(): void {
+    protected onAdd(popover: RtPopoverDirective): void {
         if (!this.isDisabled()) {
-            this.popover()?.open();
+            popover.open();
         }
     }
 
     protected onApplied(keys: unknown[]): void {
-        this.popover()?.close();
+        this.#closePopup();
         this.#change(
             this.mode() === 'single'
                 ? keys.slice(0, 1)
@@ -212,7 +216,7 @@ export class RtDynamicSelectorComponent<TEntity extends object> extends RtFormCo
     }
 
     protected onCancelled(): void {
-        this.popover()?.close();
+        this.#closePopup();
     }
 
     protected onRemoved(key: unknown): void {
@@ -244,6 +248,12 @@ export class RtDynamicSelectorComponent<TEntity extends object> extends RtFormCo
 
     protected onClosed(): void {
         this.markTouched();
+    }
+
+    #closePopup(): void {
+        for (const popover of this.popovers()) {
+            popover.close();
+        }
     }
 
     protected getEmptyValue(): unknown[] {

@@ -179,3 +179,29 @@ When the person clicks «Boris», and then Ctrl-clicks «Vera»
 Then «Boris» alone is ticked after the click, and «Boris» and «Vera» after the Ctrl-click
 
 Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/popup/rt-dynamic-selector-popup.component.spec.ts`.
+
+### SC-UKV-534 — a dragged row keeps its background in flight
+
+Given a draggable selector with two chosen rows
+When the person drags a row by its handle
+Then the row in flight is drawn on the tint of a row over the surface, with the paddings of a row
+
+Не покрыто: the row in flight exists only while the pointer drags it, and the drag library draws it
+at the end of the page; neither a spec nor a still showcase frame holds that moment. Checked by eye
+in the showcase.
+
+### SC-UKV-535 — the icon buttons of the list are round by default
+
+Given a selector with chosen rows and no rounding named
+When it is drawn, and then the caller names the step «sm»
+Then every icon button of the list takes the full step, and after that the step «sm»
+
+Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/rt-dynamic-selector.component.spec.ts`.
+
+### SC-UKV-536 — the popup opens from the add button pressed
+
+Given a selector with something to offer
+When the person presses the add button
+Then the popup opens, and it is the popup of that very button
+
+Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/rt-dynamic-selector.component.spec.ts`.

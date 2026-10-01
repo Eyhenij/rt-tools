@@ -91,3 +91,18 @@
         }
     }
 }
+
+/* rt-layer-outside: фон, цвет и поля строки в руке.
+
+   CDK кладёт строку в руке в конец страницы и в момент перетаскивания подключает свой слой
+   `cdk-resets` с `.cdk-drag-preview { background: none; color: inherit; padding: 0 }`. Слой
+   появляется на странице позже слоя кита и потому сильнее его: оставленные в слое, три свойства
+   ниже проигрывают, и строка едет прозрачной, без полей. Тонировка строки полупрозрачна, поэтому
+   под ней лежит поверхность — в покое ту же роль играет поле, в котором стоит список. Скругление и
+   тень остаются в слое — их CDK не трогает. */
+.rt-dynamic-selector-list__row.cdk-drag-preview {
+    padding: var(--rt-space-2xs) var(--rt-space-2xs) var(--rt-space-2xs) var(--rt-space-sm);
+    background-color: var(--rt-color-bg-surface);
+    background-image: linear-gradient(var(--rt-dynamic-selector-list-row-bg), var(--rt-dynamic-selector-list-row-bg));
+    color: var(--rt-color-text-primary);
+}

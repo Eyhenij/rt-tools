@@ -2,15 +2,11 @@
     @if (isNothingToChoose()) {
         <rt-empty-state rtElem="nothing" qa-dataid="dynamic-selector-nothing" icon="warning" [title]="nothingToChooseLabel()" />
     } @else {
-        <div
-            rtElem="anchor"
-            rtPopoverTrigger="manual"
-            [rtPopover]="popupTpl"
-            [rtPopoverDisabled]="isDisabled()"
-            (rtPopoverClosed)="onClosed()">
+        <div rtElem="content">
             <rt-dynamic-selector-list
                 [rows]="rows()"
                 [draggable]="draggable()"
+                [buttonRadius]="buttonRadius()"
                 [disabled]="isDisabled()"
                 [actionsShown]="!invitation()"
                 [resetDisabled]="isResetDisabled()"
@@ -28,10 +24,15 @@
                         appearance="text"
                         type="button"
                         qa-dataid="dynamic-selector-add"
+                        rtPopoverTrigger="manual"
+                        #addPopover="rtPopover"
+                        [rtPopover]="popupTpl"
+                        [rtPopoverDisabled]="isDisabled()"
                         [label]="addTitle()"
                         [attr.aria-label]="addTitle()"
                         [disabled]="isDisabled()"
-                        (click)="onAdd()"></button>
+                        (rtPopoverClosed)="onClosed()"
+                        (click)="onAdd(addPopover)"></button>
                 }
             </rt-dynamic-selector-list>
 
@@ -47,10 +48,15 @@
                             appearance="outlined"
                             type="button"
                             qa-dataid="dynamic-selector-invitation-add"
+                            rtPopoverTrigger="manual"
+                            #invitationPopover="rtPopover"
+                            [rtPopover]="popupTpl"
+                            [rtPopoverDisabled]="isDisabled()"
                             [label]="addTitle()"
                             [attr.aria-label]="addTitle()"
                             [disabled]="isDisabled()"
-                            (click)="onAdd()"></button>
+                            (rtPopoverClosed)="onClosed()"
+                            (click)="onAdd(invitationPopover)"></button>
                     }
                 </rt-empty-state>
             }
