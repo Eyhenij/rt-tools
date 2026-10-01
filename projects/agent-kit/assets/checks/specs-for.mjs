@@ -118,7 +118,7 @@ function carried() {
         }
     };
 
-    CONFIG.portableDirs.forEach(collect);
+    (CONFIG.packageDirs ?? []).forEach(collect);
 
     return found;
 }

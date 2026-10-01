@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.29.2 · checks/check-spec-coverage.mjs · 05e9f9c24729 · правится надстройкой, не здесь
+// rt-kit v0.29.2 · checks/check-spec-coverage.mjs · 24f4f5c70906 · правится надстройкой, не здесь
 /**
  * The check that no resource of the package leaves without a spec.
  *
@@ -30,7 +30,7 @@ const CHECKS = CONFIG.layout?.checks ?? 'tools';
 /** The name of the entry as it lies in the tree. */
 const ENTRY = join(ROOT, CHECKS, 'specs-for.mjs');
 
-if (!Array.isArray(CONFIG.portableDirs) || CONFIG.portableDirs.length === 0) {
+if (!Array.isArray(CONFIG.packageDirs) || CONFIG.packageDirs.length === 0) {
     console.log('check-spec-coverage: the tree declares no directories of package sources — there is nothing to judge');
     process.exit(0);
 }
