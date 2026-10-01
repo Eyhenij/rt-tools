@@ -4,7 +4,7 @@ kind: rule
 law: project-documentation
 description: Rule under the project-documentation law. Load when editing specs, laws and any skill. Names the three layers — law, rule, pattern — the mandatory sections, the binding to code and the link between scenarios and tests. Patterns spec-driven-domain, spec-driven-rule.
 ---
-<!-- rt-kit v0.29.1 · rules/spec-driven.md · a40502c4825a · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.1 · rules/spec-driven.md · 91b5c38e5f37 · правится надстройкой, не здесь -->
 
 # Project documentation — how it works here
 
@@ -241,7 +241,9 @@ A rule loads whole into a session and pays for it every session, whatever the se
 measurement names where the weight is: 289 440 characters in twenty-nine loaded rules, the articles
 section is 45% of them, and inside the section statements take 19%, their arguments 81%. So the
 argument is cut, not the statement: a removed statement changes the rule, a removed argument only
-its price.
+its price. Room is measured before an article is added, not after the commit is refused: the size
+check judges lines and characters apart, and a rule near either limit is compressed in the same
+edit. The measurement is two numbers from `wc -lc` against the limits the check prints.
 
 A paragraph at an article has three outcomes, chosen by one question: **what is this text needed for
 — to make a decision, to keep it from being reversed, or to review a miss?**
@@ -259,8 +261,7 @@ A paragraph at an article has three outcomes, chosen by one question: **what is 
   green while it checks something else" is an argument. When it happened, how many times in a row
   and in which branch is history, and its place is the cold part.
 - **An incident analysis leaves for the cold part whole, with its numbers and rejected options.**
-  The cold part loads on demand — for whoever reviews a miss — and grows freely: one session in a
-  hundred pays for it, not every one.
+  The cold part loads on demand and grows freely: one session in a hundred pays for it.
 - **The cold part holds explanation, not requirement.** A statement absent from the rule never lives
   there: a rule whose requirement lives in the cold part promises what the session loading it will
   not see. Tested by the same question reversed — no decision can be made by the cold part that
@@ -269,9 +270,7 @@ A paragraph at an article has three outcomes, chosen by one question: **what is 
   by the same decision: whoever read only it edits the same way as whoever read the former one. They
   diverged — surplus was removed, and it comes back at the article, not to the cold part.
 - **A rule without a cold part is legitimate, and the first paragraph that leaves creates one.** An
-  empty `pitfalls.md` next to it is a promise, not a mechanism: in the measurement of twenty-nine
-  rules, four of the heaviest have no cold part at all, and their whole incident analysis loads
-  every session.
+  empty `pitfalls.md` next to it is a promise, not a mechanism.
 
 ## What of the law is not here
 

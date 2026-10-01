@@ -3,19 +3,19 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 1 of 4 — Texts of the package
-- **Done:** the task, the branch, the plan
-- **Next step:** add the room in the target to the two review roles
+- **Stage:** 2 of 4 — The folder guard
+- **Done:** stage 1 — the package texts
+- **Next step:** give the head branch in the PR state
 - **Uncommitted:** nothing
 - **Waiting for the owner:** no
 - **PR:** not open yet
 
 ## Steps
 
-- [>] 1.1 Add the room in the target to the two review roles
-- [ ] 1.2 Ask for a measurement before an article in spec-driven
-- [ ] 1.3 Rewrite the expiry article in doc-style and its companion line
-- [ ] 2.1 Give the head branch in the PR state
+- [x] 1.1 Add the room in the target to the two review roles
+- [x] 1.2 Ask for a measurement before an article in spec-driven
+- [x] 1.3 Rewrite the expiry article in doc-style and its companion line
+- [>] 2.1 Give the head branch in the PR state
 - [ ] 2.2 Judge the folder of the named PR's branch
 - [ ] 2.3 Write the scenarios
 - [ ] 2.4 Lay out the guard
