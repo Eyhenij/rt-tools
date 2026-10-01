@@ -14,10 +14,10 @@ class StubBreakpointsService {
 const ITEMS: IRtSideMenu.Item[] = [
     { id: 'settings', icon: 'settings', name: 'Настройки', link: '/settings' },
     {
-        id: 'food',
-        icon: 'fork_spoon',
-        name: 'Еда',
-        submenu: [{ id: 'menu', icon: 'fork_spoon', name: 'Меню', link: '/food/menu' }],
+        id: 'launches',
+        icon: 'rocket_launch',
+        name: 'Запуски',
+        submenu: [{ id: 'list', icon: 'rocket_launch', name: 'Список', link: '/launches/list' }],
     },
 ];
 
@@ -79,7 +79,7 @@ describe('RtSideMenuComponent — значки вне набора', (): void =>
         const own: HTMLElement[] = [...root(fixture).querySelectorAll<HTMLElement>('[qa-dataid="side-menu-own-icon"]')];
 
         expect(own).toHaveLength(1);
-        expect(own[0].querySelector('.own')?.getAttribute('data-icon')).toBe('fork_spoon');
+        expect(own[0].querySelector('.own')?.getAttribute('data-icon')).toBe('rocket_launch');
         expect(own[0].getAttribute('aria-hidden')).toBe('true');
     });
 
@@ -93,7 +93,7 @@ describe('RtSideMenuComponent — значки вне набора', (): void =>
         const fixture: ComponentFixture<RtSideMenuIconTestHostComponent> = setup(false);
 
         expect(root(fixture).querySelector('[qa-dataid="side-menu-own-icon"]')).toBeNull();
-        expect(warn).toHaveBeenCalledWith(expect.stringContaining('«fork_spoon»'));
+        expect(warn).toHaveBeenCalledWith(expect.stringContaining('«rocket_launch»'));
     });
 
     it('SC-UKV-482 — со своим шаблоном меню о пунктах не предупреждает', (): void => {

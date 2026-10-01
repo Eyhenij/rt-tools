@@ -5,7 +5,7 @@
 - **State:** `этап-идёт`
 - **Stage:** 5 of 5 — Texts, frames, showing; stages 1–4 done
 - **Done:** stage 1 — live stories on the first kit's data; stage 2 — the phone menu matches the first kit's Mobile by measurement; stage 3 — favourites on the new `rt-expansion-panel`, with their preset pair; stage 4 — `[data-rt-scheme]` by the mixin `rt-color-scheme`, a scheme toolbar, the `Scheme` story
-- **Next step:** 5.4 — at the showing the owner asked «что с иконками?»: the RT-2412 technique for icons outside the set is carried into the menu, then the links again
+- **Next step:** 5.4 — the icons are in the set; frames retaken after a look, the epic merged in (waits for the owner's permission), then the PR by «иконки делай в этой ветке потом пр»
 - **Uncommitted:** nothing
 - **Waiting for the owner:** no; every port is shown before a push — «я просил каждый перенесенный из первого кита модуль показывать мне перед отправкой в пр!!!»
 - **PR:** not open yet
@@ -149,6 +149,9 @@ $ramp)` emits `:root[data-rt-scheme]` with the brand ramp and the material blue 
 - Found: an application menu passes ten names to items and row buttons, and the kit draws four;
   its own header and footer use twelve more, and the kit draws two. The rest need the template or
   new drawings. Named to the owner.
+- Then by the owner's word «иконки делай в этой ветке потом пр»: six names drawn in both sets
+  (`home`, `fork-spoon`, `troubleshoot`, `fullscreen`, `layers`, `chat-error`), ten Material names
+  paired onto drawings the set had. The pair check counts 51 entries, 50 with a pair.
 
 ## Handover of the session
 
@@ -161,7 +164,7 @@ Put together by a hook before the compaction of the context (auto).
 
 - **State:** `этап-идёт`
 - **Stage:** 5 of 5 — Texts, frames, showing; stages 1–4 done
-- **Next step:** 5.4 — at the showing the owner asked «что с иконками?»: the RT-2412 technique for icons outside the set is carried into the menu, then the links again
+- **Next step:** 5.4 — the icons are in the set; frames retaken after a look, the epic merged in (waits for the owner's permission), then the PR by «иконки делай в этой ветке потом пр»
 - **PR:** not open yet
 
 The progress in full — `docs/tasks/RT-2440-kit2-side-menu-like-kit1/progress.md`; the plan lies next to it.

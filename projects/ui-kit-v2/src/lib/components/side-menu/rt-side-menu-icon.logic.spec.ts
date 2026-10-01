@@ -11,10 +11,12 @@ describe('rt-side-menu — значок пункта', (): void => {
         expect(sideMenuIconName('settings')).toBe('cog');
         expect(sideMenuIconName('arrow_forward')).toBe('arrow-right');
         expect(sideMenuIconName('add')).toBe('ico-plus');
+        expect(sideMenuIconName('home')).toBe('home');
+        expect(sideMenuIconName('insert_chart')).toBe('chart-bar');
     });
 
     it('SC-UKV-480 — имя, которого кит не рисует, и пустое имя значка не дают', (): void => {
-        expect(sideMenuIconName('fork_spoon')).toBeNull();
+        expect(sideMenuIconName('rocket_launch')).toBeNull();
         expect(sideMenuIconName('')).toBeNull();
         expect(sideMenuIconName(undefined)).toBeNull();
     });
@@ -25,21 +27,21 @@ describe('rt-side-menu — о каких значках предупредить
         { id: 1, icon: 'settings', name: 'Настройки' },
         {
             id: 2,
-            icon: 'fork_spoon',
-            name: 'Еда',
+            icon: 'rocket_launch',
+            name: 'Запуски',
             submenu: [
-                { id: 21, icon: 'troubleshoot', name: 'Прогноз', link: '/a', iconButton: { icon: 'zoom_in' } },
-                { id: 22, icon: 'fork_spoon', name: 'Повтор', link: '/b', iconButton: { icon: 'arrow_forward' } },
+                { id: 21, icon: 'stadia_controller', name: 'Игры', link: '/a', iconButton: { icon: 'qr_code_scanner' } },
+                { id: 22, icon: 'rocket_launch', name: 'Повтор', link: '/b', iconButton: { icon: 'arrow_forward' } },
             ],
         },
     ];
 
     it('SC-UKV-482 — без своего шаблона называются имена пунктов и кнопок без значка, каждое один раз, на любой глубине', (): void => {
-        expect(unpairedSideMenuIcons(items, false)).toEqual(['fork_spoon', 'troubleshoot', 'zoom_in']);
+        expect(unpairedSideMenuIcons(items, false)).toEqual(['rocket_launch', 'stadia_controller', 'qr_code_scanner']);
     });
 
     it('SC-UKV-482 — свой шаблон закрывает пункты, но не кнопку строки', (): void => {
-        expect(unpairedSideMenuIcons(items, true)).toEqual(['zoom_in']);
+        expect(unpairedSideMenuIcons(items, true)).toEqual(['qr_code_scanner']);
     });
 
     it('SC-UKV-482 — меню, где кит рисует всё, предупреждать не о чем', (): void => {
