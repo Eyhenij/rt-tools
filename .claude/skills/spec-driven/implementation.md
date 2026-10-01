@@ -18,6 +18,7 @@ as an edit of what leaves for foreign trees.
 - **the tree's names next to a rule** — `implementation.md` beside the rule — this file is its very sample
 - **a domain spec** — a directory in `docs/specs/<package>/` — `spec.md`, `scenarios.md`, `implementation.md`; the agreement of unclosed work lies in `proposed/<feature>/` next to it
 - **an accepted decision** — a file in `docs/adr/`
+- **the free scenario number** — `pnpm run spec:next-id <PREFIX>` (`tools/spec-next-id.mjs`), run before the heading is written; it reads the local and remote branches
 - **a project override** — a file in `.claude/rt-kit/overrides/<resource>`, merged with the package text by `## ` sections
 
 ## Where it lives
@@ -102,7 +103,3 @@ silent about.
 - `pnpm run agent-kit:sync` — the layout; a refusal on even one file writes nothing.
 - `pnpm exec nx test @rt-tools/agent-kit` — the specs of the layout itself: the choice, the merge
   by sections, the decision about a file's fate.
-
-- **A free scenario number is searched for in all branches.** — `tools/spec-next-id.mjs:main` — it
-  reads the scenario headings in the local and remote branches and prints the first free one after
-  the highest taken; it is called by `npm run spec:next-id [<prefix>]`

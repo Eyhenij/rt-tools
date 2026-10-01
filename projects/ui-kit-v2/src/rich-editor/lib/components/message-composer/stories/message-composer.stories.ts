@@ -13,6 +13,7 @@ export default {
         sending: { control: { type: 'boolean' } },
         disabled: { control: { type: 'boolean' } },
         formatting: { control: { type: 'boolean' } },
+        hint: { control: { type: 'boolean' } },
         toolbar: {
             options: ['full', 'minimal'],
             control: { type: 'select' },
@@ -33,6 +34,7 @@ export const Playground: TStory = {
         sending: false,
         disabled: false,
         formatting: false,
+        hint: false,
         toolbar: 'full',
         minRows: 1,
         maxRows: 6,

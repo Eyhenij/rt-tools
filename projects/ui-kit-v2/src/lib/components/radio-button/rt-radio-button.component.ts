@@ -24,6 +24,8 @@ import { distinctUntilChanged, EMPTY, Observable, Subject, switchMap } from 'rxj
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
+import { RtRadiusDirective } from '../radius/rt-radius.directive';
+
 const BEM_BLOCK: string = 'rt-radio-button';
 
 /** Вход выбранности: не заданный вход — `null`, и тогда выбранность решает форма. */
@@ -68,6 +70,7 @@ function checkedAttribute(value: BooleanInput | null | undefined): boolean | nul
             multi: true,
         },
     ],
+    hostDirectives: [{ directive: RtRadiusDirective, inputs: ['radius'] }],
     host: {
         class: BEM_BLOCK,
     },

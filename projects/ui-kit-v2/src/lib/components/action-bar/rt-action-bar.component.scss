@@ -1,3 +1,5 @@
+@use '../../../styles/mixins' as kv;
+
 @layer rt-kit.components {
     /* rt-action-bar — ViewEncapsulation.None: правила таргетируют BEM-класс блока.
        `.rt-action-bar` — сам хост (шаблон начинается с ng-container, класс ставит host). */
@@ -118,5 +120,8 @@
                 display: none;
             }
         }
+
+        /* Шаг входа `radius` переназначает скругление панели; действия и меню держат своё. */
+        @include kv.radius-steps('--rt-action-bar-radius');
     }
 }

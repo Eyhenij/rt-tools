@@ -31,7 +31,8 @@ Covered: `projects/agent-kit/tests/git-guards.test.sh`.
 
 ### SC-AK-1077 — a call from a second working copy is refused
 
-Given the command moves into another working copy of a tree and sends the branch from there
+Given the command moves into another working copy of the same repository and sends the branch
+from there
 When the gate judges the call
 Then it refuses and names both copies: the set runs where the session was started, so someone
 else's uncommitted work would refuse the call while the contribution actually leaving passes
@@ -46,3 +47,37 @@ When the gate judges the call
 Then everything goes as before: the set runs and decides by its own outcome
 
 Covered: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.
+
+### SC-AK-1173 — a sending call in another repository is not judged by the gate
+
+Given the command moves into a tree of another repository and sends the branch from there
+When the gate judges the call
+Then it lets the call through without running the set of the session tree
+
+Covered: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.
+
+### SC-AK-1174 — a branch in another repository asks the task of that repository
+
+Given the command moves into a tree of another repository, and the task of the branch exists in
+its work queue and not in the session's
+When the guard judges the creation of the branch
+Then it lets the call through: the task is asked of the queue of the repository the command runs in
+
+Covered: `projects/agent-kit/tests/git-guards.test.sh`.
+
+### SC-AK-1175 — a second copy of the same repository asks the session's queue
+
+Given the command moves into a second copy of the same repository, and the task of the branch is
+not in the session's work queue
+When the guard judges the creation of the branch
+Then it refuses as before: the shared `.git` directory is one, and so is the queue
+
+Covered: `projects/agent-kit/tests/git-guards.test.sh`.
+
+### SC-AK-1176 — a request from another repository is judged by its branch
+
+Given the command moves into a tree of another repository and opens a request there
+When the guard judges the opening
+Then it reads the branch and the task of that repository, not of the session tree
+
+Covered: `projects/agent-kit/tests/git-guards.test.sh`.

@@ -1,5 +1,9 @@
+@use '../../../styles/mixins' as kv;
+
 @layer rt-kit.components {
     .rt-textarea {
+        --rt-textarea-radius: var(--rt-input-radius);
+
         display: block;
         width: 100%;
 
@@ -16,7 +20,7 @@
             box-sizing: border-box;
             padding: var(--rt-textarea-padding-y) var(--rt-input-padding-x);
             border: var(--rt-input-border-width) solid var(--rt-input-color-border);
-            border-radius: var(--rt-input-radius);
+            border-radius: var(--rt-textarea-radius);
             background-color: var(--rt-input-color-bg);
             color: var(--rt-input-color-text);
 
@@ -76,5 +80,8 @@
                 color: var(--rt-field-value-empty-color);
             }
         }
+
+        /* Шаг входа `radius` переназначает скругление поля; панель в оверлее держит своё. */
+        @include kv.radius-steps('--rt-textarea-radius');
     }
 }

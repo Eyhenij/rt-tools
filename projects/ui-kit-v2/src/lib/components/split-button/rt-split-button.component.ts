@@ -19,6 +19,7 @@ import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { rtKitLabel } from '../../i18n';
 import { RtButtonDirective } from '../button/rt-button.directive';
 import { RtPopoverDirective } from '../popover/rt-popover.directive';
+import { RtRadiusDirective } from '../radius/rt-radius.directive';
 import { IRtSplitButton } from './rt-split-button.model';
 
 const BEM_BLOCK: string = 'rt-split-button';
@@ -43,6 +44,7 @@ const BEM_BLOCK: string = 'rt-split-button';
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
     imports: [RtButtonDirective, RtPopoverDirective, BlockDirective, ElemDirective],
+    hostDirectives: [{ directive: RtRadiusDirective, inputs: ['radius'] }],
     host: {
         class: BEM_BLOCK,
         '[class.rt-split-button--open]': 'menu()?.isOpen()',

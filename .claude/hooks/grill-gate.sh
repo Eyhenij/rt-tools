@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.29.0 · hooks/grill-gate.sh · 7d1dfa3a4c8f · правится надстройкой, не здесь
+# rt-kit v0.29.3 · hooks/grill-gate.sh · 8930de732ddd · правится надстройкой, не здесь
 # Requires: hooks/deny-tail.sh
 # rt-hook: Stop
 # The conversation guard: the owner is not asked a question until the laws and rules have been read
@@ -106,6 +106,7 @@ if command -v skill_for >/dev/null 2>&1 && [ -n "$rules_dir" ]; then
         def is_input:
             .type == "user"
             and ((.isCompactSummary // false) | not)
+            and ((.isMeta // false) | not)
             and (((.message.content // []) | if type == "array"
                     then ([.[] | select(.type == "tool_result")] | length)
                     else 0 end) == 0);
@@ -129,6 +130,9 @@ fi
 # A turn is everything recorded after the last real input from the owner. A tool answer comes in
 # under the same `user` role, so lines with `tool_result` do not count as input: otherwise the turn
 # would be the piece after the last tool call, and reading the rules at its start would be lost.
+# The text of a loaded rule and the report of a subagent come in under that role too, marked
+# `isMeta`. Taken for input, a rule loaded right before a question cut the turn after its own
+# loading, and its text stood as the owner's last reply.
 #
 # A tail of 400 lines: the turn record grows all session, and only the last turn is judged.
 # On the tool call event the question is already known — it is the call; only whether the rules
@@ -138,6 +142,7 @@ verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg re "$read_re" 
     def is_input:
         .type == "user"
         and ((.isCompactSummary // false) | not)
+        and ((.isMeta // false) | not)
         and (((.message.content // []) | if type == "array"
                 then ([.[] | select(.type == "tool_result")] | length)
                 else 0 end) == 0);
@@ -185,11 +190,16 @@ verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg re "$read_re" 
 # FAIL-OPEN: no question in the call, no reply from the owner, no earlier question — the sign stays
 # silent.
 if [ -n "$tool" ]; then
-    asked_json="$(printf '%s' "$input" | jq -r '(.tool_input.questions // []) | tostring' 2>/dev/null)"
-    seen="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg now "$asked_json" '
+    # The words are taken from what the owner reads — the question, the options and their
+    # descriptions — and not from the serialised menu: its keys `question`, `label` and
+    # `description` stand in every call and matched any English text by two words of the three.
+    asked_text="$(printf '%s' "$input" | jq -r '[(.tool_input.questions // [])[]
+        | (.question // ""), ((.options // [])[] | (.label // ""), (.description // ""))] | join(" ")' 2>/dev/null)"
+    seen="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg now "$asked_text" '
         def is_input:
             .type == "user"
             and ((.isCompactSummary // false) | not)
+            and ((.isMeta // false) | not)
             and (((.message.content // []) | if type == "array"
                     then ([.[] | select(.type == "tool_result")] | length)
                     else 0 end) == 0);

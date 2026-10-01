@@ -40,14 +40,19 @@ themselves. This text has no screen of its own.
 - **An event carries the message whole, not a sign that something has changed.** A sign would make
   every screen ask for the message again, and the stream would cost a request per event instead of
   saving one.
+- **The closing of a conversation reaches the stream of its visitor as an event of its own kind.**
+  It carries the conversation and the minute of the closing. Without it the visitor writes on into
+  a talk nobody waits for. The stream of the operator does not get it: the panel changed the state
+  itself.
 - **While there are no events the service sends a heartbeat.** An idle connection is closed by the
   proxy in front of the service, and the screen would read that as an ending talk.
 
 **Who sees which stream.**
 
 - **The stream of a visitor is closed by their sign, and it carries the events of their
-  conversation alone.** The sign is the one the service issued at the creation of the conversation;
-  an unknown one is refused as a not-found conversation.
+  conversations alone.** The sign is the one the service issued at the creation of the conversation;
+  an unknown one is refused as a not-found conversation. All the talks of the visitor come by one
+  stream: an answer to a talk the widget does not show marks it in the list.
 - **The stream of an operator is closed by their entry, and it carries the events of the sites
   they answer for.** The same set of the sites the reading works from: a second answer to the
   question "whose is this" would diverge from the first.

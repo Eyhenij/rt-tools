@@ -1,0 +1,105 @@
+@switch (part) {
+    @case ('size') {
+        <app-story-presets caption="Размер в обоих наборах">
+            <ng-template>
+                <app-story-row [items]="sizes" [slotWidth]="fieldWidth">
+                    <ng-template let-size>
+                        <rt-date-range ariaLabel="Размер" [size]="size" [formControl]="sizeValue" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('filling') {
+        <app-story-presets caption="Наполненность и очистка в обоих наборах">
+            <ng-template>
+                <app-story-row [items]="fillingCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
+                    <ng-template let-fillingCase>
+                        <rt-date-range [ariaLabel]="fillingCase.name" [formControl]="fillingCase.control" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('bordered') {
+        <app-story-presets caption="Рамка в обоих наборах">
+            <ng-template>
+                <app-story-row [items]="borderedCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
+                    <ng-template let-borderedCase>
+                        <rt-date-range
+                            [bordered]="borderedCase.bordered"
+                            [ariaLabel]="borderedCase.name"
+                            [formControl]="borderedCase.control" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('appearance') {
+        <app-story-presets caption="Вид поля в обоих наборах">
+            <ng-template>
+                <app-story-row [items]="appearanceCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
+                    <ng-template let-appearanceCase>
+                        <rt-date-range
+                            [appearance]="appearanceCase.appearance"
+                            [ariaLabel]="appearanceCase.name"
+                            [formControl]="appearanceCase.control" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('states') {
+        <app-story-presets caption="Взаимодействие в обоих наборах">
+            <ng-template>
+                <app-story-row [items]="states" [itemLabel]="stateLabel" [slotWidth]="fieldWidth">
+                    <ng-template let-state>
+                        <rt-date-range ariaLabel="Состояние" [attr.data-story-state]="state.state" [formControl]="stateValue" />
+                    </ng-template>
+                </app-story-row>
+
+                <app-story-row caption="Значение, форма и обёртка" [items]="stateCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
+                    <ng-template let-stateCase>
+                        @if (stateCase.flat) {
+                            <rt-field [readonly]="true">
+                                <rt-date-range [ariaLabel]="stateCase.name" [formControl]="stateCase.control" />
+                            </rt-field>
+                        } @else {
+                            <rt-date-range [disabled]="stateCase.disabled" [ariaLabel]="stateCase.name" [formControl]="stateCase.control" />
+                        }
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('presets') {
+        <app-story-presets caption="Поле в обоих наборах">
+            <ng-template>
+                <app-story-row [items]="themeCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
+                    <ng-template let-themeCase>
+                        <rt-date-range [disabled]="themeCase.disabled" [ariaLabel]="themeCase.name" [formControl]="themeCase.control" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('themes') {
+        <app-story-presets caption="Поле в обеих темах в обоих наборах">
+            <ng-template>
+                <app-story-themes>
+                    <ng-template>
+                        @for (themeCase of themeCases; track themeCase.name) {
+                            <rt-date-range [disabled]="themeCase.disabled" [ariaLabel]="themeCase.name" [formControl]="themeCase.control" />
+                        }
+                    </ng-template>
+                </app-story-themes>
+            </ng-template>
+        </app-story-presets>
+    }
+}

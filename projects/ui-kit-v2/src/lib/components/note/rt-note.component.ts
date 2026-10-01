@@ -2,6 +2,8 @@ import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/
 
 import { BlockDirective } from '@rt-tools/core';
 
+import { RtRadiusDirective } from '../radius/rt-radius.directive';
+
 const BEM_BLOCK: string = 'rt-note';
 
 /**
@@ -26,6 +28,7 @@ const BEM_BLOCK: string = 'rt-note';
         // standalone components / directives
         BlockDirective,
     ],
+    hostDirectives: [{ directive: RtRadiusDirective, inputs: ['radius'] }],
     host: {
         // Block-класс на host (BlockDirective пропускает comment-ноду ng-container),
         // role — на том же элементе: rt-note самодостаточен, без внутреннего контейнера.

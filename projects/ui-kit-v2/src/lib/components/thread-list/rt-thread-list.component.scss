@@ -1,3 +1,5 @@
+@use '../../../styles/mixins' as kv;
+
 @layer rt-kit.components {
     .rt-thread-list {
         --rt-thread-list-border-width: var(--rt-border-width-thin);
@@ -253,5 +255,8 @@
                 inline-size: 48px;
             }
         }
+
+        /* Шаг входа `radius` переназначает скругление карточки беседы. */
+        @include kv.radius-steps('--rt-thread-list-card-radius');
     }
 }

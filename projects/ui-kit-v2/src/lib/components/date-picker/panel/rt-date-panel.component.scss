@@ -1,0 +1,155 @@
+@layer rt-kit.components {
+    /* rt-date-panel — ViewEncapsulation.None: правила таргетируют BEM-класс блока, класс ставит host. */
+
+    .rt-date-panel {
+        /* Высота ячейки колонок времени и месяцев. */
+        --rt-date-panel-cell-size: var(--rt-control-height-sm);
+
+        /* Скругление ячеек колонок времени и месяцев. */
+        --rt-date-panel-cell-radius: var(--rt-radius-md);
+
+        /* Толщина черты над подвалом. */
+        --rt-date-panel-divider-width: var(--rt-border-width-thin);
+
+        /* Видимая высота колонки времени: семь ячеек с шестью зазорами, остальное прокручивается. */
+        --rt-date-panel-column-height: calc(var(--rt-date-panel-cell-size) * 7 + var(--rt-space-0-5) * 6);
+
+        display: flex;
+        flex-direction: column;
+        padding: var(--rt-space-4);
+        gap: var(--rt-space-4);
+
+        &__body {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--rt-space-4);
+        }
+
+        /* Панель показывает один месяц: сетка календаря не держит пустую вторую колонку.
+           Свойство ставится на сам узел календаря — корень его блока объявляет своё, и правило
+           вложено в блок панели, чтобы быть сильнее его, а не зависеть от порядка подключения. */
+        & &__calendar {
+            --rt-calendar-month-count: 1;
+            --rt-calendar-day-justify: center;
+        }
+
+        &__calendar,
+        &__months {
+            flex: 1 1 auto;
+            min-inline-size: calc(var(--rt-size-10) * 7);
+        }
+
+        &__months-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--rt-space-4);
+        }
+
+        &__year {
+            color: var(--rt-color-text-primary);
+            font-weight: var(--rt-font-weight-semibold);
+        }
+
+        &__month-grid {
+            display: grid;
+            gap: var(--rt-space-1);
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        &__time {
+            display: flex;
+            gap: var(--rt-space-1);
+        }
+
+        &__column {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: var(--rt-space-0-5);
+            max-block-size: var(--rt-date-panel-column-height);
+            overflow-y: auto;
+            overscroll-behavior: contain;
+            scrollbar-width: thin;
+        }
+
+        &__cell {
+            flex: 0 0 auto;
+            padding: 0 var(--rt-space-2);
+            border: none;
+            border-radius: var(--rt-date-panel-cell-radius);
+            background: none;
+            color: var(--rt-color-text-primary);
+            cursor: pointer;
+            font: inherit;
+            font-size: var(--rt-text-sm);
+            font-variant-numeric: tabular-nums;
+            min-block-size: var(--rt-date-panel-cell-size);
+            min-inline-size: var(--rt-control-height-md);
+
+            &:hover:not(:disabled, [aria-pressed='true']) {
+                background: var(--rt-color-bg-subtle);
+            }
+
+            &:focus-visible {
+                outline: var(--rt-focus-ring-width) solid var(--rt-focus-ring-color);
+                outline-offset: var(--rt-focus-ring-offset);
+            }
+
+            &[aria-pressed='true'] {
+                background: var(--rt-color-action-primary);
+                color: var(--rt-color-action-on-primary);
+            }
+
+            &:disabled {
+                color: var(--rt-color-text-muted);
+                cursor: not-allowed;
+                opacity: 0.45;
+            }
+        }
+
+        &__footer {
+            display: flex;
+            justify-content: flex-end;
+            padding-top: var(--rt-space-2);
+            border-top: var(--rt-date-panel-divider-width) solid var(--rt-color-border-subtle);
+            gap: var(--rt-space-2);
+        }
+
+        /* Дата без времени: «Сегодня» стоит по центру под месяцем. */
+        &:not(&--with-time) &__footer {
+            justify-content: center;
+        }
+
+        /* Нижняя шторка: дни и ячейки под палец, всё — в одну колонку на всю ширину. */
+        &--sheet {
+            --rt-date-panel-cell-size: calc(var(--rt-size-10) + var(--rt-size-1));
+
+            padding-inline: 0;
+        }
+
+        /* Календарь объявляет размер дня на корне своего блока, поэтому свойство ставится на сам
+           узел календаря — унаследованное от панели корень календаря перекрыл бы. */
+        &--sheet &__calendar {
+            --rt-calendar-day-size: var(--rt-date-panel-cell-size);
+        }
+
+        &--sheet &__body {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        &--sheet &__calendar,
+        &--sheet &__months {
+            min-inline-size: 0;
+        }
+
+        &--sheet &__time {
+            justify-content: center;
+        }
+
+        &--sheet &__column {
+            flex: 1 1 0;
+        }
+    }
+}

@@ -1,0 +1,68 @@
+<ng-container rtBlock="rt-date-range">
+    @if (isReadonly()) {
+        <span rtElem="readonly" qa-dataid="date-range-readonly" [rtMod]="{ empty: !displayText() }">{{ displayText() || '—' }}</span>
+    } @else {
+        <input
+            #fieldEl
+            rtElem="field"
+            qa-dataid="date-range-control"
+            type="text"
+            autocomplete="off"
+            spellcheck="false"
+            [value]="text()"
+            [disabled]="isDisabled()"
+            [attr.placeholder]="shape()"
+            [attr.title]="shapeTitle()"
+            [attr.size]="fieldSize()"
+            [attr.id]="effectiveControlId()"
+            [attr.aria-label]="ariaLabel()"
+            [attr.aria-invalid]="isInvalid() || textInvalid() || null"
+            (input)="onTyped($event)"
+            (blur)="onBlur()" />
+        @if (showClearButton()) {
+            <rt-icon-button
+                rtElem="clear"
+                qa-dataid="date-range-clear"
+                icon="ico-close"
+                size="sm"
+                variant="ghost"
+                iconColor="muted"
+                [ariaLabel]="t().uiClear"
+                [tabIndex]="-1"
+                (clicked)="clear($event)" />
+        }
+        <rt-icon-button
+            rtElem="open"
+            qa-dataid="date-range-open"
+            icon="ico-calendar"
+            size="sm"
+            variant="ghost"
+            iconColor="muted"
+            rtPopoverAlign="end"
+            [ariaLabel]="t().uiOpenCalendar"
+            [disabled]="isDisabled()"
+            [rtPopover]="panelTpl"
+            [rtPopoverDisabled]="narrow() || isDisabled()"
+            (clicked)="openPanel()" />
+
+        <ng-template #panelTpl>
+            <div rtElem="popup" qa-dataid="date-range-popup">
+                <rt-date-range-panel [value]="range()" [min]="min()" [max]="max()" (picked)="onPicked($event)" (closed)="closePanel()" />
+            </div>
+        </ng-template>
+
+        @if (narrow()) {
+            <rt-bottom-sheet qa-dataid="date-range-sheet" [open]="sheetOpen()" (openChange)="sheetOpen.set($event)">
+                @if (sheetOpen()) {
+                    <rt-date-range-panel
+                        sheet
+                        [value]="range()"
+                        [min]="min()"
+                        [max]="max()"
+                        (picked)="onPicked($event)"
+                        (closed)="closePanel()" />
+                }
+            </rt-bottom-sheet>
+        }
+    }
+</ng-container>

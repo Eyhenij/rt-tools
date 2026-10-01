@@ -20,6 +20,7 @@ import { RT_KIT_LABELS, TRtKitLabelMap } from '../../i18n';
 import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
 import { RtIconComponent } from '../icon/rt-icon.component';
 import { IRtIcon } from '../icon/rt-icon.model';
+import { RtRadiusDirective } from '../radius/rt-radius.directive';
 import { IRtTag } from '../tag/rt-tag.model';
 
 const BEM_BLOCK: string = 'rt-message';
@@ -61,6 +62,7 @@ const BEM_BLOCK: string = 'rt-message';
         ElemDirective,
         ModDirective,
     ],
+    hostDirectives: [{ directive: RtRadiusDirective, inputs: ['radius'] }],
     host: {
         class: BEM_BLOCK,
     },

@@ -6,7 +6,7 @@ import { RateLimitService } from '@rt/message-bus-api/access/feature';
 import { ACCOUNT_OF_REQUEST, IAccountBearingRequest } from '@rt/message-bus-api/accounts/util';
 import { IChatConversationStarted } from '@rt/message-bus-api/chat/api';
 import { IChatMessageListRow } from '@rt/message-bus-api/chat/data-access';
-import { IPage } from '@rt/message-bus-common';
+import { EChatTalkState, IPage } from '@rt/message-bus-common';
 
 import { ChatHookService } from './chat-hook.service';
 import { ChatIntakeController } from './chat-intake.controller';
@@ -45,6 +45,7 @@ describe('поток событий чата', () => {
     let subscribers: ChatSubscribersService;
     let intake: ChatIntakeController;
     let reads: ChatReadController;
+    let talks: ChatTalkService;
 
     /** Завести переписку на названном сайте и вернуть выданные признаки. */
     async function talk(key: string, origin: string): Promise<IChatConversationStarted> {
@@ -80,11 +81,8 @@ describe('поток событий чата', () => {
         store.operatorSites.push({ accountId: 'account-1', siteId: 'site-1' });
         subscribers = new ChatSubscribersService();
         intake = new ChatIntakeController(store.asPrisma(), new RateLimitService(), subscribers, new ChatHookService(store.asPrisma()));
-        reads = new ChatReadController(
-            store.asPrisma(),
-            subscribers,
-            new ChatTalkService(store.asPrisma(), subscribers, new ChatHookService(store.asPrisma()))
-        );
+        talks = new ChatTalkService(store.asPrisma(), subscribers, new ChatHookService(store.asPrisma()));
+        reads = new ChatReadController(store.asPrisma(), subscribers, talks);
     });
 
     it('SC-CH-28 — реплика посетителя доходит до потока его переписки', async (): Promise<void> => {
@@ -104,6 +102,7 @@ describe('поток событий чата', () => {
             side: 'visitor',
             text: 'здравствуйте',
             takenAt: AT.toISOString(),
+            authorName: '',
         });
 
         watched.open.unsubscribe();
@@ -211,5 +210,21 @@ describe('поток событий чата', () => {
         expect(watched.frames[0].data).toMatchObject({ side: 'operator', text: 'слушаю вас', conversationId: started.conversationId });
 
         watched.open.unsubscribe();
+    });
+
+    it('SC-CH-114 — закрытие доходит до потока посетителя и не доходит до потока оператора', async (): Promise<void> => {
+        const started: IChatConversationStarted = await talk('live-key', PAGE);
+        const visitor: IWatched = await watchVisitor('live-key', started);
+        const operator: IWatched = await watchOperator('account-1');
+
+        await talks.state(['site-1'], started.conversationId, EChatTalkState.Closed, AT);
+
+        expect(visitor.frames).toEqual([{ type: 'closing', data: { conversationId: started.conversationId, closedAt: AT.toISOString() } }]);
+        // поток оператора открыт и жив, но закрытия в нём нет: его сменила сама панель
+        expect(operator.open.closed).toBe(false);
+        expect(operator.frames).toEqual([]);
+
+        visitor.open.unsubscribe();
+        operator.open.unsubscribe();
     });
 });

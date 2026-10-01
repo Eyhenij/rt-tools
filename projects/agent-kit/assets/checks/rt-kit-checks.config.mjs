@@ -68,6 +68,13 @@ const DEFAULTS = {
      */
     portableDirs: [],
     /**
+     * Directories where the sources of the package itself lie: the files it carries to other trees.
+     * The specs entry and the coverage check judge them, and nothing else. A portable text is not
+     * the same thing: a consumer tree keeps texts with foreign addresses that leave by no package,
+     * and read as package sources they would each ask for a spec. Empty — the tree writes no package.
+     */
+    packageDirs: [],
+    /**
      * The signs of reuse: which bundles the tree takes and where its own lie.
      *
      * Bundles are cut by the packages whose ready-made code they name, and the tree declares only

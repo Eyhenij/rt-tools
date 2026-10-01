@@ -5,6 +5,7 @@ import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { parseMarkdown } from '../../util/markdown-parse';
 import { ERtMarkdownBlock, ERtMarkdownInline, IRtMarkdownBlockNode } from '../../util/markdown.model';
+import { RtRadiusDirective } from '../radius/rt-radius.directive';
 
 const BEM_BLOCK: string = 'rt-markdown-text';
 
@@ -34,6 +35,7 @@ const BEM_BLOCK: string = 'rt-markdown-text';
         ModDirective,
         NgTemplateOutlet,
     ],
+    hostDirectives: [{ directive: RtRadiusDirective, inputs: ['radius'] }],
     host: {
         class: BEM_BLOCK,
     },

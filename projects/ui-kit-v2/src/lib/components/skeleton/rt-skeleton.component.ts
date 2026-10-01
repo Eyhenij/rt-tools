@@ -10,9 +10,10 @@ import {
     ViewEncapsulation,
 } from '@angular/core';
 
+import { RtRadiusDirective } from '../radius/rt-radius.directive';
+
 export type TRtSkeletonShape = 'rectangle' | 'circle' | 'square';
 export type TRtSkeletonSize = 'sm' | 'md' | 'lg';
-export type TRtSkeletonRadius = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
 const BEM_BLOCK: string = 'rt-skeleton';
 
@@ -23,6 +24,8 @@ const BEM_BLOCK: string = 'rt-skeleton';
  * с input'ом `[isLoading]`. Wrapper решает что показать (skeleton или content),
  * этот компонент только рисует placeholder.
  *
+ * Скругление прямоугольника и квадрата — шаг общего входа `radius`; круг остаётся кругом.
+ *
  * Shimmer через background-position keyframes; `@media (prefers-reduced-motion)`
  * убирает анимацию для пользователей с reduced-motion preference.
  */
@@ -32,6 +35,7 @@ const BEM_BLOCK: string = 'rt-skeleton';
     styleUrls: ['./rt-skeleton.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
+    hostDirectives: [{ directive: RtRadiusDirective, inputs: ['radius'] }],
     host: {
         class: BEM_BLOCK,
     },
@@ -43,14 +47,6 @@ export class RtSkeletonComponent {
         lg: '20px',
     };
 
-    readonly #radiusMap: Record<TRtSkeletonRadius, string> = {
-        xs: '2px',
-        sm: '4px',
-        md: '6px',
-        lg: '10px',
-        xl: '999px',
-    };
-
     public readonly shape: InputSignal<TRtSkeletonShape> = input<TRtSkeletonShape>('rectangle');
 
     public readonly size: InputSignal<TRtSkeletonSize> = input<TRtSkeletonSize>('md');
@@ -58,14 +54,6 @@ export class RtSkeletonComponent {
     public readonly width: InputSignal<string> = input<string>('100%');
 
     public readonly height: InputSignal<string> = input<string>(this.#sizeMap.sm);
-
-    /**
-     * Скругление. `null` — «не задано»: прямоугольник берёт `xl`, квадрат —
-     * `sm` (пилюля из квадрата не квадрат). Умолчанием нельзя было держать сам
-     * `xl`: тогда явный `xl` неотличим от невыставленного, и квадрату
-     * приходилось прибивать `sm` жёстко — вход у него молча пропадал.
-     */
-    public readonly borderRadius: InputSignal<TRtSkeletonRadius | null> = input<TRtSkeletonRadius | null>(null);
 
     public readonly animation: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
         transform: booleanAttribute,
@@ -130,22 +118,6 @@ export class RtSkeletonComponent {
             default:
                 return this.height();
         }
-    }
-
-    @HostBinding('style.border-radius')
-    protected get hostBorderRadius(): string {
-        // Круг задаётся именно скруглением, поэтому вход к нему не применяется:
-        // любое другое значение перестало бы быть кругом.
-        if (this.shape() === 'circle') {
-            return '50%';
-        }
-
-        const requested: TRtSkeletonRadius | null = this.borderRadius();
-        if (requested !== null) {
-            return this.#radiusMap[requested];
-        }
-
-        return this.shape() === 'square' ? this.#radiusMap.sm : this.#radiusMap.xl;
     }
 
     #getSizeValue(): string {

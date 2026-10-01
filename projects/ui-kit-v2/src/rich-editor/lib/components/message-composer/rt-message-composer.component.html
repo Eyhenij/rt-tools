@@ -1,69 +1,81 @@
 <ng-container rtBlock="rt-message-composer" [formGroup]="form">
-    @if (formatting()) {
-        <rt-rich-editor
-            qa-dataid="message-composer-rich"
-            formControlName="delta"
-            [placeholder]="placeholderText()"
-            [toolbar]="toolbar()"
-            (enterPressed)="submit()" />
-    } @else {
-        <textarea
-            rtElem="input"
-            qa-dataid="message-composer-input"
-            cdkTextareaAutosize
-            formControlName="message"
-            [attr.aria-label]="t().chatComposerAria"
-            [placeholder]="placeholderText()"
-            [cdkAutosizeMinRows]="minRows()"
-            [cdkAutosizeMaxRows]="maxRows()"
-            (keydown)="onKeydown($event)"></textarea>
-    }
-
-    @if (attachments() && files().length) {
-        <div rtElem="files" qa-dataid="message-composer-files">
-            @for (file of files(); track $index) {
-                <rt-file-card
-                    showRemove
-                    qa-dataid="message-composer-file"
-                    size="sm"
-                    [name]="file.name"
-                    [sizeBytes]="file.size"
-                    [disabled]="disabled() || sending()"
-                    (removed)="removeFile($index)" />
-            }
-        </div>
-    }
-
-    <div rtElem="divider"></div>
-
-    <div rtElem="controls">
-        @if (attachments()) {
-            <input
-                #fileEl
-                qa-dataid="message-composer-file-input"
-                type="file"
-                hidden
-                multiple
-                [attr.accept]="accept() || null"
-                (change)="onFilesPicked($event)" />
-            <rt-icon-button
-                qa-dataid="message-composer-attach"
-                icon="paperclip"
-                variant="ghost"
-                [ariaLabel]="t().chatAttachAria"
-                [tooltip]="t().chatAttachTooltip"
-                [disabled]="disabled() || sending()"
-                (clicked)="openPicker()" />
+    <div rtElem="capsule" qa-dataid="message-composer-capsule" [rtMod]="capsuleMods()">
+        @if (attachments() && files().length) {
+            <div rtElem="files" qa-dataid="message-composer-files">
+                @for (file of files(); track $index) {
+                    <rt-file-card
+                        showRemove
+                        qa-dataid="message-composer-file"
+                        size="sm"
+                        [name]="file.name"
+                        [sizeBytes]="file.size"
+                        [disabled]="disabled() || sending()"
+                        (removed)="removeFile($index)" />
+                }
+            </div>
         }
 
-        <rt-icon-button
-            rtElem="send"
-            qa-dataid="message-composer-send"
-            icon="send"
-            variant="primary"
-            [ariaLabel]="t().chatSendAria"
-            [tooltip]="t().chatSendLabel"
-            [disabled]="!canSend()"
-            (clicked)="submit()" />
+        @if (formatting()) {
+            <rt-rich-editor
+                rtElem="rich"
+                qa-dataid="message-composer-rich"
+                formControlName="delta"
+                [placeholder]="placeholderText()"
+                [toolbar]="toolbar()"
+                (enterPressed)="submit()" />
+        }
+
+        <div rtElem="row">
+            @if (attachments()) {
+                <input
+                    #fileEl
+                    qa-dataid="message-composer-file-input"
+                    type="file"
+                    hidden
+                    multiple
+                    [attr.accept]="accept() || null"
+                    (change)="onFilesPicked($event)" />
+                <rt-icon-button
+                    qa-dataid="message-composer-attach"
+                    icon="paperclip"
+                    iconColor="muted"
+                    radius="full"
+                    variant="ghost"
+                    [ariaLabel]="t().chatAttachAria"
+                    [tooltip]="t().chatAttachTooltip"
+                    [disabled]="disabled() || sending()"
+                    (clicked)="openPicker()" />
+            }
+
+            @if (!formatting()) {
+                <textarea
+                    #textEl
+                    rtElem="input"
+                    qa-dataid="message-composer-input"
+                    cdkTextareaAutosize
+                    formControlName="message"
+                    [attr.aria-label]="t().chatComposerAria"
+                    [placeholder]="placeholderText()"
+                    [cdkAutosizeMinRows]="minRows()"
+                    [cdkAutosizeMaxRows]="maxRows()"
+                    (keydown)="onKeydown($event)"></textarea>
+            }
+
+            <rt-icon-button
+                rtElem="send"
+                qa-dataid="message-composer-send"
+                icon="arrow-up"
+                radius="full"
+                variant="primary"
+                [ariaLabel]="t().chatSendAria"
+                [tooltip]="t().chatSendLabel"
+                [loading]="sending()"
+                [disabled]="!canSend()"
+                (clicked)="submit()" />
+        </div>
     </div>
+
+    @if (hint()) {
+        <p rtElem="hint" qa-dataid="message-composer-hint">{{ t().chatComposerHint }}</p>
+    }
 </ng-container>

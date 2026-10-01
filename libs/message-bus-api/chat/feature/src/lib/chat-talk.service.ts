@@ -68,7 +68,13 @@ export class ChatTalkService {
     }
 
     /** Реплика отвечающего в свою переписку: она же уходит событием тем, кто смотрит на разговор. */
-    public async answer(sites: readonly string[], id: string, text: string, at: Date): Promise<IChatMessageListRow> {
+    public async answer(
+        sites: readonly string[],
+        id: string,
+        text: string,
+        at: Date,
+        authorName: string = ''
+    ): Promise<IChatMessageListRow> {
         const talk: IChatOwnedTalk = await this.own(sites, id);
         const fault: EChatTextFault | null = chatTextFault(text);
 
@@ -80,33 +86,48 @@ export class ChatTalkService {
             throw new BadRequestException(refusalBody(ERefusal.ChatTextTooLong, { limit: CHAT_TEXT_LIMIT }));
         }
 
-        const message: IChatMessageListRow = await appendOperatorMessage(this.#prisma, talk.id, text, at);
+        const message: IChatMessageListRow = await appendOperatorMessage(this.#prisma, talk.id, text, at, authorName);
 
         this.#subscribers.send(
-            { conversationId: talk.id, siteId: talk.siteId },
+            { conversationId: talk.id, visitorId: talk.visitorId, siteId: talk.siteId },
             {
                 text,
                 conversationId: talk.id,
                 messageId: message.id,
                 side: message.side,
                 takenAt: message.takenAt.toISOString(),
+                authorName: message.authorName,
             }
         );
 
         return message;
     }
 
-    /** Смена состояния своей переписки: закрыть разговор или открыть его снова. */
-    public async state(sites: readonly string[], id: string, asked: EChatTalkState): Promise<IChatStateChanged> {
+    /**
+     * Смена состояния своей переписки: закрыть разговор или открыть его снова.
+     *
+     * О закрытии узнаёт и открытый виджет посетителя — событием своего потока: иначе человек пишет
+     * дальше в разговор, которого уже никто не ждёт.
+     */
+    public async state(sites: readonly string[], id: string, asked: EChatTalkState, at: Date = new Date()): Promise<IChatStateChanged> {
         const talk: IChatOwnedTalk = await this.own(sites, id);
-        const changed: IChatStateChanged = await setConversationState(this.#prisma, id, asked);
+        const changed: { id: string; state: string; visitorId: string; closedAt: Date | null } = await setConversationState(
+            this.#prisma,
+            id,
+            asked,
+            at
+        );
 
         if (asked === EChatTalkState.Closed) {
+            this.#subscribers.sendClosing(
+                { conversationId: talk.id, visitorId: talk.visitorId, siteId: talk.siteId },
+                { conversationId: talk.id, closedAt: (changed.closedAt ?? at).toISOString() }
+            );
             // вызов наружу ответа отвечающему не держит: приложение о закрытии узнаёт своим чередом
             void this.#sayClosed(talk.siteId, id);
         }
 
-        return changed;
+        return { id: changed.id, state: changed.state };
     }
 
     /**

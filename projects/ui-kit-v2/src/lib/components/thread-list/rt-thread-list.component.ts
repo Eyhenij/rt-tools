@@ -33,6 +33,7 @@ import { RtIconComponent } from '../icon/rt-icon.component';
 import { IRtIcon } from '../icon/rt-icon.model';
 import { RtInputComponent } from '../input/rt-input.component';
 import { RtPopoverDirective } from '../popover/rt-popover.directive';
+import { RtRadiusDirective } from '../radius/rt-radius.directive';
 import { RtSkeletonComponent } from '../skeleton/rt-skeleton.component';
 import { RtThreadListFiltersDirective, RtThreadListRowDirective, RtThreadListSearchDirective } from './rt-thread-list.directives';
 import { IRtThreadList } from './rt-thread-list.model';
@@ -75,6 +76,7 @@ const SKELETON_ROWS_COUNT: number = 6;
         RtInfiniteScrollDirective,
         ModDirective,
     ],
+    hostDirectives: [{ directive: RtRadiusDirective, inputs: ['radius'] }],
     host: {
         class: BEM_BLOCK,
     },

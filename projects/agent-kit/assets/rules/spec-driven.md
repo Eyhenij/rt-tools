@@ -121,7 +121,9 @@ flowchart TD
   not inserted in the middle and does not take a deleted one — the deleted number's place stays
   empty. The number ties the scenario to its test, and issued a second time it leaves the old
   reference right on the surface; renumbering in sequence is deceptively cheap — the tests are green
-  both before and after.
+  both before and after. The free number is asked of the tree's command before the scenario heading
+  is written, and the companion names that command: the main branch alone does not show numbers
+  neighbouring work holds on disk.
 - **A scenario and the title of its test are edited by one change.** The promise changed — the
   number stays, and the test title is edited by the same commit; the scenario deleted — the test is
   deleted too. Having drifted apart, they leave the run green while it checks something else.

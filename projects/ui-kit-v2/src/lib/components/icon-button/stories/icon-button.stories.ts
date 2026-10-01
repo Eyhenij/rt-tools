@@ -1,6 +1,7 @@
 import { Meta, StoryObj } from '@storybook/angular';
 
 import { storySnapshotSkip } from '../../../../showcase';
+import { RT_RADIUS_STEPS } from '../../radius/rt-radius.model';
 import { TestRtIconButtonComponent } from './component/test-icon-button.component';
 
 export default {
@@ -22,8 +23,8 @@ export default {
             control: { type: 'select' },
         },
         iconSize: { control: false },
-        shape: {
-            options: ['square', 'rounded-sm', 'rounded-lg', 'circle'],
+        radius: {
+            options: [null, ...RT_RADIUS_STEPS],
             control: { type: 'select' },
         },
         type: {
@@ -50,7 +51,7 @@ export const Playground: TStory = {
         iconColor: 'current',
         size: 'md',
         iconSize: null,
-        shape: 'square',
+        radius: null,
         type: 'button',
         tooltip: '',
         tabIndex: 0,

@@ -118,13 +118,9 @@ describe('RtTagComponent', (): void => {
         });
     });
 
-    describe('форма и заливка', (): void => {
-        it('SC-UKV-185 — без входов — полностью скруглённая сплошная пилюля', (): void => {
-            expect(pillClasses(setup())).toEqual(expect.arrayContaining(['rt-tag--shape--pill', 'rt-tag--appearance--solid']));
-        });
-
-        it.each<IRtTag.Shape>(['pill', 'square'])('форма %s даёт свой модификатор', (shape: IRtTag.Shape): void => {
-            expect(pillClasses(setup({ shape }))).toContain(`rt-tag--shape--${shape}`);
+    describe('заливка', (): void => {
+        it('SC-UKV-185 — без входов — сплошная пилюля', (): void => {
+            expect(pillClasses(setup())).toContain('rt-tag--appearance--solid');
         });
 
         it.each<IRtTag.Appearance>(['solid', 'outlined'])('заливка %s даёт свой модификатор', (appearance: IRtTag.Appearance): void => {
@@ -133,12 +129,12 @@ describe('RtTagComponent', (): void => {
     });
 
     describe('скругление', (): void => {
-        it('SC-UKV-186 — без входа модификатора скругления нет — радиус берётся из формы', (): void => {
-            expect(pillClasses(setup()).some((cls: string): boolean => cls.startsWith('rt-tag--radius'))).toBe(false);
-        });
+        it('SC-UKV-391 — без входа шага нет, названный шаг ложится на хост', (): void => {
+            const plain: ComponentFixture<RtTagComponent> = setup();
+            const square: ComponentFixture<RtTagComponent> = setup({ radius: 'sm' });
 
-        it.each<IRtTag.Radius>(['none', 'sm', 'md', 'lg', 'full'])('заданный шаг %s перебивает форму', (radius: IRtTag.Radius): void => {
-            expect(pillClasses(setup({ radius, shape: 'pill' }))).toContain(`rt-tag--radius--${radius}`);
+            expect(plain.nativeElement.hasAttribute('data-rt-radius')).toBe(false);
+            expect(square.nativeElement.getAttribute('data-rt-radius')).toBe('sm');
         });
     });
 

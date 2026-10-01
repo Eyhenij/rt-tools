@@ -42,10 +42,15 @@ rm -rf "$RED_GATE"
 # незакоммиченная работа. Вызов, сделанный оттуда, судился копией сессии — то есть чужим деревом:
 # её устаревший архив и недописанное описание отбивали вызов, а вклад, который уезжал на хостинг,
 # не проверялся вовсе.
-SECOND="$(fixture_repo RT-73-second)"
-GREEN_GATE="$(fixture_repo RT-73-gate)"
+#
+# Вторая копия — тот же общий каталог `.git` под другим корнем, поэтому она заводится настоящей:
+# `git worktree add` от репозитория сессии.
+GREEN_GATE="$(fixture_repo_branched main RT-73-gate)"
 mkdir -p "$GREEN_GATE/.claude/rt-kit"
 printf 'rt_push_checks() { printf "%%s\\n" true; }\n' > "$GREEN_GATE/.claude/rt-kit/project.sh"
+SECOND_HOME="$(mktemp -d)"
+SECOND="$SECOND_HOME/second"
+git -C "$GREEN_GATE" worktree add -q -b RT-73-second "$SECOND" main 2>/dev/null
 
 gate "SC-AK-1077 — вызов из второй копии отбит" "$GREEN_GATE" \
     "cd $SECOND && git push origin RT-73-second" deny
@@ -53,7 +58,22 @@ gate "SC-AK-1078 — переход в свой же корень вызов н�
     "cd $GREEN_GATE && git push origin RT-73-gate" PASS
 gate "SC-AK-1078 — вызов без перехода идёт как прежде" "$GREEN_GATE" \
     'git push origin RT-73-gate' PASS
-rm -rf "$SECOND" "$GREEN_GATE"
+rm -rf "$SECOND_HOME" "$GREEN_GATE"
+
+# --- SC-AK-1173. Вызов в чужом репозитории этот гард не судит ----------------------------------
+# Корень чужого репозитория не совпадает с корнем сессии всегда. Пока вторую копию узнавали по
+# корню, сессия одного дерева не могла отправить ветку в другой репозиторий вовсе. Набор дерева
+# сессии здесь красный нарочно: по нему видно, что за чужой вызов гард его не гонит.
+OWN_RED="$(fixture_repo RT-74-own)"
+mkdir -p "$OWN_RED/.claude/rt-kit"
+printf 'rt_push_checks() { printf "%%s\\n" false; }\n' > "$OWN_RED/.claude/rt-kit/project.sh"
+FOREIGN="$(fixture_repo RT-74-foreign)"
+
+gate "SC-AK-1173 — вызов в чужом репозитории проходит" "$OWN_RED" \
+    "cd $FOREIGN && git push origin RT-74-foreign" PASS
+gate "SC-AK-1173 — свой вызов судится своим набором как прежде" "$OWN_RED" \
+    'git push origin RT-74-own' deny
+rm -rf "$OWN_RED" "$FOREIGN"
 
 # --- SC-AK-851. У красного по вине самой проверки есть свой ход --------------------------------
 # Гард проверяет код возврата и двух родов красного не различает. Когда ошибается сама проверка,

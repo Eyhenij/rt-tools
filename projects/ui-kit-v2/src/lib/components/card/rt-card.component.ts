@@ -13,6 +13,8 @@ import {
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
+import { RtRadiusDirective } from '../radius/rt-radius.directive';
+
 const BEM_BLOCK: string = 'rt-card';
 
 /**
@@ -44,6 +46,7 @@ const BEM_BLOCK: string = 'rt-card';
         ElemDirective,
         ModDirective,
     ],
+    hostDirectives: [{ directive: RtRadiusDirective, inputs: ['radius'] }],
     host: {
         class: BEM_BLOCK,
     },

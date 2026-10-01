@@ -30,6 +30,7 @@ import { rtKitLabel } from '../../i18n';
 import { RtDialogService } from '../dialog/rt-dialog.service';
 import { RtIconComponent } from '../icon/rt-icon.component';
 import { IRtIcon } from '../icon/rt-icon.model';
+import { RtRadiusDirective } from '../radius/rt-radius.directive';
 import { RtTooltipDirective } from '../tooltip/rt-tooltip.directive';
 import { RtMenuConfirmDialogComponent } from './rt-menu-confirm-dialog.component';
 import { RtMenuItemIconDirective } from './rt-menu-item-icon.directive';
@@ -78,6 +79,7 @@ const BEM_BLOCK: string = 'rt-menu-item';
             directive: RtTooltipDirective,
             inputs: ['rtTooltip: tooltip'],
         },
+        { directive: RtRadiusDirective, inputs: ['radius'] },
     ],
     host: {
         class: BEM_BLOCK,

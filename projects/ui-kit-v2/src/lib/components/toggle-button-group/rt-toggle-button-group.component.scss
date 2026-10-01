@@ -1,3 +1,5 @@
+@use '../../../styles/mixins' as kv;
+
 @layer rt-kit.components {
     /* rt-toggle-button-group — segmented control. ViewEncapsulation.None.
        Хост адресуется по имени элемента, а не по классу блока: класс
@@ -26,9 +28,9 @@
             --rt-toggle-button-group-transition-duration: var(--rt-duration-fast);
             --rt-toggle-button-group-focus-shadow: var(--rt-shadow-focus-ring);
             --rt-toggle-button-group-track-padding: 4px;
-            --rt-toggle-button-group-track-radius: 8px;
+            --rt-toggle-button-group-track-radius: var(--rt-radius-md);
             --rt-toggle-button-group-btn-padding: 0 8px;
-            --rt-toggle-button-group-btn-radius: 8px;
+            --rt-toggle-button-group-btn-radius: var(--rt-radius-ms);
             --rt-toggle-button-group-btn-gap: 4px;
             --rt-toggle-button-group-btn-font-size: 12px;
             --rt-toggle-button-group-btn-line-height: 14px;
@@ -98,9 +100,7 @@
             /* Размерные тиры — общая высота совпадает с rt-button (sm/md/lg). */
             &--md {
                 --rt-toggle-button-group-height: 40px;
-                --rt-toggle-button-group-track-radius: 10px;
                 --rt-toggle-button-group-btn-padding: 0 14px;
-                --rt-toggle-button-group-btn-radius: 10px;
                 --rt-toggle-button-group-btn-gap: 6px;
                 --rt-toggle-button-group-btn-font-size: 14px;
                 --rt-toggle-button-group-btn-line-height: 16px;
@@ -108,9 +108,7 @@
 
             &--lg {
                 --rt-toggle-button-group-height: 50px;
-                --rt-toggle-button-group-track-radius: 12px;
                 --rt-toggle-button-group-btn-padding: 0 20px;
-                --rt-toggle-button-group-btn-radius: 12px;
                 --rt-toggle-button-group-btn-gap: 8px;
                 --rt-toggle-button-group-btn-font-size: 16px;
                 --rt-toggle-button-group-btn-line-height: 18px;
@@ -120,6 +118,9 @@
                 opacity: 0.5;
             }
         }
+
+        /* Шаг входа `radius` переназначает скругление дорожки; сегменты держат своё. */
+        @include kv.radius-steps('--rt-toggle-button-group-track-radius', '> .rt-toggle-button-group');
     }
 
     /* full-width: группа растягивается на контейнер, опции делят ширину поровну. */

@@ -77,15 +77,16 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Входы
 
-| вход           | тип                | умолчание | что делает                           |
-| -------------- | ------------------ | --------- | ------------------------------------ |
-| `name`         | `string`           | `''`      | имя файла: решает иконку и заголовок |
-| `sizeBytes`    | `number \| null`   | `null`    | вес; `null` не рисует строку веса    |
-| `size`         | `IRtFileCard.Size` | `'md'`    | размер карточки: `sm`, `md`, `lg`    |
-| `showDownload` | `boolean`          | `false`   | кнопка скачивания                    |
-| `showRemove`   | `boolean`          | `false`   | кнопка удаления                      |
-| `showRename`   | `boolean`          | `false`   | кнопка переименования                |
-| `disabled`     | `boolean`          | `false`   | кнопки не нажимаются                 |
+| вход           | тип                 | умолчание     | что делает                              |
+| -------------- | ------------------- | ------------- | --------------------------------------- |
+| `name`         | `string`            | `''`          | имя файла: решает иконку и заголовок    |
+| `sizeBytes`    | `number \| null`    | `null`        | вес; `null` не рисует строку веса       |
+| `size`         | `IRtFileCard.Size`  | `'md'`        | размер карточки: `sm`, `md`, `lg`       |
+| `showDownload` | `boolean`           | `false`       | кнопка скачивания                       |
+| `showRemove`   | `boolean`           | `false`       | кнопка удаления                         |
+| `showRename`   | `boolean`           | `false`       | кнопка переименования                   |
+| `disabled`     | `boolean`           | `false`       | кнопки не нажимаются                    |
+| `radius`       | `TRtRadius \| null` | `null` → `lg` | шаг общей шкалы для главной поверхности |
 
 ## Выходы
 

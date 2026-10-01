@@ -86,15 +86,30 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 блока, которому пара назначает свойства темы. Тёмную панель смотрят переключателем темы в
 тулбаре.
 
+## Дерево опций
+
+Опция может нести `children` того же вида — тогда список рисуется деревом, как у `rt-select`:
+отступ 24px за уровень, стрелка у ветки, пустое место у листа, боковые стрелки клавиатуры.
+
+- Клик по ветке выбирает все её включённые листья или снимает их, если выбраны все. Значение самой
+  ветки в выбор не пишется: в значении только листья.
+- Флажок ветки выводится из листьев: включён — выбраны все, промежуточный — часть, выключен — ни
+  одного.
+- Фишка берёт подпись листа с любой глубины дерева.
+
+Договорённость — `docs/specs/ui-kit-v2/option-tree/`.
+
 ## Входы
 
-| вход             | тип                                          | умолчание               |
-| ---------------- | -------------------------------------------- | ----------------------- |
-| `options`        | `ReadonlyArray<{ label, value, disabled? }>` | `[]`                    |
-| `placeholder`    | `string`                                     | `''` → `uiSelectValues` |
-| `maxChips`       | `number`                                     | `3`                     |
-| `panelWidth`     | `'trigger' \| 'trigger-min' \| 'auto'`       | `'trigger-min'`         |
-| `panelMaxHeight` | `string \| null`                             | `null`                  |
+| вход             | тип                                                     | умолчание                 |
+| ---------------- | ------------------------------------------------------- | ------------------------- |
+| `options`        | `ReadonlyArray<{ label, value, disabled?, children? }>` | `[]`                      |
+| `placeholder`    | `string`                                                | `''` → `uiSelectValues`   |
+| `maxChips`       | `number`                                                | `3`                       |
+| `iconLeft`       | `IRtIcon.Name \| null`                                  | `null`                    |
+| `panelWidth`     | `'trigger' \| 'trigger-min' \| 'auto'`                  | `'trigger-min'`           |
+| `panelMaxHeight` | `string \| null`                                        | `null`                    |
+| `radius`         | `TRtRadius \| null`                                     | `null` → скругление полей |
 
 ## Входы от основы полей
 

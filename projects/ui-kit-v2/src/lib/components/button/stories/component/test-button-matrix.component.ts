@@ -6,11 +6,12 @@ import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { IStoryState, STORY_STATES, storyStateLabel } from '../../../../../showcase/story-states';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtButtonDirective } from '../../rt-button.directive';
+import { RT_RADIUS_STEPS, TRtRadius } from '../../../radius/rt-radius.model';
 import { IButton } from '../../rt-button.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
 export type TButtonMatrixPart =
-    'appearance' | 'disabled' | 'pressed' | 'size' | 'icon' | 'rounded' | 'loading' | 'states' | 'presets' | 'themes';
+    'appearance' | 'disabled' | 'pressed' | 'size' | 'icon' | 'radius' | 'loading' | 'states' | 'presets' | 'themes';
 
 /** Случай иконки — не значение оси, а различимая комбинация подписи и стороны. */
 interface IButtonIconCase {
@@ -114,12 +115,12 @@ interface IButtonIconCase {
                 </app-story-presets>
             }
 
-            @case ('rounded') {
-                <app-story-presets caption="Скругление в обоих наборах">
+            @case ('radius') {
+                <app-story-presets caption="Шаги скругления в обоих наборах">
                     <ng-template>
-                        <app-story-row [items]="rounded" [itemLabel]="roundedLabel">
+                        <app-story-row [items]="radii" [itemLabel]="radiusLabel">
                             <ng-template let-value>
-                                <button rtButton label="Сохранить" aria-label="Сохранить" [rounded]="value"></button>
+                                <button rtButton label="Сохранить" aria-label="Сохранить" [radius]="value"></button>
                             </ng-template>
                         </app-story-row>
                     </ng-template>
@@ -219,7 +220,7 @@ export class TestRtButtonMatrixComponent {
     public readonly themes: readonly IButton.Theme[] = ['primary', 'secondary', 'success', 'warning', 'danger', 'info'];
     public readonly appearances: readonly IButton.Appearance[] = ['filled', 'outlined', 'text'];
     public readonly sizes: readonly IButton.Size[] = ['sm', 'md', 'lg', 'xl', '2xl'];
-    public readonly rounded: readonly boolean[] = [false, true];
+    public readonly radii: readonly (TRtRadius | null)[] = [null, ...RT_RADIUS_STEPS];
     public readonly states: readonly IStoryState[] = STORY_STATES;
     public readonly stateLabel: (value: IStoryState) => string = storyStateLabel;
 
@@ -231,7 +232,7 @@ export class TestRtButtonMatrixComponent {
         { name: 'без подписи', label: null, icon: 'pencil', iconPos: 'left' },
     ];
 
-    public readonly roundedLabel: (value: boolean) => string = (value: boolean): string => (value ? 'rounded' : 'по умолчанию');
+    public readonly radiusLabel: (value: TRtRadius | null) => string = (value: TRtRadius | null): string => value ?? 'по умолчанию';
 
     public readonly iconCaseLabel: (value: IButtonIconCase) => string = (value: IButtonIconCase): string => value.name;
 

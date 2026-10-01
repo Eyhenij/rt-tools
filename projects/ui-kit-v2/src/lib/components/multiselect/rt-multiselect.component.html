@@ -20,6 +20,7 @@
         [attr.aria-activedescendant]="activeOptionId()"
         [disabled]="isDisabled()"
         (keydown)="onTriggerKeydown($event)"
+        (rtPopoverOpened)="onOpened()"
         (rtPopoverClosed)="onClosed()">
         <!--
             Разметка указателя: своя, если потребитель её объявил, иначе зашитая китом. Она встаёт
@@ -29,6 +30,9 @@
         @if (triggerTpl(); as tpl) {
             <ng-container [ngTemplateOutlet]="tpl.templateRef" [ngTemplateOutletContext]="{ $implicit: triggerState() }" />
         } @else {
+            @if (iconLeft(); as left) {
+                <rt-icon rtElem="icon-left" qa-dataid="multiselect-icon-left" size="sm" color="muted" [name]="left" />
+            }
             @if (value().length === 0) {
                 <span rtElem="placeholder" qa-dataid="multiselect-placeholder">{{ placeholderText() }}</span>
             } @else {
@@ -76,28 +80,47 @@
             -->
             <!-- eslint-disable @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
             <ul rtElem="list">
-                @for (opt of options(); track opt.value; let i = $index) {
+                @for (row of rows(); track row.option.value; let i = $index) {
                     <li
                         rtElem="option"
                         qa-dataid="multiselect-option"
                         role="option"
                         [id]="panelId + '-opt-' + i"
-                        [attr.data-value]="opt.value"
+                        [attr.data-value]="row.option.value"
+                        [attr.aria-level]="isTree() ? row.level + 1 : null"
+                        [style.--rt-multiselect-tree-level]="row.level"
                         [rtMod]="{
-                            selected: value().includes(opt.value),
+                            selected: rowChecks()[i] === 'all',
                             active: i === activeIndex(),
-                            disabled: !!opt.disabled,
+                            disabled: !!row.option.disabled,
                         }"
-                        [attr.aria-selected]="value().includes(opt.value)"
-                        [attr.aria-disabled]="!!opt.disabled"
-                        (click)="toggleOption(opt)">
+                        [attr.aria-selected]="rowChecks()[i] === 'all'"
+                        [attr.aria-disabled]="!!row.option.disabled"
+                        (click)="toggleOption(row.option)">
+                        @if (isTree()) {
+                            @if (row.branch) {
+                                <button
+                                    rtElem="toggle"
+                                    qa-dataid="multiselect-option-toggle"
+                                    type="button"
+                                    tabindex="-1"
+                                    [attr.aria-label]="row.open ? t().uiCollapse : t().uiExpand"
+                                    [attr.aria-expanded]="row.open"
+                                    (click)="toggleBranch($event, row.option.value)">
+                                    <rt-icon size="sm" color="muted" [name]="row.open ? 'chevron-down' : 'chevron-right'" />
+                                </button>
+                            } @else {
+                                <span rtElem="toggle-space"></span>
+                            }
+                        }
                         <input
                             rtElem="checkbox"
                             qa-dataid="multiselect-option-checkbox"
                             type="checkbox"
                             tabindex="-1"
-                            [checked]="value().includes(opt.value)" />
-                        <span rtElem="option-label" qa-dataid="multiselect-option-label">{{ opt.label }}</span>
+                            [checked]="rowChecks()[i] === 'all'"
+                            [indeterminate]="rowChecks()[i] === 'some'" />
+                        <span rtElem="option-label" qa-dataid="multiselect-option-label">{{ row.option.label }}</span>
                     </li>
                 } @empty {
                     <li rtElem="empty" qa-dataid="multiselect-empty">{{ t().uiNoOptions }}</li>

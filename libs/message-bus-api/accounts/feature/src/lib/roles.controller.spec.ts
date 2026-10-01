@@ -12,7 +12,7 @@ import { IRolesStorage, IStoredRole, signedInAs, rolesStorage } from './roles-st
 describe('RolesController', (): void => {
     it('SC-MB-382 — все операции над ролями закрыты правом на роли, а не правом на правку людей', (): void => {
         ['page', 'one', 'create', 'replace', 'remove'].forEach((method: string): void => {
-            const handler: unknown = Reflect.get(RolesController.prototype, method);
+            const handler: object = Reflect.get(RolesController.prototype, method);
 
             expect(Reflect.getMetadata(OPERATION_ACCESS, handler)).toBe('permission');
             expect(Reflect.getMetadata(OPERATION_RIGHT, handler)).toBe('roles:manage');

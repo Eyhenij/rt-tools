@@ -1,6 +1,7 @@
 import { Meta, StoryObj } from '@storybook/angular';
 
 import { storySnapshotSkip } from '../../../../showcase';
+import { RT_RADIUS_STEPS } from '../../radius/rt-radius.model';
 import { TestRtTagComponent } from './component/test-tag.component';
 
 export default {
@@ -12,15 +13,14 @@ export default {
             options: ['info', 'success', 'warning', 'danger', 'secondary', 'neutral'],
             control: { type: 'select' },
         },
-        shape: {
-            options: ['pill', 'square'],
-            control: { type: 'select' },
-        },
         appearance: {
             options: ['solid', 'outlined'],
             control: { type: 'select' },
         },
-        radius: { control: false },
+        radius: {
+            options: [null, ...RT_RADIUS_STEPS],
+            control: { type: 'select' },
+        },
         icon: { control: false },
         iconEnd: { control: false },
         closable: { control: { type: 'boolean' } },
@@ -34,7 +34,6 @@ export const Playground: TStory = {
     args: {
         value: 'Значение',
         severity: 'neutral',
-        shape: 'pill',
         appearance: 'solid',
         radius: null,
         icon: null,

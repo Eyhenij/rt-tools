@@ -41,7 +41,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-import { BlockDirective, ElemDirective, IDBStorageService, ModDirective } from '@rt-tools/core';
+import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 import { IFilterModel, ISortModel } from '@rt-tools/utils';
 
 import { TRtKitLabelKey, rtKitLabel } from '../../i18n';
@@ -50,6 +50,7 @@ import { BreakpointsService } from '../../platform';
 import { RtEmptyStateComponent } from '../empty-state/rt-empty-state.component';
 import { IRtIcon } from '../icon/rt-icon.model';
 import { RtMenuComponent } from '../menu/rt-menu.component';
+import { RtRadiusDirective } from '../radius/rt-radius.directive';
 import { RtSkeletonComponent } from '../skeleton/rt-skeleton.component';
 import { RtSpinnerComponent } from '../spinner/rt-spinner.component';
 import { RtTableFilterHeaderComponent } from './filter-header/rt-table-filter-header.component';
@@ -58,9 +59,8 @@ import { cardColumnsOf, cardRowsOf, hasRowsIn, IRtTableCardColumn } from './rt-t
 import { RtTableCardActivationDirective } from './rt-table-card-activation.directive';
 import { RtTableRowActionsDirective } from './rt-table-row-actions.directive';
 import { RtRowHasActionsPipe } from './rt-table-row-actions.pipe';
-import { RtTableSettingsPersistence } from './rt-table-settings.persistence';
-import { RtTableSettingsRegistry, type IRtTableSettingsRegistration } from './rt-table-settings.registry';
-import { defaultColumnItems, displayedColumnKeys, resolveColumns, withoutLockedHidden } from './rt-table-columns.logic';
+import { RtTableColumnSettings } from './rt-table-column-settings';
+import { displayedColumnKeys } from './rt-table-columns.logic';
 import { filterCellsOf } from './rt-table-filter.logic';
 import { nextSort } from './rt-table-sort.logic';
 import { IRtTable } from './rt-table.model';
@@ -117,6 +117,7 @@ const DEFAULT_EMPTY_KEY: TRtKitLabelKey = 'uiNoRows';
         // pipes
         RtRowHasActionsPipe,
     ],
+    hostDirectives: [{ directive: RtRadiusDirective, inputs: ['radius'] }],
     providers: [
         {
             provide: CDK_TABLE,
@@ -139,11 +140,6 @@ const DEFAULT_EMPTY_KEY: TRtKitLabelKey = 'uiNoRows';
 export class RtTableComponent<TRow> extends CdkTable<TRow> {
     readonly #t_uiNoRows: Signal<string> = rtKitLabel(DEFAULT_EMPTY_KEY);
 
-    readonly #registry: RtTableSettingsRegistry = inject(RtTableSettingsRegistry);
-    readonly #settings: RtTableSettingsPersistence = new RtTableSettingsPersistence(
-        inject<IDBStorageService<IRtTable.ColumnSettings>>(IDBStorageService),
-        inject(DestroyRef)
-    );
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
     readonly #breakpoints: BreakpointsService = inject(BreakpointsService);
 
@@ -157,19 +153,11 @@ export class RtTableComponent<TRow> extends CdkTable<TRow> {
         this.sort()
     );
 
-    /** Настройки колонок, применённые поверх `[columnsConfig]`; `null` — умолчания конфига. */
-    readonly #columnSettings: WritableSignal<IRtTable.ColumnSettings | null> = signal<IRtTable.ColumnSettings | null>(null);
-
-    /** Колонки конфига без настроек пользователя — с них панель начинает после сброса. */
-    readonly #defaultColumns: Signal<ReadonlyArray<IRtTable.ColumnSettingItem>> = computed((): ReadonlyArray<IRtTable.ColumnSettingItem> =>
-        defaultColumnItems(this.columnsConfig())
+    /** Настройка колонок: применённые настройки, реестр панели, загрузка и запись. */
+    readonly #columnSettings: RtTableColumnSettings = new RtTableColumnSettings(
+        (): ReadonlyArray<IRtTable.ColumnConfig> => this.columnsConfig(),
+        (): string | null => this.tableId()
     );
-
-    /** tableId для персиста настроек (ключ порта). `null` — таблица не настраиваемая (нет tableId/config). */
-    readonly #persistableTableId: Signal<string | null> = computed((): string | null => {
-        const id: string | null = this.tableId();
-        return id !== null && this.columnsConfig().length > 0 ? id : null;
-    });
 
     /** Колонка действий и её ячейки: регистрируются в CdkTable вручную — почему, сказано в `CONTEXT.md`. */
     // native-ok: сигнальный viewChild() резолвится после первой отрисовки строк, а колонка действий должна попасть в реестр CdkTable до неё
@@ -340,7 +328,7 @@ export class RtTableComponent<TRow> extends CdkTable<TRow> {
      * Пустой при отсутствии `[columnsConfig]` (legacy-режим).
      */
     public readonly resolvedColumns: Signal<ReadonlyArray<IRtTable.ColumnSettingItem>> = computed(
-        (): ReadonlyArray<IRtTable.ColumnSettingItem> => resolveColumns(this.columnsConfig(), this.#columnSettings())
+        (): ReadonlyArray<IRtTable.ColumnSettingItem> => this.#columnSettings.resolved()
     );
 
     /**
@@ -365,7 +353,7 @@ export class RtTableComponent<TRow> extends CdkTable<TRow> {
     );
 
     /** `true` когда таблица настраиваемая: есть и `[columnsConfig]`, и `[tableId]`. */
-    public readonly canConfigure: Signal<boolean> = computed((): boolean => this.columnsConfig().length > 0 && this.tableId() !== null);
+    public readonly canConfigure: Signal<boolean> = this.#columnSettings.canConfigure;
 
     /** Сколько skeleton-строк рендерить во время initial-load. Default 5. */
     public readonly skeletonRows: InputSignalWithTransform<number, NumberInput> = input<number, NumberInput>(DEFAULT_SKELETON_ROWS, {
@@ -395,31 +383,18 @@ export class RtTableComponent<TRow> extends CdkTable<TRow> {
             this.addColumnDef(this.actionsColumnDef);
         }
 
-        this.#registerSettings();
-
-        // Загрузка сохранённых настроек колонок. Запись может отсутствовать —
-        // IndexedDB отдаёт в этом случае undefined, применять нечего.
-        const persistedTableId: string | null = this.#persistableTableId();
-        if (persistedTableId !== null) {
-            this.#settings
-                .load(persistedTableId)
-                .pipe(takeUntilDestroyed(this.#destroyRef))
-                .subscribe((settings: IRtTable.ColumnSettings | undefined): void => {
-                    if (settings !== undefined) {
-                        this.applyColumnSettings(settings);
-                    }
-                });
-        }
+        this.#columnSettings.start();
+        this.#columnSettings
+            .saved()
+            .pipe(takeUntilDestroyed(this.#destroyRef))
+            .subscribe((settings: IRtTable.ColumnSettings): void => this.applyColumnSettings(settings));
     }
 
     public override ngOnDestroy(): void {
         if (this.actionsColumnDef !== undefined) {
             this.removeColumnDef(this.actionsColumnDef);
         }
-        const tableId: string | null = this.tableId();
-        if (tableId !== null) {
-            this.#registry.unregister(tableId);
-        }
+        this.#columnSettings.stop();
         super.ngOnDestroy();
     }
 
@@ -439,35 +414,7 @@ export class RtTableComponent<TRow> extends CdkTable<TRow> {
     }
 
     public applyColumnSettings(settings: IRtTable.ColumnSettings): void {
-        this.#columnSettings.set(withoutLockedHidden(this.columnsConfig(), settings));
-    }
-
-    /**
-     * Объявляет таблицу реестру: её колонки, умолчания и приём применения настроек. Реестр —
-     * мост к панели настроек, которую потребитель открывает переходом по адресу.
-     */
-    #registerSettings(): void {
-        const tableId: string | null = this.tableId();
-        if (tableId === null || !this.canConfigure()) {
-            return;
-        }
-        const registration: IRtTableSettingsRegistration = {
-            columns: this.resolvedColumns,
-            defaults: this.#defaultColumns,
-            apply: (settings: IRtTable.ColumnSettings): void => {
-                this.applyColumnSettings(settings);
-                this.#persistSettings(settings);
-            },
-        };
-        this.#registry.register(tableId, registration);
-    }
-
-    /** Сохраняет настройки колонок у настраиваемой таблицы; у прочих сохранять нечего. */
-    #persistSettings(settings: IRtTable.ColumnSettings): void {
-        const tableId: string | null = this.#persistableTableId();
-        if (tableId !== null) {
-            this.#settings.save(tableId, settings);
-        }
+        this.#columnSettings.apply(settings);
     }
 
     /**

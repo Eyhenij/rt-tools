@@ -13,6 +13,7 @@ import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
 import { RtIconComponent } from '../icon/rt-icon.component';
 import { IRtIcon } from '../icon/rt-icon.model';
+import { RtRadiusDirective } from '../radius/rt-radius.directive';
 
 const BEM_BLOCK: string = 'rt-empty-state';
 
@@ -38,6 +39,7 @@ const BEM_BLOCK: string = 'rt-empty-state';
         BlockDirective,
         ElemDirective,
     ],
+    hostDirectives: [{ directive: RtRadiusDirective, inputs: ['radius'] }],
     host: {
         class: BEM_BLOCK,
         '[class.rt-empty-state--framed]': 'framed()',

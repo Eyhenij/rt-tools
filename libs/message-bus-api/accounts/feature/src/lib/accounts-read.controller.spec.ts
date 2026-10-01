@@ -160,7 +160,7 @@ describe('AccountsReadController', (): void => {
     it('SC-MB-326 — операция закрыта правом `accounts:read`, а не одним входом', (): void => {
         // Вид доступа «permission» — это и есть та развилка, на которой отказ без входа отвечает
         // одно, а отказ без права другое: объявленный видом «session» отвечал бы обоим одинаково.
-        const handler: () => void = AccountsReadController.prototype.page;
+        const handler: object = AccountsReadController.prototype.page;
 
         expect(Reflect.getMetadata(OPERATION_ACCESS, handler)).toBe('permission');
         expect(Reflect.getMetadata(OPERATION_RIGHT, handler)).toBe('accounts:read');

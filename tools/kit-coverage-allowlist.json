@@ -3,7 +3,8 @@
     "form-control": "абстрактная основа полей ввода: своей разметки не имеет и в разметку не ставится, показывать нечего. Её вид виден в наследниках — поле, область текста, число, выбор, множественный выбор, подсказчик, выбор даты"
   },
   "shownAtFoundation": {
-    "ripple": "projects/ui-kit-v2/src/showcase/stories/ripple.stories.ts"
+    "ripple": "projects/ui-kit-v2/src/showcase/stories/ripple.stories.ts",
+    "radius": "projects/ui-kit-v2/src/showcase/stories/radius.stories.ts"
   },
   "notShownComponents": {
     "[rtContainerContentPanel]": "маркер проекции содержимого: своей разметки у него нет вовсе. В кадре виден не маркер, а то, как каркас разложил содержимое, и это показывает история семейства `container`",

@@ -17,7 +17,7 @@ const BEAT: IChatFrame = { type: 'beat', data: '' };
 
 /** Реплика, какой она уходит подписчикам. */
 function remark(conversationId: string, text: string): IChatMessageEvent {
-    return { conversationId, messageId: `message-of-${conversationId}`, side: 'visitor', text, takenAt: AT.toISOString() };
+    return { conversationId, messageId: `message-of-${conversationId}`, side: 'visitor', text, takenAt: AT.toISOString(), authorName: '' };
 }
 
 /** Открытый поток и всё, что в него пришло: спека читает кадры списком. */
@@ -48,11 +48,11 @@ describe('ChatSubscribersService', () => {
         vi.useRealTimers();
     });
 
-    it('реплика доходит до подписки своей переписки и не доходит до соседней', () => {
-        const own: IWatched = watch({ conversationId: 'talk-1', siteIds: [] });
-        const foreign: IWatched = watch({ conversationId: 'talk-2', siteIds: [] });
+    it('реплика доходит до подписки своего посетителя и не доходит до соседнего', () => {
+        const own: IWatched = watch({ visitorId: 'visitor-1', siteIds: [] });
+        const foreign: IWatched = watch({ visitorId: 'visitor-2', siteIds: [] });
 
-        subscribers.send({ conversationId: 'talk-1', siteId: 'site-1' }, remark('talk-1', 'здравствуйте'));
+        subscribers.send({ conversationId: 'talk-1', visitorId: 'visitor-1', siteId: 'site-1' }, remark('talk-1', 'здравствуйте'));
 
         expect(own.frames).toEqual([{ data: remark('talk-1', 'здравствуйте') }]);
         expect(foreign.frames).toEqual([]);
@@ -62,7 +62,7 @@ describe('ChatSubscribersService', () => {
     });
 
     it('SC-CH-33 — пока событий нет, служба шлёт сердцебиение', () => {
-        const watched: IWatched = watch({ conversationId: 'talk-1', siteIds: [] });
+        const watched: IWatched = watch({ visitorId: 'visitor-1', siteIds: [] });
 
         vi.advanceTimersByTime(BEAT_MS * 2);
 
@@ -74,27 +74,27 @@ describe('ChatSubscribersService', () => {
     });
 
     it('SC-CH-34 — закрытый поток событий больше не получает, и подписчик не хранится', () => {
-        const watched: IWatched = watch({ conversationId: 'talk-1', siteIds: [] });
+        const watched: IWatched = watch({ visitorId: 'visitor-1', siteIds: [] });
 
-        subscribers.send({ conversationId: 'talk-1', siteId: 'site-1' }, remark('talk-1', 'до закрытия'));
+        subscribers.send({ conversationId: 'talk-1', visitorId: 'visitor-1', siteId: 'site-1' }, remark('talk-1', 'до закрытия'));
 
         // положительная пара к утверждению об отсутствии: до закрытия кадры доходили
         expect(watched.frames).toHaveLength(1);
         expect(subscribers.openCount).toBe(1);
 
         watched.open.unsubscribe();
-        subscribers.send({ conversationId: 'talk-1', siteId: 'site-1' }, remark('talk-1', 'после закрытия'));
+        subscribers.send({ conversationId: 'talk-1', visitorId: 'visitor-1', siteId: 'site-1' }, remark('talk-1', 'после закрытия'));
 
         expect(watched.frames).toHaveLength(1);
         expect(subscribers.openCount).toBe(0);
     });
 
     it('оператор получает события своих сайтов, а не оператор — ни одного', () => {
-        const operator: IWatched = watch({ conversationId: null, siteIds: ['site-1'] });
-        const nobody: IWatched = watch({ conversationId: null, siteIds: [] });
+        const operator: IWatched = watch({ visitorId: null, siteIds: ['site-1'] });
+        const nobody: IWatched = watch({ visitorId: null, siteIds: [] });
 
-        subscribers.send({ conversationId: 'talk-1', siteId: 'site-1' }, remark('talk-1', 'своя'));
-        subscribers.send({ conversationId: 'talk-2', siteId: 'site-2' }, remark('talk-2', 'соседская'));
+        subscribers.send({ conversationId: 'talk-1', visitorId: 'visitor-1', siteId: 'site-1' }, remark('talk-1', 'своя'));
+        subscribers.send({ conversationId: 'talk-2', visitorId: 'visitor-2', siteId: 'site-2' }, remark('talk-2', 'соседская'));
 
         expect(operator.frames).toEqual([{ data: remark('talk-1', 'своя') }]);
         expect(nobody.frames).toEqual([]);

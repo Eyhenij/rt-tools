@@ -1,16 +1,23 @@
+import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { provideRtIDBStorage, provideRtStorage, provideRtUtils } from '@rt-tools/core';
+import { RtDatePickerComponent, RT_KIT_LOCALE } from '@rt-tools/ui-kit-v2';
 
 import { AdminPeriodFilterComponent, IAdminPeriod } from './admin-period-filter.component';
 
-/** Человек выбирает день: нативное поле выбора дня отдаёт строку `ГГГГ-ММ-ДД`. */
+/** Человек набирает день в поле строкой `ГГГГ-ММ-ДД` — той же, что ставит панель выбора дня. */
 function pick(fixture: ComponentFixture<AdminPeriodFilterComponent>, qaId: string, day: string): void {
     const field: HTMLInputElement = fixture.debugElement.query(By.css(`[qa-dataid="${qaId}"] input`)).nativeElement;
 
     field.value = day;
     field.dispatchEvent(new Event('input'));
     fixture.detectChanges();
+}
+
+/** Границы дня живут во входах поля: панель выключает дни за ними. */
+function picker(fixture: ComponentFixture<AdminPeriodFilterComponent>, qaId: string): RtDatePickerComponent {
+    return fixture.debugElement.query(By.css(`[qa-dataid="${qaId}"]`)).componentInstance as RtDatePickerComponent;
 }
 
 describe('AdminPeriodFilterComponent', () => {
@@ -20,7 +27,8 @@ describe('AdminPeriodFilterComponent', () => {
     beforeEach(() => {
         TestBed.configureTestingModule({
             imports: [AdminPeriodFilterComponent],
-            providers: [provideRtUtils(), provideRtStorage(), provideRtIDBStorage()],
+            // Русская локаль кита — та же, что у админки по умолчанию: поле пишет день в её порядке.
+            providers: [provideRtUtils(), provideRtStorage(), provideRtIDBStorage(), { provide: RT_KIT_LOCALE, useValue: signal('ru') }],
         });
 
         fixture = TestBed.createComponent(AdminPeriodFilterComponent);
@@ -61,9 +69,9 @@ describe('AdminPeriodFilterComponent', () => {
         const from: HTMLInputElement = fixture.debugElement.query(By.css('[qa-dataid="list-period-from"] input')).nativeElement;
         const to: HTMLInputElement = fixture.debugElement.query(By.css('[qa-dataid="list-period-to"] input')).nativeElement;
 
-        expect(from.value).toBe('2026-08-01');
-        expect(to.value).toBe('2026-08-31');
-        expect(to.min).toBe('2026-08-01');
-        expect(from.max).toBe('2026-08-31');
+        expect(from.value).toBe('01.08.2026');
+        expect(to.value).toBe('31.08.2026');
+        expect(picker(fixture, 'list-period-to').min()).toBe('2026-08-01');
+        expect(picker(fixture, 'list-period-from').max()).toBe('2026-08-31');
     });
 });

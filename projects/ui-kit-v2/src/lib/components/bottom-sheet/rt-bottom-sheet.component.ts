@@ -19,6 +19,7 @@ import {
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { RT_KIT_LABELS, TRtKitLabelMap } from '../../i18n';
+import { RtRadiusDirective } from '../radius/rt-radius.directive';
 import { clampDragDelta, shouldDismissDrag } from './rt-bottom-sheet.logic';
 
 const BEM_BLOCK: string = 'rt-bottom-sheet';
@@ -37,6 +38,7 @@ const BEM_BLOCK: string = 'rt-bottom-sheet';
 
         // transloco
     ],
+    hostDirectives: [{ directive: RtRadiusDirective, inputs: ['radius'] }],
     host: {
         class: BEM_BLOCK,
         '[class.rt-bottom-sheet--open]': 'open()',

@@ -1,3 +1,47 @@
+# [0.14.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2@0.13.1...rt-ui-kit-v2@0.14.0) (2026-10-01)
+
+### Bug Fixes
+
+- **rt:ui-kit-v2:** итог панели диапазона берёт приглушённый цвет текста кита ([1908e95](https://github.com/Eyhenij/rt-tools/commit/1908e9589b303354968e6004a54ea208267688cc))
+- **rt:ui-kit-v2:** подсказка узкого поля даты обрезается многоточием ([7787030](https://github.com/Eyhenij/rt-tools/commit/778703002d0d6265d55a6350c92be1d45afb30bd))
+- **rt:ui-kit-v2:** поле даты шириной по форме значения ([6a6ae06](https://github.com/Eyhenij/rt-tools/commit/6a6ae0609fe12a4d94741577aaee7e912f332357))
+- **rt:ui-kit-v2:** поле сообщения вмещает весь набранный текст ([a22cd7e](https://github.com/Eyhenij/rt-tools/commit/a22cd7e03ae98176304732ae7edb55be54eb0c22))
+- **rt:ui-kit-v2:** примесь radius-steps называет токены шагов полными именами ([0cf2257](https://github.com/Eyhenij/rt-tools/commit/0cf2257427ae97cd98efb641391774b246bb1471))
+- **rt:ui-kit-v2:** снимок сетки витрины шире окна показывает все столбцы ([fcc63f7](https://github.com/Eyhenij/rt-tools/commit/fcc63f75c8209a94fa0d85396250c922f335620e))
+- **rt:ui-kit-v2:** уровень строки дерева объявлен в стилях с нулём по умолчанию ([b604c58](https://github.com/Eyhenij/rt-tools/commit/b604c58c31356b3dfc8b439d1df83e541f036799))
+
+### Features
+
+- **rt:ui-kit-v2:** multiselect рисует опции деревом и выбирает листья веткой ([dfbe505](https://github.com/Eyhenij/rt-tools/commit/dfbe5059add2e59843eb6328e85a897c212c0967))
+- **rt:ui-kit-v2:** select рисует опции деревом ([2465bad](https://github.com/Eyhenij/rt-tools/commit/2465bad194c820264d81d002eb898ac16f088792))
+- **rt:ui-kit-v2:** витрина и описание входа iconLeft у multiselect ([8416239](https://github.com/Eyhenij/rt-tools/commit/841623905ef0fb944a54ba09d27d7b67a0d67a53))
+- **rt:ui-kit-v2:** витрина и описания дерева опций в select и multiselect ([3e94e05](https://github.com/Eyhenij/rt-tools/commit/3e94e05d31bbcf2ed47860a64522189bca41cf4e))
+- **rt:ui-kit-v2:** витрина и описания своей панели поля даты ([229e4a7](https://github.com/Eyhenij/rt-tools/commit/229e4a7458a6c4ade268b0f8af5a11547405565f))
+- **rt:ui-kit-v2:** витрина шагов скругления и истории на входе radius ([d6008b8](https://github.com/Eyhenij/rt-tools/commit/d6008b85625e2df2da66f1cb62e63492d7a2fe12))
+- **rt:ui-kit-v2:** истории панели даты — в своём разделе DatePanel ([f922b8a](https://github.com/Eyhenij/rt-tools/commit/f922b8a2c43c843dfdd94c6c8172bf3c58892a6f))
+- **rt:ui-kit-v2:** календарь знает выбранный день, сегодня и клавиши сетки ([f30f650](https://github.com/Eyhenij/rt-tools/commit/f30f6507401cf35ad99ff97cc153732629421269))
+- **rt:ui-kit-v2:** контролы принимают вход скругления radius ([190c37f](https://github.com/Eyhenij/rt-tools/commit/190c37fe3f4c61333c127b9fc7e89381c2846017))
+- **rt:ui-kit-v2:** лупа в поле поиска select и вход iconLeft у multiselect ([b16907c](https://github.com/Eyhenij/rt-tools/commit/b16907cb7758717cdfe449c2bcb76ab6f4bc406f))
+- **rt:ui-kit-v2:** общий вход скругления radius и правила его шагов ([84c7318](https://github.com/Eyhenij/rt-tools/commit/84c7318ccd86d761ec6400465883135ec819710b))
+- **rt:ui-kit-v2:** общий модуль дерева опций для select и multiselect ([a7e184e](https://github.com/Eyhenij/rt-tools/commit/a7e184e8a5791abefcdc026c75bc6d1acdd0d5cb))
+- **rt:ui-kit-v2:** поверхности принимают вход скругления radius ([422a0f6](https://github.com/Eyhenij/rt-tools/commit/422a0f647e492500fcfa85599b8be0e2862ee529))
+- **rt:ui-kit-v2:** поле даты открывает свою панель вместо браузерной ([45cfdad](https://github.com/Eyhenij/rt-tools/commit/45cfdada64dea5eaa62fc1171d3f49f92b430936))
+- **rt:ui-kit-v2:** поле даты показывает и принимает дату в порядке языка интерфейса ([8ac8dab](https://github.com/Eyhenij/rt-tools/commit/8ac8dab680fa8e91c6766a821f25d35900bda067))
+- **rt:ui-kit-v2:** поле диапазона дат rt-date-range с панелью из двух месяцев ([8d7255f](https://github.com/Eyhenij/rt-tools/commit/8d7255fa268e3d2c5755941d583d9afb9e735199))
+- **rt:ui-kit-v2:** поле сообщения rt-message-composer — капсула с круглыми кнопками ([de29c4d](https://github.com/Eyhenij/rt-tools/commit/de29c4d5be61ab0be5a79c43148f99c6062f9bb6))
+- **rt:ui-kit-v2:** своя панель даты и времени rt-date-panel ([5773eb3](https://github.com/Eyhenij/rt-tools/commit/5773eb3cb6fabcb0f7c7162aa15252e1d6a4f77c))
+- **rt:ui-kit-v2:** старые входы формы свёрнуты в общий вход radius ([d377d4f](https://github.com/Eyhenij/rt-tools/commit/d377d4fdd60c4bcc8a580162733498ec4bd0df06))
+- **rt:ui-kit-v2:** таблица принимает вход скругления radius для карточки узкого показа ([1934a71](https://github.com/Eyhenij/rt-tools/commit/1934a715edc951b2cf695293a192bd37b954a6eb))
+- **rt:ui-kit-v2:** чистый модуль дат для своей панели поля ([fae3b24](https://github.com/Eyhenij/rt-tools/commit/fae3b248b402154303b7da1f86d3f5b350301b63))
+
+### BREAKING CHANGES
+
+- **rt:ui-kit-v2:** входы shape у rt-tag и rt-icon-button, radius у rt-tag,
+  rounded у rtButton и настройка button.rounded, borderRadius у rt-skeleton
+  и rt-skeleton-wrapper удалены — вместо них radius со всей шкалой.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
 ## [0.13.1](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2@0.13.0...rt-ui-kit-v2@0.13.1) (2026-09-29)
 
 ### Bug Fixes

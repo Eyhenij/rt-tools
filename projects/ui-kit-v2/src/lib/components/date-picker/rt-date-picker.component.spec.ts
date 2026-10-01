@@ -1,13 +1,14 @@
-import { ChangeDetectionStrategy, Component, LOCALE_ID, Provider } from '@angular/core';
+import { signal, ChangeDetectionStrategy, Component, Provider } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
+import { RT_KIT_LOCALE } from '../../i18n';
+import { BreakpointsService } from '../../platform';
 import { createRtFixture, el, hostClasses, qa, textOf } from '../../../testing/rt-kit-testing';
-import { IRtDatePicker } from './rt-date-picker.model';
 import { RtDatePickerComponent } from './rt-date-picker.component';
 
 /** Плоский вид зависит от локали — прибиваем её, иначе проверялась бы среда. */
-const RU_LOCALE: Provider = { provide: LOCALE_ID, useValue: 'ru' };
+const RU_LOCALE: Provider = { provide: RT_KIT_LOCALE, useValue: signal('ru') };
 
 @Component({
     selector: 'rt-date-picker-host',
@@ -19,8 +20,25 @@ class DatePickerHostComponent {
     public readonly control: FormControl<string | null> = new FormControl<string | null>('');
 }
 
+/** Подмена наблюдателя ширины: сам он в тестовой среде ничего не измеряет. */
+class NarrowBreakpointsService {
+    public readonly narrow: () => boolean = (): boolean => true;
+}
+
 function setup(inputs: Readonly<Record<string, unknown>> = {}): ComponentFixture<RtDatePickerComponent> {
     return createRtFixture(RtDatePickerComponent, inputs, { providers: [RU_LOCALE] });
+}
+
+function setupHost(): ComponentFixture<DatePickerHostComponent> {
+    return createRtFixture(DatePickerHostComponent, {}, { providers: [RU_LOCALE] });
+}
+
+function openButton<T>(fixture: ComponentFixture<T>): HTMLButtonElement {
+    return el(fixture, '[qa-dataid="date-picker-open"] [qa-dataid="icon-button-control"]')?.nativeElement as HTMLButtonElement;
+}
+
+function popup(): HTMLElement | null {
+    return document.querySelector('[qa-dataid="date-picker-popup"]');
 }
 
 function field<T>(fixture: ComponentFixture<T>): HTMLInputElement {
@@ -39,55 +57,175 @@ describe('RtDatePickerComponent', (): void => {
         expect(hostClasses(setup())).toContain('rt-date-picker');
     });
 
-    it('без входа — нативное поле даты', (): void => {
-        // Календарь рисует браузер: своего кит не везёт, поэтому раскладка и
-        // формат ввода всегда совпадают с системными.
-        expect(field(setup()).getAttribute('type')).toBe('date');
+    it('SC-UKV-467 — поле текстовое, подсказка показывает форму текста в порядке локали', (): void => {
+        expect(field(setup()).getAttribute('type')).toBe('text');
+        expect(field(setup()).getAttribute('placeholder')).toBe('dd.mm.yyyy');
+        expect(field(setup({ type: 'time' })).getAttribute('placeholder')).toBe('hh:mm');
+        expect(field(setup({ type: 'datetime-local' })).getAttribute('placeholder')).toBe('dd.mm.yyyy hh:mm');
     });
 
-    it.each<IRtDatePicker.Type>(['date', 'time', 'datetime-local'])('тип %s уезжает на нативное поле', (kind: IRtDatePicker.Type): void => {
-        expect(field(setup({ type: kind })).getAttribute('type')).toBe(kind);
+    it('ширина поля в знаках равна длине формы значения', (): void => {
+        expect(field(setup()).getAttribute('size')).toBe('10');
+        expect(field(setup({ type: 'time' })).getAttribute('size')).toBe('5');
+        expect(field(setup({ type: 'datetime-local' })).getAttribute('size')).toBe('16');
     });
 
-    it('границы диапазона уезжают на нативное поле', (): void => {
-        const fixture: ComponentFixture<RtDatePickerComponent> = setup({ min: '2026-01-01', max: '2026-12-31' });
+    it('пустое поле показывает форму значения при наведении, заполненное — нет', (): void => {
+        const fixture: ComponentFixture<DatePickerHostComponent> = setupHost();
 
-        expect(field(fixture).getAttribute('min')).toBe('2026-01-01');
-        expect(field(fixture).getAttribute('max')).toBe('2026-12-31');
+        expect(field(fixture).getAttribute('title')).toBe('dd.mm.yyyy');
+
+        fixture.componentInstance.control.setValue('2026-03-15');
+        fixture.detectChanges();
+
+        expect(field(fixture).hasAttribute('title')).toBe(false);
+    });
+
+    describe('набор текста', (): void => {
+        it('SC-UKV-419 — текст в порядке локали и вставленная форма значения становятся значением', (): void => {
+            const fixture: ComponentFixture<RtDatePickerComponent> = setup({ min: '2026-01-01', max: '2026-12-31' });
+            const changes: string[] = [];
+            fixture.componentInstance.registerOnChange((value: string): void => {
+                changes.push(value);
+            });
+
+            type(fixture, '15.03.2026');
+            type(fixture, '2026-04-01');
+
+            expect(changes).toEqual(['2026-03-15', '2026-04-01']);
+            expect(field(fixture).value).toBe('01.04.2026');
+            expect(hostClasses(fixture)).not.toContain('rt-date-picker--invalid');
+        });
+
+        it('SC-UKV-419 — нечитаемый текст и дата за границей оставляют значение и помечают поле', (): void => {
+            const fixture: ComponentFixture<DatePickerHostComponent> = setupHost();
+            fixture.componentInstance.control.setValue('2026-03-15');
+            fixture.detectChanges();
+
+            type(fixture, 'не дата');
+            expect(fixture.componentInstance.control.value).toBe('2026-03-15');
+            expect(field(fixture).getAttribute('aria-invalid')).toBe('true');
+
+            type(fixture, '2026-02-30');
+            expect(fixture.componentInstance.control.value).toBe('2026-03-15');
+
+            type(fixture, '2026-04-01');
+            expect(fixture.componentInstance.control.value).toBe('2026-04-01');
+            expect(field(fixture).getAttribute('aria-invalid')).toBeNull();
+        });
+
+        it('SC-UKV-419 — дата за max не становится значением', (): void => {
+            const fixture: ComponentFixture<RtDatePickerComponent> = setup({ max: '2026-12-31' });
+            const changes: jest.Mock = jest.fn();
+            fixture.componentInstance.registerOnChange(changes);
+
+            type(fixture, '2027-01-01');
+
+            expect(changes).not.toHaveBeenCalled();
+            expect(hostClasses(fixture)).toContain('rt-date-picker--invalid');
+        });
+
+        it('стёртый текст очищает значение', (): void => {
+            const fixture: ComponentFixture<DatePickerHostComponent> = setupHost();
+            type(fixture, '2026-03-15');
+
+            type(fixture, '');
+
+            expect(fixture.componentInstance.control.value).toBe('');
+        });
+    });
+
+    describe('панель', (): void => {
+        afterEach((): void => {
+            popup()?.closest('.cdk-overlay-container')?.replaceChildren();
+        });
+
+        it('SC-UKV-420 — клик в текст панель не открывает, кнопка в конце поля — открывает', (): void => {
+            const fixture: ComponentFixture<RtDatePickerComponent> = setup();
+
+            field(fixture).click();
+            fixture.detectChanges();
+            expect(popup()).toBeNull();
+
+            openButton(fixture).click();
+            fixture.detectChanges();
+            expect(popup()?.querySelector('rt-date-panel')).not.toBeNull();
+        });
+
+        it('SC-UKV-420 — Escape закрывает панель', (): void => {
+            const fixture: ComponentFixture<RtDatePickerComponent> = setup();
+            openButton(fixture).click();
+            fixture.detectChanges();
+
+            popup()
+                ?.querySelector('rt-date-panel')
+                ?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+            fixture.detectChanges();
+
+            expect(popup()).toBeNull();
+        });
+
+        it('SC-UKV-418 — день из панели записывается в форму строкой формы значения и закрывает её', (): void => {
+            const fixture: ComponentFixture<DatePickerHostComponent> = setupHost();
+            fixture.componentInstance.control.setValue('2026-03-15');
+            fixture.detectChanges();
+            openButton(fixture).click();
+            fixture.detectChanges();
+
+            (popup()?.querySelector('[data-iso="2026-03-20"]') as HTMLButtonElement).click();
+            fixture.detectChanges();
+
+            expect(fixture.componentInstance.control.value).toBe('2026-03-20');
+            expect(field(fixture).value).toBe('20.03.2026');
+            expect(popup()).toBeNull();
+        });
+
+        it('отключённое поле панель не открывает', (): void => {
+            const fixture: ComponentFixture<RtDatePickerComponent> = setup({ disabled: true });
+
+            expect(openButton(fixture).disabled).toBe(true);
+        });
+
+        it('SC-UKV-428 — на узком экране панель открывается в нижней шторке', (): void => {
+            const fixture: ComponentFixture<RtDatePickerComponent> = createRtFixture(
+                RtDatePickerComponent,
+                { type: 'datetime-local' },
+                { providers: [RU_LOCALE, { provide: BreakpointsService, useClass: NarrowBreakpointsService }] }
+            );
+            const sheet: HTMLElement = qa(fixture, 'date-picker-sheet')?.nativeElement as HTMLElement;
+            expect(sheet.classList).not.toContain('rt-bottom-sheet--open');
+            expect(sheet.querySelector('rt-date-panel')).toBeNull();
+
+            openButton(fixture).click();
+            fixture.detectChanges();
+
+            expect(sheet.classList).toContain('rt-bottom-sheet--open');
+            expect(sheet.querySelector('rt-date-panel')?.classList).toContain('rt-date-panel--sheet');
+            expect(sheet.querySelector('[qa-dataid="date-panel-tabs"]')).not.toBeNull();
+            expect(popup()).toBeNull();
+        });
     });
 
     describe('значение', (): void => {
         it('хранится строкой ISO — тем же форматом, что отдаёт нативное поле', (): void => {
-            const fixture: ComponentFixture<DatePickerHostComponent> = createRtFixture(
-                DatePickerHostComponent,
-                {},
-                { providers: [RU_LOCALE] }
-            );
+            const fixture: ComponentFixture<DatePickerHostComponent> = setupHost();
 
             type(fixture, '2026-03-15');
 
             expect(fixture.componentInstance.control.value).toBe('2026-03-15');
         });
 
-        it('значение формы отражается в поле', (): void => {
-            const fixture: ComponentFixture<DatePickerHostComponent> = createRtFixture(
-                DatePickerHostComponent,
-                {},
-                { providers: [RU_LOCALE] }
-            );
+        it('SC-UKV-467 — значение формы стоит в поле в порядке локали', (): void => {
+            const fixture: ComponentFixture<DatePickerHostComponent> = setupHost();
 
             fixture.componentInstance.control.setValue('2026-03-15');
             fixture.detectChanges();
 
-            expect(field(fixture).value).toBe('2026-03-15');
+            expect(field(fixture).value).toBe('15.03.2026');
         });
 
         it('уход фокуса помечает контрол тронутым', (): void => {
-            const fixture: ComponentFixture<DatePickerHostComponent> = createRtFixture(
-                DatePickerHostComponent,
-                {},
-                { providers: [RU_LOCALE] }
-            );
+            const fixture: ComponentFixture<DatePickerHostComponent> = setupHost();
 
             field(fixture).dispatchEvent(new Event('blur'));
             fixture.detectChanges();
@@ -119,8 +257,8 @@ describe('RtDatePickerComponent', (): void => {
         });
 
         it('нераспознанное значение показывается как есть, а не пропадает', (): void => {
-            // Значение пишется формой, а не набором: нативное поле даты чужую
-            // строку в себя не пустит, а из формы она прийти может.
+            // Значение пишется формой, а не набором: набранную чужую строку поле в
+            // значение не пустит, а из формы она прийти может.
             const fixture: ComponentFixture<RtDatePickerComponent> = setup();
             fixture.componentInstance.writeValue('не дата');
 
