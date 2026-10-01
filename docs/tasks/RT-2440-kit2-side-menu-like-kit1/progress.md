@@ -137,39 +137,51 @@ $ramp)` emits `:root[data-rt-scheme]` with the brand ramp and the material blue 
 
 ## Handover of the session
 
-### Work
+Put together by a hook before the compaction of the context (auto).
 
-Work: RT-2440 «Боковое меню второго кита как в первом». Working tree —
-/Users/sviatoslavkhutornoy/WebstormProjects/rt-tools, branch RT-2440-kit2-side-menu-like-kit1
-(taken from the epic branch RT-2353-one-kit-part-2, in progress). PR: not open.
+**Working tree:** /Users/sviatoslavkhutornoy/WebstormProjects/rt-tools
+**Branch:** RT-2440-kit2-side-menu-like-kit1
 
-The progress and the plan arrive at session start through the hook. The grill lies in the task
-folder and is read when the reason for a decision is unclear.
+### Where we stand at the minute of the compaction
 
-Done: stages 1–4 of the plan, all committed locally, nothing pushed — the last work commit is
-c6744d6e5. Next step: stage 5 — 5.1 texts (see «Next step» above), 5.2 frames, 5.3
-`pnpm run check:all`, 5.4 links to the owner.
+- **State:** `этап-идёт`
+- **Stage:** 5 of 5 — Texts, frames, showing; stages 1–4 done
+- **Next step:** 5.3 — `pnpm run check:all`, then 5.4 — the links to the owner; the owner looks at the showcase before any push
+- **PR:** not open yet
 
-What to keep in mind in this session:
+The progress in full — `docs/tasks/RT-2440-kit2-side-menu-like-kit1/progress.md`; the plan lies next to it.
 
-- nothing is pushed and no PR is opened until the owner says «отправляй» / «открывай»; every port
-  from the first kit is shown to them first, the reply leads with :6007 links and the :6006
-  counterpart;
-- the pinned browser profile is not set up on this machine, so Chrome is not driven; frames are
-  looked at through `node tools/visual-gate.mjs ui-kit-v2 --update '<path sample>'`, and measured on
-  the raster with a pixel script kept in the scratchpad, not in the tree;
-- in update mode a frame within the threshold is not rewritten — delete the reference first to
-  retake;
-- the showcases run as background tasks on 6006 and 6007; colima is up — stop it after the frames
-  are done, the local database goes down with it;
-- `rt-color-scheme` has no compile test yet; the tokens spec and the theming page get an article and
-  a scenario for it in 5.1;
-- the favourites, the expansion panel and the phone menu were shown to the owner; the scheme was not
-  yet.
+### Uncommitted
 
-### Epic RT-2353 — «Один кит, часть 2»
+```
+ M projects/ui-kit-v2/src/lib/components/side-menu/favorites/rt-side-menu-favorites.component.scss
+ M tools/kit-coverage-allowlist.json
+```
 
-| #   | Task                                                         | State       |
-| --- | ------------------------------------------------------------ | ----------- |
-| …   | earlier ports of the epic                                    | merged      |
-| …   | **RT-2440 — the side menu of the second kit like the first** | in progress |
+### Commits over the main branch
+
+```
+5bab945ca docs(rt:ui-kit-v2): спецификации меню и токенов догнали сделанное, тест схемы цвета
+3ae021f45 docs(rt:ui-kit-v2): передача сессии по задаче RT-2440 — этапы 1–4 закрыты
+c6744d6e5 feat(rt:ui-kit-v2): цветовая схема data-rt-scheme, как в первом ките
+0cd6afee3 fix(rt:ui-kit-v2): меню телефона как у первого кита — окно 360, столбец 240, те же отступы
+5f5fd990f feat(rt:ui-kit-v2): избранное бокового меню в обоих наборах, в матрице меню
+6751a2e25 feat(rt:ui-kit-v2): раскрывающаяся панель rt-expansion-panel, папки и избранное бокового меню на ней
+89dac55f6 fix(rt:ui-kit-v2): строка избранного в руке рисуется на фоне, а не прозрачной
+b6ec496f1 fix(rt:ui-kit-v2): строку избранного снова можно тянуть за ручку
+3852883e8 fix(rt:ui-kit-v2): шеврон и «+» бокового меню в одном столбце, кнопки строки круглые
+38434d22a feat(rt:ui-kit-v2): избранное в боковом меню, как в первом ките, без Material
+459a1d2f1 Merge remote-tracking branch 'origin/RT-2353-one-kit-part-2' into RT-2440-kit2-side-menu-like-kit1
+c8b424cb0 [RT-2423] Подсказка второго кита умеет показываться только у обрезанного текста (#2425)
+4a71ba7a1 fix(rt:ui-kit-v2): сторис бокового меню проходят проверку повторов и токенов
+c6c2cd3ce docs(rt:ui-kit-v2): в ходе задачи RT-2440 записано, как меню берёт значки не из набора
+4856a6a02 Merge remote-tracking branch 'origin/RT-2353-one-kit-part-2' into RT-2423-kit2-tooltip-when-truncated
+3fc8c96fb [RT-2424] Блок ошибки запроса в боковой панели второго кита (#2426)
+a24ea0850 Merge remote-tracking branch 'origin/RT-2353-one-kit-part-2' into RT-2423-kit2-tooltip-when-truncated
+464e1e1d9 Merge remote-tracking branch 'origin/RT-2353-one-kit-part-2' into RT-2424-kit2-aside-error-box
+72a8f6267 Merge remote-tracking branch 'origin/RT-2353-one-kit-part-2' into RT-2423-kit2-tooltip-when-truncated
+4c5b80aac [RT-1884] Во втором ките есть динамические селекторы (#2422)
+```
+
+Written by a hook before the compaction of the context. Everything standing here is checked
+against the tree: a handover retells what was written and describes the minute it was put together.

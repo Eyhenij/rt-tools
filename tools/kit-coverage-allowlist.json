@@ -40,7 +40,8 @@
     "[rtDataListToolbarActions]": "маркер действий приложения в полосе действий: разметку даёт приложение, у маркера её нет — витрине показывать нечего",
     "[rtDataListCustomCells]": "маркер шаблонов ячеек приложения: своей разметки у него нет, а ячейку рисует приложение. Он лишь увозит шаблоны в таблицу списка",
     "[rtDataListRowActions]": "маркер пунктов меню строки: разметку даёт приложение. Полосу действий строки показывает история `Actions` семейства `data-table`",
-    "[rtDataListAdditionalRowActions]": "маркер действий рядом с кнопкой меню строки: разметку даёт приложение, у маркера её нет"
+    "[rtDataListAdditionalRowActions]": "маркер действий рядом с кнопкой меню строки: разметку даёт приложение, у маркера её нет",
+    "ng-template[rtExpansionPanelContent]": "маркер ленивого тела панели: своей разметки у него нет вовсе. В кадре виден не маркер, а тело, которое панель создала при раскрытии, — это показывают истории семейства `expansion-panel`"
   },
   "shownWithin": {
     "[rtDynamicListActions]": "projects/ui-kit-v2/src/lib/components/dynamic-list/stories/dynamic-list-matrix.stories.ts",
@@ -64,7 +65,8 @@
     "rt-dynamic-selector-popup": "projects/ui-kit-v2/src/lib/components/dynamic-selector/stories/dynamic-selector-matrix.stories.ts",
     "[rtSideMenuHeader]": "projects/ui-kit-v2/src/lib/components/side-menu/stories/side-menu-matrix.stories.ts",
     "[rtSideMenuFooter]": "projects/ui-kit-v2/src/lib/components/side-menu/stories/side-menu-matrix.stories.ts",
-    "rt-side-menu-sub-item": "projects/ui-kit-v2/src/lib/components/side-menu/stories/side-menu-matrix.stories.ts"
+    "rt-side-menu-sub-item": "projects/ui-kit-v2/src/lib/components/side-menu/stories/side-menu-matrix.stories.ts",
+    "rt-side-menu-favorites": "projects/ui-kit-v2/src/lib/components/side-menu/stories/side-menu-favorites.stories.ts"
   },
   "noPlayground": {
     "toolbar": "Содержимое панели приходит проекцией шаблонов в три места, и страница с входами их не задаёт: витрина умеет подставлять значения, а не разметку. Единственный вход — плотность — показан своей осью."
