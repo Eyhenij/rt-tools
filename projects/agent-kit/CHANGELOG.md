@@ -1,3 +1,33 @@
+## [0.29.1](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.29.0...rt-agent-kit@0.29.1) (2026-10-01)
+
+### Bug Fixes
+
+- **rt:agent-kit:** аудит очереди больше не требует папку задачи от веток эпиков ([785039a](https://github.com/Eyhenij/rt-tools/commit/785039a0c1eb80f592aa79a59321f40a69e67752))
+- **rt:agent-kit:** гард разбора не принимает загруженное правило за реплику владельца ([f63a690](https://github.com/Eyhenij/rt-tools/commit/f63a6904356115636af455ab7ce5cf600c267e07))
+- **rt:agent-kit:** заголовок PR читается по длинному ключу ([60cc137](https://github.com/Eyhenij/rt-tools/commit/60cc13714f0387e23b6f71fab56f61bfee683611))
+- **rt:agent-kit:** запуск проверок от открытия PR тоже требует ожидания конца ([6b1927d](https://github.com/Eyhenij/rt-tools/commit/6b1927d2b6739cf28756cf81e6eedc89a39eb46e))
+- **rt:agent-kit:** имя своего правила дерева не уезжает в приём, и отправка доходит до конца ([6d01588](https://github.com/Eyhenij/rt-tools/commit/6d0158825bfce5dbc0e17dd6f6e929a6d00ab9fc))
+- **rt:agent-kit:** источник таблицы эпика больше не несёт шапку установки ([6b5224e](https://github.com/Eyhenij/rt-tools/commit/6b5224e956cc27d1e7d92e0ea24d873ad8e737d8))
+- **rt:agent-kit:** план живого эпика читается из его ветки, а не с диска ([eb83f81](https://github.com/Eyhenij/rt-tools/commit/eb83f816c2a481a074a586ac9de5ac48ca3aeaf6)), closes [#2195](https://github.com/Eyhenij/rt-tools/issues/2195) [#2177](https://github.com/Eyhenij/rt-tools/issues/2177)
+- **rt:agent-kit:** план эпика берётся из его ветки, а с диска — только если диск не старее ([abb5722](https://github.com/Eyhenij/rt-tools/commit/abb5722b9b517e0859a93ac3ad6edef5c80fe3ea)), closes [#2219](https://github.com/Eyhenij/rt-tools/issues/2219) [#1870](https://github.com/Eyhenij/rt-tools/issues/1870) [#2256](https://github.com/Eyhenij/rt-tools/issues/2256) [#2257](https://github.com/Eyhenij/rt-tools/issues/2257) [#2269](https://github.com/Eyhenij/rt-tools/issues/2269)
+- **rt:agent-kit:** проверка выхода из хода не отпускает ход, где ход работы переписан и названный шаг не начат ([3591b96](https://github.com/Eyhenij/rt-tools/commit/3591b9634cfda0a2354b6430d9594aa0e4ae744a))
+- **rt:agent-kit:** проверка ожидания не отпускает ход, запустивший CI без команды ожидания его конца ([3d5cefd](https://github.com/Eyhenij/rt-tools/commit/3d5cefd6fc61c79a60beedd70abefe9bde7ef488))
+- **rt:agent-kit:** проверка расположения либ обходит список семей бэкенда и называет их в ответе ([5faecf0](https://github.com/Eyhenij/rt-tools/commit/5faecf0bb560baf1ba821981941bd0a051515072))
+- **rt:agent-kit:** свежесть главной спрашивается и у основания ветки ([dbe80fb](https://github.com/Eyhenij/rt-tools/commit/dbe80fbd5076cd5f667896fec8c67aa319b270ed))
+- **rt:agent-kit:** слияние сведено по длине текстов и по счёту задач эпика ([541f7f2](https://github.com/Eyhenij/rt-tools/commit/541f7f26ceda554cca869a45f1ba2a8f905ff711))
+- **rt:agent-kit:** состав эпика считает задачи по столбцу задач, а не по всей строке ([3f3de7b](https://github.com/Eyhenij/rt-tools/commit/3f3de7b493424d7df710b58b149ecf4f5b851663)), closes [#2195](https://github.com/Eyhenij/rt-tools/issues/2195) [#2177](https://github.com/Eyhenij/rt-tools/issues/2177) [#2181](https://github.com/Eyhenij/rt-tools/issues/2181)
+- команда отметки груза берёт признак дерева из модуля tree-mark и отказывает до сети на пустом признаке ([4eb925f](https://github.com/Eyhenij/rt-tools/commit/4eb925f8755b2ea81a4bd7a13a300290e49af3fd))
+
+### Features
+
+- **rt:agent-kit:** незакрытый эпик запрещает остановку хода ([64d9e85](https://github.com/Eyhenij/rt-tools/commit/64d9e858beea06b94c9aba660d7f229c41092332))
+- **rt:agent-kit:** несделанный шаг замысла запрещает остановку хода ([00b6eb6](https://github.com/Eyhenij/rt-tools/commit/00b6eb6d53033a4a972b76875a1f139ae8fed0be))
+- **rt:agent-kit:** отказ перед отправкой называет все красные проверки ([5a60df4](https://github.com/Eyhenij/rt-tools/commit/5a60df445105b55baa48306aea55aeb9179d8fe3))
+- **rt:agent-kit:** проверка разговора отбивает третье меню после двух рекомендованных ответов, проверка конца хода не отпускает ход на запуске в фоне ([4d96fa8](https://github.com/Eyhenij/rt-tools/commit/4d96fa81c9a1817cda49dd01ceaaea97a9868aa7))
+- **rt:agent-kit:** проверки перестали судить старый текст и чужие каталоги ([5173efb](https://github.com/Eyhenij/rt-tools/commit/5173efb7c8b9c83165d47f143cf352bed9315fb3))
+- **rt:agent-kit:** ресурс без спеки не уезжает в пакет молча ([2ed5303](https://github.com/Eyhenij/rt-tools/commit/2ed53030513b7741df94eafd057d8f9ddbe99233))
+- **rt:agent-kit:** шаги работы записаны перечнем и сверяются с замыслом ([dacb514](https://github.com/Eyhenij/rt-tools/commit/dacb514bf40764d9c873728f968935f56bae29ba))
+
 # [0.29.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.28.0...rt-agent-kit@0.29.0) (2026-09-18)
 
 ### Bug Fixes
