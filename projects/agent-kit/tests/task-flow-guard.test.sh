@@ -315,7 +315,7 @@ report "SC-AK-667 — папка, заведённая в историю, пра
     "$(edit_at "$IN_TREE_ONLY")" PASS
 rm -rf "$IN_TREE_ONLY"
 
-# --- SC-AK-1177…1178 — разрешение конфликта слияния на ветке без папки задачи ----------------
+# --- SC-AK-1180…1181 — разрешение конфликта слияния на ветке без папки задачи ----------------
 #
 # Главная вливается в ветку эпика, пока идёт работа, а папки задачи у ветки эпика нет по правилу:
 # она держит слияния, а не свои правки. Конфликт без исключения остаётся без законного выхода.
@@ -337,12 +337,12 @@ git -C "$MERGING" checkout -q RT-50-epic
 fixture_commit "$MERGING" "$COMP" 'export class A { epic = 1; }' 'feat: слияние задачи эпика'
 git -C "$MERGING" -c user.name=probe -c user.email=probe@example.com -c commit.gpgsign=false \
     merge -q main --no-edit >/dev/null 2>&1
-report "SC-AK-1177 — файл в конфликте слияния правится без папки задачи" \
+report "SC-AK-1180 — файл в конфликте слияния правится без папки задачи" \
     "$(edit_path_at "$MERGING" "$COMP")" PASS
-report "SC-AK-1178 — код вне конфликта в том же слиянии отбивается" \
+report "SC-AK-1181 — код вне конфликта в том же слиянии отбивается" \
     "$(edit_path_at "$MERGING" "$OTHER")" deny
 git -C "$MERGING" merge --abort >/dev/null 2>&1
-report "SC-AK-1178 — без идущего слияния тот же файл отбивается" \
+report "SC-AK-1181 — без идущего слияния тот же файл отбивается" \
     "$(edit_path_at "$MERGING" "$COMP")" deny
 rm -rf "$MERGING"
 
