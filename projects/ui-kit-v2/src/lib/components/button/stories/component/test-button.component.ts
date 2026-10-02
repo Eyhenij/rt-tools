@@ -25,7 +25,8 @@ import { IButton } from '../../rt-button.model';
             [size]="size"
             [radius]="radius"
             [loading]="loading"
-            [loadingIcon]="loadingIcon"></button>
+            [loadingIcon]="loadingIcon"
+            [loadingLabel]="loadingLabel"></button>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
@@ -43,4 +44,5 @@ export class TestRtButtonComponent {
     public radius: TRtRadius | null = null;
     public loading: boolean = false;
     public loadingIcon: string | null = null;
+    public loadingLabel: IButton.LoadingLabel = 'keep';
 }
