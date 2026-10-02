@@ -2,7 +2,7 @@ import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 import { ComponentFixture } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
-import { QuillMock } from '../../../../testing/quill-mock';
+import { QuillMock, quillInstances, resetQuillInstances } from '../../../../testing/quill-mock';
 import { createRtFixture, el, hostClasses, qa, qaAll, setInputs } from '../../../../testing/rt-kit-testing';
 
 // Редактор с разметкой грузит Quill динамическим импортом, а он в jsdom не
@@ -34,6 +34,12 @@ function type(fixture: ComponentFixture<RtMessageComposerComponent>, text: strin
 
 function sendButton(fixture: ComponentFixture<RtMessageComposerComponent>): HTMLButtonElement {
     return el(fixture, '[qa-dataid="message-composer-send"] [qa-dataid="icon-button-control"]')?.nativeElement as HTMLButtonElement;
+}
+
+function stopButton(fixture: ComponentFixture<RtMessageComposerComponent>): HTMLButtonElement | null {
+    return (
+        (el(fixture, '[qa-dataid="message-composer-stop"] [qa-dataid="icon-button-control"]')?.nativeElement as HTMLButtonElement) ?? null
+    );
 }
 
 function capsule(fixture: ComponentFixture<RtMessageComposerComponent>): HTMLElement {
@@ -171,6 +177,103 @@ describe('RtMessageComposerComponent', (): void => {
             expect(sendButton(fixture).disabled).toBe(true);
             expect(capsule(fixture).classList).toContain('rt-message-composer__capsule--disabled');
             expect(sent).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('ответ, который можно остановить', (): void => {
+        it('SC-UKV-491 — вместо стрелки стоит «Стоп», поле принимает текст, Enter не отправляет и не стирает', (): void => {
+            const fixture: ComponentFixture<RtMessageComposerComponent> = setup({ stoppable: true });
+            const sent: jest.Mock = jest.fn();
+            const stopped: jest.Mock = jest.fn();
+            fixture.componentInstance.submitted.subscribe(sent);
+            fixture.componentInstance.stopped.subscribe(stopped);
+            expect(stopButton(fixture)).toBeNull();
+
+            setInputs(fixture, { sending: true });
+            fixture.detectChanges();
+            type(fixture, 'Следующий вопрос');
+            field(fixture).dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+            fixture.detectChanges();
+
+            expect(qa(fixture, 'message-composer-send')).toBeNull();
+            expect(stopButton(fixture)?.disabled).toBe(false);
+            expect(field(fixture).disabled).toBe(false);
+            expect(field(fixture).value).toBe('Следующий вопрос');
+            expect(sent).not.toHaveBeenCalled();
+
+            stopButton(fixture)?.click();
+            expect(stopped).toHaveBeenCalledTimes(1);
+        });
+
+        it('SC-UKV-491 — без stoppable sending по-прежнему блокирует поле и крутит стрелку', (): void => {
+            const fixture: ComponentFixture<RtMessageComposerComponent> = setup({ sending: true });
+
+            expect(stopButton(fixture)).toBeNull();
+            expect(field(fixture).disabled).toBe(true);
+            expect(sendButton(fixture).disabled).toBe(true);
+        });
+
+        it('SC-UKV-491 — после ответа набранный текст отправляется', (): void => {
+            const fixture: ComponentFixture<RtMessageComposerComponent> = setup({ stoppable: true, sending: true });
+            const sent: jest.Mock = jest.fn();
+            fixture.componentInstance.submitted.subscribe(sent);
+            type(fixture, 'Ещё вопрос');
+
+            setInputs(fixture, { sending: false });
+            fixture.detectChanges();
+            sendButton(fixture).click();
+
+            expect(sent).toHaveBeenCalledWith({ text: 'Ещё вопрос', files: [] });
+        });
+    });
+
+    describe('черновик снаружи', (): void => {
+        it('SC-UKV-492 — заданный черновик стоит в поле, правки уходят наружу, после отправки пусто', (): void => {
+            const fixture: ComponentFixture<RtMessageComposerComponent> = setup({ text: 'Черновик' });
+            const composer: RtMessageComposerComponent = fixture.componentInstance;
+            expect(field(fixture).value).toBe('Черновик');
+
+            type(fixture, 'Черновик дописан');
+            expect(composer.text()).toBe('Черновик дописан');
+
+            sendButton(fixture).click();
+            fixture.detectChanges();
+            expect(composer.text()).toBe('');
+            expect(field(fixture).value).toBe('');
+        });
+
+        it('SC-UKV-492 — очищенный снаружи черновик пропадает из поля', (): void => {
+            const fixture: ComponentFixture<RtMessageComposerComponent> = setup({ text: 'Черновик' });
+
+            setInputs(fixture, { text: '' });
+            fixture.detectChanges();
+
+            expect(field(fixture).value).toBe('');
+            expect(sendButton(fixture).disabled).toBe(true);
+        });
+    });
+
+    describe('фокус', (): void => {
+        it('SC-UKV-493 — потребитель ставит фокус в поле', (): void => {
+            const fixture: ComponentFixture<RtMessageComposerComponent> = setup();
+            expect(fixture.nativeElement.ownerDocument.activeElement).not.toBe(field(fixture));
+
+            fixture.componentInstance.focus();
+
+            expect(fixture.nativeElement.ownerDocument.activeElement).toBe(field(fixture));
+        });
+
+        it('SC-UKV-493 — в режиме форматирования фокус получает редактор', async (): Promise<void> => {
+            resetQuillInstances();
+            const fixture: ComponentFixture<RtMessageComposerComponent> = setup({ formatting: true });
+            // Редактор приходит динамическим импортом, `whenStable` о нём не знает — ждём очередь задач.
+            await new Promise<void>((resolve: () => void): void => {
+                setTimeout(resolve, 0);
+            });
+
+            fixture.componentInstance.focus();
+
+            expect(quillInstances.at(-1)?.focused).toBe(true);
         });
     });
 

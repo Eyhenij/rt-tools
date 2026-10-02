@@ -1,6 +1,6 @@
 # The message field of the kit
 
-**Status:** in force · **Revision:** 2026-09-30 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 2026-10-02 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the icon button, the file card and the rich editor of the kit
 **Laws:** `frontend-application`, `reuse-first`, `verifiability`
 **Procedures:** none
@@ -19,6 +19,8 @@ draws it as a capsule with round buttons inside and gives it the focus of the ki
 - **The capsule** — the rounded box of the field that holds the buttons, the text and the files.
 - **The content** — what can be sent: text that is not blank, or picked files.
 - **The hint** — the line under the capsule about Enter and Shift + Enter.
+- **The draft** — the text typed in the field and not yet sent.
+- **A stoppable answer** — an answer the other side is still writing, which the person may stop.
 
 ### What it is called in the interface
 
@@ -27,6 +29,8 @@ draws it as a capsule with round buttons inside and gives it the focus of the ki
 | The capsule   | the rounded field at the bottom of the chat             |
 | The content   | the typed text and the file cards above it              |
 | The hint      | «Enter — отправить, Shift + Enter — новая строка» below |
+| The draft     | the text in the field                                   |
+| Stop          | the round button in place of the arrow                  |
 
 ## Rules
 
@@ -55,6 +59,17 @@ draws it as a capsule with round buttons inside and gives it the focus of the ki
 
 - **Picked and dropped files stand inside the capsule above the row as small file cards.** Each card
   has a remove button; the files leave with the message and are cleared after it.
+
+- **While a stoppable answer is going, the arrow becomes an enabled Stop button, and the field still
+  takes text.** It is on only with `stoppable` together with `sending`; a click reports `stopped`.
+  Enter sends nothing then and keeps the draft, so the next question can be typed while the answer
+  is written. Without `stoppable`, `sending` blocks the field as before.
+
+- **The draft can be given to the field and read from it.** The consumer sets the text, sees every
+  edit, and clears it; after a message is sent the draft is empty on both sides.
+
+- **The consumer can put the focus into the field.** It is needed when the control that had the
+  focus has left the screen, so the keyboard is not lost.
 
 - **In the formatting mode the rich editor with its toolbar stands in place of the text.** It lives
   in the same capsule; the send and the attach buttons stay where they are.
@@ -86,6 +101,7 @@ None of its own. The typed text and the picked files live until they are sent or
 | typing      | the text, the blue arrow                                      |
 | multiline   | several rows, the 20px rounding, the buttons at the bottom    |
 | sending     | the text, the pale buttons, the spinner in place of the arrow |
+| stoppable   | the text that can still be typed, the Stop button             |
 | filled      | the text without focus, the blue arrow                        |
 | disabled    | the pale placeholder and the pale buttons                     |
 | long        | six rows; the field does not grow further                     |
@@ -97,7 +113,7 @@ None of its own. The typed text and the picked files live until they are sent or
 
 ### Locales
 
-The placeholder, the hint and the labels of the buttons are kit labels, English in the package and
+The placeholder, the hint and the labels of the buttons, Stop among them, are kit labels, English in the package and
 translated by the consumer's translator.
 
 ### SEO
@@ -117,6 +133,8 @@ Not applicable: the composer belongs to no owning entity.
 
 - **The capsule is the composer's own look, not a new component.** The consumers keep the selector
   and the inputs; `hint` is the only new input.
+- **Stopping is a mode of its own, not a new meaning of `sending`.** A consumer that sends and waits
+  keeps its blocked field and spinner; only a consumer that turns on `stoppable` gets the Stop button.
 - **The focus is the fields' border and ring.** A composer next to a form does not draw focus in a
   way of its own.
 
@@ -127,3 +145,5 @@ None.
 ## History of changes
 
 - 2026-09-30 — written by the task RT-2366 of the epic RT-2370, which redraws the message field.
+- 2026-10-02 — the task RT-2466 adds the Stop button of a stoppable answer, the draft given from
+  outside and the focus put by the consumer.

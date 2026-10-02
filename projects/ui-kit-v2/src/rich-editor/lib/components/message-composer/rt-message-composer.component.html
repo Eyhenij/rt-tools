@@ -61,17 +61,29 @@
                     (keydown)="onKeydown($event)"></textarea>
             }
 
-            <rt-icon-button
-                rtElem="send"
-                qa-dataid="message-composer-send"
-                icon="arrow-up"
-                radius="full"
-                variant="primary"
-                [ariaLabel]="t().chatSendAria"
-                [tooltip]="t().chatSendLabel"
-                [loading]="sending()"
-                [disabled]="!canSend()"
-                (clicked)="submit()" />
+            @if (isStoppable()) {
+                <rt-icon-button
+                    rtElem="send"
+                    qa-dataid="message-composer-stop"
+                    icon="stop"
+                    radius="full"
+                    variant="primary"
+                    [ariaLabel]="t().chatStopAria"
+                    [tooltip]="t().chatStopLabel"
+                    (clicked)="stop()" />
+            } @else {
+                <rt-icon-button
+                    rtElem="send"
+                    qa-dataid="message-composer-send"
+                    icon="arrow-up"
+                    radius="full"
+                    variant="primary"
+                    [ariaLabel]="t().chatSendAria"
+                    [tooltip]="t().chatSendLabel"
+                    [loading]="sending()"
+                    [disabled]="!canSend()"
+                    (clicked)="submit()" />
+            }
         </div>
     </div>
 
