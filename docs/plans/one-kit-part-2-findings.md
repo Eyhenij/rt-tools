@@ -113,6 +113,12 @@ The review was made in the background after both PRs opened (#2426, #2429).
   for the port. The findings stay here as the practice of this epic: frames are measured, the first
   kit's frame is the sample, the showcase is restarted after a checkout.
 - **RT-2428 is closed as filed by mistake**, by the owner's word of the same day.
+- **All six findings of RT-2397, RT-1881 and RT-2349 are in the rules, task RT-2471.** The owner
+  answered on 2 October: «Внести все шесть». A `play` step asserting presence went to
+  `ui-component-tests`; `Playground` and the state class after the resize to `rt-tools-storybook`;
+  image suites from a temporary working tree to the override of `testing`. The stop word was
+  already an article of `turn-conduct`, and the refusal of the turn exit guard now names the waiting
+  line; a stop on a later step went to `task-flow`.
 
 ## Left unresolved
 
