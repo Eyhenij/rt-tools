@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.29.2 · checks/check-reuse.mjs · e67cdbeaaeea · правится надстройкой, не здесь
+// rt-kit v0.29.3 · checks/check-reuse.mjs · e67cdbeaaeea · правится надстройкой, не здесь
 /**
  * The sweeping check that the ready-made was not bypassed.
  *

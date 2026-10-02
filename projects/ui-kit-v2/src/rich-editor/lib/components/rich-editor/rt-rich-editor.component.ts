@@ -150,6 +150,11 @@ export class RtRichEditorComponent extends RtFormControlBase<IQuillDelta | null>
         this.mounted.set(true);
     }
 
+    /** Ставит фокус в редактор; до загрузки Quill ничего не делает. */
+    public focus(): void {
+        this.#quill?.focus();
+    }
+
     public ngOnDestroy(): void {
         this.#quill = null;
         this.mounted.set(false);

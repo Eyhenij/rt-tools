@@ -16,6 +16,9 @@
     "portableDirs": [
         "projects/agent-kit/assets"
     ],
+    "packageDirs": [
+        "projects/agent-kit/assets"
+    ],
     "externalEnums": [
         {
             "package": "@rt-tools/utils",

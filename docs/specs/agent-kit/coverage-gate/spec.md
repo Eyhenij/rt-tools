@@ -20,7 +20,8 @@ the push instead of reaching the package in silence.
 ## Terminology
 
 - **A resource of the package** — a file of the declared directories of the package sources that the
-  layout carries into a consumer tree.
+  layout carries into a consumer tree. The directories are named by their own key, apart from the
+  directories of portable texts.
 - **The measure** — the list of resources no spec speaks of, printed by the entry into the specs
   called without a name.
 - **The set before a push** — the checks the push guard runs; a red one refuses the push.
@@ -44,6 +45,9 @@ There is no interface: the check answers in the output of the push guard.
   uncovered, the executor asks the measure again by hand.
 - **A tree that declared no directories of package sources is not judged.** It holds laid-out
   copies; demanding a spec of someone else's package from it is demanding the impossible.
+- **The directories of portable texts are not package sources.** A consumer tree keeps texts with
+  foreign addresses that leave by no package. Read as package sources, every such text asks for a
+  spec, and every push of that tree is refused.
 - **A tree with no entry into the specs laid out is not judged either, and the check says so.**
   Silence there reads as "nothing found", and that is the very miss the check exists against.
 - **The check judges the tree, and the entry judges one resource.** One exit code answering two

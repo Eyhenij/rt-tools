@@ -4,7 +4,7 @@ kind: pattern
 rule: status-report
 description: Pattern of rule status-report. Load when answering the owner where the work stands. Ready-made calls for every cell: the branch and its commits, the PR state, the pipeline run checked against the head, the task on the board, the task order from the epic plan. A filled-in sample table is attached.
 ---
-<!-- rt-kit v0.29.2 · patterns/status-report-table.github.md · 7d2c7290a4e0 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.3 · patterns/status-report-table.github.md · 7d2c7290a4e0 · правится надстройкой, не здесь -->
 
 # What the state is asked with and how it lands in the table
 

@@ -14,7 +14,7 @@ mkdir -p "$SF_TREE/docs/specs/dom/one" "$SF_TREE/docs/specs/dom/two"
 mkdir -p "$SF_TREE/pkg/assets/hooks" "$SF_TREE/pkg/assets/rules"
 cp "$CHECKS/rt-kit-checks.config.mjs" "$CHECKS/spec-common.mjs" "$CHECKS/specs-for.mjs" "$SF_TREE/tools/"
 
-printf '{\n    "portableDirs": ["pkg/assets"]\n}\n' > "$SF_TREE/.claude/rt-kit/checks.json"
+printf '{\n    "packageDirs": ["pkg/assets"]\n}\n' > "$SF_TREE/.claude/rt-kit/checks.json"
 
 # Уложенные файлы фикстуры: два названы привязками, третий не назван никем.
 printf 'deny() { :; }\n' > "$SF_TREE/pkg/assets/hooks/a-guard.sh"
@@ -86,7 +86,7 @@ report "SC-AK-945 — названный привязкой файл в спис
 report "SC-AK-945 — код нулевой" "$(sf_code)" 0
 
 # --- SC-AK-946 — дерево без источников пакета даёт пустой список ---------------------------
-printf '{\n    "portableDirs": []\n}\n' > "$SF_TREE/.claude/rt-kit/checks.json"
+printf '{\n    "packageDirs": []\n}\n' > "$SF_TREE/.claude/rt-kit/checks.json"
 report "SC-AK-946 — список пуст" "$(sf_says | grep -c .)" 0
 report "SC-AK-946 — код нулевой" "$(sf_code)" 0
 report "SC-AK-946 — вход по имени работает по-прежнему" "$(sf_says hooks/a-guard.sh | grep -cxF 'docs/specs/dom/one/spec.md')" 1

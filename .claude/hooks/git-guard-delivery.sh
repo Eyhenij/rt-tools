@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.29.2 · hooks/git-guard-delivery.sh · 3f0c02ec6a8b · правится надстройкой, не здесь
+# rt-kit v0.29.3 · hooks/git-guard-delivery.sh · 3f0c02ec6a8b · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/git-guard-delivery-folder.sh, hooks/git-guard-delivery-epic.sh, hooks/git-guard-tree-assignment.sh, hooks/git-guard-delivery-conflict.sh, hooks/profile-check.sh, hooks/deny-tail.sh, hooks/guard-note.sh
 # Delivery guard. PreToolUse on creating a branch, on the push and on opening a PR.
