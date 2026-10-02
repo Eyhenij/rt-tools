@@ -2,10 +2,10 @@
 
 ## Where we stand
 
-- **State:** `этап-идёт`
+- **State:** `этапы-кончились`
 - **Stage:** 2 of 2 — texts and showcase
 - **Done:** the branch from the epic branch, the folder, the spec
-- **Next step:** snapshots for the new stories
+- **Next step:** take the folder apart, push, open the PR into the epic branch
 - **Uncommitted:** no
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -16,7 +16,7 @@
 - [x] 1.2 The arc look
 - [x] 2.1 The spec of the subdomain, its bindings and scenarios
 - [x] 2.2 The overview table and the spinner stories for the new modes
-- [>] 2.3 Snapshots for the new stories
+- [x] 2.3 Snapshots for the new stories
 
 ## Decisions along the way
 
@@ -30,6 +30,9 @@
   diameter of 32 that is the 48 pixels the consumer named.
 - The host bindings moved from getters to computed values while the file was edited: the kit has
   no getters in components.
+- The snapshot harness stops motion, and a stopped arc showed its first keyframe — a dot. The cycle
+  now starts at the long arc: the motion is the same, and the frame shows an arc.
+- Snapshots: three written (Appearance, Plate, Overlay), four former ones matched.
 
 ## Sessions
 
