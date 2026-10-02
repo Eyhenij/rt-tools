@@ -181,7 +181,7 @@ describe('RtMessageComposerComponent', (): void => {
     });
 
     describe('ответ, который можно остановить', (): void => {
-        it('SC-UKV-491 — вместо стрелки стоит «Стоп», поле принимает текст, Enter не отправляет и не стирает', (): void => {
+        it('SC-UKV-537 — вместо стрелки стоит «Стоп», поле принимает текст, Enter не отправляет и не стирает', (): void => {
             const fixture: ComponentFixture<RtMessageComposerComponent> = setup({ stoppable: true });
             const sent: jest.Mock = jest.fn();
             const stopped: jest.Mock = jest.fn();
@@ -205,7 +205,7 @@ describe('RtMessageComposerComponent', (): void => {
             expect(stopped).toHaveBeenCalledTimes(1);
         });
 
-        it('SC-UKV-491 — без stoppable sending по-прежнему блокирует поле и крутит стрелку', (): void => {
+        it('SC-UKV-537 — без stoppable sending по-прежнему блокирует поле и крутит стрелку', (): void => {
             const fixture: ComponentFixture<RtMessageComposerComponent> = setup({ sending: true });
 
             expect(stopButton(fixture)).toBeNull();
@@ -213,7 +213,7 @@ describe('RtMessageComposerComponent', (): void => {
             expect(sendButton(fixture).disabled).toBe(true);
         });
 
-        it('SC-UKV-491 — после ответа набранный текст отправляется', (): void => {
+        it('SC-UKV-537 — после ответа набранный текст отправляется', (): void => {
             const fixture: ComponentFixture<RtMessageComposerComponent> = setup({ stoppable: true, sending: true });
             const sent: jest.Mock = jest.fn();
             fixture.componentInstance.submitted.subscribe(sent);
@@ -228,7 +228,7 @@ describe('RtMessageComposerComponent', (): void => {
     });
 
     describe('черновик снаружи', (): void => {
-        it('SC-UKV-492 — заданный черновик стоит в поле, правки уходят наружу, после отправки пусто', (): void => {
+        it('SC-UKV-538 — заданный черновик стоит в поле, правки уходят наружу, после отправки пусто', (): void => {
             const fixture: ComponentFixture<RtMessageComposerComponent> = setup({ text: 'Черновик' });
             const composer: RtMessageComposerComponent = fixture.componentInstance;
             expect(field(fixture).value).toBe('Черновик');
@@ -242,7 +242,7 @@ describe('RtMessageComposerComponent', (): void => {
             expect(field(fixture).value).toBe('');
         });
 
-        it('SC-UKV-492 — очищенный снаружи черновик пропадает из поля', (): void => {
+        it('SC-UKV-538 — очищенный снаружи черновик пропадает из поля', (): void => {
             const fixture: ComponentFixture<RtMessageComposerComponent> = setup({ text: 'Черновик' });
 
             setInputs(fixture, { text: '' });
@@ -254,7 +254,7 @@ describe('RtMessageComposerComponent', (): void => {
     });
 
     describe('фокус', (): void => {
-        it('SC-UKV-493 — потребитель ставит фокус в поле', (): void => {
+        it('SC-UKV-539 — потребитель ставит фокус в поле', (): void => {
             const fixture: ComponentFixture<RtMessageComposerComponent> = setup();
             expect(fixture.nativeElement.ownerDocument.activeElement).not.toBe(field(fixture));
 
@@ -263,7 +263,7 @@ describe('RtMessageComposerComponent', (): void => {
             expect(fixture.nativeElement.ownerDocument.activeElement).toBe(field(fixture));
         });
 
-        it('SC-UKV-493 — в режиме форматирования фокус получает редактор', async (): Promise<void> => {
+        it('SC-UKV-539 — в режиме форматирования фокус получает редактор', async (): Promise<void> => {
             resetQuillInstances();
             const fixture: ComponentFixture<RtMessageComposerComponent> = setup({ formatting: true });
             // Редактор приходит динамическим импортом, `whenStable` о нём не знает — ждём очередь задач.

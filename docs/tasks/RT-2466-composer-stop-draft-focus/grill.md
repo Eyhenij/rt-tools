@@ -18,7 +18,7 @@
 - Значок `stop` есть в наборе кита (`src/assets/icons/stop.svg`).
 - Подписи: английский набор `rt-kit-labels.en.ts` и русский набор витрины
   `.storybook/showcase-labels.ru.ts` (полный `Record`); приложения дерева держат `Partial`.
-- Следующий свободный номер сценария — `SC-UKV-491`.
+- Следующий свободный номер сценария — `SC-UKV-537`.
 
 ## What the rules already say
 

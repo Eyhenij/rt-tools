@@ -80,7 +80,7 @@ Then the rich editor stands inside the capsule in place of the text, and the sen
 
 Covered by the component spec of the composer.
 
-### SC-UKV-491 — a stoppable answer puts Stop in place of the arrow and keeps the field open
+### SC-UKV-537 — a stoppable answer puts Stop in place of the arrow and keeps the field open
 
 Given a composer with `stoppable` and `sending`, and a typed draft
 When the person types more, presses Enter, then clicks Stop
@@ -89,7 +89,7 @@ without `stoppable` the same `sending` blocks the field and spins the arrow
 
 Covered by the component spec of the composer and the frame of the stoppable state.
 
-### SC-UKV-492 — the draft is given from outside and read back
+### SC-UKV-538 — the draft is given from outside and read back
 
 Given a composer whose draft is set from outside
 When the person edits it, then sends it
@@ -98,7 +98,7 @@ empty on both sides
 
 Covered by the component spec of the composer.
 
-### SC-UKV-493 — the consumer puts the focus into the field
+### SC-UKV-539 — the consumer puts the focus into the field
 
 Given a composer whose field has no focus
 When the consumer asks for the focus
