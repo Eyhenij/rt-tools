@@ -574,6 +574,26 @@ export type TRtConsumerHandleName =
     | '--rt-logo-wordmark-dark'
     | '--rt-page-header-bg'
     | '--rt-table-actions-bg'
+    | '--rt-toast-action-color'
+    | '--rt-toast-bg'
+    | '--rt-toast-border-color'
+    | '--rt-toast-close-color'
+    | '--rt-toast-color'
+    | '--rt-toast-filled-danger-bg'
+    | '--rt-toast-filled-danger-border-color'
+    | '--rt-toast-filled-danger-color'
+    | '--rt-toast-filled-info-bg'
+    | '--rt-toast-filled-info-border-color'
+    | '--rt-toast-filled-info-color'
+    | '--rt-toast-filled-success-bg'
+    | '--rt-toast-filled-success-border-color'
+    | '--rt-toast-filled-success-color'
+    | '--rt-toast-filled-warning-bg'
+    | '--rt-toast-filled-warning-border-color'
+    | '--rt-toast-filled-warning-color'
+    | '--rt-toast-icon-color'
+    | '--rt-toast-progress-color'
+    | '--rt-toast-progress-height'
     | '--rt-workspace-aside-size'
     | '--rt-workspace-list-size';
 
@@ -1152,6 +1172,26 @@ export const RT_CONSUMER_HANDLE_NAMES: readonly TRtConsumerHandleName[] = [
     '--rt-logo-wordmark-dark',
     '--rt-page-header-bg',
     '--rt-table-actions-bg',
+    '--rt-toast-action-color',
+    '--rt-toast-bg',
+    '--rt-toast-border-color',
+    '--rt-toast-close-color',
+    '--rt-toast-color',
+    '--rt-toast-filled-danger-bg',
+    '--rt-toast-filled-danger-border-color',
+    '--rt-toast-filled-danger-color',
+    '--rt-toast-filled-info-bg',
+    '--rt-toast-filled-info-border-color',
+    '--rt-toast-filled-info-color',
+    '--rt-toast-filled-success-bg',
+    '--rt-toast-filled-success-border-color',
+    '--rt-toast-filled-success-color',
+    '--rt-toast-filled-warning-bg',
+    '--rt-toast-filled-warning-border-color',
+    '--rt-toast-filled-warning-color',
+    '--rt-toast-icon-color',
+    '--rt-toast-progress-color',
+    '--rt-toast-progress-height',
     '--rt-workspace-aside-size',
     '--rt-workspace-list-size',
 ];

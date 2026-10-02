@@ -17,6 +17,26 @@
     "--rt-data-table-scrollbar-width": "the standard scrollbar-width of the data table; the list writes none when both bars are hidden and auto when one is, and without it the table keeps the kit's thin bar",
     "--rt-data-table-scrollbar-color": "the standard scrollbar-color of the data table; the list writes auto when one bar is hidden, so Chrome reads ::-webkit-scrollbar",
     "--rt-table-actions-bg": "the background of the table row actions strip, as --rt-table-actions-container-background-color of the first kit; without it the strip takes --rt-color-bg-surface",
-    "--rt-aside-bg": "the background of the side panel, as --rt-aside-host-background-color of the first kit; the application sets it on the root, and without it the panel takes --rt-color-bg-surface"
+    "--rt-aside-bg": "the background of the side panel, as --rt-aside-host-background-color of the first kit; the application sets it on the root, and without it the panel takes --rt-color-bg-surface",
+    "--rt-toast-bg": "the toast background; without it the toast takes --rt-color-bg-surface",
+    "--rt-toast-color": "the toast text colour; without it the toast takes --rt-color-text-primary",
+    "--rt-toast-border-color": "the toast border colour; without it the toast takes --rt-color-border-subtle",
+    "--rt-toast-icon-color": "the toast icon colour; without it the icon takes the severity colour",
+    "--rt-toast-close-color": "the colour of the toast close icon; without it the icon takes --rt-color-text-primary",
+    "--rt-toast-action-color": "the fill of the toast main action in every state; without it the action takes the primary action steps",
+    "--rt-toast-progress-color": "the colour of the toast progress strip; without it the strip takes the severity colour",
+    "--rt-toast-progress-height": "the height of the toast progress strip; without it the strip takes --rt-space-0-5",
+    "--rt-toast-filled-info-bg": "the background of a filled info toast; without it the toast takes --rt-color-state-info-bg",
+    "--rt-toast-filled-info-color": "the text and icon colour of a filled info toast; without it the toast takes --rt-color-state-info",
+    "--rt-toast-filled-info-border-color": "the border colour of a filled info toast; without it the toast takes --rt-color-state-info-bg",
+    "--rt-toast-filled-success-bg": "the background of a filled success toast; without it the toast takes --rt-color-state-success-bg",
+    "--rt-toast-filled-success-color": "the text and icon colour of a filled success toast; without it the toast takes --rt-color-state-success",
+    "--rt-toast-filled-success-border-color": "the border colour of a filled success toast; without it the toast takes --rt-color-state-success-bg",
+    "--rt-toast-filled-warning-bg": "the background of a filled warning toast; without it the toast takes --rt-color-state-warning-bg",
+    "--rt-toast-filled-warning-color": "the text and icon colour of a filled warning toast; without it the toast takes --rt-color-state-warning",
+    "--rt-toast-filled-warning-border-color": "the border colour of a filled warning toast; without it the toast takes --rt-color-state-warning-bg",
+    "--rt-toast-filled-danger-bg": "the background of a filled danger toast; without it the toast takes --rt-color-state-danger-bg",
+    "--rt-toast-filled-danger-color": "the text and icon colour of a filled danger toast; without it the toast takes --rt-color-state-danger",
+    "--rt-toast-filled-danger-border-color": "the border colour of a filled danger toast; without it the toast takes --rt-color-state-danger-bg"
   }
 }

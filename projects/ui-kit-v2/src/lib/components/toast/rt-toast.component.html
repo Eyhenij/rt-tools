@@ -1,5 +1,7 @@
 <ng-container rtBlock="rt-toast">
-    <rt-icon rtElem="icon" size="sm" [name]="icon()" [color]="toast().severity" />
+    @if (icon(); as icon) {
+        <rt-icon rtElem="icon" qa-dataid="toast-icon" size="sm" [name]="icon" />
+    }
     <div rtElem="content" qa-dataid="toast-content">
         @if (toast().meta; as meta) {
             <span rtElem="meta" qa-dataid="toast-meta">{{ meta }}</span>
@@ -39,4 +41,7 @@
         size="sm"
         [ariaLabel]="t().uiClose"
         (clicked)="onClose()" />
+    @if (showProgress()) {
+        <span rtElem="progress" qa-dataid="toast-progress" aria-hidden="true"></span>
+    }
 </ng-container>
