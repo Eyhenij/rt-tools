@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.29.4 · hooks/turn-exit-guard.sh · ca88b0ac3293 · правится надстройкой, не здесь
+# rt-kit v0.29.4 · hooks/turn-exit-guard.sh · f837c9dc6d66 · правится надстройкой, не здесь
 # rt-hook: Stop
 # Requires: hooks/deny-tail.sh, hooks/epic-over.sh, hooks/turn-exit-patterns.sh, hooks/turn-exit-epic.sh
 # Turn exit guard: a turn in which nothing was done on the work does not end until the work is
@@ -54,7 +54,7 @@ rt_hook_read
 rt_te_deny() {
     # The end of an epic releases the turn whatever tier came here: the epic is read only on this road.
     command -v rt_te_epic_over >/dev/null 2>&1 && rt_te_epic_over && exit 0
-    rt_te_reason="$1"
+    rt_te_reason="$(printf '%s\n\n%s' "$1" 'The owner said to stop — quote their word in the progress: `- **Waiting for the owner:** «<their words>»`. The guard releases on that line and on nothing else.')"
     rt_te_short="$2"
     # shellcheck disable=SC1090
     [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \

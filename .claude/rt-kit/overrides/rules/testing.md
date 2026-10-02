@@ -24,3 +24,9 @@ applies to it alone.
 
 The completeness of a test is checked by nothing, and the tree agreed on no way of substituting
 modules: a double is written by hand.
+
+## Pitfalls of this tree
+
+- **The image-based suites do not run from a working tree under the system temporary directory.**
+  The docker machine does not mount it, and the run ends with «браузер образа не ответил за 600
+  секунд». A second working tree for them lives under the home directory.

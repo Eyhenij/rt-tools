@@ -62,6 +62,8 @@ A rule under the "Law on verifiability", the section about showing a visible sta
   pagination host measured eight points and drew the collapsed form instead of the numbers. It is asked by name, because the half
   shrinks deliberately — a bare button stretched across it would look unlike the same button in the
   matrix next door.
+  `Playground` is such a showing: a host with `width: 100%` in a flex item sized by its content
+  comes out zero wide without `fill`.
 - **A showing that gets no pair says why, in the markup next to it.** Three reasons are lawful: the
   second half doubles a listing and adds no sighting, the showing carries the frame root itself and
   the pair would take it away, or the component is pinned to the window and leaves the half whole.
@@ -71,8 +73,7 @@ A rule under the "Law on verifiability", the section about showing a visible sta
 - **A component pinned to the window needs a box that is its containing block, and a relative box
   is not one.** Such a component counts its place from the window whatever stands above it in the
   markup, and the box it was written into stays an empty line in the frame. The box becomes a containing block by a property of its own, and the one chosen also clips — so it
-  replaces the box's clipping rather than standing next to it. Raising the node into a layer of its
-  own does the same and costs the rasterisation of every label in the frame.
+  replaces the box's clipping rather than standing next to it.
 - **A component that takes its size from its parent is given one by a box of the showing, not by a
   rule on its block class.** Such a component measures by its content where nothing sizes it and
   leaves loose pieces in the frame. Where the host is declared
@@ -241,7 +242,6 @@ Rules that decide what goes in a matrix:
   person's name, their mail address, the name of their establishment get into the showing
   unnoticed — the hand writes what is before the eyes — and the showcase is read by everyone who
   takes the package, while in a snapshot reference that name lies as a picture no grep will find.
-  An invented name costs exactly the same and belongs to nobody.
 - **The showcase config is checked by neither the linter nor the package typecheck — only by its
   build.** `.storybook` is excluded from ESLint, and `main.ts` additionally carries
   `/* eslint-disable */`; `nx run @rt-tools/ui-kit-v2:typecheck` does not see that folder at all.
@@ -253,6 +253,10 @@ Rules that decide what goes in a matrix:
   sizes itself from its text — autosize, a `ResizeObserver` — measures with the fallback font and
   keeps that size once the real one arrives. A story step that types or measures awaits
   `document.fonts.ready` first.
+- **A state class misses a node drawn after the resize.** The showcase hands out interaction
+  states once, when the story renders. The narrow frame resizes the window after that, and a node
+  the breakpoints service draws only then gets no state class. A state of such a node is shown by a
+  wrapper that answers "narrow" from the first render.
 - **An icon font of the first showcase is declared in `.storybook/preview-head.html`, not in a
   showcase stylesheet.** The font file lies in the tree and is served by the showcase itself. A
   `@font-face` in `storybook.scss` arrives later than the page head, and the paint probe catches the

@@ -143,6 +143,8 @@ flowchart TD
   accepted.
 - **What needs the owner's word is taken from a list, not appraised on the spot.** The appraisal
   "this is safe" is assigned by whoever finds it convenient.
+- **A stop the owner sets on a later step is written down the moment it is said.** It is quoted in
+  the waiting line: it holds that step and releases the exit guard.
 - **A reply to the owner's order begins with the result, not with intent or its justification.** A
   justification under someone else's accepted decision reads as its appraisal. One exception:
   execution stopped by an obstacle — then the obstacle is named.
@@ -153,8 +155,7 @@ flowchart TD
   assigned epic say what to do, not whether to work: a start needs the owner's word in the same
   session. An empty message, one word or one path order no work.
 - **A refusal by an external limiter removes the way, not the task.** It names no exit: the way is
-  taken from the guard that already described this fix — a bypass with the reason in the commit
-  body, a word to the owner — and the task stays the same.
+  taken from the guard that already described this fix, and the task stays the same.
 - **An instruction to work by the progress covers all its steps, including those that change
   history.** Questions are asked about what the progress lacks.
 - **A question written by a past session does not become a question to the owner.** It is addressed
@@ -227,7 +228,6 @@ flowchart TD
   leaves the first task standing on the main branch.
 - **The epic card moves to in progress by the same turn that takes its first task.** The owner
   follows the epic by one card: left where it was declared, the card reads as never started.
-  Nothing checks this yet: the rule `git-workflow` holds the move command and names the gap.
 - **The next task is taken from the epic plan, and the queue list is asked only where there is no
   epic.** By a list of numbers someone else's epic cannot be told from one's own.
 - **Which epic this working copy leads is read from the table of assignments, and the owner writes
