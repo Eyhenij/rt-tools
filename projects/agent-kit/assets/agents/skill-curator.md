@@ -108,6 +108,9 @@ Then for every proposal:
 - **package, companion or tree** — by the criterion above, and in one word why;
 - **ready-made text** — exactly what to insert, in the style of the neighbouring rules: in
   English, as a statement, without padding;
+- **room in the target** — the target file's lines and characters now and after the insertion,
+  against the prose limits of the size check; a proposal that takes the file over a limit names
+  what in the same file is cut to make room;
 - **what caused it** — what exactly in this task went wrong without this rule;
 - whether the gate map needs an edit and which — in the package default or in the tree override.
 

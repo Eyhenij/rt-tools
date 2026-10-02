@@ -211,6 +211,45 @@ MISSING="$(ready_repo "printf '%s' '{\"exists\":false}';")"
 dlv "SC-AK-376 — неизвестная заявка снятие не задерживает" "$MISSING" 'gh pr ready 917' PASS
 rm -rf "$MISSING"
 
+# --- папка задачи судится по ветке названной заявки --------------------------------------------
+#
+# Нижнюю заявку стопки снимают с верхней ветки: та несёт свою папку, а у нижней папка разобрана.
+# Ветка заявки берётся из её состояния, дерево — из удалённой ссылки. Удалённая ссылка в фикстуре
+# ставится руками: сети набор не трогает.
+stack_repo() {
+    local dir
+    dir="$(fixture_repo_branched main RT-120-lower)"
+    fixture_commit "$dir" docs/archive/razbor.md 'что решали' 'docs: разбор в архив'
+    git -C "$dir" update-ref refs/remotes/origin/RT-120-lower HEAD
+    git -C "$dir" checkout -q -b RT-121-upper 2>/dev/null
+    fixture_commit "$dir" docs/tasks/RT-121-upper/plan.md 'замысел' 'docs: замысел'
+    mkdir -p "$dir/.claude/rt-kit"
+    cat > "$dir/.claude/rt-kit/project.sh" <<EOF
+rt_pull_state() { printf '%s' '{"exists":true,"number":920,"draft":true,"reviewed":true,"branch":"$1"}'; }
+rt_report_body() { return 1; }
+EOF
+    printf '%s' "$dir"
+}
+
+STACK="$(stack_repo RT-120-lower)"
+dlv "SC-AK-1183 — снятие черновика судит ветку названной заявки" "$STACK" 'gh pr ready 920' PASS
+dlv "SC-AK-1184 — слияние по номеру судит ветку той заявки" "$STACK" 'gh pr merge 920 --merge' PASS
+rm -rf "$STACK"
+
+# Ветка заявки несёт свою папку — отказ называет папку той ветки, а не текущей.
+STACK="$(stack_repo RT-121-upper)"
+git -C "$STACK" update-ref refs/remotes/origin/RT-121-upper HEAD
+git -C "$STACK" checkout -q RT-120-lower 2>/dev/null
+dlv "SC-AK-1183 — папка в ветке заявки отбивает снятие" "$STACK" 'gh pr ready 920' deny
+dlv_reason "SC-AK-1183 — отказ называет папку ветки заявки" "$STACK" 'gh pr ready 920' \
+    'docs/tasks/RT-121-upper'
+rm -rf "$STACK"
+
+# Удалённой ссылки на ветку заявки нет — судится текущая ветка, как прежде.
+STACK="$(stack_repo RT-122-unpushed)"
+dlv "SC-AK-1183 — без удалённой ссылки судится текущая ветка" "$STACK" 'gh pr ready 920' deny
+rm -rf "$STACK"
+
 # --- заявка, названная не номером или не названная вовсе -----------------------------------------
 #
 # Ссылка на заявку у клиента необязательна: без неё он берёт заявку текущей ветки. Пока гард

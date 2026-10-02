@@ -4,7 +4,7 @@ kind: rule
 law: project-documentation
 description: Rule under the project-documentation law. Load when editing any .md including specs, and also code comments, commit bodies and PR descriptions. Names the path check, the pairs of an edit and its document, and what nothing checks in this tree. Ready-made wording is in pattern doc-style-write.
 ---
-<!-- rt-kit v0.29.3 · rules/doc-style.md · 2e6c72282991 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.3 · rules/doc-style.md · 4b80571e73f2 · правится надстройкой, не здесь -->
 
 # Project texts — how it works here
 
@@ -175,10 +175,12 @@ flowchart TD
   the run turned red for something other than the branch's change.
   <!-- rt-when: *.md -->
 
-- **The removal by expiry is not carried by whichever branch pushed first.** The check stands in the
-  gate of every branch, so the cleanup lands in the first work to reach a push and travels to the
-  reviewer inside an edit that has nothing to do with it. Either the cleanup is work of its own with
-  a task of its own, or the check refuses the run and not the push.
+- **The removal by expiry travels as a commit of its own.** The check stands in the gate of every
+  branch and counts age by the calendar, so it refuses whatever branch reaches it first — commits
+  too, not only pushes. A task of its own per record is no cure: one record expires every day. The
+  prune command makes the cleanup a separate commit with its own subject in the branch it blocked,
+  and the PR body names it as unrelated to the work. The lasting cure is moving the check out of the
+  commit and push gate into the pipeline of the main branch.
   <!-- rt-when: *.md -->
 
 - **A link to a record of the past in a live text lives exactly until the record's expiry.** The

@@ -101,6 +101,14 @@ Then what was named goes to the client of the hosting as an argument, and the PR
 
 Covered: `projects/agent-kit/tests/checks-board-pull.test.sh`.
 
+### SC-AK-1182 — the state of a PR names its head branch
+
+Given the hosting answers with the head branch of the PR
+When the state of the PR is asked about
+Then the answer carries that branch, and an answer without it carries an empty field
+
+Covered: `projects/agent-kit/tests/checks-board-pull.test.sh`.
+
 ### SC-AK-425 — a conflicting open PR is named a divergence
 
 Given an open PR conflicts with the main branch

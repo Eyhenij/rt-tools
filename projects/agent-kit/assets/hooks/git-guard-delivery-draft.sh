@@ -37,6 +37,7 @@ rt_delivery_draft_ready() {
         # the whole demand with a single space. So the first argument is taken, whatever it is —
         # a number, an address or a branch name — and its absence means "ask about the current
         # branch".
+        pull_head=''
         pull_ref="$(printf '%s' "$cmd" | sed -nE 's/.*(gh[[:space:]]+pr[[:space:]]+ready|glab[[:space:]]+mr[[:space:]]+update)[[:space:]]+([^[:space:];&|-][^[:space:];&|]*).*/\2/p' | head -1)"
         if rt_needs rt_pull_state git-guard-delivery; then
             pull="$(cd "$root" && rt_pull_state "$pull_ref" 2>/dev/null)" || pull=''
@@ -53,6 +54,8 @@ rt_delivery_draft_ready() {
                     *[!0-9]*) pull_name=" «${pull_name}»" ;;
                     *) pull_name=" #${pull_name}" ;;
                 esac
+                # The head branch of the PR goes to the folder condition below.
+                pull_head="$(printf '%s' "$pull" | jq -r '.branch // empty' 2>/dev/null)"
                 printf '%s' "$pull" | jq -e '.reviewed' >/dev/null 2>&1 \
                     || fault "the request${pull_name} has no review: no reviewer was requested and nobody left a review. A lifted draft reads as «ready to merge», and there is nobody to merge — set a reviewer and repeat."
 
@@ -82,7 +85,7 @@ rt_delivery_draft_ready() {
         # The task folder: the same subject as at opening and at the merge, as a third line. The
         # condition is local — it reads the branch, not the hosting — and therefore stands outside
         # the network tier above.
-        command -v rt_delivery_ready_folder >/dev/null 2>&1 && rt_delivery_ready_folder
+        command -v rt_delivery_ready_folder >/dev/null 2>&1 && rt_delivery_ready_folder "$pull_head"
 
         deny_faults
     fi
