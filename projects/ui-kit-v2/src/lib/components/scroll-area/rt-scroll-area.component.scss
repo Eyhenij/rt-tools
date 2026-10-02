@@ -1,4 +1,11 @@
 @layer rt-kit.components {
+    /* Фон хоста — с нулевой специфичностью. Хост области часто сам элемент чужого блока со своим
+       фоном (столбец бокового меню), и правило той же силы перебивало его порядком в файле:
+       столбец терял подложку. Под `:where` любое правило по классу сильнее. */
+    :where(.rt-scroll-area) {
+        background: var(--rt-scroll-area-bg);
+    }
+
     .rt-scroll-area {
         --rt-scroll-area-hint-height: var(--rt-space-10);
         --rt-scroll-area-hint-color: var(--rt-color-bg-surface);
@@ -16,7 +23,6 @@
         position: relative;
         display: flex;
         flex-direction: column;
-        background: var(--rt-scroll-area-bg);
         block-size: 100%;
         inline-size: 100%;
         min-block-size: 0;
