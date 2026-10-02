@@ -39,3 +39,23 @@ border, header, title and footer.
 - **The properties are consumer handles read with a fallback.** The dialog lives in an overlay, and
   an application sets them on the page root. The borders keep their kit default in a private
   `-default` property, as the token check requires for the border-width family.
+
+## Decisions along the way
+
+- The focus trap and the first focus are set after the dialog renders: before it the overlay holds
+  neither the frame nor the buttons. The trap leaves on the overlay's detachment, by a stream of its
+  own in the service's constructor stream, because the closing streams end on that same detachment.
+- Without a trap, `autoFocus: 'first-tabbable'` uses a short-lived CDK trap only to find the first
+  control, and destroys it at once.
+- The focused frame draws no outline: it is a starting point for a screen reader, not a control.
+- The title weight reads `--rt-font-weight-bold` by default — the browser's bold of an `h2`, the same
+  700, so the title does not change.
+- The footer and header hosts are `display: contents`, so a story cell's width never reached them:
+  in the first frames all four footer alignments looked the same. The Align and Lead stories give
+  each case a box of the cell's full width. The former Content, Closable and Title stories keep
+  the same latent narrowness; their frames are unchanged.
+- Snapshots: four written (dialog Content and Properties, footer Align, header Lead); 748 frames of
+  748 matched in the full audit, and the sweep found no empty showing among 731 stories and 92
+  overview pages.
+- The test components of the dialog spec were renamed to `rt-dialog-test-content` and
+  `rt-dialog-parts-host`: the first one held the selector `rt-dialog-content`, now taken by the part.
