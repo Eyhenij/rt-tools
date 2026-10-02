@@ -38,6 +38,8 @@ export const RT_KIT_LABELS_RU: Readonly<Record<TRtKitLabelKey, string>> = {
     chatStatusRead: 'Прочитано',
     chatStatusSending: 'Отправляется',
     chatStatusSent: 'Доставлено',
+    chatStopAria: 'Остановить ответ',
+    chatStopLabel: 'Остановить',
     chatTitle: 'Чат',
     counterDecrease: 'Уменьшить',
     counterIncrease: 'Увеличить',

@@ -22,7 +22,8 @@ const BASE_SECTION = 'Входы от основы полей';
 const failures = [];
 
 /**
- * The names of the inputs declared in the component: `input(...)` and `input.required(...)`.
+ * The names of the inputs declared in the component: `input(...)`, `input.required(...)` and
+ * `model(...)` — a model is an input the consumer writes on the tag, with a change output beside it.
  *
  * The declaration is looked for within one line (`[^;\n]`): without that boundary a field without
  * an assignment — abstract or declared by a type — would stick to the input following it, take its
@@ -30,7 +31,7 @@ const failures = [];
  */
 function declaredInputs(source) {
     const names = new Set();
-    const pattern = /(?:public\s+)?readonly\s+([A-Za-z_$][\w$]*)\s*:[^;\n]*?=\s*input\b/g;
+    const pattern = /(?:public\s+)?readonly\s+([A-Za-z_$][\w$]*)\s*:[^;\n]*?=\s*(?:input|model)\b/g;
     let match;
 
     while ((match = pattern.exec(source)) !== null) {
