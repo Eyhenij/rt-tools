@@ -41,3 +41,16 @@ The request came mid-way through the epic RT-2472 and is a task of that epic.
   they are, and the header draws 40 today; with the fix the override would shrink it.
 - **`2xs` takes the scale step `--rt-size-5`; `xs` is 22 px written in place.** The scale has no
   22 px step, and one step for one button would not lie on its 4 px grid.
+
+## Decisions along the way
+
+- The private steps are `--rt-icon-button-size-step` and `--rt-icon-button-bg-variant`, not the
+  requested `--_rt-…`: the styles linter refuses a name that is not kebab-case.
+- Five kit components (pagination, the data table, its cell and filter cell, the list settings
+  panel) set the button size on the inner button; they now write the step. The token graph counted
+  their declaration as the kit declaring the public property and refused its fallback; with the step
+  the application's property keeps the last word over them too.
+- Snapshots: the Size and IconSize frames re-taken for the two new sizes, HostRule written; 745
+  frames of 745 matched in the full audit, the header's among them, and the sweep found no empty
+  showing among 727 stories and 92 overview pages.
+- The header's test of its 35 px override became a test that it sets no size on the tag.
