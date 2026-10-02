@@ -342,6 +342,25 @@ merge, because the guard does not reach as far as the merge
 
 Covered: `projects/agent-kit/tests/git-guards.test.sh`.
 
+### SC-AK-1183 — lifting the draft judges the folder of the named PR's branch
+
+Given the checked-out branch carries its task folder, and the named PR has another head branch
+whose remote ref carries no folder
+When the executor lifts the draft from that PR
+Then the guard judges the tree of the PR's head and lets the call through; a head whose remote ref
+carries its folder is refused, and a head without a remote ref leaves the checked-out branch judged
+
+Covered: `projects/agent-kit/tests/git-guards-readiness.test.sh`.
+
+### SC-AK-1184 — a merge by number judges the folder of that PR's branch
+
+Given the checked-out branch carries its task folder, and the PR named by number has another head
+branch whose remote ref has its folder taken apart
+When the executor merges that PR by command
+Then the guard judges the tree of the PR's head and lets the merge through
+
+Covered: `projects/agent-kit/tests/git-guards-readiness.test.sh`.
+
 ### SC-AK-712 — a bypass with a reason works at the lifting of the draft too
 
 Given the folder of its task lies in the branch, and the command carries the line of the bypass

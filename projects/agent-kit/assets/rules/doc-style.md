@@ -174,10 +174,12 @@ flowchart TD
   the run turned red for something other than the branch's change.
   <!-- rt-when: *.md -->
 
-- **The removal by expiry is not carried by whichever branch pushed first.** The check stands in the
-  gate of every branch, so the cleanup lands in the first work to reach a push and travels to the
-  reviewer inside an edit that has nothing to do with it. Either the cleanup is work of its own with
-  a task of its own, or the check refuses the run and not the push.
+- **The removal by expiry travels as a commit of its own.** The check stands in the gate of every
+  branch and counts age by the calendar, so it refuses whatever branch reaches it first — commits
+  too, not only pushes. A task of its own per record is no cure: one record expires every day. The
+  prune command makes the cleanup a separate commit with its own subject in the branch it blocked,
+  and the PR body names it as unrelated to the work. The lasting cure is moving the check out of the
+  commit and push gate into the pipeline of the main branch.
   <!-- rt-when: *.md -->
 
 - **A link to a record of the past in a live text lives exactly until the record's expiry.** The

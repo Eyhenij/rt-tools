@@ -115,7 +115,7 @@ NUMBERED='{"number":701,"isDraft":true,"author":{"login":"probe-bot"},"reviewReq
 
 report "SC-AK-391 — без ссылки клиент зовётся вовсе без довода" \
     "$(pull_state "$PULL_TREE" "$NUMBERED" '' '' >/dev/null; pull_args "$PULL_TREE")" \
-    'pr view --json number,isDraft,reviewRequests,latestReviews,author,mergeable'
+    'pr view --json number,isDraft,reviewRequests,latestReviews,author,mergeable,headRefName'
 report "SC-AK-391 — и заявка при этом найдена" \
     "$(pull_state "$PULL_TREE" "$NUMBERED" '' '' | jq -r '.exists')" true
 # Номер приходит из ответа: заявку, названную не номером, в отказе гарда узнают по нему.
@@ -125,12 +125,20 @@ report "SC-AK-391 — номер берётся из ответа хостинг
 # Ссылка любого рода уходит клиенту как есть: разбирать адрес и имя ветки — его работа, не наша.
 report "SC-AK-392 — имя ветки уходит клиенту доводом" \
     "$(pull_state "$PULL_TREE" "$NUMBERED" '' 'RT-700-probe' >/dev/null; pull_args "$PULL_TREE")" \
-    'pr view RT-700-probe --json number,isDraft,reviewRequests,latestReviews,author,mergeable'
+    'pr view RT-700-probe --json number,isDraft,reviewRequests,latestReviews,author,mergeable,headRefName'
 report "SC-AK-392 — и адрес заявки тоже" \
     "$(pull_state "$PULL_TREE" "$NUMBERED" '' 'https://example.invalid/o/r/pull/701' >/dev/null; pull_args "$PULL_TREE")" \
-    'pr view https://example.invalid/o/r/pull/701 --json number,isDraft,reviewRequests,latestReviews,author,mergeable'
+    'pr view https://example.invalid/o/r/pull/701 --json number,isDraft,reviewRequests,latestReviews,author,mergeable,headRefName'
 report "SC-AK-392 — по имени ветки заявка тоже находится" \
     "$(pull_state "$PULL_TREE" "$NUMBERED" '' 'RT-700-probe' | jq -r '.exists')" true
+
+# --- SC-AK-1182. Ветка заявки -------------------------------------------------------------------
+# Гард папки задачи судит ветку названной заявки: нижнюю заявку стопки снимают с верхней ветки.
+HEADED='{"number":701,"isDraft":true,"author":{"login":"probe-bot"},"reviewRequests":[],"latestReviews":[],"headRefName":"RT-700-probe"}'
+report "SC-AK-1182 — ветка заявки приходит в ответе" \
+    "$(pull_state "$PULL_TREE" "$HEADED" | jq -r '.branch')" RT-700-probe
+report "SC-AK-1182 — без ветки в ответе поле пустое" \
+    "$(pull_state "$PULL_TREE" "$NUMBERED" | jq -r '.branch')" null
 
 rm -rf "$PULL_TREE"
 

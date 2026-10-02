@@ -119,6 +119,10 @@ silent about.
   them, and the linter here does not look at types: a spec object with a renamed field stays green
   in `test` until this target. A lib created later gets the target by the same two signs, without
   a line in its project file: `pnpm exec nx show projects --with-target typecheck` lists it.
+  Bare `tsc -p <lib>/tsconfig.spec.json` is not the same check: the spec settings inherit the
+  build's `rootDir`, and a lib importing a neighbour falls on TS6059 before any type is read. The
+  target passes `--rootDir .` (`tools/nx-plugins/spec-typecheck.cjs`); one lib is checked by
+  `pnpm exec nx run <lib>:typecheck`.
 - `pnpm exec nx run @rt-tools/ui-kit-v2:verify` — the audit of the input tables against the
   components.
 - The pipeline runs `nx affected -t lint test build` against the main branch
