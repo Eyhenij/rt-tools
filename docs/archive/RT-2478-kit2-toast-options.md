@@ -42,3 +42,15 @@ and an injectable map of the severity icons.
   enters while the old ones leave, instead of the old ones vanishing.
 - **`icon: null` draws no icon; the severity map is the token `RT_TOAST_SEVERITY_ICONS` with
   today's map as its default.**
+
+## Decisions along the way
+
+- The icon no longer takes its colour by the icon's `color` input, which writes an inline style no
+  rule can override. The toast paints it from a private severity colour, read under the icon handle.
+- The strip's lifetime is the internal `--lifetime`, like the stack's `--offset`: the toast writes it
+  from its own binding, and it is no handle.
+- Measured in the showcase: at 3 s of 6 s the strip is 177 of 354 px; hovering the stack pauses
+  its animation and leaving resumes it; the toaster layer computes to 1100.
+- Snapshots: two written (toast Options and Handles); 746 frames of 746 matched in the full audit,
+  and the sweep found no empty showing among 728 stories and 92 overview pages.
+- The filled kinds keep their icon on the text colour, so the filled text handle repaints both.
