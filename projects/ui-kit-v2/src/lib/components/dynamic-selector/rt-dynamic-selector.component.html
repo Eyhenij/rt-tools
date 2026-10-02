@@ -8,7 +8,9 @@
                 [draggable]="draggable()"
                 [buttonRadius]="buttonRadius()"
                 [disabled]="isDisabled()"
-                [actionsShown]="!invitation()"
+                [actionsShown]="isListActionsShown()"
+                [resetClearShown]="isResetClearShown()"
+                [removeShown]="removeShown()"
                 [resetDisabled]="isResetDisabled()"
                 [clearDisabled]="isClearDisabled()"
                 [titleTpl]="titleTpl()"
@@ -31,6 +33,7 @@
                         [label]="addTitle()"
                         [attr.aria-label]="addTitle()"
                         [disabled]="isDisabled()"
+                        (rtPopoverOpened)="onOpened()"
                         (rtPopoverClosed)="onClosed()"
                         (click)="onAdd(addPopover)"></button>
                 }
@@ -55,6 +58,7 @@
                             [label]="addTitle()"
                             [attr.aria-label]="addTitle()"
                             [disabled]="isDisabled()"
+                            (rtPopoverOpened)="onOpened()"
                             (rtPopoverClosed)="onClosed()"
                             (click)="onAdd(invitationPopover)"></button>
                     }
@@ -78,6 +82,7 @@
             [pinnedKeys]="pinnedKeys()"
             [navigateTitle]="navigateTitle()"
             [navigateLink]="navigateLink()"
+            [searchTerm]="searchTerm()"
             (applied)="onApplied($event)"
             (cancelled)="onCancelled()"
             (searchChange)="searchChange.emit($event)"

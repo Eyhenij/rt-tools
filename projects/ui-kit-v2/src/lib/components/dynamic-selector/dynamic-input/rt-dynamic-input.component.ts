@@ -6,6 +6,7 @@ import {
     forwardRef,
     inject,
     input,
+    output,
     signal,
     viewChild,
     ChangeDetectionStrategy,
@@ -14,6 +15,7 @@ import {
     Injector,
     InputSignal,
     InputSignalWithTransform,
+    OutputEmitterRef,
     Signal,
     TemplateRef,
     ViewEncapsulation,
@@ -105,10 +107,18 @@ export class RtDynamicInputComponent extends RtFormControlBase<string[]> {
     });
     protected readonly isInvitationShown: Signal<boolean> = computed((): boolean => this.invitation() && !this.isInvitationDismissed());
     protected readonly isAddShown: Signal<boolean> = computed((): boolean => !this.isFieldShown());
-    protected readonly isResetDisabled: Signal<boolean> = computed((): boolean => sameDynamicKeys(this.value(), this.#initial()));
-    protected readonly isClearDisabled: Signal<boolean> = computed(
+    protected readonly isKeysReset: Signal<boolean> = computed((): boolean => sameDynamicKeys(this.value(), this.#initial()));
+    protected readonly isKeysClear: Signal<boolean> = computed(
         (): boolean => clearDynamicKeys(this.value(), this.readonlyKeys()).length === this.value().length
     );
+    /** Правки в шаблоне строки держат сброс и очистку включёнными, даже когда строки не менялись. */
+    protected readonly isResetDisabled: Signal<boolean> = computed((): boolean => !this.extraChanged() && this.isKeysReset());
+    protected readonly isClearDisabled: Signal<boolean> = computed((): boolean => !this.extraChanged() && this.isKeysClear());
+    /** Полоса под строками: `true` держит её и под приглашением, иначе её место отдаётся приглашению. */
+    protected readonly isListActionsShown: Signal<boolean> = computed(
+        (): boolean => this.listActionsShown() === true || !this.isInvitationShown()
+    );
+    protected readonly isResetClearShown: Signal<boolean> = computed((): boolean => this.listActionsShown() !== false);
     protected readonly addTitle: Signal<string> = computed((): string => this.buttonTitle() || this.addLabel());
     protected readonly fieldPlaceholder: Signal<string> = computed((): string => this.placeholder() || this.placeholderLabel());
 
@@ -131,6 +141,25 @@ export class RtDynamicInputComponent extends RtFormControlBase<string[]> {
     });
     public readonly invitationIcon: InputSignal<IRtIcon.Name | null> = input<IRtIcon.Name | null>(null);
     public readonly invitationDescription: InputSignal<string> = input<string>('');
+    /** Корзина строк; без неё строки убирает только очистка или сам вызывающий. */
+    public readonly removeShown: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
+        transform: booleanAttribute,
+    });
+    /**
+     * Сброс и очистка под списком: `false` их убирает, кнопка добавления остаётся; `true` держит
+     * полосу и под приглашением; `null` — полоса уступает место приглашению, как прежде.
+     */
+    public readonly listActionsShown: InputSignal<boolean | null> = input<boolean | null>(null);
+    /**
+     * Строки правлены в шаблоне вызывающего: сброс и очистка включены и тогда, когда строки прежние.
+     * Сброс сообщает `listReset`, очистка — `listCleared`, и вызывающий снимает свои правки.
+     */
+    public readonly extraChanged: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
+        transform: booleanAttribute,
+    });
+
+    public readonly listReset: OutputEmitterRef<void> = output<void>();
+    public readonly listCleared: OutputEmitterRef<void> = output<void>();
 
     public readonly displayText: Signal<string> = computed((): string => this.value().join(', '));
 
@@ -190,15 +219,26 @@ export class RtDynamicInputComponent extends RtFormControlBase<string[]> {
     }
 
     protected onReset(): void {
-        if (!this.isDisabled() && !this.isResetDisabled()) {
+        if (this.isDisabled() || this.isResetDisabled()) {
+            return;
+        }
+
+        // Строки прежние, а правки только в шаблоне: значение не трогаем, сообщаем о сбросе.
+        if (!this.isKeysReset()) {
             this.#change([...this.#initial()]);
         }
+        this.listReset.emit();
     }
 
     protected onCleared(): void {
-        if (!this.isDisabled() && !this.isClearDisabled()) {
+        if (this.isDisabled() || this.isClearDisabled()) {
+            return;
+        }
+
+        if (!this.isKeysClear()) {
             this.#change(clearDynamicKeys(this.value(), this.readonlyKeys()));
         }
+        this.listCleared.emit();
     }
 
     protected getEmptyValue(): string[] {
