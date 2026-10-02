@@ -38,7 +38,7 @@ tag/
 | статус, счётчик, метка   | `tag`, `live-badge`, `info-item`, `stat-tile`, `delta-view`                                                                                    |
 | кнопки                   | `button` (директива), `icon-button`, `split-button`, `toggle-button-group`                                                                     |
 | поля ввода               | `input`, `textarea`, `input-number`, `counter`, `checkbox`, `toggle-switch`, `date-picker`, `date-range`, `file-input`, `rich-editor`          |
-| списки выбора            | `select`, `multiselect`, `autocomplete`, `filter-control`                                                                                      |
+| списки выбора            | `select`, `multiselect`, `autocomplete`, `filter-control`, `dynamic-selector`                                                                  |
 | обёртка поля             | `field`, `form-control` (основа)                                                                                                               |
 | плавающие панели         | `popover`, `tooltip`, `confirm-popover`, `menu`, `toast`                                                                                       |
 | окна и панели            | `dialog`, `aside`, `aside-section`, `bottom-sheet`, `welcome-dialog`, `photo-viewer`                                                           |

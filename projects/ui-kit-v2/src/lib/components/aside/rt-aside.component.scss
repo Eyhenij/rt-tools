@@ -20,6 +20,10 @@
 
         /* Ритм между корневыми блоками содержимого. */
         --rt-aside-content-gap: var(--rt-space-md);
+
+        /* Ширина на узком экране: во всё окно. Свойство, а не число в правиле, — чтобы коробка,
+           в которую панель поставлена разметкой, могла сдержать её своей шириной. */
+        --rt-aside-narrow-width: 100dvw;
     }
 
     /* Хост адресуется по имени элемента, а не по классу блока: класс `.rt-aside`
@@ -64,6 +68,14 @@
                cross-axis-размера контейнера и выходит за viewport. */
             min-width: 0;
             flex-shrink: 0;
+        }
+
+        /* Блок ошибки запроса стоит между шапкой и содержимым и не уезжает с прокруткой. Поля
+           по бокам — тот же инсет панели; сверху и снизу его отбивают шапка и зона содержимого. */
+        &__error {
+            min-width: 0;
+            flex-shrink: 0;
+            padding-inline: var(--rt-aside-inset);
         }
 
         /* Единственная зона содержимого: она держит инсет панели и она же
@@ -132,8 +144,8 @@
         rt-aside .rt-aside--size--sm,
         rt-aside .rt-aside--size--md,
         rt-aside .rt-aside--size--lg {
-            width: 100dvw;
-            max-width: 100dvw;
+            width: var(--rt-aside-narrow-width);
+            max-width: var(--rt-aside-narrow-width);
         }
     }
 }

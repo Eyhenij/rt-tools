@@ -1,0 +1,23 @@
+@layer rt-kit.components {
+    /* rt-dynamic-selector — поле со списком выбранного. ViewEncapsulation.None.
+       Строки и полосу рисует список семьи; здесь — место под приглашение и пустое состояние. */
+
+    .rt-dynamic-selector {
+        display: block;
+        width: 100%;
+
+        &__content {
+            display: flex;
+            flex-direction: column;
+            gap: var(--rt-space-sm);
+        }
+
+        &__invitation {
+            display: block;
+        }
+
+        &__nothing {
+            display: block;
+        }
+    }
+}

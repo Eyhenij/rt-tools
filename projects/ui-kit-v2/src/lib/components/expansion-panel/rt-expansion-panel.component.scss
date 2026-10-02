@@ -1,0 +1,134 @@
+@layer rt-kit.components {
+    /* rt-expansion-panel — раскрывающаяся панель. ViewEncapsulation.None.
+       Host несёт класс блока и модификаторы вида и состояния. Все размеры заголовка и тела — свои
+       свойства блока: владелец, рисующий панель строкой своего списка, переназначает их на хосте
+       правилом большей силы, а не переписывает правила панели. */
+
+    .rt-expansion-panel {
+        --rt-expansion-panel-radius: var(--rt-radius-md);
+        --rt-expansion-panel-shadow: var(--rt-shadow-sm);
+        --rt-expansion-panel-duration: var(--rt-duration-base);
+        --rt-expansion-panel-bg: var(--rt-color-bg-surface);
+        --rt-expansion-panel-header-min-height: var(--rt-control-height-lg);
+        --rt-expansion-panel-header-padding-block: var(--rt-space-sm);
+        --rt-expansion-panel-header-padding-start: var(--rt-space-lg);
+        --rt-expansion-panel-header-padding-end: var(--rt-space-md);
+        --rt-expansion-panel-header-gap: var(--rt-space-sm);
+        --rt-expansion-panel-header-radius: var(--rt-radius-md);
+        --rt-expansion-panel-header-bg: transparent;
+        --rt-expansion-panel-header-hover-bg: var(--rt-color-bg-hover);
+        --rt-expansion-panel-header-color: var(--rt-color-text-primary);
+        --rt-expansion-panel-header-font-size: var(--rt-text-md);
+        --rt-expansion-panel-header-font-weight: var(--rt-font-weight-medium);
+        --rt-expansion-panel-chevron-size: var(--rt-control-height-sm);
+        --rt-expansion-panel-chevron-color: var(--rt-color-text-muted);
+        --rt-expansion-panel-body-padding-inline: var(--rt-space-lg);
+        --rt-expansion-panel-body-padding-end: var(--rt-space-md);
+
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+        border-radius: var(--rt-expansion-panel-radius);
+        background: var(--rt-expansion-panel-bg);
+        box-shadow: var(--rt-expansion-panel-shadow);
+        color: var(--rt-color-text-primary);
+
+        /* Панель внутри списка: ни фона, ни тени, ни отступов — строки рисует список. */
+        &--plain {
+            --rt-expansion-panel-radius: var(--rt-radius-none);
+            --rt-expansion-panel-shadow: var(--rt-shadow-none);
+            --rt-expansion-panel-bg: transparent;
+            --rt-expansion-panel-header-min-height: var(--rt-control-height-md);
+            --rt-expansion-panel-header-padding-start: var(--rt-space-0);
+            --rt-expansion-panel-header-padding-end: var(--rt-space-0);
+            --rt-expansion-panel-header-font-size: var(--rt-text-sm);
+            --rt-expansion-panel-header-font-weight: var(--rt-font-weight-regular);
+            --rt-expansion-panel-body-padding-inline: var(--rt-space-0);
+            --rt-expansion-panel-body-padding-end: var(--rt-space-0);
+        }
+
+        /* Заголовок во всю ширину: нажатие принимает вся строка, а не один шеврон. */
+        &__header {
+            display: flex;
+            width: 100%;
+            min-height: var(--rt-expansion-panel-header-min-height);
+            box-sizing: border-box;
+            align-items: center;
+            border: 0;
+            border-radius: var(--rt-expansion-panel-header-radius);
+            background: var(--rt-expansion-panel-header-bg);
+            color: var(--rt-expansion-panel-header-color);
+            cursor: pointer;
+            font: inherit;
+            font-size: var(--rt-expansion-panel-header-font-size);
+            font-weight: var(--rt-expansion-panel-header-font-weight);
+            gap: var(--rt-expansion-panel-header-gap);
+            padding-block: var(--rt-expansion-panel-header-padding-block);
+            padding-inline: var(--rt-expansion-panel-header-padding-start) var(--rt-expansion-panel-header-padding-end);
+            text-align: start;
+            transition: background-color var(--rt-expansion-panel-duration) ease;
+
+            &:hover:not(:disabled) {
+                background: var(--rt-expansion-panel-header-hover-bg);
+            }
+
+            &:focus-visible {
+                outline: var(--rt-focus-ring-width) solid var(--rt-focus-ring-color);
+                outline-offset: calc(var(--rt-focus-ring-width) * -1);
+            }
+
+            &:disabled {
+                color: var(--rt-color-text-disabled);
+                cursor: default;
+            }
+        }
+
+        /* Шеврон у правого края, в столбце ширины маленькой кнопки: соседние кнопки строк списка
+           встают с ним на одну вертикаль. */
+        &__chevron {
+            display: inline-flex;
+            flex-shrink: 0;
+            justify-content: center;
+            color: var(--rt-expansion-panel-chevron-color);
+            inline-size: var(--rt-expansion-panel-chevron-size);
+            margin-inline-start: auto;
+            transition: transform var(--rt-expansion-panel-duration) ease;
+
+            &--open {
+                transform: rotate(180deg);
+            }
+        }
+
+        /* Раскрытие и сворачивание — высотой от нуля до своей и обратно. Высота «auto» становится
+           величиной, между которой можно вести движение, через `interpolate-size`; браузер без него
+           показывает и убирает тело сразу. */
+        &__body {
+            overflow: hidden;
+            height: auto;
+            interpolate-size: allow-keywords;
+            padding-block-end: var(--rt-expansion-panel-body-padding-end);
+            padding-inline: var(--rt-expansion-panel-body-padding-inline);
+            transition:
+                height var(--rt-expansion-panel-duration) ease,
+                padding-block-end var(--rt-expansion-panel-duration) ease;
+
+            @starting-style {
+                height: 0;
+                padding-block-end: 0;
+            }
+
+            &--leaving {
+                height: 0;
+                padding-block-end: 0;
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+                transition: none;
+            }
+        }
+
+        &--disabled &__chevron {
+            color: var(--rt-color-text-disabled);
+        }
+    }
+}

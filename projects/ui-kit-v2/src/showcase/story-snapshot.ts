@@ -22,8 +22,11 @@
  */
 export const STORY_SNAPSHOT_ROOT_ATTRIBUTE: string = 'data-story-root';
 
-/** Размер базового кадра. История, которой нужен другой, называет его сама. */
+/** Размер базового кадра. История, которой нужен другой, называет его сама — `viewport`. */
 export const STORY_SNAPSHOT_VIEWPORT: { readonly width: number; readonly height: number } = { width: 1280, height: 720 };
+
+/** Окно телефона — то же, что у историй `Mobile` первого кита: кадры двух китов сравниваются рядом. */
+export const STORY_PHONE_VIEWPORT: { readonly width: number; readonly height: number } = { width: 360, height: 780 };
 
 /** Параметры съёмки одной истории. Лежат в `parameters.snapshot`, читаются обвязкой прогона. */
 export interface IStorySnapshotParameters {
@@ -61,6 +64,23 @@ export interface IStorySnapshotParameters {
      * неотличим от исправной истории, у которой панели и не должно быть.
      */
     readonly overlay?: string;
+
+    /**
+     * Узлы, на которые обвязка наводит настоящий указатель перед самым кадром, по порядку. Кнопка,
+     * у которой без наведения на её строку нет ширины, наводится вторым шагом, после строки.
+     *
+     * Наведение не разыгрывается шагом истории: `:hover` ставит только настоящий указатель, а
+     * фокус, поставленный шагом, до кадра не доживал — строка в кадре стояла в покое.
+     */
+    readonly hover?: string | readonly string[];
+
+    /**
+     * Окно базового кадра вместо `STORY_SNAPSHOT_VIEWPORT`. Для истории, которая показывает экран
+     * другого размера: телефонное меню снимается в окне телефона, и узкий экран кит определяет сам,
+     * по ширине окна, а не подменой службы точек перехода. В витрине то же окно задаёт панель
+     * размеров окна — `globals.viewport`.
+     */
+    readonly viewport?: { readonly width: number; readonly height: number };
 }
 
 /** Ветка параметров истории, в которой обвязка ищет съёмку. */

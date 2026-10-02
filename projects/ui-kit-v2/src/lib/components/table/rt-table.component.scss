@@ -164,9 +164,11 @@
         }
 
         /* Строки-ссылки: курсор + focus-ring. Активацию (click/Enter/Space) и
-           table-семантику обеспечивает директива rtTableRow на самой строке. */
+           table-семантику обеспечивает директива rtTableRow на самой строке.
+           Карточка узкого экрана открывает запись так же, как строка: вид у неё тот же. */
         &--clickable {
-            .cdk-row {
+            .cdk-row,
+            .rt-table__card {
                 cursor: pointer;
 
                 &:focus-visible {

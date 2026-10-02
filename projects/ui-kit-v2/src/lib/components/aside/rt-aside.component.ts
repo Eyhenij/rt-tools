@@ -1,6 +1,8 @@
-import { ChangeDetectionStrategy, Component, input, InputSignal, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, InputSignal, Signal, ViewEncapsulation } from '@angular/core';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
+
+import { RtAsideErrorBoxComponent } from './error-box/rt-aside-error-box.component';
 
 const BEM_BLOCK: string = 'rt-aside';
 
@@ -47,14 +49,24 @@ export type TRtAsideContentLayout = 'default' | 'tabs';
     styleUrl: './rt-aside.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
-    imports: [BlockDirective, ElemDirective, ModDirective],
+    imports: [BlockDirective, ElemDirective, ModDirective, RtAsideErrorBoxComponent],
     host: {
         class: BEM_BLOCK,
     },
 })
 export class RtAsideComponent {
+    protected readonly hasRequestError: Signal<boolean> = computed(
+        (): boolean => this.requestError() !== null && this.requestError() !== undefined
+    );
+
     public readonly size: InputSignal<TRtAsideSize> = input<TRtAsideSize>('md');
     public readonly contentLayout: InputSignal<TRtAsideContentLayout> = input<TRtAsideContentLayout>('default');
     public readonly width: InputSignal<string | null> = input<string | null>(null);
     public readonly ariaLabel: InputSignal<string | null> = input<string | null>(null);
+
+    /**
+     * Ошибка неудавшегося запроса. Пока она есть, между шапкой и содержимым стоит блок ошибки с
+     * кнопкой копирования; `null` и `undefined` — ошибки нет, любое другое значение её показывает.
+     */
+    public readonly requestError: InputSignal<unknown> = input<unknown>(null);
 }

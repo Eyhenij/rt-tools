@@ -55,7 +55,8 @@ import { RtSkeletonComponent } from '../skeleton/rt-skeleton.component';
 import { RtSpinnerComponent } from '../spinner/rt-spinner.component';
 import { RtTableFilterHeaderComponent } from './filter-header/rt-table-filter-header.component';
 import { RtTableCardDirective } from './rt-table-card.directive';
-import { cardColumnsOf, cardRowsOf, IRtTableCardColumn } from './rt-table-cards.logic';
+import { cardColumnsOf, cardRowsOf, hasRowsIn, IRtTableCardColumn } from './rt-table-cards.logic';
+import { RtTableCardActivationDirective } from './rt-table-card-activation.directive';
 import { RtTableRowActionsDirective } from './rt-table-row-actions.directive';
 import { RtRowHasActionsPipe } from './rt-table-row-actions.pipe';
 import { RtTableColumnSettings } from './rt-table-column-settings';
@@ -108,6 +109,7 @@ const DEFAULT_EMPTY_KEY: TRtKitLabelKey = 'uiNoRows';
         RtSkeletonComponent,
         RtSpinnerComponent,
         RtTableFilterHeaderComponent,
+        RtTableCardActivationDirective,
         BlockDirective,
         ElemDirective,
         ModDirective,
@@ -429,19 +431,9 @@ export class RtTableComponent<TRow> extends CdkTable<TRow> {
         return super.dataSource;
     }
 
-    /**
-     * Проверка наличия данных в `dataSource`. CdkTable принимает array | Observable | DataSource —
-     * нас интересуют только массивы (client-side filter pattern). Для остальных типов
-     * (Observable / DataSource) консервативно возвращаем `true` — не показываем skeleton/empty
-     * там где не можем точно определить.
-     */
+    /** Есть ли строки в `dataSource`; признак версии пересчитывает ответ при смене источника. */
     #hasData(): boolean {
         this.#dataSourceVersion();
-
-        const ds: unknown = this.dataSource;
-        if (Array.isArray(ds)) {
-            return ds.length > 0;
-        }
-        return true;
+        return hasRowsIn(this.dataSource);
     }
 }

@@ -57,6 +57,11 @@ agreement about their own subject and describe the surface of a component, not a
 | [The settings of the kit and the theme](kit-settings-theme/spec.md)       | what an application sets the look of the kit at the start by, the three states of the theme, a node with a theme of its own     |
 | [One rounding input](radius-scale/spec.md)                                | the scale of steps, the default of the mockup, the step on the host and the components without the input                        |
 | [The accordion](accordion/spec.md)                                        | a list of headed items whose texts open on a press, independently of one another                                                |
+| [The expansion panel](expansion-panel/spec.md)                            | a header button over a body that opens with motion                                                                              |
+| [The tooltip of a cut text](tooltip-when-truncated/spec.md)               | the mode where the tooltip shows only over a text that did not fit its node                                                     |
+| [The request error of a side panel](aside-error-box/spec.md)              | where a failed request is shown in a panel and what its copy button puts into the clipboard                                     |
+| [The dynamic selectors](dynamic-selectors/spec.md)                        | a form field with the chosen list, a pop-up choice with search, a field of typed rows                                           |
+| [The side menu](side-menu/spec.md)                                        | a rail of sections with the submenu of a section beside it: hover or pinning, search, folders, width                            |
 | [A tree of options](option-tree/spec.md)                                  | options with children in the select and the multiselect: levels, arrows, what a click, a key and the filter do                  |
 | [The panel of the date field](date-panel/spec.md)                         | the kit's own panel of a date, a time and a date with time: month, columns, bounds, keys, narrow screen                         |
 | [The date range field](date-range/spec.md)                                | a form field of a period: two months, presets, the hover preview, the summary, bounds, keys, narrow screen                      |

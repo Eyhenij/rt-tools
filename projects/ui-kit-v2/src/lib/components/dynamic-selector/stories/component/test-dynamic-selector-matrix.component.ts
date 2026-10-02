@@ -1,0 +1,203 @@
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
+import { StoryRowComponent } from '../../../../../showcase/story-row.component';
+import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
+import { RtIconButtonComponent } from '../../../icon-button/rt-icon-button.component';
+import { RtDynamicInputComponent } from '../../dynamic-input/rt-dynamic-input.component';
+import { RtDynamicSelectorPopupComponent } from '../../popup/rt-dynamic-selector-popup.component';
+import { RtDynamicSelectorComponent } from '../../rt-dynamic-selector.component';
+import { RtDynamicSelectorRowControlsDirective, RtDynamicSelectorRowTitleDirective } from '../../rt-dynamic-selector.directives';
+import { IRtDynamicSelector } from '../../rt-dynamic-selector.model';
+import { TRtRadius } from '../../../radius/rt-radius.model';
+import { IStoryPerson, STORY_PEOPLE } from './test-dynamic-selector.component';
+
+/** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
+export type TDynamicSelectorMatrixPart =
+    'rows' | 'radius' | 'templates' | 'invitation' | 'states' | 'popup' | 'input' | 'presets' | 'themes';
+
+/** Случай списка выбранного: что показано строками и что с ними можно сделать. */
+interface IRowsCase {
+    readonly name: string;
+    readonly draggable: boolean;
+    readonly readonlyKeys: readonly number[];
+    readonly control: FormControl<number[] | null>;
+}
+
+/** Случай скругления кнопок-иконок списка. */
+interface IRadiusCase {
+    readonly name: string;
+    readonly buttonRadius: TRtRadius | null;
+    readonly control: FormControl<number[] | null>;
+}
+
+/** Случай окна выбора: окно поставлено прямо в разметку, в оверлее оно было бы одно. */
+interface IPopupCase {
+    readonly name: string;
+    readonly entities: readonly IStoryPerson[];
+    readonly mode: IRtDynamicSelector.Mode;
+    readonly multiToggleShown: boolean;
+    readonly loading: boolean;
+    readonly pinnedKeys: readonly number[];
+}
+
+/** Случай поля строк. */
+interface IInputCase {
+    readonly name: string;
+    readonly editable: boolean;
+    readonly draggable: boolean;
+    readonly readonlyKeys: readonly string[];
+    readonly control: FormControl<string[] | null>;
+}
+
+/** Адреса поля строк — придуманные, в зарезервированном для примеров домене. */
+const NORTH: string = 'north@example.test';
+const SOUTH: string = 'south@example.test';
+
+function chosen(keys: number[]): FormControl<number[] | null> {
+    return new FormControl<number[] | null>(keys);
+}
+
+function disabled(keys: number[]): FormControl<number[] | null> {
+    return new FormControl<number[] | null>({ value: keys, disabled: true });
+}
+
+function texts(values: string[]): FormControl<string[] | null> {
+    return new FormControl<string[] | null>(values);
+}
+
+/**
+ * Матрицы состояний `rt-dynamic-selector` для витрины.
+ *
+ * Оси не перемножены: перетаскивание, строки только для чтения и отключение меняют разные части
+ * строки и вместе ничего нового не показывают. Окно выбора стоит в разметке, а не в оверлее:
+ * открытое окно в истории было бы ровно одно, а случаев у него шесть.
+ *
+ * В пакет не уезжает: `tsconfig.lib.json` исключает папки историй.
+ */
+@Component({
+    selector: 'app-dynamic-selector-matrix',
+    templateUrl: './test-dynamic-selector-matrix.component.html',
+    styleUrl: './test-dynamic-selector-matrix.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        // angular
+        ReactiveFormsModule,
+
+        // components
+        RtDynamicInputComponent,
+        RtDynamicSelectorRowControlsDirective,
+        RtDynamicSelectorRowTitleDirective,
+        RtIconButtonComponent,
+        RtDynamicSelectorComponent,
+        RtDynamicSelectorPopupComponent,
+
+        // showcase
+        StoryPresetsComponent,
+        StoryRowComponent,
+        StoryThemesComponent,
+    ],
+})
+export class TestRtDynamicSelectorMatrixComponent {
+    public part: TDynamicSelectorMatrixPart = 'rows';
+
+    /** Ширина ячейки поля: строка с тремя кнопками и именем в две части помещается целиком. */
+    public readonly fieldWidth: string = '22rem';
+    /** Ширина окна выбора — его собственная, 20rem, как у первого кита. */
+    public readonly popupWidth: string = '20rem';
+    public readonly people: readonly IStoryPerson[] = STORY_PEOPLE;
+
+    public readonly rowsCases: readonly IRowsCase[] = [
+        { name: 'строки', draggable: false, readonlyKeys: [], control: chosen([1, 2, 3]) },
+        { name: 'перетаскивание', draggable: true, readonlyKeys: [], control: chosen([1, 2, 3]) },
+        { name: 'только для чтения', draggable: true, readonlyKeys: [1, 3], control: chosen([1, 2, 3]) },
+        { name: 'пусто', draggable: false, readonlyKeys: [], control: chosen([]) },
+    ];
+
+    /** Шаги скругления кнопок: круг по умолчанию, шаг кнопки-иконки и квадрат без скругления. */
+    public readonly radiusCases: readonly IRadiusCase[] = [
+        { name: 'full — по умолчанию', buttonRadius: 'full', control: chosen([1, 2]) },
+        { name: 'md', buttonRadius: 'md', control: chosen([1, 2]) },
+        { name: 'none', buttonRadius: 'none', control: chosen([1, 2]) },
+    ];
+
+    public readonly invitationCases: readonly {
+        readonly name: string;
+        readonly entities: readonly IStoryPerson[];
+        readonly invitation: boolean;
+        readonly control: FormControl<number[] | null>;
+    }[] = [
+        { name: 'приглашение', entities: STORY_PEOPLE, invitation: true, control: chosen([]) },
+        { name: 'приглашение со строками', entities: STORY_PEOPLE, invitation: true, control: chosen([4]) },
+        { name: 'нечего выбрать', entities: [], invitation: false, control: chosen([]) },
+    ];
+
+    public readonly stateCases: readonly IRowsCase[] = [
+        { name: 'отключено', draggable: true, readonlyKeys: [], control: disabled([1, 2]) },
+        { name: 'только чтение, всё закреплено', draggable: false, readonlyKeys: [1, 2], control: chosen([1, 2]) },
+    ];
+
+    public readonly popupCases: readonly IPopupCase[] = [
+        { name: 'несколько', entities: STORY_PEOPLE.slice(0, 5), mode: 'multi', multiToggleShown: false, loading: false, pinnedKeys: [] },
+        {
+            name: 'переключатель «несколько»',
+            entities: STORY_PEOPLE.slice(0, 5),
+            mode: 'multi',
+            multiToggleShown: true,
+            loading: false,
+            pinnedKeys: [],
+        },
+        {
+            name: 'закреплённые',
+            entities: STORY_PEOPLE.slice(0, 5),
+            mode: 'multi',
+            multiToggleShown: false,
+            loading: false,
+            pinnedKeys: [1, 2],
+        },
+        {
+            name: 'одна запись',
+            entities: STORY_PEOPLE.slice(0, 5),
+            mode: 'single',
+            multiToggleShown: false,
+            loading: false,
+            pinnedKeys: [],
+        },
+        { name: 'загрузка', entities: [], mode: 'multi', multiToggleShown: false, loading: true, pinnedKeys: [] },
+        { name: 'ничего не найдено', entities: [], mode: 'multi', multiToggleShown: false, loading: false, pinnedKeys: [] },
+    ];
+
+    public readonly inputCases: readonly IInputCase[] = [
+        {
+            name: 'строки',
+            editable: false,
+            draggable: false,
+            readonlyKeys: [],
+            control: texts([NORTH, SOUTH]),
+        },
+        {
+            name: 'правка',
+            editable: true,
+            draggable: false,
+            readonlyKeys: [],
+            control: texts([NORTH, SOUTH]),
+        },
+        {
+            name: 'перетаскивание и закреплённая',
+            editable: false,
+            draggable: true,
+            readonlyKeys: [NORTH],
+            control: texts([NORTH, SOUTH]),
+        },
+    ];
+
+    public readonly themeReadonly: readonly number[] = [1];
+    public readonly themePinned: readonly number[] = [1];
+    public readonly themeControl: FormControl<number[] | null> = chosen([1, 2]);
+    public readonly presetsControl: FormControl<number[] | null> = chosen([1, 2]);
+    public readonly templatesControl: FormControl<number[] | null> = chosen([4, 5]);
+
+    /** Подпись случая: у всех наборов этой матрицы имя лежит в одном поле. */
+    public readonly caseLabel: (value: { readonly name: string }) => string = (value: { readonly name: string }): string => value.name;
+}

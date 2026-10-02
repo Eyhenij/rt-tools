@@ -1,0 +1,31 @@
+@layer rt-kit.components {
+    /* Заголовок и тело, которые витрина кладёт в панель: подпись режется многоточием — так её
+       оформляет владелец панели, сама панель содержимого заголовка не знает. */
+    .app-expansion-panel-demo {
+        &__stack {
+            display: flex;
+            flex-direction: column;
+            gap: var(--rt-space-sm);
+        }
+
+        &__icon {
+            flex-shrink: 0;
+            color: var(--rt-color-text-muted);
+        }
+
+        &__title {
+            overflow: hidden;
+            min-width: 0;
+            flex: 1 1 auto;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        &__text {
+            margin: 0;
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-sm);
+            line-height: var(--rt-leading-normal);
+        }
+    }
+}

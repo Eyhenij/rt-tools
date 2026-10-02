@@ -1,7 +1,7 @@
 import { registerLocaleData } from '@angular/common';
 import localeRu from '@angular/common/locales/ru';
 import { provideHttpClient } from '@angular/common/http';
-import { Injectable, provideZonelessChangeDetection, signal, Signal } from '@angular/core';
+import { computed, Injectable, provideZonelessChangeDetection, signal, Signal, WritableSignal } from '@angular/core';
 import { provideRouter, withHashLocation } from '@angular/router';
 
 import { applicationConfig, Decorator, Preview } from '@storybook/angular';
@@ -26,7 +26,7 @@ import { SHOWCASE_MESSAGES_RU } from './showcase-messages.ru';
  * Русский набор лежит рядом с витриной, а не в пакете: потребителю кита он не
  * достаётся, и формулировки продукта кит по-прежнему не знает.
  */
-const showcaseTranslator: Signal<TRtKitTranslator> = signal<TRtKitTranslator>((key: TRtKitLabelKey, params?: TRtKitLabelParams): string => {
+function russianLabel(key: TRtKitLabelKey, params?: TRtKitLabelParams): string {
     const text: string | undefined = RT_KIT_LABELS_RU[key];
     if (text === undefined) {
         return '';
@@ -37,6 +37,18 @@ const showcaseTranslator: Signal<TRtKitTranslator> = signal<TRtKitTranslator>((k
         : text.replace(/\{\{\s*([A-Za-z0-9_]+)\s*\}\}/g, (match: string, name: string): string =>
               params[name] === undefined ? match : String(params[name])
           );
+}
+
+/**
+ * Язык подписей кита, выбранный на панели витрины. Английский — это умолчание самого кита:
+ * переводчик тогда отвечает пустым, и кит берёт свою подпись, как у приложения без перевода.
+ */
+const showcaseLabelsLang: WritableSignal<string> = signal<string>('ru');
+
+const showcaseTranslator: Signal<TRtKitTranslator> = computed((): TRtKitTranslator => {
+    const lang: string = showcaseLabelsLang();
+
+    return (key: TRtKitLabelKey, params?: TRtKitLabelParams): string => (lang === 'en' ? '' : russianLabel(key, params));
 });
 
 /**
@@ -100,6 +112,20 @@ const applyPreset: (preset: string) => void = (preset: string): void => {
     }
 };
 
+/**
+ * Схема цвета — имя в `<html data-rt-scheme>`, как у первого кита. Схема перекрашивает шкалу марки и
+ * синий шаг материального набора, поэтому идёт в обоих наборах и в обеих темах.
+ */
+const applyScheme: (scheme: string) => void = (scheme: string): void => {
+    const root: HTMLElement = document.documentElement;
+
+    if (scheme === 'default') {
+        root.removeAttribute('data-rt-scheme');
+    } else {
+        root.setAttribute('data-rt-scheme', scheme);
+    }
+};
+
 const preview: Preview = {
     decorators: [
         applicationConfig({
@@ -121,7 +147,7 @@ const preview: Preview = {
                 // пустую разметку вместо строк.
                 provideRtIDBStorage(),
                 provideRtIcons('/icons'),
-                provideRtKitLabels({ translator: showcaseTranslator, locale: signal<string>('ru') }),
+                provideRtKitLabels({ translator: showcaseTranslator, locale: showcaseLabelsLang }),
                 // Подписи целых экранов уровня `Templates`. Стоят здесь, а не декоратором той
                 // истории, которой понадобились: `| transloco` без провайдера роняет отрисовку
                 // целиком, и следующая такая история падала бы заново.
@@ -142,6 +168,8 @@ const preview: Preview = {
         (story: TDecoratorStory, context: TDecoratorContext): ReturnType<Decorator> => {
             applyTheme(String(context.globals['theme'] ?? 'light'));
             applyPreset(String(context.globals['preset'] ?? 'own'));
+            applyScheme(String(context.globals['scheme'] ?? 'default'));
+            showcaseLabelsLang.set(String(context.globals['labels'] ?? 'ru'));
 
             return story();
         },
@@ -175,12 +203,45 @@ const preview: Preview = {
                 dynamicTitle: true,
             },
         },
+        scheme: {
+            description: 'Схема цвета — пишется в `<html data-rt-scheme>`',
+            toolbar: {
+                title: 'Схема',
+                icon: 'contrast',
+                items: [
+                    { value: 'default', title: 'Без схемы — цвет марки кита' },
+                    { value: 'teal', title: 'Бирюзовая' },
+                ],
+                dynamicTitle: true,
+            },
+        },
+        labels: {
+            description: 'Язык подписей кита: русский набор витрины или английское умолчание кита',
+            toolbar: {
+                title: 'Язык',
+                icon: 'globe',
+                items: [
+                    { value: 'ru', title: 'Русский' },
+                    { value: 'en', title: 'English — умолчание кита' },
+                ],
+                dynamicTitle: true,
+            },
+        },
     },
     initialGlobals: {
         theme: 'light',
         preset: 'own',
+        scheme: 'default',
+        labels: 'ru',
     },
     parameters: {
+        // Окно телефона — как у первого кита: история телефонного меню берёт его через
+        // `globals.viewport`, и узкий экран кит определяет сам, по ширине окна.
+        viewport: {
+            options: {
+                narrow: { name: 'Узкий экран', styles: { width: '360px', height: '780px' } },
+            },
+        },
         controls: {
             matchers: {
                 color: /(background|color)$/i,

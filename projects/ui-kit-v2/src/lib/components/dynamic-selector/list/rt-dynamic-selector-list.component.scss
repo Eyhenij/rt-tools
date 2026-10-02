@@ -1,0 +1,108 @@
+@layer rt-kit.components {
+    /* rt-dynamic-selector-list — строки выбранного и полоса действий. ViewEncapsulation.None.
+       Вид снят с кадров первого кита: строки — тонированные плашки со скруглением, у ручки
+       перетаскивания разделитель справа, корзина строки красная, пока её можно нажать. */
+
+    .rt-dynamic-selector-list {
+        --rt-dynamic-selector-list-row-bg: var(--rt-color-action-primary-subtle);
+        --rt-dynamic-selector-list-row-radius: var(--rt-radius-sm);
+        --rt-dynamic-selector-list-divider-width: var(--rt-border-width-thin);
+        --rt-dynamic-selector-list-drag-shadow: var(--rt-shadow-md);
+        --rt-dynamic-selector-list-drag-duration: var(--rt-duration-base);
+
+        display: flex;
+        flex-direction: column;
+        gap: var(--rt-space-2xs);
+
+        &__rows {
+            display: flex;
+            flex-direction: column;
+            gap: var(--rt-space-sm);
+        }
+
+        &__row {
+            display: flex;
+            min-height: var(--rt-control-height-lg);
+            box-sizing: border-box;
+            align-items: center;
+            padding: var(--rt-space-2xs) var(--rt-space-2xs) var(--rt-space-2xs) var(--rt-space-sm);
+            border-radius: var(--rt-dynamic-selector-list-row-radius);
+            background: var(--rt-dynamic-selector-list-row-bg);
+            color: var(--rt-color-text-primary);
+            gap: var(--rt-space-sm);
+        }
+
+        &__handle {
+            border-right: var(--rt-dynamic-selector-list-divider-width) solid var(--rt-color-border-default);
+            cursor: grab;
+            padding-inline-end: var(--rt-space-2xs);
+        }
+
+        // Длинная подпись переносится: обрезка спрятала бы, какая запись выбрана.
+        &__title {
+            min-width: 0;
+            flex: 1 1 auto;
+            font-size: var(--rt-text-md);
+            overflow-wrap: anywhere;
+        }
+
+        &__field {
+            min-width: 0;
+            flex: 1 1 auto;
+        }
+
+        &__controls {
+            display: flex;
+            flex: 0 0 auto;
+            align-items: center;
+            gap: var(--rt-space-2xs);
+        }
+
+        &__actions {
+            display: flex;
+            align-items: center;
+            gap: var(--rt-space-2xs);
+        }
+
+        &__add {
+            display: flex;
+            min-width: 0;
+            flex: 1 1 auto;
+            align-items: center;
+        }
+
+        // Строка в полёте живёт у конца страницы, вне блока: свойства объявлены на ней самой.
+        &__row.cdk-drag-preview {
+            --rt-dynamic-selector-list-row-bg: var(--rt-color-action-primary-subtle);
+            --rt-dynamic-selector-list-row-radius: var(--rt-radius-sm);
+            --rt-dynamic-selector-list-divider-width: var(--rt-border-width-thin);
+            --rt-dynamic-selector-list-drag-shadow: var(--rt-shadow-md);
+
+            box-shadow: var(--rt-dynamic-selector-list-drag-shadow);
+        }
+
+        &__row.cdk-drag-placeholder {
+            opacity: 0;
+        }
+
+        &__row.cdk-drag-animating,
+        &__rows.cdk-drop-list-dragging &__row:not(.cdk-drag-placeholder) {
+            transition: transform var(--rt-dynamic-selector-list-drag-duration) ease-out;
+        }
+    }
+}
+
+/* rt-layer-outside: фон, цвет и поля строки в руке.
+
+   CDK кладёт строку в руке в конец страницы и в момент перетаскивания подключает свой слой
+   `cdk-resets` с `.cdk-drag-preview { background: none; color: inherit; padding: 0 }`. Слой
+   появляется на странице позже слоя кита и потому сильнее его: оставленные в слое, три свойства
+   ниже проигрывают, и строка едет прозрачной, без полей. Тонировка строки полупрозрачна, поэтому
+   под ней лежит поверхность — в покое ту же роль играет поле, в котором стоит список. Скругление и
+   тень остаются в слое — их CDK не трогает. */
+.rt-dynamic-selector-list__row.cdk-drag-preview {
+    padding: var(--rt-space-2xs) var(--rt-space-2xs) var(--rt-space-2xs) var(--rt-space-sm);
+    background-color: var(--rt-color-bg-surface);
+    background-image: linear-gradient(var(--rt-dynamic-selector-list-row-bg), var(--rt-dynamic-selector-list-row-bg));
+    color: var(--rt-color-text-primary);
+}

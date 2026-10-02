@@ -1,0 +1,30 @@
+<div class="app-side-menu-cell">
+    <rt-side-menu
+        [menuItems]="items()"
+        [menuId]="menuId()"
+        [favoritesCount]="favoritesCount()"
+        [favoriteActionsReserve]="favoriteActionsReserve()"
+        [activeMenuIds]="activeIds()"
+        [subMenuMode]="mode()"
+        [subMenuWidth]="width()">
+        @if (slots()) {
+            <ng-template rtSideMenuHeader>
+                <div class="app-side-menu-cell__slot">Лого</div>
+            </ng-template>
+            <ng-template rtSideMenuFooter>
+                <div class="app-side-menu-cell__slot">Профиль</div>
+            </ng-template>
+        }
+        @if (ownIcon()) {
+            <!-- Свой значок приложения для имён, которых кит не рисует: буква подписи в круге. -->
+            <ng-template rtSideMenuIcon let-item>
+                <svg viewBox="0 0 24 24" class="app-side-menu-cell__own-icon">
+                    <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2" />
+                    <text x="12" y="16.5" text-anchor="middle" font-size="12" font-weight="700" fill="currentColor">
+                        {{ item.name?.charAt(0) }}
+                    </text>
+                </svg>
+            </ng-template>
+        }
+    </rt-side-menu>
+</div>

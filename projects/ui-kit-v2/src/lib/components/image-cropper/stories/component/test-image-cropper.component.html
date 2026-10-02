@@ -1,0 +1,61 @@
+<!-- Один показ, без пары наборов: это сценарий работы, а не сравнение вида; набор переключается
+     на панели витрины, пары наборов показывают матрицы семьи. `fill` отдаёт показу ширину
+     половины: без неё поле обрезки, которое берёт ширину коробки, сжимается в ноль. -->
+<app-story-presets single fill caption="Выбрать изображение, обрезать, применить">
+    <ng-template>
+        <app-story-row [items]="toolbar" [itemLabel]="noLabel">
+            <ng-template let-tool>
+                @if (tool === 'choose') {
+                    <rt-file-input accept="image/*" buttonLabel="Выбрать изображение" [formControl]="picker" />
+                } @else {
+                    <button
+                        rtButton
+                        appearance="outlined"
+                        type="button"
+                        label="Демо-картинка 1200×800"
+                        aria-label="Демо-картинка 1200×800"
+                        (click)="takeSample()"></button>
+                }
+            </ng-template>
+        </app-story-row>
+
+        <rt-file-drop accept="image/*" (filesDropped)="choose($event[0])">
+            <rt-image-cropper
+                [file]="file()"
+                [placeholder]="placeholder"
+                [ratio]="ratio"
+                [round]="round"
+                [minSize]="minSize"
+                [format]="format"
+                [quality]="quality"
+                [disabled]="disabled"
+                (cropped)="onCropped($event)"
+                (loadFailed)="onFailed()" />
+        </rt-file-drop>
+
+        @if (file()) {
+            <app-story-row [items]="actions" [itemLabel]="noLabel">
+                <ng-template let-action>
+                    @if (action === 'cancel') {
+                        <button rtButton appearance="text" type="button" label="Отмена" aria-label="Отмена" (click)="cancel()"></button>
+                    } @else {
+                        <button
+                            rtButton
+                            type="button"
+                            label="Применить"
+                            aria-label="Применить"
+                            [disabled]="!cropped()"
+                            (click)="apply()"></button>
+                    }
+                </ng-template>
+            </app-story-row>
+        }
+
+        <p>{{ summary() }}</p>
+        @if (applied(); as src) {
+            <!-- Картинка в абзаце: `fill` растягивает детей показа, и голая картинка ушла бы на всю ширину.
+                 Картинку на месте зоны показывает загрузчик `rt-image-upload`, здесь — только файл обрезки. -->
+            <p><img alt="Применённый результат" width="160" [src]="src" /></p>
+        }
+    </ng-template>
+</app-story-presets>

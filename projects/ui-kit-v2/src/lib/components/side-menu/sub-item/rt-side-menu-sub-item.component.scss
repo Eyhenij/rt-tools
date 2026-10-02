@@ -1,0 +1,203 @@
+@layer rt-kit.components {
+    /* rt-side-menu-sub-item — строка подменю бокового меню. ViewEncapsulation.None.
+       Host несёт класс блока; строка — ссылка или кнопка папки. */
+
+    .rt-side-menu-sub-item {
+        --rt-side-menu-sub-item-radius: var(--rt-radius-full);
+        --rt-side-menu-sub-item-transition-duration: var(--rt-duration-fast);
+
+        /* Маркер совпадения поиска — жёлтая подложка с тёмной подписью в обеих темах, как у первого кита. */
+        --rt-side-menu-sub-item-match-bg: var(--rt-yellow-400);
+        --rt-side-menu-sub-item-match-color: var(--rt-neutral-950);
+        --rt-side-menu-sub-item-match-radius: var(--rt-radius-xs);
+
+        display: block;
+
+        &__row {
+            /* Глубину вложения ставит шаблон на саму строку; здесь — значение строки верхнего уровня. */
+            --rt-side-menu-sub-item-depth: 0;
+
+            display: flex;
+            width: 100%;
+            min-height: var(--rt-control-height-md);
+            box-sizing: border-box;
+            align-items: center;
+            border: 0;
+            border-radius: var(--rt-side-menu-sub-item-radius);
+            background: transparent;
+            color: var(--rt-color-text-primary);
+            cursor: pointer;
+            font: inherit;
+            font-size: var(--rt-text-sm);
+            gap: var(--rt-space-sm);
+            padding-block: var(--rt-space-2);
+            padding-inline: calc(var(--rt-space-md) * (1 + var(--rt-side-menu-sub-item-depth))) var(--rt-space-sm);
+            text-align: start;
+            text-decoration: none;
+            transition: background-color var(--rt-side-menu-sub-item-transition-duration) ease;
+
+            &:hover,
+            &:active,
+            &--highlighted {
+                background: var(--rt-color-bg-hover);
+            }
+
+            &:focus-visible {
+                outline: var(--rt-focus-ring-width) solid var(--rt-focus-ring-color);
+                outline-offset: calc(var(--rt-focus-ring-width) * -1);
+            }
+
+            /* Активна строка со ссылкой; у папки активность видна по её раскрытым пунктам. */
+            &--active {
+                background: var(--rt-color-action-primary-subtle);
+                color: var(--rt-color-action-primary-on-surface);
+            }
+        }
+
+        &__icon {
+            flex-shrink: 0;
+            color: inherit;
+        }
+
+        /* Свой значок приложения: коробка держит размер значка строки и её цвет, рисунок внутри
+           занимает её целиком и красится через currentColor. */
+        &__own-icon {
+            --rt-side-menu-sub-item-own-icon-size: var(--rt-size-4);
+
+            display: inline-flex;
+            width: var(--rt-side-menu-sub-item-own-icon-size);
+            height: var(--rt-side-menu-sub-item-own-icon-size);
+            flex-shrink: 0;
+            align-items: center;
+            justify-content: center;
+            color: inherit;
+            line-height: 1;
+
+            > * {
+                max-width: 100%;
+                max-height: 100%;
+            }
+        }
+
+        /* Подпись режется многоточием, полное имя — в подсказке. */
+        &__title {
+            overflow: hidden;
+            min-width: 0;
+            flex: 1 1 auto;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        &__part {
+            color: inherit;
+        }
+
+        &__match {
+            border-radius: var(--rt-side-menu-sub-item-match-radius);
+            background: var(--rt-side-menu-sub-item-match-bg);
+            color: var(--rt-side-menu-sub-item-match-color);
+        }
+
+        /* Кнопка потребителя — круг, как у первого кита: рамка круга прозрачна в покое и
+           проявляется под указателем. Рамка — обводкой, а не границей: граница раздвинула бы
+           кнопку, и «+» ушёл бы со столбца шевронов. */
+        &__action {
+            --rt-side-menu-sub-item-action-ring-width: var(--rt-border-width-thin);
+            --rt-side-menu-sub-item-action-radius: var(--rt-radius-full);
+
+            flex-shrink: 0;
+            border-radius: var(--rt-side-menu-sub-item-action-radius);
+            outline: var(--rt-side-menu-sub-item-action-ring-width) solid transparent;
+            outline-offset: calc(var(--rt-side-menu-sub-item-action-ring-width) * -1);
+
+            &:hover {
+                outline-color: var(--rt-color-border-strong);
+            }
+        }
+
+        /* Кнопка избранного: звезда у пункта раздела и «убрать» у строки блока. Закрашенная звезда
+           видна всегда — выбранное читается с одного взгляда; остальные — под наведением и фокусом
+           клавиатуры своей строки, а где указатель не умеет наводиться, — всегда. Прячется
+           прозрачностью: кнопка остаётся на месте и в порядке Tab. */
+        &__favorite {
+            flex-shrink: 0;
+            opacity: 0;
+
+            &--on {
+                --rt-icon-button-color: var(--rt-color-action-primary);
+
+                opacity: 1;
+            }
+
+            /* Корзина под указателем и под фокусом клавиатуры краснеет: нажатие убирает пункт. */
+            @media (hover: hover) {
+                &--remove:hover {
+                    --rt-icon-button-color: var(--rt-color-state-danger);
+                }
+            }
+
+            &--remove:has(:focus-visible) {
+                --rt-icon-button-color: var(--rt-color-state-danger);
+            }
+
+            @media (hover: none) {
+                opacity: 1;
+            }
+        }
+
+        &__row:hover &__favorite,
+        &__row:focus-visible &__favorite,
+        &__row:has(:focus-visible) &__favorite {
+            opacity: 1;
+        }
+
+        /* Папка — раскрывающаяся панель кита в простом виде. Её заголовок оформлен как строка со
+           ссылкой: те же высота, скругление, отступ глубины и подсветка ходьбы стрелками; шеврон
+           панели стоит в столбце кнопок строк, и «+» соседних строк с ним на одной вертикали.
+           Свойства переназначены правилом двух классов: так они сильнее значений самой панели,
+           объявленных на том же узле, а вложенная папка объявляет свои заново. */
+        &__folder.rt-expansion-panel {
+            --rt-expansion-panel-duration: var(--rt-side-menu-sub-item-transition-duration);
+            --rt-expansion-panel-header-radius: var(--rt-side-menu-sub-item-radius);
+            --rt-expansion-panel-header-min-height: var(--rt-control-height-md);
+            --rt-expansion-panel-header-padding-block: var(--rt-space-2);
+            --rt-expansion-panel-header-padding-start: calc(var(--rt-space-md) * (1 + var(--rt-side-menu-sub-item-depth)));
+            --rt-expansion-panel-header-padding-end: var(--rt-space-sm);
+            --rt-expansion-panel-header-gap: var(--rt-space-sm);
+            --rt-expansion-panel-header-font-size: var(--rt-text-sm);
+            --rt-expansion-panel-header-bg: transparent;
+        }
+
+        &__folder--highlighted.rt-expansion-panel {
+            --rt-expansion-panel-header-bg: var(--rt-color-bg-hover);
+        }
+
+        &__children {
+            display: flex;
+            flex-direction: column;
+        }
+    }
+
+    /* Меню с `favoriteActionsReserve="none"`: кнопка избранного, ждущая наведения, в покое не
+       занимает ширины, и подпись идёт до края или до кнопки потребителя; отступ ряда перед ней
+       снимается тоже. Закрашенная звезда и экран без наведения держат место: там кнопка видна
+       всегда. Сжата, а не снята с раскладки: остаётся в порядке Tab. */
+    @media (hover: hover) {
+        .rt-side-menu--favorite-actions-none .rt-side-menu-sub-item__favorite:not(.rt-side-menu-sub-item__favorite--on) {
+            overflow: hidden;
+            width: 0;
+            margin-inline-start: calc(var(--rt-space-sm) * -1);
+        }
+
+        /* Возврат места — прямым правилом, а не отрицанием в правиле выше: `:hover` внутри
+           `:not()` рядом с `:has()` браузер при наведении не пересчитывал, и кнопка оставалась
+           без ширины под указателем. */
+        .rt-side-menu--favorite-actions-none .rt-side-menu-sub-item__row:hover .rt-side-menu-sub-item__favorite,
+        .rt-side-menu--favorite-actions-none .rt-side-menu-sub-item__row:focus-visible .rt-side-menu-sub-item__favorite,
+        .rt-side-menu--favorite-actions-none .rt-side-menu-sub-item__row:has(:focus-visible) .rt-side-menu-sub-item__favorite {
+            overflow: visible;
+            width: auto;
+            margin-inline-start: 0;
+        }
+    }
+}

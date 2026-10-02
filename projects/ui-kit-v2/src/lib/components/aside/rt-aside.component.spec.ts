@@ -78,6 +78,30 @@ describe('RtAsideComponent', (): void => {
     it('содержимое проецируется между шапкой и подвалом', (): void => {
         expect(qa(setup(), 'aside-content')).not.toBeNull();
     });
+
+    it('SC-UKV-462: панель с ошибкой запроса показывает блок ошибки перед содержимым', (): void => {
+        const fixture: ComponentFixture<RtAsideComponent> = setup({ requestError: { status: 500 } });
+        const box: HTMLElement | undefined = qa(fixture, 'aside-error-box')?.nativeElement as HTMLElement | undefined;
+        const content: HTMLElement = qa(fixture, 'aside-content')?.nativeElement as HTMLElement;
+
+        expect(textOf(qa(fixture, 'aside-error-title'))).toBe('Request Error');
+        expect(qa(fixture, 'aside-error-copy')).not.toBeNull();
+        expect(box?.compareDocumentPosition(content)).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
+        // Блок стоит вне зоны прокрутки, а не внутри неё.
+        expect(content.contains(box ?? null)).toBe(false);
+    });
+
+    it('SC-UKV-462: пустая строка — тоже ошибка', (): void => {
+        expect(qa(setup({ requestError: '' }), 'aside-error-box')).not.toBeNull();
+    });
+
+    it.each<unknown>([null, undefined])('SC-UKV-463: без ошибки (%s) блока нет', (requestError: unknown): void => {
+        expect(qa(setup({ requestError }), 'aside-error-box')).toBeNull();
+    });
+
+    it('SC-UKV-463: по умолчанию блока нет', (): void => {
+        expect(qa(setup(), 'aside-error-box')).toBeNull();
+    });
 });
 
 describe('RtAsideService', (): void => {

@@ -206,3 +206,12 @@ When the check of the design goes
 Then the check names the shared name, and a key the map does not hold gives no collision
 
 Covered: `tools/tests/check-tokens-graph.test.sh` — three cases, called by `pnpm run test:checks`.
+
+### SC-UKV-479 — a colour scheme repaints the brand line and the material blue step on the root
+
+Given an application declares the scheme «teal» by the scheme mixin
+When the styles are built
+Then the root under `data-rt-scheme` carries the scheme's brand steps and its step 500 as the material
+blue. A ramp without the step 500 or with a step outside the line refuses the build
+
+Covered: `projects/ui-kit-v2/src/styles/color-scheme.theme.spec.ts`.

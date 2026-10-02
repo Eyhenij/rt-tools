@@ -1,0 +1,36 @@
+<ng-container rtBlock="rt-expansion-panel">
+    <button
+        type="button"
+        rtElem="header"
+        qa-dataid="expansion-panel-header"
+        [id]="headerDomId()"
+        [disabled]="disabled()"
+        [attr.aria-expanded]="expanded()"
+        [attr.aria-controls]="expanded() ? bodyId : null"
+        [attr.aria-label]="ariaLabel()"
+        (click)="toggle()">
+        <ng-content />
+
+        @if (!hideToggle()) {
+            <!-- Шеврон — в обёртке: ширину столбца держит она, значок свою ширину ставит сам. -->
+            <span rtElem="chevron" aria-hidden="true" [rtMod]="{ open: expanded() }"><rt-icon size="sm" name="chevron-down" /></span>
+        }
+    </button>
+
+    @if (expanded()) {
+        <!-- Сворачивание доигрывает движение: класс ухода сводит высоту к нулю, и тело уходит после. -->
+        <div
+            rtElem="body"
+            role="region"
+            qa-dataid="expansion-panel-body"
+            animate.leave="rt-expansion-panel__body--leaving"
+            [id]="bodyId"
+            [attr.aria-labelledby]="headerDomId()">
+            <ng-content select="[rtExpansionPanelBody]" />
+
+            @if (lazyContent(); as content) {
+                <ng-container [ngTemplateOutlet]="content.templateRef" />
+            }
+        </div>
+    }
+</ng-container>

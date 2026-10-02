@@ -32,6 +32,12 @@ export const Width: TStory = { args: { part: 'width' } };
 /** Раскладка содержимого: обычная прокручивается целиком, «под вкладки» отдаёт прокрутку внутрь. */
 export const Layout: TStory = { args: { part: 'layout' } };
 
+/**
+ * Ошибка запроса: блок между шапкой и содержимым. Подтверждение «Copied» живёт секунду после
+ * нажатия и в кадр не попадает — его держат тесты блока.
+ */
+export const RequestError: TStory = { args: { part: 'error' } };
+
 export const Presets: TStory = { args: { part: 'presets' } };
 
 export const Themes: TStory = { args: { part: 'themes' } };

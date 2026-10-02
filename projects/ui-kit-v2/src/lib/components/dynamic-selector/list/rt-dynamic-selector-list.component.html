@@ -1,0 +1,120 @@
+<ng-container rtBlock="rt-dynamic-selector-list">
+    @if (rows().length > 0) {
+        <div rtElem="rows" cdkDropList qa-dataid="dynamic-selector-rows" (cdkDropListDropped)="onDrop($event)">
+            @for (row of rows(); track row.key; let index = $index) {
+                <div
+                    rtElem="row"
+                    cdkDrag
+                    qa-dataid="dynamic-selector-row"
+                    [rtMod]="{ locked: row.locked }"
+                    [cdkDragDisabled]="!draggable() || disabled()">
+                    @if (draggable()) {
+                        <span rtElem="handle">
+                            <rt-icon-button
+                                cdkDragHandle
+                                qa-dataid="dynamic-selector-drag"
+                                icon="arrows"
+                                size="sm"
+                                [radius]="buttonRadius()"
+                                [ariaLabel]="dragLabel()"
+                                [tooltip]="isNarrow() ? '' : dragLabel()"
+                                [disabled]="disabled()" />
+                        </span>
+                    }
+
+                    @if (editedIndex() === index) {
+                        <rt-input
+                            rtElem="field"
+                            qa-dataid="dynamic-selector-edit-field"
+                            [ngModel]="draft()"
+                            (ngModelChange)="draft.set($event ?? '')"
+                            (keydown.enter)="onEditApply(row)" />
+                    } @else if (titleTpl(); as tpl) {
+                        <div rtElem="title">
+                            <ng-container [ngTemplateOutlet]="tpl" [ngTemplateOutletContext]="{ $implicit: row.item }" />
+                        </div>
+                    } @else {
+                        <span rtElem="title">{{ row.label }}</span>
+                    }
+
+                    <div rtElem="controls">
+                        @if (controlsTpl(); as tpl) {
+                            <ng-container [ngTemplateOutlet]="tpl" [ngTemplateOutletContext]="{ $implicit: row.item }" />
+                        }
+
+                        @if (editable()) {
+                            @if (editedIndex() === index) {
+                                <rt-icon-button
+                                    qa-dataid="dynamic-selector-edit-cancel"
+                                    icon="undo"
+                                    size="sm"
+                                    [radius]="buttonRadius()"
+                                    [ariaLabel]="cancelLabel()"
+                                    [tooltip]="isNarrow() ? '' : cancelLabel()"
+                                    (clicked)="onEditCancel()" />
+                                <rt-icon-button
+                                    qa-dataid="dynamic-selector-edit-apply"
+                                    icon="check"
+                                    size="sm"
+                                    [radius]="buttonRadius()"
+                                    [ariaLabel]="applyLabel()"
+                                    [tooltip]="isNarrow() ? '' : applyLabel()"
+                                    (clicked)="onEditApply(row)" />
+                            } @else {
+                                <rt-icon-button
+                                    qa-dataid="dynamic-selector-edit"
+                                    icon="pencil"
+                                    size="sm"
+                                    [radius]="buttonRadius()"
+                                    [ariaLabel]="editLabel()"
+                                    [tooltip]="isNarrow() ? '' : editLabel()"
+                                    [disabled]="disabled()"
+                                    (clicked)="onEditStart(index, row)" />
+                            }
+                        }
+
+                        <rt-icon-button
+                            qa-dataid="dynamic-selector-remove"
+                            icon="trash"
+                            size="sm"
+                            [radius]="buttonRadius()"
+                            [iconColor]="row.locked || disabled() ? 'muted' : 'danger'"
+                            [ariaLabel]="removeLabel()"
+                            [tooltip]="isNarrow() ? '' : removeLabel()"
+                            [disabled]="row.locked || disabled()"
+                            (clicked)="onRemove(row)" />
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+    @if (actionsShown()) {
+        <div rtElem="actions">
+            <div rtElem="add">
+                <ng-content />
+            </div>
+
+            <rt-icon-button
+                qa-dataid="dynamic-selector-reset"
+                icon="refresh"
+                size="sm"
+                [radius]="buttonRadius()"
+                [iconColor]="resetDisabled() || disabled() ? 'muted' : 'current'"
+                [ariaLabel]="resetLabel()"
+                [tooltip]="isNarrow() ? '' : resetLabel()"
+                [disabled]="resetDisabled() || disabled()"
+                (clicked)="resetClicked.emit()" />
+            <rt-icon-button
+                qa-dataid="dynamic-selector-clear"
+                icon="close"
+                size="sm"
+                [radius]="buttonRadius()"
+                [iconColor]="clearDisabled() || disabled() ? 'muted' : 'danger'"
+                [ariaLabel]="clearLabel()"
+                [tooltip]="isNarrow() ? '' : clearLabel()"
+                [disabled]="clearDisabled() || disabled()"
+                (clicked)="cleared.emit()" />
+        </div>
+    }
+</ng-container>

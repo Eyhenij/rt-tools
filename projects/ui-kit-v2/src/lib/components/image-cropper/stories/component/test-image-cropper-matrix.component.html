@@ -1,0 +1,57 @@
+@switch (part) {
+    @case ('ratios') {
+        <app-story-presets caption="Пропорции рамки в обоих наборах">
+            <ng-template>
+                <app-story-row [items]="ratioCases" [itemLabel]="caseLabel" [slotWidth]="cellWidth">
+                    <ng-template let-ratioCase>
+                        <rt-image-cropper [file]="sample()" [ratio]="ratioCase.ratio" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('looks') {
+        <app-story-presets caption="Вид рамки в обоих наборах">
+            <ng-template>
+                <app-story-row [items]="lookCases" [itemLabel]="caseLabel" [slotWidth]="cellWidth">
+                    <ng-template let-lookCase>
+                        <rt-image-cropper [file]="sample()" [round]="lookCase.round" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('states') {
+        <app-story-presets caption="Состояния поля в обоих наборах">
+            <ng-template>
+                <app-story-row [items]="stateCases()" [itemLabel]="caseLabel" [slotWidth]="cellWidth">
+                    <ng-template let-stateCase>
+                        <rt-image-cropper [file]="stateCase.file" [ratio]="1" [disabled]="stateCase.disabled" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('presets') {
+        <app-story-presets caption="Обрезка в обоих наборах">
+            <ng-template>
+                <rt-image-cropper [file]="sample()" [ratio]="1" />
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('themes') {
+        <app-story-presets caption="Обрезка в обеих темах в обоих наборах">
+            <ng-template>
+                <app-story-themes>
+                    <ng-template>
+                        <rt-image-cropper round [file]="sample()" />
+                    </ng-template>
+                </app-story-themes>
+            </ng-template>
+        </app-story-presets>
+    }
+}

@@ -13,6 +13,9 @@
         --rt-empty-state-icon-size: var(--rt-size-8);
         --rt-empty-state-title-size: var(--rt-text-md);
         --rt-empty-state-title-weight: var(--rt-font-weight-medium);
+        --rt-empty-state-frame-width: var(--rt-border-width-medium);
+        --rt-empty-state-frame-color: var(--rt-color-border-strong);
+        --rt-empty-state-frame-radius: var(--rt-radius-lg);
 
         display: flex;
         flex-direction: column;
@@ -21,6 +24,12 @@
         padding: var(--rt-space-xl) var(--rt-space-lg);
         gap: var(--rt-space-sm);
         text-align: center;
+
+        /* Рамка зоны загрузки: пунктир говорит «сюда можно бросить файл», как у первого кита. */
+        &--framed {
+            border: var(--rt-empty-state-frame-width) dashed var(--rt-empty-state-frame-color);
+            border-radius: var(--rt-empty-state-frame-radius);
+        }
 
         /* Слот иллюстрации (проецируемая графика вместо иконки) — скрыт, если пуст. */
         &__illustration {
