@@ -70,7 +70,7 @@ function rowTooltips<T>(fixture: ComponentFixture<T>): string[] {
     imports: [RtSideMenuComponent, RtSideMenuIconDirective],
 })
 class OwnButtonHostComponent {
-    public readonly items: IRtSideMenu.Item[] = ITEMS;
+    public items: IRtSideMenu.Item[] = ITEMS;
 }
 
 describe('Переключатели бокового меню', (): void => {
@@ -138,6 +138,17 @@ describe('Переключатели бокового меню', (): void => {
         // Кнопка со значком кита шаблон не берёт.
         expect((actions[1].nativeElement as HTMLElement).querySelector('.own')).toBeNull();
         expect((actions[1].nativeElement as HTMLElement).querySelector('rt-icon')).not.toBeNull();
+    });
+
+    it('SC-UKV-622 — пункт полосы с именем вне кита отдаёт шаблону своё имя и место', (): void => {
+        TestBed.configureTestingModule({ providers: PROVIDERS as never[] });
+        const fixture: ComponentFixture<OwnButtonHostComponent> = TestBed.createComponent(OwnButtonHostComponent);
+        fixture.componentInstance.items = [{ id: 'launches', icon: 'rocket_launch', name: 'Запуски', link: '/launches' }, ...ITEMS];
+        fixture.detectChanges();
+        const own: HTMLElement | null = (qaAll(fixture, 'side-menu-item')[0].nativeElement as HTMLElement).querySelector('.own');
+
+        expect(own?.getAttribute('data-icon')).toBe('rocket_launch');
+        expect(own?.getAttribute('data-slot')).toBe('icon');
     });
 
     it('SC-UKV-622 — без своего шаблона кнопка строки с именем вне кита пуста и значка не просит', (): void => {

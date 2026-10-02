@@ -191,7 +191,9 @@
                     <rt-icon [name]="kitIcon" />
                 } @else if (ownIconTpl(); as own) {
                     <span rtElem="own-icon" qa-dataid="side-menu-own-icon" aria-hidden="true">
-                        <ng-container [ngTemplateOutlet]="own" [ngTemplateOutletContext]="{ $implicit: item }" />
+                        <ng-container
+                            [ngTemplateOutlet]="own"
+                            [ngTemplateOutletContext]="{ $implicit: item, icon: item.icon, slot: 'icon' }" />
                     </span>
                 }
             </span>
@@ -233,7 +235,7 @@
                 <rt-icon rtElem="mobile-icon" [name]="kitIcon" />
             } @else if (ownIconTpl(); as own) {
                 <span rtElem="own-icon" qa-dataid="side-menu-own-icon" aria-hidden="true">
-                    <ng-container [ngTemplateOutlet]="own" [ngTemplateOutletContext]="{ $implicit: item }" />
+                    <ng-container [ngTemplateOutlet]="own" [ngTemplateOutletContext]="{ $implicit: item, icon: item.icon, slot: 'icon' }" />
                 </span>
             }
         }
