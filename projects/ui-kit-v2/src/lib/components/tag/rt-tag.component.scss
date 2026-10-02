@@ -20,7 +20,9 @@
         max-width: 100%;
 
         /* Цвета и отступы приложение задаёт ручками `--rt-tag-color-*` и `--rt-tag-padding-*`:
-           их кит не объявляет, а запасное значение — то, что дают палитра и ступень размера. */
+           их кит не объявляет, а запасное значение — то, что дают палитра и ступень размера.
+           У интервала запасного нет нарочно: незаданная ручка даёт unset, то есть наследование
+           от родителя, как до ручки. Запасное normal обрывало его. */
         .rt-tag {
             --rt-tag-severity-bg: var(--rt-neutral-100);
             --rt-tag-severity-text: var(--rt-neutral-700);
@@ -37,7 +39,7 @@
             color: var(--rt-tag-color-text, var(--rt-tag-severity-text));
             font-size: var(--rt-text-sm);
             gap: var(--rt-space-1);
-            letter-spacing: var(--rt-tag-letter-spacing, normal);
+            letter-spacing: var(--rt-tag-letter-spacing);
             line-height: var(--rt-leading-tight);
 
             /* Ступени размера: отступы, кегль и просвет между частями двигаются вместе. `md`

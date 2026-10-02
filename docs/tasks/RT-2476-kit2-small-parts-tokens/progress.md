@@ -25,6 +25,7 @@
 ## Decisions along the way
 
 - The tag keeps its severity and size values in private properties on its root; the six handles read them as the fallback.
+- The letter-spacing handle has no fallback: an unset handle gives `unset`, so the tag inherits its parent's spacing as before. The first snapshot run caught it — the info item frame diverged, its value carries a wide spacing.
 - The toggle switch label properties are `--rt-toggle-label-gap`, `-size`, `-color-off`, `-color-on`, `-color-hover`: the requested `--rt-toggle-label-color` and `-font-size` are taken by the first kit, and the tokens graph check refuses a shared name.
 - The size, on and disabled modifiers are also drawn on the toggle switch host; the disabled opacity sits there and dims the label too.
 - The toolbar height is a minimum height: a bar stacked into a column on a narrow screen is never clipped. The gap property is the gap between the zones.

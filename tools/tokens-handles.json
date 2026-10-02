@@ -23,6 +23,6 @@
     "--rt-tag-color-border": "the outline colour of an outlined tag; the default is the text colour",
     "--rt-tag-padding-block": "the tag's block padding; the default follows its size step",
     "--rt-tag-padding-inline": "the tag's inline padding; the default follows its size step",
-    "--rt-tag-letter-spacing": "the tag's letter spacing; the default is normal"
+    "--rt-tag-letter-spacing": "the tag's letter spacing; unset, the tag inherits it from its parent"
   }
 }
