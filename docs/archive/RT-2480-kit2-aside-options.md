@@ -51,3 +51,13 @@ a `[asideHeaderContent]` slot under the header title.
   the word `inset`, the panel's own word for it; line height takes `leading`, the kit's word.
 - **The header content slot is a row under the header row, across the whole header.** An empty slot
   takes no room.
+
+## Decisions along the way
+
+- The owner's destruction closes the panel through the service's per-open stream, not a separate
+  subscription: the tree's lint forbids a subscription inside a method, and the stream ends with the
+  overlay anyway.
+- The focus trap is created by the factory only while the input is on: the CDK directive would
+  insert its anchors into every panel, the ones without a trap too.
+- Escape and the backdrop are now listened to always, so that a switched-off gesture is reported. A
+  panel with Escape switched off now keeps that key from an overlay under it.
