@@ -1,19 +1,18 @@
 # `rt-tag`
 
 ```html
-<rt-tag value="Активен" severity="success" shape="pill" appearance="solid" icon="check" [closable]="true" (closed)="onClosed($event)" />
+<rt-tag value="Активен" severity="success" appearance="solid" icon="check" [closable]="true" (closed)="onClosed($event)" />
 ```
 
-| вход               | тип                                                                        | умолчание      |
-| ------------------ | -------------------------------------------------------------------------- | -------------- |
-| `value`            | `string`                                                                   | **обязателен** |
-| `severity`         | `'info' \| 'success' \| 'warning' \| 'danger' \| 'secondary' \| 'neutral'` | `'neutral'`    |
-| `size`             | `'sm' \| 'md' \| 'lg'`                                                     | `'md'`         |
-| `shape`            | `'pill' \| 'square'`                                                       | `'pill'`       |
-| `appearance`       | `'solid' \| 'outlined'`                                                    | `'solid'`      |
-| `radius`           | `'none' \| 'sm' \| 'md' \| 'lg' \| 'full' \| null`                         | `null`         |
-| `icon` / `iconEnd` | `IRtIcon.Name \| null`                                                     | `null`         |
-| `closable`         | `boolean`                                                                  | `false`        |
+| вход               | тип                                                                        | умолчание       |
+| ------------------ | -------------------------------------------------------------------------- | --------------- |
+| `value`            | `string`                                                                   | **обязателен**  |
+| `severity`         | `'info' \| 'success' \| 'warning' \| 'danger' \| 'secondary' \| 'neutral'` | `'neutral'`     |
+| `size`             | `'sm' \| 'md' \| 'lg'`                                                     | `'md'`          |
+| `appearance`       | `'solid' \| 'outlined'`                                                    | `'solid'`       |
+| `radius`           | `TRtRadius \| null` — шаг общей шкалы                                      | `null` → `full` |
+| `icon` / `iconEnd` | `IRtIcon.Name \| null`                                                     | `null`          |
+| `closable`         | `boolean`                                                                  | `false`         |
 
 | выход    | тип          |
 | -------- | ------------ |
@@ -37,8 +36,8 @@
   12 пикселей, `md` — 16, `lg` — 20. Кегль, названный отдельно, оставил бы отступы от другой
   ступени, и ряд пилюль перестал бы выстраиваться.
 
-- `radius` перебивает скругление, заданное формой. Без него класс скругления не выводится
-  вовсе — радиус берётся из `shape`.
+- `radius` — шаг общей шкалы кита, он ложится на хост атрибутом. Без него пилюля скруглена
+  полностью.
 - Палитра дублируется атрибутом `data-severity` — по нему тег находят проверки и внешние стили,
   не завязываясь на BEM-класс.
 - Подпись крестика для скринридера берётся из словаря кита (`uiRemove`). Без
@@ -48,8 +47,8 @@
 
 - `value` — обязательный вход: тег без текста не бывает. Иконка без текста — это
   [`rt-icon-button`](../icon-button/CONTEXT.md), а не тег.
-- Модификаторы выводятся BEM-директивами: `rt-tag--severity--success`, `rt-tag--shape--square`,
-  булев `closable` даёт `rt-tag--closable` без значения.
+- Модификаторы выводятся BEM-директивами: `rt-tag--severity--success`, булев `closable` даёт
+  `rt-tag--closable` без значения.
 
 ## Рядом
 

@@ -456,13 +456,14 @@ model ChatVisitor {
     @@map("chat_visitor")
 }
 
-/// Переписка: разговор одного посетителя на одном сайте. Живая переписка у посетителя одна —
-/// иначе перезагрузка страницы рвала бы разговор на куски, которые оператор видит как разных людей.
+/// Переписка: одно обращение посетителя на сайте. Обращений у посетителя может быть несколько, но
+/// новое заводится только по его просьбе — иначе перезагрузка страницы рвала бы разговор на куски,
+/// которые оператор видит как разных людей.
 model ChatConversation {
     id        String      @id @default(uuid())
     siteId    String
     site      ChatSite    @relation(fields: [siteId], references: [id], onDelete: Cascade)
-    visitorId String      @unique
+    visitorId String
     visitor   ChatVisitor @relation(fields: [visitorId], references: [id], onDelete: Cascade)
     createdAt DateTime    @default(now())
     /// Минута последнего сообщения: по ней панель оператора ставит переписки по свежести.
@@ -474,10 +475,14 @@ model ChatConversation {
     /// Ответ оператора её снимает: иначе одна переписка будила бы каждую минуту, и приложение
     /// научилось бы не смотреть на эти вызовы вовсе.
     wokeAt        DateTime?
+    /// Минута, которой оператор закрыл переписку. Пусто — она живая: реплика посетителя, открывшая её
+    /// снова, минуту снимает.
+    closedAt      DateTime?
 
     messages ChatMessage[]
 
     @@index([siteId, state, lastMessageAt])
+    @@index([visitorId, lastMessageAt])
     @@map("chat_conversation")
 }
 
@@ -493,6 +498,9 @@ model ChatMessage {
     text           String
     /// Минута приёма сервисом.
     takenAt        DateTime         @default(now())
+    /// Имя учётной записи, которая написала ответ, на минуту ответа. Пусто — реплика посетителя или
+    /// ответ без учётной записи. Имя, а не связь: таблиц приёма чат не трогает.
+    authorName     String           @default("")
 
     @@index([conversationId, takenAt])
     @@map("chat_message")

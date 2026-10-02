@@ -43,8 +43,15 @@ test.describe('отбор по дереву', () => {
         const options: IOptionMetrics[] = await page.getByRole('option').evaluateAll((nodes: Element[]): IOptionMetrics[] =>
             nodes.map((node: Element): IOptionMetrics => {
                 const range: Range = document.createRange();
+                /*
+                 * Мерится подпись, а не вся опция: рядом с ней в опции стоят галочка выбранной и
+                 * место под стрелку дерева, и выделение по всей опции давало выбранной две
+                 * «строки» там, где подпись стоит в одну. Опция без узла подписи мерится целиком —
+                 * тогда тест снова считает по всем её узлам и покажет, что разметка сменилась.
+                 */
+                const label: Element = node.querySelector('.rt-select__option-label') ?? node;
 
-                range.selectNodeContents(node);
+                range.selectNodeContents(label);
 
                 return {
                     text: (node.textContent ?? '').trim(),

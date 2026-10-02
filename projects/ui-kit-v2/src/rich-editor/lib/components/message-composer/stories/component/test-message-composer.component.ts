@@ -21,6 +21,7 @@ import { TRtRichEditorToolbar } from '../../../rich-editor/rt-rich-editor.compon
                     [sending]="sending"
                     [disabled]="disabled"
                     [formatting]="formatting"
+                    [hint]="hint"
                     [toolbar]="toolbar"
                     [minRows]="minRows"
                     [maxRows]="maxRows"
@@ -44,6 +45,7 @@ export class TestRtMessageComposerComponent {
     public sending: boolean = false;
     public disabled: boolean = false;
     public formatting: boolean = false;
+    public hint: boolean = false;
     public toolbar: TRtRichEditorToolbar = 'full';
     public minRows: number = 1;
     public maxRows: number = 6;

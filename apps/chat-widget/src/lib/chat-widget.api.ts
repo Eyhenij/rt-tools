@@ -1,13 +1,22 @@
 /**
  * Обращения виджета к сервису.
  *
- * Все пять открытые: виджет представляется ключом площадки, а своей перепиской — признаком
+ * Все шесть открытые: виджет представляется ключом площадки, а своей перепиской — признаком
  * посетителя. Форму ответов виджет берёт у общей либы — той же, которой отвечает приёмник:
  * своя копия формы разошлась бы с ней молча.
  *
  * Отказ приезжает кодом, а не словами: слова виджет говорит свои, и разбирает код общий разбор.
  */
-import { ERefusal, IChatMessageRow, IChatSiteLookRow, IPage, IRefusal, refusalOf, TRefusalParams } from '@rt/message-bus-common';
+import {
+    ERefusal,
+    IChatMessageRow,
+    IChatSiteLookRow,
+    IChatVisitorTalkListRow,
+    IPage,
+    IRefusal,
+    refusalOf,
+    TRefusalParams,
+} from '@rt/message-bus-common';
 
 /** Сколько реплик читается за раз: разговор поддержки короток, страница у него одна. */
 const FEED_SIZE: number = 100;
@@ -63,12 +72,20 @@ export async function askOwnFeed(signs: IWidgetSigns): Promise<IPage<IChatMessag
     return answer<IPage<IChatMessageRow>>(asked);
 }
 
-/** Заведение переписки. Признак посетителя приезжает, если он у виджета уже был. */
-export async function startTalk(service: string, site: string, visitor: string): Promise<{ conversationId: string; visitorToken: string }> {
+/**
+ * Заведение переписки. Признак посетителя приезжает, если он у виджета уже был; отметка `fresh`
+ * заводит ему новое обращение — её ставит только кнопка «Новое обращение».
+ */
+export async function startTalk(
+    service: string,
+    site: string,
+    visitor: string,
+    fresh: boolean = false
+): Promise<{ conversationId: string; visitorToken: string }> {
     const asked: Response = await fetch(`${service}/api/chat/conversations`, {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify(visitor ? { site, visitor } : { site }),
+        body: JSON.stringify(visitor ? { site, visitor, fresh } : { site }),
     });
 
     return answer<{ conversationId: string; visitorToken: string }>(asked);
@@ -90,4 +107,12 @@ export function streamAddress(signs: IWidgetSigns): string {
     const query: URLSearchParams = new URLSearchParams({ site: signs.site, visitor: signs.visitor });
 
     return `${signs.service}/api/chat/stream?${query.toString()}`;
+}
+
+/** Обращения посетителя, свежие первыми: из них собирается список «Ваши обращения». */
+export async function askTalks(signs: IWidgetSigns): Promise<IChatVisitorTalkListRow[]> {
+    const query: URLSearchParams = new URLSearchParams({ site: signs.site, visitor: signs.visitor });
+    const asked: Response = await fetch(`${signs.service}/api/chat/visitor-conversations?${query.toString()}`);
+
+    return answer<IChatVisitorTalkListRow[]>(asked);
 }

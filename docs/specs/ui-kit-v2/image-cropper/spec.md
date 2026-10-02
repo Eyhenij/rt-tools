@@ -144,4 +144,4 @@ None.
 
 - 29 September 2026 — the agreement was written before the code, the task RT-2397. The accordion
   was merged first and took `SC-UKV-394`…`SC-UKV-405`, so the last four scenarios of the family
-  took `SC-UKV-406`…`SC-UKV-409`.
+  took `SC-UKV-502`…`SC-UKV-505`.

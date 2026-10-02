@@ -78,6 +78,44 @@ d "SC-AK-1076 — у дерева без профиля форма не суди
     "cd $BARE_TREE && git checkout -b RT-9-GuestToken" PASS
 rm -rf "$NEIGHBOUR_TREE" "$BARE_TREE"
 
+# --- SC-AK-1174…1176. Задача спрашивается у репозитория, в котором идёт команда -----------------
+# Ветка, заведённая в другом репозитории, несёт номер задачи того репозитория. Спрошенный у
+# очереди дерева сессии, номер указывал на задачу, которой там нет. Вторая копия того же
+# репозитория — не другое дерево: общий каталог `.git` один, и очередь работ одна.
+#
+# Очереди подставляются профилями: в очереди сессии задачи нет, в очереди соседа она взята.
+task_profile() {
+    mkdir -p "$1/.claude/rt-kit"
+    cat > "$1/.claude/rt-kit/project.sh" <<EOF
+rt_task_state() { printf '%s' '{"exists":$2,"open":true,"onBoard":true,"assigned":true,"numbered":true}'; }
+EOF
+}
+dt() {
+    local label="$1" session="$2" cmd="$3" want="$4" out
+    out="$(CLAUDE_PROJECT_DIR="$session" input_cmd "$cmd" Bash "$session" \
+        | CLAUDE_PROJECT_DIR="$session" "$HOOKS/git-guard-delivery.sh" 2>/dev/null \
+        | jq -r '.hookSpecificOutput.permissionDecision // "PASS"' 2>/dev/null)"
+    report "$label" "${out:-PASS}" "$want"
+}
+SESSION_TREE="$(fixture_repo_branched main main-work)"
+task_profile "$SESSION_TREE" false
+OTHER_REPO="$(fixture_repo RT-9-probe)"
+task_profile "$OTHER_REPO" true
+COPY_HOME="$(mktemp -d)"
+git -C "$SESSION_TREE" worktree add -q -b copy-work "$COPY_HOME/copy" main 2>/dev/null
+
+dt "SC-AK-1174 — ветка в другом репозитории спрашивает задачу у его очереди" "$SESSION_TREE" \
+    "cd $OTHER_REPO && git checkout -b RT-9-other" PASS
+dt "SC-AK-1174 — та же ветка в своём дереве спрашивает свою очередь как прежде" "$SESSION_TREE" \
+    'git checkout -b RT-9-other' deny
+dt "SC-AK-1175 — вторая копия того же репозитория спрашивает очередь сессии" "$SESSION_TREE" \
+    "cd $COPY_HOME/copy && git checkout -b RT-9-other" deny
+dt "SC-AK-1176 — заявка из другого репозитория читает его ветку и его задачу" "$SESSION_TREE" \
+    "cd $OTHER_REPO && gh pr create --title '[RT-9] Сделано' --body x" PASS
+dt "SC-AK-1176 — заявка из второй копии читает ветку копии" "$SESSION_TREE" \
+    "cd $COPY_HOME/copy && gh pr create --title '[RT-9] Сделано' --body x" deny
+rm -rf "$SESSION_TREE" "$OTHER_REPO" "$COPY_HOME"
+
 # --- SC-AK-830. Приставкой имени бывает не только ключ задач --------------------------------
 # Номер вынимает профиль: пока разбор был зашит в гард одной формой, такая ветка номера не
 # давала вовсе, и форма её не проверялась.

@@ -17,6 +17,7 @@ import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { RtIconComponent } from '../icon/rt-icon.component';
 import { IRtIcon } from '../icon/rt-icon.model';
+import { RtRadiusDirective } from '../radius/rt-radius.directive';
 import { RtTooltipDirective } from '../tooltip/rt-tooltip.directive';
 import { IRtToggleButtonGroup } from './rt-toggle-button-group.model';
 
@@ -65,6 +66,7 @@ const ICON_SIZE_BY_SIZE: Readonly<Record<IRtToggleButtonGroup.Size, IRtIcon.Size
         ElemDirective,
         ModDirective,
     ],
+    hostDirectives: [{ directive: RtRadiusDirective, inputs: ['radius'] }],
     host: {
         class: BEM_BLOCK,
         '[class.rt-toggle-button-group--full-width]': 'fullWidth()',

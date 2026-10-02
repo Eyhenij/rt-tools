@@ -13,6 +13,7 @@ import {
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
 import { RtIconComponent } from '../icon/rt-icon.component';
+import { RtRadiusDirective } from '../radius/rt-radius.directive';
 
 const BEM_BLOCK: string = 'rt-notifications-bell';
 
@@ -37,6 +38,7 @@ const BEM_BLOCK: string = 'rt-notifications-bell';
         // components
         RtIconComponent,
     ],
+    hostDirectives: [{ directive: RtRadiusDirective, inputs: ['radius'] }],
     host: {
         class: BEM_BLOCK,
     },

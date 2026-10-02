@@ -30,6 +30,25 @@ export interface IScreenShotOptions {
 }
 
 /**
+ * Снять фокус с кнопки перед кадром.
+ *
+ * Подсказка кита всплывает и от фокуса, не только от наведения. Закрытое меню возвращает фокус на
+ * кнопку, которая его открыла, и через задержку над ней встаёт подсказка: кадр панели доступа
+ * ловил подсказку «Действия» у кнопки строки, смотря по тому, успела ли она. Увод указателя её не
+ * прячет — прячет только потеря фокуса.
+ *
+ * Поле ввода фокус сохраняет: его фокус — часть того, что кадр показывает.
+ */
+async function dropButtonFocus(page: Page): Promise<void> {
+    await page.evaluate((): void => {
+        const focused: Element | null = document.activeElement;
+        if (focused instanceof HTMLButtonElement || focused instanceof HTMLAnchorElement) {
+            focused.blur();
+        }
+    });
+}
+
+/**
  * Снять кадр целой страницы и сверить с эталоном.
  *
  * Кадр берётся целой страницей, а не окном: панель, вылезшая за нижний край, в оконном кадре
@@ -47,6 +66,7 @@ export async function expectScreen(page: Page, name: string, options: IScreenSho
      */
     if (!options.keepPointer) {
         await page.mouse.move(0, 0);
+        await dropButtonFocus(page);
     }
 
     await expect(page).toHaveScreenshot(`${name}.png`, {

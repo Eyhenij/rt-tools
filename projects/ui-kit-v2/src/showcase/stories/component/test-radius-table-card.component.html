@@ -1,0 +1,8 @@
+<table rt-table ariaLabel="Туры" [dataSource]="rows" [columns]="columns" [radius]="radius()">
+    <ng-container cdkColumnDef="title">
+        <th *cdkHeaderCellDef cdk-header-cell>Тур</th>
+        <td *cdkCellDef="let row" cdk-cell>{{ row.title }}</td>
+    </ng-container>
+    <tr *cdkHeaderRowDef="columns" cdk-header-row></tr>
+    <tr *cdkRowDef="let row; columns: columns" cdk-row></tr>
+</table>

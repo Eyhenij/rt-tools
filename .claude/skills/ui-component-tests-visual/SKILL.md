@@ -23,7 +23,9 @@ costs depends on the kit, and the two are no longer alike.
 
 Both kits' frames are taken by a browser raised in an image, and each showcase is built and served
 as files: `node tools/visual-gate.mjs ui-kit` and `node tools/visual-gate.mjs ui-kit-v2`, a re-take
-by the same command with `--update`. The image is one on any machine, so the references are matched
+by the same command with `--update`. A pointed re-take passes a piece of the story file path after
+the flag, not the frame name: a frame name matches no file, and the run reports no tests. The image
+is one on any machine, so the references are matched
 everywhere — on the developer's machine and in the pipeline alike. A re-take by any other road
 writes the raster of the machine that took it, and the run refuses to start without the image's
 address for exactly that reason. The development server is not shot at all: from the image it

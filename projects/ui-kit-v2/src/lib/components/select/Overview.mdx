@@ -97,18 +97,35 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 блока, которому пара назначает свойства темы. Тёмную панель смотрят переключателем темы в
 тулбаре, а не парой.
 
+## Дерево опций
+
+Опция может нести `children` того же вида — тогда список рисуется деревом. Отдельного входа нет:
+дерево узнаётся по самим опциям, а плоский список выглядит как прежде.
+
+- Строка отступает на шаг 24px за уровень. У ветки стрелка — вправо свёрнута, вниз раскрыта; у листа
+  на её месте пусто, и подписи одного уровня стоят в одну колонку.
+- Клик по стрелке раскрывает или сворачивает ветку и ничего не выбирает. Клик по подписи выбирает
+  опцию — ветку так же, как лист.
+- При открытии раскрыты ветки над выбранным значением. Поиск оставляет совпавшие строки и путь к
+  ним, раскрытый.
+- `ArrowRight` раскрывает ветку или спускается к первому ребёнку, `ArrowLeft` сворачивает ветку или
+  поднимается к родителю.
+
+Договорённость — `docs/specs/ui-kit-v2/option-tree/`.
+
 ## Входы
 
-| вход                | тип                                          | умолчание         |
-| ------------------- | -------------------------------------------- | ----------------- |
-| `appearance`        | `'outline' \| 'fill'`                        | `'outline'`       |
-| `options`           | `ReadonlyArray<{ label, value, disabled? }>` | `[]`              |
-| `placeholder`       | `string`                                     | `''`              |
-| `iconLeft`          | `IRtIcon.Name \| null`                       | `null`            |
-| `filter`            | `boolean`                                    | `false`           |
-| `filterPlaceholder` | `string`                                     | `''` → `uiSearch` |
-| `panelWidth`        | `'trigger' \| 'trigger-min' \| 'auto'`       | `'trigger-min'`   |
-| `panelMaxHeight`    | `string \| null`                             | `null`            |
+| вход                | тип                                                     | умолчание                 |
+| ------------------- | ------------------------------------------------------- | ------------------------- |
+| `appearance`        | `'outline' \| 'fill'`                                   | `'outline'`               |
+| `options`           | `ReadonlyArray<{ label, value, disabled?, children? }>` | `[]`                      |
+| `placeholder`       | `string`                                                | `''`                      |
+| `iconLeft`          | `IRtIcon.Name \| null`                                  | `null`                    |
+| `filter`            | `boolean`                                               | `false`                   |
+| `filterPlaceholder` | `string`                                                | `''` → `uiSearch`         |
+| `panelWidth`        | `'trigger' \| 'trigger-min' \| 'auto'`                  | `'trigger-min'`           |
+| `panelMaxHeight`    | `string \| null`                                        | `null`                    |
+| `radius`            | `TRtRadius \| null`                                     | `null` → скругление полей |
 
 ## Входы от основы полей
 

@@ -37,6 +37,15 @@ function declaredInputs(source) {
         names.add(match[1]);
     }
 
+    // An input a host directive forwards is the component's input the same way: the consumer writes
+    // it on the component's tag. The list stands in the decorator, the public name after the colon.
+    const decorator = source.split(/\bexport\s+class\b/)[0];
+    for (const list of decorator.matchAll(/inputs:\s*\[([^\]]*)\]/g)) {
+        for (const entry of list[1].matchAll(/'([^']+)'/g)) {
+            names.add(entry[1].split(':').pop().trim());
+        }
+    }
+
     return names;
 }
 

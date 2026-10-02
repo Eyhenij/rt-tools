@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 
+import { STORY_OPTION_TREE } from '../../../../../showcase/story-option-tree';
 import { STORY_FIELD_WIDTH } from '../../../../../showcase/story-metrics';
 import { STORY_TRIGGER_ATTRIBUTE } from '../../../../../showcase/story-overlay';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
@@ -16,7 +17,7 @@ import { RtMultiselectComponent } from '../../rt-multiselect.component';
 export type TMultiselectMatrixPart = 'size' | 'chips' | 'bordered' | 'states' | 'presets' | 'themes' | 'panel';
 
 /** Что показывает открытая панель: набор вариантов или его отсутствие. */
-export type TMultiselectPanelCase = 'options' | 'empty';
+export type TMultiselectPanelCase = 'options' | 'empty' | 'tree';
 
 /** Наполненность триггера: сколько фишек влезло и с какого места пошёл счётчик `+N`. */
 interface IMultiselectChipsCase {
@@ -108,6 +109,16 @@ function invalid(): FormControl<readonly string[] | null> {
                                     [maxChips]="chipsCase.maxChips"
                                     [options]="options"
                                     [formControl]="chipsCase.control" />
+                            </ng-template>
+                        </app-story-row>
+
+                        <app-story-row caption="Иконка слева" [items]="iconCases" [itemLabel]="iconLabel" [slotWidth]="fieldWidth">
+                            <ng-template let-withIcon>
+                                <rt-multiselect
+                                    ariaLabel="Иконка слева"
+                                    placeholder="Выберите города"
+                                    [iconLeft]="withIcon ? 'ico-search' : null"
+                                    [options]="options" />
                             </ng-template>
                         </app-story-row>
                     </ng-template>
@@ -210,8 +221,8 @@ function invalid(): FormControl<readonly string[] | null> {
                         ariaLabel="Открытый список"
                         placeholder="Выберите города"
                         [attr.data-story-trigger]="triggerAttribute"
-                        [options]="panel === 'empty' ? noOptions : options"
-                        [formControl]="panelControl" />
+                        [options]="panel === 'empty' ? noOptions : panel === 'tree' ? treeOptions : options"
+                        [formControl]="panel === 'tree' ? treeControl : panelControl" />
                 </div>
             }
         }
@@ -264,6 +275,12 @@ export class TestRtMultiselectMatrixComponent {
     /** Выбор ряда размеров: фишка нужна, чтобы высота триггера мерилась по содержимому. */
     public readonly sizeControl: FormControl<readonly string[] | null> = chosen(['msk']);
 
+    /** Дерево опций: ветки, листья и отключённый лист на трёх уровнях. */
+    public readonly treeOptions: ReadonlyArray<IRtSelect.Option<string>> = STORY_OPTION_TREE;
+
+    /** Все листья области выбраны — её флажок включён, у округа над ней выбрана часть — промежуточный. */
+    public readonly treeControl: FormControl<readonly string[] | null> = chosen(['msk', 'khi']);
+
     /** Выбор открытой панели: по нему видно, чем отмеченная опция отличается от прочих. */
     public readonly panelControl: FormControl<readonly string[] | null> = chosen(['spb', 'nsk']);
 
@@ -295,6 +312,10 @@ export class TestRtMultiselectMatrixComponent {
         { name: 'ошибка', disabled: false, control: invalid() },
         { name: 'отключено', disabled: true, control: chosen(['msk']) },
     ];
+
+    public readonly iconCases: readonly boolean[] = [false, true];
+
+    public readonly iconLabel: (value: boolean) => string = (value: boolean): string => (value ? 'с иконкой' : 'без иконки');
 
     /** Подпись случая: у всех наборов этой матрицы имя лежит в одном поле. */
     public readonly caseLabel: (value: { readonly name: string }) => string = (value: { readonly name: string }): string => value.name;

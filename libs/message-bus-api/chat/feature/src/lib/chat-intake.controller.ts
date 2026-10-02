@@ -37,13 +37,18 @@ import {
     appendVisitorMessage,
     findConversationByVisitorToken,
     findLiveSiteByKey,
+    findVisitorConversation,
+    findVisitorId,
     IChatConversationRow,
     IChatMessageListRow,
     IChatSiteRow,
     IChatStartedRow,
     IChatTakenRow,
+    IChatVisitorTalkRow,
     messagesPage,
     startConversation,
+    startVisitorConversation,
+    visitorConversations,
 } from '@rt/message-bus-api/chat/data-access';
 import {
     chatAnswersAt,
@@ -111,9 +116,10 @@ export class ChatIntakeController {
     /**
      * Заведение переписки.
      *
-     * Признак посетителя приезжает, если виджет его уже получал: тогда возвращается живая
+     * Признак посетителя приезжает, если виджет его уже получал: тогда возвращается последняя
      * переписка, а вторая не заводится — перезагрузка страницы иначе рвала бы разговор на куски,
-     * которые оператор видит как разных людей.
+     * которые оператор видит как разных людей. Новое обращение того же посетителя заводит только
+     * отметка `fresh`: её ставит кнопка «Новое обращение», и больше ничто.
      */
     @Post('conversations')
     @PublicOperation()
@@ -121,12 +127,21 @@ export class ChatIntakeController {
         const fields: Record<string, unknown> = (body ?? {}) as Record<string, unknown>;
         const site: IChatSiteRow = await this.#site(fields, request);
         const asked: string = field(fields, 'visitor');
+        const visitorId: string | null = asked ? await findVisitorId(this.#prisma, site.id, asked) : null;
 
-        if (asked) {
-            const live: IChatConversationRow | null = await findConversationByVisitorToken(this.#prisma, site.id, asked);
+        if (visitorId && fields['fresh'] === true) {
+            this.#hold(`chat-start:${this.#clientKey(request)}`, at);
 
-            if (live) {
-                return { conversationId: live.id, visitorToken: asked };
+            const fresh: IChatConversationRow = await startVisitorConversation(this.#prisma, site.id, visitorId, at);
+
+            return { conversationId: fresh.id, visitorToken: asked };
+        }
+
+        if (visitorId) {
+            const latest: IChatConversationRow | null = await findConversationByVisitorToken(this.#prisma, site.id, asked);
+
+            if (latest) {
+                return { conversationId: latest.id, visitorToken: asked };
             }
         }
 
@@ -177,6 +192,28 @@ export class ChatIntakeController {
         return messagesPage(this.#prisma, conversation.id, pageAsked(query, MESSAGE_SORTABLE));
     }
 
+    /**
+     * Обращения посетителя на сайте, свежие первыми: из них виджет собирает список «Ваши обращения».
+     *
+     * Закрыты признаком посетителя, как и чтение его переписки: чужой и никому не выданный признак
+     * отвечают одинаково, как ненайденная переписка.
+     */
+    @Get('visitor-conversations')
+    @PublicOperation()
+    public async talks(@Query() query: Record<string, unknown>, @Req() request: IChatRequest): Promise<IChatVisitorTalkRow[]> {
+        const site: IChatSiteRow = await this.#site(query, request);
+        const token: string = field(query, 'visitor');
+        const talks: IChatVisitorTalkRow[] | null = token ? await visitorConversations(this.#prisma, site.id, token) : null;
+
+        if (!talks) {
+            this.#log.warn({ event: 'chat-conversation-refused', site: site.id });
+
+            throw new NotFoundException(refusalBody(ERefusal.ChatConversationNotFound));
+        }
+
+        return talks;
+    }
+
     /** Приём реплики посетителя в его переписку. */
     @Post('messages')
     @PublicOperation()
@@ -205,9 +242,10 @@ export class ChatIntakeController {
             messageId: message.id,
             side: CHAT_SIDE_VISITOR,
             takenAt: message.takenAt.toISOString(),
+            authorName: '',
         };
 
-        this.#subscribers.send({ conversationId: conversation.id, siteId: site.id }, event);
+        this.#subscribers.send({ conversationId: conversation.id, visitorId: conversation.visitorId, siteId: site.id }, event);
 
         /*
          * Вызов наружу ответа посетителю не держит: чужой узел, который не отвечает, иначе
@@ -224,12 +262,13 @@ export class ChatIntakeController {
     }
 
     /**
-     * Поток событий одной переписки: его читает виджет посетителя.
+     * Поток событий обращений посетителя: его читает виджет.
      *
      * Закрыт признаком посетителя — тем самым, который сервис выдал при заведении переписки:
-     * чужой и никому не выданный отвечают одинаково, как ненайденная переписка. Открытый поток
-     * ничего не пишет сам, пока в переписке не появилась реплика: пока событий нет, идёт
-     * сердцебиение, иначе простаивающее соединение закрыл бы проксировщик.
+     * чужой и никому не выданный отвечают одинаково, как ненайденная переписка. Несёт события всех
+     * обращений посетителя: ответ в то, что сейчас не открыто, виджет помечает в списке. Открытый
+     * поток ничего не пишет сам, пока реплики нет: идёт сердцебиение, иначе простаивающее
+     * соединение закрыл бы проксировщик.
      */
     @Get('stream')
     @PublicOperation()
@@ -237,30 +276,44 @@ export class ChatIntakeController {
     public async stream(@Query() query: Record<string, unknown>, @Req() request: IChatRequest): Promise<Observable<IChatFrame>> {
         const site: IChatSiteRow = await this.#site(query, request);
         const token: string = field(query, 'visitor');
-        const conversation: IChatConversationRow | null = token ? await findConversationByVisitorToken(this.#prisma, site.id, token) : null;
+        const visitorId: string | null = token ? await findVisitorId(this.#prisma, site.id, token) : null;
 
-        if (!conversation) {
+        if (!visitorId) {
             this.#log.warn({ event: 'chat-stream-refused', site: site.id });
 
             throw new NotFoundException(refusalBody(ERefusal.ChatConversationNotFound));
         }
 
-        return this.#subscribers.stream({ conversationId: conversation.id, siteIds: [] });
+        return this.#subscribers.stream({ visitorId, siteIds: [] });
     }
 
-    /** Переписка посетителя по его признаку. Чужая и несуществующая отвечают одинаково. */
+    /**
+     * Переписка посетителя по его признаку: названная, а если не названа — последняя. Чужая и
+     * несуществующая отвечают одинаково.
+     */
     async #own(site: IChatSiteRow, fields: Record<string, unknown>): Promise<IChatConversationRow> {
         const token: string = field(fields, 'visitor');
         const asked: string = field(fields, 'conversation');
-        const conversation: IChatConversationRow | null = token ? await findConversationByVisitorToken(this.#prisma, site.id, token) : null;
+        const conversation: IChatConversationRow | null = await this.#visitorTalk(site, token, asked);
 
-        if (!conversation || (asked && conversation.id !== asked)) {
+        if (!conversation) {
             this.#log.warn({ event: 'chat-conversation-refused', site: site.id });
 
             throw new NotFoundException(refusalBody(ERefusal.ChatConversationNotFound));
         }
 
         return conversation;
+    }
+
+    /** Обращение посетителя: названное или последнее. Пусто — признака нет, он чужой или обращение не его. */
+    async #visitorTalk(site: IChatSiteRow, token: string, asked: string): Promise<IChatConversationRow | null> {
+        if (!token) {
+            return null;
+        }
+
+        return asked
+            ? findVisitorConversation(this.#prisma, site.id, token, asked)
+            : findConversationByVisitorToken(this.#prisma, site.id, token);
     }
 
     /** Живой сайт по ключу и позволенный адрес страницы. Не сошлось — отказ, один на две причины. */

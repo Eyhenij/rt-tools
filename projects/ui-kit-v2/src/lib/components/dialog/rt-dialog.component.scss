@@ -1,3 +1,5 @@
+@use '../../../styles/mixins' as kv;
+
 @layer rt-kit.components {
     /* rt-dialog — styled frame модалки поверх CDK Overlay.
        ViewEncapsulation.None — селекторы префиксованы `.rt-dialog`.
@@ -9,6 +11,9 @@
        становится: рамка должна быть прямым flex-ребёнком overlay-панели. */
     rt-dialog {
         display: contents;
+
+        /* Шаг входа `radius` переназначает скругление рамки. */
+        @include kv.radius-steps('--rt-dialog-radius', '> .rt-dialog');
     }
 
     /* Size tokens — sm/md/lg.

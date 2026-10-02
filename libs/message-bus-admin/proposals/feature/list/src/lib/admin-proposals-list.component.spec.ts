@@ -57,6 +57,9 @@ function rowOf(patch: Partial<IProposal.Short.Api> = {}): IProposal.Short.Api {
         address: 'Ловушки',
         releaseVersion: '0.9.0',
         arrivedAt: '2026-08-14T21:30:00.000Z',
+        state: 'new',
+        quarantineNote: null,
+        closedByPublisher: false,
         ...patch,
     };
 }
@@ -145,7 +148,7 @@ describe('AdminProposalsListComponent', () => {
     it('SC-MB-222, SC-MB-239 — в тулбаре раздела стоят три отбора, и по версии — правее всех', async () => {
         await openSection();
 
-        const filters: string[] = Array.from(
+        const filters: string[] = Array.from<Element>(
             harness.fixture.nativeElement.querySelectorAll(
                 '[qa-dataid="list-tree-filter"], [qa-dataid="list-state-filter"], [qa-dataid="list-version-filter"]'
             )

@@ -30,6 +30,7 @@ import { RtEmptyStateComponent } from '../empty-state';
 import { RtFileDropComponent } from '../file-drop';
 import { RtIconButtonComponent } from '../icon-button';
 import { IRtImageCropper, RT_IMAGE_CROPPER_QUALITY, RtImageCropperComponent } from '../image-cropper';
+import { TRtRadius } from '../radius/rt-radius.model';
 import { RtSpinnerComponent } from '../spinner';
 import { RtTooltipDirective } from '../tooltip';
 import { isImageFile, uploadState } from './rt-image-upload.logic';
@@ -101,6 +102,9 @@ export class RtImageUploadComponent {
 
     /** Круглая ли кнопка скачивания: подложка под размытием повторяет её скругление */
     protected readonly downloadRound: Signal<boolean> = computed((): boolean => this.downloadShape() === 'circle');
+
+    /** Шаг скругления кнопки скачивания: круг — полный шаг, квадрат — скругление кнопки по умолчанию */
+    protected readonly downloadRadius: Signal<TRtRadius | null> = computed((): TRtRadius | null => (this.downloadRound() ? 'full' : null));
 
     /**
      * Адрес текущей картинки: данный приложением или сделанный под применённый файл. Новый адрес от

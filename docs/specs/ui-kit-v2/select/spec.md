@@ -1,6 +1,6 @@
 # The consumer's own trigger of a choice from a list
 
-**Status:** in force · **Revision:** 2026-09-15 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 2026-09-29 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the popover directive of the kit, the select family and the multiselect family
 **Laws:** `frontend-application`, `verifiability`, `reuse-first`
 **Procedures:** none
@@ -92,12 +92,20 @@ a list: a field, a badge, an icon, a pill with a name.
   field's ring off takes the only sign of focus with it, and a person moving by the keyboard is left
   with nothing.
 
+- **The filter line of the select panel carries the magnifier on the left.** The mockup rule is that
+  a search field always shows it; without it the line reads as an empty field with a word in it. The
+  magnifier is fixed, not an input: an input would let the rule be broken.
+
+- **The multiselect takes an icon on the left of its trigger the same way the select does.** The
+  same input `iconLeft`, the same place before the content, the same size and colour: one input
+  shape across the kit, and a form holding both families looks the same in both.
+
 ## What is out of scope
 
 - The look of the consumer's trigger: the kit gives no badge, no pill and no icon trigger of its own.
-- What is drawn inside the panel: the option row, the filter line and the empty state belong to
-  the families themselves and do not change here. Only the panel's size and the scroll to the
-  option reached by keys are spoken of above.
+- What is drawn inside the panel: the option row and the empty state belong to the families
+  themselves and do not change here. Only the panel's size, the scroll to the option reached by
+  keys and the magnifier of the filter line are spoken of above.
 - The row of actions of the table and the filter cell of its header: they are consumers of this
   input, and they arrive with the task that carries the dynamic list over.
 
@@ -163,3 +171,5 @@ None.
 - 2026-09-15 — written by the task RT-2152, which gives the families a trigger of the consumer's own.
 - 2026-09-28 — the option reached by keys is scrolled into the panel, at the autocomplete too; the
   review of the epic RT-1870.
+- 2026-09-29 — the magnifier of the filter line and the multiselect's icon on the left; the task
+  RT-2368 of the epic RT-2370.

@@ -2,6 +2,8 @@ import { ChangeDetectionStrategy, Component, input, InputSignal, ViewEncapsulati
 
 import { BlockDirective, ModDirective } from '@rt-tools/core';
 
+import { RtRadiusDirective } from '../radius/rt-radius.directive';
+
 const BEM_BLOCK: string = 'rt-dialog';
 
 export type TRtDialogSize = 'sm' | 'md' | 'lg';
@@ -40,6 +42,7 @@ export type TRtDialogSize = 'sm' | 'md' | 'lg';
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
     imports: [BlockDirective, ModDirective],
+    hostDirectives: [{ directive: RtRadiusDirective, inputs: ['radius'] }],
     host: {
         class: BEM_BLOCK,
         '[style.--rt-dialog-width]': 'width()',

@@ -148,30 +148,31 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Входы
 
-| вход                           | тип                                    | умолчание   | что делает                                                             |
-| ------------------------------ | -------------------------------------- | ----------- | ---------------------------------------------------------------------- |
-| `ariaLabel`                    | `string \| null`                       | `null`      | имя таблицы для скринридера                                            |
-| `density`                      | `IRtTable.Density`                     | `'default'` | высота строк                                                           |
-| `cards`                        | `boolean`                              | `true`      | разрешает переключение на карточки на узком показе                     |
-| `clickable`                    | `boolean`                              | `false`     | строка отзывается на наведение и нажатие                               |
-| `loading`                      | `boolean`                              | `false`     | первая загрузка: строки подменяются заглушками                         |
-| `fetching`                     | `boolean`                              | `false`     | догрузка: показанные строки остаются на месте                          |
-| `columns`                      | `ReadonlyArray<string>`                | `[]`        | ключи колонок в порядке показа                                         |
-| `columnsConfig`                | `ReadonlyArray<IRtTable.ColumnConfig>` | `[]`        | подписи колонок, сортируемость, отбор, скрытие и закрепление           |
-| `showFilters`                  | `boolean`                              | `false`     | строка отбора под шапкой                                               |
-| `filters`                      | `ReadonlyArray<IFilterModel<string>>`  | `[]`        | набор условий, показанный в строке отбора                              |
-| `tableId`                      | `string \| null`                       | `null`      | ключ, под которым запоминается настройка колонок                       |
-| `showRowActions`               | `boolean`                              | `false`     | колонка действий над строкой                                           |
-| `rowHasActions`                | `RowActionsPredicate \| null`          | `null`      | у каких строк действия есть                                            |
-| `sort`                         | `ISortModel<string> \| null`           | `null`      | текущий порядок строк                                                  |
-| `skeletonRows`                 | `number`                               | `5`         | сколько заглушек рисовать при первой загрузке                          |
-| `emptyMessage`                 | `string`                               | `''`        | текст заглушки; пустой оставляет переведённый                          |
-| `emptyIcon`                    | `IRtIcon.Name \| null`                 | `'inbox'`   | иконка заглушки; `null` убирает её                                     |
-| `emptyDescription`             | `string \| null`                       | `null`      | пояснение под текстом заглушки                                         |
-| `rtTableCardRowType`           | `readonly TRow[]`                      | `[]`        | носитель типа строки для своего шаблона карточки; в работе не читается |
-| `rtTableRowActionsRowType`     | `readonly TRow[]`                      | `[]`        | то же для шаблона действий над строкой                                 |
-| `rtTableCardActivation`        | `number`                               | —           | номер карточки, по нему нажатие уходит строке; ставит таблица сама     |
-| `rtTableCardActivationEnabled` | `boolean`                              | `false`     | карточка отзывается на нажатие; таблица передаёт сюда `clickable`      |
+| вход                           | тип                                    | умолчание     | что делает                                                             |
+| ------------------------------ | -------------------------------------- | ------------- | ---------------------------------------------------------------------- |
+| `ariaLabel`                    | `string \| null`                       | `null`        | имя таблицы для скринридера                                            |
+| `density`                      | `IRtTable.Density`                     | `'default'`   | высота строк                                                           |
+| `cards`                        | `boolean`                              | `true`        | разрешает переключение на карточки на узком показе                     |
+| `radius`                       | `TRtRadius \| null`                    | `null` → `md` | шаг общей шкалы для карточки узкого показа; у широкого углов нет       |
+| `clickable`                    | `boolean`                              | `false`       | строка отзывается на наведение и нажатие                               |
+| `loading`                      | `boolean`                              | `false`       | первая загрузка: строки подменяются заглушками                         |
+| `fetching`                     | `boolean`                              | `false`       | догрузка: показанные строки остаются на месте                          |
+| `columns`                      | `ReadonlyArray<string>`                | `[]`          | ключи колонок в порядке показа                                         |
+| `columnsConfig`                | `ReadonlyArray<IRtTable.ColumnConfig>` | `[]`          | подписи колонок, сортируемость, отбор, скрытие и закрепление           |
+| `showFilters`                  | `boolean`                              | `false`       | строка отбора под шапкой                                               |
+| `filters`                      | `ReadonlyArray<IFilterModel<string>>`  | `[]`          | набор условий, показанный в строке отбора                              |
+| `tableId`                      | `string \| null`                       | `null`        | ключ, под которым запоминается настройка колонок                       |
+| `showRowActions`               | `boolean`                              | `false`       | колонка действий над строкой                                           |
+| `rowHasActions`                | `RowActionsPredicate \| null`          | `null`        | у каких строк действия есть                                            |
+| `sort`                         | `ISortModel<string> \| null`           | `null`        | текущий порядок строк                                                  |
+| `skeletonRows`                 | `number`                               | `5`           | сколько заглушек рисовать при первой загрузке                          |
+| `emptyMessage`                 | `string`                               | `''`          | текст заглушки; пустой оставляет переведённый                          |
+| `emptyIcon`                    | `IRtIcon.Name \| null`                 | `'inbox'`     | иконка заглушки; `null` убирает её                                     |
+| `emptyDescription`             | `string \| null`                       | `null`        | пояснение под текстом заглушки                                         |
+| `rtTableCardRowType`           | `readonly TRow[]`                      | `[]`          | носитель типа строки для своего шаблона карточки; в работе не читается |
+| `rtTableRowActionsRowType`     | `readonly TRow[]`                      | `[]`          | то же для шаблона действий над строкой                                 |
+| `rtTableCardActivation`        | `number`                               | —             | номер карточки, по нему нажатие уходит строке; ставит таблица сама     |
+| `rtTableCardActivationEnabled` | `boolean`                              | `false`       | карточка отзывается на нажатие; таблица передаёт сюда `clickable`      |
 
 Последние два входа значения не несут: в них биндят тот же набор, что в `dataSource`, и служат
 они только выводу типа `let-row` в своих шаблонах. Убрать их нельзя — без них строка в шаблоне

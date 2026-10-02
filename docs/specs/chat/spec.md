@@ -1,6 +1,6 @@
 # The chat with the visitors
 
-**Status:** in force · **Revision:** 2026-09-21 · **Scenario prefix:** `SC-CH`
+**Status:** in force · **Revision:** 2026-09-30 · **Scenario prefix:** `SC-CH`
 **Depends on:** `message-bus` (the node, the storage and the pipeline of the rollout are shared)
 **Laws:** `verifiability`, `code-structure`, `lib-imports`, `entity-models`, `observability`
 **Procedures:** none — the operations are declared by the controllers of the chat
@@ -35,7 +35,7 @@ infrastructure do not grow.
 | The list of the allowed addresses | The addresses of the pages from which the operations of this site are called. What is not in the list is refused            |
 | The visitor                       | The one who writes from the site without an entry. They are recognised by a sign the service issues                         |
 | The sign of the visitor           | The secret the service gives out at the first turning to it; the widget keeps it and passes it along                        |
-| The conversation                  | The talk of one visitor on one site. A visitor has one live conversation per site                                           |
+| The conversation                  | One talk of a visitor on a site. A visitor may hold several; a new one is started at their asking                           |
 | The message                       | One remark: from the visitor or from the operator. It carries the text and the minute of the taking in                      |
 | The operator                      | A person of the space who answers in the panel. The panel is described by the subdomain next to this text                   |
 
@@ -66,12 +66,20 @@ this text, and the words of each are named there. This text has no screen of its
 - **The visitor is recognised by a sign the service issues, not by what the page passes.** The sign
   arrives in the answer to the creation of the conversation and comes back in every following
   request; an identifier invented by the page would let one read a foreign conversation by a guess.
-- **A visitor has one live conversation per site.** The second creation with the same sign gives
-  back the conversation that exists: otherwise a reload of the page would tear the talk into pieces
-  the operator sees as different people.
+- **A visitor may hold several conversations on a site, and a new one is started only at their
+  asking.** The creation with the same sign and without that asking gives back the latest
+  conversation: otherwise a reload of the page would tear the talk into pieces the operator sees as
+  different people.
+- **The visitor reads the list of their own conversations only.** The list is read by the sign of
+  the visitor; a foreign or unknown sign is refused as a not-found conversation.
 - **A remark is taken into the conversation of its visitor only.** The sign of the visitor and the
   conversation are checked together: their divergence is refused as a not-found conversation, and
   the two reasons are not told apart in the answer.
+- **An answer of the operator keeps the name of the account that wrote it.** The name is taken at
+  the minute of the answer and goes out with the message; the identifier of the account is not
+  kept, the same way the operator names the account by a column, not a link into the tables of the
+  intake. An answer without an account — from the embedded page or written before this rule — has
+  no name.
 - **The order of the messages is set by the minute of the taking in by the service.** The clock of
   the sender is not asked for: a wrong clock of one page would mix the talk for everyone reading it.
 
@@ -107,25 +115,26 @@ this text, and the words of each are named there. This text has no screen of its
 
 ## Contract
 
-The visitor turns to the service without an entry. Four operations, all by the key of the site; the
+The visitor turns to the service without an entry. Five operations, all by the key of the site; the
 address of the page comes in the header `Origin`, as the browser sends it.
 
-| Operation                    | What it does                                                                                                                   |
-| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| POST /api/chat/conversations | creates the conversation of the visitor on the site by the key, or gives back the live one, and issues the sign of the visitor |
-| POST /api/chat/messages      | takes in a remark of the visitor into their conversation                                                                       |
-| GET /api/chat/site           | the greeting of the site, the hours of answer and whether the site is on                                                       |
-| GET /api/chat/messages       | the messages of the own conversation of the visitor, by their sign                                                             |
+| Operation                           | What it does                                                                                                                     |
+| ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| POST /api/chat/conversations        | creates the conversation of the visitor on the site by the key, or gives back the latest one, and issues the sign of the visitor |
+| GET /api/chat/visitor-conversations | the conversations of the visitor on the site by their sign, the latest first                                                     |
+| POST /api/chat/messages             | takes in a remark of the visitor into their conversation                                                                         |
+| GET /api/chat/site                  | the greeting of the site, the hours of answer and whether the site is on                                                         |
+| GET /api/chat/messages              | the messages of the own conversation of the visitor, by their sign                                                               |
 
-The last two are described by the subdomain of the widget; the address of the page they take from
+The last three are described by the subdomain of the widget; the address of the page they take from
 the header `Origin`, and where the browser sends none — from the address of the referring page.
 
 The mandatory fields:
 
-| Operation                      | What is obliged to be in the request                                                       |
-| ------------------------------ | ------------------------------------------------------------------------------------------ |
-| the creation of a conversation | the key of the site; the sign of the visitor — when the widget already has one             |
-| the taking in of a remark      | the key of the site, the sign of the visitor, the identifier of the conversation, the text |
+| Operation                      | What is obliged to be in the request                                                                                                    |
+| ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------- |
+| the creation of a conversation | the key of the site; the sign of the visitor — when the widget already has one; the mark of a new talk — when the visitor asked for one |
+| the taking in of a remark      | the key of the site, the sign of the visitor, the identifier of the conversation, the text                                              |
 
 ### Refusal codes
 
@@ -151,8 +160,8 @@ is obliged to refuse instead of staying silent:
 | The space        | The name; the minute of the creation                                                                                                                                                      |
 | The site         | The space, the name, the key, the allowed addresses, the sign of being switched on. The greeting and the hours of answer. The address of the call outward, its secret and the agreed time |
 | The visitor      | The site, the sign the service issued, the minute of the first turning                                                                                                                    |
-| The conversation | The site, the visitor, the minute of the creation and of the last message                                                                                                                 |
-| The message      | The conversation, who wrote it — the visitor or the operator — the text, the minute of the taking in                                                                                      |
+| The conversation | The site, the visitor, the minute of the creation, of the last message and of the closing                                                                                                 |
+| The message      | The conversation, who wrote it — the visitor or the operator — the text, the minute of the taking in. The name of the account for an answer written from the panel                        |
 
 The key of the site and the sign of the visitor are kept as they are given out: the key is open by
 its purpose, and the sign of the visitor opens one conversation of one site and nothing besides.
@@ -205,6 +214,9 @@ both. A request that names a conversation of a foreign site is refused as a not-
   not touched.
 - **The visitor is not asked for a name or mail.** The first remark must cost the visitor one
   press; whoever needs the mail asks for it in the talk.
+- **The answer keeps the name of the account, not the account.** A renamed account leaves its old
+  answers under the old name. Rejected: a link to the account — it would add a field to a record of
+  the intake, and the chat does not touch those tables.
 - **The address of the page the visitor writes from is not kept.** The service reads it to check
   the list of the addresses of the site and stores nothing: a kept address would be a field of the
   storage nobody asked for, and the operator has never asked to see it.
@@ -223,3 +235,6 @@ both. A request that names a conversation of a foreign site is refused as a not-
   added to the contract.
 - 2026-09-21 — the notifications became a subdomain next to this text by the task RT-2183; the
   record of the site gained the address of the call outward, its secret and the agreed time.
+- 2026-09-30 — a visitor holds several conversations and reads their list, and an answer keeps the
+  name of the account that wrote it, by the task RT-2367.
+- 2026-09-30 — the conversation keeps the minute of its closing, by the task RT-2364.

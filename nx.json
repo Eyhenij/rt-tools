@@ -85,7 +85,8 @@
         "ciTargetName": "test-ci",
         "testMode": "run"
       }
-    }
+    },
+    "./tools/nx-plugins/spec-typecheck.cjs"
   ],
   "release": {
     "version": {

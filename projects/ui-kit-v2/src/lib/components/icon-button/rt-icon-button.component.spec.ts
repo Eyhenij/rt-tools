@@ -30,10 +30,11 @@ describe('RtIconButtonComponent', (): void => {
     });
 
     describe('оформление', (): void => {
-        it('без входов — призрачная кнопка среднего размера квадратной формы', (): void => {
-            expect(controlClasses(setup())).toEqual(
-                expect.arrayContaining(['rt-icon-button--ghost', 'rt-icon-button--md', 'rt-icon-button--square'])
-            );
+        it('без входов — призрачная кнопка среднего размера без шага скругления', (): void => {
+            const fixture: ComponentFixture<RtIconButtonComponent> = setup();
+
+            expect(controlClasses(fixture)).toEqual(expect.arrayContaining(['rt-icon-button--ghost', 'rt-icon-button--md']));
+            expect((fixture.nativeElement as HTMLElement).hasAttribute('data-rt-radius')).toBe(false);
         });
 
         it.each<IRtIconButton.Variant>(['primary', 'secondary', 'ghost', 'danger', 'success', 'warning'])(
@@ -50,12 +51,9 @@ describe('RtIconButtonComponent', (): void => {
             }
         );
 
-        it.each<IRtIconButton.Shape>(['square', 'rounded-sm', 'rounded-lg', 'circle'])(
-            'форма %s выводит свой модификатор',
-            (shape: IRtIconButton.Shape): void => {
-                expect(controlClasses(setup({ shape }))).toContain(`rt-icon-button--${shape}`);
-            }
-        );
+        it('названный шаг скругления ложится на хост', (): void => {
+            expect((setup({ radius: 'full' }).nativeElement as HTMLElement).getAttribute('data-rt-radius')).toBe('full');
+        });
 
         it('камелкейс модификатора превращается в дефис', (): void => {
             expect(controlClasses(setup({ indicator: true }))).toContain('rt-icon-button--has-indicator');

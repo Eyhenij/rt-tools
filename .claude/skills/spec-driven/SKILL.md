@@ -4,7 +4,7 @@ kind: rule
 law: project-documentation
 description: Rule under the project-documentation law. Load when editing specs, laws and any skill. Names the three layers — law, rule, pattern — the mandatory sections, the binding to code and the link between scenarios and tests. Patterns spec-driven-domain, spec-driven-rule.
 ---
-<!-- rt-kit v0.29.0 · rules/spec-driven.md · 22cbf6d13bd0 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.3 · rules/spec-driven.md · a40502c4825a · правится надстройкой, не здесь -->
 
 # Project documentation — how it works here
 
@@ -122,7 +122,9 @@ flowchart TD
   not inserted in the middle and does not take a deleted one — the deleted number's place stays
   empty. The number ties the scenario to its test, and issued a second time it leaves the old
   reference right on the surface; renumbering in sequence is deceptively cheap — the tests are green
-  both before and after.
+  both before and after. The free number is asked of the tree's command before the scenario heading
+  is written, and the companion names that command: the main branch alone does not show numbers
+  neighbouring work holds on disk.
 - **A scenario and the title of its test are edited by one change.** The promise changed — the
   number stays, and the test title is edited by the same commit; the scenario deleted — the test is
   deleted too. Having drifted apart, they leave the run green while it checks something else.

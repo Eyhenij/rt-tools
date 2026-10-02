@@ -18,6 +18,7 @@ import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { RtIconComponent } from '../icon/rt-icon.component';
 import { IRtIcon } from '../icon/rt-icon.model';
+import { RtRadiusDirective } from '../radius/rt-radius.directive';
 import { RtRippleDirective } from '../ripple';
 import { RtTooltipDirective } from '../tooltip/rt-tooltip.directive';
 import { IRtIconButton } from './rt-icon-button.model';
@@ -55,6 +56,7 @@ const BEM_BLOCK: string = 'rt-icon-button';
         ElemDirective,
         ModDirective,
     ],
+    hostDirectives: [{ directive: RtRadiusDirective, inputs: ['radius'] }],
     host: {
         class: BEM_BLOCK,
     },
@@ -88,7 +90,6 @@ export class RtIconButtonComponent {
     protected readonly bemMods: Signal<Record<string, boolean>> = computed((): Record<string, boolean> => ({
         [this.variant()]: true,
         [this.size()]: true,
-        [this.shape()]: true,
         loading: this.loading(),
         active: this.active(),
         hasIndicator: this.indicator(),
@@ -124,9 +125,6 @@ export class RtIconButtonComponent {
 
     /** Размер иконки; пусто — берётся от размера кнопки. */
     public readonly iconSize: InputSignal<IRtIcon.Size | null> = input<IRtIcon.Size | null>(null);
-
-    /** Форма (круг или скруглённый квадрат). */
-    public readonly shape: InputSignal<IRtIconButton.Shape> = input<IRtIconButton.Shape>('square');
 
     /** HTML-type для нативного `<button>`. */
     public readonly type: InputSignal<IRtIconButton.Type> = input<IRtIconButton.Type>('button');

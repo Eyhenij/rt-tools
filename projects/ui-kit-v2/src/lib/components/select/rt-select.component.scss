@@ -1,5 +1,8 @@
+@use '../../../styles/mixins' as kv;
+
 @layer rt-kit.components {
     .rt-select {
+        --rt-select-radius: var(--rt-input-radius);
         --rt-select-fill-radius: var(--rt-radius-sm);
         --rt-select-caret-transition-duration: var(--rt-duration-fast);
         --rt-select-own-outline-width: var(--rt-border-width-medium);
@@ -34,7 +37,7 @@
             align-items: center;
             padding: var(--rt-input-padding-y) var(--rt-input-padding-x);
             border: var(--rt-input-border-width) solid var(--rt-input-color-border);
-            border-radius: var(--rt-input-radius);
+            border-radius: var(--rt-select-radius);
             background-color: var(--rt-input-color-bg);
             color: var(--rt-input-color-text);
             cursor: pointer;
@@ -207,6 +210,7 @@
             --rt-select-check-display: var(--rt-overlay-select-check-display);
             --rt-select-option-min-height: var(--rt-overlay-select-option-min-height);
             --rt-select-panel-border-width: var(--rt-overlay-select-panel-border-width);
+            --rt-select-tree-indent: var(--rt-space-lg);
 
             /* Предел высоты по умолчанию — предел кита: длинный список прокручивается внутри
                панели, а не уходит за нижний край экрана. Вход `panelMaxHeight` ставит свой
@@ -238,6 +242,9 @@
         }
 
         &__option {
+            /* Уровень строки в дереве ставит разметка на саму строку; ноль — строка верхнего уровня. */
+            --rt-select-tree-level: 0;
+
             display: flex;
             min-height: var(--rt-select-option-min-height);
             box-sizing: border-box;
@@ -248,6 +255,7 @@
             cursor: pointer;
             font-size: var(--rt-select-option-font-size);
             gap: var(--rt-space-sm);
+            padding-inline-start: calc(var(--rt-space-md) + var(--rt-select-tree-indent) * var(--rt-select-tree-level));
 
             &:hover,
             &--active {
@@ -269,6 +277,30 @@
             }
         }
 
+        &__option-label {
+            min-width: 0;
+            flex: 1 1 auto;
+        }
+
+        /* Стрелка ветки и пустое место под неё у листа: шаг отступа равен их ширине с зазором,
+           и стрелка дочерней строки встаёт под подписью родителя. */
+        &__toggle,
+        &__toggle-space {
+            display: inline-flex;
+            flex-shrink: 0;
+            block-size: var(--rt-input-icon-size);
+            inline-size: var(--rt-input-icon-size);
+        }
+
+        &__toggle {
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            border: 0;
+            background: transparent;
+            cursor: pointer;
+        }
+
         /* Отметка выбранного пункта — у mat-select первого кита; свой вид её не рисует. */
         &__check {
             display: var(--rt-select-check-display);
@@ -280,5 +312,8 @@
             color: var(--rt-input-color-text-placeholder);
             font-style: italic;
         }
+
+        /* Шаг входа `radius` переназначает скругление поля; панель в оверлее держит своё. */
+        @include kv.radius-steps('--rt-select-radius');
     }
 }

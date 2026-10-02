@@ -66,7 +66,7 @@ describe('RtSideMenuComponent — значки вне набора', (): void =>
         warn.mockRestore();
     });
 
-    it('SC-UKV-480 — имя Material с парой рисуется значком кита, а не пустым местом', (): void => {
+    it('SC-UKV-531 — имя Material с парой рисуется значком кита, а не пустым местом', (): void => {
         const fixture: ComponentFixture<RtSideMenuIconTestHostComponent> = setup(true);
         const icons: HTMLElement[] = [...root(fixture).querySelectorAll<HTMLElement>('.rt-side-menu__rail-icon rt-icon')];
 
@@ -74,7 +74,7 @@ describe('RtSideMenuComponent — значки вне набора', (): void =>
         expect(root(fixture).querySelector('.rt-side-menu__rail-icon use')?.getAttribute('href')).toContain('cog');
     });
 
-    it('SC-UKV-481 — имя, которого кит не рисует, берёт свой шаблон меню и получает пункт', (): void => {
+    it('SC-UKV-532 — имя, которого кит не рисует, берёт свой шаблон меню и получает пункт', (): void => {
         const fixture: ComponentFixture<RtSideMenuIconTestHostComponent> = setup(true);
         const own: HTMLElement[] = [...root(fixture).querySelectorAll<HTMLElement>('[qa-dataid="side-menu-own-icon"]')];
 
@@ -83,20 +83,20 @@ describe('RtSideMenuComponent — значки вне набора', (): void =>
         expect(own[0].getAttribute('aria-hidden')).toBe('true');
     });
 
-    it('SC-UKV-481 — свой шаблон не перебивает значок, который кит рисует сам', (): void => {
+    it('SC-UKV-532 — свой шаблон не перебивает значок, который кит рисует сам', (): void => {
         const fixture: ComponentFixture<RtSideMenuIconTestHostComponent> = setup(true);
 
         expect(root(fixture).querySelectorAll('.own[data-icon="settings"]')).toHaveLength(0);
     });
 
-    it('SC-UKV-482 — без своего шаблона меню предупреждает разработчика об имени без значка', (): void => {
+    it('SC-UKV-533 — без своего шаблона меню предупреждает разработчика об имени без значка', (): void => {
         const fixture: ComponentFixture<RtSideMenuIconTestHostComponent> = setup(false);
 
         expect(root(fixture).querySelector('[qa-dataid="side-menu-own-icon"]')).toBeNull();
         expect(warn).toHaveBeenCalledWith(expect.stringContaining('«rocket_launch»'));
     });
 
-    it('SC-UKV-482 — со своим шаблоном меню о пунктах не предупреждает', (): void => {
+    it('SC-UKV-533 — со своим шаблоном меню о пунктах не предупреждает', (): void => {
         setup(true);
 
         expect(warn).not.toHaveBeenCalled();

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.29.0 · hooks/task-flow-context.sh · cd5931283b4b · правится надстройкой, не здесь
+# rt-kit v0.29.3 · hooks/task-flow-context.sh · 42e8f24496eb · правится надстройкой, не здесь
 # Shared parsing for the work-conduct guards. NOT a guard: it has no `rt-hook:` declaration and
 # is not attached to any agent event. The guards themselves source it — the same way they source
 # the shared refusal tail.
@@ -25,6 +25,7 @@
 # branch with history; otherwise a non-zero code, and the guard exits silently.
 #
 #   RT_TF_PATH        — the application-code path because of which the guard judges at all
+#   RT_TF_CANDIDATES  — every path the call writes, one per line, as named in the call
 #   RT_TF_BRANCH      — the current branch of the edit's working directory
 #   RT_TF_ROOT        — the root of the working tree
 #   RT_TF_TASKS_DIR   — the task folders directory, as the tree names it
@@ -175,6 +176,7 @@ rt_task_flow_context() {
 $rt_tf_candidates
 EOF
     [ -z "$RT_TF_PATH" ] && return 1
+    RT_TF_CANDIDATES="$rt_tf_candidates"
 
     # The branch is looked at where the edit will go: a worktree has one of its own.
     rt_tf_workdir="$(rt_hook_cwd)"

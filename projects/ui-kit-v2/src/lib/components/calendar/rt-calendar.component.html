@@ -5,26 +5,31 @@
             qa-dataid="calendar-prev-month"
             icon="chevron-left"
             variant="secondary"
-            shape="circle"
+            radius="full"
             [ariaLabel]="prevAriaLabel()"
             [disabled]="!canPrev()"
             (clicked)="prevMonth.emit()" />
+        @if (headerTitle() && months()[0]; as first) {
+            <ng-container *ngTemplateOutlet="titleTpl; context: { $implicit: first }" />
+        }
         <ng-content select="[calendarHint]" />
         <rt-icon-button
             rtElem="nav"
             qa-dataid="calendar-next-month"
             icon="chevron-right"
             variant="secondary"
-            shape="circle"
+            radius="full"
             [ariaLabel]="nextAriaLabel()"
             [disabled]="!canNext()"
             (clicked)="nextMonth.emit()" />
     </div>
 
-    <div rtElem="months" qa-dataid="calendar-months">
+    <div rtElem="months" qa-dataid="calendar-months" (mouseleave)="dayHover.emit(null)">
         @for (month of months(); track month.key) {
             <div rtElem="month" qa-dataid="calendar-month">
-                <p rtElem="month-title" qa-dataid="calendar-month-title">{{ month.label }}</p>
+                @if (!headerTitle()) {
+                    <ng-container *ngTemplateOutlet="titleTpl; context: { $implicit: month }" />
+                }
                 <div rtElem="grid" qa-dataid="calendar-grid">
                     @for (weekday of weekdayLabels(); track $index) {
                         <span rtElem="weekday" qa-dataid="calendar-weekday">{{ weekday }}</span>
@@ -35,12 +40,20 @@
                     }
                     @for (day of month.days; track day.key) {
                         <button
+                            #dayButton
                             rtElem="day"
                             qa-dataid="calendar-day"
                             type="button"
                             [attr.data-iso]="day.key"
                             [attr.data-state]="day.state"
+                            [attr.data-today]="day.today ? '' : null"
+                            [attr.aria-current]="day.today ? 'date' : null"
+                            [attr.aria-pressed]="day.state === chosenState ? true : null"
+                            [attr.tabindex]="rovingKey() === null ? null : day.key === rovingKey() ? 0 : -1"
                             [disabled]="day.disabled"
+                            (keydown)="onDayKey($event, day)"
+                            (mouseenter)="onDayHover(day)"
+                            (focus)="onDayHover(day)"
                             (click)="onDayClick(day)">
                             <span rtElem="day-num" qa-dataid="calendar-day-num">{{ day.dayOfMonth }}</span>
                             @if (sublabelsLoading()) {
@@ -48,7 +61,7 @@
                                     rtElem="day-sublabel"
                                     qa-dataid="calendar-day-price-skeleton"
                                     width="80%"
-                                    borderRadius="sm"
+                                    radius="sm"
                                     [height]="sublabelSkeletonHeight" />
                             } @else if (day.sublabel) {
                                 <span rtElem="day-sublabel" qa-dataid="calendar-day-price">{{ day.sublabel }}</span>
@@ -61,4 +74,14 @@
     </div>
 
     <ng-content />
+
+    <ng-template #titleTpl let-month>
+        @if (titleAction()) {
+            <button rtElem="month-title" qa-dataid="calendar-month-title" type="button" (click)="titleClick.emit(month)">
+                {{ month.label }}
+            </button>
+        } @else {
+            <p rtElem="month-title" qa-dataid="calendar-month-title">{{ month.label }}</p>
+        }
+    </ng-template>
 </ng-container>

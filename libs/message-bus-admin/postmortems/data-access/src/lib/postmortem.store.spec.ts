@@ -17,6 +17,11 @@ function apiOne(patch: Partial<IPostmortem.Api> = {}): IPostmortem.Api {
         arrivedAt: '2026-08-14T21:30:00.000Z',
         updatedAt: '2026-08-15T06:00:00.000Z',
         text: '# Разбор',
+        state: 'new',
+        releaseVersion: null,
+        quarantineNote: null,
+        closedByPublisher: false,
+        fixNote: null,
         ...patch,
     };
 }

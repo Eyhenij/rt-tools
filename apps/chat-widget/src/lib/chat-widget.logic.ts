@@ -5,7 +5,7 @@
  * до того, как что-то нарисовать. Оставшись внутри элемента, каждое из них проверялось бы только
  * поднятым браузером.
  */
-import { IChatSiteLookRow } from '@rt/message-bus-common';
+import { CHAT_SIDE_OPERATOR, EChatTalkState, IChatMessageRow, IChatSiteLookRow, IChatVisitorTalkListRow } from '@rt/message-bus-common';
 
 /** Минута суток часами и минутами. */
 function clockOf(minutes: number): string {
@@ -65,4 +65,113 @@ export function widgetHoursWord(look: IChatSiteLookRow): EWidgetHoursWord {
 /** Часы ответа словами человека: «09:00–18:00». Минуты суток приезжают числами. */
 export function widgetHoursText(look: IChatSiteLookRow): string {
     return `${clockOf(look.answerFrom)}–${clockOf(look.answerTo)}`;
+}
+
+/**
+ * Время реплики часами и минутами в поясе посетителя: «12:40».
+ *
+ * Сервис отдаёт минуту приёма строкой ISO. Нечитаемая строка даёт пустое время, а не «NaN:NaN»:
+ * пузырь без времени читается лучше, чем с мусором.
+ */
+export function widgetTimeText(takenAt: string): string {
+    const moment: Date = new Date(takenAt);
+
+    if (Number.isNaN(moment.getTime())) {
+        return '';
+    }
+
+    return clockOf(moment.getHours() * 60 + moment.getMinutes());
+}
+
+/** Под каким именем в хранилище браузера лежат минуты, когда посетитель последний раз видел обращения. */
+export function widgetSeenKey(siteKey: string): string {
+    return `rt-chat-seen:${siteKey}`;
+}
+
+/**
+ * Непрочитан ли ответ в обращении.
+ *
+ * Непрочитан, когда последняя реплика — ответ, и она свежее минуты, когда посетитель последний раз
+ * видел это обращение. Не видел ни разу — ответ непрочитан. Своя реплика посетителя точки не
+ * ставит: её он читал, когда писал.
+ */
+export function widgetUnread(talk: IChatVisitorTalkListRow, seenAt: string): boolean {
+    if (talk.lastMessageSide !== CHAT_SIDE_OPERATOR) {
+        return false;
+    }
+
+    const seen: number = new Date(seenAt).getTime();
+
+    return Number.isNaN(seen) || new Date(talk.lastMessageAt).getTime() > seen;
+}
+
+/**
+ * Список обращений после пришедшего закрытия: строка закрытого обращения получает состояние и
+ * минуту закрытия. Обращения, которого в списке нет, закрытие не добавляет — его строку принесёт
+ * следующее чтение списка.
+ */
+export function widgetClosedTalks(
+    talks: readonly IChatVisitorTalkListRow[],
+    conversationId: string,
+    closedAt: string
+): IChatVisitorTalkListRow[] {
+    return talks.map((talk: IChatVisitorTalkListRow): IChatVisitorTalkListRow =>
+        talk.id === conversationId ? { ...talk, closedAt, state: EChatTalkState.Closed } : talk
+    );
+}
+
+/** Инициалы для круга аватара: первые буквы двух первых слов имени, заглавными. */
+export function widgetInitials(name: string): string {
+    return name
+        .trim()
+        .split(/\s+/)
+        .slice(0, 2)
+        .map((word: string): string => word.charAt(0))
+        .join('')
+        .toUpperCase();
+}
+
+/** Первое слово имени: им подписан пузырь ответа, как в макете — «Анна». */
+export function widgetFirstName(name: string): string {
+    return name.trim().split(/\s+/)[0] ?? '';
+}
+
+/** Имя того, кто ответил последним в ленте. Пусто — названного ответа ещё не было. */
+export function widgetLastAuthor(messages: readonly IChatMessageRow[]): string {
+    for (let index: number = messages.length - 1; index >= 0; index -= 1) {
+        const author: string = messages[index].authorName ?? '';
+
+        if (author) {
+            return author;
+        }
+    }
+
+    return '';
+}
+
+/**
+ * Когда была последняя реплика, словами строки списка.
+ *
+ * Сегодня — часами и минутами, вчера — словом дня, раньше — числом и месяцем: «24 сент.». Минута
+ * «сейчас» приезжает доводом, а не читается часами внутри: решение проверяется вызовом.
+ */
+export function widgetDayText(takenAt: string, now: Date, yesterday: string): string {
+    const moment: Date = new Date(takenAt);
+
+    if (Number.isNaN(moment.getTime())) {
+        return '';
+    }
+
+    const day: (at: Date) => number = (at: Date): number => new Date(at.getFullYear(), at.getMonth(), at.getDate()).getTime();
+    const daysAgo: number = Math.round((day(now) - day(moment)) / 86_400_000);
+
+    if (daysAgo <= 0) {
+        return widgetTimeText(takenAt);
+    }
+
+    if (daysAgo === 1) {
+        return yesterday;
+    }
+
+    return new Intl.DateTimeFormat('ru-RU', { day: 'numeric', month: 'short' }).format(moment);
 }

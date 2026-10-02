@@ -1,3 +1,5 @@
+@use '../../../styles/mixins' as kv;
+
 @layer rt-kit.components {
     /* rt-checkbox — чекбокс в common/ui. ViewEncapsulation.None.
        Хост адресуется по имени элемента, а не по классу блока: класс `.rt-checkbox` висит
@@ -6,6 +8,9 @@
 
     rt-checkbox {
         display: inline-block;
+
+        /* Шаг входа `radius` переназначает скругление квадрата, кольцо фокуса держит своё. */
+        @include kv.radius-steps('--rt-checkbox-box-radius', '> .rt-checkbox');
     }
 
     /* Корень — `<button>`, а кнопке браузер даёт свой шрифт, а не шрифт страницы: `font: inherit`

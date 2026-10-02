@@ -77,6 +77,12 @@ as an attachment.
   business in the frame either. A width the story named as a threshold is never widened for the span —
   there the widening replaces the very side of the threshold the story asked to check.
 
+- **A helper of the showing does not scroll its matrix inside itself.** A scrolling wrapper is an
+  ancestor that cuts the span, so the window never grows for a matrix wider than itself: the columns
+  past the edge leave the frame, and the frame does not say they are missing. A wide matrix widens the
+  page instead, and the window grows to it. A component's own scroll stays a cut: what the component
+  scrolls, a person scrolls too.
+
 - **Any frame beyond the bounds of the window is shot by a window widened to it, not by a shooting past
   those bounds.** A shooting past the bounds of the window not only shoots the page but touches it: the
   browser substitutes the window for the time of the frame, the page gets a `resize`, and what is counted
@@ -369,6 +375,8 @@ single file for a commit in the tree; after the rolling back of the edit the run
 
 ## History of changes
 
+- 2026-09-30 — the grid helper no longer scrolls its matrix inside itself: a frame of a grid wider than
+  the window holds every column.
 - 2026-08-17 — the subdomain was split out of the spec of the domain, which had outgrown the length limit. The
   rules, the scenarios and the bindings of the snapshots of the showcase moved here as they were: the scenario
   numbers were not recounted.

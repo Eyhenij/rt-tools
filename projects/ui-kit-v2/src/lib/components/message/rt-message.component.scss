@@ -1,3 +1,5 @@
+@use '../../../styles/mixins' as kv;
+
 @layer rt-kit.components {
     /* rt-message — alert/banner в common/ui. ViewEncapsulation.None.
        Хост адресуется по имени элемента, а не по классу блока: класс `.rt-message` висит
@@ -61,5 +63,8 @@
                 margin-inline-start: auto;
             }
         }
+
+        /* Шаг входа `radius` переназначает скругление плашки. */
+        @include kv.radius-steps('--rt-message-radius', '> .rt-message');
     }
 }

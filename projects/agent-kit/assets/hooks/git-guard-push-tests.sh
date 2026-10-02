@@ -112,12 +112,20 @@ git rev-parse --is-inside-work-tree >/dev/null 2>&1 || exit 0
 # copy holds someone else's uncommitted work. A call made from there is judged by the copy the
 # session stands in — that is, by a foreign tree: its stale archive and its half-written spec refuse
 # the call, while the contribution actually leaving is never checked at all.
+#
+# A second copy is the same shared `.git` directory under another root. Another repository is no
+# copy of this tree, and its root differs from the session root always: judged by the roots alone,
+# a session of one tree could not push a branch into another repository at all. Such a call is not
+# judged by this guard — the set of this tree says nothing about a foreign one.
 moved="$(printf '%s' "$cmd" | sed -nE 's/.*(^|[;&|[:space:]])cd[[:space:]]+([^[:space:];&|]+).*/\2/p' | head -1)"
 moved="${moved%\'}"; moved="${moved#\'}"
 moved="${moved%\"}"; moved="${moved#\"}"
 if [ -n "$moved" ] && [ -d "$moved" ]; then
     moved_root="$(git -C "$moved" rev-parse --show-toplevel 2>/dev/null)"
     here_root="$(git rev-parse --show-toplevel 2>/dev/null)"
+    moved_repo="$(git -C "$moved" rev-parse --path-format=absolute --git-common-dir 2>/dev/null)"
+    here_repo="$(git rev-parse --path-format=absolute --git-common-dir 2>/dev/null)"
+    [ -n "$moved_repo" ] && [ -n "$here_repo" ] && [ "$moved_repo" != "$here_repo" ] && exit 0
     if [ -n "$moved_root" ] && [ -n "$here_root" ] && [ "$moved_root" != "$here_root" ]; then
         push_deny "BLOCKED: the call goes from a second working copy — «${moved_root}», while the session stands in «${here_root}». The gate set runs where the session was started, not where the call was made: someone else's uncommitted work refuses it, and the contribution actually leaving passes unchecked. The second copy is for reading; bring the result of the merge back and send from the copy the session stands in."
     fi

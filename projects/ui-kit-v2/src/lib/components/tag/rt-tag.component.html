@@ -5,9 +5,7 @@
     [rtMod]="{
         severity: severity(),
         size: size(),
-        shape: shape(),
         appearance: appearance(),
-        radius: radius(),
         closable: closable(),
     }">
     @if (icon(); as iconName) {
@@ -29,7 +27,7 @@
             icon="ico-close"
             variant="ghost"
             size="sm"
-            shape="circle"
+            radius="full"
             [ariaLabel]="t().uiRemove"
             (clicked)="onClose($event)" />
     }

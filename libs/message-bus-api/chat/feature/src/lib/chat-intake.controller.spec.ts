@@ -61,7 +61,7 @@ describe('ChatIntakeController', () => {
         expect(store.visitors[0].token).toBe(started.visitorToken);
     });
 
-    it('SC-CH-2 — второе заведение с тем же признаком возвращает живую переписку', async (): Promise<void> => {
+    it('SC-CH-2 — второе заведение с тем же признаком возвращает последнюю переписку', async (): Promise<void> => {
         const first: IChatConversationStarted = await controller.start({ site: 'live-key' }, from(), AT);
         const second: IChatConversationStarted = await controller.start({ site: 'live-key', visitor: first.visitorToken }, from(), AT);
 

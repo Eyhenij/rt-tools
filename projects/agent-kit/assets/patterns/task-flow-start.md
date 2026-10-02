@@ -44,9 +44,8 @@ the archive, the records of past sessions — are reached first. "Not found in s
 the place, not of the tree, and the question names where the search went.
 
 Exploration ends with command output, not with a feeling. Before the first question the executor
-knows three things. How the repository is arranged (the root memo), what lies in the directory at
-hand (`ls`), and whether something is written on the theme (a search over the documentation and the
-rules). Without such a list exploration runs as a mood, and a read handover passes for it.
+knows how the repository is arranged (the root memo), what lies in the directory at hand (`ls`), and
+whether something is written on the theme (a search over the documentation and the rules).
 
 Exploration over a created task ends with a reproduced symptom, not a found file. The task body
 describes the tree on the day of creation, and exploration by the names from the body confirms only
@@ -60,13 +59,11 @@ and only then come the questions about techniques. The answer to "how is this do
 folder, and generalised into a map of the tree it lies: the neighbouring family of directories is
 left out, and the owner finds the loss.
 
-What was inferred is marked right in the list, together with what confirms it: a guess by a
-neighbouring case next to what was checked reads as checked.
+What was inferred is marked right in the list, together with what confirms it.
 
 **A ready-made module of the same kind is looked for before the first question** — in this tree and
 in the trees recorded as samples of its layout. The one found is read whole: it closes the questions
-about the structure — the source of the numbers, the rows, the screen, the storage. A grill of five
-menus about such a module was closed by the owner naming it; the search costs one listing.
+about the structure — the source of the numbers, the rows, the screen, the storage.
 
 The six questions are asked minus those the exploration answered: instead of a question with a ready
 answer, the grill gets the line "taking such-and-such answer, here is where from". The sign is one —
@@ -104,8 +101,11 @@ such answer the remaining questions go into the grill as decisions — what is t
 and the owner gets the list in one line, not a menu. The guard of the conversation refuses the third
 menu itself; a menu goes out again only for a question no assumption closes, and says so first.
 
-The size of the work is never a ground for a question about boundaries: "this is big work" is the
-executor's judgement, "whether to do it whole" the owner's, decided before the work began.
+**The streak is counted over the session record, not per task.** After two «recommended» answers at
+the end of one task, the next task's questions go into its grill as decisions from the start.
+
+The size of the work is never a ground for a question about boundaries: the owner decided it before
+the work began.
 
 The form of a question is set by the owner's settings: where a menu is required, a menu is asked,
 and a free option is added to every question — a closed set has no line "wrong question".

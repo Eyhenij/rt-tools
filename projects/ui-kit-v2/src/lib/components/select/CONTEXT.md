@@ -8,13 +8,13 @@
 
 Свои входы поверх общих из [`RtFormControlBase`](../form-control/CONTEXT.md):
 
-| вход                | тип                                          | умолчание         |
-| ------------------- | -------------------------------------------- | ----------------- |
-| `options`           | `ReadonlyArray<{ label, value, disabled? }>` | `[]`              |
-| `placeholder`       | `string`                                     | `''`              |
-| `iconLeft`          | `IRtIcon.Name \| null`                       | `null`            |
-| `filter`            | `boolean`                                    | `false`           |
-| `filterPlaceholder` | `string`                                     | `''` → `uiSearch` |
+| вход                | тип                                                     | умолчание         |
+| ------------------- | ------------------------------------------------------- | ----------------- |
+| `options`           | `ReadonlyArray<{ label, value, disabled?, children? }>` | `[]`              |
+| `placeholder`       | `string`                                                | `''`              |
+| `iconLeft`          | `IRtIcon.Name \| null`                                  | `null`            |
+| `filter`            | `boolean`                                               | `false`           |
+| `filterPlaceholder` | `string`                                                | `''` → `uiSearch` |
 
 | выход             | тип              |
 | ----------------- | ---------------- |
@@ -37,6 +37,9 @@
   первую доступную опцию.
 - Стрелки **перешагивают отключённые опции** и заворачиваются по кругу.
 - `Enter`/`Space` выбирают подсвеченную, `Escape` закрывает без выбора.
+- В дереве `ArrowRight` раскрывает ветку или спускается к первому ребёнку, `ArrowLeft` сворачивает
+  ветку или поднимается к родителю. Опции с `children` рисуются деревом — договорённость в
+  `docs/specs/ui-kit-v2/option-tree/`.
 - Опции не фокусируются поодиночке: подсвеченная называется скринридеру через
   `aria-activedescendant` на триггере.
 - Подсвеченная опция **прокручивается в видимую часть панели** (`block: 'nearest'`): у панели

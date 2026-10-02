@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 
+import { STORY_OPTION_TREE } from '../../../../../showcase/story-option-tree';
 import { STORY_FIELD_WIDTH } from '../../../../../showcase/story-metrics';
 import { STORY_TRIGGER_ATTRIBUTE } from '../../../../../showcase/story-overlay';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
@@ -18,7 +19,7 @@ import { IRtSelect } from '../../rt-select.model';
 export type TSelectMatrixPart = 'size' | 'filling' | 'bordered' | 'appearance' | 'states' | 'presets' | 'themes' | 'panel';
 
 /** Что показывает открытая панель: обычный список, список с фильтром, пустой набор. */
-export type TSelectPanelCase = 'options' | 'filter' | 'empty';
+export type TSelectPanelCase = 'options' | 'filter' | 'empty' | 'tree';
 
 /** Наполненность триггера: она решает, видно ли крестик очистки и подпись вместо подсказки. */
 interface ISelectFillingCase {
@@ -236,8 +237,8 @@ function invalid(): FormControl<string | null> {
                         placeholder="Выберите город"
                         [attr.data-story-trigger]="triggerAttribute"
                         [filter]="panel === 'filter'"
-                        [options]="panel === 'empty' ? noOptions : options"
-                        [formControl]="panelControl" />
+                        [options]="panel === 'empty' ? noOptions : panel === 'tree' ? treeOptions : options"
+                        [formControl]="panel === 'tree' ? treeControl : panelControl" />
                 </div>
             }
         }
@@ -294,6 +295,12 @@ export class TestRtSelectMatrixComponent {
         { label: 'Новосибирск', value: 'nsk' },
         { label: 'Владивосток', value: 'vvo', disabled: true },
     ];
+
+    /** Дерево опций: ветки, листья и отключённый лист на трёх уровнях. */
+    public readonly treeOptions: ReadonlyArray<IRtSelect.Option<string>> = STORY_OPTION_TREE;
+
+    /** Лист на третьем уровне: при открытии раскрыты обе ветки над ним. */
+    public readonly treeControl: FormControl<string | null> = chosen('khi');
 
     /** Значение открытой панели: по нему видно, чем выбранная опция отличается от прочих. */
     public readonly panelControl: FormControl<string | null> = chosen('spb');

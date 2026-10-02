@@ -169,8 +169,8 @@ test.describe('раздел чата', () => {
             await route.continue();
         });
 
-        await qa(page, 'chat-composer-input').fill('Ответ набора');
-        await qa(page, 'chat-composer-send').click();
+        await qa(page, 'message-composer-input').fill('Ответ набора');
+        await qa(page, 'message-composer-send').click();
 
         await expect(qa(page, 'chat-message-text').last()).toHaveText('Ответ набора');
         await expect(qa(page, 'chat-message-status').last()).toHaveAttribute('data-status', 'sending');
@@ -182,7 +182,7 @@ test.describe('раздел чата', () => {
         await talks(page).first().click();
 
         await expect(qa(page, 'chat-thread')).toBeVisible();
-        await expect(qa(page, 'chat-composer-input')).toBeVisible();
+        await expect(qa(page, 'message-composer-input')).toBeVisible();
 
         // положительная пара к отсутствию: реплики в ленте есть, и нарисованы они метками кита
         await expect(qa(page, 'chat-message').first()).toBeVisible();
@@ -211,8 +211,8 @@ test.describe('раздел чата', () => {
             await route.continue();
         });
 
-        await qa(page, 'chat-composer-input').fill('Реплика со второго захода');
-        await qa(page, 'chat-composer-send').click();
+        await qa(page, 'message-composer-input').fill('Реплика со второго захода');
+        await qa(page, 'message-composer-send').click();
 
         await expect(qa(page, 'chat-message-status').last()).toHaveAttribute('data-status', 'failed');
         await expect(qa(page, 'chat-message')).toHaveCount(before + 1);

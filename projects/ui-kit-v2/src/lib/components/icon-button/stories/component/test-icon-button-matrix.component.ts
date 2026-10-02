@@ -6,11 +6,12 @@ import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { IStoryState, STORY_STATES, storyStateLabel } from '../../../../../showcase/story-states';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { IRtIcon } from '../../../icon/rt-icon.model';
+import { RT_RADIUS_STEPS, TRtRadius } from '../../../radius/rt-radius.model';
 import { RtIconButtonComponent } from '../../rt-icon-button.component';
 import { IRtIconButton } from '../../rt-icon-button.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TIconButtonMatrixPart = 'variant' | 'size' | 'iconSize' | 'shape' | 'flags' | 'states' | 'presets' | 'themes';
+export type TIconButtonMatrixPart = 'variant' | 'size' | 'iconSize' | 'radius' | 'flags' | 'states' | 'presets' | 'themes';
 
 /** Случай признака: какой из булевых входов включён и как он называется словами. */
 interface IIconButtonFlagCase {
@@ -35,11 +36,11 @@ interface IIconButtonFlagCase {
     template: `
         @switch (part) {
             @case ('variant') {
-                <app-story-presets caption="Палитра × форма в обоих наборах">
+                <app-story-presets caption="Палитра × скругление в обоих наборах">
                     <ng-template>
-                        <app-story-grid [rows]="variants" [columns]="shapes">
-                            <ng-template let-variant let-shape="col">
-                                <rt-icon-button icon="pencil" [ariaLabel]="variant" [variant]="variant" [shape]="shape" />
+                        <app-story-grid [rows]="variants" [columns]="gridRadii" [columnLabel]="radiusLabel">
+                            <ng-template let-variant let-radius="col">
+                                <rt-icon-button icon="pencil" [ariaLabel]="variant" [variant]="variant" [radius]="radius" />
                             </ng-template>
                         </app-story-grid>
                     </ng-template>
@@ -76,12 +77,12 @@ interface IIconButtonFlagCase {
                 </app-story-presets>
             }
 
-            @case ('shape') {
-                <app-story-presets caption="Форма в обоих наборах">
+            @case ('radius') {
+                <app-story-presets caption="Шаги скругления в обоих наборах">
                     <ng-template>
-                        <app-story-row [items]="shapes">
-                            <ng-template let-shape>
-                                <rt-icon-button icon="pencil" ariaLabel="Править" variant="primary" [shape]="shape" />
+                        <app-story-row [items]="radii" [itemLabel]="radiusLabel">
+                            <ng-template let-radius>
+                                <rt-icon-button icon="pencil" ariaLabel="Править" variant="primary" [radius]="radius" />
                             </ng-template>
                         </app-story-row>
                     </ng-template>
@@ -187,7 +188,9 @@ export class TestRtIconButtonMatrixComponent {
 
     public readonly variants: readonly IRtIconButton.Variant[] = ['ghost', 'primary', 'secondary', 'danger', 'success', 'warning'];
     public readonly sizes: readonly IRtIconButton.Size[] = ['sm', 'md', 'lg', 'xl', '2xl'];
-    public readonly shapes: readonly IRtIconButton.Shape[] = ['square', 'rounded-sm', 'rounded-lg', 'circle'];
+    public readonly radii: readonly (TRtRadius | null)[] = [null, ...RT_RADIUS_STEPS];
+    /** Шаги, которыми раньше были формы: квадрат — умолчание, две скруглённые формы и круг. */
+    public readonly gridRadii: readonly (TRtRadius | null)[] = [null, 'lg', 'xl', 'full'];
     public readonly states: readonly IStoryState[] = STORY_STATES;
     public readonly stateLabel: (value: IStoryState) => string = storyStateLabel;
 
@@ -206,4 +209,6 @@ export class TestRtIconButtonMatrixComponent {
         value === null ? 'от кнопки' : value;
 
     public readonly flagCaseLabel: (value: IIconButtonFlagCase) => string = (value: IIconButtonFlagCase): string => value.name;
+
+    public readonly radiusLabel: (value: TRtRadius | null) => string = (value: TRtRadius | null): string => value ?? 'по умолчанию';
 }

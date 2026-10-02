@@ -1,6 +1,6 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting, TestRequest } from '@angular/common/http/testing';
-import { ChangeDetectionStrategy, Component, DebugElement } from '@angular/core';
+import { signal, ChangeDetectionStrategy, Component, DebugElement } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { provideRouter, Router } from '@angular/router';
@@ -8,6 +8,7 @@ import { RouterTestingHarness } from '@angular/router/testing';
 import { IUsage, USAGE_PATH } from '@rt/message-bus-admin/usage/util';
 import { IUsagePage } from '@rt/message-bus-common';
 import { IDBStorageService, provideRtStorage, provideRtUtils } from '@rt-tools/core';
+import { RT_KIT_LOCALE } from '@rt-tools/ui-kit-v2';
 import { Observable, of } from 'rxjs';
 
 import { AdminUsageListComponent } from './admin-usage-list.component';
@@ -102,6 +103,8 @@ describe('AdminUsageListComponent', () => {
                 provideRtUtils(),
                 provideRtStorage(),
                 { provide: IDBStorageService, useClass: ColumnSettingsStub },
+                // Русская локаль кита — та же, что у админки по умолчанию: поле периода пишет день в её порядке.
+                { provide: RT_KIT_LOCALE, useValue: signal('ru') },
                 provideRouter([
                     { path: 'usage', component: AdminUsageListComponent },
                     { path: 'usage/:skill', pathMatch: 'full', outlet: 'ro', component: SessionsStubComponent },
@@ -157,8 +160,8 @@ describe('AdminUsageListComponent', () => {
         await harness.fixture.whenStable();
         harness.detectChanges();
 
-        expect(fieldValue('list-period-from')).toBe(PERIOD.from);
-        expect(fieldValue('list-period-to')).toBe(PERIOD.to);
+        expect(fieldValue('list-period-from')).toBe('01.08.2026');
+        expect(fieldValue('list-period-to')).toBe('31.08.2026');
         expect(router.url).toBe('/usage?tree=a1b2');
     });
 
