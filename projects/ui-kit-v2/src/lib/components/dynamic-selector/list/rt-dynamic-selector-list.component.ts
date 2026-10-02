@@ -24,6 +24,7 @@ import { rtKitLabel } from '../../../i18n';
 import { BreakpointsService } from '../../../platform';
 import { RtIconButtonComponent } from '../../icon-button/rt-icon-button.component';
 import { RtInputComponent } from '../../input/rt-input.component';
+import { TRtRadius } from '../../radius/rt-radius.model';
 import { RtTooltipDirective } from '../../tooltip/rt-tooltip.directive';
 import { IRtDynamicSelector } from '../rt-dynamic-selector.model';
 
@@ -100,6 +101,8 @@ export class RtDynamicSelectorListComponent<TItem> {
     public readonly clearDisabled: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
         transform: booleanAttribute,
     });
+    /** Шаг скругления кнопок-иконок списка; по умолчанию они круглые. */
+    public readonly buttonRadius: InputSignal<TRtRadius | null> = input<TRtRadius | null>('full');
     public readonly titleTpl: InputSignal<TemplateRef<IRtDynamicSelector.RowContext<TItem>> | null> = input<TemplateRef<
         IRtDynamicSelector.RowContext<TItem>
     > | null>(null);

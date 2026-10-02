@@ -1,9 +1,14 @@
-import { ChangeDetectionStrategy, Component, WritableSignal, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DebugElement, WritableSignal, signal } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { By } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
 
 import { createRtFixture, qa, qaAll, textOf } from '../../../testing/rt-kit-testing';
+import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
+import { RtPopoverDirective } from '../popover/rt-popover.directive';
+import { RtRadiusDirective } from '../radius/rt-radius.directive';
+import { TRtRadius } from '../radius/rt-radius.model';
 import { RtDynamicSelectorComponent } from './rt-dynamic-selector.component';
 import { IRtDynamicSelector } from './rt-dynamic-selector.model';
 
@@ -27,6 +32,7 @@ const PEOPLE: IPerson[] = [
             [entities]="entities()"
             [mode]="mode()"
             [readonlyKeys]="readonlyKeys()"
+            [buttonRadius]="buttonRadius()"
             [formControl]="control"
             (listReset)="resets = resets + 1" />
     `,
@@ -38,6 +44,7 @@ class DynamicSelectorHostComponent {
     public readonly entities: WritableSignal<IPerson[]> = signal<IPerson[]>(PEOPLE);
     public readonly mode: WritableSignal<IRtDynamicSelector.Mode> = signal<IRtDynamicSelector.Mode>('multi');
     public readonly readonlyKeys: WritableSignal<number[]> = signal<number[]>([]);
+    public readonly buttonRadius: WritableSignal<TRtRadius | null> = signal<TRtRadius | null>('full');
     public resets: number = 0;
 }
 
@@ -203,5 +210,30 @@ describe('RtDynamicSelectorComponent', (): void => {
 
         expect(removeButtons(fixture).every((button: HTMLButtonElement): boolean => button.disabled)).toBe(true);
         expect((qa(fixture, 'dynamic-selector-add')?.nativeElement as HTMLButtonElement).disabled).toBe(true);
+    });
+    it('SC-UKV-535 — кнопки-иконки списка круглые по умолчанию и берут шаг входа', (): void => {
+        const fixture: THostFixture = setup();
+        const steps: () => (TRtRadius | null)[] = (): (TRtRadius | null)[] =>
+            fixture.debugElement
+                .queryAll(By.directive(RtIconButtonComponent))
+                .map((button: DebugElement): TRtRadius | null => button.injector.get(RtRadiusDirective).step());
+
+        expect(steps().length).toBeGreaterThan(0);
+        expect(steps().every((step: TRtRadius | null): boolean => step === 'full')).toBe(true);
+
+        fixture.componentInstance.buttonRadius.set('sm');
+        fixture.detectChanges();
+
+        expect(steps().every((step: TRtRadius | null): boolean => step === 'sm')).toBe(true);
+    });
+
+    it('SC-UKV-536 — окно выбора открывается от нажатой кнопки добавления', async (): Promise<void> => {
+        const fixture: THostFixture = setup();
+        const add: DebugElement | null = qa(fixture, 'dynamic-selector-add');
+
+        await openPopup(fixture);
+
+        expect(popup()).not.toBeNull();
+        expect(add?.injector.get(RtPopoverDirective).isOpen()).toBe(true);
     });
 });

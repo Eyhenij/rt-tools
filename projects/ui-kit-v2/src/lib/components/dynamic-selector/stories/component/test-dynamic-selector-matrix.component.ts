@@ -10,16 +10,25 @@ import { RtDynamicSelectorPopupComponent } from '../../popup/rt-dynamic-selector
 import { RtDynamicSelectorComponent } from '../../rt-dynamic-selector.component';
 import { RtDynamicSelectorRowControlsDirective, RtDynamicSelectorRowTitleDirective } from '../../rt-dynamic-selector.directives';
 import { IRtDynamicSelector } from '../../rt-dynamic-selector.model';
+import { TRtRadius } from '../../../radius/rt-radius.model';
 import { IStoryPerson, STORY_PEOPLE } from './test-dynamic-selector.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TDynamicSelectorMatrixPart = 'rows' | 'templates' | 'invitation' | 'states' | 'popup' | 'input' | 'presets' | 'themes';
+export type TDynamicSelectorMatrixPart =
+    'rows' | 'radius' | 'templates' | 'invitation' | 'states' | 'popup' | 'input' | 'presets' | 'themes';
 
 /** Случай списка выбранного: что показано строками и что с ними можно сделать. */
 interface IRowsCase {
     readonly name: string;
     readonly draggable: boolean;
     readonly readonlyKeys: readonly number[];
+    readonly control: FormControl<number[] | null>;
+}
+
+/** Случай скругления кнопок-иконок списка. */
+interface IRadiusCase {
+    readonly name: string;
+    readonly buttonRadius: TRtRadius | null;
     readonly control: FormControl<number[] | null>;
 }
 
@@ -104,6 +113,13 @@ export class TestRtDynamicSelectorMatrixComponent {
         { name: 'перетаскивание', draggable: true, readonlyKeys: [], control: chosen([1, 2, 3]) },
         { name: 'только для чтения', draggable: true, readonlyKeys: [1, 3], control: chosen([1, 2, 3]) },
         { name: 'пусто', draggable: false, readonlyKeys: [], control: chosen([]) },
+    ];
+
+    /** Шаги скругления кнопок: круг по умолчанию, шаг кнопки-иконки и квадрат без скругления. */
+    public readonly radiusCases: readonly IRadiusCase[] = [
+        { name: 'full — по умолчанию', buttonRadius: 'full', control: chosen([1, 2]) },
+        { name: 'md', buttonRadius: 'md', control: chosen([1, 2]) },
+        { name: 'none', buttonRadius: 'none', control: chosen([1, 2]) },
     ];
 
     public readonly invitationCases: readonly {

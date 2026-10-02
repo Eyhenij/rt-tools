@@ -22,7 +22,7 @@ The scenarios live in the subdomains, each at its own rules:
 | [The image uploader](image-upload/scenarios.md)                          | `SC-UKV-507`…`SC-UKV-518`                            |
 | [The tooltip of a cut text](tooltip-when-truncated/scenarios.md)         | `SC-UKV-458`…`SC-UKV-461`                            |
 | [The request error of a side panel](aside-error-box/scenarios.md)        | `SC-UKV-462`…`SC-UKV-466`                            |
-| [The dynamic selectors](dynamic-selectors/scenarios.md)                  | `SC-UKV-436`…`SC-UKV-457`                            |
+| [The dynamic selectors](dynamic-selectors/scenarios.md)                  | `SC-UKV-436`…`SC-UKV-457`, `SC-UKV-534`…`SC-UKV-536` |
 | [The side menu](side-menu/scenarios.md)                                  | `SC-UKV-430`…`SC-UKV-435`, `SC-UKV-526`…`SC-UKV-533` |
 
 The prefix is shared across the domain, and the numbers were not recounted at the move: the number

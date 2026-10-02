@@ -29,6 +29,7 @@ import { RtEmptyStateComponent } from '../../empty-state/rt-empty-state.componen
 import { RtFormControlBase } from '../../form-control/rt-form-control.base';
 import { IRtIcon } from '../../icon/rt-icon.model';
 import { RtInputComponent } from '../../input/rt-input.component';
+import { TRtRadius } from '../../radius/rt-radius.model';
 import { RtDynamicSelectorListComponent } from '../list/rt-dynamic-selector-list.component';
 import { RtDynamicSelectorRowControlsDirective } from '../rt-dynamic-selector.directives';
 import { addDynamicText, clearDynamicKeys, moveDynamicKey, renameDynamicText, sameDynamicKeys } from '../rt-dynamic-selector.logic';
@@ -120,6 +121,8 @@ export class RtDynamicInputComponent extends RtFormControlBase<string[]> {
     public readonly draggable: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
         transform: booleanAttribute,
     });
+    /** Шаг скругления кнопок-иконок списка; по умолчанию они круглые. */
+    public readonly buttonRadius: InputSignal<TRtRadius | null> = input<TRtRadius | null>('full');
     public readonly editable: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
         transform: booleanAttribute,
     });

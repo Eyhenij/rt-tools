@@ -22,6 +22,9 @@ type TStory = StoryObj<TestRtDynamicSelectorMatrixComponent>;
 
 export const Rows: TStory = { args: { part: 'rows' } };
 
+/** Кнопки-иконки списка круглые по умолчанию; шаг задаёт вход `buttonRadius`. */
+export const ButtonRadius: TStory = { args: { part: 'radius' } };
+
 /** Свои кнопки строки и своё название — шаблоны вызывающего; корзина остаётся китовой. */
 export const RowTemplates: TStory = { args: { part: 'templates' } };
 
