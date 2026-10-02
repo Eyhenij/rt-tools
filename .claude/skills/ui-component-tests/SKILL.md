@@ -63,18 +63,18 @@ Four checks do not replace one another, and the choice between them is not a mat
 - **A state's sign is checked by the same thing a person sees it by: a frame or a measurement of
   the raster, not by the value of a written style.** A style set on a node proves only that it was
   set; whether it applied depends on what the showing registered.
+- **A `play` step that asserts a node exists proves nothing about what is seen.** A 2x2 box exists
+  as surely as a 400x300 one. A component that draws a surface asserts its size against a lower
+  bound, not its presence.
 - **If there is a pair of states, both must be in the frame.** A reference showing one side of a
   pair says nothing about the pair itself and stays green under any breakage of it.
 - **A styling edit that passed the snapshots without divergences is half checked.** A small element
   takes hundredths of a frame; the comparison threshold can let it through. The sign is the share of
   the divergence, not the colour of the run.
 - **A settled frame is waited for by an event, not by a countdown, and the technique is repeated in
-  every harness.** A countdown checks the machine rather than the layout: on a free one it is always
-  enough, on a busy one it is not, and which frame did not make it turns out to be a matter of
-  chance. What are waited for are signs independent of the machine's load: the fonts are up, the
-  motion is stopped, the network went quiet, the size of the node being shot did not change over two
-  frames in a row. While the wait goes by time, a green run means "the moment is missed alike", not
-  "the frame is right".
+  every harness.** A countdown checks the machine rather than the layout. What are waited for are
+  signs independent of the machine's load: the fonts are up, the motion is stopped, the network went
+  quiet, the size of the node being shot did not change over two frames in a row.
 - **A wait that swallows its own refusal takes the frame too early.** Not having waited, it silently
   lets the shot go on, and the frame goes into the comparison without what was awaited. A wait's
   refusal costs a line of sorting out, a diverged snapshot a whole session.
