@@ -32,3 +32,19 @@ plate under the ring, a translucent backdrop and an arc look without a track, as
   box to fill.
 - **The arc keeps the colour axis and the diameter** — it is a second look of the same ring, not a
   second component.
+
+## Decisions along the way
+
+- The ring rules are shared by the host and the inner `__ring` through one selector list: the
+  check of cascade layers allows nothing but imports before the layer wrapper, so a mixin there
+  was refused.
+- The overlay layer is the block's own property `--rt-spinner-overlay-z` with the sticky step as
+  its default, so it is declared and the token graph sees it; the plate rounding is a property of
+  its own for the same rule about direct steps.
+- The plate size follows the diameter: the diameter plus a step on each side. At the default
+  diameter of 32 that is the 48 pixels the consumer named.
+- The host bindings moved from getters to computed values while the file was edited: the kit has
+  no getters in components.
+- The snapshot harness stops motion, and a stopped arc showed its first keyframe — a dot. The cycle
+  now starts at the long arc: the motion is the same, and the frame shows an arc.
+- Snapshots: three written (Appearance, Plate, Overlay), four former ones matched.
