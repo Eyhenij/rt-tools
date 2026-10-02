@@ -4,8 +4,8 @@
 
 - **State:** `этап-идёт`
 - **Stage:** 3 of 3 — texts and showcase
-- **Done:** the branch from the epic branch, the folder, the spec, the tag, the toggle switch, the toggle button group, the toolbar, the loading button, the tooltip sides
-- **Next step:** the spec of the subdomain, its bindings and scenarios
+- **Done:** the branch from the epic branch, the folder, the spec, the tag, the toggle switch, the toggle button group, the toolbar, the loading button, the tooltip sides, the scenarios SC-UKV-565…574
+- **Next step:** the overview tables and the stories for the new inputs
 - **Uncommitted:** no
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -18,8 +18,8 @@
 - [x] 1.4 The toolbar: layout properties
 - [x] 2.1 The button hides its label while loading and keeps its width
 - [x] 2.2 The tooltip on the left and on the right
-- [>] 3.1 The spec of the subdomain, its bindings and scenarios
-- [ ] 3.2 The overview tables and the stories for the new inputs
+- [x] 3.1 The spec of the subdomain, its bindings and scenarios
+- [>] 3.2 The overview tables and the stories for the new inputs
 - [ ] 3.3 Snapshots for the new stories
 
 ## Decisions along the way
