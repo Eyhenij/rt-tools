@@ -4,8 +4,8 @@
 
 - **State:** `этап-идёт`
 - **Stage:** 1 of 3 — properties
-- **Done:** the branch from the epic branch, the folder, the spec, the tag, the toggle switch
-- **Next step:** the toggle button group: size properties on the host
+- **Done:** the branch from the epic branch, the folder, the spec, the tag, the toggle switch, the toggle button group
+- **Next step:** the toolbar: layout properties
 - **Uncommitted:** no
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -14,8 +14,8 @@
 
 - [x] 1.1 The tag: size properties on the host, colour, padding and letter-spacing handles
 - [x] 1.2 The toggle switch: size properties on the host, the label, the disabled opacity
-- [>] 1.3 The toggle button group: size properties on the host
-- [ ] 1.4 The toolbar: layout properties
+- [x] 1.3 The toggle button group: size properties on the host
+- [>] 1.4 The toolbar: layout properties
 - [ ] 2.1 The button hides its label while loading and keeps its width
 - [ ] 2.2 The tooltip on the left and on the right
 - [ ] 3.1 The spec of the subdomain, its bindings and scenarios
