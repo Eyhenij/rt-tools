@@ -44,7 +44,7 @@ class SelectorHostComponent {
     public readonly people: IPerson[] = PEOPLE;
     public readonly control: FormControl<number[] | null> = new FormControl<number[] | null>([1, 2]);
     public readonly removeShown: WritableSignal<boolean> = signal(true);
-    public readonly listActionsShown: WritableSignal<boolean | null> = signal<boolean | null>(null);
+    public readonly listActionsShown: WritableSignal<boolean> = signal(true);
     public readonly invitation: WritableSignal<boolean> = signal(false);
     public readonly extraChanged: WritableSignal<boolean> = signal(false);
     public readonly searchTerm: WritableSignal<string> = signal('');
@@ -71,7 +71,7 @@ class SelectorHostComponent {
 class InputHostComponent {
     public readonly control: FormControl<string[] | null> = new FormControl<string[] | null>(['a@x.com']);
     public readonly removeShown: WritableSignal<boolean> = signal(true);
-    public readonly listActionsShown: WritableSignal<boolean | null> = signal<boolean | null>(null);
+    public readonly listActionsShown: WritableSignal<boolean> = signal(true);
     public readonly extraChanged: WritableSignal<boolean> = signal(false);
     public resets: number = 0;
     public clears: number = 0;
@@ -149,19 +149,17 @@ describe('Переключатели динамического селектор
         expect(qa(fixture, 'dynamic-selector-reset')).toBeNull();
     });
 
-    it('SC-UKV-615 — без переключателя полоса уступает место приглашению, а true держит её', (): void => {
-        const fixture: ComponentFixture<SelectorHostComponent> = host(SelectorHostComponent, (it: SelectorHostComponent): void =>
-            it.invitation.set(true)
-        );
+    it('SC-UKV-615 — без переключателя полоса держит сброс и очистку и уступает место приглашению', (): void => {
+        const fixture: ComponentFixture<SelectorHostComponent> = host(SelectorHostComponent);
+
+        expect(qa(fixture, 'dynamic-selector-reset')).not.toBeNull();
+        expect(qa(fixture, 'dynamic-selector-clear')).not.toBeNull();
+
+        fixture.componentInstance.invitation.set(true);
+        fixture.detectChanges();
 
         expect(qa(fixture, 'dynamic-selector-invitation')).not.toBeNull();
         expect(qa(fixture, 'dynamic-selector-reset')).toBeNull();
-
-        fixture.componentInstance.listActionsShown.set(true);
-        fixture.detectChanges();
-
-        expect(qa(fixture, 'dynamic-selector-reset')).not.toBeNull();
-        expect(qa(fixture, 'dynamic-selector-invitation')).not.toBeNull();
     });
 
     it('SC-UKV-616 — правки в строках включают сброс и очистку; сброс при прежних ключах значение не трогает, оба сообщают о себе', async (): Promise<void> => {

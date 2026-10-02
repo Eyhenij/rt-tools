@@ -33,7 +33,7 @@ search; the switches, the query input and the state signal are invisible to them
 
 - **A list without the bin draws its rows without the remove button.**
 - **A list without the reset and clear panel keeps its add button.**
-- **Without the panel switch the panel follows the invitation, as before.**
+- **With the panel switch on, as by default, the bar gives its place to the invitation, as before.**
 - **Edits in a row keep reset and clear active, and both then report to the consumer.**
 - **The popup opens on the initial query and does not report it as a search.**
 - **The selector tells whether its popup is open and reports every change of that.**

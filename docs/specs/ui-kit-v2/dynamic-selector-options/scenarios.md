@@ -19,11 +19,11 @@ Given a selector, or a text input, with the reset and clear panel switched off
 When its list is drawn
 Then the add button stands under the list, and reset and clear do not
 
-### SC-UKV-615 — without the panel switch the panel follows the invitation
+### SC-UKV-615 — with the panel switch on the bar follows the invitation
 
-Given a selector with an invitation and without the panel switch, and then with the switch on
+Given a selector with the panel switch on, as by default, and then with an invitation
 When it is drawn
-Then the bar gives its place to the invitation, and with the switch on it stands under it too
+Then reset and clear stand under the list, and with the invitation the bar gives its place to it
 
 ### SC-UKV-616 — row edits keep reset and clear active
 

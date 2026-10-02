@@ -44,3 +44,7 @@ without a search event; a public `popupOpen` signal and a `popupOpenChange` outp
 
 - Clear with only row edits keeps the value and still reports by the new `listCleared`: without a
   report the press would do nothing visible.
+- `listActionsShown` is a plain boolean, `true` by default, not `boolean | null`: the tree's check
+  of boolean inputs takes a third value only by the owner's entry in its accepted list. `false`
+  takes off reset and clear; the bar under an invitation, which the request did not ask for, is
+  not offered.

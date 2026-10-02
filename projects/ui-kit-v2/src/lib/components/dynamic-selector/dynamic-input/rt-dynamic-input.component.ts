@@ -114,11 +114,6 @@ export class RtDynamicInputComponent extends RtFormControlBase<string[]> {
     /** Правки в шаблоне строки держат сброс и очистку включёнными, даже когда строки не менялись. */
     protected readonly isResetDisabled: Signal<boolean> = computed((): boolean => !this.extraChanged() && this.isKeysReset());
     protected readonly isClearDisabled: Signal<boolean> = computed((): boolean => !this.extraChanged() && this.isKeysClear());
-    /** Полоса под строками: `true` держит её и под приглашением, иначе её место отдаётся приглашению. */
-    protected readonly isListActionsShown: Signal<boolean> = computed(
-        (): boolean => this.listActionsShown() === true || !this.isInvitationShown()
-    );
-    protected readonly isResetClearShown: Signal<boolean> = computed((): boolean => this.listActionsShown() !== false);
     protected readonly addTitle: Signal<string> = computed((): string => this.buttonTitle() || this.addLabel());
     protected readonly fieldPlaceholder: Signal<string> = computed((): string => this.placeholder() || this.placeholderLabel());
 
@@ -145,11 +140,10 @@ export class RtDynamicInputComponent extends RtFormControlBase<string[]> {
     public readonly removeShown: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
         transform: booleanAttribute,
     });
-    /**
-     * Сброс и очистка под списком: `false` их убирает, кнопка добавления остаётся; `true` держит
-     * полосу и под приглашением; `null` — полоса уступает место приглашению, как прежде.
-     */
-    public readonly listActionsShown: InputSignal<boolean | null> = input<boolean | null>(null);
+    /** Сброс и очистка под списком: `false` их убирает, кнопка добавления остаётся. */
+    public readonly listActionsShown: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
+        transform: booleanAttribute,
+    });
     /**
      * Строки правлены в шаблоне вызывающего: сброс и очистка включены и тогда, когда строки прежние.
      * Сброс сообщает `listReset`, очистка — `listCleared`, и вызывающий снимает свои правки.

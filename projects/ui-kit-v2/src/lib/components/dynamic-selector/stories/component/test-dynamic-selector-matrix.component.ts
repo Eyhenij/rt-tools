@@ -21,9 +21,8 @@ export type TDynamicSelectorMatrixPart =
 interface ISwitchesCase {
     readonly name: string;
     readonly removeShown: boolean;
-    readonly listActionsShown: boolean | null;
+    readonly listActionsShown: boolean;
     readonly extraChanged: boolean;
-    readonly invitation: boolean;
     readonly control: FormControl<number[] | null>;
 }
 
@@ -178,45 +177,12 @@ export class TestRtDynamicSelectorMatrixComponent {
         { name: 'ничего не найдено', entities: [], mode: 'multi', multiToggleShown: false, loading: false, pinnedKeys: [] },
     ];
 
-    /**
-     * Прежний список стоит первым — рядом видно, что убирает каждый переключатель. Правки в строках
-     * включают сброс и очистку при прежних ключах; приглашение с `listActionsShown = true` держит
-     * полосу и под собой.
-     */
+    /** Прежний список стоит первым — рядом видно, что убирает каждый переключатель. */
     public readonly switchesCases: readonly ISwitchesCase[] = [
-        { name: 'как прежде', removeShown: true, listActionsShown: null, extraChanged: false, invitation: false, control: chosen([1, 2]) },
-        {
-            name: 'без корзины',
-            removeShown: false,
-            listActionsShown: null,
-            extraChanged: false,
-            invitation: false,
-            control: chosen([1, 2]),
-        },
-        {
-            name: 'без сброса и очистки',
-            removeShown: true,
-            listActionsShown: false,
-            extraChanged: false,
-            invitation: false,
-            control: chosen([1, 2]),
-        },
-        {
-            name: 'правки в строках',
-            removeShown: true,
-            listActionsShown: null,
-            extraChanged: true,
-            invitation: false,
-            control: chosen([1, 2]),
-        },
-        {
-            name: 'приглашение с полосой',
-            removeShown: true,
-            listActionsShown: true,
-            extraChanged: false,
-            invitation: true,
-            control: chosen([1]),
-        },
+        { name: 'как прежде', removeShown: true, listActionsShown: true, extraChanged: false, control: chosen([1, 2]) },
+        { name: 'без корзины', removeShown: false, listActionsShown: true, extraChanged: false, control: chosen([1, 2]) },
+        { name: 'без сброса и очистки', removeShown: true, listActionsShown: false, extraChanged: false, control: chosen([1, 2]) },
+        { name: 'правки в строках', removeShown: true, listActionsShown: true, extraChanged: true, control: chosen([1, 2]) },
     ];
 
     /** Начальный запрос: окно открыто с текстом в поиске и предлагает только совпадения. */
