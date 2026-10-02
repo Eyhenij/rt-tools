@@ -4,8 +4,8 @@
 
 - **State:** `этап-идёт`
 - **Stage:** 2 of 2 — texts and showcase
-- **Done:** the branch from the epic branch, the folder, the spec, the scroll area, the action bar, its menu
-- **Next step:** the spec of the subdomain, its bindings and scenarios
+- **Done:** the branch from the epic branch, the folder, the spec, the scroll area, the action bar, its menu, the scenarios SC-UKV-575…578
+- **Next step:** the overview tables and the stories for the new properties and the open menu
 - **Uncommitted:** no
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -15,8 +15,8 @@
 - [x] 1.1 The scroll area: padding and background properties
 - [x] 1.2 The action bar: colour, padding, gap, font and weight properties
 - [x] 1.3 The action bar menu: properties read with a fallback in the overlay
-- [>] 2.1 The spec of the subdomain, its bindings and scenarios
-- [ ] 2.2 The overview tables and the stories for the new properties and the open menu
+- [x] 2.1 The spec of the subdomain, its bindings and scenarios
+- [>] 2.2 The overview tables and the stories for the new properties and the open menu
 - [ ] 2.3 Snapshots for the new stories
 
 ## Decisions along the way
