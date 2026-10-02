@@ -232,22 +232,22 @@ EOF
 }
 
 STACK="$(stack_repo RT-120-lower)"
-dlv "SC-AK-1178 — снятие черновика судит ветку названной заявки" "$STACK" 'gh pr ready 920' PASS
-dlv "SC-AK-1179 — слияние по номеру судит ветку той заявки" "$STACK" 'gh pr merge 920 --merge' PASS
+dlv "SC-AK-1183 — снятие черновика судит ветку названной заявки" "$STACK" 'gh pr ready 920' PASS
+dlv "SC-AK-1184 — слияние по номеру судит ветку той заявки" "$STACK" 'gh pr merge 920 --merge' PASS
 rm -rf "$STACK"
 
 # Ветка заявки несёт свою папку — отказ называет папку той ветки, а не текущей.
 STACK="$(stack_repo RT-121-upper)"
 git -C "$STACK" update-ref refs/remotes/origin/RT-121-upper HEAD
 git -C "$STACK" checkout -q RT-120-lower 2>/dev/null
-dlv "SC-AK-1178 — папка в ветке заявки отбивает снятие" "$STACK" 'gh pr ready 920' deny
-dlv_reason "SC-AK-1178 — отказ называет папку ветки заявки" "$STACK" 'gh pr ready 920' \
+dlv "SC-AK-1183 — папка в ветке заявки отбивает снятие" "$STACK" 'gh pr ready 920' deny
+dlv_reason "SC-AK-1183 — отказ называет папку ветки заявки" "$STACK" 'gh pr ready 920' \
     'docs/tasks/RT-121-upper'
 rm -rf "$STACK"
 
 # Удалённой ссылки на ветку заявки нет — судится текущая ветка, как прежде.
 STACK="$(stack_repo RT-122-unpushed)"
-dlv "SC-AK-1178 — без удалённой ссылки судится текущая ветка" "$STACK" 'gh pr ready 920' deny
+dlv "SC-AK-1183 — без удалённой ссылки судится текущая ветка" "$STACK" 'gh pr ready 920' deny
 rm -rf "$STACK"
 
 # --- заявка, названная не номером или не названная вовсе -----------------------------------------

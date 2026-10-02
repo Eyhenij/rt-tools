@@ -132,12 +132,12 @@ report "SC-AK-392 — и адрес заявки тоже" \
 report "SC-AK-392 — по имени ветки заявка тоже находится" \
     "$(pull_state "$PULL_TREE" "$NUMBERED" '' 'RT-700-probe' | jq -r '.exists')" true
 
-# --- SC-AK-1177. Ветка заявки -------------------------------------------------------------------
+# --- SC-AK-1182. Ветка заявки -------------------------------------------------------------------
 # Гард папки задачи судит ветку названной заявки: нижнюю заявку стопки снимают с верхней ветки.
 HEADED='{"number":701,"isDraft":true,"author":{"login":"probe-bot"},"reviewRequests":[],"latestReviews":[],"headRefName":"RT-700-probe"}'
-report "SC-AK-1177 — ветка заявки приходит в ответе" \
+report "SC-AK-1182 — ветка заявки приходит в ответе" \
     "$(pull_state "$PULL_TREE" "$HEADED" | jq -r '.branch')" RT-700-probe
-report "SC-AK-1177 — без ветки в ответе поле пустое" \
+report "SC-AK-1182 — без ветки в ответе поле пустое" \
     "$(pull_state "$PULL_TREE" "$NUMBERED" | jq -r '.branch')" null
 
 rm -rf "$PULL_TREE"

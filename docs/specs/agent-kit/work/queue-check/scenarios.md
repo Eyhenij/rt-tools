@@ -101,7 +101,7 @@ Then what was named goes to the client of the hosting as an argument, and the PR
 
 Covered: `projects/agent-kit/tests/checks-board-pull.test.sh`.
 
-### SC-AK-1177 — the state of a PR names its head branch
+### SC-AK-1182 — the state of a PR names its head branch
 
 Given the hosting answers with the head branch of the PR
 When the state of the PR is asked about

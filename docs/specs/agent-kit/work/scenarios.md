@@ -342,7 +342,7 @@ merge, because the guard does not reach as far as the merge
 
 Covered: `projects/agent-kit/tests/git-guards.test.sh`.
 
-### SC-AK-1178 — lifting the draft judges the folder of the named PR's branch
+### SC-AK-1183 — lifting the draft judges the folder of the named PR's branch
 
 Given the checked-out branch carries its task folder, and the named PR has another head branch
 whose remote ref carries no folder
@@ -352,7 +352,7 @@ carries its folder is refused, and a head without a remote ref leaves the checke
 
 Covered: `projects/agent-kit/tests/git-guards-readiness.test.sh`.
 
-### SC-AK-1179 — a merge by number judges the folder of that PR's branch
+### SC-AK-1184 — a merge by number judges the folder of that PR's branch
 
 Given the checked-out branch carries its task folder, and the PR named by number has another head
 branch whose remote ref has its folder taken apart
