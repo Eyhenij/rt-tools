@@ -50,6 +50,22 @@ const COLORS: Readonly<Record<IRtIcon.Color, string | null>> = Object.freeze({
     inverse: 'var(--rt-color-text-inverse)',
 });
 
+function isSizeStep(value: string): value is IRtIcon.Size {
+    return Object.hasOwn(SIZES, value);
+}
+
+/** Ступень или число пикселей — в пиксели. Числовая строка читается числом, прочее — ступенью `md`. */
+function toSizePx(value: IRtIcon.SizeInput | string): number {
+    if (typeof value === 'number') {
+        return value > 0 ? value : SIZES.md;
+    }
+    if (isSizeStep(value)) {
+        return SIZES[value];
+    }
+    const px: number = numberAttribute(value, 0);
+    return px > 0 ? px : SIZES.md;
+}
+
 const BEM_BLOCK: string = 'rt-icon';
 
 @Component({
@@ -66,6 +82,7 @@ const BEM_BLOCK: string = 'rt-icon';
         '[style.height.px]': 'sizePx()',
         '[style.color]': 'colorValue()',
         '[style.transform]': 'rotateStyle()',
+        '[class.rt-icon--spin]': 'spin()',
     },
 })
 export class RtIconComponent {
@@ -133,7 +150,7 @@ export class RtIconComponent {
         return this.fill() ? 'material-fill' : 'material';
     });
 
-    protected readonly sizePx: Signal<number> = computed((): number => SIZES[this.size()]);
+    protected readonly sizePx: Signal<number> = computed((): number => this.size());
 
     protected readonly colorValue: Signal<string | null> = computed((): string | null => COLORS[this.color()]);
 
@@ -152,7 +169,15 @@ export class RtIconComponent {
      */
     public readonly glyph: InputSignal<string | null> = input<string | null>(null);
 
-    public readonly size: InputSignal<IRtIcon.Size> = input<IRtIcon.Size>('md');
+    /**
+     * Ступень размера или число пикселей — для размеров между ступенями и крупнее последней.
+     * Числовая строка из статического атрибута читается числом, прочая строка вне ступеней — `md`.
+     * Внутри вход хранит пиксели: ступень переводится в них при записи.
+     */
+    public readonly size: InputSignalWithTransform<number, IRtIcon.SizeInput | string> = input<number, IRtIcon.SizeInput | string>(
+        SIZES.md,
+        { transform: toSizePx }
+    );
 
     public readonly color: InputSignal<IRtIcon.Color> = input<IRtIcon.Color>('current');
 
@@ -161,6 +186,14 @@ export class RtIconComponent {
      * материальном наборе; свой набор рисует значок одним рисунком. Дефолт `false`.
      */
     public readonly fill: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+
+    /**
+     * Значок вращается — как индикатор занятости внутри кнопки или строки. Когда система просит
+     * меньше движения, вращение медленнее. Поворот на время вращения уступает ему. Дефолт `false`.
+     */
+    public readonly spin: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
 

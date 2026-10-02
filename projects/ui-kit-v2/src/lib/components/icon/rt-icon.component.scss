@@ -3,6 +3,9 @@
        Селектор bare `.rt-icon` (класс на host) — им же адресуются и программные
        потребители sprite'а, рисующие иконку без компонента. */
     .rt-icon {
+        --rt-icon-spin-duration: 1s;
+        --rt-icon-spin-duration-reduced: 4s;
+
         display: inline-flex;
         flex-shrink: 0;
         line-height: 0;
@@ -41,7 +44,24 @@
             }
         }
 
+        /* Вращение задаётся анимацией, и на её время она перекрывает поворот значка. */
+        &--spin {
+            animation: rt-icon-spin var(--rt-icon-spin-duration) linear infinite;
+        }
+
         /* Набор рисунков стилями не выбирается: ссылку на символ спрайта CSS подменить нечем.
            Признак набора компонент читает у разметки над собой — см. rt-icon.component.ts. */
+    }
+
+    @keyframes rt-icon-spin {
+        to {
+            transform: rotate(1turn);
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .rt-icon--spin {
+            animation-duration: var(--rt-icon-spin-duration-reduced);
+        }
     }
 }

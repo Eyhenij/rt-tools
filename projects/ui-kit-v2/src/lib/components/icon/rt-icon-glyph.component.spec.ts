@@ -86,6 +86,38 @@ describe('RtIconComponent — глиф Material', (): void => {
     });
 });
 
+describe('RtIconComponent — вращение и размер в пикселях', (): void => {
+    function hostOf(fixture: ComponentFixture<RtIconComponent>): HTMLElement {
+        return fixture.nativeElement as HTMLElement;
+    }
+
+    it('SC-UKV-551 — значок с вращением несёт модификатор вращения', (): void => {
+        const fixture: ComponentFixture<RtIconComponent> = setup({ name: 'spinner', spin: true });
+
+        expect(classesOf(hostOf(fixture))).toEqual(['rt-icon', 'rt-icon--spin']);
+    });
+
+    it('без вращения модификатора нет', (): void => {
+        expect(classesOf(hostOf(setup({ name: 'spinner' })))).toEqual(['rt-icon']);
+    });
+
+    it.each<[unknown, string]>([
+        [14, '14px'],
+        [56, '56px'],
+        ['48', '48px'],
+        ['lg', '24px'],
+    ])('SC-UKV-552 — размер %p даёт квадрат %s', (size: unknown, expected: string): void => {
+        const host: HTMLElement = hostOf(setup({ name: 'check', size }));
+
+        expect(host.style.width).toBe(expected);
+        expect(host.style.height).toBe(expected);
+    });
+
+    it.each<[unknown]>([[0], [-4], ['huge']])('негодный размер %p рисуется ступенью md', (size: unknown): void => {
+        expect(hostOf(setup({ name: 'check', size })).style.width).toBe('20px');
+    });
+});
+
 describe('provideRtIcons — настройки значков', (): void => {
     function injectorOf(...args: Parameters<typeof provideRtIcons>): EnvironmentInjector {
         return createEnvironmentInjector([provideRtIcons(...args)], TestBed.inject(EnvironmentInjector));
