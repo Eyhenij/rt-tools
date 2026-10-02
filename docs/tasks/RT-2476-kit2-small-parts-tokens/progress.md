@@ -3,9 +3,9 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 2 of 3 — behaviour
-- **Done:** the branch from the epic branch, the folder, the spec, the tag, the toggle switch, the toggle button group, the toolbar, the loading button
-- **Next step:** the tooltip on the left and on the right
+- **Stage:** 3 of 3 — texts and showcase
+- **Done:** the branch from the epic branch, the folder, the spec, the tag, the toggle switch, the toggle button group, the toolbar, the loading button, the tooltip sides
+- **Next step:** the spec of the subdomain, its bindings and scenarios
 - **Uncommitted:** no
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -17,8 +17,8 @@
 - [x] 1.3 The toggle button group: size properties on the host
 - [x] 1.4 The toolbar: layout properties
 - [x] 2.1 The button hides its label while loading and keeps its width
-- [>] 2.2 The tooltip on the left and on the right
-- [ ] 3.1 The spec of the subdomain, its bindings and scenarios
+- [x] 2.2 The tooltip on the left and on the right
+- [>] 3.1 The spec of the subdomain, its bindings and scenarios
 - [ ] 3.2 The overview tables and the stories for the new inputs
 - [ ] 3.3 Snapshots for the new stories
 
@@ -29,6 +29,7 @@
 - The size, on and disabled modifiers are also drawn on the toggle switch host; the disabled opacity sits there and dims the label too.
 - The toolbar height is a minimum height: a bar stacked into a column on a narrow screen is never clipped. The gap property is the gap between the zones.
 - A loading button with `loadingLabel="hide"` keeps its ordinary content, icon included, at zero opacity rather than `visibility: hidden`: the width stays the idle width and the label still names the button for a screen reader. The loader stands over it absolutely.
+- A side tooltip that fits on neither side falls back to top, then bottom; the sides are logical `start`/`end`, so they mirror in right-to-left writing.
 
 ## Sessions
 

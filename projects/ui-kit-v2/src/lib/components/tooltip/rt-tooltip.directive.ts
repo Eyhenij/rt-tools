@@ -23,7 +23,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { carryThemeScope, materialPresetClassesOf } from '../../util/material-preset';
 import { RtTooltipComponent } from './rt-tooltip.component';
-import { isTooltipTextCut } from './rt-tooltip.logic';
+import { isTooltipTextCut, tooltipPositions } from './rt-tooltip.logic';
 import { IRtTooltip } from './rt-tooltip.model';
 
 const SHOW_DELAY_MS: number = 300;
@@ -142,23 +142,9 @@ export class RtTooltipDirective implements OnDestroy {
         if (this.#overlayRef !== null) {
             return this.#overlayRef;
         }
-        const above: ConnectedPosition = {
-            originX: 'center',
-            originY: 'top',
-            overlayX: 'center',
-            overlayY: 'bottom',
-            offsetY: -6,
-        };
-        const below: ConnectedPosition = {
-            originX: 'center',
-            originY: 'bottom',
-            overlayX: 'center',
-            overlayY: 'top',
-            offsetY: 6,
-        };
         const presetClasses: string[] = materialPresetClassesOf(this.#elementRef.nativeElement);
         const placement: IRtTooltip.Placement = this.placement() ?? (presetClasses.length > 0 ? 'bottom' : 'top');
-        const positions: ConnectedPosition[] = placement === 'top' ? [above, below] : [below, above];
+        const positions: ConnectedPosition[] = tooltipPositions(placement);
 
         const positionStrategy: FlexibleConnectedPositionStrategy = this.#overlay
             .position()
