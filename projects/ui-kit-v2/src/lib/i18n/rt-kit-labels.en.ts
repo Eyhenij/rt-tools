@@ -45,6 +45,8 @@ export const RT_KIT_LABELS_EN = {
     chatStatusRead: 'Read',
     chatStatusSending: 'Sending',
     chatStatusSent: 'Delivered',
+    chatStopAria: 'Stop the answer',
+    chatStopLabel: 'Stop',
     chatTitle: 'Chat',
     counterDecrease: 'Decrease',
     counterIncrease: 'Increase',
