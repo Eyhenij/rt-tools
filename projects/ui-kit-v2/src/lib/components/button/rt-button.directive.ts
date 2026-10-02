@@ -21,7 +21,15 @@ import { IRtKitConfig } from '../../config/rt-kit-config.model';
 import { rtKitDefault } from '../../config/rt-kit-config.providers';
 import { RtRadiusDirective } from '../radius/rt-radius.directive';
 import { RT_RADIUS_DEFAULT, TRtRadius } from '../radius/rt-radius.model';
-import { RtIconRegistry, IRtIcon } from '../icon';
+import {
+    IRtIcon,
+    RT_ICON_GLYPH_STRATEGY,
+    RT_ICON_MATERIAL_PRESET_SELECTOR,
+    RtIconFontService,
+    RtIconRegistry,
+    resolveIconGlyph,
+} from '../icon';
+import { iconMaterialDrawn } from '../icon/rt-icon-material-map';
 import { RtRippleDirective } from '../ripple';
 import { IButton } from './rt-button.model';
 
@@ -71,6 +79,8 @@ export class RtButtonDirective {
     readonly #renderer: Renderer2 = inject(Renderer2);
     readonly #doc: Document = inject(DOCUMENT);
     readonly #iconRegistry: RtIconRegistry = inject(RtIconRegistry);
+    readonly #glyphStrategy: IRtIcon.GlyphStrategy = inject(RT_ICON_GLYPH_STRATEGY);
+    readonly #fontReady: Signal<boolean> = inject(RtIconFontService).ready;
 
     /* С чего стартуют три входа, которые приложение вправе задать киту разом. Значение считается
        из настроек при объявлении входа: так публичный вид входа не меняется — ни тип, ни имя, — а
@@ -92,7 +102,11 @@ export class RtButtonDirective {
 
     /** Текстовый лейбл кнопки. Если null — кнопка только с иконкой. */
     public readonly label: InputSignal<string | null> = input<string | null>(null);
-    /** CSS-класс иконки (например, `check`). Если null — без иконки. */
+    /**
+     * Значок кнопки: имя кита (`check`) или имя Material (`arrow_back`). Имя Material рисуется
+     * так же, как вход `glyph` у `rt-icon`: парой из перечня кита или лигатурой шрифта — по
+     * настройке `glyphStrategy` у `provideRtIcons()`. Если null — без иконки.
+     */
     public readonly icon: InputSignal<string | null> = input<string | null>(null);
     /** Сторона размещения иконки относительно лейбла. */
     public readonly iconPos: InputSignal<IButton.IconPos> = input<IButton.IconPos>('left');
@@ -134,6 +148,8 @@ export class RtButtonDirective {
             this.iconPos();
             this.loading();
             this.loadingIcon();
+            // Лигатура до готовности шрифтов скрыта: готовность перерисовывает содержимое.
+            this.#fontReady();
 
             untracked(() => this.#updateContent());
         });
@@ -292,9 +308,14 @@ export class RtButtonDirective {
     }
 
     #createIcon(iconName: string): HTMLElement {
-        // Рендерим SVG-sprite через RtIconRegistry — единый источник иконок
-        // (как rt-icon / rt-icon-button / rt-input). Старый `<i class="ico-X">`
-        // паттерн требовал icon-font CSS, который ушёл вместе с PrimeNG.
+        const resolved: IRtIcon.Resolved | null = resolveIconGlyph(null, iconName, this.#glyphStrategy);
+        if (resolved?.kind === 'kit') {
+            return this.#createKitIcon(resolved.name);
+        }
+        return this.#createGlyph(iconName);
+    }
+
+    #createKitIcon(name: IRtIcon.Name): HTMLElement {
         const svg: SVGSVGElement = this.#doc.createElementNS('http://www.w3.org/2000/svg', 'svg');
         svg.setAttribute('focusable', 'false');
         svg.setAttribute('aria-hidden', 'true');
@@ -303,16 +324,37 @@ export class RtButtonDirective {
 
         // Тот же путь, что и у компонента значка: имя просится у реестра, а он ходит за файлом
         // один раз на страницу — значок, спрошенный обеими разметками сразу, едет одним запросом.
-        this.#iconRegistry.request(iconName as IRtIcon.Name);
+        const drawing: IRtIcon.Drawing = this.#drawingOf(name);
+        this.#iconRegistry.request(name, drawing);
 
         const use: SVGUseElement = this.#doc.createElementNS('http://www.w3.org/2000/svg', 'use');
-        // Регистр типизирован через IRtIcon.Name; директива принимает arbitrary
-        // string для совместимости со старыми потребителями. Если name неизвестен,
-        // <use href> просто не зарезолвится — браузер тихо отрендерит пустой контейнер.
-        use.setAttribute('href', this.#iconRegistry.symbolHref(iconName as IRtIcon.Name));
+        use.setAttribute('href', this.#iconRegistry.symbolHref(name, drawing));
         svg.appendChild(use);
 
         return svg as unknown as HTMLElement;
+    }
+
+    /**
+     * Набор рисунка — как у компонента значка: материальный рисунок под разметкой с признаком
+     * материального набора, если у имени он есть. Признак читается при каждой отрисовке
+     * содержимого, а после первой отрисовки она повторяется — контейнер к тому времени на месте.
+     */
+    #drawingOf(name: IRtIcon.Name): IRtIcon.Drawing {
+        const underMaterial: boolean = this.#el.nativeElement.closest(RT_ICON_MATERIAL_PRESET_SELECTOR) !== null;
+        return underMaterial && iconMaterialDrawn.has(name) ? 'material' : 'base';
+    }
+
+    /** Лигатура шрифта Material Symbols для имени без пары. Шрифт подключает приложение. */
+    #createGlyph(glyph: string): HTMLElement {
+        const el: HTMLElement = this.#renderer.createElement('span') as HTMLElement;
+        this.#renderer.addClass(el, `${BEM_BLOCK}__icon`);
+        this.#renderer.addClass(el, `${BEM_BLOCK}__glyph`);
+        if (!this.#fontReady()) {
+            this.#renderer.addClass(el, `${BEM_BLOCK}__glyph--pending`);
+        }
+        this.#renderer.setAttribute(el, 'aria-hidden', 'true');
+        this.#renderer.appendChild(el, this.#renderer.createText(glyph));
+        return el;
     }
 
     #createLabel(text: string): HTMLElement {
