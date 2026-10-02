@@ -1,3 +1,19 @@
+# [0.10.0](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.9.1...rt-tools@0.10.0) (2026-10-02)
+
+### Bug Fixes
+
+- **rt:ui-kit-v2:** в ветку эпика приходит лечение кадров вместо ошибочного возврата ([2d2cb4c](https://github.com/Eyhenij/rt-tools/commit/2d2cb4c04bf5749321afe4014a88f4f30f04f160))
+- **rt:ui-kit:** витрина первого кита рисует значки шрифтом Material Symbols ([d007031](https://github.com/Eyhenij/rt-tools/commit/d007031e37d88abdf8cf4859fa40ebd73218a5e3))
+- **rt:ui-kit:** перетаскивание ширины подменю заканчивается при потере указателя ([7e53b40](https://github.com/Eyhenij/rt-tools/commit/7e53b40a5f489f885e85ea3a6cfbc159d53fa4f9))
+- **rt:ui-kit:** ручка ширины подменю берётся пальцем и пером ([7f4044e](https://github.com/Eyhenij/rt-tools/commit/7f4044ecc1e18ee9e0994e35bc5a5938f5acff5f))
+- **rt:ui-kit:** число ширины подменю перестало врать о нарисованной панели ([a0e5198](https://github.com/Eyhenij/rt-tools/commit/a0e5198cd8b06a3f0ff339b92d1acb0326960ea6))
+- сверка кадров первого кита не пишет недостающий эталон, шаг докера называет причину ([c43603c](https://github.com/Eyhenij/rt-tools/commit/c43603c5d9957d1e266c450d9a88bf66f4199ee9))
+
+### Features
+
+- **rt:ui-kit:** начало и конец тяги ширины подменю уходят наружу ([b3ebd00](https://github.com/Eyhenij/rt-tools/commit/b3ebd00209b517c9cc570e9c726a1110d5536bc9))
+- **rt:ui-kit:** ширина подменю меняется с клавиатуры, и диктор её называет ([ca42747](https://github.com/Eyhenij/rt-tools/commit/ca427473cb080ab7ec43e848f135db49e863428a))
+
 ## [0.9.1](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.9.0...rt-tools@0.9.1) (2026-09-24)
 
 ### Bug Fixes
