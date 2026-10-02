@@ -1,3 +1,13 @@
+# [0.15.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2@0.14.0...rt-ui-kit-v2@0.15.0) (2026-10-02)
+
+### Bug Fixes
+
+- **rt:ui-kit-v2:** половины пары тем на витрине переносятся по ширине содержимого ([3c1f0b5](https://github.com/Eyhenij/rt-tools/commit/3c1f0b5f0f44d2514b3281cc76ba186ddc3719a3))
+
+### Features
+
+- **rt:ui-kit-v2:** поле сообщения останавливает ответ, отдаёт черновик и ставит фокус ([61b78d3](https://github.com/Eyhenij/rt-tools/commit/61b78d36ff60f5b09abb4626bfcef00c353b985e))
+
 # [0.14.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2@0.13.1...rt-ui-kit-v2@0.14.0) (2026-10-01)
 
 ### Bug Fixes
