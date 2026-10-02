@@ -4,7 +4,7 @@ kind: rule
 law: verifiability
 description: Rule under the verifiability law. Load when editing any test file and anything in the tree's end-to-end suites. Names the scenario id in the title, moving a decision into a pure function and what an end-to-end test closes. Patterns testing-unit, testing-e2e.
 ---
-<!-- rt-kit v0.29.4 · rules/testing.md · c7540beaad35 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.4 · rules/testing.md · 0c348fe12884 · правится надстройкой, не здесь -->
 
 # Verifiability — how it works here
 
@@ -279,3 +279,9 @@ modules: a double is written by hand.
 - `testing-unit` — a test on a pure function, on a Connect procedure and a one-off proof test
   that is not committed.
 - `testing-e2e` — running end-to-end tests, a stand under real nginx, switches.
+
+## Pitfalls of this tree
+
+- **The image-based suites do not run from a working tree under the system temporary directory.**
+  The docker machine does not mount it, and the run ends with «браузер образа не ответил за 600
+  секунд». A second working tree for them lives under the home directory.
