@@ -5,7 +5,7 @@
 - **State:** `этап-идёт`
 - **Stage:** 2 of 2 — texts and showcase
 - **Done:** the branch from the epic branch, the folder, the spec
-- **Next step:** the overview table and the spinner stories for the new modes
+- **Next step:** snapshots for the new stories
 - **Uncommitted:** no
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -15,8 +15,8 @@
 - [x] 1.1 The overlay, the plate and the backdrop
 - [x] 1.2 The arc look
 - [x] 2.1 The spec of the subdomain, its bindings and scenarios
-- [>] 2.2 The overview table and the spinner stories for the new modes
-- [ ] 2.3 Snapshots for the new stories
+- [x] 2.2 The overview table and the spinner stories for the new modes
+- [>] 2.3 Snapshots for the new stories
 
 ## Decisions along the way
 
