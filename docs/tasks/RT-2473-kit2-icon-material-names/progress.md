@@ -5,7 +5,7 @@
 - **State:** `этап-идёт`
 - **Stage:** 3 of 3 — the spec, the showcase and the snapshots
 - **Done:** epic RT-2472 with its nine tasks, its plan and branch; this task's branch and folder
-- **Next step:** the spec of the subdomain, its bindings and scenarios
+- **Next step:** the overview tables and the icon stories for the glyph, the spin and the size
 - **Uncommitted:** no
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -17,8 +17,8 @@
 - [x] 1.3 The spin and the size in pixels on rt-icon
 - [x] 2.1 The glyph on rtButton, with the material drawing under the material preset
 - [x] 2.2 The glyph on rt-icon-button, the toggle button group, the split button and the empty state
-- [>] 3.1 The spec of the subdomain, its bindings and scenarios
-- [ ] 3.2 The overview tables and the icon stories for the glyph, the spin and the size
+- [x] 3.1 The spec of the subdomain, its bindings and scenarios
+- [>] 3.2 The overview tables and the icon stories for the glyph, the spin and the size
 - [ ] 3.3 Snapshots retaken for the new stories only
 
 ## Decisions along the way
