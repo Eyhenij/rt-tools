@@ -1,3 +1,10 @@
+## [0.29.4](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.29.3...rt-agent-kit@0.29.4) (2026-10-02)
+
+### Bug Fixes
+
+- **rt:agent-kit:** проверка папки задачи судит ветку названного PR ([5b156d0](https://github.com/Eyhenij/rt-tools/commit/5b156d004a507f5c60c1d3d03819f6844e33d9d2))
+- **rt:agent-kit:** сторож хода работы пропускает разрешение конфликта слияния ([88b77ba](https://github.com/Eyhenij/rt-tools/commit/88b77baf073ed32d38e5e09318723fbc076cd8b6))
+
 ## [0.29.3](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.29.2...rt-agent-kit@0.29.3) (2026-10-01)
 
 ### Bug Fixes

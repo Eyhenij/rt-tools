@@ -1,4 +1,4 @@
-<!-- rt-kit v0.29.3 · laws/reuse-first.md · d170594b4f2f · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.4 · laws/reuse-first.md · d170594b4f2f · правится надстройкой, не здесь -->
 # Law on application uniformity
 
 Things that mean the same look and behave the same in all parts of the application. That comes

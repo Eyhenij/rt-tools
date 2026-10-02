@@ -4,7 +4,7 @@ kind: pattern
 rule: spec-driven
 description: Pattern of rule spec-driven. Load when creating or editing a domain spec in docs/specs — the mandatory sections, the scenario form, binding a rule to code, the order of work from spec to code. Not for creating a law, a rule or a pattern — that is pattern spec-driven-rule.
 ---
-<!-- rt-kit v0.29.3 · patterns/spec-driven-domain.md · a7125e368b8a · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.4 · patterns/spec-driven-domain.md · a7125e368b8a · правится надстройкой, не здесь -->
 
 # Domain spec
 

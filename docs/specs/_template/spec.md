@@ -1,4 +1,4 @@
-<!-- rt-kit v0.29.3 · samples/specs/_template/spec.md · d281e58fe4b7 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.4 · samples/specs/_template/spec.md · d281e58fe4b7 · правится надстройкой, не здесь -->
 # <Domain>
 
 **Status:** in force · **Revision:** <date> · **Scenario prefix:** `SC-<PREFIX>`

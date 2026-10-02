@@ -1,4 +1,4 @@
-<!-- rt-kit v0.29.3 · laws/delivery.md · 70e416822f3e · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.4 · laws/delivery.md · 70e416822f3e · правится надстройкой, не здесь -->
 # Law on delivery
 
 How a change reaches the running application. The law covers both the history of changes and what

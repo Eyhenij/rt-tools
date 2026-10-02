@@ -1,4 +1,4 @@
-// rt-kit v0.29.3 · checks/lib-reexports.mjs · dd8dea358d52 · правится надстройкой, не здесь
+// rt-kit v0.29.4 · checks/lib-reexports.mjs · dd8dea358d52 · правится надстройкой, не здесь
 /**
  * Barrels and re-exports: what a lib gives outward and how that differs from an own declaration.
  *
