@@ -4,16 +4,16 @@
 
 - **State:** `этап-идёт`
 - **Stage:** 1 of 3 — properties
-- **Done:** the branch from the epic branch, the folder, the spec
-- **Next step:** the tag: size properties on the host, colour, padding and letter-spacing handles
+- **Done:** the branch from the epic branch, the folder, the spec, the tag
+- **Next step:** the toggle switch: size properties on the host, the label, the disabled opacity
 - **Uncommitted:** no
 - **Waiting for the owner:** no
 - **PR:** not open yet
 
 ## Steps
 
-- [>] 1.1 The tag: size properties on the host, colour, padding and letter-spacing handles
-- [ ] 1.2 The toggle switch: size properties on the host, the label, the disabled opacity
+- [x] 1.1 The tag: size properties on the host, colour, padding and letter-spacing handles
+- [>] 1.2 The toggle switch: size properties on the host, the label, the disabled opacity
 - [ ] 1.3 The toggle button group: size properties on the host
 - [ ] 1.4 The toolbar: layout properties
 - [ ] 2.1 The button hides its label while loading and keeps its width
@@ -24,7 +24,7 @@
 
 ## Decisions along the way
 
-None yet.
+- The tag keeps its severity and size values in private properties on its root; the six handles read them as the fallback.
 
 ## Sessions
 

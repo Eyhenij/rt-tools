@@ -7,6 +7,11 @@
        так они достаются только корню шаблона. */
 
     rt-tag {
+        /* Скругление и толщина рамки объявлены на хосте: правило приложения на теге компонента
+           их переопределяет, а шаги входа `radius` стоят тоже на хосте. */
+        --rt-tag-radius: var(--rt-radius-full);
+        --rt-tag-border-width: var(--rt-border-width-thin);
+
         display: inline-flex;
 
         /* Предел стоит и на хосте, и на пилюле внутри. Вмещающий блок пилюли — сам хост, и без
@@ -14,73 +19,86 @@
            разросшегося хоста, и метка вылезает за место, которое ей дали. */
         max-width: 100%;
 
+        /* Цвета и отступы приложение задаёт ручками `--rt-tag-color-*` и `--rt-tag-padding-*`:
+           их кит не объявляет, а запасное значение — то, что дают палитра и ступень размера. */
         .rt-tag {
-            --rt-tag-radius: var(--rt-radius-full);
-            --rt-tag-border-width: var(--rt-border-width-thin);
+            --rt-tag-severity-bg: var(--rt-neutral-100);
+            --rt-tag-severity-text: var(--rt-neutral-700);
+            --rt-tag-size-padding-block: var(--rt-space-1);
+            --rt-tag-size-padding-inline: var(--rt-space-2);
 
             display: inline-flex;
             max-width: 100%;
             align-items: center;
-            padding: var(--rt-space-1) var(--rt-space-2);
+            padding: var(--rt-tag-padding-block, var(--rt-tag-size-padding-block))
+                var(--rt-tag-padding-inline, var(--rt-tag-size-padding-inline));
             border-radius: var(--rt-tag-radius);
-            background: var(--rt-neutral-100);
-            color: var(--rt-neutral-700);
+            background: var(--rt-tag-color-bg, var(--rt-tag-severity-bg));
+            color: var(--rt-tag-color-text, var(--rt-tag-severity-text));
             font-size: var(--rt-text-sm);
             gap: var(--rt-space-1);
+            letter-spacing: var(--rt-tag-letter-spacing, normal);
             line-height: var(--rt-leading-tight);
 
             /* Ступени размера: отступы, кегль и просвет между частями двигаются вместе. `md`
                повторяет то, чем метка рисовалась до появления ступеней, и вид без входа не
                меняется ни на пиксель. */
             &--size--sm {
-                padding: var(--rt-space-0-5) var(--rt-space-1);
+                --rt-tag-size-padding-block: var(--rt-space-0-5);
+                --rt-tag-size-padding-inline: var(--rt-space-1);
+
                 font-size: var(--rt-text-xs);
                 gap: var(--rt-space-0-5);
             }
 
             &--size--md {
-                padding: var(--rt-space-1) var(--rt-space-2);
+                --rt-tag-size-padding-block: var(--rt-space-1);
+                --rt-tag-size-padding-inline: var(--rt-space-2);
+
                 font-size: var(--rt-text-sm);
                 gap: var(--rt-space-1);
             }
 
             &--size--lg {
-                padding: var(--rt-space-2) var(--rt-space-4);
+                --rt-tag-size-padding-block: var(--rt-space-2);
+                --rt-tag-size-padding-inline: var(--rt-space-4);
+
                 font-size: var(--rt-text-md);
                 gap: var(--rt-space-2);
             }
 
             &--severity--info {
-                background: var(--rt-color-state-info-bg);
-                color: var(--rt-color-state-info);
+                --rt-tag-severity-bg: var(--rt-color-state-info-bg);
+                --rt-tag-severity-text: var(--rt-color-state-info);
             }
 
             &--severity--success {
-                background: var(--rt-color-state-success-bg);
-                color: var(--rt-color-state-success);
+                --rt-tag-severity-bg: var(--rt-color-state-success-bg);
+                --rt-tag-severity-text: var(--rt-color-state-success);
             }
 
             &--severity--warning {
-                background: var(--rt-color-state-warning-bg);
-                color: var(--rt-color-state-warning);
+                --rt-tag-severity-bg: var(--rt-color-state-warning-bg);
+                --rt-tag-severity-text: var(--rt-color-state-warning);
             }
 
             &--severity--danger {
-                background: var(--rt-color-state-danger-bg);
-                color: var(--rt-color-state-danger);
+                --rt-tag-severity-bg: var(--rt-color-state-danger-bg);
+                --rt-tag-severity-text: var(--rt-color-state-danger);
             }
 
             &--severity--secondary,
             &--severity--neutral {
-                background: var(--rt-color-bg-subtle);
-                color: var(--rt-color-text-primary);
+                --rt-tag-severity-bg: var(--rt-color-bg-subtle);
+                --rt-tag-severity-text: var(--rt-color-text-primary);
             }
 
             /* Outlined: прозрачный фон + рамка цвета палитры (currentColor = текст).
-               После severity-блоков — иначе их `background` перебил бы transparent. */
+               После severity-блоков — иначе их фон перебил бы transparent. */
             &--appearance--outlined {
-                border: var(--rt-tag-border-width) solid currentcolor;
-                background: transparent;
+                --rt-tag-severity-bg: transparent;
+
+                border: var(--rt-tag-border-width) solid var(--rt-tag-color-border, currentcolor);
             }
 
             &__icon {
@@ -111,7 +129,7 @@
             }
         }
 
-        /* Шаг входа `radius` переназначает собственное свойство пилюли. */
-        @include kv.radius-steps('--rt-tag-radius', '> .rt-tag');
+        /* Шаг входа `radius` переназначает собственное свойство пилюли на хосте. */
+        @include kv.radius-steps('--rt-tag-radius');
     }
 }
