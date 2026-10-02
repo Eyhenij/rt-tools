@@ -13,6 +13,7 @@ interface IComposerStateCase {
     readonly focus: boolean;
     readonly sending: boolean;
     readonly disabled: boolean;
+    readonly stoppable?: boolean;
 }
 
 const SHORT_TEXT: string = 'Да, можно с 13:00.';
@@ -65,6 +66,7 @@ export type TMessageComposerMatrixPart = 'state' | 'attachments' | 'formatting' 
                                     [rtStoryComposerText]="item.text"
                                     [attr.data-story-state]="item.focus ? 'focus-within' : null"
                                     [sending]="item.sending"
+                                    [stoppable]="item.stoppable ?? false"
                                     [disabled]="item.disabled" />
                             </ng-template>
                         </app-story-row>
@@ -170,13 +172,24 @@ export class TestRtMessageComposerMatrixComponent {
 
     public readonly shortText: string = SHORT_TEXT;
 
-    /** Девять состояний страницы макета в его порядке. Отправка в пути и выключенное поле блокируют одно и то же, а означают разное. */
+    /**
+     * Девять состояний страницы макета в его порядке и ответ, который можно остановить. Отправка в пути
+     * и выключенное поле блокируют одно и то же, а означают разное; при остановимом ответе поле открыто.
+     */
     public readonly states: readonly IComposerStateCase[] = [
         { name: 'пустое', text: '', focus: false, sending: false, disabled: false },
         { name: 'фокус', text: '', focus: true, sending: false, disabled: false },
         { name: 'набор', text: SHORT_TEXT, focus: true, sending: false, disabled: false },
         { name: 'несколько строк', text: MULTILINE_TEXT, focus: true, sending: false, disabled: false },
         { name: 'sending — отправка в пути', text: SHORT_TEXT, focus: false, sending: true, disabled: false },
+        {
+            name: 'stoppable — ответ идёт, можно остановить',
+            text: SHORT_TEXT,
+            focus: true,
+            sending: true,
+            disabled: false,
+            stoppable: true,
+        },
         { name: 'с текстом без фокуса', text: SHORT_TEXT, focus: false, sending: false, disabled: false },
         { name: 'disabled — выключено снаружи', text: '', focus: false, sending: false, disabled: true },
         { name: 'шесть строк — предел роста', text: LONG_TEXT, focus: true, sending: false, disabled: false },

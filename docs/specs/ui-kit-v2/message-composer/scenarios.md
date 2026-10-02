@@ -79,3 +79,29 @@ When it is drawn
 Then the rich editor stands inside the capsule in place of the text, and the send button is there
 
 Covered by the component spec of the composer.
+
+### SC-UKV-537 — a stoppable answer puts Stop in place of the arrow and keeps the field open
+
+Given a composer with `stoppable` and `sending`, and a typed draft
+When the person types more, presses Enter, then clicks Stop
+Then the field takes the text, Enter sends nothing and keeps the draft, the click reports `stopped`;
+without `stoppable` the same `sending` blocks the field and spins the arrow
+
+Covered by the component spec of the composer and the frame of the stoppable state.
+
+### SC-UKV-538 — the draft is given from outside and read back
+
+Given a composer whose draft is set from outside
+When the person edits it, then sends it
+Then the field shows the given text, every edit reaches the consumer, and after sending the draft is
+empty on both sides
+
+Covered by the component spec of the composer.
+
+### SC-UKV-539 — the consumer puts the focus into the field
+
+Given a composer whose field has no focus
+When the consumer asks for the focus
+Then the text field holds it; in the formatting mode the rich editor does
+
+Covered by the component spec of the composer.

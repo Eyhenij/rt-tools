@@ -6,6 +6,7 @@ import {
     effect,
     inject,
     input,
+    model,
     numberAttribute,
     output,
     signal,
@@ -15,12 +16,13 @@ import {
     ElementRef,
     InputSignal,
     InputSignalWithTransform,
+    ModelSignal,
     OutputEmitterRef,
     Signal,
     ViewEncapsulation,
     WritableSignal,
 } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
@@ -53,6 +55,9 @@ interface IComposerFormShape {
  *
  * Отправка — `Enter` (без Shift) или клик по иконке; `Shift+Enter` — перенос
  * строки. Кнопка отправки активна, пока есть непустой текст или вложения.
+ *
+ * Со `stoppable` во время `sending` вместо стрелки стоит кнопка «Стоп», а поле
+ * остаётся открытым: следующий вопрос набирается, пока идёт ответ.
  */
 @Component({
     selector: 'rt-message-composer',
@@ -96,6 +101,8 @@ export class RtMessageComposerComponent {
     protected readonly textInput: Signal<ElementRef<HTMLTextAreaElement> | undefined> =
         viewChild<ElementRef<HTMLTextAreaElement>>('textEl');
 
+    protected readonly richEditor: Signal<RtRichEditorComponent | undefined> = viewChild(RtRichEditorComponent);
+
     protected readonly form: FormGroup<IComposerFormShape> = new FormGroup<IComposerFormShape>({
         message: new FormControl<string>('', { nonNullable: true }),
         files: new FormControl<File[]>([], { nonNullable: true }),
@@ -123,6 +130,9 @@ export class RtMessageComposerComponent {
         (): boolean => this.#multiRow() || this.formatting() || (this.attachments() && this.files().length > 0)
     );
 
+    /** Идёт ответ, который можно остановить: вместо стрелки — «Стоп», поле открыто. */
+    protected readonly isStoppable: Signal<boolean> = computed((): boolean => this.stoppable() && this.sending() && !this.disabled());
+
     protected readonly capsuleMods: Signal<Record<string, boolean>> = computed((): Record<string, boolean> => ({
         tall: this.tall(),
         disabled: this.disabled(),
@@ -146,6 +156,14 @@ export class RtMessageComposerComponent {
 
     /** Отправка в процессе — блокирует submit, кнопка отправки крутит индикатор. */
     public readonly sending: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+
+    /**
+     * Ответ на сообщение можно остановить. Во время `sending` стрелку сменяет кнопка
+     * «Стоп», а поле не блокируется; без входа `sending` блокирует поле, как раньше.
+     */
+    public readonly stoppable: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
 
@@ -178,13 +196,28 @@ export class RtMessageComposerComponent {
     /** Отправка сообщения: текст + файлы (последние — только при `attachments`). */
     public readonly submitted: OutputEmitterRef<IRtMessageComposer.SubmitPayload> = output<IRtMessageComposer.SubmitPayload>();
 
+    /** Черновик поля без форматирования: задаётся снаружи, правки уходят наружу, после отправки пуст. */
+    public readonly text: ModelSignal<string> = model<string>('');
+
+    /** Клик по кнопке «Стоп» во время ответа, который можно остановить. */
+    public readonly stopped: OutputEmitterRef<void> = output<void>();
+
     constructor() {
         this.#formValue = toSignal(this.form.valueChanges, {
             initialValue: this.form.value,
         });
 
         effect((): void => {
-            const blocked: boolean = this.disabled() || this.sending();
+            const draft: string = this.text();
+            if (this.form.controls.message.value !== draft) {
+                this.form.controls.message.setValue(draft);
+            }
+        });
+
+        this.form.controls.message.valueChanges.pipe(takeUntilDestroyed()).subscribe((value: string): void => this.text.set(value));
+
+        effect((): void => {
+            const blocked: boolean = this.disabled() || (this.sending() && !this.stoppable());
             if (blocked && this.form.enabled) {
                 this.form.disable({ emitEvent: false });
             }
@@ -213,12 +246,27 @@ export class RtMessageComposerComponent {
         });
     }
 
+    /** Ставит фокус в поле: в textarea, а в режиме форматирования — в rich-редактор. */
+    public focus(): void {
+        if (this.formatting()) {
+            this.richEditor()?.focus();
+            return;
+        }
+        this.textInput()?.nativeElement.focus();
+    }
+
     protected onKeydown(event: KeyboardEvent): void {
         // Enter без модификаторов — отправка; Shift+Enter оставляем переносом строки.
         // isComposing — не перехватываем подтверждение IME-композиции.
         if (event.key === 'Enter' && !event.shiftKey && !event.isComposing) {
             event.preventDefault();
             this.submit();
+        }
+    }
+
+    protected stop(): void {
+        if (this.isStoppable()) {
+            this.stopped.emit();
         }
     }
 
