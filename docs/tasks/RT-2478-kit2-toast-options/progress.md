@@ -2,10 +2,10 @@
 
 ## Where we stand
 
-- **State:** `этап-идёт`
+- **State:** `этапы-кончились`
 - **Stage:** 3 of 3 — texts and showcase
-- **Done:** the branch from the epic branch, the folder, the options, the replace mode, the icon token, the layer property, the strip and the colour handles
-- **Next step:** the spec bindings and scenarios
+- **Done:** the branch from the epic branch, the folder, the options, the replace mode, the icon token, the layer property, the strip and the colour handles, the scenarios SC-UKV-579…588, the overview and the stories Options, Handles and the toaster mode
+- **Next step:** archive the folder, push, open the request into the epic branch
 - **Uncommitted:** no
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -17,9 +17,9 @@
 - [x] 1.3 The per-toast icon and the severity icons token
 - [x] 2.1 The toaster layer property
 - [x] 2.2 The progress strip and the colour handles of the toast and its filled kinds
-- [>] 3.1 The spec of the subdomain, its bindings and scenarios
-- [ ] 3.2 The overview tables and the stories for the new options, mode and handles
-- [ ] 3.3 Snapshots for the new stories
+- [x] 3.1 The spec of the subdomain, its bindings and scenarios
+- [x] 3.2 The overview tables and the stories for the new options, mode and handles
+- [x] 3.3 Snapshots for the new stories
 
 ## Decisions along the way
 
@@ -27,6 +27,10 @@
   rule can override. The toast paints it from a private severity colour, read under the icon handle.
 - The strip's lifetime is the internal `--lifetime`, like the stack's `--offset`: the toast writes it
   from its own binding, and it is no handle.
+- Measured in the showcase: at 3 s of 6 s the strip is 177 of 354 px; hovering the stack pauses
+  its animation and leaving resumes it; the toaster layer computes to 1100.
+- Snapshots: two written (toast Options and Handles); 746 frames of 746 matched in the full audit,
+  and the sweep found no empty showing among 728 stories and 92 overview pages.
 - The filled kinds keep their icon on the text colour, so the filled text handle repaints both.
 
 ## Sessions
