@@ -18,6 +18,10 @@ import {
     WritableSignal,
 } from '@angular/core';
 
+import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
+
+import { RT_ICON_GLYPH_STRATEGY, RtIconFontService } from './rt-icon-font.service';
+import { resolveIconGlyph } from './rt-icon-glyph.logic';
 import { iconMaterialDrawn } from './rt-icon-material-map';
 import { RT_ICON_MATERIAL_PRESET_SELECTOR } from './rt-icon.const';
 import { IRtIcon } from './rt-icon.model';
@@ -52,6 +56,7 @@ const BEM_BLOCK: string = 'rt-icon';
     selector: 'rt-icon',
     templateUrl: './rt-icon.component.html',
     styleUrls: ['./rt-icon.component.scss'],
+    imports: [BlockDirective, ElemDirective, ModDirective],
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
     host: {
@@ -66,6 +71,8 @@ const BEM_BLOCK: string = 'rt-icon';
 export class RtIconComponent {
     readonly #registry: RtIconRegistry = inject(RtIconRegistry);
     readonly #host: ElementRef<HTMLElement> = inject(ElementRef);
+    readonly #strategy: IRtIcon.GlyphStrategy = inject(RT_ICON_GLYPH_STRATEGY);
+    readonly #fontReady: Signal<boolean> = inject(RtIconFontService).ready;
 
     /**
      * Набор, объявленный разметкой над этим значком.
@@ -82,16 +89,41 @@ export class RtIconComponent {
      */
     readonly #preset: WritableSignal<IRtIcon.Preset> = signal<IRtIcon.Preset>('base');
 
-    protected readonly href: Signal<string> = computed((): string => this.#registry.symbolHref(this.name(), this.drawing()));
+    /** Чем рисуется значок: именем кита или лигатурой шрифта. Ни имени, ни глифа — пустое место. */
+    protected readonly resolved: Signal<IRtIcon.Resolved | null> = computed((): IRtIcon.Resolved | null =>
+        resolveIconGlyph(this.name(), this.glyph(), this.#strategy)
+    );
+
+    protected readonly kitName: Signal<IRtIcon.Name | null> = computed((): IRtIcon.Name | null => {
+        const resolved: IRtIcon.Resolved | null = this.resolved();
+        return resolved?.kind === 'kit' ? resolved.name : null;
+    });
+
+    protected readonly fontGlyph: Signal<string | null> = computed((): string | null => {
+        const resolved: IRtIcon.Resolved | null = this.resolved();
+        return resolved?.kind === 'font' ? resolved.glyph : null;
+    });
+
+    /** Лигатура прячется, пока шрифты страницы не готовы: до того она рисуется словом. */
+    protected readonly glyphMods: Signal<Record<string, boolean>> = computed((): Record<string, boolean> => ({
+        filled: this.fill(),
+        pending: !this.#fontReady(),
+    }));
+
+    protected readonly href: Signal<string | null> = computed((): string | null => {
+        const name: IRtIcon.Name | null = this.kitName();
+        return name === null ? null : this.#registry.symbolHref(name, this.drawing());
+    });
 
     /**
      * Набор, которым рисуется этот значок. Материальный закрывает не все имена кита — он слой
      * переопределений, как набор оформления: имя без материального рисунка рисуется своим, и это
      * не пробел.
      */
-    protected readonly preset: Signal<IRtIcon.Preset> = computed((): IRtIcon.Preset =>
-        this.#preset() === 'material' && iconMaterialDrawn.has(this.name()) ? 'material' : 'base'
-    );
+    protected readonly preset: Signal<IRtIcon.Preset> = computed((): IRtIcon.Preset => {
+        const name: IRtIcon.Name | null = this.kitName();
+        return this.#preset() === 'material' && name !== null && iconMaterialDrawn.has(name) ? 'material' : 'base';
+    });
 
     /** Рисунок значка: залитый бывает только у материального набора, свой набор заливки не знает. */
     protected readonly drawing: Signal<IRtIcon.Drawing> = computed((): IRtIcon.Drawing => {
@@ -110,7 +142,15 @@ export class RtIconComponent {
         return r !== null && r !== 0 ? `rotate(${r}deg)` : null;
     });
 
-    public readonly name: InputSignal<IRtIcon.Name> = input.required<IRtIcon.Name>();
+    /** Имя кита. Стоит рядом с глифом и побеждает его, когда переданы оба. */
+    public readonly name: InputSignal<IRtIcon.Name | null> = input<IRtIcon.Name | null>(null);
+
+    /**
+     * Имя Material вместо имени кита. Как оно рисуется — парой из перечня кита или лигатурой
+     * шрифта Material Symbols — решает настройка `glyphStrategy` у `provideRtIcons()`. Шрифт
+     * приложение подключает само; семья берётся из свойства `--rt-icon-glyph-font`.
+     */
+    public readonly glyph: InputSignal<string | null> = input<string | null>(null);
 
     public readonly size: InputSignal<IRtIcon.Size> = input<IRtIcon.Size>('md');
 
@@ -137,7 +177,10 @@ export class RtIconComponent {
         // Значок едет по запросу имени, а не вперёд всем набором: страница платит за то, что
         // нарисовала. Смена имени просит новое — прежний символ остаётся в спрайте.
         effect((): void => {
-            this.#registry.request(this.name(), this.drawing());
+            const name: IRtIcon.Name | null = this.kitName();
+            if (name !== null) {
+                this.#registry.request(name, this.drawing());
+            }
         });
 
         // Разметка над значком видна только в браузере и только после первой отрисовки:

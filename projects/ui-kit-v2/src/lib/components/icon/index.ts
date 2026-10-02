@@ -1,4 +1,6 @@
 export * from './icon-categories';
+export * from './rt-icon-font.service';
+export * from './rt-icon-glyph.logic';
 export * from './rt-icon-names';
 export * from './rt-icon.component';
 export * from './rt-icon.const';

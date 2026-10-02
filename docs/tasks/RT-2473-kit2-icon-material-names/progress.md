@@ -5,7 +5,7 @@
 - **State:** `этап-идёт`
 - **Stage:** 1 of 3 — the icon
 - **Done:** epic RT-2472 with its nine tasks, its plan and branch; this task's branch and folder
-- **Next step:** the glyph, the font ligature and the strategy option on rt-icon
+- **Next step:** the spin and the size in pixels on rt-icon
 - **Uncommitted:** no
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -13,8 +13,8 @@
 ## Steps
 
 - [x] 1.1 One resolver of a Material name, with the menu item and the side menu moved onto it
-- [>] 1.2 The glyph, the font ligature and the strategy option on rt-icon
-- [ ] 1.3 The spin and the size in pixels on rt-icon
+- [x] 1.2 The glyph, the font ligature and the strategy option on rt-icon
+- [>] 1.3 The spin and the size in pixels on rt-icon
 - [ ] 2.1 The glyph on rtButton, with the material drawing under the material preset
 - [ ] 2.2 The glyph on rt-icon-button, the toggle button group, the split button and the empty state
 - [ ] 3.1 The spec of the subdomain, its bindings and scenarios
@@ -23,7 +23,10 @@
 
 ## Decisions along the way
 
-None yet.
+- The ligature waits for the page's font readiness as a whole, not for one family: the kit ships
+  no font and does not know which family the application connects.
+- `name` of the icon became optional, so its type widened to a name or nothing; one helper in the
+  data-table spec followed the type.
 
 ## Sessions
 
