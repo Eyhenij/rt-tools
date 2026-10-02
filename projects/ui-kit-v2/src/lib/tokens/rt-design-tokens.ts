@@ -560,6 +560,14 @@ export type TRtDesignTokenName =
 /** The name of a consumer's handle — a property the kit deliberately does not declare. */
 export type TRtConsumerHandleName =
     | '--rt-aside-bg'
+    | '--rt-aside-content-inset'
+    | '--rt-aside-error-margin-block'
+    | '--rt-aside-footer-gap'
+    | '--rt-aside-footer-inset'
+    | '--rt-aside-footer-justify'
+    | '--rt-aside-footer-margin'
+    | '--rt-aside-header-inset'
+    | '--rt-aside-header-title-leading'
     | '--rt-aside-width'
     | '--rt-data-table-scrollbar-color'
     | '--rt-data-table-scrollbar-horizontal-height'
@@ -1138,6 +1146,14 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
 /** All the consumer's handles: the value comes from the application, until then the fallback works. */
 export const RT_CONSUMER_HANDLE_NAMES: readonly TRtConsumerHandleName[] = [
     '--rt-aside-bg',
+    '--rt-aside-content-inset',
+    '--rt-aside-error-margin-block',
+    '--rt-aside-footer-gap',
+    '--rt-aside-footer-inset',
+    '--rt-aside-footer-justify',
+    '--rt-aside-footer-margin',
+    '--rt-aside-header-inset',
+    '--rt-aside-header-title-leading',
     '--rt-aside-width',
     '--rt-data-table-scrollbar-color',
     '--rt-data-table-scrollbar-horizontal-height',
