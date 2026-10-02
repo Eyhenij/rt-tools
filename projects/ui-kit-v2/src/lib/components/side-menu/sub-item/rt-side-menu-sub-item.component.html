@@ -23,7 +23,7 @@
                     <ng-container [ngTemplateOutlet]="iconTpl" [ngTemplateOutletContext]="{ $implicit: row }" />
                 }
 
-                <span rtElem="title" [rtTooltip]="row.name">
+                <span rtElem="title" [rtTooltip]="menuRef.subMenuTooltipsShown() ? row.name : ''">
                     <!-- Кусок без отметки тоже узел: голая интерполяция разрывала бы подпись пробелами. -->
                     @for (part of row.name | rtSideMenuTitleParts: menuRef.subMenuQuery(); track $index) {
                         @if (part.matched) {
@@ -48,7 +48,7 @@
                         [rtMod]="{ remove: true }"
                         [icon]="favoritesIcons.remove"
                         [ariaLabel]="removeLabel()"
-                        [tooltip]="narrow() ? '' : removeLabel()"
+                        [tooltip]="narrow() || !menuRef.subMenuTooltipsShown() ? '' : removeLabel()"
                         (clicked)="onRemoveFavorite(row, $event)" />
                 } @else if (favoritesOn() && !row.favoriteDisabled) {
                     @let isFavorite = favoriteIds().includes(row.id);
@@ -61,7 +61,7 @@
                         [icon]="isFavorite ? 'star-fill' : 'star'"
                         [iconFill]="isFavorite"
                         [ariaLabel]="isFavorite ? removeLabel() : addLabel()"
-                        [tooltip]="narrow() ? '' : isFavorite ? removeLabel() : addLabel()"
+                        [tooltip]="narrow() || !menuRef.subMenuTooltipsShown() ? '' : isFavorite ? removeLabel() : addLabel()"
                         (clicked)="onToggleFavorite(row, $event)" />
                 }
 
@@ -69,15 +69,26 @@
                 <ng-content select="[rtSideMenuSubItemAction]" />
 
                 <!-- Кнопка потребителя видна всегда и стоит последней: кнопки избранного встают перед ней. -->
-                @if (row.iconButton?.icon) {
+                @if (row.iconButton?.icon; as buttonIcon) {
+                    <!-- Имя без значка кита берёт свой шаблон меню, как значок строки; без шаблона кнопка пуста. -->
+                    @let buttonKitIcon = buttonIcon | rtSideMenuIcon;
+                    @let buttonOwnTpl = buttonKitIcon ? null : menuRef.ownIconTpl();
                     <rt-icon-button
                         rtElem="action"
                         qa-dataid="side-menu-sub-item-action"
                         size="sm"
                         shape="circle"
-                        [icon]="(row.iconButton.icon | rtSideMenuIcon) ?? row.iconButton.icon"
+                        [icon]="buttonOwnTpl ? null : (buttonKitIcon ?? buttonIcon)"
                         [ariaLabel]="row.name ?? ''"
-                        (clicked)="onClickSubMenuAdditional(row, $event)" />
+                        (clicked)="onClickSubMenuAdditional(row, $event)">
+                        @if (buttonOwnTpl) {
+                            <span rtElem="own-icon" qa-dataid="side-menu-own-button-icon" aria-hidden="true">
+                                <ng-container
+                                    [ngTemplateOutlet]="buttonOwnTpl"
+                                    [ngTemplateOutletContext]="{ $implicit: row, icon: buttonIcon, slot: 'iconButton' }" />
+                            </span>
+                        }
+                    </rt-icon-button>
                 }
             </a>
         } @else if (row.submenu) {
@@ -101,7 +112,7 @@
                     <ng-container [ngTemplateOutlet]="iconTpl" [ngTemplateOutletContext]="{ $implicit: row }" />
                 }
 
-                <span rtElem="title" qa-dataid="side-menu-folder" [rtTooltip]="row.name">
+                <span rtElem="title" qa-dataid="side-menu-folder" [rtTooltip]="menuRef.subMenuTooltipsShown() ? row.name : ''">
                     @for (part of row.name | rtSideMenuTitleParts: menuRef.subMenuQuery(); track $index) {
                         @if (part.matched) {
                             <span rtElem="match">{{ part.text }}</span>
@@ -129,7 +140,7 @@
             <rt-icon rtElem="icon" size="sm" [name]="kitIcon" />
         } @else if (menuRef.ownIconTpl(); as own) {
             <span rtElem="own-icon" qa-dataid="side-menu-own-icon" aria-hidden="true">
-                <ng-container [ngTemplateOutlet]="own" [ngTemplateOutletContext]="{ $implicit: row }" />
+                <ng-container [ngTemplateOutlet]="own" [ngTemplateOutletContext]="{ $implicit: row, icon: row.icon, slot: 'icon' }" />
             </span>
         }
     </ng-template>

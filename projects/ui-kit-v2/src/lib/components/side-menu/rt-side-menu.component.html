@@ -85,16 +85,18 @@
                         (focusin)="onSearchHold()"
                         (keydown)="onSearchKeydown($event)" />
 
-                    <rt-icon-button
-                        rtElem="pin"
-                        qa-dataid="side-menu-pin"
-                        size="sm"
-                        icon="pin"
-                        [iconFill]="isPinned()"
-                        [active]="isPinned()"
-                        [ariaLabel]="isPinned() ? unpinLabel() : pinLabel()"
-                        [tooltip]="isPinned() ? unpinLabel() : pinLabel()"
-                        (clicked)="onSubMenuModeToggle()" />
+                    @if (pinShown()) {
+                        <rt-icon-button
+                            rtElem="pin"
+                            qa-dataid="side-menu-pin"
+                            size="sm"
+                            icon="pin"
+                            [iconFill]="isPinned()"
+                            [active]="isPinned()"
+                            [ariaLabel]="isPinned() ? unpinLabel() : pinLabel()"
+                            [tooltip]="isPinned() ? unpinLabel() : pinLabel()"
+                            (clicked)="onSubMenuModeToggle()" />
+                    }
                 </div>
 
                 <rt-scroll-area rtElem="panel-body">

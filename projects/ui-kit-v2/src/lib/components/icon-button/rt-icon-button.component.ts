@@ -95,8 +95,11 @@ export class RtIconButtonComponent {
         hasIndicator: this.indicator(),
     }));
 
-    /** Имя иконки — обязательно. */
-    public readonly icon: InputSignal<IRtIcon.Name> = input.required<IRtIcon.Name>();
+    /**
+     * Имя иконки — обязательно. `null` — значок кит не рисует, и кнопка показывает вложенное
+     * содержимое: свой рисунок приложения встаёт в кнопку с её размером, формой и состояниями.
+     */
+    public readonly icon: InputSignal<IRtIcon.Name | null> = input.required<IRtIcon.Name | null>();
 
     /** Доступное имя для screen-reader'ов — обязательно (icon-only кнопка). */
     public readonly ariaLabel: InputSignal<string> = input.required<string>();

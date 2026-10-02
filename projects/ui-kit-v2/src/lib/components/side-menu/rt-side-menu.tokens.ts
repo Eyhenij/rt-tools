@@ -25,6 +25,8 @@ export interface IRtSideMenuHost {
     readonly isFavoritesSearchShown: Signal<boolean>;
     /** Свой значок пунктов, чьё имя кит не рисует: шаблон `rtSideMenuIcon` меню. */
     readonly ownIconTpl: Signal<TemplateRef<IRtSideMenuIconContext> | undefined>;
+    /** Подсказки строк подменю: выключено — их нет ни у подписей, ни у кнопок строк. */
+    readonly subMenuTooltipsShown: Signal<boolean>;
     /** Раскрыть или свернуть папку нажатием её заголовка. */
     toggleFolder(item: IRtSideMenu.Item): void;
     /** Уход указателя с панели: подменю, открытое наведением, закрывается. */
