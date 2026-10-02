@@ -37,3 +37,9 @@ row icon does.
 - **`rt-icon-button` projects its content when it has no icon name.** The button keeps its size,
   shape, ripple and states; the menu puts its template inside.
 - **A row button with an own template is not warned about.**
+
+## Decisions along the way
+
+- A row button with a name outside the kit and no own template no longer hands that name to the
+  icon: the button was empty before as well, while the icon waited for a symbol the set does not
+  hold, and the showcase waited with it until its timeout.
