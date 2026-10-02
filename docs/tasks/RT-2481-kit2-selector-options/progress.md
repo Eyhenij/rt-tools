@@ -2,10 +2,10 @@
 
 ## Where we stand
 
-- **State:** `этап-идёт`
+- **State:** `этапы-кончились`
 - **Stage:** 2 of 2 — texts and showcase
-- **Done:** behaviour; the spec's scenarios and bindings
-- **Next step:** the overview tables and the stories
+- **Done:** all stages; 746 of 746 frames match, the sweep is clean
+- **Next step:** take the folder apart and open the PR
 - **Uncommitted:** no
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -16,8 +16,8 @@
 - [x] 1.2 Reset and clear for edits in the row template
 - [x] 1.3 The initial query and the popup state
 - [x] 2.1 The spec of the subdomain, its bindings and scenarios
-- [>] 2.2 The overview tables and the stories for the new switches
-- [ ] 2.3 Snapshots for the new stories
+- [x] 2.2 The overview tables and the stories for the new switches
+- [x] 2.3 Snapshots for the new stories
 
 ## Decisions along the way
 

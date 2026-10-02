@@ -35,6 +35,12 @@
 - Свои кнопки у строки — `<ng-template rtDynamicSelectorRowControls let-item>`, своё название —
   `<ng-template rtDynamicSelectorRowTitle let-item>`. Корзина и ручка перетаскивания остаются китовыми.
 - Приглашение (`invitation`) встаёт вместо полосы кнопок; его кнопка открывает тот же выбор.
+  `listActionsShown = true` держит полосу и под ним, `false` убирает сброс и очистку, оставляя
+  кнопку добавления; `removeShown = false` убирает корзину строк.
+- Правки в своём шаблоне строки — `extraChanged`: сброс и очистка включены при прежних ключах и
+  сообщают `listReset` и `listCleared`, значение сброс тогда не трогает.
+- Начальный запрос окна — `searchTerm`, событием поиска он не уходит. Открыто ли окно — сигнал
+  `popupOpen` и выход `popupOpenChange`.
 
 ## Рядом
 
