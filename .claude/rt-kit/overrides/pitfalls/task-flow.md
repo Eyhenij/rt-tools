@@ -30,16 +30,11 @@ that came from an analysis is not lifted until the analysis is found wrong.
   and unmarked reads as checked throughout, and the error in it is found by the owner. A guessed
   line is marked right in the list — together with what would confirm it.
   Analysis: «2026-08-14-structure-invented-beside-the-sample».
-- **A reply to the owner's order begins with the result, not with intent and not with its
-  justification.** The owner who set the task asked for no opinion about it; a justification under
-  someone else's decision reads as an appraisal and rewrites its authorship onto the executor. One
-  exception: execution ran into an obstacle — then the obstacle is named, not the attitude to the
-  task.
+- **A justification under the owner's decision rewrites its authorship onto the executor.** The
+  article of the rule says the reply begins with the result; this is why.
   Analysis: «2026-08-14-opinion-instead-of-execution».
-- **No check reads the reply to the owner.** The misses in it are the same as in the tree's text:
-  an invented fact next to a verified one, an appraisal instead of carrying out. The author
-  answers for the reply, and the owner pays for the error.
-  Analyses: both from 14 August 2026.
+- **No check reads the reply to the owner**, so an invented fact next to a verified one reaches
+  them. Analyses: both from 14 August 2026.
 - **An edit refused by a guard is not laid by another way.** The guards are subscribed to the
   file-editing tools, and the same edit can be laid by a shell command — a redirection, `sed -i`,
   an interpreter with a heredoc. That is what happened: the refusal was bypassed twice in an hour.
