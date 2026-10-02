@@ -101,10 +101,9 @@ function config(selected: number, total: number, actions: readonly IRtActionBar.
             }
 
             @case ('menu') {
-                <!-- Без пары наборов: меню раскрывается по одному на историю, второй жест закрыл бы первое. -->
-                <div class="app-action-bar-matrix__room">
-                    <rt-action-bar data-story-trigger [config]="menuConfig" />
-                </div>
+                <!-- Без пары наборов: меню раскрывается по одному на историю, второй жест закрыл бы первое.
+                     Кадр снимается целой страницей, и меню под полосой в него входит. -->
+                <rt-action-bar data-story-trigger [config]="menuConfig" />
             }
 
             @case ('presets') {
@@ -125,13 +124,6 @@ function config(selected: number, total: number, actions: readonly IRtActionBar.
         }
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    styles: `
-        /* Место под меню: оно раскрывается под действием, и без места кадр обрезал бы его. */
-        .app-action-bar-matrix__room {
-            min-height: 14rem;
-            padding: var(--rt-space-4);
-        }
-    `,
     imports: [RtActionBarComponent, StoryPresetsComponent, StoryRowComponent, StoryThemesComponent],
 })
 export class TestRtActionBarMatrixComponent {
