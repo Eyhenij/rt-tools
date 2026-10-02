@@ -36,3 +36,27 @@ draw icons, a ligature of the Material Symbols font as the last resort, a strate
   is read in eighteen places, and widening it would break consumers that map over it.
 - **`rtButton` asks for the material drawing under the material preset, like `rt-icon`** — the
   consumer draws in the material preset, and buttons were the only icons that ignored it.
+
+## Decisions along the way
+
+- The ligature waits for the page's font readiness as a whole, not for one family: the kit ships
+  no font and does not know which family the application connects.
+- `name` of the icon became optional, so its type widened to a name or nothing; one helper in the
+  data-table spec followed the type.
+- The size input stores pixels: a step is turned into them on write. Nothing in the kit read the
+  step back, and one number spared a second branch in the component.
+- rtButton got no input of its own for a glyph: its `icon` already takes any string, so it is
+  resolved the way `glyph` of the icon is. A kit name draws as before; a name that drew an empty
+  place now draws its pair or the ligature.
+- The material drawing on rtButton changes the material half of thirteen existing story wrappers
+  that hold a button with an icon. Step 3.3 retakes those frames too, after a look by eye: the
+  change is the one the spec names.
+- The split button got no input of its own: its menu items draw through rtButton, and an item
+  `icon` takes a Material name since step 2.1. `icon` of the icon button stopped being required.
+- The icon probe of the snapshot gate held back only the own set. Under the material preset the
+  button now asks for the material set, so the probe holds both sets.
+- The second showcase ships no Material Symbols font, and the first showcase's file is a subset by
+  its own names. The Glyph story therefore shows the ligature as the word in the fallback font, the
+  state of an application without the font, and says so under the frames.
+- Snapshots: two written, three retaken (the button and the split button, material half only),
+  745 of 745 matched on a second raising.
