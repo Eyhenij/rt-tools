@@ -3,9 +3,9 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 2 of 3 — the controls that draw an icon
+- **Stage:** 3 of 3 — the spec, the showcase and the snapshots
 - **Done:** epic RT-2472 with its nine tasks, its plan and branch; this task's branch and folder
-- **Next step:** the glyph on rt-icon-button, the toggle button group, the split button and the empty state
+- **Next step:** the spec of the subdomain, its bindings and scenarios
 - **Uncommitted:** no
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -16,8 +16,8 @@
 - [x] 1.2 The glyph, the font ligature and the strategy option on rt-icon
 - [x] 1.3 The spin and the size in pixels on rt-icon
 - [x] 2.1 The glyph on rtButton, with the material drawing under the material preset
-- [>] 2.2 The glyph on rt-icon-button, the toggle button group, the split button and the empty state
-- [ ] 3.1 The spec of the subdomain, its bindings and scenarios
+- [x] 2.2 The glyph on rt-icon-button, the toggle button group, the split button and the empty state
+- [>] 3.1 The spec of the subdomain, its bindings and scenarios
 - [ ] 3.2 The overview tables and the icon stories for the glyph, the spin and the size
 - [ ] 3.3 Snapshots retaken for the new stories only
 
@@ -35,6 +35,8 @@
 - The material drawing on rtButton changes the material half of thirteen existing story wrappers
   that hold a button with an icon. Step 3.3 retakes those frames too, after a look by eye: the
   change is the one the spec names.
+- The split button got no input of its own: its menu items draw through rtButton, and an item
+  `icon` takes a Material name since step 2.1. `icon` of the icon button stopped being required.
 
 ## Sessions
 
