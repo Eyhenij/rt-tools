@@ -2,17 +2,17 @@
 
 ## Where we stand
 
-- **State:** `этап-идёт`
+- **State:** `этапы-кончились`
 - **Stage:** 1 of 1 — pnpm in the runner's own directory
-- **Done:** the task, the branch and the folder; the cause is found
-- **Next step:** the `dest` line in `ci.yml`
-- **Uncommitted:** the folder and the assignment row
+- **Done:** `pnpm/action-setup` in `ci.yml` installs into `runner.tool_cache`
+- **Next step:** the folder is taken apart, the PR opens, its run confirms the store path
+- **Uncommitted:** the `ci.yml` edit and this file
 - **Waiting for the owner:** no
 - **PR:** not open yet
 
 ## Steps
 
-- [>] 1.1 Give `pnpm/action-setup` in `ci.yml` a `dest` under `runner.tool_cache`, with a comment naming the reason.
+- [x] 1.1 Give `pnpm/action-setup` in `ci.yml` a `dest` under `runner.tool_cache`, with a comment naming the reason.
 
 ## Decisions along the way
 
@@ -23,3 +23,4 @@
 ### 2026-10-02
 
 - The cause is found by the store path in the run log and the time `~/setup-pnpm` was recreated.
+- Stage 1: `pnpm exec prettier --check .github/workflows/ci.yml` — «All matched files use Prettier code style!»

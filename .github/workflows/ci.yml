@@ -70,11 +70,16 @@ jobs:
               with:
                   fetch-depth: 0
 
+            # pnpm ставится в каталог инструментов своего раннера, а не в `~/setup-pnpm` по
+            # умолчанию. На машине три раннера, а каталог в домашней папке у них общий: соседний
+            # проект пересоздавал его посреди прогона, хранилище pnpm внутри пропадало, и шаг
+            # сохранения кэша падал при прошедших проверках.
             - name: Install pnpm
               uses: pnpm/action-setup@v6
               with:
                   version: 11.10.0
                   run_install: false
+                  dest: ${{ runner.tool_cache }}/setup-pnpm
 
             - name: Cache node_modules
               uses: actions/setup-node@v7
