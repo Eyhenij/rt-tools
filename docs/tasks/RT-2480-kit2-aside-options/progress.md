@@ -2,10 +2,10 @@
 
 ## Where we stand
 
-- **State:** `этап-идёт`
+- **State:** `этапы-кончились`
 - **Stage:** 3 of 3 — texts and showcase
-- **Done:** behaviour, styles and handles; the spec's scenarios and bindings
-- **Next step:** the overview tables and the stories
+- **Done:** all stages; 749 of 749 frames match, the sweep is clean
+- **Next step:** take the folder apart and open the PR
 - **Uncommitted:** no
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -18,8 +18,8 @@
 - [x] 1.4 The header content slot
 - [x] 2.1 The panel's padding, footer, title and error properties
 - [x] 3.1 The spec of the subdomain, its bindings and scenarios
-- [>] 3.2 The overview tables and the stories for the new inputs, slot and properties
-- [ ] 3.3 Snapshots for the new stories
+- [x] 3.2 The overview tables and the stories for the new inputs, slot and properties
+- [x] 3.3 Snapshots for the new stories
 
 ## Decisions along the way
 
