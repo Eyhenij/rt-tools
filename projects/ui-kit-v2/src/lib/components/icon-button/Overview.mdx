@@ -17,6 +17,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 - Действие, для которого нет места под подпись: панель инструментов, строка таблицы, угол
   карточки.
 - Кнопка-переключатель — тогда `active` превращается в `aria-pressed`.
+- Рисунок не из набора кита — `[icon]="null"` и рисунок внутри кнопки, история `Content`.
 
 ## Когда не применять
 
@@ -87,7 +88,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 | вход        | тип                                                                         | умолчание                   |
 | ----------- | --------------------------------------------------------------------------- | --------------------------- |
-| `icon`      | `IRtIcon.Name`                                                              | **обязателен**              |
+| `icon`      | `IRtIcon.Name \| null` — `null` показывает вложенное                        | **обязателен**              |
 | `ariaLabel` | `string`                                                                    | **обязателен**              |
 | `variant`   | `'primary' \| 'secondary' \| 'ghost' \| 'danger' \| 'success' \| 'warning'` | `'ghost'`                   |
 | `size`      | `'sm' \| 'md' \| 'lg' \| 'xl' \| '2xl'`                                     | `'md'`                      |

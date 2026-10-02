@@ -55,6 +55,8 @@ export class TestRtSideMenuCellComponent {
         input<IRtSideMenu.FavoriteActionsReserve>('none');
     /** Шапка и подвал полосы. */
     public readonly slots: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, { transform: booleanAttribute });
+    /** Кнопка закрепления в шапке подменю. */
+    public readonly pinShown: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, { transform: booleanAttribute });
     /** Свой значок меню для имён, которых кит не рисует. */
     public readonly ownIcon: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, { transform: booleanAttribute });
 

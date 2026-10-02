@@ -70,7 +70,8 @@
 
                 <!-- Кнопка потребителя видна всегда и стоит последней: кнопки избранного встают перед ней. -->
                 @if (row.iconButton?.icon; as buttonIcon) {
-                    <!-- Имя без значка кита берёт свой шаблон меню, как значок строки; без шаблона кнопка пуста. -->
+                    <!-- Имя без значка кита берёт свой шаблон меню, как значок строки. Без шаблона кнопка пуста и
+                         незнакомого имени значку не передаёт: значка с таким именем нет, и ждать его некому. -->
                     @let buttonKitIcon = buttonIcon | rtSideMenuIcon;
                     @let buttonOwnTpl = buttonKitIcon ? null : menuRef.ownIconTpl();
                     <rt-icon-button
@@ -78,7 +79,7 @@
                         qa-dataid="side-menu-sub-item-action"
                         size="sm"
                         shape="circle"
-                        [icon]="buttonOwnTpl ? null : (buttonKitIcon ?? buttonIcon)"
+                        [icon]="buttonKitIcon"
                         [ariaLabel]="row.name ?? ''"
                         (clicked)="onClickSubMenuAdditional(row, $event)">
                         @if (buttonOwnTpl) {

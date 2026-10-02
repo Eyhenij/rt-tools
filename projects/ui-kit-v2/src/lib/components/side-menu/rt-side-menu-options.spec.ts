@@ -139,6 +139,14 @@ describe('Переключатели бокового меню', (): void => {
         expect((actions[1].nativeElement as HTMLElement).querySelector('.own')).toBeNull();
         expect((actions[1].nativeElement as HTMLElement).querySelector('rt-icon')).not.toBeNull();
     });
+
+    it('SC-UKV-622 — без своего шаблона кнопка строки с именем вне кита пуста и значка не просит', (): void => {
+        const fixture: ComponentFixture<RtSideMenuComponent> = menu({ subMenuMode: 'pinned', activeMenuIds: ['reports', 'sales'] });
+        const scan: HTMLElement = qaAll(fixture, 'side-menu-sub-item-action')[0].nativeElement as HTMLElement;
+
+        expect(scan.querySelector('rt-icon')).toBeNull();
+        expect(scan.querySelector('[qa-dataid="side-menu-own-button-icon"]')).toBeNull();
+    });
 });
 
 @Component({
