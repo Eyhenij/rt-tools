@@ -38,3 +38,14 @@ that hides its label while loading and keeps its width; tooltips on the left and
   `--rt-opacity-disabled` is `0.6`, and taking it would move the look of every disabled switch.
 - **A loading button with a hidden label keeps the label in the box, only invisible.** Its width
   stays the width of the label; the spinner stands over it.
+
+## Decisions along the way
+
+- The tag keeps its severity and size values in private properties on its root; the six handles read them as the fallback.
+- The letter-spacing handle has no fallback: an unset handle gives `unset`, so the tag inherits its parent's spacing as before. The first snapshot run caught it — the info item frame diverged, its value carries a wide spacing.
+- Snapshots: seven written (tag Handles and HostRule, toggle switch Label and HostRule, button LoadingLabel, toolbar Layout in two widths), tooltip Placement re-taken with four sides; a wider cell keeps the left tooltip from flipping at the window edge.
+- The toggle switch label properties are `--rt-toggle-label-gap`, `-size`, `-color-off`, `-color-on`, `-color-hover`: the requested `--rt-toggle-label-color` and `-font-size` are taken by the first kit, and the tokens graph check refuses a shared name.
+- The size, on and disabled modifiers are also drawn on the toggle switch host; the disabled opacity sits there and dims the label too.
+- The toolbar height is a minimum height: a bar stacked into a column on a narrow screen is never clipped. The gap property is the gap between the zones.
+- A loading button with `loadingLabel="hide"` keeps its ordinary content, icon included, at zero opacity rather than `visibility: hidden`: the width stays the idle width and the label still names the button for a screen reader. The loader stands over it absolutely.
+- A side tooltip that fits on neither side falls back to top, then bottom; the sides are logical `start`/`end`, so they mirror in right-to-left writing.
