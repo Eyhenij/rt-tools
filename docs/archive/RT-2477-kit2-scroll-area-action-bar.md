@@ -35,3 +35,11 @@ colours of its menu.
   tokens graph check refuses a shared name.
 - **A story shows the open menu.** Without it the restored rounding and shadow are seen by no
   frame.
+
+## Decisions along the way
+
+- The bar's own hover tint and close icon colour now follow `--rt-action-bar-color`, so a recoloured bar keeps a readable close icon and hover; the default is the same inverse text.
+- The menu properties are consumer handles read with a fallback; their kit defaults for rounding and shadow live in private `-default` properties on the menu, because the token check refuses a direct step as a fallback on those families.
+- The host background of the scroll area stands under `:where()`: the side menu uses scroll areas as its own elements with a surface background, and an equal-strength host rule took it away — the first snapshot run showed every side menu frame diverged. With zero specificity any class rule wins.
+- Snapshots: three written (scroll area Properties, action bar Properties and Menu); the 744 former frames matched after the fix.
+- The radius contract stripped only flat `var()` references, and the menu's nested reference read as an off-scale literal. It now strips references from the inside out, and its negative half names the nested case.
