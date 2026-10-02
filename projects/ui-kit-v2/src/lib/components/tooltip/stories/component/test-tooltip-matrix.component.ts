@@ -58,8 +58,8 @@ interface ITooltipTruncatedCase {
                 <app-story-presets caption="Сторона в обоих наборах">
                     <ng-template>
                         <div class="app-tooltip-matrix__room">
-                            <!-- Ячейка с запасом: боковая подсказка ложится в пустую часть соседней ячейки, а не на её кнопку. -->
-                            <app-story-row slotWidth="15rem" [items]="placementCases" [itemLabel]="caseLabel">
+                            <!-- Широкая ячейка ставит стороны в один столбец: у кнопки остаётся место на подсказку с обоих боков, и у края окна боковая не разворачивается. -->
+                            <app-story-row slotWidth="20rem" [items]="placementCases" [itemLabel]="caseLabel">
                                 <ng-template let-placementCase>
                                     <button
                                         rtButton

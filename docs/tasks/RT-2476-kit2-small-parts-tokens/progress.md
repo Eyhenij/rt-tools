@@ -2,10 +2,10 @@
 
 ## Where we stand
 
-- **State:** `этап-идёт`
+- **State:** `этапы-кончились`
 - **Stage:** 3 of 3 — texts and showcase
-- **Done:** the branch from the epic branch, the folder, the spec, the tag, the toggle switch, the toggle button group, the toolbar, the loading button, the tooltip sides, the scenarios SC-UKV-565…574, the overviews and the stories
-- **Next step:** snapshots for the new stories
+- **Done:** the branch from the epic branch, the folder, the spec, the tag, the toggle switch, the toggle button group, the toolbar, the loading button, the tooltip sides, the scenarios SC-UKV-565…574, the overviews and the stories, the snapshots
+- **Next step:** archive the folder, push, open the request into the epic branch
 - **Uncommitted:** no
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -20,12 +20,13 @@
 - [x] 2.2 The tooltip on the left and on the right
 - [x] 3.1 The spec of the subdomain, its bindings and scenarios
 - [x] 3.2 The overview tables and the stories for the new inputs
-- [>] 3.3 Snapshots for the new stories
+- [x] 3.3 Snapshots for the new stories
 
 ## Decisions along the way
 
 - The tag keeps its severity and size values in private properties on its root; the six handles read them as the fallback.
 - The letter-spacing handle has no fallback: an unset handle gives `unset`, so the tag inherits its parent's spacing as before. The first snapshot run caught it — the info item frame diverged, its value carries a wide spacing.
+- Snapshots: seven written (tag Handles and HostRule, toggle switch Label and HostRule, button LoadingLabel, toolbar Layout in two widths), tooltip Placement re-taken with four sides; a wider cell keeps the left tooltip from flipping at the window edge.
 - The toggle switch label properties are `--rt-toggle-label-gap`, `-size`, `-color-off`, `-color-on`, `-color-hover`: the requested `--rt-toggle-label-color` and `-font-size` are taken by the first kit, and the tokens graph check refuses a shared name.
 - The size, on and disabled modifiers are also drawn on the toggle switch host; the disabled opacity sits there and dims the label too.
 - The toolbar height is a minimum height: a bar stacked into a column on a narrow screen is never clipped. The gap property is the gap between the zones.
