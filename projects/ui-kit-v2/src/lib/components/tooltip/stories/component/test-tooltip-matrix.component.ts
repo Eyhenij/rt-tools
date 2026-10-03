@@ -58,7 +58,8 @@ interface ITooltipTruncatedCase {
                 <app-story-presets caption="Сторона в обоих наборах">
                     <ng-template>
                         <div class="app-tooltip-matrix__room">
-                            <app-story-row [items]="placementCases" [itemLabel]="caseLabel">
+                            <!-- Широкая ячейка ставит стороны в один столбец: у кнопки остаётся место на подсказку с обоих боков, и у края окна боковая не разворачивается. -->
+                            <app-story-row slotWidth="20rem" [items]="placementCases" [itemLabel]="caseLabel">
                                 <ng-template let-placementCase>
                                     <button
                                         rtButton
@@ -228,6 +229,8 @@ export class TestRtTooltipMatrixComponent implements AfterViewInit {
     public readonly placementCases: readonly ITooltipPlacementCase[] = [
         { name: 'сверху', placement: 'top' },
         { name: 'снизу', placement: 'bottom' },
+        { name: 'слева', placement: 'left' },
+        { name: 'справа', placement: 'right' },
     ];
 
     public readonly textCases: readonly ITooltipTextCase[] = [

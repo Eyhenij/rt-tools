@@ -180,4 +180,69 @@ describe('RtToggleSwitchComponent', (): void => {
             expect(control(setup({ inputId: 'dark' }))?.attributes['id']).toBe('dark');
         });
     });
+
+    describe('подпись', (): void => {
+        function label<T>(fixture: ComponentFixture<T>): DebugElement | null {
+            return qa(fixture, 'toggle-switch-label');
+        }
+
+        it('SC-UKV-566 — подпись стоит после кнопки и называет переключатель', (): void => {
+            const fixture: ComponentFixture<RtToggleSwitchComponent> = setup({ label: 'Уведомления' });
+            const caption: HTMLLabelElement = label(fixture)?.nativeElement as HTMLLabelElement;
+            const button: HTMLButtonElement = control(fixture)?.nativeElement as HTMLButtonElement;
+
+            expect(caption.textContent?.trim()).toBe('Уведомления');
+            expect(button.nextElementSibling).toBe(caption);
+            expect(caption.htmlFor).toBe(button.id);
+            expect(button.getAttribute('aria-labelledby')).toBe(caption.id);
+        });
+
+        it('SC-UKV-566 — подпись связывается с идентификатором, заданным входом', (): void => {
+            const fixture: ComponentFixture<RtToggleSwitchComponent> = setup({ label: 'Тёмная тема', inputId: 'dark' });
+
+            expect((label(fixture)?.nativeElement as HTMLLabelElement).htmlFor).toBe('dark');
+        });
+
+        it('SC-UKV-567 — нажатие на подпись переключает', (): void => {
+            const fixture: ComponentFixture<RtToggleSwitchComponent> = setup({ label: 'Уведомления' });
+
+            label(fixture)?.nativeElement.click();
+            fixture.detectChanges();
+
+            expect(control(fixture)?.attributes['aria-checked']).toBe('true');
+        });
+
+        it('SC-UKV-567 — у отключённого нажатие на подпись не переключает', (): void => {
+            const fixture: ComponentFixture<RtToggleSwitchComponent> = setup({ label: 'Уведомления', disabled: true });
+
+            label(fixture)?.nativeElement.click();
+            fixture.detectChanges();
+
+            expect(control(fixture)?.attributes['aria-checked']).toBe('false');
+        });
+
+        it('SC-UKV-568 — без подписи разметка прежняя: ни подписи, ни своего id, ни связки', (): void => {
+            const fixture: ComponentFixture<RtToggleSwitchComponent> = setup();
+
+            expect(label(fixture)).toBeNull();
+            expect(control(fixture)?.attributes['id']).toBeUndefined();
+            expect(control(fixture)?.attributes['aria-labelledby']).toBeUndefined();
+        });
+    });
+
+    describe('модификаторы хоста', (): void => {
+        it('SC-UKV-565 — размер и отключение выводятся и на хост: по ним работают свойства на теге', (): void => {
+            const host: HTMLElement = setup({ size: 'lg', disabled: true }).nativeElement as HTMLElement;
+
+            expect(host.classList).toContain('rt-toggle-switch--lg');
+            expect(host.classList).toContain('rt-toggle-switch--disabled');
+            expect(host.classList).not.toContain('rt-toggle-switch--on');
+        });
+
+        it('SC-UKV-565 — у плотного размера модификатора на хосте нет: база объявлена на самом хосте', (): void => {
+            const host: HTMLElement = setup().nativeElement as HTMLElement;
+
+            expect([...host.classList]).toEqual(['rt-toggle-switch']);
+        });
+    });
 });

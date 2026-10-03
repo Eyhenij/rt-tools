@@ -590,6 +590,12 @@ export type TRtConsumerHandleName =
     | '--rt-logo-wordmark-dark'
     | '--rt-page-header-bg'
     | '--rt-table-actions-bg'
+    | '--rt-tag-color-bg'
+    | '--rt-tag-color-border'
+    | '--rt-tag-color-text'
+    | '--rt-tag-letter-spacing'
+    | '--rt-tag-padding-block'
+    | '--rt-tag-padding-inline'
     | '--rt-workspace-aside-size'
     | '--rt-workspace-list-size';
 
@@ -1184,6 +1190,12 @@ export const RT_CONSUMER_HANDLE_NAMES: readonly TRtConsumerHandleName[] = [
     '--rt-logo-wordmark-dark',
     '--rt-page-header-bg',
     '--rt-table-actions-bg',
+    '--rt-tag-color-bg',
+    '--rt-tag-color-border',
+    '--rt-tag-color-text',
+    '--rt-tag-letter-spacing',
+    '--rt-tag-padding-block',
+    '--rt-tag-padding-inline',
     '--rt-workspace-aside-size',
     '--rt-workspace-list-size',
 ];

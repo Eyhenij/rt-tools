@@ -29,6 +29,7 @@ const modifiersOf: (node: HTMLElement) => string[] = (node: HTMLElement): string
             [radius]="radius()"
             [loading]="loading()"
             [loadingIcon]="loadingIcon()"
+            [loadingLabel]="loadingLabel()"
             [pressed]="pressed()"
             [disabled]="disabled()"></button>
     `,
@@ -45,6 +46,7 @@ class ButtonHostComponent {
     public readonly radius: WritableSignal<TRtRadius | null> = signal<TRtRadius | null>(null);
     public readonly loading: WritableSignal<boolean> = signal<boolean>(false);
     public readonly loadingIcon: WritableSignal<string | null> = signal<string | null>(null);
+    public readonly loadingLabel: WritableSignal<IButton.LoadingLabel> = signal<IButton.LoadingLabel>('keep');
     public readonly pressed: WritableSignal<boolean | null> = signal<boolean | null>(null);
     public readonly disabled: WritableSignal<boolean> = signal<boolean>(false);
 }
@@ -244,6 +246,62 @@ describe('RtButtonDirective', (): void => {
             fixture.detectChanges();
 
             expect(textOf(el(fixture, '.rt-button__label'))).toBe('Сохранить');
+        });
+
+        it('SC-UKV-569 — без входа подпись не прячется: модификатора нет, загрузчик в потоке', (): void => {
+            const fixture: ComponentFixture<ButtonHostComponent> = setup();
+
+            fixture.componentInstance.loading.set(true);
+            fixture.detectChanges();
+
+            expect(classesOf(button(fixture))).not.toContain('rt-button--loading-label-hidden');
+            expect(el(fixture, '.rt-button__loader')).toBeNull();
+        });
+
+        it('SC-UKV-569 — спрятанная подпись остаётся в кнопке вместе с иконкой, кольцо встаёт поверх', (): void => {
+            const fixture: ComponentFixture<ButtonHostComponent> = setup();
+
+            fixture.componentInstance.icon.set('check');
+            fixture.componentInstance.loadingLabel.set('hide');
+            fixture.componentInstance.loading.set(true);
+            fixture.detectChanges();
+
+            const children: string[] = Array.from(button(fixture).children).map(
+                (child: Element): string => child.getAttribute('class') ?? ''
+            );
+
+            expect(classesOf(button(fixture))).toContain('rt-button--loading-label-hidden');
+            expect(children).toEqual(['rt-button__icon', 'rt-button__label', 'rt-button__spinner rt-button__loader']);
+            expect(textOf(el(fixture, '.rt-button__label'))).toBe('Сохранить');
+        });
+
+        it('SC-UKV-569 — заданная иконка загрузки тоже встаёт поверх спрятанной подписи', (): void => {
+            const fixture: ComponentFixture<ButtonHostComponent> = setup();
+
+            fixture.componentInstance.loadingIcon.set('spinner');
+            fixture.componentInstance.loadingLabel.set('hide');
+            fixture.componentInstance.loading.set(true);
+            fixture.detectChanges();
+
+            expect(el(fixture, '.rt-button__loader')?.nativeElement.classList).toContain('rt-button__icon');
+            expect(el(fixture, '.rt-button__spinner')).toBeNull();
+        });
+
+        it('SC-UKV-569 — после загрузки модификатор снимается, подпись на месте', (): void => {
+            jest.useFakeTimers();
+            const fixture: ComponentFixture<ButtonHostComponent> = setup();
+
+            fixture.componentInstance.loadingLabel.set('hide');
+            fixture.componentInstance.loading.set(true);
+            fixture.detectChanges();
+            fixture.componentInstance.loading.set(false);
+            fixture.detectChanges();
+            jest.runAllTimers();
+
+            expect(classesOf(button(fixture))).not.toContain('rt-button--loading-label-hidden');
+            expect(el(fixture, '.rt-button__loader')).toBeNull();
+            expect(textOf(el(fixture, '.rt-button__label'))).toBe('Сохранить');
+            jest.useRealTimers();
         });
 
         it('заданная иконка загрузки рисуется вместо встроенного кольца', (): void => {
