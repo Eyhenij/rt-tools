@@ -23,8 +23,13 @@
             [attr.aria-pressed]="item.active ? 'true' : 'false'"
             [rtTooltip]="item.option.title ?? ''"
             (click)="onOptionClick(item)">
-            @if (item.option.icon) {
-                <rt-icon rtElem="icon" color="current" [name]="item.option.icon" [size]="iconSize()" />
+            @if (item.option.icon || item.option.glyph) {
+                <rt-icon
+                    rtElem="icon"
+                    color="current"
+                    [name]="item.option.icon ?? null"
+                    [glyph]="item.option.glyph ?? null"
+                    [size]="iconSize()" />
             }
             <span rtElem="label">{{ item.option.label }}</span>
         </button>

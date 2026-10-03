@@ -1,5 +1,7 @@
 import { EnvironmentProviders, makeEnvironmentProviders } from '@angular/core';
 
+import { RT_ICON_GLYPH_STRATEGY } from './rt-icon-font.service';
+import { IRtIcon } from './rt-icon.model';
 import { RT_ICONS_BASE_URL, RT_ICONS_MATERIAL_BASE_URL } from './rt-icon.registry';
 
 /**
@@ -24,12 +26,23 @@ import { RT_ICONS_BASE_URL, RT_ICONS_MATERIAL_BASE_URL } from './rt-icon.registr
  * Наборов значков два: свой и материальный. Второй нужен только приложению, которое объявляет
  * материальный набор оформления, и адрес у него свой — набор лежит в `assets/icons-material`.
  *
+ * Третий аргумент — настройки значков. `glyphStrategy` говорит, как рисуется имя Material на входе
+ * `glyph`: `map-first` (по умолчанию) — пара из перечня кита, а без пары шрифт Material Symbols;
+ * `font` — шрифт для любого имени. Шрифт приложение подключает само.
+ *
  * @param baseUrl Адрес опубликованного набора. По умолчанию `/icons`.
  * @param materialBaseUrl Адрес материального набора. По умолчанию `/icons-material`.
+ * @param options Настройки значков.
  */
-export function provideRtIcons(baseUrl?: string, materialBaseUrl?: string): EnvironmentProviders {
+export function provideRtIcons(baseUrl?: string, materialBaseUrl?: string, options?: IRtIconsOptions): EnvironmentProviders {
     return makeEnvironmentProviders([
         ...(baseUrl === undefined ? [] : [{ provide: RT_ICONS_BASE_URL, useValue: baseUrl }]),
         ...(materialBaseUrl === undefined ? [] : [{ provide: RT_ICONS_MATERIAL_BASE_URL, useValue: materialBaseUrl }]),
+        ...(options?.glyphStrategy === undefined ? [] : [{ provide: RT_ICON_GLYPH_STRATEGY, useValue: options.glyphStrategy }]),
     ]);
+}
+
+/** Настройки значков приложения — третий аргумент `provideRtIcons()`. */
+export interface IRtIconsOptions {
+    readonly glyphStrategy?: IRtIcon.GlyphStrategy;
 }

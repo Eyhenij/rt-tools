@@ -80,17 +80,17 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Входы
 
-| вход        | тип                                                         | умолчание               |
-| ----------- | ----------------------------------------------------------- | ----------------------- |
-| `options`   | `ReadonlyArray<{ value, label, icon?, title?, disabled? }>` | **обязателен**          |
-| `value`     | `T \| undefined`                                            | `undefined`             |
-| `multiple`  | `boolean`                                                   | `false`                 |
-| `values`    | `ReadonlyArray<T>`                                          | `[]`                    |
-| `ariaLabel` | `string \| null`                                            | `null`                  |
-| `size`      | `'sm' \| 'md' \| 'lg'`                                      | `'sm'`                  |
-| `disabled`  | `boolean`                                                   | `false`                 |
-| `fullWidth` | `boolean`                                                   | `false`                 |
-| `radius`    | `TRtRadius \| null`                                         | `null` → `md` у дорожки |
+| вход        | тип                                                                 | умолчание               |
+| ----------- | ------------------------------------------------------------------- | ----------------------- |
+| `options`   | `ReadonlyArray<{ value, label, icon?, glyph?, title?, disabled? }>` | **обязателен**          |
+| `value`     | `T \| undefined`                                                    | `undefined`             |
+| `multiple`  | `boolean`                                                           | `false`                 |
+| `values`    | `ReadonlyArray<T>`                                                  | `[]`                    |
+| `ariaLabel` | `string \| null`                                                    | `null`                  |
+| `size`      | `'sm' \| 'md' \| 'lg'`                                              | `'sm'`                  |
+| `disabled`  | `boolean`                                                           | `false`                 |
+| `fullWidth` | `boolean`                                                           | `false`                 |
+| `radius`    | `TRtRadius \| null`                                                 | `null` → `md` у дорожки |
 
 `value` читается при одиночном выборе, `values` — при множественном. Разными входами, а не одним с
 меняющимся типом: вход, тип которого зависит от значения другого входа, не проверяет ни сборка, ни

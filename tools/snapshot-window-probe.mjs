@@ -29,7 +29,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { openStory } from './showcase-probe.mjs';
+import { loadChromium, openStory } from './showcase-probe.mjs';
 
 /** A story whose root is higher than the base window: the set of the social signs, 1072 px tall. */
 const STORY = 'atoms-icon--social';
@@ -53,30 +53,6 @@ const ROOT_SELECTOR = '[data-story-root]';
 
 /** The late boundary of the wait for the root — a limit, not a measure. */
 const ROOT_TIMEOUT_MS = 30_000;
-
-/**
- * The browser driver arrives as a dependency of the snapshot runner rather than by the tree's manifest.
- *
- * pnpm's strict layout does not put it into the root `node_modules`, so an import by name finds
- * nothing here. The second road is pnpm's shared links directory. The technique is repeated from the
- * icon probe next to it: the tree's checks have no shared module.
- */
-async function loadChromium() {
-    const candidates = ['playwright', join(process.cwd(), 'node_modules/.pnpm/node_modules/playwright/index.mjs')];
-
-    for (const candidate of candidates) {
-        try {
-            return (await import(candidate)).chromium;
-        } catch {
-            // The next path.
-        }
-    }
-
-    console.error(
-        '\n  The browser driver is found neither by name nor in the pnpm links directory. Install the dependencies: pnpm install\n'
-    );
-    process.exit(1);
-}
 
 /**
  * It removes the explanations from the source, leaving the code alone.
