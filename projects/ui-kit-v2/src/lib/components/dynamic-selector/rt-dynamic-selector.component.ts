@@ -122,10 +122,13 @@ export class RtDynamicSelectorComponent<TEntity extends object> extends RtFormCo
     protected readonly hasOffer: Signal<boolean> = computed((): boolean => this.offered().length > 0 || !this.localSearch());
     protected readonly isNothingToChoose: Signal<boolean> = computed((): boolean => this.value().length === 0 && !this.hasOffer());
     protected readonly isAddShown: Signal<boolean> = computed((): boolean => this.addShown() && this.hasOffer());
-    protected readonly isResetDisabled: Signal<boolean> = computed((): boolean => sameDynamicKeys(this.value(), this.#initial()));
-    protected readonly isClearDisabled: Signal<boolean> = computed(
+    protected readonly isKeysReset: Signal<boolean> = computed((): boolean => sameDynamicKeys(this.value(), this.#initial()));
+    protected readonly isKeysClear: Signal<boolean> = computed(
         (): boolean => clearDynamicKeys(this.value(), this.readonlyKeys()).length === this.value().length
     );
+    /** Правки в шаблоне строки держат сброс и очистку включёнными, даже когда ключи не менялись. */
+    protected readonly isResetDisabled: Signal<boolean> = computed((): boolean => !this.extraChanged() && this.isKeysReset());
+    protected readonly isClearDisabled: Signal<boolean> = computed((): boolean => !this.extraChanged() && this.isKeysClear());
     protected readonly addTitle: Signal<string> = computed((): string => this.buttonTitle() || this.addLabel());
 
     protected readonly hasValue: Signal<boolean> = computed((): boolean => this.value().length > 0);
@@ -140,6 +143,23 @@ export class RtDynamicSelectorComponent<TEntity extends object> extends RtFormCo
     public readonly addShown: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
         transform: booleanAttribute,
     });
+    /** Корзина строк; без неё записи убирает только очистка или сам вызывающий. */
+    public readonly removeShown: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
+        transform: booleanAttribute,
+    });
+    /** Сброс и очистка под списком: `false` их убирает, кнопка добавления остаётся. */
+    public readonly listActionsShown: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
+        transform: booleanAttribute,
+    });
+    /**
+     * Строки правлены в шаблоне вызывающего: сброс и очистка включены и тогда, когда ключи прежние.
+     * Сброс сообщает `listReset`, очистка — `listCleared`, и вызывающий снимает свои правки.
+     */
+    public readonly extraChanged: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
+        transform: booleanAttribute,
+    });
+    /** Запрос, с которым открывается всплывающий выбор; событием поиска он не уходит. */
+    public readonly searchTerm: InputSignal<string> = input<string>('');
     /** Ключи, которые нельзя убрать из списка. */
     public readonly readonlyKeys: InputSignal<ReadonlyArray<unknown>> = input<ReadonlyArray<unknown>>([]);
     /** Ключи строк всплывающего выбора, под последней из которых стоит разделитель. */
@@ -184,9 +204,17 @@ export class RtDynamicSelectorComponent<TEntity extends object> extends RtFormCo
 
     public readonly selectionChange: OutputEmitterRef<TEntity[]> = output<TEntity[]>();
     public readonly listReset: OutputEmitterRef<void> = output<void>();
+    public readonly listCleared: OutputEmitterRef<void> = output<void>();
+    /** Всплывающий выбор открылся или закрылся. */
+    public readonly popupOpenChange: OutputEmitterRef<boolean> = output<boolean>();
     public readonly searchChange: OutputEmitterRef<string> = output<string>();
     public readonly loadMore: OutputEmitterRef<void> = output<void>();
     public readonly temporaryChoiceChange: OutputEmitterRef<TEntity[]> = output<TEntity[]>();
+
+    /** Открыт ли всплывающий выбор — от кнопки полосы или от кнопки приглашения. */
+    public readonly popupOpen: Signal<boolean> = computed((): boolean =>
+        this.popovers().some((popover: RtPopoverDirective): boolean => popover.isOpen())
+    );
 
     public readonly displayText: Signal<string> = computed((): string =>
         this.rows()
@@ -236,18 +264,31 @@ export class RtDynamicSelectorComponent<TEntity extends object> extends RtFormCo
             return;
         }
 
-        this.#change([...this.#initial()]);
+        // Ключи прежние, а правки только в строках: значение не трогаем, сообщаем о сбросе.
+        if (!this.isKeysReset()) {
+            this.#change([...this.#initial()]);
+        }
         this.listReset.emit();
     }
 
     protected onCleared(): void {
-        if (!this.isDisabled() && !this.isClearDisabled()) {
+        if (this.isDisabled() || this.isClearDisabled()) {
+            return;
+        }
+
+        if (!this.isKeysClear()) {
             this.#change(clearDynamicKeys(this.value(), this.readonlyKeys()));
         }
+        this.listCleared.emit();
+    }
+
+    protected onOpened(): void {
+        this.popupOpenChange.emit(true);
     }
 
     protected onClosed(): void {
         this.markTouched();
+        this.popupOpenChange.emit(false);
     }
 
     #closePopup(): void {

@@ -577,6 +577,17 @@ export type TRtConsumerHandleName =
     | '--rt-data-table-scrollbar-horizontal-height'
     | '--rt-data-table-scrollbar-vertical-width'
     | '--rt-data-table-scrollbar-width'
+    | '--rt-dialog-bg'
+    | '--rt-dialog-border'
+    | '--rt-dialog-content-max-height'
+    | '--rt-dialog-content-padding'
+    | '--rt-dialog-footer-border'
+    | '--rt-dialog-footer-padding'
+    | '--rt-dialog-header-border'
+    | '--rt-dialog-header-padding'
+    | '--rt-dialog-title-font-size'
+    | '--rt-dialog-title-transform'
+    | '--rt-dialog-title-weight'
     | '--rt-dialog-width'
     | '--rt-header-content-max-width'
     | '--rt-header-height'
@@ -587,6 +598,12 @@ export type TRtConsumerHandleName =
     | '--rt-logo-wordmark-dark'
     | '--rt-page-header-bg'
     | '--rt-table-actions-bg'
+    | '--rt-tag-color-bg'
+    | '--rt-tag-color-border'
+    | '--rt-tag-color-text'
+    | '--rt-tag-letter-spacing'
+    | '--rt-tag-padding-block'
+    | '--rt-tag-padding-inline'
     | '--rt-workspace-aside-size'
     | '--rt-workspace-list-size';
 
@@ -1168,6 +1185,17 @@ export const RT_CONSUMER_HANDLE_NAMES: readonly TRtConsumerHandleName[] = [
     '--rt-data-table-scrollbar-horizontal-height',
     '--rt-data-table-scrollbar-vertical-width',
     '--rt-data-table-scrollbar-width',
+    '--rt-dialog-bg',
+    '--rt-dialog-border',
+    '--rt-dialog-content-max-height',
+    '--rt-dialog-content-padding',
+    '--rt-dialog-footer-border',
+    '--rt-dialog-footer-padding',
+    '--rt-dialog-header-border',
+    '--rt-dialog-header-padding',
+    '--rt-dialog-title-font-size',
+    '--rt-dialog-title-transform',
+    '--rt-dialog-title-weight',
     '--rt-dialog-width',
     '--rt-header-content-max-width',
     '--rt-header-height',
@@ -1178,6 +1206,12 @@ export const RT_CONSUMER_HANDLE_NAMES: readonly TRtConsumerHandleName[] = [
     '--rt-logo-wordmark-dark',
     '--rt-page-header-bg',
     '--rt-table-actions-bg',
+    '--rt-tag-color-bg',
+    '--rt-tag-color-border',
+    '--rt-tag-color-text',
+    '--rt-tag-letter-spacing',
+    '--rt-tag-padding-block',
+    '--rt-tag-padding-inline',
     '--rt-workspace-aside-size',
     '--rt-workspace-list-size',
 ];

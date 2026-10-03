@@ -1,0 +1,20 @@
+@layer rt-kit.components {
+    /* rt-dialog-content — тело модалки. ViewEncapsulation.None.
+       Хост адресуется по имени элемента, как у шапки и подвала: класс блока висит и на хосте, и на
+       узле внутри. Хост боксом не становится — тело должно быть прямым flex-ребёнком рамки, чтобы
+       сжиматься между шапкой и подвалом и прокручиваться само.
+
+       Свойства читаются с запасным значением на месте: окно живёт в оверлее, вне блоков
+       приложения, и приложение задаёт их на корне страницы. */
+    rt-dialog-content {
+        display: contents;
+
+        .rt-dialog-content {
+            overflow: auto;
+            min-height: 0;
+            max-height: var(--rt-dialog-content-max-height, none);
+            flex: 1 1 auto;
+            padding: var(--rt-dialog-content-padding, var(--rt-space-lg));
+        }
+    }
+}

@@ -38,6 +38,12 @@ export const Popup: TStory = { args: { part: 'popup' } };
 /** Поле строк — те же строки и полоса, но строки набирают вручную. */
 export const StringList: TStory = { args: { part: 'input' } };
 
+/** Переключатели списка: корзина, панель сброса и очистки, правки в шаблоне строки. */
+export const Switches: TStory = { args: { part: 'switches' } };
+
+/** Окно с начальным запросом: текст уже в поиске, предложены только совпадения. */
+export const InitialQuery: TStory = { args: { part: 'initial-query' } };
+
 export const Presets: TStory = { args: { part: 'presets' } };
 
 export const Themes: TStory = { args: { part: 'themes' } };
