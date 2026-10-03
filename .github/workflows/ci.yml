@@ -235,7 +235,10 @@ jobs:
                   docker run -d --rm --name rt-ci-schema \
                       -e POSTGRES_USER=message_bus -e POSTGRES_PASSWORD=message_bus \
                       -e POSTGRES_DB=message_bus -p 55452:5432 postgres:16-alpine >/dev/null
-                  until docker exec rt-ci-schema pg_isready -U message_bus >/dev/null 2>&1; do sleep 1; done
+                  # Готовность спрашивается по TCP, а не через сокет: образ сначала поднимает сервер
+                  # начальной настройки только на сокете и перезапускает его, и проверка через сокет
+                  # отвечала «готов» в этот промежуток — соединение по порту ловило ECONNRESET.
+                  until docker exec rt-ci-schema pg_isready -h 127.0.0.1 -U message_bus >/dev/null 2>&1; do sleep 1; done
                   node tools/check-schema-drift.mjs
                   docker rm -f rt-ci-schema >/dev/null 2>&1 || true
 
