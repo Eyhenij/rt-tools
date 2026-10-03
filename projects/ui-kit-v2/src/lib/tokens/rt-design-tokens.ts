@@ -559,6 +559,10 @@ export type TRtDesignTokenName =
 
 /** The name of a consumer's handle — a property the kit deliberately does not declare. */
 export type TRtConsumerHandleName =
+    | '--rt-action-bar-menu-bg'
+    | '--rt-action-bar-menu-color'
+    | '--rt-action-bar-menu-radius'
+    | '--rt-action-bar-menu-shadow'
     | '--rt-aside-bg'
     | '--rt-aside-width'
     | '--rt-data-table-scrollbar-color'
@@ -1144,6 +1148,10 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
 
 /** All the consumer's handles: the value comes from the application, until then the fallback works. */
 export const RT_CONSUMER_HANDLE_NAMES: readonly TRtConsumerHandleName[] = [
+    '--rt-action-bar-menu-bg',
+    '--rt-action-bar-menu-color',
+    '--rt-action-bar-menu-radius',
+    '--rt-action-bar-menu-shadow',
     '--rt-aside-bg',
     '--rt-aside-width',
     '--rt-data-table-scrollbar-color',

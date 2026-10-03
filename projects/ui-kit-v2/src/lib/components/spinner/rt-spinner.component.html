@@ -1,0 +1,21 @@
+@if (framed()) {
+    <ng-container rtBlock="rt-spinner">
+        @if (plate()) {
+            <span rtElem="plate">
+                <ng-container [ngTemplateOutlet]="ring" />
+            </span>
+        } @else {
+            <ng-container [ngTemplateOutlet]="ring" />
+        }
+
+        <ng-template #ring>
+            @if (appearance() === 'arc') {
+                <svg rtElem="arc" viewBox="0 0 48 48" focusable="false" aria-hidden="true">
+                    <circle rtElem="arc-circle" cx="24" cy="24" r="20" />
+                </svg>
+            } @else {
+                <span rtElem="ring"></span>
+            }
+        </ng-template>
+    </ng-container>
+}

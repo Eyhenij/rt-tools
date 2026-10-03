@@ -24,6 +24,10 @@
     "--rt-tag-padding-block": "the tag's block padding; the default follows its size step",
     "--rt-tag-padding-inline": "the tag's inline padding; the default follows its size step",
     "--rt-tag-letter-spacing": "the tag's letter spacing; unset, the tag inherits it from its parent",
+    "--rt-action-bar-menu-bg": "the action bar menu's background; the menu lives in an overlay, so it is set on the page root; the default is the surface",
+    "--rt-action-bar-menu-color": "the action bar menu's text colour; the default is the primary text",
+    "--rt-action-bar-menu-radius": "the action bar menu's rounding; the default is the step md",
+    "--rt-action-bar-menu-shadow": "the action bar menu's shadow; the default is the card shadow",
     "--rt-icon-glyph-font": "the font family of an icon's Material ligature; the application connects the font itself, and until it names a family the kit takes 'Material Symbols Outlined'"
   }
 }

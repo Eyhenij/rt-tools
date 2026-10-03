@@ -54,6 +54,7 @@ import { IRtMessageComposer } from '../message-composer/rt-message-composer.mode
 import { TRtRichEditorToolbar } from '../rich-editor/rt-rich-editor.component';
 import { pickedFiles, withAppendedFiles, withoutFileAt } from './rt-chat-files.logic';
 import { nextAtBottom, RT_CHAT_PIN_RETRY_DELAYS_MS } from './rt-chat-thread.logic';
+import { typingDraft, RtChatTypingTracker } from './rt-chat-typing.logic';
 import { ERtChatMessageStatus, IRtChat } from './rt-chat.model';
 
 const BEM_BLOCK: string = 'rt-chat';
@@ -62,17 +63,11 @@ const BEM_BLOCK: string = 'rt-chat';
 const ATTACHMENT_FALLBACK_KEY: TRtKitLabelKey = 'chatAttachmentFallback';
 
 /**
- * Общий презентационный чат: тред сообщений + композер. Никакого data-access/api — история
- * приходит готовым массивом `IRtChat.Message[]`, отправка/обновление/скачивание уходят наружу
- * через outputs, а стор и blob-загрузка остаются в feature-компоненте каждого домена.
- *
- * Композер держит свой `FormGroup` — наружу торчит только `send`. Полноэкранный
- * режим (expand) — overlay внутри самого компонента (`--expanded`), потребителю
- * лишь опционально сообщается через `expandedChange`.
- *
- * Шапка (тулбар «Чат» + refresh/expand) рендерится только когда включена хотя бы
- * одна из иконок (`showRefresh`/`showExpand`): в диалогах своя header-обёртка,
- * туда тулбар не нужен.
+ * Общий презентационный чат: тред сообщений + композер. История приходит готовым массивом
+ * `IRtChat.Message[]`, отправка, обновление, скачивание и набор текста уходят наружу выходами;
+ * стор и blob-загрузка остаются у потребителя. Композер держит свой `FormGroup`. Полноэкранный
+ * режим — overlay внутри компонента (`--expanded`). Шапка рисуется, только когда включена хотя бы
+ * одна из иконок `showRefresh`/`showExpand`: в диалогах своя header-обёртка.
  */
 @Component({
     selector: 'rt-chat',
@@ -117,22 +112,15 @@ const ATTACHMENT_FALLBACK_KEY: TRtKitLabelKey = 'chatAttachmentFallback';
 })
 export class RtChatComponent {
     /**
-     * Дата сообщения форматируется по активной локали приложения, а не по
-     * `LOCALE_ID`: тот вычисляется на подъёме приложения и там, где язык
-     * переключают на ходу, оставил бы часы в прежнем формате до перезагрузки.
-     *
-     * Данные локали для `DatePipe` регистрирует приложение: без них пайп падает
-     * `Missing locale data`, и кит за это не отвечает.
+     * Дата форматируется по активной локали приложения, а не по `LOCALE_ID`: тот вычисляется на
+     * подъёме и при смене языка на ходу оставил бы прежний формат. Данные локали для `DatePipe`
+     * регистрирует приложение: без них пайп падает `Missing locale data`.
      */
     protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
 
     protected readonly locale: Signal<string> = inject(RT_KIT_LOCALE);
 
-    /**
-     * Пользователь у нижнего края треда. Плоское поле (не сигнал), чтобы
-     * afterRenderEffect не перезапускался на каждый scroll — обновляется в
-     * обработчике scroll и читается при автоскролле.
-     */
+    /** Читатель у нижнего края. Плоское поле, не сигнал: afterRenderEffect не перезапускается на scroll. */
     #atBottom: boolean = true;
 
     /** Прошлый scrollTop треда — для различения прокрутки вверх и роста контента. */
@@ -140,6 +128,9 @@ export class RtChatComponent {
 
     /** One-shot: своё отправленное сообщение всегда прокручивает тред вниз. */
     #forceScroll: boolean = false;
+
+    /** Отрезок набора в поле ответа: наружу уходит одно «начал» и одно «перестал» на отрезок. */
+    readonly #typingTracker: RtChatTypingTracker = new RtChatTypingTracker((typing: boolean): void => this.typing.emit(typing));
 
     /** Текущее значение композера — источник реактивности для `canSend`. */
     readonly #formValue: Signal<Partial<{ message: string; files: File[] }>>;
@@ -329,12 +320,17 @@ export class RtChatComponent {
     /** Клик refresh — consumer перетягивает тред. */
     public readonly refresh: OutputEmitterRef<void> = output<void>();
 
-    /** Клик по вложению — consumer качает blob своим api. Шаблон зовёт выход прямо: релей-метод,
-     * который только повторял `emit`, ничего не добавлял, а файл при этом рос. */
+    /** Клик по вложению — consumer качает blob своим api; шаблон зовёт выход прямо, без релея. */
     public readonly downloadFile: OutputEmitterRef<IRtChat.Message> = output<IRtChat.Message>();
 
     /** Клик по карточке вложения из `attachments[]` — консюмер качает по `publicId`. */
     public readonly downloadAttachment: OutputEmitterRef<IRtChat.Attachment> = output<IRtChat.Attachment>();
+
+    /** Набор текста в поле ответа: `true` — отрезок начался, `false` — кончился. */
+    public readonly typing: OutputEmitterRef<boolean> = output<boolean>();
+
+    /** Строка о том, что печатает вторая сторона, поверх низа ленты; пустая прячет плашку. */
+    public readonly typingText: InputSignal<string> = input<string>('');
 
     /** Смена fullscreen-состояния. */
     public readonly expandedChange: OutputEmitterRef<boolean> = output<boolean>();
@@ -359,12 +355,8 @@ export class RtChatComponent {
             initialValue: this.replyForm.value,
         });
 
-        // Поведение мессенджера: после каждого рендера, зависящего от треда
-        // (новые сообщения, окончание загрузки, fullscreen), прокручиваем к
-        // последнему сообщению — но только если это своё сообщение (forceScroll)
-        // или пользователь уже у нижнего края. Если он ушёл вверх читать историю,
-        // входящее сообщение его не дёргает. afterRenderEffect гарантирует, что DOM
-        // уже обновлён и scrollHeight посчитан по реальной высоте.
+        // После рендера, зависящего от треда, лента прокручивается к последнему сообщению — если оно
+        // своё (forceScroll) или читатель у нижнего края; ушедшего читать историю входящее не дёргает.
         afterRenderEffect((): void => {
             this.messages();
             this.loading();
@@ -406,6 +398,7 @@ export class RtChatComponent {
         const files: File[] = this.replyForm.controls.files.value;
         // Своё сообщение всегда прокручивает тред вниз — независимо от позиции.
         this.#forceScroll = true;
+        this.#typingTracker.stop();
         this.send.emit({ text, files: this.attachments() ? files : undefined });
         this.replyForm.reset({ message: '', files: [] });
     }
@@ -421,11 +414,20 @@ export class RtChatComponent {
     protected onComposerSubmit(payload: IRtMessageComposer.SubmitPayload): void {
         // Своё сообщение всегда прокручивает тред вниз — независимо от позиции.
         this.#forceScroll = true;
+        this.#typingTracker.stop();
         this.send.emit({
             text: payload.text,
             files: this.attachments() ? payload.files : undefined,
             delta: payload.delta,
         });
+    }
+
+    /** Ввод в поле ответа любого из двух режимов; выбор файла набором не считается. */
+    protected onReplyInput(event: Event): void {
+        const draft: string | null = typingDraft(event.target);
+        if (draft !== null) {
+            this.#typingTracker.input(draft);
+        }
     }
 
     /**

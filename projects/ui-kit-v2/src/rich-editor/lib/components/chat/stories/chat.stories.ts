@@ -32,6 +32,8 @@ export default {
         fill: { control: { type: 'boolean' } },
         showRefresh: { control: { type: 'boolean' } },
         showExpand: { control: { type: 'boolean' } },
+        typingText: { control: { type: 'text' } },
+        typing: { action: 'typing' },
     },
 } as Meta<TestRtChatComponent>;
 
@@ -57,5 +59,6 @@ export const Playground: TStory = {
         fill: false,
         showRefresh: false,
         showExpand: false,
+        typingText: '',
     },
 };

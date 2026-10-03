@@ -7,13 +7,25 @@ import { RtActionBarComponent } from '../../rt-action-bar.component';
 import { IRtActionBar } from '../../rt-action-bar.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TActionBarMatrixPart = 'counter' | 'actions' | 'wrap' | 'presets' | 'themes';
+export type TActionBarMatrixPart = 'counter' | 'actions' | 'wrap' | 'properties' | 'menu' | 'presets' | 'themes';
+
+/**
+ * Свойства, которые приложение ставит на тег полосы. Инлайн-стиль — самое сильное правило на
+ * теге: если свойство не дошло и от него, его не достанет и правило приложения.
+ */
+interface IStyleCase {
+    readonly label: string;
+    readonly style: Readonly<Record<string, string>>;
+}
 
 /** Один случай ряда: подпись ячейки и настройка, которую показывает полоса. */
 interface ICase {
     readonly label: string;
     readonly config: IRtActionBar.Config;
 }
+
+/** Действие «Скачать» со значком — стоит в нескольких показах. */
+const DOWNLOAD: IRtActionBar.Action = { label: 'Скачать', icon: 'ico-download' };
 
 const PLAIN_ACTIONS: readonly IRtActionBar.Action[] = [{ label: 'Скачать' }, { label: 'Перенести' }];
 
@@ -76,6 +88,24 @@ function config(selected: number, total: number, actions: readonly IRtActionBar.
                 </app-story-presets>
             }
 
+            @case ('properties') {
+                <app-story-presets caption="Цвета, отступы и шрифт с тега полосы в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="30rem" [items]="styleCases" [itemLabel]="caseLabel">
+                            <ng-template let-item>
+                                <rt-action-bar [config]="fullConfig" [style]="item.style" />
+                            </ng-template>
+                        </app-story-row>
+                    </ng-template>
+                </app-story-presets>
+            }
+
+            @case ('menu') {
+                <!-- Без пары наборов: меню раскрывается по одному на историю, второй жест закрыл бы первое.
+                     Кадр снимается целой страницей, и меню под полосой в него входит. -->
+                <rt-action-bar data-story-trigger [config]="menuConfig" />
+            }
+
             @case ('presets') {
                 <app-story-presets caption="Полоса целиком в обоих наборах" fill>
                     <ng-template>
@@ -109,10 +139,7 @@ export class TestRtActionBarMatrixComponent {
         { label: 'обычные', config: config(3, 128) },
         {
             label: 'со значком',
-            config: config(3, 128, [
-                { label: 'Скачать', icon: 'ico-download' },
-                { label: 'Удалить', icon: 'trash' },
-            ]),
+            config: config(3, 128, [DOWNLOAD, { label: 'Удалить', icon: 'trash' }]),
         },
         { label: 'опасное', config: config(3, 128, [{ label: 'Скачать' }, { label: 'Удалить', icon: 'trash', look: 'danger' }]) },
         {
@@ -131,10 +158,39 @@ export class TestRtActionBarMatrixComponent {
     ];
 
     public readonly fullConfig: IRtActionBar.Config = config(3, 128, [
-        { label: 'Скачать', icon: 'ico-download' },
+        DOWNLOAD,
         { label: 'Отправить', icon: 'send', menu: [{ label: 'Письмом' }, { label: 'В чат' }] },
         { label: 'Удалить', icon: 'trash', look: 'danger' },
     ]);
 
-    public readonly caseLabel: (value: ICase) => string = (value: ICase): string => value.label;
+    /** Первым стоит действие со списком: его кнопку история и нажимает. */
+    public readonly menuConfig: IRtActionBar.Config = config(3, 128, [
+        {
+            label: 'Отправить',
+            icon: 'send',
+            menu: [{ label: 'Письмом' }, { label: 'В чат' }, { label: 'Удалить из рассылки', look: 'danger' }],
+        },
+        DOWNLOAD,
+    ]);
+
+    /** Кит без свойств и светлая полоса с плотными отступами и полужирным счётом. */
+    public readonly styleCases: readonly IStyleCase[] = [
+        { label: 'кит', style: {} },
+        {
+            label: 'свойства приложения',
+            style: {
+                '--rt-action-bar-bg': 'var(--rt-color-bg-surface)',
+                '--rt-action-bar-color': 'var(--rt-color-text-primary)',
+                '--rt-action-bar-padding': 'var(--rt-space-1) var(--rt-space-2)',
+                '--rt-action-bar-gap': 'var(--rt-space-2)',
+                '--rt-action-bar-font-size': 'var(--rt-text-xs)',
+                '--rt-action-bar-counter-weight': 'var(--rt-font-weight-semibold)',
+                '--rt-action-bar-action-padding-block': 'var(--rt-space-0-5)',
+                '--rt-action-bar-action-padding-inline': 'var(--rt-space-1)',
+                '--rt-action-bar-action-weight': 'var(--rt-font-weight-regular)',
+            },
+        },
+    ];
+
+    public readonly caseLabel: (value: { readonly label: string }) => string = (value: { readonly label: string }): string => value.label;
 }
