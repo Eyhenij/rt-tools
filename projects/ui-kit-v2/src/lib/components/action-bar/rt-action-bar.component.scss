@@ -7,12 +7,19 @@
     .rt-action-bar {
         --rt-action-bar-radius: var(--rt-radius-lg);
         --rt-action-bar-shadow: var(--rt-shadow-card);
+        --rt-action-bar-bg: var(--rt-color-bg-inverse);
+        --rt-action-bar-color: var(--rt-color-text-inverse);
+        --rt-action-bar-padding: var(--rt-space-2) var(--rt-space-4);
+        --rt-action-bar-gap: var(--rt-space-4);
+        --rt-action-bar-font-size: var(--rt-text-sm);
+        --rt-action-bar-counter-weight: var(--rt-font-weight-medium);
         --rt-action-bar-action-radius: var(--rt-radius-md);
-        --rt-action-bar-action-bg-hover: color-mix(in srgb, var(--rt-color-text-inverse) 16%, transparent);
+        --rt-action-bar-action-padding-block: var(--rt-space-1);
+        --rt-action-bar-action-padding-inline: var(--rt-space-2);
+        --rt-action-bar-action-weight: var(--rt-font-weight-medium);
+        --rt-action-bar-action-bg-hover: color-mix(in srgb, var(--rt-action-bar-color) 16%, transparent);
         --rt-action-bar-action-color-danger: var(--rt-color-action-danger-on-surface);
         --rt-action-bar-action-focus-shadow: var(--rt-shadow-focus-ring);
-        --rt-action-bar-menu-radius: var(--rt-radius-md);
-        --rt-action-bar-menu-shadow: var(--rt-shadow-card);
 
         // Предел ширины стоит и на самом элементе. Содержащий блок полосы — этот элемент, и
         // без предела он растёт по содержимому: сто процентов считались бы тогда от выросшего,
@@ -22,16 +29,16 @@
         max-width: 100%;
         box-sizing: border-box;
         align-items: center;
-        padding: var(--rt-space-2) var(--rt-space-4);
+        padding: var(--rt-action-bar-padding);
         border-radius: var(--rt-action-bar-radius);
-        background: var(--rt-color-bg-inverse);
+        background: var(--rt-action-bar-bg);
         box-shadow: var(--rt-action-bar-shadow);
-        color: var(--rt-color-text-inverse);
-        font-size: var(--rt-text-sm);
-        gap: var(--rt-space-4);
+        color: var(--rt-action-bar-color);
+        font-size: var(--rt-action-bar-font-size);
+        gap: var(--rt-action-bar-gap);
 
         &__counter {
-            font-weight: var(--rt-font-weight-medium);
+            font-weight: var(--rt-action-bar-counter-weight);
             white-space: nowrap;
         }
 
@@ -47,7 +54,7 @@
         &__action {
             display: flex;
             align-items: center;
-            padding: var(--rt-space-1) var(--rt-space-2);
+            padding: var(--rt-action-bar-action-padding-block) var(--rt-action-bar-action-padding-inline);
             border: 0;
             border-radius: var(--rt-action-bar-action-radius);
             background: transparent;
@@ -58,7 +65,7 @@
 
             // Нажатие в этом ките набрано средним начертанием — так набрана кнопка кита, и
             // действие полосы такое же нажатие. Первый кит ставил здесь шестьсот.
-            font-weight: var(--rt-font-weight-medium);
+            font-weight: var(--rt-action-bar-action-weight);
             gap: var(--rt-space-2);
 
             &:hover {
@@ -94,21 +101,28 @@
         // белому, и крестика не было видно ни в одном кадре. Своё свойство блока перебивают —
         // так делает просмотр фотографии, где кнопка стоит на снимке.
         &__close {
-            --rt-icon-button-color: var(--rt-color-text-inverse);
+            --rt-icon-button-color: var(--rt-action-bar-color);
             --rt-icon-button-color-bg-hover: var(--rt-action-bar-action-bg-hover);
 
             flex: none;
             margin-left: auto;
         }
 
+        // Меню рисуется в оверлее, вне полосы: объявление на полосе до него не доходит, и раньше
+        // меню выходило без скругления и тени. Свои свойства меню читает с запасным значением —
+        // объявленное на самом меню перебило бы правило приложения на корне страницы, а только
+        // оттуда свойство до оверлея и доходит.
         &__menu {
+            --rt-action-bar-menu-radius-default: var(--rt-radius-md);
+            --rt-action-bar-menu-shadow-default: var(--rt-shadow-card);
+
             display: flex;
             flex-direction: column;
             padding: var(--rt-space-2);
-            border-radius: var(--rt-action-bar-menu-radius);
-            background: var(--rt-color-bg-surface);
-            box-shadow: var(--rt-action-bar-menu-shadow);
-            color: var(--rt-color-text-primary);
+            border-radius: var(--rt-action-bar-menu-radius, var(--rt-action-bar-menu-radius-default));
+            background: var(--rt-action-bar-menu-bg, var(--rt-color-bg-surface));
+            box-shadow: var(--rt-action-bar-menu-shadow, var(--rt-action-bar-menu-shadow-default));
+            color: var(--rt-action-bar-menu-color, var(--rt-color-text-primary));
         }
 
         // Полоса живёт на нижней кромке, и пальцу нужно место, которое занимают подписи. Решает

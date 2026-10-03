@@ -1,8 +1,22 @@
 @layer rt-kit.components {
+    /* Фон хоста — с нулевой специфичностью. Хост области часто сам элемент чужого блока со своим
+       фоном (столбец бокового меню), и правило той же силы перебивало его порядком в файле:
+       столбец терял подложку. Под `:where` любое правило по классу сильнее. */
+    :where(.rt-scroll-area) {
+        background: var(--rt-scroll-area-bg);
+    }
+
     .rt-scroll-area {
         --rt-scroll-area-hint-height: var(--rt-space-10);
         --rt-scroll-area-hint-color: var(--rt-color-bg-surface);
         --rt-scroll-area-hint-radius: var(--rt-radius-full);
+        --rt-scroll-area-header-padding: var(--rt-space-2) var(--rt-space-4);
+        --rt-scroll-area-body-padding: var(--rt-space-4);
+        --rt-scroll-area-footer-padding: var(--rt-space-4);
+        --rt-scroll-area-bg: transparent;
+        --rt-scroll-area-header-bg: transparent;
+        --rt-scroll-area-body-bg: transparent;
+        --rt-scroll-area-footer-bg: transparent;
 
         // Полоса растушёвки считает своё место от хоста: тело обрезает всё по своему краю, а
         // полоса обязана дойти до содержимого подвала.
@@ -15,7 +29,8 @@
 
         &__header {
             flex: 0 0 auto;
-            padding: var(--rt-space-2) var(--rt-space-4);
+            padding: var(--rt-scroll-area-header-padding);
+            background: var(--rt-scroll-area-header-bg);
         }
 
         &__body {
@@ -23,13 +38,15 @@
             overflow: auto;
             flex: 1 1 auto;
             flex-direction: column;
-            padding: var(--rt-space-4);
+            padding: var(--rt-scroll-area-body-padding);
+            background: var(--rt-scroll-area-body-bg);
             min-block-size: 0;
         }
 
         &__footer {
             flex: 0 0 auto;
-            padding: var(--rt-space-4);
+            padding: var(--rt-scroll-area-footer-padding);
+            background: var(--rt-scroll-area-footer-bg);
         }
 
         // Полоса стоит поверх стыка тела и подвала и не ловит указатель: под ней живой список,
