@@ -1,9 +1,10 @@
-import { accessSync, chmodSync, constants, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { accessSync, chmodSync, constants, existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 import { parseConfig } from './config.js';
-import { runSync } from './sync.js';
+import { IAmbiguousName } from './integrity.js';
+import { ISyncResult, runSync } from './sync.js';
 
 /**
  * Дерево-источник: один хук и одна проверка, обе без права на исполнение.
@@ -70,5 +71,31 @@ describe('runSync — право на исполнение у разложенн
         runSync(parseConfig('{}'), root, '0.0.0', assetsDir);
 
         expect(executable(join(root, 'tools/probe-check.mjs'))).toBe(true);
+    });
+});
+
+describe('runSync — одноимённые ресурсы одного рода', () => {
+    let assetsDir: string;
+    let root: string;
+
+    beforeEach(() => {
+        assetsDir = mkdtempSync(join(tmpdir(), 'rt-kit-assets-'));
+        root = mkdtempSync(join(tmpdir(), 'rt-kit-root-'));
+        mkdirSync(join(assetsDir, 'laws', 'application'), { recursive: true });
+        writeFileSync(join(assetsDir, 'laws', 'access.md'), '# Law on access\n\n## Articles\n', 'utf8');
+        writeFileSync(join(assetsDir, 'laws', 'application', 'access.md'), '# Law on access\n\n## Articles\n', 'utf8');
+    });
+
+    afterEach(() => {
+        rmSync(assetsDir, { recursive: true, force: true });
+        rmSync(root, { recursive: true, force: true });
+    });
+
+    it('SC-AK-1186 — раскладка называет оба закона и не пишет ни одного файла', () => {
+        const result: ISyncResult = runSync(parseConfig('{}'), root, '0.0.0', assetsDir);
+
+        expect(result.ambiguous.map((one: IAmbiguousName): string => `${one.kind}/${one.name}`)).toEqual(['laws/access']);
+        expect(result.written).toEqual([]);
+        expect(existsSync(join(root, 'docs/constitution/access.md'))).toBe(false);
     });
 });

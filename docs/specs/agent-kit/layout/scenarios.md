@@ -253,6 +253,14 @@ them is ambiguous
 
 Covered: `projects/agent-kit/src/lib/integrity.spec.ts`.
 
+### SC-AK-1186 — the layout refuses a set with two resources of one kind under one short name
+
+Given two laws with the same last link of the name lie in different layers of the set When the layout
+runs Then it names the name and both resources and writes not one file: the
+cascade by that name would remove the children of the wrong parent
+
+Covered: `projects/agent-kit/src/lib/sync.spec.ts`.
+
 ### SC-AK-156 — an article without an address gets into the count
 
 Given a rule has an article that is not in the companion of the tree When the added debt is counted
