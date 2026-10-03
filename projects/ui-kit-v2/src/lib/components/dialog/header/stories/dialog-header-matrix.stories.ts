@@ -21,4 +21,6 @@ export const Closable: TStory = { args: { part: 'closable' } };
 
 export const Title: TStory = { args: { part: 'title' } };
 
+export const Lead: TStory = { args: { part: 'lead' } };
+
 export const Themes: TStory = { args: { part: 'themes' } };

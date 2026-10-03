@@ -1,10 +1,12 @@
+import { InteractivityChecker } from '@angular/cdk/a11y';
 import { ApplicationRef, ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { firstValueFrom } from 'rxjs';
 
 import { createRtFixture, hostClasses, provideRtKitTesting, qa, textOf } from '../../../testing/rt-kit-testing';
-import { RtDialogFooterComponent } from './footer/rt-dialog-footer.component';
+import { RtDialogContentComponent } from './content/rt-dialog-content.component';
+import { TRtDialogFooterAlign, RtDialogFooterComponent } from './footer/rt-dialog-footer.component';
 import { RtDialogHeaderComponent } from './header/rt-dialog-header.component';
 import { RtDialogRef } from './rt-dialog-ref';
 import { TRtDialogSize, RtDialogComponent } from './rt-dialog.component';
@@ -13,7 +15,7 @@ import { RT_DIALOG_DATA } from './rt-dialog.tokens';
 
 /** Компонент, который сервис поднимает в оверлее. */
 @Component({
-    selector: 'rt-dialog-content',
+    selector: 'rt-dialog-test-content',
     template: `
         <rt-dialog [ariaLabel]="'Подтверждение'">
             <rt-dialog-header title="Удаление" />
@@ -176,6 +178,96 @@ describe('RtDialogService', (): void => {
         expect(panel()).not.toBeNull();
     });
 
+    describe('фокус', (): void => {
+        /**
+         * У jsdom нет раскладки, и проверка видимости CDK считает невидимым всё подряд. Подменяем её:
+         * доступен любой элемент, а по Tab — тот, у кого неотрицательный tabIndex.
+         */
+        function focusService(): RtDialogService {
+            TestBed.configureTestingModule({
+                providers: [
+                    ...provideRtKitTesting(),
+                    {
+                        provide: InteractivityChecker,
+                        useValue: {
+                            isDisabled: (): boolean => false,
+                            isVisible: (): boolean => true,
+                            isFocusable: (element: HTMLElement): boolean => element.tabIndex >= -1,
+                            isTabbable: (element: HTMLElement): boolean => element.tabIndex >= 0,
+                        },
+                    },
+                ],
+            });
+            return TestBed.inject(RtDialogService);
+        }
+
+        function opener(): HTMLButtonElement {
+            const button: HTMLButtonElement = document.createElement('button');
+            button.setAttribute('qa-dataid', 'dialog-opener');
+            document.body.appendChild(button);
+            button.focus();
+            return button;
+        }
+
+        afterEach((): void => {
+            node('dialog-opener')?.remove();
+        });
+
+        it('SC-UKV-597 — без флагов фокус остаётся там, где был', (): void => {
+            const button: HTMLButtonElement = opener();
+            focusService().open(DialogContentComponent, { data: 'Удалить запись?' });
+            render();
+
+            expect(document.activeElement).toBe(button);
+        });
+
+        it('SC-UKV-596 — первый фокус встаёт на первый элемент под Tab', (): void => {
+            opener();
+            focusService().open(DialogContentComponent, { data: 'Удалить запись?', autoFocus: 'first-tabbable' });
+            render();
+
+            expect(document.activeElement).toBe(node('dialog-close')?.querySelector('button') ?? null);
+        });
+
+        it('SC-UKV-596 — первый фокус на рамке встаёт на само окно', (): void => {
+            opener();
+            focusService().open(DialogContentComponent, { data: 'Удалить запись?', autoFocus: 'dialog' });
+            render();
+
+            expect(document.activeElement).toBe(panel());
+        });
+
+        it('SC-UKV-594 — ловушка ставит границы фокуса вокруг окна и уходит вместе с ним', (): void => {
+            opener();
+            const ref: RtDialogRef = focusService().open(DialogContentComponent, { data: 'Удалить запись?', trapFocus: true });
+            render();
+
+            expect(document.querySelectorAll('.cdk-focus-trap-anchor').length).toBe(2);
+
+            ref.close();
+            render();
+
+            expect(document.querySelectorAll('.cdk-focus-trap-anchor').length).toBe(0);
+        });
+
+        it('SC-UKV-595 — после закрытия фокус возвращается к открывшей кнопке', (): void => {
+            const button: HTMLButtonElement = opener();
+            const ref: RtDialogRef = focusService().open(DialogContentComponent, {
+                data: 'Удалить запись?',
+                autoFocus: 'first-tabbable',
+                restoreFocus: true,
+            });
+            render();
+
+            expect(document.activeElement).not.toBe(button);
+
+            ref.close();
+            render();
+
+            expect(document.activeElement).toBe(button);
+        });
+    });
+
     describe('тема куска', (): void => {
         /** Кнопка, от которой открывают диалог: стоит в фокусе в момент открытия. */
         function focusButtonIn(markup: string): HTMLElement {
@@ -239,5 +331,66 @@ describe('RtDialogHeaderComponent', (): void => {
             (fixture.nativeElement as HTMLElement).querySelector<HTMLButtonElement>('[qa-dataid="icon-button-control"]')?.click();
             fixture.detectChanges();
         }).not.toThrow();
+    });
+});
+
+describe('части окна', (): void => {
+    @Component({
+        selector: 'rt-dialog-parts-host',
+        template: `
+            <rt-dialog>
+                <rt-dialog-header title="Удаление">
+                    <span rtDialogHeaderLead qa-dataid="lead-icon">!</span>
+                </rt-dialog-header>
+                <rt-dialog-content><p>Тело</p></rt-dialog-content>
+                <rt-dialog-footer [align]="align"><button type="button">Да</button></rt-dialog-footer>
+            </rt-dialog>
+        `,
+        changeDetection: ChangeDetectionStrategy.OnPush,
+        imports: [RtDialogComponent, RtDialogHeaderComponent, RtDialogContentComponent, RtDialogFooterComponent],
+    })
+    class DialogPartsHostComponent {
+        public align: TRtDialogFooterAlign = 'end';
+    }
+
+    function host(): ComponentFixture<DialogPartsHostComponent> {
+        const fixture: ComponentFixture<DialogPartsHostComponent> = createRtFixture(DialogPartsHostComponent);
+        fixture.detectChanges();
+        return fixture;
+    }
+
+    it('SC-UKV-598 — элемент с меткой места встаёт перед заголовком', (): void => {
+        const header: HTMLElement = qa(host(), 'dialog-header')?.nativeElement as HTMLElement;
+        const lead: HTMLElement | null = header.querySelector('[qa-dataid="dialog-header-lead"]');
+
+        expect(lead?.querySelector('[qa-dataid="lead-icon"]')).not.toBeNull();
+        expect(lead?.nextElementSibling?.getAttribute('qa-dataid')).toBe('dialog-title');
+    });
+
+    it('SC-UKV-598 — без элемента место перед заголовком пустое', (): void => {
+        const fixture: ComponentFixture<RtDialogHeaderComponent> = createRtFixture(RtDialogHeaderComponent, { title: 'Удаление' });
+
+        expect((qa(fixture, 'dialog-header-lead')?.nativeElement as HTMLElement).childElementCount).toBe(0);
+    });
+
+    it.each<TRtDialogFooterAlign>(['start', 'center', 'end', 'between'])(
+        'SC-UKV-599 — выравнивание подвала %s выводит модификатор',
+        (align: TRtDialogFooterAlign): void => {
+            const fixture: ComponentFixture<RtDialogFooterComponent> = createRtFixture(RtDialogFooterComponent, { align });
+
+            expect(Array.from((qa(fixture, 'dialog-footer')?.nativeElement as HTMLElement).classList)).toContain(
+                `rt-dialog-footer--align--${align}`
+            );
+        }
+    );
+
+    it('SC-UKV-599 — без входа подвал прижат к концу', (): void => {
+        const footer: HTMLElement = qa(host(), 'dialog-footer')?.nativeElement as HTMLElement;
+
+        expect(Array.from(footer.classList)).toContain('rt-dialog-footer--align--end');
+    });
+
+    it('SC-UKV-600 — тело окна проецирует содержимое в свой узел', (): void => {
+        expect(textOf(qa(host(), 'dialog-content'))).toBe('Тело');
     });
 });

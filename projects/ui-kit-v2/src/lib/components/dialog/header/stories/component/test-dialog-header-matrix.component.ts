@@ -2,10 +2,12 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { StoryRowComponent } from '../../../../../../showcase/story-row.component';
 import { StoryThemesComponent } from '../../../../../../showcase/story-themes.component';
+import { RtIconComponent } from '../../../../icon/rt-icon.component';
+import { IRtIcon } from '../../../../icon/rt-icon.model';
 import { RtDialogHeaderComponent } from '../../rt-dialog-header.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TDialogHeaderMatrixPart = 'closable' | 'title' | 'themes';
+export type TDialogHeaderMatrixPart = 'closable' | 'title' | 'lead' | 'themes';
 
 /** Крестик: он единственное, чем шапка отличается сама от себя. */
 interface IDialogHeaderClosableCase {
@@ -48,6 +50,21 @@ interface IDialogHeaderTitleCase {
                 </app-story-row>
             }
 
+            @case ('lead') {
+                <app-story-row caption="Место перед заголовком" [items]="leadCases" [itemLabel]="caseLabel" [slotWidth]="leadWidth">
+                    <ng-template let-leadCase>
+                        <!-- Ширину шапке даёт коробка показа: хост шапки боксом не становится. -->
+                        <div style="inline-size: 100%">
+                            <rt-dialog-header title="Удалить запись?">
+                                @if (leadCase.icon !== null) {
+                                    <rt-icon rtDialogHeaderLead size="md" color="danger" [name]="leadCase.icon" />
+                                }
+                            </rt-dialog-header>
+                        </div>
+                    </ng-template>
+                </app-story-row>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Шапка в обеих темах">
                     <ng-template>
@@ -62,6 +79,7 @@ interface IDialogHeaderTitleCase {
     imports: [
         // components
         RtDialogHeaderComponent,
+        RtIconComponent,
 
         // showcase
         StoryRowComponent,
@@ -77,6 +95,15 @@ export class TestRtDialogHeaderMatrixComponent {
     public readonly closableCases: readonly IDialogHeaderClosableCase[] = [
         { name: 'с крестиком', closable: true },
         { name: 'без крестика', closable: false },
+    ];
+
+    /** Ячейка места перед заголовком шире: значок забирает ширину, и заголовок иначе переносился бы. */
+    public readonly leadWidth: string = '24rem';
+
+    /** Значок перед заголовком и пустое место: пустое не занимает ничего. */
+    public readonly leadCases: readonly { readonly name: string; readonly icon: IRtIcon.Name | null }[] = [
+        { name: 'со значком', icon: 'exclamation-circle' },
+        { name: 'без значка', icon: null },
     ];
 
     public readonly titleCases: readonly IDialogHeaderTitleCase[] = [

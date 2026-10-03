@@ -4,3 +4,4 @@ export * from './rt-dialog-ref';
 export * from './rt-dialog.tokens';
 export * from './header/rt-dialog-header.component';
 export * from './footer/rt-dialog-footer.component';
+export * from './content/rt-dialog-content.component';

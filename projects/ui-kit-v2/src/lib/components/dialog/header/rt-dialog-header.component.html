@@ -1,4 +1,5 @@
 <header rtBlock="rt-dialog-header" qa-dataid="dialog-header">
+    <span rtElem="lead" qa-dataid="dialog-header-lead"><ng-content select="[rtDialogHeaderLead]" /></span>
     <h2 rtElem="title" qa-dataid="dialog-title">{{ title() }}</h2>
     @if (closable()) {
         <rt-icon-button
