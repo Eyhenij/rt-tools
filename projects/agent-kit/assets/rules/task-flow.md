@@ -149,8 +149,8 @@ flowchart TD
   justification under someone else's accepted decision reads as its appraisal. One exception:
   execution stopped by an obstacle — then the obstacle is named.
 - **The last run of the main branch is read first thing in a session and after every known
-  merge.** A red main branch after a merge lives until the owner notices. The start hook prints it; after a merge the command is called by hand, and a red
-  or pushed-out run is fixed before new work is taken.
+  merge.** A red main branch after a merge lives until the owner notices; a red or pushed-out run is
+  fixed before new work is taken.
 - **A session does not start work by itself.** The handover, the state from the startup hook and an
   assigned epic say what to do, not whether to work: a start needs the owner's word in the same
   session. An empty message, one word or one path order no work.
@@ -199,6 +199,9 @@ flowchart TD
 - **A plan for work that ports a technique from outside is written by a measurement of one's own
   code.** Reading the sample says how it is built; what is needed here is said by a count over
   one's own files.
+- **A count that becomes the measure of the work is bounded by the declaration, not by the file.**
+  A file holds neighbouring sets too: a count over it took a neighbour's suite and came out twice
+  the real measure.
 - **Waiting for one part of a stage is never a stop of the stage.** The parts independent of what is
   awaited are done in the same turn; the owner is told what is done and what is left for their step.
 - **A finding made mid-stage is checked against the plan's exit conditions before the first edit.**
@@ -248,8 +251,8 @@ flowchart TD
   left in the epic branch reaches the main branch with it. Until then the epic branch is not
   offered to a person at all — the merge button on it means the whole epic.
 - **The epic plan lies where it is found without the network and after the merge.** The card does
-  not hold the task order, and the task folder dies with the merge; the directory — in the rule's
-  companion. What the owner names along the way is appended there by the turn that accepted it.
+  not hold the task order, and the task folder dies with the merge. What the owner names along the
+  way is appended there by the turn that accepted it.
 - **Building by a sample begins with reading the sample itself, whole, by walking the directories.**
 - **What acts on the tree, not on the edit, lies outside the index.** The path to the sample and the
   permission to work outside the epic do not belong to the branch and live next to the handover. A
@@ -286,13 +289,11 @@ trace. The owner judges both.
 The guard judges by the edit paths, not by whether the work changes behaviour. A refactoring gets no
 sign of its own: the appraisal "behaviour does not change" would be assigned by whoever it hinders.
 
-Nothing of the grill itself is checked. A conversation with the owner is not a tool call: the guard
-sees a file edit and knows nothing of the exploration, the six mandatory questions or the answers.
-An empty table passes the same as a filled one.
+Nothing of the grill itself is checked: the guard sees a file edit and knows nothing of the
+exploration, the six questions or the answers. An empty table passes the same as a filled one.
 
-The conversation guard does not understand text: its second sign judges shared words between the
-question's topic and the owner's last message, not meaning. The refusal names the lawful move: name
-what the owner's earlier answer lacks.
+The conversation guard judges shared words between the question's topic and the owner's last
+message, not meaning; its refusal names the lawful move.
 
 Nothing watches the plan's immutability: an edit along the way is told from the original record only
 by history.
@@ -302,17 +303,13 @@ or a spec. This is held by the closing step and the task footprint in the plan. 
 are edited in the branch, a law is not: its article goes to the owner as text, and the work goes on
 without it.
 
-What exactly went to the archive is not checked: the guard sees that the folder left and the branch
-added something to the archive; whether it is the right thing the owner judges at review.
+What went to the archive is not checked: the owner judges it at review.
 
 The task folder guard judges the executor's call, not the host's button: a person merging from their
-side passes it in silence. On that half of the cases the requirement is held by the remaining step:
-a section in the PR body, said aloud.
+side passes it in silence, and there the requirement is held by a section in the PR body.
 
-A tree may reverse the hand-in order by an override, and then some package steps stop being
-executed. Which ones — nothing counts: a step whose mechanics broke by the same decision does not
-enter the cancelled list and still reads as in force. This is held by reading both texts in a row on
-every edit of the hand-in order.
+A tree may reverse the hand-in order by an override. Which package steps stop being executed then
+nothing counts; it is held by reading both texts in a row on every such edit.
 
 ## Patterns
 

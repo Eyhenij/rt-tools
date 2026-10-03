@@ -93,4 +93,11 @@ describe('RtEmptyStateComponent', (): void => {
             expect(qa(setup(), 'empty-state-action')).not.toBeNull();
         });
     });
+
+    it('SC-UKV-558 — глиф рисует значок заглушки по имени Material', (): void => {
+        const fixture: ComponentFixture<RtEmptyStateComponent> = setup({ glyph: 'pets' });
+
+        expect(qa(fixture, 'empty-state-icon')).not.toBeNull();
+        expect((fixture.nativeElement as HTMLElement).querySelector('.rt-icon__glyph')?.textContent?.trim()).toBe('pets');
+    });
 });

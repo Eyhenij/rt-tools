@@ -571,6 +571,7 @@ export type TRtConsumerHandleName =
     | '--rt-icon-button-bg'
     | '--rt-icon-button-bg-hover'
     | '--rt-icon-button-size'
+    | '--rt-icon-glyph-font'
     | '--rt-logo-tagline'
     | '--rt-logo-tagline-dark'
     | '--rt-logo-wordmark'
@@ -1152,6 +1153,7 @@ export const RT_CONSUMER_HANDLE_NAMES: readonly TRtConsumerHandleName[] = [
     '--rt-icon-button-bg',
     '--rt-icon-button-bg-hover',
     '--rt-icon-button-size',
+    '--rt-icon-glyph-font',
     '--rt-logo-tagline',
     '--rt-logo-tagline-dark',
     '--rt-logo-wordmark',

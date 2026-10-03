@@ -20,6 +20,7 @@
     "--rt-aside-bg": "the background of the side panel, as --rt-aside-host-background-color of the first kit; the application sets it on the root, and without it the panel takes --rt-color-bg-surface",
     "--rt-icon-button-size": "the side of the icon button; set on its tag or above, it wins over the size step",
     "--rt-icon-button-bg": "the resting background of the icon button; set on its tag or above, it wins over the kind background",
-    "--rt-icon-button-bg-hover": "the hover background of the icon button; without it each kind takes its own"
+    "--rt-icon-button-bg-hover": "the hover background of the icon button; without it each kind takes its own",
+    "--rt-icon-glyph-font": "the font family of an icon's Material ligature; the application connects the font itself, and until it names a family the kit takes 'Material Symbols Outlined'"
   }
 }

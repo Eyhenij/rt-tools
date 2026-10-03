@@ -3,9 +3,9 @@
         <ng-content select="[rtEmptyIllustration]" />
     </div>
 
-    @if (icon(); as iconName) {
+    @if (icon() || glyph()) {
         <span rtElem="icon-wrap" qa-dataid="empty-state-icon">
-            <rt-icon size="xl" color="muted" [name]="iconName" />
+            <rt-icon size="xl" color="muted" [name]="icon()" [glyph]="glyph()" />
         </span>
     }
 

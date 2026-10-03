@@ -168,4 +168,11 @@ describe('RtIconButtonComponent', (): void => {
             expect(el(fixture, '.rt-icon-button__indicator')?.attributes['aria-hidden']).toBe('true');
         });
     });
+
+    it('SC-UKV-556 — глиф без имени кита рисуется значком по имени Material', (): void => {
+        const fixture: ComponentFixture<RtIconButtonComponent> = setup({ icon: null, glyph: 'arrow_back' });
+        const host: HTMLElement = fixture.nativeElement as HTMLElement;
+
+        expect(host.querySelector('use')?.getAttribute('href')).toBe('#rt-icon-arrow-left');
+    });
 });
