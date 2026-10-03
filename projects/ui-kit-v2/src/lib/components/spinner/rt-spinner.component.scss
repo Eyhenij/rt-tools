@@ -7,15 +7,28 @@
         --rt-spinner-rotation-duration: 1s;
         --rt-spinner-rotation-duration-reduced: 4s;
         --rt-spinner-radius: var(--rt-radius-full);
+        --rt-spinner-overlay-z: var(--rt-z-sticky);
+        --rt-spinner-plate-size: calc(var(--rt-spinner-diameter) + 2 * var(--rt-space-2));
+        --rt-spinner-plate-bg: var(--rt-color-bg-surface);
+        --rt-spinner-plate-shadow: var(--rt-shadow-md);
+        --rt-spinner-plate-radius: var(--rt-radius-full);
+        --rt-spinner-backdrop-bg: color-mix(in srgb, var(--rt-color-bg-subtle) 85%, transparent);
+        --rt-spinner-arc-duration: 1.4s;
+        --rt-spinner-arc-duration-reduced: 5.6s;
 
-        display: inline-block;
-        width: var(--rt-spinner-diameter);
-        height: var(--rt-spinner-diameter);
-        box-sizing: border-box;
-        border: var(--rt-spinner-border-width) solid var(--rt-spinner-track-color);
-        border-radius: var(--rt-spinner-radius);
-        border-right-color: var(--rt-spinner-progress-color);
-        animation: rt-spinner-rotate var(--rt-spinner-rotation-duration) linear infinite;
+        /* Кольцо: border с одной цветной стороной и вращение. Его рисует host без новых режимов,
+           а в них — элемент `__ring` внутри, теми же правилами. */
+        &,
+        &__ring {
+            display: inline-block;
+            width: var(--rt-spinner-diameter);
+            height: var(--rt-spinner-diameter);
+            box-sizing: border-box;
+            border: var(--rt-spinner-border-width) solid var(--rt-spinner-track-color);
+            border-radius: var(--rt-spinner-radius);
+            border-right-color: var(--rt-spinner-progress-color);
+            animation: rt-spinner-rotate var(--rt-spinner-rotation-duration) linear infinite;
+        }
 
         &--primary {
             --rt-spinner-progress-color: var(--rt-color-action-primary);
@@ -29,6 +42,61 @@
             --rt-spinner-track-color: var(--rt-overlay-white-25);
             --rt-spinner-progress-color: var(--rt-color-action-on-primary);
         }
+
+        /* В новых режимах host — коробка, а кольцо внутри: border и вращение с host-а снимаются. */
+        &--framed {
+            display: inline-flex;
+            width: auto;
+            height: auto;
+            align-items: center;
+            justify-content: center;
+            border: 0;
+            border-radius: 0;
+            animation: none;
+        }
+
+        /* Слой — ступень sticky: выше закреплённых частей самого блока, ниже всего, что открывается
+           поверх страницы; приложение переназначает слой свойством `--rt-spinner-overlay-z`. Родитель
+           должен быть позиционирован — его спиннер не трогает. */
+        &--overlay {
+            position: absolute;
+            z-index: var(--rt-spinner-overlay-z);
+            display: flex;
+            inset: 0;
+        }
+
+        &--backdrop {
+            background: var(--rt-spinner-backdrop-bg);
+        }
+
+        &__plate {
+            display: inline-flex;
+            width: var(--rt-spinner-plate-size);
+            height: var(--rt-spinner-plate-size);
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--rt-spinner-plate-radius);
+            background: var(--rt-spinner-plate-bg);
+            box-shadow: var(--rt-spinner-plate-shadow);
+        }
+
+        /* Дуга как у Material: контейнер вращается, а длина дуги растёт и сокращается. Дорожки нет. */
+        &__arc {
+            display: block;
+            width: var(--rt-spinner-diameter);
+            height: var(--rt-spinner-diameter);
+            animation: rt-spinner-rotate var(--rt-spinner-arc-duration) linear infinite;
+        }
+
+        &__arc-circle {
+            animation: rt-spinner-arc-dash var(--rt-spinner-arc-duration) ease-in-out infinite;
+            fill: none;
+            stroke: var(--rt-spinner-progress-color);
+            stroke-dasharray: 89 200;
+            stroke-dashoffset: -35;
+            stroke-linecap: round;
+            stroke-width: 4;
+        }
     }
 
     @keyframes rt-spinner-rotate {
@@ -37,9 +105,40 @@
         }
     }
 
+    /* Цикл Material — точка, длинная дуга, дуга уходит в точку — начат с длинной дуги. Движение то
+       же, а кадр с остановленным движением показывает дугу, а не точку. В середине дуга уже точка, и
+       переход к началу её длины глазу не виден. */
+    @keyframes rt-spinner-arc-dash {
+        0% {
+            stroke-dasharray: 89 200;
+            stroke-dashoffset: -35;
+        }
+
+        50% {
+            stroke-dasharray: 89 200;
+            stroke-dashoffset: -124;
+        }
+
+        50.01% {
+            stroke-dasharray: 1 200;
+            stroke-dashoffset: 0;
+        }
+
+        100% {
+            stroke-dasharray: 89 200;
+            stroke-dashoffset: -35;
+        }
+    }
+
     @media (prefers-reduced-motion: reduce) {
-        .rt-spinner {
+        .rt-spinner,
+        .rt-spinner__ring {
             animation-duration: var(--rt-spinner-rotation-duration-reduced);
+        }
+
+        .rt-spinner__arc,
+        .rt-spinner__arc-circle {
+            animation-duration: var(--rt-spinner-arc-duration-reduced);
         }
     }
 }

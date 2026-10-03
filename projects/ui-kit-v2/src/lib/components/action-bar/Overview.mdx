@@ -85,6 +85,29 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 Место над страницей держатель берёт номером слоя из шкалы кита, а не числом в своём файле.
 
+Цвета, отступы и шрифт полосы — свойства блока, история **Properties**. Без них вид прежний.
+
+| свойство                                | что задаёт                           | умолчание                     |
+| --------------------------------------- | ------------------------------------ | ----------------------------- |
+| `--rt-action-bar-bg`                    | фон полосы                           | `--rt-color-bg-inverse`       |
+| `--rt-action-bar-color`                 | текст, крестик и след наведения      | `--rt-color-text-inverse`     |
+| `--rt-action-bar-padding`               | отступы полосы                       | `--rt-space-2` `--rt-space-4` |
+| `--rt-action-bar-gap`                   | промежуток между счётом и действиями | `--rt-space-4`                |
+| `--rt-action-bar-font-size`             | кегль                                | `--rt-text-sm`                |
+| `--rt-action-bar-counter-weight`        | начертание счёта                     | `--rt-font-weight-medium`     |
+| `--rt-action-bar-action-padding-block`  | отступ действия по вертикали         | `--rt-space-1`                |
+| `--rt-action-bar-action-padding-inline` | отступ действия по горизонтали       | `--rt-space-2`                |
+| `--rt-action-bar-action-weight`         | начертание действия                  | `--rt-font-weight-medium`     |
+
+Отступ и начертание действия названы не `-action-padding` и `-action-font-weight`: эти имена у
+полосы первого кита, и на странице с обоими китами они значили бы два разных свойства.
+
+**Меню действия со списком рисуется в оверлее, вне полосы** (история **Menu**). Свойства, объявленные
+на полосе, до него не доходят, поэтому меню читает свои с запасным значением, и задаются они на
+корне страницы: `--rt-action-bar-menu-bg`, `--rt-action-bar-menu-color`,
+`--rt-action-bar-menu-radius`, `--rt-action-bar-menu-shadow`. Пока их нет, меню скруглено ступенью
+`md` и отбрасывает тень карточки.
+
 ## Рядом
 
 - [`rt-toolbar`](./?path=/docs/organisms-table-toolbar-overview--docs) — полоса в потоке страницы.
@@ -170,5 +193,6 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
   уход работает, и полоса действительно съезжает вниз, а не исчезает мгновенно.
 - **Прежние правила по классам `rtui-action-bar__*` молча перестают действовать:** имена блока и
   элементов другие, а внутреннего блока нет вовсе. Цвета, скругление и тень переопределяют
-  свойствами блока — `--rt-action-bar-radius`, `--rt-action-bar-shadow`,
-  `--rt-action-bar-action-radius`, — а не правилом по классу элемента.
+  свойствами блока — `--rt-action-bar-bg`, `--rt-action-bar-color`, `--rt-action-bar-radius`,
+  `--rt-action-bar-shadow`, `--rt-action-bar-action-radius` и остальными из раздела оформления, — а
+  не правилом по классу элемента. Свойства меню задаются на корне страницы.
