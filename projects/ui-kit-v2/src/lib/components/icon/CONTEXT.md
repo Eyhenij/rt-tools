@@ -4,15 +4,19 @@
 <rt-icon name="check" size="md" color="current" [rotate]="null" />
 ```
 
-| вход     | тип                                                                                 | умолчание      |
-| -------- | ----------------------------------------------------------------------------------- | -------------- |
-| `name`   | `IRtIcon.Name` — литеральный union из `rt-icon-names.ts`                            | **обязателен** |
-| `size`   | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| '2xl'`                                     | `'md'`         |
-| `color`  | `'current' \| 'muted' \| 'info' \| 'success' \| 'warning' \| 'danger' \| 'inverse'` | `'current'`    |
-| `rotate` | `number \| string \| null`                                                          | `null`         |
+| вход     | тип                                                                                 | умолчание   |
+| -------- | ----------------------------------------------------------------------------------- | ----------- |
+| `name`   | `IRtIcon.Name \| null` — литеральный union из `rt-icon-names.ts`; побеждает `glyph` | `null`      |
+| `glyph`  | `string \| null` — имя Material: пара кита или лигатура шрифта                      | `null`      |
+| `size`   | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| '2xl' \| number` — число в пикселях        | `'md'`      |
+| `color`  | `'current' \| 'muted' \| 'info' \| 'success' \| 'warning' \| 'danger' \| 'inverse'` | `'current'` |
+| `rotate` | `number \| string \| null`                                                          | `null`      |
+| `fill`   | `boolean` — залитый рисунок материального набора и заливка шрифта лигатуры          | `false`     |
+| `spin`   | `boolean` — вращение, медленнее при просьбе системы о меньшем движении              | `false`     |
 
 Выходов нет. Размер и цвет едут инлайновым стилем host-а (`width`/`height`/`color`), не классом:
-`xs` 12px, `sm` 16px, `md` 20px, `lg` 24px, `xl` 32px, `2xl` 40px.
+`xs` 12px, `sm` 16px, `md` 20px, `lg` 24px, `xl` 32px, `2xl` 40px, или число пикселей. Лигатура
+глифа скрыта, пока шрифты страницы не готовы: её ждёт `RtIconFontService`.
 
 ## Главное, что нужно знать
 

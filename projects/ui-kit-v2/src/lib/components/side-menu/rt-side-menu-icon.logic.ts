@@ -1,13 +1,6 @@
-import { iconMaterialMap, IRtIconMaterialEntry } from '../icon/rt-icon-material-map';
-import { iconsName } from '../icon/rt-icon-names';
+import { isKitIconName, materialPairOf } from '../icon/rt-icon-glyph.logic';
 import { IRtIcon } from '../icon/rt-icon.model';
 import { IRtSideMenu } from './rt-side-menu.model';
-
-const KIT_NAMES: ReadonlySet<string> = new Set<string>(iconsName);
-
-function isKitIconName(icon: string): icon is IRtIcon.Name {
-    return KIT_NAMES.has(icon);
-}
 
 /**
  * Значок пункта по его `icon`: имя кита как есть, имя Material первого кита — его парой из перечня
@@ -21,7 +14,7 @@ export function sideMenuIconName(icon: string | undefined): IRtIcon.Name | null 
     if (isKitIconName(icon)) {
         return icon;
     }
-    return iconMaterialMap.find((entry: IRtIconMaterialEntry): boolean => entry.from === icon)?.to ?? null;
+    return materialPairOf(icon);
 }
 
 /**

@@ -96,10 +96,14 @@ export class RtIconButtonComponent {
     }));
 
     /**
-     * Имя иконки — обязательно. `null` — значок кит не рисует, и кнопка показывает вложенное
-     * содержимое: свой рисунок приложения встаёт в кнопку с её размером, формой и состояниями.
+     * Имя иконки в наборе кита. Нужно оно или `glyph`; когда переданы оба, побеждает имя. Нет ни
+     * того ни другого — значок кит не рисует, и кнопка показывает вложенное содержимое: свой
+     * рисунок приложения встаёт в кнопку с её размером, формой и состояниями.
      */
-    public readonly icon: InputSignal<IRtIcon.Name | null> = input.required<IRtIcon.Name | null>();
+    public readonly icon: InputSignal<IRtIcon.Name | null> = input<IRtIcon.Name | null>(null);
+
+    /** Имя Material вместо имени кита — рисуется так же, как вход `glyph` у `rt-icon`. */
+    public readonly glyph: InputSignal<string | null> = input<string | null>(null);
 
     /** Доступное имя для screen-reader'ов — обязательно (icon-only кнопка). */
     public readonly ariaLabel: InputSignal<string> = input.required<string>();
