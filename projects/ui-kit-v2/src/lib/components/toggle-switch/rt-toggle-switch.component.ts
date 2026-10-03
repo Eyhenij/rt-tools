@@ -24,6 +24,14 @@ import { IRtToggleSwitch } from './rt-toggle-switch.model';
 
 const BEM_BLOCK: string = 'rt-toggle-switch';
 
+/** Счётчик для авто-id (связка подписи с кнопкой, когда `inputId` не задан). */
+let uidSeed: number = 0;
+
+function nextAutoId(): string {
+    uidSeed += 1;
+    return `rt-toggle-switch-${uidSeed}`;
+}
+
 /**
  * On/off switch с `role="switch"` + `aria-checked` — более правильный a11y
  * pattern чем `<input type="checkbox">` для toggle (screen readers произносят
@@ -44,6 +52,14 @@ const BEM_BLOCK: string = 'rt-toggle-switch';
  * off-иконка в начальной половине, on-иконка в конечной. Бегунок непрозрачен
  * и наезжает на иконку активного состояния, так что видна всегда иконка того
  * состояния, куда переключится контрол.
+ *
+ * Вход `label` рисует подпись после кнопки — элементом `<label>`, связанным с
+ * кнопкой: нажатие на подпись переключает, и она же называет переключатель
+ * скринридеру через `aria-labelledby`.
+ *
+ * Размер и отключение выводятся модификаторами и на хост: свойства размеров
+ * объявлены на хосте, чтобы правило приложения на теге их переопределяло, а
+ * прозрачность отключения гасит переключатель вместе с подписью.
  *
  * ViewEncapsulation.None — стили таргетируют имя элемента и BEM-класс блока.
  */
@@ -70,6 +86,10 @@ const BEM_BLOCK: string = 'rt-toggle-switch';
     hostDirectives: [{ directive: RtRadiusDirective, inputs: ['radius'] }],
     host: {
         class: BEM_BLOCK,
+        '[class.rt-toggle-switch--md]': "size() === 'md'",
+        '[class.rt-toggle-switch--lg]': "size() === 'lg'",
+        '[class.rt-toggle-switch--on]': 'isOn()',
+        '[class.rt-toggle-switch--disabled]': 'isDisabled()',
     },
 })
 export class RtToggleSwitchComponent implements ControlValueAccessor {
@@ -79,8 +99,15 @@ export class RtToggleSwitchComponent implements ControlValueAccessor {
     /** Отключение, назначенное формой через CVA (`setDisabledState`). */
     readonly #disabledByForm: WritableSignal<boolean> = signal<boolean>(false);
 
+    readonly #autoId: string = nextAutoId();
+
     protected readonly isOn: WritableSignal<boolean> = signal<boolean>(false);
     protected readonly isDisabled: Signal<boolean> = computed((): boolean => this.disabled() || this.#disabledByForm());
+
+    /** Id кнопки: заданный входом или свой — на него указывает подпись. */
+    protected readonly controlId: Signal<string> = computed((): string => this.inputId() ?? this.#autoId);
+
+    protected readonly labelId: string = `${this.#autoId}-label`;
 
     /**
      * BEM-модификаторы для `[rtMod]`. Собираем в .ts, потому что
@@ -97,6 +124,9 @@ export class RtToggleSwitchComponent implements ControlValueAccessor {
     public readonly inputId: InputSignal<string | null> = input<string | null>(null);
 
     public readonly ariaLabel: InputSignal<string | null> = input<string | null>(null);
+
+    /** Подпись после переключателя. Пусто — без подписи, как раньше. */
+    public readonly label: InputSignal<string | null> = input<string | null>(null);
 
     /** Размерный тир трека. */
     public readonly size: InputSignal<IRtToggleSwitch.Size> = input<IRtToggleSwitch.Size>('sm');

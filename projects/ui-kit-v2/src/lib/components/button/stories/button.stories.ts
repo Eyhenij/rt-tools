@@ -32,6 +32,10 @@ export default {
         },
         loading: { control: { type: 'boolean' } },
         loadingIcon: { control: { type: 'text' } },
+        loadingLabel: {
+            options: ['keep', 'hide'],
+            control: { type: 'inline-radio' },
+        },
     },
 } as Meta<TestRtButtonComponent>;
 
@@ -51,5 +55,6 @@ export const Playground: TStory = {
         radius: null,
         loading: false,
         loadingIcon: null,
+        loadingLabel: 'keep',
     },
 };

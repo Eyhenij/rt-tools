@@ -29,4 +29,7 @@ export const Fill: TStory = { args: { part: 'fill' } };
 /** Разницу видно только на узком кадре: в широком обе панели одинаковы. */
 export const Dense: TStory = { args: { part: 'dense' } };
 
+/** Высота, поля, граница, промежуток и выравнивание центра — свойствами с тега панели, SC-UKV-573. */
+export const Layout: TStory = { args: { part: 'layout' } };
+
 export const Themes: TStory = { args: { part: 'themes' } };

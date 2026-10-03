@@ -29,6 +29,12 @@ export const Icon: TStory = { args: { part: 'icon' } };
 
 export const Closable: TStory = { args: { part: 'closable' } };
 
+/** Ручки цвета, отступов и интервала перебивают палитру и ступень — SC-UKV-572. */
+export const Handles: TStory = { args: { part: 'handles' } };
+
+/** Скругление и толщина рамки, поставленные на тег компонента, доходят до пилюли — SC-UKV-565. */
+export const HostRule: TStory = { args: { part: 'host-rule' } };
+
 export const Presets: TStory = { args: { part: 'presets' } };
 
 export const Themes: TStory = { args: { part: 'themes' } };
