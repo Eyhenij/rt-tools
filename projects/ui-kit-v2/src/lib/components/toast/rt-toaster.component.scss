@@ -3,8 +3,12 @@
         --width: 356px;
         --toaster-offset: 32px;
 
+        /* Слой — своё свойство на шаге шкалы: шаг `sticky` и есть прежние 1100, а приложение,
+           которому тост нужен поверх диалога, перебивает свойство правилом на своём теге. */
+        --rt-toaster-z-index: var(--rt-z-sticky);
+
         position: fixed;
-        z-index: 1100;
+        z-index: var(--rt-toaster-z-index);
         width: var(--width);
         box-sizing: border-box;
         padding: 0;
