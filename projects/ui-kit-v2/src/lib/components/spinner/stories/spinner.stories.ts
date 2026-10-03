@@ -12,6 +12,11 @@ export default {
             options: ['primary', 'neutral', 'on-primary'],
             control: { type: 'select' },
         },
+        appearance: {
+            options: ['border', 'arc'],
+            control: { type: 'inline-radio' },
+        },
+        plate: { control: { type: 'boolean' } },
     },
 } as Meta<TestRtSpinnerComponent>;
 
@@ -22,5 +27,7 @@ export const Playground: TStory = {
     args: {
         diameter: 32,
         color: 'primary',
+        appearance: 'border',
+        plate: false,
     },
 };
