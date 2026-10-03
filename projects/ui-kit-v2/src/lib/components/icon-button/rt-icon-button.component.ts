@@ -95,8 +95,11 @@ export class RtIconButtonComponent {
         hasIndicator: this.indicator(),
     }));
 
-    /** Имя иконки — обязательно. */
-    public readonly icon: InputSignal<IRtIcon.Name> = input.required<IRtIcon.Name>();
+    /** Имя иконки в наборе кита. Нужно оно или `glyph`; когда переданы оба, побеждает имя. */
+    public readonly icon: InputSignal<IRtIcon.Name | null> = input<IRtIcon.Name | null>(null);
+
+    /** Имя Material вместо имени кита — рисуется так же, как вход `glyph` у `rt-icon`. */
+    public readonly glyph: InputSignal<string | null> = input<string | null>(null);
 
     /** Доступное имя для screen-reader'ов — обязательно (icon-only кнопка). */
     public readonly ariaLabel: InputSignal<string> = input.required<string>();

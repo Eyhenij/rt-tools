@@ -572,6 +572,7 @@ export type TRtConsumerHandleName =
     | '--rt-dialog-width'
     | '--rt-header-content-max-width'
     | '--rt-header-height'
+    | '--rt-icon-glyph-font'
     | '--rt-logo-tagline'
     | '--rt-logo-tagline-dark'
     | '--rt-logo-wordmark'
@@ -1154,6 +1155,7 @@ export const RT_CONSUMER_HANDLE_NAMES: readonly TRtConsumerHandleName[] = [
     '--rt-dialog-width',
     '--rt-header-content-max-width',
     '--rt-header-height',
+    '--rt-icon-glyph-font',
     '--rt-logo-tagline',
     '--rt-logo-tagline-dark',
     '--rt-logo-wordmark',

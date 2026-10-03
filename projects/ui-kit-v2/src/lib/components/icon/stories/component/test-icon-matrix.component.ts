@@ -21,6 +21,8 @@ export type TIconMatrixPart =
     | 'material-set'
     | 'material-themes'
     | 'migration-map'
+    | 'glyph'
+    | 'spin-pixels'
     | 'themes';
 
 /** Категория набора со своими именами — строка каталога. */
@@ -234,6 +236,55 @@ interface IIconCategoryGroup {
                 </p>
             }
 
+            @case ('glyph') {
+                <app-story-presets caption="Имя Material на входе glyph в обоих наборах">
+                    <ng-template>
+                        <app-story-row caption="С парой в перечне кита — рисунок кита" [items]="pairedGlyphs">
+                            <ng-template let-glyph>
+                                <rt-icon size="lg" [glyph]="glyph" />
+                            </ng-template>
+                        </app-story-row>
+                        <app-story-row caption="Без пары — лигатура шрифта" [items]="unpairedGlyphs">
+                            <ng-template let-glyph>
+                                <rt-icon size="lg" [glyph]="glyph" />
+                            </ng-template>
+                        </app-story-row>
+                        <app-story-row caption="Без пары, залитый — вход fill" [items]="unpairedGlyphs">
+                            <ng-template let-glyph>
+                                <rt-icon size="lg" fill [glyph]="glyph" />
+                            </ng-template>
+                        </app-story-row>
+                    </ng-template>
+                </app-story-presets>
+
+                <p class="app-icon-matrix__note">
+                    Шрифт Material Symbols кит не везёт, и витрина его не подключает. Поэтому лигатура здесь видна словом в запасном шрифте
+                    — так её увидит приложение, которое шрифт не подключило. С подключённым шрифтом на месте слова стоит значок.
+                </p>
+            }
+
+            @case ('spin-pixels') {
+                <app-story-presets caption="Вращение и размер в пикселях в обоих наборах">
+                    <ng-template>
+                        <app-story-row caption="Размер числом пикселей" [items]="pixelSizes" [itemLabel]="pixelLabel">
+                            <ng-template let-size>
+                                <rt-icon name="alarm-clock" [size]="size" />
+                            </ng-template>
+                        </app-story-row>
+                        <app-story-row caption="Вращение — вход spin" [items]="spinSizes">
+                            <ng-template let-size>
+                                <rt-icon name="spinner" spin [size]="size" />
+                            </ng-template>
+                        </app-story-row>
+                    </ng-template>
+                </app-story-presets>
+
+                <p class="app-icon-matrix__note">
+                    Снимок гасит движение, и вращающийся значок в нём стоит. Вращение видно на живой витрине; когда система просит меньше
+                    движения, значок вращается в четыре раза медленнее.
+                </p>
+            }
+
             @case ('themes') {
                 <app-story-presets caption="Цвет в обеих темах в обоих наборах">
                     <ng-template>
@@ -311,6 +362,19 @@ export class TestRtIconMatrixComponent {
         category,
         names: iconsName.filter((name: IRtIcon.Name): boolean => categoryOf(name) === category),
     })).filter((group: IIconCategoryGroup): boolean => group.names.length > 0);
+
+    /** Имена Material с парой в перечне кита: рисуются рисунком кита. */
+    public readonly pairedGlyphs: readonly string[] = ['arrow_back', 'add', 'account_circle', 'close'];
+
+    /** Имена Material без пары: рисуются лигатурой шрифта. */
+    public readonly unpairedGlyphs: readonly string[] = ['pets', 'savings', 'rocket_launch'];
+
+    /** Размеры между ступенями и крупнее последней — то, чего ступени не дают. */
+    public readonly pixelSizes: readonly number[] = [14, 18, 28, 48, 56];
+
+    public readonly spinSizes: readonly IRtIcon.Size[] = ['sm', 'md', 'lg'];
+
+    public readonly pixelLabel: (value: number) => string = (value: number): string => `${value} px`;
 
     public readonly rotateLabel: (value: number | null) => string = (value: number | null): string =>
         value === null ? 'без поворота' : `${value}°`;
