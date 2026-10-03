@@ -15,6 +15,7 @@ import { IRtIcon } from '../../../icon/rt-icon.model';
         <rt-toggle-switch
             [inputId]="inputId"
             [ariaLabel]="ariaLabel"
+            [label]="label"
             [size]="size"
             [iconOff]="iconOff"
             [iconOn]="iconOn"
@@ -29,6 +30,7 @@ import { IRtIcon } from '../../../icon/rt-icon.model';
 export class TestRtToggleSwitchComponent {
     public inputId: string | null = null;
     public ariaLabel: string | null = null;
+    public label: string | null = null;
     public size: IRtToggleSwitch.Size = 'sm';
     public iconOff: IRtIcon.Name | null = null;
     public iconOn: IRtIcon.Name | null = null;

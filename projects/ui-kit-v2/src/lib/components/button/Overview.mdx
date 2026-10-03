@@ -111,8 +111,13 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | `radius`         | `TRtRadius \| null` — шаг общей шкалы                                      | настройки кита или `null`     |
 | `loading`        | `boolean`                                                                  | `false`                       |
 | `loadingIcon`    | `string \| null`                                                           | `null` → встроенное кольцо    |
+| `loadingLabel`   | `'keep' \| 'hide'`                                                         | `'keep'`                      |
 | `pressed`        | `boolean \| null`                                                          | `null` → положения нет        |
 | `rippleDisabled` | `boolean`                                                                  | `false`                       |
+
+`loadingLabel="hide"` прячет подпись и иконку на время загрузки, а ширина кнопки остаётся прежней:
+содержимое стоит на месте с нулевой прозрачностью, кольцо — поверх по центру. Подпись при этом
+остаётся именем кнопки для скринридера. Оба режима рядом — история **LoadingLabel**.
 
 `pressed` трёхзначен нарочно. `true` — кнопка нажата и остаётся такой после отпускания, `false` —
 отжата, `null` — положения у неё нет вовсе. Третье не то же, что второе: обычная кнопка о положении

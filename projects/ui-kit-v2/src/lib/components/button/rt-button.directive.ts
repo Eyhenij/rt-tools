@@ -122,6 +122,11 @@ export class RtButtonDirective {
     });
     /** Кастомный CSS-класс иконки в loading. Если null — встроенный CSS-спиннер. */
     public readonly loadingIcon: InputSignal<string | null> = input<string | null>(null);
+    /**
+     * Подпись во время загрузки. `hide` оставляет подпись и иконку в кнопке невидимыми — ширина
+     * не скачет, — а спиннер ставит по центру; имя кнопки для скринридера остаётся.
+     */
+    public readonly loadingLabel: InputSignal<IButton.LoadingLabel> = input<IButton.LoadingLabel>('keep');
 
     /**
      * Положение двухпозиционной кнопки: `true` — нажата, `false` — отжата, `null` — положения нет
@@ -148,6 +153,7 @@ export class RtButtonDirective {
             this.iconPos();
             this.loading();
             this.loadingIcon();
+            this.loadingLabel();
             // Лигатура до готовности шрифтов скрыта: готовность перерисовывает содержимое.
             this.#fontReady();
 
@@ -175,6 +181,7 @@ export class RtButtonDirective {
             [`${BEM_BLOCK}--outlined`]: appearance === 'outlined',
             [`${BEM_BLOCK}--text`]: appearance === 'text',
             [`${BEM_BLOCK}--loading`]: this.loading(),
+            [`${BEM_BLOCK}--loading-label-hidden`]: this.loading() && this.loadingLabel() === 'hide',
             [`${BEM_BLOCK}--icon-only`]: this.isIconOnly(),
             [`${BEM_BLOCK}--${size}`]: size !== 'md',
             [`${BEM_BLOCK}--pressed`]: this.pressed() === true,
@@ -263,12 +270,25 @@ export class RtButtonDirective {
 
     #renderLoading(button: HTMLElement): void {
         const loadingIcon: string | null = this.loadingIcon();
+        const loader: HTMLElement = loadingIcon ? this.#createIcon(loadingIcon) : this.#createSpinner();
+
+        if (this.loadingLabel() === 'hide') {
+            // Обычное содержимое остаётся и держит ширину; стили гасят его и ставят
+            // загрузчик поверх по центру
+            this.#renderIconAndLabel(button);
+            this.#renderer.addClass(loader, `${BEM_BLOCK}__loader`);
+            this.#renderer.appendChild(button, loader);
+            if (!loadingIcon) {
+                this.#spinnerEl = loader;
+            }
+            return;
+        }
 
         if (loadingIcon) {
-            this.#iconEl = this.#createIcon(loadingIcon);
+            this.#iconEl = loader;
             this.#renderer.appendChild(button, this.#iconEl);
         } else {
-            this.#spinnerEl = this.#createSpinner();
+            this.#spinnerEl = loader;
             this.#renderer.appendChild(button, this.#spinnerEl);
         }
 

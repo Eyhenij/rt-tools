@@ -4,19 +4,18 @@
     .rt-aside-footer {
         --rt-aside-footer-border-width: var(--rt-border-width-thin);
 
-        padding-top: var(--rt-aside-inset);
-
-        /* Верхний разделитель не на всю ширину панели: margin отбивает футер по
-           горизонтали на тот же инсет, что и контентная зона, поэтому
-           border-block-start совпадает по краям с контентом. */
-        margin: var(--rt-aside-inset);
+        /* Отступ и поля футера — ручки приложения; без них отступ только сверху, а поля — инсет
+           панели. Верхний разделитель не на всю ширину: поля отбивают футер по горизонтали на тот
+           же инсет, что и контентная зона, и border-block-start совпадает по краям с контентом. */
+        padding: var(--rt-aside-footer-inset, var(--rt-aside-inset) 0 0);
+        margin: var(--rt-aside-footer-margin, var(--rt-aside-inset));
         border-block-start: var(--rt-aside-footer-border-width) solid var(--rt-color-border-subtle);
 
         &__content {
             display: flex;
             flex-wrap: wrap;
-            justify-content: space-between;
-            gap: var(--rt-space-sm);
+            justify-content: var(--rt-aside-footer-justify, space-between);
+            gap: var(--rt-aside-footer-gap, var(--rt-space-sm));
         }
 
         &:empty {

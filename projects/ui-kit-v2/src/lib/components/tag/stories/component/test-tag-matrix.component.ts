@@ -10,7 +10,8 @@ import { RtTagComponent } from '../../rt-tag.component';
 import { IRtTag } from '../../rt-tag.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TTagMatrixPart = 'severity' | 'size' | 'overflow' | 'radius' | 'icon' | 'closable' | 'presets' | 'themes';
+export type TTagMatrixPart =
+    'severity' | 'size' | 'overflow' | 'radius' | 'icon' | 'closable' | 'handles' | 'host-rule' | 'presets' | 'themes';
 
 /** Случай усечения — не значение оси, а пара «подпись и место, которое ей дали». */
 interface ITagOverflowCase {
@@ -25,6 +26,26 @@ interface ITagIconCase {
     readonly icon: IRtIcon.Name | null;
     readonly iconEnd: IRtIcon.Name | null;
 }
+
+/**
+ * Случай свойств, которые приложение ставит на тег компонента. Инлайн-стиль — самое сильное
+ * правило на теге: если свойство не дошло и от него, его не достанет и правило приложения.
+ */
+interface ITagStyleCase {
+    readonly name: string;
+    readonly appearance: IRtTag.Appearance;
+    readonly style: Readonly<Record<string, string>>;
+}
+
+/** Ручки цвета, отступов и интервала — те, что приложение задаёт вместо палитры и ступени. */
+const TAG_HANDLES: Readonly<Record<string, string>> = {
+    '--rt-tag-color-bg': 'var(--rt-color-bg-surface)',
+    '--rt-tag-color-text': 'var(--rt-color-text-primary)',
+    '--rt-tag-color-border': 'var(--rt-color-border-strong)',
+    '--rt-tag-padding-block': 'var(--rt-space-0-5)',
+    '--rt-tag-padding-inline': 'var(--rt-space-4)',
+    '--rt-tag-letter-spacing': '0.06em',
+};
 
 /**
  * Матрицы `rt-tag` для витрины.
@@ -124,6 +145,39 @@ interface ITagIconCase {
                 </app-story-presets>
             }
 
+            @case ('handles') {
+                <app-story-presets caption="Палитра × ручки приложения в обоих наборах">
+                    <ng-template>
+                        <app-story-grid [rows]="severities" [columns]="handleCases" [columnLabel]="styleCaseLabel">
+                            <ng-template let-severity let-styleCase="col">
+                                <rt-tag
+                                    [value]="severity"
+                                    [severity]="severity"
+                                    [appearance]="styleCase.appearance"
+                                    [style]="styleCase.style" />
+                            </ng-template>
+                        </app-story-grid>
+                    </ng-template>
+                </app-story-presets>
+            }
+
+            @case ('host-rule') {
+                <app-story-presets caption="Скругление и рамка с тега компонента в обоих наборах">
+                    <ng-template>
+                        <app-story-grid [rows]="sizes" [columns]="hostRuleCases" [columnLabel]="styleCaseLabel">
+                            <ng-template let-size let-styleCase="col">
+                                <rt-tag
+                                    value="Активен"
+                                    severity="info"
+                                    [size]="size"
+                                    [appearance]="styleCase.appearance"
+                                    [style]="styleCase.style" />
+                            </ng-template>
+                        </app-story-grid>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('presets') {
                 <app-story-presets caption="Палитра в обоих наборах">
                     <ng-template>
@@ -188,6 +242,26 @@ export class TestRtTagMatrixComponent {
         { name: 'справа', icon: null, iconEnd: 'arrow-right' },
         { name: 'с обеих сторон', icon: 'check', iconEnd: 'arrow-right' },
     ];
+
+    /** Каждая ручка перебивает палитру: одна и та же строка случаев на всех значимостях. */
+    public readonly handleCases: readonly ITagStyleCase[] = [
+        { name: 'кит', appearance: 'solid', style: {} },
+        { name: 'ручки приложения', appearance: 'solid', style: TAG_HANDLES },
+        { name: 'контур, кит', appearance: 'outlined', style: {} },
+        { name: 'контур, ручки приложения', appearance: 'outlined', style: TAG_HANDLES },
+    ];
+
+    /** Свойства на теге компонента перебивают и ступень размера: строка — ступень, столбец — правило. */
+    public readonly hostRuleCases: readonly ITagStyleCase[] = [
+        { name: 'кит', appearance: 'outlined', style: {} },
+        {
+            name: 'правило на теге',
+            appearance: 'outlined',
+            style: { '--rt-tag-radius': 'var(--rt-radius-xs)', '--rt-tag-border-width': 'var(--rt-border-width-medium)' },
+        },
+    ];
+
+    public readonly styleCaseLabel: (value: ITagStyleCase) => string = (value: ITagStyleCase): string => value.name;
 
     public readonly radiusLabel: (value: TRtRadius | null) => string = (value: TRtRadius | null): string => value ?? 'по умолчанию';
 

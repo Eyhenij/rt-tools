@@ -14,6 +14,7 @@ export default {
         duration: { control: { type: 'number' } },
         visibleToasts: { control: { type: 'number' } },
         expand: { control: { type: 'boolean' } },
+        mode: { options: ['stack', 'replace'], control: { type: 'inline-radio' } },
     },
 } as Meta<TestRtToasterComponent>;
 
@@ -28,5 +29,6 @@ export const Playground: TStory = {
         duration: 4000,
         visibleToasts: 3,
         expand: false,
+        mode: 'stack',
     },
 };

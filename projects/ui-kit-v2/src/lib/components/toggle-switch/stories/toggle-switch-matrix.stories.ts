@@ -24,6 +24,12 @@ export const Value: TStory = { args: { part: 'value' } };
 
 export const Icons: TStory = { args: { part: 'icons' } };
 
+/** Подпись после переключателя и свойства подписи и отключения с тега — SC-UKV-566, SC-UKV-574. */
+export const Label: TStory = { args: { part: 'label' } };
+
+/** Свойства размеров, поставленные на тег компонента, перебивают ступень — SC-UKV-565. */
+export const HostRule: TStory = { args: { part: 'host-rule' } };
+
 /**
  * Кольцо фокуса рисует кнопка внутри хоста, а признак стоит на хосте — аддону передан спуск
  * до неё: без него класс лёг бы на элемент, у которого этих правил нет.

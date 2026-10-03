@@ -30,7 +30,7 @@ import { RtButtonDirective } from '../button/rt-button.directive';
 import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
 import { RtIconComponent } from '../icon/rt-icon.component';
 import { IRtIcon } from '../icon/rt-icon.model';
-import { RT_TOASTER_GAP_PX, IRtToaster } from './rt-toaster.model';
+import { RT_TOAST_SEVERITY_ICONS, RT_TOASTER_GAP_PX, IRtToaster } from './rt-toaster.model';
 
 const BEM_BLOCK: string = 'rt-toast';
 
@@ -52,12 +52,7 @@ const UNMOUNT_DELAY_MS: number = 200;
 export class RtToastComponent implements AfterViewInit, OnDestroy {
     readonly #host: ElementRef<HTMLElement> = inject(ElementRef);
 
-    readonly #severityIcon: Readonly<Record<INotification.Severity, IRtIcon.Name>> = {
-        info: 'info-circle',
-        success: 'check-circle',
-        warning: 'exclamation-circle',
-        danger: 'times-circle',
-    };
+    readonly #severityIcons: Readonly<Record<INotification.Severity, IRtIcon.Name>> = inject(RT_TOAST_SEVERITY_ICONS);
 
     readonly #mounted: WritableSignal<boolean> = signal<boolean>(false);
 
@@ -97,7 +92,22 @@ export class RtToastComponent implements AfterViewInit, OnDestroy {
 
     protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
 
-    protected readonly icon: Signal<IRtIcon.Name> = computed((): IRtIcon.Name => this.#severityIcon[this.toast().severity]);
+    /** Свой значок тоста важнее карты severity; `null` у тоста значок снимает. */
+    protected readonly icon: Signal<IRtIcon.Name | null> = computed((): IRtIcon.Name | null => {
+        const icon: IRtIcon.Name | null | undefined = this.toast().icon;
+        return icon === undefined ? this.#severityIcons[this.toast().severity] : icon;
+    });
+
+    /** Срок жизни тоста: свой, если задан, иначе тостера; `null` — таймера нет. */
+    protected readonly lifetime: Signal<number | null> = computed((): number | null => {
+        const duration: number | null | undefined = this.toast().duration;
+        return duration === undefined ? this.duration() : duration;
+    });
+
+    protected readonly showProgress: Signal<boolean> = computed((): boolean => this.toast().progress === true && this.lifetime() !== null);
+
+    /** Таймер и полоса срока встают от одного признака, чтобы не разойтись. */
+    protected readonly paused: Signal<boolean> = computed((): boolean => this.expanded() || this.interacting());
 
     public readonly toast: InputSignal<IRtToaster.Toast> = input.required<IRtToaster.Toast>();
 
@@ -142,6 +152,7 @@ export class RtToastComponent implements AfterViewInit, OnDestroy {
             [`${BEM_BLOCK}--front`]: this.index() === 0,
             [`${BEM_BLOCK}--hidden`]: this.index() + 1 > this.visibleToasts(),
             [`${BEM_BLOCK}--expanded`]: this.expanded() || (this.expandByDefault() && this.#mounted()),
+            [`${BEM_BLOCK}--paused`]: this.paused(),
         };
     }
 
@@ -153,16 +164,17 @@ export class RtToastComponent implements AfterViewInit, OnDestroy {
             '--z-index': `${this.totalToasts() - this.index()}`,
             '--offset': `${this.#removed() ? this.#offsetBeforeRemove() : this.#offset()}px`,
             '--initial-height': this.expandByDefault() ? 'auto' : `${this.#initialHeight()}px`,
+            '--lifetime': `${this.lifetime() ?? 0}ms`,
         };
     }
 
     constructor() {
         effect((onCleanup: (cleanup: () => void) => void): void => {
-            if (!this.#mounted() || this.#removed()) {
+            if (!this.#mounted() || this.#removed() || this.lifetime() === null) {
                 return;
             }
 
-            if (this.expanded() || this.interacting()) {
+            if (this.paused()) {
                 this.#pauseTimer();
             } else {
                 this.#startTimer();
@@ -170,10 +182,17 @@ export class RtToastComponent implements AfterViewInit, OnDestroy {
 
             onCleanup((): void => clearTimeout(this.#timeoutId));
         });
+
+        // Вытесненный в режиме `replace` уходит тем же путём, что и закрытый крестиком.
+        effect((): void => {
+            if (this.#mounted() && this.toast().replaced === true) {
+                this.#deleteToast();
+            }
+        });
     }
 
     public ngAfterViewInit(): void {
-        this.#remainingTimeMs = this.duration();
+        this.#remainingTimeMs = this.lifetime() ?? 0;
 
         const height: number = this.#host.nativeElement.getBoundingClientRect().height;
         this.#initialHeight.set(height);

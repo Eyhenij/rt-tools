@@ -6,17 +6,20 @@
        и на `<rt-toggle-switch>`, и на корне шаблона, поэтому правила блока вложены в хост —
        так они достаются только корню шаблона. */
 
+    /* Свойства объявлены на хосте: правило приложения на теге переопределяет их, а
+       ступени размера — тоже правила хоста, по модификатору на нём самом. Имена подписи
+       не повторяют первый кит: у его переключателя свои `--rt-toggle-label-*`. */
     rt-toggle-switch {
-        display: inline-flex;
-
-        /* Шаг входа `radius` переназначает скругление дорожки, ручка идёт за ней. */
-        @include kv.radius-steps('--rt-toggle-radius', '> .rt-toggle-switch');
-    }
-
-    rt-toggle-switch .rt-toggle-switch {
         --rt-toggle-radius: var(--rt-radius-full);
         --rt-toggle-focus-shadow: var(--rt-shadow-focus-ring);
         --rt-toggle-transition-duration: var(--rt-duration-fast);
+        --rt-toggle-disabled-opacity: 0.5;
+        --rt-toggle-justify: flex-start;
+        --rt-toggle-label-gap: var(--rt-space-2);
+        --rt-toggle-label-size: var(--rt-text-sm);
+        --rt-toggle-label-color-off: var(--rt-color-text-muted);
+        --rt-toggle-label-color-on: var(--rt-color-text-primary);
+        --rt-toggle-label-color-hover: var(--rt-color-text-primary);
 
         /* Геометрия размера. База — `sm`; модификаторы перекрывают только числа,
            правила ниже к размерам не привязаны. `thumb-travel` держим явным
@@ -29,23 +32,38 @@
         --rt-toggle-icon-inset: 4px;
 
         display: inline-flex;
-        padding: 0;
-        border: none;
-        background: none;
-        cursor: pointer;
+        align-items: center;
+        justify-content: var(--rt-toggle-justify);
+        gap: var(--rt-toggle-label-gap);
 
-        &--md {
+        &.rt-toggle-switch--md {
             --rt-toggle-track-width: 52px;
             --rt-toggle-thumb-travel: 28px;
         }
 
-        &--lg {
+        &.rt-toggle-switch--lg {
             --rt-toggle-track-width: 60px;
             --rt-toggle-track-height: 30px;
             --rt-toggle-thumb-size: 24px;
             --rt-toggle-thumb-travel: 30px;
             --rt-toggle-icon-inset: 6px;
         }
+
+        /* Прозрачность — на хосте: подпись гаснет вместе с переключателем. */
+        &.rt-toggle-switch--disabled {
+            opacity: var(--rt-toggle-disabled-opacity);
+        }
+
+        /* Шаг входа `radius` переназначает скругление дорожки, ручка идёт за ней. */
+        @include kv.radius-steps('--rt-toggle-radius');
+    }
+
+    rt-toggle-switch .rt-toggle-switch {
+        display: inline-flex;
+        padding: 0;
+        border: none;
+        background: none;
+        cursor: pointer;
 
         &:focus-visible {
             border-radius: var(--rt-toggle-radius);
@@ -56,7 +74,6 @@
 
         &--disabled {
             cursor: not-allowed;
-            opacity: 0.5;
         }
 
         &__track {
@@ -114,5 +131,27 @@
         &--on .rt-toggle-switch__thumb {
             transform: translateX(var(--rt-toggle-thumb-travel));
         }
+
+        &__label {
+            color: var(--rt-toggle-label-color-off);
+            cursor: pointer;
+            font-size: var(--rt-toggle-label-size);
+            transition: color var(--rt-toggle-transition-duration) ease;
+            user-select: none;
+        }
+    }
+
+    /* Состояния подписи — по модификаторам хоста: подпись стоит рядом с кнопкой, не в ней.
+       Наведение ниже включённого: под курсором подпись берёт свой цвет и у включённого. */
+    rt-toggle-switch.rt-toggle-switch--on .rt-toggle-switch__label {
+        color: var(--rt-toggle-label-color-on);
+    }
+
+    rt-toggle-switch:not(.rt-toggle-switch--disabled):hover .rt-toggle-switch__label {
+        color: var(--rt-toggle-label-color-hover);
+    }
+
+    rt-toggle-switch.rt-toggle-switch--disabled .rt-toggle-switch__label {
+        cursor: not-allowed;
     }
 }

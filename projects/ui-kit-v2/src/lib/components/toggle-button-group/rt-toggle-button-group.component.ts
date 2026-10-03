@@ -70,6 +70,8 @@ const ICON_SIZE_BY_SIZE: Readonly<Record<IRtToggleButtonGroup.Size, IRtIcon.Size
     host: {
         class: BEM_BLOCK,
         '[class.rt-toggle-button-group--full-width]': 'fullWidth()',
+        '[class.rt-toggle-button-group--md]': "size() === 'md'",
+        '[class.rt-toggle-button-group--lg]': "size() === 'lg'",
     },
 })
 export class RtToggleButtonGroupComponent<T = string> {

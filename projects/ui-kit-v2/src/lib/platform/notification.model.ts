@@ -1,3 +1,5 @@
+import type { IRtIcon } from '../components/icon/rt-icon.model';
+
 import { IMessageBusEvent } from './message-bus';
 
 /**
@@ -28,9 +30,21 @@ export namespace INotification {
          */
         readonly secondaryAction?: Action;
         readonly filled?: boolean;
+        /**
+         * Сколько тост живёт, в миллисекундах. Не задано — столько, сколько велит тостер;
+         * `null` — таймера нет, тост держится до крестика.
+         */
+        readonly duration?: number | null;
+        /** Полоса срока под тостом: сжимается вместе с таймером и встаёт вместе с ним. */
+        readonly progress?: boolean;
+        /** Свой значок вместо значка severity; `null` — тост без значка. */
+        readonly icon?: IRtIcon.Name | null;
     }
 
-    export type Options = Pick<Payload, 'description' | 'meta' | 'action' | 'secondaryAction' | 'filled'>;
+    export type Options = Pick<
+        Payload,
+        'description' | 'meta' | 'action' | 'secondaryAction' | 'filled' | 'duration' | 'progress' | 'icon'
+    >;
 
     /**
      * Событие шины уведомлений. `type` — строковый дискриминатор (доменные

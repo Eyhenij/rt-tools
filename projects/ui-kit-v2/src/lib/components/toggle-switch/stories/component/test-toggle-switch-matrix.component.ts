@@ -11,7 +11,7 @@ import { IRtToggleSwitch } from '../../rt-toggle-switch.model';
 import { RtToggleSwitchComponent } from '../../rt-toggle-switch.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TToggleSwitchMatrixPart = 'size' | 'value' | 'icons' | 'states' | 'presets' | 'themes';
+export type TToggleSwitchMatrixPart = 'size' | 'value' | 'icons' | 'label' | 'host-rule' | 'states' | 'presets' | 'themes';
 
 /** Положение тумблера: выключено или включено. */
 interface IToggleValueCase {
@@ -24,6 +24,15 @@ interface IToggleIconCase {
     readonly name: string;
     readonly iconOff: IRtIcon.Name | null;
     readonly iconOn: IRtIcon.Name | null;
+}
+
+/**
+ * Свойства, которые приложение ставит на тег компонента. Инлайн-стиль — самое сильное правило
+ * на теге: если свойство не дошло и от него, его не достанет и правило приложения.
+ */
+interface IToggleStyleCase {
+    readonly name: string;
+    readonly style: Readonly<Record<string, string>>;
 }
 
 function on(value: boolean): FormControl<boolean> {
@@ -76,6 +85,36 @@ function on(value: boolean): FormControl<boolean> {
                             [iconOff]="iconCase.iconOff"
                             [iconOn]="iconCase.iconOn"
                             [formControl]="valueCase.control" />
+                    </ng-template>
+                </app-story-grid>
+            }
+
+            @case ('label') {
+                <app-story-presets caption="Подпись × положение × отключённость в обоих наборах">
+                    <ng-template>
+                        <app-story-grid [rows]="valueCases" [columns]="switches" [rowLabel]="caseLabel" [columnLabel]="switchLabel">
+                            <ng-template let-valueCase let-off="col">
+                                <rt-toggle-switch label="Уведомления" [disabled]="off" [formControl]="valueCase.control" />
+                            </ng-template>
+                        </app-story-grid>
+
+                        <app-story-row caption="Свойства подписи с тега компонента" [items]="labelCases" [itemLabel]="caseLabel">
+                            <ng-template let-styleCase>
+                                <rt-toggle-switch
+                                    label="Уведомления"
+                                    [disabled]="true"
+                                    [formControl]="disabledValue"
+                                    [style]="styleCase.style" />
+                            </ng-template>
+                        </app-story-row>
+                    </ng-template>
+                </app-story-presets>
+            }
+
+            @case ('host-rule') {
+                <app-story-grid caption="Размер × правило на теге" [rows]="sizes" [columns]="hostRuleCases" [columnLabel]="caseLabel">
+                    <ng-template let-size let-styleCase="col">
+                        <rt-toggle-switch ariaLabel="Размер" [size]="size" [formControl]="sizeValue" [style]="styleCase.style" />
                     </ng-template>
                 </app-story-grid>
             }
@@ -170,6 +209,35 @@ export class TestRtToggleSwitchMatrixComponent {
         { name: 'без иконок', iconOff: null, iconOn: null },
         { name: 'обе иконки', iconOff: 'ico-notificationOff', iconOn: 'ico-notification' },
         { name: 'только включённая', iconOff: null, iconOn: 'check' },
+    ];
+
+    /** Отключённый с подписью: прозрачность и цвета подписи приходят свойствами с тега. */
+    public readonly labelCases: readonly IToggleStyleCase[] = [
+        { name: 'кит', style: {} },
+        {
+            name: 'прозрачность 0.3, подпись крупнее',
+            style: {
+                '--rt-toggle-disabled-opacity': '0.3',
+                '--rt-toggle-label-size': 'var(--rt-text-md)',
+                '--rt-toggle-label-color-on': 'var(--rt-color-action-primary)',
+                '--rt-toggle-label-gap': 'var(--rt-space-4)',
+            },
+        },
+    ];
+
+    /** Свойства размеров на теге перебивают и ступень: у всех строк один и тот же трек. */
+    public readonly hostRuleCases: readonly IToggleStyleCase[] = [
+        { name: 'кит', style: {} },
+        {
+            name: 'правило на теге',
+            style: {
+                '--rt-toggle-track-width': '36px',
+                '--rt-toggle-track-height': '20px',
+                '--rt-toggle-thumb-size': '14px',
+                '--rt-toggle-thumb-inset': '3px',
+                '--rt-toggle-thumb-travel': '16px',
+            },
+        },
     ];
 
     /** Подпись столбца сетки отключённости. */

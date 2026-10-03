@@ -4,11 +4,12 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 <Title>ToggleSwitch — `rt-toggle-switch`</Title>
 
-Тумблер «включено / выключено». Значение — `boolean` через форму; своего текста на экране у него
-нет, поэтому подпись приходит извне.
+Тумблер «включено / выключено». Значение — `boolean` через форму. Подпись рядом рисует вход
+`label`; без него текста на экране нет, и имя приходит извне.
 
 ```html
 <rt-toggle-switch ariaLabel="Уведомления" [formControl]="notify" />
+<rt-toggle-switch label="Уведомления" [formControl]="notify" />
 <rt-toggle-switch size="md" iconOff="ico-notificationOff" iconOn="ico-notification" [formControl]="notify" />
 
 <rt-counter-row label="Уведомления">
@@ -37,6 +38,10 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | размер    | `sm`, `md`, `lg`                   | `sm`       |
 | положение | выключено, включено                | выключено  |
 | иконки    | без иконок, обе, только включённая | без иконок |
+| подпись   | нет, есть                          | нет        |
+
+Подпись перемножена с положением и отключённостью: включённая и отключённая берут свой цвет и
+прозрачность. Это история **Label**.
 
 **Иконки перемножены с положением:** бегунок непрозрачен и наезжает на иконку текущего
 состояния, поэтому в каждом положении видна ровно одна из двух — та, куда контрол переключится.
@@ -65,8 +70,10 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 - `role="switch"`, а не `checkbox`: скринридер произносит «switch on/off» вместо «checkbox
   checked» — для тумблера это точнее.
-- Своего текста у контрола нет: подпись задаётся входом `ariaLabel` или внешним `<label for>`
-  через `inputId`. Без одного из них у контрола не будет доступного имени.
+- Доступное имя даёт вход `label`, вход `ariaLabel` или внешний `<label for>` через `inputId`.
+  Без одного из них у контрола не будет доступного имени.
+- Подпись входа `label` — элемент `<label>`, связанный с кнопкой: нажатие на неё переключает, и
+  кнопка ссылается на неё через `aria-labelledby`. Без входа разметка прежняя.
 - Иконки на треке помечены как оформление: состояние читается из `aria-checked`, а не из них.
 
 ## Оформление
@@ -75,12 +82,29 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 `--rt-toggle-track-width`, `--rt-toggle-track-height`, `--rt-toggle-thumb-size`, кольцо фокуса —
 из `--rt-shadow-focus-ring`. Достаточно одной из двух иконок, чтобы включился режим с иконками.
 
+Свойства объявлены на самом теге `rt-toggle-switch`, ступени размера — правила того же тега по
+его модификатору. Поэтому правило приложения на теге перебивает и ступень (история **HostRule**).
+
+| свойство                        | что задаёт                           | умолчание                 |
+| ------------------------------- | ------------------------------------ | ------------------------- |
+| `--rt-toggle-disabled-opacity`  | прозрачность отключённого с подписью | `0.5`                     |
+| `--rt-toggle-justify`           | выравнивание кнопки и подписи        | `flex-start`              |
+| `--rt-toggle-label-gap`         | зазор между кнопкой и подписью       | `--rt-space-2`            |
+| `--rt-toggle-label-size`        | кегль подписи                        | `--rt-text-sm`            |
+| `--rt-toggle-label-color-off`   | цвет подписи выключенного            | `--rt-color-text-muted`   |
+| `--rt-toggle-label-color-on`    | цвет подписи включённого             | `--rt-color-text-primary` |
+| `--rt-toggle-label-color-hover` | цвет подписи под указателем          | `--rt-color-text-primary` |
+
+Имена подписи не повторяют первый кит: у его переключателя свои `--rt-toggle-label-*`, и оба кита
+на одной странице не делят одно имя.
+
 ## Входы
 
 | вход        | тип                    | умолчание       |
 | ----------- | ---------------------- | --------------- |
 | `inputId`   | `string \| null`       | `null`          |
 | `ariaLabel` | `string \| null`       | `null`          |
+| `label`     | `string \| null`       | `null`          |
 | `size`      | `'sm' \| 'md' \| 'lg'` | `'sm'`          |
 | `iconOff`   | `IRtIcon.Name \| null` | `null`          |
 | `iconOn`    | `IRtIcon.Name \| null` | `null`          |

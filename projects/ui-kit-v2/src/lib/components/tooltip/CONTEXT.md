@@ -5,11 +5,11 @@
 <rt-icon-button icon="ico-trash" ariaLabel="Удалить" tooltip="Удалить" />
 ```
 
-| вход                     | тип                           | умолчание                                       |
-| ------------------------ | ----------------------------- | ----------------------------------------------- |
-| `rtTooltip`              | `string \| null \| undefined` | `''`                                            |
-| `rtTooltipPlacement`     | `'top' \| 'bottom' \| null`   | `null` — сверху, под материальным набором снизу |
-| `rtTooltipWhenTruncated` | `boolean`                     | `false` — подсказка только у обрезанного текста |
+| вход                     | тип                                              | умолчание                                       |
+| ------------------------ | ------------------------------------------------ | ----------------------------------------------- |
+| `rtTooltip`              | `string \| null \| undefined`                    | `''`                                            |
+| `rtTooltipPlacement`     | `'top' \| 'bottom' \| 'left' \| 'right' \| null` | `null` — сверху, под материальным набором снизу |
+| `rtTooltipWhenTruncated` | `boolean`                                        | `false` — подсказка только у обрезанного текста |
 
 Выходов нет. Панель — `rt-tooltip` в оверлее CDK, `role="tooltip"`.
 

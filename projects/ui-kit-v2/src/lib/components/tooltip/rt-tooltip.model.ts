@@ -2,6 +2,9 @@
  * Модель `[rtTooltip]`: один корневой неймспейс с префиксом `I`.
  */
 export namespace IRtTooltip {
-    /** Сторона, с которой tooltip пристыкован к host'у (с авто-flip у края). */
-    export type Placement = 'top' | 'bottom';
+    /**
+     * Сторона, с которой tooltip пристыкован к host'у. Не поместилась — подсказка уходит на
+     * противоположную; боковой не хватило ни одной стороны — встаёт сверху или снизу.
+     */
+    export type Placement = 'top' | 'bottom' | 'left' | 'right';
 }
