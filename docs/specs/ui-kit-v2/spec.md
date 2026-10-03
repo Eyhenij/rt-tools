@@ -50,6 +50,7 @@ agreement about their own subject and describe the surface of a component, not a
 | [The design of the kit](tokens/spec.md)                                   | the brand and the palettes, the graph of the tokens, the completeness of the dark theme, the contrast, the layer of the cascade |
 | [The field of input](input/spec.md)                                       | what the field declares the kind of the value to the browser by and where the promise of the kit ends                           |
 | [The actions at a reply](chat-actions/spec.md)                            | what a consumer declares its own action at a reply of a correspondence by and where the boundary is                             |
+| [The sign of typing](chat-typing/spec.md)                                 | how a correspondence tells that the person types and shows that the other side types                                            |
 | [The field and a signal form](signal-forms/spec.md)                       | where a field of the set takes the state of the form from and what happens to both bindings                                     |
 | [The form dictionary of a panel](form-dictionary/spec.md)                 | the hierarchy of the form of a panel, where the gap comes from, what the consumer does not write                                |
 | [The digits of a number field](number-grouping/spec.md)                   | what a field separates the digits of a number by and where a consumer says a number is solid                                    |
