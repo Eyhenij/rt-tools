@@ -3,6 +3,9 @@
        Селектор bare `.rt-icon` (класс на host) — им же адресуются и программные
        потребители sprite'а, рисующие иконку без компонента. */
     .rt-icon {
+        --rt-icon-spin-duration: 1s;
+        --rt-icon-spin-duration-reduced: 4s;
+
         display: inline-flex;
         flex-shrink: 0;
         line-height: 0;
@@ -14,7 +17,51 @@
             fill: currentcolor;
         }
 
+        /* Лигатура шрифта Material Symbols для глифа без пары. Шрифт подключает приложение,
+           семью можно переназначить свойством сверху. Размер шрифта — встроенным стилем, он равен
+           ширине значка. До готовности шрифтов лигатура скрыта: иначе на её месте видно слово. */
+        &__glyph {
+            display: block;
+            overflow: hidden;
+            width: 100%;
+            font-family: var(--rt-icon-glyph-font, 'Material Symbols Outlined'), sans-serif;
+            font-feature-settings: 'liga';
+            font-style: normal;
+            font-variation-settings: 'FILL' 0;
+            font-weight: var(--rt-font-weight-regular);
+            letter-spacing: normal;
+            line-height: 1;
+            text-align: center;
+            text-transform: none;
+            white-space: nowrap;
+
+            &--filled {
+                font-variation-settings: 'FILL' 1;
+            }
+
+            &--pending {
+                visibility: hidden;
+            }
+        }
+
+        /* Вращение задаётся анимацией, и на её время она перекрывает поворот значка. */
+        &--spin {
+            animation: rt-icon-spin var(--rt-icon-spin-duration) linear infinite;
+        }
+
         /* Набор рисунков стилями не выбирается: ссылку на символ спрайта CSS подменить нечем.
            Признак набора компонент читает у разметки над собой — см. rt-icon.component.ts. */
+    }
+
+    @keyframes rt-icon-spin {
+        to {
+            transform: rotate(1turn);
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .rt-icon--spin {
+            animation-duration: var(--rt-icon-spin-duration-reduced);
+        }
     }
 }

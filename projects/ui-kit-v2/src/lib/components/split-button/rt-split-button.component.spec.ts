@@ -151,4 +151,13 @@ describe('RtSplitButtonComponent', (): void => {
 
         expect(el(fixture, '.rt-button--loading')).not.toBeNull();
     });
+
+    it('SC-UKV-559 — пункт меню с именем Material рисует его значок', (): void => {
+        const fixture: ComponentFixture<RtSplitButtonComponent> = setup({
+            menuItems: [{ value: 'pet', label: 'Питомцы', icon: 'pets' }],
+        });
+        openMenu(fixture);
+
+        expect(menuItems()[0].querySelector('.rt-button__glyph')?.textContent).toBe('pets');
+    });
 });
