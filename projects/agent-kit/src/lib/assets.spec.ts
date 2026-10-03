@@ -24,7 +24,7 @@ const run: (suite: string) => string = (suite: string): string => {
         return execFileSync('bash', [join(TESTS, suite)], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
     } catch (error: unknown) {
         const failure: { stdout?: string; stderr?: string } = error as { stdout?: string; stderr?: string };
-        throw new Error(`набор ${suite} упал:\n${failure.stdout ?? ''}${failure.stderr ?? ''}`);
+        throw new Error(`набор ${suite} упал:\n${failure.stdout ?? ''}${failure.stderr ?? ''}`, { cause: error });
     }
 };
 

@@ -10,17 +10,18 @@
 <a rtButton label="На главную" [routerLink]="'/'"></a>
 ```
 
-| вход          | тип                                                                        | умолчание                     |
-| ------------- | -------------------------------------------------------------------------- | ----------------------------- |
-| `label`       | `string \| null`                                                           | `null`                        |
-| `icon`        | `string \| null` (имя из набора `rt-icon`)                                 | `null`                        |
-| `iconPos`     | `'left' \| 'right'`                                                        | `'left'`                      |
-| `theme`       | `'primary' \| 'secondary' \| 'success' \| 'warning' \| 'danger' \| 'info'` | `'primary'`                   |
-| `appearance`  | `'filled' \| 'outlined' \| 'text'`                                         | настройки кита или `'filled'` |
-| `size`        | `'sm' \| 'md' \| 'lg' \| 'xl' \| '2xl'` (30 / 40 / 50 / 60 / 70 px)        | настройки кита или `'md'`     |
-| `radius`      | `TRtRadius \| null` — шаг общей шкалы                                      | настройки кита или `null`     |
-| `loading`     | `boolean`                                                                  | `false`                       |
-| `loadingIcon` | `string \| null`                                                           | `null` → встроенное кольцо    |
+| вход           | тип                                                                        | умолчание                          |
+| -------------- | -------------------------------------------------------------------------- | ---------------------------------- |
+| `label`        | `string \| null`                                                           | `null`                             |
+| `icon`         | `string \| null` (имя из набора `rt-icon`)                                 | `null`                             |
+| `iconPos`      | `'left' \| 'right'`                                                        | `'left'`                           |
+| `theme`        | `'primary' \| 'secondary' \| 'success' \| 'warning' \| 'danger' \| 'info'` | `'primary'`                        |
+| `appearance`   | `'filled' \| 'outlined' \| 'text'`                                         | настройки кита или `'filled'`      |
+| `size`         | `'sm' \| 'md' \| 'lg' \| 'xl' \| '2xl'` (30 / 40 / 50 / 60 / 70 px)        | настройки кита или `'md'`          |
+| `radius`       | `TRtRadius \| null` — шаг общей шкалы                                      | настройки кита или `null`          |
+| `loading`      | `boolean`                                                                  | `false`                            |
+| `loadingIcon`  | `string \| null`                                                           | `null` → встроенное кольцо         |
+| `loadingLabel` | `'keep' \| 'hide'`                                                         | `'keep'` — кольцо рядом с подписью |
 
 Своего выхода нет — клик слушается нативным `(click)` на самом элементе.
 

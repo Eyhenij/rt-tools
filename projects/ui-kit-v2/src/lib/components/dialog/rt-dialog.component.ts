@@ -11,9 +11,10 @@ export type TRtDialogSize = 'sm' | 'md' | 'lg';
 /**
  * Презентационный styled-frame для модалки поверх CDK Overlay.
  *
- * Видимость / backdrop / scroll-block / ESC / focus-trap — НЕ внутренняя
- * ответственность компонента. Это обеспечивает CDK Overlay через
- * `RtDialogService.open()`. rt-dialog здесь — стилизованная "рамка"
+ * Видимость / backdrop / scroll-block / ESC / фокус — НЕ внутренняя
+ * ответственность компонента. Это обеспечивает `RtDialogService.open()`: оверлей CDK, а
+ * ловушку и первый фокус — по флагам `trapFocus`, `restoreFocus` и `autoFocus` (по
+ * умолчанию выключены). Рамка несёт `tabindex="-1"`, чтобы `autoFocus: 'dialog'` мог её взять. rt-dialog здесь — стилизованная "рамка"
  * (padding-free контейнер) с size-вариантами + ng-content слотом.
  *
  * Композиция:

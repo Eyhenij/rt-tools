@@ -190,6 +190,9 @@
                         <rt-spinner diameter="32" />
                     </div>
                 }
+                <div rtElem="typing" qa-dataid="chat-typing" aria-live="polite" [rtMod]="{ shown: typingText() !== '' }">
+                    {{ typingText() }}
+                </div>
             </div>
 
             @if (canReply()) {
@@ -205,9 +208,15 @@
                         [sending]="sending()"
                         [disabled]="loading() || fetching()"
                         [droppedFiles]="droppedFiles()"
-                        (submitted)="onComposerSubmit($event)" />
+                        (submitted)="onComposerSubmit($event)"
+                        (input)="onReplyInput($event)" />
                 } @else {
-                    <form rtElem="composer" qa-dataid="chat-composer" [formGroup]="replyForm" (ngSubmit)="onSubmit()">
+                    <form
+                        rtElem="composer"
+                        qa-dataid="chat-composer"
+                        [formGroup]="replyForm"
+                        (ngSubmit)="onSubmit()"
+                        (input)="onReplyInput($event)">
                         @if (attachments() && selectedFiles().length > 0) {
                             <div rtElem="composer-files" qa-dataid="chat-composer-files">
                                 @for (file of selectedFiles(); track $index) {

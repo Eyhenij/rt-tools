@@ -9,7 +9,7 @@ export default {
     argTypes: {
         text: { control: { type: 'text' } },
         placement: {
-            options: ['top', 'bottom'],
+            options: ['top', 'bottom', 'left', 'right'],
             control: { type: 'select' },
         },
     },

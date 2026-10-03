@@ -15,7 +15,16 @@ import { IStoryPerson, STORY_PEOPLE } from './test-dynamic-selector.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
 export type TDynamicSelectorMatrixPart =
-    'rows' | 'radius' | 'templates' | 'invitation' | 'states' | 'popup' | 'input' | 'presets' | 'themes';
+    'rows' | 'radius' | 'templates' | 'invitation' | 'states' | 'popup' | 'input' | 'switches' | 'initial-query' | 'presets' | 'themes';
+
+/** Переключатели списка: корзина, панель сброса и очистки, правки в шаблоне строки. */
+interface ISwitchesCase {
+    readonly name: string;
+    readonly removeShown: boolean;
+    readonly listActionsShown: boolean;
+    readonly extraChanged: boolean;
+    readonly control: FormControl<number[] | null>;
+}
 
 /** Случай списка выбранного: что показано строками и что с ними можно сделать. */
 interface IRowsCase {
@@ -167,6 +176,17 @@ export class TestRtDynamicSelectorMatrixComponent {
         { name: 'загрузка', entities: [], mode: 'multi', multiToggleShown: false, loading: true, pinnedKeys: [] },
         { name: 'ничего не найдено', entities: [], mode: 'multi', multiToggleShown: false, loading: false, pinnedKeys: [] },
     ];
+
+    /** Прежний список стоит первым — рядом видно, что убирает каждый переключатель. */
+    public readonly switchesCases: readonly ISwitchesCase[] = [
+        { name: 'как прежде', removeShown: true, listActionsShown: true, extraChanged: false, control: chosen([1, 2]) },
+        { name: 'без корзины', removeShown: false, listActionsShown: true, extraChanged: false, control: chosen([1, 2]) },
+        { name: 'без сброса и очистки', removeShown: true, listActionsShown: false, extraChanged: false, control: chosen([1, 2]) },
+        { name: 'правки в строках', removeShown: true, listActionsShown: true, extraChanged: true, control: chosen([1, 2]) },
+    ];
+
+    /** Начальный запрос: окно открыто с текстом в поиске и предлагает только совпадения. */
+    public readonly initialQueryEntities: readonly IStoryPerson[] = STORY_PEOPLE;
 
     public readonly inputCases: readonly IInputCase[] = [
         {

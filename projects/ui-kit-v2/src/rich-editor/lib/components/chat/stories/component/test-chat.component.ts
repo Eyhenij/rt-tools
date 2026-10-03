@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { output, ChangeDetectionStrategy, Component, OutputEmitterRef } from '@angular/core';
 
 import { StoryPresetsComponent } from '../../../../../../showcase/story-presets.component';
 import { RtChatComponent } from '../../rt-chat.component';
@@ -33,7 +33,9 @@ import { TRtRichEditorToolbar } from '../../../rich-editor/rt-rich-editor.compon
                     [formattingToolbar]="formattingToolbar"
                     [fill]="fill"
                     [showRefresh]="showRefresh"
-                    [showExpand]="showExpand" />
+                    [showExpand]="showExpand"
+                    [typingText]="typingText"
+                    (typing)="typing.emit($event)" />
             </ng-template>
         </app-story-presets>
     `,
@@ -65,4 +67,8 @@ export class TestRtChatComponent {
     public fill: boolean = false;
     public showRefresh: boolean = false;
     public showExpand: boolean = false;
+    public typingText: string = '';
+
+    /** Набор в поле ответа — уходит в панель событий витрины. */
+    public readonly typing: OutputEmitterRef<boolean> = output<boolean>();
 }

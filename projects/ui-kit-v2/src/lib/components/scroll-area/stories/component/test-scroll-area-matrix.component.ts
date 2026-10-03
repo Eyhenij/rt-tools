@@ -7,7 +7,16 @@ import { RtScrollAreaComponent } from '../../rt-scroll-area.component';
 import { RtScrollAreaContentDirective, RtScrollAreaFooterDirective, RtScrollAreaHeaderDirective } from '../../rt-scroll-area.directives';
 
 /** Какую матрицу рисовать: у каждой оси свой показ, и выбирает его этот вход. */
-export type TScrollAreaMatrixPart = 'parts' | 'hint' | 'presets' | 'themes';
+export type TScrollAreaMatrixPart = 'parts' | 'hint' | 'properties' | 'presets' | 'themes';
+
+/**
+ * Свойства, которые приложение ставит на тег области. Инлайн-стиль — самое сильное правило на
+ * теге: если свойство не дошло и от него, его не достанет и правило приложения.
+ */
+interface IScrollAreaPropertiesCase {
+    readonly name: string;
+    readonly style: Readonly<Record<string, string>>;
+}
 
 /** Какие части объявлены: необъявленная не рисуется вовсе, и область меняет вид. */
 interface IScrollAreaPartsCase {
@@ -60,6 +69,32 @@ interface IScrollAreaHintCase {
                                                 <div class="app-scroll-area-matrix__total">Всего: {{ rows.length }}</div>
                                             </ng-template>
                                         }
+                                    </rt-scroll-area>
+                                </div>
+                            </ng-template>
+                        </app-story-row>
+                    </ng-template>
+                </app-story-presets>
+            }
+
+            @case ('properties') {
+                <app-story-presets caption="Отступы и фоны с тега области в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="propertiesCases" [itemLabel]="caseLabel" [slotWidth]="boxWidth">
+                            <ng-template let-propertiesCase>
+                                <div class="app-scroll-area-matrix__box">
+                                    <rt-scroll-area [style]="propertiesCase.style">
+                                        <ng-template rtScrollAreaHeader>
+                                            <div class="app-scroll-area-matrix__title">Заявки смены</div>
+                                        </ng-template>
+                                        <ng-template rtScrollAreaContent>
+                                            @for (row of rows; track row) {
+                                                <div class="app-scroll-area-matrix__row">{{ row }}</div>
+                                            }
+                                        </ng-template>
+                                        <ng-template rtScrollAreaFooter>
+                                            <div class="app-scroll-area-matrix__total">Всего: {{ rows.length }}</div>
+                                        </ng-template>
                                     </rt-scroll-area>
                                 </div>
                             </ng-template>
@@ -198,6 +233,22 @@ export class TestRtScrollAreaMatrixComponent {
         { name: 'снизу осталось', hint: true, short: false },
         { name: 'список влез', hint: true, short: true },
         { name: 'признак выключен', hint: false, short: false },
+    ];
+
+    /** Кит без свойств и область с плотными отступами и своими фонами частей. */
+    public readonly propertiesCases: readonly IScrollAreaPropertiesCase[] = [
+        { name: 'кит', style: {} },
+        {
+            name: 'свойства приложения',
+            style: {
+                '--rt-scroll-area-header-padding': 'var(--rt-space-4) var(--rt-space-2)',
+                '--rt-scroll-area-body-padding': 'var(--rt-space-2)',
+                '--rt-scroll-area-footer-padding': 'var(--rt-space-2)',
+                '--rt-scroll-area-bg': 'var(--rt-color-bg-surface)',
+                '--rt-scroll-area-header-bg': 'var(--rt-color-bg-subtle)',
+                '--rt-scroll-area-footer-bg': 'var(--rt-color-bg-subtle)',
+            },
+        },
     ];
 
     public readonly rows: readonly string[] = [

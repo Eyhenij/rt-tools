@@ -28,6 +28,9 @@ export const Radius: TStory = { args: { part: 'radius' } };
 
 export const Loading: TStory = { args: { part: 'loading' } };
 
+/** Спрятанная на время загрузки подпись держит ширину кнопки — SC-UKV-569. */
+export const LoadingLabel: TStory = { args: { part: 'loading-label' } };
+
 export const Disabled: TStory = { args: { part: 'disabled' } };
 
 /**

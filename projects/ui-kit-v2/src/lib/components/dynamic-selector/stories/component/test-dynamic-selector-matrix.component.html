@@ -135,6 +135,39 @@
         </app-story-presets>
     }
 
+    @case ('switches') {
+        <app-story-presets caption="Корзина, сброс и очистка, правки в строках в обоих наборах">
+            <ng-template>
+                <app-story-row [items]="switchesCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
+                    <ng-template let-switchesCase>
+                        <rt-dynamic-selector
+                            keyExp="id"
+                            displayExp="name"
+                            [ariaLabel]="switchesCase.name"
+                            [entities]="people"
+                            [removeShown]="switchesCase.removeShown"
+                            [listActionsShown]="switchesCase.listActionsShown"
+                            [extraChanged]="switchesCase.extraChanged"
+                            [formControl]="switchesCase.control" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('initial-query') {
+        <app-story-presets caption="Окно с начальным запросом в обоих наборах">
+            <ng-template>
+                <!-- Одно окно: случай один, а ширину половины ему задаёт ряд. -->
+                <app-story-row [items]="['начальный запрос «Ma»']" [slotWidth]="popupWidth">
+                    <ng-template>
+                        <rt-dynamic-selector-popup keyExp="id" displayExp="name" searchTerm="Ma" [entities]="initialQueryEntities" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
     @case ('presets') {
         <app-story-presets caption="Список и окно в обоих наборах">
             <ng-template>

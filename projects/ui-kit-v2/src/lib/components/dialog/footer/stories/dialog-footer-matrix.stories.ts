@@ -23,6 +23,8 @@ type TStory = StoryObj<TestRtDialogFooterMatrixComponent>;
 /** Содержимое футера: одна кнопка, пара, пара со статусной строкой, пустой футер. */
 export const Content: TStory = { args: { part: 'content' } };
 
+export const Align: TStory = { args: { part: 'align' } };
+
 export const Presets: TStory = { args: { part: 'presets' } };
 
 export const Themes: TStory = { args: { part: 'themes' } };
