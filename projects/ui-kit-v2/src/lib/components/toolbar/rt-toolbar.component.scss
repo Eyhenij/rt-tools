@@ -1,19 +1,29 @@
 @layer rt-kit.components {
     .rt-toolbar {
-        /* Отступ полосы сверху и снизу — свойства блока: обёртка переставляет их снаружи. */
+        /* Раскладка полосы — свойства блока: обёртка и приложение переставляют их снаружи.
+           Высота — наименьшая: полоса, стёкшая в колонку на узком экране, не обрезается. */
         --rt-toolbar-padding-top: var(--rt-space-2);
         --rt-toolbar-padding-bottom: var(--rt-space-2);
+        --rt-toolbar-padding-inline: 0;
+        --rt-toolbar-height: auto;
+        --rt-toolbar-border-bottom: none;
+        --rt-toolbar-gap: var(--rt-space-2);
+        --rt-toolbar-center-justify: flex-end;
+        --rt-toolbar-center-overflow: visible;
 
         display: block;
 
         &__bars {
             display: flex;
             width: 100%;
+            min-height: var(--rt-toolbar-height);
+            box-sizing: border-box;
             flex-direction: row;
             align-items: center;
             justify-content: space-between;
-            padding: var(--rt-toolbar-padding-top) 0 var(--rt-toolbar-padding-bottom);
-            gap: var(--rt-space-2);
+            padding: var(--rt-toolbar-padding-top) var(--rt-toolbar-padding-inline) var(--rt-toolbar-padding-bottom);
+            border-bottom: var(--rt-toolbar-border-bottom);
+            gap: var(--rt-toolbar-gap);
         }
 
         &__bar {
@@ -29,8 +39,9 @@
             }
 
             &--center {
+                overflow: var(--rt-toolbar-center-overflow);
                 flex: 1 1 auto;
-                justify-content: flex-end;
+                justify-content: var(--rt-toolbar-center-justify);
                 gap: var(--rt-space-2);
 
                 // Контрол-фильтр (поиск/селект) занимает ширину center и право-

@@ -35,6 +35,9 @@
     }
 
     rt-aside .rt-aside {
+        /* Точка отсчёта для слоя ожидания. Рамка и так занимает панель целиком, поэтому прочим
+           потомкам она ничего не меняет. */
+        position: relative;
         display: flex;
         width: var(--rt-aside-width, var(--rt-aside-width-md));
 
@@ -75,6 +78,7 @@
         &__error {
             min-width: 0;
             flex-shrink: 0;
+            margin-block: var(--rt-aside-error-margin-block, 0);
             padding-inline: var(--rt-aside-inset);
         }
 
@@ -87,10 +91,22 @@
             min-height: 0;
             flex: 1 1 auto;
             flex-direction: column;
-            padding: var(--rt-aside-inset);
+            padding: var(--rt-aside-content-inset, var(--rt-aside-inset));
             gap: var(--rt-aside-content-gap);
             overflow-y: auto;
             overscroll-behavior: contain;
+        }
+
+        /* Слой ожидания поверх всей панели: шапка, содержимое и футер под ним не нажимаются. Тот же
+           вид, что у слоя дозагрузки таблицы. */
+        &__pending {
+            position: absolute;
+            z-index: var(--rt-z-sticky);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: color-mix(in srgb, var(--rt-color-bg-surface) 60%, transparent);
+            inset: 0;
         }
 
         &--size--sm {

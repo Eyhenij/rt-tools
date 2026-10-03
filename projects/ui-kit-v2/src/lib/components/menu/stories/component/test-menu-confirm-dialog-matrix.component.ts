@@ -2,6 +2,8 @@ import { OverlayRef } from '@angular/cdk/overlay';
 import { NgComponentOutlet } from '@angular/common';
 import { inject, ChangeDetectionStrategy, Component, Injector, Type } from '@angular/core';
 
+import { NEVER, Observable } from 'rxjs';
+
 import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
@@ -24,7 +26,7 @@ interface IMenuConfirmCase {
  * поднято наложением. Настоящая ручка сносит наложение, которого нет.
  */
 function storyDialogRef(): RtDialogRef<boolean> {
-    return new RtDialogRef<boolean>({ dispose: (): void => undefined } as OverlayRef);
+    return new RtDialogRef<boolean>({ dispose: (): void => undefined, detachments: (): Observable<void> => NEVER } as OverlayRef);
 }
 
 /** Данные окна с умолчаниями: случаи матрицы отличаются одним-двумя полями, а не всем набором. */

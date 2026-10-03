@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
+import { RtInputComponent } from '../../../../input/rt-input.component';
 import { StoryRowComponent } from '../../../../../../showcase/story-row.component';
 import { StoryThemesComponent } from '../../../../../../showcase/story-themes.component';
 import { RtAsideHeaderComponent } from '../../rt-aside-header.component';
@@ -12,7 +13,7 @@ const TOUR_TITLE: string = 'Тур в Сочи';
 const REQUEST_OVERLINE: string = 'Заявка № 1024';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TAsideHeaderMatrixPart = 'heading' | 'badges' | 'states' | 'themes';
+export type TAsideHeaderMatrixPart = 'heading' | 'badges' | 'states' | 'row' | 'themes';
 
 /** Заголовок вместе с надзаголовком: порознь они не бывают — надзаголовок стоит над заголовком. */
 interface IAsideHeaderHeadingCase {
@@ -83,6 +84,22 @@ interface IAsideHeaderBadgeCase {
                 </app-story-row>
             }
 
+            @case ('row') {
+                <app-story-row caption="Строка под заголовком" [items]="rowCases" [itemLabel]="caseLabel" [slotWidth]="headerWidth">
+                    <ng-template let-rowCase>
+                        <rt-aside-header class="app-aside-header-matrix__header" title="Туристы" overline="Заявка № 1024">
+                            @if (rowCase.row) {
+                                <rt-input
+                                    asideHeaderContent
+                                    placeholder="Поиск по туристам"
+                                    ariaLabel="Поиск по туристам"
+                                    iconLeft="search" />
+                            }
+                        </rt-aside-header>
+                    </ng-template>
+                </app-story-row>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Шапка в обеих темах">
                     <ng-template>
@@ -105,6 +122,7 @@ interface IAsideHeaderBadgeCase {
     imports: [
         // components
         RtAsideHeaderComponent,
+        RtInputComponent,
 
         // showcase
         StoryRowComponent,
@@ -148,6 +166,12 @@ export class TestRtAsideHeaderMatrixComponent {
     public readonly loadingCases: readonly { readonly name: string; readonly loading: boolean }[] = [
         { name: 'загружено', loading: false },
         { name: 'загрузка', loading: true },
+    ];
+
+    /** Строка под заголовком: без неё шапка та же, что прежде, с ней поле встаёт на всю ширину. */
+    public readonly rowCases: readonly { readonly name: string; readonly row: boolean }[] = [
+        { name: 'без строки', row: false },
+        { name: 'со строкой', row: true },
     ];
 
     /** Подпись случая: у всех наборов этой матрицы имя лежит в одном поле. */

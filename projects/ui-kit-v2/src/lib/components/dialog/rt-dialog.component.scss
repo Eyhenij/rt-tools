@@ -3,7 +3,7 @@
 @layer rt-kit.components {
     /* rt-dialog — styled frame модалки поверх CDK Overlay.
        ViewEncapsulation.None — селекторы префиксованы `.rt-dialog`.
-       Видимость / backdrop / focus-trap обеспечивает CDK Overlay через RtDialogService. */
+       Видимость и подложку даёт CDK Overlay, ловушку и первый фокус — RtDialogService по флагам. */
 
     /* Хост адресуется по имени элемента, а не по классу блока: класс `.rt-dialog`
        висит и на `<rt-dialog>`, и на рамке внутри него, поэтому правила рамки
@@ -37,11 +37,17 @@
         max-height: 90dvh;
         flex-direction: column;
         padding: 0;
-        border: none;
+        border: var(--rt-dialog-border, none);
         border-radius: var(--rt-dialog-radius);
-        background: var(--rt-color-bg-surface);
+        background: var(--rt-dialog-bg, var(--rt-color-bg-surface));
         box-shadow: var(--rt-dialog-shadow);
         color: var(--rt-color-text-primary);
+
+        /* Рамку фокус берёт только по `autoFocus: 'dialog'` — как точку отсчёта для скринридера,
+           а не как элемент управления: кольцо вокруг всего окна читалось бы как выбор окна. */
+        &:focus {
+            outline: none;
+        }
 
         &--size--sm {
             width: var(--rt-dialog-width, var(--rt-dialog-width-sm));

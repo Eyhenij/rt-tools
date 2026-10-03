@@ -10,31 +10,46 @@
        (sm 30 / md 40 / lg 50px).
        Цвета — только семантические --rt-* токены. */
 
+    /* Свойства объявлены на хосте: правило приложения на теге переопределяет их, а ступени
+       размера — тоже правила хоста, по модификатору на нём самом.
+
+       Дорожка берёт приглушённую поверхность, а не ближайшую по светлоте ступень:
+       прежний код цвета стоял почти на уровне белого, а отличаться дорожка обязана
+       именно от активного сегмента, который белым и покрашен. Default size = sm. */
     rt-toggle-button-group {
-        display: inline-flex;
-
-        /* Локальные overridable custom properties — позволяют потребителю
-           подстроить trackовый bg без перекраски всей темы (см. dark override ниже).
-
-           Дорожка берёт приглушённую поверхность, а не ближайшую по светлоте ступень:
-           прежний код цвета стоял почти на уровне белого, а отличаться дорожка обязана
-           именно от активного сегмента, который белым и покрашен. */
         --rt-toggle-button-group-track-bg: var(--rt-color-bg-surface-subtle);
         --rt-toggle-button-group-active-bg: var(--rt-color-bg-surface);
+        --rt-toggle-button-group-height: 30px;
+        --rt-toggle-button-group-transition-duration: var(--rt-duration-fast);
+        --rt-toggle-button-group-focus-shadow: var(--rt-shadow-focus-ring);
+        --rt-toggle-button-group-track-padding: 4px;
+        --rt-toggle-button-group-track-radius: var(--rt-radius-md);
+        --rt-toggle-button-group-btn-padding: 0 8px;
+        --rt-toggle-button-group-btn-radius: var(--rt-radius-ms);
+        --rt-toggle-button-group-btn-gap: 4px;
+        --rt-toggle-button-group-btn-font-size: 12px;
+        --rt-toggle-button-group-btn-line-height: 14px;
+
+        display: inline-flex;
+
+        /* Размерные тиры — общая высота совпадает с rt-button (sm/md/lg). */
+        &.rt-toggle-button-group--md {
+            --rt-toggle-button-group-height: 40px;
+            --rt-toggle-button-group-btn-padding: 0 14px;
+            --rt-toggle-button-group-btn-gap: 6px;
+            --rt-toggle-button-group-btn-font-size: 14px;
+            --rt-toggle-button-group-btn-line-height: 16px;
+        }
+
+        &.rt-toggle-button-group--lg {
+            --rt-toggle-button-group-height: 50px;
+            --rt-toggle-button-group-btn-padding: 0 20px;
+            --rt-toggle-button-group-btn-gap: 8px;
+            --rt-toggle-button-group-btn-font-size: 16px;
+            --rt-toggle-button-group-btn-line-height: 18px;
+        }
 
         .rt-toggle-button-group {
-            /* Default size = sm. md/lg переопределяют ниже. */
-            --rt-toggle-button-group-height: 30px;
-            --rt-toggle-button-group-transition-duration: var(--rt-duration-fast);
-            --rt-toggle-button-group-focus-shadow: var(--rt-shadow-focus-ring);
-            --rt-toggle-button-group-track-padding: 4px;
-            --rt-toggle-button-group-track-radius: var(--rt-radius-md);
-            --rt-toggle-button-group-btn-padding: 0 8px;
-            --rt-toggle-button-group-btn-radius: var(--rt-radius-ms);
-            --rt-toggle-button-group-btn-gap: 4px;
-            --rt-toggle-button-group-btn-font-size: 12px;
-            --rt-toggle-button-group-btn-line-height: 14px;
-
             display: inline-flex;
             height: var(--rt-toggle-button-group-height);
             box-sizing: border-box;
@@ -97,30 +112,13 @@
                 flex-shrink: 0;
             }
 
-            /* Размерные тиры — общая высота совпадает с rt-button (sm/md/lg). */
-            &--md {
-                --rt-toggle-button-group-height: 40px;
-                --rt-toggle-button-group-btn-padding: 0 14px;
-                --rt-toggle-button-group-btn-gap: 6px;
-                --rt-toggle-button-group-btn-font-size: 14px;
-                --rt-toggle-button-group-btn-line-height: 16px;
-            }
-
-            &--lg {
-                --rt-toggle-button-group-height: 50px;
-                --rt-toggle-button-group-btn-padding: 0 20px;
-                --rt-toggle-button-group-btn-gap: 8px;
-                --rt-toggle-button-group-btn-font-size: 16px;
-                --rt-toggle-button-group-btn-line-height: 18px;
-            }
-
             &--disabled {
                 opacity: 0.5;
             }
         }
 
         /* Шаг входа `radius` переназначает скругление дорожки; сегменты держат своё. */
-        @include kv.radius-steps('--rt-toggle-button-group-track-radius', '> .rt-toggle-button-group');
+        @include kv.radius-steps('--rt-toggle-button-group-track-radius');
     }
 
     /* full-width: группа растягивается на контейнер, опции делят ширину поровну. */

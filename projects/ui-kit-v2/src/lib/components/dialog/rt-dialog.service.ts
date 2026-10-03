@@ -1,10 +1,11 @@
+import { FocusTrap, FocusTrapFactory } from '@angular/cdk/a11y';
 import { ComponentType, Overlay, OverlayRef } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
 import { DOCUMENT } from '@angular/common';
-import { inject, Injectable, Injector, Signal } from '@angular/core';
+import { afterNextRender, inject, Injectable, Injector, Signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-import { EMPTY, map, merge, mergeMap, Observable, Subject, takeUntil } from 'rxjs';
+import { EMPTY, map, merge, mergeMap, Observable, Subject, take, takeUntil } from 'rxjs';
 
 import { carryThemeScopeOfFocus, materialPresetClassesOfFocus } from '../../util/material-preset';
 import { RtDialogRef } from './rt-dialog-ref';
@@ -28,6 +29,30 @@ export interface IRtDialogConfig<TData = unknown> {
 
     /** Закрывать модалку по ESC. По дефолту `true`. */
     closeOnEscape?: boolean;
+
+    /** Держать Tab внутри модалки, пока она открыта. По дефолту `false` — как было. */
+    trapFocus?: boolean;
+
+    /** После закрытия вернуть фокус туда, где он стоял при открытии. По дефолту `false`. */
+    restoreFocus?: boolean;
+
+    /**
+     * Куда поставить фокус при открытии: `'dialog'` — на рамку окна, `'first-tabbable'` — на первый
+     * элемент, до которого доходит Tab. По дефолту `false` — фокус не трогается.
+     */
+    autoFocus?: TRtDialogAutoFocus;
+}
+
+/** Куда диалог ставит фокус при открытии; `false` — никуда. */
+export type TRtDialogAutoFocus = 'dialog' | 'first-tabbable' | false;
+
+/**
+ * Фокус одного открытия: ловушка ставится после того, как содержимое прикреплено, а вернуть
+ * фокус надо при уходе оверлея, поэтому поля пишутся по ходу открытия.
+ */
+interface IRtDialogFocusState {
+    trap: FocusTrap | null;
+    restoreTo: HTMLElement | null;
 }
 
 /**
@@ -43,6 +68,7 @@ interface IRtDialogOpenContext {
     };
     closeOnBackdropClick: boolean;
     closeOnEscape: boolean;
+    focus: IRtDialogFocusState;
 }
 
 /**
@@ -99,6 +125,7 @@ export class RtDialogService {
     readonly #overlay: Overlay = inject(Overlay);
     readonly #injector: Injector = inject(Injector);
     readonly #document: Document = inject(DOCUMENT);
+    readonly #focusTrapFactory: FocusTrapFactory = inject(FocusTrapFactory);
 
     readonly #openSource: Subject<IRtDialogOpenContext> = new Subject<IRtDialogOpenContext>();
 
@@ -141,7 +168,13 @@ export class RtDialogService {
                               })
                           )
                         : EMPTY;
-                    return merge(backdropClose$, escapeClose$).pipe(takeUntil(openContext.overlayRef.detachments()));
+                    // Уход оверлея снимает ловушку фокуса и возвращает фокус. Отдельно от закрывающих
+                    // потоков: те обрываются тем же уходом и до него не доживают.
+                    const releaseFocus$: Observable<() => void> = openContext.overlayRef.detachments().pipe(
+                        take(1),
+                        map((): (() => void) => (): void => this.#releaseFocus(openContext.focus))
+                    );
+                    return merge(merge(backdropClose$, escapeClose$).pipe(takeUntil(openContext.overlayRef.detachments())), releaseFocus$);
                 }),
                 takeUntilDestroyed()
             )
@@ -164,12 +197,17 @@ export class RtDialogService {
         carryThemeScopeOfFocus(overlayRef.overlayElement, this.#document);
 
         const dialogRef: RtDialogRef<TResult> = new RtDialogRef<TResult>(overlayRef);
+        const focus: IRtDialogFocusState = {
+            trap: null,
+            restoreTo: config?.restoreFocus === true ? this.#focusedElement() : null,
+        };
 
         // Сами close-подписки объявлены один раз в конструкторе — здесь только
         // эмит контекста открытия (см. #openSource-стрим).
         this.#openSource.next({
             overlayRef,
             dialogRef,
+            focus,
             closeOnBackdropClick: config?.closeOnBackdropClick !== false,
             closeOnEscape: config?.closeOnEscape !== false,
         });
@@ -184,7 +222,60 @@ export class RtDialogService {
 
         const portal: ComponentPortal<TComponent> = new ComponentPortal<TComponent>(component, null, injector);
         overlayRef.attach(portal);
+        this.#holdFocus(overlayRef.overlayElement, focus, config?.trapFocus === true, config?.autoFocus ?? false);
 
         return dialogRef;
+    }
+
+    /**
+     * Ловушка и первый фокус ставятся после отрисовки содержимого: до неё в оверлее нет ни рамки,
+     * ни кнопок, и ловушке не на что опереться.
+     */
+    #holdFocus(pane: HTMLElement, focus: IRtDialogFocusState, trapFocus: boolean, autoFocus: TRtDialogAutoFocus): void {
+        if (!trapFocus && autoFocus === false) {
+            return;
+        }
+        afterNextRender(
+            (): void => {
+                if (trapFocus) {
+                    focus.trap = this.#focusTrapFactory.create(pane);
+                }
+                switch (autoFocus) {
+                    case 'dialog':
+                        pane.querySelector<HTMLElement>('[role="dialog"]')?.focus();
+                        break;
+                    case 'first-tabbable':
+                        this.#focusFirstTabbable(pane, focus.trap);
+                        break;
+                    default:
+                        break;
+                }
+            },
+            { injector: this.#injector }
+        );
+    }
+
+    /** Без ловушки первый элемент ищет временная ловушка: обход по Tab у неё уже есть. */
+    #focusFirstTabbable(pane: HTMLElement, trap: FocusTrap | null): void {
+        if (trap) {
+            trap.focusFirstTabbableElement();
+            return;
+        }
+        const lookup: FocusTrap = this.#focusTrapFactory.create(pane);
+        lookup.focusFirstTabbableElement();
+        lookup.destroy();
+    }
+
+    #releaseFocus(focus: IRtDialogFocusState): void {
+        focus.trap?.destroy();
+        focus.trap = null;
+        if (focus.restoreTo?.isConnected) {
+            focus.restoreTo.focus();
+        }
+    }
+
+    #focusedElement(): HTMLElement | null {
+        const active: Element | null = this.#document.activeElement;
+        return active instanceof HTMLElement && active !== this.#document.body ? active : null;
     }
 }

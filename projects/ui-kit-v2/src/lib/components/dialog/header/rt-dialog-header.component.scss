@@ -13,18 +13,36 @@
     rt-dialog-header {
         display: contents;
 
+        /* Свойства читаются с запасным значением на месте: окно живёт в оверлее, и приложение
+           задаёт их на корне страницы. Разделитель кита лежит в частном `-default` — проверка
+           токенов не пускает шаг толщины рамки запасным значением напрямую. */
         .rt-dialog-header {
+            --rt-dialog-header-border-default: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
+
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: var(--rt-space-lg);
-            border-block-end: 1px solid var(--rt-color-border-subtle);
+            padding: var(--rt-dialog-header-padding, var(--rt-space-lg));
+            border-block-end: var(--rt-dialog-header-border, var(--rt-dialog-header-border-default));
             gap: var(--rt-space-sm);
+
+            /* Место перед заголовком: пустое ничего не занимает и не добавляет промежутка. */
+            &__lead {
+                display: inline-flex;
+                flex-shrink: 0;
+                align-items: center;
+
+                &:empty {
+                    display: none;
+                }
+            }
 
             &__title {
                 margin: 0;
                 color: var(--rt-color-text-primary);
-                font-size: var(--rt-text-xl);
+                font-size: var(--rt-dialog-title-font-size, var(--rt-text-xl));
+                font-weight: var(--rt-dialog-title-weight, var(--rt-font-weight-bold));
+                text-transform: var(--rt-dialog-title-transform, none);
             }
 
             &__close {

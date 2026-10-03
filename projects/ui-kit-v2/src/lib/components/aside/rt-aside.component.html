@@ -1,10 +1,12 @@
 <div
+    #frame
     rtBlock="rt-aside"
     qa-dataid="aside"
     role="complementary"
     [rtMod]="{ size: size(), content: contentLayout() }"
     [style.--rt-aside-width]="width()"
-    [attr.aria-label]="ariaLabel()">
+    [attr.aria-label]="ariaLabel()"
+    [attr.aria-busy]="pending() || null">
     <ng-content select="rt-aside-header" />
 
     @if (hasRequestError()) {
@@ -16,4 +18,10 @@
     </div>
 
     <ng-content select="rt-aside-footer" />
+
+    @if (pending()) {
+        <div rtElem="pending" qa-dataid="aside-pending">
+            <rt-spinner />
+        </div>
+    }
 </div>

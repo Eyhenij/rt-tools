@@ -27,6 +27,9 @@ const BEM_BLOCK: string = 'rt-dialog-header';
  * (внутри inline `<rt-dialog [visible]>`) `RtDialogRef` не зарегистрирован — клик
  * по close-кнопке эмитит output `(closeAction)`, который должен повесить родитель.
  *
+ * Перед заголовком — место для значка или другого элемента: узел с атрибутом
+ * `rtDialogHeaderLead` проецируется туда. Пустое место ничего не занимает.
+ *
  * `ViewEncapsulation.None` — для единообразия с rt-dialog (стили префиксованы `.rt-dialog-header`).
  *
  * @example
