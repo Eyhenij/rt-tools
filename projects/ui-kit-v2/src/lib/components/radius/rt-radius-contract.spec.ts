@@ -259,6 +259,20 @@ function styleFiles(dir: string): string[] {
 }
 
 /**
+ * Ссылки на свойства вырезаются изнутри наружу: запасное значение ссылки — само ссылка, когда
+ * часть живёт в оверлее и читает свойство приложения поверх своего умолчания.
+ */
+function withoutReferences(value: string): string {
+    let rest: string = value;
+    let previous: string = '';
+    while (rest !== previous) {
+        previous = rest;
+        rest = rest.replace(/var\([^()]*\)/g, '');
+    }
+    return rest;
+}
+
+/**
  * Значения скругления вне шкалы. Ссылки на свойства вырезаются, и от значения должны остаться
  * только нули — либо значение целиком наследуется.
  */
@@ -270,7 +284,7 @@ function offScale(css: string): string[] {
             if (value === 'inherit') {
                 return false;
             }
-            return !/^[0\s]*$/.test(value.replace(/var\([^()]*\)/g, ''));
+            return !/^[0\s]*$/.test(withoutReferences(value));
         })
         .map((m: RegExpMatchArray): string => `${m[1]}: ${m[2].trim()}`);
 }
@@ -302,5 +316,6 @@ describe('контракт входа radius', (): void => {
     it('SC-UKV-390 — литерал вне шкалы проверкой замечен, ссылки и нули — нет', (): void => {
         expect(offScale('.x { border-radius: 12px; --rt-x-radius: 999px; }')).toHaveLength(2);
         expect(offScale('.x { border-radius: var(--rt-a) var(--rt-a) 0 0; border-radius: inherit; }')).toEqual([]);
+        expect(offScale('.x { border-radius: var(--rt-a, var(--rt-b)); }')).toEqual([]);
     });
 });
