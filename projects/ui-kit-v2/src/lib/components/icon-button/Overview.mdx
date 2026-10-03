@@ -17,6 +17,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 - Действие, для которого нет места под подпись: панель инструментов, строка таблицы, угол
   карточки.
 - Кнопка-переключатель — тогда `active` превращается в `aria-pressed`.
+- Рисунок не из набора кита — `[icon]="null"` и рисунок внутри кнопки, история `Content`.
 
 ## Когда не применять
 
@@ -87,24 +88,24 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Входы
 
-| вход        | тип                                                                         | умолчание                   |
-| ----------- | --------------------------------------------------------------------------- | --------------------------- |
-| `icon`      | `IRtIcon.Name \| null` — нужен он или `glyph`; побеждает `glyph`            | `null`                      |
-| `glyph`     | `string \| null` — имя Material, рисуется как `glyph` у `rt-icon`           | `null`                      |
-| `ariaLabel` | `string`                                                                    | **обязателен**              |
-| `variant`   | `'primary' \| 'secondary' \| 'ghost' \| 'danger' \| 'success' \| 'warning'` | `'ghost'`                   |
-| `size`      | `'2xs' \| 'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| '2xl'`                    | `'md'`                      |
-| `iconSize`  | `IRtIcon.Size \| null`                                                      | `null` → от размера кнопки  |
-| `iconColor` | `IRtIcon.Color`                                                             | `'current'`                 |
-| `iconFill`  | `boolean`                                                                   | `false`                     |
-| `radius`    | `TRtRadius \| null` — шаг общей шкалы                                       | `null` → `md`               |
-| `type`      | `'button' \| 'submit'`                                                      | `'button'`                  |
-| `tooltip`   | `string`                                                                    | `''` — пусто, подсказки нет |
-| `tabIndex`  | `number`                                                                    | `0`                         |
-| `loading`   | `boolean`                                                                   | `false`                     |
-| `disabled`  | `boolean`                                                                   | `false`                     |
-| `active`    | `boolean`                                                                   | `false`                     |
-| `indicator` | `boolean`                                                                   | `false`                     |
+| вход        | тип                                                                                 | умолчание                   |
+| ----------- | ----------------------------------------------------------------------------------- | --------------------------- |
+| `icon`      | `IRtIcon.Name \| null` — нужен он или `glyph`; побеждает имя; без обоих — вложенное | `null`                      |
+| `glyph`     | `string \| null` — имя Material, рисуется как `glyph` у `rt-icon`                   | `null`                      |
+| `ariaLabel` | `string`                                                                            | **обязателен**              |
+| `variant`   | `'primary' \| 'secondary' \| 'ghost' \| 'danger' \| 'success' \| 'warning'`         | `'ghost'`                   |
+| `size`      | `'2xs' \| 'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| '2xl'`                            | `'md'`                      |
+| `iconSize`  | `IRtIcon.Size \| null`                                                              | `null` → от размера кнопки  |
+| `iconColor` | `IRtIcon.Color`                                                                     | `'current'`                 |
+| `iconFill`  | `boolean`                                                                           | `false`                     |
+| `radius`    | `TRtRadius \| null` — шаг общей шкалы                                               | `null` → `md`               |
+| `type`      | `'button' \| 'submit'`                                                              | `'button'`                  |
+| `tooltip`   | `string`                                                                            | `''` — пусто, подсказки нет |
+| `tabIndex`  | `number`                                                                            | `0`                         |
+| `loading`   | `boolean`                                                                           | `false`                     |
+| `disabled`  | `boolean`                                                                           | `false`                     |
+| `active`    | `boolean`                                                                           | `false`                     |
+| `indicator` | `boolean`                                                                           | `false`                     |
 
 ## Выходы
 

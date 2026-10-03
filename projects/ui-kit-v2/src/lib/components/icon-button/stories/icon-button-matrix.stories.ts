@@ -30,6 +30,9 @@ export const Radius: TStory = { args: { part: 'radius' } };
 
 export const Flags: TStory = { args: { part: 'flags' } };
 
+/** `icon = null`: кнопка показывает вложенный рисунок, которого нет в наборе кита. */
+export const Content: TStory = { args: { part: 'content' } };
+
 /**
  * Признак ставится на хост, а стилизована `<button>` внутри шаблона — поэтому аддону
  * псевдосостояний передан спуск до неё.

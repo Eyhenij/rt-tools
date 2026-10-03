@@ -13,8 +13,10 @@
     (click)="onClick($event)">
     @if (loading()) {
         <rt-icon rtElem="spinner" name="spinner" color="current" [size]="resolvedIconSize()" />
-    } @else {
+    } @else if (icon() || glyph()) {
         <rt-icon rtElem="icon" [color]="iconColor()" [name]="icon()" [glyph]="glyph()" [size]="resolvedIconSize()" [fill]="iconFill()" />
+    } @else {
+        <span rtElem="content" qa-dataid="icon-button-content"><ng-content /></span>
     }
     @if (indicator()) {
         <span rtElem="indicator" aria-hidden="true"></span>

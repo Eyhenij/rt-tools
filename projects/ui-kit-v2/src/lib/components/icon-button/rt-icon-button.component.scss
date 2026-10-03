@@ -189,6 +189,15 @@
                 outline-offset: 2px;
             }
 
+            /* Своё содержимое вместо значка по имени: встаёт по центру и берёт цвет кнопки. */
+            &__content {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                color: inherit;
+                line-height: 1;
+            }
+
             &__spinner {
                 --rt-icon-button-spin-duration: 1s;
 

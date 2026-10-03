@@ -24,7 +24,7 @@ import { TestRtSideMenuNarrowCellComponent } from './test-side-menu-narrow-cell.
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
 export type TSideMenuMatrixPart =
-    'modes' | 'search' | 'folders' | 'favorites' | 'states' | 'narrow' | 'edges' | 'icons' | 'presets' | 'themes';
+    'modes' | 'search' | 'folders' | 'favorites' | 'states' | 'narrow' | 'edges' | 'icons' | 'switches' | 'presets' | 'themes';
 
 /** Случай ячейки: подпись и то, до чего ячейка доводит меню. */
 export interface ISideMenuCase {
@@ -39,6 +39,7 @@ export interface ISideMenuCase {
     readonly menuId?: string;
     readonly favoritesCount?: IRtSideMenu.FavoritesCount;
     readonly ownIcon?: boolean;
+    readonly pinShown?: boolean;
 }
 
 /**
@@ -125,6 +126,12 @@ export class TestRtSideMenuMatrixComponent {
             mode: 'pinned',
             ownIcon: true,
         },
+    ];
+
+    /** Меню без кнопки закрепления: подменю над страницей и подменю, закреплённое входом. */
+    public readonly switches: readonly ISideMenuCase[] = [
+        { name: 'без закрепления: подменю над страницей', activeIds: [1, 2], openId: 1, pinShown: false },
+        { name: 'без закрепления, закреплено входом', activeIds: [1, 2], mode: 'pinned', pinShown: false },
     ];
 
     public readonly narrows: readonly ISideMenuCase[] = [

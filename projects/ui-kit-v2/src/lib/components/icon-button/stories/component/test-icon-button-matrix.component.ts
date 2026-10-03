@@ -11,7 +11,8 @@ import { RtIconButtonComponent } from '../../rt-icon-button.component';
 import { IRtIconButton } from '../../rt-icon-button.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TIconButtonMatrixPart = 'variant' | 'size' | 'iconSize' | 'hostRule' | 'radius' | 'flags' | 'states' | 'presets' | 'themes';
+export type TIconButtonMatrixPart =
+    'variant' | 'size' | 'iconSize' | 'hostRule' | 'radius' | 'flags' | 'content' | 'states' | 'presets' | 'themes';
 
 /** Случай признака: какой из булевых входов включён и как он называется словами. */
 interface IIconButtonFlagCase {
@@ -113,6 +114,30 @@ interface IIconButtonFlagCase {
                                     [disabled]="flagCase.disabled"
                                     [active]="flagCase.active"
                                     [indicator]="flagCase.indicator" />
+                            </ng-template>
+                        </app-story-grid>
+                    </ng-template>
+                </app-story-presets>
+            }
+
+            <!-- Вложенное вместо значка: свой рисунок встаёт в ту же кнопку, с тем же размером и
+                 цветом палитры. Рядом — значок кита той же кнопки, чтобы размеры сравнивались в кадре. -->
+            @case ('content') {
+                <app-story-presets caption="Палитра × значок кита или вложенное в обоих наборах">
+                    <ng-template>
+                        <app-story-grid [rows]="variants" [columns]="contentCases" [columnLabel]="contentCaseLabel">
+                            <ng-template let-variant let-own="col">
+                                @if (own) {
+                                    <rt-icon-button [icon]="null" [ariaLabel]="variant" [variant]="variant">
+                                        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                                            <path
+                                                fill="currentColor"
+                                                d="M3 3h8v8H3zm2 2v4h4V5zm8-2h8v8h-8zm2 2v4h4V5zM3 13h8v8H3zm2 2v4h4v-4zm8-2h2v2h-2zm4 0h4v2h-4zm-4 4h4v4h-4zm6 2h2v2h-2z" />
+                                        </svg>
+                                    </rt-icon-button>
+                                } @else {
+                                    <rt-icon-button icon="pencil" [ariaLabel]="variant" [variant]="variant" />
+                                }
                             </ng-template>
                         </app-story-grid>
                     </ng-template>
@@ -222,6 +247,11 @@ export class TestRtIconButtonMatrixComponent {
         { name: 'загрузка', loading: true, disabled: false, active: false, indicator: false },
         { name: 'отключена', loading: false, disabled: true, active: false, indicator: false },
     ];
+
+    /** `false` — значок кита, `true` — своё содержимое при `icon = null`. */
+    public readonly contentCases: readonly boolean[] = [false, true];
+
+    public readonly contentCaseLabel: (value: boolean) => string = (value: boolean): string => (value ? 'вложенное' : 'значок кита');
 
     public readonly iconSizeLabel: (value: IRtIcon.Size | null) => string = (value: IRtIcon.Size | null): string =>
         value === null ? 'от кнопки' : value;

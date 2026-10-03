@@ -4,20 +4,20 @@
 <rt-icon-button icon="ico-trash" ariaLabel="Удалить" variant="danger" size="md" (clicked)="remove()" />
 ```
 
-| вход                                            | тип                                                                         | умолчание                    |
-| ----------------------------------------------- | --------------------------------------------------------------------------- | ---------------------------- |
-| `icon`                                          | `IRtIcon.Name \| null` — нужен он или `glyph`                               | `null`                       |
-| `glyph`                                         | `string \| null` — имя Material, как `glyph` у `rt-icon`                    | `null`                       |
-| `ariaLabel`                                     | `string`                                                                    | **обязателен**               |
-| `variant`                                       | `'primary' \| 'secondary' \| 'ghost' \| 'danger' \| 'success' \| 'warning'` | `'ghost'`                    |
-| `size`                                          | `'2xs' \| 'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| '2xl'`                    | `'md'`                       |
-| `iconSize`                                      | `IRtIcon.Size \| null`                                                      | `null` → от размера кнопки   |
-| `iconColor`                                     | `IRtIcon.Color`                                                             | `'current'`                  |
-| `radius`                                        | `TRtRadius \| null` — шаг общей шкалы                                       | `null` → `md`                |
-| `type`                                          | `'button' \| 'submit'`                                                      | `'button'`                   |
-| `tooltip`                                       | `string`                                                                    | `''` (пусто → подсказки нет) |
-| `tabIndex`                                      | `number`                                                                    | `0`                          |
-| `loading` / `disabled` / `active` / `indicator` | `boolean`                                                                   | `false`                      |
+| вход                                            | тип                                                                           | умолчание                    |
+| ----------------------------------------------- | ----------------------------------------------------------------------------- | ---------------------------- |
+| `icon`                                          | `IRtIcon.Name \| null` — нужен он или `glyph`; без обоих показывает вложенное | `null`                       |
+| `glyph`                                         | `string \| null` — имя Material, как `glyph` у `rt-icon`                      | `null`                       |
+| `ariaLabel`                                     | `string`                                                                      | **обязателен**               |
+| `variant`                                       | `'primary' \| 'secondary' \| 'ghost' \| 'danger' \| 'success' \| 'warning'`   | `'ghost'`                    |
+| `size`                                          | `'2xs' \| 'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| '2xl'`                      | `'md'`                       |
+| `iconSize`                                      | `IRtIcon.Size \| null`                                                        | `null` → от размера кнопки   |
+| `iconColor`                                     | `IRtIcon.Color`                                                               | `'current'`                  |
+| `radius`                                        | `TRtRadius \| null` — шаг общей шкалы                                         | `null` → `md`                |
+| `type`                                          | `'button' \| 'submit'`                                                        | `'button'`                   |
+| `tooltip`                                       | `string`                                                                      | `''` (пусто → подсказки нет) |
+| `tabIndex`                                      | `number`                                                                      | `0`                          |
+| `loading` / `disabled` / `active` / `indicator` | `boolean`                                                                     | `false`                      |
 
 | выход     | тип          |
 | --------- | ------------ |
@@ -27,6 +27,10 @@
 
 **`ariaLabel` обязателен.** У кнопки нет текста, и без подписи она для скринридера безымянна.
 Это единственная причина, по которой вход помечен `required`.
+
+**Нет ни `icon`, ни `glyph` — кнопка показывает вложенное.** Так в кнопку кита встаёт рисунок,
+которого нет в наборе: размер, форма и состояния остаются кнопочными. Со значком вложенное не
+рисуется.
 
 **Кнопку компонент рисует внутри себя**, host остаётся обычным элементом. Модификаторы размера и
 вида пишут частные шаги `--rt-icon-button-size-step` и `--rt-icon-button-bg-variant`, а кнопка

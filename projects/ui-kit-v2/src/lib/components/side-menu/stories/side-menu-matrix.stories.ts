@@ -69,9 +69,16 @@ export const Edges: TStory = { args: { part: 'edges' } };
 /**
  * Значки вне набора: имена Material первого кита как есть. Имя с парой рисуется значком кита, имя без
  * пары без своего шаблона стоит пустым местом, а со своим шаблоном `rtSideMenuIcon` — значком
- * приложения.
+ * приложения; так же и у кнопки строки «Запуски».
  */
 export const Icons: TStory = { args: { part: 'icons' } };
+
+/**
+ * `pinShown="false"`: в шапке подменю нет кнопки закрепления, а режим, заданный входом, по-прежнему
+ * закрепляет. Второй переключатель, `subMenuTooltipsShown`, в кадре не виден: подсказка появляется
+ * только под указателем, а снимок его не держит — его проверяет тест SC-UKV-621.
+ */
+export const Switches: TStory = { args: { part: 'switches' } };
 
 export const Presets: TStory = { args: { part: 'presets' } };
 

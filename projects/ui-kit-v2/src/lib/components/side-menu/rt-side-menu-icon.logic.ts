@@ -18,8 +18,8 @@ export function sideMenuIconName(icon: string | undefined): IRtIcon.Name | null 
 }
 
 /**
- * Имена значков меню, о которых оно должно предупредить: ни имени кита, ни пары в перечне. Значок
- * пункта закрывает свой шаблон меню; значок кнопки строки шаблона не берёт и предупреждает всегда.
+ * Имена значков меню, о которых оно должно предупредить: ни имени кита, ни пары в перечне. И значок
+ * пункта, и значок кнопки строки закрывает свой шаблон меню.
  * Без предупреждения такой значок пуст, и пропуск не заметен. Обходит пункты на любую глубину;
  * каждое имя — один раз.
  */
@@ -30,8 +30,7 @@ export function unpairedSideMenuIcons(items: ReadonlyArray<IRtSideMenu.Item>, ha
             if (!hasOwnIcon && item.icon && sideMenuIconName(item.icon) === null) {
                 found.add(item.icon);
             }
-            // Кнопка строки своего шаблона не берёт: имя без значка кита оставляет её пустой при любом меню.
-            if (item.iconButton?.icon && sideMenuIconName(item.iconButton.icon) === null) {
+            if (!hasOwnIcon && item.iconButton?.icon && sideMenuIconName(item.iconButton.icon) === null) {
                 found.add(item.iconButton.icon);
             }
             walk(item.submenu ?? []);

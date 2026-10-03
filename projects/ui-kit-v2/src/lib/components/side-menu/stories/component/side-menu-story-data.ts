@@ -121,7 +121,8 @@ export const SIDE_MENU_STORY_DEEP_ACTIVE: ReadonlyArray<string | number> = [24, 
 /**
  * Меню с именами значков Material первого кита как есть — проверка значков вне набора. Имена с
  * парой в перечне кита рисуются значками кита, «Папка» — именем кита. «Запуски» несут имя, которого
- * в ките нет: без своего шаблона на его месте пусто, со своим — значок приложения.
+ * в ките нет, и у пункта, и у кнопки строки: без своего шаблона на их месте пусто, со своим —
+ * значок приложения.
  */
 export const SIDE_MENU_ICONS_STORY_ITEMS: readonly IRtSideMenu.Item[] = [
     {
@@ -132,7 +133,7 @@ export const SIDE_MENU_ICONS_STORY_ITEMS: readonly IRtSideMenu.Item[] = [
             { id: 511, icon: 'insert_chart', name: 'Отчёты', link: '/reports', iconButton: { icon: 'arrow_forward' } },
             { id: 512, icon: 'dashboard', name: 'Дашборды', link: '/dashboards', iconButton: { icon: 'add' } },
             { id: 513, icon: 'monitoring', name: 'Мониторинг', link: '/monitoring' },
-            { id: 516, icon: 'rocket_launch', name: 'Запуски', link: '/launches' },
+            { id: 516, icon: 'rocket_launch', name: 'Запуски', link: '/launches', iconButton: { icon: 'rocket_launch' } },
             { id: 514, icon: 'folder', name: 'Папка', submenu: [{ id: 515, name: 'Вложенный отчёт', link: '/reports/nested' }] },
         ],
     },

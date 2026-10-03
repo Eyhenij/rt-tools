@@ -40,8 +40,9 @@ describe('rt-side-menu — о каких значках предупредить
         expect(unpairedSideMenuIcons(items, false)).toEqual(['rocket_launch', 'stadia_controller', 'qr_code_scanner']);
     });
 
-    it('SC-UKV-533 — свой шаблон закрывает пункты, но не кнопку строки', (): void => {
-        expect(unpairedSideMenuIcons(items, true)).toEqual(['qr_code_scanner']);
+    it('SC-UKV-533 — свой шаблон закрывает и пункты, и кнопку строки', (): void => {
+        expect(unpairedSideMenuIcons(items, false)).toContain('qr_code_scanner');
+        expect(unpairedSideMenuIcons(items, true)).toEqual([]);
     });
 
     it('SC-UKV-533 — меню, где кит рисует всё, предупреждать не о чем', (): void => {
