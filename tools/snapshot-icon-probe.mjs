@@ -31,7 +31,7 @@ import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { openStory } from './showcase-probe.mjs';
+import { loadChromium, openStory } from './showcase-probe.mjs';
 
 /** The story the former wait did not see: zero icon hosts and seven drawn icons. */
 const STORY = 'molecules-forms-splitbutton--states';
@@ -69,30 +69,6 @@ const RUNNER = 'projects/ui-kit-v2/.storybook/test-runner.ts';
 const ROOT_SELECTOR = '[data-story-root]';
 
 const digest = (buffer) => createHash('sha1').update(buffer).digest('hex').slice(0, 12);
-
-/**
- * The browser driver arrives as a dependency of the snapshot runner rather than by the tree's manifest.
- *
- * pnpm's strict layout does not put it into the root `node_modules`, so an import by name finds
- * nothing here. The second road is pnpm's shared links directory, where the transitive is put. The
- * technique is repeated from the first showcase's drawing probe: the tree's checks have no shared module.
- */
-async function loadChromium() {
-    const candidates = ['playwright', join(process.cwd(), 'node_modules/.pnpm/node_modules/playwright/index.mjs')];
-
-    for (const candidate of candidates) {
-        try {
-            return (await import(candidate)).chromium;
-        } catch {
-            // The next path.
-        }
-    }
-
-    console.error(
-        '\n  The browser driver is found neither by name nor in the pnpm links directory. Install the dependencies: pnpm install\n'
-    );
-    process.exit(1);
-}
 
 /**
  * It removes the explanations from the source, leaving the code alone.

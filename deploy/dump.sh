@@ -102,8 +102,9 @@ probe() {
     docker run -d --name "${name}" \
         -e POSTGRES_USER="${POSTGRES_USER}" -e POSTGRES_PASSWORD="${POSTGRES_PASSWORD}" \
         -e POSTGRES_DB="${POSTGRES_DB}" "${image}" >/dev/null
+    # Готовность по TCP: сервер начальной настройки слушает только сокет и перезапускается.
     for _ in $(seq 1 30); do
-        docker exec "${name}" pg_isready -U "${POSTGRES_USER}" -d "${POSTGRES_DB}" >/dev/null 2>&1 && break
+        docker exec "${name}" pg_isready -h 127.0.0.1 -U "${POSTGRES_USER}" -d "${POSTGRES_DB}" >/dev/null 2>&1 && break
         sleep 1
     done
     # Те же ключи, что у боевой загрузки: проба проверяет тот путь, которым пойдёт `load`.
