@@ -1,0 +1,19 @@
+# What it is carried out by — the Material names of an icon
+
+The first column is the rule of the spec next to it verbatim. The second is where it is carried out
+in the tree; the scenario it is checked by is named there too, and what exactly every scenario is
+covered by is said in `scenarios.md`.
+
+A rule without a line and a line without a rule is a divergence: the spec promises what is not in the
+tree, or the tree holds what the spec is silent about.
+
+- **An icon is named by a kit name or by a glyph, and the kit name wins when both are given.** — `projects/ui-kit-v2/src/lib/components/icon/rt-icon-glyph.logic.ts:resolveIconGlyph` — the kit name is returned before the glyph is looked at; scenarios `SC-UKV-540`, `SC-UKV-545`
+- **By the strategy `map-first` a glyph draws its pair, and without a pair the ligature.** — `projects/ui-kit-v2/src/lib/components/icon/rt-icon-glyph.logic.ts:materialPairOf` — the pair is taken from the table of Material pairs; scenarios `SC-UKV-541`, `SC-UKV-543`
+- **By the strategy `font` a glyph always draws the ligature.** — `projects/ui-kit-v2/src/lib/components/icon/rt-icon-glyph.logic.ts:resolveIconGlyph` — the pair is looked for only under `map-first`; scenarios `SC-UKV-542`, `SC-UKV-546`
+- **The strategy is set for the application by the third argument of `provideRtIcons`, and `map-first` is the default.** — `projects/ui-kit-v2/src/lib/components/icon/rt-icon.providers.ts:provideRtIcons`, `projects/ui-kit-v2/src/lib/components/icon/rt-icon-font.service.ts:RT_ICON_GLYPH_STRATEGY`; scenarios `SC-UKV-549`, `SC-UKV-550`
+- **The ligature is hidden until the page's fonts are ready, and the kit ships no font.** — `projects/ui-kit-v2/src/lib/components/icon/rt-icon-font.service.ts:RtIconFontService` — one readiness of the page's fonts for every icon; scenarios `SC-UKV-547`, `SC-UKV-548`
+- **An icon spins on request, and slower when the system asks for less motion.** — `projects/ui-kit-v2/src/lib/components/icon/rt-icon.component.ts:spin` — the spin modifier on the host. The slower spin is a style rule next to it; scenario `SC-UKV-551`
+- **The size of an icon takes pixels as well as a step.** — `projects/ui-kit-v2/src/lib/components/icon/rt-icon.component.ts:toSizePx` — a step is turned into pixels on write; scenario `SC-UKV-552`
+- **Under the material preset a button asks for the material drawing of its icon, as the icon does.** — `projects/ui-kit-v2/src/lib/components/button/rt-button.directive.ts:#drawingOf` — the preset sign is read from the markup above the button; scenario `SC-UKV-553`
+- **The icon button, the toggle button group, the split button and the empty state take a glyph next to their kit name.** — `projects/ui-kit-v2/src/lib/components/icon-button/rt-icon-button.component.ts:glyph`, `projects/ui-kit-v2/src/lib/components/empty-state/rt-empty-state.component.ts:glyph`, `projects/ui-kit-v2/src/lib/components/toggle-button-group/rt-toggle-button-group.model.ts:glyph`, `projects/ui-kit-v2/src/lib/components/button/rt-button.directive.ts:#createGlyph`. The split button draws its items through the button. Scenarios `SC-UKV-554` to `SC-UKV-559`
+- **Without a glyph, a spin and a size in pixels every icon draws as before.** — `projects/ui-kit-v2/src/lib/components/icon/rt-icon.component.ts:RtIconComponent` — the new inputs default to the former behaviour. The former icon specs run unchanged in `rt-icon.component.spec.ts`

@@ -28,6 +28,7 @@
     "--rt-dialog-content-padding": "the padding of the dialog content part; without it the part takes --rt-space-lg",
     "--rt-dialog-content-max-height": "the height cap of the dialog content part; without it the part has none and the frame cap of 90dvh holds",
     "--rt-dialog-footer-padding": "the padding of the dialog footer; without it the footer takes --rt-space-lg",
-    "--rt-dialog-footer-border": "the line over the dialog footer, a whole border value; without it the kit draws a thin subtle line"
+    "--rt-dialog-footer-border": "the line over the dialog footer, a whole border value; without it the kit draws a thin subtle line",
+    "--rt-icon-glyph-font": "the font family of an icon's Material ligature; the application connects the font itself, and until it names a family the kit takes 'Material Symbols Outlined'"
   }
 }

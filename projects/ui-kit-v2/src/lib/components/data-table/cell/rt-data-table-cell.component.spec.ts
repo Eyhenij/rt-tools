@@ -119,7 +119,7 @@ function hover(fixture: ComponentFixture<CellHostComponent>): void {
     fixture.detectChanges();
 }
 
-function kitIconNames(fixture: ComponentFixture<CellHostComponent>): string[] {
+function kitIconNames(fixture: ComponentFixture<CellHostComponent>): (string | null)[] {
     return fixture.debugElement
         .queryAll(By.directive(RtIconComponent))
         .filter((icon: { nativeElement: HTMLElement }) => !icon.nativeElement.closest('rt-icon-button'))
