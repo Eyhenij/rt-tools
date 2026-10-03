@@ -95,6 +95,14 @@ export class RtDynamicSelectorListComponent<TItem> {
     public readonly actionsShown: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
         transform: booleanAttribute,
     });
+    /** Сброс и очистка в полосе; без них в полосе остаётся кнопка добавления. */
+    public readonly resetClearShown: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
+        transform: booleanAttribute,
+    });
+    /** Корзина строк; без неё строки двигаются и правятся, но не убираются. */
+    public readonly removeShown: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
+        transform: booleanAttribute,
+    });
     public readonly resetDisabled: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
         transform: booleanAttribute,
     });
