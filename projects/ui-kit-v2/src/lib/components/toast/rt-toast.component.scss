@@ -7,6 +7,7 @@
         --rt-toast-shadow-duration: var(--rt-duration-base);
         --rt-toast-leave-duration: var(--rt-duration-slower);
         --rt-toast-fade-duration: var(--rt-duration-fast);
+        --rt-toast-severity-color: var(--rt-color-state-info);
         --y: translateY(100%);
         --lift-amount: calc(var(--lift) * var(--gap));
 
@@ -17,11 +18,11 @@
         box-sizing: border-box;
         align-items: center;
         padding: var(--rt-space-4);
-        border: var(--rt-toast-border-width) solid var(--rt-color-border-subtle);
+        border: var(--rt-toast-border-width) solid var(--rt-toast-border-color, var(--rt-color-border-subtle));
         border-radius: var(--rt-toast-radius);
-        background: var(--rt-color-bg-surface);
+        background: var(--rt-toast-bg, var(--rt-color-bg-surface));
         box-shadow: var(--rt-toast-shadow);
-        color: var(--rt-color-text-primary);
+        color: var(--rt-toast-color, var(--rt-color-text-primary));
         font-size: var(--rt-text-sm);
         font-weight: var(--rt-font-weight-medium);
         gap: var(--rt-space-2);
@@ -64,33 +65,52 @@
             bottom: 0;
         }
 
+        /* Цвет важности — частное свойство: его берут значок и полоса срока. */
+        &--severity--success {
+            --rt-toast-severity-color: var(--rt-color-state-success);
+        }
+
+        &--severity--warning {
+            --rt-toast-severity-color: var(--rt-color-state-warning);
+        }
+
+        &--severity--danger {
+            --rt-toast-severity-color: var(--rt-color-state-danger);
+        }
+
+        /* Залитый тост читает свои ручки по важности, а не общие: общая ручка фона, заданная
+           на корне страницы, иначе перекрасила бы и залитые тосты. Значок идёт за текстом. */
         &--filled {
             .rt-toast__description {
                 color: inherit;
             }
 
+            .rt-toast__icon {
+                color: currentcolor;
+            }
+
             &.rt-toast--severity--info {
-                border-color: var(--rt-color-state-info-bg);
-                background: var(--rt-color-state-info-bg);
-                color: var(--rt-color-state-info);
+                border-color: var(--rt-toast-filled-info-border-color, var(--rt-color-state-info-bg));
+                background: var(--rt-toast-filled-info-bg, var(--rt-color-state-info-bg));
+                color: var(--rt-toast-filled-info-color, var(--rt-color-state-info));
             }
 
             &.rt-toast--severity--success {
-                border-color: var(--rt-color-state-success-bg);
-                background: var(--rt-color-state-success-bg);
-                color: var(--rt-color-state-success);
+                border-color: var(--rt-toast-filled-success-border-color, var(--rt-color-state-success-bg));
+                background: var(--rt-toast-filled-success-bg, var(--rt-color-state-success-bg));
+                color: var(--rt-toast-filled-success-color, var(--rt-color-state-success));
             }
 
             &.rt-toast--severity--warning {
-                border-color: var(--rt-color-state-warning-bg);
-                background: var(--rt-color-state-warning-bg);
-                color: var(--rt-color-state-warning);
+                border-color: var(--rt-toast-filled-warning-border-color, var(--rt-color-state-warning-bg));
+                background: var(--rt-toast-filled-warning-bg, var(--rt-color-state-warning-bg));
+                color: var(--rt-toast-filled-warning-color, var(--rt-color-state-warning));
             }
 
             &.rt-toast--severity--danger {
-                border-color: var(--rt-color-state-danger-bg);
-                background: var(--rt-color-state-danger-bg);
-                color: var(--rt-color-state-danger);
+                border-color: var(--rt-toast-filled-danger-border-color, var(--rt-color-state-danger-bg));
+                background: var(--rt-toast-filled-danger-bg, var(--rt-color-state-danger-bg));
+                color: var(--rt-toast-filled-danger-color, var(--rt-color-state-danger));
             }
         }
 
@@ -152,6 +172,25 @@
 
         &__icon {
             flex-shrink: 0;
+            color: var(--rt-toast-icon-color, var(--rt-toast-severity-color));
+        }
+
+        /* Полоса срока — анимация того же срока, что у таймера, и встаёт от того же признака.
+           Она лежит у нижнего края внутри рамки и повторяет нижние скругления. */
+        &__progress {
+            position: absolute;
+            bottom: 0;
+            animation: rt-toast-progress var(--lifetime) linear forwards;
+            background: var(--rt-toast-progress-color, var(--rt-toast-severity-color));
+            block-size: var(--rt-toast-progress-height, var(--rt-space-0-5));
+            border-end-end-radius: var(--rt-toast-radius);
+            border-end-start-radius: var(--rt-toast-radius);
+            inset-inline: 0;
+            transform-origin: left center;
+        }
+
+        &--paused &__progress {
+            animation-play-state: paused;
         }
 
         &__content {
@@ -186,7 +225,17 @@
             align-self: flex-start;
         }
 
+        /* Ручка цвета действия — заливка главной кнопки во всех её состояниях; подпись на ней
+           остаётся цветом кита. */
+        & &__action:not(.rt-button--text) {
+            --rt-btn-bg: var(--rt-toast-action-color, var(--rt-color-action-primary));
+            --rt-btn-bg-hover: var(--rt-toast-action-color, var(--rt-color-action-primary-hover));
+            --rt-btn-bg-active: var(--rt-toast-action-color, var(--rt-color-action-primary-active));
+        }
+
         & &__close {
+            --rt-icon-button-color: var(--rt-toast-close-color, var(--rt-color-text-primary));
+
             flex-shrink: 0;
             align-self: flex-start;
             margin-inline-start: auto;
@@ -205,6 +254,16 @@
             > * {
                 transition: none;
             }
+        }
+    }
+
+    @keyframes rt-toast-progress {
+        from {
+            transform: scaleX(1);
+        }
+
+        to {
+            transform: scaleX(0);
         }
     }
 }

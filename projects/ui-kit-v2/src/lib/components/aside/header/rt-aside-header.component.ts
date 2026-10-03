@@ -41,6 +41,9 @@ const BEM_BLOCK: string = 'rt-aside-header';
  * Доменные действия (отклонить / удалить / снять с публикации и т.п.)
  * проецируются в слот `[asideActions]` как ряд `rt-icon-button` справа от title.
  *
+ * Слот `[asideHeaderContent]` — строка под заголовком на всю ширину шапки: поиск, вкладки,
+ * сводка. Пустой слот места не занимает.
+ *
  * `ViewEncapsulation.None` — для единообразия с rt-dialog-header (стили
  * префиксованы `.rt-aside-header`).
  *

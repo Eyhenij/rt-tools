@@ -564,6 +564,14 @@ export type TRtConsumerHandleName =
     | '--rt-action-bar-menu-radius'
     | '--rt-action-bar-menu-shadow'
     | '--rt-aside-bg'
+    | '--rt-aside-content-inset'
+    | '--rt-aside-error-margin-block'
+    | '--rt-aside-footer-gap'
+    | '--rt-aside-footer-inset'
+    | '--rt-aside-footer-justify'
+    | '--rt-aside-footer-margin'
+    | '--rt-aside-header-inset'
+    | '--rt-aside-header-title-leading'
     | '--rt-aside-width'
     | '--rt-data-table-scrollbar-color'
     | '--rt-data-table-scrollbar-horizontal-height'
@@ -583,6 +591,9 @@ export type TRtConsumerHandleName =
     | '--rt-dialog-width'
     | '--rt-header-content-max-width'
     | '--rt-header-height'
+    | '--rt-icon-button-bg'
+    | '--rt-icon-button-bg-hover'
+    | '--rt-icon-button-size'
     | '--rt-icon-glyph-font'
     | '--rt-logo-tagline'
     | '--rt-logo-tagline-dark'
@@ -596,6 +607,26 @@ export type TRtConsumerHandleName =
     | '--rt-tag-letter-spacing'
     | '--rt-tag-padding-block'
     | '--rt-tag-padding-inline'
+    | '--rt-toast-action-color'
+    | '--rt-toast-bg'
+    | '--rt-toast-border-color'
+    | '--rt-toast-close-color'
+    | '--rt-toast-color'
+    | '--rt-toast-filled-danger-bg'
+    | '--rt-toast-filled-danger-border-color'
+    | '--rt-toast-filled-danger-color'
+    | '--rt-toast-filled-info-bg'
+    | '--rt-toast-filled-info-border-color'
+    | '--rt-toast-filled-info-color'
+    | '--rt-toast-filled-success-bg'
+    | '--rt-toast-filled-success-border-color'
+    | '--rt-toast-filled-success-color'
+    | '--rt-toast-filled-warning-bg'
+    | '--rt-toast-filled-warning-border-color'
+    | '--rt-toast-filled-warning-color'
+    | '--rt-toast-icon-color'
+    | '--rt-toast-progress-color'
+    | '--rt-toast-progress-height'
     | '--rt-workspace-aside-size'
     | '--rt-workspace-list-size';
 
@@ -1164,6 +1195,14 @@ export const RT_CONSUMER_HANDLE_NAMES: readonly TRtConsumerHandleName[] = [
     '--rt-action-bar-menu-radius',
     '--rt-action-bar-menu-shadow',
     '--rt-aside-bg',
+    '--rt-aside-content-inset',
+    '--rt-aside-error-margin-block',
+    '--rt-aside-footer-gap',
+    '--rt-aside-footer-inset',
+    '--rt-aside-footer-justify',
+    '--rt-aside-footer-margin',
+    '--rt-aside-header-inset',
+    '--rt-aside-header-title-leading',
     '--rt-aside-width',
     '--rt-data-table-scrollbar-color',
     '--rt-data-table-scrollbar-horizontal-height',
@@ -1183,6 +1222,9 @@ export const RT_CONSUMER_HANDLE_NAMES: readonly TRtConsumerHandleName[] = [
     '--rt-dialog-width',
     '--rt-header-content-max-width',
     '--rt-header-height',
+    '--rt-icon-button-bg',
+    '--rt-icon-button-bg-hover',
+    '--rt-icon-button-size',
     '--rt-icon-glyph-font',
     '--rt-logo-tagline',
     '--rt-logo-tagline-dark',
@@ -1196,6 +1238,26 @@ export const RT_CONSUMER_HANDLE_NAMES: readonly TRtConsumerHandleName[] = [
     '--rt-tag-letter-spacing',
     '--rt-tag-padding-block',
     '--rt-tag-padding-inline',
+    '--rt-toast-action-color',
+    '--rt-toast-bg',
+    '--rt-toast-border-color',
+    '--rt-toast-close-color',
+    '--rt-toast-color',
+    '--rt-toast-filled-danger-bg',
+    '--rt-toast-filled-danger-border-color',
+    '--rt-toast-filled-danger-color',
+    '--rt-toast-filled-info-bg',
+    '--rt-toast-filled-info-border-color',
+    '--rt-toast-filled-info-color',
+    '--rt-toast-filled-success-bg',
+    '--rt-toast-filled-success-border-color',
+    '--rt-toast-filled-success-color',
+    '--rt-toast-filled-warning-bg',
+    '--rt-toast-filled-warning-border-color',
+    '--rt-toast-filled-warning-color',
+    '--rt-toast-icon-color',
+    '--rt-toast-progress-color',
+    '--rt-toast-progress-height',
     '--rt-workspace-aside-size',
     '--rt-workspace-list-size',
 ];

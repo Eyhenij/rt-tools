@@ -26,4 +26,7 @@ export const Badges: TStory = { args: { part: 'badges' } };
 /** Загрузка: заголовок подменяется заглушкой, остальное остаётся на месте. */
 export const States: TStory = { args: { part: 'states' } };
 
+/** Строка под заголовком — слот `[asideHeaderContent]`: пустой места не занимает. */
+export const Row: TStory = { args: { part: 'row' } };
+
 export const Themes: TStory = { args: { part: 'themes' } };

@@ -1,15 +1,15 @@
 import { ComponentType, Overlay, OverlayConfig, OverlayRef, PositionStrategy } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
 import { DOCUMENT } from '@angular/common';
-import { inject, Injectable, Injector, Renderer2, RendererFactory2, Signal } from '@angular/core';
+import { inject, DestroyRef, Injectable, Injector, Renderer2, RendererFactory2, Signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-import { EMPTY, map, merge, mergeMap, Observable, Subject, takeUntil } from 'rxjs';
+import { EMPTY, map, merge, mergeMap, Observable, Subject, Subscriber, takeUntil } from 'rxjs';
 
 import { IRtKitConfig } from '../../config/rt-kit-config.model';
 import { rtKitDefault } from '../../config/rt-kit-config.providers';
 import { carryThemeScopeOfFocus, materialPresetClassesOfFocus } from '../../util/material-preset';
-import { RtAsideRef } from './rt-aside-ref';
+import { RtAsideRef, TRtAsideCloseRequest } from './rt-aside-ref';
 import { RT_ASIDE_DATA } from './rt-aside.tokens';
 
 /**
@@ -38,6 +38,13 @@ export interface IRtAsideConfig<TData = unknown> {
 
     /** К какому краю viewport "приклеить" панель. По дефолту `"right"`. */
     position?: TRtAsidePosition;
+
+    /**
+     * Injector хозяина панели — обычно `inject(Injector)` открывающего компонента. Он становится
+     * родителем портала: содержимое видит провайдеры хозяина. Уничтожение хозяина закрывает
+     * панель через `close()`. Без него родитель — корневой injector, и панель живёт сама по себе.
+     */
+    injector?: Injector;
 }
 
 /**
@@ -51,6 +58,9 @@ interface IRtAsideOpenContext {
         disableClose: Signal<boolean>;
         close: () => void;
     };
+    closeRequests: Subject<TRtAsideCloseRequest>;
+    /** DestroyRef хозяина из `config.injector`; его уничтожение закрывает панель. */
+    ownerDestroyRef: DestroyRef | null;
     closeOnBackdropClick: boolean;
     closeOnEscape: boolean;
 }
@@ -126,31 +136,28 @@ export class RtAsideService {
         this.#openSource
             .pipe(
                 mergeMap((openContext: IRtAsideOpenContext): Observable<() => void> => {
-                    const backdropClose$: Observable<() => void> = openContext.closeOnBackdropClick
-                        ? openContext.overlayRef.backdropClick().pipe(
-                              map((): (() => void) => (): void => {
-                                  if (openContext.asideRef.disableClose()) {
-                                      return;
-                                  }
-                                  openContext.asideRef.close();
-                              })
-                          )
-                        : EMPTY;
-                    const escapeClose$: Observable<() => void> = openContext.closeOnEscape
-                        ? openContext.overlayRef.keydownEvents().pipe(
-                              map((event: KeyboardEvent): (() => void) => (): void => {
-                                  if (event.key !== 'Escape') {
-                                      return;
-                                  }
-                                  event.preventDefault();
-                                  if (openContext.asideRef.disableClose()) {
-                                      return;
-                                  }
-                                  openContext.asideRef.close();
-                              })
-                          )
-                        : EMPTY;
-                    return merge(backdropClose$, escapeClose$).pipe(takeUntil(openContext.overlayRef.detachments()));
+                    // Оба жеста слушаются всегда: отказ в закрытии — тоже ответ, и он уходит в
+                    // `closeRequests()` хэндла, будь то `disableClose` или выключенный жест.
+                    const backdropClose$: Observable<() => void> = openContext.overlayRef.backdropClick().pipe(
+                        map((): (() => void) => (): void => {
+                            this.#answerCloseGesture(openContext, 'backdrop', openContext.closeOnBackdropClick);
+                        })
+                    );
+                    const escapeClose$: Observable<() => void> = openContext.overlayRef.keydownEvents().pipe(
+                        map((event: KeyboardEvent): (() => void) => (): void => {
+                            if (event.key !== 'Escape') {
+                                return;
+                            }
+                            if (openContext.closeOnEscape) {
+                                event.preventDefault();
+                            }
+                            this.#answerCloseGesture(openContext, 'escape', openContext.closeOnEscape);
+                        })
+                    );
+                    const ownerClose$: Observable<() => void> = this.#destroyed(openContext.ownerDestroyRef).pipe(
+                        map((): (() => void) => (): void => openContext.asideRef.close())
+                    );
+                    return merge(backdropClose$, escapeClose$, ownerClose$).pipe(takeUntil(openContext.overlayRef.detachments()));
                 }),
                 takeUntilDestroyed()
             )
@@ -186,19 +193,22 @@ export class RtAsideService {
         const overlayRef: OverlayRef = this.#overlay.create(overlayConfig);
         // До attach: содержимое панели может забрать фокус, и кусок темы у кнопки будет потерян.
         carryThemeScopeOfFocus(overlayRef.overlayElement, this.#document);
-        const asideRef: RtAsideRef<TResult> = new RtAsideRef<TResult>(overlayRef, this.#renderer);
+        const closeRequests: Subject<TRtAsideCloseRequest> = new Subject<TRtAsideCloseRequest>();
+        const asideRef: RtAsideRef<TResult> = new RtAsideRef<TResult>(overlayRef, this.#renderer, closeRequests);
 
         // Сами close-подписки объявлены один раз в конструкторе — здесь только
         // эмит контекста открытия (см. #openSource-стрим).
         this.#openSource.next({
             overlayRef,
             asideRef,
+            closeRequests,
+            ownerDestroyRef: config?.injector?.get(DestroyRef, null) ?? null,
             closeOnBackdropClick: config?.closeOnBackdropClick !== false,
             closeOnEscape: config?.closeOnEscape ?? this.#closeOnEscape,
         });
 
         const injector: Injector = Injector.create({
-            parent: this.#injector,
+            parent: config?.injector ?? this.#injector,
             providers: [
                 { provide: RtAsideRef, useValue: asideRef },
                 { provide: RT_ASIDE_DATA, useValue: config?.data ?? null },
@@ -221,6 +231,28 @@ export class RtAsideService {
         });
 
         return asideRef;
+    }
+
+    /** Жест закрытия: закрывает панель, если жест включён и не держит `disableClose`, иначе сообщает об отказе. */
+    #answerCloseGesture(openContext: IRtAsideOpenContext, gesture: TRtAsideCloseRequest, enabled: boolean): void {
+        if (enabled && !openContext.asideRef.disableClose()) {
+            openContext.asideRef.close();
+            return;
+        }
+        openContext.closeRequests.next(gesture);
+    }
+
+    /**
+     * Уничтожение хозяина как поток. Отписка — уход панели — снимает слушателя с хозяина, и его
+     * позднее уничтожение панель уже не трогает.
+     */
+    #destroyed(ownerDestroyRef: DestroyRef | null): Observable<void> {
+        if (ownerDestroyRef === null) {
+            return EMPTY;
+        }
+        return new Observable<void>((subscriber: Subscriber<void>): (() => void) =>
+            ownerDestroyRef.onDestroy((): void => subscriber.next())
+        );
     }
 
     /** Нормализует `string | string[]` к массиву (panelClass поддерживает оба формата). */

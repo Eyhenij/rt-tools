@@ -25,6 +25,8 @@ ref.afterClosed().subscribe((result?: ITour): void => …);
 | `width`         | `string \| null`       | `null`      |
 | `ariaLabel`     | `string \| null`       | `null`      |
 | `requestError`  | `unknown`              | `null`      |
+| `trapFocus`     | `boolean`              | `false`     |
+| `pending`       | `boolean`              | `false`     |
 
 | настройка `open()`                       | умолчание                                 |
 | ---------------------------------------- | ----------------------------------------- |
@@ -32,6 +34,7 @@ ref.afterClosed().subscribe((result?: ITour): void => …);
 | `position`                               | `'right'`                                 |
 | `closeOnBackdropClick` / `closeOnEscape` | `true`; второе — из настроек кита         |
 | `backdropClass` / `panelClass`           | `rt-aside-backdrop` / `rt-aside-overlay`  |
+| `injector`                               | корневой — уничтожение хозяина закрывает  |
 
 ## Главное, что нужно знать
 
@@ -54,7 +57,12 @@ ref.afterClosed().subscribe((result?: ITour): void => …);
 переопределяет своими правилами. Стережёт это `rt-aside-overlay.styles.spec.ts`.
 
 **`disableClose`** на `RtAsideRef` держит панель под кликом по подложке и под Escape — ставится
-самим содержимым, когда в форме есть несохранённое.
+самим содержимым, когда в форме есть несохранённое. Отказанный жест — под `disableClose` или
+выключенный настройкой — приходит в `closeRequests()`: `'escape'` или `'backdrop'`.
+
+**Снятый без `close()` слой завершает `afterClosed()` значением `undefined`.** Переход по адресу
+(`disposeOnNavigation`) и уничтожение хозяина больше не оставляют подписчика ждать. То же у
+`RtDialogRef`.
 
 **Ошибку запроса показывает сама панель.** Вход `requestError` ставит между шапкой и содержимым
 блок `rt-aside-error-box` с кнопкой копирования ошибки; `null` и `undefined` его убирают. Своя

@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { createRtFixture, hostClasses, qa, qaAll, setInputs, textOf } from '../../../testing/rt-kit-testing';
 import { NotificationBus } from '../../platform';
-import { IRtToaster } from './rt-toaster.model';
+import { RT_TOAST_SEVERITY_ICONS, IRtToaster } from './rt-toaster.model';
 import { RtToasterComponent } from './rt-toaster.component';
 
 function setup(inputs: Readonly<Record<string, unknown>> = {}): ComponentFixture<RtToasterComponent> {
@@ -172,6 +172,124 @@ describe('RtToasterComponent', (): void => {
         fixture.detectChanges();
 
         expect(qaAll(fixture, 'toast').length).toBe(1);
+    });
+
+    describe('параметры тоста', (): void => {
+        function closeTimers(fixture: ComponentFixture<RtToasterComponent>, ms: number): void {
+            fixture.detectChanges();
+            jest.advanceTimersByTime(ms);
+            fixture.detectChanges();
+            jest.advanceTimersByTime(400);
+            fixture.detectChanges();
+        }
+
+        function iconHref(fixture: ComponentFixture<RtToasterComponent>): string | null | undefined {
+            return (fixture.nativeElement as HTMLElement).querySelector('.rt-toast__icon use')?.getAttribute('href');
+        }
+
+        it('SC-UKV-626 — тост живёт свой срок, а без него — срок тостера', (): void => {
+            const fixture: ComponentFixture<RtToasterComponent> = setup({ duration: 8000 });
+
+            bus().info('Короткий', 'info', { duration: 1000 });
+            bus().info('Обычный');
+            closeTimers(fixture, 1000);
+
+            expect(messages(fixture)).toEqual(['Обычный']);
+
+            closeTimers(fixture, 7000);
+
+            expect(messages(fixture)).toEqual([]);
+        });
+
+        it('SC-UKV-627 — тост без срока держится, пока его не закроют', (): void => {
+            const fixture: ComponentFixture<RtToasterComponent> = setup();
+
+            bus().warning('Нужен ответ', 'warning', { duration: null });
+            closeTimers(fixture, 60000);
+
+            expect(messages(fixture)).toEqual(['Нужен ответ']);
+        });
+
+        it('SC-UKV-628 — полоса срока рисуется по просьбе и встаёт вместе с таймером', (): void => {
+            const fixture: ComponentFixture<RtToasterComponent> = setup();
+
+            bus().info('Без полосы');
+            bus().info('С полосой', 'info', { progress: true, duration: 3000 });
+            fixture.detectChanges();
+
+            expect(qaAll(fixture, 'toast-progress').length).toBe(1);
+            const toast: HTMLElement = qa(fixture, 'toast')?.nativeElement as HTMLElement;
+            expect(toast.style.getPropertyValue('--lifetime')).toBe('3000ms');
+            expect(toast.classList).not.toContain('rt-toast--paused');
+
+            (fixture.nativeElement as HTMLElement).dispatchEvent(new Event('mouseenter'));
+            fixture.detectChanges();
+
+            expect(toast.classList).toContain('rt-toast--paused');
+        });
+
+        it('SC-UKV-629 — у тоста без таймера полосы срока нет', (): void => {
+            const fixture: ComponentFixture<RtToasterComponent> = setup();
+
+            bus().info('Висит', 'info', { progress: true, duration: null });
+            fixture.detectChanges();
+
+            expect(qa(fixture, 'toast')).not.toBeNull();
+            expect(qa(fixture, 'toast-progress')).toBeNull();
+        });
+
+        it('SC-UKV-585 — в режиме замены новый тост уводит прежние', (): void => {
+            const fixture: ComponentFixture<RtToasterComponent> = setup({ mode: 'replace', duration: 60000 });
+
+            bus().info('Первое');
+            fixture.detectChanges();
+            bus().info('Второе');
+            closeTimers(fixture, 0);
+
+            expect(messages(fixture)).toEqual(['Второе']);
+        });
+
+        it('SC-UKV-585 — в режиме стопки прежние тосты остаются', (): void => {
+            const fixture: ComponentFixture<RtToasterComponent> = setup({ duration: 60000 });
+
+            bus().info('Первое');
+            fixture.detectChanges();
+            bus().info('Второе');
+            closeTimers(fixture, 0);
+
+            expect(messages(fixture)).toEqual(['Второе', 'Первое']);
+        });
+
+        it('SC-UKV-586 — свой значок тоста важнее значка важности, а null его снимает', (): void => {
+            const fixture: ComponentFixture<RtToasterComponent> = setup();
+
+            bus().success('Своим значком', 'success', { icon: 'bell' });
+            fixture.detectChanges();
+
+            expect(iconHref(fixture)).toBe('#rt-icon-bell');
+
+            bus().success('Без значка', 'success', { icon: null });
+            fixture.detectChanges();
+
+            expect(qaAll(fixture, 'toast-icon').length).toBe(1);
+        });
+
+        it('SC-UKV-587 — карта значков важности подменяется через внедрение', (): void => {
+            const fixture: ComponentFixture<RtToasterComponent> = createRtFixture(
+                RtToasterComponent,
+                {},
+                {
+                    providers: [
+                        { provide: RT_TOAST_SEVERITY_ICONS, useValue: { info: 'bell', success: 'check', warning: 'bell', danger: 'bell' } },
+                    ],
+                }
+            );
+
+            bus().success('Готово');
+            fixture.detectChanges();
+
+            expect(iconHref(fixture)).toBe('#rt-icon-check');
+        });
     });
 
     beforeEach((): void => {
