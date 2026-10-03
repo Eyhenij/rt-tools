@@ -133,6 +133,70 @@ describe('RtChatComponent', (): void => {
         });
     });
 
+    describe('набор текста', (): void => {
+        function typeInto(fixture: ComponentFixture<RtChatComponent>, field: HTMLTextAreaElement | HTMLInputElement, value: string): void {
+            field.value = value;
+            field.dispatchEvent(new Event('input', { bubbles: true }));
+            fixture.detectChanges();
+        }
+
+        function typingSignals(fixture: ComponentFixture<RtChatComponent>): boolean[] {
+            const signals: boolean[] = [];
+            fixture.componentInstance.typing.subscribe((typing: boolean): number => signals.push(typing));
+            return signals;
+        }
+
+        it('SC-UKV-582 — ввод в обычное поле шлёт «начал», выбор файла ничего не шлёт', (): void => {
+            const fixture: ComponentFixture<RtChatComponent> = setup({ canReply: true, attachments: true });
+            const signals: boolean[] = typingSignals(fixture);
+
+            typeInto(fixture, qa(fixture, 'chat-composer-file-input')?.nativeElement as HTMLInputElement, '');
+            expect(signals).toEqual([]);
+
+            typeInto(fixture, qa(fixture, 'chat-composer-input')?.nativeElement as HTMLTextAreaElement, 'Сп');
+            typeInto(fixture, qa(fixture, 'chat-composer-input')?.nativeElement as HTMLTextAreaElement, 'Спа');
+            expect(signals).toEqual([true]);
+        });
+
+        it('SC-UKV-582 — ввод в поле с оформлением шлёт «начал»', (): void => {
+            const fixture: ComponentFixture<RtChatComponent> = setup({ canReply: true, richComposer: true });
+            const signals: boolean[] = typingSignals(fixture);
+            const field: HTMLTextAreaElement = el(fixture, '[qa-dataid="chat-composer-rich"] textarea')
+                ?.nativeElement as HTMLTextAreaElement;
+
+            typeInto(fixture, field, 'Да');
+
+            expect(signals).toEqual([true]);
+        });
+
+        it('SC-UKV-581 — отправка кончает отрезок набора', (): void => {
+            const fixture: ComponentFixture<RtChatComponent> = setup({ canReply: true });
+            const signals: boolean[] = typingSignals(fixture);
+
+            typeInto(fixture, qa(fixture, 'chat-composer-input')?.nativeElement as HTMLTextAreaElement, 'Спасибо');
+            qa(fixture, 'chat-composer-send')?.nativeElement.click();
+            fixture.detectChanges();
+
+            expect(signals).toEqual([true, false]);
+        });
+
+        it('SC-UKV-583 — строка второй стороны показывается по тексту и прячется пустой, живая область остаётся', (): void => {
+            const fixture: ComponentFixture<RtChatComponent> = setup({ typingText: 'Оператор печатает…' });
+            const line: HTMLElement = qa(fixture, 'chat-typing')?.nativeElement as HTMLElement;
+
+            expect(line.getAttribute('aria-live')).toBe('polite');
+            expect(line.textContent?.trim()).toBe('Оператор печатает…');
+            expect(line.classList).toContain('rt-chat__typing--shown');
+
+            fixture.componentRef.setInput('typingText', '');
+            fixture.detectChanges();
+
+            expect(qa(fixture, 'chat-typing')).not.toBeNull();
+            expect(line.textContent?.trim()).toBe('');
+            expect(line.classList).not.toContain('rt-chat__typing--shown');
+        });
+    });
+
     describe('шапка', (): void => {
         it('заголовок рисуется, когда задан', (): void => {
             expect(textOf(qa(setup({ title: 'Переписка по заявке', showRefresh: true }), 'chat-title'))).toBe('Переписка по заявке');

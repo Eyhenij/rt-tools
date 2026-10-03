@@ -1,7 +1,7 @@
 # Plan
 
 **Task:** RT-2439 · **Branch:** RT-2439-chat-typing
-**Agreement:** `docs/specs/ui-kit-v2/proposed/chat-typing/`
+**Draft:** `docs/specs/ui-kit-v2/proposed/chat-typing/`
 
 ## Task footprint
 
