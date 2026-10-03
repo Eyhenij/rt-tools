@@ -23,6 +23,9 @@ export const Parts: TStory = { args: { part: 'parts' } };
 /** Признак непоказанного снизу: осталось, влезло целиком, вход выключен. */
 export const Hint: TStory = { args: { part: 'hint' } };
 
+/** Отступы и фоны шапки, тела и подвала — свойствами с тега области, SC-UKV-575. */
+export const Properties: TStory = { args: { part: 'properties' } };
+
 export const Presets: TStory = { args: { part: 'presets' } };
 
 export const Themes: TStory = { args: { part: 'themes' } };

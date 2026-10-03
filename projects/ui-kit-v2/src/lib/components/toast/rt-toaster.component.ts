@@ -87,6 +87,9 @@ export class RtToasterComponent {
         { transform: numberAttribute }
     );
 
+    /** `replace` — новый тост уводит прежние их же анимацией ухода, а не копится стопкой. */
+    public readonly mode: InputSignal<IRtToaster.Mode> = input<IRtToaster.Mode>('stack');
+
     public readonly expand: InputSignalWithTransform<boolean, boolean | string> = input<boolean, boolean | string>(false, {
         transform: booleanAttribute,
     });
@@ -164,8 +167,18 @@ export class RtToasterComponent {
             action: event.payload.action,
             secondaryAction: event.payload.secondaryAction,
             filled: event.payload.filled,
+            duration: event.payload.duration,
+            progress: event.payload.progress,
+            icon: event.payload.icon,
         };
-        this.toasts.update((items: IRtToaster.Toast[]): IRtToaster.Toast[] => [toast, ...items]);
+        this.toasts.update((items: IRtToaster.Toast[]): IRtToaster.Toast[] => [
+            toast,
+            ...(this.mode() === 'replace' ? items.map((item: IRtToaster.Toast): IRtToaster.Toast => this.#replaced(item)) : items),
+        ]);
+    }
+
+    #replaced(toast: IRtToaster.Toast): IRtToaster.Toast {
+        return toast.replaced ? toast : { ...toast, replaced: true };
     }
 
     #sortHeights(items: IRtToaster.Height[]): IRtToaster.Height[] {

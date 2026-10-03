@@ -18,6 +18,7 @@ export namespace IRtToggleButtonGroup {
      * - `value` — уникальный идентификатор сегмента, эмитится в `valueChange`.
      * - `label` — текстовая подпись (основной контент).
      * - `icon` — опциональная иконка перед лейблом (`<rt-icon>`).
+     * - `glyph` — имя Material вместо `icon`; рисуется так же, как вход `glyph` у `rt-icon`.
      * - `title` — нативный HTML-title (вместо тултип-директивы).
      * - `disabled` — сегмент недоступен сейчас: он остаётся видимым, но нажатия не пропускает.
      *   Признак лежит рядом с подписью, а не отдельным списком значений: список запретов
@@ -28,6 +29,7 @@ export namespace IRtToggleButtonGroup {
         readonly value: T;
         readonly label: string;
         readonly icon?: IRtIcon.Name;
+        readonly glyph?: string;
         readonly title?: string;
         readonly disabled?: boolean;
     }

@@ -110,6 +110,6 @@ Covered: `projects/ui-kit-v2/src/lib/components/side-menu/rt-side-menu-icon.comp
 
 Given items and row buttons carry names the kit does not draw
 When the menu is drawn in development, with and without its own template
-Then the warning names each such name once; the template silences the items but not the buttons
+Then the warning names each such name once; the template silences the items and the buttons alike
 
 Covered: `projects/ui-kit-v2/src/lib/components/side-menu/rt-side-menu-icon.logic.spec.ts`, `projects/ui-kit-v2/src/lib/components/side-menu/rt-side-menu-icon.component.spec.ts`.

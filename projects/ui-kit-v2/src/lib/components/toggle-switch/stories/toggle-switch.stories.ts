@@ -9,6 +9,7 @@ export default {
     argTypes: {
         inputId: { control: { type: 'text' } },
         ariaLabel: { control: { type: 'text' } },
+        label: { control: { type: 'text' } },
         size: {
             options: ['sm', 'md', 'lg'],
             control: { type: 'select' },
@@ -26,6 +27,7 @@ export const Playground: TStory = {
     args: {
         inputId: null,
         ariaLabel: null,
+        label: null,
         size: 'sm',
         iconOff: null,
         iconOn: null,

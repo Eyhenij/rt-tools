@@ -11,7 +11,7 @@ import { IRtSpinner } from '../../rt-spinner.model';
 @Component({
     selector: 'app-spinner',
     template: `
-        <rt-spinner [diameter]="diameter" [color]="color" />
+        <rt-spinner [diameter]="diameter" [color]="color" [appearance]="appearance" [plate]="plate" />
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
@@ -22,4 +22,6 @@ import { IRtSpinner } from '../../rt-spinner.model';
 export class TestRtSpinnerComponent {
     public diameter: number = 32;
     public color: IRtSpinner.Color = 'primary';
+    public appearance: IRtSpinner.Appearance = 'border';
+    public plate: boolean = false;
 }

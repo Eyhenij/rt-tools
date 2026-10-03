@@ -11,8 +11,12 @@ import { IRtToaster } from '../../rt-toaster.model';
 /** Сообщение всплывающей подсказки — одно на все ячейки матрицы. */
 const TOAST_MESSAGE: string = 'Договор сохранён';
 
+/** Тёмная подложка и светлый текст — то, во что приложение перекрашивает тост ручками. */
+const DARK_SURFACE: string = 'var(--rt-neutral-800)';
+const INVERSE_TEXT: string = 'var(--rt-color-text-inverse)';
+
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TToastMatrixPart = 'severity' | 'parts' | 'actions' | 'edges' | 'presets' | 'themes';
+export type TToastMatrixPart = 'severity' | 'parts' | 'actions' | 'edges' | 'options' | 'handles' | 'presets' | 'themes';
 
 /**
  * Ничего не делающее действие: в витрине важен вид кнопки, а не её последствие.
@@ -126,6 +130,50 @@ const noop: () => void = (): void => undefined;
                         </app-story-row>
                     </ng-template>
                 </app-story-presets>
+            }
+
+            @case ('options') {
+                <!-- Полоса срока стоит во всю ширину: плашка матрицы на паузе с первой отрисовки.
+                     Как полоса сжимается, показывает Playground стопки. -->
+                <app-story-presets caption="Свой значок, без значка и с полосой срока в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="22rem" [items]="optionCases" [itemLabel]="partLabel">
+                            <ng-template let-item>
+                                <div style="position: relative; display: block; min-block-size: 5.5rem; width: 100%">
+                                    <rt-toast
+                                        [toast]="item.toast"
+                                        [index]="0"
+                                        [totalToasts]="1"
+                                        [heights]="heights"
+                                        [expanded]="false"
+                                        [interacting]="true"
+                                        [visibleToasts]="3"
+                                        [duration]="60000" />
+                                </div>
+                            </ng-template>
+                        </app-story-row>
+                    </ng-template>
+                </app-story-presets>
+            }
+
+            @case ('handles') {
+                <!-- Ручки ставит приложение выше тоста — здесь их несёт ячейка, как нёс бы корень
+                     страницы. Пары нет: ручки перекрашивают тост одинаково в обоих наборах. -->
+                <app-story-grid slotWidth="22rem" [rows]="severities" [columns]="fills" [columnLabel]="fillLabel">
+                    <ng-template let-severity let-filled="col">
+                        <div style="position: relative; display: block; min-block-size: 5.5rem; width: 100%" [style]="handleStyle">
+                            <rt-toast
+                                [toast]="filled ? toastOf(severity, true) : actionToastOf(severity)"
+                                [index]="0"
+                                [totalToasts]="1"
+                                [heights]="heights"
+                                [expanded]="false"
+                                [interacting]="true"
+                                [visibleToasts]="3"
+                                [duration]="0" />
+                        </div>
+                    </ng-template>
+                </app-story-grid>
             }
 
             @case ('presets') {
@@ -270,9 +318,41 @@ export class TestRtToastMatrixComponent {
         { name: 'пустое сообщение', toast: { id: 10, severity: 'info', message: '' } },
     ];
 
+    public readonly optionCases: readonly { name: string; toast: IRtToaster.Toast }[] = [
+        { name: 'свой значок', toast: { id: 11, severity: 'info', message: 'Новое сообщение в чате', icon: 'bell' } },
+        { name: 'без значка', toast: { id: 12, severity: 'success', message: TOAST_MESSAGE, icon: null } },
+        { name: 'с полосой срока', toast: { id: 13, severity: 'warning', message: 'Сессия скоро закончится', progress: true } },
+        {
+            name: 'залитый со своим значком',
+            toast: { id: 14, severity: 'success', message: 'Оплата прошла', filled: true, icon: 'star' },
+        },
+    ];
+
+    /** Ручки приложения: общие для обычного тоста и свои у каждой важности залитого. */
+    public readonly handleStyle: Readonly<Record<string, string>> = {
+        '--rt-toast-bg': DARK_SURFACE,
+        '--rt-toast-color': INVERSE_TEXT,
+        '--rt-toast-border-color': DARK_SURFACE,
+        '--rt-toast-icon-color': INVERSE_TEXT,
+        '--rt-toast-close-color': INVERSE_TEXT,
+        '--rt-toast-action-color': 'var(--rt-color-action-success)',
+        ...Object.fromEntries(
+            this.severities.flatMap((severity: INotification.Severity): [string, string][] => [
+                [`--rt-toast-filled-${severity}-bg`, `var(--rt-color-action-${severity})`],
+                [`--rt-toast-filled-${severity}-color`, `var(--rt-color-action-on-${severity})`],
+                [`--rt-toast-filled-${severity}-border-color`, `var(--rt-color-action-${severity})`],
+            ])
+        ),
+    };
+
     public readonly fillLabel: (value: boolean) => string = (value: boolean): string => (value ? 'filled' : 'обычная');
 
     public readonly partLabel: (value: { name: string }) => string = (value: { name: string }): string => value.name;
+
+    /** Обычная плашка с действием — на ней видна ручка заливки действия. */
+    public actionToastOf(severity: INotification.Severity): IRtToaster.Toast {
+        return { severity, id: 1, message: `Сообщение «${severity}»`, action: { label: 'Открыть', handler: noop } };
+    }
 
     /** Плашка одной важности: заливка приходит признаком `filled` в самом тосте. */
     public toastOf(severity: INotification.Severity, filled: boolean): IRtToaster.Toast {

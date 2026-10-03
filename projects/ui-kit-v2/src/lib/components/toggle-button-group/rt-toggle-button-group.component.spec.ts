@@ -216,6 +216,19 @@ describe('RtToggleButtonGroupComponent', (): void => {
             expect(hostClasses(setup({ fullWidth: true }))).toContain('rt-toggle-button-group--full-width');
         });
 
+        it.each<[IRtToggleButtonGroup.Size, string | null]>([
+            ['sm', null],
+            ['md', 'rt-toggle-button-group--md'],
+            ['lg', 'rt-toggle-button-group--lg'],
+        ])(
+            'SC-UKV-565 — размер %s выводится на хост: свойства размеров объявлены на нём',
+            (size: IRtToggleButtonGroup.Size, expected: string | null): void => {
+                const classes: string[] = hostClasses(setup({ size }));
+
+                expect(classes.filter((name: string): boolean => /--(md|lg)$/.test(name))).toEqual(expected === null ? [] : [expected]);
+            }
+        );
+
         it('иконка рисуется только у вариантов, где она задана', (): void => {
             const fixture: ComponentFixture<RtToggleButtonGroupComponent<string>> = setup();
 
@@ -226,5 +239,13 @@ describe('RtToggleButtonGroupComponent', (): void => {
 
     it('значение варианта продублировано атрибутом данных', (): void => {
         expect(buttons(setup())[1].getAttribute('data-value')).toBe('week');
+    });
+
+    it('SC-UKV-557 — сегмент с глифом рисует значок по имени Material', (): void => {
+        const fixture: ComponentFixture<RtToggleButtonGroupComponent<string>> = setup({
+            options: [{ value: 'pet', label: 'Питомцы', glyph: 'pets' }],
+        });
+
+        expect(buttons(fixture)[0].querySelector('.rt-icon__glyph')?.textContent?.trim()).toBe('pets');
     });
 });

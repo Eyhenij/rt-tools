@@ -11,12 +11,28 @@
     rt-dialog-footer {
         display: contents;
 
+        /* Свойства читаются с запасным значением на месте — окно живёт в оверлее. Разделитель
+           кита лежит в частном `-default`, как у шапки. */
         .rt-dialog-footer {
+            --rt-dialog-footer-border-default: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
+
             display: flex;
             justify-content: flex-end;
-            padding: var(--rt-space-lg);
-            border-block-start: 1px solid var(--rt-color-border-subtle);
+            padding: var(--rt-dialog-footer-padding, var(--rt-space-lg));
+            border-block-start: var(--rt-dialog-footer-border, var(--rt-dialog-footer-border-default));
             gap: var(--rt-space-sm);
+
+            &--align--start {
+                justify-content: flex-start;
+            }
+
+            &--align--center {
+                justify-content: center;
+            }
+
+            &--align--between {
+                justify-content: space-between;
+            }
 
             &:empty {
                 display: none;

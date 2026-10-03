@@ -47,6 +47,18 @@
         </app-story-presets>
     }
 
+    @case ('switches') {
+        <app-story-presets caption="Меню без кнопки закрепления в обоих наборах">
+            <ng-template>
+                <app-story-row [items]="switches" [itemLabel]="caseLabel">
+                    <ng-template let-item>
+                        <ng-container [ngTemplateOutlet]="cellTpl" [ngTemplateOutletContext]="{ $implicit: item }" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
     @case ('favorites') {
         <app-story-presets caption="Избранное в обоих наборах">
             <ng-template>
@@ -131,5 +143,6 @@
         [slots]="item.slots ?? false"
         [menuId]="item.menuId ?? null"
         [favoritesCount]="item.favoritesCount ?? 'collapsed'"
-        [ownIcon]="item.ownIcon ?? false" />
+        [ownIcon]="item.ownIcon ?? false"
+        [pinShown]="item.pinShown ?? true" />
 </ng-template>

@@ -28,6 +28,12 @@ export const Width: TStory = { args: { part: 'width' } };
 /** Шапка и подвал необязательны: без них окно выглядит иначе. */
 export const Parts: TStory = { args: { part: 'parts' } };
 
+/** Тело окна: короткое и длинное, которое прокручивается под потолком высоты. */
+export const Content: TStory = { args: { part: 'content' } };
+
+/** Свойства вида окна, заданные приложением. */
+export const Properties: TStory = { args: { part: 'properties' } };
+
 export const Presets: TStory = { args: { part: 'presets' } };
 
 export const Themes: TStory = { args: { part: 'themes' } };

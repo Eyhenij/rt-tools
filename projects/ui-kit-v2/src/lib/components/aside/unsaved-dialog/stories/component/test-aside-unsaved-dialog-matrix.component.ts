@@ -1,6 +1,8 @@
 import { OverlayRef } from '@angular/cdk/overlay';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
+import { NEVER, Observable } from 'rxjs';
+
 import { StoryPresetsComponent } from '../../../../../../showcase/story-presets.component';
 import { StoryThemesComponent } from '../../../../../../showcase/story-themes.component';
 import { RtDialogRef } from '../../../../dialog/rt-dialog-ref';
@@ -15,7 +17,7 @@ export type TAsideUnsavedDialogMatrixPart = 'outcomes' | 'presets' | 'themes';
  * пустая: без неё компонент не поднимается вовсе — ручку он берёт из инжектора полем.
  */
 function storyDialogRef(): RtDialogRef<never> {
-    return new RtDialogRef<never>({ dispose: (): void => undefined } as OverlayRef);
+    return new RtDialogRef<never>({ dispose: (): void => undefined, detachments: (): Observable<void> => NEVER } as OverlayRef);
 }
 
 /**

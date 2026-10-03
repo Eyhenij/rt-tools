@@ -145,7 +145,7 @@
 
         /* Кнопка «назад» — круглая `mat-icon-button` первого кита, как и кнопки подвала панели. */
         .rt-aside-header__back .rt-icon-button {
-            --rt-icon-button-size: var(--rt-data-list-settings-aside-control-size);
+            --rt-icon-button-size-step: var(--rt-data-list-settings-aside-control-size);
             --rt-icon-button-color: var(--rt-list-settings-icon-color);
             --rt-icon-button-radius: var(--rt-radius-full);
         }
@@ -236,7 +236,7 @@
         }
 
         .rt-data-list-settings-aside__toggle .rt-icon-button {
-            --rt-icon-button-size: var(--rt-data-list-settings-aside-control-size);
+            --rt-icon-button-size-step: var(--rt-data-list-settings-aside-control-size);
             --rt-icon-button-color: var(--rt-list-settings-icon-color);
         }
     }

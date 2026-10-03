@@ -4,10 +4,10 @@ import { StoryPresetsComponent } from '../../../../../../showcase/story-presets.
 import { StoryRowComponent } from '../../../../../../showcase/story-row.component';
 import { StoryThemesComponent } from '../../../../../../showcase/story-themes.component';
 import { RtButtonDirective } from '../../../../button/rt-button.directive';
-import { RtDialogFooterComponent } from '../../rt-dialog-footer.component';
+import { TRtDialogFooterAlign, RtDialogFooterComponent } from '../../rt-dialog-footer.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TDialogFooterMatrixPart = 'content' | 'presets' | 'themes';
+export type TDialogFooterMatrixPart = 'content' | 'align' | 'presets' | 'themes';
 
 /** Набор проецируемого содержимого: своих входов у футера нет. */
 interface IDialogFooterContentCase {
@@ -48,6 +48,21 @@ interface IDialogFooterContentCase {
                                 <button rtButton theme="primary">Сохранить</button>
                             }
                         </rt-dialog-footer>
+                    </ng-template>
+                </app-story-row>
+            }
+
+            @case ('align') {
+                <app-story-row caption="Выравнивание" [items]="aligns" [slotWidth]="alignWidth">
+                    <ng-template let-align>
+                        <!-- Хост подвала боксом не становится, и строка сжалась бы по кнопкам: ширину ей
+                             даёт коробка показа во всю ячейку. -->
+                        <div style="inline-size: 100%">
+                            <rt-dialog-footer [align]="align">
+                                <button rtButton appearance="text">Отмена</button>
+                                <button rtButton theme="primary">Сохранить</button>
+                            </rt-dialog-footer>
+                        </div>
                     </ng-template>
                 </app-story-row>
             }
@@ -113,6 +128,12 @@ export class TestRtDialogFooterMatrixComponent {
         { name: 'со статусной строкой', note: 'Черновик сохранён', cancel: true, confirm: true },
         { name: 'пустой', note: null, cancel: false, confirm: false },
     ];
+
+    /** Ячейка выравнивания шире: в узкой у пары кнопок нет свободного места, и все четыре
+        выравнивания выглядели бы одинаково. */
+    public readonly alignWidth: string = '32rem';
+
+    public readonly aligns: readonly TRtDialogFooterAlign[] = ['start', 'center', 'end', 'between'];
 
     public readonly caseLabel: (value: IDialogFooterContentCase) => string = (value: IDialogFooterContentCase): string => value.name;
 }

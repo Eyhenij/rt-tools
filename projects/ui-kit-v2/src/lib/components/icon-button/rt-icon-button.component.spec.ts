@@ -44,7 +44,7 @@ describe('RtIconButtonComponent', (): void => {
             }
         );
 
-        it.each<IRtIconButton.Size>(['sm', 'md', 'lg', 'xl', '2xl'])(
+        it.each<IRtIconButton.Size>(['2xs', 'xs', 'sm', 'md', 'lg', 'xl', '2xl'])(
             'размер %s выводит свой модификатор',
             (size: IRtIconButton.Size): void => {
                 expect(controlClasses(setup({ size }))).toContain(`rt-icon-button--${size}`);
@@ -62,12 +62,24 @@ describe('RtIconButtonComponent', (): void => {
 
     describe('размер иконки', (): void => {
         it.each<[IRtIconButton.Size, string]>([
+            ['2xs', '16px'],
+            ['xs', '16px'],
             ['sm', '16px'],
             ['md', '20px'],
             ['lg', '24px'],
         ])('размер кнопки %s даёт иконку %s', (size: IRtIconButton.Size, expected: string): void => {
             expect((el(setup({ size }), 'rt-icon')?.nativeElement as HTMLElement).style.width).toBe(expected);
         });
+
+        it.each<IRtIconButton.Size>(['2xs', 'xs'])(
+            'SC-UKV-592 — шаг %s рисует кнопку со значком 16px',
+            (size: IRtIconButton.Size): void => {
+                const fixture: ComponentFixture<RtIconButtonComponent> = setup({ size });
+
+                expect(controlClasses(fixture)).toContain(`rt-icon-button--${size}`);
+                expect((el(fixture, 'rt-icon')?.nativeElement as HTMLElement).style.width).toBe('16px');
+            }
+        );
 
         it('заданный размер иконки перебивает размер кнопки', (): void => {
             // Крупная кнопка-действие: в неё целятся пальцем, а иконка во весь
@@ -155,5 +167,12 @@ describe('RtIconButtonComponent', (): void => {
 
             expect(el(fixture, '.rt-icon-button__indicator')?.attributes['aria-hidden']).toBe('true');
         });
+    });
+
+    it('SC-UKV-556 — глиф без имени кита рисуется значком по имени Material', (): void => {
+        const fixture: ComponentFixture<RtIconButtonComponent> = setup({ icon: null, glyph: 'arrow_back' });
+        const host: HTMLElement = fixture.nativeElement as HTMLElement;
+
+        expect(host.querySelector('use')?.getAttribute('href')).toBe('#rt-icon-arrow-left');
     });
 });

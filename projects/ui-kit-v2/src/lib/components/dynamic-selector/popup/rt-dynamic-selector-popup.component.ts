@@ -187,6 +187,8 @@ export class RtDynamicSelectorPopupComponent<TEntity extends object> implements 
     public readonly pinnedKeys: InputSignal<ReadonlyArray<unknown>> = input<ReadonlyArray<unknown>>([]);
     public readonly navigateTitle: InputSignal<string> = input<string>('');
     public readonly navigateLink: InputSignal<string> = input<string>('');
+    /** Запрос, с которым выбор открывается; событием поиска он не уходит — вызывающий его знает. */
+    public readonly searchTerm: InputSignal<string> = input<string>('');
 
     /** Применённые ключи в порядке отметок. */
     public readonly applied: OutputEmitterRef<unknown[]> = output<unknown[]>();
@@ -198,6 +200,8 @@ export class RtDynamicSelectorPopupComponent<TEntity extends object> implements 
     public readonly temporaryChoiceChange: OutputEmitterRef<TEntity[]> = output<TEntity[]>();
 
     public ngOnInit(): void {
+        // Выбор живёт в шаблоне и создаётся заново при каждом открытии: запрос начинается с входа.
+        this.query.set(this.searchTerm());
         this.temporaryChoiceChange.emit([]);
         this.#searchSource
             .pipe(debounceTime(RT_DYNAMIC_SELECTOR_SEARCH_DEBOUNCE), takeUntilDestroyed(this.#destroyRef))

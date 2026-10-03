@@ -19,7 +19,7 @@ export default {
             control: { type: 'select' },
         },
         size: {
-            options: ['sm', 'md', 'lg', 'xl', '2xl'],
+            options: ['2xs', 'xs', 'sm', 'md', 'lg', 'xl', '2xl'],
             control: { type: 'select' },
         },
         iconSize: { control: false },

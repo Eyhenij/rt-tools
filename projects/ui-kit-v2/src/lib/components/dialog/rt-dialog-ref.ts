@@ -1,13 +1,16 @@
 import { OverlayRef } from '@angular/cdk/overlay';
 import { signal, WritableSignal } from '@angular/core';
 
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, take } from 'rxjs';
 
 /**
  * Хэндл к программно открытой модалке (через `RtDialogService.open()`).
  *
  * Контент-компонент инжектит `RtDialogRef` и закрывает модалку через `.close(result?)`.
  * Родитель, открывший модалку, ждёт результата через `.afterClosed()`.
+ *
+ * Слой, снятый без `close()` — переходом по адресу или уничтожением хозяина, — тоже завершает
+ * `afterClosed()`: подписчик получает `undefined`. Иначе он ждал бы ответа, которого не будет.
  *
  * Generic `<T>` — тип результата `close(result)`. Дефолт `unknown` — если результат
  * не нужен, оставляй generic пустым.
@@ -42,19 +45,39 @@ export class RtDialogRef<T = unknown> {
     readonly #overlayRef: OverlayRef;
     readonly #afterClosedSource: Subject<T | undefined> = new Subject<T | undefined>();
 
+    #isClosed: boolean = false;
+
     constructor(overlayRef: OverlayRef) {
         this.#overlayRef = overlayRef;
+        this.#overlayRef
+            .detachments()
+            .pipe(take(1))
+            .subscribe((): void => this.#finish(undefined));
     }
 
     /** Закрывает overlay; опционально передаёт результат подписчикам `afterClosed()`. */
     public close(result?: T): void {
+        if (this.#isClosed) {
+            return;
+        }
+        // Флаг до dispose: снятие слоя само отзовётся в detachments(), а результат отдаёт close().
+        this.#isClosed = true;
         this.#overlayRef.dispose();
         this.#afterClosedSource.next(result);
         this.#afterClosedSource.complete();
     }
 
-    /** Эмиттит один раз — результат `close(result)` — и завершается. */
+    /** Эмиттит один раз — результат `close(result)` или `undefined` при снятом слое — и завершается. */
     public afterClosed(): Observable<T | undefined> {
         return this.#afterClosedSource.asObservable();
+    }
+
+    #finish(result: T | undefined): void {
+        if (this.#isClosed) {
+            return;
+        }
+        this.#isClosed = true;
+        this.#afterClosedSource.next(result);
+        this.#afterClosedSource.complete();
     }
 }

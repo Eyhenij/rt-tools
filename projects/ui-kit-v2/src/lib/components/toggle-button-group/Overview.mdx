@@ -78,19 +78,23 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 совпадает с [`[rtButton]`](./?path=/docs/atoms-buttons-button-overview--docs), чтобы группа
 выравнивалась с кнопками в одном ряду.
 
+Свойства размеров — `--rt-toggle-button-group-height`, `-btn-padding`, `-btn-font-size`,
+`-btn-line-height` и остальные — объявлены на самом теге `rt-toggle-button-group`, ступени `md` и
+`lg` — правила того же тега по его модификатору. Правило приложения на теге перебивает и ступень.
+
 ## Входы
 
-| вход        | тип                                                         | умолчание               |
-| ----------- | ----------------------------------------------------------- | ----------------------- |
-| `options`   | `ReadonlyArray<{ value, label, icon?, title?, disabled? }>` | **обязателен**          |
-| `value`     | `T \| undefined`                                            | `undefined`             |
-| `multiple`  | `boolean`                                                   | `false`                 |
-| `values`    | `ReadonlyArray<T>`                                          | `[]`                    |
-| `ariaLabel` | `string \| null`                                            | `null`                  |
-| `size`      | `'sm' \| 'md' \| 'lg'`                                      | `'sm'`                  |
-| `disabled`  | `boolean`                                                   | `false`                 |
-| `fullWidth` | `boolean`                                                   | `false`                 |
-| `radius`    | `TRtRadius \| null`                                         | `null` → `md` у дорожки |
+| вход        | тип                                                                 | умолчание               |
+| ----------- | ------------------------------------------------------------------- | ----------------------- |
+| `options`   | `ReadonlyArray<{ value, label, icon?, glyph?, title?, disabled? }>` | **обязателен**          |
+| `value`     | `T \| undefined`                                                    | `undefined`             |
+| `multiple`  | `boolean`                                                           | `false`                 |
+| `values`    | `ReadonlyArray<T>`                                                  | `[]`                    |
+| `ariaLabel` | `string \| null`                                                    | `null`                  |
+| `size`      | `'sm' \| 'md' \| 'lg'`                                              | `'sm'`                  |
+| `disabled`  | `boolean`                                                           | `false`                 |
+| `fullWidth` | `boolean`                                                           | `false`                 |
+| `radius`    | `TRtRadius \| null`                                                 | `null` → `md` у дорожки |
 
 `value` читается при одиночном выборе, `values` — при множественном. Разными входами, а не одним с
 меняющимся типом: вход, тип которого зависит от значения другого входа, не проверяет ни сборка, ни

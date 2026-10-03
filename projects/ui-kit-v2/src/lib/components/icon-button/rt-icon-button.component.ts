@@ -30,8 +30,8 @@ const BEM_BLOCK: string = 'rt-icon-button';
  *
  * Рендерит свой собственный `<button type="...">` внутри template (НЕ host-button).
  * Все цвета и размеры — через семантические `--rt-*` токены; геометрия квадрата
- * выставляется CSS-custom-property `--rt-icon-button-size` (overridable inline
- * через `style="--rt-icon-button-size: 35px"` — нужно для миграции rt-header 35×35).
+ * берётся из `--rt-icon-button-size`, а без него — из шага `size`. Свойство, заданное на теге
+ * `<rt-icon-button>` или выше, доходит до кнопки; так же и `--rt-icon-button-bg`.
  *
  * Loading state — заменяет иконку на `<rt-icon name="spinner">` и блокирует
  * клики (`button[disabled]`). Active state управляет `aria-pressed` (для toggle-кнопок).
@@ -70,6 +70,8 @@ export class RtIconButtonComponent {
      */
     protected readonly resolvedIconSize: Signal<IRtIcon.Size> = computed((): IRtIcon.Size => {
         const map: Readonly<Record<IRtIconButton.Size, IRtIcon.Size>> = {
+            '2xs': 'sm',
+            xs: 'sm',
             sm: 'sm',
             md: 'md',
             lg: 'lg',
@@ -95,8 +97,15 @@ export class RtIconButtonComponent {
         hasIndicator: this.indicator(),
     }));
 
-    /** Имя иконки — обязательно. */
-    public readonly icon: InputSignal<IRtIcon.Name> = input.required<IRtIcon.Name>();
+    /**
+     * Имя иконки в наборе кита. Нужно оно или `glyph`; когда переданы оба, побеждает имя. Нет ни
+     * того ни другого — значок кит не рисует, и кнопка показывает вложенное содержимое: свой
+     * рисунок приложения встаёт в кнопку с её размером, формой и состояниями.
+     */
+    public readonly icon: InputSignal<IRtIcon.Name | null> = input<IRtIcon.Name | null>(null);
+
+    /** Имя Material вместо имени кита — рисуется так же, как вход `glyph` у `rt-icon`. */
+    public readonly glyph: InputSignal<string | null> = input<string | null>(null);
 
     /** Доступное имя для screen-reader'ов — обязательно (icon-only кнопка). */
     public readonly ariaLabel: InputSignal<string> = input.required<string>();

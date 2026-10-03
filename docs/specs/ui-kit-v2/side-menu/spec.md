@@ -70,8 +70,8 @@ side menu stands next to it as a component of its own.
   pairs serve `rt-menu`. The button of a row resolves its name the same way.
 - **A name the kit does not draw takes the menu's own icon template.** The template is one per menu
   and gets the item. It never replaces an icon the kit draws.
-- **A name left without an icon is named in a warning while the application is developed.** A
-  button name is named always: a button takes no template.
+- **A name left without an icon is named in a warning while the application is developed.** The
+  own template silences the items and the row buttons alike: a row button takes it too.
 - **On a narrow screen the menu is one column 240 pixels wide.** A long label is cut, not widening the menu. The rows stand eight pixels from the edge, as in the first kit's phone menu.
 
 ## What is out of scope
@@ -153,3 +153,5 @@ None.
   task RT-2440.
 - 1 October 2026 — icons outside the set: Material names by the kit's pairs, an own icon template,
   a warning in development; task RT-2440.
+- 2 October 2026 — the row button takes the own template too, and the warning about it falls
+  silent under the template; task RT-2482.

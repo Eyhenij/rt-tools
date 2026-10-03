@@ -11,7 +11,7 @@ import { IButton } from '../../rt-button.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
 export type TButtonMatrixPart =
-    'appearance' | 'disabled' | 'pressed' | 'size' | 'icon' | 'radius' | 'loading' | 'states' | 'presets' | 'themes';
+    'appearance' | 'disabled' | 'pressed' | 'size' | 'icon' | 'radius' | 'loading' | 'loading-label' | 'states' | 'presets' | 'themes';
 
 /** Случай иконки — не значение оси, а различимая комбинация подписи и стороны. */
 interface IButtonIconCase {
@@ -139,6 +139,24 @@ interface IButtonIconCase {
                 </app-story-presets>
             }
 
+            @case ('loading-label') {
+                <app-story-presets caption="Подпись в загрузке × загрузка в обоих наборах">
+                    <ng-template>
+                        <app-story-grid [rows]="loadingLabels" [columns]="loadingStates" [columnLabel]="loadingStateLabel">
+                            <ng-template let-mode let-busy="col">
+                                <button
+                                    rtButton
+                                    icon="check"
+                                    label="Сохранить изменения"
+                                    aria-label="Сохранить изменения"
+                                    [loading]="busy"
+                                    [loadingLabel]="mode"></button>
+                            </ng-template>
+                        </app-story-grid>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('states') {
                 <app-story-presets caption="Взаимодействие и отключение в обоих наборах">
                     <ng-template>
@@ -206,6 +224,10 @@ interface IButtonIconCase {
 export class TestRtButtonMatrixComponent {
     public part: TButtonMatrixPart = 'appearance';
 
+    /** Строки — режим подписи, столбцы — покой и загрузка: у `hide` ширина в обоих столбцах одна. */
+    public readonly loadingLabels: readonly IButton.LoadingLabel[] = ['keep', 'hide'];
+    public readonly loadingStates: readonly boolean[] = [false, true];
+
     /**
      * Три положения кнопки: нажата, отжата и положения нет вовсе. Третье — не то же, что отжатое:
      * обычная кнопка о положении не говорит вспомогательным средствам ничего, а отжатая говорит,
@@ -238,4 +260,6 @@ export class TestRtButtonMatrixComponent {
 
     public readonly pressedLabel: (value: { readonly label: string }) => string = (value: { readonly label: string }): string =>
         value.label;
+
+    public readonly loadingStateLabel: (value: boolean) => string = (value: boolean): string => (value ? 'загрузка' : 'покой');
 }

@@ -11,7 +11,8 @@ import { RtIconButtonComponent } from '../../rt-icon-button.component';
 import { IRtIconButton } from '../../rt-icon-button.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TIconButtonMatrixPart = 'variant' | 'size' | 'iconSize' | 'radius' | 'flags' | 'states' | 'presets' | 'themes';
+export type TIconButtonMatrixPart =
+    'variant' | 'size' | 'iconSize' | 'hostRule' | 'radius' | 'flags' | 'content' | 'states' | 'presets' | 'themes';
 
 /** Случай признака: какой из булевых входов включён и как он называется словами. */
 interface IIconButtonFlagCase {
@@ -77,6 +78,17 @@ interface IIconButtonFlagCase {
                 </app-story-presets>
             }
 
+            <!-- Правило на теге, как его пишет приложение: размер и заливка покоя заданы самой кнопке
+                 и бьют шаги размера и вида. Заливка под указателем объявлена тем же правилом и видна в
+                 витрине под указателем. Пары наборов нет: правило приложения одинаково в обоих. -->
+            @case ('hostRule') {
+                <app-story-row [items]="variants">
+                    <ng-template let-variant>
+                        <rt-icon-button icon="pencil" ariaLabel="Править" size="md" [variant]="variant" [style]="hostRuleStyle" />
+                    </ng-template>
+                </app-story-row>
+            }
+
             @case ('radius') {
                 <app-story-presets caption="Шаги скругления в обоих наборах">
                     <ng-template>
@@ -102,6 +114,30 @@ interface IIconButtonFlagCase {
                                     [disabled]="flagCase.disabled"
                                     [active]="flagCase.active"
                                     [indicator]="flagCase.indicator" />
+                            </ng-template>
+                        </app-story-grid>
+                    </ng-template>
+                </app-story-presets>
+            }
+
+            <!-- Вложенное вместо значка: свой рисунок встаёт в ту же кнопку, с тем же размером и
+                 цветом палитры. Рядом — значок кита той же кнопки, чтобы размеры сравнивались в кадре. -->
+            @case ('content') {
+                <app-story-presets caption="Палитра × значок кита или вложенное в обоих наборах">
+                    <ng-template>
+                        <app-story-grid [rows]="variants" [columns]="contentCases" [columnLabel]="contentCaseLabel">
+                            <ng-template let-variant let-own="col">
+                                @if (own) {
+                                    <rt-icon-button [icon]="null" [ariaLabel]="variant" [variant]="variant">
+                                        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                                            <path
+                                                fill="currentColor"
+                                                d="M3 3h8v8H3zm2 2v4h4V5zm8-2h8v8h-8zm2 2v4h4V5zM3 13h8v8H3zm2 2v4h4v-4zm8-2h2v2h-2zm4 0h4v2h-4zm-4 4h4v4h-4zm6 2h2v2h-2z" />
+                                        </svg>
+                                    </rt-icon-button>
+                                } @else {
+                                    <rt-icon-button icon="pencil" [ariaLabel]="variant" [variant]="variant" />
+                                }
                             </ng-template>
                         </app-story-grid>
                     </ng-template>
@@ -187,7 +223,14 @@ export class TestRtIconButtonMatrixComponent {
     public part: TIconButtonMatrixPart = 'variant';
 
     public readonly variants: readonly IRtIconButton.Variant[] = ['ghost', 'primary', 'secondary', 'danger', 'success', 'warning'];
-    public readonly sizes: readonly IRtIconButton.Size[] = ['sm', 'md', 'lg', 'xl', '2xl'];
+    /** Правило приложения на теге: сторона 24px, своя заливка покоя и под указателем. */
+    public readonly hostRuleStyle: Readonly<Record<string, string>> = {
+        '--rt-icon-button-size': 'var(--rt-size-6)',
+        '--rt-icon-button-bg': 'var(--rt-color-state-info-bg)',
+        '--rt-icon-button-bg-hover': 'var(--rt-color-state-warning-bg)',
+    };
+
+    public readonly sizes: readonly IRtIconButton.Size[] = ['2xs', 'xs', 'sm', 'md', 'lg', 'xl', '2xl'];
     public readonly radii: readonly (TRtRadius | null)[] = [null, ...RT_RADIUS_STEPS];
     /** Шаги, которыми раньше были формы: квадрат — умолчание, две скруглённые формы и круг. */
     public readonly gridRadii: readonly (TRtRadius | null)[] = [null, 'lg', 'xl', 'full'];
@@ -204,6 +247,11 @@ export class TestRtIconButtonMatrixComponent {
         { name: 'загрузка', loading: true, disabled: false, active: false, indicator: false },
         { name: 'отключена', loading: false, disabled: true, active: false, indicator: false },
     ];
+
+    /** `false` — значок кита, `true` — своё содержимое при `icon = null`. */
+    public readonly contentCases: readonly boolean[] = [false, true];
+
+    public readonly contentCaseLabel: (value: boolean) => string = (value: boolean): string => (value ? 'вложенное' : 'значок кита');
 
     public readonly iconSizeLabel: (value: IRtIcon.Size | null) => string = (value: IRtIcon.Size | null): string =>
         value === null ? 'от кнопки' : value;

@@ -144,9 +144,13 @@ export class RtSideMenuComponent implements IRtSideMenuHost {
     readonly #searchHeld: WritableSignal<boolean> = signal(false);
     /** Строку избранного тянут: уход указателя за панель подменю не закрывает. */
     readonly #dragHeld: WritableSignal<boolean> = signal(false);
-    /** Режим и ширина в работе: вход приложения, иначе сохранённые под номером меню. */
+    /**
+     * Режим и ширина в работе: вход приложения, иначе сохранённые под номером меню. Без кнопки
+     * закрепления сохранённый режим не читается: открепить меню, закреплённое раньше, было бы нечем.
+     */
     readonly #mode: Signal<IRtSideMenu.SubMenuMode> = computed(
-        (): IRtSideMenu.SubMenuMode => this.subMenuMode() ?? this.#settings?.subMenuMode(this.menuId())() ?? 'hover'
+        (): IRtSideMenu.SubMenuMode =>
+            this.subMenuMode() ?? (this.pinShown() ? this.#settings?.subMenuMode(this.menuId())() : undefined) ?? 'hover'
     );
     readonly #width: Signal<number | null> = computed(
         (): number | null => this.subMenuWidth() ?? this.#settings?.subMenuWidth(this.menuId())() ?? null
@@ -243,6 +247,14 @@ export class RtSideMenuComponent implements IRtSideMenuHost {
         input<IRtSideMenu.FavoriteActionsReserve>('none');
     /** Поиск показывает совпавшие строки избранного; выключено — на время поиска блока нет. */
     public readonly isFavoritesSearchShown: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
+        transform: booleanAttribute,
+    });
+    /** Кнопка закрепления в шапке подменю; выключено — подменю только всплывает, если режим не задан входом. */
+    public readonly pinShown: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
+        transform: booleanAttribute,
+    });
+    /** Подсказки строк подменю — у подписей и у кнопок строк. Доступные имена остаются. */
+    public readonly subMenuTooltipsShown: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
         transform: booleanAttribute,
     });
 
