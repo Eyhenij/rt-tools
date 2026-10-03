@@ -3,6 +3,8 @@
         --rt-chat-bubble-radius: var(--rt-radius-lg);
         --rt-chat-message-border-width: var(--rt-border-width-thin);
         --rt-chat-transition-duration: var(--rt-duration-fast);
+        --rt-chat-typing-radius: var(--rt-radius-full);
+        --rt-chat-typing-shadow: var(--rt-shadow-sm);
 
         display: flex;
         flex-direction: column;
@@ -122,6 +124,7 @@
             z-index: 1;
             bottom: var(--rt-space-1);
             left: var(--rt-space-2);
+            box-sizing: border-box;
             color: var(--rt-color-text-muted);
             font-size: var(--rt-text-xs);
             max-inline-size: calc(100% - 2 * var(--rt-space-2));
@@ -130,9 +133,9 @@
 
             &--shown {
                 padding: var(--rt-space-0-5) var(--rt-space-2);
-                border-radius: var(--rt-radius-full);
+                border-radius: var(--rt-chat-typing-radius);
                 background: var(--rt-color-bg-surface);
-                box-shadow: var(--rt-shadow-sm);
+                box-shadow: var(--rt-chat-typing-shadow);
             }
         }
 
