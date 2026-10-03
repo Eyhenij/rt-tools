@@ -187,7 +187,7 @@ describe('RtToasterComponent', (): void => {
             return (fixture.nativeElement as HTMLElement).querySelector('.rt-toast__icon use')?.getAttribute('href');
         }
 
-        it('SC-UKV-580 — тост живёт свой срок, а без него — срок тостера', (): void => {
+        it('SC-UKV-626 — тост живёт свой срок, а без него — срок тостера', (): void => {
             const fixture: ComponentFixture<RtToasterComponent> = setup({ duration: 8000 });
 
             bus().info('Короткий', 'info', { duration: 1000 });
@@ -201,7 +201,7 @@ describe('RtToasterComponent', (): void => {
             expect(messages(fixture)).toEqual([]);
         });
 
-        it('SC-UKV-581 — тост без срока держится, пока его не закроют', (): void => {
+        it('SC-UKV-627 — тост без срока держится, пока его не закроют', (): void => {
             const fixture: ComponentFixture<RtToasterComponent> = setup();
 
             bus().warning('Нужен ответ', 'warning', { duration: null });
@@ -210,7 +210,7 @@ describe('RtToasterComponent', (): void => {
             expect(messages(fixture)).toEqual(['Нужен ответ']);
         });
 
-        it('SC-UKV-582 — полоса срока рисуется по просьбе и встаёт вместе с таймером', (): void => {
+        it('SC-UKV-628 — полоса срока рисуется по просьбе и встаёт вместе с таймером', (): void => {
             const fixture: ComponentFixture<RtToasterComponent> = setup();
 
             bus().info('Без полосы');
@@ -228,7 +228,7 @@ describe('RtToasterComponent', (): void => {
             expect(toast.classList).toContain('rt-toast--paused');
         });
 
-        it('SC-UKV-583 — у тоста без таймера полосы срока нет', (): void => {
+        it('SC-UKV-629 — у тоста без таймера полосы срока нет', (): void => {
             const fixture: ComponentFixture<RtToasterComponent> = setup();
 
             bus().info('Висит', 'info', { progress: true, duration: null });

@@ -7,7 +7,7 @@ tests refer to them.
 What a scenario is covered by is said under it. Where the run does not cover a scenario, that is said
 openly.
 
-### SC-UKV-579 — the toaster stands on its own layer property
+### SC-UKV-625 — the toaster stands on its own layer property
 
 Given a toaster without a layer set by the application
 When it is drawn
@@ -16,31 +16,31 @@ Then its layer is the kit scale's sticky step, the same 1100 as before
 Not covered: a test has no layout, and this is a style rule. The former frames of the toast stories
 match without a re-take.
 
-### SC-UKV-580 — a toast lives its own duration
+### SC-UKV-626 — a toast lives its own duration
 
 Given a toaster with a duration of its own
 When one toast arrives with a shorter duration and another without one
 Then the first leaves after its own duration and the second after the toaster's
 
-### SC-UKV-581 — a toast without a duration stays
+### SC-UKV-627 — a toast without a duration stays
 
 Given a toast sent with no duration
 When any time passes
 Then the toast stays until its close button is pressed
 
-### SC-UKV-582 — the progress strip pauses with the timer
+### SC-UKV-628 — the progress strip pauses with the timer
 
 Given a toast sent with a progress strip
 When the person points at the stack
 Then the strip is drawn over the toast's duration, and it stops together with the timer
 
-### SC-UKV-583 — a toast without a timer draws no strip
+### SC-UKV-629 — a toast without a timer draws no strip
 
 Given a toast sent with a progress strip and no duration
 When it is drawn
 Then it has no strip
 
-### SC-UKV-584 — the toast takes its colours from handles
+### SC-UKV-630 — the toast takes its colours from handles
 
 Given colour handles set by the application on the page root
 When a toast and a filled toast are drawn
