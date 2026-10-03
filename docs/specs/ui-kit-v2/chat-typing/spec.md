@@ -1,6 +1,6 @@
 # The sign of typing in a correspondence
 
-**Status:** proposed · **Revision:** 2026-10-02 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 2026-10-03 · **Scenario prefix:** `SC-UKV`
 **Depends on:** none
 **Laws:** `frontend-application`, `reuse-first`
 **Procedures:** none
@@ -109,4 +109,4 @@ Not applicable.
 
 ## History of changes
 
-- 2026-10-02 — created by the work about the sign of typing in a correspondence.
+- 2026-10-03 — created by the work about the sign of typing in a correspondence.
