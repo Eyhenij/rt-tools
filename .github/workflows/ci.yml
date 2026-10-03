@@ -59,9 +59,9 @@ jobs:
             # локальное умолчание 4311 и падала с EADDRINUSE, пока на машине стоял местный стенд.
             E2E_FOREIGN_PORT: 4321
             E2E_DATABASE: message_bus_e2e_ci
-            # Браузер снимков — свой контейнер и свой порт. С умолчанием `rt-tools-shot` и 43210
-            # шаг снимков и местная проверка перед отправкой делили один контейнер: второй запуск
-            # перезапускал его, и первый падал с ECONNRESET посреди прогона.
+            # Браузер снимков — свой контейнер и свой порт. С общим умолчанием шаг снимков и местная
+            # проверка перед отправкой делили один контейнер: второй запуск перезапускал его, и
+            # первый падал с ECONNRESET посреди прогона.
             E2E_SHOT_CONTAINER: rt-tools-shot-ci
             E2E_SHOT_PORT: 43220
 
@@ -70,11 +70,16 @@ jobs:
               with:
                   fetch-depth: 0
 
+            # pnpm ставится в каталог инструментов своего раннера, а не в `~/setup-pnpm` по
+            # умолчанию. На машине три раннера, а каталог в домашней папке у них общий: соседний
+            # проект пересоздавал его посреди прогона, хранилище pnpm внутри пропадало, и шаг
+            # сохранения кэша падал при прошедших проверках.
             - name: Install pnpm
               uses: pnpm/action-setup@v6
               with:
                   version: 11.10.0
                   run_install: false
+                  dest: ${{ runner.tool_cache }}/setup-pnpm
 
             - name: Cache node_modules
               uses: actions/setup-node@v7
@@ -230,7 +235,10 @@ jobs:
                   docker run -d --rm --name rt-ci-schema \
                       -e POSTGRES_USER=message_bus -e POSTGRES_PASSWORD=message_bus \
                       -e POSTGRES_DB=message_bus -p 55452:5432 postgres:16-alpine >/dev/null
-                  until docker exec rt-ci-schema pg_isready -U message_bus >/dev/null 2>&1; do sleep 1; done
+                  # Готовность спрашивается по TCP, а не через сокет: образ сначала поднимает сервер
+                  # начальной настройки только на сокете и перезапускает его, и проверка через сокет
+                  # отвечала «готов» в этот промежуток — соединение по порту ловило ECONNRESET.
+                  until docker exec rt-ci-schema pg_isready -h 127.0.0.1 -U message_bus >/dev/null 2>&1; do sleep 1; done
                   node tools/check-schema-drift.mjs
                   docker rm -f rt-ci-schema >/dev/null 2>&1 || true
 

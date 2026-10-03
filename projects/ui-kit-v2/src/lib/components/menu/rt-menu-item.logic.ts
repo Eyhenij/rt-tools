@@ -1,4 +1,4 @@
-import { iconMaterialMap, IRtIconMaterialEntry } from '../icon/rt-icon-material-map';
+import { materialPairOf } from '../icon/rt-icon-glyph.logic';
 import { IRtIcon } from '../icon/rt-icon.model';
 
 /** Значок пункта: свой `icon`, а без него — пара имени Material из перечня кита. */
@@ -6,7 +6,7 @@ export function menuItemIconName(icon: IRtIcon.Name | null, glyph: string | null
     if (icon !== null) {
         return icon;
     }
-    return glyph ? (iconMaterialMap.find((entry: IRtIconMaterialEntry): boolean => entry.from === glyph)?.to ?? null) : null;
+    return materialPairOf(glyph);
 }
 
 /**

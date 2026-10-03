@@ -240,4 +240,12 @@ describe('RtToggleButtonGroupComponent', (): void => {
     it('значение варианта продублировано атрибутом данных', (): void => {
         expect(buttons(setup())[1].getAttribute('data-value')).toBe('week');
     });
+
+    it('SC-UKV-557 — сегмент с глифом рисует значок по имени Material', (): void => {
+        const fixture: ComponentFixture<RtToggleButtonGroupComponent<string>> = setup({
+            options: [{ value: 'pet', label: 'Питомцы', glyph: 'pets' }],
+        });
+
+        expect(buttons(fixture)[0].querySelector('.rt-icon__glyph')?.textContent?.trim()).toBe('pets');
+    });
 });
