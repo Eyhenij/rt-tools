@@ -60,4 +60,13 @@ export const MaterialThemes: TStory = { args: { part: 'material-themes' } };
  */
 export const MigrationMap: TStory = { args: { part: 'migration-map' } };
 
+/**
+ * Имя Material на входе `glyph`: с парой рисуется рисунком кита, без пары — лигатурой шрифта.
+ * Шрифт витрина не подключает, и лигатура видна словом — так её увидит приложение без шрифта.
+ */
+export const Glyph: TStory = { args: { part: 'glyph' } };
+
+/** Размер числом пикселей и вращение: вход `size` берёт число рядом со ступенями, вход `spin` вращает. */
+export const SpinAndPixels: TStory = { args: { part: 'spin-pixels' } };
+
 export const Themes: TStory = { args: { part: 'themes' } };

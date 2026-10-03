@@ -23,4 +23,16 @@ export namespace IRtIcon {
 
     /** Семантические цвета. Маппинг на CSS-переменные `--rt-icon-color-*` — в `rt-icon.component.ts`. */
     export type Color = 'current' | 'muted' | 'info' | 'success' | 'warning' | 'danger' | 'inverse';
+
+    /** Размер на входе значка: ступень или пиксели. */
+    export type SizeInput = Size | number;
+
+    /**
+     * Как значок рисует имя Material: `map-first` — пара из перечня кита, без пары шрифт;
+     * `font` — шрифт для любого имени.
+     */
+    export type GlyphStrategy = 'map-first' | 'font';
+
+    /** Итог разбора имени: рисунок кита либо лигатура шрифта Material. */
+    export type Resolved = { readonly kind: 'kit'; readonly name: Name } | { readonly kind: 'font'; readonly glyph: string };
 }

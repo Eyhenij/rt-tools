@@ -48,6 +48,9 @@ const BEM_BLOCK: string = 'rt-empty-state';
 export class RtEmptyStateComponent {
     public readonly icon: InputSignal<IRtIcon.Name | null> = input<IRtIcon.Name | null>(null);
 
+    /** Имя Material вместо `icon` — рисуется так же, как вход `glyph` у `rt-icon`. */
+    public readonly glyph: InputSignal<string | null> = input<string | null>(null);
+
     public readonly title: InputSignal<string> = input<string>('');
 
     public readonly description: InputSignal<string | null> = input<string | null>(null);

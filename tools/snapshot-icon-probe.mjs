@@ -189,7 +189,9 @@ try {
 
         // The set is held back on its approach: without the delay it arrives before the frame's
         // preparation, and the probe would judge the machine's speed instead of the order of the calls.
-        await context.route('**/icons/*.svg', async (route) => {
+        // Both sets are held: under the material preset the button asks for the material set, and
+        // a material half drawn at once would make the frame before the wait match the one after.
+        await context.route(/\/icons(-material)?\/[^/]+\.svg$/, async (route) => {
             await new Promise((resolve) => setTimeout(resolve, SPRITE_HOLD_MS));
             await route.continue();
         });
