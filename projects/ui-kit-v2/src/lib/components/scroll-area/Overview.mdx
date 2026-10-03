@@ -77,6 +77,21 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 Растушёвка красится фоном темы: перекрасить её можно свойством `--rt-scroll-area-hint-color` на
 блоке.
 
+Отступы и фоны частей — свойства блока, история **Properties**. Без них вид прежний.
+
+| свойство                          | что задаёт       | умолчание                     |
+| --------------------------------- | ---------------- | ----------------------------- |
+| `--rt-scroll-area-header-padding` | отступы шапки    | `--rt-space-2` `--rt-space-4` |
+| `--rt-scroll-area-body-padding`   | отступы тела     | `--rt-space-4`                |
+| `--rt-scroll-area-footer-padding` | отступы подвала  | `--rt-space-4`                |
+| `--rt-scroll-area-bg`             | фон всей области | `transparent`                 |
+| `--rt-scroll-area-header-bg`      | фон шапки        | `transparent`                 |
+| `--rt-scroll-area-body-bg`        | фон тела         | `transparent`                 |
+| `--rt-scroll-area-footer-bg`      | фон подвала      | `transparent`                 |
+
+Растушёвка своего цвета не меняет вместе с фоном: области, перекрашенной свойством, надо назначить
+тот же цвет и `--rt-scroll-area-hint-color`.
+
 ## Рядом
 
 - [`rt-container`](./?path=/docs/organisms-layout-container-overview--docs) — зоны целого экрана,
