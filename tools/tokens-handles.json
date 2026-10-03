@@ -26,6 +26,10 @@
     "--rt-aside-footer-gap": "the gap between the side panel footer's buttons; without it --rt-space-sm",
     "--rt-aside-header-title-leading": "the line height of the side panel's title; without it inherited. Named apart from the first kit's --rt-aside-header-title-line-height",
     "--rt-aside-error-margin-block": "the block margin of the side panel's request error box; without it 0",
+    "--rt-action-bar-menu-bg": "the action bar menu's background; the menu lives in an overlay, so it is set on the page root; the default is the surface",
+    "--rt-action-bar-menu-color": "the action bar menu's text colour; the default is the primary text",
+    "--rt-action-bar-menu-radius": "the action bar menu's rounding; the default is the step md",
+    "--rt-action-bar-menu-shadow": "the action bar menu's shadow; the default is the card shadow",
     "--rt-icon-glyph-font": "the font family of an icon's Material ligature; the application connects the font itself, and until it names a family the kit takes 'Material Symbols Outlined'"
   }
 }

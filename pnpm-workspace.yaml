@@ -41,10 +41,6 @@ overrides:
   '@storybook/test-runner>jest-runner': '30.4.2'
   '@storybook/test-runner>jest-circus': '30.4.2'
   '@storybook/test-runner>jest-environment-node': '30.4.1'
-  # The references were taken with Chromium of Playwright 1.62; 1.63 draws the native textarea
-  # resize grip differently, and seven textarea frames of the second showcase diverge by it.
-  # Drop the line together with a re-take of those references.
-  '@storybook/test-runner>playwright': '1.62.1'
 minimumReleaseAgeExclude:
   - '@rt-tools/core@0.0.5 || 0.1.0 || 0.2.0 || 0.3.0 || 0.3.1 || 0.4.0 || 0.5.0'
   - '@rt-tools/store@0.0.6 || 0.0.8 || 0.1.0 || 0.2.0 || 0.3.0 || 0.3.1 || 0.3.2 || 0.3.3'
