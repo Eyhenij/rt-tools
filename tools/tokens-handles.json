@@ -25,6 +25,7 @@
     "--rt-aside-footer-justify": "how the side panel footer spreads its buttons; without it space-between",
     "--rt-aside-footer-gap": "the gap between the side panel footer's buttons; without it --rt-space-sm",
     "--rt-aside-header-title-leading": "the line height of the side panel's title; without it inherited. Named apart from the first kit's --rt-aside-header-title-line-height",
-    "--rt-aside-error-margin-block": "the block margin of the side panel's request error box; without it 0"
+    "--rt-aside-error-margin-block": "the block margin of the side panel's request error box; without it 0",
+    "--rt-icon-glyph-font": "the font family of an icon's Material ligature; the application connects the font itself, and until it names a family the kit takes 'Material Symbols Outlined'"
   }
 }

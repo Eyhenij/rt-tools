@@ -12,12 +12,12 @@
  * and the requests that did not arrive — enough to tell a stale showcase from a broken harness
  * without opening a browser by hand.
  *
- * The browser driver itself is not loaded here: every probe in the tree carries its own way to it,
- * and a fifth copy of that way is not what this module was started for.
+ * The browser driver is loaded here too: four tools used to carry a copy each, and the copies had
+ * already drifted apart in their refusal text.
  */
 
 import { utimesSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { join, resolve } from 'node:path';
 
 /** The sign Storybook leaves on a page whose story never finished preparing. */
 const PREPARING = 'sb-preparing-story';
@@ -200,4 +200,29 @@ export async function ensureIndex(address, options = {}) {
 
     console.error(`\n${complaintAboutIndex(address, files)}\n`);
     process.exit(1);
+}
+
+/** The refusal when the driver is not found: printed, and the process ends. */
+function driverMissing(message) {
+    console.error(`\n  ${message}\n`);
+    process.exit(1);
+}
+
+/**
+ * The browser driver: first by name, then from the pnpm links directory, where a tool run from
+ * `tools/` finds it when the root manifest does not name it. The caller hands in its own way to
+ * refuse; by default the refusal is printed and the process ends.
+ */
+export async function loadChromium(refuse = driverMissing) {
+    const candidates = ['playwright', join(process.cwd(), 'node_modules/.pnpm/node_modules/playwright/index.mjs')];
+
+    for (const candidate of candidates) {
+        try {
+            return (await import(candidate)).chromium;
+        } catch {
+            // The next path.
+        }
+    }
+
+    return refuse('The browser driver is found neither by name nor in the pnpm links directory. Install the dependencies: pnpm install');
 }

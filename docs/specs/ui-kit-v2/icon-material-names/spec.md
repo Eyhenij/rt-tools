@@ -1,0 +1,113 @@
+# The Material names of an icon
+
+**Status:** in force · **Revision:** 2 October 2026 · **Scenario prefix:** `SC-UKV`
+**Depends on:** the icon of the second kit and its table of Material pairs; the material preset
+**Laws:** `frontend-application`, `verifiability`, `reuse-first`
+**Procedures:** none
+
+A subdomain of the second kit's spec, written before the code by task RT-2473 of the epic RT-2472.
+
+## Why
+
+An application moving from the first kit names its icons by Material names: the first kit drew them
+by the Material Symbols font. The second kit draws only its own names and 49 Material pairs from its
+table, and a name without a pair draws an empty place. The icon cannot spin, and its size is chosen
+from six steps, so 14, 48 and 56 pixels are out of reach. A button under the material preset draws
+the kit drawing where every other icon draws the Material one.
+
+## Terminology
+
+| Term         | What it is                                                                    |
+| ------------ | ----------------------------------------------------------------------------- |
+| a kit name   | a name the icon set of the kit draws                                          |
+| a glyph      | a Material name given to an icon instead of a kit name                        |
+| a pair       | the kit name the table of Material pairs gives to a glyph                     |
+| the ligature | the glyph drawn as text in the Material Symbols font                          |
+| the strategy | how a glyph is drawn: `map-first` — the pair first, `font` — the font at once |
+
+### What it is called in the interface
+
+A person sees an icon; how it is drawn is invisible to them.
+
+## Rules
+
+- **An icon is named by a kit name or by a glyph, and the kit name wins when both are given.**
+- **By the strategy `map-first` a glyph draws its pair, and without a pair the ligature.** A glyph
+  that is itself a kit name draws that name.
+- **By the strategy `font` a glyph always draws the ligature.**
+- **The strategy is set for the application by the third argument of `provideRtIcons`, and
+  `map-first` is the default.** A call with two addresses works as before.
+- **The ligature is hidden until the page's fonts are ready, and the kit ships no font.** The family
+  is the property `--rt-icon-glyph-font`, and the fill of the icon sets the font's fill.
+- **An icon spins on request, and slower when the system asks for less motion.**
+- **The size of an icon takes pixels as well as a step.**
+- **Under the material preset a button asks for the material drawing of its icon, as the icon
+  does.**
+- **The icon button, the toggle button group, the split button and the empty state take a glyph
+  next to their kit name.**
+- **Without a glyph, a spin and a size in pixels every icon draws as before.**
+
+## What is out of scope
+
+- Shipping the Material Symbols font: the application connects it itself.
+- The empty button of the side menu without a pair — task RT-2482.
+- The icon of a toast — task RT-2478.
+
+## Contract
+
+Not applicable: the surface is inputs of kit components and an argument of a provider function.
+
+### Refusal codes
+
+Not applicable.
+
+## Data
+
+Not applicable: the icon keeps nothing.
+
+## Screens and states
+
+| State                  | What is visible                                               |
+| ---------------------- | ------------------------------------------------------------- |
+| a glyph with a pair    | the kit drawing, or the material one under the preset         |
+| a glyph without a pair | the ligature of the font, after the fonts are ready           |
+| the font not connected | the glyph text in the fallback font after the fonts are ready |
+| a spinning icon        | the icon turning round                                        |
+
+## Cross-cutting requirements
+
+### Locales
+
+Not applicable: an icon carries no label.
+
+### SEO
+
+Not applicable: the kit lives inside an application behind a sign-in.
+
+### Mobile layout
+
+Not applicable: an icon draws the same at any width.
+
+### Several objects
+
+Every icon resolves its own name: a glyph with a pair and one without stand side by side and draw
+by their own ways.
+
+## Decisions
+
+- **The strategy is the third argument of `provideRtIcons`, not an object in place of the second.**
+  The second is the address of the material drawings, and changing its type breaks every call.
+- **`name` of the icon is no longer required.** The glyph stands next to it; a required name would
+  force a placeholder name on every glyph.
+- **One resolver of a Material name lives in the icon folder.** The menu item and the side menu
+  resolved it by two copies of their own; they move onto it with their behaviour unchanged.
+- **The size type stays as it is, and only the input takes pixels.** The type is read in many
+  places, and widening it breaks consumers that map over the steps.
+
+## Open questions
+
+None.
+
+## History of changes
+
+- 2 October 2026 — the agreement was written from the consumer's request by task RT-2473.

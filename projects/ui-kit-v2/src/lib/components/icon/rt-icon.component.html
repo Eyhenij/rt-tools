@@ -1,3 +1,9 @@
-<svg focusable="false" aria-hidden="true" [attr.viewBox]="'0 0 24 24'">
-    <use [attr.href]="href()" />
-</svg>
+<ng-container rtBlock="rt-icon">
+    @if (href(); as symbol) {
+        <svg focusable="false" aria-hidden="true" [attr.viewBox]="'0 0 24 24'">
+            <use [attr.href]="symbol" />
+        </svg>
+    } @else if (fontGlyph(); as ligature) {
+        <span rtElem="glyph" aria-hidden="true" [rtMod]="glyphMods()" [style.font-size.px]="sizePx()">{{ ligature }}</span>
+    }
+</ng-container>

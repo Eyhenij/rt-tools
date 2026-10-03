@@ -6,7 +6,8 @@
 
 | вход                                            | тип                                                                         | умолчание                    |
 | ----------------------------------------------- | --------------------------------------------------------------------------- | ---------------------------- |
-| `icon`                                          | `IRtIcon.Name`                                                              | **обязателен**               |
+| `icon`                                          | `IRtIcon.Name \| null` — нужен он или `glyph`                               | `null`                       |
+| `glyph`                                         | `string \| null` — имя Material, как `glyph` у `rt-icon`                    | `null`                       |
 | `ariaLabel`                                     | `string`                                                                    | **обязателен**               |
 | `variant`                                       | `'primary' \| 'secondary' \| 'ghost' \| 'danger' \| 'success' \| 'warning'` | `'ghost'`                    |
 | `size`                                          | `'sm' \| 'md' \| 'lg' \| 'xl' \| '2xl'`                                     | `'md'`                       |
