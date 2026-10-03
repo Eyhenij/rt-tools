@@ -260,3 +260,12 @@ Then the card is asked about the executor and the board like any task, and it do
 count of the cargo; a record of the cargo next to it is sifted out as before
 
 Covered: `projects/agent-kit/tests/checks-board-cargo.test.sh`.
+
+### SC-AK-1185 — a numbered task folder outside the index is named
+
+Given a task folder with a number lies on disk, and not one of its files is in the index
+When the check of the work queue goes
+Then a line names the folder and both ways out — commit it in the branch of the task or delete it;
+the same folder committed, a draft `_draft-<slug>` and the template give no such line
+
+Covered: `projects/agent-kit/tests/checks-board-folders.test.sh`.

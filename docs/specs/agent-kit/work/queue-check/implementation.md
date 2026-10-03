@@ -4,6 +4,7 @@ A statement of the spec and the place where it is carried out. The link goes by 
 statement: a removed statement is removed together with its line.
 
 - **The check of the work queue sees a task folder in a nested directory too.** — `projects/agent-kit/assets/checks/board.github.mjs:taskDirs`
+- **A task folder with a number that holds no file from the index is a divergence of the check.** — `projects/agent-kit/assets/checks/board-folders.mjs:checkUntrackedFolders`
 - **An open PR whose tip carries no run is a divergence of the check.** — `projects/agent-kit/assets/checks/check-board.github.mjs:checkHeadRun`
 - **The run is asked about at the tip of the PR, not at its branch.** — `projects/agent-kit/assets/checks/board-runs.github.mjs:runsOnHead`
 - **What counts is the very fact of a run, not its colour.** — `projects/agent-kit/assets/checks/board-runs.github.mjs:total_count`

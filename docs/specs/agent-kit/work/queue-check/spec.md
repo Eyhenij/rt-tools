@@ -69,6 +69,12 @@ the total.
 - **The check of the work queue sees a task folder in a nested directory too.** A bare number in the
   name also counts as a number — the check of the name of the branch accepts the same form. A folder
   the check does not see nobody will find: one such was found by a grep, not by a check.
+- **A task folder with a number that holds no file from the index is a divergence of the check.**
+  Only a draft without a number may live outside history. A numbered folder outside the index
+  passes edits without a refusal and follows its owner across every switch of branches. The task
+  creating command lays such a folder at once, and a task created "for later" leaves it on disk for
+  good. The line names both ways out: take the branch and commit the folder, or delete it. The
+  check reads the disk only, so it speaks without a connection too.
 - **At a conflicting request the reason named is the conflict, not the loss of the event.** The
   pipeline checks the merge of the branch with the base, and at a conflict there is no merge — the
   run will not stand, however many events are brought back. Advice to bring the event back is

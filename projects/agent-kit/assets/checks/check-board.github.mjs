@@ -48,7 +48,7 @@ import {
     numberFromTitle,
     taskDirs,
 } from './board.mjs';
-import { checkBranchFolders } from './board-folders.mjs';
+import { checkBranchFolders, checkUntrackedFolders } from './board-folders.mjs';
 import { checkConflicting, checkHeadRun } from './board-pull-state.mjs';
 import { checkLongWork } from './board-long-work.mjs';
 import { HAS_PIPELINE, deployLag, lastDeploy, lastMainRun, pipelineText, pipelineWakesOnPush } from './board-runs.mjs';
@@ -167,6 +167,7 @@ let checked = { issues: 0, pulls: 0, cargo: 0, offBase: 0 };
 // Drafts are judged by the disk and so are checked always: no connection is needed for that.
 checkDrafts();
 checkBranchFolders(report, MAIN_BRANCH);
+checkUntrackedFolders(report);
 
 let offline = false;
 try {

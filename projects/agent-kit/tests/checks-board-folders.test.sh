@@ -95,6 +95,18 @@ bf_git commit -m 'папка задачи'
 bf_git checkout main
 report "SC-AK-1127 — ветка задачи с папкой не называется" "$(bf_says 'RT-700-task: the task folder never travelled')" 0
 
+# --- SC-AK-1185 — папка задачи с номером вне индекса названа ------------------------------
+# Команда заведения задачи кладёт папку сразу. Задача заведена «на потом» — папка лежит вне
+# истории и тянется за владельцем через все ветки. Законен вне истории только черновик без номера.
+mkdir -p "$BF_TREE/docs/tasks/RT-900-later" "$BF_TREE/docs/tasks/_draft-idea"
+printf '# План\n' > "$BF_TREE/docs/tasks/RT-900-later/plan.md"
+printf '# Разбор\n' > "$BF_TREE/docs/tasks/_draft-idea/grill.md"
+report "SC-AK-1185 — папка с номером вне индекса названа" "$(bf_says 'docs/tasks/RT-900-later/: the task folder lies outside the index')" 1
+report "SC-AK-1185 — черновик без номера не назван" "$(bf_says '_draft-idea/: the task folder lies outside')" 0
+bf_git add docs/tasks/RT-900-later
+bf_git commit -m 'папка задачи RT-900'
+report "SC-AK-1185 — папка в индексе не названа" "$(bf_says 'RT-900-later/: the task folder lies outside')" 0
+
 rm -rf "$BF_TREE"
 
 suite_result "очередь работ, папка задачи в ветке"
