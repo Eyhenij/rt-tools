@@ -37,6 +37,7 @@
     "--rt-toast-filled-warning-border-color": "the border colour of a filled warning toast; without it the toast takes --rt-color-state-warning-bg",
     "--rt-toast-filled-danger-bg": "the background of a filled danger toast; without it the toast takes --rt-color-state-danger-bg",
     "--rt-toast-filled-danger-color": "the text and icon colour of a filled danger toast; without it the toast takes --rt-color-state-danger",
-    "--rt-toast-filled-danger-border-color": "the border colour of a filled danger toast; without it the toast takes --rt-color-state-danger-bg"
+    "--rt-toast-filled-danger-border-color": "the border colour of a filled danger toast; without it the toast takes --rt-color-state-danger-bg",
+    "--rt-icon-glyph-font": "the font family of an icon's Material ligature; the application connects the font itself, and until it names a family the kit takes 'Material Symbols Outlined'"
   }
 }

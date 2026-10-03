@@ -15,6 +15,8 @@ import { createRequire } from 'node:module';
 import { connect } from 'node:net';
 import { fileURLToPath } from 'node:url';
 
+import { shotDefaults } from './shot-browser-name.mjs';
+
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 
 /** Сколько ждать браузер образа, миллисекунды. Первый запуск качает образ, и это минуты. */
@@ -49,11 +51,14 @@ const RUNNER_VERSION = createRequire(import.meta.url)('@playwright/test/package.
 /** Образ с браузерами того же издания, что прогонщик. */
 const SHOT_IMAGE = `mcr.microsoft.com/playwright:v${RUNNER_VERSION}-noble`;
 
-/** Имя поднятого образа. Своё у каждого дерева: на машине с несколькими раннерами оно общее. */
-const SHOT_CONTAINER = textFromEnv('E2E_SHOT_CONTAINER', 'rt-tools-shot');
+/** Умолчания имени и порта — свои у рабочей копии: на машине их несколько. */
+const SHOT_DEFAULTS = shotDefaults(ROOT);
 
-/** Порт машины, на котором отвечает браузер образа. Второй запуск на той же машине называет свой. */
-const SHOT_PORT = intFromEnv('E2E_SHOT_PORT', 43210);
+/** Имя поднятого образа. */
+const SHOT_CONTAINER = textFromEnv('E2E_SHOT_CONTAINER', SHOT_DEFAULTS.container);
+
+/** Порт машины, на котором отвечает браузер образа. */
+const SHOT_PORT = intFromEnv('E2E_SHOT_PORT', SHOT_DEFAULTS.port);
 
 /** Путь входа: он стоит в адресе и тем отличает наш браузер от чужого, занявшего тот же порт. */
 const SHOT_PATH = '/shot';

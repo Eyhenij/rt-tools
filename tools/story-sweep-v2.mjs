@@ -30,7 +30,7 @@
  */
 import { join } from 'node:path';
 
-import { ensureIndex, openStory } from './showcase-probe.mjs';
+import { ensureIndex, loadChromium, openStory } from './showcase-probe.mjs';
 
 /** The address of an already raised showcase: the sweep raises none of its own — like the snapshot run next to it. */
 const URL = process.env.STORYBOOK_URL ?? 'http://localhost:6007';
@@ -76,26 +76,6 @@ const KNOWN_SHOWCASE_NOISE = [/NG04002: Cannot match any routes\. URL Segment: '
 function fail(message) {
     console.error(`\n  ${message}\n`);
     process.exit(1);
-}
-
-/**
- * The browser driver arrives as a dependency of the snapshot runner rather than by the tree's manifest.
- *
- * pnpm's strict layout does not put it into the root `node_modules`, so an import by name finds
- * nothing here. The second road is pnpm's shared links directory, where the transitive is put.
- */
-async function loadChromium() {
-    const candidates = ['playwright', join(process.cwd(), 'node_modules/.pnpm/node_modules/playwright/index.mjs')];
-
-    for (const candidate of candidates) {
-        try {
-            return (await import(candidate)).chromium;
-        } catch {
-            // The next path.
-        }
-    }
-
-    return fail('The browser driver is found neither by name nor in the pnpm links directory. Install the dependencies: pnpm install');
 }
 
 /**
@@ -186,7 +166,7 @@ const measureShownArea = (mode) => {
     return drawn.reduce((largest, node) => Math.max(largest, area(node)), 0);
 };
 
-const chromium = await loadChromium();
+const chromium = await loadChromium(fail);
 const showings = await ownShowings();
 const storyCount = showings.filter((showing) => showing.type === 'story').length;
 const docsCount = showings.length - storyCount;
