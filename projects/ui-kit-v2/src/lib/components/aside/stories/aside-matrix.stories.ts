@@ -38,6 +38,16 @@ export const Layout: TStory = { args: { part: 'layout' } };
  */
 export const RequestError: TStory = { args: { part: 'error' } };
 
+/** Ожидание: слой с крутилкой накрывает всю панель, шапку и подвал тоже. */
+export const Pending: TStory = { args: { part: 'pending' } };
+
+/**
+ * Ручки вида: отступы шапки, содержимого и подвала, поля, раскладка и промежуток подвала, высота
+ * строки заголовка и поля блока ошибки. Слева панель без них — она же показывает, что без ручек
+ * вид прежний.
+ */
+export const Properties: TStory = { args: { part: 'properties' } };
+
 export const Presets: TStory = { args: { part: 'presets' } };
 
 export const Themes: TStory = { args: { part: 'themes' } };

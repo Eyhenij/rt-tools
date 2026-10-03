@@ -10,12 +10,18 @@ import { RtAsideHeaderComponent } from '../../header/rt-aside-header.component';
 import { TRtAsideContentLayout, TRtAsideSize, RtAsideComponent } from '../../rt-aside.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TAsideMatrixPart = 'size' | 'width' | 'layout' | 'error' | 'presets' | 'themes';
+export type TAsideMatrixPart = 'size' | 'width' | 'layout' | 'error' | 'pending' | 'properties' | 'presets' | 'themes';
 
 /** Раскладка содержимого: с вкладками содержимое не прокручивается целиком, а отдаёт прокрутку внутрь. */
 interface IAsideLayoutCase {
     readonly name: string;
     readonly layout: TRtAsideContentLayout;
+}
+
+/** Ручки вида: без них и с ними — подвал, отступы и высота строки заголовка меняются рядом. */
+interface IAsidePropertiesCase {
+    readonly name: string;
+    readonly style: string;
 }
 
 /**
@@ -139,6 +145,72 @@ interface IAsideLayoutCase {
                     </app-story-presets>
                 }
 
+                @case ('pending') {
+                    <app-story-presets caption="Панель в ожидании в обеих темах в обоих наборах">
+                        <ng-template>
+                            <app-story-themes>
+                                <ng-template>
+                                    <div class="app-aside-matrix__box">
+                                        <rt-aside size="sm" ariaLabel="Карточка тура" [pending]="true">
+                                            <rt-aside-header title="Тур в Сочи" overline="Заявка № 1024" />
+                                            <rt-aside-section heading="Клиент">Иванов Иван Иванович</rt-aside-section>
+                                            <rt-aside-footer>
+                                                <button
+                                                    rtButton
+                                                    asideDismiss
+                                                    type="button"
+                                                    theme="secondary"
+                                                    appearance="text"
+                                                    label="Закрыть"
+                                                    aria-label="Закрыть"></button>
+                                                <button
+                                                    rtButton
+                                                    asidePrimary
+                                                    type="button"
+                                                    label="Сохранить"
+                                                    aria-label="Сохранить"></button>
+                                            </rt-aside-footer>
+                                        </rt-aside>
+                                    </div>
+                                </ng-template>
+                            </app-story-themes>
+                        </ng-template>
+                    </app-story-presets>
+                }
+
+                @case ('properties') {
+                    <app-story-presets caption="Ручки вида панели в обоих наборах">
+                        <ng-template>
+                            <app-story-row [items]="propertiesCases" [itemLabel]="caseLabel">
+                                <ng-template let-propertiesCase>
+                                    <div class="app-aside-matrix__box app-aside-matrix__box--tall" [attr.style]="propertiesCase.style">
+                                        <rt-aside size="sm" [ariaLabel]="propertiesCase.name" [requestError]="requestError">
+                                            <rt-aside-header title="Тур в Сочи" overline="Заявка № 1024" />
+                                            <rt-aside-section heading="Клиент">Иванов Иван Иванович</rt-aside-section>
+                                            <rt-aside-footer>
+                                                <button
+                                                    rtButton
+                                                    asideDismiss
+                                                    type="button"
+                                                    theme="secondary"
+                                                    appearance="text"
+                                                    label="Закрыть"
+                                                    aria-label="Закрыть"></button>
+                                                <button
+                                                    rtButton
+                                                    asidePrimary
+                                                    type="button"
+                                                    label="Сохранить"
+                                                    aria-label="Сохранить"></button>
+                                            </rt-aside-footer>
+                                        </rt-aside>
+                                    </div>
+                                </ng-template>
+                            </app-story-row>
+                        </ng-template>
+                    </app-story-presets>
+                }
+
                 @case ('presets') {
                     <app-story-presets caption="Панель в обоих наборах">
                         <ng-template>
@@ -251,6 +323,28 @@ export class TestRtAsideMatrixComponent {
 
     /** Ошибка неудавшегося сохранения: её содержимое уходит только в копию, на экране его нет. */
     public readonly requestError: Readonly<Record<string, unknown>> = { status: 500, message: 'Internal Server Error' };
+
+    /**
+     * Ручки задаёт ящик, как приложение задало бы их с корня: свойства наследуются до рамки. Подвал
+     * собирает кнопки в конце с широким промежутком, отступы и поля уже, у заголовка своя высота
+     * строки, а блок ошибки отбит сверху и снизу.
+     */
+    public readonly propertiesCases: readonly IAsidePropertiesCase[] = [
+        { name: 'без ручек', style: '' },
+        {
+            name: 'с ручками',
+            style: [
+                '--rt-aside-header-inset: 8px 16px',
+                '--rt-aside-content-inset: 8px 16px',
+                '--rt-aside-footer-inset: 8px 0 0',
+                '--rt-aside-footer-margin: 8px 16px',
+                '--rt-aside-footer-justify: flex-end',
+                '--rt-aside-footer-gap: 24px',
+                '--rt-aside-header-title-leading: 2',
+                '--rt-aside-error-margin-block: 8px',
+            ].join('; '),
+        },
+    ];
 
     public readonly layoutCases: readonly IAsideLayoutCase[] = [
         { name: 'обычная', layout: 'default' },
