@@ -29,8 +29,7 @@ const BEM_BLOCK: string = 'rt-header';
  * `canGoBack=false` (default) — slot полностью скрыт через display:none, wordmark
  * выравнивается слева.
  *
- * Далее — wordmark, справа — action-иконки (на базе rt-icon-button с inline
- * override `--rt-icon-button-size: 35px`): опциональная «Пригласить пользователя»
+ * Далее — wordmark, справа — action-иконки (rt-icon-button шагом md): опциональная «Пригласить пользователя»
  * (`showInvite`), слот колокольчика и профиль.
  *
  * Колокольчик уведомлений — проекция `[rtHeaderBell]`: домен кладёт в слот

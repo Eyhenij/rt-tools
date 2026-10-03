@@ -227,7 +227,7 @@ theme.setTheme('auto');`}
 
 ## Ручки потребителя
 
-Шестьдесят семь свойств кит **намеренно не объявляет**: их значение приходит от приложения, а до
+Семьдесят свойств кит **намеренно не объявляет**: их значение приходит от приложения, а до
 него работает запасное. Всё, чего в этой таблице нет, кит объявляет сам — и переопределять его
 запасным значением на месте не нужно.
 
@@ -259,6 +259,16 @@ theme.setTheme('auto');`}
 | `--rt-data-table-scrollbar-color`             | `scrollbar-color` таблицы                          | тихая полоса основы            |
 | `--rt-aside-bg`                               | фон боковой панели                                 | `--rt-color-bg-surface`        |
 | `--rt-table-actions-bg`                       | фон полосы действий строки таблицы                 | `--rt-color-bg-surface`        |
+| `--rt-action-bar-menu-bg`                     | фон меню панели действий — на корне страницы       | `--rt-color-bg-surface`        |
+| `--rt-action-bar-menu-color`                  | цвет текста меню панели действий                   | `--rt-color-text-primary`      |
+| `--rt-action-bar-menu-radius`                 | скругление меню панели действий                    | ступень `--rt-radius-md`       |
+| `--rt-action-bar-menu-shadow`                 | тень меню панели действий                          | `--rt-shadow-card`             |
+| `--rt-icon-button-size`                       | сторона кнопки-значка                              | шаг входа `size`               |
+| `--rt-icon-button-bg`                         | заливка покоя кнопки-значка                        | заливка вида                   |
+| `--rt-icon-button-bg-hover`                   | заливка кнопки-значка под указателем               | заливка вида под указателем    |
+| `--rt-icon-glyph-font`                        | семья шрифта лигатуры значка                       | `'Material Symbols Outlined'`  |
+| Свойство                                      | Что задаёт                                         | Пока не задано                 |
+| --------------------------------------------- | -------------------------------------------------- | ------------------------------ |
 | `--rt-toast-bg`                               | фон тоста                                          | `--rt-color-bg-surface`        |
 | `--rt-toast-color`                            | цвет текста тоста                                  | `--rt-color-text-primary`      |
 | `--rt-toast-border-color`                     | цвет рамки тоста                                   | `--rt-color-border-subtle`     |
@@ -279,11 +289,6 @@ theme.setTheme('auto');`}
 | `--rt-toast-filled-danger-bg`                 | фон залитого тоста ошибки                          | `--rt-color-state-danger-bg`   |
 | `--rt-toast-filled-danger-color`              | цвет текста и значка залитого тоста ошибки         | `--rt-color-state-danger`      |
 | `--rt-toast-filled-danger-border-color`       | цвет рамки залитого тоста ошибки                   | `--rt-color-state-danger-bg`   |
-| `--rt-icon-glyph-font`                        | семья шрифта лигатуры значка                       | `'Material Symbols Outlined'`  |
-| `--rt-action-bar-menu-bg`                     | фон меню панели действий — на корне страницы       | `--rt-color-bg-surface`        |
-| `--rt-action-bar-menu-color`                  | цвет текста меню панели действий                   | `--rt-color-text-primary`      |
-| `--rt-action-bar-menu-radius`                 | скругление меню панели действий                    | ступень `--rt-radius-md`       |
-| `--rt-action-bar-menu-shadow`                 | тень меню панели действий                          | `--rt-shadow-card`             |
 | Свойство                                      | Что задаёт                                         | Пока не задано                 |
 | --------------------------------------------- | --------------------------------------------       | ------------------------------ |
 | `--rt-aside-header-inset`                     | отступ шапки боковой панели                        | `--rt-aside-inset`             |

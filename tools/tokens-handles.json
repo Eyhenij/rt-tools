@@ -67,6 +67,9 @@
     "--rt-action-bar-menu-color": "the action bar menu's text colour; the default is the primary text",
     "--rt-action-bar-menu-radius": "the action bar menu's rounding; the default is the step md",
     "--rt-action-bar-menu-shadow": "the action bar menu's shadow; the default is the card shadow",
+    "--rt-icon-button-size": "the side of the icon button; set on its tag or above, it wins over the size step",
+    "--rt-icon-button-bg": "the resting background of the icon button; set on its tag or above, it wins over the kind background",
+    "--rt-icon-button-bg-hover": "the hover background of the icon button; without it each kind takes its own",
     "--rt-icon-glyph-font": "the font family of an icon's Material ligature; the application connects the font itself, and until it names a family the kit takes 'Material Symbols Outlined'"
   }
 }

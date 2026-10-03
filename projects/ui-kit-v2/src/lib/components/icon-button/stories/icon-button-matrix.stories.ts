@@ -24,6 +24,8 @@ export const Size: TStory = { args: { part: 'size' } };
 
 export const IconSize: TStory = { args: { part: 'iconSize' } };
 
+export const HostRule: TStory = { args: { part: 'hostRule' } };
+
 export const Radius: TStory = { args: { part: 'radius' } };
 
 export const Flags: TStory = { args: { part: 'flags' } };

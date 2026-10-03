@@ -100,9 +100,11 @@ describe('RtHeaderComponent', (): void => {
         });
     });
 
-    it('кнопки действий подогнаны под высоту шапки инлайновым размером', (): void => {
+    it('SC-UKV-593 — кнопки действий идут шагом md и не задают своего размера на теге', (): void => {
         const fixture: ComponentFixture<RtHeaderComponent> = setup();
+        const profile: HTMLElement = qa(fixture, 'header-profile')?.nativeElement as HTMLElement;
 
-        expect((qa(fixture, 'header-profile')?.nativeElement as HTMLElement).style.getPropertyValue('--rt-icon-button-size')).toBe('35px');
+        expect(profile.querySelector('.rt-icon-button')?.classList).toContain('rt-icon-button--md');
+        expect(profile.style.getPropertyValue('--rt-icon-button-size')).toBe('');
     });
 });

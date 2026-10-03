@@ -11,7 +11,7 @@ import { RtIconButtonComponent } from '../../rt-icon-button.component';
 import { IRtIconButton } from '../../rt-icon-button.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TIconButtonMatrixPart = 'variant' | 'size' | 'iconSize' | 'radius' | 'flags' | 'states' | 'presets' | 'themes';
+export type TIconButtonMatrixPart = 'variant' | 'size' | 'iconSize' | 'hostRule' | 'radius' | 'flags' | 'states' | 'presets' | 'themes';
 
 /** Случай признака: какой из булевых входов включён и как он называется словами. */
 interface IIconButtonFlagCase {
@@ -75,6 +75,17 @@ interface IIconButtonFlagCase {
                         </app-story-grid>
                     </ng-template>
                 </app-story-presets>
+            }
+
+            <!-- Правило на теге, как его пишет приложение: размер и заливка покоя заданы самой кнопке
+                 и бьют шаги размера и вида. Заливка под указателем объявлена тем же правилом и видна в
+                 витрине под указателем. Пары наборов нет: правило приложения одинаково в обоих. -->
+            @case ('hostRule') {
+                <app-story-row [items]="variants">
+                    <ng-template let-variant>
+                        <rt-icon-button icon="pencil" ariaLabel="Править" size="md" [variant]="variant" [style]="hostRuleStyle" />
+                    </ng-template>
+                </app-story-row>
             }
 
             @case ('radius') {
@@ -187,7 +198,14 @@ export class TestRtIconButtonMatrixComponent {
     public part: TIconButtonMatrixPart = 'variant';
 
     public readonly variants: readonly IRtIconButton.Variant[] = ['ghost', 'primary', 'secondary', 'danger', 'success', 'warning'];
-    public readonly sizes: readonly IRtIconButton.Size[] = ['sm', 'md', 'lg', 'xl', '2xl'];
+    /** Правило приложения на теге: сторона 24px, своя заливка покоя и под указателем. */
+    public readonly hostRuleStyle: Readonly<Record<string, string>> = {
+        '--rt-icon-button-size': 'var(--rt-size-6)',
+        '--rt-icon-button-bg': 'var(--rt-color-state-info-bg)',
+        '--rt-icon-button-bg-hover': 'var(--rt-color-state-warning-bg)',
+    };
+
+    public readonly sizes: readonly IRtIconButton.Size[] = ['2xs', 'xs', 'sm', 'md', 'lg', 'xl', '2xl'];
     public readonly radii: readonly (TRtRadius | null)[] = [null, ...RT_RADIUS_STEPS];
     /** Шаги, которыми раньше были формы: квадрат — умолчание, две скруглённые формы и круг. */
     public readonly gridRadii: readonly (TRtRadius | null)[] = [null, 'lg', 'xl', 'full'];

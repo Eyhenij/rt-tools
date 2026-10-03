@@ -9,11 +9,6 @@
     rt-icon-button {
         display: inline-flex;
 
-        /* Дефолт = md; перезаписывается модификаторами sm/lg ниже либо inline стилем потребителя.
-           Ряд берётся из общей шкалы высот контролов: иконочная кнопка стоит в строке
-           рядом с кнопкой и полем и обязана совпадать с ними по высоте. */
-        --rt-icon-button-size: var(--rt-control-height-md);
-
         /* Цвет иконки объявлен здесь, а не приходил бы запасным значением на месте
            обращения: запасное переживает смену темы — переопределять нечего. Своё
            свойство блока перебивает тот, кому нужен другой цвет: так делает просмотр
@@ -38,20 +33,26 @@
             --rt-icon-button-color-hover: var(--rt-icon-button-color);
             --rt-icon-button-transition-duration: var(--rt-duration-fast);
 
-            /* Заливка покоя — своим свойством: неактивная кнопка берёт из неё долю, которую задаёт
-               набор оформления. */
-            --rt-icon-button-bg: transparent;
+            /* Размер и заливка покоя — частные шаги: их пишут модификаторы размера и вида, а кнопка
+               читает их под публичными `--rt-icon-button-size` и `--rt-icon-button-bg`. Публичные
+               кнопка не объявляет, поэтому значение на теге `<rt-icon-button>` или выше доходит до
+               неё; раньше модификатор объявлял публичное свойство на самой кнопке и перебивал тег.
+               Компоненты кита, которым нужен свой размер кнопки, тоже пишут шаг, а не публичное
+               свойство: последнее слово остаётся за приложением.
+               Ряд размеров — из общей шкалы высот контролов: кнопка стоит в строке рядом с полем. */
+            --rt-icon-button-bg-variant: transparent;
+            --rt-icon-button-size-step: var(--rt-control-height-md);
 
             position: relative;
             display: inline-flex;
-            width: var(--rt-icon-button-size);
-            height: var(--rt-icon-button-size);
+            width: var(--rt-icon-button-size, var(--rt-icon-button-size-step));
+            height: var(--rt-icon-button-size, var(--rt-icon-button-size-step));
             align-items: center;
             justify-content: center;
             padding: 0;
             border: 0;
             border-radius: var(--rt-icon-button-radius);
-            background-color: var(--rt-icon-button-bg);
+            background-color: var(--rt-icon-button-bg, var(--rt-icon-button-bg-variant));
             box-shadow: var(--rt-icon-button-shadow);
             color: var(--rt-icon-button-color);
             cursor: pointer;
@@ -59,24 +60,34 @@
                 background-color var(--rt-icon-button-transition-duration) ease,
                 box-shadow var(--rt-icon-button-transition-duration) ease;
 
+            /* Два шага меньше `sm` — для плотных строк. У шкалы нет ступени 22px, и ступень ради одной
+               кнопки легла бы мимо её сетки в 4px: шаг `xs` записан на месте. */
+            &--2xs {
+                --rt-icon-button-size-step: var(--rt-size-5);
+            }
+
+            &--xs {
+                --rt-icon-button-size-step: 22px;
+            }
+
             &--sm {
-                --rt-icon-button-size: var(--rt-control-height-sm);
+                --rt-icon-button-size-step: var(--rt-control-height-sm);
             }
 
             &--md {
-                --rt-icon-button-size: var(--rt-control-height-md);
+                --rt-icon-button-size-step: var(--rt-control-height-md);
             }
 
             &--lg {
-                --rt-icon-button-size: var(--rt-control-height-lg);
+                --rt-icon-button-size-step: var(--rt-control-height-lg);
             }
 
             &--xl {
-                --rt-icon-button-size: var(--rt-control-height-xl);
+                --rt-icon-button-size-step: var(--rt-control-height-xl);
             }
 
             &--2xl {
-                --rt-icon-button-size: var(--rt-control-height-2xl);
+                --rt-icon-button-size-step: var(--rt-control-height-2xl);
             }
 
             /* Подъём под указателем — ручка для потребителя, как тень покоя; по умолчанию равен
@@ -85,9 +96,11 @@
                 box-shadow: var(--rt-icon-button-shadow-hover);
             }
 
+            /* Заливка под указателем читается под ручкой `--rt-icon-button-bg-hover`; без неё каждый
+               вид берёт свою, как прежде. */
             &--ghost {
                 &:hover:not(:disabled) {
-                    background-color: var(--rt-icon-button-color-bg-hover);
+                    background-color: var(--rt-icon-button-bg-hover, var(--rt-icon-button-color-bg-hover));
                     color: var(--rt-icon-button-color-hover);
                 }
 
@@ -97,22 +110,22 @@
             }
 
             &--primary {
-                --rt-icon-button-bg: var(--rt-color-action-primary);
+                --rt-icon-button-bg-variant: var(--rt-color-action-primary);
 
                 color: var(--rt-color-action-on-primary);
 
                 &:hover:not(:disabled) {
-                    background-color: var(--rt-color-action-primary-hover);
+                    background-color: var(--rt-icon-button-bg-hover, var(--rt-color-action-primary-hover));
                 }
             }
 
             &--secondary {
-                --rt-icon-button-bg: var(--rt-color-bg-surface-subtle);
+                --rt-icon-button-bg-variant: var(--rt-color-bg-surface-subtle);
 
                 color: var(--rt-color-text-primary);
 
                 &:hover:not(:disabled) {
-                    background-color: var(--rt-icon-button-color-bg-hover);
+                    background-color: var(--rt-icon-button-bg-hover, var(--rt-icon-button-color-bg-hover));
                 }
             }
 
@@ -120,7 +133,7 @@
                 color: var(--rt-color-state-danger);
 
                 &:hover:not(:disabled) {
-                    background-color: var(--rt-icon-button-color-bg-hover);
+                    background-color: var(--rt-icon-button-bg-hover, var(--rt-icon-button-color-bg-hover));
                 }
 
                 &.rt-icon-button--active {
@@ -132,7 +145,7 @@
                 color: var(--rt-color-state-success);
 
                 &:hover:not(:disabled) {
-                    background-color: var(--rt-icon-button-color-bg-hover);
+                    background-color: var(--rt-icon-button-bg-hover, var(--rt-icon-button-color-bg-hover));
                 }
 
                 &.rt-icon-button--active {
@@ -144,7 +157,7 @@
                 color: var(--rt-color-state-warning);
 
                 &:hover:not(:disabled) {
-                    background-color: var(--rt-icon-button-color-bg-hover);
+                    background-color: var(--rt-icon-button-bg-hover, var(--rt-icon-button-color-bg-hover));
                 }
 
                 &.rt-icon-button--active {
@@ -157,7 +170,11 @@
                встроенным стилем, и правилом его не перебить. Заливка остаётся долей заливки покоя: по умолчанию
                вся, и свой вид прежний. */
             &:disabled {
-                background-color: color-mix(in srgb, var(--rt-icon-button-bg) var(--rt-icon-button-disabled-fill), transparent);
+                background-color: color-mix(
+                    in srgb,
+                    var(--rt-icon-button-bg, var(--rt-icon-button-bg-variant)) var(--rt-icon-button-disabled-fill),
+                    transparent
+                );
                 cursor: not-allowed;
                 opacity: var(--rt-icon-button-disabled-opacity);
 
