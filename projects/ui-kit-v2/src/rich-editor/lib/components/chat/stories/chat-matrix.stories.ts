@@ -41,6 +41,9 @@ export const MessageActions: TStory = {
 
 export const Reply: TStory = { args: { part: 'reply' } };
 
+/** Строка «печатает» поверх низа ленты: пустая плашку прячет, лента при этом не сдвигается. */
+export const Typing: TStory = { args: { part: 'typing' } };
+
 export const Header: TStory = { args: { part: 'header' } };
 
 export const Loading: TStory = { args: { part: 'loading' } };

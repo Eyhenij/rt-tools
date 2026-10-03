@@ -11,7 +11,7 @@ import { CHAT_MESSAGES, CHAT_PEER } from './chat.fixture';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
 export type TChatMatrixPart =
-    'thread' | 'messageKind' | 'status' | 'messageActions' | 'reply' | 'header' | 'loading' | 'presets' | 'themes';
+    'thread' | 'messageKind' | 'status' | 'messageActions' | 'reply' | 'typing' | 'header' | 'loading' | 'presets' | 'themes';
 
 const NOW: string = '2026-03-14T16:02:00.000Z';
 
@@ -159,6 +159,27 @@ const NOW: string = '2026-03-14T16:02:00.000Z';
                 </app-story-presets>
             }
 
+            @case ('typing') {
+                <app-story-presets caption="Строка о том, что печатает вторая сторона, в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="24rem" [items]="typingCases" [itemLabel]="caseLabel">
+                            <ng-template let-item>
+                                <div
+                                    style="box-sizing: border-box; inline-size: 100%; block-size: 22rem; padding: 1rem; border: 1px solid var(--rt-color-border-subtle); border-radius: var(--rt-radius-lg); background-color: var(--rt-color-bg-surface)">
+                                    <rt-chat
+                                        style="height: 100%"
+                                        canReply
+                                        hasThread
+                                        placeholder="Написать сообщение"
+                                        [messages]="messages"
+                                        [typingText]="item.text" />
+                                </div>
+                            </ng-template>
+                        </app-story-row>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('header') {
                 <app-story-presets caption="Когда появляется шапка в обоих наборах">
                     <ng-template>
@@ -298,6 +319,12 @@ export class TestRtChatMatrixComponent {
         { name: 'отправка в пути', canReply: true, reason: null, sending: true },
         { name: 'отвечать нельзя — причина', canReply: false, reason: 'Переписка закрыта', sending: false },
         { name: 'нельзя, причина не названа', canReply: false, reason: null, sending: false },
+    ];
+
+    /** Пустая строка плашку прячет, и лента в обоих случаях стоит на одном месте. */
+    public readonly typingCases: readonly { name: string; text: string }[] = [
+        { name: 'никто не печатает', text: '' },
+        { name: 'вторая сторона печатает', text: 'Оператор печатает…' },
     ];
 
     public readonly headerCases: readonly { name: string; refresh: boolean; expand: boolean }[] = [
