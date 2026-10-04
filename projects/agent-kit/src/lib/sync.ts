@@ -12,6 +12,7 @@ import { collectAssets, IAsset, targetOf } from './assets.js';
 import { ICascadeCut, IIdleSkip, cascadeCuts, idleSkips, namedButCut } from './cascade.js';
 import { brokenLinks, IBrokenLink, IEntryOfCatalog, IGapOfVariant, isExecutable, readCatalog, variantGaps } from './catalog.js';
 import { ICompanion, pathOf, planCompanion } from './companion.js';
+import { ambiguousNames, IAmbiguousName } from './integrity.js';
 import { IConfig, KINDS, OVERRIDES_DIR, TKind } from './config.js';
 import {
     bindDispatch,
@@ -53,6 +54,14 @@ export interface ISyncResult {
      * значения и с файлом, который правили руками.
      */
     readonly gaps: readonly IGapOfVariant[];
+    /**
+     * Ресурсы одного рода, сошедшиеся на одном коротком имени.
+     *
+     * Потомок ищет родителя по этому имени, и при двух одноимённых законах каскад снял бы правила
+     * не того родителя — молча, потому что оба имени существуют. Набор с такой парой неисправен
+     * сам, у любого дерева разом, поэтому непустой список — отказ раскладки наравне с `gaps`.
+     */
+    readonly ambiguous: readonly IAmbiguousName[];
     /**
      * Разложенные гарды, которых нет в настройке агента: файл лежит, а позвать его некому.
      *
@@ -335,6 +344,7 @@ export function planSync(config: IConfig, root: string, version: string, assetsD
         companions,
         abandoned: left.abandoned,
         gaps: variantGaps(readCatalog(assetsDir), config),
+        ambiguous: ambiguousNames(readCatalog(assetsDir)),
         unbound: unboundHooks(bindingsOf(config, assetsDir), root),
         drifted: driftedMatchers(bindingsOf(config, assetsDir), root),
         broken: brokenLinks(readCatalog(assetsDir), config),
@@ -372,7 +382,12 @@ function writePlanned(root: string, entry: IPlanned, executable: ReadonlySet<str
 /** Раскладка. Отказ хотя бы по одному файлу не пишет ничего: половина разложенного хуже целого. */
 export function runSync(config: IConfig, root: string, version: string, assetsDir: string): ISyncResult {
     const result: ISyncResult = planSync(config, root, version, assetsDir);
-    if (result.missing.size || result.gaps.length || result.planned.some((entry: IPlanned): boolean => isRefusal(entry.outcome))) {
+    if (
+        result.missing.size ||
+        result.gaps.length ||
+        result.ambiguous.length ||
+        result.planned.some((entry: IPlanned): boolean => isRefusal(entry.outcome))
+    ) {
         return result;
     }
 
