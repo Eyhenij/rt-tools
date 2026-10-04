@@ -2,19 +2,19 @@
 
 ## Where we stand
 
-- **State:** `этап-идёт`
+- **State:** `этапы-кончились`
 - **Stage:** 1 of 1 — Правки текстов
-- **Done:** папка задачи, план
-- **Next step:** строка в справке task-flow
-- **Uncommitted:** папка задачи, строка назначения
+- **Done:** обе правки, установка совпадает с пакетом
+- **Next step:** разобрать папку, открыть PR
+- **Uncommitted:** нет
 - **Waiting for the owner:** no
 - **PR:** not open yet
 
 ## Steps
 
-- [>] 1.1 Строка в справке task-flow
-- [ ] 1.2 Абзац в образце git-workflow-commit
-- [ ] 1.3 Установить файлы пакета в дерево
+- [x] 1.1 Строка в справке task-flow
+- [x] 1.2 Абзац в образце git-workflow-commit
+- [x] 1.3 Установить файлы пакета в дерево
 
 ## Decisions along the way
 
