@@ -44,3 +44,8 @@ selector (no bar under the invitation) is written nowhere. Take a task to fix th
 ## What is left unclear
 
 - Nothing.
+
+## Decisions along the way
+
+- **The stages section of the plan was brought to the sample form** — the step check did not read the
+  first form; the steps and their names did not change. Affected stage of the plan: 1.
