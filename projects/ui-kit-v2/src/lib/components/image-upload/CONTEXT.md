@@ -12,20 +12,23 @@
     (imageChanged)="upload($event)" />
 ```
 
-| вход            | тип                                 | умолчание                    |
-| --------------- | ----------------------------------- | ---------------------------- |
-| `imageUrl`      | `string \| null`                    | `null`                       |
-| `fileName`      | `string`                            | `'image'`                    |
-| `tooltip`       | `string`                            | `''` → `uiImageUploadChange` |
-| `downloadable`  | `boolean`                           | `false`                      |
-| `downloadShape` | `'circle' \| 'square'`              | `'circle'`                   |
-| `autoApply`     | `boolean`                           | `false`                      |
-| `loading`       | `boolean`                           | `false`                      |
-| `disabled`      | `boolean`                           | `false`                      |
-| `ratio`         | `number \| null`                    | `null`                       |
-| `round`         | `boolean`                           | `false`                      |
-| `format`        | `'png' \| 'jpeg' \| 'webp' \| null` | `null`                       |
-| `quality`       | `number`                            | `92`                         |
+| вход               | тип                                                     | умолчание                    |
+| ------------------ | ------------------------------------------------------- | ---------------------------- |
+| `imageUrl`         | `string \| null`                                        | `null`                       |
+| `fileName`         | `string`                                                | `'image'`                    |
+| `tooltip`          | `string`                                                | `''` → `uiImageUploadChange` |
+| `downloadable`     | `boolean`                                               | `false`                      |
+| `downloadShape`    | `'circle' \| 'square'`                                  | `'circle'`                   |
+| `downloadIconSize` | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| '2xl' \| null` | `null` → по размеру кнопки   |
+| `chooseAppearance` | `'filled' \| 'outlined' \| 'text'`                      | `'outlined'`                 |
+| `chooseIcon`       | `string \| null`                                        | `'ico-upload'`               |
+| `autoApply`        | `boolean`                                               | `false`                      |
+| `loading`          | `boolean`                                               | `false`                      |
+| `disabled`         | `boolean`                                               | `false`                      |
+| `ratio`            | `number \| null`                                        | `null`                       |
+| `round`            | `boolean`                                               | `false`                      |
+| `format`           | `'png' \| 'jpeg' \| 'webp' \| null`                     | `null`                       |
+| `quality`          | `number`                                                | `92`                         |
 
 Выходы: `imageChanged` (`File`), `downloaded`.
 
@@ -48,7 +51,9 @@
 Свойства блока: `--rt-image-upload-image-max-height`, `--rt-image-upload-image-radius`,
 `--rt-image-upload-hover-opacity`, `--rt-image-upload-focus-shadow`,
 `--rt-image-upload-download-overhang`, `--rt-image-upload-download-bg`,
-`--rt-image-upload-download-radius`. Они объявлены на самом блоке, поэтому переопределяются
+`--rt-image-upload-download-radius`, `--rt-image-upload-download-size` (размер кнопки скачивания,
+по умолчанию шаг `--rt-control-height-md`), `--rt-image-upload-download-blur` (размытие под ней,
+8px). Они объявлены на самом блоке, поэтому переопределяются
 правилом на `.rt-image-upload`, а не на `:root`. Зона загрузки берёт свойства
 `--rt-empty-state-frame-*`, обрезка — `--rt-image-cropper-*`.
 

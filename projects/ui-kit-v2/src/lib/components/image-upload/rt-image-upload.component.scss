@@ -10,6 +10,8 @@
         --rt-image-upload-download-overhang: var(--rt-space-sm);
         --rt-image-upload-download-bg: color-mix(in srgb, var(--rt-color-bg-surface) 75%, transparent);
         --rt-image-upload-download-radius: var(--rt-radius-md);
+        --rt-image-upload-download-blur: 8px;
+        --rt-image-upload-download-size: var(--rt-control-height-md);
 
         display: block;
         width: 100%;
@@ -36,6 +38,9 @@
             max-width: 100%;
             box-sizing: border-box;
             padding: var(--rt-image-upload-download-overhang);
+
+            /* На верх строки: на базовой линии под картинкой оставался зазор под нижние выносные. */
+            vertical-align: top;
         }
 
         &__download {
@@ -44,12 +49,19 @@
             right: 0;
             border-radius: var(--rt-image-upload-download-radius);
             /* stylelint-disable-next-line property-no-vendor-prefix -- Safari < 18 */
-            -webkit-backdrop-filter: blur(8px);
-            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(var(--rt-image-upload-download-blur));
+            backdrop-filter: blur(var(--rt-image-upload-download-blur));
             background: var(--rt-image-upload-download-bg);
 
             &--round {
                 --rt-image-upload-download-radius: var(--rt-radius-full);
+            }
+
+            /* Размер отдаётся кнопке её частным шагом, а не публичным `--rt-icon-button-size`: так
+               последнее слово остаётся за приложением. Шаг кнопка объявляет на корне своего
+               шаблона, а не на хосте, поэтому правило адресует тот же корень. */
+            .rt-icon-button {
+                --rt-icon-button-size-step: var(--rt-image-upload-download-size);
             }
         }
 

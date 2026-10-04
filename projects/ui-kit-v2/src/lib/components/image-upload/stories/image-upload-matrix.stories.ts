@@ -22,4 +22,10 @@ export const States: TStory = { args: { part: 'states' } };
 
 export const Presets: TStory = { args: { part: 'presets' } };
 
+/**
+ * Настройки кнопок и подложки: кнопка выбора в другом виде и без значка, кнопка скачивания своего
+ * размера со своим значком и размытием. Свойства блока заданы на самом загрузчике.
+ */
+export const Options: TStory = { args: { part: 'options' } };
+
 export const Themes: TStory = { args: { part: 'themes' } };

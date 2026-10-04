@@ -69,6 +69,7 @@
                             icon="ico-download"
                             qa-dataid="image-upload-download"
                             [radius]="downloadRadius()"
+                            [iconSize]="downloadIconSize()"
                             [rtMod]="{ round: downloadRound() }"
                             [ariaLabel]="t().uiDownload"
                             [tooltip]="t().uiDownload"
@@ -82,10 +83,10 @@
                 <rt-empty-state framed icon="cloud-upload" [title]="t().uiImageUploadDrop">
                     <button
                         rtButton
-                        appearance="outlined"
                         type="button"
-                        icon="ico-upload"
                         qa-dataid="image-upload-choose"
+                        [appearance]="chooseAppearance()"
+                        [icon]="chooseIcon()"
                         [label]="t().uiImageUploadChoose"
                         [attr.aria-label]="t().uiImageUploadChoose"
                         [disabled]="disabled()"

@@ -55,28 +55,33 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 Зона загрузки — `rt-empty-state` с пунктирной рамкой внутри `rt-file-drop`. Кнопка скачивания
 лежит на правом верхнем углу картинки и заходит за её край, как в первом ките, на размытой
-подложке. Она круглая, а по входу `downloadShape` — квадратная. Высота картинки
+подложке. Она круглая, а по входу `downloadShape` — квадратная; размер её значка задаёт `downloadIconSize`.
+Кнопка выбора файла в пустом загрузчике берёт вид из `chooseAppearance` и значок из `chooseIcon`. Высота картинки
 ограничена свойством `--rt-image-upload-image-max-height`. Остальные свойства блока —
 `--rt-image-upload-image-radius`, `--rt-image-upload-hover-opacity`, `--rt-image-upload-focus-shadow`,
-`--rt-image-upload-download-overhang`, `--rt-image-upload-download-bg` и
-`--rt-image-upload-download-radius`; их переопределяют правилом на `.rt-image-upload`.
+`--rt-image-upload-download-overhang`, `--rt-image-upload-download-bg`,
+`--rt-image-upload-download-radius`, `--rt-image-upload-download-size` (размер кнопки скачивания) и
+`--rt-image-upload-download-blur` (размытие под ней); их переопределяют правилом на `.rt-image-upload`.
 
 ## Входы
 
-| вход            | тип                                 | умолчание                    |
-| --------------- | ----------------------------------- | ---------------------------- |
-| `imageUrl`      | `string \| null`                    | `null`                       |
-| `fileName`      | `string`                            | `'image'`                    |
-| `tooltip`       | `string`                            | `''` → `uiImageUploadChange` |
-| `downloadable`  | `boolean`                           | `false`                      |
-| `downloadShape` | `'circle' \| 'square'`              | `'circle'`                   |
-| `autoApply`     | `boolean`                           | `false`                      |
-| `loading`       | `boolean`                           | `false`                      |
-| `disabled`      | `boolean`                           | `false`                      |
-| `ratio`         | `number \| null`                    | `null`                       |
-| `round`         | `boolean`                           | `false`                      |
-| `format`        | `'png' \| 'jpeg' \| 'webp' \| null` | `null`                       |
-| `quality`       | `number`                            | `92`                         |
+| вход               | тип                                                     | умолчание                    |
+| ------------------ | ------------------------------------------------------- | ---------------------------- |
+| `imageUrl`         | `string \| null`                                        | `null`                       |
+| `fileName`         | `string`                                                | `'image'`                    |
+| `tooltip`          | `string`                                                | `''` → `uiImageUploadChange` |
+| `downloadable`     | `boolean`                                               | `false`                      |
+| `downloadShape`    | `'circle' \| 'square'`                                  | `'circle'`                   |
+| `downloadIconSize` | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| '2xl' \| null` | `null` → по размеру кнопки   |
+| `chooseAppearance` | `'filled' \| 'outlined' \| 'text'`                      | `'outlined'`                 |
+| `chooseIcon`       | `string \| null`                                        | `'ico-upload'`               |
+| `autoApply`        | `boolean`                                               | `false`                      |
+| `loading`          | `boolean`                                               | `false`                      |
+| `disabled`         | `boolean`                                               | `false`                      |
+| `ratio`            | `number \| null`                                        | `null`                       |
+| `round`            | `boolean`                                               | `false`                      |
+| `format`           | `'png' \| 'jpeg' \| 'webp' \| null`                     | `null`                       |
+| `quality`          | `number`                                                | `92`                         |
 
 ## Выходы
 

@@ -10,11 +10,13 @@ import { StoryPresetsComponent } from '../../../../../showcase/story-presets.com
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { drawStoryCropperSample } from '../../../image-cropper/stories/component/story-cropper-sample';
+import { IButton } from '../../../button';
+import { IRtIcon } from '../../../icon/rt-icon.model';
 import { RtImageUploadComponent } from '../../rt-image-upload.component';
 import { IRtImageUpload } from '../../rt-image-upload.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TImageUploadMatrixPart = 'states' | 'presets' | 'themes';
+export type TImageUploadMatrixPart = 'states' | 'presets' | 'themes' | 'options';
 
 /** Состояние места: какая картинка дана и что загрузчику велено */
 interface IImageUploadStateCase {
@@ -24,6 +26,19 @@ interface IImageUploadStateCase {
     readonly downloadShape: IRtImageUpload.DownloadShape;
     readonly loading: boolean;
     readonly disabled: boolean;
+}
+
+/** Значок кнопки выбора по умолчанию — тот же, что у загрузчика */
+const UPLOAD_ICON: string = 'ico-upload';
+
+/** Настройка кнопок: входы и свойства блока, заданные на самом загрузчике */
+interface IImageUploadOptionCase {
+    readonly name: string;
+    readonly imageUrl: string | null;
+    readonly chooseAppearance: IButton.Appearance;
+    readonly chooseIcon: string | null;
+    readonly downloadIconSize: IRtIcon.Size | null;
+    readonly style: Readonly<Record<string, string>>;
 }
 
 /**
@@ -95,6 +110,27 @@ export class TestRtImageUploadMatrixComponent {
             downloadShape: 'circle',
             loading: false,
             disabled: true,
+        },
+    ]);
+
+    public readonly optionCases: Signal<readonly IImageUploadOptionCase[]> = computed((): readonly IImageUploadOptionCase[] => [
+        { name: 'выбор: заливка', imageUrl: null, chooseAppearance: 'filled', chooseIcon: UPLOAD_ICON, downloadIconSize: null, style: {} },
+        { name: 'выбор: текст без значка', imageUrl: null, chooseAppearance: 'text', chooseIcon: null, downloadIconSize: null, style: {} },
+        {
+            name: 'скачивание: крупная, значок lg',
+            imageUrl: this.#url(),
+            chooseAppearance: 'outlined',
+            chooseIcon: UPLOAD_ICON,
+            downloadIconSize: 'lg',
+            style: { '--rt-image-upload-download-size': 'var(--rt-control-height-xl)' },
+        },
+        {
+            name: 'скачивание: мелкая, значок xs, без размытия',
+            imageUrl: this.#url(),
+            chooseAppearance: 'outlined',
+            chooseIcon: UPLOAD_ICON,
+            downloadIconSize: 'xs',
+            style: { '--rt-image-upload-download-size': 'var(--rt-control-height-sm)', '--rt-image-upload-download-blur': '0px' },
         },
     ]);
 

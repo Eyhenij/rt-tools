@@ -25,9 +25,10 @@ import {
 import { BlockDirective, ElemDirective, ModDirective, WINDOW } from '@rt-tools/core';
 
 import { RT_KIT_LABELS, TRtKitLabelMap } from '../../i18n';
-import { RtButtonDirective } from '../button';
+import { IButton, RtButtonDirective } from '../button';
 import { RtEmptyStateComponent } from '../empty-state';
 import { RtFileDropComponent } from '../file-drop';
+import { IRtIcon } from '../icon/rt-icon.model';
 import { RtIconButtonComponent } from '../icon-button';
 import { IRtImageCropper, RT_IMAGE_CROPPER_QUALITY, RtImageCropperComponent } from '../image-cropper';
 import { TRtRadius } from '../radius/rt-radius.model';
@@ -128,6 +129,15 @@ export class RtImageUploadComponent {
 
     /** Форма кнопки скачивания; она заходит за правый верхний угол картинки при любой форме */
     public readonly downloadShape: InputSignal<IRtImageUpload.DownloadShape> = input<IRtImageUpload.DownloadShape>('circle');
+
+    /** Размер значка кнопки скачивания; пусто — от размера кнопки */
+    public readonly downloadIconSize: InputSignal<IRtIcon.Size | null> = input<IRtIcon.Size | null>(null);
+
+    /** Вид кнопки выбора файла в пустом загрузчике */
+    public readonly chooseAppearance: InputSignal<IButton.Appearance> = input<IButton.Appearance>('outlined');
+
+    /** Значок кнопки выбора файла; пусто — кнопка без значка */
+    public readonly chooseIcon: InputSignal<string | null> = input<string | null>('ico-upload');
 
     /** Без кнопок «Отмена» и «Применить»: каждый результат обрезки применяется сразу */
     public readonly autoApply: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
