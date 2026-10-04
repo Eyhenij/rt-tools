@@ -74,6 +74,12 @@ body itself and prints the branch line from the branch of the epic; work outside
 card is created. The epic itself is created by the same command with `--epic`. Author and assignee — the machine account; the command reads the token itself, from
 a file outside the repository.
 
+A task created under an epic that has closed since is taken outside the epic, not by reviving
+the epic branch. The delivery guard reads the epic from the line in the task body, and for a closed
+epic it demands a branch in the remote that nobody will send again. The line about the epic is
+replaced in the body by `Работа вне эпика — <слово владельца>`, the shape `--outside-epic` writes,
+and only then is the branch created.
+
 The script under this command is created by the project — the package does not ship it. What it
 does by `gh` calls:
 
