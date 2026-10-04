@@ -24,7 +24,14 @@ along the way.
 
 ## Stages
 
-### Stage 1 — the documents
+### 1. The documents
 
-- 1.1 One handles table in Theming
-- 1.2 The selector decision in its spec
+- **Steps:**
+    1. One handles table in Theming
+    2. The selector decision in its spec
+- **Readiness sign:** the handles section has one table header and 70 rows, and the spec check passes
+- **Verified by:** `node tools/check-tokens-graph.mjs` — "there are no new divergences"; `npm run check:specs` — exit 0
+
+## What this work does not do
+
+- Nothing outside these two documents: the selector code stays as it is.

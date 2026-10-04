@@ -2,20 +2,23 @@
 
 ## Where we stand
 
-- **State:** `этап-идёт`
+- **State:** `этапы-кончились`
 - **Stage:** 1 of 1 — the documents
-- **Done:** the folder
-- **Next step:** one handles table in Theming
+- **Done:** one handles table in Theming (70 rows, one header), the selector decision in its spec
+- **Next step:** the folder teardown and the request
 - **Uncommitted:** no
 - **Waiting for the owner:** no
 - **PR:** not open yet
 
 ## Steps
 
-- [>] 1.1 One handles table in Theming
-- [ ] 1.2 The selector decision in its spec
+- [x] 1.1 One handles table in Theming
+- [x] 1.2 The selector decision in its spec
 
 ## Decisions along the way
+
+- **The stages section of the plan was brought to the sample form** — the step check did not read the
+  first form; the steps and their names did not change. Affected stage of the plan: 1.
 
 ## Sessions
 
