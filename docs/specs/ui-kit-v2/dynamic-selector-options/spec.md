@@ -1,6 +1,6 @@
 # The switches, initial query and popup state of the dynamic selector
 
-**Status:** in force · **Revision:** 2 October 2026 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 4 October 2026 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the dynamic selector and the dynamic text input of the second kit
 **Laws:** `frontend-application`, `verifiability`
 **Procedures:** none
@@ -87,6 +87,9 @@ Every selector holds its own switches, query and popup state.
 - **Reset and clear with only row edits keep the value and still report.** The consumer drops its
   row edits by the report; the value has nothing to change.
 - **The initial query is not a search event.** The consumer set it and already knows it.
+- **The panel switch has two values, and the bar never stands under the invitation.** The owner
+  said so on 4 October 2026: the request asked for a third value that keeps the bar there, and it
+  is not needed.
 
 ## Open questions
 
@@ -95,3 +98,5 @@ None.
 ## History of changes
 
 - 2 October 2026 — the agreement was written from the consumer's request by task RT-2481.
+- 4 October 2026 — the owner's word on the bar under the invitation is written into the decisions
+  by task RT-2520.
