@@ -1,3 +1,41 @@
+# [0.17.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2@0.16.0...rt-ui-kit-v2@0.17.0) (2026-10-04)
+
+### Bug Fixes
+
+- **rt:ui-kit-v2:** длинная строка «печатает» не упирается в край ленты ([eddfde6](https://github.com/Eyhenij/rt-tools/commit/eddfde6a49afd8357fdb9ed01a7f16e5e3cb64bc))
+- **rt:ui-kit-v2:** переключатель панели сброса селектора — обычный булев вход ([2b9ae06](https://github.com/Eyhenij/rt-tools/commit/2b9ae06786b470977f46c075f5e3ca7d610ebd96))
+- **rt:ui-kit-v2:** пункт полосы бокового меню отдаёт своему шаблону имя и место ([781cd42](https://github.com/Eyhenij/rt-tools/commit/781cd42aa507838cb850dc064386de4e934f0cb4))
+- **rt:ui-kit-v2:** семья шрифта лигатуры объявлена ручкой приложения ([d72cb09](https://github.com/Eyhenij/rt-tools/commit/d72cb09cb5a1eaef78a26518342041e5124c24b4))
+- **rt:ui-kit-v2:** тег снова наследует межбуквенный интервал родителя ([4af30f7](https://github.com/Eyhenij/rt-tools/commit/4af30f7150773daad1b013fdc1febd77f18314fd))
+- **rt:ui-kit-v2:** фон области прокрутки не перебивает фон элемента, который она собой занимает; снимки ([b697a88](https://github.com/Eyhenij/rt-tools/commit/b697a887de78ab02ecb4df8759c280f4a9d57a50))
+
+### Features
+
+- **rt:ui-kit-v2:** боковое меню без закрепления и подсказок, свой рисунок у кнопки строки ([27111a6](https://github.com/Eyhenij/rt-tools/commit/27111a6421517f767da942620866d721a4adb515))
+- **rt:ui-kit-v2:** витрина переключателей бокового меню и вложенного рисунка кнопки-иконки ([4100831](https://github.com/Eyhenij/rt-tools/commit/4100831050203d6aa63e656cae900bbc886d172d))
+- **rt:ui-kit-v2:** витрина переписки показывает строку «печатает» и событие набора ([3722c37](https://github.com/Eyhenij/rt-tools/commit/3722c37877a296211a7a9a99e6191470fdfb2515))
+- **rt:ui-kit-v2:** владелец, отказанные жесты, ловушка фокуса, ожидание и свойства панели ([5a90044](https://github.com/Eyhenij/rt-tools/commit/5a9004439e2d8acc3beb1c0a0b62554a2df79cac))
+- **rt:ui-kit-v2:** глиф у кнопки-значка, группы переключателей и заглушки ([21b5203](https://github.com/Eyhenij/rt-tools/commit/21b520392d739ed9d696524124f8635ba7179594))
+- **rt:ui-kit-v2:** группа переключателей — свойства размеров на хосте ([897c0b8](https://github.com/Eyhenij/rt-tools/commit/897c0b8bfd7c5e85dca2d9aa4f77ceaa2b6cd77e))
+- **rt:ui-kit-v2:** значок вращается и принимает размер в пикселях ([408abb4](https://github.com/Eyhenij/rt-tools/commit/408abb4be25dbadd26b24eb8157bba9ccda3e067))
+- **rt:ui-kit-v2:** значок рисует имя Material глифом ([2cbe707](https://github.com/Eyhenij/rt-tools/commit/2cbe707481471537d448bede2c43ac7f45932a56))
+- **rt:ui-kit-v2:** кнопка — подпись можно спрятать на время загрузки ([193a232](https://github.com/Eyhenij/rt-tools/commit/193a232c23eacef934f5c434f76d37999c750e92))
+- **rt:ui-kit-v2:** кнопка рисует имя Material и материальный рисунок ([45e5906](https://github.com/Eyhenij/rt-tools/commit/45e5906343d3ccaac9b4d92f9f4311ab3d1d22d8))
+- **rt:ui-kit-v2:** корзина, панель сброса, правки строк, начальный запрос и состояние выбора селектора ([dfff284](https://github.com/Eyhenij/rt-tools/commit/dfff2847d66eecb4e41cd8e69af44558d5c70940))
+- **rt:ui-kit-v2:** область прокрутки — свойства отступов и фонов ([67495e9](https://github.com/Eyhenij/rt-tools/commit/67495e9e7866ded68bd37ab0ce164126ee500e6c))
+- **rt:ui-kit-v2:** один разбор имени Material для значков кита ([a7d8284](https://github.com/Eyhenij/rt-tools/commit/a7d8284267472fd8e57d50c160f70e54ee9c81c3))
+- **rt:ui-kit-v2:** панель действий — свойства цвета, отступов и шрифта, меню со скруглением и тенью ([6b89863](https://github.com/Eyhenij/rt-tools/commit/6b89863d5b77a4337947ede8116d090b54858e18))
+- **rt:ui-kit-v2:** переключатель — подпись, прозрачность отключения, размеры на хосте ([cc65af0](https://github.com/Eyhenij/rt-tools/commit/cc65af06f96b9202d48d509abb4d58825f2b57d4))
+- **rt:ui-kit-v2:** переписка сообщает о наборе текста и показывает, что печатает вторая сторона ([3c80876](https://github.com/Eyhenij/rt-tools/commit/3c808766d269c9209eccb67625e61349193d7988))
+- **rt:ui-kit-v2:** подсказка слева и справа ([dc73ece](https://github.com/Eyhenij/rt-tools/commit/dc73ece9404e644bdcbac6420e5c3536f67523ab))
+- **rt:ui-kit-v2:** размер и размытие кнопки скачивания, вид кнопки выбора, превью без зазора ([50b7cb6](https://github.com/Eyhenij/rt-tools/commit/50b7cb6aad19fecfd44da02411b7123f410ba91b))
+- **rt:ui-kit-v2:** размер и фон кнопки-значка задаются с её тега, шаги xs и 2xs ([dfeb075](https://github.com/Eyhenij/rt-tools/commit/dfeb0758951db7381294362f7c3ca8e8f114a143))
+- **rt:ui-kit-v2:** свой срок, полоса срока, значок, режим замены и цвета тоста ([a6aeb05](https://github.com/Eyhenij/rt-tools/commit/a6aeb05837a23edef6adabb18209bdf4f2c306fc))
+- **rt:ui-kit-v2:** спиннер накрывает блок, встаёт на плашку и рисуется дугой ([ce8489a](https://github.com/Eyhenij/rt-tools/commit/ce8489a75b4cbef8863b20bd716a38511e73672e))
+- **rt:ui-kit-v2:** тег — размеры на хосте, ручки цвета и отступов ([138cc6d](https://github.com/Eyhenij/rt-tools/commit/138cc6ddfe4d3a0fbe50da02b81dac92ff73de11))
+- **rt:ui-kit-v2:** тулбар — свойства раскладки ([973b6eb](https://github.com/Eyhenij/rt-tools/commit/973b6eb9f221c5cbdc27d37a6d870de0039b1882))
+- **rt:ui-kit-v2:** фокус, место перед заголовком, выравнивание подвала, тело и свойства диалога ([f3fec3c](https://github.com/Eyhenij/rt-tools/commit/f3fec3c39965b2ce4dae1d36aa771e870f9fa628))
+
 # [0.16.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2@0.15.0...rt-ui-kit-v2@0.16.0) (2026-10-02)
 
 ### Bug Fixes
