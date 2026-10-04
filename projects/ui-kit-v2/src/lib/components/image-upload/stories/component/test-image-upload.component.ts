@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
+import { IButton } from '../../../button';
+import { IRtIcon } from '../../../icon/rt-icon.model';
 import { IRtImageCropper } from '../../../image-cropper';
 import { RtImageUploadComponent } from '../../rt-image-upload.component';
 import { IRtImageUpload } from '../../rt-image-upload.model';
@@ -38,6 +40,9 @@ export class TestRtImageUploadComponent {
     public tooltip: string = '';
     public downloadable: boolean = true;
     public downloadShape: IRtImageUpload.DownloadShape = 'circle';
+    public downloadIconSize: IRtIcon.Size | null = null;
+    public chooseAppearance: IButton.Appearance = 'outlined';
+    public chooseIcon: string | null = 'ico-upload';
     public autoApply: boolean = false;
     public loading: boolean = false;
     public disabled: boolean = false;

@@ -48,7 +48,7 @@ function rule(selector: string): string {
 describe('RtImageUploadComponent — download button, choose button and preview', (): void => {
     it('SC-UKV-631 — the download button takes its size from the uploader property', (): void => {
         expect(STYLES).toContain('--rt-image-upload-download-size: var(--rt-control-height-md);');
-        expect(rule('&.rt-icon-button {')).toContain('--rt-icon-button-size-step: var(--rt-image-upload-download-size);');
+        expect(rule('.rt-icon-button {')).toContain('--rt-icon-button-size-step: var(--rt-image-upload-download-size);');
         expect(STYLES).not.toMatch(/--rt-icon-button-size\s*:/);
     });
 

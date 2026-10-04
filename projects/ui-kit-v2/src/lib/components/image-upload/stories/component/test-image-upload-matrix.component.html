@@ -28,6 +28,24 @@
         </app-story-presets>
     }
 
+    @case ('options') {
+        <app-story-presets caption="Настройки кнопок загрузчика в обоих наборах">
+            <ng-template>
+                <app-story-row [items]="optionCases()" [itemLabel]="caseLabel" [slotWidth]="cellWidth">
+                    <ng-template let-optionCase>
+                        <rt-image-upload
+                            downloadable
+                            [style]="optionCase.style"
+                            [imageUrl]="optionCase.imageUrl"
+                            [chooseAppearance]="optionCase.chooseAppearance"
+                            [chooseIcon]="optionCase.chooseIcon"
+                            [downloadIconSize]="optionCase.downloadIconSize" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
     @case ('themes') {
         <app-story-presets caption="Загрузчик в обеих темах в обоих наборах">
             <ng-template>
