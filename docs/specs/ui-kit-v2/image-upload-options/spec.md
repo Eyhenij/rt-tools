@@ -82,8 +82,9 @@ Every uploader holds its own inputs; a property set on one uploader does not rea
 
 - **The icon size is an input, not a property.** The icon writes its size inline, and a property
   would silently do nothing.
-- **The download size is handed to the button as its public size.** An uploader that sets it wins
-  over a size set for icon buttons higher on the page; without it the button keeps its step.
+- **The download size is the uploader's own property, and the button gets it as its private step.**
+  Its default is the step the button stood on, so nothing moves without it. The public size of the
+  icon button stays the application's: a value set on the button itself still wins.
 - **The gap is removed without a switch.** Nobody designed it, and a consumer has nothing to do with
   it.
 
