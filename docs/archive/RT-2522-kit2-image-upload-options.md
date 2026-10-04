@@ -50,3 +50,16 @@ items 1–47 the epic RT-2472 covered. The owner's standing words for that reque
 ## What is left unclear
 
 - Nothing.
+
+## Decisions along the way
+
+- **The download size reaches the button as its private step, not as its public size.** The
+  grill's first decision wrote the public `--rt-icon-button-size`; the token graph refused it, and
+  the icon button's own comment says kit components write the step, so the application keeps the
+  last word. The uploader declares `--rt-image-upload-download-size` at its root with the former
+  step, and no consumer handle is added. Affected stage of the plan: 1.
+- **The step is written on the root of the button's template, not on its host.** The button
+  declares its step there, and a value on the host never reached it: the first frame of the new
+  story showed the large button at the default size. Affected stage of the plan: 2.
+- **The overview and CONTEXT tables went in with the inputs in stage 1.** The docs check pairs
+  them with the component. Affected stage of the plan: 2.
