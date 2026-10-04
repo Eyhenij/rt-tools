@@ -9,7 +9,7 @@
  */
 import { execFileSync } from 'node:child_process';
 
-import { TASK_KEY } from './board.mjs';
+import { TASK_KEY, numberFromTaskDir, taskDirs } from './board.mjs';
 import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
 
 /**
@@ -106,6 +106,45 @@ export function checkBranchFolders(report, mainBranch) {
         report(
             `${branch}: the task folder never travelled into the branch — commit ${CONFIG.tasksDir}/${branch}/, ` +
                 `otherwise the refusal arrives at the exit of a turn, when there is nothing left to fix`
+        );
+    }
+}
+
+/**
+ * Task folders with a number that hold not one file from the index.
+ *
+ * Only a draft without a number may live outside history. The task creating command lays a numbered
+ * folder at once, and a task created "for later" leaves it on disk for good: the folder passes edits
+ * without a refusal and follows its owner across every switch of branches. Ten such folders were
+ * found by the owner in `git status`, not by a check.
+ *
+ * The index is asked, not the history: a folder added and not committed yet travels with the next
+ * commit, and a line about it would ask for what is already done.
+ */
+export function checkUntrackedFolders(report) {
+    let tracked;
+    try {
+        tracked = execFileSync('git', ['ls-files', '-z', '--', CONFIG.tasksDir], {
+            cwd: ROOT,
+            encoding: 'utf8',
+            stdio: ['ignore', 'pipe', 'ignore'],
+        }).split('\0');
+    } catch {
+        // Not a repository: there is no index to compare with.
+        return;
+    }
+
+    for (const name of taskDirs()) {
+        if (numberFromTaskDir(name.split('/').pop()) === null) {
+            continue;
+        }
+        const prefix = `${CONFIG.tasksDir}/${name}/`;
+        if (tracked.some((file) => file.startsWith(prefix))) {
+            continue;
+        }
+        report(
+            `${prefix}: the task folder lies outside the index — take the branch of the task and commit the folder, ` +
+                `or delete it, if the task is not taken now`
         );
     }
 }
