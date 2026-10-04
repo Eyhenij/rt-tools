@@ -14,6 +14,7 @@ import { IBrokenLink, IEntryOfCatalog, IGapOfVariant, isChosen, readCatalog } fr
 import { debtLine, ICompanion, isUnfilled, IUnaddressed, pathOf as companionPathOf, TCompanionState, unaddressedOf } from './companion.js';
 import { CONFIG_PATH, DEFAULT_LAYOUT, IConfig, KINDS, OVERRIDES_DIR, PROFILE_FILE, readConfig, RT_KIT_DIR, TKind } from './config.js';
 import { IStaleBuild } from './freshness.js';
+import { IAmbiguousName } from './integrity.js';
 import { hooksSection, IHookBinding, IMatcherDrift, SETTINGS_PATH } from './hooks-map.js';
 import {
     DEFAULT_DAYS,
@@ -327,6 +328,13 @@ const gapLines: (result: ISyncResult) => string[] = (result: ISyncResult): strin
         `      либо заведи вид под «${gap.chosen}», либо назови в skip: ${gap.ids.join(', ')}`,
     ]);
 
+/** Одноимённые ресурсы одного рода: какое имя двусмысленно и какими путями оно зовётся. */
+const ambiguousLines: (result: ISyncResult) => string[] = (result: ISyncResult): string[] =>
+    result.ambiguous.map(
+        (one: IAmbiguousName): string =>
+            `  ${one.kind}/${one.name} — одно короткое имя у ${one.ids.join(', ')}: переименуй один из них в пакете`
+    );
+
 /**
  * Свойства, названные не по перечню пакета, — и деревом, и ресурсами.
  *
@@ -538,6 +546,7 @@ const warnings: (result: ISyncResult) => string[] = (result: ISyncResult): strin
 
 const describe: (result: ISyncResult) => string[] = (result: ISyncResult): string[] => [
     ...gapLines(result),
+    ...ambiguousLines(result),
     ...unboundLines(result),
     ...driftedLines(result),
     ...warnings(result),
@@ -781,7 +790,8 @@ function syncCheck(config: IConfig, root: string, version: string, assetsDir: st
         // Незаполненная дырка в счёт не входит: она говорит о том, чего дерево ещё не описало о
         // себе, а не о расхождении разложенного с редакцией. Она печатается предупреждением —
         // и на сошедшемся дереве тоже.
-        const count: number = result.gaps.length + pending.length + empty.length + result.unbound.length + result.drifted.length;
+        const count: number =
+            result.gaps.length + result.ambiguous.length + pending.length + empty.length + result.unbound.length + result.drifted.length;
         if (!count) {
             return { code: 0, lines: [`sync --check: разложенное сходится с пакетом v${version}`, ...warnings(result)] };
         }
@@ -820,6 +830,12 @@ export function sync(env: IEnvironment, check: boolean): IOutcomeOfCommand {
             code: 1,
             lines: ['раскладка не начата: у этих ресурсов нет вида под выбор дерева', ...gapLines(result)],
         };
+    }
+
+    // Двусмысленное имя отбивает раскладку целиком: каскад по нему снял бы потомков не того
+    // родителя, и разложенное читалось бы как верное.
+    if (result.ambiguous.length) {
+        return { code: 1, lines: ['раскладка не начата: у ресурсов одного рода одинаковое короткое имя', ...ambiguousLines(result)] };
     }
 
     const refused: readonly IPlanned[] = result.planned.filter((entry: IPlanned): boolean => isRefusal(entry.outcome));
