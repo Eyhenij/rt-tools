@@ -1,6 +1,6 @@
 {
   "name": "@rt-tools/auth-contract",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Rights, the caller and the reading of a Keycloak token shared by the client and the server of the entry module",
   "author": "RT Team",
   "license": "Apache-2.0",
