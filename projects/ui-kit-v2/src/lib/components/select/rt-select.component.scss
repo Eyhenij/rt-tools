@@ -82,6 +82,10 @@
             border-color: transparent;
             background-color: transparent;
 
+            /* Высота строки поля рассчитана на подпись поля, а здесь разметка потребителя: с ней
+               кнопка вырастала бы на пару точек и сдвигала панель. Строка остаётся прежней. */
+            line-height: var(--rt-leading-none);
+
             &:focus {
                 border-color: transparent;
                 box-shadow: none;

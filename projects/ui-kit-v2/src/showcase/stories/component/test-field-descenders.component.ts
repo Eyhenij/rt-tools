@@ -21,34 +21,8 @@ export type TFieldDescenderSize = 'sm' | 'md' | 'lg';
  */
 @Component({
     selector: 'app-field-descenders',
-    template: `
-        <app-story-presets caption="Хвосты букв в полях кита, увеличение вдвое">
-            <ng-template>
-                <app-story-row [items]="sizes" [itemLabel]="sizeLabel" [slotWidth]="cellWidth">
-                    <ng-template let-size>
-                        <div class="app-field-descenders">
-                            <rt-select [size]="size" [placeholder]="text" [options]="[]" />
-                            <rt-multiselect [size]="size" [placeholder]="text" [options]="[]" />
-                            <rt-input [size]="size" [placeholder]="text" />
-                            <rt-autocomplete [size]="size" [placeholder]="text" />
-                            <rt-input-number [size]="size" [placeholder]="text" />
-                            <rt-date-picker [size]="size" />
-                        </div>
-                    </ng-template>
-                </app-story-row>
-            </ng-template>
-        </app-story-presets>
-    `,
-    styles: [
-        `
-            .app-field-descenders {
-                display: grid;
-                width: 12rem;
-                gap: 0.5rem;
-                zoom: 2;
-            }
-        `,
-    ],
+    templateUrl: './test-field-descenders.component.html',
+    styleUrl: './test-field-descenders.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // components
