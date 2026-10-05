@@ -48,15 +48,8 @@ Not applicable: the package has no screens.
 
 ## Contract
 
-| Name                 | Takes                        | Returns                            |
-| -------------------- | ---------------------------- | ---------------------------------- |
-| `isPermission`       | any value                    | whether it is a right              |
-| `parsePermission`    | a string                     | `{ resource, action }` or `null`   |
-| `definePermissions`  | resources with their actions | the catalog: the list of rights    |
-| `callerFromClaims`   | the claims and the client id | the caller                         |
-| `hasPermission`      | the caller and a right       | whether the caller has it          |
-| `hasEveryPermission` | the caller and rights        | whether the caller has all of them |
-| `hasSomePermission`  | the caller and rights        | whether the caller has one of them |
+Not applicable: the package serves no procedures. Its functions and what each answers are listed
+in the package README.
 
 ### Refusal codes
 

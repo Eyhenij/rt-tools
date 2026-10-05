@@ -375,6 +375,24 @@ export default [
             ],
         },
     },
+    {
+        // Контракт модуля входа читают и клиент на Angular, и сервер на NestJS. Импорт любого из
+        // фреймворков сделал бы пакет непригодным для второй стороны.
+        files: ['projects/auth-contract/**/*.ts'],
+        rules: {
+            'no-restricted-imports': [
+                'error',
+                {
+                    patterns: [
+                        {
+                            group: ['@angular/*', '@angular/**', '@nestjs/*', '@nestjs/**', 'rxjs', 'rxjs/*'],
+                            message: '@rt-tools/auth-contract остаётся без фреймворка: его читают и клиент, и сервер модуля входа.',
+                        },
+                    ],
+                },
+            ],
+        },
+    },
     // Первый кит не правится (docs/adr/0003-one-ui-kit.md): находку правила eslint 10 в нём чинить нечем.
     { files: ['projects/ui-kit/**/*.ts'], rules: { 'no-useless-assignment': 'off' } },
     {
