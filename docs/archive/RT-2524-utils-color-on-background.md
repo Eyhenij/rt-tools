@@ -50,3 +50,12 @@ application?**
 ## What is left unclear
 
 - Nothing.
+
+## Decisions along the way
+
+- **Each function got its own folder, and the shared hex parser went to `internal/`.** The package
+  keeps one function per folder. Affected stage of the plan: 1.
+- **The utils package got a domain spec with one package-wide rule.** The spec check refuses a
+  subdomain whose domain has no spec. Affected stage of the plan: 1.
+- **The «Contract» section says not applicable.** The spec check reads a table there as server
+  procedures. Affected stage of the plan: 1.
