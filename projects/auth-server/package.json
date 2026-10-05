@@ -1,0 +1,46 @@
+{
+  "name": "@rt-tools/auth-server",
+  "version": "0.0.0",
+  "description": "Keycloak token check, access declarations and the rights catalog sync for NestJS controllers and Connect procedures",
+  "author": "RT Team",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nickmdf/rt-tools.git",
+    "directory": "projects/auth-server"
+  },
+  "homepage": "https://github.com/nickmdf/rt-tools/tree/main/projects/auth-server",
+  "bugs": {
+    "url": "https://github.com/nickmdf/rt-tools/issues"
+  },
+  "keywords": [
+    "nestjs",
+    "connect",
+    "keycloak",
+    "oidc",
+    "permissions"
+  ],
+  "dependencies": {
+    "@rt-tools/auth-contract": "^0.0.0",
+    "jose": "^6.2.12",
+    "tslib": "^2.3.0"
+  },
+  "peerDependencies": {
+    "@nestjs/common": "^11.0.0",
+    "@nestjs/core": "^11.0.0",
+    "@connectrpc/connect": "^2.0.0",
+    "reflect-metadata": "^0.2.0",
+    "rxjs": "^7.8.0"
+  },
+  "peerDependenciesMeta": {
+    "@connectrpc/connect": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@connectrpc/connect": "2.2.0"
+  },
+  "sideEffects": false,
+  "main": "src/index.ts",
+  "types": "src/index.ts"
+}

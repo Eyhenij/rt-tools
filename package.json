@@ -7,6 +7,7 @@
     "build:core": "rimraf dist/core && nx build @rt-tools/core --verbose",
     "build:store": "rimraf dist/store && nx build @rt-tools/store --verbose",
     "build:auth-contract": "rimraf dist/auth-contract && nx build @rt-tools/auth-contract --verbose",
+    "build:auth-server": "rimraf dist/auth-server && nx build @rt-tools/auth-server --verbose",
     "build:utils": "rimraf dist/utils && nx build @rt-tools/utils --verbose && nx verify @rt-tools/utils",
     "build:agent-kit": "rimraf dist/agent-kit && nx build @rt-tools/agent-kit --skip-nx-cache --verbose",
     "build:ui-kit": "rimraf dist/ui-kit && nx build @rt-tools/ui-kit --verbose && pnpm run build:tokens",
@@ -124,6 +125,7 @@
     "projects/store",
     "projects/utils",
     "projects/auth-contract",
+    "projects/auth-server",
     "projects/agent-kit",
     "projects/ui-kit"
   ],
