@@ -42,14 +42,42 @@
         "pkce.code.challenge.method": "S256",
         "post.logout.redirect.uris": "http://localhost:4210/*"
       }
+    },
+    {
+      "clientId": "rt-catalog-sync",
+      "name": "Catalog sync",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "secret": "rt-catalog-sync-secret",
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true
     }
   ],
   "roles": {
     "client": {
       "rt-example-admin": [
-        { "name": "example:read", "description": "Read the example records" },
-        { "name": "example:write", "description": "Edit the example records" }
+        {
+          "name": "example:read",
+          "description": "Read the example records"
+        },
+        {
+          "name": "example:write",
+          "description": "Edit the example records"
+        }
       ]
     }
-  }
+  },
+  "users": [
+    {
+      "username": "service-account-rt-catalog-sync",
+      "enabled": true,
+      "serviceAccountClientId": "rt-catalog-sync",
+      "clientRoles": {
+        "realm-management": ["view-clients", "manage-clients"]
+      }
+    }
+  ]
 }

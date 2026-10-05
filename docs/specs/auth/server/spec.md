@@ -33,9 +33,9 @@ Not applicable: the package has no screens.
   forgotten declaration shows only to the person who calls the operation.
 - **An operation with two access declarations stops the application at start.** Otherwise the
   reader cannot tell which of the two holds.
-- **A token is accepted only when a realm key signed it, the realm issued it, its term holds and it
-  was issued to the client of this admin.** Otherwise a token of another admin of the same realm
-  opens this one.
+- **A token is accepted only from the realm, within its term and for the client of this admin.**
+  The realm signs it by its key and names itself the issuer. Otherwise a token of another admin of
+  the same realm opens this one.
 - **A call without an accepted token is refused as not signed in, a call without the right as not
   allowed.** The first is cured by signing in, the second is not, and the person is told which.
 - **A refusal does not name the missing right or what in the token did not match.** Otherwise the

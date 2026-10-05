@@ -43,3 +43,5 @@ Then the missing right is created, the extra one stays and is named in the log
 Given a Connect procedure open by a right
 When it is called without a token, with a token without the right and with the right
 Then the answers are unauthenticated, permission denied and the result
+
+Coverage: partial — the test calls the interceptor with a hand-made request. The tree has no Connect server to send a real one through.

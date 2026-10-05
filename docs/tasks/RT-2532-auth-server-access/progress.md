@@ -2,10 +2,10 @@
 
 ## Where we stand
 
-- **State:** `этап-идёт`
-- **Stage:** 3 of 4 — Catalog sync
-- **Done:** stages 1 and 2. 23 tests pass, coverage is full.
-- **Next step:** run the sync against the stand.
+- **State:** `этапы-кончились`
+- **Stage:** 4 of 4 — Texts
+- **Done:** all four stages. The sync ran against the stand.
+- **Next step:** take the folder apart and open the PR.
 - **Uncommitted:** nothing beyond this folder and the spec.
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -21,9 +21,9 @@
 - [x] 2.5 Write the tests of SC-AUTH-11…15 and SC-AUTH-17
 - [x] 3.1 Write the catalog sync
 - [x] 3.2 Write the test of SC-AUTH-16
-- [>] 3.3 Run the sync against the stand
-- [ ] 4.1 Write the package README
-- [ ] 4.2 Run the spec audit
+- [x] 3.3 Run the sync against the stand
+- [x] 4.1 Write the package README
+- [x] 4.2 Run the spec audit
 
 ## Decisions along the way
 
@@ -32,8 +32,14 @@
 - **The server package compiles against the built contract.** From the contract sources the
   compiler put them inside the output of this package. Affected stage: 1.
 
+- **The stand got a sync client, and the realm loader keeps roles.** Without the client the sync
+  had nothing to run as. Without keeping roles the next raising removed what the sync created.
+  Affected stage: 3.
+
 ## Sessions
 
 ### 2026-10-05
 
 - The branch stands on RT-2533: the package takes the contract.
+- The sync against the stand created `example:delete`, named `example:write` as extra, and a second
+  run created nothing. The role outlived the next raising.
