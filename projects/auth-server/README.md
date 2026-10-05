@@ -40,7 +40,7 @@ public list(@CurrentCaller() caller: ICaller): Order[] { … }
 
 | Decorator                         | The operation is open to      |
 | --------------------------------- | ----------------------------- |
-| `@PublicOperation()`              | everyone, without a token     |
+| `@OpenOperation()`              | everyone, without a token     |
 | `@SignedInOperation()`            | anyone with an accepted token |
 | `@PermittedOperation(permission)` | a caller with the right       |
 

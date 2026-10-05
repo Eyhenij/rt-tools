@@ -33,7 +33,7 @@ function declare(access: TAccess): MethodDecorator {
 /* eslint-disable sonarjs/function-name -- decorator factories are named with a capital letter: so the framework names them, and so they read at the place of use */
 
 /** The operation is open to everyone, without a token. */
-export function PublicOperation(): MethodDecorator {
+export function OpenOperation(): MethodDecorator {
     return declare({ kind: 'public' });
 }
 

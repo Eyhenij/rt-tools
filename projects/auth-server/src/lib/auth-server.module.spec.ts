@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { ICaller } from '@rt-tools/auth-contract';
 
-import { PermittedOperation, PublicOperation, SignedInOperation } from './access';
+import { PermittedOperation, OpenOperation, SignedInOperation } from './access';
 import { AuthServerModule } from './auth-server.module';
 import { AUTH_TOKEN_VERIFIER } from './auth.tokens';
 import { CurrentCaller } from './current-caller.decorator';
@@ -25,7 +25,7 @@ class OrdersController {
     }
 
     @Get('health')
-    @PublicOperation()
+    @OpenOperation()
     public health(@CurrentCaller() caller: ICaller | undefined): string {
         return caller === undefined ? 'ok' : 'caller';
     }

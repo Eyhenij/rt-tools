@@ -1,6 +1,6 @@
 import { Controller, Get, Post } from '@nestjs/common';
 
-import { PermittedOperation, PublicOperation, SignedInOperation } from './access';
+import { PermittedOperation, OpenOperation, SignedInOperation } from './access';
 import { accessAuditError, undeclaredAccess } from './access-audit';
 
 @Controller('orders')
@@ -17,7 +17,7 @@ class OrdersController {
     }
 
     @Get('health')
-    @PublicOperation()
+    @OpenOperation()
     @PermittedOperation('orders:read')
     public health(): string {
         return 'ok';
