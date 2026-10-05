@@ -1,0 +1,13 @@
+<ng-container rtBlock="login">
+    <h1 rtElem="title" qa-dataid="kc-title">{{ title }}</h1>
+
+    @if (summary) {
+        <p rtElem="text" qa-dataid="kc-info-summary">{{ summary }}</p>
+    }
+    @if (actions) {
+        <p rtElem="text" qa-dataid="kc-info-actions">{{ actions }}</p>
+    }
+    @if (next; as step) {
+        <a rtButton rtElem="submit" qa-dataid="kc-info-next" [href]="step.href" [label]="step.label" [attr.aria-label]="step.label"></a>
+    }
+</ng-container>

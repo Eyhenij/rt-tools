@@ -1,0 +1,69 @@
+{
+  "name": "@rt-tools/auth-keycloak-theme",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "prefix": "kc",
+  "sourceRoot": "projects/auth-keycloak-theme/src",
+  "tags": ["scope:package"],
+  "targets": {
+    "build-app": {
+      "executor": "@angular/build:application",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": {
+          "base": "dist/auth-keycloak-theme/app",
+          "browser": ""
+        },
+        "browser": "projects/auth-keycloak-theme/src/main.ts",
+        "tsConfig": "projects/auth-keycloak-theme/tsconfig.app.json",
+        "inlineStyleLanguage": "scss",
+        "assets": [
+          {
+            "glob": "**/*",
+            "input": "projects/auth-keycloak-theme/public"
+          },
+          {
+            "glob": "**/*.svg",
+            "input": "projects/ui-kit-v2/src/assets/icons",
+            "output": "icons"
+          },
+          {
+            "glob": "{google,apple}.svg",
+            "input": "node_modules/simple-icons/icons",
+            "output": "icons"
+          }
+        ],
+        "styles": ["projects/auth-keycloak-theme/src/styles.scss"],
+        "outputHashing": "none"
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/dist/auth-keycloak-theme/rt-auth-keycloak-theme.jar"],
+      "dependsOn": ["build-app"],
+      "options": {
+        "cwd": "projects/auth-keycloak-theme",
+        "command": "keycloakify build"
+      }
+    },
+    "serve": {
+      "continuous": true,
+      "executor": "@angular/build:dev-server",
+      "options": {
+        "buildTarget": "@rt-tools/auth-keycloak-theme:build-app",
+        "port": 4220
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/projects/auth-keycloak-theme"],
+      "options": {
+        "jestConfig": "projects/auth-keycloak-theme/jest.config.ts",
+        "tsConfig": "projects/auth-keycloak-theme/tsconfig.spec.json"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}

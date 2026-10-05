@@ -1,0 +1,80 @@
+/**
+ * The kit styling whole: the scales, the purposes and both themes. Taken from the sources: the
+ * theme and the kit live in one tree, and a kit build for the sake of the theme styles would
+ * leave the build order to memory.
+ */
+@use '../../ui-kit-v2/src/styles/index';
+
+/**
+ * The page base. The kit declares the font and the page colour but does not put them on the page:
+ * without these lines the screen draws a serif font, an eight pixel margin and no background.
+ */
+body {
+    margin: 0;
+    background-color: var(--rt-color-bg-page);
+    color: var(--rt-color-text-primary);
+    font-family: var(--rt-font-family-sans);
+}
+
+/**
+ * A page and its message stand inside the card as one node each, and the card spaces only its own
+ * children. Without a box of their own their children take the spacing of the card, and a page
+ * without a message keeps no empty gap for it.
+ */
+.rt-kc-page,
+.rt-kc-message {
+    display: contents;
+}
+
+/**
+ * The theme elements next to the kit's `login`: the realm name, the plain text, the checkbox row,
+ * the provider list and the locale row. Declared outside the cascade layer, after the kit.
+ */
+.login__brand {
+    align-self: center;
+    color: var(--rt-color-text-muted);
+    font-size: var(--rt-text-sm);
+    font-weight: var(--rt-font-weight-semibold);
+    letter-spacing: var(--rt-letter-spacing-wide);
+    text-transform: uppercase;
+}
+
+.login__text {
+    margin: 0;
+    color: var(--rt-color-text-primary);
+    font-size: var(--rt-text-sm);
+    overflow-wrap: anywhere;
+}
+
+.login__check {
+    display: flex;
+    align-items: center;
+    gap: var(--rt-space-2);
+}
+
+.login__check-label {
+    color: var(--rt-color-text-primary);
+    cursor: pointer;
+    font-size: var(--rt-text-sm);
+}
+
+.login__providers {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rt-space-2);
+}
+
+.login__providers-title {
+    color: var(--rt-color-text-muted);
+    font-size: var(--rt-text-xs);
+    text-align: center;
+}
+
+.login__provider {
+    width: 100%;
+}
+
+.login__locales {
+    display: flex;
+    gap: var(--rt-space-1);
+}

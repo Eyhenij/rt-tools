@@ -1,0 +1,30 @@
+{
+  "name": "@rt-tools/auth-keycloak-theme",
+  "version": "0.1.0",
+  "description": "The Keycloak login theme of the entry module, drawn with the components of @rt-tools/ui-kit-v2",
+  "author": "RT Team",
+  "license": "Apache-2.0",
+  "private": true,
+  "keywords": [
+    "keycloak",
+    "keycloakify",
+    "theme",
+    "angular"
+  ],
+  "dependencies": {
+    "@keycloakify/angular": "22.1.0",
+    "@rt-tools/core": "^0.5.0",
+    "@rt-tools/ui-kit-v2": "^0.17.0",
+    "keycloakify": "11.16.1"
+  },
+  "keycloakify": {
+    "themeName": "rt",
+    "accountThemeImplementation": "none",
+    "projectBuildDirPath": "../../dist/auth-keycloak-theme/app",
+    "keycloakifyBuildDirPath": "../../dist/auth-keycloak-theme",
+    "keycloakVersionTargets": {
+      "22-to-25": false,
+      "all-other-versions": "rt-auth-keycloak-theme.jar"
+    }
+  }
+}
