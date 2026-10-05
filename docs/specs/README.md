@@ -83,6 +83,7 @@ surfaces of the other components and services the spec does not describe yet.
 `auth` is the entry module. One Keycloak serves every admin application. Each admin is a client,
 and its rights are client roles. So far the domain holds the stand. Keycloak, its database and a
 mail catcher are raised by one command. The realm is applied from a file. A command asks the stand.
+The subdomain `theme` draws the entry screens of Keycloak with the components of the second kit.
 
 `ui-kit-v2` — four subdomains. The snapshots of the showcase: what is shot, what a frame is held the
 same between the runs by and where the run is obliged to refuse instead of being green. The leaving of
