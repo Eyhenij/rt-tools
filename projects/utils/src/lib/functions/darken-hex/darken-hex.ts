@@ -9,9 +9,9 @@ function toHexPair(channel: number): string {
  * `1 - percent / 100` and rounded down.
  *
  * Takes `#rgb` or `#rrggbb`, with or without `#`, and returns `#rrggbb`. A value that is not a hex
- * colour comes back as it came.
+ * colour comes back as it came. In the first kit the same function is called `darkenHexColor`.
  */
-export function darkenHexColor(hex: string, percent: number): string {
+export function darkenHex(hex: string, percent: number): string {
     const channels: TRgbChannels | null = parseHexColor(hex);
 
     if (channels === null) {

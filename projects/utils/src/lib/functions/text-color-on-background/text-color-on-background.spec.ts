@@ -1,8 +1,8 @@
-import { darkenHexColor } from '../darken-hex-color/index.js';
-import { getColorBasedOnBackground } from './get-color-based-on-background.js';
+import { darkenHex } from '../darken-hex/index.js';
+import { textColorOnBackground } from './text-color-on-background.js';
 
 /**
- * Answers of the first kit's functions on the same colours: the text colour, then a darkening by
+ * Answers of the first kit's `getColorBasedOnBackground` and `darkenHexColor` on the same colours: the text colour, then a darkening by
  * 30%. Taken by running the first kit's own code when the functions moved here; the first kit is not
  * imported, because this package must not depend on it.
  */
@@ -22,29 +22,29 @@ const FIRST_KIT_ANSWERS: readonly (readonly [string, string, string])[] = [
     ['#ABCDEF', '#556677', '#778fa7'],
 ];
 
-describe('getColorBasedOnBackground and darkenHexColor', () => {
+describe('textColorOnBackground and darkenHex', () => {
     it('SC-UT-1 — white text on a dark background', () => {
-        expect(getColorBasedOnBackground('#1f2937')).toBe('#fff');
-        expect(getColorBasedOnBackground('#000')).toBe('#fff');
+        expect(textColorOnBackground('#1f2937')).toBe('#fff');
+        expect(textColorOnBackground('#000')).toBe('#fff');
     });
 
     it('SC-UT-2 — darkened text on a light background', () => {
-        expect(getColorBasedOnBackground('#ffffff')).toBe('#7f7f7f');
-        expect(getColorBasedOnBackground('#facc15')).toBe('#7d660a');
+        expect(textColorOnBackground('#ffffff')).toBe('#7f7f7f');
+        expect(textColorOnBackground('#facc15')).toBe('#7d660a');
     });
 
     it.each(['#fff', 'fff', 'ffffff'])('SC-UT-3 — %s is read as #ffffff', (color: string) => {
-        expect(getColorBasedOnBackground(color)).toBe('#7f7f7f');
-        expect(darkenHexColor(color, 50)).toBe('#7f7f7f');
+        expect(textColorOnBackground(color)).toBe('#7f7f7f');
+        expect(darkenHex(color, 50)).toBe('#7f7f7f');
     });
 
     it.each(['red', '', '#12345', '#ggg'])('SC-UT-4 — «%s» is not a colour', (value: string) => {
-        expect(getColorBasedOnBackground(value)).toBe('#fff');
-        expect(darkenHexColor(value, 50)).toBe(value);
+        expect(textColorOnBackground(value)).toBe('#fff');
+        expect(darkenHex(value, 50)).toBe(value);
     });
 
     it.each(FIRST_KIT_ANSWERS)('SC-UT-5 — %s answers as in the first kit', (color: string, text: string, darkened: string) => {
-        expect(getColorBasedOnBackground(color)).toBe(text);
-        expect(darkenHexColor(color, 30)).toBe(darkened);
+        expect(textColorOnBackground(color)).toBe(text);
+        expect(darkenHex(color, 30)).toBe(darkened);
     });
 });

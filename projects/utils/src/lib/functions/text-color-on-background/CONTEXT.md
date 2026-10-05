@@ -1,7 +1,7 @@
-# getColorBasedOnBackground
+# textColorOnBackground
 
 ```ts
-getColorBasedOnBackground(backgroundColor: string): string
+textColorOnBackground(backgroundColor: string): string
 ```
 
 Picks a readable text colour for a background: `#fff` on a dark one, the background darkened by
@@ -14,9 +14,10 @@ half on a light one.
 ## The one thing to know
 
 **A background is light when its relative luminance is above 0.179**, and then the text is the
-background darkened by 50% through [`darkenHexColor`](../darken-hex-color/CONTEXT.md). On a six-digit
-colour with `#` the function answers exactly as the first kit's function of the same name, so a
-badge moved from the first kit keeps its colours.
+background darkened by 50% through [`darkenHex`](../darken-hex/CONTEXT.md). On a six-digit
+colour with `#` the function answers exactly as the first kit's `getColorBasedOnBackground`, so a
+badge moved from the first kit keeps its colours. The name differs because the first kit still
+exports its own copy, and one name is not exported from two packages.
 
 ## Edge cases
 

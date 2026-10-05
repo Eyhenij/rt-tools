@@ -6,7 +6,7 @@ const FULL_HEX: RegExp = /^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i;
 
 /**
  * Reads `#rgb` or `#rrggbb`, with or without the leading `#`, into its three channels — shared by
- * `darkenHexColor` and `getColorBasedOnBackground`. Anything else is not a colour and yields `null`.
+ * `darkenHex` and `textColorOnBackground`. Anything else is not a colour and yields `null`.
  */
 export function parseHexColor(value: string): TRgbChannels | null {
     const short: RegExpExecArray | null = SHORT_HEX.exec(value);

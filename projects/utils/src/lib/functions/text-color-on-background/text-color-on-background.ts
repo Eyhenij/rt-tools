@@ -1,4 +1,4 @@
-import { darkenHexColor } from '../darken-hex-color/index.js';
+import { darkenHex } from '../darken-hex/index.js';
 import { parseHexColor, TRgbChannels } from '../internal/hex-color.js';
 
 /** Relative luminance above which a background counts as light and gets dark text. */
@@ -23,9 +23,9 @@ function channelToLinear(channel: number): number {
  *
  * A background is light when its relative luminance is above 0.179. Takes `#rgb` or `#rrggbb`, with
  * or without `#`; a value that is not a hex colour gets `#fff`. On a six-digit colour with `#` it
- * answers as the first kit's function of the same name.
+ * answers as the first kit's `getColorBasedOnBackground`.
  */
-export function getColorBasedOnBackground(backgroundColor: string): string {
+export function textColorOnBackground(backgroundColor: string): string {
     const channels: TRgbChannels | null = parseHexColor(backgroundColor);
 
     if (channels === null) {
@@ -35,5 +35,5 @@ export function getColorBasedOnBackground(backgroundColor: string): string {
     const [r, g, b]: number[] = channels.map(channelToLinear);
     const luminance: number = 0.2126 * r + 0.7152 * g + 0.0722 * b;
 
-    return luminance > LIGHT_LUMINANCE ? darkenHexColor(backgroundColor, TEXT_DARKENING_PERCENT) : WHITE_TEXT;
+    return luminance > LIGHT_LUMINANCE ? darkenHex(backgroundColor, TEXT_DARKENING_PERCENT) : WHITE_TEXT;
 }

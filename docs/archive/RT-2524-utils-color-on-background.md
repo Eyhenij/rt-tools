@@ -59,3 +59,7 @@ application?**
   subdomain whose domain has no spec. Affected stage of the plan: 1.
 - **The «Contract» section says not applicable.** The spec check reads a table there as server
   procedures. Affected stage of the plan: 1.
+- **The functions are named `textColorOnBackground` and `darkenHex` in utils.** The duplicate check
+  refused the push: the first kit still exports the same names, and a re-export is forbidden. Asked
+  to remove the first kit's copies or to rename, the owner answered «2» — rename; the first kit stays
+  untouched. This replaces the grill's decision to keep the names. Affected stage of the plan: 1.

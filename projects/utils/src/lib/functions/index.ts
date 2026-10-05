@@ -4,13 +4,12 @@
 
 export * from './are-arrays-equal-unordered/index.js';
 export * from './check-is-entity-in-array-by-key/index.js';
-export * from './darken-hex-color/index.js';
+export * from './darken-hex/index.js';
 export * from './date-string-to-date/index.js';
 export * from './debounce/index.js';
 export * from './deep-equal/index.js';
 export * from './empty-to-dash/index.js';
 export * from './format-date/index.js';
-export * from './get-color-based-on-background/index.js';
 export * from './has-property-in-chain/index.js';
 export * from './init-today/index.js';
 export * from './is-date/index.js';
@@ -36,5 +35,6 @@ export * from './safe-str-compare/index.js';
 export * from './sort-by-alphabet/index.js';
 export * from './sort-by-date/index.js';
 export * from './stringify-http-like-params/index.js';
+export * from './text-color-on-background/index.js';
 export * from './transform-array-input/index.js';
 export * from './transform-string-input/index.js';

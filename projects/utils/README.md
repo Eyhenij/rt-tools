@@ -116,15 +116,16 @@ transformArrayInput(maybeArray); // always an array — for component inputs
 ### Colours
 
 ```typescript
-import { getColorBasedOnBackground, darkenHexColor } from '@rt-tools/utils';
+import { textColorOnBackground, darkenHex } from '@rt-tools/utils';
 
-getColorBasedOnBackground('#1f2937'); // '#fff' — dark background
-getColorBasedOnBackground('#facc15'); // '#7d660a' — the background darkened by half
-darkenHexColor('#fff', 30); // '#b2b2b2'
+textColorOnBackground('#1f2937'); // '#fff' — dark background
+textColorOnBackground('#facc15'); // '#7d660a' — the background darkened by half
+darkenHex('#fff', 30); // '#b2b2b2'
 ```
 
-Both moved here from the first kit's info badge under the same names; on `#rrggbb` they answer as
-before, and `#rgb` or a colour without `#` is now read in full.
+Both came from the first kit's info badge, where they are `getColorBasedOnBackground` and
+`darkenHexColor`; on `#rrggbb` they answer as there, and `#rgb` or a colour without `#` is now read
+in full.
 
 ### Validation and timing
 

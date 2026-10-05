@@ -75,7 +75,10 @@ Not applicable: the functions are pure.
 
 ## Decisions
 
-- **The names stay as in the first kit.** The application changes only the import path.
+- **The names are `textColorOnBackground` and `darkenHex`, not the first kit's.** The first kit
+  keeps its own copies, it is not touched, and the tree does not export one name from two packages;
+  the owner chose new names over removing the first kit's copies. The application changes the import
+  path and the name.
 - **The utils version reads short and bare colours in both functions.** In the first kit the text
   colour function stripped the first character blindly, and such a colour gave a wrong answer.
 - **The threshold and the half darkening are the first kit's.** A migrated badge keeps its look.
@@ -86,4 +89,5 @@ None.
 
 ## History of changes
 
-- 5 October 2026 — the agreement was written from the owner's word by task RT-2524.
+- 5 October 2026 — the agreement was written from the owner's word by task RT-2524; the names were
+  changed by the owner's answer «2».
