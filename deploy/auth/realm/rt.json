@@ -1,0 +1,55 @@
+{
+  "realm": "rt",
+  "enabled": true,
+  "displayName": "RT",
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "registrationAllowed": false,
+  "resetPasswordAllowed": true,
+  "verifyEmail": true,
+  "rememberMe": false,
+  "bruteForceProtected": true,
+  "sslRequired": "external",
+  "accessTokenLifespan": 300,
+  "ssoSessionIdleTimeout": 1800,
+  "ssoSessionMaxLifespan": 36000,
+  "internationalizationEnabled": true,
+  "supportedLocales": ["en", "ru"],
+  "defaultLocale": "en",
+  "smtpServer": {
+    "host": "mailpit",
+    "port": "1025",
+    "from": "no-reply@rt.localhost",
+    "fromDisplayName": "RT",
+    "auth": "false",
+    "ssl": "false",
+    "starttls": "false"
+  },
+  "clients": [
+    {
+      "clientId": "rt-example-admin",
+      "name": "Example admin",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "redirectUris": ["http://localhost:4210/*"],
+      "webOrigins": ["http://localhost:4210"],
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "http://localhost:4210/*"
+      }
+    }
+  ],
+  "roles": {
+    "client": {
+      "rt-example-admin": [
+        { "name": "example:read", "description": "Read the example records" },
+        { "name": "example:write", "description": "Edit the example records" }
+      ]
+    }
+  }
+}
