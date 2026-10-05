@@ -1,0 +1,96 @@
+# Стенд модуля входа: Keycloak, его база и перехватчик почты. Один Keycloak на все админки.
+#
+#   pnpm run serve:auth        — поднять стенд и дождаться готовности всех служб
+#   pnpm run check:auth-stand  — опросить поднятый стенд
+#
+# Порты лежат вне портов остальных стендов дерева: 58080 — Keycloak, 55434 — его база,
+# 58025 — окно перехватчика почты, 51025 — его SMTP.
+#
+# Пароли здесь простые намеренно: стенд локальный, наружу его порты не выходят.
+
+name: rt-auth
+
+services:
+    keycloak-db:
+        image: postgres:18.3-alpine
+        environment:
+            POSTGRES_USER: keycloak
+            POSTGRES_PASSWORD: keycloak
+            POSTGRES_DB: keycloak
+        ports:
+            - '55434:5432'
+        volumes:
+            # Восемнадцатый Postgres ждёт одну точку монтирования на весь каталог.
+            - keycloak-db:/var/lib/postgresql
+        healthcheck:
+            test: ['CMD-SHELL', 'pg_isready -U keycloak -d keycloak']
+            interval: 5s
+            timeout: 3s
+            retries: 10
+        restart: unless-stopped
+
+    mailpit:
+        image: axllent/mailpit:v1.27
+        ports:
+            - '58025:8025'
+            - '51025:1025'
+        healthcheck:
+            test: ['CMD', '/mailpit', 'readyz']
+            interval: 5s
+            timeout: 3s
+            retries: 10
+        restart: unless-stopped
+
+    keycloak:
+        image: quay.io/keycloak/keycloak:26.5.5
+        command: ['start-dev', '--http-port=8080']
+        environment:
+            KC_DB: postgres
+            KC_DB_URL: jdbc:postgresql://keycloak-db:5432/keycloak
+            KC_DB_USERNAME: keycloak
+            KC_DB_PASSWORD: keycloak
+            KC_HOSTNAME: http://localhost:58080
+            KC_HEALTH_ENABLED: 'true'
+            KC_BOOTSTRAP_ADMIN_USERNAME: admin
+            KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+        ports:
+            - '58080:8080'
+        depends_on:
+            keycloak-db:
+                condition: service_healthy
+        healthcheck:
+            # В образе нет curl: запрос к порту управления собирается средствами bash.
+            test:
+                [
+                    'CMD-SHELL',
+                    "exec 3<>/dev/tcp/127.0.0.1/9000 && printf 'GET /health/ready HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3 && grep -q '\"UP\"' <&3",
+                ]
+            interval: 5s
+            timeout: 5s
+            retries: 60
+        restart: unless-stopped
+
+    # Область, клиенты и роли накладываются из файла при каждом подъёме. Поверх работающей
+    # области правка файла доходит до неё; то, что файл не называет, остаётся.
+    keycloak-config:
+        image: adorsys/keycloak-config-cli:6.5.1-26.5.5
+        environment:
+            KEYCLOAK_URL: http://keycloak:8080
+            KEYCLOAK_USER: admin
+            KEYCLOAK_PASSWORD: admin
+            KEYCLOAK_AVAILABILITYCHECK_ENABLED: 'true'
+            KEYCLOAK_AVAILABILITYCHECK_TIMEOUT: 120s
+            IMPORT_FILES_LOCATIONS: /config/*.json
+            IMPORT_VAR_SUBSTITUTION_ENABLED: 'false'
+            # Без кэша файл накладывается и тогда, когда он не менялся: правка в консоли
+            # возвращается к файлу при следующем подъёме.
+            IMPORT_CACHE_ENABLED: 'false'
+        volumes:
+            - ./realm:/config:ro
+        depends_on:
+            keycloak:
+                condition: service_healthy
+        restart: 'no'
+
+volumes:
+    keycloak-db:
