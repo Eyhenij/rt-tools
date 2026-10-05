@@ -41,10 +41,7 @@ Not applicable: the functions have no screen.
 
 ## Contract
 
-| Function                    | Takes                                   | Returns            |
-| --------------------------- | --------------------------------------- | ------------------ |
-| `getColorBasedOnBackground` | a background hex colour                 | a text colour      |
-| `darkenHexColor`            | a hex colour and a percent of darkening | a six-digit colour |
+Not applicable: the surface is two exported functions of the package, not procedures.
 
 ### Refusal codes
 
