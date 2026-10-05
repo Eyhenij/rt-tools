@@ -43,3 +43,14 @@ RT-2526 was created from the owner's description and taken by «бери в ра
 ## What is left unclear
 
 - Nothing.
+
+## Decisions along the way
+
+- **The line height is `--rt-leading-snug`, 1.35, not `tight`.** Montserrat needs 1.219 of the
+  size, and 1.2 still cuts a fraction of a pixel. Affected stage of the plan: 1.
+- **The clip was seen on an enlarged frame before the fix.** In the select the tails of «р» and «у»
+  were cut flat, in the plain input whole; after the fix the select matches. Affected stage: 1.
+- **The select's own trigger keeps the former line height.** It holds the consumer's markup, and
+  the field line height grew it and moved the panel in four frames. Affected stage of the plan: 2.
+- **Thirteen frames were re-taken, each moved by 0.02–0.07%,** the text shifting by a fraction of a
+  pixel; a second raising matched all 779. Affected stage of the plan: 2.
