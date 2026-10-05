@@ -463,3 +463,11 @@ When the spec audit gathers the mentions of a scenario
 Then the reference is counted once, not twice
 
 Covered: `projects/agent-kit/tests/checks-specs-roots.test.sh`.
+
+### SC-AK-1187 — a file a barrel imports with the `.js` ending counts as published
+
+Given an ES module package whose barrel imports a file by the ending of the built file
+When the spec audit judges a binding to a function of that file
+Then the function counts as published and not as called by tests alone
+
+Covered: `projects/agent-kit/tests/checks-specs-roots.test.sh`.
