@@ -113,6 +113,20 @@ stringifyHttpLikeParams({ page: 1 }); // { page: '1' }
 transformArrayInput(maybeArray); // always an array — for component inputs
 ```
 
+### Colours
+
+```typescript
+import { textColorOnBackground, darkenHex } from '@rt-tools/utils';
+
+textColorOnBackground('#1f2937'); // '#fff' — dark background
+textColorOnBackground('#facc15'); // '#7d660a' — the background darkened by half
+darkenHex('#fff', 30); // '#b2b2b2'
+```
+
+Both came from the first kit's info badge, where they are `getColorBasedOnBackground` and
+`darkenHexColor`; on `#rrggbb` they answer as there, and `#rgb` or a colour without `#` is now read
+in full.
+
 ### Validation and timing
 
 ```typescript
