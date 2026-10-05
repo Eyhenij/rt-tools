@@ -114,26 +114,26 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 Тег заменяет `rtui-info-badge` первого кита целиком. Киты стоят рядом, поэтому приложение
 переходит по одному экрану: непереписанный экран держит прежний значок и работает как работал.
 
-| в первом ките                                 | во втором                                    |
-| --------------------------------------------- | -------------------------------------------- |
-| `rtui-info-badge`                             | `rt-tag`                                     |
-| `RtuiInfoBadgeComponent`                      | `RtTagComponent`                             |
-| вход `text`                                   | `value`                                      |
-| вход `size`                                   | `size`, но строками `'sm' \| 'md' \| 'lg'`   |
-| вход `glyph`                                  | `icon` или `iconEnd`                         |
-| вход `iconSide`                               | выбор между `icon` и `iconEnd`               |
-| вход `isFontBold`                             | **нет**                                      |
-| вход `isTitleCollapsed`                       | **нет**: тег считает нехватку места сам      |
-| `EInfoBadgeSize.LARGE / MEDIUM / SMALL`       | `'lg'`, `'md'`, `'sm'`                       |
-| `TInfoBadgeSizeType`                          | `IRtTag.Size`                                |
-| `EInfoBadgeType`, `TInfoBadgeType`            | вход `severity`                              |
-| `TIconSideType`, `EPosition.LEFT / RIGHT`     | **нет**: сторону называет имя входа          |
-| `getColorBasedOnBackground`, `darkenHexColor` | **нет**: палитра закрытая, цвет не считается |
-| класс `rtui-info-badge`                       | `rt-tag`                                     |
-| класс `c-info-badge`                          | `rt-tag`: внутреннего блока у тега нет       |
-| класс `c-info-badge__content`                 | `rt-tag__text`                               |
-| класс `c-info-badge--size-l / -m / -s`        | `rt-tag--size--lg / --md / --sm`             |
-| класс `c-info-badge--bold`                    | **нет**                                      |
+| в первом ките                                 | во втором                                                                                        |
+| --------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| `rtui-info-badge`                             | `rt-tag`                                                                                         |
+| `RtuiInfoBadgeComponent`                      | `RtTagComponent`                                                                                 |
+| вход `text`                                   | `value`                                                                                          |
+| вход `size`                                   | `size`, но строками `'sm' \| 'md' \| 'lg'`                                                       |
+| вход `glyph`                                  | `icon` или `iconEnd`                                                                             |
+| вход `iconSide`                               | выбор между `icon` и `iconEnd`                                                                   |
+| вход `isFontBold`                             | **нет**                                                                                          |
+| вход `isTitleCollapsed`                       | **нет**: тег считает нехватку места сам                                                          |
+| `EInfoBadgeSize.LARGE / MEDIUM / SMALL`       | `'lg'`, `'md'`, `'sm'`                                                                           |
+| `TInfoBadgeSizeType`                          | `IRtTag.Size`                                                                                    |
+| `EInfoBadgeType`, `TInfoBadgeType`            | вход `severity`                                                                                  |
+| `TIconSideType`, `EPosition.LEFT / RIGHT`     | **нет**: сторону называет имя входа                                                              |
+| `getColorBasedOnBackground`, `darkenHexColor` | **нет** у тега: палитра закрытая; в `@rt-tools/utils` есть `textColorOnBackground` и `darkenHex` |
+| класс `rtui-info-badge`                       | `rt-tag`                                                                                         |
+| класс `c-info-badge`                          | `rt-tag`: внутреннего блока у тега нет                                                           |
+| класс `c-info-badge__content`                 | `rt-tag__text`                                                                                   |
+| класс `c-info-badge--size-l / -m / -s`        | `rt-tag--size--lg / --md / --sm`                                                                 |
+| класс `c-info-badge--bold`                    | **нет**                                                                                          |
 
 Пять видов старого перечисления ложатся на палитру тега так: `SUCCESS` — `success`, `INFO` —
 `info`, `WARNING` — `warning`, `PRIMARY` — `info` либо фирменный цвет через свойство блока,

@@ -37,6 +37,7 @@ Rules that hold across the folder:
 | sorting              | `safe-compare`, `safe-str-compare`, `safe-num-compare`, `safe-comparator-pipe`, `sort-by-alphabet`, `sort-by-date`   |
 | dates                | `format-date`, `parse-date`, `parse-iso`, `date-string-to-date`, `init-today`, `is-today`                            |
 | component inputs     | `transform-array-input`, `transform-string-input`                                                                    |
+| colours              | `text-color-on-background`, `darken-hex`                                                                             |
 | objects              | `remove-field-from-object`, `has-property-in-chain`, `check-is-entity-in-array-by-key`, `stringify-http-like-params` |
 | display              | `empty-to-dash`                                                                                                      |
 | validation           | `is-email`                                                                                                           |
