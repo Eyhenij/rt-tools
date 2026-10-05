@@ -21,7 +21,7 @@
     "permissions"
   ],
   "dependencies": {
-    "@rt-tools/auth-contract": "^0.0.0",
+    "@rt-tools/auth-contract": "^0.1.0",
     "jose": "^6.2.12",
     "tslib": "^2.3.0"
   },
