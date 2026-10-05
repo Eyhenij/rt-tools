@@ -2,11 +2,11 @@
 
 ## Where we stand
 
-- **State:** `этап-идёт`
+- **State:** `этапы-кончились`
 - **Stage:** 3 of 3 — Domain spec
-- **Done:** stages 1 and 2. The stand check prints five ok lines.
-- **Next step:** merge the agreement into the domain spec.
-- **Uncommitted:** nothing beyond this folder and the draft
+- **Done:** all three stages. The stand check prints five ok lines, the spec audit is green.
+- **Next step:** run the push gate, take the folder apart, open the PR into the epic branch.
+- **Uncommitted:** nothing
 - **Waiting for the owner:** no
 - **PR:** not open yet
 
@@ -18,16 +18,16 @@
 - [x] 2.1 Write the check command
 - [x] 2.2 Run the check over the raised stand
 - [x] 2.3 Check that an edited realm file reaches a running stand
-- [>] 3.1 Merge the agreement into the domain spec
-- [ ] 3.2 Write the companion of the domain
-- [ ] 3.3 Add the domain to the specs index
+- [x] 3.1 Merge the agreement into the domain spec
+- [x] 3.2 Write the companion of the domain
+- [x] 3.3 Add the domain to the specs index
 
 ## Decisions along the way
 
-- **The realm job runs without the import cache.** With the cache the job skips a file whose
+- **The realm loader runs without the import cache.** With the cache the loader skips a file whose
   checksum did not change. A console edit then outlives the next raising. Affected stage: 2.
-- **The raising command waits for the realm job to exit with code 0.** The plain wait returns while
-  the job still runs. Affected stage: 1.
+- **The raising command waits for the realm loader to exit with code 0.** The plain wait returns while
+  the loader still runs. Affected stage: 1.
 - **Keycloak 26.5.5 with keycloak-config-cli 6.5.1-26.5.5.** The config tool has no build for a
   newer Keycloak yet. Affected stage: 1.
 

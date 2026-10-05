@@ -1,11 +1,12 @@
-# The Keycloak stand
+# The entry module
 
-**Status:** proposed · **Revision:** 2026-10-05 · **Scenario prefix:** `SC-AUTH`
+**Status:** in force · **Revision:** 2026-10-05 · **Scenario prefix:** `SC-AUTH`
 **Depends on:** none
 **Laws:** `verifiability`, `delivery`
 **Procedures:** none
 
-The first piece of the entry module: one Keycloak with its own database, raised on a machine by one
+One entry for every admin application: one Keycloak, a client per admin, rights as client roles.
+So far the domain holds the stand — Keycloak with its own database, raised on a machine by one
 command. The packages of the module and the example admin application are checked against it.
 
 ## Why
@@ -71,7 +72,8 @@ Not applicable.
 
 ### Locales
 
-The realm enables the eight languages of the second kit; the texts themselves belong to the theme.
+The realm enables English and Russian. The texts of the screens and further languages belong to
+the theme task.
 
 ### SEO
 
@@ -101,4 +103,4 @@ One realm for all admin applications, a client per application.
 
 ## History of changes
 
-- 2026-10-05 — proposed.
+- 2026-10-05 — the stand of Keycloak, task RT-2529.
