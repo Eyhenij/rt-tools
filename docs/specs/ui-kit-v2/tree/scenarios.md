@@ -115,3 +115,11 @@ When the branch row is clicked twice — its leaves are chosen, then cleared
 Then the branch stays open after both clicks, and its children stay visible
 
 Covered by the component test of `rt-tree`.
+
+### SC-UKV-653 — a row's texts carry the tooltip for a cut text
+
+Given a tree with a node that has a label and a description
+When the tree is drawn
+Then the label and the description each carry the kit tooltip with their own whole text, in the mode for a cut text
+
+Covered by the component test of `rt-tree`.

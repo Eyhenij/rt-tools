@@ -1,7 +1,9 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DebugElement } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 
 import { createRtFixture } from '../../../testing/rt-kit-testing';
+import { RtTooltipDirective } from '../tooltip/rt-tooltip.directive';
 import { RtTreeComponent } from './rt-tree.component';
 import { RtTreeNodeEndDirective } from './rt-tree.directives';
 import { IRtTree } from './rt-tree.model';
@@ -15,7 +17,7 @@ const TREE: ReadonlyArray<IRtTree.Node<string>> = [
         label: 'Россия',
         value: 'ru',
         children: [
-            { label: 'Москва', value: 'msk' },
+            { label: 'Москва', value: 'msk', description: 'Столица' },
             { label: 'Тверь', value: 'tvr' },
         ],
     },
@@ -90,6 +92,17 @@ describe('RtTreeComponent', (): void => {
         const box: HTMLElement = rowOf(fixture, 'ru').querySelector('[qa-dataid="tree-row-checkbox"] [role="checkbox"]') as HTMLElement;
 
         expect(box.getAttribute('aria-checked')).toBe('mixed');
+    });
+
+    it('SC-UKV-653 — подпись и описание строки несут подсказку обрезанного текста', (): void => {
+        const fixture: TFixture = setup({ value: ['msk'] });
+        const tips: RtTooltipDirective[] = fixture.debugElement
+            .queryAll(By.directive(RtTooltipDirective))
+            .map((node: DebugElement): RtTooltipDirective => node.injector.get(RtTooltipDirective));
+        const texts: string[] = tips.map((tip: RtTooltipDirective): string => tip.text());
+
+        expect(texts).toEqual(expect.arrayContaining(['Москва', 'Столица', 'Минск']));
+        expect(tips.every((tip: RtTooltipDirective): boolean => tip.whenTruncated())).toBe(true);
     });
 
     it('SC-UKV-652 — выбор ветки не сворачивает и не раскрывает её', (): void => {

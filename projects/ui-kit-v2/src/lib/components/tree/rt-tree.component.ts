@@ -27,6 +27,7 @@ import { RT_KIT_LABELS, TRtKitLabelMap } from '../../i18n';
 import { RtCheckboxComponent } from '../checkbox/rt-checkbox.component';
 import { RtIconComponent } from '../icon/rt-icon.component';
 import { RtRadioButtonComponent } from '../radio-button/rt-radio-button.component';
+import { RtTooltipDirective } from '../tooltip/rt-tooltip.directive';
 import { rtTreeOpenFor, rtTreeRows, rtTreeSideKey, rtTreeToggle } from '../select/rt-select-tree';
 import { IRtSelect } from '../select/rt-select.model';
 import { RtTreeNodeEndDirective } from './rt-tree.directives';
@@ -65,6 +66,7 @@ interface IRtTreeView<TValue> {
         RtCheckboxComponent,
         RtIconComponent,
         RtRadioButtonComponent,
+        RtTooltipDirective,
         BlockDirective,
         ElemDirective,
         ModDirective,

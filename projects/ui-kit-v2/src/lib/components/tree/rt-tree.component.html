@@ -63,13 +63,17 @@
             }
 
             <span rtElem="text">
-                <span rtElem="label" qa-dataid="tree-row-label">
+                <span rtElem="label" qa-dataid="tree-row-label" rtTooltipWhenTruncated [rtTooltip]="view.row.option.label">
                     @for (part of view.parts.label; track $index) {
                         <span rtElem="part" [rtMod]="{ match: part.matched }">{{ part.text }}</span>
                     }
                 </span>
                 @if (view.parts.description.length > 0) {
-                    <span rtElem="description">
+                    <span
+                        rtElem="description"
+                        qa-dataid="tree-row-description"
+                        rtTooltipWhenTruncated
+                        [rtTooltip]="view.row.option.description">
                         @for (part of view.parts.description; track $index) {
                             <span rtElem="part" [rtMod]="{ match: part.matched }">{{ part.text }}</span>
                         }

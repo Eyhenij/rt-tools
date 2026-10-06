@@ -59,6 +59,8 @@ multiselect; a standalone tree on the same logic gives the applications one look
   every branch as open as it was before it.
 - **A mark is drawn by the kit's own checkbox and radio.** They stand inert in the row: the row takes
   the click and the keys, and the control only shows the mark.
+- **A cut label or description shows its whole text in the kit's tooltip.** The tooltip runs in the
+  mode for a cut text, so a label that fits shows none.
 - **The search term filters the tree and marks the match in the label.** A row stays when its label or
   a descendant's label holds the term, the path to a match is shown open, and the matched part of a
   label is drawn with the highlight tokens of the side-menu search.
