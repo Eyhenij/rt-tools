@@ -6,7 +6,7 @@ Rewritten by every session, not appended to.
 
 - **State:** `этап-идёт`
 - **Stage:** 3 of 4 — The showcase
-- **Done:** the grill, the agreement, the plan; the logic and the component, 12 tests; the stories and `Overview.mdx`, the sweep green over 772 stories
+- **Done:** the grill, the agreement, the plan; the logic and the component, 12 tests; the stories and `Overview.mdx`, the sweep green over 772 stories; the agreement merged into the domain spec
 - **Next step:** the owner looks at the stories on :6007 (step 3.3)
 - **Uncommitted:** five snapshot frames, taken and looked at, kept until the owner's look
 - **Waiting for the owner:** the look at the stories
@@ -25,7 +25,7 @@ Rewritten by every session, not appended to.
 - [x] 3.2 Run the story sweep over the raised showcase.
 - [>] 3.3 Give the owner the links to the stories on :6007.
 - [ ] 3.4 Take the snapshots after the owner's look and look at every frame.
-- [ ] 4.1 Merge the agreement into `docs/specs/ui-kit-v2/draggable-tree/` and name it in the domain index.
+- [x] 4.1 Merge the agreement into `docs/specs/ui-kit-v2/draggable-tree/` and name it in the domain index.
 - [ ] 4.2 Run the spec check and the full set before the push.
 
 ## Decisions along the way

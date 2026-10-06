@@ -15,6 +15,7 @@ The scenarios live in the subdomains, each at its own rules:
 | [The accordion](accordion/scenarios.md)                                  | `SC-UKV-394`…`SC-UKV-405`                            |
 | [A tree of options](option-tree/scenarios.md)                            | `SC-UKV-408`…`SC-UKV-417`                            |
 | [A tree of choice](tree/scenarios.md)                                    | `SC-UKV-639`…`SC-UKV-653`                            |
+| [A tree ordered by dragging](draggable-tree/scenarios.md)                | `SC-UKV-654`…`SC-UKV-663`                            |
 | [The panel of the date field](date-panel/scenarios.md)                   | `SC-UKV-418`…`SC-UKV-429`                            |
 | [The text of the date field](date-panel/scenarios.md)                    | `SC-UKV-467`                                         |
 | [The date range field](date-range/scenarios.md)                          | `SC-UKV-468`…`SC-UKV-478`                            |

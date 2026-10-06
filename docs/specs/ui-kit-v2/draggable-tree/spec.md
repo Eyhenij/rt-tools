@@ -1,6 +1,6 @@
 # A tree ordered by dragging
 
-**Status:** proposed · **Revision:** 2026-10-06 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 2026-10-06 · **Scenario prefix:** `SC-UKV`
 **Depends on:** `docs/specs/ui-kit-v2/tree` (the node, the rows and the open state of `rt-tree`)
 **Laws:** `frontend-application`, `reuse-first`, `verifiability`
 **Procedures:** none
