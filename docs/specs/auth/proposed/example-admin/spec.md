@@ -49,10 +49,13 @@ between two packages shows only when they work together.
   again.
 - **The token of the example client lives forty seconds on the stand.** The end-to-end suite then
   sees a refresh within one test instead of waiting five minutes.
+- **The stand offers the entry through Google only when the keys of the owner lie in its
+  environment.** Without them the provider is in the realm and switched off, and the entry screen
+  shows no Google button. The keys never get into the history of the tree.
 
 ## What is out of scope
 
-- The entry through Google and Apple — the stand tasks of the epic.
+- The entry through Apple — task RT-2547.
 - The organizations — the example has none.
 
 ## Contract

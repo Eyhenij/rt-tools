@@ -8,3 +8,4 @@ The first column is the rule verbatim, as it is written in the "Rules" section o
 - **A token near its end is refreshed without a new entry.** — `apps/auth-example-admin/src/app/example.config.ts:EXAMPLE_CONFIG`
 - **Sign out ends the session in Keycloak.** — `apps/auth-example-admin/src/app/records/records.page.ts:RecordsPage`
 - **The token of the example client lives forty seconds on the stand.** — `deploy/auth/realm/rt.json:access.token.lifespan`
+- **The stand offers the entry through Google only when the keys of the owner lie in its environment.** — `deploy/auth/compose.yml:RT_GOOGLE_ENABLED`

@@ -26,6 +26,22 @@
     "ssl": "false",
     "starttls": "false"
   },
+  "identityProviders": [
+    {
+      "alias": "google",
+      "providerId": "google",
+      "displayName": "Google",
+      "enabled": "$(env:RT_GOOGLE_ENABLED)",
+      "trustEmail": true,
+      "firstBrokerLoginFlowAlias": "first broker login",
+      "config": {
+        "clientId": "$(env:RT_GOOGLE_CLIENT_ID)",
+        "clientSecret": "$(env:RT_GOOGLE_CLIENT_SECRET)",
+        "defaultScope": "openid profile email",
+        "syncMode": "IMPORT"
+      }
+    }
+  ],
   "clients": [
     {
       "clientId": "rt-example-admin",
