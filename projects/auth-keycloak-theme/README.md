@@ -52,6 +52,9 @@ Every other Keycloak page keeps the standard Keycloakify layout.
 - **The theme follows the system** until a person switches it above the card. The choice lives in
   the browser storage of the kit.
 - **Provider buttons** come from the realm list. Google and Apple get their own marks.
+- **The language** is chosen from a drop-down list above the card when the realm has two or more.
+- **The forms** use the large fields and buttons of the kit, and every field keeps the line for its
+  error, so an error does not move the form.
 
 ## Requirements
 
