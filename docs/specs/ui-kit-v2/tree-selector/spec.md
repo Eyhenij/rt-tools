@@ -129,7 +129,8 @@ draft, the search line and the multi toggle live in the component.
 ### Locales
 
 Every label of the selector — search, expand all, collapse all, clear, multiple selection and its
-hint, apply, cancel — is a kit label taken through the label token, in all eight languages.
+hint, apply, cancel — is a kit label taken through the label token. The kit carries the English set; the application
+gives its own language through the translator.
 
 ### SEO
 

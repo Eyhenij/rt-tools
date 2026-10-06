@@ -3,19 +3,19 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 1 of 3 — Component
-- **Done:** grill closed by the owner's word, spec and scenarios written
-- **Next step:** write the search and draft logic with its tests
-- **Uncommitted:** the task folder, the spec, the epic plan edit
+- **Stage:** 2 of 3 — Showcase
+- **Done:** logic, component and labels; selector tests 16 of 16, typecheck green
+- **Next step:** write the wrapper, Playground and the matrices
+- **Uncommitted:** nothing
 - **Waiting for the owner:** no
 - **PR:** not open yet
 
 ## Steps
 
-- [>] 1.1 Write the search and draft logic with its tests
-- [ ] 1.2 Write the component with its tests
-- [ ] 1.3 Add the kit labels in eight languages
-- [ ] 2.1 Write the wrapper, Playground and the matrices
+- [x] 1.1 Write the search and draft logic with its tests
+- [x] 1.2 Write the component with its tests
+- [x] 1.3 Add the kit labels in eight languages
+- [>] 2.1 Write the wrapper, Playground and the matrices
 - [ ] 2.2 Write the overview page
 - [ ] 2.3 Take the snapshots and look at them
 - [ ] 3.1 Bind the spec rules in the companion and the indexes
@@ -26,6 +26,10 @@
 
 - **The branch is renamed to `RT-2550-kit2-tree-selector`** — the owner turned the task from a
   `rt-multiselect` mode into a port. Affected stage: all.
+
+- **Labels in English and the showcase Russian, not eight languages** — the kit carries one English
+  set and the application gives its language through the translator; the multi toggle, its hint and
+  the search placeholder reuse the labels of the dynamic selector. Affected stage: 1.
 
 ## Sessions
 
