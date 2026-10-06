@@ -58,6 +58,10 @@ the entry is not sure the page belongs to the admin.
   They do not hang in the corner of the window over the dots.
 - **A link back to the sign-in or to the application is plain text without a chevron.** Keycloak
   starts these two messages with «, and the theme drops it.
+- **Under the new password and its confirmation the page lists every requirement of the realm password policy.**
+  The list is read from the policy Keycloak puts on the page, so a new policy needs no theme release.
+- **A requirement the typed password meets is marked as met while the person types.** The person
+  learns the rules before the submit, not from a refusal after it.
 - **A message Keycloak puts on a page is shown above the form in the colour of its kind.**
 - **Every provider of the realm gets a button, and Google and Apple get their own icons.** A
   provider without a known icon gets a button with its name only.
@@ -124,6 +128,9 @@ One theme for every admin of the realm. The realm display name heads the card.
   field. Rejected: a `name` input in the kit — a kit release for one consumer.
 - **The page texts come from the Keycloak messages.** Rejected: a dictionary of the theme — it
   would part with the mails of the realm.
+- **The password requirements are the theme's own texts in English and Russian.** Keycloak has only
+  refusal texts for the policy, and they read as errors before anything is typed. Rejected: the
+  refusal texts with their prefix cut — the Russian set lacks the address requirement.
 
 ## Open questions
 
@@ -132,3 +139,4 @@ None.
 ## History of changes
 
 - 2026-10-05 — the theme, task RT-2530.
+- 2026-10-06 — the password requirements under the two password fields, task RT-2570.

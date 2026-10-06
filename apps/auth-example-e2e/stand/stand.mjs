@@ -25,9 +25,10 @@ export const ADMIN_ORIGIN = `http://localhost:${ADMIN_PORT}`;
 
 /**
  * The password of every person of the stand. A test value of a local stand: the realm lives in a
- * container on this machine, and the people are recreated on every run.
+ * container on this machine, and the people are recreated on every run. It meets the realm
+ * password policy: Keycloak refuses to create a person with a weaker one.
  */
-export const STAND_PASSWORD = 'example-stand-2026';
+export const STAND_PASSWORD = 'Example-stand-2026';
 
 /** The people of the stand and their rights in the example client. */
 export const PEOPLE = Object.freeze({

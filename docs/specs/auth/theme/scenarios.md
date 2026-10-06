@@ -119,3 +119,23 @@ Then the block with the language list and the theme switch is a child of the car
 Given the reset page
 When it is drawn
 Then the link back to the sign-in reads «Back to Login» with no « in front
+
+### SC-AUTH-66 — the new password page lists every requirement of the realm policy
+
+Given a realm whose policy asks for a length, letters of both cases, a digit, a special character
+and a password unlike the login and the address
+When the new password page is drawn
+Then a list under the new password and confirmation fields names each of the seven requirements,
+none marked as met
+
+### SC-AUTH-67 — a requirement is marked as met while the person types
+
+Given the new password page of the same realm
+When the person types a password that meets the length and the case requirements only
+Then those requirements are marked as met and the rest stay unmarked
+
+### SC-AUTH-68 — a realm without a policy shows no list
+
+Given a realm without a password policy
+When the new password page is drawn
+Then no requirement list stands under the fields

@@ -18,6 +18,8 @@ without a line and a line without a rule is a divergence.
 - **The card is glass: a semi-transparent background with a blur of what lies behind it.** — `projects/auth-keycloak-theme/src/styles.scss:backdrop-filter`
 - **The language list and the theme switch stand in the first row of the card, on its right edge.** — `projects/auth-keycloak-theme/src/login/shell/rt-kc-root.component.html:kc-chrome`. The pinning of the kit is cancelled at `projects/auth-keycloak-theme/src/styles.scss:login__chrome`
 - **A link back to the sign-in or to the application is plain text without a chevron.** — `projects/auth-keycloak-theme/src/login/kc-i18n.ts:backLinkText`
+- **Under the new password and its confirmation the page lists every requirement of the realm password policy.** — `projects/auth-keycloak-theme/src/login/kc-password-rules.ts:passwordRulesOf`. The list stands at `projects/auth-keycloak-theme/src/login/pages/update-password/rt-kc-update-password.component.html:kc-password-rules`
+- **A requirement the typed password meets is marked as met while the person types.** — `projects/auth-keycloak-theme/src/login/kc-password-rules.ts:passwordRuleMet`
 - **A message Keycloak puts on a page is shown above the form in the colour of its kind.** — `projects/auth-keycloak-theme/src/login/message/rt-kc-message.component.ts:SEVERITY`
 - **Every provider of the realm gets a button, and Google and Apple get their own icons.** — `projects/auth-keycloak-theme/src/login/pages/login/rt-kc-login.component.ts:PROVIDER_ICONS`
 - **The dark theme follows the system until the person switches it on the page.** — `projects/auth-keycloak-theme/src/login/kc-app.config.ts:themeAppConfig`
