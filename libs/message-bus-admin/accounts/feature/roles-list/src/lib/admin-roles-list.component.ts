@@ -12,7 +12,7 @@ import {
 import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@angular/core';
 import { RolesStore } from '@rt/message-bus-admin/accounts/data-access';
 import { IRole, rightsLabel, ROLE_CREATE_ROUTE, ROLES_COLUMNS, ROLES_TABLE_ID } from '@rt/message-bus-admin/accounts/util';
-import { AuthStore } from '@rt/message-bus-admin/auth/data-access';
+import { AuthStore } from '@rt/message-bus-admin/common/container/data-access';
 import { AdminListScreenBase } from '@rt/message-bus-admin/common/core/feature';
 import { AdminListPageComponent, AdminListToolbarRightDirective } from '@rt/message-bus-admin/common/core/ui';
 import { adminColumns, AdminTextService, provideAdminListHost, TAdminLabelKey, TAdminText } from '@rt/message-bus-admin/common/core/util';

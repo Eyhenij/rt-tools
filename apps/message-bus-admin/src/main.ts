@@ -15,7 +15,7 @@ import { appConfig, IEntrySettings } from './app/app.config';
 async function start(): Promise<void> {
     const answer: Response = await fetch('/api/auth/settings');
     if (!answer.ok) {
-        throw new Error(`приёмник не назвал, где входить: ${answer.status}`);
+        throw new Error(`the receiver did not name where to sign in: ${answer.status}`);
     }
     const settings: IEntrySettings = (await answer.json()) as IEntrySettings;
 

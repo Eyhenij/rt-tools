@@ -58,6 +58,12 @@
   spec of the module now starts an application operation that reads them. Affected stage of the
   plan: 1.
 
+- **The sign-in domain of the admin panel is gone, and its rest lives in the shell domain.** With
+  the screens drawn by Keycloak the domain had no screen layer, and the layout check refused it.
+  The sign-in state and the section guards went to the shell's data layer, the person model and
+  the addresses to its utilities. The guards stay out of the shell's screen layer: it loads on
+  demand. Affected stage of the plan: 1.
+
 ## Sessions
 
 ### 2026-10-06

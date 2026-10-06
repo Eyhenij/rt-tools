@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivateFn, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
-import { AuthStore } from '@rt/message-bus-admin/auth/data-access';
-import { NO_SECTIONS_PATH } from '@rt/message-bus-admin/auth/util';
+import { AuthStore } from './auth.store';
+import { NO_SECTIONS_PATH } from '@rt/message-bus-admin/common/container/util';
 import { ADMIN_MENU, IAdminMenuItem } from '@rt/message-bus-admin/common/container/util';
 
 /**

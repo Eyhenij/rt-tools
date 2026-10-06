@@ -31,7 +31,7 @@ divergence is written down as a line.
 - **the contract page types** — `libs/message-bus-common/src/lib/page.ts`
 - **the cargo shape** — `projects/agent-kit/src/lib/cargo.ts` — declared by the sending side
 - **what the receiver adds of its own** — `libs/message-bus-common/src/lib/cargo.ts`
-- **the model of the signed-in person** — `libs/message-bus-admin/auth/util/src/lib/session.model.ts`
+- **the model of the signed-in person** — `libs/message-bus-admin/common/container/util/src/lib/session.model.ts`
 - **the cargo record models** — `libs/message-bus-admin/postmortems/util/src/lib/postmortem.model.ts`, `.../proposals/util/src/lib/proposal.model.ts`, `.../summaries/util/src/lib/month-record.model.ts`
 - **the cargo record mappers** — `libs/message-bus-admin/postmortems/util/src/lib/postmortem.mapper.ts`, `.../proposals/util/src/lib/proposal.mapper.ts`, `.../summaries/util/src/lib/month-record.mapper.ts`
 
@@ -42,7 +42,7 @@ here" (the bold part of the item). An article without a line and a line without 
 divergence: the rule promises what the tree does not have, or the tree holds what the rule is
 silent about.
 
-- **An entity has two sides, and both lie in the namespace `I<Entity>`.** — `libs/message-bus-admin/postmortems/util/src/lib/postmortem.model.ts:IPostmortem` — `Api` and `State` on each of the two levels. The signed-in person is outside the rule: `libs/message-bus-admin/auth/util/src/lib/session.model.ts:IAdminSession` — one side, the receiver gives the name and the admin panel shows that same name.
+- **An entity has two sides, and both lie in the namespace `I<Entity>`.** — `libs/message-bus-admin/postmortems/util/src/lib/postmortem.model.ts:IPostmortem` — `Api` and `State` on each of the two levels. The signed-in person is outside the rule: `libs/message-bus-admin/common/container/util/src/lib/session.model.ts:IAdminSession` — one side, the receiver gives the name and the admin panel shows that same name.
 - **The contract side is not written by hand — it is declared as an alias.** — Here it is otherwise: there is no contract generator, and the contract side is written by hand — `libs/message-bus-common/src/lib/page.ts:IPage`. It cannot diverge silently: the declaration is one for both sides, and the receiver and the admin panel read that same file, not a copy of their own.
 - **A mapper inheriting `BaseMapper` stands between the sides, and screens read only `State`.** — `libs/message-bus-admin/postmortems/util/src/lib/postmortem.mapper.ts:PostmortemMapper` — a pair of mappers per record, the list row and the whole record apart; the screen sees only `State`, and time in it is already a date, not a string.
 - **Empty is expressed by an empty string or zero, not by a missing field.** — `libs/message-bus-common/src/lib/page.ts:pageAsked` — parsing the selection substitutes a default instead of leaving the field empty. In `IPageAsked` the only field with `null` is the tree trait, and `null` there means "not narrowed", not "no value".

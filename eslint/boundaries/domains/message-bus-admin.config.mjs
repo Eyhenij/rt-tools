@@ -11,7 +11,7 @@
  */
 
 import {
-    AUTH_DATA_ACCESS,
+    CONTAINER_DATA_ACCESS,
     CONTRACT,
     CORE_API,
     CORE_DATA_ACCESS,
@@ -21,10 +21,10 @@ import {
     PACKAGE,
 } from './message-bus-admin.tags.mjs';
 
-/** Слой утилит домена входа: род отказа и модели читают все, кто про вход говорит. */
-const AUTH_UTIL = 'scope:message-bus-admin-auth-util';
-
-/** Меню объявлением: его читает оболочка, а заводится оно вместе со своим экраном. */
+/**
+ * Меню объявлением, адреса и модель вошедшего: их читает оболочка, а заводится меню вместе со
+ * своим экраном.
+ */
 const CONTAINER_UTIL = 'scope:message-bus-admin-common-container-util';
 
 /**
@@ -82,13 +82,13 @@ export const messageBusAdminBoundaries = [
     // отдаются ему провайдером рядом с иконками, а лежат они там же, где подписи экранов, —
     // разложенные по двум местам, они расходятся молча
     //
-    // Утилиты входа — ради слов адресов: маршруты собираются здесь, а объявлены адреса там,
+    // Утилиты оболочки — ради слов адресов: маршруты собираются здесь, а объявлены адреса там,
     // рядом друг с другом. Своё слово в маршрутах разошлось бы с тем, по которому уводят стражи
     {
         sourceTag: 'scope:admin-app',
         onlyDependOnLibsWithTags: [
-            'scope:message-bus-admin-auth-shell',
-            AUTH_UTIL,
+            CONTAINER_DATA_ACCESS,
+            CONTAINER_UTIL,
             'scope:message-bus-admin-common-container-feature',
             'scope:message-bus-admin-postmortems-shell',
             'scope:message-bus-admin-proposals-shell',
@@ -102,39 +102,16 @@ export const messageBusAdminBoundaries = [
         ],
     },
 
-    // Стражи по праву раздела читают право из объявления пункта меню: свой список прав рядом с
-    // маршрутами разошёлся бы с меню молча. Оболочку они при этом не видят — она грузится по
-    // требованию, и статическая ссылка на неё это потеряла бы. Страж входа берётся из пакета
-    {
-        sourceTag: 'scope:message-bus-admin-auth-shell',
-        onlyDependOnLibsWithTags: [AUTH_DATA_ACCESS, AUTH_UTIL, CONTAINER_UTIL, CORE_UTIL, PACKAGE],
-    },
-    // У входа нет своих компонентов и обращений: экран входа рисует Keycloak
-    {
-        sourceTag: 'scope:message-bus-admin-auth-ui',
-        onlyDependOnLibsWithTags: [AUTH_UTIL, PACKAGE],
-    },
-    {
-        sourceTag: 'scope:message-bus-admin-auth-data-access',
-        onlyDependOnLibsWithTags: [AUTH_UTIL, PACKAGE],
-    },
-    {
-        sourceTag: 'scope:message-bus-admin-auth-api',
-        onlyDependOnLibsWithTags: [AUTH_UTIL, PACKAGE],
-    },
-
     // Оболочка: она знает, кто вошёл, куда его вывести при выходе, из чего собрано меню и чем
-    // рисуется шапка. Сама шапка предмета не знает — разделы и вошедший приходят к ней входами
+    // рисуется шапка. Сама шапка предмета не знает — разделы и вошедший приходят к ней входами.
     // Оболочка видит словарь по той же причине, что шапка и меню: свою подпись она показывает
     // одну — экран для того, кому не открыт ни один раздел, — и написанная разметкой она
     // разошлась бы с остальными подписями админки молча
     {
         sourceTag: 'scope:message-bus-admin-common-container-feature',
         onlyDependOnLibsWithTags: [
-            'scope:message-bus-admin-auth-shell',
             'scope:message-bus-admin-common-container-ui',
-            AUTH_DATA_ACCESS,
-            AUTH_UTIL,
+            CONTAINER_DATA_ACCESS,
             CONTAINER_UTIL,
             CORE_UTIL,
             PACKAGE,
@@ -144,10 +121,6 @@ export const messageBusAdminBoundaries = [
     // Слои, которые не зовут никого. Выписаны отдельными правилами, а не пропущены: правило
     // проверки раскладки требует, чтобы тег каждой либы стоял в границах, и молчание про либу
     // читается как «прав ей не давали», а не как «прав ей не нужно»
-    {
-        sourceTag: 'scope:message-bus-admin-auth-util',
-        onlyDependOnLibsWithTags: [PACKAGE],
-    },
     // Меню видит словарь: подписи разделов оно берёт оттуда же, откуда их берут сами разделы, —
     // переписанные в декларации литералом, они расходятся с заголовком экрана молча. Общую либу
     // оно видит ради имени права: тем же именем приёмник закрывает свою операцию, и свой список
@@ -160,6 +133,9 @@ export const messageBusAdminBoundaries = [
         sourceTag: 'scope:message-bus-admin-common-container-api',
         onlyDependOnLibsWithTags: [CONTAINER_UTIL, PACKAGE],
     },
+    // Состояние входа и стражи по праву раздела: право стражи читают из объявления пункта меню, а
+    // свой список прав рядом с маршрутами разошёлся бы с меню молча. Оболочку они не видят — она
+    // грузится по требованию, и статическая ссылка на неё это потеряла бы
     {
         sourceTag: 'scope:message-bus-admin-common-container-data-access',
         onlyDependOnLibsWithTags: ['scope:message-bus-admin-common-container-api', CONTAINER_UTIL, PACKAGE],

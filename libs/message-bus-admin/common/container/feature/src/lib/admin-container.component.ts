@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterOutlet } from '@angular/router';
-import { AuthStore } from '@rt/message-bus-admin/auth/data-access';
-import { IAdminSession } from '@rt/message-bus-admin/auth/util';
+import { AuthStore } from '@rt/message-bus-admin/common/container/data-access';
+import { IAdminSession } from '@rt/message-bus-admin/common/container/util';
 import { AdminHeaderComponent } from '@rt/message-bus-admin/common/container/ui';
 import { ADMIN_MENU, IAdminMenuItem } from '@rt/message-bus-admin/common/container/util';
 import { AdminTextService } from '@rt/message-bus-admin/common/core/util';

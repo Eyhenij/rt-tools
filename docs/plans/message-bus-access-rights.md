@@ -17,7 +17,7 @@ of them may do a thing the owner sets from a screen rather than from a database 
 | the access check            | `libs/message-bus-api/access/feature/`                                   | one guard over the whole application, three kinds of access: public, a tree token, a person's sign-in               |
 | the access declaration      | `libs/message-bus-api/access/util/`                                      | a mark on the class or the operation; an undeclared operation answers nobody                                        |
 | the refusal                 | the same guard                                                           | one answer for every branch — 401; "you did not introduce yourself" and "this is not for you" are indistinguishable |
-| the admin panel route guard | `libs/message-bus-admin/auth/shell/`                                     | one guard on the whole closed branch; sections are not told apart                                                   |
+| the admin panel route guard | `libs/message-bus-admin/common/container/data-access/`                   | one guard on the whole closed branch; sections are not told apart                                                   |
 | the menu                    | `libs/message-bus-admin/common/container/util/`                          | four items, the same for everyone who signed in                                                                     |
 | the law and the rule        | `docs/constitution/application/access.md`, `.claude/skills/permissions/` | rights, roles, presets and overrides are described; the companion says the tree has none of it                      |
 

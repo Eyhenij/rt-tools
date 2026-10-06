@@ -1,7 +1,7 @@
 import { computed, inject, Injectable, Signal } from '@angular/core';
 import { ICaller } from '@rt-tools/auth-contract';
 import { RtAuthService } from '@rt-tools/auth-angular';
-import { IAdminSession } from '@rt/message-bus-admin/auth/util';
+import { IAdminSession } from '@rt/message-bus-admin/common/container/util';
 
 /**
  * Вошедший админки — тот, кого назвал Keycloak.

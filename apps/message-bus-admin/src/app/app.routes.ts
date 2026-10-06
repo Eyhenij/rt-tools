@@ -1,9 +1,9 @@
 import { Route } from '@angular/router';
 import { rtAuthGuard } from '@rt-tools/auth-angular';
 import { PEOPLE_ROUTE, peopleRoutes, ROLES_ROUTE, rolesRoutes } from '@rt/message-bus-admin/accounts/shell';
-import { landingPath, noSectionsGuard, sectionRightGuard } from '@rt/message-bus-admin/auth/shell';
+import { landingPath, noSectionsGuard, sectionRightGuard } from '@rt/message-bus-admin/common/container/data-access';
 import { chatRoutes } from '@rt/message-bus-admin/chat/shell';
-import { NO_SECTIONS_PATH } from '@rt/message-bus-admin/auth/util';
+import { NO_SECTIONS_PATH } from '@rt/message-bus-admin/common/container/util';
 import { COLUMNS_ROUTE } from '@rt/message-bus-admin/common/core/util';
 import { INVITES_ROUTE, invitesRoutes } from '@rt/message-bus-admin/invites/shell';
 import { POSTMORTEMS_ROUTE, postmortemsRoutes } from '@rt/message-bus-admin/postmortems/shell';
