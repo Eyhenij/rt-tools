@@ -48,3 +48,9 @@ does that before the claims get here.
 | `hasPermission`      | whether the caller has the right                 |
 | `hasEveryPermission` | whether the caller has all the rights            |
 | `hasSomePermission`  | whether the caller has at least one of the rights |
+
+## Connecting it to an application
+
+The order of the whole connection is in the guide of the module.
+It covers Keycloak, the server, the admin, the entry screens and the move of people:
+[docs/auth-integration.md](https://github.com/Eyhenij/rt-tools/blob/main/docs/auth-integration.md).
