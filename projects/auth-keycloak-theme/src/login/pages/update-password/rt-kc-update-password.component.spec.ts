@@ -4,6 +4,23 @@ import { IKcSubmitted, kcContextOf, kcNode, renderKcPage, submitForm, typeInto }
 import { RtKcResetPasswordComponent } from '../reset-password/rt-kc-reset-password.component';
 import { RtKcUpdatePasswordComponent } from './rt-kc-update-password.component';
 
+/** The new password page of a realm with the policy of the stand. */
+function pageWithPolicy(): ReturnType<typeof kcContextOf<'login-update-password.ftl'>> {
+    return Object.assign(kcContextOf('login-update-password.ftl'), {
+        passwordPolicies: { length: 8, upperCase: 1, lowerCase: 1, digits: 1, specialChars: 1, notUsername: true, notEmail: true },
+    });
+}
+
+/** The requirement lines under the new password field: the text and whether it is marked as met. */
+function ruleLines(fixture: ComponentFixture<unknown>): { text: string; met: boolean }[] {
+    const lines: HTMLElement[] = Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('[qa-dataid="kc-password-rule"]'));
+
+    return lines.map((line: HTMLElement): { text: string; met: boolean } => ({
+        text: line.textContent?.trim() ?? '',
+        met: line.getAttribute('data-met') === 'true',
+    }));
+}
+
 describe('the password forms', () => {
     it('SC-AUTH-21 — the forms of the reset and the new password keep their field names', async () => {
         const reset: ComponentFixture<RtKcResetPasswordComponent> = await renderKcPage(
@@ -51,5 +68,45 @@ describe('the password forms', () => {
 
         expect(cancel?.getAttribute('name')).toBe('cancel-aia');
         expect((await submitForm(update, 'kc-update-form', cancel ?? undefined)).sent).toBe(true);
+    });
+
+    it('SC-AUTH-66 — the new password page lists every requirement of the realm policy', async () => {
+        const update: ComponentFixture<RtKcUpdatePasswordComponent> = await renderKcPage(RtKcUpdatePasswordComponent, pageWithPolicy());
+
+        expect(kcNode(update, 'kc-password-rules')?.getAttribute('aria-label')).toBe('Password requirements');
+        expect(ruleLines(update)).toEqual([
+            { text: 'Length: at least 8', met: false },
+            { text: 'Upper case letters: at least 1', met: false },
+            { text: 'Lower case letters: at least 1', met: false },
+            { text: 'Digits: at least 1', met: false },
+            { text: 'Special characters: at least 1', met: false },
+            { text: 'Not the same as the username', met: false },
+            { text: 'Not the same as the email', met: false },
+        ]);
+    });
+
+    it('SC-AUTH-67 — a requirement is marked as met while the person types', async () => {
+        const update: ComponentFixture<RtKcUpdatePasswordComponent> = await renderKcPage(RtKcUpdatePasswordComponent, pageWithPolicy());
+        await typeInto(update, 'kc-password-new', 'Abcdefgh');
+
+        expect(ruleLines(update).map((line: { text: string; met: boolean }): boolean => line.met)).toEqual([
+            true,
+            true,
+            true,
+            false,
+            false,
+            true,
+            true,
+        ]);
+    });
+
+    it('SC-AUTH-68 — a realm without a policy shows no list', async () => {
+        const update: ComponentFixture<RtKcUpdatePasswordComponent> = await renderKcPage(
+            RtKcUpdatePasswordComponent,
+            kcContextOf('login-update-password.ftl')
+        );
+
+        expect(kcNode(update, 'kc-password-new')).not.toBeNull();
+        expect(kcNode(update, 'kc-password-rules')).toBeNull();
     });
 });

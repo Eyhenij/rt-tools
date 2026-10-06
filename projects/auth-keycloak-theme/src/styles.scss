@@ -109,6 +109,35 @@ body {
     width: 100%;
 }
 
+/**
+ * The requirements of the realm password policy under the new password field. An unmet requirement
+ * is muted; a met one takes the success colour and a filled mark.
+ */
+.login__rules {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    margin: 0;
+    gap: var(--rt-space-1);
+    list-style: none;
+}
+
+.login__rule {
+    display: flex;
+    align-items: center;
+    color: var(--rt-color-text-muted);
+    font-size: var(--rt-text-sm);
+    gap: var(--rt-space-2);
+}
+
+.login__rule--met {
+    color: var(--rt-color-state-success-text);
+}
+
+.login__rule-icon {
+    flex-shrink: 0;
+}
+
 .login__locales {
     display: flex;
     gap: var(--rt-space-1);
