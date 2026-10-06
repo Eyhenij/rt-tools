@@ -406,6 +406,27 @@ importers:
 
   projects/agent-kit: {}
 
+  projects/auth-contract:
+    dependencies:
+      tslib:
+        specifier: ^2.3.0
+        version: 2.8.1
+
+  projects/auth-keycloak-theme:
+    dependencies:
+      '@keycloakify/angular':
+        specifier: 22.1.0
+        version: 22.1.0(@angular/common@22.1.6(@angular/core@22.1.6(@angular/compiler@22.1.6)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.1.6(@angular/compiler@22.1.6)(rxjs@7.8.2))(@angular/platform-browser@22.1.6(@angular/animations@22.1.6(@angular/core@22.1.6(@angular/compiler@22.1.6)(rxjs@7.8.2)))(@angular/common@22.1.6(@angular/core@22.1.6(@angular/compiler@22.1.6)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.1.6(@angular/compiler@22.1.6)(rxjs@7.8.2)))(keycloakify@11.16.1)
+      '@rt-tools/core':
+        specifier: ^0.5.0
+        version: 0.5.0(2c57471cbf67690551e296dd2c34dd34)
+      '@rt-tools/ui-kit-v2':
+        specifier: ^0.17.0
+        version: 0.17.0(d4898107c57358d9661e38fc5f6097bc)
+      keycloakify:
+        specifier: 11.16.1
+        version: 11.16.1
+
   projects/core:
     dependencies:
       '@angular/cdk':
@@ -3018,6 +3039,15 @@ packages:
   '@jsverse/utils@1.0.0-beta.5':
     resolution: {integrity: sha512-z7IdlV6BdSeF3Veii8Yyk64KuyTjNIQnFaW5PAhmDx0wN29lB2BFp8WO6+tJPLPjtlz2yKeNrjkp1XqnMPaeHA==}
 
+  '@keycloakify/angular@22.1.0':
+    resolution: {integrity: sha512-vce13Va6zyCnpzUKq7v/lZlguqd89EM7BBo6awbrY4zDkg0q3c3diL5tMiVwvaeGYKY8JTWz9R8b79SHnuoMXQ==}
+    hasBin: true
+    peerDependencies:
+      '@angular/common': ^22.0.0
+      '@angular/core': ^22.0.0
+      '@angular/platform-browser': ^22.0.0
+      keycloakify: ^11.15.3
+
   '@keyv/bigmap@1.3.1':
     resolution: {integrity: sha512-WbzE9sdmQtKy8vrNPa9BRnwZh5UF4s1KTmSK0KUVLo3eff5BlQNNWDnFOouNpKfPKDnms9xynJjsMYjMaT/aFQ==}
     engines: {node: '>= 18'}
@@ -5109,6 +5139,25 @@ packages:
       '@rt-tools/core': ^0.5.0
       '@rt-tools/utils': ^0.4.0
       rxjs: ^7.8.0
+
+  '@rt-tools/ui-kit-v2@0.17.0':
+    resolution: {integrity: sha512-FWTqmrb5zfkcpwFvswRV0LiE+L+w/IG8WRERELqpd1iKZcJmWTw1VOV9iDT+vFC6OgmUR/gHLWzgJedtYpWcdQ==}
+    peerDependencies:
+      '@angular/cdk': ^22.0.0
+      '@angular/common': ^22.0.0
+      '@angular/compiler': ^22.0.0
+      '@angular/core': ^22.0.0
+      '@angular/forms': ^22.0.0
+      '@angular/platform-browser': ^22.0.0
+      '@angular/router': ^22.0.0
+      '@rt-tools/core': ^0.5.0
+      '@rt-tools/utils': ^0.4.0
+      quill: ^2.0.3
+      rxjs: ^7.8.2
+      typescript: ^6.0.0
+    peerDependenciesMeta:
+      quill:
+        optional: true
 
   '@rt-tools/utils@0.4.0':
     resolution: {integrity: sha512-kIc9oFxxwIhEpfFF68FyIPxoVy4xtRnea7Op7Vdb5rfZnnaVZIsQZffShY6mQVk0/7fC5yJToMj0purmrSauAw==}
@@ -9216,6 +9265,10 @@ packages:
   karma-source-map-support@1.4.0:
     resolution: {integrity: sha512-RsBECncGO17KAoJCYXjv+ckIz+Ii9NCi+9enk+rq6XC81ezYkb4/RHE6CTXdA7IOJqoF3wcaLfVG0CPmE5ca6A==}
 
+  keycloakify@11.16.1:
+    resolution: {integrity: sha512-upPGc/GCfa2McUoJVOHVVFiZ36rbYWBUP7NGwGb4cVCJbIWXCAvLeDouclXzSTyC/3xZIV8v0VW3C8ftNTXQBA==}
+    hasBin: true
+
   keyv@5.6.0:
     resolution: {integrity: sha512-CYDD3SOtsHtyXeEORYRx2qBtpDJFjRTGXUtmNEMGyzYOKj1TE3tycdlho7kA1Ufx9OYWZzg52QFBGALTirzDSw==}
 
@@ -12107,6 +12160,9 @@ packages:
         optional: true
       '@swc/wasm':
         optional: true
+
+  tsafe@1.8.12:
+    resolution: {integrity: sha512-nFRqW0ttu/2o6XTXsHiVZWJBCOaxhVqZLg7dgs3coZNsCMPXPfwz+zPHAQA+70fNnVJLAPg1EgGIqK9Q84tvAw==}
 
   tsconfig-paths-webpack-plugin@4.2.0:
     resolution: {integrity: sha512-zbem3rfRS8BgeNK50Zz5SIQgXzLafiHjOwUAvk/38/o1jHn/V5QAgVUcz884or7WYcPaH3N2CIfUc2u0ul7UcA==}
@@ -15952,6 +16008,15 @@ snapshots:
 
   '@jsverse/utils@1.0.0-beta.5': {}
 
+  '@keycloakify/angular@22.1.0(@angular/common@22.1.6(@angular/core@22.1.6(@angular/compiler@22.1.6)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.1.6(@angular/compiler@22.1.6)(rxjs@7.8.2))(@angular/platform-browser@22.1.6(@angular/animations@22.1.6(@angular/core@22.1.6(@angular/compiler@22.1.6)(rxjs@7.8.2)))(@angular/common@22.1.6(@angular/core@22.1.6(@angular/compiler@22.1.6)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.1.6(@angular/compiler@22.1.6)(rxjs@7.8.2)))(keycloakify@11.16.1)':
+    dependencies:
+      '@angular/common': 22.1.6(@angular/core@22.1.6(@angular/compiler@22.1.6)(rxjs@7.8.2))(rxjs@7.8.2)
+      '@angular/core': 22.1.6(@angular/compiler@22.1.6)(rxjs@7.8.2)
+      '@angular/platform-browser': 22.1.6(@angular/animations@22.1.6(@angular/core@22.1.6(@angular/compiler@22.1.6)(rxjs@7.8.2)))(@angular/common@22.1.6(@angular/core@22.1.6(@angular/compiler@22.1.6)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.1.6(@angular/compiler@22.1.6)(rxjs@7.8.2))
+      keycloakify: 11.16.1
+      tsafe: 1.8.12
+      tslib: 2.8.1
+
   '@keyv/bigmap@1.3.1(keyv@5.6.0)':
     dependencies:
       hashery: 1.5.1
@@ -17753,6 +17818,23 @@ snapshots:
       '@rt-tools/utils': 0.4.0
       rxjs: 7.8.2
       tslib: 2.8.1
+
+  '@rt-tools/ui-kit-v2@0.17.0(d4898107c57358d9661e38fc5f6097bc)':
+    dependencies:
+      '@angular/cdk': 22.1.6(@angular/common@22.1.6(@angular/core@22.1.6(@angular/compiler@22.1.6)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.1.6(@angular/compiler@22.1.6)(rxjs@7.8.2))(@angular/forms@22.1.6(@angular/common@22.1.6(@angular/core@22.1.6(@angular/compiler@22.1.6)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.1.6(@angular/compiler@22.1.6)(rxjs@7.8.2))(@angular/platform-browser@22.1.6(@angular/animations@22.1.6(@angular/core@22.1.6(@angular/compiler@22.1.6)(rxjs@7.8.2)))(@angular/common@22.1.6(@angular/core@22.1.6(@angular/compiler@22.1.6)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.1.6(@angular/compiler@22.1.6)(rxjs@7.8.2)))(rxjs@7.8.2))(@angular/platform-browser@22.1.6(@angular/animations@22.1.6(@angular/core@22.1.6(@angular/compiler@22.1.6)(rxjs@7.8.2)))(@angular/common@22.1.6(@angular/core@22.1.6(@angular/compiler@22.1.6)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.1.6(@angular/compiler@22.1.6)(rxjs@7.8.2)))(rxjs@7.8.2)
+      '@angular/common': 22.1.6(@angular/core@22.1.6(@angular/compiler@22.1.6)(rxjs@7.8.2))(rxjs@7.8.2)
+      '@angular/compiler': 22.1.6
+      '@angular/core': 22.1.6(@angular/compiler@22.1.6)(rxjs@7.8.2)
+      '@angular/forms': 22.1.6(@angular/common@22.1.6(@angular/core@22.1.6(@angular/compiler@22.1.6)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.1.6(@angular/compiler@22.1.6)(rxjs@7.8.2))(@angular/platform-browser@22.1.6(@angular/animations@22.1.6(@angular/core@22.1.6(@angular/compiler@22.1.6)(rxjs@7.8.2)))(@angular/common@22.1.6(@angular/core@22.1.6(@angular/compiler@22.1.6)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.1.6(@angular/compiler@22.1.6)(rxjs@7.8.2)))(rxjs@7.8.2)
+      '@angular/platform-browser': 22.1.6(@angular/animations@22.1.6(@angular/core@22.1.6(@angular/compiler@22.1.6)(rxjs@7.8.2)))(@angular/common@22.1.6(@angular/core@22.1.6(@angular/compiler@22.1.6)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.1.6(@angular/compiler@22.1.6)(rxjs@7.8.2))
+      '@angular/router': 22.1.6(@angular/common@22.1.6(@angular/core@22.1.6(@angular/compiler@22.1.6)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.1.6(@angular/compiler@22.1.6)(rxjs@7.8.2))(@angular/platform-browser@22.1.6(@angular/animations@22.1.6(@angular/core@22.1.6(@angular/compiler@22.1.6)(rxjs@7.8.2)))(@angular/common@22.1.6(@angular/core@22.1.6(@angular/compiler@22.1.6)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.1.6(@angular/compiler@22.1.6)(rxjs@7.8.2)))(rxjs@7.8.2)
+      '@rt-tools/core': 0.5.0(2c57471cbf67690551e296dd2c34dd34)
+      '@rt-tools/utils': 0.4.0
+      rxjs: 7.8.2
+      tslib: 2.8.1
+      typescript: 6.0.3
+    optionalDependencies:
+      quill: 2.0.3
 
   '@rt-tools/utils@0.4.0':
     dependencies:
@@ -22767,6 +22849,10 @@ snapshots:
     dependencies:
       source-map-support: 0.5.21
 
+  keycloakify@11.16.1:
+    dependencies:
+      tsafe: 1.8.12
+
   keyv@5.6.0:
     dependencies:
       '@keyv/serialize': 1.1.1
@@ -26165,6 +26251,8 @@ snapshots:
       yn: 3.1.1
     optionalDependencies:
       '@swc/core': 1.16.2(@swc/helpers@0.5.23)
+
+  tsafe@1.8.12: {}
 
   tsconfig-paths-webpack-plugin@4.2.0:
     dependencies:

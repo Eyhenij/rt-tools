@@ -1,0 +1,12 @@
+<ng-container rtBlock="login">
+    <h1 rtElem="title" qa-dataid="kc-title">{{ title }}</h1>
+
+    <p rtElem="text">
+        {{ restart }}
+        <a rtElem="link" qa-dataid="kc-expired-restart" [href]="context.url.loginRestartFlowUrl">{{ here }}</a>
+    </p>
+    <p rtElem="text">
+        {{ resume }}
+        <a rtElem="link" qa-dataid="kc-expired-resume" [href]="context.url.loginAction">{{ here }}</a>
+    </p>
+</ng-container>
