@@ -43,6 +43,19 @@
         "pkce.code.challenge.method": "S256",
         "post.logout.redirect.uris": "http://localhost:4210/*"
       }
+    },
+    {
+      "clientId": "rt-user-import",
+      "name": "User import",
+      "description": "Moves the people of an existing application into the realm with their password hashes",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "secret": "rt-user-import-stand",
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true
     }
   ],
   "roles": {
@@ -52,5 +65,15 @@
         { "name": "example:write", "description": "Edit the example records" }
       ]
     }
-  }
+  },
+  "users": [
+    {
+      "username": "service-account-rt-user-import",
+      "enabled": true,
+      "serviceAccountClientId": "rt-user-import",
+      "clientRoles": {
+        "realm-management": ["manage-users", "view-clients"]
+      }
+    }
+  ]
 }

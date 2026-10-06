@@ -1,0 +1,27 @@
+{
+  "name": "@rt-tools/auth-import",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Moves the people of an existing application into Keycloak with their password hashes",
+  "author": "RT Team",
+  "license": "Apache-2.0",
+  "type": "module",
+  "main": "./index.js",
+  "types": "./index.d.ts",
+  "bin": {
+    "rt-auth-import": "./bin.js"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "keywords": [
+    "keycloak",
+    "import",
+    "argon2",
+    "pbkdf2"
+  ],
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
+  "sideEffects": false
+}
