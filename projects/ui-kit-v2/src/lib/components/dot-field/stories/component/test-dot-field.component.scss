@@ -1,22 +1,31 @@
-.app-dot-field__scene {
-    position: relative;
-    display: flex;
-    overflow: hidden;
-    width: 100%;
-    height: 22rem;
-    align-items: center;
-    justify-content: center;
-    background-color: var(--rt-color-bg-page);
-}
+@layer rt-kit.components {
+    /* Сцена страницы входа: позиционированный родитель поля и карточка поверх него. */
+    .app-dot-field {
+        --rt-dot-field-story-card-border-width: var(--rt-border-width-thin);
+        --rt-dot-field-story-card-radius: var(--rt-radius-md);
+        --rt-dot-field-story-card-shadow: var(--rt-shadow-card);
 
-.app-dot-field__card {
-    position: relative;
-    z-index: 1;
-    padding: var(--rt-space-10) var(--rt-space-5);
-    border: var(--rt-border-width-thin) solid var(--rt-color-border-default);
-    border-radius: var(--rt-radius-md);
-    background-color: var(--rt-color-bg-surface);
-    box-shadow: var(--rt-shadow-card);
-    color: var(--rt-color-text-primary);
-    font-family: var(--rt-font-family-sans);
+        &__scene {
+            position: relative;
+            display: flex;
+            overflow: hidden;
+            width: 100%;
+            height: 22rem;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--rt-color-bg-page);
+        }
+
+        &__card {
+            position: relative;
+            z-index: 1;
+            padding: var(--rt-space-10) var(--rt-space-5);
+            border: var(--rt-dot-field-story-card-border-width) solid var(--rt-color-border-default);
+            border-radius: var(--rt-dot-field-story-card-radius);
+            background-color: var(--rt-color-bg-surface);
+            box-shadow: var(--rt-dot-field-story-card-shadow);
+            color: var(--rt-color-text-primary);
+            font-family: var(--rt-font-family-sans);
+        }
+    }
 }
