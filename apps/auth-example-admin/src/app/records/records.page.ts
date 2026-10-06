@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, Signal, signal, WritableSignal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { RtAuthService, RtIfPermissionDirective } from '@rt-tools/auth-angular';
 import { ICaller } from '@rt-tools/auth-contract';
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
@@ -53,7 +53,9 @@ export class RecordsPage {
 
     protected readonly records: WritableSignal<readonly IRecordLine[]> = signal<readonly IRecordLine[]>([]);
     protected readonly refusal: WritableSignal<string | null> = signal<string | null>(null);
-    protected readonly title: FormControl<string> = new FormControl<string>('', { nonNullable: true });
+    protected readonly form: FormGroup<{ title: FormControl<string> }> = new FormGroup({
+        title: new FormControl<string>('', { nonNullable: true }),
+    });
     protected readonly canRead: Signal<boolean> = computed((): boolean => this.#auth.meets({ every: ['example:read'] }));
     protected readonly personName: Signal<string> = computed((): string => {
         const caller: ICaller | null = this.#auth.caller();
@@ -73,7 +75,7 @@ export class RecordsPage {
                 concatMap((title: string): Observable<IRecordLine> =>
                     this.#api.create(title).pipe(catchError((error: unknown) => this.#refused(error)))
                 ),
-                tap((): void => this.title.reset()),
+                tap((): void => this.form.reset()),
                 takeUntilDestroyed(this.#destroyRef)
             )
             .subscribe((): void => this.#loadSource.next());
@@ -90,7 +92,7 @@ export class RecordsPage {
 
     protected create(): void {
         this.refusal.set(null);
-        this.#createSource.next(this.title.value);
+        this.#createSource.next(this.form.controls.title.value);
     }
 
     protected signOut(): void {

@@ -37,11 +37,12 @@
       "implicitFlowEnabled": false,
       "directAccessGrantsEnabled": false,
       "serviceAccountsEnabled": false,
-      "redirectUris": ["http://localhost:4210/*"],
-      "webOrigins": ["http://localhost:4210"],
+      "redirectUris": ["http://localhost:4210/*", "http://localhost:4410/*"],
+      "webOrigins": ["http://localhost:4210", "http://localhost:4410"],
       "attributes": {
         "pkce.code.challenge.method": "S256",
-        "post.logout.redirect.uris": "http://localhost:4210/*"
+        "post.logout.redirect.uris": "http://localhost:4210/*##http://localhost:4410/*",
+        "access.token.lifespan": "40"
       }
     },
     {
