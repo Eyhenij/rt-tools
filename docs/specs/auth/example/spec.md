@@ -1,14 +1,11 @@
 # The example admin
 
-**Status:** proposed · **Revision:** 2026-10-06 · **Scenario prefix:** `SC-AUTH`
-**Depends on:** `auth/angular`, `auth/server`, `auth/theme`
+**Status:** in force · **Revision:** 2026-10-06 · **Scenario prefix:** `SC-AUTH`
+**Depends on:** `auth`, `auth/angular`, `auth/server`, `auth/theme`
 **Laws:** `verifiability`, `frontend-application`
 **Procedures:** none
 
-An agreement about the product written before the code. It is merged into the spec of the domain by
-the last commit of the PR, with the same scenario numbers.
-
-The example admin is an Angular admin and a NestJS server of the tree that use the packages of the
+A subdomain of the entry module. The example admin is an Angular admin and a NestJS server of the tree that use the packages of the
 entry module the way an application would. The end-to-end suite runs a person through it on the
 stand: the entry, the session and the rights are checked whole, not package by package.
 
@@ -49,29 +46,24 @@ between two packages shows only when they work together.
   again.
 - **The token of the example client lives forty seconds on the stand.** The end-to-end suite then
   sees a refresh within one test instead of waiting five minutes.
-- **The stand offers the entry through Google only when the keys of the owner lie in its
-  environment.** Without them the provider is in the realm and switched off, and the entry screen
-  shows no Google button. The keys never get into the history of the tree.
 
 ## What is out of scope
 
-- The entry through Apple — task RT-2547.
 - The organizations — the example has none.
 
 ## Contract
 
-| Call                | Access          | Answer                         |
-| ------------------- | --------------- | ------------------------------ |
-| `GET /api/records`  | `example:read`  | the records                    |
-| `POST /api/records` | `example:write` | the created record             |
-| `GET /api/health`   | open            | `ok`, for the stand to wait on |
+Not applicable as procedures: the example server is a NestJS controller, not a Connect service. Its
+calls are these.
+
+- The list of records — `GET` on `/api/records`, by the right `example:read`.
+- A new record — `POST` on `/api/records` with a title, by the right `example:write`.
+- The probe — `GET` on `/api/health`, open: the stand waits on it.
 
 ### Refusal codes
 
-| Code | When                                   |
-| ---- | -------------------------------------- |
-| 401  | no token or a token the realm refuses  |
-| 403  | the caller lacks the right of the call |
+Not applicable: the refusals are those of `auth/server`. A call without a token or with a token the
+realm refuses gets HTTP 401, a call without the right gets 403. A record without a title gets 400.
 
 ## Data
 
@@ -116,4 +108,4 @@ None.
 
 ## History of changes
 
-- 2026-10-06 — the agreement, task RT-2534.
+- 2026-10-06 — the example admin, the example server and the end-to-end suite, task RT-2534.

@@ -44,9 +44,13 @@ Not applicable: the stand has no screens of its own. The entry screens belong to
 - **The stand is checked by a command that asks it, not by a look at the console.** The command
   reads the discovery document of the realm, the example client and the mail settings, sends a test
   letter and finds it in the catcher.
+- **The stand offers the entry through Google only when the keys of the owner lie in its
+  environment.** Without them the provider is in the realm and switched off, and the entry screen
+  shows no Google button. The keys never get into the history of the tree.
 
 ## What is out of scope
 
+- The entry through Apple — task RT-2547.
 - The entry screens — the subdomain `theme`.
 - Keycloak in the production environment of the applications.
 - The users of the existing applications — the import task of the epic.
@@ -110,3 +114,4 @@ One realm for all admin applications, a client per application.
 
 - 2026-10-05 — the stand of Keycloak, task RT-2529.
 - 2026-10-05 — the client of the catalog sync and kept roles, task RT-2532.
+- 2026-10-06 — the entry through Google by the keys of the owner, task RT-2534.

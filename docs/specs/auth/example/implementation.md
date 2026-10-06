@@ -7,5 +7,4 @@ The first column is the rule verbatim, as it is written in the "Rules" section o
 - **The example server refuses a call without the right with 403, whatever the screen shows.** — `apps/auth-example-api/src/app/records.controller.ts:RecordsController`
 - **A token near its end is refreshed without a new entry.** — `apps/auth-example-admin/src/app/example.config.ts:EXAMPLE_CONFIG`
 - **Sign out ends the session in Keycloak.** — `apps/auth-example-admin/src/app/records/records.page.ts:RecordsPage`
-- **The token of the example client lives forty seconds on the stand.** — `deploy/auth/realm/rt.json:access.token.lifespan`
-- **The stand offers the entry through Google only when the keys of the owner lie in its environment.** — `deploy/auth/compose.yml:RT_GOOGLE_ENABLED`
+- **The token of the example client lives forty seconds on the stand.** — `deploy/auth/realm/rt.json:lifespan` — the attribute `access.token.lifespan` of the client `rt-example-admin`

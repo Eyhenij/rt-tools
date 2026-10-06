@@ -37,11 +37,3 @@ Then only the editor sees the form «New record»
 Given a reader in the admin
 When a record is created with their token
 Then the example server answers 403
-
-### SC-AUTH-53 — the entry page offers Google exactly when the stand holds the keys of the owner
-
-Given the stand raised with or without the keys of Google
-When the entry page of the realm is opened
-Then the Google provider is switched on and offered only when the keys are given
-
-Not covered: the command `check:auth-stand` asks a raised stand. It runs in the gate before sending and in the pipeline, and the audit of specs reads only `.spec.ts` files

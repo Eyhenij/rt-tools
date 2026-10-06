@@ -22,6 +22,14 @@ JDK on the machine.
 
 The stand of this tree does both: `pnpm run serve:auth` builds the JAR first and mounts it.
 
+A built JAR is also attached to a GitHub release with the tag `rt-auth-keycloak-theme@<version>`.
+The release is made by the workflow `publish-auth-keycloak-theme.yml`, started by hand.
+
+The Google button appears when the realm holds the Google provider switched on. On the stand that
+happens when the environment of `deploy/auth/compose.yml` gives `RT_GOOGLE_ENABLED=true`,
+`RT_GOOGLE_CLIENT_ID` and `RT_GOOGLE_CLIENT_SECRET`. The keys stay outside the history, in the shell
+or in the .env file next to the compose file.
+
 ## What the theme draws
 
 | Page                        | What a person does there                      |

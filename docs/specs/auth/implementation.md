@@ -9,3 +9,4 @@ without a line and a line without a rule is a divergence.
 - **The stand sends mail to a local catcher, not out.** — `deploy/auth/realm/rt.json:smtpServer`
 - **The example client uses the code flow with PKCE and does not accept a password grant.** — `deploy/auth/realm/rt.json:directAccessGrantsEnabled`
 - **The stand is checked by a command that asks it, not by a look at the console.** — `tools/auth-stand-check.mjs:scenario`
+- **The stand offers the entry through Google only when the keys of the owner lie in its environment.** — `deploy/auth/compose.yml:RT_GOOGLE_ENABLED`
