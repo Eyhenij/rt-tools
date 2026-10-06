@@ -52,3 +52,39 @@ When the login page of the realm is read
 Then it is drawn by the theme `rt`
 
 Not covered: the command `check:auth-stand` asks a raised stand. It runs in the gate before sending and in the pipeline, and the audit of specs reads only `.spec.ts` files
+
+### SC-AUTH-54 — a Keycloak message shows a quotation mark, not its HTML code
+
+Given a message that carries `&laquo;`
+When a page draws it
+Then the screen shows «
+
+### SC-AUTH-55 — an error under a field does not move the form
+
+Given the entry form with an empty password
+When the person sends it
+Then the error appears under the field, and the button stays where it was
+
+### SC-AUTH-56 — the fields and the button of the entry form are large
+
+Given the entry page
+When it is drawn
+Then the fields and the submit button have the large size of the kit
+
+### SC-AUTH-57 — the language is chosen from a drop-down list
+
+Given a realm with two languages
+When a page is drawn
+Then the language is chosen from one drop-down list, not from a row of buttons
+
+### SC-AUTH-58 — the entry card has an outline and a shadow
+
+Given the entry page of the stand
+When it is drawn
+Then the card has a border and a shadow
+
+### SC-AUTH-59 — an empty field shows its name as a placeholder
+
+Given the entry form with empty fields
+When it is drawn
+Then every field shows its name inside it

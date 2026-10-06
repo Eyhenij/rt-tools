@@ -1,19 +1,19 @@
 import { DOCUMENT, NgComponentOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, Type } from '@angular/core';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
-import { RtButtonDirective, RtThemeToggleComponent } from '@rt-tools/ui-kit-v2';
+import { IRtSelect, RtSelectComponent, RtThemeToggleComponent } from '@rt-tools/ui-kit-v2';
 
 import { KC_CONTEXT, KC_PAGE, TKcContext } from '../kc-context';
 import { KC_MESSAGES, TKcMessages } from '../kc-i18n';
 
 const BEM_BLOCK: string = 'rt-kc-root';
 
-/** A locale link of the page, marked when it is the current one. */
-interface IKcLocaleLink {
+/** A language of the realm as Keycloak lists it: the tag, the name and the page in that language. */
+interface IKcLanguage {
     readonly languageTag: string;
     readonly label: string;
     readonly href: string;
-    readonly current: boolean;
 }
 
 /**
@@ -22,7 +22,7 @@ interface IKcLocaleLink {
  */
 @Component({
     selector: 'rt-kc-root',
-    imports: [NgComponentOutlet, BlockDirective, ElemDirective, RtButtonDirective, RtThemeToggleComponent],
+    imports: [NgComponentOutlet, ReactiveFormsModule, BlockDirective, ElemDirective, RtSelectComponent, RtThemeToggleComponent],
     templateUrl: './rt-kc-root.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     host: { class: BEM_BLOCK },
@@ -34,18 +34,32 @@ export class RtKcRootComponent {
     protected readonly page: Type<unknown> = inject(KC_PAGE);
     protected readonly realmName: string = this.#context.realm.displayName || this.#context.realm.name;
 
-    /** A switch of one language is not a choice, so the row shows only with two languages. */
-    protected readonly locales: readonly IKcLocaleLink[] =
-        this.#i18n.enabledLanguages.length > 1
-            ? this.#i18n.enabledLanguages.map((language: { languageTag: string; label: string; href: string }): IKcLocaleLink => ({
-                  ...language,
-                  current: language.languageTag === this.#i18n.currentLanguage.languageTag,
+    readonly #view: Document = inject(DOCUMENT);
+    readonly #languages: readonly IKcLanguage[] = this.#i18n.enabledLanguages;
+
+    protected readonly languagesLabel: string = this.#i18n.msgStr('languages');
+
+    /** A choice of one language is not a choice, so the list shows only with two languages. */
+    protected readonly localeOptions: ReadonlyArray<IRtSelect.Option<string>> =
+        this.#languages.length > 1
+            ? this.#languages.map((language: IKcLanguage): IRtSelect.Option<string> => ({
+                  label: language.label,
+                  value: language.languageTag,
               }))
             : [];
 
+    protected readonly locale: FormControl<string> = new FormControl<string>(this.#i18n.currentLanguage.languageTag, { nonNullable: true });
+
     constructor() {
-        const view: Document = inject(DOCUMENT);
-        view.documentElement.lang = this.#i18n.currentLanguage.languageTag;
-        view.title = this.realmName;
+        this.#view.documentElement.lang = this.#i18n.currentLanguage.languageTag;
+        this.#view.title = this.realmName;
+    }
+
+    /** Keycloak draws a page in a language by its own address, so a choice opens that address. */
+    protected switchLocale(languageTag: string | null): void {
+        const language: IKcLanguage | undefined = this.#languages.find((item: IKcLanguage): boolean => item.languageTag === languageTag);
+        if (language && languageTag !== this.#i18n.currentLanguage.languageTag) {
+            this.#view.location.assign(language.href);
+        }
     }
 }

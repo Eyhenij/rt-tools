@@ -7,7 +7,7 @@ import { provideRtKit, provideRtKitLabels } from '@rt-tools/ui-kit-v2';
 import { createGetKcContextMock } from 'keycloakify/login/KcContext';
 
 import { KC_CONTEXT, KC_PAGE, TKcContext, TKcPageContext, TKcPageId } from '../login/kc-context';
-import { getI18n, KC_MESSAGES, TKcMessages } from '../login/kc-i18n';
+import { getI18n, KC_MESSAGES, plainMessages, TKcMessages } from '../login/kc-i18n';
 import { kitTranslatorFor } from '../login/kc-kit-labels';
 
 const { getKcContextMock } = createGetKcContextMock({
@@ -30,8 +30,15 @@ export async function kcMessagesOf(context: TKcContext): Promise<TKcMessages> {
     return (await loaded.prI18n_currentLanguage) ?? loaded.i18n;
 }
 
-/** Draws a theme component on a page context, with the providers the theme application has. */
-export async function renderKcPage<COMPONENT>(component: Type<COMPONENT>, context: TKcContext): Promise<ComponentFixture<COMPONENT>> {
+/**
+ * Draws a theme component on a page context, with the providers the theme application has. The
+ * frame of the pages takes the page it draws inside as `page`.
+ */
+export async function renderKcPage<COMPONENT>(
+    component: Type<COMPONENT>,
+    context: TKcContext,
+    page: Type<unknown> = component
+): Promise<ComponentFixture<COMPONENT>> {
     const messages: TKcMessages = await kcMessagesOf(context);
     const languageTag: string = messages.currentLanguage.languageTag;
     TestBed.configureTestingModule({
@@ -44,8 +51,8 @@ export async function renderKcPage<COMPONENT>(component: Type<COMPONENT>, contex
             provideRtKit({ global: { theme: 'auto' } }),
             provideRtKitLabels({ translator: signal(kitTranslatorFor(languageTag)), locale: signal(languageTag) }),
             { provide: KC_CONTEXT, useValue: context },
-            { provide: KC_MESSAGES, useValue: messages },
-            { provide: KC_PAGE, useValue: component },
+            { provide: KC_MESSAGES, useValue: plainMessages(messages) },
+            { provide: KC_PAGE, useValue: page },
         ],
     });
     const fixture: ComponentFixture<COMPONENT> = TestBed.createComponent(component);

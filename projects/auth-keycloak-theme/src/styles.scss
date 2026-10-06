@@ -27,6 +27,15 @@ body {
 }
 
 /**
+ * The card of every theme page. The kit paints it the colour of the page behind it, so without an
+ * outline and a shadow the form floats on the page with no edge.
+ */
+.login__card {
+    border: var(--rt-border-width-thin) solid var(--rt-color-border-default);
+    box-shadow: var(--rt-shadow-card);
+}
+
+/**
  * The theme elements next to the kit's `login`: the realm name, the plain text, the checkbox row,
  * the provider list and the locale row. Declared outside the cascade layer, after the kit.
  */
