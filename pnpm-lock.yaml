@@ -127,6 +127,9 @@ importers:
       '@angular/router':
         specifier: 22.1.6
         version: 22.1.6(@angular/common@22.1.6(@angular/core@22.1.6(@angular/compiler@22.1.6)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.1.6(@angular/compiler@22.1.6)(rxjs@7.8.2))(@angular/platform-browser@22.1.6(@angular/animations@22.1.6(@angular/core@22.1.6(@angular/compiler@22.1.6)(rxjs@7.8.2)))(@angular/common@22.1.6(@angular/core@22.1.6(@angular/compiler@22.1.6)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.1.6(@angular/compiler@22.1.6)(rxjs@7.8.2)))(rxjs@7.8.2)
+      '@bufbuild/protobuf':
+        specifier: 2.11.0
+        version: 2.11.0
       '@commitlint/cli':
         specifier: 21.2.3
         version: 21.2.3(@types/node@24.13.4)(conventional-commits-parser@6.4.0)(typescript@6.0.3)
@@ -136,6 +139,9 @@ importers:
       '@commitlint/config-conventional':
         specifier: 21.2.3
         version: 21.2.3
+      '@connectrpc/connect':
+        specifier: 2.2.0
+        version: 2.2.0(@bufbuild/protobuf@2.11.0)
       '@eslint/eslintrc':
         specifier: 3.3.7
         version: 3.3.7
@@ -280,6 +286,9 @@ importers:
       globals:
         specifier: 17.12.0
         version: 17.12.0
+      hash-wasm:
+        specifier: 4.12.0
+        version: 4.12.0
       husky:
         specifier: 9.1.7
         version: 9.1.7
@@ -406,7 +415,40 @@ importers:
 
   projects/agent-kit: {}
 
+  projects/auth-angular:
+    dependencies:
+      '@angular/common':
+        specifier: ^22.0.0
+        version: 22.1.6(@angular/core@22.1.6(@angular/compiler@22.1.6)(rxjs@7.8.2))(rxjs@7.8.2)
+      '@angular/core':
+        specifier: ^22.0.0
+        version: 22.1.6(@angular/compiler@22.1.6)(rxjs@7.8.2)
+      '@angular/router':
+        specifier: ^22.0.0
+        version: 22.1.6(@angular/common@22.1.6(@angular/core@22.1.6(@angular/compiler@22.1.6)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.1.6(@angular/compiler@22.1.6)(rxjs@7.8.2))(@angular/platform-browser@22.1.6(@angular/animations@22.1.6(@angular/core@22.1.6(@angular/compiler@22.1.6)(rxjs@7.8.2)))(@angular/common@22.1.6(@angular/core@22.1.6(@angular/compiler@22.1.6)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.1.6(@angular/compiler@22.1.6)(rxjs@7.8.2)))(rxjs@7.8.2)
+      '@connectrpc/connect':
+        specifier: ^2.0.0
+        version: 2.2.0(@bufbuild/protobuf@2.11.0)
+      '@rt-tools/auth-contract':
+        specifier: ^0.1.0
+        version: 0.1.0
+      keycloak-js:
+        specifier: 26.2.4
+        version: 26.2.4
+      rxjs:
+        specifier: ^7.8.2
+        version: 7.8.2
+      tslib:
+        specifier: ^2.8.0
+        version: 2.8.1
+
   projects/auth-contract:
+    dependencies:
+      tslib:
+        specifier: ^2.3.0
+        version: 2.8.1
+
+  projects/auth-import:
     dependencies:
       tslib:
         specifier: ^2.3.0
@@ -8399,6 +8441,9 @@ packages:
     resolution: {integrity: sha512-NqADB8VjPFLM2V0VvHUewwwsw0ZWBaIdgo+ieHtK3hasLz4qeCRjYcqfB6AQrBggRKppKF8L52/VqdVsO47Dlw==}
     engines: {node: '>= 0.4'}
 
+  hash-wasm@4.12.0:
+    resolution: {integrity: sha512-+/2B2rYLb48I/evdOIhP+K/DD2ca2fgBjp6O+GBEnCDk2e4rpeXIK8GvIyRPjTezgmWn9gmKwkQjjx6BtqDHVQ==}
+
   hasha@5.2.2:
     resolution: {integrity: sha512-Hrp5vIK/xr5SkeN2onO32H0MgNZ0f17HRNH39WfL0SYUNOTZ5Lz1TJ8Pajo/87dYGEFlLMm7mIc/k/s6Bvz9HQ==}
     engines: {node: '>=8'}
@@ -9303,6 +9348,9 @@ packages:
 
   karma-source-map-support@1.4.0:
     resolution: {integrity: sha512-RsBECncGO17KAoJCYXjv+ckIz+Ii9NCi+9enk+rq6XC81ezYkb4/RHE6CTXdA7IOJqoF3wcaLfVG0CPmE5ca6A==}
+
+  keycloak-js@26.2.4:
+    resolution: {integrity: sha512-PnXpR3ubETGOt0B/Qt2lxmPbkZr5bc3vlQsOqDoTPPQsZRp7JjhTKxlJ187uWh8qJhvBab6Gsjb06a8ayOPfuw==}
 
   keycloakify@11.16.1:
     resolution: {integrity: sha512-upPGc/GCfa2McUoJVOHVVFiZ36rbYWBUP7NGwGb4cVCJbIWXCAvLeDouclXzSTyC/3xZIV8v0VW3C8ftNTXQBA==}
@@ -21546,6 +21594,8 @@ snapshots:
     dependencies:
       has-symbols: 1.1.0
 
+  hash-wasm@4.12.0: {}
+
   hasha@5.2.2:
     dependencies:
       is-stream: 2.0.1
@@ -22897,6 +22947,8 @@ snapshots:
   karma-source-map-support@1.4.0:
     dependencies:
       source-map-support: 0.5.21
+
+  keycloak-js@26.2.4: {}
 
   keycloakify@11.16.1:
     dependencies:

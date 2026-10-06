@@ -45,6 +45,19 @@
       }
     },
     {
+      "clientId": "rt-user-import",
+      "name": "User import",
+      "description": "Moves the people of an existing application into the realm with their password hashes",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "secret": "rt-user-import-stand",
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true
+    },
+    {
       "clientId": "rt-catalog-sync",
       "name": "Catalog sync",
       "enabled": true,
@@ -60,18 +73,20 @@
   "roles": {
     "client": {
       "rt-example-admin": [
-        {
-          "name": "example:read",
-          "description": "Read the example records"
-        },
-        {
-          "name": "example:write",
-          "description": "Edit the example records"
-        }
+        { "name": "example:read", "description": "Read the example records" },
+        { "name": "example:write", "description": "Edit the example records" }
       ]
     }
   },
   "users": [
+    {
+      "username": "service-account-rt-user-import",
+      "enabled": true,
+      "serviceAccountClientId": "rt-user-import",
+      "clientRoles": {
+        "realm-management": ["manage-users", "view-clients"]
+      }
+    },
     {
       "username": "service-account-rt-catalog-sync",
       "enabled": true,
