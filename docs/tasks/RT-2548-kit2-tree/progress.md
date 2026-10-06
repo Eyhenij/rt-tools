@@ -73,20 +73,17 @@ in this folder. The agreement is `docs/specs/ui-kit-v2/proposed/tree/`; the epic
 
 ### Done and the next step
 
-Done: stage 1 whole and steps 2.1–2.2 — the model, the pure logic (9 tests), the component, the
-directive, the styles, the barrel export, `CONTEXT.md`; typecheck and lint green.
-Next step: the five gate refusals, then the component spec (2.3).
+Done: stage 1 and steps 2.1–2.3 — the model, the logic, the component, `CONTEXT.md`, the component
+spec; the tree tests 20 of 20, typecheck, lint and `check-specs` green (commit `9a0981c12`).
+Next step: `Overview.mdx` (2.4), then stage 3 — the stories, the sweep, the snapshots, the links.
 
 ### What to keep in mind
 
-- The gate before sending the branch refused with five checks, all real:
-    - `check-specs` — SC-UKV-648 … 651 have no test yet: the component spec closes them.
-    - `check-tokens-graph` — `--rt-color-text-secondary` and `--rt-font-size-sm` do not exist; take
-      the names the select and the multiselect styles use.
-    - `check-tokens-styles` — `box-shadow` and `border-bottom` need the block's own property
-      (`--rt-tree-…`) with the step as its default, the technique of rule `rt-tools-styling`.
+- The gate before sending the branch refused with five checks; three are fixed (specs, the token
+  graph, the token styles). Two are left, and stage 3 closes them:
     - `check-preset-stories` — a story must show the tree under the preset and without it.
     - `check-kit-coverage` — `Overview.mdx` and stories for `rt-tree` and `rtTreeNodeEnd`.
+- Before the stories, load the rules `rt-tools-storybook` and `rt-tools-storybook-story`.
 - The label and the description truncate with an ellipsis and have no tooltip yet: the kit has a
   tooltip-when-truncated directive (`docs/specs/ui-kit-v2/tooltip-when-truncated/`) — apply it.
 - A guard reads the word for sending a branch inside any shell text, a heredoc included, and runs
