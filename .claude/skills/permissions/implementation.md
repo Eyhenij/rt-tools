@@ -25,7 +25,7 @@ operation, one check for the whole application, closed by default.
 - **a preset, an override** — a role and a pointed edit over it: a role is a named set, an edit is one right given or taken away from one person
 - **`Code.Unauthenticated`** — the framework's `UnauthorizedException` — the answer 401
 - **`Code.PermissionDenied`** — the framework's `ForbiddenException` — the answer 403
-- **the sign-in interceptor** — `AccessGuard` — one check for both ways of introducing oneself
+- **the sign-in interceptor** — `AuthGuard` of `@rt-tools/auth-server` for the token of a person, and `AccessGuard` of the intake for the tree token: a request passes when both agree
 - **the admin panel route guard** — `sessionGuard`
 
 ## Where it lives
@@ -33,9 +33,7 @@ operation, one check for the whole application, closed by default.
 - **the access declaration** — `libs/message-bus-api/access/util/src/lib/operation-access.ts`
 - **the access check** — `libs/message-bus-api/access/feature/src/lib/access.guard.ts`
 - **putting the check on everything** — `libs/message-bus-api/access/feature/src/lib/access.module.ts`
-- **the sign-in, the sign-out and the answer about the signed-in person** — `libs/message-bus-api/accounts/feature/src/lib/auth.controller.ts`
-- **the count of failed attempts** — `libs/message-bus-api/accounts/feature/src/lib/login-attempts.service.ts`
-- **the cookie and the sign-in value** — `libs/message-bus-api/accounts/util/src/lib/session-cookie.util.ts`, `session-token.util.ts`
+- **the token check, the rights in it and the start audit of the declarations** — `projects/auth-server/src/lib/auth-server.module.ts`, connected in `apps/message-bus/src/app/app.module.ts` with the options read by `projects/auth-server/src/lib/env-options.ts`
 - **the admin panel route guard** — `libs/message-bus-admin/auth/shell/src/lib/session.guard.ts`
 - **the sign-in state in the admin panel and the rights of the signed-in person** — `libs/message-bus-admin/auth/data-access/src/lib/auth.store.ts`
 - **the closed set of rights and the addition of a role with the edits over it** — `libs/message-bus-common/src/lib/rights.ts`
@@ -54,39 +52,36 @@ silent about.
 - **A user's rights are the preset's rights with their overrides applied over them.** — `libs/message-bus-common/src/lib/rights.ts:rightsOf` — a pure addition: the set of the role, then the pointed edits over it. A name outside the closed set is discarded on both sides — `isRight` next to it.
 - **A person has one role per ownership, and the storage holds that.** — `prisma/schema.prisma:Role` — one role on the account, and there are no ownerships here to divide it by: the intake is one. There is nothing to add up either, and that is what the article is about.
 - **A right the role says nothing about counts as not given.** — `libs/message-bus-common/src/lib/rights.ts:hasRight` — the set holds what is given, and silence about a right is an answer, not a gap. The same default stands a tier higher, in the `default` branch of `access.guard.ts`: an operation that declared no access is refused rather than let through.
-- **A signed-in person's rights are read on every call rather than taken from the issued sign-in.** — `libs/message-bus-api/accounts/data-access/src/lib/account.queries.ts:findAccountRights` — the check asks the storage for the role and the edits at every call. The cookie holds a random value and says only who came — `libs/message-bus-api/accounts/util/src/lib/session-token.util.ts:sessionTokenHash`.
-- **An account that no longer exists opens no calls that require a sign-in.** — `libs/message-bus-api/accounts/util/src/lib/session-token.util.ts:sessionAlive` — by that same read an expired and a revoked sign-in are refused. A disabled account is refused by `access.guard.ts` on the `disabledAt` sign.
+- **A signed-in person's rights are read on every call rather than taken from the issued sign-in.** — `projects/auth-server/src/lib/auth.guard.ts:canActivate` — **narrower** than the article: the rights are read from the access token of the call, not from the storage. The token lives minutes, so a right taken away in Keycloak acts with the next token rather than with the next call.
+- **An account that no longer exists opens no calls that require a sign-in.** — `projects/auth-server/src/lib/token-verifier.ts:callerOf` — **narrower** than the article: Keycloak issues no new token to a removed or disabled person, and the token already issued is accepted until its term ends.
 - **The counter and the advertising signals are switched on by the guest's answer, not by the presence of a key in the settings.** — Not applicable: neither the receiver nor the admin panel has a visit counter or advertising. One operation is open to a guest here — the liveness probe, `apps/message-bus/src/app/health/health.controller.ts:HealthController`.
-- **A public procedure that creates a record is closed by a rate limiter as well.** — `libs/message-bus-api/accounts/feature/src/lib/login-attempts.service.ts:LoginAttemptsService` — the count of failures in a row; the answer's delay is computed by `libs/message-bus-api/accounts/util/src/lib/login-delay.util.ts:loginDelayMs`. The key here is the account name rather than the client: of the public operations the one worth watching is the sign-in, and the liveness probe creates nothing. The first-run creation `libs/message-bus-api/accounts/feature/src/lib/setup.controller.ts:create` is public and creates a record, yet it has no limiter: with the first record it refuses anything, and there is nothing to pick at.
-- **A request without a sign-in is refused as unauthenticated, and a sign-in without a right as permission denied.** — `libs/message-bus-api/access/feature/src/lib/access.guard.ts:AccessGuard` — the first refusal is `UnauthorizedException`, the second `ForbiddenException`: one is cured by signing in, the other is not. Neither names what did not match, the right included: by the difference of answers one could read what exists and what rights a foreign account holds.
-- **The right is checked by an interceptor before the procedure body.** — `libs/message-bus-api/access/feature/src/lib/access.module.ts:AccessModule` — the check is put as `APP_GUARD`, that is, before any handler and over the whole application at once.
-- **Being public is declared with a reason.** — Here it is otherwise: `libs/message-bus-api/access/util/src/lib/operation-access.ts:PublicOperation` accepts no arguments, and the reason stands as a comment on the operation. There are four public operations — the liveness probe, the sign-in and the two first-run operations of `libs/message-bus-api/accounts/feature/src/lib/setup.controller.ts:SetupController` — and all have their argument in a comment rather than in the signature.
+- **A public procedure that creates a record is closed by a rate limiter as well.** — `libs/message-bus-api/trees/feature/src/lib/enroll.controller.ts:enroll` — the enrolment of a tree counts the attempts of a client by `RateLimitService` and refuses beyond the limit. The sign-in and its limit live in Keycloak.
+- **A request without a sign-in is refused as unauthenticated, and a sign-in without a right as permission denied.** — `projects/auth-server/src/lib/auth.guard.ts:AuthGuard` — the first refusal is `UnauthorizedException`, the second `ForbiddenException`: one is cured by signing in, the other is not. Neither names what did not match, the right included.
+- **The right is checked by an interceptor before the procedure body.** — `projects/auth-server/src/lib/auth-server.module.ts:AuthServerModule` — the token check is put as `APP_GUARD`, and the tree check of `libs/message-bus-api/access/feature/src/lib/access.module.ts:AccessModule` stands next to it the same way: both run before any handler.
+- **Being public is declared with a reason.** — Here it is otherwise: `libs/message-bus-api/access/util/src/lib/operation-access.ts:PublicOperation` accepts no arguments, and the reason stands as a comment on the operation. The public operations are the liveness probe, the enrolment of a tree and the operations of the chat widget, and all have their argument in a comment rather than in the signature.
 - **A menu item and a section address are closed by one declaration.** — `libs/message-bus-admin/common/container/util/src/lib/menu.declaration.ts:IAdminMenuItem` — the right stands at the item, and `libs/message-bus-admin/auth/shell/src/lib/section-access.ts:sectionRightGuard` reads it from there. The guard stands on the children of the closed branch: on the branch itself it would run once per page load and would not see moves between sections.
 - **Until the rights are received the admin panel hides nothing.** — `libs/message-bus-admin/auth/data-access/src/lib/auth.store.ts:allows` — until the answer about the signed-in person arrives, the rights are unknown rather than empty, and neither the menu nor the guard by a right hides anything by them. The route guard next to it waits for that same answer rather than deciding by the tab's memory — `libs/message-bus-admin/auth/shell/src/lib/session.guard.ts:sessionGuard`; checked by a click in `apps/message-bus-admin-e2e/src/sign-in.spec.ts`.
 
 ## What else is worth knowing when reading the code
 
-- One check for both ways of introducing oneself is deliberate. Two global checks in a row would
-  mean a request with a tree token reaches the reading of cargo if the second one forgot to
-  refuse.
+- There are two checks, and a request passes only when both agree. The token of a person is
+  checked by the entry module, the tree token by the check of the intake; every mark sets the
+  declaration of both, so a tree operation is open for the module and closed for the intake.
 - A tree token does not count as a sign-in even when valid: it opens the intake of its own tree,
-  not the reading of everyone's cargo. The reverse is true too — the sign-in cookie does not open
-  the cargo intake.
-- The admin panel's sign-in lives by the receiver's cookie rather than by a storage of its own in
-  the browser: the cookie is unavailable to scripts, so the admin panel asks the receiver "who
-  signed in" instead of reading it at home.
+  not the reading of everyone's cargo. The reverse is true too — the token of a person does not
+  open the cargo intake.
+- The admin panel signs in through Keycloak and carries the access token in the `Authorization`
+  header; the intake keeps no sign-in of its own.
 - The default "closed" is held not by an agreement but by the check having no branch "nothing is
   declared — let through". Removing that branch would open every new operation outward silently.
 
 ## What this is checked by
 
-- `pnpm exec nx test message-bus-api-access-feature` — the specs of the access check: an
-  undeclared operation, a foreign token, an expired sign-in, a disabled account, and an operation
-  closed by a right — a sign-in with it, without it and with no role at all.
+- `pnpm exec nx test message-bus-api-access-feature` — both checks together on the marks of the
+  application: a tree token, a token of a person, an undeclared operation and an operation closed
+  by a right — a token with it, without it and with no client role at all.
 - `pnpm exec nx test message-bus-api-access-util` — the addition of a role with the pointed edits
   and the marks the declaration by a right sets.
-- `pnpm exec nx test message-bus-api-accounts-feature` — the sign-in specs: a valid and an invalid
-  pair, signing out, the count of attempts.
 - `pnpm exec nx run message-bus-admin-e2e:e2e` — the end-to-end suite: signing in by the screen,
   the refusal without a sign-in and the same refusal text for a wrong pair and for an unknown name.
 - The rule gate demands this rule on the receiver's access guard and on the admin panel's route

@@ -24,9 +24,9 @@ Given there is no account with such a name
 When its name is named on the screen of the entry
 Then the answer is word for word the same as at a wrong password
 
-### SC-MB-36 — an operation of the admin application without an entry is refused
+### SC-MB-36 — an operation of the admin application without a token is refused
 
-Given the request has no entry
+Given the request carries no access token of the bus client
 When it arrives at any operation of the reading of the cargo
 Then the intake refuses and says that the operation demands an entry
 
@@ -38,12 +38,6 @@ Then the reading is refused, and the owner sees the screen of the entry
 
 it is closed by an end-to-end spec together with the screens, task #587
 
-### SC-MB-38 — the exit breaks off the entry at once
-
-Given the owner entered and pressed "Выйти"
-When the reading of a list arrives by the former entry
-Then it is refused, although the term of the entry has not run out yet
-
 ### SC-MB-39 — a token of a tree does not open the operations of the admin application
 
 Given a tree has a fit token
@@ -52,15 +46,9 @@ Then the reading is refused the same way as without an entry
 
 ### SC-MB-40 — the entry of a person does not open the intake of the cargo
 
-Given the owner entered the admin application
-When their entry is presented to an operation of the intake of the cargo
+Given a person holds a fit access token of the bus client
+When the token is presented to an operation of the intake of the cargo
 Then the intake is refused: it asks for a token of a tree, not for an entry
-
-### SC-MB-41 — an unsuccessful attempt of the entry is written into the journal without the password
-
-Given a wrong pair is named on the screen of the entry
-When the attempt is refused
-Then a row with the name of the account stands in the journal, and there is no password in it
 
 ### SC-MB-42 — the creating stores the hash, not the password
 
@@ -73,12 +61,6 @@ Then the record is created, and the hash lies in the storage, not the password i
 Given a record with such a name is already created
 When the creating is called with the same name
 Then it refuses and creates no second record
-
-### SC-MB-80 — unsuccessful attempts in a row lengthen the answer
-
-Given by one and the same pair it was refused twice in a row
-When a third attempt arrives
-Then the answer to it comes later than to the first, and the account stays in force
 
 ## The sections and the addresses
 
@@ -94,24 +76,6 @@ Given the owner came by a link to the section of the analyses and was sent to th
 When they name a fit pair
 Then they see the section they came by the link to
 
-### SC-MB-56 — the entry lies in a cookie unavailable to scripts
-
-Given the owner entered the admin application
-When the page asks the browser for the cookies by a script
-Then the value of the entry is not among them, and the operations of the reading of the cargo answer
-
-### SC-MB-57 — the exit breaks off the entry that was come by
-
-Given the owner entered in two browsers
-When they leave in one
-Then the second entry goes on being accepted
-
-### SC-MB-58 — a record that is switched off does not enter, and its former entries are refused
-
-Given an account has a live entry
-When it is switched off from the people section
-Then the former entry stops being accepted, and a new one by its pair is not created
-
 ### SC-MB-59 — a change of the password refuses the former one
 
 Given the password of an account is changed from the people section
@@ -121,14 +85,8 @@ Then the entry is not created, and by the new pair it is created
 ### SC-MB-60 — the name of an account does not tell the case apart
 
 Given the record `admin` is created
-When the command creates the record `Admin`
-Then it refuses, and the entry by the pair `Admin` is accepted the same as by `admin`
-
-### SC-MB-61 — the service says at the start that there is not a single record
-
-Given there is not a single account in the storage
-When the intake goes up
-Then it leaves in the journal a row saying that there are no records and that the first is created by the first-run screen
+When the people section creates the record `Admin`
+Then it refuses: the name is taken
 
 ### SC-MB-79 — an operation without a declared access does not open outward
 

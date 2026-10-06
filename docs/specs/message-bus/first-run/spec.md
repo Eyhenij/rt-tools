@@ -40,25 +40,9 @@ exactly while the storage holds not one account and closed forever after the fir
 - **The four commands of accounts are not in the tree.** `account:add`, `account:passwd`,
   `account:disable` and `account:list` leave together with their parse and their report; the tree
   commands stay. A command kept "just in case" is the second way the agreement removes.
-- **Whether the first record is still to be created is answered by a public operation.** The
-  answer is one word: yes while the storage holds not one account, no otherwise. It carries
-  nothing else: an empty storage is not a secret, and a full one says nothing about who is in it.
-- **The first record is created by a public operation, and only while the storage holds not one
-  account.** With a record in the storage the operation refuses with a conflict, whatever the
-  input: the screen is closed forever, and a request past the screen is refused the same way.
-- **The first record takes the owner role that comes with the receiver.** A first person without
-  a right would sign in and see nothing, and there would be nobody to give them a role. A node
-  without the owner role refuses the creation naming the role: the migration did not run.
-- **The first record is created and signed in by one operation.** The answer is the same as the
-  answer of the sign-in, with the same cookie: the person who typed the pair a moment ago is the
-  person who will use it, and asking them to type it again is a second screen for nothing.
-- **An empty name and an empty password are refused before the write.** The same words as the
-  panel of creating a person: the name waits, the password waits.
-- **Two first records at once give one record.** The creation counts the records inside its
-  transaction and gives up the second one: the answer of the second request is the conflict of a
-  closed screen.
-- **The startup line about an empty storage names the screen, not a command.** The line stays a
-  warning: the node is up and nobody can read it yet.
+- **The intake serves no operation of the first run.** The accounts live in Keycloak, and the
+  first person is created there by whoever holds the node. An empty storage of the intake says
+  nothing about who can sign in, so the intake neither asks it nor warns about it at the start.
 
 **The admin panel.**
 
@@ -94,21 +78,12 @@ exactly while the storage holds not one account and closed forever after the fir
 
 ## Contract
 
-| Operation       | Access | What it does                                                                                                        |
-| --------------- | ------ | ------------------------------------------------------------------------------------------------------------------- |
-| GET /api/setup  | public | `{ "open": true }` while the storage holds not one account, `{ "open": false }` else                                |
-| POST /api/setup | public | creates the first record with the owner role by `name` and `password`; answers like the sign-in and sets its cookie |
+Not applicable: the intake serves no operation of the first run. `GET /api/setup` and
+`POST /api/setup` left together with the entry by a password.
 
 ### Refusal codes
 
-Not applicable: the receiver answers with a code of the answer of HTTP, not with named codes of the
-domain. Where the operations are obliged to refuse instead of staying silent:
-
-| What happened                        | Code  | What it says                             |
-| ------------------------------------ | ----- | ---------------------------------------- |
-| the storage already holds a record   | `409` | that the first record is already created |
-| the name or the password is empty    | `400` | which of the two waits                   |
-| the owner role is not in the storage | `409` | that the role is missing: the migration  |
+Not applicable: there is no operation to refuse.
 
 ## Data
 
@@ -169,3 +144,5 @@ One receiver, one first record.
 - 2026-09-15 — the agreement was written before the code.
 - 2026-09-15 — merged into the domain by the task RT-1902. The receiver, the screen, the stand and
   the texts are done; the rule about the sign-in form names the form drawn at once.
+- 2026-10-06 — the operations of the first run left the intake by the task RT-2576: the accounts
+  live in Keycloak. The screens leave by the same task.

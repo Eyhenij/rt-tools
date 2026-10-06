@@ -1,15 +1,11 @@
 /**
- * Учётные записи и входы — всё, что домен читает из базы и пишет в неё.
+ * Учётные записи — всё, что домен читает из базы и пишет в неё. Входом человека ведает Keycloak.
  *
- * Вход ищется по хешу, а не перебором строк: хеш уникален в хранилище, и поиск равенством идёт
- * индексом. Перебор со сверкой в коде стоил бы прохода по всем живым входам на каждом запросе
- * всякого раздела.
- *
- * Записи учётных записей делают операции раздела людей и заведение первой записи: правки —
+ * Записи учётных записей делают операции раздела людей: правки —
  * заведение, новый пароль, отключение — зовутся из разных операций и лежат поэтому здесь.
  */
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
-import { IPersonSource, IRequestAccount, personRowOf } from '@rt/message-bus-api/accounts/util';
+import { IPersonSource, personRowOf } from '@rt/message-bus-api/accounts/util';
 import { IPage, IPageAsked, IPersonView, pageSkip, TPageDirection } from '@rt/message-bus-common';
 
 /** Учётная запись, которую заводят: имя, его приведённый вид и хеш пароля. */
@@ -25,14 +21,6 @@ export interface IAccountForLogin {
     readonly name: string;
     readonly passwordHash: string;
     readonly disabledAt: Date | null;
-}
-
-/** Вход, найденный по хешу куки: чей он, когда истекает и не оборван ли. */
-export interface ISessionForRequest {
-    readonly id: string;
-    readonly expiresAt: Date;
-    readonly revokedAt: Date | null;
-    readonly account: { readonly id: string; readonly name: string; readonly disabledAt: Date | null };
 }
 
 /** Учётная запись по приведённому имени. Пусто — записи с таким именем нет. */
@@ -94,43 +82,6 @@ export async function findPersonByNameKey(prisma: PrismaService, nameKey: string
 }
 
 /**
- * Что нужно от клиента внутри сделки заведения первой записи.
- *
- * Объявлено здесь, а не взято типом клиента: внутри сделки клиент другой — у него нет ни
- * подключения, ни вложенных сделок, — и подпись службы врала бы о том, что там доступно.
- */
-interface IFirstAccountTransaction {
-    $executeRaw(query: TemplateStringsArray, ...values: unknown[]): Promise<number>;
-    readonly account: {
-        count(): Promise<number>;
-        create(args: Record<string, unknown>): Promise<{ id: string }>;
-    };
-}
-
-/**
- * Первая запись узла: заводится, только пока записей нет ни одной, и сразу с ролью.
- *
- * Счёт и запись идут одной транзакцией под замком таблицы: два первых запроса разом иначе
- * прочитали бы ноль оба и завели бы две первые записи. Замок берётся на время одной вставки в
- * пустую таблицу, и никого другого он не задерживает: пока записей нет, никто не вошёл.
- *
- * Пусто в ответе — записи уже есть, и ничего не записано.
- */
-export async function createFirstAccount(prisma: PrismaService, account: INewAccount, roleId: string): Promise<string | null> {
-    return prisma.$transaction(async (tx: IFirstAccountTransaction): Promise<string | null> => {
-        await tx.$executeRaw`LOCK TABLE "account" IN SHARE ROW EXCLUSIVE MODE`;
-
-        if ((await tx.account.count()) > 0) {
-            return null;
-        }
-
-        const created: { id: string } = await tx.account.create({ data: { ...account, roleId }, select: { id: true } });
-
-        return created.id;
-    });
-}
-
-/**
  * Первая ступень порядка людей. Вторая — всегда имя: оно уникально, и им запрос кончает порядок.
  *
  * Пустой последний вход уезжает в конец при любом направлении: хранилище кладёт пустоту первой
@@ -174,94 +125,4 @@ export async function readPeople(prisma: PrismaService, asked: IPageAsked): Prom
     });
 
     return { rows: rows.map(personRowOf), page: asked.page, size: asked.size, total };
-}
-
-/** Сколько записей заведено. Спрашивается при старте: свежая служба говорит, что входить некем. */
-export async function countAccounts(prisma: PrismaService): Promise<number> {
-    return prisma.account.count();
-}
-
-/**
- * Заведение входа и отметка о том, что записью вошли.
- *
- * Обе правки одной транзакцией: время последнего входа, отставшее от самого входа, читается
- * командой списка как «этой записью не входили ни разу».
- */
-export async function createSession(
-    prisma: PrismaService,
-    input: { accountId: string; hash: string; expiresAt: Date; at: Date }
-): Promise<string> {
-    const [session]: [{ id: string }, unknown] = await prisma.$transaction([
-        prisma.session.create({
-            data: { accountId: input.accountId, hash: input.hash, expiresAt: input.expiresAt },
-            select: { id: true },
-        }),
-        prisma.account.update({ where: { id: input.accountId }, data: { lastLoginAt: input.at } }),
-    ]);
-
-    return session.id;
-}
-
-/**
- * Вход по хешу куки — вместе с записью, которой он принадлежит.
- *
- * Отключение записи читается здесь же: между отключением и следующим запросом иначе оставался бы
- * живой вход отключённого.
- */
-export async function findSessionByHash(prisma: PrismaService, hash: string): Promise<ISessionForRequest | null> {
-    return prisma.session.findUnique({
-        where: { hash },
-        select: {
-            id: true,
-            expiresAt: true,
-            revokedAt: true,
-            account: { select: { id: true, name: true, disabledAt: true } },
-        },
-    });
-}
-
-/**
- * Обрыв одного входа — того, которым пришли.
- *
- * Всех входов записи выход не обрывает: два браузера — два входа, и выход в одном не выбивает
- * человека там, где он ничего не делал.
- */
-export async function revokeSession(prisma: PrismaService, id: string, at: Date): Promise<void> {
-    await prisma.session.updateMany({ where: { id, revokedAt: null }, data: { revokedAt: at } });
-}
-
-/** Роль и точечные правки одной записи: то, из чего складываются права человека. */
-export interface IAccountRights {
-    readonly roleRights: readonly string[] | null;
-    readonly edits: readonly { readonly right: string; readonly granted: boolean }[];
-}
-
-/** Строка, какой её отдаёт хранилище: роль отдельно, правки отдельно. */
-interface IAccountRightsRow {
-    readonly role: { readonly rights: string[] } | null;
-    readonly permissions: readonly { readonly right: string; readonly granted: boolean }[];
-}
-
-/**
- * Права записи: набор её роли и точечные правки поверх него.
- *
- * Читается на каждом вызове операции, закрытой правом, а не берётся из выданного входа: вход
- * живёт часами и говорит только, кто пришёл. Снятое право иначе держало бы раздел открытым до
- * конца дня.
- *
- * Записи нет — пусто вместо отказа: решение принимает проверка доступа, и второй код отказа в
- * этом месте разошёлся бы с её собственным.
- */
-export async function findAccountRights(prisma: PrismaService, accountId: string): Promise<IAccountRights | null> {
-    const found: IAccountRightsRow | null = await prisma.account.findUnique({
-        where: { id: accountId },
-        select: { role: { select: { rights: true } }, permissions: { select: { right: true, granted: true } } },
-    });
-
-    return found ? { roleRights: found.role?.rights ?? null, edits: found.permissions } : null;
-}
-
-/** Вошедший для запроса: то, что кладётся в него проверкой входа. */
-export function requestAccountOf(session: ISessionForRequest): IRequestAccount {
-    return { id: session.account.id, name: session.account.name, sessionId: session.id };
 }

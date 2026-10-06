@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 
 import { RateLimitService } from '@rt/message-bus-api/access/feature';
 import { OPERATION_ACCESS } from '@rt/message-bus-api/access/util';
-import { ACCOUNT_OF_REQUEST, IAccountBearingRequest } from '@rt/message-bus-api/accounts/util';
+import { IAccountBearingRequest, requestSignedInAs } from '@rt/message-bus-api/accounts/util';
 import { IChatConversationListRow, IChatMessageListRow } from '@rt/message-bus-api/chat/data-access';
 import { CHAT_TEXT_LIMIT } from '@rt/message-bus-api/chat/util';
 import { IPage } from '@rt/message-bus-common';
@@ -21,7 +21,7 @@ const AT: Date = new Date('2026-09-20T10:00:00.000Z');
 
 /** Обращение вошедшего: проверка входа кладёт учётную запись в запрос, и спека делает то же. */
 function signedIn(accountId: string): IAccountBearingRequest {
-    return { [ACCOUNT_OF_REQUEST]: { id: accountId, name: 'оператор', sessionId: 'session-1' } };
+    return requestSignedInAs(accountId, 'оператор');
 }
 
 describe('ChatReadController', () => {

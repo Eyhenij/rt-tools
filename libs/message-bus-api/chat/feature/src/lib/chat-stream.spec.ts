@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import { RateLimitService } from '@rt/message-bus-api/access/feature';
-import { ACCOUNT_OF_REQUEST, IAccountBearingRequest } from '@rt/message-bus-api/accounts/util';
+import { IAccountBearingRequest, requestSignedInAs } from '@rt/message-bus-api/accounts/util';
 import { IChatConversationStarted } from '@rt/message-bus-api/chat/api';
 import { IChatMessageListRow } from '@rt/message-bus-api/chat/data-access';
 import { EChatTalkState, IPage } from '@rt/message-bus-common';
@@ -31,7 +31,7 @@ function from(origin: string = PAGE): { headers: Record<string, string> } {
 
 /** Обращение вошедшего: проверка входа кладёт учётную запись в запрос, и спека делает то же. */
 function signedIn(accountId: string): IAccountBearingRequest {
-    return { [ACCOUNT_OF_REQUEST]: { id: accountId, name: 'оператор', sessionId: 'session-1' } };
+    return requestSignedInAs(accountId, 'оператор');
 }
 
 /** Открытый поток и всё, что в него пришло. */

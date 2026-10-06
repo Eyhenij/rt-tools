@@ -30,6 +30,16 @@ export class AppModule {}
 The module puts a guard on every route. At start it checks that every operation declares exactly
 one access. When `sync` is given, it also sends the catalog to Keycloak.
 
+The same options are read from the environment by `authOptionsFromEnv`:
+
+```ts
+AuthServerModule.forRoot(authOptionsFromEnv(process.env, RIGHTS));
+```
+
+`AUTH_ISSUER` and `AUTH_CLIENT_ID` are required, and a missing one stops the start by name.
+`AUTH_SYNC_SECRET` turns the catalog sync on; the Keycloak address and the realm are taken from
+the issuer, and `AUTH_SYNC_CLIENT_ID` names the sync client when it is not `rt-catalog-sync`.
+
 ## Access
 
 ```ts

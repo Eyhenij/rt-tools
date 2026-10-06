@@ -6,7 +6,7 @@
  */
 import { IPermissionEdit } from '@rt/message-bus-common';
 
-import { ACCOUNT_OF_REQUEST, IAccountBearingRequest } from '@rt/message-bus-api/accounts/util';
+import { IAccountBearingRequest, requestSignedInAs } from '@rt/message-bus-api/accounts/util';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 
 /** Роль в хранилище. */
@@ -150,5 +150,5 @@ export function rolesStorage(): IRolesStorage {
 
 /** Запрос, в который проверка входа положила вошедшего. */
 export function signedInAs(id: string, name: string): IAccountBearingRequest {
-    return { [ACCOUNT_OF_REQUEST]: { id, name, sessionId: 's1' } };
+    return requestSignedInAs(id, name);
 }

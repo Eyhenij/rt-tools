@@ -45,3 +45,17 @@ When it is called without a token, with a token without the right and with the r
 Then the answers are unauthenticated, permission denied and the result
 
 Coverage: partial — the test calls the interceptor with a hand-made request. The tree has no Connect server to send a real one through.
+
+### SC-AUTH-69 — a missing realm setting stops the start
+
+Given a server started without `AUTH_ISSUER` or `AUTH_CLIENT_ID`
+When the options of the entry module are read
+Then the start stops and names every missing variable; with both set and no sync secret the catalog
+is not sent
+
+### SC-AUTH-70 — the sync secret sends the catalog to the realm of the issuer
+
+Given a server started with `AUTH_SYNC_SECRET`
+When the options of the entry module are read
+Then the catalog goes to the realm named by the issuer through `rt-catalog-sync` or the client named
+by `AUTH_SYNC_CLIENT_ID`; an issuer that is not a realm address stops the start

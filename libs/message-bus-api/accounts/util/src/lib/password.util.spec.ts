@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { burnAbsentAccountTime, passwordHash, passwordMatches } from './password.util';
+import { passwordHash, passwordMatches } from './password.util';
 
 const PASSWORD: string = 'тайный-пароль';
 
@@ -37,12 +37,5 @@ describe('passwordMatches', () => {
     it('SC-MB-34 — испорченная строка хранилища читается как «не сошлось», а не роняет сверку', () => {
         expect(passwordMatches(PASSWORD, '')).toBe(false);
         expect(passwordMatches(PASSWORD, 'только-одно-поле')).toBe(false);
-    });
-});
-
-describe('burnAbsentAccountTime', () => {
-    it('SC-MB-35 — сверка с заглушкой отвечает «не сошлось» на любой пароль', () => {
-        expect(burnAbsentAccountTime(PASSWORD)).toBe(false);
-        expect(burnAbsentAccountTime('что угодно')).toBe(false);
     });
 });

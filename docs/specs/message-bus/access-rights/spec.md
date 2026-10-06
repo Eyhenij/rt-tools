@@ -41,31 +41,22 @@ that opened or did not.
 **The right and the role.**
 
 - **A right is the pair "resource and action", and the set of rights is closed.** A right absent
-  from the set is not accepted anywhere: neither in a role, nor in a pointed edit, nor in an
-  operation's declaration. Otherwise a typo in a right's name gives a role that permits nothing,
-  and it looks exactly like a role that permits.
-- **A role is a named set of rights, and a person has one role.** Two roles would have to be added
-  up, and the result of adding a permission and a ban over two rows cannot be read.
-- **The rights of a person are the rights of their role with their pointed edits applied over
-  them.** A pointed edit either gives a right the role is silent about or takes away one the role
-  gives.
-- **A right the role says nothing about counts as not given.** Silence is not permission, and an
-  absent right and one outright taken away mean the same.
-- **A person without a role has no rights at all.** They sign in and see the sections none of which
-  their rights name; this is a lawful state, not a defect.
-- **The rights are given by the same change that closed the operations.** Closing alone leaves
-  every account that existed before it with an empty role, that is with no rights at all, and the
-  intake answers a refusal to everyone, the owner included. The state before the closing is
-  restored by the change itself, not by a query afterwards: a query is made on one machine and is
-  absent from every other copy of the storage.
+  from the set is not accepted in an operation's declaration. Otherwise a typo in a right's name
+  closes an operation by a right nobody can be given.
+- **The rights of a person are the client roles of the bus client in their access token.** Roles
+  and per-person rights are given in Keycloak, as in every admin of the shared entry module.
+- **A right the token does not carry counts as not given.** Silence is not permission.
+- **A person without client roles has no rights at all.** They sign in and see the sections none of
+  which their rights name; this is a lawful state, not a defect.
+- **The set of rights reaches Keycloak at the start of the intake.** The intake creates the client
+  roles Keycloak lacks, and names the ones it holds beyond the set.
 
 **The check.**
 
-- **An operation declares its access by one mark, and a fourth kind of mark appears — by a right.**
-  The three that already exist stay as they are: open, by a token of a tree, by a person's sign-in.
-- **The rights are read on every call rather than taken from the issued sign-in.** A sign-in says
-  only who came: it lives for hours, and a right taken away would otherwise keep the section open
-  until the end of the day.
+- **An operation declares its access by one of four marks.** Open, by a token of a tree, by a
+  person's sign-in and by a right.
+- **The rights are read from the access token of the call.** The token lives minutes, and a right
+  taken away in Keycloak acts with the next token.
 - **A request without a sign-in is refused as unauthenticated, and a sign-in without a right as
   permission denied.** These are different answers: the first is cured by signing in, the second is
   not.
