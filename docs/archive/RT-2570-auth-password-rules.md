@@ -1,5 +1,7 @@
 # Grill
 
+Task RT-2570 · the request — the PR into the epic branch RT-2528 · merged —
+
 ## The owner request
 
 > для поля с паролем необходимо показать все треобвания к сложности пароля
@@ -39,3 +41,11 @@ digit, a special character, not equal to the login and not equal to the address.
 ## What is left unclear
 
 - The wording of each requirement is read by the owner in the PR.
+
+## Decisions along the way
+
+- **The requirement texts are the theme's own, in English and Russian.** Keycloak names the policy
+  only in refusal texts, and the Russian set lacks the address requirement. Affected stage of the
+  plan: 1.
+- **The stand password of the end-to-end suite gets an upper case letter.** Keycloak refuses to
+  create a person with a password weaker than the realm policy. Affected stage of the plan: 1.
