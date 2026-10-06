@@ -9,7 +9,9 @@ Rewritten by every session, not appended to.
 - **Done:** the grill, the agreement, the plan; the logic and the component, 12 tests; the stories and `Overview.mdx`, the sweep green over 772 stories; the agreement merged into the domain spec
 - **Next step:** the owner looks at the stories on :6007 (step 3.3)
 - **Uncommitted:** five snapshot frames, taken and looked at, kept until the owner's look
-- **Waiting for the owner:** the look at the stories
+- **Waiting for the owner:** no — the owner chose «Закрыть всё в ките» before the PR: `rt-tree`
+  gains the marks by level, the Ctrl or Cmd add, a second slot and node badges in RT-2548's branch,
+  and this tree gains the open branches as input and output
 - **PR:** not open yet
 
 ## Steps
