@@ -1,33 +1,42 @@
 # Grill
 
-<Work begun from cargo that arrived names its records here — by full keys, as the intake reading
-prints them. Eight characters are not enough: a mark with a short key is refused with the line
-«the tree has no such record». This file leaves for the archive, and after the folder is taken apart
-the keys live only here.>
-
 ## The owner request
 
-> <verbatim, in the owner's language, without retelling>
+> добавь непрозрачную подложку под селектор языков и переключатель тем, чтобы облако точек не накладывалось на эти элементы
+
+> back to login показывай без символа шеврона, показывай просто строкой
+
+> показывай селектор языка и переключатель тем прямо в карточке формы логина/регистрации/восстановления, то есть пееренеси из угла экрана в саму карточку с формой
 
 ## What the tree already has
 
-<Findings of the exploration: specs on the subject, the laws and rules the work touches, a
-ready-made sample nearby. Filled in before the first question to the owner.>
-
-## What the rules already say
-
-<What was found in the laws and rules on the subject of the question. The owner is not asked
-what already has a written answer.>
+- The language list and the theme switch stand in `login__chrome`, pinned by the kit to the top
+  right corner of the window: `projects/ui-kit-v2/src/styles/_login.scss`.
+- The frame of every theme page draws the chrome and the card next to each other:
+  `projects/auth-keycloak-theme/src/login/shell/rt-kc-root.component.html`.
+- «Back to Login» and «Back to Application» come from the Keycloak messages `backToLogin` and
+  `backToApplication`, which start with `&laquo;`. The theme turns entities into characters in
+  `projects/auth-keycloak-theme/src/login/kc-i18n.ts`.
 
 ## Questions and answers
 
-**<question>**
-<the owner's answer in their words>
+**The plate under the switches.**
+The owner asked for it first and then moved the switches into the card. The plate is dropped: in the
+card the dots do not reach the switches.
+
+**Back to Login.**
+«показывай просто строкой» — the link text without the chevron.
 
 ## Decisions
 
-- **<decision>** — <reason>. Rejected: <what and why>.
+- **The switches stand in the first row of the card, on its right edge, above the realm name.** —
+  the owner's word «в саму карточку с формой»; every page of the theme has the same card.
+- **The kit keeps its pinned `login__chrome`; the theme cancels the pinning for its card.** — the kit
+  block serves other consumers.
+- **The chevron is removed from the start of the two «back» messages only.** — other messages keep
+  their characters. Rejected: stripping «» from every message — a quote in a message would be lost.
+- Question closed by assumption: the behaviour changes — the theme spec rules change.
 
 ## What is left unclear
 
-- <a question that was not asked, and why it does not block the work>
+- Nothing blocks the work.

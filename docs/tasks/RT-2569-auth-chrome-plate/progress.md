@@ -2,36 +2,29 @@
 
 ## Where we stand
 
-Rewritten by every session, not appended to.
-
-- **State:** `<name from the state list of rule task-flow>`
-- **Stage:** <number> of <total> — <name>
-- **Done:** <briefly>
-- **Next step:** <what is done first in the new session>
-- **Uncommitted:** <what lies in the tree outside the index>
-- **Waiting for the owner:** <what exactly, or "no"; the owner's standing word about a stop is quoted in « »>
-- **PR:** <number and state, or "not open yet">
+- **State:** `этап-идёт`
+- **Stage:** 1 of 1 — Switches in the card, back links without the chevron
+- **Done:** the task folder
+- **Next step:** write the theme spec rules
+- **Uncommitted:** no
+- **Waiting for the owner:** no
+- **PR:** not open yet
 
 ## Steps
 
-The steps of the plan, all of them, with a mark each. Rewritten by every turn that moves the work.
-
-- `[x]` done · `[>]` going on right now · `[ ]` not begun
-
-Exactly one step carries `[>]`. The numbers and the names are copied from the plan and not
-reworded: a check matches the two lists, and the turn exit guard counts what is not done yet.
-
-- [x] 1.1 <name of the first step of the first stage>
-- [>] 1.2 <name of the second step of the first stage>
-- [ ] 2.1 <name of the first step of the second stage>
+- [>] 1.1 The theme spec rules and scenarios are written
+- [ ] 1.2 The frame moves the switches into the card
+- [ ] 1.3 The back links lose the chevron
+- [ ] 1.4 The tests are written
+- [ ] 1.5 The theme is checked on the stand
 
 ## Decisions along the way
 
-- **<decision>** — <reason>. Affected stage of the plan: <number>.
+- **The plate under the switches is dropped.** The owner moved the switches into the card after
+  asking for the plate. Affected stage of the plan: 1.
 
 ## Sessions
 
-### <date>
+### 2026-10-06
 
-- <what was done, in numbers: files, commits, what is green>
-- <what we stumbled on and what caught it>
+- The task folder is written.
