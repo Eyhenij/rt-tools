@@ -1,5 +1,7 @@
 # Grill
 
+Task RT-2565 · the request — the PR into the branch of RT-2564 · merged —
+
 ## The owner request
 
 > теперь добавь рябь на бэкграунд вокруг карточки как это сделано в [приложение-образец] на страницах ошибок и на странице maintenance
@@ -62,3 +64,12 @@ The name of the sample application is replaced by a placeholder: another tree is
 ## What is left unclear
 
 - Nothing blocks the work.
+
+## Decisions along the way
+
+- **The stories of the field are not shot.** The field moves, and a frame depends on the minute it
+  was taken. Affected stage of the plan: 1.
+- **The glass of the card is checked by the end-to-end scenario SC-AUTH-62.** A unit test does not
+  compute styles. Affected stage of the plan: 2.
+- **The stand takes a rebuilt theme only after the Keycloak container is recreated.** The jar is
+  mounted as a single file. Affected stage of the plan: 2.
