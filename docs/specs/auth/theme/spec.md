@@ -54,6 +54,10 @@ the entry is not sure the page belongs to the admin.
   card is no longer an empty plane.
 - **The card is glass: a semi-transparent background with a blur of what lies behind it.** The dots
   show through its edge softly and do not cross the text.
+- **The language list and the theme switch stand in the first row of the card, on its right edge.**
+  They do not hang in the corner of the window over the dots.
+- **A link back to the sign-in or to the application is plain text without a chevron.** Keycloak
+  starts these two messages with «, and the theme drops it.
 - **A message Keycloak puts on a page is shown above the form in the colour of its kind.**
 - **Every provider of the realm gets a button, and Google and Apple get their own icons.** A
   provider without a known icon gets a button with its name only.

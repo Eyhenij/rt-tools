@@ -3,7 +3,7 @@ import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { RtButtonDirective } from '@rt-tools/ui-kit-v2';
 
 import { KC_CONTEXT, TKcPageContext } from '../../kc-context';
-import { KC_MESSAGES, TKcMessages } from '../../kc-i18n';
+import { backLinkText, KC_MESSAGES, TKcMessages } from '../../kc-i18n';
 import { RtKcMessageComponent } from '../../message/rt-kc-message.component';
 
 const BEM_BLOCK: string = 'rt-kc-page';
@@ -25,7 +25,7 @@ export class RtKcLogoutConfirmComponent {
     protected readonly title: string = this.#i18n.msgStr('logoutConfirmTitle');
     protected readonly question: string = this.#i18n.msgStr('logoutConfirmHeader');
     protected readonly submitLabel: string = this.#i18n.msgStr('doLogout');
-    protected readonly backLabel: string = this.#i18n.msgStr('backToApplication');
+    protected readonly backLabel: string = backLinkText(this.#i18n.msgStr('backToApplication'));
     protected readonly backHref: string | null =
         !this.context.logoutConfirm.skipLink && this.context.client.baseUrl ? this.context.client.baseUrl : null;
 }

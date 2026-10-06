@@ -6,7 +6,7 @@ import { IRtField, RtButtonDirective, RtFieldComponent, RtInputComponent } from 
 
 import { KC_CONTEXT, TKcPageContext } from '../../kc-context';
 import { holdInvalidSubmit, loginPlaceholder } from '../../kc-form';
-import { KC_MESSAGES, TKcMessages } from '../../kc-i18n';
+import { backLinkText, KC_MESSAGES, TKcMessages } from '../../kc-i18n';
 import { RtKcMessageComponent } from '../../message/rt-kc-message.component';
 
 const BEM_BLOCK: string = 'rt-kc-page';
@@ -45,7 +45,7 @@ export class RtKcResetPasswordComponent {
     protected readonly usernameLabel: string = this.#i18n.msgStr(this.context.realm.loginWithEmailAllowed ? 'usernameOrEmail' : 'username');
     protected readonly usernamePlaceholder: string = loginPlaceholder(this.context.realm.loginWithEmailAllowed);
     protected readonly submitLabel: string = this.#i18n.msgStr('doSubmit');
-    protected readonly backLabel: string = this.#i18n.msgStr('backToLogin');
+    protected readonly backLabel: string = backLinkText(this.#i18n.msgStr('backToLogin'));
     protected readonly usernameErrors: IRtField.ErrorMessages = { required: this.#i18n.msgStr('missingUsernameMessage') };
 
     protected send(event: Event): void {
