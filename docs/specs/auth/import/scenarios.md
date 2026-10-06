@@ -58,4 +58,4 @@ Given the stand with the import client
 When the command moves a person with an argon2 hash, one with a pbkdf2 hash and one with scrypt
 Then the first two get a token by their old passwords, and the third must set a password
 
-Not covered: the command `check:auth-stand` asks a raised stand; it joins the push gate with the end-to-end task RT-2534
+Not covered: the command `check:auth-stand` asks a raised stand. It runs in the gate before sending and in the pipeline, and the audit of specs reads only `.spec.ts` files

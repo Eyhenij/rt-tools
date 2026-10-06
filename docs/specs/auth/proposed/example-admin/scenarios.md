@@ -44,4 +44,4 @@ Given the stand raised with or without the keys of Google
 When the entry page of the realm is opened
 Then the Google provider is switched on and offered only when the keys are given
 
-Not covered: the command `check:auth-stand` asks a raised stand. It joins the gate before sending at stage 6 of task RT-2534
+Not covered: the command `check:auth-stand` asks a raised stand. It runs in the gate before sending and in the pipeline, and the audit of specs reads only `.spec.ts` files
