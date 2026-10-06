@@ -19,10 +19,14 @@ import {
     WritableSignal,
 } from '@angular/core';
 
+import { FormsModule } from '@angular/forms';
+
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { RT_KIT_LABELS, TRtKitLabelMap } from '../../i18n';
+import { RtCheckboxComponent } from '../checkbox/rt-checkbox.component';
 import { RtIconComponent } from '../icon/rt-icon.component';
+import { RtRadioButtonComponent } from '../radio-button/rt-radio-button.component';
 import { rtTreeOpenFor, rtTreeRows, rtTreeSideKey, rtTreeToggle } from '../select/rt-select-tree';
 import { IRtSelect } from '../select/rt-select.model';
 import { RtTreeNodeEndDirective } from './rt-tree.directives';
@@ -55,7 +59,16 @@ interface IRtTreeView<TValue> {
     styleUrl: './rt-tree.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
-    imports: [NgTemplateOutlet, RtIconComponent, BlockDirective, ElemDirective, ModDirective],
+    imports: [
+        NgTemplateOutlet,
+        FormsModule,
+        RtCheckboxComponent,
+        RtIconComponent,
+        RtRadioButtonComponent,
+        BlockDirective,
+        ElemDirective,
+        ModDirective,
+    ],
     host: {
         class: BEM_BLOCK,
         role: 'tree',
@@ -157,7 +170,7 @@ export class RtTreeComponent<TValue> {
             }
             return;
         }
-        this.value.set(rtTreeChoose(row.option, this.value(), this.mode(), this.cascade()));
+        this.#choose(rtTreeChoose(row.option, this.value(), this.mode(), this.cascade()));
     }
 
     protected onToggleClick(event: Event, value: TValue): void {
@@ -166,7 +179,7 @@ export class RtTreeComponent<TValue> {
     }
 
     protected onSelectAll(): void {
-        this.value.set(rtTreeSelectAll(this.rows(), this.value()));
+        this.#choose(rtTreeSelectAll(this.rows(), this.value()));
     }
 
     #collectBranches(list: ReadonlyArray<IRtTree.Node<TValue>>, into: Set<TValue>): void {
@@ -176,6 +189,15 @@ export class RtTreeComponent<TValue> {
                 this.#collectBranches(node.children ?? [], into);
             }
         });
+    }
+
+    /**
+     * Меняет выбор, не трогая раскрытие. Пока ветки никто не раскрывал руками, раскрытие считается из
+     * выбора, и без этой фиксации отметка ветки сворачивала или раскрывала её саму.
+     */
+    #choose(next: ReadonlyArray<TValue>): void {
+        this.#open.set(this.openBranches());
+        this.value.set(next);
     }
 
     #toggle(value: TValue): void {
@@ -234,7 +256,7 @@ export class RtTreeComponent<TValue> {
             return;
         }
         if (!row.option.disabled) {
-            this.value.set(rtTreeChoose(row.option, this.value(), this.mode(), this.cascade()));
+            this.#choose(rtTreeChoose(row.option, this.value(), this.mode(), this.cascade()));
         }
     }
 
@@ -246,7 +268,7 @@ export class RtTreeComponent<TValue> {
         if (row.option.disabled) {
             return;
         }
-        this.value.set(rtTreeChoose(row.option, this.value(), this.mode(), this.cascade()));
+        this.#choose(rtTreeChoose(row.option, this.value(), this.mode(), this.cascade()));
         this.picked.emit(row.option);
     }
 }

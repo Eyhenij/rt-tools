@@ -87,10 +87,24 @@ describe('RtTreeComponent', (): void => {
 
     it('SC-UKV-641 — частично выбранная ветка рисует флажок с чертой', (): void => {
         const fixture: TFixture = setup({ value: ['msk'] });
-        const box: HTMLInputElement = rowOf(fixture, 'ru').querySelector('[qa-dataid="tree-row-checkbox"]') as HTMLInputElement;
+        const box: HTMLElement = rowOf(fixture, 'ru').querySelector('[qa-dataid="tree-row-checkbox"] [role="checkbox"]') as HTMLElement;
 
-        expect(box.indeterminate).toBe(true);
-        expect(box.checked).toBe(false);
+        expect(box.getAttribute('aria-checked')).toBe('mixed');
+    });
+
+    it('SC-UKV-652 — выбор ветки не сворачивает и не раскрывает её', (): void => {
+        const fixture: TFixture = setup({ value: ['msk'] });
+        expect(rowOf(fixture, 'tvr')).toBeDefined();
+
+        rowOf(fixture, 'ru').click();
+        fixture.detectChanges();
+        expect(rowOf(fixture, 'ru').getAttribute('aria-expanded')).toBe('true');
+
+        rowOf(fixture, 'ru').click();
+        fixture.detectChanges();
+        expect(fixture.componentInstance.value()).toEqual([]);
+        expect(rowOf(fixture, 'ru').getAttribute('aria-expanded')).toBe('true');
+        expect(rowOf(fixture, 'tvr')).toBeDefined();
     });
 
     it('SC-UKV-643 — одиночный режим рисует радио', (): void => {

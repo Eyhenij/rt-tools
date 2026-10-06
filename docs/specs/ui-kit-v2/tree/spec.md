@@ -55,6 +55,10 @@ multiselect; a standalone tree on the same logic gives the applications one look
   takes no click, and no bulk action flips it.
 - **The branches holding a chosen value are open when the tree appears; the rest are folded.** After
   that, opening and folding belong to the person and to the public `expandAll` and `collapseAll`.
+- **Choosing never opens or folds a branch.** A mark on a row, by a click, a key or select-all, leaves
+  every branch as open as it was before it.
+- **A mark is drawn by the kit's own checkbox and radio.** They stand inert in the row: the row takes
+  the click and the keys, and the control only shows the mark.
 - **The search term filters the tree and marks the match in the label.** A row stays when its label or
   a descendant's label holds the term, the path to a match is shown open, and the matched part of a
   label is drawn with the highlight tokens of the side-menu search.

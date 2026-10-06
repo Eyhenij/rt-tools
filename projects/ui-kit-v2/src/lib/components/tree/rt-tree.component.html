@@ -6,12 +6,12 @@
     <!-- eslint-disable @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
     @if (isSelectAllShown()) {
         <div rtElem="select-all" qa-dataid="tree-select-all" role="presentation" (click)="onSelectAll()">
-            <input
+            <rt-checkbox
                 rtElem="check"
-                type="checkbox"
-                tabindex="-1"
-                [checked]="selectAllMark() === 'all'"
-                [indeterminate]="selectAllMark() === 'some'" />
+                inert
+                [indeterminate]="selectAllMark() === 'some'"
+                [ngModel]="selectAllMark() === 'all'"
+                [ngModelOptions]="{ standalone: true }" />
             <span rtElem="label">{{ t().uiSelectAll }}</span>
         </div>
     }
@@ -44,20 +44,20 @@
             }
 
             @if (mode() === 'multiple') {
-                <input
+                <rt-checkbox
                     rtElem="check"
                     qa-dataid="tree-row-checkbox"
-                    type="checkbox"
-                    tabindex="-1"
-                    [checked]="view.mark === 'all'"
+                    inert
+                    [disabled]="!!view.row.option.disabled"
                     [indeterminate]="view.mark === 'some'"
-                    [disabled]="!!view.row.option.disabled" />
+                    [ngModel]="view.mark === 'all'"
+                    [ngModelOptions]="{ standalone: true }" />
             } @else if (mode() === 'single') {
-                <input
+                <rt-radio-button
                     rtElem="check"
                     qa-dataid="tree-row-radio"
-                    type="radio"
-                    tabindex="-1"
+                    inert
+                    [value]="view.row.option.value"
                     [checked]="view.mark === 'all'"
                     [disabled]="!!view.row.option.disabled" />
             }

@@ -107,3 +107,11 @@ When the tree is drawn
 Then the kit label for nothing found is shown, and with no nodes at all — the label for no options
 
 Covered by the component test of `rt-tree`.
+
+### SC-UKV-652 — choosing a branch leaves it as open as it was
+
+Given a tree where a leaf of a branch is chosen, so the branch is open when the tree appears
+When the branch row is clicked twice — its leaves are chosen, then cleared
+Then the branch stays open after both clicks, and its children stay visible
+
+Covered by the component test of `rt-tree`.
