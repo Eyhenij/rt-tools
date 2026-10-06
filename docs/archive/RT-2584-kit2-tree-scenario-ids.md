@@ -34,3 +34,10 @@ so the renumber goes as this task.
 ## What is left unclear
 
 - Nothing.
+
+## How it went
+
+- Task #2584 added to the board by hand: the listing lagged four minutes behind the add.
+- check:specs exit 0; tree tests 28 of 28; check:all 405 of 406 tasks green.
+- The one red task is the build of the sign-in theme: it packs with Maven and a JDK, and this
+  machine has neither. The branch does not touch the theme.
