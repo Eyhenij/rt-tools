@@ -1,0 +1,62 @@
+@switch (part) {
+    @case ('content') {
+        <app-story-presets>
+            <ng-template>
+                <app-story-row caption="Содержимое дерева" [items]="contentCases" [itemLabel]="caseLabel">
+                    <ng-template let-c>
+                        <rt-draggable-tree style="width: 320px" [ariaLabel]="c.name" [nodes]="c.nodes" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('node-template') {
+        <app-story-presets>
+            <ng-template>
+                <app-story-row caption="Разметка приложения в строке" [items]="templateCases" [itemLabel]="caseLabel">
+                    <ng-template let-c>
+                        <rt-draggable-tree style="width: 360px" ariaLabel="Разделы" [nodes]="c.nodes">
+                            <ng-template rtDraggableTreeNode let-node>
+                                <span>{{ node.label }}</span>
+                                <rt-tag size="sm" severity="info" [value]="node.value" />
+                            </ng-template>
+                        </rt-draggable-tree>
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('states') {
+        <app-story-presets>
+            <ng-template>
+                <app-story-row caption="Взаимодействие с деревом" [items]="states" [itemLabel]="stateLabel">
+                    <ng-template let-state>
+                        <rt-draggable-tree
+                            style="width: 320px"
+                            ariaLabel="Состояние"
+                            [attr.data-story-state]="state.state"
+                            [nodes]="nodes" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('presets') {
+        <app-story-presets caption="Перетаскиваемое дерево в обоих наборах">
+            <ng-template>
+                <rt-draggable-tree style="width: 320px" ariaLabel="Разделы" [nodes]="nodes" />
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('themes') {
+        <app-story-themes caption="Перетаскиваемое дерево в обеих темах">
+            <ng-template>
+                <rt-draggable-tree style="width: 320px" ariaLabel="Разделы" [nodes]="nodes" />
+            </ng-template>
+        </app-story-themes>
+    }
+}
