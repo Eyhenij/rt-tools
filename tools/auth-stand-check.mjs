@@ -9,13 +9,18 @@
  * container left from a past session as well. Every scenario of the stand agreement gets one line,
  * `ok` or `FAIL` with the reason; the exit code is 1 when any line failed.
  *
- * The check leaves the stand as it found it: the test user is removed, and the realm field edited
- * to check the second raising is restored by that very raising.
+ * The check leaves the stand as it found it: the test users are removed, and the realm field edited
+ * to check the second raising is restored by that very raising. The import scenario runs the built
+ * command, so the script builds `@rt-tools/auth-import` before it starts.
  */
 import { execFileSync } from 'node:child_process';
-import { randomUUID } from 'node:crypto';
+import { pbkdf2Sync, randomBytes, randomUUID, scryptSync } from 'node:crypto';
+import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+
+import { argon2id } from 'hash-wasm';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const COMPOSE = ['compose', '-f', join(ROOT, 'deploy/auth/compose.yml')];
@@ -24,6 +29,10 @@ const MAIL = 'http://localhost:58025';
 const REALM = 'rt';
 const CLIENT = 'rt-example-admin';
 const DISPLAY_NAME = 'RT';
+// The import client of the stand; the secret is a test value of the realm file, the stand is local.
+const IMPORT_CLIENT = 'rt-user-import';
+const IMPORT_SECRET = 'rt-user-import-stand';
+const IMPORT_BIN = join(ROOT, 'dist/auth-import/bin.js');
 
 const results = [];
 
@@ -164,6 +173,83 @@ await scenario('SC-AUTH-5', 'a second raising applies the realm file over a runn
     const fresh = await adminToken();
     const { body: after } = await admin(fresh, '');
     expect(after.displayName === DISPLAY_NAME, `after the second raising the realm is named ${after.displayName}`);
+});
+
+await scenario('SC-AUTH-46', 'the import moves argon2 and pbkdf2 with their passwords and scrypt without one', async () => {
+    expect(token, 'no admin token');
+    const tag = randomUUID().slice(0, 8);
+    const password = `Old-${tag}-pass`;
+    const salt = randomBytes(16);
+    const unpadded = (bytes) => bytes.toString('base64').replace(/=+$/, '');
+    const people = {
+        argon2: `import-argon2-${tag}@stand.test`,
+        pbkdf2: `import-pbkdf2-${tag}@stand.test`,
+        scrypt: `import-scrypt-${tag}@stand.test`,
+    };
+    const file = [
+        {
+            email: people.argon2,
+            firstName: 'Argon',
+            emailVerified: true,
+            lastName: 'Stand',
+            passwordHash: await argon2id({
+                password,
+                salt,
+                iterations: 3,
+                memorySize: 19456,
+                parallelism: 1,
+                hashLength: 32,
+                outputType: 'encoded',
+            }),
+            roles: { [CLIENT]: ['example:read'] },
+        },
+        {
+            email: people.pbkdf2,
+            firstName: 'Pbkdf',
+            emailVerified: true,
+            lastName: 'Stand',
+            passwordHash: `$pbkdf2-sha256$i=27500,l=32$${unpadded(salt)}$${unpadded(pbkdf2Sync(password, salt, 27500, 32, 'sha256'))}`,
+        },
+        {
+            email: people.scrypt,
+            firstName: 'Scrypt',
+            emailVerified: true,
+            lastName: 'Stand',
+            passwordHash: `$scrypt$ln=14,r=8,p=1$${unpadded(salt)}$${unpadded(scryptSync(password, salt, 32))}`,
+        },
+    ];
+    const dir = mkdtempSync(join(tmpdir(), 'rt-auth-import-'));
+    try {
+        writeFileSync(join(dir, 'users.json'), JSON.stringify(file));
+        execFileSync(
+            'node',
+            [IMPORT_BIN, '--url', BASE, '--realm', REALM, '--client-id', IMPORT_CLIENT, '--file', join(dir, 'users.json')],
+            {
+                env: { ...process.env, RT_AUTH_IMPORT_CLIENT_SECRET: IMPORT_SECRET },
+                stdio: ['ignore', 'pipe', 'pipe'],
+            }
+        );
+        const signIn = async (username) =>
+            json(`${BASE}/realms/${REALM}/protocol/openid-connect/token`, {
+                method: 'POST',
+                headers: { 'content-type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({ grant_type: 'password', client_id: 'admin-cli', username, password }),
+            });
+        for (const kept of [people.argon2, people.pbkdf2]) {
+            const { status, body } = await signIn(kept);
+            expect(status === 200, `${kept} did not enter with the old password: ${status} ${body?.error_description ?? ''}`);
+        }
+        const [scrypt] = (await admin(token, `/users?username=${encodeURIComponent(people.scrypt)}&exact=true`)).body;
+        expect(scrypt?.requiredActions?.includes('UPDATE_PASSWORD'), `${people.scrypt} is not asked to set a password`);
+        expect((await signIn(people.scrypt)).status !== 200, `${people.scrypt} entered with the old password`);
+    } finally {
+        rmSync(dir, { recursive: true, force: true });
+        for (const username of Object.values(people)) {
+            for (const user of (await admin(token, `/users?username=${encodeURIComponent(username)}&exact=true`)).body ?? []) {
+                await admin(token, `/users/${user.id}`, { method: 'DELETE' });
+            }
+        }
+    }
 });
 
 for (const result of results) {

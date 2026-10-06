@@ -32,7 +32,7 @@ Then the letter goes once, to the added person, and only in the run with the fla
 
 Given a file of people
 When the command runs twice
-Then the second run asks Keycloak to skip existing people and reports them as skipped
+Then the second run finds every person already in the realm and reports them as skipped
 
 ### SC-AUTH-43 — the rights move as client roles
 
@@ -40,11 +40,11 @@ Given a person with rights in the admin client
 When the command builds them
 Then Keycloak gets these rights as roles of that client
 
-### SC-AUTH-44 — a file with an error is refused before the first request
+### SC-AUTH-44 — a file with an error is refused before the first write
 
-Given a file where one line has no address and another has a role of another shape
-When the command reads it
-Then it names both lines and sends nothing to Keycloak
+Given a file where one line has no address and another has a role the client does not have
+When the command runs
+Then it names both lines and writes nothing to Keycloak
 
 ### SC-AUTH-45 — the secret is read from the environment
 
@@ -57,3 +57,5 @@ Then it takes the secret from the environment and refuses to start without it
 Given the stand with the import client
 When the command moves a person with an argon2 hash, one with a pbkdf2 hash and one with scrypt
 Then the first two get a token by their old passwords, and the third must set a password
+
+Not covered: the command `check:auth-stand` asks a raised stand; it joins the push gate with the end-to-end task RT-2534

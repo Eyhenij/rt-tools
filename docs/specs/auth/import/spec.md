@@ -39,11 +39,11 @@ Not applicable: the command prints a report to the terminal and has no screens.
   The application chooses the day of the move, and a second run sends no letter twice.
 - **A second run skips the people already in the realm.** Otherwise it would overwrite a password
   the person has changed since.
-- **The rights move with the person as client roles of the admin.** A role that is not a right is
-  refused before anything is sent.
+- **The rights move with the person as client roles of the admin.** A role the client does not
+  have is refused before the first write: Keycloak would refuse the whole batch on it.
 - **The secret of the import client is read from the environment, not from the arguments.** An
   argument stays in the history of the terminal.
-- **A file with an error is refused whole before the first request.** Otherwise half of the people
+- **A file with an error is refused whole before the first write.** Otherwise half of the people
   move, and the second run has to tell them from the rest.
 
 ## What is out of scope
@@ -64,7 +64,8 @@ Not applicable: the command ends with the exit code 1 and names the line of the 
 ## Data
 
 The file of users is read and not kept. In Keycloak a person is created with the username and the
-address equal to the address of the file.
+address equal to the address of the file. At the first entry Keycloak asks a person without a first
+and a last name to fill them in, and a person whose address is not verified to verify it.
 
 ## Screens and states
 
@@ -92,8 +93,9 @@ The organizations stay in the database of the application, and the file does not
 
 - **A person with a hash Keycloak cannot verify moves without a password.** Rejected: a Java
   extension for scrypt — it would be built anew for every Keycloak version.
-- **The import goes through the partial import of the realm.** It takes a hash ready-made and
-  answers what it added and what it skipped.
+- **The import creates people one by one through the users API.** It needs only the roles
+  `manage-users` and `view-clients`. Rejected: the partial import of the realm — it asks for the
+  management of the whole realm.
 
 ## Open questions
 
