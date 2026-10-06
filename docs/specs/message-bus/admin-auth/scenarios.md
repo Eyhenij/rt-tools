@@ -6,22 +6,22 @@ common numbering of the domain and do not change at a move between subdomains.
 While a scenario is not covered, it carries the mark "Not covered" with a reason. The scenarios whose
 "Then" names a person and what they see are closed by an end-to-end spec.
 
-### SC-MB-33 — an entry by a fit pair opens the admin application
+### SC-MB-33 — an entry at Keycloak opens the admin application
 
-Given an account is created from the screens
-When the owner names its name and password on the screen of the entry
-Then the entry is created, and the owner sees the section of the incident analyses
+Given a person of the realm holds the rights of the bus client
+When they name their address and password on the entry screen of the realm
+Then Keycloak returns them to the admin application, and they see the section of the incident analyses
 
 ### SC-MB-34 — a wrong password is refused without naming the reason
 
-Given an account is created
-When the owner names the right name and a wrong password
+Given a person of the realm
+When they name their address and a wrong password on the entry screen of the realm
 Then the entry is not created, and the refusal does not say what exactly did not match
 
-### SC-MB-35 — an unknown name is refused by the same answer
+### SC-MB-35 — an unknown address is refused by the same answer
 
-Given there is no account with such a name
-When its name is named on the screen of the entry
+Given the realm has no person with such an address
+When the address is named on the entry screen of the realm
 Then the answer is word for word the same as at a wrong password
 
 ### SC-MB-36 — an operation of the admin application without a token is refused
@@ -32,11 +32,9 @@ Then the intake refuses and says that the operation demands an entry
 
 ### SC-MB-37 — an expired entry stops being accepted
 
-Given the term of the entry expired
-When the reading of the list of the analyses arrives by it
-Then the reading is refused, and the owner sees the screen of the entry
-
-it is closed by an end-to-end spec together with the screens, task #587
+Given the entry at Keycloak ended
+When the owner reloads the section of the analyses
+Then they see the entry screen of the realm, not an empty section
 
 ### SC-MB-39 — a token of a tree does not open the operations of the admin application
 
@@ -68,19 +66,19 @@ Then it refuses and creates no second record
 
 Given the owner has not entered
 When they open the address of the section of the analyses by a direct link
-Then they see the screen of the entry, not an empty section
+Then they see the entry screen of the realm, not an empty section
 
 ### SC-MB-45 — after the entry a person lands where they were going
 
 Given the owner came by a link to the section of the analyses and was sent to the entry
-When they name a fit pair
+When they name their address and password at Keycloak
 Then they see the section they came by the link to
 
-### SC-MB-59 — a change of the password refuses the former one
+### SC-MB-59 — a changed password does not match the stored hash of the former one
 
 Given the password of an account is changed from the people section
-When the owner names the former pair
-Then the entry is not created, and by the new pair it is created
+When the former password is checked against the stored hash
+Then it does not match, and the new password does
 
 ### SC-MB-60 — the name of an account does not tell the case apart
 

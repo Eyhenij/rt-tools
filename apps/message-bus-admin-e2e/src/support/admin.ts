@@ -1,6 +1,6 @@
-import { expect, Locator, Page } from '@playwright/test';
+import { expect, Locator, Page, Request, Response } from '@playwright/test';
 
-import { ACCOUNT, SECTIONS } from '../../stand/stand.mjs';
+import { ACCOUNT, KEYCLOAK_ORIGIN, SECTIONS, STAND_PASSWORD } from '../../stand/stand.mjs';
 
 /**
  * Опора сквозного набора: вход, разделы и то, чем на экране находят строки и панель.
@@ -9,13 +9,9 @@ import { ACCOUNT, SECTIONS } from '../../stand/stand.mjs';
  * в двадцати местах, а `qa-dataid`, переименованный в разметке, роняет набор в случайном
  * порядке — и починка выглядит правкой каждой спеки по очереди.
  *
- * Вход идёт экраном, а не подстановкой куки. Кука недоступна скриптам, и поставить её со
- * стороны браузера нечем; но дело не только в этом — набор проверяет, что человек входит и
- * попадает туда, куда шёл, и вход, сделанный мимо экрана, отвечал бы на другой вопрос.
+ * Вход идёт формой Keycloak, а не подстановкой токена: набор проверяет, что человек входит и
+ * попадает туда, куда шёл, и вход мимо формы отвечал бы на другой вопрос.
  */
-
-/** Адрес экрана входа. Тот же, что объявляют маршруты домена входа. */
-export const SIGN_IN_PATH: string = '/sign-in';
 
 /** Чем набор держится за раздел: его адрес, заголовок экрана и метки проверки на разметке. */
 export interface ISectionMarks {
@@ -158,32 +154,53 @@ export function rowsOf(page: Page, section: TSectionName): Locator {
     return qa(page, SECTION[section].row);
 }
 
-/**
- * Пара входа: имя записи и её пароль.
- *
- * Названа не так, как то же самое зовётся в домене входа админки, и намеренно: набор в либы
- * приложения не смотрит — он говорит с ним по сети, как человек. Одно имя на два объявления
- * прочиталось бы общим типом, которого нет, и проверка повторов отбивает его прямо на пуше.
- */
-export interface IStandSignInPair {
-    readonly name: string;
-    readonly password: string;
+/** Человек стенда, каким его знает Keycloak: адрес, которым он входит. */
+export interface IStandPerson {
+    readonly email: string;
+}
+
+/** Экран входа области: админка отправила человека в Keycloak. */
+export async function expectRealmScreen(page: Page): Promise<void> {
+    await expect(page).toHaveURL((url: URL): boolean => url.origin === KEYCLOAK_ORIGIN);
+    await expect(qa(page, 'kc-login-form')).toBeVisible();
+}
+
+/** Заполняет форму области и отправляет её. */
+export async function enterOnRealmScreen(page: Page, email: string, password: string): Promise<void> {
+    await expectRealmScreen(page);
+    await qa(page, 'kc-username').locator('input').fill(email);
+    await qa(page, 'kc-password').locator('input').fill(password);
+    await qa(page, 'kc-login-submit').click();
 }
 
 /**
- * Вход парой стенда.
+ * Вход человеком стенда на форме Keycloak.
  *
- * Ждёт ухода с экрана входа: форма отвечает не мгновенно, и следующий шаг, начатый раньше,
- * читает ещё старую страницу.
+ * Ждёт возврата в админку: Keycloak отвечает не мгновенно, и следующий шаг, начатый раньше,
+ * читает ещё форму области.
  *
- * Пара приезжает доводом, а умолчание — запись самого набора: у неё права на все разделы, и ею
- * идёт весь набор, кроме проверок того, что видит человек без права.
+ * Умолчание — запись самого набора: у неё права на все разделы, и ею идёт весь набор, кроме
+ * проверок того, что видит человек без права.
  */
-export async function signIn(page: Page, account: IStandSignInPair = ACCOUNT): Promise<void> {
-    await qa(page, 'sign-in-name').locator('input').fill(account.name);
-    await qa(page, 'sign-in-password').locator('input').fill(account.password);
-    await qa(page, 'sign-in-submit').click();
-    await page.waitForURL((url: URL): boolean => !url.pathname.startsWith(SIGN_IN_PATH));
+export async function signIn(page: Page, person: IStandPerson = ACCOUNT): Promise<void> {
+    await enterOnRealmScreen(page, person.email, STAND_PASSWORD);
+    await page.waitForURL((url: URL): boolean => url.origin !== KEYCLOAK_ORIGIN);
+}
+
+/**
+ * Заголовок входа, с которым админка ходит к приёмнику.
+ *
+ * Прямой запрос спеки несёт тот же токен, что и экран: заголовок снимается с первого запроса
+ * админки к приёмнику после перезагрузки. Токен живёт в памяти страницы, и взять его оттуда
+ * иначе нечем.
+ */
+export async function bearerOf(page: Page): Promise<Record<string, string>> {
+    const [request]: [Request, Response | null] = await Promise.all([
+        page.waitForRequest((one: Request): boolean => one.url().includes('/api/') && Boolean(one.headers()['authorization'])),
+        page.reload(),
+    ]);
+
+    return { authorization: request.headers()['authorization'] };
 }
 
 /** Открыть раздел вошедшим: заход с прямого адреса, вход, ожидание строк. */

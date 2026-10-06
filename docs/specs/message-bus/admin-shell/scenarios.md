@@ -29,11 +29,11 @@ Given the owner entered
 When they press their own name in the top row
 Then a popup with the theme, the language and the exit opens, and the entry stays accepted
 
-### SC-MB-146 — the exit goes from the popup and leads away to the screen of the entry
+### SC-MB-146 — the exit goes from the popup and leads away to the entry screen of the realm
 
 Given the popup of the profile is open
 When the owner chooses the exit
-Then the entry is broken off, and the owner finds themselves at the screen of the entry
+Then the entry at Keycloak is broken off, and the owner finds themselves at the entry screen of the realm
 
 ### SC-MB-147 — the theme is switched in the popup and outlives a reload
 

@@ -1,135 +1,58 @@
 /**
- * Учётные записи стенда: запись самого набора с её ролью и люди, которых показывает раздел людей.
+ * Люди стенда: запись набора и люди, которых показывает раздел людей.
  *
- * Стоит отдельным файлом от остального засева: тот кладёт груз приёмом, а здесь записи заводятся
- * теми же операциями, какими их заводит человек, — первая запись экраном первичной настройки,
- * остальные разделом людей. Мимо операций идут роли и времена: ролей из веба стенду не нужно
- * больше одной, а время приёмник пишет часами машины.
+ * Входят они через Keycloak: каждый заводится в области стенда с правами ролями клиента шины.
+ * Строки раздела людей кладутся запросом к базе стенда — раздел показывает учётные записи
+ * приёмника, а заводить их операцией нечем: вход по паре ушёл, и раздел людей уходит следом.
  *
  * Запрос к хранилищу приезжает доводом, а не берётся здесь заново: он завязан на адрес базы
  * стенда, и второй его сборкой этот файл отвечал бы на вопрос об адресе второй раз.
  */
-import { ACCOUNT, API_ORIGIN, PEOPLE, WATCHER_ROLE } from './stand.mjs';
+import { seedRealmPeople } from '../../../tools/keycloak-stand.mjs';
+
+import { ACCOUNT, ALL_RIGHTS, CLIENT, KEYCLOAK_ORIGIN, PEOPLE, REALM, STAND_PASSWORD, WATCHER_RIGHTS, WATCHER_ROLE } from './stand.mjs';
 
 /**
- * Учётная запись стенда: первая запись узла, заведённая тем же запросом, каким её заводит экран
- * первичной настройки. Ответ несёт куку входа — ею дальше заводятся люди.
- *
- * Роль владельца кладётся до запроса: вычистка стирает и роли, а заведение первой записи без
- * роли владельца отказывает по устройству.
+ * Заводит людей в Keycloak и строки раздела людей. Отвечает ключом записи набора в Keycloak: им
+ * приёмник узнаёт вошедшего, и им же записан оператор чата.
  */
-export async function seedAccount(sql) {
-    await role(sql);
-
-    const answer = await fetch(`${API_ORIGIN}/api/setup`, {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ name: ACCOUNT.name, password: ACCOUNT.password }),
+export async function seedPeople(sql) {
+    const ids = await seedRealmPeople({
+        origin: KEYCLOAK_ORIGIN,
+        realm: REALM,
+        clientId: CLIENT,
+        password: STAND_PASSWORD,
+        people: [ACCOUNT, ...Object.values(PEOPLE)],
     });
 
-    if (!answer.ok) {
-        throw new Error(`первая запись стенда не заведена: ${answer.status} ${await answer.text()}`);
-    }
-
-    const cookie = answer.headers.get('set-cookie')?.split(';')[0] ?? '';
-
-    if (cookie === '') {
-        throw new Error('первая запись стенда заведена без куки входа: людей заводить нечем');
-    }
-
-    return cookie;
-}
-
-/**
- * Роль записи стенда: все права разом.
- *
- * Права здесь у всех, потому что набор проверяет разделы, а не права: само сложение прав и два
- * отказа проверяются вызовом, спеками приёмника. Без роли запись прав не имеет ни одного, и весь
- * набор покраснел бы на пустой админке — ни один сценарий при этом не был бы о правах.
- *
- * Имена перечислены здесь, а не собраны из кода приёмника: набор, взятый из того же кода, что
- * проверяется, подтвердил бы сам себя. Разойдётся перечень с набором — стенд скажет об этом
- * сразу: раздел, права на который не нашлось, исчезнет с экрана.
- */
-async function role(sql) {
-    const rights = [
-        'postmortems:read',
-        'postmortems:manage',
-        'proposals:read',
-        'proposals:manage',
-        'summaries:read',
-        'usage:read',
-        'invites:read',
-        'invites:manage',
-        'accounts:read',
-        'accounts:manage',
-        'roles:manage',
-        'chat:read',
-    ]
-        .map((right) => `'${right}'`)
-        .join(', ');
-
-    await sql(`INSERT INTO "role" ("id", "key", "name", "rights") VALUES (gen_random_uuid(), 'owner', 'Владелец', ARRAY[${rights}]);`);
-}
-
-/**
- * Люди стенда: те, кого показывает раздел людей.
- *
- * Заводятся операциями раздела людей под кукой записи набора — так же, как их заводит человек с
- * экрана. Отключение идёт своей операцией, а роль и времена ставятся запросом: время последнего
- * входа приёмник пишет часами машины, и оставленное как есть оно меняло бы порядок списка от
- * прогона к прогону.
- *
- * Время последнего входа наблюдателя стоит в прошлом только до его первого входа: спека про
- * раздел без права входит именно им, и после неё значение — сегодняшнее. Поэтому список людей
- * судится по строке, найденной именем, а не по её месту в порядке.
- */
-export async function seedPeople(cookie, sql) {
-    for (const person of Object.values(PEOPLE)) {
-        await people(cookie, '', { name: person.name, password: person.password });
-    }
-
-    await people(cookie, `/${encodeURIComponent(PEOPLE.disabled.name)}/disable`, null);
-    await watcherRole(sql);
+    await sql([roleSql('owner', 'Владелец', ALL_RIGHTS), roleSql('watcher', WATCHER_ROLE, WATCHER_RIGHTS)].join('\n'));
+    await sql([ACCOUNT, ...Object.values(PEOPLE)].map((person) => accountSql(person, ids.get(person.email))).join('\n'));
     await peopleMoments(sql);
+
+    return ids.get(ACCOUNT.email);
 }
 
-/** Операция раздела людей под кукой входа: заведение и отключение. */
-async function people(cookie, path, body) {
-    const answer = await fetch(`${API_ORIGIN}/api/accounts${path}`, {
-        method: 'POST',
-        headers: { 'content-type': 'application/json', cookie },
-        body: body === null ? undefined : JSON.stringify(body),
-    });
+function list(rights) {
+    return rights.length ? `ARRAY[${rights.map((right) => `'${right}'`).join(', ')}]` : `'{}'::text[]`;
+}
 
-    if (!answer.ok) {
-        throw new Error(`операция людей «${path || 'заведение'}» отбита: ${answer.status} ${await answer.text()}`);
-    }
+function roleSql(key, name, rights) {
+    return `INSERT INTO "role" ("id", "key", "name", "rights") VALUES (gen_random_uuid(), '${key}', '${name}', ${list(rights)});`;
 }
 
 /**
- * Роль наблюдателя: права на все четыре раздела груза, на чат — и ни одного права на людей.
- *
- * Ею набор входит, проверяя, что раздел людей без права `accounts:read` не показан и не
- * открывается. Роль без единого права ответила бы на другой вопрос: вошедший без прав не видит
- * ни одного раздела вообще, и пропажа пункта людей ничего не значила бы.
- *
- * Право на чат у наблюдателя есть, а записи оператора чата — нет: им набор проверяет, что
- * вошедший с правом, но не оператор, видит пустой список, а не отказ. Право и принадлежность
- * сайтам — разные вопросы, и без такого человека их не различить.
+ * Строка раздела людей. Ключ строки — ключ человека в Keycloak: им приёмник узнаёт вошедшего, и
+ * отказ отключить свою запись сверяет именно его. Роль — та, чьи права у человека в Keycloak;
+ * пароля у строки нет, поле хеша держит метку стенда.
  */
-async function watcherRole(sql) {
-    const rights = ['postmortems:read', 'proposals:read', 'summaries:read', 'usage:read', 'invites:read', 'chat:read']
-        .map((right) => `'${right}'`)
-        .join(', ');
+function accountSql(person, id) {
+    const role = person.rights === ALL_RIGHTS ? 'owner' : person.rights === WATCHER_RIGHTS ? 'watcher' : null;
+    const roleId = role ? `(SELECT "id" FROM "role" WHERE "key" = '${role}')` : 'NULL';
 
-    await sql(
-        [
-            `INSERT INTO "role" ("id", "key", "name", "rights") VALUES (gen_random_uuid(), 'watcher', '${WATCHER_ROLE}', ARRAY[${rights}]);`,
-            `UPDATE "account" SET "roleId" = (SELECT "id" FROM "role" WHERE "key" = 'watcher')`,
-            `    WHERE "name" IN ('${PEOPLE.watcher.name}', '${PEOPLE.disabled.name}');`,
-        ].join('\n')
-    );
+    return [
+        `INSERT INTO "account" ("id", "name", "nameKey", "passwordHash", "roleId")`,
+        `    VALUES ('${id}', '${person.name}', '${person.name.trim().toLowerCase()}', 'stand:no-password', ${roleId});`,
+    ].join('\n');
 }
 
 /**

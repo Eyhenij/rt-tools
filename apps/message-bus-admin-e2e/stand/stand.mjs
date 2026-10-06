@@ -50,11 +50,12 @@ export const ADMIN_ORIGIN = `http://localhost:${ADMIN_PORT}`;
 /**
  * Тем же адресом админка зовётся из браузера набора.
  *
- * Браузер поднимается образом, и `localhost` там свой: машину он зовёт другим именем. Отсюда же
- * его берёт и настройка прогонщика, и засев площадок виджета — заголовок адреса страницы браузер
- * шлёт именно таким, и площадка, у которой в списке стоит `localhost`, отказала бы ему.
+ * Браузер поднимается образом, и `localhost` там свой, но порт админки образ пересылает на машину:
+ * вход через Keycloak работает только на защищённом адресе, а по простому `http` браузер считает
+ * защищённым один `localhost`. Отсюда же адрес берёт и настройка прогонщика, и засев площадок
+ * виджета — заголовок адреса страницы браузер шлёт именно таким.
  */
-export const ADMIN_PAGE_ORIGIN = `http://host.docker.internal:${ADMIN_PORT}`;
+export const ADMIN_PAGE_ORIGIN = `http://localhost:${ADMIN_PORT}`;
 
 /**
  * Порт страницы чужого адреса: на нём стенд поднимает страницу потребителя, и только её.
@@ -78,14 +79,64 @@ export const STAND_DATABASE_URL = `postgresql://message_bus:message_bus@localhos
 export const SERVER_DATABASE_URL = 'postgresql://message_bus:message_bus@localhost:55432/message_bus';
 
 /**
- * Пара входа стенда.
- *
- * Тайной она не является и не притворяется: запись живёт только в базе стенда, которую набор
- * заводит и вычищает сам, а сам стенд слушает локалхост. Пара названа здесь, а не в окружении,
+ * Keycloak стенда. Образ браузера пересылает его порт на машину, так что браузер и приёмник видят
+ * Keycloak одним адресом, и выдавший в токене тот же, что назван приёмнику.
+ */
+export const KEYCLOAK_ORIGIN = 'http://localhost:58080';
+export const REALM = 'rt';
+export const CLIENT = 'rt-message-bus-admin';
+
+/**
+ * Вход приёмника стенда. Нужен и серверу, и командам засева: обе стороны собирают один модуль
+ * приложения, а он без входа не собирается.
+ */
+export const STAND_AUTH_ENV = Object.freeze({ AUTH_ISSUER: `${KEYCLOAK_ORIGIN}/realms/${REALM}`, AUTH_CLIENT_ID: CLIENT });
+
+/**
+ * Пароль людей стенда в Keycloak. Тайной он не является и не притворяется: люди живут только в
+ * области стенда, которую набор заводит заново на каждом прогоне. Назван здесь, а не в окружении,
  * потому что тест, погашенный отсутствием переменной, значится пропущенным, а прогон при этом
  * выглядит успешным.
  */
-export const ACCOUNT = Object.freeze({ name: 'Набор', password: 'nabor-e2e-2026' });
+export const STAND_PASSWORD = 'Nabor-stand-2026';
+
+/** Все права шины: ими входит запись набора, потому что набор проверяет разделы, а не права. */
+export const ALL_RIGHTS = Object.freeze([
+    'postmortems:read',
+    'postmortems:manage',
+    'proposals:read',
+    'proposals:manage',
+    'summaries:read',
+    'usage:read',
+    'invites:read',
+    'invites:manage',
+    'accounts:read',
+    'accounts:manage',
+    'roles:manage',
+    'chat:read',
+]);
+
+/** Права наблюдателя: четыре раздела груза, приглашения и чат — и ни одного права на людей. */
+export const WATCHER_RIGHTS = Object.freeze([
+    'postmortems:read',
+    'proposals:read',
+    'summaries:read',
+    'usage:read',
+    'invites:read',
+    'chat:read',
+]);
+
+/**
+ * Запись набора. `name` — имя строки раздела людей, и оно же — имя и фамилия в Keycloak: шапка и
+ * раздел людей называют человека одним именем, и по нему раздел узнаёт свою строку.
+ */
+export const ACCOUNT = Object.freeze({
+    name: 'Набор Стенд',
+    email: 'nabor@stand.example',
+    firstName: 'Набор',
+    lastName: 'Стенд',
+    rights: ALL_RIGHTS,
+});
 
 /**
  * Деревья стенда.
@@ -135,14 +186,39 @@ export const ENROLLED_SLUG = 'stand-enrolled';
  * «разделов нет». Третьим входить нельзя — список людей обещает про него «Не входили», и первый
  * же вход этой спеки сделал бы то обещание ложным.
  *
- * Пара входа наблюдателя тайной не является — по той же причине, по какой ею не является пара
- * набора: запись живёт в базе стенда, которую прогон заводит и вычищает сам.
+ * В Keycloak у каждого те же права ролями клиента шины, что у его строки в разделе людей, а имя
+ * и фамилия складываются в имя строки: строка показывает человека, а входит он токеном.
  */
 export const PEOPLE = Object.freeze({
-    watcher: Object.freeze({ name: 'Стенд наблюдатель', password: 'nabor-e2e-watcher' }),
-    disabled: Object.freeze({ name: 'Стенд отключённый', password: 'nabor-e2e-disabled' }),
-    roleless: Object.freeze({ name: 'Стенд без роли', password: 'nabor-e2e-roleless' }),
-    entrant: Object.freeze({ name: 'Стенд без прав', password: 'nabor-e2e-entrant' }),
+    watcher: Object.freeze({
+        name: 'Стенд наблюдатель',
+        email: 'watcher@stand.example',
+        firstName: 'Стенд',
+        lastName: 'наблюдатель',
+        rights: WATCHER_RIGHTS,
+    }),
+    disabled: Object.freeze({
+        name: 'Стенд отключённый',
+        email: 'disabled@stand.example',
+        firstName: 'Стенд',
+        lastName: 'отключённый',
+        rights: WATCHER_RIGHTS,
+        enabled: false,
+    }),
+    roleless: Object.freeze({
+        name: 'Стенд без роли',
+        email: 'roleless@stand.example',
+        firstName: 'Стенд',
+        lastName: 'без роли',
+        rights: [],
+    }),
+    entrant: Object.freeze({
+        name: 'Стенд без прав',
+        email: 'entrant@stand.example',
+        firstName: 'Стенд',
+        lastName: 'без прав',
+        rights: [],
+    }),
 });
 
 /** Роль наблюдателя: права на разделы груза и ни одного права на людей. */

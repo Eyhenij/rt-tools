@@ -16,11 +16,21 @@
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
-import { seedAccount, seedPeople } from './seed-account.mjs';
+import { seedPeople } from './seed-account.mjs';
 import { seedChat } from './seed-chat.mjs';
 import { seedObservations } from './seed-observations.mjs';
 import { checkNothingDrifts } from './seed-self-check.mjs';
-import { ACCOUNT, API_ORIGIN, ENROLLED_SLUG, INVITES, SERVER_DATABASE_URL, STAND_DATABASE, STAND_DATABASE_URL, TREES } from './stand.mjs';
+import {
+    ACCOUNT,
+    API_ORIGIN,
+    ENROLLED_SLUG,
+    INVITES,
+    SERVER_DATABASE_URL,
+    STAND_AUTH_ENV,
+    STAND_DATABASE,
+    STAND_DATABASE_URL,
+    TREES,
+} from './stand.mjs';
 
 const ROOT = fileURLToPath(new URL('../../..', import.meta.url));
 
@@ -129,7 +139,7 @@ function sql(script, url = STAND_DATABASE_URL) {
 
 /** Команда приёмника: деревья заводятся только ею. */
 function command(args, input = '') {
-    return run('node', [API_ENTRY, ...args], { env: { DATABASE_URL: STAND_DATABASE_URL }, input });
+    return run('node', [API_ENTRY, ...args], { env: { DATABASE_URL: STAND_DATABASE_URL, ...STAND_AUTH_ENV }, input });
 }
 
 /**
@@ -466,9 +476,8 @@ async function states() {
 /** Засев целиком. Зовётся подъёмом стенда после того, как приёмник поднят. */
 export async function seed() {
     await wipe();
-    const cookie = await seedAccount(sql);
-    await seedPeople(cookie, sql);
-    await seedChat(sql, ACCOUNT.name);
+    const operator = await seedPeople(sql);
+    await seedChat(sql, operator);
     const tokens = await trees();
     await postmortems(tokens);
     await proposals(tokens);

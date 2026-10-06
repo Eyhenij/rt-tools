@@ -157,6 +157,8 @@ The open questions of the domain are shared, and they live in the spec next to i
 - 2026-10-06 — the entry moved to Keycloak, task RT-2576. The operations of the sign-in, the exit
   and the session are gone. So are the scenarios `SC-MB-38`, `SC-MB-41`, `SC-MB-56`, `SC-MB-57`,
   `SC-MB-58`, `SC-MB-61` and `SC-MB-80`.
+  The scenarios `SC-MB-33`…`SC-MB-37`, `SC-MB-44` and `SC-MB-45` now name the entry screen of
+  the realm, and `SC-MB-59` checks the stored hash alone.
 
 - 2026-09-15 — the commands of the launch line for the accounts were removed: the first record is
   created by the first-run screen, the rest by the people section. The scenarios of the commands

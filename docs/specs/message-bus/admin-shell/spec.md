@@ -308,3 +308,4 @@ None.
 | 2026-09-18 | By the task RT-2211 the screens of the sections took their labels from the dictionary: a row holds the key, the word by it is the screen's |
 | 2026-09-18 | By the task RT-2213 the English set was filled whole: both sets hold the same keys, and a key without a translation does not compile       |
 | 2026-09-18 | By the task RT-2214 a check was started: a word for a person written past the dictionary refuses the push and the pipeline                 |
+| 2026-10-06 | By the task RT-2576 the exit leads to the entry screen of Keycloak.                                                                        |

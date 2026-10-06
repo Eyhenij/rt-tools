@@ -4,9 +4,9 @@
 
 - **State:** `этап-идёт`
 - **Stage:** 1 of 1 — The bus server checks the Keycloak token
-- **Done:** the server checks the Keycloak token; the stand realm has the bus client
-- **Next step:** the admin part of the decision about RT-2577 — the admin panel signs in with
-  `@rt-tools/auth-angular`, then the end-to-end stand
+- **Done:** the server checks the Keycloak token; the admin panel signs in through Keycloak; the
+  operator chat stream reads the token; the end-to-end stand seeds its people in the stand realm
+- **Next step:** the push gate, then the folder is taken apart and the PR opens into the epic branch
 - **Uncommitted:** no
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -48,6 +48,16 @@
   by the first-run operation that left the server, and the suite of the epic branch stays red.
   RT-2580 keeps the scenarios of the suite that need Keycloak users. Affected stage of the plan: 1.
 
+- **The records of the people section open no sign-in.** The people and roles screens stay until
+  RT-2578, and their scenarios lost the parts that signed in with a record: `SC-MB-364`,
+  `SC-MB-365` and `SC-MB-378`. The stand gives each row the Keycloak key and the Keycloak name of
+  its person, so the screen and the receiver still find the own row. Affected stage of the plan: 1.
+
+- **The entry module gives its options to the application.** The settings operation of the admin
+  panel read them, and the module did not export them: the receiver did not start at all. The
+  spec of the module now starts an application operation that reads them. Affected stage of the
+  plan: 1.
+
 ## Sessions
 
 ### 2026-10-06
@@ -55,3 +65,5 @@
 - The task folder is written.
 - The server part: tests, types and lint are green over 44 projects. The server started against
   the stand Keycloak, sent 12 rights, answered 401 without a token and 200 to the liveness probe.
+- The end-to-end stand moved to Keycloak: the admin suite passed 167 of 167 twice, the example suite
+  10 of 10. Twenty-one frames were taken anew: the header names the stand account by its Keycloak name.

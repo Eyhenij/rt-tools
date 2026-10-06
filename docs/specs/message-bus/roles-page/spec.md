@@ -208,6 +208,8 @@ One receiver and one set of roles in it.
 
 ## History of changes
 
+- 2026-10-06 — the sign-in moved to Keycloak, task RT-2576: the sections a person sees follow the
+  rights of their token, so `SC-MB-378` no longer signs in with the record.
 - 2026-09-15 — the agreement was written before the code.
 - 2026-09-15 — merged into the domain by the task RT-1901: the receiver, the section, the two
   panels and the end-to-end suite are in the tree; every rule is bound to code in

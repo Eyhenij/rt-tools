@@ -19,11 +19,11 @@ describe('passwordHash', () => {
 });
 
 describe('passwordMatches', () => {
-    it('SC-MB-33 — годный пароль сходится со своим хешем', () => {
+    it('SC-MB-59 — годный пароль сходится со своим хешем', () => {
         expect(passwordMatches(PASSWORD, passwordHash(PASSWORD))).toBe(true);
     });
 
-    it('SC-MB-34 — негодный пароль со своим хешем не сходится', () => {
+    it('SC-MB-59 — негодный пароль со своим хешем не сходится', () => {
         expect(passwordMatches('не-тот-пароль', passwordHash(PASSWORD))).toBe(false);
     });
 
@@ -34,7 +34,7 @@ describe('passwordMatches', () => {
         expect(passwordMatches('новый-пароль', stored)).toBe(true);
     });
 
-    it('SC-MB-34 — испорченная строка хранилища читается как «не сошлось», а не роняет сверку', () => {
+    it('SC-MB-59 — испорченная строка хранилища читается как «не сошлось», а не роняет сверку', () => {
         expect(passwordMatches(PASSWORD, '')).toBe(false);
         expect(passwordMatches(PASSWORD, 'только-одно-поле')).toBe(false);
     });
