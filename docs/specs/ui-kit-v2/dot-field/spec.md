@@ -77,7 +77,7 @@ Not applicable: the field keeps only the time of the noise and the size of the c
 | reduced motion | one still frame of the same clouds                  |
 | dark theme     | the same clouds in the colour of the dark theme     |
 
-The showcase gets `Playground` with a card in the centre over the field and `Themes`. The movement
+The showcase gets `Playground` with a card in the centre over the field, `Presets` and `Themes`. The movement
 is not shot: the snapshot shows a still frame.
 
 ## Cross-cutting requirements

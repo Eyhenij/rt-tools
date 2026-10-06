@@ -28,3 +28,8 @@ export const Themes: TStory = {
     parameters: storySnapshotSkip(MOVING),
     args: { part: 'themes' },
 };
+
+export const Presets: TStory = {
+    parameters: storySnapshotSkip(MOVING),
+    args: { part: 'presets' },
+};
