@@ -1,117 +1,50 @@
-import { provideHttpClient } from '@angular/common/http';
-import { HttpTestingController, provideHttpClientTesting, TestRequest } from '@angular/common/http/testing';
+import { computed, provideZonelessChangeDetection, signal, WritableSignal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { ESignInFault, IAdminSession } from '@rt/message-bus-admin/auth/util';
+import { ICaller, TPermission } from '@rt-tools/auth-contract';
+import { RtAuthService } from '@rt-tools/auth-angular';
 
 import { AuthStore } from './auth.store';
 
-const LOGIN_PATH: string = '/api/auth/login';
-const LOGOUT_PATH: string = '/api/auth/logout';
-const SESSION_PATH: string = '/api/auth/session';
+/** Модуль входа подменён: вошедшего называет Keycloak, и спека ставит его таким, каким его отдал бы токен. */
+const caller: WritableSignal<ICaller | null> = signal<ICaller | null>(null);
 
-const SESSION: IAdminSession = { name: 'owner', rights: ['postmortems:read'] };
-
-describe('AuthStore', () => {
+describe('AuthStore', (): void => {
     let store: AuthStore;
-    let http: HttpTestingController;
 
-    /** Вход парой: спека отвечает за приёмник тем, чем сказано. */
-    function signIn(): TestRequest {
-        store.signIn({ name: 'owner', password: 'right' });
-
-        return http.expectOne(LOGIN_PATH);
-    }
-
-    beforeEach(() => {
-        TestBed.configureTestingModule({ providers: [provideHttpClient(), provideHttpClientTesting()] });
-
+    beforeEach((): void => {
+        caller.set(null);
+        TestBed.configureTestingModule({
+            providers: [
+                provideZonelessChangeDetection(),
+                {
+                    provide: RtAuthService,
+                    useValue: {
+                        caller,
+                        authenticated: computed((): boolean => caller() !== null),
+                        logout: (): Promise<void> => Promise.resolve(),
+                    },
+                },
+            ],
+        });
         store = TestBed.inject(AuthStore);
-        http = TestBed.inject(HttpTestingController);
     });
 
-    afterEach(() => {
-        http.verify();
-        TestBed.resetTestingModule();
+    it('SC-MB-296 — права вошедшего — ровно роли клиента из его токена, имя — имя из токена', (): void => {
+        const permissions: ReadonlySet<TPermission> = new Set<TPermission>(['postmortems:read', 'chat:read']);
+        caller.set({ name: 'Анна', subject: 'p-1', email: 'anna@example.com', emailVerified: true, permissions });
+
+        expect(store.session()).toEqual({ name: 'Анна', rights: ['postmortems:read', 'chat:read'] });
+        expect(store.allows('chat:read')).toBe(true);
+        expect(store.allows('accounts:manage')).toBe(false);
     });
 
-    it('годная пара делает человека вошедшим', () => {
-        signIn().flush(SESSION);
+    it('SC-MB-296 — без имени в токене шапка называет почту', (): void => {
+        caller.set({ name: null, subject: 'p-1', email: 'anna@example.com', emailVerified: true, permissions: new Set<TPermission>() });
 
-        expect(store.signedIn()).toBe(true);
-        expect(store.session()).toEqual(SESSION);
-        expect(store.fault()).toBeNull();
+        expect(store.session()?.name).toBe('anna@example.com');
     });
 
-    it('SC-MB-296 — права вошедшего приезжают тем же ответом и лежат в хранилище входа', () => {
-        signIn().flush(SESSION);
-
-        expect(store.rights()).toEqual(['postmortems:read']);
-        expect(store.allows('postmortems:read')).toBe(true);
-        expect(store.allows('roles:manage')).toBe(false);
-    });
-
-    it('пока ответ о вошедшем не приехал, не скрывается ничего', () => {
-        // Права неизвестны, а не пусты: скрыв по пустому набору, админка спрятала бы разделы у
-        // того, у кого они есть, и человек остался бы на пустом экране без выхода с него.
-        expect(store.rightsKnown()).toBe(false);
-        expect(store.allows('roles:manage')).toBe(true);
-    });
-
-    it('вход идёт с кукой: без неё приёмник не узнаёт вошедшего', () => {
-        const request: TestRequest = signIn();
-
-        expect(request.request.withCredentials).toBe(true);
-        request.flush(SESSION);
-    });
-
-    it('неверная пара оставляет невошедшим и называет род отказа', () => {
-        signIn().flush('', { status: 401, statusText: 'Unauthorized' });
-
-        expect(store.signedIn()).toBe(false);
-        expect(store.fault()).toBe(ESignInFault.Pair);
-    });
-
-    it('вторая попытка поверх идущей приёмника не тревожит', () => {
-        const first: TestRequest = signIn();
-
-        store.signIn({ name: 'owner', password: 'again' });
-        http.expectNone(LOGIN_PATH);
-        first.flush(SESSION);
-
-        expect(store.signedIn()).toBe(true);
-    });
-
-    it('вход переживает перезагрузку: кто вошёл, спрашивается у приёмника', () => {
-        store.restore().subscribe();
-        http.expectOne(SESSION_PATH).flush(SESSION);
-
-        expect(store.signedIn()).toBe(true);
-    });
-
-    it('«не вошёл» — законный ответ, а не поломка работы', () => {
-        let asked: IAdminSession | null = SESSION;
-
-        store.restore().subscribe((session: IAdminSession | null): void => void (asked = session));
-        http.expectOne(SESSION_PATH).flush('', { status: 401, statusText: 'Unauthorized' });
-
-        expect(asked).toBeNull();
-        expect(store.signedIn()).toBe(false);
-    });
-
-    it('выход обрывает вход у приёмника и в состоянии', () => {
-        signIn().flush(SESSION);
-        store.signOut().subscribe();
-        http.expectOne(LOGOUT_PATH).flush(null);
-
-        expect(store.signedIn()).toBe(false);
-    });
-
-    it('забытый вход приёмника не тревожит: это он и сказал, что входа больше нет', () => {
-        signIn().flush(SESSION);
-        store.forget();
-
-        expect(store.signedIn()).toBe(false);
-        expect(store.session()).toBeNull();
-        http.expectNone(LOGOUT_PATH);
+    it('SC-MB-301 — пока вошедшего нет, не скрывается ничего', (): void => {
+        expect(store.allows('accounts:manage')).toBe(true);
     });
 });

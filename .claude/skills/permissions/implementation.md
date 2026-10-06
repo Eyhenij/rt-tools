@@ -26,7 +26,7 @@ operation, one check for the whole application, closed by default.
 - **`Code.Unauthenticated`** — the framework's `UnauthorizedException` — the answer 401
 - **`Code.PermissionDenied`** — the framework's `ForbiddenException` — the answer 403
 - **the sign-in interceptor** — `AuthGuard` of `@rt-tools/auth-server` for the token of a person, and `AccessGuard` of the intake for the tree token: a request passes when both agree
-- **the admin panel route guard** — `sessionGuard`
+- **the admin panel route guard** — `rtAuthGuard` of `@rt-tools/auth-angular`
 
 ## Where it lives
 
@@ -34,7 +34,7 @@ operation, one check for the whole application, closed by default.
 - **the access check** — `libs/message-bus-api/access/feature/src/lib/access.guard.ts`
 - **putting the check on everything** — `libs/message-bus-api/access/feature/src/lib/access.module.ts`
 - **the token check, the rights in it and the start audit of the declarations** — `projects/auth-server/src/lib/auth-server.module.ts`, connected in `apps/message-bus/src/app/app.module.ts` with the options read by `projects/auth-server/src/lib/env-options.ts`
-- **the admin panel route guard** — `libs/message-bus-admin/auth/shell/src/lib/session.guard.ts`
+- **the admin panel route guard** — `rtAuthGuard` of `@rt-tools/auth-angular`, `projects/auth-angular/src/lib/auth.guards.ts`
 - **the sign-in state in the admin panel and the rights of the signed-in person** — `libs/message-bus-admin/auth/data-access/src/lib/auth.store.ts`
 - **the closed set of rights and the addition of a role with the edits over it** — `libs/message-bus-common/src/lib/rights.ts`
 - **the role and the pointed edits in the storage** — `prisma/schema.prisma` — the models `Role` and `AccountPermission`
@@ -60,7 +60,7 @@ silent about.
 - **The right is checked by an interceptor before the procedure body.** — `projects/auth-server/src/lib/auth-server.module.ts:AuthServerModule` — the token check is put as `APP_GUARD`, and the tree check of `libs/message-bus-api/access/feature/src/lib/access.module.ts:AccessModule` stands next to it the same way: both run before any handler.
 - **Being public is declared with a reason.** — Here it is otherwise: `libs/message-bus-api/access/util/src/lib/operation-access.ts:PublicOperation` accepts no arguments, and the reason stands as a comment on the operation. The public operations are the liveness probe, the enrolment of a tree and the operations of the chat widget, and all have their argument in a comment rather than in the signature.
 - **A menu item and a section address are closed by one declaration.** — `libs/message-bus-admin/common/container/util/src/lib/menu.declaration.ts:IAdminMenuItem` — the right stands at the item, and `libs/message-bus-admin/auth/shell/src/lib/section-access.ts:sectionRightGuard` reads it from there. The guard stands on the children of the closed branch: on the branch itself it would run once per page load and would not see moves between sections.
-- **Until the rights are received the admin panel hides nothing.** — `libs/message-bus-admin/auth/data-access/src/lib/auth.store.ts:allows` — until the answer about the signed-in person arrives, the rights are unknown rather than empty, and neither the menu nor the guard by a right hides anything by them. The route guard next to it waits for that same answer rather than deciding by the tab's memory — `libs/message-bus-admin/auth/shell/src/lib/session.guard.ts:sessionGuard`; checked by a click in `apps/message-bus-admin-e2e/src/sign-in.spec.ts`.
+- **Until the rights are received the admin panel hides nothing.** — `libs/message-bus-admin/auth/data-access/src/lib/auth.store.ts:allows` — until Keycloak names the person, the rights are unknown rather than empty, and neither the menu nor the guard by a right hides anything by them. The start of the admin panel waits for the silent check of Keycloak, so a signed-in person has their rights from the first route.
 
 ## What else is worth knowing when reading the code
 

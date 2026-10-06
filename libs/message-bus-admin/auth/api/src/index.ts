@@ -1,1 +1,2 @@
-export * from './lib/auth.api.service';
+/** Обращений к приёмнику у входа нет: вход, продление и выход ведёт Keycloak. */
+export {};

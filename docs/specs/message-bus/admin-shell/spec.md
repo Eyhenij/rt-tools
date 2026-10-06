@@ -128,9 +128,9 @@ creates:
 - **The dates in the lists are shown in one shape at any choice.** They are drawn by the admin
   application itself — by the day, the month, the year and the minutes in figures — and that shape reads
   the same in both languages; there is no locale of the kit in them at all.
-- **The choice of the language stands on the screen of the entry and in the popup of the profile.** Put
-  only at the entry, it does not change after the entry at all — while the labels of the kit a person
-  gets at every list.
+- **The choice of the language stands in the popup of the profile.** The screen of the entry belongs to
+  Keycloak and carries its own choice; the admin application keeps the one the labels of the kit
+  follow at every list.
 - **The choice of the language lives on the device and outlives a reload.** By the same thing the choice
   of the theme lives by.
 
@@ -143,14 +143,6 @@ creates:
 
 **The screen of the entry and the shell of the application.**
 
-- **The form of the entry stays reactive and a component of its own.** The name, the heading and the
-  strip with the theme and the language belong to the screen, not to a pair of fields; folded into the
-  form, they go away together with it into any other place the form is needed at.
-- **The fields of the entry carry an icon and a placeholder.** An empty field without a hint answers the
-  question "what is written here" only by the label at the side, and on a narrow screen it goes away
-  first.
-- **A refusal of the entry stays a message in the form.** A toast about a wrong pair goes away in a few
-  seconds, and the reason of the refusal is needed exactly in the minute the person is fixing the field.
 - **The stack of the toasts is one, and it is drawn by the framework.** A second one, created by the
   shell, shows the same toast a second time and in another corner of the screen: the bus is listened to
   by each of them.
@@ -278,8 +270,8 @@ account.
 - **The theme was created, and the switch stands in the popup and on the screen of the entry.** The word
   of the owner at the analysis; before that request the second theme counted as not created. The price:
   both themes are now checked by a measurement at every screen.
-- **The choice of the language stands both at the entry and in the popup of the profile.** The word of
-  the owner. There are two languages, and the second is the built-in English default of the kit: the
+- **The choice of the language stands in the popup of the profile.** The word of the owner; the
+  screen of the entry moved to Keycloak with its own choice. There are two languages, and the second is the built-in English default of the kit: the
   application creates no second dictionary of its own. The price: until both sets were filled the
   screen came out half bilingual.
 - **The application calls itself by a word, not by a sign.** The word of the owner: the admin

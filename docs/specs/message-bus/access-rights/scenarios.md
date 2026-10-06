@@ -60,11 +60,11 @@ Given a fit token of a tree
 When an operation declared by a right is called by it
 Then the answer is a refusal, and the token gives no rights
 
-### SC-MB-296 — the answer about the signed-in person carries their rights
+### SC-MB-296 — the admin panel takes the rights of the person from their token
 
-Given an account with a role and pointed edits over it
-When the admin panel asks who signed in
-Then the answer holds the rights of that person as the role and the edits over it add up to
+Given a person whose token carries client roles of the bus client
+When the admin panel reads who signed in
+Then their rights are exactly those roles, and their name is the name from the token
 
 ### SC-MB-297 — a right that no operation declares is not accepted into a role
 

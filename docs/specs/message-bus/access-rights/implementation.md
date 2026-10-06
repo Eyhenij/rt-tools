@@ -14,7 +14,7 @@ code, or the code holds what the spec is silent about.
 - **A request without a sign-in is refused as unauthenticated, and a sign-in without a right as permission denied.** — `projects/auth-server/src/lib/auth.guard.ts:AuthGuard`
 - **A refusal by a right does not name which right was missing.** — `projects/auth-server/src/lib/auth.guard.ts:AuthGuard`
 - **A token of a tree carries no rights and opens no operation declared by a right.** — `libs/message-bus-api/access/feature/src/lib/access.guard.ts:AccessGuard`
-- **The answer about the signed-in person carries their rights whole.** — **Not carried out:** the answer was given by the operation of the entry that left the intake; the admin panel reads the rights from the token in the same task
+- **The admin panel reads the rights of the person from their token.** — `libs/message-bus-admin/auth/data-access/src/lib/auth.store.ts:AuthStore` — the rights are the permissions of the caller `@rt-tools/auth-angular` read from the token
 - **Until the rights are received the admin panel hides nothing.** — `libs/message-bus-admin/auth/data-access/src/lib/auth.store.ts:allows`
 - **A menu item carries the right that opens its section, and the address is closed by that same declaration.** — `libs/message-bus-admin/common/container/util/src/lib/menu.declaration.ts:IAdminMenuItem`
 - **An item whose right the signed-in person does not hold is not drawn.** — `libs/message-bus-admin/common/container/feature/src/lib/admin-container.component.ts:sections`

@@ -102,57 +102,25 @@ export const messageBusAdminBoundaries = [
         ],
     },
 
-    // Вход: экран берёт форму и состояние, состояние — обращение к приёмнику, обращение —
-    // модели. Лесенка домена выписана ребро за ребром.
-    //
-    // Общий слой экран видит ради переключателей темы и языка: они стоят и здесь, и в попапе
-    // профиля, а выбор у них один на приложение. Собранные на входе заново, они разошлись бы с
-    // попапом набором языков и видом
-    {
-        sourceTag: 'scope:message-bus-admin-auth-feature-sign-in',
-        onlyDependOnLibsWithTags: ['scope:message-bus-admin-auth-ui', AUTH_DATA_ACCESS, AUTH_UTIL, CORE_UI, CORE_UTIL, PACKAGE],
-    },
-    // Экран первой записи стоит на той же раскладке входа и видит то же, что экран входа, кроме
-    // формы входа: у его формы своё слово отказа — то, что сказал приёмник, — а не род отказа
-    // по паре. Форму он держит сам, на готовых полях кита
-    {
-        sourceTag: 'scope:message-bus-admin-auth-feature-setup',
-        onlyDependOnLibsWithTags: [AUTH_DATA_ACCESS, AUTH_UTIL, CORE_UI, CORE_UTIL, PACKAGE],
-    },
-    // Стражи закрытой ветки стоят здесь оба, и второй читает право раздела из объявления пункта
-    // меню: свой список прав рядом с маршрутами разошёлся бы с меню молча. Оболочку он при этом
-    // не видит — она грузится по требованию, и статическая ссылка на неё это потеряла бы
-    // Словарь маршруты входа видят по той же причине, что и меню: заголовок вкладки они называют
-    // ключом, а текст по нему спрашивают на каждом переходе — написанный здесь строкой, он остался
-    // бы на одном языке при любом выборе человека
+    // Стражи по праву раздела читают право из объявления пункта меню: свой список прав рядом с
+    // маршрутами разошёлся бы с меню молча. Оболочку они при этом не видят — она грузится по
+    // требованию, и статическая ссылка на неё это потеряла бы. Страж входа берётся из пакета
     {
         sourceTag: 'scope:message-bus-admin-auth-shell',
-        onlyDependOnLibsWithTags: [
-            'scope:message-bus-admin-auth-feature-sign-in',
-            'scope:message-bus-admin-auth-feature-setup',
-            AUTH_DATA_ACCESS,
-            AUTH_UTIL,
-            CONTAINER_UTIL,
-            CORE_UTIL,
-            PACKAGE,
-        ],
+        onlyDependOnLibsWithTags: [AUTH_DATA_ACCESS, AUTH_UTIL, CONTAINER_UTIL, CORE_UTIL, PACKAGE],
     },
-    // Форма входа видит словарь по той же причине, что шапка и меню: подписи её полей, кнопки и
-    // текстов отказа лежат там, где остальные подписи админки, — написанные здесь литералом, они
-    // остались бы на одном языке при любом выборе человека
+    // У входа нет своих компонентов и обращений: экран входа рисует Keycloak
     {
         sourceTag: 'scope:message-bus-admin-auth-ui',
-        onlyDependOnLibsWithTags: [AUTH_UTIL, CORE_UTIL, PACKAGE],
+        onlyDependOnLibsWithTags: [AUTH_UTIL, PACKAGE],
     },
     {
         sourceTag: 'scope:message-bus-admin-auth-data-access',
-        onlyDependOnLibsWithTags: ['scope:message-bus-admin-auth-api', AUTH_UTIL, PACKAGE],
+        onlyDependOnLibsWithTags: [AUTH_UTIL, PACKAGE],
     },
-    // Обращение входа видит общий слой обращений ради разбора отказа правки: заведение первой
-    // записи отвечает словом приёмника, и читается оно тем же разбором, что у правок людей
     {
         sourceTag: 'scope:message-bus-admin-auth-api',
-        onlyDependOnLibsWithTags: [AUTH_UTIL, CORE_API, PACKAGE],
+        onlyDependOnLibsWithTags: [AUTH_UTIL, PACKAGE],
     },
 
     // Оболочка: она знает, кто вошёл, куда его вывести при выходе, из чего собрано меню и чем

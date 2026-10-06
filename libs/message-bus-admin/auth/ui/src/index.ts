@@ -1,1 +1,2 @@
-export * from './lib/sign-in-form/admin-sign-in-form.component';
+/** Своих компонентов у входа нет: экран входа рисует Keycloak. */
+export {};

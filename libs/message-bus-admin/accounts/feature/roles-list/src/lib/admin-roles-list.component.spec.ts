@@ -1,3 +1,6 @@
+import { computed, signal, WritableSignal } from '@angular/core';
+import { ICaller, TPermission } from '@rt-tools/auth-contract';
+import { RtAuthService } from '@rt-tools/auth-angular';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting, TestRequest } from '@angular/common/http/testing';
 import { DebugElement } from '@angular/core';
@@ -6,12 +9,26 @@ import { By } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { IRole, ROLES_PATH } from '@rt/message-bus-admin/accounts/util';
-import { AuthStore } from '@rt/message-bus-admin/auth/data-access';
 import { IPage } from '@rt/message-bus-common';
 import { IDBStorageService, provideRtStorage, provideRtUtils } from '@rt-tools/core';
 import { Observable, of } from 'rxjs';
 
 import { AdminRolesListComponent } from './admin-roles-list.component';
+
+/**
+ * Модуль входа подменён: вошедшего называет Keycloak, и права ставит спека тем же набором ролей,
+ * каким их выдал бы токен.
+ */
+const caller: WritableSignal<ICaller | null> = signal<ICaller | null>(null);
+const AUTH_DOUBLE: Pick<RtAuthService, 'caller' | 'authenticated' | 'logout'> = {
+    caller,
+    authenticated: computed((): boolean => caller() !== null),
+    logout: (): Promise<void> => Promise.resolve(),
+};
+
+function callerWith(name: string, rights: readonly string[]): ICaller {
+    return { name, subject: 'p-1', email: null, emailVerified: true, permissions: new Set(rights as readonly TPermission[]) };
+}
 
 /**
  * Хранилище выбора столбцов, живущее в памяти: настоящее лежит в базе браузера, которой в стенде
@@ -65,8 +82,7 @@ describe('AdminRolesListComponent', () => {
     }
 
     function signedInWith(rights: readonly string[]): void {
-        TestBed.inject(AuthStore).restore().subscribe();
-        http.expectOne('/api/auth/session').flush({ name: 'Набор', rights });
+        caller.set(callerWith('Набор', rights));
         harness.detectChanges();
     }
 
@@ -81,8 +97,10 @@ describe('AdminRolesListComponent', () => {
     }
 
     beforeEach(() => {
+        caller.set(null);
         TestBed.configureTestingModule({
             providers: [
+                { provide: RtAuthService, useValue: AUTH_DOUBLE },
                 provideHttpClient(),
                 provideHttpClientTesting(),
                 provideRtUtils(),

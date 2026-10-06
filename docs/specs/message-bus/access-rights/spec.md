@@ -67,8 +67,8 @@ that opened or did not.
 
 **What the admin panel is given.**
 
-- **The answer about the signed-in person carries their rights whole.** The admin panel decides
-  what to show by them, and it asks the receiver rather than remembering the rights in the browser.
+- **The admin panel reads the rights of the person from their token.** The same client roles the
+  receiver checks; a second answer about the rights would drift from the token.
 - **Until the rights are received the admin panel hides nothing.** An empty menu after a network
   failure looks like a broken admin panel and leaves no way out.
 

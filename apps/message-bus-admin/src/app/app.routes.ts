@@ -1,6 +1,7 @@
 import { Route } from '@angular/router';
+import { rtAuthGuard } from '@rt-tools/auth-angular';
 import { PEOPLE_ROUTE, peopleRoutes, ROLES_ROUTE, rolesRoutes } from '@rt/message-bus-admin/accounts/shell';
-import { authRoutes, landingPath, noSectionsGuard, sectionRightGuard, sessionGuard } from '@rt/message-bus-admin/auth/shell';
+import { landingPath, noSectionsGuard, sectionRightGuard } from '@rt/message-bus-admin/auth/shell';
 import { chatRoutes } from '@rt/message-bus-admin/chat/shell';
 import { NO_SECTIONS_PATH } from '@rt/message-bus-admin/auth/util';
 import { COLUMNS_ROUTE } from '@rt/message-bus-admin/common/core/util';
@@ -33,15 +34,13 @@ function columnsRoute(section: string): Route {
 /**
  * Маршруты админки.
  *
- * Экран входа стоит вне оболочки: меню и шапка невошедшему показывать нечего. Всё остальное
- * закрыто одним объявлением на корне закрытой ветки — проверка, выписанная у каждого раздела,
- * была бы вторым ответом на тот же вопрос и разошлась бы с первым на первом же новом разделе.
+ * Экрана входа у админки нет: невошедшего страж входа уводит в Keycloak, и тот возвращает его
+ * по тому же адресу. Закрыто одним объявлением на корне закрытой ветки — проверка, выписанная у
+ * каждого раздела, была бы вторым ответом на тот же вопрос и разошлась бы с первым.
  *
- * Гвард назван дважды намеренно. На самой ветке он отрабатывает один раз за загрузку страницы и
- * переходов между разделами не видит: вход, оборвавшийся посреди работы, до перезагрузки
- * оставался бы принятым, и человек ходил бы по разделам, которым приёмник уже отвечает отказом.
- * На детях он проверяет каждый переход, но саму оболочку не закрывает — её держит первое
- * объявление.
+ * Страж назван дважды намеренно. На самой ветке он отрабатывает один раз за загрузку страницы и
+ * переходов между разделами не видит; на детях он проверяет каждый переход, но саму оболочку не
+ * закрывает — её держит первое объявление.
  *
  * Рядом с ним на детях стоит проверка по праву: раздел закрыт правом своего пункта меню, и
  * читает она его оттуда же, откуда шапка берёт подпись и адрес. На самой ветке ей места нет по
@@ -51,11 +50,10 @@ function columnsRoute(section: string): Route {
  * видит, переадресация на него кончалась бы отказом сразу после входа.
  */
 export const appRoutes: Route[] = [
-    ...authRoutes,
     {
         path: '',
-        canActivate: [sessionGuard],
-        canActivateChild: [sessionGuard, sectionRightGuard],
+        canActivate: [rtAuthGuard],
+        canActivateChild: [rtAuthGuard, sectionRightGuard],
         loadComponent: async () => (await import('@rt/message-bus-admin/common/container/feature')).AdminContainerComponent,
         children: [
             // Впереди маршрутов разделов: у панели подробностей путь `<раздел>/:id`, и

@@ -1,11 +1,28 @@
+import { computed, signal, WritableSignal } from '@angular/core';
+import { ICaller, TPermission } from '@rt-tools/auth-contract';
+import { RtAuthService } from '@rt-tools/auth-angular';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideZonelessChangeDetection, runInInjectionContext, EnvironmentInjector } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRouteSnapshot, provideRouter, RouterStateSnapshot, UrlTree } from '@angular/router';
-import { AuthStore } from '@rt/message-bus-admin/auth/data-access';
 
 import { firstOpenSectionPath, landingPath, noSectionsGuard, sectionRightGuard } from './section-access';
+
+/**
+ * Модуль входа подменён: вошедшего называет Keycloak, и права ставит спека тем же набором ролей,
+ * каким их выдал бы токен.
+ */
+const caller: WritableSignal<ICaller | null> = signal<ICaller | null>(null);
+const AUTH_DOUBLE: Pick<RtAuthService, 'caller' | 'authenticated' | 'logout'> = {
+    caller,
+    authenticated: computed((): boolean => caller() !== null),
+    logout: (): Promise<void> => Promise.resolve(),
+};
+
+function callerWith(name: string, rights: readonly string[]): ICaller {
+    return { name, subject: 'p-1', email: null, emailVerified: true, permissions: new Set(rights as readonly TPermission[]) };
+}
 
 /**
  * Раздел, закрытый правом своего пункта меню.
@@ -17,8 +34,7 @@ describe('sectionRightGuard', (): void => {
     let http: HttpTestingController;
 
     function signedInWith(rights: readonly string[]): void {
-        TestBed.inject(AuthStore).restore().subscribe();
-        http.expectOne('/api/auth/session').flush({ name: 'Владелец', rights });
+        caller.set(callerWith('Владелец', rights));
     }
 
     /** Ответ проверки на переход по адресу: согласие, отказ или адрес ухода. */
@@ -41,8 +57,15 @@ describe('sectionRightGuard', (): void => {
     }
 
     beforeEach((): void => {
+        caller.set(null);
         TestBed.configureTestingModule({
-            providers: [provideZonelessChangeDetection(), provideRouter([]), provideHttpClient(), provideHttpClientTesting()],
+            providers: [
+                { provide: RtAuthService, useValue: AUTH_DOUBLE },
+                provideZonelessChangeDetection(),
+                provideRouter([]),
+                provideHttpClient(),
+                provideHttpClientTesting(),
+            ],
         });
 
         http = TestBed.inject(HttpTestingController);
@@ -93,7 +116,13 @@ describe('sectionRightGuard', (): void => {
 
         TestBed.resetTestingModule();
         TestBed.configureTestingModule({
-            providers: [provideZonelessChangeDetection(), provideRouter([]), provideHttpClient(), provideHttpClientTesting()],
+            providers: [
+                { provide: RtAuthService, useValue: AUTH_DOUBLE },
+                provideZonelessChangeDetection(),
+                provideRouter([]),
+                provideHttpClient(),
+                provideHttpClientTesting(),
+            ],
         });
         http = TestBed.inject(HttpTestingController);
         signedInWith(['proposals:read']);
