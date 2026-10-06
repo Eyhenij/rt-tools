@@ -1,4 +1,4 @@
-// rt-kit v0.29.4 · checks/spec-anchors.mjs · 5d7242ff9205 · правится надстройкой, не здесь
+// rt-kit v0.29.4 · checks/spec-anchors.mjs · 33867c3ba88c · правится надстройкой, не здесь
 /**
  * The binding of a rule to code and the laws a spec applies.
  *
@@ -273,8 +273,12 @@ function publishedFiles() {
         const file = queue.pop();
         const dir = file.slice(0, file.lastIndexOf('/'));
         for (const [, relative] of read(file).matchAll(/(?:export|import)[^'"]*from\s+['"](\.[^'"]*)['"]/g)) {
+            // An ES module package writes the import with the `.js` ending of the built file; the
+            // source behind it is the `.ts` of the same name. Read literally, the published file
+            // stayed unseen, and every function the package hands out read as called by tests alone.
+            const source = relative.replace(/^\.\//, '').replace(/\.js$/, '');
             for (const suffix of ['.ts', '/index.ts', '']) {
-                const path = `${dir}/${relative.replace(/^\.\//, '')}${suffix}`.replace(/\/\.\//g, '/');
+                const path = `${dir}/${source}${suffix}`.replace(/\/\.\//g, '/');
                 if (exists(path) && !published.has(path)) {
                     published.add(path);
                     if (path.endsWith('/index.ts')) {
