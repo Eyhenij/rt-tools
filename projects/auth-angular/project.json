@@ -1,0 +1,44 @@
+{
+  "name": "@rt-tools/auth-angular",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "library",
+  "tags": ["scope:package"],
+  "sourceRoot": "projects/auth-angular/src",
+  "prefix": "rt",
+  "implicitDependencies": ["@rt-tools/auth-contract"],
+  "targets": {
+    "build": {
+      "executor": "@nx/angular:package",
+      "options": {
+        "project": "projects/auth-angular/ng-package.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "projects/auth-angular/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "projects/auth-angular/tsconfig.lib.json"
+        }
+      },
+      "defaultConfiguration": "production",
+      "outputs": ["{workspaceRoot}/dist/auth-angular"]
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "cacheable": false
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "projects/auth-angular/jest.config.ts"
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc --noEmit -p projects/auth-angular/tsconfig.spec.json"
+      }
+    }
+  }
+}
