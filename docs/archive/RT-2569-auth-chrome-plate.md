@@ -1,5 +1,7 @@
 # Grill
 
+Task RT-2569 · the request — the PR into the epic branch RT-2528 · merged —
+
 ## The owner request
 
 > добавь непрозрачную подложку под селектор языков и переключатель тем, чтобы облако точек не накладывалось на эти элементы
@@ -40,3 +42,13 @@ card the dots do not reach the switches.
 ## What is left unclear
 
 - Nothing blocks the work.
+
+## Decisions along the way
+
+- **The plate under the switches is dropped.** The owner moved the switches into the card after
+  asking for the plate. Affected stage of the plan: 1.
+- **The switches are pinned to the top right corner of the card, and the card's top padding grows
+  to 80px.** In the flow of the card they took a row of their own and pressed the realm name;
+  pinned, they sit in the padding, 20px above the name. Affected stage of the plan: 1.
+- **Scenario numbers 64 and 65.** Number 63 went to the plate, which was committed in a branch that
+  never left the machine. Affected stage of the plan: 1.
