@@ -53,6 +53,9 @@ the same rows gives the applications one look, one keyboard and an order they ca
   with no container right above it has nowhere to go right.
 - **The keys without Alt walk the rows as in `rt-tree`.** ArrowUp and ArrowDown move the highlight,
   ArrowRight and ArrowLeft open and fold, Enter emits `picked`.
+- **The open branches are the application's when it gives them, and all are open when it does not.**
+  The two-way `open` holds the values of the open branches; a fold, an unfold and a drop inside a
+  folded container write a new array to it. `null` opens every branch.
 - **A row takes the application's markup by a template.** Without it the row shows the label.
 - **An empty tree shows the kit label for no options.**
 
@@ -73,8 +76,8 @@ Not applicable: a component of the kit throws no refusals.
 
 ## Data
 
-`IRtTree.Node<TValue>` of `rt-tree`. The open branches and the highlighted value live in the
-component; the order lives with the application through `nodes`.
+`IRtTree.Node<TValue>` of `rt-tree`. The highlighted value lives in the component; the order lives
+with the application through `nodes`, the open branches through `open`.
 
 ## Screens and states
 

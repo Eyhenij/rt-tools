@@ -129,6 +129,33 @@ describe('RtDraggableTreeComponent', (): void => {
         expect(rows(fixture)).toEqual([]);
     });
 
+    it('SC-UKV-664 — раскрытые ветки задаёт приложение, и дерево отдаёт их после каждого раскрытия', (): void => {
+        const nodes: ReadonlyArray<IRtTree.Node<string>> = [
+            { label: 'Папка А', value: 'a', children: [{ label: 'Внутри А', value: 'a1' }] },
+            { label: 'Папка Б', value: 'b', children: [{ label: 'Внутри Б', value: 'b1' }] },
+        ];
+        const fixture: TFixture = createRtFixture(RtDraggableTreeComponent<string>, { nodes, open: ['a'] });
+        const changes: ReadonlyArray<string>[] = [];
+        fixture.componentInstance.open.subscribe((open: ReadonlyArray<string> | null): number => changes.push(open ?? []));
+        const toggle: (value: string) => void = (value: string): void => {
+            (rowOf(fixture, value).querySelector('[qa-dataid="draggable-tree-toggle"]') as HTMLElement).click();
+            fixture.detectChanges();
+        };
+
+        expect(rows(fixture).map((row: HTMLElement): string | null => row.getAttribute('data-value'))).toEqual(['a', 'a1', 'b']);
+
+        toggle('b');
+        expect(changes.at(-1)).toEqual(['a', 'b']);
+
+        toggle('a');
+        expect(changes.at(-1)).toEqual(['b']);
+
+        highlight(fixture, 'b');
+        key(fixture, 'ArrowRight');
+        expect(fixture.componentInstance.nodes()[0].children?.map((node: IRtTree.Node<string>): string => node.value)).toEqual(['a1', 'b']);
+        expect([...(changes.at(-1) ?? [])].sort()).toEqual(['a', 'b']);
+    });
+
     it('стрелки без Alt ходят по строкам и не двигают узлы', (): void => {
         const fixture: TFixture = setup();
 

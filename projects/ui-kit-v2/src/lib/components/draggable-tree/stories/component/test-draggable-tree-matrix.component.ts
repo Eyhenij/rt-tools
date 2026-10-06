@@ -17,6 +17,8 @@ export type TDraggableTreeMatrixPart = 'content' | 'node-template' | 'states' | 
 interface IDraggableTreeCase {
     readonly name: string;
     readonly nodes: ReadonlyArray<IRtTree.Node<string>>;
+    /** Раскрытые ветки; без поля раскрыты все. */
+    readonly open?: ReadonlyArray<string>;
 }
 
 const FLAT: ReadonlyArray<IRtTree.Node<string>> = [
@@ -54,6 +56,7 @@ export class TestRtDraggableTreeMatrixComponent {
     public readonly contentCases: readonly IDraggableTreeCase[] = [
         { name: 'плоский список', nodes: FLAT },
         { name: 'вложенность, пустая папка, закреплённый раздел', nodes: DRAGGABLE_TREE_STORY_NODES },
+        { name: 'приложение раскрыло только «Продажи»', nodes: DRAGGABLE_TREE_STORY_NODES, open: ['sales'] },
         { name: 'пусто', nodes: [] },
     ];
 

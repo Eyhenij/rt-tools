@@ -17,5 +17,6 @@ the tree, or the tree holds what the spec is silent about.
 - **Alt with ArrowUp or ArrowDown moves a node among its siblings.** — `projects/ui-kit-v2/src/lib/components/draggable-tree/rt-draggable-tree.logic.ts:rtDragKeyPlace`. Scenario `SC-UKV-659`
 - **Alt with ArrowLeft takes a node out of its branch to stand right after it; Alt with ArrowRight puts it last into the container right above it.** — `projects/ui-kit-v2/src/lib/components/draggable-tree/rt-draggable-tree.logic.ts:rtDragKeyPlace`. Scenario `SC-UKV-660`
 - **The keys without Alt walk the rows as in `rt-tree`.** — `projects/ui-kit-v2/src/lib/components/draggable-tree/rt-draggable-tree.component.ts:RtDraggableTreeComponent` — over `rtTreeSideKey`. Scenario `SC-UKV-659`
+- **The open branches are the application's when it gives them, and all are open when it does not.** — `projects/ui-kit-v2/src/lib/components/draggable-tree/rt-draggable-tree.component.ts:open`. Scenario `SC-UKV-664`
 - **A row takes the application's markup by a template.** — `projects/ui-kit-v2/src/lib/components/draggable-tree/rt-draggable-tree.directives.ts:RtDraggableTreeNodeDirective`. Scenario `SC-UKV-662`
 - **An empty tree shows the kit label for no options.** — `projects/ui-kit-v2/src/lib/components/draggable-tree/rt-draggable-tree.component.ts:RtDraggableTreeComponent`. Scenario `SC-UKV-663`

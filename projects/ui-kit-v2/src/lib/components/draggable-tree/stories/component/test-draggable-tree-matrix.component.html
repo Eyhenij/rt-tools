@@ -4,7 +4,7 @@
             <ng-template>
                 <app-story-row caption="Содержимое дерева" [items]="contentCases" [itemLabel]="caseLabel">
                     <ng-template let-c>
-                        <rt-draggable-tree style="width: 320px" [ariaLabel]="c.name" [nodes]="c.nodes" />
+                        <rt-draggable-tree style="width: 320px" [ariaLabel]="c.name" [nodes]="c.nodes" [open]="c.open ?? null" />
                     </ng-template>
                 </app-story-row>
             </ng-template>

@@ -69,7 +69,6 @@ const MOVE_KEYS: ReadonlyArray<string> = ['ArrowUp', 'ArrowDown', 'ArrowLeft', '
     },
 })
 export class RtDraggableTreeComponent<TValue> {
-    readonly #closed: WritableSignal<ReadonlySet<TValue>> = signal<ReadonlySet<TValue>>(new Set<TValue>());
     readonly #highlighted: WritableSignal<TValue | null> = signal<TValue | null>(null);
     readonly #dragged: WritableSignal<TValue | null> = signal<TValue | null>(null);
 
@@ -82,12 +81,18 @@ export class RtDraggableTreeComponent<TValue> {
     /** Место, куда встанет перетаскиваемый узел; `null` — сейчас места нет. */
     protected readonly drop: WritableSignal<IRtDraggableTree.Drop<TValue> | null> = signal<IRtDraggableTree.Drop<TValue> | null>(null);
 
-    /** Раскрыты все ветки, кроме свёрнутых человеком: порядок виден целиком с первого взгляда. */
+    /**
+     * Раскрытые ветки. Пока приложение их не задало и человек ничего не сворачивал, раскрыты все:
+     * порядок виден целиком с первого взгляда.
+     */
     protected readonly openBranches: Signal<ReadonlySet<TValue>> = computed((): ReadonlySet<TValue> => {
-        const open: Set<TValue> = new Set<TValue>();
-        this.#collectBranches(this.nodes(), open);
-        this.#closed().forEach((value: TValue): boolean => open.delete(value));
-        return open;
+        const open: ReadonlyArray<TValue> | null = this.open();
+        if (open !== null) {
+            return new Set<TValue>(open);
+        }
+        const all: Set<TValue> = new Set<TValue>();
+        this.#collectBranches(this.nodes(), all);
+        return all;
     });
 
     protected readonly rows: Signal<ReadonlyArray<IRtTree.Row<TValue>>> = computed((): ReadonlyArray<IRtTree.Row<TValue>> =>
@@ -97,6 +102,8 @@ export class RtDraggableTreeComponent<TValue> {
     protected readonly highlighted: Signal<TValue | null> = this.#highlighted.asReadonly();
 
     public readonly nodes: ModelSignal<ReadonlyArray<IRtTree.Node<TValue>>> = model.required<ReadonlyArray<IRtTree.Node<TValue>>>();
+    /** Значения раскрытых веток; `null` — раскрыты все. Пара `openChange` приходит на каждое раскрытие. */
+    public readonly open: ModelSignal<ReadonlyArray<TValue> | null> = model<ReadonlyArray<TValue> | null>(null);
     public readonly canDrop: InputSignal<IRtDraggableTree.CanDrop<TValue> | null> = input<IRtDraggableTree.CanDrop<TValue> | null>(null);
     public readonly ariaLabel: InputSignal<string | null> = input<string | null>(null);
 
@@ -215,24 +222,15 @@ export class RtDraggableTreeComponent<TValue> {
         if (!result) {
             return;
         }
-        if (drop.place === 'inside') {
-            const closed: Set<TValue> = new Set<TValue>(this.#closed());
-            closed.delete(drop.target);
-            this.#closed.set(closed);
-        }
         this.nodes.set(result.nodes);
+        if (drop.place === 'inside' && !this.openBranches().has(drop.target)) {
+            this.open.set([...this.openBranches(), drop.target]);
+        }
         this.moved.emit(result.moved);
     }
 
     #toggle(value: TValue): void {
-        const open: ReadonlySet<TValue> = rtTreeToggle(this.openBranches(), value);
-        const closed: Set<TValue> = new Set<TValue>(this.#closed());
-        if (open.has(value)) {
-            closed.delete(value);
-        } else {
-            closed.add(value);
-        }
-        this.#closed.set(closed);
+        this.open.set([...rtTreeToggle(this.openBranches(), value)]);
     }
 
     #collectBranches(list: ReadonlyArray<IRtTree.Node<TValue>>, into: Set<TValue>): void {

@@ -84,3 +84,13 @@ When the tree is drawn
 Then the kit label for no options is shown
 
 Covered by the component test of `rt-draggable-tree`.
+
+### SC-UKV-664 — the application keeps the open branches
+
+Given a tree with two containers and `open` holding only the first
+When the tree is drawn, the second is unfolded, and a node is dropped inside the folded first one
+after it was folded
+Then only the first container's children are seen at first, `openChange` gives both values after
+the unfold, and the drop puts the target back among the open values
+
+Covered by the component test of `rt-draggable-tree`.
