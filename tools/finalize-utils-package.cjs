@@ -1,5 +1,10 @@
 /**
- * Assembles the publishable `dist/utils` from the two compiler outputs.
+ * Assembles the publishable `dist/<package>` from the two compiler outputs.
+ *
+ *   node tools/finalize-utils-package.cjs [package folder]   — `utils` when not named
+ *
+ * The packages without a framework ship the same way: `utils` and the contract of the entry
+ * module.
  *
  * `@rt-tools/utils` ships dual-format on purpose: Angular applications resolve the ESM entry and
  * tree-shake it, while a consumer compiling to CommonJS can `require()` the CJS one. Neither the
@@ -10,8 +15,9 @@
 const fs = require('fs');
 const path = require('path');
 
-const projectDir = path.resolve(__dirname, '../projects/utils');
-const distDir = path.resolve(__dirname, '../dist/utils');
+const folder = process.argv[2] ?? 'utils';
+const projectDir = path.resolve(__dirname, '../projects', folder);
+const distDir = path.resolve(__dirname, '../dist', folder);
 
 const source = JSON.parse(fs.readFileSync(path.join(projectDir, 'package.json'), 'utf8'));
 
@@ -58,4 +64,4 @@ for (const file of ['README.md', 'CHANGELOG.md']) {
 }
 
 // eslint-disable-next-line no-console
-console.log(`@rt-tools/utils ${manifest.version}: dist/utils assembled (esm + cjs)`);
+console.log(`${manifest.name} ${manifest.version}: dist/${folder} assembled (esm + cjs)`);

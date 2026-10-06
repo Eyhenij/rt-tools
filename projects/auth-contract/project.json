@@ -1,0 +1,65 @@
+{
+  "name": "@rt-tools/auth-contract",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "projects/auth-contract/src",
+  "prefix": "lib",
+  "projectType": "library",
+  "release": {
+    "version": {
+      "manifestRootsToUpdate": ["dist/auth-contract"],
+      "currentVersionResolver": "git-tag",
+      "fallbackCurrentVersionResolver": "disk"
+    }
+  },
+  "tags": ["scope:package"],
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/dist/auth-contract"],
+      "dependsOn": ["build:esm", "build:cjs"],
+      "options": {
+        "command": "node tools/finalize-utils-package.cjs auth-contract"
+      }
+    },
+    "build:esm": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{workspaceRoot}/dist/auth-contract/esm"],
+      "options": {
+        "main": "projects/auth-contract/src/index.ts",
+        "tsConfig": "projects/auth-contract/tsconfig.lib.esm.json",
+        "outputPath": "dist/auth-contract/esm",
+        "generatePackageJson": false,
+        "assets": [],
+        "rootDir": "projects/auth-contract/src"
+      }
+    },
+    "build:cjs": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{workspaceRoot}/dist/auth-contract/cjs"],
+      "options": {
+        "main": "projects/auth-contract/src/index.ts",
+        "tsConfig": "projects/auth-contract/tsconfig.lib.cjs.json",
+        "outputPath": "dist/auth-contract/cjs",
+        "generatePackageJson": false,
+        "assets": [],
+        "rootDir": "projects/auth-contract/src"
+      }
+    },
+    "nx-release-publish": {
+      "options": {
+        "packageRoot": "dist/auth-contract"
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/projects/auth-contract"],
+      "options": {
+        "jestConfig": "projects/auth-contract/jest.config.ts",
+        "tsConfig": "projects/auth-contract/tsconfig.spec.json"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "name": "auth-example-e2e",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/auth-example-e2e/src",
+  "tags": ["scope:auth-example-e2e"],
+  "implicitDependencies": ["auth-example-admin", "auth-example-api"],
+  "targets": {
+    "e2e": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx playwright test",
+        "cwd": "apps/auth-example-e2e"
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx tsc -p apps/auth-example-e2e/tsconfig.json --noEmit"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}

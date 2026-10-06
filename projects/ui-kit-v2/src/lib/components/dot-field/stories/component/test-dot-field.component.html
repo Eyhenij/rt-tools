@@ -1,0 +1,35 @@
+@switch (part) {
+    @case ('playground') {
+        <!-- Без пары: одна сцена для взгляда; обе половины пресета показывает история Presets. -->
+        <div class="app-dot-field__scene">
+            <rt-dot-field />
+            <div class="app-dot-field__card">Карточка поверх поля</div>
+        </div>
+    }
+
+    @case ('presets') {
+        <app-story-presets fill caption="Поле под карточкой в обоих наборах">
+            <ng-template>
+                <div class="app-dot-field__scene">
+                    <rt-dot-field />
+                    <div class="app-dot-field__card">Карточка поверх поля</div>
+                </div>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('themes') {
+        <app-story-presets fill caption="Поле в обеих темах в обоих наборах">
+            <ng-template>
+                <app-story-themes fill>
+                    <ng-template>
+                        <div class="app-dot-field__scene">
+                            <rt-dot-field />
+                            <div class="app-dot-field__card">Карточка поверх поля</div>
+                        </div>
+                    </ng-template>
+                </app-story-themes>
+            </ng-template>
+        </app-story-presets>
+    }
+}

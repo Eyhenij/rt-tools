@@ -349,6 +349,23 @@ jobs:
 
                   pnpm exec nx run message-bus-admin-e2e:e2e
 
+            # Стенд модуля входа: Keycloak с темой, база и перехватчик почты. Команда подъёма
+            # собирает тему и ждёт, пока область наложится из файла; проверка опрашивает стенд и
+            # печатает строку на сценарий.
+            - name: Auth stand
+              if: steps.scope.outputs.docs_only != 'true'
+              run: |
+                  pnpm run serve:auth
+                  pnpm run check:auth-stand
+
+            # Сквозной набор модуля входа: человек входит в пример админки через Keycloak, и
+            # сервер примера проверяет его права. Кадров набор не снимает и идёт браузером машины.
+            - name: E2E auth
+              if: steps.scope.outputs.docs_only != 'true'
+              run: |
+                  node node_modules/.pnpm/playwright@*/node_modules/playwright/cli.js install chromium
+                  pnpm exec nx run auth-example-e2e:e2e
+
             # Снимки первой витрины: измерение вычисленных значений отвечает только на заданный
             # вопрос, а снимок ловит всё видимое разом. Кадры снимает браузер из образа — тот же,
             # что у второй витрины и у экранов админки, — и потому судятся они всюду: и здесь, и

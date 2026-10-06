@@ -29,6 +29,7 @@ export * from './date-picker';
 export * from './date-range';
 export * from './detail-list';
 export * from './dialog';
+export * from './dot-field';
 export * from './download-link';
 export * from './dynamic-list';
 export * from './dynamic-selector';
