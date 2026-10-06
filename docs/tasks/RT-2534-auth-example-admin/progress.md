@@ -3,17 +3,17 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 1 of 8 — Договорённость
-- **Done:** разбор с ответами владельца, план
-- **Next step:** договорённость `docs/specs/auth/proposed/example-admin/`
+- **Stage:** 2 of 8 — Пример сервера
+- **Done:** разбор с ответами владельца, план, договорённость со сценариями SC-AUTH-47…52
+- **Next step:** `apps/auth-example-api` на NestJS с `@rt-tools/auth-server`
 - **Uncommitted:** нет
 - **Waiting for the owner:** ключи Google для стенда — к этапу 5
 - **PR:** not open yet; ветка стоит каскадом на #2546 (RT-2532)
 
 ## Steps
 
-- [>] 1.1 Написать договорённость `docs/specs/auth/proposed/example-admin/` со сценариями сквозного набора
-- [ ] 2.1 Завести `apps/auth-example-api` на NestJS с `@rt-tools/auth-server`: записи по праву чтения, создание по праву записи
+- [x] 1.1 Написать договорённость `docs/specs/auth/proposed/example-admin/` со сценариями сквозного набора
+- [>] 2.1 Завести `apps/auth-example-api` на NestJS с `@rt-tools/auth-server`: записи по праву чтения, создание по праву записи
 - [ ] 3.1 Завести `apps/auth-example-admin` на Angular с `@rt-tools/auth-angular` и вторым китом: список записей, кнопка создания по праву, выход
 - [ ] 4.1 Завести `apps/auth-example-e2e`: стенд из Keycloak и production-сборок примера, засев людей с правами
 - [ ] 4.2 Написать спеки шести сценариев карточки
@@ -34,3 +34,4 @@
 ### 2026-10-06
 
 - Ветка каскадом от RT-2532, ответы владельца о Google и публикации, разбор и план.
+- Договорённость примера: шесть сценариев сквозного набора, `check:specs` — код 0.
