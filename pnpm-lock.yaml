@@ -280,6 +280,9 @@ importers:
       globals:
         specifier: 17.12.0
         version: 17.12.0
+      hash-wasm:
+        specifier: 4.12.0
+        version: 4.12.0
       husky:
         specifier: 9.1.7
         version: 9.1.7
@@ -407,6 +410,12 @@ importers:
   projects/agent-kit: {}
 
   projects/auth-contract:
+    dependencies:
+      tslib:
+        specifier: ^2.3.0
+        version: 2.8.1
+
+  projects/auth-import:
     dependencies:
       tslib:
         specifier: ^2.3.0
@@ -8362,6 +8371,9 @@ packages:
   has-tostringtag@1.0.2:
     resolution: {integrity: sha512-NqADB8VjPFLM2V0VvHUewwwsw0ZWBaIdgo+ieHtK3hasLz4qeCRjYcqfB6AQrBggRKppKF8L52/VqdVsO47Dlw==}
     engines: {node: '>= 0.4'}
+
+  hash-wasm@4.12.0:
+    resolution: {integrity: sha512-+/2B2rYLb48I/evdOIhP+K/DD2ca2fgBjp6O+GBEnCDk2e4rpeXIK8GvIyRPjTezgmWn9gmKwkQjjx6BtqDHVQ==}
 
   hasha@5.2.2:
     resolution: {integrity: sha512-Hrp5vIK/xr5SkeN2onO32H0MgNZ0f17HRNH39WfL0SYUNOTZ5Lz1TJ8Pajo/87dYGEFlLMm7mIc/k/s6Bvz9HQ==}
@@ -21498,6 +21510,8 @@ snapshots:
   has-tostringtag@1.0.2:
     dependencies:
       has-symbols: 1.1.0
+
+  hash-wasm@4.12.0: {}
 
   hasha@5.2.2:
     dependencies:
