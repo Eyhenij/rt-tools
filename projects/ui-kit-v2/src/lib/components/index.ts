@@ -90,6 +90,7 @@ export * from './toggle-button-group';
 export * from './toggle-switch';
 export * from './toolbar';
 export * from './tooltip';
+export * from './tree';
 export * from './welcome-dialog';
 export * from './workspace';
 export * from './workspace-details';
