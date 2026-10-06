@@ -52,6 +52,15 @@ describe('RtKcLoginComponent', () => {
         expect(submit?.className).toContain('lg');
     });
 
+    it('SC-AUTH-59 — an empty field shows its name as a placeholder', async () => {
+        const fixture: ComponentFixture<RtKcLoginComponent> = await renderKcPage(RtKcLoginComponent, kcContextOf('login.ftl'));
+        const placeholders: (string | null | undefined)[] = ['kc-username', 'kc-password'].map(
+            (anchor: string): string | null | undefined => kcNode(fixture, anchor)?.querySelector('input')?.getAttribute('placeholder')
+        );
+
+        expect(placeholders).toEqual(['Username or email', 'Password']);
+    });
+
     it('SC-AUTH-22 — a Keycloak message stands above the form in the colour of its kind', async () => {
         const fixture: ComponentFixture<RtKcLoginComponent> = await renderKcPage(
             RtKcLoginComponent,

@@ -12,6 +12,7 @@
                         autocomplete="username"
                         iconLeft="user"
                         qa-dataid="kc-username"
+                        [placeholder]="usernameLabel"
                         [formControl]="form.controls.username" />
                 </rt-field>
             }
@@ -23,6 +24,7 @@
                     autocomplete="current-password"
                     iconLeft="lock"
                     qa-dataid="kc-password"
+                    [placeholder]="passwordLabel"
                     [passwordToggle]="true"
                     [formControl]="form.controls.password" />
             </rt-field>

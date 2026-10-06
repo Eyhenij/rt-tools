@@ -82,3 +82,9 @@ Then the language is chosen from one drop-down list, not from a row of buttons
 Given the entry page of the stand
 When it is drawn
 Then the card has a border and a shadow
+
+### SC-AUTH-59 — an empty field shows its name as a placeholder
+
+Given the entry form with empty fields
+When it is drawn
+Then every field shows its name inside it
