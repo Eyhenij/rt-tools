@@ -152,3 +152,12 @@ When it is drawn
 Then the text is cut by an ellipsis, and the hint carries the whole value rather than the cut one
 
 Covered: `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.spec.ts`.
+
+### SC-UKV-667 — the words of the search are marked in the label
+
+Given a tag «Москва Центр»
+When `highlight` is «моск цен»
+Then «Моск» and «Цен» are drawn as matched parts and the rest of the label stays plain; with an
+empty `highlight` no part is marked
+
+Covered by the component test of `rt-tag`.
