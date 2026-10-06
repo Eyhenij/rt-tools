@@ -140,3 +140,36 @@ When the search term is «мин сто msq»
 Then «Мин», «Сто» and «MSQ» are the matched parts of the label, the description and the badge
 
 Covered by the logic test of `rt-tree`.
+
+### SC-UKV-668 — an exclusive tree chooses one node by a click and adds one by Ctrl or Cmd
+
+Given an exclusive tree with checkboxes and one chosen leaf
+When another leaf is clicked, and then a third one with Ctrl, and a fourth with Cmd
+Then the first click leaves only the clicked leaf, and the clicks with Ctrl and Cmd add theirs to it
+
+Covered by the component test of `rt-tree`.
+
+### SC-UKV-669 — a group without a mark opens on a click
+
+Given a tree with `branchMarks` off
+When a group row is clicked and Space is pressed on it
+Then the row has no checkbox, the group opens and folds, and the choice stays empty
+
+Covered by the component test of `rt-tree`.
+
+### SC-UKV-670 — a search that only marks hides no row
+
+Given a tree with `filter` off and a search term matching one leaf
+When the tree is drawn
+Then every row of the tree is still shown, and the match is marked in that leaf's label
+
+Covered by the component test of `rt-tree`.
+
+### SC-UKV-671 — badges and the application's meta stand under the label
+
+Given a node with two badges, a meta template and a search term matching a badge
+When the tree is drawn
+Then the row holds two kit tags with the match marked in one, followed by the meta template with
+the node in its context
+
+Covered by the component test of `rt-tree`.

@@ -27,11 +27,12 @@ import { RT_KIT_LABELS, TRtKitLabelMap } from '../../i18n';
 import { RtCheckboxComponent } from '../checkbox/rt-checkbox.component';
 import { RtIconComponent } from '../icon/rt-icon.component';
 import { RtRadioButtonComponent } from '../radio-button/rt-radio-button.component';
+import { RtTagComponent } from '../tag/rt-tag.component';
 import { RtTooltipDirective } from '../tooltip/rt-tooltip.directive';
 import { rtTreeOpenFor, rtTreeRows, rtTreeSideKey, rtTreeToggle } from '../select/rt-select-tree';
 import { IRtSelect } from '../select/rt-select.model';
-import { RtTreeNodeEndDirective } from './rt-tree.directives';
-import { rtTreeChoose, rtTreeLabelParts, rtTreeMark, rtTreeSelectAll, rtTreeSelectAllMark } from './rt-tree.logic';
+import { RtTreeNodeEndDirective, RtTreeNodeMetaDirective } from './rt-tree.directives';
+import { rtTreeChoose, rtTreeChooseAlone, rtTreeLabelParts, rtTreeMark, rtTreeSelectAll, rtTreeSelectAllMark } from './rt-tree.logic';
 import { IRtTree } from './rt-tree.model';
 
 const BEM_BLOCK: string = 'rt-tree';
@@ -40,6 +41,8 @@ const BEM_BLOCK: string = 'rt-tree';
 interface IRtTreeView<TValue> {
     readonly row: IRtTree.Row<TValue>;
     readonly mark: IRtTree.Mark;
+    /** Рисуется ли у строки флажок или радио: у групп без отметок его нет. */
+    readonly marked: boolean;
     readonly parts: IRtTree.LabelParts;
     readonly highlighted: boolean;
 }
@@ -66,6 +69,7 @@ interface IRtTreeView<TValue> {
         RtCheckboxComponent,
         RtIconComponent,
         RtRadioButtonComponent,
+        RtTagComponent,
         RtTooltipDirective,
         BlockDirective,
         ElemDirective,
@@ -88,13 +92,15 @@ export class RtTreeComponent<TValue> {
 
     protected readonly nodeEnd: Signal<RtTreeNodeEndDirective<TValue> | undefined> = contentChild(RtTreeNodeEndDirective);
 
+    protected readonly nodeMeta: Signal<RtTreeNodeMetaDirective<TValue> | undefined> = contentChild(RtTreeNodeMetaDirective);
+
     /** Раскрытые ветки: до первого действия человека — ветки над выбранным. */
     protected readonly openBranches: Signal<ReadonlySet<TValue>> = computed(
         (): ReadonlySet<TValue> => this.#open() ?? rtTreeOpenFor(this.nodes(), this.value())
     );
 
     protected readonly rows: Signal<ReadonlyArray<IRtTree.Row<TValue>>> = computed((): ReadonlyArray<IRtTree.Row<TValue>> =>
-        rtTreeRows(this.nodes(), this.openBranches(), this.searchTerm())
+        rtTreeRows(this.nodes(), this.openBranches(), this.filter() ? this.searchTerm() : '')
     );
 
     protected readonly views: Signal<ReadonlyArray<IRtTreeView<TValue>>> = computed((): ReadonlyArray<IRtTreeView<TValue>> => {
@@ -102,9 +108,12 @@ export class RtTreeComponent<TValue> {
         const cascade: boolean = this.cascade();
         const term: string = this.searchTerm();
         const highlighted: TValue | null = this.#highlighted();
+        const mode: IRtTree.Mode = this.mode();
+        const branchMarks: boolean = this.branchMarks();
         return this.rows().map((row: IRtTree.Row<TValue>): IRtTreeView<TValue> => ({
             row,
             mark: rtTreeMark(row.option, value, cascade),
+            marked: mode !== 'none' && (branchMarks || !row.branch),
             parts: rtTreeLabelParts(row.option, term),
             highlighted: row.option.value === highlighted,
         }));
@@ -130,6 +139,21 @@ export class RtTreeComponent<TValue> {
     });
     public readonly ariaLabel: InputSignal<string | null> = input<string | null>(null);
 
+    /** Отметки у групп. Без них клик, пробел и Enter по группе раскрывают и сворачивают её. */
+    public readonly branchMarks: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
+        transform: booleanAttribute,
+    });
+
+    /** Клик без Ctrl и Cmd выбирает узел один; с Ctrl или Cmd добавляет к выбору. Только для флажков. */
+    public readonly exclusive: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
+        transform: booleanAttribute,
+    });
+
+    /** Скрывает ли слово поиска строки. Без отбора строки отбирает приложение, а слово только отмечено. */
+    public readonly filter: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
+        transform: booleanAttribute,
+    });
+
     public readonly picked: OutputEmitterRef<IRtTree.Node<TValue>> = output<IRtTree.Node<TValue>>();
 
     /**
@@ -137,7 +161,7 @@ export class RtTreeComponent<TValue> {
      * приложение может отдавать сюда каждую клавишу своего поля поиска.
      */
     public handleKeydown(event: KeyboardEvent): boolean {
-        const taken: boolean = this.#takeKey(event.key);
+        const taken: boolean = this.#takeKey(event.key, event.ctrlKey || event.metaKey);
         if (taken) {
             event.preventDefault();
             event.stopPropagation();
@@ -159,20 +183,16 @@ export class RtTreeComponent<TValue> {
         this.#highlighted.set(null);
     }
 
-    protected onRowClick(row: IRtTree.Row<TValue>): void {
+    protected onRowClick(row: IRtTree.Row<TValue>, event: MouseEvent): void {
         this.#highlighted.set(row.option.value);
         if (row.option.disabled) {
             return;
         }
-        if (this.mode() === 'none') {
-            if (row.branch) {
-                this.#toggle(row.option.value);
-            } else {
-                this.picked.emit(row.option);
-            }
+        if (this.#opensOnly(row)) {
+            this.#toggleOrPick(row);
             return;
         }
-        this.#choose(rtTreeChoose(row.option, this.value(), this.mode(), this.cascade()));
+        this.#choose(this.#next(row.option, event.ctrlKey || event.metaKey));
     }
 
     protected onToggleClick(event: Event, value: TValue): void {
@@ -182,6 +202,27 @@ export class RtTreeComponent<TValue> {
 
     protected onSelectAll(): void {
         this.#choose(rtTreeSelectAll(this.rows(), this.value()));
+    }
+
+    /** Строка, клик по которой ничего не отмечает: режим без отметок или группа без флажка. */
+    #opensOnly(row: IRtTree.Row<TValue>): boolean {
+        return this.mode() === 'none' || (row.branch && !this.branchMarks());
+    }
+
+    #toggleOrPick(row: IRtTree.Row<TValue>): void {
+        if (row.branch) {
+            this.#toggle(row.option.value);
+        } else {
+            this.picked.emit(row.option);
+        }
+    }
+
+    /** Выбор после действия над узлом: в исключающем режиме без Ctrl и Cmd узел остаётся один. */
+    #next(node: IRtTree.Node<TValue>, additive: boolean): ReadonlyArray<TValue> {
+        if (this.exclusive() && this.mode() === 'multiple' && !additive) {
+            return rtTreeChooseAlone(this.nodes(), node, this.value(), this.cascade());
+        }
+        return rtTreeChoose(node, this.value(), this.mode(), this.cascade());
     }
 
     #collectBranches(list: ReadonlyArray<IRtTree.Node<TValue>>, into: Set<TValue>): void {
@@ -211,7 +252,7 @@ export class RtTreeComponent<TValue> {
         return this.rows().findIndex((row: IRtTree.Row<TValue>): boolean => row.option.value === highlighted);
     }
 
-    #takeKey(key: string): boolean {
+    #takeKey(key: string, additive: boolean): boolean {
         const rows: ReadonlyArray<IRtTree.Row<TValue>> = this.rows();
         const index: number = this.#highlightedIndex();
         if (key === 'ArrowDown' || key === 'ArrowUp') {
@@ -225,11 +266,11 @@ export class RtTreeComponent<TValue> {
             return true;
         }
         if (key === ' ') {
-            this.#space(rows[index]);
+            this.#space(rows[index], additive);
             return true;
         }
         if (key === 'Enter') {
-            this.#enter(rows[index]);
+            this.#enter(rows[index], additive);
             return true;
         }
         return false;
@@ -252,25 +293,27 @@ export class RtTreeComponent<TValue> {
         this.#highlighted.set(rows[answer.index].option.value);
     }
 
-    #space(row: IRtTree.Row<TValue>): void {
-        if (this.mode() === 'none' && row.branch) {
+    #space(row: IRtTree.Row<TValue>, additive: boolean): void {
+        if (this.#opensOnly(row) && row.branch) {
             this.#toggle(row.option.value);
             return;
         }
-        if (!row.option.disabled) {
-            this.#choose(rtTreeChoose(row.option, this.value(), this.mode(), this.cascade()));
+        if (!row.option.disabled && this.mode() !== 'none') {
+            this.#choose(this.#next(row.option, additive));
         }
     }
 
-    #enter(row: IRtTree.Row<TValue>): void {
-        if (row.branch && this.mode() === 'none') {
+    #enter(row: IRtTree.Row<TValue>, additive: boolean): void {
+        if (this.#opensOnly(row) && row.branch) {
             this.#toggle(row.option.value);
             return;
         }
         if (row.option.disabled) {
             return;
         }
-        this.#choose(rtTreeChoose(row.option, this.value(), this.mode(), this.cascade()));
+        if (this.mode() !== 'none') {
+            this.#choose(this.#next(row.option, additive));
+        }
         this.picked.emit(row.option);
     }
 }

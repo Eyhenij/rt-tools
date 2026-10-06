@@ -24,11 +24,11 @@
             [attr.data-value]="view.row.option.value"
             [attr.aria-level]="view.row.level + 1"
             [attr.aria-expanded]="view.row.branch ? view.row.open : null"
-            [attr.aria-selected]="mode() === 'none' ? null : view.mark === 'all'"
+            [attr.aria-selected]="view.marked ? view.mark === 'all' : null"
             [attr.aria-disabled]="!!view.row.option.disabled"
             [style.--rt-tree-level]="view.row.level"
             [rtMod]="{ highlighted: view.highlighted, disabled: !!view.row.option.disabled, chosen: view.mark === 'all' }"
-            (click)="onRowClick(view.row)">
+            (click)="onRowClick(view.row, $event)">
             @if (view.row.branch) {
                 <button
                     rtElem="toggle"
@@ -43,7 +43,7 @@
                 <span rtElem="toggle-space"></span>
             }
 
-            @if (mode() === 'multiple') {
+            @if (view.marked && mode() === 'multiple') {
                 <rt-checkbox
                     rtElem="check"
                     qa-dataid="tree-row-checkbox"
@@ -52,7 +52,7 @@
                     [indeterminate]="view.mark === 'some'"
                     [ngModel]="view.mark === 'all'"
                     [ngModelOptions]="{ standalone: true }" />
-            } @else if (mode() === 'single') {
+            } @else if (view.marked && mode() === 'single') {
                 <rt-radio-button
                     rtElem="check"
                     qa-dataid="tree-row-radio"
@@ -76,6 +76,18 @@
                         [rtTooltip]="view.row.option.description">
                         @for (part of view.parts.description; track $index) {
                             <span rtElem="part" [rtMod]="{ match: part.matched }">{{ part.text }}</span>
+                        }
+                    </span>
+                }
+                @if (view.row.option.badges?.length || nodeMeta()) {
+                    <span rtElem="meta" qa-dataid="tree-row-meta">
+                        @for (badge of view.row.option.badges; track $index) {
+                            <rt-tag size="sm" [value]="badge.text" [severity]="badge.severity ?? 'neutral'" [highlight]="searchTerm()" />
+                        }
+                        @if (nodeMeta(); as meta) {
+                            <ng-container
+                                [ngTemplateOutlet]="meta.templateRef"
+                                [ngTemplateOutletContext]="{ $implicit: view.row.option }" />
                         }
                     </span>
                 }

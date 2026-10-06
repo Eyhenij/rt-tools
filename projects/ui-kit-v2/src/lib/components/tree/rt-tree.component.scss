@@ -102,6 +102,16 @@
             white-space: nowrap;
         }
 
+        /* Метки узла и разметка приложения под подписью: строка переносится, а не вылезает. */
+        &__meta {
+            display: flex;
+            min-width: 0;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: var(--rt-space-1);
+            margin-block-start: var(--rt-space-1);
+        }
+
         &__part {
             &--match {
                 border-radius: var(--rt-tree-match-radius);

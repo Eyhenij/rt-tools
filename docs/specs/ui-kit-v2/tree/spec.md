@@ -78,6 +78,15 @@ multiselect; a standalone tree on the same logic gives the applications one look
   an application can pass every key from its own search field and typing there keeps working.
 - **Select-all chooses every enabled leaf of the visible rows, or clears them.** It is drawn only when
   asked for and only in the cascade with checkboxes.
+- **Groups may go without a mark, and then a click on a group opens it.** With `branchMarks` off,
+  branch rows draw no checkbox or radio; a click, Space and Enter on such a row open or fold it, and
+  the choice is made on the leaves. Select-all still chooses the leaves.
+- **The search may only mark, leaving the rows to the application.** With `filter` off, the term
+  hides no row and opens no path; it marks the words where they stand.
+- **A node's badges stand under its label as kit tags.** Each badge of the node is a small `rt-tag`
+  of its palette, and the search words are marked in it as in the label.
+- **A row takes the application's content under its label too.** A template marked by
+  `rtTreeNodeMeta` is drawn in the line of the badges with the node in its context.
 - **A row takes the application's content at its end.** A template marked by `rtTreeNodeEnd` is drawn
   at the end of every row with the node in its context; the tree adds no input per such control.
 - **An empty tree says so.** With no rows the tree shows the kit label for nothing found when a term is
