@@ -5,9 +5,9 @@
 Rewritten by every session, not appended to.
 
 - **State:** `этап-идёт`
-- **Stage:** 1 of 4 — The logic
-- **Done:** the grill, the agreement in `docs/specs/ui-kit-v2/proposed/draggable-tree/`, the plan
-- **Next step:** `rt-draggable-tree.logic.ts` and its tests
+- **Stage:** 2 of 4 — The component
+- **Done:** the grill, the agreement in `docs/specs/ui-kit-v2/proposed/draggable-tree/`, the plan; the logic and its 6 tests
+- **Next step:** the component, its template and styles (step 2.1)
 - **Uncommitted:** nothing beyond this folder and the agreement
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -16,9 +16,9 @@ Rewritten by every session, not appended to.
 
 - `[x]` done · `[>]` going on right now · `[ ]` not begun
 
-- [>] 1.1 Write `rt-draggable-tree.logic.ts`: `rtDragPlace`, `rtDragAllowed`, `rtDragMove`, `rtDragKeyPlace`.
-- [ ] 1.2 Write `rt-draggable-tree.logic.spec.ts` for SC-UKV-654 … SC-UKV-658.
-- [ ] 2.1 Write `rt-draggable-tree.component.ts`, `.html`, `.scss` and the row template directive.
+- [x] 1.1 Write `rt-draggable-tree.logic.ts`: `rtDragPlace`, `rtDragAllowed`, `rtDragMove`, `rtDragKeyPlace`.
+- [x] 1.2 Write `rt-draggable-tree.logic.spec.ts` for SC-UKV-654 … SC-UKV-658.
+- [>] 2.1 Write `rt-draggable-tree.component.ts`, `.html`, `.scss` and the row template directive.
 - [ ] 2.2 Export the folder from the components barrel and write `CONTEXT.md`.
 - [ ] 2.3 Write `rt-draggable-tree.component.spec.ts` for SC-UKV-659 … SC-UKV-663.
 - [ ] 3.1 Write the stories with `Playground` and the matrices, and `Overview.mdx`.
