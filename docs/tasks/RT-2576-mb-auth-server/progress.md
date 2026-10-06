@@ -5,7 +5,8 @@
 - **State:** `этап-идёт`
 - **Stage:** 1 of 1 — The bus server checks the Keycloak token
 - **Done:** the server checks the Keycloak token; the stand realm has the bus client
-- **Next step:** 1.7 — the admin panel signs in with `@rt-tools/auth-angular`
+- **Next step:** the admin part of the decision about RT-2577 — the admin panel signs in with
+  `@rt-tools/auth-angular`, then the end-to-end stand
 - **Uncommitted:** no
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -18,10 +19,6 @@
 - [x] 1.4 The operations of sign-in, sign-out, session and first run are removed
 - [x] 1.5 The signed-in person of a request is read from the token
 - [x] 1.6 The tests are rewritten
-- [>] 1.7 The admin panel signs in with `@rt-tools/auth-angular` and sends the token
-- [ ] 1.8 The sign-in and first-run screens leave, the rights come from the token
-- [ ] 1.9 The operator chat stream reads the token
-- [ ] 1.10 The end-to-end stand raises Keycloak and signs in through it
 
 ## Decisions along the way
 
@@ -29,7 +26,9 @@
   entry: the session cookie goes on both sides at once. Merged one by one, the epic branch would
   hold an admin panel that cannot sign in. The admin part adds steps after 1.6: the admin panel
   signs in with `@rt-tools/auth-angular`, the sign-in and first-run screens go, the operator chat
-  stream reads the token. Affected stage of the plan: 1.
+  stream reads the token. The plan is not edited, so these parts stay outside the step list. The
+  push gate runs the end-to-end suite, so the branch is pushed only with them done. Affected stage
+  of the plan: 1.
 
 - **The cargo commands are a task of their own, RT-2582.** `tools/cargo-pull.mjs` and
   `tools/cargo-close.mjs` sign in with the pair of a service account and carry the session cookie.
