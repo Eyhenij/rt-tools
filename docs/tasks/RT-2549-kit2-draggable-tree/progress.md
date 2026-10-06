@@ -7,11 +7,9 @@ Rewritten by every session, not appended to.
 - **State:** `этап-идёт`
 - **Stage:** 3 of 4 — The showcase
 - **Done:** the grill, the agreement, the plan; the logic and the component, 12 tests; the stories and `Overview.mdx`, the sweep green over 772 stories; the agreement merged into the domain spec
-- **Next step:** the owner looks at the stories on :6007 (step 3.3)
-- **Uncommitted:** five snapshot frames, taken and looked at, kept until the owner's look
-- **Waiting for the owner:** no — the owner chose «Закрыть всё в ките» before the PR: `rt-tree`
-  gains the marks by level, the Ctrl or Cmd add, a second slot and node badges in RT-2548's branch,
-  and this tree gains the open branches as input and output
+- **Next step:** the full set, then the folder taken apart and the PR (step 4.2)
+- **Uncommitted:** nothing
+- **Waiting for the owner:** no — the owner said «Открывай, дальше RT-2572»
 - **PR:** not open yet
 
 ## Steps
@@ -25,10 +23,10 @@ Rewritten by every session, not appended to.
 - [x] 2.3 Write `rt-draggable-tree.component.spec.ts` for SC-UKV-659 … SC-UKV-663.
 - [x] 3.1 Write the stories with `Playground` and the matrices, and `Overview.mdx`.
 - [x] 3.2 Run the story sweep over the raised showcase.
-- [>] 3.3 Give the owner the links to the stories on :6007.
-- [ ] 3.4 Take the snapshots after the owner's look and look at every frame.
+- [x] 3.3 Give the owner the links to the stories on :6007.
+- [x] 3.4 Take the snapshots after the owner's look and look at every frame.
 - [x] 4.1 Merge the agreement into `docs/specs/ui-kit-v2/draggable-tree/` and name it in the domain index.
-- [ ] 4.2 Run the spec check and the full set before the push.
+- [>] 4.2 Run the spec check and the full set before the push.
 
 ## Decisions along the way
 
