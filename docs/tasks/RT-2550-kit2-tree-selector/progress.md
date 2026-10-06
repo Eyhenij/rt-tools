@@ -4,8 +4,8 @@
 
 - **State:** `этап-идёт`
 - **Stage:** 2 of 3 — Showcase
-- **Done:** logic, component and labels; selector tests 16 of 16, typecheck green
-- **Next step:** write the wrapper, Playground and the matrices
+- **Done:** component, showcase stories and overview; selector tests 17 of 17; 6 snapshots taken and looked at
+- **Next step:** confirm the snapshots by a second raising, then bind the spec
 - **Uncommitted:** nothing
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -15,9 +15,9 @@
 - [x] 1.1 Write the search and draft logic with its tests
 - [x] 1.2 Write the component with its tests
 - [x] 1.3 Add the kit labels in eight languages
-- [>] 2.1 Write the wrapper, Playground and the matrices
-- [ ] 2.2 Write the overview page
-- [ ] 2.3 Take the snapshots and look at them
+- [x] 2.1 Write the wrapper, Playground and the matrices
+- [x] 2.2 Write the overview page
+- [>] 2.3 Take the snapshots and look at them
 - [ ] 3.1 Bind the spec rules in the companion and the indexes
 - [ ] 3.2 Run the full check set
 - [ ] 3.3 Show the stories to the owner

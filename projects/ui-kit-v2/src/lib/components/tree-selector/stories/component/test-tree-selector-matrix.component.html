@@ -1,0 +1,95 @@
+<ng-template #cell let-c>
+    <div style="width: 320px; height: 420px; display: flex">
+        <rt-tree-selector
+            style="flex: 1"
+            [ariaLabel]="c.name"
+            [nodes]="nodes"
+            [mode]="c.mode"
+            [value]="c.value"
+            [confirm]="c.confirm"
+            [emptyAllowed]="c.emptyAllowed"
+            [clearable]="c.clearable"
+            [multiToggle]="c.multiToggle"
+            [searchTerm]="c.searchTerm"
+            [label]="c.label">
+            @if (c.own) {
+                <ng-template rtTreeSelectorControls>
+                    <button
+                        rtButton
+                        type="button"
+                        appearance="outlined"
+                        theme="secondary"
+                        size="sm"
+                        label="Страна › Город"
+                        aria-label="Страна › Город"></button>
+                </ng-template>
+            }
+        </rt-tree-selector>
+    </div>
+</ng-template>
+
+@switch (part) {
+    @case ('form') {
+        <app-story-presets>
+            <ng-template>
+                <app-story-row caption="Прямая и подтверждаемая формы" [items]="formCases" [itemLabel]="caseLabel">
+                    <ng-template let-c>
+                        <ng-container [ngTemplateOutlet]="cell" [ngTemplateOutletContext]="{ $implicit: c }" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('search') {
+        <app-story-presets>
+            <ng-template>
+                <app-story-row caption="Поиск по каждому слову" [items]="searchCases" [itemLabel]="caseLabel">
+                    <ng-template let-c>
+                        <ng-container [ngTemplateOutlet]="cell" [ngTemplateOutletContext]="{ $implicit: c }" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('controls') {
+        <app-story-presets>
+            <ng-template>
+                <app-story-row caption="Строка контролов" [items]="controlCases" [itemLabel]="caseLabel">
+                    <ng-template let-c>
+                        <ng-container [ngTemplateOutlet]="cell" [ngTemplateOutletContext]="{ $implicit: c }" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('mode') {
+        <app-story-presets>
+            <ng-template>
+                <app-story-row caption="Режим отметок" [items]="modeCases" [itemLabel]="caseLabel">
+                    <ng-template let-c>
+                        <ng-container [ngTemplateOutlet]="cell" [ngTemplateOutletContext]="{ $implicit: c }" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('presets') {
+        <app-story-presets caption="Селектор в обоих наборах">
+            <ng-template>
+                <ng-container [ngTemplateOutlet]="cell" [ngTemplateOutletContext]="{ $implicit: formCases[1] }" />
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('themes') {
+        <app-story-themes caption="Селектор в обеих темах">
+            <ng-template>
+                <ng-container [ngTemplateOutlet]="cell" [ngTemplateOutletContext]="{ $implicit: controlCases[0] }" />
+            </ng-template>
+        </app-story-themes>
+    }
+}

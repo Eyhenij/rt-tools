@@ -76,21 +76,25 @@
         </div>
     </div>
 
-    <rt-tree
-        rtElem="tree"
-        qa-dataid="tree-selector-tree"
-        [nodes]="shownNodes()"
-        [value]="draft()"
-        [mode]="mode()"
-        [cascade]="cascade()"
-        [branchMarks]="branchMarks()"
-        [exclusive]="isExclusive()"
-        [showSelectAll]="selectAll()"
-        [searchTerm]="term()"
-        [filter]="false"
-        [ariaLabel]="ariaLabel()"
-        (valueChange)="onTreeChange($event)"
-        (picked)="onPicked()" />
+    @if (isNothingFound()) {
+        <div rtElem="empty" qa-dataid="tree-selector-empty">{{ nothingFoundLabel() }}</div>
+    } @else {
+        <rt-tree
+            rtElem="tree"
+            qa-dataid="tree-selector-tree"
+            [nodes]="shownNodes()"
+            [value]="draft()"
+            [mode]="mode()"
+            [cascade]="cascade()"
+            [branchMarks]="branchMarks()"
+            [exclusive]="isExclusive()"
+            [showSelectAll]="selectAll()"
+            [searchTerm]="term()"
+            [filter]="false"
+            [ariaLabel]="ariaLabel()"
+            (valueChange)="onTreeChange($event)"
+            (picked)="onPicked()" />
+    }
 
     @if (isFooterShown()) {
         <div rtElem="foot">

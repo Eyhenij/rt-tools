@@ -66,6 +66,13 @@
             overflow-y: auto;
         }
 
+        &__empty {
+            flex: 1 1 auto;
+            padding: var(--rt-space-md);
+            color: var(--rt-color-text-muted);
+            text-align: center;
+        }
+
         &__foot {
             display: flex;
             align-items: center;

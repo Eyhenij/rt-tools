@@ -52,7 +52,7 @@ field and the controls on top of it, so the application moves without its own co
 - **The search keeps the nodes in which every typed word is found, and marks the words.** A word is
   looked for in the label, the description and the badges, without case. A branch that matches keeps
   its whole subtree; a branch with a matching node below it stays as its path. While a term is typed
-  every kept branch is open.
+  every kept branch is open. The line starts from `searchTerm`, so a rebuilt tree keeps its search.
 
 - **Expand-all and collapse-all open and fold every branch of the tree.** They stand while the tree
   has rows.

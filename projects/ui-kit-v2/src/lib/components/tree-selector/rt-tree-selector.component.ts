@@ -9,7 +9,6 @@ import {
     linkedSignal,
     model,
     output,
-    signal,
     viewChild,
     ChangeDetectionStrategy,
     Component,
@@ -80,12 +79,14 @@ export class RtTreeSelectorComponent<TValue> {
     protected readonly multiHintLabel: Signal<string> = rtKitLabel('dynamicSelectorMultiHint');
     protected readonly cancelLabel: Signal<string> = rtKitLabel('uiCancel');
     protected readonly applyLabel: Signal<string> = rtKitLabel('uiApply');
+    protected readonly nothingFoundLabel: Signal<string> = rtKitLabel('uiNothingFound');
 
     protected readonly tree: Signal<RtTreeComponent<TValue> | undefined> = viewChild<RtTreeComponent<TValue>>(RtTreeComponent);
 
     protected readonly controlsTpl: Signal<RtTreeSelectorControlsDirective | undefined> = contentChild(RtTreeSelectorControlsDirective);
 
-    protected readonly term: WritableSignal<string> = signal<string>('');
+    /** Строка поиска: начинается с `searchTerm` и дальше живёт от набора в поле. */
+    protected readonly term: WritableSignal<string> = linkedSignal((): string => this.searchTerm());
 
     /** Включён ли множественный выбор: без переключателя клик всегда добавляет. */
     protected readonly multiOn: WritableSignal<boolean> = linkedSignal((): boolean => this.multiDefault());
@@ -98,6 +99,9 @@ export class RtTreeSelectorComponent<TValue> {
     );
 
     protected readonly hasRows: Signal<boolean> = computed((): boolean => this.shownNodes().length > 0);
+
+    /** Поиск ничего не нашёл. Дереву ушёл бы пустой список, и оно написало бы «нет вариантов». */
+    protected readonly isNothingFound: Signal<boolean> = computed((): boolean => !this.hasRows() && this.nodes().length > 0);
 
     protected readonly isMultiToggleShown: Signal<boolean> = computed((): boolean => this.multiToggle() && this.mode() === 'multiple');
 
@@ -138,6 +142,8 @@ export class RtTreeSelectorComponent<TValue> {
     });
     public readonly expandOnStart: InputSignal<IRtTreeSelector.ExpandOnStart> = input<IRtTreeSelector.ExpandOnStart>('chosen');
     public readonly label: InputSignal<string> = input<string>('');
+    /** Начальная строка поиска. */
+    public readonly searchTerm: InputSignal<string> = input<string>('');
     public readonly ariaLabel: InputSignal<string | null> = input<string | null>(null);
 
     public readonly applied: OutputEmitterRef<ReadonlyArray<TValue>> = output<ReadonlyArray<TValue>>();
@@ -221,7 +227,7 @@ export class RtTreeSelectorComponent<TValue> {
 
     #expandOnStart(): void {
         const start: IRtTreeSelector.ExpandOnStart = this.expandOnStart();
-        if (start === 'all') {
+        if (start === 'all' || this.term().trim() !== '') {
             this.tree()?.expandAll();
             return;
         }

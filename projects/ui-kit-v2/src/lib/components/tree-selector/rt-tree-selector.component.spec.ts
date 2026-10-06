@@ -103,6 +103,13 @@ describe('RtTreeSelectorComponent', (): void => {
         expect(marked).toEqual(expect.arrayContaining(['paris', 'hilton']));
     });
 
+    it('a search that found nothing says so and keeps the controls row', async (): Promise<void> => {
+        const fixture: TFixture = setup();
+        await type(fixture, 'nothing like it');
+        expect(host(fixture).querySelector('[qa-dataid="tree-selector-empty"]')?.textContent?.trim()).toBe('Nothing found');
+        expect(host(fixture).querySelector('.rt-tree-selector__controls')).not.toBeNull();
+    });
+
     it('SC-UKV-679: the search field hands the arrows and Space to the tree and keeps its text', async (): Promise<void> => {
         const fixture: TFixture = setup({ expandOnStart: 'all' });
         await fixture.whenStable();
