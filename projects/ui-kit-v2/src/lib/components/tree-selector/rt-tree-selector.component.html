@@ -16,7 +16,7 @@
 
         <div rtElem="controls">
             <div rtElem="row">
-                @if (hasRows()) {
+                @if (isExpandShown()) {
                     <button
                         rtButton
                         rtElem="control"
@@ -25,8 +25,8 @@
                         appearance="outlined"
                         theme="secondary"
                         size="sm"
-                        icon="chevron-down"
-                        [label]="expandAllLabel()"
+                        icon="expand-all"
+                        [rtTooltip]="expandAllLabel()"
                         [attr.aria-label]="expandAllLabel()"
                         (click)="expandAll()"></button>
                     <button
@@ -37,13 +37,28 @@
                         appearance="outlined"
                         theme="secondary"
                         size="sm"
-                        icon="chevron-up"
-                        [label]="collapseAllLabel()"
+                        icon="collapse-all"
+                        [rtTooltip]="collapseAllLabel()"
                         [attr.aria-label]="collapseAllLabel()"
                         (click)="collapseAll()"></button>
                 }
                 @if (controlsTpl(); as controls) {
                     <ng-container [ngTemplateOutlet]="controls.templateRef" />
+                }
+                @if (isRevertShown()) {
+                    <button
+                        rtButton
+                        rtElem="control"
+                        qa-dataid="tree-selector-revert"
+                        type="button"
+                        appearance="outlined"
+                        theme="secondary"
+                        size="sm"
+                        icon="undo"
+                        [rtTooltip]="revertLabel()"
+                        [attr.aria-label]="revertLabel()"
+                        [disabled]="!isDraftChanged()"
+                        (click)="onRevert()"></button>
                 }
                 @if (isClearShown()) {
                     <button
@@ -54,8 +69,8 @@
                         appearance="text"
                         theme="danger"
                         size="sm"
-                        icon="close"
-                        [label]="clearLabel()"
+                        icon="trash"
+                        [rtTooltip]="clearLabel()"
                         [attr.aria-label]="clearLabel()"
                         (click)="onClear()"></button>
                 }

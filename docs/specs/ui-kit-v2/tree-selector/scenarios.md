@@ -85,3 +85,21 @@ When it is drawn
 Then the template stands in the controls row after «Collapse all»
 
 Covered by the component test of `rt-tree-selector`.
+
+### SC-UKV-689 — expand-all and collapse-all are icon buttons drawn only when asked for
+
+Given the selector without `expandControls`
+When it is drawn
+Then the controls row holds neither «Expand all» nor «Collapse all»; with `expandControls` both
+stand as icon buttons with their labels as names and tooltips
+
+Covered by the component test of `rt-tree-selector`.
+
+### SC-UKV-690 — revert returns the draft to the choice
+
+Given the confirming form with `revertable` and the choice «Paris Hilton»
+When a person ticks «Berlin Hilton» and presses «Revert selection»
+Then the draft is «Paris Hilton» again, the selector stays open, and the button is off while the
+draft equals the choice; in the direct form the button is not drawn
+
+Covered by the component test of `rt-tree-selector`.

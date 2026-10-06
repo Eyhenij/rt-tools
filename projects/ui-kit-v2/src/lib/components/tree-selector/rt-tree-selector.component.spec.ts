@@ -81,7 +81,7 @@ function pressButton(fixture: ComponentFixture<unknown>, qa: string): void {
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [RtTreeSelectorComponent, RtTreeSelectorControlsDirective],
     template: `
-        <rt-tree-selector [nodes]="nodes">
+        <rt-tree-selector expandControls [nodes]="nodes">
             <ng-template rtTreeSelectorControls>
                 <button qa-dataid="own-control" type="button">Group by</button>
             </ng-template>
@@ -218,5 +218,43 @@ describe('RtTreeSelectorComponent', (): void => {
         fixture.componentInstance.value.set([]);
         fixture.detectChanges();
         expect(button(fixture, 'tree-selector-clear')).toBeNull();
+    });
+
+    it('SC-UKV-689: expand-all and collapse-all are icon buttons drawn only when asked for', (): void => {
+        const plain: TFixture = setup();
+        expect(host(plain).querySelector('.rt-tree-selector__row')).not.toBeNull();
+        expect(button(plain, 'tree-selector-expand-all')).toBeNull();
+        expect(button(plain, 'tree-selector-collapse-all')).toBeNull();
+
+        const asked: TFixture = setup({ expandControls: true });
+        const expand: HTMLButtonElement = button(asked, 'tree-selector-expand-all');
+        expect(expand.classList).toContain('rt-button--icon-only');
+        expect(expand.getAttribute('aria-label')).toBe('Expand all');
+        expect(button(asked, 'tree-selector-collapse-all').classList).toContain('rt-button--icon-only');
+    });
+
+    it('SC-UKV-690: revert returns the draft to the choice and stands only in the confirming form', (): void => {
+        const fixture: TFixture = setup({ confirm: true, revertable: true, expandOnStart: 'all', value: ['ph'] });
+        expect(button(fixture, 'tree-selector-revert').disabled).toBe(true);
+
+        click(fixture, 'bh');
+        expect(button(fixture, 'tree-selector-apply').disabled).toBe(false);
+        expect(button(fixture, 'tree-selector-revert').disabled).toBe(false);
+
+        pressButton(fixture, 'tree-selector-revert');
+        expect(button(fixture, 'tree-selector-apply').disabled).toBe(true);
+        expect(button(fixture, 'tree-selector-revert').disabled).toBe(true);
+        expect(fixture.componentInstance.value()).toEqual(['ph']);
+
+        const direct: TFixture = setup({ revertable: true });
+        expect(host(direct).querySelector('.rt-tree-selector__row')).not.toBeNull();
+        expect(button(direct, 'tree-selector-revert')).toBeNull();
+    });
+
+    it('clear is an icon button with a trash can', (): void => {
+        const fixture: TFixture = setup({ clearable: true, value: ['ph'] });
+        const clear: HTMLButtonElement = button(fixture, 'tree-selector-clear');
+        expect(clear.classList).toContain('rt-button--icon-only');
+        expect(clear.getAttribute('aria-label')).toBe('Clear selection');
     });
 });

@@ -1,7 +1,15 @@
 # `rt-tree-selector`
 
 ```html
-<rt-tree-selector confirm multiToggle [emptyAllowed]="false" [nodes]="hotels" [(value)]="hotelIds" (applied)="close()" />
+<rt-tree-selector
+    confirm
+    expandControls
+    revertable
+    multiToggle
+    [emptyAllowed]="false"
+    [nodes]="hotels"
+    [(value)]="hotelIds"
+    (applied)="close()" />
 ```
 
 Входы и выходы — на странице обзора `Overview.mdx` рядом. Договорённость —
@@ -23,4 +31,5 @@
 
 - Выбор всегда новый массив, узлы не правятся.
 - «Очистить выбор» оставляет выключенные выбранные узлы.
+- Кнопки строки контролов иконочные и все необязательные. Откат стоит только в подтверждаемой форме.
 - Порядок значений при сравнении черновика с выбором не учитывается.

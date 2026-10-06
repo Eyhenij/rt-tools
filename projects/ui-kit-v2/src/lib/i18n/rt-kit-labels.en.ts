@@ -236,6 +236,7 @@ export const RT_KIT_LABELS_EN = {
     uiResizeList: 'Resize list pane',
     uiRefresh: 'Refresh',
     uiRevert: 'Revert',
+    uiRevertSelection: 'Revert selection',
     uiSave: 'Save',
     uiSaveNewAgent: 'Save the new agent',
     uiScrollDown: 'Scroll down',

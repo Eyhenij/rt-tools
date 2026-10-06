@@ -35,8 +35,9 @@ field and the controls on top of it, so the application moves without its own co
 | In the domain       | On the screen                                             |
 | ------------------- | --------------------------------------------------------- |
 | The search field    | a field with a magnifier and a cross, «Search»            |
-| Expand and collapse | two buttons «Expand all» and «Collapse all»               |
-| Clear               | a button «Clear selection»                                |
+| Expand and collapse | two icon buttons «Expand all» and «Collapse all»          |
+| Clear               | a trash can icon «Clear selection»                        |
+| Revert              | a back arrow icon «Revert selection»                      |
 | The multi toggle    | a switch «Multiple selection» with a hint about Ctrl or ⌘ |
 | Apply and Cancel    | «Apply» and «Cancel» in the footer                        |
 
@@ -54,18 +55,22 @@ field and the controls on top of it, so the application moves without its own co
   its whole subtree; a branch with a matching node below it stays as its path. While a term is typed
   every kept branch is open. The line starts from `searchTerm`, so a rebuilt tree keeps its search.
 
-- **Expand-all and collapse-all open and fold every branch of the tree.** They stand while the tree
-  has rows.
+- **Expand-all and collapse-all open and fold every branch of the tree.** They are icon buttons drawn
+  only when asked for by `expandControls`, and they stand while the tree has rows.
 
-- **Clear empties the choice except the disabled chosen nodes.** It is drawn only when asked for and
-  only while something is chosen.
+- **Clear empties the choice except the disabled chosen nodes.** It is an icon button with a trash
+  can, drawn only when asked for and only while something is chosen.
+
+- **Revert returns the draft to the choice without closing the selector.** It is an icon button drawn
+  only when asked for by `revertable`. It stands in the confirming form alone: in the direct form
+  the choice is already written. It is off while the draft equals the choice.
 
 - **The multi toggle switches the exclusive click off and on.** With the toggle off a plain click
   keeps one node and Ctrl or Cmd adds; with it on a click adds. The toggle is drawn only when asked
   for; without it the click adds.
 
 - **The application's own controls stand in the row of the selector.** A template marked by
-  `rtTreeSelectorControls` is drawn after expand-all and collapse-all; the hotel grouping is one.
+  `rtTreeSelectorControls` is drawn after expand-all and collapse-all, before revert and clear; the hotel grouping is one.
 
 - **In the direct form every change is written to the choice at once.** A click, a key, select-all and
   clear write `value` with a new array.
@@ -128,8 +133,8 @@ draft, the search line and the multi toggle live in the component.
 
 ### Locales
 
-Every label of the selector — search, expand all, collapse all, clear, multiple selection and its
-hint, apply, cancel — is a kit label taken through the label token. The kit carries the English set; the application
+Every label of the selector — search, expand all, collapse all, clear, revert, multiple selection
+and its hint, apply, cancel — is a kit label taken through the label token. The kit carries the English set; the application
 gives its own language through the translator.
 
 ### SEO
@@ -162,3 +167,5 @@ None.
 ## History of changes
 
 - 2026-10-06 — the agreement written for RT-2550.
+- 2026-10-06 — expand-all and collapse-all became optional icon buttons by the owner's word. Clear
+  became an icon button with a trash can, and an optional revert button was added.

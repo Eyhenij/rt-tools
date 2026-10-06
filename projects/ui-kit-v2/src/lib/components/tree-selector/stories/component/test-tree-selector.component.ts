@@ -27,7 +27,9 @@ export class TestRtTreeSelectorComponent {
     public confirm: boolean = true;
     public footer: boolean = true;
     public emptyAllowed: boolean = true;
+    public expandControls: boolean = true;
     public clearable: boolean = true;
+    public revertable: boolean = true;
     public multiToggle: boolean = true;
     public multiDefault: boolean = false;
     public selectAll: boolean = true;

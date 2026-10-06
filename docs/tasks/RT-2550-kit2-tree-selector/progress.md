@@ -7,7 +7,7 @@
 - **Done:** component, showcase stories and overview; selector tests 17 of 17; 6 snapshots taken, looked at and confirmed by a second raising (801 of 801); check:all green — 131 projects and stylelint
 - **Next step:** show the stories on :6007 and wait for «открывай»
 - **Uncommitted:** nothing
-- **Waiting for the owner:** the look of the stories on :6007 — the PR opens after «открывай»
+- **Waiting for the owner:** the look of the reworked controls on :6007 — the PR opens after «открывай»
 - **PR:** not open yet
 
 ## Steps
@@ -30,6 +30,13 @@
 - **Labels in English and the showcase Russian, not eight languages** — the kit carries one English
   set and the application gives its language through the translator; the multi toggle, its hint and
   the search placeholder reuse the labels of the dynamic selector. Affected stage: 1.
+
+- **Control buttons are icon buttons, and each is optional** — the owner on the shown stories:
+  «развернуть свернуть нужно опционально только иконочные кнопки с соответвующими иконками» and
+  «очистить тоже иконко иусорки + откатить выбор кнопка опциональная». Expand and collapse are
+  asked for by `expandControls`, clear has a trash can, revert is asked for by `revertable` and
+  stands in the confirming form alone. The kit got the icons `expand-all` and `collapse-all` in
+  both sets and a Material pair for `undo`. Scenarios SC-UKV-689 and SC-UKV-690. Affected stage: 1–3.
 
 ## Sessions
 

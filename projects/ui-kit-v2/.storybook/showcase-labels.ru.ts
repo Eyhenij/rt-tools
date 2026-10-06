@@ -229,6 +229,7 @@ export const RT_KIT_LABELS_RU: Readonly<Record<TRtKitLabelKey, string>> = {
     uiResizeList: 'Изменить ширину списка',
     uiRefresh: 'Обновить',
     uiRevert: 'Отменить',
+    uiRevertSelection: 'Откатить выбор',
     uiSave: 'Сохранить',
     uiSaveNewAgent: 'Сохранить нового агента',
     uiScrollDown: 'Прокрутить вниз',

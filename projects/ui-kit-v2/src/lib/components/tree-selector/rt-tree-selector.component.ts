@@ -35,7 +35,7 @@ import { RtTooltipDirective } from '../tooltip/rt-tooltip.directive';
 import { RtTreeComponent } from '../tree/rt-tree.component';
 import { IRtTree } from '../tree/rt-tree.model';
 import { RtTreeSelectorControlsDirective } from './rt-tree-selector.directives';
-import { rtTreeSelectorCanApply, rtTreeSelectorClear, rtTreeSelectorFilter } from './rt-tree-selector.logic';
+import { rtTreeSelectorCanApply, rtTreeSelectorClear, rtTreeSelectorFilter, rtTreeSelectorSame } from './rt-tree-selector.logic';
 import { IRtTreeSelector } from './rt-tree-selector.model';
 
 const BEM_BLOCK: string = 'rt-tree-selector';
@@ -75,6 +75,7 @@ export class RtTreeSelectorComponent<TValue> {
     protected readonly expandAllLabel: Signal<string> = rtKitLabel('uiExpandAll');
     protected readonly collapseAllLabel: Signal<string> = rtKitLabel('uiCollapseAll');
     protected readonly clearLabel: Signal<string> = rtKitLabel('uiClearSelection');
+    protected readonly revertLabel: Signal<string> = rtKitLabel('uiRevertSelection');
     protected readonly multiLabel: Signal<string> = rtKitLabel('dynamicSelectorMulti');
     protected readonly multiHintLabel: Signal<string> = rtKitLabel('dynamicSelectorMultiHint');
     protected readonly cancelLabel: Signal<string> = rtKitLabel('uiCancel');
@@ -103,6 +104,15 @@ export class RtTreeSelectorComponent<TValue> {
     /** Поиск ничего не нашёл. Дереву ушёл бы пустой список, и оно написало бы «нет вариантов». */
     protected readonly isNothingFound: Signal<boolean> = computed((): boolean => !this.hasRows() && this.nodes().length > 0);
 
+    protected readonly isExpandShown: Signal<boolean> = computed((): boolean => this.expandControls() && this.hasRows());
+
+    /** Откат стоит только в подтверждаемой форме: в прямой выбор уже записан, откатывать не к чему. */
+    protected readonly isRevertShown: Signal<boolean> = computed(
+        (): boolean => this.revertable() && this.confirm() && this.mode() !== 'none'
+    );
+
+    protected readonly isDraftChanged: Signal<boolean> = computed((): boolean => !rtTreeSelectorSame(this.draft(), this.value()));
+
     protected readonly isMultiToggleShown: Signal<boolean> = computed((): boolean => this.multiToggle() && this.mode() === 'multiple');
 
     protected readonly isExclusive: Signal<boolean> = computed((): boolean => this.isMultiToggleShown() && !this.multiOn());
@@ -130,7 +140,15 @@ export class RtTreeSelectorComponent<TValue> {
     public readonly emptyAllowed: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
         transform: booleanAttribute,
     });
+    /** Иконочные кнопки «Развернуть всё» и «Свернуть всё». */
+    public readonly expandControls: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
+        transform: booleanAttribute,
+    });
     public readonly clearable: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
+        transform: booleanAttribute,
+    });
+    /** Иконочная кнопка «Откатить выбор»: возвращает черновик к выбору, не закрывая селектор. */
+    public readonly revertable: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
         transform: booleanAttribute,
     });
     public readonly multiToggle: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
@@ -204,6 +222,10 @@ export class RtTreeSelectorComponent<TValue> {
 
     protected onClear(): void {
         this.#write(rtTreeSelectorClear(this.nodes(), this.draft()));
+    }
+
+    protected onRevert(): void {
+        this.draft.set(this.value());
     }
 
     protected expandAll(): void {

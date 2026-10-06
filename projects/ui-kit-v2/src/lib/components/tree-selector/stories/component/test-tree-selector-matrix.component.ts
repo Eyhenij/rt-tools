@@ -20,13 +20,18 @@ interface ITreeSelectorCase {
     readonly value: ReadonlyArray<string>;
     readonly confirm: boolean;
     readonly emptyAllowed: boolean;
+    readonly expandControls: boolean;
     readonly clearable: boolean;
+    readonly revertable: boolean;
     readonly multiToggle: boolean;
     readonly searchTerm: string;
     readonly label: string;
     /** Рисовать ли свой контрол приложения в строке. */
     readonly own: boolean;
 }
+
+/** Ячейка, где история снимает отметку с узла: откат в ней включён. Имя читает история. */
+export const REVERT_CHANGED: string = 'откат: черновик изменён';
 
 function selectorCase(name: string, patch: Partial<ITreeSelectorCase> = {}): ITreeSelectorCase {
     return {
@@ -35,7 +40,9 @@ function selectorCase(name: string, patch: Partial<ITreeSelectorCase> = {}): ITr
         value: ['ararat', 'mtac'],
         confirm: false,
         emptyAllowed: true,
+        expandControls: false,
         clearable: false,
+        revertable: false,
         multiToggle: false,
         searchTerm: '',
         label: '',
@@ -77,7 +84,7 @@ export class TestRtTreeSelectorMatrixComponent {
     public readonly defaultValue: ReadonlyArray<string> = ['ararat', 'mtac'];
 
     public readonly formCases: readonly ITreeSelectorCase[] = [
-        selectorCase('прямая форма'),
+        selectorCase('прямая форма', { expandControls: true }),
         selectorCase('подтверждаемая: «Применить» выключено', { confirm: true }),
         selectorCase('пустой выбор запрещён', { confirm: true, emptyAllowed: false, value: [] }),
     ];
@@ -89,9 +96,13 @@ export class TestRtTreeSelectorMatrixComponent {
     ];
 
     public readonly controlCases: readonly ITreeSelectorCase[] = [
+        selectorCase('без кнопок — умолчание'),
+        selectorCase('развернуть и свернуть', { expandControls: true }),
         selectorCase('заголовок и очистка', { label: 'Гостиницы', clearable: true }),
+        selectorCase('откат: черновик не изменён', { confirm: true, revertable: true }),
+        selectorCase(REVERT_CHANGED, { confirm: true, revertable: true }),
         selectorCase('переключатель множественного выбора', { multiToggle: true }),
-        selectorCase('контрол приложения', { own: true }),
+        selectorCase('контрол приложения', { expandControls: true, own: true }),
     ];
 
     public readonly modeCases: readonly ITreeSelectorCase[] = [
