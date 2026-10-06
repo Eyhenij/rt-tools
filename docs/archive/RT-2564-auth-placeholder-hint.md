@@ -1,5 +1,7 @@
 # Grill
 
+Task RT-2564 · the request — the PR into the epic branch RT-2528 · merged —
+
 ## The owner request
 
 > ты написал плэйслхолдер таким же как и тайтл
@@ -37,3 +39,11 @@ No answer in words. Question closed by assumption: the recommended option — an
 ## What is left unclear
 
 - Nothing blocks the work.
+
+## Decisions along the way
+
+- **A realm whose login takes only a name gets no example either: scenario SC-AUTH-60.** — an
+  address in a field that does not take one would mislead. Affected stage of the plan: 1.
+- **The stand takes a rebuilt theme only after the container is recreated.** — the jar is mounted
+  as a single file, the build writes a new file, and a restart keeps the old one. Affected stage of
+  the plan: 1.
