@@ -6,9 +6,9 @@ Rewritten by every session, not appended to.
 
 - **State:** `этап-идёт`
 - **Stage:** 4 of 5 — The showcase
-- **Done:** the grill, the plan; the logic — `rtTreeChooseAlone`, the word cut, 11 tests; `rt-tag` `highlight`, 29 tests; `rt-tree` `branchMarks`, `exclusive`, `filter`, badges, `rtTreeNodeMeta` — 28 tests, typecheck green
-- **Next step:** the new axes in the stories (step 4.1)
-- **Uncommitted:** nothing
+- **Done:** the grill, the plan; the logic — `rtTreeChooseAlone`, the word cut, 11 tests; `rt-tag` `highlight`, 29 tests; `rt-tree` `branchMarks`, `exclusive`, `filter`, badges, `rtTreeNodeMeta` — 28 tests, typecheck green; stories `BranchMarks`, `NodeMeta`, tag `Highlight`, sweep green over 769 stories
+- **Next step:** the owner looks at the stories on :6007 (step 4.3)
+- **Uncommitted:** three new frames, looked at, kept until the owner's look
 - **Waiting for the owner:** no
 - **PR:** not open yet
 
@@ -21,9 +21,9 @@ Rewritten by every session, not appended to.
 - [x] 2.1 Add the `highlight` input to `rt-tag` with its rule, scenario and test.
 - [x] 3.1 Add `branchMarks`, `exclusive`, `filter`, the badges and the `rtTreeNodeMeta` slot to `rt-tree`.
 - [x] 3.2 Write the component scenarios and tests in `rt-tree.component.spec.ts`.
-- [>] 4.1 Add the new axes to the tree and tag stories and to both `Overview.mdx`.
-- [ ] 4.2 Run the story sweep over the raised showcase.
-- [ ] 4.3 Give the owner the links to the stories on :6007.
+- [x] 4.1 Add the new axes to the tree and tag stories and to both `Overview.mdx`.
+- [x] 4.2 Run the story sweep over the raised showcase.
+- [>] 4.3 Give the owner the links to the stories on :6007.
 - [ ] 4.4 Take the snapshots after the owner's look and look at every frame.
 - [ ] 5.1 Run the spec check and the full set before the push.
 

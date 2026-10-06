@@ -83,6 +83,48 @@
         </app-story-presets>
     }
 
+    @case ('branch-marks') {
+        <app-story-presets>
+            <ng-template>
+                <app-story-row caption="Отметки у групп" [items]="branchMarkCases" [itemLabel]="caseLabel">
+                    <ng-template let-c>
+                        <rt-tree
+                            style="width: 280px"
+                            [ariaLabel]="c.name"
+                            [nodes]="c.nodes"
+                            [mode]="c.mode"
+                            [branchMarks]="c.branchMarks"
+                            [value]="c.value" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('node-meta') {
+        <app-story-presets>
+            <ng-template>
+                <app-story-row caption="Под подписью: метки узла и разметка приложения" [items]="nodeMetaCases" [itemLabel]="caseLabel">
+                    <ng-template let-c>
+                        <rt-tree
+                            style="width: 300px"
+                            [ariaLabel]="c.name"
+                            [nodes]="c.nodes"
+                            [filter]="c.filter"
+                            [searchTerm]="c.searchTerm"
+                            [value]="c.value">
+                            @if (c.meta) {
+                                <ng-template rtTreeNodeMeta let-node>
+                                    <rt-tag size="sm" appearance="outlined" value="ещё 2" />
+                                </ng-template>
+                            }
+                        </rt-tree>
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
     @case ('states') {
         <app-story-presets>
             <ng-template>

@@ -29,6 +29,9 @@ export const Icon: TStory = { args: { part: 'icon' } };
 
 export const Closable: TStory = { args: { part: 'closable' } };
 
+/** Слова поиска отмечены в подписи — SC-UKV-667. */
+export const Highlight: TStory = { args: { part: 'highlight' } };
+
 /** Ручки цвета, отступов и интервала перебивают палитру и ступень — SC-UKV-572. */
 export const Handles: TStory = { args: { part: 'handles' } };
 

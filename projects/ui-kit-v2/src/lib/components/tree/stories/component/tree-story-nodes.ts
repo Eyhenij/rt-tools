@@ -28,3 +28,11 @@ export const TREE_STORY_NODES: ReadonlyArray<IRtTree.Node<string>> = [
     },
     { label: 'Ереван', value: 'evn' },
 ];
+
+function withBadges(node: IRtTree.Node<string>): IRtTree.Node<string> {
+    const badges: ReadonlyArray<IRtTree.Badge> = node.children ? [] : [{ text: node.value.toUpperCase(), severity: 'info' }];
+    return { ...node, badges, children: node.children?.map(withBadges) };
+}
+
+/** Те же регионы с метками-кодами: по ним поиск без отбора показывает найденное и в метках. */
+export const TREE_STORY_BADGE_NODES: ReadonlyArray<IRtTree.Node<string>> = TREE_STORY_NODES.map(withBadges);

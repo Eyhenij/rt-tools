@@ -35,6 +35,12 @@ export const Empty: TStory = { args: { part: 'empty' } };
 /** Разметка приложения в конце строки — SC-UKV-650. */
 export const NodeEnd: TStory = { args: { part: 'node-end' } };
 
+/** Группы без отметки: по клику раскрываются, выбор идёт по листьям — SC-UKV-669. */
+export const BranchMarks: TStory = { args: { part: 'branch-marks' } };
+
+/** Метки узла, поиск без отбора и разметка приложения под подписью — SC-UKV-670, SC-UKV-671. */
+export const NodeMeta: TStory = { args: { part: 'node-meta' } };
+
 /**
  * Признак состояния стоит на самом хосте дерева, поэтому общий помощник с селектором потомка сюда
  * не подходит. Кольцо фокуса рисует хост, а наведение — строка: оно показано на «Казани».
