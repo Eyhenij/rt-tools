@@ -5,9 +5,9 @@
 Rewritten by every session, not appended to.
 
 - **State:** `этап-идёт`
-- **Stage:** 1 of 4 — Model and pure logic
+- **Stage:** 2 of 4 — The component
 - **Done:** the epic RT-2542 with nine tasks, the agreement `docs/specs/ui-kit-v2/proposed/tree/`, the plan
-- **Next step:** write `IRtTree` and the pure logic over the select tree module
+- **Next step:** write the component, its template, styles and the row template directive
 - **Uncommitted:** the folders of the other eight tasks of the epic — each goes into its own branch
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -16,10 +16,10 @@ Rewritten by every session, not appended to.
 
 - `[x]` done · `[>]` going on right now · `[ ]` not begun
 
-- [>] 1.1 Declare `IRtTree` in `rt-tree.model.ts`: the node, the mode, the mark.
-- [ ] 1.2 Write `rt-tree.logic.ts`: `rtTreeChoose`, `rtTreeMark`, `rtTreeSelectAll`, `rtTreeLabelParts` over the select tree module.
-- [ ] 1.3 Write `rt-tree.logic.spec.ts` for SC-UKV-639 … SC-UKV-643, SC-UKV-645, SC-UKV-647 by the logic.
-- [ ] 2.1 Write `rt-tree.component.ts`, `.html`, `.scss` and `rt-tree.directives.ts` with the row template directive.
+- [x] 1.1 Declare `IRtTree` in `rt-tree.model.ts`: the node, the mode, the mark.
+- [x] 1.2 Write `rt-tree.logic.ts`: `rtTreeChoose`, `rtTreeMark`, `rtTreeSelectAll`, `rtTreeLabelParts` over the select tree module.
+- [x] 1.3 Write `rt-tree.logic.spec.ts` for SC-UKV-639 … SC-UKV-643, SC-UKV-645, SC-UKV-647 by the logic.
+- [>] 2.1 Write `rt-tree.component.ts`, `.html`, `.scss` and `rt-tree.directives.ts` with the row template directive.
 - [ ] 2.2 Export the folder from the components barrel.
 - [ ] 2.3 Write `rt-tree.component.spec.ts` for every scenario through the drawn component.
 - [ ] 2.4 Write `CONTEXT.md` and `Overview.mdx` next to the component.
