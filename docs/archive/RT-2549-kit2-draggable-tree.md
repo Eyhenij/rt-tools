@@ -59,3 +59,21 @@ application's own bans.
 ## What is left unclear
 
 - Dragging between two trees — the sample has one tree; not asked, out of scope.
+
+## Decisions along the way
+
+- **The branch stands on `RT-2548-kit2-tree`** — the epic plan stacks the tree tasks; the PR goes
+  into that branch's successor base once #2568 is merged.
+
+- **All branches are open when the tree appears** — an order is judged seen whole; what the person
+  folds stays folded, and a container a node was put into opens. Affected stage: 2.
+- **The handle is decoration, the row moves by keys** — the handle has no label of its own, so no
+  new kit label is started; Alt with an arrow is the way without a mouse. Affected stage: 2.
+- **The row content has a gap** — the frame of the application markup showed the tag glued to
+  the label; the content element got `--rt-space-sm` between its children. Affected stage: 3.
+
+- **The open branches became the application's** — after the showing the owner asked whether the
+  application moves to both trees without workarounds; the answer showed its tree keeps `expanded`
+  on nodes and hears every fold. The owner chose «Закрыть всё в ките»: `open` is a two-way input,
+  `null` keeps every branch open. The modes `rt-tree` lacks went to RT-2572, since #2568 was
+  already merged. Affected stage: 3.
