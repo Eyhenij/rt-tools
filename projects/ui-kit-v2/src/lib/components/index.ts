@@ -30,6 +30,7 @@ export * from './date-range';
 export * from './detail-list';
 export * from './dialog';
 export * from './download-link';
+export * from './draggable-tree';
 export * from './dynamic-list';
 export * from './dynamic-selector';
 export * from './empty-state';

@@ -1,0 +1,140 @@
+@layer rt-kit.components {
+    .rt-draggable-tree {
+        --rt-draggable-tree-focus-shadow: var(--rt-shadow-focus-ring);
+
+        display: block;
+        color: var(--rt-color-text-primary);
+        font-size: var(--rt-input-font-size);
+        outline: none;
+
+        &:focus-visible {
+            box-shadow: var(--rt-draggable-tree-focus-shadow);
+        }
+
+        &__list {
+            display: block;
+        }
+
+        &__empty {
+            padding: var(--rt-space-md);
+            color: var(--rt-color-text-muted);
+            text-align: center;
+        }
+    }
+
+    /* Строка объявлена вне корня блока: строку в руке CDK выносит в конец страницы, и правило из
+       корня до неё не доходит. Свои свойства она поэтому объявляет на себе. */
+    .rt-draggable-tree__row {
+        --rt-draggable-tree-level: 0;
+        --rt-draggable-tree-indent: var(--rt-space-lg);
+        --rt-draggable-tree-mark-width: var(--rt-border-width-thick);
+        --rt-draggable-tree-mark-color: var(--rt-color-action-primary);
+        --rt-draggable-tree-mark-radius: var(--rt-radius-xs);
+        --rt-draggable-tree-preview-shadow: var(--rt-shadow-md);
+
+        position: relative;
+        display: flex;
+        align-items: center;
+        padding: var(--rt-space-sm) var(--rt-space-md);
+        background: var(--rt-color-bg-surface);
+        color: var(--rt-color-text-primary);
+        cursor: pointer;
+        font-size: var(--rt-input-font-size);
+        gap: var(--rt-space-sm);
+        padding-inline-start: calc(var(--rt-space-md) + var(--rt-draggable-tree-indent) * var(--rt-draggable-tree-level));
+
+        &:hover,
+        &--highlighted {
+            background-color: var(--rt-color-bg-hover);
+        }
+
+        /* Черта места сброса — полоса у верхнего или нижнего края строки цели. */
+        &--drop-before:before,
+        &--drop-after:after {
+            position: absolute;
+            background: var(--rt-draggable-tree-mark-color);
+            block-size: var(--rt-draggable-tree-mark-width);
+            content: '';
+            inset-inline: 0;
+        }
+
+        &--drop-before:before {
+            inset-block-start: 0;
+        }
+
+        &--drop-after:after {
+            inset-block-end: 0;
+        }
+
+        &--drop-inside {
+            border-radius: var(--rt-draggable-tree-mark-radius);
+            outline: var(--rt-draggable-tree-mark-width) solid var(--rt-draggable-tree-mark-color);
+            outline-offset: calc(var(--rt-draggable-tree-mark-width) * -1);
+        }
+
+        &.cdk-drag-preview {
+            box-shadow: var(--rt-draggable-tree-preview-shadow);
+        }
+
+        &.cdk-drag-placeholder {
+            opacity: 0;
+        }
+
+        &--disabled {
+            cursor: not-allowed;
+            opacity: var(--rt-input-disabled-opacity);
+
+            &:hover {
+                background-color: transparent;
+            }
+        }
+
+        @media (pointer: coarse) {
+            min-block-size: var(--rt-control-height-lg);
+        }
+    }
+
+    /* Ручка и стрелка ветки — по ширине значка; у выключенного узла и у листа на их месте пустое
+       место той же ширины, чтобы подписи одного уровня стояли в линию. */
+    .rt-draggable-tree__handle,
+    .rt-draggable-tree__handle-space,
+    .rt-draggable-tree__toggle,
+    .rt-draggable-tree__toggle-space {
+        display: inline-flex;
+        flex-shrink: 0;
+        align-items: center;
+        justify-content: center;
+        block-size: var(--rt-input-icon-size);
+        inline-size: var(--rt-input-icon-size);
+    }
+
+    .rt-draggable-tree__handle {
+        cursor: grab;
+
+        &:active {
+            cursor: grabbing;
+        }
+    }
+
+    .rt-draggable-tree__toggle {
+        padding: 0;
+        border: 0;
+        background: transparent;
+        cursor: pointer;
+    }
+
+    .rt-draggable-tree__content {
+        display: flex;
+        min-width: 0;
+        flex: 1 1 auto;
+        align-items: center;
+        gap: var(--rt-space-sm);
+    }
+
+    /* Длинная подпись обрезается многоточием, и полный текст даёт подсказка кита. */
+    .rt-draggable-tree__label {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}

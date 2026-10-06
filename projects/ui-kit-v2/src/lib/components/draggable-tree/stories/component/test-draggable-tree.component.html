@@ -1,0 +1,4 @@
+<div rtBlock="app-draggable-tree" style="display: grid; gap: 12px; width: 360px">
+    <rt-draggable-tree ariaLabel="Разделы отчётов" [(nodes)]="nodes" (moved)="onMoved($event)" />
+    <span rtElem="last">Последний перенос: {{ lastMove }}</span>
+</div>
