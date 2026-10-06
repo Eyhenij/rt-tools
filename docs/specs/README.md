@@ -80,6 +80,16 @@ pinned panel and the search over a submenu; the look of a field of input in the 
 where the components take the look of a field from and in which order the values are overridden. The
 surfaces of the other components and services the spec does not describe yet.
 
+`auth` is the entry module. One Keycloak serves every admin application. Each admin is a client,
+and its rights are client roles. The domain holds the stand: Keycloak, its database and a mail
+catcher are raised by one command, the realm is applied from a file, a command asks the stand. The
+subdomain of the contract reads rights from a token. The subdomain `theme` draws the entry screens of
+Keycloak with the components of the second kit. The subdomain of the client signs a person in from
+an Angular admin and sends the token with its requests. The subdomain of the server checks the
+token and the rights of every call. The subdomain of the import moves the people of an existing
+application into Keycloak with their password hashes. The subdomain `example` is an admin and a
+server of the tree that connect the packages, and an end-to-end suite runs a person through them.
+
 `ui-kit-v2` — four subdomains. The snapshots of the showcase: what is shot, what a frame is held the
 same between the runs by and where the run is obliged to refuse instead of being green. The leaving of
 a route panel: whom the guard asks about the edits and where the leaving is cancelled instead of a
@@ -96,6 +106,7 @@ surfaces of the other components and services the spec does not describe yet.
 | `message-bus` | `SC-MB` |
 | `store` | `SC-ST` |
 | `ui-kit` | `SC-UK` |
+| `auth` | `SC-AUTH` |
 
 The prefix is one per domain and does not change after the merging: the titles of the tests refer to
 the identifiers.

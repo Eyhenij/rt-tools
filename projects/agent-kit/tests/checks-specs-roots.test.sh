@@ -84,6 +84,31 @@ report "SC-AK-922 — вложенный корень не удваивает м
 settings '{ "sourceRoots": ["src"], "testRoots": ["src"] }'
 report "SC-AK-922 — повторённый корень не удваивает место" "$(places_of "SC-$PREFIX-01")" 1
 
+# --- SC-AK-1187 — a file a barrel imports with the `.js` ending counts as published ------------
+#
+# Пакет на ES-модулях пишет импорт в бареле с окончанием собранного файла. Аудит искал файл ровно
+# с этим именем, не находил его и читал каждую отданную пакетом функцию вызванной одним тестом. Имя файла
+# отличается от имени функции: иначе строка импорта в бареле сама считалась бы вызовом, и проба
+# зеленела бы и без исправления.
+
+mkdir -p "$ROOTS_TREE/projects/pkg/src/lib"
+printf "export * from './lib/numbers.js';\n" > "$ROOTS_TREE/projects/pkg/src/index.ts"
+printf 'export function alpha(): number {\n    return 1;\n}\n' > "$ROOTS_TREE/projects/pkg/src/lib/numbers.ts"
+printf "import { alpha } from './numbers';\n\nit('one', () => expect(alpha()).toBe(1));\n" > "$ROOTS_TREE/projects/pkg/src/lib/numbers.spec.ts"
+printf -- '- **Alpha answers one.** — `projects/pkg/src/lib/numbers.ts:alpha`\n' >> "$ROOTS_TREE/docs/specs/zeta/implementation.md"
+python3 - "$ROOTS_TREE/docs/specs/zeta/spec.md" <<'PY'
+import sys
+p = sys.argv[1]
+s = open(p).read().replace('## Правила\n\nНе применимо.', '## Правила\n\n- **Alpha answers one.** It is checked.', 1)
+open(p, 'w').write(s)
+PY
+
+settings '{ "sourceRoots": ["projects"] }'
+report "SC-AK-1187 — функция файла с окончанием .js в бареле не читается вызванной одним тестом" "$(specs_says 'called by a test alone')" 0
+
+printf "export * from './lib/other.js';\n" > "$ROOTS_TREE/projects/pkg/src/index.ts"
+report "SC-AK-1187 — файл, которого барель не подключает, по-прежнему судится" "$(specs_says 'called by a test alone')" 1
+
 rm -rf "$ROOTS_TREE"
 
 suite_result "проверки: корни наборов"

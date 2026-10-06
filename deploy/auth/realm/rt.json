@@ -1,0 +1,117 @@
+{
+  "realm": "rt",
+  "enabled": true,
+  "displayName": "RT",
+  "loginTheme": "rt",
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "registrationAllowed": false,
+  "resetPasswordAllowed": true,
+  "verifyEmail": true,
+  "rememberMe": false,
+  "bruteForceProtected": true,
+  "sslRequired": "external",
+  "accessTokenLifespan": 300,
+  "ssoSessionIdleTimeout": 1800,
+  "ssoSessionMaxLifespan": 36000,
+  "passwordPolicy": "length(8) and upperCase(1) and lowerCase(1) and digits(1) and specialChars(1) and notUsername and notEmail",
+  "internationalizationEnabled": true,
+  "supportedLocales": ["en", "ru"],
+  "defaultLocale": "en",
+  "smtpServer": {
+    "host": "mailpit",
+    "port": "1025",
+    "from": "no-reply@rt.localhost",
+    "fromDisplayName": "RT",
+    "auth": "false",
+    "ssl": "false",
+    "starttls": "false"
+  },
+  "identityProviders": [
+    {
+      "alias": "google",
+      "providerId": "google",
+      "displayName": "Google",
+      "enabled": "$(env:RT_GOOGLE_ENABLED)",
+      "trustEmail": true,
+      "firstBrokerLoginFlowAlias": "first broker login",
+      "config": {
+        "clientId": "$(env:RT_GOOGLE_CLIENT_ID)",
+        "clientSecret": "$(env:RT_GOOGLE_CLIENT_SECRET)",
+        "defaultScope": "openid profile email",
+        "syncMode": "IMPORT"
+      }
+    }
+  ],
+  "clients": [
+    {
+      "clientId": "rt-example-admin",
+      "name": "Example admin",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "redirectUris": ["http://localhost:4210/*", "http://localhost:4410/*"],
+      "webOrigins": ["http://localhost:4210", "http://localhost:4410"],
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "http://localhost:4210/*##http://localhost:4410/*",
+        "access.token.lifespan": "40"
+      }
+    },
+    {
+      "clientId": "rt-user-import",
+      "name": "User import",
+      "description": "Moves the people of an existing application into the realm with their password hashes",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "secret": "rt-user-import-stand",
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true
+    },
+    {
+      "clientId": "rt-catalog-sync",
+      "name": "Catalog sync",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "secret": "rt-catalog-sync-secret",
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true
+    }
+  ],
+  "roles": {
+    "client": {
+      "rt-example-admin": [
+        { "name": "example:read", "description": "Read the example records" },
+        { "name": "example:write", "description": "Edit the example records" }
+      ]
+    }
+  },
+  "users": [
+    {
+      "username": "service-account-rt-user-import",
+      "enabled": true,
+      "serviceAccountClientId": "rt-user-import",
+      "clientRoles": {
+        "realm-management": ["manage-users", "view-clients"]
+      }
+    },
+    {
+      "username": "service-account-rt-catalog-sync",
+      "enabled": true,
+      "serviceAccountClientId": "rt-catalog-sync",
+      "clientRoles": {
+        "realm-management": ["view-clients", "manage-clients"]
+      }
+    }
+  ]
+}

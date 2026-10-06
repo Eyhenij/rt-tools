@@ -1,0 +1,67 @@
+{
+  "name": "@rt-tools/auth-server",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "projects/auth-server/src",
+  "prefix": "lib",
+  "projectType": "library",
+  "release": {
+    "version": {
+      "manifestRootsToUpdate": ["dist/auth-server"],
+      "currentVersionResolver": "git-tag",
+      "fallbackCurrentVersionResolver": "disk"
+    }
+  },
+  "tags": ["scope:package"],
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/dist/auth-server"],
+      "dependsOn": ["build:esm", "build:cjs"],
+      "options": {
+        "command": "node tools/finalize-utils-package.cjs auth-server"
+      }
+    },
+    "build:esm": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{workspaceRoot}/dist/auth-server/esm"],
+      "options": {
+        "main": "projects/auth-server/src/index.ts",
+        "tsConfig": "projects/auth-server/tsconfig.lib.esm.json",
+        "outputPath": "dist/auth-server/esm",
+        "generatePackageJson": false,
+        "assets": [],
+        "rootDir": "projects/auth-server/src"
+      },
+      "dependsOn": ["^build"]
+    },
+    "build:cjs": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{workspaceRoot}/dist/auth-server/cjs"],
+      "options": {
+        "main": "projects/auth-server/src/index.ts",
+        "tsConfig": "projects/auth-server/tsconfig.lib.cjs.json",
+        "outputPath": "dist/auth-server/cjs",
+        "generatePackageJson": false,
+        "assets": [],
+        "rootDir": "projects/auth-server/src"
+      },
+      "dependsOn": ["^build"]
+    },
+    "nx-release-publish": {
+      "options": {
+        "packageRoot": "dist/auth-server"
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/projects/auth-server"],
+      "options": {
+        "jestConfig": "projects/auth-server/jest.config.ts",
+        "tsConfig": "projects/auth-server/tsconfig.spec.json"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}

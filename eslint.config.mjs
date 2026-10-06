@@ -140,7 +140,7 @@ export default [
             'apps/message-bus/**/*.{ts,js}',
             'libs/message-bus-api/**/*.ts',
             'tools/**/*.{ts,js,mjs,cjs}',
-            'projects/agent-kit/**/*.ts',
+            'projects/{agent-kit,auth-server}/**/*.ts',
             '**/webpack.config.js',
             '**/playwright.config.ts',
             '**/.storybook/**/*.{ts,js,mjs,cjs}',
@@ -358,17 +358,18 @@ export default [
         // `@rt-tools/utils` уезжает потребителям на Node наравне с приложениями Angular: ни
         // фреймворка, ни частичной компиляции, ни одноранговых зависимостей. Один импорт вернул
         // бы всё это назад, и пакет молча перестал бы разрешаться вне Angular — поэтому запрет
-        // стоит там, где импорт пишут, а не всплывает при публикации.
-        files: ['projects/utils/**/*.ts'],
+        // стоит там, где импорт пишут, а не всплывает при публикации. Контракт модуля входа так же:
+        // его читают и клиент на Angular, и сервер на NestJS; перенос пользователей идёт на Node.
+        files: ['projects/utils/**/*.ts', 'projects/auth-contract/**/*.ts', 'projects/auth-import/**/*.ts'],
         rules: {
             'no-restricted-imports': [
                 'error',
                 {
                     patterns: [
                         {
-                            group: ['@angular/*', '@angular/**', 'rxjs', 'rxjs/*'],
+                            group: ['@angular/*', '@angular/**', '@nestjs/*', '@nestjs/**', 'rxjs', 'rxjs/*'],
                             message:
-                                '@rt-tools/utils остаётся без фреймворка — ни Angular, ни RxJS у него в зависимостях нет. Код, которому фреймворк нужен, живёт в @rt-tools/core.',
+                                '@rt-tools/utils, @rt-tools/auth-contract и @rt-tools/auth-import остаются без фреймворка — ни Angular, ни NestJS, ни RxJS у них в зависимостях нет. Код, которому фреймворк нужен, живёт в @rt-tools/core.',
                         },
                     ],
                 },
@@ -411,7 +412,7 @@ export default [
     // каталога, и путь от корня там не совпадает ни с одним файлом.
     ...backendConfig.map((entry) => ({
         ...entry,
-        files: ['apps/message-bus/**/*.ts', 'libs/message-bus-api/**/*.ts', 'libs/message-bus-common/**/*.ts'],
+        files: ['apps/message-bus/**/*.ts', 'libs/message-bus-{api,common}/**/*.ts', 'projects/auth-server/**/*.ts'],
     })),
     {
         // Предел длины файла — 500 строк, и считаются все строки: пустые и
