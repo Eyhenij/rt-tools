@@ -7,7 +7,8 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { ISideMenu } from '../../side-menu.types';
 import { DEFAULT_MENU_ID } from '../../settings/side-menu-settings.logic';
-import { RtuiSideMenuComponent, RtuiSideMenuFooterDirective, RtuiSideMenuHeaderDirective } from '../../menu/rtui-side-menu.component';
+import { RtuiSideMenuComponent } from '../../menu/rtui-side-menu.component';
+import { RtuiSideMenuFooterDirective, RtuiSideMenuHeaderDirective } from '../../menu/rtui-side-menu-slots.directive';
 
 /** Длинное имя пункта: им показывают, как меню переносит текст. */
 const LONG_ITEM_NAME: string = 'Item 2 Lorem Ipsum is simply dummy text of the printing and typesetting industry';
