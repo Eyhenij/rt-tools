@@ -6,7 +6,7 @@ import { IRtField, RtButtonDirective, RtCheckboxComponent, RtFieldComponent, RtI
 import { map } from 'rxjs';
 
 import { KC_CONTEXT, TKcPageContext } from '../../kc-context';
-import { holdInvalidSubmit } from '../../kc-form';
+import { holdInvalidSubmit, loginPlaceholder } from '../../kc-form';
 import { KC_MESSAGES, TKcMessages } from '../../kc-i18n';
 import { RtKcMessageComponent } from '../../message/rt-kc-message.component';
 
@@ -71,6 +71,7 @@ export class RtKcLoginComponent {
 
     protected readonly title: string = this.#i18n.msgStr('loginAccountTitle');
     protected readonly usernameLabel: string = this.#i18n.msgStr(this.#usernameKey());
+    protected readonly usernamePlaceholder: string = loginPlaceholder(this.context.realm.loginWithEmailAllowed);
     protected readonly passwordLabel: string = this.#i18n.msgStr('password');
     protected readonly rememberMeLabel: string = this.#i18n.msgStr('rememberMe');
     protected readonly submitLabel: string = this.#i18n.msgStr('doLogIn');

@@ -5,7 +5,7 @@ import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { IRtField, RtButtonDirective, RtFieldComponent, RtInputComponent } from '@rt-tools/ui-kit-v2';
 
 import { KC_CONTEXT, TKcPageContext } from '../../kc-context';
-import { holdInvalidSubmit } from '../../kc-form';
+import { holdInvalidSubmit, loginPlaceholder } from '../../kc-form';
 import { KC_MESSAGES, TKcMessages } from '../../kc-i18n';
 import { RtKcMessageComponent } from '../../message/rt-kc-message.component';
 
@@ -43,6 +43,7 @@ export class RtKcResetPasswordComponent {
     protected readonly title: string = this.#i18n.msgStr('emailForgotTitle');
     protected readonly instruction: string = this.#i18n.msgStr('emailInstruction');
     protected readonly usernameLabel: string = this.#i18n.msgStr(this.context.realm.loginWithEmailAllowed ? 'usernameOrEmail' : 'username');
+    protected readonly usernamePlaceholder: string = loginPlaceholder(this.context.realm.loginWithEmailAllowed);
     protected readonly submitLabel: string = this.#i18n.msgStr('doSubmit');
     protected readonly backLabel: string = this.#i18n.msgStr('backToLogin');
     protected readonly usernameErrors: IRtField.ErrorMessages = { required: this.#i18n.msgStr('missingUsernameMessage') };

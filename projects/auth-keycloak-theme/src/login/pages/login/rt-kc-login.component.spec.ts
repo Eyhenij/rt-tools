@@ -52,13 +52,31 @@ describe('RtKcLoginComponent', () => {
         expect(submit?.className).toContain('lg');
     });
 
-    it('SC-AUTH-59 — an empty field shows its name as a placeholder', async () => {
-        const fixture: ComponentFixture<RtKcLoginComponent> = await renderKcPage(RtKcLoginComponent, kcContextOf('login.ftl'));
+    it('SC-AUTH-59 — an empty login field shows an example address, not its label', async () => {
+        const fixture: ComponentFixture<RtKcLoginComponent> = await renderKcPage(
+            RtKcLoginComponent,
+            kcContextOf('login.ftl', { realm: { loginWithEmailAllowed: true } })
+        );
         const placeholders: (string | null | undefined)[] = ['kc-username', 'kc-password'].map(
             (anchor: string): string | null | undefined => kcNode(fixture, anchor)?.querySelector('input')?.getAttribute('placeholder')
         );
 
-        expect(placeholders).toEqual(['Username or email', 'Password']);
+        expect(placeholders).toEqual(['name@example.com', '']);
+    });
+
+    it('SC-AUTH-60 — a login field that takes only a name has no placeholder', async () => {
+        const fixture: ComponentFixture<RtKcLoginComponent> = await renderKcPage(
+            RtKcLoginComponent,
+            kcContextOf('login.ftl', { realm: { loginWithEmailAllowed: false } })
+        );
+        const inputs: (HTMLInputElement | null | undefined)[] = ['kc-username', 'kc-password'].map(
+            (anchor: string): HTMLInputElement | null | undefined => kcNode(fixture, anchor)?.querySelector('input')
+        );
+
+        expect(inputs.every((input: HTMLInputElement | null | undefined): boolean => input instanceof HTMLInputElement)).toBe(true);
+        expect(
+            inputs.map((input: HTMLInputElement | null | undefined): string | null | undefined => input?.getAttribute('placeholder'))
+        ).toEqual(['', '']);
     });
 
     it('SC-AUTH-22 — a Keycloak message stands above the form in the colour of its kind', async () => {

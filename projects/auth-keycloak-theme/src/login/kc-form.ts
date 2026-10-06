@@ -1,5 +1,18 @@
 import { AbstractControl } from '@angular/forms';
 
+/** The example a login field shows when it takes an address. Not translated: an address reads the same in every language. */
+const LOGIN_EXAMPLE: string = 'name@example.com';
+
+/**
+ * What an empty login field shows inside it. The label above already names the field, so the
+ * placeholder gives an example of the value; a field that takes only a name gets none.
+ *
+ * @returns The example address, or an empty string.
+ */
+export function loginPlaceholder(emailAllowed: boolean): string {
+    return emailAllowed ? LOGIN_EXAMPLE : '';
+}
+
 /**
  * Lets a valid form go to Keycloak by its own native submit and holds an invalid one on the page.
  *

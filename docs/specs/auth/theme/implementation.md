@@ -10,7 +10,8 @@ without a line and a line without a rule is a divergence.
 - **A Keycloak message is shown as plain text, its HTML entities turned into characters.** — `projects/auth-keycloak-theme/src/login/kc-i18n.ts:plainMessage`
 - **Every field of a form keeps the line for its error, so an error does not move the form.** — `projects/auth-keycloak-theme/src/login/pages/login/rt-kc-login.component.html:reserveHintSpace`
 - **The fields and the buttons of the forms are of the large size.** — `projects/auth-keycloak-theme/src/login/pages/login/rt-kc-login.component.html:size`
-- **An empty field shows its name as a placeholder.** — `projects/auth-keycloak-theme/src/login/pages/login/rt-kc-login.component.html:placeholder`
+- **An empty login field that takes an address shows the example `name@example.com`.** — `projects/auth-keycloak-theme/src/login/kc-form.ts:loginPlaceholder`
+- **A login field that takes only a name, and a password field, have no placeholder.** — `projects/auth-keycloak-theme/src/login/kc-form.ts:loginPlaceholder`
 - **The language is chosen from a drop-down list, and a choice opens the page in that language.** — `projects/auth-keycloak-theme/src/login/shell/rt-kc-root.component.ts:switchLocale`
 - **The card of a page has an outline and a shadow.** — `projects/auth-keycloak-theme/src/styles.scss:login__card`
 - **A message Keycloak puts on a page is shown above the form in the colour of its kind.** — `projects/auth-keycloak-theme/src/login/message/rt-kc-message.component.ts:SEVERITY`
