@@ -5,7 +5,7 @@
 - **State:** `этап-идёт`
 - **Stage:** 2 of 3 — Showcase
 - **Done:** component, showcase stories and overview; selector tests 17 of 17; 6 snapshots taken and looked at
-- **Next step:** confirm the snapshots by a second raising, then bind the spec
+- **Next step:** confirm the snapshots by a second raising once the CI run of #2527 ends, then the full check set
 - **Uncommitted:** nothing
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -18,7 +18,7 @@
 - [x] 2.1 Write the wrapper, Playground and the matrices
 - [x] 2.2 Write the overview page
 - [>] 2.3 Take the snapshots and look at them
-- [ ] 3.1 Bind the spec rules in the companion and the indexes
+- [x] 3.1 Bind the spec rules in the companion and the indexes
 - [ ] 3.2 Run the full check set
 - [ ] 3.3 Show the stories to the owner
 
