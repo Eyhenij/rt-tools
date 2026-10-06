@@ -1,6 +1,5 @@
 import { Meta, StoryObj } from '@storybook/angular';
 
-import { storyPseudoParameters } from '../../../../showcase/story-states';
 import { TestRtTreeMatrixComponent } from './component/test-tree-matrix.component';
 
 /**
@@ -36,10 +35,18 @@ export const Empty: TStory = { args: { part: 'empty' } };
 /** Разметка приложения в конце строки — SC-UKV-650. */
 export const NodeEnd: TStory = { args: { part: 'node-end' } };
 
-/** Кольцо фокуса рисует сам хост дерева: признак ставится на него. */
+/**
+ * Признак состояния стоит на самом хосте дерева, поэтому общий помощник с селектором потомка сюда
+ * не подходит. Кольцо фокуса рисует хост, а наведение — строка: оно показано на «Казани».
+ */
 export const States: TStory = {
     args: { part: 'states' },
-    parameters: { pseudo: storyPseudoParameters('.rt-tree') },
+    parameters: {
+        pseudo: {
+            hover: "[data-story-state='hover'] .rt-tree__row[data-value='kzn']",
+            focusVisible: "[data-story-state='focus-visible']",
+        },
+    },
 };
 
 export const Presets: TStory = { args: { part: 'presets' } };

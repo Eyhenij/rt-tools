@@ -80,7 +80,7 @@ export class TestRtTreeMatrixComponent {
 
     public readonly searchCases: readonly ITreeCase[] = [
         treeCase('«мин» — лист второго уровня', { searchTerm: 'мин', value: [] }),
-        treeCase('«ст» — описание и подпись', { searchTerm: 'ст', value: [] }),
+        treeCase('«ск» — совпадения в двух ветках', { searchTerm: 'ск', value: [] }),
     ];
 
     public readonly emptyCases: readonly ITreeCase[] = [
