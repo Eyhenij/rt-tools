@@ -1,6 +1,6 @@
 import { expect, Locator, test } from '@playwright/test';
 
-import { signIn } from './support/example';
+import { expectEntryScreen, signIn } from './support/example';
 
 /** A title longer than any line of the column, without a space to break at. */
 const LONG_TITLE: string = `record-${'x'.repeat(140)}`;
@@ -34,5 +34,32 @@ test.describe('the layout of the records screen', () => {
         const field: { y: number; height: number } = await boxOf(page.getByTestId('records-new-title'));
         const add: { y: number; height: number } = await boxOf(page.getByTestId('records-new-submit'));
         expect(Math.abs(field.y + field.height / 2 - (add.y + add.height / 2))).toBeLessThan(2);
+    });
+});
+
+test.describe('the layout of the entry screen', () => {
+    test('SC-AUTH-55 — an error under a field does not move the form', async ({ page }) => {
+        await page.goto('/');
+        await expectEntryScreen(page);
+        const before: { y: number } = await boxOf(page.getByTestId('kc-login-submit'));
+
+        await page.getByTestId('kc-username').locator('input').fill('reader@example.test');
+        await page.getByTestId('kc-login-submit').click();
+        await expect(page.getByTestId('kc-password').locator('xpath=ancestor::rt-field').getByTestId('field-error')).toBeVisible();
+
+        const after: { y: number } = await boxOf(page.getByTestId('kc-login-submit'));
+        expect(Math.abs(after.y - before.y)).toBeLessThan(1);
+    });
+
+    test('SC-AUTH-58 — the entry card has an outline and a shadow', async ({ page }) => {
+        await page.goto('/');
+        await expectEntryScreen(page);
+
+        const edge: { border: number; shadow: string } = await page.getByTestId('kc-card').evaluate((card: Element) => {
+            const style: CSSStyleDeclaration = getComputedStyle(card);
+            return { border: parseFloat(style.borderTopWidth), shadow: style.boxShadow };
+        });
+        expect(edge.border).toBeGreaterThan(0);
+        expect(edge.shadow).not.toBe('none');
     });
 });

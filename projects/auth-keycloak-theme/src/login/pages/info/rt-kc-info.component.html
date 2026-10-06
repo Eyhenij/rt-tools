@@ -8,6 +8,13 @@
         <p rtElem="text" qa-dataid="kc-info-actions">{{ actions }}</p>
     }
     @if (next; as step) {
-        <a rtButton rtElem="submit" qa-dataid="kc-info-next" [href]="step.href" [label]="step.label" [attr.aria-label]="step.label"></a>
+        <a
+            rtButton
+            size="lg"
+            rtElem="submit"
+            qa-dataid="kc-info-next"
+            [href]="step.href"
+            [label]="step.label"
+            [attr.aria-label]="step.label"></a>
     }
 </ng-container>

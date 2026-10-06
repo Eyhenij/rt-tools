@@ -40,6 +40,12 @@ the entry is not sure the page belongs to the admin.
 - **A form with an empty required field is not sent.** The field shows its error in place.
 - **The texts of a page are the Keycloak messages in the page locale, and the kit labels follow it.**
   Otherwise a page mixes two languages, and the realm mails use other words than the screen.
+- **A Keycloak message is shown as plain text, its HTML entities turned into characters.** The
+  messages carry entities such as `&laquo;`; markup in a message is not inserted.
+- **Every field of a form keeps the line for its error, so an error does not move the form.**
+- **The fields and the buttons of the forms are of the large size.**
+- **The language is chosen from a drop-down list, and a choice opens the page in that language.**
+- **The card of a page has an outline and a shadow.** The kit paints it the colour of the page.
 - **A message Keycloak puts on a page is shown above the form in the colour of its kind.**
 - **Every provider of the realm gets a button, and Google and Apple get their own icons.** A
   provider without a known icon gets a button with its name only.

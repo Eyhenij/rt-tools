@@ -32,6 +32,26 @@ describe('RtKcLoginComponent', () => {
         expect(error?.trim()).toBe('Please specify password.');
     });
 
+    it('SC-AUTH-55 — every field keeps the line for its error before an error appears', async () => {
+        const fixture: ComponentFixture<RtKcLoginComponent> = await renderKcPage(RtKcLoginComponent, kcContextOf('login.ftl'));
+        const fields: HTMLElement[] = Array.from((fixture.nativeElement as HTMLElement).querySelectorAll<HTMLElement>('rt-field'));
+
+        expect(fields.length).toBe(2);
+        expect(fields.map((field: HTMLElement): boolean => field.querySelector('.rt-field__messages--reserved') !== null)).toEqual([
+            true,
+            true,
+        ]);
+    });
+
+    it('SC-AUTH-56 — the fields and the submit button are of the large size', async () => {
+        const fixture: ComponentFixture<RtKcLoginComponent> = await renderKcPage(RtKcLoginComponent, kcContextOf('login.ftl'));
+        const submit: HTMLElement | null = kcNode(fixture, 'kc-login-submit');
+
+        expect(kcNode(fixture, 'kc-username')?.classList.contains('rt-input--size--lg')).toBe(true);
+        expect(kcNode(fixture, 'kc-password')?.classList.contains('rt-input--size--lg')).toBe(true);
+        expect(submit?.className).toContain('lg');
+    });
+
     it('SC-AUTH-22 — a Keycloak message stands above the form in the colour of its kind', async () => {
         const fixture: ComponentFixture<RtKcLoginComponent> = await renderKcPage(
             RtKcLoginComponent,

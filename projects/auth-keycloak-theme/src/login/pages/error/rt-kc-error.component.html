@@ -4,6 +4,13 @@
     <rt-kc-message />
 
     @if (backHref) {
-        <a rtButton rtElem="submit" qa-dataid="kc-error-back" [href]="backHref" [label]="backLabel" [attr.aria-label]="backLabel"></a>
+        <a
+            rtButton
+            size="lg"
+            rtElem="submit"
+            qa-dataid="kc-error-back"
+            [href]="backHref"
+            [label]="backLabel"
+            [attr.aria-label]="backLabel"></a>
     }
 </ng-container>

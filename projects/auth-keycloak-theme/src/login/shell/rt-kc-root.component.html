@@ -1,27 +1,22 @@
 <ng-container rtBlock="login">
     <div rtElem="viewport">
         <div rtElem="chrome" qa-dataid="kc-chrome">
-            @if (locales.length > 0) {
-                <nav rtElem="locales" qa-dataid="kc-locales">
-                    @for (locale of locales; track locale.languageTag) {
-                        <a
-                            rtButton
-                            appearance="text"
-                            size="sm"
-                            qa-dataid="kc-locale"
-                            [href]="locale.href"
-                            [label]="locale.label"
-                            [attr.aria-label]="locale.label"
-                            [pressed]="locale.current"
-                            [attr.lang]="locale.languageTag"></a>
-                    }
-                </nav>
+            @if (localeOptions.length > 0) {
+                <rt-select
+                    rtElem="locales"
+                    qa-dataid="kc-locales"
+                    size="sm"
+                    [clearable]="false"
+                    [ariaLabel]="languagesLabel"
+                    [options]="localeOptions"
+                    [formControl]="locale"
+                    (selectionChange)="switchLocale($event)" />
             }
 
             <rt-theme-toggle qa-dataid="kc-theme" />
         </div>
 
-        <section rtElem="card">
+        <section rtElem="card" qa-dataid="kc-card">
             <span rtElem="brand" qa-dataid="kc-brand">{{ realmName }}</span>
 
             <ng-container *ngComponentOutlet="page" />

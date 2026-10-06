@@ -12,7 +12,7 @@ import { provideRtStorage, provideRtUtils } from '@rt-tools/core';
 import { provideRtIcons, provideRtKit, provideRtKitLabels, ThemeService } from '@rt-tools/ui-kit-v2';
 
 import { KC_CONTEXT, KC_PAGE, TKcContext } from './kc-context';
-import { KC_MESSAGES, TKcMessages } from './kc-i18n';
+import { KC_MESSAGES, plainMessages, TKcMessages } from './kc-i18n';
 import { kitTranslatorFor } from './kc-kit-labels';
 
 /**
@@ -38,7 +38,7 @@ export function themeAppConfig(context: TKcContext, i18n: TKcMessages, page: Typ
                 inject(ThemeService);
             }),
             { provide: KC_CONTEXT, useValue: context },
-            { provide: KC_MESSAGES, useValue: i18n },
+            { provide: KC_MESSAGES, useValue: plainMessages(i18n) },
             { provide: KC_PAGE, useValue: page },
         ],
     };

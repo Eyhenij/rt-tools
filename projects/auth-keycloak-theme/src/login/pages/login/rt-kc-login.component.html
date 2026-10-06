@@ -6,13 +6,19 @@
     @if (context.realm.password) {
         <form rtElem="form" method="post" qa-dataid="kc-login-form" [action]="context.url.loginAction" (submit)="send($event)">
             @if (!context.usernameHidden) {
-                <rt-field [label]="usernameLabel" [attr.aria-label]="usernameLabel" [errors]="usernameErrors">
-                    <rt-input autocomplete="username" iconLeft="user" qa-dataid="kc-username" [formControl]="form.controls.username" />
+                <rt-field reserveHintSpace [label]="usernameLabel" [attr.aria-label]="usernameLabel" [errors]="usernameErrors">
+                    <rt-input
+                        size="lg"
+                        autocomplete="username"
+                        iconLeft="user"
+                        qa-dataid="kc-username"
+                        [formControl]="form.controls.username" />
                 </rt-field>
             }
 
-            <rt-field [label]="passwordLabel" [attr.aria-label]="passwordLabel" [errors]="passwordErrors">
+            <rt-field reserveHintSpace [label]="passwordLabel" [attr.aria-label]="passwordLabel" [errors]="passwordErrors">
                 <rt-input
+                    size="lg"
                     type="password"
                     autocomplete="current-password"
                     iconLeft="lock"
@@ -38,6 +44,7 @@
             <!-- Подпись кнопке рисует директива кита: содержимое ей отдавать нельзя, оно будет затёрто -->
             <button
                 rtButton
+                size="lg"
                 rtElem="submit"
                 type="submit"
                 qa-dataid="kc-login-submit"
@@ -53,6 +60,7 @@
             @for (provider of providers; track provider.alias) {
                 <a
                     rtButton
+                    size="lg"
                     rtElem="provider"
                     appearance="outlined"
                     theme="secondary"
