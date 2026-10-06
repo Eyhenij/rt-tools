@@ -359,8 +359,8 @@ export default [
         // фреймворка, ни частичной компиляции, ни одноранговых зависимостей. Один импорт вернул
         // бы всё это назад, и пакет молча перестал бы разрешаться вне Angular — поэтому запрет
         // стоит там, где импорт пишут, а не всплывает при публикации. Контракт модуля входа так же:
-        // его читают и клиент на Angular, и сервер на NestJS.
-        files: ['projects/utils/**/*.ts', 'projects/auth-contract/**/*.ts'],
+        // его читают и клиент на Angular, и сервер на NestJS; перенос пользователей идёт на Node.
+        files: ['projects/utils/**/*.ts', 'projects/auth-contract/**/*.ts', 'projects/auth-import/**/*.ts'],
         rules: {
             'no-restricted-imports': [
                 'error',
@@ -369,7 +369,7 @@ export default [
                         {
                             group: ['@angular/*', '@angular/**', '@nestjs/*', '@nestjs/**', 'rxjs', 'rxjs/*'],
                             message:
-                                '@rt-tools/utils и @rt-tools/auth-contract остаются без фреймворка — ни Angular, ни NestJS, ни RxJS у них в зависимостях нет. Код, которому фреймворк нужен, живёт в @rt-tools/core.',
+                                '@rt-tools/utils, @rt-tools/auth-contract и @rt-tools/auth-import остаются без фреймворка — ни Angular, ни NestJS, ни RxJS у них в зависимостях нет. Код, которому фреймворк нужен, живёт в @rt-tools/core.',
                         },
                     ],
                 },
