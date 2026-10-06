@@ -73,7 +73,11 @@ describe('the password forms', () => {
     it('SC-AUTH-66 — the new password page lists every requirement of the realm policy', async () => {
         const update: ComponentFixture<RtKcUpdatePasswordComponent> = await renderKcPage(RtKcUpdatePasswordComponent, pageWithPolicy());
 
-        expect(kcNode(update, 'kc-password-rules')?.getAttribute('aria-label')).toBe('Password requirements');
+        const list: HTMLElement | null = kcNode(update, 'kc-password-rules');
+        const confirm: Element | null = kcNode(update, 'kc-password-confirm')?.closest('rt-field') ?? null;
+
+        expect(list?.getAttribute('aria-label')).toBe('Password requirements');
+        expect(confirm?.nextElementSibling).toBe(list);
         expect(ruleLines(update)).toEqual([
             { text: 'Length: at least 8', met: false },
             { text: 'Upper case letters: at least 1', met: false },

@@ -58,7 +58,7 @@ the entry is not sure the page belongs to the admin.
   They do not hang in the corner of the window over the dots.
 - **A link back to the sign-in or to the application is plain text without a chevron.** Keycloak
   starts these two messages with «, and the theme drops it.
-- **Under the new password field the page lists every requirement of the realm password policy.**
+- **Under the new password and its confirmation the page lists every requirement of the realm password policy.**
   The list is read from the policy Keycloak puts on the page, so a new policy needs no theme release.
 - **A requirement the typed password meets is marked as met while the person types.** The person
   learns the rules before the submit, not from a refusal after it.
@@ -139,4 +139,4 @@ None.
 ## History of changes
 
 - 2026-10-05 — the theme, task RT-2530.
-- 2026-10-06 — the password requirements under the new password field, task RT-2570.
+- 2026-10-06 — the password requirements under the two password fields, task RT-2570.

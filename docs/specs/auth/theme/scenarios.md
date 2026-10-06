@@ -125,7 +125,8 @@ Then the link back to the sign-in reads «Back to Login» with no « in front
 Given a realm whose policy asks for a length, letters of both cases, a digit, a special character
 and a password unlike the login and the address
 When the new password page is drawn
-Then a list under the new password field names each of the seven requirements, none marked as met
+Then a list under the new password and confirmation fields names each of the seven requirements,
+none marked as met
 
 ### SC-AUTH-67 — a requirement is marked as met while the person types
 
@@ -137,4 +138,4 @@ Then those requirements are marked as met and the rest stay unmarked
 
 Given a realm without a password policy
 When the new password page is drawn
-Then no requirement list stands under the field
+Then no requirement list stands under the fields
