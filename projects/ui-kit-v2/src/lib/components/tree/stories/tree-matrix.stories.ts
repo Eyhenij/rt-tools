@@ -17,10 +17,10 @@ export default {
 
 type TStory = StoryObj<TestRtTreeMatrixComponent>;
 
-/** Флажки, радио и режим без отметок — SC-UKV-643, SC-UKV-644. */
+/** Флажки, радио и режим без отметок — SC-UKV-676, SC-UKV-644. */
 export const Mode: TStory = { args: { part: 'mode' } };
 
-/** Отметка ветки по листьям и без каскада — SC-UKV-641, SC-UKV-642. */
+/** Отметка ветки по листьям и без каскада — SC-UKV-674, SC-UKV-675. */
 export const Cascade: TStory = { args: { part: 'cascade' } };
 
 /** «Выбрать всё» в трёх положениях — SC-UKV-645. */

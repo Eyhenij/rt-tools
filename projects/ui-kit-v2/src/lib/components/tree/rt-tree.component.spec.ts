@@ -143,7 +143,7 @@ describe('RtTreeComponent', (): void => {
         expect(meta.querySelector('[qa-dataid="meta-mark"]')?.textContent).toBe('msq');
     });
 
-    it('SC-UKV-639 — клик по листу кладёт его в value', (): void => {
+    it('SC-UKV-672 — клик по листу кладёт его в value', (): void => {
         const fixture: TFixture = setup({ value: ['msk'] });
 
         rowOf(fixture, 'msq').click();
@@ -152,7 +152,7 @@ describe('RtTreeComponent', (): void => {
         expect(fixture.componentInstance.value()).toEqual(['msk', 'msq']);
     });
 
-    it('SC-UKV-640 — клик по ветке выбирает её листья, повторный снимает', (): void => {
+    it('SC-UKV-673 — клик по ветке выбирает её листья, повторный снимает', (): void => {
         const fixture: TFixture = setup();
 
         rowOf(fixture, 'ru').click();
@@ -164,7 +164,7 @@ describe('RtTreeComponent', (): void => {
         expect(fixture.componentInstance.value()).toEqual([]);
     });
 
-    it('SC-UKV-641 — частично выбранная ветка рисует флажок с чертой', (): void => {
+    it('SC-UKV-674 — частично выбранная ветка рисует флажок с чертой', (): void => {
         const fixture: TFixture = setup({ value: ['msk'] });
         const box: HTMLElement = rowOf(fixture, 'ru').querySelector('[qa-dataid="tree-row-checkbox"] [role="checkbox"]') as HTMLElement;
 
@@ -197,7 +197,7 @@ describe('RtTreeComponent', (): void => {
         expect(rowOf(fixture, 'tvr')).toBeDefined();
     });
 
-    it('SC-UKV-643 — одиночный режим рисует радио', (): void => {
+    it('SC-UKV-676 — одиночный режим рисует радио', (): void => {
         const fixture: TFixture = setup({ mode: 'single' });
 
         expect(rowOf(fixture, 'msq').querySelector('[qa-dataid="tree-row-radio"]')).not.toBeNull();

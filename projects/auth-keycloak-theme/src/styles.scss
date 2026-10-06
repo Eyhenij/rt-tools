@@ -1,0 +1,144 @@
+/**
+ * The kit styling whole: the scales, the purposes and both themes. Taken from the sources: the
+ * theme and the kit live in one tree, and a kit build for the sake of the theme styles would
+ * leave the build order to memory.
+ */
+@use '../../ui-kit-v2/src/styles/index';
+
+/**
+ * The page base. The kit declares the font and the page colour but does not put them on the page:
+ * without these lines the screen draws a serif font, an eight pixel margin and no background.
+ */
+body {
+    margin: 0;
+    background-color: var(--rt-color-bg-page);
+    color: var(--rt-color-text-primary);
+    font-family: var(--rt-font-family-sans);
+}
+
+/**
+ * A page and its message stand inside the card as one node each, and the card spaces only its own
+ * children. Without a box of their own their children take the spacing of the card, and a page
+ * without a message keeps no empty gap for it.
+ */
+.rt-kc-page,
+.rt-kc-message {
+    display: contents;
+}
+
+/**
+ * The viewport carries the kit's dot field and a soft radial gradient under it: lighter at the top
+ * centre, the page colour below. In the dark theme the page colour is transparent, and the gradient
+ * lies over the body gradient of the kit.
+ */
+.login__viewport {
+    position: relative;
+    overflow: hidden;
+    background: radial-gradient(120% 90% at 50% 0%, var(--rt-color-bg-subtle) 0%, var(--rt-color-bg-surface-auth-card) 65%);
+}
+
+/**
+ * The language list and the theme switch stand in the first row of the card, on its right edge.
+ * The kit pins the block to the corner of the window; inside the card it is pinned to the corner of
+ * the card instead and takes the top padding above the realm name.
+ */
+.login__card .login__chrome {
+    position: absolute;
+    top: var(--rt-space-5);
+    right: var(--rt-space-5);
+}
+
+/**
+ * The card of every theme page is glass over the dot field: a semi-transparent background with a
+ * blur of what lies behind it, an outline and a shadow. It stands above the field.
+ */
+.login__card {
+    z-index: 1;
+    padding-top: var(--rt-space-20);
+    border: var(--rt-border-width-thin) solid var(--rt-color-border-default);
+    backdrop-filter: blur(1.25rem) saturate(140%);
+    background-color: color-mix(in srgb, var(--rt-color-bg-surface) 78%, transparent);
+    box-shadow: var(--rt-shadow-card);
+}
+
+/**
+ * The theme elements next to the kit's `login`: the realm name, the plain text, the checkbox row,
+ * the provider list and the locale row. Declared outside the cascade layer, after the kit.
+ */
+.login__brand {
+    align-self: center;
+    color: var(--rt-color-text-muted);
+    font-size: var(--rt-text-sm);
+    font-weight: var(--rt-font-weight-semibold);
+    letter-spacing: var(--rt-letter-spacing-wide);
+    text-transform: uppercase;
+}
+
+.login__text {
+    margin: 0;
+    color: var(--rt-color-text-primary);
+    font-size: var(--rt-text-sm);
+    overflow-wrap: anywhere;
+}
+
+.login__check {
+    display: flex;
+    align-items: center;
+    gap: var(--rt-space-2);
+}
+
+.login__check-label {
+    color: var(--rt-color-text-primary);
+    cursor: pointer;
+    font-size: var(--rt-text-sm);
+}
+
+.login__providers {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rt-space-2);
+}
+
+.login__providers-title {
+    color: var(--rt-color-text-muted);
+    font-size: var(--rt-text-xs);
+    text-align: center;
+}
+
+.login__provider {
+    width: 100%;
+}
+
+/**
+ * The requirements of the realm password policy under the new password field. An unmet requirement
+ * is muted; a met one takes the success colour and a filled mark.
+ */
+.login__rules {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    margin: 0;
+    gap: var(--rt-space-1);
+    list-style: none;
+}
+
+.login__rule {
+    display: flex;
+    align-items: center;
+    color: var(--rt-color-text-muted);
+    font-size: var(--rt-text-sm);
+    gap: var(--rt-space-2);
+}
+
+.login__rule--met {
+    color: var(--rt-color-state-success-text);
+}
+
+.login__rule-icon {
+    flex-shrink: 0;
+}
+
+.login__locales {
+    display: flex;
+    gap: var(--rt-space-1);
+}
