@@ -94,3 +94,16 @@ Then the login field shows `name@example.com` inside it and the password field s
 Given the entry form of a realm where the login takes only a name
 When it is drawn with empty fields
 Then neither the login field nor the password field shows anything inside it
+
+### SC-AUTH-61 — the dot field stands behind the card
+
+Given any theme page
+When it is drawn
+Then the viewport holds the kit's dot field next to the card
+
+### SC-AUTH-62 — the entry card is glass over a moving field
+
+Given the entry screen on the stand
+When it is open
+Then the card background is semi-transparent with a blur behind it, the viewport carries a radial
+gradient, and the dot field canvas is drawn and lies under the card

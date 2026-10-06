@@ -62,4 +62,31 @@ test.describe('the layout of the entry screen', () => {
         expect(edge.border).toBeGreaterThan(0);
         expect(edge.shadow).not.toBe('none');
     });
+
+    test('SC-AUTH-62 — the entry card is glass over a moving field', async ({ page }) => {
+        await page.goto('/');
+        await expectEntryScreen(page);
+
+        const scene: { blur: string; alpha: number; gradient: string; canvas: number; under: boolean } = await page
+            .getByTestId('kc-card')
+            .evaluate((card: Element) => {
+                const style: CSSStyleDeclaration = getComputedStyle(card);
+                const viewport: Element | null = card.parentElement;
+                const canvas: HTMLCanvasElement | null = viewport?.querySelector('rt-dot-field canvas') ?? null;
+                const alpha: RegExpMatchArray | null = style.backgroundColor.match(/[\d.]+(?=\)$)/);
+                const field: Element | null = canvas?.parentElement?.closest('rt-dot-field') ?? null;
+                return {
+                    blur: style.backdropFilter,
+                    alpha: style.backgroundColor.startsWith('rgba') || style.backgroundColor.includes('/') ? Number(alpha?.[0] ?? 1) : 1,
+                    gradient: viewport ? getComputedStyle(viewport).backgroundImage : '',
+                    canvas: canvas ? canvas.width * canvas.height : 0,
+                    under: field ? Number(getComputedStyle(field).zIndex) < Number(style.zIndex) : false,
+                };
+            });
+        expect(scene.blur).toContain('blur');
+        expect(scene.alpha).toBeLessThan(1);
+        expect(scene.gradient).toContain('radial-gradient');
+        expect(scene.canvas).toBeGreaterThan(0);
+        expect(scene.under).toBe(true);
+    });
 });

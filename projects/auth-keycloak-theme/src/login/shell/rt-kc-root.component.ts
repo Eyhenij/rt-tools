@@ -2,7 +2,7 @@ import { DOCUMENT, NgComponentOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, Type } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
-import { IRtSelect, RtSelectComponent, RtThemeToggleComponent } from '@rt-tools/ui-kit-v2';
+import { IRtSelect, RtDotFieldComponent, RtSelectComponent, RtThemeToggleComponent } from '@rt-tools/ui-kit-v2';
 
 import { KC_CONTEXT, KC_PAGE, TKcContext } from '../kc-context';
 import { KC_MESSAGES, TKcMessages } from '../kc-i18n';
@@ -22,7 +22,15 @@ interface IKcLanguage {
  */
 @Component({
     selector: 'rt-kc-root',
-    imports: [NgComponentOutlet, ReactiveFormsModule, BlockDirective, ElemDirective, RtSelectComponent, RtThemeToggleComponent],
+    imports: [
+        NgComponentOutlet,
+        ReactiveFormsModule,
+        BlockDirective,
+        ElemDirective,
+        RtDotFieldComponent,
+        RtSelectComponent,
+        RtThemeToggleComponent,
+    ],
     templateUrl: './rt-kc-root.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     host: { class: BEM_BLOCK },
