@@ -11,16 +11,7 @@ import { TREE_STORY_NODES } from './tree-story-nodes';
  */
 @Component({
     selector: 'app-tree',
-    template: `
-        <rt-tree
-            ariaLabel="Регионы"
-            [nodes]="nodes"
-            [mode]="mode"
-            [cascade]="cascade"
-            [searchTerm]="searchTerm"
-            [showSelectAll]="showSelectAll"
-            [(value)]="value" />
-    `,
+    templateUrl: './test-tree.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // components

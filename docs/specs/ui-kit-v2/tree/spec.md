@@ -1,6 +1,6 @@
 # A tree of choice
 
-**Status:** proposed · **Revision:** 2026-10-06 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 2026-10-06 · **Scenario prefix:** `SC-UKV`
 **Depends on:** `docs/specs/ui-kit-v2/option-tree` (the tree logic shared with the select and the multiselect)
 **Laws:** `frontend-application`, `reuse-first`, `verifiability`
 **Procedures:** none
@@ -79,18 +79,8 @@ multiselect; a standalone tree on the same logic gives the applications one look
 
 ## Contract
 
-The component `rt-tree`, exported from the public entry of the package.
-
-| Input / output    | Type                                  | Default      |
-| ----------------- | ------------------------------------- | ------------ |
-| `nodes`           | `ReadonlyArray<IRtTree.Node<TValue>>` | required     |
-| `value` (model)   | `ReadonlyArray<TValue>`               | `[]`         |
-| `mode`            | `'multiple' \| 'single' \| 'none'`    | `'multiple'` |
-| `cascade`         | `boolean`                             | `true`       |
-| `searchTerm`      | `string`                              | `''`         |
-| `showSelectAll`   | `boolean`                             | `false`      |
-| `ariaLabel`       | `string \| null`                      | `null`       |
-| `picked` (output) | `IRtTree.Node<TValue>`                | —            |
+None: `rt-tree` is a layout component and serves no procedure. Its inputs and outputs are
+listed on its showcase overview page, and the docs guard keeps that table matched to the code.
 
 Public methods: `handleKeydown(event)`, `expandAll()`, `collapseAll()`, `clearHighlight()`.
 The row template is marked by the `rtTreeNodeEnd` directive.

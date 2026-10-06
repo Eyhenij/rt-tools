@@ -20,4 +20,4 @@ the tree, or the tree holds what the spec is silent about.
 - **A key the tree does not use is not consumed.** — `projects/ui-kit-v2/src/lib/components/tree/rt-tree.component.ts:RtTreeComponent`. Scenario `SC-UKV-649`
 - **Select-all chooses every enabled leaf of the visible rows, or clears them.** — `projects/ui-kit-v2/src/lib/components/tree/rt-tree.logic.ts:rtTreeSelectAll`. Scenario `SC-UKV-645`
 - **A row takes the application's content at its end.** — `projects/ui-kit-v2/src/lib/components/tree/rt-tree.directives.ts:RtTreeNodeEndDirective`. Scenario `SC-UKV-650`
-- **An empty tree says so.** — `projects/ui-kit-v2/src/lib/components/tree/rt-tree.component.html`. Scenario `SC-UKV-651`
+- **An empty tree says so.** — `projects/ui-kit-v2/src/lib/components/tree/rt-tree.component.ts:emptyText`. Scenario `SC-UKV-651`
