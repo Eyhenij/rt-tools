@@ -123,3 +123,20 @@ When the tree is drawn
 Then the label and the description each carry the kit tooltip with their own whole text, in the mode for a cut text
 
 Covered by the component test of `rt-tree`.
+
+### SC-UKV-665 — an exclusive click keeps only what the clicked node covers
+
+Given a choice holding two leaves of different branches and a disabled chosen leaf
+When a third leaf is clicked without Ctrl or Cmd in an exclusive tree, and then clicked again
+Then the choice holds that leaf and the disabled one after the first click, and only the disabled one
+after the second
+
+Covered by the logic test of `rt-tree`.
+
+### SC-UKV-666 — every word of the term is marked in the label, the description and the badges
+
+Given a node «Минск» with the description «Столица» and a badge «MSQ»
+When the search term is «мин сто msq»
+Then «Мин», «Сто» and «MSQ» are the matched parts of the label, the description and the badge
+
+Covered by the logic test of `rt-tree`.
