@@ -59,3 +59,9 @@ Every other Keycloak page keeps the standard Keycloakify layout.
 ## Requirements
 
 Keycloak 26. The theme carries no Java extensions.
+
+## Connecting it to an application
+
+The order of the whole connection is in the guide of the module.
+It covers Keycloak, the server, the admin, the entry screens and the move of people:
+[docs/auth-integration.md](https://github.com/Eyhenij/rt-tools/blob/main/docs/auth-integration.md).

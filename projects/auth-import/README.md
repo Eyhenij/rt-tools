@@ -83,3 +83,9 @@ import { importUsers, KeycloakAdmin, readUsers, realmClients, unknownRoles } fro
 ```
 
 The agreement of the package is `docs/specs/auth/import/`.
+
+## Connecting it to an application
+
+The order of the whole connection is in the guide of the module.
+It covers Keycloak, the server, the admin, the entry screens and the move of people:
+[docs/auth-integration.md](https://github.com/Eyhenij/rt-tools/blob/main/docs/auth-integration.md).

@@ -70,3 +70,9 @@ The refusals are `unauthenticated` and `permission_denied`. A procedure reads th
 `syncPermissionCatalog` creates the roles the client of the admin lacks and removes none. Removing
 a role takes it from every person who holds it. The rights Keycloak holds beyond the catalog are
 named in the log. The sync client needs a service account with `view-clients` and `manage-clients`.
+
+## Connecting it to an application
+
+The order of the whole connection is in the guide of the module.
+It covers Keycloak, the server, the admin, the entry screens and the move of people:
+[docs/auth-integration.md](https://github.com/Eyhenij/rt-tools/blob/main/docs/auth-integration.md).
