@@ -3,18 +3,18 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 1 of 4 — Описание поддомена переноса
-- **Done:** разбор, проба на стенде, план
-- **Next step:** описание поддомена `docs/specs/auth/import/`
+- **Stage:** 2 of 4 — Пакет
+- **Done:** разбор, проба на стенде, план, описание поддомена
+- **Next step:** проект `projects/auth-import`
 - **Uncommitted:** нет
 - **Waiting for the owner:** нет
 - **PR:** not open yet
 
 ## Steps
 
-- [>] 1.1 Написать `spec.md`, `scenarios.md` и `implementation.md` в `docs/specs/auth/import/`
-- [ ] 1.2 Назвать поддомен в описании доменов
-- [ ] 2.1 Завести проект `projects/auth-import`: сборка, Jest, команда
+- [x] 1.1 Написать `spec.md`, `scenarios.md` и `implementation.md` в `docs/specs/auth/import/`
+- [x] 1.2 Назвать поддомен в описании доменов
+- [>] 2.1 Завести проект `projects/auth-import`: сборка, Jest, команда
 - [ ] 2.2 Написать разбор хэша и сборку пользователя Keycloak
 - [ ] 2.3 Написать клиент Keycloak и перенос пачками
 - [ ] 3.1 Добавить в область клиент переноса с ролью `manage-users`
@@ -24,7 +24,9 @@
 
 ## Decisions along the way
 
-Пока нет.
+- Привязки описания ведут в файлы пакета, которых ещё нет: имена решены до кода.
+- SC-AUTH-46 проверяется проверкой стенда, как SC-AUTH-1…5: она не тест и в отчёте описаний
+  числится «no test».
 
 ## Sessions
 
