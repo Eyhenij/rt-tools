@@ -86,3 +86,20 @@ Closed by the exploration: the consumer folders above; for the tree — also `op
 
 - Whether the speed menu (item 7) earns a place in the kit — the owner took it; its agreement names
   the consumer case, and the showcase review decides.
+
+## Decisions along the way
+
+- **The marks are drawn by the kit's `rt-checkbox` and `rt-radio-button`, inert in the row** — the
+  owner looked at the showcase: «что за чекбоксы использует дерево? из кита?». The native inputs
+  went; the row keeps the click and the keys. The rule moved to `docs/specs/ui-kit-v2/tree/`.
+- **Choosing never folds or opens a branch** — the owner: «при клике на чекбокс у которого есть
+  чайлды происходит экспанд/колапс». The openness was derived from the choice until a manual
+  toggle; the first choice now fixes it. Scenario `SC-UKV-652` in the domain spec.
+- **A cut label shows the kit tooltip in the cut-text mode** — the owner chose it before the
+  references. Scenario `SC-UKV-653`.
+- **No lazy loading of children** — the executor named it as missing; the owner asked where it came
+  from. It is in neither the plan nor the request, and nothing is done about it.
+- **Every tree matrix stands in the preset pair; the row-end slot is named as shown inside the
+  `NodeEnd` story** — both are carried in the stories and the coverage list.
+
+The owner looked at the showcase and answered «открывай пр».
