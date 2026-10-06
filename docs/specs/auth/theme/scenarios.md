@@ -83,8 +83,14 @@ Given the entry page of the stand
 When it is drawn
 Then the card has a border and a shadow
 
-### SC-AUTH-59 — an empty field shows its name as a placeholder
+### SC-AUTH-59 — an empty login field shows an example address, not its label
 
-Given the entry form with empty fields
-When it is drawn
-Then every field shows its name inside it
+Given the entry form of a realm where the login takes an address
+When it is drawn with empty fields
+Then the login field shows `name@example.com` inside it and the password field shows nothing
+
+### SC-AUTH-60 — a login field that takes only a name has no placeholder
+
+Given the entry form of a realm where the login takes only a name
+When it is drawn with empty fields
+Then neither the login field nor the password field shows anything inside it

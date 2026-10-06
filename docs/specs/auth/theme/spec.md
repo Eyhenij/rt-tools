@@ -44,7 +44,10 @@ the entry is not sure the page belongs to the admin.
   messages carry entities such as `&laquo;`; markup in a message is not inserted.
 - **Every field of a form keeps the line for its error, so an error does not move the form.**
 - **The fields and the buttons of the forms are of the large size.**
-- **An empty field shows its name as a placeholder.** The name is the Keycloak label of the field.
+- **An empty login field that takes an address shows the example `name@example.com`.** The label
+  above already names the field, and a placeholder repeating it adds nothing.
+- **A login field that takes only a name, and a password field, have no placeholder.** An example
+  name or password tells the person nothing.
 - **The language is chosen from a drop-down list, and a choice opens the page in that language.**
 - **The card of a page has an outline and a shadow.** The kit paints it the colour of the page.
 - **A message Keycloak puts on a page is shown above the form in the colour of its kind.**
