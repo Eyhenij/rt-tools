@@ -47,6 +47,7 @@
   "shownWithin": {
     "[rtDynamicListActions]": "projects/ui-kit-v2/src/lib/components/dynamic-list/stories/dynamic-list-matrix.stories.ts",
     "[rtDynamicListSelectors]": "projects/ui-kit-v2/src/lib/components/dynamic-list/stories/dynamic-list-matrix.stories.ts",
+    "ng-template[rtTreeNodeEnd]": "projects/ui-kit-v2/src/lib/components/tree/stories/tree-matrix.stories.ts",
     "[rtFieldHint]": "projects/ui-kit-v2/src/lib/components/field/stories/field-matrix.stories.ts",
     "rt-table-settings-aside": "projects/ui-kit-v2/src/showcase/templates/stories/bookings-template.stories.ts",
     "rt-data-table-cell": "projects/ui-kit-v2/src/lib/components/data-table/stories/data-table-matrix.stories.ts",

@@ -1,0 +1,133 @@
+@layer rt-kit.components {
+    .rt-tree {
+        --rt-tree-indent: var(--rt-space-lg);
+        --rt-tree-match-bg: var(--rt-yellow-400);
+        --rt-tree-match-color: var(--rt-neutral-950);
+        --rt-tree-match-radius: var(--rt-radius-xs);
+        --rt-tree-focus-shadow: var(--rt-shadow-focus-ring);
+        --rt-tree-border-width: var(--rt-border-width-thin);
+
+        display: block;
+        color: var(--rt-color-text-primary);
+        font-size: var(--rt-input-font-size);
+        outline: none;
+
+        &:focus-visible {
+            box-shadow: var(--rt-tree-focus-shadow);
+        }
+
+        &__select-all,
+        &__row {
+            /* Уровень строки ставит разметка на саму строку; ноль — верхний уровень. */
+            --rt-tree-level: 0;
+
+            display: flex;
+            align-items: center;
+            padding: var(--rt-space-sm) var(--rt-space-md);
+            cursor: pointer;
+            gap: var(--rt-space-sm);
+            padding-inline-start: calc(var(--rt-space-md) + var(--rt-tree-indent) * var(--rt-tree-level));
+
+            &:hover {
+                background-color: var(--rt-color-bg-hover);
+            }
+        }
+
+        &__select-all {
+            border-bottom: var(--rt-tree-border-width) solid var(--rt-color-border-default);
+        }
+
+        &__row {
+            &--highlighted {
+                background-color: var(--rt-color-bg-hover);
+            }
+
+            &--chosen {
+                background-color: var(--rt-color-action-primary-subtle);
+            }
+
+            &--disabled {
+                cursor: not-allowed;
+                opacity: var(--rt-input-disabled-opacity);
+
+                &:hover {
+                    background-color: transparent;
+                }
+            }
+        }
+
+        /* Стрелка ветки и пустое место под неё у листа: шаг отступа равен их ширине с зазором,
+           и стрелка дочерней строки встаёт под подписью родителя. */
+        &__toggle,
+        &__toggle-space {
+            display: inline-flex;
+            flex-shrink: 0;
+            block-size: var(--rt-input-icon-size);
+            inline-size: var(--rt-input-icon-size);
+        }
+
+        &__toggle {
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            border: 0;
+            background: transparent;
+            cursor: pointer;
+        }
+
+        &__check {
+            flex-shrink: 0;
+            margin: 0;
+            pointer-events: none;
+        }
+
+        &__text {
+            display: flex;
+            min-width: 0;
+            flex: 1 1 auto;
+            flex-direction: column;
+        }
+
+        &__label {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        &__description {
+            overflow: hidden;
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-sm);
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        &__part {
+            &--match {
+                border-radius: var(--rt-tree-match-radius);
+                background: var(--rt-tree-match-bg);
+                color: var(--rt-tree-match-color);
+            }
+        }
+
+        &__end {
+            display: inline-flex;
+            flex-shrink: 0;
+            align-items: center;
+            margin-inline-start: auto;
+        }
+
+        &__empty {
+            padding: var(--rt-space-md);
+            color: var(--rt-color-text-muted);
+            text-align: center;
+        }
+
+        @media (pointer: coarse) {
+            &__select-all,
+            &__row {
+                min-block-size: var(--rt-control-height-lg);
+            }
+        }
+    }
+}

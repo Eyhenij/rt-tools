@@ -1,0 +1,93 @@
+<ng-container rtBlock="rt-tree">
+    <!--
+        Строки выбираются мышью через (click); клавиатура — на самом дереве (handleKeydown), строки
+        по отдельности фокус не берут: подсветка — третье состояние рядом с фокусом и выбором.
+    -->
+    <!-- eslint-disable @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
+    @if (isSelectAllShown()) {
+        <div rtElem="select-all" qa-dataid="tree-select-all" role="presentation" (click)="onSelectAll()">
+            <rt-checkbox
+                rtElem="check"
+                inert
+                [indeterminate]="selectAllMark() === 'some'"
+                [ngModel]="selectAllMark() === 'all'"
+                [ngModelOptions]="{ standalone: true }" />
+            <span rtElem="label">{{ t().uiSelectAll }}</span>
+        </div>
+    }
+
+    @for (view of views(); track view.row.option.value) {
+        <div
+            rtElem="row"
+            qa-dataid="tree-row"
+            role="treeitem"
+            [attr.data-value]="view.row.option.value"
+            [attr.aria-level]="view.row.level + 1"
+            [attr.aria-expanded]="view.row.branch ? view.row.open : null"
+            [attr.aria-selected]="mode() === 'none' ? null : view.mark === 'all'"
+            [attr.aria-disabled]="!!view.row.option.disabled"
+            [style.--rt-tree-level]="view.row.level"
+            [rtMod]="{ highlighted: view.highlighted, disabled: !!view.row.option.disabled, chosen: view.mark === 'all' }"
+            (click)="onRowClick(view.row)">
+            @if (view.row.branch) {
+                <button
+                    rtElem="toggle"
+                    qa-dataid="tree-row-toggle"
+                    type="button"
+                    tabindex="-1"
+                    [attr.aria-label]="view.row.open ? t().uiCollapse : t().uiExpand"
+                    (click)="onToggleClick($event, view.row.option.value)">
+                    <rt-icon size="sm" color="muted" [name]="view.row.open ? 'chevron-down' : 'chevron-right'" />
+                </button>
+            } @else {
+                <span rtElem="toggle-space"></span>
+            }
+
+            @if (mode() === 'multiple') {
+                <rt-checkbox
+                    rtElem="check"
+                    qa-dataid="tree-row-checkbox"
+                    inert
+                    [disabled]="!!view.row.option.disabled"
+                    [indeterminate]="view.mark === 'some'"
+                    [ngModel]="view.mark === 'all'"
+                    [ngModelOptions]="{ standalone: true }" />
+            } @else if (mode() === 'single') {
+                <rt-radio-button
+                    rtElem="check"
+                    qa-dataid="tree-row-radio"
+                    inert
+                    [value]="view.row.option.value"
+                    [checked]="view.mark === 'all'"
+                    [disabled]="!!view.row.option.disabled" />
+            }
+
+            <span rtElem="text">
+                <span rtElem="label" qa-dataid="tree-row-label" rtTooltipWhenTruncated [rtTooltip]="view.row.option.label">
+                    @for (part of view.parts.label; track $index) {
+                        <span rtElem="part" [rtMod]="{ match: part.matched }">{{ part.text }}</span>
+                    }
+                </span>
+                @if (view.parts.description.length > 0) {
+                    <span
+                        rtElem="description"
+                        qa-dataid="tree-row-description"
+                        rtTooltipWhenTruncated
+                        [rtTooltip]="view.row.option.description">
+                        @for (part of view.parts.description; track $index) {
+                            <span rtElem="part" [rtMod]="{ match: part.matched }">{{ part.text }}</span>
+                        }
+                    </span>
+                }
+            </span>
+
+            @if (nodeEnd(); as end) {
+                <span rtElem="end" qa-dataid="tree-row-end">
+                    <ng-container [ngTemplateOutlet]="end.templateRef" [ngTemplateOutletContext]="{ $implicit: view.row.option }" />
+                </span>
+            }
+        </div>
+    } @empty {
+        <div rtElem="empty" qa-dataid="tree-empty">{{ emptyText() }}</div>
+    }
+</ng-container>

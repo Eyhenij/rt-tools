@@ -64,6 +64,7 @@ agreement about their own subject and describe the surface of a component, not a
 | [The dynamic selectors](dynamic-selectors/spec.md)                        | a form field with the chosen list, a pop-up choice with search, a field of typed rows                                           |
 | [The side menu](side-menu/spec.md)                                        | a rail of sections with the submenu of a section beside it: hover or pinning, search, folders, width                            |
 | [A tree of options](option-tree/spec.md)                                  | options with children in the select and the multiselect: levels, arrows, what a click, a key and the filter do                  |
+| [A tree of choice](tree/spec.md)                                          | a tree of nodes on the page itself: checkboxes with a cascade, a radio or none, search, select all, keys                        |
 | [The panel of the date field](date-panel/spec.md)                         | the kit's own panel of a date, a time and a date with time: month, columns, bounds, keys, narrow screen                         |
 | [The date range field](date-range/spec.md)                                | a form field of a period: two months, presets, the hover preview, the summary, bounds, keys, narrow screen                      |
 | [The message field](message-composer/spec.md)                             | the capsule a chat message is typed in: round buttons, growth, send states, focus, files, the hint                              |

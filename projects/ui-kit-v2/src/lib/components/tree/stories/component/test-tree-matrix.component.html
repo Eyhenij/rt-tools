@@ -1,0 +1,120 @@
+@switch (part) {
+    @case ('mode') {
+        <app-story-presets>
+            <ng-template>
+                <app-story-row caption="Режим отметок" [items]="modeCases" [itemLabel]="caseLabel">
+                    <ng-template let-c>
+                        <rt-tree style="width: 280px" [ariaLabel]="c.name" [nodes]="c.nodes" [mode]="c.mode" [value]="c.value" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('cascade') {
+        <app-story-presets>
+            <ng-template>
+                <app-story-row caption="Каскад: выбран «Центр» и «Минск»" [items]="cascadeCases" [itemLabel]="caseLabel">
+                    <ng-template let-c>
+                        <rt-tree style="width: 280px" [ariaLabel]="c.name" [nodes]="c.nodes" [cascade]="c.cascade" [value]="c.value" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('select-all') {
+        <app-story-presets>
+            <ng-template>
+                <app-story-row caption="«Выбрать всё»: ничего, часть, всё" [items]="selectAllCases" [itemLabel]="caseLabel">
+                    <ng-template let-c>
+                        <rt-tree style="width: 280px" [ariaLabel]="c.name" [nodes]="c.nodes" [showSelectAll]="true" [value]="c.value" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('search') {
+        <app-story-presets>
+            <ng-template>
+                <app-story-row
+                    caption="Поиск: путь к совпадению раскрыт, совпадение выделено"
+                    [items]="searchCases"
+                    [itemLabel]="caseLabel">
+                    <ng-template let-c>
+                        <rt-tree
+                            style="width: 280px"
+                            [ariaLabel]="c.name"
+                            [nodes]="c.nodes"
+                            [searchTerm]="c.searchTerm"
+                            [value]="c.value" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('empty') {
+        <app-story-presets>
+            <ng-template>
+                <app-story-row caption="Пустое дерево" [items]="emptyCases" [itemLabel]="caseLabel">
+                    <ng-template let-c>
+                        <rt-tree style="width: 280px" [ariaLabel]="c.name" [nodes]="c.nodes" [searchTerm]="c.searchTerm" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('node-end') {
+        <app-story-presets>
+            <ng-template>
+                <app-story-row caption="Разметка приложения в конце строки" [items]="nodeEndCases" [itemLabel]="caseLabel">
+                    <ng-template let-c>
+                        <rt-tree style="width: 320px" [ariaLabel]="c.name" [nodes]="c.nodes" [value]="c.value">
+                            <ng-template rtTreeNodeEnd let-node>
+                                <rt-tag size="sm" severity="info" [value]="node.value" />
+                            </ng-template>
+                        </rt-tree>
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('states') {
+        <app-story-presets>
+            <ng-template>
+                <app-story-row caption="Взаимодействие с деревом" [items]="states" [itemLabel]="stateLabel">
+                    <ng-template let-state>
+                        <rt-tree
+                            style="width: 280px"
+                            ariaLabel="Состояние"
+                            [attr.data-story-state]="state.state"
+                            [nodes]="nodes"
+                            [value]="defaultValue" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('presets') {
+        <app-story-presets caption="Дерево в обоих наборах">
+            <ng-template>
+                <rt-tree style="width: 280px" ariaLabel="Регионы" [nodes]="nodes" [showSelectAll]="true" [value]="defaultValue" />
+                <rt-tree style="width: 280px" ariaLabel="Регионы" mode="single" [nodes]="nodes" [value]="singleValue" />
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('themes') {
+        <app-story-themes caption="Дерево в обеих темах">
+            <ng-template>
+                <rt-tree style="width: 280px" ariaLabel="Регионы" [nodes]="nodes" [showSelectAll]="true" [value]="defaultValue" />
+                <rt-tree style="width: 280px" ariaLabel="Поиск" searchTerm="мин" [nodes]="nodes" />
+            </ng-template>
+        </app-story-themes>
+    }
+}
