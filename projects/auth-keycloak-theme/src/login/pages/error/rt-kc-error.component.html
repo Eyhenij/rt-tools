@@ -1,0 +1,9 @@
+<ng-container rtBlock="login">
+    <h1 rtElem="title" qa-dataid="kc-title">{{ title }}</h1>
+
+    <rt-kc-message />
+
+    @if (backHref) {
+        <a rtButton rtElem="submit" qa-dataid="kc-error-back" [href]="backHref" [label]="backLabel" [attr.aria-label]="backLabel"></a>
+    }
+</ng-container>

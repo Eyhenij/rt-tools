@@ -1,0 +1,79 @@
+<ng-container rtBlock="login">
+    <h1 rtElem="title" qa-dataid="kc-title">{{ title }}</h1>
+
+    <rt-kc-message />
+
+    @if (context.realm.password) {
+        <form rtElem="form" method="post" qa-dataid="kc-login-form" [action]="context.url.loginAction" (submit)="send($event)">
+            @if (!context.usernameHidden) {
+                <rt-field [label]="usernameLabel" [attr.aria-label]="usernameLabel" [errors]="usernameErrors">
+                    <rt-input autocomplete="username" iconLeft="user" qa-dataid="kc-username" [formControl]="form.controls.username" />
+                </rt-field>
+            }
+
+            <rt-field [label]="passwordLabel" [attr.aria-label]="passwordLabel" [errors]="passwordErrors">
+                <rt-input
+                    type="password"
+                    autocomplete="current-password"
+                    iconLeft="lock"
+                    qa-dataid="kc-password"
+                    [passwordToggle]="true"
+                    [formControl]="form.controls.password" />
+            </rt-field>
+
+            @if (context.realm.rememberMe && !context.usernameHidden) {
+                <div rtElem="check">
+                    <rt-checkbox inputId="kc-remember-me" qa-dataid="kc-remember-me" [formControl]="form.controls.rememberMe" />
+                    <label rtElem="check-label" for="kc-remember-me">{{ rememberMeLabel }}</label>
+                </div>
+            }
+
+            <input type="hidden" name="username" [value]="value().username" />
+            <input type="hidden" name="password" [value]="value().password" />
+            @if (value().rememberMe) {
+                <input type="hidden" name="rememberMe" value="on" />
+            }
+            <input type="hidden" name="credentialId" [value]="context.auth.selectedCredential ?? ''" />
+
+            <!-- Подпись кнопке рисует директива кита: содержимое ей отдавать нельзя, оно будет затёрто -->
+            <button
+                rtButton
+                rtElem="submit"
+                type="submit"
+                qa-dataid="kc-login-submit"
+                [label]="submitLabel"
+                [attr.aria-label]="submitLabel"
+                [loading]="sending()"></button>
+        </form>
+    }
+
+    @if (providers.length > 0) {
+        <div rtElem="providers" qa-dataid="kc-providers">
+            <span rtElem="providers-title">{{ providersLabel }}</span>
+            @for (provider of providers; track provider.alias) {
+                <a
+                    rtButton
+                    rtElem="provider"
+                    appearance="outlined"
+                    theme="secondary"
+                    qa-dataid="kc-provider"
+                    [attr.data-provider]="provider.alias"
+                    [href]="provider.href"
+                    [label]="provider.label"
+                    [attr.aria-label]="provider.label"
+                    [icon]="provider.icon"></a>
+            }
+        </div>
+    }
+
+    @if (context.realm.resetPasswordAllowed || (context.realm.registrationAllowed && !context.registrationDisabled)) {
+        <nav rtElem="links">
+            @if (context.realm.resetPasswordAllowed) {
+                <a rtElem="link" qa-dataid="kc-forgot-password" [href]="context.url.loginResetCredentialsUrl">{{ forgotLabel }}</a>
+            }
+            @if (context.realm.registrationAllowed && !context.registrationDisabled) {
+                <a rtElem="link" qa-dataid="kc-register" [href]="context.url.registrationUrl">{{ registerLabel }}</a>
+            }
+        </nav>
+    }
+</ng-container>

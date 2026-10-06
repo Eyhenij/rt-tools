@@ -153,6 +153,24 @@ await scenario('SC-AUTH-4', 'the realm sends a letter, and the mail catcher hold
     }
 });
 
+await scenario('SC-AUTH-25', 'the stand realm draws the login page with the theme rt', async () => {
+    const query = new URLSearchParams({
+        client_id: CLIENT,
+        response_type: 'code',
+        redirect_uri: 'http://localhost:4210/',
+        scope: 'openid',
+        code_challenge: 'E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM',
+        code_challenge_method: 'S256',
+    });
+    const response = await fetch(`${BASE}/realms/${REALM}/protocol/openid-connect/auth?${query}`);
+    const page = await response.text();
+    expect(response.status === 200, `the login page answered ${response.status}`);
+    expect(
+        /<base href="[^"]*\/login\/rt\/dist\/"/.test(page),
+        'the login page does not load the theme rt: is the theme JAR built and mounted?'
+    );
+});
+
 await scenario('SC-AUTH-5', 'a second raising applies the realm file over a running stand', async () => {
     expect(token, 'no admin token');
     const drift = `drift-${randomUUID().slice(0, 8)}`;
