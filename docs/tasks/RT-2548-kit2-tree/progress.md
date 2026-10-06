@@ -5,11 +5,11 @@
 Rewritten by every session, not appended to.
 
 - **State:** `этап-идёт`
-- **Stage:** 2 of 4 — The component
-- **Done:** the epic RT-2542 with nine tasks; the agreement; the pure logic (9 tests); the component, its directive, template, styles, barrel export and `CONTEXT.md` — typecheck and lint green
-- **Next step:** `Overview.mdx` (step 2.4), then the stories with a preset half (stage 3)
+- **Stage:** 3 of 4 — The showcase
+- **Done:** the logic and the component (20 tests); `CONTEXT.md` and `Overview.mdx`; the stories — `Playground` and nine matrices, every one in the preset pair; typecheck, the docs, links, preset and coverage checks green; the sweep: 766 stories and 93 overview pages, no empty showings
+- **Next step:** look at the tree frames by eye on :6007, then take the references (step 3.3)
 - **Uncommitted:** the folders of RT-2549 … RT-2556 under `docs/tasks/` — each goes into its own branch; nothing of RT-2548
-- **Waiting for the owner:** no
+- **Waiting for the owner:** the browser profile helper printed nothing, so the executor has not looked at the frames; the owner has the links
 - **PR:** not open yet
 
 ## Steps
@@ -22,10 +22,10 @@ Rewritten by every session, not appended to.
 - [x] 2.1 Write `rt-tree.component.ts`, `.html`, `.scss` and `rt-tree.directives.ts` with the row template directive.
 - [x] 2.2 Export the folder from the components barrel.
 - [x] 2.3 Write `rt-tree.component.spec.ts` for every scenario through the drawn component.
-- [>] 2.4 Write `CONTEXT.md` and `Overview.mdx` next to the component.
-- [ ] 3.1 Write the stories of `rt-tree` with a matrix per axis.
-- [ ] 3.2 Run the story sweep over the raised showcase.
-- [ ] 3.3 Take the snapshots of the new stories and look at every frame.
+- [x] 2.4 Write `CONTEXT.md` and `Overview.mdx` next to the component.
+- [x] 3.1 Write the stories of `rt-tree` with a matrix per axis.
+- [x] 3.2 Run the story sweep over the raised showcase.
+- [>] 3.3 Take the snapshots of the new stories and look at every frame.
 - [ ] 3.4 Give the owner the links to the stories on :6007.
 - [ ] 4.1 Merge the agreement into `docs/specs/ui-kit-v2/tree/` and name it in the domain index.
 - [ ] 4.2 Run the spec check and the full set before the push.
@@ -34,6 +34,10 @@ Rewritten by every session, not appended to.
 
 - **The epic grill lives in this folder.** It was written for the whole epic before the numbers
   existed; RT-2548 is the first task, and the grill leaves for the archive with this folder.
+- **Every tree matrix stands in the preset pair, not only `Presets`.** The preset repaints the
+  chosen and highlighted row ground, and those show on every axis.
+- **`ng-template[rtTreeNodeEnd]` is named as shown inside `tree-matrix.stories.ts`.** It is a
+  template slot with no look of its own; the `NodeEnd` story shows it.
 
 ## Sessions
 
@@ -45,53 +49,47 @@ Rewritten by every session, not appended to.
 
 ## Handover of the session
 
-### Work
+Put together by a hook before the compaction of the context (auto).
 
-RT-2548 «Во втором ките нет дерева выбора». Working tree — `/Users/sviatoslavkhutornoy/WebstormProjects/rt-tools`,
-branch `RT-2548-kit2-tree` from the epic branch `RT-2542-kit2-app-parts`. The branch is committed
-locally and has not left the machine: the gate before sending it refused (below). No PR yet.
+**Working tree:** /Users/sviatoslavkhutornoy/WebstormProjects/rt-tools
+**Branch:** RT-2548-kit2-tree
 
-### Where to look
+### Where we stand at the minute of the compaction
 
-The progress, the plan and the turn map arrive by the startup hook. The grill of the whole epic lies
-in this folder. The agreement is `docs/specs/ui-kit-v2/proposed/tree/`; the epic plan is
-`docs/plans/kit2-app-parts.md`.
+- **State:** `этап-идёт`
+- **Stage:** 2 of 4 — The component
+- **Next step:** `Overview.mdx` (step 2.4), then the stories with a preset half (stage 3)
+- **PR:** not open yet
 
-### Epic RT-2542 — Деревья, крошки, палитра и карусель из приложения есть во втором ките
+The progress in full — `docs/tasks/RT-2548-kit2-tree/progress.md`; the plan lies next to it.
 
-| #   | Task                                                                  | State       |
-| --- | --------------------------------------------------------------------- | ----------- |
-| 1   | **RT-2548 — дерево выбора `rt-tree` на логике дерева из `rt-select`** | in progress |
-| 2   | RT-2549 — перетаскиваемое дерево `rt-draggable-tree`                  | ahead       |
-| 3   | RT-2550 — режим «Применить» у `rt-multiselect`                        | ahead       |
-| 4   | RT-2551 — гибридный выбор деревом: режим мультиселекта или покрыт     | ahead       |
-| 5   | RT-2552 — хлебные крошки `rt-breadcrumbs`                             | ahead       |
-| 6   | RT-2553 — правка значения на месте                                    | ahead       |
-| 7   | RT-2554 — быстрое меню у плавающей кнопки                             | ahead       |
-| 8   | RT-2555 — палитра цветов `rt-color-palette`                           | ahead       |
-| 9   | RT-2556 — карусель `rt-carousel`                                      | ahead       |
+### Uncommitted
 
-### Done and the next step
+```
+?? ../../../../docs/tasks/RT-2549-kit2-draggable-tree/
+?? ../../../../docs/tasks/RT-2550-kit2-multiselect-apply/
+?? ../../../../docs/tasks/RT-2551-kit2-hybrid-tree/
+?? ../../../../docs/tasks/RT-2552-kit2-breadcrumbs/
+?? ../../../../docs/tasks/RT-2553-kit2-inline-edit/
+?? ../../../../docs/tasks/RT-2554-kit2-speed-menu/
+?? ../../../../docs/tasks/RT-2555-kit2-color-palette/
+?? ../../../../docs/tasks/RT-2556-kit2-carousel/
+?? ../lib/components/tree/stories/
+```
 
-Done: stage 1 and steps 2.1–2.3 — the model, the logic, the component, `CONTEXT.md`, the component
-spec; the tree tests 20 of 20, typecheck, lint and `check-specs` green (commit `9a0981c12`).
-Next step: `Overview.mdx` (2.4), then stage 3 — the stories, the sweep, the snapshots, the links.
+### Commits over the main branch
 
-### What to keep in mind
+```
+78a34f4f1 docs: передача сессии по RT-2548 обновлена
+9a0981c12 test(rt:ui-kit-v2): тесты компонента rt-tree и токены его стилей
+faef3d9de docs: передача сессии по RT-2548
+aca64cb60 feat(rt:ui-kit-v2): компонент rt-tree
+ef3ee56f0 feat(rt:ui-kit-v2): модель и расчёт выбора дерева rt-tree
+f75f2d6f5 docs(rt:ui-kit-v2): папка задачи RT-2548 и договорённость о дереве выбора
+a123b11dd Merge remote-tracking branch 'origin/main' into RT-2542-kit2-app-parts
+dd4c332bb docs: просроченные записи архива удалены
+5860a059b docs: план эпика RT-2542 и назначение копии
+```
 
-- The gate before sending the branch refused with five checks; three are fixed (specs, the token
-  graph, the token styles). Two are left, and stage 3 closes them:
-    - `check-preset-stories` — a story must show the tree under the preset and without it.
-    - `check-kit-coverage` — `Overview.mdx` and stories for `rt-tree` and `rtTreeNodeEnd`.
-- Before the stories, load the rules `rt-tools-storybook` and `rt-tools-storybook-story`.
-- The label and the description truncate with an ellipsis and have no tooltip yet: the kit has a
-  tooltip-when-truncated directive (`docs/specs/ui-kit-v2/tooltip-when-truncated/`) — apply it.
-- A guard reads the word for sending a branch inside any shell text, a heredoc included, and runs
-  the whole gate on it: write such text through the file editor, not through the shell.
-- Consumers of the kit are never named in the tree, tasks, commits or PRs; the owner was sharp about
-  it. The sample paths live in the session memory, not here.
-- There is no machine-account token on this machine: the branch leaves by the owner's credentials,
-  commits are signed `rt-tools-dev` through the environment variables.
-- PR #2527 (RT-2526) is a draft waiting for its run; the run sat queued — the runner did not take it.
-  When it is green, lift the draft.
-- Colima was up before this session; the database container `rt-tools-db-1` is running.
+Written by a hook before the compaction of the context. Everything standing here is checked
+against the tree: a handover retells what was written and describes the minute it was put together.
