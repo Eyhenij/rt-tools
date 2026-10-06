@@ -46,6 +46,14 @@
             flex: 0 0 auto;
         }
 
+        // Контролы приложения прижаты к правому краю строки, кнопки дерева — к левому.
+        &__own {
+            display: flex;
+            align-items: center;
+            gap: var(--rt-space-xs);
+            margin-inline-start: auto;
+        }
+
         &__multi {
             display: flex;
             align-items: center;

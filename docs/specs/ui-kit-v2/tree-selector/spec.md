@@ -70,7 +70,8 @@ field and the controls on top of it, so the application moves without its own co
   for; without it the click adds.
 
 - **The application's own controls stand in the row of the selector.** A template marked by
-  `rtTreeSelectorControls` is drawn after expand-all and collapse-all, before revert and clear; the hotel grouping is one.
+  `rtTreeSelectorControls` is pressed to the right end of the row. The selector's own buttons stand
+  at the left end; the hotel grouping is one such control.
 
 - **In the direct form every change is written to the choice at once.** A click, a key, select-all and
   clear write `value` with a new array.
@@ -127,7 +128,7 @@ draft, the search line and the multi toggle live in the component.
 | a search term              | the matching nodes with every branch open, the words marked |
 | nothing found              | the controls row stays, the tree says «Nothing found»       |
 | single mode                | radios, no select-all, no multi toggle                      |
-| the application's control  | its template after collapse-all                             |
+| the application's control  | its template at the right end of the row                    |
 
 ## Cross-cutting requirements
 

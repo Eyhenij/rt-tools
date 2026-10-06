@@ -42,9 +42,6 @@
                         [attr.aria-label]="collapseAllLabel()"
                         (click)="collapseAll()"></button>
                 }
-                @if (controlsTpl(); as controls) {
-                    <ng-container [ngTemplateOutlet]="controls.templateRef" />
-                }
                 @if (isRevertShown()) {
                     <button
                         rtButton
@@ -73,6 +70,11 @@
                         [rtTooltip]="clearLabel()"
                         [attr.aria-label]="clearLabel()"
                         (click)="onClear()"></button>
+                }
+                @if (controlsTpl(); as controls) {
+                    <div rtElem="own">
+                        <ng-container [ngTemplateOutlet]="controls.templateRef" />
+                    </div>
                 }
             </div>
 

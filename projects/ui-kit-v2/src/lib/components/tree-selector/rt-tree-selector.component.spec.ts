@@ -198,12 +198,19 @@ describe('RtTreeSelectorComponent', (): void => {
         expect(same.componentInstance.value()).toEqual(['ph']);
     });
 
-    it('SC-UKV-686: the application controls stand in the row after Collapse all', (): void => {
+    it('SC-UKV-686: the application controls stand at the right end of the row, after the selector buttons', (): void => {
         const fixture: ComponentFixture<ControlsHostComponent> = TestBed.createComponent(ControlsHostComponent);
         fixture.detectChanges();
         const row: Element | null = host(fixture).querySelector('.rt-tree-selector__row');
-        const qa: string[] = Array.from(row?.children ?? []).map((child: Element): string => child.getAttribute('qa-dataid') ?? '');
-        expect(qa).toEqual(['tree-selector-expand-all', 'tree-selector-collapse-all', 'own-control']);
+        const children: Element[] = Array.from(row?.children ?? []);
+        expect(children.map((child: Element): string => child.getAttribute('qa-dataid') ?? '')).toEqual([
+            'tree-selector-expand-all',
+            'tree-selector-collapse-all',
+            '',
+        ]);
+        const own: Element | undefined = children.at(-1);
+        expect(own?.classList).toContain('rt-tree-selector__own');
+        expect(own?.querySelector('[qa-dataid="own-control"]')).not.toBeNull();
     });
 
     it('clear keeps the disabled chosen nodes and is drawn only while something is chosen', (): void => {

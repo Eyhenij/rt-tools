@@ -78,11 +78,11 @@ Then the first emits `applied` with the new node, the second emits `cancelled`
 
 Covered by the component test of `rt-tree-selector`.
 
-### SC-UKV-686 — the application's controls stand in the row
+### SC-UKV-686 — the application's controls stand at the right end of the row
 
 Given the selector with a template marked by `rtTreeSelectorControls`
 When it is drawn
-Then the template stands in the controls row after «Collapse all»
+Then the template stands at the right end of the controls row, after the selector's own buttons
 
 Covered by the component test of `rt-tree-selector`.
 
