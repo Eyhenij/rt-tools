@@ -1,11 +1,12 @@
-import { Controller, Get, INestApplication } from '@nestjs/common';
+import { Controller, Get, Inject, INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { ICaller } from '@rt-tools/auth-contract';
 
 import { PermittedOperation, OpenOperation, SignedInOperation } from './access';
-import { AuthServerModule } from './auth-server.module';
-import { AUTH_TOKEN_VERIFIER } from './auth.tokens';
+import { AuthServerModule, IAuthServerOptions } from './auth-server.module';
+import { AUTH_SERVER_OPTIONS, AUTH_TOKEN_VERIFIER } from './auth.tokens';
+import { clientSettingsOf, IAuthClientSettings } from './env-options';
 import { CurrentCaller } from './current-caller.decorator';
 import { ITestRealm, personClaims, TEST_CLIENT, TEST_ISSUER, testRealm } from './testing/keys';
 import { KeycloakTokenVerifier } from './token-verifier';
@@ -28,6 +29,22 @@ class OrdersController {
     @OpenOperation()
     public health(@CurrentCaller() caller: ICaller | undefined): string {
         return caller === undefined ? 'ok' : 'caller';
+    }
+}
+
+/** The settings operation of an application: it reads the options the module was set up with. */
+@Controller('entry')
+class EntryController {
+    readonly #settings: IAuthClientSettings;
+
+    constructor(@Inject(AUTH_SERVER_OPTIONS) options: IAuthServerOptions) {
+        this.#settings = clientSettingsOf(options);
+    }
+
+    @Get()
+    @OpenOperation()
+    public settings(): IAuthClientSettings {
+        return this.#settings;
     }
 }
 
@@ -59,7 +76,7 @@ describe('AuthServerModule', () => {
 
     beforeAll(async () => {
         realm = await testRealm();
-        app = await start(realm, [OrdersController]);
+        app = await start(realm, [OrdersController, EntryController]);
         base = await app.getUrl();
     });
 
@@ -101,6 +118,13 @@ describe('AuthServerModule', () => {
         const response: Response = await fetch(`${base}/orders/health`);
 
         expect(await response.text()).toBe('ok');
+    });
+
+    it('SC-AUTH-71 — an operation of the application reads the options the module was set up with', async () => {
+        const response: Response = await fetch(`${base}/entry`);
+
+        expect(response.status).toBe(200);
+        expect(await response.json()).toEqual(clientSettingsOf({ issuer: TEST_ISSUER, clientId: TEST_CLIENT, catalog: ['orders:read'] }));
     });
 
     it('SC-AUTH-11 — an application with an undeclared operation does not start', async () => {
