@@ -18,7 +18,7 @@ function declared(file: string, name: string): string {
 }
 
 describe('the field line height', () => {
-    it('SC-UKV-637 — the field line box holds the font', () => {
+    it('SC-UKV-687 — the field line box holds the font', () => {
         const reference: string = declared('_semantic.scss', '--rt-input-line-height');
         const step: RegExpExecArray | null = /^var\((--rt-leading-[a-z]+)\)$/.exec(reference);
         expect(step).not.toBeNull();
