@@ -27,11 +27,25 @@ body {
 }
 
 /**
- * The card of every theme page. The kit paints it the colour of the page behind it, so without an
- * outline and a shadow the form floats on the page with no edge.
+ * The viewport carries the kit's dot field and a soft radial gradient under it: lighter at the top
+ * centre, the page colour below. In the dark theme the page colour is transparent, and the gradient
+ * lies over the body gradient of the kit.
+ */
+.login__viewport {
+    position: relative;
+    overflow: hidden;
+    background: radial-gradient(120% 90% at 50% 0%, var(--rt-color-bg-subtle) 0%, var(--rt-color-bg-surface-auth-card) 65%);
+}
+
+/**
+ * The card of every theme page is glass over the dot field: a semi-transparent background with a
+ * blur of what lies behind it, an outline and a shadow. It stands above the field.
  */
 .login__card {
+    z-index: 1;
     border: var(--rt-border-width-thin) solid var(--rt-color-border-default);
+    backdrop-filter: blur(1.25rem) saturate(140%);
+    background-color: color-mix(in srgb, var(--rt-color-bg-surface) 78%, transparent);
     box-shadow: var(--rt-shadow-card);
 }
 

@@ -50,6 +50,10 @@ the entry is not sure the page belongs to the admin.
   name or password tells the person nothing.
 - **The language is chosen from a drop-down list, and a choice opens the page in that language.**
 - **The card of a page has an outline and a shadow.** The kit paints it the colour of the page.
+- **Behind the card the kit's dot field drifts over a soft radial gradient.** The page around the
+  card is no longer an empty plane.
+- **The card is glass: a semi-transparent background with a blur of what lies behind it.** The dots
+  show through its edge softly and do not cross the text.
 - **A message Keycloak puts on a page is shown above the form in the colour of its kind.**
 - **Every provider of the realm gets a button, and Google and Apple get their own icons.** A
   provider without a known icon gets a button with its name only.

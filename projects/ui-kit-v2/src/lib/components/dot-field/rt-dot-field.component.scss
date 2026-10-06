@@ -1,0 +1,20 @@
+@layer rt-kit.components {
+    .rt-dot-field {
+        --rt-dot-field-color: var(--rt-color-action-primary);
+        --rt-dot-field-opacity: 0.85;
+
+        position: absolute;
+        z-index: var(--rt-z-base);
+        display: block;
+        color: var(--rt-dot-field-color);
+        inset: 0;
+        opacity: var(--rt-dot-field-opacity);
+        pointer-events: none;
+
+        &__canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+    }
+}
