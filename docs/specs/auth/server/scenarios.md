@@ -59,3 +59,9 @@ Given a server started with `AUTH_SYNC_SECRET`
 When the options of the entry module are read
 Then the catalog goes to the realm named by the issuer through `rt-catalog-sync` or the client named
 by `AUTH_SYNC_CLIENT_ID`; an issuer that is not a realm address stops the start
+
+### SC-AUTH-71 — the browser part gets the realm and the client of the server
+
+Given a server set up with an issuer and a client
+When the settings for the browser part are asked
+Then they name the Keycloak address and the realm of that issuer and the same client

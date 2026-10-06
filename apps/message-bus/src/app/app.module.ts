@@ -14,6 +14,7 @@ import { ProposalsModule } from '@rt/message-bus-api/proposals/feature';
 import { TreesModule } from '@rt/message-bus-api/trees/feature';
 import { RIGHTS } from '@rt/message-bus-common';
 
+import { EntrySettingsController } from './entry/entry-settings.controller';
 import { HealthController } from './health/health.controller';
 import { FailureFilter } from './failure.filter';
 
@@ -43,7 +44,7 @@ import { FailureFilter } from './failure.filter';
         TreesModule,
         ChatModule,
     ],
-    controllers: [HealthController],
+    controllers: [HealthController, EntrySettingsController],
     providers: [AppLoggerService, { provide: APP_FILTER, useClass: FailureFilter }],
 })
 export class AppModule {}

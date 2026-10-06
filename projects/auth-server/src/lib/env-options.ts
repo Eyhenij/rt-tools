@@ -19,6 +19,33 @@ const SYNC_CLIENT_ID: string = 'rt-catalog-sync';
 /** The Keycloak address and the realm name, taken from the issuer: `https://sso.example.com/realms/rt`. */
 const ISSUER: RegExp = /^(https?:\/\/.+)\/realms\/([^/]+)\/?$/;
 
+/** What the browser part of an admin needs to sign a person in: the same realm and client as the server. */
+export interface IAuthClientSettings {
+    /** The Keycloak address, for example `https://sso.example.com`. */
+    readonly url: string;
+    readonly realm: string;
+    readonly clientId: string;
+}
+
+/** The Keycloak address and the realm of an issuer, or `null` when it is not the address of a realm. */
+export function realmOfIssuer(issuer: string): { readonly url: string; readonly realm: string } | null {
+    const match: RegExpExecArray | null = ISSUER.exec(issuer);
+    return match ? { url: match[1], realm: match[2] } : null;
+}
+
+/**
+ * The settings the browser part signs in with, taken from the options of the server. The admin
+ * asks them at start instead of carrying its own copy: a copy built into the page drifts from the
+ * server at the first move of Keycloak to another address.
+ */
+export function clientSettingsOf(options: IAuthServerOptions): IAuthClientSettings {
+    const realm: { readonly url: string; readonly realm: string } | null = realmOfIssuer(options.issuer);
+    if (!realm) {
+        throw new Error(`The issuer is not the address of a Keycloak realm: ${options.issuer}`);
+    }
+    return { ...realm, clientId: options.clientId };
+}
+
 /**
  * The options of the entry module from the environment of the server.
  *
@@ -39,7 +66,7 @@ export function authOptionsFromEnv(env: IAuthEnv, catalog: readonly TPermission[
     if (!secret) {
         return { issuer, clientId, catalog };
     }
-    const realm: RegExpExecArray | null = ISSUER.exec(issuer);
+    const realm: { readonly url: string; readonly realm: string } | null = realmOfIssuer(issuer);
     if (!realm) {
         throw new Error(`AUTH_ISSUER is not the address of a Keycloak realm: ${issuer}`);
     }
@@ -48,8 +75,8 @@ export function authOptionsFromEnv(env: IAuthEnv, catalog: readonly TPermission[
         clientId,
         catalog,
         sync: {
-            baseUrl: realm[1],
-            realm: realm[2],
+            baseUrl: realm.url,
+            realm: realm.realm,
             syncClientId: env.AUTH_SYNC_CLIENT_ID || SYNC_CLIENT_ID,
             syncClientSecret: secret,
         },

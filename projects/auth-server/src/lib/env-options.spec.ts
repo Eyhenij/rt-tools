@@ -1,7 +1,7 @@
 import { TPermission } from '@rt-tools/auth-contract';
 
 import { IAuthServerOptions } from './auth-server.module';
-import { authOptionsFromEnv } from './env-options';
+import { authOptionsFromEnv, clientSettingsOf } from './env-options';
 
 const CATALOG: readonly TPermission[] = ['orders:read', 'orders:write'];
 
@@ -47,5 +47,14 @@ describe('authOptionsFromEnv', () => {
         expect(() =>
             authOptionsFromEnv({ AUTH_ISSUER: 'https://sso.test/rt', AUTH_CLIENT_ID: 'a', AUTH_SYNC_SECRET: 's' }, CATALOG)
         ).toThrow('is not the address of a Keycloak realm');
+    });
+
+    it('SC-AUTH-71 — the browser part gets the realm and the client the server checks tokens of', () => {
+        const options: IAuthServerOptions = authOptionsFromEnv(
+            { AUTH_ISSUER: 'https://sso.test/realms/rt', AUTH_CLIENT_ID: 'orders-admin' },
+            CATALOG
+        );
+
+        expect(clientSettingsOf(options)).toEqual({ url: 'https://sso.test', realm: 'rt', clientId: 'orders-admin' });
     });
 });

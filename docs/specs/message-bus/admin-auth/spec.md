@@ -56,6 +56,9 @@ The vocabulary of the domain whole is in the spec of the domain. Here only what 
   openness is named in the operation itself.
 - **The intake does not start while one of its operations declares no access.** An operation that
   slipped past the declaration is found at the start, not by a foreign request.
+- **The admin application asks the intake where to sign in.** The intake names the Keycloak address,
+  the realm and the client whose tokens it checks, without a token and without secrets. A copy
+  built into the page would drift from the intake when Keycloak moves.
 
 **The account.**
 
@@ -85,6 +88,10 @@ The vocabulary of the domain whole is in the spec of the domain. Here only what 
 
 The intake serves no operations of the entry: the sign-in, the exit and the renewal of the token go
 to Keycloak. Every operation of a person reads the access token from the `Authorization` header.
+
+| Operation              | Access | What it does                                                      |
+| ---------------------- | ------ | ----------------------------------------------------------------- |
+| GET /api/auth/settings | public | `{ url, realm, clientId }` — where the admin application signs in |
 
 ### Refusal codes
 

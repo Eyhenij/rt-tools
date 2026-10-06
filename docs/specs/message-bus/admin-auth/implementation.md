@@ -10,6 +10,7 @@ or the code holds what the spec is silent about.
 - **A token of a tree does not open the admin application, and the entry of a person does not open the intake of the cargo.** — `libs/message-bus-api/access/feature/src/lib/access.guard.ts:canActivate`
 - **Every operation declares its way of access openly.** — `libs/message-bus-api/access/util/src/lib/operation-access.ts:OPERATION_ACCESS`
 - **The intake does not start while one of its operations declares no access.** — `projects/auth-server/src/lib/access-audit.ts:undeclaredAccess`
+- **The admin application asks the intake where to sign in.** — `apps/message-bus/src/app/entry/entry-settings.controller.ts:EntrySettingsController`
 - **An account is created, changes its password and is switched off from the screens.** — `libs/message-bus-api/accounts/feature/src/lib/accounts-manage.controller.ts:create`
 - **The name of an account is taken by one person, and the case is not told apart in it.** — `libs/message-bus-api/accounts/util/src/lib/account-name.util.ts:accountNameKey`
 - **A person sent to the entry from the address of a section lands after the entry where they were going.** — `libs/message-bus-admin/auth/shell/src/lib/session.guard.ts:sessionGuard`

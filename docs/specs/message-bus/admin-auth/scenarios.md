@@ -93,3 +93,9 @@ Then it refuses: the name is taken
 Given a new operation without a declaration of the access is created in the intake
 When a request without an entry and without a token of a tree arrives at it
 Then it is refused, it does not answer
+
+### SC-MB-417 — the intake names where the admin application signs in
+
+Given the intake set up with a Keycloak realm and the bus client
+When the admin application asks the settings of the entry without a token
+Then the answer names the Keycloak address, the realm and the client, and nothing more
