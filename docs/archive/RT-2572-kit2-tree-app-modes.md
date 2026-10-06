@@ -60,3 +60,13 @@ Four call sites, read by a research pass over the application:
 ## What is left unclear
 
 - Text `info` at the row end and hidden leaf marks — no host uses them; the end slot covers `info`.
+
+## Decisions along the way
+
+- **The branch stands on the epic branch, not on RT-2549** — `rt-tree` does not depend on the
+  dragged tree, and #2568 is merged there.
+- **The word cut lives next to the side-menu cut** — `rt-tag` needs it too, and an atom does not
+  import an organism. Affected stage: 1.
+- **The filter reads the label only, the marks read the badges too** — a word found only in a badge
+  hides the row while `filter` is on; an application searching by badges turns `filter` off and
+  filters itself, as it does today. Affected stage: 3.
