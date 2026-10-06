@@ -3,7 +3,7 @@
 The prefix `SC-UKV` is shared across the domain together with the subdomains. What a scenario is
 covered by is said under it.
 
-### SC-UKV-639 — a click on a leaf adds it to the choice and leaves the nodes as they were
+### SC-UKV-672 — a click on a leaf adds it to the choice and leaves the nodes as they were
 
 Given a tree in the multiple mode with the cascade
 When a person clicks an unchosen leaf
@@ -11,7 +11,7 @@ Then `value` gets a new array holding that leaf, and the node objects passed in 
 
 Covered by the component test of `rt-tree`.
 
-### SC-UKV-640 — a click on a branch chooses its enabled leaves and then clears them
+### SC-UKV-673 — a click on a branch chooses its enabled leaves and then clears them
 
 Given a branch whose leaves are all enabled and none chosen
 When a person clicks the branch twice
@@ -19,7 +19,7 @@ Then after the first click every leaf of the branch is in the choice, and after 
 
 Covered by the component test of `rt-tree`.
 
-### SC-UKV-641 — a partly chosen branch shows a dash
+### SC-UKV-674 — a partly chosen branch shows a dash
 
 Given a branch with two leaves, one of them chosen
 When the tree is drawn
@@ -27,7 +27,7 @@ Then the branch checkbox is indeterminate and not checked
 
 Covered by the component test of `rt-tree`.
 
-### SC-UKV-642 — without the cascade a click changes only the clicked node
+### SC-UKV-675 — without the cascade a click changes only the clicked node
 
 Given a tree with the cascade switched off
 When a person clicks a branch
@@ -35,7 +35,7 @@ Then the choice holds the branch value and none of its leaves
 
 Covered by the component test of `rt-tree`.
 
-### SC-UKV-643 — the single mode keeps one chosen node
+### SC-UKV-676 — the single mode keeps one chosen node
 
 Given a tree in the single mode with one leaf chosen
 When a person clicks another leaf

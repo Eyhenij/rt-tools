@@ -18,7 +18,7 @@ function valuesOf(rows: ReadonlyArray<IRtTree.Row<string>>): string[] {
 }
 
 describe('rt-tree logic', (): void => {
-    it('SC-UKV-639 — клик по листу даёт новый массив, а узлы остаются прежними', (): void => {
+    it('SC-UKV-672 — клик по листу даёт новый массив, а узлы остаются прежними', (): void => {
         const before: string = JSON.stringify(TREE);
         const value: ReadonlyArray<string> = [];
 
@@ -30,20 +30,20 @@ describe('rt-tree logic', (): void => {
         expect(JSON.stringify(TREE)).toBe(before);
     });
 
-    it('SC-UKV-640 — клик по ветке выбирает её включённые листья, повторный снимает', (): void => {
+    it('SC-UKV-673 — клик по ветке выбирает её включённые листья, повторный снимает', (): void => {
         const first: ReadonlyArray<string> = rtTreeChoose(RUSSIA, [], 'multiple', true);
 
         expect([...first].sort()).toEqual(['kzn', 'msk', 'tvr']);
         expect(rtTreeChoose(RUSSIA, first, 'multiple', true)).toEqual([]);
     });
 
-    it('SC-UKV-641 — ветка с частью выбранных листьев отмечена частично', (): void => {
+    it('SC-UKV-674 — ветка с частью выбранных листьев отмечена частично', (): void => {
         expect(rtTreeMark(CENTRE, ['msk'], true)).toBe('some');
         expect(rtTreeMark(CENTRE, ['msk', 'tvr'], true)).toBe('all');
         expect(rtTreeMark(CENTRE, [], true)).toBe('none');
     });
 
-    it('SC-UKV-642 — без каскада клик меняет только сам узел', (): void => {
+    it('SC-UKV-675 — без каскада клик меняет только сам узел', (): void => {
         const next: ReadonlyArray<string> = rtTreeChoose(CENTRE, [], 'multiple', false);
 
         expect(next).toEqual(['ru-c']);
@@ -51,7 +51,7 @@ describe('rt-tree logic', (): void => {
         expect(rtTreeMark(MOSCOW, next, false)).toBe('none');
     });
 
-    it('SC-UKV-643 — одиночный режим держит один узел и не снимает его повторным кликом', (): void => {
+    it('SC-UKV-676 — одиночный режим держит один узел и не снимает его повторным кликом', (): void => {
         expect(rtTreeChoose(MINSK, ['msk'], 'single', true)).toEqual(['msq']);
         expect(rtTreeChoose(MINSK, ['msq'], 'single', true)).toEqual(['msq']);
     });
