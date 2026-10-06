@@ -1,33 +1,43 @@
 # Grill
 
-<Work begun from cargo that arrived names its records here — by full keys, as the intake reading
-prints them. Eight characters are not enough: a mark with a short key is refused with the line
-«the tree has no such record». This file leaves for the archive, and after the folder is taken apart
-the keys live only here.>
-
 ## The owner request
 
-> <verbatim, in the owner's language, without retelling>
+> изучи как утроен логин на <двух приложениях владельца> - нужно вынести логин в отдельный модуль который можно подключать в приложения
+
+Задача эпика RT-2528, текст карточки:
+
+> На экране входа нет кнопки «Войти через Apple»: провайдер Apple в области Keycloak не заведён. Владелец 6 октября 2026 года отложил его: в RT-2534 подключается только Google.
+>
+> - Провайдер Apple заводится на стенде из переменных среды с ключами владельца; без них он выключен.
+> - Описано, как менять секрет Apple: он истекает и обновляется вручную.
+> - Кнопка Apple на экране входа ведёт на вход Apple.
 
 ## What the tree already has
 
-<Findings of the exploration: specs on the subject, the laws and rules the work touches, a
-ready-made sample nearby. Filled in before the first question to the owner.>
+- Google заведён в области стенда задачей RT-2534: ключи из среды через compose, без них
+  провайдер выключен, проверка стенда SC-AUTH-53.
+- Тема рисует кнопку и значок Apple по списку провайдеров области (RT-2530).
+- В Keycloak 26 встроенного провайдера Apple нет.
 
 ## What the rules already say
 
-<What was found in the laws and rules on the subject of the question. The owner is not asked
-what already has a written answer.>
+- План эпика: своих расширений Keycloak на Java нет.
+- Постоянное указание владельца: не запускать код внешнего репозитория.
 
 ## Questions and answers
 
-**<question>**
-<the owner's answer in their words>
+Вопрос владельцу ещё не задан: в ходе, где завели задачу, проверка разбора не пропустила меню.
 
 ## Decisions
 
-- **<decision>** — <reason>. Rejected: <what and why>.
+Пока нет: путь подключения выбирает владелец.
 
 ## What is left unclear
 
-- <a question that was not asked, and why it does not block the work>
+- **Каким путём подключать Apple.** Замер на стенде 6 октября 2026 года: общий OIDC-брокер
+  Keycloak отвечает на ответ провайдера формой POST кодом 405 Method Not Allowed. Apple присылает
+  ответ формой POST, когда просят почту или имя. Значит, общий провайдер получает Apple без
+  почты, и при первом входе Keycloak спросит её сам, без подтверждения. Рабочий путь с почтой —
+  стороннее расширение Keycloak для Apple, а это код внешнего репозитория на стенде.
+- **Ключи Apple для проверки.** Без них вход Apple на стенде не проверить: проверка стенда увидит
+  только выключенный провайдер.

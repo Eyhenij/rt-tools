@@ -2,36 +2,22 @@
 
 ## Where we stand
 
-Rewritten by every session, not appended to.
-
-- **State:** `<name from the state list of rule task-flow>`
-- **Stage:** <number> of <total> — <name>
-- **Done:** <briefly>
-- **Next step:** <what is done first in the new session>
-- **Uncommitted:** <what lies in the tree outside the index>
-- **Waiting for the owner:** <what exactly, or "no"; the owner's standing word about a stop is quoted in « »>
-- **PR:** <number and state, or "not open yet">
-
-## Steps
-
-The steps of the plan, all of them, with a mark each. Rewritten by every turn that moves the work.
-
-- `[x]` done · `[>]` going on right now · `[ ]` not begun
-
-Exactly one step carries `[>]`. The numbers and the names are copied from the plan and not
-reworded: a check matches the two lists, and the turn exit guard counts what is not done yet.
-
-- [x] 1.1 <name of the first step of the first stage>
-- [>] 1.2 <name of the second step of the first stage>
-- [ ] 2.1 <name of the first step of the second stage>
+- **State:** `просьба-не-разобрана`
+- **Stage:** 0 of 0 — разбор
+- **Done:** ветка каскадом от RT-2534, карточка в работе, замер брокера Keycloak на стенде
+- **Next step:** вопрос владельцу меню: стороннее расширение Apple, общий OIDC без почты или отложить
+- **Uncommitted:** нет
+- **Waiting for the owner:** выбор пути подключения Apple и ключи Apple для проверки
+- **PR:** not open yet; ветка стоит каскадом на #2557 (RT-2534)
 
 ## Decisions along the way
 
-- **<decision>** — <reason>. Affected stage of the plan: <number>.
+Пока нет.
 
 ## Sessions
 
-### <date>
+### 2026-10-06
 
-- <what was done, in numbers: files, commits, what is green>
-- <what we stumbled on and what caught it>
+- Ветка `RT-2547-auth-apple` от `RT-2534-auth-example-admin`, карточка #2547 в «In progress».
+- Замер: пробный OIDC-провайдер на стенде, GET на конечную точку брокера — страница входа, POST —
+  405 Method Not Allowed. Пробный провайдер снят.
