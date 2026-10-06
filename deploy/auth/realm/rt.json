@@ -26,6 +26,22 @@
     "ssl": "false",
     "starttls": "false"
   },
+  "identityProviders": [
+    {
+      "alias": "google",
+      "providerId": "google",
+      "displayName": "Google",
+      "enabled": "$(env:RT_GOOGLE_ENABLED)",
+      "trustEmail": true,
+      "firstBrokerLoginFlowAlias": "first broker login",
+      "config": {
+        "clientId": "$(env:RT_GOOGLE_CLIENT_ID)",
+        "clientSecret": "$(env:RT_GOOGLE_CLIENT_SECRET)",
+        "defaultScope": "openid profile email",
+        "syncMode": "IMPORT"
+      }
+    }
+  ],
   "clients": [
     {
       "clientId": "rt-example-admin",
@@ -37,11 +53,12 @@
       "implicitFlowEnabled": false,
       "directAccessGrantsEnabled": false,
       "serviceAccountsEnabled": false,
-      "redirectUris": ["http://localhost:4210/*"],
-      "webOrigins": ["http://localhost:4210"],
+      "redirectUris": ["http://localhost:4210/*", "http://localhost:4410/*"],
+      "webOrigins": ["http://localhost:4210", "http://localhost:4410"],
       "attributes": {
         "pkce.code.challenge.method": "S256",
-        "post.logout.redirect.uris": "http://localhost:4210/*"
+        "post.logout.redirect.uris": "http://localhost:4210/*##http://localhost:4410/*",
+        "access.token.lifespan": "40"
       }
     },
     {

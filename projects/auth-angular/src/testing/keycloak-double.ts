@@ -8,7 +8,7 @@ import { provideRtAuth } from '../lib/auth.providers';
 import { RtAuthService } from '../lib/auth.service';
 import { RT_KEYCLOAK, TRtKeycloak } from '../lib/keycloak';
 
-export const CLIENT_ID: string = 'rt-example-admin';
+export const CLIENT_ID: string = 'double-admin';
 
 export const TEST_CONFIG: IRtAuthConfig = {
     url: 'https://auth.test',

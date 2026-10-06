@@ -162,7 +162,7 @@ await scenario('SC-AUTH-4', 'the realm sends a letter, and the mail catcher hold
     }
 });
 
-await scenario('SC-AUTH-25', 'the stand realm draws the login page with the theme rt', async () => {
+async function loginPage() {
     const query = new URLSearchParams({
         client_id: CLIENT,
         response_type: 'code',
@@ -172,11 +172,35 @@ await scenario('SC-AUTH-25', 'the stand realm draws the login page with the them
         code_challenge_method: 'S256',
     });
     const response = await fetch(`${BASE}/realms/${REALM}/protocol/openid-connect/auth?${query}`);
-    const page = await response.text();
-    expect(response.status === 200, `the login page answered ${response.status}`);
+    return { status: response.status, page: await response.text() };
+}
+
+await scenario('SC-AUTH-25', 'the stand realm draws the login page with the theme rt', async () => {
+    const { status, page } = await loginPage();
+    expect(status === 200, `the login page answered ${status}`);
     expect(
         /<base href="[^"]*\/login\/rt\/dist\/"/.test(page),
         'the login page does not load the theme rt: is the theme JAR built and mounted?'
+    );
+});
+
+// The value compose puts in place of a key the owner did not give
+const UNSET_KEY = 'not-set';
+
+await scenario('SC-AUTH-53', 'the entry page offers Google exactly when the stand holds the keys of the owner', async () => {
+    expect(token, 'no admin token');
+    const { status, body: provider } = await admin(token, '/identity-provider/instances/google');
+    expect(status === 200, `the realm has no provider google: ${status}`);
+    const keyed = provider.config?.clientId !== UNSET_KEY;
+    expect(
+        provider.enabled === keyed,
+        `the provider is ${provider.enabled ? 'on' : 'off'} while the keys are ${keyed ? 'given' : 'absent'}`
+    );
+    const { page } = await loginPage();
+    const offered = /"alias":\s*"google"/.test(page);
+    expect(
+        offered === keyed,
+        `the entry page ${offered ? 'offers' : 'does not offer'} Google while the keys are ${keyed ? 'given' : 'absent'}`
     );
 });
 

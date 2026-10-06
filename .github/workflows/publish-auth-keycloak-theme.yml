@@ -1,0 +1,55 @@
+name: Release the Keycloak theme of the entry module
+
+# Тема входа — не пакет npm, а JAR для каталога `providers` Keycloak. Выпуск собирает его и кладёт
+# в выпуск GitHub с меткой `rt-auth-keycloak-theme@<версия>`. Версия берётся из манифеста темы и
+# здесь не поднимается. Сборке нужны Java и Maven: на образе ubuntu-latest они есть.
+
+on:
+    workflow_dispatch:
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
+permissions:
+    contents: write
+
+jobs:
+    release:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v7
+              with:
+                  fetch-depth: 0
+
+            - name: Install pnpm
+              uses: pnpm/action-setup@v6
+              with:
+                  version: 11.10.0
+                  run_install: false
+
+            - name: Cache node_modules
+              uses: actions/setup-node@v7
+              with:
+                  node-version: 22.22.3
+                  cache: 'pnpm'
+
+            - name: Install dependencies
+              run: pnpm install --frozen-lockfile
+
+            - name: Read version
+              run: echo "VERSION=$(jq -r .version projects/auth-keycloak-theme/package.json)" >> $GITHUB_ENV
+
+            - name: Build the theme
+              run: pnpm run build:auth-keycloak-theme
+
+            - name: Create the release
+              run: |
+                  gh release create "rt-auth-keycloak-theme@${{ env.VERSION }}" \
+                      dist/auth-keycloak-theme/rt-auth-keycloak-theme.jar \
+                      --target "${{ github.sha }}" \
+                      --title "Keycloak theme ${{ env.VERSION }}" \
+                      --notes "The login theme of the entry module. Put the JAR into the providers directory of Keycloak and choose the theme rt for the realm."
+              env:
+                  GH_TOKEN: ${{ github.token }}

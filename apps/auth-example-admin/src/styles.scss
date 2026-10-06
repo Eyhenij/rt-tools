@@ -1,0 +1,14 @@
+/**
+ * The styles of the second kit come whole from its source: the kit and the example live in one tree.
+ */
+@use '../../../projects/ui-kit-v2/src/styles/index';
+@use 'styles/example-records';
+
+html,
+body {
+    height: 100%;
+    margin: 0;
+    background-color: var(--rt-color-bg-page);
+    color: var(--rt-color-text-primary);
+    font-family: var(--rt-font-family-sans);
+}

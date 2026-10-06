@@ -11,6 +11,7 @@
  * Порядок значим: первое подходящее правило выигрывает, поэтому общее разрешение публикуемых
  * пакетов стоит последним.
  */
+import { authExampleBoundaries } from './domains/auth-example.config.mjs';
 import { chatTalksEmbedBoundaries } from './domains/chat-talks-embed.config.mjs';
 import { chatTalksPageBoundaries } from './domains/chat-talks-page.config.mjs';
 import { chatWidgetBoundaries } from './domains/chat-widget.config.mjs';
@@ -30,5 +31,6 @@ export const allBoundaries = [
     ...chatWidgetBoundaries,
     ...messageBusApiBoundaries,
     ...messageBusCommonBoundaries,
+    ...authExampleBoundaries,
     ...packagesBoundaries,
 ];

@@ -51,4 +51,4 @@ Given the stand is raised
 When the login page of the realm is read
 Then it is drawn by the theme `rt`
 
-Not covered: the command `check:auth-stand` asks a raised stand; it joins the push gate with the end-to-end task RT-2534
+Not covered: the command `check:auth-stand` asks a raised stand. It runs in the gate before sending and in the pipeline, and the audit of specs reads only `.spec.ts` files

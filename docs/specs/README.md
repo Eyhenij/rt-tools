@@ -87,7 +87,8 @@ subdomain of the contract reads rights from a token. The subdomain `theme` draws
 Keycloak with the components of the second kit. The subdomain of the client signs a person in from
 an Angular admin and sends the token with its requests. The subdomain of the server checks the
 token and the rights of every call. The subdomain of the import moves the people of an existing
-application into Keycloak with their password hashes.
+application into Keycloak with their password hashes. The subdomain `example` is an admin and a
+server of the tree that connect the packages, and an end-to-end suite runs a person through them.
 
 `ui-kit-v2` — four subdomains. The snapshots of the showcase: what is shot, what a frame is held the
 same between the runs by and where the run is obliged to refuse instead of being green. The leaving of

@@ -85,7 +85,14 @@ services:
             KEYCLOAK_AVAILABILITYCHECK_ENABLED: 'true'
             KEYCLOAK_AVAILABILITYCHECK_TIMEOUT: 120s
             IMPORT_FILES_LOCATIONS: /config/*.json
-            IMPORT_VAR_SUBSTITUTION_ENABLED: 'false'
+            # Подстановка `$(env:…)` в файле области: ключи Google приходят из среды и в историю
+            # не попадают. Spring читает ключ без подчёркивания между VAR и SUBSTITUTION.
+            IMPORT_VARSUBSTITUTION_ENABLED: 'true'
+            # Ключи Google владелец кладёт в `deploy/auth/.env` (вне истории) или в среду команды.
+            # Без них провайдер заведён выключенным, и на экране входа кнопки Google нет.
+            RT_GOOGLE_ENABLED: ${RT_GOOGLE_ENABLED:-false}
+            RT_GOOGLE_CLIENT_ID: ${RT_GOOGLE_CLIENT_ID:-not-set}
+            RT_GOOGLE_CLIENT_SECRET: ${RT_GOOGLE_CLIENT_SECRET:-not-set}
             # Без кэша файл накладывается и тогда, когда он не менялся: правка в консоли
             # возвращается к файлу при следующем подъёме.
             IMPORT_CACHE_ENABLED: 'false'

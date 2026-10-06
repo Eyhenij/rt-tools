@@ -1,0 +1,111 @@
+# The example admin
+
+**Status:** in force · **Revision:** 2026-10-06 · **Scenario prefix:** `SC-AUTH`
+**Depends on:** `auth`, `auth/angular`, `auth/server`, `auth/theme`
+**Laws:** `verifiability`, `frontend-application`
+**Procedures:** none
+
+A subdomain of the entry module. The example admin is an Angular admin and a NestJS server of the tree that use the packages of the
+entry module the way an application would. The end-to-end suite runs a person through it on the
+stand: the entry, the session and the rights are checked whole, not package by package.
+
+## Why
+
+Each package of the module is checked by its own tests with doubles. A person meets all of them at
+once: the theme of Keycloak, the client, the token in the request, the check on the server. A miss
+between two packages shows only when they work together.
+
+## Terminology
+
+| Term        | What it is                                                         |
+| ----------- | ------------------------------------------------------------------ |
+| The example | The example admin and the example server, two programs of the tree |
+| A record    | The only thing of the example: a line with a title                 |
+| A reader    | A person with the right `example:read`                             |
+| An editor   | A person with the rights `example:read` and `example:write`        |
+
+### What it is called in the interface
+
+| On the screen | What it is                     |
+| ------------- | ------------------------------ |
+| Records       | The list of records            |
+| New record    | The form that creates a record |
+| Sign out      | The exit through Keycloak      |
+
+## Rules
+
+- **The example admin opens only to a person who entered through Keycloak.** A person who is not
+  signed in is sent to the entry screen of the realm.
+- **The list of records is shown to a reader, the form of a new record only to an editor.** A
+  person without the right does not see the part, not a disabled one.
+- **The example server refuses a call without the right with 403, whatever the screen shows.** The
+  hidden form is convenience; the protection is on the server.
+- **A token near its end is refreshed without a new entry.** A person who keeps working is not sent
+  back to the entry screen while the Keycloak session lives.
+- **Sign out ends the session in Keycloak.** The next opening of the admin asks for the entry
+  again.
+- **The token of the example client lives forty seconds on the stand.** The end-to-end suite then
+  sees a refresh within one test instead of waiting five minutes.
+
+## What is out of scope
+
+- The organizations — the example has none.
+
+## Contract
+
+Not applicable as procedures: the example server is a NestJS controller, not a Connect service. Its
+calls are these.
+
+- The list of records — `GET` on `/api/records`, by the right `example:read`.
+- A new record — `POST` on `/api/records` with a title, by the right `example:write`.
+- The probe — `GET` on `/api/health`, open: the stand waits on it.
+
+### Refusal codes
+
+Not applicable: the refusals are those of `auth/server`. A call without a token or with a token the
+realm refuses gets HTTP 401, a call without the right gets 403. A record without a title gets 400.
+
+## Data
+
+The records live in the memory of the example server and are lost with it: the example checks the
+entry, not the keeping.
+
+## Screens and states
+
+| Screen  | State              | What the person sees                         |
+| ------- | ------------------ | -------------------------------------------- |
+| Records | a reader           | the list and their name with «Sign out»      |
+| Records | an editor          | the same and the form «New record»           |
+| Records | no right to read   | the line «You have no access to the records» |
+| Records | the server refuses | the message of the refusal above the list    |
+
+## Cross-cutting requirements
+
+### Locales
+
+The example is in English only: it is a stand, not a product screen.
+
+### SEO
+
+Not applicable.
+
+### Mobile layout
+
+Not applicable: the suite checks the entry, not the layout.
+
+### Several objects
+
+Not applicable.
+
+## Decisions
+
+- **The example lives in the tree as two applications next to the suite.** A test page inside the
+  suite would check what the suite itself wrote, not what an application connects.
+
+## Open questions
+
+None.
+
+## History of changes
+
+- 2026-10-06 — the example admin, the example server and the end-to-end suite, task RT-2534.
