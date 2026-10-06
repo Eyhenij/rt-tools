@@ -1,0 +1,52 @@
+/*
+ * The only screen of the example: a column in the middle of the page.
+ */
+.example-records {
+    display: flex;
+    flex-direction: column;
+    padding: var(--rt-space-6) var(--rt-space-4);
+    margin: 0 auto;
+    gap: var(--rt-space-4);
+    max-inline-size: 720px;
+
+    &__header {
+        display: flex;
+        align-items: center;
+        gap: var(--rt-space-3);
+    }
+
+    &__title {
+        flex: 1;
+        margin: 0;
+    }
+
+    &__person {
+        overflow: hidden;
+        max-inline-size: 240px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    &__form {
+        display: flex;
+        align-items: flex-end;
+        gap: var(--rt-space-3);
+    }
+
+    &__toolbar {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    &__list {
+        padding: 0;
+        margin: 0;
+        list-style: none;
+    }
+
+    &__item {
+        padding: var(--rt-space-3) 0;
+        border-block-end: 1px solid var(--rt-color-border-subtle);
+        overflow-wrap: anywhere;
+    }
+}
