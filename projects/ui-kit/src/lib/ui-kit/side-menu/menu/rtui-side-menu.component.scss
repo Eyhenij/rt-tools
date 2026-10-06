@@ -3,6 +3,8 @@
 $side-menu: (
     base: (
         width: 5.5rem,
+        // Полоса без подписей: значок пункта и поля вокруг него.
+        compact-width: 4rem,
         margin-top-between-items: 0.75rem,
     ),
     item: (
@@ -63,6 +65,10 @@ $side-menu: (
     // где закрепления нет вовсе.
     display: flex;
     height: 100%;
+}
+
+:host(.rtui-side-menu--titles-hidden) {
+    --rt-side-menu-base-width: var(--rt-side-menu-base-compact-width);
 }
 
 :host {
