@@ -1,5 +1,6 @@
 import { IRtSelect } from '../select/rt-select.model';
 import { IRtSideMenu } from '../side-menu/rt-side-menu.model';
+import { IRtTag } from '../tag/rt-tag.model';
 
 /**
  * Модель `<rt-tree>`: один корневой неймспейс с префиксом `I`. Узел повторяет опцию выбора из
@@ -10,7 +11,15 @@ export namespace IRtTree {
     export interface Node<TValue> extends IRtSelect.Option<TValue> {
         /** Вторая строка под подписью. */
         description?: string;
+        /** Метки под подписью: поиск отмечает в них найденное так же, как в подписи. */
+        badges?: ReadonlyArray<Badge>;
         children?: ReadonlyArray<Node<TValue>>;
+    }
+
+    /** Метка узла: текст и цвет палитры `rt-tag`. */
+    export interface Badge {
+        text: string;
+        severity?: IRtTag.Severity;
     }
 
     /**
@@ -31,6 +40,7 @@ export namespace IRtTree {
     export interface LabelParts {
         readonly label: ReadonlyArray<IRtSideMenu.TitlePart>;
         readonly description: ReadonlyArray<IRtSideMenu.TitlePart>;
+        readonly badges: ReadonlyArray<ReadonlyArray<IRtSideMenu.TitlePart>>;
     }
 
     /** Контекст разметки приложения в конце строки. */

@@ -6,12 +6,13 @@ import { IStoryState, STORY_CONTROL_STATES, storyStateLabel } from '../../../../
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtTagComponent } from '../../../tag/rt-tag.component';
 import { RtTreeComponent } from '../../rt-tree.component';
-import { RtTreeNodeEndDirective } from '../../rt-tree.directives';
+import { RtTreeNodeEndDirective, RtTreeNodeMetaDirective } from '../../rt-tree.directives';
 import { IRtTree } from '../../rt-tree.model';
-import { TREE_STORY_NODES } from './tree-story-nodes';
+import { TREE_STORY_BADGE_NODES, TREE_STORY_NODES } from './tree-story-nodes';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TTreeMatrixPart = 'mode' | 'cascade' | 'select-all' | 'search' | 'empty' | 'node-end' | 'states' | 'presets' | 'themes';
+export type TTreeMatrixPart =
+    'mode' | 'cascade' | 'select-all' | 'search' | 'empty' | 'node-end' | 'branch-marks' | 'node-meta' | 'states' | 'presets' | 'themes';
 
 /** Одна ячейка ряда: подпись и то, чем дерево в ней отличается от соседей. */
 interface ITreeCase {
@@ -21,10 +22,25 @@ interface ITreeCase {
     readonly value: ReadonlyArray<string>;
     readonly searchTerm: string;
     readonly nodes: ReadonlyArray<IRtTree.Node<string>>;
+    readonly branchMarks: boolean;
+    readonly filter: boolean;
+    /** Рисовать ли разметку приложения под подписью. */
+    readonly meta: boolean;
 }
 
 function treeCase(name: string, patch: Partial<ITreeCase> = {}): ITreeCase {
-    return { name, mode: 'multiple', cascade: true, value: ['msk', 'msq'], searchTerm: '', nodes: TREE_STORY_NODES, ...patch };
+    return {
+        name,
+        mode: 'multiple',
+        cascade: true,
+        value: ['msk', 'msq'],
+        searchTerm: '',
+        nodes: TREE_STORY_NODES,
+        branchMarks: true,
+        filter: true,
+        meta: false,
+        ...patch,
+    };
 }
 
 /**
@@ -48,6 +64,7 @@ function treeCase(name: string, patch: Partial<ITreeCase> = {}): ITreeCase {
         RtTagComponent,
         RtTreeComponent,
         RtTreeNodeEndDirective,
+        RtTreeNodeMetaDirective,
         // showcase
         StoryPresetsComponent,
         StoryRowComponent,
@@ -89,6 +106,18 @@ export class TestRtTreeMatrixComponent {
     ];
 
     public readonly nodeEndCases: readonly ITreeCase[] = [treeCase('значение узла в метке')];
+
+    public readonly branchMarkCases: readonly ITreeCase[] = [
+        treeCase('у групп отметки есть'),
+        treeCase('у групп отметок нет', { branchMarks: false }),
+        treeCase('радио только у листьев', { branchMarks: false, mode: 'single', value: ['tvr'] }),
+    ];
+
+    public readonly nodeMetaCases: readonly ITreeCase[] = [
+        treeCase('метки узла', { nodes: TREE_STORY_BADGE_NODES }),
+        treeCase('поиск без отбора: «мос gna»', { nodes: TREE_STORY_BADGE_NODES, filter: false, searchTerm: 'мос gna' }),
+        treeCase('метки и разметка приложения', { nodes: TREE_STORY_BADGE_NODES, meta: true }),
+    ];
 
     public readonly states: readonly IStoryState[] = STORY_CONTROL_STATES;
     public readonly stateLabel: (value: IStoryState) => string = storyStateLabel;

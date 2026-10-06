@@ -1,5 +1,5 @@
 import { rtTreeOpenFor, rtTreeRows } from '../select/rt-select-tree';
-import { rtTreeChoose, rtTreeLabelParts, rtTreeMark, rtTreeSelectAll, rtTreeSelectAllMark } from './rt-tree.logic';
+import { rtTreeChoose, rtTreeChooseAlone, rtTreeLabelParts, rtTreeMark, rtTreeSelectAll, rtTreeSelectAllMark } from './rt-tree.logic';
 import { IRtTree } from './rt-tree.model';
 
 const MOSCOW: IRtTree.Node<string> = { label: 'Москва', value: 'msk' };
@@ -81,5 +81,33 @@ describe('rt-tree logic', (): void => {
             { text: 'Мин', matched: true },
             { text: 'ск', matched: false },
         ]);
+    });
+
+    it('SC-UKV-665 — клик без Ctrl и Cmd оставляет в выборе только кликнутый узел и выключенные', (): void => {
+        const value: ReadonlyArray<string> = ['msk', 'msq', 'aer'];
+
+        const first: ReadonlyArray<string> = rtTreeChooseAlone(TREE, { label: 'Казань', value: 'kzn' }, value, true);
+        expect([...first].sort()).toEqual(['aer', 'kzn']);
+
+        const second: ReadonlyArray<string> = rtTreeChooseAlone(TREE, { label: 'Казань', value: 'kzn' }, first, true);
+        expect(second).toEqual(['aer']);
+
+        expect([...rtTreeChooseAlone(TREE, CENTRE, value, true)].sort()).toEqual(['aer', 'msk', 'tvr']);
+    });
+
+    it('SC-UKV-666 — каждое слово запроса отмечено в подписи, описании и метках', (): void => {
+        const node: IRtTree.Node<string> = { ...MINSK, badges: [{ text: 'MSQ' }] };
+
+        const parts: IRtTree.LabelParts = rtTreeLabelParts(node, 'мин сто msq');
+
+        expect(parts.label).toEqual([
+            { text: 'Мин', matched: true },
+            { text: 'ск', matched: false },
+        ]);
+        expect(parts.description).toEqual([
+            { text: 'Сто', matched: true },
+            { text: 'лица', matched: false },
+        ]);
+        expect(parts.badges).toEqual([[{ text: 'MSQ', matched: true }]]);
     });
 });

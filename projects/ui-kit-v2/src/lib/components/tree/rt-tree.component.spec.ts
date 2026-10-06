@@ -5,7 +5,7 @@ import { By } from '@angular/platform-browser';
 import { createRtFixture } from '../../../testing/rt-kit-testing';
 import { RtTooltipDirective } from '../tooltip/rt-tooltip.directive';
 import { RtTreeComponent } from './rt-tree.component';
-import { RtTreeNodeEndDirective } from './rt-tree.directives';
+import { RtTreeNodeEndDirective, RtTreeNodeMetaDirective } from './rt-tree.directives';
 import { IRtTree } from './rt-tree.model';
 
 /**
@@ -65,7 +65,84 @@ class TreeEndHostComponent {
     protected readonly nodes: ReadonlyArray<IRtTree.Node<string>> = TREE;
 }
 
+const LEAVES: ReadonlyArray<IRtTree.Node<string>> = ['a', 'b', 'c', 'd'].map((value: string): IRtTree.Node<string> => ({
+    label: value.toUpperCase(),
+    value,
+}));
+
+function click(fixture: ComponentFixture<unknown>, value: string, init: MouseEventInit = {}): void {
+    rowOf(fixture, value).dispatchEvent(new MouseEvent('click', { bubbles: true, ...init }));
+    fixture.detectChanges();
+}
+
+function matchedIn(target: Element): string[] {
+    return Array.from(target.querySelectorAll('[class*="__part--match"]')).map((part: Element): string => part.textContent ?? '');
+}
+
+@Component({
+    selector: 'rt-tree-meta-host',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtTreeComponent, RtTreeNodeMetaDirective],
+    template: `
+        <rt-tree searchTerm="msq" [filter]="false" [nodes]="nodes">
+            <ng-template rtTreeNodeMeta let-node>
+                <span qa-dataid="meta-mark">{{ node.value }}</span>
+            </ng-template>
+        </rt-tree>
+    `,
+})
+class TreeMetaHostComponent {
+    protected readonly nodes: ReadonlyArray<IRtTree.Node<string>> = [
+        { label: 'Минск', value: 'msq', badges: [{ text: 'MSQ', severity: 'info' }, { text: 'Столица' }] },
+    ];
+}
+
 describe('RtTreeComponent', (): void => {
+    it('SC-UKV-668 — исключающее дерево выбирает узел кликом один и добавляет по Ctrl или Cmd', (): void => {
+        const fixture: TFixture = setup({ nodes: LEAVES, value: ['a'], exclusive: true });
+
+        click(fixture, 'b');
+        expect(fixture.componentInstance.value()).toEqual(['b']);
+
+        click(fixture, 'c', { ctrlKey: true });
+        click(fixture, 'd', { metaKey: true });
+        expect([...fixture.componentInstance.value()].sort()).toEqual(['b', 'c', 'd']);
+    });
+
+    it('SC-UKV-669 — группа без отметки раскрывается кликом и пробелом, выбор не меняется', (): void => {
+        const fixture: TFixture = setup({ branchMarks: false });
+
+        expect(rowOf(fixture, 'ru').querySelector('[qa-dataid="tree-row-checkbox"]')).toBeNull();
+        expect(rowOf(fixture, 'msq').querySelector('[qa-dataid="tree-row-checkbox"]')).not.toBeNull();
+
+        click(fixture, 'ru');
+        expect(rowOf(fixture, 'msk')).toBeDefined();
+
+        key(fixture, ' ');
+        expect(rowOf(fixture, 'msk')).toBeUndefined();
+        expect(fixture.componentInstance.value()).toEqual([]);
+    });
+
+    it('SC-UKV-670 — поиск без отбора не прячет строк и отмечает найденное', (): void => {
+        const fixture: TFixture = setup({ filter: false, searchTerm: 'мин' });
+
+        expect(rows(fixture).map((row: HTMLElement): string | null => row.getAttribute('data-value'))).toEqual(['ru', 'msq']);
+        expect(matchedIn(rowOf(fixture, 'msq'))).toEqual(['Мин']);
+    });
+
+    it('SC-UKV-671 — метки узла и разметка приложения стоят под подписью', (): void => {
+        TestBed.configureTestingModule({ imports: [TreeMetaHostComponent] });
+        const fixture: ComponentFixture<TreeMetaHostComponent> = TestBed.createComponent(TreeMetaHostComponent);
+        fixture.detectChanges();
+        const meta: HTMLElement = rowOf(fixture, 'msq').querySelector('[qa-dataid="tree-row-meta"]') as HTMLElement;
+
+        const tags: Element[] = Array.from(meta.querySelectorAll('rt-tag'));
+        expect(tags.length).toBe(2);
+        expect(matchedIn(tags[0])).toEqual(['MSQ']);
+        expect(matchedIn(tags[1])).toEqual([]);
+        expect(meta.querySelector('[qa-dataid="meta-mark"]')?.textContent).toBe('msq');
+    });
+
     it('SC-UKV-639 — клик по листу кладёт его в value', (): void => {
         const fixture: TFixture = setup({ value: ['msk'] });
 

@@ -66,6 +66,9 @@ promises, so that the next pill is asked for from it rather than written beside 
 - **The size is chosen by a step, not by a number in the place.** Three steps: the padding, the type
   size and the icon of the pill move together. A consumer who sets a type size of their own gets a
   pill whose padding stays from another step, and the row of pills stops lining up.
+- **The words of `highlight` are marked in the label.** An application that searches by tags too
+  shows where a word was found: every word of the input, split on spaces, is drawn with the search
+  highlight of the kit, and an empty input marks nothing.
 - **A label that did not fit its place is cut by an ellipsis and gets a hint with the whole value.**
   A pill lives in a row, in a cell and in a header, and the value inside it comes from a consumer
   who cannot shorten it. Cut without a hint, the text reads as the whole one: a person has no way to

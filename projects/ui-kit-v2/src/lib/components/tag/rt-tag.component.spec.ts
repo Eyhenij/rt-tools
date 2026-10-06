@@ -213,4 +213,19 @@ describe('RtTagComponent', (): void => {
             expect(control?.attributes['aria-label']).toBe('Delete');
         });
     });
+
+    it('SC-UKV-667 — слова поиска отмечены в подписи, а пустой ввод не отмечает ничего', (): void => {
+        const fixture: ComponentFixture<RtTagComponent> = setup({ value: 'Москва Центр', highlight: 'моск цен' });
+        const matched: () => string[] = (): string[] =>
+            Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('.rt-tag__part--match')).map(
+                (part: Element): string => part.textContent ?? ''
+            );
+
+        expect(matched()).toEqual(['Моск', 'Цен']);
+        expect(textOf(qa(fixture, 'tag-text'))).toBe('Москва Центр');
+
+        setInputs(fixture, { highlight: '' });
+        fixture.detectChanges();
+        expect(matched()).toEqual([]);
+    });
 });

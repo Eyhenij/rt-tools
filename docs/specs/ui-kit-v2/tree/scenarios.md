@@ -123,3 +123,53 @@ When the tree is drawn
 Then the label and the description each carry the kit tooltip with their own whole text, in the mode for a cut text
 
 Covered by the component test of `rt-tree`.
+
+### SC-UKV-665 — an exclusive click keeps only what the clicked node covers
+
+Given a choice holding two leaves of different branches and a disabled chosen leaf
+When a third leaf is clicked without Ctrl or Cmd in an exclusive tree, and then clicked again
+Then the choice holds that leaf and the disabled one after the first click, and only the disabled one
+after the second
+
+Covered by the logic test of `rt-tree`.
+
+### SC-UKV-666 — every word of the term is marked in the label, the description and the badges
+
+Given a node «Минск» with the description «Столица» and a badge «MSQ»
+When the search term is «мин сто msq»
+Then «Мин», «Сто» and «MSQ» are the matched parts of the label, the description and the badge
+
+Covered by the logic test of `rt-tree`.
+
+### SC-UKV-668 — an exclusive tree chooses one node by a click and adds one by Ctrl or Cmd
+
+Given an exclusive tree with checkboxes and one chosen leaf
+When another leaf is clicked, and then a third one with Ctrl, and a fourth with Cmd
+Then the first click leaves only the clicked leaf, and the clicks with Ctrl and Cmd add theirs to it
+
+Covered by the component test of `rt-tree`.
+
+### SC-UKV-669 — a group without a mark opens on a click
+
+Given a tree with `branchMarks` off
+When a group row is clicked and Space is pressed on it
+Then the row has no checkbox, the group opens and folds, and the choice stays empty
+
+Covered by the component test of `rt-tree`.
+
+### SC-UKV-670 — a search that only marks hides no row
+
+Given a tree with `filter` off and a search term matching one leaf
+When the tree is drawn
+Then every row of the tree is still shown, and the match is marked in that leaf's label
+
+Covered by the component test of `rt-tree`.
+
+### SC-UKV-671 — badges and the application's meta stand under the label
+
+Given a node with two badges, a meta template and a search term matching a badge
+When the tree is drawn
+Then the row holds two kit tags with the match marked in one, followed by the meta template with
+the node in its context
+
+Covered by the component test of `rt-tree`.

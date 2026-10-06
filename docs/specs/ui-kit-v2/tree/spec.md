@@ -64,6 +64,13 @@ multiselect; a standalone tree on the same logic gives the applications one look
 - **The search term filters the tree and marks the match in the label.** A row stays when its label or
   a descendant's label holds the term, the path to a match is shown open, and the matched part of a
   label is drawn with the highlight tokens of the side-menu search.
+- **Every word of the search term is marked, in the label, the description and the badges.** The
+  application splits its search on spaces, so a word found anywhere in the row is drawn with the same
+  highlight; a word inside an already marked part does not cut it again.
+- **A plain click chooses the clicked node alone when the tree is exclusive.** In the multiple mode
+  with `exclusive`, a click, Space or Enter keeps of the choice only what the clicked node covers and
+  the disabled nodes, then works as an ordinary click: a second click on the only chosen node clears
+  it. A click with Ctrl or Cmd adds or removes as in the ordinary mode.
 - **The keys walk the visible rows, and the side arrows work the tree.** ArrowDown and ArrowUp move the
   highlight, ArrowRight opens a folded branch or steps to the first child, ArrowLeft folds an open
   branch or steps to the parent; Space toggles the mark of the highlighted node and Enter picks it.
@@ -71,6 +78,15 @@ multiselect; a standalone tree on the same logic gives the applications one look
   an application can pass every key from its own search field and typing there keeps working.
 - **Select-all chooses every enabled leaf of the visible rows, or clears them.** It is drawn only when
   asked for and only in the cascade with checkboxes.
+- **Groups may go without a mark, and then a click on a group opens it.** With `branchMarks` off,
+  branch rows draw no checkbox or radio; a click, Space and Enter on such a row open or fold it, and
+  the choice is made on the leaves. Select-all still chooses the leaves.
+- **The search may only mark, leaving the rows to the application.** With `filter` off, the term
+  hides no row and opens no path; it marks the words where they stand.
+- **A node's badges stand under its label as kit tags.** Each badge of the node is a small `rt-tag`
+  of its palette, and the search words are marked in it as in the label.
+- **A row takes the application's content under its label too.** A template marked by
+  `rtTreeNodeMeta` is drawn in the line of the badges with the node in its context.
 - **A row takes the application's content at its end.** A template marked by `rtTreeNodeEnd` is drawn
   at the end of every row with the node in its context; the tree adds no input per such control.
 - **An empty tree says so.** With no rows the tree shows the kit label for nothing found when a term is

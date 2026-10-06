@@ -1,5 +1,6 @@
 import { rtTreeBranchState, rtTreeLeaves } from '../select/rt-select-tree';
-import { splitSideMenuTitle } from '../side-menu/rt-side-menu.logic';
+import { splitTitleByWords } from '../side-menu/rt-side-menu.logic';
+import { IRtSideMenu } from '../side-menu/rt-side-menu.model';
 import { IRtTree } from './rt-tree.model';
 
 /**
@@ -86,10 +87,48 @@ export function rtTreeSelectAll<TValue>(rows: ReadonlyArray<IRtTree.Row<TValue>>
     return rtTreeSelectAllMark(rows, value) === 'all' ? without(value, leaves) : withAll(value, leaves);
 }
 
-/** Подпись и описание узла, разрезанные по найденному слову тем же резом, что у поиска меню. */
+/**
+ * Подпись, описание и метки узла, разрезанные по каждому слову запроса тем же резом, что у поиска
+ * меню: приложение делит поиск по пробелам, и найденное слово видно там, где оно нашлось.
+ */
 export function rtTreeLabelParts<TValue>(node: TNode<TValue>, term: string): IRtTree.LabelParts {
     return {
-        label: splitSideMenuTitle(node.label, term),
-        description: splitSideMenuTitle(node.description ?? '', term),
+        label: splitTitleByWords(node.label, term),
+        description: splitTitleByWords(node.description ?? '', term),
+        badges: (node.badges ?? []).map((badge: IRtTree.Badge): ReadonlyArray<IRtSideMenu.TitlePart> =>
+            splitTitleByWords(badge.text, term)
+        ),
     };
+}
+
+/** Значения узла и всех его потомков. */
+function covered<TValue>(node: TNode<TValue>): ReadonlyArray<TValue> {
+    return [node.value, ...(node.children ?? []).flatMap((child: TNode<TValue>): ReadonlyArray<TValue> => covered(child))];
+}
+
+/** Значения выключенных узлов дерева: их состояние не меняет ни одно действие. */
+function disabledValues<TValue>(nodes: ReadonlyArray<TNode<TValue>>): ReadonlyArray<TValue> {
+    return nodes.flatMap((node: TNode<TValue>): ReadonlyArray<TValue> => [
+        ...(node.disabled ? [node.value] : []),
+        ...disabledValues(node.children ?? []),
+    ]);
+}
+
+/**
+ * Выбор после клика без Ctrl и Cmd в режиме, где клик выбирает один узел. Из выбора остаётся только
+ * то, что покрывает сам узел, и выключенные узлы; дальше клик работает как обычно — поэтому
+ * повторный клик по единственному выбранному снимает его.
+ */
+export function rtTreeChooseAlone<TValue>(
+    nodes: ReadonlyArray<TNode<TValue>>,
+    node: TNode<TValue>,
+    value: ReadonlyArray<TValue>,
+    cascade: boolean
+): ReadonlyArray<TValue> {
+    if (node.disabled) {
+        return value;
+    }
+    const keep: ReadonlyArray<TValue> = [...covered(node), ...disabledValues(nodes)];
+    const base: ReadonlyArray<TValue> = value.filter((item: TValue): boolean => keep.includes(item));
+    return rtTreeChoose(node, base, 'multiple', cascade);
 }
