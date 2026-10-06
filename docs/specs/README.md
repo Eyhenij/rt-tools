@@ -84,8 +84,9 @@ surfaces of the other components and services the spec does not describe yet.
 and its rights are client roles. The domain holds the stand: Keycloak, its database and a mail
 catcher are raised by one command, the realm is applied from a file, a command asks the stand. The
 subdomain of the contract reads rights from a token. The subdomain `theme` draws the entry screens of
-Keycloak with the components of the second kit. The subdomain of the import moves the people of an
-existing application into Keycloak with their password hashes.
+Keycloak with the components of the second kit. The subdomain of the client signs a person in from
+an Angular admin and sends the token with its requests. The subdomain of the import moves the people
+of an existing application into Keycloak with their password hashes.
 
 `ui-kit-v2` — four subdomains. The snapshots of the showcase: what is shot, what a frame is held the
 same between the runs by and where the run is obliged to refuse instead of being green. The leaving of
