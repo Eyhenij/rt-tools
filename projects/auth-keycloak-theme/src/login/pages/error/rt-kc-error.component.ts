@@ -3,7 +3,7 @@ import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { RtButtonDirective } from '@rt-tools/ui-kit-v2';
 
 import { KC_CONTEXT, TKcPageContext } from '../../kc-context';
-import { KC_MESSAGES, TKcMessages } from '../../kc-i18n';
+import { backLinkText, KC_MESSAGES, TKcMessages } from '../../kc-i18n';
 import { RtKcMessageComponent } from '../../message/rt-kc-message.component';
 
 const BEM_BLOCK: string = 'rt-kc-page';
@@ -25,5 +25,5 @@ export class RtKcErrorComponent {
     protected readonly title: string = this.#i18n.msgStr('errorTitle');
     protected readonly backHref: string | null =
         !this.#context.skipLink && this.#context.client?.baseUrl ? this.#context.client.baseUrl : null;
-    protected readonly backLabel: string = this.#i18n.msgStr('backToApplication');
+    protected readonly backLabel: string = backLinkText(this.#i18n.msgStr('backToApplication'));
 }

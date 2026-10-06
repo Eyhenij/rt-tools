@@ -107,3 +107,15 @@ Given the entry screen on the stand
 When it is open
 Then the card background is semi-transparent with a blur behind it, the viewport carries a radial
 gradient, and the dot field canvas is drawn and lies under the card
+
+### SC-AUTH-64 — the language list and the theme switch stand inside the card
+
+Given any theme page
+When it is drawn
+Then the block with the language list and the theme switch is a child of the card
+
+### SC-AUTH-65 — a link back is plain text without a chevron
+
+Given the reset page
+When it is drawn
+Then the link back to the sign-in reads «Back to Login» with no « in front

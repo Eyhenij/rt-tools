@@ -5,6 +5,20 @@ import { RtKcLoginComponent } from '../pages/login/rt-kc-login.component';
 import { RtKcRootComponent } from './rt-kc-root.component';
 
 describe('RtKcRootComponent', () => {
+    it('SC-AUTH-64 — the language list and the theme switch stand inside the card', async () => {
+        const fixture: ComponentFixture<RtKcRootComponent> = await renderKcPage(
+            RtKcRootComponent,
+            kcContextOf('login.ftl'),
+            RtKcLoginComponent
+        );
+        const chrome: HTMLElement | null = kcNode(fixture, 'kc-chrome');
+        const card: HTMLElement | null = kcNode(fixture, 'kc-card');
+
+        expect(card).not.toBeNull();
+        expect(chrome?.parentElement).toBe(card);
+        expect(chrome?.querySelector('rt-theme-toggle')).not.toBeNull();
+    });
+
     it('SC-AUTH-61 — the dot field stands behind the card', async () => {
         const fixture: ComponentFixture<RtKcRootComponent> = await renderKcPage(
             RtKcRootComponent,

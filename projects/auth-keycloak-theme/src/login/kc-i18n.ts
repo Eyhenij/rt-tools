@@ -25,6 +25,14 @@ export function plainMessage(message: string): string {
     return new DOMParser().parseFromString(message, 'text/html').documentElement.textContent ?? '';
 }
 
+/**
+ * The text of a link back to the sign-in or to the application. Keycloak starts these messages with
+ * a chevron, and the theme shows the link as plain text without it.
+ */
+export function backLinkText(message: string): string {
+    return message.replace(/^[\s«‹<]+/u, '');
+}
+
 /** The messages of the page with every text already plain: the pages read them as they are. */
 export function plainMessages(i18n: TKcMessages): TKcMessages {
     const msgStr: TKcMessages['msgStr'] = (...args: Parameters<TKcMessages['msgStr']>): string => plainMessage(i18n.msgStr(...args));

@@ -38,11 +38,23 @@ body {
 }
 
 /**
+ * The language list and the theme switch stand in the first row of the card, on its right edge.
+ * The kit pins the block to the corner of the window; inside the card it is pinned to the corner of
+ * the card instead and takes the top padding above the realm name.
+ */
+.login__card .login__chrome {
+    position: absolute;
+    top: var(--rt-space-5);
+    right: var(--rt-space-5);
+}
+
+/**
  * The card of every theme page is glass over the dot field: a semi-transparent background with a
  * blur of what lies behind it, an outline and a shadow. It stands above the field.
  */
 .login__card {
     z-index: 1;
+    padding-top: var(--rt-space-20);
     border: var(--rt-border-width-thin) solid var(--rt-color-border-default);
     backdrop-filter: blur(1.25rem) saturate(140%);
     background-color: color-mix(in srgb, var(--rt-color-bg-surface) 78%, transparent);
