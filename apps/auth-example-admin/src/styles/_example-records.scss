@@ -1,0 +1,53 @@
+/*
+ * The only screen of the example: a column in the middle of the page. It lives in the shared layer
+ * of the application rather than in the styles of the component.
+ */
+.example-records {
+    display: flex;
+    flex-direction: column;
+    padding: var(--rt-space-6) var(--rt-space-4);
+    margin: 0 auto;
+    gap: var(--rt-space-4);
+    max-inline-size: 720px;
+
+    &__header {
+        display: flex;
+        align-items: center;
+        gap: var(--rt-space-2);
+    }
+
+    &__title {
+        flex: 1;
+        margin: 0;
+    }
+
+    &__person {
+        overflow: hidden;
+        max-inline-size: 240px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    &__form {
+        display: flex;
+        align-items: center;
+        gap: var(--rt-space-2);
+    }
+
+    &__toolbar {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    &__list {
+        padding: 0;
+        margin: 0;
+        list-style: none;
+    }
+
+    &__item {
+        padding: var(--rt-space-2) 0;
+        border-block-end: 1px solid var(--rt-color-border-subtle);
+        overflow-wrap: anywhere;
+    }
+}

@@ -272,8 +272,12 @@ function publishedFiles() {
         const file = queue.pop();
         const dir = file.slice(0, file.lastIndexOf('/'));
         for (const [, relative] of read(file).matchAll(/(?:export|import)[^'"]*from\s+['"](\.[^'"]*)['"]/g)) {
+            // An ES module package writes the import with the `.js` ending of the built file; the
+            // source behind it is the `.ts` of the same name. Read literally, the published file
+            // stayed unseen, and every function the package hands out read as called by tests alone.
+            const source = relative.replace(/^\.\//, '').replace(/\.js$/, '');
             for (const suffix of ['.ts', '/index.ts', '']) {
-                const path = `${dir}/${relative.replace(/^\.\//, '')}${suffix}`.replace(/\/\.\//g, '/');
+                const path = `${dir}/${source}${suffix}`.replace(/\/\.\//g, '/');
                 if (exists(path) && !published.has(path)) {
                     published.add(path);
                     if (path.endsWith('/index.ts')) {

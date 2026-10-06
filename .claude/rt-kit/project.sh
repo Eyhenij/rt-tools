@@ -225,9 +225,11 @@ EOF
     shot_v2='node tools/visual-gate.mjs ui-kit-v2'
     img_api='docker build -f deploy/message-bus.Dockerfile -t message-bus:gate .'
     img_web='docker build -f deploy/message-bus-web.Dockerfile -t message-bus-web:gate .'
+    auth_stand='pnpm run serve:auth && pnpm run check:auth-stand'
+    auth_e2e='pnpm exec nx run auth-example-e2e:e2e'
 
     if [ -z "$1" ] || ! rt_push_touched "$1" >/dev/null 2>&1; then
-        printf '%s\n%s\n%s\n%s\n%s\n' "$e2e" "$shot_v1" "$shot_v2" "$img_api" "$img_web"
+        printf '%s\n%s\n%s\n%s\n%s\n%s\n%s\n' "$e2e" "$auth_stand" "$auth_e2e" "$shot_v1" "$shot_v2" "$img_api" "$img_web"
 
         return 0
     fi
@@ -236,7 +238,7 @@ EOF
 
     case " $_touched " in
         *' everything '*)
-            printf '%s\n%s\n%s\n%s\n%s\n' "$e2e" "$shot_v1" "$shot_v2" "$img_api" "$img_web"
+            printf '%s\n%s\n%s\n%s\n%s\n%s\n%s\n' "$e2e" "$auth_stand" "$auth_e2e" "$shot_v1" "$shot_v2" "$img_api" "$img_web"
 
             return 0
             ;;
@@ -256,6 +258,9 @@ EOF
     # всех веток эпика (задача RT-2257). Образы сюда не идут: правка кита их не ломает, а сквозной
     # набор собирает прод-сборку сам.
         case " $_touched " in *' kit2 '*) printf '%s\n%s\n' "$shot_v2" "$e2e" ;; esac
+    # The entry module: the stand, its check and the suite of the example. The second kit draws the
+    # entry screens of the theme and the example admin, so its edit raises them too.
+        case " $_touched " in *' auth '* | *' kit2 '*) printf '%s\n%s\n' "$auth_stand" "$auth_e2e" ;; esac
     } | awk '!seen[$0]++'
 }
 
@@ -290,10 +295,15 @@ rt_push_touched() {
             # receiver changes from an edit of them. While they fell into the general case, an edit
             # of one check raised the end-to-end suite, two snapshot sets and two image builds — six
             # minutes for a line none of those subjects is touched by.
+            # The check of the auth stand is the script of a heavy step and goes before the rest of
+            # the checks.
+            tools/auth-stand-check.mjs) _add auth ;;
             docs/*|*.md|.claude/*|projects/agent-kit/*|tools/*) ;;
             # The kits — each with a showcase of its own.
             projects/ui-kit/*) _add kit1 ;;
             projects/ui-kit-v2/*) _add kit2 ;;
+            # The entry module: its packages, the example, its suite and the stand.
+            projects/auth-*|apps/auth-example*|deploy/auth/*) _add auth ;;
             # The receiver, the admin panel, its end-to-end suite, the rollout and the database
             # schema.
             apps/message-bus*|deploy/*|prisma/*) _add receiver ;;

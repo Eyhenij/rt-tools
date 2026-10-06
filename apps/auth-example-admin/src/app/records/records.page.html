@@ -1,0 +1,46 @@
+<ng-container rtBlock="example-records">
+    <header rtElem="header">
+        <h1 rtElem="title">Records</h1>
+        <span rtElem="person" qa-dataid="records-person">{{ personName() }}</span>
+        <!-- The kit directive draws the label itself: content given to the button would be erased -->
+        <button
+            rtButton
+            type="button"
+            label="Sign out"
+            aria-label="Sign out"
+            appearance="outlined"
+            qa-dataid="records-sign-out"
+            (click)="signOut()"></button>
+    </header>
+
+    @if (refusal(); as text) {
+    <rt-message severity="danger" qa-dataid="records-refusal">{{ text }}</rt-message>
+    } @if (canRead()) {
+    <form *rtIfPermission="'example:write'" rtElem="form" qa-dataid="records-new" [formGroup]="form" (ngSubmit)="create()">
+        <rt-input placeholder="New record title" ariaLabel="New record" qa-dataid="records-new-title" formControlName="title" />
+        <button rtButton type="submit" label="Add" aria-label="Add" qa-dataid="records-new-submit"></button>
+    </form>
+
+    <div rtElem="toolbar">
+        <button
+            rtButton
+            type="button"
+            label="Reload"
+            aria-label="Reload"
+            appearance="text"
+            qa-dataid="records-reload"
+            (click)="reload()"></button>
+    </div>
+
+    @if (records().length) {
+    <ul rtElem="list" qa-dataid="records-list">
+        @for (record of records(); track record.id) {
+        <li rtElem="item" qa-dataid="records-item">{{ record.title }}</li>
+        }
+    </ul>
+    } @else {
+    <rt-empty-state title="No records yet" qa-dataid="records-empty" />
+    } } @else {
+    <rt-empty-state title="You have no access to the records" qa-dataid="records-no-access" />
+    }
+</ng-container>

@@ -25,6 +25,10 @@ module.exports = {
         'subject-empty': [2, 'never'],
         'subject-full-stop': [2, 'never', '.'],
         'subject-russian': [2, 'always'],
-        'scope-enum': [2, 'always', ['rt:core', 'rt:store', 'rt:utils', 'rt:ui-kit', 'rt:ui-kit-v2', 'rt:agent-kit', 'rt:message-bus']],
+        'scope-enum': [
+            2,
+            'always',
+            ['rt:core', 'rt:store', 'rt:utils', 'rt:ui-kit', 'rt:ui-kit-v2', 'rt:agent-kit', 'rt:message-bus', 'rt:auth'],
+        ],
     },
 };

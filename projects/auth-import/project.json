@@ -1,0 +1,38 @@
+{
+  "name": "@rt-tools/auth-import",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "projects/auth-import/src",
+  "projectType": "library",
+  "tags": ["scope:package"],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{workspaceRoot}/dist/auth-import"],
+      "options": {
+        "main": "projects/auth-import/src/index.ts",
+        "tsConfig": "projects/auth-import/tsconfig.lib.json",
+        "outputPath": "dist/auth-import",
+        "rootDir": "projects/auth-import/src",
+        "generatePackageJson": false,
+        "assets": ["projects/auth-import/package.json", "projects/auth-import/README.md"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/projects/auth-import"],
+      "options": {
+        "jestConfig": "projects/auth-import/jest.config.ts",
+        "tsConfig": "projects/auth-import/tsconfig.spec.json"
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc --noEmit -p projects/auth-import/tsconfig.spec.json"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}

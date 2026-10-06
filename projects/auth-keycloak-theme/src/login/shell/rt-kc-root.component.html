@@ -1,0 +1,27 @@
+<ng-container rtBlock="login">
+    <div rtElem="viewport">
+        <rt-dot-field qa-dataid="kc-dot-field" />
+
+        <section rtElem="card" qa-dataid="kc-card">
+            <div rtElem="chrome" qa-dataid="kc-chrome">
+                @if (localeOptions.length > 0) {
+                    <rt-select
+                        rtElem="locales"
+                        qa-dataid="kc-locales"
+                        size="sm"
+                        [clearable]="false"
+                        [ariaLabel]="languagesLabel"
+                        [options]="localeOptions"
+                        [formControl]="locale"
+                        (selectionChange)="switchLocale($event)" />
+                }
+
+                <rt-theme-toggle qa-dataid="kc-theme" />
+            </div>
+
+            <span rtElem="brand" qa-dataid="kc-brand">{{ realmName }}</span>
+
+            <ng-container *ngComponentOutlet="page" />
+        </section>
+    </div>
+</ng-container>

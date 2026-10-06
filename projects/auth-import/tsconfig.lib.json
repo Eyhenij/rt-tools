@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "target": "ES2022",
+    "outDir": "../../dist/auth-import",
+    "declaration": true,
+    "declarationMap": false,
+    "types": ["node"],
+    "rootDir": "src"
+  },
+  "exclude": ["src/**/*.spec.ts", "src/testing/**", "jest.config.ts"],
+  "include": ["src/**/*.ts"]
+}
