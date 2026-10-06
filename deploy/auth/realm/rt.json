@@ -56,6 +56,18 @@
       "implicitFlowEnabled": false,
       "directAccessGrantsEnabled": false,
       "serviceAccountsEnabled": true
+    },
+    {
+      "clientId": "rt-catalog-sync",
+      "name": "Catalog sync",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "secret": "rt-catalog-sync-secret",
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true
     }
   ],
   "roles": {
@@ -73,6 +85,14 @@
       "serviceAccountClientId": "rt-user-import",
       "clientRoles": {
         "realm-management": ["manage-users", "view-clients"]
+      }
+    },
+    {
+      "username": "service-account-rt-catalog-sync",
+      "enabled": true,
+      "serviceAccountClientId": "rt-catalog-sync",
+      "clientRoles": {
+        "realm-management": ["view-clients", "manage-clients"]
       }
     }
   ]

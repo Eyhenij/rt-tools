@@ -95,6 +95,12 @@ One realm for all admin applications, a client per application.
   Rejected: the realm import at Keycloak start — it skips a realm that already exists, so an edit of
   the file does not reach a running stand.
 
+- **The realm loader keeps the client roles the file does not name.** The catalog sync of every
+  admin adds its rights as client roles, and the file knows nothing of them. Rejected: the file as
+  the full list of roles — the next raising would take the rights away from people.
+- **The stand holds a client for the catalog sync with a service account.** It may view and manage
+  clients and nothing else. The secret is plain, as the other passwords of the stand.
+
 ## Open questions
 
 - `Q-1` — the names of the packages of the module. The epic plan proposes them; the work goes on
@@ -103,3 +109,4 @@ One realm for all admin applications, a client per application.
 ## History of changes
 
 - 2026-10-05 — the stand of Keycloak, task RT-2529.
+- 2026-10-05 — the client of the catalog sync and kept roles, task RT-2532.

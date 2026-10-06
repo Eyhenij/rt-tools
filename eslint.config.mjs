@@ -140,7 +140,7 @@ export default [
             'apps/message-bus/**/*.{ts,js}',
             'libs/message-bus-api/**/*.ts',
             'tools/**/*.{ts,js,mjs,cjs}',
-            'projects/agent-kit/**/*.ts',
+            'projects/{agent-kit,auth-server}/**/*.ts',
             '**/webpack.config.js',
             '**/playwright.config.ts',
             '**/.storybook/**/*.{ts,js,mjs,cjs}',
@@ -412,7 +412,7 @@ export default [
     // каталога, и путь от корня там не совпадает ни с одним файлом.
     ...backendConfig.map((entry) => ({
         ...entry,
-        files: ['apps/message-bus/**/*.ts', 'libs/message-bus-api/**/*.ts', 'libs/message-bus-common/**/*.ts'],
+        files: ['apps/message-bus/**/*.ts', 'libs/message-bus-{api,common}/**/*.ts', 'projects/auth-server/**/*.ts'],
     })),
     {
         // Предел длины файла — 500 строк, и считаются все строки: пустые и
