@@ -7,7 +7,7 @@ Rewritten by every session, not appended to.
 - **State:** `этап-идёт`
 - **Stage:** 2 of 4 — The component
 - **Done:** the epic RT-2542 with nine tasks; the agreement; the pure logic (9 tests); the component, its directive, template, styles, barrel export and `CONTEXT.md` — typecheck and lint green
-- **Next step:** fix the five gate refusals listed in the handover below, then step 2.3
+- **Next step:** `Overview.mdx` (step 2.4), then the stories with a preset half (stage 3)
 - **Uncommitted:** the folders of RT-2549 … RT-2556 under `docs/tasks/` — each goes into its own branch; nothing of RT-2548
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -21,8 +21,8 @@ Rewritten by every session, not appended to.
 - [x] 1.3 Write `rt-tree.logic.spec.ts` for SC-UKV-639 … SC-UKV-643, SC-UKV-645, SC-UKV-647 by the logic.
 - [x] 2.1 Write `rt-tree.component.ts`, `.html`, `.scss` and `rt-tree.directives.ts` with the row template directive.
 - [x] 2.2 Export the folder from the components barrel.
-- [>] 2.3 Write `rt-tree.component.spec.ts` for every scenario through the drawn component.
-- [ ] 2.4 Write `CONTEXT.md` and `Overview.mdx` next to the component.
+- [x] 2.3 Write `rt-tree.component.spec.ts` for every scenario through the drawn component.
+- [>] 2.4 Write `CONTEXT.md` and `Overview.mdx` next to the component.
 - [ ] 3.1 Write the stories of `rt-tree` with a matrix per axis.
 - [ ] 3.2 Run the story sweep over the raised showcase.
 - [ ] 3.3 Take the snapshots of the new stories and look at every frame.

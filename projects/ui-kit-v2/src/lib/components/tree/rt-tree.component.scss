@@ -4,6 +4,8 @@
         --rt-tree-match-bg: var(--rt-yellow-400);
         --rt-tree-match-color: var(--rt-neutral-950);
         --rt-tree-match-radius: var(--rt-radius-xs);
+        --rt-tree-focus-shadow: var(--rt-shadow-focus-ring);
+        --rt-tree-border-width: var(--rt-border-width-thin);
 
         display: block;
         color: var(--rt-color-text-primary);
@@ -11,7 +13,7 @@
         outline: none;
 
         &:focus-visible {
-            box-shadow: var(--rt-shadow-focus-ring);
+            box-shadow: var(--rt-tree-focus-shadow);
         }
 
         &__select-all,
@@ -32,7 +34,7 @@
         }
 
         &__select-all {
-            border-bottom: var(--rt-border-width-thin) solid var(--rt-color-border-default);
+            border-bottom: var(--rt-tree-border-width) solid var(--rt-color-border-default);
         }
 
         &__row {
@@ -94,8 +96,8 @@
 
         &__description {
             overflow: hidden;
-            color: var(--rt-color-text-secondary);
-            font-size: var(--rt-font-size-sm);
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-sm);
             text-overflow: ellipsis;
             white-space: nowrap;
         }
@@ -117,7 +119,7 @@
 
         &__empty {
             padding: var(--rt-space-md);
-            color: var(--rt-color-text-secondary);
+            color: var(--rt-color-text-muted);
             text-align: center;
         }
 
