@@ -57,4 +57,18 @@ describe('authOptionsFromEnv', () => {
 
         expect(clientSettingsOf(options)).toEqual({ url: 'https://sso.test', realm: 'rt', clientId: 'orders-admin' });
     });
+
+    it('SC-AUTH-72 — the keys are read by the address the environment names', () => {
+        const options: IAuthServerOptions = authOptionsFromEnv(
+            {
+                AUTH_ISSUER: 'http://host.docker.internal:58080/realms/rt',
+                AUTH_CLIENT_ID: 'orders-admin',
+                AUTH_KEYS_URL: 'http://localhost:58080/realms/rt/protocol/openid-connect/certs',
+            },
+            CATALOG
+        );
+
+        expect(options.keysUrl).toBe('http://localhost:58080/realms/rt/protocol/openid-connect/certs');
+        expect(clientSettingsOf(options).url).toBe('http://host.docker.internal:58080');
+    });
 });

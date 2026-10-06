@@ -65,3 +65,9 @@ by `AUTH_SYNC_CLIENT_ID`; an issuer that is not a realm address stops the start
 Given a server set up with an issuer and a client
 When the settings for the browser part are asked
 Then they name the Keycloak address and the realm of that issuer and the same client
+
+### SC-AUTH-72 — the keys are read by the address the environment names
+
+Given a server whose environment names the issuer the browser sees and a key set address of its own
+When the options of the entry module are read
+Then the tokens are checked against that issuer, and the keys are read by the named address

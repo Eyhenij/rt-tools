@@ -48,6 +48,9 @@ Not applicable: the package has no screens.
   against a guess, and the first refused person learns of it instead of whoever started the server.
 - **The catalog goes to Keycloak only when the environment holds the secret of the sync client.**
   The realm of the sync is taken from the issuer, so the two cannot name different realms.
+- **The server may read the keys of the realm by an address of its own.** The browser and the
+  server reach Keycloak by different addresses inside a container or an inner network; the issuer
+  stays the one the browser sees, and only the key set is read elsewhere.
 - **The browser part signs in with the realm and the client the server checks tokens of.** The
   server hands them out instead of the page carrying its own copy, which drifts at the first move
   of Keycloak to another address.

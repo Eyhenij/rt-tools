@@ -8,6 +8,11 @@ export interface ITokenCheckOptions {
     readonly issuer: string;
     /** The client of this admin in the realm. A token issued to another client is refused. */
     readonly clientId: string;
+    /**
+     * Where the server reads the keys of the realm, when it reaches Keycloak by another address than
+     * the browser does: an inner network, a container. By default — the key set of the issuer.
+     */
+    readonly keysUrl?: string;
 }
 
 const BEARER: RegExp = /^Bearer ([A-Za-z0-9\-_]+\.[A-Za-z0-9\-_]+\.[A-Za-z0-9\-_]+)$/;
@@ -59,7 +64,7 @@ export class KeycloakTokenVerifier {
 
     constructor(options: ITokenCheckOptions, keys?: JWTVerifyGetKey) {
         this.#options = options;
-        this.#keys = keys ?? createRemoteJWKSet(new URL(`${options.issuer}/protocol/openid-connect/certs`));
+        this.#keys = keys ?? createRemoteJWKSet(new URL(options.keysUrl ?? `${options.issuer}/protocol/openid-connect/certs`));
     }
 
     /** The caller of the `Authorization` header, or `null` when the token is not accepted. */

@@ -8,6 +8,7 @@ export interface IAuthEnv {
     readonly AUTH_CLIENT_ID?: string;
     readonly AUTH_SYNC_SECRET?: string;
     readonly AUTH_SYNC_CLIENT_ID?: string;
+    readonly AUTH_KEYS_URL?: string;
 }
 
 /** The variables without which a server checks no token. */
@@ -53,7 +54,8 @@ export function clientSettingsOf(options: IAuthServerOptions): IAuthClientSettin
  * name instead of checking tokens against a guess. The catalog goes to Keycloak only when the
  * environment holds the secret of the sync client (`AUTH_SYNC_SECRET`); `AUTH_SYNC_CLIENT_ID`
  * names that client when it is not `rt-catalog-sync`. Without the secret the realm file of the
- * stand declares the roles itself.
+ * stand declares the roles itself. `AUTH_KEYS_URL` names where the keys are read when the server
+ * reaches Keycloak by another address than the browser.
  */
 export function authOptionsFromEnv(env: IAuthEnv, catalog: readonly TPermission[]): IAuthServerOptions {
     const missing: readonly string[] = AUTH_ENV_VARIABLES.filter((name: keyof IAuthEnv): boolean => !env[name]);
@@ -63,8 +65,9 @@ export function authOptionsFromEnv(env: IAuthEnv, catalog: readonly TPermission[
     const issuer: string = String(env.AUTH_ISSUER);
     const clientId: string = String(env.AUTH_CLIENT_ID);
     const secret: string | undefined = env.AUTH_SYNC_SECRET;
+    const keys: { readonly keysUrl?: string } = env.AUTH_KEYS_URL ? { keysUrl: env.AUTH_KEYS_URL } : {};
     if (!secret) {
-        return { issuer, clientId, catalog };
+        return { issuer, clientId, catalog, ...keys };
     }
     const realm: { readonly url: string; readonly realm: string } | null = realmOfIssuer(issuer);
     if (!realm) {
@@ -74,6 +77,7 @@ export function authOptionsFromEnv(env: IAuthEnv, catalog: readonly TPermission[
         issuer,
         clientId,
         catalog,
+        ...keys,
         sync: {
             baseUrl: realm.url,
             realm: realm.realm,

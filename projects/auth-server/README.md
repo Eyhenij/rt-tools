@@ -39,6 +39,8 @@ AuthServerModule.forRoot(authOptionsFromEnv(process.env, RIGHTS));
 `AUTH_ISSUER` and `AUTH_CLIENT_ID` are required, and a missing one stops the start by name.
 `AUTH_SYNC_SECRET` turns the catalog sync on; the Keycloak address and the realm are taken from
 the issuer, and `AUTH_SYNC_CLIENT_ID` names the sync client when it is not `rt-catalog-sync`.
+`AUTH_KEYS_URL` names where the keys of the realm are read when the server reaches Keycloak by
+another address than the browser does — from a container or an inner network.
 
 ## Access
 

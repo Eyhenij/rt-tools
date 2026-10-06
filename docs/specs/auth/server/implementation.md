@@ -12,3 +12,4 @@ The first column is the rule verbatim, as it is written in the "Rules" section o
 - **A missing realm setting stops the start and is named.** — `projects/auth-server/src/lib/env-options.ts:authOptionsFromEnv`
 - **The catalog goes to Keycloak only when the environment holds the secret of the sync client.** — `projects/auth-server/src/lib/env-options.ts:authOptionsFromEnv`
 - **The browser part signs in with the realm and the client the server checks tokens of.** — `projects/auth-server/src/lib/env-options.ts:clientSettingsOf`
+- **The server may read the keys of the realm by an address of its own.** — `projects/auth-server/src/lib/token-verifier.ts:KeycloakTokenVerifier` — the address comes from `AUTH_KEYS_URL` through `projects/auth-server/src/lib/env-options.ts:authOptionsFromEnv`
