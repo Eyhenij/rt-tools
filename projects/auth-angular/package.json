@@ -1,9 +1,17 @@
 {
   "name": "@rt-tools/auth-angular",
   "version": "0.1.0",
-  "private": true,
   "description": "Entry through Keycloak for Angular admin applications: the session, the token in requests, route checks and blocks shown by a right",
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nickmdf/rt-tools.git",
+    "directory": "projects/auth-angular"
+  },
+  "homepage": "https://github.com/nickmdf/rt-tools/tree/main/projects/auth-angular",
+  "bugs": {
+    "url": "https://github.com/nickmdf/rt-tools/issues"
+  },
   "author": "RT Team",
   "type": "module",
   "dependencies": {
@@ -28,5 +36,11 @@
     "./assets/*": {
       "default": "./src/assets/*"
     }
-  }
+  },
+  "keywords": [
+    "angular",
+    "keycloak",
+    "oidc",
+    "permissions"
+  ]
 }

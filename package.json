@@ -8,6 +8,8 @@
     "build:store": "rimraf dist/store && nx build @rt-tools/store --verbose",
     "build:auth-contract": "rimraf dist/auth-contract && nx build @rt-tools/auth-contract --verbose",
     "build:auth-server": "rimraf dist/auth-server && nx build @rt-tools/auth-server --verbose",
+    "build:auth-angular": "rimraf dist/auth-angular && nx build @rt-tools/auth-angular --verbose",
+    "build:auth-import": "rimraf dist/auth-import && nx build @rt-tools/auth-import --verbose",
     "build:auth-keycloak-theme": "nx build @rt-tools/auth-keycloak-theme",
     "build:utils": "rimraf dist/utils && nx build @rt-tools/utils --verbose && nx verify @rt-tools/utils",
     "build:agent-kit": "rimraf dist/agent-kit && nx build @rt-tools/agent-kit --skip-nx-cache --verbose",
