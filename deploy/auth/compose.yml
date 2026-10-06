@@ -55,6 +55,10 @@ services:
             KC_BOOTSTRAP_ADMIN_PASSWORD: admin
         ports:
             - '58080:8080'
+        # Тема экранов входа: JAR собирает `build:auth-keycloak-theme`, команда подъёма зовёт его
+        # первой. Без файла Docker создал бы на этом месте пустой каталог.
+        volumes:
+            - ../../dist/auth-keycloak-theme/rt-auth-keycloak-theme.jar:/opt/keycloak/providers/rt-auth-keycloak-theme.jar:ro
         depends_on:
             keycloak-db:
                 condition: service_healthy

@@ -1,0 +1,12 @@
+<ng-container rtBlock="login">
+    <h1 rtElem="title" qa-dataid="kc-title">{{ title }}</h1>
+
+    <rt-kc-message />
+
+    <p rtElem="text" qa-dataid="kc-verify-sent">{{ sent }}</p>
+    <p rtElem="text">
+        {{ resend }}
+        <a rtElem="link" qa-dataid="kc-verify-resend" [href]="context.url.loginAction">{{ resendLink }}</a>
+        {{ resendTail }}
+    </p>
+</ng-container>

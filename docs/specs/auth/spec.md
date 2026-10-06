@@ -47,7 +47,7 @@ Not applicable: the stand has no screens of its own. The entry screens belong to
 
 ## What is out of scope
 
-- The entry screens — the theme task of the epic.
+- The entry screens — the subdomain `theme`.
 - Keycloak in the production environment of the applications.
 - The users of the existing applications — the import task of the epic.
 
@@ -72,8 +72,7 @@ Not applicable.
 
 ### Locales
 
-The realm enables English and Russian. The texts of the screens and further languages belong to
-the theme task.
+The realm enables English and Russian. The texts of the screens belong to the subdomain `theme`.
 
 ### SEO
 

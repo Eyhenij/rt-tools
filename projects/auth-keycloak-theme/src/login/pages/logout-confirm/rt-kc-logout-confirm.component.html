@@ -1,0 +1,26 @@
+<ng-container rtBlock="login">
+    <h1 rtElem="title" qa-dataid="kc-title">{{ title }}</h1>
+
+    <rt-kc-message />
+
+    <p rtElem="text">{{ question }}</p>
+
+    <form rtElem="form" method="post" qa-dataid="kc-logout-form" [action]="context.url.logoutConfirmAction">
+        <input type="hidden" name="session_code" [value]="context.logoutConfirm.code" />
+        <button
+            rtButton
+            rtElem="submit"
+            type="submit"
+            name="confirmLogout"
+            qa-dataid="kc-logout-submit"
+            [value]="submitLabel"
+            [label]="submitLabel"
+            [attr.aria-label]="submitLabel"></button>
+    </form>
+
+    @if (backHref) {
+        <nav rtElem="links">
+            <a rtElem="link" qa-dataid="kc-logout-back" [href]="backHref">{{ backLabel }}</a>
+        </nav>
+    }
+</ng-container>
