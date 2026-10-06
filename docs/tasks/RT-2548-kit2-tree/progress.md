@@ -4,10 +4,10 @@
 
 Rewritten by every session, not appended to.
 
-- **State:** `этап-идёт`
+- **State:** `этапы-кончились`
 - **Stage:** 4 of 4 — Closing
 - **Done:** the logic and the component (22 tests); the marks drawn by the kit checkbox and radio; choosing no longer folds a branch (SC-UKV-652); the tooltip on a cut label (SC-UKV-653); `CONTEXT.md` and `Overview.mdx`; `Playground` and nine matrices in the preset pair; the agreement merged into `docs/specs/ui-kit-v2/tree/`; 9 references taken through the image browser and looked at as files; the sweep: 766 stories, no empty showings
-- **Next step:** the full set before sending the branch (step 4.2), then the PR into the epic branch on the owner's word
+- **Next step:** on the owner's «открывай» — take the task folder apart by the last commit and open the PR into `RT-2542-kit2-app-parts`; the branch is on the host, the full gate let it through
 - **Uncommitted:** the folders of RT-2549 … RT-2556 under `docs/tasks/` — each goes into its own branch; nothing of RT-2548
 - **Waiting for the owner:** the word «открывай» before the PR; the owner looked at the frames and said the look is fine
 - **PR:** not open yet
@@ -28,7 +28,7 @@ Rewritten by every session, not appended to.
 - [x] 3.3 Take the snapshots of the new stories and look at every frame.
 - [x] 3.4 Give the owner the links to the stories on :6007.
 - [x] 4.1 Merge the agreement into `docs/specs/ui-kit-v2/tree/` and name it in the domain index.
-- [>] 4.2 Run the spec check and the full set before the push.
+- [x] 4.2 Run the spec check and the full set before the push.
 
 ## Decisions along the way
 
