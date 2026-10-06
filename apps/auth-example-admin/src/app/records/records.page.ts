@@ -5,7 +5,7 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { RtAuthService, RtIfPermissionDirective } from '@rt-tools/auth-angular';
 import { ICaller } from '@rt-tools/auth-contract';
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
-import { RtButtonDirective, RtEmptyStateComponent, RtFieldComponent, RtInputComponent, RtMessageComponent } from '@rt-tools/ui-kit-v2';
+import { RtButtonDirective, RtEmptyStateComponent, RtInputComponent, RtMessageComponent } from '@rt-tools/ui-kit-v2';
 import { catchError, concatMap, EMPTY, Observable, Subject, switchMap, tap } from 'rxjs';
 
 import { RecordsApiService } from './records-api.service';
@@ -22,7 +22,6 @@ const BEM_BLOCK: string = 'example-records';
 @Component({
     selector: 'example-records',
     templateUrl: './records.page.html',
-    styleUrl: './records.page.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // angular
@@ -38,7 +37,6 @@ const BEM_BLOCK: string = 'example-records';
 
         // components
         RtEmptyStateComponent,
-        RtFieldComponent,
         RtInputComponent,
         RtMessageComponent,
     ],

@@ -1,5 +1,6 @@
 /*
- * The only screen of the example: a column in the middle of the page.
+ * The only screen of the example: a column in the middle of the page. It lives in the shared layer
+ * of the application rather than in the styles of the component.
  */
 .example-records {
     display: flex;
@@ -12,7 +13,7 @@
     &__header {
         display: flex;
         align-items: center;
-        gap: var(--rt-space-3);
+        gap: var(--rt-space-2);
     }
 
     &__title {
@@ -29,8 +30,8 @@
 
     &__form {
         display: flex;
-        align-items: flex-end;
-        gap: var(--rt-space-3);
+        align-items: center;
+        gap: var(--rt-space-2);
     }
 
     &__toolbar {
@@ -45,7 +46,7 @@
     }
 
     &__item {
-        padding: var(--rt-space-3) 0;
+        padding: var(--rt-space-2) 0;
         border-block-end: 1px solid var(--rt-color-border-subtle);
         overflow-wrap: anywhere;
     }

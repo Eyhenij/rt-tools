@@ -17,9 +17,7 @@
     <rt-message severity="danger" qa-dataid="records-refusal">{{ text }}</rt-message>
     } @if (canRead()) {
     <form *rtIfPermission="'example:write'" rtElem="form" qa-dataid="records-new" [formGroup]="form" (ngSubmit)="create()">
-        <rt-field label="New record">
-            <rt-input placeholder="Title" qa-dataid="records-new-title" formControlName="title" />
-        </rt-field>
+        <rt-input placeholder="New record title" ariaLabel="New record" qa-dataid="records-new-title" formControlName="title" />
         <button rtButton type="submit" label="Add" aria-label="Add" qa-dataid="records-new-submit"></button>
     </form>
 
