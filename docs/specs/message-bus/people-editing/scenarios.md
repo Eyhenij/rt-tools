@@ -25,18 +25,17 @@ When the password is empty
 Then the request is refused with a code of a bad request that says the record needs a password, and
 the storage is not written
 
-### SC-MB-364 — a new password signs in, and the old one does not
+### SC-MB-364 — a new password from the panel is stored
 
 Given a record created from the panel
 When a person with the right gives it a new password from the row menu and the panel of a password
-Then a sign-in with the new password succeeds and one with the old one is refused
+Then the panel closes and says that the password is changed, and the password is shown nowhere
 
-### SC-MB-365 — disabling asks a question, cuts the sign-ins and the record signs in nowhere
+### SC-MB-365 — disabling asks a question and marks the record
 
-Given a live record with a live sign-in
+Given a live record
 When "Отключить" is chosen in its row menu and the question is confirmed
-Then the row says "Отключена", the live sign-in of the record is refused on the next request, and a
-sign-in with the record's password is refused
+Then the row says "Отключена", and its row menu is gone
 
 ### SC-MB-366 — the own record has no disabling, and the receiver refuses it by name
 

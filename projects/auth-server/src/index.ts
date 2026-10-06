@@ -6,4 +6,5 @@ export * from './lib/auth.tokens.js';
 export * from './lib/catalog-sync.js';
 export * from './lib/connect-access.js';
 export * from './lib/current-caller.decorator.js';
+export * from './lib/env-options.js';
 export * from './lib/token-verifier.js';

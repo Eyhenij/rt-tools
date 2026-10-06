@@ -74,7 +74,7 @@ export class AuthServerModule {
                     inject: [DiscoveryService],
                 },
             ],
-            exports: [AUTH_TOKEN_VERIFIER],
+            exports: [AUTH_SERVER_OPTIONS, AUTH_TOKEN_VERIFIER],
         };
     }
 }

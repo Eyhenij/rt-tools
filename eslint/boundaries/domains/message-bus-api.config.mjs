@@ -13,6 +13,9 @@
 /** Типы груза: их знают обе стороны — и отправляющее дерево, и приёмник. */
 const COMMON = 'scope:message-bus-common';
 
+// Пакеты модуля входа: проверка токена Keycloak, метки доступа и вызывающий из токена
+const PACKAGE = 'scope:package';
+
 /** Слои домена хранилища. `util` держит клиент генератора, `data-access` — службу над ним. */
 const PERSISTENCE_UTIL = 'scope:message-bus-api-persistence-util';
 const PERSISTENCE_DATA_ACCESS = 'scope:message-bus-api-persistence-data-access';
@@ -72,6 +75,8 @@ export const messageBusApiBoundaries = [
             ACCOUNTS_UTIL,
             // Метка открытой операции: пробу живости объявляет само приложение
             ACCESS_UTIL,
+            // Модуль входа: проверку токена Keycloak и выгрузку прав ставит приложение
+            PACKAGE,
             // Дерево запроса читает разбор отказа: в журнал уходит признак того дерева, чей
             // груз отбит, а не признак, названный самим грузом
             TREES_UTIL,
@@ -294,30 +299,30 @@ export const messageBusApiBoundaries = [
         onlyDependOnLibsWithTags: [ACCOUNTS_UTIL, PERSISTENCE_DATA_ACCESS, PERSISTENCE_UTIL, COMMON],
     },
     { sourceTag: 'scope:message-bus-api-accounts-api', onlyDependOnLibsWithTags: [ACCOUNTS_UTIL, COMMON] },
-    // Хеш пароля, значение входа и вошедший в запросе: чистые функции, ни базы, ни каркаса
-    { sourceTag: 'scope:message-bus-api-accounts-util', onlyDependOnLibsWithTags: [COMMON] },
+    // Хеш пароля и вошедший в запросе: чистые функции. Вошедшего кладёт в запрос модуль входа
+    { sourceTag: 'scope:message-bus-api-accounts-util', onlyDependOnLibsWithTags: [COMMON, PACKAGE] },
 
-    // Объявление доступа и единственная проверка приёмника. Проверка одна на оба способа
-    // представиться: две глобальные подряд означали бы, что запрос с токеном дерева доходит до
-    // чтения груза, если вторая забыла отказать
+    // Проверка токена дерева. Токен человека проверяет модуль входа, и обе видят одно объявление:
+    // каждая метка ставит оба, поэтому операцию дерева модуль считает открытой, а приёмник — нет
     {
         sourceTag: 'scope:message-bus-api-access-feature',
         onlyDependOnLibsWithTags: [
             ACCESS_UTIL,
-            'scope:message-bus-api-accounts-data-access',
-            ACCOUNTS_UTIL,
             'scope:message-bus-api-trees-data-access',
             TREES_UTIL,
             PERSISTENCE_DATA_ACCESS,
             COMMON,
+            // Модуль входа: его проверку токена набор проверяет в паре с проверкой приёмника
+            PACKAGE,
         ],
     },
     { sourceTag: 'scope:message-bus-api-access-data-access', onlyDependOnLibsWithTags: [ACCESS_UTIL] },
     { sourceTag: 'scope:message-bus-api-access-api', onlyDependOnLibsWithTags: [ACCESS_UTIL, COMMON] },
     // Метки объявления: декораторы каркаса и имя права. Набор прав лежит в общей либе, потому
     // что право называет и объявление операции, и пункт меню админки: второй список имён
-    // разошёлся бы с первым молча. Ни базы, ни доменных либ метки по-прежнему не видят
-    { sourceTag: 'scope:message-bus-api-access-util', onlyDependOnLibsWithTags: [COMMON] },
+    // разошёлся бы с первым молча. Ни базы, ни доменных либ метки по-прежнему не видят. Каждая
+    // метка ставит и объявление модуля входа: его проверка токена и его проверка при старте
+    { sourceTag: 'scope:message-bus-api-access-util', onlyDependOnLibsWithTags: [COMMON, PACKAGE] },
 
     // Хранилище: клиент лежит в слое утилит, служба над ним, модуль над службой. Доменных либ
     // домен не видит вовсе — его зовут, а не он зовёт

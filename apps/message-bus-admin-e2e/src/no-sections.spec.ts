@@ -1,14 +1,13 @@
 import { expect, Page, test } from '@playwright/test';
 
 import { PEOPLE, SECTIONS } from '../stand/stand.mjs';
-import { qa, signIn } from './support/admin';
+import { expectRealmScreen, qa, signIn } from './support/admin';
 import { expectScreen } from './support/shot';
 
 /**
  * Экран того, кому не открыт ни один раздел.
  *
- * Входит запись без роли, заведённая ровно для этого: третьей записью без роли входить нельзя —
- * список людей обещает про неё «Не входили».
+ * Входит человек области без единой роли клиента шины, заведённый ровно для этого.
  *
  * Прежде на месте этого экрана была белая страница: состояние жило только зоной содержимого
  * оболочки, а прямая ссылка в закрытый раздел кончалась отменённым переходом — оболочка не
@@ -61,10 +60,9 @@ test.describe('вошедший без единого права', () => {
         await expect(screen(page)).toBeVisible();
 
         await qa(page, 'header-user-menu').click();
-        await expect(qa(page, 'profile-name')).toHaveText(PEOPLE.entrant.name);
+        await expect(qa(page, 'profile-name')).toHaveText(`${PEOPLE.entrant.firstName} ${PEOPLE.entrant.lastName}`);
         await qa(page, 'profile-sign-out').click();
 
-        await expect(page).toHaveURL(/\/sign-in$/);
-        await expect(qa(page, 'sign-in-submit')).toBeVisible();
+        await expectRealmScreen(page);
     });
 });

@@ -1,47 +1,49 @@
 /**
- * Вошедший: то, что приёмник прочитал по куке входа, а не то, чем назвался запрос.
+ * Вошедший: то, что модуль входа прочитал из токена Keycloak, а не то, чем назвался запрос.
  *
- * Лежит под символом по той же причине, что и дерево запроса: поле с обычным именем приходит в
- * теле запроса, и перепутать прочитанное с присланным нельзя даже опечаткой.
+ * Модуль кладёт вызывающего под своим символом, и поле с обычным именем из тела запроса с ним не
+ * перепутать даже опечаткой. Здесь он только переводится в слова приёмника: операции чтения груза
+ * знают вошедшего по ключу и имени, а не по форме токена.
  *
- * Живёт в слое утилит, потому что читают его и проверка входа, и операции чтения груза, а вторая
- * копия этого чтения разошлась бы с первой в коде отказа.
+ * Живёт в слое утилит, потому что читают его операции разных доменов, а вторая копия этого чтения
+ * разошлась бы с первой в том, какое имя уходит в журнал.
  */
+import { ICaller } from '@rt-tools/auth-contract';
+import { REQUEST_CALLER } from '@rt-tools/auth-server';
 
-/** Учётная запись, опознанная по куке входа. */
+/** Человек, опознанный по токену Keycloak. */
 export interface IRequestAccount {
+    /** Ключ человека в Keycloak: он не меняется, когда меняются имя и почта. */
     readonly id: string;
-    /** Имя, как его назвал владелец: оно уходит в ответ о том, кто вошёл. */
+    /** Имя, как оно записано в Keycloak, а без имени — почта: оно уходит в журнал и в ответы чата. */
     readonly name: string;
-    /** Вход, которым пришли: его обрывает выход, и только его. */
-    readonly sessionId: string;
 }
 
-/** Ключ, под которым вошедший лежит в запросе. */
-export const ACCOUNT_OF_REQUEST: unique symbol = Symbol('message-bus.account');
-
-/** Запрос, в который проверка входа положила учётную запись. */
+/** Запрос, в который модуль входа положил вызывающего. */
 export interface IAccountBearingRequest {
-    [ACCOUNT_OF_REQUEST]?: IRequestAccount;
-}
-
-/** Положить опознанного вошедшего в запрос. Зовёт проверка входа, и больше никто. */
-export function rememberAccount(request: IAccountBearingRequest, account: IRequestAccount): void {
-    request[ACCOUNT_OF_REQUEST] = account;
+    [REQUEST_CALLER]?: ICaller;
 }
 
 /**
- * Вошедший.
+ * Вошедший запроса.
  *
- * Пусто здесь означает не отказ вызывающему, а дефект приложения: операция объявлена, но
- * проверкой входа не закрыта. Человеку править нечего, и отказ поэтому свой, а не его.
+ * Бросает, если вызывающего нет: значит, операция не закрыта входом, а читает вошедшего. Это
+ * дефект объявления, и отвечать вызывающему пустым именем вместо отказа нельзя.
  */
 export function accountOf(request: IAccountBearingRequest): IRequestAccount {
-    const account: IRequestAccount | undefined = request[ACCOUNT_OF_REQUEST];
+    const caller: ICaller | undefined = request[REQUEST_CALLER];
 
-    if (!account) {
+    if (!caller) {
         throw new Error('the entered one is not read: the operation is not closed by the check of the entry');
     }
 
-    return account;
+    return { id: caller.subject, name: caller.name ?? caller.email ?? caller.subject };
+}
+
+/**
+ * Запрос с вошедшим, каким его оставляет модуль входа. Прав у такого вошедшего нет: право проверяет
+ * модуль до операции, а операции читают только ключ и имя.
+ */
+export function requestSignedInAs(id: string, name: string): IAccountBearingRequest {
+    return { [REQUEST_CALLER]: { name, subject: id, email: null, emailVerified: false, permissions: new Set() } };
 }

@@ -15,6 +15,10 @@ The three actions move to the section of people: a panel next to the list create
 second panel gives a record a new password, an item of the row menu disables it. The launch-line
 commands stay until task #1902 removes them.
 
+Since task RT-2576 a person signs in through Keycloak, and a record of this section opens no
+sign-in. Its password and its disabling change the row and nothing else. The section leaves for
+the Keycloak console by task RT-2578, together with this subdomain.
+
 ## Terminology
 
 - **Creating** — a new record by a name and a first password. The one creating names both; the
@@ -178,6 +182,8 @@ One receiver and one list of people in it.
 
 ## History of changes
 
+- 2026-10-06 — the sign-in moved to Keycloak, task RT-2576. `SC-MB-364` and `SC-MB-365` lost the
+  sign-in with the record: the record opens no sign-in any more.
 - 2026-09-15 — the agreement was written before the code.
 - 2026-09-15 — the agreement was merged into the domain as a subdomain of its own (RT-1900). Not
   merged into the list subdomain next to it: that one describes the reading, and together they

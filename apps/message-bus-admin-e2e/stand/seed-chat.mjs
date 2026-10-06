@@ -133,11 +133,14 @@ function returningSql() {
     return lines.join('\n');
 }
 
-/** Оператор набора: он отвечает за первый сайт и не отвечает за соседский. */
-function operatorSql(accountName) {
+/**
+ * Оператор набора: он отвечает за первый сайт и не отвечает за соседский. Записан ключом записи
+ * набора в Keycloak — по нему приёмник узнаёт вошедшего оператора.
+ */
+function operatorSql(operatorId) {
     return [
         `INSERT INTO "chat_operator" ("id", "spaceId", "accountId")`,
-        `SELECT 'chat-operator-stand', 'chat-space-stand', "id" FROM "account" WHERE "name" = '${accountName}';`,
+        `VALUES ('chat-operator-stand', 'chat-space-stand', '${operatorId}');`,
         `INSERT INTO "chat_operator_site" ("operatorId", "siteId") VALUES`,
         `    ('chat-operator-stand', '${CHAT.own.id}'),`,
         `    ('chat-operator-stand', '${CHAT.widget.id}');`,
@@ -147,12 +150,12 @@ function operatorSql(accountName) {
 /**
  * Чат стенда целиком.
  *
- * Зовётся после засева учётных записей: оператор привязан к записи набора, и без неё привязывать
+ * Зовётся после засева людей: оператор привязан к записи набора в Keycloak, и без неё привязывать
  * его не к чему.
  */
-export async function seedChat(sql, accountName) {
+export async function seedChat(sql, operatorId) {
     await sql(recordsSql());
-    await sql(operatorSql(accountName));
+    await sql(operatorSql(operatorId));
     await sql(returningSql());
 
     const own = [];

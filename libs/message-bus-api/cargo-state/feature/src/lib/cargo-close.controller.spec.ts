@@ -2,7 +2,7 @@ import { Logger } from '@nestjs/common';
 import { describe, expect, it, MockInstance, vi } from 'vitest';
 
 import { OPERATION_ACCESS, TOperationAccess } from '@rt/message-bus-api/access/util';
-import { IAccountBearingRequest, rememberAccount } from '@rt/message-bus-api/accounts/util';
+import { IAccountBearingRequest, requestSignedInAs } from '@rt/message-bus-api/accounts/util';
 import { ECargoStateDenial, ICargoCloseResponse, ICargoStateResponse } from '@rt/message-bus-api/cargo-state/api';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { ECargoState, TCargoBody } from '@rt/message-bus-common';
@@ -112,10 +112,7 @@ function stateControllerWith(prisma: PrismaDouble): CargoStateController {
 }
 
 function requestOf(): IAccountBearingRequest {
-    const request: IAccountBearingRequest = {};
-    rememberAccount(request, { id: 'account-1', name: 'издатель', sessionId: 'session-1' });
-
-    return request;
+    return requestSignedInAs('account-1', 'издатель');
 }
 
 function treeRequestOf(): ITreeBearingRequest {

@@ -1,22 +1,22 @@
-import { APIResponse, Browser, BrowserContext, expect, Locator, Page, Response, test } from '@playwright/test';
+import { APIResponse, expect, Locator, Page, test } from '@playwright/test';
 
 import { ACCOUNT, PEOPLE, SECTIONS, WATCHER_ROLE } from '../stand/stand.mjs';
-import { pageQa, qa, rowsOf, SECTION, signIn } from './support/admin';
+import { bearerOf, pageQa, qa, rowsOf, SECTION, signIn } from './support/admin';
 import { expectScreen } from './support/shot';
 
 /**
  * Раздел ролей и панель прав пользователя.
  *
  * Юниты проверяют разбор полей, отказы приёмника и то, что кнопка с меню прячутся без права;
- * здесь — путь человека целиком: от строки списка ролей до входа записью, которой роль и личные
- * права выданы с экрана, и до того, какие разделы она после этого видит.
+ * здесь — путь человека: от строки списка ролей до записи, которой роль и личные права выданы с
+ * экрана. Входят люди через Keycloak, и разделы вошедшему открывают права его токена.
  *
  * Сцены идут одна за другой и наследуют состояние: роль, заведённая в одной, правится и
  * назначается в следующих. Строки засева не трогаются: заводится своя роль, ею же и
  * распоряжаются, а удаляется только заведённая для удаления.
  *
  * Идёт после набора людей: тот считает строки и время входа записи без роли, а здесь ей
- * назначается роль и ею входят.
+ * назначается роль.
  */
 test.describe('раздел ролей', () => {
     const READER: string = 'Стенд читатель';
@@ -74,33 +74,6 @@ test.describe('раздел ролей', () => {
         expect(decodeURIComponent(page.url())).toContain(`ro:people/${name}/access`);
     }
 
-    /**
-     * Вход в новом окне браузера другой записью: своя кука, чужой вход не трогается.
-     *
-     * Исход читается по ответу операции входа, а не по уходу с экрана: записи без единого права
-     * не открыт ни один раздел, и после удавшегося входа она остаётся на том же адресе.
-     */
-    async function signedInContext(
-        browser: Browser,
-        account: { readonly name: string; readonly password: string }
-    ): Promise<BrowserContext> {
-        const context: BrowserContext = await browser.newContext();
-        const page: Page = await context.newPage();
-
-        await page.goto(SECTIONS.postmortems);
-        await qa(page, 'sign-in-name').locator('input').fill(account.name);
-        await qa(page, 'sign-in-password').locator('input').fill(account.password);
-
-        const [answer]: [APIResponse | Response, void] = await Promise.all([
-            page.waitForResponse((response: Response): boolean => response.url().endsWith('/api/auth/login')),
-            qa(page, 'sign-in-submit').click(),
-        ]);
-
-        expect(answer.status()).toBeLessThan(400);
-
-        return context;
-    }
-
     test('SC-MB-371 — список ролей: имя, права словами и число людей у каждой', async ({ page }: { page: Page }) => {
         await page.goto(SECTIONS.roles);
         await signIn(page);
@@ -137,7 +110,7 @@ test.describe('раздел ролей', () => {
         await expect(qa(page, SECTION.roles.table)).toHaveCount(0);
 
         // Прямой запрос тем же вошедшим отвечает «не для вас», а не пустой страницей
-        const refused: APIResponse = await page.request.get(`/api/roles`);
+        const refused: APIResponse = await page.request.get(`/api/roles`, { headers: await bearerOf(page) });
 
         expect(refused.status()).toBe(403);
     });
@@ -226,7 +199,7 @@ test.describe('раздел ролей', () => {
         await expect(qa(page, 'roles-edit')).toBeVisible();
         await expect(qa(page, 'roles-delete')).toHaveCount(0);
 
-        const refused: APIResponse = await page.request.delete(`/api/roles/owner`);
+        const refused: APIResponse = await page.request.delete(`/api/roles/owner`, { headers: await bearerOf(page) });
 
         expect(refused.status()).toBe(409);
         expect(((await refused.json()) as { message: string }).message).toContain('держат');
@@ -244,12 +217,10 @@ test.describe('раздел ролей', () => {
         await expectScreen(page, 'person-access-panel');
     });
 
-    test('SC-MB-378 — роль и личные слова дают ровно те разделы: исход виден до сохранения, а после входа — в шапке', async ({
+    test('SC-MB-378 — роль и личные слова дают ровно те права: исход виден до сохранения, а роль встаёт в строку', async ({
         page,
-        browser,
     }: {
         page: Page;
-        browser: Browser;
     }) => {
         await openAccess(page, PEOPLE.roleless.name);
 
@@ -282,17 +253,6 @@ test.describe('раздел ролей', () => {
         // Роль держат: строка списка ролей считает записи заново
         await page.goto(SECTIONS.roles);
         await expect(roleCell(page, READER, 'people')).toHaveText('1');
-
-        // Вошедшая запись видит ровно два раздела: разборы по роли и использование по личному
-        // праву; предложения отняты
-        const fresh: BrowserContext = await signedInContext(browser, PEOPLE.roleless);
-        const freshPage: Page = fresh.pages()[0];
-
-        await expect(qa(freshPage, 'header-nav-item')).toHaveCount(2);
-        await expect(freshPage.locator(`[qa-dataid="header-nav-item"][data-id="${SECTIONS.postmortems}"]`)).toBeVisible();
-        await expect(freshPage.locator(`[qa-dataid="header-nav-item"][data-id="${SECTIONS.usage}"]`)).toBeVisible();
-        await expect(freshPage.locator(`[qa-dataid="header-nav-item"][data-id="${SECTIONS.proposals}"]`)).toHaveCount(0);
-        await fresh.close();
     });
 
     test('SC-MB-382 — без входа операции над ролями отвечают «не представились»', async ({ page }: { page: Page }) => {

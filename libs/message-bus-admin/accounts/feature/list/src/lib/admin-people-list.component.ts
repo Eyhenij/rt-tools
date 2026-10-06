@@ -21,7 +21,7 @@ import {
     PERSON_ROLE_NONE_KEY,
     personRowHasActions,
 } from '@rt/message-bus-admin/accounts/util';
-import { AuthStore } from '@rt/message-bus-admin/auth/data-access';
+import { AuthStore } from '@rt/message-bus-admin/common/container/data-access';
 import { AdminListScreenBase } from '@rt/message-bus-admin/common/core/feature';
 import { AdminListPageComponent, AdminListToolbarRightDirective, AdminMomentPipe } from '@rt/message-bus-admin/common/core/ui';
 import { adminColumns, AdminTextService, provideAdminListHost } from '@rt/message-bus-admin/common/core/util';

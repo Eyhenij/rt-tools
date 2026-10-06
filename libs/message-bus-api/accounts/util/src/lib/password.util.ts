@@ -57,23 +57,3 @@ export function passwordMatches(password: string, stored: string): boolean {
 
     return expected.length === actual.length && timingSafeEqual(expected, actual);
 }
-
-/**
- * Хеш-заглушка: с ней сверяется пароль, когда учётной записи с таким именем нет вовсе.
- *
- * Без неё неизвестное имя отвергается сразу, а неверный пароль — после растягивания, и разница
- * во времени ответа перебирает имена учётных записей ровно так, как запрещает правило об отказе
- * входа. Считается один раз при загрузке: считать её на каждую попытку значит платить временем
- * растягивания дважды.
- */
-const ABSENT_ACCOUNT_HASH: string = passwordHash(randomBytes(KEY_BYTES).toString('hex'));
-
-/**
- * Потратить на неизвестное имя столько же, сколько на известное.
- *
- * Возвращает всегда `false`: сверять здесь нечего, и звать это следует ровно там, где записи
- * не нашлось.
- */
-export function burnAbsentAccountTime(password: string): boolean {
-    return passwordMatches(password, ABSENT_ACCOUNT_HASH);
-}

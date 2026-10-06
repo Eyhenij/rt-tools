@@ -44,6 +44,16 @@ Not applicable: the package has no screens.
   from every person who holds it; an extra role is named in the log.
 - **A Connect procedure is checked by the same token check as a controller.** Otherwise one server
   holds two checks that drift apart.
+- **A missing realm setting stops the start and is named.** Otherwise the server checks tokens
+  against a guess, and the first refused person learns of it instead of whoever started the server.
+- **The catalog goes to Keycloak only when the environment holds the secret of the sync client.**
+  The realm of the sync is taken from the issuer, so the two cannot name different realms.
+- **The server may read the keys of the realm by an address of its own.** The browser and the
+  server reach Keycloak by different addresses inside a container or an inner network; the issuer
+  stays the one the browser sees, and only the key set is read elsewhere.
+- **The browser part signs in with the realm and the client the server checks tokens of.** The
+  server hands them out instead of the page carrying its own copy, which drifts at the first move
+  of Keycloak to another address.
 
 ## What is out of scope
 
@@ -99,3 +109,4 @@ None.
 ## History of changes
 
 - 2026-10-05 — the server package, task RT-2532.
+- 2026-10-06 — the options are read from the environment by the package, task RT-2576.

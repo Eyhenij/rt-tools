@@ -4,7 +4,7 @@ import { BadRequestException, ConflictException, NotFoundException } from '@nest
 import { describe, expect, it } from 'vitest';
 
 import { OPERATION_ACCESS, OPERATION_RIGHT } from '@rt/message-bus-api/access/util';
-import { ACCOUNT_OF_REQUEST, IAccountBearingRequest, passwordMatches } from '@rt/message-bus-api/accounts/util';
+import { IAccountBearingRequest, requestSignedInAs, passwordMatches } from '@rt/message-bus-api/accounts/util';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { IPersonView } from '@rt/message-bus-common';
 
@@ -102,7 +102,7 @@ function storage(): { prisma: PrismaService; accounts: IStoredAccount[]; session
 
 /** Запрос, в который проверка входа положила вошедшего: здесь — Ольгу. */
 function requestOf(id: string, name: string): IAccountBearingRequest {
-    return { [ACCOUNT_OF_REQUEST]: { id, name, sessionId: 's1' } };
+    return requestSignedInAs(id, name);
 }
 
 describe('AccountsManageController', (): void => {

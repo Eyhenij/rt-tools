@@ -159,11 +159,11 @@ skill_for() {
                     return 0
                     ;;
 
-                # The rest of the sign-in keeps no records: it has neither an edit panel nor an
-                # entity model, and there is nothing to demand the entity rules on it for. The
+                # The sign-in state of the shell keeps no records: it has neither an edit panel nor
+                # an entity model, and there is nothing to demand the entity rules on it for. The
                 # branch takes it to the default before the branches of the stores and the models
                 # reach it.
-                */libs/message-bus-admin/auth/*)
+                */libs/message-bus-admin/common/container/data-access/*|*/libs/message-bus-admin/common/container/util/src/lib/session.model.ts)
                     command -v skill_for_default >/dev/null 2>&1 && skill_for_default "$kind" "$target" "$written"
                     return 0
                     ;;

@@ -53,14 +53,13 @@ When "Права" is opened from their row of the people list
 Then the panel names "Без роли", every right of the set stands with the word "По роли" and the
 outcome "нет"
 
-### SC-MB-378 — a role and pointed edits given from the panel open exactly those sections
+### SC-MB-378 — a role and pointed edits given from the panel give exactly those rights
 
 Given a person without a role, and a role that opens two sections
 When the panel of access gives them that role, takes one of its rights away and gives one right
 the role does not have, and "Сохранить" is pressed
 Then the outcome next to each right follows the choice before the save; after it the panel closes,
-the people list names the role in the row, and that person, signed in, sees in the top row exactly
-the sections their rights name
+and the people list names the role in the row
 
 ### SC-MB-379 — the receiver refuses what would lock the signed-in person out
 

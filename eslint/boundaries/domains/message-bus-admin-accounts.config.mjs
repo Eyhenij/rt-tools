@@ -6,7 +6,7 @@
  * либу, первое подходящее правило выигрывает, и общее разрешение пакетов лежит последним в своде.
  */
 import {
-    AUTH_DATA_ACCESS,
+    CONTAINER_DATA_ACCESS,
     CONTRACT,
     CORE_API,
     CORE_DATA_ACCESS,
@@ -54,7 +54,7 @@ export const messageBusAdminAccountsBoundaries = [
         onlyDependOnLibsWithTags: [
             PEOPLE_DATA_ACCESS,
             PEOPLE_UTIL,
-            AUTH_DATA_ACCESS,
+            CONTAINER_DATA_ACCESS,
             CORE_FEATURE,
             CORE_UI,
             CORE_DATA_ACCESS,
@@ -78,7 +78,7 @@ export const messageBusAdminAccountsBoundaries = [
         onlyDependOnLibsWithTags: [
             PEOPLE_DATA_ACCESS,
             PEOPLE_UTIL,
-            AUTH_DATA_ACCESS,
+            CONTAINER_DATA_ACCESS,
             CORE_FEATURE,
             CORE_UI,
             CORE_DATA_ACCESS,

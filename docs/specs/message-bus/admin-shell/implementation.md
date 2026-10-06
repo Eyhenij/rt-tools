@@ -16,7 +16,7 @@ or the code holds what the spec is silent about.
 - **The popup of the profile shows the name of whoever entered, the theme, the language and the exit.** — `libs/message-bus-admin/common/container/ui/src/lib/header/admin-header.component.ts:AdminHeaderComponent`
 - **There is no changing of the password in the popup.** — **Not checked by a machine.** The absence of an item is invisible to a machine — it is held by reading the template of the popup of the header.
 - **There is no bell of the unread.** — **Not checked by a machine.** The absence of an item is invisible to a machine — it is held by reading the template of the popup of the header.
-- **The exit breaks off the entry that was come by and leads away to the screen of the entry.** — `libs/message-bus-admin/auth/data-access/src/lib/auth.store.ts:signOut`
+- **The exit breaks off the entry that was come by and leads away to the screen of the entry.** — `libs/message-bus-admin/common/container/data-access/src/lib/auth.store.ts:signOut`
 - **There are two themes, and a person chooses between them.** — `projects/ui-kit-v2/src/lib/components/theme-toggle/rt-theme-toggle.component.ts:RtThemeToggleComponent`
 - **The choice of the theme lives on the device and outlives a reload.** — `projects/ui-kit-v2/src/lib/platform/theme.service.ts:ThemeService`
 - **The switch of the theme stands both in the popup of the profile and on the screen of the entry.** — `libs/message-bus-admin/common/container/ui/src/lib/header/admin-header.component.ts:AdminHeaderComponent`
@@ -29,22 +29,19 @@ or the code holds what the spec is silent about.
 - **Both sets hold the same keys, and that is proved by a call.** — `libs/message-bus-admin/common/core/util/src/lib/admin-labels-en.ts:ADMIN_LABELS_EN` — the set is declared as a full record by the key of the Russian one: a key without a translation does not compile. The scenario `SC-MB-414` walks the whole set on both locales — `libs/message-bus-admin/common/core/util/src/lib/admin-text.service.spec.ts:services`.
 - **A word for a person written past the dictionary is refused by a check.** — `tools/check-admin-texts.mjs:placesOf` — it reads the markup and the code of the admin application. The comments, the sets of the labels and the specs are out of the count. What is accepted stands in `tools/admin-texts-allowlist.json`. The check is called by the push gate and by the step «Words past the dictionary» of the pipeline; its own scenarios are in `tools/tests/check-admin-texts.test.sh`.
 - **The labels of the shell change without a reload.** — `libs/message-bus-admin/common/container/ui/src/lib/header/admin-header.component.ts:AdminHeaderComponent` — every label of the header is derived from the choice. The top row does the same: `libs/message-bus-admin/common/container/feature/src/lib/admin-container.component.ts:AdminContainerComponent`. The text of an item is taken by the key of `libs/message-bus-admin/common/container/util/src/lib/menu.declaration.ts:IAdminMenuItem`.
-- **The choice of the language stands on the screen of the entry and in the popup of the profile.** — `libs/message-bus-admin/auth/feature/sign-in/src/lib/admin-sign-in.component.ts:AdminSignInComponent`
+- **The choice of the language stands in the popup of the profile.** — `libs/message-bus-admin/common/core/ui/src/lib/locale-switch/admin-locale-switch.component.ts:AdminLocaleSwitchComponent`
 - **The choice of the language lives on the device and outlives a reload.** — `libs/message-bus-admin/common/core/util/src/lib/admin-locale.ts:AdminLocaleService`
-- **The form of the entry stays reactive and a component of its own.** — `libs/message-bus-admin/auth/ui/src/lib/sign-in-form/admin-sign-in-form.component.ts:AdminSignInFormComponent`
-- **The fields of the entry carry an icon and a placeholder.** — `apps/message-bus-admin-e2e/src/sign-in-chrome.spec.ts:SC-MB-151`
-- **A refusal of the entry stays a message in the form.** — `libs/message-bus-admin/auth/ui/src/lib/sign-in-form/admin-sign-in-form.component.ts:FAULT_TEXT`
 - **The stack of the toasts is one, and it is drawn by the framework.** — `libs/message-bus-admin/common/container/feature/src/lib/admin-container.component.ts:AdminContainerComponent`
 - **The heading of the tab names the application, not the project of the build.** — `libs/message-bus-admin/common/core/util/src/lib/admin-title.strategy.ts:AdminTitleStrategy`
 - **The page declares the language of the document as the one it is written in.** — `libs/message-bus-admin/common/core/util/src/lib/admin-locale.ts:AdminLocaleService` — the sign of the document goes after the choice. The initial value stands in `apps/message-bus-admin/src/index.html`, and the end-to-end spec SC-MB-404 holds the rest.
 - **A header pinned at the top is opaque over the whole width.** — `apps/message-bus-admin/src/styles/_header.scss:admin-header`
 - **What stands above the page paints its own ground itself.** — `apps/message-bus-admin/src/styles/_profile-menu.scss:admin-profile-menu`
-- **The screen has an address of its own, and it stands next to the addresses of the sections.** — `libs/message-bus-admin/auth/util/src/lib/auth-paths.ts:NO_SECTIONS_PATH`
+- **The screen has an address of its own, and it stands next to the addresses of the sections.** — `libs/message-bus-admin/common/container/util/src/lib/auth-paths.ts:NO_SECTIONS_PATH`
 - **The screen lives inside the shell, not beside it.** — `apps/message-bus-admin/src/app/app.routes.ts:appRoutes`
-- **The root of the admin panel leads to the screen when no section is open.** — `libs/message-bus-admin/auth/shell/src/lib/section-access.ts:landingPath`
-- **A direct link to a closed section leads to the screen, not to a cancelled move.** — `libs/message-bus-admin/auth/shell/src/lib/section-access.ts:sectionRightGuard`
-- **The screen is open to whoever has no section open, and leads away everyone else.** — `libs/message-bus-admin/auth/shell/src/lib/section-access.ts:noSectionsGuard`
+- **The root of the admin panel leads to the screen when no section is open.** — `libs/message-bus-admin/common/container/data-access/src/lib/section-access.ts:landingPath`
+- **A direct link to a closed section leads to the screen, not to a cancelled move.** — `libs/message-bus-admin/common/container/data-access/src/lib/section-access.ts:sectionRightGuard`
+- **The screen is open to whoever has no section open, and leads away everyone else.** — `libs/message-bus-admin/common/container/data-access/src/lib/section-access.ts:noSectionsGuard`
 - **The screen names the reason and whom to ask, not the rights that are missing.** — `libs/message-bus-admin/common/core/util/src/lib/admin-labels.ts:ADMIN_LABELS`
 - **The way out from the screen is the same way out as everywhere.** — `libs/message-bus-admin/common/container/ui/src/lib/header/admin-header.component.ts:AdminHeaderComponent`
 - **A right that arrives without a reload takes the person off the screen.** — `libs/message-bus-admin/common/container/feature/src/lib/admin-no-sections.component.ts:AdminNoSectionsComponent`
-- **The screen is not shown while the answer about the signed-in person has not arrived.** — `libs/message-bus-admin/auth/data-access/src/lib/auth.store.ts:rightsKnown`
+- **The screen is not shown while the answer about the signed-in person has not arrived.** — `libs/message-bus-admin/common/container/data-access/src/lib/auth.store.ts:rightsKnown`
