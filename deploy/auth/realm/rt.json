@@ -2,6 +2,7 @@
   "realm": "rt",
   "enabled": true,
   "displayName": "RT",
+  "loginTheme": "rt",
   "loginWithEmailAllowed": true,
   "duplicateEmailsAllowed": false,
   "registrationAllowed": false,
