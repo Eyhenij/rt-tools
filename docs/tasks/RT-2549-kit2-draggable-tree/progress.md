@@ -5,9 +5,9 @@
 Rewritten by every session, not appended to.
 
 - **State:** `этап-идёт`
-- **Stage:** 2 of 4 — The component
-- **Done:** the grill, the agreement in `docs/specs/ui-kit-v2/proposed/draggable-tree/`, the plan; the logic and its 6 tests
-- **Next step:** the component, its template and styles (step 2.1)
+- **Stage:** 3 of 4 — The showcase
+- **Done:** the grill, the agreement in `docs/specs/ui-kit-v2/proposed/draggable-tree/`, the plan; the logic and the component, 12 tests; typecheck green
+- **Next step:** the stories and `Overview.mdx` (step 3.1)
 - **Uncommitted:** nothing beyond this folder and the agreement
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -18,10 +18,10 @@ Rewritten by every session, not appended to.
 
 - [x] 1.1 Write `rt-draggable-tree.logic.ts`: `rtDragPlace`, `rtDragAllowed`, `rtDragMove`, `rtDragKeyPlace`.
 - [x] 1.2 Write `rt-draggable-tree.logic.spec.ts` for SC-UKV-654 … SC-UKV-658.
-- [>] 2.1 Write `rt-draggable-tree.component.ts`, `.html`, `.scss` and the row template directive.
-- [ ] 2.2 Export the folder from the components barrel and write `CONTEXT.md`.
-- [ ] 2.3 Write `rt-draggable-tree.component.spec.ts` for SC-UKV-659 … SC-UKV-663.
-- [ ] 3.1 Write the stories with `Playground` and the matrices, and `Overview.mdx`.
+- [x] 2.1 Write `rt-draggable-tree.component.ts`, `.html`, `.scss` and the row template directive.
+- [x] 2.2 Export the folder from the components barrel and write `CONTEXT.md`.
+- [x] 2.3 Write `rt-draggable-tree.component.spec.ts` for SC-UKV-659 … SC-UKV-663.
+- [>] 3.1 Write the stories with `Playground` and the matrices, and `Overview.mdx`.
 - [ ] 3.2 Run the story sweep over the raised showcase.
 - [ ] 3.3 Give the owner the links to the stories on :6007.
 - [ ] 3.4 Take the snapshots after the owner's look and look at every frame.
@@ -32,6 +32,11 @@ Rewritten by every session, not appended to.
 
 - **The branch stands on `RT-2548-kit2-tree`** — the epic plan stacks the tree tasks; the PR goes
   into that branch's successor base once #2568 is merged.
+
+- **All branches are open when the tree appears** — an order is judged seen whole; what the person
+  folds stays folded, and a container a node was put into opens. Affected stage: 2.
+- **The handle is decoration, the row moves by keys** — the handle has no label of its own, so no
+  new kit label is started; Alt with an arrow is the way without a mouse. Affected stage: 2.
 
 ## Sessions
 

@@ -1,0 +1,70 @@
+<ng-container rtBlock="rt-draggable-tree">
+    <!--
+        Строки берут мышь через (click), клавиатура — на самом дереве (handleKeydown): строки фокус не
+        берут, подсвеченная строка — состояние рядом с фокусом. Строку тянут за ручку; список один на
+        всё дерево, и место сброса считает компонент по рамке строки под указателем.
+    -->
+    <!-- eslint-disable @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
+    <div rtElem="list" cdkDropList [cdkDropListSortingDisabled]="true" (cdkDropListDropped)="onDropped()">
+        @for (row of rows(); track row.option.value) {
+            <div
+                #row
+                rtElem="row"
+                qa-dataid="draggable-tree-row"
+                role="treeitem"
+                cdkDrag
+                [cdkDragData]="row.option.value"
+                [cdkDragDisabled]="!!row.option.disabled"
+                [attr.data-value]="row.option.value"
+                [attr.aria-level]="row.level + 1"
+                [attr.aria-expanded]="row.branch ? row.open : null"
+                [attr.aria-selected]="row.option.value === highlighted()"
+                [attr.aria-disabled]="!!row.option.disabled"
+                [style.--rt-draggable-tree-level]="row.level"
+                [rtMod]="{
+                    highlighted: row.option.value === highlighted(),
+                    disabled: !!row.option.disabled,
+                    'drop-before': drop()?.target === row.option.value && drop()?.place === 'before',
+                    'drop-after': drop()?.target === row.option.value && drop()?.place === 'after',
+                    'drop-inside': drop()?.target === row.option.value && drop()?.place === 'inside',
+                }"
+                (cdkDragStarted)="onDragStarted(row.option.value)"
+                (cdkDragMoved)="onDragMoved($event)"
+                (click)="onRowClick(row)">
+                @if (row.option.disabled) {
+                    <span rtElem="handle-space"></span>
+                } @else {
+                    <span rtElem="handle" qa-dataid="draggable-tree-handle" cdkDragHandle aria-hidden="true">
+                        <rt-icon name="bars" size="sm" color="muted" />
+                    </span>
+                }
+
+                @if (row.branch) {
+                    <button
+                        rtElem="toggle"
+                        qa-dataid="draggable-tree-toggle"
+                        type="button"
+                        tabindex="-1"
+                        [attr.aria-label]="row.open ? t().uiCollapse : t().uiExpand"
+                        (click)="onToggleClick($event, row.option.value)">
+                        <rt-icon size="sm" color="muted" [name]="row.open ? 'chevron-down' : 'chevron-right'" />
+                    </button>
+                } @else {
+                    <span rtElem="toggle-space"></span>
+                }
+
+                <span rtElem="content" qa-dataid="draggable-tree-content">
+                    @if (nodeTemplate(); as template) {
+                        <ng-container [ngTemplateOutlet]="template.templateRef" [ngTemplateOutletContext]="{ $implicit: row.option }" />
+                    } @else {
+                        <span rtElem="label" qa-dataid="draggable-tree-label" rtTooltipWhenTruncated [rtTooltip]="row.option.label">
+                            {{ row.option.label }}
+                        </span>
+                    }
+                </span>
+            </div>
+        } @empty {
+            <div rtElem="empty" qa-dataid="draggable-tree-empty">{{ t().uiNoOptions }}</div>
+        }
+    </div>
+</ng-container>
