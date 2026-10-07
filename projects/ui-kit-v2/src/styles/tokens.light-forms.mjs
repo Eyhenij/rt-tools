@@ -235,7 +235,7 @@ export const lightForms = [
     },
     {
         name: `--rt-input-line-height`,
-        value: `var(--rt-leading-none)`,
+        value: `var(--rt-leading-snug)`,
     },
     {
         lead: `    /* State / motion */`,

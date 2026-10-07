@@ -1,0 +1,16 @@
+<app-story-presets caption="Хвосты букв в полях кита, увеличение вдвое">
+    <ng-template>
+        <app-story-row [items]="sizes" [itemLabel]="sizeLabel" [slotWidth]="cellWidth">
+            <ng-template let-size>
+                <div class="app-field-descenders">
+                    <rt-select [size]="size" [placeholder]="text" [options]="[]" />
+                    <rt-multiselect [size]="size" [placeholder]="text" [options]="[]" />
+                    <rt-input [size]="size" [placeholder]="text" />
+                    <rt-autocomplete [size]="size" [placeholder]="text" />
+                    <rt-input-number [size]="size" [placeholder]="text" />
+                    <rt-date-picker [size]="size" />
+                </div>
+            </ng-template>
+        </app-story-row>
+    </ng-template>
+</app-story-presets>
