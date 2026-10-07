@@ -1,0 +1,37 @@
+// The window stands on the kit dialog box; the form goes as a column, and the page list scrolls
+// inside the window instead of growing it past the screen edge.
+:host {
+    display: block;
+
+    .rt-cms-link-dialog {
+        display: flex;
+        flex-direction: column;
+        gap: var(--rt-space-md);
+
+        &__list {
+            display: flex;
+            max-height: 50vh;
+            flex-direction: column;
+            padding: 0;
+            margin: 0;
+            gap: var(--rt-space-sm);
+            list-style: none;
+            overflow-y: auto;
+        }
+
+        &__item {
+            display: grid;
+            align-items: center;
+            gap: var(--rt-space-sm);
+            grid-template-columns: minmax(0, 1.6fr) minmax(0, 1.2fr) auto;
+        }
+
+        &__state {
+            overflow: hidden;
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-sm);
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    }
+}

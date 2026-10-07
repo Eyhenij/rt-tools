@@ -1,0 +1,39 @@
+:host {
+    display: block;
+
+    .rt-cms-tag-tree {
+        display: flex;
+        flex-direction: column;
+        gap: var(--rt-space-xs);
+        margin: 0;
+        padding: 0;
+        list-style: none;
+
+        &__node {
+            display: flex;
+            flex-direction: column;
+            gap: var(--rt-space-xs);
+        }
+
+        &__row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: var(--rt-space-sm);
+            min-height: var(--rt-control-height-md);
+        }
+
+        /* A long name is cut with an ellipsis, and the whole name is in the tooltip. */
+        &__name {
+            overflow: hidden;
+            min-width: 0;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        &__children {
+            padding-left: var(--rt-space-lg);
+            border-left: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
+        }
+    }
+}

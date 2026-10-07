@@ -1,0 +1,42 @@
+{
+  "name": "@rt-tools/cms-angular",
+  "version": "0.1.0",
+  "description": "The CMS client for Angular: the block editor model and the paste cleaning, the admin screens of pages, types, tags, redirects and the media library, and the site page renderer",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nickmdf/rt-tools.git",
+    "directory": "projects/cms-angular"
+  },
+  "homepage": "https://github.com/nickmdf/rt-tools/tree/main/projects/cms-angular",
+  "bugs": {
+    "url": "https://github.com/nickmdf/rt-tools/issues"
+  },
+  "author": "RT Team",
+  "type": "module",
+  "dependencies": {
+    "@rt-tools/cms-contract": "workspace:*",
+    "dompurify": "^3.4.16",
+    "tslib": "^2.8.0"
+  },
+  "peerDependencies": {
+    "@angular/cdk": "^22.0.0",
+    "@angular/common": "^22.0.0",
+    "@angular/core": "^22.0.0",
+    "@angular/forms": "^22.0.0",
+    "@angular/router": "^22.0.0",
+    "@bufbuild/protobuf": "^2.11.0",
+    "@connectrpc/connect": "^2.0.0",
+    "@rt-tools/core": "^0.5.0",
+    "@rt-tools/ui-kit-v2": "^0.17.0",
+    "@rt-tools/utils": "^0.4.0",
+    "rxjs": "^7.8.2"
+  },
+  "sideEffects": false,
+  "keywords": [
+    "angular",
+    "cms",
+    "block-editor",
+    "media-library"
+  ]
+}

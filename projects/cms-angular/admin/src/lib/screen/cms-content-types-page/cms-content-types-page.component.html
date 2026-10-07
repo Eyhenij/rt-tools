@@ -1,0 +1,29 @@
+<rt-cms-page qaPrefix="content-types" qa-dataid="content-types-page" [title]="t().typesTitle" [hint]="t().typesSubtitle">
+    <button
+        rtCmsPageActions
+        rtButton
+        type="button"
+        appearance="outlined"
+        icon="tags"
+        qa-dataid="content-types-tags"
+        [label]="t().tagsTitle"
+        [attr.aria-label]="t().tagsTitle"
+        (click)="openTags()"></button>
+    <button
+        rtCmsPageActions
+        rtButton
+        type="button"
+        appearance="outlined"
+        icon="directions"
+        qa-dataid="content-types-redirects"
+        [label]="t().redirectsTitle"
+        [attr.aria-label]="t().redirectsTitle"
+        (click)="openRedirects()"></button>
+
+    <rt-cms-content-types-table
+        qa-dataid="content-types-list"
+        [types]="types()"
+        [loading]="loading()"
+        (openRequested)="open($event)"
+        (settingsRequested)="openSettings($event)" />
+</rt-cms-page>
