@@ -1,3 +1,9 @@
+# [0.11.0](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.10.0...rt-tools@0.11.0) (2026-10-07)
+
+### Features
+
+- **rt:ui-kit:** полоса бокового меню прячет подписи под значками ([0e578e0](https://github.com/Eyhenij/rt-tools/commit/0e578e08f4904966ec5c51a3a81e8f3056085e1d))
+
 # [0.10.0](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.9.1...rt-tools@0.10.0) (2026-10-02)
 
 ### Bug Fixes
