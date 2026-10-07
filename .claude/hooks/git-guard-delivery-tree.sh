@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.29.4 · hooks/git-guard-delivery-tree.sh · 01de0ddf49e6 · правится надстройкой, не здесь
+# rt-kit v0.29.4 · hooks/git-guard-delivery-tree.sh · 72815141ab6a · правится надстройкой, не здесь
 # The tree a command runs in, for the delivery guard: the form of a branch name is judged by the
 # profile of that tree, not of the tree the session was started from.
 #
@@ -31,6 +31,16 @@ rt_delivery_exec_dir() {
     named="$(printf '%s' "$cmd" | sed -nE 's/.*(^|[;&|[:space:]])cd[[:space:]]+([^[:space:];&|]+).*/\2/p' | head -1)"
     named="${named%\'}"; named="${named#\'}"
     named="${named%\"}"; named="${named#\"}"
+    # The shell expands the home directory before `cd` runs, and the guard reads the command text
+    # unexpanded: a path with a tilde named no directory, and the command counted as running in the
+    # tree of the session.
+    case "$named" in
+        '~') named="$HOME" ;;
+        '~/'*) named="$HOME/${named#\~/}" ;;
+        '$HOME'|'${HOME}') named="$HOME" ;;
+        '$HOME/'*) named="$HOME/${named#\$HOME/}" ;;
+        '${HOME}/'*) named="$HOME/${named#\$\{HOME\}/}" ;;
+    esac
     [ -z "$named" ] && return 0
     [ -d "$named" ] || return 0
     git -C "$named" rev-parse --show-toplevel 2>/dev/null
@@ -95,4 +105,23 @@ rt_delivery_task_state() {
 rt_delivery_current_branch() {
     other="$(rt_delivery_foreign_root)"
     git -C "${other:-.}" branch --show-current 2>/dev/null
+}
+
+# The form of the task number in a request title, by the profile of the tree of execution. The key of
+# a neighbouring tree is its own: judged by the session's form, a lawful title of that tree was
+# refused as having no number at all.
+rt_delivery_title_re() {
+    other="$(rt_delivery_foreign_root)"
+    if [ -z "$other" ] || [ ! -f "$other/.claude/rt-kit/project.sh" ]; then
+        printf '%s' "$1"
+        return 0
+    fi
+    (
+        cd "$other" 2>/dev/null || { printf '%s' "$1"; exit 0; }
+        unset RT_TASK_TITLE_RE
+        for profile in "$other/.claude/rt-kit/defaults/project.sh" "$other/.claude/rt-kit/project.sh"; do
+            [ -f "$profile" ] && . "$profile" >/dev/null 2>&1
+        done
+        printf '%s' "${RT_TASK_TITLE_RE:-^\[[A-Za-z]+-[0-9]+\][[:space:]]+[^[:space:]]}"
+    )
 }
