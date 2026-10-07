@@ -2,10 +2,10 @@
 
 ## Where we stand
 
-- **State:** `этап-идёт`
+- **State:** `этапы-кончились`
 - **Stage:** 1 of 1 — The transfer command
-- **Done:** the grill, the spec of the transfer, the plan, the pure part with its test set, the command
-- **Next step:** the order of the transfer in the production guide
+- **Done:** the grill, the spec of the transfer, the plan, the pure part with its test set, the command, the production guide
+- **Next step:** the push gate, then take the folder apart and open the PR
 - **Uncommitted:** no
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -14,7 +14,7 @@
 
 - [x] 1.1 The pure part of the transfer is written with its test set
 - [x] 1.2 The command reads production and writes the files
-- [>] 1.3 The production guide names the order of the transfer
+- [x] 1.3 The production guide names the order of the transfer
 
 ## Decisions along the way
 
