@@ -120,6 +120,14 @@
             }
         }
 
+        /* Число выбранного под группой без отметки — в конце строки, перед разметкой приложения. */
+        &__count {
+            flex-shrink: 0;
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-sm);
+            font-variant-numeric: tabular-nums;
+        }
+
         &__end {
             display: inline-flex;
             flex-shrink: 0;

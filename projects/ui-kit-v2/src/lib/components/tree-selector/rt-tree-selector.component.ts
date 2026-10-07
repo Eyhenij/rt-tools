@@ -32,6 +32,7 @@ import { RtIconComponent } from '../icon/rt-icon.component';
 import { RtInputComponent } from '../input/rt-input.component';
 import { RtToggleSwitchComponent } from '../toggle-switch/rt-toggle-switch.component';
 import { RtTooltipDirective } from '../tooltip/rt-tooltip.directive';
+import { RtHybridTreeComponent } from '../hybrid-tree/rt-hybrid-tree.component';
 import { RtTreeComponent } from '../tree/rt-tree.component';
 import { IRtTree } from '../tree/rt-tree.model';
 import { RtTreeSelectorControlsDirective } from './rt-tree-selector.directives';
@@ -64,6 +65,7 @@ const BEM_BLOCK: string = 'rt-tree-selector';
         RtToggleSwitchComponent,
         RtTooltipDirective,
         RtTreeComponent,
+        RtHybridTreeComponent,
     ],
     host: { class: BEM_BLOCK },
 })
@@ -82,7 +84,18 @@ export class RtTreeSelectorComponent<TValue> {
     protected readonly applyLabel: Signal<string> = rtKitLabel('uiApply');
     protected readonly nothingFoundLabel: Signal<string> = rtKitLabel('uiNothingFound');
 
-    protected readonly tree: Signal<RtTreeComponent<TValue> | undefined> = viewChild<RtTreeComponent<TValue>>(RtTreeComponent);
+    /** Гибридное ли дерево внутри. Ставит его наследник `rt-hybrid-tree-selector`. */
+    protected readonly hybrid: boolean = false;
+
+    protected readonly plainTree: Signal<RtTreeComponent<TValue> | undefined> = viewChild<RtTreeComponent<TValue>>(RtTreeComponent);
+
+    protected readonly hybridTree: Signal<RtHybridTreeComponent<TValue> | undefined> =
+        viewChild<RtHybridTreeComponent<TValue>>(RtHybridTreeComponent);
+
+    /** Дерево внутри, какое бы ни стояло: у гибридного те же раскрытие и клавиши. */
+    protected readonly tree: Signal<RtTreeComponent<TValue> | undefined> = computed(
+        (): RtTreeComponent<TValue> | undefined => this.hybridTree() ?? this.plainTree()
+    );
 
     protected readonly controlsTpl: Signal<RtTreeSelectorControlsDirective | undefined> = contentChild(RtTreeSelectorControlsDirective);
 

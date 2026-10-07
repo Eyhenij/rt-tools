@@ -43,7 +43,7 @@
                 <span rtElem="toggle-space"></span>
             }
 
-            @if (view.marked && mode() === 'multiple') {
+            @if (view.marked && !view.radio) {
                 <rt-checkbox
                     rtElem="check"
                     qa-dataid="tree-row-checkbox"
@@ -52,7 +52,7 @@
                     [indeterminate]="view.mark === 'some'"
                     [ngModel]="view.mark === 'all'"
                     [ngModelOptions]="{ standalone: true }" />
-            } @else if (view.marked && mode() === 'single') {
+            } @else if (view.marked) {
                 <rt-radio-button
                     rtElem="check"
                     qa-dataid="tree-row-radio"
@@ -92,6 +92,10 @@
                     </span>
                 }
             </span>
+
+            @if (view.count) {
+                <span rtElem="count" qa-dataid="tree-row-count">{{ view.count }}</span>
+            }
 
             @if (nodeEnd(); as end) {
                 <span rtElem="end" qa-dataid="tree-row-end">

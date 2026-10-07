@@ -93,6 +93,8 @@ export * from './toggle-switch';
 export * from './toolbar';
 export * from './tooltip';
 export * from './tree';
+export * from './hybrid-tree';
+export * from './hybrid-tree-selector';
 export * from './tree-selector';
 export * from './welcome-dialog';
 export * from './workspace';
