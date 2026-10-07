@@ -36,7 +36,7 @@ describe('RtIconComponent — глиф Material', (): void => {
 
         expect(el(fixture, 'svg')).toBeNull();
         expect(glyphNode(fixture)?.textContent?.trim()).toBe('pets');
-        expect(glyphNode(fixture)?.style.fontSize).toBe('var(--rt-icon-size-lg, var(--rt-size-6))');
+        expect(glyphNode(fixture)?.style.fontSize).toBe('var(--rt-icon-step-lg, var(--rt-size-6))');
         http.verify();
     });
 
@@ -126,7 +126,7 @@ describe('RtIconComponent — вращение и размер в пикселя
         [14, '14px'],
         [56, '56px'],
         ['48', '48px'],
-        ['lg', 'var(--rt-icon-size-lg, var(--rt-size-6))'],
+        ['lg', 'var(--rt-icon-step-lg, var(--rt-size-6))'],
     ])('SC-UKV-552 — размер %p даёт квадрат %s', (size: unknown, expected: string): void => {
         const host: HTMLElement = hostOf(setup({ name: 'check', size }));
 
@@ -135,7 +135,7 @@ describe('RtIconComponent — вращение и размер в пикселя
     });
 
     it.each<[unknown]>([[0], [-4], ['huge']])('негодный размер %p рисуется ступенью md', (size: unknown): void => {
-        expect(hostOf(setup({ name: 'check', size })).style.width).toBe('var(--rt-icon-size-md, var(--rt-size-5))');
+        expect(hostOf(setup({ name: 'check', size })).style.width).toBe('var(--rt-icon-step-md, var(--rt-size-5))');
     });
 });
 

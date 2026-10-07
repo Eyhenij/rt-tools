@@ -52,19 +52,19 @@ describe('RtIconComponent', (): void => {
         it('без входа рисуется ступенью md — 20px шкалы кита', (): void => {
             const fixture: ComponentFixture<RtIconComponent> = setup();
 
-            expect(hostStyle(fixture, 'width')).toBe('var(--rt-icon-size-md, var(--rt-size-5))');
-            expect(hostStyle(fixture, 'height')).toBe('var(--rt-icon-size-md, var(--rt-size-5))');
+            expect(hostStyle(fixture, 'width')).toBe('var(--rt-icon-step-md, var(--rt-size-5))');
+            expect(hostStyle(fixture, 'height')).toBe('var(--rt-icon-step-md, var(--rt-size-5))');
         });
 
         it.each<[IRtIcon.Size, string]>([
-            ['xs', 'var(--rt-icon-size-xs, var(--rt-size-3))'],
-            ['sm', 'var(--rt-icon-size-sm, var(--rt-size-4))'],
-            ['md', 'var(--rt-icon-size-md, var(--rt-size-5))'],
-            ['lg', 'var(--rt-icon-size-lg, var(--rt-size-6))'],
-            ['xl', 'var(--rt-icon-size-xl, var(--rt-size-8))'],
-            ['2xl', 'var(--rt-icon-size-2xl, var(--rt-size-10))'],
-            ['3xl', 'var(--rt-icon-size-3xl, var(--rt-size-12))'],
-            ['4xl', 'var(--rt-icon-size-4xl, var(--rt-size-16))'],
+            ['xs', 'var(--rt-icon-step-xs, var(--rt-size-3))'],
+            ['sm', 'var(--rt-icon-step-sm, var(--rt-size-4))'],
+            ['md', 'var(--rt-icon-step-md, var(--rt-size-5))'],
+            ['lg', 'var(--rt-icon-step-lg, var(--rt-size-6))'],
+            ['xl', 'var(--rt-icon-step-xl, var(--rt-size-8))'],
+            ['2xl', 'var(--rt-icon-step-2xl, var(--rt-size-10))'],
+            ['3xl', 'var(--rt-icon-step-3xl, var(--rt-size-12))'],
+            ['4xl', 'var(--rt-icon-step-4xl, var(--rt-size-16))'],
         ])('SC-UKV-712 — ступень %s — свойство приложения с шагом шкалы %s', (size: IRtIcon.Size, expected: string): void => {
             const fixture: ComponentFixture<RtIconComponent> = setup({ size });
 

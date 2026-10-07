@@ -9,7 +9,7 @@ export namespace IRtIcon {
     /** Допустимые имена иконок. Литеральный union из {@link iconsName}. */
     export type Name = (typeof iconsName)[number];
 
-    /** Доступные размеры. Каждая ступень — свойство `--rt-icon-size-*`, умолчания — в `rt-icon.component.ts`. */
+    /** Доступные размеры. Каждая ступень — свойство `--rt-icon-step-*`, умолчания — в `rt-icon.component.ts`. */
     export type Size = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl';
 
     /** Набор рисунков: свой набор кита либо материальный. */

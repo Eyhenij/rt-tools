@@ -202,7 +202,7 @@ Covered: `projects/ui-kit-v2/src/lib/components/icon/rt-icon.component.spec.ts`.
 
 Given the icon is given each of the eight steps
 When it is drawn
-Then its side is the property `--rt-icon-size-<step>` with the step of the kit size scale as
+Then its side is the property `--rt-icon-step-<step>` with the step of the kit size scale as
 default, `3xl` and `4xl` among them
 
 Covered: `projects/ui-kit-v2/src/lib/components/icon/rt-icon.component.spec.ts`.

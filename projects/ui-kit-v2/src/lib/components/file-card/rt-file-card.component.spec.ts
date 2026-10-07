@@ -120,10 +120,10 @@ describe('RtFileCardComponent', (): void => {
 
         it('мелкая карточка рисует мелкую иконку, средняя и крупная — большую', (): void => {
             expect((el(setup({ size: 'sm' }), '.rt-file-card__icon')?.nativeElement as HTMLElement).style.width).toBe(
-                'var(--rt-icon-size-sm, var(--rt-size-4))'
+                'var(--rt-icon-step-sm, var(--rt-size-4))'
             );
             expect((el(setup({ size: 'lg' }), '.rt-file-card__icon')?.nativeElement as HTMLElement).style.width).toBe(
-                'var(--rt-icon-size-xl, var(--rt-size-8))'
+                'var(--rt-icon-step-xl, var(--rt-size-8))'
             );
         });
     });

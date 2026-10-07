@@ -9,14 +9,14 @@
 | `name`          | `IRtIcon.Name \| null` — литеральный union из `rt-icon-names.ts`; побеждает `glyph`                                                                            | `null`      |
 | `glyph`         | `string \| null` — имя Material: пара кита или лигатура шрифта                                                                                                 | `null`      |
 | `glyphStrategy` | `'map-first' \| 'font' \| null` — способ рисовать `glyph` у этого значка; `null` — настройка `provideRtIcons`                                                  | `null`      |
-| `size`          | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| '2xl' \| '3xl' \| '4xl' \| number` — ступень берёт свойство `--rt-icon-size-*`, число — пиксели                       | `'md'`      |
+| `size`          | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| '2xl' \| '3xl' \| '4xl' \| number` — ступень берёт свойство `--rt-icon-step-*`, число — пиксели                       | `'md'`      |
 | `color`         | `'current' \| 'primary' \| 'muted' \| 'disabled' \| 'info' \| 'success' \| 'warning' \| 'danger' \| 'inverse'` — кроме `current`, свойство `--rt-icon-color-*` | `'current'` |
 | `rotate`        | `number \| string \| null`                                                                                                                                     | `null`      |
 | `fill`          | `boolean` — залитый рисунок материального набора и заливка шрифта лигатуры                                                                                     | `false`     |
 | `spin`          | `boolean` — вращение, медленнее при просьбе системы о меньшем движении                                                                                         | `false`     |
 
 Выходов нет. Размер и цвет едут инлайновым стилем host-а (`width`/`height`/`color`), не классом.
-Ступень — свойство `--rt-icon-size-<ступень>`, по умолчанию `xs` 12px, `sm` 16px, `md` 20px,
+Ступень — свойство `--rt-icon-step-<ступень>`, по умолчанию `xs` 12px, `sm` 16px, `md` 20px,
 `lg` 24px, `xl` 32px, `2xl` 40px, `3xl` 48px, `4xl` 64px; число — пиксели. Цвет, кроме `current`, —
 свойство `--rt-icon-color-<цвет>` с ролью кита по умолчанию. Оси шрифта лигатуры — свойства
 `--rt-icon-glyph-weight`, `-grade`, `-opsz`. Лигатура глифа скрыта, пока шрифты страницы не готовы:

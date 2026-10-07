@@ -76,9 +76,9 @@ describe('RtTagComponent', (): void => {
         it('SC-UKV-196 — значок идёт ступенью пилюли, своего входа у него нет', (): void => {
             const fixture: ComponentFixture<RtTagComponent> = setup({ icon: 'ico-close' });
             const steps: Record<string, string> = {
-                sm: 'var(--rt-icon-size-xs, var(--rt-size-3))',
-                md: 'var(--rt-icon-size-sm, var(--rt-size-4))',
-                lg: 'var(--rt-icon-size-md, var(--rt-size-5))',
+                sm: 'var(--rt-icon-step-xs, var(--rt-size-3))',
+                md: 'var(--rt-icon-step-sm, var(--rt-size-4))',
+                lg: 'var(--rt-icon-step-md, var(--rt-size-5))',
             };
 
             for (const [size, width] of Object.entries(steps)) {

@@ -72,7 +72,7 @@ describe('RtEmptyStateComponent', (): void => {
 
             expect(el(fixture, '[qa-dataid="empty-state-icon"] use')?.attributes['href']).toBe('#rt-icon-folder');
             expect((el(fixture, '[qa-dataid="empty-state-icon"] rt-icon')?.nativeElement as HTMLElement).style.width).toBe(
-                'var(--rt-icon-size-xl, var(--rt-size-8))'
+                'var(--rt-icon-step-xl, var(--rt-size-8))'
             );
         });
     });

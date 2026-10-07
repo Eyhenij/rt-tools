@@ -47,7 +47,7 @@ A person sees an icon; how it is drawn is invisible to them.
   is the property `--rt-icon-glyph-font`, and the fill of the icon sets the font's fill.
 - **An icon spins on request, and slower when the system asks for less motion.**
 - **The size of an icon takes pixels as well as a step.**
-- **A size step is the property `--rt-icon-size-<step>`, and its default is the kit size scale.**
+- **A size step is the property `--rt-icon-step-<step>`, and its default is the kit size scale.**
   Eight steps: `xs` 12, `sm` 16, `md` 20, `lg` 24, `xl` 32, `2xl` 40, `3xl` 48 and `4xl` 64 pixels.
   A number stays pixels.
 - **Every colour of the icon but `current` is a property the application sets above it.** The
@@ -117,6 +117,10 @@ by their own ways.
   places, and widening it breaks consumers that map over the steps. Revised on 7 October 2026: the
   owner asked for the steps `3xl` and `4xl`, and the type grew by them; inside the kit only the
   icon itself maps over the steps.
+- **The size steps are named `--rt-icon-step-*`, not `--rt-icon-size-*` as the request had it.**
+  The first kit declares `--rt-icon-size-*` on the page root with values of its own — `md` is
+  24 pixels there — and an application holding both kits would get them in every icon of the
+  second one.
 - **`primary` takes `--rt-color-action-primary-on-surface`.** The kit has no `--rt-color-primary`;
   the brand colour over a surface is the role the text button paints its label with.
 

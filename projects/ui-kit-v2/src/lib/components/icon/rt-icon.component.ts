@@ -28,16 +28,18 @@ import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 import { RtIconRegistry } from './rt-icon.registry';
 
 /* Ступень — свойство, которое приложение задаёт правилом на значке или на его предке; умолчание —
-   шаг шкалы размеров кита, те же пиксели, что стояли здесь числом. */
+   шаг шкалы размеров кита, те же пиксели, что стояли здесь числом. Имя `--rt-icon-step-*`, а не
+   `--rt-icon-size-*`: те объявляет на корне страницы первый кит со своими значениями (md — 24px),
+   и в приложении с обоими китами каждый значок второго вырос бы. */
 const SIZES: Readonly<Record<IRtIcon.Size, string>> = Object.freeze({
-    xs: 'var(--rt-icon-size-xs, var(--rt-size-3))',
-    sm: 'var(--rt-icon-size-sm, var(--rt-size-4))',
-    md: 'var(--rt-icon-size-md, var(--rt-size-5))',
-    lg: 'var(--rt-icon-size-lg, var(--rt-size-6))',
-    xl: 'var(--rt-icon-size-xl, var(--rt-size-8))',
-    '2xl': 'var(--rt-icon-size-2xl, var(--rt-size-10))',
-    '3xl': 'var(--rt-icon-size-3xl, var(--rt-size-12))',
-    '4xl': 'var(--rt-icon-size-4xl, var(--rt-size-16))',
+    xs: 'var(--rt-icon-step-xs, var(--rt-size-3))',
+    sm: 'var(--rt-icon-step-sm, var(--rt-size-4))',
+    md: 'var(--rt-icon-step-md, var(--rt-size-5))',
+    lg: 'var(--rt-icon-step-lg, var(--rt-size-6))',
+    xl: 'var(--rt-icon-step-xl, var(--rt-size-8))',
+    '2xl': 'var(--rt-icon-step-2xl, var(--rt-size-10))',
+    '3xl': 'var(--rt-icon-step-3xl, var(--rt-size-12))',
+    '4xl': 'var(--rt-icon-step-4xl, var(--rt-size-16))',
 });
 
 /* Пиксели ступеней по умолчанию — оптический размер лигатуры. Без оси `opsz` в настройках шрифта
@@ -167,7 +169,7 @@ export class RtIconComponent {
         return this.fill() ? 'material-fill' : 'material';
     });
 
-    /** Длина CSS стороны значка: ступень — её свойство `--rt-icon-size-*`, число — пиксели. */
+    /** Длина CSS стороны значка: ступень — её свойство `--rt-icon-step-*`, число — пиксели. */
     protected readonly sizeValue: Signal<string> = computed((): string => {
         const size: IRtIcon.SizeInput = this.size();
         return typeof size === 'number' ? `${size}px` : SIZES[size];

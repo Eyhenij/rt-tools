@@ -203,9 +203,9 @@ describe('RtToggleButtonGroupComponent', (): void => {
         });
 
         it.each<[IRtToggleButtonGroup.Size, string]>([
-            ['sm', 'var(--rt-icon-size-xs, var(--rt-size-3))'],
-            ['md', 'var(--rt-icon-size-sm, var(--rt-size-4))'],
-            ['lg', 'var(--rt-icon-size-sm, var(--rt-size-4))'],
+            ['sm', 'var(--rt-icon-step-xs, var(--rt-size-3))'],
+            ['md', 'var(--rt-icon-step-sm, var(--rt-size-4))'],
+            ['lg', 'var(--rt-icon-step-sm, var(--rt-size-4))'],
         ])('размер %s задаёт размер иконки %s', (size: IRtToggleButtonGroup.Size, expected: string): void => {
             const fixture: ComponentFixture<RtToggleButtonGroupComponent<string>> = setup({ size });
 

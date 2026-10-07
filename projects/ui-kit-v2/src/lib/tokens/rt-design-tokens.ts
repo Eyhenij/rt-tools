@@ -650,14 +650,14 @@ export type TRtConsumerHandleName =
     | '--rt-icon-glyph-grade'
     | '--rt-icon-glyph-opsz'
     | '--rt-icon-glyph-weight'
-    | '--rt-icon-size-2xl'
-    | '--rt-icon-size-3xl'
-    | '--rt-icon-size-4xl'
-    | '--rt-icon-size-lg'
-    | '--rt-icon-size-md'
-    | '--rt-icon-size-sm'
-    | '--rt-icon-size-xl'
-    | '--rt-icon-size-xs'
+    | '--rt-icon-step-2xl'
+    | '--rt-icon-step-3xl'
+    | '--rt-icon-step-4xl'
+    | '--rt-icon-step-lg'
+    | '--rt-icon-step-md'
+    | '--rt-icon-step-sm'
+    | '--rt-icon-step-xl'
+    | '--rt-icon-step-xs'
     | '--rt-logo-tagline'
     | '--rt-logo-tagline-dark'
     | '--rt-logo-wordmark'
@@ -1344,14 +1344,14 @@ export const RT_CONSUMER_HANDLE_NAMES: readonly TRtConsumerHandleName[] = [
     '--rt-icon-glyph-grade',
     '--rt-icon-glyph-opsz',
     '--rt-icon-glyph-weight',
-    '--rt-icon-size-2xl',
-    '--rt-icon-size-3xl',
-    '--rt-icon-size-4xl',
-    '--rt-icon-size-lg',
-    '--rt-icon-size-md',
-    '--rt-icon-size-sm',
-    '--rt-icon-size-xl',
-    '--rt-icon-size-xs',
+    '--rt-icon-step-2xl',
+    '--rt-icon-step-3xl',
+    '--rt-icon-step-4xl',
+    '--rt-icon-step-lg',
+    '--rt-icon-step-md',
+    '--rt-icon-step-sm',
+    '--rt-icon-step-xl',
+    '--rt-icon-step-xs',
     '--rt-logo-tagline',
     '--rt-logo-tagline-dark',
     '--rt-logo-wordmark',
