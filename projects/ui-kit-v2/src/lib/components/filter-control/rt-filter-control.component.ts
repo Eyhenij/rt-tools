@@ -15,11 +15,11 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import { BreakpointsService } from '../../platform';
+import { BreakpointsService } from '@rt-tools/ui-kit-v2/core';
 
-import { RtSelectComponent } from '../select/rt-select.component';
-import { IRtSelect } from '../select/rt-select.model';
-import { RtToggleButtonGroupComponent } from '../toggle-button-group/rt-toggle-button-group.component';
+import { RtSelectComponent } from '@rt-tools/ui-kit-v2/select';
+import { IRtSelect } from '@rt-tools/ui-kit-v2/select';
+import { RtToggleButtonGroupComponent } from '@rt-tools/ui-kit-v2/toggle-button-group';
 import { IRtFilterControl } from './rt-filter-control.model';
 
 const BEM_BLOCK: string = 'rt-filter-control';

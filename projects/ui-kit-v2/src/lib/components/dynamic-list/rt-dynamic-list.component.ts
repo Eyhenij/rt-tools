@@ -28,16 +28,16 @@ import { filter, map } from 'rxjs';
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { IPageModel, TNullable } from '@rt-tools/utils';
 
-import { RT_KIT_LABELS, rtKitLabel, TRtKitLabelMap, TRtKitLabelParams } from '../../i18n';
-import { searchDebounce } from '../../util';
-import { RtButtonDirective } from '../button/rt-button.directive';
-import { RtCheckboxComponent } from '../checkbox/rt-checkbox.component';
-import { IRtIcon } from '../icon/rt-icon.model';
-import { RtEmptyStateComponent } from '../empty-state/rt-empty-state.component';
-import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
-import { RtInputComponent } from '../input/rt-input.component';
-import { RtPaginationComponent } from '../pagination/rt-pagination.component';
-import { RtSpinnerComponent } from '../spinner/rt-spinner.component';
+import { RT_KIT_LABELS, rtKitLabel, TRtKitLabelMap, TRtKitLabelParams } from '@rt-tools/ui-kit-v2/core';
+import { searchDebounce } from '@rt-tools/ui-kit-v2/core';
+import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
+import { RtCheckboxComponent } from '@rt-tools/ui-kit-v2/checkbox';
+import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
+import { RtEmptyStateComponent } from '@rt-tools/ui-kit-v2/empty-state';
+import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
+import { RtInputComponent } from '@rt-tools/ui-kit-v2/input';
+import { RtPaginationComponent } from '@rt-tools/ui-kit-v2/pagination';
+import { RtSpinnerComponent } from '@rt-tools/ui-kit-v2/spinner';
 import { RtDynamicListToolbarActionsDirective, RtDynamicListToolbarSelectorsDirective } from './rt-dynamic-list.directives';
 import { IRtDynamicList } from './rt-dynamic-list.model';
 

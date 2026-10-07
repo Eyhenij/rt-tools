@@ -18,15 +18,15 @@ import {
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, TRtKitLabelMap, rtKitLabel } from '../../i18n';
-import { RtFormControlBase } from '../form-control/rt-form-control.base';
-import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
-import { RtIconComponent } from '../icon/rt-icon.component';
-import { IRtIcon } from '../icon/rt-icon.model';
-import { RtPopoverDirective } from '../popover/rt-popover.directive';
-import { IRtPopover } from '../popover/rt-popover.model';
-import { RtRadiusDirective } from '../radius/rt-radius.directive';
-import { rtScrollActiveOptionIntoView } from '../select/rt-select-active-option';
+import { RT_KIT_LABELS, TRtKitLabelMap, rtKitLabel } from '@rt-tools/ui-kit-v2/core';
+import { RtFormControlBase } from '@rt-tools/ui-kit-v2/form-control';
+import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
+import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
+import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
+import { RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
+import { IRtPopover } from '@rt-tools/ui-kit-v2/popover';
+import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
+import { rtScrollActiveOptionIntoView } from '@rt-tools/ui-kit-v2/select';
 import {
     rtTreeBranchState,
     rtTreeFind,
@@ -36,10 +36,10 @@ import {
     rtTreeRows,
     rtTreeSideKey,
     rtTreeToggle,
-} from '../select/rt-select-tree';
-import { RtSelectTriggerDirective } from '../select/rt-select-trigger.directive';
-import { IRtSelect } from '../select/rt-select.model';
-import { RtTagComponent } from '../tag/rt-tag.component';
+} from '@rt-tools/ui-kit-v2/select';
+import { RtSelectTriggerDirective } from '@rt-tools/ui-kit-v2/select';
+import { IRtSelect } from '@rt-tools/ui-kit-v2/select';
+import { RtTagComponent } from '@rt-tools/ui-kit-v2/tag';
 import { RtMultiselectLabelPipe } from './rt-multiselect-label.pipe';
 
 const BEM_BLOCK: string = 'rt-multiselect';

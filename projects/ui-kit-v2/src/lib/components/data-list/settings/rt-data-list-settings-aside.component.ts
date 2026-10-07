@@ -15,18 +15,18 @@ import { FormsModule } from '@angular/forms';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { rtKitLabel } from '../../../i18n';
-import { RtAsideRef } from '../../aside/rt-aside-ref';
-import { RT_ASIDE_DATA } from '../../aside/rt-aside.tokens';
-import { RtAsideComponent } from '../../aside/rt-aside.component';
-import { RtAsideFooterComponent } from '../../aside/footer/rt-aside-footer.component';
-import { RtAsideHeaderComponent } from '../../aside/header/rt-aside-header.component';
-import { RtButtonDirective } from '../../button/rt-button.directive';
-import { IRtDataTable, RT_PRESET_MATERIAL_CLASS } from '../../data-table/rt-data-table.model';
-import { RtIconButtonComponent } from '../../icon-button/rt-icon-button.component';
-import { RtIconComponent } from '../../icon/rt-icon.component';
-import { IRtTable } from '../../table/rt-table.model';
-import { RtToggleSwitchComponent } from '../../toggle-switch/rt-toggle-switch.component';
+import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
+import { RtAsideRef } from '@rt-tools/ui-kit-v2/aside';
+import { RT_ASIDE_DATA } from '@rt-tools/ui-kit-v2/aside';
+import { RtAsideComponent } from '@rt-tools/ui-kit-v2/aside';
+import { RtAsideFooterComponent } from '@rt-tools/ui-kit-v2/aside';
+import { RtAsideHeaderComponent } from '@rt-tools/ui-kit-v2/aside';
+import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
+import { IRtDataTable, RT_PRESET_MATERIAL_CLASS } from '@rt-tools/ui-kit-v2/core';
+import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
+import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
+import { IRtTable } from '@rt-tools/ui-kit-v2/table';
+import { RtToggleSwitchComponent } from '@rt-tools/ui-kit-v2/toggle-switch';
 import {
     dataListColumnsFromItems,
     dataListMoveItem,

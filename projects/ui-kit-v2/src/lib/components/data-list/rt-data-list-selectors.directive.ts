@@ -18,7 +18,7 @@ import { filter, switchMap, take } from 'rxjs/operators';
 
 import { transformArrayInput, TNullable } from '@rt-tools/utils';
 
-import { RtDataTableComponent } from '../data-table/rt-data-table.component';
+import { RtDataTableComponent } from '@rt-tools/ui-kit-v2/data-table';
 import {
     dataTableAllOnPage,
     dataTableAnyOnPage,
@@ -27,7 +27,7 @@ import {
     dataTableWithEntity,
     dataTableWithoutPageEntities,
     dataTableWithPageEntities,
-} from '../data-table/rt-data-table-selection.logic';
+} from '@rt-tools/ui-kit-v2/data-table';
 import { RtDataListComponent } from './rt-data-list.component';
 import { RtDataListToolbarComponent } from './toolbar/rt-data-list-toolbar.component';
 import {

@@ -18,8 +18,8 @@ import {
 // rt-tools
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, TRtKitLabelMap } from '../../i18n';
-import { RtRadiusDirective } from '../radius/rt-radius.directive';
+import { RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
+import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 import { clampDragDelta, shouldDismissDrag } from './rt-bottom-sheet.logic';
 
 const BEM_BLOCK: string = 'rt-bottom-sheet';

@@ -18,8 +18,8 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
-import { rtKitLabel } from '../../i18n';
-import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
+import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
+import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
 import { RT_COUNTER_DECREASE_KEY, RT_COUNTER_INCREASE_KEY } from './rt-counter.const';
 
 const BEM_BLOCK: string = 'rt-counter';

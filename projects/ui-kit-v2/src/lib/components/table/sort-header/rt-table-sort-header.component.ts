@@ -4,8 +4,8 @@ import { ChangeDetectionStrategy, Component, computed, inject, input, InputSigna
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 import { EListSortOrder, TListSortOrderType } from '@rt-tools/utils';
 
-import { RtIconComponent } from '../../icon/rt-icon.component';
-import { IRtIcon } from '../../icon/rt-icon.model';
+import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
+import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 import { ariaSortOf, TRtTableAriaSort, isColumnSortable, sortDirectionOf } from '../rt-table-sort.logic';
 import { RtTableComponent } from '../rt-table.component';
 

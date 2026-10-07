@@ -15,13 +15,13 @@ import { NgTemplateOutlet } from '@angular/common';
 import { BlockDirective, ConcatClassesPipe, ElemDirective, ModDirective } from '@rt-tools/core';
 import { EListSortOrder, ISortModel, TNullable } from '@rt-tools/utils';
 
-import { RtIconComponent } from '../../icon/rt-icon.component';
-import { IRtIcon } from '../../icon/rt-icon.model';
-import { RtTooltipDirective } from '../../tooltip/rt-tooltip.directive';
+import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
+import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
+import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
 import { dataTableIconName } from '../rt-data-table-cell.logic';
 import { IRtDataTableIconContext } from '../rt-data-table-icon.directive';
 import { dataTableNextSortOrder, dataTableSortActive } from '../rt-data-table-sort.logic';
-import { IRtDataTable } from '../rt-data-table.model';
+import { IRtDataTable } from '@rt-tools/ui-kit-v2/core';
 
 const BEM_BLOCK: string = 'rt-data-table-header-cell';
 

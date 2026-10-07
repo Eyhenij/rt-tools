@@ -17,12 +17,12 @@ import { RouterLink } from '@angular/router';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { RtExpansionPanelComponent, RtExpansionPanelContentDirective } from '../../expansion-panel';
-import { RtIconComponent } from '../../icon';
-import { RtIconButtonComponent } from '../../icon-button';
-import { rtKitLabel } from '../../../i18n';
-import { BreakpointsService } from '../../../platform/breakpoints.service';
-import { RtTooltipDirective } from '../../tooltip';
+import { RtExpansionPanelComponent, RtExpansionPanelContentDirective } from '@rt-tools/ui-kit-v2/expansion-panel';
+import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
+import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
+import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
+import { BreakpointsService } from '@rt-tools/ui-kit-v2/core';
+import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
 import { sideMenuFavoritesSection } from '../rt-side-menu-favorites.logic';
 import { RtSideMenuSettingsService } from '../rt-side-menu-settings.service';
 import { RtSideMenuIconPipe } from '../rt-side-menu-icon.pipe';

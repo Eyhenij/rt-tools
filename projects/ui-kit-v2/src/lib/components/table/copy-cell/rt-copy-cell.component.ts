@@ -19,11 +19,11 @@ import {
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
-import { TRtKitLabelKey, rtKitLabel } from '../../../i18n';
-import { RtIconButtonComponent } from '../../icon-button/rt-icon-button.component';
-import { IRtIconButton } from '../../icon-button/rt-icon-button.model';
-import { IRtIcon } from '../../icon/rt-icon.model';
-import { RtTooltipDirective } from '../../tooltip/rt-tooltip.directive';
+import { TRtKitLabelKey, rtKitLabel } from '@rt-tools/ui-kit-v2/core';
+import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
+import { IRtIconButton } from '@rt-tools/ui-kit-v2/icon-button';
+import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
+import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
 
 const BEM_BLOCK: string = 'rt-copy-cell';
 

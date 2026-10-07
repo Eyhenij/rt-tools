@@ -17,8 +17,8 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-import { rtKitLabel } from '../../i18n';
-import { INotification, NotificationBus } from '../../platform';
+import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
+import { INotification, NotificationBus } from '@rt-tools/ui-kit-v2/core';
 
 import { RtToastComponent } from './rt-toast.component';
 import { RT_TOASTER_GAP_PX, IRtToaster } from './rt-toaster.model';

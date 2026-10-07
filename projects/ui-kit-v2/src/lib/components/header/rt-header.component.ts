@@ -14,10 +14,10 @@ import {
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, TRtKitLabelMap } from '../../i18n';
-import { RtIconButtonComponent } from '../icon-button';
-import { RtLogoComponent } from '../logo';
-import { RtRadiusDirective } from '../radius/rt-radius.directive';
+import { RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
+import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
+import { RtLogoComponent } from '@rt-tools/ui-kit-v2/logo';
+import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 
 const BEM_BLOCK: string = 'rt-header';
 

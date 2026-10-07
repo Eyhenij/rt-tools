@@ -11,9 +11,9 @@ import {
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
-import { RtIconComponent } from '../icon/rt-icon.component';
-import { IRtIcon } from '../icon/rt-icon.model';
-import { RtRadiusDirective } from '../radius/rt-radius.directive';
+import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
+import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
+import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 
 const BEM_BLOCK: string = 'rt-empty-state';
 

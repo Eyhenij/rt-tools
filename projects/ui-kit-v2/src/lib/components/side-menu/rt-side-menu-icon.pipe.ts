@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
-import { IRtIcon } from '../icon/rt-icon.model';
+import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 import { sideMenuIconName } from './rt-side-menu-icon.logic';
 
 /** Значок пункта, который рисует кит: имя кита или пара имени Material; `null` — такого нет. */

@@ -1,4 +1,3 @@
-export * from './rt-data-table.model';
 export * from './rt-data-table-cell.logic';
 export * from './rt-data-table-config.service';
 export * from './rt-data-table-icon.directive';
