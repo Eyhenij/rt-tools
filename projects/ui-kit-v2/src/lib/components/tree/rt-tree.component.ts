@@ -140,6 +140,9 @@ export class RtTreeComponent<TValue> {
         (): boolean => this.showSelectAll() && this.cascade() && this.mode() === 'multiple' && this.rows().length > 0
     );
 
+    /** Отметка «выбрать всё» встаёт над отметкой первой строки; у строки без отметки — над стрелкой. */
+    protected readonly isSelectAllUnderMark: Signal<boolean> = computed((): boolean => this.views()[0]?.marked ?? false);
+
     protected readonly emptyText: Signal<string> = computed((): string =>
         this.nodes().length > 0 ? this.t().uiNothingFound : this.t().uiNoOptions
     );

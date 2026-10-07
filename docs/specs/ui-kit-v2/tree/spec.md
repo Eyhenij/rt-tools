@@ -131,6 +131,7 @@ the component; the choice lives with the application through `value`.
 | no marks               | labels only                                                 |
 | a node disabled        | the row muted, its mark unchangeable                        |
 | the tree disabled      | every row and select-all muted, the arrows still open       |
+| select-all             | its mark above the first row's mark, or above the arrow     |
 | a search term          | the matching rows with the path open, the match highlighted |
 | empty                  | the kit label «Nothing found» or «No options»               |
 | a row highlighted      | the row background of the active option of the select       |
@@ -169,3 +170,4 @@ None.
 
 - 2026-10-06 — the agreement written for RT-2548.
 - 2026-10-07 — a disabled tree, for the report builder of the application; RT-2551.
+- 2026-10-07 — the select-all mark stands above the first row's mark by the owner's word; RT-2551.

@@ -29,6 +29,11 @@
   selector extends `RtTreeSelectorComponent`, and the selector template draws the hybrid tree by
   the `hybrid` flag. Affected stage: 1.
 
+- **The select-all mark stands above the first row's mark, and Clear is outlined and red** — the
+  owner after looking at the stories: «Чекбокс Выбратьвсе должен быть над первым чекбоксом списка
+  если там есть чекбокс у группы или на шевроном как сечас если чекбокса группы нет». Done in this
+  branch, since RT-2550 waits for the same «открывай». Affected stage: 3.
+
 - **Both selectors and both trees get `disabled`** — the owner on the migration of the report
   builder: «в этой задаче добавь чего не хватает». The application's own `disabled` greys only
   select-all and Submit, and its rows stay clickable; the kit switches off the search, the buttons,
