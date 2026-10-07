@@ -17,8 +17,10 @@
   into `site/src/lib/page/site-page.function.ts` (SC-CMS-71, SC-CMS-72); the rubric labels of the
   former blog groups stay with the application. The page client with the transfer state is carried
   over into `site/src/lib/page/site-pages-api.service.ts` (SC-CMS-73); the content type comes as a
-  parameter. Left: the six block components behind a registry, the page screen and the redirect
-  resolver. The next free scenario number is SC-CMS-74
+  parameter. The block registry `CMS_BLOCK_RENDERERS` and the body `rt-cms-site-blocks` are in
+  `site/src/lib/block/` (SC-CMS-74): the look of a block stays with the application, which gives a
+  renderer per kind. Left: the page screen and the redirect resolver. The next free scenario number
+  is SC-CMS-75
 - **Uncommitted:** nothing
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -95,6 +97,8 @@
   comes with the switch of the application to the package.
 - Step 3.1 begun: the embed address check, the site page model, the rubric root tag and the sitemap
   carried over into the `site` entry with their tests.
+- The page client with the transfer state and the block registry carried over; the block components
+  themselves stay in the application, since their look is its own.
 
 ## Handover of the session
 
@@ -121,8 +125,8 @@ the site part lie in the blog `ui`, `data-access` and `feature/article` librarie
 
 ### Done and the next step
 
-Done: stages 1 and 2, part of 3.1. Next: the page client with the transfer state, the six block
-components behind a registry, the page screen and the redirect resolver; then stage 4.
+Done: stages 1 and 2; of 3.1 — the embed check, the page model, the page client and the block
+registry. Next: the page screen and the redirect resolver; then stage 4.
 
 ### What to keep in mind
 
