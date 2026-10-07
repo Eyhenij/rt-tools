@@ -1,0 +1,70 @@
+syntax = "proto3";
+
+package rt.cms.v1;
+
+import "google/protobuf/timestamp.proto";
+
+// The media library: images in public storage and their records. A file belongs to the whole
+// platform, as do the pages that refer to it. The site takes an image by the file address and does
+// not ask the service.
+service CmsMediaService {
+    rpc ListFiles(ListFilesRequest) returns (ListFilesResponse);
+    rpc UploadFile(UploadFileRequest) returns (UploadFileResponse);
+    rpc DeleteFile(DeleteFileRequest) returns (DeleteFileResponse);
+}
+
+// A media record. The address is built by the server from the storage key and the storage public
+// address: it is not stored, and moving to another CDN does not edit the records.
+message MediaFile {
+    string id = 1;
+    string name = 2;
+    string content_type = 3;
+    uint64 size = 4;
+    uint32 width = 5;
+    uint32 height = 6;
+    string url = 7;
+    google.protobuf.Timestamp created_at = 8;
+    // The reduced copies from narrow to wide. Empty — no copies: a narrow image, a GIF or a file before
+    // the recount; the original is shown then.
+    repeated MediaCopy copies = 9;
+}
+
+// A reduced copy of the file in WebP. Its address is built the same way as the original's.
+message MediaCopy {
+    uint32 width = 1;
+    string url = 2;
+}
+
+// The page and the filter: the page number starts at one, zero reads as the first page, an empty
+// search means no filter. The search goes by file name. No folder — the files of all folders, as
+// the image picker sees them; an empty one — the library root; an id — one folder without nested ones.
+message ListFilesRequest {
+    uint32 page = 1;
+    uint32 page_size = 2;
+    string search = 3;
+    optional string folder_id = 4;
+}
+
+message ListFilesResponse {
+    repeated MediaFile files = 1;
+    uint32 total = 2;
+}
+
+// The file bytes go inside the call: the server recognises the kind by the first bytes before the
+// file reaches storage. The name is a label for the list and never reaches the address. An empty
+// folder puts the file in the root.
+message UploadFileRequest {
+    string name = 1;
+    bytes content = 2;
+    string folder_id = 3;
+}
+
+message UploadFileResponse {
+    MediaFile file = 1;
+}
+
+message DeleteFileRequest {
+    string file_id = 1;
+}
+
+message DeleteFileResponse {}
