@@ -48,3 +48,16 @@ publication itself was named in that question as needing the owner's word, and t
 ## What is left unclear
 
 - nothing
+
+## Decisions along the way
+
+- **The delivery and plan guards are bypassed for this epic.** The owner's words: «Да, на весь
+  эпик», «Обходи и его на весь эпик».
+
+- **The workflows run on the task branch, not on the epic branch.** The first run on the epic
+  branch failed at the install: the lockfile lacked the `@rt-tools/utils` entry the Angular package
+  declares. The fix is an edit, and the epic branch takes merges only; the task branch carries it.
+
+- **npm shows a fresh package a few minutes late.** Right after the publish the registry lists only
+  `0.0.0-stage`; the real version appears in about three minutes, and the short metadata pnpm reads
+  answers «Not found» a little longer. The lockfile is updated after that, not before.
