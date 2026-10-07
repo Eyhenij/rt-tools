@@ -3,6 +3,7 @@
         [rows]="rows()"
         [draggable]="draggable()"
         [buttonRadius]="buttonRadius()"
+        [clearIcon]="clearIcon()"
         [editable]="editable()"
         [disabled]="isDisabled()"
         [actionsShown]="!isInvitationShown()"
@@ -34,6 +35,7 @@
             #field
             rtElem="field"
             qa-dataid="dynamic-input-field"
+            [appearance]="fieldAppearance()"
             [placeholder]="fieldPlaceholder()"
             [ngModel]="draft()"
             (ngModelChange)="draft.set($event ?? '')"
@@ -49,9 +51,10 @@
             [description]="invitationDescription()">
             <button
                 rtButton
-                appearance="outlined"
                 type="button"
                 qa-dataid="dynamic-input-invitation-add"
+                [appearance]="invitationButtonAppearance()"
+                [icon]="invitationButtonIcon()"
                 [label]="addTitle()"
                 [attr.aria-label]="addTitle()"
                 [disabled]="isDisabled()"

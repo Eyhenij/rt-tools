@@ -78,6 +78,56 @@ Item 7 of the first list: the icon `delete_forever` in the kit icon set.
 
 > ты уже заводил задачу на правки динамик селектора включи это все в один тикет и задачу?
 
+> Запрос в ui-kit-v2: rt-icon
+>
+> 1. Добавить вход glyphStrategy: 'map-first' | 'font' на экземпляре. Он перекрывает
+>    RT_ICON_GLYPH_STRATEGY для этой иконки.
+> 2. Добавить токены осей глифа и подставить их в font-variation-settings у .rt-icon__glyph:
+>     - --rt-icon-glyph-weight (по умолчанию 400);
+>     - --rt-icon-glyph-grade (по умолчанию 0);
+>     - --rt-icon-glyph-opsz (по умолчанию 24);
+>     - FILL остаётся от входа fill.
+> 3. Добавить во вход color значение primary: var(--rt-icon-color-primary, var(--rt-color-primary)).
+> 4. Добавить во вход color значение disabled: var(--rt-icon-color-disabled, var(--rt-color-text-disabled)).
+> 5. Сделать цвета переопределяемыми токенами, по образцу muted:
+>     - danger: var(--rt-icon-color-danger, var(--rt-color-state-danger));
+>     - success: var(--rt-icon-color-success, var(--rt-color-state-success));
+>     - info: var(--rt-icon-color-info, var(--rt-color-state-info));
+>     - warning: var(--rt-icon-color-warning, var(--rt-color-state-warning));
+>     - inverse: var(--rt-icon-color-inverse, var(--rt-color-text-inverse)).
+> 6. Брать ступени размера из токенов --rt-icon-size-xs, -sm, -md, -lg, -xl, -2xl с текущими
+>    значениями по умолчанию, а не из зашитых px. Добавить ступени 3xl и 4xl.
+
+> включи в текущую задачу по правкам динамик селектора динамик инпута и экшен бара
+
+> Запрос в кит: rt-dynamic-selector-popup
+>
+> 1. Убрать display: block у .rt-dynamic-selector-popup__search. Сейчас он перебивает inline-flex у
+>    rt-input: лупа стоит без зазора с текстом, поле не растягивается, крестик сброса оказывается
+>    посередине и у верхнего края.
+> 2. Добавить вход searchAppearance, передавать его в rt-input поиска. rt-dynamic-selector
+>    пробрасывает свой searchAppearance в окно.
+> 3. Добавить токены окна:
+>     - --rt-dynamic-selector-popup-bg
+>     - --rt-dynamic-selector-popup-min-height
+>     - --rt-dynamic-selector-popup-padding
+>     - --rt-dynamic-selector-popup-foot-border-width
+>     - --rt-dynamic-selector-popup-nav-color
+>     - --rt-dynamic-selector-popup-button-height
+>     - --rt-dynamic-selector-popup-button-font-size
+>     - --rt-dynamic-selector-popup-empty-icon-size
+>     - --rt-dynamic-selector-popup-empty-icon-wrap-bg
+>     - --rt-dynamic-selector-popup-empty-text-size
+>     - --rt-dynamic-selector-popup-empty-text-weight
+>     - --rt-dynamic-selector-popup-empty-text-color
+> 4. Объявлять умолчания токенов через var(--token, <умолчание>) в самих свойствах, а не
+>    присваиванием на .rt-dynamic-selector-popup. Иначе значение, заданное на предке
+>    (cdk-overlay-pane, cc-selector), до окна не доходит.
+
+> глянь еще это в этой ветке
+
+> важно не допустить регрессий и изменения дефолтной втьюхи второго кита
+
 ## What the tree already has
 
 - `rt-dynamic-selector` draws the invitation button as `rtButton appearance="outlined"` with no
@@ -130,6 +180,23 @@ list and the dynamic-input remarks.
   tokens reach it through the shared list. `emptyResultsText` does not apply: it has no popup.
 - **The popup, list and empty-state properties stay declared on their blocks**, like every other
   kit component: the owner asked for new names there, not for handles.
+
+- **The rt-icon list joins this task by the owner's later word.** The plan gets a sixth stage
+  appended under its own line; the five written stages stay as they were.
+- **`primary` takes `--rt-color-action-primary-on-surface`.** The kit has no `--rt-color-primary`;
+  the brand colour drawn over a surface is the role the text button paints its label with. Named
+  in the PR.
+- **The size steps become handles whose defaults are the kit size scale:** `xs` 12, `sm` 16, `md`
+  20, `lg` 24, `xl` 32, `2xl` 40 — the same pixels as before — and the new `3xl` 48 and `4xl` 64,
+  the next steps of the scale. A number on the input stays pixels.
+
+- **The optical size of the ligature defaults to the side of the icon, not to 24.** Without the
+  axis in the font settings the browser took the optical size from the font size; a fixed 24 would
+  move every unpaired glyph not drawn at 24 pixels, and the owner asked for no change of the
+  default look. At the `lg` step it is the 24 of the request. Named in the PR.
+- **The popup items 1–3 were already done by stage 1; item 4 turns all seventeen popup properties
+  into handles,** the five former ones among them, so that the popup reads from an ancestor the
+  same way whatever property is set. Defaults stay as they were.
 
 ## What is left unclear
 

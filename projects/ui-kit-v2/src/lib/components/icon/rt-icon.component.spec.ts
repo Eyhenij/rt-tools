@@ -49,20 +49,23 @@ describe('RtIconComponent', (): void => {
     });
 
     describe('размер', (): void => {
-        it('без входа рисуется размером md — 20px', (): void => {
+        it('без входа рисуется ступенью md — 20px шкалы кита', (): void => {
             const fixture: ComponentFixture<RtIconComponent> = setup();
 
-            expect(hostStyle(fixture, 'width')).toBe('20px');
-            expect(hostStyle(fixture, 'height')).toBe('20px');
+            expect(hostStyle(fixture, 'width')).toBe('var(--rt-icon-size-md, var(--rt-size-5))');
+            expect(hostStyle(fixture, 'height')).toBe('var(--rt-icon-size-md, var(--rt-size-5))');
         });
 
         it.each<[IRtIcon.Size, string]>([
-            ['xs', '12px'],
-            ['sm', '16px'],
-            ['md', '20px'],
-            ['lg', '24px'],
-            ['xl', '32px'],
-        ])('размер %s даёт квадрат %s', (size: IRtIcon.Size, expected: string): void => {
+            ['xs', 'var(--rt-icon-size-xs, var(--rt-size-3))'],
+            ['sm', 'var(--rt-icon-size-sm, var(--rt-size-4))'],
+            ['md', 'var(--rt-icon-size-md, var(--rt-size-5))'],
+            ['lg', 'var(--rt-icon-size-lg, var(--rt-size-6))'],
+            ['xl', 'var(--rt-icon-size-xl, var(--rt-size-8))'],
+            ['2xl', 'var(--rt-icon-size-2xl, var(--rt-size-10))'],
+            ['3xl', 'var(--rt-icon-size-3xl, var(--rt-size-12))'],
+            ['4xl', 'var(--rt-icon-size-4xl, var(--rt-size-16))'],
+        ])('SC-UKV-712 — ступень %s — свойство приложения с шагом шкалы %s', (size: IRtIcon.Size, expected: string): void => {
             const fixture: ComponentFixture<RtIconComponent> = setup({ size });
 
             expect(hostStyle(fixture, 'width')).toBe(expected);
@@ -76,13 +79,15 @@ describe('RtIconComponent', (): void => {
         });
 
         it.each<[IRtIcon.Color, string]>([
+            ['primary', 'var(--rt-icon-color-primary, var(--rt-color-action-primary-on-surface))'],
             ['muted', 'var(--rt-icon-color-muted, var(--rt-neutral-600))'],
-            ['info', 'var(--rt-color-state-info)'],
-            ['success', 'var(--rt-color-state-success)'],
-            ['warning', 'var(--rt-color-state-warning)'],
-            ['danger', 'var(--rt-color-state-danger)'],
-            ['inverse', 'var(--rt-color-text-inverse)'],
-        ])('цвет %s разрешается в токен %s', (color: IRtIcon.Color, expected: string): void => {
+            ['disabled', 'var(--rt-icon-color-disabled, var(--rt-color-text-disabled))'],
+            ['info', 'var(--rt-icon-color-info, var(--rt-color-state-info))'],
+            ['success', 'var(--rt-icon-color-success, var(--rt-color-state-success))'],
+            ['warning', 'var(--rt-icon-color-warning, var(--rt-color-state-warning))'],
+            ['danger', 'var(--rt-icon-color-danger, var(--rt-color-state-danger))'],
+            ['inverse', 'var(--rt-icon-color-inverse, var(--rt-color-text-inverse))'],
+        ])('SC-UKV-711 — цвет %s — свойство приложения %s', (color: IRtIcon.Color, expected: string): void => {
             expect(hostStyle(setup({ color }), 'color')).toBe(expected);
         });
     });

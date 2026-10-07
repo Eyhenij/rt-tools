@@ -126,6 +126,15 @@ stands next to it as components of its own, drawn on the parts of the second kit
   row's field, and Enter or the apply button replaces the text in its place. A blank edit, an
   unchanged one or one into a text another row holds leaves the list as it was; so does the reset
   button.
+- **The caller names the look of the invitation, the clear button, the popup search and the empty
+  result.** The invitation button takes an icon and one of the kit button's looks; the clear button
+  takes an icon, the close cross by default; the popup search field and the string list's own field
+  take one of the field's looks; the empty result shows the caller's text, the kit label without it.
+- **A value the caller sets on the list block reaches it, and a popup property or the add button's
+  colour reaches it from any ancestor.** The popup lives in an overlay, outside the field, so the
+  caller sets its properties on the overlay pane or a container of its own; only the defaults stand
+  on the popup itself, under the `-default` suffix. The add button is projected by both fields with
+  different looks, so its colour is a handle with the button's own colour as the fallback.
 
 ## What is out of scope
 
@@ -240,3 +249,6 @@ owner's review.
   code. The scenarios kept their numbers.
 - 1 October 2026 — the owner's remarks (RT-2455): round icon buttons by default, the popup at the
   add button pressed, the background of the row in flight.
+- 7 October 2026 — the application's requests (RT-2619): the inputs of the invitation, clear, search
+  and empty-result look, the popup and list properties, the cross trash icon `trash-x`; the popup
+  properties read from any ancestor.

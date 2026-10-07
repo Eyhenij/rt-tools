@@ -24,7 +24,7 @@ import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
 import { BreakpointsService } from '@rt-tools/ui-kit-v2/core';
 import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
 import { RtInputComponent } from '@rt-tools/ui-kit-v2/input';
-import { TRtRadius } from '@rt-tools/ui-kit-v2/core';
+import { IRtIcon, TRtRadius } from '@rt-tools/ui-kit-v2/core';
 import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
 import { IRtDynamicSelector } from '../rt-dynamic-selector.model';
 
@@ -111,6 +111,8 @@ export class RtDynamicSelectorListComponent<TItem> {
     });
     /** Шаг скругления кнопок-иконок списка; по умолчанию они круглые. */
     public readonly buttonRadius: InputSignal<TRtRadius | null> = input<TRtRadius | null>('full');
+    /** Значок кнопки «Очистить список»; по умолчанию крестик. */
+    public readonly clearIcon: InputSignal<IRtIcon.Name> = input<IRtIcon.Name>('close');
     public readonly titleTpl: InputSignal<TemplateRef<IRtDynamicSelector.RowContext<TItem>> | null> = input<TemplateRef<
         IRtDynamicSelector.RowContext<TItem>
     > | null>(null);

@@ -80,6 +80,42 @@
         </app-story-presets>
     }
 
+    @case ('look') {
+        <app-story-presets caption="Вид, который задаёт приложение, в обоих наборах">
+            <ng-template>
+                <app-story-row [items]="lookCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
+                    <ng-template let-lookCase>
+                        <rt-dynamic-selector
+                            keyExp="id"
+                            displayExp="name"
+                            invitationIcon="users"
+                            invitationDescription="В команде пока никого нет"
+                            [ariaLabel]="lookCase.name"
+                            [entities]="people"
+                            [invitation]="lookCase.invitation"
+                            [invitationButtonIcon]="lookCase.invitationButtonIcon"
+                            [invitationButtonAppearance]="lookCase.invitationButtonAppearance"
+                            [clearIcon]="lookCase.clearIcon"
+                            [formControl]="lookCase.control" />
+                    </ng-template>
+                </app-story-row>
+                <app-story-row [items]="lookPopupCases" [itemLabel]="caseLabel" [slotWidth]="popupWidth">
+                    <ng-template let-popupCase>
+                        <!-- Свойства окна стоят на предке, как приложение задаёт их на панели оверлея; обёртка без коробки. -->
+                        <div style="display: contents" [style]="popupCase.tuned ? tunedPopupStyle : {}">
+                            <rt-dynamic-selector-popup
+                                keyExp="id"
+                                displayExp="name"
+                                searchAppearance="fill"
+                                emptyResultsText="Никого не нашли"
+                                [entities]="popupCase.entities" />
+                        </div>
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
     @case ('states') {
         <app-story-presets caption="Значение, форма и отключение в обоих наборах">
             <ng-template>

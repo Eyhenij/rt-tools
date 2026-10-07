@@ -240,78 +240,141 @@ theme.setTheme('auto');`}
 собираются из источника оформления тем же прогоном, что и `tokens.css`, поэтому имя из них
 существует наверняка.
 
-| Свойство                                      | Что задаёт                                         | Пока не задано                 |
-| --------------------------------------------- | -------------------------------------------------- | ------------------------------ |
-| `--rt-aside-width`                            | ширина боковой панели                              | ступень `--rt-aside-width-md`  |
-| `--rt-dialog-width`                           | ширина диалога                                     | ступень `--rt-dialog-width-md` |
-| `--rt-header-height`                          | высота шапки приложения                            | `0px` — кит её не рисует       |
-| `--rt-header-content-max-width`               | кап ширины содержимого шапки                       | `100%`                         |
-| `--rt-logo-wordmark`                          | начертание логотипа, светлая тема                  | `none`                         |
-| `--rt-logo-wordmark-dark`                     | то же для тёмной темы                              | светлое начертание             |
-| `--rt-logo-tagline`                           | подпись под логотипом, светлая тема                | `none`                         |
-| `--rt-logo-tagline-dark`                      | то же для тёмной темы                              | светлая подпись                |
-| `--rt-workspace-aside-size`                   | ширина боковой колонки рабочей области             | `360px`                        |
-| `--rt-workspace-list-size`                    | ширина списка рабочей области                      | `320px`                        |
-| `--rt-page-header-bg`                         | подложка шапки страницы                            | подложка панели навигации      |
-| `--rt-data-table-scrollbar-vertical-width`    | ширина вертикальной полосы прокрутки таблицы       | `--rt-size-3`                  |
-| `--rt-data-table-scrollbar-horizontal-height` | то же для горизонтальной                           | `--rt-size-3`                  |
-| `--rt-data-table-scrollbar-width`             | `scrollbar-width` таблицы                          | `thin`                         |
-| `--rt-data-table-scrollbar-color`             | `scrollbar-color` таблицы                          | тихая полоса основы            |
-| `--rt-aside-bg`                               | фон боковой панели                                 | `--rt-color-bg-surface`        |
-| `--rt-table-actions-bg`                       | фон полосы действий строки таблицы                 | `--rt-color-bg-surface`        |
-| `--rt-action-bar-menu-bg`                     | фон меню панели действий — на корне страницы       | `--rt-color-bg-surface`        |
-| `--rt-action-bar-menu-color`                  | цвет текста меню панели действий                   | `--rt-color-text-primary`      |
-| `--rt-action-bar-menu-radius`                 | скругление меню панели действий                    | ступень `--rt-radius-md`       |
-| `--rt-action-bar-menu-shadow`                 | тень меню панели действий                          | `--rt-shadow-card`             |
-| `--rt-icon-button-size`                       | сторона кнопки-значка                              | шаг входа `size`               |
-| `--rt-icon-button-bg`                         | заливка покоя кнопки-значка                        | заливка вида                   |
-| `--rt-icon-button-bg-hover`                   | заливка кнопки-значка под указателем               | заливка вида под указателем    |
-| `--rt-icon-glyph-font`                        | семья шрифта лигатуры значка                       | `'Material Symbols Outlined'`  |
-| `--rt-toast-bg`                               | фон тоста                                          | `--rt-color-bg-surface`        |
-| `--rt-toast-color`                            | цвет текста тоста                                  | `--rt-color-text-primary`      |
-| `--rt-toast-border-color`                     | цвет рамки тоста                                   | `--rt-color-border-subtle`     |
-| `--rt-toast-icon-color`                       | цвет значка тоста                                  | цвет важности                  |
-| `--rt-toast-close-color`                      | цвет крестика тоста                                | `--rt-color-text-primary`      |
-| `--rt-toast-action-color`                     | заливка главного действия тоста                    | ступени главного действия      |
-| `--rt-toast-progress-color`                   | цвет полосы срока тоста                            | цвет важности                  |
-| `--rt-toast-progress-height`                  | высота полосы срока тоста                          | `--rt-space-0-5`               |
-| `--rt-toast-filled-info-bg`                   | фон залитого тоста сообщения                       | `--rt-color-state-info-bg`     |
-| `--rt-toast-filled-info-color`                | цвет текста и значка залитого тоста сообщения      | `--rt-color-state-info`        |
-| `--rt-toast-filled-info-border-color`         | цвет рамки залитого тоста сообщения                | `--rt-color-state-info-bg`     |
-| `--rt-toast-filled-success-bg`                | фон залитого тоста успеха                          | `--rt-color-state-success-bg`  |
-| `--rt-toast-filled-success-color`             | цвет текста и значка залитого тоста успеха         | `--rt-color-state-success`     |
-| `--rt-toast-filled-success-border-color`      | цвет рамки залитого тоста успеха                   | `--rt-color-state-success-bg`  |
-| `--rt-toast-filled-warning-bg`                | фон залитого тоста предупреждения                  | `--rt-color-state-warning-bg`  |
-| `--rt-toast-filled-warning-color`             | цвет текста и значка залитого тоста предупреждения | `--rt-color-state-warning`     |
-| `--rt-toast-filled-warning-border-color`      | цвет рамки залитого тоста предупреждения           | `--rt-color-state-warning-bg`  |
-| `--rt-toast-filled-danger-bg`                 | фон залитого тоста ошибки                          | `--rt-color-state-danger-bg`   |
-| `--rt-toast-filled-danger-color`              | цвет текста и значка залитого тоста ошибки         | `--rt-color-state-danger`      |
-| `--rt-toast-filled-danger-border-color`       | цвет рамки залитого тоста ошибки                   | `--rt-color-state-danger-bg`   |
-| `--rt-aside-header-inset`                     | отступ шапки боковой панели                        | `--rt-aside-inset`             |
-| `--rt-aside-content-inset`                    | отступ содержимого боковой панели                  | `--rt-aside-inset`             |
-| `--rt-aside-footer-inset`                     | отступ подвала боковой панели                      | `--rt-aside-inset` сверху      |
-| `--rt-aside-footer-margin`                    | поля подвала боковой панели                        | `--rt-aside-inset`             |
-| `--rt-aside-footer-justify`                   | раскладка кнопок подвала панели                    | `space-between`                |
-| `--rt-aside-footer-gap`                       | промежуток между кнопками подвала                  | `--rt-space-sm`                |
-| `--rt-aside-header-title-leading`             | высота строки заголовка панели                     | наследуется                    |
-| `--rt-aside-error-margin-block`               | поля блока ошибки панели сверху и снизу            | `0`                            |
-| `--rt-dialog-bg`                              | фон диалога                                        | `--rt-color-bg-surface`        |
-| `--rt-dialog-border`                          | рамка окна диалога                                 | `none`                         |
-| `--rt-dialog-header-padding`                  | отступ шапки диалога                               | `--rt-space-lg`                |
-| `--rt-dialog-header-border`                   | линия под шапкой диалога                           | тонкая тихая линия             |
-| `--rt-dialog-title-font-size`                 | кегль заголовка диалога                            | `--rt-text-xl`                 |
-| `--rt-dialog-title-weight`                    | начертание заголовка диалога                       | `--rt-font-weight-bold`        |
-| `--rt-dialog-title-transform`                 | регистр заголовка диалога                          | `none`                         |
-| `--rt-dialog-content-padding`                 | отступ тела диалога                                | `--rt-space-lg`                |
-| `--rt-dialog-content-max-height`              | потолок высоты тела диалога                        | `none`                         |
-| `--rt-dialog-footer-padding`                  | отступ подвала диалога                             | `--rt-space-lg`                |
-| `--rt-dialog-footer-border`                   | линия над подвалом диалога                         | тонкая тихая линия             |
-| `--rt-tag-color-bg`                           | фон тега                                           | цвет его значимости            |
-| `--rt-tag-color-text`                         | цвет текста тега                                   | цвет его значимости            |
-| `--rt-tag-color-border`                       | цвет рамки контурного тега                         | цвет текста                    |
-| `--rt-tag-padding-block`                      | отступ тега по вертикали                           | ступень его размера            |
-| `--rt-tag-padding-inline`                     | отступ тега по горизонтали                         | ступень его размера            |
-| `--rt-tag-letter-spacing`                     | межбуквенный интервал тега                         | от родителя                    |
+| Свойство                                         | Что задаёт                                                    | Пока не задано                                 |
+| ------------------------------------------------ | ------------------------------------------------------------- | ---------------------------------------------- |
+| `--rt-aside-width`                               | ширина боковой панели                                         | ступень `--rt-aside-width-md`                  |
+| `--rt-dialog-width`                              | ширина диалога                                                | ступень `--rt-dialog-width-md`                 |
+| `--rt-header-height`                             | высота шапки приложения                                       | `0px` — кит её не рисует                       |
+| `--rt-header-content-max-width`                  | кап ширины содержимого шапки                                  | `100%`                                         |
+| `--rt-logo-wordmark`                             | начертание логотипа, светлая тема                             | `none`                                         |
+| `--rt-logo-wordmark-dark`                        | то же для тёмной темы                                         | светлое начертание                             |
+| `--rt-logo-tagline`                              | подпись под логотипом, светлая тема                           | `none`                                         |
+| `--rt-logo-tagline-dark`                         | то же для тёмной темы                                         | светлая подпись                                |
+| `--rt-workspace-aside-size`                      | ширина боковой колонки рабочей области                        | `360px`                                        |
+| `--rt-workspace-list-size`                       | ширина списка рабочей области                                 | `320px`                                        |
+| `--rt-page-header-bg`                            | подложка шапки страницы                                       | подложка панели навигации                      |
+| `--rt-data-table-scrollbar-vertical-width`       | ширина вертикальной полосы прокрутки таблицы                  | `--rt-size-3`                                  |
+| `--rt-data-table-scrollbar-horizontal-height`    | то же для горизонтальной                                      | `--rt-size-3`                                  |
+| `--rt-data-table-scrollbar-width`                | `scrollbar-width` таблицы                                     | `thin`                                         |
+| `--rt-data-table-scrollbar-color`                | `scrollbar-color` таблицы                                     | тихая полоса основы                            |
+| `--rt-aside-bg`                                  | фон боковой панели                                            | `--rt-color-bg-surface`                        |
+| `--rt-table-actions-bg`                          | фон полосы действий строки таблицы                            | `--rt-color-bg-surface`                        |
+| `--rt-action-bar-menu-bg`                        | фон меню панели действий — на корне страницы                  | `--rt-color-bg-surface`                        |
+| `--rt-action-bar-menu-color`                     | цвет текста меню панели действий                              | `--rt-color-text-primary`                      |
+| `--rt-action-bar-menu-radius`                    | скругление меню панели действий                               | ступень `--rt-radius-md`                       |
+| `--rt-action-bar-menu-shadow`                    | тень меню панели действий                                     | `--rt-shadow-card`                             |
+| `--rt-action-bar-bg`                             | фон панели действий                                           | `--rt-color-bg-inverse`                        |
+| `--rt-action-bar-color`                          | текст, крестик и след наведения панели действий               | `--rt-color-text-inverse`                      |
+| `--rt-action-bar-radius`                         | скругление панели действий                                    | ступень `--rt-radius-lg`                       |
+| `--rt-action-bar-shadow`                         | тень панели действий                                          | `--rt-shadow-card`                             |
+| `--rt-action-bar-padding`                        | отступы панели действий                                       | `--rt-space-2` `--rt-space-4`                  |
+| `--rt-action-bar-gap`                            | промежуток между счётом и действиями                          | `--rt-space-4`                                 |
+| `--rt-action-bar-font-size`                      | кегль панели действий                                         | `--rt-text-sm`                                 |
+| `--rt-action-bar-counter-font-size`              | кегль счёта панели действий                                   | кегль панели                                   |
+| `--rt-action-bar-counter-weight`                 | начертание счёта панели действий                              | `--rt-font-weight-medium`                      |
+| `--rt-action-bar-action-height`                  | наименьшая высота действия панели                             | `auto`                                         |
+| `--rt-action-bar-action-font-size`               | кегль действия панели                                         | кегль панели                                   |
+| `--rt-action-bar-action-weight`                  | начертание действия панели                                    | `--rt-font-weight-medium`                      |
+| `--rt-action-bar-action-radius`                  | скругление действия панели                                    | ступень `--rt-radius-md`                       |
+| `--rt-action-bar-action-padding-block`           | отступ действия по вертикали                                  | `--rt-space-1`                                 |
+| `--rt-action-bar-action-padding-inline`          | отступ действия по горизонтали                                | `--rt-space-2`                                 |
+| `--rt-action-bar-action-bg-hover`                | след наведения на действие                                    | цвет панели на 16%                             |
+| `--rt-action-bar-action-color-danger`            | цвет опасного действия                                        | `--rt-color-action-danger-on-surface`          |
+| `--rt-action-bar-action-focus-shadow`            | кольцо фокуса действия                                        | `--rt-shadow-focus-ring`                       |
+| `--rt-action-bar-icon-size`                      | размер значка действия                                        | `--rt-size-4`                                  |
+| `--rt-action-bar-icon-gap`                       | промежуток между значком и подписью действия                  | `--rt-space-2`                                 |
+| `--rt-action-bar-close-size`                     | сторона кнопки-крестика панели                                | `--rt-control-height-sm`                       |
+| `--rt-action-bar-close-icon-size`                | размер крестика панели                                        | `--rt-size-4`                                  |
+| `--rt-action-bar-holder-bottom`                  | отступ панели от нижнего края окна                            | `--rt-space-6`                                 |
+| `--rt-action-bar-holder-inline`                  | отступы панели от боковых краёв окна                          | `--rt-space-4`                                 |
+| `--rt-action-bar-holder-enter-duration`          | длительность появления панели                                 | `300ms`                                        |
+| `--rt-action-bar-holder-leave-duration`          | длительность ухода панели — держатель снимает её через 300 мс | `300ms`                                        |
+| `--rt-dynamic-selector-list-add-color`           | цвет кнопки «Добавить» списка выбранного                      | цвет своей кнопки                              |
+| `--rt-dynamic-selector-popup-width`              | ширина окна выбора                                            | `calc(var(--rt-size-40) * 2)`                  |
+| `--rt-dynamic-selector-popup-max-height`         | наибольшая высота окна выбора                                 | `calc(var(--rt-size-100) + var(--rt-size-20))` |
+| `--rt-dynamic-selector-popup-radius`             | скругление окна выбора                                        | `--rt-radius-md`                               |
+| `--rt-dynamic-selector-popup-border-width`       | толщина рамки окна выбора                                     | `--rt-border-width-thin`                       |
+| `--rt-dynamic-selector-popup-shadow`             | тень окна выбора                                              | `--rt-shadow-lg`                               |
+| `--rt-dynamic-selector-popup-bg`                 | фон окна выбора                                               | `--rt-color-bg-surface`                        |
+| `--rt-dynamic-selector-popup-min-height`         | наименьшая высота окна выбора                                 | `0`                                            |
+| `--rt-dynamic-selector-popup-padding`            | отступ окна выбора                                            | `--rt-space-md`                                |
+| `--rt-dynamic-selector-popup-foot-border-width`  | толщина черты над низом окна                                  | толщина рамки окна                             |
+| `--rt-dynamic-selector-popup-nav-color`          | цвет ссылок перехода окна                                     | `--rt-color-text-link`                         |
+| `--rt-dynamic-selector-popup-button-height`      | высота кнопок окна                                            | `--rt-control-height-md`                       |
+| `--rt-dynamic-selector-popup-button-font-size`   | кегль кнопок окна                                             | `0.95rem`                                      |
+| `--rt-dynamic-selector-popup-empty-icon-size`    | размер значка пустого результата                              | `--rt-size-8`                                  |
+| `--rt-dynamic-selector-popup-empty-icon-wrap-bg` | фон круга под значком пустого результата                      | `--rt-color-bg-subtle`                         |
+| `--rt-dynamic-selector-popup-empty-text-size`    | кегль подписи пустого результата                              | `--rt-text-md`                                 |
+| `--rt-dynamic-selector-popup-empty-text-weight`  | насыщенность подписи пустого результата                       | `--rt-font-weight-medium`                      |
+| `--rt-dynamic-selector-popup-empty-text-color`   | цвет подписи пустого результата                               | `--rt-color-text-primary`                      |
+| `--rt-icon-button-size`                          | сторона кнопки-значка                                         | шаг входа `size`                               |
+| `--rt-icon-button-bg`                            | заливка покоя кнопки-значка                                   | заливка вида                                   |
+| `--rt-icon-button-bg-hover`                      | заливка кнопки-значка под указателем                          | заливка вида под указателем                    |
+| `--rt-icon-glyph-font`                           | семья шрифта лигатуры значка                                  | `'Material Symbols Outlined'`                  |
+| `--rt-icon-glyph-weight`                         | вес лигатуры значка — ось wght шрифта                         | `400`                                          |
+| `--rt-icon-glyph-grade`                          | градация лигатуры значка — ось GRAD шрифта                    | `0`                                            |
+| `--rt-icon-glyph-opsz`                           | оптический размер лигатуры значка — ось opsz шрифта           | сторона значка                                 |
+| `--rt-icon-size-xs`                              | сторона значка ступени `xs`                                   | `--rt-size-3`                                  |
+| `--rt-icon-size-sm`                              | сторона значка ступени `sm`                                   | `--rt-size-4`                                  |
+| `--rt-icon-size-md`                              | сторона значка ступени `md`                                   | `--rt-size-5`                                  |
+| `--rt-icon-size-lg`                              | сторона значка ступени `lg`                                   | `--rt-size-6`                                  |
+| `--rt-icon-size-xl`                              | сторона значка ступени `xl`                                   | `--rt-size-8`                                  |
+| `--rt-icon-size-2xl`                             | сторона значка ступени `2xl`                                  | `--rt-size-10`                                 |
+| `--rt-icon-size-3xl`                             | сторона значка ступени `3xl`                                  | `--rt-size-12`                                 |
+| `--rt-icon-size-4xl`                             | сторона значка ступени `4xl`                                  | `--rt-size-16`                                 |
+| `--rt-icon-color-primary`                        | цвет значка `primary` — основной                              | `--rt-color-action-primary-on-surface`         |
+| `--rt-icon-color-muted`                          | цвет значка `muted` — приглушённый                            | `--rt-neutral-600`                             |
+| `--rt-icon-color-disabled`                       | цвет значка `disabled` — недоступный                          | `--rt-color-text-disabled`                     |
+| `--rt-icon-color-info`                           | цвет значка `info` — сведения                                 | `--rt-color-state-info`                        |
+| `--rt-icon-color-success`                        | цвет значка `success` — успех                                 | `--rt-color-state-success`                     |
+| `--rt-icon-color-warning`                        | цвет значка `warning` — предупреждение                        | `--rt-color-state-warning`                     |
+| `--rt-icon-color-danger`                         | цвет значка `danger` — опасность                              | `--rt-color-state-danger`                      |
+| `--rt-icon-color-inverse`                        | цвет значка `inverse` — на тёмном                             | `--rt-color-text-inverse`                      |
+| `--rt-toast-bg`                                  | фон тоста                                                     | `--rt-color-bg-surface`                        |
+| `--rt-toast-color`                               | цвет текста тоста                                             | `--rt-color-text-primary`                      |
+| `--rt-toast-border-color`                        | цвет рамки тоста                                              | `--rt-color-border-subtle`                     |
+| `--rt-toast-icon-color`                          | цвет значка тоста                                             | цвет важности                                  |
+| `--rt-toast-close-color`                         | цвет крестика тоста                                           | `--rt-color-text-primary`                      |
+| `--rt-toast-action-color`                        | заливка главного действия тоста                               | ступени главного действия                      |
+| `--rt-toast-progress-color`                      | цвет полосы срока тоста                                       | цвет важности                                  |
+| `--rt-toast-progress-height`                     | высота полосы срока тоста                                     | `--rt-space-0-5`                               |
+| `--rt-toast-filled-info-bg`                      | фон залитого тоста сообщения                                  | `--rt-color-state-info-bg`                     |
+| `--rt-toast-filled-info-color`                   | цвет текста и значка залитого тоста сообщения                 | `--rt-color-state-info`                        |
+| `--rt-toast-filled-info-border-color`            | цвет рамки залитого тоста сообщения                           | `--rt-color-state-info-bg`                     |
+| `--rt-toast-filled-success-bg`                   | фон залитого тоста успеха                                     | `--rt-color-state-success-bg`                  |
+| `--rt-toast-filled-success-color`                | цвет текста и значка залитого тоста успеха                    | `--rt-color-state-success`                     |
+| `--rt-toast-filled-success-border-color`         | цвет рамки залитого тоста успеха                              | `--rt-color-state-success-bg`                  |
+| `--rt-toast-filled-warning-bg`                   | фон залитого тоста предупреждения                             | `--rt-color-state-warning-bg`                  |
+| `--rt-toast-filled-warning-color`                | цвет текста и значка залитого тоста предупреждения            | `--rt-color-state-warning`                     |
+| `--rt-toast-filled-warning-border-color`         | цвет рамки залитого тоста предупреждения                      | `--rt-color-state-warning-bg`                  |
+| `--rt-toast-filled-danger-bg`                    | фон залитого тоста ошибки                                     | `--rt-color-state-danger-bg`                   |
+| `--rt-toast-filled-danger-color`                 | цвет текста и значка залитого тоста ошибки                    | `--rt-color-state-danger`                      |
+| `--rt-toast-filled-danger-border-color`          | цвет рамки залитого тоста ошибки                              | `--rt-color-state-danger-bg`                   |
+| `--rt-aside-header-inset`                        | отступ шапки боковой панели                                   | `--rt-aside-inset`                             |
+| `--rt-aside-content-inset`                       | отступ содержимого боковой панели                             | `--rt-aside-inset`                             |
+| `--rt-aside-footer-inset`                        | отступ подвала боковой панели                                 | `--rt-aside-inset` сверху                      |
+| `--rt-aside-footer-margin`                       | поля подвала боковой панели                                   | `--rt-aside-inset`                             |
+| `--rt-aside-footer-justify`                      | раскладка кнопок подвала панели                               | `space-between`                                |
+| `--rt-aside-footer-gap`                          | промежуток между кнопками подвала                             | `--rt-space-sm`                                |
+| `--rt-aside-header-title-leading`                | высота строки заголовка панели                                | наследуется                                    |
+| `--rt-aside-error-margin-block`                  | поля блока ошибки панели сверху и снизу                       | `0`                                            |
+| `--rt-dialog-bg`                                 | фон диалога                                                   | `--rt-color-bg-surface`                        |
+| `--rt-dialog-border`                             | рамка окна диалога                                            | `none`                                         |
+| `--rt-dialog-header-padding`                     | отступ шапки диалога                                          | `--rt-space-lg`                                |
+| `--rt-dialog-header-border`                      | линия под шапкой диалога                                      | тонкая тихая линия                             |
+| `--rt-dialog-title-font-size`                    | кегль заголовка диалога                                       | `--rt-text-xl`                                 |
+| `--rt-dialog-title-weight`                       | начертание заголовка диалога                                  | `--rt-font-weight-bold`                        |
+| `--rt-dialog-title-transform`                    | регистр заголовка диалога                                     | `none`                                         |
+| `--rt-dialog-content-padding`                    | отступ тела диалога                                           | `--rt-space-lg`                                |
+| `--rt-dialog-content-max-height`                 | потолок высоты тела диалога                                   | `none`                                         |
+| `--rt-dialog-footer-padding`                     | отступ подвала диалога                                        | `--rt-space-lg`                                |
+| `--rt-dialog-footer-border`                      | линия над подвалом диалога                                    | тонкая тихая линия                             |
+| `--rt-tag-color-bg`                              | фон тега                                                      | цвет его значимости                            |
+| `--rt-tag-color-text`                            | цвет текста тега                                              | цвет его значимости                            |
+| `--rt-tag-color-border`                          | цвет рамки контурного тега                                    | цвет текста                                    |
+| `--rt-tag-padding-block`                         | отступ тега по вертикали                                      | ступень его размера                            |
+| `--rt-tag-padding-inline`                        | отступ тега по горизонтали                                    | ступень его размера                            |
+| `--rt-tag-letter-spacing`                        | межбуквенный интервал тега                                    | от родителя                                    |
 
 <div style={warn}>
     <strong>Ручка — обещание, а не забытое объявление.</strong> Имя, которого нет ни в этой таблице, ни в слоях оформления, — мёртвая

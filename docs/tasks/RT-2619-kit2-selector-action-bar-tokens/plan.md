@@ -66,7 +66,25 @@
 - **Readiness sign:** all checks green, the snapshot suite green on a second run.
 - **Verified by:** `node tools/visual-gate.mjs ui-kit-v2` — every frame matches.
 
+### 6. Icon (appended 7 October 2026 by the owner's word «включи в текущую задачу»)
+
+- **Steps:**
+    1. Add the glyphStrategy input on the instance
+    2. Put the glyph axes weight, grade and opsz into font-variation-settings
+    3. Add the colours primary and disabled and turn every colour into a handle
+    4. Take the size steps from handles and add 3xl and 4xl
+- **Readiness sign:** the icon specs are green, the token graph check passes.
+- **Verified by:** `pnpm exec nx test @rt-tools/ui-kit-v2 --testFile=icon` — «Tests:» with no failed.
+
+### 7. Popup handles (appended 7 October 2026 by the owner's word «глянь еще это в этой ветке»)
+
+- **Steps:**
+    1. Read the popup properties from any ancestor with the defaults under `-default`
+    2. Re-take the touched snapshots and confirm no other frame moved
+- **Readiness sign:** the token graph check passes, the snapshot suite moves only the touched stories.
+- **Verified by:** `node tools/visual-gate.mjs ui-kit-v2` — every frame outside the touched stories matches.
+
 ## What this work does not do
 
-- The popup, list and empty-state properties are not turned into handles: not asked.
+- The list and empty-state properties are not turned into handles: not asked.
 - The epic RT-2542 is not touched: this work is outside it by the owner's word.

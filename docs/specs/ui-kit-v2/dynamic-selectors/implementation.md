@@ -40,3 +40,6 @@ paths are given from the root of the tree.
 
 The scenarios of the subdomain are bound to the tests by the number in the title of a test, not by a
 table here: the bond is checked both ways by the checking of the specs.
+
+- **The caller names the look of the invitation, the clear button, the popup search and the empty result.** — `projects/ui-kit-v2/src/lib/components/dynamic-selector/rt-dynamic-selector.component.ts:invitationButtonIcon`, `projects/ui-kit-v2/src/lib/components/dynamic-selector/rt-dynamic-selector.component.ts:clearIcon`, `projects/ui-kit-v2/src/lib/components/dynamic-selector/popup/rt-dynamic-selector-popup.component.ts:searchAppearance`, `projects/ui-kit-v2/src/lib/components/dynamic-selector/popup/rt-dynamic-selector-popup.component.ts:emptyText`, `projects/ui-kit-v2/src/lib/components/dynamic-selector/dynamic-input/rt-dynamic-input.component.ts:fieldAppearance`
+- **A value the caller sets on the list block reaches it, and a popup property or the add button's colour reaches it from any ancestor.** — `projects/ui-kit-v2/src/lib/components/dynamic-selector/popup/rt-dynamic-selector-popup.component.scss:popup-bg-default`, `projects/ui-kit-v2/src/lib/components/dynamic-selector/list/rt-dynamic-selector-list.component.scss:add-color`

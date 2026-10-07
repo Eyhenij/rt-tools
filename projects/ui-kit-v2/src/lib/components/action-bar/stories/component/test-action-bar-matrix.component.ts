@@ -4,6 +4,7 @@ import { StoryPresetsComponent } from '../../../../../showcase/story-presets.com
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtActionBarComponent } from '../../rt-action-bar.component';
+import { IRtIcon } from '../../../icon/rt-icon.model';
 import { IRtActionBar } from '../../rt-action-bar.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
@@ -16,6 +17,9 @@ export type TActionBarMatrixPart = 'counter' | 'actions' | 'wrap' | 'properties'
 interface IStyleCase {
     readonly label: string;
     readonly style: Readonly<Record<string, string>>;
+    /** Свойства на предке полосы: с RT-2619 они доходят до неё и оттуда. */
+    readonly ancestorStyle?: Readonly<Record<string, string>>;
+    readonly closeIcon?: IRtIcon.Name;
 }
 
 /** Один случай ряда: подпись ячейки и настройка, которую показывает полоса. */
@@ -93,7 +97,10 @@ function config(selected: number, total: number, actions: readonly IRtActionBar.
                     <ng-template>
                         <app-story-row slotWidth="30rem" [items]="styleCases" [itemLabel]="caseLabel">
                             <ng-template let-item>
-                                <rt-action-bar [config]="fullConfig" [style]="item.style" />
+                                <!-- Обёртка без коробки: ячейка ряда отдаёт ширину полосе, а свойства предка наследуются. -->
+                                <div style="display: contents" [style]="item.ancestorStyle ?? {}">
+                                    <rt-action-bar [config]="fullConfig" [style]="item.style" [closeIcon]="item.closeIcon ?? 'close'" />
+                                </div>
                             </ng-template>
                         </app-story-row>
                     </ng-template>
@@ -146,6 +153,10 @@ export class TestRtActionBarMatrixComponent {
             label: 'с вложенным списком',
             config: config(3, 128, [{ label: 'Отправить', icon: 'send', menu: [{ label: 'Письмом' }, { label: 'В чат' }] }]),
         },
+        {
+            label: 'имя Material',
+            config: config(3, 128, [{ label: 'Стереть', glyph: 'delete_forever', look: 'danger' }]),
+        },
     ];
 
     public readonly wrapCases: readonly ICase[] = [
@@ -188,6 +199,20 @@ export class TestRtActionBarMatrixComponent {
                 '--rt-action-bar-action-padding-block': 'var(--rt-space-0-5)',
                 '--rt-action-bar-action-padding-inline': 'var(--rt-space-1)',
                 '--rt-action-bar-action-weight': 'var(--rt-font-weight-regular)',
+            },
+        },
+        {
+            label: 'на предке и новые свойства',
+            style: {},
+            closeIcon: 'times-circle',
+            ancestorStyle: {
+                '--rt-action-bar-action-height': 'var(--rt-control-height-md)',
+                '--rt-action-bar-action-font-size': 'var(--rt-text-md)',
+                '--rt-action-bar-icon-size': 'var(--rt-size-5)',
+                '--rt-action-bar-icon-gap': 'var(--rt-space-1)',
+                '--rt-action-bar-counter-font-size': 'var(--rt-text-md)',
+                '--rt-action-bar-close-size': 'var(--rt-control-height-md)',
+                '--rt-action-bar-close-icon-size': 'var(--rt-size-5)',
             },
         },
     ];

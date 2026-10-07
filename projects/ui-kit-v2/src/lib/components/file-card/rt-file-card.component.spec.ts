@@ -119,8 +119,12 @@ describe('RtFileCardComponent', (): void => {
         });
 
         it('мелкая карточка рисует мелкую иконку, средняя и крупная — большую', (): void => {
-            expect((el(setup({ size: 'sm' }), '.rt-file-card__icon')?.nativeElement as HTMLElement).style.width).toBe('16px');
-            expect((el(setup({ size: 'lg' }), '.rt-file-card__icon')?.nativeElement as HTMLElement).style.width).toBe('32px');
+            expect((el(setup({ size: 'sm' }), '.rt-file-card__icon')?.nativeElement as HTMLElement).style.width).toBe(
+                'var(--rt-icon-size-sm, var(--rt-size-4))'
+            );
+            expect((el(setup({ size: 'lg' }), '.rt-file-card__icon')?.nativeElement as HTMLElement).style.width).toBe(
+                'var(--rt-icon-size-xl, var(--rt-size-8))'
+            );
         });
     });
 });

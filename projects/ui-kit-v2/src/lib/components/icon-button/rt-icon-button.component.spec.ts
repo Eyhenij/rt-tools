@@ -62,11 +62,11 @@ describe('RtIconButtonComponent', (): void => {
 
     describe('размер иконки', (): void => {
         it.each<[IRtIconButton.Size, string]>([
-            ['2xs', '16px'],
-            ['xs', '16px'],
-            ['sm', '16px'],
-            ['md', '20px'],
-            ['lg', '24px'],
+            ['2xs', 'var(--rt-icon-size-sm, var(--rt-size-4))'],
+            ['xs', 'var(--rt-icon-size-sm, var(--rt-size-4))'],
+            ['sm', 'var(--rt-icon-size-sm, var(--rt-size-4))'],
+            ['md', 'var(--rt-icon-size-md, var(--rt-size-5))'],
+            ['lg', 'var(--rt-icon-size-lg, var(--rt-size-6))'],
         ])('размер кнопки %s даёт иконку %s', (size: IRtIconButton.Size, expected: string): void => {
             expect((el(setup({ size }), 'rt-icon')?.nativeElement as HTMLElement).style.width).toBe(expected);
         });
@@ -77,7 +77,7 @@ describe('RtIconButtonComponent', (): void => {
                 const fixture: ComponentFixture<RtIconButtonComponent> = setup({ size });
 
                 expect(controlClasses(fixture)).toContain(`rt-icon-button--${size}`);
-                expect((el(fixture, 'rt-icon')?.nativeElement as HTMLElement).style.width).toBe('16px');
+                expect((el(fixture, 'rt-icon')?.nativeElement as HTMLElement).style.width).toBe('var(--rt-icon-size-sm, var(--rt-size-4))');
             }
         );
 
@@ -86,7 +86,7 @@ describe('RtIconButtonComponent', (): void => {
             // диаметр выглядела бы тяжеловесно.
             const fixture: ComponentFixture<RtIconButtonComponent> = setup({ size: 'lg', iconSize: 'sm' });
 
-            expect((el(fixture, 'rt-icon')?.nativeElement as HTMLElement).style.width).toBe('16px');
+            expect((el(fixture, 'rt-icon')?.nativeElement as HTMLElement).style.width).toBe('var(--rt-icon-size-sm, var(--rt-size-4))');
         });
     });
 

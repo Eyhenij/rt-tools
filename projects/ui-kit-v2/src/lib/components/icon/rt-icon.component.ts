@@ -27,43 +27,60 @@ import { RT_ICON_MATERIAL_PRESET_SELECTOR } from './rt-icon.const';
 import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 import { RtIconRegistry } from './rt-icon.registry';
 
-const SIZES: Readonly<Record<IRtIcon.Size, number>> = Object.freeze({
+/* Ступень — свойство, которое приложение задаёт правилом на значке или на его предке; умолчание —
+   шаг шкалы размеров кита, те же пиксели, что стояли здесь числом. */
+const SIZES: Readonly<Record<IRtIcon.Size, string>> = Object.freeze({
+    xs: 'var(--rt-icon-size-xs, var(--rt-size-3))',
+    sm: 'var(--rt-icon-size-sm, var(--rt-size-4))',
+    md: 'var(--rt-icon-size-md, var(--rt-size-5))',
+    lg: 'var(--rt-icon-size-lg, var(--rt-size-6))',
+    xl: 'var(--rt-icon-size-xl, var(--rt-size-8))',
+    '2xl': 'var(--rt-icon-size-2xl, var(--rt-size-10))',
+    '3xl': 'var(--rt-icon-size-3xl, var(--rt-size-12))',
+    '4xl': 'var(--rt-icon-size-4xl, var(--rt-size-16))',
+});
+
+/* Пиксели ступеней по умолчанию — оптический размер лигатуры. Без оси `opsz` в настройках шрифта
+   браузер ставил её по размеру шрифта, и умолчание повторяет это: значок, которому приложение оси
+   не задало, рисуется как прежде. */
+const STEP_PX: Readonly<Record<IRtIcon.Size, number>> = Object.freeze({
     xs: 12,
     sm: 16,
     md: 20,
     lg: 24,
     xl: 32,
     '2xl': 40,
+    '3xl': 48,
+    '4xl': 64,
 });
 
 /* Без переданного цвета значок цвета не пишет: `currentColor` строкой стиля перебивал правило
    стилей, которое красит значок снаружи, — значок опасного пункта меню оставался цвета текста. */
+// Каждый тон можно переназначить свойством сверху: поле ввода называет так тон своего значка в
+// наборе оформления. Цвет стоит встроенным стилем, и правилом его не перебить.
 const COLORS: Readonly<Record<IRtIcon.Color, string | null>> = Object.freeze({
     current: null,
-    // Приглушённый тон можно переназначить свойством сверху: поле ввода называет так тон своего
-    // значка в наборе оформления. Цвет стоит встроенным стилем, и правилом его не перебить.
+    primary: 'var(--rt-icon-color-primary, var(--rt-color-action-primary-on-surface))',
     muted: 'var(--rt-icon-color-muted, var(--rt-neutral-600))',
-    info: 'var(--rt-color-state-info)',
-    success: 'var(--rt-color-state-success)',
-    warning: 'var(--rt-color-state-warning)',
-    danger: 'var(--rt-color-state-danger)',
-    inverse: 'var(--rt-color-text-inverse)',
+    disabled: 'var(--rt-icon-color-disabled, var(--rt-color-text-disabled))',
+    info: 'var(--rt-icon-color-info, var(--rt-color-state-info))',
+    success: 'var(--rt-icon-color-success, var(--rt-color-state-success))',
+    warning: 'var(--rt-icon-color-warning, var(--rt-color-state-warning))',
+    danger: 'var(--rt-icon-color-danger, var(--rt-color-state-danger))',
+    inverse: 'var(--rt-icon-color-inverse, var(--rt-color-text-inverse))',
 });
 
 function isSizeStep(value: string): value is IRtIcon.Size {
     return Object.hasOwn(SIZES, value);
 }
 
-/** Ступень или число пикселей — в пиксели. Числовая строка читается числом, прочее — ступенью `md`. */
-function toSizePx(value: IRtIcon.SizeInput | string): number {
-    if (typeof value === 'number') {
-        return value > 0 ? value : SIZES.md;
+/** Ступень остаётся ступенью, число — пикселями. Числовая строка читается числом, прочее — ступенью `md`. */
+function toSize(value: IRtIcon.SizeInput | string): IRtIcon.SizeInput {
+    let size: IRtIcon.SizeInput = typeof value === 'number' || isSizeStep(value) ? value : numberAttribute(value, 0);
+    if (typeof size === 'number' && size <= 0) {
+        size = 'md';
     }
-    if (isSizeStep(value)) {
-        return SIZES[value];
-    }
-    const px: number = numberAttribute(value, 0);
-    return px > 0 ? px : SIZES.md;
+    return size;
 }
 
 const BEM_BLOCK: string = 'rt-icon';
@@ -78,8 +95,8 @@ const BEM_BLOCK: string = 'rt-icon';
     host: {
         class: BEM_BLOCK,
         '[attr.aria-hidden]': "'true'",
-        '[style.width.px]': 'sizePx()',
-        '[style.height.px]': 'sizePx()',
+        '[style.width]': 'sizeValue()',
+        '[style.height]': 'sizeValue()',
         '[style.color]': 'colorValue()',
         '[style.transform]': 'rotateStyle()',
         '[class.rt-icon--spin]': 'spin()',
@@ -108,7 +125,7 @@ export class RtIconComponent {
 
     /** Чем рисуется значок: именем кита или лигатурой шрифта. Ни имени, ни глифа — пустое место. */
     protected readonly resolved: Signal<IRtIcon.Resolved | null> = computed((): IRtIcon.Resolved | null =>
-        resolveIconGlyph(this.name(), this.glyph(), this.#strategy)
+        resolveIconGlyph(this.name(), this.glyph(), this.glyphStrategy() ?? this.#strategy)
     );
 
     protected readonly kitName: Signal<IRtIcon.Name | null> = computed((): IRtIcon.Name | null => {
@@ -150,7 +167,17 @@ export class RtIconComponent {
         return this.fill() ? 'material-fill' : 'material';
     });
 
-    protected readonly sizePx: Signal<number> = computed((): number => this.size());
+    /** Длина CSS стороны значка: ступень — её свойство `--rt-icon-size-*`, число — пиксели. */
+    protected readonly sizeValue: Signal<string> = computed((): string => {
+        const size: IRtIcon.SizeInput = this.size();
+        return typeof size === 'number' ? `${size}px` : SIZES[size];
+    });
+
+    /** Оптический размер лигатуры, пока приложение не задало `--rt-icon-glyph-opsz`: сторона значка в пикселях. */
+    protected readonly opticalSize: Signal<number> = computed((): number => {
+        const size: IRtIcon.SizeInput = this.size();
+        return typeof size === 'number' ? size : STEP_PX[size];
+    });
 
     protected readonly colorValue: Signal<string | null> = computed((): string | null => COLORS[this.color()]);
 
@@ -170,14 +197,20 @@ export class RtIconComponent {
     public readonly glyph: InputSignal<string | null> = input<string | null>(null);
 
     /**
+     * Как рисовать имя Material у этого значка. Перекрывает `glyphStrategy` из `provideRtIcons()`;
+     * `null` — берётся настройка приложения. Дефолт `null`.
+     */
+    public readonly glyphStrategy: InputSignal<IRtIcon.GlyphStrategy | null> = input<IRtIcon.GlyphStrategy | null>(null);
+
+    /**
      * Ступень размера или число пикселей — для размеров между ступенями и крупнее последней.
      * Числовая строка из статического атрибута читается числом, прочая строка вне ступеней — `md`.
-     * Внутри вход хранит пиксели: ступень переводится в них при записи.
+     * Внутри вход хранит ступень или положительное число пикселей.
      */
-    public readonly size: InputSignalWithTransform<number, IRtIcon.SizeInput | string> = input<number, IRtIcon.SizeInput | string>(
-        SIZES.md,
-        { transform: toSizePx }
-    );
+    public readonly size: InputSignalWithTransform<IRtIcon.SizeInput, IRtIcon.SizeInput | string> = input<
+        IRtIcon.SizeInput,
+        IRtIcon.SizeInput | string
+    >('md', { transform: toSize });
 
     public readonly color: InputSignal<IRtIcon.Color> = input<IRtIcon.Color>('current');
 

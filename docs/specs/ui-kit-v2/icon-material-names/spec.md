@@ -1,6 +1,6 @@
 # The Material names of an icon
 
-**Status:** in force · **Revision:** 2 October 2026 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 7 October 2026 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the icon of the second kit and its table of Material pairs; the material preset
 **Laws:** `frontend-application`, `verifiability`, `reuse-first`
 **Procedures:** none
@@ -37,10 +37,22 @@ A person sees an icon; how it is drawn is invisible to them.
 - **By the strategy `font` a glyph always draws the ligature.**
 - **The strategy is set for the application by the third argument of `provideRtIcons`, and
   `map-first` is the default.** A call with two addresses works as before.
+- **One icon sets its own strategy by the `glyphStrategy` input, and it overrides the
+  application's.** Without the input the application's strategy holds.
+- **The font axes of the ligature are properties the application sets above the icon.** Weight
+  `--rt-icon-glyph-weight`, grade `--rt-icon-glyph-grade` and optical size `--rt-icon-glyph-opsz`
+  default to 400, 0 and the side of the icon in pixels — what the browser took without the axis, so
+  an icon without the properties draws as before; the fill still comes from the `fill` input.
 - **The ligature is hidden until the page's fonts are ready, and the kit ships no font.** The family
   is the property `--rt-icon-glyph-font`, and the fill of the icon sets the font's fill.
 - **An icon spins on request, and slower when the system asks for less motion.**
 - **The size of an icon takes pixels as well as a step.**
+- **A size step is the property `--rt-icon-size-<step>`, and its default is the kit size scale.**
+  Eight steps: `xs` 12, `sm` 16, `md` 20, `lg` 24, `xl` 32, `2xl` 40, `3xl` 48 and `4xl` 64 pixels.
+  A number stays pixels.
+- **Every colour of the icon but `current` is a property the application sets above it.** The
+  default of `--rt-icon-color-<colour>` is the kit role the colour drew before; `primary` and
+  `disabled` stand next to the former ones.
 - **Under the material preset a button asks for the material drawing of its icon, as the icon
   does.**
 - **The icon button, the toggle button group, the split button and the empty state take a glyph
@@ -102,7 +114,11 @@ by their own ways.
 - **One resolver of a Material name lives in the icon folder.** The menu item and the side menu
   resolved it by two copies of their own; they move onto it with their behaviour unchanged.
 - **The size type stays as it is, and only the input takes pixels.** The type is read in many
-  places, and widening it breaks consumers that map over the steps.
+  places, and widening it breaks consumers that map over the steps. Revised on 7 October 2026: the
+  owner asked for the steps `3xl` and `4xl`, and the type grew by them; inside the kit only the
+  icon itself maps over the steps.
+- **`primary` takes `--rt-color-action-primary-on-surface`.** The kit has no `--rt-color-primary`;
+  the brand colour over a surface is the role the text button paints its label with.
 
 ## Open questions
 
@@ -111,3 +127,5 @@ None.
 ## History of changes
 
 - 2 October 2026 — the agreement was written from the consumer's request by task RT-2473.
+- 7 October 2026 — the strategy on one icon, the font axes, the colours and the size steps as
+  application properties, by task RT-2619.

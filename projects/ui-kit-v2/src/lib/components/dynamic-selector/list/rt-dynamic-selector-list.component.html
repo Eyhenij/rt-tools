@@ -99,6 +99,7 @@
 
             @if (resetClearShown()) {
                 <rt-icon-button
+                    rtElem="reset"
                     qa-dataid="dynamic-selector-reset"
                     icon="refresh"
                     size="sm"
@@ -109,9 +110,10 @@
                     [disabled]="resetDisabled() || disabled()"
                     (clicked)="resetClicked.emit()" />
                 <rt-icon-button
+                    rtElem="clear"
                     qa-dataid="dynamic-selector-clear"
-                    icon="close"
                     size="sm"
+                    [icon]="clearIcon()"
                     [radius]="buttonRadius()"
                     [iconColor]="clearDisabled() || disabled() ? 'muted' : 'danger'"
                     [ariaLabel]="clearLabel()"

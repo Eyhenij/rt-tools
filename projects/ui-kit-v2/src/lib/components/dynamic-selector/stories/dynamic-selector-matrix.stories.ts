@@ -44,6 +44,9 @@ export const Switches: TStory = { args: { part: 'switches' } };
 /** Окно с начальным запросом: текст уже в поиске, предложены только совпадения. */
 export const InitialQuery: TStory = { args: { part: 'initial-query' } };
 
+/** Вид, который задаёт приложение: входы приглашения, очистки, поиска и пустого результата, свойства окна. */
+export const Look: TStory = { args: { part: 'look' } };
+
 export const Presets: TStory = { args: { part: 'presets' } };
 
 export const Themes: TStory = { args: { part: 'themes' } };

@@ -4,42 +4,63 @@
     /* rt-dynamic-selector-popup — панель выбора в CDK Overlay. ViewEncapsulation.None.
        Размер и вид сняты с кадров первого кита: 20rem на 30rem, поверхность с рамкой и тенью. */
 
+    /* Свойства окна приложение задаёт на любом предке — на панели оверлея или на своём контейнере:
+       на самом окне объявлены только умолчания с приставкой `-default`, а читается свойство с
+       запасным значением. Объявленное на окне под публичным именем перебило бы правило предка. */
     .rt-dynamic-selector-popup {
-        --rt-dynamic-selector-popup-width: calc(var(--rt-size-40) * 2);
-        --rt-dynamic-selector-popup-max-height: calc(var(--rt-size-100) + var(--rt-size-20));
-        --rt-dynamic-selector-popup-radius: var(--rt-radius-md);
-        --rt-dynamic-selector-popup-border-width: var(--rt-border-width-thin);
-        --rt-dynamic-selector-popup-shadow: var(--rt-shadow-lg);
+        --rt-dynamic-selector-popup-width-default: calc(var(--rt-size-40) * 2);
+        --rt-dynamic-selector-popup-max-height-default: calc(var(--rt-size-100) + var(--rt-size-20));
+        --rt-dynamic-selector-popup-radius-default: var(--rt-radius-md);
+        --rt-dynamic-selector-popup-border-width-default: var(--rt-border-width-thin);
+        --rt-dynamic-selector-popup-shadow-default: var(--rt-shadow-lg);
+        --rt-dynamic-selector-popup-bg-default: var(--rt-color-bg-surface);
+        --rt-dynamic-selector-popup-min-height-default: 0;
+        --rt-dynamic-selector-popup-padding-default: var(--rt-space-md);
+        --rt-dynamic-selector-popup-foot-border-width-default: var(
+            --rt-dynamic-selector-popup-border-width,
+            var(--rt-dynamic-selector-popup-border-width-default)
+        );
+        --rt-dynamic-selector-popup-nav-color-default: var(--rt-color-text-link);
+
+        /* Кнопки «Отмена» и «Применить» по умолчанию той же высоты и кегля, что кнопка кита среднего шага. */
+        --rt-dynamic-selector-popup-button-height-default: var(--rt-control-height-md);
+        --rt-dynamic-selector-popup-button-font-size-default: 0.95rem;
+
+        /* Заглушка «ничего не нашлось» по умолчанию повторяет свойства самой заглушки. */
+        --rt-dynamic-selector-popup-empty-icon-size-default: var(--rt-size-8);
+        --rt-dynamic-selector-popup-empty-icon-wrap-bg-default: var(--rt-color-bg-subtle);
+        --rt-dynamic-selector-popup-empty-text-size-default: var(--rt-text-md);
+        --rt-dynamic-selector-popup-empty-text-weight-default: var(--rt-font-weight-medium);
+        --rt-dynamic-selector-popup-empty-text-color-default: var(--rt-color-text-primary);
 
         display: flex;
-        width: var(--rt-dynamic-selector-popup-width);
+        width: var(--rt-dynamic-selector-popup-width, var(--rt-dynamic-selector-popup-width-default));
         max-width: calc(100vw - var(--rt-space-md) * 2);
-        max-height: var(--rt-dynamic-selector-popup-max-height);
+        min-height: var(--rt-dynamic-selector-popup-min-height, var(--rt-dynamic-selector-popup-min-height-default));
+        max-height: var(--rt-dynamic-selector-popup-max-height, var(--rt-dynamic-selector-popup-max-height-default));
         box-sizing: border-box;
         flex-direction: column;
-        border: var(--rt-dynamic-selector-popup-border-width) solid var(--rt-color-border-subtle);
-        border-radius: var(--rt-dynamic-selector-popup-radius);
-        background: var(--rt-color-bg-surface);
-        box-shadow: var(--rt-dynamic-selector-popup-shadow);
+        border: var(--rt-dynamic-selector-popup-border-width, var(--rt-dynamic-selector-popup-border-width-default)) solid
+            var(--rt-color-border-subtle);
+        border-radius: var(--rt-dynamic-selector-popup-radius, var(--rt-dynamic-selector-popup-radius-default));
+        background: var(--rt-dynamic-selector-popup-bg, var(--rt-dynamic-selector-popup-bg-default));
+        box-shadow: var(--rt-dynamic-selector-popup-shadow, var(--rt-dynamic-selector-popup-shadow-default));
         color: var(--rt-color-text-primary);
         gap: var(--rt-space-sm);
-        padding-block: var(--rt-space-md);
+        padding-block: var(--rt-dynamic-selector-popup-padding, var(--rt-dynamic-selector-popup-padding-default));
 
         &__head {
             display: flex;
             flex-direction: column;
             gap: var(--rt-space-sm);
-            padding-inline: var(--rt-space-md);
-        }
-
-        &__search {
-            display: block;
+            padding-inline: var(--rt-dynamic-selector-popup-padding, var(--rt-dynamic-selector-popup-padding-default));
         }
 
         &__controls {
             display: flex;
             flex-direction: column;
-            border-bottom: var(--rt-dynamic-selector-popup-border-width) solid var(--rt-color-border-subtle);
+            border-bottom: var(--rt-dynamic-selector-popup-border-width, var(--rt-dynamic-selector-popup-border-width-default)) solid
+                var(--rt-color-border-subtle);
 
             /* Строка переключателя и «Выбрать все» — два разных решения; при зазоре 2xs флажок
                прилипал к переключателю и читался его частью. */
@@ -97,7 +118,7 @@
             flex: 1 1 auto;
             flex-direction: column;
             overflow-y: auto;
-            padding-inline: var(--rt-space-md);
+            padding-inline: var(--rt-dynamic-selector-popup-padding, var(--rt-dynamic-selector-popup-padding-default));
         }
 
         // Шаг строки снят с первого кита: флажок и по отступу сверху и снизу — около 36px.
@@ -106,7 +127,8 @@
             padding-block: var(--rt-space-sm);
 
             &--separated {
-                border-bottom: var(--rt-dynamic-selector-popup-border-width) solid var(--rt-color-border-subtle);
+                border-bottom: var(--rt-dynamic-selector-popup-border-width, var(--rt-dynamic-selector-popup-border-width-default)) solid
+                    var(--rt-color-border-subtle);
                 margin-block-end: var(--rt-space-2xs);
                 padding-block-end: var(--rt-space-sm);
             }
@@ -129,18 +151,43 @@
         }
 
         &__empty {
-            display: block;
-            padding-inline: var(--rt-space-md);
+            padding-inline: var(--rt-dynamic-selector-popup-padding, var(--rt-dynamic-selector-popup-padding-default));
+        }
+
+        /* Свойства заглушки переставляются правилом из двух классов: объявление самой заглушки
+           стоит на том же элементе, и одним классом его не перебить. */
+        &__empty.rt-empty-state {
+            --rt-empty-state-icon-size: var(
+                --rt-dynamic-selector-popup-empty-icon-size,
+                var(--rt-dynamic-selector-popup-empty-icon-size-default)
+            );
+            --rt-empty-state-icon-wrap-bg: var(
+                --rt-dynamic-selector-popup-empty-icon-wrap-bg,
+                var(--rt-dynamic-selector-popup-empty-icon-wrap-bg-default)
+            );
+            --rt-empty-state-title-size: var(
+                --rt-dynamic-selector-popup-empty-text-size,
+                var(--rt-dynamic-selector-popup-empty-text-size-default)
+            );
+            --rt-empty-state-title-weight: var(
+                --rt-dynamic-selector-popup-empty-text-weight,
+                var(--rt-dynamic-selector-popup-empty-text-weight-default)
+            );
+            --rt-empty-state-title-color: var(
+                --rt-dynamic-selector-popup-empty-text-color,
+                var(--rt-dynamic-selector-popup-empty-text-color-default)
+            );
         }
 
         &__foot {
             display: flex;
             align-items: center;
             justify-content: flex-end;
-            border-top: var(--rt-dynamic-selector-popup-border-width) solid var(--rt-color-border-subtle);
+            border-top: var(--rt-dynamic-selector-popup-foot-border-width, var(--rt-dynamic-selector-popup-foot-border-width-default)) solid
+                var(--rt-color-border-subtle);
             gap: var(--rt-space-sm);
             padding-block-start: var(--rt-space-sm);
-            padding-inline: var(--rt-space-md);
+            padding-inline: var(--rt-dynamic-selector-popup-padding, var(--rt-dynamic-selector-popup-padding-default));
 
             &--nav {
                 justify-content: space-between;
@@ -151,7 +198,7 @@
         &__nav {
             overflow: hidden;
             min-width: 0;
-            color: var(--rt-color-text-link);
+            color: var(--rt-dynamic-selector-popup-nav-color, var(--rt-dynamic-selector-popup-nav-color-default));
             font-size: var(--rt-text-sm);
             text-overflow: ellipsis;
             white-space: nowrap;
@@ -165,6 +212,14 @@
             display: flex;
             flex: 0 0 auto;
             gap: var(--rt-space-sm);
+        }
+
+        &__actions .rt-button {
+            --rt-btn-height: var(--rt-dynamic-selector-popup-button-height, var(--rt-dynamic-selector-popup-button-height-default));
+            --rt-btn-font-size: var(
+                --rt-dynamic-selector-popup-button-font-size,
+                var(--rt-dynamic-selector-popup-button-font-size-default)
+            );
         }
     }
 }

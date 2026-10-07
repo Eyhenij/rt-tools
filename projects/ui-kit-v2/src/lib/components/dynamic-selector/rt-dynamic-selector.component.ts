@@ -26,7 +26,7 @@ import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
 import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
 import { RtEmptyStateComponent } from '@rt-tools/ui-kit-v2/empty-state';
 import { RtFormControlBase } from '@rt-tools/ui-kit-v2/form-control';
-import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
+import { IButton, IRtIcon, IRtInput } from '@rt-tools/ui-kit-v2/core';
 import { RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
 import { TRtRadius } from '@rt-tools/ui-kit-v2/core';
 import { RtDynamicSelectorListComponent } from './list/rt-dynamic-selector-list.component';
@@ -175,6 +175,16 @@ export class RtDynamicSelectorComponent<TEntity extends object> extends RtFormCo
     });
     public readonly invitationIcon: InputSignal<IRtIcon.Name | null> = input<IRtIcon.Name | null>(null);
     public readonly invitationDescription: InputSignal<string> = input<string>('');
+    /** Значок кнопки приглашения; null — кнопка без значка. */
+    public readonly invitationButtonIcon: InputSignal<IRtIcon.Name | null> = input<IRtIcon.Name | null>(null);
+    /** Вид кнопки приглашения — тот же набор, что у кнопки кита. */
+    public readonly invitationButtonAppearance: InputSignal<IButton.Appearance> = input<IButton.Appearance>('outlined');
+    /** Значок кнопки «Очистить список». */
+    public readonly clearIcon: InputSignal<IRtIcon.Name> = input<IRtIcon.Name>('close');
+    /** Вид поля поиска в окне выбора. */
+    public readonly searchAppearance: InputSignal<IRtInput.Appearance> = input<IRtInput.Appearance>('outline');
+    /** Подпись пустого результата поиска; пустая строка оставляет подпись кита. */
+    public readonly emptyResultsText: InputSignal<string> = input<string>('');
     public readonly multiToggleShown: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
         transform: booleanAttribute,
     });

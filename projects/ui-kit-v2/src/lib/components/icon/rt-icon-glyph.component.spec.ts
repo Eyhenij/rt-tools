@@ -36,7 +36,7 @@ describe('RtIconComponent — глиф Material', (): void => {
 
         expect(el(fixture, 'svg')).toBeNull();
         expect(glyphNode(fixture)?.textContent?.trim()).toBe('pets');
-        expect(glyphNode(fixture)?.style.fontSize).toBe('24px');
+        expect(glyphNode(fixture)?.style.fontSize).toBe('var(--rt-icon-size-lg, var(--rt-size-6))');
         http.verify();
     });
 
@@ -53,6 +53,27 @@ describe('RtIconComponent — глиф Material', (): void => {
         ]);
 
         expect(el(fixture, 'svg')).toBeNull();
+        expect(glyphNode(fixture)?.textContent?.trim()).toBe('arrow_back');
+    });
+
+    it('SC-UKV-709 — вход glyphStrategy значка перекрывает стратегию приложения', (): void => {
+        const own: ComponentFixture<RtIconComponent> = setup({ glyph: 'arrow_back', glyphStrategy: 'font' }, [
+            { provide: RT_ICON_GLYPH_STRATEGY, useValue: 'map-first' },
+        ]);
+        const neighbour: ComponentFixture<RtIconComponent> = setup({ glyph: 'arrow_back' }, [
+            { provide: RT_ICON_GLYPH_STRATEGY, useValue: 'map-first' },
+        ]);
+
+        expect(el(own, 'svg')).toBeNull();
+        expect(glyphNode(own)?.textContent?.trim()).toBe('arrow_back');
+        expect(el(neighbour, 'use')?.attributes['href']).toBe('#rt-icon-arrow-left');
+    });
+
+    it('SC-UKV-709 — без входа glyphStrategy значок берёт стратегию приложения', (): void => {
+        const fixture: ComponentFixture<RtIconComponent> = setup({ glyph: 'arrow_back', glyphStrategy: null }, [
+            { provide: RT_ICON_GLYPH_STRATEGY, useValue: 'font' },
+        ]);
+
         expect(glyphNode(fixture)?.textContent?.trim()).toBe('arrow_back');
     });
 
@@ -105,7 +126,7 @@ describe('RtIconComponent — вращение и размер в пикселя
         [14, '14px'],
         [56, '56px'],
         ['48', '48px'],
-        ['lg', '24px'],
+        ['lg', 'var(--rt-icon-size-lg, var(--rt-size-6))'],
     ])('SC-UKV-552 — размер %p даёт квадрат %s', (size: unknown, expected: string): void => {
         const host: HTMLElement = hostOf(setup({ name: 'check', size }));
 
@@ -114,7 +135,7 @@ describe('RtIconComponent — вращение и размер в пикселя
     });
 
     it.each<[unknown]>([[0], [-4], ['huge']])('негодный размер %p рисуется ступенью md', (size: unknown): void => {
-        expect(hostOf(setup({ name: 'check', size })).style.width).toBe('20px');
+        expect(hostOf(setup({ name: 'check', size })).style.width).toBe('var(--rt-icon-size-md, var(--rt-size-5))');
     });
 });
 

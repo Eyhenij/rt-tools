@@ -110,8 +110,8 @@ a media query, and the spec environment has no such query.
 
 Given the icon is given 14, 56, the string `48` or the step `lg`
 When it is drawn
-Then it is a square of 14, 56, 48 and 24 pixels. A size that is neither a positive number nor a
-step draws the step `md`
+Then it is a square of 14, 56 and 48 pixels and of the step `lg` property. A size that is neither a
+positive number nor a step draws the step `md`
 
 Covered: `projects/ui-kit-v2/src/lib/components/icon/rt-icon-glyph.component.spec.ts`.
 
@@ -170,3 +170,39 @@ When the menu opens
 Then the item draws the ligature
 
 Covered: `projects/ui-kit-v2/src/lib/components/split-button/rt-split-button.component.spec.ts`.
+
+### SC-UKV-709 — one icon overrides the application's strategy
+
+Given the application draws glyphs by the strategy `map-first`
+When an icon with the glyph `arrow_back` gets `glyphStrategy` `font`
+Then it draws the ligature, while a neighbour without the input draws the pair `arrow-left`
+
+Covered: `projects/ui-kit-v2/src/lib/components/icon/rt-icon-glyph.component.spec.ts`.
+
+### SC-UKV-710 — the font axes of the ligature come from the application
+
+Given the application sets `--rt-icon-glyph-weight` to 600 above an icon drawing a ligature
+When it is drawn
+Then the ligature's font variation carries the weight 600, and without the properties the weight
+400, the grade 0 and the optical size equal to the side of the icon
+
+Not covered: a test has no styles at all — the font variation is read by a measurement on the icon
+story of the showcase.
+
+### SC-UKV-711 — every colour of the icon is an application property
+
+Given the icon is given each of the colours but `current`
+When it is drawn
+Then its colour is the property `--rt-icon-color-<colour>` with the kit role as default, and
+`primary` and `disabled` are among them
+
+Covered: `projects/ui-kit-v2/src/lib/components/icon/rt-icon.component.spec.ts`.
+
+### SC-UKV-712 — a size step is an application property
+
+Given the icon is given each of the eight steps
+When it is drawn
+Then its side is the property `--rt-icon-size-<step>` with the step of the kit size scale as
+default, `3xl` and `4xl` among them
+
+Covered: `projects/ui-kit-v2/src/lib/components/icon/rt-icon.component.spec.ts`.

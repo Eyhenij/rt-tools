@@ -82,51 +82,84 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 `--rt-color-bg-surface`, рамка `--rt-color-border-subtle`, тень `--rt-shadow-lg`. Свои свойства
 блоков: `--rt-dynamic-selector-list-*` и `--rt-dynamic-selector-popup-*`.
 
-«Добавить» — серая текстовая кнопка, как «Add» у первого кита. Очистка всего списка нарисована
-крестиком, а не корзиной: корзина стоит у каждой строки, и два разных действия не должны
-выглядеть одинаково. Корзины с крестом, как у первого кита, в наборе значков нет.
+«Добавить» — серая текстовая кнопка, как «Add» у первого кита. Очистка всего списка по умолчанию
+нарисована крестиком, а не корзиной: корзина стоит у каждой строки, и два разных действия не должны
+выглядеть одинаково. Корзину с крестом, как у первого кита, ставит вход `clearIcon="trash-x"`.
+
+Свойства, которые приложение переставляет у окна и списка. Окно рисуется в оверлее, вне поля, и
+его свойства доходят с любого предка — с панели оверлея, со своего контейнера, с корня страницы:
+на самом окне стоят только умолчания с приставкой `-default`. Ширина, наибольшая высота, скругление,
+толщина рамки и тень окна — `--rt-dynamic-selector-popup-width`, `-max-height`, `-radius`,
+`-border-width`, `-shadow` — читаются так же. Свойства списка, кроме цвета «Добавить», задаются
+правилом на `.rt-dynamic-selector-list`.
+
+| свойство                                         | что задаёт                                      | умолчание                                                       |
+| ------------------------------------------------ | ----------------------------------------------- | --------------------------------------------------------------- |
+| `--rt-dynamic-selector-popup-bg`                 | фон окна                                        | `--rt-color-bg-surface`                                         |
+| `--rt-dynamic-selector-popup-min-height`         | наименьшая высота окна                          | `0`                                                             |
+| `--rt-dynamic-selector-popup-padding`            | отступы окна от края до содержимого             | `--rt-space-md`                                                 |
+| `--rt-dynamic-selector-popup-foot-border-width`  | толщина черты над кнопками                      | толщина рамки окна                                              |
+| `--rt-dynamic-selector-popup-nav-color`          | цвет ссылки в подвале                           | `--rt-color-text-link`                                          |
+| `--rt-dynamic-selector-popup-button-height`      | высота кнопок «Отмена» и «Применить»            | `--rt-control-height-md`                                        |
+| `--rt-dynamic-selector-popup-button-font-size`   | кегль этих кнопок                               | `0.95rem`, как у кнопки кита                                    |
+| `--rt-dynamic-selector-popup-empty-icon-size`    | значок «ничего не нашлось»                      | `--rt-size-8`                                                   |
+| `--rt-dynamic-selector-popup-empty-icon-wrap-bg` | круг под этим значком                           | `--rt-color-bg-subtle`                                          |
+| `--rt-dynamic-selector-popup-empty-text-size`    | кегль подписи «ничего не нашлось»               | `--rt-text-md`                                                  |
+| `--rt-dynamic-selector-popup-empty-text-weight`  | её начертание                                   | `--rt-font-weight-medium`                                       |
+| `--rt-dynamic-selector-popup-empty-text-color`   | её цвет                                         | `--rt-color-text-primary`                                       |
+| `--rt-dynamic-selector-list-row-padding-x`       | отступ строки слева, до ручки и подписи         | `--rt-space-sm`                                                 |
+| `--rt-dynamic-selector-list-add-font-weight`     | начертание кнопки «Добавить»                    | `--rt-font-weight-medium`                                       |
+| `--rt-dynamic-selector-list-add-indent`          | отступ кнопки «Добавить» слева                  | `0`                                                             |
+| `--rt-dynamic-selector-list-reset-color`         | цвет значка «Сбросить»                          | `--rt-color-text-primary`                                       |
+| `--rt-dynamic-selector-list-add-color`           | цвет кнопки «Добавить» — ручка, на любом предке | цвет своей кнопки: у селектора вторичный, у поля строк основной |
 
 ## Входы
 
 Таблица одна на оба поля — колонка «чей» говорит, к какому из них вход относится. Входы только
 поля строк стоят ниже своей таблицей.
 
-| вход                    | чей      | тип                          | умолчание    |
-| ----------------------- | -------- | ---------------------------- | ------------ |
-| `entities`              | селектор | `ReadonlyArray<TEntity>`     | `[]`         |
-| `chosenEntities`        | селектор | `TEntity[]`, двусторонний    | `[]`         |
-| `keyExp`                | селектор | `keyof TEntity`              | обязателен   |
-| `displayExp`            | селектор | `keyof TEntity`              | обязателен   |
-| `mode`                  | селектор | `'multi' \| 'single'`        | `'multi'`    |
-| `buttonTitle`           | оба      | `string`                     | `''` → «Add» |
-| `addShown`              | селектор | `boolean`                    | `true`       |
-| `readonlyKeys`          | оба      | `ReadonlyArray`              | `[]`         |
-| `pinnedKeys`            | селектор | `ReadonlyArray<unknown>`     | `[]`         |
-| `draggable`             | оба      | `boolean`                    | `false`      |
-| `buttonRadius`          | оба      | `TRtRadius \| null`          | `'full'`     |
-| `invitation`            | оба      | `boolean`                    | `false`      |
-| `invitationIcon`        | оба      | `IRtIcon.Name \| null`       | `null`       |
-| `invitationDescription` | оба      | `string`                     | `''`         |
-| `multiToggleShown`      | селектор | `boolean`                    | `false`      |
-| `selectAllShown`        | селектор | `boolean`                    | `true`       |
-| `localSearch`           | селектор | `boolean`                    | `true`       |
-| `lazyLoad`              | селектор | `boolean`                    | `false`      |
-| `loading`               | селектор | `boolean`                    | `false`      |
-| `fetching`              | селектор | `boolean`                    | `false`      |
-| `navigateTitle`         | селектор | `string`                     | `''`         |
-| `navigateLink`          | селектор | `string`                     | `''`         |
-| `sortFn`                | селектор | `((a, b) => number) \| null` | `null`       |
-| `removeShown`           | оба      | `boolean`                    | `true`       |
-| `listActionsShown`      | оба      | `boolean`                    | `true`       |
-| `extraChanged`          | оба      | `boolean`                    | `false`      |
-| `searchTerm`            | селектор | `string`                     | `''`         |
+| вход                         | чей      | тип                          | умолчание                           |
+| ---------------------------- | -------- | ---------------------------- | ----------------------------------- |
+| `entities`                   | селектор | `ReadonlyArray<TEntity>`     | `[]`                                |
+| `chosenEntities`             | селектор | `TEntity[]`, двусторонний    | `[]`                                |
+| `keyExp`                     | селектор | `keyof TEntity`              | обязателен                          |
+| `displayExp`                 | селектор | `keyof TEntity`              | обязателен                          |
+| `mode`                       | селектор | `'multi' \| 'single'`        | `'multi'`                           |
+| `buttonTitle`                | оба      | `string`                     | `''` → «Add»                        |
+| `addShown`                   | селектор | `boolean`                    | `true`                              |
+| `readonlyKeys`               | оба      | `ReadonlyArray`              | `[]`                                |
+| `pinnedKeys`                 | селектор | `ReadonlyArray<unknown>`     | `[]`                                |
+| `draggable`                  | оба      | `boolean`                    | `false`                             |
+| `buttonRadius`               | оба      | `TRtRadius \| null`          | `'full'`                            |
+| `invitation`                 | оба      | `boolean`                    | `false`                             |
+| `invitationIcon`             | оба      | `IRtIcon.Name \| null`       | `null`                              |
+| `invitationDescription`      | оба      | `string`                     | `''`                                |
+| `multiToggleShown`           | селектор | `boolean`                    | `false`                             |
+| `selectAllShown`             | селектор | `boolean`                    | `true`                              |
+| `localSearch`                | селектор | `boolean`                    | `true`                              |
+| `lazyLoad`                   | селектор | `boolean`                    | `false`                             |
+| `loading`                    | селектор | `boolean`                    | `false`                             |
+| `fetching`                   | селектор | `boolean`                    | `false`                             |
+| `navigateTitle`              | селектор | `string`                     | `''`                                |
+| `navigateLink`               | селектор | `string`                     | `''`                                |
+| `sortFn`                     | селектор | `((a, b) => number) \| null` | `null`                              |
+| `removeShown`                | оба      | `boolean`                    | `true`                              |
+| `listActionsShown`           | оба      | `boolean`                    | `true`                              |
+| `extraChanged`               | оба      | `boolean`                    | `false`                             |
+| `searchTerm`                 | селектор | `string`                     | `''`                                |
+| `invitationButtonIcon`       | оба      | `IRtIcon.Name \| null`       | `null`                              |
+| `invitationButtonAppearance` | оба      | `IButton.Appearance`         | `'outlined'`                        |
+| `clearIcon`                  | оба      | `IRtIcon.Name`               | `'close'`                           |
+| `searchAppearance`           | селектор | `IRtInput.Appearance`        | `'outline'`                         |
+| `emptyResultsText`           | селектор | `string`                     | `''` → «No results» из словаря кита |
 
 ### Только у поля строк
 
-| вход        | тип       | умолчание                                     |
-| ----------- | --------- | --------------------------------------------- |
-| editable    | `boolean` | `false`                                       |
-| placeholder | `string`  | `''` → «Type and press Enter» из словаря кита |
+| вход            | тип                   | умолчание                                     |
+| --------------- | --------------------- | --------------------------------------------- |
+| editable        | `boolean`             | `false`                                       |
+| placeholder     | `string`              | `''` → «Type and press Enter» из словаря кита |
+| fieldAppearance | `IRtInput.Appearance` | `'outline'`                                   |
 
 ### Двусторонняя привязка селектора
 

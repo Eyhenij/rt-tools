@@ -205,3 +205,43 @@ When the person presses the add button
 Then the popup opens, and it is the popup of that very button
 
 Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/rt-dynamic-selector.component.spec.ts`.
+
+### SC-UKV-702 — the invitation button takes its icon and look from the inputs
+
+Given a selector or a string list with the invitation shown
+When the caller names an icon and the look «text» or «filled» for the invitation button
+Then the button draws that icon in that look, and without them it is outlined and has no icon
+
+Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/rt-dynamic-selector-look.spec.ts`.
+
+### SC-UKV-703 — the clear button takes its icon from the input
+
+Given a selector or a string list with chosen rows
+When the caller names the icon `trash-x` for the clear button
+Then the clear button draws it, and without it draws the close cross
+
+Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/rt-dynamic-selector-look.spec.ts`.
+
+### SC-UKV-704 — the popup search takes the field look from the input
+
+Given a selector whose caller names the look «fill» for the search
+When the person opens the popup
+Then the search field of the popup is drawn in that look
+
+Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/rt-dynamic-selector-look.spec.ts`.
+
+### SC-UKV-705 — the empty result shows the caller's text
+
+Given a selector whose popup opens with a query nothing matches
+When the caller names the text of the empty result, and then takes it away
+Then the popup shows that text, and after that the kit label
+
+Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/rt-dynamic-selector-look.spec.ts`.
+
+### SC-UKV-706 — the field of a new row takes its look from the input
+
+Given a string list whose caller names the look «fill» for its field
+When the person presses the add button
+Then the field of the new row is drawn in that look
+
+Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/rt-dynamic-selector-look.spec.ts`.

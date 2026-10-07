@@ -29,7 +29,7 @@ import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
 import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
 import { RtEmptyStateComponent } from '@rt-tools/ui-kit-v2/empty-state';
 import { RtFormControlBase } from '@rt-tools/ui-kit-v2/form-control';
-import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
+import { IButton, IRtIcon, IRtInput } from '@rt-tools/ui-kit-v2/core';
 import { RtInputComponent } from '@rt-tools/ui-kit-v2/input';
 import { TRtRadius } from '@rt-tools/ui-kit-v2/core';
 import { RtDynamicSelectorListComponent } from '../list/rt-dynamic-selector-list.component';
@@ -136,6 +136,14 @@ export class RtDynamicInputComponent extends RtFormControlBase<string[]> {
     });
     public readonly invitationIcon: InputSignal<IRtIcon.Name | null> = input<IRtIcon.Name | null>(null);
     public readonly invitationDescription: InputSignal<string> = input<string>('');
+    /** Значок кнопки приглашения; null — кнопка без значка. */
+    public readonly invitationButtonIcon: InputSignal<IRtIcon.Name | null> = input<IRtIcon.Name | null>(null);
+    /** Вид кнопки приглашения — тот же набор, что у кнопки кита. */
+    public readonly invitationButtonAppearance: InputSignal<IButton.Appearance> = input<IButton.Appearance>('outlined');
+    /** Значок кнопки «Очистить список». */
+    public readonly clearIcon: InputSignal<IRtIcon.Name> = input<IRtIcon.Name>('close');
+    /** Вид поля, в которое вводят новую строку. */
+    public readonly fieldAppearance: InputSignal<IRtInput.Appearance> = input<IRtInput.Appearance>('outline');
     /** Корзина строк; без неё строки убирает только очистка или сам вызывающий. */
     public readonly removeShown: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
         transform: booleanAttribute,
