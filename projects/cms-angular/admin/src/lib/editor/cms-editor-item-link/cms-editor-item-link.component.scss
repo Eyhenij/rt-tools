@@ -1,0 +1,14 @@
+// The picked page as a line and the picking button beside it.
+:host {
+    display: flex;
+    align-items: center;
+    gap: var(--rt-space-sm);
+
+    .rt-cms-editor-item-link {
+        &__choice {
+            min-width: 0;
+            flex: 1 1 auto;
+            color: var(--rt-color-text-primary);
+        }
+    }
+}

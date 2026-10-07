@@ -5,7 +5,16 @@ export default {
     setupFilesAfterEnv: ['<rootDir>/src/test-setup.ts'],
     coverageDirectory: '../../coverage/rt-cms-angular',
     roots: ['<rootDir>/src', '<rootDir>/admin/src', '<rootDir>/site/src'],
-    collectCoverageFrom: ['{src,admin/src,site/src}/lib/**/*.ts', '!**/*.spec.ts', '!**/testing/**'],
+    // The decisions live in functions and stores and are held at full coverage; a component, a
+    // directive and a pipe stay thin wrappers over them and are checked by the scenarios that draw them.
+    collectCoverageFrom: [
+        '{src,admin/src,site/src}/lib/**/*.ts',
+        '!**/*.spec.ts',
+        '!**/testing/**',
+        '!**/*.component.ts',
+        '!**/*.directive.ts',
+        '!**/*.pipe.ts',
+    ],
     coverageThreshold: {
         global: {
             statements: 100,

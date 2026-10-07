@@ -5,6 +5,7 @@ export * from './lib/editor/editor-blocks';
 export * from './lib/editor/editor-link.function';
 export * from './lib/editor/editor-paste.function';
 export * from './lib/editor/text-style.function';
+export * from './lib/i18n/cms-label.pipe';
 export * from './lib/i18n/cms-labels.en';
 export * from './lib/i18n/cms-labels.model';
 export * from './lib/i18n/cms-labels.providers';

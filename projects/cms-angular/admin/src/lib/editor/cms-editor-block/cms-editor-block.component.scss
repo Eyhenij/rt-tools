@@ -1,0 +1,59 @@
+// A body block is a card with a frame: the header with actions on top, the field of its kind under it.
+:host {
+    display: flex;
+    flex-direction: column;
+    padding: var(--rt-space-md);
+    border: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
+    border-radius: var(--rt-radius-md);
+    background: var(--rt-color-bg-surface);
+    gap: var(--rt-space-sm);
+
+    .rt-cms-editor-block {
+        &__header {
+            display: flex;
+            align-items: center;
+            gap: var(--rt-space-xs);
+        }
+
+        &__kind {
+            flex: 1 1 auto;
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-sm);
+            font-weight: var(--rt-font-weight-medium);
+        }
+
+        &__body {
+            min-width: 0;
+        }
+
+        // A text field without a frame: the block already stands as a card. An empty one shows the placeholder.
+        &__text {
+            margin: 0;
+            outline: none;
+
+            &:empty:before {
+                color: var(--rt-color-text-muted);
+                content: attr(placeholder);
+            }
+        }
+
+        &__note {
+            margin: 0;
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-sm);
+        }
+
+        // The selection menu stands above the text in window coordinates: the selection knows only those.
+        &__menu {
+            position: fixed;
+            z-index: var(--rt-z-popover);
+            display: flex;
+            padding: var(--rt-space-2xs);
+            border: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
+            border-radius: var(--rt-radius-md);
+            background: var(--rt-color-bg-surface);
+            box-shadow: var(--rt-shadow-md);
+            gap: var(--rt-space-2xs);
+        }
+    }
+}

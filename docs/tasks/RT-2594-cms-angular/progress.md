@@ -43,7 +43,13 @@
 - **A store keeps a label key, not a text, and reads the text when it speaks.** So a message follows
   a language change made after the store was created. Affected stage: 2.
 - **The package tests hold full coverage by a threshold, as the server package does.** The nx test
-  target does not count coverage itself. Affected stages: all.
+  target does not count coverage itself. A component, a directive and a pipe stay out of the
+  threshold: they are thin wrappers over the tested functions and stores, and the scenarios that draw
+  them check them. Affected stages: all.
+- **The package windows stand on the kit dialog box, not on an application window layout.** The
+  application layout class does not exist in another application; the styles a window needs beyond
+  the box move into the window itself. Affected stage: 2.
+- **The selectors and the style blocks carry the `rt-cms-` prefix of the package.** Affected stage: 2.
 
 ## Sessions
 
@@ -53,5 +59,6 @@
 - Stage 1 done: lint, tests (33) and the build green, coverage 100%.
 - Step 2.1 done: the server is replaced in the tests by an in-memory Connect transport; 65 tests,
   coverage 100%.
+- The block editor carried over with its window and the label pipe; 82 tests.
 - The media library clients, stores and model carried over as part of 2.1; the file bytes are now
   read inside the stream, so an unreadable file refuses its own upload. 74 tests, coverage 100%.

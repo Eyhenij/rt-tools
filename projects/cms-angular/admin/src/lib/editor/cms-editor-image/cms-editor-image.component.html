@@ -1,0 +1,13 @@
+<ng-container rtBlock="rt-cms-editor-image">
+    <div rtElem="header">
+        <span rtElem="count">{{ t().imageCount | cmsLabel: { count: images().length } }}</span>
+        <rt-icon-button icon="image" variant="ghost" qa-dataid="cms-editor-image-pick" [ariaLabel]="t().imagePick" (clicked)="pick()" />
+    </div>
+    <div rtElem="list" qa-dataid="cms-editor-image-list">
+        @for (image of images(); track image.fileId) {
+            <img rtElem="thumb" loading="lazy" alt="" [src]="image.imageUrl" />
+        } @empty {
+            <rt-empty-state qa-dataid="cms-editor-image-empty" icon="image" [title]="t().imageNone" />
+        }
+    </div>
+</ng-container>
