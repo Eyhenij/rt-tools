@@ -4,9 +4,9 @@
 
 - **State:** `этап-идёт`
 - **Stage:** 2 of 4 — The admin
-- **Done:** stage 1 — the package builds, the editor model, the form decisions, the paste cleaning
-  and the labels are carried over with their tests at full coverage
-- **Next step:** carry over the clients, the stores and the configuration tokens
+- **Done:** stage 1; step 2.1 — the contract clients, the list selection, the screen stores and
+  the settings tokens, with their tests at full coverage
+- **Next step:** carry over the block editor and the admin components
 - **Uncommitted:** nothing
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -15,8 +15,8 @@
 
 - [x] 1.1 Create `projects/cms-angular` after the auth Angular package and register it
 - [x] 1.2 Carry over the editor model, the form decisions, the paste cleaning and the labels with their tests
-- [>] 2.1 Carry over the clients, the stores and the configuration tokens
-- [ ] 2.2 Carry over the block editor and the admin components
+- [x] 2.1 Carry over the clients, the stores and the configuration tokens
+- [>] 2.2 Carry over the block editor and the admin components
 - [ ] 2.3 Carry over the screens and the routes of the content and the media library
 - [ ] 3.1 Carry over the block renderer, the page data and the redirect resolver
 - [ ] 4.1 Write the spec, the scenarios and the bindings, and the README
@@ -40,6 +40,8 @@
   the application's facts. Affected stages: 1, 2.
 - **The site layout, the SEO and the styles stay with the application.** The package gives the
   block renderers through a registry and the page data. Affected stage: 3.
+- **A store keeps a label key, not a text, and reads the text when it speaks.** So a message follows
+  a language change made after the store was created. Affected stage: 2.
 - **The package tests hold full coverage by a threshold, as the server package does.** The nx test
   target does not count coverage itself. Affected stages: all.
 
@@ -49,3 +51,5 @@
 
 - The branch taken from the epic branch after RT-2593 was merged.
 - Stage 1 done: lint, tests (33) and the build green, coverage 100%.
+- Step 2.1 done: the server is replaced in the tests by an in-memory Connect transport; 65 tests,
+  coverage 100%.
