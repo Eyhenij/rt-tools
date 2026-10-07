@@ -4,3 +4,4 @@ export * from './lib/block/cms-site-blocks/cms-site-blocks.component';
 export * from './lib/block/embed-src.function';
 export * from './lib/page/site-page.function';
 export * from './lib/page/site-pages-api.service';
+export * from './lib/redirect/site-redirects.function';
