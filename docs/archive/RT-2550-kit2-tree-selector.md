@@ -107,3 +107,21 @@ So the confirmation lives in a side panel, not in a dropdown: the epic plan's «
 - **The hotel groupings stay in the application** — they are its domain.
 
 ## What is left unclear
+
+## Decisions along the way
+
+- **The branch is renamed to `RT-2550-kit2-tree-selector`** — the owner turned the task from a
+  `rt-multiselect` mode into a port. Affected stage: all.
+
+- **Labels in English and the showcase Russian, not eight languages** — the kit carries one English
+  set and the application gives its language through the translator; the multi toggle, its hint and
+  the search placeholder reuse the labels of the dynamic selector. Affected stage: 1.
+
+- **Control buttons are icon buttons, and each is optional** — the owner on the shown stories:
+  «развернуть свернуть нужно опционально только иконочные кнопки с соответвующими иконками» and
+  «очистить тоже иконко иусорки + откатить выбор кнопка опциональная». Expand and collapse are
+  asked for by `expandControls`, clear has a trash can, revert is asked for by `revertable` and
+  stands in the confirming form alone. The kit got the icons `expand-all` and `collapse-all` in
+  both sets and a Material pair for `undo`. Scenarios SC-UKV-689 and SC-UKV-690. Affected stage: 1–3.
+
+The decisions above live in the agreement `docs/specs/ui-kit-v2/tree-selector/spec.md` — its rules and the history of changes.
