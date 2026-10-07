@@ -21,8 +21,8 @@ import {
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { rtKitLabel } from '../../i18n';
-import { RtRadiusDirective } from '../radius/rt-radius.directive';
+import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
+import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 import { IRtFileDrop } from './rt-file-drop.model';
 
 const BEM_BLOCK: string = 'rt-file-drop';

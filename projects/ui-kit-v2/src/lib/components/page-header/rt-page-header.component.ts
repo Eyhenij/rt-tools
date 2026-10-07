@@ -29,12 +29,12 @@ import { filter, map } from 'rxjs';
 
 import { BlockDirective, ElemDirective, ModDirective, WINDOW } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, RT_KIT_TRANSLATOR, RtKitLabelPipe, TRtKitLabelMap, TRtKitTranslator, rtKitLabel } from '../../i18n';
-import { BreakpointsService } from '../../platform';
+import { RT_KIT_LABELS, RT_KIT_TRANSLATOR, RtKitLabelPipe, TRtKitLabelMap, TRtKitTranslator, rtKitLabel } from '@rt-tools/ui-kit-v2/core';
+import { BreakpointsService } from '@rt-tools/ui-kit-v2/core';
 
-import { RtIconComponent } from '../icon';
-import { RtPopoverDirective } from '../popover';
-import { RtTooltipDirective } from '../tooltip';
+import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
+import { RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
+import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
 import { activeSectionIds, compactSectionsOf, ERtPageHeaderEntry, IRtPageHeaderView, isStuck, toSections } from './rt-page-header.logic';
 import { IRtPageHeader } from './rt-page-header.model';
 

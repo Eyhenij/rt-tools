@@ -165,5 +165,21 @@ probe "SC-AK-901 — импорт в комментарии не судится"
 RT_PROJECTS_DIR="$projects" RT_PUBLISHED_DIR="$published" node "$check" --package @rt-tools/none > /dev/null 2>&1
 probe "SC-AK-901 — неизвестный пакет отбивается" "$?" 1
 
+# --- SC-AK-1190 — корень переотдаёт входы того же пакета по имени пакета --------------------------
+reset
+neighbour '@rt-tools/kit2' '0.2.0' 'types/kit2.d.ts' "export * from '@rt-tools/kit2/table';\n"
+neighbour_file '@rt-tools/kit2' '0.2.0' 'types/kit2-table.d.ts' 'export declare class RtTable {}\n'
+printf '{"name":"@rt-tools/kit2","version":"0.2.0","typings":"types/kit2.d.ts","exports":{".":{"types":"./types/kit2.d.ts"},"./table":{"types":"./types/kit2-table.d.ts"}}}\n' > "$published/@rt-tools/kit2/0.2.0/package/package.json"
+package 'app' '@rt-tools/app' '"@rt-tools/kit2":"^0.2.0"' "import { RtTable } from '@rt-tools/kit2';\n" 'a.ts'
+probe "SC-AK-1190 — символ входа выпущенного пакета находится по карте exports" "$(code)" 0
+package 'app' '@rt-tools/app' '"@rt-tools/kit2":"^0.2.0"' "import { RtDot } from '@rt-tools/kit2';\n" 'a.ts'
+package 'kit2' '@rt-tools/kit2' '' "export * from '@rt-tools/kit2/dot';\n" 'public-api.ts'
+mkdir -p "$projects/kit2/dot" "$projects/kit2/src/lib/dot"
+printf '{"lib":{"entryFile":"../src/lib/dot/index.ts"}}\n' > "$projects/kit2/dot/ng-package.json"
+printf 'export class RtDot {}\n' > "$projects/kit2/src/lib/dot/index.ts"
+out="$(says)"
+probe "SC-AK-1190 — символ входа в исходниках ждёт выпуска и не роняет проверку" "$(code)" 0
+probe "SC-AK-1190 — о нём сказано, что он ждёт публикации соседа" "$(contains "$out" "RtDot from @rt-tools/kit2")" 'есть'
+
 printf 'проверка импортов из соседей: %s ok, %s провалов\n' "$ok" "$bad"
 [ "$bad" -eq 0 ]

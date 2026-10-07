@@ -17,8 +17,8 @@ import {
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { RtFormControlBase } from '../form-control/rt-form-control.base';
-import { RtRadiusDirective } from '../radius/rt-radius.directive';
+import { RtFormControlBase } from '@rt-tools/ui-kit-v2/form-control';
+import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 
 const BEM_BLOCK: string = 'rt-textarea';
 

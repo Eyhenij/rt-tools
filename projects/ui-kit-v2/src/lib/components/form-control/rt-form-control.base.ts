@@ -16,7 +16,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractControl, ControlValueAccessor, NgControl, ValidationErrors, Validators } from '@angular/forms';
 
-import { IRtInput } from '../input/rt-input.model';
+import { IRtInput } from '@rt-tools/ui-kit-v2/core';
 
 /**
  * Базовый класс input-семейства common/ui. Владеет единым CVA-ядром:

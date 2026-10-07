@@ -23,17 +23,17 @@ import { debounceTime, Subject } from 'rxjs';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { rtKitLabel } from '../../../i18n';
-import { RtInfiniteScrollDirective } from '../../../scroll/infinite-scroll.directive';
-import { RtButtonDirective } from '../../button/rt-button.directive';
-import { RtCheckboxComponent } from '../../checkbox/rt-checkbox.component';
-import { RtEmptyStateComponent } from '../../empty-state/rt-empty-state.component';
-import { RtIconComponent } from '../../icon/rt-icon.component';
-import { RtInputComponent } from '../../input/rt-input.component';
-import { RtRadioButtonComponent } from '../../radio-button/rt-radio-button.component';
-import { RtSpinnerComponent } from '../../spinner/rt-spinner.component';
-import { RtToggleSwitchComponent } from '../../toggle-switch/rt-toggle-switch.component';
-import { RtTooltipDirective } from '../../tooltip/rt-tooltip.directive';
+import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
+import { RtInfiniteScrollDirective } from '@rt-tools/ui-kit-v2/core';
+import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
+import { RtCheckboxComponent } from '@rt-tools/ui-kit-v2/checkbox';
+import { RtEmptyStateComponent } from '@rt-tools/ui-kit-v2/empty-state';
+import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
+import { RtInputComponent } from '@rt-tools/ui-kit-v2/input';
+import { RtRadioButtonComponent } from '@rt-tools/ui-kit-v2/radio-button';
+import { RtSpinnerComponent } from '@rt-tools/ui-kit-v2/spinner';
+import { RtToggleSwitchComponent } from '@rt-tools/ui-kit-v2/toggle-switch';
+import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
 import {
     dynamicPopupRows,
     dynamicSelectAllState,

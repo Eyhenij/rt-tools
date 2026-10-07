@@ -1,4 +1,4 @@
-import { IRtIcon } from '../icon';
+import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 
 export namespace IRtPageHeader {
     /**

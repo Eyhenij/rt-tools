@@ -1,6 +1,6 @@
 import { Directive, inject, TemplateRef } from '@angular/core';
 
-import { IRtDataTable } from './rt-data-table.model';
+import { IRtDataTable } from '@rt-tools/ui-kit-v2/core';
 
 /** Что получает шаблон значка: имя, колонку и — в ячейке — запись строки. */
 export interface IRtDataTableIconContext<T = Record<string, unknown>> {

@@ -22,12 +22,12 @@ import {
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, TRtKitLabelMap } from '../../i18n';
-import { RtIconComponent } from '../icon/rt-icon.component';
-import { rtTreeRows, rtTreeSideKey, rtTreeToggle } from '../select/rt-select-tree';
-import { IRtSelect } from '../select/rt-select.model';
-import { RtTooltipDirective } from '../tooltip/rt-tooltip.directive';
-import { IRtTree } from '../tree/rt-tree.model';
+import { RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
+import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
+import { rtTreeRows, rtTreeSideKey, rtTreeToggle } from '@rt-tools/ui-kit-v2/select';
+import { IRtSelect } from '@rt-tools/ui-kit-v2/select';
+import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
+import { IRtTree } from '@rt-tools/ui-kit-v2/tree';
 import { RtDraggableTreeNodeDirective } from './rt-draggable-tree.directives';
 import { rtDragAllowed, rtDragKeyPlace, rtDragMove, rtDragPlace } from './rt-draggable-tree.logic';
 import { IRtDraggableTree } from './rt-draggable-tree.model';

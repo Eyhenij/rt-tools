@@ -16,7 +16,7 @@ import {
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { RtIconComponent } from '../icon';
+import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { RtExpansionPanelContentDirective } from './rt-expansion-panel-content.directive';
 import { IRtExpansionPanel } from './rt-expansion-panel.model';
 

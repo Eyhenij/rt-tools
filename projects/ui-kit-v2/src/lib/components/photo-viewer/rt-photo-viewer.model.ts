@@ -1,6 +1,6 @@
 import { TemplateRef } from '@angular/core';
 
-import { IRtPicture } from '../../util';
+import { IRtPicture } from '@rt-tools/ui-kit-v2/core';
 
 /**
  * Контракты полноэкранного просмотрщика фотографий. Один корневой неймспейс с

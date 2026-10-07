@@ -7,6 +7,7 @@ statement: a removed statement is removed together with its line.
 - **Probes, showcase stories and imports inside comments are not judged.** — `tools/check-package-imports.mjs:NOT_SHIPPED` — the comments are removed by the sample `COMMENTS`; scenarios SC-AK-897, SC-AK-901
 - **The exports of a neighbour are read from the types of the published version, the greatest in the registry under the range of the manifest.** — `tools/check-package-imports.mjs:maxSatisfying` — the entry point of the types is picked by `typesEntry`; scenario SC-AK-894
 - **The chain of `export *` is read to the end, and the file of types is taken before the source next to it.** — `tools/check-package-imports.mjs:resolveChained` — scenario SC-AK-896
+- **A chain that names an entry point of the same package by the package name is read through that entry point.** — `tools/check-package-imports.mjs:resolveOwnEntry` — scenario SC-AK-1190
 - **The neighbour imported from is named in the manifest, and there is a version in the registry under its range.** — `tools/check-package-imports.mjs:satisfies` — scenario SC-AK-898
 - **A symbol the published neighbour does not have, while the sources of the neighbour do, waits for publishing and does not drop the check in the push gate.** — `tools/check-package-imports.mjs:exportedInTree` — the strict mode is switched on by the flag `STRICT`; scenario SC-AK-900
 - **The judging is narrowed down to one package by a flag, and an unknown package is refused.** — `tools/check-package-imports.mjs:ONLY` — scenario SC-AK-901

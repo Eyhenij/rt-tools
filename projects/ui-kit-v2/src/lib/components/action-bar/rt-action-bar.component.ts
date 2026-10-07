@@ -13,13 +13,13 @@ import {
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { rtKitLabel } from '../../i18n';
-import { TRtKitLabelParams } from '../../i18n/rt-kit-labels.model';
-import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
-import { RtIconComponent } from '../icon/rt-icon.component';
-import { RtMenuItemComponent } from '../menu/rt-menu-item.component';
-import { RtPopoverDirective } from '../popover/rt-popover.directive';
-import { RtRadiusDirective } from '../radius/rt-radius.directive';
+import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
+import { TRtKitLabelParams } from '@rt-tools/ui-kit-v2/core';
+import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
+import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
+import { RtMenuItemComponent } from '@rt-tools/ui-kit-v2/menu';
+import { RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
+import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 import { IRtActionBar } from './rt-action-bar.model';
 
 const BEM_BLOCK: string = 'rt-action-bar';

@@ -7,3 +7,4 @@ export * from './picture.model';
 export * from './quill-delta.helper';
 export * from './quill-delta.model';
 export * from './search-debounce';
+export * from './material-preset';

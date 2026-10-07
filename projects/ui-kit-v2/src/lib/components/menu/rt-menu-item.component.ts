@@ -26,12 +26,12 @@ import { mergeMap, Observable, Subject } from 'rxjs';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { rtKitLabel } from '../../i18n';
-import { RtDialogService } from '../dialog/rt-dialog.service';
-import { RtIconComponent } from '../icon/rt-icon.component';
-import { IRtIcon } from '../icon/rt-icon.model';
-import { RtRadiusDirective } from '../radius/rt-radius.directive';
-import { RtTooltipDirective } from '../tooltip/rt-tooltip.directive';
+import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
+import { RtDialogService } from '@rt-tools/ui-kit-v2/dialog';
+import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
+import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
+import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
+import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
 import { RtMenuConfirmDialogComponent } from './rt-menu-confirm-dialog.component';
 import { RtMenuItemIconDirective } from './rt-menu-item-icon.directive';
 import { menuItemIconName, unpairedGlyph } from './rt-menu-item.logic';

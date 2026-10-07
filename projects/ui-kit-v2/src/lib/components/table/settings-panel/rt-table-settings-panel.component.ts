@@ -3,9 +3,9 @@ import { inject, model, ChangeDetectionStrategy, Component, ModelSignal, Signal,
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, TRtKitLabelMap } from '../../../i18n';
-import { RtIconButtonComponent } from '../../icon-button/rt-icon-button.component';
-import { RtIconComponent } from '../../icon/rt-icon.component';
+import { RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
+import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
+import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { IRtTable } from '../rt-table.model';
 
 const BEM_BLOCK: string = 'rt-table-settings-panel';

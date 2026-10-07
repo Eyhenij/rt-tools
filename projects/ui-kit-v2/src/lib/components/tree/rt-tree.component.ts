@@ -23,14 +23,14 @@ import { FormsModule } from '@angular/forms';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, TRtKitLabelMap } from '../../i18n';
-import { RtCheckboxComponent } from '../checkbox/rt-checkbox.component';
-import { RtIconComponent } from '../icon/rt-icon.component';
-import { RtRadioButtonComponent } from '../radio-button/rt-radio-button.component';
-import { RtTagComponent } from '../tag/rt-tag.component';
-import { RtTooltipDirective } from '../tooltip/rt-tooltip.directive';
-import { rtTreeOpenFor, rtTreeRows, rtTreeSideKey, rtTreeToggle } from '../select/rt-select-tree';
-import { IRtSelect } from '../select/rt-select.model';
+import { RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
+import { RtCheckboxComponent } from '@rt-tools/ui-kit-v2/checkbox';
+import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
+import { RtRadioButtonComponent } from '@rt-tools/ui-kit-v2/radio-button';
+import { RtTagComponent } from '@rt-tools/ui-kit-v2/tag';
+import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
+import { rtTreeOpenFor, rtTreeRows, rtTreeSideKey, rtTreeToggle } from '@rt-tools/ui-kit-v2/select';
+import { IRtSelect } from '@rt-tools/ui-kit-v2/select';
 import { RtTreeNodeEndDirective, RtTreeNodeMetaDirective } from './rt-tree.directives';
 import { rtTreeChoose, rtTreeChooseAlone, rtTreeLabelParts, rtTreeMark, rtTreeSelectAll, rtTreeSelectAllMark } from './rt-tree.logic';
 import { IRtTree } from './rt-tree.model';

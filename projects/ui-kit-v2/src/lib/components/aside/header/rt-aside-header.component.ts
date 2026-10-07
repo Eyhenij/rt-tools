@@ -15,10 +15,10 @@ import {
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, TRtKitLabelMap } from '../../../i18n';
-import { RtIconButtonComponent } from '../../icon-button/rt-icon-button.component';
-import { RtSkeletonWrapperComponent } from '../../skeleton-wrapper/rt-skeleton-wrapper.component';
-import { RtTagComponent } from '../../tag/rt-tag.component';
+import { RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
+import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
+import { RtSkeletonWrapperComponent } from '@rt-tools/ui-kit-v2/skeleton-wrapper';
+import { RtTagComponent } from '@rt-tools/ui-kit-v2/tag';
 import { RtAsideRef } from '../rt-aside-ref';
 import { IRtAsideHeader } from './rt-aside-header.model';
 

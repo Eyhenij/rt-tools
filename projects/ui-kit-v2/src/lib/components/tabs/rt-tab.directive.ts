@@ -11,8 +11,8 @@ import {
     TemplateRef,
 } from '@angular/core';
 
-import { rtKitLabel } from '../../i18n';
-import { IRtIcon } from '../icon/rt-icon.model';
+import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
+import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 import { IRtTabs } from './rt-tabs.model';
 
 /**

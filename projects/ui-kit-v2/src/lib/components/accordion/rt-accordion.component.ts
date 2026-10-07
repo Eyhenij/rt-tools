@@ -2,7 +2,7 @@ import { input, linkedSignal, ChangeDetectionStrategy, Component, InputSignal, V
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { RtIconComponent } from '../icon';
+import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { initialAccordionOpen, toggleAccordionItem } from './rt-accordion.logic';
 import { IRtAccordion } from './rt-accordion.model';
 

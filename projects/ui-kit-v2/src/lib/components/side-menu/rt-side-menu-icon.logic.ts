@@ -1,5 +1,5 @@
-import { isKitIconName, materialPairOf } from '../icon/rt-icon-glyph.logic';
-import { IRtIcon } from '../icon/rt-icon.model';
+import { isKitIconName, materialPairOf } from '@rt-tools/ui-kit-v2/icon';
+import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 import { IRtSideMenu } from './rt-side-menu.model';
 
 /**

@@ -10,7 +10,7 @@ import {
     ViewEncapsulation,
 } from '@angular/core';
 
-import { RtRadiusDirective } from '../radius/rt-radius.directive';
+import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 
 export type TRtSkeletonShape = 'rectangle' | 'circle' | 'square';
 export type TRtSkeletonSize = 'sm' | 'md' | 'lg';

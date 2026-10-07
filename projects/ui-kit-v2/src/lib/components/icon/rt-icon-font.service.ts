@@ -3,7 +3,7 @@ import { Injectable, InjectionToken, Signal, WritableSignal, inject, signal } fr
 
 import { PlatformService } from '@rt-tools/core';
 
-import { IRtIcon } from './rt-icon.model';
+import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 
 /**
  * Как значки приложения рисуют имя Material. Задаётся третьим аргументом `provideRtIcons()`;

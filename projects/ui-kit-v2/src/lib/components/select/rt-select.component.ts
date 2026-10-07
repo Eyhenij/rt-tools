@@ -23,15 +23,16 @@ import { FormsModule } from '@angular/forms';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, TRtKitLabelMap, rtKitLabel } from '../../i18n';
-import { RtFormControlBase } from '../form-control/rt-form-control.base';
-import { IRtInput } from '../input/rt-input.model';
-import { RtIconComponent, IRtIcon } from '../icon';
-import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
-import { RtInputComponent } from '../input/rt-input.component';
-import { RtPopoverDirective } from '../popover/rt-popover.directive';
-import { IRtPopover } from '../popover/rt-popover.model';
-import { RtRadiusDirective } from '../radius/rt-radius.directive';
+import { RT_KIT_LABELS, TRtKitLabelMap, rtKitLabel } from '@rt-tools/ui-kit-v2/core';
+import { RtFormControlBase } from '@rt-tools/ui-kit-v2/form-control';
+import { IRtInput } from '@rt-tools/ui-kit-v2/core';
+import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
+import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
+import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
+import { RtInputComponent } from '@rt-tools/ui-kit-v2/input';
+import { RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
+import { IRtPopover } from '@rt-tools/ui-kit-v2/popover';
+import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 import { rtScrollActiveOptionIntoView } from './rt-select-active-option';
 import { rtTreeFind, rtTreeIsTree, rtTreeOpenFor, rtTreeRows, rtTreeSideKey, rtTreeToggle } from './rt-select-tree';
 import { RtSelectTriggerDirective } from './rt-select-trigger.directive';

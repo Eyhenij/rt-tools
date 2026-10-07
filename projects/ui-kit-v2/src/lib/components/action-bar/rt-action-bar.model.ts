@@ -1,4 +1,4 @@
-import { IRtIcon } from '../icon/rt-icon.model';
+import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 
 /**
  * Контракты полосы массовых действий. Один корневой неймспейс с префиксом `I`.

@@ -1,6 +1,6 @@
-import { IRtIcon } from '../../icon';
-import { TRtRadius } from '../../radius/rt-radius.model';
-import { IRtTag } from '../../tag/rt-tag.model';
+import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
+import { TRtRadius } from '@rt-tools/ui-kit-v2/core';
+import { IRtTag } from '@rt-tools/ui-kit-v2/tag';
 
 /**
  * Контракты `rt-aside-header`. Один корневой неймспейс с
