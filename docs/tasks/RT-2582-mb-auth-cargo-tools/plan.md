@@ -1,56 +1,40 @@
 # Plan
 
 **Task:** RT-2582 · **Branch:** RT-2582-mb-auth-cargo-tools
-**Draft:** `<path to the product agreement>`
+**Spec:** `docs/specs/auth/server/spec.md`
 **Behaviour:** changes
-
-A tree that writes the agreement straight into the domain spec names it instead of the draft:
-`**Spec:** `<path to the spec>``.
-
-Work that does not touch application code needs no agreement — then instead of the draft line
-stands `**Behaviour:** unchanged — <the owner's reason>`; an empty reason is not accepted.
-
-After it is written this file is not edited. A stage revision goes to `progress.md` as a decision
-along the way.
 
 ## Task footprint
 
-<What the work touches. Filled in by exploration before the grill and confirmed by the owner. By
-this same table, at closing, one sees what of the specs, rules and patterns has gone stale: what
-is named here is read twice — before the work and after it.>
-
-| What  | Where                         |
-| ----- | ----------------------------- |
-| Specs | `docs/specs/<domain>/`        |
-| Laws  | `docs/constitution/<name>.md` |
-| Rules | `.claude/skills/<name>/`      |
-| Code  | `projects/<package>/`         |
+| What  | Where                                                                                          |
+| ----- | ---------------------------------------------------------------------------------------------- |
+| Specs | `docs/specs/auth/server/`, `docs/specs/message-bus/admin-auth/`                                |
+| Laws  | `docs/constitution/application/access.md`, `docs/constitution/verifiability.md`                |
+| Rules | `.claude/skills/permissions/`, `.claude/skills/cargo-triage/`, `.claude/skills/testing/`       |
+| Code  | `projects/auth-server/`, `deploy/auth/realm/rt.json`, `tools/cargo-*.mjs`, `apps/message-bus/` |
 
 ## What counts as done
 
-- <a statement that can be checked>
+- The auth server accepts a token of a service client it names, with the roles of the bus client.
+- The realm holds the service client of the cargo commands with the rights of the old role.
+- The cargo commands sign in by the token of that client, not by a name and a password.
+- The receiver names its service client from the environment.
 
 ## Stages
 
-### 1. <name>
+### 1. The cargo commands sign in by a service client
 
 - **Steps:**
-    1. <what is done first>
-    2. <what is done after it>
-- **Readiness sign:** <what must become true>
-- **Verified by:** `<command>` — <what in its output means "it matched">
-
-The steps are the smallest unit of the work, and they are written here in full: the progress
-mirrors this list with its marks, and a check matches the two by number and by name. A step is
-named by what is done, not by what is thought over — a line nobody can call done is not a step.
-
-The command is written in backticks: the turn exit guard reads it and does not let out a turn in
-which the stage is declared closed and the command was not run. An acceptance written in prose
-cannot be confirmed by anything. The command is run right here, while the plan is written, not at
-the end of the stage: its output is what names the readiness sign. A sign written by a guess is
-sometimes impossible to meet — the line the stage must put out comes from an unconfigured tree
-rather than from the work — and that is found out latest of everything that depended on it.
+    1. The auth server accepts the tokens of the service clients it names
+    2. The realm holds the service client of the cargo commands
+    3. The cargo commands sign in by the token of the service client
+    4. The receiver and the guides name the service client
+- **Readiness sign:** `pnpm exec nx test auth-server` is green, and the cargo read command answers
+  against the stand with a token of the service client.
+- **Verified by:** `pnpm exec nx run-many -t lint test typecheck build -p auth-server message-bus`
+  — the line «Successfully ran».
 
 ## What this work does not do
 
-- <neighbouring work that is not dragged in here, and where it is created>
+- Does not create the client in the Keycloak of production: task RT-2581.
+- Does not publish the package by itself: the publish runs by the owner's pipeline after the merge.
