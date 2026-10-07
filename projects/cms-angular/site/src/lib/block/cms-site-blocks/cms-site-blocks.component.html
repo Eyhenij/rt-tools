@@ -1,0 +1,3 @@
+@for (block of rendered(); track block.id) {
+    <ng-container *ngComponentOutlet="block.component; inputs: block.inputs" />
+}
