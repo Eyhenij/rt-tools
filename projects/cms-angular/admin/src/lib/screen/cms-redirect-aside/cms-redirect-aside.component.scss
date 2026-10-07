@@ -1,0 +1,12 @@
+/* The panel frame comes from the kit aside; its own is only the field column. */
+:host {
+    display: contents;
+
+    .rt-cms-redirect-aside {
+        &__form {
+            display: flex;
+            flex-direction: column;
+            gap: var(--rt-space-md);
+        }
+    }
+}

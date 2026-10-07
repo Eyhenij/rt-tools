@@ -13,6 +13,7 @@ import {
 } from '@rt-tools/ui-kit-v2';
 import { IPageModel } from '@rt-tools/utils';
 
+import { CmsPageComponent } from '../../page/cms-page/cms-page.component';
 import { CMS_LIST_PAGE_HOST } from '../list-page.tokens';
 import { IListPage, IListQuery } from '../list-query.model';
 
@@ -48,6 +49,9 @@ const BEM_BLOCK: string = 'rt-cms-list-page';
         RtToolbarComponent,
         RtToolbarLeftDirective,
         RtToolbarRightDirective,
+
+        // components
+        CmsPageComponent,
     ],
     host: {
         class: BEM_BLOCK,
