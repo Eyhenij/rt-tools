@@ -49,3 +49,4 @@ minimumReleaseAgeExclude:
   - simple-icons@16.30.0
   - '@rt-tools/auth-contract@0.1.0'
   - '@rt-tools/auth-server@0.1.0'
+  - '@rt-tools/cms-contract@0.1.0'
