@@ -7,8 +7,11 @@
 - **Done:** stages 1 and 2 — the clients, the stores, the tokens, the block editor, the admin
   components, the screens and the `cmsRoutes` and `mediaRoutes` sets
 - **Next step:** 3.1 — carry over the block renderer through a registry, the page data with the
-  transfer state and the redirect resolver into the `site` entry; the sources are the site page
-  libraries of the application
+  transfer state and the redirect resolver into the `site` entry. Sources found: the block
+  components (accordion, button, embed, image, pros-cons, quote) in the site blog `ui` library, the
+  page client, its mapper, the embed address check and the stored-pages helper in the blog
+  `data-access` library, and the page screen (400 lines) in the blog `feature/article` library;
+  the embed check and the stored-pages helper carry their tests
 - **Uncommitted:** nothing
 - **Waiting for the owner:** no
 - **PR:** not open yet
