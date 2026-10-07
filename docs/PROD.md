@@ -148,6 +148,44 @@ ssh message-bus 'bash /opt/message-bus/dump.sh probe /opt/message-bus/dumps/<ф�
 Контейнер пробы сносится вместе с томом и при отказе тоже. Проба со старым файлом расходится
 законно, если с тех пор приехал груз: сверять старый дамп имеет смысл только с его же временем.
 
+## Вход: общий Keycloak
+
+Админка и приёмник входят через общий Keycloak, область `rt`. Keycloak стоит на своём узле, а не
+рядом с приёмником: через него входят все продукты, и выкатка или сбой одного продукта не должны
+уносить вход остальных.
+
+| Что             | Значение                                                                                                                     |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| где             | отдельный узел DigitalOcean, Сингапур, 2 ГБ                                                                                  |
+| ssh             | `ssh auth`, учётная запись `deploy`                                                                                          |
+| каталог выкатки | `/opt/auth`                                                                                                                  |
+| имя области     | `auth.message-bus.dev`, выдавший `https://auth.message-bus.dev/realms/rt`                                                    |
+| состав          | `deploy/auth/prod/docker-compose.prod.yml`: Keycloak, Postgres, Caddy                                                        |
+| выкатка         | workflow «Deploy Auth», запуск рукой из главной ветки; секреты `AUTH_DEPLOY_HOST`, `AUTH_DEPLOY_USER`, `AUTH_DEPLOY_SSH_KEY` |
+| дамп            | ночью, `DUMP_NAME=auth bash /opt/auth/dump.sh save`                                                                          |
+
+Область `rt` собирает `node tools/auth-realm-prod.mjs` из файла стенда: клиента примера в ней нет,
+адрес админки — прод, а секреты и почта — подстановки `$(env:…)`. Значения лежат только в
+`/opt/auth/.env.prod`: `POSTGRES_*`, `KC_ADMIN_USER` и `KC_ADMIN_PASSWORD`, `AUTH_HOSTS` — имена
+входа через запятую, `RT_USER_IMPORT_SECRET`, `RT_CATALOG_SYNC_SECRET`, `RT_CARGO_TOOLS_SECRET`,
+`RT_VERIFY_EMAIL`, `RT_SMTP_*`, `RT_GOOGLE_*`.
+
+Другие продукты держат файлы своих областей у себя и кладут их в `/opt/auth/realm/`. Выкатка
+отсюда перезаписывает только `realm/rt.json` и чужие файлы не трогает. Имя входа продукта
+дописывается в `AUTH_HOSTS`.
+
+Приёмник получает вход из своего состава: `AUTH_ISSUER`, `AUTH_CLIENT_ID=rt-message-bus-admin`,
+`AUTH_SERVICE_CLIENTS=rt-cargo-tools`. В `.env.prod` приёмника дописывается `AUTH_SYNC_SECRET` —
+то же значение, что `RT_CATALOG_SYNC_SECRET` у Keycloak. Без него приёмник не поднимается.
+
+Порядок выкатки эпика входа:
+
+1. «Deploy Auth» — Keycloak отвечает по `https://auth.message-bus.dev/realms/rt`.
+2. Выгрузка и импорт людей — раздел ниже, шаги 1–3.
+3. `AUTH_SYNC_SECRET` в `.env.prod` приёмника.
+4. «Deploy» приёмника.
+5. Ключи операторов чата — раздел ниже, шаг 5.
+
 ## Перенос людей в Keycloak
 
 Выкатка эпика входа через Keycloak удаляет из хранилища таблицы людей. Поэтому люди уходят в

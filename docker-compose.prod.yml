@@ -66,6 +66,14 @@ services:
             # Предел веса груза. Без него запрос произвольного размера кладёт службу на самом
             # малом узле — правило договорённости приёмника.
             CARGO_LIMIT: ${CARGO_LIMIT:-2mb}
+            # Вход — общий Keycloak на своём узле, область `rt` внутренних инструментов. Токены
+            # команд груза приходят от служебного клиента и получают права админки. Секрет
+            # выгрузки каталога прав — тот же, что `RT_CATALOG_SYNC_SECRET` в окружении узла
+            # Keycloak: без него роли новых прав в Keycloak не появляются.
+            AUTH_ISSUER: ${AUTH_ISSUER:-https://auth.message-bus.dev/realms/rt}
+            AUTH_CLIENT_ID: rt-message-bus-admin
+            AUTH_SERVICE_CLIENTS: rt-cargo-tools
+            AUTH_SYNC_SECRET: ${AUTH_SYNC_SECRET:?set in .env.prod}
         depends_on:
             migrate:
                 condition: service_completed_successfully
