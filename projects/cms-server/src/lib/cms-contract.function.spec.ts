@@ -85,6 +85,16 @@ describe('the contract shape of the records', () => {
         expect(timestampDate(item.state?.lockedAt ?? timestampFromDate(new Date(0)))).toEqual(NOW);
     });
 
+    it('SC-CMS-20 — a gallery image carries its media library file, and the last editor is named', async () => {
+        expect(
+            await contractItemOf(
+                { ...ITEM, updatedById: 'u2', images: [{ mediaFileId: 'f1', caption: '', altText: '', orderIndex: 0, labels: [] }] },
+                mediaFileOf,
+                true
+            )
+        ).toMatchObject({ images: [{ file: { url: 'https://cdn/f1.png' } }], state: { updatedById: 'u2' } });
+    });
+
     it('SC-CMS-20 — a missing main image file reads as no image', async () => {
         const item: ContentItem = await contractItemOf({ ...ITEM, mainImageId: 'gone' }, mediaFileOf, true);
 
