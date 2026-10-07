@@ -110,9 +110,6 @@ export const ALL_RIGHTS = Object.freeze([
     'usage:read',
     'invites:read',
     'invites:manage',
-    'accounts:read',
-    'accounts:manage',
-    'roles:manage',
     'chat:read',
 ]);
 

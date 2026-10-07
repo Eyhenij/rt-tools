@@ -3,7 +3,6 @@ import { APP_FILTER } from '@nestjs/core';
 import { authOptionsFromEnv, AuthServerModule } from '@rt-tools/auth-server';
 
 import { AccessModule } from '@rt/message-bus-api/access/feature';
-import { AccountsModule } from '@rt/message-bus-api/accounts/feature';
 import { ChatModule } from '@rt/message-bus-api/chat/feature';
 import { ObservationsModule } from '@rt/message-bus-api/observations/feature';
 import { AppLoggerService } from '@rt/message-bus-api/observability/feature';
@@ -36,7 +35,6 @@ import { FailureFilter } from './failure.filter';
         PrismaModule,
         AuthServerModule.forRoot(authOptionsFromEnv(process.env, RIGHTS)),
         AccessModule,
-        AccountsModule,
         ObservationsModule,
         ProposalsModule,
         PostmortemsModule,

@@ -35,7 +35,7 @@ describe('AuthStore', (): void => {
 
         expect(store.session()).toEqual({ name: 'Анна', rights: ['postmortems:read', 'chat:read'] });
         expect(store.allows('chat:read')).toBe(true);
-        expect(store.allows('accounts:manage')).toBe(false);
+        expect(store.allows('invites:manage')).toBe(false);
     });
 
     it('SC-MB-296 — без имени в токене шапка называет почту', (): void => {
@@ -45,6 +45,6 @@ describe('AuthStore', (): void => {
     });
 
     it('SC-MB-301 — пока вошедшего нет, не скрывается ничего', (): void => {
-        expect(store.allows('accounts:manage')).toBe(true);
+        expect(store.allows('invites:manage')).toBe(true);
     });
 });

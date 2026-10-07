@@ -1,6 +1,5 @@
 import { Route } from '@angular/router';
 import { rtAuthGuard } from '@rt-tools/auth-angular';
-import { PEOPLE_ROUTE, peopleRoutes, ROLES_ROUTE, rolesRoutes } from '@rt/message-bus-admin/accounts/shell';
 import { landingPath, noSectionsGuard, sectionRightGuard } from '@rt/message-bus-admin/common/container/data-access';
 import { chatRoutes } from '@rt/message-bus-admin/chat/shell';
 import { NO_SECTIONS_PATH } from '@rt/message-bus-admin/common/container/util';
@@ -64,16 +63,12 @@ export const appRoutes: Route[] = [
             columnsRoute(SUMMARIES_ROUTE),
             columnsRoute(USAGE_ROUTE),
             columnsRoute(INVITES_ROUTE),
-            columnsRoute(PEOPLE_ROUTE),
-            columnsRoute(ROLES_ROUTE),
             ...postmortemsRoutes,
             ...proposalsRoutes,
             ...summariesRoutes,
             ...usageRoutes,
             ...chatRoutes,
             ...invitesRoutes,
-            ...peopleRoutes,
-            ...rolesRoutes,
             {
                 path: NO_SECTIONS_PATH,
                 pathMatch: 'full',

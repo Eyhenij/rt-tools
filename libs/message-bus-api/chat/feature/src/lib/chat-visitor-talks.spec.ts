@@ -2,7 +2,7 @@ import { NotFoundException } from '@nestjs/common';
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import { RateLimitService } from '@rt/message-bus-api/access/feature';
-import { IAccountBearingRequest, requestSignedInAs } from '@rt/message-bus-api/accounts/util';
+import { IAccountBearingRequest, requestSignedInAs } from '@rt/message-bus-api/access/util';
 import { IChatConversationStarted } from '@rt/message-bus-api/chat/api';
 import { IChatMessageListRow, IChatVisitorTalkRow } from '@rt/message-bus-api/chat/data-access';
 import { EChatTalkState, IPage } from '@rt/message-bus-common';
@@ -42,7 +42,7 @@ describe('обращения посетителя', () => {
     beforeEach((): void => {
         store = new ChatPrismaDouble();
         store.sites.push({ id: 'site-1', spaceId: 'space-1', key: 'live-key', origins: [PAGE], enabled: true });
-        store.operatorSites.push({ accountId: 'account-1', siteId: 'site-1' });
+        store.operatorSites.push({ personId: 'account-1', siteId: 'site-1' });
 
         const subscribers: ChatSubscribersService = new ChatSubscribersService();
 

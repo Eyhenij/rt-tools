@@ -139,7 +139,7 @@ function returningSql() {
  */
 function operatorSql(operatorId) {
     return [
-        `INSERT INTO "chat_operator" ("id", "spaceId", "accountId")`,
+        `INSERT INTO "chat_operator" ("id", "spaceId", "personId")`,
         `VALUES ('chat-operator-stand', 'chat-space-stand', '${operatorId}');`,
         `INSERT INTO "chat_operator_site" ("operatorId", "siteId") VALUES`,
         `    ('chat-operator-stand', '${CHAT.own.id}'),`,

@@ -12,15 +12,15 @@ const TEXT: TAdminText = (key: TAdminLabelKey, params?: Readonly<Record<string, 
 
 describe('отказ правки с кодом приёмника', (): void => {
     it('SC-MB-362 — отклонённое обращение несёт код причины и подстановки', (): void => {
-        expect(spokenFaultOf(409, refusalBody(ERefusal.AccountNameTaken, { name: 'Пётр' }))).toEqual({
+        expect(spokenFaultOf(409, refusalBody(ERefusal.InviteProjectExists, { name: 'Витрина' }))).toEqual({
             kind: EReadFault.Service,
-            refusal: { code: ERefusal.AccountNameTaken, params: { name: 'Пётр' } },
+            refusal: { code: ERefusal.InviteProjectExists, params: { name: 'Витрина' } },
         });
-        expect(spokenFaultOf(400, refusalBody(ERefusal.RoleNameEmpty))).toEqual({
+        expect(spokenFaultOf(400, refusalBody(ERefusal.InviteNameEmpty))).toEqual({
             kind: EReadFault.Service,
-            refusal: { code: ERefusal.RoleNameEmpty },
+            refusal: { code: ERefusal.InviteNameEmpty },
         });
-        expect(spokenFaultOf(404, refusalBody(ERefusal.RoleNotFound, { key: 'watcher' })).kind).toBe(EReadFault.Missing);
+        expect(spokenFaultOf(404, refusalBody(ERefusal.TreeUnknown, { slug: 'vitrina' })).kind).toBe(EReadFault.Missing);
     });
 
     it('SC-MB-362 — поломка службы и кончившийся вход кода не несут', (): void => {
@@ -30,15 +30,15 @@ describe('отказ правки с кодом приёмника', (): void =>
     });
 
     it('SC-MB-411 — показывается текст словаря по коду, а слово приёмника из тела ответа не берётся', (): void => {
-        const fault: unknown = spokenFaultOf(409, refusalBody(ERefusal.AccountNameTaken, { name: 'Пётр' }));
+        const fault: unknown = spokenFaultOf(409, refusalBody(ERefusal.InviteProjectExists, { name: 'Витрина' }));
 
-        expect(spokenFaultText(fault, 'не удалось', TEXT)).toBe('Пользователь «Пётр» уже заведён: имя занято');
-        expect(spokenFaultText(fault, 'не удалось', TEXT)).not.toContain('пользователь «Пётр» уже заведён');
+        expect(spokenFaultText(fault, 'не удалось', TEXT)).toBe('Проект «Витрина» уже заведён: приглашение ему не нужно, а имя занято');
+        expect(spokenFaultText(fault, 'не удалось', TEXT)).not.toContain('проект «Витрина» уже заведён');
     });
 
-    it('SC-MB-362 — без кода отвечает строка экрана', (): void => {
+    it('без кода отвечает строка экрана', (): void => {
         expect(spokenFaultText({ kind: EReadFault.Service, refusal: null }, 'не удалось', TEXT)).toBe('не удалось');
         expect(spokenFaultText(new Error('чужая'), 'не удалось', TEXT)).toBe('не удалось');
-        expect(spokenFaultText({ kind: 'nothing', refusal: { code: ERefusal.RoleNameEmpty } }, 'не удалось', TEXT)).toBe('не удалось');
+        expect(spokenFaultText({ kind: 'nothing', refusal: { code: ERefusal.InviteNameEmpty } }, 'не удалось', TEXT)).toBe('не удалось');
     });
 });

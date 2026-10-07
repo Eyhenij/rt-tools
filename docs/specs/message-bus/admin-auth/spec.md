@@ -1,40 +1,37 @@
 # The entry into the admin application
 
-**Status:** in force · **Revision:** 2026-08-21 · **Scenario prefix:** `SC-MB`
+**Status:** in force · **Revision:** 2026-10-07 · **Scenario prefix:** `SC-MB`
 **Depends on:** none
 **Laws:** `frontend-application`, `reuse-first`
 **Procedures:** none — the operations are declared by the controllers of the intake
 
 A subdomain of the domain "the intake of the cargo": what a person introduces themselves to the
-intake by and how their account is created. What they read after the entry — the subdomain next to
+intake by. What they read after the entry — the subdomain next to
 it: `docs/specs/message-bus/admin/`.
 
 ## Why
 
 The service goes out into the internet. Knowing the tokens of the trees alone, it would give what
 was taken in to anyone who reached its address and would not answer the question of who read it.
-Hence the entry of a person: a name, a password and the cookie the browser introduces itself by
-further on.
-
-The accounts at that are created by whoever has access to the node — the service has no admin
-application of the accounts at all, and that is a decision, not an unfinished piece of work.
+Hence the entry of a person. Since October 2026 it goes through Keycloak, and the people live
+there.
 
 ## Terminology
 
 The vocabulary of the domain whole is in the spec of the domain. Here only what lives in the entry:
 
-| Term                  | What it is                                                                                                            |
-| --------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| An account            | The name and the password of one person. The first is created by the first-run screen, the rest by the people section |
-| The entry             | The state in which the intake knows who is asking. It lives by a term and is broken off by the exit                   |
-| The term of the entry | The time after which the entry stops being accepted and a person introduces themselves anew                           |
+| Term                  | What it is                                                                                          |
+| --------------------- | --------------------------------------------------------------------------------------------------- |
+| A person              | Whoever signs in at Keycloak. The intake keeps no record of them and knows them by the token alone  |
+| The entry             | The state in which the intake knows who is asking. It lives by a term and is broken off by the exit |
+| The term of the entry | The time after which the entry stops being accepted and a person introduces themselves anew         |
 
 ### What it is called in the interface
 
-| In the agreement      | On the screen                                                                   |
-| --------------------- | ------------------------------------------------------------------------------- |
-| the entry             | a screen with two fields and a button; a person sees no other screens before it |
-| a refusal of the pair | one line under the form: the pair is not accepted, and what exactly is not said |
+| In the agreement      | On the screen                                                              |
+| --------------------- | -------------------------------------------------------------------------- |
+| the entry             | the sign-in screen of the Keycloak realm; the admin application draws none |
+| a refusal of the pair | the message of that screen: the pair is not accepted, and what is not said |
 
 ## Rules
 
@@ -60,17 +57,6 @@ The vocabulary of the domain whole is in the spec of the domain. Here only what 
   the realm and the client whose tokens it checks, without a token and without secrets. A copy
   built into the page would drift from the intake when Keycloak moves.
 
-**The account.**
-
-- **An account is created, changes its password and is switched off from the screens.** The
-  accounts are created by the people section under the right to edit people. The section moves to
-  the Keycloak console by task RT-2578.
-- **The name of an account is taken by one person, and the case is not told apart in it.** The
-  creating refuses at a taken name instead of creating a second record.
-- **The name of an account is unique by the brought-to form.** A constraint of the storage, not a
-  check by reading: two creations started in a row are not told apart by a check by reading.
-- **The password lies only as a hash.** There is neither a column under the password itself nor a copy
-  of it in the journal on any path.
 - **A person sent to the entry from the address of a section lands after the entry where they were
   going.** Otherwise a link to a section works only for whoever has already entered.
 
@@ -80,7 +66,7 @@ The vocabulary of the domain whole is in the spec of the domain. Here only what 
   no screen of its own for them; the first person of an empty node is the subdomain `first-run`.
 - **The restoring of a password by mail.** Keycloak holds it, as every other step of the sign-in.
 - **Rights inside the admin application.** Subdomain `access-rights`.
-- **The requirements of the password itself.** The records are created by whoever has access to the node.
+- **The requirements of the password itself.** Keycloak sets them for its realm.
 
 ## Contract
 
@@ -102,15 +88,14 @@ domain. Where the entry is obliged to refuse instead of staying silent:
 
 ## Data
 
-| Entity     | What is in it                                                                                                            |
-| ---------- | ------------------------------------------------------------------------------------------------------------------------ |
-| An account | the name, the hash of the password, the sign of being switched off, the date of the creating, the time of the last entry |
+Not applicable: the intake keeps no record of a person. Keycloak holds the people, their
+passwords and their rights.
 
 ## Screens and states
 
-| Screen    | States                                                                         |
-| --------- | ------------------------------------------------------------------------------ |
-| The entry | an empty form · the sending · a refusal of the pair · a refusal of the service |
+| Screen    | States                                                                              |
+| --------- | ----------------------------------------------------------------------------------- |
+| The entry | drawn by Keycloak: an empty form · a refusal of the pair · a refusal of the service |
 
 The table of the states is checked by nothing: a state the code does not know how to come into reads
 here as a description of something working. The states are confirmed by scenarios.
@@ -119,8 +104,8 @@ here as a description of something working. The states are confirmed by scenario
 
 ### Locales
 
-The language is one — Russian. The labels of the screen of the entry lie in the dictionary of the
-application, not in the markup.
+The screen of the entry is drawn by the theme of the realm, and its labels lie in that theme, not in
+the dictionary of the admin application.
 
 ### SEO
 
@@ -129,19 +114,15 @@ stands behind it.
 
 ### Mobile layout
 
-The form of the entry on a narrow screen is not cut: the two fields and the button stand as a column.
+The form of the entry is the screen of the realm, and its narrow layout belongs to the theme.
 
 ### Several objects
 
-An account belongs to the service, not to a tree: whoever entered gets the cargo of all the trees, and
-there are no rights inside the admin application.
+A person belongs to the service, not to a tree: whoever entered gets the cargo of all the trees, and
+what they may do is said by their rights.
 
 ## Decisions
 
-- **The entry is by a password, and the accounts are created from the screens.** The service goes
-  out into the internet — an entry is needed. The commands of the launch line held the creating
-  until the screens came; with the screens in place they were removed as a second way in nobody
-  checked. The first record of an empty node is created by the first-run screen.
 - **The entry goes through the shared Keycloak.** The owner on 6 October 2026: «мигрируй логин из
   message bus на новый auth». Rejected: the own entry by a password and a cookie — every admin would
   keep its own passwords and its own guessing defence.
@@ -151,6 +132,10 @@ there are no rights inside the admin application.
 The open questions of the domain are shared, and they live in the spec next to it.
 
 ## History of changes
+
+- 2026-10-07 — the records of people left the intake, task RT-2578: Keycloak keeps them. The
+  rules of the account are gone, and so are the scenarios `SC-MB-42`, `SC-MB-43`, `SC-MB-59` and
+  `SC-MB-60`.
 
 - 2026-10-06 — the entry moved to Keycloak, task RT-2576. The operations of the sign-in, the exit
   and the session are gone. So are the scenarios `SC-MB-38`, `SC-MB-41`, `SC-MB-56`, `SC-MB-57`,

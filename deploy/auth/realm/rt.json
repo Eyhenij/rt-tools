@@ -144,15 +144,6 @@
         },
         {
           "name": "invites:manage"
-        },
-        {
-          "name": "accounts:read"
-        },
-        {
-          "name": "accounts:manage"
-        },
-        {
-          "name": "roles:manage"
         }
       ]
     }

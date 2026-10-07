@@ -16,8 +16,7 @@
 import { BadRequestException, Body, Controller, Get, Param, Post, Query, Req, Sse } from '@nestjs/common';
 import { Observable } from 'rxjs';
 
-import { SessionOperation } from '@rt/message-bus-api/access/util';
-import { accountOf, IAccountBearingRequest, IRequestAccount } from '@rt/message-bus-api/accounts/util';
+import { accountOf, IAccountBearingRequest, IRequestAccount, SessionOperation } from '@rt/message-bus-api/access/util';
 import {
     conversationsPage,
     IChatConversationListRow,
