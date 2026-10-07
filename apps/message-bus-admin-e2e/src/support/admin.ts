@@ -34,7 +34,7 @@ export type TPageMark = 'hint' | 'columns' | 'refresh' | 'fault' | 'retry';
  * роли не имеют ни отбора, ни панели подробностей: их панели правят и открываются кнопкой и
  * меню строки, а не нажатием на строку.
  */
-export type TSectionName = 'postmortems' | 'proposals' | 'summaries' | 'usage' | 'invites' | 'people' | 'roles' | 'chat';
+export type TSectionName = 'postmortems' | 'proposals' | 'summaries' | 'usage' | 'invites' | 'chat';
 
 /** Разделы админки: адрес, заголовок экрана и `qa-dataid` его таблицы и строк. */
 export const SECTION: Readonly<Record<TSectionName, ISectionMarks>> = Object.freeze({
@@ -87,25 +87,6 @@ export const SECTION: Readonly<Record<TSectionName, ISectionMarks>> = Object.fre
         // Панели подробностей у приглашения нет: всё известное о нём стоит в строке. Метка
         // объявлена пустой, а не выдуманной, — по выдуманной спека искала бы то, чего нет, и
         // молча ничего не находила.
-        details: '',
-    }),
-    people: Object.freeze({
-        path: SECTIONS.people,
-        title: 'Пользователи',
-        prefix: 'people',
-        table: 'people-table',
-        row: 'people-row',
-        // Панели подробностей у человека нет: всё известное о нём стоит в строке, а панели
-        // заведения, пароля и прав правят и открываются кнопкой и меню строки.
-        details: '',
-    }),
-    roles: Object.freeze({
-        path: SECTIONS.roles,
-        title: 'Роли',
-        prefix: 'roles',
-        table: 'roles-table',
-        row: 'roles-row',
-        // Панели подробностей у роли нет: строка несёт её целиком, а панель роли правит.
         details: '',
     }),
 });

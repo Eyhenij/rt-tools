@@ -21,7 +21,6 @@ import { seedChat } from './seed-chat.mjs';
 import { seedObservations } from './seed-observations.mjs';
 import { checkNothingDrifts } from './seed-self-check.mjs';
 import {
-    ACCOUNT,
     API_ORIGIN,
     ENROLLED_SLUG,
     INVITES,
@@ -162,7 +161,7 @@ async function database() {
 /** Вычистка: набор начинает с пустого хранилища, чтобы числа на экране не зависели от прошлых прогонов. */
 async function wipe() {
     await sql(
-        'TRUNCATE TABLE "session", "account_permission", "role", "account", "postmortem", "proposal", "month_record", "tree_invite", "tree_token", "tree", "chat_space", "chat_message", "chat_conversation", "chat_visitor", "chat_site", "chat_operator" CASCADE;'
+        'TRUNCATE TABLE "postmortem", "proposal", "month_record", "tree_invite", "tree_token", "tree", "chat_space", "chat_message", "chat_conversation", "chat_visitor", "chat_site", "chat_operator" CASCADE;'
     );
 }
 
@@ -476,7 +475,7 @@ async function states() {
 /** Засев целиком. Зовётся подъёмом стенда после того, как приёмник поднят. */
 export async function seed() {
     await wipe();
-    const operator = await seedPeople(sql);
+    const operator = await seedPeople();
     await seedChat(sql, operator);
     const tokens = await trees();
     await postmortems(tokens);
@@ -487,7 +486,7 @@ export async function seed() {
     await keys();
     await moments();
     await states();
-    await checkNothingDrifts(sql, ACCOUNT.name);
+    await checkNothingDrifts(sql);
 }
 
 /** Подготовка хранилища: база и схема. Идёт до подъёма приёмника — он ждёт готовой схемы. */

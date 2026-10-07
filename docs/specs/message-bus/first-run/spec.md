@@ -86,9 +86,8 @@ One receiver, one realm.
 - **The first person is created in Keycloak.** The owner on 6 October 2026: «мигрируй логин из
   message bus на новый auth». A screen of the first run in the admin panel would be a second way to
   create a person next to Keycloak's own.
-- **The scenarios about the commands are reworded, not renumbered.** SC-MB-42, 43, 58 and 59
-  speak of the people section now and are carried by the tests that stay; the command tests
-  leave with the commands.
+- **The scenarios about the commands are reworded, not renumbered.** SC-MB-42, 43 and 59 spoke of
+  the people section afterwards; they left with it in task RT-2578.
 
 ## Open questions
 

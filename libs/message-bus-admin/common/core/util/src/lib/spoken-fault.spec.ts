@@ -11,7 +11,7 @@ const TEXT: TAdminText = (key: TAdminLabelKey, params?: Readonly<Record<string, 
     fill(ADMIN_LABELS[key], params);
 
 describe('отказ правки с кодом приёмника', (): void => {
-    it('SC-MB-362 — отклонённое обращение несёт код причины и подстановки', (): void => {
+    it('SC-MB-408 — отклонённое обращение несёт код причины и подстановки', (): void => {
         expect(spokenFaultOf(409, refusalBody(ERefusal.InviteProjectExists, { name: 'Витрина' }))).toEqual({
             kind: EReadFault.Service,
             refusal: { code: ERefusal.InviteProjectExists, params: { name: 'Витрина' } },
@@ -23,7 +23,7 @@ describe('отказ правки с кодом приёмника', (): void =>
         expect(spokenFaultOf(404, refusalBody(ERefusal.TreeUnknown, { slug: 'vitrina' })).kind).toBe(EReadFault.Missing);
     });
 
-    it('SC-MB-362 — поломка службы и кончившийся вход кода не несут', (): void => {
+    it('поломка службы и кончившийся вход кода не несут', (): void => {
         expect(spokenFaultOf(500, { message: 'обращение 1a2b' }).refusal).toBeNull();
         expect(spokenFaultOf(401, refusalBody(ERefusal.SignInRequired))).toEqual({ kind: EReadFault.Session, refusal: null });
         expect(spokenFaultOf(0, null)).toEqual({ kind: EReadFault.Timeout, refusal: null });
