@@ -3,9 +3,9 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 2 of 3 — Showcase
-- **Done:** both components with their tests — 96 tree and selector tests green, typecheck green; the 802 snapshots of the kit match, so `rt-tree` and `rt-tree-selector` kept their look
-- **Next step:** the showcase of both components
+- **Stage:** 3 of 3 — Agreement and checks
+- **Done:** both components with their tests — 96 tree and selector tests green, typecheck green; the 802 snapshots of the kit match, so `rt-tree` and `rt-tree-selector` kept their look; 9 new snapshots taken, looked at and confirmed by a second raising (811 of 811)
+- **Next step:** the full check set, then the stories to the owner
 - **Uncommitted:** nothing
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -15,11 +15,11 @@
 - [x] 1.1 Write the single-group logic with its tests
 - [x] 1.2 Open the tree and the selector to heirs without changing them
 - [x] 1.3 Write both components with their tests
-- [>] 2.1 Write the wrappers, Playground and the matrices
-- [ ] 2.2 Write the overview pages
-- [ ] 2.3 Take the snapshots and look at them
-- [ ] 3.1 Bind the spec rules in the companion and the indexes
-- [ ] 3.2 Run the full check set
+- [x] 2.1 Write the wrappers, Playground and the matrices
+- [x] 2.2 Write the overview pages
+- [x] 2.3 Take the snapshots and look at them
+- [x] 3.1 Bind the spec rules in the companion and the indexes
+- [>] 3.2 Run the full check set
 - [ ] 3.3 Show the stories to the owner
 
 ## Decisions along the way

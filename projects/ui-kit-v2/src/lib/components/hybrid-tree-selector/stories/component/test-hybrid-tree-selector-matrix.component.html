@@ -1,0 +1,55 @@
+<ng-template #cell let-c>
+    <div style="width: 320px; height: 420px; display: flex">
+        <rt-hybrid-tree-selector
+            style="flex: 1"
+            expandControls
+            [ariaLabel]="c.name"
+            [nodes]="nodes"
+            [value]="c.value"
+            [confirm]="c.confirm"
+            [branchMarks]="c.branchMarks"
+            [searchTerm]="c.searchTerm" />
+    </div>
+</ng-template>
+
+@switch (part) {
+    @case ('form') {
+        <app-story-presets>
+            <ng-template>
+                <app-story-row caption="Прямая и подтверждаемая формы" [items]="formCases" [itemLabel]="caseLabel">
+                    <ng-template let-c>
+                        <ng-container [ngTemplateOutlet]="cell" [ngTemplateOutletContext]="{ $implicit: c }" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('search') {
+        <app-story-presets>
+            <ng-template>
+                <app-story-row caption="Поиск по каждому слову" [items]="searchCases" [itemLabel]="caseLabel">
+                    <ng-template let-c>
+                        <ng-container [ngTemplateOutlet]="cell" [ngTemplateOutletContext]="{ $implicit: c }" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('presets') {
+        <app-story-presets caption="Селектор в обоих наборах">
+            <ng-template>
+                <ng-container [ngTemplateOutlet]="cell" [ngTemplateOutletContext]="{ $implicit: formCases[1] }" />
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('themes') {
+        <app-story-themes caption="Селектор в обеих темах">
+            <ng-template>
+                <ng-container [ngTemplateOutlet]="cell" [ngTemplateOutletContext]="{ $implicit: formCases[0] }" />
+            </ng-template>
+        </app-story-themes>
+    }
+}
