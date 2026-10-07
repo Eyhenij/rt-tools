@@ -4,16 +4,16 @@
 
 - **State:** `этап-идёт`
 - **Stage:** 1 of 1 — Shorten the guard
-- **Done:** the task, the branch from main and the plan
-- **Next step:** take three lines out of the guard source
+- **Done:** the guard source is 498 lines, the copy 499; the length check names nothing, the layout matches, the guard scenarios 102 of 102
+- **Next step:** take the folder apart and open the PR into main
 - **Uncommitted:** nothing
 - **Waiting for the owner:** no
 - **PR:** not open yet
 
 ## Steps
 
-- [>] 1.1 Take three lines out of the guard source without a change of behaviour
-- [ ] 1.2 Lay out the package and run the guard scenarios
+- [x] 1.1 Take three lines out of the guard source without a change of behaviour
+- [>] 1.2 Lay out the package and run the guard scenarios
 
 ## Decisions along the way
 
