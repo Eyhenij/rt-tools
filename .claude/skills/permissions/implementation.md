@@ -2,9 +2,9 @@
 
 The names and bindings of this tree, next to the rule `SKILL.md`.
 
-There are rights here: a closed set of them, a role that holds a set whole, and pointed edits over
-the role. What the tree has not got is ownerships — there is one intake and one set of sections, so
-a person has one role, not one per ownership. Where the rule speaks of an ownership, the line says
+There are rights here: a closed set of them, given to a person in Keycloak as client roles of the
+bus client. What the tree has not got is presets with overrides and ownerships — there is one
+intake and one set of sections. Where the rule speaks of an ownership, the line says
 so and names what is here instead: an empty line a month later is indistinguishable from a
 forgotten one.
 
@@ -16,13 +16,13 @@ operation, one check for the whole application, closed by default.
 
 - **In the rule** — Here
 - **a Connect procedure** — an operation of a Nest controller; the shared check stands as `APP_GUARD`
-- **a right ("resource and action")** — the pair as a string: `postmortems:manage`, `roles:manage`; the set is closed by the code
+- **a right ("resource and action")** — the pair as a string: `postmortems:manage`, `invites:manage`; the set is closed by the code
 - **`@RequiresPermission('…')`** — `@RequiresRight('…')` — the right is taken from the closed set, not written as a string
 - **`@RequiresAuth('reason')`** — `@SessionOperation()` — closed by a person's sign-in
 - **`@PublicProcedure('reason')`** — `@PublicOperation()` — the reason is not passed as an argument, it stands as a comment
 - **`@OptionalAuthProcedure('reason')`** — there is no such thing here: an operation gives a guest and a signed-in person nothing different
 - **— (the rule has no fourth kind)** — `@TreeOperation()` — closed by a tree token: taking in cargo and editing its state
-- **a preset, an override** — a role and a pointed edit over it: a role is a named set, an edit is one right given or taken away from one person
+- **a preset, an override** — there is no such thing here: Keycloak gives a person client roles one by one, and the intake keeps no set of its own
 - **`Code.Unauthenticated`** — the framework's `UnauthorizedException` — the answer 401
 - **`Code.PermissionDenied`** — the framework's `ForbiddenException` — the answer 403
 - **the sign-in interceptor** — `AuthGuard` of `@rt-tools/auth-server` for the token of a person, and `AccessGuard` of the intake for the tree token: a request passes when both agree
@@ -36,9 +36,7 @@ operation, one check for the whole application, closed by default.
 - **the token check, the rights in it and the start audit of the declarations** — `projects/auth-server/src/lib/auth-server.module.ts`, connected in `apps/message-bus/src/app/app.module.ts` with the options read by `projects/auth-server/src/lib/env-options.ts`
 - **the admin panel route guard** — `rtAuthGuard` of `@rt-tools/auth-angular`, `projects/auth-angular/src/lib/auth.guards.ts`
 - **the sign-in state in the admin panel and the rights of the signed-in person** — `libs/message-bus-admin/common/container/data-access/src/lib/auth.store.ts`
-- **the closed set of rights and the addition of a role with the edits over it** — `libs/message-bus-common/src/lib/rights.ts`
-- **the role and the pointed edits in the storage** — `prisma/schema.prisma` — the models `Role` and `AccountPermission`
-- **the page of roles and the panel of a person's access** — `libs/message-bus-admin/accounts/feature/roles-list/`, `libs/message-bus-admin/accounts/feature/role-aside/`, `libs/message-bus-admin/accounts/feature/access-aside/` — both closed by `roles:manage`; the receiver side is `libs/message-bus-api/accounts/feature/src/lib/roles.controller.ts` and `accounts-access.controller.ts`, the agreement `docs/specs/message-bus/roles-page/`
+- **the closed set of rights** — `libs/message-bus-common/src/lib/rights.ts`
 
 ## Where the articles are carried out
 
@@ -49,9 +47,9 @@ silent about.
 
 - **Every procedure declares its access by a decorator, and there is exactly one declaration.** — `libs/message-bus-api/access/feature/src/lib/access.guard.ts:AccessGuard` — the mark is read from the operation and from the class at once, `getAllAndOverride`. An undeclared operation answers nobody. A second declaration cannot come about: the mark is one, and a second one replaces the first rather than adding to it.
 - **There are four kinds of access: by a right, to any signed-in person, public and public with a read of the sign-in.** — There are four here too, and one of them is another: `libs/message-bus-api/access/util/src/lib/operation-access.ts:TOperationAccess` — `public`, `tree`, `session`, `permission`. "Public with a read of the sign-in" is absent for want of anything to show a signed-in person beyond a guest; in its place stands the tree token, which the rule does not know at all.
-- **A user's rights are the preset's rights with their overrides applied over them.** — `libs/message-bus-common/src/lib/rights.ts:rightsOf` — a pure addition: the set of the role, then the pointed edits over it. A name outside the closed set is discarded on both sides — `isRight` next to it.
-- **A person has one role per ownership, and the storage holds that.** — `prisma/schema.prisma:Role` — one role on the account, and there are no ownerships here to divide it by: the intake is one. There is nothing to add up either, and that is what the article is about.
-- **A right the role says nothing about counts as not given.** — `libs/message-bus-common/src/lib/rights.ts:hasRight` — the set holds what is given, and silence about a right is an answer, not a gap. The same default stands a tier higher, in the `default` branch of `access.guard.ts`: an operation that declared no access is refused rather than let through.
+- **A user's rights are the preset's rights with their overrides applied over them.** — **Not carried out.** The rights of a person are the client roles in their Keycloak token, given one by one; the intake keeps neither a preset nor overrides. The divergence from the law went to the owner as text, task RT-2578.
+- **A person has one role per ownership, and the storage holds that.** — **Not carried out.** The intake keeps no role of a person in its storage, and there are no ownerships here: Keycloak holds the client roles of the one bus client.
+- **A right the role says nothing about counts as not given.** — `libs/message-bus-common/src/lib/rights.ts:hasRight` — the set of the token holds what is given, and silence about a right is an answer, not a gap. The same default stands a tier higher, in the `default` branch of `access.guard.ts`: an operation that declared no access is refused rather than let through.
 - **A signed-in person's rights are read on every call rather than taken from the issued sign-in.** — `projects/auth-server/src/lib/auth.guard.ts:canActivate` — **narrower** than the article: the rights are read from the access token of the call, not from the storage. The token lives minutes, so a right taken away in Keycloak acts with the next token rather than with the next call.
 - **An account that no longer exists opens no calls that require a sign-in.** — `projects/auth-server/src/lib/token-verifier.ts:callerOf` — **narrower** than the article: Keycloak issues no new token to a removed or disabled person, and the token already issued is accepted until its term ends.
 - **The counter and the advertising signals are switched on by the guest's answer, not by the presence of a key in the settings.** — Not applicable: neither the receiver nor the admin panel has a visit counter or advertising. One operation is open to a guest here — the liveness probe, `apps/message-bus/src/app/health/health.controller.ts:HealthController`.
@@ -80,8 +78,7 @@ silent about.
 - `pnpm exec nx test message-bus-api-access-feature` — both checks together on the marks of the
   application: a tree token, a token of a person, an undeclared operation and an operation closed
   by a right — a token with it, without it and with no client role at all.
-- `pnpm exec nx test message-bus-api-access-util` — the addition of a role with the pointed edits
-  and the marks the declaration by a right sets.
+- `pnpm exec nx test message-bus-api-access-util` — the marks the declaration by a right sets.
 - `pnpm exec nx run message-bus-admin-e2e:e2e` — the end-to-end suite: signing in by the screen,
   the refusal without a sign-in and the same refusal text for a wrong pair and for an unknown name.
 - The rule gate demands this rule on the receiver's access guard and on the admin panel's route

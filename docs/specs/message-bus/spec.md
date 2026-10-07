@@ -46,18 +46,18 @@ cargo.
 
 The second half of the vocabulary is about the reading of what was taken in:
 
-| Term                  | What it is                                                                                                            |
-| --------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| The admin application | The application a person reads the taken-in cargo by. There are no edits of the cargo in it at all                    |
-| An account            | The name and the password of one person. The first is created by the first-run screen, the rest by the people section |
-| An entry              | The state in which the intake knows who is asking. It lives by a term and is broken off by an exit                    |
-| The term of an entry  | The time after which the entry stops being accepted and the person introduces themselves anew                         |
-| A section             | A screen of the admin application with an address of its own. An item of the menu leads into a section                |
-| A list                | The page of a section: a row per record, a toolbar above it and a pagination below it                                 |
-| A panel of details    | A panel with one record whole, sliding out at a press on a row                                                        |
-| A filter              | A condition narrowing the list. It stands in the toolbar and is visible on the screen                                 |
-| A page of a list      | A stretch of the list arriving by one request. The number of the page and the size are named by the request           |
-| A selection           | The page, the size, the sorting and the filter together. It lives in the address of the section                       |
+| Term                  | What it is                                                                                                  |
+| --------------------- | ----------------------------------------------------------------------------------------------------------- |
+| The admin application | The application a person reads the taken-in cargo by. There are no edits of the cargo in it at all          |
+| A person              | Whoever signs in at Keycloak. The intake keeps no record of them and knows them by the token                |
+| An entry              | The state in which the intake knows who is asking: the person holds a valid Keycloak token                  |
+| The term of an entry  | The life of the token. After it the person introduces themselves to Keycloak anew                           |
+| A section             | A screen of the admin application with an address of its own. An item of the menu leads into a section      |
+| A list                | The page of a section: a row per record, a toolbar above it and a pagination below it                       |
+| A panel of details    | A panel with one record whole, sliding out at a press on a row                                              |
+| A filter              | A condition narrowing the list. It stands in the toolbar and is visible on the screen                       |
+| A page of a list      | A stretch of the list arriving by one request. The number of the page and the size are named by the request |
+| A selection           | The page, the size, the sorting and the filter together. It lives in the address of the section             |
 
 The third is about where the intake stands and what it is raised by:
 
@@ -134,11 +134,8 @@ the limit is split further by the same technique.
 | [The section of the invitations](invites/spec.md)                       | the list of the invitations, the revocation, the issuing by a panel, the showing of the code once          |
 | [The shell of the admin application](admin-shell/spec.md)               | the top row of the sections, the popup of the profile, the theme and the language, the screen of the entry |
 | [What the intake writes about itself](journal/spec.md)                  | the row of the journal, the taken-apart reason, the cleaning of the fields                                 |
-| [A right, a role and the check that reads them](access-rights/spec.md)  | what a person may do after the entry: the closed set of rights, the role, the pointed edits over it        |
+| [A right, a role and the check that reads them](access-rights/spec.md)  | what a person may do after the entry: the closed set of rights and the client roles of the token           |
 | [The usage of the rules in the sessions](usage/spec.md)                 | the observation lines: the intake of a day whole, the counting by skill over a period, the section         |
-| [The list of people](people-list/spec.md)                               | who reaches the cargo: the name, the role, the state of the record and the last sign-in                    |
-| [Creating, disabling and a new password](people-editing/spec.md)        | the three edits of a record from the section of people: two panels and a row menu under one right          |
-| [Roles and rights on a screen](roles-page/spec.md)                      | the section of roles, the panel of a role and the panel of a person's access, all under `roles:manage`     |
 | [The first record](first-run/spec.md)                                   | the first-run screen of an empty node: one public operation creates the owner and signs them in            |
 
 ## What is out of scope
@@ -261,10 +258,9 @@ not to a tree, and a filter by tree narrows what is shown, not the access.
 - **The answer of the intake is widened, not created as a second one.** The sender already reads this
   answer, and a second request for the sake of the count of the repeats would add the run one more
   place where it tears.
-- **The entry is by a password, and the accounts are created from the screens.** The service goes
-  out into the internet — an entry is needed. Until the people section came, the records were
-  created by commands of the launch line; with the section and the first-run screen in place the
-  commands were removed as a second way in nobody checked.
+- **The entry goes through Keycloak, and the people live there.** The service goes out into the
+  internet — an entry is needed. The owner on 6 October 2026: «мигрируй логин из message bus на
+  новый auth». The intake keeps neither passwords nor records of people.
 - **Three list screens, not one.** The word of the owner on a divergence brought by an analysis: the
   analyses, the proposals and the digests by one piece of work. Rejected: one screen with the harness
   paying off on it. The price: the branch is longer, and a rollback carries away all three.
@@ -300,16 +296,9 @@ not to a tree, and a filter by tree narrows what is shown, not the access.
   with the rule of a list screen, named as a divergence: a toast goes away by itself, and a person
   who came back to the screen has nothing to repeat it by. The reason, the number of the request and
   the repeat stand in the place of the table.
-- **The number of the attempts of the entry is not limited, and the answer is lengthened — an
-  assumption of the executor.** There is nobody to unlock a locked record: there is no admin
-  application of the accounts. It is cancelled by one edit.
 - **The language is one and the theme is one — an assumption of the executor.** Within the boundaries
   of the work the owner did not name them. It is cancelled by one edit, while the labels lie in the
   dictionary.
-- **The first record is created by a public first-run operation, and it closes for good with the
-  first record.** Without it an empty node has no way in at all: the people section needs an
-  entry, and there is nobody to enter. Rejected: keeping one command of the launch line for the
-  first record — a second way in that lives on the node and that no screen checks.
 - **The proxy is taken as a ready image, it is not installed on the node by a package.** Everything
   that lives on the node is raised by one composition: a package installed by hand outlives the
   recreating of the node only in the memory of whoever installed it.
@@ -431,3 +420,6 @@ not to a tree, and a filter by tree narrows what is shown, not the access.
 - 2026-09-15 — the task RT-1902 created the subdomain about the first record: the first-run screen
   of an empty node and one public operation behind it. The four account commands of the launch
   line were removed with it.
+- 2026-10-07 — task RT-2578 removed the subdomains about the list of people, their editing and
+  roles on a screen: Keycloak keeps the people and their rights, and the intake keeps no table of
+  them.

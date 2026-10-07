@@ -68,7 +68,7 @@ describe('AdminTextService', () => {
 
         // Сначала положительная половина: ключи набора найдены, и отбор ниже узнаёт признак
         // ненайденного. Без неё проба осталась бы зелёной и на пустом списке ключей.
-        expect(keys.length).toBeGreaterThan(200);
+        expect(keys.length).toBeGreaterThan(150);
         expect(text.text('ключНиОткуда' as TAdminLabelKey)).toBe('«ключНиОткуда»');
 
         for (const chosen of [EAdminLocale.Ru, EAdminLocale.En]) {
@@ -101,7 +101,7 @@ describe('AdminTextService', () => {
         const { text }: { locale: AdminLocaleService; text: AdminTextService } = services();
 
         // Сначала положительная половина: код набора приходит текстом.
-        expect(text.text(ERefusal.RoleNameEmpty)).toBe('Роль ждёт имя');
+        expect(text.text(ERefusal.InviteNameEmpty)).toBe('Выдача ждёт имя будущего проекта');
 
         // Приёмник выкатывается отдельно от админки, и его новый код доезжает сюда именем.
         expect(text.text('невиданныйКод' as TAdminLabelKey)).toBe('«невиданныйКод»');

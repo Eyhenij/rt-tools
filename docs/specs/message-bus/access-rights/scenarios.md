@@ -24,21 +24,9 @@ Given an access token without the right of the operation
 When the operation is called
 Then the answer holds neither the name of the right nor the list of the rights of the person
 
-### SC-MB-290 — a right the role is silent about counts as not given
+### SC-MB-290 — a right the token is silent about counts as not given
 
-Given a role whose set holds neither a permission nor a ban of the right
-When an operation declared by that right is called
-Then the answer is a refusal by a right
-
-### SC-MB-291 — a pointed edit gives a right the role does not hold
-
-Given an account whose role lacks the right, and a pointed edit giving it
-When an operation declared by that right is called
-Then the operation does its work
-
-### SC-MB-292 — a pointed edit takes away a right the role holds
-
-Given an account whose role holds the right, and a pointed edit taking it away
+Given an access token whose client roles name other rights of the set, not this one
 When an operation declared by that right is called
 Then the answer is a refusal by a right
 
@@ -65,12 +53,6 @@ Then the answer is a refusal, and the token gives no rights
 Given a person whose token carries client roles of the bus client
 When the admin panel reads who signed in
 Then their rights are exactly those roles, and their name is the name from the token
-
-### SC-MB-297 — a right that no operation declares is not accepted into a role
-
-Given a name that is not in the closed set of rights
-When it is written into a role or into a pointed edit
-Then the writing is refused, and the role is left as it was
 
 ### SC-MB-298 — a section whose right is held is shown and opens
 
@@ -128,25 +110,8 @@ When a right is written into an item
 Then it is a name of the closed set of rights, one for both sides, and a name outside the set does
 not compile
 
-### SC-MB-307 — the stand gives its account every right
+### SC-MB-307 — the stand gives its person every right
 
 Given the stand of the end-to-end suite is seeded
 When a person signs in on it
-Then all four sections are open to them: the suite checks the sections rather than the rights
-
-### SC-MB-370 — the rights model arriving keeps the access of those who already had it
-
-Given accounts created before the rights, each of which saw every section, and among them the
-service account of the cargo triage
-When the migration that grants the rights to the existing accounts is applied
-Then the role of the former access appears with every right of the closed set, and every account
-without a role points at it: the sign-in of such a person opens the sections again. The service
-account of the triage gets a role of its own — reading and marking the cargo, and nothing else. An
-account that already has a role is not touched, and a second application of the migration adds no
-second role
-
-Покрытие: частичное — the test reads the migration and checks what it states: the set of rights
-against the closed set, the update limited to accounts without a role, and the repeat application.
-The applying itself on a database is not run by it.
-
-Covered: `libs/message-bus-common/src/lib/rights-backfill.spec.ts`.
+Then every section is open to them: the realm of the stand gives them every client role

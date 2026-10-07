@@ -22,7 +22,7 @@ The names of this tree: the reading command is `npm run cargo:pull`, the mark co
 `npm run agent-kit:hooks` runs them.
 
 The side of the intake the command speaks to lies in this same repository: the sign-in is
-`libs/message-bus-api/accounts/feature/`, the reading of the lists is
+checked by `projects/auth-server/src/lib/auth.guard.ts`, the reading of the lists is
 `libs/message-bus-api/proposals/feature/` and `libs/message-bus-api/postmortems/feature/`. The shape
 of counting the sign of a proposal is declared there too, in `libs/message-bus-api/proposals/util/`,
 and is repeated here verbatim.

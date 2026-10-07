@@ -24,6 +24,6 @@ they answer for as `ChatOperatorSite`, and the state of a conversation as the se
 `prisma/migrations/20260920160000_chat_operator_and_state/migration.sql`. The tables are
 `chat_operator` and `chat_operator_site`.
 
-The signed-in person is read by `libs/message-bus-api/accounts/util/src/lib/account-context.ts:accountOf`
+The signed-in person is read by `libs/message-bus-api/access/util/src/lib/account-context.ts:accountOf`
 — the same reading every operation of the receiver closed by an entry works from. The refusal about
 a state outside the set is `ChatStateUnknown` in `libs/message-bus-common/src/lib/refusal.ts`.

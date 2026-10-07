@@ -48,20 +48,6 @@ Given a person holds a fit access token of the bus client
 When the token is presented to an operation of the intake of the cargo
 Then the intake is refused: it asks for a token of a tree, not for an entry
 
-### SC-MB-42 — the creating stores the hash, not the password
-
-Given there is no account with such a name
-When the owner creates the record from the people section and names a password
-Then the record is created, and the hash lies in the storage, not the password itself
-
-### SC-MB-43 — a taken name of an account refuses the creating
-
-Given a record with such a name is already created
-When the creating is called with the same name
-Then it refuses and creates no second record
-
-## The sections and the addresses
-
 ### SC-MB-44 — a direct address of a section without an entry leads to the entry
 
 Given the owner has not entered
@@ -73,18 +59,6 @@ Then they see the entry screen of the realm, not an empty section
 Given the owner came by a link to the section of the analyses and was sent to the entry
 When they name their address and password at Keycloak
 Then they see the section they came by the link to
-
-### SC-MB-59 — a changed password does not match the stored hash of the former one
-
-Given the password of an account is changed from the people section
-When the former password is checked against the stored hash
-Then it does not match, and the new password does
-
-### SC-MB-60 — the name of an account does not tell the case apart
-
-Given the record `admin` is created
-When the people section creates the record `Admin`
-Then it refuses: the name is taken
 
 ### SC-MB-79 — an operation without a declared access does not open outward
 

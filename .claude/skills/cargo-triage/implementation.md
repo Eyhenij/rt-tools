@@ -30,7 +30,7 @@ receiving side stands — and both lie in one repository.
 - **The build of the mark package** — `tools/cargo-mark.mjs`
 - **The read command** — `tools/cargo-pull.mjs`
 - **The close command** — `tools/cargo-close.mjs`
-- **The account sign-in** — `libs/message-bus-api/accounts/feature/`
+- **The account sign-in** — Keycloak; the intake checks the token by `projects/auth-server/src/lib/auth.guard.ts`
 - **The set of states** — `projects/agent-kit/src/lib/cargo.ts`
 - **The state-editing operation** — `libs/message-bus-api/cargo-state/`
 - **The admin panel's cargo sections** — `libs/message-bus-admin/postmortems/`, `libs/message-bus-admin/proposals/`
