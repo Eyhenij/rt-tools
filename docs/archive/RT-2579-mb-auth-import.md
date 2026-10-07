@@ -1,5 +1,7 @@
 # Grill
 
+Task RT-2579 · the PR into the epic branch RT-2575
+
 ## The owner request
 
 > я вмержил https://github.com/Eyhenij/rt-tools/pull/2559, подтягивай свежий main и чисти вмерженные ветки как локально так и в ремоуте, выпускай итоговые пакеты auth и затем мигрируй логин из message bus на новый auth
@@ -59,3 +61,8 @@ Keycloak.
 ## What is left unclear
 
 - Nothing blocks the work. The addresses arrive with the owner's file before the deploy.
+
+## Decisions along the way
+
+- **The export query was checked on the local database, read only.** Production is read by the
+  owner before the deploy; the session did not reach it.
