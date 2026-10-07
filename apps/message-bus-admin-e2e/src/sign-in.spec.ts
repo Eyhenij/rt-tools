@@ -1,13 +1,12 @@
 import { BrowserContext, expect, Page, test } from '@playwright/test';
 
-import { ACCOUNT } from '../stand/stand.mjs';
-import { openSection, qa, SECTION, SIGN_IN_PATH, signIn } from './support/admin';
-import { expectScreen } from './support/shot';
+import { ACCOUNT, STAND_PASSWORD } from '../stand/stand.mjs';
+import { enterOnRealmScreen, expectRealmScreen, openSection, qa, SECTION, signIn } from './support/admin';
 
 /**
  * Вход в админку и адреса разделов.
  *
- * Проверяется то, что видит человек: закрытый адрес уводит его на вход, вход возвращает туда,
+ * Проверяется то, что видит человек: закрытый адрес уводит его на форму Keycloak, вход возвращает туда,
  * куда он шёл, а раздел переживает перезагрузку страницы. Серверную сторону всего этого держат
  * спеки приёмника — здесь она не повторяется, здесь смотрят на экран.
  */
@@ -15,14 +14,8 @@ test.describe('вход и адреса разделов', () => {
     test('SC-MB-44 — прямой адрес раздела без входа ведёт на вход', async ({ page }: { page: Page }) => {
         await page.goto(SECTION.postmortems.path);
 
-        await expect(page).toHaveURL(new RegExp(`${SIGN_IN_PATH}\\b`));
-        await expect(qa(page, 'sign-in-submit')).toBeVisible();
+        await expectRealmScreen(page);
         await expect(qa(page, SECTION.postmortems.table)).toHaveCount(0);
-
-        // Кадр стоит там, где экран уже открыт проверкой поведения: отдельная спека «про
-        // снимки» открывала бы те же экраны второй раз и расходилась бы с этой при первой же
-        // правке адресов.
-        await expectScreen(page, 'sign-in');
     });
 
     test('SC-MB-45 — после входа человек попадает туда, куда шёл', async ({ page }: { page: Page }) => {
@@ -33,7 +26,7 @@ test.describe('вход и адреса разделов', () => {
         await expect(page.getByRole('heading', { name: SECTION.summaries.title })).toBeVisible();
     });
 
-    test('SC-MB-33 — вход по годной паре открывает админку', async ({ page }: { page: Page }) => {
+    test('SC-MB-33 — вход в Keycloak открывает админку', async ({ page }: { page: Page }) => {
         await page.goto('/');
         await signIn(page);
 
@@ -55,32 +48,33 @@ test.describe('вход и адреса разделов', () => {
     test('SC-MB-37 — просроченный вход перестаёт приниматься', async ({ page, context }: { page: Page; context: BrowserContext }) => {
         await openSection(page, 'postmortems');
 
-        // Вход обрывается со стороны браузера — так же, как он обрывается сроком: приёмник
-        // видит запрос без входа, а человек обязан увидеть экран входа, а не отказ на пустом
-        // разделе
+        // Вход в Keycloak обрывается со стороны браузера — так же, как он обрывается сроком:
+        // перезагруженная админка не находит входа и обязана увести на форму области, а не
+        // показать отказ на пустом разделе
         await context.clearCookies();
         await page.reload();
 
-        await expect(page).toHaveURL(new RegExp(`${SIGN_IN_PATH}\\b`));
-        await expect(qa(page, 'sign-in-submit')).toBeVisible();
+        await expectRealmScreen(page);
+        await expect(qa(page, SECTION.postmortems.table)).toHaveCount(0);
     });
 
-    test('SC-MB-34, SC-MB-35 — неверная пара и незнакомое имя отбиваются одним и тем же текстом', async ({ page }: { page: Page }) => {
-        const refusalOf: (name: string, password: string) => Promise<string> = async (name: string, password: string): Promise<string> => {
-            await page.goto(SIGN_IN_PATH);
-            await qa(page, 'sign-in-name').locator('input').fill(name);
-            await qa(page, 'sign-in-password').locator('input').fill(password);
-            await qa(page, 'sign-in-submit').click();
-            await expect(qa(page, 'sign-in-fault')).toBeVisible();
+    test('SC-MB-34, SC-MB-35 — неверный пароль и незнакомый адрес отбиваются одним и тем же текстом', async ({ page }: { page: Page }) => {
+        const refusalOf: (email: string, password: string) => Promise<string> = async (
+            email: string,
+            password: string
+        ): Promise<string> => {
+            await page.goto('/');
+            await enterOnRealmScreen(page, email, password);
+            await expect(qa(page, 'kc-message')).toBeVisible();
 
-            return ((await qa(page, 'sign-in-fault').textContent()) ?? '').trim();
+            return ((await qa(page, 'kc-message').textContent()) ?? '').trim();
         };
 
-        const wrongPassword: string = await refusalOf(ACCOUNT.name, 'не тот пароль');
-        const unknownName: string = await refusalOf('Такой записи нет', ACCOUNT.password);
+        const wrongPassword: string = await refusalOf(ACCOUNT.email, 'не тот пароль');
+        const unknownAddress: string = await refusalOf('nobody@stand.example', STAND_PASSWORD);
 
         expect(wrongPassword).not.toBe('');
-        expect(unknownName).toBe(wrongPassword);
-        await expect(page).toHaveURL(new RegExp(`${SIGN_IN_PATH}\\b`));
+        expect(unknownAddress).toBe(wrongPassword);
+        await expectRealmScreen(page);
     });
 });

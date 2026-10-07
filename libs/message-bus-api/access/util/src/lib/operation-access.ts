@@ -11,10 +11,16 @@
  *
  * Умолчание — **закрыто**: операция, не объявившая ничего, не отвечает никому. Направление
  * выбрано так намеренно: при обратном забытая строка открывала бы новую операцию наружу молча.
+ *
+ * Человек входит через Keycloak, и его токен проверяет модуль входа. Поэтому каждая метка ставит
+ * два объявления: своё — для проверки приёмника, и объявление модуля — для его проверки токена и
+ * для его проверки при старте. Операция дерева для модуля открыта: токен дерева проверяет приёмник.
+ * Метки ставятся на операцию, а не на контроллер: модуль читает объявление с обработчика.
  */
-import { applyDecorators, CustomDecorator, SetMetadata } from '@nestjs/common';
+import { applyDecorators, SetMetadata } from '@nestjs/common';
 
 import { TRight } from '@rt/message-bus-common';
+import { OpenOperation, PermittedOperation, SignedInOperation } from '@rt-tools/auth-server';
 
 /**
  * Чем операция закрыта. Набор закрыт: другого способа представиться у приёмника нет.
@@ -49,18 +55,18 @@ export const OPERATION_RIGHT: string = 'message-bus.operation-right';
 /* eslint-disable sonarjs/function-name -- фабрики декораторов зовутся с прописной буквы: так их называет сам каркас, и так они читаются в месте применения */
 
 /** Операция, открытая без токена и без входа. */
-export function PublicOperation(): CustomDecorator<string> {
-    return SetMetadata(OPERATION_ACCESS, 'public');
+export function PublicOperation(): ReturnType<typeof applyDecorators> {
+    return applyDecorators(SetMetadata(OPERATION_ACCESS, 'public'), OpenOperation());
 }
 
 /** Операция приёма груза: закрыта токеном дерева. */
-export function TreeOperation(): CustomDecorator<string> {
-    return SetMetadata(OPERATION_ACCESS, 'tree');
+export function TreeOperation(): ReturnType<typeof applyDecorators> {
+    return applyDecorators(SetMetadata(OPERATION_ACCESS, 'tree'), OpenOperation());
 }
 
 /** Операция чтения принятого: закрыта входом человека, каким бы правом он ни обладал. */
-export function SessionOperation(): CustomDecorator<string> {
-    return SetMetadata(OPERATION_ACCESS, 'session');
+export function SessionOperation(): ReturnType<typeof applyDecorators> {
+    return applyDecorators(SetMetadata(OPERATION_ACCESS, 'session'), SignedInOperation());
 }
 
 /**
@@ -71,5 +77,5 @@ export function SessionOperation(): CustomDecorator<string> {
  * всем молча.
  */
 export function RequiresRight(right: TRight): ReturnType<typeof applyDecorators> {
-    return applyDecorators(SetMetadata(OPERATION_ACCESS, 'permission'), SetMetadata(OPERATION_RIGHT, right));
+    return applyDecorators(SetMetadata(OPERATION_ACCESS, 'permission'), SetMetadata(OPERATION_RIGHT, right), PermittedOperation(right));
 }

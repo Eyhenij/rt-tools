@@ -1,0 +1,123 @@
+# Состав прода общего Keycloak: свой узел, своя база, своя дорога.
+#
+# Keycloak — вход всех продуктов, поэтому он живёт не на узле одного из них: сбой или выкатка
+# продукта не уносит вход остальных. Каждый продукт держит файл своей области у себя и кладёт
+# его в каталог областей узла; отсюда приходит только область `rt` внутренних инструментов.
+#
+#   docker compose -f docker-compose.prod.yml --env-file .env.prod up -d
+#   docker compose -f docker-compose.prod.yml --env-file .env.prod run --rm keycloak-config
+#
+# Секреты, пароли базы и почта лежат только в `.env.prod` на узле. Имена, на которых отвечает
+# вход, — тоже: `AUTH_HOSTS` перечисляет их через запятую, и имя продукта в это дерево не
+# попадает.
+name: auth-prod
+
+x-logging: &logging
+    driver: json-file
+    options:
+        max-size: '10m'
+        max-file: '5'
+
+services:
+    db:
+        image: postgres:18.3-alpine
+        restart: unless-stopped
+        logging: *logging
+        environment:
+            POSTGRES_USER: ${POSTGRES_USER:?set in .env.prod}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set in .env.prod}
+            POSTGRES_DB: ${POSTGRES_DB:?set in .env.prod}
+        volumes:
+            # Восемнадцатый Postgres ждёт одну точку монтирования на весь каталог.
+            - db:/var/lib/postgresql
+        healthcheck:
+            test: ['CMD-SHELL', 'pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"']
+            interval: 5s
+            timeout: 3s
+            retries: 10
+
+    keycloak:
+        image: quay.io/keycloak/keycloak:26.5.5
+        restart: unless-stopped
+        logging: *logging
+        command: ['start', '--http-enabled=true', '--http-port=8080']
+        environment:
+            KC_DB: postgres
+            KC_DB_URL: jdbc:postgresql://db:5432/${POSTGRES_DB}
+            KC_DB_USERNAME: ${POSTGRES_USER}
+            KC_DB_PASSWORD: ${POSTGRES_PASSWORD}
+            # TLS снимает дорога. Адрес области берётся из запроса: у каждого продукта своё имя
+            # входа, и выдавший в токене — то имя, по которому пришёл браузер.
+            KC_PROXY_HEADERS: xforwarded
+            KC_HOSTNAME_STRICT: 'false'
+            KC_HEALTH_ENABLED: 'true'
+            KC_BOOTSTRAP_ADMIN_USERNAME: ${KC_ADMIN_USER:?set in .env.prod}
+            KC_BOOTSTRAP_ADMIN_PASSWORD: ${KC_ADMIN_PASSWORD:?set in .env.prod}
+            # Узлу 2 ГБ на Keycloak и базу: без потолка куча растёт и вытесняет базу.
+            JAVA_OPTS_KC_HEAP: -Xms256m -Xmx768m
+        volumes:
+            # Тема входа: файл кладёт выкатка рядом с составом.
+            - ./providers:/opt/keycloak/providers:ro
+        depends_on:
+            db:
+                condition: service_healthy
+        expose:
+            - '8080'
+        healthcheck:
+            # В образе нет curl: запрос к порту управления собирается средствами bash.
+            test:
+                [
+                    'CMD-SHELL',
+                    "exec 3<>/dev/tcp/127.0.0.1/9000 && printf 'GET /health/ready HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3 && grep -q '\"UP\"' <&3",
+                ]
+            interval: 10s
+            timeout: 5s
+            retries: 60
+
+    # Области накладываются из файлов каталога `realm` по вызову выкатки. Роли клиентов не
+    # удаляются: их дописывает выгрузка каталога прав самих приложений. Подстановки `$(env:…)`
+    # в файлах берутся из того же `.env.prod`.
+    keycloak-config:
+        image: adorsys/keycloak-config-cli:6.5.1-26.5.5
+        logging: *logging
+        env_file: .env.prod
+        environment:
+            KEYCLOAK_URL: http://keycloak:8080
+            KEYCLOAK_USER: ${KC_ADMIN_USER}
+            KEYCLOAK_PASSWORD: ${KC_ADMIN_PASSWORD}
+            KEYCLOAK_AVAILABILITYCHECK_ENABLED: 'true'
+            KEYCLOAK_AVAILABILITYCHECK_TIMEOUT: 300s
+            IMPORT_FILES_LOCATIONS: /config/*.json
+            IMPORT_VARSUBSTITUTION_ENABLED: 'true'
+            IMPORT_CACHE_ENABLED: 'false'
+            IMPORT_MANAGED_ROLE: no-delete
+        volumes:
+            - ./realm:/config:ro
+        depends_on:
+            keycloak:
+                condition: service_healthy
+        restart: 'no'
+        profiles: ['config']
+
+    caddy:
+        image: caddy:2.10-alpine
+        restart: unless-stopped
+        logging: *logging
+        environment:
+            AUTH_HOSTS: ${AUTH_HOSTS:?set in .env.prod}
+        ports:
+            - '80:80'
+            - '443:443'
+        volumes:
+            - ./Caddyfile:/etc/caddy/Caddyfile:ro
+            # Состояние выдачи сертификатов: без тома каждая выкатка просила бы новый и упёрлась
+            # бы в недельный предел выдач.
+            - caddy-data:/data
+            - caddy-config:/config
+        depends_on:
+            - keycloak
+
+volumes:
+    db:
+    caddy-data:
+    caddy-config:

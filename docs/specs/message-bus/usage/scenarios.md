@@ -136,7 +136,7 @@ When they open the admin application
 Then the row of the sections holds no «Использование», and the address of the section answers with
 the refusal of the shell
 
-Coverage: partial — the right closes the section and the route by calls in `libs/message-bus-admin/auth/shell/src/lib/section-access.spec.ts` and `libs/message-bus-admin/common/container/feature/src/lib/admin-container.component.spec.ts`; the stand has one account, with every right.
+Coverage: partial — the right closes the section and the route by calls in `libs/message-bus-admin/common/container/data-access/src/lib/section-access.spec.ts` and `libs/message-bus-admin/common/container/feature/src/lib/admin-container.component.spec.ts`; the stand has one account, with every right.
 
 ### SC-MB-352 — an empty period draws the empty state of the base
 

@@ -1,7 +1,7 @@
 import { expect, Page, Request, test } from '@playwright/test';
 
 import { SECTIONS } from '../stand/stand.mjs';
-import { openSection, qa, SECTION, SIGN_IN_PATH, signIn } from './support/admin';
+import { expectRealmScreen, openSection, qa, SECTION, signIn } from './support/admin';
 import { expectScreen } from './support/shot';
 
 /**
@@ -58,14 +58,14 @@ test.describe('оболочка админки', () => {
         await expectScreen(page, 'shell-profile-menu', { keepPointer: true });
     });
 
-    test('SC-MB-146 — выход идёт из попапа и уводит на экран входа', async ({ page }: { page: Page }) => {
+    test('SC-MB-146 — выход идёт из попапа и уводит на форму входа Keycloak', async ({ page }: { page: Page }) => {
         await openSection(page, 'postmortems');
 
         await qa(page, 'header-user-menu').click();
         await qa(page, 'profile-sign-out').click();
 
-        await expect(page).toHaveURL(new RegExp(`${SIGN_IN_PATH}\\b`));
-        await expect(qa(page, 'sign-in-submit')).toBeVisible();
+        await expectRealmScreen(page);
+        await expect(qa(page, SECTION.postmortems.table)).toHaveCount(0);
     });
 
     test('SC-MB-147 — тема переключается в попапе и переживает перезагрузку', async ({ page }: { page: Page }) => {
@@ -162,11 +162,7 @@ test.describe('оболочка админки', () => {
     });
 
     test('SC-MB-152 — заголовок вкладки называет приложение, а не проект сборки', async ({ page }: { page: Page }) => {
-        await page.goto(SIGN_IN_PATH);
-        await expect(qa(page, 'sign-in-submit')).toBeVisible();
-
-        await expect(page).toHaveTitle(/Приёмник$/);
-
+        await page.goto('/');
         await signIn(page);
         await expect(qa(page, SECTION.postmortems.table)).toBeVisible();
 

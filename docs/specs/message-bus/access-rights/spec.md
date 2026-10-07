@@ -1,6 +1,6 @@
 # A right, a role and the check that reads them
 
-**Status:** in force · **Revision:** 10 September 2026 · **Scenario prefix:** `SC-MB`
+**Status:** in force · **Revision:** 7 October 2026 · **Scenario prefix:** `SC-MB`
 **Depends on:** `docs/specs/message-bus/admin-auth/spec.md`
 **Laws:** `access`
 **Procedures:** none — the operations are declared by the controllers of the receiver
@@ -24,48 +24,36 @@ are answered by the same words, and the admin panel cannot tell the two apart ei
 ## Terminology
 
 - **A right** — the pair "resource and action", written as one string: `postmortems:read`,
-  `postmortems:manage`, `accounts:manage`. The resource is a section of the receiver, the action is
+  `postmortems:manage`, `invites:manage`. The resource is a section of the receiver, the action is
   what is done in it.
-- **A role** — a named set of rights, given to a person whole.
-- **A pointed edit** — one right given or taken away from one person over their role.
-- **The rights of a person** — the rights of their role with their pointed edits applied over them.
+- **The rights of a person** — the client roles of the bus client in their access token.
 
 ### What it is called in the interface
 
-The words "right" and "role" are seen by the owner on the screens of the tasks that follow this
-one. This agreement adds no screen: everything it starts is seen by a person only as a section
-that opened or did not.
+The owner sees the rights as client roles in the Keycloak console. The admin panel adds no screen
+for them: a person sees the rights only as a section that opened or did not.
 
 ## Rules
 
 **The right and the role.**
 
 - **A right is the pair "resource and action", and the set of rights is closed.** A right absent
-  from the set is not accepted anywhere: neither in a role, nor in a pointed edit, nor in an
-  operation's declaration. Otherwise a typo in a right's name gives a role that permits nothing,
-  and it looks exactly like a role that permits.
-- **A role is a named set of rights, and a person has one role.** Two roles would have to be added
-  up, and the result of adding a permission and a ban over two rows cannot be read.
-- **The rights of a person are the rights of their role with their pointed edits applied over
-  them.** A pointed edit either gives a right the role is silent about or takes away one the role
-  gives.
-- **A right the role says nothing about counts as not given.** Silence is not permission, and an
-  absent right and one outright taken away mean the same.
-- **A person without a role has no rights at all.** They sign in and see the sections none of which
-  their rights name; this is a lawful state, not a defect.
-- **The rights are given by the same change that closed the operations.** Closing alone leaves
-  every account that existed before it with an empty role, that is with no rights at all, and the
-  intake answers a refusal to everyone, the owner included. The state before the closing is
-  restored by the change itself, not by a query afterwards: a query is made on one machine and is
-  absent from every other copy of the storage.
+  from the set is not accepted in an operation's declaration. Otherwise a typo in a right's name
+  closes an operation by a right nobody can be given.
+- **The rights of a person are the client roles of the bus client in their access token.** Roles
+  and per-person rights are given in Keycloak, as in every admin of the shared entry module.
+- **A right the token does not carry counts as not given.** Silence is not permission.
+- **A person without client roles has no rights at all.** They sign in and see the sections none of
+  which their rights name; this is a lawful state, not a defect.
+- **The set of rights reaches Keycloak at the start of the intake.** The intake creates the client
+  roles Keycloak lacks, and names the ones it holds beyond the set.
 
 **The check.**
 
-- **An operation declares its access by one mark, and a fourth kind of mark appears — by a right.**
-  The three that already exist stay as they are: open, by a token of a tree, by a person's sign-in.
-- **The rights are read on every call rather than taken from the issued sign-in.** A sign-in says
-  only who came: it lives for hours, and a right taken away would otherwise keep the section open
-  until the end of the day.
+- **An operation declares its access by one of four marks.** Open, by a token of a tree, by a
+  person's sign-in and by a right.
+- **The rights are read from the access token of the call.** The token lives minutes, and a right
+  taken away in Keycloak acts with the next token.
 - **A request without a sign-in is refused as unauthenticated, and a sign-in without a right as
   permission denied.** These are different answers: the first is cured by signing in, the second is
   not.
@@ -76,8 +64,8 @@ that opened or did not.
 
 **What the admin panel is given.**
 
-- **The answer about the signed-in person carries their rights whole.** The admin panel decides
-  what to show by them, and it asks the receiver rather than remembering the rights in the browser.
+- **The admin panel reads the rights of the person from their token.** The same client roles the
+  receiver checks; a second answer about the rights would drift from the token.
 - **Until the rights are received the admin panel hides nothing.** An empty menu after a network
   failure looks like a broken admin panel and leaves no way out.
 
@@ -105,19 +93,16 @@ that opened or did not.
   the operations, the admin panel the rights of the items; a second list of names diverges from the
   first silently, and both sides stay green — one closes by its name, the other asks by its own.
 - **A right taken away closes the section on the next move, not on the next sign-in.** The rights
-  arrive with the answer about the signed-in person, and the check by a right asks the store, which
-  that answer fills.
+  arrive with the token, and the check by a right asks the store, which the token fills.
 
 ## What is out of scope
 
-- **The screens.** The list of people, the panel of creating them and the page of roles are the
-  tasks that follow; this agreement gives them what to stand on.
+- **People and the giving of rights.** The Keycloak console creates people and gives them client
+  roles; the admin panel of the bus has no screen of its own for either.
 - **The division of the cargo by trees.** A right closes a section and an action in it; everyone
   who signed in sees the cargo of every tree, as before.
-- **A password change by the person themselves.** The law names it an open question of its own,
-  `Q-A-2`.
 - **A second ownership.** The law speaks of a role per ownership; here there is one receiver and
-  one set of roles in it.
+  one client of it in Keycloak.
 - **The operations that serve several sections at once.** The list of trees and the list of cargo
   versions fill the filters of every section, and the closing of records by a publisher touches two
   kinds of cargo in one packet. One right of one section cannot be written on any of them, and they
@@ -125,31 +110,24 @@ that opened or did not.
 
 ## Contract
 
-The receiver gains no operation of its own by this agreement. What changes is the answer of the
-operation that already exists — the one about the signed-in person: next to the name it carries the
-list of the rights of that person, computed at the minute of the request.
+The receiver gains no operation of its own by this agreement. The rights travel in the access
+token, and both the receiver and the admin panel read them from there.
 
 ### Refusal codes
 
 Not applicable: the receiver answers with a code of the answer of HTTP, not with named codes of the
 domain. Where an operation closed by a right is obliged to refuse instead of staying silent:
 
-| What happened                                                         | Code  | What it says                                                  |
-| --------------------------------------------------------------------- | ----- | ------------------------------------------------------------- |
-| there is no sign-in, it expired, it was revoked or the account is off | `401` | that the operation demands a sign-in                          |
-| there is a sign-in, and the declared right is not among the rights    | `403` | that the operation demands a right; which one it does not say |
-| a token of a tree was presented to an operation closed by a right     | `401` | the same as without a sign-in                                 |
+| What happened                                                      | Code  | What it says                                                  |
+| ------------------------------------------------------------------ | ----- | ------------------------------------------------------------- |
+| there is no token, it expired or Keycloak did not sign it          | `401` | that the operation demands a sign-in                          |
+| there is a sign-in, and the declared right is not among the rights | `403` | that the operation demands a right; which one it does not say |
+| a token of a tree was presented to an operation closed by a right  | `401` | the same as without a sign-in                                 |
 
 ## Data
 
-| What                 | Fields                                                       | Why so                                                                                    |
-| -------------------- | ------------------------------------------------------------ | ----------------------------------------------------------------------------------------- |
-| a role               | a key, a name shown to a person, the set of its rights       | the key is what an operation and a pointed edit refer to; the name is what a person reads |
-| the role of a person | one reference from the account to the role                   | one role per person: two would have to be added up                                        |
-| a pointed edit       | the person, the right, and whether it is given or taken away | one row per right: a row absent means the role decides                                    |
-
-The set of rights themselves is not a table: it is a closed list in the code, and a right that
-nothing declares is not a right but a typo.
+The receiver keeps no rights in its storage: Keycloak holds which person has which client role.
+The set of rights is a closed list in the code, and a right that nothing declares is a typo.
 
 ## Screens and states
 
@@ -166,8 +144,8 @@ has:
 
 ### Locales
 
-The admin panel is written in one language, and the names of the roles are entered by a person.
-The names of the rights are not shown to a person by this agreement at all.
+The admin panel is written in one language. The names of the rights are not shown to a person by
+this agreement at all.
 
 ### SEO
 
@@ -179,15 +157,13 @@ Not applicable: no screen is added.
 
 ### Several objects
 
-There is one receiver, and the roles in it are shared. Several ownerships are out of scope.
+There is one receiver, and one client of it in Keycloak. Several ownerships are out of scope.
 
 ## Decisions
 
-- **The model is taken from the law of access, not invented anew.** The law already describes a
-  right as a pair, a role as a named set and pointed edits over it. Rejected: two or three fixed
-  roles without pointed edits — cheaper, but it cannot express "one extra right to one person";
-  and a boolean sign "may edit / only looks" — it cannot express "look at the analyses without
-  closing them".
+- **The rights are the client roles of Keycloak, not tables of the receiver.** Since the bus signs
+  in through Keycloak, no sign-in reads the role of the receiver. Rejected: keeping the roles and
+  the pointed edits in the receiver, because two places would give two answers about one person.
 - **The set of rights lives in the code, not in the storage.** A right is named by an operation's
   declaration, and a declaration refers to a name that exists. A table of rights would let a row be
   created that no operation reads, and it would look like a right.
@@ -217,5 +193,7 @@ There is one receiver, and the roles in it are shared. Several ownerships are ou
 
 - 8 September 2026 — written as a draft of the task RT-1897.
 - 8 September 2026 — the sections closed by a right joined it from the draft of the task RT-1898.
-- 15 September 2026 — the question where roles come from is closed by the subdomain `roles-page`:
-  two roles come with the receiver by the migration, the rest the owner creates on the screen.
+- 15 September 2026 — two roles came with the receiver by the migration, the rest the owner created
+  on the page of roles.
+- 7 October 2026 — the roles, the pointed edits and the page of roles left for Keycloak: the rights
+  of a person are the client roles in their token, task RT-2578.

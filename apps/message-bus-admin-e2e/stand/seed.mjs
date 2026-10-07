@@ -16,11 +16,20 @@
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
-import { seedAccount, seedPeople } from './seed-account.mjs';
+import { seedPeople } from './seed-account.mjs';
 import { seedChat } from './seed-chat.mjs';
 import { seedObservations } from './seed-observations.mjs';
 import { checkNothingDrifts } from './seed-self-check.mjs';
-import { ACCOUNT, API_ORIGIN, ENROLLED_SLUG, INVITES, SERVER_DATABASE_URL, STAND_DATABASE, STAND_DATABASE_URL, TREES } from './stand.mjs';
+import {
+    API_ORIGIN,
+    ENROLLED_SLUG,
+    INVITES,
+    SERVER_DATABASE_URL,
+    STAND_AUTH_ENV,
+    STAND_DATABASE,
+    STAND_DATABASE_URL,
+    TREES,
+} from './stand.mjs';
 
 const ROOT = fileURLToPath(new URL('../../..', import.meta.url));
 
@@ -129,7 +138,7 @@ function sql(script, url = STAND_DATABASE_URL) {
 
 /** Команда приёмника: деревья заводятся только ею. */
 function command(args, input = '') {
-    return run('node', [API_ENTRY, ...args], { env: { DATABASE_URL: STAND_DATABASE_URL }, input });
+    return run('node', [API_ENTRY, ...args], { env: { DATABASE_URL: STAND_DATABASE_URL, ...STAND_AUTH_ENV }, input });
 }
 
 /**
@@ -152,7 +161,7 @@ async function database() {
 /** Вычистка: набор начинает с пустого хранилища, чтобы числа на экране не зависели от прошлых прогонов. */
 async function wipe() {
     await sql(
-        'TRUNCATE TABLE "session", "account_permission", "role", "account", "postmortem", "proposal", "month_record", "tree_invite", "tree_token", "tree", "chat_space", "chat_message", "chat_conversation", "chat_visitor", "chat_site", "chat_operator" CASCADE;'
+        'TRUNCATE TABLE "postmortem", "proposal", "month_record", "tree_invite", "tree_token", "tree", "chat_space", "chat_message", "chat_conversation", "chat_visitor", "chat_site", "chat_operator" CASCADE;'
     );
 }
 
@@ -466,9 +475,8 @@ async function states() {
 /** Засев целиком. Зовётся подъёмом стенда после того, как приёмник поднят. */
 export async function seed() {
     await wipe();
-    const cookie = await seedAccount(sql);
-    await seedPeople(cookie, sql);
-    await seedChat(sql, ACCOUNT.name);
+    const operator = await seedPeople();
+    await seedChat(sql, operator);
     const tokens = await trees();
     await postmortems(tokens);
     await proposals(tokens);
@@ -478,7 +486,7 @@ export async function seed() {
     await keys();
     await moments();
     await states();
-    await checkNothingDrifts(sql, ACCOUNT.name);
+    await checkNothingDrifts(sql);
 }
 
 /** Подготовка хранилища: база и схема. Идёт до подъёма приёмника — он ждёт готовой схемы. */

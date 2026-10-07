@@ -47,7 +47,7 @@ export interface IDoubleConversation {
 
 /** Оператор и сайт, за который он отвечает. */
 export interface IDoubleOperatorSite {
-    readonly accountId: string;
+    readonly personId: string;
     readonly siteId: string;
 }
 
@@ -373,10 +373,10 @@ export class ChatPrismaDouble {
 
     /** Сайты оператора по признаку учётной записи, как их спрашивает чтение. */
     #operatorSites(args: Record<string, unknown>): { siteId: string }[] {
-        const where: { operator: { accountId: string } } = args['where'] as { operator: { accountId: string } };
+        const where: { operator: { personId: string } } = args['where'] as { operator: { personId: string } };
 
         return this.operatorSites
-            .filter((row: IDoubleOperatorSite): boolean => row.accountId === where.operator.accountId)
+            .filter((row: IDoubleOperatorSite): boolean => row.personId === where.operator.personId)
             .map((row: IDoubleOperatorSite): { siteId: string } => ({ siteId: row.siteId }));
     }
 

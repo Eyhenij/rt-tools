@@ -5,10 +5,9 @@
  * It lives in the tree rather than in the rules package, for the same reason as the mark command:
  * the cargo is read by whoever sorts it out, and that is the tree where the receiver stands.
  *
- * It is closed not by the tree's token but by a service account's sign-in. A token opens the intake
- * and only its own tree's, while all the cargo about the package has to be sorted out — four trees
- * send it and one fixes it. The account's pair lies outside the repository, like the token: it does
- * not outlive the history.
+ * It is closed not by the tree's token but by the token of the service client of Keycloak. A tree
+ * token opens the intake and only its own tree's, while all the cargo about the package has to be
+ * sorted out — four trees send it and one fixes it. The sign-in is `tools/cargo-sign-in.mjs`.
  *
  * A record's key is printed next to it, and it is the same one the record is marked by: for an
  * incident analysis that is the file name and it arrives in the list row, for a proposal it is the
@@ -21,12 +20,12 @@
  */
 import { createHash } from 'node:crypto';
 import { existsSync, readFileSync } from 'node:fs';
-import { homedir } from 'node:os';
 import { join, resolve } from 'node:path';
+
+import { accountOf, login, NO_PAIR, saidOf, signedIn } from './cargo-sign-in.mjs';
 
 const REFUSED = 1;
 const TIMEOUT_MS = 15_000;
-const SESSION_COOKIE = 'message_bus_session';
 
 const KIND_FLAG = '--kind';
 const STATE_FLAG = '--state';
@@ -80,82 +79,13 @@ function wholeOf(argv, flag, fallback) {
     return Number.isInteger(said) && said > 0 ? said : fallback;
 }
 
-/**
- * The service account's pair from the file named by the settings.
- *
- * The file lies outside the tree and does not outlive the history — by the same technique as the
- * token. Two lines rather than one with a separator: a password may hold any character, and a
- * separator met inside it would cut the pair silently.
- */
-export function accountOf(where) {
-    if (!where) {
-        return { name: '', password: '' };
-    }
-
-    const path = where.startsWith('~') ? join(homedir(), where.slice(1)) : resolve(ROOT, where);
-
-    if (!existsSync(path)) {
-        return { name: '', password: '' };
-    }
-
-    const lines = readFileSync(path, 'utf8').split('\n');
-
-    return { name: (lines[0] ?? '').trim(), password: (lines[1] ?? '').trim() };
-}
-
-/** What the intake said in words: the message from the answer, and for an unreadable one the answer itself. */
-function saidOf(text) {
-    try {
-        const said = JSON.parse(text);
-
-        return typeof said.message === 'string' ? said.message : text.trim();
-    } catch {
-        return text.trim();
-    }
-}
-
-/** The sign-in cookie's value from the answer's headers: the client does not keep them, and it is put in by hand. */
-function cookieOf(answer) {
-    const set = answer.headers.getSetCookie ? answer.headers.getSetCookie() : [answer.headers.get('set-cookie') ?? ''];
-
-    for (const one of set) {
-        const at = one.indexOf('=');
-
-        if (at > 0 && one.slice(0, at).trim() === SESSION_COOKIE) {
-            return one.slice(at + 1).split(';')[0];
-        }
-    }
-
-    return '';
-}
-
-/** A sign-in by the service account. A refusal is as much an answer as an accepted one. */
-export async function login(intake, account) {
-    let answer;
-
-    try {
-        answer = await fetch(`${intake.replace(/\/+$/, '')}/api/auth/login`, {
-            method: 'POST',
-            headers: { 'content-type': 'application/json' },
-            body: JSON.stringify({ name: account.name, password: account.password }),
-            signal: AbortSignal.timeout(TIMEOUT_MS),
-        });
-    } catch (error) {
-        return { ok: false, status: 0, said: error.message, cookie: '' };
-    }
-
-    const text = await answer.text();
-
-    return { ok: answer.ok, status: answer.status, said: saidOf(text), cookie: answer.ok ? cookieOf(answer) : '' };
-}
-
-/** A request to the intake with the sign-in cookie. The reading of the answer is one for a list and for one record. */
-export async function read(intake, cookie, path) {
+/** A request to the intake with the sign-in token. The reading of the answer is one for a list and for one record. */
+export async function read(intake, token, path) {
     let answer;
 
     try {
         answer = await fetch(`${intake.replace(/\/+$/, '')}/api/${path}`, {
-            headers: { cookie: `${SESSION_COOKIE}=${cookie}` },
+            headers: signedIn(token),
             signal: AbortSignal.timeout(TIMEOUT_MS),
         });
     } catch (error) {
@@ -279,11 +209,11 @@ function fullLines(kind, row, key) {
  * A record that did not read on does not fall out of the list: it arrives without a text and
  * without a key, and the row about it says so. Vanishing silently, it would read as sorted out.
  */
-export async function withTexts(intake, cookie, kind, rows) {
+export async function withTexts(intake, token, kind, rows) {
     const full = [];
 
     for (const row of rows) {
-        const one = await read(intake, cookie, `${KINDS[kind].path}/${row.id}`);
+        const one = await read(intake, token, `${KINDS[kind].path}/${row.id}`);
 
         full.push(one.ok && one.body ? one.body : row);
     }
@@ -310,34 +240,30 @@ export async function pull(options) {
     if (!options.account.name || !options.account.password) {
         return {
             code: REFUSED,
-            lines: [
-                'there is no service account pair: the sign-in did not happen',
-                'it lies outside the repository as two lines — the name and the password — and the path to it is named by the key `account` in `.claude/rt-kit.json`',
-                'the account itself is created in the people section of the receiver admin panel',
-            ],
+            lines: ['there is no service client pair: the sign-in did not happen', ...NO_PAIR],
         };
     }
 
     const entered = await options.enter(options.intake, options.account);
 
-    if (!entered.ok || !entered.cookie) {
+    if (!entered.ok || !entered.token) {
         return { code: REFUSED, lines: [`${options.intake} did not accept the sign-in: ${entered.status || 'silence'} — ${entered.said}`] };
     }
 
-    return page(options, entered.cookie);
+    return page(options, entered.token);
 }
 
 /** A page of the list: how much lies in all, what is on this page and what each record is marked by. */
-async function page(options, cookie) {
+async function page(options, token) {
     const asked = { page: options.page, size: Math.min(options.size, SIZE_MAX), state: options.state, tree: options.tree };
-    const got = await options.fetchOne(options.intake, cookie, `${KINDS[options.kind].path}?${query(asked)}`);
+    const got = await options.fetchOne(options.intake, token, `${KINDS[options.kind].path}?${query(asked)}`);
 
     if (!got.ok || !got.body) {
         return { code: REFUSED, lines: [`${options.intake} answered ${got.status || 'with silence'} — ${got.said}`] };
     }
 
     const rows = Array.isArray(got.body.rows) ? got.body.rows : [];
-    const full = options.brief ? rows : await options.fetchTexts(options.intake, cookie, options.kind, rows);
+    const full = options.brief ? rows : await options.fetchTexts(options.intake, token, options.kind, rows);
     const sifted = options.state ? '' : ' (there is no filter by state: everything lies here)';
     const total = Number(got.body.total ?? rows.length);
 
@@ -360,14 +286,10 @@ async function page(options, cookie) {
 async function main() {
     const argv = process.argv.slice(2);
     const config = existsSync(CONFIG) ? JSON.parse(readFileSync(CONFIG, 'utf8')) : {};
-    const named = accountOf(config.account ?? '');
 
     const outcome = await pull({
         intake: process.env.RT_INTAKE || (config.intake ?? ''),
-        account: {
-            name: process.env.RT_ACCOUNT_NAME || named.name,
-            password: process.env.RT_ACCOUNT_PASSWORD || named.password,
-        },
+        account: accountOf(config.account ?? '', ROOT),
         kind: valueOf(argv, KIND_FLAG) || 'proposal',
         state: valueOf(argv, STATE_FLAG),
         tree: valueOf(argv, TREE_FLAG),
