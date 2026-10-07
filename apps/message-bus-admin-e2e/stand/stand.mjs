@@ -50,11 +50,12 @@ export const ADMIN_ORIGIN = `http://localhost:${ADMIN_PORT}`;
 /**
  * Тем же адресом админка зовётся из браузера набора.
  *
- * Браузер поднимается образом, и `localhost` там свой: машину он зовёт другим именем. Отсюда же
- * его берёт и настройка прогонщика, и засев площадок виджета — заголовок адреса страницы браузер
- * шлёт именно таким, и площадка, у которой в списке стоит `localhost`, отказала бы ему.
+ * Браузер поднимается образом, и `localhost` там свой, но порт админки образ пересылает на машину:
+ * вход через Keycloak работает только на защищённом адресе, а по простому `http` браузер считает
+ * защищённым один `localhost`. Отсюда же адрес берёт и настройка прогонщика, и засев площадок
+ * виджета — заголовок адреса страницы браузер шлёт именно таким.
  */
-export const ADMIN_PAGE_ORIGIN = `http://host.docker.internal:${ADMIN_PORT}`;
+export const ADMIN_PAGE_ORIGIN = `http://localhost:${ADMIN_PORT}`;
 
 /**
  * Порт страницы чужого адреса: на нём стенд поднимает страницу потребителя, и только её.
@@ -78,14 +79,66 @@ export const STAND_DATABASE_URL = `postgresql://message_bus:message_bus@localhos
 export const SERVER_DATABASE_URL = 'postgresql://message_bus:message_bus@localhost:55432/message_bus';
 
 /**
- * Пара входа стенда.
- *
- * Тайной она не является и не притворяется: запись живёт только в базе стенда, которую набор
- * заводит и вычищает сам, а сам стенд слушает локалхост. Пара названа здесь, а не в окружении,
+ * Keycloak стенда. Образ браузера пересылает его порт на машину, так что браузер и приёмник видят
+ * Keycloak одним адресом, и выдавший в токене тот же, что назван приёмнику.
+ */
+export const KEYCLOAK_ORIGIN = 'http://localhost:58080';
+export const REALM = 'rt';
+export const CLIENT = 'rt-message-bus-admin';
+/** Служебный клиент команд груза: приёмник стенда принимает его токен с правами админки. */
+export const CARGO_CLIENT = 'rt-cargo-tools';
+
+/**
+ * Вход приёмника стенда. Нужен и серверу, и командам засева: обе стороны собирают один модуль
+ * приложения, а он без входа не собирается.
+ */
+export const STAND_AUTH_ENV = Object.freeze({
+    AUTH_ISSUER: `${KEYCLOAK_ORIGIN}/realms/${REALM}`,
+    AUTH_CLIENT_ID: CLIENT,
+    AUTH_SERVICE_CLIENTS: CARGO_CLIENT,
+});
+
+/**
+ * Пароль людей стенда в Keycloak. Тайной он не является и не притворяется: люди живут только в
+ * области стенда, которую набор заводит заново на каждом прогоне. Назван здесь, а не в окружении,
  * потому что тест, погашенный отсутствием переменной, значится пропущенным, а прогон при этом
  * выглядит успешным.
  */
-export const ACCOUNT = Object.freeze({ name: 'Набор', password: 'nabor-e2e-2026' });
+export const STAND_PASSWORD = 'Nabor-stand-2026';
+
+/** Все права шины: ими входит запись набора, потому что набор проверяет разделы, а не права. */
+export const ALL_RIGHTS = Object.freeze([
+    'postmortems:read',
+    'postmortems:manage',
+    'proposals:read',
+    'proposals:manage',
+    'summaries:read',
+    'usage:read',
+    'invites:read',
+    'invites:manage',
+    'chat:read',
+]);
+
+/** Права наблюдателя: четыре раздела груза, приглашения и чат — и ни одного права правки. */
+export const WATCHER_RIGHTS = Object.freeze([
+    'postmortems:read',
+    'proposals:read',
+    'summaries:read',
+    'usage:read',
+    'invites:read',
+    'chat:read',
+]);
+
+/**
+ * Запись набора. `name` — имя и фамилия в Keycloak одной строкой: так шапка называет вошедшего.
+ */
+export const ACCOUNT = Object.freeze({
+    name: 'Набор Стенд',
+    email: 'nabor@stand.example',
+    firstName: 'Набор',
+    lastName: 'Стенд',
+    rights: ALL_RIGHTS,
+});
 
 /**
  * Деревья стенда.
@@ -126,27 +179,25 @@ export const ENROLLED_SLUG = 'stand-enrolled';
 /**
  * Люди стенда, кроме учётной записи самого набора.
  *
- * Четверо и с разной судьбой: у первого роль не владельца — ею набор входит, проверяя раздел без
- * права; второй отключён; третьему роли не назначено, и он ни разу не входил. Одной записью
- * список людей не проверяется: у неё все четыре значения заполнены, и ни слова вместо пустой
- * роли, ни слова вместо несостоявшегося входа на экране не показались бы.
- *
- * Четвёртый тоже без роли, и заведён он только затем, чтобы им входили: набор проверяет им экран
- * «разделов нет». Третьим входить нельзя — список людей обещает про него «Не входили», и первый
- * же вход этой спеки сделал бы то обещание ложным.
- *
- * Пара входа наблюдателя тайной не является — по той же причине, по какой ею не является пара
- * набора: запись живёт в базе стенда, которую прогон заводит и вычищает сам.
+ * Двое: наблюдатель входит, проверяя раздел без права правки, а человек без прав — экран
+ * «разделов нет». Оба заведены в области стенда Keycloak с правами ролями клиента шины.
  */
 export const PEOPLE = Object.freeze({
-    watcher: Object.freeze({ name: 'Стенд наблюдатель', password: 'nabor-e2e-watcher' }),
-    disabled: Object.freeze({ name: 'Стенд отключённый', password: 'nabor-e2e-disabled' }),
-    roleless: Object.freeze({ name: 'Стенд без роли', password: 'nabor-e2e-roleless' }),
-    entrant: Object.freeze({ name: 'Стенд без прав', password: 'nabor-e2e-entrant' }),
+    watcher: Object.freeze({
+        name: 'Стенд наблюдатель',
+        email: 'watcher@stand.example',
+        firstName: 'Стенд',
+        lastName: 'наблюдатель',
+        rights: WATCHER_RIGHTS,
+    }),
+    entrant: Object.freeze({
+        name: 'Стенд без прав',
+        email: 'entrant@stand.example',
+        firstName: 'Стенд',
+        lastName: 'без прав',
+        rights: [],
+    }),
 });
-
-/** Роль наблюдателя: права на разделы груза и ни одного права на людей. */
-export const WATCHER_ROLE = 'Наблюдатель';
 
 /**
  * Чат стенда: пространство, два сайта и разговоры на них.
@@ -282,7 +333,5 @@ export const SECTIONS = Object.freeze({
     summaries: '/summaries',
     usage: '/usage',
     invites: '/invites',
-    people: '/people',
-    roles: '/roles',
     chat: '/chat',
 });

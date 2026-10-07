@@ -4,14 +4,14 @@ import { ERefusal, IRefusal, IRefusalBody, refusalBody, refusalOf, refusalSaid }
 
 describe('refusalSaid', () => {
     it('SC-MB-413 — подстановки отказа встают в текст по имени', () => {
-        const said: string = refusalSaid(ERefusal.RoleHeld, { name: 'Аналитика', people: 'Пётр, Анна' });
+        const said: string = refusalSaid(ERefusal.InviteProjectExists, { name: 'Витрина' });
 
-        expect(said).toBe('роль «Аналитика» держат записи: Пётр, Анна; сначала дайте им другую');
+        expect(said).toBe('проект «Витрина» уже заведён: приглашение ему не нужно, а имя занято');
         expect(said).not.toContain('{{');
     });
 
     it('место, для которого значения не дали, остаётся видимым, а не пустым', () => {
-        expect(refusalSaid(ERefusal.RoleNotFound)).toContain('{{key}}');
+        expect(refusalSaid(ERefusal.TreeUnknown)).toContain('{{slug}}');
     });
 
     it('у каждого кода набора есть своё предложение', () => {
@@ -24,15 +24,18 @@ describe('refusalSaid', () => {
 
 describe('refusalBody', () => {
     it('тело отказа несёт код, подстановки и собранное по ним предложение', () => {
-        const body: IRefusalBody = refusalBody(ERefusal.AccountNameTaken, { name: 'Пётр' });
+        const body: IRefusalBody = refusalBody(ERefusal.InviteProjectExists, { name: 'Витрина' });
 
-        expect(body.code).toBe(ERefusal.AccountNameTaken);
-        expect(body.params).toEqual({ name: 'Пётр' });
-        expect(body.message).toBe('пользователь «Пётр» уже заведён: имя занято');
+        expect(body.code).toBe(ERefusal.InviteProjectExists);
+        expect(body.params).toEqual({ name: 'Витрина' });
+        expect(body.message).toBe('проект «Витрина» уже заведён: приглашение ему не нужно, а имя занято');
     });
 
     it('у причины без значений подстановок в теле нет вовсе', () => {
-        expect(refusalBody(ERefusal.RoleNameEmpty)).toEqual({ code: ERefusal.RoleNameEmpty, message: 'роль ждёт имя' });
+        expect(refusalBody(ERefusal.InviteNameEmpty)).toEqual({
+            code: ERefusal.InviteNameEmpty,
+            message: 'выдача ждёт имя будущего проекта',
+        });
     });
 });
 
@@ -44,7 +47,7 @@ describe('refusalOf', () => {
     });
 
     it('код вне набора не отбрасывается: показывающая сторона увидит его именем', () => {
-        expect(refusalOf({ code: ERefusal.RoleNameEmpty })).not.toBeNull();
+        expect(refusalOf({ code: ERefusal.InviteNameEmpty })).not.toBeNull();
         expect(refusalOf({ code: 'выдуманный', message: 'что-то' })).toEqual({ code: 'выдуманный' });
     });
 
@@ -56,6 +59,6 @@ describe('refusalOf', () => {
     });
 
     it('подстановки не набором значений отбрасываются, а код остаётся', () => {
-        expect(refusalOf({ code: ERefusal.RoleNameEmpty, params: { at: { deep: 1 } } })).toEqual({ code: ERefusal.RoleNameEmpty });
+        expect(refusalOf({ code: ERefusal.InviteNameEmpty, params: { at: { deep: 1 } } })).toEqual({ code: ERefusal.InviteNameEmpty });
     });
 });

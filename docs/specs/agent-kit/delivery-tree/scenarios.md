@@ -81,3 +81,20 @@ When the guard judges the opening
 Then it reads the branch and the task of that repository, not of the session tree
 
 Covered: `projects/agent-kit/tests/git-guards.test.sh`.
+
+### SC-AK-1188 — a path from the home directory names the tree of execution
+
+Given the command moves into a tree of another repository by a path with a tilde or `$HOME`
+When the guard judges the creation of a branch there
+Then it judges the name by the profile and the queue of that repository, as for a full path
+
+Covered: `projects/agent-kit/tests/git-guards.test.sh`.
+
+### SC-AK-1189 — the title of a request in another repository is judged by its form
+
+Given the session tree declares a title form with its own key, and the command moves into a tree of
+another repository and opens a request there with that repository's key in the title
+When the guard judges the opening
+Then it lets the title through: the form is taken from the repository the command runs in
+
+Covered: `projects/agent-kit/tests/git-guards.test.sh`.

@@ -224,7 +224,8 @@ test.describe('виджет посетителя', () => {
 
         await expect(qa(page, 'widget-title')).toHaveText(ACCOUNT.name);
         await expect(qa(page, 'widget-role')).toHaveText('Служба поддержки');
-        await expect(qa(page, 'widget-avatar')).toHaveText(ACCOUNT.name.charAt(0).toUpperCase());
+        // Буквы аватара — первые буквы слов имени: «Набор Стенд» даёт «НС»
+        await expect(qa(page, 'widget-avatar')).toHaveText(`${ACCOUNT.firstName.charAt(0)}${ACCOUNT.lastName.charAt(0)}`);
         await expect(qa(page, 'widget-remark-side').last()).toHaveText(ACCOUNT.name.split(' ')[0]);
 
         await qa(page, 'widget-back').click();

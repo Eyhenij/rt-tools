@@ -8,10 +8,10 @@ echo "проверки: закрытие груза издателем"
 TREE_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 CLOSE="$TREE_ROOT/tools/cargo-close.mjs"
 
-# Пара учётной записи задаётся окружением: набор не читает файла владельца и в настоящий приём
-# не ходит ни одним сценарием.
-export RT_ACCOUNT_NAME=publisher
-export RT_ACCOUNT_PASSWORD=secret
+# Пара служебного клиента задаётся окружением: набор не читает файла владельца и в настоящий
+# приём не ходит ни одним сценарием.
+export RT_CARGO_CLIENT_ID=publisher
+export RT_CARGO_CLIENT_SECRET=secret
 
 # Что напечатало закрытие. Оно отвечает строками, а не кодом на каждую.
 close_says() {
@@ -56,9 +56,9 @@ BARE_TREE="$(mktemp -d)"
 mkdir -p "$BARE_TREE/.claude"
 echo '{}' > "$BARE_TREE/.claude/rt-kit.json"
 
-CLOSE_PATTERN='there is no service account pair'
+CLOSE_PATTERN='there is no service client pair'
 report "SC-MB-279 — отсутствие пары названо" \
-    "$( (cd "$BARE_TREE" && RT_ACCOUNT_NAME='' RT_ACCOUNT_PASSWORD='' RT_INTAKE='http://127.0.0.1:1' \
+    "$( (cd "$BARE_TREE" && RT_CARGO_CLIENT_ID='' RT_CARGO_CLIENT_SECRET='' RT_INTAKE='http://127.0.0.1:1' \
         node "$CLOSE" --state fixed --proposal id-1 --fix x 2>&1) | grep -cE "$CLOSE_PATTERN")" 1
 
 rm -rf "$BARE_TREE"
@@ -73,9 +73,19 @@ node -e "
 const http = require('node:http');
 const fs = require('node:fs');
 http.createServer((req, res) => {
-    if (req.url.endsWith('/login')) {
-        res.writeHead(200, { 'content-type': 'application/json', 'set-cookie': 'message_bus_session=live; Path=/' });
-        res.end('{}');
+    res.setHeader('content-type', 'application/json');
+    if (req.url === '/api/auth/settings') {
+        res.end(JSON.stringify({ url: 'http://' + req.headers.host, realm: 'rt', clientId: 'rt-message-bus-admin' }));
+        return;
+    }
+    if (req.url === '/realms/rt/protocol/openid-connect/token') {
+        res.end(JSON.stringify({ access_token: 'probe-token' }));
+        return;
+    }
+    // Записи отдаются только тому, кто пришёл с токеном: так сценарии чтения доказывают и заголовок
+    if (req.headers.authorization !== 'Bearer probe-token') {
+        res.statusCode = 401;
+        res.end(JSON.stringify({ message: 'no token' }));
         return;
     }
     res.writeHead(200, { 'content-type': 'application/json' });
