@@ -201,3 +201,37 @@ list and the dynamic-input remarks.
 ## What is left unclear
 
 - Nothing blocks the work.
+
+## Decisions along the way
+
+- **The add button colour is a consumer handle, its weight, indent, row padding and reset colour are
+  declared on the list.** The add button is projected by two hosts with different looks — secondary
+  on the selector, primary on the input — so one declared default would repaint one of them.
+  Affected stage: 1.
+- **The empty-state title colour got a property of its own.** Item 19 needs something to set, and the
+  empty state painted its title by a step in place. Affected stage: 1.
+- **The close button size goes through the icon button's own step, not `--rt-icon-button-size`.**
+  That name is the application's handle; declared by the kit it made the icon button's fallback a
+  refusal of the token graph. Affected stage: 4.
+- **A Material font glyph without a kit pair keeps its step size.** `rt-icon` writes the glyph size
+  as an inline style; the bar sizes the icon box by min and max, as the empty state does. Named in
+  the PR. Affected stage: 4.
+- **The fetch script rewrites every Material drawing unformatted; only the new trash-x pair is
+  kept.** The rest differ from the tree by formatting alone. Affected stage: 2.
+
+- **The plan got a sixth stage appended, not rewritten.** The owner added the rt-icon list to this
+  task after the plan was written; the step check matches the plan and the progress line by line,
+  so the new steps stand in both. The five written stages are untouched. Affected stage: 6.
+- **The empty result of the popup lost `display: block` too.** It broke the empty state's centred
+  stack the same way the search lost its layout: the icon stood at 90 against the block's centre at
+  201; after the edit both are 201. Affected stage: 5.
+- **The ancestor wrapper in the bar story is `display: contents`.** As a box it took the width of
+  its content and the bar stopped wrapping inside the 30rem cell; without a box the cell gives the
+  bar its width and the ancestor properties still inherit. Affected stage: 5.
+
+- **`size()` of the icon keeps the step or the pixels, and the CSS length is a computed of its
+  own.** A CSS string in the public input broke the kit's specs reading it as a number; the step is
+  the meaningful value to a reader. Eighteen expectations of neighbouring specs moved from pixels
+  to the step property; two data-table specs took `pets` as the unpaired name, since
+  `delete_forever` now has the pair `trash-x`. Affected stage: 6.
+- **The optical size of the ligature defaults to the icon side** — see the grill. Affected stage: 6.
