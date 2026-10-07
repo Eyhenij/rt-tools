@@ -1,5 +1,7 @@
 # Grill
 
+Task RT-2592 · the request — the PR into the epic branch RT-2591 —
+
 ## The owner request
 
 > нужно вынести редактор и cms в общий модуль/пакет … rt-tools
@@ -54,3 +56,15 @@ Closed by the epic plan: the owner ordered the approaches carried over as they a
 ## What is left unclear
 
 - nothing
+
+## Decisions along the way
+
+- **The branch of this task was created past this session's delivery guard.** The owner's word:
+  «разрешаю обход, делай отсюда». The guard looked for the epic branch in another repository.
+- **Stages 1 and 2 went in one commit.** An empty package has nothing to build: the skeleton
+  builds only with its first source. Affected stage of the plan: 1, 2.
+- **`sitePathOf` takes the section root as a parameter.** The page address under a fixed `/blog` was
+  one application's choice. Affected stage of the plan: 2.
+- **The generator is `@bufbuild/buf` 1.73.0 and `@bufbuild/protoc-gen-es` 2.11.0.** The generator
+  matches the runtime version the workspace already has; `@bufbuild/buf` runs without its install
+  script. Affected stage of the plan: 2.
