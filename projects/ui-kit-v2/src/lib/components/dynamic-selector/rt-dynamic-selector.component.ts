@@ -174,6 +174,8 @@ export class RtDynamicSelectorComponent<TEntity extends object> extends RtFormCo
         transform: booleanAttribute,
     });
     public readonly invitationIcon: InputSignal<IRtIcon.Name | null> = input<IRtIcon.Name | null>(null);
+    /** Имя Material вместо `invitationIcon` — уходит во вход `glyph` заглушки приглашения. */
+    public readonly invitationGlyph: InputSignal<string | null> = input<string | null>(null);
     public readonly invitationDescription: InputSignal<string> = input<string>('');
     /** Значок кнопки приглашения; null — кнопка без значка. */
     public readonly invitationButtonIcon: InputSignal<IRtIcon.Name | null> = input<IRtIcon.Name | null>(null);

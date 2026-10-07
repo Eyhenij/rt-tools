@@ -245,3 +245,20 @@ When the person presses the add button
 Then the field of the new row is drawn in that look
 
 Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/rt-dynamic-selector-look.spec.ts`.
+
+### SC-UKV-714 — the invitation draws a Material name
+
+Given a selector or a string list whose caller names a Material name for the invitation and no kit
+icon
+When the invitation is shown
+Then its placeholder takes that name as its glyph
+
+Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/rt-dynamic-selector-look.spec.ts`.
+
+### SC-UKV-715 — the label of the kit field leads to the field of a new row
+
+Given a string list inside the kit field with a label
+When the person presses the add button
+Then the label is drawn above the list and points at the field of the new row
+
+Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/rt-dynamic-selector-look.spec.ts`.

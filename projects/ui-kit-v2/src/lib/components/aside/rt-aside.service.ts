@@ -45,6 +45,12 @@ export interface IRtAsideConfig<TData = unknown> {
      * панель через `close()`. Без него родитель — корневой injector, и панель живёт сама по себе.
      */
     injector?: Injector;
+
+    /**
+     * Снимать панель при переходе по адресу. По умолчанию `true`; `false` оставляет её открытой —
+     * для панели, которая сама ведёт навигацию и должна пережить смену адреса.
+     */
+    disposeOnNavigation?: boolean;
 }
 
 /**
@@ -187,7 +193,7 @@ export class RtAsideService {
             hasBackdrop: true,
             backdropClass: config?.backdropClass ?? 'rt-aside-backdrop',
             panelClass: config?.panelClass !== undefined ? [...panelClasses, ...this.#toArray(config.panelClass)] : panelClasses,
-            disposeOnNavigation: true,
+            disposeOnNavigation: config?.disposeOnNavigation ?? true,
         };
 
         const overlayRef: OverlayRef = this.#overlay.create(overlayConfig);
@@ -221,7 +227,11 @@ export class RtAsideService {
         // Slide-in: на следующий paint снимаем --entering и добавляем --open.
         // CSS transition (см. rt-aside.component.scss) сделает анимацию.
         // Backdrop default hidden — toggle --visible одновременно со слайдом.
+        // Панель могли снять до кадра — `close()`, переходом или уничтожением хозяина в том же такте.
         requestAnimationFrame((): void => {
+            if (!overlayRef.hasAttached()) {
+                return;
+            }
             this.#renderer.removeClass(overlayRef.overlayElement, 'rt-aside-overlay--entering');
             this.#renderer.addClass(overlayRef.overlayElement, 'rt-aside-overlay--open');
             const backdropEl: HTMLElement | null = overlayRef.backdropElement;

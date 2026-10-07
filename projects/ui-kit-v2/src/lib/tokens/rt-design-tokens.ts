@@ -596,8 +596,15 @@ export type TRtConsumerHandleName =
     | '--rt-aside-footer-inset'
     | '--rt-aside-footer-justify'
     | '--rt-aside-footer-margin'
+    | '--rt-aside-header-back-icon-size'
+    | '--rt-aside-header-back-size'
+    | '--rt-aside-header-gap'
     | '--rt-aside-header-inset'
+    | '--rt-aside-header-min-height'
+    | '--rt-aside-header-subtitle-size'
     | '--rt-aside-header-title-leading'
+    | '--rt-aside-header-title-size'
+    | '--rt-aside-header-title-weight'
     | '--rt-aside-width'
     | '--rt-data-table-scrollbar-color'
     | '--rt-data-table-scrollbar-horizontal-height'
@@ -1290,8 +1297,15 @@ export const RT_CONSUMER_HANDLE_NAMES: readonly TRtConsumerHandleName[] = [
     '--rt-aside-footer-inset',
     '--rt-aside-footer-justify',
     '--rt-aside-footer-margin',
+    '--rt-aside-header-back-icon-size',
+    '--rt-aside-header-back-size',
+    '--rt-aside-header-gap',
     '--rt-aside-header-inset',
+    '--rt-aside-header-min-height',
+    '--rt-aside-header-subtitle-size',
     '--rt-aside-header-title-leading',
+    '--rt-aside-header-title-size',
+    '--rt-aside-header-title-weight',
     '--rt-aside-width',
     '--rt-data-table-scrollbar-color',
     '--rt-data-table-scrollbar-horizontal-height',

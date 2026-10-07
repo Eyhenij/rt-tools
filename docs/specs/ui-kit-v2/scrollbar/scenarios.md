@@ -43,3 +43,14 @@ Not covered: it cannot be closed by a test — the bar of the scroll is drawn by
 environment of the specs nothing draws it: neither a width nor a colour of the slider exists there.
 Checked on the spot — by a measurement with the driver on the assembled showcase, the numbers are named
 in the description of the past of the work.
+
+### SC-UKV-713 — the application's zone inside a kit node keeps the bar of the browser
+
+Given an application's own scrolling node inside a side panel
+When it is drawn
+Then its bar colour is the browser's default, not the kit's transparent one, and the input zone of the
+text editor keeps the quiet bar
+
+Not covered: the bar is drawn by the browser, and the environment of the specs draws none. Checked by a
+measurement of the computed colour in the showcase; the numbers are named in the description of the
+work.

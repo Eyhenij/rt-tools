@@ -5,6 +5,8 @@ import { provideRouter } from '@angular/router';
 
 import { createRtFixture, qa, textOf } from '../../../testing/rt-kit-testing';
 import { RtButtonDirective } from '../button/rt-button.directive';
+import { RtEmptyStateComponent } from '../empty-state/rt-empty-state.component';
+import { RtFieldComponent } from '../field/rt-field.component';
 import { IButton } from '../button/rt-button.model';
 import { IRtIcon } from '../icon/rt-icon.model';
 import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
@@ -31,6 +33,7 @@ const PEOPLE: IPerson[] = [
             displayExp="name"
             [entities]="people"
             [invitation]="invitation()"
+            [invitationGlyph]="invitationGlyph()"
             [invitationButtonIcon]="invitationButtonIcon()"
             [invitationButtonAppearance]="invitationButtonAppearance()"
             [clearIcon]="clearIcon()"
@@ -46,6 +49,7 @@ class SelectorHostComponent {
     public readonly people: IPerson[] = PEOPLE;
     public readonly control: FormControl<number[] | null> = new FormControl<number[] | null>([1]);
     public readonly invitation: WritableSignal<boolean> = signal(false);
+    public readonly invitationGlyph: WritableSignal<string | null> = signal<string | null>(null);
     public readonly invitationButtonIcon: WritableSignal<IRtIcon.Name | null> = signal<IRtIcon.Name | null>(null);
     public readonly invitationButtonAppearance: WritableSignal<IButton.Appearance> = signal<IButton.Appearance>('outlined');
     public readonly clearIcon: WritableSignal<IRtIcon.Name> = signal<IRtIcon.Name>('close');
@@ -59,6 +63,7 @@ class SelectorHostComponent {
     template: `
         <rt-dynamic-input
             [invitation]="invitation()"
+            [invitationGlyph]="invitationGlyph()"
             [invitationButtonIcon]="invitationButtonIcon()"
             [invitationButtonAppearance]="invitationButtonAppearance()"
             [clearIcon]="clearIcon()"
@@ -71,10 +76,25 @@ class SelectorHostComponent {
 class InputHostComponent {
     public readonly control: FormControl<string[] | null> = new FormControl<string[] | null>(['a@x.com']);
     public readonly invitation: WritableSignal<boolean> = signal(false);
+    public readonly invitationGlyph: WritableSignal<string | null> = signal<string | null>(null);
     public readonly invitationButtonIcon: WritableSignal<IRtIcon.Name | null> = signal<IRtIcon.Name | null>(null);
     public readonly invitationButtonAppearance: WritableSignal<IButton.Appearance> = signal<IButton.Appearance>('outlined');
     public readonly clearIcon: WritableSignal<IRtIcon.Name> = signal<IRtIcon.Name>('close');
     public readonly fieldAppearance: WritableSignal<IRtInput.Appearance> = signal<IRtInput.Appearance>('outline');
+}
+
+@Component({
+    selector: 'rt-dynamic-input-field-host',
+    template: `
+        <rt-field label="Почта для копий">
+            <rt-dynamic-input [formControl]="control" />
+        </rt-field>
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [ReactiveFormsModule, RtDynamicInputComponent, RtFieldComponent],
+})
+class FieldHostComponent {
+    public readonly control: FormControl<string[] | null> = new FormControl<string[] | null>(['a@x.com']);
 }
 
 function host<T>(type: new () => T, configure: (it: T) => void = (): void => undefined): ComponentFixture<T> {
@@ -92,6 +112,10 @@ async function settle<T>(fixture: ComponentFixture<T>): Promise<void> {
 
 function buttonOf<T>(fixture: ComponentFixture<T>, id: string): RtButtonDirective | undefined {
     return qa(fixture, id)?.injector.get(RtButtonDirective);
+}
+
+function invitationGlyphOf<T>(fixture: ComponentFixture<T>, id: string): string | null | undefined {
+    return (qa(fixture, id)?.componentInstance as RtEmptyStateComponent | undefined)?.glyph();
 }
 
 function clearIconOf<T>(fixture: ComponentFixture<T>): IRtIcon.Name | null | undefined {
@@ -129,6 +153,15 @@ describe('RtDynamicSelectorComponent — вид, который задаёт п�
 
         expect(buttonOf(fixture, 'dynamic-selector-invitation-add')?.icon()).toBeNull();
         expect(buttonOf(fixture, 'dynamic-selector-invitation-add')?.appearance()).toBe('outlined');
+    });
+
+    it('SC-UKV-714 — приглашение выбора отдаёт имя Material заглушке', (): void => {
+        const fixture: ComponentFixture<SelectorHostComponent> = host(SelectorHostComponent, (it: SelectorHostComponent): void => {
+            it.invitation.set(true);
+            it.invitationGlyph.set('group_add');
+        });
+
+        expect(invitationGlyphOf(fixture, 'dynamic-selector-invitation')).toBe('group_add');
     });
 
     it('SC-UKV-703 — кнопка «Очистить список» выбора берёт значок из входа, по умолчанию крестик', (): void => {
@@ -182,6 +215,36 @@ describe('RtDynamicInputComponent — вид, который задаёт при
 
         expect(buttonOf(fixture, 'dynamic-input-invitation-add')?.icon()).toBe('ico-plus');
         expect(buttonOf(fixture, 'dynamic-input-invitation-add')?.appearance()).toBe('filled');
+    });
+
+    it('SC-UKV-714 — приглашение ввода отдаёт имя Material заглушке, а без него заглушка без имени', (): void => {
+        const fixture: ComponentFixture<InputHostComponent> = host(InputHostComponent, (it: InputHostComponent): void => {
+            it.control.setValue([]);
+            it.invitation.set(true);
+        });
+
+        expect(invitationGlyphOf(fixture, 'dynamic-input-invitation')).toBeNull();
+
+        fixture.componentInstance.invitationGlyph.set('mail');
+        fixture.detectChanges();
+
+        expect(invitationGlyphOf(fixture, 'dynamic-input-invitation')).toBe('mail');
+    });
+
+    it('SC-UKV-715 — подпись поля кита стоит над списком и ведёт к полю новой строки', async (): Promise<void> => {
+        const fixture: ComponentFixture<FieldHostComponent> = host(FieldHostComponent);
+        const label: HTMLLabelElement | undefined = qa(fixture, 'field-label')?.nativeElement as HTMLLabelElement | undefined;
+
+        expect(textOf(label ?? null)).toContain('Почта для копий');
+
+        (qa(fixture, 'dynamic-input-add')?.nativeElement as HTMLButtonElement).click();
+        await settle(fixture);
+        const field: HTMLInputElement | null = (fixture.nativeElement as HTMLElement).querySelector(
+            '[qa-dataid="dynamic-input-field"] input'
+        );
+
+        expect(label?.htmlFor).toBeTruthy();
+        expect(field?.id).toBe(label?.htmlFor);
     });
 
     it('SC-UKV-703 — кнопка «Очистить список» ввода берёт значок из входа', (): void => {

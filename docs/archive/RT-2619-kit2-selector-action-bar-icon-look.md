@@ -128,6 +128,24 @@ Item 7 of the first list: the icon `delete_forever` in the kit icon set.
 
 > важно не допустить регрессий и изменения дефолтной втьюхи второго кита
 
+The owner's list after the pack on the desktop, 7 October 2026, verbatim (the message was cut after
+row 83):
+
+> Не сделано:
+>
+> | Пункт | Что осталось                                                                                                                |
+> | ----- | --------------------------------------------------------------------------------------------------------------------------- |
+> | 57    | токены --rt-aside-header-* по-прежнему присваиваются на самом .rt-aside-header, с предка не доходят                         |
+> | 58    | нет размеров кнопки «назад» в шапке панели (--rt-aside-header-back-size, -back-icon-size)                                   |
+> | 59    | overline и subtitle есть; есть ли слот под произвольное содержимое под заголовком, по коду не определил                     |
+> | 60    | в requestAnimationFrame у RtAsideService.open нет проверки, что overlay не уничтожен                                        |
+> | 61    | disposeOnNavigation: true зашит, параметра в конфиге нет                                                                    |
+> | 64    | тихая полоса прокрутки всё ещё наследуется в содержимое приложения внутри узлов кита                                        |
+> | 81    | invitationIcon у rt-dynamic-input принимает только имена кита, а у rt-empty-state вход glyph уже есть, его нужно пробросить |
+> | 83    | нет подписи поля (label) у rt-dynamic-input                                                                                 |
+
+> все в этотй ветке + проверка на регрессий после правок
+
 ## What the tree already has
 
 - `rt-dynamic-selector` draws the invitation button as `rtButton appearance="outlined"` with no
@@ -235,3 +253,22 @@ list and the dynamic-input remarks.
   to the step property; two data-table specs took `pets` as the unpaired name, since
   `delete_forever` now has the pair `trash-x`. Affected stage: 6.
 - **The optical size of the ligature defaults to the icon side** — see the grill. Affected stage: 6.
+- **The header properties moved under `-default` on the block, like the bar and the popup.** The
+  material look of the list settings panel set the public names on the header, which would now read
+  as kit-declared handles; it sets the `-default` names instead and keeps its look. Owner's list,
+  row 57.
+- **The back button sizes override the button step and the icon's `sm` step on the back node.** The
+  public `--rt-icon-button-size` on the button would beat the settings panel's own step; the step
+  property loses to it as before. A `--rt-icon-step-sm` the application sets above no longer reaches
+  the back icon: it has its own handle. Row 58.
+- **The header already had a full-width row slot; a second slot sits inside the title column.** Row
+  59 asked for content under the title, and the row slot stands under the whole header line, next
+  to neither the arrow nor the actions.
+- **The label of the string list is the kit field, not an input of its own.** `rt-field` already
+  draws the label, the required mark and the error for any kit control; the list passes its id to
+  the field of a new row so the label leads there. Row 83.
+- **The quiet bar stops on the first node without a kit class under a kit node.** The colour of the
+  bar is inherited, and a stop on every node without a kit class would cut an application's own
+  colour set on its body. The input zone of the text editor is drawn by Quill without a kit class
+  and takes the quiet bar back by a rule of its own; a sweep of the kit's scrolling rules found no
+  other such node. Row 64.

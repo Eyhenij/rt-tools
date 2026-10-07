@@ -135,6 +135,11 @@ stands next to it as components of its own, drawn on the parts of the second kit
   caller sets its properties on the overlay pane or a container of its own; only the defaults stand
   on the popup itself, under the `-default` suffix. The add button is projected by both fields with
   different looks, so its colour is a handle with the button's own colour as the fallback.
+- **The invitation takes a Material name for its picture when the caller names no kit icon.** The
+  name goes to the placeholder's own glyph input and is drawn as an icon's glyph is.
+- **A string list put into the kit field takes the field's label, and the label leads to the field of
+  a new row.** The kit field draws the label, the required mark and the error; the list adds no label
+  of its own.
 
 ## What is out of scope
 
@@ -252,3 +257,5 @@ owner's review.
 - 7 October 2026 — the application's requests (RT-2619): the inputs of the invitation, clear, search
   and empty-result look, the popup and list properties, the cross trash icon `trash-x`; the popup
   properties read from any ancestor.
+- 7 October 2026 — the application's remarks (RT-2619): a Material name for the invitation picture,
+  the label of the string list by the kit field.

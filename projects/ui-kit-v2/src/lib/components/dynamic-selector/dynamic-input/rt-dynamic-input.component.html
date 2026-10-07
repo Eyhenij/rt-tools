@@ -36,6 +36,7 @@
             rtElem="field"
             qa-dataid="dynamic-input-field"
             [appearance]="fieldAppearance()"
+            [controlId]="effectiveControlId()"
             [placeholder]="fieldPlaceholder()"
             [ngModel]="draft()"
             (ngModelChange)="draft.set($event ?? '')"
@@ -48,6 +49,7 @@
             rtElem="invitation"
             qa-dataid="dynamic-input-invitation"
             [icon]="invitationIcon()"
+            [glyph]="invitationGlyph()"
             [description]="invitationDescription()">
             <button
                 rtButton

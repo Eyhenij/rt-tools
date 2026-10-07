@@ -74,6 +74,9 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
   доступными именами из словаря кита; подсказки на узком экране не показываются.
 - Флажки и переключатели окна — `rt-checkbox` и `rt-radio-button` с ролями `checkbox` и `radio`.
 - `Escape` закрывает окно и снимает отметки.
+- Подпись поля даёт [`rt-field`](./?path=/docs/molecules-forms-field-overview--docs): поле
+  строк кладут в него, как любое поле кита, и обёртка рисует подпись, звёздочку обязательности и
+  ошибку. У поля строк `<label for>` ведёт к полю новой строки, пока оно открыто.
 
 ## Оформление
 
@@ -133,6 +136,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | `buttonRadius`               | оба      | `TRtRadius \| null`          | `'full'`                            |
 | `invitation`                 | оба      | `boolean`                    | `false`                             |
 | `invitationIcon`             | оба      | `IRtIcon.Name \| null`       | `null`                              |
+| `invitationGlyph`            | оба      | `string \| null`             | `null`                              |
 | `invitationDescription`      | оба      | `string`                     | `''`                                |
 | `multiToggleShown`           | селектор | `boolean`                    | `false`                             |
 | `selectAllShown`             | селектор | `boolean`                    | `true`                              |
@@ -193,6 +197,9 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | `ariaLabel` | `string \| null`       | `null`    |
 | `clearable` | `boolean`              | `true`    |
 | `bordered`  | `boolean`              | `true`    |
+
+`invitationGlyph` — имя Material вместо значка кита: уходит во вход `glyph` заглушки, как у
+`rt-empty-state`, и рисуется только при пустом `invitationIcon`.
 
 `size`, `clearable` и `bordered` семье не нужны: крестика очистки и рамки поля у неё нет.
 

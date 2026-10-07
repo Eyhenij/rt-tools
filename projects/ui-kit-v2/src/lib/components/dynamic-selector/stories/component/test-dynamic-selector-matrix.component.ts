@@ -13,6 +13,7 @@ import { IRtDynamicSelector } from '../../rt-dynamic-selector.model';
 import { TRtRadius } from '../../../radius/rt-radius.model';
 import { IButton } from '../../../button/rt-button.model';
 import { IRtIcon } from '../../../icon/rt-icon.model';
+import { RtFieldComponent } from '../../../field/rt-field.component';
 import { IStoryPerson, STORY_PEOPLE } from './test-dynamic-selector.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
@@ -119,6 +120,7 @@ function texts(values: string[]): FormControl<string[] | null> {
 
         // components
         RtDynamicInputComponent,
+        RtFieldComponent,
         RtDynamicSelectorRowControlsDirective,
         RtDynamicSelectorRowTitleDirective,
         RtIconButtonComponent,
@@ -209,6 +211,16 @@ export class TestRtDynamicSelectorMatrixComponent {
     }[] = [
         { name: 'поиск fill, своя подпись', entities: [], tuned: false },
         { name: 'свои свойства окна', entities: STORY_PEOPLE.slice(0, 3), tuned: true },
+    ];
+
+    /** Поле строк: приглашение с именем Material и подпись, которую даёт поле кита. */
+    public readonly lookInputCases: readonly {
+        readonly name: string;
+        readonly label: string | null;
+        readonly control: FormControl<string[] | null>;
+    }[] = [
+        { name: 'приглашение: имя Material', label: null, control: new FormControl<string[] | null>([]) },
+        { name: 'подпись поля кита', label: 'Почта для копий', control: new FormControl<string[] | null>(['anna@example.com']) },
     ];
 
     public readonly stateCases: readonly IRowsCase[] = [

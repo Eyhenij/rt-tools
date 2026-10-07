@@ -112,6 +112,22 @@
                         </div>
                     </ng-template>
                 </app-story-row>
+                <app-story-row [items]="lookInputCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
+                    <ng-template let-inputCase>
+                        @if (inputCase.label) {
+                            <rt-field [label]="inputCase.label">
+                                <rt-dynamic-input [formControl]="inputCase.control" />
+                            </rt-field>
+                        } @else {
+                            <rt-dynamic-input
+                                invitationGlyph="email"
+                                invitationDescription="Адресов для копий пока нет"
+                                [ariaLabel]="inputCase.name"
+                                [invitation]="true"
+                                [formControl]="inputCase.control" />
+                        }
+                    </ng-template>
+                </app-story-row>
             </ng-template>
         </app-story-presets>
     }
