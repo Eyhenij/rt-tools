@@ -535,6 +535,9 @@ importers:
       '@rt-tools/ui-kit-v2':
         specifier: ^0.17.0
         version: 0.17.0(d4898107c57358d9661e38fc5f6097bc)
+      '@rt-tools/utils':
+        specifier: ^0.4.0
+        version: 0.4.0
       dompurify:
         specifier: ^3.4.16
         version: 3.4.16
