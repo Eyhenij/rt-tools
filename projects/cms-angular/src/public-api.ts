@@ -12,3 +12,4 @@ export * from './lib/item/cms-item.model';
 export * from './lib/item/content-type-settings.function';
 export * from './lib/item/item-draft.function';
 export * from './lib/item/item-form.function';
+export * from './lib/media/media-file.model';

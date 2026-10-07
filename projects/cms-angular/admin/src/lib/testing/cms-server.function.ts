@@ -3,12 +3,15 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TestBed } from '@angular/core/testing';
 
 import { Code, ConnectError, ConnectRouter, createRouterTransport, ServiceImpl } from '@connectrpc/connect';
-import { CmsService } from '@rt-tools/cms-contract';
+import { CmsMediaService, CmsService } from '@rt-tools/cms-contract';
 import { CMS_TRANSPORT } from '@rt-tools/cms-angular';
 import { INotification, NotificationBus } from '@rt-tools/ui-kit-v2';
 
 /** The CMS server of a test: only the procedures the test answers; a call to any other fails the test. */
 export type TCmsServerDouble = Partial<ServiceImpl<typeof CmsService>>;
+
+/** The media library server of a test, answered the same way. */
+export type TMediaServerDouble = Partial<ServiceImpl<typeof CmsMediaService>>;
 
 /** What the test reads back: the messages the stores showed to the person. */
 export interface ICmsTestBed {
@@ -16,7 +19,7 @@ export interface ICmsTestBed {
 }
 
 /** Raises the test bed with the CMS client calling the given server double over an in-memory transport. */
-export function cmsTestBed(server: TCmsServerDouble, providers: unknown[] = []): ICmsTestBed {
+export function cmsTestBed(server: TCmsServerDouble, providers: unknown[] = [], media: TMediaServerDouble = {}): ICmsTestBed {
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({
         providers: [
@@ -24,6 +27,7 @@ export function cmsTestBed(server: TCmsServerDouble, providers: unknown[] = []):
                 provide: CMS_TRANSPORT,
                 useValue: createRouterTransport((router: ConnectRouter) => {
                     router.service(CmsService, server);
+                    router.service(CmsMediaService, media);
                 }),
             },
             ...(providers as never[]),
@@ -48,4 +52,12 @@ export async function settled(): Promise<void> {
     await new Promise<void>((resolve: () => void) => {
         setTimeout(resolve, 0);
     });
+}
+
+/** A picked file with its bytes: the test DOM gives files no way to read them. */
+export function pickedFile(name: string, text: string): File {
+    const file: File = new File([text], name);
+    const bytes: ArrayBuffer = new TextEncoder().encode(text).buffer;
+    Object.defineProperty(file, 'arrayBuffer', { value: (): Promise<ArrayBuffer> => Promise.resolve(bytes) });
+    return file;
 }

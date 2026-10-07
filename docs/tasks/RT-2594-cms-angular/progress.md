@@ -53,3 +53,5 @@
 - Stage 1 done: lint, tests (33) and the build green, coverage 100%.
 - Step 2.1 done: the server is replaced in the tests by an in-memory Connect transport; 65 tests,
   coverage 100%.
+- The media library clients, stores and model carried over as part of 2.1; the file bytes are now
+  read inside the stream, so an unreadable file refuses its own upload. 74 tests, coverage 100%.
