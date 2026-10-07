@@ -3,24 +3,16 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 3 of 4 — The site
-- **Done:** stages 1 and 2 — the clients, the stores, the tokens, the block editor, the admin
-  components, the screens and the `cmsRoutes` and `mediaRoutes` sets
-- **Next step:** 3.1 — carry over the block renderer through a registry, the page data with the
-  transfer state and the redirect resolver into the `site` entry. Sources found: the block
-  components (accordion, button, embed, image, pros-cons, quote) in the site blog `ui` library, the
-  page client, its mapper, the embed address check and the stored-pages helper in the blog
-  `data-access` library, and the page screen (400 lines) in the blog `feature/article` library;
-  the embed check and the stored-pages helper carry their tests. The embed check is carried over
-  into `site/src/lib/block/embed-src.function.ts` with its own provider list (SC-CMS-70). The page
-  model, its assembly from the server answer, the rubric root tag and the sitemap are carried over
-  into `site/src/lib/page/site-page.function.ts` (SC-CMS-71, SC-CMS-72); the rubric labels of the
-  former blog groups stay with the application. The page client with the transfer state is carried
-  over into `site/src/lib/page/site-pages-api.service.ts` (SC-CMS-73); the content type comes as a
-  parameter. The block registry `CMS_BLOCK_RENDERERS` and the body `rt-cms-site-blocks` are in
-  `site/src/lib/block/` (SC-CMS-74): the look of a block stays with the application, which gives a
-  renderer per kind. Left: the page screen and the redirect resolver. The next free scenario number
-  is SC-CMS-75
+- **Stage:** 4 of 4 — The documents
+- **Done:** stages 1–3 — the clients, the stores, the tokens, the block editor, the admin
+  components, the screens and the routes; the `site` entry: the embed check (SC-CMS-70), the page
+  model and sitemap (SC-CMS-71, 72), the page client with the transfer state (SC-CMS-73), the block
+  registry and body (SC-CMS-74), the redirect loader `cmsSiteRedirects` (SC-CMS-75) and the page
+  head `SitePageHeadService` (SC-CMS-76…78)
+- **Next step:** 4.1 — the spec `docs/specs/cms/angular/{spec,scenarios,implementation}.md` with
+  scenarios SC-CMS-41…78, the package README, then `check:specs`, `check:docs`, `check:board`, the
+  folder into the archive and a ready PR into `RT-2591-cms-packages`. The next free scenario number
+  is SC-CMS-79
 - **Uncommitted:** nothing
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -32,7 +24,7 @@
 - [x] 2.1 Carry over the clients, the stores and the configuration tokens
 - [x] 2.2 Carry over the block editor and the admin components
 - [x] 2.3 Carry over the screens and the routes of the content and the media library
-- [>] 3.1 Carry over the block renderer, the page data and the redirect resolver
+- [x] 3.1 Carry over the block renderer, the page data and the redirect resolver
 - [ ] 4.1 Write the spec, the scenarios and the bindings, and the README
 - [ ] 4.2 Run the tree checks
 
@@ -99,6 +91,10 @@
   carried over into the `site` entry with their tests.
 - The page client with the transfer state and the block registry carried over; the block components
   themselves stay in the application, since their look is its own.
+- Step 3.1 done. The page screen stays in the application: its layout, breadcrumbs, structured
+  data wording and related cards are its own; what of it is CMS — the head by the page, the draft
+  closed from indexing, hreflang by the published languages — went into `SitePageHeadService`. The
+  redirect loader reads the public output; the site server wires it before rendering.
 
 ## Handover of the session
 
@@ -125,8 +121,7 @@ the site part lie in the blog `ui`, `data-access` and `feature/article` librarie
 
 ### Done and the next step
 
-Done: stages 1 and 2; of 3.1 — the embed check, the page model, the page client and the block
-registry. Next: the page screen and the redirect resolver; then stage 4.
+Done: stages 1–3. Next: stage 4 — the spec, the README, the checks, the archive and a ready PR.
 
 ### What to keep in mind
 
