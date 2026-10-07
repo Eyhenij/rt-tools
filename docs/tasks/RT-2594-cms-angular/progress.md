@@ -4,9 +4,9 @@
 
 - **State:** `этап-идёт`
 - **Stage:** 2 of 4 — The admin
-- **Done:** stage 1; step 2.1 — the contract clients, the list selection, the screen stores and
-  the settings tokens, with their tests at full coverage
-- **Next step:** carry over the block editor and the admin components
+- **Done:** stage 1; steps 2.1 and 2.2 — the clients, the stores, the tokens, the block editor and
+  the admin components
+- **Next step:** carry over the screens and the routes of the content and the media library
 - **Uncommitted:** nothing
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -16,8 +16,8 @@
 - [x] 1.1 Create `projects/cms-angular` after the auth Angular package and register it
 - [x] 1.2 Carry over the editor model, the form decisions, the paste cleaning and the labels with their tests
 - [x] 2.1 Carry over the clients, the stores and the configuration tokens
-- [>] 2.2 Carry over the block editor and the admin components
-- [ ] 2.3 Carry over the screens and the routes of the content and the media library
+- [x] 2.2 Carry over the block editor and the admin components
+- [>] 2.3 Carry over the screens and the routes of the content and the media library
 - [ ] 3.1 Carry over the block renderer, the page data and the redirect resolver
 - [ ] 4.1 Write the spec, the scenarios and the bindings, and the README
 - [ ] 4.2 Run the tree checks
@@ -62,3 +62,7 @@
 - The block editor carried over with its window and the label pipe; 82 tests.
 - The media library clients, stores and model carried over as part of 2.1; the file bytes are now
   read inside the stream, so an unreadable file refuses its own upload. 74 tests, coverage 100%.
+- Step 2.2 done: the list frame and its base, the page, type and redirect tables, the name and
+  unsaved-edits windows, the tag tree, the page images and connections, the media folders, table and
+  picker window. A table cell row is untyped, so a label read by the row is put into the row by a
+  computed signal. The page type comes from the kit utilities package, now a peer dependency.

@@ -1,0 +1,37 @@
+/* The column of a list screen: the title, the action bar, the table and the page switch. The
+   application chrome around it — the page padding, the sticky header — stays with the application. */
+:host {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rt-space-md);
+
+    .rt-cms-list-page {
+        &__header {
+            display: flex;
+            flex-direction: column;
+            gap: var(--rt-space-sm);
+        }
+
+        &__title {
+            margin: 0;
+            color: var(--rt-color-text-primary);
+            font-size: var(--rt-text-3xl);
+            font-weight: var(--rt-font-weight-bold);
+            line-height: var(--rt-leading-none);
+        }
+
+        &__hint {
+            margin: 0;
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-sm);
+        }
+
+        /* The sideways scroll of the table works only together with `min-width: max-content` on
+           the table: without it the columns shrink instead of moving. The table comes by
+           projection and this style does not reach it, so the screen that declares the table
+           gives it the width. */
+        &__scroll {
+            overflow-x: auto;
+        }
+    }
+}

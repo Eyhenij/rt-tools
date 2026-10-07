@@ -1,4 +1,5 @@
-// The admin entry of the CMS client: the contract clients, the list selection and the screen stores.
+// The admin entry of the CMS client: the contract clients, the list selection, the screen stores,
+// the block editor and the section components.
 export * from './lib/api/cms-contract-mapping.function';
 export * from './lib/api/content-items-api.facade';
 export * from './lib/api/content-items-api.service';
@@ -10,6 +11,8 @@ export * from './lib/api/redirects-api.facade';
 export * from './lib/api/redirects-api.service';
 export * from './lib/api/tags-api.facade';
 export * from './lib/api/tags-api.service';
+export * from './lib/dialog/cms-name-dialog/cms-name-dialog.component';
+export * from './lib/dialog/cms-unsaved-edits-dialog/cms-unsaved-edits-dialog.component';
 export * from './lib/editor/cms-editor.tokens';
 export * from './lib/editor/cms-editable.directive';
 export * from './lib/editor/cms-editor/cms-editor.component';
@@ -22,8 +25,16 @@ export * from './lib/editor/cms-editor-list/cms-editor-list.component';
 export * from './lib/editor/cms-editor-pros-cons/cms-editor-pros-cons.component';
 export * from './lib/editor/cms-editor-titled/cms-editor-titled.component';
 export * from './lib/editor/cms-link-dialog/cms-link-dialog.component';
+export * from './lib/item/cms-item-connections/cms-item-connections.component';
+export * from './lib/item/cms-item-images/cms-item-images.component';
+export * from './lib/list/base-list-page.directive';
+export * from './lib/list/cms-list-page/cms-list-page.component';
+export * from './lib/list/list-page.tokens';
 export * from './lib/list/list-query.function';
 export * from './lib/list/list-query.model';
+export * from './lib/media/cms-media-folders/cms-media-folders.component';
+export * from './lib/media/cms-media-picker-dialog/cms-media-picker-dialog.component';
+export * from './lib/media/cms-media-table/cms-media-table.component';
 export * from './lib/store/cms-refusal.function';
 export * from './lib/store/content-items.store';
 export * from './lib/store/content-type-settings.store';
@@ -33,3 +44,7 @@ export * from './lib/store/media-folders.store';
 export * from './lib/store/media.store';
 export * from './lib/store/redirects.store';
 export * from './lib/store/tags.store';
+export * from './lib/table/cms-content-items-table/cms-content-items-table.component';
+export * from './lib/table/cms-content-types-table/cms-content-types-table.component';
+export * from './lib/table/cms-redirects-table/cms-redirects-table.component';
+export * from './lib/tag/cms-tag-tree/cms-tag-tree.component';
