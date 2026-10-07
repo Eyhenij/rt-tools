@@ -20,6 +20,18 @@ describe('authOptionsFromEnv', () => {
         expect(options).toEqual({ issuer: 'http://sso.test/realms/rt', clientId: 'orders-admin', catalog: CATALOG });
     });
 
+    it('SC-AUTH-73 — the service clients are named by the environment, by commas', () => {
+        const options: IAuthServerOptions = authOptionsFromEnv(
+            { AUTH_ISSUER: 'http://sso.test/realms/rt', AUTH_CLIENT_ID: 'orders-admin', AUTH_SERVICE_CLIENTS: ' cargo-tools , reports ,' },
+            CATALOG
+        );
+
+        expect(options.serviceClients).toEqual(['cargo-tools', 'reports']);
+        expect(
+            authOptionsFromEnv({ AUTH_ISSUER: 'http://sso.test/realms/rt', AUTH_CLIENT_ID: 'orders-admin' }, CATALOG).serviceClients
+        ).toBeUndefined();
+    });
+
     it('SC-AUTH-70 — the sync secret sends the catalog to the realm of the issuer', () => {
         const options: IAuthServerOptions = authOptionsFromEnv(
             { AUTH_ISSUER: 'https://sso.test/realms/rt/', AUTH_CLIENT_ID: 'orders-admin', AUTH_SYNC_SECRET: 'secret' },

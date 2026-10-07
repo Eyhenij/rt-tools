@@ -85,12 +85,18 @@ export const SERVER_DATABASE_URL = 'postgresql://message_bus:message_bus@localho
 export const KEYCLOAK_ORIGIN = 'http://localhost:58080';
 export const REALM = 'rt';
 export const CLIENT = 'rt-message-bus-admin';
+/** Служебный клиент команд груза: приёмник стенда принимает его токен с правами админки. */
+export const CARGO_CLIENT = 'rt-cargo-tools';
 
 /**
  * Вход приёмника стенда. Нужен и серверу, и командам засева: обе стороны собирают один модуль
  * приложения, а он без входа не собирается.
  */
-export const STAND_AUTH_ENV = Object.freeze({ AUTH_ISSUER: `${KEYCLOAK_ORIGIN}/realms/${REALM}`, AUTH_CLIENT_ID: CLIENT });
+export const STAND_AUTH_ENV = Object.freeze({
+    AUTH_ISSUER: `${KEYCLOAK_ORIGIN}/realms/${REALM}`,
+    AUTH_CLIENT_ID: CLIENT,
+    AUTH_SERVICE_CLIENTS: CARGO_CLIENT,
+});
 
 /**
  * Пароль людей стенда в Keycloak. Тайной он не является и не притворяется: люди живут только в

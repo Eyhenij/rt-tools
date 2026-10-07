@@ -71,3 +71,9 @@ Then they name the Keycloak address and the realm of that issuer and the same cl
 Given a server whose environment names the issuer the browser sees and a key set address of its own
 When the options of the entry module are read
 Then the tokens are checked against that issuer, and the keys are read by the named address
+
+### SC-AUTH-73 — a named service client is accepted with the rights of the admin client
+
+Given a server that names a service client, and a token issued to that client
+When the token carries roles of the admin client and the server checks it
+Then the caller has exactly those rights; a service client the server does not name is refused

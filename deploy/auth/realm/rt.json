@@ -103,6 +103,19 @@
       "implicitFlowEnabled": false,
       "directAccessGrantsEnabled": false,
       "serviceAccountsEnabled": true
+    },
+    {
+      "clientId": "rt-cargo-tools",
+      "name": "Cargo tools",
+      "description": "The cargo commands of the tree read and close the cargo of the bus without a person",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "secret": "rt-cargo-tools-stand",
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true
     }
   ],
   "roles": {
@@ -163,6 +176,14 @@
       "serviceAccountClientId": "rt-catalog-sync",
       "clientRoles": {
         "realm-management": ["view-clients", "manage-clients"]
+      }
+    },
+    {
+      "username": "service-account-rt-cargo-tools",
+      "enabled": true,
+      "serviceAccountClientId": "rt-cargo-tools",
+      "clientRoles": {
+        "rt-message-bus-admin": ["postmortems:read", "postmortems:manage", "proposals:read", "proposals:manage", "summaries:read"]
       }
     }
   ]

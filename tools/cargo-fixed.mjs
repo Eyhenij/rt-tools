@@ -29,7 +29,8 @@ import { createHash } from 'node:crypto';
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 
-import { accountOf, login, read, withTexts } from './cargo-pull.mjs';
+import { read, withTexts } from './cargo-pull.mjs';
+import { accountOf, login } from './cargo-sign-in.mjs';
 
 const REFUSED = 1;
 const PAGE_SIZE = 100;
@@ -143,13 +144,13 @@ export function archiveKeys(dir) {
 }
 
 /** All one's own proposals of the named state: the pages are read to the end rather than to the first. */
-async function everything(intake, cookie, tree, fetchOne, fetchTexts, state = 'new') {
+async function everything(intake, token, tree, fetchOne, fetchTexts, state = 'new') {
     const all = [];
 
     for (let page = 1; page <= PAGES_MAX; page += 1) {
         const got = await fetchOne(
             intake,
-            cookie,
+            token,
             `proposals?page=${page}&size=${PAGE_SIZE}&sort=arrivedAt&dir=asc&state=${state}&tree=${encodeURIComponent(tree)}`
         );
 
@@ -159,7 +160,7 @@ async function everything(intake, cookie, tree, fetchOne, fetchTexts, state = 'n
 
         const rows = Array.isArray(got.body.rows) ? got.body.rows : [];
 
-        all.push(...(await fetchTexts(intake, cookie, 'proposal', rows)));
+        all.push(...(await fetchTexts(intake, token, 'proposal', rows)));
 
         if (all.length >= Number(got.body.total ?? all.length) || !rows.length) {
             break;
@@ -200,18 +201,18 @@ export async function fixed(options) {
 
     const entered = await options.enter(options.intake, options.account);
 
-    if (!entered.ok || !entered.cookie) {
+    if (!entered.ok || !entered.token) {
         return { code: REFUSED, lines: [`${options.intake} did not accept the sign-in: ${entered.status || 'silence'} — ${entered.said}`] };
     }
 
-    const got = await everything(options.intake, entered.cookie, options.tree, options.fetchOne, options.fetchTexts);
+    const got = await everything(options.intake, entered.token, options.tree, options.fetchOne, options.fetchTexts);
 
     if (!got.ok) {
         return { code: REFUSED, lines: [`${options.intake} answered ${got.status || 'with silence'} — ${got.said}`] };
     }
 
     const { found, waiting, mute } = options.sift(got.rows, options.sources);
-    const taken = await everything(options.intake, entered.cookie, options.tree, options.fetchOne, options.fetchTexts, 'in_work');
+    const taken = await everything(options.intake, entered.token, options.tree, options.fetchOne, options.fetchTexts, 'in_work');
     const late = taken.ok ? stalled(taken.rows, options.sources, options.archived) : [];
 
     return {
@@ -250,14 +251,10 @@ export async function fixed(options) {
 
 async function main() {
     const config = existsSync(CONFIG) ? JSON.parse(readFileSync(CONFIG, 'utf8')) : {};
-    const named = accountOf(config.account ?? '');
     const outcome = await fixed({
         intake: process.env.RT_INTAKE || (config.intake ?? ''),
         tree: process.env.RT_TREE_SLUG || (await treeSlug()),
-        account: {
-            name: process.env.RT_ACCOUNT_NAME || named.name,
-            password: process.env.RT_ACCOUNT_PASSWORD || named.password,
-        },
+        account: accountOf(config.account ?? '', ROOT),
         sources: sourcesText(SOURCES),
         archived: archiveKeys(join(ROOT, 'docs/archive')),
         enter: login,

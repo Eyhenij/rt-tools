@@ -6,8 +6,8 @@
  * moved by the tree that sent it — that is the mark command, and it stays; but a neighbour's
  * proposal enters an edition of the package here, and the sender cannot move it into «released»:
  * they do not know about the release. The publisher has no neighbour's token, and opening a foreign
- * record with it is not allowed — so the closing is closed by a person's sign-in, by the same
- * service account pair the cargo is read by.
+ * record with it is not allowed — so the closing is closed by the token of the service client of
+ * Keycloak, the same client the cargo is read by (`tools/cargo-sign-in.mjs`).
  *
  * A record is named by a sign from the intake rather than by the sender's key: a file name and a
  * text sign are unique in their own tree, not in the intake, and a named key would find two records
@@ -17,12 +17,12 @@
  * non-zero code.
  */
 import { existsSync, readFileSync } from 'node:fs';
-import { homedir } from 'node:os';
 import { join, resolve } from 'node:path';
+
+import { accountOf, login, NO_PAIR, saidOf, signedIn } from './cargo-sign-in.mjs';
 
 const REFUSED = 1;
 const TIMEOUT_MS = 15_000;
-const SESSION_COOKIE = 'message_bus_session';
 
 const POSTMORTEM_FLAG = '--postmortem';
 const PROPOSAL_FLAG = '--proposal';
@@ -77,82 +77,14 @@ export function itemsOf(argv, state, attached = { fixNote: '', releaseVersion: '
     return items;
 }
 
-/**
- * The service account's pair from the file named by the settings.
- *
- * The same file and the same technique as the cargo read: one person reads and closes, and a
- * second pair under the same sign-in would mean a second account nobody created.
- */
-export function accountOf(where) {
-    if (!where) {
-        return { name: '', password: '' };
-    }
-
-    const path = where.startsWith('~') ? join(homedir(), where.slice(1)) : resolve(ROOT, where);
-
-    if (!existsSync(path)) {
-        return { name: '', password: '' };
-    }
-
-    const lines = readFileSync(path, 'utf8').split('\n');
-
-    return { name: (lines[0] ?? '').trim(), password: (lines[1] ?? '').trim() };
-}
-
-/** What the intake said in words: the message from the answer, and for an unreadable one the answer itself. */
-function saidOf(text) {
-    try {
-        const said = JSON.parse(text);
-
-        return typeof said.message === 'string' ? said.message : text.trim();
-    } catch {
-        return text.trim();
-    }
-}
-
-/** The sign-in cookie's value from the answer's headers: the client does not keep them, and it is put in by hand. */
-function cookieOf(answer) {
-    const set = answer.headers.getSetCookie ? answer.headers.getSetCookie() : [answer.headers.get('set-cookie') ?? ''];
-
-    for (const one of set) {
-        const at = one.indexOf('=');
-
-        if (at > 0 && one.slice(0, at).trim() === SESSION_COOKIE) {
-            return one.slice(at + 1).split(';')[0];
-        }
-    }
-
-    return '';
-}
-
-/** A sign-in by the service account. A refusal is as much an answer as an accepted one. */
-export async function login(intake, account) {
-    let answer;
-
-    try {
-        answer = await fetch(`${intake.replace(/\/+$/, '')}/api/auth/login`, {
-            method: 'POST',
-            headers: { 'content-type': 'application/json' },
-            body: JSON.stringify({ name: account.name, password: account.password }),
-            signal: AbortSignal.timeout(TIMEOUT_MS),
-        });
-    } catch (error) {
-        return { ok: false, status: 0, said: error.message, cookie: '' };
-    }
-
-    const text = await answer.text();
-
-    return { ok: answer.ok, status: answer.status, said: saidOf(text), cookie: answer.ok ? cookieOf(answer) : '' };
-}
-
-/** A closing request with the sign-in cookie. A refusal is as much an answer as an accepted one. */
-export async function callClose(intake, cookie, body) {
+/** A closing request with the sign-in token. A refusal is as much an answer as an accepted one. */
+export async function callClose(intake, token, body) {
     let answer;
 
     try {
         answer = await fetch(`${intake.replace(/\/+$/, '')}/api/intake/close`, {
             method: 'POST',
-            headers: { 'content-type': 'application/json', cookie: `${SESSION_COOKIE}=${cookie}` },
+            headers: { 'content-type': 'application/json', ...signedIn(token) },
             body: JSON.stringify(body),
             signal: AbortSignal.timeout(TIMEOUT_MS),
         });
@@ -210,10 +142,7 @@ function refusalOf(options) {
     }
 
     if (!options.account.name || !options.account.password) {
-        return [
-            'there is no service account pair: the closing stayed unsent',
-            'it lies outside the tree, by the same technique as the token — as a file named by the settings',
-        ];
+        return ['there is no service client pair: the closing stayed unsent', ...NO_PAIR];
     }
 
     return null;
@@ -246,14 +175,14 @@ export async function close(options) {
 
     const entered = await options.enter(options.intake, options.account);
 
-    if (!entered.ok || !entered.cookie) {
+    if (!entered.ok || !entered.token) {
         return {
             code: REFUSED,
             lines: [`the sign-in to ${options.intake} was not accepted: ${entered.status || 'silence'} — ${entered.said}`],
         };
     }
 
-    const closed = await options.call(options.intake, entered.cookie, { items: options.items });
+    const closed = await options.call(options.intake, entered.token, { items: options.items });
 
     if (!closed.ok || !closed.accepted) {
         return { code: REFUSED, lines: [`${options.intake} answered ${closed.status || 'with silence'} — ${closed.said}`] };
@@ -275,15 +204,11 @@ export async function close(options) {
 async function main() {
     const argv = process.argv.slice(2);
     const config = existsSync(CONFIG) ? JSON.parse(readFileSync(CONFIG, 'utf8')) : {};
-    const named = accountOf(config.account ?? '');
     const state = valueOf(argv, STATE_FLAG);
 
     const outcome = await close({
         intake: process.env.RT_INTAKE || (config.intake ?? ''),
-        account: {
-            name: process.env.RT_ACCOUNT_NAME || named.name,
-            password: process.env.RT_ACCOUNT_PASSWORD || named.password,
-        },
+        account: accountOf(config.account ?? '', ROOT),
         state,
         items: itemsOf(argv, state, { fixNote: valueOf(argv, FIX_FLAG), releaseVersion: valueOf(argv, RELEASE_FLAG) }),
         dryRun: argv.includes(DRY_RUN_FLAG),

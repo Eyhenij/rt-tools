@@ -12,11 +12,11 @@ Then it refuses, lists the known kinds and goes to no network
 
 Covered: `projects/agent-kit/tests/cargo-pull.test.sh`.
 
-### SC-AK-561 — without the pair of the account the call does not go
+### SC-AK-561 — without the pair of the client the call does not go
 
-Given there is no pair of the service account on the disk
+Given there is no pair of the service client on the disk
 When the reading command is called
-Then it refuses and names where the pair lies and what the record itself is created by
+Then it refuses and names where the pair lies and where the client itself is created
 
 Covered: `projects/agent-kit/tests/cargo-pull.test.sh`.
 

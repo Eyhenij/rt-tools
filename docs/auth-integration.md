@@ -94,6 +94,7 @@ import { AuthServerModule } from '@rt-tools/auth-server';
         AuthServerModule.forRoot({
             issuer: process.env.AUTH_ISSUER, // https://sso.example.com/realms/rt
             clientId: process.env.AUTH_CLIENT_ID, // orders-admin
+            serviceClients: ['orders-tools'], // tokens of these clients carry the roles of orders-admin
             catalog: ORDERS_RIGHTS,
             sync: {
                 baseUrl: process.env.AUTH_URL, // https://sso.example.com
