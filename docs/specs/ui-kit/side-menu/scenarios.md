@@ -437,3 +437,25 @@ in a spec — the container there has no height of its own, and there is nothing
 `SubMenuKeepsItsPlace` (`projects/ui-kit/src/lib/ui-kit/side-menu/stories/side-menu.stories.ts`): it measures
 the height of the content of the container against its own, and the top of the panel before and after the
 bringing of an item into view.
+
+## The labels of the strip
+
+### SC-UK-142 — the strip shows the labels by default and does not repeat them in the accessible name
+
+Given a side menu without the input of the labels
+When the strip is drawn
+Then every item of the strip has its label under the icon, no item carries an accessible name of its own,
+and the host has no mark of a strip without labels
+
+Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`.
+
+### SC-UK-143 — a strip without labels is narrower, and the label goes into the accessible name
+
+Given a side menu with `isMainMenuTitlesShown` at `false`
+When the strip is drawn
+Then no item has a label under the icon, every item is named for a reader by its label, and the host
+carries the mark `rtui-side-menu--titles-hidden` the narrow width is read from
+
+Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`. The tooltip and the
+width itself are not covered: the styles of a component and the overlay of a tooltip are not applied in a
+spec. Checked by a measurement in the consumer's browser.
