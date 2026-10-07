@@ -154,15 +154,15 @@ ssh message-bus 'bash /opt/message-bus/dump.sh probe /opt/message-bus/dumps/<ф�
 рядом с приёмником: через него входят все продукты, и выкатка или сбой одного продукта не должны
 уносить вход остальных.
 
-| Что             | Значение                                                                  |
-| --------------- | ------------------------------------------------------------------------- |
-| где             | отдельный узел DigitalOcean, Сингапур, 2 ГБ                               |
-| ssh             | `ssh auth`, учётная запись `deploy`                                       |
-| каталог выкатки | `/opt/auth`                                                               |
-| имя области     | `auth.message-bus.dev`, выдавший `https://auth.message-bus.dev/realms/rt` |
-| состав          | `deploy/auth/prod/docker-compose.prod.yml`: Keycloak, Postgres, Caddy     |
-| выкатка         | workflow «Deploy Auth», запуск рукой из главной ветки                     |
-| дамп            | ночью, `DUMP_NAME=auth bash /opt/auth/dump.sh save`                       |
+| Что             | Значение                                                                                                                     |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| где             | отдельный узел DigitalOcean, Сингапур, 2 ГБ                                                                                  |
+| ssh             | `ssh auth`, учётная запись `deploy`                                                                                          |
+| каталог выкатки | `/opt/auth`                                                                                                                  |
+| имя области     | `auth.message-bus.dev`, выдавший `https://auth.message-bus.dev/realms/rt`                                                    |
+| состав          | `deploy/auth/prod/docker-compose.prod.yml`: Keycloak, Postgres, Caddy                                                        |
+| выкатка         | workflow «Deploy Auth», запуск рукой из главной ветки; секреты `AUTH_DEPLOY_HOST`, `AUTH_DEPLOY_USER`, `AUTH_DEPLOY_SSH_KEY` |
+| дамп            | ночью, `DUMP_NAME=auth bash /opt/auth/dump.sh save`                                                                          |
 
 Область `rt` собирает `node tools/auth-realm-prod.mjs` из файла стенда: клиента примера в ней нет,
 адрес админки — прод, а секреты и почта — подстановки `$(env:…)`. Значения лежат только в
