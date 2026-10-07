@@ -1,6 +1,6 @@
 import { inject, Directive, TemplateRef } from '@angular/core';
 
-import { IRtTree } from '../tree/rt-tree.model';
+import { IRtTree } from '@rt-tools/ui-kit-v2/tree';
 
 /**
  * Разметка приложения вместо подписи строки `rt-draggable-tree`. Узел строки приходит в контексте

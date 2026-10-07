@@ -13,7 +13,7 @@ import {
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { rtKitLabel } from '../../i18n';
+import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
 
 const BEM_BLOCK: string = 'rt-live-badge';
 

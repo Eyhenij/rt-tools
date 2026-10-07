@@ -15,10 +15,10 @@ import {
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { RtIconComponent } from '../icon/rt-icon.component';
-import { IRtIcon } from '../icon/rt-icon.model';
-import { RtRadiusDirective } from '../radius/rt-radius.directive';
-import { RtTooltipDirective } from '../tooltip/rt-tooltip.directive';
+import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
+import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
+import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
+import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
 import { IRtToggleButtonGroup } from './rt-toggle-button-group.model';
 
 const BEM_BLOCK: string = 'rt-toggle-button-group';

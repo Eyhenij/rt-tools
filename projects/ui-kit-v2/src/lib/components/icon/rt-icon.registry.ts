@@ -13,7 +13,7 @@ import {
     RT_ICON_SPRITE_ID,
     RT_ICON_SYMBOL_ID_PREFIX,
 } from './rt-icon.const';
-import { IRtIcon } from './rt-icon.model';
+import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 
 /**
  * Адрес, по которому приложение публикует набор из `assets/icons` пакета.

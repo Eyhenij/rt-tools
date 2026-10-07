@@ -2,11 +2,11 @@ import { inject, ChangeDetectionStrategy, Component, Signal, ViewEncapsulation }
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, TRtKitLabelMap } from '../../i18n';
-import { RtButtonDirective } from '../button/rt-button.directive';
-import { RtDialogRef } from '../dialog/rt-dialog-ref';
-import { RtDialogComponent } from '../dialog/rt-dialog.component';
-import { RT_DIALOG_DATA } from '../dialog/rt-dialog.tokens';
+import { RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
+import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
+import { RtDialogRef } from '@rt-tools/ui-kit-v2/dialog';
+import { RtDialogComponent } from '@rt-tools/ui-kit-v2/dialog';
+import { RT_DIALOG_DATA } from '@rt-tools/ui-kit-v2/dialog';
 import { IRtMenu } from './rt-menu.model';
 
 const BEM_BLOCK: string = 'rt-menu-confirm-dialog';

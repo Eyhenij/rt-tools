@@ -24,18 +24,18 @@ import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Observable, timer } from 'rxjs';
 import { debounce, filter, map, tap } from 'rxjs/operators';
-import { IRtInput } from '../../input/rt-input.model';
+import { IRtInput } from '@rt-tools/ui-kit-v2/core';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 import { TNullable } from '@rt-tools/utils';
 
-import { rtKitLabel } from '../../../i18n';
-import { RtCheckboxComponent } from '../../checkbox/rt-checkbox.component';
-import { dataTableIconName } from '../../data-table/rt-data-table-cell.logic';
-import { RtIconButtonComponent } from '../../icon-button/rt-icon-button.component';
-import { IRtIcon } from '../../icon/rt-icon.model';
-import { RtInputComponent } from '../../input/rt-input.component';
-import { RtToolbarComponent, RtToolbarLeftDirective, RtToolbarRightDirective } from '../../toolbar/rt-toolbar.component';
+import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
+import { RtCheckboxComponent } from '@rt-tools/ui-kit-v2/checkbox';
+import { dataTableIconName } from '@rt-tools/ui-kit-v2/data-table';
+import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
+import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
+import { RtInputComponent } from '@rt-tools/ui-kit-v2/input';
+import { RtToolbarComponent, RtToolbarLeftDirective, RtToolbarRightDirective } from '@rt-tools/ui-kit-v2/toolbar';
 import { RtDataListToolbarActionsDirective, RtDataListToolbarSelectorsDirective } from '../rt-data-list-toolbar.directive';
 
 const BEM_BLOCK: string = 'rt-data-list-toolbar';

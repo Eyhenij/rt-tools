@@ -10,7 +10,7 @@ import { StoryPresetsComponent } from '../../../../../showcase/story-presets.com
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { drawStoryCropperSample } from '../../../image-cropper/stories/component/story-cropper-sample';
-import { IButton } from '../../../button';
+import { IButton } from '../../../button/rt-button.model';
 import { IRtIcon } from '../../../icon/rt-icon.model';
 import { RtImageUploadComponent } from '../../rt-image-upload.component';
 import { IRtImageUpload } from '../../rt-image-upload.model';

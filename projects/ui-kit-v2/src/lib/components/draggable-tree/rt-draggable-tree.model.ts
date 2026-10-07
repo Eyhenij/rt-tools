@@ -1,4 +1,4 @@
-import { IRtTree } from '../tree/rt-tree.model';
+import { IRtTree } from '@rt-tools/ui-kit-v2/tree';
 
 /**
  * Модель `<rt-draggable-tree>`. Узел — тот же `IRtTree.Node`, что у `rt-tree`: перетаскиваемое

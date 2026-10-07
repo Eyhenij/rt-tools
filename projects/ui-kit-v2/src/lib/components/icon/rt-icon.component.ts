@@ -24,7 +24,7 @@ import { RT_ICON_GLYPH_STRATEGY, RtIconFontService } from './rt-icon-font.servic
 import { resolveIconGlyph } from './rt-icon-glyph.logic';
 import { iconMaterialDrawn } from './rt-icon-material-map';
 import { RT_ICON_MATERIAL_PRESET_SELECTOR } from './rt-icon.const';
-import { IRtIcon } from './rt-icon.model';
+import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 import { RtIconRegistry } from './rt-icon.registry';
 
 const SIZES: Readonly<Record<IRtIcon.Size, number>> = Object.freeze({

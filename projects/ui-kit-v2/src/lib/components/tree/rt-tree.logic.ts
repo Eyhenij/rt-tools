@@ -1,6 +1,6 @@
-import { rtTreeBranchState, rtTreeLeaves } from '../select/rt-select-tree';
-import { splitTitleByWords } from '../side-menu/rt-side-menu.logic';
-import { IRtSideMenu } from '../side-menu/rt-side-menu.model';
+import { rtTreeBranchState, rtTreeLeaves } from '@rt-tools/ui-kit-v2/select';
+import { splitTitleByWords } from '@rt-tools/ui-kit-v2/side-menu';
+import { IRtSideMenu } from '@rt-tools/ui-kit-v2/side-menu';
 import { IRtTree } from './rt-tree.model';
 
 /**

@@ -1,4 +1,4 @@
-import { IRtIcon } from '../icon/rt-icon.model';
+import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 
 /**
  * Модель `<rt-filter-control>`: один корневой неймспейс с

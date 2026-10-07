@@ -1,4 +1,4 @@
-import { IRtTree } from '../tree/rt-tree.model';
+import { IRtTree } from '@rt-tools/ui-kit-v2/tree';
 
 /**
  * Модель `<rt-hybrid-tree>`: узел дерева выбора с признаком группы, где выбирается один лист.

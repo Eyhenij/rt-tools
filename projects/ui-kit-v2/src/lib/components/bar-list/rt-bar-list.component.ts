@@ -2,8 +2,8 @@ import { ChangeDetectionStrategy, Component, computed, input, InputSignal, Signa
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
-import { rtKitLabel } from '../../i18n';
-import { RtIconComponent } from '../icon';
+import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
+import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { IRtBarList } from './rt-bar-list.model';
 
 const BEM_BLOCK: string = 'rt-bar-list';

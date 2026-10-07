@@ -12,14 +12,14 @@ import {
 
 import { Observable, of } from 'rxjs';
 
-import { RT_KIT_LABELS, TRtKitLabelMap } from '../../../i18n';
-import { RtAsideFooterComponent } from '../../aside/footer/rt-aside-footer.component';
-import { RtAsideHeaderComponent } from '../../aside/header/rt-aside-header.component';
-import { RtAsideComponent } from '../../aside/rt-aside.component';
-import { RtButtonDirective } from '../../button/rt-button.directive';
-import { RtContainerRightSidenavPanelDirective } from '../../container/rt-container.directives';
-import { RtRouteAsideComponent } from '../../container/rt-route-aside.base';
-import { RtIconButtonComponent } from '../../icon-button/rt-icon-button.component';
+import { RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
+import { RtAsideFooterComponent } from '@rt-tools/ui-kit-v2/aside';
+import { RtAsideHeaderComponent } from '@rt-tools/ui-kit-v2/aside';
+import { RtAsideComponent } from '@rt-tools/ui-kit-v2/aside';
+import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
+import { RtContainerRightSidenavPanelDirective } from '@rt-tools/ui-kit-v2/container';
+import { RtRouteAsideComponent } from '@rt-tools/ui-kit-v2/container';
+import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
 import { RtTableSettingsPanelComponent } from '../settings-panel/rt-table-settings-panel.component';
 import { RtTableSettingsRegistry, type IRtTableSettingsRegistration } from '../rt-table-settings.registry';
 import { IRtTable } from '../rt-table.model';

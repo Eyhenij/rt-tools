@@ -1,8 +1,8 @@
 import { isNumber, isString, TNullable } from '@rt-tools/utils';
 
-import { iconMaterialMap, IRtIconMaterialEntry } from '../icon/rt-icon-material-map';
-import { IRtIcon } from '../icon/rt-icon.model';
-import { IRtDataTable } from './rt-data-table.model';
+import { iconMaterialMap, IRtIconMaterialEntry } from '@rt-tools/ui-kit-v2/icon';
+import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
+import { IRtDataTable } from '@rt-tools/ui-kit-v2/core';
 
 /** Значение ячейки: как его отдала запись или как его переделала колонка. */
 export function dataTableCellValue<T>(row: T, column: IRtDataTable.Column<T>): T[keyof T] | string | number {

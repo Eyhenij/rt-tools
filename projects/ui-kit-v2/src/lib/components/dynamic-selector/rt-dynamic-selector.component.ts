@@ -22,13 +22,13 @@ import {
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
-import { rtKitLabel } from '../../i18n';
-import { RtButtonDirective } from '../button/rt-button.directive';
-import { RtEmptyStateComponent } from '../empty-state/rt-empty-state.component';
-import { RtFormControlBase } from '../form-control/rt-form-control.base';
-import { IRtIcon } from '../icon/rt-icon.model';
-import { RtPopoverDirective } from '../popover/rt-popover.directive';
-import { TRtRadius } from '../radius/rt-radius.model';
+import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
+import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
+import { RtEmptyStateComponent } from '@rt-tools/ui-kit-v2/empty-state';
+import { RtFormControlBase } from '@rt-tools/ui-kit-v2/form-control';
+import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
+import { RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
+import { TRtRadius } from '@rt-tools/ui-kit-v2/core';
 import { RtDynamicSelectorListComponent } from './list/rt-dynamic-selector-list.component';
 import { RtDynamicSelectorPopupComponent } from './popup/rt-dynamic-selector-popup.component';
 import { RtDynamicSelectorRowControlsDirective, RtDynamicSelectorRowTitleDirective } from './rt-dynamic-selector.directives';

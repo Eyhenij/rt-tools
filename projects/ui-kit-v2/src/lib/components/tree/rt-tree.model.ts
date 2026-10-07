@@ -1,6 +1,6 @@
-import { IRtSelect } from '../select/rt-select.model';
-import { IRtSideMenu } from '../side-menu/rt-side-menu.model';
-import { IRtTag } from '../tag/rt-tag.model';
+import { IRtSelect } from '@rt-tools/ui-kit-v2/select';
+import { IRtSideMenu } from '@rt-tools/ui-kit-v2/side-menu';
+import { IRtTag } from '@rt-tools/ui-kit-v2/tag';
 
 /**
  * Модель `<rt-tree>`: один корневой неймспейс с префиксом `I`. Узел повторяет опцию выбора из

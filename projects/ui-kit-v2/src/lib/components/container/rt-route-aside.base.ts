@@ -17,16 +17,11 @@ import { ActivatedRoute, ParamMap, Params, Router, UrlTree } from '@angular/rout
 
 import { exhaustMap, mergeMap, Observable, of, Subject, switchMap, tap } from 'rxjs';
 
-import { NotificationBus } from '../../platform';
+import { NotificationBus } from '@rt-tools/ui-kit-v2/core';
 
-import { RtAsideUnsavedDialogComponent } from '../aside/unsaved-dialog/rt-aside-unsaved-dialog.component';
-import {
-    ERtAsideCloseIntent,
-    ERtAsideUnsavedOutcome,
-    IRtAsideUnsavedGuard,
-    resolveCloseIntent,
-} from '../aside/unsaved-dialog/rt-aside-unsaved.logic';
-import { RtDialogService } from '../dialog/rt-dialog.service';
+import { RtAsideUnsavedDialogComponent } from '@rt-tools/ui-kit-v2/aside';
+import { ERtAsideCloseIntent, ERtAsideUnsavedOutcome, IRtAsideUnsavedGuard, resolveCloseIntent } from '@rt-tools/ui-kit-v2/aside';
+import { RtDialogService } from '@rt-tools/ui-kit-v2/dialog';
 import { RtContainerRightSidenavPanelDirective } from './rt-container.directives';
 import { RtRouteAsideMutations } from './rt-route-aside.mutations';
 import { RtRouteAsideNavigation } from './rt-route-aside.navigation';

@@ -22,10 +22,10 @@ import {
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { rtKitLabel } from '../../i18n';
-import { carryThemeScope, materialPresetClassesOf } from '../../util/material-preset';
-import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
-import { IRtIcon } from '../icon/rt-icon.model';
+import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
+import { carryThemeScope, materialPresetClassesOf } from '@rt-tools/ui-kit-v2/core';
+import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
+import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 import { IRtMenu } from './rt-menu.model';
 
 const BEM_BLOCK: string = 'rt-menu';

@@ -18,10 +18,10 @@ import {
 // rt-tools
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, TRtKitLabelMap } from '../../i18n';
-import { RtDialogRef } from '../dialog/rt-dialog-ref';
-import { RT_DIALOG_DATA } from '../dialog/rt-dialog.tokens';
-import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
+import { RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
+import { RtDialogRef } from '@rt-tools/ui-kit-v2/dialog';
+import { RT_DIALOG_DATA } from '@rt-tools/ui-kit-v2/dialog';
+import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
 import { indexFromScroll, nextPhotoIndex, shouldRenderPhoto } from './rt-photo-viewer.logic';
 import { IRtPhotoViewer } from './rt-photo-viewer.model';
 

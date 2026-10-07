@@ -12,7 +12,7 @@ import {
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { RtRadiusDirective } from '../radius/rt-radius.directive';
+import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 import { IRtStepper } from './rt-stepper.model';
 
 const BEM_BLOCK: string = 'rt-stepper';

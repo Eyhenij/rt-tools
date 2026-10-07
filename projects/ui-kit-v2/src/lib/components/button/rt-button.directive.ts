@@ -17,21 +17,21 @@ import {
     untracked,
 } from '@angular/core';
 
-import { IRtKitConfig } from '../../config/rt-kit-config.model';
-import { rtKitDefault } from '../../config/rt-kit-config.providers';
-import { RtRadiusDirective } from '../radius/rt-radius.directive';
-import { RT_RADIUS_DEFAULT, TRtRadius } from '../radius/rt-radius.model';
+import { IRtKitConfig } from '@rt-tools/ui-kit-v2/core';
+import { rtKitDefault } from '@rt-tools/ui-kit-v2/core';
+import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
+import { RT_RADIUS_DEFAULT, TRtRadius } from '@rt-tools/ui-kit-v2/core';
+import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 import {
-    IRtIcon,
     RT_ICON_GLYPH_STRATEGY,
     RT_ICON_MATERIAL_PRESET_SELECTOR,
     RtIconFontService,
     RtIconRegistry,
     resolveIconGlyph,
-} from '../icon';
-import { iconMaterialDrawn } from '../icon/rt-icon-material-map';
-import { RtRippleDirective } from '../ripple';
-import { IButton } from './rt-button.model';
+} from '@rt-tools/ui-kit-v2/icon';
+import { iconMaterialDrawn } from '@rt-tools/ui-kit-v2/icon';
+import { RtRippleDirective } from '@rt-tools/ui-kit-v2/ripple';
+import { IButton } from '@rt-tools/ui-kit-v2/core';
 
 const BEM_BLOCK: string = 'rt-button';
 

@@ -7,7 +7,7 @@ import { concatMap, map, switchMap, take, takeUntil } from 'rxjs/operators';
 import { IDBStorageService } from '@rt-tools/core';
 import { areArraysEqual, TNullable } from '@rt-tools/utils';
 
-import { IRtDataTable } from './rt-data-table.model';
+import { IRtDataTable } from '@rt-tools/ui-kit-v2/core';
 
 /** Настройка, как её держит хранилище: столбцы там лежат частичными. Форма — первого кита. */
 interface IStoredConfig<ENTITY_TYPE> {

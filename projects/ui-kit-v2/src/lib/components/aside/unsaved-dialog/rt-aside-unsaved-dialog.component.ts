@@ -2,10 +2,10 @@ import { inject, ChangeDetectionStrategy, Component, Signal, ViewEncapsulation }
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, TRtKitLabelMap } from '../../../i18n';
-import { RtButtonDirective } from '../../button/rt-button.directive';
-import { RtDialogRef } from '../../dialog/rt-dialog-ref';
-import { RtDialogComponent } from '../../dialog/rt-dialog.component';
+import { RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
+import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
+import { RtDialogRef } from '@rt-tools/ui-kit-v2/dialog';
+import { RtDialogComponent } from '@rt-tools/ui-kit-v2/dialog';
 import { ERtAsideUnsavedOutcome } from './rt-aside-unsaved.logic';
 
 const BEM_BLOCK: string = 'rt-aside-unsaved-dialog';

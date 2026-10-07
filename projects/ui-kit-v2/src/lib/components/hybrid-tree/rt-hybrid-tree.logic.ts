@@ -1,6 +1,6 @@
-import { rtTreeLeaves } from '../select/rt-select-tree';
-import { rtTreeAloneBase, rtTreeChoose, rtTreeChooseAlone, rtTreeMark, rtTreeVisibleLeaves } from '../tree/rt-tree.logic';
-import { IRtTree } from '../tree/rt-tree.model';
+import { rtTreeLeaves } from '@rt-tools/ui-kit-v2/select';
+import { rtTreeAloneBase, rtTreeChoose, rtTreeChooseAlone, rtTreeMark, rtTreeVisibleLeaves } from '@rt-tools/ui-kit-v2/tree';
+import { IRtTree } from '@rt-tools/ui-kit-v2/tree';
 import { IRtHybridTree } from './rt-hybrid-tree.model';
 
 /**

@@ -5,14 +5,14 @@ import { FormsModule } from '@angular/forms';
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
-import { RtButtonDirective } from '../button/rt-button.directive';
-import { RtHybridTreeComponent } from '../hybrid-tree/rt-hybrid-tree.component';
-import { RtIconComponent } from '../icon/rt-icon.component';
-import { RtInputComponent } from '../input/rt-input.component';
-import { RtToggleSwitchComponent } from '../toggle-switch/rt-toggle-switch.component';
-import { RtTooltipDirective } from '../tooltip/rt-tooltip.directive';
-import { RtTreeComponent } from '../tree/rt-tree.component';
-import { RtTreeSelectorComponent } from '../tree-selector/rt-tree-selector.component';
+import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
+import { RtHybridTreeComponent } from '@rt-tools/ui-kit-v2/hybrid-tree';
+import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
+import { RtInputComponent } from '@rt-tools/ui-kit-v2/input';
+import { RtToggleSwitchComponent } from '@rt-tools/ui-kit-v2/toggle-switch';
+import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
+import { RtTreeComponent } from '@rt-tools/ui-kit-v2/tree';
+import { RtTreeSelectorComponent } from '@rt-tools/ui-kit-v2/tree-selector';
 
 /** Блок разметки — блок `rt-tree-selector`: панель у селекторов одна, отличается дерево внутри. */
 const BEM_BLOCK: string = 'rt-tree-selector';

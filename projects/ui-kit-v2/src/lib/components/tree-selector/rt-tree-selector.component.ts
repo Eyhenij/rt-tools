@@ -26,15 +26,15 @@ import { FormsModule } from '@angular/forms';
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
-import { rtKitLabel } from '../../i18n';
-import { RtButtonDirective } from '../button/rt-button.directive';
-import { RtIconComponent } from '../icon/rt-icon.component';
-import { RtInputComponent } from '../input/rt-input.component';
-import { RtToggleSwitchComponent } from '../toggle-switch/rt-toggle-switch.component';
-import { RtTooltipDirective } from '../tooltip/rt-tooltip.directive';
-import { RtHybridTreeComponent } from '../hybrid-tree/rt-hybrid-tree.component';
-import { RtTreeComponent } from '../tree/rt-tree.component';
-import { IRtTree } from '../tree/rt-tree.model';
+import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
+import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
+import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
+import { RtInputComponent } from '@rt-tools/ui-kit-v2/input';
+import { RtToggleSwitchComponent } from '@rt-tools/ui-kit-v2/toggle-switch';
+import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
+import { RtHybridTreeComponent } from '@rt-tools/ui-kit-v2/hybrid-tree';
+import { RtTreeComponent } from '@rt-tools/ui-kit-v2/tree';
+import { IRtTree } from '@rt-tools/ui-kit-v2/tree';
 import { RtTreeSelectorControlsDirective } from './rt-tree-selector.directives';
 import { rtTreeSelectorCanApply, rtTreeSelectorClear, rtTreeSelectorFilter, rtTreeSelectorSame } from './rt-tree-selector.logic';
 import { IRtTreeSelector } from './rt-tree-selector.model';

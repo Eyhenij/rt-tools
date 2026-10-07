@@ -20,16 +20,16 @@ import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
 import { BlockDirective, ElemDirective, EmptyToDashPipe, ModDirective } from '@rt-tools/core';
 import { isEmpty, TNullable } from '@rt-tools/utils';
 
-import { rtKitLabel } from '../../../i18n';
-import { BreakpointsService } from '../../../platform';
-import { RtIconButtonComponent } from '../../icon-button/rt-icon-button.component';
-import { RtIconComponent } from '../../icon/rt-icon.component';
-import { IRtIcon } from '../../icon/rt-icon.model';
-import { RtTooltipDirective } from '../../tooltip/rt-tooltip.directive';
+import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
+import { BreakpointsService } from '@rt-tools/ui-kit-v2/core';
+import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
+import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
+import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
+import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
 import { dataTableCellText, dataTableCellValue, dataTableCopyButtonSide, dataTableIconName } from '../rt-data-table-cell.logic';
 import { IRtDataTableIconContext } from '../rt-data-table-icon.directive';
 import { RtDataTableStopRowClickDirective } from '../rt-data-table-row-click.directive';
-import { IRtDataTable } from '../rt-data-table.model';
+import { IRtDataTable } from '@rt-tools/ui-kit-v2/core';
 
 const BEM_BLOCK: string = 'rt-data-table-cell';
 

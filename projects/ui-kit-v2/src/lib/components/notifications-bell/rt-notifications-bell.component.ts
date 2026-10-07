@@ -12,8 +12,8 @@ import {
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
-import { RtIconComponent } from '../icon/rt-icon.component';
-import { RtRadiusDirective } from '../radius/rt-radius.directive';
+import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
+import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 
 const BEM_BLOCK: string = 'rt-notifications-bell';
 

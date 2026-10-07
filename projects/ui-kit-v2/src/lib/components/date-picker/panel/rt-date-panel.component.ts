@@ -23,13 +23,13 @@ import {
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, RT_KIT_LOCALE, TRtKitLabelMap } from '../../../i18n';
-import { RtButtonDirective } from '../../button/rt-button.directive';
-import { RtCalendarComponent } from '../../calendar/rt-calendar.component';
-import { IRtCalendar } from '../../calendar/rt-calendar.model';
-import { RtIconButtonComponent } from '../../icon-button/rt-icon-button.component';
-import { RtToggleButtonGroupComponent } from '../../toggle-button-group/rt-toggle-button-group.component';
-import { IRtToggleButtonGroup } from '../../toggle-button-group/rt-toggle-button-group.model';
+import { RT_KIT_LABELS, RT_KIT_LOCALE, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
+import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
+import { RtCalendarComponent } from '@rt-tools/ui-kit-v2/calendar';
+import { IRtCalendar } from '@rt-tools/ui-kit-v2/calendar';
+import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
+import { RtToggleButtonGroupComponent } from '@rt-tools/ui-kit-v2/toggle-button-group';
+import { IRtToggleButtonGroup } from '@rt-tools/ui-kit-v2/toggle-button-group';
 import {
     rtDateAddMonths,
     rtDateCanPage,

@@ -1,4 +1,4 @@
-import { IRtTree } from '../tree/rt-tree.model';
+import { IRtTree } from '@rt-tools/ui-kit-v2/tree';
 
 type TNode<TValue> = IRtTree.Node<TValue>;
 

@@ -4,7 +4,7 @@ import { StoryGridComponent } from '../../../../../showcase/story-grid.component
 import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
-import { IRtIcon } from '../../../icon';
+import { IRtIcon } from '../../../icon/rt-icon.model';
 import { RT_RADIUS_STEPS, TRtRadius } from '../../../radius/rt-radius.model';
 import { RtTagComponent } from '../../rt-tag.component';
 import { IRtTag } from '../../rt-tag.model';

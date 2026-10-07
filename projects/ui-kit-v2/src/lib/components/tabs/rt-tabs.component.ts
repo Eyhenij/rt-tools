@@ -27,8 +27,8 @@ import { debounceTime, fromEvent } from 'rxjs';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { RtIconComponent } from '../icon/rt-icon.component';
-import { RtTooltipDirective } from '../tooltip/rt-tooltip.directive';
+import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
+import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
 import { RtTabDirective } from './rt-tab.directive';
 import { RtTabsControlDirective } from './rt-tabs-control.directive';
 import { IRtTabs } from './rt-tabs.model';

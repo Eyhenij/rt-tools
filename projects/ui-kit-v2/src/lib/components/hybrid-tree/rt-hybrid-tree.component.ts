@@ -5,13 +5,13 @@ import { FormsModule } from '@angular/forms';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { RtCheckboxComponent } from '../checkbox/rt-checkbox.component';
-import { RtIconComponent } from '../icon/rt-icon.component';
-import { RtRadioButtonComponent } from '../radio-button/rt-radio-button.component';
-import { RtTagComponent } from '../tag/rt-tag.component';
-import { RtTooltipDirective } from '../tooltip/rt-tooltip.directive';
-import { RtTreeComponent } from '../tree/rt-tree.component';
-import { IRtTree } from '../tree/rt-tree.model';
+import { RtCheckboxComponent } from '@rt-tools/ui-kit-v2/checkbox';
+import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
+import { RtRadioButtonComponent } from '@rt-tools/ui-kit-v2/radio-button';
+import { RtTagComponent } from '@rt-tools/ui-kit-v2/tag';
+import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
+import { RtTreeComponent } from '@rt-tools/ui-kit-v2/tree';
+import { IRtTree } from '@rt-tools/ui-kit-v2/tree';
 import {
     rtHybridTreeChoose,
     rtHybridTreeChosenCount,
