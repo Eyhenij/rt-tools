@@ -137,6 +137,7 @@ the limit is split further by the same technique.
 | [A right, a role and the check that reads them](access-rights/spec.md)  | what a person may do after the entry: the closed set of rights and the client roles of the token           |
 | [The usage of the rules in the sessions](usage/spec.md)                 | the observation lines: the intake of a day whole, the counting by skill over a period, the section         |
 | [The first record](first-run/spec.md)                                   | the first-run screen of an empty node: one public operation creates the owner and signs them in            |
+| [The transfer of the bus people](people-transfer/spec.md)               | the export of the people of production to Keycloak and the rewrite of the chat operators                   |
 
 ## What is out of scope
 
