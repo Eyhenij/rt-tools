@@ -1,5 +1,7 @@
 # Grill
 
+Task RT-2578 · the PR into the epic branch RT-2575
+
 ## The owner request
 
 > я вмержил https://github.com/Eyhenij/rt-tools/pull/2559, подтягивай свежий main и чисти вмерженные ветки как локально так и в ремоуте, выпускай итоговые пакеты auth и затем мигрируй логин из message bus на новый auth
@@ -45,3 +47,14 @@ so it rewrites the operator column. Until then the column keeps what it holds.
 ## What is left unclear
 
 - The production import of the operator ids belongs to RT-2579 and waits for the owner's addresses.
+
+## Decisions along the way
+
+- **The branch stands on the local epic branch with main merged in.** The epic branch could not be
+  sent: the frames of main lack the Keycloak name in the header, and the push gate runs the suite.
+  The frames are taken anew by the first step here, and the merge reaches the epic branch with this
+  task. Affected stage of the plan: 1.
+- **The refusal codes of people and roles left with their operations.** Nothing throws them any
+  more, and the refusal spec lists only codes the intake answers with.
+- **The migration drops the four tables in this task.** The export of RT-2579 reads production
+  before the deploy of the epic; this went into the epic plan.
