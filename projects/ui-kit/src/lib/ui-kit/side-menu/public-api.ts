@@ -12,7 +12,8 @@ export {
     writeSubMenuWidth,
 } from './side-menu.logic';
 export type { ISubMenuTitlePart } from './side-menu.logic';
-export { RtuiSideMenuComponent, RtuiSideMenuFooterDirective, RtuiSideMenuHeaderDirective } from './menu/rtui-side-menu.component';
+export { RtuiSideMenuComponent } from './menu/rtui-side-menu.component';
+export { RtuiSideMenuFooterDirective, RtuiSideMenuHeaderDirective } from './menu/rtui-side-menu-slots.directive';
 export { DEFAULT_MENU_ID, SIDE_MENU_SETTINGS_KEY } from './settings/side-menu-settings.logic';
 export type { TSideMenuSettingsRecord } from './settings/side-menu-settings.logic';
 export {

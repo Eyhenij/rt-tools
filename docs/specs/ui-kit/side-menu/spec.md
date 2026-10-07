@@ -1,6 +1,6 @@
 # The second level of the side menu
 
-**Status:** in force · **Revision:** 2026-09-06 · **Scenario prefix:** `SC-UK`
+**Status:** in force · **Revision:** 2026-10-06 · **Scenario prefix:** `SC-UK`
 **Depends on:** none
 **Laws:** `frontend-application`, `reuse-first`
 **Procedures:** none
@@ -122,6 +122,11 @@ the kit does not count.
   the flow makes the container twice as tall as the screen, and then one bringing of the active item into
   view scrolls the container together with the panel.
 
+- **The strip may hide the labels under its icons.** The input `isMainMenuTitlesShown`, `true` by
+  default, keeps today's strip. At `false` the strip is narrower, the label of an item becomes its tooltip
+  to the right and its accessible name, and the order and the icons of the items do not change. The
+  consumer that pins the width of the strip by its own styling pins the narrow width as well.
+
 ## What is out of scope
 
 - **A separate component of the submenu.** The second level stays a part of `rtui-side-menu`.
@@ -210,3 +215,5 @@ The subdomain has no open questions.
 - 2026-09-21 — the mode and the width moved into the menu's settings under its id (RT-2291); the fixed
   keys `rtui-side-menu-sub-menu-mode` and `-width` are no longer read by the kit.
 - 2026-09-21 — the pinned submenu lost its rounded corners: the corner cut the scroll hint (RT-2291).
+- 2026-10-06 — the strip may hide the labels under its icons; the label goes into a tooltip and into
+  the accessible name. Scenarios SC-UK-142, SC-UK-143.
