@@ -1,0 +1,38 @@
+{
+  "name": "@rt-tools/cms-server",
+  "version": "0.1.0",
+  "description": "The CMS server: the admin, site and media library services of the CMS contract over a storage port the application implements",
+  "author": "RT Team",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nickmdf/rt-tools.git",
+    "directory": "projects/cms-server"
+  },
+  "homepage": "https://github.com/nickmdf/rt-tools/tree/main/projects/cms-server",
+  "bugs": {
+    "url": "https://github.com/nickmdf/rt-tools/issues"
+  },
+  "keywords": [
+    "cms",
+    "connect",
+    "nestjs",
+    "media"
+  ],
+  "dependencies": {
+    "@rt-tools/auth-contract": "^0.1.0",
+    "@rt-tools/auth-server": "^0.1.0",
+    "@rt-tools/cms-contract": "workspace:*",
+    "tslib": "^2.3.0"
+  },
+  "peerDependencies": {
+    "@bufbuild/protobuf": "^2.11.0",
+    "@connectrpc/connect": "^2.0.0"
+  },
+  "devDependencies": {
+    "@connectrpc/connect": "2.2.0"
+  },
+  "sideEffects": false,
+  "main": "src/index.ts",
+  "types": "src/index.ts"
+}

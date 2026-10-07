@@ -8,6 +8,7 @@
     "build:store": "rimraf dist/store && nx build @rt-tools/store --verbose",
     "build:auth-contract": "rimraf dist/auth-contract && nx build @rt-tools/auth-contract --verbose",
     "build:cms-contract": "rimraf dist/cms-contract && nx build @rt-tools/cms-contract --verbose",
+    "build:cms-server": "rimraf dist/cms-server && nx build @rt-tools/cms-server --verbose",
     "build:auth-server": "rimraf dist/auth-server && nx build @rt-tools/auth-server --verbose",
     "build:auth-angular": "rimraf dist/auth-angular && nx build @rt-tools/auth-angular --verbose",
     "build:auth-import": "rimraf dist/auth-import && nx build @rt-tools/auth-import --verbose",
@@ -130,6 +131,7 @@
     "projects/utils",
     "projects/auth-contract",
     "projects/cms-contract",
+    "projects/cms-server",
     "projects/auth-server",
     "projects/agent-kit",
     "projects/ui-kit"

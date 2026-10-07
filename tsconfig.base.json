@@ -33,6 +33,7 @@
       "@rt-tools/auth-contract": ["projects/auth-contract/src/index.ts"],
       "@rt-tools/cms-contract": ["projects/cms-contract/src/index.ts"],
       "@rt-tools/auth-server": ["projects/auth-server/src/index.ts"],
+      "@rt-tools/cms-server": ["projects/cms-server/src/index.ts"],
       "@rt-tools/ui-kit": ["projects/ui-kit/src/public-api.ts"],
       "@rt-tools/ui-kit-v2": ["projects/ui-kit-v2/src/public-api.ts"],
       "@rt-tools/ui-kit-v2/rich-editor": ["projects/ui-kit-v2/src/rich-editor/public-api.ts"],

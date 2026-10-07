@@ -506,11 +506,33 @@ importers:
   projects/cms-contract:
     dependencies:
       '@bufbuild/protobuf':
-        specifier: ^2.0.0
+        specifier: ^2.11.0
         version: 2.11.0
       tslib:
         specifier: ^2.3.0
         version: 2.8.1
+
+  projects/cms-server:
+    dependencies:
+      '@bufbuild/protobuf':
+        specifier: ^2.11.0
+        version: 2.11.0
+      '@rt-tools/auth-contract':
+        specifier: ^0.1.0
+        version: 0.1.0
+      '@rt-tools/auth-server':
+        specifier: ^0.1.0
+        version: 0.1.0(@connectrpc/connect@2.2.0(@bufbuild/protobuf@2.11.0))(@nestjs/common@11.2.3(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.2.3)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      '@rt-tools/cms-contract':
+        specifier: workspace:*
+        version: link:../cms-contract
+      tslib:
+        specifier: ^2.3.0
+        version: 2.8.1
+    devDependencies:
+      '@connectrpc/connect':
+        specifier: 2.2.0
+        version: 2.2.0(@bufbuild/protobuf@2.11.0)
 
   projects/core:
     dependencies:
@@ -5273,6 +5295,18 @@ packages:
   '@rt-tools/auth-contract@0.1.0':
     resolution: {integrity: sha512-TcF7qlAjyh2BscuDI68hcHoMdVccVZBWpT/KUO2TSeo8+d/krtRvmMvoqbpdFBL2b3nm6Pif9ymgA/kDT/K1SA==}
 
+  '@rt-tools/auth-server@0.1.0':
+    resolution: {integrity: sha512-JDrbLcH2NjwwScNk7mcz7IIEu0m9WeC/yqA9I1dmESVsz1VUFZG/cLZzkktm3cy+psTf4sWdGQvl2eEERK8XWA==}
+    peerDependencies:
+      '@connectrpc/connect': ^2.0.0
+      '@nestjs/common': ^11.0.0
+      '@nestjs/core': ^11.0.0
+      reflect-metadata: ^0.2.0
+      rxjs: ^7.8.0
+    peerDependenciesMeta:
+      '@connectrpc/connect':
+        optional: true
+
   '@rt-tools/core@0.5.0':
     resolution: {integrity: sha512-ttoNheNanqoI+9zfU+jiZo53uthjkxTKxu6GaVUDbFmQCCmlvfMZrxo2osFgU0nvdG023z9/3gUwNvYMqIAlBA==}
     peerDependencies:
@@ -9316,9 +9350,6 @@ packages:
 
   jose@6.2.12:
     resolution: {integrity: sha512-9NiFmJEex0sy2Dk58j2UGBSHgUs2ypF9eZSu4L6vjOX3Dp96Sw1F3uL+H+D1sx02jZZdzUT0HgvCy59CuvXcWw==}
-
-  jose@6.2.6:
-    resolution: {integrity: sha512-HwMtbJjMw8rC8dUTwCNilHJD+fxTeKM3JV1eprSmTjS41qwXSSt6exJXgyPK1QOu0jB9eDYLESRDkB3qaT3jnw==}
 
   js-tokens@10.0.0:
     resolution: {integrity: sha512-lM/UBzQmfJRo9ABXbPWemivdCW8V2G8FHaHdypQaIy523snUjog0W71ayWXTjiR+ixeMyVHN2XcpnTd/liPg/Q==}
@@ -16300,7 +16331,7 @@ snapshots:
       express: 5.2.1
       express-rate-limit: 8.6.1(express@5.2.1)
       hono: 4.12.33
-      jose: 6.2.6
+      jose: 6.2.12
       json-schema-typed: 8.0.2
       pkce-challenge: 5.0.1
       raw-body: 3.0.2
@@ -18025,6 +18056,18 @@ snapshots:
   '@rt-tools/auth-contract@0.1.0':
     dependencies:
       tslib: 2.8.1
+
+  '@rt-tools/auth-server@0.1.0(@connectrpc/connect@2.2.0(@bufbuild/protobuf@2.11.0))(@nestjs/common@11.2.3(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.2.3)(reflect-metadata@0.2.2)(rxjs@7.8.2)':
+    dependencies:
+      '@nestjs/common': 11.2.3(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      '@nestjs/core': 11.2.3(@nestjs/common@11.2.3(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.2.3)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      '@rt-tools/auth-contract': 0.1.0
+      jose: 6.2.12
+      reflect-metadata: 0.2.2
+      rxjs: 7.8.2
+      tslib: 2.8.1
+    optionalDependencies:
+      '@connectrpc/connect': 2.2.0(@bufbuild/protobuf@2.11.0)
 
   '@rt-tools/core@0.5.0(2c57471cbf67690551e296dd2c34dd34)':
     dependencies:
@@ -22935,8 +22978,6 @@ snapshots:
       '@sideway/pinpoint': 2.0.0
 
   jose@6.2.12: {}
-
-  jose@6.2.6: {}
 
   js-tokens@10.0.0: {}
 
