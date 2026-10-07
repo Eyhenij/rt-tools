@@ -4,16 +4,16 @@
 
 - **State:** `этап-идёт`
 - **Stage:** 1 of 1 — People and roles leave the bus
-- **Done:** the task folder; main is merged into the local epic branch
-- **Next step:** take the frames anew after the merge of main
-- **Uncommitted:** the task folder
+- **Done:** the task folder; main is merged into the local epic branch; seven frames are taken anew
+- **Next step:** remove the specs of the people and roles screens and rewrite the access spec
+- **Uncommitted:** no
 - **Waiting for the owner:** no
 - **PR:** not open yet
 
 ## Steps
 
-- [>] 1.1 The frames of the suite are taken anew after the merge of main
-- [ ] 1.2 The specs of the people and roles screens are removed and the access spec is rewritten
+- [x] 1.1 The frames of the suite are taken anew after the merge of main
+- [>] 1.2 The specs of the people and roles screens are removed and the access spec is rewritten
 - [ ] 1.3 The admin panel loses the people and roles sections
 - [ ] 1.4 The server loses the accounts operations, and the signed-in person is read in the access domain
 - [ ] 1.5 The storage loses the four tables, and the operator column names the Keycloak person
