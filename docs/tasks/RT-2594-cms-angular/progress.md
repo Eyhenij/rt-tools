@@ -2,17 +2,16 @@
 
 ## Where we stand
 
-- **State:** `этап-идёт`
+- **State:** `этапы-кончились`
 - **Stage:** 4 of 4 — The documents
-- **Done:** stages 1–3 — the clients, the stores, the tokens, the block editor, the admin
+- **Done:** stages 1–4 — the spec `docs/specs/cms/angular/` (SC-CMS-41…78) and the package README;
+  the clients, the stores, the tokens, the block editor, the admin
   components, the screens and the routes; the `site` entry: the embed check (SC-CMS-70), the page
   model and sitemap (SC-CMS-71, 72), the page client with the transfer state (SC-CMS-73), the block
   registry and body (SC-CMS-74), the redirect loader `cmsSiteRedirects` (SC-CMS-75) and the page
   head `SitePageHeadService` (SC-CMS-76…78)
-- **Next step:** 4.1 — the spec `docs/specs/cms/angular/{spec,scenarios,implementation}.md` with
-  scenarios SC-CMS-41…78, the package README, then `check:specs`, `check:docs`, `check:board`, the
-  folder into the archive and a ready PR into `RT-2591-cms-packages`. The next free scenario number
-  is SC-CMS-79
+- **Next step:** take the task folder apart into the archive, send the branch and open a ready PR
+  into `RT-2591-cms-packages`. The next free scenario number is SC-CMS-79
 - **Uncommitted:** nothing
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -25,7 +24,7 @@
 - [x] 2.2 Carry over the block editor and the admin components
 - [x] 2.3 Carry over the screens and the routes of the content and the media library
 - [x] 3.1 Carry over the block renderer, the page data and the redirect resolver
-- [ ] 4.1 Write the spec, the scenarios and the bindings, and the README
+- [x] 4.1 Write the spec, the scenarios and the bindings, and the README
 - [ ] 4.2 Run the tree checks
 
 ## Decisions along the way
