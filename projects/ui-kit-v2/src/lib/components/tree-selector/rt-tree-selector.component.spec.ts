@@ -240,6 +240,11 @@ describe('RtTreeSelectorComponent', (): void => {
         expect(button(asked, 'tree-selector-collapse-all').classList).toContain('rt-button--icon-only');
     });
 
+    it('SC-UKV-701: select-all is drawn only when asked for', (): void => {
+        expect(button(setup(), 'tree-select-all')).toBeNull();
+        expect(button(setup({ selectAll: true }), 'tree-select-all')).not.toBeNull();
+    });
+
     it('SC-UKV-690: revert returns the draft to the choice and stands only in the confirming form', (): void => {
         const fixture: TFixture = setup({ confirm: true, revertable: true, expandOnStart: 'all', value: ['ph'] });
         expect(button(fixture, 'tree-selector-revert').disabled).toBe(true);

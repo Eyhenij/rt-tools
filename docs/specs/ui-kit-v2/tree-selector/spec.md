@@ -62,6 +62,9 @@ field and the controls on top of it, so the application moves without its own co
   can, outlined like its neighbours and red, drawn only when asked for and only while something is
   chosen.
 
+- **Select-all is drawn only when asked for.** It is optional like the buttons of the row and is
+  asked for by `selectAll`. Drawn, it stays on top while the tree scrolls.
+
 - **Revert returns the draft to the choice without closing the selector.** It is an icon button drawn
   only when asked for by `revertable`. It stands in the confirming form alone: in the direct form
   the choice is already written. It is off while the draft equals the choice.
@@ -175,5 +178,6 @@ None.
 - 2026-10-06 — the agreement written for RT-2550.
 - 2026-10-07 — a disabled selector, for the report builder of the application; RT-2551.
 - 2026-10-07 — Clear is outlined like its neighbours and red, by the owner's word; RT-2551.
+- 2026-10-07 — select-all became optional and sticky by the owner's word; RT-2551.
 - 2026-10-06 — expand-all and collapse-all became optional icon buttons by the owner's word. Clear
   became an icon button with a trash can, and an optional revert button was added.

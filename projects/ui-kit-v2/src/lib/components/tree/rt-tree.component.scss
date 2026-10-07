@@ -6,10 +6,17 @@
         --rt-tree-match-radius: var(--rt-radius-xs);
         --rt-tree-focus-shadow: var(--rt-shadow-focus-ring);
         --rt-tree-border-width: var(--rt-border-width-thin);
+        --rt-tree-bg: var(--rt-color-bg-surface);
+        --rt-tree-select-all-bg: var(--rt-tree-bg);
+
+        /* Ярус липкой строки «выбрать всё» — внутри дерева: `isolation` не пускает её над страницей. */
+        --rt-tree-select-all-z: var(--rt-z-sticky);
 
         display: block;
+        background-color: var(--rt-tree-bg);
         color: var(--rt-color-text-primary);
         font-size: var(--rt-input-font-size);
+        isolation: isolate;
         outline: none;
 
         &:focus-visible {
@@ -33,8 +40,19 @@
             }
         }
 
+        /* Строка прилипает к верху места, которое прокручивает дерево; фон непрозрачный, иначе под
+           ней видны уехавшие строки. Наведение ложится поверх фона, а не вместо него. */
         &__select-all {
+            position: sticky;
+            z-index: var(--rt-tree-select-all-z);
+            top: 0;
             border-bottom: var(--rt-tree-border-width) solid var(--rt-color-border-default);
+            background-color: var(--rt-tree-select-all-bg);
+
+            &:hover {
+                background-color: var(--rt-tree-select-all-bg);
+                background-image: linear-gradient(var(--rt-color-bg-hover), var(--rt-color-bg-hover));
+            }
 
             &--disabled {
                 cursor: not-allowed;

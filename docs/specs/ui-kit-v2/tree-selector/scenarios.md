@@ -111,3 +111,11 @@ When it is drawn and a person clicks a row
 Then the search field and every button are off, the choice stays, and `canApply` is false
 
 Covered by the component test of `rt-tree-selector`.
+
+### SC-UKV-701 — select-all is drawn only when asked for
+
+Given the selector without `selectAll`
+When it is drawn
+Then the tree holds no «Select all» row; with `selectAll` the row stands above the rows
+
+Covered by the component test of `rt-tree-selector`.

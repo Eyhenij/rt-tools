@@ -19,6 +19,7 @@ interface IHybridTreeSelectorCase {
     readonly branchMarks: boolean;
     readonly searchTerm: string;
     readonly disabled: boolean;
+    readonly selectAll: boolean;
 }
 
 function selectorCase(name: string, patch: Partial<IHybridTreeSelectorCase> = {}): IHybridTreeSelectorCase {
@@ -29,6 +30,7 @@ function selectorCase(name: string, patch: Partial<IHybridTreeSelectorCase> = {}
         branchMarks: true,
         searchTerm: '',
         disabled: false,
+        selectAll: true,
         ...patch,
     };
 }

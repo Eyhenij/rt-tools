@@ -27,6 +27,7 @@ interface ITreeSelectorCase {
     readonly searchTerm: string;
     readonly label: string;
     readonly disabled: boolean;
+    readonly selectAll: boolean;
     /** Рисовать ли свой контрол приложения в строке. */
     readonly own: boolean;
 }
@@ -48,6 +49,7 @@ function selectorCase(name: string, patch: Partial<ITreeSelectorCase> = {}): ITr
         searchTerm: '',
         label: '',
         disabled: false,
+        selectAll: true,
         own: false,
         ...patch,
     };

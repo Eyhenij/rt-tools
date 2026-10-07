@@ -131,7 +131,7 @@ the component; the choice lives with the application through `value`.
 | no marks               | labels only                                                 |
 | a node disabled        | the row muted, its mark unchangeable                        |
 | the tree disabled      | every row and select-all muted, the arrows still open       |
-| select-all             | its mark above the first row's mark, or above the arrow     |
+| select-all             | on top while the rows scroll; its mark above the first mark |
 | a search term          | the matching rows with the path open, the match highlighted |
 | empty                  | the kit label «Nothing found» or «No options»               |
 | a row highlighted      | the row background of the active option of the select       |

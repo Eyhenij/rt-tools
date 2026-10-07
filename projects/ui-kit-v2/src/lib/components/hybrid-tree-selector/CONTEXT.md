@@ -1,7 +1,7 @@
 # `rt-hybrid-tree-selector`
 
 ```html
-<rt-hybrid-tree-selector confirm expandControls [selectAll]="false" [nodes]="fields" [(value)]="chosenFields" />
+<rt-hybrid-tree-selector confirm expandControls [nodes]="fields" [(value)]="chosenFields" />
 ```
 
 Входы и выходы — на странице обзора `Overview.mdx` рядом. Договорённость —

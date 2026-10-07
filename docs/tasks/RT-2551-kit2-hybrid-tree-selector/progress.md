@@ -34,6 +34,11 @@
   если там есть чекбокс у группы или на шевроном как сечас если чекбокса группы нет». Done in this
   branch, since RT-2550 waits for the same «открывай». Affected stage: 3.
 
+- **Select-all is optional and sticky** — the owner: «Выбрать все должен быть стики и опциональным».
+  `selectAll` of the selector is off by default like the buttons of the row. The row sticks to the
+  top of the scrolling place, so the tree and the selector got their own surface background.
+  Otherwise the sticky row stood as a white strip on the page. Affected stage: 3.
+
 - **Both selectors and both trees get `disabled`** — the owner on the migration of the report
   builder: «в этой задаче добавь чего не хватает». The application's own `disabled` greys only
   select-all and Submit, and its rows stay clickable; the kit switches off the search, the buttons,

@@ -143,7 +143,8 @@ export class RtTreeSelectorComponent<TValue> {
     public readonly branchMarks: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
         transform: booleanAttribute,
     });
-    public readonly selectAll: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
+    /** «Выбрать все» — необязательная, как кнопки строки: по умолчанию её нет. */
+    public readonly selectAll: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
         transform: booleanAttribute,
     });
     /** Подтверждаемая форма: выбор копится в черновике и уходит по «Применить». */

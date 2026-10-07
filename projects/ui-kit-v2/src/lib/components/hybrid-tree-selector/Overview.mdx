@@ -11,14 +11,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 кнопки строки, переключатель множественного выбора, черновик и «Применить».
 
 ```html
-<rt-hybrid-tree-selector
-    confirm
-    expandControls
-    ariaLabel="Поля отчёта"
-    [selectAll]="false"
-    [nodes]="fields"
-    [(value)]="chosenFields"
-    (applied)="close()" />
+<rt-hybrid-tree-selector confirm expandControls ariaLabel="Поля отчёта" [nodes]="fields" [(value)]="chosenFields" (applied)="close()" />
 ```
 
 ## Когда применять
