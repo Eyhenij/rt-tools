@@ -95,6 +95,11 @@ export class RtDynamicSelectorComponent<TEntity extends object> extends RtFormCo
         (it: IRtKitConfig.DynamicSelector): IRtIcon.Name | undefined => it.clearIcon,
         'close'
     );
+    readonly #titleWrapDefault: boolean = rtKitDefault(
+        'dynamicSelector',
+        (it: IRtKitConfig.DynamicSelector): boolean | undefined => it.titleWrap,
+        true
+    );
     readonly #searchAppearanceDefault: IRtInput.Appearance = rtKitDefault(
         'dynamicSelector',
         (it: IRtKitConfig.DynamicSelector): IRtInput.Appearance | undefined => it.searchAppearance,
@@ -213,7 +218,7 @@ export class RtDynamicSelectorComponent<TEntity extends object> extends RtFormCo
     /** Значок кнопки «Очистить список». */
     public readonly clearIcon: InputSignal<IRtIcon.Name> = input<IRtIcon.Name>(this.#clearIconDefault);
     /** Название строки переносится; `false` ведёт его одной строкой с многоточием и подсказкой при обрезке. */
-    public readonly titleWrap: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
+    public readonly titleWrap: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(this.#titleWrapDefault, {
         transform: booleanAttribute,
     });
     /** Вид поля поиска в окне выбора. */

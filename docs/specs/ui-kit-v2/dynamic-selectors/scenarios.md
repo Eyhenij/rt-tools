@@ -292,8 +292,8 @@ Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/rt-dynamic-sele
 
 Given an application that sets the look of the dynamic selectors in the kit settings, or sets nothing
 When a selector and a string list whose markup names no look are drawn
-Then the invitation button, the clear icon, the search look and the empty-result text come from the
-settings, and without the settings they are the kit defaults
+Then the invitation button, the clear icon, the search look, the empty-result text and the title
+wrapping come from the settings, and without the settings they are the kit defaults
 
 Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/rt-dynamic-selector-defaults.spec.ts`.
 

@@ -16,7 +16,7 @@ interface IPerson {
     readonly name: string;
 }
 
-/** Умолчания, отличные от китовых во всех пяти полях. */
+/** Умолчания, отличные от китовых во всех шести полях. */
 const SETTINGS: IRtKitConfig.Config = {
     components: {
         dynamicSelector: {
@@ -25,6 +25,7 @@ const SETTINGS: IRtKitConfig.Config = {
             clearIcon: 'trash-x',
             searchAppearance: 'fill',
             emptyResultsText: 'Никого не нашли',
+            titleWrap: false,
         },
     },
 };
@@ -57,9 +58,10 @@ class SilentHostComponent {
             clearIcon="close"
             searchAppearance="outline"
             emptyResultsText="Пусто"
+            titleWrap
             [entities]="people"
             [invitationButtonIcon]="null" />
-        <rt-dynamic-input invitation invitationButtonAppearance="outlined" clearIcon="close" [invitationButtonIcon]="null" />
+        <rt-dynamic-input invitation invitationButtonAppearance="outlined" clearIcon="close" titleWrap [invitationButtonIcon]="null" />
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [RtDynamicSelectorComponent, RtDynamicInputComponent],
@@ -92,6 +94,8 @@ describe('RtDynamicSelectorComponent — умолчания из настрое�
         expect(inputOf(fixture).invitationButtonIcon()).toBeNull();
         expect(inputOf(fixture).invitationButtonAppearance()).toBe('outlined');
         expect(inputOf(fixture).clearIcon()).toBe('close');
+        expect(selectorOf(fixture).titleWrap()).toBe(true);
+        expect(inputOf(fixture).titleWrap()).toBe(true);
     });
 
     it('SC-UKV-724 — умолчание узла доходит до обоих полей, о которых разметка молчит', (): void => {
@@ -105,6 +109,8 @@ describe('RtDynamicSelectorComponent — умолчания из настрое�
         expect(inputOf(fixture).invitationButtonIcon()).toBe('ico-plus');
         expect(inputOf(fixture).invitationButtonAppearance()).toBe('text');
         expect(inputOf(fixture).clearIcon()).toBe('trash-x');
+        expect(selectorOf(fixture).titleWrap()).toBe(false);
+        expect(inputOf(fixture).titleWrap()).toBe(false);
     });
 
     it('SC-UKV-724 — кнопки рисуются умолчаниями из настроек', (): void => {
@@ -131,5 +137,7 @@ describe('RtDynamicSelectorComponent — умолчания из настрое�
         expect(inputOf(fixture).invitationButtonIcon()).toBeNull();
         expect(inputOf(fixture).invitationButtonAppearance()).toBe('outlined');
         expect(inputOf(fixture).clearIcon()).toBe('close');
+        expect(selectorOf(fixture).titleWrap()).toBe(true);
+        expect(inputOf(fixture).titleWrap()).toBe(true);
     });
 });

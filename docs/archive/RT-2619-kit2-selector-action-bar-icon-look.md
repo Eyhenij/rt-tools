@@ -176,6 +176,12 @@ Then a third row, and a fourth one that waits for its own turn:
 >     `invitationButtonAppearance`, `clearIcon`, `searchAppearance`, `emptyResultsText`. Вход на
 >     экземпляре сильнее провайдера; без провайдера — текущие умолчания.
 
+After the package with rows 86–89 was installed:
+
+> 90. Поле `titleWrap` в раздаче `provideRtKit({ components: { dynamicSelector } })` (и для
+>     `rt-dynamic-input`). В приложении все списки ведут название одной строкой; сейчас
+>     `[titleWrap]="false"` повторяется на каждом месте. Вход на экземпляре сильнее раздачи.
+
 ## What the tree already has
 
 - `rt-dynamic-selector` draws the invitation button as `rtButton appearance="outlined"` with no
@@ -325,3 +331,4 @@ list and the dynamic-input remarks.
   an input at the place wins with nothing more; a second provider would be a second road to the same
   answer. Both fields read the invitation button and the clear icon, the search and the empty result
   belong to the selector alone. The application's session agreed to the form. Row 89.
+- **`titleWrap` joined the same section and is read by both fields.** Row 90.

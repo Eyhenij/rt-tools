@@ -95,6 +95,11 @@ export class RtDynamicInputComponent extends RtFormControlBase<string[]> {
         (it: IRtKitConfig.DynamicSelector): IRtIcon.Name | undefined => it.clearIcon,
         'close'
     );
+    readonly #titleWrapDefault: boolean = rtKitDefault(
+        'dynamicSelector',
+        (it: IRtKitConfig.DynamicSelector): boolean | undefined => it.titleWrap,
+        true
+    );
 
     protected readonly addLabel: Signal<string> = rtKitLabel('dynamicSelectorAdd');
     protected readonly placeholderLabel: Signal<string> = rtKitLabel('dynamicInputPlaceholder');
@@ -165,7 +170,7 @@ export class RtDynamicInputComponent extends RtFormControlBase<string[]> {
     /** Значок кнопки «Очистить список». */
     public readonly clearIcon: InputSignal<IRtIcon.Name> = input<IRtIcon.Name>(this.#clearIconDefault);
     /** Название строки переносится; `false` ведёт его одной строкой с многоточием и подсказкой при обрезке. */
-    public readonly titleWrap: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
+    public readonly titleWrap: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(this.#titleWrapDefault, {
         transform: booleanAttribute,
     });
     /** Вид поля, в которое вводят новую строку. */
