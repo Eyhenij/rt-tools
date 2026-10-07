@@ -20,32 +20,6 @@
 
 /** Чем приёмник отбил обращение. Значение — ключ словаря админки: имя одно на обе стороны. */
 export enum ERefusal {
-    /** Учётная запись с таким именем уже заведена. */
-    AccountNameTaken = 'accountNameTaken',
-    /** Учётной записи с таким именем нет. */
-    AccountNotFound = 'accountNotFound',
-    /** Человек отключает свою же запись. */
-    AccountSelfDisable = 'accountSelfDisable',
-    /** Запись уже отключена. */
-    AccountAlreadyOff = 'accountAlreadyOff',
-    /** Запись пропала между правкой и ответом. */
-    AccountGone = 'accountGone',
-    /** Роль с таким именем уже заведена. */
-    RoleNameTaken = 'roleNameTaken',
-    /** Роли с таким ключом нет. */
-    RoleNotFound = 'roleNotFound',
-    /** Роль держат учётные записи. */
-    RoleHeld = 'roleHeld',
-    /** Правка оставила бы правящего без права на роли. */
-    RoleRightsLost = 'roleRightsLost',
-    /** Роль пришла без имени. */
-    RoleNameEmpty = 'roleNameEmpty',
-    /** Права нет в наборе. */
-    RightUnknown = 'rightUnknown',
-    /** Право названо дважды. */
-    RightRepeated = 'rightRepeated',
-    /** Правка не называет право и дано ли оно. */
-    EditMalformed = 'editMalformed',
     /** Выдача приглашения просит имя будущего проекта. */
     InviteNameEmpty = 'inviteNameEmpty',
     /** Проект уже заведён, и приглашение ему не нужно. */
@@ -62,16 +36,6 @@ export enum ERefusal {
     SummaryNotFound = 'summaryNotFound',
     /** Дерево с таким признаком приёмнику не известно. */
     TreeUnknown = 'treeUnknown',
-    /** Заведение записи просит имя пользователя. */
-    PersonNameEmpty = 'personNameEmpty',
-    /** Заведение записи просит пароль. */
-    PersonPasswordEmpty = 'personPasswordEmpty',
-    /** Первая запись уже заведена, и заведение закрыто. */
-    SetupClosed = 'setupClosed',
-    /** Роли владельца нет в хранилище. */
-    OwnerRoleMissing = 'ownerRoleMissing',
-    /** В запросе входа нет имени или пароля. */
-    SignInEmpty = 'signInEmpty',
     /** Обращений с одного клиента больше предела. */
     EnrollThrottled = 'enrollThrottled',
     /** Обращение о заведении дерева пришло без кода приглашения или признака. */
@@ -141,19 +105,6 @@ const PLACEHOLDER: RegExp = /\{\{(\w+)\}\}/g;
  * именно это поле. Админка сюда не заглядывает — у неё свой набор на каждый язык.
  */
 const SAID: Readonly<Record<ERefusal, string>> = {
-    [ERefusal.AccountNameTaken]: 'пользователь «{{name}}» уже заведён: имя занято',
-    [ERefusal.AccountNotFound]: 'пользователя с именем «{{name}}» нет',
-    [ERefusal.AccountSelfDisable]: 'свою запись отключить нельзя: это оборвало бы и ваш вход',
-    [ERefusal.AccountAlreadyOff]: 'пользователь «{{name}}» уже отключён',
-    [ERefusal.AccountGone]: 'запись пропала между правкой и ответом',
-    [ERefusal.RoleNameTaken]: 'роль «{{name}}» уже заведена: имя занято',
-    [ERefusal.RoleNotFound]: 'роли с ключом «{{key}}» нет',
-    [ERefusal.RoleHeld]: 'роль «{{name}}» держат записи: {{people}}; сначала дайте им другую',
-    [ERefusal.RoleRightsLost]: 'правка оставила бы вас без права на роли: сначала дайте его другой записи',
-    [ERefusal.RoleNameEmpty]: 'роль ждёт имя',
-    [ERefusal.RightUnknown]: 'права «{{right}}» нет в наборе',
-    [ERefusal.RightRepeated]: 'право «{{right}}» названо дважды',
-    [ERefusal.EditMalformed]: 'правка называет право и дано ли оно',
     [ERefusal.InviteNameEmpty]: 'выдача ждёт имя будущего проекта',
     [ERefusal.InviteProjectExists]: 'проект «{{name}}» уже заведён: приглашение ему не нужно, а имя занято',
     [ERefusal.InviteAlreadyIssued]: 'годное приглашение для «{{name}}» уже выдано; отзовите его, чтобы выдать новое',
@@ -162,11 +113,6 @@ const SAID: Readonly<Record<ERefusal, string>> = {
     [ERefusal.ProposalNotFound]: 'предложения с таким признаком нет',
     [ERefusal.SummaryNotFound]: 'записи месяца с таким признаком нет',
     [ERefusal.TreeUnknown]: 'дерево с признаком «{{slug}}» не известно приёмнику',
-    [ERefusal.PersonNameEmpty]: 'заведение ждёт имя пользователя',
-    [ERefusal.PersonPasswordEmpty]: 'пользователю нужен пароль: пустой не принимается',
-    [ERefusal.SetupClosed]: 'первая запись уже заведена: вход — по имени и паролю',
-    [ERefusal.OwnerRoleMissing]: 'роли владельца «{{key}}» нет в хранилище: миграции не применены',
-    [ERefusal.SignInEmpty]: 'в запросе нет имени или пароля',
     [ERefusal.EnrollThrottled]: 'обращений с одного клиента больше предела: подождите и повторите',
     [ERefusal.EnrollMalformed]: 'обращение ожидает код приглашения и признак дерева',
     [ERefusal.InviteRejected]: 'приглашение не принято',

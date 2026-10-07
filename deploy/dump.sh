@@ -47,17 +47,21 @@ compose() {
 # которую промах в данных успевают заметить; семь файлов диск узла не съедают.
 KEEP_DUMPS="${KEEP_DUMPS:-7}"
 
+# Начало имени файла дампа. Тот же сценарий снимает и базу общего Keycloak на его узле: там
+# расписание задаёт `DUMP_NAME=auth`.
+DUMP_NAME="${DUMP_NAME:-message-bus}"
+
 save() {
     mkdir -p "${DUMPS}"
     # Метка времени в имени: дамп, перезаписывающий предыдущий, оставляет ровно одну точку
     # возврата — ту, что снята последней, в том числе снятой поверх уже испорченного.
-    target="${DUMPS}/message-bus-$(date -u +%Y%m%dT%H%M%SZ).dump"
+    target="${DUMPS}/${DUMP_NAME}-$(date -u +%Y%m%dT%H%M%SZ).dump"
     # Своим форматом, а не текстом: он сжат, и загрузка идёт с параллелью и без разбора SQL.
     compose exec -T db pg_dump -U "${POSTGRES_USER}" -d "${POSTGRES_DB}" --format=custom > "${target}"
     echo "dump: снят ${target} ($(du -h "${target}" | cut -f1))" >&2
     # Старше предела — снимаются после выгрузки, а не до: неудачная выгрузка иначе оставила бы
     # на один файл меньше, не прибавив нового. Порядок по имени и есть порядок по времени.
-    ls -1 "${DUMPS}"/message-bus-*.dump | sort -r | tail -n "+$((KEEP_DUMPS + 1))" | while read -r old; do
+    ls -1 "${DUMPS}"/"${DUMP_NAME}"-*.dump | sort -r | tail -n "+$((KEEP_DUMPS + 1))" | while read -r old; do
         rm -f "${old}"
         echo "dump: снят старый ${old}" >&2
     done

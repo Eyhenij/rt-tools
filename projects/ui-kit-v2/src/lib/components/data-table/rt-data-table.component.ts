@@ -26,13 +26,13 @@ import { FormsModule } from '@angular/forms';
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 import { EFilterOperatorType, ISortModel, TNullable, transformArrayInput } from '@rt-tools/utils';
 
-import { IRtKitConfig } from '../../config/rt-kit-config.model';
-import { rtKitDefault } from '../../config/rt-kit-config.providers';
-import { rtKitLabel } from '../../i18n';
-import { IRtInput } from '../input/rt-input.model';
-import { RtCheckboxComponent } from '../checkbox/rt-checkbox.component';
-import { RtMenuComponent } from '../menu/rt-menu.component';
-import { RtRadioButtonComponent } from '../radio-button/rt-radio-button.component';
+import { IRtKitConfig } from '@rt-tools/ui-kit-v2/core';
+import { rtKitDefault } from '@rt-tools/ui-kit-v2/core';
+import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
+import { IRtInput } from '@rt-tools/ui-kit-v2/core';
+import { RtCheckboxComponent } from '@rt-tools/ui-kit-v2/checkbox';
+import { RtMenuComponent } from '@rt-tools/ui-kit-v2/menu';
+import { RtRadioButtonComponent } from '@rt-tools/ui-kit-v2/radio-button';
 import { RtDataTableCellComponent } from './cell/rt-data-table-cell.component';
 import { RtDataTableFilterCellComponent } from './filter-cell/rt-data-table-filter-cell.component';
 import { RtDataTableHeaderCellComponent } from './header-cell/rt-data-table-header-cell.component';
@@ -52,7 +52,7 @@ import {
     RT_DATA_TABLE_PRESET_FROM_HOST,
     RT_PRESET_MATERIAL_CLASS,
     TRtDataTableFilters,
-} from './rt-data-table.model';
+} from '@rt-tools/ui-kit-v2/core';
 
 const BEM_BLOCK: string = 'rt-data-table';
 

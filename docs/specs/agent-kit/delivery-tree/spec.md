@@ -37,6 +37,9 @@ own turn.
   key of a neighbouring tree is its own, and a name lawful there says nothing about this tree.
 - **The tree of execution is taken from the command itself.** A move at the start of the call names
   it; there is nowhere else to learn it from before the call runs.
+- **A path from the home directory names the tree the same as a full path.** The shell expands the
+  tilde and `$HOME` before the move, and the command text holds them unexpanded. Read as written,
+  such a path names no directory, and the command counts as running in the tree of the session.
 - **Without a move the tree of the session answers.** That is the former behaviour, and the whole
   of it stays for the ordinary case.
 - **A second working copy is for reading, and a sending call goes from the copy of the session.**
@@ -54,6 +57,9 @@ own turn.
   `.git` directory is one, and so are the work queue and the profile.
 - **A request opened in another repository is judged by the branch of that repository.** The
   branch of the session tree names a different task or none.
+- **The title of a request opened in another repository is judged by the title form of that
+  repository.** The task key of a neighbouring tree is its own. Judged by the session's form, a lawful
+  title of that tree is refused as a title without a number.
 - **A tree that declared no profile is not judged by the form at all.** A foreign tree is not
   accountable to this guard, and a refusal on a lawful name has no bypass.
 
@@ -113,6 +119,9 @@ Not applicable: the guard judges one command of one turn.
 None.
 
 ## History of changes
+
+- 2026-10-07 — a path from the home directory names the tree of execution, and the title of a
+  request in another repository is judged by that repository's form.
 
 - 2026-10-01 — a second copy is told by the shared `.git` directory. A push into another repository
   is no longer refused as a call from a second copy, and the task of a branch in another repository

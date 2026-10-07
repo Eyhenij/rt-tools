@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, inject, Signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Router, RouterOutlet } from '@angular/router';
-import { AuthStore } from '@rt/message-bus-admin/auth/data-access';
-import { IAdminSession, SIGN_IN_PATH } from '@rt/message-bus-admin/auth/util';
+import { RouterOutlet } from '@angular/router';
+import { AuthStore } from '@rt/message-bus-admin/common/container/data-access';
+import { IAdminSession } from '@rt/message-bus-admin/common/container/util';
 import { AdminHeaderComponent } from '@rt/message-bus-admin/common/container/ui';
 import { ADMIN_MENU, IAdminMenuItem } from '@rt/message-bus-admin/common/container/util';
 import { AdminTextService } from '@rt/message-bus-admin/common/core/util';
@@ -13,7 +13,7 @@ import {
     RtContainerHeaderDirective,
     RtContainerRightSidenavDirective,
 } from '@rt-tools/ui-kit-v2';
-import { exhaustMap, Observable, Subject } from 'rxjs';
+import { exhaustMap, Subject } from 'rxjs';
 
 const BEM_BLOCK: string = 'admin-container';
 
@@ -50,7 +50,6 @@ const BEM_BLOCK: string = 'admin-container';
     host: { class: BEM_BLOCK },
 })
 export class AdminContainerComponent {
-    readonly #router: Router = inject(Router);
     readonly #store: AuthStore = inject(AuthStore);
     readonly #text: AdminTextService = inject(AdminTextService);
     readonly #signOutSource: Subject<void> = new Subject<void>();
@@ -86,12 +85,10 @@ export class AdminContainerComponent {
     constructor() {
         this.#signOutSource
             .pipe(
-                exhaustMap((): Observable<void> => this.#store.signOut()),
+                exhaustMap((): Promise<void> => this.#store.signOut()),
                 takeUntilDestroyed()
             )
-            .subscribe((): void => {
-                void this.#router.navigate([SIGN_IN_PATH]);
-            });
+            .subscribe();
     }
 
     protected signOut(): void {

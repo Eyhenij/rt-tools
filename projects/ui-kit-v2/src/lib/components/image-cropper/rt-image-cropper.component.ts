@@ -26,8 +26,8 @@ import {
 
 import { BlockDirective, ElemDirective, ModDirective, PlatformService, WINDOW } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, TRtKitLabelKey, TRtKitLabelMap } from '../../i18n';
-import { RtSpinnerComponent } from '../spinner';
+import { RT_KIT_LABELS, TRtKitLabelKey, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
+import { RtSpinnerComponent } from '@rt-tools/ui-kit-v2/spinner';
 import {
     cropArea,
     fieldDelta,

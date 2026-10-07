@@ -36,6 +36,25 @@ describe('KeycloakTokenVerifier', () => {
         }
     });
 
+    it('SC-AUTH-73 — a token of a named service client gives the caller with the rights of this client', async () => {
+        const services: KeycloakTokenVerifier = new KeycloakTokenVerifier(
+            { issuer: TEST_ISSUER, clientId: TEST_CLIENT, serviceClients: ['cargo-tools'] },
+            realm.keys
+        );
+
+        const caller: ICaller | null = await services.callerOf(`Bearer ${await realm.sign(personClaims(['orders:read'], 'cargo-tools'))}`);
+
+        expect([...(caller?.permissions ?? [])]).toEqual(['orders:read']);
+        expect(await services.callerOf(`Bearer ${await realm.sign(personClaims(['orders:read'], 'people-admin'))}`)).toBeNull();
+    });
+
+    it('SC-AUTH-73 — a service client the server does not name is refused', async () => {
+        // First the positive half: the token of the admin client itself passes, so the refusal below
+        // is about the client, not about a broken token
+        expect(await verifier.callerOf(`Bearer ${await realm.sign(personClaims(['orders:read']))}`)).not.toBeNull();
+        expect(await verifier.callerOf(`Bearer ${await realm.sign(personClaims(['orders:read'], 'cargo-tools'))}`)).toBeNull();
+    });
+
     it('SC-AUTH-13 — a header of another form is refused before any key is read', async () => {
         expect(await verifier.callerOf(undefined)).toBeNull();
         expect(await verifier.callerOf('Basic abc')).toBeNull();

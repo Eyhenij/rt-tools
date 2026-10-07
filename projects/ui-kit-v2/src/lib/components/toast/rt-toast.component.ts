@@ -23,13 +23,13 @@ import {
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, TRtKitLabelMap } from '../../i18n';
-import { INotification } from '../../platform';
+import { RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
+import { INotification } from '@rt-tools/ui-kit-v2/core';
 
-import { RtButtonDirective } from '../button/rt-button.directive';
-import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
-import { RtIconComponent } from '../icon/rt-icon.component';
-import { IRtIcon } from '../icon/rt-icon.model';
+import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
+import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
+import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
+import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 import { RT_TOAST_SEVERITY_ICONS, RT_TOASTER_GAP_PX, IRtToaster } from './rt-toaster.model';
 
 const BEM_BLOCK: string = 'rt-toast';

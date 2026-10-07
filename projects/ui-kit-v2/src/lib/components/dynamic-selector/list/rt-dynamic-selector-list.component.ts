@@ -20,12 +20,12 @@ import { FormsModule } from '@angular/forms';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { rtKitLabel } from '../../../i18n';
-import { BreakpointsService } from '../../../platform';
-import { RtIconButtonComponent } from '../../icon-button/rt-icon-button.component';
-import { RtInputComponent } from '../../input/rt-input.component';
-import { TRtRadius } from '../../radius/rt-radius.model';
-import { RtTooltipDirective } from '../../tooltip/rt-tooltip.directive';
+import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
+import { BreakpointsService } from '@rt-tools/ui-kit-v2/core';
+import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
+import { RtInputComponent } from '@rt-tools/ui-kit-v2/input';
+import { TRtRadius } from '@rt-tools/ui-kit-v2/core';
+import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
 import { IRtDynamicSelector } from '../rt-dynamic-selector.model';
 
 const BEM_BLOCK: string = 'rt-dynamic-selector-list';

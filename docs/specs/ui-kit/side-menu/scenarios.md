@@ -459,3 +459,36 @@ carries the mark `rtui-side-menu--titles-hidden` the narrow width is read from
 Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.spec.ts`. The tooltip and the
 width itself are not covered: the styles of a component and the overlay of a tooltip are not applied in a
 spec. Checked by a measurement in the consumer's browser.
+
+### SC-UK-144 — the leaving of the pointer closes the hovered submenu only after the delay
+
+Given a submenu opened by hovering and a delay of 500 ms
+When the pointer leaves the panel
+Then the submenu is still open at 499 ms and closed at 500 ms
+
+Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.close-delay.spec.ts`.
+
+### SC-UK-145 — a return onto the panel within the delay keeps the submenu
+
+Given a submenu opened by hovering and a delay of 500 ms
+When the pointer leaves the panel and comes back before 500 ms
+Then the submenu stays open after the delay has run out
+
+Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.close-delay.spec.ts`.
+
+### SC-UK-146 — an item of the strip without sections closes after the delay, an item with sections keeps
+
+Given a submenu opened by hovering and a delay of 500 ms
+When the pointer moves onto an item without sections
+Then the submenu closes after 500 ms; when it moves onto an item with sections before that, the submenu
+stays open
+
+Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.close-delay.spec.ts`.
+
+### SC-UK-147 — a press of the backing closes at once
+
+Given a submenu opened by hovering and a delay of 500 ms, and the pointer has left the panel
+When the backing is pressed
+Then the submenu is closed at once, and the timer that was running does not open or close anything later
+
+Covered: `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.close-delay.spec.ts`.

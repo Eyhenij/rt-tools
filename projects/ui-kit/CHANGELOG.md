@@ -1,3 +1,9 @@
+# [0.12.0](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.11.0...rt-tools@0.12.0) (2026-10-07)
+
+### Features
+
+- **rt:ui-kit:** подменю бокового меню закрывается через задержку после ухода указателя ([a0a5ce3](https://github.com/Eyhenij/rt-tools/commit/a0a5ce3d1902b632eed9711183d64b01dd6c0273)), closes [#2609](https://github.com/Eyhenij/rt-tools/issues/2609)
+
 # [0.11.0](https://github.com/Eyhenij/rt-tools/compare/rt-tools@0.10.0...rt-tools@0.11.0) (2026-10-07)
 
 ### Features

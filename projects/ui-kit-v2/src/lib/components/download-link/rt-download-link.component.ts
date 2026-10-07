@@ -12,8 +12,8 @@ import {
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
-import { TRtKitLabelParams, rtKitLabel } from '../../i18n';
-import { RtIconComponent } from '../icon/rt-icon.component';
+import { TRtKitLabelParams, rtKitLabel } from '@rt-tools/ui-kit-v2/core';
+import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 
 const BEM_BLOCK: string = 'rt-download-link';
 

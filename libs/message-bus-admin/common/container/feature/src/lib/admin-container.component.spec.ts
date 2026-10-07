@@ -1,13 +1,30 @@
+import { computed, signal, WritableSignal } from '@angular/core';
+import { ICaller, TPermission } from '@rt-tools/auth-contract';
+import { RtAuthService } from '@rt-tools/auth-angular';
 import { HttpRequest, provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
-import { AuthStore } from '@rt/message-bus-admin/auth/data-access';
 import { provideRtStorage, provideRtUtils } from '@rt-tools/core';
 
 import { AdminContainerComponent } from './admin-container.component';
+
+/**
+ * Модуль входа подменён: вошедшего называет Keycloak, и права ставит спека тем же набором ролей,
+ * каким их выдал бы токен.
+ */
+const caller: WritableSignal<ICaller | null> = signal<ICaller | null>(null);
+const AUTH_DOUBLE: Pick<RtAuthService, 'caller' | 'authenticated' | 'logout'> = {
+    caller,
+    authenticated: computed((): boolean => caller() !== null),
+    logout: (): Promise<void> => Promise.resolve(),
+};
+
+function callerWith(name: string, rights: readonly string[]): ICaller {
+    return { name, subject: 'p-1', email: null, emailVerified: true, permissions: new Set(rights as readonly TPermission[]) };
+}
 
 describe('AdminContainerComponent', () => {
     let fixture: ComponentFixture<AdminContainerComponent>;
@@ -18,8 +35,7 @@ describe('AdminContainerComponent', () => {
      * подставленные, они проверяли бы то, чего в дереве нет, — путь ответа тот же, что у экрана.
      */
     function signedInWith(rights: readonly string[]): void {
-        TestBed.inject(AuthStore).restore().subscribe();
-        http.expectOne('/api/auth/session').flush({ name: 'Владелец', rights });
+        caller.set(callerWith('Владелец', rights));
         fixture.detectChanges();
     }
 
@@ -31,9 +47,11 @@ describe('AdminContainerComponent', () => {
     }
 
     beforeEach(() => {
+        caller.set(null);
         TestBed.configureTestingModule({
             imports: [AdminContainerComponent],
             providers: [
+                { provide: RtAuthService, useValue: AUTH_DOUBLE },
                 provideZonelessChangeDetection(),
                 provideRouter([]),
                 provideHttpClient(),
@@ -70,7 +88,7 @@ describe('AdminContainerComponent', () => {
     });
 
     it('SC-MB-142 — разделы приходят в шапку декларацией меню, а колонки с ними нет', () => {
-        signedInWith(['postmortems:read', 'proposals:read', 'summaries:read', 'usage:read', 'invites:read', 'accounts:read']);
+        signedInWith(['postmortems:read', 'proposals:read', 'summaries:read', 'usage:read', 'invites:read', 'chat:read']);
 
         expect(shownSections().length).toBe(6);
         expect(fixture.debugElement.query(By.css('rt-section-nav'))).toBeNull();
@@ -89,26 +107,11 @@ describe('AdminContainerComponent', () => {
         expect(shownSections()).not.toContain('Использование');
     });
 
-    it('SC-MB-325 — раздел людей стоит в шапке у того, у кого есть `accounts:read`', () => {
-        signedInWith(['accounts:read']);
-
-        expect(shownSections()).toEqual(['Пользователи']);
-    });
-
-    it('SC-MB-325 — раздела людей без этого права в шапке нет вовсе', () => {
-        signedInWith(['postmortems:read']);
-
-        // Сперва положительное: разделы вообще показываются — иначе проверка на отсутствие
-        // зеленела бы и на шапке, потерявшей меню целиком.
-        expect(shownSections()).toContain('Разборы происшествий');
-        expect(shownSections()).not.toContain('Пользователи');
-    });
-
     it('SC-MB-301 — пока ответ о вошедшем не приехал, не скрывается ничего', () => {
         // Права неизвестны, а не пусты: скрыв по пустому набору, админка спрятала бы разделы у
         // того, у кого они есть, — и человек остался бы на пустом экране без выхода с него.
-        // Восемь — все пункты декларации, включая роли, которые открыты одним правом на роли
-        expect(shownSections().length).toBe(8);
+        // Шесть — все пункты декларации
+        expect(shownSections().length).toBe(6);
     });
 
     it('SC-MB-302 — вошедшему без единого права разделов в шапке не показывают', () => {

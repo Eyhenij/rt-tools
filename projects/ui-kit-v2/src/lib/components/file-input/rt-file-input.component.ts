@@ -16,11 +16,11 @@ import {
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { rtKitLabel } from '../../i18n';
-import { RtButtonDirective } from '../button/rt-button.directive';
-import { RtFileCardComponent } from '../file-card/rt-file-card.component';
-import { RtFileListComponent } from '../file-list/rt-file-list.component';
-import { RtFormControlBase } from '../form-control/rt-form-control.base';
+import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
+import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
+import { RtFileCardComponent } from '@rt-tools/ui-kit-v2/file-card';
+import { RtFileListComponent } from '@rt-tools/ui-kit-v2/file-list';
+import { RtFormControlBase } from '@rt-tools/ui-kit-v2/form-control';
 
 const BEM_BLOCK: string = 'rt-file-input';
 

@@ -1,26 +1,65 @@
-import { ExecutionContext, UnauthorizedException } from '@nestjs/common';
+import { CanActivate, ExecutionContext, ForbiddenException, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { describe, expect, it } from 'vitest';
 
-import { OPERATION_ACCESS, TOperationAccess } from '@rt/message-bus-api/access/util';
-import { ACCOUNT_OF_REQUEST, IAccountBearingRequest, sessionTokenHash } from '@rt/message-bus-api/accounts/util';
+import { ICaller } from '@rt-tools/auth-contract';
+import { AuthGuard, KeycloakTokenVerifier } from '@rt-tools/auth-server';
+import { PublicOperation, RequiresRight, SessionOperation, TreeOperation } from '@rt/message-bus-api/access/util';
+import { TRight } from '@rt/message-bus-common';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { ITreeBearingRequest, TREE_OF_REQUEST, treeTokenHash } from '@rt/message-bus-api/trees/util';
 import { TREE_TOKEN_HEADER } from '@rt-tools/agent-kit/cargo';
 
 import { AccessGuard } from './access.guard';
 
+/**
+ * Обе проверки приёмника вместе, как они стоят в приложении: проверка модуля входа и проверка
+ * приёмника. Запрос проходит, только если согласны обе, поэтому сценарий судится по паре, а не
+ * по одной из них.
+ *
+ * Подпись токена здесь не проверяется — её проверяет набор самого модуля входа. Двойник
+ * проверяющего отвечает вызывающим по строке заголовка, как ответил бы настоящий на годный токен.
+ */
+
 /** Токены дерева: годный и отозванный — оба одного и того же дерева. */
 const TOKEN: string = 'токен-своего-дерева';
 const REVOKED_TOKEN: string = 'токен-отозванный';
 
-/** Входы человека: живой, просроченный, оборванный и вход отключённой записи. */
-const SESSION: string = 'вход-живой';
-const EXPIRED_SESSION: string = 'вход-просроченный';
-const REVOKED_SESSION: string = 'вход-оборванный';
-const DISABLED_SESSION: string = 'вход-отключённой-записи';
-
 const TREE: { id: string; slug: string; name: string } = { id: 'id-1', slug: 'own-tree', name: 'Своё дерево' };
+
+const RIGHT: TRight = 'postmortems:manage';
+const OTHER_RIGHT: TRight = 'postmortems:read';
+
+/** Заголовки токенов людей: с правом, без него и без единой роли клиента. */
+const WITH_RIGHT: string = 'Bearer with.right.token';
+const WITHOUT_RIGHT: string = 'Bearer without.right.token';
+const NO_ROLE: string = 'Bearer no.role.token';
+
+function caller(subject: string, permissions: readonly TRight[]): ICaller {
+    return { subject, email: `${subject}@example.com`, emailVerified: true, name: subject, permissions: new Set(permissions) };
+}
+
+/** Двойник проверяющего: годные токены и вызывающие по ним. Остальное он не принимает. */
+class VerifierDouble {
+    readonly #callers: Map<string, ICaller> = new Map([
+        [WITH_RIGHT, caller('с-правом', [RIGHT, OTHER_RIGHT])],
+        [WITHOUT_RIGHT, caller('без-права', [OTHER_RIGHT])],
+        [NO_ROLE, caller('без-роли', [])],
+    ]);
+
+    /** Новый токен того же человека: роли в нём — те, что Keycloak выдал на этот раз. */
+    public reissue(header: string, permissions: readonly TRight[]): void {
+        const known: ICaller | undefined = this.#callers.get(header);
+
+        if (known) {
+            this.#callers.set(header, caller(known.subject, permissions));
+        }
+    }
+
+    public async callerOf(authorization: string | null | undefined): Promise<ICaller | null> {
+        return this.#callers.get(authorization ?? '') ?? null;
+    }
+}
 
 interface ITokenRow {
     readonly hash: string;
@@ -28,26 +67,15 @@ interface ITokenRow {
     readonly tree: { id: string; slug: string; name: string };
 }
 
-interface ISessionRow {
-    readonly hash: string;
-    readonly id: string;
-    readonly expiresAt: Date;
-    readonly revokedAt: Date | null;
-    readonly account: { id: string; name: string; disabledAt: Date | null };
-}
-
 /**
  * Двойник хранилища: отбор по хешу он делает сам. Проверять собранный `where` вместо строк
  * значило бы проверять форму запроса, а сценарий обещает исход проверки.
  */
 class PrismaDouble {
-    readonly #tokens: ITokenRow[];
-    readonly #sessions: ISessionRow[];
-
-    constructor(tokens: ITokenRow[], sessions: ISessionRow[]) {
-        this.#tokens = tokens;
-        this.#sessions = sessions;
-    }
+    readonly #tokens: ITokenRow[] = [
+        { hash: treeTokenHash(TOKEN), revokedAt: null, tree: TREE },
+        { hash: treeTokenHash(REVOKED_TOKEN), revokedAt: new Date('2026-08-01T00:00:00Z'), tree: TREE },
+    ];
 
     public get treeToken(): { findFirst: (args: Record<string, unknown>) => Promise<unknown> } {
         return {
@@ -61,162 +89,177 @@ class PrismaDouble {
             },
         };
     }
+}
 
-    public get session(): { findUnique: (args: Record<string, unknown>) => Promise<unknown> } {
-        return {
-            findUnique: async (args: Record<string, unknown>): Promise<unknown> => {
-                const where: { hash?: string } = args['where'] ?? {};
-                const found: ISessionRow | undefined = this.#sessions.find((row: ISessionRow): boolean => row.hash === where.hash);
+/** Операции каждого вида доступа, объявленные теми же метками, что и в приложении. */
+class Operations {
+    @PublicOperation()
+    public open(): void {
+        return undefined;
+    }
 
-                if (!found) {
-                    return null;
-                }
+    @TreeOperation()
+    public intake(): void {
+        return undefined;
+    }
 
-                return { id: found.id, expiresAt: found.expiresAt, revokedAt: found.revokedAt, account: found.account };
-            },
-        };
+    @SessionOperation()
+    public read(): void {
+        return undefined;
+    }
+
+    @RequiresRight(RIGHT)
+    public manage(): void {
+        return undefined;
+    }
+
+    public undeclared(): void {
+        return undefined;
     }
 }
 
-/** Хранилище: одно дерево с двумя токенами и четыре входа в разных состояниях. */
-function storage(): PrismaService {
-    const account: { id: string; name: string; disabledAt: Date | null } = {
-        id: 'account-1',
-        name: 'Владелец',
-        disabledAt: null,
-    };
-    const ahead: Date = new Date(Date.now() + 60 * 60 * 1000);
-    const behind: Date = new Date(Date.now() - 60 * 60 * 1000);
+type TOperation = keyof Operations;
 
-    return new PrismaDouble(
-        [
-            { hash: treeTokenHash(TOKEN), revokedAt: null, tree: TREE },
-            { hash: treeTokenHash(REVOKED_TOKEN), revokedAt: new Date('2026-08-01T00:00:00Z'), tree: TREE },
-        ],
-        [
-            { hash: sessionTokenHash(SESSION), id: 'session-1', expiresAt: ahead, revokedAt: null, account },
-            { hash: sessionTokenHash(EXPIRED_SESSION), id: 'session-2', expiresAt: behind, revokedAt: null, account },
-            { hash: sessionTokenHash(REVOKED_SESSION), id: 'session-3', expiresAt: ahead, revokedAt: behind, account },
-            {
-                hash: sessionTokenHash(DISABLED_SESSION),
-                id: 'session-4',
-                expiresAt: ahead,
-                revokedAt: null,
-                account: { id: 'account-2', name: 'Отключённый', disabledAt: behind },
-            },
-        ]
-    ) as unknown as PrismaService;
+type TRequest = ITreeBearingRequest & { headers: Record<string, string | string[] | undefined> };
+
+function requestWith(headers: Record<string, string | string[] | undefined> = {}): TRequest {
+    return { headers };
 }
 
-/** Запрос — то, что проверка от него читает: заголовки и куки. */
-type TRequest = ITreeBearingRequest & IAccountBearingRequest & { headers: Record<string, string | string[] | undefined> };
-
-/** Вход приезжает кукой в заголовке — тем же способом, каким его несёт браузер. */
-function requestWith(headers: Record<string, string | string[] | undefined> = {}, session?: string): TRequest {
-    const carried: Record<string, string | string[] | undefined> = session
-        ? { ...headers, cookie: `other=1; message_bus_session=${session}` }
-        : headers;
-
-    return { headers: carried };
-}
-
-function contextOf(request: TRequest): ExecutionContext {
+function contextOf(operation: TOperation, request: TRequest): ExecutionContext {
     return {
         switchToHttp: () => ({ getRequest: () => request }),
-        getHandler: () => (): void => undefined,
-        getClass: () => class {},
+        getHandler: () => Operations.prototype[operation],
+        getClass: () => Operations,
     } as unknown as ExecutionContext;
 }
 
-/** Отражатель, отвечающий на вопрос об объявлении доступа одним и тем же ответом. */
-function reflector(access: TOperationAccess | undefined): Reflector {
-    return {
-        getAllAndOverride: (key: string): TOperationAccess | undefined => (key === OPERATION_ACCESS ? access : undefined),
-    } as unknown as Reflector;
+function accessGuard(): AccessGuard {
+    return new AccessGuard(new PrismaDouble() as unknown as PrismaService, new Reflector());
 }
 
-function guardWith(access: TOperationAccess | undefined): AccessGuard {
-    return new AccessGuard(storage(), reflector(access));
+/** Пара проверок, как в приложении: сначала модуль входа, затем приёмник. */
+class Guards {
+    public readonly verifier: VerifierDouble = new VerifierDouble();
+    readonly #guards: readonly CanActivate[] = [new AuthGuard(this.verifier as unknown as KeycloakTokenVerifier), accessGuard()];
+
+    public async pass(operation: TOperation, request: TRequest): Promise<boolean> {
+        for (const guard of this.#guards) {
+            await guard.canActivate(contextOf(operation, request));
+        }
+
+        return true;
+    }
 }
 
-describe('AccessGuard', () => {
-    it('SC-MB-4 — запрос без токена дерева отбивается', async () => {
-        await expect(guardWith('tree').canActivate(contextOf(requestWith()))).rejects.toBeInstanceOf(UnauthorizedException);
+describe('AccessGuard', (): void => {
+    it('SC-MB-4 — запрос без токена дерева отбивается', async (): Promise<void> => {
+        await expect(new Guards().pass('intake', requestWith())).rejects.toBeInstanceOf(UnauthorizedException);
     });
 
-    it('SC-MB-4 — годный токен пропускает запрос и кладёт в него опознанное дерево', async () => {
+    it('SC-MB-4 — годный токен пропускает запрос и кладёт в него опознанное дерево', async (): Promise<void> => {
         const request: TRequest = requestWith({ [TREE_TOKEN_HEADER]: TOKEN });
 
-        await expect(guardWith('tree').canActivate(contextOf(request))).resolves.toBe(true);
+        await expect(new Guards().pass('intake', request)).resolves.toBe(true);
         expect(request[TREE_OF_REQUEST]).toEqual(TREE);
     });
 
-    it('SC-MB-4 — два токена в одном запросе токеном не считаются', async () => {
+    it('SC-MB-4 — два токена в одном запросе токеном не считаются', async (): Promise<void> => {
         const request: TRequest = requestWith({ [TREE_TOKEN_HEADER]: [TOKEN, REVOKED_TOKEN] });
 
-        await expect(guardWith('tree').canActivate(contextOf(request))).rejects.toBeInstanceOf(UnauthorizedException);
+        await expect(new Guards().pass('intake', request)).rejects.toBeInstanceOf(UnauthorizedException);
     });
 
-    it('SC-MB-5 — отозванный токен перестаёт приниматься, и отказ не называет, какой именно', async () => {
+    it('SC-MB-5 — отозванный токен перестаёт приниматься, и отказ не называет, какой именно', async (): Promise<void> => {
         const request: TRequest = requestWith({ [TREE_TOKEN_HEADER]: REVOKED_TOKEN });
 
-        await expect(guardWith('tree').canActivate(contextOf(request))).rejects.toThrow('токен не принят');
+        await expect(new Guards().pass('intake', request)).rejects.toThrow('токен не принят');
     });
 
-    it('SC-MB-5 — незаведённый токен отвечает тем же отказом, что и отозванный', async () => {
+    it('SC-MB-5 — незаведённый токен отвечает тем же отказом, что и отозванный', async (): Promise<void> => {
         const request: TRequest = requestWith({ [TREE_TOKEN_HEADER]: 'чужой-токен' });
 
-        await expect(guardWith('tree').canActivate(contextOf(request))).rejects.toThrow('токен не принят');
+        await expect(new Guards().pass('intake', request)).rejects.toThrow('токен не принят');
     });
 
-    it('SC-MB-17 — операция, объявленная открытой, проходит без токена и без входа', async () => {
-        await expect(guardWith('public').canActivate(contextOf(requestWith()))).resolves.toBe(true);
+    it('SC-MB-17 — операция, объявленная открытой, проходит без токена и без входа', async (): Promise<void> => {
+        await expect(new Guards().pass('open', requestWith())).resolves.toBe(true);
     });
 
-    it('SC-MB-36 — операция чтения груза без входа отбивается', async () => {
-        await expect(guardWith('session').canActivate(contextOf(requestWith()))).rejects.toThrow('операция требует входа');
+    it('SC-MB-36 — операция чтения груза без токена отбивается', async (): Promise<void> => {
+        await expect(new Guards().pass('read', requestWith())).rejects.toBeInstanceOf(UnauthorizedException);
     });
 
-    it('SC-MB-36 — живой вход пропускает запрос и кладёт в него вошедшего', async () => {
-        const request: TRequest = requestWith({}, SESSION);
-
-        await expect(guardWith('session').canActivate(contextOf(request))).resolves.toBe(true);
-        expect(request[ACCOUNT_OF_REQUEST]).toEqual({ id: 'account-1', name: 'Владелец', sessionId: 'session-1' });
+    it('SC-MB-36 — годный токен человека операцию чтения открывает', async (): Promise<void> => {
+        await expect(new Guards().pass('read', requestWith({ authorization: NO_ROLE }))).resolves.toBe(true);
     });
 
-    it('SC-MB-37 — просроченный вход перестаёт приниматься', async () => {
-        const request: TRequest = requestWith({}, EXPIRED_SESSION);
+    it('SC-MB-36 — непринятый токен отвечает тем же отказом, что и отсутствующий', async (): Promise<void> => {
+        const request: TRequest = requestWith({ authorization: 'Bearer foreign.client.token' });
 
-        await expect(guardWith('session').canActivate(contextOf(request))).rejects.toThrow('операция требует входа');
+        await expect(new Guards().pass('read', request)).rejects.toBeInstanceOf(UnauthorizedException);
     });
 
-    it('SC-MB-38 — оборванный выходом вход не принимается', async () => {
-        const request: TRequest = requestWith({}, REVOKED_SESSION);
-
-        await expect(guardWith('session').canActivate(contextOf(request))).rejects.toThrow('операция требует входа');
-    });
-
-    it('SC-MB-58 — вход отключённой записи не принимается', async () => {
-        const request: TRequest = requestWith({}, DISABLED_SESSION);
-
-        await expect(guardWith('session').canActivate(contextOf(request))).rejects.toThrow('операция требует входа');
-    });
-
-    it('SC-MB-39 — токен дерева операцию чтения груза не открывает', async () => {
+    it('SC-MB-39 — токен дерева операцию чтения груза не открывает', async (): Promise<void> => {
         const request: TRequest = requestWith({ [TREE_TOKEN_HEADER]: TOKEN });
 
-        await expect(guardWith('session').canActivate(contextOf(request))).rejects.toThrow('операция требует входа');
+        await expect(new Guards().pass('read', request)).rejects.toBeInstanceOf(UnauthorizedException);
     });
 
-    it('SC-MB-40 — вход человека приёма груза не открывает', async () => {
-        const request: TRequest = requestWith({}, SESSION);
+    it('SC-MB-40 — токен человека приёма груза не открывает', async (): Promise<void> => {
+        const request: TRequest = requestWith({ authorization: WITH_RIGHT });
 
-        await expect(guardWith('tree').canActivate(contextOf(request))).rejects.toThrow('операция требует токен дерева');
+        await expect(new Guards().pass('intake', request)).rejects.toThrow('операция требует токен дерева');
     });
 
-    it('SC-MB-79 — операция, не объявившая доступа, не отвечает никому', async () => {
-        const request: TRequest = requestWith({ [TREE_TOKEN_HEADER]: TOKEN }, SESSION);
+    it('SC-MB-79 — операция, не объявившая доступа, не отвечает никому', async (): Promise<void> => {
+        const request: TRequest = requestWith({ [TREE_TOKEN_HEADER]: TOKEN, authorization: WITH_RIGHT });
 
-        await expect(guardWith(undefined).canActivate(contextOf(request))).rejects.toThrow('операция доступа не объявила');
+        await expect(new Guards().pass('undeclared', request)).rejects.toBeInstanceOf(UnauthorizedException);
+        await expect(accessGuard().canActivate(contextOf('undeclared', request))).rejects.toThrow('операция доступа не объявила');
+    });
+});
+
+describe('AccessGuard: операция, закрытая правом', (): void => {
+    it('SC-MB-287 — вошедший с правом операцию открывает', async (): Promise<void> => {
+        await expect(new Guards().pass('manage', requestWith({ authorization: WITH_RIGHT }))).resolves.toBe(true);
+    });
+
+    it('SC-MB-288 — вошедший без права отбивается отказом о праве, а не об отсутствии входа', async (): Promise<void> => {
+        const request: TRequest = requestWith({ authorization: WITHOUT_RIGHT });
+
+        await expect(new Guards().pass('manage', request)).rejects.toBeInstanceOf(ForbiddenException);
+    });
+
+    it('SC-MB-288 — не представившийся отбивается другим отказом, чем вошедший без права', async (): Promise<void> => {
+        await expect(new Guards().pass('manage', requestWith())).rejects.toBeInstanceOf(UnauthorizedException);
+    });
+
+    it('SC-MB-289 — отказ не называет ни права, ни набора прав вошедшего', async (): Promise<void> => {
+        const request: TRequest = requestWith({ authorization: WITHOUT_RIGHT });
+
+        await expect(new Guards().pass('manage', request)).rejects.toThrow(
+            expect.objectContaining({ message: expect.not.stringContaining(RIGHT) })
+        );
+    });
+
+    it('SC-MB-293 — человек без ролей клиента операцию не открывает', async (): Promise<void> => {
+        await expect(new Guards().pass('manage', requestWith({ authorization: NO_ROLE }))).rejects.toBeInstanceOf(ForbiddenException);
+    });
+
+    it('SC-MB-294 — снятое право действует со следующим токеном', async (): Promise<void> => {
+        const guards: Guards = new Guards();
+
+        await expect(guards.pass('manage', requestWith({ authorization: WITH_RIGHT }))).resolves.toBe(true);
+
+        guards.verifier.reissue(WITH_RIGHT, [OTHER_RIGHT]);
+
+        await expect(guards.pass('manage', requestWith({ authorization: WITH_RIGHT }))).rejects.toBeInstanceOf(ForbiddenException);
+    });
+
+    it('SC-MB-295 — годный токен дерева операцию, закрытую правом, не открывает', async (): Promise<void> => {
+        const request: TRequest = requestWith({ [TREE_TOKEN_HEADER]: TOKEN });
+
+        await expect(new Guards().pass('manage', request)).rejects.toBeInstanceOf(UnauthorizedException);
     });
 });

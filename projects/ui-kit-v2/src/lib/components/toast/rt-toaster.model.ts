@@ -1,8 +1,8 @@
 import { InjectionToken } from '@angular/core';
 
-import { INotification } from '../../platform';
+import { INotification } from '@rt-tools/ui-kit-v2/core';
 
-import { IRtIcon } from '../icon/rt-icon.model';
+import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 
 export const RT_TOASTER_GAP_PX: number = 14;
 

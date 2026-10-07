@@ -23,13 +23,14 @@ import {
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, TRtKitLabelMap } from '../../i18n';
-import { RtFormControlBase } from '../form-control/rt-form-control.base';
-import { RtIconComponent, IRtIcon } from '../icon';
-import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
-import { RtPopoverDirective } from '../popover/rt-popover.directive';
-import { RtRadiusDirective } from '../radius/rt-radius.directive';
-import { rtScrollActiveOptionIntoView } from '../select/rt-select-active-option';
+import { RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
+import { RtFormControlBase } from '@rt-tools/ui-kit-v2/form-control';
+import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
+import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
+import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
+import { RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
+import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
+import { rtScrollActiveOptionIntoView } from '@rt-tools/ui-kit-v2/select';
 import { IRtAutocomplete } from './rt-autocomplete.model';
 
 const BEM_BLOCK: string = 'rt-autocomplete';

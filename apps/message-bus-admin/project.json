@@ -24,6 +24,11 @@
             "glob": "**/*.svg",
             "input": "projects/ui-kit-v2/src/assets/icons",
             "output": "icons"
+          },
+          {
+            "glob": "silent-check-sso.html",
+            "input": "projects/auth-angular/src/assets",
+            "output": "/"
           }
         ],
         "styles": ["apps/message-bus-admin/src/styles.scss"]

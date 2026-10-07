@@ -15,7 +15,6 @@ import { authExampleBoundaries } from './domains/auth-example.config.mjs';
 import { chatTalksEmbedBoundaries } from './domains/chat-talks-embed.config.mjs';
 import { chatTalksPageBoundaries } from './domains/chat-talks-page.config.mjs';
 import { chatWidgetBoundaries } from './domains/chat-widget.config.mjs';
-import { messageBusAdminAccountsBoundaries } from './domains/message-bus-admin-accounts.config.mjs';
 import { messageBusAdminChatBoundaries } from './domains/message-bus-admin-chat.config.mjs';
 import { messageBusAdminBoundaries } from './domains/message-bus-admin.config.mjs';
 import { messageBusApiBoundaries } from './domains/message-bus-api.config.mjs';
@@ -24,7 +23,6 @@ import { packagesBoundaries } from './domains/packages.config.mjs';
 
 export const allBoundaries = [
     ...messageBusAdminBoundaries,
-    ...messageBusAdminAccountsBoundaries,
     ...messageBusAdminChatBoundaries,
     ...chatTalksPageBoundaries,
     ...chatTalksEmbedBoundaries,

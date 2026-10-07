@@ -44,15 +44,15 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 import { IFilterModel, ISortModel } from '@rt-tools/utils';
 
-import { TRtKitLabelKey, rtKitLabel } from '../../i18n';
-import { BreakpointsService } from '../../platform';
+import { TRtKitLabelKey, rtKitLabel } from '@rt-tools/ui-kit-v2/core';
+import { BreakpointsService } from '@rt-tools/ui-kit-v2/core';
 
-import { RtEmptyStateComponent } from '../empty-state/rt-empty-state.component';
-import { IRtIcon } from '../icon/rt-icon.model';
-import { RtMenuComponent } from '../menu/rt-menu.component';
-import { RtRadiusDirective } from '../radius/rt-radius.directive';
-import { RtSkeletonComponent } from '../skeleton/rt-skeleton.component';
-import { RtSpinnerComponent } from '../spinner/rt-spinner.component';
+import { RtEmptyStateComponent } from '@rt-tools/ui-kit-v2/empty-state';
+import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
+import { RtMenuComponent } from '@rt-tools/ui-kit-v2/menu';
+import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
+import { RtSkeletonComponent } from '@rt-tools/ui-kit-v2/skeleton';
+import { RtSpinnerComponent } from '@rt-tools/ui-kit-v2/spinner';
 import { RtTableFilterHeaderComponent } from './filter-header/rt-table-filter-header.component';
 import { RtTableCardDirective } from './rt-table-card.directive';
 import { cardColumnsOf, cardRowsOf, hasRowsIn, IRtTableCardColumn } from './rt-table-cards.logic';

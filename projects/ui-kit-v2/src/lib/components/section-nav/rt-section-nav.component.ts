@@ -2,8 +2,8 @@ import { ChangeDetectionStrategy, Component, input, InputSignal, output, OutputE
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { RtIconComponent } from '../icon';
-import { RtRadiusDirective } from '../radius/rt-radius.directive';
+import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
+import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 import { IRtSectionNav } from './rt-section-nav.model';
 
 const BEM_BLOCK: string = 'rt-section-nav';

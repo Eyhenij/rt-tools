@@ -16,16 +16,16 @@ import {
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, RT_KIT_LOCALE, TRtKitLabelMap } from '../../i18n';
-import { BreakpointsService } from '../../platform';
-import { RtBottomSheetComponent } from '../bottom-sheet/rt-bottom-sheet.component';
-import { IRtDatePicker } from '../date-picker/rt-date-picker.model';
-import { rtDateLayout } from '../date-picker/rt-date-text.logic';
-import { RtFormControlBase } from '../form-control/rt-form-control.base';
-import { IRtInput } from '../input/rt-input.model';
-import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
-import { RtPopoverDirective } from '../popover/rt-popover.directive';
-import { RtRadiusDirective } from '../radius/rt-radius.directive';
+import { RT_KIT_LABELS, RT_KIT_LOCALE, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
+import { BreakpointsService } from '@rt-tools/ui-kit-v2/core';
+import { RtBottomSheetComponent } from '@rt-tools/ui-kit-v2/bottom-sheet';
+import { IRtDatePicker } from '@rt-tools/ui-kit-v2/date-picker';
+import { rtDateLayout } from '@rt-tools/ui-kit-v2/date-picker';
+import { RtFormControlBase } from '@rt-tools/ui-kit-v2/form-control';
+import { IRtInput } from '@rt-tools/ui-kit-v2/core';
+import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
+import { RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
+import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 import { RtDateRangePanelComponent } from './panel/rt-date-range-panel.component';
 import { rtRangeInBounds, rtRangeParse, rtRangeRead, rtRangeShape, rtRangeText } from './rt-date-range.logic';
 import { IRtDateRange } from './rt-date-range.model';

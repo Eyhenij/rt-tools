@@ -45,3 +45,35 @@ When it is called without a token, with a token without the right and with the r
 Then the answers are unauthenticated, permission denied and the result
 
 Coverage: partial — the test calls the interceptor with a hand-made request. The tree has no Connect server to send a real one through.
+
+### SC-AUTH-69 — a missing realm setting stops the start
+
+Given a server started without `AUTH_ISSUER` or `AUTH_CLIENT_ID`
+When the options of the entry module are read
+Then the start stops and names every missing variable; with both set and no sync secret the catalog
+is not sent
+
+### SC-AUTH-70 — the sync secret sends the catalog to the realm of the issuer
+
+Given a server started with `AUTH_SYNC_SECRET`
+When the options of the entry module are read
+Then the catalog goes to the realm named by the issuer through `rt-catalog-sync` or the client named
+by `AUTH_SYNC_CLIENT_ID`; an issuer that is not a realm address stops the start
+
+### SC-AUTH-71 — the browser part gets the realm and the client of the server
+
+Given a server set up with an issuer and a client
+When the settings for the browser part are asked
+Then they name the Keycloak address and the realm of that issuer and the same client
+
+### SC-AUTH-72 — the keys are read by the address the environment names
+
+Given a server whose environment names the issuer the browser sees and a key set address of its own
+When the options of the entry module are read
+Then the tokens are checked against that issuer, and the keys are read by the named address
+
+### SC-AUTH-73 — a named service client is accepted with the rights of the admin client
+
+Given a server that names a service client, and a token issued to that client
+When the token carries roles of the admin client and the server checks it
+Then the caller has exactly those rights; a service client the server does not name is refused

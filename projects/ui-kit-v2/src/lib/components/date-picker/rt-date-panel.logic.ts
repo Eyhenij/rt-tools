@@ -1,4 +1,4 @@
-import { ERtCalendarDayState, IRtCalendar } from '../calendar/rt-calendar.model';
+import { ERtCalendarDayState, IRtCalendar } from '@rt-tools/ui-kit-v2/calendar';
 import { IRtDatePicker } from './rt-date-picker.model';
 
 /**
