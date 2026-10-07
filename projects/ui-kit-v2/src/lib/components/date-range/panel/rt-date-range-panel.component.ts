@@ -19,18 +19,11 @@ import {
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
-import { rtKitLabel, RT_KIT_LABELS, RT_KIT_LOCALE, TRtKitLabelKey, TRtKitLabelMap, TRtKitLabelParams } from '../../../i18n';
-import { RtButtonDirective } from '../../button/rt-button.directive';
-import { RtCalendarComponent } from '../../calendar/rt-calendar.component';
-import { IRtCalendar } from '../../calendar/rt-calendar.model';
-import {
-    rtDateAddMonths,
-    rtDateCanPage,
-    rtDateFirstDay,
-    rtDateGridKey,
-    rtDateNow,
-    rtDateWeekdays,
-} from '../../date-picker/rt-date-panel.logic';
+import { rtKitLabel, RT_KIT_LABELS, RT_KIT_LOCALE, TRtKitLabelKey, TRtKitLabelMap, TRtKitLabelParams } from '@rt-tools/ui-kit-v2/core';
+import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
+import { RtCalendarComponent } from '@rt-tools/ui-kit-v2/calendar';
+import { IRtCalendar } from '@rt-tools/ui-kit-v2/calendar';
+import { rtDateAddMonths, rtDateCanPage, rtDateFirstDay, rtDateGridKey, rtDateNow, rtDateWeekdays } from '@rt-tools/ui-kit-v2/date-picker';
 import {
     rtRangeDates,
     rtRangeDays,

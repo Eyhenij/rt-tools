@@ -1,3 +1,19 @@
+# [0.18.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2@0.17.0...rt-ui-kit-v2@0.18.0) (2026-10-07)
+
+### Bug Fixes
+
+- **rt:ui-kit-v2:** обёртка витрины поля точек в трёх файлах и история Presets ([14805b3](https://github.com/Eyhenij/rt-tools/commit/14805b33f3eb5d9f8d5b34aab6786b7f27a714ea))
+- **rt:ui-kit-v2:** стили обёртки витрины поля точек в каскадном слое кита ([a208a4e](https://github.com/Eyhenij/rt-tools/commit/a208a4eb40ddf39f5326f74df75a49e64f575e4f))
+- **rt:ui-kit-v2:** сценарии подписи полей получили свободные номера SC-UKV-687 и 688 ([6ce7fa6](https://github.com/Eyhenij/rt-tools/commit/6ce7fa601ac6f7dd6a914aba40ef701c5bf8c5c4))
+- **rt:ui-kit-v2:** у текста в полях больше не срезаны хвосты букв ([59c73ab](https://github.com/Eyhenij/rt-tools/commit/59c73ab84de5fd27c385a305d3384dd5926675f1))
+
+### Features
+
+- **rt:ui-kit-v2:** каждый компонент собран своей точкой входа ([ea8a489](https://github.com/Eyhenij/rt-tools/commit/ea8a489c3f7aa76b81e43aa6efad2d921a65f9be))
+- **rt:ui-kit-v2:** поле объявляет себя обязательным входом required ([f98f7eb](https://github.com/Eyhenij/rt-tools/commit/f98f7eb1af0e409df2711af992ccf98607f30228))
+- **rt:ui-kit-v2:** поле точек rt-dot-field за карточкой экранов входа ([5859257](https://github.com/Eyhenij/rt-tools/commit/585925701b0c8c12c99daa5262bc1391369489ed))
+- **rt:utils:** цвет текста по фону и затемнение цвета перенесены из первого кита ([923020b](https://github.com/Eyhenij/rt-tools/commit/923020b0d5ecd40cc05268dece90f911a01749d9)), closes [#rrggbb](https://github.com/Eyhenij/rt-tools/issues/rrggbb)
+
 # [0.17.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2@0.16.0...rt-ui-kit-v2@0.17.0) (2026-10-04)
 
 ### Bug Fixes

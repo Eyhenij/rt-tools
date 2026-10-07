@@ -1,6 +1,6 @@
 import { computed, Directive, inject, input, InputSignal, Signal } from '@angular/core';
 
-import { RT_RADIUS_DEFAULT, TRtRadius } from './rt-radius.model';
+import { RT_RADIUS_DEFAULT, TRtRadius } from '@rt-tools/ui-kit-v2/core';
 
 /**
  * Вход скругления, один на весь кит. Компонент с поверхностью берёт его

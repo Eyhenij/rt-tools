@@ -1,4 +1,4 @@
-import { IRtIcon } from './rt-icon.model';
+import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 
 /**
  * Категории иконок rt-icon. 11 buckets: 8 prefix-based + Social (префикс `social-`) + Custom

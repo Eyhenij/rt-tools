@@ -13,8 +13,8 @@ import {
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, TRtKitLabelMap } from '../../../i18n';
-import { RtIconButtonComponent } from '../../icon-button/rt-icon-button.component';
+import { RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
+import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
 import { RtDialogRef } from '../rt-dialog-ref';
 
 const BEM_BLOCK: string = 'rt-dialog-header';

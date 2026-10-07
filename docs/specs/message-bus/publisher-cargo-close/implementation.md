@@ -23,7 +23,7 @@ or the code holds what the spec is silent about.
   what the operation is closed by, by which order the transition is judged and by which sign the record
   is looked for.
 - The command of the launch line is `tools/cargo-close.mjs`, it is called by `npm run cargo:close`. It
-  takes the entry by the same pair of an account of the service as the reading of the cargo: one person
-  reads and closes.
+  signs in by the same Keycloak service client as the reading of the cargo, `tools/cargo-sign-in.mjs`:
+  one executor reads and closes.
 - The screen of the list shows the sign as an addition to the state, not as a column of its own:
   `libs/message-bus-admin/proposals/feature/list/src/lib/admin-proposals-list.component.html`.

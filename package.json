@@ -90,7 +90,7 @@
     "packagr:ui-kit": "cd ./dist/ui-kit && npm pack && npm publish --access public",
     "packagr:ui-kit-v2": "cd ./dist/ui-kit-v2 && npm pack && npm publish --access public",
     "serve:db": "docker compose up -d db",
-    "serve:api": "DATABASE_URL=postgresql://message_bus:message_bus@localhost:55432/message_bus nx serve message-bus",
+    "serve:api": "DATABASE_URL=postgresql://message_bus:message_bus@localhost:55432/message_bus AUTH_ISSUER=http://localhost:58080/realms/rt AUTH_CLIENT_ID=rt-message-bus-admin AUTH_SYNC_SECRET=rt-catalog-sync-secret AUTH_SERVICE_CLIENTS=rt-cargo-tools nx serve message-bus",
     "serve:admin": "nx serve message-bus-admin",
     "serve:stand": "node apps/message-bus-admin-e2e/stand/up.mjs",
     "serve:auth": "pnpm run build:auth-keycloak-theme && docker compose -f deploy/auth/compose.yml up -d --wait && docker compose -f deploy/auth/compose.yml wait keycloak-config | grep 'status code 0$'",

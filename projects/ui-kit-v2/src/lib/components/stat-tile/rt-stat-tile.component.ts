@@ -2,8 +2,9 @@ import { computed, inject, input, ChangeDetectionStrategy, Component, InputSigna
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, TRtKitLabelMap, rtKitLabel } from '../../i18n';
-import { IRtIcon, RtIconComponent } from '../icon';
+import { RT_KIT_LABELS, TRtKitLabelMap, rtKitLabel } from '@rt-tools/ui-kit-v2/core';
+import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
+import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { IRtStatTile } from './rt-stat-tile.model';
 
 const BEM_BLOCK: string = 'rt-stat-tile';

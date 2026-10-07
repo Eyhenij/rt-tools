@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, WritableSignal, signal } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
-import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormControl, FormsModule, NgModel, ReactiveFormsModule, Validators } from '@angular/forms';
+import { By } from '@angular/platform-browser';
 
 import { createRtFixture, el, hostClasses, qa, qaAll, textOf } from '../../../testing/rt-kit-testing';
 import { RtInputComponent } from '../input/rt-input.component';
@@ -77,6 +78,33 @@ class TwoErrorsHostComponent {
     ]);
 }
 
+/** Шаблонная форма: валидатора на контроле нет, обязательность объявляет само поле. */
+@Component({
+    selector: 'rt-field-template-host',
+    template: `
+        <rt-field label="Имя" [required]="required()">
+            <rt-input [(ngModel)]="name" />
+        </rt-field>
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtFieldComponent, RtInputComponent, FormsModule],
+})
+class TemplateHostComponent {
+    public readonly required: WritableSignal<boolean> = signal<boolean>(true);
+    public name: string = '';
+}
+
+async function setupTemplate(): Promise<ComponentFixture<TemplateHostComponent>> {
+    const fixture: ComponentFixture<TemplateHostComponent> = createRtFixture(TemplateHostComponent);
+    await fixture.whenStable();
+    fixture.detectChanges();
+    return fixture;
+}
+
+function ngModelOf(fixture: ComponentFixture<TemplateHostComponent>): NgModel {
+    return fixture.debugElement.query(By.directive(NgModel)).injector.get(NgModel);
+}
+
 function setup(): ComponentFixture<FieldHostComponent> {
     return createRtFixture(FieldHostComponent);
 }
@@ -134,6 +162,59 @@ describe('RtFieldComponent', (): void => {
 
         it('спрятан от скринридера — обязательность он читает из самого контрола', (): void => {
             expect(qa(setup(), 'field-required')?.attributes['aria-hidden']).toBe('true');
+        });
+    });
+
+    describe('обязательность, объявленная полем', (): void => {
+        it('даёт маркер, когда валидатора на контроле нет', async (): Promise<void> => {
+            expect(qa(await setupTemplate(), 'field-required')).not.toBeNull();
+        });
+
+        it('без входа маркера нет', async (): Promise<void> => {
+            const fixture: ComponentFixture<TemplateHostComponent> = await setupTemplate();
+            expect(qa(fixture, 'field-label')).not.toBeNull();
+
+            fixture.componentInstance.required.set(false);
+            fixture.detectChanges();
+
+            expect(qa(fixture, 'field-required')).toBeNull();
+        });
+
+        it('нетронутое пустое поле ошибки не показывает', async (): Promise<void> => {
+            expect(qa(await setupTemplate(), 'field-error')).toBeNull();
+        });
+
+        it('тронутое пустое поле показывает ошибку обязательности', async (): Promise<void> => {
+            const fixture: ComponentFixture<TemplateHostComponent> = await setupTemplate();
+
+            ngModelOf(fixture).control.markAsTouched();
+            fixture.detectChanges();
+
+            expect(textOf(qa(fixture, 'field-error'))).toBe('Required field');
+            expect(fixture.nativeElement.querySelector('rt-input').classList).toContain('rt-input--invalid');
+        });
+
+        it('ошибка уходит, как только в поле появилось значение', async (): Promise<void> => {
+            const fixture: ComponentFixture<TemplateHostComponent> = await setupTemplate();
+            ngModelOf(fixture).control.markAsTouched();
+            fixture.detectChanges();
+            expect(qa(fixture, 'field-error')).not.toBeNull();
+
+            const input: HTMLInputElement = fixture.nativeElement.querySelector('input');
+            input.value = 'Иван';
+            input.dispatchEvent(new Event('input'));
+            fixture.detectChanges();
+
+            expect(qa(fixture, 'field-error')).toBeNull();
+        });
+
+        it('форму недействительной не делает — решение о записи остаётся у формы', async (): Promise<void> => {
+            const fixture: ComponentFixture<TemplateHostComponent> = await setupTemplate();
+
+            ngModelOf(fixture).control.markAsTouched();
+            fixture.detectChanges();
+
+            expect(ngModelOf(fixture).control.valid).toBe(true);
         });
     });
 

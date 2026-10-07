@@ -1,7 +1,7 @@
-import { ERtCalendarDayState, IRtCalendar } from '../calendar/rt-calendar.model';
-import { rtDateAddMonths, rtDateInBounds, rtDateMonth, rtDateRead } from '../date-picker/rt-date-panel.logic';
-import { IRtDatePicker } from '../date-picker/rt-date-picker.model';
-import { rtDateParse, rtDateShape, rtDateText } from '../date-picker/rt-date-text.logic';
+import { ERtCalendarDayState, IRtCalendar } from '@rt-tools/ui-kit-v2/calendar';
+import { rtDateAddMonths, rtDateInBounds, rtDateMonth, rtDateRead } from '@rt-tools/ui-kit-v2/date-picker';
+import { IRtDatePicker } from '@rt-tools/ui-kit-v2/date-picker';
+import { rtDateParse, rtDateShape, rtDateText } from '@rt-tools/ui-kit-v2/date-picker';
 import { ERtDateRangePreset, IRtDateRange } from './rt-date-range.model';
 
 /**

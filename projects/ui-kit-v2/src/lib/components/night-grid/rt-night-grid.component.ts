@@ -12,7 +12,7 @@ import {
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { rtKitLabel } from '../../i18n';
+import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
 import { IRtNightGrid } from './rt-night-grid.model';
 
 const BEM_BLOCK: string = 'rt-night-grid';

@@ -1,6 +1,6 @@
 import { iconMaterialMap, IRtIconMaterialEntry } from './rt-icon-material-map';
-import { iconsName } from './rt-icon-names';
-import { IRtIcon } from './rt-icon.model';
+import { iconsName } from '@rt-tools/ui-kit-v2/core';
+import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 
 const KIT_NAMES: ReadonlySet<string> = new Set<string>(iconsName);
 

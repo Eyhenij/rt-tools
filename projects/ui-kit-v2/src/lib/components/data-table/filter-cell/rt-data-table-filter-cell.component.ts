@@ -15,21 +15,21 @@ import {
 } from '@angular/core';
 import { TitleCasePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IRtInput } from '../../input/rt-input.model';
+import { IRtInput } from '@rt-tools/ui-kit-v2/core';
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { EFilterOperatorType, IFilterModel, TFilterOperatorType, transformArrayInput } from '@rt-tools/utils';
 
-import { RT_KIT_TRANSLATOR, rtKitLabel, TRtKitLabelKey, TRtKitTranslator } from '../../../i18n';
-import { RtDatePickerComponent } from '../../date-picker/rt-date-picker.component';
-import { RtIconButtonComponent } from '../../icon-button/rt-icon-button.component';
-import { IRtIcon } from '../../icon/rt-icon.model';
-import { RtInputNumberComponent } from '../../input-number/rt-input-number.component';
-import { RtInputComponent } from '../../input/rt-input.component';
-import { RtMenuItemComponent } from '../../menu/rt-menu-item.component';
-import { RtMenuComponent } from '../../menu/rt-menu.component';
-import { RtSelectComponent } from '../../select/rt-select.component';
-import { IRtSelect } from '../../select/rt-select.model';
+import { RT_KIT_TRANSLATOR, rtKitLabel, TRtKitLabelKey, TRtKitTranslator } from '@rt-tools/ui-kit-v2/core';
+import { RtDatePickerComponent } from '@rt-tools/ui-kit-v2/date-picker';
+import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
+import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
+import { RtInputNumberComponent } from '@rt-tools/ui-kit-v2/input-number';
+import { RtInputComponent } from '@rt-tools/ui-kit-v2/input';
+import { RtMenuItemComponent } from '@rt-tools/ui-kit-v2/menu';
+import { RtMenuComponent } from '@rt-tools/ui-kit-v2/menu';
+import { RtSelectComponent } from '@rt-tools/ui-kit-v2/select';
+import { IRtSelect } from '@rt-tools/ui-kit-v2/select';
 import { dataTableIconName } from '../rt-data-table-cell.logic';
 import {
     DATA_TABLE_FILTER_MENU_OPERATORS,
@@ -42,7 +42,7 @@ import {
     dataTableIsoToDay,
     TRtDataTableFilterValue,
 } from '../rt-data-table-filter.logic';
-import { ERtDataTableFilterType, IRtDataTable } from '../rt-data-table.model';
+import { ERtDataTableFilterType, IRtDataTable } from '@rt-tools/ui-kit-v2/core';
 
 const BEM_BLOCK: string = 'rt-data-table-filter-cell';
 

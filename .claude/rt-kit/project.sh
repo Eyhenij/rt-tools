@@ -302,8 +302,11 @@ rt_push_touched() {
             # The kits — each with a showcase of its own.
             projects/ui-kit/*) _add kit1 ;;
             projects/ui-kit-v2/*) _add kit2 ;;
-            # The entry module: its packages, the example, its suite and the stand.
-            projects/auth-*|apps/auth-example*|deploy/auth/*) _add auth ;;
+            # The entry module: its packages, the example, its suite and the stand. The receiver and
+            # the admin panel take the packages as sources, so a package edit is the receiver's
+            # subject too: an edit of the packages broke both images, and the gate did not build them.
+            projects/auth-*) _add auth; _add receiver ;;
+            apps/auth-example*|deploy/auth/*) _add auth ;;
             # The receiver, the admin panel, its end-to-end suite, the rollout and the database
             # schema.
             apps/message-bus*|deploy/*|prisma/*) _add receiver ;;

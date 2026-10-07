@@ -17,12 +17,12 @@ import { FormsModule } from '@angular/forms';
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 import { IPageModel } from '@rt-tools/utils';
 
-import { RT_KIT_LABELS, TRtKitLabelMap, TRtKitLabelParams, rtKitLabel } from '../../i18n';
-import { IRtIcon } from '../icon/rt-icon.model';
-import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
-import { RtRadiusDirective } from '../radius/rt-radius.directive';
-import { RtSelectComponent } from '../select/rt-select.component';
-import { IRtSelect } from '../select/rt-select.model';
+import { RT_KIT_LABELS, TRtKitLabelMap, TRtKitLabelParams, rtKitLabel } from '@rt-tools/ui-kit-v2/core';
+import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
+import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
+import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
+import { RtSelectComponent } from '@rt-tools/ui-kit-v2/select';
+import { IRtSelect } from '@rt-tools/ui-kit-v2/select';
 import { lastPageOf, pageItemsOf, pageSlotsOf, rangeFromOf, rangeToOf } from './rt-pagination.logic';
 import { IRtPagination } from './rt-pagination.model';
 

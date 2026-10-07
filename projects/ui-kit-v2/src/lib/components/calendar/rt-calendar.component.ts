@@ -22,9 +22,9 @@ import {
 // rt-tools
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
-import { RtIconButtonComponent } from '../icon-button';
-import { RtRadiusDirective } from '../radius/rt-radius.directive';
-import { RtSkeletonComponent } from '../skeleton';
+import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
+import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
+import { RtSkeletonComponent } from '@rt-tools/ui-kit-v2/skeleton';
 import { ERtCalendarDayState, IRtCalendar } from './rt-calendar.model';
 
 const BEM_BLOCK: string = 'rt-calendar';

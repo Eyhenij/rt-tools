@@ -4,9 +4,9 @@ A statement of the spec and the place where it is carried out. The link goes by 
 statement: a removed statement is removed together with its line.
 
 - **The cargo is fetched by a command of the tree, not by a person's sign-in to the admin panel.** — `tools/cargo-pull.mjs:pull`
-- **The reading is closed by the sign-in of a service account, not by the token of the tree.** — `tools/cargo-pull.mjs:login`
-- **The pair of the account lies outside the repository.** — `tools/cargo-pull.mjs:accountOf`
-- **A missing pair is refused before the network, and the refusal names where it lies and what it is created by.** — `tools/cargo-pull.mjs:pull`
+- **The reading is closed by the token of a service client, not by the token of the tree.** — `tools/cargo-sign-in.mjs:login`
+- **The pair of the client lies outside the repository.** — `tools/cargo-sign-in.mjs:accountOf`
+- **A missing pair is refused before the network, and the refusal names where it lies and where the client is created.** — `tools/cargo-pull.mjs:pull`, the words are `tools/cargo-sign-in.mjs:NO_PAIR`
 - **An unknown kind of cargo is refused before the network and lists the known ones.** — `tools/cargo-pull.mjs:KINDS`
 - **Next to a record the key it is marked by is printed.** — `tools/cargo-pull.mjs:listLine`
 - **The key of a proposal is counted from its text by the same technique as at the intake.** — `tools/cargo-pull.mjs:KINDS`
@@ -22,7 +22,7 @@ The names of this tree: the reading command is `npm run cargo:pull`, the mark co
 `npm run agent-kit:hooks` runs them.
 
 The side of the intake the command speaks to lies in this same repository: the sign-in is
-`libs/message-bus-api/accounts/feature/`, the reading of the lists is
+checked by `projects/auth-server/src/lib/auth.guard.ts`, the reading of the lists is
 `libs/message-bus-api/proposals/feature/` and `libs/message-bus-api/postmortems/feature/`. The shape
 of counting the sign of a proposal is declared there too, in `libs/message-bus-api/proposals/util/`,
 and is repeated here verbatim.

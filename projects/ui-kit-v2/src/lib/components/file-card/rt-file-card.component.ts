@@ -16,15 +16,15 @@ import {
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, TRtKitLabelMap } from '../../i18n';
-import { formatFileSize } from '../../util';
+import { RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
+import { formatFileSize } from '@rt-tools/ui-kit-v2/core';
 
-import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
-import { IRtIconButton } from '../icon-button/rt-icon-button.model';
-import { RtIconComponent } from '../icon/rt-icon.component';
-import { IRtIcon } from '../icon/rt-icon.model';
-import { RtRadiusDirective } from '../radius/rt-radius.directive';
-import { RtTooltipDirective } from '../tooltip/rt-tooltip.directive';
+import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
+import { IRtIconButton } from '@rt-tools/ui-kit-v2/icon-button';
+import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
+import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
+import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
+import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
 import { deriveFileTitle, getFileTypeIcon } from './file-card.helper';
 import { IRtFileCard } from './rt-file-card.model';
 import { RtTruncateMiddlePipe } from './rt-truncate-middle.pipe';

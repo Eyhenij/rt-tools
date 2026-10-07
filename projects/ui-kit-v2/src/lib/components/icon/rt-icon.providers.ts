@@ -1,7 +1,7 @@
 import { EnvironmentProviders, makeEnvironmentProviders } from '@angular/core';
 
 import { RT_ICON_GLYPH_STRATEGY } from './rt-icon-font.service';
-import { IRtIcon } from './rt-icon.model';
+import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 import { RT_ICONS_BASE_URL, RT_ICONS_MATERIAL_BASE_URL } from './rt-icon.registry';
 
 /**

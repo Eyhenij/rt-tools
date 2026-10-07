@@ -1,7 +1,7 @@
 import { DOCUMENT } from '@angular/common';
 import { ChangeDetectionStrategy, Component, effect, ElementRef, inject, input, InputSignal, ViewEncapsulation } from '@angular/core';
 
-import { IQuillDelta, IQuillDeltaAttributes } from '../../util';
+import { IQuillDelta, IQuillDeltaAttributes } from '@rt-tools/ui-kit-v2/core';
 
 const BEM_BLOCK: string = 'rt-delta-view';
 

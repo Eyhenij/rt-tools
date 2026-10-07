@@ -63,6 +63,23 @@
       }
     },
     {
+      "clientId": "rt-message-bus-admin",
+      "name": "Message bus admin",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "redirectUris": ["http://localhost:4200/*", "http://localhost:4310/*", "http://localhost:4320/*"],
+      "webOrigins": ["http://localhost:4200", "http://localhost:4310", "http://localhost:4320"],
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "http://localhost:4200/*##http://localhost:4310/*##http://localhost:4320/*"
+      }
+    },
+    {
       "clientId": "rt-user-import",
       "name": "User import",
       "description": "Moves the people of an existing application into the realm with their password hashes",
@@ -86,13 +103,61 @@
       "implicitFlowEnabled": false,
       "directAccessGrantsEnabled": false,
       "serviceAccountsEnabled": true
+    },
+    {
+      "clientId": "rt-cargo-tools",
+      "name": "Cargo tools",
+      "description": "The cargo commands of the tree read and close the cargo of the bus without a person",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "secret": "rt-cargo-tools-stand",
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true
     }
   ],
   "roles": {
     "client": {
       "rt-example-admin": [
-        { "name": "example:read", "description": "Read the example records" },
-        { "name": "example:write", "description": "Edit the example records" }
+        {
+          "name": "example:read",
+          "description": "Read the example records"
+        },
+        {
+          "name": "example:write",
+          "description": "Edit the example records"
+        }
+      ],
+      "rt-message-bus-admin": [
+        {
+          "name": "postmortems:read"
+        },
+        {
+          "name": "postmortems:manage"
+        },
+        {
+          "name": "proposals:read"
+        },
+        {
+          "name": "proposals:manage"
+        },
+        {
+          "name": "summaries:read"
+        },
+        {
+          "name": "usage:read"
+        },
+        {
+          "name": "chat:read"
+        },
+        {
+          "name": "invites:read"
+        },
+        {
+          "name": "invites:manage"
+        }
       ]
     }
   },
@@ -111,6 +176,14 @@
       "serviceAccountClientId": "rt-catalog-sync",
       "clientRoles": {
         "realm-management": ["view-clients", "manage-clients"]
+      }
+    },
+    {
+      "username": "service-account-rt-cargo-tools",
+      "enabled": true,
+      "serviceAccountClientId": "rt-cargo-tools",
+      "clientRoles": {
+        "rt-message-bus-admin": ["postmortems:read", "postmortems:manage", "proposals:read", "proposals:manage", "summaries:read"]
       }
     }
   ]

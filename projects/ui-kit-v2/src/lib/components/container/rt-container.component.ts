@@ -28,8 +28,8 @@ import { map, merge, Observable, Subject, switchMap, takeUntil } from 'rxjs';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { carryThemeScope, materialPresetClassesOf } from '../../util/material-preset';
-import { RtToasterComponent } from '../toast/rt-toaster.component';
+import { carryThemeScope, materialPresetClassesOf } from '@rt-tools/ui-kit-v2/core';
+import { RtToasterComponent } from '@rt-tools/ui-kit-v2/toast';
 import { RtContainerStateService } from './rt-container-state.service';
 import {
     RtContainerContentDirective,

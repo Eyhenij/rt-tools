@@ -16,7 +16,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractControl, ControlValueAccessor, NgControl, ValidationErrors, Validators } from '@angular/forms';
 
-import { IRtInput } from '../input/rt-input.model';
+import { IRtInput } from '@rt-tools/ui-kit-v2/core';
 
 /**
  * Базовый класс input-семейства common/ui. Владеет единым CVA-ядром:
@@ -44,10 +44,12 @@ interface IControlState {
     invalid: boolean;
     errors: ValidationErrors | null;
     required: boolean;
+    /** Касались ли контрола или правили его: до этого пустое обязательное поле не краснеет. */
+    interacted: boolean;
 }
 
 /** Состояние поля, которому форма ещё ничего не сказала. */
-const PRISTINE_STATE: IControlState = { invalid: false, errors: null, required: false };
+const PRISTINE_STATE: IControlState = { invalid: false, errors: null, required: false, interacted: false };
 
 /** Рассылает ли контрол своё состояние. Переходник сигнальной формы — не рассылает. */
 function emitsEvents(control: AbstractControl): boolean {
@@ -60,6 +62,7 @@ function stateOf(control: AbstractControl): IControlState {
         invalid: !!control.invalid && (control.touched || control.dirty),
         errors: control.errors,
         required: control.hasValidator(Validators.required),
+        interacted: control.touched || control.dirty,
     };
 }
 
@@ -75,6 +78,11 @@ export abstract class RtFormControlBase<TValue> implements ControlValueAccessor,
     // авто-id для связки label[for], read-only режим, зеркало ошибок/required.
     readonly #controlIdAssigned: WritableSignal<string | null> = signal<string | null>(null);
     readonly #readonlyAssigned: WritableSignal<boolean> = signal<boolean>(false);
+    /**
+     * Обязательность, объявленная полем. Шаблонная форма валидатора на контрол не кладёт, и без
+     * этого признака её обязательное поле не получало бы ни звёздочки, ни ошибки.
+     */
+    readonly #requiredAssigned: WritableSignal<boolean> = signal<boolean>(false);
     /** Состояние, разосланное прежней привязкой: её контрол сигналами не читается. */
     readonly #pushedState: WritableSignal<IControlState> = signal<IControlState>(PRISTINE_STATE);
     /**
@@ -100,7 +108,15 @@ export abstract class RtFormControlBase<TValue> implements ControlValueAccessor,
         return control === null ? this.#pushedState() : stateOf(control);
     });
 
-    protected readonly isInvalid: Signal<boolean> = computed((): boolean => this.#state().invalid);
+    /**
+     * Пустое поле, обязательное по слову rt-field, которого уже коснулись. Валидатор формы здесь
+     * не нужен: его ошибку контрол и так получает от формы.
+     */
+    readonly #missingRequired: Signal<boolean> = computed(
+        (): boolean => this.#requiredAssigned() && !this.#state().required && this.#state().interacted && !this.hasValue()
+    );
+
+    protected readonly isInvalid: Signal<boolean> = computed((): boolean => this.#state().invalid || this.#missingRequired());
 
     /** Видимость кнопки очистки: включена, есть значение, поле активно. */
     protected readonly showClearButton: Signal<boolean> = computed(
@@ -141,10 +157,12 @@ export abstract class RtFormControlBase<TValue> implements ControlValueAccessor,
     public readonly invalid: Signal<boolean> = computed((): boolean => this.isInvalid());
 
     /** Текущие ошибки связанного контрола — источник текста ошибки в rt-field. */
-    public readonly errors: Signal<ValidationErrors | null> = computed((): ValidationErrors | null => this.#state().errors);
+    public readonly errors: Signal<ValidationErrors | null> = computed(
+        (): ValidationErrors | null => this.#state().errors ?? (this.#missingRequired() ? { required: true } : null)
+    );
 
-    /** Помечен ли контрол как обязательный — для авто-«*» в rt-field. */
-    public readonly required: Signal<boolean> = computed((): boolean => this.#state().required);
+    /** Обязателен ли контрол — по валидатору формы или по слову rt-field. Для авто-«*». */
+    public readonly required: Signal<boolean> = computed((): boolean => this.#state().required || this.#requiredAssigned());
 
     /** Текст read-only представления. Реализуется конкретным контролом. */
     public abstract readonly displayText: Signal<string>;
@@ -202,6 +220,11 @@ export abstract class RtFormControlBase<TValue> implements ControlValueAccessor,
     /** Включить/выключить read-only режим — вызывает родительский rt-field. */
     public setReadonly(value: boolean): void {
         this.#readonlyAssigned.set(value);
+    }
+
+    /** Объявить контрол обязательным — вызывает родительский rt-field. */
+    public setRequired(value: boolean): void {
+        this.#requiredAssigned.set(value);
     }
 
     /** Очистка значения по кнопке-крестику + возврат фокуса в поле. */

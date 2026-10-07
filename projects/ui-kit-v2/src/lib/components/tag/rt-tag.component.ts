@@ -22,11 +22,12 @@ import {
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, TRtKitLabelMap } from '../../i18n';
-import { RtIconComponent, IRtIcon } from '../icon';
-import { RtTooltipDirective } from '../tooltip/rt-tooltip.directive';
-import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
-import { RtRadiusDirective } from '../radius/rt-radius.directive';
+import { RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
+import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
+import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
+import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
+import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
+import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 import { IRtTag } from './rt-tag.model';
 
 const BEM_BLOCK: string = 'rt-tag';

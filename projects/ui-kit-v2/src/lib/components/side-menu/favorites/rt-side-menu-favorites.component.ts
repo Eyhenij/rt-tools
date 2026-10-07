@@ -20,11 +20,12 @@ import {
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { rtKitLabel } from '../../../i18n';
-import { BreakpointsService } from '../../../platform/breakpoints.service';
-import { RtExpansionPanelComponent, RtExpansionPanelContentDirective } from '../../expansion-panel';
-import { IRtIcon, RtIconComponent } from '../../icon';
-import { RtIconButtonComponent } from '../../icon-button';
+import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
+import { BreakpointsService } from '@rt-tools/ui-kit-v2/core';
+import { RtExpansionPanelComponent, RtExpansionPanelContentDirective } from '@rt-tools/ui-kit-v2/expansion-panel';
+import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
+import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
+import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
 import { sideMenuFavoritesSection, findSideMenuFavoriteItems, isSideMenuDropOutside } from '../rt-side-menu-favorites.logic';
 import { RtSideMenuSettingsService } from '../rt-side-menu-settings.service';
 import { filterSideMenuItems } from '../rt-side-menu.logic';

@@ -29,18 +29,18 @@ import { RouterLink } from '@angular/router';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { rtKitLabel } from '../../i18n';
-import { BreakpointsService } from '../../platform/breakpoints.service';
-import { RtIconComponent } from '../icon';
-import { RtIconButtonComponent } from '../icon-button';
-import { RtInputComponent } from '../input';
+import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
+import { BreakpointsService } from '@rt-tools/ui-kit-v2/core';
+import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
+import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
+import { RtInputComponent } from '@rt-tools/ui-kit-v2/input';
 import {
     RtScrollAreaComponent,
     RtScrollAreaContentDirective,
     RtScrollAreaFooterDirective,
     RtScrollAreaHeaderDirective,
-} from '../scroll-area';
-import { RtTooltipDirective } from '../tooltip';
+} from '@rt-tools/ui-kit-v2/scroll-area';
+import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
 import { RtSideMenuFavoritesComponent } from './favorites/rt-side-menu-favorites.component';
 import { RtSubMenuKeyboard } from './rt-side-menu-keyboard';
 import { RtSideMenuResize } from './rt-side-menu-resize';

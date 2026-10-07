@@ -1,4 +1,4 @@
-import { dataTableWithEntity, dataTableWithoutPageEntities, dataTableWithPageEntities } from '../data-table/rt-data-table-selection.logic';
+import { dataTableWithEntity, dataTableWithoutPageEntities, dataTableWithPageEntities } from '@rt-tools/ui-kit-v2/data-table';
 
 /** Отметки и исключения после смены страницы: пришедшие строки отмечаются, кроме исключённых. */
 export function dataListSelectedAfterPage<ENTITY_TYPE, KEY extends keyof ENTITY_TYPE>(

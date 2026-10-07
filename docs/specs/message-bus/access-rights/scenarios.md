@@ -8,50 +8,38 @@ whose "Then" names a person and what they see are closed by an end-to-end spec.
 
 ### SC-MB-287 — an operation declared by a right lets in whoever holds it
 
-Given an account with a role whose set holds the right of the operation
-When the operation is called with the sign-in of that account
+Given an access token whose client roles hold the right of the operation
+When the operation is called with that token
 Then the operation does its work
 
-### SC-MB-288 — a sign-in without the right is refused, and not as an absent sign-in
+### SC-MB-288 — a token without the right is refused, and not as an absent sign-in
 
-Given an account with a role whose set does not hold the right of the operation
-When the operation is called with the sign-in of that account
+Given an access token whose client roles do not hold the right of the operation
+When the operation is called with that token
 Then the answer is a refusal by a right, and it differs from the refusal to whoever did not sign in
 
 ### SC-MB-289 — the refusal by a right does not name the right that was missing
 
-Given a sign-in without the right of the operation
+Given an access token without the right of the operation
 When the operation is called
-Then the answer holds neither the name of the right nor the list of the rights of the account
+Then the answer holds neither the name of the right nor the list of the rights of the person
 
-### SC-MB-290 — a right the role is silent about counts as not given
+### SC-MB-290 — a right the token is silent about counts as not given
 
-Given a role whose set holds neither a permission nor a ban of the right
+Given an access token whose client roles name other rights of the set, not this one
 When an operation declared by that right is called
 Then the answer is a refusal by a right
 
-### SC-MB-291 — a pointed edit gives a right the role does not hold
+### SC-MB-293 — a person without client roles opens no operation declared by a right
 
-Given an account whose role lacks the right, and a pointed edit giving it
-When an operation declared by that right is called
-Then the operation does its work
-
-### SC-MB-292 — a pointed edit takes away a right the role holds
-
-Given an account whose role holds the right, and a pointed edit taking it away
-When an operation declared by that right is called
-Then the answer is a refusal by a right
-
-### SC-MB-293 — an account without a role opens no operation declared by a right
-
-Given an account to which no role is assigned
+Given an access token with no client role of the bus
 When an operation declared by any right is called
 Then the answer is a refusal by a right
 
-### SC-MB-294 — a right taken away acts on the next call, not on the next sign-in
+### SC-MB-294 — a right taken away acts with the next token
 
-Given a sign-in made while the right was held
-When the right is taken away by a pointed edit and the operation is called by that same sign-in
+Given a token issued while the right was held
+When the right is taken away in Keycloak and the operation is called with a token issued after that
 Then the answer is a refusal by a right
 
 ### SC-MB-295 — a token of a tree opens no operation declared by a right
@@ -60,17 +48,11 @@ Given a fit token of a tree
 When an operation declared by a right is called by it
 Then the answer is a refusal, and the token gives no rights
 
-### SC-MB-296 — the answer about the signed-in person carries their rights
+### SC-MB-296 — the admin panel takes the rights of the person from their token
 
-Given an account with a role and pointed edits over it
-When the admin panel asks who signed in
-Then the answer holds the rights of that person as the role and the edits over it add up to
-
-### SC-MB-297 — a right that no operation declares is not accepted into a role
-
-Given a name that is not in the closed set of rights
-When it is written into a role or into a pointed edit
-Then the writing is refused, and the role is left as it was
+Given a person whose token carries client roles of the bus client
+When the admin panel reads who signed in
+Then their rights are exactly those roles, and their name is the name from the token
 
 ### SC-MB-298 — a section whose right is held is shown and opens
 
@@ -128,25 +110,8 @@ When a right is written into an item
 Then it is a name of the closed set of rights, one for both sides, and a name outside the set does
 not compile
 
-### SC-MB-307 — the stand gives its account every right
+### SC-MB-307 — the stand gives its person every right
 
 Given the stand of the end-to-end suite is seeded
 When a person signs in on it
-Then all four sections are open to them: the suite checks the sections rather than the rights
-
-### SC-MB-370 — the rights model arriving keeps the access of those who already had it
-
-Given accounts created before the rights, each of which saw every section, and among them the
-service account of the cargo triage
-When the migration that grants the rights to the existing accounts is applied
-Then the role of the former access appears with every right of the closed set, and every account
-without a role points at it: the sign-in of such a person opens the sections again. The service
-account of the triage gets a role of its own — reading and marking the cargo, and nothing else. An
-account that already has a role is not touched, and a second application of the migration adds no
-second role
-
-Покрытие: частичное — the test reads the migration and checks what it states: the set of rights
-against the closed set, the update limited to accounts without a role, and the repeat application.
-The applying itself on a database is not run by it.
-
-Covered: `libs/message-bus-common/src/lib/rights-backfill.spec.ts`.
+Then every section is open to them: the realm of the stand gives them every client role

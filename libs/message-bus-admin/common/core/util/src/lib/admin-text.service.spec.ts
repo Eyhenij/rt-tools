@@ -31,38 +31,21 @@ describe('AdminTextService', () => {
 
     it('SC-MB-402 — длинная подпись переведена целиком, а не наполовину', () => {
         const { locale, text }: { locale: AdminLocaleService; text: AdminTextService } = services();
-        const key: TAdminLabelKey = 'setupHint';
+        const key: TAdminLabelKey = 'noSectionsFrom';
 
-        expect(text.text(key)).toContain('Записей в приёмнике');
+        expect(text.text(key)).toContain('попросите его открыть');
 
         locale.setLocale(EAdminLocale.En);
 
-        expect(text.text(key)).toContain('holds no records yet');
+        expect(text.text(key)).toContain('ask them to open the sections');
     });
 
-    it('SC-MB-402 — оба набора отвечают на каждый ключ экранов входа', () => {
+    it('SC-MB-402 — оба набора отвечают на каждый ключ шапки и попапа профиля', () => {
         const { locale, text }: { locale: AdminLocaleService; text: AdminTextService } = services();
 
-        // Ключи экрана входа и экрана первой записи: их переводит задача RT-2210, и ни один из
-        // них не должен приходить признаком ненайденного ни на одном языке.
-        const keys: readonly TAdminLabelKey[] = [
-            'signInTitle',
-            'signInTab',
-            'signInName',
-            'signInNameHint',
-            'signInPassword',
-            'signInPasswordHint',
-            'signInSubmit',
-            'signInFaultPair',
-            'signInFaultForm',
-            'signInFaultService',
-            'setupTitle',
-            'setupHint',
-            'setupName',
-            'setupPassword',
-            'setupSubmit',
-            'setupFailed',
-        ];
+        // Ключи шапки и попапа профиля: их видит каждый вошедший, и ни один из них не должен
+        // приходить признаком ненайденного ни на одном языке.
+        const keys: readonly TAdminLabelKey[] = ['signOut', 'theme', 'language', 'languageSwitch', 'noSectionsTitle'];
 
         // Сначала положительная половина: отбор ниже узнаёт признак ненайденного — ключ, которого
         // в наборе нет вовсе, приходит именно им.
@@ -85,7 +68,7 @@ describe('AdminTextService', () => {
 
         // Сначала положительная половина: ключи набора найдены, и отбор ниже узнаёт признак
         // ненайденного. Без неё проба осталась бы зелёной и на пустом списке ключей.
-        expect(keys.length).toBeGreaterThan(200);
+        expect(keys.length).toBeGreaterThan(150);
         expect(text.text('ключНиОткуда' as TAdminLabelKey)).toBe('«ключНиОткуда»');
 
         for (const chosen of [EAdminLocale.Ru, EAdminLocale.En]) {
@@ -118,7 +101,7 @@ describe('AdminTextService', () => {
         const { text }: { locale: AdminLocaleService; text: AdminTextService } = services();
 
         // Сначала положительная половина: код набора приходит текстом.
-        expect(text.text(ERefusal.RoleNameEmpty)).toBe('Роль ждёт имя');
+        expect(text.text(ERefusal.InviteNameEmpty)).toBe('Выдача ждёт имя будущего проекта');
 
         // Приёмник выкатывается отдельно от админки, и его новый код доезжает сюда именем.
         expect(text.text('невиданныйКод' as TAdminLabelKey)).toBe('«невиданныйКод»');

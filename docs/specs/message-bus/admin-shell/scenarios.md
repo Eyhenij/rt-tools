@@ -29,11 +29,11 @@ Given the owner entered
 When they press their own name in the top row
 Then a popup with the theme, the language and the exit opens, and the entry stays accepted
 
-### SC-MB-146 — the exit goes from the popup and leads away to the screen of the entry
+### SC-MB-146 — the exit goes from the popup and leads away to the entry screen of the realm
 
 Given the popup of the profile is open
 When the owner chooses the exit
-Then the entry is broken off, and the owner finds themselves at the screen of the entry
+Then the entry at Keycloak is broken off, and the owner finds themselves at the entry screen of the realm
 
 ### SC-MB-147 — the theme is switched in the popup and outlives a reload
 
@@ -41,16 +41,10 @@ Given the owner entered and the theme is light
 When they switch the theme in the popup of the profile and reload the page
 Then the screen stays dark, it does not come back to the light one
 
-### SC-MB-148 — the theme is switched on the screen of the entry
+### SC-MB-149 — the chosen language holds across the sections, and the shape of the dates does not depend on it
 
-Given the owner stands at the screen of the entry
-When they switch the theme
-Then the screen of the entry becomes dark, and after the entry the shell stays dark too
-
-### SC-MB-149 — the choice made at the entry holds after it, and the shape of the dates does not depend on it
-
-Given the owner chose the second language on the screen of the entry
-When they enter and open a list
+Given the owner chose the second language in the popup of the profile
+When they open a list
 Then the labels the kit draws and the name of the section go in the chosen language, and the shape
 of the dates stays the former one
 
@@ -59,12 +53,6 @@ of the dates stays the former one
 Given the owner entered
 When they change the language in the popup of the profile and reload the page
 Then the chosen language stayed the same, it did not come back to the initial one
-
-### SC-MB-151 — the fields of the entry carry an icon and a placeholder
-
-Given the owner stands at the screen of the entry
-When they look at the fields of the account and of the password
-Then each has an icon and a hint inside the field, not one label at the side
 
 ### SC-MB-152 — the heading of the tab names the application
 
@@ -146,13 +134,6 @@ document goes with them, and the page is not reloaded
 Given a person chose English
 When the page is reloaded
 Then the choice stayed English, and not one request to the receiver asked about the language
-
-### SC-MB-406 — the screen of the entry holds no Russian word at the English choice
-
-Given a person stands at the screen of the entry and chooses English
-When they look at the card of the entry
-Then not one word of it is Russian: the name of the application, the heading, the labels of the
-fields, the hints inside them and the label of the button come from the dictionary
 
 ### SC-MB-414 — every key of the dictionary has a text in both sets
 

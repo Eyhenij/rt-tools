@@ -33,15 +33,12 @@
 #   RT_TASK_BOT          — the account put as the assignee; the PR is opened by it as well;
 #   RT_PULL_TOKEN_VAR    — the variable through which its token is substituted into the call;
 #   RT_PULL_TOKEN_HINT   — the ready-made substitution of that token, whole;
-#   RT_COMMIT_EMAIL      — the address a machine commit is signed with; by its left part the commit
-#                          is recognised as well.
-# The refusal names both what is wrong and what fixes it: a refusal without an action is bypassed,
-# not carried out.
+#   RT_COMMIT_EMAIL      — the address of a machine commit; its left part recognises the commit too.
+# A refusal names what is wrong and what fixes it: one without an action is bypassed, not obeyed.
 #
 # FAIL-OPEN: not a repository, no parser, broken input, no profile — let through.
 
-# Its own name in the observations: the refusal is written by the shared deny tail, not by the
-# guard itself.
+# Its own name in the observations: the refusal is written by the shared deny tail, not here.
 RT_GUARD_NAME=git-guard-delivery
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
@@ -364,6 +361,9 @@ epic_pull="$(printf '%s' "$state" | jq -r '.epic // empty' 2>/dev/null)"
 # The branch of an epic itself: its request goes into the main branch, and it opens only when the
 # folders of all its tasks are taken apart.
 command -v rt_epic_own_pull >/dev/null 2>&1 && rt_epic_own_pull "$state"
+
+# A request in another repository is judged by the title form of that repository.
+command -v rt_delivery_title_re >/dev/null 2>&1 && title_re="$(rt_delivery_title_re "$title_re")"
 
 title=''
 if command -v perl >/dev/null 2>&1; then

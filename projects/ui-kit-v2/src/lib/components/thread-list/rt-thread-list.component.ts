@@ -23,18 +23,18 @@ import { distinctUntilChanged, map } from 'rxjs';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, TRtKitLabelMap, rtKitLabel } from '../../i18n';
-import { searchDebounce } from '../../util';
+import { RT_KIT_LABELS, TRtKitLabelMap, rtKitLabel } from '@rt-tools/ui-kit-v2/core';
+import { searchDebounce } from '@rt-tools/ui-kit-v2/core';
 
-import { RtInfiniteScrollDirective } from '../../scroll/infinite-scroll.directive';
-import { RtEmptyStateComponent } from '../empty-state/rt-empty-state.component';
-import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
-import { RtIconComponent } from '../icon/rt-icon.component';
-import { IRtIcon } from '../icon/rt-icon.model';
-import { RtInputComponent } from '../input/rt-input.component';
-import { RtPopoverDirective } from '../popover/rt-popover.directive';
-import { RtRadiusDirective } from '../radius/rt-radius.directive';
-import { RtSkeletonComponent } from '../skeleton/rt-skeleton.component';
+import { RtInfiniteScrollDirective } from '@rt-tools/ui-kit-v2/core';
+import { RtEmptyStateComponent } from '@rt-tools/ui-kit-v2/empty-state';
+import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
+import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
+import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
+import { RtInputComponent } from '@rt-tools/ui-kit-v2/input';
+import { RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
+import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
+import { RtSkeletonComponent } from '@rt-tools/ui-kit-v2/skeleton';
 import { RtThreadListFiltersDirective, RtThreadListRowDirective, RtThreadListSearchDirective } from './rt-thread-list.directives';
 import { IRtThreadList } from './rt-thread-list.model';
 

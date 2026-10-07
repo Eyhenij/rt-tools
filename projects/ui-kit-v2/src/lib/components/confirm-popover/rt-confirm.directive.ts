@@ -31,7 +31,7 @@ import { map, merge, Observable, Subject, switchMap } from 'rxjs';
 
 import { setRtComponentInputs } from '@rt-tools/core';
 
-import { carryThemeScope, materialPresetClassesOf } from '../../util/material-preset';
+import { carryThemeScope, materialPresetClassesOf } from '@rt-tools/ui-kit-v2/core';
 import { RtConfirmPopoverComponent } from './rt-confirm-popover.component';
 import { IRtConfirmPopover } from './rt-confirm-popover.model';
 

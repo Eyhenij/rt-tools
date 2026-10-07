@@ -15,8 +15,8 @@ import {
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
-import { rtKitLabel } from '../../../i18n';
-import { RtButtonDirective } from '../../button/rt-button.directive';
+import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
+import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
 import { rtAsideErrorCopyText } from './rt-aside-error-box.logic';
 
 const BEM_BLOCK: string = 'rt-aside-error-box';
