@@ -15,6 +15,10 @@ WORKDIR /workspace
 # манифестами — установка заканчивается генерацией клиента хранилища и без схемы отказывает.
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY prisma ./prisma
+# Пакеты входа админка берёт исходниками, а их зависимости объявлены только в их манифестах:
+# без манифеста `auth-angular` установка не ставит `keycloak-js`, и сборка админки падает на нём.
+COPY projects/auth-contract/package.json ./projects/auth-contract/package.json
+COPY projects/auth-angular/package.json ./projects/auth-angular/package.json
 RUN --mount=type=cache,id=pnpm-store,target=/root/.local/share/pnpm/store \
     pnpm install --frozen-lockfile
 

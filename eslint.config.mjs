@@ -8,6 +8,7 @@ import sonarjs from 'eslint-plugin-sonarjs';
 import { backendConfig } from './eslint/backend.config.mjs';
 import { baseTemplateConfig, baseTypeScriptConfig } from './eslint/base.config.mjs';
 import { allBoundaries } from './eslint/boundaries/index.mjs';
+import { uiKitV2Config } from './eslint/ui-kit-v2.config.mjs';
 
 // Все правила eslint-plugin-sonarjs на максимально строгом уровне.
 // Динамическая сборка из плагина — переживёт минорные апдейты без правки конфига.
@@ -39,29 +40,6 @@ export default [
                     // Рёбра живут файлами доменов в `eslint/boundaries/domains`, а сюда приезжают
                     // сводом: проверка раскладки читает их модулем и требует, чтобы тег либы был
                     // объявлен там ровно один раз.
-                    depConstraints: allBoundaries,
-                },
-            ],
-        },
-    },
-    {
-        // Второй кит собран точками входа: ядро, по одной на компонент и `rich-editor`. Вход берёт
-        // соседний по имени пакета: сборщик пакета собирает входы порознь, и относительный путь в
-        // чужой вход он отвергает. Файлы входов лежат не над исходниками, поэтому правило само
-        // входы не узнаёт — исключение названо здесь.
-        files: ['projects/ui-kit-v2/src/**/*.ts'],
-        ignores: ['**/*.spec.ts', '**/stories/**', 'projects/ui-kit-v2/src/showcase/**', 'projects/ui-kit-v2/src/testing/**'],
-        rules: {
-            '@nx/enforce-module-boundaries': [
-                'error',
-                {
-                    enforceBuildableLibDependency: true,
-                    allow: [
-                        '@rt-tools/ui-kit-v2',
-                        '@rt-tools/ui-kit-v2/*',
-                        '@rt-tools/agent-kit/cargo',
-                        '^.*/eslint(\\.base)?\\.config\\.[cm]?[jt]s$',
-                    ],
                     depConstraints: allBoundaries,
                 },
             ],
@@ -361,25 +339,7 @@ export default [
             ],
         },
     },
-    {
-        // Корень второго кита переотдаёт свои же точки входа: так приложение берёт компонент из
-        // корня, а сборщик кладёт в кусок только модуль этого компонента. Соседний пакет
-        // реэкспортировать по-прежнему нельзя.
-        files: ['projects/ui-kit-v2/src/public-api.ts'],
-        rules: {
-            'no-restricted-syntax': [
-                'error',
-                {
-                    selector: 'ExportNamedDeclaration[source.value=/^@rt-tools\\//]:not([source.value=/^@rt-tools\\/ui-kit-v2\\//])',
-                    message: 'Не реэкспортируй символ соседнего пакета @rt-tools. Импортируй его из того пакета, которому он принадлежит.',
-                },
-                {
-                    selector: 'ExportAllDeclaration[source.value=/^@rt-tools\\//]:not([source.value=/^@rt-tools\\/ui-kit-v2\\//])',
-                    message: 'Не реэкспортируй символ соседнего пакета @rt-tools. Импортируй его из того пакета, которому он принадлежит.',
-                },
-            ],
-        },
-    },
+    ...uiKitV2Config,
     {
         // `@rt-tools/utils` уезжает потребителям на Node наравне с приложениями Angular: ни
         // фреймворка, ни частичной компиляции, ни одноранговых зависимостей. Один импорт вернул
@@ -404,28 +364,6 @@ export default [
     },
     // Первый кит не правится (docs/adr/0003-one-ui-kit.md): находку правила eslint 10 в нём чинить нечем.
     { files: ['projects/ui-kit/**/*.ts'], rules: { 'no-useless-assignment': 'off' } },
-    {
-        // Второй кит рисует себя сам: `@angular/cdk` и свои свойства оформления, без Material. Из
-        // первого кита в него переезжают восемь семейств, и Material стоит в шестидесяти его
-        // файлах — приедет он с первым же перенесённым семейством одной строкой импорта, и пакет
-        // потянет зависимость, о которой не договаривался. Поэтому запрет стоит там, где импорт
-        // пишут. Список исключений не заводится: пустой подсказывал бы, что исключения бывают.
-        files: ['projects/ui-kit-v2/**/*.ts'],
-        rules: {
-            'no-restricted-imports': [
-                'error',
-                {
-                    patterns: [
-                        {
-                            group: ['@angular/material', '@angular/material/*', '@angular/material/**'],
-                            message:
-                                '@rt-tools/ui-kit-v2 обходится без Material: он рисует себя своими свойствами оформления поверх @angular/cdk. Готовое из Material переносится в кит своим семейством, а не зовётся отсюда.',
-                        },
-                    ],
-                },
-            ],
-        },
-    },
     {
         files: ['**/bem/*.directive.ts'],
         rules: {
