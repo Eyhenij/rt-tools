@@ -4,16 +4,16 @@
 
 - **State:** `этап-идёт`
 - **Stage:** 1 of 1 — The transfer command
-- **Done:** the grill, the spec of the transfer, the plan
-- **Next step:** the pure part of the transfer with its test set
+- **Done:** the grill, the spec of the transfer, the plan, the pure part with its test set
+- **Next step:** the command that reads production and writes the files
 - **Uncommitted:** no
 - **Waiting for the owner:** no
 - **PR:** not open yet
 
 ## Steps
 
-- [>] 1.1 The pure part of the transfer is written with its test set
-- [ ] 1.2 The command reads production and writes the files
+- [x] 1.1 The pure part of the transfer is written with its test set
+- [>] 1.2 The command reads production and writes the files
 - [ ] 1.3 The production guide names the order of the transfer
 
 ## Decisions along the way
