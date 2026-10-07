@@ -29,3 +29,7 @@
 ## What is left unclear
 
 - Нет.
+
+## Decisions along the way
+
+- **Таймер и реакции на указатель вынесены в `SubMenuCloseDelay`, выбор закреплённого раздела — в `pickPinnedSubMenu`.** Компонент упирался в `max-lines` 500; поведение выбора не менялось.
