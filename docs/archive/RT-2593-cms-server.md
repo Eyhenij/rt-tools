@@ -1,5 +1,7 @@
 # Grill
 
+Task RT-2593 · the request — the PR into the epic branch RT-2591 —
+
 ## The owner request
 
 > нужно вынести редактор и cms в общий модуль/пакет … rt-tools
@@ -60,3 +62,17 @@ Closed by the epic plan and the owner's words.
 ## What is left unclear
 
 - nothing
+
+## Decisions along the way
+
+- **The branch of this task was created past this session's delivery guard.** The owner's word for
+  the whole epic: «Да, на весь эпик». The guard looked for the epic branch in another repository.
+
+- **The plan guard was bypassed for this epic too.** The owner's word: «Обходи и его на весь
+  эпик». The guard looked for the plan in another repository.
+- **The contract package is linked as `workspace:*` until its release.** It is not on the registry
+  yet; the release task turns the link into a version, as the tree did for the first packages.
+  Affected stage of the plan: 1.
+- **The services are Connect service implementations with access maps per method.** The rights
+  are split into reading and editing per area, as the working implementation asked them; the
+  application names all eight. Affected stage of the plan: 2.
