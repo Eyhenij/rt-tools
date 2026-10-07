@@ -12,8 +12,12 @@
   page client, its mapper, the embed address check and the stored-pages helper in the blog
   `data-access` library, and the page screen (400 lines) in the blog `feature/article` library;
   the embed check and the stored-pages helper carry their tests. The embed check is carried over
-  into `site/src/lib/block/embed-src.function.ts` with its own provider list (SC-CMS-70); the next
-  free scenario number is SC-CMS-71
+  into `site/src/lib/block/embed-src.function.ts` with its own provider list (SC-CMS-70). The page
+  model, its assembly from the server answer, the rubric root tag and the sitemap are carried over
+  into `site/src/lib/page/site-page.function.ts` (SC-CMS-71, SC-CMS-72); the rubric labels of the
+  former blog groups stay with the application. Left: the page client with the transfer state, the
+  six block components behind a registry, the page screen and the redirect resolver. The next free
+  scenario number is SC-CMS-73
 - **Uncommitted:** nothing
 - **Waiting for the owner:** no
 - **PR:** not open yet
