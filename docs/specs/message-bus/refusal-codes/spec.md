@@ -19,8 +19,8 @@ no choice of a language reaches it.
 
 - **A code of a refusal** — the name of the reason a request was rejected for. One for both sides.
 - **The set of the codes** — every code the intake names. It lies in the shared lib, in one place.
-- **The substitutions of a refusal** — the named values of the reason: the name of a role, the name
-  of an account, the right.
+- **The substitutions of a refusal** — the named values of the reason: the name of a project, the
+  sign of a tree.
 - **An unknown code** — a code the admin application has no text for.
 - **The word of the intake** — the sentence the intake puts into the body of the answer today.
 
@@ -42,8 +42,8 @@ as now; only its text starts to follow the chosen language.
 - **The code is the key of the dictionary.** One name instead of two and a table between them: a key
   built out of a code by string arithmetic is not found by a search for the key, and a table between
   them goes stale with nothing next to it changed.
-- **The reason is named by the code, the values go beside it by name.** The name of a role, the name
-  of an account, the right — and the text of the dictionary holds the places for them. A code
+- **The reason is named by the code, the values go beside it by name.** The name of a project, the
+  sign of a tree — and the text of the dictionary holds the places for them. A code
   assembled out of a value is a sentence again, only written differently.
 - **Every code has a text in both sets, and that is proved by a call.** A set walked by eye diverges
   at the first code added, and the divergence shows at the person, not at the check.
@@ -101,43 +101,25 @@ data — a table in this section the audit of the contract reads as a list of pr
 The work adds no storage and no field to one. The set of the codes lies in the code of the shared
 lib, the texts for them in the sets of the labels of the admin application.
 
-| The code              | When it is answered                                                 | Substitutions    |
-| --------------------- | ------------------------------------------------------------------- | ---------------- |
-| `accountNameTaken`    | an account of that name is already created                          | `name`           |
-| `accountNotFound`     | there is no account of that name                                    | `name`           |
-| `accountSelfDisable`  | a person disables their own account                                 | —                |
-| `accountAlreadyOff`   | the account is already disabled                                     | `name`           |
-| `accountGone`         | the record disappeared between the edit and the answer              | —                |
-| `roleNameTaken`       | a role of that name is already created                              | `name`           |
-| `roleNotFound`        | there is no role with that key                                      | `key`            |
-| `roleHeld`            | the role is held by accounts                                        | `name`, `people` |
-| `roleRightsLost`      | the edit would leave the person without the right to the roles      | —                |
-| `roleNameEmpty`       | the role arrived without a name                                     | —                |
-| `rightUnknown`        | the right is not in the set                                         | `right`          |
-| `rightRepeated`       | the right is named twice                                            | `right`          |
-| `editMalformed`       | the edit does not name the right and whether it is given            | —                |
-| `inviteNameEmpty`     | the issue is asked without the name of the project                  | —                |
-| `inviteProjectExists` | the project is already created                                      | `name`           |
-| `inviteAlreadyIssued` | a valid invitation for the project is already issued                | `name`           |
-| `inviteNotFound`      | there is no valid invitation for the project                        | `name`           |
-| `inviteRejected`      | the code of the invitation is not accepted                          | —                |
-| `postmortemNotFound`  | there is no incident analysis with that sign                        | —                |
-| `proposalNotFound`    | there is no proposal with that sign                                 | —                |
-| `summaryNotFound`     | there is no record of a month with that sign                        | —                |
-| `treeUnknown`         | the tree with that sign is not known to the intake                  | `slug`           |
-| `personNameEmpty`     | the account arrived without a name                                  | —                |
-| `personPasswordEmpty` | the account arrived without a password                              | —                |
-| `setupClosed`         | the first account is already created                                | —                |
-| `ownerRoleMissing`    | the role of the owner is not in the storage                         | `key`            |
-| `signInEmpty`         | the request carries no name or no password                          | —                |
-| `enrollThrottled`     | there are more requests from one client than the limit              | —                |
-| `enrollMalformed`     | the request awaits the code of an invitation and the sign of a tree | —                |
-| `treeTaken`           | a tree with that sign or that name is already created               | —                |
-| `signInRequired`      | the operation demands an entry                                      | —                |
-| `rightRequired`       | the entry has no right to the operation                             | —                |
-| `treeTokenRequired`   | the operation demands a token of a tree                             | —                |
-| `treeTokenRejected`   | the token is not accepted                                           | —                |
-| `accessUndeclared`    | the operation declared no access                                    | —                |
+| The code              | When it is answered                                                 | Substitutions |
+| --------------------- | ------------------------------------------------------------------- | ------------- |
+| `inviteNameEmpty`     | the issue is asked without the name of the project                  | —             |
+| `inviteProjectExists` | the project is already created                                      | `name`        |
+| `inviteAlreadyIssued` | a valid invitation for the project is already issued                | `name`        |
+| `inviteNotFound`      | there is no valid invitation for the project                        | `name`        |
+| `inviteRejected`      | the code of the invitation is not accepted                          | —             |
+| `postmortemNotFound`  | there is no incident analysis with that sign                        | —             |
+| `proposalNotFound`    | there is no proposal with that sign                                 | —             |
+| `summaryNotFound`     | there is no record of a month with that sign                        | —             |
+| `treeUnknown`         | the tree with that sign is not known to the intake                  | `slug`        |
+| `enrollThrottled`     | there are more requests from one client than the limit              | —             |
+| `enrollMalformed`     | the request awaits the code of an invitation and the sign of a tree | —             |
+| `treeTaken`           | a tree with that sign or that name is already created               | —             |
+| `signInRequired`      | the operation demands an entry                                      | —             |
+| `rightRequired`       | the entry has no right to the operation                             | —             |
+| `treeTokenRequired`   | the operation demands a token of a tree                             | —             |
+| `treeTokenRejected`   | the token is not accepted                                           | —             |
+| `accessUndeclared`    | the operation declared no access                                    | —             |
 
 The last five never reach the screen: the admin application answers the number of such an answer
 by the entry, not by a text. They have a code all the same — a refusal of the intake is named by a

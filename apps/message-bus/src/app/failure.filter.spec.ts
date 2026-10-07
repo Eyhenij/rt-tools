@@ -129,22 +129,22 @@ describe('FailureFilter', () => {
         const response: ResponseDouble = new ResponseDouble();
 
         new FailureFilter().catch(
-            new ConflictException(refusalBody(ERefusal.RoleNameTaken, { name: 'Владелец' })),
-            hostWith('/api/roles', response)
+            new ConflictException(refusalBody(ERefusal.InviteProjectExists, { name: 'Витрина' })),
+            hostWith('/api/invites', response)
         );
 
         expect(response.code).toBe(HttpStatus.CONFLICT);
         expect(response.body).toEqual({
-            code: ERefusal.RoleNameTaken,
-            params: { name: 'Владелец' },
-            message: 'роль «Владелец» уже заведена: имя занято',
+            code: ERefusal.InviteProjectExists,
+            params: { name: 'Витрина' },
+            message: 'проект «Витрина» уже заведён: приглашение ему не нужно, а имя занято',
         });
     });
 
     it('SC-MB-408 — у отказа с номером обращения кода нет: причина спрашивавшему не видна', () => {
         const response: ResponseDouble = new ResponseDouble();
 
-        new FailureFilter().catch(new PrismaClientKnownRequestError(), hostWith('/api/roles', response));
+        new FailureFilter().catch(new PrismaClientKnownRequestError(), hostWith('/api/invites', response));
 
         expect(response.body).toHaveProperty('message');
         expect(response.body).not.toHaveProperty('code');

@@ -2,8 +2,7 @@ import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import { RateLimitService } from '@rt/message-bus-api/access/feature';
-import { OPERATION_ACCESS } from '@rt/message-bus-api/access/util';
-import { ACCOUNT_OF_REQUEST, IAccountBearingRequest } from '@rt/message-bus-api/accounts/util';
+import { IAccountBearingRequest, OPERATION_ACCESS, requestSignedInAs } from '@rt/message-bus-api/access/util';
 import { IChatConversationListRow, IChatMessageListRow } from '@rt/message-bus-api/chat/data-access';
 import { CHAT_TEXT_LIMIT } from '@rt/message-bus-api/chat/util';
 import { IPage } from '@rt/message-bus-common';
@@ -20,8 +19,8 @@ import { ChatPrismaDouble, IDoubleConversation, IDoubleMessage } from './chat.do
 const AT: Date = new Date('2026-09-20T10:00:00.000Z');
 
 /** Обращение вошедшего: проверка входа кладёт учётную запись в запрос, и спека делает то же. */
-function signedIn(accountId: string): IAccountBearingRequest {
-    return { [ACCOUNT_OF_REQUEST]: { id: accountId, name: 'оператор', sessionId: 'session-1' } };
+function signedIn(personId: string): IAccountBearingRequest {
+    return requestSignedInAs(personId, 'оператор');
 }
 
 describe('ChatReadController', () => {
@@ -39,7 +38,7 @@ describe('ChatReadController', () => {
         store = new ChatPrismaDouble();
         store.sites.push({ id: 'site-1', spaceId: 'space-1', key: 'live-key', origins: ['https://shop.example'], enabled: true });
         store.sites.push({ id: 'site-2', spaceId: 'space-2', key: 'other-key', origins: ['https://other.example'], enabled: true });
-        store.operatorSites.push({ accountId: 'account-1', siteId: 'site-1' });
+        store.operatorSites.push({ personId: 'account-1', siteId: 'site-1' });
         hooks = new ChatHookSpy();
         const subscribers: ChatSubscribersService = new ChatSubscribersService();
 

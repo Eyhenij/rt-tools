@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, Signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthStore } from '@rt/message-bus-admin/auth/data-access';
+import { AuthStore } from '@rt/message-bus-admin/common/container/data-access';
 import { ADMIN_MENU, IAdminMenuItem } from '@rt/message-bus-admin/common/container/util';
 import { AdminTextService } from '@rt/message-bus-admin/common/core/util';
 import { RtEmptyStateComponent } from '@rt-tools/ui-kit-v2';

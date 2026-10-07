@@ -6,7 +6,8 @@
         "allowJs": true,
         "types": ["node"],
         "outDir": "../../dist/out-tsc/message-bus-admin-e2e",
-        "noEmit": true
+        "noEmit": true,
+        "rootDir": "../.."
     },
     "include": ["src/**/*.ts", "stand/**/*.mjs", "playwright.config.ts"]
 }

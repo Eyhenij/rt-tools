@@ -21,9 +21,10 @@ moved, here they are read.
 
 - **Cargo** — the records that arrived in the intake: an incident analysis and a proposal about the
   rules layer.
-- **A service account** — a record of the intake the executor signs in by. It does not belong to a
-  tree: it sees the cargo whole, because one tree fixes it while several send it.
-- **A pair** — the name and the password of the service account, lying outside the repository.
+- **A service client** — a confidential client of Keycloak the executor signs in by. Its service
+  account holds the roles of the intake admin client. It does not belong to a tree: it sees the
+  cargo whole, because one tree fixes it while several send it.
+- **A pair** — the client id and the secret of the service client, lying outside the repository.
 - **The mark key** — what a record is named by when its state is moved: for an incident analysis the
   name of the file, for a proposal the sign of its text.
 
@@ -36,14 +37,14 @@ is shown to a person by the admin panel of the intake, and that is a neighbourin
 
 - **The cargo is fetched by a command of the tree, not by a person's sign-in to the admin panel.**
   The cargo is sorted out by the executor, and what they cannot read they do not sort out.
-- **The reading is closed by the sign-in of a service account, not by the token of the tree.** The
+- **The reading is closed by the token of a service client, not by the token of the tree.** The
   token opens the intake and only of its own tree, while the whole cargo about resources has to be
   sorted out: several trees send it, and one fixes it.
-- **The pair of the account lies outside the repository.** By the same technique as the token: put
+- **The pair of the client lies outside the repository.** By the same technique as the token: put
   into the tree, it leaves into the history and into every copy of it, and there is nothing to
   revoke it from there with.
-- **A missing pair is refused before the network, and the refusal names where it lies and what it is
-  created by.** A refusal without an address leaves the executor before the same question the call
+- **A missing pair is refused before the network, and the refusal names where it lies and where the
+  client is created.** A refusal without an address leaves the executor before the same question the call
   failed over.
 - **An unknown kind of cargo is refused before the network and lists the known ones.** There are two
   kinds, and both are named by a word; a call refused over a typo would otherwise look like an empty
@@ -93,9 +94,9 @@ is shown to a person by the admin panel of the intake, and that is a neighbourin
 
 | What happened                        | What the executor sees                                    |
 | ------------------------------------ | --------------------------------------------------------- |
-| there is no pair                     | a refusal with the address of the pair and its command    |
+| there is no pair                     | a refusal with the address of the pair and of the client  |
 | the kind is named by a wrong word    | a refusal with the list of known kinds                    |
-| the pair was not accepted            | a refusal with the answer of the intake                   |
+| the pair was not accepted            | a refusal with the answer of Keycloak                     |
 | the cargo was read                   | the total count, the page count and records with keys     |
 | a record's text was not read through | a line of the record without a key and words about it     |
 | the filter names the quarantine      | the records of the quarantine, each with its reason       |
@@ -107,14 +108,14 @@ is shown to a person by the admin panel of the intake, and that is a neighbourin
   tree.
 - Sorting out the cargo itself: deciding what of what was read becomes an edit is the gathering of
   proposals, a separate step of the rule.
-- Creating the service account: it is created by a command of the intake on its own side.
+- Creating the service client: it is created in Keycloak, in the realm the intake names.
 - Showing the cargo to a person: that is the admin panel of the intake, a neighbouring domain.
 
 ## Contract
 
 The surface is the launch line of the command. The answer is either the lines of the cargo or a
-refusal naming what was missing. Outward the command goes by a sign-in and by reading the list of
-the intake; it has two closing keys, and it creates none of its own: the pair arrives from a file
+refusal naming what was missing. Outward the command goes by a token request to Keycloak and by
+reading the list of the intake; it has two closing keys, and it creates none of its own: the pair arrives from a file
 named by the setting of the tree.
 
 ### Refusal codes
@@ -124,9 +125,9 @@ it is not.
 
 | What happened                                         | How it ends | What it says                                       |
 | ----------------------------------------------------- | ----------- | -------------------------------------------------- |
-| no pair or no address of the intake                   | one         | where this is set and what it is created by        |
+| no pair or no address of the intake                   | one         | where this is set and where the client is created  |
 | the kind is named outside the set                     | one         | the list of known kinds                            |
-| the sign-in was not accepted                          | one         | the answer of the intake in words and its number   |
+| the sign-in was not accepted                          | one         | the answer in words and which step refused         |
 | the intake did not answer or the answer did not parse | one         | what exactly happened, without guessing the reason |
 | the cargo was read, an empty one included             | zero        | the count and the records with their keys          |
 
@@ -175,7 +176,7 @@ token of one's own tree.
 - **The texts are read through by the page, not one record at a time on demand.** There is nothing to
   open a record by a separate call with: the output holds no sign of the record, and printing it next
   to the key would mean showing two similar values of which one is fit for nothing.
-- **The pair is read as two lines of a file, not as one with a separator.** A password has the right
+- **The pair is read as two lines of a file, not as one with a separator.** A secret has the right
   to hold any character, and a separator met inside it would cut the pair silently.
 
 ## Open questions

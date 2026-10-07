@@ -56,9 +56,9 @@ interface IStoredConversation {
 }
 
 /** Сайты, за которые отвечает вошедший. Пусто — он не оператор чата вовсе. */
-export async function operatorSites(prisma: PrismaService, accountId: string): Promise<string[]> {
+export async function operatorSites(prisma: PrismaService, personId: string): Promise<string[]> {
     const rows: { siteId: string }[] = await prisma.chatOperatorSite.findMany({
-        where: { operator: { accountId } },
+        where: { operator: { personId } },
         select: { siteId: true },
     });
 

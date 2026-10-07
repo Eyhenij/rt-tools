@@ -60,6 +60,16 @@ const SHOT_CONTAINER = textFromEnv('E2E_SHOT_CONTAINER', SHOT_DEFAULTS.container
 /** Порт машины, на котором отвечает браузер образа. */
 const SHOT_PORT = intFromEnv('E2E_SHOT_PORT', SHOT_DEFAULTS.port);
 
+/**
+ * Порты машины, которые браузер образа зовёт как свой `localhost`: админка стенда и Keycloak.
+ *
+ * Вход через Keycloak подписывает запрос средствами шифрования браузера, а их браузер даёт только
+ * защищённому адресу. По простому `http` защищён один `localhost`, и под именем машины админка не
+ * стартовала бы вовсе. Флаг браузера, объявляющий адрес защищённым, облегчённый браузер образа не
+ * читает, поэтому внутри образа стоит пересылка: `localhost` с этими портами ведёт на машину.
+ */
+const FORWARDED_PORTS = [intFromEnv('E2E_ADMIN_PORT', 4310), 58080];
+
 /** Путь входа: он стоит в адресе и тем отличает наш браузер от чужого, занявшего тот же порт. */
 const SHOT_PATH = '/shot';
 
@@ -96,6 +106,15 @@ const SHOT_LOCALE = ['-e', 'LC_ALL=ru_RU.UTF-8', '-e', 'LANG=ru_RU.UTF-8'];
  * принимает — проба показала, что доводы, переданные соединением, браузер не получает вовсе.
  */
 const SHOT_SCRIPT = `const { chromium } = require('@playwright/test');
+const net = require('node:net');
+for (const port of ${JSON.stringify(FORWARDED_PORTS)}) {
+    net.createServer((page) => {
+        const machine = net.connect(port, 'host.docker.internal');
+        page.on('error', () => machine.destroy());
+        machine.on('error', () => page.destroy());
+        page.pipe(machine).pipe(page);
+    }).listen(port, '127.0.0.1');
+}
 chromium
     .launchServer({ port: 3000, host: '0.0.0.0', wsPath: '${SHOT_PATH}', args: ${JSON.stringify(SHOT_ARGS)} })
     .then((server) => console.log(server.wsEndpoint()));`;

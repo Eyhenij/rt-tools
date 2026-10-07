@@ -8,6 +8,17 @@ export interface ITokenCheckOptions {
     readonly issuer: string;
     /** The client of this admin in the realm. A token issued to another client is refused. */
     readonly clientId: string;
+    /**
+     * The service clients whose tokens this admin accepts too: commands that call it without a
+     * person. Their rights are the roles of `clientId` on their service account, the same place the
+     * rights of a person are read from.
+     */
+    readonly serviceClients?: readonly string[];
+    /**
+     * Where the server reads the keys of the realm, when it reaches Keycloak by another address than
+     * the browser does: an inner network, a container. By default — the key set of the issuer.
+     */
+    readonly keysUrl?: string;
 }
 
 const BEARER: RegExp = /^Bearer ([A-Za-z0-9\-_]+\.[A-Za-z0-9\-_]+\.[A-Za-z0-9\-_]+)$/;
@@ -46,7 +57,8 @@ function claimsOf(payload: JWTPayload): IKeycloakClaims {
  * The token check of one admin, shared by the NestJS guard and the Connect interceptor.
  *
  * A token is accepted when a key of the realm signed it, the realm issued it, its term holds and
- * it was issued to the client of this admin (`azp`). Every other case answers `null` and nothing
+ * it was issued to the client of this admin or to a service client it names (`azp`). Every other
+ * case answers `null` and nothing
  * more: the reason of a refusal is not told to the caller, so the answers do not show which tokens
  * come close.
  *
@@ -59,7 +71,7 @@ export class KeycloakTokenVerifier {
 
     constructor(options: ITokenCheckOptions, keys?: JWTVerifyGetKey) {
         this.#options = options;
-        this.#keys = keys ?? createRemoteJWKSet(new URL(`${options.issuer}/protocol/openid-connect/certs`));
+        this.#keys = keys ?? createRemoteJWKSet(new URL(options.keysUrl ?? `${options.issuer}/protocol/openid-connect/certs`));
     }
 
     /** The caller of the `Authorization` header, or `null` when the token is not accepted. */
@@ -70,12 +82,17 @@ export class KeycloakTokenVerifier {
         }
         try {
             const { payload } = await jwtVerify(token, this.#keys, { issuer: this.#options.issuer });
-            if (payload['azp'] !== this.#options.clientId || typeof payload.sub !== 'string') {
+            if (!this.#accepts(payload['azp']) || typeof payload.sub !== 'string') {
                 return null;
             }
             return callerFromClaims(claimsOf(payload), this.#options.clientId);
         } catch {
             return null;
         }
+    }
+
+    /** Whether a token issued to this client is accepted: the client of this admin or a service client it names. */
+    #accepts(azp: unknown): boolean {
+        return azp === this.#options.clientId || (typeof azp === 'string' && (this.#options.serviceClients ?? []).includes(azp));
     }
 }

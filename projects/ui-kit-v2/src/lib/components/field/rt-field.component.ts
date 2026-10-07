@@ -39,6 +39,7 @@ function nextAutoId(): string {
 /**
  * Обёртка единой анатомии поля: label (+ опц. help-иконка с popover, + авто «*»
  * для required) сверху, спроецированный rt-контрол посередине, hint/error снизу.
+ * `required` объявляет поле обязательным там, где валидатора на контроле нет (шаблонная форма).
  * `hideRequiredMark` глушит авто-«*» — для форм, где все поля обязательны и
  * маркер лишний (логин).
  * `reserveHintSpace` держит под контролом строку высотой в одно сообщение даже
@@ -128,6 +129,14 @@ export class RtFieldComponent implements AfterContentInit {
     public readonly loading: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
+    /**
+     * Поле обязательно, хотя валидатора на контроле нет: шаблонная форма его не кладёт. Даёт «*» и
+     * ошибку под тронутым пустым полем. Форму недействительной не делает — решение о записи
+     * остаётся у формы.
+     */
+    public readonly required: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
     public readonly hideRequiredMark: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
@@ -140,6 +149,9 @@ export class RtFieldComponent implements AfterContentInit {
         // Реактивно прокидываем read-only режим в спроецированный контрол.
         effect((): void => {
             this.projectedControl()?.setReadonly(this.readonly());
+        });
+        effect((): void => {
+            this.projectedControl()?.setRequired(this.required());
         });
     }
 
