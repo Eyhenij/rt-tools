@@ -16,8 +16,8 @@
 - [x] 1.2 Register it in the workspace, the lint ban and the commit scopes
 - [x] 2.1 Carry over the block model, the parsing and the site page functions with their tests
 - [x] 2.2 Carry over the `.proto` files and generate the contract into the package
-- [>] 3.1 Write the spec, the scenarios and the bindings, and the README
-- [ ] 3.2 Run the tree checks
+- [x] 3.1 Write the spec, the scenarios and the bindings, and the README
+- [>] 3.2 Run the tree checks
 
 ## Decisions along the way
 
