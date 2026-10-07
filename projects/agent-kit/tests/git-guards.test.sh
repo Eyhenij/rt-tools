@@ -116,6 +116,35 @@ dt "SC-AK-1176 — заявка из второй копии читает вет
     "cd $COPY_HOME/copy && gh pr create --title '[RT-9] Сделано' --body x" deny
 rm -rf "$SESSION_TREE" "$OTHER_REPO" "$COPY_HOME"
 
+# --- SC-AK-1188…1189. Чужое дерево узнаётся и по пути от домашнего каталога ------------------
+# Оболочка раскрывает тильду до `cd`, а гард читает текст команды нераскрытым: путь с тильдой не
+# называл каталога, и команда считалась идущей в дереве сессии. Форма номера в заголовке при этом
+# бралась из профиля сессии, и законный заголовок соседа отбивался как заголовок без номера.
+dth() {
+    local label="$1" session="$2" home="$3" cmd="$4" want="$5" out
+    out="$(HOME="$home" CLAUDE_PROJECT_DIR="$session" input_cmd "$cmd" Bash "$session" \
+        | HOME="$home" CLAUDE_PROJECT_DIR="$session" "$HOOKS/git-guard-delivery.sh" 2>/dev/null \
+        | jq -r '.hookSpecificOutput.permissionDecision // "PASS"' 2>/dev/null)"
+    report "$label" "${out:-PASS}" "$want"
+}
+SESSION_TREE="$(fixture_repo_branched main main-work)"
+task_profile "$SESSION_TREE" false
+printf '%s\n' "RT_TASK_TITLE_RE='^\\[VM-[0-9]+\\]'" >> "$SESSION_TREE/.claude/rt-kit/project.sh"
+OTHER_REPO="$(fixture_repo RT-9-probe)"
+task_profile "$OTHER_REPO" true
+OTHER_HOME="$(dirname "$OTHER_REPO")"
+OTHER_NAME="$(basename "$OTHER_REPO")"
+
+dth "SC-AK-1188 — переход по пути с тильдой ведёт в чужое дерево" "$SESSION_TREE" "$OTHER_HOME" \
+    "cd ~/$OTHER_NAME && git checkout -b RT-9-other" PASS
+dth "SC-AK-1188 — переход через \$HOME ведёт туда же" "$SESSION_TREE" "$OTHER_HOME" \
+    "cd \$HOME/$OTHER_NAME && git checkout -b RT-9-other" PASS
+dth "SC-AK-1189 — заголовок заявки соседа судится его формой" "$SESSION_TREE" "$OTHER_HOME" \
+    "cd ~/$OTHER_NAME && gh pr create --title '[RT-9] Сделано' --body x" PASS
+dth "SC-AK-1189 — в дереве сессии тот же заголовок отбит её формой" "$SESSION_TREE" "$OTHER_HOME" \
+    "gh pr create --title '[RT-9] Сделано' --body x" deny
+rm -rf "$SESSION_TREE" "$OTHER_REPO"
+
 # --- SC-AK-830. Приставкой имени бывает не только ключ задач --------------------------------
 # Номер вынимает профиль: пока разбор был зашит в гард одной формой, такая ветка номера не
 # давала вовсе, и форма её не проверялась.

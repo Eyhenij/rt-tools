@@ -365,6 +365,9 @@ epic_pull="$(printf '%s' "$state" | jq -r '.epic // empty' 2>/dev/null)"
 # folders of all its tasks are taken apart.
 command -v rt_epic_own_pull >/dev/null 2>&1 && rt_epic_own_pull "$state"
 
+# A request in another repository is judged by the title form of that repository.
+command -v rt_delivery_title_re >/dev/null 2>&1 && title_re="$(rt_delivery_title_re "$title_re")"
+
 title=''
 if command -v perl >/dev/null 2>&1; then
     title="$(printf '%s' "$cmd" | perl -0ne '
