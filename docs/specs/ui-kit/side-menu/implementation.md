@@ -26,6 +26,7 @@ given from the root of the tree.
 - **On a narrow screen there is no pinning, and there is a search.** — `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.ts:isPinned`
 - **The submenu keeps its place while the pointer walks the strip.** — `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.scss:.rtui-sub-side-menu-content` — the placement of the panel is left to the framework's drawer, so the container of the drawer stays unscrollable
 - **The strip may hide the labels under its icons.** — `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.ts:isMainMenuTitlesShown`, the narrow width — `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.scss:rtui-side-menu--titles-hidden`
+- **A hovered submenu closes after a delay, not at the first step past its edge.** — `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.ts:subMenuCloseDelay`, the timer and the pointer reactions — `projects/ui-kit/src/lib/ui-kit/side-menu/menu/sub-menu-close-delay.ts:SubMenuCloseDelay`
 
 The scenarios of the subdomain are bound to the tests by the number in the title of a test, not by a table
 here: the bond is checked both ways by the checking of the specs.

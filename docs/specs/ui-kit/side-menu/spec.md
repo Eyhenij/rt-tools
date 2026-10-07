@@ -126,6 +126,12 @@ the kit does not count.
   default, keeps today's strip. At `false` the strip is narrower, the label of an item becomes its tooltip
   to the right and its accessible name, and the order and the icons of the items do not change. The
   consumer that pins the width of the strip by its own styling pins the narrow width as well.
+- **A hovered submenu closes after a delay, not at the first step past its edge.** The leaving of the
+  pointer from the panel, or a hovering of an item of the strip without sections, closes the hovered
+  submenu after `subMenuCloseDelay` milliseconds, 500 by default; at 0 it closes at once. A return of the
+  pointer onto the panel, or a hovering of an item with sections, within that time keeps it. A press of the
+  backing, a transition by an item and the closing by the keyboard close it at once, as before; a pinned
+  submenu and a submenu held by the search field are not touched by the delay.
 
 ## What is out of scope
 

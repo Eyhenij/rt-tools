@@ -58,6 +58,9 @@ export class BreakpointServiceStub {
 
 const SEARCH_FIELD: string = '[qa-dataid="side-menu-search"]';
 
+const SUB_MENU_DRAWER: string = 'mat-drawer';
+const RAIL_ITEM: string = '.rtui-side-menu-item';
+
 export const ITEMS: ISideMenu.Item[] = [
     {
         id: 'refs',
@@ -107,6 +110,7 @@ export const NESTED_ITEMS: ISideMenu.Item[] = [
             [favoritesCount]="count()"
             [isFavoritesSearchShown]="searchShown()"
             [isMainMenuTitlesShown]="titlesShown()"
+            [subMenuCloseDelay]="closeDelay()"
             (subMenuWidthChange)="width.set($event)" />
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -122,6 +126,8 @@ export class HostComponent {
     public readonly count: WritableSignal<string | undefined> = signal(undefined);
     public readonly searchShown: WritableSignal<boolean> = signal(true);
     public readonly titlesShown: WritableSignal<boolean> = signal(true);
+    /** Ноль — уход указателя закрывает сразу: так прежние сценарии читают итог без ожидания. */
+    public readonly closeDelay: WritableSignal<number> = signal(0);
 }
 
 export interface ISetup {
@@ -177,7 +183,7 @@ export function subItems(fixture: ComponentFixture<HostComponent>): HTMLElement[
 }
 
 export function hoverFirstItem(fixture: ComponentFixture<HostComponent>): void {
-    const trigger: HTMLElement = fixture.nativeElement.querySelector('.rtui-side-menu-item') as HTMLElement;
+    const trigger: HTMLElement = fixture.nativeElement.querySelector(RAIL_ITEM) as HTMLElement;
 
     trigger.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
     fixture.detectChanges();
@@ -193,9 +199,12 @@ export function typeInSearch(fixture: ComponentFixture<HostComponent>, query: st
     fixture.detectChanges();
 }
 
-/** Уход указателя с панели: незакреплённое подменю живёт наведением и на этом закрывается. */
+/**
+ * Уход указателя с панели: незакреплённое подменю живёт наведением и на этом закрывается — сразу
+ * при нулевой задержке стенда, через `subMenuCloseDelay` при ненулевой.
+ */
 export function leavePanel(fixture: ComponentFixture<HostComponent>): void {
-    const panel: HTMLElement = fixture.nativeElement.querySelector('mat-drawer') as HTMLElement;
+    const panel: HTMLElement = fixture.nativeElement.querySelector(SUB_MENU_DRAWER) as HTMLElement;
 
     panel.dispatchEvent(new MouseEvent('mouseleave', { bubbles: true }));
     fixture.detectChanges();
@@ -211,6 +220,22 @@ export function focusSearch(fixture: ComponentFixture<HostComponent>): void {
     fixture.detectChanges();
 }
 
+/** Возврат указателя на панель подменю. */
+export function enterPanel(fixture: ComponentFixture<HostComponent>): void {
+    const panel: HTMLElement = fixture.nativeElement.querySelector(SUB_MENU_DRAWER) as HTMLElement;
+
+    panel.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
+    fixture.detectChanges();
+}
+
+/** Наведение на пункт полосы по его номеру. */
+export function hoverItem(fixture: ComponentFixture<HostComponent>, index: number): void {
+    const items: HTMLElement[] = Array.from(fixture.nativeElement.querySelectorAll(RAIL_ITEM));
+
+    items[index].dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
+    fixture.detectChanges();
+}
+
 export function pin(fixture: ComponentFixture<HostComponent>): HTMLElement {
     return fixture.nativeElement.querySelector('[qa-dataid="side-menu-pin"]') as HTMLElement;
 }
@@ -221,7 +246,7 @@ export function pinButton(fixture: ComponentFixture<HostComponent>): HTMLElement
 
 /** Нажатие пункта полосы значков: у закреплённой моды это единственный способ сменить раздел. */
 export function clickRailItem(fixture: ComponentFixture<HostComponent>, index: number): void {
-    const items: HTMLElement[] = Array.from(fixture.nativeElement.querySelectorAll('.rtui-side-menu-item'));
+    const items: HTMLElement[] = Array.from(fixture.nativeElement.querySelectorAll(RAIL_ITEM));
 
     items[index].dispatchEvent(new MouseEvent('click', { bubbles: true }));
     fixture.detectChanges();
