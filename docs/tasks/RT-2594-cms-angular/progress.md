@@ -15,9 +15,10 @@
   into `site/src/lib/block/embed-src.function.ts` with its own provider list (SC-CMS-70). The page
   model, its assembly from the server answer, the rubric root tag and the sitemap are carried over
   into `site/src/lib/page/site-page.function.ts` (SC-CMS-71, SC-CMS-72); the rubric labels of the
-  former blog groups stay with the application. Left: the page client with the transfer state, the
-  six block components behind a registry, the page screen and the redirect resolver. The next free
-  scenario number is SC-CMS-73
+  former blog groups stay with the application. The page client with the transfer state is carried
+  over into `site/src/lib/page/site-pages-api.service.ts` (SC-CMS-73); the content type comes as a
+  parameter. Left: the six block components behind a registry, the page screen and the redirect
+  resolver. The next free scenario number is SC-CMS-74
 - **Uncommitted:** nothing
 - **Waiting for the owner:** no
 - **PR:** not open yet
