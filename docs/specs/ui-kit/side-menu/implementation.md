@@ -7,8 +7,8 @@ given from the root of the tree.
 - **A press of the switch and a pull of the edge write the choice into the menu's settings and report it outward.** — `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.ts:onSubMenuModeToggle`, `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.ts:#resize`, the pull itself — `projects/ui-kit/src/lib/ui-kit/side-menu/menu/sub-menu-resize.ts:SubMenuResize`
 - **A pinned submenu shows the active item.** — `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.ts:#pinnedSubMenu`
 - **The pinning does not change what is visible.** — `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.ts:#pinnedSubMenu`
-- **A press of an item of the strip moves the pinned submenu onto its section.** — `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.ts:#pickPinnedSubMenu`
-- **An item with an address of its own and without sections lifts the pinned submenu.** — `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.ts:#pickPinnedSubMenu`
+- **A press of an item of the strip moves the pinned submenu onto its section.** — `projects/ui-kit/src/lib/ui-kit/side-menu/menu/sub-menu-pinned-pick.ts:pickPinnedSubMenu`
+- **An item with an address of its own and without sections lifts the pinned submenu.** — `projects/ui-kit/src/lib/ui-kit/side-menu/menu/sub-menu-pinned-pick.ts:pickPinnedSubMenu`
 - **A pinned panel that has nothing to show takes no place.** — `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.scss:.rtui-sub-side-menu--opened`, `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.html:rtui-side-menu-resizer`
 - **A pinned submenu closes neither at the leaving of the pointer nor at a transition by its own item.** — `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.ts:toggleSubMenu`
 - **There is no backing under a pinned submenu.** — `projects/ui-kit/src/lib/ui-kit/side-menu/menu/rtui-side-menu.component.ts:isPinned`
