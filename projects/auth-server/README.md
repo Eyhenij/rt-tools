@@ -41,6 +41,9 @@ AuthServerModule.forRoot(authOptionsFromEnv(process.env, RIGHTS));
 the issuer, and `AUTH_SYNC_CLIENT_ID` names the sync client when it is not `rt-catalog-sync`.
 `AUTH_KEYS_URL` names where the keys of the realm are read when the server reaches Keycloak by
 another address than the browser does — from a container or an inner network.
+`AUTH_SERVICE_CLIENTS` is a comma list of service clients whose tokens the server accepts with the
+rights of `AUTH_CLIENT_ID`. Such a client has a service account holding the roles of that client;
+a command without a person signs in by it.
 
 ## Access
 

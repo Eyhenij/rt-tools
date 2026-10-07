@@ -2,10 +2,10 @@
 
 ## Where we stand
 
-- **State:** `этап-идёт`
+- **State:** `этапы-кончились`
 - **Stage:** 1 of 1 — The cargo commands sign in by a service client
-- **Done:** the grill, the plan; the server accepts named service clients; the realm client; the cargo commands
-- **Next step:** the receiver and the guides name the service client
+- **Done:** the grill, the plan; the server accepts named service clients; the realm client; the cargo commands; the receiver and the guides
+- **Next step:** the push gate, then take the folder apart and open the PR
 - **Uncommitted:** no
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -15,7 +15,7 @@
 - [x] 1.1 The auth server accepts the tokens of the service clients it names
 - [x] 1.2 The realm holds the service client of the cargo commands
 - [x] 1.3 The cargo commands sign in by the token of the service client
-- [>] 1.4 The receiver and the guides name the service client
+- [x] 1.4 The receiver and the guides name the service client
 
 ## Decisions along the way
 
