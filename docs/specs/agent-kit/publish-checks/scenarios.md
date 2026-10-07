@@ -37,6 +37,20 @@ Then the symbol from the depth of the chain is found, and the check is green
 
 Covered: `projects/agent-kit/tests/checks-package-imports.test.sh`.
 
+### SC-AK-1190 — the root re-exports entry points of the same package by the package name
+
+Given the published neighbour's root types re-export its entry point by the package name, and the
+manifest maps that entry point to its types file
+When the comparison of the imports goes
+Then the symbol of the entry point is found, and the check is green
+
+Given the neighbour's sources re-export an entry point by the package name, its directory holds
+`ng-package.json`, and the symbol is not published yet
+When the comparison of the imports goes without the strict mode
+Then the check passes and names the symbol as waiting for publishing
+
+Covered: `projects/agent-kit/tests/checks-package-imports.test.sh`.
+
 ### SC-AK-897 — probes and showcase stories are not judged
 
 Given the missing symbol is imported only in a probe and in a showcase story
