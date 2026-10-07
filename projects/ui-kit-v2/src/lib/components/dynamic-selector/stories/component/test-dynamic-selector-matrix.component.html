@@ -118,6 +118,13 @@
                             <rt-field [label]="inputCase.label">
                                 <rt-dynamic-input [formControl]="inputCase.control" />
                             </rt-field>
+                        } @else if (inputCase.fieldLabel) {
+                            <!-- Поле новой строки открывает шаг play истории: оно появляется по «Добавить». -->
+                            <rt-dynamic-input
+                                data-story-field-open
+                                [ariaLabel]="inputCase.name"
+                                [fieldLabel]="inputCase.fieldLabel"
+                                [formControl]="inputCase.control" />
                         } @else {
                             <rt-dynamic-input
                                 invitationGlyph="email"

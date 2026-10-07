@@ -213,14 +213,26 @@ export class TestRtDynamicSelectorMatrixComponent {
         { name: 'свои свойства окна', entities: STORY_PEOPLE.slice(0, 3), tuned: true },
     ];
 
-    /** Поле строк: приглашение с именем Material и подпись, которую даёт поле кита. */
+    /** Поле строк: приглашение с именем Material, подпись поля кита и подпись поля новой строки. */
     public readonly lookInputCases: readonly {
         readonly name: string;
         readonly label: string | null;
+        readonly fieldLabel: string | null;
         readonly control: FormControl<string[] | null>;
     }[] = [
-        { name: 'приглашение: имя Material', label: null, control: new FormControl<string[] | null>([]) },
-        { name: 'подпись поля кита', label: 'Почта для копий', control: new FormControl<string[] | null>(['anna@example.com']) },
+        { name: 'приглашение: имя Material', label: null, fieldLabel: null, control: new FormControl<string[] | null>([]) },
+        {
+            name: 'подпись поля кита',
+            label: 'Почта для копий',
+            fieldLabel: null,
+            control: new FormControl<string[] | null>(['anna@example.com']),
+        },
+        {
+            name: 'подпись поля новой строки',
+            label: null,
+            fieldLabel: 'Адрес для копии',
+            control: new FormControl<string[] | null>(['anna@example.com']),
+        },
     ];
 
     public readonly stateCases: readonly IRowsCase[] = [

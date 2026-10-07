@@ -262,3 +262,11 @@ When the person presses the add button
 Then the label is drawn above the list and points at the field of the new row
 
 Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/rt-dynamic-selector-look.spec.ts`.
+
+### SC-UKV-720 — the field of a new row shows the caller's label
+
+Given a string list whose caller names a label for the field of a new row, or names none
+When the person presses the add button
+Then the label stands above the field and leads to it, and without it the field stands bare
+
+Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/rt-dynamic-selector-look.spec.ts`.

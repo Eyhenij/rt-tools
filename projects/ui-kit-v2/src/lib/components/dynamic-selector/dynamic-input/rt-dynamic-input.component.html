@@ -31,17 +31,35 @@
     </rt-dynamic-selector-list>
 
     @if (isFieldShown()) {
-        <rt-input
-            #field
-            rtElem="field"
-            qa-dataid="dynamic-input-field"
-            [appearance]="fieldAppearance()"
-            [controlId]="effectiveControlId()"
-            [placeholder]="fieldPlaceholder()"
-            [ngModel]="draft()"
-            (ngModelChange)="draft.set($event ?? '')"
-            (keydown.enter)="onCommit()"
-            (focusout)="onCommit()" />
+        <!-- Подпись поля рисует rt-field: у rt-input своей нет. Обёртка стоит только при подписи —
+             пустая добавила бы зазор под полем и сдвинула прежний вид. -->
+        @if (fieldLabel(); as label) {
+            <rt-field qa-dataid="dynamic-input-field-label" [label]="label">
+                <rt-input
+                    #field
+                    rtElem="field"
+                    qa-dataid="dynamic-input-field"
+                    [appearance]="fieldAppearance()"
+                    [controlId]="effectiveControlId()"
+                    [placeholder]="fieldPlaceholder()"
+                    [ngModel]="draft()"
+                    (ngModelChange)="draft.set($event ?? '')"
+                    (keydown.enter)="onCommit()"
+                    (focusout)="onCommit()" />
+            </rt-field>
+        } @else {
+            <rt-input
+                #field
+                rtElem="field"
+                qa-dataid="dynamic-input-field"
+                [appearance]="fieldAppearance()"
+                [controlId]="effectiveControlId()"
+                [placeholder]="fieldPlaceholder()"
+                [ngModel]="draft()"
+                (ngModelChange)="draft.set($event ?? '')"
+                (keydown.enter)="onCommit()"
+                (focusout)="onCommit()" />
+        }
     }
 
     @if (isInvitationShown()) {

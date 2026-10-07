@@ -68,6 +68,7 @@ class SelectorHostComponent {
             [invitationButtonAppearance]="invitationButtonAppearance()"
             [clearIcon]="clearIcon()"
             [fieldAppearance]="fieldAppearance()"
+            [fieldLabel]="fieldLabel()"
             [formControl]="control" />
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -81,6 +82,7 @@ class InputHostComponent {
     public readonly invitationButtonAppearance: WritableSignal<IButton.Appearance> = signal<IButton.Appearance>('outlined');
     public readonly clearIcon: WritableSignal<IRtIcon.Name> = signal<IRtIcon.Name>('close');
     public readonly fieldAppearance: WritableSignal<IRtInput.Appearance> = signal<IRtInput.Appearance>('outline');
+    public readonly fieldLabel: WritableSignal<string> = signal('');
 }
 
 @Component({
@@ -267,5 +269,33 @@ describe('RtDynamicInputComponent — вид, который задаёт при
 
         expect(field).not.toBeNull();
         expect((field?.componentInstance as RtInputComponent | undefined)?.appearance()).toBe('fill');
+    });
+
+    it('SC-UKV-720 — подпись поля новой строки стоит над полем и ведёт к нему', async (): Promise<void> => {
+        const fixture: ComponentFixture<InputHostComponent> = host(InputHostComponent, (it: InputHostComponent): void =>
+            it.fieldLabel.set('Адрес для копии')
+        );
+
+        (qa(fixture, 'dynamic-input-add')?.nativeElement as HTMLButtonElement).click();
+        await settle(fixture);
+        const wrapper: DebugElement | null = qa(fixture, 'dynamic-input-field-label');
+        const label: HTMLLabelElement | null = (wrapper?.nativeElement as HTMLElement | undefined)?.querySelector('label') ?? null;
+        const field: HTMLInputElement | null = (fixture.nativeElement as HTMLElement).querySelector(
+            '[qa-dataid="dynamic-input-field"] input'
+        );
+
+        expect(textOf(label)).toContain('Адрес для копии');
+        expect(label?.htmlFor).toBeTruthy();
+        expect(field?.id).toBe(label?.htmlFor);
+    });
+
+    it('SC-UKV-720 — без подписи поле новой строки стоит без обёртки', async (): Promise<void> => {
+        const fixture: ComponentFixture<InputHostComponent> = host(InputHostComponent);
+
+        (qa(fixture, 'dynamic-input-add')?.nativeElement as HTMLButtonElement).click();
+        await settle(fixture);
+
+        expect(qa(fixture, 'dynamic-input-field')).not.toBeNull();
+        expect(qa(fixture, 'dynamic-input-field-label')).toBeNull();
     });
 });

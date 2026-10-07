@@ -146,6 +146,11 @@ row 83):
 
 > все в этотй ветке + проверка на регрессий после правок
 
+The owner's next request, 7 October 2026, verbatim:
+
+> rt-dynamic-input: добавить вход fieldLabel: string и передавать его подписью в rt-input поля. В v1
+> поле показывало mat-label (у нас Recipient Email в панели рассылки), в v2 подписи у поля нет.
+
 ## What the tree already has
 
 - `rt-dynamic-selector` draws the invitation button as `rtButton appearance="outlined"` with no
@@ -272,3 +277,7 @@ list and the dynamic-input remarks.
   colour set on its body. The input zone of the text editor is drawn by Quill without a kit class
   and takes the quiet bar back by a rule of its own; a sweep of the kit's scrolling rules found no
   other such node. Row 64.
+- **`fieldLabel` wraps the field of a new row in `rt-field` only when the label is set.** `rt-input`
+  has no label input of its own: the kit draws a label by `rt-field`. A wrapper standing always
+  would add the field's gap under the input even with an empty label and move the default look, so
+  the field is drawn in one of two branches; a label switched while the field is open recreates it.

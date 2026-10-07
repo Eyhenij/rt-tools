@@ -30,6 +30,7 @@ import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
 import { RtEmptyStateComponent } from '@rt-tools/ui-kit-v2/empty-state';
 import { RtFormControlBase } from '@rt-tools/ui-kit-v2/form-control';
 import { IButton, IRtIcon, IRtInput } from '@rt-tools/ui-kit-v2/core';
+import { RtFieldComponent } from '@rt-tools/ui-kit-v2/field';
 import { RtInputComponent } from '@rt-tools/ui-kit-v2/input';
 import { TRtRadius } from '@rt-tools/ui-kit-v2/core';
 import { RtDynamicSelectorListComponent } from '../list/rt-dynamic-selector-list.component';
@@ -65,6 +66,7 @@ const BEM_BLOCK: string = 'rt-dynamic-input';
         RtButtonDirective,
         RtDynamicSelectorListComponent,
         RtEmptyStateComponent,
+        RtFieldComponent,
         RtInputComponent,
     ],
     providers: [
@@ -146,6 +148,8 @@ export class RtDynamicInputComponent extends RtFormControlBase<string[]> {
     public readonly clearIcon: InputSignal<IRtIcon.Name> = input<IRtIcon.Name>('close');
     /** Вид поля, в которое вводят новую строку. */
     public readonly fieldAppearance: InputSignal<IRtInput.Appearance> = input<IRtInput.Appearance>('outline');
+    /** Подпись поля новой строки; пустая — поле без подписи, как раньше. */
+    public readonly fieldLabel: InputSignal<string> = input<string>('');
     /** Корзина строк; без неё строки убирает только очистка или сам вызывающий. */
     public readonly removeShown: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
         transform: booleanAttribute,
