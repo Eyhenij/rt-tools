@@ -1,6 +1,6 @@
 # The server of the entry module
 
-**Status:** in force · **Revision:** 2026-10-05 · **Scenario prefix:** `SC-AUTH`
+**Status:** in force · **Revision:** 2026-10-07 · **Scenario prefix:** `SC-AUTH`
 **Depends on:** `auth/contract`
 **Laws:** `verifiability`, `observability`
 **Procedures:** none — the package checks the procedures of the application that installs it
@@ -36,6 +36,10 @@ Not applicable: the package has no screens.
 - **A token is accepted only from the realm, within its term and for the client of this admin.**
   The realm signs it by its key and names itself the issuer. Otherwise a token of another admin of
   the same realm opens this one.
+- **A token of a service client the server names is accepted with the rights of the admin client.**
+  A command that calls the admin without a person signs in by its own confidential client. Its
+  rights are the roles of the admin client on its service account, so the server reads one place
+  for both kinds of callers.
 - **A call without an accepted token is refused as not signed in, a call without the right as not
   allowed.** The first is cured by signing in, the second is not, and the person is told which.
 - **A refusal does not name the missing right or what in the token did not match.** Otherwise the
@@ -94,7 +98,8 @@ Not applicable.
 
 ### Several objects
 
-Each admin server names its own client; a token of another client is refused.
+Each admin server names its own client and its service clients; a token of any other client is
+refused.
 
 ## Decisions
 
@@ -108,5 +113,6 @@ None.
 
 ## History of changes
 
+- 2026-10-07 — the server accepts the tokens of the service clients it names, task RT-2582.
 - 2026-10-05 — the server package, task RT-2532.
 - 2026-10-06 — the options are read from the environment by the package, task RT-2576.
