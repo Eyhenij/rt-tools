@@ -1,2 +1,2 @@
-// The site entry of the CMS client.
-export {};
+// The site entry of the CMS client: the block renderers, the page data and the redirect resolver.
+export * from './lib/block/embed-src.function';

@@ -11,7 +11,9 @@
   components (accordion, button, embed, image, pros-cons, quote) in the site blog `ui` library, the
   page client, its mapper, the embed address check and the stored-pages helper in the blog
   `data-access` library, and the page screen (400 lines) in the blog `feature/article` library;
-  the embed check and the stored-pages helper carry their tests
+  the embed check and the stored-pages helper carry their tests. The embed check is carried over
+  into `site/src/lib/block/embed-src.function.ts` with its own provider list (SC-CMS-70); the next
+  free scenario number is SC-CMS-71
 - **Uncommitted:** nothing
 - **Waiting for the owner:** no
 - **PR:** not open yet
