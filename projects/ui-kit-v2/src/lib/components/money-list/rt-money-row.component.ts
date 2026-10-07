@@ -11,7 +11,7 @@ import {
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
-import { RtSkeletonComponent } from '../skeleton/rt-skeleton.component';
+import { RtSkeletonComponent } from '@rt-tools/ui-kit-v2/skeleton';
 
 const BEM_BLOCK: string = 'rt-money-row';
 

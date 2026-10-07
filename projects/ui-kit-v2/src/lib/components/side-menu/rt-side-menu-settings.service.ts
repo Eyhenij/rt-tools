@@ -13,8 +13,8 @@ import {
 
 import { LOCAL_STORAGE, PlatformService, WINDOW } from '@rt-tools/core';
 
-import { ERtStorageKeys } from '../../platform/storage-keys.enum';
-import { IRtIcon } from '../icon';
+import { ERtStorageKeys } from '@rt-tools/ui-kit-v2/core';
+import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 import { moveVisibleSideMenuFavorite, normalizeSideMenuFavorites } from './rt-side-menu-favorites.logic';
 import {
     normalizeSideMenuId,

@@ -1,4 +1,4 @@
-import { IRtIcon } from '../icon/rt-icon.model';
+import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 
 /** Иконка Word-семейства (несколько расширений делят один глиф). */
 const ICON_WORD: IRtIcon.Name = 'attach-docx-doc';

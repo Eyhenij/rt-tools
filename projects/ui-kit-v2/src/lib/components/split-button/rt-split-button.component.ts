@@ -16,10 +16,10 @@ import {
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
-import { rtKitLabel } from '../../i18n';
-import { RtButtonDirective } from '../button/rt-button.directive';
-import { RtPopoverDirective } from '../popover/rt-popover.directive';
-import { RtRadiusDirective } from '../radius/rt-radius.directive';
+import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
+import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
+import { RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
+import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 import { IRtSplitButton } from './rt-split-button.model';
 
 const BEM_BLOCK: string = 'rt-split-button';

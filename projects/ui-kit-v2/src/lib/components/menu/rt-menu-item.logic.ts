@@ -1,5 +1,5 @@
-import { materialPairOf } from '../icon/rt-icon-glyph.logic';
-import { IRtIcon } from '../icon/rt-icon.model';
+import { materialPairOf } from '@rt-tools/ui-kit-v2/icon';
+import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 
 /** Значок пункта: свой `icon`, а без него — пара имени Material из перечня кита. */
 export function menuItemIconName(icon: IRtIcon.Name | null, glyph: string | null): IRtIcon.Name | null {

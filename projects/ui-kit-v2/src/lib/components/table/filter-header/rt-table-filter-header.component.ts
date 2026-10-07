@@ -22,17 +22,17 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 import { EFilterOperatorType, IFilterModel, TFilterOperatorType } from '@rt-tools/utils';
 
-import { TRtKitLabelKey } from '../../../i18n/rt-kit-labels.model';
-import { rtKitLabel } from '../../../i18n/rt-kit-labels.providers';
+import { TRtKitLabelKey } from '@rt-tools/ui-kit-v2/core';
+import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
 
-import { RtDatePickerComponent } from '../../date-picker/rt-date-picker.component';
-import { RtIconButtonComponent } from '../../icon-button/rt-icon-button.component';
-import { RtInputNumberComponent } from '../../input-number/rt-input-number.component';
-import { RtInputComponent } from '../../input/rt-input.component';
-import { RtMenuItemComponent } from '../../menu/rt-menu-item.component';
-import { RtPopoverDirective } from '../../popover/rt-popover.directive';
-import { IRtSelect } from '../../select/rt-select.model';
-import { RtSelectComponent } from '../../select/rt-select.component';
+import { RtDatePickerComponent } from '@rt-tools/ui-kit-v2/date-picker';
+import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
+import { RtInputNumberComponent } from '@rt-tools/ui-kit-v2/input-number';
+import { RtInputComponent } from '@rt-tools/ui-kit-v2/input';
+import { RtMenuItemComponent } from '@rt-tools/ui-kit-v2/menu';
+import { RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
+import { IRtSelect } from '@rt-tools/ui-kit-v2/select';
+import { RtSelectComponent } from '@rt-tools/ui-kit-v2/select';
 import {
     TRtTableFilterInput,
     TRtTableFilterValue,

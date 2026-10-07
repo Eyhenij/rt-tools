@@ -1,4 +1,4 @@
-import { TRtKitLabelKey } from '../../i18n';
+import { TRtKitLabelKey } from '@rt-tools/ui-kit-v2/core';
 
 /** Контракт счётчика common/ui. */
 

@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/
 
 import { BlockDirective } from '@rt-tools/core';
 
-import { RtRadiusDirective } from '../radius/rt-radius.directive';
+import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 
 const BEM_BLOCK: string = 'rt-money-list';
 

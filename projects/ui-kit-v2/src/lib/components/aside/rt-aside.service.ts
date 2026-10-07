@@ -6,9 +6,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { EMPTY, map, merge, mergeMap, Observable, Subject, Subscriber, takeUntil } from 'rxjs';
 
-import { IRtKitConfig } from '../../config/rt-kit-config.model';
-import { rtKitDefault } from '../../config/rt-kit-config.providers';
-import { carryThemeScopeOfFocus, materialPresetClassesOfFocus } from '../../util/material-preset';
+import { IRtKitConfig } from '@rt-tools/ui-kit-v2/core';
+import { rtKitDefault } from '@rt-tools/ui-kit-v2/core';
+import { carryThemeScopeOfFocus, materialPresetClassesOfFocus } from '@rt-tools/ui-kit-v2/core';
 import { RtAsideRef, TRtAsideCloseRequest } from './rt-aside-ref';
 import { RT_ASIDE_DATA } from './rt-aside.tokens';
 

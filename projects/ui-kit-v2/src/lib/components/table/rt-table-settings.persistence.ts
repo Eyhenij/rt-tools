@@ -5,7 +5,7 @@ import { mergeMap, Observable, Subject } from 'rxjs';
 
 import { IDBStorageService } from '@rt-tools/core';
 
-import { ERtStorageKeys } from '../../platform';
+import { ERtStorageKeys } from '@rt-tools/ui-kit-v2/core';
 import { IRtTable } from './rt-table.model';
 
 /** Запрос на запись настроек колонок — то, что уезжает в объявленный поток записи. */

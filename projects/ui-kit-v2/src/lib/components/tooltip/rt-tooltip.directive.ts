@@ -21,7 +21,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-import { carryThemeScope, materialPresetClassesOf } from '../../util/material-preset';
+import { carryThemeScope, materialPresetClassesOf } from '@rt-tools/ui-kit-v2/core';
 import { RtTooltipComponent } from './rt-tooltip.component';
 import { isTooltipTextCut, tooltipPositions } from './rt-tooltip.logic';
 import { IRtTooltip } from './rt-tooltip.model';

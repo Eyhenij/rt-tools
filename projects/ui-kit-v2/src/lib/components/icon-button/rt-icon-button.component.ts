@@ -16,11 +16,11 @@ import {
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { RtIconComponent } from '../icon/rt-icon.component';
-import { IRtIcon } from '../icon/rt-icon.model';
-import { RtRadiusDirective } from '../radius/rt-radius.directive';
-import { RtRippleDirective } from '../ripple';
-import { RtTooltipDirective } from '../tooltip/rt-tooltip.directive';
+import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
+import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
+import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
+import { RtRippleDirective } from '@rt-tools/ui-kit-v2/ripple';
+import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
 import { IRtIconButton } from './rt-icon-button.model';
 
 const BEM_BLOCK: string = 'rt-icon-button';

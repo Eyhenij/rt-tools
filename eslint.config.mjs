@@ -45,16 +45,23 @@ export default [
         },
     },
     {
-        // Второй вход пакета второго кита берёт первый по имени пакета: сборщик пакета собирает
-        // входы порознь, и относительный путь в первый вход он отвергает. Файл входа лежит не над
-        // исходниками, поэтому правило само второй вход не узнаёт — исключение названо здесь.
-        files: ['projects/ui-kit-v2/src/rich-editor/**/*.ts'],
+        // Второй кит собран точками входа: ядро, по одной на компонент и `rich-editor`. Вход берёт
+        // соседний по имени пакета: сборщик пакета собирает входы порознь, и относительный путь в
+        // чужой вход он отвергает. Файлы входов лежат не над исходниками, поэтому правило само
+        // входы не узнаёт — исключение названо здесь.
+        files: ['projects/ui-kit-v2/src/**/*.ts'],
+        ignores: ['**/*.spec.ts', '**/stories/**', 'projects/ui-kit-v2/src/showcase/**', 'projects/ui-kit-v2/src/testing/**'],
         rules: {
             '@nx/enforce-module-boundaries': [
                 'error',
                 {
                     enforceBuildableLibDependency: true,
-                    allow: ['@rt-tools/ui-kit-v2', '@rt-tools/agent-kit/cargo', '^.*/eslint(\\.base)?\\.config\\.[cm]?[jt]s$'],
+                    allow: [
+                        '@rt-tools/ui-kit-v2',
+                        '@rt-tools/ui-kit-v2/*',
+                        '@rt-tools/agent-kit/cargo',
+                        '^.*/eslint(\\.base)?\\.config\\.[cm]?[jt]s$',
+                    ],
                     depConstraints: allBoundaries,
                 },
             ],
@@ -349,6 +356,25 @@ export default [
                 },
                 {
                     selector: 'ExportAllDeclaration[source.value=/^@rt-tools\\//]',
+                    message: 'Не реэкспортируй символ соседнего пакета @rt-tools. Импортируй его из того пакета, которому он принадлежит.',
+                },
+            ],
+        },
+    },
+    {
+        // Корень второго кита переотдаёт свои же точки входа: так приложение берёт компонент из
+        // корня, а сборщик кладёт в кусок только модуль этого компонента. Соседний пакет
+        // реэкспортировать по-прежнему нельзя.
+        files: ['projects/ui-kit-v2/src/public-api.ts'],
+        rules: {
+            'no-restricted-syntax': [
+                'error',
+                {
+                    selector: 'ExportNamedDeclaration[source.value=/^@rt-tools\\//]:not([source.value=/^@rt-tools\\/ui-kit-v2\\//])',
+                    message: 'Не реэкспортируй символ соседнего пакета @rt-tools. Импортируй его из того пакета, которому он принадлежит.',
+                },
+                {
+                    selector: 'ExportAllDeclaration[source.value=/^@rt-tools\\//]:not([source.value=/^@rt-tools\\/ui-kit-v2\\//])',
                     message: 'Не реэкспортируй символ соседнего пакета @rt-tools. Импортируй его из того пакета, которому он принадлежит.',
                 },
             ],

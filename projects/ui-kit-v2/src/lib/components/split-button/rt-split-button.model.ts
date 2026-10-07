@@ -1,4 +1,4 @@
-import { IButton } from '../button/rt-button.model';
+import { IButton } from '@rt-tools/ui-kit-v2/core';
 
 /**
  * Модель `rt-split-button`: один корневой неймспейс с префиксом `I`.

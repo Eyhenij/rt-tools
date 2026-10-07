@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
-import { IButton } from '../../../button';
+import { IButton } from '../../../button/rt-button.model';
 import { IRtIcon } from '../../../icon/rt-icon.model';
 import { IRtImageCropper } from '../../../image-cropper';
 import { RtImageUploadComponent } from '../../rt-image-upload.component';
