@@ -559,10 +559,36 @@ export type TRtDesignTokenName =
 
 /** The name of a consumer's handle — a property the kit deliberately does not declare. */
 export type TRtConsumerHandleName =
+    | '--rt-action-bar-action-bg-hover'
+    | '--rt-action-bar-action-color-danger'
+    | '--rt-action-bar-action-focus-shadow'
+    | '--rt-action-bar-action-font-size'
+    | '--rt-action-bar-action-height'
+    | '--rt-action-bar-action-padding-block'
+    | '--rt-action-bar-action-padding-inline'
+    | '--rt-action-bar-action-radius'
+    | '--rt-action-bar-action-weight'
+    | '--rt-action-bar-bg'
+    | '--rt-action-bar-close-icon-size'
+    | '--rt-action-bar-close-size'
+    | '--rt-action-bar-color'
+    | '--rt-action-bar-counter-font-size'
+    | '--rt-action-bar-counter-weight'
+    | '--rt-action-bar-font-size'
+    | '--rt-action-bar-gap'
+    | '--rt-action-bar-holder-bottom'
+    | '--rt-action-bar-holder-enter-duration'
+    | '--rt-action-bar-holder-inline'
+    | '--rt-action-bar-holder-leave-duration'
+    | '--rt-action-bar-icon-gap'
+    | '--rt-action-bar-icon-size'
     | '--rt-action-bar-menu-bg'
     | '--rt-action-bar-menu-color'
     | '--rt-action-bar-menu-radius'
     | '--rt-action-bar-menu-shadow'
+    | '--rt-action-bar-padding'
+    | '--rt-action-bar-radius'
+    | '--rt-action-bar-shadow'
     | '--rt-aside-bg'
     | '--rt-aside-content-inset'
     | '--rt-aside-error-margin-block'
@@ -589,12 +615,49 @@ export type TRtConsumerHandleName =
     | '--rt-dialog-title-transform'
     | '--rt-dialog-title-weight'
     | '--rt-dialog-width'
+    | '--rt-dynamic-selector-list-add-color'
+    | '--rt-dynamic-selector-popup-bg'
+    | '--rt-dynamic-selector-popup-border-width'
+    | '--rt-dynamic-selector-popup-button-font-size'
+    | '--rt-dynamic-selector-popup-button-height'
+    | '--rt-dynamic-selector-popup-empty-icon-size'
+    | '--rt-dynamic-selector-popup-empty-icon-wrap-bg'
+    | '--rt-dynamic-selector-popup-empty-text-color'
+    | '--rt-dynamic-selector-popup-empty-text-size'
+    | '--rt-dynamic-selector-popup-empty-text-weight'
+    | '--rt-dynamic-selector-popup-foot-border-width'
+    | '--rt-dynamic-selector-popup-max-height'
+    | '--rt-dynamic-selector-popup-min-height'
+    | '--rt-dynamic-selector-popup-nav-color'
+    | '--rt-dynamic-selector-popup-padding'
+    | '--rt-dynamic-selector-popup-radius'
+    | '--rt-dynamic-selector-popup-shadow'
+    | '--rt-dynamic-selector-popup-width'
     | '--rt-header-content-max-width'
     | '--rt-header-height'
     | '--rt-icon-button-bg'
     | '--rt-icon-button-bg-hover'
     | '--rt-icon-button-size'
+    | '--rt-icon-color-danger'
+    | '--rt-icon-color-disabled'
+    | '--rt-icon-color-info'
+    | '--rt-icon-color-inverse'
+    | '--rt-icon-color-muted'
+    | '--rt-icon-color-primary'
+    | '--rt-icon-color-success'
+    | '--rt-icon-color-warning'
     | '--rt-icon-glyph-font'
+    | '--rt-icon-glyph-grade'
+    | '--rt-icon-glyph-opsz'
+    | '--rt-icon-glyph-weight'
+    | '--rt-icon-size-2xl'
+    | '--rt-icon-size-3xl'
+    | '--rt-icon-size-4xl'
+    | '--rt-icon-size-lg'
+    | '--rt-icon-size-md'
+    | '--rt-icon-size-sm'
+    | '--rt-icon-size-xl'
+    | '--rt-icon-size-xs'
     | '--rt-logo-tagline'
     | '--rt-logo-tagline-dark'
     | '--rt-logo-wordmark'
@@ -1190,10 +1253,36 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
 
 /** All the consumer's handles: the value comes from the application, until then the fallback works. */
 export const RT_CONSUMER_HANDLE_NAMES: readonly TRtConsumerHandleName[] = [
+    '--rt-action-bar-action-bg-hover',
+    '--rt-action-bar-action-color-danger',
+    '--rt-action-bar-action-focus-shadow',
+    '--rt-action-bar-action-font-size',
+    '--rt-action-bar-action-height',
+    '--rt-action-bar-action-padding-block',
+    '--rt-action-bar-action-padding-inline',
+    '--rt-action-bar-action-radius',
+    '--rt-action-bar-action-weight',
+    '--rt-action-bar-bg',
+    '--rt-action-bar-close-icon-size',
+    '--rt-action-bar-close-size',
+    '--rt-action-bar-color',
+    '--rt-action-bar-counter-font-size',
+    '--rt-action-bar-counter-weight',
+    '--rt-action-bar-font-size',
+    '--rt-action-bar-gap',
+    '--rt-action-bar-holder-bottom',
+    '--rt-action-bar-holder-enter-duration',
+    '--rt-action-bar-holder-inline',
+    '--rt-action-bar-holder-leave-duration',
+    '--rt-action-bar-icon-gap',
+    '--rt-action-bar-icon-size',
     '--rt-action-bar-menu-bg',
     '--rt-action-bar-menu-color',
     '--rt-action-bar-menu-radius',
     '--rt-action-bar-menu-shadow',
+    '--rt-action-bar-padding',
+    '--rt-action-bar-radius',
+    '--rt-action-bar-shadow',
     '--rt-aside-bg',
     '--rt-aside-content-inset',
     '--rt-aside-error-margin-block',
@@ -1220,12 +1309,49 @@ export const RT_CONSUMER_HANDLE_NAMES: readonly TRtConsumerHandleName[] = [
     '--rt-dialog-title-transform',
     '--rt-dialog-title-weight',
     '--rt-dialog-width',
+    '--rt-dynamic-selector-list-add-color',
+    '--rt-dynamic-selector-popup-bg',
+    '--rt-dynamic-selector-popup-border-width',
+    '--rt-dynamic-selector-popup-button-font-size',
+    '--rt-dynamic-selector-popup-button-height',
+    '--rt-dynamic-selector-popup-empty-icon-size',
+    '--rt-dynamic-selector-popup-empty-icon-wrap-bg',
+    '--rt-dynamic-selector-popup-empty-text-color',
+    '--rt-dynamic-selector-popup-empty-text-size',
+    '--rt-dynamic-selector-popup-empty-text-weight',
+    '--rt-dynamic-selector-popup-foot-border-width',
+    '--rt-dynamic-selector-popup-max-height',
+    '--rt-dynamic-selector-popup-min-height',
+    '--rt-dynamic-selector-popup-nav-color',
+    '--rt-dynamic-selector-popup-padding',
+    '--rt-dynamic-selector-popup-radius',
+    '--rt-dynamic-selector-popup-shadow',
+    '--rt-dynamic-selector-popup-width',
     '--rt-header-content-max-width',
     '--rt-header-height',
     '--rt-icon-button-bg',
     '--rt-icon-button-bg-hover',
     '--rt-icon-button-size',
+    '--rt-icon-color-danger',
+    '--rt-icon-color-disabled',
+    '--rt-icon-color-info',
+    '--rt-icon-color-inverse',
+    '--rt-icon-color-muted',
+    '--rt-icon-color-primary',
+    '--rt-icon-color-success',
+    '--rt-icon-color-warning',
     '--rt-icon-glyph-font',
+    '--rt-icon-glyph-grade',
+    '--rt-icon-glyph-opsz',
+    '--rt-icon-glyph-weight',
+    '--rt-icon-size-2xl',
+    '--rt-icon-size-3xl',
+    '--rt-icon-size-4xl',
+    '--rt-icon-size-lg',
+    '--rt-icon-size-md',
+    '--rt-icon-size-sm',
+    '--rt-icon-size-xl',
+    '--rt-icon-size-xs',
     '--rt-logo-tagline',
     '--rt-logo-tagline-dark',
     '--rt-logo-wordmark',
