@@ -33,7 +33,7 @@ Not applicable: the domain itself has no screens; the Angular subdomain names it
 - **The contract package imports no framework: neither Angular, nor NestJS, nor RxJS.** The server
   and the client read one model, and a framework in the contract would tie one side to the other.
 
-The rest of the rules live in the subdomains: `contract/spec.md` for now.
+The rest of the rules live in the subdomains: `contract/spec.md` and `server/spec.md`.
 
 ## What is out of scope
 
@@ -85,3 +85,4 @@ None.
 ## History of changes
 
 - 2026-10-07 — the domain and the contract subdomain, task RT-2592.
+- 2026-10-07 — the server subdomain, task RT-2593.

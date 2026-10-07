@@ -5,7 +5,7 @@
 - **State:** `этап-идёт`
 - **Stage:** 3 of 3 — The spec and the checks
 - **Done:** grill, plan, stage 1: the package builds, the rule, mapping and scheduler tests pass
-- **Next step:** the spec, the scenarios, the bindings and the README
+- **Next step:** run the tree checks
 - **Uncommitted:** no
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -17,8 +17,8 @@
 - [x] 2.1 Carry over the port and the admin and site services with the access maps
 - [x] 2.2 Carry over the storage helpers over structural delegates
 - [x] 2.3 Carry over the media library service, its ports and the copies backfill
-- [>] 3.1 Write the spec, the scenarios and the bindings, and the README
-- [ ] 3.2 Run the tree checks
+- [x] 3.1 Write the spec, the scenarios and the bindings, and the README
+- [>] 3.2 Run the tree checks
 
 ## Decisions along the way
 
