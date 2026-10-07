@@ -1,5 +1,7 @@
 # Grill
 
+Task RT-2582 · the PR into the epic branch RT-2575
+
 ## The owner request
 
 > я вмержил https://github.com/Eyhenij/rt-tools/pull/2559, подтягивай свежий main и чисти вмерженные ветки как локально так и в ремоуте, выпускай итоговые пакеты auth и затем мигрируй логин из message bus на новый auth
@@ -48,3 +50,11 @@ of the rights.
 ## What is left unclear
 
 - The secret of the production client is created in the Keycloak of production, task RT-2581.
+
+## Decisions along the way
+
+- **The sign-in code lives in one module the three cargo commands import.** Reading, closing and
+  picking the fixed records signed in by copies of one cookie sign-in; one copy left is one place
+  to change next time.
+- **The production client is not created by this task.** The realm of production gets it with
+  task RT-2581, together with `AUTH_SERVICE_CLIENTS` in the production environment.
