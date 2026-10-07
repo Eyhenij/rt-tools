@@ -13,6 +13,7 @@ allowBuilds:
   msgpackr-extract: true
   nx: true
   unrs-resolver: true
+  '@bufbuild/buf': false
 # Security patches for transitive build-tooling dependencies whose direct parents
 # still pin a vulnerable range. None of these ship inside the published packages —
 # they exist only in the dev/build graph. Drop an entry once the parent bumps it itself.
