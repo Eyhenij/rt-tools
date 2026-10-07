@@ -109,6 +109,10 @@
                         <a
                             rtBlock="rtui-side-menu-item"
                             tabindex="0"
+                            matTooltipPosition="right"
+                            [matTooltip]="item?.name ?? ''"
+                            [matTooltipDisabled]="isMainMenuTitlesShown()"
+                            [attr.aria-label]="isMainMenuTitlesShown() ? null : item?.name"
                             [rtNavigationDirective]="item?.link"
                             (mouseenter)="toggleSubMenu(item)"
                             (click)="onClickMenu(item)"
@@ -123,7 +127,7 @@
                                 </mat-list-item>
                             }
 
-                            @if (item?.name) {
+                            @if (item?.name && isMainMenuTitlesShown()) {
                                 <div rtElem="title">{{ item.name }}</div>
                             }
                         </a>

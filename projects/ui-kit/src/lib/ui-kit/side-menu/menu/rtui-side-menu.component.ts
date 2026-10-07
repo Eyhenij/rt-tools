@@ -6,7 +6,6 @@ import {
     computed,
     contentChild,
     DestroyRef,
-    Directive,
     ElementRef,
     inject,
     input,
@@ -27,10 +26,10 @@ import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { MatListItem, MatListItemIcon, MatNavList } from '@angular/material/list';
 import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
+import { MatTooltip } from '@angular/material/tooltip';
 
 import { BlockDirective, BreakpointService, ElemDirective, ModDirective } from '@rt-tools/core';
-import { TNullable } from '@rt-tools/utils';
-import { transformArrayInput } from '@rt-tools/utils';
+import { TNullable, transformArrayInput } from '@rt-tools/utils';
 import { RtIconOutlinedDirective, RtNavigationDirective, RtScrollToElementDirective } from '@rt-tools/core';
 import {
     clampSubMenuWidth,
@@ -59,16 +58,7 @@ import { RtuiSubMenuHoldService } from './rtui-sub-menu-hold.service';
 import { RtuiSideMenuFavoritesComponent } from '../favorites/rtui-side-menu-favorites.component';
 import { DEFAULT_MENU_ID, normalizeMenuId } from '../settings/side-menu-settings.logic';
 import { RtuiSideMenuSettingsService } from '../settings/rtui-side-menu-settings.service';
-
-@Directive({
-    selector: '[rtuiSideMenuHeader]',
-})
-export class RtuiSideMenuHeaderDirective {}
-
-@Directive({
-    selector: '[rtuiSideMenuFooter]',
-})
-export class RtuiSideMenuFooterDirective {}
+import { RtuiSideMenuFooterDirective, RtuiSideMenuHeaderDirective } from './rtui-side-menu-slots.directive';
 
 const BEM_BLOCK: string = 'rtui-side-menu';
 
@@ -81,6 +71,7 @@ const BEM_BLOCK: string = 'rtui-side-menu';
         '[class.rtui-side-menu--pinned]': 'isPinned()',
         // Отметку читают стили строк подменю: скрытые кнопки избранного отдают ширину подписи.
         '[class.rtui-side-menu--favorite-actions-none]': "favoriteActionsReserve() === 'none'",
+        '[class.rtui-side-menu--titles-hidden]': '!isMainMenuTitlesShown()',
         // Ширина подменю приходит переменной оформления: правило стилей стоит на ней в трёх
         // местах разом, и правка одной переменной двигает их все.
         '[style.--rt-side-menu-sub-menu-dragged-width]': 'subMenuWidthStyle()',
@@ -100,6 +91,7 @@ const BEM_BLOCK: string = 'rtui-side-menu';
         MatListItem,
         MatNavList,
         MatListItemIcon,
+        MatTooltip,
 
         // directives
         BlockDirective,
@@ -287,6 +279,10 @@ export class RtuiSideMenuComponent implements IRtuiSideMenuHost {
         transform: booleanAttribute,
     });
     public isMainMenuIconsOutlined: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
+        transform: booleanAttribute,
+    });
+    /** Подписи под значками полосы; `false` — полоса уже, подпись уходит в подсказку и в имя для чтеца. */
+    public isMainMenuTitlesShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(true, {
         transform: booleanAttribute,
     });
     public isSubMenuIconsOutlined: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {

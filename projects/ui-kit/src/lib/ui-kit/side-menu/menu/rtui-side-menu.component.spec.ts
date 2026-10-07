@@ -422,3 +422,30 @@ describe('RtuiSideMenuComponent — поиск внутри папок', () => {
         expect(subItemTitles(fixture)).toEqual(['Сохранённое']);
     });
 });
+
+describe('RtuiSideMenuComponent — подписи полосы', () => {
+    function railItems(fixture: ComponentFixture<HostComponent>): HTMLElement[] {
+        return Array.from(fixture.nativeElement.querySelectorAll('a.rtui-side-menu-item'));
+    }
+
+    it('SC-UK-142 — полоса по умолчанию показывает подписи и не дублирует их в имени для чтеца', () => {
+        const { fixture }: ISetup = setup();
+
+        expect(fixture.nativeElement.querySelectorAll('.rtui-side-menu-item__title').length).toBe(ITEMS.length);
+        expect(railItems(fixture).every((item: HTMLElement): boolean => !item.hasAttribute('aria-label'))).toBe(true);
+        expect(fixture.nativeElement.querySelector('rtui-side-menu').classList).not.toContain('rtui-side-menu--titles-hidden');
+    });
+
+    it('SC-UK-143 — полоса без подписей уже, а подпись уходит в имя пункта для чтеца', () => {
+        const { fixture, host }: ISetup = setup();
+
+        host.titlesShown.set(false);
+        fixture.detectChanges();
+
+        expect(fixture.nativeElement.querySelectorAll('.rtui-side-menu-item__title').length).toBe(0);
+        expect(railItems(fixture).map((item: HTMLElement): string | null => item.getAttribute('aria-label'))).toEqual(
+            ITEMS.map((item: { name?: string }): string | null => item.name ?? null)
+        );
+        expect(fixture.nativeElement.querySelector('rtui-side-menu').classList).toContain('rtui-side-menu--titles-hidden');
+    });
+});
