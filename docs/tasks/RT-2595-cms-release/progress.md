@@ -4,16 +4,17 @@
 
 - **State:** `этап-идёт`
 - **Stage:** 1 of 3 — The workflows
-- **Done:** the branch taken from the epic branch after RT-2594 was merged
-- **Next step:** 1.1 — write the three publication workflows
+- **Done:** the three publication workflows, PR #2621 into main (a draft until its run is green)
+- **Next step:** 1.2 — make #2621 ready on its green run; the owner merges it, then 2.1 runs the
+  contract workflow on the epic branch
 - **Uncommitted:** nothing
 - **Waiting for the owner:** no
-- **PR:** not open yet
+- **PR:** #2621 into main — the workflows; the task PR into the epic branch is not open yet
 
 ## Steps
 
-- [>] 1.1 Write the three publication workflows after the auth server one
-- [ ] 1.2 Open the PR of the workflows into main
+- [x] 1.1 Write the three publication workflows after the auth server one
+- [>] 1.2 Open the PR of the workflows into main
 - [ ] 2.1 Run the contract workflow on the epic branch
 - [ ] 3.1 Replace the `workspace:*` links with `^0.1.0` and update the lockfile
 - [ ] 3.2 Run the server and the Angular workflows on the task branch
