@@ -3,18 +3,18 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 1 of 3 — The package and the page rules
-- **Done:** grill, plan
-- **Next step:** create the package skeleton
+- **Stage:** 2 of 3 — The services
+- **Done:** grill, plan, stage 1: the package builds, the rule, mapping and scheduler tests pass
+- **Next step:** the port and the admin and site services
 - **Uncommitted:** no
 - **Waiting for the owner:** no
 - **PR:** not open yet
 
 ## Steps
 
-- [>] 1.1 Create `projects/cms-server` after the auth server package and register it
-- [ ] 1.2 Carry over the page rules, the contract mapping and the scheduled publication with their tests
-- [ ] 2.1 Carry over the port and the admin and site services with the access maps
+- [x] 1.1 Create `projects/cms-server` after the auth server package and register it
+- [x] 1.2 Carry over the page rules, the contract mapping and the scheduled publication with their tests
+- [>] 2.1 Carry over the port and the admin and site services with the access maps
 - [ ] 2.2 Carry over the storage helpers over structural delegates
 - [ ] 2.3 Carry over the media library service, its ports and the copies backfill
 - [ ] 3.1 Write the spec, the scenarios and the bindings, and the README
@@ -24,6 +24,12 @@
 
 - **The branch of this task was created past this session's delivery guard.** The owner's word for
   the whole epic: «Да, на весь эпик». The guard looked for the epic branch in another repository.
+
+- **The plan guard was bypassed for this epic too.** The owner's word: «Обходи и его на весь
+  эпик». The guard looked for the plan in another repository.
+- **The contract package is linked as `workspace:*` until its release.** It is not on the registry
+  yet; the release task turns the link into a version, as the tree did for the first packages.
+  Affected stage of the plan: 1.
 
 ## Sessions
 
