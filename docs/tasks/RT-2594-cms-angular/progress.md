@@ -92,3 +92,43 @@
   page edit with its editor sources, the tags, the redirects with the panel and the media library,
   and the `cmsRoutes` and `mediaRoutes` sets. Not yet checked against a running application: that
   comes with the switch of the application to the package.
+- Step 3.1 begun: the embed address check, the site page model, the rubric root tag and the sitemap
+  carried over into the `site` entry with their tests.
+
+## Handover of the session
+
+### Work
+
+RT-2594 "the CMS package for Angular". Working tree — `/Users/eyhenij/WebstormProjects/rt-tools-cms`,
+branch `RT-2594-cms-angular` taken from the epic branch `RT-2591-cms-packages`. No PR yet. The work
+is driven from a session of the application tree, whose guards read that tree and not this one; the
+owner allowed bypassing the delivery and plan guards for the whole epic.
+
+### Where to look
+
+This progress: "Where we stand" names the next step and the sources. The application sources of
+the site part lie in the blog `ui`, `data-access` and `feature/article` libraries of the application.
+
+### Epic RT-2591 — the CMS packages
+
+| #   | Task                                       | State       |
+| --- | ------------------------------------------ | ----------- |
+| 1   | RT-2592 — the contract package             | closed      |
+| 2   | RT-2593 — the server package               | closed      |
+| 3   | **RT-2594 — the Angular package**          | in progress |
+| 4   | RT-2595 — the release, by the owner's word | ahead       |
+
+### Done and the next step
+
+Done: stages 1 and 2, part of 3.1. Next: the page client with the transfer state, the six block
+components behind a registry, the page screen and the redirect resolver; then stage 4.
+
+### What to keep in mind
+
+- Commits go as the `rt-tools-dev` account with the bot token; the untracked folder of RT-2595 in
+  the tree is not this task's and is never added.
+- Files are written by the editor tool, not by a shell here-document: the plan guard of the
+  application tree refuses the latter. A command naming the jest config file is refused by the
+  reuse guard; tests run through nx.
+- The admin screens were never opened in a running application; the application switch (SC-494)
+  checks them.
