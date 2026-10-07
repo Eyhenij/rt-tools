@@ -8,8 +8,10 @@
 - **Next step:** 1.2 — make #2621 ready on its green run; the owner merges it, then 2.1 runs the
   contract workflow on the epic branch
 - **Uncommitted:** nothing
-- **Waiting for the owner:** the run of #2621 is red on the image build of another app, the same
-  on every PR into main today (#2612); whether to hand #2621 in with that noted or wait for #2612
+- **Waiting for the owner:** the run of #2621 is red on the image build of another app (#2612,
+  #2615), the same on every PR into main; whether to hand #2621 in with that noted, hand in the
+  #2612 Dockerfile fix that lies uncommitted in `/Users/eyhenij/WebstormProjects/rt-cms-workflows`
+  (the image builds with it, the start still fails on #2615), or wait
 - **PR:** #2621 into main — the workflows; the task PR into the epic branch is not open yet
 
 ## Steps
