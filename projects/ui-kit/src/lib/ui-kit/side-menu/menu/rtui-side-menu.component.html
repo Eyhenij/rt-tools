@@ -114,7 +114,7 @@
                             [matTooltipDisabled]="isMainMenuTitlesShown()"
                             [attr.aria-label]="isMainMenuTitlesShown() ? null : item?.name"
                             [rtNavigationDirective]="item?.link"
-                            (mouseenter)="toggleSubMenu(item)"
+                            (mouseenter)="closeDelay.railItemEntered(item)"
                             (click)="onClickMenu(item)"
                             (keydown.enter)="onClickMenu(item)">
                             @if (item?.icon) {
@@ -154,7 +154,8 @@
             mode="side"
             position="start"
             [opened]="subMenuOpened()"
-            (mouseleave)="toggleSubMenu()">
+            (mouseenter)="closeDelay.panelEntered()"
+            (mouseleave)="closeDelay.panelLeft()">
             <rtui-scrollable [isScrollHintShown]="true">
                 <ng-container *rtuiScrollableHeader>
                     @if (subMenuOpened()) {
