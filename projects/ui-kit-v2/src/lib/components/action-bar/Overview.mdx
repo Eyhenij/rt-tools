@@ -132,8 +132,10 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 **Меню действия со списком рисуется в оверлее, вне полосы** (история **Menu**). Свойства, объявленные
 на полосе, до него не доходят, поэтому меню читает свои с запасным значением, и задаются они на
 корне страницы: `--rt-action-bar-menu-bg`, `--rt-action-bar-menu-color`,
-`--rt-action-bar-menu-radius`, `--rt-action-bar-menu-shadow`. Пока их нет, меню скруглено ступенью
-`md` и отбрасывает тень карточки.
+`--rt-action-bar-menu-radius`, `--rt-action-bar-menu-shadow`, `--rt-action-bar-menu-padding`,
+`--rt-action-bar-menu-gap`, `--rt-action-bar-menu-item-font-size`. Пока их нет, меню скруглено
+ступенью `md`, отбрасывает тень карточки, держит отступ `--rt-space-2`, пункты стоят без зазора, а
+шрифт пункта — ступень `--rt-text-sm`.
 
 ## Рядом
 

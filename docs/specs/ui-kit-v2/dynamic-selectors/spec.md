@@ -130,6 +130,10 @@ stands next to it as components of its own, drawn on the parts of the second kit
   result.** The invitation button takes an icon and one of the kit button's looks; the clear button
   takes an icon, the close cross by default; the popup search field and the string list's own field
   take one of the field's looks; the empty result shows the caller's text, the kit label without it.
+- **The kit settings set the look of the invitation, the clear button, the popup search and the empty
+  result for every field at once, and an input at the place wins over them.** Both fields read the
+  invitation button and the clear icon from the settings; the search and the empty result belong to
+  the selector alone. Without the settings the kit defaults stay.
 - **A value the caller sets on the list block reaches it, and a popup property or the add button's
   colour reaches it from any ancestor.** The popup lives in an overlay, outside the field, so the
   caller sets its properties on the overlay pane or a container of its own; only the defaults stand
@@ -140,6 +144,11 @@ stands next to it as components of its own, drawn on the parts of the second kit
 - **A string list put into the kit field takes the field's label, and the label leads to the field of
   a new row.** The kit field draws the label, the required mark and the error; the list adds no label
   of its own.
+- **A non-empty list the caller passes as the chosen entities sets the value and the reset list; a
+  list with the keys already shown changes nothing.** That list is the parent's echo of the
+  selection change, and taking it as the reset list would keep the reset off for good.
+- **The row title wraps unless the caller turns wrapping off; then it stands on one line, cut with
+  an ellipsis, and a cut title shows the whole text in a tooltip.**
 - **The field of a new row shows the caller's label, and without one it stands as before.** The label
   is drawn by the kit field around the field and leads to it; the field has no label input of its
   own.
@@ -261,4 +270,7 @@ owner's review.
   and empty-result look, the popup and list properties, the cross trash icon `trash-x`; the popup
   properties read from any ancestor.
 - 7 October 2026 — the application's remarks (RT-2619): a Material name for the invitation picture,
-  the label of the string list by the kit field, the label of the field of a new row.
+  the label of the string list by the kit field, the label of the field of a new row, the chosen
+  entities set by the input, the row title on one line.
+- 8 October 2026 — the application's request (RT-2619): the look inputs of both fields take their
+  defaults from the kit settings.

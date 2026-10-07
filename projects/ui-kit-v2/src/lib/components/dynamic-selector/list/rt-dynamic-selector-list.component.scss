@@ -48,6 +48,13 @@
             flex: 1 1 auto;
             font-size: var(--rt-text-md);
             overflow-wrap: anywhere;
+
+            // Название одной строкой: длинное режется многоточием, а полный текст даёт подсказка.
+            &--nowrap {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
         }
 
         &__field {

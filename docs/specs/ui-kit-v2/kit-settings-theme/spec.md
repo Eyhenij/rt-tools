@@ -151,8 +151,8 @@ chose for the whole kit. The only handle they touch is the switch of the theme.
 - **The field choosing between Material and the own look.** The word of the owner of the 22nd of
   September: there must be no Material. Neither the common default nor the default of a node carries
   such a field, and the node that reads it in the first kit is not carried over with it.
-- **The defaults of the dynamic selectors and of the side menu.** The first family has not arrived
-  in the second kit at all, the second is work of its own; both go on the request of a consumer.
+- **The defaults of the side menu.** That is work of its own and goes on the request of a consumer.
+  The dynamic selectors got their section on such a request; their spec describes it.
 - **The switch showing three states.** The switch has two positions, and how it shows the third is
   decided when the owner says so; until then the third state is set by the settings alone.
 - **A change of the settings on a live page.** The settings are the snapshot of the start; what has

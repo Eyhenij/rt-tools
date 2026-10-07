@@ -113,6 +113,10 @@ export class RtDynamicSelectorListComponent<TItem> {
     public readonly buttonRadius: InputSignal<TRtRadius | null> = input<TRtRadius | null>('full');
     /** Значок кнопки «Очистить список»; по умолчанию крестик. */
     public readonly clearIcon: InputSignal<IRtIcon.Name> = input<IRtIcon.Name>('close');
+    /** Название строки переносится; `false` ведёт его одной строкой с многоточием и подсказкой при обрезке. */
+    public readonly titleWrap: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
+        transform: booleanAttribute,
+    });
     public readonly titleTpl: InputSignal<TemplateRef<IRtDynamicSelector.RowContext<TItem>> | null> = input<TemplateRef<
         IRtDynamicSelector.RowContext<TItem>
     > | null>(null);

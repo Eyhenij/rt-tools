@@ -151,6 +151,31 @@ The owner's next request, 7 October 2026, verbatim:
 > rt-dynamic-input: добавить вход fieldLabel: string и передавать его подписью в rt-input поля. В v1
 > поле показывало mat-label (у нас Recipient Email в панели рассылки), в v2 подписи у поля нет.
 
+The application's session sent two more rows the same evening, retold without the application's
+names:
+
+> 86. Вход `chosenEntities` должен задавать выбранное. Сейчас модель только пишется китом и нигде
+>     не читается: при `[chosenEntities]="list()"` без формы список выбранного пуст. Нужно (как в v1):
+>     когда пришёл непустой список, ключи которого отличаются от текущего значения, ставить его и
+>     значением, и исходным списком для «Сбросить». Список с теми же ключами (эхо родителя после
+>     `selectionChange`) исходный не трогает, иначе «Сбросить» никогда не включится.
+>
+> 87. Название строки списка выбранного: вход `titleWrap: boolean`, чтобы название шло одной строкой
+>     с многоточием и подсказкой с полным текстом при обрезке, как в v1. Сейчас `__title` переносится,
+>     строка растёт в высоту.
+
+Then a third row, and a fourth one that waits for its own turn:
+
+> 88. Меню действия со списком у `rt-action-bar`: токен `--rt-action-bar-menu-gap` — зазор между
+>     пунктами, сейчас 0; токен `--rt-action-bar-menu-padding` — сейчас зашит `var(--rt-space-2)`; токен
+>     `--rt-action-bar-menu-item-font-size` — сейчас пункт берёт `--rt-text-sm`. Умолчания через
+>     `var(--token, <умолчание>)`.
+>
+> 89. Провайдер умолчаний для `rt-dynamic-selector` и `rt-dynamic-input`:
+>     `provideRtDynamicSelectorDefaults({ ... })` или InjectionToken с полями `invitationButtonIcon`,
+>     `invitationButtonAppearance`, `clearIcon`, `searchAppearance`, `emptyResultsText`. Вход на
+>     экземпляре сильнее провайдера; без провайдера — текущие умолчания.
+
 ## What the tree already has
 
 - `rt-dynamic-selector` draws the invitation button as `rtButton appearance="outlined"` with no
@@ -281,3 +306,22 @@ list and the dynamic-input remarks.
   has no label input of its own: the kit draws a label by `rt-field`. A wrapper standing always
   would add the field's gap under the input even with an empty label and move the default look, so
   the field is drawn in one of two branches; a label switched while the field is open recreates it.
+- **`chosenEntities` is read by a subscription set up once, not by an effect.** The value and the
+  initial list of the reset change by the person's actions too, so they are state, not a value
+  derived from the input. The echo is recognised by the keys of the rows shown, not of the value: a
+  key no entity holds stays in the value and would read as a new list. The rows look entities up in
+  `chosenEntities` after `entities`, so a list passed without the same records in `entities` draws.
+  The input sets the value the way a form writes it, without telling the form. Row 86.
+- **`titleWrap` defaults to `true`, and the tooltip stays empty while titles wrap.** A tooltip with an
+  empty text does nothing, so the default rows keep their look; the no-wrap title takes the kit
+  tooltip's truncation mode. The string list passes the input too: both fields draw the same list.
+  Row 87.
+- **The three menu properties are read with a fallback to `-default` names declared on the menu.**
+  The menu lives in an overlay, so the application sets them on the page root, as it sets the menu
+  colours already. Measured on the showcase: without them the menu keeps a padding of 8px, no gap
+  and items of 14px; from the page root 20px, 6px and 18px arrive. Row 88.
+- **The defaults of row 89 go through the kit settings the kit already has, not a provider of their
+  own.** `provideRtKit({ components: { dynamicSelector } })` gives the input its starting value, so
+  an input at the place wins with nothing more; a second provider would be a second road to the same
+  answer. Both fields read the invitation button and the clear icon, the search and the empty result
+  belong to the selector alone. The application's session agreed to the form. Row 89.

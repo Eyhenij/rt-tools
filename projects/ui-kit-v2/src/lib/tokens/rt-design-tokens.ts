@@ -584,6 +584,9 @@ export type TRtConsumerHandleName =
     | '--rt-action-bar-icon-size'
     | '--rt-action-bar-menu-bg'
     | '--rt-action-bar-menu-color'
+    | '--rt-action-bar-menu-gap'
+    | '--rt-action-bar-menu-item-font-size'
+    | '--rt-action-bar-menu-padding'
     | '--rt-action-bar-menu-radius'
     | '--rt-action-bar-menu-shadow'
     | '--rt-action-bar-padding'
@@ -1285,6 +1288,9 @@ export const RT_CONSUMER_HANDLE_NAMES: readonly TRtConsumerHandleName[] = [
     '--rt-action-bar-icon-size',
     '--rt-action-bar-menu-bg',
     '--rt-action-bar-menu-color',
+    '--rt-action-bar-menu-gap',
+    '--rt-action-bar-menu-item-font-size',
+    '--rt-action-bar-menu-padding',
     '--rt-action-bar-menu-radius',
     '--rt-action-bar-menu-shadow',
     '--rt-action-bar-padding',

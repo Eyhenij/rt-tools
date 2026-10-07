@@ -112,6 +112,17 @@
                         </div>
                     </ng-template>
                 </app-story-row>
+                <app-story-row [items]="titleCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
+                    <ng-template let-titleCase>
+                        <rt-dynamic-selector
+                            keyExp="id"
+                            displayExp="name"
+                            [ariaLabel]="titleCase.name"
+                            [entities]="longPeople"
+                            [titleWrap]="titleCase.wrap"
+                            [formControl]="titleCase.control" />
+                    </ng-template>
+                </app-story-row>
                 <app-story-row [items]="lookInputCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
                     <ng-template let-inputCase>
                         @if (inputCase.label) {

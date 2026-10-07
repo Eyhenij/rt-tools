@@ -34,7 +34,13 @@
                             <ng-container [ngTemplateOutlet]="tpl" [ngTemplateOutletContext]="{ $implicit: row.item }" />
                         </div>
                     } @else {
-                        <span rtElem="title">{{ row.label }}</span>
+                        <span
+                            rtElem="title"
+                            rtTooltipWhenTruncated
+                            [rtMod]="{ nowrap: !titleWrap() }"
+                            [rtTooltip]="titleWrap() ? '' : row.label">
+                            {{ row.label }}
+                        </span>
                     }
 
                     <div rtElem="controls">

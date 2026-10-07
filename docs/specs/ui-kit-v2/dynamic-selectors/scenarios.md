@@ -270,3 +270,37 @@ When the person presses the add button
 Then the label stands above the field and leads to it, and without it the field stands bare
 
 Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/rt-dynamic-selector-look.spec.ts`.
+
+### SC-UKV-721 — the chosen entities passed by the caller set the value and the reset list
+
+Given a selector without a form whose caller passes a list of chosen entities
+When the list arrives, the person removes a row and the parent passes back the echo of the change
+Then the rows show the passed list, the echo leaves the reset on, and the reset returns the passed list
+
+Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/rt-dynamic-selector-chosen.spec.ts`.
+
+### SC-UKV-722 — the row title on one line is cut and shows the whole text in a tooltip
+
+Given a list whose caller turns title wrapping off, or leaves it on
+When a row with a long title is drawn
+Then the title is marked to stand on one line with a tooltip of its whole text, and with wrapping on it
+has neither
+
+Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/rt-dynamic-selector-chosen.spec.ts`.
+
+### SC-UKV-724 — the kit settings give both fields their look
+
+Given an application that sets the look of the dynamic selectors in the kit settings, or sets nothing
+When a selector and a string list whose markup names no look are drawn
+Then the invitation button, the clear icon, the search look and the empty-result text come from the
+settings, and without the settings they are the kit defaults
+
+Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/rt-dynamic-selector-defaults.spec.ts`.
+
+### SC-UKV-725 — an input at the place wins over the kit settings
+
+Given the kit settings naming a look for the dynamic selectors
+When a selector and a string list name their look in the markup
+Then they take the look from the markup
+
+Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/rt-dynamic-selector-defaults.spec.ts`.

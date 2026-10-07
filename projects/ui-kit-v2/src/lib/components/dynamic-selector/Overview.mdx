@@ -121,6 +121,26 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 Таблица одна на оба поля — колонка «чей» говорит, к какому из них вход относится. Входы только
 поля строк стоят ниже своей таблицей.
 
+Пять входов вида приложение задаёт один раз на всё приложение, через настройки кита:
+
+```typescript
+provideRtKit({
+    components: {
+        dynamicSelector: {
+            invitationButtonIcon: 'ico-plus',
+            invitationButtonAppearance: 'text',
+            clearIcon: 'trash-x',
+            searchAppearance: 'fill',
+            emptyResultsText: 'Никого не нашли',
+        },
+    },
+});
+```
+
+Оба поля берут из них `invitationButtonIcon`, `invitationButtonAppearance` и `clearIcon`; поиск и
+пустой результат есть только у селектора. Вход, написанный в разметке, сильнее настроек, а без
+настроек остаются умолчания из таблицы ниже.
+
 | вход                         | чей      | тип                          | умолчание                           |
 | ---------------------------- | -------- | ---------------------------- | ----------------------------------- |
 | `entities`                   | селектор | `ReadonlyArray<TEntity>`     | `[]`                                |
@@ -154,6 +174,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | `invitationButtonIcon`       | оба      | `IRtIcon.Name \| null`       | `null`                              |
 | `invitationButtonAppearance` | оба      | `IButton.Appearance`         | `'outlined'`                        |
 | `clearIcon`                  | оба      | `IRtIcon.Name`               | `'close'`                           |
+| `titleWrap`                  | оба      | `boolean`                    | `true`                              |
 | `searchAppearance`           | селектор | `IRtInput.Appearance`        | `'outline'`                         |
 | `emptyResultsText`           | селектор | `string`                     | `''` → «No results» из словаря кита |
 
@@ -170,6 +191,14 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 `[(chosenEntities)]` — выбранные записи, `TEntity[]`, по умолчанию `[]`: те же, что уходят выходом
 `selectionChange`.
+
+Вход задаёт выбранное и без формы. Непустой список с другими ключами становится и значением, и
+списком, к которому возвращает «Сбросить». Список с теми же ключами — это родитель вернул выбор после
+`selectionChange` — ничего не меняет. Строки рисуются и по записям из `chosenEntities`, которых нет в
+`entities`.
+
+`titleWrap="false"` ведёт название строки одной строкой: длинное режется многоточием, а подсказка
+показывает его целиком. По умолчанию название переносится.
 
 ### Переключатели и состояние окна
 

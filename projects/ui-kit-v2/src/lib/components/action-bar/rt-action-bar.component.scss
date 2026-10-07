@@ -154,14 +154,23 @@
         &__menu {
             --rt-action-bar-menu-radius-default: var(--rt-radius-md);
             --rt-action-bar-menu-shadow-default: var(--rt-shadow-card);
+            --rt-action-bar-menu-padding-default: var(--rt-space-2);
+            --rt-action-bar-menu-gap-default: 0;
+            --rt-action-bar-menu-item-font-size-default: var(--rt-text-sm);
 
             display: flex;
             flex-direction: column;
-            padding: var(--rt-space-2);
+            padding: var(--rt-action-bar-menu-padding, var(--rt-action-bar-menu-padding-default));
             border-radius: var(--rt-action-bar-menu-radius, var(--rt-action-bar-menu-radius-default));
             background: var(--rt-action-bar-menu-bg, var(--rt-color-bg-surface));
             box-shadow: var(--rt-action-bar-menu-shadow, var(--rt-action-bar-menu-shadow-default));
             color: var(--rt-action-bar-menu-color, var(--rt-color-text-primary));
+            gap: var(--rt-action-bar-menu-gap, var(--rt-action-bar-menu-gap-default));
+
+            // Кегль пункта у пункта меню свой; меню полосы переназначает его правилом большей силы.
+            .rt-menu-item {
+                font-size: var(--rt-action-bar-menu-item-font-size, var(--rt-action-bar-menu-item-font-size-default));
+            }
         }
 
         // Полоса живёт на нижней кромке, и пальцу нужно место, которое занимают подписи. Решает

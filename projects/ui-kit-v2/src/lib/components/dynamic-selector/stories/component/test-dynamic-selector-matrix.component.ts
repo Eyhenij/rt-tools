@@ -213,6 +213,22 @@ export class TestRtDynamicSelectorMatrixComponent {
         { name: 'свои свойства окна', entities: STORY_PEOPLE.slice(0, 3), tuned: true },
     ];
 
+    /** Записи с длинными названиями: на них видно, переносится название строки или режется. */
+    public readonly longPeople: readonly IStoryPerson[] = [
+        { id: 1, name: 'Анна Сергеевна Константинопольская-Преображенская' },
+        { id: 2, name: 'Борис Игнатьевич Воскресенский' },
+    ];
+
+    /** Название строки: переносится по умолчанию, а без переноса режется многоточием. */
+    public readonly titleCases: readonly {
+        readonly name: string;
+        readonly wrap: boolean;
+        readonly control: FormControl<number[] | null>;
+    }[] = [
+        { name: 'название переносится', wrap: true, control: chosen([1, 2]) },
+        { name: 'название одной строкой', wrap: false, control: chosen([1, 2]) },
+    ];
+
     /** Поле строк: приглашение с именем Material, подпись поля кита и подпись поля новой строки. */
     public readonly lookInputCases: readonly {
         readonly name: string;
