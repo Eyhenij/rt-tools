@@ -36,4 +36,5 @@ export class TestRtTreeSelectorComponent {
     public expandOnStart: IRtTreeSelector.ExpandOnStart = 'chosen';
     public label: string = 'Гостиницы';
     public searchTerm: string = '';
+    public disabled: boolean = false;
 }

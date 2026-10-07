@@ -45,6 +45,8 @@ interface IRtTreeView<TValue> {
     readonly marked: boolean;
     /** Радио вместо флажка. */
     readonly radio: boolean;
+    /** Строка выключена: свой `disabled` у узла или выключено всё дерево. */
+    readonly disabled: boolean;
     /** Число выбранного под группой в конце строки; `null` — числа нет. */
     readonly count: number | null;
     readonly parts: IRtTree.LabelParts;
@@ -82,7 +84,8 @@ interface IRtTreeView<TValue> {
     host: {
         class: BEM_BLOCK,
         role: 'tree',
-        tabindex: '0',
+        '[attr.tabindex]': 'disabled() ? -1 : 0',
+        '[attr.aria-disabled]': 'disabled() || null',
         '[attr.aria-label]': 'ariaLabel()',
         '[attr.aria-multiselectable]': "mode() === 'multiple'",
         '(keydown)': 'handleKeydown($event)',
@@ -114,6 +117,7 @@ export class RtTreeComponent<TValue> {
         const highlighted: TValue | null = this.#highlighted();
         const mode: IRtTree.Mode = this.mode();
         const branchMarks: boolean = this.branchMarks();
+        const treeDisabled: boolean = this.disabled();
         return this.rows().map((row: IRtTree.Row<TValue>): IRtTreeView<TValue> => {
             const marked: boolean = mode !== 'none' && (branchMarks || !row.branch);
             const state: IRtTree.RowState = this.rowState(row, value, cascade);
@@ -122,6 +126,7 @@ export class RtTreeComponent<TValue> {
                 marked,
                 mark: state.mark,
                 radio: state.radio,
+                disabled: treeDisabled || !!row.option.disabled,
                 count: marked ? null : state.count,
                 parts: rtTreeLabelParts(row.option, term),
                 highlighted: row.option.value === highlighted,
@@ -164,6 +169,11 @@ export class RtTreeComponent<TValue> {
         transform: booleanAttribute,
     });
 
+    /** Выключенное дерево не меняет выбор ни кликом, ни клавишей, ни «выбрать всё»; ветки раскрываются стрелкой. */
+    public readonly disabled: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
+        transform: booleanAttribute,
+    });
+
     public readonly picked: OutputEmitterRef<IRtTree.Node<TValue>> = output<IRtTree.Node<TValue>>();
 
     /**
@@ -171,6 +181,9 @@ export class RtTreeComponent<TValue> {
      * приложение может отдавать сюда каждую клавишу своего поля поиска.
      */
     public handleKeydown(event: KeyboardEvent): boolean {
+        if (this.disabled()) {
+            return false;
+        }
         const taken: boolean = this.#takeKey(event.key, event.ctrlKey || event.metaKey);
         if (taken) {
             event.preventDefault();
@@ -194,6 +207,9 @@ export class RtTreeComponent<TValue> {
     }
 
     protected onRowClick(row: IRtTree.Row<TValue>, event: MouseEvent): void {
+        if (this.disabled()) {
+            return;
+        }
         this.#highlighted.set(row.option.value);
         if (row.option.disabled) {
             return;
@@ -211,6 +227,9 @@ export class RtTreeComponent<TValue> {
     }
 
     protected onSelectAll(): void {
+        if (this.disabled()) {
+            return;
+        }
         this.#choose(this.selectAllChoice(this.rows(), this.value()));
     }
 

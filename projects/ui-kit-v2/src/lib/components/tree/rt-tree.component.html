@@ -5,10 +5,11 @@
     -->
     <!-- eslint-disable @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
     @if (isSelectAllShown()) {
-        <div rtElem="select-all" qa-dataid="tree-select-all" role="presentation" (click)="onSelectAll()">
+        <div rtElem="select-all" qa-dataid="tree-select-all" role="presentation" [rtMod]="{ disabled: disabled() }" (click)="onSelectAll()">
             <rt-checkbox
                 rtElem="check"
                 inert
+                [disabled]="disabled()"
                 [indeterminate]="selectAllMark() === 'some'"
                 [ngModel]="selectAllMark() === 'all'"
                 [ngModelOptions]="{ standalone: true }" />
@@ -25,9 +26,9 @@
             [attr.aria-level]="view.row.level + 1"
             [attr.aria-expanded]="view.row.branch ? view.row.open : null"
             [attr.aria-selected]="view.marked ? view.mark === 'all' : null"
-            [attr.aria-disabled]="!!view.row.option.disabled"
+            [attr.aria-disabled]="view.disabled"
             [style.--rt-tree-level]="view.row.level"
-            [rtMod]="{ highlighted: view.highlighted, disabled: !!view.row.option.disabled, chosen: view.mark === 'all' }"
+            [rtMod]="{ highlighted: view.highlighted, disabled: view.disabled, chosen: view.mark === 'all' }"
             (click)="onRowClick(view.row, $event)">
             @if (view.row.branch) {
                 <button
@@ -48,7 +49,7 @@
                     rtElem="check"
                     qa-dataid="tree-row-checkbox"
                     inert
-                    [disabled]="!!view.row.option.disabled"
+                    [disabled]="view.disabled"
                     [indeterminate]="view.mark === 'some'"
                     [ngModel]="view.mark === 'all'"
                     [ngModelOptions]="{ standalone: true }" />
@@ -59,7 +60,7 @@
                     inert
                     [value]="view.row.option.value"
                     [checked]="view.mark === 'all'"
-                    [disabled]="!!view.row.option.disabled" />
+                    [disabled]="view.disabled" />
             }
 
             <span rtElem="text">

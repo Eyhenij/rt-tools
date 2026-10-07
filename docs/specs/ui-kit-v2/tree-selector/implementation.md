@@ -21,3 +21,4 @@ the tree, or the tree holds what the spec is silent about.
 - **The footer belongs to the selector only when asked for.** — `projects/ui-kit-v2/src/lib/components/tree-selector/rt-tree-selector.component.ts:isFooterShown`
 - **In the single mode of the confirming form Enter on a node applies.** — `projects/ui-kit-v2/src/lib/components/tree-selector/rt-tree-selector.component.ts:onPicked`. Scenario `SC-UKV-685`
 - **On appearance the branches over the choice are open, or all of them, or none.** — `projects/ui-kit-v2/src/lib/components/tree-selector/rt-tree-selector.component.ts:#expandOnStart`
+- **A disabled selector changes nothing in the choice.** — `projects/ui-kit-v2/src/lib/components/tree-selector/rt-tree-selector.component.ts:canApply` — false while `disabled`; the template passes `disabled` to the field, the buttons, the toggle and the tree. Scenario `SC-UKV-700`

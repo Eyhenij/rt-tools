@@ -173,3 +173,11 @@ Then the row holds two kit tags with the match marked in one, followed by the me
 the node in its context
 
 Covered by the component test of `rt-tree`.
+
+### SC-UKV-699 — a disabled tree changes nothing in the choice
+
+Given a disabled tree with select-all and a chosen leaf
+When a person clicks a leaf, clicks select-all and presses Space
+Then the choice stays as it was, and the arrow of a branch still opens it
+
+Covered by the component test of `rt-tree`.

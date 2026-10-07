@@ -18,10 +18,19 @@ interface IHybridTreeSelectorCase {
     readonly confirm: boolean;
     readonly branchMarks: boolean;
     readonly searchTerm: string;
+    readonly disabled: boolean;
 }
 
 function selectorCase(name: string, patch: Partial<IHybridTreeSelectorCase> = {}): IHybridTreeSelectorCase {
-    return { name, value: ['hotel', 'ty-revenue'], confirm: false, branchMarks: true, searchTerm: '', ...patch };
+    return {
+        name,
+        value: ['hotel', 'ty-revenue'],
+        confirm: false,
+        branchMarks: true,
+        searchTerm: '',
+        disabled: false,
+        ...patch,
+    };
 }
 
 /**
@@ -57,6 +66,7 @@ export class TestRtHybridTreeSelectorMatrixComponent {
         selectorCase('прямая форма'),
         selectorCase('подтверждаемая: «Применить» выключено', { confirm: true }),
         selectorCase('группы без отметок', { branchMarks: false, value: ['hotel', 'segment', 'ty-rooms'] }),
+        selectorCase('выключен', { confirm: true, disabled: true }),
     ];
 
     public readonly searchCases: readonly IHybridTreeSelectorCase[] = [

@@ -29,4 +29,5 @@ export class TestRtHybridTreeSelectorComponent {
     public branchMarks: boolean = true;
     public label: string = 'Поля отчёта';
     public searchTerm: string = '';
+    public disabled: boolean = false;
 }

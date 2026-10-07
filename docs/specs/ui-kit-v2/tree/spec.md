@@ -53,6 +53,9 @@ multiselect; a standalone tree on the same logic gives the applications one look
   leaf emits `picked`, a click on a branch opens or folds it.
 - **A disabled node keeps its state through every change, select-all included.** It is drawn muted,
   takes no click, and no bulk action flips it.
+- **A disabled tree changes nothing in the choice.** Clicks, keys and select-all leave the choice as
+  it was, every row is drawn muted, and the tree takes no focus. The branch arrows still open and
+  fold: looking is not changing.
 - **The branches holding a chosen value are open when the tree appears; the rest are folded.** After
   that, opening and folding belong to the person and to the public `expandAll` and `collapseAll`.
 - **Choosing never opens or folds a branch.** A mark on a row, by a click, a key or select-all, leaves
@@ -127,6 +130,7 @@ the component; the choice lives with the application through `value`.
 | single mode            | radios instead of checkboxes                                |
 | no marks               | labels only                                                 |
 | a node disabled        | the row muted, its mark unchangeable                        |
+| the tree disabled      | every row and select-all muted, the arrows still open       |
 | a search term          | the matching rows with the path open, the match highlighted |
 | empty                  | the kit label «Nothing found» or «No options»               |
 | a row highlighted      | the row background of the active option of the select       |
@@ -164,3 +168,4 @@ None.
 ## History of changes
 
 - 2026-10-06 — the agreement written for RT-2548.
+- 2026-10-07 — a disabled tree, for the report builder of the application; RT-2551.

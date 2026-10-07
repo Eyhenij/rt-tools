@@ -8,6 +8,7 @@
             rtElem="search"
             qa-dataid="tree-selector-search"
             iconLeft="search"
+            [disabled]="disabled()"
             [placeholder]="searchLabel()"
             [ariaLabel]="searchLabel()"
             [ngModel]="term()"
@@ -28,6 +29,7 @@
                         icon="expand-all"
                         [rtTooltip]="expandAllLabel()"
                         [attr.aria-label]="expandAllLabel()"
+                        [disabled]="disabled()"
                         (click)="expandAll()"></button>
                     <button
                         rtButton
@@ -40,6 +42,7 @@
                         icon="collapse-all"
                         [rtTooltip]="collapseAllLabel()"
                         [attr.aria-label]="collapseAllLabel()"
+                        [disabled]="disabled()"
                         (click)="collapseAll()"></button>
                 }
                 @if (isRevertShown()) {
@@ -54,7 +57,7 @@
                         icon="undo"
                         [rtTooltip]="revertLabel()"
                         [attr.aria-label]="revertLabel()"
-                        [disabled]="!isDraftChanged()"
+                        [disabled]="disabled() || !isDraftChanged()"
                         (click)="onRevert()"></button>
                 }
                 @if (isClearShown()) {
@@ -69,6 +72,7 @@
                         icon="trash"
                         [rtTooltip]="clearLabel()"
                         [attr.aria-label]="clearLabel()"
+                        [disabled]="disabled()"
                         (click)="onClear()"></button>
                 }
                 @if (controlsTpl(); as controls) {
@@ -83,6 +87,7 @@
                     <rt-toggle-switch
                         qa-dataid="tree-selector-multi"
                         [ariaLabel]="multiLabel()"
+                        [disabled]="disabled()"
                         [ngModel]="multiOn()"
                         [ngModelOptions]="{ standalone: true }"
                         (ngModelChange)="onMultiToggle($event)" />
@@ -110,6 +115,7 @@
                 [searchTerm]="term()"
                 [filter]="false"
                 [ariaLabel]="ariaLabel()"
+                [disabled]="disabled()"
                 (valueChange)="onTreeChange($event)"
                 (picked)="onPicked()" />
         } @else {
@@ -126,6 +132,7 @@
                 [searchTerm]="term()"
                 [filter]="false"
                 [ariaLabel]="ariaLabel()"
+                [disabled]="disabled()"
                 (valueChange)="onTreeChange($event)"
                 (picked)="onPicked()" />
         }
@@ -140,6 +147,7 @@
                 appearance="text"
                 [label]="cancelLabel()"
                 [attr.aria-label]="cancelLabel()"
+                [disabled]="disabled()"
                 (click)="cancel()"></button>
             <button
                 rtButton

@@ -103,3 +103,11 @@ Then the draft is «Paris Hilton» again, the selector stays open, and the butto
 draft equals the choice; in the direct form the button is not drawn
 
 Covered by the component test of `rt-tree-selector`.
+
+### SC-UKV-700 — a disabled selector changes nothing in the choice
+
+Given a disabled confirming selector with clear, revert and the expand buttons
+When it is drawn and a person clicks a row
+Then the search field and every button are off, the choice stays, and `canApply` is false
+
+Covered by the component test of `rt-tree-selector`.

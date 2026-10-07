@@ -91,6 +91,10 @@ field and the controls on top of it, so the application moves without its own co
   highlighted node; then the draft is applied if «Apply» is on, and `cancelled` is emitted if it is
   not — picking the node already chosen changes nothing.
 
+- **A disabled selector changes nothing in the choice.** The search field, the control buttons, the
+  multi toggle, the tree and the footer are off, and `canApply` is false. The selector takes no
+  focus on appearance.
+
 - **On appearance the branches over the choice are open, or all of them, or none.** `expandOnStart`
   takes `chosen`, `all` or `none`; `chosen` is the default.
 
@@ -168,5 +172,6 @@ None.
 ## History of changes
 
 - 2026-10-06 — the agreement written for RT-2550.
+- 2026-10-07 — a disabled selector, for the report builder of the application; RT-2551.
 - 2026-10-06 — expand-all and collapse-all became optional icon buttons by the owner's word. Clear
   became an icon button with a trash can, and an optional revert button was added.

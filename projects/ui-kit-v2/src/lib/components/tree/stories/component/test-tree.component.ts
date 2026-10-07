@@ -28,4 +28,5 @@ export class TestRtTreeComponent {
     public branchMarks: boolean = true;
     public exclusive: boolean = false;
     public filter: boolean = true;
+    public disabled: boolean = false;
 }

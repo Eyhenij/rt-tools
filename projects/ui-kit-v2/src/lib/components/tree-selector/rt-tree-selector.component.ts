@@ -176,18 +176,24 @@ export class RtTreeSelectorComponent<TValue> {
     /** Начальная строка поиска. */
     public readonly searchTerm: InputSignal<string> = input<string>('');
     public readonly ariaLabel: InputSignal<string | null> = input<string | null>(null);
+    /** Выключенный селектор не меняет выбор: поле поиска, кнопки, переключатель, дерево и подвал выключены. */
+    public readonly disabled: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
+        transform: booleanAttribute,
+    });
 
     public readonly applied: OutputEmitterRef<ReadonlyArray<TValue>> = output<ReadonlyArray<TValue>>();
     public readonly cancelled: OutputEmitterRef<void> = output<void>();
 
     /** Можно ли применить черновик: он отличается от выбора и не пуст там, где пустой запрещён. */
-    public readonly canApply: Signal<boolean> = computed((): boolean =>
-        rtTreeSelectorCanApply(this.draft(), this.value(), this.emptyAllowed())
+    public readonly canApply: Signal<boolean> = computed(
+        (): boolean => !this.disabled() && rtTreeSelectorCanApply(this.draft(), this.value(), this.emptyAllowed())
     );
 
     constructor() {
         afterNextRender((): void => {
-            this.#host.nativeElement.querySelector<HTMLInputElement>('.rt-tree-selector__search input')?.focus();
+            if (!this.disabled()) {
+                this.#host.nativeElement.querySelector<HTMLInputElement>('.rt-tree-selector__search input')?.focus();
+            }
             this.#expandOnStart();
         });
     }

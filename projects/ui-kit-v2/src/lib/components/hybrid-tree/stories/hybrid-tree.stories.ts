@@ -16,6 +16,7 @@ export default {
         showSelectAll: { control: { type: 'boolean' } },
         branchMarks: { control: { type: 'boolean' } },
         exclusive: { control: { type: 'boolean' } },
+        disabled: { control: { type: 'boolean' } },
         nodes: { control: false },
         value: { control: false },
     },
@@ -32,5 +33,6 @@ export const Playground: TStory = {
         showSelectAll: true,
         branchMarks: true,
         exclusive: false,
+        disabled: false,
     },
 };

@@ -4,7 +4,7 @@
 
 - **State:** `этап-идёт`
 - **Stage:** 3 of 3 — Agreement and checks
-- **Done:** both components with their tests — 96 tree and selector tests green, typecheck green; the 802 snapshots of the kit match, so `rt-tree` and `rt-tree-selector` kept their look; 9 new snapshots taken, looked at and confirmed by a second raising (811 of 811); check:all green — 131 projects and stylelint
+- **Done:** both components with their tests; `disabled` on both trees and both selectors — rules SC-UKV-699 and 700 with their tests, 98 tree and selector tests green; overviews, Playground and three matrix cells; 3 references re-taken after a look, the second run 811 of 811; check:all green — 131 projects and stylelint
 - **Next step:** show the stories on :6007 and wait for «открывай»
 - **Uncommitted:** nothing
 - **Waiting for the owner:** the look of the stories on :6007 — the PR opens after «открывай»
@@ -28,6 +28,11 @@
   takes its template and styles; the tree opens four protected points of the choice. The hybrid
   selector extends `RtTreeSelectorComponent`, and the selector template draws the hybrid tree by
   the `hybrid` flag. Affected stage: 1.
+
+- **Both selectors and both trees get `disabled`** — the owner on the migration of the report
+  builder: «в этой задаче добавь чего не хватает». The application's own `disabled` greys only
+  select-all and Submit, and its rows stay clickable; the kit switches off the search, the buttons,
+  select-all and the rows. Affected stage: 1–3.
 
 ## Sessions
 

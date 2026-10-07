@@ -15,6 +15,7 @@ export default {
         branchMarks: { control: { type: 'boolean' } },
         label: { control: { type: 'text' } },
         searchTerm: { control: { type: 'text' } },
+        disabled: { control: { type: 'boolean' } },
         nodes: { control: false },
         value: { control: false },
     },
@@ -33,5 +34,6 @@ export const Playground: TStory = {
         branchMarks: true,
         label: 'Поля отчёта',
         searchTerm: '',
+        disabled: false,
     },
 };

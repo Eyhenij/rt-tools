@@ -26,6 +26,7 @@ interface ITreeSelectorCase {
     readonly multiToggle: boolean;
     readonly searchTerm: string;
     readonly label: string;
+    readonly disabled: boolean;
     /** Рисовать ли свой контрол приложения в строке. */
     readonly own: boolean;
 }
@@ -46,6 +47,7 @@ function selectorCase(name: string, patch: Partial<ITreeSelectorCase> = {}): ITr
         multiToggle: false,
         searchTerm: '',
         label: '',
+        disabled: false,
         own: false,
         ...patch,
     };
@@ -87,6 +89,14 @@ export class TestRtTreeSelectorMatrixComponent {
         selectorCase('прямая форма', { expandControls: true }),
         selectorCase('подтверждаемая: «Применить» выключено', { confirm: true }),
         selectorCase('пустой выбор запрещён', { confirm: true, emptyAllowed: false, value: [] }),
+        selectorCase('выключен', {
+            confirm: true,
+            disabled: true,
+            expandControls: true,
+            clearable: true,
+            revertable: true,
+            multiToggle: true,
+        }),
     ];
 
     public readonly searchCases: readonly ITreeSelectorCase[] = [

@@ -54,7 +54,8 @@ const BEM_BLOCK: string = 'rt-tree';
     host: {
         class: BEM_BLOCK,
         role: 'tree',
-        tabindex: '0',
+        '[attr.tabindex]': 'disabled() ? -1 : 0',
+        '[attr.aria-disabled]': 'disabled() || null',
         '[attr.aria-label]': 'ariaLabel()',
         '[attr.aria-multiselectable]': "mode() === 'multiple'",
         '(keydown)': 'handleKeydown($event)',

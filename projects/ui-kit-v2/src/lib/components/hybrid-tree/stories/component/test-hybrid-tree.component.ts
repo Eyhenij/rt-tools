@@ -28,4 +28,5 @@ export class TestRtHybridTreeComponent {
     public showSelectAll: boolean = true;
     public branchMarks: boolean = true;
     public exclusive: boolean = false;
+    public disabled: boolean = false;
 }

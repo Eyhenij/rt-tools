@@ -35,6 +35,11 @@
 
         &__select-all {
             border-bottom: var(--rt-tree-border-width) solid var(--rt-color-border-default);
+
+            &--disabled {
+                cursor: not-allowed;
+                opacity: var(--rt-input-disabled-opacity);
+            }
         }
 
         &__row {

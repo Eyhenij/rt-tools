@@ -264,4 +264,29 @@ describe('RtTreeSelectorComponent', (): void => {
         expect(clear.classList).toContain('rt-button--icon-only');
         expect(clear.getAttribute('aria-label')).toBe('Clear selection');
     });
+
+    it('SC-UKV-700: a disabled selector switches off the field and the buttons and keeps the choice', (): void => {
+        const fixture: TFixture = setup({
+            disabled: true,
+            confirm: true,
+            clearable: true,
+            revertable: true,
+            expandControls: true,
+            expandOnStart: 'all',
+            value: ['ph'],
+        });
+        expect(searchInput(fixture).disabled).toBe(true);
+        [
+            'tree-selector-expand-all',
+            'tree-selector-collapse-all',
+            'tree-selector-clear',
+            'tree-selector-revert',
+            'tree-selector-cancel',
+        ].forEach((qa: string): void => expect(button(fixture, qa).disabled).toBe(true));
+
+        click(fixture, 'bh');
+        expect(button(fixture, 'tree-selector-apply').disabled).toBe(true);
+        expect(fixture.componentInstance.canApply()).toBe(false);
+        expect(fixture.componentInstance.value()).toEqual(['ph']);
+    });
 });
