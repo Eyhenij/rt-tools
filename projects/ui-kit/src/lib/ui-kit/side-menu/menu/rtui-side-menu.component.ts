@@ -9,6 +9,7 @@ import {
     ElementRef,
     inject,
     input,
+    numberAttribute,
     InputSignal,
     InputSignalWithTransform,
     output,
@@ -52,6 +53,8 @@ import {
 import { RtuiButtonComponent } from '../../buttons/unified-button/rtui-button.component';
 import { RtuiClearButtonComponent } from '../../table/components/clear-search-button/rtui-clear-button.component';
 import { RtuiSideMenuSubItemComponent } from '../menu-sub-item/rtui-side-menu-sub-item.component';
+import { SubMenuCloseDelay } from './sub-menu-close-delay';
+import { pickPinnedSubMenu } from './sub-menu-pinned-pick';
 import { SubMenuResize } from './sub-menu-resize';
 import { pressSubMenuRow, SubMenuKeyboard } from './sub-menu-keyboard';
 import { RtuiSubMenuHoldService } from './rtui-sub-menu-hold.service';
@@ -159,7 +162,7 @@ export class RtuiSideMenuComponent implements IRtuiSideMenuHost {
         (): number | null => this.subMenuWidth() ?? this.#settings?.subMenuWidth(this.menuId())() ?? null
     );
 
-    /** Что показывает закреплённое подменю — счёт в `pinnedSubMenuItems`; выбор ставит `#pickPinnedSubMenu`. */
+    /** Что показывает закреплённое подменю — счёт в `pinnedSubMenuItems`; выбор ставит `pickPinnedSubMenu`. */
     readonly #pinnedSubMenu: Signal<ISideMenu.Item[]> = computed((): ISideMenu.Item[] =>
         this.isPinned() ? pinnedSubMenuItems(this.selectedSubMenu(), this.activeMenuIds(), this.menuItems()) : []
     );
@@ -205,6 +208,14 @@ export class RtuiSideMenuComponent implements IRtuiSideMenuHost {
     /** Закреплённое подменю открыто, пока ему есть что показать: указатель на это не влияет. */
     protected readonly subMenuOpened: Signal<boolean> = computed((): boolean =>
         this.isPinned() ? this.#pinnedSubMenu().length > 0 : this.#hoverOpened()
+    );
+    protected readonly closeDelay: SubMenuCloseDelay = new SubMenuCloseDelay(
+        {
+            delay: (): number => Math.max(0, this.subMenuCloseDelay() || 0),
+            isHovered: (): boolean => !this.isPinned() && this.subMenuOpened(),
+            toggle: (item?: ISideMenu.Item): void => this.toggleSubMenu(item),
+        },
+        inject(DestroyRef)
     );
 
     /** Что видно в подменю: отобранные пункты того набора, который его сейчас наполняет. */
@@ -294,6 +305,8 @@ export class RtuiSideMenuComponent implements IRtuiSideMenuHost {
     public isSubMenuTooltipsShown: InputSignalWithTransform<boolean, boolean> = input<boolean, boolean>(false, {
         transform: booleanAttribute,
     });
+    /** Сколько миллисекунд подменю, открытое наведением, ждёт после ухода указателя. Ноль — сразу. */
+    public subMenuCloseDelay: InputSignalWithTransform<number, unknown> = input<number, unknown>(500, { transform: numberAttribute });
 
     public activeMenuId: Signal<number | string> = computed(() =>
         this.activeMenuIds()?.length ? this.activeMenuIds()[this.activeMenuIds()?.length - 1] : ''
@@ -324,7 +337,7 @@ export class RtuiSideMenuComponent implements IRtuiSideMenuHost {
 
     public onClickMenu(item: ISideMenu.Item): void {
         if (this.isPinned()) {
-            this.#pickPinnedSubMenu(item);
+            pickPinnedSubMenu(this, item);
             this.closeMobileMenu();
 
             return;
@@ -387,6 +400,7 @@ export class RtuiSideMenuComponent implements IRtuiSideMenuHost {
     }
 
     public closeSubMenu(): void {
+        this.closeDelay.cancel();
         this.selectedItem.set(null);
         this.selectedSubMenu.set(null);
         this.subMenuQuery.set('');
@@ -469,28 +483,5 @@ export class RtuiSideMenuComponent implements IRtuiSideMenuHost {
 
     #openSubMenu(): void {
         this.#hoverOpened.set(true);
-    }
-
-    /**
-     * Нажат пункт полосы, пока подменю закреплено. Наведение здесь по-прежнему не делает ничего:
-     * рука идёт вдоль полосы к подвалу и к самой панели, и переставленное наведением подменю
-     * мелькало бы разделами по дороге. Нажатие — выбор человека, и для раздела без своего адреса
-     * это единственный способ его открыть.
-     *
-     * Пункт со своим адресом и без разделов выбор снимает: человек ушёл на страницу, разделов у
-     * которой нет, и оставленная от прежнего раздела панель врала бы о том, где он стоит.
-     */
-    #pickPinnedSubMenu(item: ISideMenu.Item): void {
-        if (item?.submenu?.length) {
-            this.selectedItem.set(item);
-            this.selectedSubMenu.set(item.submenu);
-            this.subMenuQuery.set('');
-        } else if (item?.link) {
-            this.selectedItem.set(null);
-            this.selectedSubMenu.set(null);
-            this.subMenuQuery.set('');
-        } else {
-            // Пункт без разделов и без своего адреса: нажимать в нём нечего, и выбор остаётся прежним.
-        }
     }
 }
