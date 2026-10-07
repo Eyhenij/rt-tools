@@ -3,9 +3,9 @@ import { toObservable } from '@angular/core/rxjs-interop';
 
 import { filter, finalize, map, Observable, of, shareReplay, switchMap, take } from 'rxjs';
 
-import { RtAsideUnsavedDialogComponent } from '../aside/unsaved-dialog/rt-aside-unsaved-dialog.component';
-import { ERtAsideUnsavedOutcome } from '../aside/unsaved-dialog/rt-aside-unsaved.logic';
-import { RtDialogService } from '../dialog/rt-dialog.service';
+import { RtAsideUnsavedDialogComponent } from '@rt-tools/ui-kit-v2/aside';
+import { ERtAsideUnsavedOutcome } from '@rt-tools/ui-kit-v2/aside';
+import { RtDialogService } from '@rt-tools/ui-kit-v2/dialog';
 
 /** То, что вопрос о правках знает о панели: чем записать и чем узнать исход записи. */
 export interface IRtRouteAsideUnsavedDeps {

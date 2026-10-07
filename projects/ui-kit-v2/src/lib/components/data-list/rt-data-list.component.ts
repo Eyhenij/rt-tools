@@ -21,32 +21,27 @@ import { DOCUMENT, NgTemplateOutlet } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Observable, Subject } from 'rxjs';
 import { exhaustMap, filter } from 'rxjs/operators';
-import { IRtKitConfig } from '../../config/rt-kit-config.model';
-import { rtKitDefault } from '../../config/rt-kit-config.providers';
-import { IRtInput } from '../input/rt-input.model';
+import { IRtKitConfig } from '@rt-tools/ui-kit-v2/core';
+import { rtKitDefault } from '@rt-tools/ui-kit-v2/core';
+import { IRtInput } from '@rt-tools/ui-kit-v2/core';
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { IPageModel, ISortModel, TNullable, transformArrayInput } from '@rt-tools/utils';
 
-import { rtKitLabel } from '../../i18n';
-import { RtAsideService } from '../aside/rt-aside.service';
-import { RtDataTableComponent } from '../data-table/rt-data-table.component';
-import { RtDataTableConfigService } from '../data-table/rt-data-table-config.service';
-import { RtDataTableIconDirective } from '../data-table/rt-data-table-icon.directive';
+import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
+import { RtAsideService } from '@rt-tools/ui-kit-v2/aside';
+import { RtDataTableComponent } from '@rt-tools/ui-kit-v2/data-table';
+import { RtDataTableConfigService } from '@rt-tools/ui-kit-v2/data-table';
+import { RtDataTableIconDirective } from '@rt-tools/ui-kit-v2/data-table';
 import {
     RtDataTableAdditionalRowActionsDirective,
     RtDataTableCustomCellsDirective,
     RtDataTableRowActionsDirective,
-} from '../data-table/rt-data-table-cells.directive';
-import {
-    IRtDataTable,
-    RT_DATA_TABLE_PRESET_FROM_HOST,
-    RT_PRESET_MATERIAL_CLASS,
-    TRtDataTableFilters,
-} from '../data-table/rt-data-table.model';
-import { RtEmptyStateComponent } from '../empty-state/rt-empty-state.component';
-import { RtSpinnerComponent } from '../spinner/rt-spinner.component';
-import { RtPaginationComponent } from '../pagination/rt-pagination.component';
+} from '@rt-tools/ui-kit-v2/data-table';
+import { IRtDataTable, RT_DATA_TABLE_PRESET_FROM_HOST, RT_PRESET_MATERIAL_CLASS, TRtDataTableFilters } from '@rt-tools/ui-kit-v2/core';
+import { RtEmptyStateComponent } from '@rt-tools/ui-kit-v2/empty-state';
+import { RtSpinnerComponent } from '@rt-tools/ui-kit-v2/spinner';
+import { RtPaginationComponent } from '@rt-tools/ui-kit-v2/pagination';
 import { dataListPageAfterSizeChange, dataListPageSizes } from './rt-data-list-pagination.logic';
 import { RtDataListSettingsAsideComponent } from './settings/rt-data-list-settings-aside.component';
 import { RtDataListToolbarComponent } from './toolbar/rt-data-list-toolbar.component';

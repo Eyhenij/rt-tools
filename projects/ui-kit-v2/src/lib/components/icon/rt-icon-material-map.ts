@@ -1,4 +1,4 @@
-import { IRtIcon } from './rt-icon.model';
+import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 
 /**
  * Соответствие значков первого кита значкам этого набора.

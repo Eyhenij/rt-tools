@@ -48,6 +48,11 @@ step of the pipeline.
 - **The chain of `export *` is read to the end, and the file of types is taken before the source next
   to it.** Next to a `.d.ts` lies a `.js` of the same name, and taken first it gives back an empty
   list of names.
+- **A chain that names an entry point of the same package by the package name is read through that
+  entry point.** A package split into entry points re-exports them from its root by name, not by a
+  relative path. The published types find the entry point by the `exports` map of the manifest, the
+  sources by `ng-package.json` of its directory. Otherwise every symbol of such a package reads as
+  missing.
 - **The neighbour imported from is named in the manifest, and there is a version in the registry
   under its range.** Otherwise there is nothing for a consumer to install, and the check names the
   range.

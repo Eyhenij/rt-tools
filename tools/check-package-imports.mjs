@@ -211,10 +211,32 @@ function typesEntry(packageDir) {
 }
 
 /**
- * The file `export * from` leads to. The types first, the source after: next to a `.d.ts` lies a
- * `.js` of the same name, and taken first it gives an empty list of names.
+ * The file a package's own entry point leads to, when `export * from` names it by the package name:
+ * `@rt-tools/ui-kit-v2/table` from the root of the same package. A published package finds it by the
+ * `exports` map of its manifest, the sources — by `ng-package.json` of the entry directory.
  */
-function resolveChained(from, target) {
+function resolveOwnEntry(target, own) {
+    if (!own || (target !== own.name && !target.startsWith(`${own.name}/`))) return null;
+    const sub = target.slice(own.name.length);
+    const manifestPath = join(own.dir, 'package.json');
+    const types = existsSync(manifestPath) ? readJson(manifestPath).exports?.[`.${sub}`]?.types : null;
+    const ngPackage = join(own.dir, sub.slice(1), 'ng-package.json');
+    const candidates = [
+        types ? join(own.dir, types) : null,
+        sub && existsSync(ngPackage) ? join(own.dir, sub.slice(1), readJson(ngPackage).lib?.entryFile ?? '') : null,
+        sub ? null : join(own.dir, 'src/public-api.ts'),
+        sub ? null : join(own.dir, 'src/index.ts'),
+    ].filter(Boolean);
+    return candidates.find((candidate) => existsSync(candidate) && statSync(candidate).isFile()) ?? null;
+}
+
+/**
+ * The file `export * from` leads to. The types first, the source after: next to a `.d.ts` lies a
+ * `.js` of the same name, and taken first it gives an empty list of names. A name without a dot is
+ * an entry point of the same package.
+ */
+function resolveChained(from, target, own) {
+    if (!target.startsWith('.')) return resolveOwnEntry(target, own);
     const base = join(dirname(from), target);
     const candidates = [
         base.replace(/\.js$/, '.d.ts'),
@@ -232,13 +254,13 @@ function resolveChained(from, target) {
 }
 
 /** All the names a package exports: the declarations, the lists and the `export *` chains. */
-function exportsOf(entry, seen = new Set(), out = new Set()) {
+function exportsOf(entry, own, seen = new Set(), out = new Set()) {
     if (!entry || seen.has(entry)) return out;
     seen.add(entry);
     const text = readFileSync(entry, 'utf8');
     for (const match of text.matchAll(DECLARED)) out.add(match[1]);
     for (const match of text.matchAll(LISTED)) for (const name of namesOf(match[1], { after: true })) out.add(name);
-    for (const match of text.matchAll(CHAINED)) exportsOf(resolveChained(entry, match[1]), seen, out);
+    for (const match of text.matchAll(CHAINED)) exportsOf(resolveChained(entry, match[1], own), own, seen, out);
     return out;
 }
 
@@ -271,7 +293,7 @@ function exportedInTree(neighbour) {
         const entry = found
             ? [join(found.dir, 'src/index.ts'), join(found.dir, 'src/public-api.ts')].find((p) => existsSync(p))
             : null;
-        treeExports.set(neighbour, entry ? exportsOf(entry) : new Set());
+        treeExports.set(neighbour, entry ? exportsOf(entry, { name: neighbour, dir: found.dir }) : new Set());
     }
     return treeExports.get(neighbour);
 }
@@ -315,7 +337,10 @@ for (const { dir, manifest } of packages) {
                         problems.push(`${neighbour}@${version}: the published package has no types file — there is nothing to match against`);
                         exportsCache.set(key, null);
                     } else {
-                        exportsCache.set(key, { version, names: exportsOf(entry) });
+                        exportsCache.set(key, {
+                            version,
+                            names: exportsOf(entry, { name: neighbour, dir: join(packed, 'package') }),
+                        });
                     }
                 }
             }

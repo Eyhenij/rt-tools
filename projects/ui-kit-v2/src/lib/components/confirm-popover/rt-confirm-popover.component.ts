@@ -12,8 +12,8 @@ import {
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
-import { rtKitLabel } from '../../i18n';
-import { RtButtonDirective } from '../button/rt-button.directive';
+import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
+import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
 import { IRtConfirmPopover } from './rt-confirm-popover.model';
 
 const BEM_BLOCK: string = 'rt-confirm-popover';

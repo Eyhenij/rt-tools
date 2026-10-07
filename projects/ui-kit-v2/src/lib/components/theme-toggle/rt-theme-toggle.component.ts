@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, InputSignal, Signal, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import { rtKitLabel } from '../../i18n';
-import { ThemeService } from '../../platform';
+import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
+import { ThemeService } from '@rt-tools/ui-kit-v2/core';
 
-import { RtIconButtonComponent } from '../icon-button';
-import { IRtIcon } from '../icon/rt-icon.model';
-import { RtToggleSwitchComponent } from '../toggle-switch';
+import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
+import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
+import { RtToggleSwitchComponent } from '@rt-tools/ui-kit-v2/toggle-switch';
 import { IRtThemeToggle } from './rt-theme-toggle.model';
 
 const BEM_BLOCK: string = 'rt-theme-toggle';

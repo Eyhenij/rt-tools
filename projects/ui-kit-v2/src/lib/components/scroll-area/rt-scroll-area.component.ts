@@ -21,9 +21,9 @@ import {
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { TNullable } from '@rt-tools/utils';
 
-import { RT_KIT_LABELS, TRtKitLabelMap } from '../../i18n';
-import { RtIconComponent } from '../icon/rt-icon.component';
-import { RtTooltipDirective } from '../tooltip/rt-tooltip.directive';
+import { RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
+import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
+import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
 import { RtScrollAreaContentDirective, RtScrollAreaFooterDirective, RtScrollAreaHeaderDirective } from './rt-scroll-area.directives';
 
 const BEM_BLOCK: string = 'rt-scroll-area';

@@ -35,6 +35,10 @@ export default {
         // the working tree, so the name leads to the sources, not to a built copy.
         '^@rt-tools/ui-kit-v2$': '<rootDir>/src/public-api.ts',
         '^@rt-tools/ui-kit-v2/rich-editor$': '<rootDir>/src/rich-editor/public-api.ts',
+        // Every component is an entry of its own, and the components import each other by entry
+        // name: the core lies apart, the rest by the name of the component directory.
+        '^@rt-tools/ui-kit-v2/core$': '<rootDir>/src/lib/core.ts',
+        '^@rt-tools/ui-kit-v2/([\\w-]+)$': '<rootDir>/src/lib/components/$1/index.ts',
         // @rt-tools/utils writes explicit .js extensions on its relative imports so its ESM output
         // is loadable by Node. Jest resolves the TypeScript sources, so the extension is stripped.
         '^(\\.{1,2}/.*)\\.js$': '$1',

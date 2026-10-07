@@ -2,8 +2,8 @@ import { TitleCasePipe } from '@angular/common';
 
 import { BreakStringPipe } from '@rt-tools/core';
 
-import { IRtDataTable } from '../data-table/rt-data-table.model';
-import { IRtTable } from '../table/rt-table.model';
+import { IRtDataTable } from '@rt-tools/ui-kit-v2/core';
+import { IRtTable } from '@rt-tools/ui-kit-v2/table';
 
 const breakString: BreakStringPipe = new BreakStringPipe();
 const titleCase: TitleCasePipe = new TitleCasePipe();

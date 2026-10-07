@@ -1,7 +1,7 @@
-import { IButton } from '../button/rt-button.model';
-import { IRtConfirmPopover } from '../confirm-popover/rt-confirm-popover.model';
-import { IRtSelect } from '../select/rt-select.model';
-import { IRtTimeline } from '../timeline/rt-timeline.model';
+import { IButton } from '@rt-tools/ui-kit-v2/core';
+import { IRtConfirmPopover } from '@rt-tools/ui-kit-v2/confirm-popover';
+import { IRtSelect } from '@rt-tools/ui-kit-v2/select';
+import { IRtTimeline } from '@rt-tools/ui-kit-v2/timeline';
 
 export namespace IRtWorkspaceDetails {
     export interface Row {

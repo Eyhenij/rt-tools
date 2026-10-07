@@ -18,11 +18,11 @@ import { ValidationErrors } from '@angular/forms';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, TRtKitLabelKey, TRtKitLabelMap, rtKitLabel } from '../../i18n';
-import { RtFormControlBase } from '../form-control/rt-form-control.base';
-import { RtIconComponent } from '../icon';
-import { RtPopoverDirective } from '../popover/rt-popover.directive';
-import { RtSkeletonWrapperComponent } from '../skeleton-wrapper/rt-skeleton-wrapper.component';
+import { RT_KIT_LABELS, TRtKitLabelKey, TRtKitLabelMap, rtKitLabel } from '@rt-tools/ui-kit-v2/core';
+import { RtFormControlBase } from '@rt-tools/ui-kit-v2/form-control';
+import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
+import { RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
+import { RtSkeletonWrapperComponent } from '@rt-tools/ui-kit-v2/skeleton-wrapper';
 import { RtFieldHintDirective } from './rt-field-hint.directive';
 import { RT_FIELD_DEFAULT_ERROR_KEYS, RT_FIELD_EMPTY_VALUE, IRtField } from './rt-field.model';
 

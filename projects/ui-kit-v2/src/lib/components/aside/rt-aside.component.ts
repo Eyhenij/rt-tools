@@ -21,7 +21,7 @@ import {
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { RtSpinnerComponent } from '../spinner/rt-spinner.component';
+import { RtSpinnerComponent } from '@rt-tools/ui-kit-v2/spinner';
 import { RtAsideErrorBoxComponent } from './error-box/rt-aside-error-box.component';
 
 const BEM_BLOCK: string = 'rt-aside';

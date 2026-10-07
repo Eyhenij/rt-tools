@@ -100,14 +100,15 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | `hint`             | `string`                       | `''`      |
 | `help`             | `string`                       | `''`      |
 | `readonly`         | `boolean`                      | `false`   |
+| `required`         | `boolean`                      | `false`   |
 | `loading`          | `boolean`                      | `false`   |
 | `hideRequiredMark` | `boolean`                      | `false`   |
 | `reserveHintSpace` | `boolean`                      | `false`   |
 | `errors`           | `Record<validatorKey, string>` | `{}`      |
 
-Входа обязательности здесь нет намеренно: звёздочку поле рисует, обнаружив у контрола валидатор
-`required`. `hideRequiredMark` её глушит — для форм, где обязательны все поля и маркер становится
-шумом.
+Звёздочку поле рисует, обнаружив у контрола валидатор `required`. Шаблонной форме валидатор на
+контроле не виден, и обязательность она объявляет входом `required`. `hideRequiredMark` звёздочку
+глушит — для форм, где обязательны все поля и маркер становится шумом.
 
 ## Выходы
 

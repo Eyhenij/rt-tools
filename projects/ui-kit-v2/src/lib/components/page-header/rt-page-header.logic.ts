@@ -1,4 +1,4 @@
-import { IRtIcon } from '../icon';
+import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 import { IRtPageHeader } from './rt-page-header.model';
 
 /** Чем пункт отрисуется: панелью, ссылкой или кнопкой. */

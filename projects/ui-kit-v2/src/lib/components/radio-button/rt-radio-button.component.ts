@@ -24,7 +24,7 @@ import { distinctUntilChanged, EMPTY, Observable, Subject, switchMap } from 'rxj
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { RtRadiusDirective } from '../radius/rt-radius.directive';
+import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 
 const BEM_BLOCK: string = 'rt-radio-button';
 

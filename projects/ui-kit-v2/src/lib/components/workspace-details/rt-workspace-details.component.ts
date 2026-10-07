@@ -22,27 +22,27 @@ import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, TRtKitLabelMap } from '../../i18n';
-import { NotificationBus } from '../../platform';
+import { RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
+import { NotificationBus } from '@rt-tools/ui-kit-v2/core';
 
-import { RtAsideSectionComponent } from '../aside-section/rt-aside-section.component';
-import { RtButtonDirective } from '../button/rt-button.directive';
-import { RtConfirmDirective } from '../confirm-popover/rt-confirm.directive';
-import { RtDetailListComponent } from '../detail-list/rt-detail-list.component';
-import { RtDetailRowComponent } from '../detail-list/rt-detail-row.component';
-import { RtEmptyStateComponent } from '../empty-state/rt-empty-state.component';
-import { RtFieldComponent } from '../field/rt-field.component';
-import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
-import { RtMoneyListComponent } from '../money-list/rt-money-list.component';
-import { RtMoneyRowComponent } from '../money-list/rt-money-row.component';
-import { RtNoteComponent } from '../note/rt-note.component';
-import { RtSelectComponent } from '../select/rt-select.component';
-import { RtSpinnerComponent } from '../spinner/rt-spinner.component';
-import { RtTabDirective } from '../tabs/rt-tab.directive';
-import { RtTabsComponent } from '../tabs/rt-tabs.component';
-import { RtTextareaComponent } from '../textarea/rt-textarea.component';
-import { RtTimelineComponent } from '../timeline/rt-timeline.component';
-import { RtToggleSwitchComponent } from '../toggle-switch/rt-toggle-switch.component';
+import { RtAsideSectionComponent } from '@rt-tools/ui-kit-v2/aside-section';
+import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
+import { RtConfirmDirective } from '@rt-tools/ui-kit-v2/confirm-popover';
+import { RtDetailListComponent } from '@rt-tools/ui-kit-v2/detail-list';
+import { RtDetailRowComponent } from '@rt-tools/ui-kit-v2/detail-list';
+import { RtEmptyStateComponent } from '@rt-tools/ui-kit-v2/empty-state';
+import { RtFieldComponent } from '@rt-tools/ui-kit-v2/field';
+import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
+import { RtMoneyListComponent } from '@rt-tools/ui-kit-v2/money-list';
+import { RtMoneyRowComponent } from '@rt-tools/ui-kit-v2/money-list';
+import { RtNoteComponent } from '@rt-tools/ui-kit-v2/note';
+import { RtSelectComponent } from '@rt-tools/ui-kit-v2/select';
+import { RtSpinnerComponent } from '@rt-tools/ui-kit-v2/spinner';
+import { RtTabDirective } from '@rt-tools/ui-kit-v2/tabs';
+import { RtTabsComponent } from '@rt-tools/ui-kit-v2/tabs';
+import { RtTextareaComponent } from '@rt-tools/ui-kit-v2/textarea';
+import { RtTimelineComponent } from '@rt-tools/ui-kit-v2/timeline';
+import { RtToggleSwitchComponent } from '@rt-tools/ui-kit-v2/toggle-switch';
 import { IRtWorkspaceDetails } from './rt-workspace-details.model';
 
 const BEM_BLOCK: string = 'rt-workspace-details';

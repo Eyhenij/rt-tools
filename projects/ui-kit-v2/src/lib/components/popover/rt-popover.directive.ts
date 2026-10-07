@@ -32,7 +32,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { map, merge, Observable, Subject, switchMap } from 'rxjs';
 
-import { carryThemeScope, materialPresetClassesOf } from '../../util/material-preset';
+import { carryThemeScope, materialPresetClassesOf } from '@rt-tools/ui-kit-v2/core';
 import { IRtPopover } from './rt-popover.model';
 
 const HOVER_CLOSE_DELAY_MS: number = 100;

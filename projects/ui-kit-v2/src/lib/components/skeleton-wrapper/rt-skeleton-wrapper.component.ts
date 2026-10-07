@@ -9,8 +9,8 @@ import {
     ViewEncapsulation,
 } from '@angular/core';
 
-import { TRtRadius } from '../radius/rt-radius.model';
-import { RtSkeletonComponent, TRtSkeletonShape, TRtSkeletonSize } from '../skeleton/rt-skeleton.component';
+import { TRtRadius } from '@rt-tools/ui-kit-v2/core';
+import { RtSkeletonComponent, TRtSkeletonShape, TRtSkeletonSize } from '@rt-tools/ui-kit-v2/skeleton';
 
 const BEM_BLOCK: string = 'rt-skeleton-wrapper';
 

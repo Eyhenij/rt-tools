@@ -7,7 +7,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { EMPTY, map, merge, mergeMap, Observable, Subject, take, takeUntil } from 'rxjs';
 
-import { carryThemeScopeOfFocus, materialPresetClassesOfFocus } from '../../util/material-preset';
+import { carryThemeScopeOfFocus, materialPresetClassesOfFocus } from '@rt-tools/ui-kit-v2/core';
 import { RtDialogRef } from './rt-dialog-ref';
 import { RT_DIALOG_DATA } from './rt-dialog.tokens';
 

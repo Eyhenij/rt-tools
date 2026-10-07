@@ -24,16 +24,17 @@ import {
 
 import { BlockDirective, ElemDirective, ModDirective, WINDOW } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, TRtKitLabelMap } from '../../i18n';
-import { IButton, RtButtonDirective } from '../button';
-import { RtEmptyStateComponent } from '../empty-state';
-import { RtFileDropComponent } from '../file-drop';
-import { IRtIcon } from '../icon/rt-icon.model';
-import { RtIconButtonComponent } from '../icon-button';
-import { IRtImageCropper, RT_IMAGE_CROPPER_QUALITY, RtImageCropperComponent } from '../image-cropper';
-import { TRtRadius } from '../radius/rt-radius.model';
-import { RtSpinnerComponent } from '../spinner';
-import { RtTooltipDirective } from '../tooltip';
+import { RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
+import { IButton } from '@rt-tools/ui-kit-v2/core';
+import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
+import { RtEmptyStateComponent } from '@rt-tools/ui-kit-v2/empty-state';
+import { RtFileDropComponent } from '@rt-tools/ui-kit-v2/file-drop';
+import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
+import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
+import { IRtImageCropper, RT_IMAGE_CROPPER_QUALITY, RtImageCropperComponent } from '@rt-tools/ui-kit-v2/image-cropper';
+import { TRtRadius } from '@rt-tools/ui-kit-v2/core';
+import { RtSpinnerComponent } from '@rt-tools/ui-kit-v2/spinner';
+import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
 import { isImageFile, uploadState } from './rt-image-upload.logic';
 import { IRtImageUpload } from './rt-image-upload.model';
 
