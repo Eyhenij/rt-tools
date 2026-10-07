@@ -1,0 +1,93 @@
+@layer rt-kit.components {
+    /* rt-tree-selector — поиск, контролы и дерево. ViewEncapsulation.None.
+       Высоту задаёт место, куда приложение ставит селектор: дерево прокручивается внутри,
+       поле поиска и подвал стоят на месте. */
+
+    .rt-tree-selector {
+        --rt-tree-selector-border-width: var(--rt-border-width-thin);
+
+        display: flex;
+        min-height: 0;
+        box-sizing: border-box;
+        flex-direction: column;
+        color: var(--rt-color-text-primary);
+        gap: var(--rt-space-sm);
+
+        &__head {
+            display: flex;
+            flex-direction: column;
+            gap: var(--rt-space-sm);
+        }
+
+        &__label {
+            font-size: var(--rt-text-sm);
+            font-weight: var(--rt-font-weight-semibold);
+        }
+
+        &__search {
+            display: block;
+        }
+
+        &__controls {
+            display: flex;
+            flex-direction: column;
+            gap: var(--rt-space-sm);
+        }
+
+        // Контролы переносятся на вторую строку на узком экране: обрезка спрятала бы кнопку.
+        &__row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: var(--rt-space-xs);
+        }
+
+        &__control {
+            flex: 0 0 auto;
+        }
+
+        // Контролы приложения прижаты к правому краю строки, кнопки дерева — к левому.
+        &__own {
+            display: flex;
+            align-items: center;
+            gap: var(--rt-space-xs);
+            margin-inline-start: auto;
+        }
+
+        &__multi {
+            display: flex;
+            align-items: center;
+            gap: var(--rt-space-sm);
+        }
+
+        &__multi-label {
+            font-size: var(--rt-text-sm);
+        }
+
+        &__multi-hint-icon {
+            color: var(--rt-color-text-muted);
+        }
+
+        &__tree {
+            min-height: 0;
+            flex: 1 1 auto;
+            overflow-y: auto;
+        }
+
+        &__empty {
+            flex: 1 1 auto;
+            padding: var(--rt-space-md);
+            color: var(--rt-color-text-muted);
+            text-align: center;
+        }
+
+        &__foot {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            border-top: var(--rt-tree-selector-border-width) solid var(--rt-color-border-subtle);
+            gap: var(--rt-space-sm);
+            padding-block-start: var(--rt-space-sm);
+        }
+    }
+}

@@ -1,0 +1,136 @@
+<ng-container rtBlock="rt-tree-selector">
+    <div rtElem="head">
+        @if (label()) {
+            <div rtElem="label" qa-dataid="tree-selector-label">{{ label() }}</div>
+        }
+
+        <rt-input
+            rtElem="search"
+            qa-dataid="tree-selector-search"
+            iconLeft="search"
+            [placeholder]="searchLabel()"
+            [ariaLabel]="searchLabel()"
+            [ngModel]="term()"
+            (ngModelChange)="onTerm($event)"
+            (keydown)="onSearchKeydown($event)" />
+
+        <div rtElem="controls">
+            <div rtElem="row">
+                @if (isExpandShown()) {
+                    <button
+                        rtButton
+                        rtElem="control"
+                        qa-dataid="tree-selector-expand-all"
+                        type="button"
+                        appearance="outlined"
+                        theme="secondary"
+                        size="sm"
+                        icon="expand-all"
+                        [rtTooltip]="expandAllLabel()"
+                        [attr.aria-label]="expandAllLabel()"
+                        (click)="expandAll()"></button>
+                    <button
+                        rtButton
+                        rtElem="control"
+                        qa-dataid="tree-selector-collapse-all"
+                        type="button"
+                        appearance="outlined"
+                        theme="secondary"
+                        size="sm"
+                        icon="collapse-all"
+                        [rtTooltip]="collapseAllLabel()"
+                        [attr.aria-label]="collapseAllLabel()"
+                        (click)="collapseAll()"></button>
+                }
+                @if (isRevertShown()) {
+                    <button
+                        rtButton
+                        rtElem="control"
+                        qa-dataid="tree-selector-revert"
+                        type="button"
+                        appearance="outlined"
+                        theme="secondary"
+                        size="sm"
+                        icon="undo"
+                        [rtTooltip]="revertLabel()"
+                        [attr.aria-label]="revertLabel()"
+                        [disabled]="!isDraftChanged()"
+                        (click)="onRevert()"></button>
+                }
+                @if (isClearShown()) {
+                    <button
+                        rtButton
+                        rtElem="control"
+                        qa-dataid="tree-selector-clear"
+                        type="button"
+                        appearance="text"
+                        theme="danger"
+                        size="sm"
+                        icon="trash"
+                        [rtTooltip]="clearLabel()"
+                        [attr.aria-label]="clearLabel()"
+                        (click)="onClear()"></button>
+                }
+                @if (controlsTpl(); as controls) {
+                    <div rtElem="own">
+                        <ng-container [ngTemplateOutlet]="controls.templateRef" />
+                    </div>
+                }
+            </div>
+
+            @if (isMultiToggleShown()) {
+                <div rtElem="multi">
+                    <rt-toggle-switch
+                        qa-dataid="tree-selector-multi"
+                        [ariaLabel]="multiLabel()"
+                        [ngModel]="multiOn()"
+                        [ngModelOptions]="{ standalone: true }"
+                        (ngModelChange)="onMultiToggle($event)" />
+                    <span rtElem="multi-label">{{ multiLabel() }}</span>
+                    <rt-icon rtElem="multi-hint-icon" name="info-circle" size="sm" [rtTooltip]="multiHintLabel()" />
+                </div>
+            }
+        </div>
+    </div>
+
+    @if (isNothingFound()) {
+        <div rtElem="empty" qa-dataid="tree-selector-empty">{{ nothingFoundLabel() }}</div>
+    } @else {
+        <rt-tree
+            rtElem="tree"
+            qa-dataid="tree-selector-tree"
+            [nodes]="shownNodes()"
+            [value]="draft()"
+            [mode]="mode()"
+            [cascade]="cascade()"
+            [branchMarks]="branchMarks()"
+            [exclusive]="isExclusive()"
+            [showSelectAll]="selectAll()"
+            [searchTerm]="term()"
+            [filter]="false"
+            [ariaLabel]="ariaLabel()"
+            (valueChange)="onTreeChange($event)"
+            (picked)="onPicked()" />
+    }
+
+    @if (isFooterShown()) {
+        <div rtElem="foot">
+            <button
+                rtButton
+                qa-dataid="tree-selector-cancel"
+                type="button"
+                appearance="text"
+                [label]="cancelLabel()"
+                [attr.aria-label]="cancelLabel()"
+                (click)="cancel()"></button>
+            <button
+                rtButton
+                qa-dataid="tree-selector-apply"
+                type="button"
+                [label]="applyLabel()"
+                [attr.aria-label]="applyLabel()"
+                [disabled]="!canApply()"
+                (click)="apply()"></button>
+        </div>
+    }
+</ng-container>

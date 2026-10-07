@@ -50,6 +50,7 @@
     "ng-template[rtDraggableTreeNode]": "projects/ui-kit-v2/src/lib/components/draggable-tree/stories/draggable-tree-matrix.stories.ts",
     "ng-template[rtTreeNodeEnd]": "projects/ui-kit-v2/src/lib/components/tree/stories/tree-matrix.stories.ts",
     "ng-template[rtTreeNodeMeta]": "projects/ui-kit-v2/src/lib/components/tree/stories/tree-matrix.stories.ts",
+    "ng-template[rtTreeSelectorControls]": "projects/ui-kit-v2/src/lib/components/tree-selector/stories/tree-selector-matrix.stories.ts",
     "[rtFieldHint]": "projects/ui-kit-v2/src/lib/components/field/stories/field-matrix.stories.ts",
     "rt-table-settings-aside": "projects/ui-kit-v2/src/showcase/templates/stories/bookings-template.stories.ts",
     "rt-data-table-cell": "projects/ui-kit-v2/src/lib/components/data-table/stories/data-table-matrix.stories.ts",
