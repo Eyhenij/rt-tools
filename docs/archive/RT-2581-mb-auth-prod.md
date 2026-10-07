@@ -62,3 +62,17 @@ $12 a month; B — one realm for all products; C — each product keeps its own 
 
 - The mail of the realm `rt`: the bus sends no letters today. Without a mail key the realm does not
   demand a confirmed address, and a reset of a password goes through the console.
+
+## Decisions along the way
+
+- **The first rollout went by hand with the steps of the workflow.** GitHub registers a manual run
+  only from the main branch. The first run of «Deploy Auth» comes right after the epic merges;
+  until then an error in the workflow file itself is not seen. The question to the owner did not
+  leave: the question check refused it, and the recommended option was taken.
+- **The droplet was paid by the owner's own press.** The executor filled the form; the purchase
+  button was refused to it by the action filter.
+- **The node secrets were born on the node.** A local copy for the transfer and the bus
+  environment lies outside the repository with mode 600.
+- **Keycloak answers at `https://auth.message-bus.dev/realms/rt`.** The cargo client gets a token
+  with the five bus roles by the production secret; the stand secret is refused. The node uses
+  1.1 GB of 2.
