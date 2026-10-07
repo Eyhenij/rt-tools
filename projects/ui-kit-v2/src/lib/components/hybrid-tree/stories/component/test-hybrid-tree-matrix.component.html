@@ -1,0 +1,64 @@
+<ng-template #cell let-c>
+    <div style="width: 300px">
+        <rt-hybrid-tree
+            [ariaLabel]="c.name"
+            [nodes]="nodes"
+            [value]="c.value"
+            [branchMarks]="c.branchMarks"
+            [showSelectAll]="c.showSelectAll" />
+    </div>
+</ng-template>
+
+@switch (part) {
+    @case ('single') {
+        <app-story-presets>
+            <ng-template>
+                <app-story-row caption="Группы «один лист»" [items]="singleCases" [itemLabel]="caseLabel">
+                    <ng-template let-c>
+                        <ng-container [ngTemplateOutlet]="cell" [ngTemplateOutletContext]="{ $implicit: c }" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('marks') {
+        <app-story-presets>
+            <ng-template>
+                <app-story-row caption="Отметки групп и число выбранного" [items]="markCases" [itemLabel]="caseLabel">
+                    <ng-template let-c>
+                        <ng-container [ngTemplateOutlet]="cell" [ngTemplateOutletContext]="{ $implicit: c }" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('select-all') {
+        <app-story-presets>
+            <ng-template>
+                <app-story-row caption="«Выбрать всё» по свободным листьям" [items]="selectAllCases" [itemLabel]="caseLabel">
+                    <ng-template let-c>
+                        <ng-container [ngTemplateOutlet]="cell" [ngTemplateOutletContext]="{ $implicit: c }" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('presets') {
+        <app-story-presets caption="Дерево в обоих наборах">
+            <ng-template>
+                <ng-container [ngTemplateOutlet]="cell" [ngTemplateOutletContext]="{ $implicit: singleCases[1] }" />
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('themes') {
+        <app-story-themes caption="Дерево в обеих темах">
+            <ng-template>
+                <ng-container [ngTemplateOutlet]="cell" [ngTemplateOutletContext]="{ $implicit: singleCases[1] }" />
+            </ng-template>
+        </app-story-themes>
+    }
+}

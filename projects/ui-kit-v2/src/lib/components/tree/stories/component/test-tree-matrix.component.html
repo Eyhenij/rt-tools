@@ -138,6 +138,18 @@
                             [value]="defaultValue" />
                     </ng-template>
                 </app-story-row>
+                <app-story-row caption="Выключенное дерево: вход disabled" [items]="disabledCases" [itemLabel]="caseLabel">
+                    <ng-template let-c>
+                        <rt-tree
+                            style="width: 280px"
+                            disabled
+                            [ariaLabel]="c.name"
+                            [nodes]="c.nodes"
+                            [showSelectAll]="c.showSelectAll"
+                            [mode]="c.mode"
+                            [value]="c.value" />
+                    </ng-template>
+                </app-story-row>
             </ng-template>
         </app-story-presets>
     }

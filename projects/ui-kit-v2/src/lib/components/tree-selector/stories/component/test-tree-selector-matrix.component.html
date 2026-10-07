@@ -13,7 +13,9 @@
             [revertable]="c.revertable"
             [multiToggle]="c.multiToggle"
             [searchTerm]="c.searchTerm"
-            [label]="c.label">
+            [label]="c.label"
+            [disabled]="c.disabled"
+            [selectAll]="c.selectAll">
             @if (c.own) {
                 <ng-template rtTreeSelectorControls>
                     <button

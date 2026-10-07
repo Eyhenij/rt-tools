@@ -47,6 +47,8 @@ export * from '@rt-tools/ui-kit-v2/file-list';
 export * from '@rt-tools/ui-kit-v2/filter-control';
 export * from '@rt-tools/ui-kit-v2/form-control';
 export * from '@rt-tools/ui-kit-v2/header';
+export * from '@rt-tools/ui-kit-v2/hybrid-tree';
+export * from '@rt-tools/ui-kit-v2/hybrid-tree-selector';
 export * from '@rt-tools/ui-kit-v2/icon-button';
 export * from '@rt-tools/ui-kit-v2/icon';
 export * from '@rt-tools/ui-kit-v2/image-cropper';

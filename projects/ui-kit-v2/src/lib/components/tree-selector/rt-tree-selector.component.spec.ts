@@ -240,6 +240,11 @@ describe('RtTreeSelectorComponent', (): void => {
         expect(button(asked, 'tree-selector-collapse-all').classList).toContain('rt-button--icon-only');
     });
 
+    it('SC-UKV-701: select-all is drawn only when asked for', (): void => {
+        expect(button(setup(), 'tree-select-all')).toBeNull();
+        expect(button(setup({ selectAll: true }), 'tree-select-all')).not.toBeNull();
+    });
+
     it('SC-UKV-690: revert returns the draft to the choice and stands only in the confirming form', (): void => {
         const fixture: TFixture = setup({ confirm: true, revertable: true, expandOnStart: 'all', value: ['ph'] });
         expect(button(fixture, 'tree-selector-revert').disabled).toBe(true);
@@ -263,5 +268,30 @@ describe('RtTreeSelectorComponent', (): void => {
         const clear: HTMLButtonElement = button(fixture, 'tree-selector-clear');
         expect(clear.classList).toContain('rt-button--icon-only');
         expect(clear.getAttribute('aria-label')).toBe('Clear selection');
+    });
+
+    it('SC-UKV-700: a disabled selector switches off the field and the buttons and keeps the choice', (): void => {
+        const fixture: TFixture = setup({
+            disabled: true,
+            confirm: true,
+            clearable: true,
+            revertable: true,
+            expandControls: true,
+            expandOnStart: 'all',
+            value: ['ph'],
+        });
+        expect(searchInput(fixture).disabled).toBe(true);
+        [
+            'tree-selector-expand-all',
+            'tree-selector-collapse-all',
+            'tree-selector-clear',
+            'tree-selector-revert',
+            'tree-selector-cancel',
+        ].forEach((qa: string): void => expect(button(fixture, qa).disabled).toBe(true));
+
+        click(fixture, 'bh');
+        expect(button(fixture, 'tree-selector-apply').disabled).toBe(true);
+        expect(fixture.componentInstance.canApply()).toBe(false);
+        expect(fixture.componentInstance.value()).toEqual(['ph']);
     });
 });

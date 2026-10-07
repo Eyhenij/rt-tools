@@ -24,6 +24,7 @@ interface ITreeCase {
     readonly nodes: ReadonlyArray<IRtTree.Node<string>>;
     readonly branchMarks: boolean;
     readonly filter: boolean;
+    readonly showSelectAll: boolean;
     /** Рисовать ли разметку приложения под подписью. */
     readonly meta: boolean;
 }
@@ -38,6 +39,7 @@ function treeCase(name: string, patch: Partial<ITreeCase> = {}): ITreeCase {
         nodes: TREE_STORY_NODES,
         branchMarks: true,
         filter: true,
+        showSelectAll: false,
         meta: false,
         ...patch,
     };
@@ -117,6 +119,11 @@ export class TestRtTreeMatrixComponent {
         treeCase('метки узла', { nodes: TREE_STORY_BADGE_NODES }),
         treeCase('поиск без отбора: «мос gna»', { nodes: TREE_STORY_BADGE_NODES, filter: false, searchTerm: 'мос gna' }),
         treeCase('метки и разметка приложения', { nodes: TREE_STORY_BADGE_NODES, meta: true }),
+    ];
+
+    public readonly disabledCases: readonly ITreeCase[] = [
+        treeCase('множественный, «выбрать всё»', { showSelectAll: true }),
+        treeCase('один из многих', { mode: 'single', value: ['tvr'] }),
     ];
 
     public readonly states: readonly IStoryState[] = STORY_CONTROL_STATES;

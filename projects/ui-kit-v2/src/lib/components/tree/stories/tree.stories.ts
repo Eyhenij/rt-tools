@@ -17,6 +17,7 @@ export default {
         branchMarks: { control: { type: 'boolean' } },
         exclusive: { control: { type: 'boolean' } },
         filter: { control: { type: 'boolean' } },
+        disabled: { control: { type: 'boolean' } },
         nodes: { control: false },
         value: { control: false },
     },
@@ -31,5 +32,6 @@ export const Playground: TStory = {
         cascade: true,
         searchTerm: '',
         showSelectAll: false,
+        disabled: false,
     },
 };

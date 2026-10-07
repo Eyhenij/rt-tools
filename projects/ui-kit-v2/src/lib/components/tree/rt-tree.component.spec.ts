@@ -270,4 +270,22 @@ describe('RtTreeComponent', (): void => {
         expect(emptyText(found)).toBe('Nothing found');
         expect(emptyText(none)).toBe('No options');
     });
+
+    it('SC-UKV-699 — выключенное дерево не меняет выбор, а ветку по-прежнему раскрывает стрелка', (): void => {
+        const fixture: TFixture = setup({ disabled: true, showSelectAll: true, value: ['msq'] });
+        const host: HTMLElement = fixture.nativeElement as HTMLElement;
+        expect(host.getAttribute('tabindex')).toBe('-1');
+        expect(host.getAttribute('aria-disabled')).toBe('true');
+
+        rowOf(fixture, 'msq').click();
+        (host.querySelector('[qa-dataid="tree-select-all"]') as HTMLElement).click();
+        fixture.detectChanges();
+        expect(key(fixture, ' ').taken).toBe(false);
+        expect(fixture.componentInstance.value()).toEqual(['msq']);
+        expect(rowOf(fixture, 'msq').classList).toContain('rt-tree__row--disabled');
+
+        (rowOf(fixture, 'ru').querySelector('[qa-dataid="tree-row-toggle"]') as HTMLElement).click();
+        fixture.detectChanges();
+        expect(rowOf(fixture, 'msk')).toBeDefined();
+    });
 });

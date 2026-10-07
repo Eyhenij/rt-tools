@@ -32,6 +32,7 @@ import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { RtInputComponent } from '@rt-tools/ui-kit-v2/input';
 import { RtToggleSwitchComponent } from '@rt-tools/ui-kit-v2/toggle-switch';
 import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
+import { RtHybridTreeComponent } from '@rt-tools/ui-kit-v2/hybrid-tree';
 import { RtTreeComponent } from '@rt-tools/ui-kit-v2/tree';
 import { IRtTree } from '@rt-tools/ui-kit-v2/tree';
 import { RtTreeSelectorControlsDirective } from './rt-tree-selector.directives';
@@ -64,6 +65,7 @@ const BEM_BLOCK: string = 'rt-tree-selector';
         RtToggleSwitchComponent,
         RtTooltipDirective,
         RtTreeComponent,
+        RtHybridTreeComponent,
     ],
     host: { class: BEM_BLOCK },
 })
@@ -82,7 +84,18 @@ export class RtTreeSelectorComponent<TValue> {
     protected readonly applyLabel: Signal<string> = rtKitLabel('uiApply');
     protected readonly nothingFoundLabel: Signal<string> = rtKitLabel('uiNothingFound');
 
-    protected readonly tree: Signal<RtTreeComponent<TValue> | undefined> = viewChild<RtTreeComponent<TValue>>(RtTreeComponent);
+    /** Гибридное ли дерево внутри. Ставит его наследник `rt-hybrid-tree-selector`. */
+    protected readonly hybrid: boolean = false;
+
+    protected readonly plainTree: Signal<RtTreeComponent<TValue> | undefined> = viewChild<RtTreeComponent<TValue>>(RtTreeComponent);
+
+    protected readonly hybridTree: Signal<RtHybridTreeComponent<TValue> | undefined> =
+        viewChild<RtHybridTreeComponent<TValue>>(RtHybridTreeComponent);
+
+    /** Дерево внутри, какое бы ни стояло: у гибридного те же раскрытие и клавиши. */
+    protected readonly tree: Signal<RtTreeComponent<TValue> | undefined> = computed(
+        (): RtTreeComponent<TValue> | undefined => this.hybridTree() ?? this.plainTree()
+    );
 
     protected readonly controlsTpl: Signal<RtTreeSelectorControlsDirective | undefined> = contentChild(RtTreeSelectorControlsDirective);
 
@@ -130,7 +143,8 @@ export class RtTreeSelectorComponent<TValue> {
     public readonly branchMarks: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
         transform: booleanAttribute,
     });
-    public readonly selectAll: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
+    /** «Выбрать все» — необязательная, как кнопки строки: по умолчанию её нет. */
+    public readonly selectAll: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
         transform: booleanAttribute,
     });
     /** Подтверждаемая форма: выбор копится в черновике и уходит по «Применить». */
@@ -163,18 +177,24 @@ export class RtTreeSelectorComponent<TValue> {
     /** Начальная строка поиска. */
     public readonly searchTerm: InputSignal<string> = input<string>('');
     public readonly ariaLabel: InputSignal<string | null> = input<string | null>(null);
+    /** Выключенный селектор не меняет выбор: поле поиска, кнопки, переключатель, дерево и подвал выключены. */
+    public readonly disabled: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
+        transform: booleanAttribute,
+    });
 
     public readonly applied: OutputEmitterRef<ReadonlyArray<TValue>> = output<ReadonlyArray<TValue>>();
     public readonly cancelled: OutputEmitterRef<void> = output<void>();
 
     /** Можно ли применить черновик: он отличается от выбора и не пуст там, где пустой запрещён. */
-    public readonly canApply: Signal<boolean> = computed((): boolean =>
-        rtTreeSelectorCanApply(this.draft(), this.value(), this.emptyAllowed())
+    public readonly canApply: Signal<boolean> = computed(
+        (): boolean => !this.disabled() && rtTreeSelectorCanApply(this.draft(), this.value(), this.emptyAllowed())
     );
 
     constructor() {
         afterNextRender((): void => {
-            this.#host.nativeElement.querySelector<HTMLInputElement>('.rt-tree-selector__search input')?.focus();
+            if (!this.disabled()) {
+                this.#host.nativeElement.querySelector<HTMLInputElement>('.rt-tree-selector__search input')?.focus();
+            }
             this.#expandOnStart();
         });
     }

@@ -64,13 +64,13 @@ export function rtTreeChoose<TValue>(
  * Включённые листья видимых строк. Раскрытая ветка отдаёт листья своими строками ниже, свёрнутая —
  * всеми листьями под собой: они видимы через неё.
  */
-function visibleLeaves<TValue>(rows: ReadonlyArray<IRtTree.Row<TValue>>): ReadonlyArray<TValue> {
+export function rtTreeVisibleLeaves<TValue>(rows: ReadonlyArray<IRtTree.Row<TValue>>): ReadonlyArray<TValue> {
     return rows.flatMap((row: IRtTree.Row<TValue>): ReadonlyArray<TValue> => (row.branch && row.open ? [] : rtTreeLeaves(row.option)));
 }
 
 /** Отметка «выбрать всё» по включённым листьям видимых строк. */
 export function rtTreeSelectAllMark<TValue>(rows: ReadonlyArray<IRtTree.Row<TValue>>, value: ReadonlyArray<TValue>): IRtTree.Mark {
-    const leaves: ReadonlyArray<TValue> = visibleLeaves(rows);
+    const leaves: ReadonlyArray<TValue> = rtTreeVisibleLeaves(rows);
     const count: number = leaves.filter((leaf: TValue): boolean => value.includes(leaf)).length;
     if (count === 0) {
         return 'none';
@@ -83,7 +83,7 @@ export function rtTreeSelectAllMark<TValue>(rows: ReadonlyArray<IRtTree.Row<TVal
  * все — снимаются. Выключенные листья `rtTreeLeaves` не отдаёт, поэтому их состояние не меняется.
  */
 export function rtTreeSelectAll<TValue>(rows: ReadonlyArray<IRtTree.Row<TValue>>, value: ReadonlyArray<TValue>): ReadonlyArray<TValue> {
-    const leaves: ReadonlyArray<TValue> = visibleLeaves(rows);
+    const leaves: ReadonlyArray<TValue> = rtTreeVisibleLeaves(rows);
     return rtTreeSelectAllMark(rows, value) === 'all' ? without(value, leaves) : withAll(value, leaves);
 }
 
@@ -114,6 +114,16 @@ function disabledValues<TValue>(nodes: ReadonlyArray<TNode<TValue>>): ReadonlyAr
     ]);
 }
 
+/** Что остаётся от выбора перед кликом без Ctrl и Cmd: то, что покрывает сам узел, и выключенные узлы. */
+export function rtTreeAloneBase<TValue>(
+    nodes: ReadonlyArray<TNode<TValue>>,
+    node: TNode<TValue>,
+    value: ReadonlyArray<TValue>
+): ReadonlyArray<TValue> {
+    const keep: ReadonlyArray<TValue> = [...covered(node), ...disabledValues(nodes)];
+    return value.filter((item: TValue): boolean => keep.includes(item));
+}
+
 /**
  * Выбор после клика без Ctrl и Cmd в режиме, где клик выбирает один узел. Из выбора остаётся только
  * то, что покрывает сам узел, и выключенные узлы; дальше клик работает как обычно — поэтому
@@ -128,7 +138,5 @@ export function rtTreeChooseAlone<TValue>(
     if (node.disabled) {
         return value;
     }
-    const keep: ReadonlyArray<TValue> = [...covered(node), ...disabledValues(nodes)];
-    const base: ReadonlyArray<TValue> = value.filter((item: TValue): boolean => keep.includes(item));
-    return rtTreeChoose(node, base, 'multiple', cascade);
+    return rtTreeChoose(node, rtTreeAloneBase(nodes, node, value), 'multiple', cascade);
 }

@@ -36,7 +36,7 @@ field and the controls on top of it, so the application moves without its own co
 | ------------------- | --------------------------------------------------------- |
 | The search field    | a field with a magnifier and a cross, «Search»            |
 | Expand and collapse | two icon buttons «Expand all» and «Collapse all»          |
-| Clear               | a trash can icon «Clear selection»                        |
+| Clear               | a red trash can icon «Clear selection»                    |
 | Revert              | a back arrow icon «Revert selection»                      |
 | The multi toggle    | a switch «Multiple selection» with a hint about Ctrl or ⌘ |
 | Apply and Cancel    | «Apply» and «Cancel» in the footer                        |
@@ -59,7 +59,11 @@ field and the controls on top of it, so the application moves without its own co
   only when asked for by `expandControls`, and they stand while the tree has rows.
 
 - **Clear empties the choice except the disabled chosen nodes.** It is an icon button with a trash
-  can, drawn only when asked for and only while something is chosen.
+  can, outlined like its neighbours and red, drawn only when asked for and only while something is
+  chosen.
+
+- **Select-all is drawn only when asked for.** It is optional like the buttons of the row and is
+  asked for by `selectAll`. Drawn, it stays on top while the tree scrolls.
 
 - **Revert returns the draft to the choice without closing the selector.** It is an icon button drawn
   only when asked for by `revertable`. It stands in the confirming form alone: in the direct form
@@ -90,6 +94,10 @@ field and the controls on top of it, so the application moves without its own co
 - **In the single mode of the confirming form Enter on a node applies.** Enter chooses the
   highlighted node; then the draft is applied if «Apply» is on, and `cancelled` is emitted if it is
   not — picking the node already chosen changes nothing.
+
+- **A disabled selector changes nothing in the choice.** The search field, the control buttons, the
+  multi toggle, the tree and the footer are off, and `canApply` is false. The selector takes no
+  focus on appearance.
 
 - **On appearance the branches over the choice are open, or all of them, or none.** `expandOnStart`
   takes `chosen`, `all` or `none`; `chosen` is the default.
@@ -168,5 +176,8 @@ None.
 ## History of changes
 
 - 2026-10-06 — the agreement written for RT-2550.
+- 2026-10-07 — a disabled selector, for the report builder of the application; RT-2551.
+- 2026-10-07 — Clear is outlined like its neighbours and red, by the owner's word; RT-2551.
+- 2026-10-07 — select-all became optional and sticky by the owner's word; RT-2551.
 - 2026-10-06 — expand-all and collapse-all became optional icon buttons by the owner's word. Clear
   became an icon button with a trash can, and an optional revert button was added.

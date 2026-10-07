@@ -43,6 +43,13 @@ export namespace IRtTree {
         readonly badges: ReadonlyArray<ReadonlyArray<IRtSideMenu.TitlePart>>;
     }
 
+    /** Отметка строки, радио ли она и сколько выбрано под группой; `null` — числа нет. */
+    export interface RowState {
+        readonly mark: Mark;
+        readonly radio: boolean;
+        readonly count: number | null;
+    }
+
     /** Контекст разметки приложения в конце строки. */
     export interface NodeContext<TValue> {
         $implicit: Node<TValue>;

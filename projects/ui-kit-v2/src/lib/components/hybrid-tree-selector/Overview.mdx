@@ -1,0 +1,85 @@
+import { Meta, Title } from '@storybook/addon-docs/blocks';
+
+<Meta title="Organisms/Forms/HybridTreeSelector/Overview" />
+
+<Title>HybridTreeSelector — `rt-hybrid-tree-selector`</Title>
+
+Выбор деревом с поиском, где внутри стоит
+[`rt-hybrid-tree`](./?path=/docs/organisms-forms-hybridtree-overview--docs): часть групп выбирает
+один лист. Панель та же, что у
+[`rt-tree-selector`](./?path=/docs/organisms-forms-treeselector-overview--docs): поле поиска,
+кнопки строки, переключатель множественного выбора, черновик и «Применить».
+
+```html
+<rt-hybrid-tree-selector confirm expandControls ariaLabel="Поля отчёта" [nodes]="fields" [(value)]="chosenFields" (applied)="close()" />
+```
+
+## Когда применять
+
+- Выбор с поиском из иерархии, где в одних группах берётся одно значение, а в других — сколько
+  угодно: поля отчёта в боковой панели или во всплывающем окне.
+
+## Когда не применять
+
+- **Во всех группах выбор одинаковый** — [`rt-tree-selector`](./?path=/docs/organisms-forms-treeselector-overview--docs).
+- **Без поиска и кнопок** — [`rt-hybrid-tree`](./?path=/docs/organisms-forms-hybridtree-overview--docs)
+  само по себе.
+
+## Оси
+
+| ось           | значения                        | умолчание |
+| ------------- | ------------------------------- | --------- |
+| форма         | прямая, подтверждаемая          | прямая    |
+| отметки групп | есть, нет — число выбранного    | есть      |
+| поиск         | пусто, слова, ничего не нашлось | пусто     |
+
+Кнопки строки контролов, подвал, переключатель и пустой выбор — те же оси, что у
+`rt-tree-selector`, и показаны в его историях.
+
+Поиск отбирает узлы по каждому слову и не теряет признак `single`: найденные листья группы «один
+лист» остаются радио. В подтверждаемой форме выбор листа группы идёт в черновик и уходит в выбор по
+«Применить».
+
+Каждая история стоит парой половин под двумя наборами оформления.
+
+**Оси, которых не видно.** Те же, что у `rt-tree-selector`: `ariaLabel` и выходы.
+
+## Состояния
+
+Своих состояний взаимодействия у селектора нет: они у частей — поля поиска, кнопок и строк дерева.
+Состояния черновика те же, что у `rt-tree-selector`.
+
+| состояние          | чем задаётся          | что меняется                    |
+| ------------------ | --------------------- | ------------------------------- |
+| выбран лист группы | клик по листу         | соседи по группе сняты          |
+| число выбранного   | `branchMarks = false` | число в конце строки группы     |
+| выключен           | вход `disabled`       | поле, кнопки и дерево выключены |
+
+## Клавиатура
+
+Та же, что у `rt-tree-selector`: фокус стоит в поле поиска, стрелки, пробел и Enter уходят дереву.
+
+## Доступность
+
+Та же, что у `rt-tree-selector` и `rt-hybrid-tree`.
+
+## Оформление
+
+Свойства те же, что у `rt-tree-selector`: разметка и стили у селекторов одни.
+
+## Входы
+
+Своих входов нет: все входы — у `rt-tree-selector`, таблица на его
+[странице обзора](./?path=/docs/organisms-forms-treeselector-overview--docs). Узлы —
+`IRtHybridTree.Node<T>`.
+
+## Выходы
+
+Те же, что у `rt-tree-selector`: `valueChange`, `applied` и `cancelled`. Открыты и те же
+`canApply`, `apply()` и `cancel()`.
+
+## Рядом
+
+- [`rt-tree-selector`](./?path=/docs/organisms-forms-treeselector-overview--docs) — селектор, который этот
+  наследует.
+- [`rt-hybrid-tree`](./?path=/docs/organisms-forms-hybridtree-overview--docs) — дерево внутри.

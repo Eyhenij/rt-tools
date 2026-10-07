@@ -5,11 +5,13 @@
 
     .rt-tree-selector {
         --rt-tree-selector-border-width: var(--rt-border-width-thin);
+        --rt-tree-selector-bg: var(--rt-color-bg-surface);
 
         display: flex;
         min-height: 0;
         box-sizing: border-box;
         flex-direction: column;
+        background-color: var(--rt-tree-selector-bg);
         color: var(--rt-color-text-primary);
         gap: var(--rt-space-sm);
 
