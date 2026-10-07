@@ -132,3 +132,6 @@ Done: stages 1–3. Next: stage 4 — the spec, the README, the checks, the arch
   reuse guard; tests run through nx.
 - The admin screens were never opened in a running application; the application switch (SC-494)
   checks them.
+- The stage 4 spec in `docs/specs/cms/angular/` is written and passes `check:specs`. A check of
+  the tree before one's own edits runs on a second working tree, never by `git stash`: the stash
+  list is shared by every working tree of the repository.
