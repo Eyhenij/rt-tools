@@ -4,10 +4,10 @@
 
 - **State:** `этап-идёт`
 - **Stage:** 3 of 3 — Agreement and checks
-- **Done:** both components with their tests — 96 tree and selector tests green, typecheck green; the 802 snapshots of the kit match, so `rt-tree` and `rt-tree-selector` kept their look; 9 new snapshots taken, looked at and confirmed by a second raising (811 of 811)
-- **Next step:** the full check set, then the stories to the owner
+- **Done:** both components with their tests — 96 tree and selector tests green, typecheck green; the 802 snapshots of the kit match, so `rt-tree` and `rt-tree-selector` kept their look; 9 new snapshots taken, looked at and confirmed by a second raising (811 of 811); check:all green — 131 projects and stylelint
+- **Next step:** show the stories on :6007 and wait for «открывай»
 - **Uncommitted:** nothing
-- **Waiting for the owner:** no
+- **Waiting for the owner:** the look of the stories on :6007 — the PR opens after «открывай»
 - **PR:** not open yet
 
 ## Steps
@@ -19,8 +19,8 @@
 - [x] 2.2 Write the overview pages
 - [x] 2.3 Take the snapshots and look at them
 - [x] 3.1 Bind the spec rules in the companion and the indexes
-- [>] 3.2 Run the full check set
-- [ ] 3.3 Show the stories to the owner
+- [x] 3.2 Run the full check set
+- [>] 3.3 Show the stories to the owner
 
 ## Decisions along the way
 
