@@ -76,12 +76,10 @@ The vocabulary of the domain whole is in the spec of the domain. Here only what 
 
 ## What is out of scope
 
-- **The creating of accounts and the first record.** The people section creates, switches off and
-  changes the password — subdomain `people-editing`; the first record of an empty node is the
-  subdomain `first-run`.
+- **People, their passwords and their rights.** Keycloak holds them, and the admin application has
+  no screen of its own for them; the first person of an empty node is the subdomain `first-run`.
 - **The restoring of a password by mail.** Keycloak holds it, as every other step of the sign-in.
-- **Roles and rights inside the admin application.** The word of the owner: whoever entered sees
-  everything.
+- **Rights inside the admin application.** Subdomain `access-rights`.
 - **The requirements of the password itself.** The records are created by whoever has access to the node.
 
 ## Contract

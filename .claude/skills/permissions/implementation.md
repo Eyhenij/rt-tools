@@ -36,9 +36,7 @@ operation, one check for the whole application, closed by default.
 - **the token check, the rights in it and the start audit of the declarations** — `projects/auth-server/src/lib/auth-server.module.ts`, connected in `apps/message-bus/src/app/app.module.ts` with the options read by `projects/auth-server/src/lib/env-options.ts`
 - **the admin panel route guard** — `rtAuthGuard` of `@rt-tools/auth-angular`, `projects/auth-angular/src/lib/auth.guards.ts`
 - **the sign-in state in the admin panel and the rights of the signed-in person** — `libs/message-bus-admin/common/container/data-access/src/lib/auth.store.ts`
-- **the closed set of rights and the addition of a role with the edits over it** — `libs/message-bus-common/src/lib/rights.ts`
-- **the role and the pointed edits in the storage** — `prisma/schema.prisma` — the models `Role` and `AccountPermission`
-- **the page of roles and the panel of a person's access** — `libs/message-bus-admin/accounts/feature/roles-list/`, `libs/message-bus-admin/accounts/feature/role-aside/`, `libs/message-bus-admin/accounts/feature/access-aside/` — both closed by `roles:manage`; the receiver side is `libs/message-bus-api/accounts/feature/src/lib/roles.controller.ts` and `accounts-access.controller.ts`, the agreement `docs/specs/message-bus/roles-page/`
+- **the closed set of rights** — `libs/message-bus-common/src/lib/rights.ts`
 
 ## Where the articles are carried out
 

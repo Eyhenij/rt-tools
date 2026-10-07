@@ -134,11 +134,8 @@ the limit is split further by the same technique.
 | [The section of the invitations](invites/spec.md)                       | the list of the invitations, the revocation, the issuing by a panel, the showing of the code once          |
 | [The shell of the admin application](admin-shell/spec.md)               | the top row of the sections, the popup of the profile, the theme and the language, the screen of the entry |
 | [What the intake writes about itself](journal/spec.md)                  | the row of the journal, the taken-apart reason, the cleaning of the fields                                 |
-| [A right, a role and the check that reads them](access-rights/spec.md)  | what a person may do after the entry: the closed set of rights, the role, the pointed edits over it        |
+| [A right, a role and the check that reads them](access-rights/spec.md)  | what a person may do after the entry: the closed set of rights and the client roles of the token           |
 | [The usage of the rules in the sessions](usage/spec.md)                 | the observation lines: the intake of a day whole, the counting by skill over a period, the section         |
-| [The list of people](people-list/spec.md)                               | who reaches the cargo: the name, the role, the state of the record and the last sign-in                    |
-| [Creating, disabling and a new password](people-editing/spec.md)        | the three edits of a record from the section of people: two panels and a row menu under one right          |
-| [Roles and rights on a screen](roles-page/spec.md)                      | the section of roles, the panel of a role and the panel of a person's access, all under `roles:manage`     |
 | [The first record](first-run/spec.md)                                   | the first-run screen of an empty node: one public operation creates the owner and signs them in            |
 
 ## What is out of scope
