@@ -19,7 +19,7 @@ FAKE_HOME="$(mktemp -d)"
 cleanup() { rm -rf "$ASKED" "$FAKE_HOME" "$PORT_FILE"; }
 trap cleanup EXIT
 
-# Пара учётной записи: две строки файла вне дерева — так же, как её кладёт настоящее дерево.
+# Пара служебного клиента: две строки файла вне дерева — так же, как её кладёт настоящее дерево.
 mkdir -p "$FAKE_HOME/.config"
 printf 'служба\nпароль\n' > "$FAKE_HOME/.config/message-bus-cargo-account"
 
@@ -50,9 +50,18 @@ const post = (id) => ({ ...row(id), file: '2026-08-24-probe.md', text: TEXT });
 const server = http.createServer((req, res) => {
     fs.appendFileSync(asked, req.url + '\n');
     res.setHeader('content-type', 'application/json');
-    if (req.url === '/api/auth/login') {
-        res.setHeader('set-cookie', 'message_bus_session=probe-value; Path=/; HttpOnly');
-        res.end(JSON.stringify({ name: 'служба' }));
+    if (req.url === '/api/auth/settings') {
+        res.end(JSON.stringify({ url: 'http://' + req.headers.host, realm: 'rt', clientId: 'rt-message-bus-admin' }));
+        return;
+    }
+    if (req.url === '/realms/rt/protocol/openid-connect/token') {
+        res.end(JSON.stringify({ access_token: 'probe-token' }));
+        return;
+    }
+    // Записи отдаются только тому, кто пришёл с токеном: так сценарии чтения доказывают и заголовок
+    if (req.headers.authorization !== 'Bearer probe-token') {
+        res.statusCode = 401;
+        res.end(JSON.stringify({ message: 'no token' }));
         return;
     }
     if (req.url.includes('?')) {
@@ -107,8 +116,8 @@ report "SC-AK-561 — без пары вызов не идёт" \
     "$(HOME=/nonexistent pull_code --kind proposal)" "код:1"
 report "SC-AK-561 — отказ называет, где лежит пара" \
     "$(cd "$TREE_ROOT" && HOME=/nonexistent RT_INTAKE="$INTAKE" node "$PULL" --kind proposal 2>&1 | grep -cE '`account`')" 1
-report "SC-AK-561 — и где заводится сама запись" \
-    "$(cd "$TREE_ROOT" && HOME=/nonexistent RT_INTAKE="$INTAKE" node "$PULL" --kind proposal 2>&1 | grep -cE 'people section')" 1
+report "SC-AK-561 — и где заводится сам клиент" \
+    "$(cd "$TREE_ROOT" && HOME=/nonexistent RT_INTAKE="$INTAKE" node "$PULL" --kind proposal 2>&1 | grep -cE 'created in Keycloak')" 1
 
 report "SC-AK-562 — непринятый вход отбивает чтение" \
     "$(pull_code --kind proposal)" "код:1"

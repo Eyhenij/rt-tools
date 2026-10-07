@@ -16,9 +16,9 @@ receiving side stands — and both lie in one repository.
 - **the intake** — the cargo receiver, the application `message-bus`; the address is declared by the key `intake`
 - **the intake's admin panel** — the application `message-bus-admin`, the sections «Разборы» and «Предложения»
 - **the mark command** — `npm run cargo:mark` — the tree's own command: it is called by whoever sorts out the cargo
-- **the read command** — `npm run cargo:pull` — it signs in as a service pair and prints the record keys
+- **the read command** — `npm run cargo:pull` — it signs in by the token of the Keycloak service client `rt-cargo-tools` and prints the record keys
 - **the close command** — `npm run cargo:close` — the edition's publisher closes a neighbour's records by it
-- **the service account's pair** — two lines in `~/.config/message-bus-cargo-account`; the path is the key `account`
+- **the service account's pair** — the client id and the secret of `rt-cargo-tools`, two lines in `~/.config/message-bus-cargo-account`; the path is the key `account`; `RT_CARGO_CLIENT_ID` and `RT_CARGO_CLIENT_SECRET` override it
 - **new, in work, done, released** — the `--state` arguments: `new`, `in_work`, `fixed`, `released`
 - **the quarantine** — the `--state` argument `quarantined`; the reason travels by the argument `--quarantine-note`
 - **an incident analysis** — a record in the intake; its key is the name of the file it travelled by. No analyses lie on the tree's disk: a draft is written into a directory outside the history and is removed together with the send
@@ -61,11 +61,11 @@ sign of "read and decided".
 - **"Done" is set when the edit is merged into the main branch.** — `.claude/hooks/cargo-mark-guard.sh:verdict` — what is judged is handing over the work rather than the merge itself. The merge is pressed by a person at the host, where there are no guards, so the mark is demanded one step earlier. Scenario SC-MB-281
 - **The move to "done" goes by the work state `влито`, not by the executor's memory.** — **Not checked.** The step stands as text in the pattern `task-flow-archive`, as a subsection with a ready-made call. Carrying the step out is invisible to a machine
 - **The fix travels with the move to "done".** — `libs/message-bus-api/cargo-state/util/src/lib/cargo-state-body.ts:cargoStateBody`
-- **A neighbouring tree's record is closed by the edition's publisher, not by its sender.** — `libs/message-bus-api/cargo-state/feature/src/lib/cargo-close.controller.ts:CargoCloseController` — the operation under a person's sign-in; the command is `tools/cargo-close.mjs:close`, the order of the moves is `libs/message-bus-common/src/lib/cargo-state-move.ts:cargoCloseMove`
+- **A neighbouring tree's record is closed by the edition's publisher, not by its sender.** — `libs/message-bus-api/cargo-state/feature/src/lib/cargo-close.controller.ts:CargoCloseController` — the operation under a Keycloak token with the bus rights; the command is `tools/cargo-close.mjs:close`, the order of the moves is `libs/message-bus-common/src/lib/cargo-state-move.ts:cargoCloseMove`
 - **"Released" is set by whoever publishes the edition, and by the same motion as the publication.** — **Not checked by anything.** The release goes by the pipeline, and the mark by the publisher's hand
 - **Between "done" and "released" stands an edition.** — `projects/agent-kit/src/lib/cargo.ts:CARGO_STATES` — the set keeps the two states apart
-- **Both sides of the sorting out go by commands, and they are closed differently.** — `tools/cargo-pull.mjs:login`, `tools/cargo-mark.mjs:main`
-- **The service account's pair lies outside the repository.** — `tools/cargo-pull.mjs:accountOf`
+- **Both sides of the sorting out go by commands, and they are closed differently.** — `tools/cargo-sign-in.mjs:login`, `tools/cargo-mark.mjs:main`
+- **The service account's pair lies outside the repository.** — `tools/cargo-sign-in.mjs:accountOf`
 - **A key is written down in full and travels into the description of the past together with the grill of the request.** — **Not checked.** The line stands in the task folder's sample `docs/tasks/_template/grill.md`. That the executor carried it out is invisible to a machine
 - **The mark's key is taken from that same read rather than computed from a file on the disk.** — `tools/cargo-pull.mjs:KINDS`
 - **The records of a whole sorting out travel in one batch.** — `tools/cargo-mark.mjs:itemsOf`
