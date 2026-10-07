@@ -13,7 +13,7 @@ import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 import { prepareDatabase, seed } from './seed.mjs';
-import { ADMIN_ORIGIN, API_ORIGIN, API_PORT, STAND_DATABASE_URL } from './stand.mjs';
+import { ADMIN_ORIGIN, API_ORIGIN, API_PORT, STAND_AUTH_ENV, STAND_DATABASE_URL } from './stand.mjs';
 
 const ROOT = fileURLToPath(new URL('../../..', import.meta.url));
 
@@ -78,6 +78,9 @@ process.on('SIGINT', () => {
     process.exit(0);
 });
 
+/* Keycloak со своей областью: засев заводит в ней людей стенда, и через неё входит админка. */
+await run('pnpm', ['run', 'serve:auth']);
+
 await run(
     'npx',
     [
@@ -108,18 +111,11 @@ await run('npx', ['nx', 'build', 'chat-talks-page', '--configuration', 'producti
 
 await prepareDatabase();
 
-/*
- * Признак входа помечен `secure`, а такую браузер шлёт только по защищённому соединению.
- * Исключение у него одно — `localhost`, и пока набор ходил с машины, исключения хватало. Браузер
- * из образа зовёт машину другим именем, исключение не работает, и признак не уходит вовсе: вход
- * проходит, а следующий запрос отвечает отказом. Стенд поэтому снимает пометку — он стоит на
- * своей машине и в сеть не смотрит.
- */
 start('node', ['dist/apps/message-bus/main.js'], {
     DATABASE_URL: STAND_DATABASE_URL,
     PORT: String(API_PORT),
     CARGO_LIMIT: '2mb',
-    SESSION_COOKIE_SECURE: 'false',
+    ...STAND_AUTH_ENV,
 });
 await awaitAnswer(`${API_ORIGIN}/api/trees`);
 

@@ -12,7 +12,6 @@ import { PublicOperation } from '@rt/message-bus-api/access/util';
  * умолчанию, и без метки проба отвечала бы отказом, как всякая незаявленная операция.
  */
 @Controller('health')
-@PublicOperation()
 export class HealthController {
     readonly #prisma: PrismaService;
 
@@ -21,6 +20,7 @@ export class HealthController {
     }
 
     @Get()
+    @PublicOperation()
     public async check(): Promise<{ status: string }> {
         const alive: boolean = await this.#prisma.isAlive();
 

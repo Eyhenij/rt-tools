@@ -49,7 +49,10 @@ services:
             KC_DB_URL: jdbc:postgresql://keycloak-db:5432/keycloak
             KC_DB_USERNAME: keycloak
             KC_DB_PASSWORD: keycloak
-            KC_HOSTNAME: http://localhost:58080
+            # Адрес Keycloak берётся из запроса: админки на машине ходят на localhost:58080, а браузер
+            # сквозных тестов из контейнера — на host.docker.internal:58080. Выдавший в токене тот,
+            # по которому пришёл браузер, и сервер админки знает его из своего окружения
+            KC_HOSTNAME_STRICT: 'false'
             KC_HEALTH_ENABLED: 'true'
             KC_BOOTSTRAP_ADMIN_USERNAME: admin
             KC_BOOTSTRAP_ADMIN_PASSWORD: admin

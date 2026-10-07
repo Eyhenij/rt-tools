@@ -19,7 +19,7 @@ or the code holds what the spec is silent about.
 - **A remark the service refused is marked in the feed and is not taken out of it.** — `libs/message-bus-admin/chat/util/src/lib/chat-send.logic.ts:chatSendAnswered`
 - **A refused remark is sent again from the feed itself.** — `libs/message-bus-admin/chat/data-access/src/lib/chat-feed.store.ts:resend`
 - **An answer into a conversation of a foreign site is refused as a not-found conversation.** — `libs/message-bus-api/chat/data-access/src/lib/chat-operator.queries.ts:conversationOfSites`
-- **A remark of the visitor arrives into the open feed without a reload.** — `libs/message-bus-admin/chat/feature/panel/src/lib/admin-chat-panel.component.ts:#listen`
+- **A remark of the visitor arrives into the open feed without a reload.** — `libs/message-bus-admin/chat/feature/panel/src/lib/admin-chat-panel.component.ts:#listenSource` — the stream is read by `libs/message-bus-admin/chat/api/src/lib/chat-stream.service.ts:ChatStreamService` with the token of the entry
 
 The names of this tree: the section is the area `libs/message-bus-admin/chat` of the admin
 application of the receiver, laid out by the layers the other areas keep — `util` for the models and

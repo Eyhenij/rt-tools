@@ -7,12 +7,19 @@ import {
     provideZonelessChangeDetection,
 } from '@angular/core';
 import { provideRouter, TitleStrategy, withComponentInputBinding } from '@angular/router';
-import { sessionExpiredInterceptor } from '@rt/message-bus-admin/auth/shell';
 import { AdminTitleStrategy, provideAdminKitLabels } from '@rt/message-bus-admin/common/core/util';
+import { provideRtAuth, rtAuthInterceptor } from '@rt-tools/auth-angular';
 import { provideRtIDBStorage, provideRtStorage, provideRtUtils } from '@rt-tools/core';
 import { provideRtIcons, ThemeService } from '@rt-tools/ui-kit-v2';
 
 import { appRoutes } from './app.routes';
+
+/** Где входить: ответ приёмника на `GET /api/auth/settings`. */
+export interface IEntrySettings {
+    readonly url: string;
+    readonly realm: string;
+    readonly clientId: string;
+}
 
 /**
  * Иконки кита лежат отдельными файлами и публикуются сборкой по адресу `/icons`. Вперёд кит не
@@ -35,29 +42,32 @@ import { appRoutes } from './app.routes';
  * приложения дописывается к нему здесь — вкладок у человека десяток, и по одному названию раздела
  * не видно, чьё оно.
  *
- * Перехватчик кончившегося входа стоит на всех обращениях сразу: вход обрывается посреди
- * работы, и узнаёт об этом то обращение, которое в этот момент ушло, — а не гвард, который
- * отвечает на переход.
+ * Вход идёт через Keycloak: адрес, область и клиент приходят от приёмника, и токен едет только
+ * с обращениями к `/api`. Перехватчик модуля входа обновляет токен перед обращением, поэтому
+ * человек, который продолжает работать, не отправляется на вход заново.
  *
  * Основание кита — признак среды, пороги ширины и оба хранилища — ставится здесь целиком.
  * Просят его сами компоненты кита: таблица держит выбор столбцов в базе браузера, а реестр
  * значков и тема спрашивают среду. Без этих провайдеров экран поднимается заголовком и
  * обрывается на первом же из них; сборка молчит — инжектор собирается в браузере.
  */
-export const appConfig: ApplicationConfig = {
-    providers: [
-        provideBrowserGlobalErrorListeners(),
-        provideZonelessChangeDetection(),
-        provideRouter(appRoutes, withComponentInputBinding()),
-        provideHttpClient(withInterceptors([sessionExpiredInterceptor])),
-        provideRtUtils(),
-        provideRtStorage(),
-        provideRtIDBStorage(),
-        provideRtIcons('/icons'),
-        provideAdminKitLabels(),
-        provideAppInitializer((): void => {
-            inject(ThemeService);
-        }),
-        { provide: TitleStrategy, useClass: AdminTitleStrategy },
-    ],
-};
+export function appConfig(entry: IEntrySettings): ApplicationConfig {
+    return {
+        providers: [
+            provideBrowserGlobalErrorListeners(),
+            provideZonelessChangeDetection(),
+            provideRouter(appRoutes, withComponentInputBinding()),
+            provideRtAuth({ ...entry, tokenRecipients: ['/api'] }),
+            provideHttpClient(withInterceptors([rtAuthInterceptor])),
+            provideRtUtils(),
+            provideRtStorage(),
+            provideRtIDBStorage(),
+            provideRtIcons('/icons'),
+            provideAdminKitLabels(),
+            provideAppInitializer((): void => {
+                inject(ThemeService);
+            }),
+            { provide: TitleStrategy, useClass: AdminTitleStrategy },
+        ],
+    };
+}

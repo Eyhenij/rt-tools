@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import { RateLimitService } from '@rt/message-bus-api/access/feature';
-import { ACCOUNT_OF_REQUEST, IAccountBearingRequest } from '@rt/message-bus-api/accounts/util';
+import { IAccountBearingRequest, requestSignedInAs } from '@rt/message-bus-api/access/util';
 import { IChatConversationStarted } from '@rt/message-bus-api/chat/api';
 import { IChatMessageListRow } from '@rt/message-bus-api/chat/data-access';
 import { EChatTalkState, IPage } from '@rt/message-bus-common';
@@ -30,8 +30,8 @@ function from(origin: string = PAGE): { headers: Record<string, string> } {
 }
 
 /** Обращение вошедшего: проверка входа кладёт учётную запись в запрос, и спека делает то же. */
-function signedIn(accountId: string): IAccountBearingRequest {
-    return { [ACCOUNT_OF_REQUEST]: { id: accountId, name: 'оператор', sessionId: 'session-1' } };
+function signedIn(personId: string): IAccountBearingRequest {
+    return requestSignedInAs(personId, 'оператор');
 }
 
 /** Открытый поток и всё, что в него пришло. */
@@ -65,9 +65,9 @@ describe('поток событий чата', () => {
     }
 
     /** Подписаться на поток оператора. */
-    async function watchOperator(accountId: string): Promise<IWatched> {
+    async function watchOperator(personId: string): Promise<IWatched> {
         const frames: IChatFrame[] = [];
-        const open: Subscription = (await reads.stream(signedIn(accountId))).subscribe((frame: IChatFrame): void => {
+        const open: Subscription = (await reads.stream(signedIn(personId))).subscribe((frame: IChatFrame): void => {
             frames.push(frame);
         });
 
@@ -78,7 +78,7 @@ describe('поток событий чата', () => {
         store = new ChatPrismaDouble();
         store.sites.push({ id: 'site-1', spaceId: 'space-1', key: 'live-key', origins: [PAGE], enabled: true });
         store.sites.push({ id: 'site-2', spaceId: 'space-1', key: 'other-key', origins: [OTHER_PAGE], enabled: true });
-        store.operatorSites.push({ accountId: 'account-1', siteId: 'site-1' });
+        store.operatorSites.push({ personId: 'account-1', siteId: 'site-1' });
         subscribers = new ChatSubscribersService();
         intake = new ChatIntakeController(store.asPrisma(), new RateLimitService(), subscribers, new ChatHookService(store.asPrisma()));
         talks = new ChatTalkService(store.asPrisma(), subscribers, new ChatHookService(store.asPrisma()));

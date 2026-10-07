@@ -3,7 +3,6 @@ import {
     ChangeDetectionStrategy,
     Component,
     computed,
-    DestroyRef,
     effect,
     inject,
     signal,
@@ -11,6 +10,8 @@ import {
     untracked,
     WritableSignal,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ChatStreamService } from '@rt/message-bus-admin/chat/api';
 import { ChatFeedStore, ChatTalksStore } from '@rt/message-bus-admin/chat/data-access';
 import { AdminChatSiteFilterComponent, AdminChatStateFilterComponent, AdminChatTalkComponent } from '@rt/message-bus-admin/chat/ui';
 import {
@@ -27,7 +28,6 @@ import {
     IChatTalkWords,
 } from '@rt/message-bus-admin/chat/util';
 import { AdminLocaleService, AdminTextService } from '@rt/message-bus-admin/common/core/util';
-import { WINDOW } from '@rt-tools/core';
 import { CHAT_STREAM_PATH, IChatMessageEventRow } from '@rt/message-bus-common';
 import {
     IRtThreadList,
@@ -43,6 +43,7 @@ import {
     RtWorkspaceListDirective,
 } from '@rt-tools/ui-kit-v2';
 import { IRtChat, RtChatComponent } from '@rt-tools/ui-kit-v2/rich-editor';
+import { Observable, Subject, switchMap } from 'rxjs';
 
 const BEM_BLOCK: string = 'admin-chat';
 
@@ -94,8 +95,8 @@ export class AdminChatPanelComponent {
     readonly #feed: ChatFeedStore = inject(ChatFeedStore);
     readonly #text: AdminTextService = inject(AdminTextService);
     // Тип сужен приведением: средство потока объявлено у глобального объекта, а не у окна
-    readonly #window: Window & typeof globalThis = inject(WINDOW) as Window & typeof globalThis;
-    readonly #destroyRef: DestroyRef = inject(DestroyRef);
+    readonly #stream: ChatStreamService = inject(ChatStreamService);
+    readonly #listenSource: Subject<void> = new Subject<void>();
     readonly #locale: AdminLocaleService = inject(AdminLocaleService);
     readonly #mapper: ChatMessageMapper = new ChatMessageMapper();
 
@@ -205,7 +206,16 @@ export class AdminChatPanelComponent {
             untracked((): void => this.sites.set([...new Set(rows.map((row: IChat.Talk.State): string => row.siteId))]));
         });
 
-        afterNextRender((): void => this.#listen());
+        // Поток подключается после первого рисования: при отдаче страницы сервером читать его
+        // некому. Закрывается вместе с экраном: подписку, которую никто не закрыл, сервис держит
+        // открытой до обрыва связи
+        this.#listenSource
+            .pipe(
+                switchMap((): Observable<string> => this.#stream.events(CHAT_STREAM_PATH)),
+                takeUntilDestroyed()
+            )
+            .subscribe((raw: string): void => this.#arrived(raw));
+        afterNextRender((): void => this.#listenSource.next());
     }
 
     /**
@@ -265,20 +275,6 @@ export class AdminChatPanelComponent {
         }
 
         this.#feed.resend(this.chosen(), String(message.id));
-    }
-
-    /**
-     * Поток событий оператора.
-     *
-     * Открывается средством браузера, взятым из окна по признаку: своего обращения у потока нет —
-     * он отвечает не одним ответом, а событиями. Закрывается вместе с экраном: подписку, которую
-     * никто не закрыл, сервис держит открытой до обрыва связи.
-     */
-    #listen(): void {
-        const stream: EventSource = new this.#window.EventSource(CHAT_STREAM_PATH, { withCredentials: true });
-
-        stream.addEventListener('message', (event: MessageEvent<string>): void => this.#arrived(event.data));
-        this.#destroyRef.onDestroy((): void => stream.close());
     }
 
     /** Пришедшее событие: реплика встаёт в ленту, если открыт её разговор. */
