@@ -32,7 +32,8 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Состояния
 
-- `running` — крутилка, по подписи бежит блик.
+- `running` — крутилка и блик по подписи переливаются одними цветами: синий, голубой, зелёный,
+  янтарный.
 - `done` — зелёная отметка, подпись цветом текста.
 - `stopped` — приглушённый крестик и приглушённая подпись.
 - `failed` — красный восклицательный знак и красная подпись.
@@ -45,13 +46,14 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
   «Show steps» / «Hide steps», подписи кита.
 - Без шагов строка объявляется `role="status"`.
 - Отметка состояния скрыта от скринридера: состояние называет подпись.
-- При `prefers-reduced-motion` блик не бежит.
+- При `prefers-reduced-motion` блик не бежит, крутилка не меняет цвет.
 
 ## Оформление
 
 Свойства блока: `--rt-ai-run-status-radius` (скругление кольца фокуса),
-`--rt-ai-run-status-shimmer-duration`, `--rt-ai-run-status-shimmer-from`,
-`--rt-ai-run-status-shimmer-to`.
+`--rt-ai-run-status-shimmer-duration` (проход блика, 2,4 с), `--rt-ai-run-status-shimmer-from`,
+`--rt-ai-run-status-shimmer-to`, `--rt-ai-run-status-shimmer-2`, `--rt-ai-run-status-shimmer-3`,
+`--rt-ai-run-status-shimmer-4` — цвета перелива по порядку.
 
 ## Входы
 
