@@ -10,6 +10,7 @@ export * from '@rt-tools/ui-kit-v2/core';
 
 // компоненты
 export * from '@rt-tools/ui-kit-v2/accordion';
+export * from '@rt-tools/ui-kit-v2/ai-run-status';
 export * from '@rt-tools/ui-kit-v2/action-bar';
 export * from '@rt-tools/ui-kit-v2/aside-section';
 export * from '@rt-tools/ui-kit-v2/aside';
@@ -23,6 +24,7 @@ export * from '@rt-tools/ui-kit-v2/checkbox';
 export * from '@rt-tools/ui-kit-v2/collapsible-text';
 export * from '@rt-tools/ui-kit-v2/confirm-popover';
 export * from '@rt-tools/ui-kit-v2/container';
+export * from '@rt-tools/ui-kit-v2/copy-value';
 export * from '@rt-tools/ui-kit-v2/counter-row';
 export * from '@rt-tools/ui-kit-v2/counter';
 export * from '@rt-tools/ui-kit-v2/data-list';
@@ -67,6 +69,7 @@ export * from '@rt-tools/ui-kit-v2/page-header';
 export * from '@rt-tools/ui-kit-v2/pagination';
 export * from '@rt-tools/ui-kit-v2/photo-viewer';
 export * from '@rt-tools/ui-kit-v2/popover';
+export * from '@rt-tools/ui-kit-v2/prompt-suggestion';
 export * from '@rt-tools/ui-kit-v2/radio-button';
 export * from '@rt-tools/ui-kit-v2/radius';
 export * from '@rt-tools/ui-kit-v2/ripple';

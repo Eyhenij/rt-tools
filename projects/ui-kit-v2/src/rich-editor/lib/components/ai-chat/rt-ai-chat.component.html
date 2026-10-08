@@ -1,0 +1,216 @@
+<ng-container rtBlock="rt-ai-chat">
+    @if (isThreadColumn()) {
+        <aside rtElem="thread-column" qa-dataid="ai-chat-thread-column" [attr.aria-label]="t().aiThreads">
+            <div rtElem="column-head">
+                <span rtElem="column-title">{{ t().aiThreads }}</span>
+                <ng-container [ngTemplateOutlet]="newThreadButton" />
+            </div>
+            <ng-container [ngTemplateOutlet]="threadList" />
+        </aside>
+    }
+
+    <section rtElem="conversation" qa-dataid="ai-chat" [attr.aria-label]="titleText()">
+        <header rtElem="header">
+            @if (isThreadPage()) {
+                <rt-icon-button
+                    #back
+                    qa-dataid="ai-chat-back"
+                    size="sm"
+                    iconSize="sm"
+                    icon="arrow-left"
+                    [ariaLabel]="t().aiBackToChat"
+                    [tooltip]="t().aiBackToChat"
+                    (clicked)="onToggleThreads()" />
+            }
+
+            <div rtElem="heading">
+                <span rtElem="title" qa-dataid="ai-chat-title">
+                    @if (!isThreadPage()) {
+                        <rt-icon name="sparkle" size="sm" color="primary" aria-hidden="true" />
+                    }
+                    {{ isThreadPage() ? t().aiThreads : titleText() }}
+                </span>
+                @if (!isThreadPage() && subtitle()) {
+                    <span rtElem="subtitle" qa-dataid="ai-chat-subtitle">{{ subtitle() }}</span>
+                }
+            </div>
+
+            <div rtElem="actions">
+                @if (fullScreenable()) {
+                    <rt-icon-button
+                        qa-dataid="ai-chat-full-screen"
+                        size="sm"
+                        iconSize="sm"
+                        [icon]="fullScreen() ? 'window-minimize' : 'fullscreen'"
+                        [active]="fullScreen()"
+                        [ariaLabel]="fullScreen() ? t().aiExitFullScreen : t().aiFullScreen"
+                        [tooltip]="fullScreen() ? t().aiExitFullScreen : t().aiFullScreen"
+                        (clicked)="onToggleFullScreen()" />
+                }
+                @if (hasThreads() && !isThreadPage() && !isThreadColumn()) {
+                    <rt-icon-button
+                        qa-dataid="ai-chat-threads"
+                        size="sm"
+                        iconSize="sm"
+                        icon="history"
+                        [ariaLabel]="t().aiThreads"
+                        [tooltip]="t().aiThreads"
+                        (clicked)="onToggleThreads()" />
+                }
+                @if (!isThreadColumn()) {
+                    <ng-container [ngTemplateOutlet]="newThreadButton" />
+                }
+                @if (closable()) {
+                    <rt-icon-button
+                        qa-dataid="ai-chat-close"
+                        size="sm"
+                        iconSize="sm"
+                        icon="close"
+                        [ariaLabel]="t().aiClose"
+                        [tooltip]="t().aiClose"
+                        (clicked)="closed.emit()" />
+                }
+            </div>
+        </header>
+
+        @if (isThreadPage()) {
+            <ng-container [ngTemplateOutlet]="threadList" />
+        } @else {
+            <div #feed rtElem="feed" qa-dataid="ai-chat-feed" aria-live="polite" (scroll)="onFeedScroll()">
+                @if (loading() && !messages().length) {
+                    <rt-spinner rtElem="spinner" appearance="arc" [diameter]="32" />
+                } @else if (isEmpty()) {
+                    <div rtElem="empty" qa-dataid="ai-chat-empty">
+                        <rt-empty-state icon="comments" [title]="emptyTitleText()" [description]="emptyDescriptionText()" />
+                        @if (suggestions().length) {
+                            <div rtElem="suggestions">
+                                @for (suggestion of suggestions(); track suggestion) {
+                                    <rt-prompt-suggestion
+                                        qa-dataid="ai-chat-suggestion"
+                                        [label]="suggestion"
+                                        [disabled]="sending()"
+                                        (picked)="onSuggestion($event)" />
+                                }
+                            </div>
+                        }
+                    </div>
+                }
+
+                @for (message of messages(); track message.id) {
+                    @if (message.role === 'user') {
+                        <div rtElem="question" qa-dataid="ai-chat-question">
+                            <div rtElem="bubble">
+                                <span rtElem="author">{{ t().aiYou }}</span>
+                                <p rtElem="bubble-text">{{ message.text }}</p>
+                                @if (message.time) {
+                                    <span rtElem="time">{{ message.time }}</span>
+                                }
+                            </div>
+                        </div>
+                    } @else {
+                        <rt-ai-chat-answer
+                            qa-dataid="ai-chat-answer"
+                            [message]="message"
+                            [extra]="extraTemplate()?.templateRef ?? null"
+                            [expanded]="openRuns().has(message.id)"
+                            (expandedChange)="onToggleRun(message.id, $event)"
+                            (feedbackChange)="onFeedback(message, $event)" />
+                    }
+                }
+
+                @if (error(); as runError) {
+                    <div rtElem="error" qa-dataid="ai-chat-error" role="alert">
+                        <rt-message severity="danger">{{ runError.message }}</rt-message>
+                        @if (runError.referenceId) {
+                            <rt-copy-value [label]="t().aiReference" [value]="runError.referenceId" [copyLabel]="t().aiCopyReference" />
+                        }
+                        @if (runError.retryable) {
+                            <button
+                                rtButton
+                                type="button"
+                                qa-dataid="ai-chat-retry"
+                                appearance="text"
+                                icon="sync"
+                                size="sm"
+                                [label]="t().aiRetry"
+                                [attr.aria-label]="t().aiRetry"
+                                [disabled]="sending()"
+                                (click)="retry.emit()"></button>
+                        }
+                    </div>
+                }
+            </div>
+
+            <rt-message-composer
+                rtElem="composer"
+                qa-dataid="ai-chat-composer"
+                stoppable
+                [placeholder]="placeholder()"
+                [sending]="sending()"
+                [(text)]="draft"
+                (submitted)="onSubmitted($event)"
+                (stopped)="onStop()" />
+
+            @if (disclaimerText()) {
+                <p rtElem="disclaimer" qa-dataid="ai-chat-disclaimer">{{ disclaimerText() }}</p>
+            }
+        }
+    </section>
+</ng-container>
+
+<ng-template #newThreadButton>
+    <rt-icon-button
+        qa-dataid="ai-chat-new-thread"
+        size="sm"
+        iconSize="sm"
+        icon="ico-plus"
+        [disabled]="sending()"
+        [ariaLabel]="t().aiNewThread"
+        [tooltip]="t().aiNewThread"
+        (clicked)="onNewThread()" />
+</ng-template>
+
+<ng-template #threadList>
+    <ng-container rtBlock="rt-ai-chat">
+        <rt-thread-list
+            rtElem="threads"
+            qa-dataid="ai-chat-thread-list"
+            [rows]="threadRows()"
+            [activeId]="activeThreadId()"
+            [searchPlaceholder]="t().aiSearchThreads"
+            [emptyText]="threadsEmptyText()"
+            [loading]="threadsLoading()"
+            [fetching]="threadsFetching()"
+            [hasMore]="threadsHasMore()"
+            (selectRow)="onSelectThread($event)"
+            (searchChange)="onSearchThreads($event)"
+            (loadMore)="loadMoreThreads.emit()">
+            <ng-template let-row [rtThreadListRow]="threadRows()">
+                <span rtElem="thread-title" qa-dataid="ai-chat-thread-title" [attr.title]="row.title">
+                    @for (part of row.titleParts; track $index) {
+                        <span rtElem="thread-part" [rtMod]="{ match: part.matched }">{{ part.text }}</span>
+                    }
+                </span>
+                <span rtElem="thread-meta">
+                    @if (row.unreadCount) {
+                        <span rtElem="thread-unread" qa-dataid="ai-chat-thread-unread">{{ row.unreadCount }}</span>
+                    }
+                    @if (row.time) {
+                        <span rtElem="thread-time">{{ row.time }}</span>
+                    }
+                </span>
+            </ng-template>
+            <ng-template let-row [rtThreadListRowActions]="threadRows()">
+                <rt-icon-button
+                    qa-dataid="ai-chat-delete-thread"
+                    size="xs"
+                    iconSize="sm"
+                    icon="trash"
+                    [disabled]="sending() && row.id === activeThreadId()"
+                    [ariaLabel]="t().aiDeleteThread"
+                    [tooltip]="t().aiDeleteThread"
+                    (clicked)="deleteThread.emit(row.id)" />
+            </ng-template>
+        </rt-thread-list>
+    </ng-container>
+</ng-template>

@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, DebugElement, WritableSignal, signa
 import { ComponentFixture } from '@angular/core/testing';
 
 import { classesOf, createRtFixture, el, qa, qaAll, textOf } from '../../../testing/rt-kit-testing';
-import { RtThreadListRowDirective } from './rt-thread-list.directives';
+import { RtThreadListRowActionsDirective, RtThreadListRowDirective } from './rt-thread-list.directives';
 import { IRtThreadList } from './rt-thread-list.model';
 import { RtThreadListComponent } from './rt-thread-list.component';
 
@@ -45,6 +45,27 @@ class ThreadListHostComponent {
     public selected: IRtThreadList.TRowId | null = null;
     public openedInTab: IRtThreadList.TRowId | null = null;
     public loadMoreCount: number = 0;
+}
+
+@Component({
+    selector: 'rt-thread-list-actions-host',
+    template: `
+        <rt-thread-list [rows]="rows" (selectRow)="selected = $event">
+            <ng-template rtThreadListRow let-row>
+                <span>{{ row.title }}</span>
+            </ng-template>
+            <ng-template let-row [rtThreadListRowActions]="rows">
+                <button qa-dataid="row-delete" type="button" (click)="deleted = row.id">x</button>
+            </ng-template>
+        </rt-thread-list>
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtThreadListComponent, RtThreadListRowDirective, RtThreadListRowActionsDirective],
+})
+class RowActionsHostComponent {
+    public readonly rows: ReadonlyArray<IThread> = ROWS;
+    public selected: IRtThreadList.TRowId | null = null;
+    public deleted: IRtThreadList.TRowId | null = null;
 }
 
 function setup(): ComponentFixture<ThreadListHostComponent> {
@@ -186,5 +207,26 @@ describe('RtThreadListComponent', (): void => {
 
     it('без шаблона фильтров кнопки фильтров нет', (): void => {
         expect(qa(render(setup()), 'thread-list-filter')).toBeNull();
+    });
+
+    describe('действия строки', (): void => {
+        it('без шаблона действий строка стоит без обёртки', (): void => {
+            const fixture: ComponentFixture<ThreadListHostComponent> = render(setup());
+
+            expect(qa(fixture, 'thread-list-row-wrap')).toBeNull();
+        });
+
+        it('действия стоят рядом с кнопкой строки, не внутри неё, и их нажатие строку не выбирает', (): void => {
+            const fixture: ComponentFixture<RowActionsHostComponent> = createRtFixture(RowActionsHostComponent);
+            const actions: DebugElement[] = qaAll(fixture, 'row-delete');
+
+            expect(actions).toHaveLength(2);
+            expect((actions[0].nativeElement as HTMLElement).closest('button.rt-thread-list__row')).toBeNull();
+
+            (actions[1].nativeElement as HTMLButtonElement).click();
+
+            expect(fixture.componentInstance.deleted).toBe(2);
+            expect(fixture.componentInstance.selected).toBeNull();
+        });
     });
 });

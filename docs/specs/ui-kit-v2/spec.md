@@ -60,6 +60,8 @@ agreement about their own subject and describe the surface of a component, not a
 | [The accordion](accordion/spec.md)                                        | a list of headed items whose texts open on a press, independently of one another                                                |
 | [The expansion panel](expansion-panel/spec.md)                            | a header button over a body that opens with motion                                                                              |
 | [The tooltip of a cut text](tooltip-when-truncated/spec.md)               | the mode where the tooltip shows only over a text that did not fit its node                                                     |
+| [The assistant chat](ai-chat/spec.md)                                     | the panel of an AI assistant as one component: the feed, the run line, the rating, the error, the conversations                 |
+| [The prompt suggestion](prompt-suggestion/spec.md)                        | a card with a ready question on the empty screen of an assistant: the text, the arrow at the edge, the press                    |
 | [The request error of a side panel](aside-error-box/spec.md)              | where a failed request is shown in a panel and what its copy button puts into the clipboard                                     |
 | [The dynamic selectors](dynamic-selectors/spec.md)                        | a form field with the chosen list, a pop-up choice with search, a field of typed rows                                           |
 | [The side menu](side-menu/spec.md)                                        | a rail of sections with the submenu of a section beside it: hover or pinning, search, folders, width                            |
@@ -67,7 +69,9 @@ agreement about their own subject and describe the surface of a component, not a
 | [The panel of the date field](date-panel/spec.md)                         | the kit's own panel of a date, a time and a date with time: month, columns, bounds, keys, narrow screen                         |
 | [The date range field](date-range/spec.md)                                | a form field of a period: two months, presets, the hover preview, the summary, bounds, keys, narrow screen                      |
 | [The message field](message-composer/spec.md)                             | the capsule a chat message is typed in: round buttons, growth, send states, focus, files, the hint                              |
+| [The run status of the assistant](ai-run-status/spec.md)                  | the line of an AI answer at work: the mark of the state, the running label, the meta, the steps that open under it              |
 | [The long title of a dense toolbar](toolbar-dense/spec.md)                | what a dense toolbar does with a title wider than the place left to it                                                          |
+| [The value with a copy button](copy-value/spec.md)                        | a short value with a copy button: the label, the plate, «Copied» for two seconds, a long value cut                              |
 
 ## What is out of scope
 

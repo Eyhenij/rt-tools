@@ -1,3 +1,25 @@
+# [0.19.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2@0.18.0...rt-ui-kit-v2@0.19.0) (2026-10-08)
+
+### Bug Fixes
+
+- **rt:ui-kit-v2:** длинный заголовок плотной полосы переносится внутри колонки ([96af4ae](https://github.com/Eyhenij/rt-tools/commit/96af4ae9cf09fe2e50b032f1ac52bbd10b0b9946))
+- **rt:ui-kit-v2:** ступени размера значка названы --rt-icon-step-*, а не именами первого кита ([302c9e5](https://github.com/Eyhenij/rt-tools/commit/302c9e594bca182c009bc8d3d34e77c93079c0d4))
+- **rt:ui-kit-v2:** сценарий плотной панели получил свой номер SC-UKV-727 ([266a547](https://github.com/Eyhenij/rt-tools/commit/266a5476ee021c2d2d845c9235c408e222eeffb2))
+- **rt:ui-kit-v2:** тело окна выбора занимает высоту, заданную наименьшей высотой окна ([ba91c79](https://github.com/Eyhenij/rt-tools/commit/ba91c794b246b41c66dae707a7d62a55c838d9b2))
+
+### Features
+
+- **rt:ui-kit-v2:** chosenEntities, titleWrap, свойства меню полосы и умолчания полей выбора из настроек кита ([b935099](https://github.com/Eyhenij/rt-tools/commit/b9350997e2b5dcea492706e1eb8c54ebf537a6c6))
+- **rt:ui-kit-v2:** вид селектора, поля строк, полосы действий и значка задаёт приложение ([b031eff](https://github.com/Eyhenij/rt-tools/commit/b031effc2a17a20e22762ac2f2014f69d9a363b3))
+- **rt:ui-kit-v2:** значение с кнопкой копирования rt-copy-value ([4365d43](https://github.com/Eyhenij/rt-tools/commit/4365d43d56f1bf1a721b297c92de6382cb094841)), closes [#2652](https://github.com/Eyhenij/rt-tools/issues/2652)
+- **rt:ui-kit-v2:** значки искры и оценки ответа — sparkle, thumb-up, thumb-down ([0f2fa3e](https://github.com/Eyhenij/rt-tools/commit/0f2fa3e218a5ce7ed3f7a3bde5e2269b7ec4ceba)), closes [#2650](https://github.com/Eyhenij/rt-tools/issues/2650)
+- **rt:ui-kit-v2:** карточка подсказки запроса rt-prompt-suggestion ([7784e37](https://github.com/Eyhenij/rt-tools/commit/7784e37d906aec0d5cfbbc4287e71e37f8dfbd95)), closes [#2653](https://github.com/Eyhenij/rt-tools/issues/2653)
+- **rt:ui-kit-v2:** панель ИИ-ассистента rt-ai-chat ([0eb64dc](https://github.com/Eyhenij/rt-tools/commit/0eb64dcd8946200d7888ceb29379c61fc63d2036)), closes [#2654](https://github.com/Eyhenij/rt-tools/issues/2654)
+- **rt:ui-kit-v2:** перенос названия строки задаётся в настройках кита для полей выбора ([3cc01c8](https://github.com/Eyhenij/rt-tools/commit/3cc01c81f3a45bacac026695e299c6b1c3cc74bd))
+- **rt:ui-kit-v2:** поле новой строки у rt-dynamic-input получает подпись fieldLabel ([d589f56](https://github.com/Eyhenij/rt-tools/commit/d589f56975cab760d0efd8f34ac23cdc824770d5))
+- **rt:ui-kit-v2:** строка хода работы ассистента rt-ai-run-status ([453acf6](https://github.com/Eyhenij/rt-tools/commit/453acf6579ed5aae94548aa1e09452b872fe6832)), closes [#2651](https://github.com/Eyhenij/rt-tools/issues/2651)
+- **rt:ui-kit-v2:** шапка панели, сервис панели, тихая полоса и поле строк по второму списку приложения ([e5ba089](https://github.com/Eyhenij/rt-tools/commit/e5ba0898273776fdb8110106cf9c016cfc8131af))
+
 # [0.18.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2@0.17.0...rt-ui-kit-v2@0.18.0) (2026-10-07)
 
 ### Bug Fixes
