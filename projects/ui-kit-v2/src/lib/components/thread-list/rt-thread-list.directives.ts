@@ -28,6 +28,31 @@ export class RtThreadListRowDirective<TRow extends IRtThreadList.Row> {
 }
 
 /**
+ * Помечает `<ng-template>` действий строки (удалить, закрепить). Действия рисуются рядом с
+ * кнопкой строки, а не внутри неё: вложенная кнопка в `<button>` недопустима и крадёт клик
+ * выбора строки. Видны при наведении и фокусе внутри строки.
+ */
+@Directive({
+    selector: 'ng-template[rtThreadListRowActions]',
+})
+export class RtThreadListRowActionsDirective<TRow extends IRtThreadList.Row> {
+    public readonly templateRef: TemplateRef<IRtThreadList.RowContext<TRow>> =
+        inject<TemplateRef<IRtThreadList.RowContext<TRow>>>(TemplateRef);
+
+    public readonly rows: InputSignal<readonly TRow[]> = input<readonly TRow[]>([], {
+        alias: 'rtThreadListRowActions',
+    });
+
+    public static ngTemplateContextGuard<TRow extends IRtThreadList.Row>(
+        _directive: RtThreadListRowActionsDirective<TRow>,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars -- второй довод стража контекста шаблона стоит только в типе-предикате; убрать его нечем, подпись задаёт каркас
+        context: unknown
+    ): context is IRtThreadList.RowContext<TRow> {
+        return true;
+    }
+}
+
+/**
  * Помечает `<ng-template>` с фильтрами — его содержимое рендерится в поповере,
  * который открывает иконка-фильтр в шапке списка.
  */

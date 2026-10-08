@@ -1,0 +1,119 @@
+@layer rt-kit.components {
+    /* rt-ai-run-status — строка хода работы ассистента. ViewEncapsulation.None.
+       Класс блока висит и на хосте, и на корне шаблона, поэтому правила вложены в хост. */
+
+    rt-ai-run-status {
+        display: block;
+
+        .rt-ai-run-status {
+            --rt-ai-run-status-radius: var(--rt-radius-sm);
+            --rt-ai-run-status-focus-shadow: var(--rt-shadow-focus-ring);
+            --rt-ai-run-status-shimmer-duration: var(--rt-duration-slower);
+            --rt-ai-run-status-shimmer-from: var(--rt-color-text-muted);
+            --rt-ai-run-status-shimmer-to: var(--rt-color-action-primary-on-surface);
+
+            display: flex;
+            flex-direction: column;
+            gap: var(--rt-space-2xs);
+
+            &__row {
+                display: inline-flex;
+                align-items: center;
+                align-self: flex-start;
+                padding: var(--rt-space-2xs) 0;
+                border: 0;
+                border-radius: var(--rt-ai-run-status-radius);
+                margin: 0;
+                background: transparent;
+                color: inherit;
+                font: inherit;
+                gap: var(--rt-space-sm);
+                text-align: start;
+            }
+
+            button.rt-ai-run-status__row {
+                cursor: pointer;
+
+                &:focus-visible {
+                    box-shadow: var(--rt-ai-run-status-focus-shadow);
+                    outline: 2px solid transparent;
+                    outline-offset: 2px;
+                }
+
+                &:hover .rt-ai-run-status__chevron {
+                    color: var(--rt-color-text-primary);
+                }
+            }
+
+            &__mark {
+                display: inline-flex;
+                flex: none;
+                align-items: center;
+                justify-content: center;
+                block-size: 16px;
+                inline-size: 16px;
+            }
+
+            &__label {
+                color: var(--rt-color-text-primary);
+                font-size: var(--rt-text-sm);
+                line-height: var(--rt-leading-snug);
+
+                &--state--running {
+                    animation: rt-ai-run-status-shimmer var(--rt-ai-run-status-shimmer-duration) linear infinite;
+                    background: linear-gradient(
+                        90deg,
+                        var(--rt-ai-run-status-shimmer-from) 0%,
+                        var(--rt-ai-run-status-shimmer-to) 50%,
+                        var(--rt-ai-run-status-shimmer-from) 100%
+                    );
+                    background-clip: text;
+                    background-size: 200% 100%;
+                    color: transparent;
+                }
+
+                &--state--stopped {
+                    color: var(--rt-color-text-muted);
+                }
+
+                &--state--failed {
+                    color: var(--rt-color-action-danger-on-surface);
+                }
+            }
+
+            &__meta {
+                flex: none;
+                color: var(--rt-color-text-muted);
+                font-size: var(--rt-text-xs);
+                line-height: var(--rt-leading-snug);
+            }
+
+            &__chevron {
+                flex: none;
+                color: var(--rt-color-text-muted);
+            }
+
+            &__steps {
+                padding-inline-start: var(--rt-space-2xs);
+            }
+        }
+    }
+
+    @keyframes rt-ai-run-status-shimmer {
+        0% {
+            background-position: 100% 0;
+        }
+
+        100% {
+            background-position: -100% 0;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .rt-ai-run-status__label--state--running {
+            animation: none;
+            background: none;
+            color: var(--rt-ai-run-status-shimmer-from);
+        }
+    }
+}

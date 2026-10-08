@@ -1,0 +1,75 @@
+import { Meta, Title } from '@storybook/addon-docs/blocks';
+
+<Meta title="Molecules/Chat/AiRunStatus/Overview" />
+
+<Title>AiRunStatus — `rt-ai-run-status`</Title>
+
+Строка хода работы ИИ-ассистента: отметка состояния, подпись шага или итога, мета и раскрытие
+пройденных шагов.
+
+```html
+<rt-ai-run-status [state]="run.state" [label]="run.label" [meta]="run.meta" [steps]="run.steps" [(expanded)]="stepsOpen" />
+```
+
+## Когда применять
+
+- Ответ ассистента собирается несколько секунд и проходит шаги: человек видит, что модель
+  работает, на каком она шаге и чем кончилось.
+
+## Когда не применять
+
+- **История событий записи** — [`rt-timeline`](./?path=/docs/organisms-chat-timeline-overview--docs)
+  сама по себе, без строки состояния.
+- **Ожидание без шагов и итога** — [`rt-spinner`](./?path=/docs/atoms-feedback-spinner-overview--docs).
+
+## Оси
+
+| ось       | значения                               | умолчание   |
+| --------- | -------------------------------------- | ----------- |
+| состояние | `running`, `done`, `stopped`, `failed` | обязательна |
+| шаги      | нет, закрыты, открыты                  | нет         |
+| мета      | пустая, своя                           | пустая      |
+
+## Состояния
+
+- `running` — крутилка, по подписи бежит блик.
+- `done` — зелёная отметка, подпись цветом текста.
+- `stopped` — приглушённый крестик и приглушённая подпись.
+- `failed` — красный восклицательный знак и красная подпись.
+
+С шагами строка — кнопка: наведение темнит шеврон, фокус рисует кольцо фокуса кита.
+
+## Доступность
+
+- С шагами строка — `<button>` с `aria-expanded` и `aria-controls`, подсказка и имя —
+  «Show steps» / «Hide steps», подписи кита.
+- Без шагов строка объявляется `role="status"`.
+- Отметка состояния скрыта от скринридера: состояние называет подпись.
+- При `prefers-reduced-motion` блик не бежит.
+
+## Оформление
+
+Свойства блока: `--rt-ai-run-status-radius` (скругление кольца фокуса),
+`--rt-ai-run-status-shimmer-duration`, `--rt-ai-run-status-shimmer-from`,
+`--rt-ai-run-status-shimmer-to`.
+
+## Входы
+
+| вход       | тип                           | умолчание  |
+| ---------- | ----------------------------- | ---------- |
+| `state`    | `IRtAiRunStatus.State`        | обязателен |
+| `label`    | `string`                      | обязателен |
+| `meta`     | `string`                      | `''`       |
+| `steps`    | `readonly IRtTimeline.Step[]` | `[]`       |
+| `expanded` | `boolean`                     | `false`    |
+
+## Выходы
+
+| выход            | значение                  |
+| ---------------- | ------------------------- |
+| `expandedChange` | новое состояние раскрытия |
+
+## Рядом
+
+- [`rt-timeline`](./?path=/docs/organisms-chat-timeline-overview--docs) — лента шагов.
+- [`rt-spinner`](./?path=/docs/atoms-feedback-spinner-overview--docs) — крутилка.

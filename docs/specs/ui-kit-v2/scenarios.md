@@ -18,8 +18,12 @@ The scenarios live in the subdomains, each at its own rules:
 | [The text of the date field](date-panel/scenarios.md)                    | `SC-UKV-467`                                         |
 | [The date range field](date-range/scenarios.md)                          | `SC-UKV-468`…`SC-UKV-478`                            |
 | [The message field](message-composer/scenarios.md)                       | `SC-UKV-480`…`SC-UKV-488`, `SC-UKV-537`…`SC-UKV-539` |
+| [The run status of the assistant](ai-run-status/scenarios.md)            | `SC-UKV-735`…`SC-UKV-741`                            |
 | [The expansion panel](expansion-panel/scenarios.md)                      | `SC-UKV-519`…`SC-UKV-525`                            |
+| [The value with a copy button](copy-value/scenarios.md)                  | `SC-UKV-742`…`SC-UKV-746`                            |
 | [The image cropper](image-cropper/scenarios.md)                          | `SC-UKV-491`…`SC-UKV-506`                            |
+| [The assistant chat](ai-chat/scenarios.md)                               | `SC-UKV-750`…`SC-UKV-761`                            |
+| [The prompt suggestion](prompt-suggestion/scenarios.md)                  | `SC-UKV-747`…`SC-UKV-749`                            |
 | [The image uploader](image-upload/scenarios.md)                          | `SC-UKV-507`…`SC-UKV-518`                            |
 | [The tooltip of a cut text](tooltip-when-truncated/scenarios.md)         | `SC-UKV-458`…`SC-UKV-461`                            |
 | [The request error of a side panel](aside-error-box/scenarios.md)        | `SC-UKV-462`…`SC-UKV-466`                            |

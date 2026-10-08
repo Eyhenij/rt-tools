@@ -1,0 +1,60 @@
+import { Meta, Title } from '@storybook/addon-docs/blocks';
+
+<Meta title="Molecules/Chat/PromptSuggestion/Overview" />
+
+<Title>PromptSuggestion — `rt-prompt-suggestion`</Title>
+
+Карточка готового вопроса на пустом экране ассистента: подпись слева, стрелка справа.
+
+```html
+<rt-prompt-suggestion label="Give me a performance overview" (picked)="ask($event)" />
+```
+
+## Когда применять
+
+- Пустая беседа с ассистентом: человеку предлагают начать с готового вопроса.
+
+## Когда не применять
+
+- **Действие формы** — [`rtButton`](./?path=/docs/atoms-buttons-button-overview--docs).
+- **Пункт навигации** — карточка отдаёт текст, а не ведёт по адресу.
+
+## Оси
+
+| ось       | значения            | умолчание |
+| --------- | ------------------- | --------- |
+| состояние | включена, выключена | включена  |
+
+## Состояния
+
+- Покой: заливка `--rt-color-bg-hover`.
+- Наведение: заливка `--rt-color-bg-subtle`.
+- Фокус: кольцо фокуса кита.
+- Выключена: подпись цветом выключенного текста, нажатие не проходит.
+
+## Доступность
+
+- Карточка — `<button type="button">`, имя — подпись.
+- Стрелка скрыта от скринридера.
+
+## Оформление
+
+Свойства блока: `--rt-prompt-suggestion-radius`, `--rt-prompt-suggestion-focus-shadow`,
+`--rt-prompt-suggestion-transition-duration`.
+
+## Входы
+
+| вход       | тип       | умолчание  |
+| ---------- | --------- | ---------- |
+| `label`    | `string`  | обязателен |
+| `disabled` | `boolean` | `false`    |
+
+## Выходы
+
+| выход    | значение      |
+| -------- | ------------- |
+| `picked` | текст вопроса |
+
+## Рядом
+
+- [`rt-empty-state`](./?path=/docs/molecules-emptystate-overview--docs) — пустой экран.

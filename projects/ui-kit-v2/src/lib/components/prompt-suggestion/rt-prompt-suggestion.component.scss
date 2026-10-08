@@ -1,0 +1,58 @@
+@layer rt-kit.components {
+    /* rt-prompt-suggestion — карточка готового вопроса. ViewEncapsulation.None.
+       Класс блока висит и на хосте, и на кнопке шаблона, поэтому правила вложены в хост. */
+
+    rt-prompt-suggestion {
+        display: block;
+
+        .rt-prompt-suggestion {
+            --rt-prompt-suggestion-radius: var(--rt-radius-lg);
+            --rt-prompt-suggestion-focus-shadow: var(--rt-shadow-focus-ring);
+            --rt-prompt-suggestion-transition-duration: var(--rt-duration-fast);
+
+            display: flex;
+            box-sizing: border-box;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--rt-space-sm) var(--rt-space-md);
+            border: 0;
+            border-radius: var(--rt-prompt-suggestion-radius);
+            margin: 0;
+            background: var(--rt-color-bg-hover);
+            color: var(--rt-color-text-primary);
+            cursor: pointer;
+            font: inherit;
+            font-size: var(--rt-text-sm);
+            font-weight: var(--rt-font-weight-medium);
+            gap: var(--rt-space-sm);
+            inline-size: 100%;
+            line-height: var(--rt-leading-snug);
+            text-align: start;
+            transition: background-color var(--rt-prompt-suggestion-transition-duration) ease;
+
+            &:hover:not(:disabled) {
+                background: var(--rt-color-bg-subtle);
+            }
+
+            &:focus-visible {
+                box-shadow: var(--rt-prompt-suggestion-focus-shadow);
+                outline: 2px solid transparent;
+                outline-offset: 2px;
+            }
+
+            &:disabled {
+                color: var(--rt-color-text-disabled);
+                cursor: default;
+            }
+
+            &__label {
+                min-inline-size: 0;
+            }
+
+            &__arrow {
+                flex: none;
+                color: var(--rt-color-text-muted);
+            }
+        }
+    }
+}
