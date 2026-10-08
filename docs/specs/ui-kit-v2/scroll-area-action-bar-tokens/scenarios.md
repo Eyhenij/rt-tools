@@ -35,6 +35,18 @@ Then the menu is rounded and casts a shadow, though it lives in an overlay outsi
 Not covered: a test has no layout, and the overlay styles are seen only in a frame. The snapshot of
 the action bar story **Menu** shows it.
 
+### SC-UKV-723 — the menu takes its padding, item gap and item font size from the page root
+
+Given an action bar with an action that holds a list, and the page root setting the menu padding,
+the item gap and the item font size
+When the action is pressed and the menu opens
+Then the menu draws with those values, and without them it keeps the padding of step 2, no gap and
+the text step sm
+
+Not covered: a test has no layout, and the overlay styles are seen only in a frame. The snapshot of
+the action bar story **Menu** keeps the look without the properties; the values from the page root
+were measured on the showcase.
+
 ### SC-UKV-578 — without the new properties the look stays
 
 Given a scroll area and an action bar without the new properties

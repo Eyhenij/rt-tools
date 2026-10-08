@@ -136,4 +136,40 @@ describe('RtActionBarComponent', (): void => {
 
         expect(qaAll(fixture, 'action-bar-action').map((node: DebugElement): string => textOf(node))).toEqual(['Скачать', 'Удалить']);
     });
+
+    it('SC-UKV-707 — имя Material у действия рисуется значком в полосе и в пункте вложенного списка', (): void => {
+        // Перечень кита ведёт `delete_forever` на свой рисунок `trash-x`: стратегия по умолчанию
+        // берёт пару раньше шрифта, и значок ссылается на рисунок набора.
+        const fixture: ComponentFixture<RtActionBarComponent> = setup(
+            config({
+                actions: [
+                    { label: 'Удалить', glyph: 'delete_forever' },
+                    { label: 'Ещё', menu: [{ label: 'Стереть', glyph: 'delete_forever' }] },
+                ],
+            })
+        );
+        const [plain, group]: DebugElement[] = qaAll(fixture, 'action-bar-action');
+
+        expect(plain?.nativeElement.querySelector('use')?.getAttribute('href')).toContain('trash-x');
+        expect(classesOf(plain ?? null)).toContain('rt-action-bar__action--with-icon');
+        expect(plain?.attributes['aria-label']).toBe('Удалить');
+
+        group?.nativeElement.click();
+        fixture.detectChanges();
+
+        expect(menuItems()[0]?.querySelector('use')?.getAttribute('href')).toContain('trash-x');
+    });
+
+    it('SC-UKV-708 — крестик полосы берёт значок из входа, по умолчанию крестик', (): void => {
+        const fixture: ComponentFixture<RtActionBarComponent> = setup();
+        const closeIcon: () => unknown = (): unknown =>
+            (qa(fixture, 'action-bar-close')?.componentInstance as { icon: () => unknown }).icon();
+
+        expect(closeIcon()).toBe('close');
+
+        fixture.componentRef.setInput('closeIcon', 'times-circle');
+        fixture.detectChanges();
+
+        expect(closeIcon()).toBe('times-circle');
+    });
 });

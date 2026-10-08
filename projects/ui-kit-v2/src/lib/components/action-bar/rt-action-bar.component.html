@@ -39,8 +39,8 @@
         rtElem="close"
         qa-dataid="action-bar-close"
         variant="ghost"
-        icon="close"
         size="sm"
+        [icon]="closeIcon()"
         [ariaLabel]="closeLabel()"
         (clicked)="onClose()" />
 
@@ -53,8 +53,8 @@
         стиля по грубому указателю, и только у действия, у которого значок есть.
     -->
     <ng-template #actionFace let-action>
-        @if (action.icon) {
-            <rt-icon rtElem="action-icon" size="sm" [name]="action.icon" />
+        @if (action.icon || action.glyph) {
+            <rt-icon rtElem="action-icon" size="sm" [name]="action.icon ?? null" [glyph]="action.glyph ?? null" />
         }
 
         <span rtElem="action-label">{{ action.label }}</span>
@@ -66,6 +66,7 @@
                 <rt-menu-item
                     qa-dataid="action-bar-menu-item"
                     [icon]="item.icon ?? null"
+                    [glyph]="item.glyph ?? null"
                     [label]="item.label"
                     [danger]="item.look === 'danger'"
                     (selected)="onAction(item)" />

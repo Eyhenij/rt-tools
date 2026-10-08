@@ -80,6 +80,76 @@
         </app-story-presets>
     }
 
+    @case ('look') {
+        <app-story-presets caption="Вид, который задаёт приложение, в обоих наборах">
+            <ng-template>
+                <app-story-row [items]="lookCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
+                    <ng-template let-lookCase>
+                        <rt-dynamic-selector
+                            keyExp="id"
+                            displayExp="name"
+                            invitationIcon="users"
+                            invitationDescription="В команде пока никого нет"
+                            [ariaLabel]="lookCase.name"
+                            [entities]="people"
+                            [invitation]="lookCase.invitation"
+                            [invitationButtonIcon]="lookCase.invitationButtonIcon"
+                            [invitationButtonAppearance]="lookCase.invitationButtonAppearance"
+                            [clearIcon]="lookCase.clearIcon"
+                            [formControl]="lookCase.control" />
+                    </ng-template>
+                </app-story-row>
+                <app-story-row [items]="lookPopupCases" [itemLabel]="caseLabel" [slotWidth]="popupWidth">
+                    <ng-template let-popupCase>
+                        <!-- Свойства окна стоят на предке, как приложение задаёт их на панели оверлея; обёртка без коробки. -->
+                        <div style="display: contents" [style]="popupCase.tuned ? tunedPopupStyle : {}">
+                            <rt-dynamic-selector-popup
+                                keyExp="id"
+                                displayExp="name"
+                                searchAppearance="fill"
+                                emptyResultsText="Никого не нашли"
+                                [entities]="popupCase.entities" />
+                        </div>
+                    </ng-template>
+                </app-story-row>
+                <app-story-row [items]="titleCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
+                    <ng-template let-titleCase>
+                        <rt-dynamic-selector
+                            keyExp="id"
+                            displayExp="name"
+                            [ariaLabel]="titleCase.name"
+                            [entities]="longPeople"
+                            [titleWrap]="titleCase.wrap"
+                            [formControl]="titleCase.control" />
+                    </ng-template>
+                </app-story-row>
+                <app-story-row [items]="lookInputCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
+                    <ng-template let-inputCase>
+                        @if (inputCase.label) {
+                            <rt-field [label]="inputCase.label">
+                                <rt-dynamic-input [formControl]="inputCase.control" />
+                            </rt-field>
+                        } @else if (inputCase.fieldLabel) {
+                            <!-- Поле новой строки открывает шаг play истории: оно появляется по «Добавить». -->
+                            <rt-dynamic-input
+                                data-story-field-open
+                                [ariaLabel]="inputCase.name"
+                                [fieldLabel]="inputCase.fieldLabel"
+                                [formControl]="inputCase.control" />
+                        } @else {
+                            <rt-dynamic-input
+                                invitationGlyph="email"
+                                invitationDescription="Адресов для копий пока нет"
+                                [ariaLabel]="inputCase.name"
+                                [invitation]="true"
+                                [formControl]="inputCase.control" />
+                        }
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
     @case ('states') {
         <app-story-presets caption="Значение, форма и отключение в обоих наборах">
             <ng-template>

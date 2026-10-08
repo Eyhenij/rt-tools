@@ -9,6 +9,10 @@
         --rt-dynamic-selector-list-divider-width: var(--rt-border-width-thin);
         --rt-dynamic-selector-list-drag-shadow: var(--rt-shadow-md);
         --rt-dynamic-selector-list-drag-duration: var(--rt-duration-base);
+        --rt-dynamic-selector-list-row-padding-x: var(--rt-space-sm);
+        --rt-dynamic-selector-list-add-font-weight: var(--rt-font-weight-medium);
+        --rt-dynamic-selector-list-add-indent: 0;
+        --rt-dynamic-selector-list-reset-color: var(--rt-color-text-primary);
 
         display: flex;
         flex-direction: column;
@@ -25,7 +29,7 @@
             min-height: var(--rt-control-height-lg);
             box-sizing: border-box;
             align-items: center;
-            padding: var(--rt-space-2xs) var(--rt-space-2xs) var(--rt-space-2xs) var(--rt-space-sm);
+            padding: var(--rt-space-2xs) var(--rt-space-2xs) var(--rt-space-2xs) var(--rt-dynamic-selector-list-row-padding-x);
             border-radius: var(--rt-dynamic-selector-list-row-radius);
             background: var(--rt-dynamic-selector-list-row-bg);
             color: var(--rt-color-text-primary);
@@ -44,6 +48,13 @@
             flex: 1 1 auto;
             font-size: var(--rt-text-md);
             overflow-wrap: anywhere;
+
+            // Название одной строкой: длинное режется многоточием, а полный текст даёт подсказка.
+            &--nowrap {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
         }
 
         &__field {
@@ -69,6 +80,23 @@
             min-width: 0;
             flex: 1 1 auto;
             align-items: center;
+            padding-inline-start: var(--rt-dynamic-selector-list-add-indent);
+        }
+
+        // Кнопку «Добавить» проецируют два хозяина, и вид у неё разный: у выбора вторичный, у
+        // ввода основной. Поэтому цвет — ручка потребителя: не задан — кнопка остаётся своего цвета.
+        &__add .rt-button {
+            color: var(--rt-dynamic-selector-list-add-color, var(--rt-btn-color));
+            font-weight: var(--rt-dynamic-selector-list-add-font-weight);
+        }
+
+        // Значок «Сбросить» красится цветом кнопки; выключенная кнопка остаётся приглушённой.
+        &__reset.rt-icon-button {
+            --rt-icon-button-color: var(--rt-dynamic-selector-list-reset-color);
+        }
+
+        &__clear {
+            flex: none;
         }
 
         // Строка в полёте живёт у конца страницы, вне блока: свойства объявлены на ней самой.

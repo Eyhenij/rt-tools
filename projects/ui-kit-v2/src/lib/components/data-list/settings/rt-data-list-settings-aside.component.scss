@@ -136,11 +136,11 @@
         --rt-data-list-settings-aside-header-height: 96px;
 
         .rt-aside-header {
-            --rt-aside-header-title-size: var(--rt-text-2xl);
-            --rt-aside-header-title-weight: var(--rt-font-weight-semibold);
-            --rt-aside-header-subtitle-size: var(--rt-text-md);
-            --rt-aside-header-gap: var(--rt-space-md);
-            --rt-aside-header-min-height: var(--rt-data-list-settings-aside-header-height);
+            --rt-aside-header-title-size-default: var(--rt-text-2xl);
+            --rt-aside-header-title-weight-default: var(--rt-font-weight-semibold);
+            --rt-aside-header-subtitle-size-default: var(--rt-text-md);
+            --rt-aside-header-gap-default: var(--rt-space-md);
+            --rt-aside-header-min-height-default: var(--rt-data-list-settings-aside-header-height);
         }
 
         /* Кнопка «назад» — круглая `mat-icon-button` первого кита, как и кнопки подвала панели. */

@@ -4,22 +4,36 @@
     /* rt-action-bar — ViewEncapsulation.None: правила таргетируют BEM-класс блока.
        `.rt-action-bar` — сам хост (шаблон начинается с ng-container, класс ставит host). */
 
+    /* Свойства полосы приложение задаёт на любом предке, хоть на корне страницы: на самой полосе
+       объявлены только умолчания с приставкой `-default`, а читается свойство с запасным значением.
+       Объявленное на полосе под публичным именем перебило бы правило предка — так было до RT-2619. */
     .rt-action-bar {
-        --rt-action-bar-radius: var(--rt-radius-lg);
-        --rt-action-bar-shadow: var(--rt-shadow-card);
-        --rt-action-bar-bg: var(--rt-color-bg-inverse);
-        --rt-action-bar-color: var(--rt-color-text-inverse);
-        --rt-action-bar-padding: var(--rt-space-2) var(--rt-space-4);
-        --rt-action-bar-gap: var(--rt-space-4);
-        --rt-action-bar-font-size: var(--rt-text-sm);
-        --rt-action-bar-counter-weight: var(--rt-font-weight-medium);
-        --rt-action-bar-action-radius: var(--rt-radius-md);
-        --rt-action-bar-action-padding-block: var(--rt-space-1);
-        --rt-action-bar-action-padding-inline: var(--rt-space-2);
-        --rt-action-bar-action-weight: var(--rt-font-weight-medium);
-        --rt-action-bar-action-bg-hover: color-mix(in srgb, var(--rt-action-bar-color) 16%, transparent);
-        --rt-action-bar-action-color-danger: var(--rt-color-action-danger-on-surface);
-        --rt-action-bar-action-focus-shadow: var(--rt-shadow-focus-ring);
+        --rt-action-bar-radius-default: var(--rt-radius-lg);
+        --rt-action-bar-shadow-default: var(--rt-shadow-card);
+        --rt-action-bar-bg-default: var(--rt-color-bg-inverse);
+        --rt-action-bar-color-default: var(--rt-color-text-inverse);
+        --rt-action-bar-padding-default: var(--rt-space-2) var(--rt-space-4);
+        --rt-action-bar-gap-default: var(--rt-space-4);
+        --rt-action-bar-font-size-default: var(--rt-text-sm);
+        --rt-action-bar-counter-weight-default: var(--rt-font-weight-medium);
+        --rt-action-bar-counter-font-size-default: 1em;
+        --rt-action-bar-action-radius-default: var(--rt-radius-md);
+        --rt-action-bar-action-padding-block-default: var(--rt-space-1);
+        --rt-action-bar-action-padding-inline-default: var(--rt-space-2);
+        --rt-action-bar-action-weight-default: var(--rt-font-weight-medium);
+        --rt-action-bar-action-height-default: auto;
+        --rt-action-bar-action-font-size-default: 1em;
+        --rt-action-bar-action-bg-hover-default: color-mix(
+            in srgb,
+            var(--rt-action-bar-color, var(--rt-action-bar-color-default)) 16%,
+            transparent
+        );
+        --rt-action-bar-action-color-danger-default: var(--rt-color-action-danger-on-surface);
+        --rt-action-bar-action-focus-shadow-default: var(--rt-shadow-focus-ring);
+        --rt-action-bar-icon-size-default: var(--rt-size-4);
+        --rt-action-bar-icon-gap-default: var(--rt-space-2);
+        --rt-action-bar-close-size-default: var(--rt-control-height-sm);
+        --rt-action-bar-close-icon-size-default: var(--rt-size-4);
 
         // Предел ширины стоит и на самом элементе. Содержащий блок полосы — этот элемент, и
         // без предела он растёт по содержимому: сто процентов считались бы тогда от выросшего,
@@ -29,16 +43,17 @@
         max-width: 100%;
         box-sizing: border-box;
         align-items: center;
-        padding: var(--rt-action-bar-padding);
-        border-radius: var(--rt-action-bar-radius);
-        background: var(--rt-action-bar-bg);
-        box-shadow: var(--rt-action-bar-shadow);
-        color: var(--rt-action-bar-color);
-        font-size: var(--rt-action-bar-font-size);
-        gap: var(--rt-action-bar-gap);
+        padding: var(--rt-action-bar-padding, var(--rt-action-bar-padding-default));
+        border-radius: var(--rt-action-bar-radius, var(--rt-action-bar-radius-default));
+        background: var(--rt-action-bar-bg, var(--rt-action-bar-bg-default));
+        box-shadow: var(--rt-action-bar-shadow, var(--rt-action-bar-shadow-default));
+        color: var(--rt-action-bar-color, var(--rt-action-bar-color-default));
+        font-size: var(--rt-action-bar-font-size, var(--rt-action-bar-font-size-default));
+        gap: var(--rt-action-bar-gap, var(--rt-action-bar-gap-default));
 
         &__counter {
-            font-weight: var(--rt-action-bar-counter-weight);
+            font-size: var(--rt-action-bar-counter-font-size, var(--rt-action-bar-counter-font-size-default));
+            font-weight: var(--rt-action-bar-counter-weight, var(--rt-action-bar-counter-weight-default));
             white-space: nowrap;
         }
 
@@ -53,36 +68,46 @@
 
         &__action {
             display: flex;
+            min-height: var(--rt-action-bar-action-height, var(--rt-action-bar-action-height-default));
+            box-sizing: border-box;
             align-items: center;
-            padding: var(--rt-action-bar-action-padding-block) var(--rt-action-bar-action-padding-inline);
+            padding: var(--rt-action-bar-action-padding-block, var(--rt-action-bar-action-padding-block-default))
+                var(--rt-action-bar-action-padding-inline, var(--rt-action-bar-action-padding-inline-default));
             border: 0;
-            border-radius: var(--rt-action-bar-action-radius);
+            border-radius: var(--rt-action-bar-action-radius, var(--rt-action-bar-action-radius-default));
             background: transparent;
             color: inherit;
             cursor: pointer;
             font-family: inherit;
-            font-size: inherit;
+            font-size: var(--rt-action-bar-action-font-size, var(--rt-action-bar-action-font-size-default));
 
             // Нажатие в этом ките набрано средним начертанием — так набрана кнопка кита, и
             // действие полосы такое же нажатие. Первый кит ставил здесь шестьсот.
-            font-weight: var(--rt-action-bar-action-weight);
-            gap: var(--rt-space-2);
+            font-weight: var(--rt-action-bar-action-weight, var(--rt-action-bar-action-weight-default));
+            gap: var(--rt-action-bar-icon-gap, var(--rt-action-bar-icon-gap-default));
 
             &:hover {
-                background: var(--rt-action-bar-action-bg-hover);
+                background: var(--rt-action-bar-action-bg-hover, var(--rt-action-bar-action-bg-hover-default));
             }
 
             &:focus-visible {
-                box-shadow: var(--rt-action-bar-action-focus-shadow);
+                box-shadow: var(--rt-action-bar-action-focus-shadow, var(--rt-action-bar-action-focus-shadow-default));
                 outline: none;
             }
 
             &--danger {
-                color: var(--rt-action-bar-action-color-danger);
+                color: var(--rt-action-bar-action-color-danger, var(--rt-action-bar-action-color-danger-default));
             }
         }
 
+        // Значок ставит свой размер строкой стиля, и свойство полосы берёт верх через min и max —
+        // так же делает заглушка пустого состояния. Глиф шрифта Material без пары в наборе кита
+        // держит кегль своего шага: его значок пишет строкой стиля на самом глифе.
         &__action-icon {
+            min-width: var(--rt-action-bar-icon-size, var(--rt-action-bar-icon-size-default));
+            max-width: var(--rt-action-bar-icon-size, var(--rt-action-bar-icon-size-default));
+            min-height: var(--rt-action-bar-icon-size, var(--rt-action-bar-icon-size-default));
+            max-height: var(--rt-action-bar-icon-size, var(--rt-action-bar-icon-size-default));
             flex: none;
         }
 
@@ -101,11 +126,25 @@
         // белому, и крестика не было видно ни в одном кадре. Своё свойство блока перебивают —
         // так делает просмотр фотографии, где кнопка стоит на снимке.
         &__close {
-            --rt-icon-button-color: var(--rt-action-bar-color);
-            --rt-icon-button-color-bg-hover: var(--rt-action-bar-action-bg-hover);
+            --rt-icon-button-color: var(--rt-action-bar-color, var(--rt-action-bar-color-default));
+            --rt-icon-button-color-bg-hover: var(--rt-action-bar-action-bg-hover, var(--rt-action-bar-action-bg-hover-default));
 
             flex: none;
             margin-left: auto;
+
+            // Размер кнопки — шаг самой иконочной кнопки: `--rt-icon-button-size` — ручка приложения,
+            // и кит её не объявляет. Шаг объявлен на внутренней кнопке правилом из двух классов,
+            // поэтому здесь три: хост с классом элемента и внутренняя кнопка.
+            &.rt-icon-button .rt-icon-button {
+                --rt-icon-button-size-step: var(--rt-action-bar-close-size, var(--rt-action-bar-close-size-default));
+            }
+
+            .rt-icon {
+                min-width: var(--rt-action-bar-close-icon-size, var(--rt-action-bar-close-icon-size-default));
+                max-width: var(--rt-action-bar-close-icon-size, var(--rt-action-bar-close-icon-size-default));
+                min-height: var(--rt-action-bar-close-icon-size, var(--rt-action-bar-close-icon-size-default));
+                max-height: var(--rt-action-bar-close-icon-size, var(--rt-action-bar-close-icon-size-default));
+            }
         }
 
         // Меню рисуется в оверлее, вне полосы: объявление на полосе до него не доходит, и раньше
@@ -115,14 +154,23 @@
         &__menu {
             --rt-action-bar-menu-radius-default: var(--rt-radius-md);
             --rt-action-bar-menu-shadow-default: var(--rt-shadow-card);
+            --rt-action-bar-menu-padding-default: var(--rt-space-2);
+            --rt-action-bar-menu-gap-default: 0;
+            --rt-action-bar-menu-item-font-size-default: var(--rt-text-sm);
 
             display: flex;
             flex-direction: column;
-            padding: var(--rt-space-2);
+            padding: var(--rt-action-bar-menu-padding, var(--rt-action-bar-menu-padding-default));
             border-radius: var(--rt-action-bar-menu-radius, var(--rt-action-bar-menu-radius-default));
             background: var(--rt-action-bar-menu-bg, var(--rt-color-bg-surface));
             box-shadow: var(--rt-action-bar-menu-shadow, var(--rt-action-bar-menu-shadow-default));
             color: var(--rt-action-bar-menu-color, var(--rt-color-text-primary));
+            gap: var(--rt-action-bar-menu-gap, var(--rt-action-bar-menu-gap-default));
+
+            // Кегль пункта у пункта меню свой; меню полосы переназначает его правилом большей силы.
+            .rt-menu-item {
+                font-size: var(--rt-action-bar-menu-item-font-size, var(--rt-action-bar-menu-item-font-size-default));
+            }
         }
 
         // Полоса живёт на нижней кромке, и пальцу нужно место, которое занимают подписи. Решает

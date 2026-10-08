@@ -8,7 +8,7 @@
   "targets": {
     "build-app": {
       "executor": "@angular/build:application",
-      "outputs": ["{options.outputPath}"],
+      "outputs": ["{workspaceRoot}/dist/auth-keycloak-theme/app"],
       "options": {
         "outputPath": {
           "base": "dist/auth-keycloak-theme/app",

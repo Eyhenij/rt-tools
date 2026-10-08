@@ -4,6 +4,7 @@
             rtElem="search"
             qa-dataid="dynamic-selector-search"
             iconLeft="search"
+            [appearance]="searchAppearance()"
             [placeholder]="searchLabel()"
             [ngModel]="query()"
             (ngModelChange)="onQueryChange($event)" />
@@ -77,7 +78,7 @@
             }
         </div>
     } @else {
-        <rt-empty-state rtElem="empty" qa-dataid="dynamic-selector-no-results" icon="search" [title]="noResultsLabel()" />
+        <rt-empty-state rtElem="empty" qa-dataid="dynamic-selector-no-results" icon="search" [title]="emptyText()" />
     }
 
     <div rtElem="foot" [rtMod]="{ nav: isNavShown() }">

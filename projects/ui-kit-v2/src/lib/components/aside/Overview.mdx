@@ -66,6 +66,7 @@ ref.afterClosed().subscribe((result?: ITour): void => …);
 | `closeOnBackdropClick` / `closeOnEscape` | `true`                                   | закрытие щелчком по подложке и `Escape`; умолчание второго приложение задаёт киту разом через `provideRtKit` |
 | `backdropClass` / `panelClass`           | `rt-aside-backdrop` / `rt-aside-overlay` | классы подложки и панели                                                                                     |
 | `injector`                               | корневой                                 | injector хозяина: содержимое видит его провайдеры, а уничтожение хозяина закрывает панель                    |
+| `disposeOnNavigation`                    | `true`                                   | переход по адресу снимает панель; `false` оставляет её открытой                                              |
 
 **Закрытие двухтактное.** `close(result)` отдаёт результат **сразу**, а панель убирает через
 200 мс — чтобы доиграла анимация ухода. В проверках это значит: подписчик уже получил значение,
