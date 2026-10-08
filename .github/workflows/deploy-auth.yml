@@ -91,6 +91,10 @@ jobs:
 
             # Поднять состав, дождаться готового Keycloak и наложить области. Наложение с ошибкой
             # роняет выкатку: область, наложенная наполовину, хуже прежней целой.
+            #
+            # Keycloak пересоздаётся всегда. Тема лежит в томе `providers`, а `up -d` пересоздаёт
+            # только контейнер с изменёнными настройками: без этого Keycloak остаётся со старой
+            # темой, загруженной при запуске.
             - name: Restart stack and apply realms
               if: github.ref == 'refs/heads/main'
               env:
@@ -101,6 +105,7 @@ jobs:
                       "cd /opt/auth \
                       && docker compose -f docker-compose.prod.yml --env-file .env.prod pull db keycloak caddy \
                       && docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --wait --remove-orphans \
+                      && docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --wait --no-deps --force-recreate keycloak \
                       && docker compose -f docker-compose.prod.yml --env-file .env.prod run --rm keycloak-config"
 
             # Проба снаружи, по имени: так же, как до Keycloak доходит браузер. Выдавший в ответе
@@ -118,6 +123,27 @@ jobs:
                       sleep 10
                   done
                   echo 'Keycloak не ответил за отведённое время'
+                  exit 1
+
+            # Проба выше зелёная при любой теме. Здесь страница входа отдаёт `main.js`, и он
+            # сверяется с собранным в этой выкатке: иначе старая тема на проде не видна никому.
+            - name: Theme check
+              if: github.ref == 'refs/heads/main'
+              run: |
+                  base='https://auth.message-bus.dev'
+                  login="${base}/realms/rt/protocol/openid-connect/auth?client_id=rt-message-bus-admin&redirect_uri=https%3A%2F%2Fmessage-bus.dev%2F&response_type=code&scope=openid&code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM&code_challenge_method=S256"
+                  want="$(sha256sum dist/auth-keycloak-theme/app/main.js | cut -d' ' -f1)"
+                  for attempt in $(seq 1 6); do
+                      dir="$(curl -fsS -m 15 "${login}" | grep -oE '/resources/[^"]*/login/rt/dist/' | head -1)"
+                      got="$(curl -fsS -m 15 "${base}${dir}main.js" | sha256sum | cut -d' ' -f1)"
+                      if [ -n "${dir}" ] && [ "${got}" = "${want}" ]; then
+                          echo 'Keycloak отдаёт тему этой сборки'
+                          exit 0
+                      fi
+                      echo "попытка ${attempt}: тема на проде не та, что собрана (${got:0:12} против ${want:0:12}), повтор через 10 с"
+                      sleep 10
+                  done
+                  echo 'Keycloak отдаёт не ту тему, что собрана этой выкаткой'
                   exit 1
 
             - name: Prune old images
