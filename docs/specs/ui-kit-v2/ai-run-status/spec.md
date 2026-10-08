@@ -41,7 +41,8 @@ a time and a list of steps that opens under it.
 
 - **While the run works, a highlight runs across the label, and with reduced motion the label is
   muted and still.** The highlight flows from the muted text colour through blue, light blue, green and amber, and one pass
-  takes 2.4 seconds.
+  takes 2.4 seconds. The spinner changes through blue, light blue, green and amber at the same pace,
+  and with reduced motion it stays blue.
 
 - **A stopped label is muted, a failed label is red, a done label has the text colour.**
 
@@ -121,3 +122,4 @@ None.
 - 2026-10-08 — written by the task RT-2651 of the epic RT-2649, which brings the assistant chat
   into the kit.
 - 2026-10-08 — the task RT-2695: the highlight is slower and of several colours, by the owner's word.
+  The spinner takes the same colours by the same task.

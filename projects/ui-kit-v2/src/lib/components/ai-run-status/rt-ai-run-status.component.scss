@@ -55,6 +55,15 @@
                 justify-content: center;
                 block-size: 16px;
                 inline-size: 16px;
+
+                .rt-spinner {
+                    --rt-spinner-progress-color: currentcolor;
+                }
+            }
+
+            &--state--running .rt-ai-run-status__mark {
+                animation: rt-ai-run-status-hue var(--rt-ai-run-status-shimmer-duration) linear infinite;
+                color: var(--rt-ai-run-status-shimmer-to);
             }
 
             &__label {
@@ -116,7 +125,30 @@
         }
     }
 
+    @keyframes rt-ai-run-status-hue {
+        0%,
+        100% {
+            color: var(--rt-ai-run-status-shimmer-to);
+        }
+
+        25% {
+            color: var(--rt-ai-run-status-shimmer-2);
+        }
+
+        50% {
+            color: var(--rt-ai-run-status-shimmer-3);
+        }
+
+        75% {
+            color: var(--rt-ai-run-status-shimmer-4);
+        }
+    }
+
     @media (prefers-reduced-motion: reduce) {
+        .rt-ai-run-status--state--running .rt-ai-run-status__mark {
+            animation: none;
+        }
+
         .rt-ai-run-status__label--state--running {
             animation: none;
             background: none;
