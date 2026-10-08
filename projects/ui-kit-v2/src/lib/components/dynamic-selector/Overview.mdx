@@ -113,6 +113,10 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | `--rt-dynamic-selector-popup-empty-text-color`   | её цвет                                         | `--rt-color-text-primary`                                       |
 | `--rt-dynamic-selector-popup-highlight-color`    | цвет символов, совпавших с поиском              | `--rt-color-text-primary`                                       |
 | `--rt-dynamic-selector-popup-highlight-weight`   | их начертание                                   | `--rt-font-weight-semibold`                                     |
+| `--rt-dynamic-selector-popup-option-line-height` | высота строки подписи пункта                    | `normal`                                                        |
+| `--rt-dynamic-selector-popup-option-min-height`  | наименьшая высота пункта с отступами            | `0`                                                             |
+| `--rt-dynamic-selector-popup-empty-gap`          | зазор от круга значка до подписи                | `--rt-space-xs` + `--rt-space-sm`                               |
+| `--rt-dynamic-selector-popup-foot-padding`       | отступ низа окна                                | `--rt-space-sm` отступ окна `0`                                 |
 | `--rt-dynamic-selector-list-row-padding-x`       | отступ строки слева, до ручки и подписи         | `--rt-space-sm`                                                 |
 | `--rt-dynamic-selector-list-add-font-weight`     | начертание кнопки «Добавить»                    | `--rt-font-weight-medium`                                       |
 | `--rt-dynamic-selector-list-add-indent`          | отступ кнопки «Добавить» слева                  | `0`                                                             |
@@ -124,7 +128,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 Таблица одна на оба поля — колонка «чей» говорит, к какому из них вход относится. Входы только
 поля строк стоят ниже своей таблицей.
 
-Десять входов вида приложение задаёт один раз на всё приложение, через настройки кита:
+Одиннадцать входов вида приложение задаёт один раз на всё приложение, через настройки кита:
 
 ```typescript
 provideRtKit({
@@ -140,13 +144,14 @@ provideRtKit({
             highlightSearch: true,
             applyLabel: 'Submit',
             applyLabelCase: 'upper',
+            autofocusSearch: true,
         },
     },
 });
 ```
 
 Оба поля берут из них `invitationButtonIcon`, `invitationButtonAppearance`, `clearIcon` и
-`titleWrap`; поиск, его подсветка, пустой результат и кнопка применения есть только у селектора. Вход, написанный в разметке, сильнее
+`titleWrap`; поиск с подсветкой и фокусом, пустой результат и кнопка применения есть только у селектора. Вход, написанный в разметке, сильнее
 настроек, а без настроек остаются умолчания из таблицы ниже.
 
 | вход                         | чей      | тип                            | умолчание                           |
@@ -188,6 +193,7 @@ provideRtKit({
 | `highlightSearch`            | селектор | `boolean`                      | `false`                             |
 | `applyLabel`                 | селектор | `string`                       | `''` → «Apply» из словаря кита      |
 | `applyLabelCase`             | селектор | `'none' \| 'title' \| 'upper'` | `'none'` — подпись как есть         |
+| `autofocusSearch`            | селектор | `boolean`                      | `false`                             |
 | `emptyResultsText`           | селектор | `string`                       | `''` → «No results» из словаря кита |
 
 ### Только у поля строк
@@ -219,6 +225,9 @@ provideRtKit({
 `applyLabel` заменяет подпись кнопки применения, а `applyLabelCase` задаёт её регистр: `none`
 оставляет как есть, `title` ставит заглавную в начало каждого слова, `upper` пишет всё заглавными.
 Регистр действует и на подпись кита.
+
+`autofocusSearch` ставит фокус в поле поиска при открытии окна. По умолчанию фокус остаётся на
+элементе, который окно открыл.
 
 ### Переключатели и состояние окна
 

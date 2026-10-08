@@ -1,5 +1,5 @@
-import { DebugElement } from '@angular/core';
-import { ComponentFixture } from '@angular/core/testing';
+import { ApplicationRef, DebugElement } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
 import { createRtFixture, qa, textOf } from '../../../../testing/rt-kit-testing';
@@ -32,6 +32,16 @@ function searchRadiusOf(fixture: TPopupFixture): string | null | undefined {
     return search?.injector.get(RtRadiusDirective).step();
 }
 
+async function focusedSearch(inputs: Readonly<Record<string, unknown>>): Promise<boolean> {
+    const fixture: TPopupFixture = setup(inputs);
+    const field: HTMLInputElement | null = (qa(fixture, 'dynamic-selector-search')?.nativeElement as HTMLElement).querySelector('input');
+
+    TestBed.inject(ApplicationRef).tick();
+    await fixture.whenStable();
+
+    return field !== null && document.activeElement === field;
+}
+
 function applyOf(fixture: TPopupFixture): readonly [string, string | null] {
     const button: HTMLElement = qa(fixture, 'dynamic-selector-apply')?.nativeElement as HTMLElement;
 
@@ -59,5 +69,10 @@ describe('RtDynamicSelectorPopupComponent — вид, который задаё�
         expect(applyOf(setup({ applyLabel: 'submit FORM', applyLabelCase: 'title' }))).toEqual(['Submit Form', 'Submit Form']);
         expect(applyOf(setup({ applyLabel: 'Submit', applyLabelCase: 'upper' }))).toEqual(['SUBMIT', 'SUBMIT']);
         expect(applyOf(setup({ applyLabelCase: 'upper' }))[0]).toBe(kitText.toLocaleUpperCase());
+    });
+
+    it('SC-UKV-732 — поле поиска получает фокус при открытии, только когда вход это просит', async (): Promise<void> => {
+        expect(await focusedSearch({ autofocusSearch: true })).toBe(true);
+        expect(await focusedSearch({})).toBe(false);
     });
 });

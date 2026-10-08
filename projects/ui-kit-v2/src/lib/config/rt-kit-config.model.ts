@@ -79,6 +79,8 @@ export namespace IRtKitConfig {
         applyLabel?: string;
         /** Регистр подписи кнопки применения. Умолчание кита — `none`, подпись как есть. */
         applyLabelCase?: IRtDynamicSelector.LabelCase;
+        /** Получает ли поле поиска фокус при открытии окна выбора. Умолчание кита — не получает. */
+        autofocusSearch?: boolean;
     }
 
     /** Умолчания по узлам: каждое действует на одну семью и перебивает общее. */

@@ -135,9 +135,16 @@ stands next to it as components of its own, drawn on the parts of the second kit
   the kit label. The case leaves the label as it is by default, raises the first letter of every
   word, or raises the whole label; the button is named for a reader who hears the screen by the same
   text.
+- **The search field takes focus when the popup opens only if the caller asks for it.** By default
+  the focus stays on the element that opened the popup.
+- **The option line, the empty result gap and the footer padding are popup properties.** The line
+  height of an option label and the least height of an option row default to the browser line and
+  the row content, and a taller row keeps its content in the middle. The gap runs from the circle
+  under the empty result icon to its text and defaults to the gap drawn today; the footer padding
+  defaults to the padding drawn today.
 - **The kit settings set the look of the invitation, the clear button, the popup search, the empty
-  result, the row title wrapping, the search highlight and the apply button label for every field at
-  once, and an input at the place wins over them.** Both fields read the invitation button, the clear icon and the title wrapping from the
+  result, the row title wrapping, the search highlight, the apply button label and the search focus
+  for every field at once, and an input at the place wins over them.** Both fields read the invitation button, the clear icon and the title wrapping from the
   settings; the search and the empty result belong to the selector alone. Without the settings the
   kit defaults stay.
 - **A value the caller sets on the list block reaches it, and a popup property or the add button's

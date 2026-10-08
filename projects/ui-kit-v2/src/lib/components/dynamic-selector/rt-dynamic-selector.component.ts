@@ -125,6 +125,11 @@ export class RtDynamicSelectorComponent<TEntity extends object> extends RtFormCo
         (it: IRtKitConfig.DynamicSelector): IRtDynamicSelector.LabelCase | undefined => it.applyLabelCase,
         'none'
     );
+    readonly #autofocusSearchDefault: boolean = rtKitDefault(
+        'dynamicSelector',
+        (it: IRtKitConfig.DynamicSelector): boolean | undefined => it.autofocusSearch,
+        false
+    );
     readonly #emptyResultsTextDefault: string = rtKitDefault(
         'dynamicSelector',
         (it: IRtKitConfig.DynamicSelector): string | undefined => it.emptyResultsText,
@@ -257,6 +262,10 @@ export class RtDynamicSelectorComponent<TEntity extends object> extends RtFormCo
     public readonly applyLabelCase: InputSignal<IRtDynamicSelector.LabelCase> = input<IRtDynamicSelector.LabelCase>(
         this.#applyLabelCaseDefault
     );
+    /** Поле поиска получает фокус при открытии окна выбора. */
+    public readonly autofocusSearch: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(this.#autofocusSearchDefault, {
+        transform: booleanAttribute,
+    });
     public readonly multiToggleShown: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
         transform: booleanAttribute,
     });

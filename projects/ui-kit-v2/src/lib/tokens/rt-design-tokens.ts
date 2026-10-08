@@ -630,17 +630,21 @@ export type TRtConsumerHandleName =
     | '--rt-dynamic-selector-popup-border-width'
     | '--rt-dynamic-selector-popup-button-font-size'
     | '--rt-dynamic-selector-popup-button-height'
+    | '--rt-dynamic-selector-popup-empty-gap'
     | '--rt-dynamic-selector-popup-empty-icon-size'
     | '--rt-dynamic-selector-popup-empty-icon-wrap-bg'
     | '--rt-dynamic-selector-popup-empty-text-color'
     | '--rt-dynamic-selector-popup-empty-text-size'
     | '--rt-dynamic-selector-popup-empty-text-weight'
     | '--rt-dynamic-selector-popup-foot-border-width'
+    | '--rt-dynamic-selector-popup-foot-padding'
     | '--rt-dynamic-selector-popup-highlight-color'
     | '--rt-dynamic-selector-popup-highlight-weight'
     | '--rt-dynamic-selector-popup-max-height'
     | '--rt-dynamic-selector-popup-min-height'
     | '--rt-dynamic-selector-popup-nav-color'
+    | '--rt-dynamic-selector-popup-option-line-height'
+    | '--rt-dynamic-selector-popup-option-min-height'
     | '--rt-dynamic-selector-popup-padding'
     | '--rt-dynamic-selector-popup-radius'
     | '--rt-dynamic-selector-popup-shadow'
@@ -1336,17 +1340,21 @@ export const RT_CONSUMER_HANDLE_NAMES: readonly TRtConsumerHandleName[] = [
     '--rt-dynamic-selector-popup-border-width',
     '--rt-dynamic-selector-popup-button-font-size',
     '--rt-dynamic-selector-popup-button-height',
+    '--rt-dynamic-selector-popup-empty-gap',
     '--rt-dynamic-selector-popup-empty-icon-size',
     '--rt-dynamic-selector-popup-empty-icon-wrap-bg',
     '--rt-dynamic-selector-popup-empty-text-color',
     '--rt-dynamic-selector-popup-empty-text-size',
     '--rt-dynamic-selector-popup-empty-text-weight',
     '--rt-dynamic-selector-popup-foot-border-width',
+    '--rt-dynamic-selector-popup-foot-padding',
     '--rt-dynamic-selector-popup-highlight-color',
     '--rt-dynamic-selector-popup-highlight-weight',
     '--rt-dynamic-selector-popup-max-height',
     '--rt-dynamic-selector-popup-min-height',
     '--rt-dynamic-selector-popup-nav-color',
+    '--rt-dynamic-selector-popup-option-line-height',
+    '--rt-dynamic-selector-popup-option-min-height',
     '--rt-dynamic-selector-popup-padding',
     '--rt-dynamic-selector-popup-radius',
     '--rt-dynamic-selector-popup-shadow',

@@ -212,6 +212,10 @@ export class TestRtDynamicSelectorMatrixComponent {
         '--rt-dynamic-selector-popup-foot-border-width': '0',
         '--rt-dynamic-selector-popup-button-height': 'var(--rt-control-height-sm)',
         '--rt-dynamic-selector-popup-button-font-size': 'var(--rt-text-sm)',
+        '--rt-dynamic-selector-popup-option-line-height': 'var(--rt-size-5)',
+        '--rt-dynamic-selector-popup-option-min-height': 'var(--rt-size-12)',
+        '--rt-dynamic-selector-popup-empty-gap': 'var(--rt-space-xs)',
+        '--rt-dynamic-selector-popup-foot-padding': 'var(--rt-space-md) var(--rt-space-lg) 0 var(--rt-space-sm)',
     };
 
     public readonly lookPopupCases: readonly {
@@ -221,6 +225,7 @@ export class TestRtDynamicSelectorMatrixComponent {
     }[] = [
         { name: 'поиск fill, своя подпись', entities: [], tuned: false },
         { name: 'свои свойства окна', entities: STORY_PEOPLE.slice(0, 3), tuned: true },
+        { name: 'свои свойства пустого результата', entities: [], tuned: true },
     ];
 
     /** Записи с длинными названиями: на них видно, переносится название строки или режется. */

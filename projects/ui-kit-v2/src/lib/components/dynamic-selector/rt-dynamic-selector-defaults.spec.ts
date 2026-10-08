@@ -30,6 +30,7 @@ const SETTINGS: IRtKitConfig.Config = {
             highlightSearch: true,
             applyLabel: 'Submit',
             applyLabelCase: 'upper',
+            autofocusSearch: true,
         },
     },
 };
@@ -65,6 +66,7 @@ class SilentHostComponent {
             titleWrap
             applyLabel="Готово"
             applyLabelCase="none"
+            [autofocusSearch]="false"
             [searchRadius]="null"
             [highlightSearch]="false"
             [entities]="people"
@@ -107,6 +109,7 @@ describe('RtDynamicSelectorComponent — умолчания из настрое�
         expect(selectorOf(fixture).highlightSearch()).toBe(false);
         expect(selectorOf(fixture).applyLabel()).toBe('');
         expect(selectorOf(fixture).applyLabelCase()).toBe('none');
+        expect(selectorOf(fixture).autofocusSearch()).toBe(false);
         expect(inputOf(fixture).titleWrap()).toBe(true);
     });
 
@@ -126,6 +129,7 @@ describe('RtDynamicSelectorComponent — умолчания из настрое�
         expect(selectorOf(fixture).highlightSearch()).toBe(true);
         expect(selectorOf(fixture).applyLabel()).toBe('Submit');
         expect(selectorOf(fixture).applyLabelCase()).toBe('upper');
+        expect(selectorOf(fixture).autofocusSearch()).toBe(true);
         expect(inputOf(fixture).titleWrap()).toBe(false);
     });
 
@@ -158,6 +162,7 @@ describe('RtDynamicSelectorComponent — умолчания из настрое�
         expect(selectorOf(fixture).highlightSearch()).toBe(false);
         expect(selectorOf(fixture).applyLabel()).toBe('Готово');
         expect(selectorOf(fixture).applyLabelCase()).toBe('none');
+        expect(selectorOf(fixture).autofocusSearch()).toBe(false);
         expect(inputOf(fixture).titleWrap()).toBe(true);
     });
 });

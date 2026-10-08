@@ -352,3 +352,23 @@ Then the button shows that label in that case and is named by it, and without th
 label as it is
 
 Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/popup/rt-dynamic-selector-popup-look.spec.ts`, `projects/ui-kit-v2/src/lib/components/dynamic-selector/rt-dynamic-selector.logic.spec.ts`.
+
+### SC-UKV-732 — the search field takes focus on opening when asked
+
+Given a selector whose caller asks for the search focus, or the kit settings ask for it
+When the popup opens
+Then the search field holds the focus, and without the request the focus stays where it was
+
+Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/popup/rt-dynamic-selector-popup-look.spec.ts`.
+
+### SC-UKV-733 — the caller sets the option line, the empty result gap and the footer padding
+
+Given a popup whose caller sets the option line height, the least option height, the empty result
+gap or the footer padding
+When the popup shows its options or the empty result
+Then the popup takes those values, and without them it is drawn as before
+
+Not covered: a test has no layout. Measured on the showcase in the story **Popup**: without the
+properties the rows are 36px, the gap 12px and the footer padding `8px 16px 0`; with a 20px line, a
+44px least height, a 4px gap and `16px 24px 0 8px` the labels are 20px per line, the rows 44px with
+the content in the middle, the gap 4px and the footer padding `16px 24px 0 8px`.

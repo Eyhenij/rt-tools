@@ -1,8 +1,11 @@
 import {
+    afterNextRender,
     booleanAttribute,
     computed,
     DestroyRef,
+    ElementRef,
     inject,
+    Injector,
     input,
     output,
     signal,
@@ -14,6 +17,7 @@ import {
     OutputEmitterRef,
     Signal,
     ViewEncapsulation,
+    viewChild,
     WritableSignal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -61,7 +65,7 @@ export const RT_DYNAMIC_SELECTOR_SEARCH_DEBOUNCE: number = 500;
 @Component({
     selector: 'rt-dynamic-selector-popup',
     templateUrl: './rt-dynamic-selector-popup.component.html',
-    styleUrl: './rt-dynamic-selector-popup.component.scss',
+    styleUrls: ['./rt-dynamic-selector-popup.component.scss', './rt-dynamic-selector-popup-options.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
     imports: [
@@ -89,9 +93,11 @@ export const RT_DYNAMIC_SELECTOR_SEARCH_DEBOUNCE: number = 500;
 })
 export class RtDynamicSelectorPopupComponent<TEntity extends object> implements OnInit {
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
+    readonly #injector: Injector = inject(Injector);
     readonly #searchSource: Subject<string> = new Subject<string>();
 
     protected readonly searchLabel: Signal<string> = rtKitLabel('dynamicSelectorSearch');
+    protected readonly searchField: Signal<ElementRef<HTMLElement> | undefined> = viewChild('searchField', { read: ElementRef });
     protected readonly selectAllLabel: Signal<string> = rtKitLabel('uiSelectAll');
     protected readonly multiLabel: Signal<string> = rtKitLabel('dynamicSelectorMulti');
     protected readonly multiHintLabel: Signal<string> = rtKitLabel('dynamicSelectorMultiHint');
@@ -216,6 +222,10 @@ export class RtDynamicSelectorPopupComponent<TEntity extends object> implements 
     public readonly applyLabel: InputSignal<string> = input<string>('');
     /** Регистр подписи кнопки применения; `none` оставляет её как есть. */
     public readonly applyLabelCase: InputSignal<IRtDynamicSelector.LabelCase> = input<IRtDynamicSelector.LabelCase>('none');
+    /** Поле поиска получает фокус при открытии окна; по умолчанию фокус остаётся там, где был. */
+    public readonly autofocusSearch: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
+        transform: booleanAttribute,
+    });
     /** Подпись пункта переносится; `false` ведёт её одной строкой с многоточием и подсказкой при обрезке. */
     public readonly titleWrap: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
         transform: booleanAttribute,
@@ -241,6 +251,12 @@ export class RtDynamicSelectorPopupComponent<TEntity extends object> implements 
         this.#searchSource
             .pipe(debounceTime(RT_DYNAMIC_SELECTOR_SEARCH_DEBOUNCE), takeUntilDestroyed(this.#destroyRef))
             .subscribe((query: string): void => this.searchChange.emit(query));
+
+        if (this.autofocusSearch()) {
+            afterNextRender((): void => this.searchField()?.nativeElement.querySelector('input')?.focus({ preventScroll: true }), {
+                injector: this.#injector,
+            });
+        }
     }
 
     protected onQueryChange(value: string | null): void {
