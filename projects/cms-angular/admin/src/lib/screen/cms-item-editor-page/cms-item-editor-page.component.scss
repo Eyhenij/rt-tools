@@ -1,0 +1,27 @@
+@use '../../styles/form';
+
+:host {
+    display: block;
+
+    .rt-cms-item-editor-page {
+        &__form {
+            @include form.stack;
+        }
+
+        &__section {
+            @include form.section;
+        }
+
+        &__hint {
+            @include form.hint;
+        }
+
+        /* Two fields side by side, and one under the other when they do not fit. */
+        &__row {
+            display: grid;
+            align-items: end;
+            gap: var(--rt-space-md);
+            grid-template-columns: repeat(auto-fit, minmax(calc(var(--rt-size-40) * 6), 1fr));
+        }
+    }
+}

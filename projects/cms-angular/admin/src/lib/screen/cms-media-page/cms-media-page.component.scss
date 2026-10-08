@@ -1,0 +1,4 @@
+/* The screen has nothing of its own: the column and the header come from the list frame. */
+:host {
+    display: block;
+}

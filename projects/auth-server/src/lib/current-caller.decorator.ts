@@ -2,7 +2,7 @@ import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 
 import { ICaller } from '@rt-tools/auth-contract';
 
-import { REQUEST_CALLER } from './auth.tokens';
+import { REQUEST_CALLER } from './auth.tokens.js';
 
 /** The caller the guard accepted; `undefined` on an operation open to everyone. */
 export function callerOfRequest(request: object): ICaller | undefined {

@@ -1,0 +1,64 @@
+<ng-container rtBlock="rt-cms-item-images">
+    <div rtElem="list" cdkDropList (cdkDropListDropped)="moved.emit({ from: $event.previousIndex, to: $event.currentIndex })">
+        @for (image of images(); track image.fileId; let first = $first; let last = $last) {
+            @let isMain = image.fileId === mainImageId();
+            <div rtElem="item" cdkDrag qa-dataid="item-image" [attr.data-file-id]="image.fileId">
+                <rt-icon-button cdkDragHandle icon="arrows-v" variant="ghost" qa-dataid="item-image-handle" [ariaLabel]="t().imagesDrag" />
+                <img rtElem="preview" alt="" [src]="image.url" />
+                <div rtElem="fields">
+                    <rt-field qa-skip [label]="t().imagesCaption">
+                        <rt-input
+                            qa-dataid="item-image-caption"
+                            [ngModel]="image.caption"
+                            (ngModelChange)="textChanged.emit({ fileId: image.fileId, change: { caption: $event } })" />
+                    </rt-field>
+                    <rt-field qa-skip [label]="t().imagesAlt" [hint]="t().imagesAltHint">
+                        <rt-input
+                            qa-dataid="item-image-alt"
+                            [ngModel]="image.altText"
+                            (ngModelChange)="textChanged.emit({ fileId: image.fileId, change: { altText: $event } })" />
+                    </rt-field>
+                </div>
+                <div rtElem="actions">
+                    <rt-icon-button
+                        qa-dataid="item-image-main"
+                        [icon]="isMain ? 'star-fill' : 'star'"
+                        [ariaLabel]="isMain ? t().imagesMain : t().imagesMakeMain"
+                        [tooltip]="isMain ? t().imagesMain : t().imagesMakeMain"
+                        (clicked)="mainPicked.emit(image.fileId)" />
+                    <rt-icon-button
+                        qa-dataid="item-image-up"
+                        icon="chevron-up"
+                        [ariaLabel]="t().uiUp"
+                        [tooltip]="t().uiUp"
+                        [disabled]="first"
+                        (clicked)="moved.emit({ from: $index, to: $index - 1 })" />
+                    <rt-icon-button
+                        qa-dataid="item-image-down"
+                        icon="chevron-down"
+                        [ariaLabel]="t().uiDown"
+                        [tooltip]="t().uiDown"
+                        [disabled]="last"
+                        (clicked)="moved.emit({ from: $index, to: $index + 1 })" />
+                    <rt-icon-button
+                        qa-dataid="item-image-remove"
+                        icon="trash"
+                        [ariaLabel]="t().imagesRemove"
+                        [tooltip]="isMain ? t().imagesMainLocked : t().imagesRemove"
+                        [disabled]="isMain"
+                        (clicked)="removeRequested.emit(image.fileId)" />
+                </div>
+            </div>
+        }
+    </div>
+    <div rtElem="add">
+        <button
+            rtButton
+            type="button"
+            appearance="outlined"
+            qa-dataid="item-image-add"
+            [label]="t().imagesAdd"
+            [attr.aria-label]="t().imagesAdd"
+            (click)="addRequested.emit()"></button>
+    </div>
+</ng-container>

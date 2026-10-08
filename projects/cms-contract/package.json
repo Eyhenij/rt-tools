@@ -1,0 +1,33 @@
+{
+  "name": "@rt-tools/cms-contract",
+  "version": "0.1.0",
+  "description": "The block model, the content model and the Connect contract of the CMS shared by the server and the client packages",
+  "author": "RT Team",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nickmdf/rt-tools.git",
+    "directory": "projects/cms-contract"
+  },
+  "homepage": "https://github.com/nickmdf/rt-tools/tree/main/projects/cms-contract",
+  "bugs": {
+    "url": "https://github.com/nickmdf/rt-tools/issues"
+  },
+  "keywords": [
+    "typescript",
+    "cms",
+    "blocks",
+    "connect",
+    "protobuf",
+    "framework-agnostic"
+  ],
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
+  "peerDependencies": {
+    "@bufbuild/protobuf": "^2.11.0"
+  },
+  "sideEffects": false,
+  "main": "src/index.ts",
+  "types": "src/index.ts"
+}

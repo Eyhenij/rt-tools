@@ -1,0 +1,25 @@
+// The block button is shown by its label in a frame, beside it the address and the settings button.
+:host {
+    display: flex;
+    align-items: center;
+    gap: var(--rt-space-sm);
+
+    .rt-cms-editor-button {
+        &__preview {
+            padding: var(--rt-space-xs) var(--rt-space-md);
+            border: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
+            border-radius: var(--rt-radius-md);
+            font-weight: var(--rt-font-weight-medium);
+        }
+
+        &__target {
+            overflow: hidden;
+            min-width: 0;
+            flex: 1 1 auto;
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-sm);
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    }
+}

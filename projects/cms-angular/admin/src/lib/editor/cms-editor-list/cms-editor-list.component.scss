@@ -1,0 +1,54 @@
+// The block list: an item is a handle, the text and a remove button in a row; the item sign sets the list kind.
+:host {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rt-space-sm);
+
+    .rt-cms-editor-list {
+        &__items {
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+            margin: 0;
+            gap: var(--rt-space-xs);
+            list-style: none;
+
+            &--marker--disc,
+            &--marker--decimal {
+                padding-left: var(--rt-space-lg);
+            }
+
+            &--marker--disc {
+                list-style: disc;
+            }
+
+            &--marker--decimal {
+                list-style: decimal;
+            }
+        }
+
+        &__item {
+            display: list-item;
+        }
+
+        &__text {
+            display: inline-block;
+            width: calc(100% - 2 * var(--rt-size-40));
+            min-width: 0;
+            margin: 0;
+            outline: none;
+            vertical-align: middle;
+        }
+
+        &__add {
+            display: flex;
+            align-items: center;
+            gap: var(--rt-space-xs);
+
+            > :first-child {
+                min-width: 0;
+                flex: 1 1 auto;
+            }
+        }
+    }
+}

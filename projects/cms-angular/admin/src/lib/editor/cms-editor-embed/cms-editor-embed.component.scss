@@ -1,0 +1,15 @@
+// The preview of the embedded page — a frame the full width of the block, of a fixed height.
+:host {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rt-space-sm);
+
+    .rt-cms-editor-embed {
+        &__frame {
+            width: 100%;
+            height: calc(var(--rt-size-40) * 6);
+            border: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
+            border-radius: var(--rt-radius-md);
+        }
+    }
+}
