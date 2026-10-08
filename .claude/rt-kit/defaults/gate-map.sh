@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.29.4 · defaults/gate-map.sh · 04cf365641de · правится надстройкой, не здесь
+# rt-kit v0.29.4 · defaults/gate-map.sh · d912ec396f28 · правится надстройкой, не здесь
 # Map "what is edited — which rule". The package default: real paths, not samples.
 #
 # The trees of this workshop are built alike — Nx, `apps/` and `libs/`, the same extensions and the
@@ -102,7 +102,7 @@ skill_for_default() {
                     printf '%s\n' 'styling-bem' ;;
                 */check-lib-layers.mjs | */lib-layers-allowlist.json) printf '%s\n' 'lib-layers' ;;
                 */check-reuse.mjs | */reuse-allowlist.json) printf '%s\n' 'reuse-first' ;;
-                */check-board.mjs | */board.mjs | */task-new.mjs | */check-schema-drift.mjs)
+                */check-board.mjs | */board.mjs | */board-*.mjs | */task-new.mjs | */check-schema-drift.mjs)
                     printf '%s\n' 'git-workflow' ;;
                 # A tree's own code linter rule is written by the same conventions as the code under
                 # it.
