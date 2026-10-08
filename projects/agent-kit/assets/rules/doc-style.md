@@ -256,6 +256,12 @@ freshness of a number in the text. The last two the law leaves with the author e
 open question is written in the same words as a promise, and a date and an id are numbers like
 the ones that get recomputed.
 
+The two columns of the glossary are judged at different minutes. The wording check carries a part
+of the left column and the tree's own bans, and it fires on the edit. The whole section of words
+not written here is read by the glossary check, and that one stands only in the set before a
+push — a word it refuses already lies in a commit by then. A commit body is read by neither: it
+is held by the article about the addressee, the same as a PR description.
+
 No check reads the reply to the owner, and the misses in it are the same as in tree text: an
 invented fact served alongside a verified one, and an appraisal of someone else's decision
 instead of carrying it out. Only the owner catches them — that is, having already read. The rule
