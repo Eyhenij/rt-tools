@@ -4,7 +4,7 @@ kind: pattern
 rule: spec-driven
 description: Pattern of rule spec-driven. Load when creating or editing a law in docs/constitution, a rule or a pattern in .claude/skills — ready-made headers, the section set of each layer, the binding table, the sign that a rule is due for splitting. Not for a domain spec — that is pattern spec-driven-domain.
 ---
-<!-- rt-kit v0.29.4 · patterns/spec-driven-rule.md · 2ebc68614318 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.4 · patterns/spec-driven-rule.md · 27e8998650f1 · правится надстройкой, не здесь -->
 
 # Law, rule and pattern
 
@@ -123,8 +123,10 @@ description: Pattern of rule git-workflow. Load for … Not for … — that is 
 ```
 
 Sections: `## When to use` · ready-made code · `## Common misses`. A pattern has no binding:
-the check does not audit it, because there is nothing to check ready-made code against but
-itself.
+there is nothing to check ready-made code against but itself. Its set of sections is checked all
+the same — the suite of the package that ships the texts refuses a pattern without `## When to
+use` and without the section of misses. A consumer tree does not see that refusal; the tree with
+the package sources sees it in the set before a push.
 
 ## How the article itself is written
 
