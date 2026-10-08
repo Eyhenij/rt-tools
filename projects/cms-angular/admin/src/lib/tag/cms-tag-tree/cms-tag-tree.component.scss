@@ -4,9 +4,9 @@
     .rt-cms-tag-tree {
         display: flex;
         flex-direction: column;
-        gap: var(--rt-space-xs);
-        margin: 0;
         padding: 0;
+        margin: 0;
+        gap: var(--rt-space-xs);
         list-style: none;
 
         &__node {
@@ -17,10 +17,10 @@
 
         &__row {
             display: flex;
+            min-height: var(--rt-control-height-md);
             align-items: center;
             justify-content: space-between;
             gap: var(--rt-space-sm);
-            min-height: var(--rt-control-height-md);
         }
 
         /* A long name is cut with an ellipsis, and the whole name is in the tooltip. */

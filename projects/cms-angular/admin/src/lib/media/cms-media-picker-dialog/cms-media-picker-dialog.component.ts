@@ -39,7 +39,7 @@ const BEM_BLOCK: string = 'rt-cms-media-picker-dialog';
  * How many files the window shows at once. The rest are found by the search: the picker is not the
  * media library, and a page switch in it would be a second list of the same section.
  */
-const PAGE_SIZE: number = 48;
+const MEDIA_PICKER_PAGE_SIZE: number = 48;
 
 /**
  * The image picker: the media library files, the search by name and the upload of a new one. A
@@ -106,7 +106,7 @@ export class CmsMediaPickerDialogComponent {
                     this.#loading.set(true);
                 }),
                 switchMap((search: string): Observable<IMediaFileList> =>
-                    this.#api.files({ pageNumber: 1, pageSize: PAGE_SIZE, search }).pipe(
+                    this.#api.files({ pageNumber: 1, pageSize: MEDIA_PICKER_PAGE_SIZE, search }).pipe(
                         catchError((): Observable<IMediaFileList> => {
                             this.#notifications.error(this.t().mediaLoadFailed);
                             const empty: IMediaFileList = { files: [], total: 0 };

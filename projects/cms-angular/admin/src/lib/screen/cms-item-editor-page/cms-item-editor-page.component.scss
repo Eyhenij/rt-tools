@@ -19,9 +19,9 @@
         /* Two fields side by side, and one under the other when they do not fit. */
         &__row {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(calc(var(--rt-size-40) * 6), 1fr));
             align-items: end;
             gap: var(--rt-space-md);
+            grid-template-columns: repeat(auto-fit, minmax(calc(var(--rt-size-40) * 6), 1fr));
         }
     }
 }
