@@ -4,7 +4,7 @@ kind: rule
 law: project-documentation
 description: Rule under the project-documentation law. Load when editing any .md including specs, and also code comments, commit bodies and PR descriptions. Names the path check, the pairs of an edit and its document, and what nothing checks in this tree. Ready-made wording is in pattern doc-style-write.
 ---
-<!-- rt-kit v0.29.4 · rules/doc-style.md · ba6fb11f13a5 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.4 · rules/doc-style.md · c859a8eeb9ab · правится надстройкой, не здесь -->
 
 # Project texts — how it works here
 
@@ -256,6 +256,12 @@ intake. What is left with the author is one sentence per rule, no claims about t
 freshness of a number in the text. The last two the law leaves with the author explicitly: an
 open question is written in the same words as a promise, and a date and an id are numbers like
 the ones that get recomputed.
+
+The two columns of the glossary are judged at different minutes. The wording check carries a part
+of the left column and the tree's own bans, and it fires on the edit. The whole section of words
+not written here is read by the glossary check, and that one stands only in the set before a
+push — a word it refuses already lies in a commit by then. A commit body is read by neither: it
+is held by the article about the addressee, the same as a PR description.
 
 No check reads the reply to the owner, and the misses in it are the same as in tree text: an
 invented fact served alongside a verified one, and an appraisal of someone else's decision
