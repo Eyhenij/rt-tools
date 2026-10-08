@@ -130,6 +130,7 @@ stands next to it as components of its own, drawn on the parts of the second kit
   result.** The invitation button takes an icon and one of the kit button's looks; the clear button
   takes an icon, the close cross by default; the popup search field and the string list's own field
   take one of the field's looks; the empty result shows the caller's text, the kit label without it.
+  The popup search takes a radius step too, and without one it keeps the field's own rounding.
 - **The kit settings set the look of the invitation, the clear button, the popup search, the empty
   result and the row title wrapping for every field at once, and an input at the place wins over
   them.** Both fields read the invitation button, the clear icon and the title wrapping from the

@@ -122,7 +122,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 Таблица одна на оба поля — колонка «чей» говорит, к какому из них вход относится. Входы только
 поля строк стоят ниже своей таблицей.
 
-Шесть входов вида приложение задаёт один раз на всё приложение, через настройки кита:
+Семь входов вида приложение задаёт один раз на всё приложение, через настройки кита:
 
 ```typescript
 provideRtKit({
@@ -132,6 +132,7 @@ provideRtKit({
             invitationButtonAppearance: 'text',
             clearIcon: 'trash-x',
             searchAppearance: 'fill',
+            searchRadius: 'full',
             emptyResultsText: 'Никого не нашли',
             titleWrap: false,
         },
@@ -178,6 +179,7 @@ provideRtKit({
 | `clearIcon`                  | оба      | `IRtIcon.Name`               | `'close'`                           |
 | `titleWrap`                  | оба      | `boolean`                    | `true`                              |
 | `searchAppearance`           | селектор | `IRtInput.Appearance`        | `'outline'`                         |
+| `searchRadius`               | селектор | `TRtRadius \| null`          | `null` — скругление поля            |
 | `emptyResultsText`           | селектор | `string`                     | `''` → «No results» из словаря кита |
 
 ### Только у поля строк

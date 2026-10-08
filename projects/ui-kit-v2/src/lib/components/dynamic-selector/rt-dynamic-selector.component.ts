@@ -105,6 +105,11 @@ export class RtDynamicSelectorComponent<TEntity extends object> extends RtFormCo
         (it: IRtKitConfig.DynamicSelector): IRtInput.Appearance | undefined => it.searchAppearance,
         'outline'
     );
+    readonly #searchRadiusDefault: TRtRadius | null = rtKitDefault(
+        'dynamicSelector',
+        (it: IRtKitConfig.DynamicSelector): TRtRadius | null | undefined => it.searchRadius,
+        null
+    );
     readonly #emptyResultsTextDefault: string = rtKitDefault(
         'dynamicSelector',
         (it: IRtKitConfig.DynamicSelector): string | undefined => it.emptyResultsText,
@@ -223,6 +228,8 @@ export class RtDynamicSelectorComponent<TEntity extends object> extends RtFormCo
     });
     /** Вид поля поиска в окне выбора. */
     public readonly searchAppearance: InputSignal<IRtInput.Appearance> = input<IRtInput.Appearance>(this.#searchAppearanceDefault);
+    /** Шаг скругления поля поиска в окне выбора; null — скругление самого поля. */
+    public readonly searchRadius: InputSignal<TRtRadius | null> = input<TRtRadius | null>(this.#searchRadiusDefault);
     /** Подпись пустого результата поиска; пустая строка оставляет подпись кита. */
     public readonly emptyResultsText: InputSignal<string> = input<string>(this.#emptyResultsTextDefault);
     public readonly multiToggleShown: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {

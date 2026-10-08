@@ -5,6 +5,7 @@
             qa-dataid="dynamic-selector-search"
             iconLeft="search"
             [appearance]="searchAppearance()"
+            [radius]="searchRadius()"
             [placeholder]="searchLabel()"
             [ngModel]="query()"
             (ngModelChange)="onQueryChange($event)" />

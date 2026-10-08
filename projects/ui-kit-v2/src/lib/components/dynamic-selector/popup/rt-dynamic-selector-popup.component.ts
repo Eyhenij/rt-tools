@@ -23,7 +23,7 @@ import { debounceTime, Subject } from 'rxjs';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { rtKitLabel, IRtInput } from '@rt-tools/ui-kit-v2/core';
+import { rtKitLabel, IRtInput, TRtRadius } from '@rt-tools/ui-kit-v2/core';
 import { RtInfiniteScrollDirective } from '@rt-tools/ui-kit-v2/core';
 import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
 import { RtCheckboxComponent } from '@rt-tools/ui-kit-v2/checkbox';
@@ -193,6 +193,8 @@ export class RtDynamicSelectorPopupComponent<TEntity extends object> implements 
     public readonly searchTerm: InputSignal<string> = input<string>('');
     /** Вид поля поиска — тот же вход, что у поля кита. */
     public readonly searchAppearance: InputSignal<IRtInput.Appearance> = input<IRtInput.Appearance>('outline');
+    /** Шаг скругления поля поиска; null — скругление самого поля. */
+    public readonly searchRadius: InputSignal<TRtRadius | null> = input<TRtRadius | null>(null);
     /** Подпись пустого результата поиска; пустая строка оставляет подпись кита. */
     public readonly emptyResultsText: InputSignal<string> = input<string>('');
     /** Подпись пункта переносится; `false` ведёт её одной строкой с многоточием и подсказкой при обрезке. */

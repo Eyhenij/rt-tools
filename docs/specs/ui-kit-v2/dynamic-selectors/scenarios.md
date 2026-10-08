@@ -305,7 +305,7 @@ Then they take the look from the markup
 
 Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/rt-dynamic-selector-defaults.spec.ts`.
 
-### SC-UKV-726 — with a minimum height the footer of the popup stands at the bottom edge
+### SC-UKV-729 — with a minimum height the footer of the popup stands at the bottom edge
 
 Given a popup whose caller sets a minimum height taller than its content
 When it shows a short list, the loading or the empty result
@@ -325,3 +325,11 @@ the single-choice label stands next to its button, names it and chooses the row;
 the options look as before
 
 Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/popup/rt-dynamic-selector-popup-wrap.spec.ts`.
+
+### SC-UKV-728 — the popup search takes the caller's radius step
+
+Given a selector whose caller names a radius step for the search, or the kit settings name it
+When the popup opens
+Then the search field is rounded by that step, and without one it keeps its own rounding
+
+Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/popup/rt-dynamic-selector-popup-look.spec.ts`.

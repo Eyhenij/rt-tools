@@ -16,7 +16,7 @@ interface IPerson {
     readonly name: string;
 }
 
-/** Умолчания, отличные от китовых во всех шести полях. */
+/** Умолчания, отличные от китовых во всех полях раздела. */
 const SETTINGS: IRtKitConfig.Config = {
     components: {
         dynamicSelector: {
@@ -26,6 +26,7 @@ const SETTINGS: IRtKitConfig.Config = {
             searchAppearance: 'fill',
             emptyResultsText: 'Никого не нашли',
             titleWrap: false,
+            searchRadius: 'full',
         },
     },
 };
@@ -59,6 +60,7 @@ class SilentHostComponent {
             searchAppearance="outline"
             emptyResultsText="Пусто"
             titleWrap
+            [searchRadius]="null"
             [entities]="people"
             [invitationButtonIcon]="null" />
         <rt-dynamic-input invitation invitationButtonAppearance="outlined" clearIcon="close" titleWrap [invitationButtonIcon]="null" />
@@ -95,6 +97,7 @@ describe('RtDynamicSelectorComponent — умолчания из настрое�
         expect(inputOf(fixture).invitationButtonAppearance()).toBe('outlined');
         expect(inputOf(fixture).clearIcon()).toBe('close');
         expect(selectorOf(fixture).titleWrap()).toBe(true);
+        expect(selectorOf(fixture).searchRadius()).toBeNull();
         expect(inputOf(fixture).titleWrap()).toBe(true);
     });
 
@@ -110,6 +113,7 @@ describe('RtDynamicSelectorComponent — умолчания из настрое�
         expect(inputOf(fixture).invitationButtonAppearance()).toBe('text');
         expect(inputOf(fixture).clearIcon()).toBe('trash-x');
         expect(selectorOf(fixture).titleWrap()).toBe(false);
+        expect(selectorOf(fixture).searchRadius()).toBe('full');
         expect(inputOf(fixture).titleWrap()).toBe(false);
     });
 
@@ -138,6 +142,7 @@ describe('RtDynamicSelectorComponent — умолчания из настрое�
         expect(inputOf(fixture).invitationButtonAppearance()).toBe('outlined');
         expect(inputOf(fixture).clearIcon()).toBe('close');
         expect(selectorOf(fixture).titleWrap()).toBe(true);
+        expect(selectorOf(fixture).searchRadius()).toBeNull();
         expect(inputOf(fixture).titleWrap()).toBe(true);
     });
 });
