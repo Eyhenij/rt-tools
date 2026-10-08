@@ -403,3 +403,23 @@ finds «User Admin»; without the function the labels stay as the field holds th
 
 Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/rt-dynamic-selector-display-with.spec.ts`.
 Покрытие: частичное — the test reads the label text in the markup; the drawn labels are looked at on the showcase in the story **Look**, in the case where the surname stands first.
+
+### SC-UKV-763 — the caller sets the gaps of the list
+
+Given a selector whose ancestor sets the action bar gap, the row buttons gap, the row end padding or
+the action bar offset
+When the list shows its rows and the action bar
+Then the list takes those values, and without them it is drawn as before
+
+Not covered: a test has no layout. Measured on the showcase in the story **Look**: without the
+properties the offset, both gaps and the end padding are 2px; with the offset `md`, both gaps `sm`
+and the end padding `xs` they are 16px, 8px, 8px and 4px.
+
+### SC-UKV-764 — no empty list above the invitation
+
+Given a selector or a string field with the invitation on and no chosen rows
+When it is drawn
+Then the invitation stands with no list node above it, and once a row is chosen the list appears
+above the invitation
+
+Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/rt-dynamic-selector-look.spec.ts`.

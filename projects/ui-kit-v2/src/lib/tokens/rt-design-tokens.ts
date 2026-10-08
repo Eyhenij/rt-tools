@@ -625,7 +625,11 @@ export type TRtConsumerHandleName =
     | '--rt-dialog-title-transform'
     | '--rt-dialog-title-weight'
     | '--rt-dialog-width'
+    | '--rt-dynamic-selector-list-actions-gap'
+    | '--rt-dynamic-selector-list-actions-offset'
     | '--rt-dynamic-selector-list-add-color'
+    | '--rt-dynamic-selector-list-controls-gap'
+    | '--rt-dynamic-selector-list-row-padding-end'
     | '--rt-dynamic-selector-popup-bg'
     | '--rt-dynamic-selector-popup-border-width'
     | '--rt-dynamic-selector-popup-button-font-size'
@@ -1337,7 +1341,11 @@ export const RT_CONSUMER_HANDLE_NAMES: readonly TRtConsumerHandleName[] = [
     '--rt-dialog-title-transform',
     '--rt-dialog-title-weight',
     '--rt-dialog-width',
+    '--rt-dynamic-selector-list-actions-gap',
+    '--rt-dynamic-selector-list-actions-offset',
     '--rt-dynamic-selector-list-add-color',
+    '--rt-dynamic-selector-list-controls-gap',
+    '--rt-dynamic-selector-list-row-padding-end',
     '--rt-dynamic-selector-popup-bg',
     '--rt-dynamic-selector-popup-border-width',
     '--rt-dynamic-selector-popup-button-font-size',

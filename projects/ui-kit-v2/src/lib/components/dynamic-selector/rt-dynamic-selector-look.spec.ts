@@ -126,6 +126,10 @@ function clearIconOf<T>(fixture: ComponentFixture<T>): IRtIcon.Name | null | und
     return (clear?.componentInstance as RtIconButtonComponent | undefined)?.icon();
 }
 
+function listOf<T>(fixture: ComponentFixture<T>): HTMLElement | null {
+    return (fixture.nativeElement as HTMLElement).querySelector<HTMLElement>('rt-dynamic-selector-list');
+}
+
 async function openPopup(fixture: ComponentFixture<SelectorHostComponent>): Promise<void> {
     (qa(fixture, 'dynamic-selector-add')?.nativeElement as HTMLButtonElement).click();
     await settle(fixture);
@@ -155,6 +159,21 @@ describe('RtDynamicSelectorComponent — вид, который задаёт п�
 
         expect(buttonOf(fixture, 'dynamic-selector-invitation-add')?.icon()).toBeNull();
         expect(buttonOf(fixture, 'dynamic-selector-invitation-add')?.appearance()).toBe('outlined');
+    });
+
+    it('SC-UKV-764 — под приглашением выбора пустой список не рисуется, а список с записями остаётся', (): void => {
+        const fixture: ComponentFixture<SelectorHostComponent> = host(SelectorHostComponent, (it: SelectorHostComponent): void => {
+            it.control.setValue([]);
+            it.invitation.set(true);
+        });
+
+        expect(listOf(fixture)).toBeNull();
+        expect(qa(fixture, 'dynamic-selector-invitation')).not.toBeNull();
+
+        fixture.componentInstance.control.setValue([1]);
+        fixture.detectChanges();
+
+        expect(listOf(fixture)).not.toBeNull();
     });
 
     it('SC-UKV-714 — приглашение выбора отдаёт имя Material заглушке', (): void => {
@@ -228,6 +247,16 @@ describe('RtDynamicInputComponent — вид, который задаёт при
 
         expect(buttonOf(fixture, 'dynamic-input-invitation-add')?.icon()).toBe('ico-plus');
         expect(buttonOf(fixture, 'dynamic-input-invitation-add')?.appearance()).toBe('filled');
+    });
+
+    it('SC-UKV-764 — под приглашением ввода пустой список не рисуется', (): void => {
+        const fixture: ComponentFixture<InputHostComponent> = host(InputHostComponent, (it: InputHostComponent): void => {
+            it.control.setValue([]);
+            it.invitation.set(true);
+        });
+
+        expect(listOf(fixture)).toBeNull();
+        expect(qa(fixture, 'dynamic-input-invitation')).not.toBeNull();
     });
 
     it('SC-UKV-714 — приглашение ввода отдаёт имя Material заглушке, а без него заглушка без имени', (): void => {

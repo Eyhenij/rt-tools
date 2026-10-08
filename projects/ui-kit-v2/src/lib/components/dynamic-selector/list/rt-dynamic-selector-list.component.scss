@@ -13,10 +13,14 @@
         --rt-dynamic-selector-list-add-font-weight: var(--rt-font-weight-medium);
         --rt-dynamic-selector-list-add-indent: 0;
         --rt-dynamic-selector-list-reset-color: var(--rt-color-text-primary);
+        --rt-dynamic-selector-list-actions-gap-default: var(--rt-space-2xs);
+        --rt-dynamic-selector-list-controls-gap-default: var(--rt-space-2xs);
+        --rt-dynamic-selector-list-row-padding-end-default: var(--rt-space-2xs);
+        --rt-dynamic-selector-list-actions-offset-default: var(--rt-space-2xs);
 
         display: flex;
         flex-direction: column;
-        gap: var(--rt-space-2xs);
+        gap: var(--rt-dynamic-selector-list-actions-offset, var(--rt-dynamic-selector-list-actions-offset-default));
 
         &__rows {
             display: flex;
@@ -29,7 +33,9 @@
             min-height: var(--rt-control-height-lg);
             box-sizing: border-box;
             align-items: center;
-            padding: var(--rt-space-2xs) var(--rt-space-2xs) var(--rt-space-2xs) var(--rt-dynamic-selector-list-row-padding-x);
+            padding: var(--rt-space-2xs)
+                var(--rt-dynamic-selector-list-row-padding-end, var(--rt-dynamic-selector-list-row-padding-end-default)) var(--rt-space-2xs)
+                var(--rt-dynamic-selector-list-row-padding-x);
             border-radius: var(--rt-dynamic-selector-list-row-radius);
             background: var(--rt-dynamic-selector-list-row-bg);
             color: var(--rt-color-text-primary);
@@ -66,13 +72,13 @@
             display: flex;
             flex: 0 0 auto;
             align-items: center;
-            gap: var(--rt-space-2xs);
+            gap: var(--rt-dynamic-selector-list-controls-gap, var(--rt-dynamic-selector-list-controls-gap-default));
         }
 
         &__actions {
             display: flex;
             align-items: center;
-            gap: var(--rt-space-2xs);
+            gap: var(--rt-dynamic-selector-list-actions-gap, var(--rt-dynamic-selector-list-actions-gap-default));
         }
 
         &__add {
@@ -129,7 +135,7 @@
    под ней лежит поверхность — в покое ту же роль играет поле, в котором стоит список. Скругление и
    тень остаются в слое — их CDK не трогает. */
 .rt-dynamic-selector-list__row.cdk-drag-preview {
-    padding: var(--rt-space-2xs) var(--rt-space-2xs) var(--rt-space-2xs) var(--rt-space-sm);
+    padding: var(--rt-space-2xs) var(--rt-dynamic-selector-list-row-padding-end, var(--rt-space-2xs)) var(--rt-space-2xs) var(--rt-space-sm);
     background-color: var(--rt-color-bg-surface);
     background-image: linear-gradient(var(--rt-dynamic-selector-list-row-bg), var(--rt-dynamic-selector-list-row-bg));
     color: var(--rt-color-text-primary);

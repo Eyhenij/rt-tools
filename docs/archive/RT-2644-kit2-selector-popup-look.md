@@ -109,3 +109,12 @@ closing:
   by a function, for the list row, the popup option and the search at once. The first kit split
   joined names by a flag; a function covers that case and any other, and the kit takes no string
   pipe of its own for it. Without the function the label is the `displayExp` field, as before.
+- Row 106 came from the application's session: the action bar gap, the row buttons gap, the row end
+  padding and the action bar offset of the list become properties read from any ancestor, like the
+  add button colour. Their defaults are the steps that stood there.
+- Row 107 came from the application's session: the empty state gets its padding, the gap of its stack,
+  the offset under the icon and the line height of the description as properties of the block, with
+  today's steps as defaults. The request named one gap property; the icon keeps an offset of its own
+  on top of the gap, so a fourth property sets it, and the distance from icon to text is their sum.
+  Under the invitation an empty list is no longer drawn: its node of zero height pushed the invitation
+  down by the field's gap. That moves the invitation 8px up for every caller, as the defect fix it is.

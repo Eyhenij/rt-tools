@@ -104,6 +104,8 @@ stands next to it as components of its own, drawn on the parts of the second kit
   items to choose» and no buttons.**
 - **While the caller turns the invitation on, it replaces the row of buttons.** Its button opens the
   popup the same as the add button.
+- **Under the invitation a list with no rows is not drawn.** An empty node would push the invitation
+  down by the gap of the field; a list with rows stays above the invitation.
 - **A disabled selector keeps the add, reset and clear buttons off.** The row delete, the row edit
   and the dragging are off as well.
 - **The icon buttons of the list are round unless the caller names another rounding step.** The step
@@ -154,6 +156,10 @@ stands next to it as components of its own, drawn on the parts of the second kit
   caller sets its properties on the overlay pane or a container of its own; only the defaults stand
   on the popup itself, under the `-default` suffix. The add button is projected by both fields with
   different looks, so its colour is a handle with the button's own colour as the fallback.
+- **The gaps of the list reach it from any ancestor.** These are the gap between the action bar
+  buttons, the gap between the buttons of a row, the end padding of a row and the distance from the
+  last row to the action bar. Their defaults are the steps that stood there, so the look stays as it
+  was.
 - **The body of the popup takes the height its head and footer leave.** With a minimum height set, a
   short list, the loading and the empty result stretch, and the footer stands at the bottom edge.
   Without one the popup is as tall as its content, as before.

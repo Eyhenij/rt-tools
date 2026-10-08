@@ -93,8 +93,8 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 его свойства доходят с любого предка — с панели оверлея, со своего контейнера, с корня страницы:
 на самом окне стоят только умолчания с приставкой `-default`. Ширина, наибольшая высота, скругление,
 толщина рамки и тень окна — `--rt-dynamic-selector-popup-width`, `-max-height`, `-radius`,
-`-border-width`, `-shadow` — читаются так же. Свойства списка, кроме цвета «Добавить», задаются
-правилом на `.rt-dynamic-selector-list`. При заданной `--rt-dynamic-selector-popup-min-height` тело
+`-border-width`, `-shadow` — читаются так же. Цвет «Добавить» и четыре зазора списка тоже доходят с
+любого предка. Остальные свойства списка задаются правилом на `.rt-dynamic-selector-list`. При заданной `--rt-dynamic-selector-popup-min-height` тело
 окна — список, загрузка или пустой результат — занимает всю оставшуюся высоту, и футер стоит у низа.
 
 | свойство                                         | что задаёт                                      | умолчание                                                       |
@@ -124,6 +124,10 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | `--rt-dynamic-selector-list-add-indent`          | отступ кнопки «Добавить» слева                  | `0`                                                             |
 | `--rt-dynamic-selector-list-reset-color`         | цвет значка «Сбросить»                          | `--rt-color-text-primary`                                       |
 | `--rt-dynamic-selector-list-add-color`           | цвет кнопки «Добавить» — ручка, на любом предке | цвет своей кнопки: у селектора вторичный, у поля строк основной |
+| `--rt-dynamic-selector-list-actions-gap`         | зазор между кнопками полосы действий            | `--rt-space-2xs`                                                |
+| `--rt-dynamic-selector-list-controls-gap`        | зазор между кнопками в строке                   | `--rt-space-2xs`                                                |
+| `--rt-dynamic-selector-list-row-padding-end`     | отступ строки справа                            | `--rt-space-2xs`                                                |
+| `--rt-dynamic-selector-list-actions-offset`      | расстояние от последней строки до полосы        | `--rt-space-2xs`                                                |
 
 ## Входы
 

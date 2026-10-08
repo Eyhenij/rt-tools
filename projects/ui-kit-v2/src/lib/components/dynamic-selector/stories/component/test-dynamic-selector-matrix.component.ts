@@ -41,6 +41,8 @@ interface ILookCase {
     readonly control: FormControl<number[] | null>;
     /** Подпись записи функцией; не задана — поле `name`. */
     readonly displayWith?: (person: IStoryPerson) => string;
+    /** Свойства списка на поле; не заданы — умолчания кита. */
+    readonly listStyle?: Readonly<Record<string, string>>;
 }
 
 /** Переключатели списка: корзина, панель сброса и очистки, правки в шаблоне строки. */
@@ -214,6 +216,20 @@ export class TestRtDynamicSelectorMatrixComponent {
             clearIcon: 'close',
             control: chosen([1, 2]),
             displayWith: (person: IStoryPerson): string => person.name.split(' ').reverse().join(' '),
+        },
+        {
+            name: 'свои зазоры списка',
+            invitation: false,
+            invitationButtonIcon: null,
+            invitationButtonAppearance: 'outlined',
+            clearIcon: 'trash-x',
+            control: chosen([1, 2]),
+            listStyle: {
+                '--rt-dynamic-selector-list-actions-gap': 'var(--rt-space-sm)',
+                '--rt-dynamic-selector-list-controls-gap': 'var(--rt-space-sm)',
+                '--rt-dynamic-selector-list-row-padding-end': 'var(--rt-space-xs)',
+                '--rt-dynamic-selector-list-actions-offset': 'var(--rt-space-md)',
+            },
         },
     ];
 
