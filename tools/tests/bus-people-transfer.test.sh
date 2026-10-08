@@ -57,6 +57,13 @@ got="$(run "console.log(lib.rekeySql([{ id: 'a-1', email: 'owner@example.com' },
 says "SC-MB-423 — an address the realm does not know refuses the rewrite" "$got" 'refused: the realm knows no person with the address: lost@example.com'
 lacks "SC-MB-423 — no statement is given" "$got" 'UPDATE'
 
+got="$(run "console.log(lib.rekeyReport('BEGIN\nUPDATE 1\nUPDATE 1\nCOMMIT', 2));")"
+says "SC-MB-424 — the report counts the rows the database changed" "$got" '2 operators of 2 people now name their Keycloak keys'
+
+got="$(run "console.log(lib.rekeyReport('BEGIN\nUPDATE 0\nUPDATE 0\nCOMMIT', 2));")"
+says "SC-MB-424 — a run that changed no row says nothing is rewritten" "$got" 'nothing is rewritten'
+lacks "SC-MB-424 — an empty run is not reported as success" "$got" 'now name their Keycloak keys'
+
 got="$(run "console.log([...lib.busRights()].includes('postmortems:read'), [...lib.busRights()].includes('accounts:manage'));")"
 says "the set of rights is read from its declaration" "$got" 'true false'
 

@@ -14,6 +14,10 @@ WORKDIR /workspace
 # образ не собирается вовсе, ещё не дойдя до своего кода.
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY prisma ./prisma
+# Пакеты входа приёмник берёт исходниками, а их зависимости объявлены только в их манифестах:
+# без манифестов установка не ставит `jose`, и сборка пакетов падает на нём.
+COPY projects/auth-contract/package.json ./projects/auth-contract/package.json
+COPY projects/auth-server/package.json ./projects/auth-server/package.json
 RUN --mount=type=cache,id=pnpm-store,target=/root/.local/share/pnpm/store \
     pnpm install --frozen-lockfile
 
@@ -31,8 +35,21 @@ COPY libs ./libs
 # `@rt-tools/agent-kit/cargo`. Алиас ведёт в исходник пакета, а не в собранный артефакт, поэтому
 # каталог нужен здесь целиком: без него сборка падает на пяти файлах приёма, а не на своём коде.
 COPY projects/agent-kit ./projects/agent-kit
+# Проверка токена входа и права операций — пакеты `@rt-tools/auth-server` и
+# `@rt-tools/auth-contract`, их алиасы тоже ведут в исходники.
+COPY projects/auth-contract ./projects/auth-contract
+COPY projects/auth-server ./projects/auth-server
 RUN npx prisma generate --schema prisma/schema.prisma
 RUN NX_DAEMON=false npx nx build message-bus
+# Перехватчик прав Connect из `@rt-tools/auth-server` берёт `@connectrpc/connect`, а пакет объявляет
+# его однорангово: собранный манифест такие не называет, и приёмник падал на первом `require`.
+# Версия берётся из корневого манифеста, своей копии здесь нет; не нашлась — сборка падает здесь.
+RUN node -e "const fs = require('fs'); const out = 'dist/apps/message-bus/package.json'; \
+    const root = require('./package.json'); const name = '@connectrpc/connect'; \
+    const version = (root.dependencies || {})[name] || (root.devDependencies || {})[name]; \
+    if (!version) { console.error(name + ': no version in the root package.json'); process.exit(1); } \
+    const pkg = JSON.parse(fs.readFileSync(out, 'utf8')); pkg.dependencies[name] = version; \
+    fs.writeFileSync(out, JSON.stringify(pkg, null, 2))"
 
 FROM node:22-alpine
 WORKDIR /app

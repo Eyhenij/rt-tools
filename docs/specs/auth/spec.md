@@ -47,6 +47,8 @@ Not applicable: the stand has no screens of its own. The entry screens belong to
 - **The stand offers the entry through Google only when the keys of the owner lie in its
   environment.** Without them the provider is in the realm and switched off, and the entry screen
   shows no Google button. The keys never get into the history of the tree.
+- **A production rollout restarts Keycloak and ends red when the served theme is not the built one.**
+  The theme lies in a volume, and a Keycloak left running keeps the theme it loaded at start.
 
 ## What is out of scope
 

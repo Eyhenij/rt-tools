@@ -3,7 +3,7 @@ import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { RtButtonDirective } from '@rt-tools/ui-kit-v2';
 
 import { KC_CONTEXT, TKcPageContext } from '../../kc-context';
-import { KC_MESSAGES, TKcMessages } from '../../kc-i18n';
+import { backLinkText, KC_MESSAGES, TKcMessages } from '../../kc-i18n';
 
 const BEM_BLOCK: string = 'rt-kc-page';
 
@@ -42,13 +42,13 @@ export class RtKcInfoComponent {
             return null;
         }
         if (this.#context.pageRedirectUri) {
-            return { href: this.#context.pageRedirectUri, label: this.#i18n.msgStr('backToApplication') };
+            return { href: this.#context.pageRedirectUri, label: backLinkText(this.#i18n.msgStr('backToApplication')) };
         }
         if (this.#context.actionUri) {
-            return { href: this.#context.actionUri, label: this.#i18n.msgStr('proceedWithAction') };
+            return { href: this.#context.actionUri, label: backLinkText(this.#i18n.msgStr('proceedWithAction')) };
         }
         if (this.#context.client.baseUrl) {
-            return { href: this.#context.client.baseUrl, label: this.#i18n.msgStr('backToApplication') };
+            return { href: this.#context.client.baseUrl, label: backLinkText(this.#i18n.msgStr('backToApplication')) };
         }
 
         return null;
