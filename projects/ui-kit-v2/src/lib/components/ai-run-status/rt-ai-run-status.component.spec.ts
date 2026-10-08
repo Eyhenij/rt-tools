@@ -1,6 +1,9 @@
 import { ComponentFixture } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 
+import { RtIconComponent } from '../icon/rt-icon.component';
 import { IRtTimeline } from '../timeline/rt-timeline.model';
+import { RtTooltipDirective } from '../tooltip/rt-tooltip.directive';
 
 import { classesOf, createRtFixture, hostClasses, qa, qaAll, setInputs, textOf } from '../../../testing/rt-kit-testing';
 import { RtAiRunStatusComponent } from './rt-ai-run-status.component';
@@ -9,6 +12,16 @@ const STEPS: readonly IRtTimeline.Step[] = [
     { label: 'Fetching daily performance briefing', meta: '14s', status: 'complete' },
     { label: 'Working out the answer', meta: '5s', status: 'complete' },
 ];
+
+/** Имя значка состояния. */
+function markName(fixture: ComponentFixture<RtAiRunStatusComponent>): string | null {
+    return fixture.debugElement.query(By.css('.rt-ai-run-status__mark')).query(By.directive(RtIconComponent)).componentInstance.name();
+}
+
+/** Текст подсказки на строке-кнопке. */
+function toggleTooltip(fixture: ComponentFixture<RtAiRunStatusComponent>): string {
+    return fixture.debugElement.query(By.directive(RtTooltipDirective)).injector.get(RtTooltipDirective).text();
+}
 
 function setup(inputs: Readonly<Record<string, unknown>> = {}): ComponentFixture<RtAiRunStatusComponent> {
     return createRtFixture(RtAiRunStatusComponent, { state: 'running', label: 'Thinking…', ...inputs });
@@ -37,7 +50,7 @@ describe('RtAiRunStatusComponent', (): void => {
             expect(fixture.nativeElement.querySelector('.rt-ai-run-status__mark rt-icon')).not.toBeNull();
             expect(fixture.nativeElement.querySelector('.rt-ai-run-status__mark rt-spinner')).toBeNull();
             expect(qa(fixture, 'ai-run-status')?.attributes['data-state']).toBe(state);
-            expect(fixture.componentInstance.mark()?.name).toBe(icon);
+            expect(markName(fixture)).toBe(icon);
         });
     });
 
@@ -81,7 +94,7 @@ describe('RtAiRunStatusComponent', (): void => {
             expect(toggle.tagName).toBe('BUTTON');
             expect(toggle.getAttribute('aria-expanded')).toBe('false');
             expect(qa(fixture, 'ai-run-status-steps')).toBeNull();
-            expect(fixture.componentInstance.toggleLabel()).toBe('Show steps');
+            expect(toggleTooltip(fixture)).toBe('Show steps');
         });
 
         it('SC-UKV-739 — нажатие раскрывает список и сообщает об этом наружу', (): void => {
@@ -94,7 +107,7 @@ describe('RtAiRunStatusComponent', (): void => {
 
             expect(qa(fixture, 'ai-run-status-toggle')?.attributes['aria-expanded']).toBe('true');
             expect(qaAll(fixture, 'timeline-item')).toHaveLength(2);
-            expect(fixture.componentInstance.toggleLabel()).toBe('Hide steps');
+            expect(toggleTooltip(fixture)).toBe('Hide steps');
             expect(seen).toEqual([true]);
         });
 
