@@ -8,9 +8,12 @@
         .rt-ai-run-status {
             --rt-ai-run-status-radius: var(--rt-radius-sm);
             --rt-ai-run-status-focus-shadow: var(--rt-shadow-focus-ring);
-            --rt-ai-run-status-shimmer-duration: var(--rt-duration-slower);
+            --rt-ai-run-status-shimmer-duration: 2.4s;
             --rt-ai-run-status-shimmer-from: var(--rt-color-text-muted);
             --rt-ai-run-status-shimmer-to: var(--rt-color-action-primary-on-surface);
+            --rt-ai-run-status-shimmer-2: var(--rt-info-500);
+            --rt-ai-run-status-shimmer-3: var(--rt-success-400);
+            --rt-ai-run-status-shimmer-4: var(--rt-amber-400);
 
             display: flex;
             flex-direction: column;
@@ -52,6 +55,15 @@
                 justify-content: center;
                 block-size: 16px;
                 inline-size: 16px;
+
+                .rt-spinner {
+                    --rt-spinner-progress-color: currentcolor;
+                }
+            }
+
+            &--state--running .rt-ai-run-status__mark {
+                animation: rt-ai-run-status-hue var(--rt-ai-run-status-shimmer-duration) linear infinite;
+                color: var(--rt-ai-run-status-shimmer-to);
             }
 
             &__label {
@@ -64,7 +76,11 @@
                     background: linear-gradient(
                         90deg,
                         var(--rt-ai-run-status-shimmer-from) 0%,
-                        var(--rt-ai-run-status-shimmer-to) 50%,
+                        var(--rt-ai-run-status-shimmer-to) 20%,
+                        var(--rt-ai-run-status-shimmer-2) 35%,
+                        var(--rt-ai-run-status-shimmer-3) 50%,
+                        var(--rt-ai-run-status-shimmer-4) 65%,
+                        var(--rt-ai-run-status-shimmer-from) 80%,
                         var(--rt-ai-run-status-shimmer-from) 100%
                     );
                     background-clip: text;
@@ -109,7 +125,30 @@
         }
     }
 
+    @keyframes rt-ai-run-status-hue {
+        0%,
+        100% {
+            color: var(--rt-ai-run-status-shimmer-to);
+        }
+
+        25% {
+            color: var(--rt-ai-run-status-shimmer-2);
+        }
+
+        50% {
+            color: var(--rt-ai-run-status-shimmer-3);
+        }
+
+        75% {
+            color: var(--rt-ai-run-status-shimmer-4);
+        }
+    }
+
     @media (prefers-reduced-motion: reduce) {
+        .rt-ai-run-status--state--running .rt-ai-run-status__mark {
+            animation: none;
+        }
+
         .rt-ai-run-status__label--state--running {
             animation: none;
             background: none;
