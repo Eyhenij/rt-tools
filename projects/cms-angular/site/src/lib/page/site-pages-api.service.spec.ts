@@ -64,7 +64,7 @@ describe('the site pages client', () => {
             false
         );
         const carried: ICmsStoredPage = { page: { slug: 'carried' } as never, locales: ['en'] };
-        TestBed.inject(TransferState).set(makeStateKey('cms-page-en-pine'), { value: carried });
+        TestBed.inject(TransferState).set(makeStateKey<{ value: ICmsStoredPage } | null>('cms-page-en-pine'), { value: carried });
 
         expect((await client.page('pine', 'en'))?.page.slug).toBe('carried');
         expect(calls).toBe(0);

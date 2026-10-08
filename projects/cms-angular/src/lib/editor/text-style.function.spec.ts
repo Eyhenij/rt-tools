@@ -32,7 +32,8 @@ describe('selection styles', () => {
     });
 
     it('SC-CMS-41 — italic, line-through and underline wrap the selection and are removed the same way', () => {
-        [ETextAction.Italic, ETextAction.LineThrough, ETextAction.Underline].forEach((action: TStyleAction) => {
+        const actions: TStyleAction[] = [ETextAction.Italic, ETextAction.LineThrough, ETextAction.Underline];
+        actions.forEach((action: TStyleAction) => {
             const { page, paragraph, text }: { page: Document; paragraph: HTMLParagraphElement; text: Text } = paragraphOf('<p>word</p>');
             const range: Range = page.createRange();
             range.selectNodeContents(text);
