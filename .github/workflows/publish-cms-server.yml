@@ -1,0 +1,54 @@
+name: Publish @rt-tools/cms-server to npm
+
+# Выпуск идёт с той версией, что записана в манифесте пакета, и с той ветки, на которой workflow
+# запущен. Подъём версии здесь не делается. Пакет зависит от `@rt-tools/cms-contract`, поэтому
+# выпускается после него.
+
+on:
+    workflow_dispatch:
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    publish:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v7
+              with:
+                  fetch-depth: 0
+                  token: ${{ secrets.WORKFLOW_ACCESS_TOKEN }}
+
+            - name: Install pnpm
+              uses: pnpm/action-setup@v6
+              with:
+                  version: 11.10.0
+                  run_install: false
+
+            - name: Cache node_modules
+              uses: actions/setup-node@v7
+              with:
+                  node-version: 22.22.3
+                  cache: 'pnpm'
+                  registry-url: https://registry.npmjs.org/
+
+            - name: Install dependencies
+              run: pnpm install --frozen-lockfile
+
+            - name: Read version
+              run: echo "VERSION=$(jq -r .version projects/cms-server/package.json)" >> $GITHUB_ENV
+
+            - name: Build cms-server
+              run: pnpm run build:cms-server
+
+            - name: Publish
+              run: cd dist/cms-server && npm publish --access public
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+            - name: Create git tag
+              run: |
+                  git tag "rt-cms-server@${{ env.VERSION }}"
+                  git push origin "rt-cms-server@${{ env.VERSION }}"

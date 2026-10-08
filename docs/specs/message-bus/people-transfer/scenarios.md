@@ -39,3 +39,9 @@ Then every old key is replaced by the Keycloak key of the same address, in one t
 Given an address of the key map that the realm does not answer with a person
 When the rewrite runs
 Then nothing is changed, and the refusal names the address
+
+### SC-MB-424 — the report of the rewrite names the rows the database changed
+
+Given the answer of the database to the rewrite
+When the report is built
+Then it names how many operators got Keycloak keys, and a run that changed no row says that nothing is rewritten
