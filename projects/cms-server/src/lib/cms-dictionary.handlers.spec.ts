@@ -13,8 +13,8 @@ import {
     SaveTagRequestSchema,
 } from '@rt-tools/cms-contract';
 
-import { cmsDictionaryHandlers, type TCmsDictionaryHandlers } from './cms-dictionary.handlers';
-import { callerOf, contextOf, type IMemorySources, memorySources, refusalOf } from './testing/memory-sources';
+import { cmsDictionaryHandlers, type TCmsDictionaryHandlers } from './cms-dictionary.handlers.js';
+import { callerOf, contextOf, type IMemorySources, memorySources, refusalOf } from './testing/memory-sources.js';
 
 const ME: HandlerContext = contextOf(callerOf('u1'));
 

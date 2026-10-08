@@ -1,6 +1,6 @@
 import { EContentItemStatus } from '@rt-tools/cms-contract';
 
-import type { IContentItemRecord } from '../cms-records.model';
+import type { IContentItemRecord } from '../cms-records.model.js';
 
 /** The moment every test of the package takes as now. */
 export const NOW: Date = new Date('2026-10-07T10:00:00Z');

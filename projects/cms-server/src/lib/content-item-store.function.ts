@@ -6,7 +6,7 @@ import type {
     IContentItemImageRecord,
     IContentItemPage,
     IContentItemRecord,
-} from './cms-records.model';
+} from './cms-records.model.js';
 
 /** A page row as the database client gives it: the state is a plain string. */
 export type TContentItemRow = Omit<IContentItemRecord, 'status'> & { readonly status: `${EContentItemStatus}` };

@@ -1,18 +1,18 @@
 import { EContentItemStatus, ERedirectType } from '@rt-tools/cms-contract';
 
-import type { IContentItemDraft, IContentTypeRecord, IMediaFolderRecord, ITagRecord } from './cms-records.model';
+import type { IContentItemDraft, IContentTypeRecord, IMediaFolderRecord, ITagRecord } from './cms-records.model.js';
 import type {
     IContentTypeDelegate,
     IMediaFolderDelegate,
     IRedirectDelegate,
     ITagDelegate,
     TRedirectRow,
-} from './cms-dictionary-store.function';
-import type { ICmsSources } from './cms-sources.model';
-import { cmsStoreSources } from './cms-store-sources';
-import type { IContentItemDelegate, TContentItemRow } from './content-item-store.function';
-import { ITEM, NOW } from './testing/fixtures';
-import { TYPE } from './testing/memory-sources';
+} from './cms-dictionary-store.function.js';
+import type { ICmsSources } from './cms-sources.model.js';
+import { cmsStoreSources } from './cms-store-sources.js';
+import type { IContentItemDelegate, TContentItemRow } from './content-item-store.function.js';
+import { ITEM, NOW } from './testing/fixtures.js';
+import { TYPE } from './testing/memory-sources.js';
 
 const REDIRECT: TRedirectRow = { id: 'r1', from: '/old', to: '/new', type: 'FOUND' };
 const TAG: ITagRecord = { id: 'g1', name: 'Wood', isEnabled: true, parentTagId: null };

@@ -8,7 +8,7 @@ import {
     isVisibleOnSite,
     lockHolderOf,
     publishedAtAfterSave,
-} from './content-item-rules.function';
+} from './content-item-rules.function.js';
 
 const NOW: Date = new Date('2026-10-07T10:00:00Z');
 const EARLIER: Date = new Date('2026-10-01T10:00:00Z');

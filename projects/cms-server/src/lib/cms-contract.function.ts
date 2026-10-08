@@ -35,8 +35,8 @@ import type {
     IMediaFolderRecord,
     IRedirectRecord,
     ITagRecord,
-} from './cms-records.model';
-import { isContentSlug, publishedAtAfterSave } from './content-item-rules.function';
+} from './cms-records.model.js';
+import { isContentSlug, publishedAtAfterSave } from './content-item-rules.function.js';
 
 /** A media library file by its id, already in the contract shape: the media library builds its address and copies. */
 export type TMediaFileOf = (fileId: string) => Promise<MediaFile | null>;

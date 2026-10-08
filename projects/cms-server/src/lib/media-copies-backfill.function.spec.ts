@@ -1,6 +1,6 @@
-import { backfillMediaCopies, type IMediaCopiesBackfillSources } from './media-copies-backfill.function';
-import type { IMediaFileRecord } from './media-store.function';
-import { fileOf, memoryBucket, type IMemoryBucket, RESIZER } from './testing/media-doubles';
+import { backfillMediaCopies, type IMediaCopiesBackfillSources } from './media-copies-backfill.function.js';
+import type { IMediaFileRecord } from './media-store.function.js';
+import { fileOf, memoryBucket, type IMemoryBucket, RESIZER } from './testing/media-doubles.js';
 
 interface IBackfillDouble extends IMediaCopiesBackfillSources {
     rows: IMediaFileRecord[];

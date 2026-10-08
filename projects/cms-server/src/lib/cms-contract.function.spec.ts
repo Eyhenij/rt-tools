@@ -30,9 +30,9 @@ import {
     itemDraftOf,
     settingsOf,
     statusFromContract,
-} from './cms-contract.function';
-import type { IContentItemDraft, IContentTypeRecord } from './cms-records.model';
-import { ITEM, NOW } from './testing/fixtures';
+} from './cms-contract.function.js';
+import type { IContentItemDraft, IContentTypeRecord } from './cms-records.model.js';
+import { ITEM, NOW } from './testing/fixtures.js';
 
 const LOCALES: readonly string[] = ['en', 'de'];
 

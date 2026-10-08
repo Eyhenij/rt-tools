@@ -1,7 +1,7 @@
-import type { IMediaBucket, IMediaResizer } from '../media-copies.function';
-import type { IMediaFileDraft, IMediaFilePage, IMediaFileRecord, TMediaFolderScope } from '../media-store.function';
-import type { IMediaSources } from '../media-service';
-import { NOW } from './fixtures';
+import type { IMediaBucket, IMediaResizer } from '../media-copies.function.js';
+import type { IMediaFileDraft, IMediaFilePage, IMediaFileRecord, TMediaFolderScope } from '../media-store.function.js';
+import type { IMediaSources } from '../media-service.js';
+import { NOW } from './fixtures.js';
 
 /** A file store over a map of keys to types; a key may be made unreadable. */
 export interface IMemoryBucket extends IMediaBucket {

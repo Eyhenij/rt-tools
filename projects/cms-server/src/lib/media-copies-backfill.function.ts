@@ -6,8 +6,8 @@ import {
     MEDIA_COPY_CONTENT_TYPE,
     mediaCopyKey,
     mediaCopyWidths,
-} from './media-copies.function';
-import type { IMediaFileRecord } from './media-store.function';
+} from './media-copies.function.js';
+import type { IMediaFileRecord } from './media-store.function.js';
 
 /** What the backfill takes: the queue of files without copies, the file store, the resizer and the write of the widths. */
 export interface IMediaCopiesBackfillSources {

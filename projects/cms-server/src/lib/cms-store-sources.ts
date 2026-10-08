@@ -1,4 +1,4 @@
-import type { TMediaFileOf } from './cms-contract.function';
+import type { TMediaFileOf } from './cms-contract.function.js';
 import {
     allRedirectsOf,
     contentTypeOf,
@@ -16,7 +16,7 @@ import {
     saveTag,
     tagsOf,
     updateContentType,
-} from './cms-dictionary-store.function';
+} from './cms-dictionary-store.function.js';
 import type {
     IContentItemDraft,
     IContentItemFilter,
@@ -24,8 +24,8 @@ import type {
     TMediaFolderDraft,
     TRedirectDraft,
     TTagDraft,
-} from './cms-records.model';
-import type { ICmsSources } from './cms-sources.model';
+} from './cms-records.model.js';
+import type { ICmsSources } from './cms-sources.model.js';
 import {
     contentItemBySlugOf,
     contentItemOf,
@@ -40,7 +40,7 @@ import {
     setContentItemFeatured,
     unlockContentItem,
     updateContentItem,
-} from './content-item-store.function';
+} from './content-item-store.function.js';
 
 /**
  * What the storage port is assembled from: the delegates of the application's database client,

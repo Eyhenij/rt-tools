@@ -2,10 +2,10 @@ import { create } from '@bufbuild/protobuf';
 import { Code, type HandlerContext, type ServiceImpl } from '@connectrpc/connect';
 import { type CmsMediaService, DeleteFileRequestSchema, ListFilesRequestSchema, UploadFileRequestSchema } from '@rt-tools/cms-contract';
 
-import { MEDIA_MAX_BYTES } from './image-sniff.function';
-import { cmsMediaServiceImpl } from './media-service';
-import { callerOf, contextOf, refusalOf } from './testing/memory-sources';
-import { type IMediaDouble, mediaDouble, pngOf } from './testing/media-doubles';
+import { MEDIA_MAX_BYTES } from './image-sniff.function.js';
+import { cmsMediaServiceImpl } from './media-service.js';
+import { callerOf, contextOf, refusalOf } from './testing/memory-sources.js';
+import { type IMediaDouble, mediaDouble, pngOf } from './testing/media-doubles.js';
 
 type TMediaServiceImpl = ServiceImpl<typeof CmsMediaService>;
 
