@@ -318,6 +318,13 @@ When a person chooses "Contains" in its operator menu
 Then the application gets no new set of conditions and the operator button shows "Contains"
 Covered: `projects/ui-kit-v2/src/lib/components/data-table/filter-cell/rt-data-table-filter-cell.component.spec.ts`.
 
+### SC-UKV-763 — clearing a select filter by its cross keeps the focus in the cell
+
+Given a select filter with a chosen option and the focus on its cross
+When a person presses the cross
+Then the column's condition is removed and the focus stands on the select field of the same cell
+Covered: `projects/ui-kit-v2/src/lib/components/data-table/filter-cell/rt-data-table-filter-cell.component.spec.ts`.
+
 ### SC-UKV-305 — a hidden column draws neither its cell nor its filter cell
 
 Given the filter row shown and the settings with the email column hidden

@@ -45,7 +45,7 @@
                 [ariaLabel]="clearLabel()"
                 [tooltip]="clearLabel()"
                 [disabled]="!hasValue()"
-                (clicked)="onValueChange('')" />
+                (clicked)="onClear()" />
 
             <rt-date-picker
                 rtElem="field"
@@ -64,7 +64,7 @@
                 [ariaLabel]="clearLabel()"
                 [tooltip]="clearLabel()"
                 [disabled]="!hasValue()"
-                (clicked)="onValueChange('')" />
+                (clicked)="onClear()" />
 
             <rt-select
                 rtElem="field"

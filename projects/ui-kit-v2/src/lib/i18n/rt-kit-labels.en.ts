@@ -104,7 +104,7 @@ export const RT_KIT_LABELS_EN = {
     dataTableFilterOperatorGreaterThan: 'More than',
     dataTableFilterOperatorLessThan: 'Less than',
     dataTableFilterOperatorNotEquals: 'Not equal',
-    dataTableFilterSelectPlaceholder: 'Chose filter',
+    dataTableFilterSelectPlaceholder: 'Choose filter',
     dataTableFilterValuePlaceholder: 'Type in filter value',
     dataTableSelectPage: 'Select the rows of this page',
     dataTableSelectRow: 'Select row',
