@@ -15,7 +15,7 @@ import {
     type UpdateContentTypeRequest,
 } from '@rt-tools/cms-contract';
 
-import { cmsDictionaryHandlers } from './cms-dictionary.handlers';
+import { cmsDictionaryHandlers } from './cms-dictionary.handlers.js';
 import {
     contractContentTypeOf,
     contractItemOf,
@@ -24,11 +24,11 @@ import {
     itemDraftOf,
     settingsOf,
     statusFromContract,
-} from './cms-contract.function';
-import type { IContentItemDraft, IContentItemPage, IContentItemRecord, IContentTypeRecord } from './cms-records.model';
-import type { ICmsServerOptions, ICmsSources } from './cms-sources.model';
-import { ELockHolder, lockHolderOf } from './content-item-rules.function';
-import { IListWindow, listWindow, searchTerm, signedCallerOf } from './list-window.function';
+} from './cms-contract.function.js';
+import type { IContentItemDraft, IContentItemPage, IContentItemRecord, IContentTypeRecord } from './cms-records.model.js';
+import type { ICmsServerOptions, ICmsSources } from './cms-sources.model.js';
+import { ELockHolder, lockHolderOf } from './content-item-rules.function.js';
+import { IListWindow, listWindow, searchTerm, signedCallerOf } from './list-window.function.js';
 
 const SLUG_TAKEN: string = 'a page of this locale with this address already exists';
 

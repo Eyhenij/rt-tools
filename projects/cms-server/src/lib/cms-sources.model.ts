@@ -1,4 +1,4 @@
-import type { TMediaFileOf } from './cms-contract.function';
+import type { TMediaFileOf } from './cms-contract.function.js';
 import type {
     IContentItemDraft,
     IContentItemFilter,
@@ -13,7 +13,7 @@ import type {
     TMediaFolderDraft,
     TRedirectDraft,
     TTagDraft,
-} from './cms-records.model';
+} from './cms-records.model.js';
 
 /**
  * The storage port of the CMS services: everything the procedures read and write. The application

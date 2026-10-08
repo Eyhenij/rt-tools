@@ -12,11 +12,11 @@ import {
     type SaveTagRequest,
 } from '@rt-tools/cms-contract';
 
-import { contractFolderOf, contractRedirectOf, contractTagOf, contractTagTreeOf, found, idOrNull } from './cms-contract.function';
-import type { IMediaFolderRecord, IRedirectPage, TRedirectDraft } from './cms-records.model';
-import type { ICmsSources } from './cms-sources.model';
-import { isRedirectPath } from './content-item-rules.function';
-import { IListWindow, listWindow, searchTerm, signedCallerOf } from './list-window.function';
+import { contractFolderOf, contractRedirectOf, contractTagOf, contractTagTreeOf, found, idOrNull } from './cms-contract.function.js';
+import type { IMediaFolderRecord, IRedirectPage, TRedirectDraft } from './cms-records.model.js';
+import type { ICmsSources } from './cms-sources.model.js';
+import { isRedirectPath } from './content-item-rules.function.js';
+import { IListWindow, listWindow, searchTerm, signedCallerOf } from './list-window.function.js';
 
 type TDictionaryMethods =
     | 'listTags'

@@ -1,6 +1,6 @@
 {
   "name": "@rt-tools/cms-server",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "The CMS server: the admin, site and media library services of the CMS contract over a storage port the application implements",
   "author": "RT Team",
   "license": "Apache-2.0",
@@ -21,7 +21,7 @@
   ],
   "dependencies": {
     "@rt-tools/auth-contract": "^0.1.0",
-    "@rt-tools/auth-server": "^0.1.0",
+    "@rt-tools/auth-server": "^0.2.1",
     "@rt-tools/cms-contract": "^0.1.0",
     "tslib": "^2.3.0"
   },

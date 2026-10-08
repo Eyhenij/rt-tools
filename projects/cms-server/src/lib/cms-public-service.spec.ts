@@ -12,9 +12,9 @@ import {
     ListPublishedContentItemsRequestSchema,
 } from '@rt-tools/cms-contract';
 
-import { CMS_PUBLIC_SERVICE_ACCESS, cmsMediaServiceAccess, cmsServiceAccess, type ICmsRights } from './cms-access';
-import { cmsPublicServiceImpl } from './cms-public-service';
-import { contextOf, memorySources, refusalOf } from './testing/memory-sources';
+import { CMS_PUBLIC_SERVICE_ACCESS, cmsMediaServiceAccess, cmsServiceAccess, type ICmsRights } from './cms-access.js';
+import { cmsPublicServiceImpl } from './cms-public-service.js';
+import { contextOf, memorySources, refusalOf } from './testing/memory-sources.js';
 
 type TPublicServiceImpl = ServiceImpl<typeof CmsPublicService>;
 

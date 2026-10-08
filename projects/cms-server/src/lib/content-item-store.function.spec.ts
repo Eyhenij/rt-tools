@@ -1,6 +1,6 @@
 import { EContentItemStatus } from '@rt-tools/cms-contract';
 
-import type { IContentItemDraft, IContentItemRecord } from './cms-records.model';
+import type { IContentItemDraft, IContentItemRecord } from './cms-records.model.js';
 import {
     contentItemBySlugOf,
     contentItemOf,
@@ -17,8 +17,8 @@ import {
     type TContentItemRow,
     unlockContentItem,
     updateContentItem,
-} from './content-item-store.function';
-import { ITEM, NOW } from './testing/fixtures';
+} from './content-item-store.function.js';
+import { ITEM, NOW } from './testing/fixtures.js';
 
 const ROW: TContentItemRow = { ...ITEM, status: 'PUBLISHED' };
 const DUE: TContentItemRow = { ...ITEM, id: 'i5', status: 'DRAFT', toBePublishedAt: new Date('2026-10-06T00:00:00Z'), publishedAt: null };

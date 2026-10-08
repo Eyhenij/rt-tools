@@ -25,9 +25,9 @@ import type {
     TMediaFolderDraft,
     TRedirectDraft,
     TTagDraft,
-} from '../cms-records.model';
-import type { ICmsSources } from '../cms-sources.model';
-import { ITEM, NOW } from './fixtures';
+} from '../cms-records.model.js';
+import type { ICmsSources } from '../cms-sources.model.js';
+import { ITEM, NOW } from './fixtures.js';
 
 /** A caller; the subject is the id the storage records. */
 export function callerOf(subject: string): ICaller {

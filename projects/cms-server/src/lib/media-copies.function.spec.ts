@@ -1,4 +1,4 @@
-import { type ISniffedImage, MEDIA_MAX_BYTES, sniffImage } from './image-sniff.function';
+import { type ISniffedImage, MEDIA_MAX_BYTES, sniffImage } from './image-sniff.function.js';
 import {
     buildMediaCopies,
     type IMediaResizer,
@@ -7,7 +7,7 @@ import {
     mediaCopyWidths,
     mediaKey,
     mediaUrl,
-} from './media-copies.function';
+} from './media-copies.function.js';
 
 /** The headers are assembled by hand: the test needs the first bytes, not a real picture. */
 function bytesOf(...parts: (number[] | string)[]): Uint8Array {

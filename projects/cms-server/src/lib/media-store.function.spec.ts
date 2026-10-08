@@ -5,8 +5,8 @@ import {
     type IRawQuerySource,
     mediaFilePageOf,
     mediaFilesWithoutCopies,
-} from './media-store.function';
-import { fileOf } from './testing/media-doubles';
+} from './media-store.function.js';
+import { fileOf } from './testing/media-doubles.js';
 
 function delegateOf(calls: unknown[]): IMediaFileDelegate {
     const file: IMediaFileRecord = fileOf('f1', 'image/png', 2000);

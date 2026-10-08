@@ -12,8 +12,8 @@ import {
     type UploadFileRequest,
 } from '@rt-tools/cms-contract';
 
-import { type ISniffedImage, MEDIA_MAX_BYTES, sniffImage } from './image-sniff.function';
-import { IListWindow, listWindow, searchTerm, signedCallerOf } from './list-window.function';
+import { type ISniffedImage, MEDIA_MAX_BYTES, sniffImage } from './image-sniff.function.js';
+import { IListWindow, listWindow, searchTerm, signedCallerOf } from './list-window.function.js';
 import {
     buildMediaCopies,
     type IBuiltMediaCopy,
@@ -25,8 +25,8 @@ import {
     mediaCopyKey,
     mediaKey,
     mediaUrl,
-} from './media-copies.function';
-import type { IMediaFileDraft, IMediaFilePage, IMediaFileRecord, TMediaFolderScope } from './media-store.function';
+} from './media-copies.function.js';
+import type { IMediaFileDraft, IMediaFilePage, IMediaFileRecord, TMediaFolderScope } from './media-store.function.js';
 
 /**
  * The port of the media library service. The id of a new record comes from outside: the file key

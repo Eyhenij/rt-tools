@@ -10,7 +10,7 @@ import type {
     TMediaFolderDraft,
     TRedirectDraft,
     TTagDraft,
-} from './cms-records.model';
+} from './cms-records.model.js';
 
 /** A redirect row as the database client gives it: the kind is a plain string. */
 export type TRedirectRow = Omit<IRedirectRecord, 'type'> & { readonly type: `${ERedirectType}` };

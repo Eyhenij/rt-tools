@@ -1,7 +1,7 @@
 import { Controller, Get, Post } from '@nestjs/common';
 
-import { PermittedOperation, OpenOperation, SignedInOperation } from './access';
-import { accessAuditError, undeclaredAccess } from './access-audit';
+import { PermittedOperation, OpenOperation, SignedInOperation } from './access.js';
+import { accessAuditError, undeclaredAccess } from './access-audit.js';
 
 @Controller('orders')
 class OrdersController {
