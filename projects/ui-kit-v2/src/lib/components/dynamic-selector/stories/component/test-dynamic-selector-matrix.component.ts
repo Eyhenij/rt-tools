@@ -11,11 +11,35 @@ import { RtDynamicSelectorComponent } from '../../rt-dynamic-selector.component'
 import { RtDynamicSelectorRowControlsDirective, RtDynamicSelectorRowTitleDirective } from '../../rt-dynamic-selector.directives';
 import { IRtDynamicSelector } from '../../rt-dynamic-selector.model';
 import { TRtRadius } from '../../../radius/rt-radius.model';
+import { IButton } from '../../../button/rt-button.model';
+import { IRtIcon } from '../../../icon/rt-icon.model';
+import { RtFieldComponent } from '../../../field/rt-field.component';
 import { IStoryPerson, STORY_PEOPLE } from './test-dynamic-selector.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
 export type TDynamicSelectorMatrixPart =
-    'rows' | 'radius' | 'templates' | 'invitation' | 'states' | 'popup' | 'input' | 'switches' | 'initial-query' | 'presets' | 'themes';
+    | 'rows'
+    | 'radius'
+    | 'templates'
+    | 'invitation'
+    | 'states'
+    | 'popup'
+    | 'input'
+    | 'switches'
+    | 'initial-query'
+    | 'look'
+    | 'presets'
+    | 'themes';
+
+/** Вид, который задаёт приложение: значок и вид приглашения, значок очистки. */
+interface ILookCase {
+    readonly name: string;
+    readonly invitation: boolean;
+    readonly invitationButtonIcon: IRtIcon.Name | null;
+    readonly invitationButtonAppearance: IButton.Appearance;
+    readonly clearIcon: IRtIcon.Name;
+    readonly control: FormControl<number[] | null>;
+}
 
 /** Переключатели списка: корзина, панель сброса и очистки, правки в шаблоне строки. */
 interface ISwitchesCase {
@@ -96,6 +120,7 @@ function texts(values: string[]): FormControl<string[] | null> {
 
         // components
         RtDynamicInputComponent,
+        RtFieldComponent,
         RtDynamicSelectorRowControlsDirective,
         RtDynamicSelectorRowTitleDirective,
         RtIconButtonComponent,
@@ -140,6 +165,90 @@ export class TestRtDynamicSelectorMatrixComponent {
         { name: 'приглашение', entities: STORY_PEOPLE, invitation: true, control: chosen([]) },
         { name: 'приглашение со строками', entities: STORY_PEOPLE, invitation: true, control: chosen([4]) },
         { name: 'нечего выбрать', entities: [], invitation: false, control: chosen([]) },
+    ];
+
+    public readonly lookCases: readonly ILookCase[] = [
+        {
+            name: 'приглашение: значок, заливка',
+            invitation: true,
+            invitationButtonIcon: 'ico-plus',
+            invitationButtonAppearance: 'filled',
+            clearIcon: 'close',
+            control: chosen([]),
+        },
+        {
+            name: 'приглашение: значок, текст',
+            invitation: true,
+            invitationButtonIcon: 'ico-plus',
+            invitationButtonAppearance: 'text',
+            clearIcon: 'close',
+            control: chosen([]),
+        },
+        {
+            name: 'очистка корзиной с крестом',
+            invitation: false,
+            invitationButtonIcon: null,
+            invitationButtonAppearance: 'outlined',
+            clearIcon: 'trash-x',
+            control: chosen([1, 2]),
+        },
+    ];
+
+    /** Окно: поле поиска «fill» и своя подпись пустого результата; второе — со своими свойствами. */
+    /** Свойства окна на его предке: так приложение задаёт их на панели оверлея или своём контейнере. */
+    public readonly tunedPopupStyle: Readonly<Record<string, string>> = {
+        '--rt-dynamic-selector-popup-bg': 'var(--rt-color-bg-subtle)',
+        '--rt-dynamic-selector-popup-padding': 'var(--rt-space-lg)',
+        '--rt-dynamic-selector-popup-foot-border-width': '0',
+        '--rt-dynamic-selector-popup-button-height': 'var(--rt-control-height-sm)',
+        '--rt-dynamic-selector-popup-button-font-size': 'var(--rt-text-sm)',
+    };
+
+    public readonly lookPopupCases: readonly {
+        readonly name: string;
+        readonly entities: readonly IStoryPerson[];
+        readonly tuned: boolean;
+    }[] = [
+        { name: 'поиск fill, своя подпись', entities: [], tuned: false },
+        { name: 'свои свойства окна', entities: STORY_PEOPLE.slice(0, 3), tuned: true },
+    ];
+
+    /** Записи с длинными названиями: на них видно, переносится название строки или режется. */
+    public readonly longPeople: readonly IStoryPerson[] = [
+        { id: 1, name: 'Анна Сергеевна Константинопольская-Преображенская' },
+        { id: 2, name: 'Борис Игнатьевич Воскресенский' },
+    ];
+
+    /** Название строки: переносится по умолчанию, а без переноса режется многоточием. */
+    public readonly titleCases: readonly {
+        readonly name: string;
+        readonly wrap: boolean;
+        readonly control: FormControl<number[] | null>;
+    }[] = [
+        { name: 'название переносится', wrap: true, control: chosen([1, 2]) },
+        { name: 'название одной строкой', wrap: false, control: chosen([1, 2]) },
+    ];
+
+    /** Поле строк: приглашение с именем Material, подпись поля кита и подпись поля новой строки. */
+    public readonly lookInputCases: readonly {
+        readonly name: string;
+        readonly label: string | null;
+        readonly fieldLabel: string | null;
+        readonly control: FormControl<string[] | null>;
+    }[] = [
+        { name: 'приглашение: имя Material', label: null, fieldLabel: null, control: new FormControl<string[] | null>([]) },
+        {
+            name: 'подпись поля кита',
+            label: 'Почта для копий',
+            fieldLabel: null,
+            control: new FormControl<string[] | null>(['anna@example.com']),
+        },
+        {
+            name: 'подпись поля новой строки',
+            label: null,
+            fieldLabel: 'Адрес для копии',
+            control: new FormControl<string[] | null>(['anna@example.com']),
+        },
     ];
 
     public readonly stateCases: readonly IRowsCase[] = [

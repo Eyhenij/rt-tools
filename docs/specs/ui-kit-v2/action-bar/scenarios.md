@@ -133,3 +133,20 @@ Then both are wrapped in the sublayer of the kit's components whole
 
 Not covered: a test has nothing to look at here — the wrapper of the layer is read from the
 styles file by `npm run check:cascade-layer`, and that audit is what closes the scenario.
+
+### SC-UKV-707 — a Material name of an action draws an icon in the bar and in the nested list
+
+Given an action named by the Material name `delete_forever` and a group whose item is named so too
+When the bar is drawn, and the person opens the group
+Then the action and the item draw the kit's pair `trash-x`, and the action carries the icon modifier
+and its label as its name
+
+Covered: `projects/ui-kit-v2/src/lib/components/action-bar/rt-action-bar.component.spec.ts`.
+
+### SC-UKV-708 — the close button takes its icon from the input
+
+Given a bar, or a holder showing it
+When the caller names the icon `times-circle` for the close button
+Then the close button draws it, and without it draws the close cross
+
+Covered: `projects/ui-kit-v2/src/lib/components/action-bar/rt-action-bar.component.spec.ts`, `projects/ui-kit-v2/src/lib/components/action-bar/rt-action-bar-holder.component.spec.ts`.

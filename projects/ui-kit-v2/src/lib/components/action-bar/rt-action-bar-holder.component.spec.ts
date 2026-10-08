@@ -35,6 +35,17 @@ describe('RtActionBarHolderComponent', (): void => {
         expect(qa(setup(), 'action-bar-holder-bar')).toBeNull();
     });
 
+    it('SC-UKV-708 — держатель передаёт полосе значок крестика из своего входа', (): void => {
+        const fixture: ComponentFixture<RtActionBarHolderComponent> = setup();
+
+        fixture.componentRef.setInput('closeIcon', 'times-circle');
+        service().setCounts(1, 128);
+        settle(fixture);
+
+        expect(qa(fixture, 'action-bar-close')).not.toBeNull();
+        expect((qa(fixture, 'action-bar-close')?.componentInstance as { icon: () => unknown }).icon()).toBe('times-circle');
+    });
+
     it('SC-UKV-199 — полоса появляется, как только что-то выбрали', (): void => {
         const fixture: ComponentFixture<RtActionBarHolderComponent> = setup();
 

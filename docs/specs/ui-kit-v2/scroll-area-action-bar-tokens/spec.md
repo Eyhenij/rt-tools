@@ -31,6 +31,7 @@ properties are invisible to them.
 - **The action bar reads its background, text colour, padding, gap, font size and the weights of its counter and actions from properties.**
 - **The action bar reads the padding of its actions from properties.**
 - **The menu of the action bar draws with its rounding and shadow, and reads its colours from properties.**
+- **The menu of the action bar reads its padding, the gap between its items and the font size of an item from properties.**
 - **Without the new properties the scroll area and the bar draw as before.**
 
 ## What is out of scope
@@ -89,3 +90,5 @@ None.
 ## History of changes
 
 - 2 October 2026 — the agreement was written from the consumer's request by task RT-2477.
+- 7 October 2026 — the menu got its padding, item gap and item font size as properties, at the
+  application's request (RT-2619).

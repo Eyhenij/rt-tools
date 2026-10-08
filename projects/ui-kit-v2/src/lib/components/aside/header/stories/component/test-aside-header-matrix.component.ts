@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { RtInputComponent } from '../../../../input/rt-input.component';
+import { RtTagComponent } from '../../../../tag/rt-tag.component';
 import { StoryRowComponent } from '../../../../../../showcase/story-row.component';
 import { StoryThemesComponent } from '../../../../../../showcase/story-themes.component';
 import { RtAsideHeaderComponent } from '../../rt-aside-header.component';
@@ -13,7 +14,7 @@ const TOUR_TITLE: string = 'Тур в Сочи';
 const REQUEST_OVERLINE: string = 'Заявка № 1024';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TAsideHeaderMatrixPart = 'heading' | 'badges' | 'states' | 'row' | 'themes';
+export type TAsideHeaderMatrixPart = 'heading' | 'badges' | 'states' | 'row' | 'properties' | 'themes';
 
 /** Заголовок вместе с надзаголовком: порознь они не бывают — надзаголовок стоит над заголовком. */
 interface IAsideHeaderHeadingCase {
@@ -21,6 +22,13 @@ interface IAsideHeaderHeadingCase {
     readonly title: string;
     readonly overline: string | null;
     readonly closable: boolean;
+}
+
+/** Случай свойств шапки: значения ставятся на предка, как их ставит приложение. */
+interface IAsideHeaderPropertiesCase {
+    readonly name: string;
+    readonly ancestorStyle: Readonly<Record<string, string>> | null;
+    readonly heading: boolean;
 }
 
 /** Ряд бэйджей под заголовком: их вид задаётся не входами шапки, а самими бэйджами. */
@@ -100,6 +108,26 @@ interface IAsideHeaderBadgeCase {
                 </app-story-row>
             }
 
+            @case ('properties') {
+                <app-story-row
+                    caption="Свойства шапки с предка"
+                    [items]="propertiesCases"
+                    [itemLabel]="caseLabel"
+                    [slotWidth]="headerWidth">
+                    <ng-template let-propertiesCase>
+                        <!-- Предок без своей коробки: значения свойств доходят до шапки наследованием,
+                             а ширина ячейки достаётся ей самой. -->
+                        <div style="display: contents" [style]="propertiesCase.ancestorStyle ?? {}">
+                            <rt-aside-header class="app-aside-header-matrix__header" title="Тур в Сочи" subtitle="Заявка № 1024">
+                                @if (propertiesCase.heading) {
+                                    <rt-tag asideHeadingContent value="Оплачен" severity="success" />
+                                }
+                            </rt-aside-header>
+                        </div>
+                    </ng-template>
+                </app-story-row>
+            }
+
             @case ('themes') {
                 <app-story-themes caption="Шапка в обеих темах">
                     <ng-template>
@@ -123,6 +151,7 @@ interface IAsideHeaderBadgeCase {
         // components
         RtAsideHeaderComponent,
         RtInputComponent,
+        RtTagComponent,
 
         // showcase
         StoryRowComponent,
@@ -172,6 +201,25 @@ export class TestRtAsideHeaderMatrixComponent {
     public readonly rowCases: readonly { readonly name: string; readonly row: boolean }[] = [
         { name: 'без строки', row: false },
         { name: 'со строкой', row: true },
+    ];
+
+    /** Свойства шапки: без них, все с предка, и слот колонки заголовка под подписью. */
+    public readonly propertiesCases: readonly IAsideHeaderPropertiesCase[] = [
+        { name: 'по умолчанию', ancestorStyle: null, heading: false },
+        {
+            name: 'свойства с предка',
+            ancestorStyle: {
+                '--rt-aside-header-title-size': 'var(--rt-text-2xl)',
+                '--rt-aside-header-title-weight': 'var(--rt-font-weight-semibold)',
+                '--rt-aside-header-subtitle-size': 'var(--rt-text-md)',
+                '--rt-aside-header-gap': 'var(--rt-space-md)',
+                '--rt-aside-header-min-height': '96px',
+                '--rt-aside-header-back-size': '36px',
+                '--rt-aside-header-back-icon-size': '24px',
+            },
+            heading: false,
+        },
+        { name: 'слот колонки заголовка', ancestorStyle: null, heading: true },
     ];
 
     /** Подпись случая: у всех наборов этой матрицы имя лежит в одном поле. */

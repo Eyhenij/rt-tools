@@ -52,7 +52,7 @@ export const iconMaterialMap: readonly IRtIconMaterialEntry[] = [
     { from: 'content_copy', to: 'copy', why: 'два листа, один в один; есть двойник ico-copy' },
     { from: 'dashboard', to: 'th-large', why: 'ближний: у Material четыре разных плитки, здесь четыре равных' },
     { from: 'delete', to: 'trash', why: 'корзина, один в один; есть двойник ico-trash' },
-    { from: 'delete_forever', to: null, why: 'корзины с крестом в наборе нет — нужен рисунок' },
+    { from: 'delete_forever', to: 'trash-x', why: 'корзина с крестом, дорисована в своём наборе для кнопки очистки списка' },
     { from: 'done', to: 'check', why: 'галочка, один в один; есть двойник ico-check' },
     { from: 'email', to: 'email', why: 'конверт, один в один' },
     { from: 'download', to: 'ico-download', why: 'простая стрелка вниз есть только в своей рисовке — во фрейме лишь облако' },

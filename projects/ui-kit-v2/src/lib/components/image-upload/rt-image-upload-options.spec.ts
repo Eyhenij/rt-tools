@@ -7,14 +7,13 @@ import { join } from 'node:path';
 import { createRtFixture, qa, setInputs } from '../../../testing/rt-kit-testing';
 import { RtButtonDirective } from '../button';
 import { RtIconComponent } from '../icon';
+import { IRtIcon } from '../icon/rt-icon.model';
 import { RtImageUploadComponent } from './rt-image-upload.component';
 
 /** Стили компонента спековое преобразование вырезает: правила читаются из исходника. */
 const STYLES: string = readFileSync(join(__dirname, 'rt-image-upload.component.scss'), 'utf8');
 
 /** Ступени значка в пикселях: `xs` — 12, `md` — 20; значок хранит размер пикселями. */
-const XS_PX: number = 12;
-const MD_PX: number = 20;
 
 const PICTURE: Readonly<Record<string, unknown>> = { imageUrl: 'https://example.test/logo.png', downloadable: true };
 
@@ -22,7 +21,7 @@ function setup(inputs: Readonly<Record<string, unknown>> = {}): ComponentFixture
     return createRtFixture(RtImageUploadComponent, inputs);
 }
 
-function downloadIconSize(fixture: ComponentFixture<RtImageUploadComponent>): number | undefined {
+function downloadIconSize(fixture: ComponentFixture<RtImageUploadComponent>): IRtIcon.SizeInput | undefined {
     const icon: DebugElement | undefined = qa(fixture, 'image-upload-download')?.query(By.directive(RtIconComponent));
 
     return (icon?.componentInstance as RtIconComponent | undefined)?.size();
@@ -55,12 +54,12 @@ describe('RtImageUploadComponent — download button, choose button and preview'
     it('SC-UKV-632 — the download icon takes its size from the input, and the button step without it', (): void => {
         const fixture: ComponentFixture<RtImageUploadComponent> = setup({ ...PICTURE, downloadIconSize: 'xs' });
 
-        expect(downloadIconSize(fixture)).toBe(XS_PX);
+        expect(downloadIconSize(fixture)).toBe('xs');
 
         setInputs(fixture, { downloadIconSize: null });
         fixture.detectChanges();
 
-        expect(downloadIconSize(fixture)).toBe(MD_PX);
+        expect(downloadIconSize(fixture)).toBe('md');
     });
 
     it('SC-UKV-633 — the blur under the download button comes from the property', (): void => {
@@ -97,6 +96,6 @@ describe('RtImageUploadComponent — download button, choose button and preview'
     });
 
     it('SC-UKV-636 — without the new values the download icon follows the button size', (): void => {
-        expect(downloadIconSize(setup(PICTURE))).toBe(MD_PX);
+        expect(downloadIconSize(setup(PICTURE))).toBe('md');
     });
 });
