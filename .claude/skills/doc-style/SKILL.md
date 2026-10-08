@@ -4,7 +4,7 @@ kind: rule
 law: project-documentation
 description: Rule under the project-documentation law. Load when editing any .md including specs, and also code comments, commit bodies and PR descriptions. Names the path check, the pairs of an edit and its document, and what nothing checks in this tree. Ready-made wording is in pattern doc-style-write.
 ---
-<!-- rt-kit v0.29.4 · rules/doc-style.md · 47cb0a34ba42 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.4 · rules/doc-style.md · ba6fb11f13a5 · правится надстройкой, не здесь -->
 
 # Project texts — how it works here
 
@@ -131,9 +131,13 @@ flowchart TD
   to one question. Text has its own limit, lower than code, counted the same way — all lines; a
   spec that has outgrown it is split into subdomains, the boundary is not moved. Two numbers
   instead of one exist because text needs its threshold earlier: code length is also watched by
-  the linter, prose only by this number. The description of the past is excluded from the count:
-  by design the archive lists what the tree no longer has, and the task folder dies with the
-  merge.
+  the linter, prose only by this number. The prose of the rules layer has a third number, in
+  characters: compressing an article removes characters and leaves the line count, and a split
+  that only brings the lines under the limit leaves the characters where they were. The numbers
+  stand in the checks settings, not in the text; a rule at the ceiling takes a new article only
+  by folding an argument next to it, or by a split. The description of the past is excluded
+  from the count: by design the archive lists what the tree no longer has, and the task folder
+  dies with the merge.
   <!-- rt-when: *.md -->
 
 - **A file leaving for the description of the past names its former address in its header.**
