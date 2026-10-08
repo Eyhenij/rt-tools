@@ -1,4 +1,4 @@
-import { METHOD_METADATA, PATH_METADATA } from '@nestjs/common/constants';
+import { METHOD_METADATA, PATH_METADATA } from '@nestjs/common/constants.js';
 
 import { accessDeclarationsOf } from './access.js';
 

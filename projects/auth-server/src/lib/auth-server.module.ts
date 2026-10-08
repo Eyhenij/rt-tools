@@ -1,6 +1,6 @@
 import { DynamicModule, Logger, Module, OnApplicationBootstrap } from '@nestjs/common';
 import { APP_GUARD, DiscoveryModule, DiscoveryService } from '@nestjs/core';
-import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
+import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper.js';
 
 import { TPermission } from '@rt-tools/auth-contract';
 

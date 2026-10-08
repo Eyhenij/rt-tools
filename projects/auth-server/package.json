@@ -1,6 +1,6 @@
 {
   "name": "@rt-tools/auth-server",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Keycloak token check, access declarations and the rights catalog sync for NestJS controllers and Connect procedures",
   "author": "RT Team",
   "license": "Apache-2.0",

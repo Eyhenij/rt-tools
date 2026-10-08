@@ -26,6 +26,11 @@
   the consumer would stay on the version without that peer. Order: `auth-server` 0.2.1 is published
   first, then `cms-server` takes it in the lockfile and leaves as 0.1.1. Affected stage of the plan: 2.
 
+- **`auth-server` leaves once more, as 0.2.2.** A clean install of 0.2.1 loaded the relative paths
+  but stopped on the deep path `@nestjs/common/constants`: that package has no export map, and Node
+  needs the file name there too. The test now holds deep paths into packages without an export
+  map, and `cms-server` 0.1.1 takes 0.2.2 by its `^0.2.1` range. Affected stage of the plan: 2.
+
 ## Sessions
 
 ### 2026-10-08
