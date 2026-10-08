@@ -254,6 +254,19 @@ interface IIconCategoryGroup {
                                 <rt-icon size="lg" fill [glyph]="glyph" />
                             </ng-template>
                         </app-story-row>
+                        <app-story-row caption="С парой, но glyphStrategy font у значка — лигатура" [items]="pairedGlyphs">
+                            <ng-template let-glyph>
+                                <rt-icon size="lg" glyphStrategy="font" [glyph]="glyph" />
+                            </ng-template>
+                        </app-story-row>
+                        <app-story-row caption="Оси шрифта с предка — вес 600, градация 200, opsz 48" [items]="unpairedGlyphs">
+                            <ng-template let-glyph>
+                                <!-- Обёртка без коробки: свойства осей наследуются лигатурой, ячейка ряда не меняется. -->
+                                <span style="display: contents" [style]="glyphAxes">
+                                    <rt-icon size="lg" [glyph]="glyph" />
+                                </span>
+                            </ng-template>
+                        </app-story-row>
                     </ng-template>
                 </app-story-presets>
 
@@ -342,8 +355,25 @@ interface IIconCategoryGroup {
 export class TestRtIconMatrixComponent {
     public part: TIconMatrixPart = 'catalog';
 
-    public readonly sizes: readonly IRtIcon.Size[] = ['xs', 'sm', 'md', 'lg', 'xl', '2xl'];
-    public readonly colors: readonly IRtIcon.Color[] = ['current', 'muted', 'info', 'success', 'warning', 'danger', 'inverse'];
+    public readonly sizes: readonly IRtIcon.Size[] = ['xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl', '4xl'];
+    public readonly colors: readonly IRtIcon.Color[] = [
+        'current',
+        'primary',
+        'muted',
+        'disabled',
+        'info',
+        'success',
+        'warning',
+        'danger',
+        'inverse',
+    ];
+
+    /** Оси шрифта лигатуры, заданные на предке: значения далеки от умолчаний, чтобы замер их различил. */
+    public readonly glyphAxes: Readonly<Record<string, string>> = {
+        '--rt-icon-glyph-weight': '600',
+        '--rt-icon-glyph-grade': '200',
+        '--rt-icon-glyph-opsz': '48',
+    };
 
     /** Знаки соцсетей: цвет у каждого свой и в файле, поэтому пара тем показывает их без оси цвета. */
     public readonly socialNames: readonly IRtIcon.Name[] = iconsName.filter((name: IRtIcon.Name): boolean => categoryOf(name) === 'Social');

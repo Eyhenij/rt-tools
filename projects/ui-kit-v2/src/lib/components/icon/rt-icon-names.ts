@@ -355,6 +355,7 @@ export const iconsName = [
     'ticket',
     'times-circle',
     'trash',
+    'trash-x',
     'troubleshoot',
     'undo',
     'unlock',

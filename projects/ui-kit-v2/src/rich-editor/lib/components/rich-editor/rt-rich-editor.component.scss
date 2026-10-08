@@ -37,10 +37,13 @@
             overflow-y: auto;
         }
 
+        // Зону ввода рисует Quill, и класса кита у неё нет: сброс полосы для узлов приложения под
+        // узлом кита вернул бы ей полосу браузера. Она наследует тихую полосу редактора, как раньше.
         .ql-editor {
             background-color: var(--rt-color-bg-surface-subtle);
             color: var(--rt-color-text-primary);
             min-block-size: 96px;
+            scrollbar-color: inherit;
         }
 
         .ql-editor.ql-blank:before {

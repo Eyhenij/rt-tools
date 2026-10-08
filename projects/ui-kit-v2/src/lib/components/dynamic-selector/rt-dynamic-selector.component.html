@@ -7,6 +7,8 @@
                 [rows]="rows()"
                 [draggable]="draggable()"
                 [buttonRadius]="buttonRadius()"
+                [clearIcon]="clearIcon()"
+                [titleWrap]="titleWrap()"
                 [disabled]="isDisabled()"
                 [actionsShown]="!invitation()"
                 [resetClearShown]="listActionsShown()"
@@ -44,15 +46,17 @@
                     rtElem="invitation"
                     qa-dataid="dynamic-selector-invitation"
                     [icon]="invitationIcon()"
+                    [glyph]="invitationGlyph()"
                     [description]="invitationDescription()">
                     @if (hasOffer()) {
                         <button
                             rtButton
-                            appearance="outlined"
                             type="button"
                             qa-dataid="dynamic-selector-invitation-add"
                             rtPopoverTrigger="manual"
                             #invitationPopover="rtPopover"
+                            [appearance]="invitationButtonAppearance()"
+                            [icon]="invitationButtonIcon()"
                             [rtPopover]="popupTpl"
                             [rtPopoverDisabled]="isDisabled()"
                             [label]="addTitle()"
@@ -83,6 +87,8 @@
             [navigateTitle]="navigateTitle()"
             [navigateLink]="navigateLink()"
             [searchTerm]="searchTerm()"
+            [searchAppearance]="searchAppearance()"
+            [emptyResultsText]="emptyResultsText()"
             (applied)="onApplied($event)"
             (cancelled)="onCancelled()"
             (searchChange)="searchChange.emit($event)"
