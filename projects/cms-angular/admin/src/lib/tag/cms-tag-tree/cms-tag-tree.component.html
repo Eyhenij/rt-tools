@@ -1,0 +1,50 @@
+<ul rtBlock="rt-cms-tag-tree" qa-dataid="tag-tree">
+    @for (tag of tags(); track tag.id) {
+        <li rtElem="node" qa-dataid="tag-node" [attr.data-tag-id]="tag.id" [attr.data-name]="tag.name">
+            <div rtElem="row">
+                @if (selectable()) {
+                    <rt-checkbox
+                        qa-dataid="tag-pick"
+                        [ariaLabel]="tag.name"
+                        [ngModel]="selected().has(tag.id)"
+                        (ngModelChange)="picked.emit({ tagId: tag.id, picked: $event })">
+                        {{ tag.name }}
+                    </rt-checkbox>
+                } @else {
+                    <span rtElem="name" qa-dataid="tag-name" [title]="tag.name">{{ tag.name }}</span>
+                    <rt-menu icon="ellipsis-v" qa-dataid="tag-menu" [ariaLabel]="t().tagActions">
+                        @if (canNest()) {
+                            <rt-menu-item
+                                icon="plus-circle"
+                                qa-dataid="tag-add-nested"
+                                [label]="t().tagNested"
+                                (selected)="addRequested.emit(tag)" />
+                        }
+                        <rt-menu-item icon="pencil" qa-dataid="tag-rename" [label]="t().uiRename" (selected)="renameRequested.emit(tag)" />
+                        <rt-menu-item
+                            icon="trash"
+                            danger
+                            qa-dataid="tag-delete"
+                            [label]="t().uiDelete"
+                            [confirmTitle]="t().tagDeleteQuestion"
+                            [confirmLabel]="t().uiDelete"
+                            [confirmMessage]="t().tagDeleteWarning"
+                            (selected)="removeRequested.emit(tag)" />
+                    </rt-menu>
+                }
+            </div>
+            @if (tag.children.length > 0) {
+                <rt-cms-tag-tree
+                    rtElem="children"
+                    [tags]="tag.children"
+                    [depth]="depth() + 1"
+                    [selectable]="selectable()"
+                    [selectedIds]="selectedIds()"
+                    (addRequested)="addRequested.emit($event)"
+                    (renameRequested)="renameRequested.emit($event)"
+                    (removeRequested)="removeRequested.emit($event)"
+                    (picked)="picked.emit($event)" />
+            }
+        </li>
+    }
+</ul>

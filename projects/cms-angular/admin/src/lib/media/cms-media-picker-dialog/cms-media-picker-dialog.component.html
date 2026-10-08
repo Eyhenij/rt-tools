@@ -1,0 +1,64 @@
+<rt-dialog size="lg" qa-dataid="media-picker">
+    <rt-dialog-header [title]="t().mediaPickerTitle" />
+
+    <rt-dialog-content>
+        <div rtBlock="rt-cms-media-picker-dialog">
+            <p rtElem="hint">{{ t().mediaPickerHint }}</p>
+
+            <div rtElem="row">
+                <rt-input
+                    qa-dataid="media-picker-search"
+                    [placeholder]="t().mediaSearch"
+                    [ngModel]="search()"
+                    (ngModelChange)="find($event)" />
+                <rt-file-input
+                    qa-dataid="media-picker-upload"
+                    [accept]="accept"
+                    [buttonLabel]="uploading() ? t().mediaUploading : t().mediaUploadImage"
+                    [ngModel]="picked()"
+                    (ngModelChange)="upload($event)" />
+            </div>
+
+            @if (loading()) {
+                <rt-spinner qa-dataid="media-picker-loading" />
+            } @else {
+                <ul rtElem="list" qa-dataid="media-picker-files">
+                    @for (file of files(); track file.id) {
+                        <li rtElem="item">
+                            <span rtElem="thumb">
+                                <img rtElem="thumb-image" loading="lazy" alt="" [src]="file.previewUrl" />
+                            </span>
+                            <span rtElem="name">{{ file.name }}</span>
+                            <span rtElem="state">{{ file.width }}×{{ file.height }}</span>
+                            <button
+                                rtButton
+                                type="button"
+                                appearance="outlined"
+                                qa-dataid="media-picker-choose"
+                                [label]="t().uiSelect"
+                                [attr.data-file-id]="file.id"
+                                [attr.aria-label]="t().uiSelectNamed | cmsLabel: { name: file.name }"
+                                (click)="choose(file)"></button>
+                        </li>
+                    } @empty {
+                        <rt-empty-state
+                            qa-dataid="media-picker-empty"
+                            icon="image"
+                            [title]="search() ? t().uiNothingFound : t().mediaPickerEmpty" />
+                    }
+                </ul>
+            }
+        </div>
+    </rt-dialog-content>
+
+    <rt-dialog-footer>
+        <button
+            rtButton
+            type="button"
+            appearance="text"
+            qa-dataid="media-picker-cancel"
+            [label]="t().uiCancel"
+            [attr.aria-label]="t().uiCancel"
+            (click)="cancel()"></button>
+    </rt-dialog-footer>
+</rt-dialog>

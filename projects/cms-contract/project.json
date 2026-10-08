@@ -1,0 +1,79 @@
+{
+  "name": "@rt-tools/cms-contract",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "projects/cms-contract/src",
+  "prefix": "lib",
+  "projectType": "library",
+  "release": {
+    "version": {
+      "manifestRootsToUpdate": ["dist/cms-contract"],
+      "currentVersionResolver": "git-tag",
+      "fallbackCurrentVersionResolver": "disk"
+    }
+  },
+  "tags": ["scope:package"],
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/dist/cms-contract"],
+      "dependsOn": ["build:esm", "build:cjs"],
+      "options": {
+        "command": "node tools/finalize-utils-package.cjs cms-contract"
+      }
+    },
+    "build:esm": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{workspaceRoot}/dist/cms-contract/esm"],
+      "options": {
+        "main": "projects/cms-contract/src/index.ts",
+        "tsConfig": "projects/cms-contract/tsconfig.lib.esm.json",
+        "outputPath": "dist/cms-contract/esm",
+        "generatePackageJson": false,
+        "assets": [],
+        "rootDir": "projects/cms-contract/src"
+      }
+    },
+    "build:cjs": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{workspaceRoot}/dist/cms-contract/cjs"],
+      "options": {
+        "main": "projects/cms-contract/src/index.ts",
+        "tsConfig": "projects/cms-contract/tsconfig.lib.cjs.json",
+        "outputPath": "dist/cms-contract/cjs",
+        "generatePackageJson": false,
+        "assets": [],
+        "rootDir": "projects/cms-contract/src"
+      }
+    },
+    "nx-release-publish": {
+      "options": {
+        "packageRoot": "dist/cms-contract"
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/projects/cms-contract"],
+      "options": {
+        "jestConfig": "projects/cms-contract/jest.config.ts",
+        "tsConfig": "projects/cms-contract/tsconfig.spec.json"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "codegen": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "PATH=../../node_modules/.bin:$PATH buf generate",
+        "cwd": "projects/cms-contract"
+      }
+    },
+    "codegen-lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "PATH=../../node_modules/.bin:$PATH buf lint",
+        "cwd": "projects/cms-contract"
+      }
+    }
+  }
+}

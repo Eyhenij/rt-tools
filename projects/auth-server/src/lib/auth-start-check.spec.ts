@@ -1,9 +1,9 @@
 import { ExecutionContext, Logger, UnauthorizedException } from '@nestjs/common';
 import { DiscoveryService } from '@nestjs/core';
 
-import { AuthStartCheck, IAuthServerOptions } from './auth-server.module';
-import { AuthGuard } from './auth.guard';
-import { KeycloakTokenVerifier } from './token-verifier';
+import { AuthStartCheck, IAuthServerOptions } from './auth-server.module.js';
+import { AuthGuard } from './auth.guard.js';
+import { KeycloakTokenVerifier } from './token-verifier.js';
 
 function rolesAnswer(url: string): Response {
     if (url.endsWith('/token')) {

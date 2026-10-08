@@ -1,0 +1,95 @@
+<rt-table
+    #table="rtTable"
+    rtBlock="rt-cms-content-items-table"
+    qa-dataid="content-items-table"
+    clickable
+    [ariaLabel]="t().itemsTitle"
+    [dataSource]="rows()"
+    [columnsConfig]="columns()"
+    [loading]="loading()"
+    [showRowActions]="true"
+    [cards]="true">
+    <ng-template #rtTableEmpty>
+        @if (filtered()) {
+            <rt-empty-state qa-dataid="content-items-nothing-found" icon="file" [title]="t().uiNothingFound">
+                <button
+                    rtButton
+                    type="button"
+                    appearance="text"
+                    qa-dataid="content-items-reset-search"
+                    [label]="t().uiResetFilter"
+                    [attr.aria-label]="t().uiResetFilter"
+                    (click)="searchReset.emit()"></button>
+            </rt-empty-state>
+        } @else {
+            <rt-empty-state qa-dataid="content-items-empty" icon="file" [title]="t().itemsEmpty" />
+        }
+    </ng-template>
+
+    <ng-container cdkColumnDef="featured">
+        <th *cdkHeaderCellDef cdk-header-cell>{{ t().itemsColumnFeatured }}</th>
+        <!-- The star does not open the page: the press is stopped in the cell, before the row. -->
+        <td *cdkCellDef="let row" cdk-cell (click)="$event.stopPropagation()">
+            <rt-icon-button
+                qa-dataid="content-items-featured"
+                variant="ghost"
+                [attr.data-featured]="row.isFeatured"
+                [icon]="row.isFeatured ? 'star-fill' : 'star'"
+                [tooltip]="row.isFeatured ? t().itemsFeaturedRemove : t().itemsFeaturedAdd"
+                [ariaLabel]="row.isFeatured ? t().itemsFeaturedRemove : t().itemsFeaturedAdd"
+                (clicked)="featuredToggled.emit(row)" />
+        </td>
+    </ng-container>
+
+    <ng-container cdkColumnDef="name">
+        <th *cdkHeaderCellDef cdk-header-cell>{{ t().itemsColumnName }}</th>
+        <td *cdkCellDef="let row" cdk-cell qa-dataid="content-items-cell-name">{{ row.name }}</td>
+    </ng-container>
+
+    <ng-container cdkColumnDef="slug">
+        <th *cdkHeaderCellDef cdk-header-cell>{{ t().itemsColumnSlug }}</th>
+        <td *cdkCellDef="let row" cdk-cell qa-dataid="content-items-cell-slug">{{ row.slug }}</td>
+    </ng-container>
+
+    <ng-container cdkColumnDef="locale">
+        <th *cdkHeaderCellDef cdk-header-cell>{{ t().itemsColumnLocale }}</th>
+        <td *cdkCellDef="let row" cdk-cell qa-dataid="content-items-cell-locale">{{ row.locale }}</td>
+    </ng-container>
+
+    <ng-container cdkColumnDef="status">
+        <th *cdkHeaderCellDef cdk-header-cell>{{ t().itemsColumnStatus }}</th>
+        <td *cdkCellDef="let row" cdk-cell>
+            <rt-tag
+                qa-dataid="content-items-cell-status"
+                [value]="row.statusTitle"
+                [severity]="row.status === Status.Published ? 'success' : 'neutral'" />
+        </td>
+    </ng-container>
+
+    <ng-container cdkColumnDef="updatedAt">
+        <th *cdkHeaderCellDef cdk-header-cell>{{ t().itemsColumnUpdated }}</th>
+        <td *cdkCellDef="let row" cdk-cell qa-dataid="content-items-cell-updated">
+            {{ row.updatedAt ? (row.updatedAt | date: 'dd.MM.yyyy HH:mm') : '—' }}
+        </td>
+    </ng-container>
+
+    <ng-template rtTableRowActions let-row [rtTableRowActionsRowType]="rows()">
+        <rt-menu-item
+            icon="trash"
+            danger
+            qa-dataid="content-items-delete"
+            [label]="t().uiDelete"
+            [confirmTitle]="t().itemDeleteQuestion"
+            [confirmLabel]="t().uiDelete"
+            [confirmMessage]="row.status === Status.Published ? t().itemDeleteLiveWarning : t().itemDeleteWarning"
+            (selected)="removeRequested.emit(row)" />
+    </ng-template>
+
+    <tr *cdkHeaderRowDef="table.displayedColumns()" cdk-header-row></tr>
+    <tr
+        *cdkRowDef="let row; columns: table.displayedColumns()"
+        cdk-row
+        rtTableRow
+        qa-dataid="content-items-row"
+        (activated)="openRequested.emit(row)"></tr>
+</rt-table>
