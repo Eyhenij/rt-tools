@@ -153,6 +153,10 @@ stands next to it as components of its own, drawn on the parts of the second kit
   selection change, and taking it as the reset list would keep the reset off for good.
 - **The row title wraps unless the caller turns wrapping off; then it stands on one line, cut with
   an ellipsis, and a cut title shows the whole text in a tooltip.**
+- **The same wrapping holds for the options of the popup.** Without wrapping an option's label
+  stands on one line, cut with an ellipsis, and a cut label shows the whole text in a tooltip; the
+  label of a single-choice option is drawn next to its button and names the button for a reader who
+  hears the screen.
 - **The field of a new row shows the caller's label, and without one it stands as before.** The label
   is drawn by the kit field around the field and leads to it; the field has no label input of its
   own.
@@ -278,4 +282,4 @@ owner's review.
   entities set by the input, the row title on one line.
 - 8 October 2026 — the application's request (RT-2619): the look inputs of both fields take their
   defaults from the kit settings, the row title wrapping too; the popup body takes the height left by
-  its head and footer.
+  its head and footer; the title wrapping holds for the popup options too.

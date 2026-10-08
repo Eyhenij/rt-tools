@@ -195,6 +195,10 @@ export class RtDynamicSelectorPopupComponent<TEntity extends object> implements 
     public readonly searchAppearance: InputSignal<IRtInput.Appearance> = input<IRtInput.Appearance>('outline');
     /** Подпись пустого результата поиска; пустая строка оставляет подпись кита. */
     public readonly emptyResultsText: InputSignal<string> = input<string>('');
+    /** Подпись пункта переносится; `false` ведёт её одной строкой с многоточием и подсказкой при обрезке. */
+    public readonly titleWrap: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
+        transform: booleanAttribute,
+    });
 
     /** Применённые ключи в порядке отметок. */
     public readonly applied: OutputEmitterRef<unknown[]> = output<unknown[]>();

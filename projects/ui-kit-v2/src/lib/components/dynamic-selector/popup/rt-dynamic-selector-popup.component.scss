@@ -143,6 +143,47 @@
             overflow-wrap: anywhere;
         }
 
+        &__option-label {
+            overflow-wrap: anywhere;
+        }
+
+        // Без переноса подпись пункта идёт одной строкой с многоточием, а обрезанная показывает себя
+        // в подсказке. Флажок и его подпись сжимаются до ширины строки, иначе обрезать нечего.
+        &__row--nowrap {
+            display: flex;
+            align-items: center;
+            gap: var(--rt-space-sm);
+        }
+
+        &__row--nowrap &__option {
+            min-width: 0;
+            max-width: 100%;
+
+            // Кнопка выбора без своей подписи не сжимается: сжатая, она наезжает кружком на подпись.
+            &--fixed {
+                flex: 0 0 auto;
+            }
+        }
+
+        &__row--nowrap &__option .rt-checkbox {
+            max-width: 100%;
+        }
+
+        &__row--nowrap &__option .rt-checkbox__label {
+            overflow: hidden;
+            min-width: 0;
+        }
+
+        &__row--nowrap &__option-label {
+            display: block;
+            overflow: hidden;
+            min-width: 0;
+            flex: 1 1 auto;
+            font-size: var(--rt-text-sm);
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
         &__sentinel {
             min-height: var(--rt-size-1);
         }

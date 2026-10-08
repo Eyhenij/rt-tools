@@ -73,6 +73,8 @@ interface IPopupCase {
     readonly multiToggleShown: boolean;
     readonly loading: boolean;
     readonly pinnedKeys: readonly number[];
+    /** Перенос подписей пунктов; не задан — переносятся, как по умолчанию. */
+    readonly titleWrap?: boolean;
 }
 
 /** Случай поля строк. */
@@ -284,6 +286,32 @@ export class TestRtDynamicSelectorMatrixComponent {
         },
         { name: 'загрузка', entities: [], mode: 'multi', multiToggleShown: false, loading: true, pinnedKeys: [] },
         { name: 'ничего не найдено', entities: [], mode: 'multi', multiToggleShown: false, loading: false, pinnedKeys: [] },
+        {
+            name: 'длинные подписи с переносом',
+            entities: this.longPeople,
+            mode: 'multi',
+            multiToggleShown: false,
+            loading: false,
+            pinnedKeys: [],
+        },
+        {
+            name: 'длинные подписи одной строкой',
+            entities: this.longPeople,
+            mode: 'multi',
+            multiToggleShown: false,
+            loading: false,
+            pinnedKeys: [],
+            titleWrap: false,
+        },
+        {
+            name: 'одна запись, одной строкой',
+            entities: this.longPeople,
+            mode: 'single',
+            multiToggleShown: false,
+            loading: false,
+            pinnedKeys: [],
+            titleWrap: false,
+        },
     ];
 
     /** Прежний список стоит первым — рядом видно, что убирает каждый переключатель. */

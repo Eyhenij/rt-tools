@@ -315,3 +315,13 @@ popup is as tall as its content
 Not covered: a test has no layout. Measured on the showcase in the story **Popup**: with
 `--rt-dynamic-selector-popup-min-height: 30rem` every popup is 480px tall with no gap under the
 footer, and without it the heights stay as before.
+
+### SC-UKV-727 — without wrapping the popup option stands on one line with a tooltip
+
+Given a selector whose caller turns title wrapping off, in the multi or the single choice
+When the popup shows an option with a long label
+Then the label stands on one line, cut with an ellipsis, and carries a tooltip of its whole text;
+the single-choice label stands next to its button, names it and chooses the row; with wrapping on
+the options look as before
+
+Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/popup/rt-dynamic-selector-popup-wrap.spec.ts`.

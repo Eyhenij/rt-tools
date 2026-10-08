@@ -47,15 +47,31 @@
     } @else if (hasRows()) {
         <div rtElem="list" qa-dataid="dynamic-selector-options">
             @for (row of rowItems(); track row.key) {
-                <div rtElem="row" [rtMod]="{ separated: row.separated }">
+                <div rtElem="row" [rtMod]="{ separated: row.separated, nowrap: !titleWrap() }">
                     @if (isSingle()) {
+                        <!-- Без переноса подпись рисует окно рядом с кнопкой: подсказка меряет обрезку
+                             своего узла, а подпись внутри кнопки окну недоступна. -->
                         <rt-radio-button
                             rtElem="option"
                             qa-dataid="dynamic-selector-option"
                             [value]="row.key"
                             [checked]="row.ticked"
-                            [label]="row.label"
+                            [label]="titleWrap() ? row.label : ''"
+                            [ariaLabel]="titleWrap() ? null : row.label"
+                            [rtMod]="{ fixed: !titleWrap() }"
                             (checkedChange)="onRadioChange(row.entity)" />
+                        @if (!titleWrap()) {
+                            <!-- Фокус и клавиатура остаются на кнопке: она названа этой же подписью, а подпись даёт нажать мышью, как label. -->
+                            <!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
+                            <span
+                                rtElem="option-label"
+                                qa-dataid="dynamic-selector-option-label"
+                                rtTooltipWhenTruncated
+                                [rtTooltip]="row.label"
+                                (click)="onRadioChange(row.entity)">
+                                {{ row.label }}
+                            </span>
+                        }
                     } @else {
                         <rt-checkbox
                             rtElem="option"
@@ -63,7 +79,13 @@
                             [ngModel]="row.ticked"
                             [ngModelOptions]="{ standalone: true }"
                             (click)="onRowClick($event, row.entity)">
-                            {{ row.label }}
+                            <span
+                                rtElem="option-label"
+                                qa-dataid="dynamic-selector-option-label"
+                                rtTooltipWhenTruncated
+                                [rtTooltip]="titleWrap() ? '' : row.label">
+                                {{ row.label }}
+                            </span>
                         </rt-checkbox>
                     }
                 </div>
