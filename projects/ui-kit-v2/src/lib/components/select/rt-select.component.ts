@@ -225,9 +225,21 @@ export class RtSelectComponent<TValue> extends RtFormControlBase<TValue | null> 
         this.selectionChange.emit(null);
     }
 
+    /**
+     * Открытый список встаёт подсветкой на выбранный пункт.
+     *
+     * Иначе стрелка вниз начинала с первого пункта, и человек с выбранным «20» из «10, 20, 40»
+     * получал «10» вместо «40».
+     */
     protected onOpened(): void {
         const v: TValue | null = this.value();
         this.openBranches.set(rtTreeOpenFor(this.options(), v === null ? [] : [v]));
+        if (v !== null) {
+            const chosen: number = this.rows().findIndex((row: IRtSelect.Row<TValue>): boolean => row.option.value === v);
+            if (chosen >= 0) {
+                this.activeIndex.set(chosen);
+            }
+        }
     }
 
     protected toggleBranch(event: Event, value: TValue): void {
@@ -265,7 +277,9 @@ export class RtSelectComponent<TValue> extends RtFormControlBase<TValue | null> 
             if (OPEN_KEYS.has(event.key)) {
                 event.preventDefault();
                 this.popover().open();
-                this.#moveActive(1);
+                if (this.activeIndex() < 0) {
+                    this.#moveActive(1);
+                }
             }
             return;
         }

@@ -1,3 +1,14 @@
+## [0.19.1](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2@0.19.0...rt-ui-kit-v2@0.19.1) (2026-10-08)
+
+### Bug Fixes
+
+- **rt:ui-kit-v2:** список открывается на выбранном пункте, сброс отбора держит фокус ([70f5e6e](https://github.com/Eyhenij/rt-tools/commit/70f5e6e7cecc6e6b17910068e402a78013cf7669)), closes [#2698](https://github.com/Eyhenij/rt-tools/issues/2698)
+
+### Features
+
+- **rt:ui-kit-v2:** блик хода работы медленнее и разноцветный ([0084758](https://github.com/Eyhenij/rt-tools/commit/008475803f723812c02231075a3f2d12fa13ab92)), closes [#2695](https://github.com/Eyhenij/rt-tools/issues/2695)
+- **rt:ui-kit-v2:** крутилка хода работы переливается цветами блика ([ccde05e](https://github.com/Eyhenij/rt-tools/commit/ccde05e1e668c4335d2800fd55f3b02e953fbe30)), closes [#2695](https://github.com/Eyhenij/rt-tools/issues/2695)
+
 # [0.19.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2@0.18.0...rt-ui-kit-v2@0.19.0) (2026-10-08)
 
 ### Bug Fixes

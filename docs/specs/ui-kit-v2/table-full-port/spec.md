@@ -57,22 +57,22 @@ parts it drew with — by the kit's own components.
 
 The words are the first kit's; the kit's dictionary gives them in all eight languages.
 
-| In the agreement           | On the screen                                                                  |
-| -------------------------- | ------------------------------------------------------------------------------ |
-| select all                 | "Select all"                                                                   |
-| the counter                | "Selected: N"                                                                  |
-| the search field           | "Search..."                                                                    |
-| the toolbar buttons        | hints "Clear filters", "Refresh", "Table configuration"                        |
-| the placeholder            | a large search icon and "No Data Found"                                        |
-| the header of the strip    | "Actions"                                                                      |
-| the copy button            | hint "Copy", after a press "Copied!"                                           |
-| the page size              | "Items per page:"                                                              |
-| the settings panel         | "Edit table configuration" and its explanation line                            |
-| the scrollbar switches     | "Vertical scrollbar shown", "Horizontal scrollbar shown"                       |
-| the visibility of a column | hints "Hidden, click to show", "Shown, click to hide"                          |
-| the filter row             | "Type in filter value", "Chose filter", "No options available", "Clear filter" |
-| the filter operators       | "Equal", "Not equal", "Contains", "More than", "Less than"                     |
-| an empty ready cell        | a dash                                                                         |
+| In the agreement           | On the screen                                                                   |
+| -------------------------- | ------------------------------------------------------------------------------- |
+| select all                 | "Select all"                                                                    |
+| the counter                | "Selected: N"                                                                   |
+| the search field           | "Search..."                                                                     |
+| the toolbar buttons        | hints "Clear filters", "Refresh", "Table configuration"                         |
+| the placeholder            | a large search icon and "No Data Found"                                         |
+| the header of the strip    | "Actions"                                                                       |
+| the copy button            | hint "Copy", after a press "Copied!"                                            |
+| the page size              | "Items per page:"                                                               |
+| the settings panel         | "Edit table configuration" and its explanation line                             |
+| the scrollbar switches     | "Vertical scrollbar shown", "Horizontal scrollbar shown"                        |
+| the visibility of a column | hints "Hidden, click to show", "Shown, click to hide"                           |
+| the filter row             | "Type in filter value", "Choose filter", "No options available", "Clear filter" |
+| the filter operators       | "Equal", "Not equal", "Contains", "More than", "Less than"                      |
+| an empty ready cell        | a dash                                                                          |
 
 ## Rules
 
@@ -162,6 +162,9 @@ The words are the first kit's; the kit's dictionary gives them in all eight lang
   first kit does.** The menu opens from the left edge of its button, so it does not cover the side menu on
   the left of the page. Changing the operator of a column with neither a condition nor a value
   asks nothing.
+- **Clearing a date or select filter by its cross moves the focus into the field next to it.**
+  The cross switches off once there is nothing to clear, and a switched-off button dropped the
+  focus to the start of the page.
 - **The family keeps no conditions of its own and narrows no rows.** The application answers with
   new rows.
 - **The search and the filter fields draw one of the two Material field looks, `outline` or
@@ -194,61 +197,10 @@ The words are the first kit's; the kit's dictionary gives them in all eight lang
 - **A press on an inline action reaches the row unless the application stops it itself.** Only the
   row menu button is stopped by the table.
 
-### The selection column
+### Marking the rows
 
-- **The selection column is drawn only when the application asks for it; the list asks for it
-  whenever the list's selection is on.**
-- **In multiple selection every row carries a checkbox and the header carries the page
-  checkbox.**
-- **The page checkbox is checked when every row of the shown page is marked.** It is shown
-  indeterminate only while it is not checked.
-- **After a row is marked or unmarked the page checkbox is indeterminate while any record is
-  marked, on the shown page or on another.** With no mark left anywhere it is empty.
-- **After the page checkbox is pressed it is indeterminate while some row of the shown page is
-  marked.**
-- **The list recounts the page checkbox for the shown page when rows arrive; the bare table does
-  not, and keeps the state it had on the page before.**
-- **The page checkbox marks or unmarks the rows of the shown page and touches no other mark.**
-- **Marks are held by the record key and survive a change of the page.**
-- **The application reads the marked records themselves, not only their keys.** A record marked on
-  a page no longer shown is still handed over whole.
-- **The application can clear the selection; clearing leaves no mark and no checked checkbox.**
-
-### One row at a time
-
-- **In single selection every row carries a radio button, and the header carries nothing.** The
-  radio button is the circle alone and takes its accessible name from the dictionary.
-- **Choosing a row takes the mark off the row chosen before; choosing the chosen row keeps it.**
-- **In single selection the list's toolbar shows neither select all nor the counter.**
-
-### Holding the selection
-
-- **The preset marks are applied once, when the first non-empty rows and a non-empty preset have
-  both arrived.** A later change of the preset does not overwrite what the person marked since.
-- **Only the preset records found among those first rows are marked; the other keys of the preset
-  are dropped.**
-- **A switched-off selection column keeps its marks visible and lets none be changed.** Select all
-  is switched off with it.
-
-### All records across pages
-
-- **The list's toolbar shows select all, or, when the application hides it, the counter of marked
-  records.**
-- **Select all marks every loaded row; in the across-pages mode every page that arrives after it
-  comes with its rows marked.** The across-pages mode is on unless the application switches it
-  off.
-- **Select all is indeterminate while some records are marked and not every record is.**
-- **Unmarking a row in the across-pages mode puts the record into the exclusions.** Unchecking the
-  page checkbox puts all rows of the page there.
-- **Marking an excluded record again takes it out of the exclusions; with none left select all is
-  checked again.**
-- **An excluded record arrives unmarked every time its page is loaded again.**
-- **Unchecking select all takes every mark off and ends the across-pages mode, and the exclusions
-  stay.** They are emptied only by the application's own call; until then a new select all starts
-  with the old exclusions.
-- **The application reads whether select all is on, whether the across-pages mode is on and which
-  records are excluded.** A bulk action over all records is sent as "all but these": the family
-  never holds the records it did not load.
+The selection column, single selection, the preset marks and select all across pages are described
+by the subdomain next to this one, `docs/specs/ui-kit-v2/table-selection/`.
 
 ### The column settings
 
@@ -497,3 +449,5 @@ table that applied it last decides it for all.
 - 22 September 2026 — the agreement merged into the spec of the second kit as a subdomain of its
   own, with the scenario numbers it had; `Q-TP-1` is closed by the plan of the task, which names
   that place.
+- 2026-10-08 — the task RT-2698: clearing a filter by its cross keeps the focus in the cell, and the
+  select hint reads "Choose filter".

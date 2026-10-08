@@ -2,6 +2,7 @@ import {
     ChangeDetectionStrategy,
     Component,
     computed,
+    ElementRef,
     inject,
     input,
     InputSignal,
@@ -100,6 +101,7 @@ interface IOperatorItem {
 })
 export class RtDataTableFilterCellComponent<KEY extends string = string> {
     readonly #translate: Signal<TRtKitTranslator> = inject(RT_KIT_TRANSLATOR);
+    readonly #host: ElementRef<HTMLElement> = inject(ElementRef);
     readonly #titleCase: TitleCasePipe = new TitleCasePipe();
 
     /** Набранное, но ещё не зафиксированное значение текстового и числового поля. */
@@ -231,6 +233,17 @@ export class RtDataTableFilterCellComponent<KEY extends string = string> {
         }
 
         this.currentFilter.set({ ...current, value: next });
+    }
+
+    /**
+     * Сброс крестиком переводит фокус в поле рядом.
+     *
+     * Без значения крестик выключается, и выключенная кнопка роняет фокус на `body`: человек с
+     * клавиатуры оказывается в начале страницы.
+     */
+    protected onClear(): void {
+        this.onValueChange('');
+        this.#host.nativeElement.querySelector<HTMLElement>(`.${BEM_BLOCK}__field button, .${BEM_BLOCK}__field input`)?.focus();
     }
 
     protected onOperatorChange(operatorType: TFilterOperatorType): void {
