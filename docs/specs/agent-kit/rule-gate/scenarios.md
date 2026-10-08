@@ -230,3 +230,20 @@ first and the rule about tasks and branches after it: the pipeline says both wha
 merge and what reaches production after it
 
 Covered: `projects/agent-kit/tests/skill-gate.test.sh`.
+
+### SC-AK-1192 — the in-place flag of a stream editor is matched as a flag word
+
+Given a command reads a file whose path carries `-i` inside a word, or edits a file by `sed -i`,
+`sed -Ei.bak`, `sed --in-place` or `perl -pi`
+When the guard takes the command apart
+Then the read is not declared a writing one, and every shape of the in-place flag is
+
+Covered: `projects/agent-kit/tests/defaults.test.sh`.
+
+### SC-AK-1193 — a module of the queue audit demands the rule about delivery
+
+Given an edit of a module of the queue audit split out of the audit itself
+When the gate picks the rule
+Then it demands the rule about tasks and branches, the same as for the audit
+
+Covered: `projects/agent-kit/tests/defaults.test.sh`.
