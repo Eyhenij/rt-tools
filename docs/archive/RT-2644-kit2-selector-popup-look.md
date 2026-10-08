@@ -60,3 +60,23 @@ Rows 93–95 hold for both: each passes from `rt-dynamic-selector` and is set in
 ## What is left unclear
 
 - The owner adds more rows; they are written into the progress as decisions along the way.
+
+## Decisions along the way
+
+- Rows 96 and 97 came from the application's session: the search field takes focus on opening
+  (`autofocusSearch`, default `false` — the application agreed), and the option line height and
+  minimum height become properties. The owner sent them into this task together with rows 98 and
+  99: the gap of the empty result and the footer padding become properties. All four default to
+  today's look and are done before step 5.1 closes.
+- The popup minimum-height scenario of row 91 took SC-UKV-726, and the dense toolbar of RT-2639
+  took the same number in main first: the spec check in main refuses. The row 91 scenario is
+  renumbered SC-UKV-729 here; it has no test, only the heading moves.
+- Matched characters are drawn semibold, and semibold glyphs are wider. In the narrow half of the
+  showcase a label that fit on one line wraps once the highlight is on. The colour and the weight
+  are properties: a caller who wants no width change sets the regular weight.
+- Main took SC-UKV-727 for the dense toolbar in RT-2642, the number row 92 held here. The row 92
+  scenario is renumbered SC-UKV-734 with its test titles. The assignments row of the copy stays as
+  main has it, RT-2591: the merge must not rewrite a neighbour's assignment.
+- The popup styles grew to 9.05 kB, past the 8 kB budget for one component style in the production
+  builds of three applications. The row and option rules moved to a second style file of the
+  popup; the main one builds at 6.77 kB. No rule changed, and the Popup frame stays the reference.
