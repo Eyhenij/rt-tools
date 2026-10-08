@@ -38,13 +38,24 @@ the signal changes.
 ## The admin screens
 
 ```ts
-import { cmsRoutes, mediaRoutes } from '@rt-tools/cms-angular/admin';
-
 export const routes: Routes = [
-    { path: 'content', children: cmsRoutes, canActivate: [contentGuard] },
-    { path: 'media', children: mediaRoutes, canActivate: [mediaGuard] },
+    {
+        path: 'content',
+        canActivate: [contentGuard],
+        loadChildren: async () => (await import('@rt-tools/cms-angular/admin')).cmsRoutes,
+    },
+    {
+        path: 'media',
+        canActivate: [mediaGuard],
+        loadChildren: async () => (await import('@rt-tools/cms-angular/admin')).mediaRoutes,
+    },
 ];
 ```
+
+The routes are mounted by `loadChildren`, not by `children`. The admin entry is packed into one
+file, and the screens inside it do not load apart: a static import of `cmsRoutes` puts the whole
+entry, the block editor included, into the initial bundle of the application. Loaded by
+`loadChildren`, the entry leaves for a chunk of its own and loads on the first visit to the section.
 
 The routes are flat under the mount point: content types, type settings, the pages of a type, the
 page edit, tags and redirects. The redirect panel opens in the `ro` side outlet. The menu and the
