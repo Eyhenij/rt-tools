@@ -118,3 +118,7 @@ closing:
   on top of the gap, so a fourth property sets it, and the distance from icon to text is their sum.
   Under the invitation an empty list is no longer drawn: its node of zero height pushed the invitation
   down by the field's gap. That moves the invitation 8px up for every caller, as the defect fix it is.
+- Rows 108 and 109 came from the application's session: a divider between the row buttons, zero wide
+  by default, and the paddings of the drag handle with the gap to the title. Along the way the
+  defaults of row 106 turned out not to reach a dragged row: it lives at the end of the page, outside
+  the list. All the list defaults are declared by one mixin on the list and on the dragged row.

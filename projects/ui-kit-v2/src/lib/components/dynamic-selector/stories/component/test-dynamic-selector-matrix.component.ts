@@ -460,6 +460,15 @@ export class TestRtDynamicSelectorMatrixComponent {
     public readonly themeControl: FormControl<number[] | null> = chosen([1, 2]);
     public readonly presetsControl: FormControl<number[] | null> = chosen([1, 2]);
     public readonly templatesControl: FormControl<number[] | null> = chosen([4, 5]);
+    public readonly templatesTunedControl: FormControl<number[] | null> = chosen([4, 5]);
+    public readonly templatesCases: readonly string[] = ['свои кнопки и название', 'свои отступы ручки и разделитель кнопок'];
+    /** Свойства строки на поле: отступы ручки, зазор до названия и разделитель между кнопками. */
+    public readonly tunedRowStyle: Readonly<Record<string, string>> = {
+        '--rt-dynamic-selector-list-handle-padding-start': 'var(--rt-space-1)',
+        '--rt-dynamic-selector-list-handle-padding-end': 'var(--rt-space-1)',
+        '--rt-dynamic-selector-list-title-gap': 'calc(var(--rt-space-sm) + var(--rt-space-xs))',
+        '--rt-dynamic-selector-list-controls-divider-width': 'var(--rt-border-width-thin)',
+    };
 
     /** Подпись случая: у всех наборов этой матрицы имя лежит в одном поле. */
     public readonly caseLabel: (value: { readonly name: string }) => string = (value: { readonly name: string }): string => value.name;

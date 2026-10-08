@@ -93,41 +93,46 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 его свойства доходят с любого предка — с панели оверлея, со своего контейнера, с корня страницы:
 на самом окне стоят только умолчания с приставкой `-default`. Ширина, наибольшая высота, скругление,
 толщина рамки и тень окна — `--rt-dynamic-selector-popup-width`, `-max-height`, `-radius`,
-`-border-width`, `-shadow` — читаются так же. Цвет «Добавить» и четыре зазора списка тоже доходят с
-любого предка. Остальные свойства списка задаются правилом на `.rt-dynamic-selector-list`. При заданной `--rt-dynamic-selector-popup-min-height` тело
+`-border-width`, `-shadow` — читаются так же. Цвет «Добавить», зазоры, отступы ручки и разделитель кнопок
+списка тоже доходят с любого предка. Остальные свойства списка задаются правилом на `.rt-dynamic-selector-list`. При заданной `--rt-dynamic-selector-popup-min-height` тело
 окна — список, загрузка или пустой результат — занимает всю оставшуюся высоту, и футер стоит у низа.
 
-| свойство                                         | что задаёт                                      | умолчание                                                       |
-| ------------------------------------------------ | ----------------------------------------------- | --------------------------------------------------------------- |
-| `--rt-dynamic-selector-popup-bg`                 | фон окна                                        | `--rt-color-bg-surface`                                         |
-| `--rt-dynamic-selector-popup-min-height`         | наименьшая высота окна                          | `0`                                                             |
-| `--rt-dynamic-selector-popup-padding`            | отступы окна от края до содержимого             | `--rt-space-md`                                                 |
-| `--rt-dynamic-selector-popup-foot-border-width`  | толщина черты над кнопками                      | толщина рамки окна                                              |
-| `--rt-dynamic-selector-popup-nav-color`          | цвет ссылки в подвале                           | `--rt-color-text-link`                                          |
-| `--rt-dynamic-selector-popup-button-height`      | высота кнопок «Отмена» и «Применить»            | `--rt-control-height-md`                                        |
-| `--rt-dynamic-selector-popup-button-font-size`   | кегль этих кнопок                               | `0.95rem`, как у кнопки кита                                    |
-| `--rt-dynamic-selector-popup-empty-icon-size`    | значок «ничего не нашлось»                      | `--rt-size-8`                                                   |
-| `--rt-dynamic-selector-popup-empty-icon-wrap-bg` | круг под этим значком                           | `--rt-color-bg-subtle`                                          |
-| `--rt-dynamic-selector-popup-empty-text-size`    | кегль подписи «ничего не нашлось»               | `--rt-text-md`                                                  |
-| `--rt-dynamic-selector-popup-empty-text-weight`  | её начертание                                   | `--rt-font-weight-medium`                                       |
-| `--rt-dynamic-selector-popup-empty-text-color`   | её цвет                                         | `--rt-color-text-primary`                                       |
-| `--rt-dynamic-selector-popup-highlight-color`    | цвет символов, совпавших с поиском              | `--rt-color-text-primary`                                       |
-| `--rt-dynamic-selector-popup-highlight-weight`   | их начертание                                   | `--rt-font-weight-semibold`                                     |
-| `--rt-dynamic-selector-popup-highlight-bg`       | фон под ними                                    | `transparent`                                                   |
-| `--rt-dynamic-selector-popup-highlight-radius`   | скругление этого фона                           | `0`                                                             |
-| `--rt-dynamic-selector-popup-option-line-height` | высота строки подписи пункта                    | `normal`                                                        |
-| `--rt-dynamic-selector-popup-option-min-height`  | наименьшая высота пункта с отступами            | `0`                                                             |
-| `--rt-dynamic-selector-popup-empty-gap`          | зазор от круга значка до подписи                | `--rt-space-xs` + `--rt-space-sm`                               |
-| `--rt-dynamic-selector-popup-foot-padding`       | отступ низа окна                                | `--rt-space-sm` отступ окна `0`                                 |
-| `--rt-dynamic-selector-list-row-padding-x`       | отступ строки слева, до ручки и подписи         | `--rt-space-sm`                                                 |
-| `--rt-dynamic-selector-list-add-font-weight`     | начертание кнопки «Добавить»                    | `--rt-font-weight-medium`                                       |
-| `--rt-dynamic-selector-list-add-indent`          | отступ кнопки «Добавить» слева                  | `0`                                                             |
-| `--rt-dynamic-selector-list-reset-color`         | цвет значка «Сбросить»                          | `--rt-color-text-primary`                                       |
-| `--rt-dynamic-selector-list-add-color`           | цвет кнопки «Добавить» — ручка, на любом предке | цвет своей кнопки: у селектора вторичный, у поля строк основной |
-| `--rt-dynamic-selector-list-actions-gap`         | зазор между кнопками полосы действий            | `--rt-space-2xs`                                                |
-| `--rt-dynamic-selector-list-controls-gap`        | зазор между кнопками в строке                   | `--rt-space-2xs`                                                |
-| `--rt-dynamic-selector-list-row-padding-end`     | отступ строки справа                            | `--rt-space-2xs`                                                |
-| `--rt-dynamic-selector-list-actions-offset`      | расстояние от последней строки до полосы        | `--rt-space-2xs`                                                |
+| свойство                                            | что задаёт                                      | умолчание                                                       |
+| --------------------------------------------------- | ----------------------------------------------- | --------------------------------------------------------------- |
+| `--rt-dynamic-selector-popup-bg`                    | фон окна                                        | `--rt-color-bg-surface`                                         |
+| `--rt-dynamic-selector-popup-min-height`            | наименьшая высота окна                          | `0`                                                             |
+| `--rt-dynamic-selector-popup-padding`               | отступы окна от края до содержимого             | `--rt-space-md`                                                 |
+| `--rt-dynamic-selector-popup-foot-border-width`     | толщина черты над кнопками                      | толщина рамки окна                                              |
+| `--rt-dynamic-selector-popup-nav-color`             | цвет ссылки в подвале                           | `--rt-color-text-link`                                          |
+| `--rt-dynamic-selector-popup-button-height`         | высота кнопок «Отмена» и «Применить»            | `--rt-control-height-md`                                        |
+| `--rt-dynamic-selector-popup-button-font-size`      | кегль этих кнопок                               | `0.95rem`, как у кнопки кита                                    |
+| `--rt-dynamic-selector-popup-empty-icon-size`       | значок «ничего не нашлось»                      | `--rt-size-8`                                                   |
+| `--rt-dynamic-selector-popup-empty-icon-wrap-bg`    | круг под этим значком                           | `--rt-color-bg-subtle`                                          |
+| `--rt-dynamic-selector-popup-empty-text-size`       | кегль подписи «ничего не нашлось»               | `--rt-text-md`                                                  |
+| `--rt-dynamic-selector-popup-empty-text-weight`     | её начертание                                   | `--rt-font-weight-medium`                                       |
+| `--rt-dynamic-selector-popup-empty-text-color`      | её цвет                                         | `--rt-color-text-primary`                                       |
+| `--rt-dynamic-selector-popup-highlight-color`       | цвет символов, совпавших с поиском              | `--rt-color-text-primary`                                       |
+| `--rt-dynamic-selector-popup-highlight-weight`      | их начертание                                   | `--rt-font-weight-semibold`                                     |
+| `--rt-dynamic-selector-popup-highlight-bg`          | фон под ними                                    | `transparent`                                                   |
+| `--rt-dynamic-selector-popup-highlight-radius`      | скругление этого фона                           | `0`                                                             |
+| `--rt-dynamic-selector-popup-option-line-height`    | высота строки подписи пункта                    | `normal`                                                        |
+| `--rt-dynamic-selector-popup-option-min-height`     | наименьшая высота пункта с отступами            | `0`                                                             |
+| `--rt-dynamic-selector-popup-empty-gap`             | зазор от круга значка до подписи                | `--rt-space-xs` + `--rt-space-sm`                               |
+| `--rt-dynamic-selector-popup-foot-padding`          | отступ низа окна                                | `--rt-space-sm` отступ окна `0`                                 |
+| `--rt-dynamic-selector-list-row-padding-x`          | отступ строки слева, до ручки и подписи         | `--rt-space-sm`                                                 |
+| `--rt-dynamic-selector-list-add-font-weight`        | начертание кнопки «Добавить»                    | `--rt-font-weight-medium`                                       |
+| `--rt-dynamic-selector-list-add-indent`             | отступ кнопки «Добавить» слева                  | `0`                                                             |
+| `--rt-dynamic-selector-list-reset-color`            | цвет значка «Сбросить»                          | `--rt-color-text-primary`                                       |
+| `--rt-dynamic-selector-list-add-color`              | цвет кнопки «Добавить» — ручка, на любом предке | цвет своей кнопки: у селектора вторичный, у поля строк основной |
+| `--rt-dynamic-selector-list-actions-gap`            | зазор между кнопками полосы действий            | `--rt-space-2xs`                                                |
+| `--rt-dynamic-selector-list-controls-gap`           | зазор между кнопками в строке                   | `--rt-space-2xs`                                                |
+| `--rt-dynamic-selector-list-row-padding-end`        | отступ строки справа                            | `--rt-space-2xs`                                                |
+| `--rt-dynamic-selector-list-actions-offset`         | расстояние от последней строки до полосы        | `--rt-space-2xs`                                                |
+| `--rt-dynamic-selector-list-controls-divider-width` | разделитель между кнопками строки               | `0` — разделителя нет                                           |
+| `--rt-dynamic-selector-list-controls-divider-color` | его цвет                                        | `--rt-color-border-default`                                     |
+| `--rt-dynamic-selector-list-handle-padding-start`   | отступ ручки слева                              | `0`                                                             |
+| `--rt-dynamic-selector-list-handle-padding-end`     | отступ ручки справа, до её разделителя          | `--rt-space-2xs`                                                |
+| `--rt-dynamic-selector-list-title-gap`              | зазор от разделителя ручки до названия          | `--rt-space-sm`                                                 |
 
 ## Входы
 

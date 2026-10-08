@@ -628,8 +628,13 @@ export type TRtConsumerHandleName =
     | '--rt-dynamic-selector-list-actions-gap'
     | '--rt-dynamic-selector-list-actions-offset'
     | '--rt-dynamic-selector-list-add-color'
+    | '--rt-dynamic-selector-list-controls-divider-color'
+    | '--rt-dynamic-selector-list-controls-divider-width'
     | '--rt-dynamic-selector-list-controls-gap'
+    | '--rt-dynamic-selector-list-handle-padding-end'
+    | '--rt-dynamic-selector-list-handle-padding-start'
     | '--rt-dynamic-selector-list-row-padding-end'
+    | '--rt-dynamic-selector-list-title-gap'
     | '--rt-dynamic-selector-popup-bg'
     | '--rt-dynamic-selector-popup-border-width'
     | '--rt-dynamic-selector-popup-button-font-size'
@@ -1344,8 +1349,13 @@ export const RT_CONSUMER_HANDLE_NAMES: readonly TRtConsumerHandleName[] = [
     '--rt-dynamic-selector-list-actions-gap',
     '--rt-dynamic-selector-list-actions-offset',
     '--rt-dynamic-selector-list-add-color',
+    '--rt-dynamic-selector-list-controls-divider-color',
+    '--rt-dynamic-selector-list-controls-divider-width',
     '--rt-dynamic-selector-list-controls-gap',
+    '--rt-dynamic-selector-list-handle-padding-end',
+    '--rt-dynamic-selector-list-handle-padding-start',
     '--rt-dynamic-selector-list-row-padding-end',
+    '--rt-dynamic-selector-list-title-gap',
     '--rt-dynamic-selector-popup-bg',
     '--rt-dynamic-selector-popup-border-width',
     '--rt-dynamic-selector-popup-button-font-size',

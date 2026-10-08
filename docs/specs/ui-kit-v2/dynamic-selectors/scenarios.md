@@ -423,3 +423,17 @@ Then the invitation stands with no list node above it, and once a row is chosen 
 above the invitation
 
 Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/rt-dynamic-selector-look.spec.ts`.
+
+### SC-UKV-769 — the caller sets the handle paddings, the title gap and the divider between row buttons
+
+Given a draggable selector with buttons of its own in a row, whose ancestor sets the handle paddings,
+the gap to the title and the width of the divider between the row buttons
+When the list shows its rows
+Then the handle, the title and the buttons take those values, the divider stands after every button
+but the last, and without the properties the row is drawn as before
+
+Not covered: a test has no layout. Measured on the showcase in the stories **Row templates** and
+**Rows**: without the properties the handle paddings are 0 and 2px, the title stands 8px after the
+handle and 51px from the row edge, and no button has a divider; with 4px paddings, a 12px gap and a
+thin divider the title stands 61px from the row edge and the first of two buttons carries a 1px
+divider.
