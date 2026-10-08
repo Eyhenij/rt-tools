@@ -8,14 +8,15 @@ export interface IListWindow {
     readonly take: number;
 }
 
-export const DEFAULT_PAGE_SIZE: number = 20;
+/** The page size when the call names none. */
+export const LIST_WINDOW_SIZE: number = 20;
 
 /** A page is never larger than this: a list asked for a million rows would hold the storage. */
 export const MAX_PAGE_SIZE: number = 100;
 
 /** The rows of a list page; a missing or wrong page number and size fall back to the first page of the default size. */
 export function listWindow(page: number, pageSize: number): IListWindow {
-    const size: number = pageSize > 0 ? Math.min(Math.trunc(pageSize), MAX_PAGE_SIZE) : DEFAULT_PAGE_SIZE;
+    const size: number = pageSize > 0 ? Math.min(Math.trunc(pageSize), MAX_PAGE_SIZE) : LIST_WINDOW_SIZE;
     const number: number = page > 0 ? Math.trunc(page) : 1;
 
     return { skip: (number - 1) * size, take: size };

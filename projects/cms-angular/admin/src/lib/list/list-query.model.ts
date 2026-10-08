@@ -10,6 +10,12 @@ export interface IListQuery {
     readonly search: string;
 }
 
+/** The names of the selection parameters in the address. */
+export enum EListQueryParam {
+    Page = 'page',
+    Search = 'search',
+}
+
 /** The address as the selection sees it: parameters come as strings, and what is absent does not come at all. */
 export interface IListQueryParams {
     readonly [key: string]: string | undefined;
