@@ -34,6 +34,8 @@
         --rt-dynamic-selector-popup-empty-text-color-default: var(--rt-color-text-primary);
         --rt-dynamic-selector-popup-highlight-color-default: var(--rt-color-text-primary);
         --rt-dynamic-selector-popup-highlight-weight-default: var(--rt-font-weight-semibold);
+        --rt-dynamic-selector-popup-highlight-bg-default: transparent;
+        --rt-dynamic-selector-popup-highlight-radius-default: 0;
 
         /* Пункт по умолчанию держит высоту строки браузера и высоту своего содержимого. */
         --rt-dynamic-selector-popup-option-line-height-default: normal;

@@ -83,6 +83,8 @@ interface IPopupCase {
     readonly applyLabel?: string;
     /** Регистр подписи кнопки применения; не задан — как есть. */
     readonly applyLabelCase?: IRtDynamicSelector.LabelCase;
+    /** Свойства окна на нём самом; не заданы — умолчания кита. */
+    readonly popupStyle?: Readonly<Record<string, string>>;
 }
 
 /** Случай поля строк. */
@@ -354,6 +356,21 @@ export class TestRtDynamicSelectorMatrixComponent {
             titleWrap: false,
             searchTerm: 'ск',
             highlightSearch: true,
+        },
+        {
+            name: 'подсветка поиска фоном со скруглением',
+            entities: this.longPeople,
+            mode: 'multi',
+            multiToggleShown: false,
+            loading: false,
+            pinnedKeys: [],
+            searchTerm: 'ск',
+            highlightSearch: true,
+            popupStyle: {
+                '--rt-dynamic-selector-popup-highlight-bg': 'var(--rt-color-state-warning-bg)',
+                '--rt-dynamic-selector-popup-highlight-color': 'var(--rt-color-state-warning-text)',
+                '--rt-dynamic-selector-popup-highlight-radius': 'var(--rt-radius-xs)',
+            },
         },
         {
             name: 'своя подпись кнопки, каждое слово с заглавной',

@@ -102,3 +102,6 @@ closing:
   divider at once, under the pointer. As in the first kit, the ticks move above only when the query
   changes; a row ticked during the search stays where it is until then. This changes the order of
   rows during a search for every caller, with no input, because the jump was a defect.
+- Row 104 came from the application's session: the matched characters of the search highlight get a
+  background and its rounding as properties, transparent and square by default. The application
+  paints them like the match in its own tree; the kit names no colour of the application.

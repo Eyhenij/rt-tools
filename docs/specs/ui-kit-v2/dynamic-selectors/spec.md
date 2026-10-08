@@ -173,7 +173,8 @@ stands next to it as components of its own, drawn on the parts of the second kit
   hears the screen.
 - **The popup marks the characters of an option label that match the search when the caller turns
   it on.** Each word of the search is found in the label regardless of case, and the found characters
-  take the highlight colour and weight; the label still reads whole and keeps its ellipsis. Without
+  take the highlight colour, weight, background and background rounding; the background is
+  transparent unless the caller sets it. The label still reads whole and keeps its ellipsis. Without
   the input no character is marked.
 - **The field of a new row shows the caller's label, and without one it stands as before.** The label
   is drawn by the kit field around the field and leads to it; the field has no label input of its

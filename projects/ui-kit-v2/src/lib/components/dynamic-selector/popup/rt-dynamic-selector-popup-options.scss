@@ -77,9 +77,11 @@
             user-select: none;
         }
 
-        // Совпавшие с поиском символы: фон метки браузера снят, цвет и насыщенность — свойства окна.
+        // Совпавшие с поиском символы: фон метки браузера заменён свойством окна, как и скругление,
+        // цвет и насыщенность.
         &__match {
-            background: transparent;
+            border-radius: var(--rt-dynamic-selector-popup-highlight-radius, var(--rt-dynamic-selector-popup-highlight-radius-default));
+            background: var(--rt-dynamic-selector-popup-highlight-bg, var(--rt-dynamic-selector-popup-highlight-bg-default));
             color: var(--rt-dynamic-selector-popup-highlight-color, var(--rt-dynamic-selector-popup-highlight-color-default));
             font-weight: var(--rt-dynamic-selector-popup-highlight-weight, var(--rt-dynamic-selector-popup-highlight-weight-default));
         }

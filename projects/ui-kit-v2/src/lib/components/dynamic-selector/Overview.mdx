@@ -113,6 +113,8 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | `--rt-dynamic-selector-popup-empty-text-color`   | её цвет                                         | `--rt-color-text-primary`                                       |
 | `--rt-dynamic-selector-popup-highlight-color`    | цвет символов, совпавших с поиском              | `--rt-color-text-primary`                                       |
 | `--rt-dynamic-selector-popup-highlight-weight`   | их начертание                                   | `--rt-font-weight-semibold`                                     |
+| `--rt-dynamic-selector-popup-highlight-bg`       | фон под ними                                    | `transparent`                                                   |
+| `--rt-dynamic-selector-popup-highlight-radius`   | скругление этого фона                           | `0`                                                             |
 | `--rt-dynamic-selector-popup-option-line-height` | высота строки подписи пункта                    | `normal`                                                        |
 | `--rt-dynamic-selector-popup-option-min-height`  | наименьшая высота пункта с отступами            | `0`                                                             |
 | `--rt-dynamic-selector-popup-empty-gap`          | зазор от круга значка до подписи                | `--rt-space-xs` + `--rt-space-sm`                               |
@@ -218,9 +220,10 @@ provideRtKit({
 `titleWrap="false"` ведёт название строки и подпись пункта окна одной строкой: длинное режется
 многоточием, а подсказка показывает его целиком. По умолчанию названия переносятся.
 
-`highlightSearch` выделяет в подписи пункта окна символы, совпавшие со словами поиска, цветом и
-начертанием из `--rt-dynamic-selector-popup-highlight-*`. Подпись читается целиком и при подписи
-одной строкой сохраняет многоточие. По умолчанию ничего не выделено.
+`highlightSearch` выделяет в подписи пункта окна символы, совпавшие со словами поиска, цветом,
+начертанием, фоном и скруглением фона из `--rt-dynamic-selector-popup-highlight-*`. Фон по
+умолчанию прозрачный. Подпись читается целиком и при подписи одной строкой сохраняет многоточие.
+По умолчанию ничего не выделено.
 
 `applyLabel` заменяет подпись кнопки применения, а `applyLabelCase` задаёт её регистр: `none`
 оставляет как есть, `title` ставит заглавную в начало каждого слова, `upper` пишет всё заглавными.
