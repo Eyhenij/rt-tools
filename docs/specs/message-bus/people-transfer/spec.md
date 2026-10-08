@@ -48,6 +48,9 @@ Not applicable: the transfer is a command, it has no screen.
   from the key map, and the old key is replaced by it in one transaction.
 - **A person the realm does not know refuses the rewrite whole.** A half-rewritten column leaves
   some operators without their sites, and nothing says which ones.
+- **The report of the rewrite counts the rows the database changed.** A run that changed no row is
+  named so, not reported as success: from the output alone one tells a done rewrite from an empty
+  one.
 
 ## What is out of scope
 

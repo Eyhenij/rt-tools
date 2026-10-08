@@ -19,7 +19,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
 
-import { busRights, rekeySql, transferOf } from './bus-people-transfer.lib.mjs';
+import { busRights, rekeyReport, rekeySql, transferOf } from './bus-people-transfer.lib.mjs';
 
 const DIR = join(homedir(), '.config', 'rt-bus-transfer');
 const ADDRESSES = join(DIR, 'addresses.json');
@@ -137,8 +137,9 @@ async function runRekey(args) {
         console.log('nothing is changed: add --apply to run it in production');
         return;
     }
-    console.log(psql(statement).trim());
-    console.log(`the operators of ${keys.length} people now name their Keycloak keys`);
+    const answer = psql(statement).trim();
+    console.log(answer);
+    console.log(rekeyReport(answer, keys.length));
 }
 
 async function main() {

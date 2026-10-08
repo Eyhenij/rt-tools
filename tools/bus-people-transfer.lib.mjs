@@ -110,3 +110,15 @@ export function rekeySql(keys, found) {
     );
     return ['BEGIN;', ...updates, 'COMMIT;'].join('\n');
 }
+
+/**
+ * The report of the rewrite, read from what `psql` answered: the sum of the `UPDATE n` lines. Zero
+ * rows is no error — a repeated run changes nothing — but it is named, not reported as success.
+ */
+export function rekeyReport(answer, people) {
+    const rows = [...String(answer).matchAll(/^UPDATE (\d+)$/gm)].reduce((sum, [, count]) => sum + Number(count), 0);
+    if (rows === 0) {
+        return `nothing is rewritten: no operator carried the old key of any of ${people} people — they already name their Keycloak keys, or the column holds other keys`;
+    }
+    return `${rows} operators of ${people} people now name their Keycloak keys`;
+}

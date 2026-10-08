@@ -11,3 +11,4 @@ or the code holds what the spec is silent about.
 - **The export writes no password.** — `tools/bus-people-transfer.lib.mjs:transferOf` — a record carries the address and the roles only
 - **The operator column gets the Keycloak key of the same person.** — `tools/bus-people-transfer.lib.mjs:rekeySql`
 - **A person the realm does not know refuses the rewrite whole.** — `tools/bus-people-transfer.lib.mjs:rekeySql`
+- **The report of the rewrite counts the rows the database changed.** — `tools/bus-people-transfer.lib.mjs:rekeyReport`
