@@ -394,7 +394,7 @@ Not covered: a test has no layout. Measured on the showcase in the story **Popup
 properties the matched characters have the background `rgba(0, 0, 0, 0)` and the rounding `0px`; with
 the warning background and the `xs` step they have `rgb(255, 251, 235)` and `2px`.
 
-### SC-UKV-762 — the label of a record comes from the caller's function
+### SC-UKV-771 — the label of a record comes from the caller's function
 
 Given a selector whose caller gives a function that splits «BasicReports» into «Basic Reports»
 When the list, the popup and the search show the records
@@ -404,7 +404,7 @@ finds «User Admin»; without the function the labels stay as the field holds th
 Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/rt-dynamic-selector-display-with.spec.ts`.
 Покрытие: частичное — the test reads the label text in the markup; the drawn labels are looked at on the showcase in the story **Look**, in the case where the surname stands first.
 
-### SC-UKV-763 — the caller sets the gaps of the list
+### SC-UKV-772 — the caller sets the gaps of the list
 
 Given a selector whose ancestor sets the action bar gap, the row buttons gap, the row end padding or
 the action bar offset

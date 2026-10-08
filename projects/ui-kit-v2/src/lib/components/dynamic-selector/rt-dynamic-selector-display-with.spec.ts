@@ -78,7 +78,7 @@ function search(fixture: ComponentFixture<HostComponent>, text: string): void {
 }
 
 describe('RtDynamicSelectorComponent — displayWith', (): void => {
-    it('SC-UKV-762 — подпись строки, подпись пункта окна и поиск берут строку из displayWith', async (): Promise<void> => {
+    it('SC-UKV-771 — подпись строки, подпись пункта окна и поиск берут строку из displayWith', async (): Promise<void> => {
         const fixture: ComponentFixture<HostComponent> = host(spaced);
 
         expect(
@@ -94,7 +94,7 @@ describe('RtDynamicSelectorComponent — displayWith', (): void => {
         expect(optionLabels()).toEqual(['User Admin']);
     });
 
-    it('SC-UKV-762 — без displayWith подпись берётся из поля displayExp, как раньше', async (): Promise<void> => {
+    it('SC-UKV-771 — без displayWith подпись берётся из поля displayExp, как раньше', async (): Promise<void> => {
         const fixture: ComponentFixture<HostComponent> = host(null);
 
         expect(
