@@ -14,7 +14,7 @@ import {
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
-import { TRtKitLabelParams } from '@rt-tools/ui-kit-v2/core';
+import { IRtIcon, TRtKitLabelParams } from '@rt-tools/ui-kit-v2/core';
 import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
 import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { RtMenuItemComponent } from '@rt-tools/ui-kit-v2/menu';
@@ -89,12 +89,14 @@ export class RtActionBarComponent {
     protected readonly actions: Signal<readonly IActionView[]> = computed((): readonly IActionView[] =>
         this.config().actions.map((action: IRtActionBar.Action): IActionView => ({
             action,
-            modifiers: { danger: action.look === 'danger', withIcon: !!action.icon },
-            ariaLabel: action.icon ? action.label : null,
+            modifiers: { danger: action.look === 'danger', withIcon: !!(action.icon || action.glyph) },
+            ariaLabel: action.icon || action.glyph ? action.label : null,
         }))
     );
 
     public readonly config: InputSignal<IRtActionBar.Config> = input.required<IRtActionBar.Config>();
+    /** Значок кнопки, закрывающей полосу. */
+    public readonly closeIcon: InputSignal<IRtIcon.Name> = input<IRtIcon.Name>('close');
 
     public readonly actionRun: OutputEmitterRef<IRtActionBar.Action> = output<IRtActionBar.Action>();
 

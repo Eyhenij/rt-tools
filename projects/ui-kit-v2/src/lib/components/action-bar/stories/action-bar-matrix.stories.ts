@@ -28,7 +28,7 @@ export const Actions: TStory = { args: { part: 'actions' } };
 /** Ряд действий, не влезший в место: полоса обещает перенос, и виден он только здесь. */
 export const Wrap: TStory = { args: { part: 'wrap' } };
 
-/** Цвета, отступы, кегль и начертания — свойствами с тега полосы, SC-UKV-576. */
+/** Цвета, отступы, кегль и начертания — свойствами с тега полосы, SC-UKV-576; с предка и новые — RT-2619. */
 export const Properties: TStory = { args: { part: 'properties' } };
 
 /**

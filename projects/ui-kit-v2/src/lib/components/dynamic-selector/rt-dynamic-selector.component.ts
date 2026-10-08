@@ -19,6 +19,7 @@ import {
     ViewEncapsulation,
     WritableSignal,
 } from '@angular/core';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
@@ -26,7 +27,7 @@ import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
 import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
 import { RtEmptyStateComponent } from '@rt-tools/ui-kit-v2/empty-state';
 import { RtFormControlBase } from '@rt-tools/ui-kit-v2/form-control';
-import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
+import { IButton, IRtIcon, IRtInput, IRtKitConfig, rtKitDefault } from '@rt-tools/ui-kit-v2/core';
 import { RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
 import { TRtRadius } from '@rt-tools/ui-kit-v2/core';
 import { RtDynamicSelectorListComponent } from './list/rt-dynamic-selector-list.component';
@@ -78,6 +79,37 @@ const BEM_BLOCK: string = 'rt-dynamic-selector';
 export class RtDynamicSelectorComponent<TEntity extends object> extends RtFormControlBase<unknown[]> {
     /** Последнее значение, записанное формой: к нему возвращает сброс. */
     readonly #initial: WritableSignal<unknown[]> = signal<unknown[]>([]);
+    /* Умолчания входов считаются из настроек кита при объявлении: вход в разметке перебивает их. */
+    readonly #invitationButtonIconDefault: IRtIcon.Name | null = rtKitDefault(
+        'dynamicSelector',
+        (it: IRtKitConfig.DynamicSelector): IRtIcon.Name | null | undefined => it.invitationButtonIcon,
+        null
+    );
+    readonly #invitationButtonAppearanceDefault: IButton.Appearance = rtKitDefault(
+        'dynamicSelector',
+        (it: IRtKitConfig.DynamicSelector): IButton.Appearance | undefined => it.invitationButtonAppearance,
+        'outlined'
+    );
+    readonly #clearIconDefault: IRtIcon.Name = rtKitDefault(
+        'dynamicSelector',
+        (it: IRtKitConfig.DynamicSelector): IRtIcon.Name | undefined => it.clearIcon,
+        'close'
+    );
+    readonly #titleWrapDefault: boolean = rtKitDefault(
+        'dynamicSelector',
+        (it: IRtKitConfig.DynamicSelector): boolean | undefined => it.titleWrap,
+        true
+    );
+    readonly #searchAppearanceDefault: IRtInput.Appearance = rtKitDefault(
+        'dynamicSelector',
+        (it: IRtKitConfig.DynamicSelector): IRtInput.Appearance | undefined => it.searchAppearance,
+        'outline'
+    );
+    readonly #emptyResultsTextDefault: string = rtKitDefault(
+        'dynamicSelector',
+        (it: IRtKitConfig.DynamicSelector): string | undefined => it.emptyResultsText,
+        ''
+    );
 
     protected readonly addLabel: Signal<string> = rtKitLabel('dynamicSelectorAdd');
     protected readonly nothingToChooseLabel: Signal<string> = rtKitLabel('dynamicSelectorNothingToChoose');
@@ -174,7 +206,25 @@ export class RtDynamicSelectorComponent<TEntity extends object> extends RtFormCo
         transform: booleanAttribute,
     });
     public readonly invitationIcon: InputSignal<IRtIcon.Name | null> = input<IRtIcon.Name | null>(null);
+    /** Имя Material вместо `invitationIcon` — уходит во вход `glyph` заглушки приглашения. */
+    public readonly invitationGlyph: InputSignal<string | null> = input<string | null>(null);
     public readonly invitationDescription: InputSignal<string> = input<string>('');
+    /** Значок кнопки приглашения; null — кнопка без значка. */
+    public readonly invitationButtonIcon: InputSignal<IRtIcon.Name | null> = input<IRtIcon.Name | null>(this.#invitationButtonIconDefault);
+    /** Вид кнопки приглашения — тот же набор, что у кнопки кита. */
+    public readonly invitationButtonAppearance: InputSignal<IButton.Appearance> = input<IButton.Appearance>(
+        this.#invitationButtonAppearanceDefault
+    );
+    /** Значок кнопки «Очистить список». */
+    public readonly clearIcon: InputSignal<IRtIcon.Name> = input<IRtIcon.Name>(this.#clearIconDefault);
+    /** Название строки переносится; `false` ведёт его одной строкой с многоточием и подсказкой при обрезке. */
+    public readonly titleWrap: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(this.#titleWrapDefault, {
+        transform: booleanAttribute,
+    });
+    /** Вид поля поиска в окне выбора. */
+    public readonly searchAppearance: InputSignal<IRtInput.Appearance> = input<IRtInput.Appearance>(this.#searchAppearanceDefault);
+    /** Подпись пустого результата поиска; пустая строка оставляет подпись кита. */
+    public readonly emptyResultsText: InputSignal<string> = input<string>(this.#emptyResultsTextDefault);
     public readonly multiToggleShown: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
         transform: booleanAttribute,
     });
@@ -221,6 +271,14 @@ export class RtDynamicSelectorComponent<TEntity extends object> extends RtFormCo
             .map((row: IRtDynamicSelector.ListRow<TEntity>): string => row.label)
             .join(', ')
     );
+
+    constructor() {
+        super();
+        // Вход chosenEntities задаёт выбранное, как запись формы; эхо выбора, вернувшееся от родителя, его не трогает.
+        toObservable(this.chosenEntities)
+            .pipe(takeUntilDestroyed())
+            .subscribe((list: TEntity[]): void => this.#takeChosen(list));
+    }
 
     /** Записанное формой становится и списком, и значением для сброса; пустой массив список опустошает. */
     public override writeValue(value: unknown[] | null): void {
@@ -314,9 +372,28 @@ export class RtDynamicSelectorComponent<TEntity extends object> extends RtFormCo
         this.selectionChange.emit(entities);
     }
 
+    /**
+     * Непустой список с другими ключами становится и значением, и исходным для сброса. Список с теми
+     * же ключами — эхо `selectionChange` от родителя: исходный он не трогает, иначе сброс не включился бы.
+     */
+    #takeChosen(list: ReadonlyArray<TEntity>): void {
+        const keys: unknown[] = list.map((item: TEntity): unknown => this.#keyOf(item));
+        const shown: unknown[] = this.#entitiesOf(this.value()).map((item: TEntity): unknown => this.#keyOf(item));
+
+        if (keys.length === 0 || sameDynamicKeys(keys, shown)) {
+            return;
+        }
+
+        this.value.set(keys);
+        this.#initial.set([...keys]);
+    }
+
+    /** Запись ищется среди предложенных, а затем среди пришедших входом `chosenEntities`. */
     #entitiesOf(keys: ReadonlyArray<unknown>): TEntity[] {
+        const known: ReadonlyArray<TEntity> = [...this.entities(), ...this.chosenEntities()];
+
         return keys
-            .map((key: unknown): TEntity | undefined => this.entities().find((item: TEntity): boolean => this.#keyOf(item) === key))
+            .map((key: unknown): TEntity | undefined => known.find((item: TEntity): boolean => this.#keyOf(item) === key))
             .filter((item: TEntity | undefined): item is TEntity => item !== undefined);
     }
 

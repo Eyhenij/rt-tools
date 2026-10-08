@@ -1,0 +1,39 @@
+<ng-container rtBlock="rt-ai-chat-answer">
+    @if (message().run; as run) {
+        <rt-ai-run-status
+            qa-dataid="ai-chat-run"
+            [state]="run.state"
+            [label]="run.label"
+            [meta]="run.meta ?? ''"
+            [steps]="run.steps ?? []"
+            [(expanded)]="expanded" />
+    }
+    @if (message().text) {
+        <rt-markdown-text rtElem="text" qa-dataid="ai-chat-answer-text" [text]="message().text" />
+    }
+    @if (extra(); as extraTemplate) {
+        <ng-container [ngTemplateOutlet]="extraTemplate" [ngTemplateOutletContext]="{ $implicit: message() }" />
+    }
+    @if (isRated()) {
+        <div rtElem="feedback" qa-dataid="ai-chat-feedback">
+            <rt-icon-button
+                qa-dataid="ai-chat-like"
+                size="sm"
+                iconSize="sm"
+                icon="thumb-up"
+                [active]="message().feedback === 'liked'"
+                [ariaLabel]="t().aiLike"
+                [tooltip]="t().aiLike"
+                (clicked)="feedbackChange.emit('liked')" />
+            <rt-icon-button
+                qa-dataid="ai-chat-dislike"
+                size="sm"
+                iconSize="sm"
+                icon="thumb-down"
+                [active]="message().feedback === 'disliked'"
+                [ariaLabel]="t().aiDislike"
+                [tooltip]="t().aiDislike"
+                (clicked)="feedbackChange.emit('disliked')" />
+        </div>
+    }
+</ng-container>

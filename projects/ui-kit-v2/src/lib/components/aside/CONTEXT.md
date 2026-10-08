@@ -35,6 +35,7 @@ ref.afterClosed().subscribe((result?: ITour): void => …);
 | `closeOnBackdropClick` / `closeOnEscape` | `true`; второе — из настроек кита         |
 | `backdropClass` / `panelClass`           | `rt-aside-backdrop` / `rt-aside-overlay`  |
 | `injector`                               | корневой — уничтожение хозяина закрывает  |
+| `disposeOnNavigation`                    | `true` — переход по адресу снимает        |
 
 ## Главное, что нужно знать
 

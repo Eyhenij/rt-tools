@@ -1,0 +1,419 @@
+syntax = "proto3";
+
+package rt.cms.v1;
+
+import "google/protobuf/timestamp.proto";
+import "rt/cms/v1/media.proto";
+
+// CMS: content types, pages, tags, redirects and media folders. Content belongs to the platform
+// rather than to an organisation: the site is one.
+
+// Editing content from the admin. Every procedure demands the right of its section.
+service CmsService {
+    rpc ListContentTypes(ListContentTypesRequest) returns (ListContentTypesResponse);
+    rpc GetContentType(GetContentTypeRequest) returns (GetContentTypeResponse);
+    rpc UpdateContentType(UpdateContentTypeRequest) returns (UpdateContentTypeResponse);
+
+    rpc ListContentItems(ListContentItemsRequest) returns (ListContentItemsResponse);
+    rpc GetContentItem(GetContentItemRequest) returns (GetContentItemResponse);
+    rpc CreateContentItem(CreateContentItemRequest) returns (CreateContentItemResponse);
+    rpc UpdateContentItem(UpdateContentItemRequest) returns (UpdateContentItemResponse);
+    rpc DeleteContentItem(DeleteContentItemRequest) returns (DeleteContentItemResponse);
+    rpc SetContentItemFeatured(SetContentItemFeaturedRequest) returns (SetContentItemFeaturedResponse);
+    rpc LockContentItem(LockContentItemRequest) returns (LockContentItemResponse);
+    rpc UnlockContentItem(UnlockContentItemRequest) returns (UnlockContentItemResponse);
+
+    rpc ListTags(ListTagsRequest) returns (ListTagsResponse);
+    rpc SaveTag(SaveTagRequest) returns (SaveTagResponse);
+    rpc DeleteTag(DeleteTagRequest) returns (DeleteTagResponse);
+
+    rpc ListRedirects(ListRedirectsRequest) returns (ListRedirectsResponse);
+    rpc SaveRedirect(SaveRedirectRequest) returns (SaveRedirectResponse);
+    rpc DeleteRedirect(DeleteRedirectRequest) returns (DeleteRedirectResponse);
+
+    rpc ListMediaFolders(ListMediaFoldersRequest) returns (ListMediaFoldersResponse);
+    rpc SaveMediaFolder(SaveMediaFolderRequest) returns (SaveMediaFolderResponse);
+    rpc DeleteMediaFolder(DeleteMediaFolderRequest) returns (DeleteMediaFolderResponse);
+}
+
+// The site's reading without sign-in. A draft and an archived page are not given, except a draft by
+// its preview token.
+service CmsPublicService {
+    rpc GetWebPage(GetWebPageRequest) returns (GetWebPageResponse);
+    rpc ListPublishedContentItems(ListPublishedContentItemsRequest) returns (ListPublishedContentItemsResponse);
+    rpc ListPublicRedirects(ListPublicRedirectsRequest) returns (ListPublicRedirectsResponse);
+    rpc ListPublicTags(ListPublicTagsRequest) returns (ListPublicTagsResponse);
+}
+
+enum ContentTypeCategory {
+    CONTENT_TYPE_CATEGORY_UNSPECIFIED = 0;
+    CONTENT_TYPE_CATEGORY_SYSTEM = 1;
+    CONTENT_TYPE_CATEGORY_CONTENT = 2;
+    CONTENT_TYPE_CATEGORY_MAIN_PAGES = 3;
+}
+
+// A draft does not reach the site, a published page is given by the public reading, an archived
+// one is taken off the site.
+enum ContentItemStatus {
+    CONTENT_ITEM_STATUS_UNSPECIFIED = 0;
+    CONTENT_ITEM_STATUS_DRAFT = 1;
+    CONTENT_ITEM_STATUS_PUBLISHED = 2;
+    CONTENT_ITEM_STATUS_ARCHIVED = 3;
+}
+
+enum RedirectType {
+    REDIRECT_TYPE_UNSPECIFIED = 0;
+    REDIRECT_TYPE_MOVED_PERMANENTLY = 1;
+    REDIRECT_TYPE_FOUND = 2;
+}
+
+// A content type. The edit form settings are a JSON string: only the form reads them, the contract
+// does not parse them.
+message ContentType {
+    string id = 1;
+    string name = 2;
+    string description = 3;
+    ContentTypeCategory category = 4;
+    string admin_slug = 5;
+    string layout_type = 6;
+    string settings = 7;
+    google.protobuf.Timestamp created_at = 8;
+    google.protobuf.Timestamp updated_at = 9;
+}
+
+// The SEO fields of a page and its preview token.
+message ContentItemMainFields {
+    string slug = 1;
+    string title = 2;
+    string description = 3;
+    string meta_title = 4;
+    string meta_description = 5;
+    string preview_token = 6;
+}
+
+// Who created and edited the page and who holds it open in the editor.
+message ContentItemState {
+    string created_by_id = 1;
+    string updated_by_id = 2;
+    google.protobuf.Timestamp created_at = 3;
+    google.protobuf.Timestamp updated_at = 4;
+    string locked_by_id = 5;
+    optional google.protobuf.Timestamp locked_at = 6;
+}
+
+message ContentItemConnection {
+    string content_type_id = 1;
+    string content_item_id = 2;
+    string content_type_name = 3;
+    string content_item_name = 4;
+}
+
+message ContentItemImage {
+    string id = 1;
+    MediaFile file = 2;
+    string caption = 3;
+    string alt_text = 4;
+    int32 order_index = 5;
+    repeated string labels = 6;
+}
+
+// A page. The body is an array of blocks `{id, type, content}` as one JSON string.
+message ContentItem {
+    string id = 1;
+    string content_type_id = 2;
+    string name = 3;
+    ContentItemStatus status = 4;
+    bool is_featured = 5;
+    optional google.protobuf.Timestamp to_be_published_at = 6;
+    optional google.protobuf.Timestamp published_at = 7;
+    optional MediaFile main_image = 8;
+    string link = 9;
+    string locale = 10;
+    ContentItemMainFields main_fields = 11;
+    ContentItemState state = 12;
+    repeated ContentItemConnection connections = 13;
+    repeated string tag_ids = 14;
+    repeated ContentItemImage images = 15;
+    string content_body = 16;
+}
+
+message Tag {
+    string id = 1;
+    string name = 2;
+    bool is_enabled = 3;
+    string parent_tag_id = 4;
+    repeated Tag tags = 5;
+}
+
+message Redirect {
+    string id = 1;
+    string from = 2;
+    string to = 3;
+    RedirectType type = 4;
+}
+
+message MediaFolder {
+    string id = 1;
+    string parent_id = 2;
+    string name = 3;
+}
+
+// A row of the page list: without the body, so that a list page does not pull the texts.
+message ContentItemSummary {
+    string id = 1;
+    string content_type_id = 2;
+    string name = 3;
+    ContentItemStatus status = 4;
+    bool is_featured = 5;
+    string locale = 6;
+    string slug = 7;
+    optional google.protobuf.Timestamp to_be_published_at = 8;
+    optional google.protobuf.Timestamp published_at = 9;
+    google.protobuf.Timestamp updated_at = 10;
+    string locked_by_id = 11;
+}
+
+// A page edit: everything the edit form sends whole. The published status sets the publication time
+// if there was none.
+message ContentItemDraft {
+    string name = 1;
+    ContentItemStatus status = 2;
+    bool is_featured = 3;
+    optional google.protobuf.Timestamp to_be_published_at = 4;
+    string main_image_id = 5;
+    string link = 6;
+    string locale = 7;
+    string slug = 8;
+    string title = 9;
+    string description = 10;
+    string meta_title = 11;
+    string meta_description = 12;
+    string content_body = 13;
+    repeated string tag_ids = 14;
+    repeated string connected_item_ids = 15;
+    repeated ContentItemImageDraft images = 16;
+}
+
+message ContentItemImageDraft {
+    string media_file_id = 1;
+    string caption = 2;
+    string alt_text = 3;
+    repeated string labels = 4;
+}
+
+message ListContentTypesRequest {}
+
+message ListContentTypesResponse {
+    repeated ContentType content_types = 1;
+}
+
+message GetContentTypeRequest {
+    string content_type_id = 1;
+}
+
+message GetContentTypeResponse {
+    ContentType content_type = 1;
+}
+
+// The description and the form settings are edited; the admin address and the category are set by
+// the application.
+message UpdateContentTypeRequest {
+    string content_type_id = 1;
+    string name = 2;
+    string description = 3;
+    string settings = 4;
+}
+
+message UpdateContentTypeResponse {
+    ContentType content_type = 1;
+}
+
+// The pages of one type: filtered by status, locale and a search by name and address; ordered by
+// edit time, newest first.
+message ListContentItemsRequest {
+    string content_type_id = 1;
+    uint32 page = 2;
+    uint32 page_size = 3;
+    string search = 4;
+    ContentItemStatus status = 5;
+    string locale = 6;
+}
+
+message ListContentItemsResponse {
+    repeated ContentItemSummary items = 1;
+    uint32 total = 2;
+}
+
+message GetContentItemRequest {
+    string content_item_id = 1;
+}
+
+message GetContentItemResponse {
+    ContentItem item = 1;
+}
+
+message CreateContentItemRequest {
+    string content_type_id = 1;
+    ContentItemDraft draft = 2;
+}
+
+message CreateContentItemResponse {
+    ContentItem item = 1;
+}
+
+// Saving refuses with `FailedPrecondition` if another person holds the page open.
+message UpdateContentItemRequest {
+    string content_item_id = 1;
+    ContentItemDraft draft = 2;
+}
+
+message UpdateContentItemResponse {
+    ContentItem item = 1;
+}
+
+message DeleteContentItemRequest {
+    string content_item_id = 1;
+}
+
+message DeleteContentItemResponse {}
+
+message SetContentItemFeaturedRequest {
+    string content_item_id = 1;
+    bool is_featured = 2;
+}
+
+message SetContentItemFeaturedResponse {
+    ContentItem item = 1;
+}
+
+// The lock is set to whoever opened the page. Another's lock is not taken over: the answer carries
+// who holds the page, and the screen shows a banner.
+message LockContentItemRequest {
+    string content_item_id = 1;
+}
+
+message LockContentItemResponse {
+    ContentItemState state = 1;
+    bool locked_by_caller = 2;
+}
+
+message UnlockContentItemRequest {
+    string content_item_id = 1;
+}
+
+message UnlockContentItemResponse {}
+
+message ListTagsRequest {}
+
+// Tags as a tree: the root ones, each with its children.
+message ListTagsResponse {
+    repeated Tag tags = 1;
+}
+
+// An empty `id` is a new tag.
+message SaveTagRequest {
+    string id = 1;
+    string name = 2;
+    bool is_enabled = 3;
+    string parent_tag_id = 4;
+}
+
+message SaveTagResponse {
+    Tag tag = 1;
+}
+
+message DeleteTagRequest {
+    string tag_id = 1;
+}
+
+message DeleteTagResponse {}
+
+message ListRedirectsRequest {
+    uint32 page = 1;
+    uint32 page_size = 2;
+    string search = 3;
+}
+
+message ListRedirectsResponse {
+    repeated Redirect redirects = 1;
+    uint32 total = 2;
+}
+
+// An empty `id` is a new redirect. A source address taken by another one — `AlreadyExists`.
+message SaveRedirectRequest {
+    string id = 1;
+    string from = 2;
+    string to = 3;
+    RedirectType type = 4;
+}
+
+message SaveRedirectResponse {
+    Redirect redirect = 1;
+}
+
+message DeleteRedirectRequest {
+    string redirect_id = 1;
+}
+
+message DeleteRedirectResponse {}
+
+message ListMediaFoldersRequest {}
+
+message ListMediaFoldersResponse {
+    repeated MediaFolder folders = 1;
+}
+
+// An empty `id` is a new folder.
+message SaveMediaFolderRequest {
+    string id = 1;
+    string parent_id = 2;
+    string name = 3;
+}
+
+message SaveMediaFolderResponse {
+    MediaFolder folder = 1;
+}
+
+message DeleteMediaFolderRequest {
+    string folder_id = 1;
+}
+
+message DeleteMediaFolderResponse {}
+
+// A site page by address and locale. With a preview token the draft of this page is given too;
+// without it — only a published one. None — `NotFound`.
+message GetWebPageRequest {
+    string slug = 1;
+    string locale = 2;
+    string preview_token = 3;
+}
+
+// The locales the same address is published in — for the links to translations.
+message GetWebPageResponse {
+    ContentItem item = 1;
+    repeated string locales = 2;
+}
+
+// The published pages of one type in the site locale — for lists and the sitemap.
+message ListPublishedContentItemsRequest {
+    string content_type_admin_slug = 1;
+    string locale = 2;
+}
+
+message ListPublishedContentItemsResponse {
+    repeated ContentItem items = 1;
+}
+
+message ListPublicRedirectsRequest {}
+
+message ListPublicRedirectsResponse {
+    repeated Redirect redirects = 1;
+}
+
+message ListPublicTagsRequest {}
+
+// Tags as a flat list: each with its parent id, empty for a root one. The site labels sections with
+// them, and a page carries only tag ids.
+message ListPublicTagsResponse {
+    repeated Tag tags = 1;
+}

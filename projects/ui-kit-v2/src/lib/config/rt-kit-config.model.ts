@@ -1,5 +1,6 @@
 import { IButton } from '../components/button/rt-button.model';
 import { IRtDataTable } from '../components/data-table/rt-data-table.model';
+import { IRtIcon } from '../components/icon/rt-icon.model';
 import { IRtInput } from '../components/input/rt-input.model';
 import { TRtRadius } from '../components/radius/rt-radius.model';
 import { ITheme } from '../platform/theme.model';
@@ -52,12 +53,32 @@ export namespace IRtKitConfig {
         filterAppearance?: IRtInput.Appearance;
     }
 
+    /**
+     * Умолчания поля выбора записей и поля строк. Оба читают значки, вид кнопки приглашения и перенос
+     * названия; поиск и пустой результат есть только у поля выбора записей.
+     */
+    export interface DynamicSelector {
+        /** Значок кнопки приглашения. Умолчание кита — кнопка без значка. */
+        invitationButtonIcon?: IRtIcon.Name | null;
+        /** Вид кнопки приглашения. Умолчание кита — `outlined`. */
+        invitationButtonAppearance?: IButton.Appearance;
+        /** Значок кнопки «Очистить список». Умолчание кита — `close`. */
+        clearIcon?: IRtIcon.Name;
+        /** Вид поля поиска в окне выбора. Умолчание кита — `outline`. */
+        searchAppearance?: IRtInput.Appearance;
+        /** Подпись пустого результата поиска. Умолчание кита — пустая строка, то есть подпись кита. */
+        emptyResultsText?: string;
+        /** Переносится ли название строки списка. Умолчание кита — переносится. */
+        titleWrap?: boolean;
+    }
+
     /** Умолчания по узлам: каждое действует на одну семью и перебивает общее. */
     export interface Components {
         button?: Button;
         aside?: Aside;
         dataTable?: DataTable;
         dataList?: DataList;
+        dynamicSelector?: DynamicSelector;
     }
 
     /** Весь объект настроек целиком. */

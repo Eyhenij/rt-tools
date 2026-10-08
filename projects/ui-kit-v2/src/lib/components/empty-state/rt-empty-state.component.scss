@@ -13,6 +13,8 @@
         --rt-empty-state-icon-size: var(--rt-size-8);
         --rt-empty-state-title-size: var(--rt-text-md);
         --rt-empty-state-title-weight: var(--rt-font-weight-medium);
+        --rt-empty-state-title-color: var(--rt-color-text-primary);
+        --rt-empty-state-description-size: var(--rt-text-sm);
         --rt-empty-state-frame-width: var(--rt-border-width-medium);
         --rt-empty-state-frame-color: var(--rt-color-border-strong);
         --rt-empty-state-frame-radius: var(--rt-radius-lg);
@@ -62,7 +64,7 @@
 
         &__title {
             margin: 0;
-            color: var(--rt-color-text-primary);
+            color: var(--rt-empty-state-title-color);
             font-size: var(--rt-empty-state-title-size);
             font-weight: var(--rt-empty-state-title-weight);
         }
@@ -71,7 +73,7 @@
             max-width: 320px;
             margin: 0;
             color: var(--rt-color-text-muted);
-            font-size: var(--rt-text-sm);
+            font-size: var(--rt-empty-state-description-size);
             line-height: var(--rt-leading-normal);
         }
 

@@ -2,17 +2,21 @@ import {
     ChangeDetectionStrategy,
     Component,
     DestroyRef,
+    InputSignal,
     Signal,
     ViewEncapsulation,
     WritableSignal,
     computed,
     effect,
     inject,
+    input,
     signal,
     untracked,
 } from '@angular/core';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
+
+import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 
 import { RtActionBarComponent } from './rt-action-bar.component';
 import { IRtActionBar, RT_ACTION_BAR_LEAVE_MS } from './rt-action-bar.model';
@@ -70,6 +74,9 @@ export class RtActionBarHolderComponent {
     protected readonly shown: Signal<boolean> = computed((): boolean => this.opened() || this.#leaving());
 
     protected readonly leaving: Signal<boolean> = this.#leaving.asReadonly();
+
+    /** Значок кнопки, закрывающей полосу, — уходит в саму полосу. */
+    public readonly closeIcon: InputSignal<IRtIcon.Name> = input<IRtIcon.Name>('close');
 
     constructor() {
         effect((): void => {

@@ -29,4 +29,7 @@ export const States: TStory = { args: { part: 'states' } };
 /** Строка под заголовком — слот `[asideHeaderContent]`: пустой места не занимает. */
 export const Row: TStory = { args: { part: 'row' } };
 
+/** Свойства шапки, заданные приложением на предке, и слот `[asideHeadingContent]` под подписью. */
+export const Properties: TStory = { args: { part: 'properties' } };
+
 export const Themes: TStory = { args: { part: 'themes' } };

@@ -4,6 +4,13 @@
             <use [attr.href]="symbol" />
         </svg>
     } @else if (fontGlyph(); as ligature) {
-        <span rtElem="glyph" aria-hidden="true" [rtMod]="glyphMods()" [style.font-size.px]="sizePx()">{{ ligature }}</span>
+        <span
+            rtElem="glyph"
+            aria-hidden="true"
+            [rtMod]="glyphMods()"
+            [style.font-size]="sizeValue()"
+            [style.--rt-icon-glyph-opsz-auto]="opticalSize()">
+            {{ ligature }}
+        </span>
     }
 </ng-container>

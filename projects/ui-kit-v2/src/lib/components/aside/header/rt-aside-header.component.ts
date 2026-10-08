@@ -44,6 +44,9 @@ const BEM_BLOCK: string = 'rt-aside-header';
  * Слот `[asideHeaderContent]` — строка под заголовком на всю ширину шапки: поиск, вкладки,
  * сводка. Пустой слот места не занимает.
  *
+ * Слот `[asideHeadingContent]` — содержимое в колонке заголовка, под подписью и бэйджами, по её
+ * левому краю. Пустой слот ничего не рисует.
+ *
  * `ViewEncapsulation.None` — для единообразия с rt-dialog-header (стили
  * префиксованы `.rt-aside-header`).
  *

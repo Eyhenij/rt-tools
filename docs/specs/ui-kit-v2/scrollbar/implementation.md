@@ -13,6 +13,7 @@ tree, or the tree holds what the spec is silent about.
 - **Where there is no hovering, the bar is visible always.** — `projects/ui-kit-v2/src/styles/_scrollbar.scss:hover-none`; scenario `SC-UKV-94`
 - **The standard properties of the bar are declared next to the pseudo-elements.** — `projects/ui-kit-v2/src/styles/_scrollbar.scss:scrollbar-color`; scenario `SC-UKV-92`
 - **The colour of the slider is taken by the token of a border, not by a value of its own.** — `projects/ui-kit-v2/src/styles/_scrollbar.scss:rt-color-border-default`; scenario `SC-UKV-92`
+- **The application's node under a node of the kit gets the bar of the browser, not the quiet one.** — `projects/ui-kit-v2/src/styles/_scrollbar.scss:auto`, `projects/ui-kit-v2/src/rich-editor/lib/components/rich-editor/rt-rich-editor.component.scss:inherit`; scenario `SC-UKV-713`
 
 The scenarios of this subdomain are taken by a measurement on the assembled showcase, not by a spec:
 the bar of the scroll is a part of the browser, and in the environment of the specs nothing draws it.

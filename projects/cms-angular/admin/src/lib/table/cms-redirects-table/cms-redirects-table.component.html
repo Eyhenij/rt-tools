@@ -1,0 +1,65 @@
+<rt-table
+    #table="rtTable"
+    rtBlock="rt-cms-redirects-table"
+    qa-dataid="redirects-table"
+    clickable
+    [ariaLabel]="t().redirectsTitle"
+    [dataSource]="rows()"
+    [columnsConfig]="columns()"
+    [loading]="loading()"
+    [showRowActions]="true"
+    [cards]="true">
+    <ng-template #rtTableEmpty>
+        @if (filtered()) {
+            <rt-empty-state qa-dataid="redirects-nothing-found" icon="link" [title]="t().uiNothingFound">
+                <button
+                    rtButton
+                    type="button"
+                    appearance="text"
+                    qa-dataid="redirects-reset-search"
+                    [label]="t().uiResetSearch"
+                    [attr.aria-label]="t().uiResetSearch"
+                    (click)="searchReset.emit()"></button>
+            </rt-empty-state>
+        } @else {
+            <rt-empty-state qa-dataid="redirects-empty" icon="link" [title]="t().redirectsEmpty" />
+        }
+    </ng-template>
+
+    <ng-container cdkColumnDef="from">
+        <th *cdkHeaderCellDef cdk-header-cell>{{ t().redirectsColumnFrom }}</th>
+        <td *cdkCellDef="let row" cdk-cell qa-dataid="redirects-cell-from">{{ row.from }}</td>
+    </ng-container>
+
+    <ng-container cdkColumnDef="to">
+        <th *cdkHeaderCellDef cdk-header-cell>{{ t().redirectsColumnTo }}</th>
+        <td *cdkCellDef="let row" cdk-cell qa-dataid="redirects-cell-to">{{ row.to }}</td>
+    </ng-container>
+
+    <ng-container cdkColumnDef="type">
+        <th *cdkHeaderCellDef cdk-header-cell>{{ t().redirectsColumnType }}</th>
+        <td *cdkCellDef="let row" cdk-cell>
+            <rt-tag qa-dataid="redirects-cell-type" severity="neutral" [value]="row.typeTitle" />
+        </td>
+    </ng-container>
+
+    <ng-template rtTableRowActions let-row [rtTableRowActionsRowType]="rows()">
+        <rt-menu-item
+            icon="trash"
+            danger
+            qa-dataid="redirects-delete"
+            [label]="t().uiDelete"
+            [confirmTitle]="t().redirectDeleteQuestion"
+            [confirmLabel]="t().uiDelete"
+            [confirmMessage]="t().redirectDeleteWarning"
+            (selected)="removeRequested.emit(row)" />
+    </ng-template>
+
+    <tr *cdkHeaderRowDef="table.displayedColumns()" cdk-header-row></tr>
+    <tr
+        *cdkRowDef="let row; columns: table.displayedColumns()"
+        cdk-row
+        rtTableRow
+        qa-dataid="redirects-row"
+        (activated)="openRequested.emit(row)"></tr>
+</rt-table>

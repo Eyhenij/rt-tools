@@ -29,6 +29,9 @@ export const Fill: TStory = { args: { part: 'fill' } };
 /** Разницу видно только на узком кадре: в широком обе панели одинаковы. */
 export const Dense: TStory = { args: { part: 'dense' } };
 
+/** Длинный заголовок слева в плотной панели переносится и не выходит за край, SC-UKV-727. */
+export const DenseTitle: TStory = { args: { part: 'dense-title' } };
+
 /** Высота, поля, граница, промежуток и выравнивание центра — свойствами с тега панели, SC-UKV-573. */
 export const Layout: TStory = { args: { part: 'layout' } };
 

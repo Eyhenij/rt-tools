@@ -1,0 +1,177 @@
+@let item = draft();
+<ng-container rtBlock="rt-cms-item-editor-page">
+    <rt-cms-page qaPrefix="item-editor" qa-dataid="item-editor-page" [title]="heading()">
+        <button
+            rtCmsPageActions
+            rtButton
+            type="button"
+            appearance="text"
+            qa-dataid="item-editor-back"
+            [label]="t().uiBackToList"
+            [attr.aria-label]="t().uiBackToList"
+            (click)="backToList()"></button>
+        <rt-select
+            rtCmsPageActions
+            qa-dataid="item-editor-status"
+            [ariaLabel]="t().itemsColumnStatus"
+            [options]="statusOptions()"
+            [clearable]="false"
+            [ngModel]="item.status"
+            (ngModelChange)="edit({ status: $event ?? item.status })" />
+        <button
+            rtCmsPageActions
+            rtButton
+            type="button"
+            appearance="outlined"
+            qa-dataid="item-editor-preview"
+            [label]="t().itemPreview"
+            [attr.aria-label]="t().itemPreview"
+            [disabled]="previewUrl() === null"
+            (click)="preview()"></button>
+        <button
+            rtCmsPageActions
+            rtButton
+            type="button"
+            qa-dataid="item-editor-save"
+            [label]="isNew() ? t().uiCreate : t().uiSave"
+            [attr.aria-label]="isNew() ? t().uiCreate : t().uiSave"
+            [disabled]="!canSave()"
+            [loading]="saving()"
+            (click)="save()"></button>
+
+        @if (loading()) {
+            <rt-spinner qa-dataid="item-editor-loading" />
+        } @else if (failed()) {
+            <rt-empty-state qa-dataid="item-editor-failure" icon="file" [title]="t().itemFailedToOpen">
+                <button
+                    rtButton
+                    type="button"
+                    appearance="text"
+                    qa-dataid="item-editor-failure-back"
+                    [label]="t().uiBackToList"
+                    [attr.aria-label]="t().uiBackToList"
+                    (click)="backToList()"></button>
+            </rt-empty-state>
+        } @else {
+            @if (lockedByOther()) {
+                <rt-note qa-dataid="item-editor-locked">{{ t().itemLockedByOther }}</rt-note>
+            }
+
+            <rt-section-nav
+                qa-dataid="item-editor-sections"
+                [ariaLabel]="t().itemSections"
+                [items]="navItems()"
+                (itemSelect)="openSection($event)" />
+
+            <!-- The field wrappers carry only the label: the anchor stands on the field itself inside. -->
+            <div rtElem="form">
+                @switch (activeSection()) {
+                    @case (Section.WebPage) {
+                        <section rtElem="section" qa-dataid="item-editor-web-page">
+                            @for (pageField of pageFields(); track pageField.field) {
+                                @if (pageField.visible) {
+                                    <rt-field qa-skip [label]="pageField.label">
+                                        <rt-input
+                                            qa-dataid="item-editor-page-field"
+                                            [attr.data-field]="pageField.field"
+                                            [ngModel]="item.page[pageField.field]"
+                                            (ngModelChange)="editPage(pageField.field, $event)" />
+                                    </rt-field>
+                                }
+                            }
+                        </section>
+                    }
+                    @case (Section.Main) {
+                        <section rtElem="section" qa-dataid="item-editor-main">
+                            <div rtElem="row">
+                                <rt-field qa-skip [label]="t().itemName">
+                                    <rt-input qa-dataid="item-editor-name" [ngModel]="item.name" (ngModelChange)="edit({ name: $event })" />
+                                </rt-field>
+                                <rt-field qa-skip [label]="t().itemSlug" [hint]="t().itemSlugHint">
+                                    <rt-input
+                                        qa-dataid="item-editor-slug"
+                                        [ngModel]="item.page.slug"
+                                        (ngModelChange)="editPage('slug', $event)" />
+                                </rt-field>
+                            </div>
+                            <div rtElem="row">
+                                <rt-field qa-skip [label]="t().itemLink" [hint]="t().itemLinkHint">
+                                    <rt-input qa-dataid="item-editor-link" [ngModel]="item.link" (ngModelChange)="edit({ link: $event })" />
+                                </rt-field>
+                                <rt-field qa-skip [label]="t().itemsColumnLocale">
+                                    <rt-select
+                                        qa-dataid="item-editor-locale"
+                                        [options]="localeOptions"
+                                        [clearable]="false"
+                                        [ngModel]="item.locale"
+                                        (ngModelChange)="edit({ locale: $event ?? item.locale })" />
+                                </rt-field>
+                            </div>
+                            <div rtElem="row">
+                                <rt-field qa-skip [label]="t().itemPublishAt" [hint]="t().itemPublishAtHint">
+                                    <rt-date-picker
+                                        qa-dataid="item-editor-publish-at"
+                                        type="datetime-local"
+                                        [ngModel]="publishAt()"
+                                        (ngModelChange)="editPublishAt($event)" />
+                                </rt-field>
+                                <rt-toggle-switch
+                                    qa-dataid="item-editor-featured"
+                                    [label]="t().itemFeatured"
+                                    [ariaLabel]="t().itemFeatured"
+                                    [ngModel]="item.isFeatured"
+                                    (ngModelChange)="edit({ isFeatured: $event })" />
+                            </div>
+                        </section>
+                    }
+                    @case (Section.Connections) {
+                        <section rtElem="section" qa-dataid="item-editor-connections">
+                            @if (isNew()) {
+                                <p rtElem="hint">{{ t().itemConnectionsLater }}</p>
+                            } @else {
+                                <rt-cms-item-connections
+                                    qa-dataid="item-editor-connection-list"
+                                    [connections]="item.connections"
+                                    [typeOptions]="connectionTypes()"
+                                    [selfId]="itemId()"
+                                    (added)="addConnection($event)"
+                                    (removed)="removeConnection($event)" />
+                            }
+                        </section>
+                    }
+                    @case (Section.Tags) {
+                        <section rtElem="section" qa-dataid="item-editor-tags">
+                            <rt-cms-tag-tree
+                                qa-dataid="item-editor-tag-tree"
+                                selectable
+                                [tags]="tags()"
+                                [selectedIds]="item.tagIds"
+                                (picked)="pickTag($event)" />
+                        </section>
+                    }
+                    @case (Section.Media) {
+                        <section rtElem="section" qa-dataid="item-editor-media">
+                            <rt-cms-item-images
+                                qa-dataid="item-editor-images"
+                                [images]="item.images"
+                                [mainImageId]="item.mainImageId"
+                                (addRequested)="addImage()"
+                                (removeRequested)="removeImage($event)"
+                                (mainPicked)="edit({ mainImageId: $event })"
+                                (moved)="moveImage($event)"
+                                (textChanged)="editImageText($event)" />
+                        </section>
+                    }
+                    @case (Section.Editor) {
+                        <section rtElem="section" qa-dataid="item-editor-body">
+                            <rt-cms-editor
+                                qa-dataid="item-editor-cms-editor"
+                                [ngModel]="item.contentBody"
+                                (ngModelChange)="edit({ contentBody: $event ?? item.contentBody })" />
+                        </section>
+                    }
+                }
+            </div>
+        }
+    </rt-cms-page>
+</ng-container>

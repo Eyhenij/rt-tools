@@ -85,19 +85,46 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 Место над страницей держатель берёт номером слоя из шкалы кита, а не числом в своём файле.
 
-Цвета, отступы и шрифт полосы — свойства блока, история **Properties**. Без них вид прежний.
+Цвета, отступы и шрифт полосы — свойства, история **Properties**. Без них вид прежний.
 
-| свойство                                | что задаёт                           | умолчание                     |
-| --------------------------------------- | ------------------------------------ | ----------------------------- |
-| `--rt-action-bar-bg`                    | фон полосы                           | `--rt-color-bg-inverse`       |
-| `--rt-action-bar-color`                 | текст, крестик и след наведения      | `--rt-color-text-inverse`     |
-| `--rt-action-bar-padding`               | отступы полосы                       | `--rt-space-2` `--rt-space-4` |
-| `--rt-action-bar-gap`                   | промежуток между счётом и действиями | `--rt-space-4`                |
-| `--rt-action-bar-font-size`             | кегль                                | `--rt-text-sm`                |
-| `--rt-action-bar-counter-weight`        | начертание счёта                     | `--rt-font-weight-medium`     |
-| `--rt-action-bar-action-padding-block`  | отступ действия по вертикали         | `--rt-space-1`                |
-| `--rt-action-bar-action-padding-inline` | отступ действия по горизонтали       | `--rt-space-2`                |
-| `--rt-action-bar-action-weight`         | начертание действия                  | `--rt-font-weight-medium`     |
+**Свойство полосы и держателя задаётся на любом предке, хоть на корне страницы.** На самих блоках
+объявлены только умолчания с приставкой `-default`, а читается свойство с запасным значением —
+поэтому все они ручки приложения и стоят в списке ручек на странице «Theming».
+
+| свойство                                | что задаёт                           | умолчание                             |
+| --------------------------------------- | ------------------------------------ | ------------------------------------- |
+| `--rt-action-bar-bg`                    | фон полосы                           | `--rt-color-bg-inverse`               |
+| `--rt-action-bar-color`                 | текст, крестик и след наведения      | `--rt-color-text-inverse`             |
+| `--rt-action-bar-radius`                | скругление полосы                    | ступень `--rt-radius-lg`              |
+| `--rt-action-bar-shadow`                | тень полосы                          | `--rt-shadow-card`                    |
+| `--rt-action-bar-padding`               | отступы полосы                       | `--rt-space-2` `--rt-space-4`         |
+| `--rt-action-bar-gap`                   | промежуток между счётом и действиями | `--rt-space-4`                        |
+| `--rt-action-bar-font-size`             | кегль                                | `--rt-text-sm`                        |
+| `--rt-action-bar-counter-font-size`     | кегль счёта                          | кегль полосы                          |
+| `--rt-action-bar-counter-weight`        | начертание счёта                     | `--rt-font-weight-medium`             |
+| `--rt-action-bar-action-height`         | наименьшая высота действия           | `auto`                                |
+| `--rt-action-bar-action-font-size`      | кегль действия                       | кегль полосы                          |
+| `--rt-action-bar-action-padding-block`  | отступ действия по вертикали         | `--rt-space-1`                        |
+| `--rt-action-bar-action-padding-inline` | отступ действия по горизонтали       | `--rt-space-2`                        |
+| `--rt-action-bar-action-weight`         | начертание действия                  | `--rt-font-weight-medium`             |
+| `--rt-action-bar-action-radius`         | скругление действия                  | ступень `--rt-radius-md`              |
+| `--rt-action-bar-action-bg-hover`       | след наведения на действие           | цвет полосы на 16%                    |
+| `--rt-action-bar-action-color-danger`   | цвет опасного действия               | `--rt-color-action-danger-on-surface` |
+| `--rt-action-bar-action-focus-shadow`   | кольцо фокуса действия               | `--rt-shadow-focus-ring`              |
+| `--rt-action-bar-icon-size`             | размер значка действия               | `--rt-size-4`                         |
+| `--rt-action-bar-icon-gap`              | промежуток между значком и подписью  | `--rt-space-2`                        |
+| `--rt-action-bar-close-size`            | сторона кнопки-крестика              | `--rt-control-height-sm`              |
+| `--rt-action-bar-close-icon-size`       | размер крестика                      | `--rt-size-4`                         |
+| `--rt-action-bar-holder-bottom`         | отступ полосы от нижнего края окна   | `--rt-space-6`                        |
+| `--rt-action-bar-holder-inline`         | отступы полосы от боковых краёв окна | `--rt-space-4`                        |
+| `--rt-action-bar-holder-enter-duration` | длительность появления               | `300ms`                               |
+| `--rt-action-bar-holder-leave-duration` | длительность ухода                   | `300ms`                               |
+
+Длительность ухода держатель знает и числом: он снимает полосу через 300 мс, какое бы значение ни
+стояло в свойстве. Свойство ухода длиннее этого числа обрежет его на полпути.
+
+Размер значка действия задаёт рамку `rt-icon`. Значок набора кита и имя Material, у которого есть
+пара в наборе, растут вместе с ней; лигатура шрифта Material без пары держит кегль своего шага.
 
 Отступ и начертание действия названы не `-action-padding` и `-action-font-weight`: эти имена у
 полосы первого кита, и на странице с обоими китами они значили бы два разных свойства.
@@ -105,8 +132,10 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 **Меню действия со списком рисуется в оверлее, вне полосы** (история **Menu**). Свойства, объявленные
 на полосе, до него не доходят, поэтому меню читает свои с запасным значением, и задаются они на
 корне страницы: `--rt-action-bar-menu-bg`, `--rt-action-bar-menu-color`,
-`--rt-action-bar-menu-radius`, `--rt-action-bar-menu-shadow`. Пока их нет, меню скруглено ступенью
-`md` и отбрасывает тень карточки.
+`--rt-action-bar-menu-radius`, `--rt-action-bar-menu-shadow`, `--rt-action-bar-menu-padding`,
+`--rt-action-bar-menu-gap`, `--rt-action-bar-menu-item-font-size`. Пока их нет, меню скруглено
+ступенью `md`, отбрасывает тень карточки, держит отступ `--rt-space-2`, пункты стоят без зазора, а
+шрифт пункта — ступень `--rt-text-sm`.
 
 ## Рядом
 
@@ -116,13 +145,18 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Входы
 
-| вход     | тип                   | умолчание      | что делает                              |
-| -------- | --------------------- | -------------- | --------------------------------------- |
-| `config` | `IRtActionBar.Config` | **обязателен** | счёт выбранного и список действий       |
-| `radius` | `TRtRadius \| null`   | `null` → `lg`  | шаг общей шкалы для главной поверхности |
+| вход        | тип                   | умолчание      | что делает                              |
+| ----------- | --------------------- | -------------- | --------------------------------------- |
+| `config`    | `IRtActionBar.Config` | **обязателен** | счёт выбранного и список действий       |
+| `radius`    | `TRtRadius \| null`   | `null` → `lg`  | шаг общей шкалы для главной поверхности |
+| `closeIcon` | `IRtIcon.Name`        | `'close'`      | значок кнопки, закрывающей полосу       |
 
-У держателя входов нет вовсе: настройку он читает у службы, которую потребитель объявляет на своём
-уровне — там, где у него живёт список.
+У держателя один вход — `closeIcon` с тем же умолчанием, он уходит в полосу. Настройку держатель
+читает у службы, которую потребитель объявляет на своём уровне — там, где у него живёт список.
+
+У действия `IRtActionBar.Action` значок задаётся либо именем кита `icon`, либо именем Material
+`glyph` — оно рисуется так же, как вход `glyph` у `rt-icon`, и в полосе, и в пункте вложенного
+списка. Заданы оба — сильнее значок кита.
 
 ## Выходы
 

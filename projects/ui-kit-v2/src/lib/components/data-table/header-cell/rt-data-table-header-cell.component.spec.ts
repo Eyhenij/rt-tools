@@ -134,10 +134,10 @@ describe('RtDataTableHeaderCellComponent', () => {
     });
 
     it('SC-UKV-319 — имя без пары в перечне шапка рисует глифом Material Symbols', () => {
-        const fixture: ComponentFixture<HeaderHostComponent> = setup({ icon: { glyph: 'delete_forever', placement: 'left' } });
+        const fixture: ComponentFixture<HeaderHostComponent> = setup({ icon: { glyph: 'pets', placement: 'left' } });
 
         expect(fixture.debugElement.query(By.directive(RtIconComponent))).toBeNull();
-        expect(textOf(qa(fixture, 'data-table-header-glyph'))).toBe('delete_forever');
+        expect(textOf(qa(fixture, 'data-table-header-glyph'))).toBe('pets');
     });
 
     it('SC-UKV-363 — значок колонки залит, пока объявление не скажет «контурный»', () => {

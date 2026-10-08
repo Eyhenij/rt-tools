@@ -81,6 +81,12 @@ next to it and a cross to let them all go.
   content — and a hundred per cent of the bar is then counted from the grown element.
 - **The styles of the bar live in the cascade layer of the kit's components.** A consumer keeps the
   last word over them, and a rule that rode past the layer takes that away from them silently.
+- **A property of the bar or the holder set on any ancestor reaches it.** The blocks declare only
+  the defaults under the `-default` suffix and read the public name with a fallback, so the
+  application sets the look once, even on the page root.
+- **An action's icon is named by a kit name or by a Material name, and the close icon by an input.**
+  A Material name draws the way the `glyph` input of the icon does — in the bar and in the item of
+  the nested list; the close icon comes from the bar's input, and the holder passes its own on.
 
 ## What is out of scope
 
@@ -166,3 +172,5 @@ consumer's matter, as it is for any component pinned above the page.
 
 - 2026-09-17 — the subdomain was started together with the family: the second kit had no bar of mass
   actions at all, and the overview page of the toolbar said so in words (RT-1880).
+- 2026-10-07 — the application's requests (RT-2619): properties set on an ancestor, seven new
+  properties, `glyph` on an action and the `closeIcon` input.

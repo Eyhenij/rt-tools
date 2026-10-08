@@ -2,12 +2,15 @@
     /* rt-aside-header — заголовок side-sheet'а. ViewEncapsulation.None.
        Селекторы префиксованы `.rt-aside-header`. */
 
+    /* Свойства шапки — рукоятки приложения: каждое читается как `--rt-aside-header-*` с любого
+       предка (панели оверлея, своего контейнера), а на самом блоке стоит только умолчание под
+       `-default`. Значение, объявленное на блоке под публичным именем, перебило бы предка. */
     .rt-aside-header {
-        --rt-aside-header-title-size: var(--rt-text-xl);
-        --rt-aside-header-title-weight: var(--rt-font-weight-bold);
-        --rt-aside-header-subtitle-size: var(--rt-text-sm);
-        --rt-aside-header-gap: var(--rt-space-sm);
-        --rt-aside-header-min-height: auto;
+        --rt-aside-header-title-size-default: var(--rt-text-xl);
+        --rt-aside-header-title-weight-default: var(--rt-font-weight-bold);
+        --rt-aside-header-subtitle-size-default: var(--rt-text-sm);
+        --rt-aside-header-gap-default: var(--rt-space-sm);
+        --rt-aside-header-min-height-default: auto;
 
         /* Отступ шапки — ручка приложения; без неё общий инсет панели. */
         padding: var(--rt-aside-header-inset, var(--rt-aside-inset));
@@ -15,13 +18,26 @@
         &__content {
             display: flex;
             min-width: 0;
-            min-height: var(--rt-aside-header-min-height);
+            min-height: var(--rt-aside-header-min-height, var(--rt-aside-header-min-height-default));
             align-items: center;
-            gap: var(--rt-aside-header-gap);
+            gap: var(--rt-aside-header-gap, var(--rt-aside-header-gap-default));
         }
 
+        /* Кнопка «назад» — шаг `sm` кнопки и значка. Размеры кнопки и значка — рукоятки
+           `--rt-aside-header-back-size` и `--rt-aside-header-back-icon-size` с любого предка; без них
+           стоят те же шаги. Значок читает свою ступень `sm` на этом узле: ступень, заданная
+           приложением выше, сюда не доходит — у кнопки «назад» своя рукоятка. */
         &__back {
+            --rt-icon-step-sm: var(--rt-aside-header-back-icon-size, var(--rt-size-4));
+
             flex-shrink: 0;
+        }
+
+        /* Шаг кнопки переназначается на её внутреннем узле: модификатор размера объявляет его там
+           же. Вес селектора выше модификатора, а публичная `--rt-icon-button-size` по-прежнему
+           важнее шага. */
+        & &__back .rt-icon-button {
+            --rt-icon-button-size-step: var(--rt-aside-header-back-size, var(--rt-control-height-sm));
         }
 
         /* Колонка overline + title. flex/min-width живут здесь, чтобы ellipsis
@@ -49,8 +65,8 @@
             min-width: 0;
             margin: 0;
             color: var(--rt-color-text-primary);
-            font-size: var(--rt-aside-header-title-size);
-            font-weight: var(--rt-aside-header-title-weight);
+            font-size: var(--rt-aside-header-title-size, var(--rt-aside-header-title-size-default));
+            font-weight: var(--rt-aside-header-title-weight, var(--rt-aside-header-title-weight-default));
 
             /* Высота строки — ручка приложения; без неё наследуется, как было. */
             line-height: var(--rt-aside-header-title-leading, inherit);
@@ -71,7 +87,7 @@
         &__subtitle {
             margin: 0;
             color: var(--rt-color-text-muted);
-            font-size: var(--rt-aside-header-subtitle-size);
+            font-size: var(--rt-aside-header-subtitle-size, var(--rt-aside-header-subtitle-size-default));
             line-height: var(--rt-leading-snug);
         }
 
@@ -98,7 +114,7 @@
            не занимает. */
         &__row {
             min-width: 0;
-            margin-top: var(--rt-aside-header-gap);
+            margin-top: var(--rt-aside-header-gap, var(--rt-aside-header-gap-default));
 
             &:empty {
                 display: none;

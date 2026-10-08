@@ -29,7 +29,8 @@ import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
 import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
 import { RtEmptyStateComponent } from '@rt-tools/ui-kit-v2/empty-state';
 import { RtFormControlBase } from '@rt-tools/ui-kit-v2/form-control';
-import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
+import { IButton, IRtIcon, IRtInput, IRtKitConfig, rtKitDefault } from '@rt-tools/ui-kit-v2/core';
+import { RtFieldComponent } from '@rt-tools/ui-kit-v2/field';
 import { RtInputComponent } from '@rt-tools/ui-kit-v2/input';
 import { TRtRadius } from '@rt-tools/ui-kit-v2/core';
 import { RtDynamicSelectorListComponent } from '../list/rt-dynamic-selector-list.component';
@@ -65,6 +66,7 @@ const BEM_BLOCK: string = 'rt-dynamic-input';
         RtButtonDirective,
         RtDynamicSelectorListComponent,
         RtEmptyStateComponent,
+        RtFieldComponent,
         RtInputComponent,
     ],
     providers: [
@@ -77,6 +79,27 @@ export class RtDynamicInputComponent extends RtFormControlBase<string[]> {
     readonly #injector: Injector = inject(Injector);
     /** Последнее значение, записанное формой: к нему возвращает сброс. */
     readonly #initial: WritableSignal<string[]> = signal<string[]>([]);
+    /* Умолчания входов считаются из настроек кита при объявлении: вход в разметке перебивает их. */
+    readonly #invitationButtonIconDefault: IRtIcon.Name | null = rtKitDefault(
+        'dynamicSelector',
+        (it: IRtKitConfig.DynamicSelector): IRtIcon.Name | null | undefined => it.invitationButtonIcon,
+        null
+    );
+    readonly #invitationButtonAppearanceDefault: IButton.Appearance = rtKitDefault(
+        'dynamicSelector',
+        (it: IRtKitConfig.DynamicSelector): IButton.Appearance | undefined => it.invitationButtonAppearance,
+        'outlined'
+    );
+    readonly #clearIconDefault: IRtIcon.Name = rtKitDefault(
+        'dynamicSelector',
+        (it: IRtKitConfig.DynamicSelector): IRtIcon.Name | undefined => it.clearIcon,
+        'close'
+    );
+    readonly #titleWrapDefault: boolean = rtKitDefault(
+        'dynamicSelector',
+        (it: IRtKitConfig.DynamicSelector): boolean | undefined => it.titleWrap,
+        true
+    );
 
     protected readonly addLabel: Signal<string> = rtKitLabel('dynamicSelectorAdd');
     protected readonly placeholderLabel: Signal<string> = rtKitLabel('dynamicInputPlaceholder');
@@ -135,7 +158,25 @@ export class RtDynamicInputComponent extends RtFormControlBase<string[]> {
         transform: booleanAttribute,
     });
     public readonly invitationIcon: InputSignal<IRtIcon.Name | null> = input<IRtIcon.Name | null>(null);
+    /** Имя Material вместо `invitationIcon` — уходит во вход `glyph` заглушки приглашения. */
+    public readonly invitationGlyph: InputSignal<string | null> = input<string | null>(null);
     public readonly invitationDescription: InputSignal<string> = input<string>('');
+    /** Значок кнопки приглашения; null — кнопка без значка. */
+    public readonly invitationButtonIcon: InputSignal<IRtIcon.Name | null> = input<IRtIcon.Name | null>(this.#invitationButtonIconDefault);
+    /** Вид кнопки приглашения — тот же набор, что у кнопки кита. */
+    public readonly invitationButtonAppearance: InputSignal<IButton.Appearance> = input<IButton.Appearance>(
+        this.#invitationButtonAppearanceDefault
+    );
+    /** Значок кнопки «Очистить список». */
+    public readonly clearIcon: InputSignal<IRtIcon.Name> = input<IRtIcon.Name>(this.#clearIconDefault);
+    /** Название строки переносится; `false` ведёт его одной строкой с многоточием и подсказкой при обрезке. */
+    public readonly titleWrap: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(this.#titleWrapDefault, {
+        transform: booleanAttribute,
+    });
+    /** Вид поля, в которое вводят новую строку. */
+    public readonly fieldAppearance: InputSignal<IRtInput.Appearance> = input<IRtInput.Appearance>('outline');
+    /** Подпись поля новой строки; пустая — поле без подписи, как раньше. */
+    public readonly fieldLabel: InputSignal<string> = input<string>('');
     /** Корзина строк; без неё строки убирает только очистка или сам вызывающий. */
     public readonly removeShown: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
         transform: booleanAttribute,

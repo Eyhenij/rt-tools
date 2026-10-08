@@ -19,15 +19,25 @@
 
         /* Лигатура шрифта Material Symbols для глифа без пары. Шрифт подключает приложение,
            семью можно переназначить свойством сверху. Размер шрифта — встроенным стилем, он равен
-           ширине значка. До готовности шрифтов лигатура скрыта: иначе на её месте видно слово. */
+           ширине значка. До готовности шрифтов лигатура скрыта: иначе на её месте видно слово.
+           Оси шрифта — вес, градация и оптический размер — приложение задаёт свойствами сверху,
+           заливка идёт от входа `fill` и переставляется модификатором. Оптический размер по
+           умолчанию — сторона значка: её пишет компонент встроенным стилем, как делал браузер. */
         &__glyph {
+            --rt-icon-glyph-fill: 0;
+            --rt-icon-glyph-opsz-auto: 24;
+
             display: block;
             overflow: hidden;
             width: 100%;
             font-family: var(--rt-icon-glyph-font, 'Material Symbols Outlined'), sans-serif;
             font-feature-settings: 'liga';
             font-style: normal;
-            font-variation-settings: 'FILL' 0;
+            font-variation-settings:
+                'FILL' var(--rt-icon-glyph-fill),
+                'wght' var(--rt-icon-glyph-weight, 400),
+                'GRAD' var(--rt-icon-glyph-grade, 0),
+                'opsz' var(--rt-icon-glyph-opsz, var(--rt-icon-glyph-opsz-auto));
             font-weight: var(--rt-font-weight-regular);
             letter-spacing: normal;
             line-height: 1;
@@ -36,7 +46,7 @@
             white-space: nowrap;
 
             &--filled {
-                font-variation-settings: 'FILL' 1;
+                --rt-icon-glyph-fill: 1;
             }
 
             &--pending {

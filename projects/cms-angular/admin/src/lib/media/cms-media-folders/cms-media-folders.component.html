@@ -1,0 +1,61 @@
+<ng-container rtBlock="rt-cms-media-folders">
+    <nav rtElem="path" qa-dataid="media-path" [attr.aria-label]="t().mediaFolderPath">
+        <button
+            rtButton
+            type="button"
+            appearance="text"
+            qa-dataid="media-path-root"
+            [label]="t().mediaTitle"
+            [attr.aria-label]="t().mediaTitle"
+            [disabled]="path().length === 0"
+            (click)="opened.emit(rootId)"></button>
+        @for (folder of path(); track folder.id; let last = $last) {
+            <span rtElem="separator" aria-hidden="true">/</span>
+            <button
+                rtButton
+                type="button"
+                appearance="text"
+                qa-dataid="media-path-folder"
+                [attr.data-folder-id]="folder.id"
+                [label]="folder.name"
+                [attr.aria-label]="folder.name"
+                [disabled]="last"
+                (click)="opened.emit(folder.id)"></button>
+        }
+    </nav>
+
+    @if (folders().length > 0) {
+        <ul rtElem="list" qa-dataid="media-folder-list">
+            @for (folder of folders(); track folder.id) {
+                <li rtElem="item" qa-dataid="media-folder" [attr.data-folder-id]="folder.id" [attr.data-name]="folder.name">
+                    <button
+                        rtButton
+                        type="button"
+                        appearance="text"
+                        icon="folder"
+                        qa-dataid="media-folder-open"
+                        [label]="folder.name"
+                        [attr.aria-label]="t().mediaOpenFolder | cmsLabel: { name: folder.name }"
+                        [rtTooltip]="folder.name"
+                        (click)="opened.emit(folder.id)"></button>
+                    <rt-menu icon="ellipsis-v" qa-dataid="media-folder-menu" [ariaLabel]="t().mediaFolderActions">
+                        <rt-menu-item
+                            icon="pencil"
+                            qa-dataid="media-folder-rename"
+                            [label]="t().uiRename"
+                            (selected)="renameRequested.emit(folder)" />
+                        <rt-menu-item
+                            icon="trash"
+                            danger
+                            qa-dataid="media-folder-delete"
+                            [label]="t().uiDelete"
+                            [confirmTitle]="t().mediaFolderDeleteQuestion"
+                            [confirmLabel]="t().uiDelete"
+                            [confirmMessage]="t().mediaFolderDeleteWarning"
+                            (selected)="removeRequested.emit(folder)" />
+                    </rt-menu>
+                </li>
+            }
+        </ul>
+    }
+</ng-container>

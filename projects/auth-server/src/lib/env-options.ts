@@ -1,6 +1,6 @@
 import { TPermission } from '@rt-tools/auth-contract';
 
-import type { IAuthServerOptions } from './auth-server.module';
+import type { IAuthServerOptions } from './auth-server.module.js';
 
 /** The environment variables the entry module is set up by; `process.env` fits it as it is. */
 export interface IAuthEnv {

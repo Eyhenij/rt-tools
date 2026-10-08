@@ -57,22 +57,22 @@ parts it drew with — by the kit's own components.
 
 The words are the first kit's; the kit's dictionary gives them in all eight languages.
 
-| In the agreement           | On the screen                                                                  |
-| -------------------------- | ------------------------------------------------------------------------------ |
-| select all                 | "Select all"                                                                   |
-| the counter                | "Selected: N"                                                                  |
-| the search field           | "Search..."                                                                    |
-| the toolbar buttons        | hints "Clear filters", "Refresh", "Table configuration"                        |
-| the placeholder            | a large search icon and "No Data Found"                                        |
-| the header of the strip    | "Actions"                                                                      |
-| the copy button            | hint "Copy", after a press "Copied!"                                           |
-| the page size              | "Items per page:"                                                              |
-| the settings panel         | "Edit table configuration" and its explanation line                            |
-| the scrollbar switches     | "Vertical scrollbar shown", "Horizontal scrollbar shown"                       |
-| the visibility of a column | hints "Hidden, click to show", "Shown, click to hide"                          |
-| the filter row             | "Type in filter value", "Chose filter", "No options available", "Clear filter" |
-| the filter operators       | "Equal", "Not equal", "Contains", "More than", "Less than"                     |
-| an empty ready cell        | a dash                                                                         |
+| In the agreement           | On the screen                                                                   |
+| -------------------------- | ------------------------------------------------------------------------------- |
+| select all                 | "Select all"                                                                    |
+| the counter                | "Selected: N"                                                                   |
+| the search field           | "Search..."                                                                     |
+| the toolbar buttons        | hints "Clear filters", "Refresh", "Table configuration"                         |
+| the placeholder            | a large search icon and "No Data Found"                                         |
+| the header of the strip    | "Actions"                                                                       |
+| the copy button            | hint "Copy", after a press "Copied!"                                            |
+| the page size              | "Items per page:"                                                               |
+| the settings panel         | "Edit table configuration" and its explanation line                             |
+| the scrollbar switches     | "Vertical scrollbar shown", "Horizontal scrollbar shown"                        |
+| the visibility of a column | hints "Hidden, click to show", "Shown, click to hide"                           |
+| the filter row             | "Type in filter value", "Choose filter", "No options available", "Clear filter" |
+| the filter operators       | "Equal", "Not equal", "Contains", "More than", "Less than"                      |
+| an empty ready cell        | a dash                                                                          |
 
 ## Rules
 
@@ -162,6 +162,9 @@ The words are the first kit's; the kit's dictionary gives them in all eight lang
   first kit does.** The menu opens from the left edge of its button, so it does not cover the side menu on
   the left of the page. Changing the operator of a column with neither a condition nor a value
   asks nothing.
+- **Clearing a date or select filter by its cross moves the focus into the field next to it.**
+  The cross switches off once there is nothing to clear, and a switched-off button dropped the
+  focus to the start of the page.
 - **The family keeps no conditions of its own and narrows no rows.** The application answers with
   new rows.
 - **The search and the filter fields draw one of the two Material field looks, `outline` or
@@ -497,3 +500,5 @@ table that applied it last decides it for all.
 - 22 September 2026 — the agreement merged into the spec of the second kit as a subdomain of its
   own, with the scenario numbers it had; `Q-TP-1` is closed by the plan of the task, which names
   that place.
+- 2026-10-08 — the task RT-2698: clearing a filter by its cross keeps the focus in the cell, and the
+  select hint reads "Choose filter".

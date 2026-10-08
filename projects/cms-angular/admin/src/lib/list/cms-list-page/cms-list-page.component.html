@@ -1,0 +1,52 @@
+<ng-container rtBlock="rt-cms-list-page">
+    <rt-cms-page [title]="title()" [hint]="hint()" [qaPrefix]="qaPrefix()">
+        <rt-toolbar>
+            <!-- Filters and search on the left, actions over the list on the right: mixed, they read as
+             one set of buttons, and it is unclear what changes what is shown. -->
+            <ng-template rtToolbarLeft>
+                <ng-content select="[rtCmsListToolbarLeft]" />
+
+                <!-- A list the server does not search has no search: an empty hint means there is
+                 nothing to search by. The field stands after the filters: it answers "where among
+                 the filtered". -->
+                @if (searchPlaceholder()) {
+                    <rt-input
+                        iconLeft="search"
+                        size="sm"
+                        clearable
+                        [attr.qa-dataid]="qaPrefix() + '-search'"
+                        [placeholder]="searchPlaceholder()"
+                        [ariaLabel]="searchPlaceholder()"
+                        [ngModel]="search()"
+                        (ngModelChange)="host.onSearchChange($event ?? '')" />
+                }
+            </ng-template>
+
+            <ng-template rtToolbarRight>
+                <ng-content select="[rtCmsListToolbarRight]" />
+
+                <rt-icon-button
+                    icon="sync"
+                    variant="primary"
+                    [tooltip]="t().uiReload"
+                    [ariaLabel]="t().uiReload"
+                    [attr.qa-dataid]="qaPrefix() + '-reload'"
+                    [disabled]="loading()"
+                    (clicked)="host.reload()" />
+            </ng-template>
+        </rt-toolbar>
+
+        <!-- The table comes from the screen whole: its columns are collected by its own content query,
+         and a wrapper would not carry them to it. -->
+        <div rtElem="scroll">
+            <ng-content />
+        </div>
+
+        <rt-pagination
+            [attr.qa-dataid]="qaPrefix() + '-pagination'"
+            [pageModel]="pageModel()"
+            [loading]="loading()"
+            (pageChange)="host.onPageChange($event)"
+            (perPageChange)="host.onPageSizeChange($event)" />
+    </rt-cms-page>
+</ng-container>

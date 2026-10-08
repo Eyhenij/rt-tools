@@ -40,6 +40,13 @@ options, the stream and the properties are invisible to them.
 - **A pending panel is covered by a spinner layer and marked busy.**
 - **The header shows a row under its title across the whole header, and an empty row takes no room.**
 - **The panel's padding, footer layout, title line height and error margin come from properties.**
+- **The header's title and subtitle size, title weight, gap, least height and back button sizes come
+  from properties set on any ancestor.** Only the defaults stand on the header itself, under the
+  `-default` suffix.
+- **The header holds a slot in its title column, under the subtitle and the badges, and an empty slot
+  draws nothing.**
+- **A panel removed before its first frame plays no entrance.**
+- **The caller decides whether a navigation removes the panel; by default it does.**
 - **Without the new options, inputs, slot and properties the panel draws as before.**
 
 ## What is out of scope
@@ -107,3 +114,5 @@ None.
 ## History of changes
 
 - 2 October 2026 — the agreement was written from the consumer's request by task RT-2480.
+- 7 October 2026 — the application's remarks (RT-2619): the header properties from any ancestor, the
+  back button sizes, the slot of the title column, the navigation option and the frame check.

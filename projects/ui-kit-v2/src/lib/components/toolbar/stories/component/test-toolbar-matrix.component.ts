@@ -7,7 +7,7 @@ import { StoryThemesComponent } from '../../../../../showcase/story-themes.compo
 import { RtToolbarCenterDirective, RtToolbarComponent, RtToolbarLeftDirective, RtToolbarRightDirective } from '../../rt-toolbar.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TToolbarMatrixPart = 'slots' | 'fill' | 'dense' | 'layout' | 'themes';
+export type TToolbarMatrixPart = 'slots' | 'fill' | 'dense' | 'dense-title' | 'layout' | 'themes';
 
 /**
  * Свойства раскладки, которые приложение ставит на тег панели. Инлайн-стиль — самое сильное
@@ -152,6 +152,27 @@ interface IToolbarLayoutCase {
                 </app-story-presets>
             }
 
+            @case ('dense-title') {
+                <app-story-presets caption="Длинный заголовок слева в плотной панели узкой колонки в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="titleCases" [itemLabel]="titleLabel">
+                            <ng-template let-title>
+                                <div [style.width.px]="titleColumnWidth">
+                                    <rt-toolbar dense>
+                                        <ng-template rtToolbarLeft>
+                                            <strong>{{ title }}</strong>
+                                        </ng-template>
+                                        <ng-template rtToolbarRight>
+                                            <button rtButton label="Обновить" aria-label="Обновить" appearance="text"></button>
+                                        </ng-template>
+                                    </rt-toolbar>
+                                </div>
+                            </ng-template>
+                        </app-story-row>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('layout') {
                 <app-story-presets caption="Свойства раскладки с тега панели в обоих наборах">
                     <ng-template>
@@ -224,6 +245,12 @@ export class TestRtToolbarMatrixComponent {
     /** `dense` держит три зоны в строку и на узком экране: узкой шапке колонка неверна. */
     public readonly denseCases: readonly boolean[] = [false, true];
 
+    /** Заголовок шапки переписки: короткий стоит строкой, длинный переносится внутри колонки. */
+    public readonly titleCases: readonly string[] = ['Переписка', 'Переписка №12 — Анна Смирнова'];
+
+    /** Колонка уже длинного заголовка: так стоит шапка переписки на телефоне. */
+    public readonly titleColumnWidth: number = 240;
+
     /** Кит без свойств и полоса в духе шапки списка: высота, поля по бокам, граница снизу. */
     public readonly layoutCases: readonly IToolbarLayoutCase[] = [
         { name: 'кит', style: {} },
@@ -243,4 +270,7 @@ export class TestRtToolbarMatrixComponent {
 
     public readonly denseLabel: (value: boolean) => string = (value: boolean): string =>
         value ? 'dense — остаётся строкой' : 'обычная — стекается в колонку';
+
+    public readonly titleLabel: (value: string) => string = (value: string): string =>
+        value.length > 12 ? 'длинный — переносится' : 'короткий — строкой';
 }

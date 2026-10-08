@@ -9,8 +9,8 @@ export namespace IRtIcon {
     /** Допустимые имена иконок. Литеральный union из {@link iconsName}. */
     export type Name = (typeof iconsName)[number];
 
-    /** Доступные размеры. Маппинг на пиксели — в `rt-icon.component.ts`. */
-    export type Size = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+    /** Доступные размеры. Каждая ступень — свойство `--rt-icon-step-*`, умолчания — в `rt-icon.component.ts`. */
+    export type Size = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl';
 
     /** Набор рисунков: свой набор кита либо материальный. */
     export type Preset = 'base' | 'material';
@@ -22,7 +22,7 @@ export namespace IRtIcon {
     export type Drawing = Preset | 'material-fill';
 
     /** Семантические цвета. Маппинг на CSS-переменные `--rt-icon-color-*` — в `rt-icon.component.ts`. */
-    export type Color = 'current' | 'muted' | 'info' | 'success' | 'warning' | 'danger' | 'inverse';
+    export type Color = 'current' | 'primary' | 'muted' | 'disabled' | 'info' | 'success' | 'warning' | 'danger' | 'inverse';
 
     /** Размер на входе значка: ступень или пиксели. */
     export type SizeInput = Size | number;

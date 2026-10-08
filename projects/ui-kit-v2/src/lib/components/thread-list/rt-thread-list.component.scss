@@ -125,6 +125,35 @@
             }
         }
 
+        // Действия строки стоят поверх правого края строки, а не внутри её кнопки: вложенная
+        // кнопка в `<button>` недопустима. Подложка повторяет фон строки, чтобы закрыть время.
+        &__row-wrap {
+            position: relative;
+
+            &:hover .rt-thread-list__row-actions,
+            &:focus-within .rt-thread-list__row-actions {
+                opacity: 1;
+                pointer-events: auto;
+            }
+        }
+
+        &__row-actions {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            background: var(--rt-color-bg-subtle);
+            gap: var(--rt-space-1);
+            inset-block: 0;
+            inset-inline-end: 0;
+            opacity: 0;
+            padding-inline: var(--rt-space-2) var(--rt-space-4);
+            pointer-events: none;
+        }
+
+        &__row--active + .rt-thread-list__row-actions {
+            background: var(--rt-color-state-info-bg);
+        }
+
         &__row-body {
             display: flex;
             flex-direction: column;

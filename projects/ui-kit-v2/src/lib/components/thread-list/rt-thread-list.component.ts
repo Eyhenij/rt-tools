@@ -35,7 +35,12 @@ import { RtInputComponent } from '@rt-tools/ui-kit-v2/input';
 import { RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 import { RtSkeletonComponent } from '@rt-tools/ui-kit-v2/skeleton';
-import { RtThreadListFiltersDirective, RtThreadListRowDirective, RtThreadListSearchDirective } from './rt-thread-list.directives';
+import {
+    RtThreadListFiltersDirective,
+    RtThreadListRowActionsDirective,
+    RtThreadListRowDirective,
+    RtThreadListSearchDirective,
+} from './rt-thread-list.directives';
 import { IRtThreadList } from './rt-thread-list.model';
 
 const BEM_BLOCK: string = 'rt-thread-list';
@@ -110,6 +115,10 @@ export class RtThreadListComponent<TRow extends IRtThreadList.Row> implements On
     });
 
     protected readonly rowTemplate: Signal<RtThreadListRowDirective<TRow> | undefined> = contentChild(RtThreadListRowDirective<TRow>);
+
+    protected readonly rowActionsTemplate: Signal<RtThreadListRowActionsDirective<TRow> | undefined> = contentChild(
+        RtThreadListRowActionsDirective<TRow>
+    );
 
     protected readonly filtersTemplate: Signal<RtThreadListFiltersDirective | undefined> = contentChild(RtThreadListFiltersDirective);
 

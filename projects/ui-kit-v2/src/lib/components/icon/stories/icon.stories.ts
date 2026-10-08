@@ -9,11 +9,11 @@ export default {
     argTypes: {
         name: { control: false },
         size: {
-            options: ['xs', 'sm', 'md', 'lg', 'xl', '2xl'],
+            options: ['xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl', '4xl'],
             control: { type: 'select' },
         },
         color: {
-            options: ['current', 'muted', 'info', 'success', 'warning', 'danger', 'inverse'],
+            options: ['current', 'primary', 'muted', 'disabled', 'info', 'success', 'warning', 'danger', 'inverse'],
             control: { type: 'select' },
         },
         rotate: { control: { type: 'number' } },

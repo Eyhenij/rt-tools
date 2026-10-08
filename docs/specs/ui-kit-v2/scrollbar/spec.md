@@ -52,6 +52,9 @@ replace it show the bar together with its place — and the content jerks sidewa
 - **The colour of the slider is taken by the token of a border, not by a value of its own.** The bar is
   a part of the same line of the boundaries as the borders of the fields; a value of its own would
   diverge from them at the first edit of the theme.
+- **The application's node under a node of the kit gets the bar of the browser, not the quiet one.**
+  The colour of the bar is inherited, and without a stop the application's own zone inside a panel or
+  a dialog drew a transparent bar and lost its own design of the bar in Chrome.
 
 ## What is out of scope
 
@@ -104,6 +107,10 @@ Not applicable.
 
 - **The place under the bar stays taken** — otherwise the content jerks sideways at every hovering.
   Rejected: showing the bar together with its place, as the techniques that were found do.
+- **The stop stands on the first node without a kit class under a kit node, and it weighs nothing.**
+  Everything under that node inherits the browser's default, and a rule of the application on the
+  same node wins without counting. A node the kit draws through a foreign library takes the quiet bar
+  back by a rule of its own: the input zone of the text editor does.
 - **The bar stays the one of the system and is designed by rules** — a bar of one's own by markup stops
   obeying the wheel, the keys and the gestures. Rejected: a foreign library of a bar of the scroll.
 
@@ -116,3 +123,4 @@ Not applicable.
 ## History of changes
 
 - 31 August 2026 — the subdomain was created: the quiet bar, the showing at a hovering and at a focus.
+- 7 October 2026 — the application's node under a kit node gets the bar of the browser (RT-2619).

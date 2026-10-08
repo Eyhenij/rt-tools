@@ -1,0 +1,11 @@
+<ng-container rtBlock="rt-cms-editor-titled">
+    <rt-field qa-skip [label]="t()[titleLabel()]">
+        <rt-input qa-dataid="cms-editor-titled-title" [ngModel]="value().title" (ngModelChange)="patch({ title: $event })" />
+    </rt-field>
+    <div
+        rtElem="text"
+        qa-dataid="cms-editor-titled-text"
+        [attr.placeholder]="t()[textPlaceholder()]"
+        [rtCmsEditable]="value().text"
+        (htmlChange)="patch({ text: $event })"></div>
+</ng-container>

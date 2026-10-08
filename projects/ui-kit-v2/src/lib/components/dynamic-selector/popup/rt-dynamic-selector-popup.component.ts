@@ -23,7 +23,7 @@ import { debounceTime, Subject } from 'rxjs';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
+import { rtKitLabel, IRtInput } from '@rt-tools/ui-kit-v2/core';
 import { RtInfiniteScrollDirective } from '@rt-tools/ui-kit-v2/core';
 import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
 import { RtCheckboxComponent } from '@rt-tools/ui-kit-v2/checkbox';
@@ -92,6 +92,8 @@ export class RtDynamicSelectorPopupComponent<TEntity extends object> implements 
     protected readonly multiLabel: Signal<string> = rtKitLabel('dynamicSelectorMulti');
     protected readonly multiHintLabel: Signal<string> = rtKitLabel('dynamicSelectorMultiHint');
     protected readonly noResultsLabel: Signal<string> = rtKitLabel('dynamicSelectorNoResults');
+    /** Подпись пустого результата: своя у приложения, иначе словарь кита. */
+    protected readonly emptyText: Signal<string> = computed((): string => this.emptyResultsText() || this.noResultsLabel());
     protected readonly cancelLabel: Signal<string> = rtKitLabel('uiCancel');
     protected readonly applyLabel: Signal<string> = rtKitLabel('dynamicSelectorApply');
 
@@ -189,6 +191,10 @@ export class RtDynamicSelectorPopupComponent<TEntity extends object> implements 
     public readonly navigateLink: InputSignal<string> = input<string>('');
     /** Запрос, с которым выбор открывается; событием поиска он не уходит — вызывающий его знает. */
     public readonly searchTerm: InputSignal<string> = input<string>('');
+    /** Вид поля поиска — тот же вход, что у поля кита. */
+    public readonly searchAppearance: InputSignal<IRtInput.Appearance> = input<IRtInput.Appearance>('outline');
+    /** Подпись пустого результата поиска; пустая строка оставляет подпись кита. */
+    public readonly emptyResultsText: InputSignal<string> = input<string>('');
 
     /** Применённые ключи в порядке отметок. */
     public readonly applied: OutputEmitterRef<unknown[]> = output<unknown[]>();

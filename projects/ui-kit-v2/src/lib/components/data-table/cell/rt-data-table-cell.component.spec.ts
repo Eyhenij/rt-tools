@@ -229,10 +229,10 @@ describe('RtDataTableCellComponent', () => {
     });
 
     it('SC-UKV-319 — имя без пары в перечне рисуется глифом Material Symbols, значение остаётся', () => {
-        const fixture: ComponentFixture<CellHostComponent> = setup({ icon: { glyph: 'delete_forever', placement: 'left' } });
+        const fixture: ComponentFixture<CellHostComponent> = setup({ icon: { glyph: 'pets', placement: 'left' } });
 
         expect(kitIconNames(fixture)).toEqual([]);
-        expect(textOf(qa(fixture, 'data-table-cell-glyph'))).toBe('delete_forever');
+        expect(textOf(qa(fixture, 'data-table-cell-glyph'))).toBe('pets');
         expect(cellText(fixture)).toBe('Тур в Сочи');
     });
 

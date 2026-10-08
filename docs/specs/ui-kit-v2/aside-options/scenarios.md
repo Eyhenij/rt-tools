@@ -79,3 +79,37 @@ Then it looks as before
 
 Not covered: this is a promise about frames. The former snapshots of the side panel stories match
 without a re-take.
+
+### SC-UKV-716 — the header takes its properties from an ancestor
+
+Given header properties and back button sizes set by the application on a node above the panel
+When a panel is drawn
+Then the title, the subtitle, the gaps, the row height and the back button take those values, and
+without them the header looks as before
+
+Not covered: a test has no layout, and this is a style rule. Checked by a measurement in the
+showcase; the snapshots of the side panel stories match without a re-take.
+
+### SC-UKV-717 — the slot of the title column stands under the subtitle
+
+Given a header with an element in the slot of its title column, or without one
+When it is drawn
+Then the element stands inside the title column, and without it the column holds nothing more
+
+Covered: `projects/ui-kit-v2/src/lib/components/aside/rt-aside-open.spec.ts`.
+
+### SC-UKV-718 — a panel removed before its first frame plays no entrance
+
+Given a panel closed in the same task it was opened in
+When the next frame comes
+Then the service touches neither the removed pane nor its backdrop
+
+Covered: `projects/ui-kit-v2/src/lib/components/aside/rt-aside-open.spec.ts`.
+
+### SC-UKV-719 — the caller decides whether a navigation removes the panel
+
+Given a panel opened with the navigation option off, or without the option
+When the overlay is created
+Then it is told to stay through a navigation, and by default to leave
+
+Covered: `projects/ui-kit-v2/src/lib/components/aside/rt-aside-open.spec.ts`.
