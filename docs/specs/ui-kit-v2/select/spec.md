@@ -82,6 +82,8 @@ a list: a field, a badge, an icon, a pill with a name.
   sets their own limit as a length, or takes the limit off with `none` for a short list that must
   open whole.
 
+- **An open list highlights the chosen option.** The arrows move from it, not from the first
+  option: with "20" chosen from "10, 20, 40" the arrow down reached "10".
 - **The option reached by keys is scrolled into the panel.** The keys move the highlight while the
   focus stays on the field, and the browser does not scroll the panel for a highlight: past the
   height limit the highlight left the visible part, and Enter chose an option the person did not
@@ -173,3 +175,4 @@ None.
   review of the epic RT-1870.
 - 2026-09-29 — the magnifier of the filter line and the multiselect's icon on the left; the task
   RT-2368 of the epic RT-2370.
+- 2026-10-08 — the open list highlights the chosen option; the task RT-2698 of the epic RT-2649.
