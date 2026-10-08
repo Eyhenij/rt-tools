@@ -20,6 +20,12 @@
 
 ## Decisions along the way
 
+- **`auth-server` leaves as 0.2.1, not 0.1.1, and `cms-server` 0.1.1 depends on `^0.2.1`.** The
+  registry already has `auth-server` 0.2.0: it differs from 0.1.0 only by the required peer
+  `@connectrpc/connect`, which `cms-server` declares too. A 0.1.1 would branch off an old line, and
+  the consumer would stay on the version without that peer. Order: `auth-server` 0.2.1 is published
+  first, then `cms-server` takes it in the lockfile and leaves as 0.1.1. Affected stage of the plan: 2.
+
 ## Sessions
 
 ### 2026-10-08
