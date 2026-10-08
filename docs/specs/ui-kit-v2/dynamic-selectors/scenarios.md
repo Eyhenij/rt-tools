@@ -437,3 +437,15 @@ Not covered: a test has no layout. Measured on the showcase in the stories **Row
 handle and 51px from the row edge, and no button has a divider; with 4px paddings, a 12px gap and a
 thin divider the title stands 61px from the row edge and the first of two buttons carries a 1px
 divider.
+
+### SC-UKV-770 — the field of a new row and the invitation keep their own look whatever the style order
+
+Given a string field with its new-row field open, and a selector with the invitation
+When the styles of the field, the empty state and the family load in either order
+Then the native input fills the field and stands in its middle, and the invitation stays centred
+
+Not covered: a test has no layout and no load order. Measured on the showcase in the stories
+**String list** and **Invitation**: the input is 318px wide in a 352px field and stands 11px from its
+top, and the invitation icon stands 144px from the edge; with the former `display: block` put back on
+the host the input shrank to 157px at 1px from the top and the icon moved to 24px, as the
+application saw in 0.19.0.

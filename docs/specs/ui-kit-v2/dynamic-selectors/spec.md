@@ -104,6 +104,10 @@ stands next to it as components of its own, drawn on the parts of the second kit
   items to choose» and no buttons.**
 - **While the caller turns the invitation on, it replaces the row of buttons.** Its button opens the
   popup the same as the add button.
+- **A part of the family drawn by another kit component keeps that component's own display.** The
+  family sets no display on such a host, and hides one by a rule of two classes: the order in which
+  the styles of two kit components load is fixed by nothing, and a display of equal force from the
+  family would win or lose by that order.
 - **Under the invitation a list with no rows is not drawn.** An empty node would push the invitation
   down by the gap of the field; a list with rows stays above the invitation.
 - **A disabled selector keeps the add, reset and clear buttons off.** The row delete, the row edit

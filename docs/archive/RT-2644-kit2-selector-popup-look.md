@@ -122,3 +122,14 @@ closing:
   by default, and the paddings of the drag handle with the gap to the title. Along the way the
   defaults of row 106 turned out not to reach a dragged row: it lives at the end of the page, outside
   the list. All the list defaults are declared by one mixin on the list and on the dragged row.
+- Row 110, urgent, came from the application's session: in 0.19.0 the field of a new row in the string
+  list lost its look. The family set `display: block` on the host of `rt-input`, which carries its own
+  block class and `inline-flex`; with every component built as its own entry point the order of the
+  two style sheets changed in the application, and the family's rule won. The same clash stood on the
+  invitation, the nothing-to-choose state, the select-all box and the hidden hint icon of the popup.
+  The family no longer sets a display on another component's host, and hides the icon by two classes,
+  as the page header already did. The same kind of rule stands in four components outside the family;
+  they are named to the owner, not edited here.
+- The showcase itself drew the string field with the family's rule winning: in the **Look** frame its
+  invitation icon stood at the left edge and its new-row field was the broken one. After the fix the
+  invitation of the string field is centred like the selector's, and the frame was re-taken for it.
