@@ -161,7 +161,7 @@ describe('the redirects', () => {
             },
             saveRedirect: (request: SaveRedirectRequest) => {
                 saves.push(request);
-                return { redirect: create(RedirectSchema, { ...request, id: 'r2' }) };
+                return { redirect: create(RedirectSchema, { from: request.from, to: request.to, type: request.type, id: 'r2' }) };
             },
             deleteRedirect: () => ({}),
         });
