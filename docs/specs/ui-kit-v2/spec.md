@@ -60,6 +60,7 @@ agreement about their own subject and describe the surface of a component, not a
 | [The accordion](accordion/spec.md)                                        | a list of headed items whose texts open on a press, independently of one another                                                |
 | [The expansion panel](expansion-panel/spec.md)                            | a header button over a body that opens with motion                                                                              |
 | [The tooltip of a cut text](tooltip-when-truncated/spec.md)               | the mode where the tooltip shows only over a text that did not fit its node                                                     |
+| [The assistant chat](ai-chat/spec.md)                                     | the panel of an AI assistant as one component: the feed, the run line, the rating, the error, the conversations                 |
 | [The prompt suggestion](prompt-suggestion/spec.md)                        | a card with a ready question on the empty screen of an assistant: the text, the arrow at the edge, the press                    |
 | [The request error of a side panel](aside-error-box/spec.md)              | where a failed request is shown in a panel and what its copy button puts into the clipboard                                     |
 | [The dynamic selectors](dynamic-selectors/spec.md)                        | a form field with the chosen list, a pop-up choice with search, a field of typed rows                                           |

@@ -1,0 +1,12 @@
+@layer rt-kit.components {
+    .rt-ai-chat-answer {
+        display: flex;
+        flex-direction: column;
+        gap: var(--rt-space-sm);
+
+        &__feedback {
+            display: flex;
+            gap: var(--rt-space-xs);
+        }
+    }
+}
