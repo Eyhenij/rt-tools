@@ -40,9 +40,22 @@ Rows 93–95 hold for both: each passes from `rt-dynamic-selector` and is set in
 **Take rows 92–95 into a task of their own?**
 «да, заводи задачу на 92-95»
 
+**What else goes into the task?** The owner's list, verbatim for rows 96–99:
+
+> 96. Фокус в поле поиска при открытии окна: вход autofocusSearch: boolean, умолчание кита false.
+>     Сейчас фокус остаётся на элементе, открывшем окно.
+> 97. Токены пункта: --rt-dynamic-selector-popup-option-line-height,
+>     --rt-dynamic-selector-popup-option-min-height. Сейчас строка подписи 14px, в v1 20px при высоте
+>     пункта 36px.
+> 98. Токен --rt-dynamic-selector-popup-empty-gap — зазор между иконкой и подписью пустого
+>     результата. Сейчас 20px (рамка иконки 64px вокруг глифа 48px + отступ), в v1 16px.
+> 99. Токен --rt-dynamic-selector-popup-foot-padding. Сейчас зашит 8px 16px 0, в v1 16px 24px 0 8px.
+
 ## Decisions
 
 - **Rows 92–95 go as one task and one PR.** — the owner's word; all four touch the popup.
+- **Rows 96–99 join this task.** — the owner sent the list of rows 92–99 into this task, as
+  promised by «ща еще накину что делать в новую задачу».
 
 ## What is left unclear
 

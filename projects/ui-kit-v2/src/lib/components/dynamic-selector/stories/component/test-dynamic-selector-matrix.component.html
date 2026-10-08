@@ -182,7 +182,11 @@
                             [multiToggleShown]="popupCase.multiToggleShown"
                             [loading]="popupCase.loading"
                             [pinnedKeys]="popupCase.pinnedKeys"
-                            [titleWrap]="popupCase.titleWrap ?? true" />
+                            [titleWrap]="popupCase.titleWrap ?? true"
+                            [searchTerm]="popupCase.searchTerm ?? ''"
+                            [highlightSearch]="popupCase.highlightSearch ?? false"
+                            [applyLabel]="popupCase.applyLabel ?? ''"
+                            [applyLabelCase]="popupCase.applyLabelCase ?? 'none'" />
                     </ng-template>
                 </app-story-row>
             </ng-template>

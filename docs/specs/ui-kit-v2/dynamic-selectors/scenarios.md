@@ -333,3 +333,22 @@ When the popup opens
 Then the search field is rounded by that step, and without one it keeps its own rounding
 
 Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/popup/rt-dynamic-selector-popup-look.spec.ts`.
+
+### SC-UKV-730 — the popup marks the characters that match the search
+
+Given a selector whose caller turns the search highlight on, or the kit settings turn it on
+When the popup shows options for a search
+Then the characters of each label that match a search word are marked, the label reads whole and a
+single-line label keeps its ellipsis, and without the highlight no character is marked
+
+Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/popup/rt-dynamic-selector-popup-highlight.spec.ts`, `projects/ui-kit-v2/src/lib/components/dynamic-selector/rt-dynamic-selector.logic.spec.ts`.
+
+### SC-UKV-731 — the apply button takes the caller's label and case
+
+Given a selector whose caller names a label or a case for the apply button, or the kit settings name
+them
+When the popup opens
+Then the button shows that label in that case and is named by it, and without them it shows the kit
+label as it is
+
+Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/popup/rt-dynamic-selector-popup-look.spec.ts`, `projects/ui-kit-v2/src/lib/components/dynamic-selector/rt-dynamic-selector.logic.spec.ts`.

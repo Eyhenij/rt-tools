@@ -131,9 +131,13 @@ stands next to it as components of its own, drawn on the parts of the second kit
   takes an icon, the close cross by default; the popup search field and the string list's own field
   take one of the field's looks; the empty result shows the caller's text, the kit label without it.
   The popup search takes a radius step too, and without one it keeps the field's own rounding.
+- **The caller names the label of the apply button and its case.** Without a label the button keeps
+  the kit label. The case leaves the label as it is by default, raises the first letter of every
+  word, or raises the whole label; the button is named for a reader who hears the screen by the same
+  text.
 - **The kit settings set the look of the invitation, the clear button, the popup search, the empty
-  result and the row title wrapping for every field at once, and an input at the place wins over
-  them.** Both fields read the invitation button, the clear icon and the title wrapping from the
+  result, the row title wrapping, the search highlight and the apply button label for every field at
+  once, and an input at the place wins over them.** Both fields read the invitation button, the clear icon and the title wrapping from the
   settings; the search and the empty result belong to the selector alone. Without the settings the
   kit defaults stay.
 - **A value the caller sets on the list block reaches it, and a popup property or the add button's
@@ -158,6 +162,10 @@ stands next to it as components of its own, drawn on the parts of the second kit
   stands on one line, cut with an ellipsis, and a cut label shows the whole text in a tooltip; the
   label of a single-choice option is drawn next to its button and names the button for a reader who
   hears the screen.
+- **The popup marks the characters of an option label that match the search when the caller turns
+  it on.** Each word of the search is found in the label regardless of case, and the found characters
+  take the highlight colour and weight; the label still reads whole and keeps its ellipsis. Without
+  the input no character is marked.
 - **The field of a new row shows the caller's label, and without one it stands as before.** The label
   is drawn by the kit field around the field and leads to it; the field has no label input of its
   own.

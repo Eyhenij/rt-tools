@@ -18,6 +18,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
+import { NgTemplateOutlet } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { debounceTime, Subject } from 'rxjs';
 
@@ -35,6 +36,7 @@ import { RtSpinnerComponent } from '@rt-tools/ui-kit-v2/spinner';
 import { RtToggleSwitchComponent } from '@rt-tools/ui-kit-v2/toggle-switch';
 import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
 import {
+    dynamicMatchParts,
     dynamicPopupRows,
     dynamicSelectAllState,
     dynamicSelectorLabel,
@@ -42,6 +44,7 @@ import {
     lastPinnedDynamicKey,
     selectAllDynamicKeys,
     toggleDynamicKey,
+    dynamicLabelCase,
 } from '../rt-dynamic-selector.logic';
 import { IRtDynamicSelector } from '../rt-dynamic-selector.model';
 
@@ -64,6 +67,7 @@ export const RT_DYNAMIC_SELECTOR_SEARCH_DEBOUNCE: number = 500;
     imports: [
         // Angular
         FormsModule,
+        NgTemplateOutlet,
         RouterLink,
 
         // standalone components / directives
@@ -95,7 +99,11 @@ export class RtDynamicSelectorPopupComponent<TEntity extends object> implements 
     /** Подпись пустого результата: своя у приложения, иначе словарь кита. */
     protected readonly emptyText: Signal<string> = computed((): string => this.emptyResultsText() || this.noResultsLabel());
     protected readonly cancelLabel: Signal<string> = rtKitLabel('uiCancel');
-    protected readonly applyLabel: Signal<string> = rtKitLabel('dynamicSelectorApply');
+    protected readonly applyKitLabel: Signal<string> = rtKitLabel('dynamicSelectorApply');
+    /** Подпись кнопки применения: своя у приложения, иначе словарь кита, — в заданном регистре. */
+    protected readonly applyText: Signal<string> = computed((): string =>
+        dynamicLabelCase(this.applyLabel() || this.applyKitLabel(), this.applyLabelCase())
+    );
 
     /** Отмеченные ключи — ещё не применённые. */
     protected readonly ticked: WritableSignal<unknown[]> = signal<unknown[]>([]);
@@ -128,13 +136,18 @@ export class RtDynamicSelectorPopupComponent<TEntity extends object> implements 
         const ticked: ReadonlyArray<unknown> = this.ticked();
         const lastPinned: unknown = this.lastPinnedKey();
         const { ticked: above, found } = this.rows();
+        const highlight: boolean = this.highlightSearch();
+        const query: string = this.query();
+        const labelOf: (item: TEntity) => string = (item: TEntity): string =>
+            dynamicSelectorLabel(item, (entity: TEntity): unknown => this.#labelOf(entity)) ?? '';
         const toRow: (item: TEntity, separated: boolean) => IRtDynamicSelector.PopupRow<TEntity> = (
             item: TEntity,
             separated: boolean
         ): IRtDynamicSelector.PopupRow<TEntity> => ({
             entity: item,
             key: this.#keyOf(item),
-            label: dynamicSelectorLabel(item, (entity: TEntity): unknown => this.#labelOf(entity)) ?? '',
+            label: labelOf(item),
+            parts: highlight ? dynamicMatchParts(labelOf(item), query) : [{ text: labelOf(item), matched: false }],
             ticked: ticked.includes(this.#keyOf(item)),
             separated,
         });
@@ -146,6 +159,8 @@ export class RtDynamicSelectorPopupComponent<TEntity extends object> implements 
             ),
         ];
     });
+    /** Подпись выбора одной записи рисует окно, а не кнопка: без переноса и при подсветке поиска. */
+    protected readonly ownLabel: Signal<boolean> = computed((): boolean => !this.titleWrap() || this.highlightSearch());
     protected readonly hasRows: Signal<boolean> = computed((): boolean => this.visibleKeys().length > 0);
     protected readonly selectAllState: Signal<IRtDynamicSelector.SelectAllState> = computed((): IRtDynamicSelector.SelectAllState =>
         dynamicSelectAllState(this.visibleKeys(), this.ticked())
@@ -197,8 +212,16 @@ export class RtDynamicSelectorPopupComponent<TEntity extends object> implements 
     public readonly searchRadius: InputSignal<TRtRadius | null> = input<TRtRadius | null>(null);
     /** Подпись пустого результата поиска; пустая строка оставляет подпись кита. */
     public readonly emptyResultsText: InputSignal<string> = input<string>('');
+    /** Подпись кнопки применения; пустая строка оставляет подпись кита. */
+    public readonly applyLabel: InputSignal<string> = input<string>('');
+    /** Регистр подписи кнопки применения; `none` оставляет её как есть. */
+    public readonly applyLabelCase: InputSignal<IRtDynamicSelector.LabelCase> = input<IRtDynamicSelector.LabelCase>('none');
     /** Подпись пункта переносится; `false` ведёт её одной строкой с многоточием и подсказкой при обрезке. */
     public readonly titleWrap: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
+        transform: booleanAttribute,
+    });
+    /** Символы подписи пункта, совпавшие со словами поиска, выделены. */
+    public readonly highlightSearch: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
         transform: booleanAttribute,
     });
 

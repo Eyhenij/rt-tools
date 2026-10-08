@@ -27,6 +27,9 @@ const SETTINGS: IRtKitConfig.Config = {
             emptyResultsText: 'Никого не нашли',
             titleWrap: false,
             searchRadius: 'full',
+            highlightSearch: true,
+            applyLabel: 'Submit',
+            applyLabelCase: 'upper',
         },
     },
 };
@@ -60,7 +63,10 @@ class SilentHostComponent {
             searchAppearance="outline"
             emptyResultsText="Пусто"
             titleWrap
+            applyLabel="Готово"
+            applyLabelCase="none"
             [searchRadius]="null"
+            [highlightSearch]="false"
             [entities]="people"
             [invitationButtonIcon]="null" />
         <rt-dynamic-input invitation invitationButtonAppearance="outlined" clearIcon="close" titleWrap [invitationButtonIcon]="null" />
@@ -98,6 +104,9 @@ describe('RtDynamicSelectorComponent — умолчания из настрое�
         expect(inputOf(fixture).clearIcon()).toBe('close');
         expect(selectorOf(fixture).titleWrap()).toBe(true);
         expect(selectorOf(fixture).searchRadius()).toBeNull();
+        expect(selectorOf(fixture).highlightSearch()).toBe(false);
+        expect(selectorOf(fixture).applyLabel()).toBe('');
+        expect(selectorOf(fixture).applyLabelCase()).toBe('none');
         expect(inputOf(fixture).titleWrap()).toBe(true);
     });
 
@@ -114,6 +123,9 @@ describe('RtDynamicSelectorComponent — умолчания из настрое�
         expect(inputOf(fixture).clearIcon()).toBe('trash-x');
         expect(selectorOf(fixture).titleWrap()).toBe(false);
         expect(selectorOf(fixture).searchRadius()).toBe('full');
+        expect(selectorOf(fixture).highlightSearch()).toBe(true);
+        expect(selectorOf(fixture).applyLabel()).toBe('Submit');
+        expect(selectorOf(fixture).applyLabelCase()).toBe('upper');
         expect(inputOf(fixture).titleWrap()).toBe(false);
     });
 
@@ -143,6 +155,9 @@ describe('RtDynamicSelectorComponent — умолчания из настрое�
         expect(inputOf(fixture).clearIcon()).toBe('close');
         expect(selectorOf(fixture).titleWrap()).toBe(true);
         expect(selectorOf(fixture).searchRadius()).toBeNull();
+        expect(selectorOf(fixture).highlightSearch()).toBe(false);
+        expect(selectorOf(fixture).applyLabel()).toBe('Готово');
+        expect(selectorOf(fixture).applyLabelCase()).toBe('none');
         expect(inputOf(fixture).titleWrap()).toBe(true);
     });
 });

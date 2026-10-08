@@ -75,6 +75,14 @@ interface IPopupCase {
     readonly pinnedKeys: readonly number[];
     /** Перенос подписей пунктов; не задан — переносятся, как по умолчанию. */
     readonly titleWrap?: boolean;
+    /** Начальный запрос окна; не задан — окно без запроса. */
+    readonly searchTerm?: string;
+    /** Подсветка совпавших с поиском символов; не задана — выключена, как по умолчанию. */
+    readonly highlightSearch?: boolean;
+    /** Своя подпись кнопки применения; не задана — подпись кита. */
+    readonly applyLabel?: string;
+    /** Регистр подписи кнопки применения; не задан — как есть. */
+    readonly applyLabelCase?: IRtDynamicSelector.LabelCase;
 }
 
 /** Случай поля строк. */
@@ -311,6 +319,46 @@ export class TestRtDynamicSelectorMatrixComponent {
             loading: false,
             pinnedKeys: [],
             titleWrap: false,
+        },
+        {
+            name: 'подсветка поиска',
+            entities: this.longPeople,
+            mode: 'multi',
+            multiToggleShown: false,
+            loading: false,
+            pinnedKeys: [],
+            searchTerm: 'ск',
+            highlightSearch: true,
+        },
+        {
+            name: 'подсветка поиска одной строкой',
+            entities: this.longPeople,
+            mode: 'single',
+            multiToggleShown: false,
+            loading: false,
+            pinnedKeys: [],
+            titleWrap: false,
+            searchTerm: 'ск',
+            highlightSearch: true,
+        },
+        {
+            name: 'своя подпись кнопки, каждое слово с заглавной',
+            entities: STORY_PEOPLE.slice(0, 3),
+            mode: 'single',
+            multiToggleShown: false,
+            loading: false,
+            pinnedKeys: [],
+            applyLabel: 'отправить выбор',
+            applyLabelCase: 'title',
+        },
+        {
+            name: 'подпись кита заглавными',
+            entities: STORY_PEOPLE.slice(0, 3),
+            mode: 'single',
+            multiToggleShown: false,
+            loading: false,
+            pinnedKeys: [],
+            applyLabelCase: 'upper',
         },
     ];
 

@@ -1,5 +1,6 @@
 import { IButton } from '../components/button/rt-button.model';
 import { IRtDataTable } from '../components/data-table/rt-data-table.model';
+import { IRtDynamicSelector } from '../components/dynamic-selector/rt-dynamic-selector.model';
 import { IRtIcon } from '../components/icon/rt-icon.model';
 import { IRtInput } from '../components/input/rt-input.model';
 import { TRtRadius } from '../components/radius/rt-radius.model';
@@ -72,6 +73,12 @@ export namespace IRtKitConfig {
         titleWrap?: boolean;
         /** Шаг скругления поля поиска в окне выбора. Умолчание кита — скругление самого поля. */
         searchRadius?: TRtRadius | null;
+        /** Выделять ли в подписи пункта символы, совпавшие с поиском. Умолчание кита — не выделять. */
+        highlightSearch?: boolean;
+        /** Подпись кнопки применения в окне выбора. Умолчание кита — пустая строка, то есть подпись кита. */
+        applyLabel?: string;
+        /** Регистр подписи кнопки применения. Умолчание кита — `none`, подпись как есть. */
+        applyLabelCase?: IRtDynamicSelector.LabelCase;
     }
 
     /** Умолчания по узлам: каждое действует на одну семью и перебивает общее. */

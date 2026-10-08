@@ -8,10 +8,19 @@ export namespace IRtDynamicSelector {
     /** Как выбирает всплывающий список: один пункт переключателем или несколько флажками. */
     export type Mode = 'single' | 'multi';
 
+    /** Регистр подписи кнопки: как есть, каждое слово с заглавной или вся заглавными. */
+    export type LabelCase = 'none' | 'title' | 'upper';
+
     /** Строки всплывающего выбора: отмеченные раньше над разделителем и найденные под ним. */
     export interface PopupRows<T> {
         readonly ticked: ReadonlyArray<T>;
         readonly found: ReadonlyArray<T>;
+    }
+
+    /** Кусок подписи пункта: совпал ли он со словом поиска. */
+    export interface MatchPart {
+        readonly text: string;
+        readonly matched: boolean;
     }
 
     /** Строка всплывающего выбора, готовая для разметки. */
@@ -19,6 +28,8 @@ export namespace IRtDynamicSelector {
         readonly entity: T;
         readonly key: unknown;
         readonly label: string;
+        /** Подпись по кускам; без подсветки поиска — один кусок без отметки. */
+        readonly parts: ReadonlyArray<MatchPart>;
         readonly ticked: boolean;
         /** Под строкой стоит разделитель. */
         readonly separated: boolean;

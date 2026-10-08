@@ -636,6 +636,8 @@ export type TRtConsumerHandleName =
     | '--rt-dynamic-selector-popup-empty-text-size'
     | '--rt-dynamic-selector-popup-empty-text-weight'
     | '--rt-dynamic-selector-popup-foot-border-width'
+    | '--rt-dynamic-selector-popup-highlight-color'
+    | '--rt-dynamic-selector-popup-highlight-weight'
     | '--rt-dynamic-selector-popup-max-height'
     | '--rt-dynamic-selector-popup-min-height'
     | '--rt-dynamic-selector-popup-nav-color'
@@ -1340,6 +1342,8 @@ export const RT_CONSUMER_HANDLE_NAMES: readonly TRtConsumerHandleName[] = [
     '--rt-dynamic-selector-popup-empty-text-size',
     '--rt-dynamic-selector-popup-empty-text-weight',
     '--rt-dynamic-selector-popup-foot-border-width',
+    '--rt-dynamic-selector-popup-highlight-color',
+    '--rt-dynamic-selector-popup-highlight-weight',
     '--rt-dynamic-selector-popup-max-height',
     '--rt-dynamic-selector-popup-min-height',
     '--rt-dynamic-selector-popup-nav-color',

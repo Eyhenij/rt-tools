@@ -32,6 +32,8 @@
         --rt-dynamic-selector-popup-empty-text-size-default: var(--rt-text-md);
         --rt-dynamic-selector-popup-empty-text-weight-default: var(--rt-font-weight-medium);
         --rt-dynamic-selector-popup-empty-text-color-default: var(--rt-color-text-primary);
+        --rt-dynamic-selector-popup-highlight-color-default: var(--rt-color-text-primary);
+        --rt-dynamic-selector-popup-highlight-weight-default: var(--rt-font-weight-semibold);
 
         display: flex;
         width: var(--rt-dynamic-selector-popup-width, var(--rt-dynamic-selector-popup-width-default));
@@ -158,11 +160,34 @@
         &__row--nowrap &__option {
             min-width: 0;
             max-width: 100%;
+        }
 
-            // Кнопка выбора без своей подписи не сжимается: сжатая, она наезжает кружком на подпись.
-            &--fixed {
-                flex: 0 0 auto;
-            }
+        // Подпись выбора одной записи рисует окно рядом с кнопкой — так же, как её рисует сама кнопка.
+        &__row--own {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--rt-space-sm);
+        }
+
+        // Кнопка выбора без своей подписи не сжимается: сжатая, она наезжает кружком на подпись.
+        &__option--fixed {
+            flex: 0 0 auto;
+        }
+
+        &__row--own &__option-label {
+            min-width: 0;
+            flex: 1 1 auto;
+            color: var(--rt-color-text-primary);
+            cursor: pointer;
+            font-size: var(--rt-text-sm);
+            user-select: none;
+        }
+
+        // Совпавшие с поиском символы: фон метки браузера снят, цвет и насыщенность — свойства окна.
+        &__match {
+            background: transparent;
+            color: var(--rt-dynamic-selector-popup-highlight-color, var(--rt-dynamic-selector-popup-highlight-color-default));
+            font-weight: var(--rt-dynamic-selector-popup-highlight-weight, var(--rt-dynamic-selector-popup-highlight-weight-default));
         }
 
         &__row--nowrap &__option .rt-checkbox {

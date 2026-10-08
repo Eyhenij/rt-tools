@@ -19,6 +19,43 @@ export function dynamicSelectorMatches(label: string, query: string): boolean {
 }
 
 /**
+ * Подпись, разрезанная по словам запроса: совпавшие куски помечены. Слова ищутся так же, как при
+ * отборе, — без учёта регистра и везде, где встречаются; пересёкшиеся совпадения сливаются в один
+ * кусок. Подпись, длина которой меняется от смены регистра, остаётся одним куском без отметки.
+ */
+export function dynamicMatchParts(label: string, query: string): IRtDynamicSelector.MatchPart[] {
+    const words: string[] = query.toLowerCase().trim().split(/\s+/).filter(Boolean);
+    const text: string = label.toLowerCase();
+
+    if (words.length === 0 || label === '' || text.length !== label.length) {
+        return [{ text: label, matched: false }];
+    }
+
+    const marks: boolean[] = Array.from({ length: label.length }, (): boolean => false);
+
+    for (const word of words) {
+        let from: number = text.indexOf(word);
+
+        while (from !== -1) {
+            marks.fill(true, from, from + word.length);
+            from = text.indexOf(word, from + 1);
+        }
+    }
+
+    const parts: IRtDynamicSelector.MatchPart[] = [];
+    let start: number = 0;
+
+    for (let index: number = 1; index <= label.length; index++) {
+        if (index === label.length || marks[index] !== marks[start]) {
+            parts.push({ text: label.slice(start, index), matched: marks[start] });
+            start = index;
+        }
+    }
+
+    return parts;
+}
+
+/**
  * Пункты, которые можно выбрать: без уже выбранных, без пунктов без подписи и, если запрос есть,
  * только совпавшие. Порядок — функция сортировки приложения, а без неё — по алфавиту подписи.
  */
@@ -161,4 +198,20 @@ export function dynamicPopupRows<T, K>(
         .filter((item: T | undefined): item is T => item !== undefined);
 
     return { ticked: tickedRows, found: found.filter((item: T): boolean => !ticked.includes(keyOf(item))) };
+}
+
+/**
+ * Подпись в заданном регистре. «title» ставит заглавную в начало каждого слова, а остальные буквы
+ * слова строчными: «SUBMIT FORM» и «submit form» обе становятся «Submit Form».
+ */
+export function dynamicLabelCase(label: string, labelCase: IRtDynamicSelector.LabelCase): string {
+    if (labelCase === 'upper') {
+        return label.toLocaleUpperCase();
+    }
+
+    if (labelCase === 'title') {
+        return label.replace(/\S+/g, (word: string): string => word.charAt(0).toLocaleUpperCase() + word.slice(1).toLocaleLowerCase());
+    }
+
+    return label;
 }
