@@ -22,6 +22,7 @@ The scenarios live in the subdomains, each at its own rules:
 | [The expansion panel](expansion-panel/scenarios.md)                      | `SC-UKV-519`…`SC-UKV-525`                            |
 | [The value with a copy button](copy-value/scenarios.md)                  | `SC-UKV-742`…`SC-UKV-746`                            |
 | [The image cropper](image-cropper/scenarios.md)                          | `SC-UKV-491`…`SC-UKV-506`                            |
+| [The prompt suggestion](prompt-suggestion/scenarios.md)                  | `SC-UKV-747`…`SC-UKV-749`                            |
 | [The image uploader](image-upload/scenarios.md)                          | `SC-UKV-507`…`SC-UKV-518`                            |
 | [The tooltip of a cut text](tooltip-when-truncated/scenarios.md)         | `SC-UKV-458`…`SC-UKV-461`                            |
 | [The request error of a side panel](aside-error-box/scenarios.md)        | `SC-UKV-462`…`SC-UKV-466`                            |
