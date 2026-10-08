@@ -1,6 +1,6 @@
-import { METHOD_METADATA, PATH_METADATA } from '@nestjs/common/constants';
+import { METHOD_METADATA, PATH_METADATA } from '@nestjs/common/constants.js';
 
-import { accessDeclarationsOf } from './access';
+import { accessDeclarationsOf } from './access.js';
 
 /** A class whose prototype holds the route handlers. */
 export type TControllerClass = abstract new (...args: never[]) => object;

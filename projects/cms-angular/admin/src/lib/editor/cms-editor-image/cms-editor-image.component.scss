@@ -1,0 +1,33 @@
+// The block images — a strip of previews of one height under the row with the picking.
+:host {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rt-space-sm);
+
+    .rt-cms-editor-image {
+        &__header {
+            display: flex;
+            align-items: center;
+            gap: var(--rt-space-xs);
+        }
+
+        &__count {
+            flex: 1 1 auto;
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-sm);
+        }
+
+        &__list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--rt-space-xs);
+        }
+
+        // Previews of one height: images of different proportions would otherwise stretch the block.
+        &__thumb {
+            height: calc(var(--rt-size-40) * 3);
+            border-radius: var(--rt-radius-sm);
+            object-fit: cover;
+        }
+    }
+}

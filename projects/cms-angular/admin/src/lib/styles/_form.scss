@@ -1,0 +1,64 @@
+// The form vocabulary of the package screens: a section card, its title and hint, and a list row.
+// The type settings and the page edit share it, so a section looks the same on both.
+
+@mixin stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rt-space-md);
+}
+
+// One kind of section — a card on the surface with a shadow.
+@mixin section {
+    @include stack;
+
+    padding: var(--rt-space-5);
+    border-radius: var(--rt-radius-lg);
+    background: var(--rt-color-bg-surface);
+    box-shadow: var(--rt-shadow-card);
+}
+
+@mixin section-title {
+    margin: 0;
+    color: var(--rt-color-text-primary);
+    font-size: var(--rt-text-lg);
+    font-weight: var(--rt-font-weight-semibold);
+}
+
+@mixin hint {
+    margin: 0;
+    color: var(--rt-color-text-muted);
+    font-size: var(--rt-text-sm);
+}
+
+@mixin list {
+    @include stack;
+
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+// A list row: the name and the actions pressed to the right edge; on a narrow screen they go under the name.
+@mixin list-item {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+    padding: var(--rt-space-sm) var(--rt-space-md);
+    border-radius: var(--rt-radius-md);
+    background: var(--rt-color-bg-surface-subtle);
+    gap: var(--rt-space-sm);
+}
+
+@mixin list-item-title {
+    min-width: 0;
+    color: var(--rt-color-text-primary);
+    font-size: var(--rt-text-sm);
+    overflow-wrap: anywhere;
+}
+
+@mixin list-item-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--rt-space-xs);
+    margin-inline-start: auto;
+}
