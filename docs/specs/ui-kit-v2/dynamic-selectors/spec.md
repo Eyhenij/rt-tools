@@ -171,6 +171,9 @@ stands next to it as components of its own, drawn on the parts of the second kit
   stands on one line, cut with an ellipsis, and a cut label shows the whole text in a tooltip; the
   label of a single-choice option is drawn next to its button and names the button for a reader who
   hears the screen.
+- **The caller may give a function for the label of a record, and then the list row, the popup
+  option and the search all take its result.** Without the function the label is the field named by
+  `displayExp`, as before.
 - **The popup marks the characters of an option label that match the search when the caller turns
   it on.** Each word of the search is found in the label regardless of case, and the found characters
   take the highlight colour, weight, background and background rounding; the background is

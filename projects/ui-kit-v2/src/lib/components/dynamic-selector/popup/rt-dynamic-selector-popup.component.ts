@@ -190,6 +190,8 @@ export class RtDynamicSelectorPopupComponent<TEntity extends object> implements 
     public readonly entities: InputSignal<ReadonlyArray<TEntity>> = input<ReadonlyArray<TEntity>>([]);
     public readonly keyExp: InputSignal<keyof TEntity & string> = input.required<keyof TEntity & string>();
     public readonly displayExp: InputSignal<keyof TEntity & string> = input.required<keyof TEntity & string>();
+    /** Подпись записи для строки, пункта окна и поиска; не задана — поле `displayExp`. */
+    public readonly displayWith: InputSignal<((entity: TEntity) => string) | null> = input<((entity: TEntity) => string) | null>(null);
     public readonly mode: InputSignal<IRtDynamicSelector.Mode> = input<IRtDynamicSelector.Mode>('multi');
     public readonly multiToggleShown: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
         transform: booleanAttribute,
@@ -317,6 +319,8 @@ export class RtDynamicSelectorPopupComponent<TEntity extends object> implements 
 
     /** Подпись записи — по имени поля, которое назвал вызывающий. */
     #labelOf(item: TEntity): unknown {
-        return item[this.displayExp()];
+        const displayWith: ((entity: TEntity) => string) | null = this.displayWith();
+
+        return displayWith === null ? item[this.displayExp()] : displayWith(item);
     }
 }

@@ -194,6 +194,8 @@ export class RtDynamicSelectorComponent<TEntity extends object> extends RtFormCo
     public readonly entities: InputSignal<ReadonlyArray<TEntity>> = input<ReadonlyArray<TEntity>>([]);
     public readonly keyExp: InputSignal<keyof TEntity & string> = input.required<keyof TEntity & string>();
     public readonly displayExp: InputSignal<keyof TEntity & string> = input.required<keyof TEntity & string>();
+    /** Подпись записи для строки, пункта окна и поиска; не задана — поле `displayExp`. */
+    public readonly displayWith: InputSignal<((entity: TEntity) => string) | null> = input<((entity: TEntity) => string) | null>(null);
     public readonly mode: InputSignal<IRtDynamicSelector.Mode> = input<IRtDynamicSelector.Mode>('multi');
     /** Название кнопки добавления; пустое — «Add» из словаря кита. */
     public readonly buttonTitle: InputSignal<string> = input<string>('');
@@ -445,6 +447,8 @@ export class RtDynamicSelectorComponent<TEntity extends object> extends RtFormCo
 
     /** Подпись записи — по имени поля, которое назвал вызывающий. */
     #labelOf(item: TEntity): unknown {
-        return item[this.displayExp()];
+        const displayWith: ((entity: TEntity) => string) | null = this.displayWith();
+
+        return displayWith === null ? item[this.displayExp()] : displayWith(item);
     }
 }

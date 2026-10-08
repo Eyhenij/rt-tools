@@ -105,3 +105,7 @@ closing:
 - Row 104 came from the application's session: the matched characters of the search highlight get a
   background and its rounding as properties, transparent and square by default. The application
   paints them like the match in its own tree; the kit names no colour of the application.
+- Row 105 came from the application's session: the input `displayWith` gives the label of a record
+  by a function, for the list row, the popup option and the search at once. The first kit split
+  joined names by a flag; a function covers that case and any other, and the kit takes no string
+  pipe of its own for it. Without the function the label is the `displayExp` field, as before.

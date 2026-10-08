@@ -39,6 +39,8 @@ interface ILookCase {
     readonly invitationButtonAppearance: IButton.Appearance;
     readonly clearIcon: IRtIcon.Name;
     readonly control: FormControl<number[] | null>;
+    /** Подпись записи функцией; не задана — поле `name`. */
+    readonly displayWith?: (person: IStoryPerson) => string;
 }
 
 /** Переключатели списка: корзина, панель сброса и очистки, правки в шаблоне строки. */
@@ -203,6 +205,15 @@ export class TestRtDynamicSelectorMatrixComponent {
             invitationButtonAppearance: 'outlined',
             clearIcon: 'trash-x',
             control: chosen([1, 2]),
+        },
+        {
+            name: 'своя подпись записи: фамилия первой',
+            invitation: false,
+            invitationButtonIcon: null,
+            invitationButtonAppearance: 'outlined',
+            clearIcon: 'close',
+            control: chosen([1, 2]),
+            displayWith: (person: IStoryPerson): string => person.name.split(' ').reverse().join(' '),
         },
     ];
 

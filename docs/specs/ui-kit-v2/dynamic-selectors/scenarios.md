@@ -393,3 +393,13 @@ transparent and the corners square
 Not covered: a test has no layout. Measured on the showcase in the story **Popup**: without the
 properties the matched characters have the background `rgba(0, 0, 0, 0)` and the rounding `0px`; with
 the warning background and the `xs` step they have `rgb(255, 251, 235)` and `2px`.
+
+### SC-UKV-762 — the label of a record comes from the caller's function
+
+Given a selector whose caller gives a function that splits «BasicReports» into «Basic Reports»
+When the list, the popup and the search show the records
+Then the row and the options read «Basic Reports», «Audit Log», «User Admin», and the query «user ad»
+finds «User Admin»; without the function the labels stay as the field holds them
+
+Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/rt-dynamic-selector-display-with.spec.ts`.
+Покрытие: частичное — the test reads the label text in the markup; the drawn labels are looked at on the showcase in the story **Look**, in the case where the surname stands first.
