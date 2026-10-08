@@ -15,6 +15,10 @@ import { CMS_ASIDE_OUTLET } from './cms-aside-outlet.const';
  * side outlet: the redirects screen stands on an empty path inside its branch, otherwise a relative
  * move into the named outlet is not resolved. Leaving the page edit with unsaved edits asks: the
  * kit guard calls the question of the screen itself.
+ *
+ * The application mounts these routes by `loadChildren`: the packager puts the whole entry into one
+ * file, and the screen imports below do not split it. A static import of the routes puts the entry
+ * into the initial bundle of the application.
  */
 export const cmsRoutes: Routes = [
     {
