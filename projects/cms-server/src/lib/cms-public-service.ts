@@ -6,10 +6,10 @@ import {
     type ListPublishedContentItemsRequest,
 } from '@rt-tools/cms-contract';
 
-import { contractItemOf, contractRedirectOf, contractTagOf } from './cms-contract.function';
-import type { IContentItemRecord, IRedirectRecord, ITagRecord } from './cms-records.model';
-import type { ICmsSources } from './cms-sources.model';
-import { isVisibleOnSite } from './content-item-rules.function';
+import { contractItemOf, contractRedirectOf, contractTagOf } from './cms-contract.function.js';
+import type { IContentItemRecord, IRedirectRecord, ITagRecord } from './cms-records.model.js';
+import type { ICmsSources } from './cms-sources.model.js';
+import { isVisibleOnSite } from './content-item-rules.function.js';
 
 /** The site service of the CMS: open to everyone, it never hands out a preview token. */
 export function cmsPublicServiceImpl(sources: ICmsSources): ServiceImpl<typeof CmsPublicService> {

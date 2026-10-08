@@ -4,11 +4,11 @@ import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 
 import { TPermission } from '@rt-tools/auth-contract';
 
-import { accessAuditError, TControllerClass, undeclaredAccess } from './access-audit';
-import { AuthGuard } from './auth.guard';
-import { AUTH_SERVER_OPTIONS, AUTH_TOKEN_VERIFIER } from './auth.tokens';
-import { ICatalogSyncOptions, ICatalogSyncResult, syncPermissionCatalog } from './catalog-sync';
-import { ITokenCheckOptions, KeycloakTokenVerifier } from './token-verifier';
+import { accessAuditError, TControllerClass, undeclaredAccess } from './access-audit.js';
+import { AuthGuard } from './auth.guard.js';
+import { AUTH_SERVER_OPTIONS, AUTH_TOKEN_VERIFIER } from './auth.tokens.js';
+import { ICatalogSyncOptions, ICatalogSyncResult, syncPermissionCatalog } from './catalog-sync.js';
+import { ITokenCheckOptions, KeycloakTokenVerifier } from './token-verifier.js';
 
 /** What an admin server tells the module. */
 export interface IAuthServerOptions extends ITokenCheckOptions {

@@ -1,4 +1,4 @@
-import { IScheduledPublicationSources, runScheduledPublication } from './scheduled-publication.function';
+import { IScheduledPublicationSources, runScheduledPublication } from './scheduled-publication.function.js';
 
 const NOW: Date = new Date('2026-10-07T10:00:00Z');
 

@@ -1,4 +1,4 @@
-import { ICatalogSyncOptions, ICatalogSyncResult, syncPermissionCatalog } from './catalog-sync';
+import { ICatalogSyncOptions, ICatalogSyncResult, syncPermissionCatalog } from './catalog-sync.js';
 
 interface ICall {
     readonly url: string;

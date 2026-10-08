@@ -18,8 +18,8 @@ import {
     UpdateContentTypeRequestSchema,
 } from '@rt-tools/cms-contract';
 
-import { cmsServiceImpl } from './cms-service';
-import { callerOf, contextOf, type IMemorySources, memorySources, refusalOf } from './testing/memory-sources';
+import { cmsServiceImpl } from './cms-service.js';
+import { callerOf, contextOf, type IMemorySources, memorySources, refusalOf } from './testing/memory-sources.js';
 
 type TCmsServiceImpl = ServiceImpl<typeof CmsService>;
 
