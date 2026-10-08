@@ -105,8 +105,11 @@
             display: block;
         }
 
+        // Тело окна — загрузка, список или пустой результат — занимает высоту, которую оставили шапка и
+        // футер: при заданной наименьшей высоте окна футер стоит у нижней кромки, а не под коротким телом.
         &__state {
             display: flex;
+            flex: 1 1 auto;
             align-items: center;
             justify-content: center;
             padding: var(--rt-space-md);
@@ -151,6 +154,7 @@
         }
 
         &__empty {
+            flex: 1 1 auto;
             padding-inline: var(--rt-dynamic-selector-popup-padding, var(--rt-dynamic-selector-popup-padding-default));
         }
 

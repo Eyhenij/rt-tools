@@ -140,6 +140,9 @@ stands next to it as components of its own, drawn on the parts of the second kit
   caller sets its properties on the overlay pane or a container of its own; only the defaults stand
   on the popup itself, under the `-default` suffix. The add button is projected by both fields with
   different looks, so its colour is a handle with the button's own colour as the fallback.
+- **The body of the popup takes the height its head and footer leave.** With a minimum height set, a
+  short list, the loading and the empty result stretch, and the footer stands at the bottom edge.
+  Without one the popup is as tall as its content, as before.
 - **The invitation takes a Material name for its picture when the caller names no kit icon.** The
   name goes to the placeholder's own glyph input and is drawn as an icon's glyph is.
 - **A string list put into the kit field takes the field's label, and the label leads to the field of
@@ -274,4 +277,5 @@ owner's review.
   the label of the string list by the kit field, the label of the field of a new row, the chosen
   entities set by the input, the row title on one line.
 - 8 October 2026 — the application's request (RT-2619): the look inputs of both fields take their
-  defaults from the kit settings, the row title wrapping too.
+  defaults from the kit settings, the row title wrapping too; the popup body takes the height left by
+  its head and footer.

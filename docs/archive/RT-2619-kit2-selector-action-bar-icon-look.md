@@ -182,6 +182,12 @@ After the package with rows 86–89 was installed:
 >     `rt-dynamic-input`). В приложении все списки ведут название одной строкой; сейчас
 >     `[titleWrap]="false"` повторяется на каждом месте. Вход на экземпляре сильнее раздачи.
 
+> 91. rt-dynamic-selector-popup: тело окна должно занимать высоту, заданную
+>     --rt-dynamic-selector-popup-min-height. Сейчас у __list / __empty / __fetching / __state стоит
+>     flex: 0 1 auto. При min-height 30rem рамка растёт, а футер стоит сразу под коротким списком,
+>     пустым результатом поиска или спиннером, и ниже остаётся пустое место. Нужно: тело flex: 1 1 auto
+>     (min-height: 0 для прокрутки списка), футер прижат к низу.
+
 ## What the tree already has
 
 - `rt-dynamic-selector` draws the invitation button as `rtButton appearance="outlined"` with no
@@ -332,3 +338,6 @@ list and the dynamic-input remarks.
   answer. Both fields read the invitation button and the clear icon, the search and the empty result
   belong to the selector alone. The application's session agreed to the form. Row 89.
 - **`titleWrap` joined the same section and is read by both fields.** Row 90.
+- **Only the loading and the empty result needed to grow.** The list already stretched; the spinner
+  of the next page lives inside it. Measured with a minimum height of 30rem: the loading left 285px
+  and the empty result 182px under the footer, now none; the default heights did not move. Row 91.

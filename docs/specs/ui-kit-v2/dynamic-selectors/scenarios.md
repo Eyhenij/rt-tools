@@ -304,3 +304,14 @@ When a selector and a string list name their look in the markup
 Then they take the look from the markup
 
 Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/rt-dynamic-selector-defaults.spec.ts`.
+
+### SC-UKV-726 — with a minimum height the footer of the popup stands at the bottom edge
+
+Given a popup whose caller sets a minimum height taller than its content
+When it shows a short list, the loading or the empty result
+Then the body stretches and the footer stands at the bottom edge, and without the minimum height the
+popup is as tall as its content
+
+Not covered: a test has no layout. Measured on the showcase in the story **Popup**: with
+`--rt-dynamic-selector-popup-min-height: 30rem` every popup is 480px tall with no gap under the
+footer, and without it the heights stay as before.
