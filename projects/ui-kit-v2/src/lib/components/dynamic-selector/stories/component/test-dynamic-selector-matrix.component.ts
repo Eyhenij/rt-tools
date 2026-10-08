@@ -317,6 +317,15 @@ export class TestRtDynamicSelectorMatrixComponent {
             titleWrap: false,
         },
         {
+            name: 'короткие подписи одной строкой',
+            entities: STORY_PEOPLE.slice(0, 3),
+            mode: 'multi',
+            multiToggleShown: false,
+            loading: false,
+            pinnedKeys: [],
+            titleWrap: false,
+        },
+        {
             name: 'одна запись, одной строкой',
             entities: this.longPeople,
             mode: 'single',

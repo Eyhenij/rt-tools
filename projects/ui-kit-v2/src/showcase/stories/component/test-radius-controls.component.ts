@@ -32,6 +32,7 @@ const ROWS: readonly string[] = [
     'checkbox',
     'radio-button',
     'input',
+    'input-fill',
     'textarea',
     'input-number',
     'select',

@@ -51,11 +51,29 @@ Rows 93–95 hold for both: each passes from `rt-dynamic-selector` and is set in
 >     результата. Сейчас 20px (рамка иконки 64px вокруг глифа 48px + отступ), в v1 16px.
 > 99. Токен --rt-dynamic-selector-popup-foot-padding. Сейчас зашит 8px 16px 0, в v1 16px 24px 0 8px.
 
+**What comes after the PR opened?** The owner's list, verbatim for rows 100–102, and the word on
+closing:
+
+> 100. rt-input: вход radius действует и при appearance="fill". […] Нужно: при заданном radius у
+>      fill все четыре угла из --rt-input-box-radius, нижняя линия не рисуется. Без radius — как сейчас.
+> 101. rt-input: вид appearance="pill" (значение 'pill' в IRtInput.Appearance). Скругление
+>      --rt-radius-full на всех углах, заливка, нижней линии нет. Принимается в searchAppearance у
+>      rt-dynamic-selector и в provideRtKit({ components: { dynamicSelector } }).
+> 102. Дефект пунктов 92+97: пункты окна селектора стоят по центру строки по горизонтали. […]
+>      Нужно: у __row--nowrap justify-content: flex-start.
+
+> не спеши закрывать эту задачу после моего апрува
+
 ## Decisions
 
 - **Rows 92–95 go as one task and one PR.** — the owner's word; all four touch the popup.
 - **Rows 96–99 join this task.** — the owner sent the list of rows 92–99 into this task, as
   promised by «ща еще накину что делать в новую задачу».
+- **Rows 100–102 go into the same PR #2647.** — the owner sent them after it opened; 100 and 102 are
+  defects of rows 93 and 92+97. The number field shares the look type, so it gets the pill look and
+  the fill fix too: it would otherwise take `pill` silently and draw a border.
+- **The task stays open after the owner approves the PR.** — «не спеши закрывать эту задачу после
+  моего апрува»: more rows may follow into it.
 
 ## What is left unclear
 

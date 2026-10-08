@@ -188,6 +188,17 @@ describe('RtDynamicSelectorComponent — вид, который задаёт п�
         expect(popupPart('dynamic-selector-search')?.classList.contains('rt-input--appearance--fill')).toBe(true);
     });
 
+    it('SC-UKV-736 — поле поиска в окне выбора берёт вид pill', async (): Promise<void> => {
+        const fixture: ComponentFixture<SelectorHostComponent> = host(SelectorHostComponent, (it: SelectorHostComponent): void =>
+            it.searchAppearance.set('pill')
+        );
+
+        await openPopup(fixture);
+
+        expect(popupPart('dynamic-selector-search')).not.toBeNull();
+        expect(popupPart('dynamic-selector-search')?.classList.contains('rt-input--appearance--pill')).toBe(true);
+    });
+
     it('SC-UKV-705 — пустой результат поиска показывает подпись приложения, а без неё — подпись кита', async (): Promise<void> => {
         const fixture: ComponentFixture<SelectorHostComponent> = host(SelectorHostComponent, (it: SelectorHostComponent): void => {
             it.searchTerm.set('zzz');

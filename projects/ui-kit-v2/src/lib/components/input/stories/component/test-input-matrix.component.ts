@@ -323,6 +323,7 @@ export class TestRtInputMatrixComponent {
     public readonly appearanceCases: readonly IInputAppearanceCase[] = [
         { name: 'outline', appearance: 'outline', control: filled('Москва') },
         { name: 'fill', appearance: 'fill', control: filled('Москва') },
+        { name: 'pill', appearance: 'pill', control: filled('Москва') },
     ];
 
     public readonly stateCases: readonly IInputStateCase[] = [

@@ -67,6 +67,7 @@ const BEM_BLOCK: string = 'rt-input';
         '[class.rt-input--readonly]': 'isReadonly()',
         '[class.rt-input--borderless]': '!bordered()',
         '[class.rt-input--appearance--fill]': "appearance() === 'fill'",
+        '[class.rt-input--appearance--pill]': "appearance() === 'pill'",
         '[class.rt-input--size--sm]': "size() === 'sm'",
         '[class.rt-input--size--lg]': "size() === 'lg'",
         '[class.rt-input--with-icon-left]': '!!iconLeft()',

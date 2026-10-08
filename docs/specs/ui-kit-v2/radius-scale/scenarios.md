@@ -107,3 +107,23 @@ When it is drawn on a narrow screen and on a wide one
 Then the cards of the narrow view take the corners of the step, and the wide view keeps no corners
 
 Covered: `projects/ui-kit-v2/src/lib/components/table/rt-table.component.spec.ts`.
+
+### SC-UKV-735 — a filled field with a step rounds all four corners
+
+Given a field with the filled look
+When the caller names a radius step for it
+Then all four corners take the step and no line is drawn under it, and without a step the field
+keeps its small top rounding, its straight bottom and the line
+
+Not covered: a test has no layout. Measured on the showcase in the story **Controls** of the radius
+foundation: without a step the corners are 4px on top and 0 below with a grey line, with the step
+`full` they are 9999px on all four with no line, and every other step rounds all four corners.
+
+### SC-UKV-736 — the pill look of a field
+
+Given a field, a number field or the popup search of a selector
+When the caller names the pill look
+Then the field carries the pill look and not the filled one, and without it the field keeps its look
+
+Covered: `projects/ui-kit-v2/src/lib/components/input/rt-input.component.spec.ts`, `projects/ui-kit-v2/src/lib/components/input-number/rt-input-number.component.spec.ts`, `projects/ui-kit-v2/src/lib/components/dynamic-selector/rt-dynamic-selector-look.spec.ts`.
+Покрытие: частичное — the tests read the look class; the full rounding and the missing underline are measured on the showcase in the story **Appearance** of the field.

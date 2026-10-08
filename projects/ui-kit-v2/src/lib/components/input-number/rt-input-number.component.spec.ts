@@ -65,6 +65,14 @@ function blur<T>(fixture: ComponentFixture<T>): void {
 const NBSP: string = ' ';
 
 describe('RtInputNumberComponent', (): void => {
+    it('SC-UKV-736 — вид pill ставит свой класс и не ставит класс залитого поля', (): void => {
+        const pill: string[] = hostClasses(setup({ appearance: 'pill' }));
+
+        expect(pill).toContain('rt-input-number--appearance--pill');
+        expect(pill).not.toContain('rt-input-number--appearance--fill');
+        expect(hostClasses(setup())).not.toContain('rt-input-number--appearance--pill');
+    });
+
     it('несёт свой BEM-блок', (): void => {
         expect(hostClasses(setup())).toContain('rt-input-number');
     });

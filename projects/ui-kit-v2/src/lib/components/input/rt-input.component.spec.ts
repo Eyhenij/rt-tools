@@ -43,6 +43,14 @@ function type<T>(fixture: ComponentFixture<T>, text: string): void {
 }
 
 describe('RtInputComponent', (): void => {
+    it('SC-UKV-736 — вид pill ставит свой класс и не ставит класс залитого поля', (): void => {
+        const pill: string[] = hostClasses(setup({ appearance: 'pill' }));
+
+        expect(pill).toContain('rt-input--appearance--pill');
+        expect(pill).not.toContain('rt-input--appearance--fill');
+        expect(hostClasses(setup())).not.toContain('rt-input--appearance--pill');
+    });
+
     it('несёт свой BEM-блок', (): void => {
         expect(hostClasses(setup())).toContain('rt-input');
     });
