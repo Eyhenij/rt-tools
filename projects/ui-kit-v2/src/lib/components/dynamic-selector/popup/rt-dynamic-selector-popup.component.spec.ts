@@ -86,6 +86,10 @@ function tickedLabels(fixture: TPopupFixture): string[] {
         .map((option: HTMLElement): string => textOf(option));
 }
 
+function rowLabels(fixture: TPopupFixture): string[] {
+    return qaAll(fixture, 'dynamic-selector-option').map((option: { nativeElement: HTMLElement }): string => textOf(option.nativeElement));
+}
+
 function isApplyDisabled(fixture: TPopupFixture): boolean {
     return (qa(fixture, 'dynamic-selector-apply')?.nativeElement as HTMLButtonElement).disabled;
 }
@@ -175,6 +179,23 @@ describe('RtDynamicSelectorPopupComponent', (): void => {
         await clickRow(fixture, 'Vera', { ctrlKey: true });
 
         expect(tickedLabels(fixture)).toEqual(['Boris', 'Vera']);
+    });
+
+    it('SC-UKV-737 — пункт, отмеченный во время поиска, стоит на месте до смены запроса', async (): Promise<void> => {
+        const fixture: TPopupFixture = setup();
+
+        type(fixture, 'a');
+        // Флажок получает начальное значение от `ngModel` микрозадачей: нажатие до неё она перепишет.
+        await fixture.whenStable();
+        await clickRow(fixture, 'Vera');
+
+        expect(rowLabels(fixture)).toEqual(['Anna', 'Vera']);
+        expect(tickedLabels(fixture)).toEqual(['Vera']);
+
+        type(fixture, 'an');
+
+        expect(rowLabels(fixture)).toEqual(['Vera', 'Anna']);
+        expect(tickedLabels(fixture)).toEqual(['Vera']);
     });
 
     it('ссылка внизу появляется, когда названы и заголовок, и адрес', (): void => {

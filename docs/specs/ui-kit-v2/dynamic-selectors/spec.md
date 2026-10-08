@@ -75,8 +75,10 @@ stands next to it as components of its own, drawn on the parts of the second kit
   spaces and compared without regard to case.
 - **The server search hands the query to the caller 500 ms after the last keystroke and filters
   nothing itself.** An erased query leaves as an empty string.
-- **During a search the rows ticked earlier stay above the results, separated from them.** A tick
-  does not vanish because the query stopped matching its row.
+- **During a search the rows ticked before the query last changed stay above the results, separated
+  from them.** A tick does not vanish because the query stopped matching its row. A row ticked during
+  the search stays where it is until the query changes again, so the list does not jump under the
+  pointer.
 - **Select all works on the visible rows only.** Ticking it adds every visible key to the ticks;
   unticking removes the visible keys and keeps the ticks outside the query. Its state is off, mixed or
   on by how many of the visible keys are ticked. It appears in multi mode when the list holds more

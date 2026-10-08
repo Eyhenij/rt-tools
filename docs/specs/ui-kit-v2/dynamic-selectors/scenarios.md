@@ -372,3 +372,12 @@ Not covered: a test has no layout. Measured on the showcase in the story **Popup
 properties the rows are 36px, the gap 12px and the footer padding `8px 16px 0`; with a 20px line, a
 44px least height, a 4px gap and `16px 24px 0 8px` the labels are 20px per line, the rows 44px with
 the content in the middle, the gap 4px and the footer padding `16px 24px 0 8px`.
+
+### SC-UKV-737 — a row ticked during a search stays in place until the query changes
+
+Given the popup offers «Anna», «Boris» and «Vera», and the person typed «a»
+When the person ticks «Vera», and then types «an»
+Then after the tick the rows stay «Anna», «Vera», and after the new query «Vera» stands above the
+divider and «Anna» under it
+
+Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/popup/rt-dynamic-selector-popup.component.spec.ts`.

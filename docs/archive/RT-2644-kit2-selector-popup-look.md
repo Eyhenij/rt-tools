@@ -98,3 +98,7 @@ closing:
 - The popup styles grew to 9.05 kB, past the 8 kB budget for one component style in the production
   builds of three applications. The row and option rules moved to a second style file of the
   popup; the main one builds at 6.77 kB. No rule changed, and the Popup frame stays the reference.
+- Row 103 came from the application's session: a row ticked during a search jumped above the
+  divider at once, under the pointer. As in the first kit, the ticks move above only when the query
+  changes; a row ticked during the search stays where it is until then. This changes the order of
+  rows during a search for every caller, with no input, because the jump was a defect.

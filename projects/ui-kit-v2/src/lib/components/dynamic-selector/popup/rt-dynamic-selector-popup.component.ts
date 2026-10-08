@@ -113,6 +113,8 @@ export class RtDynamicSelectorPopupComponent<TEntity extends object> implements 
 
     /** Отмеченные ключи — ещё не применённые. */
     protected readonly ticked: WritableSignal<unknown[]> = signal<unknown[]>([]);
+    /** Отметки на минуту последней смены запроса: только они стоят над разделителем, отмеченное потом — на месте. */
+    protected readonly raised: WritableSignal<unknown[]> = signal<unknown[]>([]);
     protected readonly query: WritableSignal<string> = signal<string>('');
     /** Выбор нескольких включён: без него простое нажатие оставляет одну отметку. */
     protected readonly isMultiOn: WritableSignal<boolean> = signal<boolean>(false);
@@ -132,7 +134,7 @@ export class RtDynamicSelectorPopupComponent<TEntity extends object> implements 
         });
     });
     protected readonly rows: Signal<IRtDynamicSelector.PopupRows<TEntity>> = computed((): IRtDynamicSelector.PopupRows<TEntity> =>
-        dynamicPopupRows(this.entities(), this.found(), this.ticked(), (item: TEntity): unknown => this.#keyOf(item), this.query())
+        dynamicPopupRows(this.entities(), this.found(), this.raised(), (item: TEntity): unknown => this.#keyOf(item), this.query())
     );
     protected readonly visibleKeys: Signal<unknown[]> = computed((): unknown[] =>
         [...this.rows().ticked, ...this.rows().found].map((item: TEntity): unknown => this.#keyOf(item))
@@ -262,6 +264,7 @@ export class RtDynamicSelectorPopupComponent<TEntity extends object> implements 
     protected onQueryChange(value: string | null): void {
         const query: string = value ?? '';
 
+        this.raised.set([...this.ticked()]);
         this.query.set(query);
         this.temporaryChoiceChange.emit(this.#tickedEntities());
 
