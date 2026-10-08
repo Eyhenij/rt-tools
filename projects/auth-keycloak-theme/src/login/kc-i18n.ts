@@ -53,11 +53,12 @@ export function plainMessage(message: string): string {
 }
 
 /**
- * The text of a link back to the sign-in or to the application. Keycloak starts these messages with
- * a chevron, and the theme shows the link as plain text without it.
+ * The text of a link back to the sign-in or to the application, or of a link forward to the next
+ * step. Keycloak starts these messages with a chevron — « back, » forward — and the theme shows the
+ * link as plain text without it.
  */
 export function backLinkText(message: string): string {
-    return message.replace(/^[\s«‹<]+/u, '');
+    return message.replace(/^[\s«‹<»›>]+/u, '');
 }
 
 /** The messages of the page with every text already plain: the pages read them as they are. */

@@ -9,11 +9,13 @@ import { themeAppConfig } from './login/kc-app.config';
 import { TKcContext } from './login/kc-context';
 import { getI18n, TKcMessages } from './login/kc-i18n';
 import { themePageOf } from './login/kc-pages';
+import { placeStandardRoot } from './login/kc-standard-root';
 import { RtKcRootComponent } from './login/shell/rt-kc-root.component';
 
 /** A page the theme does not draw itself keeps the standard Keycloakify layout and its styles. */
 async function startStandard(context: TKcContext): Promise<void> {
     const page: Type<unknown> = await getDefaultPageComponent(context.pageId);
+    placeStandardRoot(document);
     const application: ApplicationRef = await bootstrapApplication(TemplateComponent, {
         providers: [
             provideZonelessChangeDetection(),

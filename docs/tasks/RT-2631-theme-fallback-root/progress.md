@@ -3,19 +3,19 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 1 of 2 — Theme fixes
-- **Done:** task, branch, folder
-- **Next step:** the standard root in the standard path
-- **Uncommitted:** the task folder, the assignment row
+- **Stage:** 2 of 2 — Delivery
+- **Done:** the standard root, the chevron of the proceed link, the spec and the tests
+- **Next step:** the gate set and the PR into main
+- **Uncommitted:** no
 - **Waiting for the owner:** no
 - **PR:** not open yet
 
 ## Steps
 
-- [>] 1.1 Put the standard root in place of the theme root before the standard path starts
-- [ ] 1.2 Drop the chevron of the proceed link
-- [ ] 1.3 Add the rules and scenarios to the theme spec and cover them by tests
-- [ ] 2.1 Run the gate set and open the PR into main
+- [x] 1.1 Put the standard root in place of the theme root before the standard path starts
+- [x] 1.2 Drop the chevron of the proceed link
+- [x] 1.3 Add the rules and scenarios to the theme spec and cover them by tests
+- [>] 2.1 Run the gate set and open the PR into main
 
 ## Decisions along the way
 
@@ -24,6 +24,8 @@
 ### 2026-10-08
 
 - task RT-2631 created after the production sign-in ended on a white screen
+- `pnpm exec nx test auth-keycloak-theme`: 8 suites, 33 tests passed
+- local stand: `login-update-profile.ftl` draws the standard form in `kc-root`, no console error
 
 ## Handover of the session
 
