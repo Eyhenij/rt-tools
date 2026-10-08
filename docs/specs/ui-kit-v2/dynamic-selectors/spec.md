@@ -163,7 +163,8 @@ stands next to it as components of its own, drawn on the parts of the second kit
 - **The gaps of the list reach it from any ancestor.** These are the gap between the action bar
   buttons, the gap between the buttons of a row, the end padding of a row, the distance from the
   last row to the action bar, the paddings of the drag handle and the gap from the handle to the
-  title. Their defaults are the steps that stood there, so the look stays as it was. A dragged row
+  title. The end padding of the action bar is one of them too. Their defaults are the steps that
+  stood there, so the look stays as it was. A dragged row
   lives outside the list and declares the same defaults on itself.
 - **A divider between the buttons of a row is drawn once the caller gives it a width.** There is none
   after the last button, and by default its width is zero.

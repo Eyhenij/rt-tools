@@ -133,3 +133,7 @@ closing:
 - The showcase itself drew the string field with the family's rule winning: in the **Look** frame its
   invitation icon stood at the left edge and its new-row field was the broken one. After the fix the
   invitation of the string field is centred like the selector's, and the frame was re-taken for it.
+- Row 111 came from the application's session: the end padding of the action bar becomes a property,
+  0 by default, so the clear button can stand under the delete button of a row as in the first kit.
+  The application confirmed rows 108–110 on the built package: the string field, the divider and the
+  button step match the first kit.

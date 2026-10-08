@@ -449,3 +449,14 @@ Not covered: a test has no layout and no load order. Measured on the showcase in
 top, and the invitation icon stands 144px from the edge; with the former `display: block` put back on
 the host the input shrank to 157px at 1px from the top and the icon moved to 24px, as the
 application saw in 0.19.0.
+
+### SC-UKV-773 — the caller lines the clear button up under the row delete button
+
+Given a selector whose ancestor gives the action bar the same end padding as the rows
+When the list shows its rows and the action bar
+Then the clear button ends where the delete button of a row ends, and without the property the action
+bar keeps no end padding, as before
+
+Not covered: a test has no layout. Measured on the showcase in the story **Look**: without the
+property the clear button ends 2px past the delete button, at 352 against 350; with the end padding
+`xs` on both they end together at 348.

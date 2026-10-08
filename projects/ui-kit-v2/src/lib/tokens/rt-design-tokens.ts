@@ -627,6 +627,7 @@ export type TRtConsumerHandleName =
     | '--rt-dialog-width'
     | '--rt-dynamic-selector-list-actions-gap'
     | '--rt-dynamic-selector-list-actions-offset'
+    | '--rt-dynamic-selector-list-actions-padding-end'
     | '--rt-dynamic-selector-list-add-color'
     | '--rt-dynamic-selector-list-controls-divider-color'
     | '--rt-dynamic-selector-list-controls-divider-width'
@@ -1348,6 +1349,7 @@ export const RT_CONSUMER_HANDLE_NAMES: readonly TRtConsumerHandleName[] = [
     '--rt-dialog-width',
     '--rt-dynamic-selector-list-actions-gap',
     '--rt-dynamic-selector-list-actions-offset',
+    '--rt-dynamic-selector-list-actions-padding-end',
     '--rt-dynamic-selector-list-add-color',
     '--rt-dynamic-selector-list-controls-divider-color',
     '--rt-dynamic-selector-list-controls-divider-width',

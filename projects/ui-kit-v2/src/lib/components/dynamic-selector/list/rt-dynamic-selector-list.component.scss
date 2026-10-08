@@ -12,6 +12,7 @@
         --rt-dynamic-selector-list-controls-divider-color-default: var(--rt-color-border-default);
         --rt-dynamic-selector-list-row-padding-end-default: var(--rt-space-2xs);
         --rt-dynamic-selector-list-actions-offset-default: var(--rt-space-2xs);
+        --rt-dynamic-selector-list-actions-padding-end-default: 0;
         --rt-dynamic-selector-list-handle-padding-start-default: 0;
         --rt-dynamic-selector-list-handle-padding-end-default: var(--rt-space-2xs);
         --rt-dynamic-selector-list-title-gap-default: var(--rt-space-sm);
@@ -110,6 +111,10 @@
             display: flex;
             align-items: center;
             gap: var(--rt-dynamic-selector-list-actions-gap, var(--rt-dynamic-selector-list-actions-gap-default));
+            padding-inline-end: var(
+                --rt-dynamic-selector-list-actions-padding-end,
+                var(--rt-dynamic-selector-list-actions-padding-end-default)
+            );
         }
 
         &__add {

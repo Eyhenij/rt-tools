@@ -103,6 +103,8 @@ interface IInputCase {
 /** Адреса поля строк — придуманные, в зарезервированном для примеров домене. */
 const NORTH: string = 'north@example.test';
 const SOUTH: string = 'south@example.test';
+/** Шаг xs — отступы строки и полосы действий в случае своих зазоров и зазор пустого результата окна. */
+const SPACE_XS: string = 'var(--rt-space-xs)';
 
 function chosen(keys: number[]): FormControl<number[] | null> {
     return new FormControl<number[] | null>(keys);
@@ -227,8 +229,9 @@ export class TestRtDynamicSelectorMatrixComponent {
             listStyle: {
                 '--rt-dynamic-selector-list-actions-gap': 'var(--rt-space-sm)',
                 '--rt-dynamic-selector-list-controls-gap': 'var(--rt-space-sm)',
-                '--rt-dynamic-selector-list-row-padding-end': 'var(--rt-space-xs)',
+                '--rt-dynamic-selector-list-row-padding-end': SPACE_XS,
                 '--rt-dynamic-selector-list-actions-offset': 'var(--rt-space-md)',
+                '--rt-dynamic-selector-list-actions-padding-end': SPACE_XS,
             },
         },
     ];
@@ -243,7 +246,7 @@ export class TestRtDynamicSelectorMatrixComponent {
         '--rt-dynamic-selector-popup-button-font-size': 'var(--rt-text-sm)',
         '--rt-dynamic-selector-popup-option-line-height': 'var(--rt-size-5)',
         '--rt-dynamic-selector-popup-option-min-height': 'var(--rt-size-12)',
-        '--rt-dynamic-selector-popup-empty-gap': 'var(--rt-space-xs)',
+        '--rt-dynamic-selector-popup-empty-gap': SPACE_XS,
         '--rt-dynamic-selector-popup-foot-padding': 'var(--rt-space-md) var(--rt-space-lg) 0 var(--rt-space-sm)',
     };
 
