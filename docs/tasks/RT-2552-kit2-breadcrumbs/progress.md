@@ -5,9 +5,10 @@
 - **State:** `этап-идёт`
 - **Stage:** 4 of 4 — Snapshots and delivery
 - **Done:** the spec, the component, ten specs, the overview page and seven stories; the frames were
-  looked at and measured on :6007; seven references are taken.
-- **Next step:** run the whole set of the second kit, then take the folder apart when the owner
-  approves the opening.
+  looked at and measured on :6007; seven references are taken. The whole set of the second kit
+  passed after the epic branch was merged in: 2677 tests, 844 frames of 844.
+- **Next step:** take the folder apart and open the PR into the epic branch when the owner approves
+  the opening.
 - **Uncommitted:** no
 - **Waiting for the owner:** «пры не открывай откроеш после моего апрува» — the push and the PR wait
   for the owner's approval in the morning
