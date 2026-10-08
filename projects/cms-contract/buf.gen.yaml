@@ -1,0 +1,10 @@
+version: v2
+clean: true
+plugins:
+    # protobuf-es v2 generates both the messages and the service descriptors: a client is created by
+    # createClient(Service, transport) from @connectrpc/connect, with no separate plugin.
+    - local: protoc-gen-es
+      out: src/lib/gen
+      opt:
+          - target=ts
+          - import_extension=js

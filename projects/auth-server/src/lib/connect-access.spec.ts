@@ -2,10 +2,10 @@ import { Code, ConnectError, createContextValues, Interceptor, StreamRequest, Un
 
 import { ICaller } from '@rt-tools/auth-contract';
 
-import { TAccess } from './access';
-import { CONNECT_CALLER, connectAccessEntries, createAuthInterceptor, IConnectServiceLike } from './connect-access';
-import { ITestRealm, personClaims, TEST_CLIENT, TEST_ISSUER, testRealm } from './testing/keys';
-import { KeycloakTokenVerifier } from './token-verifier';
+import { TAccess } from './access.js';
+import { CONNECT_CALLER, connectAccessEntries, createAuthInterceptor, IConnectServiceLike } from './connect-access.js';
+import { ITestRealm, personClaims, TEST_CLIENT, TEST_ISSUER, testRealm } from './testing/keys.js';
+import { KeycloakTokenVerifier } from './token-verifier.js';
 
 const SERVICE: IConnectServiceLike = {
     typeName: 'orders.v1.OrdersService',

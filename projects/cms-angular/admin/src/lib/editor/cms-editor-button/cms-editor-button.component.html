@@ -1,0 +1,11 @@
+@let current = button();
+<ng-container rtBlock="rt-cms-editor-button">
+    <span rtElem="preview" qa-dataid="cms-editor-button-preview">{{ current.label || t().buttonNoLabel }}</span>
+    <span rtElem="target">{{ current.link || t().buttonNoLink }}</span>
+    <rt-icon-button
+        icon="cog"
+        variant="ghost"
+        qa-dataid="cms-editor-button-settings"
+        [ariaLabel]="t().buttonSetUp"
+        (clicked)="configure()" />
+</ng-container>

@@ -1,0 +1,37 @@
+<ng-container rtBlock="rt-cms-editor-list">
+    <ol rtElem="items" cdkDropList [rtMod]="{ marker: marker() }" (cdkDropListDropped)="drop($event)">
+        @for (item of items(); track item.id) {
+            <li rtElem="item" cdkDrag>
+                <rt-icon-button
+                    cdkDragHandle
+                    icon="arrows-v"
+                    variant="ghost"
+                    qa-dataid="cms-editor-list-handle"
+                    [ariaLabel]="t().listDragItem" />
+                <p rtElem="text" qa-dataid="cms-editor-list-item" [rtCmsEditable]="item.html" (htmlChange)="edit(item.id, $event)"></p>
+                <rt-icon-button
+                    icon="trash"
+                    variant="ghost"
+                    qa-dataid="cms-editor-list-remove"
+                    [ariaLabel]="t().listRemoveItem"
+                    (clicked)="remove(item.id)" />
+            </li>
+        }
+    </ol>
+
+    <div rtElem="add">
+        <rt-input
+            qa-dataid="cms-editor-list-draft"
+            [placeholder]="t().listNewItem"
+            [ngModel]="draft()"
+            (ngModelChange)="draft.set($event)" />
+        <button
+            rtButton
+            type="button"
+            appearance="outlined"
+            qa-dataid="cms-editor-list-add"
+            [label]="t().listAddItem"
+            [attr.aria-label]="t().listAddItem"
+            (click)="add()"></button>
+    </div>
+</ng-container>

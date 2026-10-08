@@ -25,6 +25,24 @@
         }
     </header>
 
+    <ng-template #rowButton let-row>
+        <button
+            rtElem="row"
+            qa-dataid="thread-list-row"
+            type="button"
+            [attr.data-id]="row.id"
+            [attr.data-unread]="row.hasUnread"
+            [attr.aria-current]="row.id === activeId() ? 'true' : null"
+            [rtMod]="{
+                active: row.id === activeId(),
+                unread: row.hasUnread,
+                overdue: !!row.overdue,
+            }"
+            (click)="onSelect(row.id, $event)">
+            <ng-container [ngTemplateOutlet]="rowTemplate()?.templateRef ?? null" [ngTemplateOutletContext]="{ $implicit: row }" />
+        </button>
+    </ng-template>
+
     <ng-template #filtersPanel>
         <div rtElem="filters-panel" qa-dataid="thread-list-filters-panel">
             <ng-container [ngTemplateOutlet]="filtersTemplate()?.templateRef ?? null" />
@@ -57,21 +75,16 @@
             </rt-empty-state>
         } @else {
             @for (row of rows(); track row.id) {
-                <button
-                    rtElem="row"
-                    qa-dataid="thread-list-row"
-                    type="button"
-                    [attr.data-id]="row.id"
-                    [attr.data-unread]="row.hasUnread"
-                    [attr.aria-current]="row.id === activeId() ? 'true' : null"
-                    [rtMod]="{
-                        active: row.id === activeId(),
-                        unread: row.hasUnread,
-                        overdue: !!row.overdue,
-                    }"
-                    (click)="onSelect(row.id, $event)">
-                    <ng-container [ngTemplateOutlet]="rowTemplate()?.templateRef ?? null" [ngTemplateOutletContext]="{ $implicit: row }" />
-                </button>
+                @if (rowActionsTemplate(); as actions) {
+                    <div rtElem="row-wrap" qa-dataid="thread-list-row-wrap">
+                        <ng-container [ngTemplateOutlet]="rowButton" [ngTemplateOutletContext]="{ $implicit: row }" />
+                        <div rtElem="row-actions" qa-dataid="thread-list-row-actions">
+                            <ng-container [ngTemplateOutlet]="actions.templateRef" [ngTemplateOutletContext]="{ $implicit: row }" />
+                        </div>
+                    </div>
+                } @else {
+                    <ng-container [ngTemplateOutlet]="rowButton" [ngTemplateOutletContext]="{ $implicit: row }" />
+                }
             }
             @if (fetching()) {
                 <div rtElem="row-loader" qa-dataid="thread-list-row-loader">

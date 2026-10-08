@@ -2,9 +2,9 @@ import { CanActivate, ExecutionContext, ForbiddenException, Inject, Injectable, 
 
 import { hasPermission, ICaller } from '@rt-tools/auth-contract';
 
-import { accessDeclarationsOf, TAccess } from './access';
-import { AUTH_TOKEN_VERIFIER, REQUEST_CALLER } from './auth.tokens';
-import type { KeycloakTokenVerifier } from './token-verifier';
+import { accessDeclarationsOf, TAccess } from './access.js';
+import { AUTH_TOKEN_VERIFIER, REQUEST_CALLER } from './auth.tokens.js';
+import type { KeycloakTokenVerifier } from './token-verifier.js';
 
 /** The request as the guard reads it: the headers and the place for the caller. */
 interface IAuthRequest {

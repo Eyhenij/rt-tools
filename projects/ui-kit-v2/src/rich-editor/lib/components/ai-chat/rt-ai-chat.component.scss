@@ -1,0 +1,222 @@
+@layer rt-kit.components {
+    /* rt-ai-chat — панель ИИ-ассистента. ViewEncapsulation.None.
+       Корень шаблона — ng-container: класс блока висит на хосте. Высоту задаёт родитель. */
+
+    .rt-ai-chat {
+        --rt-ai-chat-bubble-radius: var(--rt-radius-xl);
+        --rt-ai-chat-column-border-width: var(--rt-border-width-thin);
+        --rt-ai-chat-column-width: 280px;
+        --rt-ai-chat-match-bg: var(--rt-yellow-400);
+        --rt-ai-chat-match-color: var(--rt-neutral-950);
+        --rt-ai-chat-match-radius: var(--rt-radius-xs);
+        --rt-ai-chat-unread-radius: var(--rt-radius-full);
+
+        display: flex;
+        overflow: hidden;
+        background: var(--rt-color-bg-surface);
+        block-size: 100%;
+        color: var(--rt-color-text-primary);
+        min-block-size: 0;
+
+        &__thread-column {
+            display: flex;
+            flex: none;
+            flex-direction: column;
+            border-inline-end: var(--rt-ai-chat-column-border-width) solid var(--rt-color-border-default);
+            inline-size: var(--rt-ai-chat-column-width);
+        }
+
+        &__column-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--rt-space-sm) var(--rt-space-md);
+            gap: var(--rt-space-xs);
+        }
+
+        &__column-title {
+            font-size: var(--rt-text-md);
+            font-weight: var(--rt-font-weight-semibold);
+        }
+
+        &__conversation {
+            display: flex;
+            flex: 1 1 auto;
+            flex-direction: column;
+            min-block-size: 0;
+            min-inline-size: 0;
+        }
+
+        &__header {
+            display: flex;
+            flex: none;
+            align-items: center;
+            padding: var(--rt-space-sm) var(--rt-space-md);
+            gap: var(--rt-space-xs);
+        }
+
+        &__heading {
+            display: flex;
+            flex: 1 1 auto;
+            flex-direction: column;
+            min-inline-size: 0;
+        }
+
+        &__title {
+            display: inline-flex;
+            align-items: center;
+            font-size: var(--rt-text-md);
+            font-weight: var(--rt-font-weight-semibold);
+            gap: var(--rt-space-xs);
+            line-height: var(--rt-leading-snug);
+        }
+
+        &__subtitle {
+            overflow: hidden;
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-xs);
+            line-height: var(--rt-leading-snug);
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        &__actions {
+            display: flex;
+            flex: none;
+            align-items: center;
+            gap: var(--rt-space-xs);
+        }
+
+        &__feed {
+            display: flex;
+            flex: 1 1 auto;
+            flex-direction: column;
+            padding: var(--rt-space-md);
+            font-size: var(--rt-text-sm);
+            gap: var(--rt-space-md);
+            min-block-size: 0;
+            overflow-y: auto;
+        }
+
+        &__spinner {
+            align-self: center;
+            margin: auto;
+        }
+
+        &__empty {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: var(--rt-space-lg);
+            margin-block: auto;
+        }
+
+        &__suggestions {
+            display: flex;
+            flex-direction: column;
+            gap: var(--rt-space-sm);
+        }
+
+        &__question {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        &__bubble {
+            display: flex;
+            flex-direction: column;
+            padding: var(--rt-space-sm) var(--rt-space-md);
+            border-radius: var(--rt-ai-chat-bubble-radius);
+            background: var(--rt-color-bg-subtle);
+            gap: var(--rt-space-2xs);
+            max-inline-size: 80%;
+        }
+
+        &__author,
+        &__time {
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-xs);
+            line-height: var(--rt-leading-snug);
+        }
+
+        &__author {
+            font-weight: var(--rt-font-weight-semibold);
+        }
+
+        &__bubble-text {
+            margin: 0;
+            line-height: var(--rt-leading-normal);
+            overflow-wrap: anywhere;
+            white-space: pre-wrap;
+        }
+
+        &__error {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: var(--rt-space-sm);
+
+            rt-message {
+                align-self: stretch;
+            }
+        }
+
+        &__composer {
+            box-sizing: border-box;
+            flex: none;
+            padding: var(--rt-space-sm) var(--rt-space-md) 0;
+        }
+
+        &__disclaimer {
+            flex: none;
+            padding: var(--rt-space-xs) var(--rt-space-md) var(--rt-space-sm);
+            margin: 0;
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-xs);
+            line-height: var(--rt-leading-snug);
+            text-align: center;
+        }
+
+        &__threads {
+            flex: 1 1 auto;
+            min-block-size: 0;
+        }
+
+        &__thread-title {
+            overflow: hidden;
+            min-inline-size: 0;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        &__thread-part {
+            &--match {
+                border-radius: var(--rt-ai-chat-match-radius);
+                background: var(--rt-ai-chat-match-bg);
+                color: var(--rt-ai-chat-match-color);
+            }
+        }
+
+        &__thread-meta {
+            display: flex;
+            flex: none;
+            align-items: center;
+            gap: var(--rt-space-xs);
+        }
+
+        &__thread-unread {
+            border-radius: var(--rt-ai-chat-unread-radius);
+            background: var(--rt-color-action-primary);
+            color: var(--rt-color-text-inverse);
+            font-size: var(--rt-text-xs);
+            font-weight: var(--rt-font-weight-semibold);
+            line-height: 18px;
+            padding-inline: 6px;
+        }
+
+        &__thread-time {
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-xs);
+        }
+    }
+}

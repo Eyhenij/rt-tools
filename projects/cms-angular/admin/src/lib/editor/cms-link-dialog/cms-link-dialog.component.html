@@ -1,0 +1,99 @@
+@let current = link();
+<rt-dialog size="lg" qa-dataid="cms-link-dialog">
+    <rt-dialog-header [title]="data.title" />
+
+    <rt-dialog-content>
+        <div rtBlock="rt-cms-link-dialog">
+            @if (!data.itemOnly) {
+                <rt-field qa-skip [label]="t().linkWhere">
+                    <rt-select
+                        qa-dataid="cms-link-dialog-type"
+                        [options]="linkTypeOptions()"
+                        [clearable]="false"
+                        [ngModel]="current.linkType"
+                        (ngModelChange)="patch({ linkType: $event ?? LinkType.Internal })" />
+                </rt-field>
+                <rt-field qa-skip [label]="t().linkText">
+                    <rt-input qa-dataid="cms-link-dialog-label" [ngModel]="current.label" (ngModelChange)="patch({ label: $event })" />
+                </rt-field>
+            }
+
+            @if (isInternal()) {
+                <rt-field qa-skip [label]="t().linkTypeOfPages">
+                    <rt-select
+                        qa-dataid="cms-link-dialog-content-type"
+                        [options]="contentTypes()"
+                        [clearable]="false"
+                        [ngModel]="current.contentTypeId"
+                        (ngModelChange)="chooseType($event)" />
+                </rt-field>
+                <rt-field qa-skip [label]="t().connectionsPage">
+                    <rt-input
+                        qa-dataid="cms-link-dialog-search"
+                        [placeholder]="t().connectionsSearch"
+                        [ngModel]="search()"
+                        (ngModelChange)="find($event)" />
+                </rt-field>
+                <ul rtElem="list" qa-dataid="cms-link-dialog-items">
+                    @for (item of items(); track item.id) {
+                        <li rtElem="item">
+                            <span>{{ item.name }}</span>
+                            <span rtElem="state">{{ item.path }}</span>
+                            <button
+                                rtButton
+                                type="button"
+                                qa-dataid="cms-link-dialog-choose"
+                                [appearance]="item.id === current.contentItemId ? 'filled' : 'outlined'"
+                                [label]="item.id === current.contentItemId ? t().uiSelected : t().uiSelect"
+                                [attr.data-item-id]="item.id"
+                                [attr.aria-label]="t().uiSelectNamed | cmsLabel: { name: item.name }"
+                                (click)="choose(item)"></button>
+                        </li>
+                    } @empty {
+                        <rt-empty-state qa-dataid="cms-link-dialog-empty" icon="search" [title]="t().uiNothingFound" />
+                    }
+                </ul>
+            } @else {
+                <rt-field qa-skip [label]="t().itemsColumnSlug">
+                    <rt-input
+                        qa-dataid="cms-link-dialog-url"
+                        placeholder="https://"
+                        [ngModel]="current.link ?? ''"
+                        (ngModelChange)="patch({ link: $event })" />
+                </rt-field>
+            }
+
+            @if (!data.itemOnly) {
+                <rt-toggle-switch
+                    qa-dataid="cms-link-dialog-new-tab"
+                    [label]="t().linkNewTab"
+                    [ngModel]="current.newTab"
+                    (ngModelChange)="patch({ newTab: $event })" />
+                <rt-toggle-switch
+                    qa-dataid="cms-link-dialog-no-follow"
+                    [label]="t().linkNoFollow"
+                    [ngModel]="current.noFollow"
+                    (ngModelChange)="patch({ noFollow: $event })" />
+            }
+        </div>
+    </rt-dialog-content>
+
+    <rt-dialog-footer>
+        <button
+            rtButton
+            type="button"
+            appearance="text"
+            qa-dataid="cms-link-dialog-cancel"
+            [label]="t().uiCancel"
+            [attr.aria-label]="t().uiCancel"
+            (click)="cancel()"></button>
+        <button
+            rtButton
+            type="button"
+            qa-dataid="cms-link-dialog-save"
+            [label]="t().uiSave"
+            [attr.aria-label]="t().uiSave"
+            [disabled]="!canSave()"
+            (click)="save()"></button>
+    </rt-dialog-footer>
+</rt-dialog>

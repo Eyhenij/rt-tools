@@ -1,0 +1,37 @@
+<rt-table
+    #table="rtTable"
+    rtBlock="rt-cms-content-types-table"
+    qa-dataid="content-types-table"
+    clickable
+    [ariaLabel]="t().typesTitle"
+    [dataSource]="types()"
+    [columnsConfig]="columns()"
+    [loading]="loading()"
+    [showRowActions]="true"
+    [cards]="true">
+    <ng-template #rtTableEmpty>
+        <rt-empty-state qa-dataid="content-types-empty" icon="file" [title]="t().typesEmpty" />
+    </ng-template>
+
+    <ng-container cdkColumnDef="name">
+        <th *cdkHeaderCellDef cdk-header-cell>{{ t().typesColumnType }}</th>
+        <td *cdkCellDef="let row" cdk-cell qa-dataid="content-types-cell-name">{{ row.name }}</td>
+    </ng-container>
+
+    <ng-container cdkColumnDef="description">
+        <th *cdkHeaderCellDef cdk-header-cell>{{ t().typesColumnDescription }}</th>
+        <td *cdkCellDef="let row" cdk-cell qa-dataid="content-types-cell-description">{{ row.description || '—' }}</td>
+    </ng-container>
+
+    <ng-template rtTableRowActions let-row [rtTableRowActionsRowType]="types()">
+        <rt-menu-item icon="cog" qa-dataid="content-types-settings" [label]="t().uiSettings" (selected)="settingsRequested.emit(row)" />
+    </ng-template>
+
+    <tr *cdkHeaderRowDef="table.displayedColumns()" cdk-header-row></tr>
+    <tr
+        *cdkRowDef="let row; columns: table.displayedColumns()"
+        cdk-row
+        rtTableRow
+        qa-dataid="content-types-row"
+        (activated)="openRequested.emit(row)"></tr>
+</rt-table>

@@ -202,4 +202,27 @@ describe('RtDataTableFilterCellComponent', () => {
 
         expect(fixture.componentInstance.sent).toEqual([[{ propertyName: 'name', operatorType: 'equals', value: 'closed' }]]);
     });
+
+    it('SC-UKV-763 — сброс списка крестиком переводит фокус в список, а не роняет его на страницу', () => {
+        const fixture: ComponentFixture<FilterHostComponent> = setup(
+            'select',
+            [],
+            [{ propertyName: 'name', operatorType: EFilterOperatorType.EQUALS, value: 'open' }]
+        );
+        const clear: HTMLButtonElement = el(fixture, '[qa-dataid="data-table-filter-clear"] [qa-dataid="icon-button-control"]')
+            ?.nativeElement as HTMLButtonElement;
+
+        clear.focus();
+        clear.click();
+        fixture.detectChanges();
+
+        expect(fixture.componentInstance.sent).toEqual([[]]);
+        expect(document.activeElement).toBe(el(fixture, '[qa-dataid="select-trigger"]')?.nativeElement);
+    });
+
+    it('пустой список подсказывает «Choose filter»', () => {
+        const fixture: ComponentFixture<FilterHostComponent> = setup('select');
+
+        expect(el(fixture, '[qa-dataid="select-trigger"]')?.nativeElement.textContent).toContain('Choose filter');
+    });
 });

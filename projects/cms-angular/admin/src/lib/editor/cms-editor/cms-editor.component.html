@@ -1,0 +1,39 @@
+<ng-container rtBlock="rt-cms-editor">
+    <nav rtElem="toolbar">
+        @for (item of toolbarItems(); track item.type) {
+            <button
+                rtButton
+                type="button"
+                appearance="outlined"
+                size="sm"
+                qa-dataid="cms-editor-add"
+                [attr.data-type]="item.type"
+                [label]="item.title"
+                [attr.aria-label]="item.title"
+                [disabled]="isDisabled()"
+                (click)="append(item.type)"></button>
+        }
+        <rt-menu icon="ellipsis-v" qa-dataid="cms-editor-add-more" [ariaLabel]="t().editorMoreBlocks" [disabled]="isDisabled()">
+            @for (item of menuItems(); track item.type) {
+                <rt-menu-item
+                    qa-dataid="cms-editor-add-more-type"
+                    [attr.data-type]="item.type"
+                    [label]="item.title"
+                    (selected)="append(item.type)" />
+            }
+        </rt-menu>
+    </nav>
+
+    <div rtElem="blocks" cdkDropList qa-dataid="cms-editor-blocks" [cdkDropListDisabled]="isDisabled()" (cdkDropListDropped)="drop($event)">
+        @for (block of blocks(); track block.id) {
+            <rt-cms-editor-block
+                cdkDrag
+                [block]="block"
+                (changed)="changeBlock($event)"
+                (removed)="removeBlock($event)"
+                (inserted)="insertBlocks($event)" />
+        } @empty {
+            <p rtElem="empty" qa-dataid="cms-editor-empty">{{ t().editorEmpty }}</p>
+        }
+    </div>
+</ng-container>

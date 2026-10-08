@@ -1,0 +1,14 @@
+<ng-container rtBlock="rt-copy-value">
+    @if (label()) {
+        <span rtElem="label" qa-dataid="copy-value-label">{{ label() }}</span>
+    }
+    <span rtElem="value" qa-dataid="copy-value-value">{{ value() }}</span>
+    <rt-icon-button
+        rtElem="button"
+        qa-dataid="copy-value-button"
+        size="sm"
+        [icon]="iconName()"
+        [ariaLabel]="actionLabel()"
+        [tooltip]="actionLabel()"
+        (clicked)="onCopy()" />
+</ng-container>

@@ -1,0 +1,89 @@
+import { Meta, Title } from '@storybook/addon-docs/blocks';
+
+<Meta title="Organisms/Chat/AiChat/Overview" />
+
+<Title>AiChat — `rt-ai-chat`</Title>
+
+Панель ИИ-ассистента одним компонентом: шапка, лента вопросов и ответов с ходом работы, пустой экран
+с подсказками, ошибка с номером обращения, поле сообщения, список бесед.
+
+```html
+<rt-ai-chat [messages]="messages()" [sending]="running()" (send)="ask($event)" (stop)="stop()" />
+```
+
+Импорт — `@rt-tools/ui-kit-v2/rich-editor`.
+
+## Когда применять
+
+- Ассистент, который отвечает на вопросы человека и показывает ход работы.
+
+## Когда не применять
+
+- **Переписка людей** — [`rt-chat`](./?path=/docs/organisms-chat-chat-overview--docs).
+
+## Состояния
+
+- Пусто: приветствие и карточки подсказок.
+- Загрузка: крутилка, пока сообщений нет.
+- Думает и пишет: строка хода работы с бликом, поле с кнопкой «Стоп».
+- Готов: текст, строка хода работы с шагами, оценка.
+- Ошибка: текст ошибки, номер обращения с копированием, «Ask again».
+- Беседы: на месте ленты в узкой панели, колонкой слева на весь экран.
+
+## Доступность
+
+- Лента — `aria-live="polite"`.
+- Кнопки шапки и оценки — `rt-icon-button` с именем и подсказкой; выбранная оценка — `aria-pressed`.
+- Ошибка — `role="alert"`.
+- Фокус: на «Back to conversation» при открытии бесед, в поле сообщения после выбора беседы, новой
+  беседы и «Стоп».
+
+## Оформление
+
+Свойства блока: `--rt-ai-chat-bubble-radius`, `--rt-ai-chat-column-border-width`,
+`--rt-ai-chat-column-width`, `--rt-ai-chat-match-bg`, `--rt-ai-chat-match-color`,
+`--rt-ai-chat-match-radius`, `--rt-ai-chat-unread-radius`.
+
+## Входы
+
+| вход               | тип                          | умолчание                          |
+| ------------------ | ---------------------------- | ---------------------------------- |
+| `title`            | `string`                     | `''` — подпись кита                |
+| `subtitle`         | `string`                     | `''`                               |
+| `messages`         | `IRtAiChat.Message[]`        | `[]`                               |
+| `suggestions`      | `string[]`                   | `[]`                               |
+| `emptyTitle`       | `string`                     | `''` — подпись кита                |
+| `emptyDescription` | `string`                     | `''` — подпись кита                |
+| `placeholder`      | `string`                     | `''` — подпись поля                |
+| `disclaimer`       | `string \| null`             | `null` — подпись кита; `''` прячет |
+| `sending`          | `boolean`                    | `false`                            |
+| `loading`          | `boolean`                    | `false`                            |
+| `error`            | `IRtAiChat.RunError \| null` | `null`                             |
+| `threads`          | `IRtAiChat.Thread[] \| null` | `null` — кнопки бесед нет          |
+| `activeThreadId`   | `string \| null`             | `null`                             |
+| `threadsLoading`   | `boolean`                    | `false`                            |
+| `threadsFetching`  | `boolean`                    | `false`                            |
+| `threadsHasMore`   | `boolean`                    | `false`                            |
+| `fullScreenable`   | `boolean`                    | `false`                            |
+| `closable`         | `boolean`                    | `true`                             |
+| `draft`            | `model<string>`              | `''`                               |
+| `threadsOpen`      | `model<boolean>`             | `false`                            |
+| `fullScreen`       | `model<boolean>`             | `false`                            |
+
+## Выходы
+
+| выход                                                     | значение                   |
+| --------------------------------------------------------- | -------------------------- |
+| `send`                                                    | текст вопроса              |
+| `stop`, `retry`, `newThread`, `closed`, `loadMoreThreads` | —                          |
+| `selectThread`, `deleteThread`                            | id беседы                  |
+| `searchThreads`                                           | строка поиска              |
+| `feedbackChange`                                          | `IRtAiChat.FeedbackChange` |
+
+## Методы
+
+- `focusComposer()` — фокус в поле сообщения после отрисовки.
+
+## Шаблоны
+
+- `ng-template[rtAiChatMessageExtra]` — вложения под текстом ответа; получает сообщение.

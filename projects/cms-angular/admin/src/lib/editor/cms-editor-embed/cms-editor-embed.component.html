@@ -1,0 +1,12 @@
+<ng-container rtBlock="rt-cms-editor-embed">
+    <rt-field qa-skip [label]="t().embedUrl">
+        <rt-input
+            qa-dataid="cms-editor-embed-url"
+            placeholder="https://"
+            [ngModel]="content()"
+            (ngModelChange)="contentChange.emit($event)" />
+    </rt-field>
+    @if (preview(); as url) {
+        <iframe rtElem="frame" [title]="t().embedPreview" [src]="url"></iframe>
+    }
+</ng-container>

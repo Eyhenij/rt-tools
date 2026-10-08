@@ -1,0 +1,49 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rt-space-md);
+
+    .rt-cms-item-images {
+        &__list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--rt-space-md);
+        }
+
+        /* Preview, fields and actions in one row; on a narrow screen the actions go under the fields. */
+        &__item {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-start;
+            gap: var(--rt-space-md);
+        }
+
+        /* A preview of one height: an image of any proportions does not stretch the row. */
+        &__preview {
+            display: block;
+            width: calc(var(--rt-size-40) * 3);
+            height: calc(var(--rt-size-40) * 2);
+            flex-shrink: 0;
+            border-radius: var(--rt-radius-sm);
+            background: var(--rt-color-bg-surface-subtle);
+            object-fit: contain;
+        }
+
+        &__fields {
+            display: flex;
+            min-width: 0;
+            flex: 1;
+            flex-direction: column;
+            gap: var(--rt-space-sm);
+        }
+
+        &__actions {
+            display: flex;
+            gap: var(--rt-space-xs);
+        }
+
+        &__add {
+            display: flex;
+        }
+    }
+}

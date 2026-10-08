@@ -1,7 +1,7 @@
 import { ICaller } from '@rt-tools/auth-contract';
 
-import { ITestRealm, personClaims, TEST_CLIENT, TEST_ISSUER, testRealm } from './testing/keys';
-import { bearerToken, KeycloakTokenVerifier } from './token-verifier';
+import { ITestRealm, personClaims, TEST_CLIENT, TEST_ISSUER, testRealm } from './testing/keys.js';
+import { bearerToken, KeycloakTokenVerifier } from './token-verifier.js';
 
 describe('KeycloakTokenVerifier', () => {
     let realm: ITestRealm;

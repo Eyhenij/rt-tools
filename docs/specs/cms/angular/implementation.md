@@ -1,0 +1,16 @@
+# The Angular client of the CMS — where the rules are carried out
+
+The first column is the rule verbatim, as it is written in the "Rules" section of the spec.
+
+- **A text style is applied once and removed by pressing it again; a link keeps its settings and an empty one reads as not set.** — `projects/cms-angular/src/lib/editor/text-style.function.ts:toggleRangeStyle`, `projects/cms-angular/src/lib/editor/editor-link.function.ts:linkOfElement`
+- **Pasted markup is cleaned before it becomes blocks: scripts, images and handlers go, a link from outside is external with `nofollow`, and of the styles only bold, italic and the line stay.** — `projects/cms-angular/src/lib/editor/editor-paste.function.ts:pastedBlocksOf`
+- **A page form follows its type settings: the name and the address are always required, a required field is visible, the sections go in a fixed order, and empty settings turn on the page, the tags, the media and the editor.** — `projects/cms-angular/src/lib/item/content-type-settings.function.ts:typeSettingsOf`, `projects/cms-angular/src/lib/item/content-type-settings.function.ts:formSectionsOf`
+- **Saving is closed without edits, with an invalid form, under a foreign lock and during a save; an opened page is locked for the caller and released on leaving.** — `projects/cms-angular/src/lib/item/item-form.function.ts:canSaveItem`, `projects/cms-angular/admin/src/lib/store/item-editor.store.ts:ItemEditorStore`
+- **The preview of a draft and of an archived page carries the token, of a published one does not.** — `projects/cms-angular/src/lib/item/item-form.function.ts:itemPreviewUrlOf`
+- **A list keeps its page and search in the address, erases the defaults, and goes back to the first page on a new size or search.** — `projects/cms-angular/admin/src/lib/list/list-query.function.ts:listQueryToParams`, `projects/cms-angular/admin/src/lib/list/list-query.function.ts:resizedQuery`
+- **A refusal names its cause by the code and keeps the screen as it was; a missing right is named apart.** — `projects/cms-angular/admin/src/lib/store/cms-refusal.function.ts:cmsRefusalOf`
+- **Every label has an English default, the application labels win, and they recompute when the language changes.** — `projects/cms-angular/src/lib/i18n/cms-labels.providers.ts:provideCmsLabels`
+- **The site draws a page from the public output once on the server and carries it to the browser; a draft by a preview token is never carried.** — `projects/cms-angular/site/src/lib/page/site-pages-api.service.ts:SitePagesApiService`
+- **A block of a kind the application gave no renderer for is skipped, and a video frame takes only a listed provider.** — `projects/cms-angular/site/src/lib/block/cms-site-blocks/cms-site-blocks.component.ts:CmsSiteBlocksComponent`, `projects/cms-angular/site/src/lib/block/embed-src.function.ts:embedSrcOf`
+- **A draft opened by a token is closed from indexing, and `hreflang` names only the sites where the page is published in their language; leaving the page brings the head back.** — `projects/cms-angular/site/src/lib/page/site-page-head.service.ts:SitePageHeadService`
+- **The site server answers by a CMS redirect before drawing the page and carries the query over; without an answer from the CMS the former list stays.** — `projects/cms-angular/site/src/lib/redirect/site-redirects.function.ts:cmsSiteRedirects`

@@ -119,6 +119,14 @@ enough to stand in it
 
 Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-active-option.spec.ts` — one spec for the three families.
 
+### SC-UKV-762 — the open list highlights the chosen option
+
+Given a choice from a list with an option chosen
+When the person opens the list by the mouse or by the arrow down
+Then the chosen option is highlighted, and the next arrow moves from it
+
+Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-chosen-active.spec.ts`.
+
 ### SC-UKV-406 — the filter line of the select panel shows the magnifier
 
 Given a select with the filter switched on
