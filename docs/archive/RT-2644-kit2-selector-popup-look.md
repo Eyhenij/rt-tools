@@ -137,3 +137,9 @@ closing:
   0 by default, so the clear button can stand under the delete button of a row as in the first kit.
   The application confirmed rows 108–110 on the built package: the string field, the divider and the
   button step match the first kit.
+- Row 112 came from the application's session: under the strategy `font` the invitation button drew
+  the text «ico-plus» instead of the icon. The request asked for every kit name to draw the kit
+  drawing under `font`. Kit names like `search`, `close` and `check` are also Material ligatures,
+  and an application on `font` names them to get the font look, so that change would repaint them.
+  Instead only a kit name the font cannot draw at all — with a hyphen or a capital letter — takes
+  the kit drawing. The default strategy `map-first` does not change.
