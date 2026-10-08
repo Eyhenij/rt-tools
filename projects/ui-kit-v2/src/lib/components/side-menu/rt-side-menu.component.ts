@@ -29,7 +29,7 @@ import { RouterLink } from '@angular/router';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
+import { IRtInput, rtKitLabel } from '@rt-tools/ui-kit-v2/core';
 import { BreakpointsService } from '@rt-tools/ui-kit-v2/core';
 import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
@@ -257,6 +257,21 @@ export class RtSideMenuComponent implements IRtSideMenuHost {
     public readonly subMenuTooltipsShown: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
         transform: booleanAttribute,
     });
+    /**
+     * Подписи под значками полосы. Выключено — имя пункта уходит в подсказку справа от значка, а
+     * подсказка подчиняется `subMenuTooltipsShown`; доступное имя пункт держит всегда.
+     */
+    public readonly railTitlesShown: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
+        transform: booleanAttribute,
+    });
+    /** Залитые значки полосы — залитый рисунок материального набора и заливка шрифта лигатуры. */
+    public readonly railIconFill: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
+        transform: booleanAttribute,
+    });
+    /** Размер поля поиска подменю — ступень `rt-input`. */
+    public readonly searchSize: InputSignal<IRtInput.Size> = input<IRtInput.Size>('sm');
+    /** Вид поля поиска подменю — вид `rt-input`. */
+    public readonly searchAppearance: InputSignal<IRtInput.Appearance> = input<IRtInput.Appearance>('outline');
 
     public readonly subMenuModeChange: OutputEmitterRef<IRtSideMenu.SubMenuMode> = output<IRtSideMenu.SubMenuMode>();
     public readonly subMenuWidthChange: OutputEmitterRef<number> = output<number>();

@@ -23,5 +23,30 @@
             width: 100%;
             height: 100%;
         }
+
+        /* Вид первого кита так, как его задаёт приложение: свойства меню на меню, свойства строки на
+           строке, черта под строкой страницы раздела — по номеру пункта на строке. Трекинг строки — ручка без
+           объявления в ките: он задан привязкой стиля на коробке и доходит до строк наследованием. */
+        &--first-kit {
+            .rt-side-menu {
+                --rt-side-menu-rail-icon-size: var(--rt-size-6);
+                --rt-side-menu-rail-gap: var(--rt-space-sm);
+                --rt-side-menu-rail-border-width: 0;
+                --rt-side-menu-panel-head-padding: var(--rt-space-sm);
+                --rt-side-menu-sub-list-padding-inline: var(--rt-space-md);
+                --rt-side-menu-panel-bg: var(--rt-color-bg-subtle);
+                --rt-side-menu-item-color-active: var(--rt-color-text-primary);
+            }
+
+            .rt-side-menu-sub-item {
+                --rt-side-menu-sub-item-min-height: calc(var(--rt-size-10) + var(--rt-space-1));
+                --rt-side-menu-sub-item-font-size: var(--rt-text-md);
+                --rt-side-menu-sub-item-padding-end: var(--rt-space-md);
+            }
+
+            .rt-side-menu-sub-item:has(> [data-item-id='2']) {
+                border-bottom: 1px solid var(--rt-color-border-subtle);
+            }
+        }
     }
 }

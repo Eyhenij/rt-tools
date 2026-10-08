@@ -11,7 +11,19 @@
         --rt-side-menu-sub-item-match-color: var(--rt-neutral-950);
         --rt-side-menu-sub-item-match-radius: var(--rt-radius-xs);
 
+        /* Размеры и цвет строки — и строки со ссылкой, и заголовка папки. Отступ начала растёт с
+           глубиной вложения. Цвета подложки и выбранной строки — свойства меню `--rt-side-menu-item-*`. */
+        --rt-side-menu-sub-item-min-height: var(--rt-control-height-md);
+        --rt-side-menu-sub-item-font-size: var(--rt-text-sm);
+        --rt-side-menu-sub-item-padding-start: var(--rt-space-md);
+        --rt-side-menu-sub-item-padding-end: var(--rt-space-sm);
+        --rt-side-menu-sub-item-color: var(--rt-color-text-primary);
+
         display: block;
+
+        /* Трекинг подписи наследуют и строка, и заголовок папки. Своего умолчания у него нет: без
+           свойства строка наследует трекинг от страницы, как раньше. */
+        letter-spacing: var(--rt-side-menu-sub-item-letter-spacing, inherit);
 
         &__row {
             /* Глубину вложения ставит шаблон на саму строку; здесь — значение строки верхнего уровня. */
@@ -19,19 +31,20 @@
 
             display: flex;
             width: 100%;
-            min-height: var(--rt-control-height-md);
+            min-height: var(--rt-side-menu-sub-item-min-height);
             box-sizing: border-box;
             align-items: center;
             border: 0;
             border-radius: var(--rt-side-menu-sub-item-radius);
             background: transparent;
-            color: var(--rt-color-text-primary);
+            color: var(--rt-side-menu-sub-item-color);
             cursor: pointer;
             font: inherit;
-            font-size: var(--rt-text-sm);
+            font-size: var(--rt-side-menu-sub-item-font-size);
             gap: var(--rt-space-sm);
             padding-block: var(--rt-space-2);
-            padding-inline: calc(var(--rt-space-md) * (1 + var(--rt-side-menu-sub-item-depth))) var(--rt-space-sm);
+            padding-inline: calc(var(--rt-side-menu-sub-item-padding-start) * (1 + var(--rt-side-menu-sub-item-depth)))
+                var(--rt-side-menu-sub-item-padding-end);
             text-align: start;
             text-decoration: none;
             transition: background-color var(--rt-side-menu-sub-item-transition-duration) ease;
@@ -39,7 +52,7 @@
             &:hover,
             &:active,
             &--highlighted {
-                background: var(--rt-color-bg-hover);
+                background: var(--rt-side-menu-item-bg-hover);
             }
 
             &:focus-visible {
@@ -49,8 +62,8 @@
 
             /* Активна строка со ссылкой; у папки активность видна по её раскрытым пунктам. */
             &--active {
-                background: var(--rt-color-action-primary-subtle);
-                color: var(--rt-color-action-primary-on-surface);
+                background: var(--rt-side-menu-item-bg-active);
+                color: var(--rt-side-menu-item-color-active);
             }
         }
 
@@ -159,17 +172,21 @@
         &__folder.rt-expansion-panel {
             --rt-expansion-panel-duration: var(--rt-side-menu-sub-item-transition-duration);
             --rt-expansion-panel-header-radius: var(--rt-side-menu-sub-item-radius);
-            --rt-expansion-panel-header-min-height: var(--rt-control-height-md);
+            --rt-expansion-panel-header-min-height: var(--rt-side-menu-sub-item-min-height);
             --rt-expansion-panel-header-padding-block: var(--rt-space-2);
-            --rt-expansion-panel-header-padding-start: calc(var(--rt-space-md) * (1 + var(--rt-side-menu-sub-item-depth)));
-            --rt-expansion-panel-header-padding-end: var(--rt-space-sm);
+            --rt-expansion-panel-header-padding-start: calc(
+                var(--rt-side-menu-sub-item-padding-start) * (1 + var(--rt-side-menu-sub-item-depth))
+            );
+            --rt-expansion-panel-header-padding-end: var(--rt-side-menu-sub-item-padding-end);
             --rt-expansion-panel-header-gap: var(--rt-space-sm);
-            --rt-expansion-panel-header-font-size: var(--rt-text-sm);
+            --rt-expansion-panel-header-font-size: var(--rt-side-menu-sub-item-font-size);
+            --rt-expansion-panel-header-color: var(--rt-side-menu-sub-item-color);
             --rt-expansion-panel-header-bg: transparent;
+            --rt-expansion-panel-header-hover-bg: var(--rt-side-menu-item-bg-hover);
         }
 
         &__folder--highlighted.rt-expansion-panel {
-            --rt-expansion-panel-header-bg: var(--rt-color-bg-hover);
+            --rt-expansion-panel-header-bg: var(--rt-side-menu-item-bg-hover);
         }
 
         &__children {

@@ -80,6 +80,14 @@ export const Icons: TStory = { args: { part: 'icons' } };
  */
 export const Switches: TStory = { args: { part: 'switches' } };
 
+/**
+ * Вид первого кита: подписи полосы ушли в подсказку справа, значки залиты, поле поиска высотой 40.
+ * Третья ячейка добавляет свойства меню и строки и черту под строкой страницы раздела — правилом
+ * приложения по номеру пункта `data-item-id`. Подсказка полосы видна только под указателем, её
+ * проверяет тест SC-UKV-781.
+ */
+export const FirstKitLook: TStory = { args: { part: 'look' } };
+
 export const Presets: TStory = { args: { part: 'presets' } };
 
 /**

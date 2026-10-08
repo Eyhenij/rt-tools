@@ -3,6 +3,17 @@
        Host несёт класс блока: полоса пунктов, рядом панель подменю. Незакреплённая панель стоит над
        страницей, закреплённая — в потоке рядом с полосой и сдвигает страницу. */
 
+    /* Цвета пункта — полосы, строки телефона и строки подменю. Объявлены и на строке избранного в
+       руке: её CDK выносит в конец страницы, вне меню. Цвет в покое по умолчанию берётся от меню, как
+       раньше брался наследованием. */
+    .rt-side-menu,
+    .rt-side-menu-favorites__row.cdk-drag-preview {
+        --rt-side-menu-item-color: currentcolor;
+        --rt-side-menu-item-bg-hover: var(--rt-color-bg-hover);
+        --rt-side-menu-item-bg-active: var(--rt-color-action-primary-subtle);
+        --rt-side-menu-item-color-active: var(--rt-color-action-primary-on-surface);
+    }
+
     .rt-side-menu {
         --rt-side-menu-rail-width: 5.5rem;
         --rt-side-menu-panel-width: 15rem;
@@ -14,6 +25,13 @@
         --rt-side-menu-resizer-border-width: var(--rt-border-width-thick);
         --rt-side-menu-panel-border-width: var(--rt-border-width-thin);
         --rt-side-menu-transition-duration: var(--rt-duration-fast);
+        --rt-side-menu-rail-icon-size: var(--rt-icon-step-md);
+        --rt-side-menu-rail-gap: var(--rt-space-md);
+        --rt-side-menu-rail-bg: var(--rt-color-bg-surface);
+        --rt-side-menu-rail-border-width: var(--rt-side-menu-panel-border-width);
+        --rt-side-menu-panel-bg: var(--rt-color-bg-surface);
+        --rt-side-menu-panel-head-padding: var(--rt-space-sm);
+        --rt-side-menu-sub-list-padding-inline: var(--rt-space-2);
 
         /* Натянутую рукой ширину ставит привязка хоста; без неё панель берёт ширину оформления. */
         --rt-side-menu-panel-dragged-width: 0px;
@@ -34,8 +52,8 @@
             height: 100%;
             box-sizing: border-box;
             flex: 0 0 var(--rt-side-menu-rail-width);
-            border-right: var(--rt-side-menu-panel-border-width) solid var(--rt-color-border-default);
-            background: var(--rt-color-bg-surface);
+            border-right: var(--rt-side-menu-rail-border-width) solid var(--rt-color-border-default);
+            background: var(--rt-side-menu-rail-bg);
 
             /* Отступ области прокрутки оставлял подписи 56 пикселей из 88, и слово рвалось посреди. */
             .rt-scroll-area__body {
@@ -47,7 +65,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: var(--rt-space-md);
+            gap: var(--rt-side-menu-rail-gap);
             padding-block: var(--rt-space-sm);
         }
 
@@ -59,7 +77,7 @@
             padding: 0;
             border: 0;
             background: transparent;
-            color: inherit;
+            color: var(--rt-side-menu-item-color);
             cursor: pointer;
             font: inherit;
             gap: var(--rt-space-1);
@@ -75,17 +93,22 @@
 
             &:hover .rt-side-menu__rail-icon,
             &:active .rt-side-menu__rail-icon {
-                background: var(--rt-color-bg-hover);
+                background: var(--rt-side-menu-item-bg-hover);
             }
 
             &--active .rt-side-menu__rail-icon,
             &--active:hover .rt-side-menu__rail-icon {
-                background: var(--rt-color-action-primary-subtle);
-                color: var(--rt-color-action-primary-on-surface);
+                background: var(--rt-side-menu-item-bg-active);
+                color: var(--rt-side-menu-item-color-active);
             }
         }
 
+        /* Размер значка полосы переназначает ступень значка внутри коробки. Свойство меню объявлено
+           ступенью без запаса: пока приложение не задало ни его, ни ступени, оно пусто, и значок берёт
+           свой запасной шаг, как раньше. Круга нет — свойство меню разрешено на корне. */
         &__rail-icon {
+            --rt-icon-step-md: var(--rt-side-menu-rail-icon-size);
+
             display: flex;
             width: 3.5rem;
             height: 2rem;
@@ -121,7 +144,7 @@
             flex-direction: column;
             border-radius: 0 var(--rt-side-menu-panel-radius) var(--rt-side-menu-panel-radius) 0;
             border-left: var(--rt-side-menu-panel-border-width) solid var(--rt-color-border-default);
-            background: var(--rt-color-bg-surface);
+            background: var(--rt-side-menu-panel-bg);
             box-shadow: var(--rt-side-menu-panel-shadow);
 
             &--held {
@@ -141,7 +164,7 @@
         &__panel-head {
             display: flex;
             align-items: center;
-            padding: var(--rt-space-sm);
+            padding: var(--rt-side-menu-panel-head-padding);
             gap: var(--rt-space-2);
         }
 
@@ -163,7 +186,7 @@
             display: flex;
             flex-direction: column;
             padding-block-end: var(--rt-space-sm);
-            padding-inline: var(--rt-space-2);
+            padding-inline: var(--rt-side-menu-sub-list-padding-inline);
         }
 
         &__empty {
@@ -238,7 +261,7 @@
             border: 0;
             border-radius: var(--rt-side-menu-item-radius);
             background: transparent;
-            color: inherit;
+            color: var(--rt-side-menu-item-color);
             cursor: pointer;
             font: inherit;
             font-size: var(--rt-text-sm);
@@ -251,7 +274,7 @@
             text-decoration: none;
 
             &:hover {
-                background: var(--rt-color-bg-hover);
+                background: var(--rt-side-menu-item-bg-hover);
             }
 
             &:focus-visible {
@@ -260,8 +283,8 @@
             }
 
             &--active {
-                background: var(--rt-color-action-primary-subtle);
-                color: var(--rt-color-action-primary-on-surface);
+                background: var(--rt-side-menu-item-bg-active);
+                color: var(--rt-side-menu-item-color-active);
             }
         }
 

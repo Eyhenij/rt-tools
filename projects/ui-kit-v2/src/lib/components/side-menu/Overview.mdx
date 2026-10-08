@@ -49,6 +49,13 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 подменю всплывает, пока режим не задан входом. `subMenuTooltipsShown="false"` гасит подсказки строк
 подменю; имена кнопок для чтения экрана остаются. Оба — в истории `Switches`.
 
+**Вид первого кита.** `railTitlesShown="false"` убирает подписи под значками полосы: имя пункта
+уходит в подсказку справа и в доступное имя пункта. Подсказку гасит тот же `subMenuTooltipsShown`.
+`railIconFill` заливает значки полосы. `searchSize` и `searchAppearance` задают поле поиска подменю,
+как у `rt-input`: размер `md` даёт высоту 40. Строка и папка подменю несут номер пункта в
+`data-item-id` — по нему приложение находит строку, например открывающую страницу раздела. Всё
+вместе — в истории `FirstKitLook`.
+
 **Избранное — как у первого кита, без Material.** У пункта полосы с флагом `favorites` в подменю
 стоят звёзды у пунктов со ссылкой, а вверху — блок «Избранное»: сворачивается заголовком, строки
 тянутся за ручку и переставляются стрелками на ней, «убрать» снимает пункт. Список и свёрнутые блоки
@@ -99,6 +106,29 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 получают: избранное в обоих наборах показывает история **Favorites**. Кнопка закрепления рисует
 булавку, как у первого кита.
 
+Свойства меню задаются на `rt-side-menu` или выше, свойства строки — на `rt-side-menu-sub-item`.
+Без них меню выглядит как раньше.
+
+| свойство                                 | что задаёт                                   | умолчание                              |
+| ---------------------------------------- | -------------------------------------------- | -------------------------------------- |
+| `--rt-side-menu-rail-icon-size`          | сторона значка полосы                        | ступень значка `md`                    |
+| `--rt-side-menu-rail-gap`                | зазор между пунктами полосы                  | `--rt-space-md`                        |
+| `--rt-side-menu-rail-bg`                 | фон полосы                                   | `--rt-color-bg-surface`                |
+| `--rt-side-menu-rail-border-width`       | толщина черты справа от полосы               | `--rt-side-menu-panel-border-width`    |
+| `--rt-side-menu-panel-bg`                | фон панели подменю                           | `--rt-color-bg-surface`                |
+| `--rt-side-menu-panel-head-padding`      | отступ шапки панели с поиском                | `--rt-space-sm`                        |
+| `--rt-side-menu-sub-list-padding-inline` | отступ списка подменю от краёв панели        | `--rt-space-2`                         |
+| `--rt-side-menu-item-color`              | цвет пункта полосы и строки телефона в покое | цвет меню                              |
+| `--rt-side-menu-item-bg-hover`           | подложка пункта и строки под указателем      | `--rt-color-bg-hover`                  |
+| `--rt-side-menu-item-bg-active`          | подложка активного пункта и строки           | `--rt-color-action-primary-subtle`     |
+| `--rt-side-menu-item-color-active`       | цвет активного пункта и строки               | `--rt-color-action-primary-on-surface` |
+| `--rt-side-menu-sub-item-min-height`     | наименьшая высота строки и папки подменю     | `--rt-control-height-md`               |
+| `--rt-side-menu-sub-item-font-size`      | кегль строки и папки                         | `--rt-text-sm`                         |
+| `--rt-side-menu-sub-item-letter-spacing` | трекинг строки и папки                       | от страницы                            |
+| `--rt-side-menu-sub-item-padding-start`  | отступ начала строки, растёт с глубиной      | `--rt-space-md`                        |
+| `--rt-side-menu-sub-item-padding-end`    | отступ конца строки                          | `--rt-space-sm`                        |
+| `--rt-side-menu-sub-item-color`          | цвет строки и папки в покое                  | `--rt-color-text-primary`              |
+
 ## Рядом
 
 - `rt-menu` — выпадающее меню действий.
@@ -120,7 +150,11 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | `favoriteActionsReserve` | `IRtSideMenu.FavoriteActionsReserve`   | `'none'`      | место под кнопки избранного, ждущие наведения       |
 | `isFavoritesSearchShown` | `boolean`                              | `true`        | поиск показывает совпавшие строки избранного        |
 | `pinShown`               | `boolean`                              | `true`        | кнопка закрепления; без неё сохранённое не читается |
-| `subMenuTooltipsShown`   | `boolean`                              | `true`        | подсказки строк подменю                             |
+| `subMenuTooltipsShown`   | `boolean`                              | `true`        | подсказки строк подменю и пунктов полосы            |
+| `railTitlesShown`        | `boolean`                              | `true`        | подписи под значками полосы                         |
+| `railIconFill`           | `boolean`                              | `false`       | залитые значки полосы                               |
+| `searchSize`             | `IRtInput.Size`                        | `'sm'`        | размер поля поиска подменю                          |
+| `searchAppearance`       | `IRtInput.Appearance`                  | `'outline'`   | вид поля поиска подменю                             |
 
 ## Выходы
 
