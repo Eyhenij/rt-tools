@@ -373,7 +373,7 @@ properties the rows are 36px, the gap 12px and the footer padding `8px 16px 0`; 
 44px least height, a 4px gap and `16px 24px 0 8px` the labels are 20px per line, the rows 44px with
 the content in the middle, the gap 4px and the footer padding `16px 24px 0 8px`.
 
-### SC-UKV-737 — a row ticked during a search stays in place until the query changes
+### SC-UKV-767 — a row ticked during a search stays in place until the query changes
 
 Given the popup offers «Anna», «Boris» and «Vera», and the person typed «a»
 When the person ticks «Vera», and then types «an»
@@ -382,7 +382,7 @@ divider and «Anna» under it
 
 Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/popup/rt-dynamic-selector-popup.component.spec.ts`.
 
-### SC-UKV-738 — the caller gives the search highlight a background and its rounding
+### SC-UKV-768 — the caller gives the search highlight a background and its rounding
 
 Given a popup with the search highlight on, whose caller sets the highlight background and its
 rounding

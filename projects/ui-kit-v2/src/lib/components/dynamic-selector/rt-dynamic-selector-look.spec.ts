@@ -207,7 +207,7 @@ describe('RtDynamicSelectorComponent — вид, который задаёт п�
         expect(popupPart('dynamic-selector-search')?.classList.contains('rt-input--appearance--fill')).toBe(true);
     });
 
-    it('SC-UKV-736 — поле поиска в окне выбора берёт вид pill', async (): Promise<void> => {
+    it('SC-UKV-766 — поле поиска в окне выбора берёт вид pill', async (): Promise<void> => {
         const fixture: ComponentFixture<SelectorHostComponent> = host(SelectorHostComponent, (it: SelectorHostComponent): void =>
             it.searchAppearance.set('pill')
         );

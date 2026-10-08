@@ -108,7 +108,7 @@ Then the cards of the narrow view take the corners of the step, and the wide vie
 
 Covered: `projects/ui-kit-v2/src/lib/components/table/rt-table.component.spec.ts`.
 
-### SC-UKV-735 — a filled field with a step rounds all four corners
+### SC-UKV-765 — a filled field with a step rounds all four corners
 
 Given a field with the filled look
 When the caller names a radius step for it
@@ -119,7 +119,7 @@ Not covered: a test has no layout. Measured on the showcase in the story **Contr
 foundation: without a step the corners are 4px on top and 0 below with a grey line, with the step
 `full` they are 9999px on all four with no line, and every other step rounds all four corners.
 
-### SC-UKV-736 — the pill look of a field
+### SC-UKV-766 — the pill look of a field
 
 Given a field, a number field or the popup search of a selector
 When the caller names the pill look

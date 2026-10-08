@@ -181,7 +181,7 @@ describe('RtDynamicSelectorPopupComponent', (): void => {
         expect(tickedLabels(fixture)).toEqual(['Boris', 'Vera']);
     });
 
-    it('SC-UKV-737 — пункт, отмеченный во время поиска, стоит на месте до смены запроса', async (): Promise<void> => {
+    it('SC-UKV-767 — пункт, отмеченный во время поиска, стоит на месте до смены запроса', async (): Promise<void> => {
         const fixture: TPopupFixture = setup();
 
         type(fixture, 'a');
