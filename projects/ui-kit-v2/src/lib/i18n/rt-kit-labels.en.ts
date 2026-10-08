@@ -18,6 +18,8 @@ const COUNT_DAYS: string = '{{count}} days';
 
 // eslint-disable-next-line @typescript-eslint/typedef -- аннотация стёрла бы литеральный тип, на котором стоит TRtKitLabelKey
 export const RT_KIT_LABELS_EN = {
+    aiHideSteps: 'Hide steps',
+    aiShowSteps: 'Show steps',
     asideCopyErrorInfo: 'Copy error info',
     asideRequestError: 'Request Error',
     bottomSheetClose: 'Close',

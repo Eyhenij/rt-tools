@@ -1,0 +1,36 @@
+# `rt-ai-run-status`
+
+```html
+<rt-ai-run-status [state]="run.state" [label]="run.label" [meta]="run.meta" [steps]="run.steps" [(expanded)]="stepsOpen" />
+```
+
+| вход       | тип                           | умолчание                     |
+| ---------- | ----------------------------- | ----------------------------- |
+| `state`    | `IRtAiRunStatus.State`        | обязателен                    |
+| `label`    | `string`                      | обязателен                    |
+| `meta`     | `string`                      | `''` — не рисуется            |
+| `steps`    | `readonly IRtTimeline.Step[]` | `[]` — строку нельзя раскрыть |
+| `expanded` | `boolean` (`model`)           | `false`                       |
+
+Выход: `expandedChange` — от `model` раскрытия.
+
+Спек — `docs/specs/ui-kit-v2/ai-run-status/`; здесь только устройство папки.
+
+## Главное, что нужно знать
+
+**Строка презентационная.** Состояние, подпись, мета и шаги приходят готовыми: разбор потока
+событий модели и подсчёт времени — дело приложения.
+
+**С шагами вся строка — кнопка.** Без шагов кнопки нет, строка объявляется `role="status"`.
+`aria-expanded` и `aria-controls` стоят на кнопке, `id` — на ленте шагов.
+
+## Края
+
+- Блик подписи — градиент, обрезанный по тексту, и он бежит анимацией. При
+  `prefers-reduced-motion` анимации нет, подпись стоит цветом `--rt-ai-run-status-shimmer-from`.
+- `expanded` при пустом `steps` ничего не раскрывает: список рисуется только при шагах.
+
+## Рядом
+
+- [`rt-timeline`](../timeline/CONTEXT.md) — лента шагов под строкой.
+- [`rt-spinner`](../spinner/CONTEXT.md) — крутилка состояния `running`.
