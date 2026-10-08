@@ -118,6 +118,13 @@ flowchart TD
   `Docs-skip: <reason>` in the commit body; an empty reason is not accepted.
   <!-- rt-when: *.md -->
 
+- **A file of the tree is edited by the edit tool, not by a shell command.** A guard judges a
+  shell command by its whole body as new text: the pattern being replaced, the old markup, a loop
+  and the headers next to a heredoc. A one-liner is then one sentence of fifty words, and the
+  guard refuses the edit for lines it does not add. A post-edit hook does not see such a write at
+  all, and a replacement whose pattern matched nothing exits zero with the file untouched. A
+  command that must write a document gets it as a file written by the edit tool beforehand.
+
 - **A document is no longer than the length limit.** A text that does not fit on one screen gets
   appended to without rereading the beginning — that is how one document ends up with two answers
   to one question. Text has its own limit, lower than code, counted the same way — all lines; a

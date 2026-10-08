@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.29.4 · checks/check-prose-style.mjs · 2b4dda1a710d · правится надстройкой, не здесь
+// rt-kit v0.29.4 · checks/check-prose-style.mjs · af92e9e7d5ac · правится надстройкой, не здесь
 /**
  * The check of style: officialese and turns of phrase that are not written in this tree.
  *
@@ -205,10 +205,14 @@ function findingsIn(line) {
     return found;
 }
 
-/** A sentence that is too long: the reader loses the beginning before the author reaches the end. */
+/**
+ * A sentence that is too long: the reader loses the beginning before the author reaches the end.
+ * A full stop closed by emphasis — `.**` at the end of an article title — ends a sentence too:
+ * otherwise the title and the first sentence after it are counted as one.
+ */
 function longSentences(line) {
     return line
-        .split(/(?<=[.!?])\s+/)
+        .split(/(?<=[.!?][*_]*)\s+/)
         .filter((sentence) => sentence.trim().split(/\s+/).length > WORDS_LIMIT)
         .map((sentence) => [`${sentence.trim().split(/\s+/).length} words in a sentence`, `split it: the limit is ${WORDS_LIMIT}`]);
 }

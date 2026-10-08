@@ -4,7 +4,7 @@ kind: rule
 law: project-documentation
 description: Rule under the project-documentation law. Load when editing any .md including specs, and also code comments, commit bodies and PR descriptions. Names the path check, the pairs of an edit and its document, and what nothing checks in this tree. Ready-made wording is in pattern doc-style-write.
 ---
-<!-- rt-kit v0.29.4 · rules/doc-style.md · 4b80571e73f2 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.4 · rules/doc-style.md · 47cb0a34ba42 · правится надстройкой, не здесь -->
 
 # Project texts — how it works here
 
@@ -118,6 +118,13 @@ flowchart TD
 - **A document goes in the same commit as the change it describes.** The bypass is the line
   `Docs-skip: <reason>` in the commit body; an empty reason is not accepted.
   <!-- rt-when: *.md -->
+
+- **A file of the tree is edited by the edit tool, not by a shell command.** A guard judges a
+  shell command by its whole body as new text: the pattern being replaced, the old markup, a loop
+  and the headers next to a heredoc. A one-liner is then one sentence of fifty words, and the
+  guard refuses the edit for lines it does not add. A post-edit hook does not see such a write at
+  all, and a replacement whose pattern matched nothing exits zero with the file untouched. A
+  command that must write a document gets it as a file written by the edit tool beforehand.
 
 - **A document is no longer than the length limit.** A text that does not fit on one screen gets
   appended to without rereading the beginning — that is how one document ends up with two answers
