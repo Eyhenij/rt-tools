@@ -66,10 +66,19 @@ async function pairs() {
  * срезает, оставляя одно тело.
  */
 function paint(raw) {
-    return raw
+    return withViewBox(raw)
         .replace(/<path\b(?![^>]*\bfill=)/g, '<path fill="currentColor"')
         .replace(/\bwidth="48"/, 'width="24"')
         .replace(/\bheight="48"/, 'height="24"');
+}
+
+/**
+ * Часть рисунков Material лежит в старом виде: без `viewBox`, в сетке 48 × 48. Без него браузер
+ * рисует такой значок в первых 24 единицах сетки, то есть четвертью. Сетка старого вида всегда 48 —
+ * размер, который скрипт и просит.
+ */
+function withViewBox(raw) {
+    return /\bviewBox=/.test(raw) ? raw : raw.replace(/<svg\b/, '<svg viewBox="0 0 48 48"');
 }
 
 async function main() {

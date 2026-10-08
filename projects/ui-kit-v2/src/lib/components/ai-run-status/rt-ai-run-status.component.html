@@ -1,0 +1,37 @@
+<div rtBlock="rt-ai-run-status" qa-dataid="ai-run-status" [attr.data-state]="state()" [rtMod]="{ state: state(), open: isOpen() }">
+    <ng-template #head>
+        <span rtElem="mark" aria-hidden="true">
+            @if (mark(); as m) {
+                <rt-icon size="sm" [name]="m.name" [color]="m.color" />
+            } @else {
+                <rt-spinner appearance="arc" [diameter]="16" />
+            }
+        </span>
+        <span rtElem="label" qa-dataid="ai-run-status-label" [rtMod]="{ state: state() }">{{ label() }}</span>
+        @if (meta()) {
+            <span rtElem="meta" qa-dataid="ai-run-status-meta">{{ meta() }}</span>
+        }
+    </ng-template>
+
+    @if (hasSteps()) {
+        <button
+            rtElem="row"
+            type="button"
+            qa-dataid="ai-run-status-toggle"
+            [attr.aria-expanded]="isOpen()"
+            [attr.aria-controls]="stepsId"
+            [rtTooltip]="toggleLabel()"
+            (click)="onToggle()">
+            <ng-container [ngTemplateOutlet]="head" />
+            <rt-icon rtElem="chevron" size="sm" color="muted" [name]="isOpen() ? 'chevron-up' : 'chevron-down'" />
+        </button>
+    } @else {
+        <div rtElem="row" role="status" qa-dataid="ai-run-status-row">
+            <ng-container [ngTemplateOutlet]="head" />
+        </div>
+    }
+
+    @if (isOpen()) {
+        <rt-timeline rtElem="steps" qa-dataid="ai-run-status-steps" [id]="stepsId" [steps]="steps()" />
+    }
+</div>
