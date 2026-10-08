@@ -3,7 +3,7 @@
 The prefix `SC-UKV` is shared across the domain together with the subdomains. The numbers go through:
 the titles of the tests refer to them.
 
-### SC-UKV-726 — the long title of a dense toolbar wraps inside the column
+### SC-UKV-727 — the long title of a dense toolbar wraps inside the column
 
 Given a dense toolbar in a column 240 points wide, with a title on the left and a button on the right
 When the title is longer than the place left to it

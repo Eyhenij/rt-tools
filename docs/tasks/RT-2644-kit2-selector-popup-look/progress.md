@@ -50,6 +50,9 @@
 - Matched characters are drawn semibold, and semibold glyphs are wider. In the narrow half of the
   showcase a label that fit on one line wraps once the highlight is on. The colour and the weight
   are properties: a caller who wants no width change sets the regular weight.
+- Main took SC-UKV-727 for the dense toolbar in RT-2642, the number row 92 held here. The row 92
+  scenario is renumbered SC-UKV-734 with its test titles. The assignments row of the copy stays as
+  main has it, RT-2591: the merge must not rewrite a neighbour's assignment.
 - The popup styles grew to 9.05 kB, past the 8 kB budget for one component style in the production
   builds of three applications. The row and option rules moved to a second style file of the
   popup; the main one builds at 6.77 kB. No rule changed, and the Popup frame stays the reference.

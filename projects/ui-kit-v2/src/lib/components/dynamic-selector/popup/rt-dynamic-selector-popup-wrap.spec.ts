@@ -42,7 +42,7 @@ function tooltipOf(label: DebugElement): string {
 }
 
 describe('RtDynamicSelectorPopupComponent — подпись пункта одной строкой', (): void => {
-    it('SC-UKV-727 — без переноса строка помечена одной строкой, а подпись несёт подсказку с полным текстом', (): void => {
+    it('SC-UKV-734 — без переноса строка помечена одной строкой, а подпись несёт подсказку с полным текстом', (): void => {
         const fixture: TPopupFixture = setup({ titleWrap: false });
 
         expect(rows(fixture).length).toBe(2);
@@ -52,7 +52,7 @@ describe('RtDynamicSelectorPopupComponent — подпись пункта одн
         expect(labels(fixture).map(tooltipOf)).toEqual([LONG_NAME, 'Boris']);
     });
 
-    it('SC-UKV-727 — с переносом по умолчанию у строки нет метки, а у подписи нет подсказки', (): void => {
+    it('SC-UKV-734 — с переносом по умолчанию у строки нет метки, а у подписи нет подсказки', (): void => {
         const fixture: TPopupFixture = setup();
 
         expect(rows(fixture).length).toBe(2);
@@ -63,7 +63,7 @@ describe('RtDynamicSelectorPopupComponent — подпись пункта одн
         expect(labels(fixture).map(tooltipOf)).toEqual(['', '']);
     });
 
-    it('SC-UKV-727 — у выбора одной записи без переноса подпись стоит рядом с кнопкой, ведёт её имя и выбирает строку', (): void => {
+    it('SC-UKV-734 — у выбора одной записи без переноса подпись стоит рядом с кнопкой, ведёт её имя и выбирает строку', (): void => {
         const fixture: TPopupFixture = setup({ mode: 'single', titleWrap: false });
         const radios: RtRadioButtonComponent[] = qaAll(fixture, 'dynamic-selector-option').map(
             (option: DebugElement): RtRadioButtonComponent => option.componentInstance as RtRadioButtonComponent
@@ -84,7 +84,7 @@ describe('RtDynamicSelectorPopupComponent — подпись пункта одн
         ).toEqual(['false', 'true']);
     });
 
-    it('SC-UKV-727 — у выбора одной записи с переносом подпись рисует сама кнопка', (): void => {
+    it('SC-UKV-734 — у выбора одной записи с переносом подпись рисует сама кнопка', (): void => {
         const fixture: TPopupFixture = setup({ mode: 'single' });
         const radios: RtRadioButtonComponent[] = qaAll(fixture, 'dynamic-selector-option').map(
             (option: DebugElement): RtRadioButtonComponent => option.componentInstance as RtRadioButtonComponent
