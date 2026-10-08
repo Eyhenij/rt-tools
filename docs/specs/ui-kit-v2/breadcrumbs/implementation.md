@@ -1,0 +1,12 @@
+# What it is carried out by — the breadcrumbs
+
+The first column is the rule of the spec next to it verbatim. The second is where it is carried out
+in the tree, and the scenario it is checked by.
+
+- **The chain comes as an input; the ancestors are links and the current crumb is text.** — `projects/ui-kit-v2/src/lib/components/breadcrumbs/rt-breadcrumbs.component.ts:crumbs`; scenario `SC-UKV-775`
+- **The host is a navigation landmark named by the kit's label.** — `projects/ui-kit-v2/src/lib/components/breadcrumbs/rt-breadcrumbs.component.ts:landmarkLabel`; scenario `SC-UKV-775`
+- **The back button is drawn only on request and only when the chain has an ancestor.** — `projects/ui-kit-v2/src/lib/components/breadcrumbs/rt-breadcrumbs.component.ts:backCrumb`; scenario `SC-UKV-776`
+- **In the heading look the current crumb is the page heading on a row of its own.** — `projects/ui-kit-v2/src/lib/components/breadcrumbs/rt-breadcrumbs.component.html:heading`; scenario `SC-UKV-777`
+- **On a narrow screen a chain of three ancestors and more folds its middle into a menu.** — `projects/ui-kit-v2/src/lib/components/breadcrumbs/rt-breadcrumbs.logic.ts:rtBreadcrumbsFold`; scenario `SC-UKV-778`
+- **The separator is an input, and its default is the slash.** — `projects/ui-kit-v2/src/lib/components/breadcrumbs/rt-breadcrumbs.component.ts:separator`; scenario `SC-UKV-779`
+- **A long chain does not push the page sideways.** — `projects/ui-kit-v2/src/lib/components/breadcrumbs/rt-breadcrumbs.component.scss:scrollbar-width`, `projects/ui-kit-v2/src/lib/components/breadcrumbs/rt-breadcrumbs.component.ts:list` — the row scrolls to its end after every render and every size change of the crumbs; scenario `SC-UKV-780`
