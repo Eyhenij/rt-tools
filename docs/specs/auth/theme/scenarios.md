@@ -120,6 +120,18 @@ Given the reset page
 When it is drawn
 Then the link back to the sign-in reads «Back to Login» with no « in front
 
+### SC-AUTH-74 — a link forward is plain text without a chevron
+
+Given the message page with an action address
+When it is drawn
+Then the link forward reads «Click here to proceed» with no » in front
+
+### SC-AUTH-75 — a page the theme does not draw gets the root of the standard layout
+
+Given the page markup with only the theme root
+When the standard layout is about to start
+Then the markup holds the root of the standard layout in place of the theme root
+
 ### SC-AUTH-66 — the new password page lists every requirement of the realm policy
 
 Given a realm whose policy asks for a length, letters of both cases, a digit, a special character

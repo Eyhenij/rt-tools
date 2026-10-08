@@ -58,6 +58,10 @@ the entry is not sure the page belongs to the admin.
   They do not hang in the corner of the window over the dots.
 - **A link back to the sign-in or to the application is plain text without a chevron.** Keycloak
   starts these two messages with «, and the theme drops it.
+- **A link forward to the next step is plain text without a chevron.** Keycloak starts it with »,
+  and the theme drops it the same way.
+- **A page the theme does not draw starts the standard layout in a root of its own.** The page markup
+  holds only the theme root, and without its own root the standard layout leaves the page empty.
 - **Under the new password and its confirmation the page lists every requirement of the realm password policy.**
   The list is read from the policy Keycloak puts on the page, so a new policy needs no theme release.
 - **A requirement the typed password meets is marked as met while the person types.** The person
