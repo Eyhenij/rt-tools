@@ -23,6 +23,7 @@ export * from '@rt-tools/ui-kit-v2/checkbox';
 export * from '@rt-tools/ui-kit-v2/collapsible-text';
 export * from '@rt-tools/ui-kit-v2/confirm-popover';
 export * from '@rt-tools/ui-kit-v2/container';
+export * from '@rt-tools/ui-kit-v2/copy-value';
 export * from '@rt-tools/ui-kit-v2/counter-row';
 export * from '@rt-tools/ui-kit-v2/counter';
 export * from '@rt-tools/ui-kit-v2/data-list';

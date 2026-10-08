@@ -21,6 +21,7 @@ export * from './checkbox';
 export * from './collapsible-text';
 export * from './confirm-popover';
 export * from './container';
+export * from './copy-value';
 export * from './counter';
 export * from './counter-row';
 export * from './data-list';

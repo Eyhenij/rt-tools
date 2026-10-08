@@ -19,6 +19,7 @@ The scenarios live in the subdomains, each at its own rules:
 | [The date range field](date-range/scenarios.md)                          | `SC-UKV-468`…`SC-UKV-478`                            |
 | [The message field](message-composer/scenarios.md)                       | `SC-UKV-480`…`SC-UKV-488`, `SC-UKV-537`…`SC-UKV-539` |
 | [The expansion panel](expansion-panel/scenarios.md)                      | `SC-UKV-519`…`SC-UKV-525`                            |
+| [The value with a copy button](copy-value/scenarios.md)                  | `SC-UKV-742`…`SC-UKV-746`                            |
 | [The image cropper](image-cropper/scenarios.md)                          | `SC-UKV-491`…`SC-UKV-506`                            |
 | [The image uploader](image-upload/scenarios.md)                          | `SC-UKV-507`…`SC-UKV-518`                            |
 | [The tooltip of a cut text](tooltip-when-truncated/scenarios.md)         | `SC-UKV-458`…`SC-UKV-461`                            |

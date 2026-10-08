@@ -68,6 +68,7 @@ agreement about their own subject and describe the surface of a component, not a
 | [The date range field](date-range/spec.md)                                | a form field of a period: two months, presets, the hover preview, the summary, bounds, keys, narrow screen                      |
 | [The message field](message-composer/spec.md)                             | the capsule a chat message is typed in: round buttons, growth, send states, focus, files, the hint                              |
 | [The long title of a dense toolbar](toolbar-dense/spec.md)                | what a dense toolbar does with a title wider than the place left to it                                                          |
+| [The value with a copy button](copy-value/spec.md)                        | a short value with a copy button: the label, the plate, «Copied» for two seconds, a long value cut                              |
 
 ## What is out of scope
 
