@@ -21,7 +21,7 @@
   ],
   "dependencies": {
     "@rt-tools/auth-contract": "^0.1.0",
-    "@rt-tools/auth-server": "^0.1.0",
+    "@rt-tools/auth-server": "^0.2.1",
     "@rt-tools/cms-contract": "^0.1.0",
     "tslib": "^2.3.0"
   },
