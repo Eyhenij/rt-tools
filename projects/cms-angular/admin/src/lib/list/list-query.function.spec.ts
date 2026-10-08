@@ -4,13 +4,11 @@ import {
     LIST_PAGE_SIZE,
     listQueryFromParams,
     listQueryToParams,
-    PAGE_PARAM,
     pagedQuery,
     resizedQuery,
-    SEARCH_PARAM,
     searchedQuery,
 } from './list-query.function';
-import { IListQuery, IListQueryOutParams } from './list-query.model';
+import { EListQueryParam, IListQuery, IListQueryOutParams } from './list-query.model';
 
 const SECOND_PAGE: number = 2;
 const BIG_PAGE: number = 50;
@@ -19,24 +17,24 @@ const OPENED: IListQuery = { pageNumber: SECOND_PAGE, pageSize: LIST_PAGE_SIZE, 
 
 describe('the list selection from the address', () => {
     it('SC-CMS-56 — the page number and the search are read, and an empty address gives the first page', () => {
-        expect(listQueryFromParams(DEFAULT_LIST_QUERY, { [PAGE_PARAM]: '2', [SEARCH_PARAM]: 'pine' })).toEqual(OPENED);
+        expect(listQueryFromParams(DEFAULT_LIST_QUERY, { [EListQueryParam.Page]: '2', [EListQueryParam.Search]: 'pine' })).toEqual(OPENED);
         expect(listQueryFromParams(OPENED, {})).toEqual({ ...OPENED, pageNumber: FIRST_PAGE, search: '' });
-        expect(listQueryFromParams({ ...DEFAULT_LIST_QUERY, pageSize: BIG_PAGE }, { [PAGE_PARAM]: '3' }).pageSize).toBe(BIG_PAGE);
+        expect(listQueryFromParams({ ...DEFAULT_LIST_QUERY, pageSize: BIG_PAGE }, { [EListQueryParam.Page]: '3' }).pageSize).toBe(BIG_PAGE);
     });
 
     it.each(['', '0', '-4', 'second', '2.7.1'])('SC-CMS-56 — a page number not understood, "%s", reads as the first', (raw: string) => {
-        expect(listQueryFromParams(DEFAULT_LIST_QUERY, { [PAGE_PARAM]: raw }).pageNumber).toBe(FIRST_PAGE);
+        expect(listQueryFromParams(DEFAULT_LIST_QUERY, { [EListQueryParam.Page]: raw }).pageNumber).toBe(FIRST_PAGE);
     });
 
     it('SC-CMS-56 — the first page and an empty search are erased from the address, and the rest reads back the same', () => {
-        expect(listQueryToParams(DEFAULT_LIST_QUERY)).toEqual({ [PAGE_PARAM]: null, [SEARCH_PARAM]: null });
+        expect(listQueryToParams(DEFAULT_LIST_QUERY)).toEqual({ [EListQueryParam.Page]: null, [EListQueryParam.Search]: null });
 
         const params: IListQueryOutParams = listQueryToParams(OPENED);
-        expect(params).toEqual({ [PAGE_PARAM]: '2', [SEARCH_PARAM]: 'pine' });
+        expect(params).toEqual({ [EListQueryParam.Page]: '2', [EListQueryParam.Search]: 'pine' });
         expect(
             listQueryFromParams(DEFAULT_LIST_QUERY, {
-                [PAGE_PARAM]: params[PAGE_PARAM] ?? undefined,
-                [SEARCH_PARAM]: params[SEARCH_PARAM] ?? undefined,
+                [EListQueryParam.Page]: params[EListQueryParam.Page] ?? undefined,
+                [EListQueryParam.Search]: params[EListQueryParam.Search] ?? undefined,
             })
         ).toEqual(OPENED);
     });

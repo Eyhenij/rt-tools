@@ -47,6 +47,7 @@ import {
     withoutImage,
 } from '@rt-tools/cms-angular';
 import {
+    ERtAsideUnsavedOutcome,
     IRtIcon,
     IRtSectionNav,
     IRtSelect,
@@ -63,7 +64,7 @@ import {
     RtToggleSwitchComponent,
 } from '@rt-tools/ui-kit-v2';
 
-import { EUnsavedChoice, openUnsavedEditsDialog } from '../../dialog/cms-unsaved-edits-dialog/cms-unsaved-edits-dialog.component';
+import { openUnsavedEditsDialog } from '../../dialog/cms-unsaved-edits-dialog/cms-unsaved-edits-dialog.component';
 import { CmsEditorComponent } from '../../editor/cms-editor/cms-editor.component';
 import { CMS_EDITOR_CONTENT_SOURCE, CMS_EDITOR_IMAGE_PICKER } from '../../editor/cms-editor.tokens';
 import { CmsItemConnectionsComponent } from '../../item/cms-item-connections/cms-item-connections.component';
@@ -337,11 +338,11 @@ export class CmsItemEditorPageComponent {
         }
 
         return openUnsavedEditsDialog(this.#dialogs).pipe(
-            switchMap((choice: EUnsavedChoice | undefined): Observable<boolean> => {
-                if (choice === EUnsavedChoice.Discard) {
+            switchMap((choice: ERtAsideUnsavedOutcome | undefined): Observable<boolean> => {
+                if (choice === ERtAsideUnsavedOutcome.Discard) {
                     return of(true);
                 }
-                if (choice !== EUnsavedChoice.Save || !this.canSave()) {
+                if (choice !== ERtAsideUnsavedOutcome.Save || !this.canSave()) {
                     return of(false);
                 }
                 this.#leaving = true;

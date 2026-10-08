@@ -17,8 +17,8 @@
         /* The search and the upload side by side, and one under the other when they do not fit. */
         &__row {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(calc(var(--rt-size-40) * 5), 1fr));
             gap: var(--rt-space-md);
+            grid-template-columns: repeat(auto-fit, minmax(calc(var(--rt-size-40) * 5), 1fr));
         }
 
         &__list {
@@ -60,8 +60,8 @@
 
         /* The name takes the rest of the row and wraps by words. */
         &__name {
-            flex: 1;
             min-width: 0;
+            flex: 1;
             overflow-wrap: anywhere;
         }
 

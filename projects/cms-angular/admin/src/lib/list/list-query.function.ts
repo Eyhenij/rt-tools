@@ -1,4 +1,4 @@
-import { IListQuery, IListQueryOutParams, IListQueryParams } from './list-query.model';
+import { EListQueryParam, IListQuery, IListQueryOutParams, IListQueryParams } from './list-query.model';
 
 /** The first page: a selection that changed its size or search starts from it. */
 export const FIRST_PAGE: number = 1;
@@ -12,12 +12,6 @@ export const DEFAULT_LIST_QUERY: Readonly<IListQuery> = Object.freeze({
     pageSize: LIST_PAGE_SIZE,
     search: '',
 });
-
-/** The name of the page in the address. */
-export const PAGE_PARAM: string = 'page';
-
-/** The name of the search string in the address. */
-export const SEARCH_PARAM: string = 'search';
 
 /**
  * How long to wait after the last key press before asking the server. Without the delay every
@@ -44,14 +38,14 @@ export function pageNumberOf(raw: string | undefined): number {
 
 /** The selection with the address laid over it: the page and the search come from the link, the size stays. */
 export function listQueryFromParams(query: IListQuery, params: IListQueryParams): IListQuery {
-    return { ...query, pageNumber: pageNumberOf(params[PAGE_PARAM]), search: params[SEARCH_PARAM] ?? '' };
+    return { ...query, pageNumber: pageNumberOf(params[EListQueryParam.Page]), search: params[EListQueryParam.Search] ?? '' };
 }
 
 /** The selection into the address. The first page and an empty search are erased: they are the default. */
 export function listQueryToParams(query: IListQuery): IListQueryOutParams {
     return {
-        [PAGE_PARAM]: query.pageNumber === FIRST_PAGE ? null : String(query.pageNumber),
-        [SEARCH_PARAM]: query.search === '' ? null : query.search,
+        [EListQueryParam.Page]: query.pageNumber === FIRST_PAGE ? null : String(query.pageNumber),
+        [EListQueryParam.Search]: query.search === '' ? null : query.search,
     };
 }
 

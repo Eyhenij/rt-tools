@@ -19,23 +19,23 @@
         /* Folders as tiles: there are many of them, and as a column they would push the files off the screen. */
         &__list {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(calc(var(--rt-size-40) * 5), 1fr));
-            gap: var(--rt-space-xs);
-            margin: 0;
             padding: 0;
+            margin: 0;
+            gap: var(--rt-space-xs);
+            grid-template-columns: repeat(auto-fill, minmax(calc(var(--rt-size-40) * 5), 1fr));
             list-style: none;
         }
 
         /* The folder name on the button is cut by the kit button and is seen whole in the tooltip. */
         &__item {
             display: flex;
+            min-width: 0;
             align-items: center;
             justify-content: space-between;
-            gap: var(--rt-space-xs);
-            min-width: 0;
-            padding-inline: var(--rt-space-xs);
             border: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
             border-radius: var(--rt-radius-md);
+            gap: var(--rt-space-xs);
+            padding-inline: var(--rt-space-xs);
         }
     }
 }

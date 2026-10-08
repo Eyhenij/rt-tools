@@ -25,16 +25,16 @@
             height: calc(var(--rt-size-40) * 2);
             flex-shrink: 0;
             border-radius: var(--rt-radius-sm);
-            object-fit: contain;
             background: var(--rt-color-bg-surface-subtle);
+            object-fit: contain;
         }
 
         &__fields {
             display: flex;
+            min-width: 0;
             flex: 1;
             flex-direction: column;
             gap: var(--rt-space-sm);
-            min-width: 0;
         }
 
         &__actions {

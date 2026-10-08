@@ -10,3 +10,4 @@ without a line and a line without a rule is a divergence.
 - **The example client uses the code flow with PKCE and does not accept a password grant.** — `deploy/auth/realm/rt.json:directAccessGrantsEnabled`
 - **The stand is checked by a command that asks it, not by a look at the console.** — `tools/auth-stand-check.mjs:scenario`
 - **The stand offers the entry through Google only when the keys of the owner lie in its environment.** — `deploy/auth/compose.yml:RT_GOOGLE_ENABLED`
+- **A production rollout restarts Keycloak and ends red when the served theme is not the built one.** — `.github/workflows/deploy-auth.yml:force-recreate`. The served theme is compared at `.github/workflows/deploy-auth.yml:Theme check`

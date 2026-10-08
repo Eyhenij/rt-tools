@@ -21,4 +21,9 @@ describe('backLinkText', () => {
         expect(backLinkText('« Назад ко входу')).toBe('Назад ко входу');
         expect(backLinkText('Back to Application')).toBe('Back to Application');
     });
+
+    it('SC-AUTH-74 — a link forward is plain text without a chevron', () => {
+        expect(backLinkText(plainMessage('&raquo; Click here to proceed'))).toBe('Click here to proceed');
+        expect(backLinkText('» Нажмите, чтобы продолжить')).toBe('Нажмите, чтобы продолжить');
+    });
 });
