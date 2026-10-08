@@ -7,11 +7,12 @@
 - **Done:** the subdomain spec with scenarios SC-UKV-786–792; the component, its model, logic and
   styles; thirteen specs on the rest, the edit, the keys, the save, the cancel, the saving wait and
   leaving the field.
-- **Next step:** the overview page, the matrix stories and the playground, then a measurement on
-  :6007.
+- **Next step:** a measurement of the seven inline-edit stories on :6007.
 - **Uncommitted:** no
 - **Waiting for the owner:** «пры не открывай откроеш после моего апрува» — the push and the PR wait
-  for the owner's approval in the morning
+  for the owner's approval in the morning. The showcase on :6007 started before the story files
+  existed and refuses to build them. The environment refused its restart, so the measurement and
+  the references wait until the owner raises it.
 - **PR:** not open
 
 ## Decisions along the way
@@ -35,7 +36,59 @@
 - [x] 1.2 Write the subdomain spec, scenarios and bindings for the inline edit
 - [x] 2.1 Write the component, its model and styles in the components layer
 - [x] 2.2 Write the specs on the rest, the edit, the keys, the save and the cancel
-- [>] 3.1 Write the overview page, the matrix stories and the playground
-- [ ] 3.2 Measure the layout on :6007
+- [x] 3.1 Write the overview page, the matrix stories and the playground
+- [>] 3.2 Measure the layout on :6007
 - [ ] 4.1 Take the references of the new stories after looking at them
 - [ ] 4.2 Run the whole set and open the PR into the epic branch after the owner's word
+
+## Handover of the session
+
+Put together by a hook before the compaction of the context (auto).
+
+**Working tree:** /Users/sviatoslavkhutornoy/WebstormProjects/rt-tools
+**Branch:** RT-2553-kit2-inline-edit
+
+### Where we stand at the minute of the compaction
+
+- **State:** `этап-идёт`
+- **Stage:** 3 of 4 — Showcase
+- **Next step:** the overview page, the matrix stories and the playground, then a measurement on
+- **PR:** not open
+
+The progress in full — `docs/tasks/RT-2553-kit2-inline-edit/progress.md`; the plan lies next to it.
+
+### Uncommitted
+
+```
+?? projects/ui-kit-v2/src/lib/components/inline-edit/CONTEXT.md
+?? projects/ui-kit-v2/src/lib/components/inline-edit/Overview.mdx
+?? projects/ui-kit-v2/src/lib/components/inline-edit/stories/
+```
+
+### Commits over the main branch
+
+```
+b6fd2b5b4 feat(rt:ui-kit-v2): правка значения на месте rt-inline-edit — компонент и спека
+c14234463 docs(rt:ui-kit-v2): папка задачи RT-2553, разбор и замысел правки на месте
+e88c4b0ba test(rt:ui-kit-v2): кадры значков после слияния main несут значки эпика
+b452f2622 chore(rt:ui-kit-v2): main влита в ветку эпика RT-2542
+3702f44b9 chore(rt:ui-kit-v2): main влита в ветку эпика RT-2542
+720dd3e75 Merge remote-tracking branch 'origin/main' into RT-2542-kit2-app-parts
+e99be6700 [RT-2551] Во втором ките появился гибридный выбор деревом (#2622)
+43120470d Merge branch 'RT-2542-kit2-app-parts' into RT-2551-kit2-hybrid-tree-selector
+1189e339c Merge branch 'RT-2611-delivery-guard-length' into RT-2542-kit2-app-parts
+2ed9cfb12 Merge remote-tracking branch 'origin/RT-2542-kit2-app-parts' into RT-2551-kit2-hybrid-tree-selector
+54a5d3b7d [RT-2550] Во втором ките появился выбор деревом с поиском и «Применить» (#2617)
+7bb124732 Merge branch 'RT-2550-kit2-tree-selector' into RT-2551-kit2-hybrid-tree-selector
+b43abb017 Merge branch 'RT-2542-kit2-app-parts' into RT-2550-kit2-tree-selector
+7f722f130 Merge branch 'RT-2611-delivery-guard-length' into RT-2542-kit2-app-parts
+2e5e081d4 docs: папка задачи RT-2551 разобрана в архив
+cb1938099 Merge branch 'RT-2550-kit2-tree-selector' into RT-2551-kit2-hybrid-tree-selector
+22520a205 docs: папка задачи RT-2550 разобрана в архив, задача в плане эпика на ревью
+1a00a8478 Merge branch 'RT-2542-kit2-app-parts' into RT-2550-kit2-tree-selector
+40d3f3cf9 Merge remote-tracking branch 'origin/main' into RT-2542-kit2-app-parts
+7a4a0f41c feat(rt:ui-kit-v2): «Выбрать все» липкая и необязательная
+```
+
+Written by a hook before the compaction of the context. Everything standing here is checked
+against the tree: a handover retells what was written and describes the minute it was put together.
