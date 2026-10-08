@@ -1,0 +1,109 @@
+@layer rt-kit.components {
+    /* rt-inline-edit — правка короткого значения на месте. ViewEncapsulation.None.
+       Host несёт класс блока; в покое — кнопка со значением, при правке — поле кита и две кнопки.
+       Высота покоя равна высоте поля: строка не прыгает при открытии. */
+
+    .rt-inline-edit {
+        --rt-inline-edit-height: var(--rt-input-height-sm);
+        --rt-inline-edit-field-width: var(--rt-size-64);
+        --rt-inline-edit-radius: var(--rt-radius-sm);
+        --rt-inline-edit-border-width: var(--rt-border-width-thin);
+        --rt-inline-edit-duration: var(--rt-duration-fast);
+
+        display: inline-flex;
+        min-width: 0;
+        max-width: 100%;
+        align-items: center;
+        gap: var(--rt-space-2xs);
+        vertical-align: middle;
+
+        &--size-md {
+            --rt-inline-edit-height: var(--rt-input-height-md);
+        }
+
+        &--size-lg {
+            --rt-inline-edit-height: var(--rt-input-height-lg);
+        }
+
+        /* Значение в покое: подпись режется многоточием, полный текст — в подсказке. */
+        &__value {
+            display: inline-flex;
+            min-width: 0;
+            max-width: 100%;
+            min-height: var(--rt-inline-edit-height);
+            box-sizing: border-box;
+            align-items: center;
+            padding: 0 var(--rt-space-xs);
+            border: var(--rt-inline-edit-border-width) solid transparent;
+            border-radius: var(--rt-inline-edit-radius);
+            background: transparent;
+            color: inherit;
+            cursor: pointer;
+            font: inherit;
+            gap: var(--rt-space-xs);
+            text-align: start;
+            transition:
+                background-color var(--rt-inline-edit-duration) ease,
+                border-color var(--rt-inline-edit-duration) ease;
+
+            &:hover:not(:disabled) {
+                background: var(--rt-color-bg-hover);
+            }
+
+            &:focus-visible {
+                outline: var(--rt-focus-ring-width) solid var(--rt-focus-ring-color);
+            }
+
+            &--empty {
+                color: var(--rt-color-text-muted);
+            }
+
+            &:disabled {
+                color: var(--rt-color-text-disabled);
+                cursor: default;
+            }
+        }
+
+        &__text {
+            overflow: hidden;
+            min-width: 0;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        &__pencil {
+            flex-shrink: 0;
+            color: var(--rt-color-text-muted);
+        }
+
+        &__field {
+            width: var(--rt-inline-edit-field-width);
+            min-width: 0;
+            flex: 0 1 auto;
+        }
+
+        &__save,
+        &__cancel {
+            flex-shrink: 0;
+        }
+
+        /* Плашка, как у первого приложения: цвет действия на светлой подложке, рамка, мелкий жирный
+           шрифт. Плашка только в покое — поле при правке читается полем в обоих видах. */
+        &--chip &__value {
+            border-color: var(--rt-color-border-default);
+            background: var(--rt-color-bg-subtle);
+            color: var(--rt-color-action-primary-on-surface);
+            font-size: var(--rt-text-xs);
+            font-weight: var(--rt-font-weight-semibold);
+
+            &:hover:not(:disabled) {
+                border-color: var(--rt-color-action-primary-on-surface);
+                background: var(--rt-color-bg-subtle);
+            }
+        }
+
+        &--chip &__pencil {
+            color: inherit;
+        }
+    }
+}

@@ -1,0 +1,49 @@
+<ng-container rtBlock="rt-inline-edit">
+    @if (editing()) {
+        <rt-input
+            rtElem="field"
+            qa-dataid="inline-edit-field"
+            [size]="size()"
+            [placeholder]="placeholder()"
+            [ariaLabel]="fieldLabel() || placeholder() || null"
+            [clearable]="false"
+            [formControl]="draftControl"
+            (keydown)="onKeydown($event)" />
+
+        <rt-icon-button
+            rtElem="save"
+            qa-dataid="inline-edit-save"
+            icon="check"
+            [size]="size()"
+            [ariaLabel]="saveLabel()"
+            [tooltip]="saveLabel()"
+            [loading]="saving()"
+            [disabled]="!canSave()"
+            (clicked)="save()" />
+
+        <rt-icon-button
+            rtElem="cancel"
+            qa-dataid="inline-edit-cancel"
+            icon="close"
+            [size]="size()"
+            [ariaLabel]="cancelLabel()"
+            [tooltip]="cancelLabel()"
+            [disabled]="saving()"
+            (clicked)="cancel()" />
+    } @else {
+        <button
+            type="button"
+            rtElem="value"
+            qa-dataid="inline-edit-value"
+            [rtMod]="{ empty: isEmpty() }"
+            [disabled]="disabled()"
+            [attr.aria-label]="startLabel()"
+            (click)="open()">
+            <span rtElem="text" rtTooltipWhenTruncated [rtTooltip]="shown()">{{ shown() }}</span>
+
+            @if (!disabled()) {
+                <rt-icon rtElem="pencil" name="pencil" size="sm" />
+            }
+        </button>
+    }
+</ng-container>

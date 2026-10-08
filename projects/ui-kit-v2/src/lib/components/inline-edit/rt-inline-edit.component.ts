@@ -1,0 +1,230 @@
+import {
+    afterNextRender,
+    booleanAttribute,
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    effect,
+    ElementRef,
+    inject,
+    Injector,
+    input,
+    InputSignal,
+    InputSignalWithTransform,
+    model,
+    ModelSignal,
+    output,
+    OutputEmitterRef,
+    signal,
+    Signal,
+    untracked,
+    ViewEncapsulation,
+    WritableSignal,
+} from '@angular/core';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+
+import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
+
+import { IRtInput, rtKitLabel } from '@rt-tools/ui-kit-v2/core';
+import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
+import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
+import { RtInputComponent } from '@rt-tools/ui-kit-v2/input';
+import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
+import { inlineEditLeaves, inlineEditOutcome } from './rt-inline-edit.logic';
+import { IRtInlineEdit } from './rt-inline-edit.model';
+
+const BEM_BLOCK: string = 'rt-inline-edit';
+
+/**
+ * Правка короткого значения на месте. В покое значение — кнопка с карандашом; нажатие открывает поле
+ * кита с черновиком, кнопкой сохранения и кнопкой отмены. Enter сохраняет, Escape отменяет.
+ *
+ * Значение принадлежит приложению: компонент отдаёт новое выходом и сам его не хранит. Приложение,
+ * которое отвечает позже, держит поле открытым входом `closeOnSave` и закрывает его само.
+ */
+@Component({
+    selector: 'rt-inline-edit',
+    templateUrl: './rt-inline-edit.component.html',
+    styleUrl: './rt-inline-edit.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    encapsulation: ViewEncapsulation.None,
+    imports: [
+        ReactiveFormsModule,
+        BlockDirective,
+        ElemDirective,
+        ModDirective,
+        RtIconComponent,
+        RtIconButtonComponent,
+        RtInputComponent,
+        RtTooltipDirective,
+    ],
+    host: {
+        class: BEM_BLOCK,
+        '[class.rt-inline-edit--chip]': "look() === 'chip'",
+        '[class.rt-inline-edit--size-md]': "size() === 'md'",
+        '[class.rt-inline-edit--size-lg]': "size() === 'lg'",
+        '(focusout)': 'onFocusOut($event)',
+    },
+})
+export class RtInlineEditComponent {
+    readonly #host: ElementRef<HTMLElement> = inject(ElementRef);
+    readonly #injector: Injector = inject(Injector);
+
+    readonly #t_uiEdit: Signal<string> = rtKitLabel('uiEdit');
+
+    protected readonly saveLabel: Signal<string> = rtKitLabel('uiSave');
+    protected readonly cancelLabel: Signal<string> = rtKitLabel('uiCancel');
+
+    /** Что видно в покое: значение, а пустое — подсказка. */
+    protected readonly shown: Signal<string> = computed((): string => this.value() || this.placeholder());
+    protected readonly isEmpty: Signal<boolean> = computed((): boolean => this.value() === '');
+    /** Имя кнопки покоя: действие и то, что правится. */
+    protected readonly startLabel: Signal<string> = computed((): string => `${this.#t_uiEdit()}: ${this.shown()}`);
+
+    /** Что набрано в открытом поле; зеркало поля для расчёта доступности сохранения. */
+    readonly #draft: WritableSignal<string> = signal('');
+
+    /**
+     * Поле черновика. Форма, а не двусторонняя привязка: форма пишет значение в поле в том же
+     * проходе отрисовки, и выделение текста при открытии застаёт его на месте.
+     */
+    protected readonly draftControl: FormControl<string> = new FormControl<string>('', { nonNullable: true });
+    protected readonly canSave: Signal<boolean> = computed(
+        (): boolean => inlineEditOutcome(this.value(), this.#draft(), this.allowEmpty()).kind !== 'refuse'
+    );
+
+    /** Значение приложения: видно в покое и встаёт в поле при открытии. */
+    public readonly value: InputSignal<string> = input.required<string>();
+    /** Подсказка пустого значения в покое и пустого поля. */
+    public readonly placeholder: InputSignal<string> = input<string>('');
+    /** Вид в покое: строка текста или плашка. */
+    public readonly look: InputSignal<IRtInlineEdit.Look> = input<IRtInlineEdit.Look>('text');
+    /** Ступень поля и кнопок. */
+    public readonly size: InputSignal<IRtInput.Size> = input<IRtInput.Size>('sm');
+    /** Имя поля для чтения экрана; пусто — подсказка поля. */
+    public readonly fieldLabel: InputSignal<string> = input<string>('');
+    /** Компонент недоступен: поле не открывается. */
+    public readonly disabled: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, { transform: booleanAttribute });
+    /** Приложение сохраняет: кнопка сохранения крутится, поле и отмена недоступны. */
+    public readonly saving: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, { transform: booleanAttribute });
+    /** Пустой черновик сохраняется; выключено — кнопка сохранения недоступна. */
+    public readonly allowEmpty: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
+        transform: booleanAttribute,
+    });
+    /** Поле закрывается при сохранении; выключено — его закрывает приложение через `editing`. */
+    public readonly closeOnSave: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
+        transform: booleanAttribute,
+    });
+    /** Что делает уход фокуса из компонента. */
+    public readonly blurAction: InputSignal<IRtInlineEdit.BlurAction> = input<IRtInlineEdit.BlurAction>('keep');
+
+    /** Поле открыто. Приложение может открыть и закрыть его само. */
+    public readonly editing: ModelSignal<boolean> = model<boolean>(false);
+
+    /** Новое значение, уже обрезанное по краям. Равное прежнему не уходит. */
+    public readonly saved: OutputEmitterRef<string> = output<string>();
+    /** Правка отменена: поле закрыто, значение прежнее. */
+    public readonly cancelled: OutputEmitterRef<void> = output<void>();
+
+    constructor() {
+        this.draftControl.valueChanges.pipe(takeUntilDestroyed()).subscribe((draft: string): void => this.#draft.set(draft));
+
+        // Поле открылось — нажатием или входом приложения: черновик берёт значение, фокус встаёт в поле.
+        effect((): void => {
+            if (this.editing()) {
+                this.draftControl.setValue(untracked(this.value));
+                afterNextRender((): void => this.focusField(), { injector: this.#injector });
+            }
+        });
+
+        // Пока приложение сохраняет, поле недоступно.
+        effect((): void => {
+            if (this.saving()) {
+                this.draftControl.disable({ emitEvent: false });
+            } else {
+                this.draftControl.enable({ emitEvent: false });
+            }
+        });
+    }
+
+    /** Нажатие на значение в покое. */
+    public open(): void {
+        if (this.disabled() || this.editing()) {
+            return;
+        }
+        this.editing.set(true);
+    }
+
+    public save(): void {
+        if (this.saving()) {
+            return;
+        }
+        const outcome: IRtInlineEdit.Outcome = inlineEditOutcome(this.value(), this.draftControl.value, this.allowEmpty());
+
+        if (outcome.kind === 'refuse') {
+            return;
+        }
+        if (outcome.kind === 'save') {
+            this.saved.emit(outcome.value);
+            if (!this.closeOnSave()) {
+                return;
+            }
+        }
+        this.#close();
+    }
+
+    public cancel(): void {
+        if (this.saving()) {
+            return;
+        }
+        this.#close();
+        this.cancelled.emit();
+    }
+
+    protected onKeydown(event: KeyboardEvent): void {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            this.save();
+        } else if (event.key === 'Escape') {
+            // Escape принадлежит полю: окно или панель вокруг не закрываются вместе с правкой.
+            event.preventDefault();
+            event.stopPropagation();
+            this.cancel();
+        } else {
+            // Остальные клавиши правят черновик в самом поле.
+        }
+    }
+
+    protected onFocusOut(event: FocusEvent): void {
+        if (!this.editing() || this.saving() || !inlineEditLeaves(this.#host.nativeElement, event.relatedTarget)) {
+            return;
+        }
+        if (this.blurAction() === 'save') {
+            this.save();
+        } else if (this.blurAction() === 'cancel') {
+            this.cancel();
+        } else {
+            // Поле держится открытым: случайное нажатие мимо не теряет набранное.
+        }
+    }
+
+    /** Фокус в поле и весь текст выделен: первое нажатие клавиши заменяет значение целиком. */
+    protected focusField(): void {
+        const field: HTMLInputElement | null = this.#host.nativeElement.querySelector('.rt-inline-edit__field input');
+
+        field?.focus();
+        field?.select();
+    }
+
+    /** Поле закрыто; фокус, бывший внутри, возвращается на значение, а не теряется на странице. */
+    #close(): void {
+        const host: HTMLElement = this.#host.nativeElement;
+        const hadFocus: boolean = host.contains(host.ownerDocument.activeElement);
+
+        this.editing.set(false);
+        if (hadFocus) {
+            afterNextRender((): void => host.querySelector<HTMLElement>('.rt-inline-edit__value')?.focus(), { injector: this.#injector });
+        }
+    }
+}
