@@ -55,6 +55,7 @@ let clipboard: ClipboardDouble;
             [fullScreen]="fullScreen()"
             [copyable]="copyable()"
             [headerIconPreset]="headerIconPreset()"
+            [threadMenu]="threadMenu()"
             (send)="sent.push($event)"
             (retry)="retried = retried + 1"
             (selectThread)="selected.push($event)"
@@ -82,6 +83,7 @@ class AiChatHostComponent {
     public readonly withExtra: WritableSignal<boolean> = signal<boolean>(false);
     public readonly copyable: WritableSignal<boolean> = signal<boolean>(true);
     public readonly headerIconPreset: WritableSignal<IRtIcon.Preset> = signal<IRtIcon.Preset>('base');
+    public readonly threadMenu: WritableSignal<boolean> = signal<boolean>(false);
     public readonly sent: string[] = [];
     public readonly selected: string[] = [];
     public readonly deleted: string[] = [];
@@ -129,6 +131,22 @@ function copyState(fixture: ComponentFixture<AiChatHostComponent>, index: number
         (copy.nativeElement.querySelector('button') as HTMLButtonElement).getAttribute('aria-label'),
         (copy.query(By.directive(RtIconComponent)).componentInstance as RtIconComponent).name(),
     ];
+}
+
+/** Пункты меню беседы живут в оверлее CDK — ищем их в документе. */
+function threadMenuItems(): HTMLElement[] {
+    return Array.from(document.querySelectorAll<HTMLElement>('[qa-dataid="menu-panel"] rt-menu-item'));
+}
+
+function openThreadMenu(fixture: ComponentFixture<AiChatHostComponent>, index: number): HTMLButtonElement {
+    const trigger: HTMLButtonElement = (qaAll(fixture, 'ai-chat-thread-menu')[index].nativeElement as HTMLElement).querySelector(
+        'button'
+    ) as HTMLButtonElement;
+
+    trigger.click();
+    fixture.detectChanges();
+
+    return trigger;
 }
 
 function isDisabled(fixture: ComponentFixture<AiChatHostComponent>, id: string): boolean {
@@ -353,6 +371,69 @@ describe('RtAiChatComponent', (): void => {
 
         expect(fixture.componentInstance.deleted).toEqual(['t2']);
         expect(fixture.componentInstance.selected).toEqual([]);
+    });
+
+    it('SC-UKV-781 — по умолчанию у строки беседы кнопка удаления, меню нет', (): void => {
+        const fixture: ComponentFixture<AiChatHostComponent> = setup({ threads: THREADS, fullScreen: true });
+
+        expect([qaAll(fixture, 'ai-chat-delete-thread').length, qaAll(fixture, 'ai-chat-thread-menu').length]).toEqual([2, 0]);
+    });
+
+    describe('SC-UKV-782 — меню действий беседы', (): void => {
+        it('кнопка «More actions» стоит вместо удаления и открывает «Copy ID» и «Delete»', (): void => {
+            const fixture: ComponentFixture<AiChatHostComponent> = setup({ threads: THREADS, fullScreen: true, threadMenu: true });
+
+            const trigger: HTMLButtonElement = openThreadMenu(fixture, 1);
+
+            expect([
+                qaAll(fixture, 'ai-chat-delete-thread').length,
+                trigger.getAttribute('aria-label'),
+                threadMenuItems().map((item: HTMLElement): string => item.textContent?.trim() ?? ''),
+                threadMenuItems()[1].classList.contains('rt-menu-item--danger'),
+                fixture.componentInstance.selected,
+            ]).toEqual([0, 'More actions', ['Copy ID', 'Delete'], true, []]);
+        });
+
+        it('«Copy ID» кладёт id беседы в буфер и не открывает её', (): void => {
+            const fixture: ComponentFixture<AiChatHostComponent> = setup({ threads: THREADS, fullScreen: true, threadMenu: true });
+            openThreadMenu(fixture, 1);
+
+            threadMenuItems()[0].click();
+            fixture.detectChanges();
+
+            expect([clipboard.copied, fixture.componentInstance.selected, fixture.componentInstance.deleted]).toEqual([['t2'], [], []]);
+        });
+
+        it('«Delete» отдаёт deleteThread с id без подтверждения и не открывает беседу', (): void => {
+            const fixture: ComponentFixture<AiChatHostComponent> = setup({ threads: THREADS, fullScreen: true, threadMenu: true });
+            openThreadMenu(fixture, 1);
+
+            threadMenuItems()[1].click();
+            fixture.detectChanges();
+
+            expect([
+                fixture.componentInstance.deleted,
+                fixture.componentInstance.selected,
+                document.querySelector('[qa-dataid="menu-panel"]'),
+            ]).toEqual([['t2'], [], null]);
+        });
+
+        it('Escape закрывает меню и возвращает фокус кнопке', (): void => {
+            const fixture: ComponentFixture<AiChatHostComponent> = setup({ threads: THREADS, fullScreen: true, threadMenu: true });
+            const trigger: HTMLButtonElement = openThreadMenu(fixture, 0);
+            const focusedItem: string | undefined = document.activeElement?.textContent?.trim();
+
+            document
+                .querySelector('[qa-dataid="menu-panel"]')
+                ?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', keyCode: 27, bubbles: true }));
+            fixture.detectChanges();
+
+            expect([focusedItem, document.querySelector('[qa-dataid="menu-panel"]'), document.activeElement]).toEqual([
+                'Copy ID',
+                null,
+                trigger,
+            ]);
+        });
     });
 
     it('SC-UKV-759 — вложения приложения стоят под ответом и получают сообщение', (): void => {
