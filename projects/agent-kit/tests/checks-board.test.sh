@@ -416,6 +416,15 @@ report "SC-AK-531 — отставший прод отбит" "$(board_code)" 1
 report "SC-AK-531 — названо число коммитов" "$(board_says 'production lags «main» by 476 commits')" 1
 report "SC-AK-531 — назван коммит последней выкатки" "$(board_says 'the last rollout is fedcba98 of 2026-08-20')" 1
 
+# Фильтр прогонов по статусу хостинг считает по отстающему указателю: один и тот же запрос за
+# минуту отдавал то месячный прогон, то вчерашний. Запрос идёт без него, по последним прогонам.
+export STUB_CALLS="$BOARD_TREE/calls.log"
+: > "$STUB_CALLS"
+board_code > /dev/null
+report "SC-AK-1213 — последняя выкатка спрашивается без отбора по статусу" "$(grep -c 'workflows/deploy.yml/runs?status=' "$STUB_CALLS")" 0
+report "SC-AK-1213 — берутся двадцать последних прогонов" "$(grep -c 'workflows/deploy.yml/runs?per_page=20' "$STUB_CALLS")" 1
+unset STUB_CALLS
+
 # Выкаток не было ни одной: сравнивать не с чем, и это тоже расхождение — прода нет вовсе.
 export STUB_DEPLOY=''
 report "SC-AK-531 — дерево без единой выкатки названо" "$(board_says 'not a single rollout by «deploy.yml»')" 1

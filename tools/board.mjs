@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.30.0 · checks/board.github.mjs · c8c41b43e019 · правится надстройкой, не здесь
+// rt-kit v0.30.0 · checks/board.github.mjs · ad7b8e6305f7 · правится надстройкой, не здесь
 /**
  * Shared work with the work queue: the project board, the tasks and their state.
  *
@@ -100,6 +100,23 @@ export function fetchBoard(options) {
         }
         after = `"${page.pageInfo.endCursor}"`;
     }
+}
+
+/**
+ * The card of one task on this board, read by a direct request to the task itself — its
+ * `projectItems` field — and not out of the list of the whole board. The list took three seconds on
+ * two hundred cards, a direct request answered in under one, and it names the column in the same
+ * answer. `undefined` — the task stands on no card of this board (yet).
+ */
+export function fetchCard(number, options) {
+    const issue = graphql(
+        `{ repository(owner: "${OWNER}", name: "${REPO}") { issue(number: ${Number(number)}) { projectItems(first: 20) {
+            nodes { id project { id }
+                status: fieldValueByName(name: "Status") { ... on ProjectV2ItemFieldSingleSelectValue { name optionId } } } } } } }`,
+        options
+    ).data?.repository?.issue;
+    const card = issue?.projectItems?.nodes?.find((node) => node.project?.id === PROJECT_ID);
+    return card ? { itemId: card.id, status: card.status?.name ?? null } : undefined;
 }
 
 /**
@@ -285,7 +302,7 @@ export function taskState(number, options) {
     if (!issue) {
         return { exists: false, viewer: viewerOf(options) };
     }
-    const item = fetchBoard(options).items.get(issue.number);
+    const item = fetchCard(issue.number, options);
     return {
         exists: true,
         viewer: viewerOf(options),
@@ -311,7 +328,7 @@ export function taskState(number, options) {
  *
  * `state` — what `taskState` returned, or `{ offline: <reason> }` if asking failed.
  */
-export function describeTaskState(number, state) {
+export function describeTaskState(number, state, waitedSeconds) {
     if (state?.offline) {
         return {
             ok: false,
@@ -327,7 +344,10 @@ export function describeTaskState(number, state) {
     if (!state.onBoard) {
         return {
             ok: false,
-            lines: [`in the work queue: NO`, 'a task that is not in the queue is backed by no work — nobody will come for it'],
+            lines: [
+                `in the work queue: NO${waitedSeconds === undefined ? '' : ` — not seen in ${waitedSeconds} s of waiting`}`,
+                'a task that is not in the queue is backed by no work — nobody will come for it',
+            ],
         };
     }
 
