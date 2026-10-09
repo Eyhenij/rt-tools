@@ -159,6 +159,17 @@ gate "SC-AK-872 — заведение с флагом перед -b — нов�
 gate "SC-AK-407 — пробный пуш формы команды не судит" "$SWITCH_GATE" \
     'git checkout RT-73-switch && git push --dry-run origin RT-73-switch' PASS
 
+# SC-AK-1204. Одна команда — одна проверка одного дерева. Два пуша в команде или пуш в цикле
+# отправляют ветки, которых набор не видел.
+gate "SC-AK-1204 — два пуша одной командой отбиваются" "$SWITCH_GATE" \
+    'git push origin RT-73-switch && git push origin RT-74-other' deny
+gate "SC-AK-1204 — пуш в цикле отбит" "$SWITCH_GATE" \
+    'for b in RT-73-switch RT-74-other; do git push origin "$b"; done' deny
+gate "SC-AK-1204 — один пуш проходит" "$SWITCH_GATE" \
+    'git push -u origin RT-73-switch' PASS
+gate "SC-AK-1204 — слово for в сообщении коммита циклом не считается" "$SWITCH_GATE" \
+    'git commit -qm "fix for loop" && git push -u origin RT-73-switch' PASS
+
 # SC-AK-408. Отложенная правка наружу ничего не отправляет, а слово `push` в ней стоит отдельным:
 # набор гейта гонялся на ней целиком и отбивал вызов первой же красной проверкой.
 gate "SC-AK-408 — отложенная правка пушем не считается" "$SWITCH_GATE" \

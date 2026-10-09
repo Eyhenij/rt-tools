@@ -25,7 +25,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/dispatch.sh PreToolUse"
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/dispatch.sh PreToolUse",
+            "timeout": 1800
           }
         ]
       }

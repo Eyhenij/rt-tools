@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.29.4 · hooks/grill-gate-bypass.sh · 4832c977857b · правится надстройкой, не здесь
+# rt-kit v0.30.0 · hooks/grill-gate-bypass.sh · 4832c977857b · правится надстройкой, не здесь
 # The fifth sign of the conversation guard: a question that offers to walk around a check does not
 # leave. NOT a guard: it has no `rt-hook:` declaration and hooks into no agent event. The
 # conversation guard sources it — it was moved out when the guard crossed the file length limit.

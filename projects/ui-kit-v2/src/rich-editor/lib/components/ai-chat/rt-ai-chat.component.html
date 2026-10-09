@@ -10,7 +10,7 @@
     }
 
     <section rtElem="conversation" qa-dataid="ai-chat" [attr.aria-label]="titleText()">
-        <header rtElem="header">
+        <header rtElem="header" [attr.data-rt-icon-preset]="headerIconSign()">
             @if (isThreadPage()) {
                 <rt-icon-button
                     #back
@@ -106,11 +106,17 @@
                                     <span rtElem="time">{{ message.time }}</span>
                                 }
                             </div>
+                            @if (copyable() && message.text) {
+                                <div rtElem="question-actions" qa-dataid="ai-chat-question-actions">
+                                    <rt-ai-chat-copy [text]="message.text" />
+                                </div>
+                            }
                         </div>
                     } @else {
                         <rt-ai-chat-answer
                             qa-dataid="ai-chat-answer"
                             [message]="message"
+                            [copyable]="copyable()"
                             [extra]="extraTemplate()?.templateRef ?? null"
                             [expanded]="openRuns().has(message.id)"
                             (expandedChange)="onToggleRun(message.id, $event)"
