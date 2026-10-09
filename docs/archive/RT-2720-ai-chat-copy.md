@@ -54,3 +54,8 @@ request or by assumption.
 ## What is left unclear
 
 - Nothing.
+
+## Decisions along the way
+
+- The labels are the kit's `uiCopy` and `uiCopied`: both texts already exist in the English set and the showcase Russian set, so no `ai*` keys were added.
+- The owner's change: the answer copied its markdown source with `##`, `**` and list markers; now it copies the visible text. Decision: `markdownToPlainText` in the kit core, built on the same `parseMarkdown` tree that `rt-markdown-text` draws. Rejected: `innerText` of the rendered body — jsdom has no `innerText`, so the spec would test a stand-in rather than the real path. The question still copies its text as is.
