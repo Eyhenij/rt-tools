@@ -39,6 +39,7 @@ table.
 | [The handover and the entry into a new session](turn-entry/scenarios.md)        | `turn-entry/`              |
 | [The turn-closing guards](turn-guards/scenarios.md)                             | `turn-guards/`             |
 | [The watchman of the turn exits](turn-guards/exit/scenarios.md)                 | `turn-guards/exit/`        |
+| [The guard of the conversation](turn-guards/grill/scenarios.md)                 | `turn-guards/grill/`       |
 | [Conducting work by commands](work/scenarios.md)                                | `work/`                    |
 | [The guards of the course of work](work-guard/scenarios.md)                     | `work-guard/`              |
 | [The audit of the work queue](work/queue-check/scenarios.md)                    | `work/queue-check/`        |
