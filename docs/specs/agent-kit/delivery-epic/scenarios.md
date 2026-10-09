@@ -109,4 +109,4 @@ Given the base named carries no epic branch in its history, or belongs to a task
 When the guard judges the opening, and the audit reads the open request
 Then the guard refuses and names the epic branch, and the audit names the request
 
-Covered: `projects/agent-kit/tests/guard-epic-base.test.sh`, `projects/agent-kit/tests/checks-board.test.sh`.
+Covered: `projects/agent-kit/tests/guard-epic-base.test.sh`, `projects/agent-kit/tests/checks-board-epic-base.test.sh`.

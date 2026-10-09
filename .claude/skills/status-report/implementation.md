@@ -39,6 +39,7 @@ silent about.
 - **The epic's tasks are listed all, and in the order the plan assigned them.** — **Not checked.** The order stands in the epic plan — `docs/plans/` — but there is nobody to reconcile the reply text with it.
 - **Every cell about the tree's state is backed by a command run by the same turn.** — `.claude/hooks/claim-guard.sh:claims` — the list of statements about the tree; a turn that said such a thing without a command is refused.
 - **A run confirms the commit it ran on.** — **Not checked.** The statement guard sees that the command was there, but it does not reconcile its output with the branch tip.
+- **A red run on an open PR is the first line of any reply about the work, whatever its cause.** — **Not checked.** No check reads the reply to the owner; the epic table reads the run state, and putting it first is held by this article.
 - **A draft PR is called a draft aloud, together with what we wait for.** — `.claude/hooks/git-guard-draft-ready.sh:run_gh` — it asks the state of the request and demands either lifting the draft or naming aloud what is awaited.
 - **A task folder left as an empty template is "created, not started".** — **Not checked.** The sample lies in `docs/tasks/_template/`, and there is nothing to tell an unfilled copy from a filled one.
 - **Under the table — no more than two lines.** — **Not checked.** The length of the reply to the owner is counted by nobody.

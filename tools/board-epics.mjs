@@ -1,4 +1,4 @@
-// rt-kit v0.29.4 · checks/board-epics.github.mjs · ac14366b2830 · правится надстройкой, не здесь
+// rt-kit v0.29.4 · checks/board-epics.github.mjs · 5ffc00cbeba7 · правится надстройкой, не здесь
 /**
  * The link between a task and an epic. Lives in a file of its own: the work queue audit stands at
  * the length limit even without it, and these two checks are read separately.
@@ -67,7 +67,16 @@ export function checkEpicLinks(open, report) {
 
         const planPath = found.path;
         const mentions = planTaskCells(found.text).join('\n').matchAll(new RegExp(`(?:#|${TASK_KEY}-)(\\d+)`, 'g'));
-        const numbers = new Set([...mentions].map((match) => Number(match[1])));
+        const listed = [...mentions].map((match) => Number(match[1]));
+        const numbers = new Set(listed);
+        // A merge that took both sides of a conflict doubles rows of the makeup, and the set above
+        // does not see it.
+        for (const number of numbers) {
+            const times = listed.filter((one) => one === number).length;
+            if (times > 1) {
+                report(`#${epic.number}: the plan names the task #${number} in ${times} rows of the makeup — a merge took both sides; one row stays`);
+            }
+        }
         for (const number of numbers) {
             if (number === epic.number || !byNumber.has(number)) {
                 continue;

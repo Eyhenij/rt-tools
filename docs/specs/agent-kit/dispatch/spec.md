@@ -74,6 +74,10 @@ edit guards and the turn-closing guards.
   is not punished by an edit. The argument the package formerly wrote nothing there by — the silent
   loss of what did not match when merging foreign JSON — is removed by construction: there are as
   many events as lines, and there is nothing to replace at the write.
+- **A new record of the dispatcher carries the largest time limit its guards declare.** The agent
+  kills a hook without a limit field at its own limit, and a killed guard gives no decision: the call
+  passes as if the guard were silent. A standing record with a smaller limit is not rewritten — the
+  layout names it, and the tree adds the field.
 - **A guard called directly works as before.** It asks the environment for the fields and parses the
   input itself when there is no environment. Otherwise the scenario suites would check not the guard
   but the dispatcher.
