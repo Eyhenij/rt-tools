@@ -3,10 +3,11 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 3 of 4 — Showcase
+- **Stage:** 4 of 4 — Snapshots and delivery
 - **Done:** the subdomain spec with scenarios SC-UKV-807–815, the colour maths, the palette and the
-  picker with both looks, 14 specs green, types and linter clean.
-- **Next step:** the overview page, the matrix stories in both looks and the playground.
+  picker with both looks, 14 specs green, types and linter clean; the overview, seven matrix stories
+  and the playground, measured on :6007 and taken as references, the whole set of 844 frames green.
+- **Next step:** take the folder apart and open the PR into the epic branch when the owner approves.
 - **Uncommitted:** no
 - **Waiting for the owner:** «пры не открывай откроеш после моего апрува» — the push and the PR wait
   for the owner's approval.
@@ -27,6 +28,10 @@
   10, a hollow 3-point ring on the chosen one, a swatch growing under the pointer.
 - The spectrum of the hue strip and the layers of the area are built by the colour logic and set as
   inline properties. They are colour space, not styling, and the kit has no black step for them.
+- The measurement on :6007 found one defect, fixed: the hex field of the picker carried the clear
+  cross of the text field, and a colour record has nothing to clear. The measured numbers: the kit
+  look draws 32-point swatches with gaps of 8 and an outer ring, the material look 30-point
+  borderless swatches with gaps of 10 and a hollow 3-point ring.
 - The test host keeps its inputs in signals: a plain field changed on an OnPush host never reached
   the palette.
 
@@ -39,7 +44,7 @@
 - [x] 2.1 Write the colour maths as a pure module with its specs
 - [x] 2.2 Write the field, the swatches and the custom colour panel in the components layer
 - [x] 2.3 Write the specs on the value, the choice, the keys, read only, disabled and the panel
-- [>] 3.1 Write the overview page, the matrix stories and the playground
-- [ ] 3.2 Measure the layout on :6007
-- [ ] 4.1 Take the references of the new stories after looking at them
-- [ ] 4.2 Run the whole set and open the PR into the epic branch after the owner's word
+- [x] 3.1 Write the overview page, the matrix stories and the playground
+- [x] 3.2 Measure the layout on :6007
+- [x] 4.1 Take the references of the new stories after looking at them
+- [>] 4.2 Run the whole set and open the PR into the epic branch after the owner's word

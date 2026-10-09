@@ -41,7 +41,13 @@
 
     <div rtElem="row">
         <span rtElem="preview" aria-hidden="true" [style.--rt-color-picker-color]="picked()"></span>
-        <rt-input rtElem="hex" qa-dataid="color-picker-hex" size="sm" [ariaLabel]="t().uiColorPickerHex" [formControl]="hexControl" />
+        <rt-input
+            rtElem="hex"
+            qa-dataid="color-picker-hex"
+            size="sm"
+            [clearable]="false"
+            [ariaLabel]="t().uiColorPickerHex"
+            [formControl]="hexControl" />
     </div>
 
     <div rtElem="actions">
