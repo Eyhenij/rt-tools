@@ -4,7 +4,7 @@ kind: rule
 law: verifiability
 description: Rule under the verifiability law. Load when editing any test file and anything in the tree's end-to-end suites. Names the scenario id in the title, moving a decision into a pure function and what an end-to-end test closes. Patterns testing-unit, testing-e2e.
 ---
-<!-- rt-kit v0.29.4 · rules/testing.md · 0c348fe12884 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.4 · rules/testing.md · 1bbc331e3e72 · правится надстройкой, не здесь -->
 
 # Verifiability — how it works here
 
@@ -139,6 +139,10 @@ flowchart TD
   calling the command — by full path, through a wrapper, with variable substitution — goes into
   the sign alongside the bare name: the bypass the command is called by every day is exactly
   where the guard goes blind.
+- **A test file is edited by the edit tool, the same as a document.** A guard judges a shell
+  command by its whole body, so the string a `sed` replaces counts as written. A refused command
+  writes nothing while the reply looks like a done edit: the file is reread before the next step.
+  The article in full is in the rule `doc-style`.
 - **A check's known list is named and explains itself.** The first field of the list is the
   check's name and a word that what is listed does not count as a refusal. Then either two keys —
   the accepted stays forever, the debt was gathered when the check was created and only shrinks —
