@@ -3,6 +3,21 @@
        Вид снят с кадров первого кита: строки — тонированные плашки со скруглением, у ручки
        перетаскивания разделитель справа, корзина строки красная, пока её можно нажать. */
 
+    // Умолчания свойств, которые приложение задаёт на списке или его предке. Строка в полёте живёт
+    // вне блока, поэтому они объявлены и на ней.
+    @mixin handle-defaults {
+        --rt-dynamic-selector-list-actions-gap-default: var(--rt-space-2xs);
+        --rt-dynamic-selector-list-controls-gap-default: var(--rt-space-2xs);
+        --rt-dynamic-selector-list-controls-divider-width-default: 0;
+        --rt-dynamic-selector-list-controls-divider-color-default: var(--rt-color-border-default);
+        --rt-dynamic-selector-list-row-padding-end-default: var(--rt-space-2xs);
+        --rt-dynamic-selector-list-actions-offset-default: var(--rt-space-2xs);
+        --rt-dynamic-selector-list-actions-padding-end-default: 0;
+        --rt-dynamic-selector-list-handle-padding-start-default: 0;
+        --rt-dynamic-selector-list-handle-padding-end-default: var(--rt-space-2xs);
+        --rt-dynamic-selector-list-title-gap-default: var(--rt-space-sm);
+    }
+
     .rt-dynamic-selector-list {
         --rt-dynamic-selector-list-row-bg: var(--rt-color-action-primary-subtle);
         --rt-dynamic-selector-list-row-radius: var(--rt-radius-sm);
@@ -14,9 +29,11 @@
         --rt-dynamic-selector-list-add-indent: 0;
         --rt-dynamic-selector-list-reset-color: var(--rt-color-text-primary);
 
+        @include handle-defaults;
+
         display: flex;
         flex-direction: column;
-        gap: var(--rt-space-2xs);
+        gap: var(--rt-dynamic-selector-list-actions-offset, var(--rt-dynamic-selector-list-actions-offset-default));
 
         &__rows {
             display: flex;
@@ -29,17 +46,28 @@
             min-height: var(--rt-control-height-lg);
             box-sizing: border-box;
             align-items: center;
-            padding: var(--rt-space-2xs) var(--rt-space-2xs) var(--rt-space-2xs) var(--rt-dynamic-selector-list-row-padding-x);
+            padding: var(--rt-space-2xs)
+                var(--rt-dynamic-selector-list-row-padding-end, var(--rt-dynamic-selector-list-row-padding-end-default)) var(--rt-space-2xs)
+                var(--rt-dynamic-selector-list-row-padding-x);
             border-radius: var(--rt-dynamic-selector-list-row-radius);
             background: var(--rt-dynamic-selector-list-row-bg);
             color: var(--rt-color-text-primary);
             gap: var(--rt-space-sm);
         }
 
+        // Зазор от разделителя ручки до названия — свойство: строка держит свой зазор, а ручка
+        // добавляет к нему разницу.
         &__handle {
             border-right: var(--rt-dynamic-selector-list-divider-width) solid var(--rt-color-border-default);
             cursor: grab;
-            padding-inline-end: var(--rt-space-2xs);
+            margin-inline-end: calc(
+                var(--rt-dynamic-selector-list-title-gap, var(--rt-dynamic-selector-list-title-gap-default)) - var(--rt-space-sm)
+            );
+            padding-inline: var(
+                    --rt-dynamic-selector-list-handle-padding-start,
+                    var(--rt-dynamic-selector-list-handle-padding-start-default)
+                )
+                var(--rt-dynamic-selector-list-handle-padding-end, var(--rt-dynamic-selector-list-handle-padding-end-default));
         }
 
         // Длинная подпись переносится: обрезка спрятала бы, какая запись выбрана.
@@ -66,13 +94,27 @@
             display: flex;
             flex: 0 0 auto;
             align-items: center;
-            gap: var(--rt-space-2xs);
+            gap: var(--rt-dynamic-selector-list-controls-gap, var(--rt-dynamic-selector-list-controls-gap-default));
+
+            // Разделитель между кнопками строки; после последней его нет. По умолчанию толщина 0.
+            > :not(:last-child) {
+                border-inline-end: var(
+                        --rt-dynamic-selector-list-controls-divider-width,
+                        var(--rt-dynamic-selector-list-controls-divider-width-default)
+                    )
+                    solid
+                    var(--rt-dynamic-selector-list-controls-divider-color, var(--rt-dynamic-selector-list-controls-divider-color-default));
+            }
         }
 
         &__actions {
             display: flex;
             align-items: center;
-            gap: var(--rt-space-2xs);
+            gap: var(--rt-dynamic-selector-list-actions-gap, var(--rt-dynamic-selector-list-actions-gap-default));
+            padding-inline-end: var(
+                --rt-dynamic-selector-list-actions-padding-end,
+                var(--rt-dynamic-selector-list-actions-padding-end-default)
+            );
         }
 
         &__add {
@@ -106,6 +148,8 @@
             --rt-dynamic-selector-list-divider-width: var(--rt-border-width-thin);
             --rt-dynamic-selector-list-drag-shadow: var(--rt-shadow-md);
 
+            @include handle-defaults;
+
             box-shadow: var(--rt-dynamic-selector-list-drag-shadow);
         }
 
@@ -129,7 +173,7 @@
    под ней лежит поверхность — в покое ту же роль играет поле, в котором стоит список. Скругление и
    тень остаются в слое — их CDK не трогает. */
 .rt-dynamic-selector-list__row.cdk-drag-preview {
-    padding: var(--rt-space-2xs) var(--rt-space-2xs) var(--rt-space-2xs) var(--rt-space-sm);
+    padding: var(--rt-space-2xs) var(--rt-dynamic-selector-list-row-padding-end, var(--rt-space-2xs)) var(--rt-space-2xs) var(--rt-space-sm);
     background-color: var(--rt-color-bg-surface);
     background-image: linear-gradient(var(--rt-dynamic-selector-list-row-bg), var(--rt-dynamic-selector-list-row-bg));
     color: var(--rt-color-text-primary);

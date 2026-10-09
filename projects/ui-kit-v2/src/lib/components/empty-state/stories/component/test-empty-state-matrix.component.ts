@@ -8,6 +8,7 @@ import { RtEmptyStateComponent } from '../../rt-empty-state.component';
 
 /** Заголовок пустого состояния — один на все ячейки матрицы. */
 const EMPTY_TITLE: string = 'Файлов нет';
+const EMPTY_DESCRIPTION: string = 'Прикрепите первый документ';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
 export type TEmptyStateMatrixPart = 'parts' | 'slots' | 'frame' | 'presets' | 'themes';
@@ -18,6 +19,8 @@ interface IEmptyStatePartsCase {
     readonly icon: 'folder' | null;
     readonly title: string;
     readonly description: string | null;
+    /** Свойства блока на нём самом; не заданы — умолчания кита. */
+    readonly style?: Readonly<Record<string, string>>;
 }
 
 /**
@@ -38,7 +41,11 @@ interface IEmptyStatePartsCase {
                     <ng-template>
                         <app-story-row [items]="partsCases" [itemLabel]="partsCaseLabel">
                             <ng-template let-partsCase>
-                                <rt-empty-state [icon]="partsCase.icon" [title]="partsCase.title" [description]="partsCase.description" />
+                                <rt-empty-state
+                                    [icon]="partsCase.icon"
+                                    [title]="partsCase.title"
+                                    [description]="partsCase.description"
+                                    [style]="partsCase.style ?? {}" />
                             </ng-template>
                         </app-story-row>
                     </ng-template>
@@ -129,11 +136,23 @@ export class TestRtEmptyStateMatrixComponent {
         "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 72'%3E%3Crect width='96' height='72' rx='8' fill='%23cbd5e1'/%3E%3C/svg%3E";
 
     public readonly partsCases: readonly IEmptyStatePartsCase[] = [
-        { name: 'всё сразу', icon: 'folder', title: EMPTY_TITLE, description: 'Прикрепите первый документ' },
+        { name: 'всё сразу', icon: 'folder', title: EMPTY_TITLE, description: EMPTY_DESCRIPTION },
         { name: 'без описания', icon: 'folder', title: EMPTY_TITLE, description: null },
-        { name: 'без иконки', icon: null, title: EMPTY_TITLE, description: 'Прикрепите первый документ' },
+        { name: 'без иконки', icon: null, title: EMPTY_TITLE, description: EMPTY_DESCRIPTION },
         { name: 'только заголовок', icon: null, title: EMPTY_TITLE, description: null },
         { name: 'без единого входа', icon: null, title: '', description: null },
+        {
+            name: 'свои поля и зазоры',
+            icon: 'folder',
+            title: '',
+            description: EMPTY_DESCRIPTION,
+            style: {
+                '--rt-empty-state-padding': 'var(--rt-space-2xs) 0',
+                '--rt-empty-state-gap': 'var(--rt-space-md)',
+                '--rt-empty-state-icon-offset': '0',
+                '--rt-empty-state-description-line-height': 'var(--rt-size-5)',
+            },
+        },
     ];
 
     public readonly slotCases: readonly string[] = ['без проекции', 'действие', 'картинка и действие'];

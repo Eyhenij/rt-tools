@@ -75,8 +75,10 @@ stands next to it as components of its own, drawn on the parts of the second kit
   spaces and compared without regard to case.
 - **The server search hands the query to the caller 500 ms after the last keystroke and filters
   nothing itself.** An erased query leaves as an empty string.
-- **During a search the rows ticked earlier stay above the results, separated from them.** A tick
-  does not vanish because the query stopped matching its row.
+- **During a search the rows ticked before the query last changed stay above the results, separated
+  from them.** A tick does not vanish because the query stopped matching its row. A row ticked during
+  the search stays where it is until the query changes again, so the list does not jump under the
+  pointer.
 - **Select all works on the visible rows only.** Ticking it adds every visible key to the ticks;
   unticking removes the visible keys and keeps the ticks outside the query. Its state is off, mixed or
   on by how many of the visible keys are ticked. It appears in multi mode when the list holds more
@@ -102,6 +104,12 @@ stands next to it as components of its own, drawn on the parts of the second kit
   items to choose» and no buttons.**
 - **While the caller turns the invitation on, it replaces the row of buttons.** Its button opens the
   popup the same as the add button.
+- **A part of the family drawn by another kit component keeps that component's own display.** The
+  family sets no display on such a host, and hides one by a rule of two classes: the order in which
+  the styles of two kit components load is fixed by nothing, and a display of equal force from the
+  family would win or lose by that order.
+- **Under the invitation a list with no rows is not drawn.** An empty node would push the invitation
+  down by the gap of the field; a list with rows stays above the invitation.
 - **A disabled selector keeps the add, reset and clear buttons off.** The row delete, the row edit
   and the dragging are off as well.
 - **The icon buttons of the list are round unless the caller names another rounding step.** The step
@@ -130,9 +138,21 @@ stands next to it as components of its own, drawn on the parts of the second kit
   result.** The invitation button takes an icon and one of the kit button's looks; the clear button
   takes an icon, the close cross by default; the popup search field and the string list's own field
   take one of the field's looks; the empty result shows the caller's text, the kit label without it.
+  The popup search takes a radius step too, and without one it keeps the field's own rounding.
+- **The caller names the label of the apply button and its case.** Without a label the button keeps
+  the kit label. The case leaves the label as it is by default, raises the first letter of every
+  word, or raises the whole label; the button is named for a reader who hears the screen by the same
+  text.
+- **The search field takes focus when the popup opens only if the caller asks for it.** By default
+  the focus stays on the element that opened the popup.
+- **The option line, the empty result gap and the footer padding are popup properties.** The line
+  height of an option label and the least height of an option row default to the browser line and
+  the row content, and a taller row keeps its content in the middle. The gap runs from the circle
+  under the empty result icon to its text and defaults to the gap drawn today; the footer padding
+  defaults to the padding drawn today.
 - **The kit settings set the look of the invitation, the clear button, the popup search, the empty
-  result and the row title wrapping for every field at once, and an input at the place wins over
-  them.** Both fields read the invitation button, the clear icon and the title wrapping from the
+  result, the row title wrapping, the search highlight, the apply button label and the search focus
+  for every field at once, and an input at the place wins over them.** Both fields read the invitation button, the clear icon and the title wrapping from the
   settings; the search and the empty result belong to the selector alone. Without the settings the
   kit defaults stay.
 - **A value the caller sets on the list block reaches it, and a popup property or the add button's
@@ -140,6 +160,14 @@ stands next to it as components of its own, drawn on the parts of the second kit
   caller sets its properties on the overlay pane or a container of its own; only the defaults stand
   on the popup itself, under the `-default` suffix. The add button is projected by both fields with
   different looks, so its colour is a handle with the button's own colour as the fallback.
+- **The gaps of the list reach it from any ancestor.** These are the gap between the action bar
+  buttons, the gap between the buttons of a row, the end padding of a row, the distance from the
+  last row to the action bar, the paddings of the drag handle and the gap from the handle to the
+  title. The end padding of the action bar is one of them too. Their defaults are the steps that
+  stood there, so the look stays as it was. A dragged row
+  lives outside the list and declares the same defaults on itself.
+- **A divider between the buttons of a row is drawn once the caller gives it a width.** There is none
+  after the last button, and by default its width is zero.
 - **The body of the popup takes the height its head and footer leave.** With a minimum height set, a
   short list, the loading and the empty result stretch, and the footer stands at the bottom edge.
   Without one the popup is as tall as its content, as before.
@@ -153,6 +181,18 @@ stands next to it as components of its own, drawn on the parts of the second kit
   selection change, and taking it as the reset list would keep the reset off for good.
 - **The row title wraps unless the caller turns wrapping off; then it stands on one line, cut with
   an ellipsis, and a cut title shows the whole text in a tooltip.**
+- **The same wrapping holds for the options of the popup.** Without wrapping an option's label
+  stands on one line, cut with an ellipsis, and a cut label shows the whole text in a tooltip; the
+  label of a single-choice option is drawn next to its button and names the button for a reader who
+  hears the screen.
+- **The caller may give a function for the label of a record, and then the list row, the popup
+  option and the search all take its result.** Without the function the label is the field named by
+  `displayExp`, as before.
+- **The popup marks the characters of an option label that match the search when the caller turns
+  it on.** Each word of the search is found in the label regardless of case, and the found characters
+  take the highlight colour, weight, background and background rounding; the background is
+  transparent unless the caller sets it. The label still reads whole and keeps its ellipsis. Without
+  the input no character is marked.
 - **The field of a new row shows the caller's label, and without one it stands as before.** The label
   is drawn by the kit field around the field and leads to it; the field has no label input of its
   own.
@@ -278,4 +318,4 @@ owner's review.
   entities set by the input, the row title on one line.
 - 8 October 2026 — the application's request (RT-2619): the look inputs of both fields take their
   defaults from the kit settings, the row title wrapping too; the popup body takes the height left by
-  its head and footer.
+  its head and footer; the title wrapping holds for the popup options too.

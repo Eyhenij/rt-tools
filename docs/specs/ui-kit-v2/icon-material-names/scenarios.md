@@ -23,7 +23,7 @@ Then the first two draw kit names, and the third draws the ligature
 
 Covered: `projects/ui-kit-v2/src/lib/components/icon/rt-icon-glyph.logic.spec.ts`.
 
-### SC-UKV-542 — by `font` a glyph always draws the font
+### SC-UKV-542 — by `font` a Material glyph draws the font even with a pair
 
 Given the strategy is `font`
 When a glyph with a pair is resolved
@@ -206,3 +206,12 @@ Then its side is the property `--rt-icon-step-<step>` with the step of the kit s
 default, `3xl` and `4xl` among them
 
 Covered: `projects/ui-kit-v2/src/lib/components/icon/rt-icon.component.spec.ts`.
+
+### SC-UKV-774 — by `font` a kit name the font cannot draw draws the kit drawing
+
+Given the strategy is `font`
+When a button or an icon gets the kit name `ico-plus`, and then the kit name `search`
+Then `ico-plus` draws the kit drawing with no text, and `search` stays the ligature
+
+Covered: `projects/ui-kit-v2/src/lib/components/icon/rt-icon-glyph.logic.spec.ts`,
+`projects/ui-kit-v2/src/lib/components/button/rt-button-glyph.directive.spec.ts`.

@@ -12,12 +12,11 @@
             gap: var(--rt-space-sm);
         }
 
-        &__invitation {
-            display: block;
-        }
-
+        // Хосты компонентов кита несут свой блочный класс и свой display, а порядок стилей двух
+        // компонентов между собой не закреплён: своего display у этих элементов нет.
+        &__invitation,
         &__nothing {
-            display: block;
+            min-width: 0;
         }
     }
 }

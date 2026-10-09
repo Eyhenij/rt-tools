@@ -1,8 +1,11 @@
 import {
+    afterNextRender,
     booleanAttribute,
     computed,
     DestroyRef,
+    ElementRef,
     inject,
+    Injector,
     input,
     output,
     signal,
@@ -14,16 +17,18 @@ import {
     OutputEmitterRef,
     Signal,
     ViewEncapsulation,
+    viewChild,
     WritableSignal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
+import { NgTemplateOutlet } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { debounceTime, Subject } from 'rxjs';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { rtKitLabel, IRtInput } from '@rt-tools/ui-kit-v2/core';
+import { rtKitLabel, IRtInput, TRtRadius } from '@rt-tools/ui-kit-v2/core';
 import { RtInfiniteScrollDirective } from '@rt-tools/ui-kit-v2/core';
 import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
 import { RtCheckboxComponent } from '@rt-tools/ui-kit-v2/checkbox';
@@ -35,6 +40,7 @@ import { RtSpinnerComponent } from '@rt-tools/ui-kit-v2/spinner';
 import { RtToggleSwitchComponent } from '@rt-tools/ui-kit-v2/toggle-switch';
 import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
 import {
+    dynamicMatchParts,
     dynamicPopupRows,
     dynamicSelectAllState,
     dynamicSelectorLabel,
@@ -42,6 +48,7 @@ import {
     lastPinnedDynamicKey,
     selectAllDynamicKeys,
     toggleDynamicKey,
+    dynamicLabelCase,
 } from '../rt-dynamic-selector.logic';
 import { IRtDynamicSelector } from '../rt-dynamic-selector.model';
 
@@ -58,12 +65,13 @@ export const RT_DYNAMIC_SELECTOR_SEARCH_DEBOUNCE: number = 500;
 @Component({
     selector: 'rt-dynamic-selector-popup',
     templateUrl: './rt-dynamic-selector-popup.component.html',
-    styleUrl: './rt-dynamic-selector-popup.component.scss',
+    styleUrls: ['./rt-dynamic-selector-popup.component.scss', './rt-dynamic-selector-popup-options.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
     imports: [
         // Angular
         FormsModule,
+        NgTemplateOutlet,
         RouterLink,
 
         // standalone components / directives
@@ -85,9 +93,11 @@ export const RT_DYNAMIC_SELECTOR_SEARCH_DEBOUNCE: number = 500;
 })
 export class RtDynamicSelectorPopupComponent<TEntity extends object> implements OnInit {
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
+    readonly #injector: Injector = inject(Injector);
     readonly #searchSource: Subject<string> = new Subject<string>();
 
     protected readonly searchLabel: Signal<string> = rtKitLabel('dynamicSelectorSearch');
+    protected readonly searchField: Signal<ElementRef<HTMLElement> | undefined> = viewChild('searchField', { read: ElementRef });
     protected readonly selectAllLabel: Signal<string> = rtKitLabel('uiSelectAll');
     protected readonly multiLabel: Signal<string> = rtKitLabel('dynamicSelectorMulti');
     protected readonly multiHintLabel: Signal<string> = rtKitLabel('dynamicSelectorMultiHint');
@@ -95,10 +105,16 @@ export class RtDynamicSelectorPopupComponent<TEntity extends object> implements 
     /** Подпись пустого результата: своя у приложения, иначе словарь кита. */
     protected readonly emptyText: Signal<string> = computed((): string => this.emptyResultsText() || this.noResultsLabel());
     protected readonly cancelLabel: Signal<string> = rtKitLabel('uiCancel');
-    protected readonly applyLabel: Signal<string> = rtKitLabel('dynamicSelectorApply');
+    protected readonly applyKitLabel: Signal<string> = rtKitLabel('dynamicSelectorApply');
+    /** Подпись кнопки применения: своя у приложения, иначе словарь кита, — в заданном регистре. */
+    protected readonly applyText: Signal<string> = computed((): string =>
+        dynamicLabelCase(this.applyLabel() || this.applyKitLabel(), this.applyLabelCase())
+    );
 
     /** Отмеченные ключи — ещё не применённые. */
     protected readonly ticked: WritableSignal<unknown[]> = signal<unknown[]>([]);
+    /** Отметки на минуту последней смены запроса: только они стоят над разделителем, отмеченное потом — на месте. */
+    protected readonly raised: WritableSignal<unknown[]> = signal<unknown[]>([]);
     protected readonly query: WritableSignal<string> = signal<string>('');
     /** Выбор нескольких включён: без него простое нажатие оставляет одну отметку. */
     protected readonly isMultiOn: WritableSignal<boolean> = signal<boolean>(false);
@@ -118,7 +134,7 @@ export class RtDynamicSelectorPopupComponent<TEntity extends object> implements 
         });
     });
     protected readonly rows: Signal<IRtDynamicSelector.PopupRows<TEntity>> = computed((): IRtDynamicSelector.PopupRows<TEntity> =>
-        dynamicPopupRows(this.entities(), this.found(), this.ticked(), (item: TEntity): unknown => this.#keyOf(item), this.query())
+        dynamicPopupRows(this.entities(), this.found(), this.raised(), (item: TEntity): unknown => this.#keyOf(item), this.query())
     );
     protected readonly visibleKeys: Signal<unknown[]> = computed((): unknown[] =>
         [...this.rows().ticked, ...this.rows().found].map((item: TEntity): unknown => this.#keyOf(item))
@@ -128,13 +144,18 @@ export class RtDynamicSelectorPopupComponent<TEntity extends object> implements 
         const ticked: ReadonlyArray<unknown> = this.ticked();
         const lastPinned: unknown = this.lastPinnedKey();
         const { ticked: above, found } = this.rows();
+        const highlight: boolean = this.highlightSearch();
+        const query: string = this.query();
+        const labelOf: (item: TEntity) => string = (item: TEntity): string =>
+            dynamicSelectorLabel(item, (entity: TEntity): unknown => this.#labelOf(entity)) ?? '';
         const toRow: (item: TEntity, separated: boolean) => IRtDynamicSelector.PopupRow<TEntity> = (
             item: TEntity,
             separated: boolean
         ): IRtDynamicSelector.PopupRow<TEntity> => ({
             entity: item,
             key: this.#keyOf(item),
-            label: dynamicSelectorLabel(item, (entity: TEntity): unknown => this.#labelOf(entity)) ?? '',
+            label: labelOf(item),
+            parts: highlight ? dynamicMatchParts(labelOf(item), query) : [{ text: labelOf(item), matched: false }],
             ticked: ticked.includes(this.#keyOf(item)),
             separated,
         });
@@ -146,6 +167,8 @@ export class RtDynamicSelectorPopupComponent<TEntity extends object> implements 
             ),
         ];
     });
+    /** Подпись выбора одной записи рисует окно, а не кнопка: без переноса и при подсветке поиска. */
+    protected readonly ownLabel: Signal<boolean> = computed((): boolean => !this.titleWrap() || this.highlightSearch());
     protected readonly hasRows: Signal<boolean> = computed((): boolean => this.visibleKeys().length > 0);
     protected readonly selectAllState: Signal<IRtDynamicSelector.SelectAllState> = computed((): IRtDynamicSelector.SelectAllState =>
         dynamicSelectAllState(this.visibleKeys(), this.ticked())
@@ -167,6 +190,8 @@ export class RtDynamicSelectorPopupComponent<TEntity extends object> implements 
     public readonly entities: InputSignal<ReadonlyArray<TEntity>> = input<ReadonlyArray<TEntity>>([]);
     public readonly keyExp: InputSignal<keyof TEntity & string> = input.required<keyof TEntity & string>();
     public readonly displayExp: InputSignal<keyof TEntity & string> = input.required<keyof TEntity & string>();
+    /** Подпись записи для строки, пункта окна и поиска; не задана — поле `displayExp`. */
+    public readonly displayWith: InputSignal<((entity: TEntity) => string) | null> = input<((entity: TEntity) => string) | null>(null);
     public readonly mode: InputSignal<IRtDynamicSelector.Mode> = input<IRtDynamicSelector.Mode>('multi');
     public readonly multiToggleShown: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
         transform: booleanAttribute,
@@ -193,8 +218,26 @@ export class RtDynamicSelectorPopupComponent<TEntity extends object> implements 
     public readonly searchTerm: InputSignal<string> = input<string>('');
     /** Вид поля поиска — тот же вход, что у поля кита. */
     public readonly searchAppearance: InputSignal<IRtInput.Appearance> = input<IRtInput.Appearance>('outline');
+    /** Шаг скругления поля поиска; null — скругление самого поля. */
+    public readonly searchRadius: InputSignal<TRtRadius | null> = input<TRtRadius | null>(null);
     /** Подпись пустого результата поиска; пустая строка оставляет подпись кита. */
     public readonly emptyResultsText: InputSignal<string> = input<string>('');
+    /** Подпись кнопки применения; пустая строка оставляет подпись кита. */
+    public readonly applyLabel: InputSignal<string> = input<string>('');
+    /** Регистр подписи кнопки применения; `none` оставляет её как есть. */
+    public readonly applyLabelCase: InputSignal<IRtDynamicSelector.LabelCase> = input<IRtDynamicSelector.LabelCase>('none');
+    /** Поле поиска получает фокус при открытии окна; по умолчанию фокус остаётся там, где был. */
+    public readonly autofocusSearch: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
+        transform: booleanAttribute,
+    });
+    /** Подпись пункта переносится; `false` ведёт её одной строкой с многоточием и подсказкой при обрезке. */
+    public readonly titleWrap: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
+        transform: booleanAttribute,
+    });
+    /** Символы подписи пункта, совпавшие со словами поиска, выделены. */
+    public readonly highlightSearch: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
+        transform: booleanAttribute,
+    });
 
     /** Применённые ключи в порядке отметок. */
     public readonly applied: OutputEmitterRef<unknown[]> = output<unknown[]>();
@@ -212,11 +255,18 @@ export class RtDynamicSelectorPopupComponent<TEntity extends object> implements 
         this.#searchSource
             .pipe(debounceTime(RT_DYNAMIC_SELECTOR_SEARCH_DEBOUNCE), takeUntilDestroyed(this.#destroyRef))
             .subscribe((query: string): void => this.searchChange.emit(query));
+
+        if (this.autofocusSearch()) {
+            afterNextRender((): void => this.searchField()?.nativeElement.querySelector('input')?.focus({ preventScroll: true }), {
+                injector: this.#injector,
+            });
+        }
     }
 
     protected onQueryChange(value: string | null): void {
         const query: string = value ?? '';
 
+        this.raised.set([...this.ticked()]);
         this.query.set(query);
         this.temporaryChoiceChange.emit(this.#tickedEntities());
 
@@ -269,6 +319,8 @@ export class RtDynamicSelectorPopupComponent<TEntity extends object> implements 
 
     /** Подпись записи — по имени поля, которое назвал вызывающий. */
     #labelOf(item: TEntity): unknown {
-        return item[this.displayExp()];
+        const displayWith: ((entity: TEntity) => string) | null = this.displayWith();
+
+        return displayWith === null ? item[this.displayExp()] : displayWith(item);
     }
 }

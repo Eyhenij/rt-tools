@@ -32,6 +32,21 @@
         --rt-dynamic-selector-popup-empty-text-size-default: var(--rt-text-md);
         --rt-dynamic-selector-popup-empty-text-weight-default: var(--rt-font-weight-medium);
         --rt-dynamic-selector-popup-empty-text-color-default: var(--rt-color-text-primary);
+        --rt-dynamic-selector-popup-highlight-color-default: var(--rt-color-text-primary);
+        --rt-dynamic-selector-popup-highlight-weight-default: var(--rt-font-weight-semibold);
+        --rt-dynamic-selector-popup-highlight-bg-default: transparent;
+        --rt-dynamic-selector-popup-highlight-radius-default: 0;
+
+        /* Пункт по умолчанию держит высоту строки браузера и высоту своего содержимого. */
+        --rt-dynamic-selector-popup-option-line-height-default: normal;
+        --rt-dynamic-selector-popup-option-min-height-default: 0;
+
+        /* Зазор от круга под значком до подписи пустого результата: отступ круга и зазор заглушки. */
+        --rt-dynamic-selector-popup-empty-gap-default: calc(var(--rt-space-xs) + var(--rt-space-sm));
+
+        /* Низ окна: отступ сверху до кнопок и отступ окна по бокам, снизу его даёт само окно. */
+        --rt-dynamic-selector-popup-foot-padding-default: var(--rt-space-sm)
+            var(--rt-dynamic-selector-popup-padding, var(--rt-dynamic-selector-popup-padding-default)) 0;
 
         display: flex;
         width: var(--rt-dynamic-selector-popup-width, var(--rt-dynamic-selector-popup-width-default));
@@ -96,13 +111,16 @@
                 display: block;
             }
 
-            &__multi-hint-icon {
+            // Два класса, а не один: `.rt-icon` задаёт значку свой display, и порядок стилей двух
+            // компонентов кита между собой не закреплён.
+            &__multi &__multi-hint-icon {
                 display: none;
             }
         }
 
+        // Хост rt-checkbox несёт свой display; в колонке flex флажок и так стоит блоком.
         &__select-all {
-            display: block;
+            min-width: 0;
         }
 
         // Тело окна — загрузка, список или пустой результат — занимает высоту, которую оставили шапка и
@@ -124,25 +142,6 @@
             padding-inline: var(--rt-dynamic-selector-popup-padding, var(--rt-dynamic-selector-popup-padding-default));
         }
 
-        // Шаг строки снят с первого кита: флажок и по отступу сверху и снизу — около 36px.
-        &__row {
-            display: block;
-            padding-block: var(--rt-space-sm);
-
-            &--separated {
-                border-bottom: var(--rt-dynamic-selector-popup-border-width, var(--rt-dynamic-selector-popup-border-width-default)) solid
-                    var(--rt-color-border-subtle);
-                margin-block-end: var(--rt-space-2xs);
-                padding-block-end: var(--rt-space-sm);
-            }
-        }
-
-        // Длинная подпись строки переносится: обрезка спрятала бы, какую запись человек отмечает.
-        &__option {
-            display: block;
-            overflow-wrap: anywhere;
-        }
-
         &__sentinel {
             min-height: var(--rt-size-1);
         }
@@ -156,6 +155,13 @@
         &__empty {
             flex: 1 1 auto;
             padding-inline: var(--rt-dynamic-selector-popup-padding, var(--rt-dynamic-selector-popup-padding-default));
+        }
+
+        // Зазор заглушки стоит и между подписью и её действием, поэтому свойство двигает отступ круга.
+        &__empty .rt-empty-state__icon-wrap {
+            margin-bottom: calc(
+                var(--rt-dynamic-selector-popup-empty-gap, var(--rt-dynamic-selector-popup-empty-gap-default)) - var(--rt-space-sm)
+            );
         }
 
         /* Свойства заглушки переставляются правилом из двух классов: объявление самой заглушки
@@ -187,11 +193,10 @@
             display: flex;
             align-items: center;
             justify-content: flex-end;
+            padding: var(--rt-dynamic-selector-popup-foot-padding, var(--rt-dynamic-selector-popup-foot-padding-default));
             border-top: var(--rt-dynamic-selector-popup-foot-border-width, var(--rt-dynamic-selector-popup-foot-border-width-default)) solid
                 var(--rt-color-border-subtle);
             gap: var(--rt-space-sm);
-            padding-block-start: var(--rt-space-sm);
-            padding-inline: var(--rt-dynamic-selector-popup-padding, var(--rt-dynamic-selector-popup-padding-default));
 
             &--nav {
                 justify-content: space-between;

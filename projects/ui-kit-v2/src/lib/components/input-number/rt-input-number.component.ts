@@ -138,6 +138,7 @@ function formatNumber(
         '[class.rt-input-number--readonly]': 'isReadonly()',
         '[class.rt-input-number--borderless]': '!bordered()',
         '[class.rt-input-number--appearance--fill]': "appearance() === 'fill'",
+        '[class.rt-input-number--appearance--pill]': "appearance() === 'pill'",
         '[class.rt-input-number--size--sm]': "size() === 'sm'",
         '[class.rt-input-number--size--lg]': "size() === 'lg'",
         '(mousedown)': 'onHostMousedown($event)',

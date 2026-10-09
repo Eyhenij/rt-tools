@@ -152,25 +152,7 @@ The words are the first kit's; the kit's dictionary gives them in all eight lang
 
 ### The filter row
 
-- **The filter row is drawn under the header only when the application asks for it.** A column
-  without a filter keeps its place with an empty cell.
-- **A text or number filter commits its value by Enter or by leaving the field.** A date filter
-  commits on choosing a date, a select filter on choosing an option.
-- **An empty value removes the column's condition, and a value on a column without a condition
-  adds one.** The whole set of conditions goes to the application at every change.
-- **A column with operators shows the current operator on its button and offers the others, as the
-  first kit does.** The menu opens from the left edge of its button, so it does not cover the side menu on
-  the left of the page. Changing the operator of a column with neither a condition nor a value
-  asks nothing.
-- **Clearing a date or select filter by its cross moves the focus into the field next to it.**
-  The cross switches off once there is nothing to clear, and a switched-off button dropped the
-  focus to the start of the page.
-- **The family keeps no conditions of its own and narrows no rows.** The application answers with
-  new rows.
-- **The search and the filter fields draw one of the two Material field looks, `outline` or
-  `fill`, each set by an input of its own.** The list takes `appearance` for its search and
-  `filterAppearance` for its filter fields, the table `filterAppearance`; both default to `outline`,
-  as in the first kit.
+Its rules live in the subdomain `table-full-port-filter-row`, next to its scenarios.
 
 ### Rows and presses
 
@@ -502,3 +484,5 @@ table that applied it last decides it for all.
   that place.
 - 2026-10-08 — the task RT-2698: clearing a filter by its cross keeps the focus in the cell, and the
   select hint reads "Choose filter".
+- 8 October 2026 — task RT-2644: the filter row with its scenarios moved to the subdomain
+  `table-full-port-filter-row`, as the spec outgrew the length limit.

@@ -304,27 +304,6 @@ When a person presses its header twice, the application answering each time
 Then the first press asks for the ascending order and the second for the descending one
 Covered: `projects/ui-kit-v2/src/lib/components/data-table/header-cell/rt-data-table-header-cell.component.spec.ts`.
 
-### SC-UKV-303 — a text filter commits by Enter, and an empty value removes the condition
-
-Given the filter row shown and a text filter on the name column
-When a person types "ann" and presses Enter, then clears the field
-Then the application gets a set with the name condition, and then a set without it
-Covered: `projects/ui-kit-v2/src/lib/components/data-table/filter-cell/rt-data-table-filter-cell.component.spec.ts`.
-
-### SC-UKV-304 — an operator change without a value asks nothing
-
-Given a column with operators, no condition and an empty filter field
-When a person chooses "Contains" in its operator menu
-Then the application gets no new set of conditions and the operator button shows "Contains"
-Covered: `projects/ui-kit-v2/src/lib/components/data-table/filter-cell/rt-data-table-filter-cell.component.spec.ts`.
-
-### SC-UKV-763 — clearing a select filter by its cross keeps the focus in the cell
-
-Given a select filter with a chosen option and the focus on its cross
-When a person presses the cross
-Then the column's condition is removed and the focus stands on the select field of the same cell
-Covered: `projects/ui-kit-v2/src/lib/components/data-table/filter-cell/rt-data-table-filter-cell.component.spec.ts`.
-
 ### SC-UKV-305 — a hidden column draws neither its cell nor its filter cell
 
 Given the filter row shown and the settings with the email column hidden
@@ -479,23 +458,9 @@ When the pairs check reads the table family
 Then frames of both kits are named for it and no reason "not moved yet" is written
 Not covered: the promise is about a list of frames, not about a call. It is held by `tools/check-kit-shot-pairs.mjs`.
 
-### SC-UKV-354 — the look of the search and of the filter fields are set apart
-
-Given a list with the filter row
-When the application gives the search the look `fill` and leaves the filter fields at their default
-Then the search is a filled field with an underline and the filter fields are outlined; the filter fields change look only by their own input
-Covered: `projects/ui-kit-v2/src/lib/components/data-list/rt-data-list.component.spec.ts`.
-
 ### SC-UKV-365 — the switch of the pagination bar hides it
 
 Given a list with more records than fit on one page
 When the application sets `isPaginationShown` to false
 Then the pagination bar is not in the markup, and it comes back once the switch is on again
 Covered: `projects/ui-kit-v2/src/lib/components/data-list/rt-data-list.pagination.spec.ts`.
-
-### SC-UKV-371 — the operator menu leaves the current operator out
-
-Given a column with the operators "Equal" and "Contains", "Equal" being current
-When a person opens its operator menu
-Then the menu opens from the left edge of the button and lists "Contains" alone
-Covered: `projects/ui-kit-v2/src/lib/components/data-table/filter-cell/rt-data-table-filter-cell.component.spec.ts`.

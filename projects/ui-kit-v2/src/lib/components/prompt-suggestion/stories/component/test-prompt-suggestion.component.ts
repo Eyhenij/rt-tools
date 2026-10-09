@@ -8,11 +8,7 @@ import { RtPromptSuggestionComponent } from '../../rt-prompt-suggestion.componen
  */
 @Component({
     selector: 'app-prompt-suggestion',
-    template: `
-        <div style="inline-size: 388px">
-            <rt-prompt-suggestion [label]="label" [disabled]="disabled" />
-        </div>
-    `,
+    templateUrl: './test-prompt-suggestion.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // components

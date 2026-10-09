@@ -35,7 +35,9 @@
 - Размеры и подложка — свойства блока: `--rt-empty-state-icon-wrap-size`,
   `--rt-empty-state-icon-wrap-bg`, `--rt-empty-state-icon-size`, `--rt-empty-state-title-size`,
   `--rt-empty-state-title-weight`, `--rt-empty-state-title-color`,
-  `--rt-empty-state-description-size`. Список ставит им назначения `--rt-list-empty-*`. Под
+  `--rt-empty-state-description-size`. Поля и зазоры задают `--rt-empty-state-padding`,
+  `--rt-empty-state-gap`, `--rt-empty-state-icon-offset` и
+  `--rt-empty-state-description-line-height`. Список ставит им назначения `--rt-list-empty-*`. Под
   материальным набором его заглушка рисуется как у первого кита: значок 48px без круга, заголовок
   32px весом 400.
 

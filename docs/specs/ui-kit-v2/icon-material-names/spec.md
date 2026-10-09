@@ -1,6 +1,6 @@
 # The Material names of an icon
 
-**Status:** in force · **Revision:** 7 October 2026 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 8 October 2026 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the icon of the second kit and its table of Material pairs; the material preset
 **Laws:** `frontend-application`, `verifiability`, `reuse-first`
 **Procedures:** none
@@ -34,7 +34,9 @@ A person sees an icon; how it is drawn is invisible to them.
 - **An icon is named by a kit name or by a glyph, and the kit name wins when both are given.**
 - **By the strategy `map-first` a glyph draws its pair, and without a pair the ligature.** A glyph
   that is itself a kit name draws that name.
-- **By the strategy `font` a glyph always draws the ligature.**
+- **By the strategy `font` a glyph draws the ligature, unless it is a kit name the font cannot
+  draw.** Such a name, with a hyphen or a capital letter, draws the kit drawing; a kit name that is
+  also a ligature, like `search`, stays the ligature.
 - **The strategy is set for the application by the third argument of `provideRtIcons`, and
   `map-first` is the default.** A call with two addresses works as before.
 - **One icon sets its own strategy by the `glyphStrategy` input, and it overrides the
@@ -133,3 +135,5 @@ None.
 - 2 October 2026 — the agreement was written from the consumer's request by task RT-2473.
 - 7 October 2026 — the strategy on one icon, the font axes, the colours and the size steps as
   application properties, by task RT-2619.
+- 8 October 2026 — by task RT-2644 from the application's request: under `font` a kit name the
+  font cannot draw takes the kit drawing instead of its own text.

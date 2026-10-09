@@ -93,36 +93,54 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 его свойства доходят с любого предка — с панели оверлея, со своего контейнера, с корня страницы:
 на самом окне стоят только умолчания с приставкой `-default`. Ширина, наибольшая высота, скругление,
 толщина рамки и тень окна — `--rt-dynamic-selector-popup-width`, `-max-height`, `-radius`,
-`-border-width`, `-shadow` — читаются так же. Свойства списка, кроме цвета «Добавить», задаются
-правилом на `.rt-dynamic-selector-list`. При заданной `--rt-dynamic-selector-popup-min-height` тело
+`-border-width`, `-shadow` — читаются так же. Цвет «Добавить», зазоры, отступы ручки и разделитель кнопок
+списка тоже доходят с любого предка. Остальные свойства списка задаются правилом на `.rt-dynamic-selector-list`. При заданной `--rt-dynamic-selector-popup-min-height` тело
 окна — список, загрузка или пустой результат — занимает всю оставшуюся высоту, и футер стоит у низа.
 
-| свойство                                         | что задаёт                                      | умолчание                                                       |
-| ------------------------------------------------ | ----------------------------------------------- | --------------------------------------------------------------- |
-| `--rt-dynamic-selector-popup-bg`                 | фон окна                                        | `--rt-color-bg-surface`                                         |
-| `--rt-dynamic-selector-popup-min-height`         | наименьшая высота окна                          | `0`                                                             |
-| `--rt-dynamic-selector-popup-padding`            | отступы окна от края до содержимого             | `--rt-space-md`                                                 |
-| `--rt-dynamic-selector-popup-foot-border-width`  | толщина черты над кнопками                      | толщина рамки окна                                              |
-| `--rt-dynamic-selector-popup-nav-color`          | цвет ссылки в подвале                           | `--rt-color-text-link`                                          |
-| `--rt-dynamic-selector-popup-button-height`      | высота кнопок «Отмена» и «Применить»            | `--rt-control-height-md`                                        |
-| `--rt-dynamic-selector-popup-button-font-size`   | кегль этих кнопок                               | `0.95rem`, как у кнопки кита                                    |
-| `--rt-dynamic-selector-popup-empty-icon-size`    | значок «ничего не нашлось»                      | `--rt-size-8`                                                   |
-| `--rt-dynamic-selector-popup-empty-icon-wrap-bg` | круг под этим значком                           | `--rt-color-bg-subtle`                                          |
-| `--rt-dynamic-selector-popup-empty-text-size`    | кегль подписи «ничего не нашлось»               | `--rt-text-md`                                                  |
-| `--rt-dynamic-selector-popup-empty-text-weight`  | её начертание                                   | `--rt-font-weight-medium`                                       |
-| `--rt-dynamic-selector-popup-empty-text-color`   | её цвет                                         | `--rt-color-text-primary`                                       |
-| `--rt-dynamic-selector-list-row-padding-x`       | отступ строки слева, до ручки и подписи         | `--rt-space-sm`                                                 |
-| `--rt-dynamic-selector-list-add-font-weight`     | начертание кнопки «Добавить»                    | `--rt-font-weight-medium`                                       |
-| `--rt-dynamic-selector-list-add-indent`          | отступ кнопки «Добавить» слева                  | `0`                                                             |
-| `--rt-dynamic-selector-list-reset-color`         | цвет значка «Сбросить»                          | `--rt-color-text-primary`                                       |
-| `--rt-dynamic-selector-list-add-color`           | цвет кнопки «Добавить» — ручка, на любом предке | цвет своей кнопки: у селектора вторичный, у поля строк основной |
+| свойство                                            | что задаёт                                      | умолчание                                                       |
+| --------------------------------------------------- | ----------------------------------------------- | --------------------------------------------------------------- |
+| `--rt-dynamic-selector-popup-bg`                    | фон окна                                        | `--rt-color-bg-surface`                                         |
+| `--rt-dynamic-selector-popup-min-height`            | наименьшая высота окна                          | `0`                                                             |
+| `--rt-dynamic-selector-popup-padding`               | отступы окна от края до содержимого             | `--rt-space-md`                                                 |
+| `--rt-dynamic-selector-popup-foot-border-width`     | толщина черты над кнопками                      | толщина рамки окна                                              |
+| `--rt-dynamic-selector-popup-nav-color`             | цвет ссылки в подвале                           | `--rt-color-text-link`                                          |
+| `--rt-dynamic-selector-popup-button-height`         | высота кнопок «Отмена» и «Применить»            | `--rt-control-height-md`                                        |
+| `--rt-dynamic-selector-popup-button-font-size`      | кегль этих кнопок                               | `0.95rem`, как у кнопки кита                                    |
+| `--rt-dynamic-selector-popup-empty-icon-size`       | значок «ничего не нашлось»                      | `--rt-size-8`                                                   |
+| `--rt-dynamic-selector-popup-empty-icon-wrap-bg`    | круг под этим значком                           | `--rt-color-bg-subtle`                                          |
+| `--rt-dynamic-selector-popup-empty-text-size`       | кегль подписи «ничего не нашлось»               | `--rt-text-md`                                                  |
+| `--rt-dynamic-selector-popup-empty-text-weight`     | её начертание                                   | `--rt-font-weight-medium`                                       |
+| `--rt-dynamic-selector-popup-empty-text-color`      | её цвет                                         | `--rt-color-text-primary`                                       |
+| `--rt-dynamic-selector-popup-highlight-color`       | цвет символов, совпавших с поиском              | `--rt-color-text-primary`                                       |
+| `--rt-dynamic-selector-popup-highlight-weight`      | их начертание                                   | `--rt-font-weight-semibold`                                     |
+| `--rt-dynamic-selector-popup-highlight-bg`          | фон под ними                                    | `transparent`                                                   |
+| `--rt-dynamic-selector-popup-highlight-radius`      | скругление этого фона                           | `0`                                                             |
+| `--rt-dynamic-selector-popup-option-line-height`    | высота строки подписи пункта                    | `normal`                                                        |
+| `--rt-dynamic-selector-popup-option-min-height`     | наименьшая высота пункта с отступами            | `0`                                                             |
+| `--rt-dynamic-selector-popup-empty-gap`             | зазор от круга значка до подписи                | `--rt-space-xs` + `--rt-space-sm`                               |
+| `--rt-dynamic-selector-popup-foot-padding`          | отступ низа окна                                | `--rt-space-sm` отступ окна `0`                                 |
+| `--rt-dynamic-selector-list-row-padding-x`          | отступ строки слева, до ручки и подписи         | `--rt-space-sm`                                                 |
+| `--rt-dynamic-selector-list-add-font-weight`        | начертание кнопки «Добавить»                    | `--rt-font-weight-medium`                                       |
+| `--rt-dynamic-selector-list-add-indent`             | отступ кнопки «Добавить» слева                  | `0`                                                             |
+| `--rt-dynamic-selector-list-reset-color`            | цвет значка «Сбросить»                          | `--rt-color-text-primary`                                       |
+| `--rt-dynamic-selector-list-add-color`              | цвет кнопки «Добавить» — ручка, на любом предке | цвет своей кнопки: у селектора вторичный, у поля строк основной |
+| `--rt-dynamic-selector-list-actions-gap`            | зазор между кнопками полосы действий            | `--rt-space-2xs`                                                |
+| `--rt-dynamic-selector-list-controls-gap`           | зазор между кнопками в строке                   | `--rt-space-2xs`                                                |
+| `--rt-dynamic-selector-list-row-padding-end`        | отступ строки справа                            | `--rt-space-2xs`                                                |
+| `--rt-dynamic-selector-list-actions-offset`         | расстояние от последней строки до полосы        | `--rt-space-2xs`                                                |
+| `--rt-dynamic-selector-list-actions-padding-end`    | отступ полосы действий справа                   | `0`                                                             |
+| `--rt-dynamic-selector-list-controls-divider-width` | разделитель между кнопками строки               | `0` — разделителя нет                                           |
+| `--rt-dynamic-selector-list-controls-divider-color` | его цвет                                        | `--rt-color-border-default`                                     |
+| `--rt-dynamic-selector-list-handle-padding-start`   | отступ ручки слева                              | `0`                                                             |
+| `--rt-dynamic-selector-list-handle-padding-end`     | отступ ручки справа, до её разделителя          | `--rt-space-2xs`                                                |
+| `--rt-dynamic-selector-list-title-gap`              | зазор от разделителя ручки до названия          | `--rt-space-sm`                                                 |
 
 ## Входы
 
 Таблица одна на оба поля — колонка «чей» говорит, к какому из них вход относится. Входы только
 поля строк стоят ниже своей таблицей.
 
-Шесть входов вида приложение задаёт один раз на всё приложение, через настройки кита:
+Одиннадцать входов вида приложение задаёт один раз на всё приложение, через настройки кита:
 
 ```typescript
 provideRtKit({
@@ -132,53 +150,64 @@ provideRtKit({
             invitationButtonAppearance: 'text',
             clearIcon: 'trash-x',
             searchAppearance: 'fill',
+            searchRadius: 'full',
             emptyResultsText: 'Никого не нашли',
             titleWrap: false,
+            highlightSearch: true,
+            applyLabel: 'Submit',
+            applyLabelCase: 'upper',
+            autofocusSearch: true,
         },
     },
 });
 ```
 
 Оба поля берут из них `invitationButtonIcon`, `invitationButtonAppearance`, `clearIcon` и
-`titleWrap`; поиск и пустой результат есть только у селектора. Вход, написанный в разметке, сильнее
+`titleWrap`; поиск с подсветкой и фокусом, пустой результат и кнопка применения есть только у селектора. Вход, написанный в разметке, сильнее
 настроек, а без настроек остаются умолчания из таблицы ниже.
 
-| вход                         | чей      | тип                          | умолчание                           |
-| ---------------------------- | -------- | ---------------------------- | ----------------------------------- |
-| `entities`                   | селектор | `ReadonlyArray<TEntity>`     | `[]`                                |
-| `chosenEntities`             | селектор | `TEntity[]`, двусторонний    | `[]`                                |
-| `keyExp`                     | селектор | `keyof TEntity`              | обязателен                          |
-| `displayExp`                 | селектор | `keyof TEntity`              | обязателен                          |
-| `mode`                       | селектор | `'multi' \| 'single'`        | `'multi'`                           |
-| `buttonTitle`                | оба      | `string`                     | `''` → «Add»                        |
-| `addShown`                   | селектор | `boolean`                    | `true`                              |
-| `readonlyKeys`               | оба      | `ReadonlyArray`              | `[]`                                |
-| `pinnedKeys`                 | селектор | `ReadonlyArray<unknown>`     | `[]`                                |
-| `draggable`                  | оба      | `boolean`                    | `false`                             |
-| `buttonRadius`               | оба      | `TRtRadius \| null`          | `'full'`                            |
-| `invitation`                 | оба      | `boolean`                    | `false`                             |
-| `invitationIcon`             | оба      | `IRtIcon.Name \| null`       | `null`                              |
-| `invitationGlyph`            | оба      | `string \| null`             | `null`                              |
-| `invitationDescription`      | оба      | `string`                     | `''`                                |
-| `multiToggleShown`           | селектор | `boolean`                    | `false`                             |
-| `selectAllShown`             | селектор | `boolean`                    | `true`                              |
-| `localSearch`                | селектор | `boolean`                    | `true`                              |
-| `lazyLoad`                   | селектор | `boolean`                    | `false`                             |
-| `loading`                    | селектор | `boolean`                    | `false`                             |
-| `fetching`                   | селектор | `boolean`                    | `false`                             |
-| `navigateTitle`              | селектор | `string`                     | `''`                                |
-| `navigateLink`               | селектор | `string`                     | `''`                                |
-| `sortFn`                     | селектор | `((a, b) => number) \| null` | `null`                              |
-| `removeShown`                | оба      | `boolean`                    | `true`                              |
-| `listActionsShown`           | оба      | `boolean`                    | `true`                              |
-| `extraChanged`               | оба      | `boolean`                    | `false`                             |
-| `searchTerm`                 | селектор | `string`                     | `''`                                |
-| `invitationButtonIcon`       | оба      | `IRtIcon.Name \| null`       | `null`                              |
-| `invitationButtonAppearance` | оба      | `IButton.Appearance`         | `'outlined'`                        |
-| `clearIcon`                  | оба      | `IRtIcon.Name`               | `'close'`                           |
-| `titleWrap`                  | оба      | `boolean`                    | `true`                              |
-| `searchAppearance`           | селектор | `IRtInput.Appearance`        | `'outline'`                         |
-| `emptyResultsText`           | селектор | `string`                     | `''` → «No results» из словаря кита |
+| вход                         | чей      | тип                            | умолчание                           |
+| ---------------------------- | -------- | ------------------------------ | ----------------------------------- |
+| `entities`                   | селектор | `ReadonlyArray<TEntity>`       | `[]`                                |
+| `chosenEntities`             | селектор | `TEntity[]`, двусторонний      | `[]`                                |
+| `keyExp`                     | селектор | `keyof TEntity`                | обязателен                          |
+| `displayExp`                 | селектор | `keyof TEntity`                | обязателен                          |
+| `displayWith`                | селектор | `((entity) => string) \| null` | `null` → поле `displayExp`          |
+| `mode`                       | селектор | `'multi' \| 'single'`          | `'multi'`                           |
+| `buttonTitle`                | оба      | `string`                       | `''` → «Add»                        |
+| `addShown`                   | селектор | `boolean`                      | `true`                              |
+| `readonlyKeys`               | оба      | `ReadonlyArray`                | `[]`                                |
+| `pinnedKeys`                 | селектор | `ReadonlyArray<unknown>`       | `[]`                                |
+| `draggable`                  | оба      | `boolean`                      | `false`                             |
+| `buttonRadius`               | оба      | `TRtRadius \| null`            | `'full'`                            |
+| `invitation`                 | оба      | `boolean`                      | `false`                             |
+| `invitationIcon`             | оба      | `IRtIcon.Name \| null`         | `null`                              |
+| `invitationGlyph`            | оба      | `string \| null`               | `null`                              |
+| `invitationDescription`      | оба      | `string`                       | `''`                                |
+| `multiToggleShown`           | селектор | `boolean`                      | `false`                             |
+| `selectAllShown`             | селектор | `boolean`                      | `true`                              |
+| `localSearch`                | селектор | `boolean`                      | `true`                              |
+| `lazyLoad`                   | селектор | `boolean`                      | `false`                             |
+| `loading`                    | селектор | `boolean`                      | `false`                             |
+| `fetching`                   | селектор | `boolean`                      | `false`                             |
+| `navigateTitle`              | селектор | `string`                       | `''`                                |
+| `navigateLink`               | селектор | `string`                       | `''`                                |
+| `sortFn`                     | селектор | `((a, b) => number) \| null`   | `null`                              |
+| `removeShown`                | оба      | `boolean`                      | `true`                              |
+| `listActionsShown`           | оба      | `boolean`                      | `true`                              |
+| `extraChanged`               | оба      | `boolean`                      | `false`                             |
+| `searchTerm`                 | селектор | `string`                       | `''`                                |
+| `invitationButtonIcon`       | оба      | `IRtIcon.Name \| null`         | `null`                              |
+| `invitationButtonAppearance` | оба      | `IButton.Appearance`           | `'outlined'`                        |
+| `clearIcon`                  | оба      | `IRtIcon.Name`                 | `'close'`                           |
+| `titleWrap`                  | оба      | `boolean`                      | `true`                              |
+| `searchAppearance`           | селектор | `IRtInput.Appearance`          | `'outline'`                         |
+| `searchRadius`               | селектор | `TRtRadius \| null`            | `null` — скругление поля            |
+| `highlightSearch`            | селектор | `boolean`                      | `false`                             |
+| `applyLabel`                 | селектор | `string`                       | `''` → «Apply» из словаря кита      |
+| `applyLabelCase`             | селектор | `'none' \| 'title' \| 'upper'` | `'none'` — подпись как есть         |
+| `autofocusSearch`            | селектор | `boolean`                      | `false`                             |
+| `emptyResultsText`           | селектор | `string`                       | `''` → «No results» из словаря кита |
 
 ### Только у поля строк
 
@@ -199,8 +228,24 @@ provideRtKit({
 `selectionChange` — ничего не меняет. Строки рисуются и по записям из `chosenEntities`, которых нет в
 `entities`.
 
-`titleWrap="false"` ведёт название строки одной строкой: длинное режется многоточием, а подсказка
-показывает его целиком. По умолчанию название переносится.
+`titleWrap="false"` ведёт название строки и подпись пункта окна одной строкой: длинное режется
+многоточием, а подсказка показывает его целиком. По умолчанию названия переносятся.
+
+`highlightSearch` выделяет в подписи пункта окна символы, совпавшие со словами поиска, цветом,
+начертанием, фоном и скруглением фона из `--rt-dynamic-selector-popup-highlight-*`. Фон по
+умолчанию прозрачный. Подпись читается целиком и при подписи одной строкой сохраняет многоточие.
+По умолчанию ничего не выделено.
+
+`displayWith` задаёт подпись записи функцией: ею подписаны строка списка и пункт окна, по ней же
+ищет поиск. Так приложение делит слитное имя на слова или собирает подпись из двух полей. Без неё
+подпись берётся из поля `displayExp`.
+
+`applyLabel` заменяет подпись кнопки применения, а `applyLabelCase` задаёт её регистр: `none`
+оставляет как есть, `title` ставит заглавную в начало каждого слова, `upper` пишет всё заглавными.
+Регистр действует и на подпись кита.
+
+`autofocusSearch` ставит фокус в поле поиска при открытии окна. По умолчанию фокус остаётся на
+элементе, который окно открыл.
 
 ### Переключатели и состояние окна
 
