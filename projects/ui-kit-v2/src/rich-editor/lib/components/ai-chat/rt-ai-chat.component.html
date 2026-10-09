@@ -208,15 +208,32 @@
                 </span>
             </ng-template>
             <ng-template let-row [rtThreadListRowActions]="threadRows()">
-                <rt-icon-button
-                    qa-dataid="ai-chat-delete-thread"
-                    size="xs"
-                    iconSize="sm"
-                    icon="trash"
-                    [disabled]="sending() && row.id === activeThreadId()"
-                    [ariaLabel]="t().aiDeleteThread"
-                    [tooltip]="t().aiDeleteThread"
-                    (clicked)="deleteThread.emit(row.id)" />
+                @if (threadMenu()) {
+                    <rt-menu qa-dataid="ai-chat-thread-menu" icon="ellipsis-v" triggerSize="xs" size="sm" [ariaLabel]="t().uiMoreActions">
+                        <rt-menu-item
+                            qa-dataid="ai-chat-thread-copy-id"
+                            icon="copy"
+                            [label]="t().aiCopyThreadId"
+                            (selected)="onCopyThreadId(row.id)" />
+                        <rt-menu-item
+                            qa-dataid="ai-chat-thread-delete"
+                            icon="trash"
+                            danger
+                            [label]="t().uiRemove"
+                            [disabled]="sending() && row.id === activeThreadId()"
+                            (selected)="deleteThread.emit(row.id)" />
+                    </rt-menu>
+                } @else {
+                    <rt-icon-button
+                        qa-dataid="ai-chat-delete-thread"
+                        size="xs"
+                        iconSize="sm"
+                        icon="trash"
+                        [disabled]="sending() && row.id === activeThreadId()"
+                        [ariaLabel]="t().aiDeleteThread"
+                        [tooltip]="t().aiDeleteThread"
+                        (clicked)="deleteThread.emit(row.id)" />
+                }
             </ng-template>
         </rt-thread-list>
     </ng-container>

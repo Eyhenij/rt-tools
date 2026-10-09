@@ -14,6 +14,7 @@ export const RT_KIT_LABELS_RU: Readonly<Record<TRtKitLabelKey, string>> = {
     aiBackToChat: 'Назад к беседе',
     aiClose: 'Закрыть ассистента',
     aiCopyReference: 'Скопировать номер',
+    aiCopyThreadId: 'Скопировать ID',
     aiDeleteThread: 'Удалить беседу',
     aiDisclaimer: 'ИИ может ошибаться. Проверяйте важное.',
     aiDislike: 'Плохой ответ',

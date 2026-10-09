@@ -33,6 +33,7 @@ export class TestRtAiChatComponent {
     public threads: readonly IRtAiChat.Thread[] | null = null;
     public fullScreenable: boolean = false;
     public copyable: boolean = true;
+    public threadMenu: boolean = false;
     public headerIconPreset: IRtIcon.Preset = 'base';
 
     public readonly send: OutputEmitterRef<string> = output<string>();
