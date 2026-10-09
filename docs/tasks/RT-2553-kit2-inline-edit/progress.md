@@ -30,6 +30,11 @@
   plate, a contrast of 4.0 and 3.4 for small text; it now takes the neutral `rt-tag` colours, and an
   empty badge is muted. A field disabled while saving dropped the focus onto the page, and it now
   comes back to the field on a refusal and to the value on closing.
+- Colours, gaps and the badge became `--rt-inline-edit-*` properties with the former steps as
+  defaults. The material preset reassigns five of them after the application's badge, and the badge
+  text stays the primary colour for contrast. The owner's words: «все переносимые компоненты из апки
+  должны иметь базовую вьюху кита + материальную но без использования пакетов материал, стили должны
+  быть заданы через токены чтобы поддавались модификации из апки + необходимые входы».
 
 ## Steps
 

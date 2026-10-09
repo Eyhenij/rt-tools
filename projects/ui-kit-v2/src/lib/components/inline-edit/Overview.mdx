@@ -75,10 +75,34 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Оформление
 
-Свои свойства блока: `--rt-inline-edit-height` (высота покоя, ступень поля), `--rt-inline-edit-field-width`
-(ширина поля, `--rt-size-64`), `--rt-inline-edit-radius`, `--rt-inline-edit-border-width`,
-`--rt-inline-edit-duration`. Базовый и материальный наборы стоят половинами каждой матрицы, светлая и
-тёмная темы — в истории **Themes**.
+Базовый и материальный наборы стоят половинами каждой матрицы, светлая и тёмная темы — в истории
+**Themes**. Свойства объявлены на самом `rt-inline-edit`, и приложение переназначает их своим правилом
+на этот блок. Умолчания — прежние ступени кита, так что без правки вид не меняется.
+
+Материальный набор переназначает пять свойств по образцу плашки приложения. Скругление плашки
+становится 6px, подложка — серой подложкой поля, рамка — тонкой без цвета действия, поля значения — 8px.
+
+| свойство                                   | что задаёт                            | умолчание                              |
+| ------------------------------------------ | ------------------------------------- | -------------------------------------- |
+| `--rt-inline-edit-height`                  | высота покоя, ступень поля по размеру | `--rt-input-height-sm`                 |
+| `--rt-inline-edit-field-width`             | ширина поля при правке                | `--rt-size-64`                         |
+| `--rt-inline-edit-radius`                  | скругление значения в покое           | `--rt-radius-sm`                       |
+| `--rt-inline-edit-border-width`            | толщина рамки значения                | `--rt-border-width-thin`               |
+| `--rt-inline-edit-duration`                | смена фона и рамки                    | `--rt-duration-fast`                   |
+| `--rt-inline-edit-gap`                     | зазор между полем и кнопками          | `--rt-space-2xs`                       |
+| `--rt-inline-edit-value-padding-x`         | поля значения по бокам                | `--rt-space-xs`                        |
+| `--rt-inline-edit-value-gap`               | зазор между текстом и карандашом      | `--rt-space-xs`                        |
+| `--rt-inline-edit-value-bg-hover`          | фон значения под указателем           | `--rt-color-bg-hover`                  |
+| `--rt-inline-edit-empty-color`             | цвет пустого значения                 | `--rt-color-text-muted`                |
+| `--rt-inline-edit-disabled-color`          | цвет отключённого значения            | `--rt-color-text-disabled`             |
+| `--rt-inline-edit-pencil-color`            | цвет карандаша                        | `--rt-color-text-muted`                |
+| `--rt-inline-edit-chip-radius`             | скругление плашки                     | `--rt-radius-sm`                       |
+| `--rt-inline-edit-chip-bg`                 | подложка плашки                       | `--rt-color-bg-subtle`                 |
+| `--rt-inline-edit-chip-color`              | цвет подписи плашки                   | `--rt-color-text-primary`              |
+| `--rt-inline-edit-chip-border-color`       | рамка плашки                          | `--rt-color-border-default`            |
+| `--rt-inline-edit-chip-border-color-hover` | рамка плашки под указателем           | `--rt-color-action-primary-on-surface` |
+| `--rt-inline-edit-chip-font-size`          | кегль плашки                          | `--rt-text-xs`                         |
+| `--rt-inline-edit-chip-font-weight`        | насыщенность плашки                   | `--rt-font-weight-semibold`            |
 
 ## Входы
 
