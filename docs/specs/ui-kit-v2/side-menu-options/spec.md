@@ -40,6 +40,11 @@ are invisible to them.
 - **The submenu search takes its size and look from the menu inputs on both screens.**
 - **Every submenu row and folder carries its item number as a mark.**
 - **The colours, sizes and paddings of the rail, the panel and the rows are menu properties, and without them the menu draws as before.**
+- **The folder icon has a Material pair.**
+- **Submenu row and folder icons are filled only by the input.**
+- **A submenu row hands its press to the consumer before the navigation, and a prevented press does not navigate.**
+- **A submenu opened by hover closes after the delay input, and the pointer coming back keeps it open.**
+- **The submenu panel shows the scroll hint only by the input.**
 
 ## What is out of scope
 
@@ -97,6 +102,15 @@ Every menu holds its own switches and its own template.
   follows the `md` icon step, as before.
 - **The item colours reach the dragged favourite row too.** The drag moves that row to the end of
   the page, out of the menu, so the defaults are declared on it as well.
+- **The submenu row navigates through the router itself, not by the router link.** The link
+  navigates before any handler of the row runs, so the consumer could not take the navigation over.
+  The row keeps its address for a middle press and for copying the link, and a press with a modifier
+  stays the browser's.
+- **The close delay and the scroll hint default to the current behaviour.** The first kit closed after
+  500 ms and showed the hint; the application sets both by the inputs, and the default look of the
+  second kit stays as it was.
+- **The folder header padding defaults to the row padding.** One property for both would not let the
+  first kit's folder stand closer to the edge than its rows.
 
 - **Without the pin button the stored setting is not read.** A person could not unpin a menu they
   pinned earlier; the bound mode still decides.
@@ -114,3 +128,6 @@ None.
 - 2 October 2026 — the agreement was written from the consumer's request by task RT-2482.
 - 8 October 2026 — the rail titles and fill, the search size and look, the row mark and the look
   properties were added from the application rows 113–121 by task RT-2644.
+- 9 October 2026 — the folder pair, the row icon fill and size, the folder header properties, the
+  empty padding, the row press, the close delay and the panel scroll hint were added from the
+  application rows 122–128 by task RT-2644.

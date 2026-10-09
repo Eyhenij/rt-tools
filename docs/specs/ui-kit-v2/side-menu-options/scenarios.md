@@ -79,3 +79,39 @@ Then it looks as before
 
 Not covered: this is a promise about frames. The former snapshots of the side menu stories match
 without a re-take.
+
+### SC-UKV-793 — the folder icon has a Material pair
+
+Given the material preset and a submenu folder with the `folder` icon
+When the folder is drawn
+Then it draws the Material folder, outlined and filled
+
+Not covered by a test: `node tools/check-icon-map.mjs` holds every pair to an existing file of both
+sets.
+
+### SC-UKV-794 — row and folder icons are filled by the input
+
+Given a menu without the row icon fill input and one with it
+When the submenu opens
+Then the first draws outlined row and folder icons and the second filled ones
+
+### SC-UKV-795 — a submenu row hands its press to the consumer first
+
+Given a submenu row with an address, in the list and in the favourites block
+When it is pressed, and the consumer prevents the press, and it is pressed with a modifier
+Then the consumer gets the press first; an unprevented press navigates by the router, a prevented one
+does not, a press with a modifier stays the browser's; the row keeps its address
+
+### SC-UKV-796 — the hover submenu closes after the delay
+
+Given a menu with a close delay and a submenu opened by hover
+When the pointer leaves the panel, comes back before the delay, and hovers a rail item without a
+submenu
+Then the panel stays open until the delay ends, the return keeps it open, an item with a submenu
+switches it at once, and without the delay the panel closes at once
+
+### SC-UKV-797 — the panel shows the scroll hint by the input
+
+Given a menu without the panel hint input and one with it
+When the submenu opens
+Then only the second panel carries the scroll hint
