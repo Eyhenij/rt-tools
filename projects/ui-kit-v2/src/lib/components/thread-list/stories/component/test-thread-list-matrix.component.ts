@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
+import { IRtIcon } from '../../../icon/rt-icon.model';
+
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
@@ -15,6 +17,8 @@ interface IThreadRow extends IRtThreadList.Row {
     readonly title: string;
     readonly meta: string;
 }
+
+const PEOPLE_ICONS: readonly IRtIcon.Name[] = ['user', 'users', 'user'];
 
 const ROWS: readonly IThreadRow[] = [
     { id: 1, hasUnread: true, title: 'Договор №2024-118', meta: 'Иванов И. И. · 16:02' },
@@ -112,6 +116,7 @@ const ROWS: readonly IThreadRow[] = [
                                         searchPlaceholder="Поиск"
                                         [rows]="none"
                                         [emptyText]="item.text"
+                                        [emptyPreviewIcons]="item.icons"
                                         [filtersActive]="item.filters">
                                         <ng-template rtThreadListRow let-row>
                                             <strong>{{ row.title }}</strong>
@@ -197,10 +202,11 @@ export class TestRtThreadListMatrixComponent {
     public readonly moreCases: readonly boolean[] = [false, true];
 
     /** Пустой от фильтров и пустой сам по себе — разные сообщения. */
-    public readonly emptyCases: readonly { name: string; text: string; filters: boolean }[] = [
-        { name: 'переведённый текст', text: '', filters: false },
-        { name: 'свой текст', text: 'Переписок пока нет', filters: false },
-        { name: 'ничего не нашлось по фильтрам', text: '', filters: true },
+    public readonly emptyCases: readonly { name: string; text: string; filters: boolean; icons: readonly IRtIcon.Name[] }[] = [
+        { name: 'переведённый текст', text: '', filters: false, icons: PEOPLE_ICONS },
+        { name: 'свой текст', text: 'Переписок пока нет', filters: false, icons: PEOPLE_ICONS },
+        { name: 'ничего не нашлось по фильтрам', text: '', filters: true, icons: PEOPLE_ICONS },
+        { name: 'свои значки строк-превью', text: '', filters: false, icons: ['sparkle', 'bot', 'sparkle'] },
     ];
 
     public readonly caseLabel: (value: { name: string }) => string = (value: { name: string }): string => value.name;

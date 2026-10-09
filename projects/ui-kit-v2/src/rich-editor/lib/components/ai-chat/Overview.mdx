@@ -46,29 +46,30 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Входы
 
-| вход               | тип                          | умолчание                          |
-| ------------------ | ---------------------------- | ---------------------------------- |
-| `title`            | `string`                     | `''` — подпись кита                |
-| `subtitle`         | `string`                     | `''`                               |
-| `messages`         | `IRtAiChat.Message[]`        | `[]`                               |
-| `suggestions`      | `string[]`                   | `[]`                               |
-| `emptyTitle`       | `string`                     | `''` — подпись кита                |
-| `emptyDescription` | `string`                     | `''` — подпись кита                |
-| `placeholder`      | `string`                     | `''` — подпись поля                |
-| `disclaimer`       | `string \| null`             | `null` — подпись кита; `''` прячет |
-| `sending`          | `boolean`                    | `false`                            |
-| `loading`          | `boolean`                    | `false`                            |
-| `error`            | `IRtAiChat.RunError \| null` | `null`                             |
-| `threads`          | `IRtAiChat.Thread[] \| null` | `null` — кнопки бесед нет          |
-| `activeThreadId`   | `string \| null`             | `null`                             |
-| `threadsLoading`   | `boolean`                    | `false`                            |
-| `threadsFetching`  | `boolean`                    | `false`                            |
-| `threadsHasMore`   | `boolean`                    | `false`                            |
-| `fullScreenable`   | `boolean`                    | `false`                            |
-| `closable`         | `boolean`                    | `true`                             |
-| `draft`            | `model<string>`              | `''`                               |
-| `threadsOpen`      | `model<boolean>`             | `false`                            |
-| `fullScreen`       | `model<boolean>`             | `false`                            |
+| вход                | тип                          | умолчание                          |
+| ------------------- | ---------------------------- | ---------------------------------- |
+| `title`             | `string`                     | `''` — подпись кита                |
+| `subtitle`          | `string`                     | `''`                               |
+| `messages`          | `IRtAiChat.Message[]`        | `[]`                               |
+| `suggestions`       | `string[]`                   | `[]`                               |
+| `emptyTitle`        | `string`                     | `''` — подпись кита                |
+| `emptyDescription`  | `string`                     | `''` — подпись кита                |
+| `placeholder`       | `string`                     | `''` — подпись поля                |
+| `disclaimer`        | `string \| null`             | `null` — подпись кита; `''` прячет |
+| `sending`           | `boolean`                    | `false`                            |
+| `loading`           | `boolean`                    | `false`                            |
+| `error`             | `IRtAiChat.RunError \| null` | `null`                             |
+| `threads`           | `IRtAiChat.Thread[] \| null` | `null` — кнопки бесед нет          |
+| `activeThreadId`    | `string \| null`             | `null`                             |
+| `threadsLoading`    | `boolean`                    | `false`                            |
+| `threadsFetching`   | `boolean`                    | `false`                            |
+| `threadsHasMore`    | `boolean`                    | `false`                            |
+| `emptyPreviewIcons` | `IRtIcon.Name[]`             | `['sparkle', 'bot', 'sparkle']`    |
+| `fullScreenable`    | `boolean`                    | `false`                            |
+| `closable`          | `boolean`                    | `true`                             |
+| `draft`             | `model<string>`              | `''`                               |
+| `threadsOpen`       | `model<boolean>`             | `false`                            |
+| `fullScreen`        | `model<boolean>`             | `false`                            |
 
 ## Выходы
 
