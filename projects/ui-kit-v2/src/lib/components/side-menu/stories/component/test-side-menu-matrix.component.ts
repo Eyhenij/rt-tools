@@ -44,6 +44,8 @@ export interface ISideMenuCase {
     readonly railTitlesShown?: boolean;
     readonly railIconFill?: boolean;
     readonly searchSize?: IRtInput.Size;
+    readonly subItemIconFill?: boolean;
+    readonly panelScrollHintShown?: boolean;
     readonly firstKitProps?: boolean;
 }
 
@@ -151,12 +153,24 @@ export class TestRtSideMenuMatrixComponent {
             searchSize: 'md',
         },
         {
-            name: 'и свойства первого кита',
+            name: 'и свойства первого кита, подсказка прокрутки',
             activeIds: [1, 2],
             mode: 'pinned',
             railTitlesShown: false,
             railIconFill: true,
             searchSize: 'md',
+            panelScrollHintShown: true,
+            firstKitProps: true,
+        },
+        {
+            name: 'папки, значки строк и подсказка прокрутки',
+            activeIds: [24, 25],
+            mode: 'pinned',
+            railTitlesShown: false,
+            railIconFill: true,
+            searchSize: 'md',
+            subItemIconFill: true,
+            panelScrollHintShown: true,
             firstKitProps: true,
         },
     ];

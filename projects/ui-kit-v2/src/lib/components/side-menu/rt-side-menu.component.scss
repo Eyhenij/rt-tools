@@ -32,6 +32,7 @@
         --rt-side-menu-panel-bg: var(--rt-color-bg-surface);
         --rt-side-menu-panel-head-padding: var(--rt-space-sm);
         --rt-side-menu-sub-list-padding-inline: var(--rt-space-2);
+        --rt-side-menu-empty-padding: var(--rt-space-md);
 
         /* Натянутую рукой ширину ставит привязка хоста; без неё панель берёт ширину оформления. */
         --rt-side-menu-panel-dragged-width: 0px;
@@ -190,7 +191,7 @@
         }
 
         &__empty {
-            padding: var(--rt-space-md);
+            padding: var(--rt-side-menu-empty-padding);
             color: var(--rt-color-text-muted);
             font-size: var(--rt-text-xs);
         }

@@ -70,6 +70,12 @@ export class TestRtSideMenuCellComponent {
         transform: booleanAttribute,
     });
     public readonly searchSize: InputSignal<IRtInput.Size> = input<IRtInput.Size>('sm');
+    public readonly subItemIconFill: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
+        transform: booleanAttribute,
+    });
+    public readonly panelScrollHintShown: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
+        transform: booleanAttribute,
+    });
     /** Свойства меню со значениями первого кита и черта под строкой страницы раздела — так их задаёт приложение. */
     public readonly firstKitProps: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
         transform: booleanAttribute,

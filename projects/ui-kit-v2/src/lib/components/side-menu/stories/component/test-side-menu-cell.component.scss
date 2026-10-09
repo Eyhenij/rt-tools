@@ -42,6 +42,10 @@
                 --rt-side-menu-sub-item-min-height: calc(var(--rt-size-10) + var(--rt-space-1));
                 --rt-side-menu-sub-item-font-size: var(--rt-text-md);
                 --rt-side-menu-sub-item-padding-end: var(--rt-space-md);
+                --rt-side-menu-sub-item-icon-size: var(--rt-size-6);
+                --rt-side-menu-sub-item-gap: calc(var(--rt-space-1) * 3);
+                --rt-side-menu-sub-item-folder-padding-start: calc(var(--rt-space-1) * 3);
+                --rt-side-menu-sub-item-chevron-color: var(--rt-color-text-primary);
             }
 
             .rt-side-menu-sub-item:has(> [data-item-id='2']) {

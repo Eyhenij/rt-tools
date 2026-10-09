@@ -13,6 +13,7 @@ import {
     InputSignal,
     InputSignalWithTransform,
     isDevMode,
+    numberAttribute,
     output,
     OutputEmitterRef,
     Renderer2,
@@ -29,7 +30,7 @@ import { RouterLink } from '@angular/router';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { IRtInput, rtKitLabel } from '@rt-tools/ui-kit-v2/core';
+import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
 import { BreakpointsService } from '@rt-tools/ui-kit-v2/core';
 import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
@@ -42,12 +43,14 @@ import {
 } from '@rt-tools/ui-kit-v2/scroll-area';
 import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
 import { RtSideMenuFavoritesComponent } from './favorites/rt-side-menu-favorites.component';
+import { RtSideMenuCloseTimer } from './rt-side-menu-close-timer';
 import { RtSubMenuKeyboard } from './rt-side-menu-keyboard';
 import { RtSideMenuResize } from './rt-side-menu-resize';
 import { normalizeSideMenuId, RT_SIDE_MENU_DEFAULT_ID } from './rt-side-menu-settings.logic';
 import { RtSideMenuSettingsService } from './rt-side-menu-settings.service';
-import { unpairedSideMenuIcons } from './rt-side-menu-icon.logic';
+import { warnUnpairedSideMenuIcons } from './rt-side-menu-icon.logic';
 import { RtSideMenuIconPipe } from './rt-side-menu-icon.pipe';
+import { RtSideMenuLookBase } from './rt-side-menu-look.base';
 import {
     IRtSideMenuIconContext,
     RtSideMenuFooterDirective,
@@ -109,7 +112,7 @@ const BEM_BLOCK: string = 'rt-side-menu';
         RtSideMenuSubItemComponent,
     ],
 })
-export class RtSideMenuComponent implements IRtSideMenuHost {
+export class RtSideMenuComponent extends RtSideMenuLookBase implements IRtSideMenuHost {
     readonly #breakpoints: BreakpointsService = inject(BreakpointsService);
     readonly #renderer: Renderer2 = inject(Renderer2);
     /** Настройки меню, если приложение их включило: режим и ширина хранятся там под `menuId`. */
@@ -131,6 +134,8 @@ export class RtSideMenuComponent implements IRtSideMenuHost {
         },
         inject(DestroyRef)
     );
+    /** Закрытие подменю, отложенное входом `subMenuCloseDelay`. */
+    readonly #closeTimer: RtSideMenuCloseTimer = new RtSideMenuCloseTimer(inject(DestroyRef));
 
     /** Ходьба с клавиатуры открывает пункт настоящим нажатием его строки — той же дорогой, что и мышь. */
     readonly #keyboard: RtSubMenuKeyboard = new RtSubMenuKeyboard({
@@ -253,25 +258,13 @@ export class RtSideMenuComponent implements IRtSideMenuHost {
     public readonly pinShown: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
         transform: booleanAttribute,
     });
-    /** Подсказки строк подменю — у подписей и у кнопок строк. Доступные имена остаются. */
-    public readonly subMenuTooltipsShown: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
-        transform: booleanAttribute,
-    });
     /**
-     * Подписи под значками полосы. Выключено — имя пункта уходит в подсказку справа от значка, а
-     * подсказка подчиняется `subMenuTooltipsShown`; доступное имя пункт держит всегда.
+     * Задержка закрытия подменю, открытого наведением, в миллисекундах: уход указателя закрывает его
+     * не сразу, а возврат на панель держит открытым. Ноль — закрытие сразу, как раньше.
      */
-    public readonly railTitlesShown: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
-        transform: booleanAttribute,
+    public readonly subMenuCloseDelay: InputSignalWithTransform<number, unknown> = input<number, unknown>(0, {
+        transform: (value: unknown): number => numberAttribute(value, 0),
     });
-    /** Залитые значки полосы — залитый рисунок материального набора и заливка шрифта лигатуры. */
-    public readonly railIconFill: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
-        transform: booleanAttribute,
-    });
-    /** Размер поля поиска подменю — ступень `rt-input`. */
-    public readonly searchSize: InputSignal<IRtInput.Size> = input<IRtInput.Size>('sm');
-    /** Вид поля поиска подменю — вид `rt-input`. */
-    public readonly searchAppearance: InputSignal<IRtInput.Appearance> = input<IRtInput.Appearance>('outline');
 
     public readonly subMenuModeChange: OutputEmitterRef<IRtSideMenu.SubMenuMode> = output<IRtSideMenu.SubMenuMode>();
     public readonly subMenuWidthChange: OutputEmitterRef<number> = output<number>();
@@ -293,6 +286,7 @@ export class RtSideMenuComponent implements IRtSideMenuHost {
     });
 
     constructor() {
+        super();
         this.searchControl.valueChanges.pipe(takeUntilDestroyed()).subscribe((query: string | null): void => {
             this.subMenuQuery.set(query ?? '');
             this.onSearchHold();
@@ -302,17 +296,7 @@ export class RtSideMenuComponent implements IRtSideMenuHost {
 
         // Имя без значка кита и без пары рисует пункт без значка, и пропуск без предупреждения не заметен.
         if (isDevMode()) {
-            effect((): void => {
-                const unpaired: string[] = unpairedSideMenuIcons(this.menuItems(), this.ownIconTpl() !== undefined);
-                if (unpaired.length) {
-                    const names: string = unpaired.map((name: string): string => `«${name}»`).join(', ');
-                    // eslint-disable-next-line no-console -- предупреждение разработчику приложения: другого канала у кита нет
-                    console.warn(
-                        `rt-side-menu «${this.menuId()}»: значков ${names} нет ни в наборе кита, ни в перечне имён Material. ` +
-                            'Задайте имя кита или свой значок через <ng-template rtSideMenuIcon>.'
-                    );
-                }
-            });
+            effect((): void => warnUnpairedSideMenuIcons(this.menuId(), this.menuItems(), this.ownIconTpl() !== undefined));
         }
     }
 
@@ -365,23 +349,39 @@ export class RtSideMenuComponent implements IRtSideMenuHost {
         this.subMenuQuery.set('');
     }
 
-    /** Наведение на пункт полосы открывает его подменю; уход указателя с панели — без пункта. */
+    /**
+     * Наведение на пункт полосы открывает его подменю сразу; уход указателя с панели — без пункта —
+     * и пункт без подменю закрывают его через задержку.
+     */
     public toggleSubMenu(item?: IRtSideMenu.Item): void {
-        if (this.isPinned() || (item === undefined && (this.#searchHeld() || this.#dragHeld()))) {
+        if (this.isPinned() || (item === undefined && this.#isHeld())) {
             return;
         }
 
         if (item?.submenu) {
+            this.#closeTimer.cancel();
             this.selectedSubMenu.set(item.submenu);
             this.#hoverOpened.set(true);
         } else if (this.selectedItem()?.submenu) {
+            this.#closeTimer.cancel();
             this.selectedSubMenu.set(this.selectedItem()?.submenu ?? null);
         } else {
-            this.closeSubMenu();
+            // Ушедший с панели указатель мог за задержку взяться за поиск или строку избранного.
+            this.#closeTimer.run(this.subMenuCloseDelay(), (): void => {
+                if (item !== undefined || !this.#isHeld()) {
+                    this.closeSubMenu();
+                }
+            });
         }
     }
 
+    /** Указатель вернулся на панель: отложенное закрытие снимается. */
+    public cancelSubMenuClose(): void {
+        this.#closeTimer.cancel();
+    }
+
     public closeSubMenu(): void {
+        this.#closeTimer.cancel();
         this.selectedItem.set(null);
         this.selectedSubMenu.set(null);
         this.searchControl.setValue('', { emitEvent: false });
@@ -444,6 +444,10 @@ export class RtSideMenuComponent implements IRtSideMenuHost {
         if (this.narrow()) {
             this.closeMobileMenuAction.emit();
         }
+    }
+
+    #isHeld(): boolean {
+        return this.#searchHeld() || this.#dragHeld();
     }
 
     /**

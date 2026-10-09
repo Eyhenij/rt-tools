@@ -72,6 +72,7 @@
                 rtElem="panel"
                 qa-dataid="side-menu-panel"
                 [rtMod]="{ pinned: isPinned(), held: isSearchHeld() }"
+                (mouseenter)="cancelSubMenuClose()"
                 (mouseleave)="toggleSubMenu()">
                 <div rtElem="panel-head">
                     <rt-input
@@ -100,7 +101,7 @@
                     }
                 </div>
 
-                <rt-scroll-area rtElem="panel-body">
+                <rt-scroll-area rtElem="panel-body" [isScrollHintShown]="panelScrollHintShown()">
                     <ng-container *rtScrollAreaContent>
                         <ng-container [ngTemplateOutlet]="subMenuTpl" />
                     </ng-container>

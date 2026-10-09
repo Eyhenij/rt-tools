@@ -18,6 +18,16 @@
         --rt-side-menu-sub-item-padding-start: var(--rt-space-md);
         --rt-side-menu-sub-item-padding-end: var(--rt-space-sm);
         --rt-side-menu-sub-item-color: var(--rt-color-text-primary);
+        --rt-side-menu-sub-item-gap: var(--rt-space-sm);
+
+        /* Заголовок папки берёт отступ начала строки, пока приложение не задало свой: у первого кита
+           папка стоит ближе к краю, чем её пункты. Растёт с глубиной так же, как у строки. */
+        --rt-side-menu-sub-item-folder-padding-start: var(--rt-side-menu-sub-item-padding-start);
+        --rt-side-menu-sub-item-chevron-color: var(--rt-color-text-muted);
+
+        /* Значок строки и папки — ступень sm значка. Без своего шага значок берёт свой запасной
+           размер, как раньше: ссылка на необъявленный шаг недействительна. */
+        --rt-side-menu-sub-item-icon-size: var(--rt-icon-step-sm);
 
         display: block;
 
@@ -41,7 +51,7 @@
             cursor: pointer;
             font: inherit;
             font-size: var(--rt-side-menu-sub-item-font-size);
-            gap: var(--rt-space-sm);
+            gap: var(--rt-side-menu-sub-item-gap);
             padding-block: var(--rt-space-2);
             padding-inline: calc(var(--rt-side-menu-sub-item-padding-start) * (1 + var(--rt-side-menu-sub-item-depth)))
                 var(--rt-side-menu-sub-item-padding-end);
@@ -68,6 +78,8 @@
         }
 
         &__icon {
+            --rt-icon-step-sm: var(--rt-side-menu-sub-item-icon-size);
+
             flex-shrink: 0;
             color: inherit;
         }
@@ -175,10 +187,11 @@
             --rt-expansion-panel-header-min-height: var(--rt-side-menu-sub-item-min-height);
             --rt-expansion-panel-header-padding-block: var(--rt-space-2);
             --rt-expansion-panel-header-padding-start: calc(
-                var(--rt-side-menu-sub-item-padding-start) * (1 + var(--rt-side-menu-sub-item-depth))
+                var(--rt-side-menu-sub-item-folder-padding-start) * (1 + var(--rt-side-menu-sub-item-depth))
             );
             --rt-expansion-panel-header-padding-end: var(--rt-side-menu-sub-item-padding-end);
-            --rt-expansion-panel-header-gap: var(--rt-space-sm);
+            --rt-expansion-panel-header-gap: var(--rt-side-menu-sub-item-gap);
+            --rt-expansion-panel-chevron-color: var(--rt-side-menu-sub-item-chevron-color);
             --rt-expansion-panel-header-font-size: var(--rt-side-menu-sub-item-font-size);
             --rt-expansion-panel-header-color: var(--rt-side-menu-sub-item-color);
             --rt-expansion-panel-header-bg: transparent;

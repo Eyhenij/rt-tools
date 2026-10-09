@@ -17,7 +17,7 @@
                 [id]="inFavorites() ? null : row.id"
                 [attr.data-item-id]="row.id"
                 [attr.draggable]="inFavorites() ? 'false' : null"
-                [routerLink]="row.link"
+                [attr.href]="row.link | rtSideMenuHref"
                 [style.--rt-side-menu-sub-item-depth]="depth"
                 [rtMod]="{ active: isActive, highlighted: isHighlighted }"
                 [attr.aria-current]="isActive ? 'page' : null"
@@ -142,7 +142,7 @@
     <ng-template #iconTpl let-row>
         @let kitIcon = row.icon | rtSideMenuIcon;
         @if (kitIcon) {
-            <rt-icon rtElem="icon" size="sm" [name]="kitIcon" />
+            <rt-icon rtElem="icon" size="sm" [name]="kitIcon" [fill]="menuRef.subItemIconFill()" />
         } @else if (menuRef.ownIconTpl(); as own) {
             <span rtElem="own-icon" qa-dataid="side-menu-own-icon" aria-hidden="true">
                 <ng-container [ngTemplateOutlet]="own" [ngTemplateOutletContext]="{ $implicit: row, icon: row.icon, slot: 'icon' }" />

@@ -63,6 +63,7 @@ export const iconMaterialMap: readonly IRtIconMaterialEntry[] = [
         why: 'две горизонтальные полосы; рисунок дорисован по слову владельца — им таблица первого кита показывает сравнение «равно»',
     },
     { from: 'edit', to: 'pencil', why: 'карандаш, один в один' },
+    { from: 'folder', to: 'folder', why: SAME_NAME },
     { from: 'fork_spoon', to: 'fork-spoon', why: SAME_NAME },
     { from: 'fullscreen', to: 'fullscreen', why: SAME_NAME },
     { from: 'fullscreen_exit', to: 'window-minimize', why: 'уголки внутрь — пара к fullscreen, выход из полного экрана в шапке чата' },

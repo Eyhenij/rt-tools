@@ -86,8 +86,7 @@ Given the material preset and a submenu folder with the `folder` icon
 When the folder is drawn
 Then it draws the Material folder, outlined and filled
 
-Not covered by a test: `node tools/check-icon-map.mjs` holds every pair to an existing file of both
-sets.
+Not covered: `node tools/check-icon-map.mjs` holds every pair to an existing file of both sets.
 
 ### SC-UKV-794 — row and folder icons are filled by the input
 
