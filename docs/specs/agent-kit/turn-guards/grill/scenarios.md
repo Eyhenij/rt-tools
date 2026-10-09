@@ -62,6 +62,19 @@ Then the second sign lets the menu out: a command is not a decision
 
 Covered: `projects/agent-kit/tests/grill-gate.test.sh`.
 
+### SC-AK-1197 — a question after a refusal carries what was done without the answer
+
+Given a guard refused a call in the turn, and the rules were read
+When the executor asks the owner by a menu or in prose without the line of what was done, or with the
+line but only a read or a status command after the refusal
+Then the question does not leave, and the refusal orders to do the mechanical part of the blocker first
+
+Given the line stands and an edit or a working command followed the refusal, or the turn had no refusal
+When the executor asks the owner
+Then the question leaves
+
+Covered: `projects/agent-kit/tests/grill-gate.test.sh`.
+
 ### SC-AK-1168 — a loaded rule and a subagent report are not the owner's remark
 
 Given the owner's last remark has nothing in common with the new menu, and after it the record holds

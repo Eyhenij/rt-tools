@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# rt-kit v0.29.4 · hooks/grill-gate.sh · 4e15393413ee · правится надстройкой, не здесь
-# Requires: hooks/deny-tail.sh
+# rt-kit v0.29.4 · hooks/grill-gate.sh · b6e2ff4fc94f · правится надстройкой, не здесь
+# Requires: hooks/deny-tail.sh, hooks/turn-exit-patterns.sh
 # rt-hook: Stop
 # The conversation guard: the owner is not asked a question until the laws and rules have been read
 # within the same turn. It judges two events, and that is not duplication; the second is declared
@@ -304,6 +304,110 @@ ${deny_tail_text}"
         jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
             || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"grill-gate: two recommended answers in a row close the remaining questions by assumption."}}\n'
         exit 0
+    fi
+fi
+
+# The fourth sign of the same guard: a question after a refusal carries what was done without the
+# answer.
+#
+# A guard refused, the executor ran not one edit and brought the owner a choice "fix or wait". A
+# question is a lawful exit of a turn, so no guard held it, and the owner asked why the work stopped.
+# A refusal removes the step, not the task: the mechanical part of the blocker is done first. So a
+# question after a refusal leaves only with the line the tree names, and with at least one working
+# command after the last refusal — an edit of a file or a command by the work pattern of the exit
+# guard. A read or a status command does not count: it looks like work and moves nothing.
+#
+# The menu and a question in prose are judged alike: one change of form would otherwise walk around
+# the requirement. A turn without a refusal is not judged by this sign.
+#
+# The line is written in the language the tree speaks to its owner: the tree names it by
+# `RT_DONE_WITHOUT_ANSWER` in its profile, and set empty it drops the sign.
+#
+# FAIL-OPEN: no turn record, no parser, no refusal in the turn — the sign stays silent.
+done_marker="${RT_DONE_WITHOUT_ANSWER-Без ответа сделано:}"
+work_re='git (add|commit|push|checkout|merge|rm)|npm run|pnpm (run|exec)|nx (build|test|run)|gh (pr|issue|api|run)|task:(new|move)|mkdir|cp |mv |rm |sed -i|tee '
+# shellcheck disable=SC1090
+[ -f "$rt_hooks_dir/turn-exit-patterns.sh" ] && . "$rt_hooks_dir/turn-exit-patterns.sh" 2>/dev/null
+if [ -n "$done_marker" ]; then
+    after_refusal="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg work "$work_re" '
+        def is_input:
+            .type == "user"
+            and ((.isCompactSummary // false) | not)
+            and ((.isMeta // false) | not)
+            and (((.message.content // []) | if type == "array"
+                    then ([.[] | select(.type == "tool_result")] | length)
+                    else 0 end) == 0);
+        def refusal:
+            .type == "user" and ((.message.content // []) | if type == "array"
+                then any(.[]; .type == "tool_result" and (.is_error // false)
+                    and ((.content | if type == "string" then . elif type == "array"
+                          then (map(if type == "object" then (.text // "") else "" end) | join(" "))
+                          else "" end) | test("BLOCKED|Refused|denied")))
+                else false end);
+        def working:
+            .type == "assistant" and ((.message.content // []) | any(.[];
+                .type == "tool_use" and (
+                    ((.name // "") | test("^(Edit|Write|NotebookEdit)$"))
+                    or ((.name == "Bash") and ((.input.command // "") | test($work))))));
+
+        (map(is_input) | rindex(true)) as $i
+        | (if $i == null then . else .[$i + 1:] end) as $turn
+        | ($turn | map(refusal) | rindex(true)) as $r
+        | if $r == null then "none"
+          elif ($turn[$r + 1:] | map(working) | any) then "worked"
+          else "idle" end
+    ' 2>/dev/null)"
+
+    if [ "$after_refusal" = "worked" ] || [ "$after_refusal" = "idle" ]; then
+        if [ -n "$tool" ]; then
+            question_text="$asked_text"
+        else
+            question_text="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r '
+                def is_input:
+                    .type == "user"
+                    and ((.isCompactSummary // false) | not)
+                    and ((.isMeta // false) | not)
+                    and (((.message.content // []) | if type == "array"
+                            then ([.[] | select(.type == "tool_result")] | length)
+                            else 0 end) == 0);
+                (map(is_input) | rindex(true)) as $i
+                | (if $i == null then . else .[$i + 1:] end)
+                | [.[] | select(.type == "assistant") | (.message.content // [])[] | select(.type == "text") | .text]
+                | join("\n")
+            ' 2>/dev/null)"
+        fi
+        asks="no"
+        if [ -n "$tool" ]; then
+            asks="yes"
+        elif printf '%s\n' "$question_text" | grep -qE '\?[[:space:]]*$'; then
+            asks="yes"
+        fi
+        marked="no"
+        case "$question_text" in
+            *"$done_marker"*) marked="yes" ;;
+        esac
+        if [ "$asks" = "yes" ] && { [ "$marked" = "no" ] || [ "$after_refusal" = "idle" ]; }; then
+            reason="BLOCKED by grill-gate: a guard refused in this turn, and the question to the owner carries nothing done without the answer.
+
+A refusal removes the step, not the task. Do the mechanical part of the blocker first — what the linter's fix mode repairs, what the refusal names as fixable — then ask only the decision that is left. The question leaves with the line «$done_marker …» naming the working commands of this turn after the last refusal: an edit of a file or a command that changes the tree. A read or a status command does not count."
+
+            # shellcheck disable=SC1090
+            [ -f "$rt_hooks_dir/deny-tail.sh" ] && . "$rt_hooks_dir/deny-tail.sh" 2>/dev/null
+            command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
+            deny_tail_text="$(rt_deny_tail "")"
+            [ -n "$deny_tail_text" ] && reason="${reason}
+
+${deny_tail_text}"
+
+            if [ -n "$tool" ]; then
+                jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
+                    || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"grill-gate: a question after a refusal carries what was done without the answer."}}\n'
+            else
+                jq -n --arg r "$reason" '{decision:"block",reason:$r}' 2>/dev/null \
+                    || printf '{"decision":"block","reason":"grill-gate: a question after a refusal carries what was done without the answer."}\n'
+            fi
+            exit 0
+        fi
     fi
 fi
 
