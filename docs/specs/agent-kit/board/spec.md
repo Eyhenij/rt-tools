@@ -92,6 +92,8 @@ through the executor.
   its epic looks like every other.
 - **The branch of an epic is recognised by its number in the name of the base.** The audit reads the
   queue and does not go to the tree; a task and its epic never share a number.
+- **A base named by a task of the same epic is a chain base and is not a divergence.** The audit
+  takes the task number from the base name and finds the epic of that task in the queue.
 - **A branch carrying no task folder is a divergence, and the branch of an epic is not.** The folder
   travels in by the very first commit: an uncommitted one lets edits through for the whole of the
   work, and the refusal arrives at the exit of a turn, when there is nothing left to fix with. An

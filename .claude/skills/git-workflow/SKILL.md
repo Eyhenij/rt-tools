@@ -4,7 +4,7 @@ kind: rule
 law: delivery
 description: Rule under the delivery law for a tree on GitHub. Load for creating a task and a branch, commit, push, opening a PR and merging. Names the one-to-one pair of task and branch, the machine account and the delivery guards. Patterns git-workflow-commit, -pr, -merge, -stack. Rollout — rule deploy-flow.
 ---
-<!-- rt-kit v0.29.4 · rules/git-workflow.github.md · 09d425d896fc · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.4 · rules/git-workflow.github.md · 39b37f1cd60c · правится надстройкой, не здесь -->
 
 # Delivery — how it works here
 
@@ -81,7 +81,8 @@ flowchart TD
   checkout -b <КЛЮЧ>-<номер задачи>-<slug> <ветка эпика>`; from `main` only the epic branch itself is
   taken — a task branched from `main` carries into it what the epic has not finished.
 - **The PR of a task has the epic branch as its base — `gh pr create --base <ветка эпика>`.** Opened
-  into `main`, it leaves the epic branch a copy nobody merges.
+  into `main`, it leaves the epic branch a copy nobody merges. In a chain the base is the previous
+  branch, lawful while it carries the epic branch.
 - **The PR of an epic into the main branch opens after all its tasks are merged and their folders
   are taken apart.** The merge button there means the whole epic, and there is nothing to press it
   for while a task of it is still written.

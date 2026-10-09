@@ -1,11 +1,11 @@
-// rt-kit v0.29.4 · checks/board-epics.github.mjs · 3c4b5c9b0ae1 · правится надстройкой, не здесь
+// rt-kit v0.29.4 · checks/board-epics.github.mjs · ac14366b2830 · правится надстройкой, не здесь
 /**
  * The link between a task and an epic. Lives in a file of its own: the work queue audit stands at
  * the length limit even without it, and these two checks are read separately.
  */
 import { declaredEpicOf } from './board-epic-link.mjs';
 import { planPathOf, planRows, planTaskCells } from './board-epic-plan.mjs';
-import { ghJson, numberFromTitle, OfflineError, OWNER, REPO, TASK_KEY } from './board.mjs';
+import { ghJson, numberFromBranch, numberFromTitle, OfflineError, OWNER, REPO, TASK_KEY } from './board.mjs';
 import { CONFIG } from './rt-kit-checks.config.mjs';
 
 /**
@@ -235,6 +235,12 @@ export function checkEpicPullBase(open, pulls, report) {
         const epic = epicOf.get(number);
         const base = String(pull.baseRefName ?? '');
         if (base.startsWith(`${TASK_KEY}-${epic}-`)) {
+            continue;
+        }
+        // A chain base: the branch of a task below in the same epic. The rule puts a chain PR on
+        // the previous branch, and that branch carries the epic branch.
+        const baseTask = numberFromBranch(base);
+        if (baseTask !== null && epicOf.get(baseTask) === epic) {
             continue;
         }
         report(

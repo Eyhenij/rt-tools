@@ -80,7 +80,8 @@ flowchart TD
   checkout -b <КЛЮЧ>-<номер задачи>-<slug> <ветка эпика>`; from `main` only the epic branch itself is
   taken — a task branched from `main` carries into it what the epic has not finished.
 - **The PR of a task has the epic branch as its base — `gh pr create --base <ветка эпика>`.** Opened
-  into `main`, it leaves the epic branch a copy nobody merges.
+  into `main`, it leaves the epic branch a copy nobody merges. In a chain the base is the previous
+  branch, lawful while it carries the epic branch.
 - **The PR of an epic into the main branch opens after all its tasks are merged and their folders
   are taken apart.** The merge button there means the whole epic, and there is nothing to press it
   for while a task of it is still written.
