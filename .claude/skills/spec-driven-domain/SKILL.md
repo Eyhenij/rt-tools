@@ -4,7 +4,7 @@ kind: pattern
 rule: spec-driven
 description: Pattern of rule spec-driven. Load when creating or editing a domain spec in docs/specs — the mandatory sections, the scenario form, binding a rule to code, the order of work from spec to code. Not for creating a law, a rule or a pattern — that is pattern spec-driven-rule.
 ---
-<!-- rt-kit v0.30.0 · patterns/spec-driven-domain.md · bb107bb4ad58 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.30.0 · patterns/spec-driven-domain.md · 4ea90b21dcc8 · правится надстройкой, не здесь -->
 
 # Domain spec
 
@@ -161,6 +161,12 @@ command's name is given by the rule's companion.
 3. The code is written to the scenarios, and the tests are named by their identifiers.
 4. `npm run check:specs` — before the push.
 5. Acceptance goes by the scenarios, not by a retelling of the edit.
+
+Between steps 2 and 3 `npm run check:specs` is red by design, not by mistake. A scenario without a
+test it only lists, but a rule without a binding and a contract row without a procedure it refuses,
+and their bindings name code that is not written yet. So a stage that edits the spec names as its
+readiness sign the refusal list itself — only the new rules unbound, only the new scenarios under
+"no test" — and not exit 0. Exit 0 is the sign of the stage that writes the bound code.
 
 A rule promising a result a person sees is confirmed on the running application, not by
 inference from the call graph. Reading confirms headings, the link to bindings and the shape of
