@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.29.4 · hooks/turn-exit-guard.sh · f837c9dc6d66 · правится надстройкой, не здесь
+# rt-kit v0.29.4 · hooks/turn-exit-guard.sh · 9e3ac8c88477 · правится надстройкой, не здесь
 # rt-hook: Stop
 # Requires: hooks/deny-tail.sh, hooks/epic-over.sh, hooks/turn-exit-patterns.sh, hooks/turn-exit-epic.sh
 # Turn exit guard: a turn in which nothing was done on the work does not end until the work is
@@ -54,7 +54,7 @@ rt_hook_read
 rt_te_deny() {
     # The end of an epic releases the turn whatever tier came here: the epic is read only on this road.
     command -v rt_te_epic_over >/dev/null 2>&1 && rt_te_epic_over && exit 0
-    rt_te_reason="$(printf '%s\n\n%s' "$1" 'The owner said to stop — quote their word in the progress: `- **Waiting for the owner:** «<their words>»`. The guard releases on that line and on nothing else.')"
+    rt_te_reason="$(printf '%s\n\n%s' "$1" 'The owner said to stop — quote their word in the progress: `- **Waiting for the owner:** «<their words>»`. Where the task folder is gone, quote it in « » in the reply: the guard checks the quote against their message.')"
     rt_te_short="$2"
     # shellcheck disable=SC1090
     [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
@@ -444,12 +444,12 @@ fi
 # sign is read without the network and stays silent where there is no reference at all — such
 # branches are created for a trial too.
 # Incident analysis — the record "2026-08-25-fifteen-branches-over-one-index" in the intake.
-if [ "$worked" = "true" ] && [ "$handed_over" != "true" ]; then
+if [ "$worked" = "true" ] && [ "$handed_over" != "true" ] && [ "${unpushed_named:-false}" != "true" ]; then
     unpushed="$(git -C "$root" rev-list --count '@{u}..HEAD' 2>/dev/null)"
     if [ -n "$unpushed" ] && [ "$unpushed" -gt 0 ] 2>/dev/null; then
         reason="BLOCKED by turn-exit-guard: there was work in the turn, but it stayed in the working tree — commits not handed over: ${unpushed}.
 
-The owner sees the former state and reads it as «nothing was done». Two moves from here: bring the work to the hosting — push the branch and open a request — or remove what was done if it is not needed. What is left in the tree is named with a reason — in the words of the owner, not as a list of leftovers.
+The owner sees the former state and reads it as «nothing was done». Two moves from here: bring the work to the hosting — push the branch and open a request — or remove what was done if it is not needed. What is left in the tree is named with a reason — in the words of the owner, not as a list of leftovers: the line «Не отправлено: <reason>» in the reply releases this tier.
 
 The guard judges one turn: the next session is not refused."
 
