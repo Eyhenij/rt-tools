@@ -128,6 +128,15 @@ main branch, and a line about the uncounted would turn red at every fresh tip
 
 Covered: `projects/agent-kit/tests/checks-board.test.sh`.
 
+### SC-AK-1213 — the last successful rollout is asked without the status filter
+
+Given the check of the work queue asks the hosting for the last successful rollout
+When the request is made
+Then it carries the twenty latest runs and no status filter, and the first successful run among
+them is the one production is compared against
+
+Covered: `projects/agent-kit/tests/checks-board.test.sh`.
+
 ### SC-AK-531 — a production that lags is named a divergence
 
 Given the last successful rollout was made not from the tip of the main branch

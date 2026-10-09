@@ -222,6 +222,11 @@ the merge, not after.
   different things: the first is launched, the second is read by the journal and fixed. Four merges in
   a row went away on top of a breakage the first one brought, and production stood for almost two
   hours.
+- **The last successful rollout is looked for among the latest runs, not by the status filter of the
+  hosting.** The filter is counted by a separate index that lags: the same request returned a
+  month-old run and yesterday's one within a minute, and the audit three times a day named a lag of
+  hundreds of commits that did not exist. The twenty latest runs come without the filter, and the
+  first successful one is taken.
 - **A rollout in progress does not count as a divergence.** It may still end in success, and a turn
   refused by it pays for a state that will be gone in a minute.
 - **A tree that named no mark or no directory of the lines gets silence, not a refusal.** There will be
