@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, WritableSignal, signal } from '@ang
 import { ComponentFixture } from '@angular/core/testing';
 
 import { createRtFixture, el, hostClasses } from '../../../testing/rt-kit-testing';
+import { IRtIconButton } from '../icon-button/rt-icon-button.model';
 import { IRtMenu } from './rt-menu.model';
 import { RtMenuItemComponent } from './rt-menu-item.component';
 import { RtMenuComponent } from './rt-menu.component';
@@ -18,7 +19,13 @@ function items(): HTMLElement[] {
 @Component({
     selector: 'rt-menu-host',
     template: `
-        <rt-menu [ariaLabel]="ariaLabel()" [align]="align()" [size]="size()" [disabled]="disabled()" (openedChange)="opened.push($event)">
+        <rt-menu
+            [ariaLabel]="ariaLabel()"
+            [align]="align()"
+            [size]="size()"
+            [triggerSize]="triggerSize()"
+            [disabled]="disabled()"
+            (openedChange)="opened.push($event)">
             <rt-menu-item label="Открыть" icon="ico-eye" (selected)="picked = picked + 1" />
             <rt-menu-item label="Удалить" icon="ico-trash" [danger]="true" [disabled]="itemDisabled()" (selected)="removed = removed + 1" />
         </rt-menu>
@@ -30,6 +37,7 @@ class MenuHostComponent {
     public readonly ariaLabel: WritableSignal<string> = signal<string>('');
     public readonly align: WritableSignal<IRtMenu.Align> = signal<IRtMenu.Align>('end');
     public readonly size: WritableSignal<IRtMenu.Size> = signal<IRtMenu.Size>('md');
+    public readonly triggerSize: WritableSignal<IRtIconButton.Size> = signal<IRtIconButton.Size>('md');
     public readonly disabled: WritableSignal<boolean> = signal<boolean>(false);
     public readonly itemDisabled: WritableSignal<boolean> = signal<boolean>(false);
     public readonly opened: boolean[] = [];
@@ -47,6 +55,18 @@ function openMenu(fixture: ComponentFixture<MenuHostComponent>): void {
 }
 
 describe('RtMenuComponent', (): void => {
+    it('размер кнопки-триггера задаёт вход triggerSize, по умолчанию md', (): void => {
+        const fixture: ComponentFixture<MenuHostComponent> = setup();
+        const control: () => HTMLElement | undefined = (): HTMLElement | undefined =>
+            el(fixture, '[qa-dataid="menu-trigger"] [qa-dataid="icon-button-control"]')?.nativeElement;
+        const regular: boolean | undefined = control()?.classList.contains('rt-icon-button--md');
+
+        fixture.componentInstance.triggerSize.set('xs');
+        fixture.detectChanges();
+
+        expect([regular, control()?.classList.contains('rt-icon-button--xs')]).toEqual([true, true]);
+    });
+
     it('до клика панели нет', (): void => {
         setup();
 
