@@ -255,3 +255,13 @@ export function pinnedSideMenuItems(
 
     return items.find((item: IRtSideMenu.Item): boolean => activeIds.includes(item.id) && !!item.submenu?.length)?.submenu ?? [];
 }
+
+/**
+ * Нажатие, которое браузер открывает сам по адресу ссылки: не левой кнопкой или с клавишей —
+ * новая вкладка, окно, загрузка. Строка подменю такое нажатие не перехватывает.
+ */
+export function sideMenuPressOpensInBrowser(event: MouseEvent): boolean {
+    const withKey: boolean = [event.ctrlKey, event.metaKey, event.shiftKey, event.altKey].some(Boolean);
+
+    return event.button !== 0 || withKey;
+}

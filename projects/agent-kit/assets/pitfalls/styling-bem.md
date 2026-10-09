@@ -37,6 +37,10 @@ The rule is `styling-bem`; the articles that hold the law stand there.
 - **`justify-content: center` in a flex container with `overflow-x` pushes the first items beyond
   zero scroll** — there is no way to scroll to them. In scrollable strips —
   `justify-content: safe center`.
+- **A strip with `overflow-x` inside a flex column collapses to a few pixels.** Any `overflow` other
+  than `visible` makes the item a scroll container, and its automatic minimum height becomes zero.
+  When the column runs out of height, the strip yields first. The strip gets `flex-shrink: 0`. The
+  measurement is the strip's height against its button's, at three widths.
 - **Do not put `scrollbar-gutter: stable` on the root:** the reserve for the scrollbar narrows the
   containing block for `position: fixed`, and a popup aligned to the right edge lands a reserve's
   width to the left of its button.

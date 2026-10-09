@@ -16,4 +16,5 @@ tree, or the tree holds what the spec is silent about.
 - **The toaster in the replace mode lets the previous toasts leave when a new one arrives.** — `projects/ui-kit-v2/src/lib/components/toast/rt-toaster.component.ts:#replaced` — scenario `SC-UKV-585`
 - **A toast shows its own icon when it has one, and no icon when the icon is turned off.** — `projects/ui-kit-v2/src/lib/components/toast/rt-toast.component.ts:icon` — scenario `SC-UKV-586`
 - **The icons of the severities come from an injectable map.** — `projects/ui-kit-v2/src/lib/components/toast/rt-toaster.model.ts:RT_TOAST_SEVERITY_ICONS` — scenario `SC-UKV-587`
+- **A toast with a dismiss callback reports once why it left: the close button, its timer or the replace mode; a toast left by its action reports nothing.** — `projects/ui-kit-v2/src/lib/components/toast/rt-toast.component.ts:#deleteToast`, `projects/ui-kit-v2/src/lib/platform/notification.model.ts:DismissReason` — scenario `SC-UKV-816`
 - **Without the new options, handles and mode the toaster behaves and draws as before.** — `projects/ui-kit-v2/src/lib/components/toast/rt-toaster.component.ts:mode` — scenario `SC-UKV-588`

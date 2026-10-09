@@ -449,6 +449,17 @@ expect_ask "SC-AK-1134 — один рекомендованный ответ м
         "$(uses Skill "$LOADED")")" \
         'Хранить помесячно или по дням?')" PASS
 
+# --- SC-AK-1208 — второй вид ответа меню считается так же ------------------------------------
+# Ответ меню приходит и как «Your questions have been answered:»; такой ответ серию не пропускал.
+menu_answered_too() { jq -c -n --arg t "Your questions have been answered: $1. You can now continue with these answers in mind." '{type:"user",message:{content:[{type:"tool_result",content:$t}]}}'; }
+expect_ask "SC-AK-1208 — два рекомендованных ответа второго вида закрывают меню" \
+    "$(input_ask_text "$(transcript \
+        "$(say "$SAID_ASK")" \
+        "$(uses AskUserQuestion '{"questions":[]}')" "$(menu_answered_too "$REC1")" \
+        "$(uses AskUserQuestion '{"questions":[]}')" "$(menu_answered_too "$REC2")" \
+        "$(uses Skill "$LOADED")")" \
+        'Хранить помесячно или по дням?')" DENY
+
 # Отказ называет, что делать, а не как переспросить: промах здесь — остановка разрешённой работы.
 out="$(input_ask_text "$(transcript \
     "$(say "$SAID_RULE")" \

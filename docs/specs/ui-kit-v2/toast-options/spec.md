@@ -1,6 +1,6 @@
 # The options of a toast and the modes of the toaster
 
-**Status:** in force · **Revision:** 2 October 2026 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 9 October 2026 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the toaster and the notification bus of the second kit
 **Laws:** `frontend-application`, `verifiability`, `reuse-first`
 **Procedures:** none
@@ -38,6 +38,8 @@ the options and handles are invisible to them.
 - **The toaster in the replace mode lets the previous toasts leave when a new one arrives.**
 - **A toast shows its own icon when it has one, and no icon when the icon is turned off.**
 - **The icons of the severities come from an injectable map.**
+- **A toast with a dismiss callback reports once why it left: the close button, its timer or the
+  replace mode; a toast left by its action reports nothing.**
 - **Without the new options, handles and mode the toaster behaves and draws as before.**
 
 ## What is out of scope
@@ -100,3 +102,4 @@ None.
 ## History of changes
 
 - 2 October 2026 — the agreement was written from the consumer's request by task RT-2478.
+- 9 October 2026 — the dismiss callback, from the application's request, by task RT-2644.
