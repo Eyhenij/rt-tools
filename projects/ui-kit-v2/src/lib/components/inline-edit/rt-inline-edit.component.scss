@@ -87,12 +87,13 @@
             flex-shrink: 0;
         }
 
-        /* Плашка, как у первого приложения: цвет действия на светлой подложке, рамка, мелкий жирный
-           шрифт. Плашка только в покое — поле при правке читается полем в обоих видах. */
+        /* Плашка: светлая подложка, рамка, мелкий жирный шрифт — цвета нейтральной плашки rt-tag.
+           Цвет действия на этой подложке не набирает 4.5 контраста, поэтому он только у рамки при
+           наведении. Плашка только в покое — поле при правке читается полем в обоих видах. */
         &--chip &__value {
             border-color: var(--rt-color-border-default);
             background: var(--rt-color-bg-subtle);
-            color: var(--rt-color-action-primary-on-surface);
+            color: var(--rt-color-text-primary);
             font-size: var(--rt-text-xs);
             font-weight: var(--rt-font-weight-semibold);
 
@@ -102,8 +103,12 @@
             }
         }
 
-        &--chip &__pencil {
-            color: inherit;
+        &--chip &__value--empty {
+            color: var(--rt-color-text-muted);
+        }
+
+        &--chip &__value:disabled {
+            color: var(--rt-color-text-disabled);
         }
     }
 }
