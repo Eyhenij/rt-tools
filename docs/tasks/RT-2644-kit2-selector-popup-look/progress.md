@@ -2,13 +2,15 @@
 
 ## Where we stand
 
-- **State:** `этап-идёт`
+- **State:** `этапы-кончились`
 - **Stage:** 3 of 3 — Showcase and delivery
 - **Done:** rows 122–128 are in the menu: the folder pair, the row icon fill and size, the folder
   header properties, the empty padding, the row press handed to the consumer, the close delay and the
   panel scroll hint. 137 side menu specs and 2624 kit specs are green; 806 frames of 806 match after
   six deliberate re-takes.
-- **Next step:** the package archive on the desktop and the message to the application.
+- **Next step:** after the owner's word — the branch goes to the host, and a new PR into main carries
+  rows 113–128. The archive `rt-tools-ui-kit-v2-0.19.1-rows-122-128.tgz` is on the desktop, and the
+  application is told what arrived.
 - **Uncommitted:** no
 - **Waiting for the owner:** «пры не открывай откроеш после моего апрува» — the push and the PR wait
   for the owner's approval.
@@ -28,7 +30,7 @@
 - [x] 3.1 Give the first kit look story the new inputs and properties
 - [x] 3.2 Measure the rows, the folder and the delay on :6007
 - [x] 3.3 Take the first kit look reference and run the whole set
-- [>] 3.4 Build the package archive and tell the application
+- [x] 3.4 Build the package archive and tell the application
 
 ## Decisions along the way
 
