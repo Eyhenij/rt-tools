@@ -46,6 +46,11 @@
                 --rt-side-menu-sub-item-gap: calc(var(--rt-space-1) * 3);
                 --rt-side-menu-sub-item-folder-padding-start: calc(var(--rt-space-1) * 3);
                 --rt-side-menu-sub-item-chevron-color: var(--rt-color-text-primary);
+                --rt-side-menu-sub-item-button-radius: var(--rt-radius-full);
+                --rt-side-menu-sub-item-button-icon-size: var(--rt-size-5);
+                --rt-side-menu-sub-item-action-size: calc(var(--rt-size-6) + var(--rt-space-0-5));
+                --rt-side-menu-sub-item-favorite-size: var(--rt-size-8);
+                --rt-side-menu-sub-item-favorite-color: var(--rt-color-text-muted);
             }
 
             .rt-side-menu-sub-item:has(> [data-item-id='2']) {

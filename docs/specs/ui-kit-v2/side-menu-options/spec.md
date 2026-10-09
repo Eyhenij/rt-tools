@@ -45,6 +45,7 @@ are invisible to them.
 - **A submenu row hands its press to the consumer before the navigation, and a prevented press does not navigate.**
 - **A submenu opened by hover closes after the delay input, and the pointer coming back keeps it open.**
 - **The submenu panel shows the scroll hint only by the input.**
+- **The row buttons take their rounding, size, icon size and resting colour from row properties, and the row icon fill input fills the consumer's button too.**
 
 ## What is out of scope
 

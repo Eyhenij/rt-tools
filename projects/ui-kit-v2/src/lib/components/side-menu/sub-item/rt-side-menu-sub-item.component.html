@@ -47,7 +47,6 @@
                         rtElem="favorite"
                         qa-dataid="side-menu-favorite-remove"
                         size="sm"
-                        shape="circle"
                         [rtMod]="{ remove: true }"
                         [icon]="favoritesIcons.remove"
                         [ariaLabel]="removeLabel()"
@@ -59,7 +58,6 @@
                         rtElem="favorite"
                         qa-dataid="side-menu-favorite-star"
                         size="sm"
-                        shape="circle"
                         [rtMod]="{ on: isFavorite }"
                         [icon]="isFavorite ? 'star-fill' : 'star'"
                         [iconFill]="isFavorite"
@@ -81,8 +79,8 @@
                         rtElem="action"
                         qa-dataid="side-menu-sub-item-action"
                         size="sm"
-                        shape="circle"
                         [icon]="buttonKitIcon"
+                        [iconFill]="menuRef.subItemIconFill()"
                         [ariaLabel]="row.name ?? ''"
                         (clicked)="onClickSubMenuAdditional(row, $event)">
                         @if (buttonOwnTpl) {

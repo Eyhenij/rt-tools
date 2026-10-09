@@ -29,6 +29,15 @@
            размер, как раньше: ссылка на необъявленный шаг недействительна. */
         --rt-side-menu-sub-item-icon-size: var(--rt-icon-step-sm);
 
+        /* Кнопки строки — «+» потребителя, звезда, «убрать» и ручка блока избранного. Умолчания дают
+           прежний вид: скруглённый квадрат шага sm, значок ступени sm, цвет текста. Значок — та же
+           ступень без своего шага, что и у значка строки. */
+        --rt-side-menu-sub-item-button-radius: var(--rt-radius-md);
+        --rt-side-menu-sub-item-button-icon-size: var(--rt-icon-step-sm);
+        --rt-side-menu-sub-item-action-size: var(--rt-control-height-sm);
+        --rt-side-menu-sub-item-favorite-size: var(--rt-control-height-sm);
+        --rt-side-menu-sub-item-favorite-color: var(--rt-color-text-primary);
+
         display: block;
 
         /* Трекинг подписи наследуют и строка, и заголовок папки. Своего умолчания у него нет: без
@@ -138,6 +147,21 @@
             &:hover {
                 outline-color: var(--rt-color-border-strong);
             }
+
+            > .rt-icon-button {
+                --rt-icon-button-size-step: var(--rt-side-menu-sub-item-action-size);
+            }
+        }
+
+        /* Форма и значок кнопок строки. Скругление и шаг размера кнопка объявляет на своём корне —
+           там они и переназначаются; ступень значка доходит до значка с тега. */
+        &__action,
+        &__favorite {
+            --rt-icon-step-sm: var(--rt-side-menu-sub-item-button-icon-size);
+
+            > .rt-icon-button {
+                --rt-icon-button-radius: var(--rt-side-menu-sub-item-button-radius);
+            }
         }
 
         /* Кнопка избранного: звезда у пункта раздела и «убрать» у строки блока. Закрашенная звезда
@@ -145,8 +169,15 @@
            клавиатуры своей строки, а где указатель не умеет наводиться, — всегда. Прячется
            прозрачностью: кнопка остаётся на месте и в порядке Tab. */
         &__favorite {
+            /* Цвет покоя — свойство строки: состояния ниже переназначают цвет кнопки и перебивают его. */
+            --rt-icon-button-color: var(--rt-side-menu-sub-item-favorite-color);
+
             flex-shrink: 0;
             opacity: 0;
+
+            > .rt-icon-button {
+                --rt-icon-button-size-step: var(--rt-side-menu-sub-item-favorite-size);
+            }
 
             &--on {
                 --rt-icon-button-color: var(--rt-color-action-primary);

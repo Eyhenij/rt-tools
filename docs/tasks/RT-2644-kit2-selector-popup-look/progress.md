@@ -53,6 +53,13 @@
   grows from zero height, and the size watcher missed the end of that growth. The backdrop of a
   panel held by search starts after the rail, so hovering another rail item switches the panel as
   in the first kit. Affected stage: 2.
+- **Row 131 keeps the square row buttons by default.** The application asked for round buttons by
+  default; the owner's word about the default look comes first, so the circle, the sizes, the icon
+  size and the resting colour are row properties, and the consumer button fill follows
+  `subItemIconFill`. The dead `shape="circle"` attribute is gone from four buttons. Two names the
+  application asked for are read by the first kit's side menu, so the second kit names them after
+  its row: `--rt-side-menu-sub-item-favorite-size` and `--rt-side-menu-sub-item-favorite-color`.
+  Affected stage: 2.
 
 ## Handover of the session
 

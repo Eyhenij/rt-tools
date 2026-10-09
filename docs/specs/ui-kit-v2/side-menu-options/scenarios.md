@@ -114,3 +114,14 @@ switches it at once, and without the delay the panel closes at once
 Given a menu without the panel hint input and one with it
 When the submenu opens
 Then only the second panel carries the scroll hint
+
+### SC-UKV-806 — the row buttons follow the row properties and the fill input
+
+Given a submenu row with a consumer button, a star and the favourites block with its handle
+When the row properties of the buttons are set, and the row icon fill input is on
+Then the four buttons take the given rounding, size, icon size and resting colour, the chosen star
+and the hovered remove keep their own colours, and the consumer button icon is filled; without them
+the buttons draw as before
+
+Покрытие: частичное — тест держит заливку значка; форму, размер и цвет держат измерение на витрине и
+кадр истории первого кита.

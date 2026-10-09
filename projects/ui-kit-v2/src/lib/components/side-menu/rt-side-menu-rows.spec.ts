@@ -8,6 +8,7 @@ import { LOCAL_STORAGE } from '@rt-tools/core';
 import { BreakpointsService } from '../../platform';
 import { createRtFixture, qaAll } from '../../../testing/rt-kit-testing';
 import { RtIconComponent } from '../icon/rt-icon.component';
+import { RtIconButtonComponent } from '../icon-button/rt-icon-button.component';
 import { RtScrollAreaComponent } from '../scroll-area/rt-scroll-area.component';
 import { provideRtSideMenuSettings, RtSideMenuSettingsService } from './rt-side-menu-settings.service';
 import { RtSideMenuComponent } from './rt-side-menu.component';
@@ -87,6 +88,24 @@ describe('Строки и панель бокового меню', (): void => {
         const filled: ComponentFixture<RtSideMenuComponent> = menu({ subItemIconFill: true });
         hover(filled, 1);
         expect(fills(filled)).toEqual([true, true]);
+    });
+
+    it('SC-UKV-806 — значок кнопки потребителя в строке залит тем же входом, что и значки строк', (): void => {
+        const withButton: IRtSideMenu.Item[] = [
+            ITEMS[0],
+            { ...ITEMS[1], submenu: [{ id: 'all', name: 'Все отчёты', link: '/reports', iconButton: { icon: 'plus' } }] },
+        ];
+        const fill: (fixture: ComponentFixture<RtSideMenuComponent>) => boolean = (
+            fixture: ComponentFixture<RtSideMenuComponent>
+        ): boolean => qaAll(fixture, 'side-menu-sub-item-action')[0].injector.get(RtIconButtonComponent).iconFill();
+
+        const plain: ComponentFixture<RtSideMenuComponent> = menu({ menuItems: withButton });
+        hover(plain, 1);
+        expect(fill(plain)).toBe(false);
+
+        const filled: ComponentFixture<RtSideMenuComponent> = menu({ menuItems: withButton, subItemIconFill: true });
+        hover(filled, 1);
+        expect(fill(filled)).toBe(true);
     });
 
     it('SC-UKV-795 — нажатие строки сначала у потребителя; отменённое не переходит, с клавишей остаётся браузеру', (): void => {
