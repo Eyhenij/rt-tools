@@ -63,13 +63,16 @@ The progress in full — `docs/tasks/RT-2552-kit2-breadcrumbs/progress.md`; the 
 ### Uncommitted
 
 ```
- M projects/ui-kit-v2/src/lib/components/breadcrumbs/Overview.mdx
- M projects/ui-kit-v2/src/lib/components/breadcrumbs/rt-breadcrumbs.component.scss
+none
 ```
 
 ### Commits over the main branch
 
 ```
+584044705 docs(rt:ui-kit-v2): сценарии крошек перешли на SC-UKV-819–824
+fcf4608fe chore(rt:ui-kit-v2): ветка эпика RT-2542 со свежим main влита в ветку задачи RT-2552
+df6f656a5 chore(rt:ui-kit-v2): main влита в ветку эпика RT-2542
+df2171a07 feat(rt:ui-kit-v2): оформление крошек — свойства блока и материальный вид
 40d362078 chore(rt:ui-kit-v2): ветка эпика RT-2542 со свежим main влита в ветку задачи RT-2552
 483d21965 chore(rt:ui-kit-v2): main влита в ветку эпика RT-2542
 f14cb33ea chore(rt:ui-kit-v2): ветка эпика RT-2542 со свежим main влита в ветку задачи
@@ -86,10 +89,6 @@ b452f2622 chore(rt:ui-kit-v2): main влита в ветку эпика RT-2542
 3702f44b9 chore(rt:ui-kit-v2): main влита в ветку эпика RT-2542
 2a7f410ce docs: папка задачи RT-2552 — хлебные крошки второго кита
 720dd3e75 Merge remote-tracking branch 'origin/main' into RT-2542-kit2-app-parts
-e99be6700 [RT-2551] Во втором ките появился гибридный выбор деревом (#2622)
-43120470d Merge branch 'RT-2542-kit2-app-parts' into RT-2551-kit2-hybrid-tree-selector
-1189e339c Merge branch 'RT-2611-delivery-guard-length' into RT-2542-kit2-app-parts
-2ed9cfb12 Merge remote-tracking branch 'origin/RT-2542-kit2-app-parts' into RT-2551-kit2-hybrid-tree-selector
 ```
 
 Written by a hook before the compaction of the context. Everything standing here is checked
