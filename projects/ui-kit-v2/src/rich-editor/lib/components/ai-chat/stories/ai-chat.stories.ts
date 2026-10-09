@@ -16,6 +16,8 @@ export default {
         sending: { control: { type: 'boolean' } },
         loading: { control: { type: 'boolean' } },
         fullScreenable: { control: { type: 'boolean' } },
+        copyable: { control: { type: 'boolean' } },
+        headerIconPreset: { control: { type: 'inline-radio' }, options: ['base', 'material'] },
         send: { action: 'send' },
         stop: { action: 'stop' },
         retry: { action: 'retry' },
@@ -39,5 +41,7 @@ export const Playground: TStory = {
         error: null,
         threads: AI_CHAT_THREADS,
         fullScreenable: true,
+        copyable: true,
+        headerIconPreset: 'base',
     },
 };

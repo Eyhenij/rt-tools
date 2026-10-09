@@ -119,7 +119,14 @@
 
         &__question {
             display: flex;
-            justify-content: flex-end;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: var(--rt-space-2xs);
+        }
+
+        &__question-actions {
+            display: flex;
+            gap: var(--rt-space-xs);
         }
 
         &__bubble {

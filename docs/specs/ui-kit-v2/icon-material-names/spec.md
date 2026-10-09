@@ -1,6 +1,6 @@
 # The Material names of an icon
 
-**Status:** in force · **Revision:** 8 October 2026 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 9 October 2026 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the icon of the second kit and its table of Material pairs; the material preset
 **Laws:** `frontend-application`, `verifiability`, `reuse-first`
 **Procedures:** none
@@ -57,6 +57,9 @@ A person sees an icon; how it is drawn is invisible to them.
   `disabled` stand next to the former ones.
 - **Under the material preset a button asks for the material drawing of its icon, as the icon
   does.**
+- **A sign of the icons alone switches the drawings under it to the material set and carries no tokens.** The
+  material preset changes the tokens and the drawings at once; the sign changes the drawings only,
+  for the icon and for the button alike.
 - **The icon button, the toggle button group, the split button and the empty state take a glyph
   next to their kit name.**
 - **Without a glyph, a spin and a size in pixels every icon draws as before.**
@@ -137,3 +140,4 @@ None.
   application properties, by task RT-2619.
 - 8 October 2026 — by task RT-2644 from the application's request: under `font` a kit name the
   font cannot draw takes the kit drawing instead of its own text.
+- 9 October 2026 — by task RT-2722: the sign of the icons alone, `data-rt-icon-preset`.
