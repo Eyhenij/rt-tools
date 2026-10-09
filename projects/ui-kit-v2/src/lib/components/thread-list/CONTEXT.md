@@ -19,7 +19,7 @@
 ```
 
 Входы: `rows`, `activeId`, `searchPlaceholder`, `emptyText`, `loading`, `fetching`, `hasMore`,
-`filtersActive`. Выходы: `selectRow`, `openInNewTab`, `searchChange`, `loadMore`.
+`filtersActive`, `emptyPreviewIcons`. Выходы: `selectRow`, `openInNewTab`, `searchChange`, `loadMore`.
 
 Строка обязана иметь `id`, `hasUnread` и (необязательно) `overdue` — это всё, что список о ней знает.
 Номер строки — число или строка: у записей домена ключ не всегда числовой. Тем же типом приходит
@@ -45,6 +45,8 @@
 
 ## Края
 
+- Пустой список рисует строки-превью по одной на значок из `emptyPreviewIcons` (по умолчанию
+  `user`, `users`, `user`); каждая вторая строка сдвинута модификатором `offset`.
 - Якорь догрузки (`rtInfiniteScroll`) появляется только при `hasMore`.
 - Кнопка фильтров рисуется, только если объявлен шаблон `[rtThreadListFilters]`;
   `filtersActive` рисует на ней точку.

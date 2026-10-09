@@ -118,30 +118,47 @@ judged="$(printf '%s\n' "$said" \
         !code && !/^[[:space:]]*>/' \
     | sed -E 's/`[^`]*`/ /g; s/«[^»]*»/ /g; s/"[^"]*"/ /g' \
     | sed -E 's/([.!?])[[:space:]]+/\1\'$'\n''/g' \
-    | grep -viE '(^|[[:space:]])(бы|если|разве|неужели|ли)([[:space:]]|[,.]|$)' 2>/dev/null)"
+    | grep -viE '(^|[[:space:]])(бы|если|разве|неужели|ли)([[:space:]]|[,.]|$)' 2>/dev/null \
+    | sed -E 's/^/ /; s/([[:space:]])не[[:space:]]+/\1не~/g')"
 [ -z "$judged" ] && exit 0
 said="$judged"
+# Every sentence starts with a space, and a negation is glued to the word after it by `~`. The
+# space is the word boundary: an anchor inside a group and a class with a negation do not hold one
+# — `^` in a group under `grep -o` is true at any position where PATH leads to ugrep, and a class
+# like `[^а-яё]` matches half of a two-byte letter. Without the boundary «слит» was found inside
+# «числит», and a sentence about counting was read as merged work.
 
 # The claims map: what is said about the tree | what shows it | what to name in the refusal.
 #
 # The word is taken in the form it is said to the owner in. The future tense does not go here:
 # "I will check" and "I will start" are not claims — they are a promise, and there is nothing in
 # them to lie with.
+#
+# `@` stands before a claim word: it reads as the word boundary for the claim and as «не» before
+# the word for its negation. A done action is named by a past form: «удаляет» and «удалить» describe
+# what a command does, not what was done.
 claims=(
-    'проверено|прогнал[а]?|тесты (зелёные|прошли)|линт(ер)? (зелёный|прошёл|чистый)|сборка (зелёная|прошла)|набор зелёный|проверки зелёные|спеки зелёные|всё зелен(о|ое)§nx (test|lint|build|run|affected|run-many)|npm (run|test)|pnpm (run|exec|test)|jest|vitest|playwright|check:|run\.sh§команду набора — прогон тестов, линта или сборки'
-    'запушен[аоы]?|запушил[а]?|пуш прошёл|ветка уехала§git push§`git push`'
-    '(PR|правка|ветка|работа)[^.]{0,20}(влит|слит|смержен)|влит[оа] в|слит[оа] в§git merge|gh pr merge§`git merge` или `gh pr merge`'
-    '(ветки|ветка|файлы|файл|папка|каталог)[^.]{0,40}(снят|удал|почищ|вычищ)|снят[оыа] с§git branch|git push .*--delete|git rm|gh api|rm §команду удаления — `git branch -d`, `git push --delete` или `git rm`'
-    'прогон (зелёный|прошёл|кончился)|конвейер зелёный|проверки на PR зелёные§gh run§`gh run list` или `gh run view`'
-    '(работа|правка|задача) готова|можно вливать|PR открыт|черновик снят§gh pr §`gh pr create`, `gh pr view` или `gh pr ready`'
+    '@проверено|@прогнал[а]?|@тесты (зелёные|прошли)|@линт(ер)? (зелёный|прошёл|чистый)|@сборка (зелёная|прошла)|@набор зелёный|@проверки зелёные|@спеки зелёные|@всё зелен(о|ое)§nx (test|lint|build|run|affected|run-many)|npm (run|test)|pnpm (run|exec|test)|jest|vitest|playwright|check:|run\.sh§команду набора — прогон тестов, линта или сборки'
+    # A gate called fixed is a claim about a run: the fix is shown by the gate passing, and the
+    # phrase was once said with not one run behind it.
+    '@проверк[аи] перед (push|пушем|отправкой)[^.]{0,30}(починен|исправлен)§git push|check:all|pnpm (run|exec)§прогон набора перед push — `git push` или `pnpm run check:all`'
+    '@запушен[аоы]?|@запушил[а]?|@пуш прошёл|@ветка уехала§git push§`git push`'
+    '(PR|правка|ветка|работа)[^.]{0,20}@(влит|слит|смержен)|@влит[оа] в|@слит[оа] в§git merge|gh pr merge§`git merge` или `gh pr merge`'
+    '(ветки|ветка|файлы|файл|папка|каталог)[^.]{0,40}@(снят|удал[её]н|удалил|почищен|почистил|вычищен|вычистил)|@снят[оыа] с§git branch|git push .*--delete|git rm|gh api|rm §команду удаления — `git branch -d`, `git push --delete` или `git rm`'
+    '@прогон (зелёный|прошёл|кончился)|@конвейер зелёный|@проверки на PR зелёные§gh run§`gh run list` или `gh run view`'
+    '@(работа|правка|задача) готова|@можно вливать|@PR открыт|@черновик снят§gh pr §`gh pr create`, `gh pr view` или `gh pr ready`'
     # Waiting for someone else's step is a claim about the state too, and there is something in it
     # to lie with: a run is green for an hour, and sometimes never starts at all. Said without a
     # command, it leaves finished work a draft, and the owner learns of it last — that is exactly
     # how it went twice in one day.
-    'жд[уёя][^.]{0,20}прогон|дожида[ею][^.]{0,20}прогон|прогон[^.]{0,20}(ещё идёт|не встал|не кончился|не дошёл)|черновик[^.]{0,30}(не снимаю|сниму|снимется)§gh run|gh pr checks|check-runs|check:board|board\.mjs§команду о прогоне — `gh run list`, `gh pr checks` или сверку очереди работ'
-    'задача заведена|задача (в|переведена в) колонк|колонка переведена§gh issue|gh api|task:new|task:move|board\.mjs§команду очереди работ — заведение задачи или перевод колонки'
-    '(в дереве|в репозитории|здесь|такого файла|такой команды)[^.]{0,30}(нет|не бывает)|не заводили|нигде не встречается§grep|rg |ls |find |git ls-files|git grep|git log|cat §команду поиска — `grep`, `git ls-files` или обход каталога'
+    '@жд[уёя][^.]{0,20}прогон|@дожида[ею][^.]{0,20}прогон|@прогон[^.]{0,20}(ещё идёт|не встал|не кончился|не дошёл)|@черновик[^.]{0,30}(не снимаю|сниму|снимется)§gh run|gh pr checks|check-runs|check:board|board\.mjs§команду о прогоне — `gh run list`, `gh pr checks` или сверку очереди работ'
+    '@задача заведена|@задача (в|переведена в) колонк|@колонка переведена§gh issue|gh api|task:new|task:move|board\.mjs§команду очереди работ — заведение задачи или перевод колонки'
+    '(в дереве|в репозитории|здесь|такого файла|такой команды)[^.]{0,30}(нет|не бывает)|@не заводили|@нигде не встречается§grep|rg |ls |find |git ls-files|git grep|git log|cat §команду поиска — `grep`, `git ls-files` или обход каталога'
 )
+
+# A negated claim is a statement about the tree too, but the action command cannot show it: «not
+# pushed» is shown by a read of the branch state, not by a push.
+read_proof='git (status|log|ls-remote|branch|show|rev-parse|fetch|diff)|gh (pr|run|api|issue)|ls |grep|board\.mjs'
 
 for row in "${claims[@]}"; do
     words="${row%%§*}"
@@ -149,9 +166,21 @@ for row in "${claims[@]}"; do
     proof="${rest%%§*}"
     name="${rest#*§}"
 
-    found="$(printf '%s' "$said" | grep -oiE "$words" 2>/dev/null | head -1)"
-    [ -z "$found" ] && continue
-    printf '%s' "$ran" | grep -qiE "$proof" 2>/dev/null && continue
+    # The text glues «не» to the next word, so the row does the same with its own «не».
+    words="${words//не /не~}"
+    claim_re="${words//@/ }"
+    negated_re="${words//@/ не~}"
+
+    found="$(printf '%s' "$said" | grep -oiE "$claim_re" 2>/dev/null | head -1)"
+    if [ -n "$found" ]; then
+        printf '%s' "$ran" | grep -qiE "$proof" 2>/dev/null && continue
+    else
+        found="$(printf '%s' "$said" | grep -oiE "$negated_re" 2>/dev/null | head -1)"
+        [ -z "$found" ] && continue
+        printf '%s' "$ran" | grep -qiE "$proof|$read_proof" 2>/dev/null && continue
+        name="команду чтения — \`git status\`, \`git log\` или \`git ls-remote\`"
+    fi
+    found="$(printf '%s' "$found" | sed -E 's/~/ /g; s/^[[:space:]]+//')"
 
     reason="BLOCKED by claim-guard: the owner was told «${found}» — that is a statement about the state of the tree, and there was no command showing it in this turn.
 

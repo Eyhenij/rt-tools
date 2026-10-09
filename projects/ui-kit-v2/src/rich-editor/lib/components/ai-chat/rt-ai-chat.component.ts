@@ -28,6 +28,7 @@ import { BooleanInput } from '@angular/cdk/coercion';
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import {
+    IRtIcon,
     IRtSideMenu,
     IRtThreadList,
     RT_KIT_LABELS,
@@ -54,6 +55,9 @@ import { RtAiChatMessageExtraDirective } from './rt-ai-chat.directives';
 import { IRtAiChat } from './rt-ai-chat.model';
 
 const BEM_BLOCK: string = 'rt-ai-chat';
+
+/** Значки строк-превью пустого списка бесед по умолчанию: беседы идут с ассистентом. */
+const PREVIEW_ICONS: readonly IRtIcon.Name[] = ['sparkle', 'bot', 'sparkle'];
 
 /** Строка беседы для списка бесед: `rt-thread-list` ждёт `id` и `hasUnread`. */
 interface IThreadRow extends IRtThreadList.Row {
@@ -211,6 +215,9 @@ export class RtAiChatComponent {
     public readonly threadsHasMore: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
+
+    /** Значки декоративных строк-превью пустого списка бесед, по строке на значок. */
+    public readonly emptyPreviewIcons: InputSignal<readonly IRtIcon.Name[]> = input<readonly IRtIcon.Name[]>(PREVIEW_ICONS);
 
     /** Кнопка «Full screen» в шапке. */
     public readonly fullScreenable: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {

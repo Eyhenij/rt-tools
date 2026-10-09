@@ -1,3 +1,27 @@
+# [0.20.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2@0.19.1...rt-ui-kit-v2@0.20.0) (2026-10-09)
+
+### Bug Fixes
+
+- **rt:ui-kit-v2:** красная главная — шаблоны витрин в файлах, спека таблицы поделена ([cbd1bb2](https://github.com/Eyhenij/rt-tools/commit/cbd1bb2f22b7fe5af1cb95b9a2fcb1dbcfe3e853))
+- **rt:ui-kit-v2:** поле строк, приглашение и «Выбрать все» не задают display хостам компонентов кита ([43f4a84](https://github.com/Eyhenij/rt-tools/commit/43f4a847bead7973cb1c3fc2fd742c51768aa09d))
+- **rt:ui-kit-v2:** при способе font имя кита, которое шрифт не нарисует, рисуется значком кита ([ea9e909](https://github.com/Eyhenij/rt-tools/commit/ea9e90965c1e352b544f3754f9622ed45c8850c8))
+- **rt:ui-kit-v2:** пункт, отмеченный во время поиска, стоит на месте до смены запроса ([64a615e](https://github.com/Eyhenij/rt-tools/commit/64a615e0d99beb53068d829b00bb16f9b567a973))
+
+### Features
+
+- **rt:ui-kit-v2:** вход displayWith — подпись записи функцией у селектора и окна выбора ([fe16466](https://github.com/Eyhenij/rt-tools/commit/fe16466f1655eb7e9862b890d50181b316d87cae))
+- **rt:ui-kit-v2:** зазоры списка выбора, поля и зазоры пустого состояния, без пустого списка под приглашением ([779cdc2](https://github.com/Eyhenij/rt-tools/commit/779cdc2df513b7bb2764f35e833adfe4bf6b8d7b))
+- **rt:ui-kit-v2:** значки строк-превью пустого rt-thread-list задаёт вход emptyPreviewIcons ([f618126](https://github.com/Eyhenij/rt-tools/commit/f618126dd708afc1a0050a976467aa2c8c356501)), closes [#2714](https://github.com/Eyhenij/rt-tools/issues/2714)
+- **rt:ui-kit-v2:** окно выбора берёт фокус поиска, строку пункта, зазор пустого результата и отступ низа ([620a584](https://github.com/Eyhenij/rt-tools/commit/620a584dc45946357a8fb50623a44b8f09980b2d))
+- **rt:ui-kit-v2:** окно выбора подсвечивает совпадения с поиском и берёт подпись кнопки применения ([301460f](https://github.com/Eyhenij/rt-tools/commit/301460f8e4049a980954ceaaaa82f3758318612a))
+- **rt:ui-kit-v2:** отступ полосы действий списка выбора справа ([a5726be](https://github.com/Eyhenij/rt-tools/commit/a5726be6cf9270a3f7b03183d5e3e3eea4d689d8))
+- **rt:ui-kit-v2:** подпись пункта окна выбора идёт одной строкой, когда перенос выключен ([a803e36](https://github.com/Eyhenij/rt-tools/commit/a803e36b117aac079ae5637d73741a1cba0604dc))
+- **rt:ui-kit-v2:** поле поиска окна выбора берёт шаг скругления из входа и настроек кита ([4255345](https://github.com/Eyhenij/rt-tools/commit/425534564292bcf9ae4a1136a55d60cc09317a7a))
+- **rt:ui-kit-v2:** пустой список бесед rt-ai-chat рисует строки-превью со значками ассистента ([fd9f9c1](https://github.com/Eyhenij/rt-tools/commit/fd9f9c13de7b915d454ca9b85def4d02306f03a8)), closes [#2714](https://github.com/Eyhenij/rt-tools/issues/2714)
+- **rt:ui-kit-v2:** разделитель между кнопками строки, отступы ручки и зазор до названия в списке выбора ([719cbcf](https://github.com/Eyhenij/rt-tools/commit/719cbcf7b5e554f458bbf335de7ddb156d863150))
+- **rt:ui-kit-v2:** фон и скругление подсветки совпадений в окне выбора ([223a0e3](https://github.com/Eyhenij/rt-tools/commit/223a0e30febeccaf3e5d717256ad1cce8ec4af1c))
+- **rt:ui-kit-v2:** шаг скругления у залитого поля, вид pill у полей и пункты окна выбора снова слева ([4748a6d](https://github.com/Eyhenij/rt-tools/commit/4748a6d895b87d40263d14134aeb7a5c8d846498))
+
 ## [0.19.1](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2@0.19.0...rt-ui-kit-v2@0.19.1) (2026-10-08)
 
 ### Bug Fixes
