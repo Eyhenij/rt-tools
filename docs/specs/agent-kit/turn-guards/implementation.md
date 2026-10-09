@@ -16,6 +16,9 @@ statement: a removed statement is removed together with its line.
 - **A turn in which nothing was done about the work does not end.** — `projects/agent-kit/assets/hooks/turn-exit-guard.sh:verdict`
 - **What counts as work is an edit of a file and a command that changes the tree.** — `projects/agent-kit/assets/hooks/turn-exit-patterns.sh:work_re`
 - **A word about a stop is judged by the remark of the owner, not by the words of the executor.** — `projects/agent-kit/assets/hooks/turn-exit-verdict.sh:told_stop`
+- **The word of the owner about a stop said a turn earlier holds until their later order to work, and a quote of it in the reply releases the turn.** — `projects/agent-kit/assets/hooks/turn-exit-verdict.sh:quoted_stop` — the word is `stop_word`, read over the whole session. Scenario SC-AK-1199.
+- **Commits left in the working tree with a reason named in the reply release the turn.** — `projects/agent-kit/assets/hooks/turn-exit-verdict.sh:unpushed_named` — the tier of the guard reads it. Scenario SC-AK-1199.
+- **A report of a role is not the word of the owner for the guard of the proposals.** — `projects/agent-kit/assets/hooks/proposal-guard.sh:is_input` — scenario SC-AK-1200.
 - **A turn that ended with words about waiting for the word of the owner is not let go without their word or a question to them by a tool.** — `projects/agent-kit/assets/hooks/turn-exit-guard.sh:awaits_word` — the set of the samples of the phrase; the tier stands before the lawful exits; scenario SC-AK-891
 - **Work handed in and merged the guard does not judge.** — `projects/agent-kit/assets/hooks/turn-exit-guard.sh:state`
 - **A turn that declared a written plan does not end at all.** — `projects/agent-kit/assets/hooks/turn-exit-guard.sh:first_stage` — the branch refuses the turn before the second sign and takes the heading of the first stage from the plan; scenarios SC-AK-591…593

@@ -128,6 +128,13 @@ The guard of the conversation — the questions to the owner — is a subdomain 
   and conversation do not count as it: they are what fills a turn that has stalled.
 - **A word about a stop is judged by the remark of the owner, not by the words of the executor.**
   Otherwise the stop is declared by whoever finds it convenient at that minute.
+- **The word of the owner about a stop said a turn earlier holds until their later order to work, and
+  a quote of it in the reply releases the turn.** Read from the current turn alone, the word was
+  lost, and the turn could leave only by a line in the progress of a folder already taken apart. The
+  quote in « » is checked against the message of the owner.
+- **Commits left in the working tree with a reason named in the reply release the turn.** The
+  refusal itself orders to name what is left and why; without the line «Не отправлено: <reason>»
+  the only accepted move was a push made to lift the refusal.
 - **A turn that ended with words about waiting for the word of the owner is not let go without their
   word or a question to them by a tool.** The phrase "waiting for your word" without them is a stop
   declared by the executor; the general signs refused it without a name, and after one step the turn
@@ -141,6 +148,9 @@ The guard of the conversation — the questions to the owner — is a subdomain 
 - **A turn in which the owner said to create or send a proposal does not close until there was a
   sending.** What is written and not sent lies in the tree indistinguishably from what is sent, and it
   has no record of its own in the rules layer. Showing what would go away does not count as a sending.
+- **A report of a role is not the word of the owner for the guard of the proposals.** It arrives
+  under the role of the owner marked as a service message; a role that called its findings
+  «proposal» woke the guard as if a sending had been asked for.
 - **A request for a proposal is caught by a verb next to a word about the rules layer, not by the word
   itself.** Work on proposals that already arrived does not end with a sending, and the word
   "proposal" without a neighbour about the layer walks in every second turn about something else.

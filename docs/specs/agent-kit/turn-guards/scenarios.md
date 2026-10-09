@@ -425,3 +425,23 @@ When the guard of the end of the conversation judges the call.
 Then the call is refused with a reason naming the owner; other tools pass, and without jq the refusal stays.
 
 Covered: `projects/agent-kit/tests/end-conversation-guard.test.sh`.
+
+### SC-AK-1199 — a stop said a turn earlier and a reason for unpushed commits release the turn
+
+Given the owner said to stop a turn earlier, the task folder is gone, and no later message of theirs orders work
+When the turn ends with a reply that quotes their word in « »
+Then the guard releases it; without the quote, or after a later order to work, it refuses
+
+Given the branch carries commits not pushed after work in the turn
+When the reply names the reason by the line «Не отправлено: <reason>»
+Then the guard releases it; the line without a reason does not
+
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+
+### SC-AK-1200 — a report of a role does not wake the guard of the proposals
+
+Given a report of a role marked as a service message asks to send a proposal, and the owner did not
+When the turn ends without a sending
+Then the guard of the proposals stays silent
+
+Covered: `projects/agent-kit/tests/proposal-guard.test.sh`.

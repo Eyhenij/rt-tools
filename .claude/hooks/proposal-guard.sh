@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.29.4 · hooks/proposal-guard.sh · 05cdc265e18b · правится надстройкой, не здесь
+# rt-kit v0.29.4 · hooks/proposal-guard.sh · b116634f841d · правится надстройкой, не здесь
 # rt-hook: Stop
 # Requires: hooks/deny-tail.sh
 # Proposal guard: a turn in which the owner said to write or send a proposal to the rules layer
@@ -80,9 +80,12 @@ context_re='пропозал|слою правил|слоя правил|сло�
 #
 # A 400-line tail: the transcript grows all session long, and only the last turn is judged.
 verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg asked "$asked_re" --arg ctx "$context_re" '
+    # A report of a role and a loaded rule come in under the same role, marked `isMeta`: a role
+    # that called its findings «proposal» woke the guard as if the owner had asked for a sending.
     def is_input:
         .type == "user"
         and ((.isCompactSummary // false) | not)
+        and ((.isMeta // false) | not)
         and (((.message.content // []) | if type == "array"
                 then ([.[] | select(.type == "tool_result")] | length)
                 else 0 end) == 0);
