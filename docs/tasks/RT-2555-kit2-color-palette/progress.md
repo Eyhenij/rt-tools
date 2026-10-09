@@ -7,6 +7,9 @@
 - **Done:** the subdomain spec with scenarios SC-UKV-807–815, the colour maths, the palette and the
   picker with both looks, 14 specs green, types and linter clean; the overview, seven matrix stories
   and the playground, measured on :6007 and taken as references, the whole set of 844 frames green.
+  On 9 October the epic branch with a fresh main went in; four icon frames were retaken for the
+  added `folder`, and the kit tests and linter passed. The hover frame of the favourites submenu
+  diverged once by a tooltip and matched on the second run.
 - **Next step:** take the folder apart and open the PR into the epic branch when the owner approves.
 - **Uncommitted:** no
 - **Waiting for the owner:** «пры не открывай откроеш после моего апрува» — the push and the PR wait
