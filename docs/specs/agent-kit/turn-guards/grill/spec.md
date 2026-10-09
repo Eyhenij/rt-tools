@@ -38,6 +38,9 @@ The guard has no interface: only the executor sees it — as the text of a refus
 - **With edits in the turn the refusal of the first sign names the rules of their area.** The
   condition then accepts only those rules, and advice to search the directories sent the executor
   round in a circle. The refusal also says that a load before the owner's last remark does not count.
+- **An edit outside the tree does not make up the area of the work.** A draft in the session scratch
+  directory is not work of this tree, and the rules gate skips it too: taken into the area, it
+  demanded a rule that answers no question to the owner. A relative path counts as a path of the tree.
 - **To a question whose answer a remark of the owner has already given, the guard of the conversation
   answers with a refusal.** The first sign judges whether the rules were read, and at allowed work it
   stays silent; the miss is of another kind — the owner gave an instruction by a direct remark, the

@@ -117,6 +117,17 @@ if command -v skill_for >/dev/null 2>&1 && [ -n "$rules_dir" ]; then
         | map(select(. != "")) | unique | .[]
     ' 2>/dev/null)"
     for path in $edited; do
+        # Only this tree's paths make up the area: a draft in the session scratch directory is not
+        # work of this tree, and the rule its kind maps to answers no question put to the owner. The
+        # rules gate stops at the same root check; a relative path is a path of the tree.
+        case "$path" in
+            /*)
+                case "$path" in
+                    "${CLAUDE_PROJECT_DIR:-$PWD}"/*) ;;
+                    *) continue ;;
+                esac
+                ;;
+        esac
         for rule in $(skill_for edit "$path" '' 2>/dev/null); do
             case "|$need_re|" in
                 *"|$rule|"*) ;;
