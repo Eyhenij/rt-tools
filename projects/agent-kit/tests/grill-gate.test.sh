@@ -226,6 +226,42 @@ expect_stop "SC-AK-756 — без правок в ходу прежний при
         "$(tool_result)" \
         "$(reply 'Как быть с этим?')")")" PASS
 
+# SC-AK-1196 — правка вне дерева область работы не задаёт
+# Черновик в каталоге сессии отображался на правило текстов, и вопрос владельцу отбивался трижды:
+# гейт правил такие пути пропускает, а проверка вопросов брала их в область.
+expect_stop "SC-AK-1196 — черновик вне дерева область не задаёт" \
+    "$(input_stop "$(transcript \
+        "$(say 'посоветуй')" \
+        "$(uses Write '{"file_path":"/nowhere-tree/scratch/draft.md"}')" \
+        "$(tool_result)" \
+        "$(uses Read '{"file_path":".claude/skills/styling-bem/SKILL.md"}')" \
+        "$(tool_result)" \
+        "$(reply 'Как быть с этим?')")")" PASS
+expect_stop "SC-AK-1196 — правка внутри дерева область задаёт" \
+    "$(input_stop "$(transcript \
+        "$(say 'посоветуй')" \
+        "$(uses Write "{\"file_path\":\"$TREE/docs/draft.md\"}")" \
+        "$(tool_result)" \
+        "$(uses Read '{"file_path":".claude/skills/styling-bem/SKILL.md"}')" \
+        "$(tool_result)" \
+        "$(reply 'Как быть с этим?')")")" BLOCK
+
+# SC-AK-1194 — при правках в ходе отказ называет правила области, а не поиск
+# Отказ советовал искать grep по каталогам правил, а условие засчитывало только правило области:
+# исполнитель искал, получал тот же отказ и решал, что проверка сломана.
+out="$(input_stop "$(transcript \
+    "$(say 'почини проверку')" \
+    "$(uses Edit "$edited_spec")" \
+    "$(tool_result)" \
+    "$(reply 'Как быть с этим?')")" | "$HOOKS/grill-gate.sh" 2>/dev/null)"
+reason="$(printf '%s' "$out" | jq -r '.reason // ""')"
+if printf '%s' "$reason" | grep -q '«testing»'; then got="есть"; else got="нет"; fi
+report "SC-AK-1194 — отказ называет правило области" "$got" "есть"
+if printf '%s' "$reason" | grep -q 'last message'; then got="есть"; else got="нет"; fi
+report "SC-AK-1194 — отказ говорит, что прошлая загрузка не считается" "$got" "есть"
+if printf '%s' "$reason" | grep -q 'grep -rn'; then got="есть"; else got="нет"; fi
+report "SC-AK-1194 — совета искать по каталогам нет" "$got" "нет"
+
 # --- SC-AK-818 — на этот вопрос владелец уже отвечал --------------------------------------
 # Указание владельца действует до его отмены, и новый факт против него — строка в ответе о цене,
 # а не новый вопрос. Признак судит общие слова темы вопроса и последней реплики владельца, и
@@ -256,6 +292,73 @@ expect_ask "SC-AK-818 — первый вопрос захода не судит
         "$(say "$SAID_RULE")" \
         "$(uses Skill "$LOADED")")" \
         'Сплошная проверка единообразия гоняется каждый раз?')" PASS
+
+# --- SC-AK-1195 — короткая команда владельца ответом на новый вопрос не считается ------------
+# Владелец ответил одной строкой «взять задачу N», следующий вопрос был о другом решении по той
+# же задаче и делил с ответом номер и слова темы: признак трижды отбил его как уже отвеченный.
+SAID_SHORT='взять задачу 2667 в работу'
+
+expect_ask "SC-AK-1195 — вопрос после короткой команды проходит" \
+    "$(input_ask_text "$(transcript \
+        "$(say "$SAID_RULE")" \
+        "$(uses AskUserQuestion '{"questions":[]}')" \
+        "$(say "$SAID_SHORT")" \
+        "$(uses Skill "$LOADED")")" \
+        'По 2667: взять задачу в работу с тестами или без них?')" PASS
+
+# --- SC-AK-1197 — вопрос после отказа уходит со строкой о сделанном без ответа ---------------
+# Проверка отказала, исполнитель не запустил ни одной правки и принёс владельцу выбор «чинить или
+# ждать»: вопрос — законный выход хода, и ни одна проверка его не задержала.
+refused() { jq -c -n '{type:"user",message:{content:[{type:"tool_result",is_error:true,content:"BLOCKED: the push is refused"}]}}'; }
+MARKED='Без ответа сделано: правка порядка свойств линтером. Константы оставить или вынести?'
+
+expect_ask "SC-AK-1197 — меню после отказа без строки не уходит" \
+    "$(input_ask_text "$(transcript \
+        "$(say 'отправь выпуск')" \
+        "$(uses Skill "$LOADED")" \
+        "$(uses Bash '{"command":"git push"}')" "$(refused)")" \
+        'Чинить или ждать?')" DENY
+expect_ask "SC-AK-1197 — строка без рабочей команды после отказа не спасает" \
+    "$(input_ask_text "$(transcript \
+        "$(say 'отправь выпуск')" \
+        "$(uses Skill "$LOADED")" \
+        "$(uses Bash '{"command":"git push"}')" "$(refused)" \
+        "$(uses Bash '{"command":"git status"}')" "$(tool_result)")" \
+        "$MARKED")" DENY
+expect_ask "SC-AK-1197 — строка и правка после отказа меню пропускают" \
+    "$(input_ask_text "$(transcript \
+        "$(say 'отправь выпуск')" \
+        "$(uses Skill "$LOADED")" \
+        "$(uses Bash '{"command":"git push"}')" "$(refused)" \
+        "$(uses Bash '{"command":"pnpm exec stylelint --fix libs/x/src/x.scss"}')" "$(tool_result)")" \
+        "$MARKED")" PASS
+expect_stop "SC-AK-1197 — вопрос прозой после отказа без строки ход не заканчивает" \
+    "$(input_stop "$(transcript \
+        "$(say 'отправь выпуск')" \
+        "$(uses Skill "$LOADED")" \
+        "$(uses Bash '{"command":"git push"}')" "$(refused)" \
+        "$(reply 'Чинить или ждать?')")")" BLOCK
+expect_ask "SC-AK-1197 — ход без отказа этим признаком не судится" \
+    "$(input_ask_text "$(transcript \
+        "$(say 'отправь выпуск')" \
+        "$(uses Skill "$LOADED")")" \
+        'Чинить или ждать?')" PASS
+
+# --- SC-AK-1202 — вопрос с вариантом обхода проверки не уходит -------------------------------
+# Красный набор объяснили «чужой» причиной и спросили владельца, отправить ли мимо проверки: вопрос
+# об обходе — сам по себе промах, даже если владелец ответит «да».
+expect_ask "SC-AK-1202 — меню с вариантом мимо проверки отбито" \
+    "$(input_ask_text "$(transcript "$(say 'отправь')" "$(uses Skill "$LOADED")")" \
+        'Отправить один раз мимо проверки?')" DENY
+expect_ask "SC-AK-1202 — меню со строкой обхода отбито" \
+    "$(input_ask_text "$(transcript "$(say 'отправь')" "$(uses Skill "$LOADED")")" \
+        'Добавить в команду Epic-stop-skip со словом владельца или ждать?')" DENY
+expect_stop "SC-AK-1202 — вопрос прозой о --no-verify отбит" \
+    "$(input_stop "$(transcript "$(say 'отправь')" "$(uses Skill "$LOADED")" \
+        "$(reply 'Сделать коммит с --no-verify?')")")" BLOCK
+expect_ask "SC-AK-1202 — вопрос о починке проверки проходит" \
+    "$(input_ask_text "$(transcript "$(say 'отправь')" "$(uses Skill "$LOADED")")" \
+        'Проверку длины чинить разбиением описания или выносом раздела?')" PASS
 
 # --- SC-AK-1168 — загруженное правило и отчёт субагента репликой владельца не считаются ------
 # Текст правила и отчёт субагента приходят в запись с ролью `user` и пометкой `isMeta`. Принятые

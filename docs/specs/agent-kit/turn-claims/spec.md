@@ -66,6 +66,15 @@ they do not speak at all.
   marks, a quoting line, code and a sentence with a condition speak of someone else's text, not of
   the state of the tree. A guard refusing them teaches not to write quotation marks, not to check the
   tree.
+- **A word of a statement is found only as a whole word.** Found inside another word, «слит» in
+  «числит» read a sentence about counting as merged work. The boundary is a space put before every
+  sentence and every claim word.
+- **A negated statement is confirmed by a reading command.** «Not pushed» is a statement about the
+  tree too, but a push cannot show it: the state of the branch, the log or the remote ref does.
+- **A description of what a command does is not a statement about a done action.** A done action is
+  named by a past form; «deletes» and «to delete» describe the command.
+- **A gate before push called fixed is confirmed by a run of the gate set in the same turn.** The
+  fix is shown by the gate passing, and the phrase was once said with not one run behind it.
 - **The refusal names as the first exit the removal of the statement, not the launch of the
   command.** In a turn where the owner asked for no command, a launch for the sake of lifting the
   refusal leads into a delivery more dangerous than the one the guard watches.

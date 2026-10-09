@@ -258,3 +258,15 @@ When the turn ends, and nothing is done about the finding
 Then the guard gives the turn back: one muted call does not mute the answer of the role
 
 Covered: `projects/agent-kit/tests/conscience-guard.test.sh`.
+
+### SC-AK-1198 — a whole word, a negation, a description and a gate called fixed
+
+Given the answer holds a claim word only inside another word, or describes what a command does
+When the turn ends without a command
+Then the guard lets it through: neither is a statement about a done action
+
+Given the answer says the branch is not pushed, or that the gate before push is fixed
+When the turn ends without a reading command, or without a run of the gate set
+Then the guard refuses it; the reading command lifts the first, the run lifts the second
+
+Covered: `projects/agent-kit/tests/claim-guard.test.sh`.

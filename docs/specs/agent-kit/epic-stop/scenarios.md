@@ -85,3 +85,11 @@ When the turn ends
 Then the guard of the turn exit lets it through; with an unfinished task of the epic it refuses
 
 Covered: `projects/agent-kit/tests/epic-stop-guard.test.sh`.
+
+### SC-AK-1201 — the owner's word naming the number of the work releases the call
+
+Given the epic is over, and the owner's message or their answer to a menu names the number the call takes
+When the executor creates the branch or moves the card of that work
+Then the guard lets it through; a word about another number, or the number in the executor's own words, does not
+
+Covered: `projects/agent-kit/tests/epic-stop-guard.test.sh`.
