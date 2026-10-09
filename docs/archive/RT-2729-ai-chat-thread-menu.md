@@ -15,3 +15,7 @@
 
 - **Reuse `uiMoreActions` and `uiRemove`, add `aiCopyThreadId`** — the request says reuse existing keys.
 - **Row actions stay visible while the row's menu is open** — focus leaves for the overlay and the pointer may leave the row; without it the trigger fades under the open panel.
+
+## Decisions along the way
+
+- **`rt-menu` takes `triggerSize`** — its trigger was always `md` with an `md` icon; the row action stands at `xs` with a 16px icon like the delete button. Affected stage of the plan: 1.
