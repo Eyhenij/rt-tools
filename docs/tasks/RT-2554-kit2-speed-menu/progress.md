@@ -3,12 +3,14 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 3 of 4 — Showcase
+- **Stage:** 4 of 4 — Snapshots and delivery
 - **Done:** the subdomain spec with scenarios SC-UKV-798–805; `rtPopover` takes its own places and
   `rt-icon-button` says it is expanded, both silent without the new inputs; the component, its model,
   logic and styles; 20 specs of the menu and three of the neighbours; the overview page, the folder
-  note and the stories.
-- **Next step:** the measurement of the stories on :6007.
+  note and the stories. Measured on :6007: the four sides, the gaps of 8 points, the keys and the
+  press outside. The whole kit set is green, 226 spec files. Main is merged in through the epic.
+- **Next step:** the references of the nine stories, once the image browser reaches the showcase
+  again, and the reason the four open frames came out without actions.
 - **Uncommitted:** no
 - **Waiting for the owner:** «пры не открывай откроеш после моего апрува» — the push and the PR wait
   for the owner's approval.
@@ -29,6 +31,17 @@
 - The keyboard is told from the mouse by the click count: a press by a key comes with a count of
   zero. The stories open the menu by a click event without that count, so the frame shows no focus
   ring and no tooltip.
+- The actions got an opaque ground of the surface colour. The second palette of the icon button
+  fills with 4% of black, and over a map or a table the actions were lost.
+- A press below the page body does not close the menu: the overlay listens to the presses on the
+  body, and in the showcase the body is 435 points of a window of 1203. Every kit panel behaves so;
+  a press inside the page closes the menu.
+- The first take of the references drew the four open frames with the trigger alone: no action and
+  no panel ground in a single pixel. The same steps of the harness repeated in the browser tab, on
+  the live and on the built showcase, leave the actions drawn. The nine references were removed
+  untaken. A retake with the entrance animation switched off, to tell whether the animation is the
+  cause, did not run: on the network 172.20.10.x the image browser does not reach the showcase,
+  twice by the timeout of page loading.
 
 ## Steps
 
@@ -40,6 +53,6 @@
 - [x] 2.2 Write the component, its model and styles in the components layer
 - [x] 2.3 Write the specs on the opening, the directions, the choice, the closing and the keys
 - [x] 3.1 Write the overview page, the matrix stories and the playground
-- [>] 3.2 Measure the layout on :6007
-- [ ] 4.1 Take the references of the new stories after looking at them
+- [x] 3.2 Measure the layout on :6007
+- [>] 4.1 Take the references of the new stories after looking at them
 - [ ] 4.2 Run the whole set and open the PR into the epic branch after the owner's word
