@@ -3,16 +3,15 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 3 of 4 — Showcase
+- **Stage:** 4 of 4 — Snapshots and delivery
 - **Done:** the subdomain spec with scenarios SC-UKV-786–792; the component, its model, logic and
-  styles; thirteen specs on the rest, the edit, the keys, the save, the cancel, the saving wait and
-  leaving the field.
-- **Next step:** a measurement of the seven inline-edit stories on :6007.
+  styles; fifteen specs; seven stories, the overview page and the folder note. The look on :6007 is
+  measured, and six references are taken. The whole set after the merge of main is green: 2707
+  tests, 843 frames of 843, the kit checks and the overview pages.
+- **Next step:** the push and the PR into the epic branch after the owner's word.
 - **Uncommitted:** no
 - **Waiting for the owner:** «пры не открывай откроеш после моего апрува» — the push and the PR wait
-  for the owner's approval in the morning. The showcase on :6007 started before the story files
-  existed and refuses to build them. The environment refused its restart, so the measurement and
-  the references wait until the owner raises it.
+  for the owner's approval in the morning.
 - **PR:** not open
 
 ## Decisions along the way
@@ -27,6 +26,10 @@
   field a tick after the first render, and the select-all on opening found an empty field.
 - Leaving the field keeps it open by default; the first application's way — save on leaving — is the
   input `blurAction="save"`.
+- The measurement on :6007 found two defects, both fixed. The badge took the action colour on a light
+  plate, a contrast of 4.0 and 3.4 for small text; it now takes the neutral `rt-tag` colours, and an
+  empty badge is muted. A field disabled while saving dropped the focus onto the page, and it now
+  comes back to the field on a refusal and to the value on closing.
 
 ## Steps
 
@@ -37,9 +40,9 @@
 - [x] 2.1 Write the component, its model and styles in the components layer
 - [x] 2.2 Write the specs on the rest, the edit, the keys, the save and the cancel
 - [x] 3.1 Write the overview page, the matrix stories and the playground
-- [>] 3.2 Measure the layout on :6007
-- [ ] 4.1 Take the references of the new stories after looking at them
-- [ ] 4.2 Run the whole set and open the PR into the epic branch after the owner's word
+- [x] 3.2 Measure the layout on :6007
+- [x] 4.1 Take the references of the new stories after looking at them
+- [>] 4.2 Run the whole set and open the PR into the epic branch after the owner's word
 
 ## Handover of the session
 
