@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# rt-kit v0.29.4 · hooks/grill-gate.sh · b6e2ff4fc94f · правится надстройкой, не здесь
-# Requires: hooks/deny-tail.sh, hooks/turn-exit-patterns.sh
+# rt-kit v0.29.4 · hooks/grill-gate.sh · e12fb83fe53e · правится надстройкой, не здесь
+# Requires: hooks/deny-tail.sh, hooks/turn-exit-patterns.sh, hooks/grill-gate-bypass.sh
 # rt-hook: Stop
 # The conversation guard: the owner is not asked a question until the laws and rules have been read
 # within the same turn. It judges two events, and that is not duplication; the second is declared
@@ -306,6 +306,19 @@ ${deny_tail_text}"
         exit 0
     fi
 fi
+
+# The fifth sign of the same guard: a question that offers to walk around a check does not leave.
+#
+# A red set was explained by a "foreign" cause, and the owner was asked whether to send it past the
+# check. Such a question is a miss by itself, even when the owner answers "yes": a check is fixed at
+# its cause or fixed itself, and a third option is not named. The sign reads the text the owner
+# reads — the menu with its options, or the last reply when it ends with a question — and looks for
+# the forms of a bypass: past the check, a bypass line, a disabled rule, a hook switched off.
+#
+# The sign lies in a file of its own next to the guard; without it the sign stays silent.
+# shellcheck disable=SC1090
+[ -f "$rt_hooks_dir/grill-gate-bypass.sh" ] && . "$rt_hooks_dir/grill-gate-bypass.sh" 2>/dev/null
+command -v rt_grill_bypass >/dev/null 2>&1 && rt_grill_bypass && exit 0
 
 # The fourth sign of the same guard: a question after a refusal carries what was done without the
 # answer.

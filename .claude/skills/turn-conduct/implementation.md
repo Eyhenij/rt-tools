@@ -89,7 +89,7 @@ divergence.
 - **The size of work is never a reason to cut its boundaries.** — **Not checked.** The appraisal «this is too expensive» would be assigned by whoever finds it expensive; the volume is visible to a machine, and the boundaries named by the owner are not
 - **The actions the executor does not do without the owner's word are listed in the rule's companion.** — `.claude/hooks/git-guard-delivery.sh:deny` — it judges the push and the opening of a request by form: the branch name, the commit signature, the number in the title, the task column. The guard asks the owner word nowhere: the list itself is the section «What is not done without the owner word» in `.claude/skills/task-flow/implementation.md`, and it is held by the memory of the executor
 - **A removed task folder lifts the state requirement and does not end the turn.** — `.claude/hooks/turn-exit-guard.sh:folder_archived` — a folder removed by a commit of the branch moves the judgement to the second sign; the scenarios are `projects/agent-kit/tests/turn-exit-guard.test.sh`
-- **An option that silences a check is not put in the menu at all.** — **Not checked.** The menu is assembled by the question tool, and what stood in it leaves no trace: the conversation guard judges whether the rules were read before the question, not what the list of answers is assembled from
+- **An option that silences a check is not put in the menu at all.** — `projects/agent-kit/assets/hooks/grill-gate-bypass.sh:bypass_re` — the conversation guard reads the menu with its options, or the last reply ending with a question, and refuses the forms of a bypass. Scenario SC-AK-1202.
 
 ## What the automatic mode refuses here
 
