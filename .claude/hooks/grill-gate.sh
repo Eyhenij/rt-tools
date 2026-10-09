@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.29.4 · hooks/grill-gate.sh · 9d97bf1b757e · правится надстройкой, не здесь
+# rt-kit v0.29.4 · hooks/grill-gate.sh · c8dfe110625c · правится надстройкой, не здесь
 # Requires: hooks/deny-tail.sh
 # rt-hook: Stop
 # The conversation guard: the owner is not asked a question until the laws and rules have been read
@@ -213,7 +213,9 @@ if [ -n "$tool" ]; then
                 else (. // "") end) as $said
             | ([.[:$i][] | select(.type == "assistant") | (.message.content // [])[]
                  | select(.type == "tool_use") | select(.name == "AskUserQuestion")] | length) as $before
-            | if $before == 0 or ($said | length) == 0 then "no" else
+            # A reply of fewer than five significant words is a command, not a decision: «take task
+            # N» shares the number and the words of the subject with any next question about it.
+            | if $before == 0 or (($said | words) | length) < 5 then "no" else
                 (($now | words) - (($now | words) - ($said | words))) as $common
                 | if ($common | length) >= 3 then "answered" else "no" end
               end
