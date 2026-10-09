@@ -28,8 +28,8 @@ waiting for orders.
   task number, moving a task to the work column.
 - **The stop** — a turn that ends with the table of the epic's tasks and the line saying the session
   waits for orders, and takes no new work.
-- **The owner's word** — an order to take work after the stop, carried in the call itself by the
-  named line.
+- **The owner's word** — an order to take work after the stop: their message or their answer to a
+  menu that names the number of the work, or the named line in the call itself.
 
 ### What it is called in the interface
 
@@ -50,6 +50,9 @@ There is no interface: the guard answers with a refusal in the executor's own tu
 - **The order to go on is carried in the call itself.** The owner's word lives in the conversation,
   and the guard does not read the conversation: the lawful form is the named line in the command,
   with the reason the owner gave. An empty reason is not a bypass.
+- **The owner's message or menu answer that names the number of the work releases the call.** An
+  owner who forbade writing the line left the executor one way out — stopping the work they had just
+  set. The number is read from the call; the words of the executor do not count.
 - **The state of the epic is asked by the same command that prints the table.** A second reader of
   the same tasks would diverge from the first in silence: one would count a task finished, the other
   would not.
@@ -137,3 +140,5 @@ them — the word for tasks, the board, the checks directory — is read from th
 
 - 2026-09-09 — the subdomain was created: the end of an epic is a stop, and taking new work after it
   is refused by a guard.
+- 2026-10-09 — the owner's message or menu answer naming the number of the work releases the call:
+  the line in the call was forbidden by an owner, and the work stopped on the word they had given.
