@@ -47,6 +47,12 @@
   логики `rt-chat`. Отправка вопроса и выбор беседы прижимают ленту к низу всегда.
 - Удаление беседы — действие строки `rt-thread-list` (`rtThreadListRowActions`), подтверждение —
   на приложении.
+- `threadMenu` ставит в действия строки вместо кнопки удаления `rt-menu` «More actions»
+  (`ellipsis-v`, `triggerSize="xs"` — размер прежней кнопки удаления). Пункты: «Copy ID» —
+  `onCopyThreadId`, CDK `Clipboard`, без состояния «скопировано»: меню закрывается выбором;
+  «Delete» — `danger`, отдаёт `deleteThread` без `confirmMessage`, подтверждение на приложении.
+  Подписи — `uiMoreActions`, `aiCopyThreadId`, `uiRemove`. Пока панель открыта, действия строки
+  видны: правило `:has(.rt-menu--open)` в `rt-thread-list`.
 - Подсветка совпадений поиска по беседам — `splitSideMenuTitle`.
 - Строки-превью пустого списка бесед — `emptyPreviewIcons`, по умолчанию `sparkle`, `bot`, `sparkle`:
   беседы идут с ассистентом, а не с людьми. Вход уходит в `rt-thread-list` как есть.

@@ -138,3 +138,19 @@ When it is drawn by default, and then with the header icons set to `material`
 Then by default the header carries no sign and «Close» refers to the kit symbol; with `material` the header carries the sign of the icons alone and not the material preset, and «Close» and «Conversations» refer to the material symbols
 
 Covered by the component spec of the organism and the frame `Answer`.
+
+### SC-UKV-781 — by default the row of a conversation has the delete button
+
+Given the list of conversations and no conversation menu asked for
+When the list is drawn
+Then every row has the delete button and no «More actions»
+
+Covered by the component spec of the organism.
+
+### SC-UKV-782 — the conversation menu copies the id and deletes
+
+Given the list of conversations with the conversation menu
+When «More actions» of a row is pressed, then «Copy ID» or «Delete»
+Then the menu holds «Copy ID» and «Delete» in the danger tone, «Copy ID» puts the conversation id into the clipboard, «Delete» reports the delete request without confirmation, neither opens the conversation, and Escape closes the menu and returns focus to «More actions»
+
+Covered by the component spec of the organism; the Playground switch `threadMenu` shows it.

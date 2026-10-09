@@ -1,3 +1,4 @@
+import { Clipboard } from '@angular/cdk/clipboard';
 import { NgTemplateOutlet } from '@angular/common';
 import {
     afterNextRender,
@@ -37,6 +38,8 @@ import {
     RtEmptyStateComponent,
     RtIconButtonComponent,
     RtIconComponent,
+    RtMenuComponent,
+    RtMenuItemComponent,
     RtMessageComponent,
     RtPromptSuggestionComponent,
     RtSpinnerComponent,
@@ -100,6 +103,8 @@ interface IThreadRow extends IRtThreadList.Row {
         RtEmptyStateComponent,
         RtIconButtonComponent,
         RtIconComponent,
+        RtMenuComponent,
+        RtMenuItemComponent,
         RtMessageComponent,
         RtMessageComposerComponent,
         RtPromptSuggestionComponent,
@@ -118,6 +123,7 @@ export class RtAiChatComponent {
     #forceScroll: boolean = false;
 
     readonly #injector: Injector = inject(Injector);
+    readonly #clipboard: Clipboard = inject(Clipboard);
 
     protected readonly composer: Signal<RtMessageComposerComponent | undefined> = viewChild(RtMessageComposerComponent);
     protected readonly backButton: Signal<ElementRef<HTMLElement> | undefined> = viewChild('back', { read: ElementRef });
@@ -233,6 +239,14 @@ export class RtAiChatComponent {
 
     /** Кнопка закрытия в шапке. */
     public readonly closable: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
+        transform: booleanAttribute,
+    });
+
+    /**
+     * Действия строки беседы меню «More actions» вместо кнопки удаления: «Copy ID» кладёт id беседы
+     * в буфер, «Delete» отдаёт `deleteThread` без подтверждения — его показывает приложение.
+     */
+    public readonly threadMenu: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
 
@@ -374,6 +388,10 @@ export class RtAiChatComponent {
         this.#forceScroll = true;
         this.selectThread.emit(String(id));
         this.focusComposer();
+    }
+
+    protected onCopyThreadId(id: string): void {
+        this.#clipboard.copy(id);
     }
 
     #pinToBottomDeferred(): void {

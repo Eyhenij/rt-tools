@@ -25,17 +25,18 @@ conversations. Every application repeats the same screen, and every copy drifts 
 
 ### What it is called in the interface
 
-| In the domain        | On the screen                                           |
-| -------------------- | ------------------------------------------------------- |
-| The question         | the bubble on the right with «You»                      |
-| The answer           | the text on the left with the run line above it         |
-| The rating           | the buttons «Good answer» and «Bad answer»              |
-| Copying a message    | the button «Copy», «Copied» after the press             |
-| The conversations    | the button and the page «Conversations»                 |
-| A new conversation   | the button «New conversation»                           |
-| The reference number | «Reference» with the id on a plate and «Copy reference» |
-| Ask again            | the button «Ask again» under the error                  |
-| The suggestions      | the cards with ready questions on the empty screen      |
+| In the domain         | On the screen                                           |
+| --------------------- | ------------------------------------------------------- |
+| The question          | the bubble on the right with «You»                      |
+| The answer            | the text on the left with the run line above it         |
+| The rating            | the buttons «Good answer» and «Bad answer»              |
+| Copying a message     | the button «Copy», «Copied» after the press             |
+| The conversations     | the button and the page «Conversations»                 |
+| A new conversation    | the button «New conversation»                           |
+| The reference number  | «Reference» with the id on a plate and «Copy reference» |
+| Ask again             | the button «Ask again» under the error                  |
+| The suggestions       | the cards with ready questions on the empty screen      |
+| The conversation menu | the button «More actions» with «Copy ID» and «Delete»   |
 
 ## Rules
 
@@ -64,6 +65,8 @@ conversations. Every application repeats the same screen, and every copy drifts 
 - **The search over conversations marks every match, and an empty result says «Nothing found» instead of «No conversations yet».**
 
 - **Deleting a conversation is an action of its row and does not open the conversation.**
+
+- **The consumer can put «More actions» in the row in place of the delete button: its menu holds «Copy ID», which puts the conversation id into the clipboard, and «Delete», which reports the delete request without asking for confirmation; neither opens the conversation.**
 
 - **Focus follows the person: the open list of conversations puts it on «Back to conversation», and choosing a conversation, a new conversation, Stop and the return to the feed put it into the composer.**
 
@@ -150,3 +153,5 @@ None.
 - 2026-10-09 — the task RT-2720: «Copy» under a question and first in the rating row of an answer;
   the answer is copied as plain text, without markdown signs.
 - 2026-10-09 — the task RT-2722: the header icons by the material drawings without the material preset.
+- 2026-10-09 — the task RT-2729: the conversation menu «More actions» with «Copy ID» and «Delete» in
+  place of the delete button.
