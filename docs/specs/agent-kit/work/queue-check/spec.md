@@ -98,6 +98,9 @@ the total.
   own.** Silence there would read as «the main branch is green»; the check reads the trigger from
   the file of the pipeline, and says the run was not checked when there is no push among the
   events, or the main branch is not among its branches.
+- **The check has a rule of its own on GitHub, and its pattern names the move for every line.** The
+  rule about tasks and branches stood at the length limit; the articles about the check left it
+  together with their bindings.
 
 ## What is out of scope
 

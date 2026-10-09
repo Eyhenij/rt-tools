@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.29.4 · checks/check-spec-coverage.mjs · 24f4f5c70906 · правится надстройкой, не здесь
+// rt-kit v0.30.0 · checks/check-spec-coverage.mjs · 24f4f5c70906 · правится надстройкой, не здесь
 /**
  * The check that no resource of the package leaves without a spec.
  *

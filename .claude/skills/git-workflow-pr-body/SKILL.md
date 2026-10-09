@@ -4,7 +4,7 @@ kind: pattern
 rule: git-workflow
 description: Pattern of rule git-workflow. Load when the PR body is written or edited — the Closes line and how the task closes when the base is not the main branch, reviewer, assignee and labels by the opening call, the four sections of the body. Opening the PR itself — pattern git-workflow-pr.
 ---
-<!-- rt-kit v0.29.4 · patterns/git-workflow-pr-body.github.md · b6e931e7007f · правится надстройкой, не здесь -->
+<!-- rt-kit v0.30.0 · patterns/git-workflow-pr-body.github.md · 9ef1e0801ba4 · правится надстройкой, не здесь -->
 
 # The PR body and the link to the task
 
@@ -160,6 +160,10 @@ the title. The sample is held by whoever writes the body — like the words said
 - A `Closes` line in a PR whose base is not the main branch, in a tree without a closing pipeline:
   the task looks attached and stays open after the merge. The body names the task in words, and
   the cleanup step closes it by hand.
+- Labels read with `join(",")` and split by a shell expansion: zsh does not split an unquoted
+  `${L//,/ }` into words, the REST call gets the whole line as one label, and the host creates a
+  label with that name. Each label goes as its own `-f 'labels[]=…'`, or is read one per line with
+  `--jq '.labels[].name'`.
 
 ## How a task of an epic closes in this tree
 

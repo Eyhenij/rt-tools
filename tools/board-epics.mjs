@@ -1,11 +1,11 @@
-// rt-kit v0.29.4 · checks/board-epics.github.mjs · 3c4b5c9b0ae1 · правится надстройкой, не здесь
+// rt-kit v0.30.0 · checks/board-epics.github.mjs · 5ffc00cbeba7 · правится надстройкой, не здесь
 /**
  * The link between a task and an epic. Lives in a file of its own: the work queue audit stands at
  * the length limit even without it, and these two checks are read separately.
  */
 import { declaredEpicOf } from './board-epic-link.mjs';
 import { planPathOf, planRows, planTaskCells } from './board-epic-plan.mjs';
-import { ghJson, numberFromTitle, OfflineError, OWNER, REPO, TASK_KEY } from './board.mjs';
+import { ghJson, numberFromBranch, numberFromTitle, OfflineError, OWNER, REPO, TASK_KEY } from './board.mjs';
 import { CONFIG } from './rt-kit-checks.config.mjs';
 
 /**
@@ -67,7 +67,16 @@ export function checkEpicLinks(open, report) {
 
         const planPath = found.path;
         const mentions = planTaskCells(found.text).join('\n').matchAll(new RegExp(`(?:#|${TASK_KEY}-)(\\d+)`, 'g'));
-        const numbers = new Set([...mentions].map((match) => Number(match[1])));
+        const listed = [...mentions].map((match) => Number(match[1]));
+        const numbers = new Set(listed);
+        // A merge that took both sides of a conflict doubles rows of the makeup, and the set above
+        // does not see it.
+        for (const number of numbers) {
+            const times = listed.filter((one) => one === number).length;
+            if (times > 1) {
+                report(`#${epic.number}: the plan names the task #${number} in ${times} rows of the makeup — a merge took both sides; one row stays`);
+            }
+        }
         for (const number of numbers) {
             if (number === epic.number || !byNumber.has(number)) {
                 continue;
@@ -235,6 +244,12 @@ export function checkEpicPullBase(open, pulls, report) {
         const epic = epicOf.get(number);
         const base = String(pull.baseRefName ?? '');
         if (base.startsWith(`${TASK_KEY}-${epic}-`)) {
+            continue;
+        }
+        // A chain base: the branch of a task below in the same epic. The rule puts a chain PR on
+        // the previous branch, and that branch carries the epic branch.
+        const baseTask = numberFromBranch(base);
+        if (baseTask !== null && epicOf.get(baseTask) === epic) {
             continue;
         }
         report(
