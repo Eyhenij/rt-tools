@@ -47,6 +47,23 @@
             background-color: var(--rt-color-bg-surface-subtle-2);
         }
 
+        /* Шаг входа `radius` у залитого поля скругляет все четыре угла, и черта снизу не рисуется:
+           прямой низ с чертой у поля-таблетки читается обрубленным. Без шага поле остаётся прежним.
+           `:where` держит силу правила на уровне вида, и рамки фокуса и ошибки ниже его перекрывают. */
+        &--appearance--fill:where([data-rt-radius]) {
+            border-radius: var(--rt-input-box-radius);
+            border-bottom-color: transparent;
+        }
+
+        /* Вид «pill» — залитое поле-таблетка без черты. Скругление идёт через своё свойство поля,
+           поэтому шаг входа `radius` его переназначает. */
+        &--appearance--pill {
+            --rt-input-box-radius: var(--rt-radius-full);
+
+            border-color: transparent;
+            background-color: var(--rt-color-bg-surface-subtle-2);
+        }
+
         &--invalid {
             border-color: var(--rt-input-color-border-error);
 

@@ -21,6 +21,11 @@ export interface IRtAuthConfig {
     readonly forbiddenPath?: string;
     /** Where Keycloak returns the person after the exit; by default the address of the page base. */
     readonly logoutRedirectUri?: string;
+    /**
+     * How long the start waits for the silent check, in milliseconds; by default five seconds. Past
+     * it the admin starts with nobody signed in.
+     */
+    readonly silentCheckTimeoutMs?: number;
 }
 
 export const RT_AUTH_CONFIG: InjectionToken<IRtAuthConfig> = new InjectionToken<IRtAuthConfig>('RT_AUTH_CONFIG');

@@ -8,9 +8,7 @@ import { RtCopyValueComponent } from '../../rt-copy-value.component';
  */
 @Component({
     selector: 'app-copy-value',
-    template: `
-        <rt-copy-value [value]="value" [label]="label" [copyLabel]="copyLabel" />
-    `,
+    templateUrl: './test-copy-value.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // components

@@ -28,7 +28,8 @@ export const appConfig: ApplicationConfig = {
 ```
 
 The application starts after the silent check has answered, so the first navigation already sees
-the session. The page of the silent check ships in the package and is published by the
+the session. The start waits for it five seconds at most: past that the admin starts with nobody
+signed in, and a Keycloak that is down does not leave a blank page. The page of the silent check ships in the package and is published by the
 application next to `index.html`:
 
 ```json
@@ -43,6 +44,7 @@ application next to `index.html`:
 | `organizationHeader`        | The header of the current organization; without it nothing is sent        |
 | `forbiddenPath`             | Where a person without the rights of a route goes; without it they stay   |
 | `logoutRedirectUri`         | Where Keycloak returns after the exit; by default the base of the admin   |
+| `silentCheckTimeoutMs`      | How long the start waits for the silent check; by default 5000            |
 
 ## The session
 

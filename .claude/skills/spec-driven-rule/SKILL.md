@@ -4,7 +4,7 @@ kind: pattern
 rule: spec-driven
 description: Pattern of rule spec-driven. Load when creating or editing a law in docs/constitution, a rule or a pattern in .claude/skills — ready-made headers, the section set of each layer, the binding table, the sign that a rule is due for splitting. Not for a domain spec — that is pattern spec-driven-domain.
 ---
-<!-- rt-kit v0.29.4 · patterns/spec-driven-rule.md · 156da013b1cb · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.4 · patterns/spec-driven-rule.md · 27e8998650f1 · правится надстройкой, не здесь -->
 
 # Law, rule and pattern
 
@@ -123,8 +123,10 @@ description: Pattern of rule git-workflow. Load for … Not for … — that is 
 ```
 
 Sections: `## When to use` · ready-made code · `## Common misses`. A pattern has no binding:
-the check does not audit it, because there is nothing to check ready-made code against but
-itself.
+there is nothing to check ready-made code against but itself. Its set of sections is checked all
+the same — the suite of the package that ships the texts refuses a pattern without `## When to
+use` and without the section of misses. A consumer tree does not see that refusal; the tree with
+the package sources sees it in the set before a push.
 
 ## How the article itself is written
 
@@ -247,6 +249,10 @@ reference — it changes how a story is written.
   unbound, and the spec audit is silent about it, because it looks for the line in the table.
   The line's place is the same as its statement's in the rule: the order of both sides is kept
   the same, otherwise the statement and its binding stop being found by one another.
+- A binding line came out as one sentence of sixty words. The statement ends at its full stop
+  inside the bold, and everything after it — the dash, the anchor, the dash and the explanation —
+  is one more sentence to the wording check. The explanation after the anchor is written in
+  sentences of its own: the line stays one, the long sentence goes.
 - The `description` does not say when **not** to load the pattern — the neighbouring pattern of
   the same rule becomes indistinguishable.
 - A block of ready-made code was accepted by its look, not by checking against the declaration.

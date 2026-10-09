@@ -86,6 +86,10 @@ environment either — that is `Q-FA-1` in the law.
   catalogue.
 - **`qa-dataid` does not replace `aria-label` and roles:** accessibility separately, the anchor
   separately. And it is not removed when the layout is edited — the specs hang on it.
+- **Markup is edited by the edit tool, not by a script.** The anchor guard judges a shell command
+  by its whole body: the old markup in a find-and-replace pair counts as written, and an edit that
+  adds every anchor is refused for the lines it removes. The article in full is in the rule
+  `doc-style`.
 - What the kit has ready is not written anew: own markup with `role="alert"`, `<table>`,
   `role="dialog"`, `role="tablist"` or `role="tooltip"` means that `<prefix>-message`,
   `<prefix>-table`, `<prefix>-dialog`, `<prefix>-tabs` or `<prefix>-tooltip` were bypassed. The rule

@@ -92,6 +92,14 @@ The rule is `doc-style`; the articles that hold the law stand there.
   shows it, usually later, by the headings of the assembled text. Text is edited with the edit
   tool; and if a replacement is called anyway, the place it promised to change is reread right
   after.
+- **A one-liner in the shell is one sentence to the wording check.** The check takes the command
+  body whole: the pattern, the replacement and the path stand on one line with no full stop
+  between them. Three one-line replacements in a document were refused as sentences of 44, 46
+  and 88 words, while the text they wrote was short.
+- **A stream-editor rollback without a line number reaches lines nobody meant.** A test made red
+  on purpose was rolled back by a replacement by pattern, the pattern matched neighbouring checks
+  too, and they were committed without a run. A rollback goes by the edit tool or by the line
+  number, then `git diff` shows what it touched, and any edit of a test is followed by a new run.
 - **A number obtained from a command is not yet a measurement.** The requirement to recompute a
   number by a command is met literally — there was a command — and nobody asks whether it
   measured the number's subject. Output is false in different ways and silently: `grep -E` with

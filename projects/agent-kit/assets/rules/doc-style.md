@@ -118,14 +118,25 @@ flowchart TD
   `Docs-skip: <reason>` in the commit body; an empty reason is not accepted.
   <!-- rt-when: *.md -->
 
+- **A file of the tree is edited by the edit tool, not by a shell command.** A guard judges a
+  shell command by its whole body as new text: the pattern being replaced, the old markup, a loop
+  and the headers next to a heredoc. A one-liner is then one sentence of fifty words, and the
+  guard refuses the edit for lines it does not add. A post-edit hook does not see such a write at
+  all, and a replacement whose pattern matched nothing exits zero with the file untouched. A
+  command that must write a document gets it as a file written by the edit tool beforehand.
+
 - **A document is no longer than the length limit.** A text that does not fit on one screen gets
   appended to without rereading the beginning — that is how one document ends up with two answers
   to one question. Text has its own limit, lower than code, counted the same way — all lines; a
   spec that has outgrown it is split into subdomains, the boundary is not moved. Two numbers
   instead of one exist because text needs its threshold earlier: code length is also watched by
-  the linter, prose only by this number. The description of the past is excluded from the count:
-  by design the archive lists what the tree no longer has, and the task folder dies with the
-  merge.
+  the linter, prose only by this number. The prose of the rules layer has a third number, in
+  characters: compressing an article removes characters and leaves the line count, and a split
+  that only brings the lines under the limit leaves the characters where they were. The numbers
+  stand in the checks settings, not in the text; a rule at the ceiling takes a new article only
+  by folding an argument next to it, or by a split. The description of the past is excluded
+  from the count: by design the archive lists what the tree no longer has, and the task folder
+  dies with the merge.
   <!-- rt-when: *.md -->
 
 - **A file leaving for the description of the past names its former address in its header.**
@@ -244,6 +255,12 @@ intake. What is left with the author is one sentence per rule, no claims about t
 freshness of a number in the text. The last two the law leaves with the author explicitly: an
 open question is written in the same words as a promise, and a date and an id are numbers like
 the ones that get recomputed.
+
+The two columns of the glossary are judged at different minutes. The wording check carries a part
+of the left column and the tree's own bans, and it fires on the edit. The whole section of words
+not written here is read by the glossary check, and that one stands only in the set before a
+push — a word it refuses already lies in a commit by then. A commit body is read by neither: it
+is held by the article about the addressee, the same as a PR description.
 
 No check reads the reply to the owner, and the misses in it are the same as in tree text: an
 invented fact served alongside a verified one, and an appraisal of someone else's decision

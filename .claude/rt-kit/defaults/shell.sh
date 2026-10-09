@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.29.4 · defaults/shell.sh · 9c2c7af43495 · правится надстройкой, не здесь
+# rt-kit v0.29.4 · defaults/shell.sh · 69628bed2f67 · правится надстройкой, не здесь
 # Parsing a shell command: whether it writes and which paths it names.
 #
 # The package default, part of the tree profile — loaded from `project.sh`, next to which it lies. A
@@ -43,6 +43,10 @@
 # and only the target tells them apart. Behind a real sign stands a path, not a word in words. The
 # price is named directly: a path typed not in Latin letters no longer counts as a write — there is
 # not one such in the tree, and should they appear, the sign will have to be widened.
+#
+# The in-place flag of a stream editor is matched as a flag word, not as a substring. A path such
+# as `order-item-list.html` carries `-i` inside it, and a read-only `sed -n …p` over such a path
+# was refused as an in-place edit, together with any command that merely quoted the path.
 rt_shell_writes_default() {
     cleaned="$(printf '%s' "$1" \
         | sed -E 's#(&|[0-9]*)>>?[[:space:]]*/dev/(null|stderr)##g; s#[0-9]*>&[0-9-]##g; s#[-=]+>##g')"
@@ -63,7 +67,7 @@ rt_shell_writes_default() {
 
     printf '%s' "$cleaned" \
         | grep -Eq \
-            '>>?[[:space:]]*[A-Za-z0-9_./~$"'"'"'-]|\btee\b|\bsed\b[^|]*-i|\bperl\b[^|]*-i|\bdd\b[^|]*of=|\bcp\b|\bmv\b|\brm\b|\btouch\b|\btruncate\b|\binstall\b|\bpatch\b|\bgit[[:space:]]+(checkout|restore|apply|stash)\b'
+            '>>?[[:space:]]*[A-Za-z0-9_./~$"'"'"'-]|\btee\b|\bsed\b[^|]*[[:space:]]-[a-zA-Z]*i\b|\bsed\b[^|]*--in-place|\bperl\b[^|]*[[:space:]]-[a-zA-Z]*i\b|\bdd\b[^|]*of=|\bcp\b|\bmv\b|\brm\b|\btouch\b|\btruncate\b|\binstall\b|\bpatch\b|\bgit[[:space:]]+(checkout|restore|apply|stash)\b'
 }
 
 # The paths named by a shell command. Prints one per line; the caller judges them.
@@ -150,7 +154,7 @@ rt_shell_paths_default() {
             #
             # The other kinds of writing are parsed as before: for an in-place edit, a copy, a move
             # and an interpreter the path stands in the command itself and not in one place.
-            if ! printf '%s' "$piece" | grep -Eq '\bsed\b[^|]*-i|\bperl\b[^|]*-i|\bpython3?\b|\bnode\b|\bruby\b|\bdd\b[^|]*of=|\bcp\b|\bmv\b|\brm\b|\btouch\b|\btruncate\b|\binstall\b|\bpatch\b|\bgit[[:space:]]+(checkout|restore|apply|stash)\b'; then
+            if ! printf '%s' "$piece" | grep -Eq '\bsed\b[^|]*[[:space:]]-[a-zA-Z]*i\b|\bsed\b[^|]*--in-place|\bperl\b[^|]*[[:space:]]-[a-zA-Z]*i\b|\bpython3?\b|\bnode\b|\bruby\b|\bdd\b[^|]*of=|\bcp\b|\bmv\b|\brm\b|\btouch\b|\btruncate\b|\binstall\b|\bpatch\b|\bgit[[:space:]]+(checkout|restore|apply|stash)\b'; then
                 printf '%s' "$piece" \
                     | grep -oE '(>>?[[:space:]]*|\btee\b([[:space:]]+-a)?[[:space:]]+)[A-Za-z0-9_@.~/-]+' \
                     | sed -E 's/^(>>?|tee([[:space:]]+-a)?)[[:space:]]*//' \

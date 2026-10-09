@@ -305,7 +305,7 @@ Then they take the look from the markup
 
 Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/rt-dynamic-selector-defaults.spec.ts`.
 
-### SC-UKV-726 — with a minimum height the footer of the popup stands at the bottom edge
+### SC-UKV-729 — with a minimum height the footer of the popup stands at the bottom edge
 
 Given a popup whose caller sets a minimum height taller than its content
 When it shows a short list, the loading or the empty result
@@ -315,3 +315,148 @@ popup is as tall as its content
 Not covered: a test has no layout. Measured on the showcase in the story **Popup**: with
 `--rt-dynamic-selector-popup-min-height: 30rem` every popup is 480px tall with no gap under the
 footer, and without it the heights stay as before.
+
+### SC-UKV-734 — without wrapping the popup option stands on one line with a tooltip
+
+Given a selector whose caller turns title wrapping off, in the multi or the single choice
+When the popup shows an option with a long label
+Then the label stands on one line, cut with an ellipsis, and carries a tooltip of its whole text;
+the single-choice label stands next to its button, names it and chooses the row; with wrapping on
+the options look as before
+
+Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/popup/rt-dynamic-selector-popup-wrap.spec.ts`.
+
+### SC-UKV-728 — the popup search takes the caller's radius step
+
+Given a selector whose caller names a radius step for the search, or the kit settings name it
+When the popup opens
+Then the search field is rounded by that step, and without one it keeps its own rounding
+
+Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/popup/rt-dynamic-selector-popup-look.spec.ts`.
+
+### SC-UKV-730 — the popup marks the characters that match the search
+
+Given a selector whose caller turns the search highlight on, or the kit settings turn it on
+When the popup shows options for a search
+Then the characters of each label that match a search word are marked, the label reads whole and a
+single-line label keeps its ellipsis, and without the highlight no character is marked
+
+Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/popup/rt-dynamic-selector-popup-highlight.spec.ts`, `projects/ui-kit-v2/src/lib/components/dynamic-selector/rt-dynamic-selector.logic.spec.ts`.
+
+### SC-UKV-731 — the apply button takes the caller's label and case
+
+Given a selector whose caller names a label or a case for the apply button, or the kit settings name
+them
+When the popup opens
+Then the button shows that label in that case and is named by it, and without them it shows the kit
+label as it is
+
+Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/popup/rt-dynamic-selector-popup-look.spec.ts`, `projects/ui-kit-v2/src/lib/components/dynamic-selector/rt-dynamic-selector.logic.spec.ts`.
+
+### SC-UKV-732 — the search field takes focus on opening when asked
+
+Given a selector whose caller asks for the search focus, or the kit settings ask for it
+When the popup opens
+Then the search field holds the focus, and without the request the focus stays where it was
+
+Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/popup/rt-dynamic-selector-popup-look.spec.ts`.
+
+### SC-UKV-733 — the caller sets the option line, the empty result gap and the footer padding
+
+Given a popup whose caller sets the option line height, the least option height, the empty result
+gap or the footer padding
+When the popup shows its options or the empty result
+Then the popup takes those values, and without them it is drawn as before
+
+Not covered: a test has no layout. Measured on the showcase in the story **Popup**: without the
+properties the rows are 36px, the gap 12px and the footer padding `8px 16px 0`; with a 20px line, a
+44px least height, a 4px gap and `16px 24px 0 8px` the labels are 20px per line, the rows 44px with
+the content in the middle, the gap 4px and the footer padding `16px 24px 0 8px`.
+
+### SC-UKV-767 — a row ticked during a search stays in place until the query changes
+
+Given the popup offers «Anna», «Boris» and «Vera», and the person typed «a»
+When the person ticks «Vera», and then types «an»
+Then after the tick the rows stay «Anna», «Vera», and after the new query «Vera» stands above the
+divider and «Anna» under it
+
+Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/popup/rt-dynamic-selector-popup.component.spec.ts`.
+
+### SC-UKV-768 — the caller gives the search highlight a background and its rounding
+
+Given a popup with the search highlight on, whose caller sets the highlight background and its
+rounding
+When the popup shows the matched characters
+Then they stand on that background with those corners, and without the properties the background is
+transparent and the corners square
+
+Not covered: a test has no layout. Measured on the showcase in the story **Popup**: without the
+properties the matched characters have the background `rgba(0, 0, 0, 0)` and the rounding `0px`; with
+the warning background and the `xs` step they have `rgb(255, 251, 235)` and `2px`.
+
+### SC-UKV-771 — the label of a record comes from the caller's function
+
+Given a selector whose caller gives a function that splits «BasicReports» into «Basic Reports»
+When the list, the popup and the search show the records
+Then the row and the options read «Basic Reports», «Audit Log», «User Admin», and the query «user ad»
+finds «User Admin»; without the function the labels stay as the field holds them
+
+Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/rt-dynamic-selector-display-with.spec.ts`.
+Покрытие: частичное — the test reads the label text in the markup; the drawn labels are looked at on the showcase in the story **Look**, in the case where the surname stands first.
+
+### SC-UKV-772 — the caller sets the gaps of the list
+
+Given a selector whose ancestor sets the action bar gap, the row buttons gap, the row end padding or
+the action bar offset
+When the list shows its rows and the action bar
+Then the list takes those values, and without them it is drawn as before
+
+Not covered: a test has no layout. Measured on the showcase in the story **Look**: without the
+properties the offset, both gaps and the end padding are 2px; with the offset `md`, both gaps `sm`
+and the end padding `xs` they are 16px, 8px, 8px and 4px.
+
+### SC-UKV-764 — no empty list above the invitation
+
+Given a selector or a string field with the invitation on and no chosen rows
+When it is drawn
+Then the invitation stands with no list node above it, and once a row is chosen the list appears
+above the invitation
+
+Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/rt-dynamic-selector-look.spec.ts`.
+
+### SC-UKV-769 — the caller sets the handle paddings, the title gap and the divider between row buttons
+
+Given a draggable selector with buttons of its own in a row, whose ancestor sets the handle paddings,
+the gap to the title and the width of the divider between the row buttons
+When the list shows its rows
+Then the handle, the title and the buttons take those values, the divider stands after every button
+but the last, and without the properties the row is drawn as before
+
+Not covered: a test has no layout. Measured on the showcase in the stories **Row templates** and
+**Rows**: without the properties the handle paddings are 0 and 2px, the title stands 8px after the
+handle and 51px from the row edge, and no button has a divider; with 4px paddings, a 12px gap and a
+thin divider the title stands 61px from the row edge and the first of two buttons carries a 1px
+divider.
+
+### SC-UKV-770 — the field of a new row and the invitation keep their own look whatever the style order
+
+Given a string field with its new-row field open, and a selector with the invitation
+When the styles of the field, the empty state and the family load in either order
+Then the native input fills the field and stands in its middle, and the invitation stays centred
+
+Not covered: a test has no layout and no load order. Measured on the showcase in the stories
+**String list** and **Invitation**: the input is 318px wide in a 352px field and stands 11px from its
+top, and the invitation icon stands 144px from the edge; with the former `display: block` put back on
+the host the input shrank to 157px at 1px from the top and the icon moved to 24px, as the
+application saw in 0.19.0.
+
+### SC-UKV-773 — the caller lines the clear button up under the row delete button
+
+Given a selector whose ancestor gives the action bar the same end padding as the rows
+When the list shows its rows and the action bar
+Then the clear button ends where the delete button of a row ends, and without the property the action
+bar keeps no end padding, as before
+
+Not covered: a test has no layout. Measured on the showcase in the story **Look**: without the
+property the clear button ends 2px past the delete button, at 352 against 350; with the end padding
+`xs` on both they end together at 348.
