@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, output, OutputEmitterRef } from '@angular/core';
 
+import { IRtIcon } from '../../../../../../lib/components/icon/rt-icon.model';
 import { StoryPresetsComponent } from '../../../../../../showcase/story-presets.component';
 import { RtAiChatComponent } from '../../rt-ai-chat.component';
 import { IRtAiChat } from '../../rt-ai-chat.model';
@@ -32,6 +33,7 @@ export class TestRtAiChatComponent {
     public threads: readonly IRtAiChat.Thread[] | null = null;
     public fullScreenable: boolean = false;
     public copyable: boolean = true;
+    public headerIconPreset: IRtIcon.Preset = 'base';
 
     public readonly send: OutputEmitterRef<string> = output<string>();
     public readonly stop: OutputEmitterRef<void> = output<void>();

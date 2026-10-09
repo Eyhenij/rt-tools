@@ -4,6 +4,7 @@ import { ComponentFixture } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
 import { IRtIcon } from '../../../../lib/components/icon/rt-icon.model';
+import { RT_ICON_PRESET_ATTRIBUTE } from '../../../../lib/components/icon/rt-icon.const';
 
 import { createRtFixture, qa, qaAll, textOf } from '../../../../testing/rt-kit-testing';
 import { RtIconComponent } from '../../../../lib/components/icon/rt-icon.component';
@@ -53,6 +54,7 @@ let clipboard: ClipboardDouble;
             [threads]="threads()"
             [fullScreen]="fullScreen()"
             [copyable]="copyable()"
+            [headerIconPreset]="headerIconPreset()"
             (send)="sent.push($event)"
             (retry)="retried = retried + 1"
             (selectThread)="selected.push($event)"
@@ -79,6 +81,7 @@ class AiChatHostComponent {
     public readonly fullScreen: WritableSignal<boolean> = signal<boolean>(false);
     public readonly withExtra: WritableSignal<boolean> = signal<boolean>(false);
     public readonly copyable: WritableSignal<boolean> = signal<boolean>(true);
+    public readonly headerIconPreset: WritableSignal<IRtIcon.Preset> = signal<IRtIcon.Preset>('base');
     public readonly sent: string[] = [];
     public readonly selected: string[] = [];
     public readonly deleted: string[] = [];
@@ -241,6 +244,22 @@ describe('RtAiChatComponent', (): void => {
         expect(qa(fixture, 'ai-chat-question-actions')).toBeNull();
         expect(qaAll(fixture, 'ai-chat-copy').length).toBe(0);
         expect(qa(fixture, 'ai-chat-like')).not.toBeNull();
+    });
+
+    it('SC-UKV-780 — headerIconPreset material ставит на шапку признак одних значков, по умолчанию его нет', (): void => {
+        const plain: ComponentFixture<AiChatHostComponent> = setup({ threads: THREADS });
+        const plainHeader: HTMLElement = (plain.nativeElement as HTMLElement).querySelector('.rt-ai-chat__header') as HTMLElement;
+
+        expect(plainHeader.hasAttribute(RT_ICON_PRESET_ATTRIBUTE)).toBe(false);
+        expect(qa(plain, 'ai-chat-close')?.nativeElement.querySelector('use')?.getAttribute('href')).toBe('#rt-icon-close');
+
+        const fixture: ComponentFixture<AiChatHostComponent> = setup({ threads: THREADS, headerIconPreset: 'material' });
+        const header: HTMLElement = (fixture.nativeElement as HTMLElement).querySelector('.rt-ai-chat__header') as HTMLElement;
+
+        expect(header.getAttribute(RT_ICON_PRESET_ATTRIBUTE)).toBe('material');
+        expect(header.hasAttribute('data-preset')).toBe(false);
+        expect(qa(fixture, 'ai-chat-close')?.nativeElement.querySelector('use')?.getAttribute('href')).toBe('#rt-icon-material-close');
+        expect(qa(fixture, 'ai-chat-threads')?.nativeElement.querySelector('use')?.getAttribute('href')).toBe('#rt-icon-material-history');
     });
 
     it('SC-UKV-754 — пока ответ пишется, поле предлагает «Стоп», подсказки и новая беседа выключены', (): void => {
