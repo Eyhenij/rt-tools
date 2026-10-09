@@ -170,6 +170,45 @@ describe('Правка на месте', (): void => {
         expect(el(fixture, 'inline-edit-value')?.textContent?.trim()).toBe('Сводка');
     });
 
+    it('SC-UKV-790 — фокус, упавший с недоступного поля, возвращается в поле при отказе и на значение при закрытии', async (): Promise<void> => {
+        const fixture: ComponentFixture<RtInlineEditComponent> = await edit({ closeOnSave: false });
+        const settle: (inputs: Readonly<Record<string, unknown>>) => Promise<void> = async (
+            inputs: Readonly<Record<string, unknown>>
+        ): Promise<void> => {
+            Object.entries(inputs).forEach(([name, value]: [string, unknown]): void => fixture.componentRef.setInput(name, value));
+            fixture.detectChanges();
+            await fixture.whenStable();
+        };
+        await press(fixture, 'inline-edit-value');
+        await type(fixture, 'Сводка');
+        await key(fixture, 'Enter');
+
+        // Браузер роняет фокус с поля, ставшего недоступным: он уходит в никуда, а не на другой элемент.
+        await settle({ saving: true });
+        field(fixture).blur();
+        await settle({ saving: false });
+        expect(document.activeElement).toBe(field(fixture));
+
+        await settle({ saving: true });
+        field(fixture).blur();
+        await settle({ saving: false, value: 'Сводка', editing: false });
+        expect(document.activeElement).toBe(el(fixture, 'inline-edit-value'));
+    });
+
+    it('SC-UKV-790 — фокус, ушедший на другой элемент страницы, при закрытии поля не забирается', async (): Promise<void> => {
+        const outside: HTMLButtonElement = document.body.appendChild(document.createElement('button'));
+        const fixture: ComponentFixture<RtInlineEditComponent> = await edit();
+        await press(fixture, 'inline-edit-value');
+
+        outside.focus();
+        fixture.componentRef.setInput('editing', false);
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        expect(document.activeElement).toBe(outside);
+        outside.remove();
+    });
+
     it('SC-UKV-791 — уход фокуса держит, сохраняет или отменяет по входу; свои кнопки уходом не считаются', async (): Promise<void> => {
         const outside: HTMLButtonElement = document.body.appendChild(document.createElement('button'));
         const leave: (fixture: ComponentFixture<RtInlineEditComponent>, target: Element) => Promise<void> = async (

@@ -64,6 +64,7 @@ const BEM_BLOCK: string = 'rt-inline-edit';
         '[class.rt-inline-edit--chip]': "look() === 'chip'",
         '[class.rt-inline-edit--size-md]': "size() === 'md'",
         '[class.rt-inline-edit--size-lg]': "size() === 'lg'",
+        '(focusin)': 'onFocusIn()',
         '(focusout)': 'onFocusOut($event)',
     },
 })
@@ -72,6 +73,14 @@ export class RtInlineEditComponent {
     readonly #injector: Injector = inject(Injector);
 
     readonly #t_uiEdit: Signal<string> = rtKitLabel('uiEdit');
+
+    /**
+     * Фокус был внутри и не ушёл на другой элемент страницы. Недоступное на время сохранения поле
+     * роняет фокус в никуда, и без этой отметки его некуда вернуть, когда поле закроет приложение.
+     */
+    #focusInside: boolean = false;
+    #wasEditing: boolean = false;
+    #wasSaving: boolean = false;
 
     protected readonly saveLabel: Signal<string> = rtKitLabel('uiSave');
     protected readonly cancelLabel: Signal<string> = rtKitLabel('uiCancel');
@@ -131,20 +140,34 @@ export class RtInlineEditComponent {
         this.draftControl.valueChanges.pipe(takeUntilDestroyed()).subscribe((draft: string): void => this.#draft.set(draft));
 
         // Поле открылось — нажатием или входом приложения: черновик берёт значение, фокус встаёт в поле.
+        // Поле закрылось — своей кнопкой или входом приложения: фокус возвращается на значение.
         effect((): void => {
-            if (this.editing()) {
+            const editing: boolean = this.editing();
+
+            if (editing) {
                 this.draftControl.setValue(untracked(this.value));
                 afterNextRender((): void => this.focusField(), { injector: this.#injector });
+            } else if (this.#wasEditing) {
+                this.#restoreFocus('.rt-inline-edit__value');
+            } else {
+                // Покой без перехода: фокус никто не трогает.
             }
+            this.#wasEditing = editing;
         });
 
-        // Пока приложение сохраняет, поле недоступно.
+        // Пока приложение сохраняет, поле недоступно; отказ оставил поле открытым — фокус снова в нём.
         effect((): void => {
-            if (this.saving()) {
+            const saving: boolean = this.saving();
+
+            if (saving) {
                 this.draftControl.disable({ emitEvent: false });
             } else {
                 this.draftControl.enable({ emitEvent: false });
+                if (this.#wasSaving && untracked(this.editing)) {
+                    this.#restoreFocus('.rt-inline-edit__field input');
+                }
             }
+            this.#wasSaving = saving;
         });
     }
 
@@ -196,7 +219,14 @@ export class RtInlineEditComponent {
         }
     }
 
+    protected onFocusIn(): void {
+        this.#focusInside = true;
+    }
+
     protected onFocusOut(event: FocusEvent): void {
+        if (event.relatedTarget instanceof Node && !this.#host.nativeElement.contains(event.relatedTarget)) {
+            this.#focusInside = false;
+        }
         if (!this.editing() || this.saving() || !inlineEditLeaves(this.#host.nativeElement, event.relatedTarget)) {
             return;
         }
@@ -217,14 +247,21 @@ export class RtInlineEditComponent {
         field?.select();
     }
 
-    /** Поле закрыто; фокус, бывший внутри, возвращается на значение, а не теряется на странице. */
     #close(): void {
-        const host: HTMLElement = this.#host.nativeElement;
-        const hadFocus: boolean = host.contains(host.ownerDocument.activeElement);
-
         this.editing.set(false);
-        if (hadFocus) {
-            afterNextRender((): void => host.querySelector<HTMLElement>('.rt-inline-edit__value')?.focus(), { injector: this.#injector });
+    }
+
+    /**
+     * Фокус, бывший внутри, возвращается на элемент компонента после отрисовки. Ушедший на другой
+     * элемент страницы не трогается: человек уже там.
+     */
+    #restoreFocus(selector: string): void {
+        const host: HTMLElement = this.#host.nativeElement;
+        const active: Element | null = host.ownerDocument.activeElement;
+
+        if (!this.#focusInside || (active !== null && active !== host.ownerDocument.body && !host.contains(active))) {
+            return;
         }
+        afterNextRender((): void => host.querySelector<HTMLElement>(selector)?.focus(), { injector: this.#injector });
     }
 }

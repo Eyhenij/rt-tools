@@ -35,7 +35,9 @@ draft is saved
 Given an inline edit that keeps the field open on saving
 When the draft is saved and the saving input turns on
 Then the field stays open, the check button spins, the field and the cross are unavailable, and the
-field closes when the application closes it
+field closes when the application closes it. The focus the unavailable field dropped comes back to
+the field when the application refuses and to the value when it closes the field; a focus that
+moved to another element of the page stays there
 
 ### SC-UKV-791 — leaving the field follows its input
 
