@@ -5,6 +5,8 @@
         @let isHighlighted = !inFavorites() && menuRef.highlightedMenuId() === row.id;
         @if (row.link) {
             <!--
+                Номер пункта на самой строке — признак для правил приложения: по нему оно находит строку,
+                например ту, что открывает страницу раздела. Стоит и у строки блока избранного.
                 Строка блока избранного без номера: по номеру клавиатура нажимает строку списка. И без
                 родного перетаскивания ссылки: нажатие на ручку внутри строки браузер забирал себе,
                 и перетаскивание CDK не начиналось.
@@ -13,8 +15,9 @@
                 rtElem="row"
                 qa-dataid="side-menu-sub-item"
                 [id]="inFavorites() ? null : row.id"
+                [attr.data-item-id]="row.id"
                 [attr.draggable]="inFavorites() ? 'false' : null"
-                [routerLink]="row.link"
+                [attr.href]="row.link | rtSideMenuHref"
                 [style.--rt-side-menu-sub-item-depth]="depth"
                 [rtMod]="{ active: isActive, highlighted: isHighlighted }"
                 [attr.aria-current]="isActive ? 'page' : null"
@@ -44,7 +47,6 @@
                         rtElem="favorite"
                         qa-dataid="side-menu-favorite-remove"
                         size="sm"
-                        shape="circle"
                         [rtMod]="{ remove: true }"
                         [icon]="favoritesIcons.remove"
                         [ariaLabel]="removeLabel()"
@@ -56,7 +58,6 @@
                         rtElem="favorite"
                         qa-dataid="side-menu-favorite-star"
                         size="sm"
-                        shape="circle"
                         [rtMod]="{ on: isFavorite }"
                         [icon]="isFavorite ? 'star-fill' : 'star'"
                         [iconFill]="isFavorite"
@@ -78,8 +79,8 @@
                         rtElem="action"
                         qa-dataid="side-menu-sub-item-action"
                         size="sm"
-                        shape="circle"
                         [icon]="buttonKitIcon"
+                        [iconFill]="menuRef.subItemIconFill()"
                         [ariaLabel]="row.name ?? ''"
                         (clicked)="onClickSubMenuAdditional(row, $event)">
                         @if (buttonOwnTpl) {
@@ -104,6 +105,7 @@
                 rtElem="folder"
                 appearance="plain"
                 [headerId]="'' + row.id"
+                [attr.data-item-id]="row.id"
                 [hideToggle]="!row.submenu.length"
                 [expanded]="isOpen"
                 [style.--rt-side-menu-sub-item-depth]="depth"
@@ -138,7 +140,7 @@
     <ng-template #iconTpl let-row>
         @let kitIcon = row.icon | rtSideMenuIcon;
         @if (kitIcon) {
-            <rt-icon rtElem="icon" size="sm" [name]="kitIcon" />
+            <rt-icon rtElem="icon" size="sm" [name]="kitIcon" [fill]="menuRef.subItemIconFill()" />
         } @else if (menuRef.ownIconTpl(); as own) {
             <span rtElem="own-icon" qa-dataid="side-menu-own-icon" aria-hidden="true">
                 <ng-container [ngTemplateOutlet]="own" [ngTemplateOutletContext]="{ $implicit: row, icon: row.icon, slot: 'icon' }" />

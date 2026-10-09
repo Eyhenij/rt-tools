@@ -88,9 +88,18 @@
     /* Ручка видна так же, как «убрать»: под наведением и фокусом клавиатуры своей строки, а где
        указатель не умеет наводиться, — всегда. Прячется прозрачностью: остаётся в порядке Tab. */
     .rt-side-menu-favorites__handle {
+        /* Размер, форма, значок и цвет ручки — свойства строки подменю, как у звезды и «убрать». */
+        --rt-icon-button-color: var(--rt-side-menu-sub-item-favorite-color);
+        --rt-icon-step-sm: var(--rt-side-menu-sub-item-button-icon-size);
+
         flex-shrink: 0;
         cursor: grab;
         opacity: 0;
+
+        > .rt-icon-button {
+            --rt-icon-button-size-step: var(--rt-side-menu-sub-item-favorite-size);
+            --rt-icon-button-radius: var(--rt-side-menu-sub-item-button-radius);
+        }
 
         &:active {
             cursor: grabbing;
