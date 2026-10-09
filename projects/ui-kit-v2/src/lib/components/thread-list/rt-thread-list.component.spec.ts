@@ -1,6 +1,10 @@
 import { ChangeDetectionStrategy, Component, DebugElement, WritableSignal, signal } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 
+import { IRtIcon } from '../icon/rt-icon.model';
+
+import { RtIconComponent } from '../icon/rt-icon.component';
 import { classesOf, createRtFixture, el, qa, qaAll, textOf } from '../../../testing/rt-kit-testing';
 import { RtThreadListRowActionsDirective, RtThreadListRowDirective } from './rt-thread-list.directives';
 import { IRtThreadList } from './rt-thread-list.model';
@@ -25,6 +29,7 @@ const ROWS: ReadonlyArray<IThread> = [
             [loading]="loading()"
             [fetching]="fetching()"
             [hasMore]="hasMore()"
+            [emptyPreviewIcons]="previewIcons()"
             (selectRow)="selected = $event"
             (openInNewTab)="openedInTab = $event"
             (loadMore)="loadMoreCount = loadMoreCount + 1">
@@ -42,6 +47,7 @@ class ThreadListHostComponent {
     public readonly loading: WritableSignal<boolean> = signal<boolean>(false);
     public readonly fetching: WritableSignal<boolean> = signal<boolean>(false);
     public readonly hasMore: WritableSignal<boolean> = signal<boolean>(false);
+    public readonly previewIcons: WritableSignal<readonly IRtIcon.Name[]> = signal<readonly IRtIcon.Name[]>(['user', 'users', 'user']);
     public selected: IRtThreadList.TRowId | null = null;
     public openedInTab: IRtThreadList.TRowId | null = null;
     public loadMoreCount: number = 0;
@@ -68,6 +74,16 @@ class RowActionsHostComponent {
     public deleted: IRtThreadList.TRowId | null = null;
 }
 
+@Component({
+    selector: 'rt-thread-list-default-preview-host',
+    template: `
+        <rt-thread-list [rows]="[]" />
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtThreadListComponent],
+})
+class DefaultPreviewHostComponent {}
+
 function setup(): ComponentFixture<ThreadListHostComponent> {
     return createRtFixture(ThreadListHostComponent, {}, { skipInitialDetect: true });
 }
@@ -75,6 +91,15 @@ function setup(): ComponentFixture<ThreadListHostComponent> {
 function render(fixture: ComponentFixture<ThreadListHostComponent>): ComponentFixture<ThreadListHostComponent> {
     fixture.detectChanges();
     return fixture;
+}
+
+function previewCards<T>(fixture: ComponentFixture<T>): { icon: IRtIcon.Name | null; offset: boolean }[] {
+    return fixture.debugElement
+        .queryAll(By.css('.rt-thread-list__empty-card'))
+        .map((card: DebugElement): { icon: IRtIcon.Name | null; offset: boolean } => ({
+            icon: (card.query(By.directive(RtIconComponent)).componentInstance as RtIconComponent).name(),
+            offset: classesOf(card.nativeElement as HTMLElement).includes('rt-thread-list__empty-card--offset'),
+        }));
 }
 
 function rows(fixture: ComponentFixture<ThreadListHostComponent>): HTMLButtonElement[] {
@@ -176,6 +201,33 @@ describe('RtThreadListComponent', (): void => {
 
             expect(qa(fixture, 'thread-list-empty')).not.toBeNull();
             expect(textOf(qa(fixture, 'empty-state-title'))).toBe('Nothing found');
+        });
+    });
+
+    describe('строки-превью пустого состояния', (): void => {
+        it('SC-UKV-775 — по умолчанию строки с людьми, средняя сдвинута', (): void => {
+            const fixture: ComponentFixture<DefaultPreviewHostComponent> = createRtFixture(DefaultPreviewHostComponent);
+
+            expect(qaAll(fixture, 'thread-list-empty').length).toBe(1);
+            expect(previewCards(fixture)).toEqual([
+                { icon: 'user', offset: false },
+                { icon: 'users', offset: true },
+                { icon: 'user', offset: false },
+            ]);
+        });
+
+        it('SC-UKV-775 — заданные значки рисуют по строке на значок, каждая вторая сдвинута', (): void => {
+            const fixture: ComponentFixture<ThreadListHostComponent> = setup();
+            fixture.componentInstance.rows.set([]);
+            fixture.componentInstance.previewIcons.set(['sparkle', 'bot', 'sparkle', 'bot']);
+            render(fixture);
+
+            expect(previewCards(fixture)).toEqual([
+                { icon: 'sparkle', offset: false },
+                { icon: 'bot', offset: true },
+                { icon: 'sparkle', offset: false },
+                { icon: 'bot', offset: true },
+            ]);
         });
     });
 

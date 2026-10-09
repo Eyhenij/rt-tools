@@ -60,7 +60,7 @@
         } @else if (!rows().length) {
             <rt-empty-state rtElem="empty" qa-dataid="thread-list-empty" [description]="t().uiThreadListEmptyHint" [title]="emptyTitle()">
                 <div rtEmptyIllustration rtElem="empty-preview">
-                    @for (row of emptyPreviewRows; track row.id) {
+                    @for (row of emptyPreviewRows(); track row.id) {
                         <div rtElem="empty-card" [rtMod]="{ offset: row.offset }">
                             <span rtElem="empty-avatar">
                                 <rt-icon size="sm" [name]="row.icon" />

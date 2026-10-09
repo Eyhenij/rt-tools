@@ -98,3 +98,19 @@ When the list of conversations is opened and a conversation is chosen
 Then focus stands on «Back to conversation», then in the composer
 
 Covered by the component spec of the organism.
+
+### SC-UKV-775 — the thread list draws a preview row per icon
+
+Given an empty thread list
+When no icons are given, or four icons are given
+Then three rows with people stand with the middle one shifted, or four rows with the given icons stand with every second one shifted
+
+Covered by the spec of the thread list.
+
+### SC-UKV-776 — the empty list of conversations shows the assistant's marks
+
+Given a panel with an empty list of conversations
+When no icons are given, or the consumer gives its own
+Then the preview rows show the spark, the bot and the spark, or the consumer's icons
+
+Covered by the component spec of the organism.
