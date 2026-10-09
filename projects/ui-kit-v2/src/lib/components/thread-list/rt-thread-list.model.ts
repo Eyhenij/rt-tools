@@ -1,6 +1,8 @@
 /**
  * Модель `<rt-thread-list>`: один корневой неймспейс с префиксом `I`.
  */
+import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
+
 export namespace IRtThreadList {
     /** Номер строки: список ведёт записи и с числовым ключом, и со строковым. */
     export type TRowId = number | string;
@@ -22,5 +24,12 @@ export namespace IRtThreadList {
     /** Контекст row-темплейта: строка приходит как `$implicit` (`let-row`). */
     export interface RowContext<TRow extends Row> {
         $implicit: TRow;
+    }
+
+    /** Декоративная строка-превью пустого состояния. */
+    export interface PreviewRow {
+        id: number;
+        icon: IRtIcon.Name;
+        offset: boolean;
     }
 }
