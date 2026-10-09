@@ -21,6 +21,7 @@ export const RT_KIT_LABELS_EN = {
     aiBackToChat: 'Back to conversation',
     aiClose: 'Close assistant',
     aiCopyReference: 'Copy reference',
+    aiCopyThreadId: 'Copy ID',
     aiDeleteThread: 'Delete conversation',
     aiDisclaimer: 'AI can make mistakes. Check important information.',
     aiDislike: 'Bad answer',

@@ -1,3 +1,9 @@
+# [0.22.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2@0.21.0...rt-ui-kit-v2@0.22.0) (2026-10-09)
+
+### Features
+
+- **rt:ui-kit-v2:** меню действий беседы в списке бесед rt-ai-chat ([087b407](https://github.com/Eyhenij/rt-tools/commit/087b4079bb2c749ad24b90392c688c3ed01adc76)), closes [#2729](https://github.com/Eyhenij/rt-tools/issues/2729)
+
 # [0.21.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2@0.20.0...rt-ui-kit-v2@0.21.0) (2026-10-09)
 
 ### Bug Fixes
