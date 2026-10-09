@@ -487,3 +487,11 @@ When the guard of the end of the conversation judges the call.
 Then the call is refused with a reason naming the owner; other tools pass, and without jq the refusal stays.
 
 Covered: `projects/agent-kit/tests/end-conversation-guard.test.sh`.
+
+### SC-AK-1194 — with edits in the turn the refusal names the rules of their area
+
+Given during the turn a file was edited for which the rules gate names its own rule, and no rule was read.
+When the turn ends with a question to the owner.
+Then the refusal names that rule, says that a load before the owner's last message does not count and gives no advice to search the directories.
+
+Covered: `projects/agent-kit/tests/grill-gate.test.sh`.
