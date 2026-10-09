@@ -17,6 +17,7 @@ question, whether the owner has already answered it, and when the menus are over
 - **The first sign** — the rules layer was not read in the turn that asks a question.
 - **The second sign** — the owner has already answered the question in a remark.
 - **The third sign** — the owner took the recommended option twice in a row.
+- **The fourth sign** — a question after a refusal carries nothing done without the answer.
 - **A significant word** — a word of five letters and more, taken from the question and its options.
 
 ### What it is called in the interface
@@ -62,6 +63,11 @@ The guard has no interface: only the executor sees it — as the text of a refus
   the streak. The refusal orders to write the assumptions into the grill, name them to the owner in
   one line and look for a ready-made module of the same kind before that: a grill of five menus was
   closed by the owner naming such a module.
+- **A question after a refusal in the same turn leaves only with the line of what was done without
+  the answer and a working command after the refusal.** A question is a lawful exit of a turn, and a
+  choice "fix or wait" brought right after a refusal stopped work no guard held. The menu and a
+  question in prose are judged alike; the line is named by the tree profile; a read or a status
+  command does not count as work. A turn without a refusal is not judged by this sign.
 - **The guard of the conversation lets the work through at any breakage.** There is no record of the
   turn, there is no parser of the record, the reading broke — the turn is allowed. A broken guard has
   no right to jam the conversation.

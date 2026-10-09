@@ -306,6 +306,44 @@ expect_ask "SC-AK-1195 — вопрос после короткой команд
         "$(uses Skill "$LOADED")")" \
         'По 2667: взять задачу в работу с тестами или без них?')" PASS
 
+# --- SC-AK-1197 — вопрос после отказа уходит со строкой о сделанном без ответа ---------------
+# Проверка отказала, исполнитель не запустил ни одной правки и принёс владельцу выбор «чинить или
+# ждать»: вопрос — законный выход хода, и ни одна проверка его не задержала.
+refused() { jq -c -n '{type:"user",message:{content:[{type:"tool_result",is_error:true,content:"BLOCKED: the push is refused"}]}}'; }
+MARKED='Без ответа сделано: правка порядка свойств линтером. Константы оставить или вынести?'
+
+expect_ask "SC-AK-1197 — меню после отказа без строки не уходит" \
+    "$(input_ask_text "$(transcript \
+        "$(say 'отправь выпуск')" \
+        "$(uses Skill "$LOADED")" \
+        "$(uses Bash '{"command":"git push"}')" "$(refused)")" \
+        'Чинить или ждать?')" DENY
+expect_ask "SC-AK-1197 — строка без рабочей команды после отказа не спасает" \
+    "$(input_ask_text "$(transcript \
+        "$(say 'отправь выпуск')" \
+        "$(uses Skill "$LOADED")" \
+        "$(uses Bash '{"command":"git push"}')" "$(refused)" \
+        "$(uses Bash '{"command":"git status"}')" "$(tool_result)")" \
+        "$MARKED")" DENY
+expect_ask "SC-AK-1197 — строка и правка после отказа меню пропускают" \
+    "$(input_ask_text "$(transcript \
+        "$(say 'отправь выпуск')" \
+        "$(uses Skill "$LOADED")" \
+        "$(uses Bash '{"command":"git push"}')" "$(refused)" \
+        "$(uses Bash '{"command":"pnpm exec stylelint --fix libs/x/src/x.scss"}')" "$(tool_result)")" \
+        "$MARKED")" PASS
+expect_stop "SC-AK-1197 — вопрос прозой после отказа без строки ход не заканчивает" \
+    "$(input_stop "$(transcript \
+        "$(say 'отправь выпуск')" \
+        "$(uses Skill "$LOADED")" \
+        "$(uses Bash '{"command":"git push"}')" "$(refused)" \
+        "$(reply 'Чинить или ждать?')")")" BLOCK
+expect_ask "SC-AK-1197 — ход без отказа этим признаком не судится" \
+    "$(input_ask_text "$(transcript \
+        "$(say 'отправь выпуск')" \
+        "$(uses Skill "$LOADED")")" \
+        'Чинить или ждать?')" PASS
+
 # --- SC-AK-1168 — загруженное правило и отчёт субагента репликой владельца не считаются ------
 # Текст правила и отчёт субагента приходят в запись с ролью `user` и пометкой `isMeta`. Принятые
 # за ввод, они вставали «последней репликой владельца», и новый вопрос совпадал с ними словами.
