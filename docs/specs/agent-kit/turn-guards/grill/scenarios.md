@@ -106,3 +106,19 @@ When the executor sends the next menu
 Then the call passes: the streak is broken by any other answer, and one answer is not a streak
 
 Covered: `projects/agent-kit/tests/grill-gate.test.sh`.
+
+### SC-AK-1202 — a question with an option past a check does not leave
+
+Given the menu offers to send once past the check, or to add a bypass line to the command
+When the executor sends this menu
+Then the call is refused, and the refusal orders to fix the cause or the check itself
+
+Given the last reply ends with a question about a commit with `--no-verify`
+When the turn ends
+Then the turn is held by the same refusal
+
+Given the menu asks how to fix the check itself
+When the executor sends this menu
+Then the call passes
+
+Covered: `projects/agent-kit/tests/grill-gate.test.sh`.

@@ -68,6 +68,10 @@ The guard has no interface: only the executor sees it — as the text of a refus
   choice "fix or wait" brought right after a refusal stopped work no guard held. The menu and a
   question in prose are judged alike; the line is named by the tree profile; a read or a status
   command does not count as work. A turn without a refusal is not judged by this sign.
+- **A question that offers the owner to walk around a check does not leave.** A "yes" to it still
+  sends red work past the check. The menu with its options and a question in prose are judged alike:
+  past the check, a bypass line, a disabled rule, a hook switched off. A question about how to fix
+  the check itself passes.
 - **The guard of the conversation lets the work through at any breakage.** There is no record of the
   turn, there is no parser of the record, the reading broke — the turn is allowed. A broken guard has
   no right to jam the conversation.
