@@ -4,7 +4,7 @@ kind: pattern
 rule: task-flow
 description: Pattern of rule task-flow. Load when bringing work to readiness — merging the product agreement into the domain spec, bringing the domain texts up to date with what was done, opening the PR as a draft or ready by its base and leaving draft.
 ---
-<!-- rt-kit v0.29.4 · patterns/task-flow-close.md · 5546ff6947c9 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.4 · patterns/task-flow-close.md · 0516331ffefa · правится надстройкой, не здесь -->
 
 # Closing the work
 
@@ -118,7 +118,9 @@ the progress and into the PR body. The law file is edited after the answer. The 
 application laws: payments, locales and access are the same agreement, only about this application.
 
 What was done at this step is written into the PR body: what was re-read, what was changed, and if
-nothing was changed — why. The form of the section — pattern `git-workflow-pr-body`.
+nothing was changed — why. The form of the section — pattern `git-workflow-pr-body`. The body fits
+the host's length limit — Azure DevOps takes 4000 characters — so the report is one line per text,
+not prose: a body over the limit refuses the opening call, and it gets cut in a hurry.
 
 **Next move:** the updated texts are committed, and in the same turn the task folder is taken apart
 — by the last commit of the branch, pattern `task-flow-archive`.
@@ -176,19 +178,19 @@ second form: nothing is left to wait for, and the check standing behind it is th
 ```
 
 The section heading and the words of both samples are written in the language of the PR, not the
-language of the pattern. The samples are set in the language of this tree's PRs and are carried over
-whole — the order of thoughts, the wording and the heading, the heading last. It looks like part of
-the form, not part of the text. The same holds for the messages to the owner below: they are
-samples of **what** is said, not of which words.
+language of the pattern. The heading is named by the tree in its profile, `RT_PULL_BODY_SECTION`,
+and is taken from there, not from the samples above. What is carried over whole is the order of
+thoughts, not the words. The same holds for the messages to the owner below: they are samples of
+**what** is said, not of which words.
 
 The section is neither left empty nor removed altogether: a missing section and "no steps left" read
 the same and mean different things. The full sample of a PR body — in the pattern for creating a
 commit and a PR, if the tree laid it out.
 
-The delivery guard holds this, not the writer's memory: it reads the body straight from the opening
-command — passed as an argument or as a file — and refuses the call together with everything else
-that does not match. The heading sample is named by the tree, because the heading is written in the
-PR's language, and the package knows no foreign words; unnamed, the section is not judged at all.
+Where the tree laid out the delivery guard, it reads the body straight from the opening command —
+passed as an argument or as a file — and refuses the call together with everything else that does
+not match. It judges the section by the heading the profile names; unnamed, the section is not
+judged at all. Without the guard the section is held only by whoever writes the body.
 The work queue audit still does not read the body: the miss is caught at the minute of opening, that
 is, where one call still fixes it.
 
