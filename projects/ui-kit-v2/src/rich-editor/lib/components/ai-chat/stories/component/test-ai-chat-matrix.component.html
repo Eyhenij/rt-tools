@@ -1,0 +1,121 @@
+<ng-template #panel let-c>
+    <div
+        style="
+            box-sizing: border-box;
+            inline-size: 100%;
+            block-size: 40rem;
+            border: 1px solid var(--rt-color-border-subtle);
+            border-radius: var(--rt-radius-lg);
+            overflow: hidden;
+        ">
+        <rt-ai-chat
+            subtitle="Occupancy last week"
+            activeThreadId="t1"
+            fullScreenable
+            [messages]="c.messages"
+            [sending]="c.sending ?? false"
+            [loading]="c.loading ?? false"
+            [error]="c.error ?? null"
+            [suggestions]="c.suggestions ?? []"
+            [threads]="c.threads ?? threads"
+            [threadsOpen]="!!c.threads"
+            [threadsLoading]="c.threadsLoading ?? false"
+            [draft]="c.draft ?? ''" />
+    </div>
+</ng-template>
+
+@switch (part) {
+    @case ('empty') {
+        <app-story-row slotWidth="26.25rem" [items]="emptyCases" [itemLabel]="caseLabel">
+            <ng-template let-c><ng-container *ngTemplateOutlet="panel; context: { $implicit: c }" /></ng-template>
+        </app-story-row>
+    }
+    @case ('answer') {
+        <app-story-row slotWidth="26.25rem" [items]="answerCases" [itemLabel]="caseLabel">
+            <ng-template let-c><ng-container *ngTemplateOutlet="panel; context: { $implicit: c }" /></ng-template>
+        </app-story-row>
+    }
+    @case ('error') {
+        <app-story-row slotWidth="26.25rem" [items]="errorCases" [itemLabel]="caseLabel">
+            <ng-template let-c><ng-container *ngTemplateOutlet="panel; context: { $implicit: c }" /></ng-template>
+        </app-story-row>
+    }
+    @case ('threads') {
+        <app-story-row slotWidth="26.25rem" [items]="threadCases" [itemLabel]="caseLabel">
+            <ng-template let-c><ng-container *ngTemplateOutlet="panel; context: { $implicit: c }" /></ng-template>
+        </app-story-row>
+    }
+    @case ('long') {
+        <app-story-row slotWidth="26.25rem" [items]="longCases" [itemLabel]="caseLabel">
+            <ng-template let-c><ng-container *ngTemplateOutlet="panel; context: { $implicit: c }" /></ng-template>
+        </app-story-row>
+    }
+    @case ('fullScreen') {
+        <div
+            style="
+                box-sizing: border-box;
+                inline-size: 60rem;
+                block-size: 40rem;
+                border: 1px solid var(--rt-color-border-subtle);
+                border-radius: var(--rt-radius-lg);
+                overflow: hidden;
+            ">
+            <rt-ai-chat
+                subtitle="Occupancy last week"
+                activeThreadId="t1"
+                fullScreenable
+                [fullScreen]="true"
+                [messages]="done"
+                [threads]="threads" />
+        </div>
+    }
+    @case ('extra') {
+        <div
+            style="
+                box-sizing: border-box;
+                inline-size: 26.25rem;
+                block-size: 40rem;
+                border: 1px solid var(--rt-color-border-subtle);
+                border-radius: var(--rt-radius-lg);
+                overflow: hidden;
+            ">
+            <rt-ai-chat [messages]="done">
+                <ng-template let-message rtAiChatMessageExtra>
+                    <div
+                        style="
+                            display: grid;
+                            place-items: center;
+                            block-size: 10rem;
+                            border: 1px dashed var(--rt-color-border-default);
+                            border-radius: var(--rt-radius-md);
+                            color: var(--rt-color-text-muted);
+                        ">
+                        Chart for {{ message.id }}
+                    </div>
+                </ng-template>
+            </rt-ai-chat>
+        </div>
+    }
+    @case ('presets') {
+        <app-story-presets caption="Ответ в обоих наборах">
+            <ng-template>
+                <div style="inline-size: 26.25rem">
+                    <ng-container *ngTemplateOutlet="panel; context: { $implicit: answerCases[2] }" />
+                </div>
+            </ng-template>
+        </app-story-presets>
+    }
+    @case ('themes') {
+        <app-story-presets caption="Ответ в обеих темах в обоих наборах">
+            <ng-template>
+                <app-story-themes>
+                    <ng-template>
+                        <div style="inline-size: 26.25rem">
+                            <ng-container *ngTemplateOutlet="panel; context: { $implicit: answerCases[3] }" />
+                        </div>
+                    </ng-template>
+                </app-story-themes>
+            </ng-template>
+        </app-story-presets>
+    }
+}

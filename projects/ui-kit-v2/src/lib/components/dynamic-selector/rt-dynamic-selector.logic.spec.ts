@@ -1,6 +1,8 @@
 import {
+    dynamicLabelCase,
     addDynamicText,
     clearDynamicKeys,
+    dynamicMatchParts,
     dynamicSelectAllState,
     dynamicSelectorMatches,
     dynamicPopupRows,
@@ -122,5 +124,38 @@ describe('rt-dynamic-selector.logic', (): void => {
         expect(rows.ticked.map(keyOf)).toEqual([1, 3]);
         expect(rows.found.map(keyOf)).toEqual([2]);
         expect(dynamicPopupRows(ITEMS, ITEMS, [1], keyOf, '').ticked).toEqual([]);
+    });
+
+    it('SC-UKV-730 — the label is cut into matched and plain parts by every word of the query, case-insensitive', (): void => {
+        expect(dynamicMatchParts('Анна Сергеевна', 'сер')).toEqual([
+            { text: 'Анна ', matched: false },
+            { text: 'Сер', matched: true },
+            { text: 'геевна', matched: false },
+        ]);
+        expect(dynamicMatchParts('Анна Анисимова', 'ан')).toEqual([
+            { text: 'Ан', matched: true },
+            { text: 'на ', matched: false },
+            { text: 'Ан', matched: true },
+            { text: 'исимова', matched: false },
+        ]);
+        expect(dynamicMatchParts('Март, отчёт', 'отчёт март')).toEqual([
+            { text: 'Март', matched: true },
+            { text: ', ', matched: false },
+            { text: 'отчёт', matched: true },
+        ]);
+    });
+
+    it('SC-UKV-730 — overlapping matches merge, and an empty query leaves one plain part', (): void => {
+        expect(dynamicMatchParts('aaa', 'aa')).toEqual([{ text: 'aaa', matched: true }]);
+        expect(dynamicMatchParts('Boris', '  ')).toEqual([{ text: 'Boris', matched: false }]);
+        expect(dynamicMatchParts('', 'b')).toEqual([{ text: '', matched: false }]);
+    });
+
+    it('SC-UKV-731 — the label case leaves the text, raises every word or the whole label', (): void => {
+        expect(dynamicLabelCase('submit FORM', 'none')).toBe('submit FORM');
+        expect(dynamicLabelCase('submit FORM', 'title')).toBe('Submit Form');
+        expect(dynamicLabelCase('применить  всё', 'title')).toBe('Применить  Всё');
+        expect(dynamicLabelCase('Применить', 'upper')).toBe('ПРИМЕНИТЬ');
+        expect(dynamicLabelCase('', 'title')).toBe('');
     });
 });

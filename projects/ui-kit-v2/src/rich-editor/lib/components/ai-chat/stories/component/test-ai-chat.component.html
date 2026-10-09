@@ -1,0 +1,31 @@
+<app-story-presets caption="Панель ассистента в обоих наборах">
+    <ng-template>
+        <div
+            style="
+                box-sizing: border-box;
+                inline-size: 26.25rem;
+                block-size: 40rem;
+                border: 1px solid var(--rt-color-border-subtle);
+                border-radius: var(--rt-radius-lg);
+                overflow: hidden;
+            ">
+            <rt-ai-chat
+                [title]="title"
+                [subtitle]="subtitle"
+                [messages]="messages"
+                [suggestions]="suggestions"
+                [sending]="sending"
+                [loading]="loading"
+                [error]="error"
+                [threads]="threads"
+                [fullScreenable]="fullScreenable"
+                (send)="send.emit($event)"
+                (stop)="stop.emit()"
+                (retry)="retry.emit()"
+                (newThread)="newThread.emit()"
+                (selectThread)="selectThread.emit($event)"
+                (deleteThread)="deleteThread.emit($event)"
+                (feedbackChange)="feedbackChange.emit($event)" />
+        </div>
+    </ng-template>
+</app-story-presets>

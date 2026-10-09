@@ -70,6 +70,15 @@ no "SC-AK-857 — запуск проверки по её пути" rt_shell_wri
 no "SC-AK-857 — запуск с доводом-файлом" rt_shell_writes_default 'node tools/probe-style.mjs docs/a.md'
 no "SC-AK-857 — запуск сценария другим интерпретатором" rt_shell_writes_default 'python3 tools/report.py --size 4'
 ok "SC-AK-857 — код доводом остаётся записью" rt_shell_writes_default "node -e \"require('fs').writeFileSync('a','b')\""
+
+# SC-AK-1192. Флаг правки на месте узнаётся словом, а не подстрокой: путь вида order-item-list
+# несёт «-i» внутри, и чтение по нему считалось правкой.
+no "SC-AK-1192 — чтение sed по пути с -i внутри" rt_shell_writes_default 'sed -n 5p src/order-item-list.html'
+no "SC-AK-1192 — perl читает путь с -i внутри" rt_shell_writes_default 'perl -ne print src/order-item.html'
+ok "SC-AK-1192 — правка sed на месте" rt_shell_writes_default "sed -i 's/a/b/' src/a.html"
+ok "SC-AK-1192 — флаг в связке и с суффиксом копии" rt_shell_writes_default "sed -Ei.bak 's/a/b/' src/a.html"
+ok "SC-AK-1192 — длинная форма флага" rt_shell_writes_default "sed --in-place 's/a/b/' src/a.html"
+ok "SC-AK-1192 — perl правит на месте" rt_shell_writes_default "perl -pi -e 's/a/b/' src/a.html"
 ok "SC-AK-857 — документ на входе остаётся записью" rt_shell_writes_default 'python3 <<PY'
 ok "SC-AK-857 — правка по месту остаётся записью" rt_shell_writes_default 'perl -pi -e s/a/b/ docs/a.md'
 
@@ -168,6 +177,8 @@ report "карта: сверка спеков" "$(skill_for edit /r/tools/check-
 report "карта: сверка длины файла" "$(skill_for edit /r/tools/check-file-size.mjs '')" doc-style
 report "карта: сверка оформления" "$(skill_for edit /r/tools/check-styles.mjs '')" styling-bem
 report "карта: своё правило линтера кода" "$(skill_for edit /r/tools/eslint-rules/no-x.mjs '')" typescript-conventions
+# SC-AK-1193. Аудит очереди разнесён по модулям, и правка любого из них требует правила о поставке.
+report "SC-AK-1193 — модуль аудита очереди" "$(skill_for edit /r/tools/board-runs.mjs '')" git-workflow
 # У конвейера предмета два сразу: какие проверки идут до слияния и что попадает на прод после.
 # Карта называет оба имени, правило о выкатке первым, и гейт требует первое незагруженное.
 report "карта: файл конвейера" "$(skill_for edit /r/.github/workflows/deploy.yml '' | head -1)" deploy-flow

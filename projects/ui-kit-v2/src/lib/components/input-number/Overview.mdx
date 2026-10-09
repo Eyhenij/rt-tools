@@ -74,18 +74,18 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Входы
 
-| вход                | тип                    | умолчание                      |
-| ------------------- | ---------------------- | ------------------------------ |
-| `appearance`        | `'outline' \| 'fill'`  | `'outline'`                    |
-| `iconLeft`          | `IRtIcon.Name \| null` | `null`                         |
-| `prefix`            | `string \| null`       | `null`                         |
-| `placeholder`       | `string`               | `''`                           |
-| `min`               | `number \| null`       | `null` (сторона не ограничена) |
-| `max`               | `number \| null`       | `null` (сторона не ограничена) |
-| `minFractionDigits` | `number`               | `0`                            |
-| `maxFractionDigits` | `number`               | `2`                            |
-| `grouped`           | `boolean`              | `true`                         |
-| `radius`            | `TRtRadius \| null`    | `null` → скругление полей      |
+| вход                | тип                             | умолчание                      |
+| ------------------- | ------------------------------- | ------------------------------ |
+| `appearance`        | `'outline' \| 'fill' \| 'pill'` | `'outline'`                    |
+| `iconLeft`          | `IRtIcon.Name \| null`          | `null`                         |
+| `prefix`            | `string \| null`                | `null`                         |
+| `placeholder`       | `string`                        | `''`                           |
+| `min`               | `number \| null`                | `null` (сторона не ограничена) |
+| `max`               | `number \| null`                | `null` (сторона не ограничена) |
+| `minFractionDigits` | `number`                        | `0`                            |
+| `maxFractionDigits` | `number`                        | `2`                            |
+| `grouped`           | `boolean`                       | `true`                         |
+| `radius`            | `TRtRadius \| null`             | `null` → скругление полей      |
 
 **Сплошное число объявляется входом `grouped`:** `false` снимает разделители разрядов и при
 наборе, и после ухода фокуса. Год, номер дома и код разрядами не читаются.

@@ -625,20 +625,38 @@ export type TRtConsumerHandleName =
     | '--rt-dialog-title-transform'
     | '--rt-dialog-title-weight'
     | '--rt-dialog-width'
+    | '--rt-dynamic-selector-list-actions-gap'
+    | '--rt-dynamic-selector-list-actions-offset'
+    | '--rt-dynamic-selector-list-actions-padding-end'
     | '--rt-dynamic-selector-list-add-color'
+    | '--rt-dynamic-selector-list-controls-divider-color'
+    | '--rt-dynamic-selector-list-controls-divider-width'
+    | '--rt-dynamic-selector-list-controls-gap'
+    | '--rt-dynamic-selector-list-handle-padding-end'
+    | '--rt-dynamic-selector-list-handle-padding-start'
+    | '--rt-dynamic-selector-list-row-padding-end'
+    | '--rt-dynamic-selector-list-title-gap'
     | '--rt-dynamic-selector-popup-bg'
     | '--rt-dynamic-selector-popup-border-width'
     | '--rt-dynamic-selector-popup-button-font-size'
     | '--rt-dynamic-selector-popup-button-height'
+    | '--rt-dynamic-selector-popup-empty-gap'
     | '--rt-dynamic-selector-popup-empty-icon-size'
     | '--rt-dynamic-selector-popup-empty-icon-wrap-bg'
     | '--rt-dynamic-selector-popup-empty-text-color'
     | '--rt-dynamic-selector-popup-empty-text-size'
     | '--rt-dynamic-selector-popup-empty-text-weight'
     | '--rt-dynamic-selector-popup-foot-border-width'
+    | '--rt-dynamic-selector-popup-foot-padding'
+    | '--rt-dynamic-selector-popup-highlight-bg'
+    | '--rt-dynamic-selector-popup-highlight-color'
+    | '--rt-dynamic-selector-popup-highlight-radius'
+    | '--rt-dynamic-selector-popup-highlight-weight'
     | '--rt-dynamic-selector-popup-max-height'
     | '--rt-dynamic-selector-popup-min-height'
     | '--rt-dynamic-selector-popup-nav-color'
+    | '--rt-dynamic-selector-popup-option-line-height'
+    | '--rt-dynamic-selector-popup-option-min-height'
     | '--rt-dynamic-selector-popup-padding'
     | '--rt-dynamic-selector-popup-radius'
     | '--rt-dynamic-selector-popup-shadow'
@@ -1329,20 +1347,38 @@ export const RT_CONSUMER_HANDLE_NAMES: readonly TRtConsumerHandleName[] = [
     '--rt-dialog-title-transform',
     '--rt-dialog-title-weight',
     '--rt-dialog-width',
+    '--rt-dynamic-selector-list-actions-gap',
+    '--rt-dynamic-selector-list-actions-offset',
+    '--rt-dynamic-selector-list-actions-padding-end',
     '--rt-dynamic-selector-list-add-color',
+    '--rt-dynamic-selector-list-controls-divider-color',
+    '--rt-dynamic-selector-list-controls-divider-width',
+    '--rt-dynamic-selector-list-controls-gap',
+    '--rt-dynamic-selector-list-handle-padding-end',
+    '--rt-dynamic-selector-list-handle-padding-start',
+    '--rt-dynamic-selector-list-row-padding-end',
+    '--rt-dynamic-selector-list-title-gap',
     '--rt-dynamic-selector-popup-bg',
     '--rt-dynamic-selector-popup-border-width',
     '--rt-dynamic-selector-popup-button-font-size',
     '--rt-dynamic-selector-popup-button-height',
+    '--rt-dynamic-selector-popup-empty-gap',
     '--rt-dynamic-selector-popup-empty-icon-size',
     '--rt-dynamic-selector-popup-empty-icon-wrap-bg',
     '--rt-dynamic-selector-popup-empty-text-color',
     '--rt-dynamic-selector-popup-empty-text-size',
     '--rt-dynamic-selector-popup-empty-text-weight',
     '--rt-dynamic-selector-popup-foot-border-width',
+    '--rt-dynamic-selector-popup-foot-padding',
+    '--rt-dynamic-selector-popup-highlight-bg',
+    '--rt-dynamic-selector-popup-highlight-color',
+    '--rt-dynamic-selector-popup-highlight-radius',
+    '--rt-dynamic-selector-popup-highlight-weight',
     '--rt-dynamic-selector-popup-max-height',
     '--rt-dynamic-selector-popup-min-height',
     '--rt-dynamic-selector-popup-nav-color',
+    '--rt-dynamic-selector-popup-option-line-height',
+    '--rt-dynamic-selector-popup-option-min-height',
     '--rt-dynamic-selector-popup-padding',
     '--rt-dynamic-selector-popup-radius',
     '--rt-dynamic-selector-popup-shadow',

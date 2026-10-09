@@ -46,6 +46,21 @@
             background-color: var(--rt-color-bg-surface-subtle-2);
         }
 
+        /* Шаг входа `radius` у залитого поля скругляет все четыре угла, и черта снизу не рисуется —
+           так же, как у поля ввода. `:where` держит силу правила на уровне вида. */
+        &--appearance--fill:where([data-rt-radius]) {
+            border-radius: var(--rt-input-number-radius);
+            border-bottom-color: transparent;
+        }
+
+        /* Вид «pill» — залитое поле-таблетка без черты; шаг входа `radius` переназначает скругление. */
+        &--appearance--pill {
+            --rt-input-number-radius: var(--rt-radius-full);
+
+            border-color: transparent;
+            background-color: var(--rt-color-bg-surface-subtle-2);
+        }
+
         &--invalid {
             border-color: var(--rt-input-color-border-error);
 
