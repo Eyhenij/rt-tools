@@ -163,6 +163,13 @@ the merge, not after.
 - **The creating of a task ends with an answer of the work queue, not with the output of the
   command.** After the fourth step the command asks the queue by the number and prints what it read; a
   printed number means "the call went through", not "the task is visible to whoever works on it".
+- **The card is read by a direct request to the task, not out of the list of the whole board.** The
+  list took three seconds on two hundred cards, the direct request under one, and the column comes
+  in the same answer.
+- **«NO» is printed only after the window of waiting, and the line names how long the command
+  waited.** The queue hands a new card back after seconds: with three readings in twelve seconds one
+  creation in six printed «NO» for a card that then stood on the board with its executor, and the
+  executor added it a second time. The pauses grow, about thirty seconds in all.
 - **A task that is not in the work queue ends the command of creating with a non-zero code.** It is
   not provided with work: nobody will come for it, and silence here costs more than a refusal.
 - **A task without an executor is named by a line of its own.** A nobody's task stands in the queue
