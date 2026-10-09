@@ -129,6 +129,10 @@ nothing.
 
 - A lib without its own `vitest.config.mts`: `nx test <project>` passes green without running a
   single file. Before writing the first test in a lib, check that the config is next to it.
+- **The compiler import goes into the harness file, not into the spec.** A lib that renders nothing
+  still pulls the framework when its test imports a barrel with a framework service, and the first
+  import fails on JIT. The import goes into the file named in `setupFiles` of the lib's run config:
+  in the spec the linter moves it below its neighbours, and the test turns red only in the full set.
 - Substituting a module (`vi.mock`) would hide what the test is created for — which call went to
   the database and in what order. The double is written by hand.
 - Do not create your own helpers for assertions: `expect(...).toBe(...)` and `.toEqual(...)`
