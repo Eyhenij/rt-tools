@@ -27,7 +27,7 @@ const LONG_NAME: IPerson = { id: 4, name: 'Анна Сергеевна Конс�
             [entities]="entities()"
             [chosenEntities]="chosen()"
             [titleWrap]="titleWrap()"
-            (selectionChange)="chosen.set($event)" />
+            (selectionChange)="onSelection($event)" />
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [RtDynamicSelectorComponent],
@@ -36,6 +36,13 @@ class ChosenHostComponent {
     public readonly entities: WritableSignal<IPerson[]> = signal<IPerson[]>([ANNA, BORIS, CLARA]);
     public readonly chosen: WritableSignal<IPerson[]> = signal<IPerson[]>([]);
     public readonly titleWrap: WritableSignal<boolean> = signal(true);
+
+    /** Родитель, что возвращает выбранное в порядке каталога, а не в порядке строк. */
+    public readonly catalogEcho: WritableSignal<boolean> = signal(false);
+
+    public onSelection(list: IPerson[]): void {
+        this.chosen.set(this.catalogEcho() ? this.entities().filter((person: IPerson): boolean => list.includes(person)) : list);
+    }
 }
 
 function host(configure: (it: ChosenHostComponent) => void): ComponentFixture<ChosenHostComponent> {
@@ -84,6 +91,27 @@ describe('RtDynamicSelectorComponent — выбранное входом chosenE
         await settle(fixture);
 
         expect(rowTitles(fixture)).toEqual(['Anna', 'Boris']);
+    });
+
+    it('SC-UKV-721 — эхо тех же ключей в другом порядке оставляет строки и сброс включённым', async (): Promise<void> => {
+        const fixture: ComponentFixture<ChosenHostComponent> = host((it: ChosenHostComponent): void => {
+            it.catalogEcho.set(true);
+            it.chosen.set([CLARA, BORIS, ANNA]);
+        });
+        await settle(fixture);
+
+        (qaAll(fixture, 'dynamic-selector-remove')[0].nativeElement.querySelector('button') as HTMLButtonElement).click();
+        await settle(fixture);
+
+        // Родитель вернул тот же набор в порядке каталога — это эхо, а не новый список
+        expect(fixture.componentInstance.chosen()).toEqual([ANNA, BORIS]);
+        expect(rowTitles(fixture)).toEqual(['Boris', 'Anna']);
+        expect(button(fixture, 'dynamic-selector-reset').disabled).toBe(false);
+
+        button(fixture, 'dynamic-selector-reset').click();
+        await settle(fixture);
+
+        expect(rowTitles(fixture)).toEqual(['Clara', 'Boris', 'Anna']);
     });
 
     it('SC-UKV-721 — новый список входа с другими ключами заменяет выбранное и исходное для сброса', async (): Promise<void> => {

@@ -92,6 +92,14 @@ true, как в v1).
 - пункт полосы без подпунктов закрывает панель с той же задержкой;
 - пункт с подпунктами переключает панель сразу.
 
+**133.** `rt-dynamic-selector` `#takeChosen` принимает эхо `chosenEntities` в другом порядке за
+новый вход, и Reset гаснет. Родитель на `selectionChange` возвращает `chosenEntities` в порядке
+каталога, а не в порядке `value`; сравнение с учётом порядка даёт false, и выполняется
+`this.#initial.set([...keys])`. Нужно: в `#takeChosen` распознавать эхо по набору ключей
+(`sameDynamicKeySet(keys, shown)`), а не по порядку. Тогда эхо не трогает ни `#initial`, ни `value`.
+Строка пришла 9 октября 2026, когда PR #2748 был уже открыт; владелец: «в эту ветку по запросу
+правки».
+
 ### Decisions on rows 122–128
 
 | Question                    | Answer                                                                                                              | Reason                                                                                                                                                         |
@@ -141,3 +149,7 @@ true, как в v1).
 - **The four icon frames were retaken on the branch from main.** The frames of the RT-2644 branch
   carried the epic's icons; the divergence on main's showcase was the folder pair alone, and the
   whole set of 789 tests and 806 snapshots matched on a second raising. Affected stage: 1.
+- **Row 133: the echo of the chosen entities is told by the set of keys.** The echo keeps the order
+  of the rows and the reset list, so the reset turns on after an addition as in the first kit. The
+  promise of SC-UKV-721 widened and kept its number; the new test failed before the fix. Affected
+  stage: 1.
