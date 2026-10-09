@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.29.4 · checks/check-push-gate.mjs · c2c02686ac30 · правится надстройкой, не здесь
+// rt-kit v0.30.0 · checks/check-push-gate.mjs · c2c02686ac30 · правится надстройкой, не здесь
 /**
  * The check that the set of the push gate is not narrower than the set of the pipeline.
  *

@@ -114,3 +114,27 @@ When no icons are given, or the consumer gives its own
 Then the preview rows show the spark, the bot and the spark, or the consumer's icons
 
 Covered by the component spec of the organism.
+
+### SC-UKV-777 — a written answer copies its text without markdown
+
+Given an answer being written, then written
+When «Copy» first in its rating row is pressed
+Then the button is absent while the answer is written, the answer text goes into the clipboard without heading, bold and list signs and without the run line and the attachments, and «Copied» with a check stands for two seconds
+
+Covered by the component spec of the organism and the frame `Answer`.
+
+### SC-UKV-778 — a question copies its text, and copying turns off
+
+Given a question and an answer
+When «Copy» under the question bubble is pressed, then copying is turned off
+Then the question text goes into the clipboard as it is, and with copying off neither button is drawn while the rating stays
+
+Covered by the component spec of the organism and the frame `Answer`.
+
+### SC-UKV-780 — the header icons switch to the material drawings
+
+Given a panel with conversations
+When it is drawn by default, and then with the header icons set to `material`
+Then by default the header carries no sign and «Close» refers to the kit symbol; with `material` the header carries the sign of the icons alone and not the material preset, and «Close» and «Conversations» refer to the material symbols
+
+Covered by the component spec of the organism and the frame `Answer`.

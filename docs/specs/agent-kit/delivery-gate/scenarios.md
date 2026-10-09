@@ -204,6 +204,18 @@ separate command — the gate set is run by the former branch, not by the one go
 
 Covered: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.
 
+### SC-AK-1204 — several pushes in one command are refused
+
+Given one command holds two pushes, or a push inside a loop body
+When the command comes to the push gate guard
+Then it is refused whole, and the refusal names the lawful move: each branch by a separate call
+
+Given one command holds one push, and the word `for` stands in a commit message next to it
+When the command comes to the same guard
+Then it is not refused over its form
+
+Covered: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.
+
 ### SC-AK-406 — creating a new branch in the same command refuses no push
 
 Given one command holds the creation of a new branch and a push to it

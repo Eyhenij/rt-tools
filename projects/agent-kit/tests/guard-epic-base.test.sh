@@ -207,6 +207,22 @@ GE_OUT="$(ge_pull "$GE_WITH_EPIC" "$GE_PR_EPIC")"
 if printf '%s' "$GE_OUT" | grep -q 'базе\|base here\|--base'; then got="отбито"; else got="прошло"; fi
 report "SC-AK-994 — заявка с основанием ветки эпика по основанию не отбита" "$got" "прошло"
 
+# --- SC-AK-1203 — база из стопки того же эпика -------------------------------------------
+#
+# Ветка нижней задачи, которая несёт ветку эпика, — законная база PR стопки. База без ветки
+# эпика в истории отбита так же, как main.
+git -C "$GE_REPO" update-ref refs/remotes/origin/RT-1924-lower "$(git -C "$GE_REPO" rev-parse HEAD)"
+GE_STRAY="$(git -C "$GE_REPO" commit-tree "$(git -C "$GE_REPO" hash-object -t tree /dev/null)" -m stray)"
+git -C "$GE_REPO" update-ref refs/remotes/origin/RT-1923-stray "$GE_STRAY"
+
+GE_OUT="$(ge_pull "$GE_WITH_EPIC" "${GE_PR_EPIC/RT-1921-work-by-epics/RT-1924-lower}")"
+if printf '%s' "$GE_OUT" | grep -q 'base here'; then got="отбито"; else got="прошло"; fi
+report "SC-AK-1203 — база из нижней ветки той же стопки проходит" "$got" "прошло"
+
+GE_OUT="$(ge_pull "$GE_WITH_EPIC" "${GE_PR_EPIC/RT-1921-work-by-epics/RT-1923-stray}")"
+if printf '%s' "$GE_OUT" | grep -q 'RT-1921-work-by-epics'; then got="отбито"; else got="прошло"; fi
+report "SC-AK-1203 — база без ветки эпика в истории отбита" "$got" "отбито"
+
 GE_OUT="$(ge_pull "$GE_NO_EPIC" "$GE_PR_MAIN")"
 if printf '%s' "$GE_OUT" | grep -q 'RT-1921-work-by-epics'; then got="$(ge_silent "$GE_OUT")"; else got="прошло"; fi
 report "SC-AK-994 — у задачи без эпика основание заявки не судится" "$got" "прошло"

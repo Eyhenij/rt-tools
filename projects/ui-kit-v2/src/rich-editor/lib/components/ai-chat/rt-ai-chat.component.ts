@@ -51,6 +51,7 @@ import { nextAtBottom, RT_CHAT_PIN_RETRY_DELAYS_MS } from '../chat/rt-chat-threa
 import { IRtMessageComposer } from '../message-composer/rt-message-composer.model';
 import { RtMessageComposerComponent } from '../message-composer/rt-message-composer.component';
 import { RtAiChatAnswerComponent } from './answer/rt-ai-chat-answer.component';
+import { RtAiChatCopyComponent } from './copy/rt-ai-chat-copy.component';
 import { RtAiChatMessageExtraDirective } from './rt-ai-chat.directives';
 import { IRtAiChat } from './rt-ai-chat.model';
 
@@ -93,6 +94,7 @@ interface IThreadRow extends IRtThreadList.Row {
         ElemDirective,
         ModDirective,
         RtAiChatAnswerComponent,
+        RtAiChatCopyComponent,
         RtButtonDirective,
         RtCopyValueComponent,
         RtEmptyStateComponent,
@@ -132,6 +134,11 @@ export class RtAiChatComponent {
     protected readonly emptyTitleText: Signal<string> = computed((): string => this.emptyTitle() || this.t().aiEmptyTitle);
     protected readonly emptyDescriptionText: Signal<string> = computed((): string => this.emptyDescription() || this.t().aiEmptyText);
     protected readonly disclaimerText: Signal<string> = computed((): string => this.disclaimer() ?? this.t().aiDisclaimer);
+
+    /** Значение признака одних значков на шапке: только материальный набор, свой — без признака. */
+    protected readonly headerIconSign: Signal<IRtIcon.Preset | null> = computed((): IRtIcon.Preset | null =>
+        this.headerIconPreset() === 'material' ? 'material' : null
+    );
 
     protected readonly hasThreads: Signal<boolean> = computed((): boolean => this.threads() !== null);
 
@@ -228,6 +235,18 @@ export class RtAiChatComponent {
     public readonly closable: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
         transform: booleanAttribute,
     });
+
+    /** Кнопка копирования текста под вопросом и в строке действий ответа. */
+    public readonly copyable: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
+        transform: booleanAttribute,
+    });
+
+    /**
+     * Набор рисунков значков шапки. `'material'` ставит на шапку признак одних значков
+     * `data-rt-icon-preset`: значки рисуются материальным набором, токены и остальной вид — свои.
+     * Признак значок читает после первой отрисовки, поэтому вход задаётся до неё. Дефолт `'base'`.
+     */
+    public readonly headerIconPreset: InputSignal<IRtIcon.Preset> = input<IRtIcon.Preset>('base');
 
     /** Черновик в поле сообщения. */
     public readonly draft: ModelSignal<string> = model<string>('');

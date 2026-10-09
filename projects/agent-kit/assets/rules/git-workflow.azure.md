@@ -89,6 +89,10 @@ flowchart TD
 - **A branch without a work item number gets no delivery conditions.** A local trial branch is
   legitimate, and demanding a fresh base of it would refuse work that will not go to main: no PR
   opens from such a branch.
+- **A commit lands with its final content, and a later commit of the same branch does not correct
+  it.** It is made after the check against the mockup, the sample and the measurement; what is not
+  checked stays in the working tree. A third commit fixing the first shows the reviewer the miss
+  instead of the work, and rewriting history hides the trace, not the cause.
 - **A code edit is handed to a person by an open PR, not by a pushed branch.** A branch is not shown
   to them in the branch list, reaches no to-do list of theirs and has no discussion: before the PR
   opens there is no edit for a person. It opens in the turn in which the executor says the work is

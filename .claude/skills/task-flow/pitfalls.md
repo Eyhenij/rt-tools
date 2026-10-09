@@ -1,4 +1,4 @@
-<!-- rt-kit v0.29.4 · pitfalls/task-flow.md · 0af4d4131fc9 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.30.0 · pitfalls/task-flow.md · 0af4d4131fc9 · правится надстройкой, не здесь -->
 # Work conduct — cold part
 
 Pitfalls and behaviour from incident analyses. Loaded not with the rule but on demand: an ordinary

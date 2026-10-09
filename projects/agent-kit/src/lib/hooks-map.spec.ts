@@ -236,6 +236,58 @@ describe('bindDispatch', () => {
         }
     });
 
+    it('SC-AK-1205 — новая запись диспетчера несёт объявленный гардом предел времени', (): void => {
+        const root: string = treeWithSettings('{\n  "hooks": {}\n}\n');
+        try {
+            bindDispatch(bindingsOf(`${ONE_EVENT}\n# rt-hook-timeout: 1800`, GUARD), root);
+            const settings: { hooks: Record<string, { hooks: { timeout?: number }[] }[]> } = JSON.parse(settingsOf(root));
+
+            expect(settings.hooks['PreToolUse'][0].hooks[0].timeout).toBe(1800);
+        } finally {
+            rmSync(root, { recursive: true, force: true });
+        }
+    });
+
+    it('SC-AK-1205 — стоящая запись с меньшим пределом не переписывается, а называется', (): void => {
+        const root: string = treeWithSettings(
+            JSON.stringify(
+                { hooks: { PreToolUse: [{ hooks: [{ type: 'command', command: `$CLAUDE_PROJECT_DIR/${DISPATCH_PATH} PreToolUse` }] }] } },
+                null,
+                2
+            )
+        );
+        try {
+            const before: string = settingsOf(root);
+            const bound: IBindResult = bindDispatch(bindingsOf(`${ONE_EVENT}\n# rt-hook-timeout: 1800`, GUARD), root);
+
+            expect(bound.short).toEqual([{ event: 'PreToolUse', need: 1800, have: null }]);
+            expect(settingsOf(root)).toBe(before);
+        } finally {
+            rmSync(root, { recursive: true, force: true });
+        }
+    });
+
+    it('SC-AK-1205 — запись с достаточным пределом не называется', (): void => {
+        const root: string = treeWithSettings(
+            JSON.stringify(
+                {
+                    hooks: {
+                        PreToolUse: [
+                            { hooks: [{ type: 'command', command: `$CLAUDE_PROJECT_DIR/${DISPATCH_PATH} PreToolUse`, timeout: 1800 }] },
+                        ],
+                    },
+                },
+                null,
+                2
+            )
+        );
+        try {
+            expect(bindDispatch(bindingsOf(`${ONE_EVENT}\n# rt-hook-timeout: 1800`, GUARD), root).short).toEqual([]);
+        } finally {
+            rmSync(root, { recursive: true, force: true });
+        }
+    });
+
     it('отступ берётся у настройки, а не у пакета: иначе точечная правка переписывает весь файл', (): void => {
         const root: string = treeWithSettings('{\n    "hooks": {}\n}\n');
         try {
