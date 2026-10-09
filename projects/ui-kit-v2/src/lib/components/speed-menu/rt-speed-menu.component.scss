@@ -42,14 +42,25 @@
     /* Подложка цвета поверхности: действие висит над картой или таблицей, а заливка второй палитры
        кнопки-значка прозрачна. Наведение и недоступность кнопка рисует поверх подложки сама.
        Действия входят по одному, ближнее к кнопке первым: в столбце вверх и в ряду к началу
-       ближнее — последнее, поэтому там шаг считается с конца. */
+       ближнее — последнее, поэтому там шаг считается с конца. Вход — переход от начального стиля, а
+       не анимация по кадрам: браузер съёмки оставлял анимацию в первом кадре, и действия выходили
+       прозрачными; переход доводится до конца так же, как у раскрывающейся панели. */
     .rt-speed-menu__action {
         --rt-speed-menu-step: 0;
 
         border-radius: var(--rt-speed-menu-action-radius);
-        animation: rt-speed-menu-enter var(--rt-speed-menu-duration) ease-out both;
-        animation-delay: calc(var(--rt-speed-menu-step) * var(--rt-speed-menu-stagger));
         background-color: var(--rt-speed-menu-action-bg);
+        opacity: 1;
+        transform: scale(1);
+        transition:
+            opacity var(--rt-speed-menu-duration) ease-out,
+            transform var(--rt-speed-menu-duration) ease-out;
+        transition-delay: calc(var(--rt-speed-menu-step) * var(--rt-speed-menu-stagger));
+
+        @starting-style {
+            opacity: 0;
+            transform: scale(0.5);
+        }
     }
 
     .rt-speed-menu__action .rt-icon-button {
@@ -67,19 +78,7 @@
 
     @media (prefers-reduced-motion: reduce) {
         .rt-speed-menu__action {
-            animation: none;
-        }
-    }
-
-    @keyframes rt-speed-menu-enter {
-        from {
-            opacity: 0;
-            transform: scale(0.5);
-        }
-
-        to {
-            opacity: 1;
-            transform: scale(1);
+            transition: none;
         }
     }
 }

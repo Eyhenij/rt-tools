@@ -9,8 +9,9 @@
   logic and styles; 20 specs of the menu and three of the neighbours; the overview page, the folder
   note and the stories. Measured on :6007: the four sides, the gaps of 8 points, the keys and the
   press outside. The whole kit set is green, 226 spec files. Main is merged in through the epic.
-- **Next step:** the references of the nine stories, once the image browser reaches the showcase
-  again, and the reason the four open frames came out without actions.
+  The nine references are taken and looked at; the entrance became a transition, and the open
+  frames draw the actions.
+- **Next step:** the whole set before the push; then the next task of the epic, RT-2555.
 - **Uncommitted:** no
 - **Waiting for the owner:** «пры не открывай откроеш после моего апрува» — the push and the PR wait
   for the owner's approval.
@@ -42,6 +43,13 @@
   untaken. A retake with the entrance animation switched off, to tell whether the animation is the
   cause, did not run: on the network 172.20.10.x the image browser does not reach the showcase,
   twice by the timeout of page loading.
+- The entrance is a transition from a starting style, not a keyframe animation. On the home network
+  the retake ran: with the animation the four open frames again drew the trigger alone, with the
+  animation switched off they drew the actions. The image browser left the keyframes at their first
+  frame, while the harness brings transitions to their end, as it does for the expansion panel. The
+  transition version matched the frames without animation pixel for pixel, all nine.
+- The `expanded` input of the icon button is named in the accepted list of the boolean input check,
+  next to `pressed`: the third value is a button that opens nothing and carries no `aria-expanded`.
 
 ## Steps
 
@@ -54,5 +62,5 @@
 - [x] 2.3 Write the specs on the opening, the directions, the choice, the closing and the keys
 - [x] 3.1 Write the overview page, the matrix stories and the playground
 - [x] 3.2 Measure the layout on :6007
-- [>] 4.1 Take the references of the new stories after looking at them
-- [ ] 4.2 Run the whole set and open the PR into the epic branch after the owner's word
+- [x] 4.1 Take the references of the new stories after looking at them
+- [>] 4.2 Run the whole set and open the PR into the epic branch after the owner's word
