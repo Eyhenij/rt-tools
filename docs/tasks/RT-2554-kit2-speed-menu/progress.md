@@ -11,7 +11,10 @@
   press outside. The whole kit set is green, 226 spec files. Main is merged in through the epic.
   The nine references are taken and looked at; the entrance became a transition, and the open
   frames draw the actions.
-- **Next step:** the whole set before the push; then the next task of the epic, RT-2555.
+  The whole set is green: lint, types, tests, build and verify of 112 projects, then the styles
+  linter.
+- **Next step:** after the owner's word — the push and the PR into the epic branch; meanwhile the
+  next task of the epic, RT-2555.
 - **Uncommitted:** no
 - **Waiting for the owner:** «пры не открывай откроеш после моего апрува» — the push and the PR wait
   for the owner's approval.
