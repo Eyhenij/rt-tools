@@ -21,6 +21,7 @@ export default {
         mode: { control: 'inline-radio', options: ['hover', 'pinned'] },
         width: { control: { type: 'number', min: 120, max: 480, step: 16 } },
         short: { control: 'boolean' },
+        closeDelay: { control: { type: 'number', min: 0, max: 2000, step: 100 } },
     },
 } as Meta<TestRtSideMenuComponent>;
 
@@ -45,7 +46,7 @@ const MOBILE: Pick<TStory, 'decorators' | 'render' | 'globals' | 'parameters'> =
 
 /** Первый кит — `Default`: меню в покое, ни один раздел не открыт. */
 export const Playground: TStory = {
-    args: { mode: 'hover', activeIds: [], width: null, short: false },
+    args: { mode: 'hover', activeIds: [], width: null, short: false, closeDelay: 0 },
 };
 
 export const Mobile: TStory = { ...MOBILE, args: { activeIds: [] } };

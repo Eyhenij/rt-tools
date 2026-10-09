@@ -1,6 +1,6 @@
 # The pin and tooltip switches and the row button fallback of the side menu
 
-**Status:** in force · **Revision:** 2 October 2026 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 8 October 2026 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the side menu and the icon button of the second kit
 **Laws:** `frontend-application`, `verifiability`, `reuse-first`
 **Procedures:** none
@@ -34,6 +34,18 @@ are invisible to them.
 - **A row button with the own template is not warned about.**
 - **An icon button without an icon name shows its projected content.**
 - **Without the new inputs and template the menu and the icon button draw as before.**
+- **A rail without titles names its items by a tooltip on the right and by the accessible name.**
+- **The rail item tooltip obeys the submenu tooltip switch.**
+- **Rail icons are filled only by the input.**
+- **The submenu search takes its size and look from the menu inputs on both screens.**
+- **Every submenu row and folder carries its item number as a mark.**
+- **The colours, sizes and paddings of the rail, the panel and the rows are menu properties, and without them the menu draws as before.**
+- **The folder icon has a Material pair.**
+- **Submenu row and folder icons are filled only by the input.**
+- **A submenu row hands its press to the consumer before the navigation, and a prevented press does not navigate.**
+- **A submenu opened by hover closes after the delay input, and the pointer coming back keeps it open.**
+- **The submenu panel shows the scroll hint only by the input.**
+- **The row buttons take their rounding, size, icon size and resting colour from row properties, and the row icon fill input fills the consumer's button too.**
 
 ## What is out of scope
 
@@ -57,6 +69,7 @@ Not applicable: the components keep nothing.
 | ------------------------ | ---------------------------------------------- |
 | without the pin          | the submenu head with the search only          |
 | a row button by template | the consumer's picture inside the round button |
+| a rail without titles    | icons only; the name shows on hover, right     |
 
 ## Cross-cutting requirements
 
@@ -78,6 +91,28 @@ Every menu holds its own switches and its own template.
 
 ## Decisions
 
+- **The rail name moves to a tooltip on the right and to the accessible name.** Without the caption
+  an icon-only item has no name for a screen reader, so the item carries it as `aria-label`.
+- **The row mark is the item number, not a role flag.** The application decides which row opens the
+  section page; the kit only names every row by its number in `data-item-id`.
+- **The row padding is two properties, start and end.** The start grows with the nesting depth, so
+  one property for both sides could not carry the depth step.
+- **The row letter spacing has no default of its own.** Without the property the row inherits it
+  from the page, as before; a default value would cut that inheritance.
+- **The rail icon size defaults to the icon step.** Until the application sets it, the rail icon
+  follows the `md` icon step, as before.
+- **The item colours reach the dragged favourite row too.** The drag moves that row to the end of
+  the page, out of the menu, so the defaults are declared on it as well.
+- **The submenu row navigates through the router itself, not by the router link.** The link
+  navigates before any handler of the row runs, so the consumer could not take the navigation over.
+  The row keeps its address for a middle press and for copying the link, and a press with a modifier
+  stays the browser's.
+- **The close delay and the scroll hint default to the current behaviour.** The first kit closed after
+  500 ms and showed the hint; the application sets both by the inputs, and the default look of the
+  second kit stays as it was.
+- **The folder header padding defaults to the row padding.** One property for both would not let the
+  first kit's folder stand closer to the edge than its rows.
+
 - **Without the pin button the stored setting is not read.** A person could not unpin a menu they
   pinned earlier; the bound mode still decides.
 - **The template context names its place.** `icon` is the name being drawn and `slot` is the place;
@@ -92,3 +127,8 @@ None.
 ## History of changes
 
 - 2 October 2026 — the agreement was written from the consumer's request by task RT-2482.
+- 8 October 2026 — the rail titles and fill, the search size and look, the row mark and the look
+  properties were added from the application rows 113–121 by task RT-2644.
+- 9 October 2026 — the folder pair, the row icon fill and size, the folder header properties, the
+  empty padding, the row press, the close delay and the panel scroll hint were added from the
+  application rows 122–128 by task RT-2644.

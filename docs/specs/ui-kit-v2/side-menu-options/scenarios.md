@@ -43,3 +43,85 @@ Then it looks as before
 
 Not covered: this is a promise about frames. The former snapshots of the side menu and icon button
 stories match without a re-take.
+
+### SC-UKV-817 — a rail without titles names its items by a tooltip
+
+Given a menu with the rail titles switched off, and one with the submenu tooltips switched off too
+When the rail is drawn
+Then no caption stands under the icons, every item carries its name as the accessible name, and the
+tooltip on the right shows the name only while the submenu tooltips are on
+
+Coverage: partial — the test reads the text and the side the items hand to the tooltip, not a hover.
+
+### SC-UKV-818 — rail icons are filled by the input
+
+Given a menu without the fill input and one with it
+When the rail is drawn
+Then the first draws outlined icons and the second filled ones
+
+### SC-UKV-783 — the submenu search takes the menu inputs
+
+Given a menu with the search size and look set, on a wide and on a narrow screen
+When the submenu opens
+Then its search field takes that size and look, and without the inputs it stays small and outlined
+
+### SC-UKV-784 — every submenu row carries its item number
+
+Given a submenu with a row of the section page and a folder
+When the submenu opens
+Then the row and the folder carry their item numbers, and a rule by the number finds the row
+
+### SC-UKV-785 — without the look properties the menu draws as before
+
+Given a menu without the new inputs and properties
+When it is drawn
+Then it looks as before
+
+Not covered: this is a promise about frames. The former snapshots of the side menu stories match
+without a re-take.
+
+### SC-UKV-793 — the folder icon has a Material pair
+
+Given the material preset and a submenu folder with the `folder` icon
+When the folder is drawn
+Then it draws the Material folder, outlined and filled
+
+Not covered: `node tools/check-icon-map.mjs` holds every pair to an existing file of both sets.
+
+### SC-UKV-794 — row and folder icons are filled by the input
+
+Given a menu without the row icon fill input and one with it
+When the submenu opens
+Then the first draws outlined row and folder icons and the second filled ones
+
+### SC-UKV-795 — a submenu row hands its press to the consumer first
+
+Given a submenu row with an address, in the list and in the favourites block
+When it is pressed, and the consumer prevents the press, and it is pressed with a modifier
+Then the consumer gets the press first; an unprevented press navigates by the router, a prevented one
+does not, a press with a modifier stays the browser's; the row keeps its address
+
+### SC-UKV-796 — the hover submenu closes after the delay
+
+Given a menu with a close delay and a submenu opened by hover
+When the pointer leaves the panel, comes back before the delay, and hovers a rail item without a
+submenu
+Then the panel stays open until the delay ends, the return keeps it open, an item with a submenu
+switches it at once, and without the delay the panel closes at once
+
+### SC-UKV-797 — the panel shows the scroll hint by the input
+
+Given a menu without the panel hint input and one with it
+When the submenu opens
+Then only the second panel carries the scroll hint
+
+### SC-UKV-806 — the row buttons follow the row properties and the fill input
+
+Given a submenu row with a consumer button, a star and the favourites block with its handle
+When the row properties of the buttons are set, and the row icon fill input is on
+Then the four buttons take the given rounding, size, icon size and resting colour, the chosen star
+and the hovered remove keep their own colours, and the consumer button icon is filled; without them
+the buttons draw as before
+
+Покрытие: частичное — тест держит заливку значка; форму, размер и цвет держат измерение на витрине и
+кадр истории первого кита.
