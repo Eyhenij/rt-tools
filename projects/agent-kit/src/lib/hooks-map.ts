@@ -23,6 +23,12 @@ export const SETTINGS_PATH: string = '.claude/settings.json';
 
 const DECLARATION: RegExp = /^#\s*rt-hook:\s*(\S+)(?:[ \t]+(\S.*))?$/gm;
 
+/**
+ * Сколько секунд гарду нужно на один вызов. Агент убивает хук без поля `timeout` на своём
+ * пределе, и убитый гард решения не отдаёт: вызов проходит, как будто гард промолчал.
+ */
+const TIMEOUT_DECLARATION: RegExp = /^#\s*rt-hook-timeout:\s*(\d+)\s*$/m;
+
 export interface IHookBinding {
     /** Событие агента: `PreToolUse`, `PostToolUse`, `SessionStart`, `Stop`. */
     readonly event: string;
@@ -33,6 +39,8 @@ export interface IHookBinding {
     readonly matcher: string;
     /** Путь разложенного гарда от корня дерева. */
     readonly path: string;
+    /** Предел времени, объявленный гардом строкой `# rt-hook-timeout:`, в секундах. */
+    readonly timeout?: number;
 }
 
 /**
@@ -43,10 +51,13 @@ export interface IHookBinding {
  * два места, где правится один порог.
  */
 export function bindingsOf(text: string, path: string): readonly IHookBinding[] {
+    const declared: RegExpExecArray | null = TIMEOUT_DECLARATION.exec(text);
+
     return [...text.matchAll(DECLARATION)].map((found: RegExpMatchArray): IHookBinding => ({
         event: found[1],
         matcher: (found[2] ?? '').trim(),
         path,
+        ...(declared === null ? {} : { timeout: Number(declared[1]) }),
     }));
 }
 
@@ -58,6 +69,20 @@ export function bindingsOf(text: string, path: string): readonly IHookBinding[] 
  */
 /** Диспетчер событий: одна запись в настройке вместо списка гардов. Путь от корня дерева. */
 export const DISPATCH_PATH: string = '.claude/hooks/dispatch.sh';
+
+/** Самый большой предел среди гардов события: диспетчер зовёт их всех одним хуком. */
+function timeoutOf(bindings: readonly IHookBinding[], event: string): number | null {
+    const declared: number[] = bindings
+        .filter((binding: IHookBinding): boolean => binding.event === event && binding.timeout !== undefined)
+        .map((binding: IHookBinding): number => binding.timeout ?? 0);
+
+    return declared.length ? Math.max(...declared) : null;
+}
+
+/** Запись диспетчера события в настройке: команда с полем предела, если оно есть. */
+function dispatchCommand(event: string, timeout: number | null): Record<string, unknown> {
+    return { type: 'command', command: `$CLAUDE_PROJECT_DIR/${DISPATCH_PATH} ${event}`, ...(timeout === null ? {} : { timeout }) };
+}
 
 /**
  * Стоит ли в настройке диспетчер этого события. Он зовётся с именем события доводом, поэтому
@@ -300,6 +325,58 @@ export interface IBindResult {
      * хуже отсутствующей записи — снаружи она выглядит работающей.
      */
     readonly missing: boolean;
+    /**
+     * Стоящие записи диспетчера с пределом меньше объявленного. Запись не переписывается, а
+     * называется: поле дописывает дерево.
+     */
+    readonly short: readonly IShortTimeout[];
+}
+
+/** Запись диспетчера, чей предел времени меньше того, что объявили гарды события. */
+export interface IShortTimeout {
+    readonly event: string;
+    readonly need: number;
+    /** Предел в записи; `null` — поля нет, и действует предел агента по умолчанию. */
+    readonly have: number | null;
+}
+
+/** Предел одной команды записи, если это команда диспетчера события; иначе `undefined`. */
+function dispatchTimeoutOf(command: unknown, event: string): number | null | undefined {
+    const one: Record<string, unknown> = (command ?? {}) as Record<string, unknown>;
+    if (one['command'] !== `$CLAUDE_PROJECT_DIR/${DISPATCH_PATH} ${event}`) {
+        return undefined;
+    }
+
+    return typeof one['timeout'] === 'number' ? one['timeout'] : null;
+}
+
+/** Пределы стоящих записей диспетчера, меньшие объявленных. */
+function shortTimeouts(bindings: readonly IHookBinding[], settings: Record<string, unknown>): readonly IShortTimeout[] {
+    const hooks: Record<string, unknown> = (settings['hooks'] ?? {}) as Record<string, unknown>;
+    const short: IShortTimeout[] = [];
+
+    for (const event of [...new Set(bindings.map((binding: IHookBinding): string => binding.event))].sort(
+        (left: string, right: string): number => left.localeCompare(right)
+    )) {
+        const need: number | null = timeoutOf(bindings, event);
+        const records: unknown = hooks[event];
+        if (need === null || !Array.isArray(records)) {
+            continue;
+        }
+        const commands: unknown[] = records.flatMap((record: unknown): unknown[] => {
+            const inner: unknown = (record as Record<string, unknown> | null)?.['hooks'];
+
+            return Array.isArray(inner) ? inner : [];
+        });
+        for (const command of commands) {
+            const have: number | null | undefined = dispatchTimeoutOf(command, event);
+            if (have !== undefined && (have === null || have < need)) {
+                short.push({ event, need, have });
+            }
+        }
+    }
+
+    return short;
 }
 
 /**
@@ -321,7 +398,7 @@ export function bindDispatch(bindings: readonly IHookBinding[], root: string): I
     // в перечень, получало настройку с вызовом отсутствующего файла: снятые рукой записи
     // возвращались следующей же раскладкой.
     if (!existsSync(join(root, DISPATCH_PATH))) {
-        return { added: [], unreadable: false, missing: true };
+        return { added: [], unreadable: false, missing: true, short: [] };
     }
 
     const path: string = join(root, SETTINGS_PATH);
@@ -329,15 +406,16 @@ export function bindDispatch(bindings: readonly IHookBinding[], root: string): I
     const settings: Record<string, unknown> | null = readSettings(text);
 
     if (settings === null) {
-        return { added: [], unreadable: true, missing: false };
+        return { added: [], unreadable: true, missing: false, short: [] };
     }
 
     const events: readonly string[] = [...new Set(bindings.map((binding: IHookBinding): string => binding.event))]
         .filter((event: string): boolean => !dispatchesEvent(text, event))
         .sort((left: string, right: string): number => left.localeCompare(right));
 
+    const short: readonly IShortTimeout[] = shortTimeouts(bindings, settings);
     if (!events.length) {
-        return { added: [], unreadable: false, missing: false };
+        return { added: [], unreadable: false, missing: false, short };
     }
 
     const hooks: Record<string, unknown> = { ...((settings['hooks'] ?? {}) as Record<string, unknown>) };
@@ -345,14 +423,11 @@ export function bindDispatch(bindings: readonly IHookBinding[], root: string): I
         const records: unknown = hooks[event];
         // Запись дописывается в конец, а не встаёт вместо чужой: у события бывают и свои гарды
         // дерева, и порядок среди них — решение дерева.
-        hooks[event] = [
-            ...(Array.isArray(records) ? records : []),
-            { hooks: [{ type: 'command', command: `$CLAUDE_PROJECT_DIR/${DISPATCH_PATH} ${event}` }] },
-        ];
+        hooks[event] = [...(Array.isArray(records) ? records : []), { hooks: [dispatchCommand(event, timeoutOf(bindings, event))] }];
     }
 
     mkdirSync(dirname(path), { recursive: true });
     writeFileSync(path, JSON.stringify({ ...settings, hooks }, null, indentOf(text)) + '\n', 'utf8');
 
-    return { added: events, unreadable: false, missing: false };
+    return { added: events, unreadable: false, missing: false, short };
 }

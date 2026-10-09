@@ -39,25 +39,22 @@ lives only in that session's record: a search over them by the theme's word cost
 is found is written into the tree in the same turn — into the epic plan if it links tasks, into the
 progress if it concerns one.
 
-Exploration that found nothing is no permission to ask: the places not yet searched — the epic plan,
-the archive, the records of past sessions — are reached first. "Not found in such a place" speaks of
-the place, not of the tree, and the question names where the search went.
+Exploration that found nothing is no permission to ask: the epic plan, the archive and past sessions
+are reached first, and the question names where the search went.
 
-Exploration ends with command output, not with a feeling. Before the first question the executor
-knows how the repository is arranged (the root memo), what lies in the directory at hand (`ls`), and
-whether something is written on the theme (a search over the documentation and the rules).
+Exploration ends with command output, not with a feeling: the root memo, `ls` of the directory at
+hand, a search over the documentation and the rules.
 
-Exploration over a created task ends with a reproduced symptom, not a found file. The task body
-describes the tree on the day of creation, and exploration by the names from the body confirms only
-that the files are in place: a task that has lapsed cannot be told from a live one. Before the first
-edit the exploration repeats what the task complains about — calls the procedure, reads the reply,
-runs the check that stayed silent. The symptom did not reproduce — the task is closed as lapsed, and
-that is a lawful outcome.
+A member added beside a list, not into it, is named at every reader of that list: each place that
+walks the list knows only its members. The readers are found by a search of the list's symbol and go
+into the agreement as places to touch; one the search did not return is found after the code.
 
-A tree named as a sample is read as a layout whole — by walking the directories two levels deep —
-and only then come the questions about techniques. The answer to "how is this done here" gives one
-folder, and generalised into a map of the tree it lies: the neighbouring family of directories is
-left out, and the owner finds the loss.
+Exploration over a created task ends with a reproduced symptom, not a found file: the body describes
+the tree on the day of creation. Before the first edit the exploration repeats what the task
+complains about; a symptom that did not reproduce closes the task as lapsed, and that is lawful.
+
+A tree named as a sample is read as a layout whole — walking the directories two levels deep —
+before questions about techniques: one folder generalised into a map leaves out its neighbours.
 
 What was inferred is marked right in the list, together with what confirms it.
 
@@ -65,9 +62,8 @@ What was inferred is marked right in the list, together with what confirms it.
 in the trees recorded as samples of its layout. The one found is read whole: it closes the questions
 about the structure — the source of the numbers, the rows, the screen, the storage.
 
-The six questions are asked minus those the exploration answered: instead of a question with a ready
-answer, the grill gets the line "taking such-and-such answer, here is where from". The sign is one —
-whether the answer is in the tree; "the task seems clear" is no sign in either direction.
+The six questions are asked minus those the exploration answered; the grill gets the line "taking
+such-and-such answer, here is where from". The sign is whether the answer is in the tree.
 
 **Next move:** the findings land in the grill, and in the same turn the first of the six questions
 goes to the owner. The exploration ended — the state stayed the same, so did the turn.
@@ -284,6 +280,9 @@ Work that does not touch `apps/**` and `libs/**` needs no agreement:
 ```
 
 An empty reason is not accepted.
+
+The Specs line of the footprint is filled by the command that names the spec of a resource, run on
+the files of the Code line, not from memory.
 
 **Next move:** under the header the task footprint and the stages are written, the plan is
 committed, and in the same turn the first stage begins.

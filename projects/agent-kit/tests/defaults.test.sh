@@ -177,8 +177,11 @@ report "карта: сверка спеков" "$(skill_for edit /r/tools/check-
 report "карта: сверка длины файла" "$(skill_for edit /r/tools/check-file-size.mjs '')" doc-style
 report "карта: сверка оформления" "$(skill_for edit /r/tools/check-styles.mjs '')" styling-bem
 report "карта: своё правило линтера кода" "$(skill_for edit /r/tools/eslint-rules/no-x.mjs '')" typescript-conventions
-# SC-AK-1193. Аудит очереди разнесён по модулям, и правка любого из них требует правила о поставке.
-report "SC-AK-1193 — модуль аудита очереди" "$(skill_for edit /r/tools/board-runs.mjs '')" git-workflow
+# SC-AK-1193. Аудит очереди разнесён по модулям, и правка любого из них требует правила аудита.
+# Модуль папок задач разложен на любом хостинге и остаётся у правила о задачах.
+report "SC-AK-1193 — модуль аудита очереди требует правила аудита" "$(skill_for edit /r/tools/board-runs.mjs '')" queue-audit
+report "SC-AK-1193 — сам аудит требует правила аудита" "$(skill_for edit /r/tools/check-board.mjs '')" queue-audit
+report "SC-AK-1193 — модуль папок задач остаётся у правила о задачах" "$(skill_for edit /r/tools/board-folders.mjs '')" git-workflow
 # У конвейера предмета два сразу: какие проверки идут до слияния и что попадает на прод после.
 # Карта называет оба имени, правило о выкатке первым, и гейт требует первое незагруженное.
 report "карта: файл конвейера" "$(skill_for edit /r/.github/workflows/deploy.yml '' | head -1)" deploy-flow

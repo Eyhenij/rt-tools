@@ -28,6 +28,7 @@ whole.
 - **A tree without a pipeline file gets no audit.** — `tools/check-push-gate.mjs:pipelineSteps`
 - **The completeness check itself stands in the gate set.** — `.claude/rt-kit/project.sh:rt_push_checks`
 - **Switching a branch in the same command refuses the push whole.** — `projects/agent-kit/assets/hooks/git-guard-push-tests.sh:checkout`
+- **Several pushes in one command, or a push inside a loop, refuse the command whole.** — `projects/agent-kit/assets/hooks/git-guard-push-tests.sh:pushes` — scenario SC-AK-1204
 - **A heavy step of the set is picked by the composition of the edit.** — `projects/agent-kit/assets/defaults/project.sh:rt_push_docs_only_default`
 - **A postponed edit does not count as a push.** — `projects/agent-kit/assets/hooks/git-guard-push-tests.sh:probe`
 - **The verb of a command is looked for in its position, not as a substring across the whole line.** — `projects/agent-kit/assets/hooks/git-guard-main.sh:verbs` — scenario SC-AK-832

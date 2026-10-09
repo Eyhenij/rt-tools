@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.29.4 · hooks/claim-guard.sh · 11e3af1f7a6b · правится надстройкой, не здесь
+# rt-kit v0.30.0 · hooks/claim-guard.sh · 11e3af1f7a6b · правится надстройкой, не здесь
 # rt-hook: Stop
 # The claim guard: what is said to the owner about the state of the tree carries the command that
 # showed it. Stop.

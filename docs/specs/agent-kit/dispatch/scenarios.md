@@ -85,6 +85,19 @@ Then the file stays byte for byte the same, and the package says it made no reco
 
 Covered: `projects/agent-kit/src/lib/hooks-map.spec.ts`.
 
+### SC-AK-1205 — the record of the dispatcher carries the declared time limit
+
+Given a guard of an event declares a time limit in its header, and the setting has no record of
+that event
+When the layout runs
+Then the new record of the dispatcher carries that limit
+
+Given a standing record of the dispatcher carries a smaller limit, or none
+When the layout runs
+Then the record stays byte for byte the same, and the layout names it with both limits
+
+Covered: `projects/agent-kit/src/lib/hooks-map.spec.ts`.
+
 ### SC-AK-700 — the refusal of a real watchman reaches the output of the dispatcher
 
 Given a record of a turn on which the watchman of the exits refuses the closing
