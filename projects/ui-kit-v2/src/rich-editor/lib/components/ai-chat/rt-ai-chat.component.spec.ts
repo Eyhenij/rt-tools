@@ -1,3 +1,4 @@
+import { Clipboard } from '@angular/cdk/clipboard';
 import { ChangeDetectionStrategy, Component, DebugElement, signal, WritableSignal } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
@@ -26,6 +27,19 @@ const THREADS: readonly IRtAiChat.Thread[] = [
     { id: 't2', title: 'Pickup for summer', unreadCount: 2 },
 ];
 
+/** Двойник буфера: настоящий в среде без браузера ничего не кладёт и молчит об этом. */
+class ClipboardDouble {
+    public readonly copied: string[] = [];
+
+    public copy(text: string): boolean {
+        this.copied.push(text);
+
+        return true;
+    }
+}
+
+let clipboard: ClipboardDouble;
+
 @Component({
     selector: 'rt-ai-chat-host',
     template: `
@@ -38,6 +52,7 @@ const THREADS: readonly IRtAiChat.Thread[] = [
             [error]="error()"
             [threads]="threads()"
             [fullScreen]="fullScreen()"
+            [copyable]="copyable()"
             (send)="sent.push($event)"
             (retry)="retried = retried + 1"
             (selectThread)="selected.push($event)"
@@ -63,6 +78,7 @@ class AiChatHostComponent {
     public readonly threads: WritableSignal<readonly IRtAiChat.Thread[] | null> = signal<readonly IRtAiChat.Thread[] | null>(null);
     public readonly fullScreen: WritableSignal<boolean> = signal<boolean>(false);
     public readonly withExtra: WritableSignal<boolean> = signal<boolean>(false);
+    public readonly copyable: WritableSignal<boolean> = signal<boolean>(true);
     public readonly sent: string[] = [];
     public readonly selected: string[] = [];
     public readonly deleted: string[] = [];
@@ -71,7 +87,12 @@ class AiChatHostComponent {
 }
 
 function setup(state: Partial<Record<keyof AiChatHostComponent, unknown>> = {}): ComponentFixture<AiChatHostComponent> {
-    const fixture: ComponentFixture<AiChatHostComponent> = createRtFixture(AiChatHostComponent, {}, { skipInitialDetect: true });
+    clipboard = new ClipboardDouble();
+    const fixture: ComponentFixture<AiChatHostComponent> = createRtFixture(
+        AiChatHostComponent,
+        {},
+        { skipInitialDetect: true, providers: [{ provide: Clipboard, useValue: clipboard }] }
+    );
     const host: AiChatHostComponent = fixture.componentInstance;
 
     for (const [key, value] of Object.entries(state)) {
@@ -95,6 +116,16 @@ function press(fixture: ComponentFixture<AiChatHostComponent>, id: string, index
 
     (node.tagName === 'BUTTON' ? node : (node.querySelector('button') as HTMLButtonElement)).click();
     fixture.detectChanges();
+}
+
+/** Имя кнопки копирования — оно же текст подсказки — и её значок. */
+function copyState(fixture: ComponentFixture<AiChatHostComponent>, index: number = 0): [string | null, IRtIcon.Name | null] {
+    const copy: DebugElement = qaAll(fixture, 'ai-chat-copy')[index];
+
+    return [
+        (copy.nativeElement.querySelector('button') as HTMLButtonElement).getAttribute('aria-label'),
+        (copy.query(By.directive(RtIconComponent)).componentInstance as RtIconComponent).name(),
+    ];
 }
 
 function isDisabled(fixture: ComponentFixture<AiChatHostComponent>, id: string): boolean {
@@ -148,6 +179,68 @@ describe('RtAiChatComponent', (): void => {
             { messageId: 'a1', feedback: null },
             { messageId: 'a1', feedback: 'disliked' },
         ]);
+    });
+
+    it('SC-UKV-777 — копирование ответа стоит первым в строке оценки дописанного ответа и кладёт в буфер текст без разметки', (): void => {
+        jest.useFakeTimers();
+        const fixture: ComponentFixture<AiChatHostComponent> = setup({ messages: [QUESTION, { ...ANSWER, streaming: true }] });
+
+        expect(qaAll(fixture, 'ai-chat-copy').length).toBe(1);
+
+        fixture.componentInstance.messages.set([QUESTION, ANSWER]);
+        fixture.detectChanges();
+        const row: HTMLElement = qa(fixture, 'ai-chat-feedback')?.nativeElement as HTMLElement;
+
+        expect(row.firstElementChild?.contains(qaAll(fixture, 'ai-chat-copy')[1].nativeElement)).toBe(true);
+        expect(copyState(fixture, 1)).toEqual(['Copy', 'copy']);
+
+        press(fixture, 'ai-chat-copy', 1);
+
+        expect(clipboard.copied).toEqual(['Occupancy grew by 4 points.']);
+        expect(copyState(fixture, 1)).toEqual(['Copied', 'check']);
+        expect(copyState(fixture, 0)).toEqual(['Copy', 'copy']);
+
+        jest.advanceTimersByTime(2000);
+        fixture.detectChanges();
+
+        expect(copyState(fixture, 1)).toEqual(['Copy', 'copy']);
+        jest.useRealTimers();
+    });
+
+    it('SC-UKV-777 — ответ копируется без знаков разметки, хода работы и вложений, вопрос — как есть', (): void => {
+        const fixture: ComponentFixture<AiChatHostComponent> = setup({
+            withExtra: true,
+            messages: [
+                { ...QUESTION, text: 'What about **bold**?' },
+                { ...ANSWER, text: '## Heading\n\nOccupancy grew by **bold** points.\n\n- North\n- South' },
+            ],
+        });
+
+        press(fixture, 'ai-chat-copy', 1);
+        press(fixture, 'ai-chat-copy', 0);
+
+        expect(qa(fixture, 'extra')).not.toBeNull();
+        expect(clipboard.copied).toEqual(['Heading\n\nOccupancy grew by bold points.\n\nNorth\nSouth', 'What about **bold**?']);
+    });
+
+    it('SC-UKV-778 — копирование вопроса стоит под пузырём, кладёт его текст в буфер; copyable выключает обе кнопки', (): void => {
+        const fixture: ComponentFixture<AiChatHostComponent> = setup({ messages: [QUESTION, ANSWER] });
+        const actions: HTMLElement = qa(fixture, 'ai-chat-question-actions')?.nativeElement as HTMLElement;
+
+        expect(actions.previousElementSibling?.classList).toContain('rt-ai-chat__bubble');
+        expect(actions.contains(qaAll(fixture, 'ai-chat-copy')[0].nativeElement)).toBe(true);
+
+        press(fixture, 'ai-chat-copy', 0);
+
+        expect(clipboard.copied).toEqual(['How did occupancy change?']);
+        expect(copyState(fixture, 0)).toEqual(['Copied', 'check']);
+
+        fixture.componentInstance.copyable.set(false);
+        fixture.detectChanges();
+
+        expect(qa(fixture, 'ai-chat-question-actions')).toBeNull();
+        expect(qaAll(fixture, 'ai-chat-copy').length).toBe(0);
+        expect(qa(fixture, 'ai-chat-like')).not.toBeNull();
     });
 
     it('SC-UKV-754 — пока ответ пишется, поле предлагает «Стоп», подсказки и новая беседа выключены', (): void => {

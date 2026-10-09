@@ -106,11 +106,17 @@
                                     <span rtElem="time">{{ message.time }}</span>
                                 }
                             </div>
+                            @if (copyable() && message.text) {
+                                <div rtElem="question-actions" qa-dataid="ai-chat-question-actions">
+                                    <rt-ai-chat-copy [text]="message.text" />
+                                </div>
+                            }
                         </div>
                     } @else {
                         <rt-ai-chat-answer
                             qa-dataid="ai-chat-answer"
                             [message]="message"
+                            [copyable]="copyable()"
                             [extra]="extraTemplate()?.templateRef ?? null"
                             [expanded]="openRuns().has(message.id)"
                             (expandedChange)="onToggleRun(message.id, $event)"

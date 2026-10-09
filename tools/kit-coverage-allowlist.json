@@ -72,6 +72,7 @@
     "rt-dialog-content": "projects/ui-kit-v2/src/lib/components/dialog/stories/dialog-matrix.stories.ts",
     "ng-template[rtThreadListRowActions]": "projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/stories/ai-chat-matrix.stories.ts",
     "rt-ai-chat-answer": "projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/stories/ai-chat-matrix.stories.ts",
+    "rt-ai-chat-copy": "projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/stories/ai-chat-matrix.stories.ts",
     "ng-template[rtAiChatMessageExtra]": "projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/stories/ai-chat-matrix.stories.ts"
   },
   "noPlayground": {

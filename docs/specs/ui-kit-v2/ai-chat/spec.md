@@ -1,6 +1,6 @@
 # The assistant chat
 
-**Status:** in force · **Revision:** 2026-10-08 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 2026-10-09 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the run status, the value with a copy button, the prompt suggestion, the message composer, the thread list and the markdown text of the kit
 **Laws:** `frontend-application`, `reuse-first`, `verifiability`
 **Procedures:** none
@@ -30,6 +30,7 @@ conversations. Every application repeats the same screen, and every copy drifts 
 | The question         | the bubble on the right with «You»                      |
 | The answer           | the text on the left with the run line above it         |
 | The rating           | the buttons «Good answer» and «Bad answer»              |
+| Copying a message    | the button «Copy», «Copied» after the press             |
 | The conversations    | the button and the page «Conversations»                 |
 | A new conversation   | the button «New conversation»                           |
 | The reference number | «Reference» with the id on a plate and «Copy reference» |
@@ -45,6 +46,10 @@ conversations. Every application repeats the same screen, and every copy drifts 
 - **The run line stands above the answer text, and its steps open for one answer at a time.**
 
 - **The rating appears once the answer text is written, and pressing the chosen rating again removes it.**
+
+- **A written answer has «Copy» first in its rating row, and the press puts the answer text as the reader sees it, without markdown signs, into the clipboard and shows «Copied» for two seconds.**
+
+- **A question has «Copy» in a row under its bubble at the bubble's side, it copies the question text, and the consumer can turn both copy buttons off.**
 
 - **While an answer is written, the composer offers Stop, and the suggestions and «New conversation» are off.**
 
@@ -94,7 +99,7 @@ leave through outputs.
 | loading       | a spinner until the first message arrives                  |
 | thinking      | the question, the running run line, the composer with Stop |
 | writing       | the answer text growing under the running run line         |
-| answered      | the text, the done run line, the rating                    |
+| answered      | the text, the done run line, «Copy» and the rating         |
 | run error     | the error message, the reference number, «Ask again»       |
 | conversations | the search and the list in place of the feed               |
 | full screen   | the conversations as a column, the feed beside them        |
@@ -140,3 +145,5 @@ None.
   into the kit.
 - 2026-10-09 — the task RT-2714: the preview rows of the empty list of conversations take their
   icons from an input, the assistant's marks by default.
+- 2026-10-09 — the task RT-2720: «Copy» under a question and first in the rating row of an answer;
+  the answer is copied as plain text, without markdown signs.

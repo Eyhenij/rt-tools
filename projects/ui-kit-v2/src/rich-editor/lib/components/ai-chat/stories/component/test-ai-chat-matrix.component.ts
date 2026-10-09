@@ -35,6 +35,7 @@ interface IAiChatCase {
     readonly threads?: readonly IRtAiChat.Thread[];
     readonly threadsLoading?: boolean;
     readonly draft?: string;
+    readonly copyable?: boolean;
 }
 
 /**
@@ -85,6 +86,7 @@ export class TestRtAiChatMatrixComponent {
         { name: 'Оценён', messages: AI_CHAT_RATED },
         { name: 'Остановлен', messages: AI_CHAT_STOPPED },
         { name: 'Не удался', messages: AI_CHAT_FAILED },
+        { name: 'Без копирования', messages: AI_CHAT_DONE, copyable: false },
     ];
 
     public readonly errorCases: readonly IAiChatCase[] = [

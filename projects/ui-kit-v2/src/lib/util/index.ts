@@ -2,6 +2,7 @@ export * from './file-name-from-url';
 export * from './format-file-size';
 export * from './markdown-inline';
 export * from './markdown-parse';
+export * from './markdown-plain-text';
 export * from './markdown.model';
 export * from './picture.model';
 export * from './quill-delta.helper';

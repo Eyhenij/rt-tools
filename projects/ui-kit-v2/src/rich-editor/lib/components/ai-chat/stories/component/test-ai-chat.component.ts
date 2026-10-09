@@ -31,6 +31,7 @@ export class TestRtAiChatComponent {
     public error: IRtAiChat.RunError | null = null;
     public threads: readonly IRtAiChat.Thread[] | null = null;
     public fullScreenable: boolean = false;
+    public copyable: boolean = true;
 
     public readonly send: OutputEmitterRef<string> = output<string>();
     public readonly stop: OutputEmitterRef<void> = output<void>();
