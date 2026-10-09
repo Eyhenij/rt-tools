@@ -6,9 +6,11 @@
 - **Stage:** 4 of 4 — Snapshots and delivery
 - **Done:** the subdomain spec with scenarios SC-UKV-825–829, the tone logic, the component with both
   looks, 22 specs green, types, linter, token and cascade checks clean; the overview, five matrix
-  stories and the playground, looked at in their frames and taken as references.
-- **Next step:** run the whole snapshot set, take the folder apart and open the PR into the epic
-  branch when the owner approves.
+  stories and the playground, looked at in their frames and taken as references. Main went into the
+  epic branch and the epic into this one; the four icon frames were retaken for the added `folder`,
+  and the whole set is green: 832 tests, 843 snapshots of 843.
+- **Next step:** after the owner's approval of the stack against the scrolling carousel of the
+  card, take the folder apart and open the PR into the epic branch.
 - **Uncommitted:** no
 - **Waiting for the owner:** «пры не открывай откроеш после моего апрува» — the push and the PR wait
   for the owner's approval.
@@ -42,3 +44,8 @@
 - [x] 3.2 Measure the layout on :6007
 - [x] 4.1 Take the references of the new stories after looking at them
 - [>] 4.2 Run the whole set and open the PR into the epic branch after the owner's word
+
+## Session entries
+
+- 9 October 2026: the whole set ran on the merged branch; four icon frames diverged by the `folder`
+  icon from main alone and were retaken, the second run green.
