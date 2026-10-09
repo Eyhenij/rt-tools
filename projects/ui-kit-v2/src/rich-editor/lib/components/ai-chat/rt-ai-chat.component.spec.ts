@@ -2,7 +2,10 @@ import { ChangeDetectionStrategy, Component, DebugElement, signal, WritableSigna
 import { ComponentFixture } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
+import { IRtIcon } from '../../../../lib/components/icon/rt-icon.model';
+
 import { createRtFixture, qa, qaAll, textOf } from '../../../../testing/rt-kit-testing';
+import { RtIconComponent } from '../../../../lib/components/icon/rt-icon.component';
 import { RtThreadListComponent } from '../../../../lib/components/thread-list/rt-thread-list.component';
 import { IRtThreadList } from '../../../../lib/components/thread-list/rt-thread-list.model';
 import { RtAiChatComponent } from './rt-ai-chat.component';
@@ -77,6 +80,14 @@ function setup(state: Partial<Record<keyof AiChatHostComponent, unknown>> = {}):
     fixture.detectChanges();
 
     return fixture;
+}
+
+function previewIcons<T>(fixture: ComponentFixture<T>): (IRtIcon.Name | null)[] {
+    return fixture.debugElement
+        .queryAll(By.css('.rt-thread-list__empty-avatar'))
+        .map((avatar: DebugElement): IRtIcon.Name | null =>
+            (avatar.query(By.directive(RtIconComponent)).componentInstance as RtIconComponent).name()
+        );
 }
 
 function press(fixture: ComponentFixture<AiChatHostComponent>, id: string, index: number = 0): void {
@@ -205,6 +216,22 @@ describe('RtAiChatComponent', (): void => {
         fixture.detectChanges();
 
         expect(textOf(qa(fixture, 'thread-list-empty'))).toContain('Nothing found');
+    });
+
+    it('SC-UKV-776 — пустой список бесед рисует строки-превью со значками ассистента', (): void => {
+        const fixture: ComponentFixture<AiChatHostComponent> = setup({ threads: [], fullScreen: true });
+
+        expect(previewIcons(fixture)).toEqual(['sparkle', 'bot', 'sparkle']);
+    });
+
+    it('SC-UKV-776 — значки строк-превью задаёт приложение', (): void => {
+        const fixture: ComponentFixture<RtAiChatComponent> = createRtFixture(RtAiChatComponent, {
+            threads: [],
+            fullScreen: true,
+            emptyPreviewIcons: ['bot', 'user'],
+        });
+
+        expect(previewIcons(fixture)).toEqual(['bot', 'user']);
     });
 
     it('SC-UKV-758 — удаление беседы не открывает её', (): void => {
