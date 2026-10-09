@@ -4,7 +4,7 @@ kind: rule
 law: delivery
 description: Rule under the delivery law for a tree on GitHub. Load for a task and a branch, commit, push, opening a PR and merging. Names the pair of task and branch, the machine account and the delivery guards. Patterns git-workflow-commit, -pr, -merge, -stack. Rollout — deploy-flow, audit — queue-audit.
 ---
-<!-- rt-kit v0.30.0 · rules/git-workflow.github.md · 11ff848800d2 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.30.0 · rules/git-workflow.github.md · 7ff62cccfac2 · правится надстройкой, не здесь -->
 
 # Delivery — how it works here
 
@@ -173,7 +173,7 @@ flowchart TD
 - **The build is in the set on a par with lint and unit tests.** The linter does not read types,
   and a type error in uncovered code lives until the merge.
 - **On a machine with several runners, any path from the home directory is shared.** Install
-  directory, container name and builder name are per project.
+  directory, container name, builder name and published port are per project.
 - **The push gate set is never narrower than the pipeline set.** A pipeline step with neither a
   line in the set nor a declared exclusion refuses the push: a warning reads as permission.
 - **The gate set calls the package default instead of listing it line by line.** Rewritten as
