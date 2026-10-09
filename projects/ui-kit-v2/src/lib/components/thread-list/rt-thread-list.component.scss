@@ -130,8 +130,11 @@
         &__row-wrap {
             position: relative;
 
+            // Открытое меню действий держит их видимыми: фокус ушёл в панель поверх страницы, и без
+            // этого кнопка меню гасла под своей же панелью, когда указатель покидал строку.
             &:hover .rt-thread-list__row-actions,
-            &:focus-within .rt-thread-list__row-actions {
+            &:focus-within .rt-thread-list__row-actions,
+            &:has(.rt-menu--open) .rt-thread-list__row-actions {
                 opacity: 1;
                 pointer-events: auto;
             }
