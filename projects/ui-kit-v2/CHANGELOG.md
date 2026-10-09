@@ -1,3 +1,14 @@
+# [0.21.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2@0.20.0...rt-ui-kit-v2@0.21.0) (2026-10-09)
+
+### Bug Fixes
+
+- **rt:ui-kit-v2:** ответ rt-ai-chat копируется текстом без разметки ([11526c9](https://github.com/Eyhenij/rt-tools/commit/11526c94a18ab838981207cd97cff9a6c5b91ef4)), closes [#2720](https://github.com/Eyhenij/rt-tools/issues/2720)
+
+### Features
+
+- **rt:ui-kit-v2:** значки шапки rt-ai-chat материальным набором без набора оформления ([f33b9b5](https://github.com/Eyhenij/rt-tools/commit/f33b9b5b374a8ac38110bf525832fa3fbf7fc0ae)), closes [#2722](https://github.com/Eyhenij/rt-tools/issues/2722)
+- **rt:ui-kit-v2:** кнопка копирования у вопроса и ответа rt-ai-chat ([25226f2](https://github.com/Eyhenij/rt-tools/commit/25226f22c30d6ce0d89966ddecae057b4d4b2602)), closes [#2720](https://github.com/Eyhenij/rt-tools/issues/2720)
+
 # [0.20.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2@0.19.1...rt-ui-kit-v2@0.20.0) (2026-10-09)
 
 ### Bug Fixes
