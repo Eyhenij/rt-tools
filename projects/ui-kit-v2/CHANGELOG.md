@@ -1,3 +1,17 @@
+## [0.22.1](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2@0.22.0...rt-ui-kit-v2@0.22.1) (2026-10-09)
+
+### Bug Fixes
+
+- **rt:ui-kit-v2:** строка 133 — эхо chosenEntities узнаётся по набору ключей, а не по порядку ([0381f27](https://github.com/Eyhenij/rt-tools/commit/0381f27485df8778323f5da5521ce1d355a15c16)), closes [#takeChosen](https://github.com/Eyhenij/rt-tools/issues/takeChosen)
+- **rt:ui-kit-v2:** строки 129–130 приложения — перемер подсказки после роста папки, полоса доступна при поиске ([46826a7](https://github.com/Eyhenij/rt-tools/commit/46826a70095b0eb42a21c2a9a7f84ee0f5e66a7f))
+
+### Features
+
+- **rt:ui-kit-v2:** боковое меню — строки 122–128 приложения: папка Material, значки строк, нажатие строки, задержка закрытия ([f619233](https://github.com/Eyhenij/rt-tools/commit/f6192334e8d92f391a48a375bfea8999891d8f70))
+- **rt:ui-kit-v2:** боковое меню получает вид первого кита входами и свойствами ([1508392](https://github.com/Eyhenij/rt-tools/commit/150839287b90d53ea6382bf12ab97903595ba5ec))
+- **rt:ui-kit-v2:** строка 131 приложения — форма, размер и цвет кнопок строки подменю свойствами ([31e3806](https://github.com/Eyhenij/rt-tools/commit/31e3806562c06ee3215b52ce4972b69ec6f5fbc0))
+- **rt:ui-kit-v2:** строка 132 — тост сообщает, почему ушёл без действия ([c3bed85](https://github.com/Eyhenij/rt-tools/commit/c3bed8500c1dc50a52783056cae8599e5d4f89bc))
+
 # [0.22.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2@0.21.0...rt-ui-kit-v2@0.22.0) (2026-10-09)
 
 ### Features
