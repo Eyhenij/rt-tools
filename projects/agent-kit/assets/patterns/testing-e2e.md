@@ -2,7 +2,7 @@
 name: testing-e2e
 kind: pattern
 rule: testing
-description: Pattern of rule testing. Load when editing and running end-to-end tests in apps/site-e2e and apps/admin-e2e — what an end-to-end test closes, ready-made run commands, a stand from the production build behind real nginx, test switches. Not for unit tests — that is pattern testing-unit.
+description: Pattern of rule testing. Load when editing and running end-to-end tests in any end-to-end suite of the tree (apps/*-e2e) — what an end-to-end test closes, ready-made run commands, a stand from the production build behind real nginx, test switches. Not for unit tests — that is pattern testing-unit.
 ---
 
 # End-to-end tests
@@ -128,6 +128,11 @@ The same holds for a popup that stays open after its item is chosen. It covers t
 click aimed at a button under it goes to the popup: the screen answers as if the button had not
 been pressed at all. The popup is closed and its absence awaited by the same pair of lines.
 
+A screen is ready when its data is, not when its heading is. A heading, a month title or a toolbar
+comes from the template and is drawn before the request answers. A check or a frame that waits for
+it reads an empty grid. The wait names a node that exists only with data: a row, a booking, a
+selected record.
+
 ## Common misses
 
 - **A service limit per client address counts the whole suite as one client.** Every test goes from
@@ -164,3 +169,7 @@ been pressed at all. The popup is closed and its absence awaited by the same pai
 - **A build directory removed under a mounted volume leaves the container with an empty root:** the
   stand answers 403 to everything, and all tests fail at once. After
   `rm -rf dist/apps/<application>` the container is recreated.
+- **The service name of a direct call is copied from the contract.** A service is often named by
+  its audience, not by its record. A guessed name gets "not found" for the whole path, and that
+  reads as a broken procedure or a missing right. The name is found in the contract declarations
+  before the first call.

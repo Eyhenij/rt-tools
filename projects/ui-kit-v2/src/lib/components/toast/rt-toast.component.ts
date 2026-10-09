@@ -186,7 +186,7 @@ export class RtToastComponent implements AfterViewInit, OnDestroy {
         // Вытесненный в режиме `replace` уходит тем же путём, что и закрытый крестиком.
         effect((): void => {
             if (this.#mounted() && this.toast().replaced === true) {
-                this.#deleteToast();
+                this.#deleteToast('replaced');
             }
         });
     }
@@ -208,24 +208,30 @@ export class RtToastComponent implements AfterViewInit, OnDestroy {
 
     protected onAction(): void {
         this.toast().action?.handler();
-        this.#deleteToast();
+        this.#deleteToast(null);
     }
 
     protected onSecondaryAction(): void {
         this.toast().secondaryAction?.handler();
-        this.#deleteToast();
+        this.#deleteToast(null);
     }
 
     protected onClose(): void {
-        this.#deleteToast();
+        this.#deleteToast('close');
     }
 
-    #deleteToast(): void {
+    /** Уход тоста. Причина — для колбэка приложения; ушедший по действию её не сообщает: `null`. */
+    #deleteToast(reason: INotification.DismissReason | null): void {
         if (this.#removed()) {
             return;
         }
 
         this.#removed.set(true);
+
+        if (reason !== null) {
+            this.toast().onDismiss?.(reason);
+        }
+
         this.#offsetBeforeRemove.set(this.#offset());
         this.heightRemoved.emit(this.toast().id);
 
@@ -234,7 +240,7 @@ export class RtToastComponent implements AfterViewInit, OnDestroy {
 
     #startTimer(): void {
         this.#closeTimerStartedAt = Date.now();
-        this.#timeoutId = setTimeout((): void => this.#deleteToast(), this.#remainingTimeMs);
+        this.#timeoutId = setTimeout((): void => this.#deleteToast('timeout'), this.#remainingTimeMs);
     }
 
     #pauseTimer(): void {

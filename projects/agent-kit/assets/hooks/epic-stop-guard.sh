@@ -92,7 +92,12 @@ rt_epic_over || exit 0
 taken="$(printf '%s' "$cmd" | sed -nE 's/.*(checkout|switch)[[:space:]]+(-[A-Za-z]+[[:space:]]+)*-(b|c)[[:space:]]+[A-Za-z]+-([0-9]+)-.*/\4/p; s/.*(task:move|board\.mjs[[:space:]]+move)[^0-9|;&]*([0-9]+).*/\2/p; s/.*--epic-of[[:space:]=]+([0-9]+).*/\1/p' | head -1)"
 transcript="$(printf '%s' "$input" | jq -r '.transcript_path // empty' 2>/dev/null)"
 if [ -n "$taken" ] && [ -n "$transcript" ] && [ -f "$transcript" ]; then
+    # A menu answer comes in two forms, «The user answered:» and «Your questions have been answered:»,
+    # followed by "question"="answer" pairs. Only the answers count: the question is written by the
+    # executor, and a number in «take RT-N?» answered «no» is not the owner's word.
     named="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg n "$taken" '
+        def menu_answers: if test("^(The user answered|Your questions have been answered):")
+            then ([match("\"=\"([^\"]*)\""; "g") | .captures[0].string] | join("\n")) else "" end;
         [.[] | select(.type == "user")
             | select(((.isMeta // false) or (.isCompactSummary // false)) | not)
             | (.message.content // "")
@@ -102,7 +107,7 @@ if [ -n "$taken" ] && [ -n "$transcript" ] && [ -f "$transcript" ]; then
                   elif .type == "tool_result" then ((.content
                       | if type == "string" then . elif type == "array"
                         then (map(if type == "object" then (.text // "") else "" end) | join(" ")) else "" end)
-                      | if test("^The user answered:") then . else "" end)
+                      | menu_answers)
                   else "" end) | join("\n"))
               else "" end]
         | map(test("(^|[^0-9])" + $n + "([^0-9]|$)")) | any

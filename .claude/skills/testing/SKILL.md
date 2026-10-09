@@ -4,7 +4,7 @@ kind: rule
 law: verifiability
 description: Rule under the verifiability law. Load when editing any test file and anything in the tree's end-to-end suites. Names the scenario id in the title, moving a decision into a pure function and what an end-to-end test closes. Patterns testing-unit, testing-e2e.
 ---
-<!-- rt-kit v0.30.0 · rules/testing.md · 1bbc331e3e72 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.30.0 · rules/testing.md · 025a753c6b34 · правится надстройкой, не здесь -->
 
 # Verifiability — how it works here
 
@@ -175,7 +175,9 @@ flowchart TD
 - **A line is not added to the known list for a red check.** The list was gathered by the day the
   check was created and has only shrunk since: an added line silences the signal, not the cause,
   and in history looks the same as a fix. A place where the check is right by the letter and
-  wrong in substance is reviewed by the owner, and until their answer the check is right.
+  wrong in substance is reviewed by the owner, and until their answer the check is right. An inline
+  mark that switches a check off for one place is the same line, written into the file instead of
+  the list. It is not placed even for a moment.
 - **An exchange counts as read on both sides, not by the success of calls.** Sending and editing
   state answer with success even when there is nothing to read the result with: over two hundred
   records stood as new because there was nobody to collect them, and only those whose file still
