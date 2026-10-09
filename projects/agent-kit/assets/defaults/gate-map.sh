@@ -101,8 +101,11 @@ skill_for_default() {
                     printf '%s\n' 'styling-bem' ;;
                 */check-lib-layers.mjs | */lib-layers-allowlist.json) printf '%s\n' 'lib-layers' ;;
                 */check-reuse.mjs | */reuse-allowlist.json) printf '%s\n' 'reuse-first' ;;
-                */check-board.mjs | */board.mjs | */board-*.mjs | */task-new.mjs | */check-schema-drift.mjs)
+                # The queue audit has a rule of its own, laid out on GitHub only; the folders
+                # module is laid out on every host and stays with the rule about tasks.
+                */board-folders.mjs | */task-new.mjs | */check-schema-drift.mjs)
                     printf '%s\n' 'git-workflow' ;;
+                */check-board.mjs | */board.mjs | */board-*.mjs) printf '%s\n' 'queue-audit' ;;
                 # A tree's own code linter rule is written by the same conventions as the code under
                 # it.
                 */eslint-rules/*) printf '%s\n' 'typescript-conventions' ;;

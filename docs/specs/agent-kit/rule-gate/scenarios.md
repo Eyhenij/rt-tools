@@ -240,10 +240,14 @@ Then the read is not declared a writing one, and every shape of the in-place fla
 
 Covered: `projects/agent-kit/tests/defaults.test.sh`.
 
-### SC-AK-1193 — a module of the queue audit demands the rule about delivery
+### SC-AK-1193 — a module of the queue audit demands the rule of the audit
 
-Given an edit of a module of the queue audit split out of the audit itself
+Given an edit of the queue audit or of a module split out of it
 When the gate picks the rule
-Then it demands the rule about tasks and branches, the same as for the audit
+Then it demands the rule of the queue audit
+
+Given an edit of the module of task folders, laid out on every host
+When the gate picks the rule
+Then it demands the rule about tasks and branches
 
 Covered: `projects/agent-kit/tests/defaults.test.sh`.

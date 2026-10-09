@@ -2,9 +2,9 @@
 name: git-workflow
 kind: rule
 law: delivery
-description: Rule under the delivery law for a tree on GitHub. Load for creating a task and a branch, commit, push, opening a PR and merging. Names the one-to-one pair of task and branch, the machine account and the delivery guards. Patterns git-workflow-commit, -pr, -merge, -stack. Rollout — rule deploy-flow.
+description: Rule under the delivery law for a tree on GitHub. Load for a task and a branch, commit, push, opening a PR and merging. Names the pair of task and branch, the machine account and the delivery guards. Patterns git-workflow-commit, -pr, -merge, -stack. Rollout — deploy-flow, audit — queue-audit.
 ---
-<!-- rt-kit v0.29.4 · rules/git-workflow.github.md · 39b37f1cd60c · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.4 · rules/git-workflow.github.md · 91c82e029ef9 · правится надстройкой, не здесь -->
 
 # Delivery — how it works here
 
@@ -148,29 +148,11 @@ flowchart TD
   names its closing columns itself; unnamed — not judged.
 - **The board holds tasks, not PRs about them.** A PR card has no column and never leaves the queue.
   The queue audit finds such cards, a line each.
-- **A lagging column is found by the queue audit, not by eye.** It judges the column by the PR both
-  ways: an open PR with the task not in review, and review with no open PR.
-- **A branch with an open PR lags behind its base silently.** The guard judges the base once, at
-  opening, and the run does not see what merged after. The work queue audit counts the lag.
-- **The link between a task and an epic is read by the audit both ways.** A one-sided binding looks
-  as whole as a two-sided one.
 - **Tasks fixed by one edit are merged before the merge.** The second is erased with its number, and
   the missing is added to the first: after the merge the branch went in whole.
-- **Work that one session cannot close is marked in two places, and they are audited.** The board
-  label and the sessions line in the epic plan say the same to two readers; only what legitimately
-  does not split is marked.
-- **The tip of an open PR without a run is seen by the work queue audit, unless the pipeline does
-  not wake for its base.** A page without a run looks the same as with a green one; where no run
-  comes at all, the audit is silent about that PR.
 - **What checks a PR whose base is not the main branch is asked before the first PR of an epic
   opens.** The trigger either wakes for it as for one into main, or does not, and then the push
   gate is the only check behind the work — pattern `git-workflow-stack`.
-- **A run pushed out of the pipeline queue gets a separate audit line.** It looks failed though it
-  never checked the branch, and the step count tells them apart.
-- **The last run of the main branch is judged by the audit too: red and pushed out get lines of
-  their own.** The merge itself is checked by nobody; a pipeline asleep on a push to main is named.
-- **A draft with a green run on its tip is an audit discrepancy.** A green page permits nothing: the
-  host locks the button.
 - **One's own drafts are judged all at once, not only the checked-out branch's.** Two signs — a
   green run on the tip and a folder taken apart; a folder still there means ongoing work.
 - **Opening a PR is refused while the branch carries its task folder.** Opening is the last point
@@ -182,8 +164,6 @@ flowchart TD
   that.** Work here means creating a task or a branch, moving the column and opening a PR.
 - **A conflicting PR of a neighbouring session is not one's own.** One's own branch is the one this
   working copy led; a neighbour's PR is named to the owner, and work is taken as usual.
-- **A conflicting open PR is a work queue audit discrepancy.** The conflict arrives with someone
-  else's merge, and the host shows the mark only inside the PR.
 - **A document goes in the same commit as the edit.** The bypass is the line `Docs-skip: <reason>`
   in the commit body; an empty reason is not accepted.
 - **The commit subject is checked against the format on the spot.** A subject parsed by type and
@@ -266,8 +246,6 @@ flowchart TD
   checks it.** The guard judges a commit that named itself as it; a person's passes by.
 - **The PR state is reread from the host right after publishing.** Opening and setting a reviewer
   answer zero even having done nothing.
-- **The author of an open PR and whether it has a reviewer are audited by the work queue.** Before the
-  merge neither miss shows: a PR opened by a person never gets a reviewer.
 - **Reviewers are asked by a REST call, not by the client's selection.** Its fields come from GraphQL,
   where the account has no rights.
 
