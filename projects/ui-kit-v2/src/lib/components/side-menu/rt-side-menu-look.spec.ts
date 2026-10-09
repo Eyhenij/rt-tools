@@ -71,7 +71,7 @@ describe('Вид бокового меню', (): void => {
         window.localStorage.clear();
     });
 
-    it('SC-UKV-781 — по умолчанию подписи под значками полосы стоят, а подсказок у пунктов нет', (): void => {
+    it('SC-UKV-817 — по умолчанию подписи под значками полосы стоят, а подсказок у пунктов нет', (): void => {
         const fixture: ComponentFixture<RtSideMenuComponent> = menu();
 
         expect(fixture.nativeElement.querySelectorAll('.rt-side-menu__rail-title').length).toBe(2);
@@ -79,7 +79,7 @@ describe('Вид бокового меню', (): void => {
         expect(rail(fixture).map((item: HTMLElement): string | null => item.getAttribute('aria-label'))).toEqual([null, null]);
     });
 
-    it('SC-UKV-781 — без подписей имя пункта уходит в подсказку справа и в доступное имя', (): void => {
+    it('SC-UKV-817 — без подписей имя пункта уходит в подсказку справа и в доступное имя', (): void => {
         const fixture: ComponentFixture<RtSideMenuComponent> = menu({ railTitlesShown: false });
 
         expect(fixture.nativeElement.querySelector('.rt-side-menu__rail-title')).toBeNull();
@@ -90,14 +90,14 @@ describe('Вид бокового меню', (): void => {
         expect(rail(fixture).map((item: HTMLElement): string | null => item.getAttribute('aria-label'))).toEqual(['Главная', 'Отчёты']);
     });
 
-    it('SC-UKV-781 — без подписей и без подсказок подменю подсказки пункта нет, а доступное имя остаётся', (): void => {
+    it('SC-UKV-817 — без подписей и без подсказок подменю подсказки пункта нет, а доступное имя остаётся', (): void => {
         const fixture: ComponentFixture<RtSideMenuComponent> = menu({ railTitlesShown: false, subMenuTooltipsShown: false });
 
         expect(railTooltips(fixture).map((tip: { text: string }): string => tip.text)).toEqual(['', '']);
         expect(rail(fixture)[0].getAttribute('aria-label')).toBe('Главная');
     });
 
-    it('SC-UKV-782 — значки полосы залиты только по входу', (): void => {
+    it('SC-UKV-818 — значки полосы залиты только по входу', (): void => {
         const fills: (fixture: ComponentFixture<RtSideMenuComponent>) => boolean[] = (
             fixture: ComponentFixture<RtSideMenuComponent>
         ): boolean[] =>

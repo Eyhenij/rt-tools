@@ -44,7 +44,7 @@ Then it looks as before
 Not covered: this is a promise about frames. The former snapshots of the side menu and icon button
 stories match without a re-take.
 
-### SC-UKV-781 — a rail without titles names its items by a tooltip
+### SC-UKV-817 — a rail without titles names its items by a tooltip
 
 Given a menu with the rail titles switched off, and one with the submenu tooltips switched off too
 When the rail is drawn
@@ -53,7 +53,7 @@ tooltip on the right shows the name only while the submenu tooltips are on
 
 Coverage: partial — the test reads the text and the side the items hand to the tooltip, not a hover.
 
-### SC-UKV-782 — rail icons are filled by the input
+### SC-UKV-818 — rail icons are filled by the input
 
 Given a menu without the fill input and one with it
 When the rail is drawn

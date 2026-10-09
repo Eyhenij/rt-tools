@@ -44,6 +44,7 @@ export namespace IRtToaster {
         readonly duration?: number | null;
         readonly progress?: boolean;
         readonly icon?: IRtIcon.Name | null;
+        readonly onDismiss?: (reason: INotification.DismissReason) => void;
         /** Тост вытеснен новым в режиме `replace` и уходит своей анимацией. */
         readonly replaced?: boolean;
     }

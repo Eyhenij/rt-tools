@@ -60,6 +60,14 @@
   application asked for are read by the first kit's side menu, so the second kit names them after
   its row: `--rt-side-menu-sub-item-favorite-size` and `--rt-side-menu-sub-item-favorite-color`.
   Affected stage: 2.
+- **Row 132: a toast reports why it left without an action.** The application holds a sign-in wait
+  behind a toast with no timer, and a toast closed by the cross must fail that wait. The option
+  `onDismiss` gets `close`, `timeout` or `replaced` once; a toast left by its action reports
+  nothing, its handler already ran. The look and the former behaviour do not change. Scenario
+  SC-UKV-816. Affected stage: 2.
+- **Two side menu scenarios moved to SC-UKV-817 and SC-UKV-818.** The merge of main brought the chat
+  scenarios under SC-UKV-781 and SC-UKV-782, and main keeps its numbers; the side menu ones and their
+  test titles moved by the same commit.
 
 ## Handover of the session
 

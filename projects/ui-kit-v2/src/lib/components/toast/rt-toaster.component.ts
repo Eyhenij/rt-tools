@@ -170,6 +170,7 @@ export class RtToasterComponent {
             duration: event.payload.duration,
             progress: event.payload.progress,
             icon: event.payload.icon,
+            onDismiss: event.payload.onDismiss,
         };
         this.toasts.update((items: IRtToaster.Toast[]): IRtToaster.Toast[] => [
             toast,
