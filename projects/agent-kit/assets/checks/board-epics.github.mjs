@@ -4,7 +4,7 @@
  */
 import { declaredEpicOf } from './board-epic-link.mjs';
 import { planPathOf, planRows, planTaskCells } from './board-epic-plan.mjs';
-import { ghJson, numberFromTitle, OfflineError, OWNER, REPO, TASK_KEY } from './board.mjs';
+import { ghJson, numberFromBranch, numberFromTitle, OfflineError, OWNER, REPO, TASK_KEY } from './board.mjs';
 import { CONFIG } from './rt-kit-checks.config.mjs';
 
 /**
@@ -234,6 +234,12 @@ export function checkEpicPullBase(open, pulls, report) {
         const epic = epicOf.get(number);
         const base = String(pull.baseRefName ?? '');
         if (base.startsWith(`${TASK_KEY}-${epic}-`)) {
+            continue;
+        }
+        // A chain base: the branch of a task below in the same epic. The rule puts a chain PR on
+        // the previous branch, and that branch carries the epic branch.
+        const baseTask = numberFromBranch(base);
+        if (baseTask !== null && epicOf.get(baseTask) === epic) {
             continue;
         }
         report(

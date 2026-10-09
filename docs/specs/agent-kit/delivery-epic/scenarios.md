@@ -97,3 +97,16 @@ When the guard judges the same opening with a folder in the branch
 Then this condition is not judged at all
 
 Covered: `projects/agent-kit/tests/guard-epic-base.test.sh`.
+
+### SC-AK-1203 — a chain base of the same epic is lawful
+
+Given a task of an epic, and the base named is the branch of the task below, whose history carries
+the epic branch
+When the guard judges the opening of the request, and the audit reads the open request
+Then neither refuses over the base
+
+Given the base named carries no epic branch in its history, or belongs to a task outside the epic
+When the guard judges the opening, and the audit reads the open request
+Then the guard refuses and names the epic branch, and the audit names the request
+
+Covered: `projects/agent-kit/tests/guard-epic-base.test.sh`, `projects/agent-kit/tests/checks-board.test.sh`.

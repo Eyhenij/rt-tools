@@ -140,6 +140,18 @@ report "SC-AK-997 — заявка мимо ветки эпика названа
 export STUB_PULLS="$(epic_pull RT-700-work-by-epics)"
 report "SC-AK-997 — заявка в ветку эпика молчит" "$(board_says 'PR #703: the task #702 belongs to the epic #700')" 0
 
+# --- SC-AK-1203 — база из стопки того же эпика ---------------------------------------------
+#
+# Правило велит ставить PR стопки на предыдущую ветку. Ветка нижней задачи того же эпика несёт
+# ветку эпика, и такая база законна; база задачи чужого эпика — нет.
+saved_issues_epic="$STUB_ISSUES"
+export STUB_ISSUES='[{"number":700,"title":"[RT-700] Эпик","state":"OPEN","assignees":[{"login":"probe"}],"labels":[{"name":"epic"}],"body":"Замысел — docs/plans/epic.md"},{"number":701,"title":"[RT-701] Нижняя","state":"OPEN","assignees":[{"login":"probe"}],"labels":[],"body":"Задача эпика #700, замысел — docs/plans/epic.md"},{"number":702,"title":"[RT-702] Задача","state":"OPEN","assignees":[{"login":"probe"}],"labels":[],"body":"Задача эпика #700, замысел — docs/plans/epic.md"}]'
+export STUB_PULLS="$(epic_pull RT-701-lower)"
+report "SC-AK-1203 — база из нижней задачи того же эпика молчит" "$(board_says 'PR #703: the task #702 belongs to the epic #700')" 0
+export STUB_PULLS="$(epic_pull RT-699-stray)"
+report "SC-AK-1203 — база задачи вне эпика названа" "$(board_says 'PR #703: the task #702 belongs to the epic #700')" 1
+export STUB_ISSUES="$saved_issues_epic"
+
 export STUB_PULLS="$saved_pulls_epic"
 
 # --- SC-AK-998 --- ветка эпика и его заявка ----------------------------------------------------
