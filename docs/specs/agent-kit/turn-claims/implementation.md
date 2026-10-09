@@ -18,6 +18,10 @@ statement: a removed statement is removed together with its line.
 - **A promise does not count as a statement.** — `projects/agent-kit/assets/hooks/claim-guard.sh:claims`
 - **The refusal names the statement it found.** — `projects/agent-kit/assets/hooks/claim-guard.sh:found`
 - **Someone else's word does not count as a statement about the tree.** — `projects/agent-kit/assets/hooks/claim-guard.sh:judged` — the quoting lines and the code blocks leave whole, the quotation marks and the code inside a line are put out, the sentences with a word of condition are thrown away; scenario SC-AK-764
+- **A word of a statement is found only as a whole word.** — `projects/agent-kit/assets/hooks/claim-guard.sh:claim_re` — `@` in a row of the map reads as a space, and every sentence starts with one. Scenario SC-AK-1198.
+- **A negated statement is confirmed by a reading command.** — `projects/agent-kit/assets/hooks/claim-guard.sh:read_proof` — the negation is glued to the next word, and `negated_re` finds it. Scenario SC-AK-1198.
+- **A description of what a command does is not a statement about a done action.** — `projects/agent-kit/assets/hooks/claim-guard.sh:claims` — the row about deleting names past forms only. Scenario SC-AK-1198.
+- **A gate before push called fixed is confirmed by a run of the gate set in the same turn.** — `projects/agent-kit/assets/hooks/claim-guard.sh:claims` — a row of its own. Scenario SC-AK-1198.
 - **The refusal names as the first exit the removal of the statement, not the launch of the command.** — `projects/agent-kit/assets/hooks/claim-guard.sh:reason`; scenario SC-AK-764
 - **A wrong conclusion the guard does not judge.** — `projects/agent-kit/assets/hooks/claim-guard.sh:claim-guard`
 - **The guard of the statements lets the work through at any breakage.** — `projects/agent-kit/assets/hooks/claim-guard.sh:transcript`
