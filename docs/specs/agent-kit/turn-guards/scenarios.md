@@ -34,22 +34,6 @@ Then the guard lets the end through
 
 Covered: `projects/agent-kit/tests/postmortem-guard.test.sh`.
 
-### SC-AK-97 — a turn with a question to the owner is refused before the question is sent
-
-Given neither the laws nor the rules were read during the turn
-When the executor calls the tool of a question to the owner
-Then the guard refuses the call, and the question does not go to the owner
-
-Covered: `projects/agent-kit/tests/grill-gate.test.sh`.
-
-### SC-AK-98 — a question in prose is still caught at the end of the turn
-
-Given neither the laws nor the rules were read during the turn, and the question is asked in prose
-When the turn ends
-Then the guard refuses it: a question in prose is not a tool
-
-Covered: `projects/agent-kit/tests/grill-gate.test.sh`.
-
 ### SC-AK-199 — a turn with a request for a proposal does not close without a sending
 
 Given the owner said to create or send a proposal to the rules layer, and there was no sending in
@@ -332,52 +316,6 @@ Then the summary does not count as a remark, and the turn is not refused by its 
 
 Covered: `projects/agent-kit/tests/proposal-guard.test.sh`.
 
-### SC-AK-818 — the owner has already answered this question
-
-Given the owner gave an instruction by a remark, and a call of a menu of questions was already in
-the record of the turn
-When the executor sends a menu whose topic overlaps with this remark by significant words
-Then the call is refused, and the refusal orders to go on with the work, not to ask differently
-
-Given the topic of the new menu does not reach the shared significant words with the remark of the
-owner
-When the executor sends this menu
-Then the call passes: the analysis of a request goes by questions about different subjects
-
-Covered: `projects/agent-kit/tests/grill-gate.test.sh`.
-
-### SC-AK-1168 — a loaded rule and a subagent report are not the owner's remark
-
-Given the owner's last remark has nothing in common with the new menu, and after it the record holds
-a loaded rule or a subagent report marked `isMeta` that shares the menu's words
-When the executor sends this menu
-Then the call passes: the menu is compared with what the owner wrote, and the rule loaded before
-the question counts as read in this turn
-
-Covered: `projects/agent-kit/tests/grill-gate.test.sh`.
-
-### SC-AK-1169 — the keys of the menu are not words of its topic
-
-Given the owner's remark shares with the new menu only the field names of the menu call —
-`question`, `label`, `description`
-When the executor sends this menu
-Then the call passes: the words are taken from the questions and the options, not from the call
-
-Covered: `projects/agent-kit/tests/grill-gate.test.sh`.
-
-### SC-AK-1134 — two answers «recommended» in a row close the remaining questions by assumption
-
-Given the owner took the recommended option on the last two menus of the record
-When the executor sends the next menu
-Then the call is refused, and the refusal orders to close the remaining questions by assumption and
-name them to the owner in one line
-
-Given the owner answered the last menu with an option of their own, or only one menu was answered
-When the executor sends the next menu
-Then the call passes: the streak is broken by any other answer, and one answer is not a streak
-
-Covered: `projects/agent-kit/tests/grill-gate.test.sh`.
-
 ### SC-AK-840 — a request to the owner to sign in or type a password does not close the turn
 
 Given a request to type a password, to sign in themselves or to fill the sign-in form stands in the
@@ -487,11 +425,3 @@ When the guard of the end of the conversation judges the call.
 Then the call is refused with a reason naming the owner; other tools pass, and without jq the refusal stays.
 
 Covered: `projects/agent-kit/tests/end-conversation-guard.test.sh`.
-
-### SC-AK-1194 — with edits in the turn the refusal names the rules of their area
-
-Given during the turn a file was edited for which the rules gate names its own rule, and no rule was read.
-When the turn ends with a question to the owner.
-Then the refusal names that rule, says that a load before the owner's last message does not count and gives no advice to search the directories.
-
-Covered: `projects/agent-kit/tests/grill-gate.test.sh`.
