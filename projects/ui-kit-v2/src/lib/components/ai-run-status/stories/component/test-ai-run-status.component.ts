@@ -12,9 +12,7 @@ import { IRtAiRunStatus } from '../../rt-ai-run-status.model';
  */
 @Component({
     selector: 'app-ai-run-status',
-    template: `
-        <rt-ai-run-status [state]="state" [label]="label" [meta]="meta" [steps]="withSteps ? steps : []" [(expanded)]="expanded" />
-    `,
+    templateUrl: './test-ai-run-status.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // components

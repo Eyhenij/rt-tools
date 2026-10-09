@@ -76,4 +76,11 @@ describe('RtButtonDirective — имя Material и материальный на
         expect(button.querySelector('svg')).toBeNull();
         expect(glyphIn(button)?.textContent).toBe('arrow_back');
     });
+
+    it('SC-UKV-774 — по стратегии font имя кита, которое шрифт не нарисует, рисуется рисунком кита', (): void => {
+        const button: HTMLElement = buttonOf(setup('ico-plus', [{ provide: RT_ICON_GLYPH_STRATEGY, useValue: 'font' }]), 'base');
+
+        expect(glyphIn(button)).toBeNull();
+        expect(hrefIn(button)).toBe('#rt-icon-ico-plus');
+    });
 });

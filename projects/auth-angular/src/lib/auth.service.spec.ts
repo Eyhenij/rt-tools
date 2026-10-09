@@ -35,6 +35,16 @@ describe('RtAuthService', () => {
         expect(auth.caller()).toBeNull();
     });
 
+    it('SC-AUTH-76 — a silent check that never answers lets the admin start with nobody signed in', async () => {
+        const double: KeycloakDouble = new KeycloakDouble();
+        double.silentCheckSilent = true;
+
+        const auth: RtAuthService = await startAuth(double, { ...TEST_CONFIG, silentCheckTimeoutMs: 10 });
+
+        expect(double.initCalls).toHaveLength(1);
+        expect(auth.authenticated()).toBe(false);
+    });
+
     it('SC-AUTH-37 — the exit goes through Keycloak', async () => {
         const double: KeycloakDouble = new KeycloakDouble();
         double.signIn(claimsWith(['orders:read']));

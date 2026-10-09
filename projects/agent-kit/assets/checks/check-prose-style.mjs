@@ -204,10 +204,14 @@ function findingsIn(line) {
     return found;
 }
 
-/** A sentence that is too long: the reader loses the beginning before the author reaches the end. */
+/**
+ * A sentence that is too long: the reader loses the beginning before the author reaches the end.
+ * A full stop closed by emphasis — `.**` at the end of an article title — ends a sentence too:
+ * otherwise the title and the first sentence after it are counted as one.
+ */
 function longSentences(line) {
     return line
-        .split(/(?<=[.!?])\s+/)
+        .split(/(?<=[.!?][*_]*)\s+/)
         .filter((sentence) => sentence.trim().split(/\s+/).length > WORDS_LIMIT)
         .map((sentence) => [`${sentence.trim().split(/\s+/).length} words in a sentence`, `split it: the limit is ${WORDS_LIMIT}`]);
 }

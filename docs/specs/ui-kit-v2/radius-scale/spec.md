@@ -55,6 +55,12 @@ own and lets any instance take any step: the kit promises the same by one input.
 - **A component whose surface lives in several parts gives the step to its main surface.** Inner
   parts — a badge, a dot, a focus ring — keep their own rounding: they are separate parts in the
   mockup, and a step for the whole box does not fit a dot.
+- **A filled field with a step rounds all four corners and draws no underline.** Its own look keeps a
+  small top rounding and a straight bottom with a line, and a step given to it replaces both: a
+  rounded field with a cut bottom reads as broken. Without a step the filled field stays as it was.
+- **The pill look of a field is filled, rounded by the full step and drawn without an underline.**
+  The field and the number field have it; a step given to the field replaces the full step, as on
+  any other look.
 - **The table gives the step to the card of its narrow view.** The wide view keeps no corners: the
   mockup draws it with the step `none`, and a rounded grid of rows would cut its outer cells.
   The host of the narrow view has no fill of its own while it draws cards: otherwise the rounded

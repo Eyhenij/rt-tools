@@ -28,6 +28,14 @@ Then it names the length and the limit
 
 Covered: `projects/agent-kit/tests/check-prose-style.test.sh`.
 
+### SC-AK-1191 — a full stop closed by emphasis ends a sentence
+
+Given an article title ends with a full stop inside bold, and a sentence follows it
+When the check of the wording goes
+Then it counts them as two sentences, not one
+
+Covered: `projects/agent-kit/tests/check-prose-style.test.sh`.
+
 ### SC-AK-334 — a code block is not judged
 
 Given an officialese word stands inside a code block
