@@ -82,9 +82,7 @@ flowchart TD
 
 - **A promise to do the work in the next turn is an announcement of intent.** It differs from a
   command named and not run only in that it sounds politer and is therefore recognised as
-  a stop less often. An offer to the owner to object to the announced intent is part of the
-  promise, not a question: a turn ends with a question when the work does not go without the
-  answer, and here it went.
+  a stop less often.
 - **An order named by a number or by the word "all" is counted aloud before the turn ends.** The reply carries the count — how many out of how many. A turn where the count did
   not add up does not end: it goes on with the next item of the order. How many items the order
   holds is written nowhere in the tree — only whoever read the order knows it.
@@ -105,6 +103,12 @@ flowchart TD
   executor could close is struck out.
 - **A menu under an assigned order.** A choice offered to the owner before the epic is over asks to
   assign the order anew. No work left in the epic — say so: the epic is over — not "what next".
+- **No order at all is a lawful state, and it is said, not filled.** A queue card is not an order.
+  The turn names that there is no order and asks for one.
+- **A standing order is written into the progress in the owner's words.** Read once, «merge every
+  PR» is lost at the first refusal; the line «Waiting for the owner: no — <their words>» carries it.
+- **Done work is shown on the running application built from it.** Host pages show delivery, not
+  «what did you do».
 - **A declaration of intent.** "Taking the next task" is not taking it: the phrase lives to the end
   of the turn, and the work does not move. Only the done is named: the created task's number, the
   branch's name, the moved column.
@@ -167,11 +171,8 @@ flowchart TD
 - **A plan stage is declared closed only after its check command has passed.** The "Checked by"
   (`Чем проверяется`) line carries the command in backticks and what in its output means "matches".
   The guard reads the previous stage number from the branch history and holds a turn where the
-  number grew and the command did not run: a session later, marked from memory cannot be told from
-  checked.
-- **The end of an epic is a stop, and it is the one lawful waiting for a word.** Every task of the
-  epic is merged or handed over, so there is no next task to take, and both guards of the turn end
-  let the stop through. The turn shows
+  number grew and the command did not run.
+- **The end of an epic is a stop, and it is the one lawful waiting for a word.** The turn shows
   the table of the epic's tasks, what was done on each and what confirms it, and says that the
   session waits for orders. On the main branch the epic is not read, and the turn is judged as before.
   <!-- rt-when: ответ владельцу о состоянии работы -->
@@ -201,7 +202,7 @@ flowchart TD
   memory.** Everything the reply says about the tree carries a command and its output; said without
   one, it is no statement — not "checked", not "cleared", not "done". The guard reads the turn's
   text to the owner and looks for a command of the same turn; each word has its own kind of
-  command. The previous turn does not count: yesterday's output says nothing of today's.
+  command.
 - **The statement guard waits for the reply text rather than judging the record as it found it.**
   The text lands in the turn record no earlier than the host calls the hook. Not having waited, the
   guard returns the turn: an empty record means not "nothing to say" but "nothing to read".
@@ -210,8 +211,7 @@ flowchart TD
 - **A turn about someone else's step is watched by the waiting guard, not by the executor's
   memory.** It refuses a turn's end where someone else's step was spoken of and nothing was done on
   the next task — no task created, no branch, no folder, no column moved. Someone else's step it
-  knows by two signs: a PR opened or a red run read in the turn. The words "taking the next task"
-  are not an action: they are said instead of one.
+  knows by two signs: a PR opened or a red run read in the turn.
 - **A turn that handed work in carries it to a lifted draft.** A draft's merge button is locked by
   the host, and in the PR list ready cannot be told from unfinished. The next task is taken on top
   of that, not instead. The waiting guard demands a command of the same turn about the state of the
@@ -248,8 +248,7 @@ flowchart TD
 - **A turn in which a question was put to the owner does not end until laws and rules were read in
   that same turn.** Reading is any of three roads: loading a rule, reading a file of laws or rules,
   a search over them. The conversation guard refuses at the turn's end, not on the question tool:
-  questions are asked in prose more often than by menu. What was found lands in the grill section
-  "What the rules already say".
+  questions are asked in prose more often than by menu.
 - **The owner's answer is sought in their own messages before the rules.** The law says a question
   with a written answer is not put to the owner, and the most reachable record lies not in the tree
   but in the conversation: the owner's first message and their answers to past rounds.
@@ -258,17 +257,20 @@ flowchart TD
   clarification. What is costly is done at cost, or called costly outright, with the price named.
 - **The actions the executor does not do without the owner's word are listed in the rule's
   companion.** Each tree has its own list; the package knows only the demand that it be named.
-  Unnamed, it is derived from general words, and "do what the plan needs" becomes permission to push
-  and edit shared documents along with the commit. The appraisal "this is safe" does not replace the
-  list: whoever finds it convenient this minute assigns it, and it drifts.
+  Unnamed, it is derived from general words, and the appraisal "this is safe" is assigned by whoever
+  finds it convenient this minute.
+- **What the host's automatic mode refuses is listed in the companion and read before the step.**
+  Such a refusal is a refused permission, not a guard: the step is named in one line and the work it
+  does not hold goes on. A browser click goes one per call.
+- **Red in the way of one's own task is one's own work, whoever wrote it.** What the linter's fix
+  mode repairs is fixed at once in the branch; only a decision goes to the owner, in one line next to
+  the fix.
 - **A refusal of an irreversible action has a safe part, and it is done.** The demand to ask the
   owner applies to the action, not the turn: work with a separable harmless part is split, not
   postponed whole. The owner is told what is done and what remained for their word.
 - **The sign of irreversibility is taken from the list, not derived by argument.** The list was
-  drawn up by someone who already weighed reversibility. The argument "it goes outside and cannot be
-  rolled back" always comes, the list only when read, and an argument on top of the list cancels it
-  silently: from outside it looks like caution, not a skipped step. Actions outside the list the
-  executor does not gate.
+  drawn up by someone who already weighed reversibility; an argument on top of it cancels it
+  silently. Actions outside the list the executor does not gate.
 - **A turn in which the executor admitted a miss does not end until the incident record exists.**
   The incident guard refuses at the turn's end. The records directory is named by the rule's companion, the file name is the date and
   the miss, the form — the layout template. The admission is caught by a set of samples: a miss

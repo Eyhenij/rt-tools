@@ -30,6 +30,9 @@ divergence.
 - **Work named as a command is run in the turn that names it.** — **Not checked.** The guard sees the commands of the turn and does not reconcile the command named in the reply with the one run: an empty turn it refuses, and a turn where something else was run it does not
 - **One's own unclosed step is not handed to the owner.** — **Not checked.** The turn exit guard answers the question «was there work», and about a turn where there was work but the handing over was not done it says «yes»; the delivery guard is silent about an uncalled command by design
 - **A menu under an assigned order.** — **Not checked.** A question to the owner is not a tool: they are asked more often in prose than by a menu
+- **No order at all is a lawful state, and it is said, not filled.** — **Not checked.** Which epic the copy leads is read from `.claude/rt-kit/assignments.md`; a turn that took a card nobody gave is told apart only by the owner
+- **A standing order is written into the progress in the owner's words.** — **Not checked.** The exit guard reads the line «Waiting for the owner» and does not know whether the owner's order stands behind it
+- **Done work is shown on the running application built from it.** — **Not checked.** What the owner is shown leaves no trace in the tree; the stands are named in the companion of `browser-verification`
 - **A word about one's own work is judged by what the same turn did.** — **Not checked.** The exit guard sees the commands of the turn and does not read what the turn promised: the promise lives in the reply text, and reconciling it with the work needs understanding of meaning
 - **An option offered to the owner is named with its cost to a person.** — **Not checked.** The cost of an option to a person is invisible to a machine altogether: it counts the steps of a command, not the steps of whoever uses it
 - **A tree state the owner named is cleared by a call before an explanation.** — **Not checked.** The owner word lives in the correspondence and leaves no trace in the tree: the guard sees what was called, not what was asked of it. It is held by the order of the rule and by the analysis, the record «2026-08-27-conflicts-named-not-checked» in the intake.
@@ -76,6 +79,8 @@ divergence.
 - **The context compaction threshold the tree sets itself, and it stands BELOW the stop threshold.** — `projects/agent-kit/src/lib/thresholds.ts:thresholdDrift` — here the window `autoCompactWindow` in `.claude/settings.json` equals a million, the compaction share is 45%, the stop share 50%, the margin `RT_WINDOW_MARGIN_PCT` 5%
 - **A filled window ends a turn only where there is no compaction.** — `.claude/hooks/window-fill-guard.sh:compact_pct` — here compaction is declared, and the first threshold calls for going on working
 - **A session closes with a handover, and it lies as a section of the progress.** — `.claude/hooks/handoff-write.sh:section` — the section «Handover of the session» in `docs/tasks/<branch>/progress.md`; the fallback path for work without a task folder is `.claude/handoff/`, and it is in `.gitignore`
+- **What the host's automatic mode refuses is listed in the companion and read before the step.** — **Not checked.** The list is the section «What the automatic mode refuses here» below; the classifier is not a guard of the tree, and its refusal comes only mid-turn
+- **Red in the way of one's own task is one's own work, whoever wrote it.** — **Not checked.** The push gate names what is red and does not tell the mechanical part from a decision; the conversation guard asks for the line of what was done without the answer
 - **A refusal of an irreversible action has a safe part, and it is done.** — **Not checked.** A turn in which part of the work was done instead of all of it is indistinguishable to a machine from a turn in which everything was done; it is held by this article and by the incident analysis
 - **The sign of irreversibility is taken from the list, not derived by argument.** — **Not checked.** The guard judges the form of the call, not the argument by which the executor decided to ask the owner; it is held by the article of the rule and by the list in `.claude/skills/task-flow/implementation.md`
 - **A turn in which the executor admitted a miss does not end until the incident record exists.** — `.claude/hooks/postmortem-guard.sh:notes_dir` — the drafts directory here is `.claude/rt-kit/postmortems`, it is outside history and named by the key `postmortems` in `.claude/rt-kit.json`; the admission is caught by a set of samples
@@ -85,3 +90,18 @@ divergence.
 - **The actions the executor does not do without the owner's word are listed in the rule's companion.** — `.claude/hooks/git-guard-delivery.sh:deny` — it judges the push and the opening of a request by form: the branch name, the commit signature, the number in the title, the task column. The guard asks the owner word nowhere: the list itself is the section «What is not done without the owner word» in `.claude/skills/task-flow/implementation.md`, and it is held by the memory of the executor
 - **A removed task folder lifts the state requirement and does not end the turn.** — `.claude/hooks/turn-exit-guard.sh:folder_archived` — a folder removed by a commit of the branch moves the judgement to the second sign; the scenarios are `projects/agent-kit/tests/turn-exit-guard.test.sh`
 - **An option that silences a check is not put in the menu at all.** — **Not checked.** The menu is assembled by the question tool, and what stood in it leaves no trace: the conversation guard judges whether the rules were read before the question, not what the list of answers is assembled from
+
+## What the automatic mode refuses here
+
+The classifier of the host judges every call by itself, and a refusal of it is a refused
+permission, not a guard of the tree: no line in the command lifts it. What it refused in this
+tree:
+
+- **Approving and merging one's own PR.** The PR is opened by the machine account, and the click on
+  the merge button in the owner's browser is read as approving oneself. The step is named to the
+  owner in one line, and the next task is taken.
+- **A script on the page and a batch of clicks.** One call makes one click; the result is read from
+  the page by the next call.
+- **Commands on the shared node that touch the production settings.** A read over `ssh` with the
+  production settings file, a copy by `scp` and closing an issue by `gh issue close` were refused;
+  files reach the node only by the rollout.

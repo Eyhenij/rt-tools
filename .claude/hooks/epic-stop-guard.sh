@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.29.4 · hooks/epic-stop-guard.sh · 166209ca5f8b · правится надстройкой, не здесь
+# rt-kit v0.29.4 · hooks/epic-stop-guard.sh · 057fd21e4328 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/deny-tail.sh, hooks/epic-over.sh, checks/epic-table.github.mjs
 # Guard of the stop at the end of an epic. PreToolUse on a call that takes new work.
@@ -86,13 +86,38 @@ fi
 command -v rt_epic_over >/dev/null 2>&1 || exit 0
 rt_epic_over || exit 0
 
+# The word of the owner about this very work releases the call: their message or their answer to a
+# menu that names the number the call takes. The line in the call was the only form before, and an
+# owner who forbade writing it left the executor one way out — stopping the work they had just set.
+# The number is read from the call; the words of the executor do not count.
+taken="$(printf '%s' "$cmd" | sed -nE 's/.*(checkout|switch)[[:space:]]+(-[A-Za-z]+[[:space:]]+)*-(b|c)[[:space:]]+[A-Za-z]+-([0-9]+)-.*/\4/p; s/.*(task:move|board\.mjs[[:space:]]+move)[^0-9|;&]*([0-9]+).*/\2/p; s/.*--epic-of[[:space:]=]+([0-9]+).*/\1/p' | head -1)"
+transcript="$(printf '%s' "$input" | jq -r '.transcript_path // empty' 2>/dev/null)"
+if [ -n "$taken" ] && [ -n "$transcript" ] && [ -f "$transcript" ]; then
+    named="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg n "$taken" '
+        [.[] | select(.type == "user")
+            | select(((.isMeta // false) or (.isCompactSummary // false)) | not)
+            | (.message.content // "")
+            | if type == "string" then .
+              elif type == "array" then (map(
+                  if .type == "text" then (.text // "")
+                  elif .type == "tool_result" then ((.content
+                      | if type == "string" then . elif type == "array"
+                        then (map(if type == "object" then (.text // "") else "" end) | join(" ")) else "" end)
+                      | if test("^The user answered:") then . else "" end)
+                  else "" end) | join("\n"))
+              else "" end]
+        | map(test("(^|[^0-9])" + $n + "([^0-9]|$)")) | any
+    ' 2>/dev/null)"
+    [ "$named" = "true" ] && exit 0
+fi
+
 root="$(git rev-parse --show-toplevel 2>/dev/null)"
 checks="$(jq -r '.layout.checks // "tools"' "$root/.claude/rt-kit.json" 2>/dev/null)"
 if [ -z "$checks" ] || [ "$checks" = null ]; then
     checks=tools
 fi
 
-reason="Refused: the epic is over — every task of it is merged or handed over by a request, and this call takes new work. The end of an epic is a stop: print the table by «npm run epic:table» (or «node $checks/epic-table.mjs»), tell the owner what was done on each task and what confirms it, and say outright that the session waits for their orders. New work is taken by their word, not by the count of what is left."
+reason="Refused: the epic is over — every task of it is merged or handed over by a request, and this call takes new work. The end of an epic is a stop: print the table by «npm run epic:table» (or «node $checks/epic-table.mjs»), tell the owner what was done on each task and what confirms it, and say outright that the session waits for their orders. New work is taken by their word, not by the count of what is left: their message or their answer to a menu that names the number of this work releases the call."
 
 # shellcheck disable=SC1090
 [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \

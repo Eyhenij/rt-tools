@@ -132,6 +132,20 @@ The rule is `turn-conduct`; the articles that hold the law stand there.
   a wait. Now the last tool of the turn is judged: the agent tool or a command sent to the
   background standing last gives the turn back, and work after the launch releases it.
 
+- **"A promise to do the work in the next turn": an offer to object is part of it.** An offer to the
+  owner to object to the announced intent is not a question: a turn ends with a question when the
+  work does not go without the answer, and here it went.
+- **"A plan stage is declared closed only after its check command": why from memory is not enough.**
+  A session later, a stage marked from memory cannot be told from one checked.
+- **"A statement about the tree's state": why the previous turn does not count.** Yesterday's output
+  says nothing of today's tree.
+- **"The actions the executor does not do without the owner's word": how an unnamed list leaks.**
+  "Do what the plan needs" became permission to push and edit shared documents along with the
+  commit.
+- **"The sign of irreversibility is taken from the list": why an argument on top cancels it.** The
+  argument "it goes outside and cannot be rolled back" always comes, the list only when read; from
+  outside it looks like caution, not a skipped step.
+
 ## A single read of the run state taken for watching it
 
 22 September 2026. An epic was handed over whole: nine tasks merged, the request of the epic opened
