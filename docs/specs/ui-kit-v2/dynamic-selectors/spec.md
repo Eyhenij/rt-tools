@@ -1,6 +1,6 @@
 # The dynamic selectors
 
-**Status:** in force · **Revision:** 29 September 2026 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 9 October 2026 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the parts of the second kit — the popover, the checkbox, the radio button, the
 input, the empty state, the buttons and the infinite scroll directive
 **Laws:** `frontend-application`, `verifiability`, `reuse-first`
@@ -177,8 +177,9 @@ stands next to it as components of its own, drawn on the parts of the second kit
   a new row.** The kit field draws the label, the required mark and the error; the list adds no label
   of its own.
 - **A non-empty list the caller passes as the chosen entities sets the value and the reset list; a
-  list with the keys already shown changes nothing.** That list is the parent's echo of the
-  selection change, and taking it as the reset list would keep the reset off for good.
+  list with the keys already shown, in any order, changes nothing.** That list is the parent's echo
+  of the selection change, and the parent may return it in its own order, the catalogue's one;
+  taking it as the reset list would keep the reset off for good.
 - **The row title wraps unless the caller turns wrapping off; then it stands on one line, cut with
   an ellipsis, and a cut title shows the whole text in a tooltip.**
 - **The same wrapping holds for the options of the popup.** Without wrapping an option's label
@@ -319,3 +320,5 @@ owner's review.
 - 8 October 2026 — the application's request (RT-2619): the look inputs of both fields take their
   defaults from the kit settings, the row title wrapping too; the popup body takes the height left by
   its head and footer; the title wrapping holds for the popup options too.
+- 9 October 2026 — the application's request (RT-2742): the echo of the chosen entities is told by
+  the set of keys, not by their order.
