@@ -65,6 +65,8 @@ export const iconMaterialMap: readonly IRtIconMaterialEntry[] = [
     { from: 'edit', to: 'pencil', why: 'карандаш, один в один' },
     { from: 'fork_spoon', to: 'fork-spoon', why: SAME_NAME },
     { from: 'fullscreen', to: 'fullscreen', why: SAME_NAME },
+    { from: 'fullscreen_exit', to: 'window-minimize', why: 'уголки внутрь — пара к fullscreen, выход из полного экрана в шапке чата' },
+    { from: 'history', to: 'history', why: SAME_NAME },
     { from: 'home', to: 'home', why: SAME_NAME },
     { from: 'info', to: 'info-circle', why: 'круг с буквой i — так рисует Material; голое info в наборе другое' },
     { from: 'insert_chart', to: 'chart-bar', why: 'столбики диаграммы, ближний: у Material они в рамке' },

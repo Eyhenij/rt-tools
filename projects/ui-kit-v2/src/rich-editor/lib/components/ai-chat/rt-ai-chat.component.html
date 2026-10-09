@@ -10,7 +10,7 @@
     }
 
     <section rtElem="conversation" qa-dataid="ai-chat" [attr.aria-label]="titleText()">
-        <header rtElem="header">
+        <header rtElem="header" [attr.data-rt-icon-preset]="headerIconSign()">
             @if (isThreadPage()) {
                 <rt-icon-button
                     #back

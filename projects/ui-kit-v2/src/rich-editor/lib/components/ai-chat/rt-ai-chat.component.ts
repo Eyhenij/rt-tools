@@ -135,6 +135,11 @@ export class RtAiChatComponent {
     protected readonly emptyDescriptionText: Signal<string> = computed((): string => this.emptyDescription() || this.t().aiEmptyText);
     protected readonly disclaimerText: Signal<string> = computed((): string => this.disclaimer() ?? this.t().aiDisclaimer);
 
+    /** Значение признака одних значков на шапке: только материальный набор, свой — без признака. */
+    protected readonly headerIconSign: Signal<IRtIcon.Preset | null> = computed((): IRtIcon.Preset | null =>
+        this.headerIconPreset() === 'material' ? 'material' : null
+    );
+
     protected readonly hasThreads: Signal<boolean> = computed((): boolean => this.threads() !== null);
 
     /** Список бесед стоит колонкой слева: на весь экран, когда беседы есть. */
@@ -235,6 +240,13 @@ export class RtAiChatComponent {
     public readonly copyable: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
         transform: booleanAttribute,
     });
+
+    /**
+     * Набор рисунков значков шапки. `'material'` ставит на шапку признак одних значков
+     * `data-rt-icon-preset`: значки рисуются материальным набором, токены и остальной вид — свои.
+     * Признак значок читает после первой отрисовки, поэтому вход задаётся до неё. Дефолт `'base'`.
+     */
+    public readonly headerIconPreset: InputSignal<IRtIcon.Preset> = input<IRtIcon.Preset>('base');
 
     /** Черновик в поле сообщения. */
     public readonly draft: ModelSignal<string> = model<string>('');

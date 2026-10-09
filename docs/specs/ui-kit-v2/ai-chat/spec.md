@@ -51,6 +51,8 @@ conversations. Every application repeats the same screen, and every copy drifts 
 
 - **A question has «Copy» in a row under its bubble at the bubble's side, it copies the question text, and the consumer can turn both copy buttons off.**
 
+- **The header icons draw the material drawings when the consumer asks, and the rest of the panel keeps its look.**
+
 - **While an answer is written, the composer offers Stop, and the suggestions and «New conversation» are off.**
 
 - **A run error shows the message, the reference number with a copy button, and «Ask again» only when the answer can be asked again.**
@@ -147,3 +149,4 @@ None.
   icons from an input, the assistant's marks by default.
 - 2026-10-09 — the task RT-2720: «Copy» under a question and first in the rating row of an answer;
   the answer is copied as plain text, without markdown signs.
+- 2026-10-09 — the task RT-2722: the header icons by the material drawings without the material preset.

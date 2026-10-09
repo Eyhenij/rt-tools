@@ -1,6 +1,7 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
+import { IRtIcon } from '../../../../../../lib/components/icon/rt-icon.model';
 import { StoryPresetsComponent } from '../../../../../../showcase/story-presets.component';
 import { StoryRowComponent } from '../../../../../../showcase/story-row.component';
 import { StoryThemesComponent } from '../../../../../../showcase/story-themes.component';
@@ -36,6 +37,7 @@ interface IAiChatCase {
     readonly threadsLoading?: boolean;
     readonly draft?: string;
     readonly copyable?: boolean;
+    readonly headerIconPreset?: IRtIcon.Preset;
 }
 
 /**
@@ -87,6 +89,7 @@ export class TestRtAiChatMatrixComponent {
         { name: 'Остановлен', messages: AI_CHAT_STOPPED },
         { name: 'Не удался', messages: AI_CHAT_FAILED },
         { name: 'Без копирования', messages: AI_CHAT_DONE, copyable: false },
+        { name: 'Значки шапки Material', messages: AI_CHAT_DONE, headerIconPreset: 'material' },
     ];
 
     public readonly errorCases: readonly IAiChatCase[] = [

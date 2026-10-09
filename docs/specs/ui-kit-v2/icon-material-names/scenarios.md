@@ -215,3 +215,11 @@ Then `ico-plus` draws the kit drawing with no text, and `search` stays the ligat
 
 Covered: `projects/ui-kit-v2/src/lib/components/icon/rt-icon-glyph.logic.spec.ts`,
 `projects/ui-kit-v2/src/lib/components/button/rt-button-glyph.directive.spec.ts`.
+
+### SC-UKV-779 — the sign of the icons alone draws the material drawings
+
+Given icons and a button with `close`, one inside the material preset and others inside the sign `data-rt-icon-preset='material'`
+When they are drawn
+Then both under the sign refer to the material symbol, like the one under the preset, while an icon outside refers to the kit symbol
+
+Covered: `projects/ui-kit-v2/src/lib/components/icon/rt-icon.component.spec.ts`.

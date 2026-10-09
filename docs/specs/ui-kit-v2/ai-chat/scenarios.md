@@ -130,3 +130,11 @@ When «Copy» under the question bubble is pressed, then copying is turned off
 Then the question text goes into the clipboard as it is, and with copying off neither button is drawn while the rating stays
 
 Covered by the component spec of the organism and the frame `Answer`.
+
+### SC-UKV-780 — the header icons switch to the material drawings
+
+Given a panel with conversations
+When it is drawn by default, and then with the header icons set to `material`
+Then by default the header carries no sign and «Close» refers to the kit symbol; with `material` the header carries the sign of the icons alone and not the material preset, and «Close» and «Conversations» refer to the material symbols
+
+Covered by the component spec of the organism and the frame `Answer`.

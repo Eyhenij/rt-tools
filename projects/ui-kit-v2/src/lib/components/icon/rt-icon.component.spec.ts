@@ -5,7 +5,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RtButtonDirective } from '../button/rt-button.directive';
 import { classesOf, createRtFixture, el, hostClasses, setInputs } from '../../../testing/rt-kit-testing';
 import { RtIconComponent } from './rt-icon.component';
-import { RT_ICON_SPRITE_ID } from './rt-icon.const';
+import { RT_ICON_PRESET_ATTRIBUTE, RT_ICON_SPRITE_ID } from './rt-icon.const';
 import { IRtIcon } from './rt-icon.model';
 
 /** Хост с обеими разметками значка: своим компонентом и кнопкой, рисующей значок сама. */
@@ -28,6 +28,24 @@ class TestTwoMarkupsComponent {}
     `,
 })
 class TestButtonOnlyComponent {}
+
+/** Значки в своём наборе, под набором оформления и под признаком одних значков. */
+@Component({
+    selector: 'rt-test-icon-preset',
+    imports: [RtIconComponent, RtButtonDirective],
+    template: `
+        <rt-icon qa-dataid="base" name="close" />
+        <div data-preset="material"><rt-icon qa-dataid="theme" name="close" /></div>
+        <div data-rt-icon-preset="material">
+            <rt-icon qa-dataid="icons" name="close" />
+            <rt-icon qa-dataid="unpaired" name="wallet" />
+            <!-- eslint-disable-next-line @angular-eslint/template/elements-content -->
+            <button rtButton qa-dataid="button" icon="close" label="Закрыть"></button>
+        </div>
+        <div data-rt-icon-preset="base"><rt-icon qa-dataid="explicit-base" name="close" /></div>
+    `,
+})
+class TestIconPresetComponent {}
 
 function setup(inputs: Readonly<Record<string, unknown>> = {}): ComponentFixture<RtIconComponent> {
     return createRtFixture(RtIconComponent, { name: 'check', ...inputs });
@@ -183,6 +201,38 @@ describe('RtIconComponent', (): void => {
             setInputs(fixture, { name: 'check' });
             fixture.detectChanges();
             http.expectNone('/icons/check.svg');
+        });
+    });
+
+    describe('признак одних значков', (): void => {
+        afterEach((): void => {
+            document.getElementById(RT_ICON_SPRITE_ID)?.remove();
+        });
+
+        function hrefOf(fixture: ComponentFixture<TestIconPresetComponent>, anchor: string): string | null {
+            return (fixture.nativeElement as HTMLElement).querySelector(`[qa-dataid="${anchor}"] use`)?.getAttribute('href') ?? null;
+        }
+
+        it('имя атрибута — data-rt-icon-preset', (): void => {
+            expect(RT_ICON_PRESET_ATTRIBUTE).toBe('data-rt-icon-preset');
+        });
+
+        it('SC-UKV-779 — значок и кнопка под признаком одних значков рисуют материальный рисунок', (): void => {
+            const fixture: ComponentFixture<TestIconPresetComponent> = createRtFixture(TestIconPresetComponent, {});
+            fixture.detectChanges();
+
+            expect(hrefOf(fixture, 'base')).toBe('#rt-icon-close');
+            expect(hrefOf(fixture, 'theme')).toBe('#rt-icon-material-close');
+            expect(hrefOf(fixture, 'icons')).toBe('#rt-icon-material-close');
+            expect(hrefOf(fixture, 'button')).toBe('#rt-icon-material-close');
+        });
+
+        it('имя без материального рисунка и признак со значением base рисуются своим набором', (): void => {
+            const fixture: ComponentFixture<TestIconPresetComponent> = createRtFixture(TestIconPresetComponent, {});
+            fixture.detectChanges();
+
+            expect(hrefOf(fixture, 'unpaired')).toBe('#rt-icon-wallet');
+            expect(hrefOf(fixture, 'explicit-base')).toBe('#rt-icon-close');
         });
     });
 });
