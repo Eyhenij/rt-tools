@@ -239,6 +239,9 @@ past session, and it answers 200 with old code.
   `nx run-many -t build` both the site and the admin go down. Build what you check
   (`npx nx build site`), not the whole tree. If the servers went down, the agent cannot bring them
   back up — the guard is in the way, so the owner is told at once, not at the end of the session.
+  The push gate is such a build too: its set runs the build of everything affected. So the
+  measurement is taken before the push or on a stand from the production build. The answer of the
+  server, not its port, tells whether it survived.
 - Take the rendering port with care: the developer's stand goes by the same name
   `ssr:<rendering port>` through `host-gateway`, and while a foreign process hangs on it, the
   stand serves a foreign build.
