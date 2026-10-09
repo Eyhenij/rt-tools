@@ -1,33 +1,75 @@
 @layer rt-kit.components {
     /* rt-breadcrumbs — путь до открытой страницы. ViewEncapsulation.None.
-       Корень шаблона — ng-container, поэтому класс блока висит только на хосте. */
+       Корень шаблона — ng-container, поэтому класс блока висит только на хосте.
+       Цвета, кегль, зазоры и заголовок — свойства блока: приложение перекрашивает крошки, не трогая
+       общих шагов кита. Умолчания — прежние шаги, вид без свойств не меняется. */
 
     .rt-breadcrumbs {
         --rt-breadcrumbs-back-radius: var(--rt-radius-full);
         --rt-breadcrumbs-duration: var(--rt-duration-fast);
+        --rt-breadcrumbs-gap: var(--rt-space-xs);
+        --rt-breadcrumbs-font-size: var(--rt-text-sm);
+        --rt-breadcrumbs-font-weight: var(--rt-font-weight-medium);
+        --rt-breadcrumbs-line-height: var(--rt-leading-snug);
+        --rt-breadcrumbs-link-color: var(--rt-color-text-muted);
+        --rt-breadcrumbs-link-color-hover: var(--rt-color-text-primary);
+        --rt-breadcrumbs-link-radius: var(--rt-radius-xs);
+        --rt-breadcrumbs-separator-color: var(--rt-color-text-disabled);
+        --rt-breadcrumbs-separator-gap: var(--rt-space-xs);
+        --rt-breadcrumbs-current-color: var(--rt-color-text-primary);
+        --rt-breadcrumbs-back-size: var(--rt-control-height-sm);
+        --rt-breadcrumbs-back-icon-size: var(--rt-size-5);
+        --rt-breadcrumbs-back-color: var(--rt-color-text-primary);
+        --rt-breadcrumbs-back-bg-hover: var(--rt-color-bg-hover);
+        --rt-breadcrumbs-heading-gap: var(--rt-space-sm);
+        --rt-breadcrumbs-heading-offset: var(--rt-space-xs);
+        --rt-breadcrumbs-title-color: var(--rt-color-text-primary);
+        --rt-breadcrumbs-title-font-size: var(--rt-text-2xl);
+        --rt-breadcrumbs-title-font-weight: var(--rt-font-weight-bold);
+        --rt-breadcrumbs-title-line-height: var(--rt-leading-tight);
 
         display: block;
         min-inline-size: 0;
 
+        /* Под пальцем кнопка «назад» крупнее: размер переназначается свойством, а не правилом. */
+        @media (pointer: coarse) {
+            --rt-breadcrumbs-back-size: var(--rt-control-height-lg);
+        }
+
+        /* Материальный набор повторяет крошки приложения: звенья, разделитель и кнопка «назад»
+           стоят через 8px, разделитель цвета предка, кнопка «назад» — круглая 40px со значком 24px. */
+        :is(.rt-preset-material, [data-preset='material']) & {
+            --rt-breadcrumbs-gap: var(--rt-size-2);
+            --rt-breadcrumbs-separator-gap: var(--rt-size-2);
+            --rt-breadcrumbs-separator-color: var(--rt-color-text-muted);
+            --rt-breadcrumbs-back-size: var(--rt-size-10);
+            --rt-breadcrumbs-back-icon-size: var(--rt-size-6);
+
+            @media (pointer: coarse) {
+                --rt-breadcrumbs-back-size: var(--rt-control-height-lg);
+            }
+        }
+
         &__row {
             display: flex;
             align-items: center;
-            gap: var(--rt-space-xs);
+            gap: var(--rt-breadcrumbs-gap);
             min-inline-size: 0;
         }
 
         /* Длинный путь не уводит страницу вбок: он едет внутри своей строки, без полосы прокрутки —
            вести по ней некуда, а место она занимает. */
+
         /* Прокручиваемая строка обрезает и кольцо фокуса: внутренние поля шириной в кольцо дают ему
            место, а такие же отрицательные поля снаружи оставляют раскладку прежней. */
         &__list {
             display: flex;
             align-items: center;
-            overflow-x: auto;
-            margin: calc(-1 * var(--rt-focus-ring-width));
             padding: var(--rt-focus-ring-width);
+            margin: calc(-1 * var(--rt-focus-ring-width));
             list-style: none;
             min-inline-size: 0;
+            overflow-x: auto;
             scrollbar-width: none;
 
             /* Начало пути уехало влево: край строки гаснет, чтобы обрезка читалась как продолжение. */
@@ -52,19 +94,19 @@
         &__link,
         &__separator,
         &__current {
-            font-size: var(--rt-text-sm);
-            font-weight: var(--rt-font-weight-medium);
-            line-height: var(--rt-leading-snug);
+            font-size: var(--rt-breadcrumbs-font-size);
+            font-weight: var(--rt-breadcrumbs-font-weight);
+            line-height: var(--rt-breadcrumbs-line-height);
         }
 
         &__link {
-            border-radius: var(--rt-radius-xs);
-            color: var(--rt-color-text-muted);
+            border-radius: var(--rt-breadcrumbs-link-radius);
+            color: var(--rt-breadcrumbs-link-color);
             text-decoration: none;
             transition: color var(--rt-breadcrumbs-duration) linear;
 
             &:hover {
-                color: var(--rt-color-text-primary);
+                color: var(--rt-breadcrumbs-link-color-hover);
             }
 
             &:focus-visible {
@@ -81,14 +123,14 @@
         }
 
         &__separator {
-            margin-inline: var(--rt-space-xs);
-            color: var(--rt-color-text-disabled);
+            color: var(--rt-breadcrumbs-separator-color);
+            margin-inline: var(--rt-breadcrumbs-separator-gap);
         }
 
         /* Текущее звено обрезается многоточием, а полный текст даёт подсказка над обрезанным. */
         &__current {
             overflow: hidden;
-            color: var(--rt-color-text-primary);
+            color: var(--rt-breadcrumbs-current-color);
             min-inline-size: 0;
             text-overflow: ellipsis;
         }
@@ -98,24 +140,22 @@
             flex: none;
             align-items: center;
             justify-content: center;
+
+            --rt-icon-step-md: var(--rt-breadcrumbs-back-icon-size);
+
             border-radius: var(--rt-breadcrumbs-back-radius);
-            block-size: var(--rt-control-height-sm);
-            color: var(--rt-color-text-primary);
-            inline-size: var(--rt-control-height-sm);
+            block-size: var(--rt-breadcrumbs-back-size);
+            color: var(--rt-breadcrumbs-back-color);
+            inline-size: var(--rt-breadcrumbs-back-size);
             transition: background-color var(--rt-breadcrumbs-duration) linear;
 
             &:hover {
-                background-color: var(--rt-color-bg-hover);
+                background-color: var(--rt-breadcrumbs-back-bg-hover);
             }
 
             &:focus-visible {
                 outline: var(--rt-focus-ring-width) solid var(--rt-focus-ring-color);
                 outline-offset: var(--rt-focus-ring-offset);
-            }
-
-            @media (pointer: coarse) {
-                block-size: var(--rt-control-height-lg);
-                inline-size: var(--rt-control-height-lg);
             }
         }
 
@@ -129,21 +169,21 @@
             display: flex;
             flex-flow: row wrap;
             align-items: center;
-            gap: var(--rt-space-sm);
+            gap: var(--rt-breadcrumbs-heading-gap);
             min-inline-size: 0;
         }
 
         &__row + &__heading {
-            margin-block-start: var(--rt-space-xs);
+            margin-block-start: var(--rt-breadcrumbs-heading-offset);
         }
 
         &__title {
             overflow: hidden;
             margin: 0;
-            color: var(--rt-color-text-primary);
-            font-size: var(--rt-text-2xl);
-            font-weight: var(--rt-font-weight-bold);
-            line-height: var(--rt-leading-tight);
+            color: var(--rt-breadcrumbs-title-color);
+            font-size: var(--rt-breadcrumbs-title-font-size);
+            font-weight: var(--rt-breadcrumbs-title-font-weight);
+            line-height: var(--rt-breadcrumbs-title-line-height);
             max-inline-size: 100%;
             min-inline-size: 0;
             text-overflow: ellipsis;
