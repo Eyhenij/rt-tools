@@ -51,6 +51,7 @@ import { nextAtBottom, RT_CHAT_PIN_RETRY_DELAYS_MS } from '../chat/rt-chat-threa
 import { IRtMessageComposer } from '../message-composer/rt-message-composer.model';
 import { RtMessageComposerComponent } from '../message-composer/rt-message-composer.component';
 import { RtAiChatAnswerComponent } from './answer/rt-ai-chat-answer.component';
+import { RtAiChatCopyComponent } from './copy/rt-ai-chat-copy.component';
 import { RtAiChatMessageExtraDirective } from './rt-ai-chat.directives';
 import { IRtAiChat } from './rt-ai-chat.model';
 
@@ -93,6 +94,7 @@ interface IThreadRow extends IRtThreadList.Row {
         ElemDirective,
         ModDirective,
         RtAiChatAnswerComponent,
+        RtAiChatCopyComponent,
         RtButtonDirective,
         RtCopyValueComponent,
         RtEmptyStateComponent,
@@ -226,6 +228,11 @@ export class RtAiChatComponent {
 
     /** Кнопка закрытия в шапке. */
     public readonly closable: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
+        transform: booleanAttribute,
+    });
+
+    /** Кнопка копирования текста под вопросом и в строке действий ответа. */
+    public readonly copyable: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
         transform: booleanAttribute,
     });
 

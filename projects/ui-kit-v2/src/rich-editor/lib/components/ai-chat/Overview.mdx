@@ -26,14 +26,15 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 - Пусто: приветствие и карточки подсказок.
 - Загрузка: крутилка, пока сообщений нет.
 - Думает и пишет: строка хода работы с бликом, поле с кнопкой «Стоп».
-- Готов: текст, строка хода работы с шагами, оценка.
+- Готов: текст, строка хода работы с шагами, строка действий — копирование и оценка.
 - Ошибка: текст ошибки, номер обращения с копированием, «Ask again».
 - Беседы: на месте ленты в узкой панели, колонкой слева на весь экран.
 
 ## Доступность
 
 - Лента — `aria-live="polite"`.
-- Кнопки шапки и оценки — `rt-icon-button` с именем и подсказкой; выбранная оценка — `aria-pressed`.
+- Кнопки шапки, копирования и оценки — `rt-icon-button` с именем и подсказкой; выбранная оценка —
+  `aria-pressed`. После копирования имя и подсказка на две секунды — «Copied», значок — галочка.
 - Ошибка — `role="alert"`.
 - Фокус: на «Back to conversation» при открытии бесед, в поле сообщения после выбора беседы, новой
   беседы и «Стоп».
@@ -67,6 +68,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | `emptyPreviewIcons` | `IRtIcon.Name[]`             | `['sparkle', 'bot', 'sparkle']`    |
 | `fullScreenable`    | `boolean`                    | `false`                            |
 | `closable`          | `boolean`                    | `true`                             |
+| `copyable`          | `boolean`                    | `true`                             |
 | `draft`             | `model<string>`              | `''`                               |
 | `threadsOpen`       | `model<boolean>`             | `false`                            |
 | `fullScreen`        | `model<boolean>`             | `false`                            |

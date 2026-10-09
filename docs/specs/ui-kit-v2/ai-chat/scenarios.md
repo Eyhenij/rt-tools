@@ -114,3 +114,19 @@ When no icons are given, or the consumer gives its own
 Then the preview rows show the spark, the bot and the spark, or the consumer's icons
 
 Covered by the component spec of the organism.
+
+### SC-UKV-777 — a written answer copies its markdown
+
+Given an answer being written, then written
+When «Copy» first in its rating row is pressed
+Then the button is absent while the answer is written, the markdown text goes into the clipboard, and «Copied» with a check stands for two seconds
+
+Covered by the component spec of the organism and the frame `Answer`.
+
+### SC-UKV-778 — a question copies its text, and copying turns off
+
+Given a question and an answer
+When «Copy» under the question bubble is pressed, then copying is turned off
+Then the question text goes into the clipboard, and with copying off neither button is drawn while the rating stays
+
+Covered by the component spec of the organism and the frame `Answer`.
