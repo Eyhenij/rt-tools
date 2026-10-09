@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.29.4 · hooks/grill-gate.sh · 8930de732ddd · правится надстройкой, не здесь
+# rt-kit v0.29.4 · hooks/grill-gate.sh · 9d97bf1b757e · правится надстройкой, не здесь
 # Requires: hooks/deny-tail.sh
 # rt-hook: Stop
 # The conversation guard: the owner is not asked a question until the laws and rules have been read
@@ -302,11 +302,21 @@ else
     head="BLOCKED by grill-gate: the reply carries a question to the owner, and the laws and rules were not read in this turn."
 fi
 
-reason="$head A question whose answer is already written down is not asked of the owner — the rule of work conduct. Run a search by the words of the subject and answer from what is found; ask only what the documents do not cover:
+# The refusal names the action its own condition accepts. When the turn holds edits, only the rules
+# of their area count, and the advice to search the directories sent the executor round in a
+# circle: the search was made, the same refusal came back, and the executor stopped asking at all.
+if [ -n "$need_re" ]; then
+    named="$(printf '%s' "$need_re" | tr '|' '\n' | sed 's/.*/«&»/' | paste -sd ',' - | sed 's/,/, /g')"
+    reason="$head A question whose answer is already written down is not asked of the owner — the rule of work conduct. The turn holds edits, and for them only the rules of their area count: $named. Load them by the tool Skill, or read them in $rules_dir, and answer from what is found; ask only what they do not cover.
+
+A rule loaded before the owner's last message does not count: the guard judges one turn, and the next session is not refused."
+else
+    reason="$head A question whose answer is already written down is not asked of the owner — the rule of work conduct. Run a search by the words of the subject and answer from what is found; ask only what the documents do not cover:
 
     grep -rn -i \"<a word of the subject>\" $laws_dir $rules_dir $specs_dir $plans_dir $archive_dir
 
 The guard judges one turn: the next session is not refused."
+fi
 
 # The shared deny tail: the two lawful moves and the lawful form of bypass, if the refusal has one.
 # The file may not be laid out — then there is no tail, and the reason for the refusal stays as it
