@@ -38,6 +38,12 @@ has a scenario prefix of its own, and the audit gives no spec a second prefix: t
 such work part into two numberings — one per spec they will merge into. The plan names both, and
 they merge apart, each into its own spec.
 
+The place of an agreement is chosen by the length of the spec it will merge into, at the moment it
+is written. The domain spec plus the agreement's rules is measured against the tree's size limit;
+one that would cross it is written from the start as the agreement of a new subdomain, with its
+own scenario prefix. Measured only at the merge, the overrun moves a finished agreement to a new
+place and a new prefix, together with the test titles that carry its numbers.
+
 ## Mandatory sections
 
 `## Зачем` · `## Терминология` with the subsection `### Как это называется в интерфейсе` ·

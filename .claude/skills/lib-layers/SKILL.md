@@ -4,7 +4,7 @@ kind: rule
 law: lib-imports
 description: Rule under the lib-imports law. Load when editing project manifests, build paths, linter boundaries, any barrel and the layout checks, and when deciding where a shared symbol lives. Patterns lib-layers-new, lib-layers-move.
 ---
-<!-- rt-kit v0.30.0 · rules/lib-layers.md · 23ea15913437 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.30.0 · rules/lib-layers.md · 1e28c6604abb · правится надстройкой, не здесь -->
 
 # Imports between libs — how it works here
 
@@ -15,10 +15,10 @@ cut in this tree, what it is called and what we do not have.
 
 | In the law                           | Here                                                                |
 | ------------------------------------ | ------------------------------------------------------------------- |
-| lib family                           | `libs/site`, `libs/admin`, `libs/api`                               |
+| lib family                           | the frontend families listed by the `families` key of the checks' settings, and the backend family named by the `apiFamily` key |
 | layer                                | `api`, `data-access`, `feature`, `shell`, `ui`, `util`              |
 | the right to see a lib               | a tag in `eslint/boundaries/domains/<family>.config.mjs`            |
-| lib shared by all three applications | `libs/common/util`, tag `scope:common-util`                         |
+| lib shared by every application      | `libs/common/util`, tag `scope:common-util`                         |
 | family base                          | `<family>/core`; its tag is in `ADMIN_UNIVERSAL`                    |
 | barrel                               | `src/index.ts` of the lib and `index.ts` of the component directory |
 

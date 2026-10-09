@@ -14,10 +14,10 @@ cut in this tree, what it is called and what we do not have.
 
 | In the law                           | Here                                                                |
 | ------------------------------------ | ------------------------------------------------------------------- |
-| lib family                           | `libs/site`, `libs/admin`, `libs/api`                               |
+| lib family                           | the frontend families listed by the `families` key of the checks' settings, and the backend family named by the `apiFamily` key |
 | layer                                | `api`, `data-access`, `feature`, `shell`, `ui`, `util`              |
 | the right to see a lib               | a tag in `eslint/boundaries/domains/<family>.config.mjs`            |
-| lib shared by all three applications | `libs/common/util`, tag `scope:common-util`                         |
+| lib shared by every application      | `libs/common/util`, tag `scope:common-util`                         |
 | family base                          | `<family>/core`; its tag is in `ADMIN_UNIVERSAL`                    |
 | barrel                               | `src/index.ts` of the lib and `index.ts` of the component directory |
 

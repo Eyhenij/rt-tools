@@ -4,7 +4,7 @@ kind: pattern
 rule: spec-driven
 description: Pattern of rule spec-driven. Load when creating or editing a domain spec in docs/specs — the mandatory sections, the scenario form, binding a rule to code, the order of work from spec to code. Not for creating a law, a rule or a pattern — that is pattern spec-driven-rule.
 ---
-<!-- rt-kit v0.30.0 · patterns/spec-driven-domain.md · a7125e368b8a · правится надстройкой, не здесь -->
+<!-- rt-kit v0.30.0 · patterns/spec-driven-domain.md · bb107bb4ad58 · правится надстройкой, не здесь -->
 
 # Domain spec
 
@@ -38,6 +38,12 @@ Work that touched a domain and its subdomain writes two product agreements, not 
 has a scenario prefix of its own, and the audit gives no spec a second prefix: the scenarios of
 such work part into two numberings — one per spec they will merge into. The plan names both, and
 they merge apart, each into its own spec.
+
+The place of an agreement is chosen by the length of the spec it will merge into, at the moment it
+is written. The domain spec plus the agreement's rules is measured against the tree's size limit;
+one that would cross it is written from the start as the agreement of a new subdomain, with its
+own scenario prefix. Measured only at the merge, the overrun moves a finished agreement to a new
+place and a new prefix, together with the test titles that carry its numbers.
 
 ## Mandatory sections
 
