@@ -4,7 +4,7 @@ kind: pattern
 rule: browser-verification
 description: Pattern of rule browser-verification. Load when an honest stand is needed — the production build of the site, the admin stand, a stand behind real nginx, signing in to the admin, finding out what sits on a port. Not for layout measurements — that is pattern browser-verification-measure.
 ---
-<!-- rt-kit v0.30.0 · patterns/browser-verification-stand.md · 7cf68d6dd747 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.30.0 · patterns/browser-verification-stand.md · 917850e19048 · правится надстройкой, не здесь -->
 
 # An honest stand
 
@@ -240,6 +240,9 @@ past session, and it answers 200 with old code.
   `nx run-many -t build` both the site and the admin go down. Build what you check
   (`npx nx build site`), not the whole tree. If the servers went down, the agent cannot bring them
   back up — the guard is in the way, so the owner is told at once, not at the end of the session.
+  The push gate is such a build too: its set runs the build of everything affected. So the
+  measurement is taken before the push or on a stand from the production build. The answer of the
+  server, not its port, tells whether it survived.
 - Take the rendering port with care: the developer's stand goes by the same name
   `ssr:<rendering port>` through `host-gateway`, and while a foreign process hangs on it, the
   stand serves a foreign build.

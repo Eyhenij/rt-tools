@@ -38,6 +38,7 @@ import {
     dynamicSelectorLabel,
     moveDynamicKey,
     sameDynamicKeys,
+    sameDynamicKeySet,
     selectableDynamicItems,
 } from './rt-dynamic-selector.logic';
 import { IRtDynamicSelector } from './rt-dynamic-selector.model';
@@ -417,13 +418,15 @@ export class RtDynamicSelectorComponent<TEntity extends object> extends RtFormCo
 
     /**
      * Непустой список с другими ключами становится и значением, и исходным для сброса. Список с теми
-     * же ключами — эхо `selectionChange` от родителя: исходный он не трогает, иначе сброс не включился бы.
+     * же ключами в любом порядке — эхо `selectionChange` от родителя: родитель вправе вернуть его в
+     * своём порядке, например каталога. Эхо не трогает ни исходный, ни порядок строк, иначе сброс не
+     * включился бы.
      */
     #takeChosen(list: ReadonlyArray<TEntity>): void {
         const keys: unknown[] = list.map((item: TEntity): unknown => this.#keyOf(item));
         const shown: unknown[] = this.#entitiesOf(this.value()).map((item: TEntity): unknown => this.#keyOf(item));
 
-        if (keys.length === 0 || sameDynamicKeys(keys, shown)) {
+        if (keys.length === 0 || sameDynamicKeySet(keys, shown)) {
             return;
         }
 

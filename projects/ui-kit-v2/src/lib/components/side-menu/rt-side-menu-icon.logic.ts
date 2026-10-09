@@ -40,3 +40,20 @@ export function unpairedSideMenuIcons(items: ReadonlyArray<IRtSideMenu.Item>, ha
 
     return [...found];
 }
+
+/**
+ * Предупреждение разработчику приложения об именах из `unpairedSideMenuIcons`: имя без значка кита и
+ * без пары рисует пункт без значка, и пропуск без предупреждения не заметен.
+ */
+export function warnUnpairedSideMenuIcons(menuId: string, items: ReadonlyArray<IRtSideMenu.Item>, hasOwnIcon: boolean): void {
+    const unpaired: string[] = unpairedSideMenuIcons(items, hasOwnIcon);
+
+    if (unpaired.length) {
+        const names: string = unpaired.map((name: string): string => `«${name}»`).join(', ');
+        // eslint-disable-next-line no-console -- предупреждение разработчику приложения: другого канала у кита нет
+        console.warn(
+            `rt-side-menu «${menuId}»: значков ${names} нет ни в наборе кита, ни в перечне имён Material. ` +
+                'Задайте имя кита или свой значок через <ng-template rtSideMenuIcon>.'
+        );
+    }
+}

@@ -75,3 +75,11 @@ Then they look and behave as before
 
 Not covered: this is a promise about frames and the former specs. The former snapshots of the toast
 stories match without a re-take, and the former toast specs pass unchanged.
+
+### SC-UKV-816 — a toast reports why it left
+
+Given toasts with a dismiss callback
+When one is closed by the button, one runs out its timer, one is replaced, and one is left by its
+action
+Then the first three report `close`, `timeout` and `replaced` once each, and the fourth reports
+nothing
