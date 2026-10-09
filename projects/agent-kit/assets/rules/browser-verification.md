@@ -194,11 +194,6 @@ frontend-application law: such access compiles and fails only when the page is s
   the new stand, and the list of what was left is named to the owner at the end of the session —
   only they can kill those. Not named so, stands pile up across sessions and hold connections to the
   storage.
-- **A measurement is also taken by an end-to-end test, not only by the browser driver.** Window
-  width, node position and the document going sideways are read there by the same computed values.
-  The viewport is set for the test suite, and the result repeats on every run — unlike a manual
-  measurement, which lives exactly one session. The driver stays where an unfamiliar screen is
-  looked at, not where a known number is confirmed.
 - **A statement about the production build is made from the build itself, not from the branch.**
   Between the branch and what is served to the reader stands the image build. It substitutes
   environment values, cuts out the unused and renames symbols. "The build holds this" is checked by

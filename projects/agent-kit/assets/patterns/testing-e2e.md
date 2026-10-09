@@ -31,7 +31,8 @@ An action that adds a node to the page — sending a message, adding a row, atta
 done at least twice in one test. The first time the page holds only the node the action needs; the
 second time it also holds the one the first action added, and a query that matched by a shared mark
 now finds the wrong node. One send per test passes against a handler that breaks on every second
-send.
+send. A toast is such a node too: the one from the previous action is still on screen, so the toast
+is matched by the text only its own action puts out, not by a broad pattern.
 
 Elements are found by `qa-dataid`: classes change together with the layout, and a search by role
 and text breaks on translations.
@@ -130,6 +131,10 @@ been pressed at all. The popup is closed and its absence awaited by the same pai
 
 ## Common misses
 
+- **A search on the stand matches by substring, and older seeds stay.** `editor@example.com` also
+  found `stand-editor@…` and `e2e-editor@…` left by earlier runs, and four old tests failed at
+  once. People a suite creates carry the suite prefix in the whole value (`e2e-<suite>-…`), and the
+  test searches by that whole value, not by a common part.
 - **A service limit per client address counts the whole suite as one client.** Every test goes from
   one machine, so a limit on requests per minute is reached by the sum of the tests, not by any one
   of them. Adding tests pushes old ones into refusal (429): a run of one spec stays green, and only

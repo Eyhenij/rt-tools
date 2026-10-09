@@ -1,4 +1,4 @@
-<!-- rt-kit v0.30.0 · pitfalls/styling-bem.md · e576a3bde799 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.30.0 · pitfalls/styling-bem.md · 5f9a55d6c7e0 · правится надстройкой, не здесь -->
 # Styling — cold part
 
 Pitfalls: traps already stepped on. Loaded not with the rule but on demand — an ordinary
@@ -50,3 +50,10 @@ The rule is `styling-bem`; the articles that hold the law stand there.
   be reset.
 - **stylelint disable comments are not placed.** Selectors are combined by nesting.
 - **Moving styles adds no new declarations** — only existing ones are relocated.
+- **A moved rule keeps the reach it had, not the one its comment names.** Sass `&` repeats the
+  whole parent selector, `:host-context(...)` included. `:host-context(.x) .block { &__a &__b {} }`
+  compiles to two `:host-context` in one selector. After the encapsulation shim, `__a` no longer
+  limits `__b`, and the rule reaches every `__b`. Before a move, the reach is read from the
+  compiled selector in the build output. After the move, frames of the affected screens are
+  compared byte for byte with frames taken before the edit. Build, lint and the class check stay
+  green, and the eye misses a change of one font step.
