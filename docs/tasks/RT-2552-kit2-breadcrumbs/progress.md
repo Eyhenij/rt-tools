@@ -27,6 +27,9 @@
   материальную но без использования пакетов материал, стили должны быть заданы через токены чтобы
   поддавались модификации из апки + необходимые входы». The kit's own look does not move, and the
   material half of the Presets frames is retaken.
+- The scenarios moved from SC-UKV-775–780 to SC-UKV-819–824. The merge of main brought the chat and
+  icon scenarios under the same numbers, and main keeps its numbers; the test titles moved by the
+  same commit.
 
 ## Steps
 

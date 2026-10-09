@@ -56,7 +56,7 @@ function linkTexts(fixture: ComponentFixture<unknown>): string[] {
 }
 
 describe('RtBreadcrumbsComponent', (): void => {
-    it('SC-UKV-775 — предки — ссылки, текущее звено — текст с aria-current, между ними разделитель', (): void => {
+    it('SC-UKV-819 — предки — ссылки, текущее звено — текст с aria-current, между ними разделитель', (): void => {
         const fixture: ComponentFixture<RtBreadcrumbsComponent> = setup({ crumbs: CHAIN });
 
         expect(linkTexts(fixture)).toEqual(['Settings', 'Villas']);
@@ -73,14 +73,14 @@ describe('RtBreadcrumbsComponent', (): void => {
         expect(textOf(host(fixture).querySelector('.rt-breadcrumbs__separator'))).toBe('/');
     });
 
-    it('SC-UKV-775 — хост — ориентир навигации с именем из подписей кита', (): void => {
+    it('SC-UKV-819 — хост — ориентир навигации с именем из подписей кита', (): void => {
         const fixture: ComponentFixture<RtBreadcrumbsComponent> = setup({ crumbs: CHAIN });
 
         expect(host(fixture).getAttribute('role')).toBe('navigation');
         expect(host(fixture).getAttribute('aria-label')).toBe('Breadcrumb');
     });
 
-    it('SC-UKV-776 — кнопка «назад» по просьбе ведёт к последнему предку и называет его', (): void => {
+    it('SC-UKV-820 — кнопка «назад» по просьбе ведёт к последнему предку и называет его', (): void => {
         const fixture: ComponentFixture<RtBreadcrumbsComponent> = setup({ crumbs: CHAIN, back: true });
         const back: HTMLElement = qa(fixture, 'breadcrumbs-back')?.nativeElement as HTMLElement;
 
@@ -88,12 +88,12 @@ describe('RtBreadcrumbsComponent', (): void => {
         expect(back.getAttribute('aria-label')).toBe('Back to Villas');
     });
 
-    it('SC-UKV-776 — без просьбы и без предков кнопки «назад» нет', (): void => {
+    it('SC-UKV-820 — без просьбы и без предков кнопки «назад» нет', (): void => {
         expect(qa(setup({ crumbs: CHAIN }), 'breadcrumbs-back')).toBeNull();
         expect(qa(setup({ crumbs: [{ label: 'Home' }], back: true }), 'breadcrumbs-back')).toBeNull();
     });
 
-    it('SC-UKV-777 — в виде заголовка текущее звено — заголовок строкой ниже, рядом проекция', (): void => {
+    it('SC-UKV-821 — в виде заголовка текущее звено — заголовок строкой ниже, рядом проекция', (): void => {
         const fixture: ComponentFixture<HeadingHostComponent> = createRtFixture(
             HeadingHostComponent,
             {},
@@ -108,7 +108,7 @@ describe('RtBreadcrumbsComponent', (): void => {
         expect(linkTexts(fixture)).toEqual(['Settings', 'Villas']);
     });
 
-    it('SC-UKV-778 — на узком экране середина длинного пути уходит в меню', (): void => {
+    it('SC-UKV-822 — на узком экране середина длинного пути уходит в меню', (): void => {
         const fixture: ComponentFixture<RtBreadcrumbsComponent> = setup({ crumbs: LONG_CHAIN }, true);
 
         expect(linkTexts(fixture)).toEqual(['Home', 'Sea View']);
@@ -116,7 +116,7 @@ describe('RtBreadcrumbsComponent', (): void => {
         expect(textOf(qa(fixture, 'breadcrumbs-current'))).toBe('Rates');
     });
 
-    it('SC-UKV-778 — свёртка оставляет первого и последнего предка, середину отдаёт по порядку', (): void => {
+    it('SC-UKV-822 — свёртка оставляет первого и последнего предка, середину отдаёт по порядку', (): void => {
         const ancestors: readonly IRtBreadcrumbs.Crumb[] = LONG_CHAIN.slice(0, -1);
 
         expect(rtBreadcrumbsFold(ancestors, true)).toEqual({
@@ -128,20 +128,20 @@ describe('RtBreadcrumbsComponent', (): void => {
         expect(rtBreadcrumbsFold(ancestors.slice(0, 2), true).hidden).toEqual([]);
     });
 
-    it('SC-UKV-778 — на широком экране свёртки нет', (): void => {
+    it('SC-UKV-822 — на широком экране свёртки нет', (): void => {
         const fixture: ComponentFixture<RtBreadcrumbsComponent> = setup({ crumbs: LONG_CHAIN });
 
         expect(linkTexts(fixture)).toEqual(['Home', 'Settings', 'Villas', 'Sea View']);
         expect(qa(fixture, 'breadcrumbs-fold')).toBeNull();
     });
 
-    it('SC-UKV-779 — разделитель задаётся входом', (): void => {
+    it('SC-UKV-823 — разделитель задаётся входом', (): void => {
         const fixture: ComponentFixture<RtBreadcrumbsComponent> = setup({ crumbs: CHAIN, separator: '›' });
 
         expect(textOf(host(fixture).querySelector('.rt-breadcrumbs__separator'))).toBe('›');
     });
 
-    it('SC-UKV-780 — обрезанное текущее звено показывает подпись целиком в подсказке', (): void => {
+    it('SC-UKV-824 — обрезанное текущее звено показывает подпись целиком в подсказке', (): void => {
         const fixture: ComponentFixture<RtBreadcrumbsComponent> = setup({ crumbs: CHAIN });
         const current: HTMLElement = qa(fixture, 'breadcrumbs-current')?.nativeElement as HTMLElement;
 
