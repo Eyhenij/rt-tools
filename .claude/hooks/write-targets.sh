@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.30.0 · hooks/write-targets.sh · 7f6990005ea3 · правится надстройкой, не здесь
+# rt-kit v0.30.0 · hooks/write-targets.sh · b5c88f83e5a8 · правится надстройкой, не здесь
 # Write targets named by the shell command outright: redirection, `tee`, an in-place edit, a copy
 # over the top, and for an interpreter — the paths from its body. Prints one per line.
 #
@@ -105,7 +105,7 @@ rt_write_targets() {
             # data.
             function emit_calls(s,   rest, arg, name) {
                 rest = s
-                while (match(rest, /(open|writeFileSync|writeFile|appendFileSync|appendFile|write_text|write_bytes|copyfile|copy2|rename|symlink|mkdir|makedirs)[ \t]*\(/)) {
+                while (match(rest, /(open|writeFileSync|writeFile|appendFileSync|appendFile|copyfile|copy2|rename|symlink|mkdir|makedirs)[ \t]*\(/)) {
                     rest = substr(rest, RSTART + RLENGTH)
                     arg = rest
                     sub(/[,)].*$/, "", arg)
@@ -133,6 +133,72 @@ rt_write_targets() {
                     || s ~ /(^|[|;&(]|[ \t])(tee|cp|mv|rm|touch|install|truncate)([ \t]|$)/
             }
             function trim(s) { sub(/^[ \t]+/, "", s); sub(/[ \t]+$/, "", s); return s }
+            # The index of the bracket that closes the call whose arguments start at `from`: the
+            # quotes are skipped, and a bracket inside a string closes nothing.
+            function args_end(s, from,   i, c, depth, q) {
+                depth = 1
+                for (i = from; i <= length(s); i++) {
+                    c = substr(s, i, 1)
+                    if (q != "") {
+                        if (c == q && substr(s, i - 1, 1) != "\\") { q = "" }
+                    } else if (c == "\047" || c == "\"") {
+                        q = c
+                    } else if (c == "(") {
+                        depth++
+                    } else if (c == ")") {
+                        depth--
+                        if (depth == 0) { return i }
+                    }
+                }
+                return length(s) + 1
+            }
+            # The first argument of a call: everything up to a comma outside quotes and brackets.
+            function first_arg(a,   i, c, depth, q) {
+                for (i = 1; i <= length(a); i++) {
+                    c = substr(a, i, 1)
+                    if (q != "") {
+                        if (c == q && substr(a, i - 1, 1) != "\\") { q = "" }
+                    } else if (c == "\047" || c == "\"") {
+                        q = c
+                    } else if (c == "(") {
+                        depth++
+                    } else if (c == ")") {
+                        depth--
+                    } else if (c == "," && depth == 0) {
+                        return substr(a, 1, i - 1)
+                    }
+                }
+                return a
+            }
+            # What the script writes or substitutes is the content of the write, not its target: a
+            # path inside the written string belongs to the content of that file. A script that
+            # edited a work file and named a laid-out copy in the text of a new line was refused by
+            # the name of a copy it never opened. The call stays and its first argument stays where
+            # that argument is the address (`writeFileSync(path, data)`); the data and the argument
+            # of `.write(`, `.write_text(`, `.write_bytes(` and of a string `.replace(` are cut.
+            # `os.replace(source, target)` is a transfer, and its arguments stay.
+            function strip_content(s,   out, pre, name, from, endp, args) {
+                out = ""
+                while (match(s, /(\.write|\.write_text|\.write_bytes|\.replace|writeFileSync|appendFileSync|writeFile|appendFile)[ \t]*\(/)) {
+                    pre = substr(s, 1, RSTART - 1)
+                    name = substr(s, RSTART, RLENGTH)
+                    from = RSTART + RLENGTH
+                    if (name ~ /^\.replace/ && pre ~ /(^|[^A-Za-z0-9_])os$/) {
+                        out = out pre name
+                        s = substr(s, from)
+                        continue
+                    }
+                    endp = args_end(s, from)
+                    if (name ~ /^\./) {
+                        out = out pre name ")"
+                    } else {
+                        args = substr(s, from, endp - from)
+                        out = out pre name first_arg(args) ")"
+                    }
+                    s = substr(s, endp + 1)
+                }
+                return out s
+            }
             # Paths are taken from the write lines, not from the whole body.
             #
             # Before, a body that writes anything at all gave away all its path-like words at once:
@@ -147,7 +213,7 @@ rt_write_targets() {
                 if (wrote) {
                     for (i = 1; i <= lines; i++) { note_var(line[i]) }
                     for (i = 1; i <= lines; i++) {
-                        if (writes(line[i])) { emit(line[i]); emit_calls(line[i]) }
+                        if (writes(line[i])) { emit(strip_content(line[i])); emit_calls(line[i]) }
                     }
                 }
                 for (i = 1; i <= lines; i++) { delete line[i] }
@@ -168,7 +234,7 @@ rt_write_targets() {
                 if ($0 ~ /(^|[|;&(]|[ \t])(python3?|node|ruby|perl|php|deno|bun)([ \t]|$)/ \
                     && match($0, /[ \t]-[ce][ \t]/)) {
                     rest = substr($0, RSTART + RLENGTH)
-                    if (writes(rest)) { note_var(rest); emit(rest); emit_calls(rest) }
+                    if (writes(rest)) { note_var(rest); emit(strip_content(rest)); emit_calls(rest) }
                 }
                 # The heredoc body: the write path of the interpreter stands exactly there.
                 if (match($0, /<<-?[ \t]*[\047\"]?[A-Za-z_][A-Za-z0-9_]*/)) {
