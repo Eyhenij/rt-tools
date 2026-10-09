@@ -4,7 +4,7 @@ kind: rule
 law: delivery
 description: Rule under the delivery law for a tree on GitHub. Load for a task and a branch, commit, push, opening a PR and merging. Names the pair of task and branch, the machine account and the delivery guards. Patterns git-workflow-commit, -pr, -merge, -stack. Rollout — deploy-flow, audit — queue-audit.
 ---
-<!-- rt-kit v0.29.4 · rules/git-workflow.github.md · 91c82e029ef9 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.29.4 · rules/git-workflow.github.md · 11ff848800d2 · правится надстройкой, не здесь -->
 
 # Delivery — how it works here
 
@@ -189,6 +189,10 @@ flowchart TD
   what the author edited means checking half: the branch answers whole.
 - **The main branch is taken by the remote ref — in words and in actions.** The local one is
   yesterday's snapshot and silent about it: by it a merged branch counts as unmerged.
+- **A commit lands with its final content, and a later commit of the same branch does not correct
+  it.** It is made after the check against the mockup, the sample and the measurement; what is not
+  checked stays in the working tree. A third commit fixing the first shows the reviewer the miss
+  instead of the work, and rewriting history hides the trace, not the cause.
 - **A code edit is handed to a person by an open PR, not by a pushed branch.** A branch reaches no
   inbox; the PR opens in the turn the work is said handed over.
 - **What is not ready to merge opens as a draft — `gh pr create --draft`.** The host locks a draft's

@@ -159,3 +159,7 @@ the title. The sample is held by whoever writes the body — like the words said
 - A `Closes` line in a PR whose base is not the main branch, in a tree without a closing pipeline:
   the task looks attached and stays open after the merge. The body names the task in words, and
   the cleanup step closes it by hand.
+- Labels read with `join(",")` and split by a shell expansion: zsh does not split an unquoted
+  `${L//,/ }` into words, the REST call gets the whole line as one label, and the host creates a
+  label with that name. Each label goes as its own `-f 'labels[]=…'`, or is read one per line with
+  `--jq '.labels[].name'`.
