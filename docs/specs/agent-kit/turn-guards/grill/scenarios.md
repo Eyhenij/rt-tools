@@ -107,6 +107,14 @@ Then the call passes: the streak is broken by any other answer, and one answer i
 
 Covered: `projects/agent-kit/tests/grill-gate.test.sh`.
 
+### SC-AK-1208 — a menu answer of the second form counts the same
+
+Given the last two menu answers start with «Your questions have been answered:» and take the recommended option
+When the executor sends the next menu
+Then the call is refused, the same as for «The user answered:»
+
+Covered: `projects/agent-kit/tests/grill-gate.test.sh`.
+
 ### SC-AK-1202 — a question with an option past a check does not leave
 
 Given the menu offers to send once past the check, or to add a bypass line to the command
