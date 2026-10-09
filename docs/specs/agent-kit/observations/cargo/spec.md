@@ -155,6 +155,9 @@ subdomain "Observations" next to it.
 - **A refused block stays on disk with a mark and a reason.** A deleted one is written anew by the
   next session — there is no trace of the analysis, and the repeat comes back. The mark holds both:
   it is visible that there was an analysis, and visible why it did not become an edit.
+- **A refusal mark with the same reason does not stand in a block twice.** A block with no quotation
+  is refused at every send, and a mark written anew each time left five equal ones under three
+  blocks, taken off by hand. A different reason is written as before.
 - **The check for a tree address judges all the ready blocks, not only the departing ones.** One
   refused by the quotation lies on disk and will go as soon as it is fixed — and a leak found in it
   refuses the whole sending and must be named at once, not hide behind the refusal.

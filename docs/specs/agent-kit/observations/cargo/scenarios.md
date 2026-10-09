@@ -460,3 +460,11 @@ Then no leak is named, the cargo leaves, and the line carries the constant word 
 name
 
 Covered: `projects/agent-kit/src/lib/observations-cargo.spec.ts`.
+
+### SC-AK-1210 — a refusal mark with the same reason does not stand in a block twice
+
+Given a block refused with a reason and already carrying the mark of that refusal
+When the send refuses it again for the same reason
+Then the block keeps one mark, and a refusal for a different reason adds its own mark
+
+Covered: `projects/agent-kit/src/lib/proposals.spec.ts`.
