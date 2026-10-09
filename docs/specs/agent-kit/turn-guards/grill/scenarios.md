@@ -28,6 +28,18 @@ Then the refusal names that rule, says that a load before the owner's last messa
 
 Covered: `projects/agent-kit/tests/grill-gate.test.sh`.
 
+### SC-AK-1196 — an edit outside the tree does not make up the area of the work
+
+Given during the turn only a draft outside the tree was edited, and a rule of another area was read
+When the turn ends with a question to the owner
+Then the guard lets it through: the draft demands no rule, and any reading counts
+
+Given the same draft lies inside the tree
+When the turn ends with the same question
+Then the guard refuses it: the rule of the draft's area was not read
+
+Covered: `projects/agent-kit/tests/grill-gate.test.sh`.
+
 ### SC-AK-818 — the owner has already answered this question
 
 Given the owner gave an instruction by a remark, and a call of a menu of questions was already in

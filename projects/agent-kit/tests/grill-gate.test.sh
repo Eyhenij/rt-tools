@@ -226,6 +226,26 @@ expect_stop "SC-AK-756 — без правок в ходу прежний при
         "$(tool_result)" \
         "$(reply 'Как быть с этим?')")")" PASS
 
+# SC-AK-1196 — правка вне дерева область работы не задаёт
+# Черновик в каталоге сессии отображался на правило текстов, и вопрос владельцу отбивался трижды:
+# гейт правил такие пути пропускает, а проверка вопросов брала их в область.
+expect_stop "SC-AK-1196 — черновик вне дерева область не задаёт" \
+    "$(input_stop "$(transcript \
+        "$(say 'посоветуй')" \
+        "$(uses Write '{"file_path":"/nowhere-tree/scratch/draft.md"}')" \
+        "$(tool_result)" \
+        "$(uses Read '{"file_path":".claude/skills/styling-bem/SKILL.md"}')" \
+        "$(tool_result)" \
+        "$(reply 'Как быть с этим?')")")" PASS
+expect_stop "SC-AK-1196 — правка внутри дерева область задаёт" \
+    "$(input_stop "$(transcript \
+        "$(say 'посоветуй')" \
+        "$(uses Write "{\"file_path\":\"$TREE/docs/draft.md\"}")" \
+        "$(tool_result)" \
+        "$(uses Read '{"file_path":".claude/skills/styling-bem/SKILL.md"}')" \
+        "$(tool_result)" \
+        "$(reply 'Как быть с этим?')")")" BLOCK
+
 # SC-AK-1194 — при правках в ходе отказ называет правила области, а не поиск
 # Отказ советовал искать grep по каталогам правил, а условие засчитывало только правило области:
 # исполнитель искал, получал тот же отказ и решал, что проверка сломана.
