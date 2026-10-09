@@ -5,7 +5,7 @@
 - **State:** `этап-идёт`
 - **Stage:** 2 of 2 — Documents and delivery
 - **Done:** label, input `threadMenu`, `triggerSize` of `rt-menu`, unit tests
-- **Next step:** spec, scenarios, CONTEXT, Overview, stories
+- **Next step:** push gate and push
 - **Uncommitted:** no
 - **Waiting for the owner:** no
 - **PR:** not open yet — «Do NOT open a PR»
@@ -16,9 +16,9 @@
 - [x] 1.2 Input `threadMenu` and the menu in the row actions of `rt-ai-chat`
 - [x] 1.3 Row actions stay visible while their menu is open
 - [x] 1.4 Unit tests of the menu
-- [>] 2.1 Spec, scenarios, implementation, CONTEXT, Overview, stories
-- [ ] 2.2 Dist build
-- [ ] 2.3 Push gate and push
+- [x] 2.1 Spec, scenarios, implementation, CONTEXT, Overview, stories
+- [x] 2.2 Dist build
+- [>] 2.3 Push gate and push
 
 ## Decisions along the way
 
@@ -30,3 +30,5 @@
 
 - Task #2729, branch from `origin/main`.
 - `nx test @rt-tools/ui-kit-v2`: 217 suites, 2635 tests green.
+- `pnpm run build:ui-kit-v2` exit 0; dist in `dist/ui-kit-v2`.
+- Scenarios SC-UKV-781, SC-UKV-782; Playground switch `threadMenu`, no new snapshot frame.
