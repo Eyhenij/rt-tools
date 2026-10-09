@@ -4,7 +4,7 @@ kind: rule
 law: delivery
 description: Rule under the delivery law for a tree on GitHub — the part about the rollout. Load when an edit goes to production — merge into the main branch, the pipeline, images and tags, storage migrations. Patterns git-workflow-migration, -restart, -docker, -secrets. Task and branch — rule git-workflow.
 ---
-<!-- rt-kit v0.30.0 · rules/deploy-flow.github.md · 8e00d8ca5bc9 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.30.0 · rules/deploy-flow.github.md · 01fdcbabf9b6 · правится надстройкой, не здесь -->
 
 # Rollout — how it works here
 
@@ -73,7 +73,30 @@ flowchart TD
   image says only that the build passed: the migrate step, the storage login, the startup order
   and whether every container has enough put inside are visible from one launch of the stack. On
   one's own machine that costs one command; on the node it costs a rollout that can no longer be
-  cancelled — the migrate failure surfaces as a container log on the node.
+  cancelled — the migrate failure surfaces as a container log on the node. The same launch is made
+  before a merge that lifts packages without a line of code changed: the stack passes an unset
+  variable as an empty string, and a new package version may stop accepting what the old one took.
+- **A variable read by several procedures is turned on first on a stand from the production
+  build.** On the stand every reader passes; on production one edit says nothing about the
+  neighbours, and a variable left empty there turns into addresses built from nothing.
+- **The name production is served under is confirmed by a live answer of that name.** `curl -s -o
+  /dev/null -w '%{http_code} %{redirect_url}\n' https://<name>/`: a redirect to a foreign address
+  means the name is dead, and the rollout does not go by it. Three files of one epoch agree by
+  common origin, not by being right. When a domain moves, the old name is searched across the whole
+  tree, not only the paths of one's own part.
+- **Data the screens need that migrations do not create is a step of the rollout.** A seed run once
+  by hand heals one storage; a new or restored one stays empty, and a screen that shows an empty
+  list for an empty answer looks the same as an unreachable server. The step runs on every rollout
+  and is safe to repeat: found records are not overwritten. After the first rollout that depends on
+  seeded data the count of records is read on production.
+- **A move of the pipeline to another runner is closed by a search for the labels across all
+  workflows.** A flow left on the host is named in the task with its reason. An order worded by a
+  set — "all", "every" — is closed against the list of that set, not against the member that got in
+  the way first. A rollout with production keys from a developer machine needs a separate word of
+  the owner.
+- **The epic plan is checked line by line against the pitfalls of the rollout step before the merge
+  of the epic.** Every empty secret in the preparation script becomes a step "before the merge" or
+  a decision of the owner, not a line "left to do".
 
 - **The image carries every file its own startup steps read.** The storage schema, the client
   settings, the environment template — everything lying next to it in the repository does not get
@@ -88,7 +111,10 @@ flowchart TD
   notice that by. They differ in the tail: the server then removes dangling layers and the build
   cache, the build machine keeps them, otherwise every build goes as the first. Cleanup on the
   build side does not wait for the merge: a branch image takes as much space, never leaves for the
-  registry and is never a rollback point.
+  registry and is never a rollback point. The build step names its builder explicitly: without the
+  name the build goes through the machine's current builder, which may have no cache limit, while
+  the declared one stands empty. The build machine keeps the build cache and removes dangling
+  images: the builder cache lies in its own volume, and dangling images are not part of it.
 - **The rollout cleans up old images after itself, keeping the last three sha.** An image tagged
   with a sha is never dangling, and a dangling cleanup does not touch it: in half a year they eat
   the server disk whole. Three sha is the rollback depth, and fewer cannot be taken: a breakage
