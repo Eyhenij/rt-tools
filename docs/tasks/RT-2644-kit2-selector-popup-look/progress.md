@@ -48,3 +48,46 @@
 - **The close delay was measured live with page events.** The browser window was hidden, its timers
   tick once a second, and the driver took five seconds per move; the exact timing is held by the
   spec with fake timers. Affected stage: 3.
+- **Rows 129–130 went into this task by the owner's word about new application rows.** The scroll
+  area re-measures its hint at the end of a transition or animation in its body: an opened folder
+  grows from zero height, and the size watcher missed the end of that growth. The backdrop of a
+  panel held by search starts after the rail, so hovering another rail item switches the panel as
+  in the first kit. Affected stage: 2.
+
+## Handover of the session
+
+Put together by a hook before the compaction of the context (auto).
+
+**Working tree:** /Users/sviatoslavkhutornoy/WebstormProjects/rt-tools
+**Branch:** RT-2644-kit2-selector-popup-look
+
+### Where we stand at the minute of the compaction
+
+- **State:** `этапы-кончились`
+- **Stage:** 3 of 3 — Showcase and delivery
+- **Next step:** after the owner's word — the branch goes to the host, and a new PR into main carries
+- **PR:** 2647 merged into main with rows up to 112; the next one is not open yet
+
+The progress in full — `docs/tasks/RT-2644-kit2-selector-popup-look/progress.md`; the plan lies next to it.
+
+### Uncommitted
+
+```
+ M scroll-area/rt-scroll-area.component.spec.ts
+ M scroll-area/rt-scroll-area.component.ts
+ M side-menu/rt-side-menu.component.scss
+```
+
+### Commits over the main branch
+
+```
+a92c2d464 chore(rt:ui-kit-v2): main влита в ветку RT-2644
+298e4dc7b docs(rt:ui-kit-v2): ход RT-2644 — строки 122–128 сделаны, архив пакета у приложения, ждём слова владельца
+33ce4622f feat(rt:ui-kit-v2): боковое меню — строки 122–128 приложения: папка Material, значки строк, нажатие строки, задержка закрытия
+7941fc8d5 docs(rt:ui-kit-v2): папка задачи RT-2644 для строк 122–128 и их правила в описании бокового меню
+604feb097 Merge remote-tracking branch 'origin/main' into RT-2644-kit2-selector-popup-look
+be09487bc feat(rt:ui-kit-v2): боковое меню получает вид первого кита входами и свойствами
+```
+
+Written by a hook before the compaction of the context. Everything standing here is checked
+against the tree: a handover retells what was written and describes the minute it was put together.

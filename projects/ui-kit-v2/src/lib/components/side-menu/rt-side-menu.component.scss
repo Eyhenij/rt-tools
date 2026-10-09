@@ -127,10 +127,13 @@
             text-align: center;
         }
 
+        /* Подложка начинается после полосы: наведение на другой пункт полосы переключает подменю и
+           тогда, когда его держит поле поиска, как у первого кита. */
         &__backdrop {
             position: fixed;
             z-index: var(--rt-z-dropdown);
             inset: 0;
+            inset-inline-start: var(--rt-side-menu-rail-width);
         }
 
         &__panel {
