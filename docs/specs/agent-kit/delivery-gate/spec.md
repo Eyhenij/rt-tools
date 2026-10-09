@@ -127,6 +127,9 @@ refuses the push.
   apart before it is run, and it runs the set in the tree that lies now: a compound "switch and push"
   passes the gate by the former branch, checking the wrong thing silently. Creating a new branch does
   not fall under this — for a fresh branch the tree is the same as it was.
+- **Several pushes in one command, or a push inside a loop, refuse the command whole.** The set runs
+  once per call, on the tree that lies there, and every other branch leaves unchecked. A loop body
+  after `do`, `then` or `else` is read as a command of its own.
 - **The identity of the machine record is confirmed by the answer of the hosting, not by recognising
   a string.** A familiar look of a string is never a confirmation: the miss looked familiar. What
   exactly to ask with the tree knows — for a limited record a search by number answers "not found"

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.29.4 · hooks/git-guard-push-tests.sh · 618b6778d026 · правится надстройкой, не здесь
+# rt-kit v0.29.4 · hooks/git-guard-push-tests.sh · e0777fe83f87 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/profile-check.sh, hooks/deny-tail.sh
 # The guard of the checks before a push. PreToolUse on the push call.
@@ -52,7 +52,8 @@ cmd="$(rt_hook_cmd)"
 # request header are put between them by `-c` keys, and that is exactly the form pushed with here.
 # While the sign was a substring, the whole gate set was not run at all on such a push, and the
 # silence of the guard read as "green".
-printf '%s' "$cmd" | grep -qE "${RT_CMD_BOUND}git([[:space:]]|\$)" || exit 0
+# A loop body starts after `do`, `then` or `else`: a push there is a push too.
+printf '%s' "$cmd" | grep -qE "${RT_CMD_BOUND}git([[:space:]]|\$)|(^|[;&|[:space:]])(do|then|else)[[:space:]]+git[[:space:]]" || exit 0
 
 # A stashed edit is never a push: `git stash push` puts the edit into the stash of this same
 # machine and sends nothing outside. The word `push` in it stands separate, and without this line
@@ -99,6 +100,13 @@ ${deny_tail_text}"
 if printf '%s' "$cmd" | grep -qE "${RT_CMD_BOUND}git[[:space:]]+(checkout|switch)[[:space:]]+" &&
     ! printf '%s' "$cmd" | grep -qE 'git[[:space:]]+(checkout([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-b|switch([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-c)([[:space:]]|$)'; then
     push_deny "BLOCKED: switching the branch and pushing by one command. The gate set runs on the tree that lies there at the minute the command is parsed — that is, on the FORMER branch, not the one that leaves for the hosting. A green set then reads as a check of what left, though it checked something else. Split the calls: switch first, then push by a separate command."
+fi
+
+# Several pushes in one command, or a push inside a loop, are refused whole. The set runs once
+# per call on the tree that lies there, and every other branch leaves unchecked.
+pushes="$(printf '%s' "$probe" | grep -oE "${RT_CMD_BOUND}git([[:space:]]+-c[[:space:]]+[^[:space:]]+)*[[:space:]]+push([[:space:]]|\$)" | wc -l | tr -d ' ')"
+if [ "${pushes:-0}" -gt 1 ] || printf '%s' "$probe" | grep -qE '(^|[;&|[:space:]])(do|then|else)[[:space:]]+git[[:space:]].*push'; then
+    push_deny "BLOCKED: several pushes by one command. The gate set runs once per call, on the tree that lies there — every other branch leaves for the hosting unchecked. Push each branch by a separate call, after switching to it."
 fi
 
 workdir="$(rt_hook_cwd)"
