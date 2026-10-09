@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.30.0 · hooks/grill-gate.sh · e12fb83fe53e · правится надстройкой, не здесь
+# rt-kit v0.30.0 · hooks/grill-gate.sh · 4554a0c7369b · правится надстройкой, не здесь
 # Requires: hooks/deny-tail.sh, hooks/turn-exit-patterns.sh, hooks/grill-gate-bypass.sh
 # rt-hook: Stop
 # The conversation guard: the owner is not asked a question until the laws and rules have been read
@@ -276,7 +276,7 @@ if [ -n "$tool" ]; then
             | select(type == "array") | .[] | select(.type == "tool_result") | .content
             | if type == "string" then . elif type == "array"
                 then (map(if type == "object" then (.text // "") else "" end) | join("\n")) else "" end
-            | select(test("^The user answered:"))];
+            | select(test("^(The user answered|Your questions have been answered):"))];
         def recommended: ([match("\"=\"[^\"]*\""; "g")] | length) as $all
             | ([match("\\((Recommended|Рекомендую|Рекомендован[^)]*)\\)\"(,|\\.|[[:space:]]|$)"; "g")] | length) as $marked
             | $all > 0 and $all == $marked;

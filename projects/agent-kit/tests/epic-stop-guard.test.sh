@@ -150,13 +150,22 @@ stop_word() {
     report "$label" "$got" "$want"
 }
 stop_word "SC-AK-1201 — ответ меню с номером работы пропускает" 'git checkout -b RT-1999-probe main' \
-    "$(turn "$(said 'что дальше')" "$(answered 'The user answered: "Брать эпик RT-1999 (Recommended)"')")" PASS
+    "$(turn "$(said 'что дальше')" "$(answered 'The user answered: "Что брать дальше?"="Брать эпик RT-1999 (Recommended)"')")" PASS
 stop_word "SC-AK-1201 — сообщение владельца с номером пропускает" 'npm run task:move -- 1999 in-progress' \
     "$(turn "$(said 'бери 1999')")" PASS
 stop_word "SC-AK-1201 — слово о другой работе не пропускает" 'git checkout -b RT-1999-probe main' \
     "$(turn "$(said 'бери 2001')")" deny
 stop_word "SC-AK-1201 — номер в словах исполнителя не пропускает" 'git checkout -b RT-1999-probe main' \
     "$(turn "$(said 'продолжай')" "$(spoke 'Беру RT-1999.')")" deny
+
+# --- SC-AK-1207 — ответ меню узнаётся в обоих видах, номер берётся только из ответа ----------
+# Ответ «Бери RT-2681» пришёл вторым видом, и проверка его не увидела: работа стояла до сообщения.
+stop_word "SC-AK-1207 — второй вид ответа меню с номером пропускает" 'git checkout -b RT-1999-probe main' \
+    "$(turn "$(said 'что дальше')" "$(answered 'Your questions have been answered: "Что брать дальше?"="Бери RT-1999 (Recommended)". You can now continue with these answers in mind.')")" PASS
+stop_word "SC-AK-1207 — номер только в вопросе меню не пропускает" 'git checkout -b RT-1999-probe main' \
+    "$(turn "$(said 'что дальше')" "$(answered 'The user answered: "Брать RT-1999?"="Нет, подожди". Read the answers carefully.')")" deny
+stop_word "SC-AK-1207 — результат команды с номером не пропускает" 'git checkout -b RT-1999-probe main' \
+    "$(turn "$(said 'что дальше')" "$(answered 'issue RT-1999 answered by the bot')")" deny
 
 rm -rf "$TURNS"
 

@@ -4,7 +4,7 @@ kind: pattern
 rule: navigation
 description: Pattern of rule navigation. Load when creating an admin menu item, a section with a panel or a new section address — one declaration per item and route, the flag of a section without a screen, address nesting, a hint on an unavailable item. Not for the record edit panel — pattern entity-aside.
 ---
-<!-- rt-kit v0.30.0 · patterns/admin-nav-item.md · 8c8d6157d340 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.30.0 · patterns/admin-nav-item.md · 2db80c3581c2 · правится надстройкой, не здесь -->
 
 # A menu item and a section address
 
@@ -74,7 +74,8 @@ declaration: a domain section is named by the id of its item.
 - An address move without editing the end-to-end tests: they walk by addresses, and the run goes
   red.
 - An icon picked as "similar": a missing one is added to the sprite and to
-  `<prefix>-icon-names.ts`.
+  `<prefix>-icon-names.ts`. The name of a present icon is copied from the kit icon file as is: some
+  names carry the `ico-` prefix and most do not.
 
 ## The highlight is given by the router, not computed from the address
 
