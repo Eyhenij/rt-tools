@@ -47,7 +47,7 @@ conversations. Every application repeats the same screen, and every copy drifts 
 
 - **The rating appears once the answer text is written, and pressing the chosen rating again removes it.**
 
-- **A written answer has «Copy» first in its rating row, and the press puts its markdown text into the clipboard and shows «Copied» for two seconds.**
+- **A written answer has «Copy» first in its rating row, and the press puts the answer text as the reader sees it, without markdown signs, into the clipboard and shows «Copied» for two seconds.**
 
 - **A question has «Copy» in a row under its bubble at the bubble's side, it copies the question text, and the consumer can turn both copy buttons off.**
 
@@ -145,4 +145,5 @@ None.
   into the kit.
 - 2026-10-09 — the task RT-2714: the preview rows of the empty list of conversations take their
   icons from an input, the assistant's marks by default.
-- 2026-10-09 — the task RT-2720: «Copy» under a question and first in the rating row of an answer.
+- 2026-10-09 — the task RT-2720: «Copy» under a question and first in the rating row of an answer;
+  the answer is copied as plain text, without markdown signs.

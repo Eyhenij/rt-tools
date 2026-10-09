@@ -52,7 +52,7 @@ export class RtAiChatCopyComponent {
 
     protected readonly actionLabel: Signal<string> = computed((): string => (this.copied() ? this.#t_uiCopied() : this.#t_uiCopy()));
 
-    /** Что уходит в буфер: текст сообщения как есть, у ответа — исходный markdown. */
+    /** Что уходит в буфер: у вопроса — его текст как есть, у ответа — видимый текст без знаков разметки. */
     public readonly text: InputSignal<string> = input.required<string>();
 
     constructor() {

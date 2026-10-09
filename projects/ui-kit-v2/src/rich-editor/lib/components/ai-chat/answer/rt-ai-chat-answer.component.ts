@@ -20,7 +20,14 @@ import { BooleanInput } from '@angular/cdk/coercion';
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, RtAiRunStatusComponent, RtIconButtonComponent, RtMarkdownTextComponent, TRtKitLabelMap } from '@rt-tools/ui-kit-v2';
+import {
+    markdownToPlainText,
+    RT_KIT_LABELS,
+    RtAiRunStatusComponent,
+    RtIconButtonComponent,
+    RtMarkdownTextComponent,
+    TRtKitLabelMap,
+} from '@rt-tools/ui-kit-v2';
 
 import { RtAiChatCopyComponent } from '../copy/rt-ai-chat-copy.component';
 import { IRtAiChat } from '../rt-ai-chat.model';
@@ -60,6 +67,9 @@ export class RtAiChatAnswerComponent {
 
     /** Текст дописан: строка действий с копированием и оценкой. */
     protected readonly isWritten: Signal<boolean> = computed((): boolean => !!this.message().text && !this.message().streaming);
+
+    /** Что копирует кнопка: видимый текст ответа без знаков разметки — без хода работы и вложений. */
+    protected readonly plainText: Signal<string> = computed((): string => markdownToPlainText(this.message().text));
 
     public readonly message: InputSignal<IRtAiChat.Message> = input.required<IRtAiChat.Message>();
 

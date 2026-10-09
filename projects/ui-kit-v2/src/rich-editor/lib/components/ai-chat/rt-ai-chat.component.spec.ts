@@ -181,7 +181,7 @@ describe('RtAiChatComponent', (): void => {
         ]);
     });
 
-    it('SC-UKV-777 — копирование ответа стоит первым в строке оценки дописанного ответа и кладёт markdown в буфер', (): void => {
+    it('SC-UKV-777 — копирование ответа стоит первым в строке оценки дописанного ответа и кладёт в буфер текст без разметки', (): void => {
         jest.useFakeTimers();
         const fixture: ComponentFixture<AiChatHostComponent> = setup({ messages: [QUESTION, { ...ANSWER, streaming: true }] });
 
@@ -196,7 +196,7 @@ describe('RtAiChatComponent', (): void => {
 
         press(fixture, 'ai-chat-copy', 1);
 
-        expect(clipboard.copied).toEqual(['Occupancy grew by **4 points**.']);
+        expect(clipboard.copied).toEqual(['Occupancy grew by 4 points.']);
         expect(copyState(fixture, 1)).toEqual(['Copied', 'check']);
         expect(copyState(fixture, 0)).toEqual(['Copy', 'copy']);
 
@@ -205,6 +205,22 @@ describe('RtAiChatComponent', (): void => {
 
         expect(copyState(fixture, 1)).toEqual(['Copy', 'copy']);
         jest.useRealTimers();
+    });
+
+    it('SC-UKV-777 — ответ копируется без знаков разметки, хода работы и вложений, вопрос — как есть', (): void => {
+        const fixture: ComponentFixture<AiChatHostComponent> = setup({
+            withExtra: true,
+            messages: [
+                { ...QUESTION, text: 'What about **bold**?' },
+                { ...ANSWER, text: '## Heading\n\nOccupancy grew by **bold** points.\n\n- North\n- South' },
+            ],
+        });
+
+        press(fixture, 'ai-chat-copy', 1);
+        press(fixture, 'ai-chat-copy', 0);
+
+        expect(qa(fixture, 'extra')).not.toBeNull();
+        expect(clipboard.copied).toEqual(['Heading\n\nOccupancy grew by bold points.\n\nNorth\nSouth', 'What about **bold**?']);
     });
 
     it('SC-UKV-778 — копирование вопроса стоит под пузырём, кладёт его текст в буфер; copyable выключает обе кнопки', (): void => {

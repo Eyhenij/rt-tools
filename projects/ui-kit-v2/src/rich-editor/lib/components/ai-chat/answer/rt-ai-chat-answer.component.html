@@ -17,7 +17,7 @@
     @if (isWritten()) {
         <div rtElem="feedback" qa-dataid="ai-chat-feedback">
             @if (copyable()) {
-                <rt-ai-chat-copy [text]="message().text" />
+                <rt-ai-chat-copy [text]="plainText()" />
             }
             <rt-icon-button
                 qa-dataid="ai-chat-like"
