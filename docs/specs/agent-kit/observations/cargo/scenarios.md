@@ -461,6 +461,24 @@ name
 
 Covered: `projects/agent-kit/src/lib/observations-cargo.spec.ts`.
 
+### SC-AK-1211 — the observations leave one day per request
+
+Given the window holds the observation files of three days
+When the send goes
+Then three requests of observations leave, each carrying one day and the same tree sign and origin;
+without observations no such request leaves
+
+Covered: `projects/agent-kit/src/lib/observations-cargo.spec.ts`.
+
+### SC-AK-1212 — a refused day is named and does not hold up the rest
+
+Given the intake refuses the request of one day with a code other than the token refusal
+When the send goes
+Then the other days, the proposals and the analyses still leave, the refused day is named by its
+date and the intake's answer, and the exit code is non-zero
+
+Covered: `projects/agent-kit/src/lib/observations-cargo.spec.ts`.
+
 ### SC-AK-1210 — a refusal mark with the same reason does not stand in a block twice
 
 Given a block refused with a reason and already carrying the mark of that refusal

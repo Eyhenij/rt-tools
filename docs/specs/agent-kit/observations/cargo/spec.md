@@ -223,6 +223,11 @@ subdomain "Observations" next to it.
   edition of the cargo for the refusals would cost a second edition of the storage.
 - **The lines leave grouped by day, and a day leaves whole.** The intake replaces a day whole; a day
   sent by halves would be replaced by its second half.
+- **A request carries one day, and a refused day does not hold up the rest.** Three days of lines
+  came to 5826 lines, and the intake refused the whole request as heavier than its limit: the digest
+  arrived alone, and the proposals and analyses stayed behind. A day refused for any reason but the
+  token is named by its date at the end, the exit code is non-zero, and the proposals and analyses
+  leave by their own requests.
 - **The cargo names the working copy it left from, by a checksum of its root.** One tree has several
   working copies with one tree sign and separate observation files; a day replaced by the tree alone
   would keep whichever copy sent last and drop the other. The path itself does not leave.
