@@ -1,9 +1,13 @@
+import { ConnectedPosition, FlexibleConnectedPositionStrategy } from '@angular/cdk/overlay';
 import { ChangeDetectionStrategy, Component, Signal, WritableSignal, signal, viewChild } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
 
 import { createRtFixture, el } from '../../../testing/rt-kit-testing';
 import { RtPopoverDirective } from './rt-popover.directive';
 import { IRtPopover } from './rt-popover.model';
+
+const END: ConnectedPosition = { originX: 'end', originY: 'center', overlayX: 'start', overlayY: 'center' };
+const START: ConnectedPosition = { originX: 'start', originY: 'center', overlayX: 'end', overlayY: 'center' };
 
 /** Панель живёт в оверлее CDK — искать её надо в документе, а не в фикстуре. */
 function panel(): HTMLElement | null {
@@ -25,6 +29,7 @@ function panelText(): string {
             [rtPopoverWidth]="width()"
             [rtPopoverDisabled]="disabled()"
             [rtPopoverPanelClass]="panelClass()"
+            [rtPopoverPositions]="positions()"
             (rtPopoverOpened)="openedCount = openedCount + 1"
             (rtPopoverClosed)="closedCount = closedCount + 1">
             Открыть
@@ -42,6 +47,7 @@ class PopoverHostComponent {
     public readonly width: WritableSignal<IRtPopover.Width> = signal<IRtPopover.Width>('auto');
     public readonly disabled: WritableSignal<boolean> = signal<boolean>(false);
     public readonly panelClass: WritableSignal<string> = signal<string>('');
+    public readonly positions: WritableSignal<readonly ConnectedPosition[] | null> = signal<readonly ConnectedPosition[] | null>(null);
     public openedCount: number = 0;
     public closedCount: number = 0;
 }
@@ -279,6 +285,45 @@ describe('RtPopoverDirective', (): void => {
 
             expect(pane()?.style.width).toBe('');
             expect(pane()?.style.minWidth).toBe('');
+        });
+    });
+
+    describe('места панели', (): void => {
+        afterEach((): void => {
+            jest.restoreAllMocks();
+        });
+
+        function lastPositions(spy: jest.SpyInstance): ConnectedPosition[] {
+            return spy.mock.calls.at(-1)?.[0] ?? [];
+        }
+
+        it('SC-UKV-805: без своих мест панель встаёт под host, а над ним — запасным', (): void => {
+            const spy: jest.SpyInstance = jest.spyOn(FlexibleConnectedPositionStrategy.prototype, 'withPositions');
+            const fixture: ComponentFixture<PopoverHostComponent> = setup();
+
+            clickTrigger(fixture);
+
+            expect(spy).toHaveBeenCalledTimes(1);
+            expect(lastPositions(spy)[0]).toEqual(expect.objectContaining({ originY: 'bottom', overlayY: 'top' }));
+            expect(lastPositions(spy)[1]).toEqual(expect.objectContaining({ originY: 'top', overlayY: 'bottom' }));
+        });
+
+        it('свои места читаются при каждом открытии', (): void => {
+            const spy: jest.SpyInstance = jest.spyOn(FlexibleConnectedPositionStrategy.prototype, 'withPositions');
+            const fixture: ComponentFixture<PopoverHostComponent> = setup();
+            fixture.componentInstance.positions.set([END]);
+            fixture.detectChanges();
+
+            clickTrigger(fixture);
+
+            expect(lastPositions(spy)).toEqual([END]);
+
+            clickTrigger(fixture);
+            fixture.componentInstance.positions.set([START]);
+            fixture.detectChanges();
+            clickTrigger(fixture);
+
+            expect(lastPositions(spy)).toEqual([START]);
         });
     });
 });

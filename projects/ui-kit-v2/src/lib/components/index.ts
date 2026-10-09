@@ -79,6 +79,7 @@ export * from './scroll-area';
 export * from './select';
 export * from './skeleton';
 export * from './skeleton-wrapper';
+export * from './speed-menu';
 export * from './spinner';
 export * from './split-button';
 export * from './stat-tile';

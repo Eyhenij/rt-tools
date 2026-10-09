@@ -1,0 +1,79 @@
+@layer rt-kit.components {
+    /* rt-speed-menu — быстрое меню у круглой кнопки. ViewEncapsulation.None.
+       Host несёт класс блока и кнопку меню; действия лежат в плавающей панели кита в конце
+       страницы, вне блока, поэтому свои свойства панель объявляет на себе. */
+
+    .rt-speed-menu {
+        --rt-speed-menu-shadow: var(--rt-shadow-md);
+
+        display: inline-flex;
+        vertical-align: middle;
+
+        /* Тень покоя кнопка-значок объявляет на своём корне, и ручку переписывает правило сильнее. */
+        &__trigger .rt-icon-button {
+            --rt-icon-button-shadow: var(--rt-speed-menu-shadow);
+        }
+    }
+
+    .rt-speed-menu__panel {
+        --rt-speed-menu-gap: var(--rt-space-sm);
+        --rt-speed-menu-action-shadow: var(--rt-shadow-sm);
+        --rt-speed-menu-duration: var(--rt-duration-fast);
+        --rt-speed-menu-stagger: var(--rt-duration-fast);
+
+        display: flex;
+        align-items: center;
+        padding: var(--rt-speed-menu-gap);
+        gap: var(--rt-speed-menu-gap);
+
+        &--up,
+        &--down {
+            flex-direction: column;
+        }
+
+        &--start,
+        &--end {
+            flex-direction: row;
+        }
+    }
+
+    /* Действия входят по одному, ближнее к кнопке первым: в столбце вверх и в ряду к началу
+       ближнее — последнее, поэтому там шаг считается с конца. */
+    .rt-speed-menu__action {
+        --rt-speed-menu-step: 0;
+
+        animation: rt-speed-menu-enter var(--rt-speed-menu-duration) ease-out both;
+        animation-delay: calc(var(--rt-speed-menu-step) * var(--rt-speed-menu-stagger));
+    }
+
+    .rt-speed-menu__action .rt-icon-button {
+        --rt-icon-button-shadow: var(--rt-speed-menu-action-shadow);
+    }
+
+    @for $step from 1 through 7 {
+        .rt-speed-menu__panel--down .rt-speed-menu__action:nth-child(#{$step + 1}),
+        .rt-speed-menu__panel--end .rt-speed-menu__action:nth-child(#{$step + 1}),
+        .rt-speed-menu__panel--up .rt-speed-menu__action:nth-last-child(#{$step + 1}),
+        .rt-speed-menu__panel--start .rt-speed-menu__action:nth-last-child(#{$step + 1}) {
+            --rt-speed-menu-step: #{$step};
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .rt-speed-menu__action {
+            animation: none;
+        }
+    }
+
+    @keyframes rt-speed-menu-enter {
+        from {
+            opacity: 0;
+            transform: scale(0.5);
+        }
+
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+}

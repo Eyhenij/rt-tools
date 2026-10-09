@@ -83,6 +83,7 @@ export class RtPopoverDirective implements OnDestroy {
     readonly #overlayCreatedSource: Subject<OverlayRef> = new Subject<OverlayRef>();
 
     #overlayRef: OverlayRef | null = null;
+    #positionStrategy: FlexibleConnectedPositionStrategy | null = null;
     #hoverCloseTimer: ReturnType<typeof setTimeout> | null = null;
 
     protected readonly isOpenState: WritableSignal<boolean> = signal<boolean>(false);
@@ -140,6 +141,14 @@ export class RtPopoverDirective implements OnDestroy {
         transform: numberAttribute,
     });
 
+    /**
+     * Свои места панели вокруг host'а: первое главное, остальные — запасные у края экрана. `null` —
+     * прежние два: под host'ом и над ним. Заданные читаются при каждом открытии.
+     */
+    public readonly positions: InputSignal<readonly ConnectedPosition[] | null> = input<readonly ConnectedPosition[] | null>(null, {
+        alias: 'rtPopoverPositions',
+    });
+
     public readonly opened: OutputEmitterRef<void> = output<void>({ alias: 'rtPopoverOpened' });
 
     public readonly closed: OutputEmitterRef<void> = output<void>({ alias: 'rtPopoverClosed' });
@@ -195,6 +204,10 @@ export class RtPopoverDirective implements OnDestroy {
             return;
         }
         const overlayRef: OverlayRef = this.#ensureOverlay();
+        const positions: readonly ConnectedPosition[] | null = this.positions();
+        if (positions !== null) {
+            this.#positionStrategy?.withPositions([...positions]);
+        }
         const hostWidth: number = this.#elementRef.nativeElement.offsetWidth;
         const sizeByWidth: Record<IRtPopover.Width, OverlaySizeConfig> = {
             trigger: { width: hostWidth },
@@ -295,6 +308,7 @@ export class RtPopoverDirective implements OnDestroy {
             // край ровно на этот отступ — вместе со своей рамкой.
             .withViewportMargin(fitViewport ? Math.abs(this.offsetY()) : 0)
             .withPositions(positions);
+        this.#positionStrategy = positionStrategy;
 
         const config: OverlayConfig = new OverlayConfig({
             positionStrategy,
@@ -385,5 +399,6 @@ export class RtPopoverDirective implements OnDestroy {
     #disposeOverlay(): void {
         this.#overlayRef?.dispose();
         this.#overlayRef = null;
+        this.#positionStrategy = null;
     }
 }
