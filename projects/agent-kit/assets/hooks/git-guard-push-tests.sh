@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
+# rt-hook-timeout: 1800
 # Requires: hooks/profile-check.sh, hooks/deny-tail.sh
 # The guard of the checks before a push. PreToolUse on the push call.
 #
