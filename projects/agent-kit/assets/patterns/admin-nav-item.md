@@ -73,4 +73,5 @@ declaration: a domain section is named by the id of its item.
 - An address move without editing the end-to-end tests: they walk by addresses, and the run goes
   red.
 - An icon picked as "similar": a missing one is added to the sprite and to
-  `<prefix>-icon-names.ts`.
+  `<prefix>-icon-names.ts`. The name of a present icon is copied from the kit icon file as is: some
+  names carry the `ico-` prefix and most do not.

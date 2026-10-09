@@ -274,8 +274,10 @@ Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/rt-dynamic-sele
 ### SC-UKV-721 — the chosen entities passed by the caller set the value and the reset list
 
 Given a selector without a form whose caller passes a list of chosen entities
-When the list arrives, the person removes a row and the parent passes back the echo of the change
-Then the rows show the passed list, the echo leaves the reset on, and the reset returns the passed list
+When the list arrives, the person removes a row and the parent passes back the echo of the change,
+in the order of the rows or in its own order
+Then the rows show the passed list, and the echo keeps the order of the rows and leaves the reset on.
+The reset returns the passed list
 
 Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/rt-dynamic-selector-chosen.spec.ts`.
 

@@ -119,6 +119,9 @@ export class RtScrollAreaComponent {
     /** Наблюдение поставлено: тело и подвал могут быть и пустыми, флаг отличает «снято» от «нечего смотреть». */
     #isWatching: boolean = false;
 
+    /** Перемер по концу перехода или анимации внутри тела; одна ссылка — чтобы снять тот же слушатель. */
+    readonly #onSettled: () => void = (): void => this.onBodyScroll();
+
     constructor() {
         // Наблюдатели живут, только пока признак включён: выключенный признак ничего не рисует, а
         // наблюдатель состава с поддеревом заставлял бы браузер пересчитывать раскладку на каждую
@@ -225,6 +228,12 @@ export class RtScrollAreaComponent {
             });
             this.#contentWatch.observe(body, { childList: true, subtree: true, characterData: true });
         }
+
+        // Раскрытая папка дорастает переходом высоты от нуля: состав меняется в миг вставки, когда
+        // высота ещё ноль, а наблюдатель размера пропускал конец роста. Конец перехода и анимации
+        // всплывает к телу и перемеряет его по вставшей высоте.
+        body.addEventListener('transitionend', this.#onSettled);
+        body.addEventListener('animationend', this.#onSettled);
     }
 
     /**
@@ -251,6 +260,8 @@ export class RtScrollAreaComponent {
     }
 
     #unwatch(): void {
+        this.#watchedBody?.removeEventListener('transitionend', this.#onSettled);
+        this.#watchedBody?.removeEventListener('animationend', this.#onSettled);
         this.#sizeWatch?.disconnect();
         this.#sizeWatch = null;
         this.#contentWatch?.disconnect();

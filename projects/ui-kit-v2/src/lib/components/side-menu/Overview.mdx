@@ -49,6 +49,22 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 подменю всплывает, пока режим не задан входом. `subMenuTooltipsShown="false"` гасит подсказки строк
 подменю; имена кнопок для чтения экрана остаются. Оба — в истории `Switches`.
 
+**Вид первого кита.** `railTitlesShown="false"` убирает подписи под значками полосы: имя пункта
+уходит в подсказку справа и в доступное имя пункта. Подсказку гасит тот же `subMenuTooltipsShown`.
+`railIconFill` заливает значки полосы. `searchSize` и `searchAppearance` задают поле поиска подменю,
+как у `rt-input`: размер `md` даёт высоту 40. Строка и папка подменю несут номер пункта в
+`data-item-id` — по нему приложение находит строку, например открывающую страницу раздела.
+`subItemIconFill` заливает значки строк и папок и значок кнопки строки, `panelScrollHintShown`
+ставит подсказку прокрутки внизу панели, как у полосы. `subMenuCloseDelay` закрывает подменю наведения не сразу, а через
+задержку в миллисекундах: вернувшийся на панель указатель держит её открытой, пункт с подменю
+переключает её сразу. Всё вместе — в истории `FirstKitLook`.
+
+**Нажатие строки — сначала приложению.** Строка подменю отдаёт нажатие выходом
+`clickSubMenuAction` до перехода. Приложение, которое переходит само, отменяет умолчание события —
+`event.preventDefault()`, и строка не переходит. Нажатие с клавишей или средней кнопкой браузер
+открывает сам по адресу строки, если приложение его не отменило. Так же ведут себя строки блока
+избранного.
+
 **Избранное — как у первого кита, без Material.** У пункта полосы с флагом `favorites` в подменю
 стоят звёзды у пунктов со ссылкой, а вверху — блок «Избранное»: сворачивается заголовком, строки
 тянутся за ручку и переставляются стрелками на ней, «убрать» снимает пункт. Список и свёрнутые блоки
@@ -99,6 +115,39 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 получают: избранное в обоих наборах показывает история **Favorites**. Кнопка закрепления рисует
 булавку, как у первого кита.
 
+Свойства меню задаются на `rt-side-menu` или выше, свойства строки — на `rt-side-menu-sub-item`.
+Без них меню выглядит как раньше.
+
+| свойство                                       | что задаёт                                       | умолчание                              |
+| ---------------------------------------------- | ------------------------------------------------ | -------------------------------------- |
+| `--rt-side-menu-rail-icon-size`                | сторона значка полосы                            | ступень значка `md`                    |
+| `--rt-side-menu-rail-gap`                      | зазор между пунктами полосы                      | `--rt-space-md`                        |
+| `--rt-side-menu-rail-bg`                       | фон полосы                                       | `--rt-color-bg-surface`                |
+| `--rt-side-menu-rail-border-width`             | толщина черты справа от полосы                   | `--rt-side-menu-panel-border-width`    |
+| `--rt-side-menu-panel-bg`                      | фон панели подменю                               | `--rt-color-bg-surface`                |
+| `--rt-side-menu-panel-head-padding`            | отступ шапки панели с поиском                    | `--rt-space-sm`                        |
+| `--rt-side-menu-sub-list-padding-inline`       | отступ списка подменю от краёв панели            | `--rt-space-2`                         |
+| `--rt-side-menu-empty-padding`                 | отступ строки «ничего не найдено»                | `--rt-space-md`                        |
+| `--rt-side-menu-item-color`                    | цвет пункта полосы и строки телефона в покое     | цвет меню                              |
+| `--rt-side-menu-item-bg-hover`                 | подложка пункта и строки под указателем          | `--rt-color-bg-hover`                  |
+| `--rt-side-menu-item-bg-active`                | подложка активного пункта и строки               | `--rt-color-action-primary-subtle`     |
+| `--rt-side-menu-item-color-active`             | цвет активного пункта и строки                   | `--rt-color-action-primary-on-surface` |
+| `--rt-side-menu-sub-item-min-height`           | наименьшая высота строки и папки подменю         | `--rt-control-height-md`               |
+| `--rt-side-menu-sub-item-font-size`            | кегль строки и папки                             | `--rt-text-sm`                         |
+| `--rt-side-menu-sub-item-letter-spacing`       | трекинг строки и папки                           | от страницы                            |
+| `--rt-side-menu-sub-item-padding-start`        | отступ начала строки, растёт с глубиной          | `--rt-space-md`                        |
+| `--rt-side-menu-sub-item-padding-end`          | отступ конца строки                              | `--rt-space-sm`                        |
+| `--rt-side-menu-sub-item-color`                | цвет строки и папки в покое                      | `--rt-color-text-primary`              |
+| `--rt-side-menu-sub-item-icon-size`            | сторона значка строки и папки                    | ступень значка `sm`                    |
+| `--rt-side-menu-sub-item-gap`                  | зазор между значком и подписью                   | `--rt-space-sm`                        |
+| `--rt-side-menu-sub-item-folder-padding-start` | отступ начала заголовка папки, растёт с глубиной | отступ начала строки                   |
+| `--rt-side-menu-sub-item-chevron-color`        | цвет стрелки папки                               | `--rt-color-text-muted`                |
+| `--rt-side-menu-sub-item-button-radius`        | скругление «+», звезды, «убрать» и ручки         | `--rt-radius-md`                       |
+| `--rt-side-menu-sub-item-button-icon-size`     | сторона значка в этих кнопках                    | ступень значка `sm`                    |
+| `--rt-side-menu-sub-item-action-size`          | сторона кнопки потребителя «+»                   | `--rt-control-height-sm`               |
+| `--rt-side-menu-sub-item-favorite-size`        | сторона звезды, «убрать» и ручки                 | `--rt-control-height-sm`               |
+| `--rt-side-menu-sub-item-favorite-color`       | цвет звезды, «убрать» и ручки в покое            | `--rt-color-text-primary`              |
+
 ## Рядом
 
 - `rt-menu` — выпадающее меню действий.
@@ -120,16 +169,23 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | `favoriteActionsReserve` | `IRtSideMenu.FavoriteActionsReserve`   | `'none'`      | место под кнопки избранного, ждущие наведения       |
 | `isFavoritesSearchShown` | `boolean`                              | `true`        | поиск показывает совпавшие строки избранного        |
 | `pinShown`               | `boolean`                              | `true`        | кнопка закрепления; без неё сохранённое не читается |
-| `subMenuTooltipsShown`   | `boolean`                              | `true`        | подсказки строк подменю                             |
+| `subMenuTooltipsShown`   | `boolean`                              | `true`        | подсказки строк подменю и пунктов полосы            |
+| `railTitlesShown`        | `boolean`                              | `true`        | подписи под значками полосы                         |
+| `railIconFill`           | `boolean`                              | `false`       | залитые значки полосы                               |
+| `searchSize`             | `IRtInput.Size`                        | `'sm'`        | размер поля поиска подменю                          |
+| `searchAppearance`       | `IRtInput.Appearance`                  | `'outline'`   | вид поля поиска подменю                             |
+| `subItemIconFill`        | `boolean`                              | `false`       | залитые значки строк, папок и кнопок строк          |
+| `panelScrollHintShown`   | `boolean`                              | `false`       | подсказка прокрутки внизу панели подменю            |
+| `subMenuCloseDelay`      | `number`                               | `0`           | задержка закрытия подменю наведения, мс             |
 
 ## Выходы
 
-| выход                          | что сообщает                                                    |
-| ------------------------------ | --------------------------------------------------------------- |
-| `subMenuModeChange`            | нажат переключатель закрепления                                 |
-| `subMenuWidthChange`           | конец тяги или нажатая клавиша на ручке — новая ширина          |
-| `subMenuResizeStart`           | тяга ширины началась                                            |
-| `subMenuResizeEnd`             | тяга кончилась отпусканием или отнятым указателем               |
-| `closeMobileMenuAction`        | на узком экране нажат пункт со ссылкой — мобильное меню закрыть |
-| `clickSubMenuAction`           | нажата строка подменю со ссылкой                                |
-| `clickSubMenuAdditionalAction` | нажата кнопка строки — её данные, строка не нажимается          |
+| выход                          | что сообщает                                                     |
+| ------------------------------ | ---------------------------------------------------------------- |
+| `subMenuModeChange`            | нажат переключатель закрепления                                  |
+| `subMenuWidthChange`           | конец тяги или нажатая клавиша на ручке — новая ширина           |
+| `subMenuResizeStart`           | тяга ширины началась                                             |
+| `subMenuResizeEnd`             | тяга кончилась отпусканием или отнятым указателем                |
+| `closeMobileMenuAction`        | на узком экране нажат пункт со ссылкой — мобильное меню закрыть  |
+| `clickSubMenuAction`           | нажата строка подменю со ссылкой — до перехода; отмена его гасит |
+| `clickSubMenuAdditionalAction` | нажата кнопка строки — её данные, строка не нажимается           |
