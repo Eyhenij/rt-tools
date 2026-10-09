@@ -1,4 +1,4 @@
-// rt-kit v0.29.4 · checks/board-epics.github.mjs · 5ffc00cbeba7 · правится надстройкой, не здесь
+// rt-kit v0.30.0 · checks/board-epics.github.mjs · 5ffc00cbeba7 · правится надстройкой, не здесь
 /**
  * The link between a task and an epic. Lives in a file of its own: the work queue audit stands at
  * the length limit even without it, and these two checks are read separately.
