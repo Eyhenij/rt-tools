@@ -235,3 +235,15 @@ When the queue audit reads the makeup of the epic
 Then it takes the text of the branch, and the tasks standing only in the newer copy are counted
 
 Covered: `projects/agent-kit/tests/checks-board-epic-plan.test.sh`.
+
+### SC-AK-1206 — a task named twice in the makeup of an epic is a divergence
+
+Given the makeup table of an epic plan names one task in two rows
+When the work queue audit goes
+Then a line names the epic, the task and the count of rows
+
+Given every task stands in one row
+When the audit goes
+Then there is no such line
+
+Covered: `projects/agent-kit/tests/checks-board-epic-base.test.sh`.

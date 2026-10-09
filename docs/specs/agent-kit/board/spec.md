@@ -94,6 +94,8 @@ through the executor.
   queue and does not go to the tree; a task and its epic never share a number.
 - **A base named by a task of the same epic is a chain base and is not a divergence.** The audit
   takes the task number from the base name and finds the epic of that task in the queue.
+- **A task named in more than one row of the epic makeup is a divergence.** A merge that took both
+  sides of a conflict doubles the rows, and the link between plan and card reads numbers as a set.
 - **A branch carrying no task folder is a divergence, and the branch of an epic is not.** The folder
   travels in by the very first commit: an uncommitted one lets edits through for the whole of the
   work, and the refusal arrives at the exit of a turn, when there is nothing left to fix with. An
