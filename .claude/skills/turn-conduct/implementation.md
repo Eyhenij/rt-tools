@@ -98,7 +98,7 @@ permission, not a guard of the tree: no line in the command lifts it. What it re
 tree:
 
 - **Approving and merging one's own PR.** The PR is opened by the machine account, and the click on
-  «Merge pull request» in the owner's browser is read as approving oneself. The step is named to the
+  the merge button in the owner's browser is read as approving oneself. The step is named to the
   owner in one line, and the next task is taken.
 - **A script on the page and a batch of clicks.** One call makes one click; the result is read from
   the page by the next call.
