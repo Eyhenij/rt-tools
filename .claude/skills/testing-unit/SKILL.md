@@ -4,7 +4,7 @@ kind: pattern
 rule: testing
 description: Pattern of rule testing. Load when creating or editing *.spec.ts under Vitest — the ready-made layout of describe and it, the fixture builder, the scenario id in the title, a Connect procedure test with a hand-written database double. Not for end-to-end tests — that is pattern testing-e2e.
 ---
-<!-- rt-kit v0.30.0 · patterns/testing-unit.md · 76cd21c3137f · правится надстройкой, не здесь -->
+<!-- rt-kit v0.30.0 · patterns/testing-unit.md · 1d97fe499563 · правится надстройкой, не здесь -->
 
 # A test on a pure function and on a procedure
 
@@ -130,6 +130,10 @@ nothing.
 
 - A lib without its own `vitest.config.mts`: `nx test <project>` passes green without running a
   single file. Before writing the first test in a lib, check that the config is next to it.
+- **The compiler import goes into the harness file, not into the spec.** A lib that renders nothing
+  still pulls the framework when its test imports a barrel with a framework service, and the first
+  import fails on JIT. The import goes into the file named in `setupFiles` of the lib's run config:
+  in the spec the linter moves it below its neighbours, and the test turns red only in the full set.
 - Substituting a module (`vi.mock`) would hide what the test is created for — which call went to
   the database and in what order. The double is written by hand.
 - Do not create your own helpers for assertions: `expect(...).toBe(...)` and `.toEqual(...)`

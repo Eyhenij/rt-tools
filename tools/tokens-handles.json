@@ -161,6 +161,7 @@
     "--rt-icon-color-inverse": "the colour of an icon given the colour inverse; until the application sets it the kit takes the inverse text colour, --rt-color-text-inverse",
     "--rt-icon-glyph-weight": "the weight axis of an icon's Material ligature; until the application sets it the kit takes 400",
     "--rt-icon-glyph-grade": "the grade axis of an icon's Material ligature; until the application sets it the kit takes 0",
-    "--rt-icon-glyph-opsz": "the optical size axis of an icon's Material ligature; until the application sets it the kit takes the side of the icon in pixels, as the browser did without the axis"
+    "--rt-icon-glyph-opsz": "the optical size axis of an icon's Material ligature; until the application sets it the kit takes the side of the icon in pixels, as the browser did without the axis",
+    "--rt-side-menu-sub-item-letter-spacing": "the letter spacing of a side menu submenu row and folder title; set on the row or above, until it is set the row inherits it from the page"
   }
 }

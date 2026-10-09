@@ -275,7 +275,7 @@ if [ -n "$tool" ]; then
             | select(type == "array") | .[] | select(.type == "tool_result") | .content
             | if type == "string" then . elif type == "array"
                 then (map(if type == "object" then (.text // "") else "" end) | join("\n")) else "" end
-            | select(test("^The user answered:"))];
+            | select(test("^(The user answered|Your questions have been answered):"))];
         def recommended: ([match("\"=\"[^\"]*\""; "g")] | length) as $all
             | ([match("\\((Recommended|Рекомендую|Рекомендован[^)]*)\\)\"(,|\\.|[[:space:]]|$)"; "g")] | length) as $marked
             | $all > 0 and $all == $marked;

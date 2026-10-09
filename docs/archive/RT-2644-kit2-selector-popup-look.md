@@ -143,3 +143,15 @@ closing:
   and an application on `font` names them to get the font look, so that change would repaint them.
   Instead only a kit name the font cannot draw at all — with a hyphen or a capital letter — takes
   the kit drawing. The default strategy `map-first` does not change.
+- Rows 113–121 came from the application's session: the side menu with the first kit's look. The
+  rail got `railTitlesShown` and `railIconFill`, the submenu search `searchSize` and
+  `searchAppearance`. Every row and folder carries its item number in `data-item-id`. The rail, the
+  panel and the rows got their own properties, each defaulting to the value that stood there.
+- Two requests are done not word for word. The row padding is two properties, start and end: the
+  start grows with nesting depth, and one property for both sides could not carry the depth step.
+  The row letter spacing is a handle without a default: a default value would cut the inheritance
+  from the page.
+- The item colour defaults are declared on the menu root and on the dragged favourite row: the drag
+  moves that row out of the menu. The rail icon size follows the `md` icon step until set.
+- All 805 former frames matched without a re-take; the new **FirstKitLook** frame was taken after a
+  look and confirmed by a second run.

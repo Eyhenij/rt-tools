@@ -91,6 +91,10 @@ flowchart TD
   answers it. The sign that closes the screen arrives with the substituted profile. Asking a person
   to do a step of the check — type a password, open a tab, press a button — means a wrongly chosen
   path, not a lack of rights on the executor's side.
+- **A move of people into a sign-in system is checked by signing in as a moved person.** The stand
+  holds the same profile fields as the real people have after the move: a person moved with only a
+  mail and rights lacks what the system requires of a profile, and is sent to a step the form check
+  never reaches. Requests to the form, the API and the sign-in settings walk no part of that path.
 - **Changing the number of elements in a container is a layout edit.** It touches no styles, so it
   reads as a markup edit, and the check shrinks to response codes. The pages answer in every locale,
   and the document is already twice the viewport width. It is closed by a measurement — document
@@ -102,6 +106,9 @@ flowchart TD
   edge and clipping without a sign show only where the content does not fit its place. On a short
   value all three look fine. The value for measurement is the extreme one — what the node can get
   from a real consumer, not what stands in the example.
+- **The longest value is set for every node that shares the line, not only for the edited one.** An
+  element next to a neighbour takes its place from the neighbour's length. A long neighbour wraps
+  the element to a new line, and the element lands at its start. Its own short value hides that.
 - **A ready-made kit piece taken for values of another size is measured, not looked at.** A
   component that lived where values are short gets a value four times longer in its new place. It
   behaves differently while staying the same code. The test does not see this at all: clipping by

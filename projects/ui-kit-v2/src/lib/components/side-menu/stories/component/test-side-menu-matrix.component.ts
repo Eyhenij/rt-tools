@@ -5,6 +5,7 @@ import { StoryPresetsComponent } from '../../../../../showcase/story-presets.com
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { IStoryState, STORY_STATES, storyStateLabel } from '../../../../../showcase/story-states';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
+import { IRtInput } from '../../../input/rt-input.model';
 import { IRtSideMenu } from '../../rt-side-menu.model';
 import {
     FAVORITES_STORY_ACTIVE,
@@ -24,7 +25,7 @@ import { TestRtSideMenuNarrowCellComponent } from './test-side-menu-narrow-cell.
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
 export type TSideMenuMatrixPart =
-    'modes' | 'search' | 'folders' | 'favorites' | 'states' | 'narrow' | 'edges' | 'icons' | 'switches' | 'presets' | 'themes';
+    'modes' | 'search' | 'folders' | 'favorites' | 'states' | 'narrow' | 'edges' | 'icons' | 'switches' | 'look' | 'presets' | 'themes';
 
 /** Случай ячейки: подпись и то, до чего ячейка доводит меню. */
 export interface ISideMenuCase {
@@ -40,6 +41,12 @@ export interface ISideMenuCase {
     readonly favoritesCount?: IRtSideMenu.FavoritesCount;
     readonly ownIcon?: boolean;
     readonly pinShown?: boolean;
+    readonly railTitlesShown?: boolean;
+    readonly railIconFill?: boolean;
+    readonly searchSize?: IRtInput.Size;
+    readonly subItemIconFill?: boolean;
+    readonly panelScrollHintShown?: boolean;
+    readonly firstKitProps?: boolean;
 }
 
 /**
@@ -132,6 +139,40 @@ export class TestRtSideMenuMatrixComponent {
     public readonly switches: readonly ISideMenuCase[] = [
         { name: 'без закрепления: подменю над страницей', activeIds: [1, 2], openId: 1, pinShown: false },
         { name: 'без закрепления, закреплено входом', activeIds: [1, 2], mode: 'pinned', pinShown: false },
+    ];
+
+    /** Вид первого кита: без настроек, входами и входами со свойствами меню и строки. */
+    public readonly looks: readonly ISideMenuCase[] = [
+        { name: 'без настроек', activeIds: [1, 2], mode: 'pinned' },
+        {
+            name: 'без подписей, залитые значки, поиск md',
+            activeIds: [1, 2],
+            mode: 'pinned',
+            railTitlesShown: false,
+            railIconFill: true,
+            searchSize: 'md',
+        },
+        {
+            name: 'и свойства первого кита, подсказка прокрутки',
+            activeIds: [1, 2],
+            mode: 'pinned',
+            railTitlesShown: false,
+            railIconFill: true,
+            searchSize: 'md',
+            panelScrollHintShown: true,
+            firstKitProps: true,
+        },
+        {
+            name: 'папки, значки строк и подсказка прокрутки',
+            activeIds: [24, 25],
+            mode: 'pinned',
+            railTitlesShown: false,
+            railIconFill: true,
+            searchSize: 'md',
+            subItemIconFill: true,
+            panelScrollHintShown: true,
+            firstKitProps: true,
+        },
     ];
 
     public readonly narrows: readonly ISideMenuCase[] = [

@@ -691,6 +691,7 @@ export type TRtConsumerHandleName =
     | '--rt-logo-wordmark'
     | '--rt-logo-wordmark-dark'
     | '--rt-page-header-bg'
+    | '--rt-side-menu-sub-item-letter-spacing'
     | '--rt-table-actions-bg'
     | '--rt-tag-color-bg'
     | '--rt-tag-color-border'
@@ -1413,6 +1414,7 @@ export const RT_CONSUMER_HANDLE_NAMES: readonly TRtConsumerHandleName[] = [
     '--rt-logo-wordmark',
     '--rt-logo-wordmark-dark',
     '--rt-page-header-bg',
+    '--rt-side-menu-sub-item-letter-spacing',
     '--rt-table-actions-bg',
     '--rt-tag-color-bg',
     '--rt-tag-color-border',

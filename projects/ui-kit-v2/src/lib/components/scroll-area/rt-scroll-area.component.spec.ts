@@ -305,6 +305,24 @@ describe('RtScrollAreaComponent', (): void => {
             expect(qa(fixture, 'scroll-area-scroll-hint')).not.toBeNull();
         });
 
+        it('SC-UKV-150 — содержимое дорастает переходом: его конец перемеряет признак', (): void => {
+            const fixture: ComponentFixture<ScrollAreaGrowingHostComponent> = createRtFixture(ScrollAreaGrowingHostComponent);
+            const body: HTMLElement = qa(fixture, 'scroll-area-body')?.nativeElement as HTMLElement;
+            size(body, 200, 200);
+            notifySize?.();
+            fixture.detectChanges();
+            expect(qa(fixture, 'scroll-area-scroll-hint')).toBeNull();
+
+            // Папка раскрылась переходом высоты: наблюдатель размера молчит, всплывает конец перехода.
+            size(body, 600, 200);
+            const inner: HTMLElement = document.createElement('div');
+            body.appendChild(inner);
+            inner.dispatchEvent(new Event('transitionend', { bubbles: true }));
+            fixture.detectChanges();
+
+            expect(qa(fixture, 'scroll-area-scroll-hint')).not.toBeNull();
+        });
+
         it('SC-UKV-150 — под наблюдением размера стоит и содержимое тела, а не одно тело', (): void => {
             const fixture: ComponentFixture<ScrollAreaGrowingHostComponent> = createRtFixture(ScrollAreaGrowingHostComponent);
             const body: HTMLElement = qa(fixture, 'scroll-area-body')?.nativeElement as HTMLElement;

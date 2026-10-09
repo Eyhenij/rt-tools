@@ -249,6 +249,43 @@ describe('RtToasterComponent', (): void => {
             expect(messages(fixture)).toEqual(['Второе']);
         });
 
+        it('SC-UKV-816 — тост один раз сообщает, почему ушёл без действия', (): void => {
+            const fixture: ComponentFixture<RtToasterComponent> = setup({ mode: 'replace', duration: 60000 });
+            const closed: jest.Mock = jest.fn();
+            const timedOut: jest.Mock = jest.fn();
+            const replaced: jest.Mock = jest.fn();
+            const acted: jest.Mock = jest.fn();
+
+            bus().info('Крестик', 'info', { duration: null, onDismiss: closed });
+            fixture.detectChanges();
+            (
+                (fixture.nativeElement as HTMLElement).querySelector(
+                    '[qa-dataid="toast-close"] [qa-dataid="icon-button-control"]'
+                ) as HTMLButtonElement
+            ).click();
+            closeTimers(fixture, 0);
+
+            bus().info('Таймер', 'info', { duration: 1000, onDismiss: timedOut });
+            closeTimers(fixture, 1000);
+
+            bus().info('Вытесняемый', 'info', { duration: null, onDismiss: replaced });
+            fixture.detectChanges();
+            bus().info('Действие', 'info', {
+                duration: null,
+                onDismiss: acted,
+                action: { label: 'Войти', handler: (): void => undefined },
+            });
+            closeTimers(fixture, 0);
+            qa(fixture, 'toast-action')?.nativeElement.click();
+            closeTimers(fixture, 0);
+
+            expect(closed.mock.calls).toEqual([['close']]);
+            expect(timedOut.mock.calls).toEqual([['timeout']]);
+            expect(replaced.mock.calls).toEqual([['replaced']]);
+            expect(acted).not.toHaveBeenCalled();
+            expect(messages(fixture)).toEqual([]);
+        });
+
         it('SC-UKV-585 — в режиме стопки прежние тосты остаются', (): void => {
             const fixture: ComponentFixture<RtToasterComponent> = setup({ duration: 60000 });
 
