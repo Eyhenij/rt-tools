@@ -17,7 +17,9 @@
 
     .rt-speed-menu__panel {
         --rt-speed-menu-gap: var(--rt-space-sm);
-        --rt-speed-menu-action-shadow: var(--rt-shadow-sm);
+        --rt-speed-menu-action-shadow: var(--rt-shadow-md);
+        --rt-speed-menu-action-bg: var(--rt-color-bg-surface);
+        --rt-speed-menu-action-radius: var(--rt-radius-full);
         --rt-speed-menu-duration: var(--rt-duration-fast);
         --rt-speed-menu-stagger: var(--rt-duration-fast);
 
@@ -37,13 +39,17 @@
         }
     }
 
-    /* Действия входят по одному, ближнее к кнопке первым: в столбце вверх и в ряду к началу
+    /* Подложка цвета поверхности: действие висит над картой или таблицей, а заливка второй палитры
+       кнопки-значка прозрачна. Наведение и недоступность кнопка рисует поверх подложки сама.
+       Действия входят по одному, ближнее к кнопке первым: в столбце вверх и в ряду к началу
        ближнее — последнее, поэтому там шаг считается с конца. */
     .rt-speed-menu__action {
         --rt-speed-menu-step: 0;
 
+        border-radius: var(--rt-speed-menu-action-radius);
         animation: rt-speed-menu-enter var(--rt-speed-menu-duration) ease-out both;
         animation-delay: calc(var(--rt-speed-menu-step) * var(--rt-speed-menu-stagger));
+        background-color: var(--rt-speed-menu-action-bg);
     }
 
     .rt-speed-menu__action .rt-icon-button {
