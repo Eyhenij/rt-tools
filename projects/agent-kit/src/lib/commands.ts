@@ -15,7 +15,7 @@ import { debtLine, ICompanion, isUnfilled, IUnaddressed, pathOf as companionPath
 import { CONFIG_PATH, DEFAULT_LAYOUT, IConfig, KINDS, OVERRIDES_DIR, PROFILE_FILE, readConfig, RT_KIT_DIR, TKind } from './config.js';
 import { IStaleBuild } from './freshness.js';
 import { IAmbiguousName } from './integrity.js';
-import { hooksSection, IHookBinding, IMatcherDrift, SETTINGS_PATH } from './hooks-map.js';
+import { hooksSection, IHookBinding, IMatcherDrift, IShortTimeout, SETTINGS_PATH } from './hooks-map.js';
 import {
     DEFAULT_DAYS,
     ICount,
@@ -364,8 +364,12 @@ function strangeTraits(config: IConfig, assetsDir: string): readonly string[] {
  * выводом, каким видит положенные файлы, — а не следующим просмотром истории.
  */
 const boundLines: (result: ISyncResult) => string[] = (result: ISyncResult): string[] => {
+    const short: string[] = (result.bound?.short ?? []).map(
+        (one: IShortTimeout): string =>
+            `запись диспетчера ${one.event} в \`${SETTINGS_PATH}\`: предел ${one.have ?? 'агента по умолчанию'}, гарды объявили ${one.need} с — поле timeout дописывается рукой`
+    );
     if (result.bound === null || (!result.bound.added.length && !result.bound.unreadable && !result.bound.missing)) {
-        return [];
+        return short;
     }
 
     if (result.bound.missing) {
@@ -383,6 +387,7 @@ const boundLines: (result: ISyncResult) => string[] = (result: ISyncResult): str
         : [
               `в \`${SETTINGS_PATH}\` дописано событий: ${result.bound.added.length}`,
               ...result.bound.added.map((event: string): string => `  ${event} — зовёт диспетчер`),
+              ...short,
           ];
 };
 
