@@ -60,6 +60,8 @@ conversations. Every application repeats the same screen, and every copy drifts 
 
 - **Focus follows the person: the open list of conversations puts it on «Back to conversation», and choosing a conversation, a new conversation, Stop and the return to the feed put it into the composer.**
 
+- **The empty list of conversations draws preview rows with the assistant's marks, and the consumer sets its own icons.**
+
 - **The attachments of an answer come from the consumer's template, which receives the message.**
 
 - **The title, the placeholder, the empty-screen texts and the line under the composer come from the consumer, and the kit's English text stands in when one is not given.**
@@ -136,3 +138,5 @@ None.
 
 - 2026-10-08 — written by the task RT-2654 of the epic RT-2649, which brings the assistant chat
   into the kit.
+- 2026-10-09 — the task RT-2714: the preview rows of the empty list of conversations take their
+  icons from an input, the assistant's marks by default.

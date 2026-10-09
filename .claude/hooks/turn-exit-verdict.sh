@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.29.4 · hooks/turn-exit-verdict.sh · 720f1567ff28 · правится надстройкой, не здесь
+# rt-kit v0.29.4 · hooks/turn-exit-verdict.sh · 09d607fd3d06 · правится надстройкой, не здесь
 # The parsing of the turn record for the turn-exit guard. NOT a guard: it has no `rt-hook:`
 # declaration and hooks into no agent event. The guard sources it right after the patterns —
 # it was moved out when the guard crossed the file length limit, and the parsing reads apart
@@ -88,6 +88,23 @@ verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg work "$work_re
     | ([$turn[] | select(.type == "assistant") | (.message.content // [])[]
           | select(.type == "text") | (.text // "")] | last // "") as $last_say
     | (($last_say | test("\\?[[:space:]]*$")) and $ask_denied) as $asked_in_prose
+    # The word of the owner about a stop said a turn earlier holds until a later message of theirs
+    # orders work. It is read from the whole session: read from this turn alone, it was lost, and
+    # the turn could leave only by a line in the progress of a folder already taken apart. Such a
+    # word releases the turn when the reply quotes it in « » and the quote stands in that message.
+    | ([.[] | select(is_input) | .message.content
+          | if type == "string" then . elif type == "array"
+            then (map(if type == "object" then (.text // "") else "" end) | join("\n")) else "" end]) as $owner_said
+    | ($owner_said | map(test("останов|стоп|хватит|подожди|не надо|прерв|отложи|не двигайся|не продолжай|прекрати") and (test($standing) | not)) | rindex(true)) as $stop_at
+    | (if $stop_at == null then null
+       elif ($owner_said[$stop_at + 1:] | map(test("продолжай|работай|делай|бери|давай|вперёд|можно")) | any) then null
+       else $owner_said[$stop_at] end) as $stop_word
+    | ([$last_say | match("«([^»]+)»"; "g") | .captures[0].string]) as $quotes
+    | ($stop_word != null and ($quotes | map(. as $q | $stop_word | contains($q)) | any)) as $quoted_stop
+    | ($told_stop or $quoted_stop) as $told_stop
+    # What is left in the tree is named with a reason, and the line «Не отправлено: <reason>» in
+    # the reply is that naming: without it the only lawful move was a push made to lift the refusal.
+    | ($last_say | test("Не отправлено:[[:space:]]*[^[:space:]]")) as $unpushed_named
     # Waiting for the word of the owner, announced by the executor. That word is read from
     # the owner: without his word in the turn and without a question to him through the tool, the
     # phrase "waiting for your word" is a stop announced by the one it suits. The set of patterns is
@@ -111,6 +128,6 @@ verdict="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg work "$work_re
           or (((.name // "") == "Bash") and ([(.input.command // "") | splits($part)] | map(test($work) and (test($read) | not) and (test("^[[:space:]]*([^[:space:]]*/)?git[[:space:]]+(add|commit|push)") | not)) | any))
       ) | any) as $after_progress
     | (($last_name == "Bash") and ($last | test($started)) and ($handed_over | not)) as $only_took
-    | { promised: $promised, only_took: $only_took, asked: $asked, handed_by_hand: ($handed and (($asked or $denied or $told_stop) | not)), standing_work: $standing_work, worked: ($edited or $ran_work), released: ($asked or $denied or $handed or $told_stop), waited: $waited, handed_over: $handed_over, started_next: $started_next, ended_working: $ended_working, asked_in_prose: $asked_in_prose, awaits_word: $awaits_word, progress_edited: $progress_edited, after_progress: $after_progress, launched_last: $launched_last, ran: $ran }
+    | { promised: $promised, only_took: $only_took, asked: $asked, handed_by_hand: ($handed and (($asked or $denied or $told_stop) | not)), standing_work: $standing_work, worked: ($edited or $ran_work), released: ($asked or $denied or $handed or $told_stop), waited: $waited, handed_over: $handed_over, started_next: $started_next, ended_working: $ended_working, asked_in_prose: $asked_in_prose, awaits_word: $awaits_word, progress_edited: $progress_edited, after_progress: $after_progress, launched_last: $launched_last, ran: $ran, unpushed_named: $unpushed_named }
 ' 2>/dev/null)"
 }

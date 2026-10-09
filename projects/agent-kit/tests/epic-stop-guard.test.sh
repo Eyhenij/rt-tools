@@ -136,6 +136,28 @@ stop_turn "SC-AK-988 — при живом эпике объявленная о�
 export STUB_LEFT=''
 stop_turn "SC-AK-988 — при кончившемся эпике остановка законна" turn-exit-guard.sh "$(stop_input "$WAITED")" PASS
 
+# --- SC-AK-1201 — слово владельца с номером новой работы снимает остановку --------------------
+# Строку обхода в команде владелец запретил, и две записи дерева противоречили друг другу: выход
+# оставался один — остановить работу, которую он сам только что поставил.
+answered() { jq -c -n --arg t "$1" '{type:"user",message:{content:[{type:"tool_result",content:$t}]}}'; }
+call_in() {
+    jq -n --arg c "$1" --arg p "$2" '{tool_name:"Bash",tool_input:{command:$c},transcript_path:$p}'
+}
+stop_word() {
+    local label="$1" cmd="$2" path="$3" want="$4" out got
+    out="$(cd "$STOP_TREE" && call_in "$cmd" "$path" | "$HOOKS/epic-stop-guard.sh" 2>/dev/null)"
+    if [ -z "$out" ]; then got="PASS"; else got="$(printf '%s' "$out" | jq -r '.hookSpecificOutput.permissionDecision // "deny"')"; fi
+    report "$label" "$got" "$want"
+}
+stop_word "SC-AK-1201 — ответ меню с номером работы пропускает" 'git checkout -b RT-1999-probe main' \
+    "$(turn "$(said 'что дальше')" "$(answered 'The user answered: "Брать эпик RT-1999 (Recommended)"')")" PASS
+stop_word "SC-AK-1201 — сообщение владельца с номером пропускает" 'npm run task:move -- 1999 in-progress' \
+    "$(turn "$(said 'бери 1999')")" PASS
+stop_word "SC-AK-1201 — слово о другой работе не пропускает" 'git checkout -b RT-1999-probe main' \
+    "$(turn "$(said 'бери 2001')")" deny
+stop_word "SC-AK-1201 — номер в словах исполнителя не пропускает" 'git checkout -b RT-1999-probe main' \
+    "$(turn "$(said 'продолжай')" "$(spoke 'Беру RT-1999.')")" deny
+
 rm -rf "$TURNS"
 
 rm -rf "$STOP_TREE"

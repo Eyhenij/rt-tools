@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Requires: hooks/deny-tail.sh
+# Requires: hooks/deny-tail.sh, hooks/turn-exit-patterns.sh, hooks/grill-gate-bypass.sh
 # rt-hook: Stop
 # The conversation guard: the owner is not asked a question until the laws and rules have been read
 # within the same turn. It judges two events, and that is not duplication; the second is declared
@@ -117,6 +117,17 @@ if command -v skill_for >/dev/null 2>&1 && [ -n "$rules_dir" ]; then
         | map(select(. != "")) | unique | .[]
     ' 2>/dev/null)"
     for path in $edited; do
+        # Only this tree's paths make up the area: a draft in the session scratch directory is not
+        # work of this tree, and the rule its kind maps to answers no question put to the owner. The
+        # rules gate stops at the same root check; a relative path is a path of the tree.
+        case "$path" in
+            /*)
+                case "$path" in
+                    "${CLAUDE_PROJECT_DIR:-$PWD}"/*) ;;
+                    *) continue ;;
+                esac
+                ;;
+        esac
         for rule in $(skill_for edit "$path" '' 2>/dev/null); do
             case "|$need_re|" in
                 *"|$rule|"*) ;;
@@ -212,7 +223,9 @@ if [ -n "$tool" ]; then
                 else (. // "") end) as $said
             | ([.[:$i][] | select(.type == "assistant") | (.message.content // [])[]
                  | select(.type == "tool_use") | select(.name == "AskUserQuestion")] | length) as $before
-            | if $before == 0 or ($said | length) == 0 then "no" else
+            # A reply of fewer than five significant words is a command, not a decision: «take task
+            # N» shares the number and the words of the subject with any next question about it.
+            | if $before == 0 or (($said | words) | length) < 5 then "no" else
                 (($now | words) - (($now | words) - ($said | words))) as $common
                 | if ($common | length) >= 3 then "answered" else "no" end
               end
@@ -293,6 +306,123 @@ ${deny_tail_text}"
     fi
 fi
 
+# The fifth sign of the same guard: a question that offers to walk around a check does not leave.
+#
+# A red set was explained by a "foreign" cause, and the owner was asked whether to send it past the
+# check. Such a question is a miss by itself, even when the owner answers "yes": a check is fixed at
+# its cause or fixed itself, and a third option is not named. The sign reads the text the owner
+# reads — the menu with its options, or the last reply when it ends with a question — and looks for
+# the forms of a bypass: past the check, a bypass line, a disabled rule, a hook switched off.
+#
+# The sign lies in a file of its own next to the guard; without it the sign stays silent.
+# shellcheck disable=SC1090
+[ -f "$rt_hooks_dir/grill-gate-bypass.sh" ] && . "$rt_hooks_dir/grill-gate-bypass.sh" 2>/dev/null
+command -v rt_grill_bypass >/dev/null 2>&1 && rt_grill_bypass && exit 0
+
+# The fourth sign of the same guard: a question after a refusal carries what was done without the
+# answer.
+#
+# A guard refused, the executor ran not one edit and brought the owner a choice "fix or wait". A
+# question is a lawful exit of a turn, so no guard held it, and the owner asked why the work stopped.
+# A refusal removes the step, not the task: the mechanical part of the blocker is done first. So a
+# question after a refusal leaves only with the line the tree names, and with at least one working
+# command after the last refusal — an edit of a file or a command by the work pattern of the exit
+# guard. A read or a status command does not count: it looks like work and moves nothing.
+#
+# The menu and a question in prose are judged alike: one change of form would otherwise walk around
+# the requirement. A turn without a refusal is not judged by this sign.
+#
+# The line is written in the language the tree speaks to its owner: the tree names it by
+# `RT_DONE_WITHOUT_ANSWER` in its profile, and set empty it drops the sign.
+#
+# FAIL-OPEN: no turn record, no parser, no refusal in the turn — the sign stays silent.
+done_marker="${RT_DONE_WITHOUT_ANSWER-Без ответа сделано:}"
+work_re='git (add|commit|push|checkout|merge|rm)|npm run|pnpm (run|exec)|nx (build|test|run)|gh (pr|issue|api|run)|task:(new|move)|mkdir|cp |mv |rm |sed -i|tee '
+# shellcheck disable=SC1090
+[ -f "$rt_hooks_dir/turn-exit-patterns.sh" ] && . "$rt_hooks_dir/turn-exit-patterns.sh" 2>/dev/null
+if [ -n "$done_marker" ]; then
+    after_refusal="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg work "$work_re" '
+        def is_input:
+            .type == "user"
+            and ((.isCompactSummary // false) | not)
+            and ((.isMeta // false) | not)
+            and (((.message.content // []) | if type == "array"
+                    then ([.[] | select(.type == "tool_result")] | length)
+                    else 0 end) == 0);
+        def refusal:
+            .type == "user" and ((.message.content // []) | if type == "array"
+                then any(.[]; .type == "tool_result" and (.is_error // false)
+                    and ((.content | if type == "string" then . elif type == "array"
+                          then (map(if type == "object" then (.text // "") else "" end) | join(" "))
+                          else "" end) | test("BLOCKED|Refused|denied")))
+                else false end);
+        def working:
+            .type == "assistant" and ((.message.content // []) | any(.[];
+                .type == "tool_use" and (
+                    ((.name // "") | test("^(Edit|Write|NotebookEdit)$"))
+                    or ((.name == "Bash") and ((.input.command // "") | test($work))))));
+
+        (map(is_input) | rindex(true)) as $i
+        | (if $i == null then . else .[$i + 1:] end) as $turn
+        | ($turn | map(refusal) | rindex(true)) as $r
+        | if $r == null then "none"
+          elif ($turn[$r + 1:] | map(working) | any) then "worked"
+          else "idle" end
+    ' 2>/dev/null)"
+
+    if [ "$after_refusal" = "worked" ] || [ "$after_refusal" = "idle" ]; then
+        if [ -n "$tool" ]; then
+            question_text="$asked_text"
+        else
+            question_text="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r '
+                def is_input:
+                    .type == "user"
+                    and ((.isCompactSummary // false) | not)
+                    and ((.isMeta // false) | not)
+                    and (((.message.content // []) | if type == "array"
+                            then ([.[] | select(.type == "tool_result")] | length)
+                            else 0 end) == 0);
+                (map(is_input) | rindex(true)) as $i
+                | (if $i == null then . else .[$i + 1:] end)
+                | [.[] | select(.type == "assistant") | (.message.content // [])[] | select(.type == "text") | .text]
+                | join("\n")
+            ' 2>/dev/null)"
+        fi
+        asks="no"
+        if [ -n "$tool" ]; then
+            asks="yes"
+        elif printf '%s\n' "$question_text" | grep -qE '\?[[:space:]]*$'; then
+            asks="yes"
+        fi
+        marked="no"
+        case "$question_text" in
+            *"$done_marker"*) marked="yes" ;;
+        esac
+        if [ "$asks" = "yes" ] && { [ "$marked" = "no" ] || [ "$after_refusal" = "idle" ]; }; then
+            reason="BLOCKED by grill-gate: a guard refused in this turn, and the question to the owner carries nothing done without the answer.
+
+A refusal removes the step, not the task. Do the mechanical part of the blocker first — what the linter's fix mode repairs, what the refusal names as fixable — then ask only the decision that is left. The question leaves with the line «$done_marker …» naming the working commands of this turn after the last refusal: an edit of a file or a command that changes the tree. A read or a status command does not count."
+
+            # shellcheck disable=SC1090
+            [ -f "$rt_hooks_dir/deny-tail.sh" ] && . "$rt_hooks_dir/deny-tail.sh" 2>/dev/null
+            command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
+            deny_tail_text="$(rt_deny_tail "")"
+            [ -n "$deny_tail_text" ] && reason="${reason}
+
+${deny_tail_text}"
+
+            if [ -n "$tool" ]; then
+                jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
+                    || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"grill-gate: a question after a refusal carries what was done without the answer."}}\n'
+            else
+                jq -n --arg r "$reason" '{decision:"block",reason:$r}' 2>/dev/null \
+                    || printf '{"decision":"block","reason":"grill-gate: a question after a refusal carries what was done without the answer."}\n'
+            fi
+            exit 0
+        fi
+    fi
+fi
+
 [ "$verdict" = "ask" ] || exit 0
 
 if [ -n "$tool" ]; then
@@ -301,11 +431,21 @@ else
     head="BLOCKED by grill-gate: the reply carries a question to the owner, and the laws and rules were not read in this turn."
 fi
 
-reason="$head A question whose answer is already written down is not asked of the owner — the rule of work conduct. Run a search by the words of the subject and answer from what is found; ask only what the documents do not cover:
+# The refusal names the action its own condition accepts. When the turn holds edits, only the rules
+# of their area count, and the advice to search the directories sent the executor round in a
+# circle: the search was made, the same refusal came back, and the executor stopped asking at all.
+if [ -n "$need_re" ]; then
+    named="$(printf '%s' "$need_re" | tr '|' '\n' | sed 's/.*/«&»/' | paste -sd ',' - | sed 's/,/, /g')"
+    reason="$head A question whose answer is already written down is not asked of the owner — the rule of work conduct. The turn holds edits, and for them only the rules of their area count: $named. Load them by the tool Skill, or read them in $rules_dir, and answer from what is found; ask only what they do not cover.
+
+A rule loaded before the owner's last message does not count: the guard judges one turn, and the next session is not refused."
+else
+    reason="$head A question whose answer is already written down is not asked of the owner — the rule of work conduct. Run a search by the words of the subject and answer from what is found; ask only what the documents do not cover:
 
     grep -rn -i \"<a word of the subject>\" $laws_dir $rules_dir $specs_dir $plans_dir $archive_dir
 
 The guard judges one turn: the next session is not refused."
+fi
 
 # The shared deny tail: the two lawful moves and the lawful form of bypass, if the refusal has one.
 # The file may not be laid out — then there is no tail, and the reason for the refusal stays as it
