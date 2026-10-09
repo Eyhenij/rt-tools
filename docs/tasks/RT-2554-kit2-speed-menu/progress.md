@@ -12,7 +12,8 @@
   The nine references are taken and looked at; the entrance became a transition, and the open
   frames draw the actions.
   The whole set is green: lint, types, tests, build and verify of 112 projects, then the styles
-  linter.
+  linter. On 9 October the epic branch with a fresh main went in again; four icon frames were
+  retaken for the added `folder`, the other 843 frames matched, and the kit tests and linter passed.
 - **Next step:** after the owner's word — the push and the PR into the epic branch; meanwhile the
   next task of the epic, RT-2555.
 - **Uncommitted:** no
