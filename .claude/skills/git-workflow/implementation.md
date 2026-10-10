@@ -30,6 +30,7 @@ consequence of a merge.
 - **the machine work account** — `rt-tools-dev` — a commit is signed by it, a task is created and a PR is opened by it; it is never a reviewer
 - **the token substitution into a call** — `.claude/rt-kit/project.sh:RT_PULL_TOKEN_VAR` — `GH_TOKEN`; the ready-made line for the guard's refusal is there too, `RT_PULL_TOKEN_HINT`
 - **the request body section about the remaining step** — `.claude/rt-kit/project.sh:RT_PULL_BODY_SECTION` — the heading «Оставшийся шаг»: the delivery guard demands it in the body of every request
+- **the line that closes the task** — `.claude/rt-kit/project.sh:RT_PULL_CLOSES_LINE` — `Closes #<номер>` with the branch's number: the delivery guard demands it in the body of every request, whatever the base
 
 ## Where it lives
 

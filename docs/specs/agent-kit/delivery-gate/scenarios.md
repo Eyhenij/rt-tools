@@ -300,6 +300,46 @@ Then it reads the file from the disk and demands the section as in a body passed
 
 Covered: `projects/agent-kit/tests/git-guards.test.sh`.
 
+### SC-AK-1217 — a body without the line that closes the task refuses the opening
+
+Given the tree named the sample of the line, and the body of the request does not carry it
+When a request is opened from a branch with a task number
+Then the guard refuses and names the line with the number of the branch
+
+Covered: `projects/agent-kit/tests/git-guards.test.sh`.
+
+### SC-AK-1218 — the line is judged by the number of the branch
+
+Given the body carries the line that closes a task
+When the number in it is the number of the branch, or another one
+Then the first passes, and the second is refused as a missing line
+
+Covered: `projects/agent-kit/tests/git-guards.test.sh`.
+
+### SC-AK-1219 — a tree that named no sample of the line is not judged
+
+Given the tree named no sample of the line that closes the task
+When a request opens with a body without such a line
+Then the guard says nothing about the line
+
+Covered: `projects/agent-kit/tests/git-guards.test.sh`.
+
+### SC-AK-1220 — a red or unfinished run on the tip refuses the merge
+
+Given the run on the tip of a request is red, or still going
+When the merge command is called
+Then the guard refuses and names the request and the state of the run
+
+Covered: `projects/agent-kit/tests/git-guards-readiness.test.sh`.
+
+### SC-AK-1222 — a green run and no run at all pass
+
+Given the run on the tip is green, or the request has no run at all
+When the merge command is called
+Then the guard says nothing about the run
+
+Covered: `projects/agent-kit/tests/git-guards-readiness.test.sh`.
+
 ### SC-AK-707 — a live task in the reason of an exception passes
 
 Given a pipeline step is declared an exception whose reason names a created task

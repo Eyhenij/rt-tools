@@ -21,7 +21,10 @@ Pattern of the rule `git-workflow`. What must be true — the law
 
 ## The PR is attached to the task
 
-The body starts with the link line — by it the board fills the linked PRs field. Reviewer,
+The body starts with the link line — by it the board fills the linked PRs field, and by it the task
+closes on the merge. The number in it is the branch's, copied rather than recalled; a tree that
+named the sample of the line in its profile, `RT_PULL_CLOSES_LINE`, gets the opening refused by the
+delivery guard without it. Reviewer,
 assignee and labels are set by the same command, and a PR does not open without them:
 
 ```bash

@@ -4,7 +4,7 @@ kind: pattern
 rule: git-workflow
 description: Pattern of rule git-workflow. Load when the PR body is written or edited — the Closes line and how the task closes when the base is not the main branch, reviewer, assignee and labels by the opening call, the four sections of the body. Opening the PR itself — pattern git-workflow-pr.
 ---
-<!-- rt-kit v0.30.1 · patterns/git-workflow-pr-body.github.md · 9ef1e0801ba4 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.30.1 · patterns/git-workflow-pr-body.github.md · b2cffe60e0d5 · правится надстройкой, не здесь -->
 
 # The PR body and the link to the task
 
@@ -22,7 +22,10 @@ Pattern of the rule `git-workflow`. What must be true — the law
 
 ## The PR is attached to the task
 
-The body starts with the link line — by it the board fills the linked PRs field. Reviewer,
+The body starts with the link line — by it the board fills the linked PRs field, and by it the task
+closes on the merge. The number in it is the branch's, copied rather than recalled; a tree that
+named the sample of the line in its profile, `RT_PULL_CLOSES_LINE`, gets the opening refused by the
+delivery guard without it. Reviewer,
 assignee and labels are set by the same command, and a PR does not open without them:
 
 ```bash
