@@ -44,6 +44,9 @@
   to `--rt-breadcrumbs-current-min` (120px), the crumb shrinks with an ellipsis and the row does not
   scroll. The decision is the pure function `rtBreadcrumbsFits`, taken by the same measurement that
   scrolls the row. Affected stage: 4.
+- On 10 October a live comparison showed that the application passes `›` as the separator. The
+  Presets story now draws a second path with that separator, so the material half shows the
+  application's case. The component is unchanged. Affected stage: 4.
 
 ## Steps
 

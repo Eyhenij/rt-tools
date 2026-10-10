@@ -59,9 +59,12 @@
     }
 
     @case ('presets') {
-        <app-story-presets caption="Путь с кнопкой «назад» в обоих наборах">
+        <app-story-presets caption="Путь с кнопкой «назад» и с разделителем приложения «›» в обоих наборах">
             <ng-template>
-                <rt-breadcrumbs [crumbs]="shortPath" [back]="true" />
+                <div style="display: grid; gap: 24px">
+                    <rt-breadcrumbs [crumbs]="shortPath" [back]="true" />
+                    <rt-breadcrumbs separator="›" [crumbs]="shortPath" [back]="true" />
+                </div>
             </ng-template>
         </app-story-presets>
     }
