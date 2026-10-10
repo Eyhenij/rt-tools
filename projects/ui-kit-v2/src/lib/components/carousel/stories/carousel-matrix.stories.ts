@@ -28,6 +28,15 @@ export const States: TStory = {
     parameters: { pseudo: storyPseudoParameters('.rt-carousel__card:nth-of-type(2)') },
 };
 
+/**
+ * Стопка размера приложения: двенадцать прав с подписями до сорока знаков, аббревиатурами и
+ * карточками без цвета. Открывается третья карточка — самая длинная подпись.
+ */
+export const Permissions: TStory = {
+    args: { part: 'permissions' },
+    parameters: { pseudo: storyPseudoParameters('.rt-carousel__card:nth-of-type(3)') },
+};
+
 export const Presets: TStory = { args: { part: 'presets' } };
 
 export const Themes: TStory = { args: { part: 'themes' } };

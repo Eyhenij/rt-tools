@@ -35,6 +35,18 @@
         </app-story-presets>
     }
 
+    @case ('permissions') {
+        <app-story-presets caption="Двенадцать прав с длинными подписями: закрыта и открыта самая длинная — в обоих наборах">
+            <ng-template>
+                <app-story-row slotWidth="44rem" [items]="permissionStates" [itemLabel]="stateLabel">
+                    <ng-template let-state>
+                        <rt-carousel [cards]="permissions" [attr.data-story-state]="state.state" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
     @case ('presets') {
         <app-story-presets caption="Стопка ролей в обоих наборах">
             <ng-template>

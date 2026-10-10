@@ -132,6 +132,9 @@
     /* Soft card-shadow в dark — насыщеннее для отделения от фона. */
     --rt-shadow-card-soft: 0 0 40px rgb(0 0 0 / 25%);
 
+    /* Тень стопки карточек в dark — чёрная: серая подложка на тёмном фоне светлее него. */
+    --rt-card-stack-shadow: var(--rt-shadow-card-stack-dark);
+
     /* Hover-overlay инвертирован для dark (light overlay поверх тёмного фона). */
     --rt-input-color-bg-hover: var(--rt-overlay-white-8);
     --rt-icon-button-color-bg-hover: var(--rt-overlay-white-4);

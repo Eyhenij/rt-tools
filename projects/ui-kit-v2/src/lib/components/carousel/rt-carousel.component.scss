@@ -28,12 +28,14 @@
         align-items: center;
         isolation: isolate;
 
-        /* Материальный набор повторяет стопку приложения: карточки с малым скруглением и большой
-           тенью, подпись обычного начертания с заглавной буквы каждого слова, движение медленнее.
-           Шага 300 у начертания в ките нет — ближайший обычный. */
+        /* Материальный набор повторяет стопку приложения: карточки с малым скруглением и плотной
+           серой тенью, тёмная подпись цвета текста Material, подпись обычного начертания с
+           заглавной буквы каждого слова, движение медленнее. Шага 300 у начертания в ките нет —
+           ближайший обычный. */
         :is(.rt-preset-material, [data-preset='material']) & {
             --rt-carousel-card-radius: var(--rt-radius-sm);
-            --rt-carousel-card-shadow: var(--rt-shadow-lg);
+            --rt-carousel-card-shadow: var(--rt-card-stack-shadow);
+            --rt-carousel-tone-dark: var(--rt-mat-neutral-100);
             --rt-carousel-label-weight: var(--rt-font-weight-regular);
             --rt-carousel-label-transform: capitalize;
             --rt-carousel-duration: calc(var(--rt-duration-base) * 1.5);

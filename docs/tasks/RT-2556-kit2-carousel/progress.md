@@ -31,6 +31,16 @@
 - Row 133 of the application came in the middle of the work and went into PR #2748; the carousel
   work was set aside by a named stash and restored after the merge. Affected stage: 2.
 
+- On 10 October the stories were compared with the application's code at the owner's word «сравни
+  сторис перенесенных компонентов с их использованием». The material preset took the application's
+  dense grey card shadow, black in the dark theme, through a new assignment `--rt-card-stack-shadow`
+  on two scale steps, and the dark label took the Material text colour. A new story Permissions
+  shows a stack of the application's size: twelve cards, labels up to forty characters,
+  abbreviations and cards without colour. The application lowers all but the first letter of a
+  word ("AI" becomes "Ai"); the kit keeps the case of the rest, and the divergence is named to the
+  owner. The application's absolute host in a table cell is not carried over: the kit stack sizes
+  itself by its cards. Affected stage: 4.
+
 ## Steps
 
 - `[x]` done · `[>]` going on right now · `[ ]` not begun

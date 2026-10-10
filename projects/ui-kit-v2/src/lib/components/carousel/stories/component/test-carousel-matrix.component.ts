@@ -14,7 +14,7 @@ import { IRtCarousel } from '../../rt-carousel.model';
 import { RtCarouselComponent } from '../../rt-carousel.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TCarouselMatrixPart = 'cards' | 'colors' | 'states' | 'presets' | 'themes';
+export type TCarouselMatrixPart = 'cards' | 'colors' | 'states' | 'permissions' | 'presets' | 'themes';
 
 interface ICarouselCase {
     readonly name: string;
@@ -29,6 +29,25 @@ const ROLES: readonly IRtCarousel.Card[] = [
     { label: 'Support live chat', color: '#8e24aa' },
     { label: 'Reports', color: '#fb8c00' },
     { label: 'Viewer' },
+];
+
+/**
+ * Права записи в размере приложения: стопка длиннее ячейки, подписи до сорока знаков,
+ * аббревиатуры и права без цвета вперемешку с цветными.
+ */
+const PERMISSIONS: readonly IRtCarousel.Card[] = [
+    { label: 'AI', color: '#e53935' },
+    { label: 'MDM', color: '#8e24aa' },
+    { label: 'Visualization export to spreadsheet files', color: '#3949ab' },
+    { label: 'F&B', color: '#00897b' },
+    { label: 'Revenue dashboards', color: '#fdd835' },
+    { label: 'Budget planning' },
+    { label: '(Light) Visualization limit tabs 10', color: '#6d4c41' },
+    { label: 'User management', color: '#1e88e5' },
+    { label: 'Forecast', color: '#c0ca33' },
+    { label: 'Reports' },
+    { label: 'Segments', color: '#f4511e' },
+    { label: 'Workspaces', color: '#546e7a' },
 ];
 
 /**
@@ -57,6 +76,7 @@ export class TestRtCarouselMatrixComponent {
     public part: TCarouselMatrixPart = 'cards';
 
     public readonly roles: readonly IRtCarousel.Card[] = ROLES.slice(0, 4);
+    public readonly permissions: readonly IRtCarousel.Card[] = PERMISSIONS;
 
     public readonly cardsCases: readonly ICarouselCase[] = [
         { name: 'одна карточка', cards: ROLES.slice(0, 1) },
@@ -89,6 +109,7 @@ export class TestRtCarouselMatrixComponent {
     ];
 
     public readonly states: readonly IStoryState[] = [STORY_STATE_DEFAULT, STORY_STATE_HOVER, STORY_STATE_FOCUS_VISIBLE];
+    public readonly permissionStates: readonly IStoryState[] = [STORY_STATE_DEFAULT, STORY_STATE_HOVER];
     public readonly stateLabel: (value: IStoryState) => string = storyStateLabel;
 
     /** Подпись случая: у всех наборов этой матрицы имя лежит в одном поле. */

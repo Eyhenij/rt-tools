@@ -23,6 +23,7 @@ export type TRtDesignTokenName =
     | '--rt-brand-950'
     | '--rt-btn-tint-active'
     | '--rt-btn-tint-hover'
+    | '--rt-card-stack-shadow'
     | '--rt-charcoal-700'
     | '--rt-charcoal-800'
     | '--rt-charcoal-900'
@@ -462,6 +463,8 @@ export type TRtDesignTokenName =
     | '--rt-radius-xs'
     | '--rt-shadow-card'
     | '--rt-shadow-card-soft'
+    | '--rt-shadow-card-stack'
+    | '--rt-shadow-card-stack-dark'
     | '--rt-shadow-dialog'
     | '--rt-shadow-focus-ring'
     | '--rt-shadow-focus-ring-danger'
@@ -745,6 +748,7 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-brand-950',
     '--rt-btn-tint-active',
     '--rt-btn-tint-hover',
+    '--rt-card-stack-shadow',
     '--rt-charcoal-700',
     '--rt-charcoal-800',
     '--rt-charcoal-900',
@@ -1184,6 +1188,8 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-radius-xs',
     '--rt-shadow-card',
     '--rt-shadow-card-soft',
+    '--rt-shadow-card-stack',
+    '--rt-shadow-card-stack-dark',
     '--rt-shadow-dialog',
     '--rt-shadow-focus-ring',
     '--rt-shadow-focus-ring-danger',
