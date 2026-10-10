@@ -10,7 +10,18 @@
             [branchMarks]="c.branchMarks"
             [searchTerm]="c.searchTerm"
             [disabled]="c.disabled"
-            [selectAll]="c.selectAll" />
+            [selectAll]="c.selectAll">
+            @if (c.slots) {
+                <ng-template rtTreeSelectorUnderSearch>
+                    <span style="font-size: 12px; color: var(--rt-color-text-muted)">Показатели за выбранный период</span>
+                </ng-template>
+                <ng-template rtTreeNodeEnd let-node>
+                    @if (!node.children) {
+                        <rt-tag size="sm" severity="info" [value]="node.value" />
+                    }
+                </ng-template>
+            }
+        </rt-hybrid-tree-selector>
     </div>
 </ng-template>
 
@@ -31,6 +42,18 @@
         <app-story-presets>
             <ng-template>
                 <app-story-row caption="Поиск по каждому слову" [items]="searchCases" [itemLabel]="caseLabel">
+                    <ng-template let-c>
+                        <ng-container [ngTemplateOutlet]="cell" [ngTemplateOutletContext]="{ $implicit: c }" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('material') {
+        <app-story-presets caption="Вид приложения: плашка числа, разметка под поиском и в строках">
+            <ng-template>
+                <app-story-row caption="Материальный набор против своего" [items]="materialCases" [itemLabel]="caseLabel">
                     <ng-template let-c>
                         <ng-container [ngTemplateOutlet]="cell" [ngTemplateOutletContext]="{ $implicit: c }" />
                     </ng-template>

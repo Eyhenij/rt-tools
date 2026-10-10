@@ -36,6 +36,28 @@ export const States: TStory = {
     },
 };
 
+/**
+ * Материальный вид приложения рядом со своим — SC-UKV-843, SC-UKV-844. Указатель наведён на
+ * «Финансы» аддоном состояний; строку подсвечивает стрелка вниз на дереве, и в материальном наборе
+ * у обеих видна ручка. Черта места сброса живёт только во время перетаскивания: кадр её не держит.
+ */
+export const Material: TStory = {
+    args: { part: 'material' },
+    parameters: {
+        pseudo: { hover: "[data-story-case='hover'] .rt-draggable-tree__row[data-value='finance']" },
+    },
+    play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
+        const trees: HTMLElement[] = Array.from(canvasElement.querySelectorAll<HTMLElement>("[data-story-case='highlight']"));
+        if (trees.length === 0) {
+            throw new Error('Material: нет дерева с признаком «highlight»');
+        }
+        trees.forEach((tree: HTMLElement): void => {
+            tree.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true, cancelable: true }));
+        });
+        await new Promise<void>((done: () => void): number => requestAnimationFrame((): void => done()));
+    },
+};
+
 export const Presets: TStory = { args: { part: 'presets' } };
 
 export const Themes: TStory = { args: { part: 'themes' } };

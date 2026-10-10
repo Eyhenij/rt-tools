@@ -50,6 +50,7 @@
         --rt-draggable-tree-row-gap: var(--rt-space-sm);
         --rt-draggable-tree-row-spacing: var(--rt-space-0);
         --rt-draggable-tree-row-min-height: auto;
+        --rt-draggable-tree-row-box-sizing: content-box;
         --rt-draggable-tree-row-radius: var(--rt-radius-none);
         --rt-draggable-tree-row-bg: var(--rt-color-bg-surface);
         --rt-draggable-tree-row-bg-hover: var(--rt-color-bg-hover);
@@ -63,6 +64,7 @@
 
         position: relative;
         display: flex;
+        box-sizing: var(--rt-draggable-tree-row-box-sizing);
         align-items: center;
         padding: var(--rt-draggable-tree-row-padding-block) var(--rt-draggable-tree-row-padding-inline);
         border-radius: var(--rt-draggable-tree-row-radius);
@@ -93,6 +95,7 @@
             --rt-draggable-tree-row-gap: calc(var(--rt-space-2) + var(--rt-space-0-5));
             --rt-draggable-tree-row-spacing: calc(var(--rt-space-1) + var(--rt-space-0-5) / 2);
             --rt-draggable-tree-row-min-height: var(--rt-size-8);
+            --rt-draggable-tree-row-box-sizing: border-box;
             --rt-draggable-tree-row-radius: var(--rt-radius-md);
             --rt-draggable-tree-row-shadow-hover: var(--rt-mat-shadow-level-2);
             --rt-draggable-tree-handle-opacity: 0;

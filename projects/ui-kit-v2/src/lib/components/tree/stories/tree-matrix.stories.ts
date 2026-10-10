@@ -55,6 +55,12 @@ export const States: TStory = {
     },
 };
 
+/**
+ * Материальный вид приложения рядом со своим: строка 32px со скруглением, отступ 46px с линией,
+ * стрелка и флажок основного цвета, совпадение на жёлтом, пустота со значком — SC-UKV-835, SC-UKV-837.
+ */
+export const Material: TStory = { args: { part: 'material' } };
+
 export const Presets: TStory = { args: { part: 'presets' } };
 
 export const Themes: TStory = { args: { part: 'themes' } };

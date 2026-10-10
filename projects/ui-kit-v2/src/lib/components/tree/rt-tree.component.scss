@@ -13,6 +13,7 @@
         --rt-tree-row-gap: var(--rt-space-sm);
         --rt-tree-row-spacing: var(--rt-space-0);
         --rt-tree-row-min-height: auto;
+        --rt-tree-row-box-sizing: content-box;
         --rt-tree-row-radius: var(--rt-radius-none);
         --rt-tree-row-bg-hover: var(--rt-color-bg-hover);
         --rt-tree-row-bg-highlighted: var(--rt-color-bg-hover);
@@ -23,6 +24,7 @@
         --rt-tree-toggle-color: var(--rt-neutral-600);
         --rt-tree-leaf-space-display: inline-flex;
         --rt-tree-check-size: calc(var(--rt-size-4) + var(--rt-space-0-5));
+        --rt-tree-check-border-color: var(--rt-color-border-strong);
         --rt-tree-match-bg: var(--rt-yellow-400);
         --rt-tree-match-color: var(--rt-neutral-950);
         --rt-tree-match-radius: var(--rt-radius-xs);
@@ -61,7 +63,9 @@
            бокам и 5px до следующей; между стрелкой или отметкой и подписью 10px; уровень отступает на
            46px, и под стрелкой предка идёт линия; у листа нет места под стрелку. Стрелка, флажок и
            плашка счётчика — основного цвета темы, флажок 16px, совпадение — полужирное на жёлтом
-           первого кита, «выбрать всё» — 14px средней насыщенности. */
+           первого кита, «выбрать всё» — 14px средней насыщенности. 32px — внешняя высота строки,
+           поэтому строка считается с полями; квадрат флажка задан без рамки — 14px внутри, 16px
+           снаружи. */
         :is(.rt-preset-material, [data-preset='material']) & {
             --rt-tree-indent: calc(var(--rt-size-12) - var(--rt-space-0-5));
             --rt-tree-row-padding-block: var(--rt-space-1);
@@ -69,11 +73,13 @@
             --rt-tree-row-gap: calc(var(--rt-space-2) + var(--rt-space-0-5));
             --rt-tree-row-spacing: calc(var(--rt-space-1) + var(--rt-space-0-5) / 2);
             --rt-tree-row-min-height: var(--rt-size-8);
+            --rt-tree-row-box-sizing: border-box;
             --rt-tree-row-radius: var(--rt-radius-ms);
             --rt-tree-guide-color: var(--mat-sys-outline-variant, var(--rt-color-border-subtle));
             --rt-tree-toggle-color: var(--rt-color-action-primary);
             --rt-tree-leaf-space-display: none;
-            --rt-tree-check-size: var(--rt-size-4);
+            --rt-tree-check-size: calc(var(--rt-size-4) - 2 * var(--rt-input-border-width));
+            --rt-tree-check-border-color: var(--rt-mat-neutral-40);
             --rt-tree-match-bg: var(--rt-mat-yellow-100);
             --rt-tree-match-font-weight: var(--rt-font-weight-semibold);
             --rt-tree-count-bg: var(--rt-color-action-primary);
@@ -100,6 +106,7 @@
             --rt-tree-level: 0;
 
             display: flex;
+            box-sizing: var(--rt-tree-row-box-sizing);
             align-items: center;
             padding: var(--rt-tree-row-padding-block) var(--rt-tree-row-padding-inline);
             border-radius: var(--rt-tree-row-radius);
@@ -214,6 +221,7 @@
            объявленное по имени тега. Умолчание дерева равно размеру самого флажка. */
         &__check {
             --rt-checkbox-box-size: var(--rt-tree-check-size);
+            --rt-checkbox-box-border-color: var(--rt-tree-check-border-color);
 
             flex-shrink: 0;
             margin: 0;

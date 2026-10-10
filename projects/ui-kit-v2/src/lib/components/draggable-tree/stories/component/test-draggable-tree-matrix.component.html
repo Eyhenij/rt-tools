@@ -44,6 +44,23 @@
         </app-story-presets>
     }
 
+    @case ('material') {
+        <app-story-presets caption="Вид приложения: тень и ручка под указателем, подсвеченная строка, пустота со значком">
+            <ng-template>
+                <app-story-row caption="Материальный набор против своего" [items]="materialCases" [itemLabel]="caseLabel">
+                    <ng-template let-c>
+                        <rt-draggable-tree
+                            style="width: 320px"
+                            [ariaLabel]="c.name"
+                            [attr.data-story-case]="c.key ?? null"
+                            [emptyIcon]="c.emptyIcon ?? null"
+                            [nodes]="c.nodes" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
     @case ('presets') {
         <app-story-presets caption="Перетаскиваемое дерево в обоих наборах">
             <ng-template>
