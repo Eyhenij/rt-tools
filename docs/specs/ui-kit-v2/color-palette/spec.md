@@ -51,7 +51,8 @@ disabled look. The kit has no such part, and a third-party package does not go i
   `--rt-color-palette-*` property, and without them the palette draws the kit look.**
 - **The material preset draws the application's look by the same properties, without Material
   packages: borderless swatches of 30 points with gaps of 10, a hollow ring on the chosen one, and a
-  swatch that grows under the pointer.**
+  swatch that grows under the pointer.** The custom swatch stands on the row of its grey button, 16
+  points below the grid. The picker is 256 by 320 points with a dense grey shadow.
 
 ## What is out of scope
 
@@ -121,3 +122,6 @@ None.
 ## History of changes
 
 - 9 October 2026 — written by the task RT-2555 of the epic RT-2542.
+- 10 October 2026 — after a live comparison with the application, the material preset moves the
+  custom swatch onto the row of its button and draws the picker at the application's size and
+  shadow.

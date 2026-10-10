@@ -46,6 +46,15 @@
   borderless swatches with gaps of 10 and a hollow 3-point ring.
 - The test host keeps its inputs in signals: a plain field changed on an OnPush host never reached
   the palette.
+- By the live comparison the material preset took the application's layout. The custom swatch is
+  drawn on the row of its button by absolute placement and stays in the radio group, so the keys and
+  the screen reader keep their order. The template is unchanged. The button is 16 points below the
+  grid, grey `--mat-sys-on-surface-variant` at 16/400. The picker is 256 by 320 with the shadow
+  `0 8px 16px` of `--rt-mat-neutral-60`, and its area takes the free height. New properties
+  `--rt-color-palette-custom-gap`, `--rt-color-palette-picker-height` and
+  `--rt-color-palette-area-grow` keep the former values by default. Measured on :6007: the button
+  stands 16 points below the grid, the swatch is centred on its row, the picker is 256 by 320.
+  Affected stage: 4.
 
 ## Live comparison of the epic's components, 10 October — what the next session fixes first
 

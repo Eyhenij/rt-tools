@@ -22,15 +22,20 @@
         --rt-color-palette-readonly-border-width: var(--rt-border-width-thin);
         --rt-color-palette-empty-border-color: var(--rt-color-border-default);
         --rt-color-palette-duration: var(--rt-duration-fast);
+        --rt-color-palette-custom-gap: var(--rt-color-palette-gap);
 
         display: flex;
         flex-direction: column;
         align-items: flex-start;
-        gap: var(--rt-color-palette-gap);
+        gap: var(--rt-color-palette-custom-gap);
 
         /* Материальный набор повторяет образцы приложения: круги 30px без рамки через 10px, выбранный —
-           полое кольцо 3px своего цвета со свечением 5px, круг под указателем растёт. */
+           полое кольцо 3px своего цвета со свечением 5px, круг под указателем растёт. Кнопка своего
+           цвета стоит в 16px под сеткой, серая 16/400, а свой образец — в её строке слева. */
         :is(.rt-preset-material, [data-preset='material']) & {
+            --rt-color-palette-custom-gap: var(--rt-space-md);
+            --rt-color-palette-custom-height: var(--rt-control-height-sm);
+            --rt-color-palette-custom-color: var(--mat-sys-on-surface-variant, var(--rt-color-text-muted));
             --rt-color-palette-swatch-size: calc(var(--rt-size-8) - var(--rt-space-2xs));
             --rt-color-palette-swatch-border-width: 0px;
             --rt-color-palette-swatch-scale-hover: 1.2;
@@ -111,6 +116,31 @@
         &--disabled &__swatch {
             cursor: not-allowed;
             opacity: var(--rt-opacity-disabled);
+        }
+
+        /* Материальный ряд своего цвета, как в приложении: свой образец уходит из сетки в строку
+           кнопки и встаёт слева от неё по середине её высоты. Порядок образцов для клавиш и чтения
+           экрана прежний — образец остаётся в группе, сдвинут только его рисунок. */
+        :is(.rt-preset-material, [data-preset='material']) &:has(.rt-color-palette__custom) {
+            position: relative;
+
+            .rt-color-palette__swatch--custom {
+                position: absolute;
+                inset-block-end: calc((var(--rt-color-palette-custom-height) - var(--rt-color-palette-swatch-size)) / 2);
+                inset-inline-start: 0;
+            }
+        }
+
+        :is(.rt-preset-material, [data-preset='material']) &:has(.rt-color-palette__swatch--custom) .rt-color-palette__custom {
+            margin-inline-start: calc(var(--rt-color-palette-swatch-size) + var(--rt-color-palette-gap));
+        }
+
+        :is(.rt-preset-material, [data-preset='material']) & .rt-color-palette__custom {
+            --rt-btn-height: var(--rt-color-palette-custom-height);
+            --rt-btn-color: var(--rt-color-palette-custom-color);
+            --rt-btn-font-size: var(--rt-text-md);
+
+            font-weight: var(--rt-font-weight-regular);
         }
     }
 }

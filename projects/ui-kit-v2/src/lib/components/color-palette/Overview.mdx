@@ -51,7 +51,9 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 правилом на этот блок. Панель своего цвета живёт в оверлее и объявляет свои свойства на себе.
 
 Материальный набор повторяет образцы приложения: круги 30px без рамки через 10px, выбранный — полое
-кольцо 3px своего цвета со свечением 5px, круг под указателем растёт. Панель получает скругление 6px.
+кольцо 3px своего цвета со свечением 5px, круг под указателем растёт. Кнопка своего цвета стоит в
+16px под сеткой, серая (`--mat-sys-on-surface-variant`) 16/400, а свой образец — в её строке слева.
+Панель — 256×320 со скруглением 6px и тенью `0 8px 16px` серого цвета.
 
 | свойство                                   | что задаёт                           | умолчание                   |
 | ------------------------------------------ | ------------------------------------ | --------------------------- |
@@ -71,7 +73,10 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | `--rt-color-palette-readonly-border-width` | рамка образца только для чтения      | `--rt-border-width-thin`    |
 | `--rt-color-palette-empty-border-color`    | рамка пустого образца                | `--rt-color-border-default` |
 | `--rt-color-palette-duration`              | смена кольца и роста                 | `--rt-duration-fast`        |
+| `--rt-color-palette-custom-gap`            | от сетки до кнопки своего цвета      | `--rt-color-palette-gap`    |
 | `--rt-color-palette-picker-width`          | ширина панели своего цвета           | `--rt-size-64`              |
+| `--rt-color-palette-picker-height`         | высота панели своего цвета           | `auto`                      |
+| `--rt-color-palette-area-grow`             | доля свободной высоты у площади      | `0`                         |
 | `--rt-color-palette-picker-padding`        | поля панели                          | `--rt-space-md`             |
 | `--rt-color-palette-picker-radius`         | скругление панели                    | `--rt-radius-md`            |
 | `--rt-color-palette-picker-shadow`         | тень панели                          | `--rt-shadow-md`            |

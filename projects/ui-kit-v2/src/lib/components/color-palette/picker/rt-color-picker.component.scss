@@ -8,6 +8,8 @@
 
     .rt-color-picker {
         --rt-color-palette-picker-width: var(--rt-size-64);
+        --rt-color-palette-picker-height: auto;
+        --rt-color-palette-area-grow: 0;
         --rt-color-palette-picker-padding: var(--rt-space-md);
         --rt-color-palette-picker-gap: var(--rt-space-sm);
         --rt-color-palette-picker-bg: var(--rt-color-bg-surface);
@@ -34,6 +36,7 @@
 
         display: flex;
         width: var(--rt-color-palette-picker-width);
+        height: var(--rt-color-palette-picker-height);
         box-sizing: border-box;
         flex-direction: column;
         padding: var(--rt-color-palette-picker-padding);
@@ -42,10 +45,14 @@
         box-shadow: var(--rt-color-palette-picker-shadow);
         gap: var(--rt-color-palette-picker-gap);
 
-        /* Материальный набор повторяет панель приложения: скругление панели 6px, площадь почти
-           прямоугольная. Тень остаётся: без неё панель над страницей не отделена ничем. */
+        /* Материальный набор повторяет панель приложения: 256×320 со скруглением 6px, площадь почти
+           прямоугольная и забирает высоту, оставшуюся от полосы и кнопок. Тень — плотная серая
+           подложка `0 8px 16px` приложения. */
         :is(.rt-preset-material, [data-preset='material']) & {
+            --rt-color-palette-picker-height: calc(var(--rt-size-64) + var(--rt-size-16));
+            --rt-color-palette-area-grow: 1;
             --rt-color-palette-picker-radius: var(--rt-radius-ms);
+            --rt-color-palette-picker-shadow: 0 var(--rt-space-2) var(--rt-space-4) 0 var(--rt-mat-neutral-60);
             --rt-color-palette-area-radius: var(--rt-radius-xs);
         }
 
@@ -53,6 +60,7 @@
         &__area {
             position: relative;
             height: var(--rt-color-palette-area-height);
+            flex-grow: var(--rt-color-palette-area-grow);
             border-radius: var(--rt-color-palette-area-radius);
             background: var(--rt-color-picker-area);
             cursor: crosshair;
