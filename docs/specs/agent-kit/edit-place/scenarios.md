@@ -250,3 +250,14 @@ Then the path from the quote is named by nothing, and the target standing before
 as before
 
 Covered: `projects/agent-kit/tests/shell-write-paths.test.sh`.
+
+### SC-AK-1209 — a path inside a written or substituted string is not a write target
+
+Given the command is a script that opens a work file for writing and substitutes a line whose text
+names the path of another file
+When the shared parse takes the write targets out of the command text
+Then the path from the text of the line is named by nothing, and the path the script opens is named
+as before; the same holds for the data of `write`, `write_text` and `writeFileSync`, while the paths
+of `os.replace` and of the receiver of `write_text` stay
+
+Covered: `projects/agent-kit/tests/shell-write-paths.test.sh`.

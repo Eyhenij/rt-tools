@@ -78,6 +78,22 @@ describe('разбор предложений', (): void => {
         expect(again.map((entry: IProposal): string => entry.sent)).toEqual(['https://example.test/1', 'https://example.test/2']);
     });
 
+    it('SC-AK-1210 — отбитый второй раз по той же причине блок остаётся с одной пометкой', (): void => {
+        const why: string = 'цитаты нет в «rules/styling-bem.md»';
+        const once: string = markSent(text, parseProposals(text, FILE)[0], why, 'отбито');
+        const twice: string = markSent(once, parseProposals(once, FILE)[0], why, 'отбито');
+
+        expect(twice).toBe(once);
+        expect(twice.split('\n').filter((line: string): boolean => line.startsWith('- **отбито:**'))).toHaveLength(1);
+    });
+
+    it('SC-AK-1210 — другая причина отбоя в тот же блок записывается', (): void => {
+        const once: string = markSent(text, parseProposals(text, FILE)[0], 'первая причина', 'отбито');
+        const twice: string = markSent(once, parseProposals(once, FILE)[0], 'вторая причина', 'отбито');
+
+        expect(twice.split('\n').filter((line: string): boolean => line.startsWith('- **отбито:**'))).toHaveLength(2);
+    });
+
     it('SC-AK-140 — готовый текст правки пометкой не рвётся', (): void => {
         let marked: string = text;
         for (const [index, proposal] of parseProposals(text, FILE).entries()) {

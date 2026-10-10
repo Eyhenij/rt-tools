@@ -66,4 +66,28 @@ report "SC-AK-1140 — цитата внутри тела целью не счи
 report "SC-AK-1140 — цель перед телом названа по-прежнему" \
     "$(names "$QUOTED" 'docs/a.md')" 1
 
+# Путь внутри строки, которую скрипт пишет или подставляет, — содержимое записи, а не её цель.
+# Скрипт правил файл хода работы, и в новой строке стояло имя разложенной копии образца: строка
+# `replace(` читалась записью, и команду отбивала копия, которой скрипт не касался.
+REPLACED="$(printf "python3 - <<'PY'\np = 'docs/tasks/x/progress.md'\ns = open(p).read()\ns = s.replace('old', 'new line with .claude/skills/doc-style-human/SKILL.md')\nopen(p, 'w').write(s)\nPY\n")"
+report "SC-AK-1209 — подставляемый текст путей не отдаёт" \
+    "$(names "$REPLACED" '.claude/skills/doc-style-human/SKILL.md')" 0
+report "SC-AK-1209 — путь записи через переменную назван по-прежнему" \
+    "$(names "$REPLACED" 'docs/tasks/x/progress.md')" 1
+WRITTEN="$(printf "python3 - <<'PY'\nf = open('docs/a.md', 'w')\nf.write('see tools/other.md')\nPY\n")"
+report "SC-AK-1209 — записываемая строка путей не отдаёт" \
+    "$(names "$WRITTEN" 'tools/other.md')" 0
+report "SC-AK-1209 — путь открытия назван по-прежнему" \
+    "$(names "$WRITTEN" 'docs/a.md')" 1
+report "SC-AK-1209 — данные записи в коде аргумента путей не отдают" \
+    "$(names 'node -e '"'"'require("fs").writeFileSync("docs/a.md", "see tools/other.md")'"'"'' 'tools/other.md')" 0
+report "SC-AK-1209 — путь вызова записи в коде аргумента назван" \
+    "$(names 'node -e '"'"'require("fs").writeFileSync("docs/a.md", "see tools/other.md")'"'"'' 'docs/a.md')" 1
+PATHLIB="$(printf "python3 - <<'PY'\nfrom pathlib import Path\nPath('docs/a.md').write_text('x')\nPY\n")"
+report "SC-AK-1209 — путь перед write_text назван по-прежнему" \
+    "$(names "$PATHLIB" 'docs/a.md')" 1
+OSREPLACE="$(printf "python3 - <<'PY'\nimport os\nos.replace('docs/a.tmp', 'docs/a.md')\nPY\n")"
+report "SC-AK-1209 — os.replace целью называет конец переноса" \
+    "$(names "$OSREPLACE" 'docs/a.md')" 1
+
 suite_result "разбор путей записи из текста команды"

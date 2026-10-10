@@ -163,6 +163,13 @@ the merge, not after.
 - **The creating of a task ends with an answer of the work queue, not with the output of the
   command.** After the fourth step the command asks the queue by the number and prints what it read; a
   printed number means "the call went through", not "the task is visible to whoever works on it".
+- **The card is read by a direct request to the task, not out of the list of the whole board.** The
+  list took three seconds on two hundred cards, the direct request under one, and the column comes
+  in the same answer.
+- **«NO» is printed only after the window of waiting, and the line names how long the command
+  waited.** The queue hands a new card back after seconds: with three readings in twelve seconds one
+  creation in six printed «NO» for a card that then stood on the board with its executor, and the
+  executor added it a second time. The pauses grow, about thirty seconds in all.
 - **A task that is not in the work queue ends the command of creating with a non-zero code.** It is
   not provided with work: nobody will come for it, and silence here costs more than a refusal.
 - **A task without an executor is named by a line of its own.** A nobody's task stands in the queue
@@ -222,6 +229,11 @@ the merge, not after.
   different things: the first is launched, the second is read by the journal and fixed. Four merges in
   a row went away on top of a breakage the first one brought, and production stood for almost two
   hours.
+- **The last successful rollout is looked for among the latest runs, not by the status filter of the
+  hosting.** The filter is counted by a separate index that lags: the same request returned a
+  month-old run and yesterday's one within a minute, and the audit three times a day named a lag of
+  hundreds of commits that did not exist. The twenty latest runs come without the filter, and the
+  first successful one is taken.
 - **A rollout in progress does not count as a divergence.** It may still end in success, and a turn
   refused by it pays for a state that will be gone in a minute.
 - **A tree that named no mark or no directory of the lines gets silence, not a refusal.** There will be
