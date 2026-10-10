@@ -92,14 +92,33 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 Строку в руке CDK выносит в конец страницы, поэтому свойства строки объявлены на самой строке.
 
-| свойство                             | что задаёт                   | умолчание                   |
-| ------------------------------------ | ---------------------------- | --------------------------- |
-| `--rt-draggable-tree-focus-shadow`   | кольцо фокуса дерева         | `--rt-shadow-focus-ring`    |
-| `--rt-draggable-tree-indent`         | шаг отступа на уровень       | `--rt-space-lg`             |
-| `--rt-draggable-tree-mark-width`     | толщина черты и рамки сброса | `--rt-border-width-thick`   |
-| `--rt-draggable-tree-mark-color`     | цвет черты и рамки сброса    | `--rt-color-action-primary` |
-| `--rt-draggable-tree-mark-radius`    | скругление рамки «внутрь»    | `--rt-radius-xs`            |
-| `--rt-draggable-tree-preview-shadow` | тень строки в руке           | `--rt-shadow-md`            |
+Умолчание — вид кита. Материальный набор (`.rt-preset-material` или `data-preset="material"` на
+корне страницы — строка в руке ищет признак там) переназначает часть свойств по перетаскиваемому
+дереву приложения, без пакетов Material.
+
+| свойство                                 | что задаёт                     | умолчание                   | материальный набор          |
+| ---------------------------------------- | ------------------------------ | --------------------------- | --------------------------- |
+| `--rt-draggable-tree-focus-shadow`       | кольцо фокуса дерева           | `--rt-shadow-focus-ring`    | —                           |
+| `--rt-draggable-tree-indent`             | шаг отступа на уровень         | `--rt-space-lg`             | 46px                        |
+| `--rt-draggable-tree-row-padding-block`  | поле строки сверху и снизу     | `--rt-space-sm`             | `--rt-space-1`              |
+| `--rt-draggable-tree-row-padding-inline` | поле строки по бокам           | `--rt-space-md`             | 12px                        |
+| `--rt-draggable-tree-row-gap`            | зазор ручки, стрелки и подписи | `--rt-space-sm`             | 10px                        |
+| `--rt-draggable-tree-row-spacing`        | зазор между строками           | `--rt-space-0`              | 5px                         |
+| `--rt-draggable-tree-row-min-height`     | наименьшая высота строки       | `auto`                      | `--rt-size-8`               |
+| `--rt-draggable-tree-row-radius`         | скругление строки              | `--rt-radius-none`          | `--rt-radius-md`            |
+| `--rt-draggable-tree-row-bg`             | фон строки                     | `--rt-color-bg-surface`     | —                           |
+| `--rt-draggable-tree-row-bg-hover`       | фон строки под указателем      | `--rt-color-bg-hover`       | —                           |
+| `--rt-draggable-tree-row-shadow-hover`   | тень строки под указателем     | `none`                      | `--rt-mat-shadow-level-2`   |
+| `--rt-draggable-tree-handle-opacity`     | ручка вне наведения            | `1`                         | `0`                         |
+| `--rt-draggable-tree-toggle-color`       | цвет стрелки ветки             | `--rt-neutral-600`          | `--rt-color-action-primary` |
+| `--rt-draggable-tree-mark-width`         | толщина черты и рамки сброса   | `--rt-border-width-thick`   | `--rt-border-width-medium`  |
+| `--rt-draggable-tree-mark-color`         | цвет черты и рамки сброса      | `--rt-color-action-primary` | —                           |
+| `--rt-draggable-tree-mark-radius`        | скругление рамки «внутрь»      | `--rt-radius-xs`            | —                           |
+| `--rt-draggable-tree-preview-shadow`     | тень строки в руке             | `--rt-shadow-md`            | —                           |
+| `--rt-draggable-tree-empty-color`        | цвет пустого состояния         | `--rt-color-text-muted`     | —                           |
+| `--rt-draggable-tree-empty-gap`          | зазор значка и подписи пустоты | `--rt-space-sm`             | —                           |
+
+Под указателем, на подсвеченной строке и на строке в руке ручка видна всегда.
 
 Длинная подпись обрезается многоточием, полный текст — в подсказке кита. При `pointer: coarse`
 строка вырастает до `--rt-control-height-lg`.
@@ -112,6 +131,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | `open`      | `ReadonlyArray<T> \| null`            | `null`     |
 | `canDrop`   | `IRtDraggableTree.CanDrop<T> \| null` | `null`     |
 | `ariaLabel` | `string \| null`                      | `null`     |
+| `emptyIcon` | `IRtIcon.Name \| null`                | `null`     |
 
 ## Выходы
 

@@ -31,3 +31,7 @@ the tree, or the tree holds what the spec is silent about.
 - **A row takes the application's content under its label too.** — `projects/ui-kit-v2/src/lib/components/tree/rt-tree.directives.ts:RtTreeNodeMetaDirective`. Scenario `SC-UKV-671`
 - **A row takes the application's content at its end.** — `projects/ui-kit-v2/src/lib/components/tree/rt-tree.directives.ts:RtTreeNodeEndDirective`. Scenario `SC-UKV-650`
 - **An empty tree says so.** — `projects/ui-kit-v2/src/lib/components/tree/rt-tree.component.ts:emptyText`. Scenario `SC-UKV-651`
+- **An empty tree shows the application's icon above its text when asked.** — `projects/ui-kit-v2/src/lib/components/tree/rt-tree.component.ts:emptyIcon`. Scenario `SC-UKV-835`
+- **The row templates come by inputs as well as by directives.** — `projects/ui-kit-v2/src/lib/components/tree/rt-tree.component.ts:endTemplate` — and `metaTemplate` next to it, each the input before the directive. Scenario `SC-UKV-836`
+- **Every visual value of the tree is a property of its block, and its default is the kit look.** — `projects/ui-kit-v2/src/lib/components/tree/rt-tree.component.scss:rt-tree-row-radius` — declared on the block with the other `--rt-tree-*` properties. Scenario `SC-UKV-837`
+- **Under the material preset the tree draws the application's rows, without a Material package.** — `projects/ui-kit-v2/src/lib/components/tree/rt-tree.component.scss:rt-preset-material` — the block reassigns only `--rt-tree-*` and the checkbox box size. Scenario `SC-UKV-837`

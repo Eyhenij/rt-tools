@@ -5,7 +5,12 @@
     -->
     <!-- eslint-disable @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
     @if (isSelectAllShown()) {
-        <div rtElem="select-all" qa-dataid="tree-select-all" role="presentation" [rtMod]="{ disabled: disabled() }" (click)="onSelectAll()">
+        <div
+            rtElem="select-all"
+            qa-dataid="tree-select-all"
+            role="presentation"
+            [rtMod]="{ disabled: disabled(), 'over-leaf': isSelectAllOverLeaf() }"
+            (click)="onSelectAll()">
             @if (isSelectAllUnderMark()) {
                 <span rtElem="toggle-space"></span>
             }
@@ -83,15 +88,13 @@
                         }
                     </span>
                 }
-                @if (view.row.option.badges?.length || nodeMeta()) {
+                @if (view.row.option.badges?.length || metaTemplate()) {
                     <span rtElem="meta" qa-dataid="tree-row-meta">
                         @for (badge of view.row.option.badges; track $index) {
                             <rt-tag size="sm" [value]="badge.text" [severity]="badge.severity ?? 'neutral'" [highlight]="searchTerm()" />
                         }
-                        @if (nodeMeta(); as meta) {
-                            <ng-container
-                                [ngTemplateOutlet]="meta.templateRef"
-                                [ngTemplateOutletContext]="{ $implicit: view.row.option }" />
+                        @if (metaTemplate(); as meta) {
+                            <ng-container [ngTemplateOutlet]="meta" [ngTemplateOutletContext]="{ $implicit: view.row.option }" />
                         }
                     </span>
                 }
@@ -101,13 +104,18 @@
                 <span rtElem="count" qa-dataid="tree-row-count">{{ view.count }}</span>
             }
 
-            @if (nodeEnd(); as end) {
+            @if (endTemplate(); as end) {
                 <span rtElem="end" qa-dataid="tree-row-end">
-                    <ng-container [ngTemplateOutlet]="end.templateRef" [ngTemplateOutletContext]="{ $implicit: view.row.option }" />
+                    <ng-container [ngTemplateOutlet]="end" [ngTemplateOutletContext]="{ $implicit: view.row.option }" />
                 </span>
             }
         </div>
     } @empty {
-        <div rtElem="empty" qa-dataid="tree-empty">{{ emptyText() }}</div>
+        <div rtElem="empty" qa-dataid="tree-empty" [rtMod]="{ 'with-icon': !!emptyIcon() }">
+            @if (emptyIcon(); as icon) {
+                <rt-icon rtElem="empty-icon" qa-dataid="tree-empty-icon" size="lg" [name]="icon" />
+            }
+            {{ emptyText() }}
+        </div>
     }
 </ng-container>

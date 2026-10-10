@@ -66,3 +66,12 @@ When a person clicks «Rooms» and presses «Apply»
 Then the choice holds «Rooms» and not «Revenue»
 
 Covered by the component test of `rt-hybrid-tree-selector`.
+
+### SC-UKV-845 — the hybrid selector draws the application's content and row templates
+
+Given the hybrid selector with content under the search and a template marked by `rtTreeNodeEnd`
+When it is drawn
+Then the content stands under the search field, and every row of the hybrid tree holds the end
+template with its node
+
+Covered by the component test of `rt-hybrid-tree-selector`.

@@ -102,6 +102,23 @@ field and the controls on top of it, so the application moves without its own co
 - **On appearance the branches over the choice are open, or all of them, or none.** `expandOnStart`
   takes `chosen`, `all` or `none`; `chosen` is the default.
 
+- **The application's content stands right under the search field.** A template marked by
+  `rtTreeSelectorUnderSearch` is drawn between the field and the controls row.
+
+- **The row templates given to the selector reach the tree inside.** Templates marked by
+  `rtTreeNodeEnd` and `rtTreeNodeMeta` in the selector's content are drawn in every row of the inner
+  tree, with the node in their context.
+
+- **The search marks its words in the rows only while `matchHighlight` is on.** Off, the search still
+  keeps the matching nodes and opens their branches, and no row shows a mark. It is on by default.
+
+- **Nothing found shows the application's icon above the label when asked.** `emptyIcon` stands over
+  the selector's own empty text, and the inner tree takes it for its empty state too.
+
+- **Under the material preset the selector takes the application's spacing, and its tree the
+  material rows.** The head stands 10px above the tree; every value is a `--rt-tree-selector-*`
+  property whose default is the kit look.
+
 ## What is out of scope
 
 - The trigger that opens the selector: the application opens it in `rt-aside` or `rt-popover`.
@@ -115,7 +132,8 @@ None: `rt-tree-selector` is a layout component and serves no procedure. Its inpu
 listed on its showcase overview page, and the docs guard keeps that table matched to the code.
 
 Public members: `canApply`, `apply()`, `cancel()`. The controls template is marked by the
-`rtTreeSelectorControls` directive.
+`rtTreeSelectorControls` directive, the content under the search by `rtTreeSelectorUnderSearch`.
+The row templates of the inner tree are marked by `rtTreeNodeEnd` and `rtTreeNodeMeta`.
 
 ### Refusal codes
 
@@ -137,6 +155,9 @@ draft, the search line and the multi toggle live in the component.
 | nothing found              | the controls row stays, the tree says «Nothing found»       |
 | single mode                | radios, no select-all, no multi toggle                      |
 | the application's control  | its template at the right end of the row                    |
+| content under the search   | the application's template between the field and the row    |
+| highlight off              | the matching nodes without marked words                     |
+| material preset            | 10px above the tree, the tree in its material rows          |
 
 ## Cross-cutting requirements
 
@@ -179,5 +200,7 @@ None.
 - 2026-10-07 — a disabled selector, for the report builder of the application; RT-2551.
 - 2026-10-07 — Clear is outlined like its neighbours and red, by the owner's word; RT-2551.
 - 2026-10-07 — select-all became optional and sticky by the owner's word; RT-2551.
+- 2026-10-10 — the content under the search, the row templates for the inner tree, the highlight
+  flag, the empty icon and the material look; RT-2764.
 - 2026-10-06 — expand-all and collapse-all became optional icon buttons by the owner's word. Clear
   became an icon button with a trash can, and an optional revert button was added.

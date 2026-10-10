@@ -2,9 +2,10 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { createRtFixture } from '../../../testing/rt-kit-testing';
+import { RtTreeNodeEndDirective, RtTreeNodeMetaDirective } from '../tree/rt-tree.directives';
 import { IRtTree } from '../tree/rt-tree.model';
 import { RtTreeSelectorComponent } from './rt-tree-selector.component';
-import { RtTreeSelectorControlsDirective } from './rt-tree-selector.directives';
+import { RtTreeSelectorControlsDirective, RtTreeSelectorUnderSearchDirective } from './rt-tree-selector.directives';
 
 /**
  * `rt-tree-selector` через нарисованную разметку: поиск, клавиши из поля, прямая и подтверждаемая
@@ -92,7 +93,81 @@ class ControlsHostComponent {
     protected readonly nodes: ReadonlyArray<IRtTree.Node<string>> = NODES;
 }
 
+/** Разметка приложения под поиском и шаблоны строк, отданные селектору, — для дерева внутри. */
+@Component({
+    selector: 'rt-tree-selector-slots-host',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtTreeSelectorComponent, RtTreeSelectorUnderSearchDirective, RtTreeNodeEndDirective, RtTreeNodeMetaDirective],
+    template: `
+        <rt-tree-selector expandControls expandOnStart="all" [nodes]="nodes">
+            <ng-template rtTreeSelectorUnderSearch>
+                <span qa-dataid="under-search-mark">scope</span>
+            </ng-template>
+            <ng-template rtTreeNodeEnd let-node>
+                <span qa-dataid="end-mark">{{ node.value }}</span>
+            </ng-template>
+            <ng-template rtTreeNodeMeta let-node>
+                <span qa-dataid="meta-mark">{{ node.value }}</span>
+            </ng-template>
+        </rt-tree-selector>
+    `,
+})
+class SlotsHostComponent {
+    protected readonly nodes: ReadonlyArray<IRtTree.Node<string>> = NODES;
+}
+
+function marks(fixture: ComponentFixture<unknown>, qa: string): string[] {
+    return Array.from(host(fixture).querySelectorAll('[qa-dataid="tree-row"]')).map(
+        (row: Element): string => row.querySelector(`[qa-dataid="${qa}"]`)?.textContent ?? ''
+    );
+}
+
 describe('RtTreeSelectorComponent', (): void => {
+    it('SC-UKV-838: the application content stands after the search field and before the controls row', async (): Promise<void> => {
+        const fixture: ComponentFixture<SlotsHostComponent> = TestBed.createComponent(SlotsHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        const head: Element[] = Array.from(host(fixture).querySelector('.rt-tree-selector__head')?.children ?? []);
+        const order: string[] = head.map((child: Element): string => child.getAttribute('qa-dataid') ?? child.className);
+        expect(order.indexOf('tree-selector-under-search')).toBe(order.indexOf('tree-selector-search') + 1);
+        expect(order.indexOf('tree-selector-under-search')).toBeLessThan(
+            head.findIndex((child: Element): boolean => child.classList.contains('rt-tree-selector__controls'))
+        );
+        expect(host(fixture).querySelector('[qa-dataid="tree-selector-under-search"] [qa-dataid="under-search-mark"]')).not.toBeNull();
+    });
+
+    it('SC-UKV-839: the row templates given to the selector are drawn in every row of the tree inside', async (): Promise<void> => {
+        const fixture: ComponentFixture<SlotsHostComponent> = TestBed.createComponent(SlotsHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
+        expect(rowValues(fixture)).toEqual(['fr', 'ph', 'pr', 'de', 'bh']);
+        expect(marks(fixture, 'end-mark')).toEqual(['fr', 'ph', 'pr', 'de', 'bh']);
+        expect(marks(fixture, 'meta-mark')).toEqual(['fr', 'ph', 'pr', 'de', 'bh']);
+    });
+
+    it('SC-UKV-840: with the highlight off the search keeps the nodes and marks no word', async (): Promise<void> => {
+        const on: TFixture = setup();
+        await type(on, 'ritz');
+        expect(rowValues(on)).toEqual(['fr', 'pr']);
+        expect(host(on).querySelectorAll('[class*="__part--match"]').length).toBeGreaterThan(0);
+
+        const off: TFixture = setup({ matchHighlight: false });
+        await type(off, 'ritz');
+        expect(rowValues(off)).toEqual(['fr', 'pr']);
+        expect(host(off).querySelectorAll('[class*="__part--match"]').length).toBe(0);
+    });
+
+    it('SC-UKV-841: nothing found shows the application icon above the label', async (): Promise<void> => {
+        const fixture: TFixture = setup({ emptyIcon: 'search' });
+        await type(fixture, 'nothing like it');
+        const empty: HTMLElement = host(fixture).querySelector('[qa-dataid="tree-selector-empty"]') as HTMLElement;
+        const icon: Element | null = empty.querySelector('[qa-dataid="tree-selector-empty-icon"]');
+        expect(icon).not.toBeNull();
+        expect(empty.firstElementChild).toBe(icon);
+        expect(empty.textContent?.trim()).toBe('Nothing found');
+    });
+
     it('SC-UKV-677: the search keeps the nodes with every word, opens the kept branches and marks the words', async (): Promise<void> => {
         const fixture: TFixture = setup();
         await type(fixture, 'hilton paris');

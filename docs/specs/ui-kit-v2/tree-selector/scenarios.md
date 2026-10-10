@@ -119,3 +119,45 @@ When it is drawn
 Then the tree holds no «Select all» row; with `selectAll` the row stands above the rows
 
 Covered by the component test of `rt-tree-selector`.
+
+### SC-UKV-838 — the application's content stands under the search field
+
+Given the selector with a template marked by `rtTreeSelectorUnderSearch`
+When it is drawn
+Then the template stands after the search field and before the controls row
+
+Covered by the component test of `rt-tree-selector`.
+
+### SC-UKV-839 — the row templates given to the selector are drawn in the tree inside
+
+Given the selector with templates marked by `rtTreeNodeEnd` and `rtTreeNodeMeta`
+When it is drawn
+Then every row of the inner tree holds both templates with its node in their context
+
+Covered by the component test of `rt-tree-selector`.
+
+### SC-UKV-840 — with the highlight off the search keeps the nodes and marks no word
+
+Given the selector with `matchHighlight` off
+When a person types a word found in one leaf
+Then the tree keeps that leaf and its path, and no row holds a marked part
+
+Covered by the component test of `rt-tree-selector`.
+
+### SC-UKV-841 — nothing found shows the application's icon
+
+Given the selector with `emptyIcon` and a search that finds nothing
+When it is drawn
+Then the named kit icon stands above the label «Nothing found»
+
+Covered by the component test of `rt-tree-selector`.
+
+### SC-UKV-842 — under the material preset the selector takes the application's spacing
+
+Given the selector with select-all, a search term and a chosen leaf, under the material preset
+When it is drawn next to the same selector in the kit look
+Then 10px stand between the head and the tree, the tree draws its material rows, and the kit half
+stays as it was
+
+Not covered: a test has no layout, and this is a style rule. The frames of the material stories of
+the selector and the Presets pair close it.

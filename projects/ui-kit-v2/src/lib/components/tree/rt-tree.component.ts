@@ -15,6 +15,7 @@ import {
     ModelSignal,
     OutputEmitterRef,
     Signal,
+    TemplateRef,
     ViewEncapsulation,
     WritableSignal,
 } from '@angular/core';
@@ -23,7 +24,7 @@ import { FormsModule } from '@angular/forms';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
+import { IRtIcon, RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
 import { RtCheckboxComponent } from '@rt-tools/ui-kit-v2/checkbox';
 import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { RtRadioButtonComponent } from '@rt-tools/ui-kit-v2/radio-button';
@@ -101,6 +102,16 @@ export class RtTreeComponent<TValue> {
 
     protected readonly nodeMeta: Signal<RtTreeNodeMetaDirective<TValue> | undefined> = contentChild(RtTreeNodeMetaDirective);
 
+    /** Разметка в конце строки: вход раньше директивы — обёртка вроде селектора отдаёт её входом. */
+    protected readonly endTemplate: Signal<TemplateRef<IRtTree.NodeContext<TValue>> | null> = computed(
+        (): TemplateRef<IRtTree.NodeContext<TValue>> | null => this.nodeEndTemplate() ?? this.nodeEnd()?.templateRef ?? null
+    );
+
+    /** Разметка под подписью: вход раньше директивы. */
+    protected readonly metaTemplate: Signal<TemplateRef<IRtTree.NodeContext<TValue>> | null> = computed(
+        (): TemplateRef<IRtTree.NodeContext<TValue>> | null => this.nodeMetaTemplate() ?? this.nodeMeta()?.templateRef ?? null
+    );
+
     /** Раскрытые ветки: до первого действия человека — ветки над выбранным. */
     protected readonly openBranches: Signal<ReadonlySet<TValue>> = computed(
         (): ReadonlySet<TValue> => this.#open() ?? rtTreeOpenFor(this.nodes(), this.value())
@@ -143,6 +154,9 @@ export class RtTreeComponent<TValue> {
     /** Отметка «выбрать всё» встаёт над отметкой первой строки; у строки без отметки — над стрелкой. */
     protected readonly isSelectAllUnderMark: Signal<boolean> = computed((): boolean => this.views()[0]?.marked ?? false);
 
+    /** Первая строка — лист: там, где у листа нет места под стрелку, его нет и у «выбрать всё». */
+    protected readonly isSelectAllOverLeaf: Signal<boolean> = computed((): boolean => this.views()[0]?.row.branch === false);
+
     protected readonly emptyText: Signal<string> = computed((): string =>
         this.nodes().length > 0 ? this.t().uiNothingFound : this.t().uiNoOptions
     );
@@ -173,6 +187,22 @@ export class RtTreeComponent<TValue> {
     });
 
     /** Выключенное дерево не меняет выбор ни кликом, ни клавишей, ни «выбрать всё»; ветки раскрываются стрелкой. */
+    /** Значок кита над подписью пустого дерева. Без него пустое дерево — одна подпись. */
+    public readonly emptyIcon: InputSignal<IRtIcon.Name | null> = input<IRtIcon.Name | null>(null);
+
+    /**
+     * Разметка в конце каждой строки, отданная входом. Нужна компоненту, который оборачивает дерево и
+     * не может положить в него директиву `rtTreeNodeEnd`; вход сильнее директивы.
+     */
+    public readonly nodeEndTemplate: InputSignal<TemplateRef<IRtTree.NodeContext<TValue>> | null> = input<TemplateRef<
+        IRtTree.NodeContext<TValue>
+    > | null>(null);
+
+    /** Разметка под подписью каждой строки, отданная входом; вход сильнее директивы `rtTreeNodeMeta`. */
+    public readonly nodeMetaTemplate: InputSignal<TemplateRef<IRtTree.NodeContext<TValue>> | null> = input<TemplateRef<
+        IRtTree.NodeContext<TValue>
+    > | null>(null);
+
     public readonly disabled: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
         transform: booleanAttribute,
     });
