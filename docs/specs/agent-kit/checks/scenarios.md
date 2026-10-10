@@ -271,12 +271,11 @@ ever checking a thing.
 Given the release journal outgrew the length limit of a document
 When a new edition is released
 Then the old releases leave into a separate file by the same commit that raised the edition:
-measured at the push, the journal stopped the push of the whole tree — and not for whoever grew it
+measured at the push, the journal stopped the push of the whole tree — and not for whoever grew it.
+The journal is counted formatted, as the commit hook will leave it: the split of 0.23.1 counted 500
+lines, and the hook made them 501
 
-Not covered: a test with an identifier cannot close this — the subject of the command is the journal
-file itself, and it has no double. Checked by a run on the spot: a journal of 655 lines was split
-into 224 fresh and 435 taken out, ten fresh releases stayed, thirteen old ones left into a file
-named by a version range; on a journal of 220 lines the command touched nothing and said so.
+Covered: `tools/tests/changelog-split.test.sh`.
 
 ### SC-AK-678 — a check declares a skip by the exit code, not by a line of output
 

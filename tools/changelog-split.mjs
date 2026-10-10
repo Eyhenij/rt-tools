@@ -21,6 +21,8 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { basename, dirname, join } from 'node:path';
 
+import { format, resolveConfig } from 'prettier';
+
 import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
 
 const FILE = process.argv[2] ?? 'projects/agent-kit/CHANGELOG.md';
@@ -53,9 +55,22 @@ function split(lines) {
     return { head, sections };
 }
 
-function main() {
+/**
+ * The text as the commit hook will leave it. The release commit runs the formatter over the staged
+ * files, and it puts a blank line between two adjacent release headings: the split of 0.23.1 counted
+ * 500 lines, the commit held 501, and no branch of the tree could be pushed after it.
+ */
+async function formatted(path, text) {
+    const options = (await resolveConfig(path)) ?? {};
+    return format(text, { ...options, filepath: path });
+}
+
+async function main() {
     const path = join(ROOT, FILE);
-    const lines = readFileSync(path, 'utf8').split('\n');
+    const text = await formatted(path, readFileSync(path, 'utf8'));
+    // Written back whatever the length: the commit then holds exactly what was counted here.
+    writeFileSync(path, text);
+    const lines = text.split('\n');
     if (lines.length <= LIMIT) {
         console.log(`changelog-split: ${FILE} — ${lines.length} lines at the limit ${LIMIT}, there is nothing to split`);
 
@@ -101,8 +116,8 @@ The old part of the journal, carried out of \`${FILE}\`: that one outgrew the do
 while the generator appends a new release only at the beginning and does not reach these lines. The
 fresh releases are there, here only a description of the past; it is not edited.\n`;
 
-    writeFileSync(target, `${title}\n${moved.flatMap((section) => section.lines).join('\n')}`.replace(/\n+$/, '\n'));
-    writeFileSync(path, `${[...head, ...keep.flatMap((section) => section.lines)].join('\n')}`.replace(/\n+$/, '\n'));
+    writeFileSync(target, await formatted(target, `${title}\n${moved.flatMap((section) => section.lines).join('\n')}`));
+    writeFileSync(path, await formatted(path, [...head, ...keep.flatMap((section) => section.lines)].join('\n')));
 
     console.log(
         `changelog-split: ${FILE} was ${lines.length} lines at the limit ${LIMIT}\n` +
@@ -113,4 +128,4 @@ fresh releases are there, here only a description of the past; it is not edited.
     return 0;
 }
 
-process.exit(main());
+process.exit(await main());
