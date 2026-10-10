@@ -4,7 +4,7 @@ kind: rule
 law: delivery
 description: Rule under the delivery law for a tree on GitHub — the work queue audit. Load when editing the audit and its modules, or when its line has to be read. Names what the audit judges about columns, open PRs, runs and epics. Pattern queue-audit-read.
 ---
-<!-- rt-kit v0.30.0 · rules/queue-audit.github.md · a4aed6fc7397 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.30.1 · rules/queue-audit.github.md · a4aed6fc7397 · правится надстройкой, не здесь -->
 
 # Work queue audit — how it works here
 
