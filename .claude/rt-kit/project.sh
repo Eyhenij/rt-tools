@@ -82,6 +82,11 @@ rt_pull_token_login() {
 # «оставшийся шаг» occur in prose too.
 RT_PULL_BODY_SECTION='^##[[:space:]]+Оставшийся шаг[[:space:]]*$'
 
+# The line that closes the task. It stands in every PR body here, whatever the base: a merge into
+# `main` is read by the hosting, a merge into an epic branch by `.github/workflows/close-epic-tasks.yml`.
+# Three PRs of one epic went out without it, and their tasks stayed open after the merge.
+RT_PULL_CLOSES_LINE='^Closes[[:space:]]+#{number}([^0-9]|$)'
+
 # The board's first column — the one a task is taken into work from. The delivery guard matches it
 # against the task's column and refuses the delivery while the task has not left it: by the work
 # queue such a task reads as untaken, although the work on it is already laid out.
