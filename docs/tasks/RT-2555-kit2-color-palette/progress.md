@@ -16,6 +16,10 @@
 - **Next step:** the rest of the comparison from the epic plan: the white circle of an empty
   read-only value, the custom colour button on a row of its own, and the picker panel's height,
   shadow and buttons. Then take the folder apart and open the PR when the owner approves.
+  The owner answered about the browser «Открыт только один браузер»: the plugin drives it, and the
+  application on :4400 opens on its users page. The live comparison of the ported components
+  against the application goes first in the next session; the roles and permissions stacks are
+  hidden columns there and are switched on in the column settings.
 - **Uncommitted:** no
 - **Waiting for the owner:** «пры не открывай откроеш после моего апрува» — the push and the PR wait
   for the owner's approval.
