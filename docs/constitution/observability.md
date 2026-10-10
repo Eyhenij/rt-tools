@@ -1,4 +1,4 @@
-<!-- rt-kit v0.30.1 · laws/observability.md · 8f35460cce83 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.31.0 · laws/observability.md · 8f35460cce83 · правится надстройкой, не здесь -->
 # Law on observability
 
 What the owner knows about how their application runs. If a breakage can be learned about only

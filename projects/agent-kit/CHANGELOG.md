@@ -1,3 +1,10 @@
+# [0.31.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.30.1...rt-agent-kit@0.31.0) (2026-10-10)
+
+### Features
+
+- **rt:agent-kit:** заявка не вливается при красном прогоне на вершине ([1ae70e3](https://github.com/Eyhenij/rt-tools/commit/1ae70e38421dc5c4b378fb95be55df996cec2c8e))
+- **rt:agent-kit:** заявка не открывается без строки закрытия задачи ([5955a8b](https://github.com/Eyhenij/rt-tools/commit/5955a8b7c60c630751ac65a2f50e211e62fcf0fa))
+
 ## [0.30.1](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.30.0...rt-agent-kit@0.30.1) (2026-10-10)
 
 ### Bug Fixes

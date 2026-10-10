@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.30.1 · hooks/proposal-guard.sh · b116634f841d · правится надстройкой, не здесь
+# rt-kit v0.31.0 · hooks/proposal-guard.sh · b116634f841d · правится надстройкой, не здесь
 # rt-hook: Stop
 # Requires: hooks/deny-tail.sh
 # Proposal guard: a turn in which the owner said to write or send a proposal to the rules layer

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.30.1 · defaults/shell.sh · 69628bed2f67 · правится надстройкой, не здесь
+# rt-kit v0.31.0 · defaults/shell.sh · 69628bed2f67 · правится надстройкой, не здесь
 # Parsing a shell command: whether it writes and which paths it names.
 #
 # The package default, part of the tree profile — loaded from `project.sh`, next to which it lies. A

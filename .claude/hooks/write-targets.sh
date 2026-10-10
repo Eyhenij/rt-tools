@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.30.1 · hooks/write-targets.sh · b5c88f83e5a8 · правится надстройкой, не здесь
+# rt-kit v0.31.0 · hooks/write-targets.sh · b5c88f83e5a8 · правится надстройкой, не здесь
 # Write targets named by the shell command outright: redirection, `tee`, an in-place edit, a copy
 # over the top, and for an interpreter — the paths from its body. Prints one per line.
 #

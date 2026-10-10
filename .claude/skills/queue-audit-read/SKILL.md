@@ -4,7 +4,7 @@ kind: pattern
 rule: queue-audit
 description: Pattern of rule queue-audit. Load when the work queue audit has printed lines — running it, and the move that answers each kind of line.
 ---
-<!-- rt-kit v0.30.1 · patterns/queue-audit-read.github.md · cbaed2fa70f3 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.31.0 · patterns/queue-audit-read.github.md · cbaed2fa70f3 · правится надстройкой, не здесь -->
 
 # Reading the work queue audit
 

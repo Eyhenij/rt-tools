@@ -4,7 +4,7 @@ kind: pattern
 rule: git-workflow
 description: Pattern of rule git-workflow. Load when PRs are already open — leaving draft, handling a red run, bringing a chain to readiness, the order "finish what was handed over first, then take new work". Opening one PR — pattern git-workflow-pr; the chain order — git-workflow-stack.
 ---
-<!-- rt-kit v0.30.1 · patterns/git-workflow-pr-ready.md · f8431e77e19b · правится надстройкой, не здесь -->
+<!-- rt-kit v0.31.0 · patterns/git-workflow-pr-ready.md · f8431e77e19b · правится надстройкой, не здесь -->
 
 # Bringing a PR to readiness
 

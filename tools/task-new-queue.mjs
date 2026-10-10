@@ -1,4 +1,4 @@
-// rt-kit v0.30.1 · checks/task-new-queue.github.mjs · b4ac3c8e8924 · правится надстройкой, не здесь
+// rt-kit v0.31.0 · checks/task-new-queue.github.mjs · b4ac3c8e8924 · правится надстройкой, не здесь
 /**
  * The fifth step of creating a task: creation is confirmed by the answer of the work queue, not by
  * the output of the command.

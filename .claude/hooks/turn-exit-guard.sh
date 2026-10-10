@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.30.1 · hooks/turn-exit-guard.sh · 9e3ac8c88477 · правится надстройкой, не здесь
+# rt-kit v0.31.0 · hooks/turn-exit-guard.sh · 9e3ac8c88477 · правится надстройкой, не здесь
 # rt-hook: Stop
 # Requires: hooks/deny-tail.sh, hooks/epic-over.sh, hooks/turn-exit-patterns.sh, hooks/turn-exit-epic.sh
 # Turn exit guard: a turn in which nothing was done on the work does not end until the work is

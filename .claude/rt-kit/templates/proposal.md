@@ -1,4 +1,4 @@
-<!-- rt-kit v0.30.1 · templates/proposal.md · e680e662b35c · правится надстройкой, не здесь -->
+<!-- rt-kit v0.31.0 · templates/proposal.md · e680e662b35c · правится надстройкой, не здесь -->
 # Proposals on the rules layer
 
 <!--

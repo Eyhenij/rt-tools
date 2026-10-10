@@ -1,4 +1,4 @@
-// rt-kit v0.30.1 · checks/tree-assignment.mjs · 17467424ebbc · правится надстройкой, не здесь
+// rt-kit v0.31.0 · checks/tree-assignment.mjs · 17467424ebbc · правится надстройкой, не здесь
 /**
  * The epic assigned to this working copy.
  *
