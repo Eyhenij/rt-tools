@@ -335,6 +335,10 @@ command -v rt_delivery_draft_ready >/dev/null 2>&1 && rt_delivery_draft_ready
 # quotes — that is how it fired on an edit of this very text. A quoted substring cannot be cut off
 # entirely this way, but an accidental mention inside a word or a path no longer gets through.
 if printf '%s' "$cmd" | grep -qE "${RT_CMD_BOUND}(gh[[:space:]]+pr[[:space:]]+merge|glab[[:space:]]+mr[[:space:]]+merge|az[[:space:]]+repos[[:space:]]+pr[[:space:]]+update)([[:space:]]|\$)"; then
+    # The run on the tip goes first: the folder tier below leaves the guard early on many paths.
+    [ -f "$rt_hooks_dir/git-guard-delivery-merge.sh" ] && . "$rt_hooks_dir/git-guard-delivery-merge.sh" 2>/dev/null
+    command -v rt_delivery_merge_run >/dev/null 2>&1 && rt_delivery_merge_run
+    deny_faults
     rt_delivery_merge_folder
 fi
 

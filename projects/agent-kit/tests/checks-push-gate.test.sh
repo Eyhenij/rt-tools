@@ -109,6 +109,7 @@ cp "$CHECKS/rt-kit-checks.config.mjs" "$CHECKS/board.github.mjs" "$CHECKS/board-
 cp "$CHECKS/board-epic-link.github.mjs" "$BOARD_TREE/tools/board-epic-link.mjs"
 cp "$CHECKS/board-epic-plan.github.mjs" "$BOARD_TREE/tools/board-epic-plan.mjs"
 cp "$CHECKS/board-task-dirs.github.mjs" "$BOARD_TREE/tools/board-task-dirs.mjs"
+cp "$CHECKS/board-runs.github.mjs" "$BOARD_TREE/tools/board-runs.mjs"
 mv "$BOARD_TREE/tools/board.github.mjs" "$BOARD_TREE/tools/board.mjs"
 mv "$BOARD_TREE/tools/board-gh.github.mjs" "$BOARD_TREE/tools/board-gh.mjs"
 
