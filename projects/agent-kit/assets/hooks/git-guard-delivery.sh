@@ -117,6 +117,9 @@ pull_token_hint="${RT_PULL_TOKEN_HINT:-}"
 # the pattern is named by the tree, not by the package: the package does not know someone else's
 # words, and an invented default would match nothing.
 pull_body_section="${RT_PULL_BODY_SECTION:-}"
+# The line that closes the task on the merge, with `{number}` in place of the task number. Its keyword
+# belongs to the hosting, so the sample is named by the tree, as the section above.
+pull_closes_line="${RT_PULL_CLOSES_LINE:-}"
 commit_email="${RT_COMMIT_EMAIL:-}"
 tasks_dir="${RT_TASKS_DIR:-}"
 archive_dir="${RT_ARCHIVE_DIR:-}"
@@ -457,32 +460,11 @@ elif [ -n "$pull_token_var" ] \
     fault "who will open the request cannot be learned: the hosting was not asked, and the command carries no substitution of «${pull_token_var}». Opened by the logged-in account, the request may come out from the very person named as its reviewer, and that is fixed only by reopening.${pull_token_hint:+ Substitute the token: ${pull_token_hint} …}"
 fi
 
-# The PR body carries the section about the remaining step from the minute it opens: without it the
-# owner merges the PR by the button while the run is still going. The body arrives either as an
-# argument or as a file, both are read here; by the time of the parse the file is already written.
-# Neither one nor the other — there is no requirement: a PR without a body is checked by the line
-# above. The flag is recognised only as a separate word: the tail `-b` of a branch name in the base
-# argument read as the body flag, and the next word of the command became the body.
-if [ -n "$pull_body_section" ]; then
-    body=''
-    if command -v perl >/dev/null 2>&1; then
-        body="$(printf '%s' "$cmd" | perl -0ne '
-            if (/(?:^|\s)(?:--body|-b)(?:=|\s+)(?:"((?:[^"\\]|\\.)*)"|\x27([^\x27]*)\x27|(\S+))/s) {
-                print defined $1 ? $1 : (defined $2 ? $2 : $3);
-            }
-        ' 2>/dev/null)"
-        body_file="$(printf '%s' "$cmd" | perl -0ne '
-            if (/(?:^|\s)(?:--body-file|-F)(?:=|\s+)(?:"((?:[^"\\]|\\.)*)"|\x27([^\x27]*)\x27|(\S+))/s) {
-                print defined $1 ? $1 : (defined $2 ? $2 : $3);
-            }
-        ' 2>/dev/null)"
-        [ -z "$body" ] && [ -n "$body_file" ] && [ -f "$body_file" ] && body="$(cat "$body_file" 2>/dev/null)"
-    fi
-
-    if [ -n "$body" ] && ! printf '%s' "$body" | grep -qE "$pull_body_section"; then
-        fault "the body of the request carries no section about the remaining step. The merge button is pressed by a person on the hosting, where there are no guards, and they merge as soon as they see green: all that holds the requirement there is what the owner read on the page. The section stands last and says exactly one thing — whether anything is left before the merge; it is rewritten by the same call that edits the body."
-    fi
-fi
+# The body of the request: the section about the remaining step and the line that closes the task.
+# The subject lives in a helper next door — `git-guard-delivery-body.sh`, by the same technique as
+# the draft above.
+[ -f "$rt_hooks_dir/git-guard-delivery-body.sh" ] && . "$rt_hooks_dir/git-guard-delivery-body.sh" 2>/dev/null
+command -v rt_delivery_pull_body >/dev/null 2>&1 && rt_delivery_pull_body
 
 
 # The task folder is taken apart before the PR opens, not after the approval: the owner merges as
