@@ -247,18 +247,18 @@ flowchart TD
   For a call with a reading twin, the kind is chosen by the action, not the command's name.
 - **A turn in which a question was put to the owner does not end until laws and rules were read in
   that same turn.** Reading is any of three roads: loading a rule, reading a file of laws or rules,
-  a search over them. The conversation guard refuses at the turn's end, not on the question tool:
-  questions are asked in prose more often than by menu.
+  a search over them. With edits in the turn, only the rule the gate demands counts, and the
+  refusal names it. The guard refuses on the question tool before the menu leaves, and at
+  the turn's end for a question in prose. What was found lands in the grill section "What the
+  rules already say".
 - **The owner's answer is sought in their own messages before the rules.** The law says a question
-  with a written answer is not put to the owner, and the most reachable record lies not in the tree
-  but in the conversation: the owner's first message and their answers to past rounds.
-- **The size of work is never a reason to cut its boundaries.** The owner who named the result did
-  not dispute the size: an offer to drop a part is a request to reassign the goal, served as a
-  clarification. What is costly is done at cost, or called costly outright, with the price named.
+  with a written answer is not put to the owner, and the most reachable record lies in the
+  conversation: the owner's first message and their answers to past rounds.
+- **The size of work is never a reason to cut its boundaries.** An offer to drop a part is a request
+  to reassign the goal, served as a clarification. What is costly is done at cost, or called costly outright, with the price named.
 - **The actions the executor does not do without the owner's word are listed in the rule's
   companion.** Each tree has its own list; the package knows only the demand that it be named.
-  Unnamed, it is derived from general words, and the appraisal "this is safe" is assigned by whoever
-  finds it convenient this minute.
+  Unnamed, the appraisal "this is safe" is assigned by whoever finds it convenient.
 - **What the host's automatic mode refuses is listed in the companion and read before the step.**
   Such a refusal is a refused permission, not a guard: the step is named in one line and the work it
   does not hold goes on. A browser click goes one per call.
@@ -269,8 +269,7 @@ flowchart TD
   owner applies to the action, not the turn: work with a separable harmless part is split, not
   postponed whole. The owner is told what is done and what remained for their word.
 - **The sign of irreversibility is taken from the list, not derived by argument.** The list was
-  drawn up by someone who already weighed reversibility; an argument on top of it cancels it
-  silently. Actions outside the list the executor does not gate.
+  drawn up by someone who already weighed reversibility, and an argument cancels it silently. Actions outside the list the executor does not gate.
 - **A turn in which the executor admitted a miss does not end until the incident record exists.**
   The incident guard refuses at the turn's end. The records directory is named by the rule's companion, the file name is the date and
   the miss, the form — the layout template. The admission is caught by a set of samples: a miss

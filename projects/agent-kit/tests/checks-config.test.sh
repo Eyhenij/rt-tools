@@ -55,6 +55,7 @@ report "вложенное: сам объект не пропал" "$(value_of b
 # борды отдельно от запросов к ней.
 printf '{"board":{"taskKey":"RT"},"tasksDir":"docs/tasks"}\n' > "$TREE/.claude/rt-kit/checks.json"
 cp "$CHECKS/board.github.mjs" "$TREE/tools/board.mjs"
+cp "$CHECKS/board-runs.github.mjs" "$TREE/tools/board-runs.mjs"
 cp "$CHECKS/board-epic-link.github.mjs" "$TREE/tools/board-epic-link.mjs"
 cp "$CHECKS/board-epic-plan.github.mjs" "$TREE/tools/board-epic-plan.mjs"
 cp "$CHECKS/board-task-dirs.github.mjs" "$TREE/tools/board-task-dirs.mjs"
@@ -99,6 +100,7 @@ rm -rf "$TREE/docs" "$TREE/tools/board.mjs"
 # кончиться, вынесено из вызовов сети — иначе оно проверяется только живой бордой.
 printf '{"board":{"taskKey":"RT"}}\n' > "$TREE/.claude/rt-kit/checks.json"
 cp "$CHECKS/board.github.mjs" "$TREE/tools/board.mjs"
+cp "$CHECKS/board-runs.github.mjs" "$TREE/tools/board-runs.mjs"
 cp "$CHECKS/board-epic-link.github.mjs" "$TREE/tools/board-epic-link.mjs"
 cp "$CHECKS/board-epic-plan.github.mjs" "$TREE/tools/board-epic-plan.mjs"
 cp "$CHECKS/board-task-dirs.github.mjs" "$TREE/tools/board-task-dirs.mjs"
