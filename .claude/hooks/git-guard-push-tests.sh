@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.30.0 · hooks/git-guard-push-tests.sh · 4e6fb7f96510 · правится надстройкой, не здесь
+# rt-kit v0.30.1 · hooks/git-guard-push-tests.sh · 4e6fb7f96510 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # rt-hook-timeout: 1800
 # Requires: hooks/profile-check.sh, hooks/deny-tail.sh

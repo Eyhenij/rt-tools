@@ -1,3 +1,14 @@
+## [0.30.1](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.30.0...rt-agent-kit@0.30.1) (2026-10-10)
+
+### Bug Fixes
+
+- **rt:agent-kit:** заведение задачи читает карточку прямым запросом и печатает «NO» только после окна ожидания ([705602a](https://github.com/Eyhenij/rt-tools/commit/705602ab55a070e8194a3b432040187ad29c3c1a))
+- **rt:agent-kit:** наблюдения уходят по одному дню на запрос, отказ дня не держит остальной груз ([c1a7c8a](https://github.com/Eyhenij/rt-tools/commit/c1a7c8a9ae280e26b4ab3867168ec0b42e4b1bea))
+- **rt:agent-kit:** пометка «отбито» с той же причиной в блок второй раз не пишется ([42a716b](https://github.com/Eyhenij/rt-tools/commit/42a716b62f9b1d7ca42025f47f5ee65025a4a54f))
+- **rt:agent-kit:** последняя успешная выкатка ищется среди двадцати последних прогонов без фильтра по статусу ([8f25f98](https://github.com/Eyhenij/rt-tools/commit/8f25f98d222b9565c687bc0e9f66fda95c3b015f))
+- **rt:agent-kit:** проверки конца эпика и разбора узнают ответ меню в обоих видах ([e69aea1](https://github.com/Eyhenij/rt-tools/commit/e69aea18b52bcffa338b3e67b619477210c994d4))
+- **rt:agent-kit:** путь внутри записываемой строки не считается целью записи, отказ спрашивающей проверки называет область ([7301760](https://github.com/Eyhenij/rt-tools/commit/7301760fb5608da09b61578865ca03bac4a3b423))
+
 # [0.30.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.29.4...rt-agent-kit@0.30.0) (2026-10-09)
 
 ### Bug Fixes
