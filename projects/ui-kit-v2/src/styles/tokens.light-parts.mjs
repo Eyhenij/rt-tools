@@ -69,14 +69,6 @@ export const lightParts = [
         value: `0 0 0 3px var(--rt-color-state-success-bg)`,
     },
     {
-        lead: `    /* Тень стопки карточек (rt-carousel в материальном наборе) — плотная подложка под
-       каждой карточкой; dark берёт свою ступень. */`,
-        space: true,
-        name: `--rt-card-stack-shadow`,
-        value: `var(--rt-shadow-card-stack)`,
-        dark: `var(--rt-shadow-card-stack-dark)`,
-    },
-    {
         lead: `    /* Chat — пузыри переписки. Входящее и своё различаются фоном, а не рамкой:
        рамка на каждом пузыре дробит ленту. Отметка прочтения синяя — единственный
        цветной элемент подвала пузыря, остальные статусы приглушены. */`,

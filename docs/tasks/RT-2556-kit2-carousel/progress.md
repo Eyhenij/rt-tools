@@ -40,6 +40,10 @@
   word ("AI" becomes "Ai"); the kit keeps the case of the rest, and the divergence is named to the
   owner. The application's absolute host in a table cell is not carried over: the kit stack sizes
   itself by its cards. Affected stage: 4.
+- On 10 October a live comparison measured the application on screen: its cards draw
+  `--rt-shadow-lg`, and the grey shadow read from its code is overridden there. The material
+  preset went back to `--rt-shadow-lg`; the assignment `--rt-card-stack-shadow` and its two scale
+  steps were removed. The dark label colour stays. Affected stage: 4.
 
 ## Steps
 

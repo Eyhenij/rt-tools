@@ -38,7 +38,7 @@ label and the move of the neighbours are drawn by the styles and shown by the St
 Given a stack in the kit look and a stack under the material preset
 When they are drawn
 Then the kit stack has rounded cards with a small shadow and a medium label, the material stack has
-cards with small corners, a dense grey shadow and a regular label in title case, and an application
+cards with small corners, a large shadow and a regular label in title case, and an application
 property set on the block overrides both
 
 Not covered: it cannot be closed by a test with an identifier — the look is computed by the styles,

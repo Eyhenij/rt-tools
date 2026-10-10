@@ -46,8 +46,8 @@ card, so a keyboard user never reads a whole label. The kit has no such part.
 - **Every size, overlap, lift, shift, radius, shadow, type step, label case and duration of the
   stack is a `--rt-carousel-*` property, and without them the stack draws the kit look.**
 - **The material preset draws the application's look by the same properties, without Material
-  packages: cards with small corners and a dense grey shadow, a dark label in the Material text
-  colour, a regular-weight label in title case, and a slower move.**
+  packages: cards with small corners and a large shadow, a dark label in the Material text colour,
+  a regular-weight label in title case, and a slower move.**
 
 ## What is out of scope
 
@@ -112,5 +112,5 @@ Every stack is independent; several stand side by side in a table column.
 ## History of changes
 
 - 9 October 2026 — written by the task RT-2556 of the epic RT-2542.
-- 10 October 2026 — after a comparison with the application, the material preset takes its dense
-  grey card shadow and its dark label colour.
+- 10 October 2026 — after a comparison with the application, the material preset takes its dark
+  label colour. The live application draws the large kit shadow on its cards, so the shadow stays.

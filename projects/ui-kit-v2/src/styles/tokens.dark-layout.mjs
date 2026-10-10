@@ -259,11 +259,6 @@ export const darkLayout = [
         value: `0 0 40px rgb(0 0 0 / 25%)`,
     },
     {
-        lead: `    /* Тень стопки карточек в dark — чёрная: серая подложка на тёмном фоне светлее него. */`,
-        space: true,
-        name: `--rt-card-stack-shadow`,
-    },
-    {
         lead: `    /* Hover-overlay инвертирован для dark (light overlay поверх тёмного фона). */`,
         space: true,
         name: `--rt-input-color-bg-hover`,
