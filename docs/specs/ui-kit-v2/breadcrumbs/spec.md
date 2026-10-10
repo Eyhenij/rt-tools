@@ -1,6 +1,6 @@
 # The breadcrumbs
 
-**Status:** in force · **Revision:** 8 October 2026 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 10 October 2026 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the icon button, the menu and the tooltip of the kit; the breakpoints service
 **Laws:** `frontend-application`, `verifiability`, `reuse-first`
 **Procedures:** none
@@ -46,6 +46,10 @@ and the page title under it. Each writes and fixes its own copy; the kit has no 
 - **A long chain does not push the page sideways.** It scrolls inside its own row, and the row
   stands at its end, so the open page stays in sight. A current crumb wider than the row alone is
   cut and shows its full label in a tooltip.
+- **A long current crumb gives way to its ancestors while they fit next to its threshold.** When
+  the ancestors fit next to the current crumb cut to `--rt-breadcrumbs-current-min`, or to its whole
+  label if that is shorter, the crumb shrinks with an ellipsis and the row does not scroll, so the
+  section stays in sight.
 
 ## What is out of scope
 
@@ -113,3 +117,5 @@ None.
 ## History of changes
 
 - 8 October 2026 — written by the task RT-2552 of the epic RT-2542.
+- 10 October 2026 — after a comparison with the application, a long current crumb gives way to its
+  section, and the material links take the theme's secondary text.

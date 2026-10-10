@@ -17,6 +17,7 @@
         --rt-breadcrumbs-separator-color: var(--rt-color-text-disabled);
         --rt-breadcrumbs-separator-gap: var(--rt-space-xs);
         --rt-breadcrumbs-current-color: var(--rt-color-text-primary);
+        --rt-breadcrumbs-current-min: var(--rt-size-30);
         --rt-breadcrumbs-back-size: var(--rt-control-height-sm);
         --rt-breadcrumbs-back-icon-size: var(--rt-size-5);
         --rt-breadcrumbs-back-color: var(--rt-color-text-primary);
@@ -37,11 +38,14 @@
         }
 
         /* Материальный набор повторяет крошки приложения: звенья, разделитель и кнопка «назад»
-           стоят через 8px, разделитель цвета предка, кнопка «назад» — круглая 40px со значком 24px. */
+           стоят через 8px, предки и разделитель — цвета вторичного текста темы Material
+           (on-surface-variant), без темы — приглушённого текста кита; кнопка «назад» — круглая 40px
+           со значком 24px. */
         :is(.rt-preset-material, [data-preset='material']) & {
             --rt-breadcrumbs-gap: var(--rt-size-2);
             --rt-breadcrumbs-separator-gap: var(--rt-size-2);
-            --rt-breadcrumbs-separator-color: var(--rt-color-text-muted);
+            --rt-breadcrumbs-link-color: var(--mat-sys-on-surface-variant, var(--rt-color-text-muted));
+            --rt-breadcrumbs-separator-color: var(--mat-sys-on-surface-variant, var(--rt-color-text-muted));
             --rt-breadcrumbs-back-size: var(--rt-size-10);
             --rt-breadcrumbs-back-icon-size: var(--rt-size-6);
 
@@ -76,6 +80,14 @@
             &--clipped {
                 mask-image: linear-gradient(to right, transparent, black var(--rt-space-lg));
             }
+        }
+
+        /* Предки помещаются рядом с текущим звеном, урезанным до порога: звено сжимается с
+           многоточием, и раздел остаётся на виду. Порог — --rt-breadcrumbs-current-min, его читает
+           замер строки. */
+        &__list--fitted > &__item:last-child {
+            flex: 0 1 auto;
+            min-inline-size: 0;
         }
 
         /* Звенья держат свою ширину, и лишнее уезжает влево — строка стоит в конце. Многоточие

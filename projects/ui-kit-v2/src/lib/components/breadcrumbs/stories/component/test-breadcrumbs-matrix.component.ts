@@ -6,7 +6,7 @@ import { IStoryState, STORY_CONTROL_STATES, storyStateLabel } from '../../../../
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtBreadcrumbsComponent } from '../../rt-breadcrumbs.component';
 import { IRtBreadcrumbs } from '../../rt-breadcrumbs.model';
-import { STORY_BREADCRUMBS_PATH, STORY_BREADCRUMBS_SHORT } from './story-breadcrumbs';
+import { STORY_BREADCRUMBS_PATH, STORY_BREADCRUMBS_RECORD, STORY_BREADCRUMBS_SHORT } from './story-breadcrumbs';
 import { TestRtBreadcrumbsNarrowCellComponent } from './test-breadcrumbs-narrow-cell.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
@@ -54,6 +54,7 @@ export class TestRtBreadcrumbsMatrixComponent {
         { name: 'цепочка', crumbs: STORY_BREADCRUMBS_SHORT, back: false, separator: '/' },
         { name: 'с кнопкой «назад»', crumbs: STORY_BREADCRUMBS_SHORT, back: true, separator: '/' },
         { name: 'свой разделитель', crumbs: STORY_BREADCRUMBS_SHORT, back: false, separator: '›' },
+        { name: 'раздел и длинное имя записи', crumbs: STORY_BREADCRUMBS_RECORD, back: false, separator: '›' },
     ];
 
     public readonly states: readonly IStoryState[] = STORY_CONTROL_STATES;

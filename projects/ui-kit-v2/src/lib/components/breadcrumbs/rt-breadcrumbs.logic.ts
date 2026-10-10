@@ -4,6 +4,15 @@ import { IRtBreadcrumbs } from './rt-breadcrumbs.model';
 export const RT_BREADCRUMBS_FOLD_FROM: number = 3;
 
 /**
+ * Помещаются ли предки рядом с текущим звеном, урезанным до порога или до своей полной подписи,
+ * если она короче. Тогда звено сжимается с многоточием и строка не едет; иначе строка встаёт в
+ * конец, и предки уезжают влево.
+ */
+export function rtBreadcrumbsFits(room: number, ancestors: number, current: number, floor: number): boolean {
+    return room - ancestors >= Math.min(current, floor);
+}
+
+/**
  * Раскладка предков. На узком экране длинный путь оставляет первого и последнего предка ссылками,
  * а середину отдаёт в меню; на широком и при коротком пути свёртки нет.
  */

@@ -7,7 +7,12 @@
                 </a>
             }
 
-            <ol #list rtElem="list" qa-dataid="breadcrumbs-list" [rtMod]="{ clipped: clipped() }" (scroll)="onListScroll()">
+            <ol
+                #list
+                rtElem="list"
+                qa-dataid="breadcrumbs-list"
+                [rtMod]="{ clipped: clipped(), fitted: fitted() }"
+                (scroll)="onListScroll()">
                 @for (crumb of fold().head; track $index) {
                     <li rtElem="item">
                         <a rtElem="link" qa-dataid="breadcrumbs-link" [routerLink]="crumb.link">{{ crumb.label }}</a>

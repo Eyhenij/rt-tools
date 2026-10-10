@@ -5,7 +5,7 @@ import { provideRouter } from '@angular/router';
 import { createRtFixture, qa, qaAll, textOf } from '../../../testing/rt-kit-testing';
 import { BreakpointsService } from '../../platform';
 import { RtBreadcrumbsComponent } from './rt-breadcrumbs.component';
-import { rtBreadcrumbsFold } from './rt-breadcrumbs.logic';
+import { rtBreadcrumbsFits, rtBreadcrumbsFold } from './rt-breadcrumbs.logic';
 import { IRtBreadcrumbs } from './rt-breadcrumbs.model';
 
 const CHAIN: readonly IRtBreadcrumbs.Crumb[] = [
@@ -146,5 +146,19 @@ describe('RtBreadcrumbsComponent', (): void => {
         const current: HTMLElement = qa(fixture, 'breadcrumbs-current')?.nativeElement as HTMLElement;
 
         expect(current.hasAttribute('rttooltipwhentruncated')).toBe(true);
+    });
+});
+
+describe('rtBreadcrumbsFits', (): void => {
+    it('SC-UKV-830 — раздел помещается рядом с длинным именем, урезанным до порога: звено сжимается', (): void => {
+        expect(rtBreadcrumbsFits(400, 120, 600, 120)).toBe(true);
+    });
+
+    it('SC-UKV-830 — короткое имя меряется своей полной шириной, а не порогом', (): void => {
+        expect(rtBreadcrumbsFits(400, 330, 60, 120)).toBe(true);
+    });
+
+    it('SC-UKV-830 — предки не помещаются и рядом с порогом: строка едет к концу', (): void => {
+        expect(rtBreadcrumbsFits(400, 330, 600, 120)).toBe(false);
     });
 });

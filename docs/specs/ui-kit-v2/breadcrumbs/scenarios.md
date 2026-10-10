@@ -56,3 +56,13 @@ and a current crumb wider than the row is cut and shows its full label on hover
 
 Покрытие: частичное — the spec checks that the current crumb carries the cut-text tooltip; the
 row's end and the page width are seen on the frame of the width story and were measured on :6007.
+
+### SC-UKV-830 — a long current crumb gives way to the section next to it
+
+Given one section and a record name longer than the row
+When the breadcrumbs are drawn
+Then the section stays in sight as a link, the record name is cut with an ellipsis, and the row does
+not scroll; a chain whose ancestors do not fit even next to the threshold still scrolls to its end
+
+Coverage: partial — the spec checks the fit decision by a call; the drawn row is seen on the frame
+of the chain story.

@@ -31,6 +31,19 @@
 - The scenarios moved from SC-UKV-775–780 to SC-UKV-819–824. The merge of main brought the chat and
   icon scenarios under the same numbers, and main keeps its numbers; the test titles moved by the
   same commit.
+- On 10 October the stories were compared with the application's code at the owner's word «сравни
+  сторис перенесенных компонентов с их использованием». The application's links and separator take
+  its secondary text, `--mat-sys-on-surface-variant` of its Material theme. The breadcrumbs'
+  material look reads the same name for the links and the separator, with the kit's muted text as
+  the fallback; the kit look and the preset without a theme stay as they were. Reading it in the
+  whole preset's muted text was tried and dropped: thirteen frames of the material list under the
+  violet theme moved, and that list is matched to the first kit. The chain story got the
+  application's case: one section and a long record name with the `›` separator. Affected stage: 4.
+- That case showed a defect: the record name took the whole row, and the section scrolled out of
+  sight. A new rule with scenario SC-UKV-830: while the ancestors fit next to the current crumb cut
+  to `--rt-breadcrumbs-current-min` (120px), the crumb shrinks with an ellipsis and the row does not
+  scroll. The decision is the pure function `rtBreadcrumbsFits`, taken by the same measurement that
+  scrolls the row. Affected stage: 4.
 
 ## Steps
 

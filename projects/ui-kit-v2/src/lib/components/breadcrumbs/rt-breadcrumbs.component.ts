@@ -23,7 +23,7 @@ import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { RtMenuComponent, RtMenuItemComponent } from '@rt-tools/ui-kit-v2/menu';
 import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
 
-import { rtBreadcrumbsFold } from './rt-breadcrumbs.logic';
+import { rtBreadcrumbsFits, rtBreadcrumbsFold } from './rt-breadcrumbs.logic';
 import { IRtBreadcrumbs } from './rt-breadcrumbs.model';
 
 const BEM_BLOCK: string = 'rt-breadcrumbs';
@@ -77,6 +77,9 @@ export class RtBreadcrumbsComponent {
 
     /** Начало пути уехало влево за край строки. */
     protected readonly clipped: WritableSignal<boolean> = signal<boolean>(false);
+
+    /** Предки помещаются рядом с урезанным текущим звеном: звено сжимается, строка не едет. */
+    protected readonly fitted: WritableSignal<boolean> = signal<boolean>(false);
 
     protected readonly landmarkLabel: Signal<string> = rtKitLabel('breadcrumbsLabel');
     protected readonly foldLabel: Signal<string> = rtKitLabel('breadcrumbsHidden');
@@ -142,8 +145,29 @@ export class RtBreadcrumbsComponent {
     #scrollToEnd(): void {
         const list: HTMLElement | undefined = this.list()?.nativeElement;
         if (list !== undefined) {
+            this.fitted.set(this.#measureFit(list));
             list.scrollLeft = list.scrollWidth;
             this.clipped.set(list.scrollLeft > 0);
         }
+    }
+
+    /**
+     * Ширина строки без внутренних полей, предки целиком и полная подпись текущего звена против
+     * порога из свойства блока. Без текущего звена в строке сжимать нечего.
+     */
+    #measureFit(list: HTMLElement): boolean {
+        const items: readonly Element[] = Array.from(list.children);
+        const current: Element | null = items.at(-1)?.querySelector('.rt-breadcrumbs__current') ?? null;
+        if (current === null) {
+            return false;
+        }
+        const listStyle: CSSStyleDeclaration = getComputedStyle(list);
+        const room: number = list.clientWidth - parseFloat(listStyle.paddingInlineStart) - parseFloat(listStyle.paddingInlineEnd);
+        const ancestors: number = items
+            .slice(0, -1)
+            .reduce((sum: number, item: Element): number => sum + item.getBoundingClientRect().width, 0);
+        const floor: number = parseFloat(listStyle.getPropertyValue('--rt-breadcrumbs-current-min')) || 0;
+
+        return rtBreadcrumbsFits(room, ancestors, current.scrollWidth, floor);
     }
 }

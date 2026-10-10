@@ -10,6 +10,12 @@ export const STORY_BREADCRUMBS_PATH: readonly IRtBreadcrumbs.Crumb[] = [
     { label: 'Летний сезон' },
 ];
 
+/** Раздел и запись с длинным именем — как у страницы записи, куда пришли из списка. */
+export const STORY_BREADCRUMBS_RECORD: readonly IRtBreadcrumbs.Crumb[] = [
+    { label: 'Пользователи', link: '/users' },
+    { label: 'Александра Константиновна Преображенская-Воскресенская' },
+];
+
 /** Путь из двух предков и записи — как у карточки в списке. */
 export const STORY_BREADCRUMBS_SHORT: readonly IRtBreadcrumbs.Crumb[] = [
     { label: 'Настройки', link: '/settings' },
