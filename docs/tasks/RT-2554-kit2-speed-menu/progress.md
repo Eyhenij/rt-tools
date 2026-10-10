@@ -63,6 +63,11 @@
   The story UpMaterial shows the open menu under the preset: the overlay takes the flag from the
   container. The application's bare trigger is the `ghost` variant, an input, not the preset.
   Affected stage: 4.
+- On 10 October a live comparison measured the application on screen: its actions are filled with
+  `--mat-sys-primary-container`, and the icon is `--mat-sys-on-primary-container` at 24px. The
+  preset reads both by name with the former grey and dark steps as fallbacks. The icon colour went
+  into a new property `--rt-speed-menu-action-color`, whose default is the text colour the
+  `secondary` variant set. The 24px icon rewrites the `md` icon step on the panel. Affected stage: 4.
 
 ## Steps
 

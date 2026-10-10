@@ -21,6 +21,7 @@
         --rt-speed-menu-action-shadow: var(--rt-shadow-md);
         --rt-speed-menu-action-shadow-hover: var(--rt-speed-menu-action-shadow);
         --rt-speed-menu-action-bg: var(--rt-color-bg-surface);
+        --rt-speed-menu-action-color: var(--rt-color-text-primary);
         --rt-speed-menu-action-radius: var(--rt-radius-full);
         --rt-speed-menu-duration: var(--rt-duration-fast);
         --rt-speed-menu-stagger: var(--rt-duration-fast);
@@ -30,13 +31,17 @@
         padding: var(--rt-speed-menu-inset);
         gap: var(--rt-speed-menu-gap);
 
-        /* Материальный набор повторяет меню приложения — mat-mini-fab: серый круг с подъёмом 3 Material
-           (под указателем — 4), действия через 16px и в 28px от кнопки, вход 100 мс со сдвигом 50 мс.
+        /* Материальный набор повторяет меню приложения — mat-mini-fab: круг цвета primary-container
+           темы со значком on-primary-container 24px, подъём 3 Material (под указателем — 4), действия
+           через 16px и в 28px от кнопки, вход 100 мс со сдвигом 50 мс. Без темы Material круг серый.
+           Значок действия кнопки меню `lg` — ступень `md`, и набор переписывает её размер.
            Панель живёт в слое поверх страницы, и признак набора несёт сама подложка слоя. */
         :is(.rt-preset-material, [data-preset='material']) & {
             --rt-speed-menu-gap: var(--rt-size-4);
             --rt-speed-menu-inset: calc(var(--rt-size-6) + var(--rt-size-1));
-            --rt-speed-menu-action-bg: var(--rt-mat-neutral-25);
+            --rt-speed-menu-action-bg: var(--mat-sys-primary-container, var(--rt-mat-neutral-25));
+            --rt-speed-menu-action-color: var(--mat-sys-on-primary-container, var(--rt-color-text-primary));
+            --rt-icon-step-md: var(--rt-size-6);
             --rt-speed-menu-action-shadow: var(--mat-sys-level3, var(--rt-mat-shadow-fab));
             --rt-speed-menu-action-shadow-hover: var(--mat-sys-level4, var(--rt-mat-shadow-fab-hover));
             --rt-speed-menu-duration: calc(var(--rt-duration-fast) * 5 / 6);
@@ -78,18 +83,22 @@
         }
     }
 
+    /* Цвет значка — свойство меню; по умолчанию тот же цвет текста, что ставит вид `secondary`. */
     .rt-speed-menu__action .rt-icon-button {
         --rt-icon-button-shadow: var(--rt-speed-menu-action-shadow);
+
+        color: var(--rt-speed-menu-action-color);
 
         &:hover {
             --rt-icon-button-shadow: var(--rt-speed-menu-action-shadow-hover);
         }
     }
 
-    /* Тёмная заливка материального действия — тёмная ступень первого кита. */
+    /* Тёмная заливка материального действия: тема Material отвечает тёмным сама, без неё — тёмная
+       ступень первого кита. */
     :root[data-theme='dark'] :is(.rt-preset-material, [data-preset='material']) .rt-speed-menu__panel,
     html.rt-theme-dark :is(.rt-preset-material, [data-preset='material']) .rt-speed-menu__panel {
-        --rt-speed-menu-action-bg: var(--rt-mat-dark-20);
+        --rt-speed-menu-action-bg: var(--mat-sys-primary-container, var(--rt-mat-dark-20));
     }
 
     @for $step from 1 through 7 {
