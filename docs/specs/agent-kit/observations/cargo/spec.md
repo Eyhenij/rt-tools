@@ -155,6 +155,9 @@ subdomain "Observations" next to it.
 - **A refused block stays on disk with a mark and a reason.** A deleted one is written anew by the
   next session — there is no trace of the analysis, and the repeat comes back. The mark holds both:
   it is visible that there was an analysis, and visible why it did not become an edit.
+- **A refusal mark with the same reason does not stand in a block twice.** A block with no quotation
+  is refused at every send, and a mark written anew each time left five equal ones under three
+  blocks, taken off by hand. A different reason is written as before.
 - **The check for a tree address judges all the ready blocks, not only the departing ones.** One
   refused by the quotation lies on disk and will go as soon as it is fixed — and a leak found in it
   refuses the whole sending and must be named at once, not hide behind the refusal.
@@ -220,6 +223,11 @@ subdomain "Observations" next to it.
   edition of the cargo for the refusals would cost a second edition of the storage.
 - **The lines leave grouped by day, and a day leaves whole.** The intake replaces a day whole; a day
   sent by halves would be replaced by its second half.
+- **A request carries one day, and a refused day does not hold up the rest.** Three days of lines
+  came to 5826 lines, and the intake refused the whole request as heavier than its limit: the digest
+  arrived alone, and the proposals and analyses stayed behind. A day refused for any reason but the
+  token is named by its date at the end, the exit code is non-zero, and the proposals and analyses
+  leave by their own requests.
 - **The cargo names the working copy it left from, by a checksum of its root.** One tree has several
   working copies with one tree sign and separate observation files; a day replaced by the tree alone
   would keep whichever copy sent last and drop the other. The path itself does not leave.

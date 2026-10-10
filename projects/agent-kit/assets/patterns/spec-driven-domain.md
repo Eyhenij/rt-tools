@@ -38,6 +38,12 @@ has a scenario prefix of its own, and the audit gives no spec a second prefix: t
 such work part into two numberings — one per spec they will merge into. The plan names both, and
 they merge apart, each into its own spec.
 
+The place of an agreement is chosen by the length of the spec it will merge into, at the moment it
+is written. The domain spec plus the agreement's rules is measured against the tree's size limit;
+one that would cross it is written from the start as the agreement of a new subdomain, with its
+own scenario prefix. Measured only at the merge, the overrun moves a finished agreement to a new
+place and a new prefix, together with the test titles that carry its numbers.
+
 ## Mandatory sections
 
 `## Зачем` · `## Терминология` with the subsection `### Как это называется в интерфейсе` ·
@@ -154,6 +160,12 @@ command's name is given by the rule's companion.
 3. The code is written to the scenarios, and the tests are named by their identifiers.
 4. `npm run check:specs` — before the push.
 5. Acceptance goes by the scenarios, not by a retelling of the edit.
+
+Between steps 2 and 3 `npm run check:specs` is red by design, not by mistake. A scenario without a
+test it only lists, but a rule without a binding and a contract row without a procedure it refuses,
+and their bindings name code that is not written yet. So a stage that edits the spec names as its
+readiness sign the refusal list itself — only the new rules unbound, only the new scenarios under
+"no test" — and not exit 0. Exit 0 is the sign of the stage that writes the bound code.
 
 A rule promising a result a person sees is confirmed on the running application, not by
 inference from the call graph. Reading confirms headings, the link to bindings and the shape of

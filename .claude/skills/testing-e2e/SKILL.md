@@ -4,7 +4,7 @@ kind: pattern
 rule: testing
 description: Pattern of rule testing. Load when editing and running end-to-end tests in any end-to-end suite of the tree (apps/*-e2e) — what an end-to-end test closes, ready-made run commands, a stand from the production build behind real nginx, test switches. Not for unit tests — that is pattern testing-unit.
 ---
-<!-- rt-kit v0.30.0 · patterns/testing-e2e.md · 9e2240ba0246 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.30.0 · patterns/testing-e2e.md · 7b169497e088 · правится надстройкой, не здесь -->
 
 # End-to-end tests
 
@@ -32,7 +32,8 @@ An action that adds a node to the page — sending a message, adding a row, atta
 done at least twice in one test. The first time the page holds only the node the action needs; the
 second time it also holds the one the first action added, and a query that matched by a shared mark
 now finds the wrong node. One send per test passes against a handler that breaks on every second
-send.
+send. A toast is such a node too: the one from the previous action is still on screen, so the toast
+is matched by the text only its own action puts out, not by a broad pattern.
 
 Elements are found by `qa-dataid`: classes change together with the layout, and a search by role
 and text breaks on translations.
@@ -136,6 +137,10 @@ selected record.
 
 ## Common misses
 
+- **A search on the stand matches by substring, and older seeds stay.** `editor@example.com` also
+  found `stand-editor@…` and `e2e-editor@…` left by earlier runs, and four old tests failed at
+  once. People a suite creates carry the suite prefix in the whole value (`e2e-<suite>-…`), and the
+  test searches by that whole value, not by a common part.
 - **A service limit per client address counts the whole suite as one client.** Every test goes from
   one machine, so a limit on requests per minute is reached by the sum of the tests, not by any one
   of them. Adding tests pushes old ones into refusal (429): a run of one spec stays green, and only

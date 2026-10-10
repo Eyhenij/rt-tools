@@ -50,12 +50,14 @@ whole.
 - **Likeness of texts does not tell a repeat apart, and it is not judged by a threshold.** — `projects/agent-kit/src/lib/proposals.ts:NEAREST`
 - **A block is refused by name, and the neighbouring ones go.** — `projects/agent-kit/src/lib/shipment.ts:propose`
 - **A refused block stays on disk with a mark and a reason.** — `projects/agent-kit/src/lib/shipment.ts:markRefused`
+- **A refusal mark with the same reason does not stand in a block twice.** — `projects/agent-kit/src/lib/proposals.ts:markSent` — the mark is looked for between the header and the next heading before it is written; scenario SC-AK-1210
 - **The check for a tree address judges all the ready blocks, not only the departing ones.** — `projects/agent-kit/src/lib/shipment.ts:leaksOfCargo`
 - **A real run names the list of the cargo before its results.** — `projects/agent-kit/src/lib/shipment.ts:manifest`
 - **A dry run is declared by the first line, not by the ending of a verb.** — `projects/agent-kit/src/lib/shipment.ts:propose`
 - **A refusal about a not-found intake address names whom to ask for it.** — `projects/agent-kit/src/lib/enroll.ts:intakeReady` and `projects/agent-kit/src/lib/shipment.ts:refusal` — both refusals name the owner of the intake and the pair "code and address"; scenario `SC-AK-855`
 - **Every line of the window leaves, of every event kind.** — `projects/agent-kit/src/lib/observations-cargo.ts:parseObservationLine` — the four kinds are the closed list `OBSERVATION_EVENTS` of the cargo module
 - **The lines leave grouped by day, and a day leaves whole.** — `projects/agent-kit/src/lib/observations-cargo.ts:readObservationDays` — one entry per day file of the window, the lines of the file whole
+- **A request carries one day, and a refused day does not hold up the rest.** — `projects/agent-kit/src/lib/shipment.ts:shipmentsOf` — one shipment per day; `projects/agent-kit/src/lib/shipment.ts:send` collects the refused days and goes on; scenarios SC-AK-1211, SC-AK-1212
 - **The cargo names the working copy it left from, by a checksum of its root.** — `projects/agent-kit/src/lib/observations-cargo.ts:originOf`
 - **A load names the kind of its skill.** — `projects/agent-kit/src/lib/observations-cargo.ts:skillKindOf` — the kind by the layout the send reads, `own` for a name the layout does not carry
 - **A line leaves as it lies, and nothing is added to it but the kind.** — `projects/agent-kit/src/lib/observations-cargo.ts:linesOfDay` — the kind is added to a load only

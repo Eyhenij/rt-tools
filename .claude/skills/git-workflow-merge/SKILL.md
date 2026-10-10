@@ -4,7 +4,7 @@ kind: pattern
 rule: git-workflow
 description: Pattern of rule git-workflow. Load when the base of a branch is merged into it and a conflict is resolved — the merge order, handling by file kind, checking what was appended against the work queue, re-reading the body of the open request. Branch and commit — pattern git-workflow-commit.
 ---
-<!-- rt-kit v0.30.0 · patterns/git-workflow-merge.md · 79ba77abe270 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.30.0 · patterns/git-workflow-merge.md · 434f89fbbfa2 · правится надстройкой, не здесь -->
 
 # Merging the base of a branch into it
 
@@ -182,6 +182,12 @@ one's own hand: it is removed by whoever's work it is, in their own branch.
 
 - "Keep both sides" applied to all files alike: in a spec it is right, in code and in the work
   list it is not.
+- **A merge carries edits of files, not edits of an application.** A function switched on by one
+  line in the root of one application stays off in the second application of the tree: nobody
+  touched that root, so there is no conflict, and an optional dependency is allowed to be absent, so
+  no check turns red. After the merge the diff of the merged-in roots and shared layers is read for
+  every application of the tree: each added line is either carried over or named in the report as
+  not needed there.
 - The merge command taken without the signature variables: the merge commit is signed by a
   person, and the push set refuses it — at the step where all checks are already green. This is
   fixed by rewriting the branch, not by editing one commit: conflict resolutions usually already

@@ -4,7 +4,7 @@ kind: pattern
 rule: deploy-flow
 description: Pattern of rule deploy-flow. Load when working with images on your own machine — starting and restarting the daemon, diagnosing a hanging command, building for the production server platform, registry login from a service. Production server commands — pattern git-workflow-restart.
 ---
-<!-- rt-kit v0.30.0 · patterns/git-workflow-docker.md · e9a363f16b26 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.30.0 · patterns/git-workflow-docker.md · 7eeae5a95d28 · правится надстройкой, не здесь -->
 
 # Images on one's own machine
 
@@ -90,11 +90,13 @@ for v in $(docker volume ls -q -f dangling=true); do
     [ -z "$(docker volume inspect "$v" --format '{{index .Labels "com.docker.compose.project"}}')" ] \
         && docker volume rm "$v"
 done
-docker builder prune --force --filter until=24h       # yesterday's cache is nobody's, the fresh one the build needs
+docker builder prune --builder <name> --force --filter until=24h   # yesterday's cache is nobody's, the fresh one the build needs
 ```
 
 A threshold on the cache, not a full cleanup: removed whole, it makes the next build go from
-scratch.
+scratch. The cache is pruned with the builder named: without `--builder` the command prunes the
+current builder, and a pipeline running on the same machine changes which one that is, so the cache
+the pipeline builds with goes with it.
 
 A pipeline run living on the owner's machine cleans up after itself, and does it in a step that
 runs on failure too: space runs out exactly when the run fails, and a cleanup skipped on failure

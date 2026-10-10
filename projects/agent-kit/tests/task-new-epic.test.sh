@@ -17,6 +17,7 @@ cp "$CHECKS/board-epic-link.github.mjs" "$TN_TREE/tools/board-epic-link.mjs"
 cp "$CHECKS/board-epic-plan.github.mjs" "$TN_TREE/tools/board-epic-plan.mjs"
 cp "$CHECKS/board-task-dirs.github.mjs" "$TN_TREE/tools/board-task-dirs.mjs"
 cp "$CHECKS/task-new.github.mjs" "$TN_TREE/tools/task-new.mjs"
+cp "$CHECKS/task-new-queue.github.mjs" "$TN_TREE/tools/task-new-queue.mjs"
 
 # Настройки дерева-фикстуры: своя очередь работ, своя метка эпика, свой каталог планов.
 tn_config() {

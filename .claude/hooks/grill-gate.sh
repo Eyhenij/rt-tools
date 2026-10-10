@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.30.0 · hooks/grill-gate.sh · 4554a0c7369b · правится надстройкой, не здесь
+# rt-kit v0.30.0 · hooks/grill-gate.sh · 8e19a48b11dd · правится надстройкой, не здесь
 # Requires: hooks/deny-tail.sh, hooks/turn-exit-patterns.sh, hooks/grill-gate-bypass.sh
 # rt-hook: Stop
 # The conversation guard: the owner is not asked a question until the laws and rules have been read
@@ -437,7 +437,7 @@ fi
 # circle: the search was made, the same refusal came back, and the executor stopped asking at all.
 if [ -n "$need_re" ]; then
     named="$(printf '%s' "$need_re" | tr '|' '\n' | sed 's/.*/«&»/' | paste -sd ',' - | sed 's/,/, /g')"
-    reason="$head A question whose answer is already written down is not asked of the owner — the rule of work conduct. The turn holds edits, and for them only the rules of their area count: $named. Load them by the tool Skill, or read them in $rules_dir, and answer from what is found; ask only what they do not cover.
+    reason="$head A question whose answer is already written down is not asked of the owner — the rule of work conduct. The turn holds edits, and for them only the rules of their area count: $named. A search over the specs or over other rules does not lift this refusal. The area counts every edit since the owner's last message, the stretch before a context compaction included. Load them by the tool Skill, or read them in $rules_dir, and answer from what is found; ask only what they do not cover.
 
 A rule loaded before the owner's last message does not count: the guard judges one turn, and the next session is not refused."
 else

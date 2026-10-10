@@ -181,6 +181,12 @@ one's own hand: it is removed by whoever's work it is, in their own branch.
 
 - "Keep both sides" applied to all files alike: in a spec it is right, in code and in the work
   list it is not.
+- **A merge carries edits of files, not edits of an application.** A function switched on by one
+  line in the root of one application stays off in the second application of the tree: nobody
+  touched that root, so there is no conflict, and an optional dependency is allowed to be absent, so
+  no check turns red. After the merge the diff of the merged-in roots and shared layers is read for
+  every application of the tree: each added line is either carried over or named in the report as
+  not needed there.
 - The merge command taken without the signature variables: the merge commit is signed by a
   person, and the push set refuses it — at the step where all checks are already green. This is
   fixed by rewriting the branch, not by editing one commit: conflict resolutions usually already

@@ -4,7 +4,7 @@ kind: pattern
 rule: doc-style
 description: Pattern of rule doc-style. Load when writing a task in the work queue, a PR description and a chat reply to the owner. Samples of "so" and "not so" for each of the three texts and the words that get replaced in them. The shape of a status reply is named by rule status-report.
 ---
-<!-- rt-kit v0.30.0 · patterns/doc-style-human.md · e76eb067d913 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.30.0 · patterns/doc-style-human.md · 9c13ecf94788 · правится надстройкой, не здесь -->
 
 # A task, a PR description and a reply to the owner
 
@@ -84,7 +84,28 @@ The owner's language is the one they write in chat and on cards. An owner writin
 gets an English task, and that is no miss: the miss is a text in a language the addressee did
 not choose.
 
+## A guide for an executor in another tree
+
+Its reader has neither the author's memory nor the author's conversation, so the guide is checked
+step by step before it is handed over: each step is done from the text alone. Addresses, access
+and the state of name records are written in. A solution already found and verified goes in as a
+recipe; "decide later" stands only where no way was verified. The ban on naming another tree covers
+its name, not the infrastructure its reader needs.
+
+```text
+✗ Шаг 1. Подготовьте узел. Адрес и доступ решим позже.
+✓ Шаг 1. Узел — таблица «Где узел»: адрес, порт почты, вход по ключу. Запись DNS ставит владелец
+  домена, и в задаче она названа его действием.
+```
+
 ## Pitfalls
+
+- **A promise about the behaviour of an outside service names what backs it.** A host or a bot is
+  promised to do something only with a quote of its documentation or a run that did it; where it
+  cannot be checked before the merge, the text says exactly that.
+- **What a text says about another record is read from that record in the same turn.** A release
+  note names a task by the title read in the tracker at that minute, and a commit without a task
+  number does not go into it: a number taken from memory lands on someone else's task.
 
 - **An edit made by a shell command is judged by the whole command, the old version inside it
   included.** The style check gets the body of the call, not the text that will end up in the
