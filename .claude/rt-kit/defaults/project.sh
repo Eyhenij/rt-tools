@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.30.1 · defaults/project.sh · 4f6c2b09f7e3 · правится надстройкой, не здесь
+# rt-kit v0.30.1 · defaults/project.sh · 3c7654c616fe · правится надстройкой, не здесь
 # Tree profile: what checks an edit here and what counts as reinvention.
 #
 # The package default. Everything the trees of this workshop have in common lives here: the Nx
@@ -359,6 +359,9 @@ rt_pull_token_login() { :; }
 # default stays silent — the heading is written in the PR's language, and the package does not know
 # foreign words: a section not named by the tree is not judged at all.
 RT_PULL_BODY_SECTION="${RT_PULL_BODY_SECTION:-}"
+
+# The PR body line closing the branch's task (`{number}`); the keyword is the hosting's, so silent.
+RT_PULL_CLOSES_LINE="${RT_PULL_CLOSES_LINE:-}"
 
 # The command that moves a task between the columns of the work queue, and the name of the first
 # column — the one the task leaves when it is taken into work. The name has no default: the tree
