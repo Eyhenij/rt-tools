@@ -261,6 +261,10 @@ if printf '%s' "$reason" | grep -q 'last message'; then got="есть"; else got
 report "SC-AK-1194 — отказ говорит, что прошлая загрузка не считается" "$got" "есть"
 if printf '%s' "$reason" | grep -q 'grep -rn'; then got="есть"; else got="нет"; fi
 report "SC-AK-1194 — совета искать по каталогам нет" "$got" "нет"
+if printf '%s' "$reason" | grep -q 'does not lift this refusal'; then got="есть"; else got="нет"; fi
+report "SC-AK-1194 — отказ говорит, что поиск по описаниям его не снимает" "$got" "есть"
+if printf '%s' "$reason" | grep -q 'compaction'; then got="есть"; else got="нет"; fi
+report "SC-AK-1194 — отказ говорит, что область берёт и участок до сжатия" "$got" "есть"
 
 # --- SC-AK-818 — на этот вопрос владелец уже отвечал --------------------------------------
 # Указание владельца действует до его отмены, и новый факт против него — строка в ответе о цене,

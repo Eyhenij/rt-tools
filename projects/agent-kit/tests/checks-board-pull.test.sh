@@ -17,6 +17,7 @@ pull_tree() {
     mkdir -p "$dir/tools" "$dir/.claude/rt-kit"
     cp "$CHECKS/rt-kit-checks.config.mjs" "$dir/tools/"
     cp "$CHECKS/board.github.mjs" "$dir/tools/board.mjs"
+    cp "$CHECKS/board-runs.github.mjs" "$dir/tools/board-runs.mjs"
     cp "$CHECKS/board-epic-link.github.mjs" "$dir/tools/board-epic-link.mjs"
     cp "$CHECKS/board-epic-plan.github.mjs" "$dir/tools/board-epic-plan.mjs"
     cp "$CHECKS/board-task-dirs.github.mjs" "$dir/tools/board-task-dirs.mjs"
@@ -115,7 +116,7 @@ NUMBERED='{"number":701,"isDraft":true,"author":{"login":"probe-bot"},"reviewReq
 
 report "SC-AK-391 — без ссылки клиент зовётся вовсе без довода" \
     "$(pull_state "$PULL_TREE" "$NUMBERED" '' '' >/dev/null; pull_args "$PULL_TREE")" \
-    'pr view --json number,isDraft,reviewRequests,latestReviews,author,mergeable,headRefName'
+    'pr view --json number,isDraft,reviewRequests,latestReviews,author,mergeable,headRefName,headRefOid'
 report "SC-AK-391 — и заявка при этом найдена" \
     "$(pull_state "$PULL_TREE" "$NUMBERED" '' '' | jq -r '.exists')" true
 # Номер приходит из ответа: заявку, названную не номером, в отказе гарда узнают по нему.
@@ -125,10 +126,10 @@ report "SC-AK-391 — номер берётся из ответа хостинг
 # Ссылка любого рода уходит клиенту как есть: разбирать адрес и имя ветки — его работа, не наша.
 report "SC-AK-392 — имя ветки уходит клиенту доводом" \
     "$(pull_state "$PULL_TREE" "$NUMBERED" '' 'RT-700-probe' >/dev/null; pull_args "$PULL_TREE")" \
-    'pr view RT-700-probe --json number,isDraft,reviewRequests,latestReviews,author,mergeable,headRefName'
+    'pr view RT-700-probe --json number,isDraft,reviewRequests,latestReviews,author,mergeable,headRefName,headRefOid'
 report "SC-AK-392 — и адрес заявки тоже" \
     "$(pull_state "$PULL_TREE" "$NUMBERED" '' 'https://example.invalid/o/r/pull/701' >/dev/null; pull_args "$PULL_TREE")" \
-    'pr view https://example.invalid/o/r/pull/701 --json number,isDraft,reviewRequests,latestReviews,author,mergeable,headRefName'
+    'pr view https://example.invalid/o/r/pull/701 --json number,isDraft,reviewRequests,latestReviews,author,mergeable,headRefName,headRefOid'
 report "SC-AK-392 — по имени ветки заявка тоже находится" \
     "$(pull_state "$PULL_TREE" "$NUMBERED" '' 'RT-700-probe' | jq -r '.exists')" true
 

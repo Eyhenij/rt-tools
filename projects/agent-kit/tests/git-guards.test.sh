@@ -437,6 +437,35 @@ out="$(input_cmd 'gh pr create --title "[RT-7] Сделано" --body "Тело 
     | jq -r '.hookSpecificOutput.permissionDecisionReason // ""' 2>/dev/null | grep -c 'the remaining step')"
 report "неназванный образец раздела не судится вовсе" "упоминаний:${out:-0}" "упоминаний:0"
 
+# --- строка закрытия задачи в теле заявки --------------------------------------------------------
+#
+# Без строки закрытия влитая задача остаётся открытой на доске: три заявки одного эпика ушли так,
+# и сверка очереди назвала это только после слияния. Номер берётся из имени ветки — здесь RT-7.
+closes_line() {
+    out="$(input_cmd "$2" Bash "$REPO_WORK" \
+        | RT_PULL_CLOSES_LINE='^Closes[[:space:]]+#{number}([^0-9]|$)' "$HOOKS/git-guard-delivery.sh" 2>/dev/null \
+        | jq -r '.hookSpecificOutput.permissionDecisionReason // ""' 2>/dev/null \
+        | grep -c 'closes the task')"
+    report "$1" "упоминаний:${out:-0}" "упоминаний:$3"
+}
+
+closes_line "SC-AK-1217 — тело без строки закрытия отбивает открытие заявки" \
+    'gh pr create --title "[RT-7] Сделано" --body "Тело без строки."' 1
+closes_line "SC-AK-1218 — строка с номером задачи из ветки принимается" \
+    'gh pr create --title "[RT-7] Сделано" --body "Closes #7
+
+Тело."' 0
+closes_line "SC-AK-1218 — строка с чужим номером отбита" \
+    'gh pr create --title "[RT-7] Сделано" --body "Closes #70
+
+Тело."' 1
+
+# Дерево, не назвавшее образца строки, требования не получает: ключевое слово принадлежит хостингу.
+out="$(input_cmd 'gh pr create --title "[RT-7] Сделано" --body "Тело без строки."' Bash "$REPO_WORK" \
+    | "$HOOKS/git-guard-delivery.sh" 2>/dev/null \
+    | jq -r '.hookSpecificOutput.permissionDecisionReason // ""' 2>/dev/null | grep -c 'closes the task')"
+report "SC-AK-1219 — неназванный образец строки закрытия не судится" "упоминаний:${out:-0}" "упоминаний:0"
+
 # --- отказ в пользу работы ---------------------------------------------------------------------
 for hook in git-guard-main.sh git-guard-delivery.sh git-guard-push-tests.sh; do
     printf '' | "$HOOKS/$hook" >/dev/null 2>&1
