@@ -12,7 +12,7 @@
 - **Next step:** the closing steps — taking the folder apart and the PR — belong to the session
   that leads the epic
 - **Uncommitted:** no
-- **Waiting for the owner:** no
+- **Waiting for the owner:** «пры не открывай откроеш после моего апрува» — sending the branch and the PR wait for their word. The live comparison with the application matched: rows 32px, gap 5px, radius 6px, indent 46px, checkbox 16px, match #ffeb3b semibold, select all 14/500. The four icon frames diverge until the breadcrumbs task, which retook them, is merged into the epic
 - **PR:** not open yet
 
 ## Steps
