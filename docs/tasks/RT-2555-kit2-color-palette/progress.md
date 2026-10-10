@@ -47,6 +47,31 @@
 - The test host keeps its inputs in signals: a plain field changed on an OnPush host never reached
   the palette.
 
+## Live comparison of the epic's components, 10 October — what the next session fixes first
+
+The owner asked «спавнивай на экране и поведение». A check agent compared the application on :4400
+with the material halves on :6007 by measurement. It corrects the code-based comparison, and the
+fixes go in this order, each on its own branch:
+
+1. **RT-2556 carousel — roll back the shadow.** The live application draws `--rt-shadow-lg`, not
+   `0 8px 16px #747474`: the variable read from its code is overridden on screen. Commit 05f19213b
+   brought the wrong one, together with `--rt-card-stack-shadow` and two scale steps; they go away.
+2. **RT-2554 speed menu — the action fill.** Live actions are `--mat-sys-primary-container` with the
+   icon `--mat-sys-on-primary-container` (24px), not grey. The bare 24px trigger stays an input.
+3. **RT-2553 inline edit — the badge look.** Live: background `--rt-mat-neutral-5`, border
+   `--mat-sys-primary-fixed-dim`, text and icon `--mat-sys-primary`, pencil on the left; the edit
+   happens inside the badge, which grows with the text up to 384px; leaving saves. The kit swaps the
+   badge for a 191px field with buttons. Needs a badge edit mode and its inputs.
+4. **RT-2552 breadcrumbs** — the application passes `›`; show the material half with it.
+5. **RT-2555 palette** — the custom swatch stands next to its button, 16px below the grid; the
+   button is grey 16/400; the picker panel is 256×320 with the shadow `0 8px 16px #747474`.
+6. **Trees (new task of the epic)** — rows 32px with a 5px gap and radius 6px, padding 8 12;
+   checkbox 16px in the accent; chevron in the accent; «Select All» 14/500.
+
+Matches already: the palette swatches, ring and glow; the carousel sizes, overlap and hover; the
+breadcrumbs type and colours; the speed menu step, distance and entry. Intended kit differences: the
+keyboard in all of them, focus rings, Escape closing the speed menu.
+
 ## Steps
 
 - `[x]` done · `[>]` going on right now · `[ ]` not begun
