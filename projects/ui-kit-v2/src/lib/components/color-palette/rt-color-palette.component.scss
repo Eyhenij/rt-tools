@@ -17,6 +17,7 @@
         --rt-color-palette-ring-gap-color: var(--rt-color-bg-surface);
         --rt-color-palette-checked-inset: 0px;
         --rt-color-palette-checked-hollow: 0%;
+        --rt-color-palette-checked-glow: 0px;
         --rt-color-palette-readonly-size: var(--rt-size-8);
         --rt-color-palette-readonly-border-width: var(--rt-border-width-thin);
         --rt-color-palette-empty-border-color: var(--rt-color-border-default);
@@ -28,7 +29,7 @@
         gap: var(--rt-color-palette-gap);
 
         /* Материальный набор повторяет образцы приложения: круги 30px без рамки через 10px, выбранный —
-           полое кольцо 3px своего цвета, круг под указателем растёт. */
+           полое кольцо 3px своего цвета со свечением 5px, круг под указателем растёт. */
         :is(.rt-preset-material, [data-preset='material']) & {
             --rt-color-palette-swatch-size: calc(var(--rt-size-8) - var(--rt-space-2xs));
             --rt-color-palette-swatch-border-width: 0px;
@@ -38,6 +39,7 @@
             --rt-color-palette-ring-gap: 0px;
             --rt-color-palette-checked-inset: var(--rt-border-width-thick);
             --rt-color-palette-checked-hollow: 100%;
+            --rt-color-palette-checked-glow: calc(var(--rt-space-xs) + 1px);
         }
 
         &__swatches {
@@ -77,7 +79,8 @@
                 --rt-color-palette-checked-shadow:
                     inset 0 0 0 var(--rt-color-palette-checked-inset) var(--rt-color-palette-color),
                     0 0 0 var(--rt-color-palette-ring-gap) var(--rt-color-palette-ring-gap-color),
-                    0 0 0 calc(var(--rt-color-palette-ring-gap) + var(--rt-color-palette-ring-width)) var(--rt-color-palette-color);
+                    0 0 0 calc(var(--rt-color-palette-ring-gap) + var(--rt-color-palette-ring-width)) var(--rt-color-palette-color),
+                    0 0 var(--rt-color-palette-checked-glow) var(--rt-color-palette-color);
 
                 background: color-mix(in srgb, var(--rt-color-palette-color), transparent var(--rt-color-palette-checked-hollow));
                 box-shadow: var(--rt-color-palette-checked-shadow);

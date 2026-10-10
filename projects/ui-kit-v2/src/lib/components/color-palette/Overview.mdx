@@ -51,7 +51,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 правилом на этот блок. Панель своего цвета живёт в оверлее и объявляет свои свойства на себе.
 
 Материальный набор повторяет образцы приложения: круги 30px без рамки через 10px, выбранный — полое
-кольцо 3px своего цвета, круг под указателем растёт. Панель получает скругление 6px.
+кольцо 3px своего цвета со свечением 5px, круг под указателем растёт. Панель получает скругление 6px.
 
 | свойство                                   | что задаёт                           | умолчание                   |
 | ------------------------------------------ | ------------------------------------ | --------------------------- |
@@ -65,6 +65,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | `--rt-color-palette-ring-gap`              | просвет до внешнего кольца           | `--rt-border-width-thick`   |
 | `--rt-color-palette-ring-gap-color`        | цвет просвета                        | `--rt-color-bg-surface`     |
 | `--rt-color-palette-checked-inset`         | вдавленное кольцо выбранного         | `0px`                       |
+| `--rt-color-palette-checked-glow`          | свечение выбранного его цветом       | `0px`                       |
 | `--rt-color-palette-checked-hollow`        | доля прозрачности заливки выбранного | `0%`                        |
 | `--rt-color-palette-readonly-size`         | сторона образца только для чтения    | `--rt-size-8`               |
 | `--rt-color-palette-readonly-border-width` | рамка образца только для чтения      | `--rt-border-width-thin`    |

@@ -9,8 +9,13 @@
   and the playground, measured on :6007 and taken as references, the whole set of 844 frames green.
   On 9 October the epic branch with a fresh main went in; four icon frames were retaken for the
   added `folder`, and the kit tests and linter passed. The hover frame of the favourites submenu
-  diverged once by a tooltip and matched on the second run.
-- **Next step:** take the folder apart and open the PR into the epic branch when the owner approves.
+  diverged once by a tooltip and matched on the second run. On 10 October, after the comparison
+  with the application's code, the material checked swatch got the application's 5px glow of its
+  colour through `--rt-color-palette-checked-glow` (0px by default); four palette frames were
+  retaken, the material half alone moved.
+- **Next step:** the rest of the comparison from the epic plan: the white circle of an empty
+  read-only value, the custom colour button on a row of its own, and the picker panel's height,
+  shadow and buttons. Then take the folder apart and open the PR when the owner approves.
 - **Uncommitted:** no
 - **Waiting for the owner:** «пры не открывай откроеш после моего апрува» — the push and the PR wait
   for the owner's approval.
