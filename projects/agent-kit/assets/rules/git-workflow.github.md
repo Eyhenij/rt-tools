@@ -172,7 +172,7 @@ flowchart TD
 - **The build is in the set on a par with lint and unit tests.** The linter does not read types,
   and a type error in uncovered code lives until the merge.
 - **On a machine with several runners, any path from the home directory is shared.** Install
-  directory, container name and builder name are per project.
+  directory, container name, builder name and published port are per project.
 - **The push gate set is never narrower than the pipeline set.** A pipeline step with neither a
   line in the set nor a declared exclusion refuses the push: a warning reads as permission.
 - **The gate set calls the package default instead of listing it line by line.** Rewritten as

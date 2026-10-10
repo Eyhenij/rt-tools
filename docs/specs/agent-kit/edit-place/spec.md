@@ -61,8 +61,15 @@ turn.
   body holding not a single write call gave out its paths on a par with one that writes. A command
   that loaded a laid-out helper and printed its answer was forbidden as an edit of that helper —
   three times in a row in one session, and not one call wrote anything. A body that does write gives
-  out its paths whole: the path and the write call stand there on different lines, and there is
-  nothing to link them by.
+  out the paths of its write lines: the path and the write call stand there on different lines, and
+  there is nothing to link them by.
+- **A path inside a string the script writes or substitutes is the content of the write, not its
+  target.** A script that edited a work file and named a laid-out copy in the text of a new line was
+  refused by the name of the copy it never opened: a string `replace(` counts as a write line, and
+  every path-like word of the line was taken. The argument of `.write(`, `.write_text(`,
+  `.write_bytes(` and of a string `.replace(` and the data of `writeFileSync` are cut before the
+  parse; the address of the call stays. `os.replace(source, target)` is a transfer, and its
+  arguments stay.
 - **The body of a heredoc is data of the command, and the shell parse does not read it.** A markdown
   quote line inside a body opens with the same sign as a redirection: a path standing in the quote
   was taken as a write target, and an edit that wrote nothing into the tree was refused twice by it.

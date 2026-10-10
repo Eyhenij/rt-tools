@@ -24,7 +24,8 @@ Covered: `projects/agent-kit/tests/grill-gate.test.sh`.
 
 Given during the turn a file was edited for which the rules gate names its own rule, and no rule was read
 When the turn ends with a question to the owner
-Then the refusal names that rule, says that a load before the owner's last message does not count and gives no advice to search the directories
+Then the refusal names that rule, says that a load before the owner's last message does not count and gives no advice to search the directories.
+The refusal also says that a search over the specs or over other rules does not lift it. It says that the area counts the stretch before a context compaction too
 
 Covered: `projects/agent-kit/tests/grill-gate.test.sh`.
 
