@@ -1,3 +1,5 @@
+## [0.23.1](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2@0.23.0...rt-ui-kit-v2@0.23.1) (2026-10-10)
+
 # [0.23.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2@0.22.1...rt-ui-kit-v2@0.23.0) (2026-10-09)
 
 ## [0.22.1](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2@0.22.0...rt-ui-kit-v2@0.22.1) (2026-10-09)
