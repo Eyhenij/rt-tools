@@ -54,6 +54,15 @@
   transition version matched the frames without animation pixel for pixel, all nine.
 - The `expanded` input of the icon button is named in the accepted list of the boolean input check,
   next to `pressed`: the third value is a button that opens nothing and carries no `aria-expanded`.
+- On 10 October the stories were compared with the application's code at the owner's word «сравни
+  сторис перенесенных компонентов с их использованием». The menu had no material look at all. The
+  preset now draws the application's mat-mini-fab: grey circles (dark step in the dark theme) with
+  Material elevation 3 and 4 under the pointer, 16px between actions and 28px from the button, entry
+  in 100 ms with a 50 ms step. Two properties were added for that: `--rt-speed-menu-inset` and
+  `--rt-speed-menu-action-shadow-hover`; both default to what stood there, and 847 frames matched.
+  The story UpMaterial shows the open menu under the preset: the overlay takes the flag from the
+  container. The application's bare trigger is the `ghost` variant, an input, not the preset.
+  Affected stage: 4.
 
 ## Steps
 

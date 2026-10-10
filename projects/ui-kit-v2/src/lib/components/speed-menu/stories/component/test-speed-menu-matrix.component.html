@@ -48,6 +48,14 @@
         </div>
     }
 
+    @case ('open-material') {
+        <!-- Без пары наборов по той же причине: открыта одна панель. Материальный набор задан
+             контейнером, и слой поверх страницы берёт его признак сам. -->
+        <div data-preset="material" style="display: grid; min-block-size: 360px; place-items: center; padding: 160px">
+            <rt-speed-menu data-story-trigger label="Масштаб" icon="zoom_in" [actions]="actions" [direction]="direction" />
+        </div>
+    }
+
     @case ('presets') {
         <app-story-presets caption="Кнопка меню в обоих наборах">
             <ng-template>

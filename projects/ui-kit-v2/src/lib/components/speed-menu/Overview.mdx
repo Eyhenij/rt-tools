@@ -67,13 +67,20 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 ## Оформление
 
 Свои свойства: `--rt-speed-menu-shadow` у блока — тень кнопки меню, `--rt-shadow-md`. На панели —
-`--rt-speed-menu-gap` (зазор и отступ от кнопки, `--rt-space-sm`), `--rt-speed-menu-action-shadow`
-(`--rt-shadow-md`), `--rt-speed-menu-action-bg` (подложка действия, `--rt-color-bg-surface`),
+`--rt-speed-menu-gap` (зазор между действиями, `--rt-space-sm`), `--rt-speed-menu-inset` (отступ от
+кнопки, равен зазору), `--rt-speed-menu-action-shadow` (`--rt-shadow-md`) и
+`--rt-speed-menu-action-shadow-hover` (под указателем, равна покою), `--rt-speed-menu-action-bg`
+(подложка действия, `--rt-color-bg-surface`),
 `--rt-speed-menu-action-radius` (`--rt-radius-full`), `--rt-speed-menu-duration` и
 `--rt-speed-menu-stagger` (вход действия и шаг между ними, `--rt-duration-fast`). Подложка
 непрозрачна: действие висит над картой или таблицей, а заливка кнопки второй палитры прозрачна.
 Панель лежит в конце страницы, и свойства её объявлены на ней самой. Базовый и материальный наборы стоят половинами матриц, светлая и тёмная темы — в истории
 **Themes**.
+
+Материальный набор повторяет меню приложения — mat-mini-fab. Действия — серые круги с подъёмом 3
+Material, под указателем 4. Между ними 16px, от кнопки 28px, вход 100 мс со сдвигом 50 мс. Раскрытое
+меню в этом наборе показывает история **UpMaterial**. Кнопку меню без заливки, как в приложении,
+даёт вход `variant="ghost"`.
 
 ## Входы
 

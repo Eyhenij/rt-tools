@@ -54,6 +54,9 @@ export const Start: TStory = { args: { part: 'open', direction: 'start' }, param
 /** Открыто к концу строки: ряд справа от кнопки. */
 export const End: TStory = { args: { part: 'open', direction: 'end' }, parameters: OPEN_SNAPSHOT, play: openMenu };
 
+/** Меню масштаба приложения, раскрытое вверх в материальном наборе. */
+export const UpMaterial: TStory = { args: { part: 'open-material', direction: 'up' }, parameters: OPEN_SNAPSHOT, play: openMenu };
+
 export const Presets: TStory = { args: { part: 'presets' } };
 
 export const Themes: TStory = { args: { part: 'themes' } };

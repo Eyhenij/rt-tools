@@ -9,7 +9,7 @@ import { IRtSpeedMenu } from '../../rt-speed-menu.model';
 import { SPEED_MENU_ZOOM, SPEED_MENU_ZOOM_UNAVAILABLE } from './test-speed-menu.data';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TSpeedMenuMatrixPart = 'size' | 'variant' | 'states' | 'open' | 'presets' | 'themes';
+export type TSpeedMenuMatrixPart = 'size' | 'variant' | 'states' | 'open' | 'open-material' | 'presets' | 'themes';
 
 /** Случай ячейки: подпись и что передано компоненту. */
 interface ISpeedMenuCase {

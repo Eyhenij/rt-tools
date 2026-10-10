@@ -17,7 +17,9 @@
 
     .rt-speed-menu__panel {
         --rt-speed-menu-gap: var(--rt-space-sm);
+        --rt-speed-menu-inset: var(--rt-speed-menu-gap);
         --rt-speed-menu-action-shadow: var(--rt-shadow-md);
+        --rt-speed-menu-action-shadow-hover: var(--rt-speed-menu-action-shadow);
         --rt-speed-menu-action-bg: var(--rt-color-bg-surface);
         --rt-speed-menu-action-radius: var(--rt-radius-full);
         --rt-speed-menu-duration: var(--rt-duration-fast);
@@ -25,8 +27,21 @@
 
         display: flex;
         align-items: center;
-        padding: var(--rt-speed-menu-gap);
+        padding: var(--rt-speed-menu-inset);
         gap: var(--rt-speed-menu-gap);
+
+        /* Материальный набор повторяет меню приложения — mat-mini-fab: серый круг с подъёмом 3 Material
+           (под указателем — 4), действия через 16px и в 28px от кнопки, вход 100 мс со сдвигом 50 мс.
+           Панель живёт в слое поверх страницы, и признак набора несёт сама подложка слоя. */
+        :is(.rt-preset-material, [data-preset='material']) & {
+            --rt-speed-menu-gap: var(--rt-size-4);
+            --rt-speed-menu-inset: calc(var(--rt-size-6) + var(--rt-size-1));
+            --rt-speed-menu-action-bg: var(--rt-mat-neutral-25);
+            --rt-speed-menu-action-shadow: var(--mat-sys-level3, var(--rt-mat-shadow-fab));
+            --rt-speed-menu-action-shadow-hover: var(--mat-sys-level4, var(--rt-mat-shadow-fab-hover));
+            --rt-speed-menu-duration: calc(var(--rt-duration-fast) * 5 / 6);
+            --rt-speed-menu-stagger: calc(var(--rt-duration-fast) * 5 / 12);
+        }
 
         &--up,
         &--down {
@@ -65,6 +80,16 @@
 
     .rt-speed-menu__action .rt-icon-button {
         --rt-icon-button-shadow: var(--rt-speed-menu-action-shadow);
+
+        &:hover {
+            --rt-icon-button-shadow: var(--rt-speed-menu-action-shadow-hover);
+        }
+    }
+
+    /* Тёмная заливка материального действия — тёмная ступень первого кита. */
+    :root[data-theme='dark'] :is(.rt-preset-material, [data-preset='material']) .rt-speed-menu__panel,
+    html.rt-theme-dark :is(.rt-preset-material, [data-preset='material']) .rt-speed-menu__panel {
+        --rt-speed-menu-action-bg: var(--rt-mat-dark-20);
     }
 
     @for $step from 1 through 7 {
