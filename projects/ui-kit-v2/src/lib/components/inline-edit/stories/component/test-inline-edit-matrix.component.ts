@@ -9,7 +9,7 @@ import { RtInlineEditComponent } from '../../rt-inline-edit.component';
 import { IRtInlineEdit } from '../../rt-inline-edit.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TInlineEditMatrixPart = 'look' | 'editing' | 'size' | 'states' | 'presets' | 'themes';
+export type TInlineEditMatrixPart = 'look' | 'chip-field' | 'editing' | 'size' | 'states' | 'presets' | 'themes';
 
 /** Случай ячейки: подпись и что передано компоненту. */
 interface IInlineEditCase {
@@ -21,6 +21,8 @@ interface IInlineEditCase {
     readonly saving?: boolean;
     readonly disabled?: boolean;
     readonly slotWidth?: string;
+    readonly icon?: string;
+    readonly state?: string;
 }
 
 const NAME: string = 'Отчёт по продажам';
@@ -58,6 +60,15 @@ export class TestRtInlineEditMatrixComponent {
         { name: 'пусто, подсказка', value: '' },
         { name: 'плашка, пусто', value: '', look: 'chip' },
         { name: 'длинное в 200px', value: LONG, slotWidth: '200px' },
+        { name: 'недоступно', value: NAME, disabled: true },
+    ];
+
+    public readonly chipFieldCases: readonly IInlineEditCase[] = [
+        { name: 'значение', value: NAME },
+        { name: 'в фокусе', value: NAME, state: 'focus-within' },
+        { name: 'пусто, подсказка', value: '' },
+        { name: 'длинное — до 24rem', value: LONG },
+        { name: 'свой значок', value: NAME, icon: 'tag' },
         { name: 'недоступно', value: NAME, disabled: true },
     ];
 

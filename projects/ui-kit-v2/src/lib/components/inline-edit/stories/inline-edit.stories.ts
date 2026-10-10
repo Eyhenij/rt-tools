@@ -11,7 +11,7 @@ export default {
     argTypes: {
         value: { control: { type: 'text' } },
         placeholder: { control: { type: 'text' } },
-        look: { ...RADIO, options: ['text', 'chip'] },
+        look: { ...RADIO, options: ['text', 'chip', 'chip-field'] },
         size: { ...RADIO, options: ['sm', 'md', 'lg'] },
         blurAction: { ...RADIO, options: ['keep', 'save', 'cancel'] },
         allowEmpty: { control: { type: 'boolean' } },

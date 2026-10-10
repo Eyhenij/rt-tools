@@ -21,6 +21,15 @@ type TStory = StoryObj<TestRtInlineEditMatrixComponent>;
 export const Look: TStory = { args: { part: 'look' } };
 
 /**
+ * Плашка-поле `look="chip-field"`: плашка сама поле, значок слева, кнопок нет. Фокус показан
+ * признаком `focus-within` на плашке, длинное значение упирается в предел 24rem.
+ */
+export const ChipField: TStory = {
+    args: { part: 'chip-field' },
+    parameters: { pseudo: storyPseudoParameters('.rt-inline-edit__chip-field') },
+};
+
+/**
  * Открытое поле: с черновиком, с пустым черновиком — сохранение недоступно, и во время сохранения.
  * Открыто оно входом `editing`, и фокус берёт поле последней ячейки — так же, как при открытии
  * нажатием.

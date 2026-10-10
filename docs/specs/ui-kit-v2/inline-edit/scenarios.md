@@ -51,3 +51,31 @@ changes nothing
 Given an unavailable inline edit
 When it is pressed
 Then the field does not open
+
+### SC-UKV-831 — the field chip is the field itself
+
+Given an inline edit in the field chip look
+When it is drawn, focused, given a new value, and made unavailable
+Then the value stands in a field with the icon before it and no buttons, focus selects the text, a
+new value of the application takes the field, and an unavailable chip is locked
+
+### SC-UKV-832 — the field chip saves on Enter and on leaving
+
+Given a field chip with a typed draft
+When Enter is pressed, or the focus leaves it
+Then the trimmed draft goes out once and the focus leaves the chip; a draft equal to the value sends
+nothing
+
+### SC-UKV-833 — Escape puts the value back in the field chip
+
+Given a field chip with a typed draft
+When Escape is pressed
+Then the value is back in the field, the cancel goes out, nothing is saved, and the key does not
+reach the window around
+
+### SC-UKV-834 — an empty draft in the field chip reverts silently
+
+Given a field chip with an empty draft
+When Enter is pressed
+Then nothing goes out and the value is back in the field; with empty values allowed the empty draft
+is saved

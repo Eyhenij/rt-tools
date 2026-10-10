@@ -25,6 +25,12 @@
         --rt-inline-edit-chip-border-color-hover: var(--rt-color-action-primary-on-surface);
         --rt-inline-edit-chip-font-size: var(--rt-text-xs);
         --rt-inline-edit-chip-font-weight: var(--rt-font-weight-semibold);
+        --rt-inline-edit-chip-field-max-width: calc(var(--rt-size-64) + var(--rt-size-64) / 2);
+        --rt-inline-edit-chip-field-bg: var(--rt-inline-edit-chip-bg);
+        --rt-inline-edit-chip-field-color: var(--rt-inline-edit-chip-color);
+        --rt-inline-edit-chip-field-icon-color: var(--rt-inline-edit-pencil-color);
+        --rt-inline-edit-chip-field-border-color: var(--rt-inline-edit-chip-border-color);
+        --rt-inline-edit-chip-field-border-color-focus: var(--rt-inline-edit-chip-border-color-hover);
 
         display: inline-flex;
         min-width: 0;
@@ -50,6 +56,13 @@
             --rt-inline-edit-chip-border-color: var(--rt-color-border-subtle);
             --rt-inline-edit-chip-border-color-hover: var(--rt-color-border-strong);
             --rt-inline-edit-value-padding-x: var(--rt-space-2);
+
+            /* Плашка-поле приложения: светлая подложка, рамка, текст и значок — основной цвет темы. */
+            --rt-inline-edit-chip-field-bg: var(--rt-mat-neutral-5);
+            --rt-inline-edit-chip-field-color: var(--mat-sys-primary, var(--rt-color-action-primary));
+            --rt-inline-edit-chip-field-icon-color: var(--mat-sys-primary, var(--rt-color-action-primary));
+            --rt-inline-edit-chip-field-border-color: var(--mat-sys-primary-fixed-dim, var(--rt-brand-200));
+            --rt-inline-edit-chip-field-border-color-focus: var(--mat-sys-primary, var(--rt-color-action-primary));
         }
 
         /* Значение в покое: подпись режется многоточием, полный текст — в подсказке. */
@@ -138,5 +151,90 @@
         &--chip &__value:disabled {
             color: var(--rt-inline-edit-disabled-color);
         }
+
+        /* Плашка-поле: сама плашка — поле. Значок слева, рамка темнеет в фокусе; ширина идёт за
+           текстом до предела, длинный текст прокручивается в поле и целиком виден в подсказке. */
+        &__chip-field {
+            display: inline-flex;
+            min-width: 0;
+            max-width: min(100%, var(--rt-inline-edit-chip-field-max-width));
+            min-height: var(--rt-inline-edit-height);
+            box-sizing: border-box;
+            align-items: center;
+            padding: 0 var(--rt-inline-edit-value-padding-x);
+            border: var(--rt-inline-edit-border-width) solid var(--rt-inline-edit-chip-field-border-color);
+            border-radius: var(--rt-inline-edit-chip-radius);
+            background: var(--rt-inline-edit-chip-field-bg);
+            color: var(--rt-inline-edit-chip-field-color);
+            cursor: text;
+            font-size: var(--rt-inline-edit-chip-font-size);
+            font-weight: var(--rt-inline-edit-chip-font-weight);
+            gap: var(--rt-inline-edit-value-gap);
+            transition: border-color var(--rt-inline-edit-duration) ease;
+
+            &:focus-within {
+                border-color: var(--rt-inline-edit-chip-field-border-color-focus);
+            }
+
+            &--disabled {
+                color: var(--rt-inline-edit-disabled-color);
+                cursor: default;
+            }
+        }
+
+        &__chip-icon {
+            flex-shrink: 0;
+            color: var(--rt-inline-edit-chip-field-icon-color);
+        }
+
+        &__chip-field--disabled &__chip-icon {
+            color: var(--rt-inline-edit-disabled-color);
+        }
+
+        /* Копия текста и поле лежат в одной клетке: копия задаёт ширину, поле её занимает. */
+        &__sizer {
+            display: inline-grid;
+            overflow: hidden;
+            min-width: 0;
+            grid-template-columns: minmax(0, auto);
+        }
+
+        &__mirror,
+        &__chip-input {
+            padding: 0;
+            font: inherit;
+            grid-area: 1 / 1;
+            letter-spacing: inherit;
+            white-space: pre;
+        }
+
+        &__mirror {
+            visibility: hidden;
+        }
+
+        &__chip-input {
+            width: 100%;
+            min-width: var(--rt-space-xs);
+            border: 0;
+            background: transparent;
+            color: inherit;
+            outline: none;
+
+            &::placeholder {
+                color: var(--rt-inline-edit-empty-color);
+            }
+
+            &:disabled {
+                cursor: default;
+            }
+        }
+    }
+
+    /* Светлая подложка плашки-поля приложения в тёмной теме светлее страницы: там плашка берёт
+       подложку плашки набора, которую тёмная тема отвечает сама. */
+    [data-theme='dark'] :is(.rt-preset-material, [data-preset='material']) .rt-inline-edit,
+    :is(.rt-preset-material, [data-preset='material']) [data-theme='dark'] .rt-inline-edit,
+    html.rt-theme-dark :is(.rt-preset-material, [data-preset='material']) .rt-inline-edit {
+        --rt-inline-edit-chip-field-bg: var(--rt-inline-edit-chip-bg);
     }
 }

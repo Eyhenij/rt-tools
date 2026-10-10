@@ -62,6 +62,7 @@ const BEM_BLOCK: string = 'rt-inline-edit';
     host: {
         class: BEM_BLOCK,
         '[class.rt-inline-edit--chip]': "look() === 'chip'",
+        '[class.rt-inline-edit--chip-field]': 'isChipField()',
         '[class.rt-inline-edit--size-md]': "size() === 'md'",
         '[class.rt-inline-edit--size-lg]': "size() === 'lg'",
         '(focusin)': 'onFocusIn()',
@@ -81,6 +82,10 @@ export class RtInlineEditComponent {
     #focusInside: boolean = false;
     #wasEditing: boolean = false;
     #wasSaving: boolean = false;
+    /** Фокус в поле плашки: пока человек правит, новое значение приложения не переписывает черновик. */
+    #chipFocused: boolean = false;
+    /** Enter или Escape уже сохранили черновик и снимают фокус сами: уход не сохраняет второй раз. */
+    #chipLeaving: boolean = false;
 
     protected readonly saveLabel: Signal<string> = rtKitLabel('uiSave');
     protected readonly cancelLabel: Signal<string> = rtKitLabel('uiCancel');
@@ -102,6 +107,11 @@ export class RtInlineEditComponent {
     protected readonly canSave: Signal<boolean> = computed(
         (): boolean => inlineEditOutcome(this.value(), this.#draft(), this.allowEmpty()).kind !== 'refuse'
     );
+
+    /** Плашка сама остаётся полем: нет покоя и открытия, нет кнопок. */
+    protected readonly isChipField: Signal<boolean> = computed((): boolean => this.look() === 'chip-field');
+    /** Текст, по которому плашка-поле берёт ширину: черновик, а пустой — подсказка. */
+    protected readonly chipText: Signal<string> = computed((): string => this.#draft() || this.placeholder());
 
     /** Значение приложения: видно в покое и встаёт в поле при открытии. */
     public readonly value: InputSignal<string> = input.required<string>();
@@ -127,6 +137,8 @@ export class RtInlineEditComponent {
     });
     /** Что делает уход фокуса из компонента. */
     public readonly blurAction: InputSignal<IRtInlineEdit.BlurAction> = input<IRtInlineEdit.BlurAction>('keep');
+    /** Значок перед текстом плашки-поля: имя значка кита. */
+    public readonly fieldIcon: InputSignal<string> = input<string>('pencil');
 
     /** Поле открыто. Приложение может открыть и закрыть его само. */
     public readonly editing: ModelSignal<boolean> = model<boolean>(false);
@@ -155,11 +167,21 @@ export class RtInlineEditComponent {
             this.#wasEditing = editing;
         });
 
+        // Плашка-поле показывает значение приложения, пока человек её не правит.
+        effect((): void => {
+            const value: string = this.value();
+
+            if (this.isChipField() && !this.#chipFocused) {
+                this.draftControl.setValue(value);
+            }
+        });
+
         // Пока приложение сохраняет, поле недоступно; отказ оставил поле открытым — фокус снова в нём.
+        // Плашка-поле всегда на месте, и недоступный компонент запирает её саму.
         effect((): void => {
             const saving: boolean = this.saving();
 
-            if (saving) {
+            if (saving || (this.isChipField() && this.disabled())) {
                 this.draftControl.disable({ emitEvent: false });
             } else {
                 this.draftControl.enable({ emitEvent: false });
@@ -239,6 +261,38 @@ export class RtInlineEditComponent {
         }
     }
 
+    /** Фокус пришёл в плашку-поле: весь текст выделен, и первое нажатие заменяет значение целиком. */
+    protected onChipFocus(event: FocusEvent): void {
+        this.#chipFocused = true;
+        if (event.target instanceof HTMLInputElement) {
+            event.target.select();
+        }
+    }
+
+    /** Уход из плашки-поля сохраняет черновик. */
+    protected onChipBlur(): void {
+        this.#chipFocused = false;
+        if (!this.#chipLeaving) {
+            this.#commitChip();
+        }
+    }
+
+    protected onChipKeydown(event: KeyboardEvent): void {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            this.#leaveChip(event);
+        } else if (event.key === 'Escape') {
+            // Escape принадлежит полю: окно или панель вокруг не закрываются вместе с правкой.
+            event.preventDefault();
+            event.stopPropagation();
+            this.draftControl.setValue(this.value());
+            this.#leaveChip(event);
+            this.cancelled.emit();
+        } else {
+            // Остальные клавиши правят черновик в самом поле.
+        }
+    }
+
     /** Фокус в поле и весь текст выделен: первое нажатие клавиши заменяет значение целиком. */
     protected focusField(): void {
         const field: HTMLInputElement | null = this.#host.nativeElement.querySelector('.rt-inline-edit__field input');
@@ -249,6 +303,36 @@ export class RtInlineEditComponent {
 
     #close(): void {
         this.editing.set(false);
+    }
+
+    /**
+     * Черновик плашки-поля уходит приложению. Пустой, который не разрешён, и равный значению молча
+     * возвращают значение: у плашки нет недоступной кнопки, которой можно было бы отказать.
+     */
+    #commitChip(): void {
+        if (this.saving()) {
+            return;
+        }
+        const outcome: IRtInlineEdit.Outcome = inlineEditOutcome(this.value(), this.draftControl.value, this.allowEmpty());
+
+        if (outcome.kind === 'save') {
+            this.saved.emit(outcome.value);
+            this.draftControl.setValue(outcome.value);
+        } else {
+            this.draftControl.setValue(this.value());
+        }
+    }
+
+    /** Enter и Escape сохраняют сами и снимают фокус: уход, который за этим следует, не сохраняет второй раз. */
+    #leaveChip(event: KeyboardEvent): void {
+        const target: EventTarget | null = event.target;
+
+        this.#commitChip();
+        if (target instanceof HTMLElement && target.ownerDocument.activeElement === target) {
+            this.#chipLeaving = true;
+            target.blur();
+            this.#chipLeaving = false;
+        }
     }
 
     /**

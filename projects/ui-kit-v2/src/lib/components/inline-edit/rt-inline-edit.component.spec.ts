@@ -256,3 +256,129 @@ describe('Правка на месте', (): void => {
         expect(el(fixture, 'inline-edit-value')?.querySelector('.rt-inline-edit__pencil')).toBeNull();
     });
 });
+
+describe('Правка на месте — плашка-поле', (): void => {
+    function chip<T>(fixture: ComponentFixture<T>): HTMLInputElement {
+        return el(fixture, 'inline-edit-chip-input') as HTMLInputElement;
+    }
+
+    async function chipField(inputs: Readonly<Record<string, unknown>> = {}): Promise<ComponentFixture<RtInlineEditComponent>> {
+        return edit({ look: 'chip-field', ...inputs });
+    }
+
+    async function focusChip<T>(fixture: ComponentFixture<T>): Promise<void> {
+        chip(fixture).focus();
+        fixture.detectChanges();
+        await fixture.whenStable();
+    }
+
+    async function typeChip<T>(fixture: ComponentFixture<T>, text: string): Promise<void> {
+        chip(fixture).value = text;
+        chip(fixture).dispatchEvent(new Event('input'));
+        fixture.detectChanges();
+        await fixture.whenStable();
+    }
+
+    async function keyChip<T>(fixture: ComponentFixture<T>, name: string): Promise<KeyboardEvent> {
+        const event: KeyboardEvent = new KeyboardEvent('keydown', { key: name, bubbles: true, cancelable: true });
+        chip(fixture).dispatchEvent(event);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        return event;
+    }
+
+    it('SC-UKV-831 — плашка сама поле: значение в поле, значок перед ним, кнопок нет', async (): Promise<void> => {
+        const fixture: ComponentFixture<RtInlineEditComponent> = await chipField({ fieldIcon: 'tag' });
+        const host: HTMLElement = fixture.nativeElement as HTMLElement;
+        const input: HTMLInputElement = chip(fixture);
+
+        expect(input.value).toBe('Отчёт');
+        expect(host.classList).toContain('rt-inline-edit--chip-field');
+        const label: HTMLElement | null = host.querySelector('.rt-inline-edit__chip-field');
+        expect(label?.firstElementChild?.classList).toContain('rt-inline-edit__chip-icon');
+        expect(el(fixture, 'inline-edit-value')).toBeNull();
+        expect(el(fixture, 'inline-edit-save')).toBeNull();
+        expect(el(fixture, 'inline-edit-cancel')).toBeNull();
+
+        await focusChip(fixture);
+        expect([input.selectionStart, input.selectionEnd]).toEqual([0, 'Отчёт'.length]);
+    });
+
+    it('SC-UKV-831 — новое значение приложения встаёт в плашку, пока её не правят', async (): Promise<void> => {
+        const fixture: ComponentFixture<RtInlineEditComponent> = await chipField();
+
+        fixture.componentRef.setInput('value', 'Сводка');
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        expect(chip(fixture).value).toBe('Сводка');
+    });
+
+    it('SC-UKV-832 — Enter сохраняет обрезанный черновик один раз и снимает фокус', async (): Promise<void> => {
+        const fixture: ComponentFixture<RtInlineEditComponent> = await chipField();
+        const log: { saved: string[]; cancelled: number } = track(fixture);
+        await focusChip(fixture);
+        await typeChip(fixture, '  Отчёт за май ');
+
+        await keyChip(fixture, 'Enter');
+
+        expect(log.saved).toEqual(['Отчёт за май']);
+        expect(chip(fixture).value).toBe('Отчёт за май');
+        expect(document.activeElement).not.toBe(chip(fixture));
+    });
+
+    it('SC-UKV-832 — уход из плашки сохраняет, равный значению черновик ничего не шлёт', async (): Promise<void> => {
+        const fixture: ComponentFixture<RtInlineEditComponent> = await chipField();
+        const log: { saved: string[]; cancelled: number } = track(fixture);
+
+        await focusChip(fixture);
+        await typeChip(fixture, 'Отчёт ');
+        chip(fixture).blur();
+        expect(log.saved).toEqual([]);
+
+        await focusChip(fixture);
+        await typeChip(fixture, 'Сводка');
+        chip(fixture).blur();
+        expect(log.saved).toEqual(['Сводка']);
+    });
+
+    it('SC-UKV-833 — Escape возвращает значение, шлёт отмену и не уходит из окна вокруг', async (): Promise<void> => {
+        const fixture: ComponentFixture<RtInlineEditComponent> = await chipField();
+        const log: { saved: string[]; cancelled: number } = track(fixture);
+        await focusChip(fixture);
+        await typeChip(fixture, 'Сводка');
+
+        const event: KeyboardEvent = await keyChip(fixture, 'Escape');
+
+        expect(chip(fixture).value).toBe('Отчёт');
+        expect(log).toEqual({ saved: [], cancelled: 1 });
+        expect(event.defaultPrevented).toBe(true);
+        expect(document.activeElement).not.toBe(chip(fixture));
+    });
+
+    it('SC-UKV-834 — пустой черновик молча возвращает значение, а разрешённый уходит', async (): Promise<void> => {
+        const fixture: ComponentFixture<RtInlineEditComponent> = await chipField();
+        const log: { saved: string[]; cancelled: number } = track(fixture);
+        await focusChip(fixture);
+        await typeChip(fixture, '   ');
+
+        await keyChip(fixture, 'Enter');
+
+        expect(log).toEqual({ saved: [], cancelled: 0 });
+        expect(chip(fixture).value).toBe('Отчёт');
+
+        const allowed: ComponentFixture<RtInlineEditComponent> = await chipField({ allowEmpty: true });
+        const allowedLog: { saved: string[]; cancelled: number } = track(allowed);
+        await focusChip(allowed);
+        await typeChip(allowed, '');
+        await keyChip(allowed, 'Enter');
+        expect(allowedLog.saved).toEqual(['']);
+    });
+
+    it('SC-UKV-831 — недоступная плашка-поле заперта', async (): Promise<void> => {
+        const fixture: ComponentFixture<RtInlineEditComponent> = await chipField({ disabled: true });
+
+        expect(chip(fixture).disabled).toBe(true);
+        expect((fixture.nativeElement as HTMLElement).querySelector('.rt-inline-edit__chip-field--disabled')).not.toBeNull();
+    });
+});

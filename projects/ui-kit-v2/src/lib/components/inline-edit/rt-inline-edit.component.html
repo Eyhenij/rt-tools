@@ -1,5 +1,24 @@
 <ng-container rtBlock="rt-inline-edit">
-    @if (editing()) {
+    @if (isChipField()) {
+        <!-- Плашка-поле: значок и поле внутри одной плашки. Ширину задаёт невидимая копия текста под
+             полем — плашка растёт с текстом до своего предела, дальше поле прокручивается. -->
+        <label rtElem="chip-field" [rtMod]="{ disabled: disabled() }">
+            <rt-icon rtElem="chip-icon" size="sm" [name]="fieldIcon()" />
+            <span rtElem="sizer" rtTooltipWhenTruncated [rtTooltip]="chipText()">
+                <span rtElem="mirror" aria-hidden="true">{{ chipText() }}</span>
+                <input
+                    type="text"
+                    rtElem="chip-input"
+                    qa-dataid="inline-edit-chip-input"
+                    [placeholder]="placeholder()"
+                    [attr.aria-label]="fieldLabel() || placeholder() || null"
+                    [formControl]="draftControl"
+                    (focus)="onChipFocus($event)"
+                    (blur)="onChipBlur()"
+                    (keydown)="onChipKeydown($event)" />
+            </span>
+        </label>
+    } @else if (editing()) {
         <rt-input
             rtElem="field"
             qa-dataid="inline-edit-field"

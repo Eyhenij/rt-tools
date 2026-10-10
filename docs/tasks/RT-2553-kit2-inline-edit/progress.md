@@ -36,6 +36,15 @@
   text stays the primary colour for contrast. The owner's words: «все переносимые компоненты из апки
   должны иметь базовую вьюху кита + материальную но без использования пакетов материал, стили должны
   быть заданы через токены чтобы поддавались модификации из апки + необходимые входы».
+- On 10 October a live comparison showed that the application cannot move onto the kit without its
+  badge: the badge is the field, grows with the text up to 384px, saves on Enter and on leaving,
+  reverts on Escape and reverts an empty value silently. A new look `chip-field` carries it, so the
+  default `text` and the `chip` look keep the field with buttons. A new input `fieldIcon` names the
+  icon on the left. Four rules with scenarios SC-UKV-831–834 and seven specs were added. The width
+  comes from a hidden copy of the text in one grid cell with the field. The material colours are
+  `--rt-mat-neutral-5`, `--mat-sys-primary-fixed-dim` and `--mat-sys-primary`, with kit fallbacks.
+  The story ChipField shows the look in both presets. The middle truncation of the application is
+  not carried over: the kit scrolls the text and shows it whole in a tooltip. Affected stage: 4.
 
 ## Steps
 
