@@ -324,6 +324,22 @@ Then the guard says nothing about the line
 
 Covered: `projects/agent-kit/tests/git-guards.test.sh`.
 
+### SC-AK-1220 — a red or unfinished run on the tip refuses the merge
+
+Given the run on the tip of a request is red, or still going
+When the merge command is called
+Then the guard refuses and names the request and the state of the run
+
+Covered: `projects/agent-kit/tests/git-guards-readiness.test.sh`.
+
+### SC-AK-1222 — a green run and no run at all pass
+
+Given the run on the tip is green, or the request has no run at all
+When the merge command is called
+Then the guard says nothing about the run
+
+Covered: `projects/agent-kit/tests/git-guards-readiness.test.sh`.
+
 ### SC-AK-707 — a live task in the reason of an exception passes
 
 Given a pipeline step is declared an exception whose reason names a created task

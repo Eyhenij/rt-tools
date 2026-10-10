@@ -17,6 +17,7 @@
  */
 import { OfflineError, botToken, gh, ghJson, graphql } from './board-gh.mjs';
 import { declaredEpicOf } from './board-epic-link.mjs';
+import { verdictOnHead } from './board-runs.mjs';
 export { numberFromTaskDir, taskDirs, unstampFolder } from './board-task-dirs.mjs';
 import { CONFIG } from './rt-kit-checks.config.mjs';
 
@@ -186,7 +187,7 @@ export function pullState(ref, options) {
     const target = ref === undefined || ref === null || `${ref}`.trim() === '' ? [] : [`${ref}`.trim()];
     let pull;
     try {
-        pull = ghJson(['pr', 'view', ...target, '--json', 'number,isDraft,reviewRequests,latestReviews,author,mergeable,headRefName'], options);
+        pull = ghJson(['pr', 'view', ...target, '--json', 'number,isDraft,reviewRequests,latestReviews,author,mergeable,headRefName,headRefOid'], options);
     } catch (error) {
         if (error instanceof OfflineError) {
             throw error;
@@ -214,6 +215,9 @@ export function pullState(ref, options) {
         // The head branch: the folder guard judges the branch of the named PR, not the checked-out
         // one — the lower PR of a stack is lifted from the upper branch.
         branch: pull.headRefName ?? null,
+        // The run on the tip: `success`, `failure`, `running` or `none`. The merge guard reads it —
+        // an epic went into main over a red image build, and the rollout fell after it.
+        run: pull.headRefOid ? verdictOnHead(pull.headRefOid, options) : 'none',
     };
 }
 
