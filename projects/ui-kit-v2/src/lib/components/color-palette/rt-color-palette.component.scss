@@ -21,6 +21,7 @@
         --rt-color-palette-readonly-size: var(--rt-size-8);
         --rt-color-palette-readonly-border-width: var(--rt-border-width-thin);
         --rt-color-palette-empty-border-color: var(--rt-color-border-default);
+        --rt-color-palette-empty-bg: transparent;
         --rt-color-palette-duration: var(--rt-duration-fast);
         --rt-color-palette-custom-gap: var(--rt-color-palette-gap);
 
@@ -31,7 +32,8 @@
 
         /* Материальный набор повторяет образцы приложения: круги 30px без рамки через 10px, выбранный —
            полое кольцо 3px своего цвета со свечением 5px, круг под указателем растёт. Кнопка своего
-           цвета стоит в 16px под сеткой, серая 16/400; свой образец остаётся последним в сетке. */
+           цвета стоит в 16px под сеткой, серая 16/400; свой образец остаётся последним в сетке.
+           Пустое значение только для чтения — белый круг. */
         :is(.rt-preset-material, [data-preset='material']) & {
             --rt-color-palette-custom-gap: var(--rt-space-md);
             --rt-color-palette-custom-height: var(--rt-control-height-sm);
@@ -45,6 +47,7 @@
             --rt-color-palette-checked-inset: var(--rt-border-width-thick);
             --rt-color-palette-checked-hollow: 100%;
             --rt-color-palette-checked-glow: calc(var(--rt-space-xs) + 1px);
+            --rt-color-palette-empty-bg: var(--mat-sys-surface-container-lowest, var(--rt-neutral-0));
         }
 
         &__swatches {
@@ -103,7 +106,7 @@
             }
 
             &--empty {
-                --rt-color-palette-color: transparent;
+                --rt-color-palette-color: var(--rt-color-palette-empty-bg);
 
                 border-color: var(--rt-color-palette-empty-border-color);
             }

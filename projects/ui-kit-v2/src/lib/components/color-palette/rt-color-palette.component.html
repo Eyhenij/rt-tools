@@ -48,7 +48,11 @@
             </button>
 
             <ng-template #pickerTpl>
-                <rt-color-picker [value]="pickerStart()" (applied)="onCustomApply($event)" (cancelled)="onCustomCancel()" />
+                <rt-color-picker
+                    [value]="pickerStart()"
+                    [channels]="channels()"
+                    (applied)="onCustomApply($event)"
+                    (cancelled)="onCustomCancel()" />
             </ng-template>
         }
     }

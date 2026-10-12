@@ -50,6 +50,23 @@
             [formControl]="hexControl" />
     </div>
 
+    @if (channels()) {
+        <div rtElem="channels">
+            @for (item of channelControls; track item.channel) {
+                <div rtElem="channel">
+                    <span rtElem="channel-name" aria-hidden="true">{{ item.name }}</span>
+                    <rt-input
+                        rtElem="channel-input"
+                        qa-dataid="color-picker-channel"
+                        size="sm"
+                        [clearable]="false"
+                        [ariaLabel]="channelLabels()[item.channel]"
+                        [formControl]="item.control" />
+                </div>
+            }
+        </div>
+    }
+
     <div rtElem="actions">
         <button
             type="button"

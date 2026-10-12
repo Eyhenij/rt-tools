@@ -23,15 +23,27 @@ import { RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
 import { RtInputComponent } from '@rt-tools/ui-kit-v2/input';
 import {
     colorPaletteArea,
+    colorPaletteChannel,
     colorPaletteFromHsv,
+    colorPaletteFromRgb,
     colorPaletteHex,
     colorPaletteSpectrum,
     colorPaletteStep,
     colorPaletteToHsv,
+    colorPaletteToRgb,
 } from '../rt-color-palette.logic';
 import { IRtColorPalette } from '../rt-color-palette.model';
 
 const BEM_BLOCK: string = 'rt-color-picker';
+const CHANNELS: readonly IRtColorPalette.Channel[] = ['r', 'g', 'b'];
+
+/** Поле одного канала и канал, который оно правит. */
+interface IChannelControl {
+    channel: IRtColorPalette.Channel;
+    /** Буква канала над полем: R, G, B одинаковы во всех языках. */
+    name: string;
+    control: FormControl<string>;
+}
 
 /**
  * Выбор своего цвета палитры: площадь насыщенности и яркости, полоса оттенка, поле шестнадцатеричной
@@ -79,8 +91,27 @@ export class RtColorPickerComponent {
 
     protected readonly hexControl: FormControl<string> = new FormControl<string>('', { nonNullable: true });
 
+    /** Поля каналов по порядку строки: красный, зелёный, синий. */
+    protected readonly channelControls: readonly IChannelControl[] = CHANNELS.map((channel: IRtColorPalette.Channel): IChannelControl => ({
+        channel,
+        name: channel.toUpperCase(),
+        control: new FormControl<string>('', { nonNullable: true }),
+    }));
+
+    /** Доступные имена полей каналов из словаря кита. */
+    protected readonly channelLabels: Signal<Readonly<Record<IRtColorPalette.Channel, string>>> = computed(
+        (): Readonly<Record<IRtColorPalette.Channel, string>> => ({
+            r: this.t().uiColorPickerRed,
+            g: this.t().uiColorPickerGreen,
+            b: this.t().uiColorPickerBlue,
+        })
+    );
+
     /** Цвет, с которого начинается выбор, `#rrggbb`. */
     public readonly value: InputSignal<string> = input.required<string>();
+
+    /** Строка полей красного, зелёного и синего под записью hex. Без неё — площадь, полоса и hex. */
+    public readonly channels: InputSignal<boolean> = input<boolean>(false);
 
     public readonly applied: OutputEmitterRef<string> = output<string>();
     public readonly cancelled: OutputEmitterRef<void> = output<void>();
@@ -105,6 +136,29 @@ export class RtColorPickerComponent {
                 this.hsv.set(colorPaletteToHsv(hex));
             }
         });
+
+        // Поля каналов ведут себя так же: показывают выбранное и молчат в ответ, а набранное целое
+        // от 0 до 255 меняет один свой канал.
+        effect((): void => {
+            const rgb: IRtColorPalette.Rgb = colorPaletteToRgb(this.picked());
+
+            for (const { channel, control } of this.channelControls) {
+                if (colorPaletteChannel(control.value) !== rgb[channel]) {
+                    control.setValue(String(rgb[channel]), { emitEvent: false });
+                }
+            }
+        });
+
+        for (const { channel, control } of this.channelControls) {
+            control.valueChanges.pipe(takeUntilDestroyed()).subscribe((text: string): void => {
+                const value: number | null = colorPaletteChannel(text);
+                const rgb: IRtColorPalette.Rgb = colorPaletteToRgb(this.picked());
+
+                if (value !== null && value !== rgb[channel]) {
+                    this.hsv.set(colorPaletteToHsv(colorPaletteFromRgb({ ...rgb, [channel]: value })));
+                }
+            });
+        }
     }
 
     protected onAreaPointer(event: PointerEvent): void {

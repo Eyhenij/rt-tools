@@ -31,6 +31,7 @@ export class TestRtColorPaletteComponent {
     public readonly readonly: InputSignal<boolean> = input<boolean>(false);
     public readonly disabled: InputSignal<boolean> = input<boolean>(false);
     public readonly customAllowed: InputSignal<boolean> = input<boolean>(true);
+    public readonly channels: InputSignal<boolean> = input<boolean>(false);
 
     constructor() {
         effect((): void => {

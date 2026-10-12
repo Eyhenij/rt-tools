@@ -10,7 +10,7 @@ const COLORS: readonly string[] = ['#ff0000', '#00ff00', '#0000ff'];
 
 @Component({
     selector: 'rt-color-palette-host',
-    template: '<rt-color-palette [formControl]="control" [colors]="colors()" [readonly]="readonly()" />',
+    template: '<rt-color-palette [formControl]="control" [colors]="colors()" [readonly]="readonly()" [channels]="channels()" />',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [RtColorPaletteComponent, ReactiveFormsModule],
 })
@@ -18,6 +18,7 @@ class ColorPaletteHostComponent {
     public readonly control: FormControl<string | null> = new FormControl<string | null>(null);
     public readonly colors: WritableSignal<readonly string[]> = signal<readonly string[]>(COLORS);
     public readonly readonly: WritableSignal<boolean> = signal<boolean>(false);
+    public readonly channels: WritableSignal<boolean> = signal<boolean>(false);
 }
 
 function host(): ComponentFixture<ColorPaletteHostComponent> {
@@ -212,5 +213,48 @@ describe('RtColorPaletteComponent', (): void => {
         fixture.detectChanges();
         expect(inPicker('color-picker-area').getAttribute('aria-valuenow')).toBe('100');
         expect(inPicker('color-picker-hue').getAttribute('aria-valuenow')).toBe('120');
+    });
+
+    it('SC-UKV-847: поля каналов показывают цвет и меняют свой канал, пока значение в пределах 0–255', (): void => {
+        const fixture: ComponentFixture<ColorPaletteHostComponent> = host();
+        fixture.componentInstance.control.setValue('#ff0000');
+        fixture.detectChanges();
+
+        openPicker(fixture);
+        // Сперва видно, что панель открыта, и только потом — что полей каналов в ней нет
+        expect(picker()).not.toBeNull();
+        expect(document.querySelectorAll('[qa-dataid="color-picker-channel"]')).toHaveLength(0);
+        inPicker('color-picker-cancel').click();
+        fixture.detectChanges();
+
+        fixture.componentInstance.channels.set(true);
+        fixture.detectChanges();
+        openPicker(fixture);
+
+        const fields: HTMLInputElement[] = [...document.querySelectorAll('[qa-dataid="color-picker-channel"] input')].map(
+            (node: Element): HTMLInputElement => node as HTMLInputElement
+        );
+        const hex: HTMLInputElement = inPicker('color-picker-hex').querySelector('input') as HTMLInputElement;
+
+        expect(fields.map((field: HTMLInputElement): string => field.value)).toEqual(['255', '0', '0']);
+        expect(fields.map((field: HTMLInputElement): string | null => field.getAttribute('aria-label'))).toEqual([
+            'Red, 0 to 255',
+            'Green, 0 to 255',
+            'Blue, 0 to 255',
+        ]);
+
+        fields[1].value = '300';
+        fields[1].dispatchEvent(new Event('input'));
+        fixture.detectChanges();
+        expect(hex.value).toBe('#ff0000');
+
+        fields[1].value = '255';
+        fields[1].dispatchEvent(new Event('input'));
+        fixture.detectChanges();
+        expect(hex.value).toBe('#ffff00');
+
+        inPicker('color-picker-apply').click();
+        fixture.detectChanges();
+        expect(fixture.componentInstance.control.value).toBe('#ffff00');
     });
 });

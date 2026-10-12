@@ -3,6 +3,7 @@ import { IRtColorPalette } from './rt-color-palette.model';
 
 const SHORT_HEX: RegExp = /^#?([0-9a-f])([0-9a-f])([0-9a-f])$/i;
 const FULL_HEX: RegExp = /^#?([0-9a-f]{6})$/i;
+const CHANNEL: RegExp = /^\d{1,3}$/;
 
 /** Шаг стрелки: по площади — двадцатая доля насыщенности и яркости, по полосе — шесть градусов оттенка. */
 const AREA_STEP: number = 0.05;
@@ -177,6 +178,36 @@ export function colorPaletteStep(target: 'area' | 'hue', key: string, hsv: IRtCo
     const [axis, delta]: readonly ['s' | 'v', number] = move;
 
     return { ...hsv, [axis]: clamp(hsv[axis] + delta) };
+}
+
+/** Цвет `#rrggbb` в каналах красного, зелёного и синего. */
+export function colorPaletteToRgb(hex: string): IRtColorPalette.Rgb {
+    return {
+        r: parseInt(hex.slice(1, 3), 16),
+        g: parseInt(hex.slice(3, 5), 16),
+        b: parseInt(hex.slice(5, 7), 16),
+    };
+}
+
+/** Каналы красного, зелёного и синего в цвете `#rrggbb`. */
+export function colorPaletteFromRgb(rgb: IRtColorPalette.Rgb): string {
+    return `#${[rgb.r, rgb.g, rgb.b].map((channel: number): string => channel.toString(16).padStart(2, '0')).join('')}`;
+}
+
+/**
+ * Значение канала из набранного в поле: целое от 0 до 255 без знаков и дробей. Всё остальное — `null`,
+ * и поле не меняет выбранного, пока ввод не окончен.
+ */
+export function colorPaletteChannel(text: string): number | null {
+    const trimmed: string = text.trim();
+
+    if (!CHANNEL.test(trimmed)) {
+        return null;
+    }
+
+    const value: number = Number(trimmed);
+
+    return value <= 255 ? value : null;
 }
 
 /** Полоса оттенков слева направо: градиент по вершинам круга в полной насыщенности и яркости. */

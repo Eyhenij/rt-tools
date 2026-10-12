@@ -107,6 +107,11 @@ export class RtColorPaletteComponent extends RtFormControlBase<string | null> {
         transform: booleanAttribute,
     });
 
+    /** Поля красного, зелёного и синего в панели своего цвета, под записью hex. */
+    public readonly channels: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+
     public readonly displayText: Signal<string> = computed((): string => this.value() ?? '');
 
     public override writeValue(value: string | null): void {

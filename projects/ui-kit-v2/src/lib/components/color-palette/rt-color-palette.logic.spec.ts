@@ -1,13 +1,16 @@
 import { RT_COLOR_PALETTE_DEFAULT } from './rt-color-palette.const';
 import {
     colorPaletteArea,
+    colorPaletteChannel,
     colorPaletteFromHsv,
+    colorPaletteFromRgb,
     colorPaletteHex,
     colorPaletteNextIndex,
     colorPaletteSpectrum,
     colorPaletteStep,
     colorPaletteSwatches,
     colorPaletteToHsv,
+    colorPaletteToRgb,
 } from './rt-color-palette.logic';
 import { IRtColorPalette } from './rt-color-palette.model';
 
@@ -79,5 +82,17 @@ describe('Логика палитры цветов', (): void => {
         expect(colorPaletteArea('#00ff00')).toBe(
             'linear-gradient(to top, #000000, transparent), linear-gradient(to right, #ffffff, #00ff00)'
         );
+    });
+
+    it('SC-UKV-847: каналы переводятся в запись и обратно, поле канала берёт целое от 0 до 255', (): void => {
+        expect(colorPaletteToRgb('#1a80ff')).toEqual({ r: 26, g: 128, b: 255 });
+        expect(colorPaletteFromRgb({ r: 26, g: 128, b: 255 })).toBe('#1a80ff');
+        expect(colorPaletteFromRgb({ r: 0, g: 0, b: 0 })).toBe('#000000');
+        expect(colorPaletteChannel(' 255 ')).toBe(255);
+        expect(colorPaletteChannel('0')).toBe(0);
+        expect(colorPaletteChannel('256')).toBeNull();
+        expect(colorPaletteChannel('-1')).toBeNull();
+        expect(colorPaletteChannel('1.5')).toBeNull();
+        expect(colorPaletteChannel('')).toBeNull();
     });
 });

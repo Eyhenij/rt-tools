@@ -47,17 +47,20 @@ disabled look. The kit has no such part, and a third-party package does not go i
   change; Apply waits for a colour that differs from the current one.
 - **In the picker the area takes saturation and brightness and the strip takes the hue, by the
   pointer and by the arrows; the hex field takes a typed colour once it is a full hex.**
+- **The channels input adds red, green and blue fields under the hex field; each shows its channel
+  and takes a typed whole number from 0 to 255.** Without the input the picker has no such row.
 - **Every size, gap, ring, border and radius of the palette and the picker is a
   `--rt-color-palette-*` property, and without them the palette draws the kit look.**
 - **The material preset draws the application's look by the same properties, without Material
   packages: borderless swatches of 30 points with gaps of 10, a hollow ring on the chosen one, and a
-  swatch that grows under the pointer.** The custom swatch stands on the row of its grey button, 16
-  points below the grid. The picker is 256 by 320 points with a dense grey shadow.
+  swatch that grows under the pointer.** The custom swatch is the last in the grid, and its grey
+  button stands 16 points below the grid. An empty read-only value is a white circle. The picker is
+  256 by 320 points with a dense grey shadow.
 
 ## What is out of scope
 
 - An alpha channel: the application keeps none.
-- RGB and HSL fields: the application's screens read the hex.
+- HSL fields: the application's picker has none.
 - The application's theme list: it belongs to the application and arrives by the colours input.
 
 ## Contract
@@ -125,3 +128,6 @@ None.
 - 10 October 2026 — after a live comparison with the application, the material preset moves the
   custom swatch onto the row of its button and draws the picker at the application's size and
   shadow.
+- 12 October 2026 — at the owner's word the custom swatch goes back into the grid in the material
+  look; the picker gets the channels input with red, green and blue fields, and the material look
+  draws an empty read-only value as a white circle.

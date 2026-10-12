@@ -17,7 +17,9 @@
   application's shadow; six palette frames were retaken. The epic plan marks the palette done.
   On 12 October, at the owner's word, the custom swatch went back into the grid in the material
   look as well, and the button stands alone 16 points below it; the Presets and Value frames were
-  retaken, the other five matched, and the 14 specs passed.
+  retaken, the other five matched, and the 14 specs passed. Later the same day the picker got the
+  `channels` input with R, G, B fields (SC-UKV-847) and the material look a white empty read-only
+  circle: 16 specs, types and linters green, Picker and Readonly retaken, 845 frames of 845.
 - **Next step:** the owner looks at the material half on :6007; then take the folder apart and open
   the PR into the epic branch at their word. The white circle of an empty read-only value came
   from the code comparison; the live comparison did not name it, and the material look keeps the
@@ -63,6 +65,13 @@
   button stay. Measured on :6007: in both looks the custom swatch is the last in the grid, and the
   button starts at the grid's left edge, 8 points below it in the kit look and 16 in the material.
   Affected stage: 4.
+- **2026-10-12. The missing functions are closed by an input, the look by a property.** The owner
+  said «расширь чего не хватает по функционалу и возможность задать вью через вход или токены
+  стилей». The application's picker has R, G, B fields; the kit gets them behind the `channels`
+  input, false by default, so the present picker does not move. The empty read-only fill is the
+  property `--rt-color-palette-empty-bg`, transparent by default and white under the material
+  preset. Measured on :6007: three fields of 69.3 points fill the 256-point picker without
+  overflow; the material picker stays 256 by 320 and its area shrinks to 131. Affected stage: 4.
 
 ## Live comparison of the epic's components, 10 October — what the next session fixes first
 

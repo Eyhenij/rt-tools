@@ -128,6 +128,30 @@
             flex: 1 1 auto;
         }
 
+        /* Три поля каналов в ряд поровну, буква канала над своим полем. */
+        &__channels {
+            display: grid;
+            gap: var(--rt-color-palette-picker-gap);
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        &__channel {
+            display: flex;
+            min-width: 0;
+            flex-direction: column;
+            gap: var(--rt-space-2xs);
+        }
+
+        &__channel-name {
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-xs);
+            font-weight: var(--rt-font-weight-medium);
+        }
+
+        &__channel-input {
+            min-width: 0;
+        }
+
         &__actions {
             display: flex;
             justify-content: flex-end;

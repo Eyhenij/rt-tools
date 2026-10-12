@@ -11,6 +11,7 @@ export default {
         readonly: { control: { type: 'boolean' } },
         disabled: { control: { type: 'boolean' } },
         customAllowed: { control: { type: 'boolean' } },
+        channels: { control: { type: 'boolean' } },
     },
 } as Meta<TestRtColorPaletteComponent>;
 
@@ -23,5 +24,6 @@ export const Playground: TStory = {
         readonly: false,
         disabled: false,
         customAllowed: true,
+        channels: false,
     },
 };

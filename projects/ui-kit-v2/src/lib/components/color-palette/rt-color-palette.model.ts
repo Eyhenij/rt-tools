@@ -16,4 +16,14 @@ export namespace IRtColorPalette {
         s: number;
         v: number;
     }
+
+    /** Цвет в каналах красного, зелёного и синего, каждый — целое от 0 до 255. */
+    export interface Rgb {
+        r: number;
+        g: number;
+        b: number;
+    }
+
+    /** Канал цвета, который правится своим полем выбора. */
+    export type Channel = keyof Rgb;
 }

@@ -36,7 +36,8 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 - Образец: обычный, наведение, фокус с клавиши; выбранный обведён кольцом.
 - Отключённая палитра: образцы и кнопка своего цвета приглушены, нажатия и клавиши не действуют.
-- Панель своего цвета: площадь, полоса оттенка, запись hex; «Применить» недоступно до изменения.
+- Панель своего цвета: площадь, полоса оттенка, запись hex; со входом `channels` — ещё поля R, G, B,
+  каждое берёт целое от 0 до 255. «Применить» недоступно до изменения.
 
 ## Доступность
 
@@ -53,7 +54,8 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 Материальный набор повторяет образцы приложения: круги 30px без рамки через 10px, выбранный — полое
 кольцо 3px своего цвета со свечением 5px, круг под указателем растёт. Кнопка своего цвета стоит в
 16px под сеткой, серая (`--mat-sys-on-surface-variant`) 16/400; свой образец — последний в сетке.
-Панель — 256×320 со скруглением 6px и тенью `0 8px 16px` серого цвета.
+Пустое значение только для чтения — белый круг. Панель — 256×320 со скруглением 6px и тенью
+`0 8px 16px` серого цвета.
 
 | свойство                                   | что задаёт                           | умолчание                   |
 | ------------------------------------------ | ------------------------------------ | --------------------------- |
@@ -72,6 +74,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | `--rt-color-palette-readonly-size`         | сторона образца только для чтения    | `--rt-size-8`               |
 | `--rt-color-palette-readonly-border-width` | рамка образца только для чтения      | `--rt-border-width-thin`    |
 | `--rt-color-palette-empty-border-color`    | рамка пустого образца                | `--rt-color-border-default` |
+| `--rt-color-palette-empty-bg`              | заливка пустого образца              | `transparent`               |
 | `--rt-color-palette-duration`              | смена кольца и роста                 | `--rt-duration-fast`        |
 | `--rt-color-palette-custom-gap`            | от сетки до кнопки своего цвета      | `--rt-color-palette-gap`    |
 | `--rt-color-palette-picker-width`          | ширина панели своего цвета           | `--rt-size-64`              |
@@ -90,6 +93,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | `colors`        | `readonly string[]` | `[]`      |
 | `readonly`      | `boolean`           | `false`   |
 | `customAllowed` | `boolean`           | `true`    |
+| `channels`      | `boolean`           | `false`   |
 
 ## Входы от основы полей
 

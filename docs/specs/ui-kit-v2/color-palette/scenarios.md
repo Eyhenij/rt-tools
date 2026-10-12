@@ -56,13 +56,21 @@ When the area is moved by the arrows, the strip by the arrows, and a full hex is
 Then the arrows change saturation and brightness on the area and the hue on the strip, the typed hex
 becomes the picked colour, and an unfinished hex changes nothing
 
+### SC-UKV-847 — the channel fields pick the colour by red, green and blue
+
+Given an open picker of a palette with the channels input, and one without it
+When a channel field gets a whole number from 0 to 255, and then a number out of range
+Then the picker without the input has no channel fields; with it the fields show the channels of
+the picked colour, a number in range changes its channel and the hex, one out of range changes
+nothing, and Apply writes the colour
+
 ### SC-UKV-815 — the look stands on the palette properties
 
 Given a palette without its properties, one with them set, and one under the material preset
 When it is drawn
 Then the first draws the kit look, the second takes the swatch size, the gap, the ring and the
 radius from its properties, and the third draws borderless swatches with a hollow ring on the chosen
-one, the custom swatch last in the grid, its grey button 16 points below the grid, and a picker of
-256 by 320 points
+one, the custom swatch last in the grid, its grey button 16 points below the grid, an empty
+read-only value as a white circle, and a picker of 256 by 320 points
 
 Не покрыто: это обещание о кадре. Его держат кадры историй `Look` и `Presets`.

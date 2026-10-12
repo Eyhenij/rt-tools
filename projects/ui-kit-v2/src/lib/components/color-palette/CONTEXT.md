@@ -14,6 +14,7 @@
 | `colors`        | `readonly string[]` | `[]` → восемнадцать цветов кита |
 | `readonly`      | `boolean`           | `false`                         |
 | `customAllowed` | `boolean`           | `true`                          |
+| `channels`      | `boolean`           | `false` → без полей R, G, B     |
 
 Выходов нет: значение уходит в форму — `#rrggbb` строчными или `null`.
 

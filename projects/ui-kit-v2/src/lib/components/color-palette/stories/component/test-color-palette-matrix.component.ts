@@ -25,6 +25,7 @@ interface IColorPaletteColorsCase {
 interface IColorPickerCase {
     readonly name: string;
     readonly value: string;
+    readonly channels: boolean;
 }
 
 /** Цвета темы приложения — короткий набор, каким его передают входом `colors`. */
@@ -97,8 +98,9 @@ export class TestRtColorPaletteMatrixComponent {
     public readonly stateControl: FormControl<string | null> = control('#1e88e5');
 
     public readonly pickerCases: readonly IColorPickerCase[] = [
-        { name: 'насыщенный', value: '#1e88e5' },
-        { name: 'серый', value: '#808080' },
+        { name: 'насыщенный', value: '#1e88e5', channels: false },
+        { name: 'серый', value: '#808080', channels: false },
+        { name: 'с полями каналов', value: '#1e88e5', channels: true },
     ];
 
     public readonly presetControl: FormControl<string | null> = control('#43a047');

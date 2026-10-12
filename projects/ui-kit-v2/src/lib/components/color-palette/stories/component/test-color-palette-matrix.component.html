@@ -58,7 +58,7 @@
             <ng-template>
                 <app-story-row [items]="pickerCases" [itemLabel]="caseLabel">
                     <ng-template let-pickerCase>
-                        <rt-color-picker [value]="pickerCase.value" />
+                        <rt-color-picker [value]="pickerCase.value" [channels]="pickerCase.channels" />
                     </ng-template>
                 </app-story-row>
             </ng-template>
