@@ -15,6 +15,7 @@ export * from './aside-section';
 export * from './autocomplete';
 export * from './bar-list';
 export * from './bottom-sheet';
+export * from './breadcrumbs';
 export * from './button';
 export * from './calendar';
 export * from './card';

@@ -12,6 +12,7 @@ import {
     booleanAttribute,
     ComponentRef,
     Directive,
+    effect,
     ElementRef,
     inject,
     input,
@@ -55,7 +56,7 @@ const VIEWPORT_MARGIN: number = 8;
         '(mouseenter)': 'show()',
         '(mouseleave)': 'hide()',
         '(focusout)': 'hide()',
-        '(click)': 'hide()',
+        '(click)': 'onClick()',
     },
 })
 export class RtTooltipDirective implements OnDestroy {
@@ -94,7 +95,20 @@ export class RtTooltipDirective implements OnDestroy {
         transform: booleanAttribute,
     });
 
+    /**
+     * Клик прячет открытую подсказку — по умолчанию, как раньше. `false` оставляет её открытой:
+     * кнопка-переключатель показывает в ней новое состояние сразу после нажатия. Отложенный показ
+     * клик снимает при любом значении — касание на тач-экране (mouseenter + click) подсказку не
+     * показывает.
+     */
+    public readonly hideOnClick: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
+        alias: 'rtTooltipHideOnClick',
+        transform: booleanAttribute,
+    });
+
     constructor() {
+        // Новый текст доходит до открытой панели на месте, без повторного наведения.
+        effect((): void => this.#syncText(this.text()));
         this.#focusMonitor
             .monitor(this.#elementRef, true)
             .pipe(takeUntilDestroyed())
@@ -123,6 +137,25 @@ export class RtTooltipDirective implements OnDestroy {
         this.#clearTimer();
         this.#overlayRef?.detach();
         this.#tooltipRef = null;
+    }
+
+    protected onClick(): void {
+        if (this.hideOnClick() || this.#tooltipRef === null) {
+            this.hide();
+        }
+    }
+
+    #syncText(text: string): void {
+        if (this.#tooltipRef === null) {
+            return;
+        }
+        if (text.trim() === '') {
+            this.hide();
+            return;
+        }
+        this.#tooltipRef.instance.text.set(text);
+        this.#tooltipRef.changeDetectorRef.markForCheck();
+        this.#overlayRef?.updatePosition();
     }
 
     #attach(): void {

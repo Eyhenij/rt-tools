@@ -1,0 +1,67 @@
+<ng-container rtBlock="rt-breadcrumbs">
+    @if (rowShown()) {
+        <div rtElem="row">
+            @if (backCrumb(); as backTo) {
+                <a rtElem="back" qa-dataid="breadcrumbs-back" [routerLink]="backTo.link" [attr.aria-label]="backLabel()">
+                    <rt-icon name="arrow-left" size="md" />
+                </a>
+            }
+
+            <ol
+                #list
+                rtElem="list"
+                qa-dataid="breadcrumbs-list"
+                [rtMod]="{ clipped: clipped(), fitted: fitted() }"
+                (scroll)="onListScroll()">
+                @for (crumb of fold().head; track $index) {
+                    <li rtElem="item">
+                        <a rtElem="link" qa-dataid="breadcrumbs-link" [routerLink]="crumb.link">{{ crumb.label }}</a>
+                        <span rtElem="separator" aria-hidden="true">{{ separator() }}</span>
+                    </li>
+                }
+
+                @if (fold().hidden.length) {
+                    <li rtElem="item" qa-dataid="breadcrumbs-fold">
+                        <span rtElem="fold">
+                            <rt-menu size="sm" align="start" [ariaLabel]="foldLabel()">
+                                @for (crumb of fold().hidden; track $index) {
+                                    <rt-menu-item qa-dataid="breadcrumbs-fold-item" [label]="crumb.label" [link]="crumb.link ?? null" />
+                                }
+                            </rt-menu>
+                        </span>
+                        <span rtElem="separator" aria-hidden="true">{{ separator() }}</span>
+                    </li>
+                }
+
+                @for (crumb of fold().tail; track $index) {
+                    <li rtElem="item">
+                        <a rtElem="link" qa-dataid="breadcrumbs-link" [routerLink]="crumb.link">{{ crumb.label }}</a>
+                        <span rtElem="separator" aria-hidden="true">{{ separator() }}</span>
+                    </li>
+                }
+
+                @if (look() === 'inline' && current(); as page) {
+                    <li rtElem="item">
+                        <span
+                            rtElem="current"
+                            qa-dataid="breadcrumbs-current"
+                            aria-current="page"
+                            rtTooltipWhenTruncated
+                            [rtTooltip]="page.label">
+                            {{ page.label }}
+                        </span>
+                    </li>
+                }
+            </ol>
+        </div>
+    }
+
+    @if (look() === 'heading' && current(); as page) {
+        <div rtElem="heading">
+            <h1 rtElem="title" qa-dataid="breadcrumbs-current" aria-current="page" rtTooltipWhenTruncated [rtTooltip]="page.label">
+                {{ page.label }}
+            </h1>
+            <ng-content />
+        </div>
+    }
+</ng-container>

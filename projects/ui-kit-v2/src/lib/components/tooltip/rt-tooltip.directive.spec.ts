@@ -13,13 +13,23 @@ function tip(): HTMLElement | null {
 
 @Component({
     selector: 'rt-tooltip-host',
-    template: '<button type="button" qa-dataid="tooltip-host" [rtTooltip]="text()" [rtTooltipPlacement]="placement()">Кнопка</button>',
+    template: `
+        <button
+            type="button"
+            qa-dataid="tooltip-host"
+            [rtTooltip]="text()"
+            [rtTooltipPlacement]="placement()"
+            [rtTooltipHideOnClick]="hideOnClick()">
+            Кнопка
+        </button>
+    `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [RtTooltipDirective],
 })
 class TooltipHostComponent {
     public readonly text: WritableSignal<string | null | undefined> = signal<string | null | undefined>('Удалить строку');
     public readonly placement: WritableSignal<IRtTooltip.Placement> = signal<IRtTooltip.Placement>('top');
+    public readonly hideOnClick: WritableSignal<boolean> = signal<boolean>(true);
 }
 
 @Component({
@@ -152,6 +162,82 @@ describe('RtTooltipDirective', (): void => {
         fixture.detectChanges();
 
         expect(tip()).toBeNull();
+    });
+
+    describe('клик по переключателю и смена текста', (): void => {
+        function open(fixture: ComponentFixture<TooltipHostComponent>): void {
+            hover(fixture, 'mouseenter');
+            jest.advanceTimersByTime(300);
+            fixture.detectChanges();
+        }
+
+        function click(fixture: ComponentFixture<TooltipHostComponent>): void {
+            el(fixture, '[qa-dataid="tooltip-host"]')?.nativeElement.click();
+            fixture.detectChanges();
+        }
+
+        function keepOnClick(fixture: ComponentFixture<TooltipHostComponent>): void {
+            fixture.componentInstance.hideOnClick.set(false);
+            fixture.detectChanges();
+        }
+
+        it('SC-UKV-850 — с rtTooltipHideOnClick=false клик оставляет открытую подсказку', (): void => {
+            const fixture: ComponentFixture<TooltipHostComponent> = setup();
+            keepOnClick(fixture);
+            open(fixture);
+            expect(tip()).not.toBeNull();
+
+            click(fixture);
+
+            expect(tip()).not.toBeNull();
+        });
+
+        it('SC-UKV-851 — по умолчанию клик прячет подсказку', (): void => {
+            const fixture: ComponentFixture<TooltipHostComponent> = setup();
+            open(fixture);
+            expect(tip()).not.toBeNull();
+
+            click(fixture);
+
+            expect(tip()).toBeNull();
+        });
+
+        it('SC-UKV-852 — касание (mouseenter и сразу click) не показывает подсказку и при false', (): void => {
+            const fixture: ComponentFixture<TooltipHostComponent> = setup();
+            keepOnClick(fixture);
+
+            hover(fixture, 'mouseenter');
+            click(fixture);
+            jest.advanceTimersByTime(500);
+            fixture.detectChanges();
+
+            expect(tip()).toBeNull();
+        });
+
+        it('SC-UKV-853 — новый текст появляется в открытой подсказке без нового наведения', (): void => {
+            const fixture: ComponentFixture<TooltipHostComponent> = setup('Включить');
+            keepOnClick(fixture);
+            open(fixture);
+            expect(tip()?.textContent?.trim()).toBe('Включить');
+
+            click(fixture);
+            fixture.componentInstance.text.set('Выключить');
+            fixture.detectChanges();
+
+            expect(document.querySelectorAll('rt-tooltip').length).toBe(1);
+            expect(tip()?.textContent?.trim()).toBe('Выключить');
+        });
+
+        it('SC-UKV-854 — опустевший текст прячет открытую подсказку', (): void => {
+            const fixture: ComponentFixture<TooltipHostComponent> = setup();
+            open(fixture);
+            expect(tip()).not.toBeNull();
+
+            fixture.componentInstance.text.set('');
+            fixture.detectChanges();
+
+            expect(tip()).toBeNull();
+        });
     });
 
     describe('пустой текст', (): void => {
