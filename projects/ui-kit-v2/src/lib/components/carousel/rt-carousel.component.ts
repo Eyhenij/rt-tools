@@ -40,6 +40,7 @@ function toCards(value: readonly IRtCarousel.Card[] | null | undefined): readonl
     host: {
         class: BEM_BLOCK,
         role: 'list',
+        '[style.--rt-carousel-count]': 'views().length',
     },
 })
 export class RtCarouselComponent {

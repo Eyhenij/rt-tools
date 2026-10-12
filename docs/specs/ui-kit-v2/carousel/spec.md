@@ -43,6 +43,8 @@ card, so a keyboard user never reads a whole label. The kit has no such part.
 - **The pointer and the focus open a card: it rises, grows to its whole label and comes on top, and
   the cards after it move aside.** Every card is in the Tab order, so the keyboard opens every label;
   with reduced motion the cards move without a transition.
+- **The host keeps the width of the closed stack, and an open card goes past it on top.** A table
+  cell sized by its content does not stretch under the pointer.
 - **Every size, overlap, lift, shift, radius, shadow, type step, label case and duration of the
   stack is a `--rt-carousel-*` property, and without them the stack draws the kit look.**
 - **The material preset draws the application's look by the same properties, without Material

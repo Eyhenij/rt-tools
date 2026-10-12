@@ -63,4 +63,12 @@ describe('RtCarouselComponent', (): void => {
         expect(cardsOf(fixture).map((card: HTMLElement): string | null => card.getAttribute('tabindex'))).toEqual(['0', '0']);
         expect(cardsOf(fixture).map((card: HTMLElement): string | null => card.getAttribute('role'))).toEqual(['listitem', 'listitem']);
     });
+
+    it('SC-UKV-846 — хост несёт число карточек, по которому стили считают ширину свёрнутой стопки', (): void => {
+        const three: ComponentFixture<RtCarouselComponent> = setup([{ label: 'Admin' }, { label: 'Editor' }, { label: 'Reader' }]);
+        const nothing: ComponentFixture<RtCarouselComponent> = setup(null);
+
+        expect((three.nativeElement as HTMLElement).style.getPropertyValue('--rt-carousel-count')).toBe('3');
+        expect((nothing.nativeElement as HTMLElement).style.getPropertyValue('--rt-carousel-count')).toBe('0');
+    });
 });

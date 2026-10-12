@@ -33,6 +33,15 @@ card is in the Tab order
 Coverage: partial — the Tab order and the roles are checked by a call; the lift, the growth to the
 label and the move of the neighbours are drawn by the styles and shown by the States story frame.
 
+### SC-UKV-846 — an open card does not stretch the host
+
+Given a stack of twelve cards in a cell sized by its content
+When a card is under the pointer
+Then the card grows over its neighbours, and the host keeps the width of the closed stack
+
+Coverage: partial — the card count on the host is checked by a call; the width is computed by the
+styles and was measured on :6007, 416 points with and without an open card.
+
 ### SC-UKV-829 — the properties draw the kit look and the material look
 
 Given a stack in the kit look and a stack under the material preset

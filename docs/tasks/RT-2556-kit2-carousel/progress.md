@@ -8,7 +8,9 @@
   looks, 22 specs green, types, linter, token and cascade checks clean; the overview, five matrix
   stories and the playground, looked at in their frames and taken as references. Main went into the
   epic branch and the epic into this one; the four icon frames were retaken for the added `folder`,
-  and the whole set is green: 832 tests, 843 snapshots of 843.
+  and the whole set is green: 832 tests, 843 snapshots of 843. On 12 October the host took the
+  width of the closed stack (SC-UKV-846): 23 specs, types and linters green, 843 frames of 844
+  matched, and the Permissions frame was retaken.
 - **Next step:** after the owner's approval of the stack against the scrolling carousel of the
   card, take the folder apart and open the PR into the epic branch.
 - **Uncommitted:** no
@@ -44,6 +46,12 @@
   `--rt-shadow-lg`, and the grey shadow read from its code is overridden there. The material
   preset went back to `--rt-shadow-lg`; the assignment `--rt-card-stack-shadow` and its two scale
   steps were removed. The dark label colour stays. Affected stage: 4.
+- **2026-10-12. An open card does not stretch the host.** The owner asked «если использовать к
+  примеру внути ячейки таблицы, должно отображаться без растягивания ячекий?». The hovered card
+  grew in the flow, and the host grew with it: 160 to 215.7 points in Presets, 416 to 441.9 in
+  Permissions. The host now takes `--rt-carousel-count` from the component and keeps the closed
+  width; the cards do not shrink and go past it on top. Measured on :6007: 416 points with and
+  without an open card. Affected stage: 4.
 
 ## Steps
 

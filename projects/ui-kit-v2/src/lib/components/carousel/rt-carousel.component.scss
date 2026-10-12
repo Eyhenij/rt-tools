@@ -24,8 +24,13 @@
         --rt-carousel-label-transform: none;
         --rt-carousel-duration: var(--rt-duration-base);
 
+        /* Ширина хоста — свёрнутая стопка: число карточек ставит компонент. Открытая карточка и
+           отошедшие соседки выходят за неё поверх, и ячейка таблицы под стопкой не растягивается. */
         display: inline-flex;
         align-items: center;
+        inline-size: calc(
+            var(--rt-carousel-count) * var(--rt-carousel-card-width) - max(var(--rt-carousel-count) - 1, 0) * var(--rt-carousel-overlap)
+        );
         isolation: isolate;
 
         /* Материальный набор повторяет стопку приложения: карточки с малым скруглением и большой
@@ -48,6 +53,7 @@
             position: relative;
             display: flex;
             box-sizing: border-box;
+            flex-shrink: 0;
             border-radius: var(--rt-carousel-card-radius);
             background: var(--rt-carousel-card-fill);
             box-shadow: var(--rt-carousel-card-shadow);
