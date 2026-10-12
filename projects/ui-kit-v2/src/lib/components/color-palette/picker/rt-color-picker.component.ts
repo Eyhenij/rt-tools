@@ -1,4 +1,6 @@
+import { BooleanInput } from '@angular/cdk/coercion';
 import {
+    booleanAttribute,
     ChangeDetectionStrategy,
     Component,
     computed,
@@ -6,6 +8,7 @@ import {
     inject,
     input,
     InputSignal,
+    InputSignalWithTransform,
     linkedSignal,
     output,
     OutputEmitterRef,
@@ -111,7 +114,9 @@ export class RtColorPickerComponent {
     public readonly value: InputSignal<string> = input.required<string>();
 
     /** Строка полей красного, зелёного и синего под записью hex. Без неё — площадь, полоса и hex. */
-    public readonly channels: InputSignal<boolean> = input<boolean>(false);
+    public readonly channels: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
 
     public readonly applied: OutputEmitterRef<string> = output<string>();
     public readonly cancelled: OutputEmitterRef<void> = output<void>();
