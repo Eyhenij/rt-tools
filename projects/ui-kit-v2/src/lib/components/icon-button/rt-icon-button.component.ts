@@ -145,6 +145,14 @@ export class RtIconButtonComponent {
     public readonly tooltip: InputSignal<string> = input<string>('');
 
     /**
+     * Прячет ли клик открытую подсказку (`rtTooltipHideOnClick`). `false` — у переключателя:
+     * подсказка остаётся и показывает новое состояние на месте.
+     */
+    public readonly tooltipHideOnClick: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
+        transform: booleanAttribute,
+    });
+
+    /**
      * Tabindex внутренней `<button>`. Default `0` (в обычном таб-порядке).
      * Значение `-1` исключает кнопку из таб-навигации, оставляя клик мышью —
      * нужно для вспомогательных аффордансов вроде крестика-очистки внутри поля.

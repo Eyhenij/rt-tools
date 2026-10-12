@@ -16,6 +16,7 @@
 | `radius`                                        | `TRtRadius \| null` — шаг общей шкалы                                         | `null` → `md`                |
 | `type`                                          | `'button' \| 'submit'`                                                        | `'button'`                   |
 | `tooltip`                                       | `string`                                                                      | `''` (пусто → подсказки нет) |
+| `tooltipHideOnClick`                            | `boolean` — `false` у переключателя: подсказка остаётся после клика           | `true`                       |
 | `tabIndex`                                      | `number`                                                                      | `0`                          |
 | `loading` / `disabled` / `active` / `indicator` | `boolean`                                                                     | `false`                      |
 

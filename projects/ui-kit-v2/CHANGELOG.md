@@ -1,3 +1,9 @@
+## [0.23.3](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2@0.23.2...rt-ui-kit-v2@0.23.3) (2026-10-12)
+
+### Features
+
+- **rt:ui-kit-v2:** поле в левой части тулбара шириной из свойства блока ([e052c82](https://github.com/Eyhenij/rt-tools/commit/e052c82f8e027ee4845fc5adcd2af58a104b9a8f))
+
 ## [0.23.2](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2@0.23.1...rt-ui-kit-v2@0.23.2) (2026-10-12)
 
 ### Features
