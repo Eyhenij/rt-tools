@@ -60,6 +60,7 @@ agreement about their own subject and describe the surface of a component, not a
 | [The accordion](accordion/spec.md)                                        | a list of headed items whose texts open on a press, independently of one another                                                |
 | [The expansion panel](expansion-panel/spec.md)                            | a header button over a body that opens with motion                                                                              |
 | [The tooltip of a cut text](tooltip-when-truncated/spec.md)               | the mode where the tooltip shows only over a text that did not fit its node                                                     |
+| [The tooltip that stays on a click](tooltip-keep-on-click/spec.md)        | the input that keeps an open tooltip on a click of a toggle, and a new text shown in place                                      |
 | [The assistant chat](ai-chat/spec.md)                                     | the panel of an AI assistant as one component: the feed, the run line, the rating, the error, the conversations                 |
 | [The prompt suggestion](prompt-suggestion/spec.md)                        | a card with a ready question on the empty screen of an assistant: the text, the arrow at the edge, the press                    |
 | [The request error of a side panel](aside-error-box/spec.md)              | where a failed request is shown in a panel and what its copy button puts into the clipboard                                     |
@@ -215,3 +216,8 @@ change of its own.
   was created, the scenarios `SC-UKV-77`…`SC-UKV-83` arrived with their former numbers.
 - 2026-10-12 — the container gives a page header placed straight in its header zone the margin from
   the page edges. The margin used to live in the showcase layout only. Task RT-2779.
+- 2026-10-12 — a field in the left bar of the toolbar takes its width from the block property
+  `--rt-toolbar-field-width`, 400px by default. It used to shrink to its placeholder. Task RT-2786.
+- 2026-10-12 — only the input in the left bar of the toolbar takes that width; a select there sizes
+  by its content again. Each filter of a row had stretched to 400px and left a narrow screen. Task
+  RT-2791.
