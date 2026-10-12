@@ -1,0 +1,97 @@
+import { Meta, Title } from '@storybook/addon-docs/blocks';
+
+<Meta title="Molecules/Navigation/Breadcrumbs/Overview" />
+
+<Title>Breadcrumbs — `rt-breadcrumbs`</Title>
+
+Путь до открытой страницы: предки ссылками, текущее звено текстом или заголовком страницы.
+
+```html
+<rt-breadcrumbs [back]="true" [crumbs]="[{ label: 'Объекты', link: '/objects' }, { label: object.name }]" />
+```
+
+## Когда применять
+
+- Страница записи внутри раздела: карточка объекта, настройки записи, вложенный список.
+- Шапка страницы, где путь и заголовок стоят вместе: вид `heading`.
+
+## Когда не применять
+
+- **Переключение разделов одного уровня** — `rt-tabs` или `rt-section-nav`.
+- **Шаги мастера** — `rt-stepper`: у шагов есть порядок и состояние, у пути нет.
+
+## Оси
+
+| ось            | значения                          | умолчание |
+| -------------- | --------------------------------- | --------- |
+| длина пути     | одно звено, цепочка, длинный путь | —         |
+| текущее звено  | `inline`, `heading`               | `inline`  |
+| кнопка «назад» | нет, есть                         | нет       |
+| разделитель    | `/`, свой знак                    | `/`       |
+| ширина экрана  | широкий, узкий                    | —         |
+
+## Состояния
+
+- Звено-ссылка: обычное, наведение, фокус с клавиши.
+- Узкий экран и три предка и больше: середина пути уходит в меню «…».
+- Длинный путь едет внутри своей строки; обрезанное текущее звено показывает подсказку.
+
+## Доступность
+
+- Хост — ориентир `navigation` с именем «Breadcrumb» из подписей кита.
+- Текущее звено несёт `aria-current="page"`; разделители скрыты от скринридера.
+- Кнопка «назад» называет, куда ведёт: «Back to» и подпись предка.
+
+## Оформление
+
+Вид кита и материальный вид стоят рядом в истории **Presets**. Свойства объявлены на самом
+`rt-breadcrumbs`, и приложение переназначает их своим правилом на этот блок. Умолчания — прежние
+ступени кита, так что без правки вид не меняется.
+
+Материальный набор переназначает шесть свойств по образцу приложения. Зазоры становятся 8px, а кнопка
+«назад» вырастает до 40px со значком 24px. Предки и разделитель берут цвет вторичного текста темы
+Material, `--mat-sys-on-surface-variant`. Без темы остаётся приглушённый текст кита.
+
+| свойство                             | что задаёт                                    | умолчание                  |
+| ------------------------------------ | --------------------------------------------- | -------------------------- |
+| `--rt-breadcrumbs-gap`               | зазор между кнопкой «назад» и строкой пути    | `--rt-space-xs`            |
+| `--rt-breadcrumbs-font-size`         | кегль звеньев                                 | `--rt-text-sm`             |
+| `--rt-breadcrumbs-font-weight`       | насыщенность звеньев                          | `--rt-font-weight-medium`  |
+| `--rt-breadcrumbs-line-height`       | высота строки звеньев                         | `--rt-leading-snug`        |
+| `--rt-breadcrumbs-link-color`        | цвет предка                                   | `--rt-color-text-muted`    |
+| `--rt-breadcrumbs-link-color-hover`  | цвет предка под указателем                    | `--rt-color-text-primary`  |
+| `--rt-breadcrumbs-link-radius`       | скругление кольца фокуса предка               | `--rt-radius-xs`           |
+| `--rt-breadcrumbs-separator-color`   | цвет разделителя                              | `--rt-color-text-disabled` |
+| `--rt-breadcrumbs-separator-gap`     | отступ разделителя с обеих сторон             | `--rt-space-xs`            |
+| `--rt-breadcrumbs-current-color`     | цвет текущего звена                           | `--rt-color-text-primary`  |
+| `--rt-breadcrumbs-back-size`         | сторона кнопки «назад»; под пальцем — крупнее | `--rt-control-height-sm`   |
+| `--rt-breadcrumbs-back-icon-size`    | значок кнопки «назад»                         | `--rt-size-5`              |
+| `--rt-breadcrumbs-back-color`        | цвет значка кнопки «назад»                    | `--rt-color-text-primary`  |
+| `--rt-breadcrumbs-back-bg-hover`     | фон кнопки «назад» под указателем             | `--rt-color-bg-hover`      |
+| `--rt-breadcrumbs-back-radius`       | скругление кнопки «назад»                     | `--rt-radius-full`         |
+| `--rt-breadcrumbs-duration`          | смена цвета ссылки и фона кнопки              | `--rt-duration-fast`       |
+| `--rt-breadcrumbs-heading-gap`       | зазор в строке заголовка                      | `--rt-space-sm`            |
+| `--rt-breadcrumbs-heading-offset`    | отступ заголовка от строки пути               | `--rt-space-xs`            |
+| `--rt-breadcrumbs-title-color`       | цвет заголовка                                | `--rt-color-text-primary`  |
+| `--rt-breadcrumbs-title-font-size`   | кегль заголовка                               | `--rt-text-2xl`            |
+| `--rt-breadcrumbs-title-font-weight` | насыщенность заголовка                        | `--rt-font-weight-bold`    |
+| `--rt-breadcrumbs-title-line-height` | высота строки заголовка                       | `--rt-leading-tight`       |
+
+## Входы
+
+| вход        | тип                               | умолчание  |
+| ----------- | --------------------------------- | ---------- |
+| `crumbs`    | `readonly IRtBreadcrumbs.Crumb[]` | обязателен |
+| `look`      | `'inline' \| 'heading'`           | `'inline'` |
+| `back`      | `boolean`                         | `false`    |
+| `separator` | `string`                          | `'/'`      |
+
+## Выходы
+
+Нет: звенья — ссылки роутера.
+
+## Рядом
+
+- [`rt-menu`](./?path=/docs/molecules-navigation-menu-overview--docs) — меню свёрнутой середины пути.
+- [`rt-page-header`](./?path=/docs/molecules-navigation-pageheader-overview--docs) — шапка
+  страницы приложения.
