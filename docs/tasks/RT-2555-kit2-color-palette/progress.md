@@ -12,14 +12,13 @@
   diverged once by a tooltip and matched on the second run. On 10 October, after the comparison
   with the application's code, the material checked swatch got the application's 5px glow of its
   colour through `--rt-color-palette-checked-glow` (0px by default); four palette frames were
-  retaken, the material half alone moved.
-- **Next step:** the rest of the comparison from the epic plan: the white circle of an empty
-  read-only value, the custom colour button on a row of its own, and the picker panel's height,
-  shadow and buttons. Then take the folder apart and open the PR when the owner approves.
-  The owner answered about the browser «Открыт только один браузер»: the plugin drives it, and the
-  application on :4400 opens on its users page. The live comparison of the ported components
-  against the application goes first in the next session; the roles and permissions stacks are
-  hidden columns there and are switched on in the column settings.
+  retaken, the material half alone moved. On 10 October, by the live comparison, the custom swatch
+  stands on the row of its button 16 points below the grid, and the picker is 256 by 320 with the
+  application's shadow; six palette frames were retaken. The epic plan marks the palette done.
+- **Next step:** the owner looks at the material half on :6007; then take the folder apart and open
+  the PR into the epic branch at their word. The white circle of an empty read-only value came
+  from the code comparison; the live comparison did not name it, and the material look keeps the
+  kit's empty ring.
 - **Uncommitted:** no
 - **Waiting for the owner:** «пры не открывай откроеш после моего апрува» — the push and the PR wait
   for the owner's approval.
