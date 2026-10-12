@@ -1,14 +1,4 @@
-import {
-    AfterViewInit,
-    ChangeDetectionStrategy,
-    Component,
-    input,
-    InputSignal,
-    Signal,
-    signal,
-    viewChildren,
-    WritableSignal,
-} from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, Signal, viewChildren } from '@angular/core';
 
 import { RtButtonDirective } from '../../../button/rt-button.directive';
 import { RtIconButtonComponent } from '../../../icon-button/rt-icon-button.component';
@@ -19,6 +9,7 @@ import { StoryThemesComponent } from '../../../../../showcase/story-themes.compo
 import { RtTooltipComponent } from '../../rt-tooltip.component';
 import { RtTooltipDirective } from '../../rt-tooltip.directive';
 import { IRtTooltip } from '../../rt-tooltip.model';
+import { TestRtTooltipPinToggleComponent } from './test-tooltip-pin-toggle.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
 export type TTooltipMatrixPart = 'placement' | 'text' | 'hosts' | 'truncated' | 'keep-on-click' | 'presets' | 'themes';
@@ -27,30 +18,6 @@ export type TTooltipMatrixPart = 'placement' | 'text' | 'hosts' | 'truncated' | 
 interface ITooltipKeepOnClickCase {
     readonly name: string;
     readonly hideOnClick: boolean;
-}
-
-/**
- * Переключатель «закрепить / открепить» со своим состоянием: у каждого экземпляра пары наборов оно
- * своё, иначе клик по одной половине переключал бы и вторую.
- */
-@Component({
-    selector: 'app-tooltip-pin-toggle',
-    template: `
-        <rt-icon-button
-            icon="pin"
-            ariaLabel="Закрепить"
-            [active]="pinned()"
-            [tooltip]="pinned() ? 'Открепить' : 'Закрепить'"
-            [tooltipHideOnClick]="hideOnClick()"
-            (click)="pinned.set(!pinned())" />
-    `,
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [RtIconButtonComponent],
-})
-class StoryPinToggleComponent {
-    protected readonly pinned: WritableSignal<boolean> = signal<boolean>(false);
-
-    public readonly hideOnClick: InputSignal<boolean> = input<boolean>(true);
 }
 
 /** Сторона вместе с подписью: значение оси — строка, а подпись должна называть её по-русски. */
@@ -276,7 +243,7 @@ interface ITooltipTruncatedCase {
         RtTooltipDirective,
 
         // showcase
-        StoryPinToggleComponent,
+        TestRtTooltipPinToggleComponent,
         StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
