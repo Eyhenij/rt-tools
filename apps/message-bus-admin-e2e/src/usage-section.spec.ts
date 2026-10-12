@@ -95,6 +95,8 @@ test.describe('раздел использования', () => {
         page: Page;
     }) => {
         await openSection(page, 'usage', PERIOD_QUERY);
+        // сводка над таблицей сдвигает строки вниз: нажатие до неё прокручивает страницу иначе, и кадр расходится
+        await expect(qa(page, 'usage-digest-bar')).toHaveCount(31);
 
         await rowsOf(page, 'usage').first().click();
 
