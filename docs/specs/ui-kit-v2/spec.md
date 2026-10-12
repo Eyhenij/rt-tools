@@ -212,3 +212,5 @@ change of its own.
   subdomain was created, the scenarios `SC-UKV-55` and `SC-UKV-56` arrived with their former numbers.
 - 2026-08-30 — the agreement about a field of the set and a signal form was merged: a sixth subdomain
   was created, the scenarios `SC-UKV-77`…`SC-UKV-83` arrived with their former numbers.
+- 2026-10-12 — the container gives a page header placed straight in its header zone the margin from
+  the page edges. The margin used to live in the showcase layout only. Task RT-2779.
