@@ -1,0 +1,7 @@
+<rt-icon-button
+    icon="pin"
+    ariaLabel="Закрепить"
+    [active]="pinned()"
+    [tooltip]="pinned() ? 'Открепить' : 'Закрепить'"
+    [tooltipHideOnClick]="hideOnClick()"
+    (click)="pinned.set(!pinned())" />
