@@ -212,3 +212,7 @@ change of its own.
   the page edges. The margin used to live in the showcase layout only. Task RT-2779.
 - 2026-10-12 — a field in the left bar of the toolbar takes its width from the block property
   `--rt-toolbar-field-width`, 400px by default. It used to shrink to its placeholder. Task RT-2786.
+- 2026-10-12 — only a field placed straight in the left bar takes that width; a field inside an
+  application's own component stays sized by its content, and on a narrow screen the left bar is
+  never wider than the window. Before, the wrapped filters of a list grew to 400px each and left the
+  window edge on a narrow screen. Task RT-2789.
