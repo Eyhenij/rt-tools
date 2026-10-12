@@ -1,5 +1,11 @@
 # Grill
 
+Former address: docs/tasks/RT-2786-toolbar-field-width/grill.md
+
+A field in the left bar of the toolbar now takes `--rt-toolbar-field-width`, 400px by default, and
+never grows wider than the bar. The toolbar description and the kit spec history say so. Checks: the
+toolbar styles and tests clean, 184 affected tasks green, 806 of 806 showcase frames match.
+
 ## The owner request
 
 > что с инпутом поиска на списках? почему он такой маленький?
