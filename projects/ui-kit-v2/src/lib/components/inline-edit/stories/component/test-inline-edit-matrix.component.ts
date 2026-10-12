@@ -4,6 +4,7 @@ import { StoryPresetsComponent } from '../../../../../showcase/story-presets.com
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { IStoryState, STORY_CONTROL_STATES, storyStateLabel } from '../../../../../showcase/story-states';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
+import { IRtIcon } from '../../../icon/rt-icon.model';
 import { IRtInput } from '../../../input/rt-input.model';
 import { RtInlineEditComponent } from '../../rt-inline-edit.component';
 import { IRtInlineEdit } from '../../rt-inline-edit.model';
@@ -21,7 +22,7 @@ interface IInlineEditCase {
     readonly saving?: boolean;
     readonly disabled?: boolean;
     readonly slotWidth?: string;
-    readonly icon?: string;
+    readonly icon?: IRtIcon.Name;
     readonly state?: string;
     readonly truncate?: IRtInlineEdit.Truncate;
 }

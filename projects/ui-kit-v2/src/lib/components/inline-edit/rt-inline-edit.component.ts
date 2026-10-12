@@ -26,7 +26,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { IRtInput, rtKitLabel } from '@rt-tools/ui-kit-v2/core';
+import { IRtIcon, IRtInput, rtKitLabel } from '@rt-tools/ui-kit-v2/core';
 import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
 import { RtInputComponent } from '@rt-tools/ui-kit-v2/input';
@@ -144,7 +144,7 @@ export class RtInlineEditComponent {
     /** Что делает уход фокуса из компонента. */
     public readonly blurAction: InputSignal<IRtInlineEdit.BlurAction> = input<IRtInlineEdit.BlurAction>('keep');
     /** Значок перед текстом плашки-поля: имя значка кита. */
-    public readonly fieldIcon: InputSignal<string> = input<string>('pencil');
+    public readonly fieldIcon: InputSignal<IRtIcon.Name> = input<IRtIcon.Name>('pencil');
 
     /** Поле открыто. Приложение может открыть и закрыть его само. */
     public readonly editing: ModelSignal<boolean> = model<boolean>(false);
