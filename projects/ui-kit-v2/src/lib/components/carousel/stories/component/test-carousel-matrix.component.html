@@ -36,11 +36,12 @@
     }
 
     @case ('permissions') {
-        <app-story-presets caption="Двенадцать прав с длинными подписями: закрыта и открыта самая длинная — в обоих наборах">
+        <app-story-presets
+            caption="Двенадцать прав с длинными подписями в регистре приложения: закрыта и открыта самая длинная — в обоих наборах">
             <ng-template>
                 <app-story-row slotWidth="44rem" [items]="permissionStates" [itemLabel]="stateLabel">
                     <ng-template let-state>
-                        <rt-carousel [cards]="permissions" [attr.data-story-state]="state.state" />
+                        <rt-carousel labelCase="title" [cards]="permissions" [attr.data-story-state]="state.state" />
                     </ng-template>
                 </app-story-row>
             </ng-template>

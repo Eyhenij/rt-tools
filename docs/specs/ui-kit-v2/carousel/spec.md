@@ -50,6 +50,8 @@ card, so a keyboard user never reads a whole label. The kit has no such part.
 - **The material preset draws the application's look by the same properties, without Material
   packages: cards with small corners and a large shadow, a dark label in the Material text colour,
   a regular-weight label in title case, and a slower move.**
+- **The labelCase input writes every word of a label with a capital and the rest in lower case;
+  by default the label stays as given.**
 
 ## What is out of scope
 
@@ -103,8 +105,12 @@ Every stack is independent; several stand side by side in a table column.
   opens to show its label, so focus is the way to reach it and no action is promised.
 - **The tone is two fixed neutral steps, not a computed colour.** A card keeps its contrast in the
   dark theme as well.
-- **The label case is a style property.** The application passes labels through title case; the
-  kit keeps the text as given and capitalises it in the material look by a property.
+- **The label case is a style property, and the application's title case is an input.** The
+  material look capitalises the first letter by a property; lowering the rest of a word ("AI" to
+  "Ai") is not a style, so it comes behind `labelCase="title"`, which keeps the text as given by
+  default.
+- **The light label weight stays with the property.** The application's label is 300 and the kit
+  scale has no such step; the application sets `--rt-carousel-label-weight` itself.
 
 ## Open questions
 
@@ -116,3 +122,5 @@ Every stack is independent; several stand side by side in a table column.
 - 9 October 2026 — written by the task RT-2556 of the epic RT-2542.
 - 10 October 2026 — after a comparison with the application, the material preset takes its dark
   label colour. The live application draws the large kit shadow on its cards, so the shadow stays.
+- 12 October 2026 — the host keeps the width of the closed stack, and the labelCase input gives the
+  application's title case.

@@ -8,6 +8,12 @@ export namespace IRtCarousel {
         readonly color?: string | null;
     }
 
+    /**
+     * Регистр подписи: как пришла или каждое слово с заглавной и строчными дальше — так приложение
+     * пишет «AI» как «Ai».
+     */
+    export type LabelCase = 'as-is' | 'title';
+
     /** Тон подписи: тёмный на светлом цвете, светлый на тёмном. */
     export type Tone = 'dark' | 'light';
 

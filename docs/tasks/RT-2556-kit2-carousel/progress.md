@@ -10,7 +10,8 @@
   epic branch and the epic into this one; the four icon frames were retaken for the added `folder`,
   and the whole set is green: 832 tests, 843 snapshots of 843. On 12 October the host took the
   width of the closed stack (SC-UKV-846): 23 specs, types and linters green, 843 frames of 844
-  matched, and the Permissions frame was retaken.
+  matched, and the Permissions frame was retaken. Later the same day the `labelCase` input gave the
+  application's title case (SC-UKV-849): 25 specs, types and linters green, Permissions retaken.
 - **Next step:** take the folder apart and open the PR into the epic branch at the owner's word.
   On 12 October the owner looked at the stack on :6007 and answered «дальше» to the question of
   the stack against the scrolling carousel of the card.
@@ -53,6 +54,12 @@
   Permissions. The host now takes `--rt-carousel-count` from the component and keeps the closed
   width; the cards do not shrink and go past it on top. Measured on :6007: 416 points with and
   without an open card. Affected stage: 4.
+- **2026-10-12. The application's title case comes behind the `labelCase` input.** The owner said
+  «расширь чего не хватает по функционалу и возможность задать вью через вход или токены стилей».
+  Lowering the rest of a word is not a style, so `labelCase="title"` writes «AI» as «Ai»
+  (SC-UKV-849); the default `as-is` keeps the present labels. The Permissions story takes the
+  application's case. The light weight 300 stays with `--rt-carousel-label-weight`: the kit scale
+  has no such step, and a new step for one component is not started. Affected stage: 4.
 
 ## Steps
 

@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, Component, computed, input, InputSignalWithTransform, Signal, ViewEncapsulation } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    input,
+    InputSignal,
+    InputSignalWithTransform,
+    Signal,
+    ViewEncapsulation,
+} from '@angular/core';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
@@ -46,7 +55,7 @@ function toCards(value: readonly IRtCarousel.Card[] | null | undefined): readonl
 export class RtCarouselComponent {
     /** Карточки, какими их рисует шаблон: цвет приведён к записи, тон подписи посчитан. */
     protected readonly views: Signal<readonly IRtCarousel.View[]> = computed((): readonly IRtCarousel.View[] =>
-        carouselViews(this.cards())
+        carouselViews(this.cards(), this.labelCase())
     );
 
     /** Карточки стопки в порядке показа. */
@@ -54,4 +63,7 @@ export class RtCarouselComponent {
         readonly IRtCarousel.Card[],
         readonly IRtCarousel.Card[] | null | undefined
     >([], { transform: toCards });
+
+    /** Регистр подписей: как пришли или каждое слово с заглавной и строчными дальше. */
+    public readonly labelCase: InputSignal<IRtCarousel.LabelCase> = input<IRtCarousel.LabelCase>('as-is');
 }

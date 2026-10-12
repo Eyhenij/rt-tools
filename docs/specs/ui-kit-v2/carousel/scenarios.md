@@ -53,3 +53,12 @@ property set on the block overrides both
 Not covered: it cannot be closed by a test with an identifier — the look is computed by the styles,
 which the spec environment does not apply; both looks are shown by the Presets and Themes story
 frames.
+
+### SC-UKV-849 — the labelCase input gives the application's title case
+
+Given a stack with the labels "AI tools" and "USER management"
+When it is drawn with the title case and without it
+Then with it the labels read "Ai Tools" and "User Management", and without it they stay as given
+
+Coverage: partial — the case is checked by a call; the material half of the Permissions story frame
+shows the labels in the application's case.

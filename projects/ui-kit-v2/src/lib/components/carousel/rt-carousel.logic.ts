@@ -32,10 +32,21 @@ export function carouselTone(hex: string | null): IRtCarousel.Tone | null {
     return brightness > BRIGHTNESS_LIMIT ? 'dark' : 'light';
 }
 
+/**
+ * Подпись в нужном регистре. `title` пишет каждое слово с заглавной и строчными дальше: «AI tools»
+ * становится «Ai Tools». Разделители между словами остаются как пришли.
+ */
+export function carouselLabel(label: string, labelCase: IRtCarousel.LabelCase): string {
+    if (labelCase === 'as-is') {
+        return label;
+    }
+    return label.replace(/\S+/g, (word: string): string => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
+}
+
 /** Карточки входа в том виде, какой рисует шаблон. */
-export function carouselViews(cards: readonly IRtCarousel.Card[]): readonly IRtCarousel.View[] {
+export function carouselViews(cards: readonly IRtCarousel.Card[], labelCase: IRtCarousel.LabelCase = 'as-is'): readonly IRtCarousel.View[] {
     return cards.map((card: IRtCarousel.Card): IRtCarousel.View => {
         const color: string | null = carouselHex(card.color);
-        return { color, label: card.label, tone: carouselTone(color) };
+        return { color, label: carouselLabel(card.label, labelCase), tone: carouselTone(color) };
     });
 }

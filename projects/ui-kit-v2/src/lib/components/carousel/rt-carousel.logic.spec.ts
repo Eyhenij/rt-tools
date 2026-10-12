@@ -1,4 +1,4 @@
-import { carouselHex, carouselTone, carouselViews } from './rt-carousel.logic';
+import { carouselHex, carouselLabel, carouselTone, carouselViews } from './rt-carousel.logic';
 import { IRtCarousel } from './rt-carousel.model';
 
 describe('rt-carousel logic', (): void => {
@@ -37,5 +37,14 @@ describe('rt-carousel logic', (): void => {
             { color: null, label: 'Reader', tone: null },
             { color: '#000000', label: 'Owner', tone: 'light' },
         ]);
+    });
+
+    it('SC-UKV-849 — регистр title пишет слово с заглавной и строчными дальше, as-is не трогает', (): void => {
+        expect(carouselLabel('AI tools', 'title')).toBe('Ai Tools');
+        expect(carouselLabel('USER  management', 'title')).toBe('User  Management');
+        expect(carouselLabel('доступ К ОТЧЁТАМ', 'title')).toBe('Доступ К Отчётам');
+        expect(carouselLabel('AI tools', 'as-is')).toBe('AI tools');
+        expect(carouselViews([{ label: 'AI' }], 'title')[0].label).toBe('Ai');
+        expect(carouselViews([{ label: 'AI' }])[0].label).toBe('AI');
     });
 });

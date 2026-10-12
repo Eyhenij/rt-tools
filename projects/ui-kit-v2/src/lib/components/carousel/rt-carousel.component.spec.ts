@@ -71,4 +71,16 @@ describe('RtCarouselComponent', (): void => {
         expect((three.nativeElement as HTMLElement).style.getPropertyValue('--rt-carousel-count')).toBe('3');
         expect((nothing.nativeElement as HTMLElement).style.getPropertyValue('--rt-carousel-count')).toBe('0');
     });
+
+    it('SC-UKV-849 — вход labelCase пишет подписи карточек в регистре приложения', (): void => {
+        const fixture: ComponentFixture<RtCarouselComponent> = createRtFixture(RtCarouselComponent, {
+            cards: [{ label: 'AI tools' }, { label: 'USER management' }],
+            labelCase: 'title',
+        });
+
+        expect(qaAll(fixture, 'carousel-card-label').map((node: DebugElement): string => textOf(node))).toEqual([
+            'Ai Tools',
+            'User Management',
+        ]);
+    });
 });
