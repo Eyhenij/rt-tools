@@ -1,3 +1,9 @@
+## [0.23.2](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2@0.23.1...rt-ui-kit-v2@0.23.2) (2026-10-12)
+
+### Features
+
+- **rt:ui-kit-v2:** каркас даёт плашке разделов отступ от краёв страницы ([3464167](https://github.com/Eyhenij/rt-tools/commit/346416781af7e62dca72a556a1a04e98e2ca3171))
+
 ## [0.23.1](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2@0.23.0...rt-ui-kit-v2@0.23.1) (2026-10-10)
 
 # [0.23.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2@0.22.1...rt-ui-kit-v2@0.23.0) (2026-10-09)
