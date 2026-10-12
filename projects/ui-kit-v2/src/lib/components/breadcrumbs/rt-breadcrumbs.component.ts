@@ -1,5 +1,6 @@
 import {
     afterRenderEffect,
+    booleanAttribute,
     ChangeDetectionStrategy,
     Component,
     computed,
@@ -8,6 +9,7 @@ import {
     inject,
     input,
     InputSignal,
+    InputSignalWithTransform,
     Signal,
     signal,
     viewChild,
@@ -108,7 +110,9 @@ export class RtBreadcrumbsComponent {
     public readonly look: InputSignal<IRtBreadcrumbs.Look> = input<IRtBreadcrumbs.Look>('inline');
 
     /** Кнопка «назад» перед путём; ведёт к последнему предку. */
-    public readonly back: InputSignal<boolean> = input<boolean>(false);
+    public readonly back: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
+        transform: booleanAttribute,
+    });
 
     /** Знак между звеньями. */
     public readonly separator: InputSignal<string> = input<string>('/');
