@@ -17,6 +17,7 @@ export * from '@rt-tools/ui-kit-v2/aside';
 export * from '@rt-tools/ui-kit-v2/autocomplete';
 export * from '@rt-tools/ui-kit-v2/bar-list';
 export * from '@rt-tools/ui-kit-v2/bottom-sheet';
+export * from '@rt-tools/ui-kit-v2/breadcrumbs';
 export * from '@rt-tools/ui-kit-v2/button';
 export * from '@rt-tools/ui-kit-v2/calendar';
 export * from '@rt-tools/ui-kit-v2/card';
