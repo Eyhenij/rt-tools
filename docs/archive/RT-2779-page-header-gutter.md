@@ -1,5 +1,13 @@
 # Grill
 
+Former address: docs/tasks/RT-2779-page-header-gutter/grill.md
+
+The container now gives a page header placed straight in its header zone the `--rt-space-5` margin
+from the top and side edges. The showcase rule is gone. The kit spec got no rule line, only a
+history line: its rules live in subdomains, and the container has none, so the rule lives in the
+container description. On the first frame run seven textarea frames differed at the resize corner.
+The cause was stale dependencies in the working copy: after the install all 806 frames matched.
+
 ## The owner request
 
 > меняй стили пакета в rt-worktree-2
