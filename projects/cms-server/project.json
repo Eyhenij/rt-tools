@@ -1,0 +1,67 @@
+{
+  "name": "@rt-tools/cms-server",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "projects/cms-server/src",
+  "prefix": "lib",
+  "projectType": "library",
+  "release": {
+    "version": {
+      "manifestRootsToUpdate": ["dist/cms-server"],
+      "currentVersionResolver": "git-tag",
+      "fallbackCurrentVersionResolver": "disk"
+    }
+  },
+  "tags": ["scope:package"],
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/dist/cms-server"],
+      "dependsOn": ["build:esm", "build:cjs"],
+      "options": {
+        "command": "node tools/finalize-utils-package.cjs cms-server"
+      }
+    },
+    "build:esm": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{workspaceRoot}/dist/cms-server/esm"],
+      "options": {
+        "main": "projects/cms-server/src/index.ts",
+        "tsConfig": "projects/cms-server/tsconfig.lib.esm.json",
+        "outputPath": "dist/cms-server/esm",
+        "generatePackageJson": false,
+        "assets": [],
+        "rootDir": "projects/cms-server/src"
+      },
+      "dependsOn": ["^build"]
+    },
+    "build:cjs": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{workspaceRoot}/dist/cms-server/cjs"],
+      "options": {
+        "main": "projects/cms-server/src/index.ts",
+        "tsConfig": "projects/cms-server/tsconfig.lib.cjs.json",
+        "outputPath": "dist/cms-server/cjs",
+        "generatePackageJson": false,
+        "assets": [],
+        "rootDir": "projects/cms-server/src"
+      },
+      "dependsOn": ["^build"]
+    },
+    "nx-release-publish": {
+      "options": {
+        "packageRoot": "dist/cms-server"
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/projects/cms-server"],
+      "options": {
+        "jestConfig": "projects/cms-server/jest.config.ts",
+        "tsConfig": "projects/cms-server/tsconfig.spec.json"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}

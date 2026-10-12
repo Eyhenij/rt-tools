@@ -11,10 +11,12 @@ import {
     InputSignalWithTransform,
     Signal,
     viewChild,
+    ViewEncapsulation,
 } from '@angular/core';
 
 import { RtSideMenuFooterDirective, RtSideMenuHeaderDirective, RtSideMenuIconDirective } from '../../rt-side-menu.directives';
 import { RtSideMenuComponent } from '../../rt-side-menu.component';
+import { IRtInput } from '../../../input/rt-input.model';
 import { IRtSideMenu } from '../../rt-side-menu.model';
 
 /**
@@ -32,6 +34,9 @@ import { IRtSideMenu } from '../../rt-side-menu.model';
     templateUrl: './test-side-menu-cell.component.html',
     styleUrls: ['./test-side-menu-cell.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    // Ячейка вида первого кита задаёт свойства строкам подменю, а их рисует шаблон кита: правило с
+    // атрибутом обёртки до них не доходит.
+    encapsulation: ViewEncapsulation.None,
     imports: [RtSideMenuComponent, RtSideMenuHeaderDirective, RtSideMenuFooterDirective, RtSideMenuIconDirective],
 })
 export class TestRtSideMenuCellComponent {
@@ -57,6 +62,24 @@ export class TestRtSideMenuCellComponent {
     public readonly slots: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, { transform: booleanAttribute });
     /** Кнопка закрепления в шапке подменю. */
     public readonly pinShown: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, { transform: booleanAttribute });
+    /** Подписи под значками полосы, заливка значков и поле поиска — входы вида первого кита. */
+    public readonly railTitlesShown: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
+        transform: booleanAttribute,
+    });
+    public readonly railIconFill: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
+        transform: booleanAttribute,
+    });
+    public readonly searchSize: InputSignal<IRtInput.Size> = input<IRtInput.Size>('sm');
+    public readonly subItemIconFill: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
+        transform: booleanAttribute,
+    });
+    public readonly panelScrollHintShown: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
+        transform: booleanAttribute,
+    });
+    /** Свойства меню со значениями первого кита и черта под строкой страницы раздела — так их задаёт приложение. */
+    public readonly firstKitProps: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
+        transform: booleanAttribute,
+    });
     /** Свой значок меню для имён, которых кит не рисует. */
     public readonly ownIcon: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, { transform: booleanAttribute });
 

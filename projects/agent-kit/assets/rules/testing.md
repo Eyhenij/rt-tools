@@ -137,6 +137,10 @@ flowchart TD
   calling the command — by full path, through a wrapper, with variable substitution — goes into
   the sign alongside the bare name: the bypass the command is called by every day is exactly
   where the guard goes blind.
+- **A test file is edited by the edit tool, the same as a document.** A guard judges a shell
+  command by its whole body, so the string a `sed` replaces counts as written. A refused command
+  writes nothing while the reply looks like a done edit: the file is reread before the next step.
+  The article in full is in the rule `doc-style`.
 - **A check's known list is named and explains itself.** The first field of the list is the
   check's name and a word that what is listed does not count as a refusal. Then either two keys —
   the accepted stays forever, the debt was gathered when the check was created and only shrinks —
@@ -169,7 +173,9 @@ flowchart TD
 - **A line is not added to the known list for a red check.** The list was gathered by the day the
   check was created and has only shrunk since: an added line silences the signal, not the cause,
   and in history looks the same as a fix. A place where the check is right by the letter and
-  wrong in substance is reviewed by the owner, and until their answer the check is right.
+  wrong in substance is reviewed by the owner, and until their answer the check is right. An inline
+  mark that switches a check off for one place is the same line, written into the file instead of
+  the list. It is not placed even for a moment.
 - **An exchange counts as read on both sides, not by the success of calls.** Sending and editing
   state answer with success even when there is nothing to read the result with: over two hundred
   records stood as new because there was nobody to collect them, and only those whose file still

@@ -60,6 +60,8 @@ export class TestRtSideMenuComponent {
     public readonly activeIds: InputSignal<ReadonlyArray<string | number>> = input<ReadonlyArray<string | number>>([]);
     public readonly mode: InputSignal<IRtSideMenu.SubMenuMode> = input<IRtSideMenu.SubMenuMode>('hover');
     public readonly width: InputSignal<number | null> = input<number | null>(null);
+    /** Задержка закрытия подменю наведения, мс: у первого кита 500. */
+    public readonly closeDelay: InputSignal<number> = input<number>(0);
     /** Номер меню в настройках: истории избранного держат список под своим номером. */
     public readonly menuId: InputSignal<string> = input<string>('main');
     public readonly favoritesCount: InputSignal<IRtSideMenu.FavoritesCount> = input<IRtSideMenu.FavoritesCount>('collapsed');

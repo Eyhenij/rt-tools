@@ -15,6 +15,10 @@
         --rt-empty-state-title-weight: var(--rt-font-weight-medium);
         --rt-empty-state-title-color: var(--rt-color-text-primary);
         --rt-empty-state-description-size: var(--rt-text-sm);
+        --rt-empty-state-description-line-height: var(--rt-leading-normal);
+        --rt-empty-state-padding: var(--rt-space-xl) var(--rt-space-lg);
+        --rt-empty-state-gap: var(--rt-space-sm);
+        --rt-empty-state-icon-offset: var(--rt-space-xs);
         --rt-empty-state-frame-width: var(--rt-border-width-medium);
         --rt-empty-state-frame-color: var(--rt-color-border-strong);
         --rt-empty-state-frame-radius: var(--rt-radius-lg);
@@ -23,8 +27,8 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        padding: var(--rt-space-xl) var(--rt-space-lg);
-        gap: var(--rt-space-sm);
+        padding: var(--rt-empty-state-padding);
+        gap: var(--rt-empty-state-gap);
         text-align: center;
 
         /* Рамка зоны загрузки: пунктир говорит «сюда можно бросить файл», как у первого кита. */
@@ -39,7 +43,7 @@
                 display: none;
             }
 
-            margin-bottom: var(--rt-space-xs);
+            margin-bottom: var(--rt-empty-state-icon-offset);
         }
 
         &__icon-wrap {
@@ -49,7 +53,7 @@
             align-items: center;
             justify-content: center;
             border-radius: var(--rt-empty-state-icon-radius);
-            margin-bottom: var(--rt-space-xs);
+            margin-bottom: var(--rt-empty-state-icon-offset);
             background: var(--rt-empty-state-icon-wrap-bg);
             color: var(--rt-color-text-muted);
 
@@ -74,7 +78,7 @@
             margin: 0;
             color: var(--rt-color-text-muted);
             font-size: var(--rt-empty-state-description-size);
-            line-height: var(--rt-leading-normal);
+            line-height: var(--rt-empty-state-description-line-height);
         }
 
         /* Слот действия скрыт, если ничего не спроецировано (пустой div). */

@@ -1,0 +1,39 @@
+@layer rt-kit.components {
+    /* rt-copy-value — значение с кнопкой копирования. ViewEncapsulation.None.
+       Корень шаблона — ng-container, поэтому класс блока висит только на хосте. */
+
+    .rt-copy-value {
+        --rt-copy-value-radius: var(--rt-radius-sm);
+
+        display: inline-flex;
+        align-items: center;
+        gap: var(--rt-space-sm);
+        max-inline-size: 100%;
+        min-inline-size: 0;
+
+        &__label {
+            flex: none;
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-xs);
+            line-height: var(--rt-leading-snug);
+        }
+
+        &__value {
+            overflow: hidden;
+            padding: var(--rt-space-2xs) var(--rt-space-xs);
+            border-radius: var(--rt-copy-value-radius);
+            background: var(--rt-color-bg-surface-subtle);
+            color: var(--rt-color-text-primary);
+            font-size: var(--rt-text-xs);
+            font-weight: var(--rt-font-weight-medium);
+            line-height: var(--rt-leading-snug);
+            min-inline-size: 0;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        &__button {
+            flex: none;
+        }
+    }
+}

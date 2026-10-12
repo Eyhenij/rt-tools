@@ -1,0 +1,14 @@
+/* The header and the column come from the screen frame; the list adds only the table scroll. */
+:host {
+    display: block;
+
+    .rt-cms-list-page {
+        /* The sideways scroll of the table works only together with `min-width: max-content` on
+           the table: without it the columns shrink instead of moving. The table comes by
+           projection and this style does not reach it, so the screen that declares the table
+           gives it the width. */
+        &__scroll {
+            overflow-x: auto;
+        }
+    }
+}

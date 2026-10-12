@@ -72,13 +72,15 @@
                 rtElem="panel"
                 qa-dataid="side-menu-panel"
                 [rtMod]="{ pinned: isPinned(), held: isSearchHeld() }"
+                (mouseenter)="cancelSubMenuClose()"
                 (mouseleave)="toggleSubMenu()">
                 <div rtElem="panel-head">
                     <rt-input
                         rtElem="search"
                         qa-dataid="side-menu-search"
-                        size="sm"
                         iconLeft="search"
+                        [size]="searchSize()"
+                        [appearance]="searchAppearance()"
                         [placeholder]="searchLabel()"
                         [ariaLabel]="searchLabel()"
                         [formControl]="searchControl"
@@ -99,7 +101,7 @@
                     }
                 </div>
 
-                <rt-scroll-area rtElem="panel-body">
+                <rt-scroll-area rtElem="panel-body" [isScrollHintShown]="panelScrollHintShown()">
                     <ng-container *rtScrollAreaContent>
                         <ng-container [ngTemplateOutlet]="subMenuTpl" />
                     </ng-container>
@@ -128,8 +130,9 @@
             <rt-input
                 rtElem="search"
                 qa-dataid="side-menu-search"
-                size="sm"
                 iconLeft="search"
+                [size]="searchSize()"
+                [appearance]="searchAppearance()"
                 [placeholder]="searchLabel()"
                 [ariaLabel]="searchLabel()"
                 [formControl]="searchControl"
@@ -157,13 +160,18 @@
 
     <ng-template #railItemTpl let-item>
         @let isActive = activeRailIds().includes(item.id);
+        <!-- Без подписей под значками имя пункта — в подсказке справа; выключенные подсказки гасят и её. -->
+        @let railTip = railTitlesShown() || !subMenuTooltipsShown() ? '' : item.name;
         @if (item.link) {
             <a
                 rtElem="rail-item"
                 qa-dataid="side-menu-item"
+                rtTooltipPlacement="right"
                 [routerLink]="item.link"
                 [rtMod]="{ active: isActive }"
                 [attr.aria-current]="isActive ? 'page' : null"
+                [attr.aria-label]="railTitlesShown() ? null : item.name"
+                [rtTooltip]="railTip"
                 (mouseenter)="toggleSubMenu(item)"
                 (click)="onClickMenu(item)">
                 <ng-container [ngTemplateOutlet]="railItemBodyTpl" [ngTemplateOutletContext]="{ $implicit: item }" />
@@ -173,7 +181,10 @@
                 type="button"
                 rtElem="rail-item"
                 qa-dataid="side-menu-item"
+                rtTooltipPlacement="right"
                 [rtMod]="{ active: isActive }"
+                [attr.aria-label]="railTitlesShown() ? null : item.name"
+                [rtTooltip]="railTip"
                 [attr.aria-expanded]="item.submenu?.length ? subMenuOpened() && selectedItem() === item : null"
                 (mouseenter)="toggleSubMenu(item)"
                 (click)="onClickMenu(item)">
@@ -188,7 +199,7 @@
             @let kitIcon = item.icon | rtSideMenuIcon;
             <span rtElem="rail-icon">
                 @if (kitIcon) {
-                    <rt-icon [name]="kitIcon" />
+                    <rt-icon [name]="kitIcon" [fill]="railIconFill()" />
                 } @else if (ownIconTpl(); as own) {
                     <span rtElem="own-icon" qa-dataid="side-menu-own-icon" aria-hidden="true">
                         <ng-container
@@ -199,7 +210,7 @@
             </span>
         }
 
-        @if (item.name) {
+        @if (item.name && railTitlesShown()) {
             <span rtElem="rail-title">{{ item.name }}</span>
         }
     </ng-template>

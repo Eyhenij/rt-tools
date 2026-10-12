@@ -1,0 +1,15 @@
+<ng-container rtBlock="rt-cms-editor-item-link">
+    <span rtElem="choice" qa-dataid="cms-editor-item-link-choice">
+        @if (contentItemId(); as itemId) {
+            {{ t().itemLinkChosen | cmsLabel: { id: itemId } }}
+        } @else {
+            {{ t().itemLinkNone }}
+        }
+    </span>
+    <rt-icon-button
+        icon="cog"
+        variant="ghost"
+        qa-dataid="cms-editor-item-link-settings"
+        [ariaLabel]="t().itemLinkPick"
+        (clicked)="configure()" />
+</ng-container>

@@ -1,0 +1,24 @@
+<rt-cms-page qaPrefix="tags" qa-dataid="tags-page" [title]="t().tagsTitle" [hint]="t().tagsSubtitle">
+    <button
+        rtCmsPageActions
+        rtButton
+        type="button"
+        icon="plus-circle"
+        qa-dataid="tags-add"
+        [label]="t().tagsNew"
+        [attr.aria-label]="t().tagsNew"
+        (click)="addRoot()"></button>
+
+    @if (loading() && !loaded()) {
+        <rt-spinner qa-dataid="tags-loading" />
+    } @else if (tags().length === 0) {
+        <rt-empty-state qa-dataid="tags-empty" icon="tags" [title]="t().tagsEmpty" [description]="t().tagsEmptyHint" />
+    } @else {
+        <rt-cms-tag-tree
+            qa-dataid="tags-tree"
+            [tags]="tags()"
+            (addRequested)="addNested($event)"
+            (renameRequested)="rename($event)"
+            (removeRequested)="remove($event)" />
+    }
+</rt-cms-page>

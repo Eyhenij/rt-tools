@@ -40,22 +40,26 @@
     @case ('templates') {
         <app-story-presets caption="Свои кнопки и название строки в обоих наборах">
             <ng-template>
-                <div [style.width]="fieldWidth">
-                    <rt-dynamic-selector
-                        keyExp="id"
-                        displayExp="name"
-                        ariaLabel="Команда"
-                        [entities]="people"
-                        [formControl]="templatesControl">
-                        <ng-template rtDynamicSelectorRowTitle let-person>
-                            <strong>{{ person.name }}</strong>
-                            · #{{ person.id }}
-                        </ng-template>
-                        <ng-template rtDynamicSelectorRowControls>
-                            <rt-icon-button icon="info" size="sm" ariaLabel="О сотруднике" />
-                        </ng-template>
-                    </rt-dynamic-selector>
-                </div>
+                <app-story-row [items]="templatesCases" [slotWidth]="fieldWidth">
+                    <ng-template let-templatesCase>
+                        <rt-dynamic-selector
+                            keyExp="id"
+                            displayExp="name"
+                            ariaLabel="Команда"
+                            [draggable]="templatesCase !== templatesCases[0]"
+                            [entities]="people"
+                            [style]="templatesCase === templatesCases[0] ? {} : tunedRowStyle"
+                            [formControl]="templatesCase === templatesCases[0] ? templatesControl : templatesTunedControl">
+                            <ng-template rtDynamicSelectorRowTitle let-person>
+                                <strong>{{ person.name }}</strong>
+                                · #{{ person.id }}
+                            </ng-template>
+                            <ng-template rtDynamicSelectorRowControls>
+                                <rt-icon-button icon="info" size="sm" ariaLabel="О сотруднике" />
+                            </ng-template>
+                        </rt-dynamic-selector>
+                    </ng-template>
+                </app-story-row>
             </ng-template>
         </app-story-presets>
     }
@@ -96,6 +100,8 @@
                             [invitationButtonIcon]="lookCase.invitationButtonIcon"
                             [invitationButtonAppearance]="lookCase.invitationButtonAppearance"
                             [clearIcon]="lookCase.clearIcon"
+                            [displayWith]="lookCase.displayWith ?? null"
+                            [style]="lookCase.listStyle ?? {}"
                             [formControl]="lookCase.control" />
                     </ng-template>
                 </app-story-row>
@@ -181,7 +187,13 @@
                             [mode]="popupCase.mode"
                             [multiToggleShown]="popupCase.multiToggleShown"
                             [loading]="popupCase.loading"
-                            [pinnedKeys]="popupCase.pinnedKeys" />
+                            [pinnedKeys]="popupCase.pinnedKeys"
+                            [titleWrap]="popupCase.titleWrap ?? true"
+                            [searchTerm]="popupCase.searchTerm ?? ''"
+                            [highlightSearch]="popupCase.highlightSearch ?? false"
+                            [applyLabel]="popupCase.applyLabel ?? ''"
+                            [applyLabelCase]="popupCase.applyLabelCase ?? 'none'"
+                            [style]="popupCase.popupStyle ?? {}" />
                     </ng-template>
                 </app-story-row>
             </ng-template>

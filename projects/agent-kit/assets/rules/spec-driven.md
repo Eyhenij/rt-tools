@@ -231,7 +231,9 @@ flowchart TD
   grows into dozens of subdomains, and the one needed is told from the rest only by reading: whoever
   takes apart a complaint about a file pays the whole window for that and therefore judges by memory.
   The command reads the bindings of the companions — the very ones the audit keeps fresh — and,
-  called without a name, names the resources no spec speaks of.
+  called without a name, names the resources no spec speaks of. It knows only what the package
+  lays out; for an application file it answers that the package carries no such name, and the
+  product spec is found by the file path in the bindings of the domain specs.
   <!-- rt-when: *.md -->
 
 ## The shape of a compressed article

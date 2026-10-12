@@ -125,7 +125,17 @@ rt_epic_pull_base() {
         ' 2>/dev/null)"
     fi
 
-    if [ "$_base" != "$_epic_branch" ]; then
+    # A chain base: the branch of the task below, standing on the epic branch. It is lawful
+    # while its history carries the epic branch — the rule puts a chain PR on the previous branch.
+    _chain=''
+    if [ -n "$_base" ] && [ "$_base" != "$_epic_branch" ] && [ "$_base" != "${main_branch:-main}" ] \
+        && git rev-parse --verify --quiet "origin/${_epic_branch}" >/dev/null 2>&1 \
+        && git rev-parse --verify --quiet "origin/${_base}" >/dev/null 2>&1 \
+        && git merge-base --is-ancestor "origin/${_epic_branch}" "origin/${_base}" 2>/dev/null; then
+        _chain=1
+    fi
+
+    if [ "$_base" != "$_epic_branch" ] && [ -z "$_chain" ]; then
         fault "the request of a task of the epic #${_epic} goes into the branch of the epic «${_epic_branch}», and the base here is ${_base:-the default branch of the repository}. A request into the main branch takes the task past its epic: the epic is handed in without it. Name the base: --base ${_epic_branch}."
         return 0
     fi

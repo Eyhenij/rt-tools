@@ -101,3 +101,6 @@ name of the edit event in three. Cutting that down is work by domains, and it is
 - The same logic written anew under another name is not caught by the check, and there will be no
   such check: two checks of the same shape from different domains are not a copy. Only whoever reads
   the edit can notice it — so says the law too.
+- A value set declared by the contract (`@<scope>/common/proto`) is shared too. A screen enum with
+  the same members `npm run check:dupes` refuses even under another name. The api layer service maps
+  the contract value into what `State` needs — a label, a sign — and the screen declares no set.

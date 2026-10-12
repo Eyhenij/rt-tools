@@ -1,0 +1,44 @@
+/* The column of a section screen: the header, then the content. */
+:host {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rt-space-md);
+
+    .rt-cms-page {
+        /* The title on the left, the actions on the right; on a narrow screen the actions wrap under it. */
+        &__header {
+            display: flex;
+            flex-flow: row wrap;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: var(--rt-space-md);
+        }
+
+        &__header-main {
+            display: flex;
+            min-width: 0;
+            flex-direction: column;
+            gap: var(--rt-space-sm);
+        }
+
+        &__title {
+            margin: 0;
+            color: var(--rt-color-text-primary);
+            font-size: var(--rt-text-3xl);
+            font-weight: var(--rt-font-weight-bold);
+            line-height: var(--rt-leading-none);
+        }
+
+        &__hint {
+            margin: 0;
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-sm);
+        }
+
+        &__actions {
+            display: flex;
+            align-items: center;
+            gap: var(--rt-space-sm);
+        }
+    }
+}

@@ -27,6 +27,8 @@ export interface IRtSideMenuHost {
     readonly ownIconTpl: Signal<TemplateRef<IRtSideMenuIconContext> | undefined>;
     /** Подсказки строк подменю: выключено — их нет ни у подписей, ни у кнопок строк. */
     readonly subMenuTooltipsShown: Signal<boolean>;
+    /** Залитые значки строк и папок подменю. */
+    readonly subItemIconFill: Signal<boolean>;
     /** Раскрыть или свернуть папку нажатием её заголовка. */
     toggleFolder(item: IRtSideMenu.Item): void;
     /** Уход указателя с панели: подменю, открытое наведением, закрывается. */

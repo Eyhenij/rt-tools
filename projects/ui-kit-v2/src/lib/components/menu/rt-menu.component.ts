@@ -24,7 +24,7 @@ import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
 import { carryThemeScope, materialPresetClassesOf } from '@rt-tools/ui-kit-v2/core';
-import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
+import { IRtIconButton, RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
 import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 import { IRtMenu } from './rt-menu.model';
 
@@ -146,6 +146,9 @@ export class RtMenuComponent {
      * не доходят: семья, нарисованная своим набором, отдаёт его панели этим входом.
      */
     public readonly panelClass: InputSignal<string | string[]> = input<string | string[]>([]);
+
+    /** Размер кнопки-триггера: мельче `md` — в плотной строке рядом с другими действиями строки. */
+    public readonly triggerSize: InputSignal<IRtIconButton.Size> = input<IRtIconButton.Size>('md');
 
     /** Размер панели: компактная — у меню действий строки таблицы. */
     public readonly size: InputSignal<IRtMenu.Size> = input<IRtMenu.Size>('md');

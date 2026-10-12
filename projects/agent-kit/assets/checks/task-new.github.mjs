@@ -50,14 +50,13 @@ import {
     STATUS_FIELD_ID,
     TASK_KEY,
     botToken,
-    describeTaskState,
     gh,
     ghJson,
     graphql,
     numberFromTitle,
-    taskState,
     unstampFolder,
 } from './board.mjs';
+import { confirmInQueue } from './task-new-queue.mjs';
 import { CONFIG, ROOT } from './rt-kit-checks.config.mjs';
 
 /**
@@ -437,45 +436,9 @@ if (args.epic) {
 console.log(`[${TASK_KEY}-${number}] ${args.title}`);
 console.log(`https://github.com/${OWNER}/${REPO}/issues/${number}`);
 
-/**
- * The fifth step: creation is confirmed by the answer of the work queue, not by the output of this
- * command.
- *
- * All four steps above answer for their own calls and stay silent about whether the task is visible
- * to whoever comes for it. Sixteen creations in a row printed the number with a link that way, and
- * not one of them landed in the queue: the account was limited by the hosting, and the calls gave
- * no refusal at that.
- */
-/**
- * This is read more than once. The queue does not hand back a new card the same second it was
- * created, and the reading goes as the next call after the adding: two creations in a row printed
- * that the task is not in the queue while the card was in place. A false refusal here costs more
- * than a delay — it pushes to create the card a second time, and only an administrator can take it
- * off the board.
- */
-let unreachable = false;
-
-function askQueue() {
-    try {
-        return describeTaskState(number, taskState(number, { token }));
-    } catch (error) {
-        // There was nothing to ask with — there is nothing to repeat: the answer is not late,
-        // there will be none at all.
-        unreachable = true;
-        const reason = error instanceof OfflineError ? error.message : String(error.message ?? error);
-        return describeTaskState(number, { offline: reason });
-    }
-}
-
-/** How long to wait between readings and how many times to re-read: the queue delay is seconds. */
-const QUEUE_RETRIES = 3;
-const QUEUE_PAUSE_MS = 1500;
-
-let answer = askQueue();
-for (let attempt = 1; !answer.ok && !unreachable && attempt < QUEUE_RETRIES; attempt += 1) {
-    Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, QUEUE_PAUSE_MS);
-    answer = askQueue();
-}
+// The fifth step: creation is confirmed by the answer of the work queue, not by the output of this
+// command. How long it waits and why is in the module of the step.
+const answer = confirmInQueue(number, token);
 for (const line of answer.lines) {
     (answer.ok ? console.log : console.error)(`task-new: ${line}`);
 }

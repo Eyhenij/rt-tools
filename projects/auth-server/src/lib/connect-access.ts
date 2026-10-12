@@ -2,8 +2,8 @@ import { Code, ConnectError, createContextKey, ContextKey, Interceptor, UnaryReq
 
 import { hasPermission, ICaller } from '@rt-tools/auth-contract';
 
-import { TAccess } from './access';
-import { KeycloakTokenVerifier } from './token-verifier';
+import { TAccess } from './access.js';
+import { KeycloakTokenVerifier } from './token-verifier.js';
 
 /** The part of a Connect service description the access map is checked against. */
 export interface IConnectServiceLike {

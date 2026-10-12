@@ -1,0 +1,40 @@
+<rt-cms-list-page
+    qaPrefix="media"
+    qa-dataid="media-page"
+    [title]="t().mediaTitle"
+    [hint]="t().mediaSubtitle"
+    [searchPlaceholder]="t().mediaSearch">
+    <rt-file-input
+        rtCmsListToolbarRight
+        multiple
+        qa-dataid="media-upload"
+        [accept]="accept"
+        [buttonLabel]="buttonLabel()"
+        [ngModel]="picked()"
+        (ngModelChange)="pick($event)" />
+
+    <rt-icon-button
+        rtCmsListToolbarRight
+        icon="folder"
+        variant="secondary"
+        qa-dataid="media-folder-create"
+        [tooltip]="t().mediaNewFolder"
+        [ariaLabel]="t().mediaNewFolder"
+        (clicked)="createFolder()" />
+
+    <rt-cms-media-folders
+        qa-dataid="media-folders"
+        [path]="path()"
+        [folders]="children()"
+        (opened)="openFolder($event)"
+        (renameRequested)="renameFolder($event)"
+        (removeRequested)="removeFolder($event)" />
+
+    <rt-cms-media-table
+        qa-dataid="media-files"
+        [files]="rows()"
+        [loading]="loading()"
+        [filtered]="filtered()"
+        (removeRequested)="remove($event)"
+        (searchReset)="resetSearch()" />
+</rt-cms-list-page>

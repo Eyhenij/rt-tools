@@ -275,4 +275,13 @@ Docs-skip: правка только в тестах хука, зеркала у
 - `gh api graphql --paginate` on a query of board items goes into repeating the first page: the
   cursor is taken from the answer by hand, and completeness is checked against
   `items(first: 1) { totalCount }`.
+- Two commits chained in one call: a commit refused by the message check leaves its files in the
+  index, and the next `git commit` takes them under its own subject. One commit is one call, and
+  its outcome is read before the next; a swallowed one is split by `git reset --soft HEAD~1` and two
+  commits anew.
+- The push set listed by hand without the package defaults: the tree profile extends the package
+  one through the default function, and sourced alone it calls an undefined function. The error
+  goes to a stream nobody reads, and the list loses lint, unit tests, the build and the spec audit
+  with a zero exit. The defaults are sourced first, and the line count is compared with the last
+  push before the run.
 - The owner's edit takes neither the token nor the variables — they are only for machine work.

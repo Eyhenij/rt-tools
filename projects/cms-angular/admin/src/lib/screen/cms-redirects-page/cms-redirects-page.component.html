@@ -1,0 +1,24 @@
+<rt-cms-list-page
+    qaPrefix="redirects"
+    qa-dataid="redirects-page"
+    [title]="t().redirectsTitle"
+    [hint]="t().redirectsSubtitle"
+    [searchPlaceholder]="t().redirectsSearch">
+    <rt-icon-button
+        rtCmsListToolbarRight
+        icon="ico-plus"
+        variant="primary"
+        qa-dataid="redirects-create"
+        [tooltip]="t().redirectsNew"
+        [ariaLabel]="t().redirectsNew"
+        (clicked)="openCreate()" />
+
+    <rt-cms-redirects-table
+        qa-dataid="redirects-list"
+        [redirects]="rows()"
+        [loading]="loading()"
+        [filtered]="filtered()"
+        (openRequested)="open($event)"
+        (removeRequested)="remove($event)"
+        (searchReset)="resetSearch()" />
+</rt-cms-list-page>

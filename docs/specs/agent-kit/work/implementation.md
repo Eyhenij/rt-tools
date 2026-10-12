@@ -42,7 +42,9 @@ needed sentence — and the statement stays green when the text of the role itse
 - **The handover is written last and put outside the tree.** — `projects/agent-kit/assets/commands/next-session.md:RT_HANDOFF_DIR`
 - **The name of the main branch and the directory of the handover the command takes from the profile of the tree.** — `projects/agent-kit/assets/defaults/project.sh:RT_HANDOFF_DIR`
 - **The closing of a session does not touch the delivery.** — `projects/agent-kit/assets/commands/next-session.md:ARGUMENTS`
-- **The creating of a task ends with an answer of the work queue, not with the output of the command.** — `projects/agent-kit/assets/checks/task-new.github.mjs:describeTaskState`
+- **The creating of a task ends with an answer of the work queue, not with the output of the command.** — `projects/agent-kit/assets/checks/task-new-queue.github.mjs:confirmInQueue`
+- **The card is read by a direct request to the task, not out of the list of the whole board.** — `projects/agent-kit/assets/checks/board.github.mjs:fetchCard` — the field `projectItems` of the task, the card of this board is taken by the project identifier; scenario SC-AK-1214
+- **«NO» is printed only after the window of waiting, and the line names how long the command waited.** — `projects/agent-kit/assets/checks/task-new-queue.github.mjs:QUEUE_PAUSES_MS` — the pauses 1, 2, 4, 8 and 15 seconds, set in a suite by `RT_TASK_NEW_PAUSES_MS`; scenarios SC-AK-1215, SC-AK-1216
 - **A task that is not in the work queue ends the command of creating with a non-zero code.** — `projects/agent-kit/assets/checks/board.github.mjs:describeTaskState`
 - **A task without an executor is named by a line of its own.** — `projects/agent-kit/assets/checks/board.github.mjs:assignees`
 - **A work queue that was not asked is no confirmation.** — `projects/agent-kit/assets/checks/task-new.github.mjs:OfflineError`
@@ -63,5 +65,6 @@ needed sentence — and the statement stays green when the text of the role itse
 - **The mark of multi-session work is checked against the record in the line of the works both ways.** — `projects/agent-kit/assets/checks/board-long-work.github.mjs:checkLongWork` — scenario SC-AK-823
 - **What counts as a record in the line is a row where both the word of the mark and the number of the task stand.** — `projects/agent-kit/assets/checks/board-long-work.github.mjs:markedRows`
 - **A rollout that fell is named apart from a production that lags.** — `projects/agent-kit/assets/checks/board-runs.github.mjs:lastDeploy` — scenario SC-AK-824
+- **The last successful rollout is looked for among the latest runs, not by the status filter of the hosting.** — `projects/agent-kit/assets/checks/board-runs.github.mjs:deployLag` — the request carries `per_page=20` and no `status`, the first run with the conclusion `success` is taken; scenario SC-AK-1213
 - **A rollout in progress does not count as a divergence.** — `projects/agent-kit/assets/checks/board-runs.github.mjs:lastDeploy` — an unfinished run gives back the verdict "running", and there is no line about it
 - **A tree that named no mark or no directory of the lines gets silence, not a refusal.** — `projects/agent-kit/assets/checks/board-long-work.github.mjs:LONG_LABEL`

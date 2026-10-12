@@ -1,0 +1,41 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rt-space-sm);
+
+    .rt-cms-media-folders {
+        /* The path wraps by whole links: a long path on a narrow screen goes to the second line. */
+        &__path {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: var(--rt-space-xs);
+        }
+
+        &__separator {
+            color: var(--rt-color-text-muted);
+        }
+
+        /* Folders as tiles: there are many of them, and as a column they would push the files off the screen. */
+        &__list {
+            display: grid;
+            padding: 0;
+            margin: 0;
+            gap: var(--rt-space-xs);
+            grid-template-columns: repeat(auto-fill, minmax(calc(var(--rt-size-40) * 5), 1fr));
+            list-style: none;
+        }
+
+        /* The folder name on the button is cut by the kit button and is seen whole in the tooltip. */
+        &__item {
+            display: flex;
+            min-width: 0;
+            align-items: center;
+            justify-content: space-between;
+            border: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
+            border-radius: var(--rt-radius-md);
+            gap: var(--rt-space-xs);
+            padding-inline: var(--rt-space-xs);
+        }
+    }
+}

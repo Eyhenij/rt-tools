@@ -41,7 +41,7 @@ import { RtDataListToolbarActionsDirective, RtDataListToolbarSelectorsDirective 
 const BEM_BLOCK: string = 'rt-data-list-toolbar';
 
 /** Набранное уходит приложению через эту задержку; очистка поля уходит сразу. */
-const SEARCH_DELAY_MS: number = 500;
+const TOOLBAR_SEARCH_DELAY_MS: number = 500;
 
 /** Значок кнопки — по имени первого кита: перечень соответствий кита даёт ему рисунок. */
 function iconOf(glyph: string, fallback: IRtIcon.Name): IRtIcon.Name {
@@ -202,7 +202,7 @@ export class RtDataListToolbarComponent {
                     this.#searchText.set(value ?? '');
                     this.#isSearchTouched.set(true);
                 }),
-                debounce((value: TNullable<string>): Observable<number> => timer(value ? SEARCH_DELAY_MS : 0)),
+                debounce((value: TNullable<string>): Observable<number> => timer(value ? TOOLBAR_SEARCH_DELAY_MS : 0)),
                 map((value: TNullable<string>) => (value ?? '').trim()),
                 // Набранное, которое приложение успело заменить своим поиском, уже не в поле.
                 filter((value: string) => value === (this.searchControl.value ?? '').trim()),

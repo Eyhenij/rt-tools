@@ -13,6 +13,22 @@ export const MIN_VALIDITY_SECONDS: number = 30;
 const FORCE_REFRESH: number = -1;
 
 /**
+ * How long the start waits for the silent check by default. The adapter itself waits for it
+ * without a limit: a Keycloak that is down, or one that refuses the return address, would leave
+ * the admin unstarted for good.
+ */
+export const SILENT_CHECK_TIMEOUT_MS: number = 5000;
+
+/** Waits for the start of the adapter, but no longer than the limit. */
+function withinLimit(start: Promise<boolean>, limitMs: number): Promise<void> {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const limit: Promise<void> = new Promise<void>((resolve: () => void): void => {
+        timer = setTimeout(resolve, limitMs);
+    });
+    return Promise.race([start.then((): void => undefined), limit]).finally((): void => clearTimeout(timer));
+}
+
+/**
  * The session of the person in the admin.
  *
  * The caller is read by the contract for the client of the admin, so a section is hidden by the
@@ -30,13 +46,19 @@ export class RtAuthService {
     public readonly caller: Signal<ICaller | null> = this.#caller.asReadonly();
     public readonly authenticated: Signal<boolean> = computed((): boolean => this.#caller() !== null);
 
-    /** Starts the adapter and brings the session back through the silent check. */
+    /**
+     * Starts the adapter and brings the session back through the silent check. A check that has
+     * not answered within the limit leaves nobody signed in, and the admin starts anyway.
+     */
     public async init(): Promise<void> {
         this.#keycloak.onAuthSuccess = (): void => this.#read();
         this.#keycloak.onAuthRefreshSuccess = (): void => this.#read();
         this.#keycloak.onAuthLogout = (): void => this.#caller.set(null);
         this.#keycloak.onTokenExpired = (): void => void this.refresh();
-        await this.#keycloak.init(keycloakInitOptions(this.#config, this.#document.baseURI));
+        await withinLimit(
+            this.#keycloak.init(keycloakInitOptions(this.#config, this.#document.baseURI)),
+            this.#config.silentCheckTimeoutMs ?? SILENT_CHECK_TIMEOUT_MS
+        );
         this.#read();
     }
 

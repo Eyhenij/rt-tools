@@ -90,6 +90,10 @@ token and the rights of every call. The subdomain of the import moves the people
 application into Keycloak with their password hashes. The subdomain `example` is an admin and a
 server of the tree that connect the packages, and an end-to-end suite runs a person through them.
 
+`cms` is the block editor and the content management system an application takes as packages. The
+subdomain of the contract holds the block model, the page model, the site page functions and the
+Connect contract.
+
 `ui-kit-v2` — four subdomains. The snapshots of the showcase: what is shot, what a frame is held the
 same between the runs by and where the run is obliged to refuse instead of being green. The leaving of
 a route panel: whom the guard asks about the edits and where the leaving is cancelled instead of a
@@ -107,6 +111,7 @@ surfaces of the other components and services the spec does not describe yet.
 | `store` | `SC-ST` |
 | `ui-kit` | `SC-UK` |
 | `auth` | `SC-AUTH` |
+| `cms` | `SC-CMS` |
 
 The prefix is one per domain and does not change after the merging: the titles of the tests refer to
 the identifiers.

@@ -37,10 +37,9 @@ turn.
 
 ## Rules
 
-- **A turn in which a question is asked of the owner does not end until the laws and the rules were
-  read during the same turn.** The requirement stands at the end of a turn, not at the tool of the
-  question: questions are asked in prose more often than by a menu, and intercepting the menu does
-  not close the hole.
+The guard of the conversation — the questions to the owner — is a subdomain of its own,
+`docs/specs/agent-kit/turn-guards/grill/`.
+
 - **A squeeze summary is never a real remark of the owner.** It retells turns that have already
   ended: a request carried out yesterday reads in it as said now, and a turn refused by it pays for
   work nobody asked for. By its words it is indistinguishable from the speech of the owner and is
@@ -61,28 +60,6 @@ turn.
 - **A setting that cannot be read does not switch a role off.** There is no JSON parser, there is no
   setting itself, the setting is not parsed — the guard works as before. A broken reading would put
   the rules layer out silently, and there would be nothing to notice it by.
-- **To a question whose answer a remark of the owner has already given, the guard of the conversation
-  answers with a refusal.** The first sign judges whether the rules were read, and at allowed work it
-  stays silent; the miss is of another kind — the owner gave an instruction by a direct remark, the
-  executor found a fact against its price and, instead of a line about the price, asked a menu where
-  two options of three cancelled the owner's decision. What is judged is the overlap of the
-  significant words of the topic of the question and of the last remark of the owner — and only where
-  a call of a menu was already in the record of the turn: the analysis of a request goes by six
-  questions about different subjects, and they do not reach the threshold.
-- **A refusal by the second sign orders to go on with the work, not to ask again differently.** The
-  miss here is not in the shape of the question but in the stopping of work that is already allowed: a
-  refusal named by the shape is fixed by a second question of the same stopping.
-- **Two answers «recommended» in a row close the remaining questions by assumption, and the
-  guard of the conversation refuses the next menu.** Every menu carries a recommended option, and an
-  owner who takes it twice running has shown that the decisions are not theirs: the tree answers
-  these questions, and the menu only asks to confirm it. The third sign reads the last two answers
-  of the question tool, each with every option taken marked as recommended; any other answer breaks
-  the streak. The refusal orders to write the assumptions into the grill, name them to the owner in
-  one line and look for a ready-made module of the same kind before that: a grill of five menus was
-  closed by the owner naming such a module.
-- **The guard of the conversation lets the work through at any breakage.** There is no record of the
-  turn, there is no parser of the record, the reading broke — the turn is allowed. A broken guard has
-  no right to jam the conversation.
 - **The guard of the window reminds before it refuses.** Between the thresholds lies exactly what the
   session is closed by: writing the progress of the work to the end, writing the handover, committing
   what was checked.
@@ -151,6 +128,13 @@ turn.
   and conversation do not count as it: they are what fills a turn that has stalled.
 - **A word about a stop is judged by the remark of the owner, not by the words of the executor.**
   Otherwise the stop is declared by whoever finds it convenient at that minute.
+- **The word of the owner about a stop said a turn earlier holds until their later order to work, and
+  a quote of it in the reply releases the turn.** Read from the current turn alone, the word was
+  lost, and the turn could leave only by a line in the progress of a folder already taken apart. The
+  quote in « » is checked against the message of the owner.
+- **Commits left in the working tree with a reason named in the reply release the turn.** The
+  refusal itself orders to name what is left and why; without the line «Не отправлено: <reason>»
+  the only accepted move was a push made to lift the refusal.
 - **A turn that ended with words about waiting for the word of the owner is not let go without their
   word or a question to them by a tool.** The phrase "waiting for your word" without them is a stop
   declared by the executor; the general signs refused it without a name, and after one step the turn
@@ -164,15 +148,12 @@ turn.
 - **A turn in which the owner said to create or send a proposal does not close until there was a
   sending.** What is written and not sent lies in the tree indistinguishably from what is sent, and it
   has no record of its own in the rules layer. Showing what would go away does not count as a sending.
-- **What counts as reading is any of the three ways, not only the loading of a rule.** Demanding
-  exactly the loading would mean driving to it where a search was enough: the guard would get in the
-  way of the work instead of putting it right.
+- **A report of a role is not the word of the owner for the guard of the proposals.** It arrives
+  under the role of the owner marked as a service message; a role that called its findings
+  «proposal» woke the guard as if a sending had been asked for.
 - **A request for a proposal is caught by a verb next to a word about the rules layer, not by the word
   itself.** Work on proposals that already arrived does not end with a sending, and the word
   "proposal" without a neighbour about the layer walks in every second turn about something else.
-- **A turn with a question to the owner is checked at the tool of the question, not at the end of the
-  turn.** The requirement "read the rules before asking" is executable only before the sending. The
-  check at the end stays for a question asked in prose.
 - **The guard declares the locale of its run, it does not inherit it.** The samples are written in the
   words of the tree, and the folding of the case at a word outside Latin works only under UTF-8: a
   service launching the same work goes with an empty locale, and the guard does not find its word —
@@ -271,3 +252,5 @@ None.
   end: a rerun went through between other things, and the owner found the green run first.
 - 2026-09-18 — the third sign of the guard of the conversation: two answers «recommended» in a row
   close the remaining questions by assumption, and the next menu is refused.
+- 2026-10-09 — the guard of the conversation went into a subdomain of its own: the scenario file ran
+  past the length limit again with two new scenarios of that guard.

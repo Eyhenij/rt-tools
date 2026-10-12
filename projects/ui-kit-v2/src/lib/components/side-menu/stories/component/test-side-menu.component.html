@@ -7,6 +7,7 @@
         [activeMenuIds]="activeIds()"
         [subMenuMode]="shownMode()"
         [subMenuWidth]="shownWidth()"
+        [subMenuCloseDelay]="closeDelay()"
         (subMenuModeChange)="shownMode.set($event)"
         (subMenuWidthChange)="shownWidth.set($event)"
         (clickSubMenuAction)="onSubMenu($event)"

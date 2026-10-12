@@ -20,6 +20,7 @@ import {
     IProposalItem,
     IProposalsCargo,
     ISummaryCargo,
+    IObservationDay,
     IObservationsCargo,
 } from './cargo.js';
 import { IEnvironment, IOutcomeOfCommand } from './commands.js';
@@ -39,7 +40,7 @@ import {
     skippedAsSentLines,
     TO_PACKAGE,
 } from './proposals.js';
-import { IShipment, IShipped, readToken, TShip } from './ship.js';
+import { accepted, IShipment, IShipped, readToken, TShip } from './ship.js';
 import { collectAssets } from './assets.js';
 import { linesTotal, observationsCargo, readObservationDays } from './observations-cargo.js';
 import { treeSlugOf } from './tree-mark.js';
@@ -169,7 +170,11 @@ export function shipmentsOf(
 ): readonly IShipment[] {
     return [
         { kind: 'сводка', operation: 'summary', body: summary },
-        ...(observations.days.length ? [{ kind: 'наблюдения', operation: 'observations', body: observations }] : []),
+        ...observations.days.map((day: IObservationDay): IShipment => ({
+            kind: `наблюдения за ${day.day}`,
+            operation: 'observations',
+            body: { ...observations, days: [day] },
+        })),
         ...(proposals.items.length ? [{ kind: 'предложения', operation: 'proposals', body: proposals }] : []),
         ...(postmortems.items.length ? [{ kind: 'разборы', operation: 'postmortems', body: postmortems }] : []),
     ];
@@ -264,25 +269,6 @@ function manifest(
 }
 
 /**
- * Что приём сказал о принятом: месяц записи, судьба самой записи и — у предложений — счёт
- * легшего и уже лежавшего.
- *
- * Без счёта строка одинакова и у прогона, привёзшего новое, и у прогона, у которого всё уже
- * лежало: человек читает второе как первое. Приём, счёта не приславший, оставляет строку
- * прежней — так же читаются сводка и разборы, у которых счёта нет вовсе.
- */
-function accepted(shipped: IShipped): string {
-    if (!shipped.accepted) {
-        return 'принято';
-    }
-
-    const record: string = `${shipped.accepted.month}${shipped.accepted.created ? ', запись заведена' : ', запись дописана'}`;
-    const added: number | undefined = shipped.accepted.added;
-
-    return added === undefined ? record : `${record}, принято ${added}, уже лежало ${shipped.accepted.known ?? 0}`;
-}
-
-/**
  * Отказ, когда признак дерева считать не из чего. Случая два, и говорят они разное: репозитория
  * нет вовсе — считать не из чего; репозиториев несколько и `origin` среди них нет — адрес есть, а
  * выбрать его может только человек. Угаданное неверно сливает в сводке приёма два дерева в одно,
@@ -300,6 +286,19 @@ function noTreeMark(names: readonly string[]): IOutcomeOfCommand {
         'признак дерева не считается: удалённого репозитория нет',
         `назови его ключом \`tree\` в ${CONFIG_PATH} — иначе деревья без репозитория сольются в одно`
     );
+}
+
+/** Отказ, на котором отправка остановилась: что уехало до него и, у токена, как выдать новый. */
+function stopped(head: readonly string[], done: readonly string[], answer: string, tokenRefused: boolean): IOutcomeOfCommand {
+    return {
+        code: REFUSED,
+        lines: [
+            ...head,
+            ...(done.length ? [`уехало до отказа: ${done.length}`, ...done] : ['не уехало ничего']),
+            answer,
+            ...(tokenRefused ? ['токен не принят: он отозван или заведён не тот — выдай новый командой приёма'] : []),
+        ],
+    };
 }
 
 /**
@@ -320,22 +319,20 @@ async function send(
     // одной строкой о нём и без перечня, из которого видно, чего этот отказ стоил.
     const head: readonly string[] = [`ОТПРАВКА — груз уходит в ${intake}, дерево ${tree}:`, ...listed];
     const done: string[] = [];
+    // Приём замещает день целиком, поэтому отказанный день другим не мешает: предложения и разборы
+    // уходят своими запросами, а отказ дня называется в конце.
+    const failedDays: string[] = [];
 
     for (const shipment of going) {
         const shipped: IShipped = await ship(intake, token, shipment);
 
         if (!shipped.ok) {
-            return {
-                code: REFUSED,
-                lines: [
-                    ...head,
-                    ...(done.length ? [`уехало до отказа: ${done.length}`, ...done] : ['не уехало ничего']),
-                    `${shipment.kind}: ${intake} ответил ${shipped.status || 'молчанием'} — ${shipped.said}`,
-                    ...(shipped.status === TOKEN_REFUSED
-                        ? ['токен не принят: он отозван или заведён не тот — выдай новый командой приёма']
-                        : []),
-                ],
-            };
+            const answer: string = `${shipment.kind}: ${intake} ответил ${shipped.status || 'молчанием'} — ${shipped.said}`;
+            if (shipment.operation !== 'observations' || shipped.status === TOKEN_REFUSED) {
+                return stopped(head, done, answer, shipped.status === TOKEN_REFUSED);
+            }
+            failedDays.push(answer);
+            continue;
         }
 
         done.push(`  ${shipment.kind} → ${accepted(shipped)}`);
@@ -343,6 +340,10 @@ async function send(
         if (shipment.operation === 'proposals') {
             markProposals(root, proposals, ownMark(shipped.accepted?.month ?? 'принято'));
         }
+    }
+
+    if (failedDays.length) {
+        return { code: REFUSED, lines: [...head, 'уехало:', ...done, `не приняты дни наблюдений: ${failedDays.length}`, ...failedDays] };
     }
 
     return { code: 0, lines: [...head, 'уехало:', ...done] };

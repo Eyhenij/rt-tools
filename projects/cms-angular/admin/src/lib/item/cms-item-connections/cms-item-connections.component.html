@@ -1,0 +1,58 @@
+<ng-container rtBlock="rt-cms-item-connections">
+    @if (connections().length > 0) {
+        <ul rtElem="list" qa-dataid="item-connections">
+            @for (connection of connections(); track connection.itemId) {
+                <li rtElem="item" qa-dataid="item-connection" [attr.data-item-id]="connection.itemId">
+                    <span rtElem="name" [rtTooltip]="connection.itemName">{{ connection.itemName }}</span>
+                    <span rtElem="type">{{ connection.typeName }}</span>
+                    <rt-icon-button
+                        qa-dataid="item-connection-remove"
+                        icon="trash"
+                        [tooltip]="t().connectionsRemove"
+                        [ariaLabel]="t().connectionsRemoveNamed | cmsLabel: { name: connection.itemName }"
+                        (clicked)="removed.emit(connection.itemId)" />
+                </li>
+            }
+        </ul>
+    }
+
+    <div rtElem="search">
+        <rt-field qa-skip [label]="t().typesColumnType">
+            <rt-select
+                qa-dataid="item-connections-type"
+                [options]="typeOptions()"
+                [clearable]="false"
+                [ngModel]="typeId()"
+                (ngModelChange)="chooseType($event)" />
+        </rt-field>
+        <rt-field qa-skip [label]="t().connectionsPage">
+            <rt-input
+                qa-dataid="item-connections-search"
+                [placeholder]="t().connectionsSearch"
+                [ngModel]="search()"
+                (ngModelChange)="find($event)" />
+        </rt-field>
+    </div>
+
+    @if (search().trim() !== '') {
+        <ul rtElem="list" qa-dataid="item-connections-found">
+            @for (item of found(); track item.id) {
+                <li rtElem="item">
+                    <span rtElem="name" [rtTooltip]="item.name">{{ item.name }}</span>
+                    <button
+                        rtButton
+                        type="button"
+                        appearance="outlined"
+                        qa-dataid="item-connections-add"
+                        [attr.data-item-id]="item.id"
+                        [label]="connectedIds().has(item.id) ? t().connectionsConnected : t().connectionsConnect"
+                        [attr.aria-label]="t().connectionsConnectNamed | cmsLabel: { name: item.name }"
+                        [disabled]="connectedIds().has(item.id)"
+                        (click)="connect(item)"></button>
+                </li>
+            } @empty {
+                <rt-empty-state qa-dataid="item-connections-empty" icon="search" [title]="t().uiNothingFound" />
+            }
+        </ul>
+    }
+</ng-container>

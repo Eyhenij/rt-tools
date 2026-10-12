@@ -1,0 +1,43 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rt-space-md);
+
+    .rt-cms-item-connections {
+        &__list {
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+            margin: 0;
+            gap: var(--rt-space-xs);
+            list-style: none;
+        }
+
+        &__item {
+            display: flex;
+            align-items: center;
+            gap: var(--rt-space-sm);
+        }
+
+        /* The page name takes the rest of the row and is cut; the whole name is in the tooltip. */
+        &__name {
+            overflow: hidden;
+            min-width: 0;
+            flex: 1;
+            color: var(--rt-color-text-primary);
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        &__type {
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-sm);
+        }
+
+        &__search {
+            display: grid;
+            gap: var(--rt-space-md);
+            grid-template-columns: repeat(auto-fit, minmax(calc(var(--rt-size-40) * 5), 1fr));
+        }
+    }
+}

@@ -58,6 +58,9 @@ Not applicable: the package has no screens.
 - **The browser part signs in with the realm and the client the server checks tokens of.** The
   server hands them out instead of the page carrying its own copy, which drifts at the first move
   of Keycloak to another address.
+- **The package installs and runs under NestJS 11 and NestJS 12.** An application on the next
+  major is not left with a peer conflict; the range is widened only after a run of the built
+  package under that major.
 
 ## What is out of scope
 

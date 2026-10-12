@@ -261,7 +261,15 @@ export function markSent(text: string, proposal: IProposal, url: string, field: 
     const shift: number = lines.slice(0, proposal.line).filter((line: string): boolean => MARKED.test(line)).length;
     // Пометка встаёт сразу под заголовок: конец блока определяется следующим заголовком, а его
     // может и не быть — тогда «конец» пришлось бы искать по пустым строкам в хвосте файла.
-    lines.splice(proposal.line + shift, 0, `- **${field}:** ${url}`);
+    const mark: string = `- **${field}:** ${url}`;
+    // Блок без цитаты отбивается при каждой отправке: такая же пометка в нём уже стоит, и вторая
+    // с той же причиной ничего не добавляет. Блок кончается следующим заголовком.
+    const at: number = proposal.line + shift;
+    const end: number = lines.findIndex((line: string, index: number): boolean => index >= at && line.startsWith('## '));
+    if (lines.slice(at, end < 0 ? lines.length : end).includes(mark)) {
+        return text;
+    }
+    lines.splice(at, 0, mark);
 
     return lines.join('\n');
 }

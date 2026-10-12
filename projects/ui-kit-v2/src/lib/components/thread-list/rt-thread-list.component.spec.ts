@@ -1,8 +1,12 @@
 import { ChangeDetectionStrategy, Component, DebugElement, WritableSignal, signal } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 
+import { IRtIcon } from '../icon/rt-icon.model';
+
+import { RtIconComponent } from '../icon/rt-icon.component';
 import { classesOf, createRtFixture, el, qa, qaAll, textOf } from '../../../testing/rt-kit-testing';
-import { RtThreadListRowDirective } from './rt-thread-list.directives';
+import { RtThreadListRowActionsDirective, RtThreadListRowDirective } from './rt-thread-list.directives';
 import { IRtThreadList } from './rt-thread-list.model';
 import { RtThreadListComponent } from './rt-thread-list.component';
 
@@ -25,6 +29,7 @@ const ROWS: ReadonlyArray<IThread> = [
             [loading]="loading()"
             [fetching]="fetching()"
             [hasMore]="hasMore()"
+            [emptyPreviewIcons]="previewIcons()"
             (selectRow)="selected = $event"
             (openInNewTab)="openedInTab = $event"
             (loadMore)="loadMoreCount = loadMoreCount + 1">
@@ -42,10 +47,42 @@ class ThreadListHostComponent {
     public readonly loading: WritableSignal<boolean> = signal<boolean>(false);
     public readonly fetching: WritableSignal<boolean> = signal<boolean>(false);
     public readonly hasMore: WritableSignal<boolean> = signal<boolean>(false);
+    public readonly previewIcons: WritableSignal<readonly IRtIcon.Name[]> = signal<readonly IRtIcon.Name[]>(['user', 'users', 'user']);
     public selected: IRtThreadList.TRowId | null = null;
     public openedInTab: IRtThreadList.TRowId | null = null;
     public loadMoreCount: number = 0;
 }
+
+@Component({
+    selector: 'rt-thread-list-actions-host',
+    template: `
+        <rt-thread-list [rows]="rows" (selectRow)="selected = $event">
+            <ng-template rtThreadListRow let-row>
+                <span>{{ row.title }}</span>
+            </ng-template>
+            <ng-template let-row [rtThreadListRowActions]="rows">
+                <button qa-dataid="row-delete" type="button" (click)="deleted = row.id">x</button>
+            </ng-template>
+        </rt-thread-list>
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtThreadListComponent, RtThreadListRowDirective, RtThreadListRowActionsDirective],
+})
+class RowActionsHostComponent {
+    public readonly rows: ReadonlyArray<IThread> = ROWS;
+    public selected: IRtThreadList.TRowId | null = null;
+    public deleted: IRtThreadList.TRowId | null = null;
+}
+
+@Component({
+    selector: 'rt-thread-list-default-preview-host',
+    template: `
+        <rt-thread-list [rows]="[]" />
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtThreadListComponent],
+})
+class DefaultPreviewHostComponent {}
 
 function setup(): ComponentFixture<ThreadListHostComponent> {
     return createRtFixture(ThreadListHostComponent, {}, { skipInitialDetect: true });
@@ -54,6 +91,15 @@ function setup(): ComponentFixture<ThreadListHostComponent> {
 function render(fixture: ComponentFixture<ThreadListHostComponent>): ComponentFixture<ThreadListHostComponent> {
     fixture.detectChanges();
     return fixture;
+}
+
+function previewCards<T>(fixture: ComponentFixture<T>): { icon: IRtIcon.Name | null; offset: boolean }[] {
+    return fixture.debugElement
+        .queryAll(By.css('.rt-thread-list__empty-card'))
+        .map((card: DebugElement): { icon: IRtIcon.Name | null; offset: boolean } => ({
+            icon: (card.query(By.directive(RtIconComponent)).componentInstance as RtIconComponent).name(),
+            offset: classesOf(card.nativeElement as HTMLElement).includes('rt-thread-list__empty-card--offset'),
+        }));
 }
 
 function rows(fixture: ComponentFixture<ThreadListHostComponent>): HTMLButtonElement[] {
@@ -158,6 +204,33 @@ describe('RtThreadListComponent', (): void => {
         });
     });
 
+    describe('строки-превью пустого состояния', (): void => {
+        it('SC-UKV-775 — по умолчанию строки с людьми, средняя сдвинута', (): void => {
+            const fixture: ComponentFixture<DefaultPreviewHostComponent> = createRtFixture(DefaultPreviewHostComponent);
+
+            expect(qaAll(fixture, 'thread-list-empty').length).toBe(1);
+            expect(previewCards(fixture)).toEqual([
+                { icon: 'user', offset: false },
+                { icon: 'users', offset: true },
+                { icon: 'user', offset: false },
+            ]);
+        });
+
+        it('SC-UKV-775 — заданные значки рисуют по строке на значок, каждая вторая сдвинута', (): void => {
+            const fixture: ComponentFixture<ThreadListHostComponent> = setup();
+            fixture.componentInstance.rows.set([]);
+            fixture.componentInstance.previewIcons.set(['sparkle', 'bot', 'sparkle', 'bot']);
+            render(fixture);
+
+            expect(previewCards(fixture)).toEqual([
+                { icon: 'sparkle', offset: false },
+                { icon: 'bot', offset: true },
+                { icon: 'sparkle', offset: false },
+                { icon: 'bot', offset: true },
+            ]);
+        });
+    });
+
     describe('догрузка', (): void => {
         it('якорь появляется, только когда есть что грузить', (): void => {
             const fixture: ComponentFixture<ThreadListHostComponent> = render(setup());
@@ -186,5 +259,26 @@ describe('RtThreadListComponent', (): void => {
 
     it('без шаблона фильтров кнопки фильтров нет', (): void => {
         expect(qa(render(setup()), 'thread-list-filter')).toBeNull();
+    });
+
+    describe('действия строки', (): void => {
+        it('без шаблона действий строка стоит без обёртки', (): void => {
+            const fixture: ComponentFixture<ThreadListHostComponent> = render(setup());
+
+            expect(qa(fixture, 'thread-list-row-wrap')).toBeNull();
+        });
+
+        it('действия стоят рядом с кнопкой строки, не внутри неё, и их нажатие строку не выбирает', (): void => {
+            const fixture: ComponentFixture<RowActionsHostComponent> = createRtFixture(RowActionsHostComponent);
+            const actions: DebugElement[] = qaAll(fixture, 'row-delete');
+
+            expect(actions).toHaveLength(2);
+            expect((actions[0].nativeElement as HTMLElement).closest('button.rt-thread-list__row')).toBeNull();
+
+            (actions[1].nativeElement as HTMLButtonElement).click();
+
+            expect(fixture.componentInstance.deleted).toBe(2);
+            expect(fixture.componentInstance.selected).toBeNull();
+        });
     });
 });

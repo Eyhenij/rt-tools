@@ -1,0 +1,51 @@
+@switch (part) {
+    @case ('state') {
+        <app-story-presets caption="Состояния хода работы в обоих наборах">
+            <ng-template>
+                <app-story-row [items]="stateCases" [itemLabel]="caseLabel">
+                    <ng-template let-c>
+                        <rt-ai-run-status [state]="c.state" [label]="c.label" [meta]="c.meta" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('steps') {
+        <app-story-presets caption="Шаги: без шагов, закрыты, открыты">
+            <ng-template>
+                <app-story-row [items]="stepsCases" [itemLabel]="stepsLabel">
+                    <ng-template let-c>
+                        <rt-ai-run-status state="done" label="Worked for 31s" meta="3 steps" [steps]="c.steps" [expanded]="c.expanded" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('presets') {
+        <app-story-presets caption="Открытый список шагов в обоих наборах">
+            <ng-template>
+                <rt-ai-run-status state="done" label="Worked for 31s" meta="3 steps" [steps]="steps" [expanded]="true" />
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('themes') {
+        <app-story-presets caption="Состояния в обеих темах в обоих наборах">
+            <ng-template>
+                <app-story-themes>
+                    <ng-template>
+                        @for (c of stateCases; track c.state) {
+                            <rt-ai-run-status
+                                [state]="c.state"
+                                [label]="c.label"
+                                [meta]="c.meta"
+                                [steps]="c.state === 'done' ? steps : []" />
+                        }
+                    </ng-template>
+                </app-story-themes>
+            </ng-template>
+        </app-story-presets>
+    }
+}

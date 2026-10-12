@@ -54,6 +54,13 @@ flowchart TD
 - **Work starts with reading the ready-made, not with a blank file.** First the base is found — a
   kit component, a base class, a sample in a neighbouring domain — then one's own is written on
   top of it.
+- **A sample is taken whole, and every departure from it is a decision written before the code.**
+  A sample read for one side of it — the data flow, the store, the columns — is not a sample: its
+  layout, its waiting state and its empty states are part of it as much as the markup of the table.
+  The executor lists what the sample holds, copies it, and names each departure in the progress
+  with its reason; a departure that appears in the code without a line in the progress is a miss,
+  not a choice. The check before showing the work is a measurement of one's own screen against the
+  sample's, node by node, not of one's own screen alone.
 - **A restriction invented on the spot is checked by a search over the tree before it becomes an
   argument.** "This is not allowed" is a statement about the tree like any other, and a tree
   where the technique is already applied answers it with one command. Named to the owner before

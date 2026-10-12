@@ -211,6 +211,27 @@ MISSING="$(ready_repo "printf '%s' '{\"exists\":false}';")"
 dlv "SC-AK-376 — неизвестная заявка снятие не задерживает" "$MISSING" 'gh pr ready 917' PASS
 rm -rf "$MISSING"
 
+# --- прогон на вершине вливаемой заявки ---------------------------------------------------------
+#
+# Эпик влили в main при красной сборке образа на вершине его заявки: выкатка упала, и все
+# следующие заявки в main покраснели. Красное стояло на странице заявки и прочитано не было.
+RED="$(ready_repo "printf '%s' '{\"exists\":true,\"number\":917,\"run\":\"failure\"}';")"
+dlv "SC-AK-1220 — красный прогон на вершине отбивает слияние" "$RED" 'gh pr merge 917 --merge' deny
+dlv_reason "SC-AK-1220 — отказ называет заявку и красный прогон" "$RED" 'gh pr merge 917 --merge' \
+    'the request #917 is red'
+rm -rf "$RED"
+
+RUNNING="$(ready_repo "printf '%s' '{\"exists\":true,\"number\":917,\"run\":\"running\"}';")"
+dlv "SC-AK-1220 — незавершённый прогон тоже отбивает слияние" "$RUNNING" 'gh pr merge 917 --merge' deny
+rm -rf "$RUNNING"
+
+# Заявка в ветку эпика прогона не получает вовсе — его отсутствие слияние не задерживает.
+for verdict in success none; do
+    GREEN="$(ready_repo "printf '%s' '{\"exists\":true,\"number\":917,\"run\":\"${verdict}\"}';")"
+    dlv "SC-AK-1222 — прогон «${verdict}» слияние не задерживает" "$GREEN" 'gh pr merge 917 --merge' PASS
+    rm -rf "$GREEN"
+done
+
 # --- папка задачи судится по ветке названной заявки --------------------------------------------
 #
 # Нижнюю заявку стопки снимают с верхней ветки: та несёт свою папку, а у нижней папка разобрана.

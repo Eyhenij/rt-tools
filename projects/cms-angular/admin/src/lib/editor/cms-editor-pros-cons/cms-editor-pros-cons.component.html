@@ -1,0 +1,39 @@
+@let current = value();
+<ng-container rtBlock="rt-cms-editor-pros-cons">
+    @for (side of [Side.Pros, Side.Cons]; track side) {
+        <section rtElem="side" [attr.data-side]="side">
+            <rt-field qa-skip [label]="side === Side.Pros ? t().prosConsProsTitle : t().prosConsConsTitle">
+                @if (side === Side.Pros) {
+                    <rt-input
+                        qa-dataid="cms-editor-pros-title"
+                        [ngModel]="current.prosTitle"
+                        (ngModelChange)="patch({ prosTitle: $event })" />
+                } @else {
+                    <rt-input
+                        qa-dataid="cms-editor-cons-title"
+                        [ngModel]="current.consTitle"
+                        (ngModelChange)="patch({ consTitle: $event })" />
+                }
+            </rt-field>
+            @for (item of current[side]; track $index) {
+                <div rtElem="row">
+                    <rt-input qa-dataid="cms-editor-pros-cons-item" [ngModel]="item" (ngModelChange)="edit(side, $index, $event)" />
+                    <rt-icon-button
+                        icon="trash"
+                        variant="ghost"
+                        qa-dataid="cms-editor-pros-cons-remove"
+                        [ariaLabel]="t().prosConsRemoveRow"
+                        (clicked)="remove(side, $index)" />
+                </div>
+            }
+            <button
+                rtButton
+                type="button"
+                appearance="outlined"
+                qa-dataid="cms-editor-pros-cons-add"
+                [label]="t().prosConsAddRow"
+                [attr.aria-label]="t().prosConsAddRow"
+                (click)="add(side)"></button>
+        </section>
+    }
+</ng-container>

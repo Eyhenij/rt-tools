@@ -35,7 +35,7 @@ case "$args" in
     "pr list"*) printf '%s' "$STUB_PULLS" ;;
     "pr view"*files*) printf '%s' '{"files":[]}' ;;
     *contents*) printf 'Not Found\n' >&2; exit 1 ;;
-    *actions/workflows/*status=success*) printf '%s\n' "$STUB_DEPLOY_OK" ;;
+    *actions/workflows/*per_page=20*) printf '%s\n' "$STUB_DEPLOY_OK" ;;
     *actions/workflows/*runs*) printf '%s\n' "$STUB_DEPLOY_LAST" ;;
     *actions/runs/*/jobs*) printf '%s\n' '0' ;;
     *actions/runs*tojson*) printf '%s\n' '[]' ;;

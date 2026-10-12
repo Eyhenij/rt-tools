@@ -188,6 +188,10 @@ After the package with rows 86–89 was installed:
 >     пустым результатом поиска или спиннером, и ниже остаётся пустое место. Нужно: тело flex: 1 1 auto
 >     (min-height: 0 для прокрутки списка), футер прижат к низу.
 
+> 92. rt-dynamic-selector-popup: titleWrap должен действовать и на пункты окна. При titleWrap: false
+>     (вход селектора и поле в provideRtKit) подпись пункта окна идёт одной строкой с многоточием; если
+>     подпись обрезана, при наведении показывается подсказка с полным текстом. Так было в v1.
+
 ## What the tree already has
 
 - `rt-dynamic-selector` draws the invitation button as `rtButton appearance="outlined"` with no
@@ -341,3 +345,8 @@ list and the dynamic-input remarks.
 - **Only the loading and the empty result needed to grow.** The list already stretched; the spinner
   of the next page lives inside it. Measured with a minimum height of 30rem: the loading left 285px
   and the empty result 182px under the footer, now none; the default heights did not move. Row 91.
+- **Without wrapping the popup draws the option label itself.** The tooltip measures the cut of
+  its own node, and the label of the kit radio button is drawn inside the button, out of the popup's
+  reach. So the single-choice row gets the label next to the button, and the label names the button
+  for a screen reader and chooses the row on a press; the checkbox takes the label as its content.
+  With wrapping on, the markup is as before. Row 92.

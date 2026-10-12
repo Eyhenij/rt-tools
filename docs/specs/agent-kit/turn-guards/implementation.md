@@ -3,15 +3,9 @@
 A statement of the spec and the place where it is carried out. The link goes by the text of the
 statement: a removed statement is removed together with its line.
 
-- **A turn in which a question is asked of the owner does not end until the laws and the rules were read during the same turn.** — `projects/agent-kit/assets/hooks/grill-gate.sh:verdict`
-- **What counts as reading is any of the three ways, not only the loading of a rule.** — `projects/agent-kit/assets/hooks/grill-gate.sh:read_re`
 - **A second pass over the same turn is not judged.** — `projects/agent-kit/assets/hooks/grill-gate.sh:active`
 - **The tool that closes the conversation is refused always.** — `projects/agent-kit/assets/hooks/end-conversation-guard.sh:tool` — the name is read by jq, without jq by grep; scenario SC-AK-1121
 - **Under an open epic the guard of the exits judges a turn that ended with work and a second pass.** — `projects/agent-kit/assets/hooks/turn-exit-epic.sh:rt_te_epic_open` — the tiers are sourced by the exit guard; the subdomain of the exits binds each of them
-- **To a question whose answer a remark of the owner has already given, the guard of the conversation answers with a refusal.** — `projects/agent-kit/assets/hooks/grill-gate.sh:seen`
-- **A refusal by the second sign orders to go on with the work, not to ask again differently.** — `projects/agent-kit/assets/hooks/grill-gate.sh:seen`
-- **Two answers «recommended» in a row close the remaining questions by assumption, and the guard of the conversation refuses the next menu.** — `projects/agent-kit/assets/hooks/grill-gate.sh:streak` — the last two answers of the question tool are read from the record. An answer counts as recommended when every option taken carries the mark in either language. Scenario SC-AK-1134.
-- **The guard of the conversation lets the work through at any breakage.** — `projects/agent-kit/assets/hooks/grill-gate.sh:transcript`
 - **The guard of the window reminds before it refuses.** — `projects/agent-kit/assets/hooks/window-fill-guard.sh:warn_pct`
 - **The reminder repeats by steps, not at every action.** — `projects/agent-kit/assets/hooks/window-fill-guard.sh:step`
 - **After the threshold of the stop the record of the progress of the work, the handover and the commands of the delivery pass.** — `projects/agent-kit/assets/hooks/window-fill-guard.sh:allowed`
@@ -19,10 +13,12 @@ statement: a removed statement is removed together with its line.
 - **A turn in which the executor admitted a miss does not close until there is a record about the incident.** — `projects/agent-kit/assets/hooks/postmortem-guard.sh:postmortem-guard`
 - **A turn in which the owner said to create or send a proposal does not close until there was a sending.** — `projects/agent-kit/assets/hooks/proposal-guard.sh:proposal-guard`
 - **A request for a proposal is caught by a verb next to a word about the rules layer, not by the word itself.** — `projects/agent-kit/assets/hooks/proposal-guard.sh:asked_re`
-- **A turn with a question to the owner is checked at the tool of the question, not at the end of the turn.** — `projects/agent-kit/assets/hooks/grill-gate.sh:grill-gate`
 - **A turn in which nothing was done about the work does not end.** — `projects/agent-kit/assets/hooks/turn-exit-guard.sh:verdict`
 - **What counts as work is an edit of a file and a command that changes the tree.** — `projects/agent-kit/assets/hooks/turn-exit-patterns.sh:work_re`
 - **A word about a stop is judged by the remark of the owner, not by the words of the executor.** — `projects/agent-kit/assets/hooks/turn-exit-verdict.sh:told_stop`
+- **The word of the owner about a stop said a turn earlier holds until their later order to work, and a quote of it in the reply releases the turn.** — `projects/agent-kit/assets/hooks/turn-exit-verdict.sh:quoted_stop` — the word is `stop_word`, read over the whole session. Scenario SC-AK-1199.
+- **Commits left in the working tree with a reason named in the reply release the turn.** — `projects/agent-kit/assets/hooks/turn-exit-verdict.sh:unpushed_named` — the tier of the guard reads it. Scenario SC-AK-1199.
+- **A report of a role is not the word of the owner for the guard of the proposals.** — `projects/agent-kit/assets/hooks/proposal-guard.sh:is_input` — scenario SC-AK-1200.
 - **A turn that ended with words about waiting for the word of the owner is not let go without their word or a question to them by a tool.** — `projects/agent-kit/assets/hooks/turn-exit-guard.sh:awaits_word` — the set of the samples of the phrase; the tier stands before the lawful exits; scenario SC-AK-891
 - **Work handed in and merged the guard does not judge.** — `projects/agent-kit/assets/hooks/turn-exit-guard.sh:state`
 - **A turn that declared a written plan does not end at all.** — `projects/agent-kit/assets/hooks/turn-exit-guard.sh:first_stage` — the branch refuses the turn before the second sign and takes the heading of the first stage from the plan; scenarios SC-AK-591…593

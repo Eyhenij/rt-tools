@@ -47,6 +47,9 @@ their own turn.
   main branch takes the task past its epic: the epic is handed in without it, and the reviewer sees
   the edit next to everything lying in the main branch and not in the epic. A base not named at all
   is the same case — the hosting takes the default branch of the repository.
+- **A chain base is lawful while its history carries the epic branch.** A chain PR goes on the
+  previous branch, and the branch of the task below stands on the epic branch. A base without the
+  epic branch in its history is refused the same as the main branch.
 - **The freshness asked before a request of such a task is the epic's, not the main branch's.** The
   request goes into the epic, and it is the divergence with the epic that shows in the diff; the main
   branch reaches the task through the epic.

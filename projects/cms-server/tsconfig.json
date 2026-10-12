@@ -1,0 +1,21 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "module": "preserve",
+    "ignoreDeprecations": "6.0",
+    "emitDecoratorMetadata": true
+  },
+  "files": [],
+  "include": [],
+  "references": [
+    {
+      "path": "./tsconfig.lib.esm.json"
+    },
+    {
+      "path": "./tsconfig.lib.cjs.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ]
+}

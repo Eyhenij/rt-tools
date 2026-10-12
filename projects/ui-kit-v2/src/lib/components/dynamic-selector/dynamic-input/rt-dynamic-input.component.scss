@@ -8,12 +8,11 @@
         flex-direction: column;
         gap: var(--rt-space-sm);
 
-        &__field {
-            display: block;
-        }
-
+        // Хосты компонентов кита несут свой блочный класс и свой display, а порядок стилей двух
+        // компонентов между собой не закреплён: своего display у этих элементов нет.
+        &__field,
         &__invitation {
-            display: block;
+            min-width: 0;
         }
     }
 }

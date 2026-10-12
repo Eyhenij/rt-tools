@@ -112,7 +112,11 @@ for (const overview of overviews) {
     const dir = path.dirname(overview);
     const sources = files.filter(
         (file) =>
-            path.dirname(file) === dir && (file.endsWith('.component.ts') || file.endsWith('.directive.ts')) && !file.endsWith('.spec.ts')
+            // A base next to the component — one that holds part of its inputs to keep the class in the
+            // length limit — counts as the component's own: its inputs land in the same table.
+            path.dirname(file) === dir &&
+            (file.endsWith('.component.ts') || file.endsWith('.directive.ts') || file.endsWith('.base.ts')) &&
+            !file.endsWith('.spec.ts')
     );
 
     if (sources.length === 0) {

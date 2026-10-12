@@ -1,0 +1,21 @@
+// The title as a kit field, under it the editable text in a field frame.
+:host {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rt-space-sm);
+
+    .rt-cms-editor-titled {
+        &__text {
+            min-height: var(--rt-size-40);
+            padding: var(--rt-space-xs) var(--rt-space-sm);
+            border: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
+            border-radius: var(--rt-radius-md);
+            outline: none;
+
+            &:empty:before {
+                color: var(--rt-color-text-muted);
+                content: attr(placeholder);
+            }
+        }
+    }
+}

@@ -1,3 +1,10 @@
+## [0.4.1](https://github.com/nickmdf/rt-tools/compare/rt-utils@0.4.0...rt-utils@0.4.1) (2026-10-10)
+
+### Features
+
+- **rt:utils:** импорты переехавшего переставляет инструмент дерева ([8d5beb0](https://github.com/nickmdf/rt-tools/commit/8d5beb0ce4dddeeff431d17561e99296125f9b16)), closes [#220](https://github.com/nickmdf/rt-tools/issues/220)
+- **rt:utils:** цвет текста по фону и затемнение цвета перенесены из первого кита ([923020b](https://github.com/nickmdf/rt-tools/commit/923020b0d5ecd40cc05268dece90f911a01749d9)), closes [#rrggbb](https://github.com/nickmdf/rt-tools/issues/rrggbb)
+
 # [0.4.0](https://github.com/nickmdf/rt-tools/compare/rt-utils@0.3.2...rt-utils@0.4.0) (2026-09-03)
 
 ### Bug Fixes

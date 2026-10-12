@@ -35,13 +35,21 @@ import { RtInputComponent } from '@rt-tools/ui-kit-v2/input';
 import { RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 import { RtSkeletonComponent } from '@rt-tools/ui-kit-v2/skeleton';
-import { RtThreadListFiltersDirective, RtThreadListRowDirective, RtThreadListSearchDirective } from './rt-thread-list.directives';
+import {
+    RtThreadListFiltersDirective,
+    RtThreadListRowActionsDirective,
+    RtThreadListRowDirective,
+    RtThreadListSearchDirective,
+} from './rt-thread-list.directives';
 import { IRtThreadList } from './rt-thread-list.model';
 
 const BEM_BLOCK: string = 'rt-thread-list';
 
 /** Кол-во скелетон-строк на первичной загрузке (пока `rows` пусты). */
 const SKELETON_ROWS_COUNT: number = 6;
+
+/** Значки строк-превью пустого списка по умолчанию: люди переписки. */
+const PREVIEW_ICONS: readonly IRtIcon.Name[] = ['user', 'users', 'user'];
 
 /**
  * Презентационный список тредов для воркспейсов:
@@ -94,22 +102,24 @@ export class RtThreadListComponent<TRow extends IRtThreadList.Row> implements On
 
     protected readonly skeletonRows: number[] = Array.from({ length: SKELETON_ROWS_COUNT }, (_: unknown, i: number): number => i);
 
-    /** Декоративные строки-превью для иллюстрации пустого состояния списка. */
-    protected readonly emptyPreviewRows: readonly {
-        id: number;
-        icon: IRtIcon.Name;
-        offset: boolean;
-    }[] = [
-        { id: 1, icon: 'user', offset: false },
-        { id: 2, icon: 'users', offset: true },
-        { id: 3, icon: 'user', offset: false },
-    ];
+    /** Декоративные строки-превью пустого состояния: значок строки из `emptyPreviewIcons`, каждая вторая сдвинута. */
+    protected readonly emptyPreviewRows: Signal<readonly IRtThreadList.PreviewRow[]> = computed((): readonly IRtThreadList.PreviewRow[] =>
+        this.emptyPreviewIcons().map((icon: IRtIcon.Name, index: number): IRtThreadList.PreviewRow => ({
+            icon,
+            id: index,
+            offset: index % 2 === 1,
+        }))
+    );
 
     protected readonly searchControl: FormControl<string> = new FormControl<string>('', {
         nonNullable: true,
     });
 
     protected readonly rowTemplate: Signal<RtThreadListRowDirective<TRow> | undefined> = contentChild(RtThreadListRowDirective<TRow>);
+
+    protected readonly rowActionsTemplate: Signal<RtThreadListRowActionsDirective<TRow> | undefined> = contentChild(
+        RtThreadListRowActionsDirective<TRow>
+    );
 
     protected readonly filtersTemplate: Signal<RtThreadListFiltersDirective | undefined> = contentChild(RtThreadListFiltersDirective);
 
@@ -123,6 +133,9 @@ export class RtThreadListComponent<TRow extends IRtThreadList.Row> implements On
     public readonly searchPlaceholder: InputSignal<string> = input<string>('');
 
     public readonly emptyText: InputSignal<string> = input<string>('');
+
+    /** Значки декоративных строк-превью пустого состояния, по строке на значок */
+    public readonly emptyPreviewIcons: InputSignal<readonly IRtIcon.Name[]> = input<readonly IRtIcon.Name[]>(PREVIEW_ICONS);
 
     public readonly loading: InputSignalWithTransform<boolean, boolean | string> = input<boolean, boolean | string>(false, {
         transform: booleanAttribute,

@@ -21,7 +21,10 @@ Pattern of the rule `git-workflow`. What must be true — the law
 
 ## The PR is attached to the task
 
-The body starts with the link line — by it the board fills the linked PRs field. Reviewer,
+The body starts with the link line — by it the board fills the linked PRs field, and by it the task
+closes on the merge. The number in it is the branch's, copied rather than recalled; a tree that
+named the sample of the line in its profile, `RT_PULL_CLOSES_LINE`, gets the opening refused by the
+delivery guard without it. Reviewer,
 assignee and labels are set by the same command, and a PR does not open without them:
 
 ```bash
@@ -159,3 +162,7 @@ the title. The sample is held by whoever writes the body — like the words said
 - A `Closes` line in a PR whose base is not the main branch, in a tree without a closing pipeline:
   the task looks attached and stays open after the merge. The body names the task in words, and
   the cleanup step closes it by hand.
+- Labels read with `join(",")` and split by a shell expansion: zsh does not split an unquoted
+  `${L//,/ }` into words, the REST call gets the whole line as one label, and the host creates a
+  label with that name. Each label goes as its own `-f 'labels[]=…'`, or is read one per line with
+  `--jq '.labels[].name'`.

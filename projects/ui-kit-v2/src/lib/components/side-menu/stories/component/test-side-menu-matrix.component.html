@@ -59,6 +59,18 @@
         </app-story-presets>
     }
 
+    @case ('look') {
+        <app-story-presets caption="Вид первого кита входами и свойствами в обоих наборах">
+            <ng-template>
+                <app-story-row [items]="looks" [itemLabel]="caseLabel">
+                    <ng-template let-item>
+                        <ng-container [ngTemplateOutlet]="cellTpl" [ngTemplateOutletContext]="{ $implicit: item }" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
     @case ('favorites') {
         <app-story-presets caption="Избранное в обоих наборах">
             <ng-template>
@@ -144,5 +156,11 @@
         [menuId]="item.menuId ?? null"
         [favoritesCount]="item.favoritesCount ?? 'collapsed'"
         [ownIcon]="item.ownIcon ?? false"
-        [pinShown]="item.pinShown ?? true" />
+        [pinShown]="item.pinShown ?? true"
+        [railTitlesShown]="item.railTitlesShown ?? true"
+        [railIconFill]="item.railIconFill ?? false"
+        [searchSize]="item.searchSize ?? 'sm'"
+        [subItemIconFill]="item.subItemIconFill ?? false"
+        [panelScrollHintShown]="item.panelScrollHintShown ?? false"
+        [firstKitProps]="item.firstKitProps ?? false" />
 </ng-template>

@@ -1,0 +1,192 @@
+@let current = block();
+<ng-container rtBlock="rt-cms-editor-block">
+    <div rtElem="header">
+        <!-- A block is dragged by the handle, not by the whole card: otherwise selecting text would carry the block away. -->
+        <rt-icon-button
+            cdkDragHandle
+            icon="arrows-v"
+            variant="ghost"
+            qa-dataid="cms-editor-block-handle"
+            [tooltip]="t().editorDragBlock"
+            [ariaLabel]="t().editorDragBlock" />
+        <span rtElem="kind" qa-dataid="cms-editor-block-kind" [attr.data-type]="current.type">{{ title() }}</span>
+        <rt-menu icon="plus-circle" qa-dataid="cms-editor-block-add" [ariaLabel]="t().editorAddBelow">
+            @for (item of addItems(); track item.type) {
+                <rt-menu-item
+                    qa-dataid="cms-editor-block-add-type"
+                    [attr.data-type]="item.type"
+                    [label]="item.title"
+                    (selected)="addAfter(item.type)" />
+            }
+        </rt-menu>
+        @if (convertItems().length) {
+            <rt-menu icon="sort-alt" qa-dataid="cms-editor-block-convert" [ariaLabel]="t().editorConvert">
+                @for (item of convertItems(); track item.type) {
+                    <rt-menu-item
+                        qa-dataid="cms-editor-block-convert-type"
+                        [attr.data-type]="item.type"
+                        [label]="item.title"
+                        (selected)="convert(item.type)" />
+                }
+            </rt-menu>
+        }
+        <rt-icon-button
+            icon="clone"
+            variant="ghost"
+            qa-dataid="cms-editor-block-duplicate"
+            [tooltip]="t().editorDuplicate"
+            [ariaLabel]="t().editorDuplicate"
+            (clicked)="duplicate()" />
+        <rt-icon-button
+            icon="trash"
+            variant="ghost"
+            qa-dataid="cms-editor-block-remove"
+            [tooltip]="t().editorRemoveBlock"
+            [ariaLabel]="t().editorRemoveBlock"
+            (clicked)="remove()" />
+    </div>
+
+    <div rtElem="body">
+        @switch (current.type) {
+            @case (Type.Paragraph) {
+                <p
+                    #text
+                    rtElem="text"
+                    qa-dataid="cms-editor-block-text"
+                    [attr.placeholder]="t().editorTextPlaceholder"
+                    [rtCmsEditable]="current.content"
+                    (htmlChange)="edit($event)"
+                    (paste)="paste($event)"></p>
+            }
+            @case (Type.Heading2) {
+                <h2
+                    #text
+                    rtElem="text"
+                    qa-dataid="cms-editor-block-text"
+                    [attr.placeholder]="t().blockHeading2"
+                    [attr.aria-label]="t().blockHeading2"
+                    [rtCmsEditable]="current.content"
+                    (htmlChange)="edit($event)"
+                    (paste)="paste($event)"></h2>
+            }
+            @case (Type.Heading3) {
+                <h3
+                    #text
+                    rtElem="text"
+                    qa-dataid="cms-editor-block-text"
+                    [attr.placeholder]="t().blockHeading3"
+                    [attr.aria-label]="t().blockHeading3"
+                    [rtCmsEditable]="current.content"
+                    (htmlChange)="edit($event)"
+                    (paste)="paste($event)"></h3>
+            }
+            @case (Type.List) {
+                <rt-cms-editor-list [content]="current.content" (contentChange)="edit($event)" />
+            }
+            @case (Type.BulletedList) {
+                <rt-cms-editor-list [content]="current.content" [marker]="ListMarker.Disc" (contentChange)="edit($event)" />
+            }
+            @case (Type.NumberedList) {
+                <rt-cms-editor-list [content]="current.content" [marker]="ListMarker.Decimal" (contentChange)="edit($event)" />
+            }
+            @case (Type.ProsCons) {
+                <rt-cms-editor-pros-cons [content]="current.content" (contentChange)="edit($event)" />
+            }
+            @case (Type.Note) {
+                <rt-cms-editor-titled textPlaceholder="editorNoteText" [content]="current.content" (contentChange)="edit($event)" />
+            }
+            @case (Type.Quote) {
+                <rt-cms-editor-titled
+                    titleLabel="editorQuoteAuthor"
+                    textPlaceholder="editorQuoteText"
+                    [content]="current.content"
+                    (contentChange)="edit($event)" />
+            }
+            @case (Type.Accordion) {
+                <rt-cms-editor-titled
+                    titleLabel="editorAccordionTitle"
+                    textPlaceholder="editorAccordionText"
+                    [content]="current.content"
+                    (contentChange)="edit($event)" />
+            }
+            @case (Type.Image) {
+                <rt-cms-editor-image [content]="current.content" (contentChange)="edit($event)" />
+            }
+            @case (Type.Button) {
+                <rt-cms-editor-button [content]="current.content" (contentChange)="edit($event)" />
+            }
+            @case (Type.EmbeddedLink) {
+                <rt-cms-editor-embed [content]="current.content" (contentChange)="edit($event)" />
+            }
+            @case (Type.ContentItemLink) {
+                <rt-cms-editor-item-link [content]="current.content" (contentChange)="edit($event)" />
+            }
+            @case (Type.ContentAnchors) {
+                <p rtElem="note" qa-dataid="cms-editor-block-anchors">{{ t().editorAnchorsNote }}</p>
+            }
+        }
+    </div>
+
+    @if (menu(); as at) {
+        <!-- A press does not take the focus from the text: otherwise the selection would vanish before the action. -->
+        <div
+            rtElem="menu"
+            qa-dataid="cms-editor-selection-menu"
+            [style.left.px]="at.x"
+            [style.top.px]="at.y"
+            (mousedown)="$event.preventDefault()">
+            @if (!at.onLink) {
+                @if (!isHeading()) {
+                    <rt-icon-button
+                        variant="ghost"
+                        qa-dataid="cms-editor-menu-bold"
+                        [tooltip]="t().editorBold"
+                        [ariaLabel]="t().editorBold"
+                        (clicked)="applyStyle(TextAction.Bold)">
+                        <b>{{ t().editorBoldMark }}</b>
+                    </rt-icon-button>
+                }
+                <rt-icon-button
+                    variant="ghost"
+                    qa-dataid="cms-editor-menu-italic"
+                    [tooltip]="t().editorItalic"
+                    [ariaLabel]="t().editorItalic"
+                    (clicked)="applyStyle(TextAction.Italic)">
+                    <i>{{ t().editorItalicMark }}</i>
+                </rt-icon-button>
+                <rt-icon-button
+                    variant="ghost"
+                    qa-dataid="cms-editor-menu-strike"
+                    [tooltip]="t().editorStrike"
+                    [ariaLabel]="t().editorStrike"
+                    (clicked)="applyStyle(TextAction.LineThrough)">
+                    <s>{{ t().editorStrikeMark }}</s>
+                </rt-icon-button>
+                <rt-icon-button
+                    variant="ghost"
+                    qa-dataid="cms-editor-menu-underline"
+                    [tooltip]="t().editorUnderline"
+                    [ariaLabel]="t().editorUnderline"
+                    (clicked)="applyStyle(TextAction.Underline)">
+                    <u>{{ t().editorUnderlineMark }}</u>
+                </rt-icon-button>
+            }
+            @if (!isHeading()) {
+                <rt-icon-button
+                    icon="link"
+                    variant="ghost"
+                    qa-dataid="cms-editor-menu-link"
+                    [tooltip]="t().editorLink"
+                    [ariaLabel]="t().editorLink"
+                    (clicked)="link()" />
+            }
+            <rt-icon-button
+                icon="copy"
+                variant="ghost"
+                qa-dataid="cms-editor-menu-copy"
+                [tooltip]="t().editorCopy"
+                [ariaLabel]="t().editorCopy"
+                (clicked)="copy()" />
+        </div>
+    }
+</ng-container>

@@ -1,0 +1,17 @@
+<ng-container rtBlock="rt-cms-page">
+    <header rtElem="header">
+        <div rtElem="header-main">
+            <h1 rtElem="title" [attr.qa-dataid]="qaPrefix() + '-title'">{{ title() }}</h1>
+
+            @if (hint()) {
+                <p rtElem="hint">{{ hint() }}</p>
+            }
+        </div>
+
+        <div rtElem="actions">
+            <ng-content select="[rtCmsPageActions]" />
+        </div>
+    </header>
+
+    <ng-content />
+</ng-container>

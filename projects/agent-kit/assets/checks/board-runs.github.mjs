@@ -39,6 +39,11 @@ export function runsOnHead(sha, options) {
  * nothing about it: production was 476 commits behind while the check stayed silent. Only a rollout
  * finished with success is judged — one still going may end with anything.
  *
+ * The status filter of the hosting is not used: it counts by a separate index that lags, and the same
+ * request returned a month-old run and yesterday's one within a minute. The twenty latest runs come
+ * without it, and the first successful among them is taken; twenty failed in a row are named by the
+ * neighbouring check of the last rollout.
+ *
  * Returns `null` if there were no rollouts at all: that is not a discrepancy but nothing to compare.
  */
 export function deployLag(workflow, mainBranch, options) {
@@ -46,9 +51,9 @@ export function deployLag(workflow, mainBranch, options) {
         [
             'api',
             `repos/${OWNER}/${REPO}/actions/workflows/${encodeURIComponent(workflow)}/runs` +
-                '?status=success&per_page=1',
+                '?per_page=20',
             '--jq',
-            '[.workflow_runs[] | {sha: .head_sha, at: .created_at}] | first // empty',
+            '[.workflow_runs[] | select(.conclusion == "success") | {sha: .head_sha, at: .created_at}] | first // empty',
         ],
         options
     );

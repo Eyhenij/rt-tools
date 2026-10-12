@@ -4,7 +4,7 @@ kind: rule
 law: frontend-application
 description: Rule under the frontend-application law. Load when editing any *.component.ts and its template. Names the order of decorator properties, import grouping, template conventions and the mandatory qa-dataid. Ready-made code is in pattern component-structure-new.
 ---
-<!-- rt-kit v0.29.4 · rules/component-structure.md · 9be9c19bbfd1 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.31.0 · rules/component-structure.md · 124edd4bc1c4 · правится надстройкой, не здесь -->
 
 # Component file — how it works here
 
@@ -87,10 +87,18 @@ environment either — that is `Q-FA-1` in the law.
   catalogue.
 - **`qa-dataid` does not replace `aria-label` and roles:** accessibility separately, the anchor
   separately. And it is not removed when the layout is edited — the specs hang on it.
+- **Markup is edited by the edit tool, not by a script.** The anchor guard judges a shell command
+  by its whole body: the old markup in a find-and-replace pair counts as written, and an edit that
+  adds every anchor is refused for the lines it removes. The article in full is in the rule
+  `doc-style`.
 - What the kit has ready is not written anew: own markup with `role="alert"`, `<table>`,
   `role="dialog"`, `role="tablist"` or `role="tooltip"` means that `<prefix>-message`,
   `<prefix>-table`, `<prefix>-dialog`, `<prefix>-tabs` or `<prefix>-tooltip` were bypassed. The rule
   whole — `reuse-first`.
+- **A kit icon name is copied from its file, and an unknown name draws an empty frame.** The kit
+  draws the frame of an icon it did not find and says nothing. The build, the lint and the tests
+  stay green, and the owner sees an empty square. Before the edit the name is looked up among the
+  kit icon files: some names carry the `ico-` prefix and most do not.
 
 ## Content that arrived from outside is built as nodes
 

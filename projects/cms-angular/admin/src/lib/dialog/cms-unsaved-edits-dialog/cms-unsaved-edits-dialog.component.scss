@@ -1,0 +1,12 @@
+/* The window stands on the kit dialog box; its own is only the question text. */
+:host {
+    display: block;
+
+    .rt-cms-unsaved-edits-dialog {
+        &__hint {
+            margin: 0;
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-sm);
+        }
+    }
+}

@@ -7,4 +7,5 @@
 export * from './lib/components/rich-editor';
 export * from './lib/components/message-composer';
 export * from './lib/components/chat';
+export * from './lib/components/ai-chat';
 export * from './lib/pipes';

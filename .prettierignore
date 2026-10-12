@@ -124,5 +124,6 @@ tools/spec-common.mjs
 tools/spec-contract.mjs
 tools/spec-scenarios.mjs
 tools/specs-for.mjs
+tools/task-new-queue.mjs
 tools/task-new.mjs
 tools/tree-assignment.mjs

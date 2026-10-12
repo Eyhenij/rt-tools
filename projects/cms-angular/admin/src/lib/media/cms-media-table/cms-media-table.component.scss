@@ -1,0 +1,14 @@
+:host {
+    display: block;
+
+    .rt-cms-media-table {
+        /* A preview of one height in every row: images of other proportions would stretch the rows. */
+        &__preview {
+            display: block;
+            width: var(--rt-size-64);
+            height: var(--rt-size-40);
+            border-radius: var(--rt-radius-sm);
+            object-fit: cover;
+        }
+    }
+}

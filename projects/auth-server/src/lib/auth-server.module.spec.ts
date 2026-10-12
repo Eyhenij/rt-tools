@@ -3,13 +3,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { ICaller } from '@rt-tools/auth-contract';
 
-import { PermittedOperation, OpenOperation, SignedInOperation } from './access';
-import { AuthServerModule, IAuthServerOptions } from './auth-server.module';
-import { AUTH_SERVER_OPTIONS, AUTH_TOKEN_VERIFIER } from './auth.tokens';
-import { clientSettingsOf, IAuthClientSettings } from './env-options';
-import { CurrentCaller } from './current-caller.decorator';
-import { ITestRealm, personClaims, TEST_CLIENT, TEST_ISSUER, testRealm } from './testing/keys';
-import { KeycloakTokenVerifier } from './token-verifier';
+import { PermittedOperation, OpenOperation, SignedInOperation } from './access.js';
+import { AuthServerModule, IAuthServerOptions } from './auth-server.module.js';
+import { AUTH_SERVER_OPTIONS, AUTH_TOKEN_VERIFIER } from './auth.tokens.js';
+import { clientSettingsOf, IAuthClientSettings } from './env-options.js';
+import { CurrentCaller } from './current-caller.decorator.js';
+import { ITestRealm, personClaims, TEST_CLIENT, TEST_ISSUER, testRealm } from './testing/keys.js';
+import { KeycloakTokenVerifier } from './token-verifier.js';
 
 @Controller('orders')
 class OrdersController {

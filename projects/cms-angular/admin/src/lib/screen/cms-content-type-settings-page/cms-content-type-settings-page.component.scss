@@ -1,0 +1,39 @@
+@use '../../styles/form';
+
+:host {
+    display: block;
+
+    .rt-cms-content-type-settings-page {
+        &__form {
+            @include form.stack;
+        }
+
+        &__section {
+            @include form.section;
+        }
+
+        &__section-title {
+            @include form.section-title;
+        }
+
+        &__hint {
+            @include form.hint;
+        }
+
+        &__list {
+            @include form.list;
+        }
+
+        &__list-item {
+            @include form.list-item;
+        }
+
+        &__list-item-title {
+            @include form.list-item-title;
+        }
+
+        &__list-item-actions {
+            @include form.list-item-actions;
+        }
+    }
+}

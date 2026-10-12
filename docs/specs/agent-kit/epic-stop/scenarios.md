@@ -85,3 +85,23 @@ When the turn ends
 Then the guard of the turn exit lets it through; with an unfinished task of the epic it refuses
 
 Covered: `projects/agent-kit/tests/epic-stop-guard.test.sh`.
+
+### SC-AK-1201 — the owner's word naming the number of the work releases the call
+
+Given the epic is over, and the owner's message or their answer to a menu names the number the call takes
+When the executor creates the branch or moves the card of that work
+Then the guard lets it through; a word about another number, or the number in the executor's own words, does not
+
+Covered: `projects/agent-kit/tests/epic-stop-guard.test.sh`.
+
+### SC-AK-1207 — a menu answer is read in both forms, and the number only from the answer
+
+Given the epic is over, and the menu answer starts with «Your questions have been answered:» and names the number
+When the executor creates the branch of that work
+Then the guard lets it through, the same as for «The user answered:»
+
+Given the number stands only in the question of the menu, or in the output of a command
+When the executor creates the branch of that work
+Then the guard refuses: the question is written by the executor
+
+Covered: `projects/agent-kit/tests/epic-stop-guard.test.sh`.

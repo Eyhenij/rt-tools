@@ -1,0 +1,27 @@
+// The editor is a column: the add toolbar on top, the body blocks under it.
+:host {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rt-space-md);
+
+    .rt-cms-editor {
+        &__toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: var(--rt-space-xs);
+        }
+
+        &__blocks {
+            display: flex;
+            flex-direction: column;
+            gap: var(--rt-space-sm);
+        }
+
+        &__empty {
+            margin: 0;
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-sm);
+        }
+    }
+}

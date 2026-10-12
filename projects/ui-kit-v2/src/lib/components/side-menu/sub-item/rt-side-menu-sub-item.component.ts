@@ -4,6 +4,7 @@ import {
     ChangeDetectionStrategy,
     Component,
     computed,
+    ErrorHandler,
     inject,
     input,
     InputSignal,
@@ -13,7 +14,7 @@ import {
     Signal,
     ViewEncapsulation,
 } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
@@ -25,8 +26,10 @@ import { BreakpointsService } from '@rt-tools/ui-kit-v2/core';
 import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
 import { sideMenuFavoritesSection } from '../rt-side-menu-favorites.logic';
 import { RtSideMenuSettingsService } from '../rt-side-menu-settings.service';
+import { RtSideMenuHrefPipe, sideMenuLinkTree } from '../rt-side-menu-href.pipe';
 import { RtSideMenuIconPipe } from '../rt-side-menu-icon.pipe';
 import { RtSideMenuTitlePartsPipe } from '../rt-side-menu-title-parts.pipe';
+import { sideMenuPressOpensInBrowser } from '../rt-side-menu.logic';
 import { IRtSideMenu } from '../rt-side-menu.model';
 import { IRtSideMenuHost, RT_SIDE_MENU } from '../rt-side-menu.tokens';
 
@@ -51,7 +54,6 @@ const FAVORITE_BUTTON: string = '.rt-side-menu-sub-item__favorite button';
     encapsulation: ViewEncapsulation.None,
     imports: [
         NgTemplateOutlet,
-        RouterLink,
         BlockDirective,
         ElemDirective,
         ModDirective,
@@ -62,10 +64,14 @@ const FAVORITE_BUTTON: string = '.rt-side-menu-sub-item__favorite button';
         RtTooltipDirective,
         RtSideMenuTitlePartsPipe,
         RtSideMenuIconPipe,
+        RtSideMenuHrefPipe,
     ],
 })
 export class RtSideMenuSubItemComponent {
     readonly #settings: RtSideMenuSettingsService | null = inject(RtSideMenuSettingsService, { optional: true });
+    readonly #router: Router = inject(Router);
+    readonly #route: ActivatedRoute | null = inject(ActivatedRoute, { optional: true });
+    readonly #errors: ErrorHandler = inject(ErrorHandler);
 
     protected readonly menuRef: IRtSideMenuHost = inject(RT_SIDE_MENU);
     protected readonly narrow: Signal<boolean> = inject(BreakpointsService).narrow;
@@ -95,8 +101,22 @@ export class RtSideMenuSubItemComponent {
         event: MouseEvent;
     }>();
 
+    /**
+     * Нажатие строки уходит потребителю раньше перехода. Потребитель, взявший переход на себя,
+     * отменяет умолчание события — тогда строка не переходит. Нажатие с клавишей или не левой
+     * кнопкой остаётся браузеру: он открывает адрес строки сам.
+     */
     public onClickSubMenu(item: IRtSideMenu.Item, event: MouseEvent): void {
         this.clickSubMenuAction.emit({ item, event });
+
+        if (event.defaultPrevented || !item.link || sideMenuPressOpensInBrowser(event)) {
+            return;
+        }
+        event.preventDefault();
+        // Отказ перехода уходит обработчику ошибок приложения, как у ссылки роутера.
+        this.#router
+            .navigateByUrl(sideMenuLinkTree(this.#router, this.#route, item.link))
+            .catch((error: unknown): void => this.#errors.handleError(error));
     }
 
     /** Кнопка потребителя в строке: ни перехода по ссылке строки, ни закрытия подменю. */

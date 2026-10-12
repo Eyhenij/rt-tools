@@ -11,6 +11,7 @@ in the code, or the code holds what the spec is silent about.
 - **The declaration opens its line, and the same words inside a sentence are not one.** — `projects/agent-kit/assets/checks/board-epic-link.github.mjs:DECLARATION` — the expression is anchored to the start of a line; scenario SC-AK-991
 - **The state of a task carries the number of its epic.** — `projects/agent-kit/assets/checks/board.github.mjs:taskState` — scenario SC-AK-992
 - **The base of a request about a task of an epic is the branch of that epic.** — `projects/agent-kit/assets/hooks/git-guard-delivery-epic.sh:rt_epic_pull_base` — scenario SC-AK-994
+- **A chain base is lawful while its history carries the epic branch.** — `projects/agent-kit/assets/hooks/git-guard-delivery-epic.sh:_chain` — the remote ref of the base must have the remote epic branch as an ancestor; the audit takes the same base by the task number, `projects/agent-kit/assets/checks/board-epics.github.mjs:baseTask`. Scenario SC-AK-1203
 - **The freshness asked before a request of such a task is the epic's, not the main branch's.** — `projects/agent-kit/assets/hooks/git-guard-delivery-epic.sh:rt_epic_pull_base`
 - **The request of an epic opens when the folders of all its tasks are taken apart.** — `projects/agent-kit/assets/hooks/git-guard-delivery-epic.sh:rt_epic_own_pull` — scenario SC-AK-995
 - **An epic is recognised by the label of its card, not by the shape of the branch name.** — `projects/agent-kit/assets/defaults/project.sh:RT_BOARD_EPIC_LABEL`

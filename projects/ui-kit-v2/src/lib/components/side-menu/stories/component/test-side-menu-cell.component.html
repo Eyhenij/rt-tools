@@ -1,4 +1,7 @@
-<div class="app-side-menu-cell">
+<div
+    class="app-side-menu-cell"
+    [class.app-side-menu-cell--first-kit]="firstKitProps()"
+    [style.--rt-side-menu-sub-item-letter-spacing]="firstKitProps() ? '0.5px' : null">
     <rt-side-menu
         [menuItems]="items()"
         [menuId]="menuId()"
@@ -7,7 +10,12 @@
         [activeMenuIds]="activeIds()"
         [subMenuMode]="mode()"
         [subMenuWidth]="width()"
-        [pinShown]="pinShown()">
+        [pinShown]="pinShown()"
+        [railTitlesShown]="railTitlesShown()"
+        [railIconFill]="railIconFill()"
+        [searchSize]="searchSize()"
+        [subItemIconFill]="subItemIconFill()"
+        [panelScrollHintShown]="panelScrollHintShown()">
         @if (slots()) {
             <ng-template rtSideMenuHeader>
                 <div class="app-side-menu-cell__slot">Лого</div>

@@ -28,6 +28,16 @@ describe('resolveIconGlyph', (): void => {
         expect(resolveIconGlyph(null, PAIRED.from, 'font')).toEqual({ kind: 'font', glyph: PAIRED.from });
     });
 
+    it('SC-UKV-774 — по способу font имя кита, которое шрифт не нарисует, рисуется рисунком кита', (): void => {
+        expect(resolveIconGlyph(null, 'ico-plus', 'font')).toEqual({ kind: 'kit', name: 'ico-plus' });
+        expect(resolveIconGlyph(null, 'docBox', 'font')).toEqual({ kind: 'kit', name: 'docBox' });
+    });
+
+    it('SC-UKV-774 — по способу font имя кита, совпавшее с лигатурой, остаётся шрифтом', (): void => {
+        expect(isKitIconName('search')).toBe(true);
+        expect(resolveIconGlyph(null, 'search', 'font')).toEqual({ kind: 'font', glyph: 'search' });
+    });
+
     it('без имени и без имени Material значку нечего рисовать', (): void => {
         expect(resolveIconGlyph(null, null, 'map-first')).toBeNull();
         expect(resolveIconGlyph(undefined, '', 'font')).toBeNull();

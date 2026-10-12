@@ -78,6 +78,12 @@ flowchart TD
   will be read as of the present one; the tip is checked before the run number goes into the cell.
   <!-- rt-when: ответ владельцу о состоянии работы -->
 
+- **A red run on an open PR is the first line of any reply about the work, whatever its cause.** A
+  runner failure checks no code, and for the owner the run is red all the same: the merge button is
+  open. A refused rerun does not lift the line — the reply says the PR stays unchecked and is not
+  merged before a green run.
+  <!-- rt-when: ответ владельцу о состоянии работы -->
+
 - **A draft PR is called a draft aloud, together with what we wait for.** A draft's merge is locked
   by the host, and a green page permits the owner nothing; silence they read as breakage.
   <!-- rt-when: ответ владельцу о состоянии работы -->

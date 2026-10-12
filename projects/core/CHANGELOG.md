@@ -1,3 +1,5 @@
+## [0.5.1](https://github.com/Eyhenij/rt-tools/compare/rt-core@0.5.0...rt-core@0.5.1) (2026-10-10)
+
 # [0.5.0](https://github.com/Eyhenij/rt-tools/compare/rt-core@0.4.0...rt-core@0.5.0) (2026-09-09)
 
 ### Features

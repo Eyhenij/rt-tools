@@ -133,6 +133,32 @@ Then it names the column and the executor and ends with a zero code
 
 Covered: `projects/agent-kit/tests/checks-config.test.sh`.
 
+### SC-AK-1214 — the card is read by a direct request, and the list of the board is not read
+
+Given a task is created and the queue returns its card
+When the command asks the queue about it
+Then the column is named from the answer about the task itself, the list of the whole board is not
+read, and the command ends with a zero code
+
+Covered: `projects/agent-kit/tests/task-new-queue.test.sh`.
+
+### SC-AK-1215 — «NO» is not printed while the window of waiting goes
+
+Given the queue returns the card only on the third reading
+When the command asks the queue and waits between the readings
+Then no «NO» is printed, the card is read three times and the command ends with a zero code
+
+Covered: `projects/agent-kit/tests/task-new-queue.test.sh`.
+
+### SC-AK-1216 — after the window the answer is «NO» and names how long the command waited
+
+Given the queue never returns the card
+When the whole window of waiting has passed
+Then the line «NO» names the seconds of waiting, the card was read once more than there are pauses
+and the command ends with code one
+
+Covered: `projects/agent-kit/tests/task-new-queue.test.sh`.
+
 ### SC-AK-153 — a task outside the work queue ends the command with a refusal
 
 Given the task is created, and it is not in the work queue

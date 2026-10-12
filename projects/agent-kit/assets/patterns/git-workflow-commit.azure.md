@@ -177,4 +177,8 @@ Docs-skip: правка только в тестах хука, зеркала у
   off whole at the first miss. The next `git commit --amend` then carries into the commit
   everything left in the index. The commit contents are read by `git show --stat` right after it,
   not at PR review.
+- Two commits chained in one call: a commit refused by the message check leaves its files in the
+  index, and the next `git commit` takes them under its own subject. One commit is one call, and
+  its outcome is read before the next; a swallowed one is split by `git reset --soft HEAD~1` and two
+  commits anew.
 - The owner's edit takes neither the token nor the variables — they are only for machine work.

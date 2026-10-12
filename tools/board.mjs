@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.29.4 · checks/board.github.mjs · c8c41b43e019 · правится надстройкой, не здесь
+// rt-kit v0.31.0 · checks/board.github.mjs · 32de6d7c9cb2 · правится надстройкой, не здесь
 /**
  * Shared work with the work queue: the project board, the tasks and their state.
  *
@@ -18,6 +18,7 @@
  */
 import { OfflineError, botToken, gh, ghJson, graphql } from './board-gh.mjs';
 import { declaredEpicOf } from './board-epic-link.mjs';
+import { verdictOnHead } from './board-runs.mjs';
 export { numberFromTaskDir, taskDirs, unstampFolder } from './board-task-dirs.mjs';
 import { CONFIG } from './rt-kit-checks.config.mjs';
 
@@ -103,6 +104,23 @@ export function fetchBoard(options) {
 }
 
 /**
+ * The card of one task on this board, read by a direct request to the task itself — its
+ * `projectItems` field — and not out of the list of the whole board. The list took three seconds on
+ * two hundred cards, a direct request answered in under one, and it names the column in the same
+ * answer. `undefined` — the task stands on no card of this board (yet).
+ */
+export function fetchCard(number, options) {
+    const issue = graphql(
+        `{ repository(owner: "${OWNER}", name: "${REPO}") { issue(number: ${Number(number)}) { projectItems(first: 20) {
+            nodes { id project { id }
+                status: fieldValueByName(name: "Status") { ... on ProjectV2ItemFieldSingleSelectValue { name optionId } } } } } } }`,
+        options
+    ).data?.repository?.issue;
+    const card = issue?.projectItems?.nodes?.find((node) => node.project?.id === PROJECT_ID);
+    return card ? { itemId: card.id, status: card.status?.name ?? null } : undefined;
+}
+
+/**
  * Moving a task to another column. The task's state on the board is the only thing the progress
  * is visible by: the board does not read the branch or the open PR itself.
  */
@@ -170,7 +188,7 @@ export function pullState(ref, options) {
     const target = ref === undefined || ref === null || `${ref}`.trim() === '' ? [] : [`${ref}`.trim()];
     let pull;
     try {
-        pull = ghJson(['pr', 'view', ...target, '--json', 'number,isDraft,reviewRequests,latestReviews,author,mergeable,headRefName'], options);
+        pull = ghJson(['pr', 'view', ...target, '--json', 'number,isDraft,reviewRequests,latestReviews,author,mergeable,headRefName,headRefOid'], options);
     } catch (error) {
         if (error instanceof OfflineError) {
             throw error;
@@ -198,6 +216,9 @@ export function pullState(ref, options) {
         // The head branch: the folder guard judges the branch of the named PR, not the checked-out
         // one — the lower PR of a stack is lifted from the upper branch.
         branch: pull.headRefName ?? null,
+        // The run on the tip: `success`, `failure`, `running` or `none`. The merge guard reads it —
+        // an epic went into main over a red image build, and the rollout fell after it.
+        run: pull.headRefOid ? verdictOnHead(pull.headRefOid, options) : 'none',
     };
 }
 
@@ -285,7 +306,7 @@ export function taskState(number, options) {
     if (!issue) {
         return { exists: false, viewer: viewerOf(options) };
     }
-    const item = fetchBoard(options).items.get(issue.number);
+    const item = fetchCard(issue.number, options);
     return {
         exists: true,
         viewer: viewerOf(options),
@@ -311,7 +332,7 @@ export function taskState(number, options) {
  *
  * `state` — what `taskState` returned, or `{ offline: <reason> }` if asking failed.
  */
-export function describeTaskState(number, state) {
+export function describeTaskState(number, state, waitedSeconds) {
     if (state?.offline) {
         return {
             ok: false,
@@ -327,7 +348,10 @@ export function describeTaskState(number, state) {
     if (!state.onBoard) {
         return {
             ok: false,
-            lines: [`in the work queue: NO`, 'a task that is not in the queue is backed by no work — nobody will come for it'],
+            lines: [
+                `in the work queue: NO${waitedSeconds === undefined ? '' : ` — not seen in ${waitedSeconds} s of waiting`}`,
+                'a task that is not in the queue is backed by no work — nobody will come for it',
+            ],
         };
     }
 

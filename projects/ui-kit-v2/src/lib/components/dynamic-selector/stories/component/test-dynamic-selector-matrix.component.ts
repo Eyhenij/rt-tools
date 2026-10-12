@@ -39,6 +39,10 @@ interface ILookCase {
     readonly invitationButtonAppearance: IButton.Appearance;
     readonly clearIcon: IRtIcon.Name;
     readonly control: FormControl<number[] | null>;
+    /** Подпись записи функцией; не задана — поле `name`. */
+    readonly displayWith?: (person: IStoryPerson) => string;
+    /** Свойства списка на поле; не заданы — умолчания кита. */
+    readonly listStyle?: Readonly<Record<string, string>>;
 }
 
 /** Переключатели списка: корзина, панель сброса и очистки, правки в шаблоне строки. */
@@ -73,6 +77,18 @@ interface IPopupCase {
     readonly multiToggleShown: boolean;
     readonly loading: boolean;
     readonly pinnedKeys: readonly number[];
+    /** Перенос подписей пунктов; не задан — переносятся, как по умолчанию. */
+    readonly titleWrap?: boolean;
+    /** Начальный запрос окна; не задан — окно без запроса. */
+    readonly searchTerm?: string;
+    /** Подсветка совпавших с поиском символов; не задана — выключена, как по умолчанию. */
+    readonly highlightSearch?: boolean;
+    /** Своя подпись кнопки применения; не задана — подпись кита. */
+    readonly applyLabel?: string;
+    /** Регистр подписи кнопки применения; не задан — как есть. */
+    readonly applyLabelCase?: IRtDynamicSelector.LabelCase;
+    /** Свойства окна на нём самом; не заданы — умолчания кита. */
+    readonly popupStyle?: Readonly<Record<string, string>>;
 }
 
 /** Случай поля строк. */
@@ -87,6 +103,8 @@ interface IInputCase {
 /** Адреса поля строк — придуманные, в зарезервированном для примеров домене. */
 const NORTH: string = 'north@example.test';
 const SOUTH: string = 'south@example.test';
+/** Шаг xs — отступы строки и полосы действий в случае своих зазоров и зазор пустого результата окна. */
+const SPACE_XS: string = 'var(--rt-space-xs)';
 
 function chosen(keys: number[]): FormControl<number[] | null> {
     return new FormControl<number[] | null>(keys);
@@ -192,6 +210,30 @@ export class TestRtDynamicSelectorMatrixComponent {
             clearIcon: 'trash-x',
             control: chosen([1, 2]),
         },
+        {
+            name: 'своя подпись записи: фамилия первой',
+            invitation: false,
+            invitationButtonIcon: null,
+            invitationButtonAppearance: 'outlined',
+            clearIcon: 'close',
+            control: chosen([1, 2]),
+            displayWith: (person: IStoryPerson): string => person.name.split(' ').reverse().join(' '),
+        },
+        {
+            name: 'свои зазоры списка',
+            invitation: false,
+            invitationButtonIcon: null,
+            invitationButtonAppearance: 'outlined',
+            clearIcon: 'trash-x',
+            control: chosen([1, 2]),
+            listStyle: {
+                '--rt-dynamic-selector-list-actions-gap': 'var(--rt-space-sm)',
+                '--rt-dynamic-selector-list-controls-gap': 'var(--rt-space-sm)',
+                '--rt-dynamic-selector-list-row-padding-end': SPACE_XS,
+                '--rt-dynamic-selector-list-actions-offset': 'var(--rt-space-md)',
+                '--rt-dynamic-selector-list-actions-padding-end': SPACE_XS,
+            },
+        },
     ];
 
     /** Окно: поле поиска «fill» и своя подпись пустого результата; второе — со своими свойствами. */
@@ -202,6 +244,10 @@ export class TestRtDynamicSelectorMatrixComponent {
         '--rt-dynamic-selector-popup-foot-border-width': '0',
         '--rt-dynamic-selector-popup-button-height': 'var(--rt-control-height-sm)',
         '--rt-dynamic-selector-popup-button-font-size': 'var(--rt-text-sm)',
+        '--rt-dynamic-selector-popup-option-line-height': 'var(--rt-size-5)',
+        '--rt-dynamic-selector-popup-option-min-height': 'var(--rt-size-12)',
+        '--rt-dynamic-selector-popup-empty-gap': SPACE_XS,
+        '--rt-dynamic-selector-popup-foot-padding': 'var(--rt-space-md) var(--rt-space-lg) 0 var(--rt-space-sm)',
     };
 
     public readonly lookPopupCases: readonly {
@@ -211,6 +257,7 @@ export class TestRtDynamicSelectorMatrixComponent {
     }[] = [
         { name: 'поиск fill, своя подпись', entities: [], tuned: false },
         { name: 'свои свойства окна', entities: STORY_PEOPLE.slice(0, 3), tuned: true },
+        { name: 'свои свойства пустого результата', entities: [], tuned: true },
     ];
 
     /** Записи с длинными названиями: на них видно, переносится название строки или режется. */
@@ -284,6 +331,96 @@ export class TestRtDynamicSelectorMatrixComponent {
         },
         { name: 'загрузка', entities: [], mode: 'multi', multiToggleShown: false, loading: true, pinnedKeys: [] },
         { name: 'ничего не найдено', entities: [], mode: 'multi', multiToggleShown: false, loading: false, pinnedKeys: [] },
+        {
+            name: 'длинные подписи с переносом',
+            entities: this.longPeople,
+            mode: 'multi',
+            multiToggleShown: false,
+            loading: false,
+            pinnedKeys: [],
+        },
+        {
+            name: 'длинные подписи одной строкой',
+            entities: this.longPeople,
+            mode: 'multi',
+            multiToggleShown: false,
+            loading: false,
+            pinnedKeys: [],
+            titleWrap: false,
+        },
+        {
+            name: 'короткие подписи одной строкой',
+            entities: STORY_PEOPLE.slice(0, 3),
+            mode: 'multi',
+            multiToggleShown: false,
+            loading: false,
+            pinnedKeys: [],
+            titleWrap: false,
+        },
+        {
+            name: 'одна запись, одной строкой',
+            entities: this.longPeople,
+            mode: 'single',
+            multiToggleShown: false,
+            loading: false,
+            pinnedKeys: [],
+            titleWrap: false,
+        },
+        {
+            name: 'подсветка поиска',
+            entities: this.longPeople,
+            mode: 'multi',
+            multiToggleShown: false,
+            loading: false,
+            pinnedKeys: [],
+            searchTerm: 'ск',
+            highlightSearch: true,
+        },
+        {
+            name: 'подсветка поиска одной строкой',
+            entities: this.longPeople,
+            mode: 'single',
+            multiToggleShown: false,
+            loading: false,
+            pinnedKeys: [],
+            titleWrap: false,
+            searchTerm: 'ск',
+            highlightSearch: true,
+        },
+        {
+            name: 'подсветка поиска фоном со скруглением',
+            entities: this.longPeople,
+            mode: 'multi',
+            multiToggleShown: false,
+            loading: false,
+            pinnedKeys: [],
+            searchTerm: 'ск',
+            highlightSearch: true,
+            popupStyle: {
+                '--rt-dynamic-selector-popup-highlight-bg': 'var(--rt-color-state-warning-bg)',
+                '--rt-dynamic-selector-popup-highlight-color': 'var(--rt-color-state-warning-text)',
+                '--rt-dynamic-selector-popup-highlight-radius': 'var(--rt-radius-xs)',
+            },
+        },
+        {
+            name: 'своя подпись кнопки, каждое слово с заглавной',
+            entities: STORY_PEOPLE.slice(0, 3),
+            mode: 'single',
+            multiToggleShown: false,
+            loading: false,
+            pinnedKeys: [],
+            applyLabel: 'отправить выбор',
+            applyLabelCase: 'title',
+        },
+        {
+            name: 'подпись кита заглавными',
+            entities: STORY_PEOPLE.slice(0, 3),
+            mode: 'single',
+            multiToggleShown: false,
+            loading: false,
+            pinnedKeys: [],
+            applyLabelCase: 'upper',
+        },
     ];
 
     /** Прежний список стоит первым — рядом видно, что убирает каждый переключатель. */
@@ -326,6 +463,15 @@ export class TestRtDynamicSelectorMatrixComponent {
     public readonly themeControl: FormControl<number[] | null> = chosen([1, 2]);
     public readonly presetsControl: FormControl<number[] | null> = chosen([1, 2]);
     public readonly templatesControl: FormControl<number[] | null> = chosen([4, 5]);
+    public readonly templatesTunedControl: FormControl<number[] | null> = chosen([4, 5]);
+    public readonly templatesCases: readonly string[] = ['свои кнопки и название', 'свои отступы ручки и разделитель кнопок'];
+    /** Свойства строки на поле: отступы ручки, зазор до названия и разделитель между кнопками. */
+    public readonly tunedRowStyle: Readonly<Record<string, string>> = {
+        '--rt-dynamic-selector-list-handle-padding-start': 'var(--rt-space-1)',
+        '--rt-dynamic-selector-list-handle-padding-end': 'var(--rt-space-1)',
+        '--rt-dynamic-selector-list-title-gap': 'calc(var(--rt-space-sm) + var(--rt-space-xs))',
+        '--rt-dynamic-selector-list-controls-divider-width': 'var(--rt-border-width-thin)',
+    };
 
     /** Подпись случая: у всех наборов этой матрицы имя лежит в одном поле. */
     public readonly caseLabel: (value: { readonly name: string }) => string = (value: { readonly name: string }): string => value.name;

@@ -73,3 +73,9 @@ Then the first carries the header with the value and the second carries no heade
 Given a signed-in person
 When they leave
 Then the adapter is asked to end the session with the return address of the admin
+
+### SC-AUTH-76 — a silent check that never answers does not hold the start
+
+Given Keycloak that does not answer the silent check
+When the package starts the adapter
+Then the admin starts after the limit with nobody signed in

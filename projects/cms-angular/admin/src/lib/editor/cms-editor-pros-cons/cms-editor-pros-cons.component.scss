@@ -1,0 +1,34 @@
+// Pros and cons stand in two columns; a row is a field and a remove button.
+:host {
+    display: grid;
+    gap: var(--rt-space-md);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    .rt-cms-editor-pros-cons {
+        &__side {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: var(--rt-space-xs);
+
+            > * {
+                width: 100%;
+            }
+
+            > button {
+                width: auto;
+            }
+        }
+
+        &__row {
+            display: flex;
+            align-items: center;
+            gap: var(--rt-space-xs);
+
+            > :first-child {
+                min-width: 0;
+                flex: 1 1 auto;
+            }
+        }
+    }
+}

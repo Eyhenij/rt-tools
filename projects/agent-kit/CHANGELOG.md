@@ -1,3 +1,50 @@
+# [0.31.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.30.1...rt-agent-kit@0.31.0) (2026-10-10)
+
+### Features
+
+- **rt:agent-kit:** заявка не вливается при красном прогоне на вершине ([1ae70e3](https://github.com/Eyhenij/rt-tools/commit/1ae70e38421dc5c4b378fb95be55df996cec2c8e))
+- **rt:agent-kit:** заявка не открывается без строки закрытия задачи ([5955a8b](https://github.com/Eyhenij/rt-tools/commit/5955a8b7c60c630751ac65a2f50e211e62fcf0fa))
+
+## [0.30.1](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.30.0...rt-agent-kit@0.30.1) (2026-10-10)
+
+### Bug Fixes
+
+- **rt:agent-kit:** заведение задачи читает карточку прямым запросом и печатает «NO» только после окна ожидания ([705602a](https://github.com/Eyhenij/rt-tools/commit/705602ab55a070e8194a3b432040187ad29c3c1a))
+- **rt:agent-kit:** наблюдения уходят по одному дню на запрос, отказ дня не держит остальной груз ([c1a7c8a](https://github.com/Eyhenij/rt-tools/commit/c1a7c8a9ae280e26b4ab3867168ec0b42e4b1bea))
+- **rt:agent-kit:** пометка «отбито» с той же причиной в блок второй раз не пишется ([42a716b](https://github.com/Eyhenij/rt-tools/commit/42a716b62f9b1d7ca42025f47f5ee65025a4a54f))
+- **rt:agent-kit:** последняя успешная выкатка ищется среди двадцати последних прогонов без фильтра по статусу ([8f25f98](https://github.com/Eyhenij/rt-tools/commit/8f25f98d222b9565c687bc0e9f66fda95c3b015f))
+- **rt:agent-kit:** проверки конца эпика и разбора узнают ответ меню в обоих видах ([e69aea1](https://github.com/Eyhenij/rt-tools/commit/e69aea18b52bcffa338b3e67b619477210c994d4))
+- **rt:agent-kit:** путь внутри записываемой строки не считается целью записи, отказ спрашивающей проверки называет область ([7301760](https://github.com/Eyhenij/rt-tools/commit/7301760fb5608da09b61578865ca03bac4a3b423))
+
+# [0.30.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.29.4...rt-agent-kit@0.30.0) (2026-10-09)
+
+### Bug Fixes
+
+- **rt:agent-kit:** аудит называет повтор номера в таблице эпика, отчёт начинается с красного прогона ([e80d352](https://github.com/Eyhenij/rt-tools/commit/e80d352c230fe7b79aea99d4d6fd259e0874f2ac))
+- **rt:agent-kit:** база PR из стопки того же эпика законна ([69ec2a8](https://github.com/Eyhenij/rt-tools/commit/69ec2a8ff254239bbe3a91b6b05fe0de884d5594))
+- **rt:agent-kit:** вопрос после отказа уходит со строкой о сделанном ([9c96fd1](https://github.com/Eyhenij/rt-tools/commit/9c96fd1b62e9708676bced9dcf59500da21532cd))
+- **rt:agent-kit:** вопрос с вариантом обхода проверки не уходит ([d58457b](https://github.com/Eyhenij/rt-tools/commit/d58457ba7225b1efebf0bd82247302ef009e8a0c))
+- **rt:agent-kit:** запись диспетчера несёт предел времени, объявленный гардом ([0944731](https://github.com/Eyhenij/rt-tools/commit/0944731c1b3bbabd7fbd6372993a93901ff2fee3))
+- **rt:agent-kit:** короткая команда владельца не отбивает новый вопрос ([72795a9](https://github.com/Eyhenij/rt-tools/commit/72795a97eaa3f8058b147dec81a3755f658953e9))
+- **rt:agent-kit:** отказ проверки вопросов называет нужные правила ([8624394](https://github.com/Eyhenij/rt-tools/commit/86243944581e71ada6eb9fdf1019701fd78e3981))
+- **rt:agent-kit:** охранник поставки снова короче предела в 500 строк ([679721d](https://github.com/Eyhenij/rt-tools/commit/679721d0e62ee8534a363179e56eeda6d64f1eb9)), closes [#2605](https://github.com/Eyhenij/rt-tools/issues/2605)
+- **rt:agent-kit:** охранник поставки узнаёт чужое дерево по пути с тильдой и судит заголовок его формой ([3b33233](https://github.com/Eyhenij/rt-tools/commit/3b33233d6597872e7bbc9564c936f340ee752d77))
+- **rt:agent-kit:** проверка вопросов не считает правками файлы вне дерева ([1531839](https://github.com/Eyhenij/rt-tools/commit/1531839623ed5c3677fa5ef306dd8a485b9182f3))
+- **rt:agent-kit:** проверка конца хода принимает слово владельца и названную причину ([bef2f2b](https://github.com/Eyhenij/rt-tools/commit/bef2f2b43876aa77bc9892a74580202b4a527825))
+- **rt:agent-kit:** проверка конца эпика принимает слово владельца с номером работы ([66251cd](https://github.com/Eyhenij/rt-tools/commit/66251cde4f640ba862aee89da658715bbd31633c))
+- **rt:agent-kit:** проверка перед отправкой отбивает несколько отправок одной командой ([328efe3](https://github.com/Eyhenij/rt-tools/commit/328efe3d7061fc7fc206e69487b84276fd8215d1))
+- **rt:agent-kit:** проверка привязок видит файлы, которые баррель подключает через .js ([b69b9f7](https://github.com/Eyhenij/rt-tools/commit/b69b9f7fecdda1a232bb769bcd0aeca500716f80))
+- **rt:agent-kit:** проверка утверждений: граница слова, отрицание, описание ([1bb506e](https://github.com/Eyhenij/rt-tools/commit/1bb506efd2e1c603bdeda1aed99d6c67f836f4af))
+- **rt:agent-kit:** сверка импортов читает входы пакета, переотданные по имени пакета ([ad27bc9](https://github.com/Eyhenij/rt-tools/commit/ad27bc9e306c76718def54167555bea686af9eca))
+- **rt:agent-kit:** файл пятого признака проверки вопросов исполняемый ([2be40a8](https://github.com/Eyhenij/rt-tools/commit/2be40a8a31094f00e33a8ecf992b856898f7fec9))
+- **rt:agent-kit:** флаг правки на месте узнаётся словом, модули аудита очереди — в карте правил ([b3f6dce](https://github.com/Eyhenij/rt-tools/commit/b3f6dce8537fe93d78efb3105a6f421c43c9404b))
+
+### Features
+
+- **rt:agent-kit:** раскладка отказывает на одноимённых ресурсах одного рода ([971fa14](https://github.com/Eyhenij/rt-tools/commit/971fa1401b430863b6fa00bcfc7de1032840b234))
+- **rt:agent-kit:** сверка очереди работ называет папку задачи вне индекса ([8ecb2bd](https://github.com/Eyhenij/rt-tools/commit/8ecb2bd8c8c5e10959f744e860f383c901dbc013))
+- **rt:message-bus:** команды груза входят токеном служебного клиента ([c5d1cb1](https://github.com/Eyhenij/rt-tools/commit/c5d1cb146a34b78eabe74e4509a6023c842ab964))
+
 ## [0.29.4](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.29.3...rt-agent-kit@0.29.4) (2026-10-02)
 
 ### Bug Fixes

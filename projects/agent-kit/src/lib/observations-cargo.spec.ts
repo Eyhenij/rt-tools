@@ -12,8 +12,9 @@ import { IObservationDay, IObservationLine, IObservationsCargo } from './cargo.j
 import { IConfig, readConfig } from './config.js';
 import { OBSERVATIONS_DIR } from './observations.js';
 import { linesOfDay, linesTotal, originOf, OWN_RESOURCE, readObservationDays } from './observations-cargo.js';
-import { dropTree, freshTree, put, said, sent, shipping, start, TODAY, treeEnv, treeRoot } from './shipment.fixture.js';
-import { IShipment } from './ship.js';
+import { IOutcomeOfCommand } from './commands.js';
+import { dropTree, freshTree, put, PROPOSALS_FILE, said, sent, shipping, start, TODAY, treeEnv, treeRoot } from './shipment.fixture.js';
+import { IShipment, IShipped, TShip } from './ship.js';
 
 function load(res: string, sid: string = '1'): string {
     return JSON.stringify({ t: `${TODAY}T10:00:00Z`, ev: 'skill-load', res, sid, v: '0.27.0' });
@@ -33,14 +34,22 @@ function assets(): readonly IAsset[] {
     return collectAssets(config, treeEnv().assetsDir);
 }
 
-function observationsSent(): IObservationsCargo {
-    const shipment: IShipment | undefined = sent.find((one: IShipment): boolean => one.operation === 'observations');
+/** Запросы наблюдений как уехали: на каждый день свой. */
+function observationRequests(): readonly IObservationsCargo[] {
+    return sent
+        .filter((one: IShipment): boolean => one.operation === 'observations')
+        .map((one: IShipment): IObservationsCargo => one.body as IObservationsCargo);
+}
 
-    if (!shipment) {
+/** Все дни, что уехали, одним грузом: так читаются спеки о строках, а не о делении на запросы. */
+function observationsSent(): IObservationsCargo {
+    const requests: readonly IObservationsCargo[] = observationRequests();
+
+    if (!requests.length) {
         throw new Error('наблюдения не уехали');
     }
 
-    return shipment.body as IObservationsCargo;
+    return { ...requests[0], days: requests.flatMap((one: IObservationsCargo): readonly IObservationDay[] => one.days) };
 }
 
 describe('груз наблюдений', () => {
@@ -103,7 +112,8 @@ describe('груз наблюдений', () => {
 
         const dry: string = said(await shipping(undefined, true));
 
-        expect(dry).toContain('observations — строк 3 за 2 дн.');
+        expect(dry).toContain('observations — строк 2 за 1 дн.');
+        expect(dry).toContain('observations — строк 1 за 1 дн.');
         expect(sent).toHaveLength(0);
 
         await shipping();
@@ -134,6 +144,71 @@ describe('груз наблюдений', () => {
 
         expect(outcome).not.toContain('назван адрес этого дерева');
         expect(observationsSent().days[0].lines[0].res).toBe(OWN_RESOURCE);
+    });
+
+    it('SC-AK-1211 — наблюдения уходят по одному дню на запрос', async () => {
+        start();
+        put(`${OBSERVATIONS_DIR}/2026-08-12.jsonl`, `${load('task-flow')}\n`);
+        put(`${OBSERVATIONS_DIR}/2026-08-13.jsonl`, `${load('testing')}\n`);
+        put(`${OBSERVATIONS_DIR}/${TODAY}.jsonl`, `${load('agent-kit')}\n`);
+
+        await shipping();
+
+        const requests: readonly IObservationsCargo[] = observationRequests();
+        expect(
+            requests.map((one: IObservationsCargo): readonly string[] => one.days.map((day: IObservationDay): string => day.day))
+        ).toEqual([['2026-08-12'], ['2026-08-13'], [TODAY]]);
+        expect(
+            requests.every((one: IObservationsCargo): boolean => one.tree === requests[0].tree && one.origin === requests[0].origin)
+        ).toBe(true);
+    });
+
+    it('SC-AK-1211 — без наблюдений запросов о них нет', async () => {
+        start();
+
+        await shipping();
+
+        expect(observationRequests()).toHaveLength(0);
+    });
+
+    it('SC-AK-1212 — отказ одного дня не останавливает остальное, и отказ называет день', async () => {
+        start();
+        put(`${OBSERVATIONS_DIR}/2026-08-12.jsonl`, `${load('task-flow')}\n`);
+        put(`${OBSERVATIONS_DIR}/2026-08-13.jsonl`, `${load('testing')}\n`);
+        put(
+            PROPOSALS_FILE,
+            [
+                '# Предложения',
+                '',
+                '## пакет · rules/styling-bem.md',
+                '',
+                '- **повод:** правило молчит',
+                '- **ближайшее:** нет',
+                '',
+                '> Текст.',
+                '',
+            ].join('\n')
+        );
+        const tooHeavy: TShip = async (_intake: string, _token: string, shipment: IShipment): Promise<IShipped> => {
+            sent.push(shipment);
+            const day: string = shipment.operation === 'observations' ? (shipment.body as IObservationsCargo).days[0].day : '';
+
+            return day === '2026-08-12'
+                ? { ok: false, status: 413, said: 'груз тяжелее предела', accepted: null }
+                : { ok: true, status: 201, said: '', accepted: { tree: 'дерево', month: '2026-08', created: true } };
+        };
+
+        const outcome: IOutcomeOfCommand = await shipping(tooHeavy);
+
+        expect(outcome.code).toBe(1);
+        expect(said(outcome)).toContain('2026-08-12');
+        expect(said(outcome)).toContain('413');
+        expect(sent.map((shipment: IShipment): string => shipment.operation)).toEqual([
+            'summary',
+            'observations',
+            'observations',
+            'proposals',
+        ]);
     });
 
     it('SC-AK-1103 — адрес дерева в свободном поле строки отбивает отправку целиком', async () => {

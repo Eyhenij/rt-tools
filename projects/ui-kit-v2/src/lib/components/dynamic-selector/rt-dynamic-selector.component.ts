@@ -38,6 +38,7 @@ import {
     dynamicSelectorLabel,
     moveDynamicKey,
     sameDynamicKeys,
+    sameDynamicKeySet,
     selectableDynamicItems,
 } from './rt-dynamic-selector.logic';
 import { IRtDynamicSelector } from './rt-dynamic-selector.model';
@@ -105,6 +106,31 @@ export class RtDynamicSelectorComponent<TEntity extends object> extends RtFormCo
         (it: IRtKitConfig.DynamicSelector): IRtInput.Appearance | undefined => it.searchAppearance,
         'outline'
     );
+    readonly #searchRadiusDefault: TRtRadius | null = rtKitDefault(
+        'dynamicSelector',
+        (it: IRtKitConfig.DynamicSelector): TRtRadius | null | undefined => it.searchRadius,
+        null
+    );
+    readonly #highlightSearchDefault: boolean = rtKitDefault(
+        'dynamicSelector',
+        (it: IRtKitConfig.DynamicSelector): boolean | undefined => it.highlightSearch,
+        false
+    );
+    readonly #applyLabelDefault: string = rtKitDefault(
+        'dynamicSelector',
+        (it: IRtKitConfig.DynamicSelector): string | undefined => it.applyLabel,
+        ''
+    );
+    readonly #applyLabelCaseDefault: IRtDynamicSelector.LabelCase = rtKitDefault(
+        'dynamicSelector',
+        (it: IRtKitConfig.DynamicSelector): IRtDynamicSelector.LabelCase | undefined => it.applyLabelCase,
+        'none'
+    );
+    readonly #autofocusSearchDefault: boolean = rtKitDefault(
+        'dynamicSelector',
+        (it: IRtKitConfig.DynamicSelector): boolean | undefined => it.autofocusSearch,
+        false
+    );
     readonly #emptyResultsTextDefault: string = rtKitDefault(
         'dynamicSelector',
         (it: IRtKitConfig.DynamicSelector): string | undefined => it.emptyResultsText,
@@ -169,6 +195,8 @@ export class RtDynamicSelectorComponent<TEntity extends object> extends RtFormCo
     public readonly entities: InputSignal<ReadonlyArray<TEntity>> = input<ReadonlyArray<TEntity>>([]);
     public readonly keyExp: InputSignal<keyof TEntity & string> = input.required<keyof TEntity & string>();
     public readonly displayExp: InputSignal<keyof TEntity & string> = input.required<keyof TEntity & string>();
+    /** Подпись записи для строки, пункта окна и поиска; не задана — поле `displayExp`. */
+    public readonly displayWith: InputSignal<((entity: TEntity) => string) | null> = input<((entity: TEntity) => string) | null>(null);
     public readonly mode: InputSignal<IRtDynamicSelector.Mode> = input<IRtDynamicSelector.Mode>('multi');
     /** Название кнопки добавления; пустое — «Add» из словаря кита. */
     public readonly buttonTitle: InputSignal<string> = input<string>('');
@@ -223,8 +251,24 @@ export class RtDynamicSelectorComponent<TEntity extends object> extends RtFormCo
     });
     /** Вид поля поиска в окне выбора. */
     public readonly searchAppearance: InputSignal<IRtInput.Appearance> = input<IRtInput.Appearance>(this.#searchAppearanceDefault);
+    /** Шаг скругления поля поиска в окне выбора; null — скругление самого поля. */
+    public readonly searchRadius: InputSignal<TRtRadius | null> = input<TRtRadius | null>(this.#searchRadiusDefault);
+    /** Символы подписи пункта окна выбора, совпавшие со словами поиска, выделены. */
+    public readonly highlightSearch: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(this.#highlightSearchDefault, {
+        transform: booleanAttribute,
+    });
     /** Подпись пустого результата поиска; пустая строка оставляет подпись кита. */
     public readonly emptyResultsText: InputSignal<string> = input<string>(this.#emptyResultsTextDefault);
+    /** Подпись кнопки применения в окне выбора; пустая строка оставляет подпись кита. */
+    public readonly applyLabel: InputSignal<string> = input<string>(this.#applyLabelDefault);
+    /** Регистр подписи кнопки применения; `none` оставляет её как есть. */
+    public readonly applyLabelCase: InputSignal<IRtDynamicSelector.LabelCase> = input<IRtDynamicSelector.LabelCase>(
+        this.#applyLabelCaseDefault
+    );
+    /** Поле поиска получает фокус при открытии окна выбора. */
+    public readonly autofocusSearch: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(this.#autofocusSearchDefault, {
+        transform: booleanAttribute,
+    });
     public readonly multiToggleShown: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
         transform: booleanAttribute,
     });
@@ -374,13 +418,15 @@ export class RtDynamicSelectorComponent<TEntity extends object> extends RtFormCo
 
     /**
      * Непустой список с другими ключами становится и значением, и исходным для сброса. Список с теми
-     * же ключами — эхо `selectionChange` от родителя: исходный он не трогает, иначе сброс не включился бы.
+     * же ключами в любом порядке — эхо `selectionChange` от родителя: родитель вправе вернуть его в
+     * своём порядке, например каталога. Эхо не трогает ни исходный, ни порядок строк, иначе сброс не
+     * включился бы.
      */
     #takeChosen(list: ReadonlyArray<TEntity>): void {
         const keys: unknown[] = list.map((item: TEntity): unknown => this.#keyOf(item));
         const shown: unknown[] = this.#entitiesOf(this.value()).map((item: TEntity): unknown => this.#keyOf(item));
 
-        if (keys.length === 0 || sameDynamicKeys(keys, shown)) {
+        if (keys.length === 0 || sameDynamicKeySet(keys, shown)) {
             return;
         }
 
@@ -404,6 +450,8 @@ export class RtDynamicSelectorComponent<TEntity extends object> extends RtFormCo
 
     /** Подпись записи — по имени поля, которое назвал вызывающий. */
     #labelOf(item: TEntity): unknown {
-        return item[this.displayExp()];
+        const displayWith: ((entity: TEntity) => string) | null = this.displayWith();
+
+        return displayWith === null ? item[this.displayExp()] : displayWith(item);
     }
 }

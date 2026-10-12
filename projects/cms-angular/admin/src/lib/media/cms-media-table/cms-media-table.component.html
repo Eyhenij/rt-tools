@@ -1,0 +1,82 @@
+<rt-table
+    #table="rtTable"
+    rtBlock="rt-cms-media-table"
+    qa-dataid="media-table"
+    [ariaLabel]="t().mediaFilesTitle"
+    [dataSource]="files()"
+    [columnsConfig]="columns()"
+    [loading]="loading()"
+    [cards]="true">
+    <!-- "No files" and "nothing matched" are different things: an empty table under a search does
+         not say the media library is empty. -->
+    <ng-template #rtTableEmpty>
+        @if (filtered()) {
+            <rt-empty-state qa-dataid="media-nothing-found" icon="image" [title]="t().uiNothingFound">
+                <button
+                    rtButton
+                    type="button"
+                    appearance="text"
+                    qa-dataid="media-reset-search"
+                    [label]="t().uiResetSearch"
+                    [attr.aria-label]="t().uiResetSearch"
+                    (click)="searchReset.emit()"></button>
+            </rt-empty-state>
+        } @else {
+            <rt-empty-state qa-dataid="media-empty" icon="image" [title]="t().mediaEmpty" />
+        }
+    </ng-template>
+
+    <ng-container cdkColumnDef="preview">
+        <th *cdkHeaderCellDef cdk-header-cell>{{ t().mediaColumnPreview }}</th>
+        <td *cdkCellDef="let row" cdk-cell>
+            <img rtElem="preview" loading="lazy" alt="" qa-dataid="media-cell-preview" [src]="row.previewUrl" />
+        </td>
+    </ng-container>
+
+    <ng-container cdkColumnDef="name">
+        <th *cdkHeaderCellDef cdk-header-cell>{{ t().mediaColumnFile }}</th>
+        <td *cdkCellDef="let row" cdk-cell qa-dataid="media-cell-name">{{ row.name }}</td>
+    </ng-container>
+
+    <ng-container cdkColumnDef="dimensions">
+        <th *cdkHeaderCellDef cdk-header-cell>{{ t().mediaColumnSize }}</th>
+        <td *cdkCellDef="let row" cdk-cell qa-dataid="media-cell-dimensions">
+            {{ t().mediaFileDimensions | cmsLabel: { width: row.width, height: row.height, size: row.sizeKb } }}
+        </td>
+    </ng-container>
+
+    <ng-container cdkColumnDef="createdAt">
+        <th *cdkHeaderCellDef cdk-header-cell>{{ t().mediaColumnUploaded }}</th>
+        <td *cdkCellDef="let row" cdk-cell qa-dataid="media-cell-created">
+            {{ row.createdAt ? (row.createdAt | date: 'dd.MM.yyyy') : '—' }}
+        </td>
+    </ng-container>
+
+    <!-- The editor puts the link into a page, so it is copied by one press. -->
+    <ng-container cdkColumnDef="url">
+        <th *cdkHeaderCellDef cdk-header-cell>{{ t().mediaColumnLink }}</th>
+        <td *cdkCellDef="let row" cdk-cell qa-dataid="media-cell-url">
+            <rt-copy-cell qa-dataid="media-copy-url" [value]="row.url" />
+        </td>
+    </ng-container>
+
+    <ng-container cdkColumnDef="actions">
+        <th *cdkHeaderCellDef cdk-header-cell></th>
+        <td *cdkCellDef="let row" cdk-cell>
+            <rt-icon-button
+                icon="trash"
+                variant="ghost"
+                qa-dataid="media-delete"
+                rtConfirmTone="danger"
+                [tooltip]="t().mediaDeleteFile"
+                [ariaLabel]="t().mediaDeleteFile"
+                [rtConfirm]="t().mediaDeleteFileWarning"
+                [rtConfirmTitle]="t().mediaDeleteFileQuestion"
+                [rtConfirmLabel]="t().uiDelete"
+                (confirmed)="removeRequested.emit(row)" />
+        </td>
+    </ng-container>
+
+    <tr *cdkHeaderRowDef="table.displayedColumns()" cdk-header-row></tr>
+    <tr *cdkRowDef="let row; columns: table.displayedColumns()" cdk-row rtTableRow qa-dataid="media-row"></tr>
+</rt-table>

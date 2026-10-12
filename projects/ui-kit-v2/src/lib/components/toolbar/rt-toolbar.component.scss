@@ -10,6 +10,7 @@
         --rt-toolbar-gap: var(--rt-space-2);
         --rt-toolbar-center-justify: flex-end;
         --rt-toolbar-center-overflow: visible;
+        --rt-toolbar-field-width: var(--rt-size-100);
 
         display: block;
 
@@ -36,6 +37,16 @@
             &--left {
                 flex: 0 0 auto;
                 gap: var(--rt-space-2);
+
+                // Поле слева — поиск списка — берёт ширину из свойства блока, а не по подсказке:
+                // своей ширины у поля нет, и в полосе по содержимому оно сжималось до подсказки.
+                // Шире самой полосы поле не становится — на узком экране оно её не распирает.
+                // Выпадающие отборы сюда не входят: они стоят здесь рядами и держат ширину по
+                // содержимому, а по 400 px каждый растягивали строку и вылезали за узкий экран.
+                rt-input {
+                    width: var(--rt-toolbar-field-width);
+                    max-width: 100%;
+                }
             }
 
             &--center {

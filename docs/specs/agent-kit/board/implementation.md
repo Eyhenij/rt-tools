@@ -13,6 +13,8 @@ statement: a removed statement is removed together with its line.
 - **The cargo of the trees is not judged by this line.** — `projects/agent-kit/assets/checks/board-epics.github.mjs:CARGO_LABELS`
 - **The base of an open request about a task of an epic is judged by the audit.** — `projects/agent-kit/assets/checks/board-epics.github.mjs:checkEpicPullBase` — scenario SC-AK-997
 - **The branch of an epic is recognised by its number in the name of the base.** — `projects/agent-kit/assets/checks/board-epics.github.mjs:checkEpicPullBase`
+- **A base named by a task of the same epic is a chain base and is not a divergence.** — `projects/agent-kit/assets/checks/board-epics.github.mjs:baseTask` — scenario SC-AK-1203
+- **A task named in more than one row of the epic makeup is a divergence.** — `projects/agent-kit/assets/checks/board-epics.github.mjs:listed` — scenario SC-AK-1206
 - **An epic with no branch in the requests is a divergence.** — `projects/agent-kit/assets/checks/board-epics.github.mjs:checkEpicState` — scenario SC-AK-998
 - **An epic whose tasks are over and whose request is not open is a divergence.** — `projects/agent-kit/assets/checks/board-epics.github.mjs:checkEpicState`
 - **A list the hosting gives in pages is read whole, not by its first page.** — `projects/agent-kit/assets/checks/board-epics.github.mjs:checkEpicSubIssues` — the call of the list carries the paging sign. The helper of the hosting in the suite answers differently with it and without it. Otherwise the scenario is green on a code that reads one page of two. Scenario SC-AK-1093

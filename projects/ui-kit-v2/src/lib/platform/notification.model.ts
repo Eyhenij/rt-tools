@@ -11,6 +11,12 @@ export namespace INotification {
     /** Семантическая палитра уведомления; совпадает по значениям с `rt-message`. */
     export type Severity = 'info' | 'success' | 'warning' | 'danger';
 
+    /**
+     * Почему тост ушёл не по действию: крестик, истёкший таймер или вытеснение новым в режиме
+     * `replace`. Ушедший по действию причины не сообщает — его обработчик уже вызван.
+     */
+    export type DismissReason = 'close' | 'timeout' | 'replaced';
+
     export interface Action {
         readonly label: string;
         readonly handler: () => void;
@@ -39,11 +45,16 @@ export namespace INotification {
         readonly progress?: boolean;
         /** Свой значок вместо значка severity; `null` — тост без значка. */
         readonly icon?: IRtIcon.Name | null;
+        /**
+         * Сообщает один раз, почему тост ушёл без действия. Приложению это нужно, когда тост
+         * держит ожидание — вход, подтверждение, — и закрытый крестиком должен его отменить.
+         */
+        readonly onDismiss?: (reason: DismissReason) => void;
     }
 
     export type Options = Pick<
         Payload,
-        'description' | 'meta' | 'action' | 'secondaryAction' | 'filled' | 'duration' | 'progress' | 'icon'
+        'description' | 'meta' | 'action' | 'secondaryAction' | 'filled' | 'duration' | 'progress' | 'icon' | 'onDismiss'
     >;
 
     /**

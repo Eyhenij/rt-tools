@@ -1,0 +1,30 @@
+<!-- The form wraps the whole box: Enter in the field saves the same way the footer button does. -->
+<form (ngSubmit)="save()">
+    <rt-dialog size="sm" qa-dataid="name-window">
+        <rt-dialog-header [title]="data.title" />
+
+        <rt-dialog-content>
+            <rt-field qa-skip [label]="data.label">
+                <rt-input qa-dataid="name-input" name="name" [ngModel]="name()" (ngModelChange)="name.set($event)" />
+            </rt-field>
+        </rt-dialog-content>
+
+        <rt-dialog-footer>
+            <button
+                rtButton
+                type="button"
+                appearance="text"
+                qa-dataid="name-cancel"
+                [label]="t().uiCancel"
+                [attr.aria-label]="t().uiCancel"
+                (click)="cancel()"></button>
+            <button
+                rtButton
+                type="submit"
+                qa-dataid="name-save"
+                [label]="t().uiSave"
+                [attr.aria-label]="t().uiSave"
+                [disabled]="!canSave()"></button>
+        </rt-dialog-footer>
+    </rt-dialog>
+</form>

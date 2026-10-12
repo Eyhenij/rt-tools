@@ -1,0 +1,116 @@
+@let type = draft();
+<ng-container rtBlock="rt-cms-content-type-settings-page">
+    <rt-cms-page qaPrefix="content-type-settings" qa-dataid="content-type-settings-page" [title]="title()">
+        <button
+            rtCmsPageActions
+            rtButton
+            type="button"
+            appearance="text"
+            qa-dataid="content-type-settings-back"
+            [label]="t().typeSettingsBack"
+            [attr.aria-label]="t().typeSettingsBack"
+            (click)="back()"></button>
+        <button
+            rtCmsPageActions
+            rtButton
+            type="button"
+            qa-dataid="content-type-settings-save"
+            [label]="t().uiSave"
+            [attr.aria-label]="t().uiSave"
+            [disabled]="!canSave()"
+            [loading]="saving()"
+            (click)="save()"></button>
+
+        @if (loading() || type === null) {
+            <rt-spinner qa-dataid="content-type-settings-loading" />
+        } @else {
+            <div rtElem="form">
+                <section rtElem="section">
+                    <rt-field qa-skip [label]="t().typeName">
+                        <rt-input qa-dataid="content-type-settings-name" [ngModel]="type.name" (ngModelChange)="editName($event)" />
+                    </rt-field>
+                    <rt-field qa-skip [label]="t().typesColumnDescription">
+                        <rt-textarea
+                            qa-dataid="content-type-settings-description"
+                            [rows]="3"
+                            [ngModel]="type.description"
+                            (ngModelChange)="editDescription($event)" />
+                    </rt-field>
+                </section>
+
+                <section rtElem="section" qa-dataid="content-type-settings-sections">
+                    <h2 rtElem="section-title">{{ t().typeSections }}</h2>
+                    <p rtElem="hint">{{ t().typeSectionsHint }}</p>
+                    @for (section of sections(); track section.value) {
+                        <rt-checkbox
+                            qa-dataid="content-type-settings-section"
+                            [attr.data-section]="section.value"
+                            [ariaLabel]="section.label"
+                            [ngModel]="type.settings[section.value]"
+                            (ngModelChange)="toggleSection(section.value, $event)">
+                            {{ section.label }}
+                        </rt-checkbox>
+                    }
+                </section>
+
+                @if (type.settings.webPage) {
+                    <section rtElem="section" qa-dataid="content-type-settings-fields">
+                        <h2 rtElem="section-title">{{ t().typeFields }}</h2>
+                        <p rtElem="hint">{{ t().typeFieldsHint }}</p>
+                        <ul rtElem="list">
+                            @for (field of fields(); track field.value) {
+                                @let setting = type.settings.fields[field.value];
+                                <li rtElem="list-item" qa-dataid="content-type-settings-field" [attr.data-field]="field.value">
+                                    <span rtElem="list-item-title">{{ field.label }}</span>
+                                    <div rtElem="list-item-actions">
+                                        <rt-checkbox
+                                            qa-dataid="content-type-settings-field-required"
+                                            [ariaLabel]="t().typeFieldRequired"
+                                            [ngModel]="setting.required"
+                                            (ngModelChange)="editField(field.value, { required: $event })">
+                                            {{ t().typeFieldRequired }}
+                                        </rt-checkbox>
+                                        <rt-checkbox
+                                            qa-dataid="content-type-settings-field-visible"
+                                            [ariaLabel]="t().typeFieldVisible"
+                                            [disabled]="setting.required"
+                                            [ngModel]="setting.visible"
+                                            (ngModelChange)="editField(field.value, { visible: $event })">
+                                            {{ t().typeFieldVisible }}
+                                        </rt-checkbox>
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                    </section>
+                }
+
+                @if (type.settings.connections) {
+                    <section rtElem="section">
+                        <h2 rtElem="section-title">{{ t().sectionConnections }}</h2>
+                        <rt-field qa-skip [label]="t().typeConnectionsHint">
+                            <rt-multiselect
+                                qa-dataid="content-type-settings-connection-types"
+                                [options]="typeOptions()"
+                                [ngModel]="type.settings.connectionTypeIds"
+                                (ngModelChange)="editConnectionTypes($event)" />
+                        </rt-field>
+                    </section>
+                }
+
+                @if (type.settings.tags) {
+                    <section rtElem="section">
+                        <h2 rtElem="section-title">{{ t().typeAllowedTags }}</h2>
+                        <p rtElem="hint">{{ t().typeAllowedTagsHint }}</p>
+                        <rt-cms-tag-tree
+                            qa-dataid="content-type-settings-tags"
+                            selectable
+                            [tags]="tags()"
+                            [selectedIds]="type.settings.tagIds"
+                            (picked)="pickTag($event)" />
+                    </section>
+                }
+            </div>
+        }
+    </rt-cms-page>
+</ng-container>

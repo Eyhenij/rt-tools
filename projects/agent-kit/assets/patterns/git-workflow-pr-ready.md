@@ -34,6 +34,15 @@ gh pr ready <номер>
 Lifting the draft is the last step of handing the work over, not a separate matter. Until it is
 done, the work is not handed over, however many commits lie in the branch.
 
+**A merge the executor was told to make goes after the run on the tip is read by a command.** The
+merge command is refused by the delivery guard on a red or unfinished run; a click on the host's
+button no guard sees, so before it the run is read the same way. An epic went into main over a red
+image build, and the rollout fell after it.
+
+```bash
+gh run list --commit "$(gh pr view <номер> --json headRefOid --jq .headRefOid)"
+```
+
 ## Finish the handed-over first, then take new work
 
 An open PR is work in flight: its run ages, its branch lags behind main, its body describes the

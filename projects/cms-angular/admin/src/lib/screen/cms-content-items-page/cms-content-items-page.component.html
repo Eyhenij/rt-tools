@@ -1,0 +1,49 @@
+@let filter = store.filter();
+<rt-cms-list-page
+    qaPrefix="content-items"
+    qa-dataid="content-items-page"
+    [title]="title()"
+    [hint]="t().itemsSubtitle"
+    [searchPlaceholder]="t().itemsSearch">
+    <rt-select
+        rtCmsListToolbarLeft
+        qa-dataid="content-items-status"
+        [ariaLabel]="t().itemsColumnStatus"
+        [options]="statusOptions()"
+        [ngModel]="filter.status"
+        (ngModelChange)="filterStatus($event)" />
+    <rt-select
+        rtCmsListToolbarLeft
+        qa-dataid="content-items-locale"
+        [ariaLabel]="t().itemsColumnLocale"
+        [options]="localeOptions()"
+        [ngModel]="filter.locale"
+        (ngModelChange)="filterLocale($event)" />
+
+    <rt-icon-button
+        rtCmsListToolbarRight
+        icon="cog"
+        variant="secondary"
+        qa-dataid="content-items-settings"
+        [tooltip]="t().itemsTypeSettings"
+        [ariaLabel]="t().itemsTypeSettings"
+        (clicked)="openSettings()" />
+    <rt-icon-button
+        rtCmsListToolbarRight
+        icon="ico-plus"
+        variant="primary"
+        qa-dataid="content-items-create"
+        [tooltip]="t().itemNew"
+        [ariaLabel]="t().itemNew"
+        (clicked)="openCreate()" />
+
+    <rt-cms-content-items-table
+        qa-dataid="content-items-list"
+        [items]="rows()"
+        [loading]="loading()"
+        [filtered]="narrowed()"
+        (openRequested)="open($event)"
+        (featuredToggled)="toggleFeatured($event)"
+        (removeRequested)="remove($event)"
+        (searchReset)="resetFilter()" />
+</rt-cms-list-page>

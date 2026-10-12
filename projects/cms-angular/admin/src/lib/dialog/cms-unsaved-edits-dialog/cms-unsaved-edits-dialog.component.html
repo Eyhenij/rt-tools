@@ -1,0 +1,34 @@
+<rt-dialog size="sm" qa-dataid="unsaved-window">
+    <rt-dialog-header [title]="t().unsavedTitle" />
+
+    <rt-dialog-content>
+        <p rtBlock="rt-cms-unsaved-edits-dialog" rtElem="hint">{{ t().unsavedMessage }}</p>
+    </rt-dialog-content>
+
+    <rt-dialog-footer>
+        <button
+            rtButton
+            type="button"
+            theme="danger"
+            appearance="outlined"
+            qa-dataid="unsaved-discard"
+            [label]="t().unsavedLeave"
+            [attr.aria-label]="t().unsavedLeave"
+            (click)="answer(Choice.Discard)"></button>
+        <button
+            rtButton
+            type="button"
+            appearance="text"
+            qa-dataid="unsaved-stay"
+            [label]="t().unsavedStay"
+            [attr.aria-label]="t().unsavedStay"
+            (click)="answer(Choice.Stay)"></button>
+        <button
+            rtButton
+            type="button"
+            qa-dataid="unsaved-save"
+            [label]="t().unsavedSaveAndLeave"
+            [attr.aria-label]="t().unsavedSaveAndLeave"
+            (click)="answer(Choice.Save)"></button>
+    </rt-dialog-footer>
+</rt-dialog>

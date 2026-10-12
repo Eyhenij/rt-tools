@@ -359,6 +359,9 @@ rt_pull_token_login() { :; }
 # foreign words: a section not named by the tree is not judged at all.
 RT_PULL_BODY_SECTION="${RT_PULL_BODY_SECTION:-}"
 
+# The PR body line closing the branch's task (`{number}`); the keyword is the hosting's, so silent.
+RT_PULL_CLOSES_LINE="${RT_PULL_CLOSES_LINE:-}"
+
 # The command that moves a task between the columns of the work queue, and the name of the first
 # column — the one the task leaves when it is taken into work. The name has no default: the tree
 # names the columns in its own words, and an invented one would match nothing and silently turn off

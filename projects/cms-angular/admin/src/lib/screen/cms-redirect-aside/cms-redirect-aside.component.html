@@ -1,0 +1,46 @@
+<!-- The panel lives in the right outlet of the shell: it tells the frame itself that it is open and
+     gives the base the press past the panel and the Esc key — both ways of closing ask about the
+     edits the same way the buttons do. -->
+<ng-container rtContainerRightSidenavPanel (cancelled)="onCancel()" (closed)="onClosed()" />
+
+<ng-container rtBlock="rt-cms-redirect-aside">
+    <rt-aside qa-dataid="redirect-aside" [ariaLabel]="t().redirectTitle">
+        <rt-aside-header qa-dataid="redirect-aside-header" [title]="title()" (dismiss)="onClose()" />
+
+        <form rtElem="form" qa-dataid="redirect-form" [formGroup]="form">
+            @if (submitError(); as reason) {
+                <rt-message severity="danger" qa-dataid="redirect-refusal">{{ reason }}</rt-message>
+            }
+            <rt-field [label]="t().redirectsColumnFrom" [hint]="t().redirectFromHint">
+                <rt-input qa-dataid="redirect-from" formControlName="from" />
+            </rt-field>
+            <rt-field [label]="t().redirectsColumnTo" [hint]="t().redirectToHint">
+                <rt-input qa-dataid="redirect-to" formControlName="to" />
+            </rt-field>
+            <rt-field [label]="t().redirectsColumnType">
+                <rt-select qa-dataid="redirect-type" formControlName="type" [options]="typeOptions()" [clearable]="false" />
+            </rt-field>
+        </form>
+
+        <rt-aside-footer>
+            <button
+                asideDismiss
+                rtButton
+                type="button"
+                appearance="text"
+                qa-dataid="redirect-cancel"
+                [label]="t().uiCancel"
+                [attr.aria-label]="t().uiCancel"
+                (click)="onClose()"></button>
+            <button
+                asidePrimary
+                rtButton
+                type="button"
+                qa-dataid="redirect-save"
+                [label]="t().uiSave"
+                [attr.aria-label]="t().uiSave"
+                [loading]="submitting()"
+                (click)="save()"></button>
+        </rt-aside-footer>
+    </rt-aside>
+</ng-container>

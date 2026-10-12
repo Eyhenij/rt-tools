@@ -15,8 +15,8 @@ export namespace IRtInput {
     export type Size = 'sm' | 'md' | 'lg';
 
     /**
-     * Вид рамки поля — два вида материального поля первого кита. `outline` — рамка со всех
-     * сторон, `fill` — залитое поле с чертой снизу.
+     * Вид рамки поля. `outline` — рамка со всех сторон, `fill` — залитое поле с чертой снизу, как у
+     * материального поля первого кита, `pill` — залитое поле-таблетка без черты.
      */
-    export type Appearance = 'outline' | 'fill';
+    export type Appearance = 'outline' | 'fill' | 'pill';
 }

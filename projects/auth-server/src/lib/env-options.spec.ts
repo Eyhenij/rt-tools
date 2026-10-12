@@ -1,7 +1,7 @@
 import { TPermission } from '@rt-tools/auth-contract';
 
-import { IAuthServerOptions } from './auth-server.module';
-import { authOptionsFromEnv, clientSettingsOf } from './env-options';
+import { IAuthServerOptions } from './auth-server.module.js';
+import { authOptionsFromEnv, clientSettingsOf } from './env-options.js';
 
 const CATALOG: readonly TPermission[] = ['orders:read', 'orders:write'];
 
