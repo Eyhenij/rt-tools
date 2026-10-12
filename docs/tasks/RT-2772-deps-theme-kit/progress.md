@@ -12,11 +12,20 @@
 
 ## Steps
 
-- [>] 1.1 Take a frame of the sign-in page on the stand with 0.17.0
-- [ ] 1.2 Write `^0.23.3` into both manifests and install
-- [ ] 1.3 Run build, specs and lint of both packages
-- [ ] 1.4 Take the frame again with 0.23.3 and compare
-- [ ] 1.5 Run the push gate set
+- [x] 1.1 Take a frame of the sign-in page on the stand with 0.17.0
+- [x] 1.2 Write `^0.23.3` into both manifests and install
+- [x] 1.3 Run build, specs and lint of both packages
+- [x] 1.4 Take the frame again with 0.23.3 and compare
+- [>] 1.5 Run the push gate set
+
+## Decisions along the way
+
+- pnpm itself added `@rt-tools/ui-kit-v2@0.23.3` to the release-age exclusions: the version came
+  out the same day, and the tree's own packages stand there the same way.
+- Build, specs, types and lint of both packages green: theme specs 101 of 101, CMS front 33 of 33.
+- The JAR carries kit 0.23.3: it holds the class `rt-input--appearance--pill`, which 0.17.0 has not.
+- The sign-in page on the stand, measured before and after: 13 nodes — heading, fields, buttons,
+  labels, link — match in place, size, font size, weight, background and rounding.
 
 ## Sessions
 
