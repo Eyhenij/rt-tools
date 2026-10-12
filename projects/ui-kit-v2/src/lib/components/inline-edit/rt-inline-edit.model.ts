@@ -5,6 +5,18 @@ export namespace IRtInlineEdit {
      */
     export type Look = 'text' | 'chip' | 'chip-field';
 
+    /**
+     * Где плашка-поле режет длинный текст вне фокуса: в конце или посередине — начало с многоточием и
+     * всегда видный конец. В фокусе текст целиком прокручивается в поле.
+     */
+    export type Truncate = 'end' | 'middle';
+
+    /** Текст, разрезанный посередине: начало уступает место, конец виден всегда. */
+    export interface MiddleParts {
+        readonly head: string;
+        readonly tail: string;
+    }
+
     /** Что делает уход фокуса из компонента: держит поле открытым, сохраняет или отменяет. */
     export type BlurAction = 'keep' | 'save' | 'cancel';
 

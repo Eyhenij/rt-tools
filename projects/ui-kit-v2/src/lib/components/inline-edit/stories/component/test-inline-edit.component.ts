@@ -24,6 +24,7 @@ export class TestRtInlineEditComponent {
     public value: string = 'Отчёт по продажам за май';
     public placeholder: string = 'Название отчёта';
     public look: IRtInlineEdit.Look = 'text';
+    public truncate: IRtInlineEdit.Truncate = 'end';
     public size: IRtInput.Size = 'sm';
     public blurAction: IRtInlineEdit.BlurAction = 'keep';
     public allowEmpty: boolean = false;

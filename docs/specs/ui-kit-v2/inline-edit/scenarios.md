@@ -79,3 +79,13 @@ Given a field chip with an empty draft
 When Enter is pressed
 Then nothing goes out and the value is back in the field; with empty values allowed the empty draft
 is saved
+
+### SC-UKV-848 — the field chip cuts a long text in the middle
+
+Given a field chip with a long value, one with the middle truncate and one without
+When it is drawn out of focus, and then its draft is emptied
+Then the chip without the input draws no middle layer; with it the start of the draft and its last
+ten characters stand apart while the field keeps the whole value, and an empty draft draws no layer
+
+Coverage: partial — the split and the layer are checked by a call; the ellipsis and the hidden
+field text are drawn by the styles and shown by the ChipField story frame.

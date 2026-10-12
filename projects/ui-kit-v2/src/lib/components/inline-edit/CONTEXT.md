@@ -5,7 +5,7 @@
 ```
 
 Входы — `value`, `placeholder`, `look`, `size`, `fieldLabel`, `disabled`, `saving`, `allowEmpty`,
-`closeOnSave`, `blurAction`, `fieldIcon` и двусторонний `editing`. Выходы — `saved` и `cancelled`.
+`closeOnSave`, `blurAction`, `fieldIcon`, `truncate` и двусторонний `editing`. Выходы — `saved` и `cancelled`.
 
 Описание — `docs/specs/ui-kit-v2/inline-edit/`; здесь только устройство папки.
 

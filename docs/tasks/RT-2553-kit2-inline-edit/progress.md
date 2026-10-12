@@ -8,7 +8,9 @@
   styles; fifteen specs; seven stories, the overview page and the folder note. The look on :6007 is
   measured, and six references are taken. On 9 October the epic branch with a fresh main went in
   again, and four icon frames were retaken for the added `folder`. The whole snapshot set passed,
-  844 frames of 844, and so did the kit tests and the linter.
+  844 frames of 844, and so did the kit tests and the linter. On 12 October the field chip got the
+  `truncate` input for the middle cut: 24 specs, types and linters green, the ChipField frame
+  retaken.
 - **Next step:** the push and the PR into the epic branch after the owner's word.
 - **Uncommitted:** no
 - **Waiting for the owner:** «пры не открывай откроеш после моего апрува» — the push and the PR wait
@@ -45,6 +47,16 @@
   `--rt-mat-neutral-5`, `--mat-sys-primary-fixed-dim` and `--mat-sys-primary`, with kit fallbacks.
   The story ChipField shows the look in both presets. The middle truncation of the application is
   not carried over: the kit scrolls the text and shows it whole in a tooltip. Affected stage: 4.
+- **2026-10-12. The middle truncation comes behind the `truncate` input.** The owner said «расширь
+  чего не хватает по функционалу и возможность задать вью через вход или токены стилей». With
+  `truncate="middle"` the field chip draws, out of focus, a layer over the field: the start with an
+  ellipsis and the last ten characters (SC-UKV-848). The hidden copy still gives the width and
+  wakes the tooltip; focus hides the layer and shows the field. The default `end` keeps the present
+  look. The application's code was searched for its middle truncation and gave nothing, so the
+  ten-character tail is the kit's own choice. The showcase states addon rewrites `:not(:focus-within)`
+  into a class union that always matches, so the rule is written by focus, not by its negation.
+  Measured on :6007: the tail fits whole in both looks, the field text is transparent at rest and
+  takes its colour in focus. Affected stage: 4.
 
 ## Steps
 

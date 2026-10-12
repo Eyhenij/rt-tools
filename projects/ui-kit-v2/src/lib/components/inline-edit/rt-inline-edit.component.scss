@@ -200,6 +200,7 @@
         }
 
         &__mirror,
+        &__middle,
         &__chip-input {
             padding: 0;
             font: inherit;
@@ -210,6 +211,39 @@
 
         &__mirror {
             visibility: hidden;
+        }
+
+        /* Слой обрезки посередине лежит над полем, пока плашка не в фокусе: поле под ним держит
+           текст прозрачным. В фокусе слой прячется, и поле показывает текст целиком. */
+        &__middle {
+            display: flex;
+            overflow: hidden;
+            min-width: 0;
+            pointer-events: none;
+        }
+
+        &__head {
+            overflow: hidden;
+            min-width: 0;
+            text-overflow: ellipsis;
+        }
+
+        &__tail {
+            flex-shrink: 0;
+        }
+
+        /* Условие стоит фокусом, а не его отрицанием: витрина переписывает состояния в классы, и
+           отрицание там выполнялось бы всегда. */
+        &__middle ~ &__chip-input {
+            color: transparent;
+        }
+
+        &__chip-field:focus-within &__middle {
+            visibility: hidden;
+        }
+
+        &__chip-field:focus-within &__middle ~ &__chip-input {
+            color: inherit;
         }
 
         &__chip-input {

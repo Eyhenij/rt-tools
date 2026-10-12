@@ -56,6 +56,9 @@ badge that is a field all the time and saves on leaving it; the other opens a fi
   nothing.**
 - **In the field chip, Escape puts the value back and sends the cancel.**
 - **In the field chip, an empty draft puts the value back silently unless the input allows it.**
+- **The truncate input cuts a long field chip text in the middle out of focus: the start ends with an
+  ellipsis and the last ten characters stay seen.** The default cuts at the end; focus shows the
+  whole text in the field, and the tooltip shows it whole either way.
 
 ## What is out of scope
 
@@ -130,3 +133,5 @@ None.
 
 - 8 October 2026 — written by the task RT-2553 of the epic RT-2542.
 - 10 October 2026 — the field chip look, after a live comparison with the application.
+- 12 October 2026 — the truncate input cuts a long field chip text in the middle, as the
+  application does.

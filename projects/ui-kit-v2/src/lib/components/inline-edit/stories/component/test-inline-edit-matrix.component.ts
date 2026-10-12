@@ -23,6 +23,7 @@ interface IInlineEditCase {
     readonly slotWidth?: string;
     readonly icon?: string;
     readonly state?: string;
+    readonly truncate?: IRtInlineEdit.Truncate;
 }
 
 const NAME: string = 'Отчёт по продажам';
@@ -68,6 +69,7 @@ export class TestRtInlineEditMatrixComponent {
         { name: 'в фокусе', value: NAME, state: 'focus-within' },
         { name: 'пусто, подсказка', value: '' },
         { name: 'длинное — до 24rem', value: LONG },
+        { name: 'длинное, обрезка посередине', value: LONG, truncate: 'middle' },
         { name: 'свой значок', value: NAME, icon: 'tag' },
         { name: 'недоступно', value: NAME, disabled: true },
     ];

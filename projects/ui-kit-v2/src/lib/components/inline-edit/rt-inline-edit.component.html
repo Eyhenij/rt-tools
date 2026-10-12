@@ -6,6 +6,14 @@
             <rt-icon rtElem="chip-icon" size="sm" [name]="fieldIcon()" />
             <span rtElem="sizer" rtTooltipWhenTruncated [rtTooltip]="chipText()">
                 <span rtElem="mirror" aria-hidden="true">{{ chipText() }}</span>
+                <!-- Обрезка посередине: копия выше по-прежнему задаёт ширину и будит подсказку, а этот
+                     слой в той же клетке показывает начало с многоточием и конец, пока поле не в фокусе. -->
+                @if (middleParts(); as parts) {
+                    <span rtElem="middle" aria-hidden="true">
+                        <span rtElem="head">{{ parts.head }}</span>
+                        <span rtElem="tail">{{ parts.tail }}</span>
+                    </span>
+                }
                 <input
                     type="text"
                     rtElem="chip-input"

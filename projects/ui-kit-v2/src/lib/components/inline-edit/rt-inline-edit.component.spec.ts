@@ -381,4 +381,24 @@ describe('Правка на месте — плашка-поле', (): void => {
         expect(chip(fixture).disabled).toBe(true);
         expect((fixture.nativeElement as HTMLElement).querySelector('.rt-inline-edit__chip-field--disabled')).not.toBeNull();
     });
+
+    it('SC-UKV-848 — обрезка посередине рисует начало и конец черновика, по умолчанию её нет', async (): Promise<void> => {
+        const long: string = 'Отчёт по продажам всех филиалов за второй квартал';
+        const byEnd: ComponentFixture<RtInlineEditComponent> = await chipField({ value: long });
+        const byMiddle: ComponentFixture<RtInlineEditComponent> = await chipField({ value: long, truncate: 'middle' });
+        const middleOf: (fixture: ComponentFixture<RtInlineEditComponent>) => HTMLElement | null = (
+            fixture: ComponentFixture<RtInlineEditComponent>
+        ): HTMLElement | null => (fixture.nativeElement as HTMLElement).querySelector('.rt-inline-edit__middle');
+
+        // Сперва видно, что плашка-поле на месте, и только потом — что слоя обрезки в ней нет
+        expect(chip(byEnd).value).toBe(long);
+        expect(middleOf(byEnd)).toBeNull();
+
+        expect(middleOf(byMiddle)?.querySelector('.rt-inline-edit__head')?.textContent).toBe('Отчёт по продажам всех филиалов за втор');
+        expect(middleOf(byMiddle)?.querySelector('.rt-inline-edit__tail')?.textContent).toBe('ой квартал');
+        expect(chip(byMiddle).value).toBe(long);
+
+        await typeChip(byMiddle, '');
+        expect(middleOf(byMiddle)).toBeNull();
+    });
 });

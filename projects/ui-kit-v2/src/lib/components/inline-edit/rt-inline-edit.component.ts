@@ -31,7 +31,7 @@ import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
 import { RtInputComponent } from '@rt-tools/ui-kit-v2/input';
 import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
-import { inlineEditLeaves, inlineEditOutcome } from './rt-inline-edit.logic';
+import { inlineEditLeaves, inlineEditMiddle, inlineEditOutcome } from './rt-inline-edit.logic';
 import { IRtInlineEdit } from './rt-inline-edit.model';
 
 const BEM_BLOCK: string = 'rt-inline-edit';
@@ -112,6 +112,10 @@ export class RtInlineEditComponent {
     protected readonly isChipField: Signal<boolean> = computed((): boolean => this.look() === 'chip-field');
     /** Текст, по которому плашка-поле берёт ширину: черновик, а пустой — подсказка. */
     protected readonly chipText: Signal<string> = computed((): string => this.#draft() || this.placeholder());
+    /** Видимый вне фокуса текст плашки-поля, разрезанный посередине; пустой черновик не режется. */
+    protected readonly middleParts: Signal<IRtInlineEdit.MiddleParts | null> = computed((): IRtInlineEdit.MiddleParts | null =>
+        this.truncate() === 'middle' && this.#draft() !== '' ? inlineEditMiddle(this.#draft()) : null
+    );
 
     /** Значение приложения: видно в покое и встаёт в поле при открытии. */
     public readonly value: InputSignal<string> = input.required<string>();
@@ -119,6 +123,8 @@ export class RtInlineEditComponent {
     public readonly placeholder: InputSignal<string> = input<string>('');
     /** Вид в покое: строка текста или плашка. */
     public readonly look: InputSignal<IRtInlineEdit.Look> = input<IRtInlineEdit.Look>('text');
+    /** Где плашка-поле режет длинный текст вне фокуса. Читается только видом `chip-field`. */
+    public readonly truncate: InputSignal<IRtInlineEdit.Truncate> = input<IRtInlineEdit.Truncate>('end');
     /** Ступень поля и кнопок. */
     public readonly size: InputSignal<IRtInput.Size> = input<IRtInput.Size>('sm');
     /** Имя поля для чтения экрана; пусто — подсказка поля. */
