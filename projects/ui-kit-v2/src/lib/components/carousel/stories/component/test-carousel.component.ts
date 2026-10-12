@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, Component, computed, input, InputSignal, Signal } from '@angular/core';
+import {
+    booleanAttribute,
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    input,
+    InputSignal,
+    InputSignalWithTransform,
+    Signal,
+} from '@angular/core';
 
 import { IRtCarousel } from '../../rt-carousel.model';
 import { RtCarouselComponent } from '../../rt-carousel.component';
@@ -32,5 +41,7 @@ export class TestRtCarouselComponent {
     );
 
     public readonly count: InputSignal<number> = input<number>(4);
-    public readonly colored: InputSignal<boolean> = input<boolean>(true);
+    public readonly colored: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
+        transform: booleanAttribute,
+    });
 }

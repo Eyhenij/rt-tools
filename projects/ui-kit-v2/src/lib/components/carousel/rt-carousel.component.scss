@@ -7,6 +7,9 @@
        материальный набор — в этом же файле. */
 
     .rt-carousel {
+        /* Число карт ставит сам компонент стилем хоста, и он перекрывает это значение; здесь оно
+           объявлено, чтобы у ширины закрытой стопки было значение и до первой отрисовки. */
+        --rt-carousel-count: 0;
         --rt-carousel-card-width: var(--rt-size-16);
         --rt-carousel-card-padding-inline: var(--rt-space-2);
         --rt-carousel-card-radius: var(--rt-radius-ms);
