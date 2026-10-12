@@ -2,18 +2,24 @@
 
 ## Where we stand
 
-- **State:** `этап-идёт`
+- **State:** `этапы-кончились`
 - **Stage:** 1 of 1 — The scenario waits for the chart
-- **Done:** task, branch, folder
-- **Next step:** add the wait
+- **Done:** the wait added; three full runs of the admin suite
+- **Next step:** commit, take the folder apart, open the PR
 - **Uncommitted:** no
 - **Waiting for the owner:** no
 - **PR:** not open yet
 
 ## Steps
 
-- [>] 1.1 Add the wait for the 31 digest bars before the row click
-- [ ] 1.2 Run the admin suite whole three times
+- [x] 1.1 Add the wait for the 31 digest bars before the row click
+- [x] 1.2 Run the admin suite whole three times
+
+## Decisions along the way
+
+- SC-MB-350 passed in all three full runs. Runs two and three passed whole, 146 of 146; run one
+  failed once on SC-MB-147, the theme switch — another scenario, outside this task's exit
+  conditions, filed as a task of its own.
 
 ## Sessions
 
