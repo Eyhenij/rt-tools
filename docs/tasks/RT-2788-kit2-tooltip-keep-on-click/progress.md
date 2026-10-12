@@ -2,14 +2,16 @@
 
 ## Where we stand
 
-- **State:** `этап-идёт`
+- **State:** `этапы-кончились`
 - **Stage:** 2 of 2 — Texts, showcase and checks
 - **Done:** spec SC-UKV-850…855, the input `rtTooltipHideOnClick`, the text shown in place, the
   passthrough `tooltipHideOnClick` of the icon button, six tests, texts, the story `KeepOnClick`
-  with its reference; typecheck, lint and check:specs green
-- **Next step:** the commit after the full frame run confirms the new reference
-- **Uncommitted:** the whole work of both stages
-- **Waiting for the owner:** no for the work; push and PR wait — «пры не открывай откроеш после моего апрува»
+  with its reference; typecheck, lint and check:specs green; full frame run 839 of 839 after the
+  icon frames were re-taken (commit 6b3028428)
+- **Next step:** the owner looks at the story; on «открывай» — take the folder apart, push, PR into
+  the epic branch
+- **Uncommitted:** nothing
+- **Waiting for the owner:** a look at the story `KeepOnClick` on :6007; push and PR wait — «пры не открывай откроеш после моего апрува»
 - **PR:** not open yet
 
 ## Steps
@@ -21,7 +23,7 @@
 - [x] 2.1 Update CONTEXT.md and Overview.mdx of the tooltip and the icon button
 - [x] 2.2 Add a story of a toggle that keeps its tooltip
 - [x] 2.3 Run typecheck, lint and the spec audit
-- [>] 2.4 Commit the work
+- [x] 2.4 Commit the work
 
 ## Decisions along the way
 
@@ -31,3 +33,6 @@
 - **The live click through the browser driver was not taken.** — In this tab the driver's click
   reached no page listener at all (no `pointerdown`, no `click`), while its hover did; the click is
   covered by the tests and by the story's `play`. Affected stage of the plan: 2.
+- **The four icon frames are re-taken in this branch by a commit of their own.** — Main re-took
+  them with `folder` (18a4c60c2), and the merge of main into the epic left the epic's frames
+  without it; the full run diverged there, not on the tooltip. Affected stage of the plan: 2.
