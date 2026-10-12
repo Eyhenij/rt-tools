@@ -23,11 +23,13 @@ The scenarios live in the subdomains, each at its own rules:
 | [The run status of the assistant](ai-run-status/scenarios.md)            | `SC-UKV-735`…`SC-UKV-741`                                                 |
 | [The expansion panel](expansion-panel/scenarios.md)                      | `SC-UKV-519`…`SC-UKV-525`                                                 |
 | [The value with a copy button](copy-value/scenarios.md)                  | `SC-UKV-742`…`SC-UKV-746`                                                 |
+| [The breadcrumbs](breadcrumbs/scenarios.md)                              | `SC-UKV-775`…`SC-UKV-780`                                                 |
 | [The image cropper](image-cropper/scenarios.md)                          | `SC-UKV-491`…`SC-UKV-506`                                                 |
 | [The assistant chat](ai-chat/scenarios.md)                               | `SC-UKV-750`…`SC-UKV-761`                                                 |
 | [The prompt suggestion](prompt-suggestion/scenarios.md)                  | `SC-UKV-747`…`SC-UKV-749`                                                 |
 | [The image uploader](image-upload/scenarios.md)                          | `SC-UKV-507`…`SC-UKV-518`                                                 |
 | [The tooltip of a cut text](tooltip-when-truncated/scenarios.md)         | `SC-UKV-458`…`SC-UKV-461`                                                 |
+| [The tooltip that stays on a click](tooltip-keep-on-click/scenarios.md)  | `SC-UKV-850`…`SC-UKV-855`                                                 |
 | [The request error of a side panel](aside-error-box/scenarios.md)        | `SC-UKV-462`…`SC-UKV-466`                                                 |
 | [The dynamic selectors](dynamic-selectors/scenarios.md)                  | `SC-UKV-436`…`SC-UKV-457`, `SC-UKV-534`…`SC-UKV-536`                      |
 | [The side menu](side-menu/scenarios.md)                                  | `SC-UKV-430`…`SC-UKV-435`, `SC-UKV-526`…`SC-UKV-533`                      |

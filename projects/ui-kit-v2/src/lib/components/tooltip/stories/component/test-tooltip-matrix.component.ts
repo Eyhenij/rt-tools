@@ -9,9 +9,16 @@ import { StoryThemesComponent } from '../../../../../showcase/story-themes.compo
 import { RtTooltipComponent } from '../../rt-tooltip.component';
 import { RtTooltipDirective } from '../../rt-tooltip.directive';
 import { IRtTooltip } from '../../rt-tooltip.model';
+import { TestRtTooltipPinToggleComponent } from './test-tooltip-pin-toggle.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TTooltipMatrixPart = 'placement' | 'text' | 'hosts' | 'truncated' | 'presets' | 'themes';
+export type TTooltipMatrixPart = 'placement' | 'text' | 'hosts' | 'truncated' | 'keep-on-click' | 'presets' | 'themes';
+
+/** Случай клика по переключателю: прячет ли клик подсказку. */
+interface ITooltipKeepOnClickCase {
+    readonly name: string;
+    readonly hideOnClick: boolean;
+}
 
 /** Сторона вместе с подписью: значение оси — строка, а подпись должна называть её по-русски. */
 interface ITooltipPlacementCase {
@@ -163,6 +170,23 @@ interface ITooltipTruncatedCase {
                 </app-story-presets>
             }
 
+            @case ('keep-on-click') {
+                <app-story-presets caption="Клик по переключателю в обоих наборах">
+                    <ng-template>
+                        <div class="app-tooltip-matrix__room">
+                            <app-story-row [items]="keepOnClickCases" [itemLabel]="caseLabel">
+                                <ng-template let-keepCase>
+                                    <app-tooltip-pin-toggle
+                                        class="app-tooltip-matrix__toggle"
+                                        [hideOnClick]="keepCase.hideOnClick"
+                                        [attr.data-story-trigger]="triggerAttribute" />
+                                </ng-template>
+                            </app-story-row>
+                        </div>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('presets') {
                 <app-story-presets caption="Панель подсказки в обоих наборах">
                     <ng-template>
@@ -203,6 +227,12 @@ interface ITooltipTruncatedCase {
             text-overflow: ellipsis;
             white-space: nowrap;
         }
+
+        /* Под материальным набором панель открывается вниз и ложилась на подпись случая. */
+        .app-tooltip-matrix__toggle {
+            display: block;
+            margin-block-end: 2.25rem;
+        }
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
@@ -213,6 +243,7 @@ interface ITooltipTruncatedCase {
         RtTooltipDirective,
 
         // showcase
+        TestRtTooltipPinToggleComponent,
         StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
@@ -248,6 +279,12 @@ export class TestRtTooltipMatrixComponent implements AfterViewInit {
         { name: 'обрезан, режим', text: 'Договор поставки № 2026-114', whenTruncated: true },
         { name: 'целиком, режим', text: 'Договор № 7', whenTruncated: true },
         { name: 'целиком, без режима', text: 'Договор № 8', whenTruncated: false },
+    ];
+
+    /** После наведения и клика подсказка остаётся только у первого случая — уже с новым текстом. */
+    public readonly keepOnClickCases: readonly ITooltipKeepOnClickCase[] = [
+        { name: 'tooltipHideOnClick = false', hideOnClick: false },
+        { name: 'по умолчанию', hideOnClick: true },
     ];
 
     public ngAfterViewInit(): void {

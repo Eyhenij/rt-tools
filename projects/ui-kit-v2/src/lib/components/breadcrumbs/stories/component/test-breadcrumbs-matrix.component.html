@@ -1,0 +1,83 @@
+@switch (part) {
+    @case ('chain') {
+        <app-story-presets caption="Длина пути, кнопка «назад» и разделитель в обоих наборах">
+            <ng-template>
+                <app-story-row slotWidth="26rem" [items]="chainCases" [itemLabel]="caseLabel">
+                    <ng-template let-c>
+                        <rt-breadcrumbs [crumbs]="c.crumbs" [back]="c.back" [separator]="c.separator" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('look') {
+        <app-story-presets caption="Текущее звено в строке пути и заголовком страницы в обоих наборах">
+            <ng-template>
+                <div style="display: grid; gap: 24px">
+                    <rt-breadcrumbs [crumbs]="shortPath" />
+                    <rt-breadcrumbs look="heading" [crumbs]="shortPath" [back]="true">
+                        <span style="color: var(--rt-color-text-muted)">черновик</span>
+                    </rt-breadcrumbs>
+                    <rt-breadcrumbs look="heading" [crumbs]="path.slice(0, 1)" />
+                </div>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('fold') {
+        <app-story-presets caption="Длинный путь на широком и на узком экране в обоих наборах">
+            <ng-template>
+                <div style="display: grid; gap: 24px">
+                    <rt-breadcrumbs [crumbs]="foldPath" />
+                    <app-breadcrumbs-narrow-cell [crumbs]="foldPath" />
+                </div>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('width') {
+        <app-story-presets caption="Длинный путь в колонке 280px в обоих наборах">
+            <ng-template>
+                <div style="inline-size: 280px">
+                    <rt-breadcrumbs [crumbs]="path" />
+                </div>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('states') {
+        <app-story-presets caption="Взаимодействие со звеном в обоих наборах">
+            <ng-template>
+                <app-story-row slotWidth="26rem" [items]="states" [itemLabel]="stateLabel">
+                    <ng-template let-state>
+                        <rt-breadcrumbs [crumbs]="shortPath" [attr.data-story-state]="state.state" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('presets') {
+        <app-story-presets caption="Путь с кнопкой «назад» и с разделителем приложения «›» в обоих наборах">
+            <ng-template>
+                <div style="display: grid; gap: 24px">
+                    <rt-breadcrumbs [crumbs]="shortPath" [back]="true" />
+                    <rt-breadcrumbs separator="›" [crumbs]="shortPath" [back]="true" />
+                </div>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('themes') {
+        <app-story-presets caption="Путь в обеих темах в обоих наборах">
+            <ng-template>
+                <app-story-themes>
+                    <ng-template>
+                        <rt-breadcrumbs [crumbs]="shortPath" [back]="true" />
+                    </ng-template>
+                </app-story-themes>
+            </ng-template>
+        </app-story-presets>
+    }
+}
