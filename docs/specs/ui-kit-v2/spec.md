@@ -215,3 +215,5 @@ change of its own.
   was created, the scenarios `SC-UKV-77`…`SC-UKV-83` arrived with their former numbers.
 - 2026-10-12 — the container gives a page header placed straight in its header zone the margin from
   the page edges. The margin used to live in the showcase layout only. Task RT-2779.
+- 2026-10-12 — a field in the left bar of the toolbar takes its width from the block property
+  `--rt-toolbar-field-width`, 400px by default. It used to shrink to its placeholder. Task RT-2786.
