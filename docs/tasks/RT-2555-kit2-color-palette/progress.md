@@ -15,6 +15,9 @@
   retaken, the material half alone moved. On 10 October, by the live comparison, the custom swatch
   stands on the row of its button 16 points below the grid, and the picker is 256 by 320 with the
   application's shadow; six palette frames were retaken. The epic plan marks the palette done.
+  On 12 October, at the owner's word, the custom swatch went back into the grid in the material
+  look as well, and the button stands alone 16 points below it; the Presets and Value frames were
+  retaken, the other five matched, and the 14 specs passed.
 - **Next step:** the owner looks at the material half on :6007; then take the folder apart and open
   the PR into the epic branch at their word. The white circle of an empty read-only value came
   from the code comparison; the live comparison did not name it, and the material look keeps the
@@ -53,6 +56,12 @@
   `--rt-color-palette-custom-gap`, `--rt-color-palette-picker-height` and
   `--rt-color-palette-area-grow` keep the former values by default. Measured on :6007: the button
   stands 16 points below the grid, the swatch is centred on its row, the picker is 256 by 320.
+  Affected stage: 4.
+- **2026-10-12. The custom swatch stays in the grid in the material look too.** The owner said
+  «изменить свой цвет кнопку под палитру, на материальном виде она в ряду с пресетами». The
+  absolute placement of the swatch on the button row was removed; the gap of 16 and the grey 16/400
+  button stay. Measured on :6007: in both looks the custom swatch is the last in the grid, and the
+  button starts at the grid's left edge, 8 points below it in the kit look and 16 in the material.
   Affected stage: 4.
 
 ## Live comparison of the epic's components, 10 October — what the next session fixes first

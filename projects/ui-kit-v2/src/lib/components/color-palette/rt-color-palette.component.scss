@@ -31,7 +31,7 @@
 
         /* Материальный набор повторяет образцы приложения: круги 30px без рамки через 10px, выбранный —
            полое кольцо 3px своего цвета со свечением 5px, круг под указателем растёт. Кнопка своего
-           цвета стоит в 16px под сеткой, серая 16/400, а свой образец — в её строке слева. */
+           цвета стоит в 16px под сеткой, серая 16/400; свой образец остаётся последним в сетке. */
         :is(.rt-preset-material, [data-preset='material']) & {
             --rt-color-palette-custom-gap: var(--rt-space-md);
             --rt-color-palette-custom-height: var(--rt-control-height-sm);
@@ -116,23 +116,6 @@
         &--disabled &__swatch {
             cursor: not-allowed;
             opacity: var(--rt-opacity-disabled);
-        }
-
-        /* Материальный ряд своего цвета, как в приложении: свой образец уходит из сетки в строку
-           кнопки и встаёт слева от неё по середине её высоты. Порядок образцов для клавиш и чтения
-           экрана прежний — образец остаётся в группе, сдвинут только его рисунок. */
-        :is(.rt-preset-material, [data-preset='material']) &:has(.rt-color-palette__custom) {
-            position: relative;
-
-            .rt-color-palette__swatch--custom {
-                position: absolute;
-                inset-block-end: calc((var(--rt-color-palette-custom-height) - var(--rt-color-palette-swatch-size)) / 2);
-                inset-inline-start: 0;
-            }
-        }
-
-        :is(.rt-preset-material, [data-preset='material']) &:has(.rt-color-palette__swatch--custom) .rt-color-palette__custom {
-            margin-inline-start: calc(var(--rt-color-palette-swatch-size) + var(--rt-color-palette-gap));
         }
 
         :is(.rt-preset-material, [data-preset='material']) & .rt-color-palette__custom {

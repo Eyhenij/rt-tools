@@ -62,7 +62,7 @@ Given a palette without its properties, one with them set, and one under the mat
 When it is drawn
 Then the first draws the kit look, the second takes the swatch size, the gap, the ring and the
 radius from its properties, and the third draws borderless swatches with a hollow ring on the chosen
-one, the custom swatch next to its grey button 16 points below the grid, and a picker of 256 by 320
-points
+one, the custom swatch last in the grid, its grey button 16 points below the grid, and a picker of
+256 by 320 points
 
 Не покрыто: это обещание о кадре. Его держат кадры историй `Look` и `Presets`.
