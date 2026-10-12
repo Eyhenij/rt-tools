@@ -11,8 +11,9 @@
   and the whole set is green: 832 tests, 843 snapshots of 843. On 12 October the host took the
   width of the closed stack (SC-UKV-846): 23 specs, types and linters green, 843 frames of 844
   matched, and the Permissions frame was retaken.
-- **Next step:** after the owner's approval of the stack against the scrolling carousel of the
-  card, take the folder apart and open the PR into the epic branch.
+- **Next step:** take the folder apart and open the PR into the epic branch at the owner's word.
+  On 12 October the owner looked at the stack on :6007 and answered «дальше» to the question of
+  the stack against the scrolling carousel of the card.
 - **Uncommitted:** no
 - **Waiting for the owner:** «пры не открывай откроеш после моего апрува» — the push and the PR wait
   for the owner's approval.
