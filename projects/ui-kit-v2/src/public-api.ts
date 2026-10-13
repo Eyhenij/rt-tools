@@ -21,6 +21,7 @@ export * from '@rt-tools/ui-kit-v2/breadcrumbs';
 export * from '@rt-tools/ui-kit-v2/button';
 export * from '@rt-tools/ui-kit-v2/calendar';
 export * from '@rt-tools/ui-kit-v2/card';
+export * from '@rt-tools/ui-kit-v2/carousel';
 export * from '@rt-tools/ui-kit-v2/checkbox';
 export * from '@rt-tools/ui-kit-v2/collapsible-text';
 export * from '@rt-tools/ui-kit-v2/color-palette';

@@ -1,0 +1,117 @@
+@layer rt-kit.components {
+    /* rt-carousel — стопка цветных карточек. ViewEncapsulation.None.
+       Корень шаблона — ng-container, поэтому класс блока висит только на хосте. Карточки наезжают на
+       левую соседку; открытая — под указателем или в фокусе — встаёт поверх, растёт до всей подписи,
+       а следующие отходят. Размеры, наезд, подъём, сдвиг, скругление, тень, кегль, регистр и
+       длительность — свойства блока: приложение переназначает их своим правилом на блок, а
+       материальный набор — в этом же файле. */
+
+    .rt-carousel {
+        /* Число карт ставит сам компонент стилем хоста, и он перекрывает это значение; здесь оно
+           объявлено, чтобы у ширины закрытой стопки было значение и до первой отрисовки. */
+        --rt-carousel-count: 0;
+        --rt-carousel-card-width: var(--rt-size-16);
+        --rt-carousel-card-padding-inline: var(--rt-space-2);
+        --rt-carousel-card-radius: var(--rt-radius-ms);
+        --rt-carousel-card-shadow: var(--rt-shadow-sm);
+        --rt-carousel-card-bg: var(--rt-color-bg-subtle);
+        --rt-carousel-card-color: var(--rt-color-text-primary);
+        --rt-carousel-tone-dark: var(--rt-neutral-950);
+        --rt-carousel-tone-light: var(--rt-neutral-0);
+        --rt-carousel-overlap: calc(var(--rt-size-16) / 2);
+        --rt-carousel-lift: var(--rt-space-1);
+        --rt-carousel-shift: var(--rt-space-4);
+        --rt-carousel-label-size: var(--rt-text-xs);
+        --rt-carousel-label-weight: var(--rt-font-weight-medium);
+        --rt-carousel-label-height: var(--rt-size-6);
+        --rt-carousel-label-transform: none;
+        --rt-carousel-duration: var(--rt-duration-base);
+
+        /* Ширина хоста — свёрнутая стопка: число карточек ставит компонент. Открытая карточка и
+           отошедшие соседки выходят за неё поверх, и ячейка таблицы под стопкой не растягивается. */
+        display: inline-flex;
+        align-items: center;
+        inline-size: calc(
+            var(--rt-carousel-count) * var(--rt-carousel-card-width) - max(var(--rt-carousel-count) - 1, 0) * var(--rt-carousel-overlap)
+        );
+        isolation: isolate;
+
+        /* Материальный набор повторяет стопку приложения: карточки с малым скруглением и большой
+           тенью, тёмная подпись цвета текста Material, подпись обычного начертания с заглавной
+           буквы каждого слова, движение медленнее. Шага 300 у начертания в ките нет — ближайший
+           обычный. */
+        :is(.rt-preset-material, [data-preset='material']) & {
+            --rt-carousel-card-radius: var(--rt-radius-sm);
+            --rt-carousel-card-shadow: var(--rt-shadow-lg);
+            --rt-carousel-tone-dark: var(--rt-mat-neutral-100);
+            --rt-carousel-label-weight: var(--rt-font-weight-regular);
+            --rt-carousel-label-transform: capitalize;
+            --rt-carousel-duration: calc(var(--rt-duration-base) * 1.5);
+        }
+
+        /* Заливку карточки ставит шаблон из её цвета; без цвета остаётся фон кита. */
+        &__card {
+            --rt-carousel-card-fill: var(--rt-carousel-card-bg);
+
+            position: relative;
+            display: flex;
+            box-sizing: border-box;
+            flex-shrink: 0;
+            border-radius: var(--rt-carousel-card-radius);
+            background: var(--rt-carousel-card-fill);
+            box-shadow: var(--rt-carousel-card-shadow);
+            color: var(--rt-carousel-card-color);
+            inline-size: var(--rt-carousel-card-width);
+            min-inline-size: var(--rt-carousel-card-width);
+            outline: 2px solid transparent;
+            padding-inline: var(--rt-carousel-card-padding-inline);
+            transition: transform var(--rt-carousel-duration) ease-out;
+
+            & + & {
+                margin-inline-start: calc(-1 * var(--rt-carousel-overlap));
+            }
+
+            /* Тон подписи — два постоянных шага: на цвете карточки он не зависит от темы. */
+            &--tone--dark {
+                color: var(--rt-carousel-tone-dark);
+            }
+
+            &--tone--light {
+                color: var(--rt-carousel-tone-light);
+            }
+
+            /* Касание фокусирует карточку, поэтому открывает её и обычный фокус, не только с клавиши. */
+            &:is(:hover, :focus, :focus-visible) {
+                z-index: 1;
+                inline-size: max-content;
+                transform: translateY(calc(-1 * var(--rt-carousel-lift)));
+
+                ~ .rt-carousel__card {
+                    transform: translateX(var(--rt-carousel-shift));
+                }
+            }
+
+            &:focus-visible {
+                outline: var(--rt-focus-ring-width) solid var(--rt-focus-ring-color);
+                outline-offset: var(--rt-focus-ring-offset);
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+                transition: none;
+            }
+        }
+
+        /* Подпись урезается многоточием; целиком её показывает открытая карточка. */
+        &__label {
+            overflow: hidden;
+            font-size: var(--rt-carousel-label-size);
+            font-weight: var(--rt-carousel-label-weight);
+            inline-size: 100%;
+            line-height: var(--rt-carousel-label-height);
+            text-align: center;
+            text-overflow: ellipsis;
+            text-transform: var(--rt-carousel-label-transform);
+            white-space: nowrap;
+        }
+    }
+}
