@@ -15,6 +15,6 @@ describe(isNumber.name, () => {
         expect(isNumber('1')).toBe(false);
         expect(isNumber(null)).toBe(false);
         expect(isNumber(undefined)).toBe(false);
-        expect(isNumber(1n)).toBe(false);
+        expect(isNumber(BigInt(1))).toBe(false);
     });
 });
