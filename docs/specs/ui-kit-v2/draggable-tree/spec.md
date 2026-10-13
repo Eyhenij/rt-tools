@@ -58,6 +58,15 @@ the same rows gives the applications one look, one keyboard and an order they ca
   folded container write a new array to it. `null` opens every branch.
 - **A row takes the application's markup by a template.** Without it the row shows the label.
 - **An empty tree shows the kit label for no options.**
+- **An empty tree shows the application's icon above its text when asked.** `emptyIcon` names a kit
+  icon; without it the empty state is the text alone.
+- **Every visual value of a row is a property of the row, and its default is the kit look.** The
+  indent, the radius, the shadow under the pointer, the handle, the arrow and the drop lines read
+  `--rt-draggable-tree-*`; the row declares them on itself, since the row in hand leaves the block.
+- **Under the material preset the rows take the application's look, without a Material package.** A
+  row is 32px high with an 8px radius and 5px to the next row, and lifts with a shadow under the
+  pointer. The handle shows only on a hovered or highlighted row, a level is indented by 46px, the
+  arrow takes the theme's primary colour, and the drop lines are 2px.
 
 ## What is out of scope
 
@@ -89,6 +98,8 @@ with the application through `nodes`, the open branches through `open`.
 | a place inside        | the target row outlined                              |
 | a node disabled       | the row muted, no handle                             |
 | empty                 | the kit label «No options»                           |
+| empty with an icon    | the application's icon above the kit label           |
+| material preset       | rounded rows apart by 5px, the handle on hover       |
 
 ## Cross-cutting requirements
 
@@ -122,3 +133,4 @@ None.
 ## History of changes
 
 - 2026-10-06 — the agreement written for RT-2549.
+- 2026-10-10 — the empty icon and the material look of the application; RT-2764.

@@ -2,16 +2,19 @@ import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { RtButtonDirective } from '../../../button/rt-button.directive';
+import { IRtIcon } from '../../../icon/rt-icon.model';
+import { RtTagComponent } from '../../../tag/rt-tag.component';
 import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
+import { RtTreeNodeEndDirective, RtTreeNodeMetaDirective } from '../../../tree/rt-tree.directives';
 import { IRtTree } from '../../../tree/rt-tree.model';
 import { RtTreeSelectorComponent } from '../../rt-tree-selector.component';
-import { RtTreeSelectorControlsDirective } from '../../rt-tree-selector.directives';
+import { RtTreeSelectorControlsDirective, RtTreeSelectorUnderSearchDirective } from '../../rt-tree-selector.directives';
 import { TREE_SELECTOR_STORY_NODES } from './tree-selector-story-nodes';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TTreeSelectorMatrixPart = 'form' | 'search' | 'controls' | 'mode' | 'presets' | 'themes';
+export type TTreeSelectorMatrixPart = 'form' | 'search' | 'controls' | 'mode' | 'slots' | 'highlight' | 'material' | 'presets' | 'themes';
 
 /** Одна ячейка ряда: подпись и то, чем селектор в ней отличается от соседей. */
 interface ITreeSelectorCase {
@@ -30,6 +33,12 @@ interface ITreeSelectorCase {
     readonly selectAll: boolean;
     /** Рисовать ли свой контрол приложения в строке. */
     readonly own: boolean;
+    /** Рисовать ли разметку приложения под полем поиска. */
+    readonly under: boolean;
+    /** Отдавать ли селектору разметку строк `rtTreeNodeEnd` и `rtTreeNodeMeta`. */
+    readonly rowTemplates: boolean;
+    readonly matchHighlight: boolean;
+    readonly emptyIcon: IRtIcon.Name | null;
 }
 
 /** Ячейка, где история снимает отметку с узла: откат в ней включён. Имя читает история. */
@@ -51,6 +60,10 @@ function selectorCase(name: string, patch: Partial<ITreeSelectorCase> = {}): ITr
         disabled: false,
         selectAll: true,
         own: false,
+        under: false,
+        rowTemplates: false,
+        matchHighlight: true,
+        emptyIcon: null,
         ...patch,
     };
 }
@@ -75,6 +88,10 @@ function selectorCase(name: string, patch: Partial<ITreeSelectorCase> = {}): ITr
         RtButtonDirective,
         RtTreeSelectorComponent,
         RtTreeSelectorControlsDirective,
+        RtTreeSelectorUnderSearchDirective,
+        RtTreeNodeEndDirective,
+        RtTreeNodeMetaDirective,
+        RtTagComponent,
         // showcase
         StoryPresetsComponent,
         StoryRowComponent,
@@ -121,6 +138,24 @@ export class TestRtTreeSelectorMatrixComponent {
         selectorCase('флажки — multiple'),
         selectorCase('радио — single', { mode: 'single', value: ['kaskad'], confirm: true }),
         selectorCase('без отметок — none', { mode: 'none', value: [] }),
+    ];
+
+    /** Разметка приложения: под поиском и в строках дерева внутри. */
+    public readonly slotCases: readonly ITreeSelectorCase[] = [
+        selectorCase('место под поиском', { under: true, expandControls: true }),
+        selectorCase('разметка строк для дерева внутри', { rowTemplates: true, expandControls: true }),
+    ];
+
+    /** Подсветка найденного включена и выключена при одном слове поиска. */
+    public readonly highlightCases: readonly ITreeSelectorCase[] = [
+        selectorCase('подсветка включена — умолчание', { searchTerm: 'гост' }),
+        selectorCase('подсветка выключена', { searchTerm: 'гост', matchHighlight: false }),
+    ];
+
+    /** Вид приложения: поиск с совпадением, кнопки строки и пустота со значком. */
+    public readonly materialCases: readonly ITreeSelectorCase[] = [
+        selectorCase('поиск и кнопки строки', { searchTerm: 'гост', expandControls: true }),
+        selectorCase('ничего не нашлось, значок приложения', { searchTerm: 'нет такого', emptyIcon: 'search' }),
     ];
 
     public readonly caseLabel: (value: ITreeSelectorCase) => string = (value: ITreeSelectorCase): string => value.name;

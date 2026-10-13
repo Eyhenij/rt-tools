@@ -154,6 +154,25 @@
         </app-story-presets>
     }
 
+    @case ('material') {
+        <app-story-presets caption="Вид приложения: строки, уровни с линией, совпадение и пустота со значком">
+            <ng-template>
+                <app-story-row caption="Материальный набор против своего" [items]="materialCases" [itemLabel]="caseLabel">
+                    <ng-template let-c>
+                        <rt-tree
+                            style="width: 300px"
+                            [ariaLabel]="c.name"
+                            [nodes]="c.nodes"
+                            [showSelectAll]="c.showSelectAll"
+                            [searchTerm]="c.searchTerm"
+                            [emptyIcon]="c.emptyIcon"
+                            [value]="c.value" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
     @case ('presets') {
         <app-story-presets caption="Дерево в обоих наборах">
             <ng-template>

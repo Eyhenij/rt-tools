@@ -4,6 +4,7 @@ import { StoryPresetsComponent } from '../../../../../showcase/story-presets.com
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { IStoryState, STORY_CONTROL_STATES, storyStateLabel } from '../../../../../showcase/story-states';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
+import { IRtIcon } from '../../../icon/rt-icon.model';
 import { RtTagComponent } from '../../../tag/rt-tag.component';
 import { RtTreeComponent } from '../../rt-tree.component';
 import { RtTreeNodeEndDirective, RtTreeNodeMetaDirective } from '../../rt-tree.directives';
@@ -12,7 +13,18 @@ import { TREE_STORY_BADGE_NODES, TREE_STORY_NODES } from './tree-story-nodes';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
 export type TTreeMatrixPart =
-    'mode' | 'cascade' | 'select-all' | 'search' | 'empty' | 'node-end' | 'branch-marks' | 'node-meta' | 'states' | 'presets' | 'themes';
+    | 'mode'
+    | 'cascade'
+    | 'select-all'
+    | 'search'
+    | 'empty'
+    | 'node-end'
+    | 'branch-marks'
+    | 'node-meta'
+    | 'states'
+    | 'material'
+    | 'presets'
+    | 'themes';
 
 /** Одна ячейка ряда: подпись и то, чем дерево в ней отличается от соседей. */
 interface ITreeCase {
@@ -27,6 +39,8 @@ interface ITreeCase {
     readonly showSelectAll: boolean;
     /** Рисовать ли разметку приложения под подписью. */
     readonly meta: boolean;
+    /** Значок над подписью пустого дерева. */
+    readonly emptyIcon: IRtIcon.Name | null;
 }
 
 function treeCase(name: string, patch: Partial<ITreeCase> = {}): ITreeCase {
@@ -41,6 +55,7 @@ function treeCase(name: string, patch: Partial<ITreeCase> = {}): ITreeCase {
         filter: true,
         showSelectAll: false,
         meta: false,
+        emptyIcon: null,
         ...patch,
     };
 }
@@ -119,6 +134,13 @@ export class TestRtTreeMatrixComponent {
         treeCase('метки узла', { nodes: TREE_STORY_BADGE_NODES }),
         treeCase('поиск без отбора: «мос gna»', { nodes: TREE_STORY_BADGE_NODES, filter: false, searchTerm: 'мос gna' }),
         treeCase('метки и разметка приложения', { nodes: TREE_STORY_BADGE_NODES, meta: true }),
+    ];
+
+    /** Вид приложения: уровни с линиями и флажками, совпадение поиска и пустота со значком. */
+    public readonly materialCases: readonly ITreeCase[] = [
+        treeCase('выбор и «выбрать всё»', { showSelectAll: true, value: ['msk', 'kzn', 'msq'] }),
+        treeCase('поиск «ск»', { searchTerm: 'ск', value: ['msq'] }),
+        treeCase('пусто, значок приложения', { nodes: [], emptyIcon: 'inbox' }),
     ];
 
     public readonly disabledCases: readonly ITreeCase[] = [

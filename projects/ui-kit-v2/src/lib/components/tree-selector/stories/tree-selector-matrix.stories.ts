@@ -45,6 +45,15 @@ export const Controls: TStory = {
 /** Флажки, радио и режим без отметок. */
 export const Mode: TStory = { args: { part: 'mode' } };
 
+/** Разметка приложения под поиском и в строках дерева внутри — SC-UKV-838, SC-UKV-839. */
+export const Slots: TStory = { args: { part: 'slots' } };
+
+/** Подсветка найденного включена и выключена — SC-UKV-840. */
+export const Highlight: TStory = { args: { part: 'highlight' } };
+
+/** Материальный вид приложения рядом со своим, пустота со значком — SC-UKV-841, SC-UKV-842. */
+export const Material: TStory = { args: { part: 'material' } };
+
 export const Presets: TStory = { args: { part: 'presets' } };
 
 export const Themes: TStory = { args: { part: 'themes' } };

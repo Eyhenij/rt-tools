@@ -94,6 +94,20 @@ multiselect; a standalone tree on the same logic gives the applications one look
   at the end of every row with the node in its context; the tree adds no input per such control.
 - **An empty tree says so.** With no rows the tree shows the kit label for nothing found when a term is
   set, and for no options otherwise.
+- **An empty tree shows the application's icon above its text when asked.** `emptyIcon` names a kit
+  icon; without it the empty state is the text alone, as before.
+- **The row templates come by inputs as well as by directives.** `nodeEndTemplate` and
+  `nodeMetaTemplate` take a template from a component that wraps the tree and cannot put content
+  into it; a template given by an input wins over the directive.
+- **Every visual value of the tree is a property of its block, and its default is the kit look.**
+  The rows, the indent and its line, the arrow, the mark, the match, the count and select-all read
+  `--rt-tree-*`, so an application retunes any of them without forking the styles.
+- **Under the material preset the tree draws the application's rows, without a Material package.**
+  A row is 32px high with a 6px radius, 12px at the sides and 5px to the next row; 10px stand
+  between the arrow or the mark and the name. A level is indented by 46px with a line under the
+  parent's arrow, and a leaf has no space for an arrow. The arrow takes the theme's primary colour,
+  the checkbox box is 16px, the match is semibold on #ffeb3b, the count is a pill of the primary
+  colour, and select-all is 14px in medium weight.
 
 ## What is out of scope
 
@@ -108,7 +122,8 @@ None: `rt-tree` is a layout component and serves no procedure. Its inputs and ou
 listed on its showcase overview page, and the docs guard keeps that table matched to the code.
 
 Public methods: `handleKeydown(event)`, `expandAll()`, `collapseAll()`, `clearHighlight()`.
-The row template is marked by the `rtTreeNodeEnd` directive.
+The row templates are marked by the `rtTreeNodeEnd` and `rtTreeNodeMeta` directives. They are
+also passed by the `nodeEndTemplate` and `nodeMetaTemplate` inputs.
 
 ### Refusal codes
 
@@ -135,6 +150,8 @@ the component; the choice lives with the application through `value`.
 | a search term          | the matching rows with the path open, the match highlighted |
 | empty                  | the kit label «Nothing found» or «No options»               |
 | a row highlighted      | the row background of the active option of the select       |
+| empty with an icon     | the application's icon above the kit label                  |
+| material preset        | rounded 32px rows apart by 5px, lines under the arrows      |
 
 ## Cross-cutting requirements
 
@@ -171,3 +188,5 @@ None.
 - 2026-10-06 — the agreement written for RT-2548.
 - 2026-10-07 — a disabled tree, for the report builder of the application; RT-2551.
 - 2026-10-07 — the select-all mark stands above the first row's mark by the owner's word; RT-2551.
+- 2026-10-10 — the material look of the application, the empty icon and the row templates by
+  inputs; RT-2764.

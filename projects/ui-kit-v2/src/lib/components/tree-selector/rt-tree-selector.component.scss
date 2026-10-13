@@ -6,6 +6,9 @@
     .rt-tree-selector {
         --rt-tree-selector-border-width: var(--rt-border-width-thin);
         --rt-tree-selector-bg: var(--rt-color-bg-surface);
+        --rt-tree-selector-gap: var(--rt-space-sm);
+        --rt-tree-selector-empty-color: var(--rt-color-text-muted);
+        --rt-tree-selector-empty-gap: var(--rt-space-sm);
 
         display: flex;
         min-height: 0;
@@ -13,7 +16,13 @@
         flex-direction: column;
         background-color: var(--rt-tree-selector-bg);
         color: var(--rt-color-text-primary);
-        gap: var(--rt-space-sm);
+        gap: var(--rt-tree-selector-gap);
+
+        /* Материальный набор повторяет выбор деревом приложения: над списком 10px. Строки дерева
+           внутри берут свой материальный вид сами. */
+        :is(.rt-preset-material, [data-preset='material']) & {
+            --rt-tree-selector-gap: calc(var(--rt-space-2) + var(--rt-space-0-5));
+        }
 
         &__head {
             display: flex;
@@ -79,8 +88,25 @@
         &__empty {
             flex: 1 1 auto;
             padding: var(--rt-space-md);
-            color: var(--rt-color-text-muted);
+            color: var(--rt-tree-selector-empty-color);
             text-align: center;
+
+            /* Значок приложения стоит над подписью. */
+            &--with-icon {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: var(--rt-tree-selector-empty-gap);
+            }
+        }
+
+        &__empty-icon {
+            flex-shrink: 0;
+        }
+
+        /* Разметка приложения под полем поиска — во всю ширину головы. */
+        &__under-search {
+            display: block;
         }
 
         &__foot {

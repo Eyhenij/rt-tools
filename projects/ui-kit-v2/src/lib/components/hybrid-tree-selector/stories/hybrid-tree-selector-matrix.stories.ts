@@ -22,6 +22,9 @@ export const Form: TStory = { args: { part: 'form' } };
 /** Поиск оставляет листья групп «один лист» и их радио. */
 export const Search: TStory = { args: { part: 'search' } };
 
+/** Материальный вид приложения рядом со своим, разметка под поиском и в строках — SC-UKV-845. */
+export const Material: TStory = { args: { part: 'material' } };
+
 export const Presets: TStory = { args: { part: 'presets' } };
 
 export const Themes: TStory = { args: { part: 'themes' } };

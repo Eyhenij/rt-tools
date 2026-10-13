@@ -58,6 +58,11 @@ they share the code of the ordinary tree and panel instead of copying it.
 - **The hybrid selector is the tree selector with the hybrid tree inside.** Every rule of
   `docs/specs/ui-kit-v2/tree-selector` holds for it, and the single groups reach the tree unchanged.
 
+- **The hybrid trees take the look and the inputs of the trees they extend.** The material rows,
+  the empty icon, the row templates, the content under the search and the highlight flag are the
+  ones of `rt-tree` and `rt-tree-selector`. Under the material preset the count of a group stands
+  in a pill of the primary colour.
+
 ## What is out of scope
 
 - The order of the choice by click and the domain groups of the report builder: the application
@@ -88,6 +93,7 @@ The nodes are `IRtHybridTree.Node<TValue>`. The choice lives with the applicatio
 | a single group, a leaf chosen  | the group radio and that leaf radio filled             |
 | groups without marks           | the count of chosen leaves at the end of a group row   |
 | select-all chosen              | every free leaf ticked, the single groups as they were |
+| material preset                | the count of a group in a pill, the material rows      |
 
 ## Cross-cutting requirements
 
@@ -123,3 +129,4 @@ None.
 ## History of changes
 
 - 2026-10-07 — the agreement written for RT-2551.
+- 2026-10-10 — the look and the inputs of the extended trees, the count pill; RT-2764.

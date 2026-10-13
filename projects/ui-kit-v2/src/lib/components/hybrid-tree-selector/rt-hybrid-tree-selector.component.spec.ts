@@ -1,7 +1,10 @@
-import { ComponentFixture } from '@angular/core/testing';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { createRtFixture } from '../../../testing/rt-kit-testing';
 import { IRtHybridTree } from '../hybrid-tree/rt-hybrid-tree.model';
+import { RtTreeNodeEndDirective } from '../tree/rt-tree.directives';
+import { RtTreeSelectorUnderSearchDirective } from '../tree-selector/rt-tree-selector.directives';
 import { RtHybridTreeSelectorComponent } from './rt-hybrid-tree-selector.component';
 
 /**
@@ -42,7 +45,42 @@ function clickRow(fixture: TFixture, value: string): void {
     fixture.detectChanges();
 }
 
+/** Разметка под поиском и шаблон конца строки, отданные гибридному селектору. */
+@Component({
+    selector: 'rt-hybrid-tree-selector-slots-host',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtHybridTreeSelectorComponent, RtTreeSelectorUnderSearchDirective, RtTreeNodeEndDirective],
+    template: `
+        <rt-hybrid-tree-selector expandOnStart="all" [nodes]="nodes">
+            <ng-template rtTreeSelectorUnderSearch>
+                <span qa-dataid="under-search-mark">scope</span>
+            </ng-template>
+            <ng-template rtTreeNodeEnd let-node>
+                <span qa-dataid="end-mark">{{ node.value }}</span>
+            </ng-template>
+        </rt-hybrid-tree-selector>
+    `,
+})
+class HybridSlotsHostComponent {
+    protected readonly nodes: ReadonlyArray<IRtHybridTree.Node<string>> = NODES;
+}
+
 describe('RtHybridTreeSelectorComponent', (): void => {
+    it('SC-UKV-845: the hybrid selector draws the content under the search and the end template in every row', async (): Promise<void> => {
+        const fixture: ComponentFixture<HybridSlotsHostComponent> = TestBed.createComponent(HybridSlotsHostComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
+        const root: HTMLElement = fixture.nativeElement as HTMLElement;
+        const rows: Element[] = Array.from(root.querySelectorAll('rt-hybrid-tree [qa-dataid="tree-row"]'));
+
+        expect(root.querySelector('[qa-dataid="tree-selector-under-search"] [qa-dataid="under-search-mark"]')).not.toBeNull();
+        expect(rows.length).toBe(4);
+        expect(rows.map((row: Element): string => row.querySelector('[qa-dataid="end-mark"]')?.textContent ?? '')).toEqual(
+            rows.map((row: Element): string => row.getAttribute('data-value') ?? '')
+        );
+    });
+
     it('draws the hybrid tree inside the panel of the tree selector', (): void => {
         const fixture: TFixture = setup();
 

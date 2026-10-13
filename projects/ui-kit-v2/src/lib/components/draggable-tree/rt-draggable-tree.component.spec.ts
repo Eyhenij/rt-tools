@@ -129,6 +129,20 @@ describe('RtDraggableTreeComponent', (): void => {
         expect(rows(fixture)).toEqual([]);
     });
 
+    it('SC-UKV-843 — пустое дерево ставит значок приложения над подписью', (): void => {
+        const plain: TFixture = setup([]);
+        const withIcon: TFixture = createRtFixture(RtDraggableTreeComponent<string>, { nodes: [], emptyIcon: 'inbox' });
+        const emptyOf: (fixture: TFixture) => HTMLElement = (fixture: TFixture): HTMLElement =>
+            (fixture.nativeElement as HTMLElement).querySelector('[qa-dataid="draggable-tree-empty"]') as HTMLElement;
+
+        expect(emptyOf(plain).querySelector('[qa-dataid="draggable-tree-empty-icon"]')).toBeNull();
+
+        const icon: Element | null = emptyOf(withIcon).querySelector('[qa-dataid="draggable-tree-empty-icon"]');
+        expect(icon).not.toBeNull();
+        expect(emptyOf(withIcon).firstElementChild).toBe(icon);
+        expect(emptyOf(withIcon).textContent?.trim()).toBe(emptyOf(plain).textContent?.trim());
+    });
+
     it('SC-UKV-664 — раскрытые ветки задаёт приложение, и дерево отдаёт их после каждого раскрытия', (): void => {
         const nodes: ReadonlyArray<IRtTree.Node<string>> = [
             { label: 'Папка А', value: 'a', children: [{ label: 'Внутри А', value: 'a1' }] },

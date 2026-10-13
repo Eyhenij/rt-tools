@@ -1,9 +1,44 @@
 @layer rt-kit.components {
+    /* rt-tree — дерево выбора; его же разметку и стили берёт rt-hybrid-tree. ViewEncapsulation.None.
+       Каждое значение вида — свойство блока: приложение перенастраивает строки, отступ уровня, стрелку,
+       отметку, совпадение и счётчик, не трогая общих шагов кита. Умолчания — прежние шаги, вид без
+       свойств не меняется. */
+
     .rt-tree {
+        --rt-tree-font-size: var(--rt-input-font-size);
+        --rt-tree-color: var(--rt-color-text-primary);
         --rt-tree-indent: var(--rt-space-lg);
+        --rt-tree-row-padding-block: var(--rt-space-sm);
+        --rt-tree-row-padding-inline: var(--rt-space-md);
+        --rt-tree-row-gap: var(--rt-space-sm);
+        --rt-tree-row-spacing: var(--rt-space-0);
+        --rt-tree-row-min-height: auto;
+        --rt-tree-row-box-sizing: content-box;
+        --rt-tree-row-radius: var(--rt-radius-none);
+        --rt-tree-row-bg-hover: var(--rt-color-bg-hover);
+        --rt-tree-row-bg-highlighted: var(--rt-color-bg-hover);
+        --rt-tree-row-bg-chosen: var(--rt-color-action-primary-subtle);
+        --rt-tree-guide-width: var(--rt-border-width-thin);
+        --rt-tree-guide-color: transparent;
+        --rt-tree-toggle-size: var(--rt-input-icon-size);
+        --rt-tree-toggle-color: var(--rt-neutral-600);
+        --rt-tree-leaf-space-display: inline-flex;
+        --rt-tree-check-size: calc(var(--rt-size-4) + var(--rt-space-0-5));
+        --rt-tree-check-border-color: var(--rt-color-border-strong);
         --rt-tree-match-bg: var(--rt-yellow-400);
         --rt-tree-match-color: var(--rt-neutral-950);
         --rt-tree-match-radius: var(--rt-radius-xs);
+        --rt-tree-match-font-weight: var(--rt-font-weight-regular);
+        --rt-tree-count-color: var(--rt-color-text-muted);
+        --rt-tree-count-bg: transparent;
+        --rt-tree-count-font-size: var(--rt-text-sm);
+        --rt-tree-count-padding-inline: var(--rt-space-0);
+        --rt-tree-count-min-size: auto;
+        --rt-tree-count-radius: var(--rt-radius-none);
+        --rt-tree-select-all-font-size: var(--rt-tree-font-size);
+        --rt-tree-select-all-font-weight: var(--rt-font-weight-regular);
+        --rt-tree-empty-color: var(--rt-color-text-muted);
+        --rt-tree-empty-gap: var(--rt-space-sm);
         --rt-tree-focus-shadow: var(--rt-shadow-focus-ring);
         --rt-tree-border-width: var(--rt-border-width-thin);
         --rt-tree-bg: var(--rt-color-bg-surface);
@@ -14,10 +49,52 @@
 
         display: block;
         background-color: var(--rt-tree-bg);
-        color: var(--rt-color-text-primary);
-        font-size: var(--rt-input-font-size);
+        color: var(--rt-tree-color);
+        font-size: var(--rt-tree-font-size);
         isolation: isolate;
         outline: none;
+
+        /* Под пальцем строка не ниже контрола кита: высота переназначается свойством, а не правилом. */
+        @media (pointer: coarse) {
+            --rt-tree-row-min-height: var(--rt-control-height-lg);
+        }
+
+        /* Материальный набор повторяет деревья приложения: строка 32px со скруглением 6px, 12px по
+           бокам и 5px до следующей; между стрелкой или отметкой и подписью 10px; уровень отступает на
+           46px, и под стрелкой предка идёт линия; у листа нет места под стрелку. Стрелка, флажок и
+           плашка счётчика — основного цвета темы, флажок 16px, совпадение — полужирное на жёлтом
+           первого кита, «выбрать всё» — 14px средней насыщенности. 32px — внешняя высота строки,
+           поэтому строка считается с полями; квадрат флажка задан без рамки — 14px внутри, 16px
+           снаружи. */
+        :is(.rt-preset-material, [data-preset='material']) & {
+            --rt-tree-indent: calc(var(--rt-size-12) - var(--rt-space-0-5));
+            --rt-tree-row-padding-block: var(--rt-space-1);
+            --rt-tree-row-padding-inline: calc(var(--rt-space-2) + var(--rt-space-1));
+            --rt-tree-row-gap: calc(var(--rt-space-2) + var(--rt-space-0-5));
+            --rt-tree-row-spacing: calc(var(--rt-space-1) + var(--rt-space-0-5) / 2);
+            --rt-tree-row-min-height: var(--rt-size-8);
+            --rt-tree-row-box-sizing: border-box;
+            --rt-tree-row-radius: var(--rt-radius-ms);
+            --rt-tree-guide-color: var(--mat-sys-outline-variant, var(--rt-color-border-subtle));
+            --rt-tree-toggle-color: var(--rt-color-action-primary);
+            --rt-tree-leaf-space-display: none;
+            --rt-tree-check-size: calc(var(--rt-size-4) - 2 * var(--rt-input-border-width));
+            --rt-tree-check-border-color: var(--rt-mat-neutral-40);
+            --rt-tree-match-bg: var(--rt-mat-yellow-100);
+            --rt-tree-match-font-weight: var(--rt-font-weight-semibold);
+            --rt-tree-count-bg: var(--rt-color-action-primary);
+            --rt-tree-count-color: var(--mat-sys-on-primary, var(--rt-color-text-inverse));
+            --rt-tree-count-font-size: var(--rt-text-xs);
+            --rt-tree-count-padding-inline: calc(var(--rt-space-1) + var(--rt-space-0-5));
+            --rt-tree-count-min-size: var(--rt-size-5);
+            --rt-tree-count-radius: var(--rt-radius-full);
+            --rt-tree-select-all-font-size: var(--rt-text-sm);
+            --rt-tree-select-all-font-weight: var(--rt-font-weight-medium);
+
+            @media (pointer: coarse) {
+                --rt-tree-row-min-height: var(--rt-control-height-lg);
+            }
+        }
 
         &:focus-visible {
             box-shadow: var(--rt-tree-focus-shadow);
@@ -29,14 +106,17 @@
             --rt-tree-level: 0;
 
             display: flex;
+            box-sizing: var(--rt-tree-row-box-sizing);
             align-items: center;
-            padding: var(--rt-space-sm) var(--rt-space-md);
+            padding: var(--rt-tree-row-padding-block) var(--rt-tree-row-padding-inline);
+            border-radius: var(--rt-tree-row-radius);
             cursor: pointer;
-            gap: var(--rt-space-sm);
-            padding-inline-start: calc(var(--rt-space-md) + var(--rt-tree-indent) * var(--rt-tree-level));
+            gap: var(--rt-tree-row-gap);
+            min-block-size: var(--rt-tree-row-min-height);
+            padding-inline-start: calc(var(--rt-tree-row-padding-inline) + var(--rt-tree-indent) * var(--rt-tree-level));
 
             &:hover {
-                background-color: var(--rt-color-bg-hover);
+                background-color: var(--rt-tree-row-bg-hover);
             }
         }
 
@@ -51,7 +131,7 @@
 
             &:hover {
                 background-color: var(--rt-tree-select-all-bg);
-                background-image: linear-gradient(var(--rt-color-bg-hover), var(--rt-color-bg-hover));
+                background-image: linear-gradient(var(--rt-tree-row-bg-hover), var(--rt-tree-row-bg-hover));
             }
 
             &--disabled {
@@ -60,13 +140,41 @@
             }
         }
 
+        &__select-all &__label {
+            font-size: var(--rt-tree-select-all-font-size);
+            font-weight: var(--rt-tree-select-all-font-weight);
+        }
+
         &__row {
+            position: relative;
+
+            & + & {
+                margin-block-start: var(--rt-tree-row-spacing);
+            }
+
+            /* Линии уровней: по одной под стрелкой каждого предка. Полоса тянется и через зазор над
+               строкой, чтобы линия шла сплошной; у верхнего уровня её ширина ноль. Без своего цвета
+               линия прозрачна, и вид кита её не показывает. */
+            &:before {
+                position: absolute;
+                background: repeating-linear-gradient(
+                    to right,
+                    var(--rt-tree-guide-color) 0 var(--rt-tree-guide-width),
+                    transparent var(--rt-tree-guide-width) var(--rt-tree-indent)
+                );
+                content: '';
+                inline-size: calc(var(--rt-tree-indent) * var(--rt-tree-level));
+                inset-block: calc(-1 * var(--rt-tree-row-spacing)) 0;
+                inset-inline-start: calc(var(--rt-tree-row-padding-inline) + (var(--rt-tree-toggle-size) - var(--rt-tree-guide-width)) / 2);
+                pointer-events: none;
+            }
+
             &--highlighted {
-                background-color: var(--rt-color-bg-hover);
+                background-color: var(--rt-tree-row-bg-highlighted);
             }
 
             &--chosen {
-                background-color: var(--rt-color-action-primary-subtle);
+                background-color: var(--rt-tree-row-bg-chosen);
             }
 
             &--disabled {
@@ -85,11 +193,22 @@
         &__toggle-space {
             display: inline-flex;
             flex-shrink: 0;
-            block-size: var(--rt-input-icon-size);
-            inline-size: var(--rt-input-icon-size);
+            block-size: var(--rt-tree-toggle-size);
+            inline-size: var(--rt-tree-toggle-size);
         }
 
+        /* Место под стрелку у листа: материальный вид его убирает, и отметка листа встаёт под
+           стрелкой соседней группы, как в приложении. Над первой строкой-листом «выбрать всё»
+           убирает своё место вместе с ней. */
+        &__row > &__toggle-space,
+        &__select-all--over-leaf > &__toggle-space {
+            display: var(--rt-tree-leaf-space-display);
+        }
+
+        /* Цвет стрелки идёт в значок через его же свойство приглушённого цвета. */
         &__toggle {
+            --rt-icon-color-muted: var(--rt-tree-toggle-color);
+
             align-items: center;
             justify-content: center;
             padding: 0;
@@ -98,7 +217,12 @@
             cursor: pointer;
         }
 
+        /* Размер квадрата флажка: класс элемента стоит на хосте флажка и перекрывает его свойство,
+           объявленное по имени тега. Умолчание дерева равно размеру самого флажка. */
         &__check {
+            --rt-checkbox-box-size: var(--rt-tree-check-size);
+            --rt-checkbox-box-border-color: var(--rt-tree-check-border-color);
+
             flex-shrink: 0;
             margin: 0;
             pointer-events: none;
@@ -140,15 +264,25 @@
                 border-radius: var(--rt-tree-match-radius);
                 background: var(--rt-tree-match-bg);
                 color: var(--rt-tree-match-color);
+                font-weight: var(--rt-tree-match-font-weight);
             }
         }
 
-        /* Число выбранного под группой без отметки — в конце строки, перед разметкой приложения. */
+        /* Число выбранного под группой без отметки — в конце строки, перед разметкой приложения.
+           В материальном виде это плашка: фон, скругление и поля приходят свойствами. */
         &__count {
+            display: inline-flex;
             flex-shrink: 0;
-            color: var(--rt-color-text-muted);
-            font-size: var(--rt-text-sm);
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--rt-tree-count-radius);
+            background: var(--rt-tree-count-bg);
+            color: var(--rt-tree-count-color);
+            font-size: var(--rt-tree-count-font-size);
             font-variant-numeric: tabular-nums;
+            min-block-size: var(--rt-tree-count-min-size);
+            min-inline-size: var(--rt-tree-count-min-size);
+            padding-inline: var(--rt-tree-count-padding-inline);
         }
 
         &__end {
@@ -160,15 +294,20 @@
 
         &__empty {
             padding: var(--rt-space-md);
-            color: var(--rt-color-text-muted);
+            color: var(--rt-tree-empty-color);
             text-align: center;
+
+            /* Значок приложения стоит над подписью. */
+            &--with-icon {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: var(--rt-tree-empty-gap);
+            }
         }
 
-        @media (pointer: coarse) {
-            &__select-all,
-            &__row {
-                min-block-size: var(--rt-control-height-lg);
-            }
+        &__empty-icon {
+            flex-shrink: 0;
         }
     }
 }

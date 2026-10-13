@@ -15,7 +15,26 @@
             [searchTerm]="c.searchTerm"
             [label]="c.label"
             [disabled]="c.disabled"
+            [matchHighlight]="c.matchHighlight"
+            [emptyIcon]="c.emptyIcon"
             [selectAll]="c.selectAll">
+            @if (c.under) {
+                <ng-template rtTreeSelectorUnderSearch>
+                    <span style="font-size: 12px; color: var(--rt-color-text-muted)">Искать по названию и городу</span>
+                </ng-template>
+            }
+            @if (c.rowTemplates) {
+                <ng-template rtTreeNodeEnd let-node>
+                    @if (!node.children) {
+                        <rt-tag size="sm" severity="info" [value]="node.value" />
+                    }
+                </ng-template>
+                <ng-template rtTreeNodeMeta let-node>
+                    @if (!node.children) {
+                        <span style="font-size: 12px; color: var(--rt-color-text-muted)">номеров: 12</span>
+                    }
+                </ng-template>
+            }
             @if (c.own) {
                 <ng-template rtTreeSelectorControls>
                     <button
@@ -73,6 +92,42 @@
         <app-story-presets>
             <ng-template>
                 <app-story-row caption="Режим отметок" [items]="modeCases" [itemLabel]="caseLabel">
+                    <ng-template let-c>
+                        <ng-container [ngTemplateOutlet]="cell" [ngTemplateOutletContext]="{ $implicit: c }" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('slots') {
+        <app-story-presets>
+            <ng-template>
+                <app-story-row caption="Разметка приложения" [items]="slotCases" [itemLabel]="caseLabel">
+                    <ng-template let-c>
+                        <ng-container [ngTemplateOutlet]="cell" [ngTemplateOutletContext]="{ $implicit: c }" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('highlight') {
+        <app-story-presets>
+            <ng-template>
+                <app-story-row caption="Подсветка найденного: вход matchHighlight" [items]="highlightCases" [itemLabel]="caseLabel">
+                    <ng-template let-c>
+                        <ng-container [ngTemplateOutlet]="cell" [ngTemplateOutletContext]="{ $implicit: c }" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('material') {
+        <app-story-presets caption="Вид приложения: отступ над деревом, строки дерева, пустота со значком">
+            <ng-template>
+                <app-story-row caption="Материальный набор против своего" [items]="materialCases" [itemLabel]="caseLabel">
                     <ng-template let-c>
                         <ng-container [ngTemplateOutlet]="cell" [ngTemplateOutletContext]="{ $implicit: c }" />
                     </ng-template>

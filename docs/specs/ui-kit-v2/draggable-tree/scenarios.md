@@ -94,3 +94,21 @@ Then only the first container's children are seen at first, `openChange` gives b
 the unfold, and the drop puts the target back among the open values
 
 Covered by the component test of `rt-draggable-tree`.
+
+### SC-UKV-843 — an empty draggable tree shows the application's icon
+
+Given a draggable tree without nodes and with `emptyIcon`
+When it is drawn
+Then the named kit icon stands above the label «No options»
+
+Covered by the component test of `rt-draggable-tree`.
+
+### SC-UKV-844 — under the material preset the draggable rows take the application's look
+
+Given a draggable tree with a hovered row and a drop place, under the material preset
+When it is drawn next to the same tree in the kit look
+Then the material rows are rounded and apart by 5px, the hovered row lifts with a shadow and shows
+its handle, the other rows hide theirs, and the drop line is 2px; the kit half stays as it was
+
+Not covered: a test has no layout, and this is a style rule. The frames of the material stories of
+the draggable tree and the Presets pair close it.
