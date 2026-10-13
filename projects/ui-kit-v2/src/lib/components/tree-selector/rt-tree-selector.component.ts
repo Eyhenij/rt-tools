@@ -19,23 +19,24 @@ import {
     ModelSignal,
     OutputEmitterRef,
     Signal,
+    TemplateRef,
     ViewEncapsulation,
     WritableSignal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import { BlockDirective, ElemDirective } from '@rt-tools/core';
+import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
+import { rtKitLabel, IRtIcon } from '@rt-tools/ui-kit-v2/core';
 import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
 import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { RtInputComponent } from '@rt-tools/ui-kit-v2/input';
 import { RtToggleSwitchComponent } from '@rt-tools/ui-kit-v2/toggle-switch';
 import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
 import { RtHybridTreeComponent } from '@rt-tools/ui-kit-v2/hybrid-tree';
-import { RtTreeComponent } from '@rt-tools/ui-kit-v2/tree';
+import { RtTreeComponent, RtTreeNodeEndDirective, RtTreeNodeMetaDirective } from '@rt-tools/ui-kit-v2/tree';
 import { IRtTree } from '@rt-tools/ui-kit-v2/tree';
-import { RtTreeSelectorControlsDirective } from './rt-tree-selector.directives';
+import { RtTreeSelectorControlsDirective, RtTreeSelectorUnderSearchDirective } from './rt-tree-selector.directives';
 import { rtTreeSelectorCanApply, rtTreeSelectorClear, rtTreeSelectorFilter, rtTreeSelectorSame } from './rt-tree-selector.logic';
 import { IRtTreeSelector } from './rt-tree-selector.model';
 
@@ -59,6 +60,7 @@ const BEM_BLOCK: string = 'rt-tree-selector';
         FormsModule,
         BlockDirective,
         ElemDirective,
+        ModDirective,
         RtButtonDirective,
         RtIconComponent,
         RtInputComponent,
@@ -99,6 +101,22 @@ export class RtTreeSelectorComponent<TValue> {
 
     protected readonly controlsTpl: Signal<RtTreeSelectorControlsDirective | undefined> = contentChild(RtTreeSelectorControlsDirective);
 
+    protected readonly underSearchTpl: Signal<RtTreeSelectorUnderSearchDirective | undefined> =
+        contentChild(RtTreeSelectorUnderSearchDirective);
+
+    /** Разметка строк, отданная селектору: дерево внутри его содержимым не видит, и она уходит туда входом. */
+    protected readonly nodeEnd: Signal<RtTreeNodeEndDirective<TValue> | undefined> = contentChild(RtTreeNodeEndDirective);
+
+    protected readonly nodeMeta: Signal<RtTreeNodeMetaDirective<TValue> | undefined> = contentChild(RtTreeNodeMetaDirective);
+
+    protected readonly endTemplate: Signal<TemplateRef<IRtTree.NodeContext<TValue>> | null> = computed(
+        (): TemplateRef<IRtTree.NodeContext<TValue>> | null => this.nodeEnd()?.templateRef ?? null
+    );
+
+    protected readonly metaTemplate: Signal<TemplateRef<IRtTree.NodeContext<TValue>> | null> = computed(
+        (): TemplateRef<IRtTree.NodeContext<TValue>> | null => this.nodeMeta()?.templateRef ?? null
+    );
+
     /** Строка поиска: начинается с `searchTerm` и дальше живёт от набора в поле. */
     protected readonly term: WritableSignal<string> = linkedSignal((): string => this.searchTerm());
 
@@ -111,6 +129,9 @@ export class RtTreeSelectorComponent<TValue> {
     protected readonly shownNodes: Signal<ReadonlyArray<IRtTree.Node<TValue>>> = computed((): ReadonlyArray<IRtTree.Node<TValue>> =>
         rtTreeSelectorFilter(this.nodes(), this.term())
     );
+
+    /** Слово, которое дерево отмечает в строках: без подсветки — пустое, а отбор узлов идёт по `term`. */
+    protected readonly markTerm: Signal<string> = computed((): string => (this.matchHighlight() ? this.term() : ''));
 
     protected readonly hasRows: Signal<boolean> = computed((): boolean => this.shownNodes().length > 0);
 
@@ -177,6 +198,12 @@ export class RtTreeSelectorComponent<TValue> {
     /** Начальная строка поиска. */
     public readonly searchTerm: InputSignal<string> = input<string>('');
     public readonly ariaLabel: InputSignal<string | null> = input<string | null>(null);
+    /** Отмечать ли найденные слова в строках. Выключенная, подсветка не мешает отбору: узлы отбираются так же. */
+    public readonly matchHighlight: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
+        transform: booleanAttribute,
+    });
+    /** Значок кита над подписью «ничего не найдено» и над пустым деревом внутри. */
+    public readonly emptyIcon: InputSignal<IRtIcon.Name | null> = input<IRtIcon.Name | null>(null);
     /** Выключенный селектор не меняет выбор: поле поиска, кнопки, переключатель, дерево и подвал выключены. */
     public readonly disabled: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
         transform: booleanAttribute,

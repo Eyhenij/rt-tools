@@ -315,6 +315,7 @@ export type TRtDesignTokenName =
     | '--rt-mat-shadow-fab'
     | '--rt-mat-shadow-fab-hover'
     | '--rt-mat-shadow-level-2'
+    | '--rt-mat-yellow-100'
     | '--rt-nav-caret-size'
     | '--rt-nav-color-disabled'
     | '--rt-nav-color-focus'
@@ -1037,6 +1038,7 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-mat-shadow-fab',
     '--rt-mat-shadow-fab-hover',
     '--rt-mat-shadow-level-2',
+    '--rt-mat-yellow-100',
     '--rt-nav-caret-size',
     '--rt-nav-color-disabled',
     '--rt-nav-color-focus',

@@ -6,10 +6,13 @@ import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { HYBRID_TREE_STORY_NODES } from '../../../hybrid-tree/stories/component/hybrid-tree-story-nodes';
 import { IRtHybridTree } from '../../../hybrid-tree/rt-hybrid-tree.model';
+import { RtTagComponent } from '../../../tag/rt-tag.component';
+import { RtTreeNodeEndDirective } from '../../../tree/rt-tree.directives';
+import { RtTreeSelectorUnderSearchDirective } from '../../../tree-selector/rt-tree-selector.directives';
 import { RtHybridTreeSelectorComponent } from '../../rt-hybrid-tree-selector.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type THybridTreeSelectorMatrixPart = 'form' | 'search' | 'presets' | 'themes';
+export type THybridTreeSelectorMatrixPart = 'form' | 'search' | 'material' | 'presets' | 'themes';
 
 /** Одна ячейка ряда: подпись и то, чем селектор в ней отличается от соседей. */
 interface IHybridTreeSelectorCase {
@@ -20,6 +23,8 @@ interface IHybridTreeSelectorCase {
     readonly searchTerm: string;
     readonly disabled: boolean;
     readonly selectAll: boolean;
+    /** Разметка приложения под поиском и в конце строк гибридного дерева. */
+    readonly slots: boolean;
 }
 
 function selectorCase(name: string, patch: Partial<IHybridTreeSelectorCase> = {}): IHybridTreeSelectorCase {
@@ -31,6 +36,7 @@ function selectorCase(name: string, patch: Partial<IHybridTreeSelectorCase> = {}
         searchTerm: '',
         disabled: false,
         selectAll: true,
+        slots: false,
         ...patch,
     };
 }
@@ -53,6 +59,9 @@ function selectorCase(name: string, patch: Partial<IHybridTreeSelectorCase> = {}
         NgTemplateOutlet,
         // components
         RtHybridTreeSelectorComponent,
+        RtTagComponent,
+        RtTreeNodeEndDirective,
+        RtTreeSelectorUnderSearchDirective,
         // showcase
         StoryPresetsComponent,
         StoryRowComponent,
@@ -74,6 +83,12 @@ export class TestRtHybridTreeSelectorMatrixComponent {
     public readonly searchCases: readonly IHybridTreeSelectorCase[] = [
         selectorCase('«выручка» — по листу в двух группах', { searchTerm: 'выручка' }),
         selectorCase('ничего не нашлось', { searchTerm: 'нет такого' }),
+    ];
+
+    /** Вид приложения: плашка числа у групп без отметок, разметка приложения под поиском и в строках. */
+    public readonly materialCases: readonly IHybridTreeSelectorCase[] = [
+        selectorCase('группы без отметок, число плашкой', { branchMarks: false, value: ['hotel', 'segment', 'ty-rooms'] }),
+        selectorCase('поиск «выручка», разметка приложения', { searchTerm: 'выручка', slots: true }),
     ];
 
     public readonly caseLabel: (value: IHybridTreeSelectorCase) => string = (value: IHybridTreeSelectorCase): string => value.name;

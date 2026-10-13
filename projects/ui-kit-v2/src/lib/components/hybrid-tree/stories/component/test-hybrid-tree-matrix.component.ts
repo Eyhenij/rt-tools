@@ -9,7 +9,7 @@ import { IRtHybridTree } from '../../rt-hybrid-tree.model';
 import { HYBRID_TREE_STORY_NODES } from './hybrid-tree-story-nodes';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type THybridTreeMatrixPart = 'single' | 'marks' | 'select-all' | 'presets' | 'themes';
+export type THybridTreeMatrixPart = 'single' | 'marks' | 'select-all' | 'material' | 'presets' | 'themes';
 
 /** Одна ячейка ряда: подпись и то, чем дерево в ней отличается от соседей. */
 interface IHybridTreeCase {
@@ -17,10 +17,11 @@ interface IHybridTreeCase {
     readonly value: ReadonlyArray<string>;
     readonly branchMarks: boolean;
     readonly showSelectAll: boolean;
+    readonly searchTerm: string;
 }
 
 function treeCase(name: string, patch: Partial<IHybridTreeCase> = {}): IHybridTreeCase {
-    return { name, value: [], branchMarks: true, showSelectAll: false, ...patch };
+    return { name, value: [], branchMarks: true, showSelectAll: false, searchTerm: '', ...patch };
 }
 
 /**
@@ -66,6 +67,13 @@ export class TestRtHybridTreeMatrixComponent {
         treeCase('ничего', { showSelectAll: true, value: ['ty-rooms'] }),
         treeCase('часть', { showSelectAll: true, value: ['hotel', 'ty-rooms'] }),
         treeCase('все свободные листья', { showSelectAll: true, value: ['hotel', 'segment', 'channel', 'ty-rooms'] }),
+    ];
+
+    /** Вид приложения: число выбранного плашкой, совпадение поиска и «выбрать всё». */
+    public readonly materialCases: readonly IHybridTreeCase[] = [
+        treeCase('число выбранного плашкой', { value: ['hotel', 'segment', 'ty-rooms'], branchMarks: false }),
+        treeCase('поиск «выручка»', { searchTerm: 'выручка', value: ['ty-revenue'] }),
+        treeCase('«выбрать всё»', { showSelectAll: true, value: ['hotel', 'ty-rooms'] }),
     ];
 
     public readonly caseLabel: (value: IHybridTreeCase) => string = (value: IHybridTreeCase): string => value.name;

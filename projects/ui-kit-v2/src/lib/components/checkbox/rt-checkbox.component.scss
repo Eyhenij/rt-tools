@@ -6,7 +6,13 @@
        и на `<rt-checkbox>`, и на корне шаблона, поэтому правила блока вложены в хост —
        так они достаются только корню шаблона. */
 
+    /* Размер и рамка квадрата объявлены на хосте, а не на кнопке внутри: окружение перекрывает их
+       классом на том же хосте. Так дерево выбора в материальном виде ставит квадрат 16px с серой
+       рамкой приложения; сам флажок держит прежние 18px и рамку кита. */
     rt-checkbox {
+        --rt-checkbox-box-size: calc(var(--rt-size-4) + var(--rt-space-0-5));
+        --rt-checkbox-box-border-color: var(--rt-color-border-strong);
+
         display: inline-block;
 
         /* Шаг входа `radius` переназначает скругление квадрата, кольцо фокуса держит своё. */
@@ -52,12 +58,12 @@
 
         &__box {
             display: inline-flex;
-            width: 18px;
-            height: 18px;
+            width: var(--rt-checkbox-box-size);
+            height: var(--rt-checkbox-box-size);
             flex-shrink: 0;
             align-items: center;
             justify-content: center;
-            border: var(--rt-input-border-width) solid var(--rt-color-border-strong);
+            border: var(--rt-input-border-width) solid var(--rt-checkbox-box-border-color);
             border-radius: var(--rt-checkbox-box-radius);
             background: var(--rt-color-bg-surface);
             transition:

@@ -65,6 +65,27 @@ class TreeEndHostComponent {
     protected readonly nodes: ReadonlyArray<IRtTree.Node<string>> = TREE;
 }
 
+/** Шаблоны строк входами — так их отдаёт обёртка; директива рядом проигрывает входу. */
+@Component({
+    selector: 'rt-tree-input-templates-host',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtTreeComponent, RtTreeNodeEndDirective],
+    template: `
+        <ng-template #end let-node>
+            <span qa-dataid="end-mark">{{ node.value }}</span>
+        </ng-template>
+        <ng-template #meta let-node>
+            <span qa-dataid="meta-mark">{{ node.value }}</span>
+        </ng-template>
+        <rt-tree [nodes]="nodes" [nodeEndTemplate]="end" [nodeMetaTemplate]="meta">
+            <ng-template rtTreeNodeEnd><span qa-dataid="directive-mark"></span></ng-template>
+        </rt-tree>
+    `,
+})
+class TreeInputTemplatesHostComponent {
+    protected readonly nodes: ReadonlyArray<IRtTree.Node<string>> = TREE;
+}
+
 const LEAVES: ReadonlyArray<IRtTree.Node<string>> = ['a', 'b', 'c', 'd'].map((value: string): IRtTree.Node<string> => ({
     label: value.toUpperCase(),
     value,
@@ -269,6 +290,39 @@ describe('RtTreeComponent', (): void => {
 
         expect(emptyText(found)).toBe('Nothing found');
         expect(emptyText(none)).toBe('No options');
+    });
+
+    it('SC-UKV-835 — пустое дерево ставит значок приложения над подписью', (): void => {
+        const plain: TFixture = setup({ nodes: [] });
+        const withIcon: TFixture = setup({ nodes: [], emptyIcon: 'inbox' });
+        const plainEmpty: HTMLElement = (plain.nativeElement as HTMLElement).querySelector('[qa-dataid="tree-empty"]') as HTMLElement;
+        const iconEmpty: HTMLElement = (withIcon.nativeElement as HTMLElement).querySelector('[qa-dataid="tree-empty"]') as HTMLElement;
+
+        expect(emptyText(plain)).toBe('No options');
+        expect(plainEmpty.querySelector('[qa-dataid="tree-empty-icon"]')).toBeNull();
+        expect(plainEmpty.classList).not.toContain('rt-tree__empty--with-icon');
+
+        const icon: Element | null = iconEmpty.querySelector('[qa-dataid="tree-empty-icon"]');
+        expect(icon).not.toBeNull();
+        expect(iconEmpty.firstElementChild).toBe(icon);
+        expect(iconEmpty.classList).toContain('rt-tree__empty--with-icon');
+        expect(emptyText(withIcon)).toBe('No options');
+    });
+
+    it('SC-UKV-836 — разметка строки, отданная входом, стоит там же, где от директивы, и сильнее её', (): void => {
+        TestBed.configureTestingModule({ imports: [TreeInputTemplatesHostComponent] });
+        const fixture: ComponentFixture<TreeInputTemplatesHostComponent> = TestBed.createComponent(TreeInputTemplatesHostComponent);
+        fixture.detectChanges();
+
+        const ends: string[] = rows(fixture).map(
+            (row: HTMLElement): string => row.querySelector('[qa-dataid="tree-row-end"] [qa-dataid="end-mark"]')?.textContent ?? ''
+        );
+        const metas: string[] = rows(fixture).map(
+            (row: HTMLElement): string => row.querySelector('[qa-dataid="tree-row-meta"] [qa-dataid="meta-mark"]')?.textContent ?? ''
+        );
+        expect(ends).toEqual(['ru', 'msq']);
+        expect(metas).toEqual(['ru', 'msq']);
+        expect((fixture.nativeElement as HTMLElement).querySelector('[qa-dataid="directive-mark"]')).toBeNull();
     });
 
     it('SC-UKV-699 — выключенное дерево не меняет выбор, а ветку по-прежнему раскрывает стрелка', (): void => {

@@ -181,3 +181,33 @@ When a person clicks a leaf, clicks select-all and presses Space
 Then the choice stays as it was, and the arrow of a branch still opens it
 
 Covered by the component test of `rt-tree`.
+
+### SC-UKV-835 — an empty tree shows the application's icon above its text
+
+Given a tree without nodes, once without `emptyIcon` and once with it
+When the tree is drawn
+Then the first shows the kit label alone, and the second shows the named kit icon above the label
+
+Covered by the component test of `rt-tree`.
+
+### SC-UKV-836 — the row templates passed by inputs stand where the directives put theirs
+
+Given a tree with a template in `nodeEndTemplate` and a template in `nodeMetaTemplate`
+When the tree is drawn
+Then every row holds the end template at its end and the meta template under its label, each with
+the node in its context
+
+Covered by the component test of `rt-tree`.
+
+### SC-UKV-837 — under the material preset the tree draws the application's rows
+
+Given a tree with a chosen leaf, select-all, a search match and a group count, under the material
+preset
+When the tree is drawn next to the same tree in the kit look
+Then the material rows are 32px high, rounded and apart by 5px, the levels stand 46px apart with a
+line, the arrow and the checkbox take the primary colour, and the match is on yellow in semibold;
+the kit rows stay as they were
+
+Not covered: a test has no layout, and this is a style rule. The frames of the material stories of
+the tree and the Presets pair close it, and the kit halves of the existing frames prove the kit look
+did not move.

@@ -5,6 +5,7 @@
             [nodes]="nodes"
             [value]="c.value"
             [branchMarks]="c.branchMarks"
+            [searchTerm]="c.searchTerm"
             [showSelectAll]="c.showSelectAll" />
     </div>
 </ng-template>
@@ -38,6 +39,18 @@
         <app-story-presets>
             <ng-template>
                 <app-story-row caption="«Выбрать всё» по свободным листьям" [items]="selectAllCases" [itemLabel]="caseLabel">
+                    <ng-template let-c>
+                        <ng-container [ngTemplateOutlet]="cell" [ngTemplateOutletContext]="{ $implicit: c }" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('material') {
+        <app-story-presets caption="Вид приложения: плашка числа, совпадение и «выбрать всё»">
+            <ng-template>
+                <app-story-row caption="Материальный набор против своего" [items]="materialCases" [itemLabel]="caseLabel">
                     <ng-template let-c>
                         <ng-container [ngTemplateOutlet]="cell" [ngTemplateOutletContext]="{ $implicit: c }" />
                     </ng-template>

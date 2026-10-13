@@ -1,0 +1,120 @@
+import { Meta, Title } from '@storybook/addon-docs/blocks';
+
+<Meta title="Organisms/Forms/ColorPalette/Overview" />
+
+<Title>ColorPalette — `rt-color-palette`</Title>
+
+Поле выбора цвета: образцы из набора и свой цвет на панели кита. Значение — `#rrggbb` строчными или
+`null`.
+
+```html
+<rt-field label="Цвет роли">
+    <rt-color-palette formControlName="color" [colors]="themeColors" />
+</rt-field>
+```
+
+## Когда применять
+
+- Цвет записи из короткого набора: роль, сезон, метка, категория.
+- Набор темы приложения с возможностью взять свой цвет, когда набора не хватило.
+
+## Когда не применять
+
+- **Свободный цвет без набора** — поле `rt-input` с записью hex: образцы там лишние.
+- **Выбор из названий, а не цветов** — `rt-select` или `rt-radio-button`.
+
+## Оси
+
+| ось           | значения                              | умолчание  |
+| ------------- | ------------------------------------- | ---------- |
+| значение      | без цвета, цвет из набора, свой цвет  | без цвета  |
+| набор         | восемнадцать цветов кита, цвета входа | набор кита |
+| только чтение | нет, да — с цветом и без              | нет        |
+| свой цвет     | разрешён, запрещён                    | разрешён   |
+
+## Состояния
+
+- Образец: обычный, наведение, фокус с клавиши; выбранный обведён кольцом.
+- Отключённая палитра: образцы и кнопка своего цвета приглушены, нажатия и клавиши не действуют.
+- Панель своего цвета: площадь, полоса оттенка, запись hex; со входом `channels` — ещё поля R, G, B,
+  каждое берёт целое от 0 до 255. «Применить» недоступно до изменения.
+
+## Доступность
+
+- Образцы — группа переключателей `radiogroup` с именем «Colour» из подписей кита или `ariaLabel`.
+- Каждый образец назван своим hex; в порядке Tab стоит один образец, стрелки, Home и End двигают выбор.
+- Площадь и полоса — ползунки со стрелками и значением для скринридера.
+
+## Оформление
+
+Вид кита и материальный вид стоят рядом в каждой матрице, светлая и тёмная темы — в истории
+**Themes**. Свойства объявлены на самом `rt-color-palette`, и приложение переназначает их своим
+правилом на этот блок. Панель своего цвета живёт в оверлее и объявляет свои свойства на себе.
+
+Материальный набор повторяет образцы приложения: круги 30px без рамки через 10px, выбранный — полое
+кольцо 3px своего цвета со свечением 5px, круг под указателем растёт. Кнопка своего цвета стоит в
+16px под сеткой, серая (`--mat-sys-on-surface-variant`) 16/400; свой образец — последний в сетке.
+Пустое значение только для чтения — белый круг. Панель — 256×320 со скруглением 6px и тенью
+`0 8px 16px` серого цвета.
+
+| свойство                                   | что задаёт                           | умолчание                   |
+| ------------------------------------------ | ------------------------------------ | --------------------------- |
+| `--rt-color-palette-swatch-size`           | сторона образца                      | `--rt-size-8`               |
+| `--rt-color-palette-swatch-radius`         | скругление образца                   | `--rt-radius-full`          |
+| `--rt-color-palette-swatch-border-width`   | рамка образца                        | `--rt-border-width-thin`    |
+| `--rt-color-palette-swatch-border-color`   | цвет рамки образца                   | `--rt-color-border-subtle`  |
+| `--rt-color-palette-swatch-scale-hover`    | рост образца под указателем          | `1`                         |
+| `--rt-color-palette-gap`                   | зазор между образцами и до кнопки    | `--rt-space-sm`             |
+| `--rt-color-palette-ring-width`            | внешнее кольцо выбранного            | `--rt-border-width-thick`   |
+| `--rt-color-palette-ring-gap`              | просвет до внешнего кольца           | `--rt-border-width-thick`   |
+| `--rt-color-palette-ring-gap-color`        | цвет просвета                        | `--rt-color-bg-surface`     |
+| `--rt-color-palette-checked-inset`         | вдавленное кольцо выбранного         | `0px`                       |
+| `--rt-color-palette-checked-glow`          | свечение выбранного его цветом       | `0px`                       |
+| `--rt-color-palette-checked-hollow`        | доля прозрачности заливки выбранного | `0%`                        |
+| `--rt-color-palette-readonly-size`         | сторона образца только для чтения    | `--rt-size-8`               |
+| `--rt-color-palette-readonly-border-width` | рамка образца только для чтения      | `--rt-border-width-thin`    |
+| `--rt-color-palette-empty-border-color`    | рамка пустого образца                | `--rt-color-border-default` |
+| `--rt-color-palette-empty-bg`              | заливка пустого образца              | `transparent`               |
+| `--rt-color-palette-duration`              | смена кольца и роста                 | `--rt-duration-fast`        |
+| `--rt-color-palette-custom-gap`            | от сетки до кнопки своего цвета      | `--rt-color-palette-gap`    |
+| `--rt-color-palette-picker-width`          | ширина панели своего цвета           | `--rt-size-64`              |
+| `--rt-color-palette-picker-height`         | высота панели своего цвета           | `auto`                      |
+| `--rt-color-palette-area-grow`             | доля свободной высоты у площади      | `0`                         |
+| `--rt-color-palette-picker-padding`        | поля панели                          | `--rt-space-md`             |
+| `--rt-color-palette-picker-radius`         | скругление панели                    | `--rt-radius-md`            |
+| `--rt-color-palette-picker-shadow`         | тень панели                          | `--rt-shadow-md`            |
+| `--rt-color-palette-area-height`           | высота площади                       | `--rt-size-40`              |
+| `--rt-color-palette-thumb-size`            | бегунок площади и полосы             | `--rt-size-4`               |
+
+## Входы
+
+| вход            | тип                 | умолчание |
+| --------------- | ------------------- | --------- |
+| `colors`        | `readonly string[]` | `[]`      |
+| `readonly`      | `boolean`           | `false`   |
+| `customAllowed` | `boolean`           | `true`    |
+| `channels`      | `boolean`           | `false`   |
+
+## Входы от основы полей
+
+Достались от `RtFormControlBase` — общей основы полей кита. Палитра читает `disabled`, `controlId` и
+`ariaLabel`; размер, кнопку очистки и рамку она не рисует, и эти входы ничего не меняют.
+
+| вход        | тип                    | умолчание |
+| ----------- | ---------------------- | --------- |
+| `size`      | `'sm' \| 'md' \| 'lg'` | `'md'`    |
+| `disabled`  | `boolean`              | `false`   |
+| `controlId` | `string \| null`       | `null`    |
+| `ariaLabel` | `string \| null`       | `null`    |
+| `clearable` | `boolean`              | `true`    |
+| `bordered`  | `boolean`              | `true`    |
+
+## Выходы
+
+Нет: значение уходит в форму.
+
+## Рядом
+
+- [`rt-field`](./?path=/docs/molecules-forms-field-overview--docs) — подпись, подсказка и ошибка вокруг
+  палитры.
+- [`rt-radio-button`](./?path=/docs/atoms-forms-radiobutton-overview--docs) — выбор из названий.

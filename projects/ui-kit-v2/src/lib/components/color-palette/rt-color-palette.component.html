@@ -1,0 +1,59 @@
+<ng-container rtBlock="rt-color-palette">
+    @if (isReadonlyView()) {
+        <!-- Только для чтения — один образец текущего цвета; пустой — с одной рамкой. -->
+        <span
+            rtElem="swatch"
+            qa-dataid="color-palette-readonly"
+            role="img"
+            [rtMod]="{ readonly: true, empty: !hasValue() }"
+            [attr.aria-label]="value() ?? t().uiColorPaletteEmpty"
+            [style.--rt-color-palette-color]="value()"></span>
+    } @else {
+        <div
+            rtElem="swatches"
+            role="radiogroup"
+            [attr.id]="effectiveControlId()"
+            [attr.aria-label]="groupLabel()"
+            [attr.aria-disabled]="isDisabled() || null">
+            @for (swatch of swatches(); track swatch.hex; let index = $index) {
+                <button
+                    #swatch
+                    type="button"
+                    rtElem="swatch"
+                    qa-dataid="color-palette-swatch"
+                    role="radio"
+                    [rtMod]="{ checked: index === checkedIndex(), custom: swatch.custom }"
+                    [attr.aria-checked]="index === checkedIndex()"
+                    [attr.aria-label]="swatch.hex"
+                    [attr.tabindex]="index === tabbableIndex() ? 0 : -1"
+                    [disabled]="isDisabled()"
+                    [style.--rt-color-palette-color]="swatch.hex"
+                    (click)="onSwatch(swatch.hex)"
+                    (keydown)="onSwatchKeydown($event)"></button>
+            }
+        </div>
+
+        @if (customAllowed()) {
+            <!-- Панель своего цвета висит на кнопке: по ней встаёт и её нажатие не считает внешним. -->
+            <button
+                type="button"
+                rtButton
+                rtElem="custom"
+                qa-dataid="color-palette-custom"
+                appearance="text"
+                size="sm"
+                [rtPopover]="pickerTpl"
+                [disabled]="isDisabled()">
+                {{ hasCustom() ? t().uiColorPaletteEditCustom : t().uiColorPaletteCustom }}
+            </button>
+
+            <ng-template #pickerTpl>
+                <rt-color-picker
+                    [value]="pickerStart()"
+                    [channels]="channels()"
+                    (applied)="onCustomApply($event)"
+                    (cancelled)="onCustomCancel()" />
+            </ng-template>
+        }
+    }
+</ng-container>

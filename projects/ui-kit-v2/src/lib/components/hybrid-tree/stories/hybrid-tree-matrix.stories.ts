@@ -26,6 +26,9 @@ export const Marks: TStory = { args: { part: 'marks' } };
 /** «Выбрать всё» по свободным листьям, группы «один лист» не трогает — SC-UKV-694. */
 export const SelectAll: TStory = { args: { part: 'select-all' } };
 
+/** Материальный вид приложения рядом со своим: число выбранного у группы плашкой основного цвета. */
+export const Material: TStory = { args: { part: 'material' } };
+
 export const Presets: TStory = { args: { part: 'presets' } };
 
 export const Themes: TStory = { args: { part: 'themes' } };

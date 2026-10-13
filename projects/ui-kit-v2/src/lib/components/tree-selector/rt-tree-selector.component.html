@@ -15,6 +15,12 @@
             (ngModelChange)="onTerm($event)"
             (keydown)="onSearchKeydown($event)" />
 
+        @if (underSearchTpl(); as underSearch) {
+            <div rtElem="under-search" qa-dataid="tree-selector-under-search">
+                <ng-container [ngTemplateOutlet]="underSearch.templateRef" />
+            </div>
+        }
+
         <div rtElem="controls">
             <div rtElem="row">
                 @if (isExpandShown()) {
@@ -99,7 +105,12 @@
     </div>
 
     @if (isNothingFound()) {
-        <div rtElem="empty" qa-dataid="tree-selector-empty">{{ nothingFoundLabel() }}</div>
+        <div rtElem="empty" qa-dataid="tree-selector-empty" [rtMod]="{ 'with-icon': !!emptyIcon() }">
+            @if (emptyIcon(); as icon) {
+                <rt-icon rtElem="empty-icon" qa-dataid="tree-selector-empty-icon" size="lg" [name]="icon" />
+            }
+            {{ nothingFoundLabel() }}
+        </div>
     } @else {
         @if (hybrid) {
             <rt-hybrid-tree
@@ -112,8 +123,11 @@
                 [branchMarks]="branchMarks()"
                 [exclusive]="isExclusive()"
                 [showSelectAll]="selectAll()"
-                [searchTerm]="term()"
+                [searchTerm]="markTerm()"
                 [filter]="false"
+                [emptyIcon]="emptyIcon()"
+                [nodeEndTemplate]="endTemplate()"
+                [nodeMetaTemplate]="metaTemplate()"
                 [ariaLabel]="ariaLabel()"
                 [disabled]="disabled()"
                 (valueChange)="onTreeChange($event)"
@@ -129,8 +143,11 @@
                 [branchMarks]="branchMarks()"
                 [exclusive]="isExclusive()"
                 [showSelectAll]="selectAll()"
-                [searchTerm]="term()"
+                [searchTerm]="markTerm()"
                 [filter]="false"
+                [emptyIcon]="emptyIcon()"
+                [nodeEndTemplate]="endTemplate()"
+                [nodeMetaTemplate]="metaTemplate()"
                 [ariaLabel]="ariaLabel()"
                 [disabled]="disabled()"
                 (valueChange)="onTreeChange($event)"

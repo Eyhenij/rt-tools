@@ -22,7 +22,7 @@ import {
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
+import { IRtIcon, RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
 import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { rtTreeRows, rtTreeSideKey, rtTreeToggle } from '@rt-tools/ui-kit-v2/select';
 import { IRtSelect } from '@rt-tools/ui-kit-v2/select';
@@ -106,6 +106,8 @@ export class RtDraggableTreeComponent<TValue> {
     public readonly open: ModelSignal<ReadonlyArray<TValue> | null> = model<ReadonlyArray<TValue> | null>(null);
     public readonly canDrop: InputSignal<IRtDraggableTree.CanDrop<TValue> | null> = input<IRtDraggableTree.CanDrop<TValue> | null>(null);
     public readonly ariaLabel: InputSignal<string | null> = input<string | null>(null);
+    /** Значок кита над подписью пустого дерева. Без него пустое дерево — одна подпись. */
+    public readonly emptyIcon: InputSignal<IRtIcon.Name | null> = input<IRtIcon.Name | null>(null);
 
     public readonly moved: OutputEmitterRef<IRtDraggableTree.Moved<TValue>> = output<IRtDraggableTree.Moved<TValue>>();
     public readonly picked: OutputEmitterRef<IRtTree.Node<TValue>> = output<IRtTree.Node<TValue>>();

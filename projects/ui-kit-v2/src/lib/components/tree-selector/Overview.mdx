@@ -104,10 +104,33 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Оформление
 
-| свойство                          | что задаёт         | умолчание                |
-| --------------------------------- | ------------------ | ------------------------ |
-| `--rt-tree-selector-border-width` | черта над подвалом | `--rt-border-width-thin` |
-| `--rt-tree-selector-bg`           | фон селектора      | `--rt-color-bg-surface`  |
+| свойство                          | что задаёт                              | умолчание                | материальный набор |
+| --------------------------------- | --------------------------------------- | ------------------------ | ------------------ |
+| `--rt-tree-selector-border-width` | черта над подвалом                      | `--rt-border-width-thin` | —                  |
+| `--rt-tree-selector-bg`           | фон селектора                           | `--rt-color-bg-surface`  | —                  |
+| `--rt-tree-selector-gap`          | зазор между головой, деревом и подвалом | `--rt-space-sm`          | 10px               |
+| `--rt-tree-selector-empty-color`  | цвет «ничего не найдено»                | `--rt-color-text-muted`  | —                  |
+| `--rt-tree-selector-empty-gap`    | зазор значка и подписи пустоты          | `--rt-space-sm`          | —                  |
+
+Строки дерева внутри берут свойства и материальный вид `rt-tree` — их таблица на странице дерева.
+
+## Разметка приложения
+
+- `rtTreeSelectorControls` — свои контролы в строке селектора, у правого края.
+- `rtTreeSelectorUnderSearch` — разметка сразу под полем поиска, над строкой контролов.
+- `rtTreeNodeEnd` и `rtTreeNodeMeta` — разметка в конце строки и под подписью. Селектор передаёт их
+  дереву внутри, гибридный — гибридному дереву.
+
+```html
+<rt-tree-selector emptyIcon="search" [nodes]="hotels" [matchHighlight]="false" [(value)]="hotelIds">
+    <ng-template rtTreeSelectorUnderSearch>
+        <rt-toggle-button-group [items]="scopes" [(value)]="scope" />
+    </ng-template>
+    <ng-template rtTreeNodeEnd let-node>
+        <rt-tag size="sm" [value]="node.value" />
+    </ng-template>
+</rt-tree-selector>
+```
 
 На узком экране контролы переносятся на вторую строку; дерево прокручивается внутри, поле поиска
 и подвал стоят на месте.
@@ -134,7 +157,12 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | `label`          | `string`                           | `''`         |
 | `searchTerm`     | `string`                           | `''`         |
 | `ariaLabel`      | `string \| null`                   | `null`       |
+| `matchHighlight` | `boolean`                          | `true`       |
+| `emptyIcon`      | `IRtIcon.Name \| null`             | `null`       |
 | `disabled`       | `boolean`                          | `false`      |
+
+`matchHighlight` выключает отметку найденных слов в строках: узлы отбираются так же. `emptyIcon`
+ставит значок кита над «ничего не найдено» и над пустым деревом внутри.
 
 ## Выходы
 

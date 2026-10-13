@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/
 
 import { FormsModule } from '@angular/forms';
 
-import { BlockDirective, ElemDirective } from '@rt-tools/core';
+import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
 import { RtHybridTreeComponent } from '@rt-tools/ui-kit-v2/hybrid-tree';
@@ -35,6 +35,7 @@ const BEM_BLOCK: string = 'rt-tree-selector';
         FormsModule,
         BlockDirective,
         ElemDirective,
+        ModDirective,
         RtButtonDirective,
         RtIconComponent,
         RtInputComponent,
