@@ -27,7 +27,7 @@ import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSy
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-import { ensureIndex } from './showcase-probe.mjs';
+import { ensureIndex, storiesLostFromIndex } from './showcase-probe.mjs';
 
 /** The address of an already raised showcase: the run raises none of its own. */
 const URL = process.env.STORYBOOK_URL ?? 'http://localhost:6007';
@@ -41,9 +41,55 @@ const SNAPSHOT_DIR = `${CONFIG_DIR}/__snapshots__`;
 /** By this path in the showcase's stories it is recognised that the address holds the second kit. */
 const OWN_IMPORT_MARKER = 'projects/ui-kit-v2/';
 
+/** How many times the index is read again before it counts as incomplete, and how long between reads. */
+const INDEX_REREADS = 6;
+const INDEX_REREAD_MS = 5_000;
+
 function fail(message) {
     console.error(`\n  ${message}\n`);
     process.exit(1);
+}
+
+/**
+ * It refuses an index that lacks a story some reference belongs to.
+ *
+ * A showcase now and then serves an index without part of its stories. The run over it then fails
+ * on references «without a story» or, taking fewer frames, ends green over an incomplete set, and
+ * the second case looks the same as a whole run. The index is read again first, because a lost
+ * entry came back on a repeat both times it was seen.
+ */
+async function requireWholeIndex(entries) {
+    if (!existsSync(SNAPSHOT_DIR)) {
+        return;
+    }
+
+    const references = readdirSync(SNAPSHOT_DIR);
+    let lost = storiesLostFromIndex(
+        references,
+        entries.map((entry) => entry.id)
+    );
+
+    for (let reread = 0; lost.length > 0 && reread < INDEX_REREADS; reread += 1) {
+        await new Promise((done) => setTimeout(done, INDEX_REREAD_MS));
+
+        try {
+            const index = await (await fetch(`${URL}/index.json`)).json();
+            lost = storiesLostFromIndex(
+                references,
+                Object.values(index.entries ?? {}).map((entry) => entry.id)
+            );
+        } catch {
+            // The next read answers; a showcase that stays silent ends in the refusal below.
+        }
+    }
+
+    if (lost.length > 0) {
+        fail(
+            `The story index of the showcase at ${URL} lacks ${lost.length} stories that references belong to:\n    ${lost.join('\n    ')}\n\n` +
+                `  Either the showcase served an incomplete index, or these stories were removed and their references stayed.\n` +
+                `  Raise the showcase anew and repeat; if the stories are gone, remove the references.`
+        );
+    }
 }
 
 /**
@@ -52,7 +98,7 @@ function fail(message) {
  * The sign is the source path: at the second kit every story lies under `projects/ui-kit-v2/`.
  * Titles are no good for this — `Components/Button` exists at both kits.
  */
-async function requireOwnShowcase() {
+async function requireOwnShowcase(matchReferences) {
     let index;
 
     // The same as in the sweep: an index the showcase lost is brought back before the run reads
@@ -80,6 +126,10 @@ async function requireOwnShowcase() {
         fail(
             `At the address ${URL} it is not the second kit's showcase that answers: the stories come from «${sample}», and were expected from «${OWN_IMPORT_MARKER}».`
         );
+    }
+
+    if (matchReferences) {
+        await requireWholeIndex(entries);
     }
 
     return own.length;
@@ -129,7 +179,8 @@ if (updateIndex >= 0 && (updateOne === undefined || updateOne.startsWith('--')))
     );
 }
 
-const own = await requireOwnShowcase();
+// A pointed re-take opens part of the directory, and the match is for a full session only.
+const own = await requireOwnShowcase(updateOne === undefined);
 console.log(`The second kit's showcase on ${URL}: stories ${own}.`);
 
 const registryDir = mkdtempSync(join(tmpdir(), 'rt-snapshots-'));
