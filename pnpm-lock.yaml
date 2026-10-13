@@ -60,13 +60,13 @@ importers:
     devDependencies:
       '@analogjs/vite-plugin-angular':
         specifier: 2.8.0
-        version: 2.8.0(09571d16d3abdc04cb5f3d755d210919)
+        version: 2.8.0(4f745dc4c2ba19dedc07c3036ffd113e)
       '@analogjs/vitest-angular':
         specifier: 2.8.0
-        version: 2.8.0(@analogjs/vite-plugin-angular@2.8.0(09571d16d3abdc04cb5f3d755d210919))(@angular-devkit/architect@0.2202.2(chokidar@5.0.0))(@angular-devkit/schematics@22.2.2(chokidar@5.0.0))(vitest@4.1.11)
+        version: 2.8.0(@analogjs/vite-plugin-angular@2.8.0(4f745dc4c2ba19dedc07c3036ffd113e))(@angular-devkit/architect@0.2202.2(chokidar@5.0.0))(@angular-devkit/schematics@22.2.2(chokidar@5.0.0))(vitest@5.0.3)
       '@angular-devkit/build-angular':
         specifier: 22.2.2
-        version: 22.2.2(@angular/compiler-cli@22.2.2(@angular/compiler@22.2.2)(typescript@6.0.3))(@angular/compiler@22.2.2)(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(@angular/platform-browser@22.2.2(@angular/animations@22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2)))(@angular/common@22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2)))(@rspack/core@2.1.7(@swc/helpers@0.5.23))(@swc/core@1.16.13(@swc/helpers@0.5.23))(@types/node@24.13.4)(chokidar@5.0.0)(html-webpack-plugin@5.6.8(@rspack/core@2.1.7(@swc/helpers@0.5.23))(webpack@5.111.1))(jiti@2.7.0)(ng-packagr@22.2.4(@angular/compiler-cli@22.2.2(@angular/compiler@22.2.2)(typescript@6.0.3))(oxc-resolver@11.24.2)(tslib@2.8.1)(typescript@6.0.3))(rollup@4.62.4)(sass-embedded@1.105.1)(sass@1.105.1)(typescript@6.0.3)(vitest@4.1.11)(webpack-cli@7.2.3)(yaml@2.9.1)
+        version: 22.2.2(@angular/compiler-cli@22.2.2(@angular/compiler@22.2.2)(typescript@6.0.3))(@angular/compiler@22.2.2)(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(@angular/platform-browser@22.2.2(@angular/animations@22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2)))(@angular/common@22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2)))(@rspack/core@2.1.7(@swc/helpers@0.5.23))(@swc/core@1.16.13(@swc/helpers@0.5.23))(@types/node@24.13.4)(chokidar@5.0.0)(html-webpack-plugin@5.6.8(@rspack/core@2.1.7(@swc/helpers@0.5.23))(webpack@5.111.1))(jiti@2.7.0)(ng-packagr@22.2.4(@angular/compiler-cli@22.2.2(@angular/compiler@22.2.2)(typescript@6.0.3))(oxc-resolver@11.24.2)(tslib@2.8.1)(typescript@6.0.3))(rollup@4.62.4)(sass-embedded@1.105.1)(sass@1.105.1)(typescript@6.0.3)(vitest@5.0.3)(webpack-cli@7.2.3)(yaml@2.9.1)
       '@angular-devkit/core':
         specifier: 22.2.2
         version: 22.2.2(chokidar@5.0.0)
@@ -93,7 +93,7 @@ importers:
         version: 22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))
       '@angular/build':
         specifier: 22.2.2
-        version: 22.2.2(@angular/compiler-cli@22.2.2(@angular/compiler@22.2.2)(typescript@6.0.3))(@angular/compiler@22.2.2)(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(@angular/platform-browser@22.2.2(@angular/animations@22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2)))(@angular/common@22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2)))(@types/node@24.13.4)(istanbul-lib-instrument@6.0.3)(jiti@2.7.0)(less@4.8.1)(ng-packagr@22.2.4(@angular/compiler-cli@22.2.2(@angular/compiler@22.2.2)(typescript@6.0.3))(oxc-resolver@11.24.2)(tslib@2.8.1)(typescript@6.0.3))(postcss@8.5.29)(rollup@4.62.4)(terser@5.51.2)(tslib@2.8.1)(typescript@6.0.3)(vitest@4.1.11)(yaml@2.9.1)
+        version: 22.2.2(@angular/compiler-cli@22.2.2(@angular/compiler@22.2.2)(typescript@6.0.3))(@angular/compiler@22.2.2)(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(@angular/platform-browser@22.2.2(@angular/animations@22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2)))(@angular/common@22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2)))(@types/node@24.13.4)(istanbul-lib-instrument@6.0.3)(jiti@2.7.0)(less@4.8.1)(ng-packagr@22.2.4(@angular/compiler-cli@22.2.2(@angular/compiler@22.2.2)(typescript@6.0.3))(oxc-resolver@11.24.2)(tslib@2.8.1)(typescript@6.0.3))(postcss@8.5.29)(rollup@4.62.4)(terser@5.51.2)(tslib@2.8.1)(typescript@6.0.3)(vitest@5.0.3)(yaml@2.9.1)
       '@angular/cdk':
         specifier: 22.2.2
         version: 22.2.2(@angular/common@22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(@angular/forms@22.2.2(@angular/common@22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(@angular/platform-browser@22.2.2(@angular/animations@22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2)))(@angular/common@22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2)))(rxjs@7.8.2))(@angular/platform-browser@22.2.2(@angular/animations@22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2)))(@angular/common@22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2)))(rxjs@7.8.2)
@@ -174,7 +174,7 @@ importers:
         version: 12.1.2(@nestjs/common@12.1.2(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@12.1.2)(@nestjs/platform-express@12.1.2)
       '@nx/angular':
         specifier: 23.3.0
-        version: 23.3.0(2492b5044f375cf0ec30fec5df276b0a)
+        version: 23.3.0(3fa71415cc88dfcc76fd312f81042d41)
       '@nx/eslint':
         specifier: 23.3.0
         version: 23.3.0(@babel/traverse@7.29.8)(@nx/jest@23.3.0(c3366e3a89d81a56d22ff63478dc81ab))(@swc-node/register@1.12.1(@swc/core@1.16.13(@swc/helpers@0.5.23))(@swc/types@0.1.28)(typescript@6.0.3))(@swc/core@1.16.13(@swc/helpers@0.5.23))(@zkochan/js-yaml@0.0.7)(eslint@10.12.0(jiti@2.7.0))(nx@23.3.0(@swc-node/register@1.12.1(@swc/core@1.16.13(@swc/helpers@0.5.23))(@swc/types@0.1.28)(typescript@6.0.3))(@swc/core@1.16.13(@swc/helpers@0.5.23)))(verdaccio@6.10.5(typanion@3.14.0))
@@ -192,16 +192,16 @@ importers:
         version: 23.3.0(4c77dc0344f2674cad0f2932373df274)
       '@nx/storybook':
         specifier: 23.3.0
-        version: 23.3.0(@babel/traverse@7.29.8)(@nx/jest@23.3.0(c3366e3a89d81a56d22ff63478dc81ab))(@nx/web@23.3.0(6fadae8c5d291eb9ad34442556585df9))(@swc-node/register@1.12.1(@swc/core@1.16.13(@swc/helpers@0.5.23))(@swc/types@0.1.28)(typescript@6.0.3))(@swc/core@1.16.13(@swc/helpers@0.5.23))(@zkochan/js-yaml@0.0.7)(eslint@10.12.0(jiti@2.7.0))(nx@23.3.0(@swc-node/register@1.12.1(@swc/core@1.16.13(@swc/helpers@0.5.23))(@swc/types@0.1.28)(typescript@6.0.3))(@swc/core@1.16.13(@swc/helpers@0.5.23)))(storybook@10.6.1(@types/react@19.2.17)(prettier@3.9.10)(react@19.2.8))(typescript@6.0.3)(verdaccio@6.10.5(typanion@3.14.0))
+        version: 23.3.0(@babel/traverse@7.29.8)(@nx/jest@23.3.0(c3366e3a89d81a56d22ff63478dc81ab))(@nx/web@23.3.0(30667d4579ecb0abe297ddad327211c8))(@swc-node/register@1.12.1(@swc/core@1.16.13(@swc/helpers@0.5.23))(@swc/types@0.1.28)(typescript@6.0.3))(@swc/core@1.16.13(@swc/helpers@0.5.23))(@zkochan/js-yaml@0.0.7)(eslint@10.12.0(jiti@2.7.0))(nx@23.3.0(@swc-node/register@1.12.1(@swc/core@1.16.13(@swc/helpers@0.5.23))(@swc/types@0.1.28)(typescript@6.0.3))(@swc/core@1.16.13(@swc/helpers@0.5.23)))(storybook@10.6.1(@types/react@19.2.17)(prettier@3.9.10)(react@19.2.8))(typescript@6.0.3)(verdaccio@6.10.5(typanion@3.14.0))
       '@nx/vite':
         specifier: 23.3.0
-        version: 23.3.0(bef468fd8ea2e862899ba93dda5329fe)
+        version: 23.3.0(2dc03630689a2990d98458c7cf73be6f)
       '@nx/vitest':
         specifier: 23.3.0
-        version: 23.3.0(bef468fd8ea2e862899ba93dda5329fe)
+        version: 23.3.0(2dc03630689a2990d98458c7cf73be6f)
       '@nx/web':
         specifier: 23.3.0
-        version: 23.3.0(6fadae8c5d291eb9ad34442556585df9)
+        version: 23.3.0(30667d4579ecb0abe297ddad327211c8)
       '@nx/webpack':
         specifier: 23.3.0
         version: 23.3.0(@babel/traverse@7.29.8)(@rspack/core@2.1.7(@swc/helpers@0.5.23))(@swc-node/register@1.12.1(@swc/core@1.16.13(@swc/helpers@0.5.23))(@swc/types@0.1.28)(typescript@6.0.3))(@swc/core@1.16.13(@swc/helpers@0.5.23))(esbuild@0.28.1)(html-webpack-plugin@5.6.8(@rspack/core@2.1.7(@swc/helpers@0.5.23))(webpack@5.111.1))(nx@23.3.0(@swc-node/register@1.12.1(@swc/core@1.16.13(@swc/helpers@0.5.23))(@swc/types@0.1.28)(typescript@6.0.3))(@swc/core@1.16.13(@swc/helpers@0.5.23)))(typescript@6.0.3)(verdaccio@6.10.5(typanion@3.14.0))(webpack-cli@7.2.3)(webpack-dev-server@5.2.6)(webpack@5.111.1)
@@ -219,7 +219,7 @@ importers:
         version: 10.6.1(@types/react@19.2.17)(storybook@10.6.1(@types/react@19.2.17)(prettier@3.9.10)(react@19.2.8))
       '@storybook/angular':
         specifier: 10.6.1
-        version: 10.6.1(67c67fb38f749883ad9870a465f63214)
+        version: 10.6.1(45622cc44a277e993291e32ed1b4c9a6)
       '@storybook/test-runner':
         specifier: 0.26.0
         version: 0.26.0(@swc/helpers@0.5.23)(@types/node@24.13.4)(babel-plugin-macros@3.1.0)(storybook@10.6.1(@types/react@19.2.17)(prettier@3.9.10)(react@19.2.8))(ts-node@10.9.2(@swc/core@1.16.13(@swc/helpers@0.5.23))(@types/node@24.13.4)(typescript@6.0.3))
@@ -254,11 +254,11 @@ importers:
         specifier: 8.71.1
         version: 8.71.1(eslint@10.12.0(jiti@2.7.0))(typescript@6.0.3)
       '@vitest/coverage-v8':
-        specifier: 4.1.11
-        version: 4.1.11(vitest@4.1.11)
+        specifier: 5.0.3
+        version: 5.0.3(vitest@5.0.3)
       '@vitest/ui':
-        specifier: 4.1.11
-        version: 4.1.11(vitest@4.1.11)
+        specifier: 5.0.3
+        version: 5.0.3(vitest@5.0.3)
       angular-eslint:
         specifier: 22.5.0
         version: 22.5.0(chokidar@5.0.0)(eslint@10.12.0(jiti@2.7.0))(typescript-eslint@8.58.0(eslint@10.12.0(jiti@2.7.0))(typescript@6.0.3))(typescript@6.0.3)
@@ -407,8 +407,8 @@ importers:
         specifier: 8.3.4
         version: 8.3.4(@types/node@24.13.4)(esbuild@0.28.1)(jiti@2.7.0)(less@4.8.1)(sass-embedded@1.105.1)(sass@1.105.1)(terser@5.51.2)(yaml@2.9.1)
       vitest:
-        specifier: 4.1.11
-        version: 4.1.11(@types/node@24.13.4)(@vitest/coverage-v8@4.1.11)(@vitest/ui@4.1.11)(jsdom@30.1.2)(vite@8.3.4(@types/node@24.13.4)(esbuild@0.28.1)(jiti@2.7.0)(less@4.8.1)(sass-embedded@1.105.1)(sass@1.105.1)(terser@5.51.2)(yaml@2.9.1))
+        specifier: 5.0.3
+        version: 5.0.3(@types/node@24.13.4)(@vitest/coverage-v8@5.0.3)(@vitest/ui@5.0.3)(jsdom@30.1.2)(vite@8.3.4(@types/node@24.13.4)(esbuild@0.28.1)(jiti@2.7.0)(less@4.8.1)(sass-embedded@1.105.1)(sass@1.105.1)(terser@5.51.2)(yaml@2.9.1))
       webpack:
         specifier: 5.111.1
         version: 5.111.1(@swc/core@1.16.13(@swc/helpers@0.5.23))(esbuild@0.28.1)(postcss@8.5.29)(webpack-cli@7.2.3)
@@ -6137,11 +6137,11 @@ packages:
     peerDependencies:
       vite: ^6.0.0 || ^7.0.0 || ^8.0.0
 
-  '@vitest/coverage-v8@4.1.11':
-    resolution: {integrity: sha512-8MVGEFnJIcdGjcbfKmeq8z0pZHH0JlVtoVZH9Q/qwUp6wyFnEJUBMrw9DCaj+ra3vShGmhavjalMIhPNxZAUcw==}
+  '@vitest/coverage-v8@5.0.3':
+    resolution: {integrity: sha512-+klsyz7BvT1vCU28Zkfzms1Ia78XD0V41U3FUtRaa3S+vOr/EXvK1O6BvVD7l1RzEjm6SONR2aybOvDDf9u0mQ==}
     peerDependencies:
-      '@vitest/browser': 4.1.11
-      vitest: 4.1.11
+      '@vitest/browser': 5.0.3
+      vitest: 5.0.3
     peerDependenciesMeta:
       '@vitest/browser':
         optional: true
@@ -6149,11 +6149,16 @@ packages:
   '@vitest/expect@3.2.4':
     resolution: {integrity: sha512-Io0yyORnB6sikFlt8QW5K7slY4OjqNX9jmJQ02QDda8lyM6B5oNgVWoSoKPac8/kgnCUzuHQKrSLtu/uOqqrig==}
 
-  '@vitest/expect@4.1.11':
-    resolution: {integrity: sha512-VX2x5vNJXET47KAFzwERI+KRMtTTCSWTfSMKsW7JsUsXV4psq++e3DvZpuTDOpHcxytiDs6p2nhVb2tVDiiUYw==}
+  '@vitest/istanbul-lib-coverage@1.0.2':
+    resolution: {integrity: sha512-9J/JMwOf9AoJhAywhrn7ScKTL38hsWQP/qPG60OtaAFcQ5OXPwKsxZFlbnuCKmZ61m8/lGgHYnFpdyQZUvG/iA==}
+    engines: {node: '>=22'}
 
-  '@vitest/mocker@4.1.11':
-    resolution: {integrity: sha512-2XJVD55d1o5AZous5CCGKS74g/riOj9odEt2bQpCVZeblHyHdnMeFl4jl0XjU21stf4mbjUkew2eXQZt65g5CQ==}
+  '@vitest/istanbul-lib-report@1.0.2':
+    resolution: {integrity: sha512-gUsfXZJbzPamoIY5TvHFiMMoXESBrUMo+xqaj+rYrWI69+EnvRlYBlP96ZnHPY4vX8kyUpgAnFUCg5wZG/HkDQ==}
+    engines: {node: '>=22'}
+
+  '@vitest/mocker@5.0.3':
+    resolution: {integrity: sha512-T8sWAIbkSyAjkwTcaEc3Iu0o9A27X1/kdXrizhZkGuSKScRQtRzclfAMpOTcGdXCsqxeWlpGy3XjqaW8CpLORg==}
     peerDependencies:
       msw: ^2.4.9
       vite: ^6.0.0 || ^7.0.0 || ^8.0.0
@@ -6166,31 +6171,25 @@ packages:
   '@vitest/pretty-format@3.2.4':
     resolution: {integrity: sha512-IVNZik8IVRJRTr9fxlitMKeJeXFFFN0JaB9PHPGQ8NKQbGpfjlTx9zO4RefN8gp7eqjNy8nyK3NZmBzOPeIxtA==}
 
-  '@vitest/pretty-format@4.1.11':
-    resolution: {integrity: sha512-yiZzPbGTS9Sr/JpFl8zHrcIkAofNbFV6k21vIgQN/cY/oxZeXhJv5sc/MBJ5jFKWmWs+oJHw0UXLZjmf931+Vw==}
-
-  '@vitest/runner@4.1.11':
-    resolution: {integrity: sha512-LztvUgdwMNJMIkj3hQnnxiC2Xy1zNxq928W/xhjCLaNCzqTZOudjwbQf6v9IntZGPw132i2Lq2rgTRZHD3JHNw==}
-
-  '@vitest/snapshot@4.1.11':
-    resolution: {integrity: sha512-pN7ikn1ON7h8ee4gIAp4AzyK+zBtJPzVbqOgu5LCEh4VaJVbPQcgYQYJIMGQPXVeJJq1fnfazis7a5pFNPahog==}
+  '@vitest/pretty-format@5.0.3':
+    resolution: {integrity: sha512-3hr5eV5z2ff0l2Q1vaKQbB4j3M3tElw8stDokEOTqXJB3Es5VrT8gBRIMY59gGuFp8Y61sWlWFK1aNUH5dHDYw==}
 
   '@vitest/spy@3.2.4':
     resolution: {integrity: sha512-vAfasCOe6AIK70iP5UD11Ac4siNUNJ9i/9PZ3NKx07sG6sUxeag1LWdNrMWeKKYBLlzuK+Gn65Yd5nyL6ds+nw==}
 
-  '@vitest/spy@4.1.11':
-    resolution: {integrity: sha512-apNa/prQy2qCeywhnixOHPRCgGNhvg7T4Dapfl1GahLp/R+uhBm5cPyFoNVyqsNd2h1nJxL6BqqdIjiABL60YA==}
+  '@vitest/spy@5.0.3':
+    resolution: {integrity: sha512-XhFysQTB8AZ+P4gMi+Lpo99vg2AZi0qKpaB9yXQl37+CaMEAPO3iH/wGVnSyL5MPERiLezpqTVtrR6UZH5GCXg==}
 
-  '@vitest/ui@4.1.11':
-    resolution: {integrity: sha512-r/rwyKoev21mWdRGSEkZOqkQ2BYy68mwjihg9M90nNRbf4NGrgzZ4cj6JNCEwlOGJkbKeMgsjlykvwKUbRr7gw==}
+  '@vitest/ui@5.0.3':
+    resolution: {integrity: sha512-9dfvqDBvSbHM6y9YVXxAypkl2z7mrWozK/JFo237qI0cj/3M/kzDKiVZqzi3TE54Ler7Jditud7OMBZCyUvRHA==}
     peerDependencies:
-      vitest: 4.1.11
+      vitest: 5.0.3
 
   '@vitest/utils@3.2.4':
     resolution: {integrity: sha512-fB2V0JFrQSMsCo9HiSq3Ezpdv4iYaXRG1Sx8edX3MwxfyNn83mKiGzOcH+Fkxt4MHxr3y42fQi1oeAInqgX2QA==}
 
-  '@vitest/utils@4.1.11':
-    resolution: {integrity: sha512-zTCVGpyFsGWBhllOyKlTw/vnr6D9qxsfSDyfbyZmTyjHw5N/VuvzHpHoQjm2ZJzn4RJgx5w4r7V0er69CmLgPQ==}
+  '@vitest/utils@5.0.3':
+    resolution: {integrity: sha512-77fDTZv8eu1CzlIfgPU2yrl5MXSUaUAOvgdZEeVm3X3WIxUubIX2SforqS6176lT32HCF6uBVMYVqfHxw7o6eg==}
 
   '@webassemblyjs/ast@1.14.1':
     resolution: {integrity: sha512-nuBEDgQfm1ccRp/8bCQrx1frohyufl4JlbMMZ4P1wpeOfDhF6FQkxZJ1b/e+PLwr6X1Nhw6OLme5usuBWYBvuQ==}
@@ -7909,6 +7908,9 @@ packages:
 
   es-module-lexer@2.3.1:
     resolution: {integrity: sha512-shc1dbU90Yl/xq1QrC7QRtfcwURZuVRfPhZbDoldJ1cn1gzDvBaBWlv0eFolj5+0znnPJz5TXLxsN77X/12KTA==}
+
+  es-module-lexer@2.3.2:
+    resolution: {integrity: sha512-poHGpORABojJJucnV9KbOavETW8lBVnphkW77ER5/BQ5Fz7oXSoCNek7IH3vR5nRjdsEz926ibFYX8KtLQmdyw==}
 
   es-object-atoms@1.1.2:
     resolution: {integrity: sha512-HWcBoN6NileqtSydK2FqHbS/LoDd2pqrnQHLyJzBj4kOp/ky2MWMN694xOfkK8/SnUsW2DH7EfyVlydKCsm1Zw==}
@@ -11809,9 +11811,6 @@ packages:
     resolution: {integrity: sha512-6x6dK6zJdpTzF4sQeNYxwtvBzf6Eg4GtlesS94HOvTudUeyK2WXAaIfmDgsyslYrRBeFIlsi54AYsFGUuhmvrQ==}
     engines: {node: '>= 0.4'}
 
-  siginfo@2.0.0:
-    resolution: {integrity: sha512-ybx0WO1/8bSBLEWXZvEd7gMW3Sn3JFlW3TvX1nREbDLRNQNaeNN8WK0meBwPdAaOI7TtRRRJn/Es1zhrrCHu7g==}
-
   signal-exit@3.0.7:
     resolution: {integrity: sha512-wnD2ZE+l+SPC/uoS0vXeE9L1+0wuaMqKlfz9AMUo38JsyLSBWSFcHR1Rri62LZc12vLr1gb3jl7iwQhgwpAbGQ==}
 
@@ -11938,9 +11937,6 @@ packages:
   stack-utils@2.0.6:
     resolution: {integrity: sha512-XlkWvfIm6RmsWtNJx+uqtKLS8eqFbxUg0ZzLXqY0caEy9l7hruX8IpiDnjsLavoBgqCCR71TqWO8MaXYheJ3RQ==}
     engines: {node: '>=10'}
-
-  stackback@0.0.2:
-    resolution: {integrity: sha512-1XMJE5fQo1jGH6Y/7ebnwPOBEkIEnT4QF32d5R1+VXdXveM0IBMJt8zfaxX1P3QhVwrYe+576+jkANtSS2mBbw==}
 
   statuses@1.5.0:
     resolution: {integrity: sha512-OpZ3zP+jT1PI7I8nemJX4AKmAX070ZkYPVWV/AaKTJl+tXCTGyVdC1a4SL8RUQYEwk/f34ZX8UTykN68FwrqAA==}
@@ -12304,8 +12300,9 @@ packages:
   tiny-invariant@1.3.3:
     resolution: {integrity: sha512-+FbBPE1o9QAYvviau/qC5SE3caw21q3xkvWKBtja5vgqOWIHHJ3ioaq1VPfn/Szqctz2bU/oYeKd9/z5BL+PVg==}
 
-  tinybench@2.9.0:
-    resolution: {integrity: sha512-0+DUvqWMValLmha6lr4kD8iAMK1HzV0/aKnCtWb9v9641TnP/MFb7Pc2bxoxQjTXAErryXVgUOfv2YqNllqGeg==}
+  tinybench@6.2.2:
+    resolution: {integrity: sha512-nIZ2N2dFpjBsg2hgitKu7mA+FvsIJuGJOwysRngmVRRmWgR/UyPjwJj8c/fT/dhm8EkHnF5EOogRf+0Z2qrimA==}
+    engines: {node: '>=20.0.0'}
 
   tinyexec@1.3.1:
     resolution: {integrity: sha512-GCvB3aoys96IuDFBMcTB46JOR6mdMtAToqwiW8JlWhsoh1mhHi/xn9ss/Dg7N555GiJyEt2qzoG/NHCwM6h1EA==}
@@ -12807,23 +12804,23 @@ packages:
       yaml:
         optional: true
 
-  vitest@4.1.11:
-    resolution: {integrity: sha512-fhACrNXUidIbGSBr5FlbuBkO7VWC1ZyLl0DO4CU2DrQoAPxX84Ysxs+HeGQpii5lZWV1Q4gBZTTu49mF+A6Edw==}
-    engines: {node: ^20.0.0 || ^22.0.0 || >=24.0.0}
+  vitest@5.0.3:
+    resolution: {integrity: sha512-xMw97S3rjdtj5dkVat7jCsqWBpvchs3RlpQctUqwJD0KkERk40vz2fJ77lDwW/Vzh/pk18eItYAzkodhSes3jQ==}
+    engines: {node: ^22.12.0 || ^24.0.0 || >=26.0.0}
     hasBin: true
     peerDependencies:
       '@edge-runtime/vm': '*'
       '@opentelemetry/api': ^1.9.0
-      '@types/node': ^20.0.0 || ^22.0.0 || >=24.0.0
-      '@vitest/browser-playwright': 4.1.11
-      '@vitest/browser-preview': 4.1.11
-      '@vitest/browser-webdriverio': 4.1.11
-      '@vitest/coverage-istanbul': 4.1.11
-      '@vitest/coverage-v8': 4.1.11
-      '@vitest/ui': 4.1.11
+      '@types/node': ^22.0.0 || >=24.0.0
+      '@vitest/browser-playwright': 5.0.3
+      '@vitest/browser-preview': 5.0.3
+      '@vitest/browser-webdriverio': ^5.0.0-beta.5 || >=5.0.0
+      '@vitest/coverage-istanbul': 5.0.3
+      '@vitest/coverage-v8': 5.0.3
+      '@vitest/ui': 5.0.3
       happy-dom: '*'
       jsdom: '*'
-      vite: ^6.0.0 || ^7.0.0 || ^8.0.0
+      vite: ^6.4.0 || ^7.0.0 || ^8.0.0
     peerDependenciesMeta:
       '@edge-runtime/vm':
         optional: true
@@ -13062,9 +13059,9 @@ packages:
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
     hasBin: true
 
-  why-is-node-running@2.3.0:
-    resolution: {integrity: sha512-hUrmaWBdVDcxvYqnyh09zunKzROWjbZTiNy8dBEjkS7ehEDQibXJ7XvlmtbwuTclUiIyN+CyXQD4Vmko8fNm8w==}
-    engines: {node: '>=8'}
+  why-is-node-running@3.2.1:
+    resolution: {integrity: sha512-Tb2FUhB4vUsGQlfSquQLYkApkuPAFQXGFzxWKHHumVz2dK+X1RUm/HnID4+TfIGYJ1kTcwOaCk/buYCEJr6YjQ==}
+    engines: {node: '>=20.11'}
     hasBin: true
 
   wildcard@2.0.1:
@@ -13253,26 +13250,26 @@ snapshots:
       '@jridgewell/gen-mapping': 0.3.13
       '@jridgewell/trace-mapping': 0.3.31
 
-  '@analogjs/vite-plugin-angular@2.8.0(09571d16d3abdc04cb5f3d755d210919)':
+  '@analogjs/vite-plugin-angular@2.8.0(4f745dc4c2ba19dedc07c3036ffd113e)':
     dependencies:
       magic-string: 0.30.21
       obug: 2.1.4
       oxc-parser: 0.121.0(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3)
       tinyglobby: 0.2.17
     optionalDependencies:
-      '@angular-devkit/build-angular': 22.2.2(@angular/compiler-cli@22.2.2(@angular/compiler@22.2.2)(typescript@6.0.3))(@angular/compiler@22.2.2)(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(@angular/platform-browser@22.2.2(@angular/animations@22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2)))(@angular/common@22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2)))(@rspack/core@2.1.7(@swc/helpers@0.5.23))(@swc/core@1.16.13(@swc/helpers@0.5.23))(@types/node@24.13.4)(chokidar@5.0.0)(html-webpack-plugin@5.6.8(@rspack/core@2.1.7(@swc/helpers@0.5.23))(webpack@5.111.1))(jiti@2.7.0)(ng-packagr@22.2.4(@angular/compiler-cli@22.2.2(@angular/compiler@22.2.2)(typescript@6.0.3))(oxc-resolver@11.24.2)(tslib@2.8.1)(typescript@6.0.3))(rollup@4.62.4)(sass-embedded@1.105.1)(sass@1.105.1)(typescript@6.0.3)(vitest@4.1.11)(webpack-cli@7.2.3)(yaml@2.9.1)
-      '@angular/build': 22.2.2(@angular/compiler-cli@22.2.2(@angular/compiler@22.2.2)(typescript@6.0.3))(@angular/compiler@22.2.2)(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(@angular/platform-browser@22.2.2(@angular/animations@22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2)))(@angular/common@22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2)))(@types/node@24.13.4)(istanbul-lib-instrument@6.0.3)(jiti@2.7.0)(less@4.8.1)(ng-packagr@22.2.4(@angular/compiler-cli@22.2.2(@angular/compiler@22.2.2)(typescript@6.0.3))(oxc-resolver@11.24.2)(tslib@2.8.1)(typescript@6.0.3))(postcss@8.5.29)(rollup@4.62.4)(terser@5.51.2)(tslib@2.8.1)(typescript@6.0.3)(vitest@4.1.11)(yaml@2.9.1)
+      '@angular-devkit/build-angular': 22.2.2(@angular/compiler-cli@22.2.2(@angular/compiler@22.2.2)(typescript@6.0.3))(@angular/compiler@22.2.2)(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(@angular/platform-browser@22.2.2(@angular/animations@22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2)))(@angular/common@22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2)))(@rspack/core@2.1.7(@swc/helpers@0.5.23))(@swc/core@1.16.13(@swc/helpers@0.5.23))(@types/node@24.13.4)(chokidar@5.0.0)(html-webpack-plugin@5.6.8(@rspack/core@2.1.7(@swc/helpers@0.5.23))(webpack@5.111.1))(jiti@2.7.0)(ng-packagr@22.2.4(@angular/compiler-cli@22.2.2(@angular/compiler@22.2.2)(typescript@6.0.3))(oxc-resolver@11.24.2)(tslib@2.8.1)(typescript@6.0.3))(rollup@4.62.4)(sass-embedded@1.105.1)(sass@1.105.1)(typescript@6.0.3)(vitest@5.0.3)(webpack-cli@7.2.3)(yaml@2.9.1)
+      '@angular/build': 22.2.2(@angular/compiler-cli@22.2.2(@angular/compiler@22.2.2)(typescript@6.0.3))(@angular/compiler@22.2.2)(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(@angular/platform-browser@22.2.2(@angular/animations@22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2)))(@angular/common@22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2)))(@types/node@24.13.4)(istanbul-lib-instrument@6.0.3)(jiti@2.7.0)(less@4.8.1)(ng-packagr@22.2.4(@angular/compiler-cli@22.2.2(@angular/compiler@22.2.2)(typescript@6.0.3))(oxc-resolver@11.24.2)(tslib@2.8.1)(typescript@6.0.3))(postcss@8.5.29)(rollup@4.62.4)(terser@5.51.2)(tslib@2.8.1)(typescript@6.0.3)(vitest@5.0.3)(yaml@2.9.1)
       vite: 8.3.4(@types/node@24.13.4)(esbuild@0.28.1)(jiti@2.7.0)(less@4.8.1)(sass-embedded@1.105.1)(sass@1.105.1)(terser@5.51.2)(yaml@2.9.1)
     transitivePeerDependencies:
       - '@emnapi/core'
       - '@emnapi/runtime'
 
-  '@analogjs/vitest-angular@2.8.0(@analogjs/vite-plugin-angular@2.8.0(09571d16d3abdc04cb5f3d755d210919))(@angular-devkit/architect@0.2202.2(chokidar@5.0.0))(@angular-devkit/schematics@22.2.2(chokidar@5.0.0))(vitest@4.1.11)':
+  '@analogjs/vitest-angular@2.8.0(@analogjs/vite-plugin-angular@2.8.0(4f745dc4c2ba19dedc07c3036ffd113e))(@angular-devkit/architect@0.2202.2(chokidar@5.0.0))(@angular-devkit/schematics@22.2.2(chokidar@5.0.0))(vitest@5.0.3)':
     dependencies:
-      '@analogjs/vite-plugin-angular': 2.8.0(09571d16d3abdc04cb5f3d755d210919)
+      '@analogjs/vite-plugin-angular': 2.8.0(4f745dc4c2ba19dedc07c3036ffd113e)
       '@angular-devkit/architect': 0.2202.2(chokidar@5.0.0)
       '@angular-devkit/schematics': 22.2.2(chokidar@5.0.0)
-      vitest: 4.1.11(@types/node@24.13.4)(@vitest/coverage-v8@4.1.11)(@vitest/ui@4.1.11)(jsdom@30.1.2)(vite@8.3.4(@types/node@24.13.4)(esbuild@0.28.1)(jiti@2.7.0)(less@4.8.1)(sass-embedded@1.105.1)(sass@1.105.1)(terser@5.51.2)(yaml@2.9.1))
+      vitest: 5.0.3(@types/node@24.13.4)(@vitest/coverage-v8@5.0.3)(@vitest/ui@5.0.3)(jsdom@30.1.2)(vite@8.3.4(@types/node@24.13.4)(esbuild@0.28.1)(jiti@2.7.0)(less@4.8.1)(sass-embedded@1.105.1)(sass@1.105.1)(terser@5.51.2)(yaml@2.9.1))
 
   '@angular-devkit/architect@0.2202.2(chokidar@5.0.0)':
     dependencies:
@@ -13281,13 +13278,13 @@ snapshots:
     transitivePeerDependencies:
       - chokidar
 
-  '@angular-devkit/build-angular@22.2.2(@angular/compiler-cli@22.2.2(@angular/compiler@22.2.2)(typescript@6.0.3))(@angular/compiler@22.2.2)(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(@angular/platform-browser@22.2.2(@angular/animations@22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2)))(@angular/common@22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2)))(@rspack/core@2.1.7(@swc/helpers@0.5.23))(@swc/core@1.16.13(@swc/helpers@0.5.23))(@types/node@24.13.4)(chokidar@5.0.0)(html-webpack-plugin@5.6.8(@rspack/core@2.1.7(@swc/helpers@0.5.23))(webpack@5.111.1))(jiti@2.7.0)(ng-packagr@22.2.4(@angular/compiler-cli@22.2.2(@angular/compiler@22.2.2)(typescript@6.0.3))(oxc-resolver@11.24.2)(tslib@2.8.1)(typescript@6.0.3))(rollup@4.62.4)(sass-embedded@1.105.1)(sass@1.105.1)(typescript@6.0.3)(vitest@4.1.11)(webpack-cli@7.2.3)(yaml@2.9.1)':
+  '@angular-devkit/build-angular@22.2.2(@angular/compiler-cli@22.2.2(@angular/compiler@22.2.2)(typescript@6.0.3))(@angular/compiler@22.2.2)(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(@angular/platform-browser@22.2.2(@angular/animations@22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2)))(@angular/common@22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2)))(@rspack/core@2.1.7(@swc/helpers@0.5.23))(@swc/core@1.16.13(@swc/helpers@0.5.23))(@types/node@24.13.4)(chokidar@5.0.0)(html-webpack-plugin@5.6.8(@rspack/core@2.1.7(@swc/helpers@0.5.23))(webpack@5.111.1))(jiti@2.7.0)(ng-packagr@22.2.4(@angular/compiler-cli@22.2.2(@angular/compiler@22.2.2)(typescript@6.0.3))(oxc-resolver@11.24.2)(tslib@2.8.1)(typescript@6.0.3))(rollup@4.62.4)(sass-embedded@1.105.1)(sass@1.105.1)(typescript@6.0.3)(vitest@5.0.3)(webpack-cli@7.2.3)(yaml@2.9.1)':
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@angular-devkit/architect': 0.2202.2(chokidar@5.0.0)
       '@angular-devkit/build-webpack': 0.2202.2(chokidar@5.0.0)(webpack-dev-server@5.2.6(webpack-cli@7.2.3)(webpack@5.111.0(@swc/core@1.16.13(@swc/helpers@0.5.23))(esbuild@0.28.1)(postcss@8.5.29)(webpack-cli@7.2.3)))(webpack@5.111.0(@swc/core@1.16.13(@swc/helpers@0.5.23))(esbuild@0.28.1)(postcss@8.5.29)(webpack-cli@7.2.3))
       '@angular-devkit/core': 22.2.2(chokidar@5.0.0)
-      '@angular/build': 22.2.2(@angular/compiler-cli@22.2.2(@angular/compiler@22.2.2)(typescript@6.0.3))(@angular/compiler@22.2.2)(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(@angular/platform-browser@22.2.2(@angular/animations@22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2)))(@angular/common@22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2)))(@types/node@24.13.4)(istanbul-lib-instrument@6.0.3)(jiti@2.7.0)(less@4.9.1)(ng-packagr@22.2.4(@angular/compiler-cli@22.2.2(@angular/compiler@22.2.2)(typescript@6.0.3))(oxc-resolver@11.24.2)(tslib@2.8.1)(typescript@6.0.3))(postcss@8.5.29)(rollup@4.62.4)(terser@5.51.2)(tslib@2.8.1)(typescript@6.0.3)(vitest@4.1.11)(yaml@2.9.1)
+      '@angular/build': 22.2.2(@angular/compiler-cli@22.2.2(@angular/compiler@22.2.2)(typescript@6.0.3))(@angular/compiler@22.2.2)(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(@angular/platform-browser@22.2.2(@angular/animations@22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2)))(@angular/common@22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2)))(@types/node@24.13.4)(istanbul-lib-instrument@6.0.3)(jiti@2.7.0)(less@4.9.1)(ng-packagr@22.2.4(@angular/compiler-cli@22.2.2(@angular/compiler@22.2.2)(typescript@6.0.3))(oxc-resolver@11.24.2)(tslib@2.8.1)(typescript@6.0.3))(postcss@8.5.29)(rollup@4.62.4)(terser@5.51.2)(tslib@2.8.1)(typescript@6.0.3)(vitest@5.0.3)(yaml@2.9.1)
       '@angular/compiler-cli': 22.2.2(@angular/compiler@22.2.2)(typescript@6.0.3)
       '@babel/core': 7.29.7
       '@babel/generator': 8.0.5
@@ -13520,7 +13517,7 @@ snapshots:
       '@angular/core': 22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2)
       tslib: 2.8.1
 
-  '@angular/build@22.2.2(@angular/compiler-cli@22.2.2(@angular/compiler@22.2.2)(typescript@6.0.3))(@angular/compiler@22.2.2)(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(@angular/platform-browser@22.2.2(@angular/animations@22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2)))(@angular/common@22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2)))(@types/node@24.13.4)(istanbul-lib-instrument@6.0.3)(jiti@2.7.0)(less@4.8.1)(ng-packagr@22.2.4(@angular/compiler-cli@22.2.2(@angular/compiler@22.2.2)(typescript@6.0.3))(oxc-resolver@11.24.2)(tslib@2.8.1)(typescript@6.0.3))(postcss@8.5.29)(rollup@4.62.4)(terser@5.51.2)(tslib@2.8.1)(typescript@6.0.3)(vitest@4.1.11)(yaml@2.9.1)':
+  '@angular/build@22.2.2(@angular/compiler-cli@22.2.2(@angular/compiler@22.2.2)(typescript@6.0.3))(@angular/compiler@22.2.2)(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(@angular/platform-browser@22.2.2(@angular/animations@22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2)))(@angular/common@22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2)))(@types/node@24.13.4)(istanbul-lib-instrument@6.0.3)(jiti@2.7.0)(less@4.8.1)(ng-packagr@22.2.4(@angular/compiler-cli@22.2.2(@angular/compiler@22.2.2)(typescript@6.0.3))(oxc-resolver@11.24.2)(tslib@2.8.1)(typescript@6.0.3))(postcss@8.5.29)(rollup@4.62.4)(terser@5.51.2)(tslib@2.8.1)(typescript@6.0.3)(vitest@5.0.3)(yaml@2.9.1)':
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@angular-devkit/architect': 0.2202.2(chokidar@5.0.0)
@@ -13562,7 +13559,7 @@ snapshots:
       ng-packagr: 22.2.4(@angular/compiler-cli@22.2.2(@angular/compiler@22.2.2)(typescript@6.0.3))(oxc-resolver@11.24.2)(tslib@2.8.1)(typescript@6.0.3)
       postcss: 8.5.29
       rollup: 4.62.4
-      vitest: 4.1.11(@types/node@24.13.4)(@vitest/coverage-v8@4.1.11)(@vitest/ui@4.1.11)(jsdom@30.1.2)(vite@8.3.4(@types/node@24.13.4)(esbuild@0.28.1)(jiti@2.7.0)(less@4.8.1)(sass-embedded@1.105.1)(sass@1.105.1)(terser@5.51.2)(yaml@2.9.1))
+      vitest: 5.0.3(@types/node@24.13.4)(@vitest/coverage-v8@5.0.3)(@vitest/ui@5.0.3)(jsdom@30.1.2)(vite@8.3.4(@types/node@24.13.4)(esbuild@0.28.1)(jiti@2.7.0)(less@4.8.1)(sass-embedded@1.105.1)(sass@1.105.1)(terser@5.51.2)(yaml@2.9.1))
     transitivePeerDependencies:
       - '@types/node'
       - '@vitejs/devtools'
@@ -13575,7 +13572,7 @@ snapshots:
       - tsx
       - yaml
 
-  '@angular/build@22.2.2(@angular/compiler-cli@22.2.2(@angular/compiler@22.2.2)(typescript@6.0.3))(@angular/compiler@22.2.2)(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(@angular/platform-browser@22.2.2(@angular/animations@22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2)))(@angular/common@22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2)))(@types/node@24.13.4)(istanbul-lib-instrument@6.0.3)(jiti@2.7.0)(less@4.9.1)(ng-packagr@22.2.4(@angular/compiler-cli@22.2.2(@angular/compiler@22.2.2)(typescript@6.0.3))(oxc-resolver@11.24.2)(tslib@2.8.1)(typescript@6.0.3))(postcss@8.5.29)(rollup@4.62.4)(terser@5.51.2)(tslib@2.8.1)(typescript@6.0.3)(vitest@4.1.11)(yaml@2.9.1)':
+  '@angular/build@22.2.2(@angular/compiler-cli@22.2.2(@angular/compiler@22.2.2)(typescript@6.0.3))(@angular/compiler@22.2.2)(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(@angular/platform-browser@22.2.2(@angular/animations@22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2)))(@angular/common@22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2)))(@types/node@24.13.4)(istanbul-lib-instrument@6.0.3)(jiti@2.7.0)(less@4.9.1)(ng-packagr@22.2.4(@angular/compiler-cli@22.2.2(@angular/compiler@22.2.2)(typescript@6.0.3))(oxc-resolver@11.24.2)(tslib@2.8.1)(typescript@6.0.3))(postcss@8.5.29)(rollup@4.62.4)(terser@5.51.2)(tslib@2.8.1)(typescript@6.0.3)(vitest@5.0.3)(yaml@2.9.1)':
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@angular-devkit/architect': 0.2202.2(chokidar@5.0.0)
@@ -13617,7 +13614,7 @@ snapshots:
       ng-packagr: 22.2.4(@angular/compiler-cli@22.2.2(@angular/compiler@22.2.2)(typescript@6.0.3))(oxc-resolver@11.24.2)(tslib@2.8.1)(typescript@6.0.3)
       postcss: 8.5.29
       rollup: 4.62.4
-      vitest: 4.1.11(@types/node@24.13.4)(@vitest/coverage-v8@4.1.11)(@vitest/ui@4.1.11)(jsdom@30.1.2)(vite@8.3.4(@types/node@24.13.4)(esbuild@0.28.1)(jiti@2.7.0)(less@4.8.1)(sass-embedded@1.105.1)(sass@1.105.1)(terser@5.51.2)(yaml@2.9.1))
+      vitest: 5.0.3(@types/node@24.13.4)(@vitest/coverage-v8@5.0.3)(@vitest/ui@5.0.3)(jsdom@30.1.2)(vite@8.3.4(@types/node@24.13.4)(esbuild@0.28.1)(jiti@2.7.0)(less@4.8.1)(sass-embedded@1.105.1)(sass@1.105.1)(terser@5.51.2)(yaml@2.9.1))
     transitivePeerDependencies:
       - '@types/node'
       - '@vitejs/devtools'
@@ -16720,14 +16717,14 @@ snapshots:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.20.1
 
-  '@nx/angular@23.3.0(2492b5044f375cf0ec30fec5df276b0a)':
+  '@nx/angular@23.3.0(3fa71415cc88dfcc76fd312f81042d41)':
     dependencies:
       '@angular-devkit/core': 22.2.2(chokidar@5.0.0)
       '@angular-devkit/schematics': 22.2.2(chokidar@5.0.0)
       '@nx/devkit': 23.3.0(nx@23.3.0(@swc-node/register@1.12.1(@swc/core@1.16.13(@swc/helpers@0.5.23))(@swc/types@0.1.28)(typescript@6.0.3))(@swc/core@1.16.13(@swc/helpers@0.5.23)))
       '@nx/eslint': 23.3.0(@babel/traverse@7.29.8)(@nx/jest@23.3.0(c3366e3a89d81a56d22ff63478dc81ab))(@swc-node/register@1.12.1(@swc/core@1.16.13(@swc/helpers@0.5.23))(@swc/types@0.1.28)(typescript@6.0.3))(@swc/core@1.16.13(@swc/helpers@0.5.23))(@zkochan/js-yaml@0.0.7)(eslint@10.12.0(jiti@2.7.0))(nx@23.3.0(@swc-node/register@1.12.1(@swc/core@1.16.13(@swc/helpers@0.5.23))(@swc/types@0.1.28)(typescript@6.0.3))(@swc/core@1.16.13(@swc/helpers@0.5.23)))(verdaccio@6.10.5(typanion@3.14.0))
       '@nx/js': 23.3.0(@babel/traverse@7.29.8)(@swc-node/register@1.12.1(@swc/core@1.16.13(@swc/helpers@0.5.23))(@swc/types@0.1.28)(typescript@6.0.3))(@swc/core@1.16.13(@swc/helpers@0.5.23))(nx@23.3.0(@swc-node/register@1.12.1(@swc/core@1.16.13(@swc/helpers@0.5.23))(@swc/types@0.1.28)(typescript@6.0.3))(@swc/core@1.16.13(@swc/helpers@0.5.23)))(verdaccio@6.10.5(typanion@3.14.0))
-      '@nx/web': 23.3.0(6fadae8c5d291eb9ad34442556585df9)
+      '@nx/web': 23.3.0(30667d4579ecb0abe297ddad327211c8)
       '@phenomnomnominal/tsquery': 6.2.0(typescript@6.0.3)
       '@schematics/angular': 22.1.8(chokidar@5.0.0)
       '@typescript-eslint/type-utils': 8.71.1(eslint@10.12.0(jiti@2.7.0))(typescript@6.0.3)
@@ -16739,8 +16736,8 @@ snapshots:
       semver: 7.8.5
       tslib: 2.8.1
     optionalDependencies:
-      '@angular-devkit/build-angular': 22.2.2(@angular/compiler-cli@22.2.2(@angular/compiler@22.2.2)(typescript@6.0.3))(@angular/compiler@22.2.2)(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(@angular/platform-browser@22.2.2(@angular/animations@22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2)))(@angular/common@22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2)))(@rspack/core@2.1.7(@swc/helpers@0.5.23))(@swc/core@1.16.13(@swc/helpers@0.5.23))(@types/node@24.13.4)(chokidar@5.0.0)(html-webpack-plugin@5.6.8(@rspack/core@2.1.7(@swc/helpers@0.5.23))(webpack@5.111.1))(jiti@2.7.0)(ng-packagr@22.2.4(@angular/compiler-cli@22.2.2(@angular/compiler@22.2.2)(typescript@6.0.3))(oxc-resolver@11.24.2)(tslib@2.8.1)(typescript@6.0.3))(rollup@4.62.4)(sass-embedded@1.105.1)(sass@1.105.1)(typescript@6.0.3)(vitest@4.1.11)(webpack-cli@7.2.3)(yaml@2.9.1)
-      '@angular/build': 22.2.2(@angular/compiler-cli@22.2.2(@angular/compiler@22.2.2)(typescript@6.0.3))(@angular/compiler@22.2.2)(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(@angular/platform-browser@22.2.2(@angular/animations@22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2)))(@angular/common@22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2)))(@types/node@24.13.4)(istanbul-lib-instrument@6.0.3)(jiti@2.7.0)(less@4.8.1)(ng-packagr@22.2.4(@angular/compiler-cli@22.2.2(@angular/compiler@22.2.2)(typescript@6.0.3))(oxc-resolver@11.24.2)(tslib@2.8.1)(typescript@6.0.3))(postcss@8.5.29)(rollup@4.62.4)(terser@5.51.2)(tslib@2.8.1)(typescript@6.0.3)(vitest@4.1.11)(yaml@2.9.1)
+      '@angular-devkit/build-angular': 22.2.2(@angular/compiler-cli@22.2.2(@angular/compiler@22.2.2)(typescript@6.0.3))(@angular/compiler@22.2.2)(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(@angular/platform-browser@22.2.2(@angular/animations@22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2)))(@angular/common@22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2)))(@rspack/core@2.1.7(@swc/helpers@0.5.23))(@swc/core@1.16.13(@swc/helpers@0.5.23))(@types/node@24.13.4)(chokidar@5.0.0)(html-webpack-plugin@5.6.8(@rspack/core@2.1.7(@swc/helpers@0.5.23))(webpack@5.111.1))(jiti@2.7.0)(ng-packagr@22.2.4(@angular/compiler-cli@22.2.2(@angular/compiler@22.2.2)(typescript@6.0.3))(oxc-resolver@11.24.2)(tslib@2.8.1)(typescript@6.0.3))(rollup@4.62.4)(sass-embedded@1.105.1)(sass@1.105.1)(typescript@6.0.3)(vitest@5.0.3)(webpack-cli@7.2.3)(yaml@2.9.1)
+      '@angular/build': 22.2.2(@angular/compiler-cli@22.2.2(@angular/compiler@22.2.2)(typescript@6.0.3))(@angular/compiler@22.2.2)(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(@angular/platform-browser@22.2.2(@angular/animations@22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2)))(@angular/common@22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2)))(@types/node@24.13.4)(istanbul-lib-instrument@6.0.3)(jiti@2.7.0)(less@4.8.1)(ng-packagr@22.2.4(@angular/compiler-cli@22.2.2(@angular/compiler@22.2.2)(typescript@6.0.3))(oxc-resolver@11.24.2)(tslib@2.8.1)(typescript@6.0.3))(postcss@8.5.29)(rollup@4.62.4)(terser@5.51.2)(tslib@2.8.1)(typescript@6.0.3)(vitest@5.0.3)(yaml@2.9.1)
       '@nx/cypress': 23.3.0(@babel/traverse@7.29.8)(@nx/jest@23.3.0(c3366e3a89d81a56d22ff63478dc81ab))(@swc-node/register@1.12.1(@swc/core@1.16.13(@swc/helpers@0.5.23))(@swc/types@0.1.28)(typescript@6.0.3))(@swc/core@1.16.13(@swc/helpers@0.5.23))(@zkochan/js-yaml@0.0.7)(eslint@10.12.0(jiti@2.7.0))(nx@23.3.0(@swc-node/register@1.12.1(@swc/core@1.16.13(@swc/helpers@0.5.23))(@swc/types@0.1.28)(typescript@6.0.3))(@swc/core@1.16.13(@swc/helpers@0.5.23)))(typescript@6.0.3)(verdaccio@6.10.5(typanion@3.14.0))
       '@nx/webpack': 23.3.0(@babel/traverse@7.29.8)(@rspack/core@2.1.7(@swc/helpers@0.5.23))(@swc-node/register@1.12.1(@swc/core@1.16.13(@swc/helpers@0.5.23))(@swc/types@0.1.28)(typescript@6.0.3))(@swc/core@1.16.13(@swc/helpers@0.5.23))(esbuild@0.28.1)(html-webpack-plugin@5.6.8(@rspack/core@2.1.7(@swc/helpers@0.5.23))(webpack@5.111.1))(nx@23.3.0(@swc-node/register@1.12.1(@swc/core@1.16.13(@swc/helpers@0.5.23))(@swc/types@0.1.28)(typescript@6.0.3))(@swc/core@1.16.13(@swc/helpers@0.5.23)))(typescript@6.0.3)(verdaccio@6.10.5(typanion@3.14.0))(webpack-cli@7.2.3)(webpack-dev-server@5.2.6)(webpack@5.111.1)
       ng-packagr: 22.2.4(@angular/compiler-cli@22.2.2(@angular/compiler@22.2.2)(typescript@6.0.3))(oxc-resolver@11.24.2)(tslib@2.8.1)(typescript@6.0.3)
@@ -16984,7 +16981,7 @@ snapshots:
   '@nx/nx-win32-x64-msvc@23.3.0':
     optional: true
 
-  '@nx/storybook@23.3.0(@babel/traverse@7.29.8)(@nx/jest@23.3.0(c3366e3a89d81a56d22ff63478dc81ab))(@nx/web@23.3.0(6fadae8c5d291eb9ad34442556585df9))(@swc-node/register@1.12.1(@swc/core@1.16.13(@swc/helpers@0.5.23))(@swc/types@0.1.28)(typescript@6.0.3))(@swc/core@1.16.13(@swc/helpers@0.5.23))(@zkochan/js-yaml@0.0.7)(eslint@10.12.0(jiti@2.7.0))(nx@23.3.0(@swc-node/register@1.12.1(@swc/core@1.16.13(@swc/helpers@0.5.23))(@swc/types@0.1.28)(typescript@6.0.3))(@swc/core@1.16.13(@swc/helpers@0.5.23)))(storybook@10.6.1(@types/react@19.2.17)(prettier@3.9.10)(react@19.2.8))(typescript@6.0.3)(verdaccio@6.10.5(typanion@3.14.0))':
+  '@nx/storybook@23.3.0(@babel/traverse@7.29.8)(@nx/jest@23.3.0(c3366e3a89d81a56d22ff63478dc81ab))(@nx/web@23.3.0(30667d4579ecb0abe297ddad327211c8))(@swc-node/register@1.12.1(@swc/core@1.16.13(@swc/helpers@0.5.23))(@swc/types@0.1.28)(typescript@6.0.3))(@swc/core@1.16.13(@swc/helpers@0.5.23))(@zkochan/js-yaml@0.0.7)(eslint@10.12.0(jiti@2.7.0))(nx@23.3.0(@swc-node/register@1.12.1(@swc/core@1.16.13(@swc/helpers@0.5.23))(@swc/types@0.1.28)(typescript@6.0.3))(@swc/core@1.16.13(@swc/helpers@0.5.23)))(storybook@10.6.1(@types/react@19.2.17)(prettier@3.9.10)(react@19.2.8))(typescript@6.0.3)(verdaccio@6.10.5(typanion@3.14.0))':
     dependencies:
       '@nx/cypress': 23.3.0(@babel/traverse@7.29.8)(@nx/jest@23.3.0(c3366e3a89d81a56d22ff63478dc81ab))(@swc-node/register@1.12.1(@swc/core@1.16.13(@swc/helpers@0.5.23))(@swc/types@0.1.28)(typescript@6.0.3))(@swc/core@1.16.13(@swc/helpers@0.5.23))(@zkochan/js-yaml@0.0.7)(eslint@10.12.0(jiti@2.7.0))(nx@23.3.0(@swc-node/register@1.12.1(@swc/core@1.16.13(@swc/helpers@0.5.23))(@swc/types@0.1.28)(typescript@6.0.3))(@swc/core@1.16.13(@swc/helpers@0.5.23)))(typescript@6.0.3)(verdaccio@6.10.5(typanion@3.14.0))
       '@nx/devkit': 23.3.0(nx@23.3.0(@swc-node/register@1.12.1(@swc/core@1.16.13(@swc/helpers@0.5.23))(@swc/types@0.1.28)(typescript@6.0.3))(@swc/core@1.16.13(@swc/helpers@0.5.23)))
@@ -16995,7 +16992,7 @@ snapshots:
       storybook: 10.6.1(@types/react@19.2.17)(prettier@3.9.10)(react@19.2.8)
       tslib: 2.8.1
     optionalDependencies:
-      '@nx/web': 23.3.0(6fadae8c5d291eb9ad34442556585df9)
+      '@nx/web': 23.3.0(30667d4579ecb0abe297ddad327211c8)
     transitivePeerDependencies:
       - '@babel/traverse'
       - '@nx/jest'
@@ -17010,11 +17007,11 @@ snapshots:
       - typescript
       - verdaccio
 
-  '@nx/vite@23.3.0(bef468fd8ea2e862899ba93dda5329fe)':
+  '@nx/vite@23.3.0(2dc03630689a2990d98458c7cf73be6f)':
     dependencies:
       '@nx/devkit': 23.3.0(nx@23.3.0(@swc-node/register@1.12.1(@swc/core@1.16.13(@swc/helpers@0.5.23))(@swc/types@0.1.28)(typescript@6.0.3))(@swc/core@1.16.13(@swc/helpers@0.5.23)))
       '@nx/js': 23.3.0(@babel/traverse@7.29.8)(@swc-node/register@1.12.1(@swc/core@1.16.13(@swc/helpers@0.5.23))(@swc/types@0.1.28)(typescript@6.0.3))(@swc/core@1.16.13(@swc/helpers@0.5.23))(nx@23.3.0(@swc-node/register@1.12.1(@swc/core@1.16.13(@swc/helpers@0.5.23))(@swc/types@0.1.28)(typescript@6.0.3))(@swc/core@1.16.13(@swc/helpers@0.5.23)))(verdaccio@6.10.5(typanion@3.14.0))
-      '@nx/vitest': 23.3.0(bef468fd8ea2e862899ba93dda5329fe)
+      '@nx/vitest': 23.3.0(2dc03630689a2990d98458c7cf73be6f)
       '@phenomnomnominal/tsquery': 6.2.0(typescript@6.0.3)
       ajv: 8.20.0
       picomatch: 4.0.4
@@ -17034,7 +17031,7 @@ snapshots:
       - verdaccio
       - vitest
 
-  '@nx/vitest@23.3.0(bef468fd8ea2e862899ba93dda5329fe)':
+  '@nx/vitest@23.3.0(2dc03630689a2990d98458c7cf73be6f)':
     dependencies:
       '@nx/devkit': 23.3.0(nx@23.3.0(@swc-node/register@1.12.1(@swc/core@1.16.13(@swc/helpers@0.5.23))(@swc/types@0.1.28)(typescript@6.0.3))(@swc/core@1.16.13(@swc/helpers@0.5.23)))
       '@nx/js': 23.3.0(@babel/traverse@7.29.8)(@swc-node/register@1.12.1(@swc/core@1.16.13(@swc/helpers@0.5.23))(@swc/types@0.1.28)(typescript@6.0.3))(@swc/core@1.16.13(@swc/helpers@0.5.23))(nx@23.3.0(@swc-node/register@1.12.1(@swc/core@1.16.13(@swc/helpers@0.5.23))(@swc/types@0.1.28)(typescript@6.0.3))(@swc/core@1.16.13(@swc/helpers@0.5.23)))(verdaccio@6.10.5(typanion@3.14.0))
@@ -17044,7 +17041,7 @@ snapshots:
     optionalDependencies:
       '@nx/eslint': 23.3.0(@babel/traverse@7.29.8)(@nx/jest@23.3.0(c3366e3a89d81a56d22ff63478dc81ab))(@swc-node/register@1.12.1(@swc/core@1.16.13(@swc/helpers@0.5.23))(@swc/types@0.1.28)(typescript@6.0.3))(@swc/core@1.16.13(@swc/helpers@0.5.23))(@zkochan/js-yaml@0.0.7)(eslint@10.12.0(jiti@2.7.0))(nx@23.3.0(@swc-node/register@1.12.1(@swc/core@1.16.13(@swc/helpers@0.5.23))(@swc/types@0.1.28)(typescript@6.0.3))(@swc/core@1.16.13(@swc/helpers@0.5.23)))(verdaccio@6.10.5(typanion@3.14.0))
       vite: 8.3.4(@types/node@24.13.4)(esbuild@0.28.1)(jiti@2.7.0)(less@4.8.1)(sass-embedded@1.105.1)(sass@1.105.1)(terser@5.51.2)(yaml@2.9.1)
-      vitest: 4.1.11(@types/node@24.13.4)(@vitest/coverage-v8@4.1.11)(@vitest/ui@4.1.11)(jsdom@30.1.2)(vite@8.3.4(@types/node@24.13.4)(esbuild@0.28.1)(jiti@2.7.0)(less@4.8.1)(sass-embedded@1.105.1)(sass@1.105.1)(terser@5.51.2)(yaml@2.9.1))
+      vitest: 5.0.3(@types/node@24.13.4)(@vitest/coverage-v8@5.0.3)(@vitest/ui@5.0.3)(jsdom@30.1.2)(vite@8.3.4(@types/node@24.13.4)(esbuild@0.28.1)(jiti@2.7.0)(less@4.8.1)(sass-embedded@1.105.1)(sass@1.105.1)(terser@5.51.2)(yaml@2.9.1))
     transitivePeerDependencies:
       - '@babel/traverse'
       - '@swc-node/register'
@@ -17055,7 +17052,7 @@ snapshots:
       - typescript
       - verdaccio
 
-  '@nx/web@23.3.0(6fadae8c5d291eb9ad34442556585df9)':
+  '@nx/web@23.3.0(30667d4579ecb0abe297ddad327211c8)':
     dependencies:
       '@nx/devkit': 23.3.0(nx@23.3.0(@swc-node/register@1.12.1(@swc/core@1.16.13(@swc/helpers@0.5.23))(@swc/types@0.1.28)(typescript@6.0.3))(@swc/core@1.16.13(@swc/helpers@0.5.23)))
       '@nx/js': 23.3.0(@babel/traverse@7.29.8)(@swc-node/register@1.12.1(@swc/core@1.16.13(@swc/helpers@0.5.23))(@swc/types@0.1.28)(typescript@6.0.3))(@swc/core@1.16.13(@swc/helpers@0.5.23))(nx@23.3.0(@swc-node/register@1.12.1(@swc/core@1.16.13(@swc/helpers@0.5.23))(@swc/types@0.1.28)(typescript@6.0.3))(@swc/core@1.16.13(@swc/helpers@0.5.23)))(verdaccio@6.10.5(typanion@3.14.0))
@@ -17067,7 +17064,7 @@ snapshots:
       '@nx/cypress': 23.3.0(@babel/traverse@7.29.8)(@nx/jest@23.3.0(c3366e3a89d81a56d22ff63478dc81ab))(@swc-node/register@1.12.1(@swc/core@1.16.13(@swc/helpers@0.5.23))(@swc/types@0.1.28)(typescript@6.0.3))(@swc/core@1.16.13(@swc/helpers@0.5.23))(@zkochan/js-yaml@0.0.7)(eslint@10.12.0(jiti@2.7.0))(nx@23.3.0(@swc-node/register@1.12.1(@swc/core@1.16.13(@swc/helpers@0.5.23))(@swc/types@0.1.28)(typescript@6.0.3))(@swc/core@1.16.13(@swc/helpers@0.5.23)))(typescript@6.0.3)(verdaccio@6.10.5(typanion@3.14.0))
       '@nx/eslint': 23.3.0(@babel/traverse@7.29.8)(@nx/jest@23.3.0(c3366e3a89d81a56d22ff63478dc81ab))(@swc-node/register@1.12.1(@swc/core@1.16.13(@swc/helpers@0.5.23))(@swc/types@0.1.28)(typescript@6.0.3))(@swc/core@1.16.13(@swc/helpers@0.5.23))(@zkochan/js-yaml@0.0.7)(eslint@10.12.0(jiti@2.7.0))(nx@23.3.0(@swc-node/register@1.12.1(@swc/core@1.16.13(@swc/helpers@0.5.23))(@swc/types@0.1.28)(typescript@6.0.3))(@swc/core@1.16.13(@swc/helpers@0.5.23)))(verdaccio@6.10.5(typanion@3.14.0))
       '@nx/jest': 23.3.0(c3366e3a89d81a56d22ff63478dc81ab)
-      '@nx/vite': 23.3.0(bef468fd8ea2e862899ba93dda5329fe)
+      '@nx/vite': 23.3.0(2dc03630689a2990d98458c7cf73be6f)
       '@nx/webpack': 23.3.0(@babel/traverse@7.29.8)(@rspack/core@2.1.7(@swc/helpers@0.5.23))(@swc-node/register@1.12.1(@swc/core@1.16.13(@swc/helpers@0.5.23))(@swc/types@0.1.28)(typescript@6.0.3))(@swc/core@1.16.13(@swc/helpers@0.5.23))(esbuild@0.28.1)(html-webpack-plugin@5.6.8(@rspack/core@2.1.7(@swc/helpers@0.5.23))(webpack@5.111.1))(nx@23.3.0(@swc-node/register@1.12.1(@swc/core@1.16.13(@swc/helpers@0.5.23))(@swc/types@0.1.28)(typescript@6.0.3))(@swc/core@1.16.13(@swc/helpers@0.5.23)))(typescript@6.0.3)(verdaccio@6.10.5(typanion@3.14.0))(webpack-cli@7.2.3)(webpack-dev-server@5.2.6)(webpack@5.111.1)
     transitivePeerDependencies:
       - '@babel/traverse'
@@ -18165,10 +18162,10 @@ snapshots:
     transitivePeerDependencies:
       - '@types/react-dom'
 
-  '@storybook/angular@10.6.1(67c67fb38f749883ad9870a465f63214)':
+  '@storybook/angular@10.6.1(45622cc44a277e993291e32ed1b4c9a6)':
     dependencies:
       '@angular-devkit/architect': 0.2202.2(chokidar@5.0.0)
-      '@angular-devkit/build-angular': 22.2.2(@angular/compiler-cli@22.2.2(@angular/compiler@22.2.2)(typescript@6.0.3))(@angular/compiler@22.2.2)(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(@angular/platform-browser@22.2.2(@angular/animations@22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2)))(@angular/common@22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2)))(@rspack/core@2.1.7(@swc/helpers@0.5.23))(@swc/core@1.16.13(@swc/helpers@0.5.23))(@types/node@24.13.4)(chokidar@5.0.0)(html-webpack-plugin@5.6.8(@rspack/core@2.1.7(@swc/helpers@0.5.23))(webpack@5.111.1))(jiti@2.7.0)(ng-packagr@22.2.4(@angular/compiler-cli@22.2.2(@angular/compiler@22.2.2)(typescript@6.0.3))(oxc-resolver@11.24.2)(tslib@2.8.1)(typescript@6.0.3))(rollup@4.62.4)(sass-embedded@1.105.1)(sass@1.105.1)(typescript@6.0.3)(vitest@4.1.11)(webpack-cli@7.2.3)(yaml@2.9.1)
+      '@angular-devkit/build-angular': 22.2.2(@angular/compiler-cli@22.2.2(@angular/compiler@22.2.2)(typescript@6.0.3))(@angular/compiler@22.2.2)(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(@angular/platform-browser@22.2.2(@angular/animations@22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2)))(@angular/common@22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2)))(@rspack/core@2.1.7(@swc/helpers@0.5.23))(@swc/core@1.16.13(@swc/helpers@0.5.23))(@types/node@24.13.4)(chokidar@5.0.0)(html-webpack-plugin@5.6.8(@rspack/core@2.1.7(@swc/helpers@0.5.23))(webpack@5.111.1))(jiti@2.7.0)(ng-packagr@22.2.4(@angular/compiler-cli@22.2.2(@angular/compiler@22.2.2)(typescript@6.0.3))(oxc-resolver@11.24.2)(tslib@2.8.1)(typescript@6.0.3))(rollup@4.62.4)(sass-embedded@1.105.1)(sass@1.105.1)(typescript@6.0.3)(vitest@5.0.3)(webpack-cli@7.2.3)(yaml@2.9.1)
       '@angular-devkit/core': 22.2.2(chokidar@5.0.0)
       '@angular/common': 22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(rxjs@7.8.2)
       '@angular/compiler': 22.2.2
@@ -19210,19 +19207,17 @@ snapshots:
     dependencies:
       vite: 8.3.0(@types/node@24.13.4)(esbuild@0.28.1)(jiti@2.7.0)(less@4.9.1)(sass-embedded@1.104.1)(sass@1.104.1)(terser@5.51.2)(yaml@2.9.1)
 
-  '@vitest/coverage-v8@4.1.11(vitest@4.1.11)':
+  '@vitest/coverage-v8@5.0.3(vitest@5.0.3)':
     dependencies:
       '@bcoe/v8-coverage': 1.0.2
-      '@vitest/utils': 4.1.11
+      '@vitest/istanbul-lib-coverage': 1.0.2
+      '@vitest/istanbul-lib-report': 1.0.2
       ast-v8-to-istanbul: 1.0.5
-      istanbul-lib-coverage: 3.2.2
-      istanbul-lib-report: 3.0.1
-      istanbul-reports: 3.2.0
       magicast: 0.5.4
       obug: 2.1.4
       std-env: 4.2.0
       tinyrainbow: 3.1.1
-      vitest: 4.1.11(@types/node@24.13.4)(@vitest/coverage-v8@4.1.11)(@vitest/ui@4.1.11)(jsdom@30.1.2)(vite@8.3.4(@types/node@24.13.4)(esbuild@0.28.1)(jiti@2.7.0)(less@4.8.1)(sass-embedded@1.105.1)(sass@1.105.1)(terser@5.51.2)(yaml@2.9.1))
+      vitest: 5.0.3(@types/node@24.13.4)(@vitest/coverage-v8@5.0.3)(@vitest/ui@5.0.3)(jsdom@30.1.2)(vite@8.3.4(@types/node@24.13.4)(esbuild@0.28.1)(jiti@2.7.0)(less@4.8.1)(sass-embedded@1.105.1)(sass@1.105.1)(terser@5.51.2)(yaml@2.9.1))
 
   '@vitest/expect@3.2.4':
     dependencies:
@@ -19232,20 +19227,18 @@ snapshots:
       chai: 5.3.3
       tinyrainbow: 2.0.0
 
-  '@vitest/expect@4.1.11':
-    dependencies:
-      '@standard-schema/spec': 1.1.0
-      '@types/chai': 5.2.3
-      '@vitest/spy': 4.1.11
-      '@vitest/utils': 4.1.11
-      chai: 6.2.2
-      tinyrainbow: 3.1.1
+  '@vitest/istanbul-lib-coverage@1.0.2': {}
 
-  '@vitest/mocker@4.1.11(vite@8.3.4(@types/node@24.13.4)(esbuild@0.28.1)(jiti@2.7.0)(less@4.8.1)(sass-embedded@1.105.1)(sass@1.105.1)(terser@5.51.2)(yaml@2.9.1))':
+  '@vitest/istanbul-lib-report@1.0.2':
     dependencies:
-      '@vitest/spy': 4.1.11
+      '@vitest/istanbul-lib-coverage': 1.0.2
+
+  '@vitest/mocker@5.0.3(vite@8.3.4(@types/node@24.13.4)(esbuild@0.28.1)(jiti@2.7.0)(less@4.8.1)(sass-embedded@1.105.1)(sass@1.105.1)(terser@5.51.2)(yaml@2.9.1))':
+    dependencies:
+      '@jridgewell/trace-mapping': 0.3.31
+      '@vitest/spy': 5.0.3
       estree-walker: 3.0.3
-      magic-string: 0.30.21
+      magic-string: 1.4.1
     optionalDependencies:
       vite: 8.3.4(@types/node@24.13.4)(esbuild@0.28.1)(jiti@2.7.0)(less@4.8.1)(sass-embedded@1.105.1)(sass@1.105.1)(terser@5.51.2)(yaml@2.9.1)
 
@@ -19253,38 +19246,25 @@ snapshots:
     dependencies:
       tinyrainbow: 2.0.0
 
-  '@vitest/pretty-format@4.1.11':
+  '@vitest/pretty-format@5.0.3':
     dependencies:
       tinyrainbow: 3.1.1
-
-  '@vitest/runner@4.1.11':
-    dependencies:
-      '@vitest/utils': 4.1.11
-      pathe: 2.0.3
-
-  '@vitest/snapshot@4.1.11':
-    dependencies:
-      '@vitest/pretty-format': 4.1.11
-      '@vitest/utils': 4.1.11
-      magic-string: 0.30.21
-      pathe: 2.0.3
 
   '@vitest/spy@3.2.4':
     dependencies:
       tinyspy: 4.0.4
 
-  '@vitest/spy@4.1.11': {}
+  '@vitest/spy@5.0.3': {}
 
-  '@vitest/ui@4.1.11(vitest@4.1.11)':
+  '@vitest/ui@5.0.3(vitest@5.0.3)':
     dependencies:
-      '@vitest/utils': 4.1.11
+      '@vitest/utils': 5.0.3
       fflate: 0.8.3
       flatted: 3.4.4
       pathe: 2.0.3
       sirv: 3.0.2
-      tinyglobby: 0.2.17
       tinyrainbow: 3.1.1
-      vitest: 4.1.11(@types/node@24.13.4)(@vitest/coverage-v8@4.1.11)(@vitest/ui@4.1.11)(jsdom@30.1.2)(vite@8.3.4(@types/node@24.13.4)(esbuild@0.28.1)(jiti@2.7.0)(less@4.8.1)(sass-embedded@1.105.1)(sass@1.105.1)(terser@5.51.2)(yaml@2.9.1))
+      vitest: 5.0.3(@types/node@24.13.4)(@vitest/coverage-v8@5.0.3)(@vitest/ui@5.0.3)(jsdom@30.1.2)(vite@8.3.4(@types/node@24.13.4)(esbuild@0.28.1)(jiti@2.7.0)(less@4.8.1)(sass-embedded@1.105.1)(sass@1.105.1)(terser@5.51.2)(yaml@2.9.1))
 
   '@vitest/utils@3.2.4':
     dependencies:
@@ -19292,9 +19272,9 @@ snapshots:
       loupe: 3.2.1
       tinyrainbow: 2.0.0
 
-  '@vitest/utils@4.1.11':
+  '@vitest/utils@5.0.3':
     dependencies:
-      '@vitest/pretty-format': 4.1.11
+      '@vitest/pretty-format': 5.0.3
       convert-source-map: 2.0.0
       tinyrainbow: 3.1.1
 
@@ -21014,6 +20994,8 @@ snapshots:
   es-module-lexer@1.7.0: {}
 
   es-module-lexer@2.3.1: {}
+
+  es-module-lexer@2.3.2: {}
 
   es-object-atoms@1.1.2:
     dependencies:
@@ -25915,8 +25897,6 @@ snapshots:
       side-channel-map: 1.0.1
       side-channel-weakmap: 1.0.2
 
-  siginfo@2.0.0: {}
-
   signal-exit@3.0.7: {}
 
   signal-exit@4.1.0: {}
@@ -26073,8 +26053,6 @@ snapshots:
   stack-utils@2.0.6:
     dependencies:
       escape-string-regexp: 2.0.0
-
-  stackback@0.0.2: {}
 
   statuses@1.5.0: {}
 
@@ -26474,7 +26452,7 @@ snapshots:
 
   tiny-invariant@1.3.3: {}
 
-  tinybench@2.9.0: {}
+  tinybench@6.2.2: {}
 
   tinyexec@1.3.1: {}
 
@@ -26974,32 +26952,26 @@ snapshots:
       terser: 5.51.2
       yaml: 2.9.1
 
-  vitest@4.1.11(@types/node@24.13.4)(@vitest/coverage-v8@4.1.11)(@vitest/ui@4.1.11)(jsdom@30.1.2)(vite@8.3.4(@types/node@24.13.4)(esbuild@0.28.1)(jiti@2.7.0)(less@4.8.1)(sass-embedded@1.105.1)(sass@1.105.1)(terser@5.51.2)(yaml@2.9.1)):
+  vitest@5.0.3(@types/node@24.13.4)(@vitest/coverage-v8@5.0.3)(@vitest/ui@5.0.3)(jsdom@30.1.2)(vite@8.3.4(@types/node@24.13.4)(esbuild@0.28.1)(jiti@2.7.0)(less@4.8.1)(sass-embedded@1.105.1)(sass@1.105.1)(terser@5.51.2)(yaml@2.9.1)):
     dependencies:
-      '@vitest/expect': 4.1.11
-      '@vitest/mocker': 4.1.11(vite@8.3.4(@types/node@24.13.4)(esbuild@0.28.1)(jiti@2.7.0)(less@4.8.1)(sass-embedded@1.105.1)(sass@1.105.1)(terser@5.51.2)(yaml@2.9.1))
-      '@vitest/pretty-format': 4.1.11
-      '@vitest/runner': 4.1.11
-      '@vitest/snapshot': 4.1.11
-      '@vitest/spy': 4.1.11
-      '@vitest/utils': 4.1.11
-      es-module-lexer: 2.3.1
+      '@types/chai': 5.2.3
+      '@vitest/mocker': 5.0.3(vite@8.3.4(@types/node@24.13.4)(esbuild@0.28.1)(jiti@2.7.0)(less@4.8.1)(sass-embedded@1.105.1)(sass@1.105.1)(terser@5.51.2)(yaml@2.9.1))
+      chai: 6.2.2
+      es-module-lexer: 2.3.2
       expect-type: 1.4.0
-      magic-string: 0.30.21
+      magic-string: 1.4.1
       obug: 2.1.4
-      pathe: 2.0.3
       picomatch: 4.0.7
       std-env: 4.2.0
-      tinybench: 2.9.0
+      tinybench: 6.2.2
       tinyexec: 1.3.1
       tinyglobby: 0.2.17
-      tinyrainbow: 3.1.1
       vite: 8.3.4(@types/node@24.13.4)(esbuild@0.28.1)(jiti@2.7.0)(less@4.8.1)(sass-embedded@1.105.1)(sass@1.105.1)(terser@5.51.2)(yaml@2.9.1)
-      why-is-node-running: 2.3.0
+      why-is-node-running: 3.2.1
     optionalDependencies:
       '@types/node': 24.13.4
-      '@vitest/coverage-v8': 4.1.11(vitest@4.1.11)
-      '@vitest/ui': 4.1.11(vitest@4.1.11)
+      '@vitest/coverage-v8': 5.0.3(vitest@5.0.3)
+      '@vitest/ui': 5.0.3(vitest@5.0.3)
       jsdom: 30.1.2
     transitivePeerDependencies:
       - msw
@@ -27361,10 +27333,7 @@ snapshots:
     dependencies:
       isexe: 2.0.0
 
-  why-is-node-running@2.3.0:
-    dependencies:
-      siginfo: 2.0.0
-      stackback: 0.0.2
+  why-is-node-running@3.2.1: {}
 
   wildcard@2.0.1: {}
 
