@@ -42,9 +42,11 @@ describe('AuthStartCheck', () => {
 
         await new AuthStartCheck(NO_CONTROLLERS, OPTIONS).onApplicationBootstrap();
 
-        expect(fetchSpy.mock.calls.some(([url, init]: [string, RequestInit?]) => url.endsWith('/roles') && init?.method === 'POST')).toBe(
-            true
-        );
+        expect(
+            fetchSpy.mock.calls.some(
+                ([url, init]: [string | URL | Request, RequestInit?]) => String(url).endsWith('/roles') && init?.method === 'POST'
+            )
+        ).toBe(true);
         expect(warn).toHaveBeenCalledWith('Keycloak holds rights the catalog lacks: orders:archive');
     });
 

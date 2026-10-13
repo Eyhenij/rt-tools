@@ -50,8 +50,11 @@ export function contextOf(caller: ICaller | null): HandlerContext {
     });
 }
 
-/** The code of the refusal a call ends with, or none when it went through. Any other failure is thrown on. */
-export async function refusalOf(call: Promise<unknown>): Promise<Code | null> {
+/**
+ * The code of the refusal a call ends with, or none when it went through. Any other failure is
+ * thrown on. A handler answers with a value or with a promise of one, so the call is taken as it is.
+ */
+export async function refusalOf(call: unknown): Promise<Code | null> {
     try {
         await call;
     } catch (error: unknown) {

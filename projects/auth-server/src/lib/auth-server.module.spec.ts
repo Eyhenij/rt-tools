@@ -1,4 +1,4 @@
-import { Controller, Get, Inject, INestApplication } from '@nestjs/common';
+import { Controller, Get, Inject, INestApplication, Type } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import type { ICaller } from '@rt-tools/auth-contract';
@@ -56,7 +56,7 @@ class ForgottenController {
     }
 }
 
-async function start(realm: ITestRealm, controllers: (new () => object)[]): Promise<INestApplication> {
+async function start(realm: ITestRealm, controllers: Type<object>[]): Promise<INestApplication> {
     const moduleRef: TestingModule = await Test.createTestingModule({
         imports: [AuthServerModule.forRoot({ issuer: TEST_ISSUER, clientId: TEST_CLIENT, catalog: ['orders:read'] })],
         controllers,

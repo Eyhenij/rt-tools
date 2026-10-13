@@ -62,7 +62,8 @@ describe('createAuthInterceptor', () => {
         );
         seen = null;
         expect(await codeOf(request('ListOrders', `Bearer ${await realm.sign(personClaims(['orders:read']))}`))).toBe('result');
-        expect(seen?.subject).toBe('p-1');
+        // `seen` is written by the interceptor chain, which the flow analysis of this body cannot see.
+        expect((seen as ICaller | null)?.subject).toBe('p-1');
     });
 
     it('SC-AUTH-17 — an open procedure answers without a token, a method the map lacks is refused', async () => {

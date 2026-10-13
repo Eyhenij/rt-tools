@@ -28,7 +28,7 @@ const TODAY: string = '2026-08-12';
 
 let root: string;
 
-const note: (event: string, fields: Readonly<Record<string, string>> = {}) => string = (
+const note: (event: string, fields?: Readonly<Record<string, string>>) => string = (
     event: string,
     fields: Readonly<Record<string, string>> = {}
 ): string => JSON.stringify({ t: `${TODAY}T10:00:00Z`, ev: event, ...fields, v: '0.5.1' });
