@@ -86,6 +86,7 @@ export * from '@rt-tools/ui-kit-v2/select';
 export * from '@rt-tools/ui-kit-v2/side-menu';
 export * from '@rt-tools/ui-kit-v2/skeleton-wrapper';
 export * from '@rt-tools/ui-kit-v2/skeleton';
+export * from '@rt-tools/ui-kit-v2/speed-menu';
 export * from '@rt-tools/ui-kit-v2/spinner';
 export * from '@rt-tools/ui-kit-v2/split-button';
 export * from '@rt-tools/ui-kit-v2/stat-tile';

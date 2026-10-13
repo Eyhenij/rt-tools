@@ -1,0 +1,118 @@
+@layer rt-kit.components {
+    /* rt-speed-menu — быстрое меню у круглой кнопки. ViewEncapsulation.None.
+       Host несёт класс блока и кнопку меню; действия лежат в плавающей панели кита в конце
+       страницы, вне блока, поэтому свои свойства панель объявляет на себе. */
+
+    .rt-speed-menu {
+        --rt-speed-menu-shadow: var(--rt-shadow-md);
+
+        display: inline-flex;
+        vertical-align: middle;
+
+        /* Тень покоя кнопка-значок объявляет на своём корне, и ручку переписывает правило сильнее. */
+        &__trigger .rt-icon-button {
+            --rt-icon-button-shadow: var(--rt-speed-menu-shadow);
+        }
+    }
+
+    .rt-speed-menu__panel {
+        --rt-speed-menu-gap: var(--rt-space-sm);
+        --rt-speed-menu-inset: var(--rt-speed-menu-gap);
+        --rt-speed-menu-action-shadow: var(--rt-shadow-md);
+        --rt-speed-menu-action-shadow-hover: var(--rt-speed-menu-action-shadow);
+        --rt-speed-menu-action-bg: var(--rt-color-bg-surface);
+        --rt-speed-menu-action-color: var(--rt-color-text-primary);
+        --rt-speed-menu-action-radius: var(--rt-radius-full);
+        --rt-speed-menu-duration: var(--rt-duration-fast);
+        --rt-speed-menu-stagger: var(--rt-duration-fast);
+
+        display: flex;
+        align-items: center;
+        padding: var(--rt-speed-menu-inset);
+        gap: var(--rt-speed-menu-gap);
+
+        /* Материальный набор повторяет меню приложения — mat-mini-fab: круг цвета primary-container
+           темы со значком on-primary-container 24px, подъём 3 Material (под указателем — 4), действия
+           через 16px и в 28px от кнопки, вход 100 мс со сдвигом 50 мс. Без темы Material круг серый.
+           Значок действия кнопки меню `lg` — ступень `md`, и набор переписывает её размер.
+           Панель живёт в слое поверх страницы, и признак набора несёт сама подложка слоя. */
+        :is(.rt-preset-material, [data-preset='material']) & {
+            --rt-speed-menu-gap: var(--rt-size-4);
+            --rt-speed-menu-inset: calc(var(--rt-size-6) + var(--rt-size-1));
+            --rt-speed-menu-action-bg: var(--mat-sys-primary-container, var(--rt-mat-neutral-25));
+            --rt-speed-menu-action-color: var(--mat-sys-on-primary-container, var(--rt-color-text-primary));
+            --rt-icon-step-md: var(--rt-size-6);
+            --rt-speed-menu-action-shadow: var(--mat-sys-level3, var(--rt-mat-shadow-fab));
+            --rt-speed-menu-action-shadow-hover: var(--mat-sys-level4, var(--rt-mat-shadow-fab-hover));
+            --rt-speed-menu-duration: calc(var(--rt-duration-fast) * 5 / 6);
+            --rt-speed-menu-stagger: calc(var(--rt-duration-fast) * 5 / 12);
+        }
+
+        &--up,
+        &--down {
+            flex-direction: column;
+        }
+
+        &--start,
+        &--end {
+            flex-direction: row;
+        }
+    }
+
+    /* Подложка цвета поверхности: действие висит над картой или таблицей, а заливка второй палитры
+       кнопки-значка прозрачна. Наведение и недоступность кнопка рисует поверх подложки сама.
+       Действия входят по одному, ближнее к кнопке первым: в столбце вверх и в ряду к началу
+       ближнее — последнее, поэтому там шаг считается с конца. Вход — переход от начального стиля, а
+       не анимация по кадрам: браузер съёмки оставлял анимацию в первом кадре, и действия выходили
+       прозрачными; переход доводится до конца так же, как у раскрывающейся панели. */
+    .rt-speed-menu__action {
+        --rt-speed-menu-step: 0;
+
+        border-radius: var(--rt-speed-menu-action-radius);
+        background-color: var(--rt-speed-menu-action-bg);
+        opacity: 1;
+        transform: scale(1);
+        transition:
+            opacity var(--rt-speed-menu-duration) ease-out,
+            transform var(--rt-speed-menu-duration) ease-out;
+        transition-delay: calc(var(--rt-speed-menu-step) * var(--rt-speed-menu-stagger));
+
+        @starting-style {
+            opacity: 0;
+            transform: scale(0.5);
+        }
+    }
+
+    /* Цвет значка — свойство меню; по умолчанию тот же цвет текста, что ставит вид `secondary`. */
+    .rt-speed-menu__action .rt-icon-button {
+        --rt-icon-button-shadow: var(--rt-speed-menu-action-shadow);
+
+        color: var(--rt-speed-menu-action-color);
+
+        &:hover {
+            --rt-icon-button-shadow: var(--rt-speed-menu-action-shadow-hover);
+        }
+    }
+
+    /* Тёмная заливка материального действия: тема Material отвечает тёмным сама, без неё — тёмная
+       ступень первого кита. */
+    :root[data-theme='dark'] :is(.rt-preset-material, [data-preset='material']) .rt-speed-menu__panel,
+    html.rt-theme-dark :is(.rt-preset-material, [data-preset='material']) .rt-speed-menu__panel {
+        --rt-speed-menu-action-bg: var(--mat-sys-primary-container, var(--rt-mat-dark-20));
+    }
+
+    @for $step from 1 through 7 {
+        .rt-speed-menu__panel--down .rt-speed-menu__action:nth-child(#{$step + 1}),
+        .rt-speed-menu__panel--end .rt-speed-menu__action:nth-child(#{$step + 1}),
+        .rt-speed-menu__panel--up .rt-speed-menu__action:nth-last-child(#{$step + 1}),
+        .rt-speed-menu__panel--start .rt-speed-menu__action:nth-last-child(#{$step + 1}) {
+            --rt-speed-menu-step: #{$step};
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .rt-speed-menu__action {
+            transition: none;
+        }
+    }
+}

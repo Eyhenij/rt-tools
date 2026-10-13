@@ -174,6 +174,12 @@ export class RtIconButtonComponent {
         transform: booleanAttribute,
     });
 
+    /**
+     * Раскрыта ли панель, которую кнопка открывает, — превращается в `aria-expanded`. `null` —
+     * кнопка ничего не раскрывает, и атрибута нет.
+     */
+    public readonly expanded: InputSignal<boolean | null> = input<boolean | null>(null);
+
     /** Бейдж-индикатор (dot top-right через BEM-модификатор). */
     public readonly indicator: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,

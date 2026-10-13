@@ -166,6 +166,12 @@ describe('RtIconButtonComponent', (): void => {
             expect(control(setup({ active: true }))?.attributes['aria-pressed']).toBe('true');
         });
 
+        it('SC-UKV-805: раскрытие объявляется только у кнопки, которой его задали', (): void => {
+            expect(control(setup())?.attributes['aria-expanded']).toBeUndefined();
+            expect(control(setup({ expanded: false }))?.attributes['aria-expanded']).toBe('false');
+            expect(control(setup({ expanded: true }))?.attributes['aria-expanded']).toBe('true');
+        });
+
         it('вспомогательная кнопка убирается из таб-порядка отрицательным индексом', (): void => {
             expect(control(setup({ tabIndex: -1 }))?.attributes['tabindex']).toBe('-1');
         });

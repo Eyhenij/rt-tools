@@ -1,0 +1,48 @@
+<ng-container rtBlock="rt-speed-menu">
+    <!-- Панель висит на кнопке меню: по ней она встаёт и её нажатие не считает нажатием снаружи.
+         Открывает и закрывает её сама кнопка — триггер панели ручной. -->
+    <rt-icon-button
+        rtElem="trigger"
+        qa-dataid="speed-menu-trigger"
+        radius="full"
+        rtPopoverTrigger="manual"
+        rtPopoverPanelClass="rt-speed-menu-pane"
+        [rtPopover]="panelTpl"
+        [rtPopoverPositions]="positions()"
+        [glyph]="isOpen() ? 'close' : icon()"
+        [ariaLabel]="triggerLabel()"
+        [variant]="variant()"
+        [size]="size()"
+        [disabled]="disabled()"
+        [expanded]="isOpen()"
+        (rtPopoverOpened)="onOpened()"
+        (rtPopoverClosed)="onClosed()"
+        (clicked)="onTrigger($event)" />
+
+    <ng-template #panelTpl>
+        <div
+            #panel
+            rtElem="panel"
+            role="group"
+            qa-dataid="speed-menu-panel"
+            [rtMod]="direction()"
+            [attr.aria-label]="triggerLabel()"
+            (keydown)="onPanelKeydown($event)">
+            @for (action of actions(); track action.value) {
+                <rt-icon-button
+                    rtElem="action"
+                    qa-dataid="speed-menu-action"
+                    radius="full"
+                    variant="secondary"
+                    [rtTooltip]="action.label"
+                    [rtTooltipPlacement]="tooltipSide()"
+                    [glyph]="action.icon"
+                    [ariaLabel]="action.label"
+                    [size]="actionSize()"
+                    [disabled]="action.disabled ?? false"
+                    [attr.data-value]="action.value"
+                    (clicked)="onAction(action)" />
+            }
+        </div>
+    </ng-template>
+</ng-container>
