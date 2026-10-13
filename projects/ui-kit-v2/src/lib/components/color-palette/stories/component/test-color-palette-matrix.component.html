@@ -1,0 +1,91 @@
+@switch (part) {
+    @case ('value') {
+        <app-story-presets caption="Без цвета, цвет из набора и свой цвет в обоих наборах">
+            <ng-template>
+                <app-story-row slotWidth="18rem" [items]="valueCases" [itemLabel]="caseLabel">
+                    <ng-template let-valueCase>
+                        <rt-color-palette [colors]="themeColors" [formControl]="valueCase.control" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('colors') {
+        <app-story-presets caption="Набор кита и цвета темы приложения в обоих наборах">
+            <ng-template>
+                <app-story-row slotWidth="22rem" [items]="colorsCases" [itemLabel]="caseLabel">
+                    <ng-template let-colorsCase>
+                        <rt-color-palette [colors]="colorsCase.colors" [formControl]="colorsControl" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('readonly') {
+        <app-story-presets caption="Только для чтения с цветом и без в обоих наборах">
+            <ng-template>
+                <app-story-row [items]="readonlyCases" [itemLabel]="caseLabel">
+                    <ng-template let-readonlyCase>
+                        <rt-color-palette [readonly]="true" [formControl]="readonlyCase.control" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('states') {
+        <app-story-presets caption="Взаимодействие с образцами и отключённость в обоих наборах">
+            <ng-template>
+                <app-story-row slotWidth="18rem" [items]="states" [itemLabel]="stateLabel">
+                    <ng-template let-state>
+                        <rt-color-palette [colors]="themeColors" [formControl]="stateControl" [attr.data-story-state]="state.state" />
+                    </ng-template>
+                </app-story-row>
+
+                <app-story-row slotWidth="18rem" [items]="disabledCases" [itemLabel]="caseLabel">
+                    <ng-template let-disabledCase>
+                        <rt-color-palette [colors]="themeColors" [formControl]="disabledCase.control" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('picker') {
+        <app-story-presets caption="Панель своего цвета в обоих наборах">
+            <ng-template>
+                <app-story-row [items]="pickerCases" [itemLabel]="caseLabel">
+                    <ng-template let-pickerCase>
+                        <rt-color-picker [value]="pickerCase.value" [channels]="pickerCase.channels" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('presets') {
+        <app-story-presets caption="Палитра с выбранным цветом в обоих наборах">
+            <ng-template>
+                <div style="width: 22rem">
+                    <rt-color-palette [formControl]="presetControl" />
+                </div>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('themes') {
+        <app-story-presets caption="Палитра в обеих темах в обоих наборах">
+            <ng-template>
+                <app-story-themes>
+                    <ng-template>
+                        <div style="width: 18rem">
+                            <rt-color-palette [colors]="themeColors" [formControl]="themeControl" />
+                        </div>
+                    </ng-template>
+                </app-story-themes>
+            </ng-template>
+        </app-story-presets>
+    }
+}

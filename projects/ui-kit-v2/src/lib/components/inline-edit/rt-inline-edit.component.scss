@@ -1,0 +1,274 @@
+@layer rt-kit.components {
+    /* rt-inline-edit — правка короткого значения на месте. ViewEncapsulation.None.
+       Host несёт класс блока; в покое — кнопка со значением, при правке — поле кита и две кнопки.
+       Высота покоя равна высоте поля: строка не прыгает при открытии.
+       Цвета, зазоры и плашка — свойства блока: приложение перекрашивает правку своим правилом на
+       блок. Умолчания — прежние ступени, вид без свойств не меняется. */
+
+    .rt-inline-edit {
+        --rt-inline-edit-height: var(--rt-input-height-sm);
+        --rt-inline-edit-field-width: var(--rt-size-64);
+        --rt-inline-edit-radius: var(--rt-radius-sm);
+        --rt-inline-edit-border-width: var(--rt-border-width-thin);
+        --rt-inline-edit-duration: var(--rt-duration-fast);
+        --rt-inline-edit-gap: var(--rt-space-2xs);
+        --rt-inline-edit-value-padding-x: var(--rt-space-xs);
+        --rt-inline-edit-value-gap: var(--rt-space-xs);
+        --rt-inline-edit-value-bg-hover: var(--rt-color-bg-hover);
+        --rt-inline-edit-empty-color: var(--rt-color-text-muted);
+        --rt-inline-edit-disabled-color: var(--rt-color-text-disabled);
+        --rt-inline-edit-pencil-color: var(--rt-color-text-muted);
+        --rt-inline-edit-chip-radius: var(--rt-radius-sm);
+        --rt-inline-edit-chip-bg: var(--rt-color-bg-subtle);
+        --rt-inline-edit-chip-color: var(--rt-color-text-primary);
+        --rt-inline-edit-chip-border-color: var(--rt-color-border-default);
+        --rt-inline-edit-chip-border-color-hover: var(--rt-color-action-primary-on-surface);
+        --rt-inline-edit-chip-font-size: var(--rt-text-xs);
+        --rt-inline-edit-chip-font-weight: var(--rt-font-weight-semibold);
+        --rt-inline-edit-chip-field-max-width: calc(var(--rt-size-64) + var(--rt-size-64) / 2);
+        --rt-inline-edit-chip-field-bg: var(--rt-inline-edit-chip-bg);
+        --rt-inline-edit-chip-field-color: var(--rt-inline-edit-chip-color);
+        --rt-inline-edit-chip-field-icon-color: var(--rt-inline-edit-pencil-color);
+        --rt-inline-edit-chip-field-border-color: var(--rt-inline-edit-chip-border-color);
+        --rt-inline-edit-chip-field-border-color-focus: var(--rt-inline-edit-chip-border-color-hover);
+
+        display: inline-flex;
+        min-width: 0;
+        max-width: 100%;
+        align-items: center;
+        gap: var(--rt-inline-edit-gap);
+        vertical-align: middle;
+
+        &--size-md {
+            --rt-inline-edit-height: var(--rt-input-height-md);
+        }
+
+        &--size-lg {
+            --rt-inline-edit-height: var(--rt-input-height-lg);
+        }
+
+        /* Материальный набор повторяет плашку приложения: скругление 6px, светлая серая подложка
+           и тонкая рамка без цвета действия. Цвет подписи остаётся основным — серый на серой
+           подложке не набирает 4.5 контраста для мелкого текста. */
+        :is(.rt-preset-material, [data-preset='material']) & {
+            --rt-inline-edit-chip-radius: var(--rt-radius-ms);
+            --rt-inline-edit-chip-bg: var(--rt-color-bg-surface-subtle-2);
+            --rt-inline-edit-chip-border-color: var(--rt-color-border-subtle);
+            --rt-inline-edit-chip-border-color-hover: var(--rt-color-border-strong);
+            --rt-inline-edit-value-padding-x: var(--rt-space-2);
+
+            /* Плашка-поле приложения: светлая подложка, рамка, текст и значок — основной цвет темы. */
+            --rt-inline-edit-chip-field-bg: var(--rt-mat-neutral-5);
+            --rt-inline-edit-chip-field-color: var(--mat-sys-primary, var(--rt-color-action-primary));
+            --rt-inline-edit-chip-field-icon-color: var(--mat-sys-primary, var(--rt-color-action-primary));
+            --rt-inline-edit-chip-field-border-color: var(--mat-sys-primary-fixed-dim, var(--rt-brand-200));
+            --rt-inline-edit-chip-field-border-color-focus: var(--mat-sys-primary, var(--rt-color-action-primary));
+        }
+
+        /* Значение в покое: подпись режется многоточием, полный текст — в подсказке. */
+        &__value {
+            display: inline-flex;
+            min-width: 0;
+            max-width: 100%;
+            min-height: var(--rt-inline-edit-height);
+            box-sizing: border-box;
+            align-items: center;
+            padding: 0 var(--rt-inline-edit-value-padding-x);
+            border: var(--rt-inline-edit-border-width) solid transparent;
+            border-radius: var(--rt-inline-edit-radius);
+            background: transparent;
+            color: inherit;
+            cursor: pointer;
+            font: inherit;
+            gap: var(--rt-inline-edit-value-gap);
+            text-align: start;
+            transition:
+                background-color var(--rt-inline-edit-duration) ease,
+                border-color var(--rt-inline-edit-duration) ease;
+
+            &:hover:not(:disabled) {
+                background: var(--rt-inline-edit-value-bg-hover);
+            }
+
+            &:focus-visible {
+                outline: var(--rt-focus-ring-width) solid var(--rt-focus-ring-color);
+            }
+
+            &--empty {
+                color: var(--rt-inline-edit-empty-color);
+            }
+
+            &:disabled {
+                color: var(--rt-inline-edit-disabled-color);
+                cursor: default;
+            }
+        }
+
+        &__text {
+            overflow: hidden;
+            min-width: 0;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        &__pencil {
+            flex-shrink: 0;
+            color: var(--rt-inline-edit-pencil-color);
+        }
+
+        &__field {
+            width: var(--rt-inline-edit-field-width);
+            min-width: 0;
+            flex: 0 1 auto;
+        }
+
+        &__save,
+        &__cancel {
+            flex-shrink: 0;
+        }
+
+        /* Плашка: светлая подложка, рамка, мелкий жирный шрифт — цвета нейтральной плашки rt-tag.
+           Цвет действия на этой подложке не набирает 4.5 контраста, поэтому он только у рамки при
+           наведении. Плашка только в покое — поле при правке читается полем в обоих видах. */
+        &--chip &__value {
+            border-color: var(--rt-inline-edit-chip-border-color);
+            border-radius: var(--rt-inline-edit-chip-radius);
+            background: var(--rt-inline-edit-chip-bg);
+            color: var(--rt-inline-edit-chip-color);
+            font-size: var(--rt-inline-edit-chip-font-size);
+            font-weight: var(--rt-inline-edit-chip-font-weight);
+
+            &:hover:not(:disabled) {
+                border-color: var(--rt-inline-edit-chip-border-color-hover);
+                background: var(--rt-inline-edit-chip-bg);
+            }
+        }
+
+        &--chip &__value--empty {
+            color: var(--rt-inline-edit-empty-color);
+        }
+
+        &--chip &__value:disabled {
+            color: var(--rt-inline-edit-disabled-color);
+        }
+
+        /* Плашка-поле: сама плашка — поле. Значок слева, рамка темнеет в фокусе; ширина идёт за
+           текстом до предела, длинный текст прокручивается в поле и целиком виден в подсказке. */
+        &__chip-field {
+            display: inline-flex;
+            min-width: 0;
+            max-width: min(100%, var(--rt-inline-edit-chip-field-max-width));
+            min-height: var(--rt-inline-edit-height);
+            box-sizing: border-box;
+            align-items: center;
+            padding: 0 var(--rt-inline-edit-value-padding-x);
+            border: var(--rt-inline-edit-border-width) solid var(--rt-inline-edit-chip-field-border-color);
+            border-radius: var(--rt-inline-edit-chip-radius);
+            background: var(--rt-inline-edit-chip-field-bg);
+            color: var(--rt-inline-edit-chip-field-color);
+            cursor: text;
+            font-size: var(--rt-inline-edit-chip-font-size);
+            font-weight: var(--rt-inline-edit-chip-font-weight);
+            gap: var(--rt-inline-edit-value-gap);
+            transition: border-color var(--rt-inline-edit-duration) ease;
+
+            &:focus-within {
+                border-color: var(--rt-inline-edit-chip-field-border-color-focus);
+            }
+
+            &--disabled {
+                color: var(--rt-inline-edit-disabled-color);
+                cursor: default;
+            }
+        }
+
+        &__chip-icon {
+            flex-shrink: 0;
+            color: var(--rt-inline-edit-chip-field-icon-color);
+        }
+
+        &__chip-field--disabled &__chip-icon {
+            color: var(--rt-inline-edit-disabled-color);
+        }
+
+        /* Копия текста и поле лежат в одной клетке: копия задаёт ширину, поле её занимает. */
+        &__sizer {
+            display: inline-grid;
+            overflow: hidden;
+            min-width: 0;
+            grid-template-columns: minmax(0, auto);
+        }
+
+        &__mirror,
+        &__middle,
+        &__chip-input {
+            padding: 0;
+            font: inherit;
+            grid-area: 1 / 1;
+            letter-spacing: inherit;
+            white-space: pre;
+        }
+
+        &__mirror {
+            visibility: hidden;
+        }
+
+        /* Слой обрезки посередине лежит над полем, пока плашка не в фокусе: поле под ним держит
+           текст прозрачным. В фокусе слой прячется, и поле показывает текст целиком. */
+        &__middle {
+            display: flex;
+            overflow: hidden;
+            min-width: 0;
+            pointer-events: none;
+        }
+
+        &__head {
+            overflow: hidden;
+            min-width: 0;
+            text-overflow: ellipsis;
+        }
+
+        &__tail {
+            flex-shrink: 0;
+        }
+
+        /* Условие стоит фокусом, а не его отрицанием: витрина переписывает состояния в классы, и
+           отрицание там выполнялось бы всегда. */
+        &__middle ~ &__chip-input {
+            color: transparent;
+        }
+
+        &__chip-field:focus-within &__middle {
+            visibility: hidden;
+        }
+
+        &__chip-field:focus-within &__middle ~ &__chip-input {
+            color: inherit;
+        }
+
+        &__chip-input {
+            width: 100%;
+            min-width: var(--rt-space-xs);
+            border: 0;
+            background: transparent;
+            color: inherit;
+            outline: none;
+
+            &::placeholder {
+                color: var(--rt-inline-edit-empty-color);
+            }
+
+            &:disabled {
+                cursor: default;
+            }
+        }
+    }
+
+    /* Светлая подложка плашки-поля приложения в тёмной теме светлее страницы: там плашка берёт
+       подложку плашки набора, которую тёмная тема отвечает сама. */
+    [data-theme='dark'] :is(.rt-preset-material, [data-preset='material']) .rt-inline-edit,
+    :is(.rt-preset-material, [data-preset='material']) [data-theme='dark'] .rt-inline-edit,
+    html.rt-theme-dark :is(.rt-preset-material, [data-preset='material']) .rt-inline-edit {
+        --rt-inline-edit-chip-field-bg: var(--rt-inline-edit-chip-bg);
+    }
+}

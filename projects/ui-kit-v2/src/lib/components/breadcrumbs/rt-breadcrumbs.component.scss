@@ -1,0 +1,205 @@
+@layer rt-kit.components {
+    /* rt-breadcrumbs — путь до открытой страницы. ViewEncapsulation.None.
+       Корень шаблона — ng-container, поэтому класс блока висит только на хосте.
+       Цвета, кегль, зазоры и заголовок — свойства блока: приложение перекрашивает крошки, не трогая
+       общих шагов кита. Умолчания — прежние шаги, вид без свойств не меняется. */
+
+    .rt-breadcrumbs {
+        --rt-breadcrumbs-back-radius: var(--rt-radius-full);
+        --rt-breadcrumbs-duration: var(--rt-duration-fast);
+        --rt-breadcrumbs-gap: var(--rt-space-xs);
+        --rt-breadcrumbs-font-size: var(--rt-text-sm);
+        --rt-breadcrumbs-font-weight: var(--rt-font-weight-medium);
+        --rt-breadcrumbs-line-height: var(--rt-leading-snug);
+        --rt-breadcrumbs-link-color: var(--rt-color-text-muted);
+        --rt-breadcrumbs-link-color-hover: var(--rt-color-text-primary);
+        --rt-breadcrumbs-link-radius: var(--rt-radius-xs);
+        --rt-breadcrumbs-separator-color: var(--rt-color-text-disabled);
+        --rt-breadcrumbs-separator-gap: var(--rt-space-xs);
+        --rt-breadcrumbs-current-color: var(--rt-color-text-primary);
+        --rt-breadcrumbs-current-min: var(--rt-size-30);
+        --rt-breadcrumbs-back-size: var(--rt-control-height-sm);
+        --rt-breadcrumbs-back-icon-size: var(--rt-size-5);
+        --rt-breadcrumbs-back-color: var(--rt-color-text-primary);
+        --rt-breadcrumbs-back-bg-hover: var(--rt-color-bg-hover);
+        --rt-breadcrumbs-heading-gap: var(--rt-space-sm);
+        --rt-breadcrumbs-heading-offset: var(--rt-space-xs);
+        --rt-breadcrumbs-title-color: var(--rt-color-text-primary);
+        --rt-breadcrumbs-title-font-size: var(--rt-text-2xl);
+        --rt-breadcrumbs-title-font-weight: var(--rt-font-weight-bold);
+        --rt-breadcrumbs-title-line-height: var(--rt-leading-tight);
+
+        display: block;
+        min-inline-size: 0;
+
+        /* Под пальцем кнопка «назад» крупнее: размер переназначается свойством, а не правилом. */
+        @media (pointer: coarse) {
+            --rt-breadcrumbs-back-size: var(--rt-control-height-lg);
+        }
+
+        /* Материальный набор повторяет крошки приложения: звенья, разделитель и кнопка «назад»
+           стоят через 8px, предки и разделитель — цвета вторичного текста темы Material
+           (on-surface-variant), без темы — приглушённого текста кита; кнопка «назад» — круглая 40px
+           со значком 24px. */
+        :is(.rt-preset-material, [data-preset='material']) & {
+            --rt-breadcrumbs-gap: var(--rt-size-2);
+            --rt-breadcrumbs-separator-gap: var(--rt-size-2);
+            --rt-breadcrumbs-link-color: var(--mat-sys-on-surface-variant, var(--rt-color-text-muted));
+            --rt-breadcrumbs-separator-color: var(--mat-sys-on-surface-variant, var(--rt-color-text-muted));
+            --rt-breadcrumbs-back-size: var(--rt-size-10);
+            --rt-breadcrumbs-back-icon-size: var(--rt-size-6);
+
+            @media (pointer: coarse) {
+                --rt-breadcrumbs-back-size: var(--rt-control-height-lg);
+            }
+        }
+
+        &__row {
+            display: flex;
+            align-items: center;
+            gap: var(--rt-breadcrumbs-gap);
+            min-inline-size: 0;
+        }
+
+        /* Длинный путь не уводит страницу вбок: он едет внутри своей строки, без полосы прокрутки —
+           вести по ней некуда, а место она занимает. */
+
+        /* Прокручиваемая строка обрезает и кольцо фокуса: внутренние поля шириной в кольцо дают ему
+           место, а такие же отрицательные поля снаружи оставляют раскладку прежней. */
+        &__list {
+            display: flex;
+            align-items: center;
+            padding: var(--rt-focus-ring-width);
+            margin: calc(-1 * var(--rt-focus-ring-width));
+            list-style: none;
+            min-inline-size: 0;
+            overflow-x: auto;
+            scrollbar-width: none;
+
+            /* Начало пути уехало влево: край строки гаснет, чтобы обрезка читалась как продолжение. */
+            &--clipped {
+                mask-image: linear-gradient(to right, transparent, black var(--rt-space-lg));
+            }
+        }
+
+        /* Предки помещаются рядом с текущим звеном, урезанным до порога: звено сжимается с
+           многоточием, и раздел остаётся на виду. Порог — --rt-breadcrumbs-current-min, его читает
+           замер строки. */
+        &__list--fitted > &__item:last-child {
+            flex: 0 1 auto;
+            min-inline-size: 0;
+        }
+
+        /* Звенья держат свою ширину, и лишнее уезжает влево — строка стоит в конце. Многоточие
+           получает только текущее звено, которое одно шире строки. */
+        &__item {
+            display: flex;
+            flex: none;
+            align-items: center;
+            white-space: nowrap;
+
+            &:last-child {
+                max-inline-size: 100%;
+            }
+        }
+
+        &__link,
+        &__separator,
+        &__current {
+            font-size: var(--rt-breadcrumbs-font-size);
+            font-weight: var(--rt-breadcrumbs-font-weight);
+            line-height: var(--rt-breadcrumbs-line-height);
+        }
+
+        &__link {
+            border-radius: var(--rt-breadcrumbs-link-radius);
+            color: var(--rt-breadcrumbs-link-color);
+            text-decoration: none;
+            transition: color var(--rt-breadcrumbs-duration) linear;
+
+            &:hover {
+                color: var(--rt-breadcrumbs-link-color-hover);
+            }
+
+            &:focus-visible {
+                outline: var(--rt-focus-ring-width) solid var(--rt-focus-ring-color);
+                outline-offset: var(--rt-focus-ring-offset);
+            }
+        }
+
+        /* Кнопка меню шире своего значка на собственные поля: без поправки зазор вокруг «…» вдвое
+           шире зазора между звеньями. */
+        &__fold {
+            display: inline-flex;
+            margin-inline: calc(-1 * var(--rt-space-sm));
+        }
+
+        &__separator {
+            color: var(--rt-breadcrumbs-separator-color);
+            margin-inline: var(--rt-breadcrumbs-separator-gap);
+        }
+
+        /* Текущее звено обрезается многоточием, а полный текст даёт подсказка над обрезанным. */
+        &__current {
+            overflow: hidden;
+            color: var(--rt-breadcrumbs-current-color);
+            min-inline-size: 0;
+            text-overflow: ellipsis;
+        }
+
+        &__back {
+            display: inline-flex;
+            flex: none;
+            align-items: center;
+            justify-content: center;
+
+            --rt-icon-step-md: var(--rt-breadcrumbs-back-icon-size);
+
+            border-radius: var(--rt-breadcrumbs-back-radius);
+            block-size: var(--rt-breadcrumbs-back-size);
+            color: var(--rt-breadcrumbs-back-color);
+            inline-size: var(--rt-breadcrumbs-back-size);
+            transition: background-color var(--rt-breadcrumbs-duration) linear;
+
+            &:hover {
+                background-color: var(--rt-breadcrumbs-back-bg-hover);
+            }
+
+            &:focus-visible {
+                outline: var(--rt-focus-ring-width) solid var(--rt-focus-ring-color);
+                outline-offset: var(--rt-focus-ring-offset);
+            }
+        }
+
+        /* Заголовок — последнее звено, он стоит строкой ниже, и черта после последнего предка
+           висела бы в конце строки пути. */
+        &--heading &__item:last-child &__separator {
+            display: none;
+        }
+
+        &__heading {
+            display: flex;
+            flex-flow: row wrap;
+            align-items: center;
+            gap: var(--rt-breadcrumbs-heading-gap);
+            min-inline-size: 0;
+        }
+
+        &__row + &__heading {
+            margin-block-start: var(--rt-breadcrumbs-heading-offset);
+        }
+
+        &__title {
+            overflow: hidden;
+            margin: 0;
+            color: var(--rt-breadcrumbs-title-color);
+            font-size: var(--rt-breadcrumbs-title-font-size);
+            font-weight: var(--rt-breadcrumbs-title-font-weight);
+            line-height: var(--rt-breadcrumbs-title-line-height);
+            max-inline-size: 100%;
+            min-inline-size: 0;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    }
+}

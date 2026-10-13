@@ -145,6 +145,14 @@ export class RtIconButtonComponent {
     public readonly tooltip: InputSignal<string> = input<string>('');
 
     /**
+     * Прячет ли клик открытую подсказку (`rtTooltipHideOnClick`). `false` — у переключателя:
+     * подсказка остаётся и показывает новое состояние на месте.
+     */
+    public readonly tooltipHideOnClick: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
+        transform: booleanAttribute,
+    });
+
+    /**
      * Tabindex внутренней `<button>`. Default `0` (в обычном таб-порядке).
      * Значение `-1` исключает кнопку из таб-навигации, оставляя клик мышью —
      * нужно для вспомогательных аффордансов вроде крестика-очистки внутри поля.
@@ -165,6 +173,12 @@ export class RtIconButtonComponent {
     public readonly active: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
+
+    /**
+     * Раскрыта ли панель, которую кнопка открывает, — превращается в `aria-expanded`. `null` —
+     * кнопка ничего не раскрывает, и атрибута нет.
+     */
+    public readonly expanded: InputSignal<boolean | null> = input<boolean | null>(null);
 
     /** Бейдж-индикатор (dot top-right через BEM-модификатор). */
     public readonly indicator: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {

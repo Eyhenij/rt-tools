@@ -1,0 +1,70 @@
+@switch (part) {
+    @case ('cards') {
+        <app-story-presets caption="Одна, три и шесть карточек и пустой список в обоих наборах">
+            <ng-template>
+                <app-story-row slotWidth="16rem" [items]="cardsCases" [itemLabel]="caseLabel">
+                    <ng-template let-cardsCase>
+                        <rt-carousel [cards]="cardsCase.cards" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('colors') {
+        <app-story-presets caption="Тон подписи по яркости цвета и карточки без цвета в обоих наборах">
+            <ng-template>
+                <app-story-row slotWidth="14rem" [items]="colorsCases" [itemLabel]="caseLabel">
+                    <ng-template let-colorsCase>
+                        <rt-carousel [cards]="colorsCase.cards" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('states') {
+        <app-story-presets caption="Вторая карточка в обычном виде, под указателем и в фокусе с клавиши в обоих наборах">
+            <ng-template>
+                <app-story-row slotWidth="18rem" [items]="states" [itemLabel]="stateLabel">
+                    <ng-template let-state>
+                        <rt-carousel [cards]="roles" [attr.data-story-state]="state.state" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('permissions') {
+        <app-story-presets
+            caption="Двенадцать прав с длинными подписями в регистре приложения: закрыта и открыта самая длинная — в обоих наборах">
+            <ng-template>
+                <app-story-row slotWidth="44rem" [items]="permissionStates" [itemLabel]="stateLabel">
+                    <ng-template let-state>
+                        <rt-carousel labelCase="title" [cards]="permissions" [attr.data-story-state]="state.state" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('presets') {
+        <app-story-presets caption="Стопка ролей в обоих наборах">
+            <ng-template>
+                <rt-carousel [cards]="roles" />
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('themes') {
+        <app-story-presets caption="Стопка ролей в обеих темах в обоих наборах">
+            <ng-template>
+                <app-story-themes>
+                    <ng-template>
+                        <rt-carousel [cards]="roles" />
+                    </ng-template>
+                </app-story-themes>
+            </ng-template>
+        </app-story-presets>
+    }
+}

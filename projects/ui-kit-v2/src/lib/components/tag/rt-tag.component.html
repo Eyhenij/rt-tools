@@ -16,7 +16,11 @@
         урезанный текст без подсказки читается как целый — узнать, где он на деле кончается,
         человеку неоткуда. Пустой текст директиву выключает.
     -->
-    <span rtElem="text" qa-dataid="tag-text" #text [rtTooltip]="overflowing() ? value() : ''">{{ value() }}</span>
+    <span rtElem="text" qa-dataid="tag-text" #text [rtTooltip]="overflowing() ? value() : ''">
+        @for (part of parts(); track $index) {
+            <span rtElem="part" [rtMod]="{ match: part.matched }">{{ part.text }}</span>
+        }
+    </span>
     @if (iconEnd(); as iconEndName) {
         <rt-icon rtElem="icon-end" [size]="iconSize()" [name]="iconEndName" />
     }

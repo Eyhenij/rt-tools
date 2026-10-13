@@ -1,0 +1,219 @@
+@layer rt-kit.components {
+    /* rt-draggable-tree — дерево с перетаскиванием строк. ViewEncapsulation.None.
+       Каждое значение вида — свойство: приложение перенастраивает строки, ручку, стрелку и черты
+       места сброса, не трогая общих шагов кита. Умолчания — прежние шаги, вид без свойств не меняется. */
+
+    .rt-draggable-tree {
+        --rt-draggable-tree-focus-shadow: var(--rt-shadow-focus-ring);
+        --rt-draggable-tree-empty-color: var(--rt-color-text-muted);
+        --rt-draggable-tree-empty-gap: var(--rt-space-sm);
+
+        display: block;
+        color: var(--rt-color-text-primary);
+        font-size: var(--rt-input-font-size);
+        outline: none;
+
+        &:focus-visible {
+            box-shadow: var(--rt-draggable-tree-focus-shadow);
+        }
+
+        &__list {
+            display: block;
+        }
+
+        &__empty {
+            padding: var(--rt-space-md);
+            color: var(--rt-draggable-tree-empty-color);
+            text-align: center;
+
+            /* Значок приложения стоит над подписью. */
+            &--with-icon {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: var(--rt-draggable-tree-empty-gap);
+            }
+        }
+
+        &__empty-icon {
+            flex-shrink: 0;
+        }
+    }
+
+    /* Строка объявлена вне корня блока: строку в руке CDK выносит в конец страницы, и правило из
+       корня до неё не доходит. Свои свойства она поэтому объявляет на себе. */
+    .rt-draggable-tree__row {
+        --rt-draggable-tree-level: 0;
+        --rt-draggable-tree-indent: var(--rt-space-lg);
+        --rt-draggable-tree-row-padding-block: var(--rt-space-sm);
+        --rt-draggable-tree-row-padding-inline: var(--rt-space-md);
+        --rt-draggable-tree-row-gap: var(--rt-space-sm);
+        --rt-draggable-tree-row-spacing: var(--rt-space-0);
+        --rt-draggable-tree-row-min-height: auto;
+        --rt-draggable-tree-row-box-sizing: content-box;
+        --rt-draggable-tree-row-radius: var(--rt-radius-none);
+        --rt-draggable-tree-row-bg: var(--rt-color-bg-surface);
+        --rt-draggable-tree-row-bg-hover: var(--rt-color-bg-hover);
+        --rt-draggable-tree-row-shadow-hover: none;
+        --rt-draggable-tree-handle-opacity: 1;
+        --rt-draggable-tree-toggle-color: var(--rt-neutral-600);
+        --rt-draggable-tree-mark-width: var(--rt-border-width-thick);
+        --rt-draggable-tree-mark-color: var(--rt-color-action-primary);
+        --rt-draggable-tree-mark-radius: var(--rt-radius-xs);
+        --rt-draggable-tree-preview-shadow: var(--rt-shadow-md);
+
+        position: relative;
+        display: flex;
+        box-sizing: var(--rt-draggable-tree-row-box-sizing);
+        align-items: center;
+        padding: var(--rt-draggable-tree-row-padding-block) var(--rt-draggable-tree-row-padding-inline);
+        border-radius: var(--rt-draggable-tree-row-radius);
+        background: var(--rt-draggable-tree-row-bg);
+        color: var(--rt-color-text-primary);
+        cursor: pointer;
+        font-size: var(--rt-input-font-size);
+        gap: var(--rt-draggable-tree-row-gap);
+        min-block-size: var(--rt-draggable-tree-row-min-height);
+        padding-inline-start: calc(
+            var(--rt-draggable-tree-row-padding-inline) + var(--rt-draggable-tree-indent) * var(--rt-draggable-tree-level)
+        );
+
+        /* Под пальцем строка не ниже контрола кита: высота переназначается свойством, а не правилом. */
+        @media (pointer: coarse) {
+            --rt-draggable-tree-row-min-height: var(--rt-control-height-lg);
+        }
+
+        /* Материальный набор повторяет перетаскиваемое дерево приложения: строка 32px со скруглением
+           8px и 5px до следующей, под указателем поднимается тенью второго уровня; ручка видна только
+           под указателем и на подсвеченной строке; уровень отступает на 46px, стрелка — основного
+           цвета темы, черты места сброса — 2px. Строка в руке уезжает в конец страницы, и признак
+           набора она находит выше — на корне страницы, где его ставит приложение. */
+        :is(.rt-preset-material, [data-preset='material']) & {
+            --rt-draggable-tree-indent: calc(var(--rt-size-12) - var(--rt-space-0-5));
+            --rt-draggable-tree-row-padding-block: var(--rt-space-1);
+            --rt-draggable-tree-row-padding-inline: calc(var(--rt-space-2) + var(--rt-space-1));
+            --rt-draggable-tree-row-gap: calc(var(--rt-space-2) + var(--rt-space-0-5));
+            --rt-draggable-tree-row-spacing: calc(var(--rt-space-1) + var(--rt-space-0-5) / 2);
+            --rt-draggable-tree-row-min-height: var(--rt-size-8);
+            --rt-draggable-tree-row-box-sizing: border-box;
+            --rt-draggable-tree-row-radius: var(--rt-radius-md);
+            --rt-draggable-tree-row-shadow-hover: var(--rt-mat-shadow-level-2);
+            --rt-draggable-tree-handle-opacity: 0;
+            --rt-draggable-tree-toggle-color: var(--rt-color-action-primary);
+            --rt-draggable-tree-mark-width: var(--rt-border-width-medium);
+
+            @media (pointer: coarse) {
+                --rt-draggable-tree-row-min-height: var(--rt-control-height-lg);
+            }
+        }
+
+        & + & {
+            margin-block-start: var(--rt-draggable-tree-row-spacing);
+        }
+
+        &:hover,
+        &--highlighted {
+            background-color: var(--rt-draggable-tree-row-bg-hover);
+        }
+
+        &:hover {
+            box-shadow: var(--rt-draggable-tree-row-shadow-hover);
+        }
+
+        /* Черта места сброса — полоса у верхнего или нижнего края строки цели. */
+        &--drop-before:before,
+        &--drop-after:after {
+            position: absolute;
+            background: var(--rt-draggable-tree-mark-color);
+            block-size: var(--rt-draggable-tree-mark-width);
+            content: '';
+            inset-inline: 0;
+        }
+
+        &--drop-before:before {
+            inset-block-start: 0;
+        }
+
+        &--drop-after:after {
+            inset-block-end: 0;
+        }
+
+        &--drop-inside {
+            border-radius: var(--rt-draggable-tree-mark-radius);
+            outline: var(--rt-draggable-tree-mark-width) solid var(--rt-draggable-tree-mark-color);
+            outline-offset: calc(var(--rt-draggable-tree-mark-width) * -1);
+        }
+
+        &.cdk-drag-preview {
+            box-shadow: var(--rt-draggable-tree-preview-shadow);
+        }
+
+        &.cdk-drag-placeholder {
+            opacity: 0;
+        }
+
+        &--disabled {
+            cursor: not-allowed;
+            opacity: var(--rt-input-disabled-opacity);
+
+            &:hover {
+                background-color: transparent;
+                box-shadow: none;
+            }
+        }
+    }
+
+    /* Ручка и стрелка ветки — по ширине значка; у выключенного узла и у листа на их месте пустое
+       место той же ширины, чтобы подписи одного уровня стояли в линию. */
+    .rt-draggable-tree__handle,
+    .rt-draggable-tree__handle-space,
+    .rt-draggable-tree__toggle,
+    .rt-draggable-tree__toggle-space {
+        display: inline-flex;
+        flex-shrink: 0;
+        align-items: center;
+        justify-content: center;
+        block-size: var(--rt-input-icon-size);
+        inline-size: var(--rt-input-icon-size);
+    }
+
+    /* Ручку можно спрятать до наведения: под указателем, на подсвеченной строке и на строке в руке
+       она видна всегда. */
+    .rt-draggable-tree__handle {
+        cursor: grab;
+        opacity: var(--rt-draggable-tree-handle-opacity);
+
+        &:active {
+            cursor: grabbing;
+        }
+    }
+
+    .rt-draggable-tree__row:is(:hover, .rt-draggable-tree__row--highlighted, .cdk-drag-preview) {
+        --rt-draggable-tree-handle-opacity: 1;
+    }
+
+    /* Цвет стрелки идёт в значок через его же свойство приглушённого цвета. */
+    .rt-draggable-tree__toggle {
+        --rt-icon-color-muted: var(--rt-draggable-tree-toggle-color);
+
+        padding: 0;
+        border: 0;
+        background: transparent;
+        cursor: pointer;
+    }
+
+    .rt-draggable-tree__content {
+        display: flex;
+        min-width: 0;
+        flex: 1 1 auto;
+        align-items: center;
+        gap: var(--rt-space-sm);
+    }
+
+    /* Длинная подпись обрезается многоточием, и полный текст даёт подсказка кита. */
+    .rt-draggable-tree__label {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}

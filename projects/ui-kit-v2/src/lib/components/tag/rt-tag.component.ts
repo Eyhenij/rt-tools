@@ -28,6 +28,7 @@ import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
 import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
+import { IRtSideMenu, splitTitleByWords } from '@rt-tools/ui-kit-v2/side-menu';
 import { IRtTag } from './rt-tag.model';
 
 const BEM_BLOCK: string = 'rt-tag';
@@ -79,7 +80,18 @@ export class RtTagComponent implements OnDestroy {
     /** Размер значка ведёт ступень пилюли: свой вход у него был бы вторым числом об одном. */
     protected readonly iconSize: Signal<IRtIcon.Size> = computed((): IRtIcon.Size => ICON_BY_SIZE[this.size()]);
 
+    /** Подпись, разрезанная по словам `highlight`: без них — один кусок целиком. */
+    protected readonly parts: Signal<ReadonlyArray<IRtSideMenu.TitlePart>> = computed((): ReadonlyArray<IRtSideMenu.TitlePart> =>
+        splitTitleByWords(this.value(), this.highlight())
+    );
+
     public readonly value: InputSignal<string> = input.required<string>();
+
+    /**
+     * Слова поиска, найденные куски которых метка отмечает: приложение, что ищет и по меткам,
+     * показывает, где слово нашлось. Пустая строка ничего не отмечает.
+     */
+    public readonly highlight: InputSignal<string> = input<string>('');
 
     /** Семантическая палитра. По умолчанию `neutral` (нейтральный серый). */
     public readonly severity: InputSignal<IRtTag.Severity> = input<IRtTag.Severity>('neutral');

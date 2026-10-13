@@ -1,0 +1,13 @@
+<div style="display: grid; gap: 16px; justify-items: center; padding: 160px 200px">
+    <rt-speed-menu
+        [actions]="actions"
+        [direction]="direction"
+        [size]="size"
+        [variant]="variant"
+        [icon]="icon"
+        [label]="label"
+        [closeOnSelect]="closeOnSelect"
+        [disabled]="disabled"
+        (actionSelect)="onSelect($event)" />
+    <span>Выбрано: {{ chosen }}</span>
+</div>

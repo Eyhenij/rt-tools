@@ -60,18 +60,26 @@ agreement about their own subject and describe the surface of a component, not a
 | [The accordion](accordion/spec.md)                                        | a list of headed items whose texts open on a press, independently of one another                                                |
 | [The expansion panel](expansion-panel/spec.md)                            | a header button over a body that opens with motion                                                                              |
 | [The tooltip of a cut text](tooltip-when-truncated/spec.md)               | the mode where the tooltip shows only over a text that did not fit its node                                                     |
+| [The tooltip that stays on a click](tooltip-keep-on-click/spec.md)        | the input that keeps an open tooltip on a click of a toggle, and a new text shown in place                                      |
 | [The assistant chat](ai-chat/spec.md)                                     | the panel of an AI assistant as one component: the feed, the run line, the rating, the error, the conversations                 |
 | [The prompt suggestion](prompt-suggestion/spec.md)                        | a card with a ready question on the empty screen of an assistant: the text, the arrow at the edge, the press                    |
 | [The request error of a side panel](aside-error-box/spec.md)              | where a failed request is shown in a panel and what its copy button puts into the clipboard                                     |
 | [The dynamic selectors](dynamic-selectors/spec.md)                        | a form field with the chosen list, a pop-up choice with search, a field of typed rows                                           |
 | [The side menu](side-menu/spec.md)                                        | a rail of sections with the submenu of a section beside it: hover or pinning, search, folders, width                            |
 | [A tree of options](option-tree/spec.md)                                  | options with children in the select and the multiselect: levels, arrows, what a click, a key and the filter do                  |
+| [A tree of choice](tree/spec.md)                                          | a tree of nodes on the page itself: checkboxes with a cascade, a radio or none, search, select all, keys                        |
+| [A tree ordered by dragging](draggable-tree/spec.md)                      | a tree whose nodes a person reorders: dragging before, after or inside a row, the Alt keys, what the application forbids        |
+| [A choice by a tree with search](tree-selector/spec.md)                   | a search field, controls and a tree; the choice written at once or applied by «Apply»                                           |
+| [A hybrid choice by a tree](hybrid-tree-selector/spec.md)                 | a tree where some groups keep one leaf, and the choice by it with search                                                        |
 | [The panel of the date field](date-panel/spec.md)                         | the kit's own panel of a date, a time and a date with time: month, columns, bounds, keys, narrow screen                         |
 | [The date range field](date-range/spec.md)                                | a form field of a period: two months, presets, the hover preview, the summary, bounds, keys, narrow screen                      |
 | [The message field](message-composer/spec.md)                             | the capsule a chat message is typed in: round buttons, growth, send states, focus, files, the hint                              |
 | [The run status of the assistant](ai-run-status/spec.md)                  | the line of an AI answer at work: the mark of the state, the running label, the meta, the steps that open under it              |
 | [The long title of a dense toolbar](toolbar-dense/spec.md)                | what a dense toolbar does with a title wider than the place left to it                                                          |
 | [The value with a copy button](copy-value/spec.md)                        | a short value with a copy button: the label, the plate, «Copied» for two seconds, a long value cut                              |
+| [The breadcrumbs](breadcrumbs/spec.md)                                    | the path to the open page: ancestors as links, the back button, the heading look, the fold on a narrow screen                   |
+| [The inline edit](inline-edit/spec.md)                                    | a short value changed where it is shown: the field on a press, save and cancel by keys and buttons, the saving wait             |
+| [The quick menu](speed-menu/spec.md)                                      | a round button that opens round action buttons beside it: the four sides, the choice, the keys, the closing                     |
 
 ## What is out of scope
 
@@ -212,3 +220,6 @@ change of its own.
   the page edges. The margin used to live in the showcase layout only. Task RT-2779.
 - 2026-10-12 — a field in the left bar of the toolbar takes its width from the block property
   `--rt-toolbar-field-width`, 400px by default. It used to shrink to its placeholder. Task RT-2786.
+- 2026-10-12 — only the input in the left bar of the toolbar takes that width; a select there sizes
+  by its content again. Each filter of a row had stretched to 400px and left a narrow screen. Task
+  RT-2791.

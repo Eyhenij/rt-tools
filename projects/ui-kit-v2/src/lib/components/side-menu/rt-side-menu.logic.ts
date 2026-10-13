@@ -105,6 +105,21 @@ export function splitSideMenuTitle(name: string, query: string): IRtSideMenu.Tit
 }
 
 /**
+ * Резка подписи по каждому слову запроса. Приложение делит поиск по пробелам и ищет каждое слово
+ * отдельно, поэтому и отмечено каждое. Слово внутри уже отмеченного куска не режет его второй раз.
+ */
+export function splitTitleByWords(name: string, query: string): IRtSideMenu.TitlePart[] {
+    const words: string[] = query.split(/\s+/).filter((word: string): boolean => word !== '');
+    return words.reduce(
+        (parts: IRtSideMenu.TitlePart[], word: string): IRtSideMenu.TitlePart[] =>
+            parts.flatMap((part: IRtSideMenu.TitlePart): IRtSideMenu.TitlePart[] =>
+                part.matched ? [part] : splitSideMenuTitle(part.text, word)
+            ),
+        splitSideMenuTitle(name, '')
+    );
+}
+
+/**
  * Пункты подменю в том порядке, в каком они стоят на экране. Внутрь папки список спускается, только
  * если та раскрыта: ходьба стрелками идёт по видимому, а не по всему набору.
  */

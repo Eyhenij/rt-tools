@@ -45,8 +45,14 @@
     "ng-template[rtExpansionPanelContent]": "маркер ленивого тела панели: своей разметки у него нет вовсе. В кадре виден не маркер, а тело, которое панель создала при раскрытии, — это показывают истории семейства `expansion-panel`"
   },
   "shownWithin": {
+    "rt-color-picker": "projects/ui-kit-v2/src/lib/components/color-palette/stories/color-palette-matrix.stories.ts",
     "[rtDynamicListActions]": "projects/ui-kit-v2/src/lib/components/dynamic-list/stories/dynamic-list-matrix.stories.ts",
     "[rtDynamicListSelectors]": "projects/ui-kit-v2/src/lib/components/dynamic-list/stories/dynamic-list-matrix.stories.ts",
+    "ng-template[rtDraggableTreeNode]": "projects/ui-kit-v2/src/lib/components/draggable-tree/stories/draggable-tree-matrix.stories.ts",
+    "ng-template[rtTreeNodeEnd]": "projects/ui-kit-v2/src/lib/components/tree/stories/tree-matrix.stories.ts",
+    "ng-template[rtTreeNodeMeta]": "projects/ui-kit-v2/src/lib/components/tree/stories/tree-matrix.stories.ts",
+    "ng-template[rtTreeSelectorControls]": "projects/ui-kit-v2/src/lib/components/tree-selector/stories/tree-selector-matrix.stories.ts",
+    "ng-template[rtTreeSelectorUnderSearch]": "projects/ui-kit-v2/src/lib/components/tree-selector/stories/tree-selector-matrix.stories.ts",
     "[rtFieldHint]": "projects/ui-kit-v2/src/lib/components/field/stories/field-matrix.stories.ts",
     "rt-table-settings-aside": "projects/ui-kit-v2/src/showcase/templates/stories/bookings-template.stories.ts",
     "rt-data-table-cell": "projects/ui-kit-v2/src/lib/components/data-table/stories/data-table-matrix.stories.ts",
