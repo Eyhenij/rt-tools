@@ -53,11 +53,10 @@
       }
     },
     "test": {
-      "executor": "@nx/jest:jest",
+      "executor": "nx:run-commands",
       "outputs": ["{workspaceRoot}/coverage/projects/auth-server"],
       "options": {
-        "jestConfig": "projects/auth-server/jest.config.ts",
-        "tsConfig": "projects/auth-server/tsconfig.spec.json"
+        "command": "node --experimental-vm-modules node_modules/jest/bin/jest.js --config projects/auth-server/jest.config.ts"
       }
     },
     "lint": {

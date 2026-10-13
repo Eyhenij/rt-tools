@@ -1,4 +1,8 @@
-/** Plain ts-jest on Node: the server package runs under NestJS, not Angular. */
+/**
+ * Plain ts-jest on Node: the server package runs under NestJS, not Angular. NestJS 12 and `jose`
+ * ship ES modules only, so the run loads the specs as ES modules too; the test target starts Jest
+ * with `--experimental-vm-modules` for that.
+ */
 export default {
     displayName: 'auth-server',
     preset: '../../jest.preset.cjs',
@@ -13,13 +17,13 @@ export default {
             lines: 100,
         },
     },
-    // `jose` ships ES modules only; the run transforms it like the sources instead of requiring it.
-    transformIgnorePatterns: ['/node_modules/(?!(\\.pnpm/jose@[^/]+/node_modules/)?jose/)'],
+    extensionsToTreatAsEsm: ['.ts'],
     transform: {
-        '^.+\\.[tj]s$': [
+        '^.+\\.ts$': [
             'ts-jest',
             {
                 tsconfig: '<rootDir>/tsconfig.spec.json',
+                useESM: true,
             },
         ],
     },

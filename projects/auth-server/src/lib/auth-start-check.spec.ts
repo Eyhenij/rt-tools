@@ -1,5 +1,6 @@
 import { ExecutionContext, Logger, UnauthorizedException } from '@nestjs/common';
 import { DiscoveryService } from '@nestjs/core';
+import { jest } from '@jest/globals';
 
 import { AuthStartCheck, IAuthServerOptions } from './auth-server.module.js';
 import { AuthGuard } from './auth.guard.js';
@@ -33,10 +34,10 @@ describe('AuthStartCheck', () => {
     });
 
     it('SC-AUTH-16 — at start the catalog reaches Keycloak and the extra right is named in the log', async () => {
-        const fetchSpy: jest.SpyInstance = jest
+        const fetchSpy: jest.Spied<typeof fetch> = jest
             .spyOn(globalThis, 'fetch')
             .mockImplementation(async (input: string | URL | Request) => rolesAnswer(String(input)));
-        const warn: jest.SpyInstance = jest.spyOn(Logger.prototype, 'warn').mockImplementation(() => undefined);
+        const warn: jest.Spied<Logger['warn']> = jest.spyOn(Logger.prototype, 'warn').mockImplementation(() => undefined);
         jest.spyOn(Logger.prototype, 'log').mockImplementation(() => undefined);
 
         await new AuthStartCheck(NO_CONTROLLERS, OPTIONS).onApplicationBootstrap();
@@ -51,7 +52,7 @@ describe('AuthStartCheck', () => {
         jest.spyOn(globalThis, 'fetch').mockImplementation(async (input: string | URL | Request) =>
             String(input).endsWith('/roles') ? new Response(JSON.stringify([{ name: 'orders:read' }])) : rolesAnswer(String(input))
         );
-        const warn: jest.SpyInstance = jest.spyOn(Logger.prototype, 'warn').mockImplementation(() => undefined);
+        const warn: jest.Spied<Logger['warn']> = jest.spyOn(Logger.prototype, 'warn').mockImplementation(() => undefined);
         jest.spyOn(Logger.prototype, 'log').mockImplementation(() => undefined);
 
         await new AuthStartCheck(NO_CONTROLLERS, OPTIONS).onApplicationBootstrap();

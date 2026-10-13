@@ -4,7 +4,7 @@ import { dirname, join } from 'node:path';
 // The module build keeps import paths as written, and Node loads a file only by its full name: a
 // path without `.js` builds fine and fails on the first `import` of the published package. A deep
 // path into a package is resolved the same way unless the package declares an export map.
-const SOURCES: string = join(__dirname, '..');
+const SOURCES: string = join(import.meta.dirname, '..');
 const IMPORT_PATH: RegExp = /(?:from|import)\s*\(?\s*['"]([^'"]+)['"]/g;
 const DEEP_PACKAGE_PATH: RegExp = /^((?:@[^/]+\/)?[^@./][^/]*)\/.+/;
 
