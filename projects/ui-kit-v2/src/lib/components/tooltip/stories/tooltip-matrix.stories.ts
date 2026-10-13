@@ -64,6 +64,21 @@ export const WhenTruncated: TStory = {
 };
 
 /**
+ * Вход `tooltipHideOnClick` иконочной кнопки (`rtTooltipHideOnClick` директивы): наведены и нажаты
+ * оба переключателя. Подсказка осталась у первого — уже с новым текстом «Открепить», у второго клик
+ * её спрятал, как раньше.
+ */
+export const KeepOnClick: TStory = {
+    parameters: { snapshot: { fullPage: true } },
+    args: { part: 'keep-on-click' },
+    play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
+        await openStoryOverlays(canvasElement, { event: 'mouseenter', wait: 400 });
+        // Щелчок без фокуса: фокус на следующей кнопке снял бы подсказку предыдущей по focusout.
+        await openStoryOverlays(canvasElement, { event: 'click' });
+    },
+};
+
+/**
  * Светло-тёмная пара показывает саму панель `rt-tooltip`, а не директиву: оверлей уезжает в
  * контейнер CDK — за пределы блока, которому пара назначает свойства темы. Подложка панели
  * инверсная, и в паре видно, что инверсия разворачивается вместе с темой.

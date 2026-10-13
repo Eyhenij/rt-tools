@@ -1,0 +1,161 @@
+@layer rt-kit.components {
+    /* rt-color-picker — выбор своего цвета палитры. ViewEncapsulation.None.
+       Стоит на панели вне палитры, в конце страницы, поэтому свои свойства объявляет на себе: свойства
+       палитры до панели не доходят. Значения по умолчанию — те же шаги, что у палитры.
+       Свойства `--rt-color-picker-*` ставит шаблон: площадь и полосу строит логика палитры, это
+       математика цвета, а не оформление. Здесь стоят их умолчания до первой отрисовки. Материальный
+       набор доходит до панели классом набора, который оверлей кладёт на свою панель. */
+
+    .rt-color-picker {
+        --rt-color-palette-picker-width: var(--rt-size-64);
+        --rt-color-palette-picker-height: auto;
+        --rt-color-palette-area-grow: 0;
+        --rt-color-palette-picker-padding: var(--rt-space-md);
+        --rt-color-palette-picker-gap: var(--rt-space-sm);
+        --rt-color-palette-picker-bg: var(--rt-color-bg-surface);
+        --rt-color-palette-picker-radius: var(--rt-radius-md);
+        --rt-color-palette-picker-shadow: var(--rt-shadow-md);
+        --rt-color-palette-area-height: var(--rt-size-40);
+        --rt-color-palette-area-radius: var(--rt-radius-sm);
+        --rt-color-palette-hue-height: var(--rt-size-3);
+        --rt-color-palette-thumb-size: var(--rt-size-4);
+        --rt-color-palette-thumb-border-width: var(--rt-border-width-thick);
+        --rt-color-palette-thumb-border-color: var(--rt-color-bg-surface);
+        --rt-color-palette-thumb-shadow: var(--rt-shadow-sm);
+        --rt-color-palette-preview-size: var(--rt-control-height-sm);
+        --rt-color-palette-actions-gap: var(--rt-space-xs);
+        --rt-color-palette-hue-radius: var(--rt-radius-full);
+        --rt-color-palette-thumb-radius: var(--rt-radius-full);
+        --rt-color-palette-preview-border-width: var(--rt-border-width-thin);
+        --rt-color-palette-preview-border-color: var(--rt-color-border-default);
+        --rt-color-picker-area: none;
+        --rt-color-picker-spectrum: none;
+        --rt-color-picker-color: transparent;
+        --rt-color-picker-x: 0;
+        --rt-color-picker-y: 0;
+
+        display: flex;
+        width: var(--rt-color-palette-picker-width);
+        height: var(--rt-color-palette-picker-height);
+        box-sizing: border-box;
+        flex-direction: column;
+        padding: var(--rt-color-palette-picker-padding);
+        border-radius: var(--rt-color-palette-picker-radius);
+        background: var(--rt-color-palette-picker-bg);
+        box-shadow: var(--rt-color-palette-picker-shadow);
+        gap: var(--rt-color-palette-picker-gap);
+
+        /* Материальный набор повторяет панель приложения: 256×320 со скруглением 6px, площадь почти
+           прямоугольная и забирает высоту, оставшуюся от полосы и кнопок. Тень — плотная серая
+           подложка `0 8px 16px` приложения. */
+        :is(.rt-preset-material, [data-preset='material']) & {
+            --rt-color-palette-picker-height: calc(var(--rt-size-64) + var(--rt-size-16));
+            --rt-color-palette-area-grow: 1;
+            --rt-color-palette-picker-radius: var(--rt-radius-ms);
+            --rt-color-palette-picker-shadow: 0 var(--rt-space-2) var(--rt-space-4) 0 var(--rt-mat-neutral-60);
+            --rt-color-palette-area-radius: var(--rt-radius-xs);
+        }
+
+        /* Площадь — три слоя: чёрный снизу, белый слева и чистый оттенок под ними. */
+        &__area {
+            position: relative;
+            height: var(--rt-color-palette-area-height);
+            flex-grow: var(--rt-color-palette-area-grow);
+            border-radius: var(--rt-color-palette-area-radius);
+            background: var(--rt-color-picker-area);
+            cursor: crosshair;
+            touch-action: none;
+        }
+
+        &__hue {
+            position: relative;
+            height: var(--rt-color-palette-hue-height);
+            border-radius: var(--rt-color-palette-hue-radius);
+            background: var(--rt-color-picker-spectrum);
+            cursor: pointer;
+            touch-action: none;
+        }
+
+        &__area,
+        &__hue {
+            &:focus-visible {
+                outline: var(--rt-focus-ring-width) solid var(--rt-focus-ring-color);
+                outline-offset: var(--rt-focus-ring-offset);
+            }
+        }
+
+        &__area-thumb,
+        &__hue-thumb {
+            position: absolute;
+            width: var(--rt-color-palette-thumb-size);
+            height: var(--rt-color-palette-thumb-size);
+            box-sizing: border-box;
+            border: var(--rt-color-palette-thumb-border-width) solid var(--rt-color-palette-thumb-border-color);
+            border-radius: var(--rt-color-palette-thumb-radius);
+            background: var(--rt-color-picker-color);
+            box-shadow: var(--rt-color-palette-thumb-shadow);
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+        }
+
+        &__area-thumb {
+            top: calc(var(--rt-color-picker-y) * 100%);
+            left: calc(var(--rt-color-picker-x) * 100%);
+        }
+
+        &__hue-thumb {
+            top: 50%;
+            left: calc(var(--rt-color-picker-x) * 100%);
+        }
+
+        &__row {
+            display: flex;
+            align-items: center;
+            gap: var(--rt-color-palette-picker-gap);
+        }
+
+        &__preview {
+            width: var(--rt-color-palette-preview-size);
+            height: var(--rt-color-palette-preview-size);
+            flex-shrink: 0;
+            border: var(--rt-color-palette-preview-border-width) solid var(--rt-color-palette-preview-border-color);
+            border-radius: var(--rt-color-palette-hue-radius);
+            background: var(--rt-color-picker-color);
+        }
+
+        &__hex {
+            min-width: 0;
+            flex: 1 1 auto;
+        }
+
+        /* Три поля каналов в ряд поровну, буква канала над своим полем. */
+        &__channels {
+            display: grid;
+            gap: var(--rt-color-palette-picker-gap);
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        &__channel {
+            display: flex;
+            min-width: 0;
+            flex-direction: column;
+            gap: var(--rt-space-2xs);
+        }
+
+        &__channel-name {
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-xs);
+            font-weight: var(--rt-font-weight-medium);
+        }
+
+        &__channel-input {
+            min-width: 0;
+        }
+
+        &__actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--rt-color-palette-actions-gap);
+        }
+    }
+}

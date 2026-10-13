@@ -1,0 +1,104 @@
+@switch (part) {
+    @case ('look') {
+        <app-story-presets caption="Значение в покое: текст и плашка, пустое, длинное и недоступное в обоих наборах">
+            <ng-template>
+                <app-story-row slotWidth="16rem" [items]="lookCases" [itemLabel]="caseLabel">
+                    <ng-template let-c>
+                        <div [style.inline-size]="c.slotWidth ?? null">
+                            <rt-inline-edit
+                                [value]="c.value"
+                                [placeholder]="placeholder"
+                                [look]="c.look ?? 'text'"
+                                [disabled]="c.disabled ?? false" />
+                        </div>
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('chip-field') {
+        <app-story-presets caption="Плашка-поле: значение, фокус, подсказка, длинное, свой значок и недоступная в обоих наборах">
+            <ng-template>
+                <app-story-row slotWidth="26rem" [items]="chipFieldCases" [itemLabel]="caseLabel">
+                    <ng-template let-c>
+                        <rt-inline-edit
+                            look="chip-field"
+                            [attr.data-story-state]="c.state ?? null"
+                            [value]="c.value"
+                            [placeholder]="placeholder"
+                            [fieldIcon]="c.icon ?? 'pencil'"
+                            [truncate]="c.truncate ?? 'end'"
+                            [disabled]="c.disabled ?? false" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('editing') {
+        <app-story-presets caption="Открытое поле: черновик, пустой черновик и сохранение в обоих наборах">
+            <ng-template>
+                <app-story-row slotWidth="24rem" [items]="editingCases" [itemLabel]="caseLabel">
+                    <ng-template let-c>
+                        <rt-inline-edit [value]="c.value" [placeholder]="placeholder" [editing]="true" [saving]="c.saving ?? false" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('size') {
+        <app-story-presets caption="Ступени в покое и открытыми в обоих наборах">
+            <ng-template>
+                <app-story-row slotWidth="24rem" [items]="sizeCases" [itemLabel]="caseLabel">
+                    <ng-template let-c>
+                        <rt-inline-edit [value]="c.value" [size]="c.size ?? 'sm'" [editing]="c.editing ?? false" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('states') {
+        <app-story-presets caption="Взаимодействие со значением в покое в обоих наборах">
+            <ng-template>
+                <app-story-row slotWidth="16rem" [items]="states" [itemLabel]="stateLabel">
+                    <ng-template let-state>
+                        <rt-inline-edit [value]="name" [attr.data-story-state]="state.state" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('presets') {
+        <app-story-presets caption="Текст, плашка, открытое поле и плашка-поле в обоих наборах">
+            <ng-template>
+                <div style="display: grid; gap: 16px; justify-items: start">
+                    <rt-inline-edit [value]="name" />
+                    <rt-inline-edit look="chip" [value]="name" />
+                    <rt-inline-edit [value]="name" [editing]="true" />
+                    <rt-inline-edit look="chip-field" [value]="name" />
+                </div>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('themes') {
+        <app-story-presets caption="Правка на месте в обеих темах в обоих наборах">
+            <ng-template>
+                <app-story-themes>
+                    <ng-template>
+                        <div style="display: grid; gap: 16px; justify-items: start">
+                            <rt-inline-edit [value]="name" />
+                            <rt-inline-edit look="chip" [value]="name" />
+                            <rt-inline-edit [value]="name" [editing]="true" />
+                            <rt-inline-edit look="chip-field" [value]="name" />
+                        </div>
+                    </ng-template>
+                </app-story-themes>
+            </ng-template>
+        </app-story-presets>
+    }
+}

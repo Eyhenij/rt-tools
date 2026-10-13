@@ -28,6 +28,9 @@
             --rt-tag-severity-text: var(--rt-neutral-700);
             --rt-tag-size-padding-block: var(--rt-space-1);
             --rt-tag-size-padding-inline: var(--rt-space-2);
+            --rt-tag-match-bg: var(--rt-yellow-400);
+            --rt-tag-match-color: var(--rt-neutral-950);
+            --rt-tag-match-radius: var(--rt-radius-xs);
 
             display: inline-flex;
             max-width: 100%;
@@ -124,6 +127,15 @@
                 line-height: var(--rt-leading-none);
                 text-overflow: ellipsis;
                 white-space: nowrap;
+            }
+
+            /* Найденное слово поиска — тем же цветом, что в подписи дерева и в поиске меню. */
+            &__part {
+                &--match {
+                    border-radius: var(--rt-tag-match-radius);
+                    background: var(--rt-tag-match-bg);
+                    color: var(--rt-tag-match-color);
+                }
             }
 
             &__close {

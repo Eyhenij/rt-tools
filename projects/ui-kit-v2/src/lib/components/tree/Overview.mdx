@@ -1,0 +1,210 @@
+import { Meta, Title } from '@storybook/addon-docs/blocks';
+
+<Meta title="Organisms/Forms/Tree/Overview" />
+
+<Title>Tree — `rt-tree`</Title>
+
+Дерево узлов прямо на странице: флажки с каскадом, радио или просто навигация по веткам. Модель
+узла та же, что у дерева вариантов `rt-select` и `rt-multiselect`, — `IRtSelect.Option` с
+`children` и необязательным `description`; одни и те же данные кладутся и в выпадающий список,
+и в дерево.
+
+```html
+<rt-tree ariaLabel="Регионы" [nodes]="regions" [(value)]="picked" />
+<rt-tree ariaLabel="Регион" mode="single" [nodes]="regions" [(value)]="picked" />
+<rt-tree ariaLabel="Регионы" [nodes]="regions" [showSelectAll]="true" [searchTerm]="term" [(value)]="picked">
+    <ng-template rtTreeNodeEnd let-node>
+        <rt-tag size="sm" [value]="node.value" />
+    </ng-template>
+</rt-tree>
+<rt-tree ariaLabel="Отели" exclusive [branchMarks]="false" [filter]="false" [searchTerm]="term" [nodes]="hotels" [(value)]="picked">
+    <ng-template rtTreeNodeMeta let-node>
+        <rt-icon-button icon="info" size="sm" />
+    </ng-template>
+</rt-tree>
+```
+
+Узел может нести метки — `badges: [{ text, severity }]`: они стоят под подписью маленькими
+`rt-tag`, и поиск подсвечивает в них найденные слова. Разметка приложения под подписью — шаблон
+`rtTreeNodeMeta`, в конце строки — `rtTreeNodeEnd`.
+
+## Когда применять
+
+- Выбор из иерархии, которую человек должен видеть целиком: регионы, подразделения, права.
+- Навигация по веткам без выбора — режим `none`: ветка по нажатию раскрывается, лист сообщает о
+  нажатии выходом `picked`.
+
+## Когда не применять
+
+- **Выбор в поле формы, где места мало** —
+  [`rt-multiselect`](./?path=/docs/molecules-forms-multiselect-overview--docs) или
+  [`rt-select`](./?path=/docs/molecules-forms-select-overview--docs): то же дерево вариантов, но
+  в выпадающей панели.
+- **Плоский список без вложенности** — дерево добавит пустое место под стрелку раскрытия и ничего
+  не даст взамен.
+
+## Оси
+
+| ось           | значения                                | умолчание  |
+| ------------- | --------------------------------------- | ---------- |
+| режим         | `multiple`, `single`, `none`            | `multiple` |
+| каскад        | включён, выключен                       | включён    |
+| «выбрать всё» | нет; есть — ничего, часть, всё          | нет        |
+| поиск         | пусто, слово                            | пусто      |
+| пустое дерево | поиск ничего не нашёл, узлов нет        | —          |
+| конец строки  | нет, разметка приложения                | нет        |
+| под подписью  | ничего, метки узла, разметка приложения | ничего     |
+| отметки групп | есть, нет                               | есть       |
+| клик          | добавляет, выбирает один                | добавляет  |
+| отбор поиском | включён, выключен                       | включён    |
+
+Каскад виден только в режиме `multiple`: в `single` отмечается один узел, в `none` отметок нет.
+Поэтому история **Cascade** идёт в режиме флажков, а режим с каскадом не перемножается.
+
+Поиск раскрывает путь к каждому совпадению и подсвечивает каждое слово запроса в подписи, описании
+и метках узла; ветка, в поддереве которой совпадений нет, скрывается. С `filter = false` поиск
+только подсвечивает: строки отбирает приложение — например, когда ищет и по тексту меток.
+
+Строка «выбрать всё» прилипает к верху места, которое прокручивает дерево: строки уезжают под
+неё. Отметка «выбрать всё» стоит над отметкой первой строки. Когда у первой строки отметки нет — группа
+без отметок, — она стоит над стрелкой.
+
+Без отметок групп (`branchMarks = false`) группа раскрывается по клику, пробелу и Enter, а выбор
+идёт по листьям. В режиме `exclusive` клик без Ctrl и Cmd оставляет выбранным только нажатый
+узел, а клик с Ctrl или Cmd добавляет его к выбору.
+
+Каждая история стоит парой половин под двумя наборами оформления: набор перекрашивает фон
+выбранной и подсвеченной строки.
+
+**Оси, которых не видно.** `ariaLabel` уходит в атрибут; выход `picked` ничего не рисует. Ось
+«клик» (`exclusive`) — поведение: в неподвижном кадре дерево выглядит так же, разницу видно в
+**Playground** по клику с Ctrl или Cmd и без.
+
+## Состояния
+
+| состояние           | чем задаётся               | что меняется                                                            |
+| ------------------- | -------------------------- | ----------------------------------------------------------------------- |
+| обычное             | —                          | —                                                                       |
+| наведение           | указатель над строкой      | фон строки `--rt-color-bg-hover`                                        |
+| фокус с клавиши     | `:focus-visible` на дереве | кольцо `--rt-tree-focus-shadow`                                         |
+| подсвеченная строка | стрелки клавиатуры         | фон строки, как при наведении                                           |
+| выбранная строка    | отметка узла               | фон строки `--rt-color-action-primary-subtle`                           |
+| ветка «частично»    | выбрана часть листьев      | флажок в промежуточном положении                                        |
+| выключенный узел    | `disabled` у узла          | прозрачность `--rt-input-disabled-opacity`, курсор                      |
+| выключенное дерево  | вход `disabled`            | все строки и «выбрать всё» как выключенный узел; стрелки веток работают |
+
+## Клавиатура
+
+Фокус стоит на самом дереве, строки его не берут — строка подсвечивается, как у списка вариантов.
+
+| клавиша             | что делает                                                                      |
+| ------------------- | ------------------------------------------------------------------------------- |
+| ↓ / ↑               | следующая / предыдущая видимая строка                                           |
+| → / ←               | раскрыть / свернуть ветку и пройти по уровням — как в дереве `rt-select`        |
+| пробел              | отметить строку; в режиме `none` и у группы без отметки — раскрыть или свернуть |
+| Ctrl / Cmd + пробел | в режиме `exclusive` — добавить строку к выбору, а не выбрать её одну           |
+| Enter               | то же, что пробел, и сообщить выходом `picked`                                  |
+
+Метод `handleKeydown` открыт: поле поиска над деревом передаёт ему стрелки и Enter, не забирая
+фокус у себя. Он возвращает, взята ли клавиша, — по этому поле решает, отменять ли её действие.
+
+## Доступность
+
+- `role="tree"` на хосте, `role="treeitem"` на строках с `aria-level`, `aria-expanded` у веток и
+  `aria-selected` в режимах с отметкой.
+- `aria-multiselectable` стоит только в режиме `multiple`.
+- Доступное имя даёт вход `ariaLabel`; без него у дерева нет имени.
+- Флажки и радио строк не берут фокус: состояние читается из атрибутов строки.
+
+## Оформление
+
+Свойства объявлены на корне блока `rt-tree`; правило приложения на теге перебивает их. Умолчание —
+вид кита. Материальный набор (`.rt-preset-material` или `data-preset="material"` выше дерева)
+переназначает часть из них по деревьям приложения, без пакетов Material.
+
+| свойство                           | что задаёт                          | умолчание                          | материальный набор          |
+| ---------------------------------- | ----------------------------------- | ---------------------------------- | --------------------------- |
+| `--rt-tree-font-size`              | кегль дерева                        | `--rt-input-font-size`             | —                           |
+| `--rt-tree-color`                  | цвет текста                         | `--rt-color-text-primary`          | —                           |
+| `--rt-tree-indent`                 | шаг отступа на уровень              | `--rt-space-lg`                    | 46px                        |
+| `--rt-tree-row-padding-block`      | поле строки сверху и снизу          | `--rt-space-sm`                    | `--rt-space-1`              |
+| `--rt-tree-row-padding-inline`     | поле строки по бокам                | `--rt-space-md`                    | 12px                        |
+| `--rt-tree-row-gap`                | зазор стрелки, отметки и подписи    | `--rt-space-sm`                    | 10px                        |
+| `--rt-tree-row-spacing`            | зазор между строками                | `--rt-space-0`                     | 5px                         |
+| `--rt-tree-row-min-height`         | наименьшая высота строки            | `auto`                             | `--rt-size-8`               |
+| `--rt-tree-row-box-sizing`         | считается ли высота строки с полями | `content-box`                      | `border-box`                |
+| `--rt-tree-row-radius`             | скругление строки                   | `--rt-radius-none`                 | `--rt-radius-ms`            |
+| `--rt-tree-row-bg-hover`           | фон строки под указателем           | `--rt-color-bg-hover`              | —                           |
+| `--rt-tree-row-bg-highlighted`     | фон подсвеченной строки             | `--rt-color-bg-hover`              | —                           |
+| `--rt-tree-row-bg-chosen`          | фон выбранной строки                | `--rt-color-action-primary-subtle` | —                           |
+| `--rt-tree-guide-width`            | толщина линии уровня                | `--rt-border-width-thin`           | —                           |
+| `--rt-tree-guide-color`            | цвет линии уровня                   | `transparent`                      | outline-variant темы        |
+| `--rt-tree-toggle-size`            | стрелка ветки и место под неё       | `--rt-input-icon-size`             | —                           |
+| `--rt-tree-toggle-color`           | цвет стрелки ветки                  | `--rt-neutral-600`                 | `--rt-color-action-primary` |
+| `--rt-tree-leaf-space-display`     | место под стрелку у листа           | `inline-flex`                      | `none`                      |
+| `--rt-tree-check-size`             | квадрат флажка строки без рамки     | 18px                               | 14px — с рамкой 16px        |
+| `--rt-tree-check-border-color`     | рамка невыбранного флажка           | `--rt-color-border-strong`         | `--rt-mat-neutral-40`       |
+| `--rt-tree-match-bg`               | фон совпадения поиска               | `--rt-yellow-400`                  | `--rt-mat-yellow-100`       |
+| `--rt-tree-match-color`            | цвет текста совпадения              | `--rt-neutral-950`                 | —                           |
+| `--rt-tree-match-radius`           | скругление подсветки совпадения     | `--rt-radius-xs`                   | —                           |
+| `--rt-tree-match-font-weight`      | насыщенность совпадения             | `--rt-font-weight-regular`         | `--rt-font-weight-semibold` |
+| `--rt-tree-count-bg`               | фон числа выбранного под группой    | `transparent`                      | `--rt-color-action-primary` |
+| `--rt-tree-count-color`            | цвет числа                          | `--rt-color-text-muted`            | on-primary темы             |
+| `--rt-tree-count-font-size`        | кегль числа                         | `--rt-text-sm`                     | `--rt-text-xs`              |
+| `--rt-tree-count-padding-inline`   | поля плашки числа                   | `--rt-space-0`                     | 6px                         |
+| `--rt-tree-count-min-size`         | наименьшая сторона плашки           | `auto`                             | `--rt-size-5`               |
+| `--rt-tree-count-radius`           | скругление плашки                   | `--rt-radius-none`                 | `--rt-radius-full`          |
+| `--rt-tree-select-all-font-size`   | кегль «выбрать всё»                 | `--rt-tree-font-size`              | `--rt-text-sm`              |
+| `--rt-tree-select-all-font-weight` | насыщенность «выбрать всё»          | `--rt-font-weight-regular`         | `--rt-font-weight-medium`   |
+| `--rt-tree-empty-color`            | цвет пустого состояния              | `--rt-color-text-muted`            | —                           |
+| `--rt-tree-empty-gap`              | зазор значка и подписи пустоты      | `--rt-space-sm`                    | —                           |
+| `--rt-tree-focus-shadow`           | кольцо фокуса дерева                | `--rt-shadow-focus-ring`           | —                           |
+| `--rt-tree-border-width`           | черта под строкой «выбрать всё»     | `--rt-border-width-thin`           | —                           |
+| `--rt-tree-bg`                     | фон дерева                          | `--rt-color-bg-surface`            | —                           |
+| `--rt-tree-select-all-bg`          | фон липкой строки «выбрать всё»     | `--rt-tree-bg`                     | —                           |
+| `--rt-tree-select-all-z`           | ярус липкой строки внутри дерева    | `--rt-z-sticky`                    | —                           |
+
+Нечётные метрики материального набора собраны из ступеней: 46px — `--rt-size-12` без
+`--rt-space-0-5`, 12px — `--rt-space-2` и `--rt-space-1`, 10px — `--rt-space-2` и
+`--rt-space-0-5`. Чекбокс и радио своего материального вида не получают: дерево задаёт только
+размер квадрата через `--rt-checkbox-box-size`.
+
+Подпись и описание строки, не поместившиеся по ширине, обрезаются многоточием, и полный текст
+показывает подсказка кита в режиме `rtTooltipWhenTruncated`.
+
+При `pointer: coarse` строка вырастает до `--rt-control-height-lg`: пальцу нужна цель крупнее.
+
+## Входы
+
+| вход               | тип                                           | умолчание    |
+| ------------------ | --------------------------------------------- | ------------ |
+| `nodes`            | `ReadonlyArray<IRtTree.Node<T>>`              | обязателен   |
+| `value`            | `ReadonlyArray<T>`                            | `[]`         |
+| `mode`             | `'multiple' \| 'single' \| 'none'`            | `'multiple'` |
+| `cascade`          | `boolean`                                     | `true`       |
+| `searchTerm`       | `string`                                      | `''`         |
+| `showSelectAll`    | `boolean`                                     | `false`      |
+| `ariaLabel`        | `string \| null`                              | `null`       |
+| `branchMarks`      | `boolean`                                     | `true`       |
+| `exclusive`        | `boolean`                                     | `false`      |
+| `filter`           | `boolean`                                     | `true`       |
+| `disabled`         | `boolean`                                     | `false`      |
+| `emptyIcon`        | `IRtIcon.Name \| null`                        | `null`       |
+| `nodeEndTemplate`  | `TemplateRef<IRtTree.NodeContext<T>> \| null` | `null`       |
+| `nodeMetaTemplate` | `TemplateRef<IRtTree.NodeContext<T>> \| null` | `null`       |
+
+`emptyIcon` ставит значок кита над подписью пустого дерева. `nodeEndTemplate` и `nodeMetaTemplate`
+отдают разметку строки входом — так её передаёт обёртка, которая не может положить в дерево
+директиву; вход сильнее директивы `rtTreeNodeEnd` или `rtTreeNodeMeta`.
+
+## Выходы
+
+| выход         | что несёт          | когда                                                                     |
+| ------------- | ------------------ | ------------------------------------------------------------------------- |
+| `valueChange` | `ReadonlyArray<T>` | изменилась отметка — пара к `value`                                       |
+| `picked`      | `IRtTree.Node<T>`  | нажатие на строку или Enter; не у выключенного узла и не у ветки в `none` |
+
+## Рядом
+
+- [`rt-multiselect`](./?path=/docs/molecules-forms-multiselect-overview--docs) — то же дерево вариантов в выпадающей панели.
+- [`rt-select`](./?path=/docs/molecules-forms-select-overview--docs) — выбор одного узла из дерева в панели.

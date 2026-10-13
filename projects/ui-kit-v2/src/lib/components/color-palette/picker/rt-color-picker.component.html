@@ -1,0 +1,85 @@
+<ng-container rtBlock="rt-color-picker">
+    <!-- Площадь: вправо растёт насыщенность, вверх — яркость. Её фон строит логика палитры по оттенку
+         полосы. Указатель тянет точку, стрелки двигают её шагом. -->
+    <div
+        rtElem="area"
+        qa-dataid="color-picker-area"
+        role="slider"
+        tabindex="0"
+        aria-valuemin="0"
+        aria-valuemax="100"
+        [attr.aria-label]="t().uiColorPickerArea"
+        [attr.aria-valuenow]="saturation()"
+        [attr.aria-valuetext]="areaText()"
+        [style.--rt-color-picker-area]="area()"
+        [style.--rt-color-picker-x]="hsv().s"
+        [style.--rt-color-picker-y]="1 - hsv().v"
+        (pointerdown)="onAreaPointer($event)"
+        (pointermove)="onAreaPointer($event)"
+        (pointerup)="onAreaPointer($event)"
+        (keydown)="onKey('area', $event)">
+        <span rtElem="area-thumb" [style.--rt-color-picker-color]="picked()"></span>
+    </div>
+
+    <div
+        rtElem="hue"
+        qa-dataid="color-picker-hue"
+        role="slider"
+        tabindex="0"
+        aria-valuemin="0"
+        aria-valuemax="359"
+        [attr.aria-label]="t().uiColorPickerHue"
+        [attr.aria-valuenow]="hueDegrees()"
+        [style.--rt-color-picker-x]="hsv().h / 360"
+        [style.--rt-color-picker-spectrum]="spectrum"
+        (pointerdown)="onHuePointer($event)"
+        (pointermove)="onHuePointer($event)"
+        (pointerup)="onHuePointer($event)"
+        (keydown)="onKey('hue', $event)">
+        <span rtElem="hue-thumb" [style.--rt-color-picker-color]="hueColor()"></span>
+    </div>
+
+    <div rtElem="row">
+        <span rtElem="preview" aria-hidden="true" [style.--rt-color-picker-color]="picked()"></span>
+        <rt-input
+            rtElem="hex"
+            qa-dataid="color-picker-hex"
+            size="sm"
+            [clearable]="false"
+            [ariaLabel]="t().uiColorPickerHex"
+            [formControl]="hexControl" />
+    </div>
+
+    @if (channels()) {
+        <div rtElem="channels">
+            @for (item of channelControls; track item.channel) {
+                <div rtElem="channel">
+                    <span rtElem="channel-name" aria-hidden="true">{{ item.name }}</span>
+                    <rt-input
+                        rtElem="channel-input"
+                        qa-dataid="color-picker-channel"
+                        size="sm"
+                        [clearable]="false"
+                        [ariaLabel]="channelLabels()[item.channel]"
+                        [formControl]="item.control" />
+                </div>
+            }
+        </div>
+    }
+
+    <div rtElem="actions">
+        <button
+            type="button"
+            rtButton
+            qa-dataid="color-picker-cancel"
+            appearance="text"
+            theme="secondary"
+            size="sm"
+            (click)="cancelled.emit()">
+            {{ t().uiCancel }}
+        </button>
+        <button type="button" rtButton qa-dataid="color-picker-apply" size="sm" [disabled]="!changed()" (click)="onApply()">
+            {{ t().uiApply }}
+        </button>
+    </div>
+</ng-container>

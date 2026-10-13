@@ -1,0 +1,86 @@
+@switch (part) {
+    @case ('size') {
+        <app-story-presets caption="Ступени кнопки меню в обоих наборах">
+            <ng-template>
+                <app-story-row slotWidth="6rem" [items]="sizeCases" [itemLabel]="caseLabel">
+                    <ng-template let-c>
+                        <rt-speed-menu label="Масштаб" icon="zoom_in" [actions]="actions" [size]="c.size ?? 'lg'" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('variant') {
+        <app-story-presets caption="Палитры кнопки меню и недоступное меню в обоих наборах">
+            <ng-template>
+                <app-story-row slotWidth="6rem" [items]="variantCases" [itemLabel]="caseLabel">
+                    <ng-template let-c>
+                        <rt-speed-menu
+                            label="Масштаб"
+                            icon="zoom_in"
+                            [actions]="actions"
+                            [variant]="c.variant ?? 'primary'"
+                            [disabled]="c.disabled ?? false" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('states') {
+        <app-story-presets caption="Взаимодействие с кнопкой меню в обоих наборах">
+            <ng-template>
+                <app-story-row slotWidth="6rem" [items]="states" [itemLabel]="stateLabel">
+                    <ng-template let-state>
+                        <rt-speed-menu label="Масштаб" icon="zoom_in" [actions]="actions" [attr.data-story-state]="state.state" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('open') {
+        <!-- Без пары наборов: панель открыта одна на историю — нажатие по меню второй половины
+             считается нажатием снаружи первого и закрыло бы его. -->
+        <div style="display: grid; min-block-size: 360px; place-items: center; padding: 160px">
+            <rt-speed-menu data-story-trigger label="Масштаб" icon="zoom_in" [actions]="unavailable" [direction]="direction" />
+        </div>
+    }
+
+    @case ('open-material') {
+        <!-- Без пары наборов по той же причине: открыта одна панель. Материальный набор задан
+             контейнером, и слой поверх страницы берёт его признак сам. -->
+        <div data-preset="material" style="display: grid; min-block-size: 360px; place-items: center; padding: 160px">
+            <rt-speed-menu data-story-trigger label="Масштаб" icon="zoom_in" [actions]="actions" [direction]="direction" />
+        </div>
+    }
+
+    @case ('presets') {
+        <app-story-presets caption="Кнопка меню в обоих наборах">
+            <ng-template>
+                <div style="display: flex; gap: 16px; align-items: center">
+                    <rt-speed-menu label="Масштаб" icon="zoom_in" [actions]="actions" />
+                    <rt-speed-menu label="Масштаб" icon="zoom_in" variant="secondary" [actions]="actions" />
+                    <rt-speed-menu label="Масштаб" icon="zoom_in" [actions]="actions" [disabled]="true" />
+                </div>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('themes') {
+        <app-story-presets caption="Кнопка меню в обеих темах в обоих наборах">
+            <ng-template>
+                <app-story-themes>
+                    <ng-template>
+                        <div style="display: flex; gap: 16px; align-items: center">
+                            <rt-speed-menu label="Масштаб" icon="zoom_in" [actions]="actions" />
+                            <rt-speed-menu label="Масштаб" icon="zoom_in" variant="secondary" [actions]="actions" />
+                            <rt-speed-menu label="Масштаб" icon="zoom_in" [actions]="actions" [disabled]="true" />
+                        </div>
+                    </ng-template>
+                </app-story-themes>
+            </ng-template>
+        </app-story-presets>
+    }
+}

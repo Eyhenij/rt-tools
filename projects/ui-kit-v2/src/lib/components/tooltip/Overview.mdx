@@ -78,8 +78,9 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | `text`          | `string \| null \| undefined`                    | `''`                                            |
 | `placement`     | `'top' \| 'bottom' \| 'left' \| 'right' \| null` | `null` — сверху, под материальным набором снизу |
 | `whenTruncated` | `boolean`                                        | `false`                                         |
+| `hideOnClick`   | `boolean`                                        | `true`                                          |
 
-В разметке они пишутся под алиасами `rtTooltip`, `rtTooltipPlacement` и `rtTooltipWhenTruncated`:
+В разметке они пишутся под алиасами `rtTooltip`, `rtTooltipPlacement`, `rtTooltipWhenTruncated` и `rtTooltipHideOnClick`:
 имя директивы и есть имя входа текста. Вход текста принимает `null` и `undefined` и сам приводит
 их к пустой строке — так `[rtTooltip]="value | date"` не ломает строгую типизацию шаблона.
 
@@ -87,6 +88,11 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 момент показа: подсказка появляется, если его содержимое шире видимой коробки. Так ведут себя
 ячейки таблицы и строки списков: у короткой подписи подсказка только повторяла бы её. Режим
 показан историей `WhenTruncated`.
+
+**`rtTooltipHideOnClick="false"` оставляет подсказку после клика.** Так ведёт себя
+кнопка-переключатель: после нажатия подсказка остаётся и показывает новое состояние, потому что новый
+текст `[rtTooltip]` меняется в открытой панели на месте. Касание на тач-экране подсказку не
+показывает и с этим входом: клик снимает отложенный показ. Режим показан историей `KeepOnClick`.
 
 ## Выходы
 

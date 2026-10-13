@@ -11,7 +11,7 @@ import { IRtTag } from '../../rt-tag.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
 export type TTagMatrixPart =
-    'severity' | 'size' | 'overflow' | 'radius' | 'icon' | 'closable' | 'handles' | 'host-rule' | 'presets' | 'themes';
+    'severity' | 'size' | 'overflow' | 'radius' | 'icon' | 'closable' | 'highlight' | 'handles' | 'host-rule' | 'presets' | 'themes';
 
 /** Случай усечения — не значение оси, а пара «подпись и место, которое ей дали». */
 interface ITagOverflowCase {
@@ -145,6 +145,18 @@ const TAG_HANDLES: Readonly<Record<string, string>> = {
                 </app-story-presets>
             }
 
+            @case ('highlight') {
+                <app-story-presets caption="Слова поиска × палитра в обоих наборах">
+                    <ng-template>
+                        <app-story-grid [rows]="severities" [columns]="highlights" [columnLabel]="highlightLabel">
+                            <ng-template let-severity let-highlight="col">
+                                <rt-tag value="Москва Центр" [severity]="severity" [highlight]="highlight" />
+                            </ng-template>
+                        </app-story-grid>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('handles') {
                 <app-story-presets caption="Палитра × ручки приложения в обоих наборах">
                     <ng-template>
@@ -221,6 +233,7 @@ export class TestRtTagMatrixComponent {
     public readonly severities: readonly IRtTag.Severity[] = ['neutral', 'info', 'success', 'warning', 'danger', 'secondary'];
     public readonly appearances: readonly IRtTag.Appearance[] = ['solid', 'outlined'];
     public readonly closables: readonly boolean[] = [false, true];
+    public readonly highlights: readonly string[] = ['', 'моск', 'моск цен'];
     public readonly sizes: readonly IRtTag.Size[] = ['sm', 'md', 'lg'];
 
     /**
@@ -270,4 +283,6 @@ export class TestRtTagMatrixComponent {
     public readonly iconCaseLabel: (value: ITagIconCase) => string = (value: ITagIconCase): string => value.name;
 
     public readonly overflowCaseLabel: (value: ITagOverflowCase) => string = (value: ITagOverflowCase): string => value.name;
+
+    public readonly highlightLabel: (value: string) => string = (value: string): string => (value === '' ? 'без слов' : `«${value}»`);
 }

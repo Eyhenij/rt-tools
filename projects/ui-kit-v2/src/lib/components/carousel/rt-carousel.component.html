@@ -1,0 +1,13 @@
+<ng-container rtBlock="rt-carousel">
+    @for (card of views(); track $index) {
+        <span
+            rtElem="card"
+            role="listitem"
+            tabindex="0"
+            qa-dataid="carousel-card"
+            [rtMod]="{ tone: card.tone }"
+            [style.--rt-carousel-card-fill]="card.color">
+            <span rtElem="label" qa-dataid="carousel-card-label">{{ card.label }}</span>
+        </span>
+    }
+</ng-container>

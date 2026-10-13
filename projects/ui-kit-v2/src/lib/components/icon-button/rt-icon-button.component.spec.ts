@@ -29,6 +29,24 @@ describe('RtIconButtonComponent', (): void => {
         expect(el(setup(), 'use')?.attributes['href']).toBe('#rt-icon-ico-trash');
     });
 
+    it('SC-UKV-855 — tooltipHideOnClick=false оставляет подсказку по клику и меняет её текст на месте', (): void => {
+        jest.useFakeTimers();
+        const fixture: ComponentFixture<RtIconButtonComponent> = setup({ tooltip: 'Закрепить', tooltipHideOnClick: false });
+        const button: HTMLElement = control(fixture)?.nativeElement as HTMLElement;
+
+        button.dispatchEvent(new Event('mouseenter'));
+        jest.advanceTimersByTime(300);
+        fixture.detectChanges();
+        expect(document.querySelector('rt-tooltip')?.textContent?.trim()).toBe('Закрепить');
+
+        button.click();
+        fixture.componentRef.setInput('tooltip', 'Открепить');
+        fixture.detectChanges();
+
+        expect(document.querySelector('rt-tooltip')?.textContent?.trim()).toBe('Открепить');
+        jest.useRealTimers();
+    });
+
     describe('оформление', (): void => {
         it('без входов — призрачная кнопка среднего размера без шага скругления', (): void => {
             const fixture: ComponentFixture<RtIconButtonComponent> = setup();
@@ -146,6 +164,12 @@ describe('RtIconButtonComponent', (): void => {
         it('нажатое состояние объявляется только когда оно есть', (): void => {
             expect(control(setup())?.attributes['aria-pressed']).toBeUndefined();
             expect(control(setup({ active: true }))?.attributes['aria-pressed']).toBe('true');
+        });
+
+        it('SC-UKV-805: раскрытие объявляется только у кнопки, которой его задали', (): void => {
+            expect(control(setup())?.attributes['aria-expanded']).toBeUndefined();
+            expect(control(setup({ expanded: false }))?.attributes['aria-expanded']).toBe('false');
+            expect(control(setup({ expanded: true }))?.attributes['aria-expanded']).toBe('true');
         });
 
         it('вспомогательная кнопка убирается из таб-порядка отрицательным индексом', (): void => {
