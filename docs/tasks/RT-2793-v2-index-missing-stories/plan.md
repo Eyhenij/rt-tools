@@ -1,56 +1,38 @@
 # Plan
 
 **Task:** RT-2793 · **Branch:** RT-2793-v2-index-missing-stories
-**Draft:** `<path to the product agreement>`
-**Behaviour:** changes
-
-A tree that writes the agreement straight into the domain spec names it instead of the draft:
-`**Spec:** `<path to the spec>``.
-
-Work that does not touch application code needs no agreement — then instead of the draft line
-stands `**Behaviour:** unchanged — <the owner's reason>`; an empty reason is not accepted.
+**Behaviour:** unchanged — only a check tool of the tree changes; the showcase and the kit stay as they are.
 
 After it is written this file is not edited. A stage revision goes to `progress.md` as a decision
 along the way.
 
 ## Task footprint
 
-<What the work touches. Filled in by exploration before the grill and confirmed by the owner. By
-this same table, at closing, one sees what of the specs, rules and patterns has gone stale: what
-is named here is read twice — before the work and after it.>
-
-| What  | Where                         |
-| ----- | ----------------------------- |
-| Specs | `docs/specs/<domain>/`        |
-| Laws  | `docs/constitution/<name>.md` |
-| Rules | `.claude/skills/<name>/`      |
-| Code  | `projects/<package>/`         |
+| What  | Where                                                                                             |
+| ----- | ------------------------------------------------------------------------------------------------- |
+| Rules | `.claude/skills/ui-component-tests/`                                                              |
+| Code  | `tools/visual-snapshots-v2.mjs`, `tools/showcase-probe.mjs`, `tools/tests/showcase-probe.test.sh` |
 
 ## What counts as done
 
-- <a statement that can be checked>
+- A reference whose story is missing from the index makes the check of the second kit refuse
+  before the run, naming the missing story ids.
+- A bounded number of re-reads of the index comes first, so a late index does not refuse.
+- The pure part has scenarios in `tools/tests/showcase-probe.test.sh`, and they pass.
 
 ## Stages
 
-### 1. <name>
+### 1. Index against references
 
 - **Steps:**
-    1. <what is done first>
-    2. <what is done after it>
-- **Readiness sign:** <what must become true>
-- **Verified by:** `<command>` — <what in its output means "it matched">
+    1. Add the pure matching of references to the story ids of the index
+    2. Make the check read the index again before it refuses
+    3. Write the scenarios of the pure part
+    4. Run the scenarios and the tree set
 
-The steps are the smallest unit of the work, and they are written here in full: the progress
-mirrors this list with its marks, and a check matches the two by number and by name. A step is
-named by what is done, not by what is thought over — a line nobody can call done is not a step.
-
-The command is written in backticks: the turn exit guard reads it and does not let out a turn in
-which the stage is declared closed and the command was not run. An acceptance written in prose
-cannot be confirmed by anything. The command is run right here, while the plan is written, not at
-the end of the stage: its output is what names the readiness sign. A sign written by a guess is
-sometimes impossible to meet — the line the stage must put out comes from an unconfigured tree
-rather than from the work — and that is found out latest of everything that depended on it.
+- **Readiness sign:** an index with a story missing is refused with its id, and a full index passes.
+- **Verified by:** `bash tools/tests/showcase-probe.test.sh` — every scenario reports ok.
 
 ## What this work does not do
 
-- <neighbouring work that is not dragged in here, and where it is created>
+- Finding why the showcase loses stories at all — the index builder is Storybook's.
