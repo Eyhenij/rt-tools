@@ -469,8 +469,8 @@ importers:
         specifier: ^0.5.1
         version: 0.5.1(c829c7b3876968a557587043894f3131)
       '@rt-tools/ui-kit-v2':
-        specifier: ^0.17.0
-        version: 0.17.0(99217a1c995bb0e733492a478813ff63)
+        specifier: ^0.23.3
+        version: 0.23.3(99217a1c995bb0e733492a478813ff63)
       keycloakify:
         specifier: 11.16.1
         version: 11.16.1
@@ -533,8 +533,8 @@ importers:
         specifier: ^0.5.1
         version: 0.5.1(c829c7b3876968a557587043894f3131)
       '@rt-tools/ui-kit-v2':
-        specifier: ^0.17.0
-        version: 0.17.0(99217a1c995bb0e733492a478813ff63)
+        specifier: ^0.23.3
+        version: 0.23.3(99217a1c995bb0e733492a478813ff63)
       '@rt-tools/utils':
         specifier: ^0.4.1
         version: 0.4.1
@@ -5262,8 +5262,8 @@ packages:
       '@rt-tools/utils': ^0.4.1
       rxjs: ^7.8.0
 
-  '@rt-tools/ui-kit-v2@0.17.0':
-    resolution: {integrity: sha512-FWTqmrb5zfkcpwFvswRV0LiE+L+w/IG8WRERELqpd1iKZcJmWTw1VOV9iDT+vFC6OgmUR/gHLWzgJedtYpWcdQ==}
+  '@rt-tools/ui-kit-v2@0.23.3':
+    resolution: {integrity: sha512-svFf0cH3LsjkImLWf2JdguyG8/ItRKJzwGaqjWMGZ3EitG7Hur3JB/zcghg4KYJ7Y6p7L3m2r1uVdcumuvWnnA==}
     peerDependencies:
       '@angular/cdk': ^22.0.0
       '@angular/common': ^22.0.0
@@ -5272,8 +5272,8 @@ packages:
       '@angular/forms': ^22.0.0
       '@angular/platform-browser': ^22.0.0
       '@angular/router': ^22.0.0
-      '@rt-tools/core': ^0.5.0
-      '@rt-tools/utils': ^0.4.0
+      '@rt-tools/core': ^0.5.1
+      '@rt-tools/utils': ^0.4.1
       quill: ^2.0.3
       rxjs: ^7.8.2
       typescript: ^6.0.0
@@ -18148,7 +18148,7 @@ snapshots:
       rxjs: 7.8.2
       tslib: 2.8.1
 
-  '@rt-tools/ui-kit-v2@0.17.0(99217a1c995bb0e733492a478813ff63)':
+  '@rt-tools/ui-kit-v2@0.23.3(99217a1c995bb0e733492a478813ff63)':
     dependencies:
       '@angular/cdk': 22.2.2(@angular/common@22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(@angular/forms@22.2.2(@angular/common@22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(@angular/platform-browser@22.2.2(@angular/animations@22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2)))(@angular/common@22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2)))(rxjs@7.8.2))(@angular/platform-browser@22.2.2(@angular/animations@22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2)))(@angular/common@22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2)))(rxjs@7.8.2)
       '@angular/common': 22.2.2(@angular/core@22.2.2(@angular/compiler@22.2.2)(rxjs@7.8.2))(rxjs@7.8.2)
