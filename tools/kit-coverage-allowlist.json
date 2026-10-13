@@ -45,6 +45,7 @@
     "ng-template[rtExpansionPanelContent]": "маркер ленивого тела панели: своей разметки у него нет вовсе. В кадре виден не маркер, а тело, которое панель создала при раскрытии, — это показывают истории семейства `expansion-panel`"
   },
   "shownWithin": {
+    "rt-color-picker": "projects/ui-kit-v2/src/lib/components/color-palette/stories/color-palette-matrix.stories.ts",
     "[rtDynamicListActions]": "projects/ui-kit-v2/src/lib/components/dynamic-list/stories/dynamic-list-matrix.stories.ts",
     "[rtDynamicListSelectors]": "projects/ui-kit-v2/src/lib/components/dynamic-list/stories/dynamic-list-matrix.stories.ts",
     "ng-template[rtDraggableTreeNode]": "projects/ui-kit-v2/src/lib/components/draggable-tree/stories/draggable-tree-matrix.stories.ts",

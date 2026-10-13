@@ -1,0 +1,132 @@
+@layer rt-kit.components {
+    /* rt-color-palette — поле выбора цвета. ViewEncapsulation.None.
+       Корень шаблона — ng-container, поэтому класс блока висит только на хосте. Образцы — круги цвета
+       образца; выбранный обведён кольцом его же цвета через просвет цвета поверхности.
+       Размеры, зазоры, кольцо и рамки — свойства блока: приложение переназначает их своим правилом
+       на блок, а материальный набор — в этом же файле. */
+
+    .rt-color-palette {
+        --rt-color-palette-swatch-size: var(--rt-size-8);
+        --rt-color-palette-swatch-radius: var(--rt-radius-full);
+        --rt-color-palette-swatch-border-width: var(--rt-border-width-thin);
+        --rt-color-palette-swatch-border-color: var(--rt-color-border-subtle);
+        --rt-color-palette-swatch-scale-hover: 1;
+        --rt-color-palette-gap: var(--rt-space-sm);
+        --rt-color-palette-ring-width: var(--rt-border-width-thick);
+        --rt-color-palette-ring-gap: var(--rt-border-width-thick);
+        --rt-color-palette-ring-gap-color: var(--rt-color-bg-surface);
+        --rt-color-palette-checked-inset: 0px;
+        --rt-color-palette-checked-hollow: 0%;
+        --rt-color-palette-checked-glow: 0px;
+        --rt-color-palette-readonly-size: var(--rt-size-8);
+        --rt-color-palette-readonly-border-width: var(--rt-border-width-thin);
+        --rt-color-palette-empty-border-color: var(--rt-color-border-default);
+        --rt-color-palette-empty-bg: transparent;
+        --rt-color-palette-duration: var(--rt-duration-fast);
+        --rt-color-palette-custom-gap: var(--rt-color-palette-gap);
+
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--rt-color-palette-custom-gap);
+
+        /* Материальный набор повторяет образцы приложения: круги 30px без рамки через 10px, выбранный —
+           полое кольцо 3px своего цвета со свечением 5px, круг под указателем растёт. Кнопка своего
+           цвета стоит в 16px под сеткой, серая 16/400; свой образец остаётся последним в сетке.
+           Пустое значение только для чтения — белый круг. */
+        :is(.rt-preset-material, [data-preset='material']) & {
+            --rt-color-palette-custom-gap: var(--rt-space-md);
+            --rt-color-palette-custom-height: var(--rt-control-height-sm);
+            --rt-color-palette-custom-color: var(--mat-sys-on-surface-variant, var(--rt-color-text-muted));
+            --rt-color-palette-swatch-size: calc(var(--rt-size-8) - var(--rt-space-2xs));
+            --rt-color-palette-swatch-border-width: 0px;
+            --rt-color-palette-swatch-scale-hover: 1.2;
+            --rt-color-palette-gap: calc(var(--rt-space-sm) + var(--rt-space-2xs));
+            --rt-color-palette-ring-width: 0px;
+            --rt-color-palette-ring-gap: 0px;
+            --rt-color-palette-checked-inset: var(--rt-border-width-thick);
+            --rt-color-palette-checked-hollow: 100%;
+            --rt-color-palette-checked-glow: calc(var(--rt-space-xs) + 1px);
+            --rt-color-palette-empty-bg: var(--mat-sys-surface-container-lowest, var(--rt-neutral-0));
+        }
+
+        &__swatches {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--rt-color-palette-gap);
+        }
+
+        /* Рамка тонкая и почти прозрачная: белый и светлые образцы иначе сливаются с поверхностью. */
+        &__swatch {
+            width: var(--rt-color-palette-swatch-size);
+            height: var(--rt-color-palette-swatch-size);
+            box-sizing: border-box;
+            flex-shrink: 0;
+            padding: 0;
+            border: var(--rt-color-palette-swatch-border-width) solid var(--rt-color-palette-swatch-border-color);
+            border-radius: var(--rt-color-palette-swatch-radius);
+            background: var(--rt-color-palette-color);
+            cursor: pointer;
+            transition:
+                box-shadow var(--rt-color-palette-duration) ease,
+                transform var(--rt-color-palette-duration) ease;
+
+            &:hover:not(:disabled) {
+                transform: scale(var(--rt-color-palette-swatch-scale-hover));
+            }
+
+            &:focus-visible {
+                outline: var(--rt-focus-ring-width) solid var(--rt-focus-ring-color);
+                outline-offset: calc(var(--rt-color-palette-ring-gap) + var(--rt-color-palette-ring-width));
+            }
+
+            /* Полое кольцо — заливка, разбавленная до прозрачной долей `checked-hollow`, и вдавленная
+               тень цвета образца. Цвет образца задан на самом образце, поэтому тень собирается здесь,
+               своим свойством образца. */
+            &--checked {
+                --rt-color-palette-checked-shadow:
+                    inset 0 0 0 var(--rt-color-palette-checked-inset) var(--rt-color-palette-color),
+                    0 0 0 var(--rt-color-palette-ring-gap) var(--rt-color-palette-ring-gap-color),
+                    0 0 0 calc(var(--rt-color-palette-ring-gap) + var(--rt-color-palette-ring-width)) var(--rt-color-palette-color),
+                    0 0 var(--rt-color-palette-checked-glow) var(--rt-color-palette-color);
+
+                background: color-mix(in srgb, var(--rt-color-palette-color), transparent var(--rt-color-palette-checked-hollow));
+                box-shadow: var(--rt-color-palette-checked-shadow);
+            }
+
+            &--readonly {
+                width: var(--rt-color-palette-readonly-size);
+                height: var(--rt-color-palette-readonly-size);
+                border-width: var(--rt-color-palette-readonly-border-width);
+                cursor: default;
+
+                &:hover {
+                    transform: none;
+                }
+            }
+
+            &--empty {
+                --rt-color-palette-color: var(--rt-color-palette-empty-bg);
+
+                border-color: var(--rt-color-palette-empty-border-color);
+            }
+        }
+
+        &__custom {
+            flex-shrink: 0;
+        }
+
+        &--disabled &__swatch {
+            cursor: not-allowed;
+            opacity: var(--rt-opacity-disabled);
+        }
+
+        :is(.rt-preset-material, [data-preset='material']) & .rt-color-palette__custom {
+            --rt-btn-height: var(--rt-color-palette-custom-height);
+            --rt-btn-color: var(--rt-color-palette-custom-color);
+            --rt-btn-font-size: var(--rt-text-md);
+
+            font-weight: var(--rt-font-weight-regular);
+        }
+    }
+}

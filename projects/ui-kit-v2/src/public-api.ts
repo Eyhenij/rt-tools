@@ -23,6 +23,7 @@ export * from '@rt-tools/ui-kit-v2/calendar';
 export * from '@rt-tools/ui-kit-v2/card';
 export * from '@rt-tools/ui-kit-v2/checkbox';
 export * from '@rt-tools/ui-kit-v2/collapsible-text';
+export * from '@rt-tools/ui-kit-v2/color-palette';
 export * from '@rt-tools/ui-kit-v2/confirm-popover';
 export * from '@rt-tools/ui-kit-v2/container';
 export * from '@rt-tools/ui-kit-v2/copy-value';
