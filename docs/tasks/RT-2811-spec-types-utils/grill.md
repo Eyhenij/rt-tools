@@ -1,33 +1,28 @@
 # Grill
 
-<Work begun from cargo that arrived names its records here — by full keys, as the intake reading
-prints them. Eight characters are not enough: a mark with a short key is refused with the line
-«the tree has no such record». This file leaves for the archive, and after the folder is taken apart
-the keys live only here.>
-
 ## The owner request
 
-> <verbatim, in the owner's language, without retelling>
+> обнови все пакеты до самых последних
+
+The task came out of that order: the work on RT-2805 found that the specs of the utils package
+carry type errors nothing reports.
 
 ## What the tree already has
 
-<Findings of the exploration: specs on the subject, the laws and rules the work touches, a
-ready-made sample nearby. Filled in before the first question to the owner.>
-
-## What the rules already say
-
-<What was found in the laws and rules on the subject of the question. The owner is not asked
-what already has a written answer.>
-
-## Questions and answers
-
-**<question>**
-<the owner's answer in their words>
+- `pnpm exec tsc -p projects/utils/tsconfig.spec.json --noEmit --rootDir .` finds 10 errors in two
+  specs; the package has no `typecheck` target, and its tests run on Jest, which does not check
+  types.
+- The spec of `isNumber` writes a BigInt literal, and the spec settings target ES2016.
+- The spec of `safeCompare` builds one comparator typed for numbers and calls the function with
+  `null` and `undefined`, which a numbers-only type does not allow. The function itself is typed
+  for any `T` and handles both.
 
 ## Decisions
 
-- **<decision>** — <reason>. Rejected: <what and why>.
-
-## What is left unclear
-
-- <a question that was not asked, and why it does not block the work>
+- **The specs are fixed to the types, not the types to the specs.**
+- **The BigInt literal becomes a `BigInt(1)` call:** it is the same value, and the target of the
+  spec settings is not raised for one line. Rejected: raising the target — it changes how every
+  spec of the package is compiled.
+- **The comparator is typed for numbers, null and undefined,** so each call in the spec names what
+  it passes. Rejected: casting every argument.
+- **The package gets a `typecheck` target,** as the servers did in RT-2805.
