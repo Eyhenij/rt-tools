@@ -57,6 +57,7 @@ export * from '@rt-tools/ui-kit-v2/icon';
 export * from '@rt-tools/ui-kit-v2/image-cropper';
 export * from '@rt-tools/ui-kit-v2/image-upload';
 export * from '@rt-tools/ui-kit-v2/info-item';
+export * from '@rt-tools/ui-kit-v2/inline-edit';
 export * from '@rt-tools/ui-kit-v2/input-number';
 export * from '@rt-tools/ui-kit-v2/input';
 export * from '@rt-tools/ui-kit-v2/live-badge';

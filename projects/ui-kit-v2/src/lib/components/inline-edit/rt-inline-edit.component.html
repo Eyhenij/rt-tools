@@ -1,0 +1,76 @@
+<ng-container rtBlock="rt-inline-edit">
+    @if (isChipField()) {
+        <!-- Плашка-поле: значок и поле внутри одной плашки. Ширину задаёт невидимая копия текста под
+             полем — плашка растёт с текстом до своего предела, дальше поле прокручивается. -->
+        <label rtElem="chip-field" [rtMod]="{ disabled: disabled() }">
+            <rt-icon rtElem="chip-icon" size="sm" [name]="fieldIcon()" />
+            <span rtElem="sizer" rtTooltipWhenTruncated [rtTooltip]="chipText()">
+                <span rtElem="mirror" aria-hidden="true">{{ chipText() }}</span>
+                <!-- Обрезка посередине: копия выше по-прежнему задаёт ширину и будит подсказку, а этот
+                     слой в той же клетке показывает начало с многоточием и конец, пока поле не в фокусе. -->
+                @if (middleParts(); as parts) {
+                    <span rtElem="middle" aria-hidden="true">
+                        <span rtElem="head">{{ parts.head }}</span>
+                        <span rtElem="tail">{{ parts.tail }}</span>
+                    </span>
+                }
+                <input
+                    type="text"
+                    rtElem="chip-input"
+                    qa-dataid="inline-edit-chip-input"
+                    [placeholder]="placeholder()"
+                    [attr.aria-label]="fieldLabel() || placeholder() || null"
+                    [formControl]="draftControl"
+                    (focus)="onChipFocus($event)"
+                    (blur)="onChipBlur()"
+                    (keydown)="onChipKeydown($event)" />
+            </span>
+        </label>
+    } @else if (editing()) {
+        <rt-input
+            rtElem="field"
+            qa-dataid="inline-edit-field"
+            [size]="size()"
+            [placeholder]="placeholder()"
+            [ariaLabel]="fieldLabel() || placeholder() || null"
+            [clearable]="false"
+            [formControl]="draftControl"
+            (keydown)="onKeydown($event)" />
+
+        <rt-icon-button
+            rtElem="save"
+            qa-dataid="inline-edit-save"
+            icon="check"
+            [size]="size()"
+            [ariaLabel]="saveLabel()"
+            [tooltip]="saveLabel()"
+            [loading]="saving()"
+            [disabled]="!canSave()"
+            (clicked)="save()" />
+
+        <rt-icon-button
+            rtElem="cancel"
+            qa-dataid="inline-edit-cancel"
+            icon="close"
+            [size]="size()"
+            [ariaLabel]="cancelLabel()"
+            [tooltip]="cancelLabel()"
+            [disabled]="saving()"
+            (clicked)="cancel()" />
+    } @else {
+        <button
+            type="button"
+            rtElem="value"
+            qa-dataid="inline-edit-value"
+            [rtMod]="{ empty: isEmpty() }"
+            [disabled]="disabled()"
+            [attr.aria-label]="startLabel()"
+            (click)="open()">
+            <span rtElem="text" rtTooltipWhenTruncated [rtTooltip]="shown()">{{ shown() }}</span>
+
+            @if (!disabled()) {
+                <rt-icon rtElem="pencil" name="pencil" size="sm" />
+            }
+        </button>
+    }
+</ng-container>

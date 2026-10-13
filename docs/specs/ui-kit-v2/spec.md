@@ -78,6 +78,7 @@ agreement about their own subject and describe the surface of a component, not a
 | [The long title of a dense toolbar](toolbar-dense/spec.md)                | what a dense toolbar does with a title wider than the place left to it                                                          |
 | [The value with a copy button](copy-value/spec.md)                        | a short value with a copy button: the label, the plate, «Copied» for two seconds, a long value cut                              |
 | [The breadcrumbs](breadcrumbs/spec.md)                                    | the path to the open page: ancestors as links, the back button, the heading look, the fold on a narrow screen                   |
+| [The inline edit](inline-edit/spec.md)                                    | a short value changed where it is shown: the field on a press, save and cancel by keys and buttons, the saving wait             |
 
 ## What is out of scope
 
