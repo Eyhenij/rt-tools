@@ -13,8 +13,8 @@
   ],
   "dependencies": {
     "@keycloakify/angular": "22.1.0",
-    "@rt-tools/core": "^0.5.0",
-    "@rt-tools/ui-kit-v2": "^0.17.0",
+    "@rt-tools/core": "^0.5.1",
+    "@rt-tools/ui-kit-v2": "^0.23.3",
     "keycloakify": "11.16.1"
   },
   "keycloakify": {

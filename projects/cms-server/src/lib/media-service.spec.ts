@@ -87,12 +87,7 @@ describe('the media library service', () => {
             Code.FailedPrecondition
         );
         await expect(
-            refusalOf(
-                cmsMediaServiceImpl({ ...double, used: false, bucket: null }).deleteFile(
-                    create(DeleteFileRequestSchema, { fileId: 'f1' }),
-                    ME
-                )
-            )
+            refusalOf(cmsMediaServiceImpl({ ...double, bucket: null }).deleteFile(create(DeleteFileRequestSchema, { fileId: 'f1' }), ME))
         ).resolves.toBe(Code.FailedPrecondition);
         double.used = false;
         await service.deleteFile(create(DeleteFileRequestSchema, { fileId: 'f1' }), ME);

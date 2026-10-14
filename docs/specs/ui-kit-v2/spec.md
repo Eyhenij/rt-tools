@@ -223,3 +223,7 @@ change of its own.
 - 2026-10-12 — only the input in the left bar of the toolbar takes that width; a select there sizes
   by its content again. Each filter of a row had stretched to 400px and left a narrow screen. Task
   RT-2791.
+- 2026-10-12 — only an input placed straight in the left bar takes that width; an input inside an
+  application's own component stays sized by its content, and on a narrow screen the left bar is
+  never wider than the window. Before, the wrapped filters of a list grew to 400px each and left the
+  window edge on a narrow screen. Task RT-2789.

@@ -2,7 +2,7 @@
 # The scenarios of opening a story in the showcase probes: what a probe says when the showcase it
 # was pointed at serves no stories, and what it does not swallow.
 #
-# Covers SC-UKV-132, SC-UKV-142 and SC-UKV-144 of the spec `docs/specs/ui-kit-v2/snapshots`.
+# Covers SC-UKV-132, SC-UKV-142, SC-UKV-144 and SC-UKV-856 of the spec `docs/specs/ui-kit-v2/snapshots`.
 #
 # There is no browser here on purpose. The module is judged by what it says and by the code it
 # leaves with, and a real browser would add half a minute of waiting to every scenario.
@@ -187,5 +187,35 @@ says_index "the refusal sends to raise the showcase anew" "raise the showcase an
 verdict_index "a refusal naming no file refuses at once" red unnamed
 says_index "such a refusal says the indexer named none" "it named none" unnamed
 
+
+# --- the index is matched against the references ------------------------------------------------
+# SC-UKV-856. The pure part: which story ids the references name and the index does not hold. A
+# reference of a story with named widths carries a `--w<width>` tail that is not part of the id.
+cat > "$WORK/tools/drive-references.mjs" <<'JS'
+import { storiesLostFromIndex, storyOfReference } from './showcase-probe.mjs';
+
+const [what, ...args] = process.argv.slice(2);
+
+if (what === 'story') {
+    console.log(storyOfReference(args[0]));
+} else if (what === 'lost') {
+    console.log(JSON.stringify(storiesLostFromIndex(JSON.parse(args[0]), JSON.parse(args[1]))));
+}
+JS
+
+matched() {
+    (cd "$WORK/tools" && node drive-references.mjs "$@" 2>&1)
+}
+
+report "a reference names its story without the extension" "$(matched story 'atoms-icon--presets.png')" 'atoms-icon--presets'
+report "the width tail is not part of the story id" "$(matched story 'molecules-forms-calendar--edges--w374.png')" 'molecules-forms-calendar--edges'
+report "an index holding every named story loses nothing" \
+    "$(matched lost '["a--one.png","a--two--w640.png"]' '["a--one","a--two","b--three"]')" '[]'
+report "a story missing from the index is named" \
+    "$(matched lost '["a--one.png","a--two.png"]' '["a--one"]')" '["a--two"]'
+report "two references of one missing story name it once" \
+    "$(matched lost '["a--two.png","a--two--w374.png","a--two--w640.png"]' '[]')" '["a--two"]'
+report "what is not a reference is not judged" \
+    "$(matched lost '["__diff_output__","a--one.png"]' '["a--one"]')" '[]'
 
 suite_result "opening a story in the showcase probes"

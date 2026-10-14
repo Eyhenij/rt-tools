@@ -26,12 +26,11 @@ overrides:
   immutable: '^5.1.9'
   'js-yaml@3': '^3.15.2'
   'js-yaml@4': '^4.3.2'
-  postcss: '^8.5.28'
+  postcss: '^8.5.29'
   qs: '^6.16.0'
   shell-quote: '^1.9.0'
   svgo: '^4.1.0'
   uuid: '^11.1.1'
-  webpack-dev-server: '^5.2.6'
   websocket-driver: '^0.7.5'
   ws: '^8.21.1'
   # The showcase snapshot runner cannot run under jest-runtime 30.5: Storybook loads the runner
@@ -46,7 +45,7 @@ minimumReleaseAgeExclude:
   - '@rt-tools/core@0.0.5 || 0.1.0 || 0.2.0 || 0.3.0 || 0.3.1 || 0.4.0 || 0.5.0 || 0.5.1'
   - '@rt-tools/store@0.0.6 || 0.0.8 || 0.1.0 || 0.2.0 || 0.3.0 || 0.3.1 || 0.3.2 || 0.3.3 || 0.3.4'
   - '@rt-tools/utils@0.0.7 || 0.0.9 || 0.1.0 || 0.1.1 || 0.2.0 || 0.3.0 || 0.3.1 || 0.3.2 || 0.4.0 || 0.4.1'
-  - simple-icons@16.30.0
   - '@rt-tools/auth-contract@0.1.0'
   - '@rt-tools/auth-server@0.2.1'
   - '@rt-tools/cms-contract@0.1.0'
+  - '@rt-tools/ui-kit-v2@0.23.3'

@@ -339,9 +339,20 @@ rt_push_docs_only() {
 # Which document must travel by the same commit as this file. It prints a path sample or stays
 # silent.
 rt_docs_pair_for() {
+    # A merge commit brings files the merged branch already holds, and they were judged there,
+    # with their documents or their own reason. A file whose staged content is exactly the merged
+    # branch's is not an edit of this commit; a file the merge changed further is judged as usual.
+    if git rev-parse -q --verify MERGE_HEAD >/dev/null 2>&1; then
+        staged="$(git rev-parse -q --verify ":$1" 2>/dev/null)"
+        theirs="$(git rev-parse -q --verify "MERGE_HEAD:$1" 2>/dev/null)"
+        [ -n "$staged" ] && [ "$staged" = "$theirs" ] && return 0
+    fi
     case "$1" in
         # A spec is not a description of a component: it checks it.
         *.spec.ts) return 0 ;;
+        # A showcase wrapper is described by the overview page next to its stories, not by a
+        # CONTEXT.md: the glob below takes it too, because `*` in a case pattern crosses `/`.
+        projects/ui-kit-v2/src/lib/*/stories/component/*) return 0 ;;
         # The description of a second-kit component lies next to it and is edited by the same
         # motion.
         projects/ui-kit-v2/src/lib/*/*/*.component.ts)

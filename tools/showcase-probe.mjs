@@ -202,6 +202,30 @@ export async function ensureIndex(address, options = {}) {
     process.exit(1);
 }
 
+/**
+ * The story a reference file belongs to: its name without `.png` and without the `--w<width>` tail
+ * a story gets for every width it names.
+ */
+export function storyOfReference(name) {
+    return name.replace(/\.png$/, '').replace(/--w\d+$/, '');
+}
+
+/**
+ * The story ids the references name and the index does not hold.
+ *
+ * Why this is asked before the run. A showcase now and then serves an index without part of its
+ * stories, and the snapshot run over it either fails on references «without a story» or, when it
+ * takes fewer frames, ends green over an incomplete set. A count of stories against references
+ * cannot tell: a story with named widths has several. Each reference does name its story, so the
+ * ids are matched one by one. A story that has no reference yet cannot be found missing this way.
+ */
+export function storiesLostFromIndex(references, storyIds) {
+    const held = new Set(storyIds);
+    const named = new Set(references.filter((name) => name.endsWith('.png')).map(storyOfReference));
+
+    return [...named].filter((id) => !held.has(id)).sort();
+}
+
 /** The refusal when the driver is not found: printed, and the process ends. */
 function driverMissing(message) {
     console.error(`\n  ${message}\n`);
