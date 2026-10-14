@@ -4,7 +4,9 @@ import { i18nBuilder } from 'keycloakify/login/i18n/noJsx';
 /**
  * The page texts are the Keycloak messages themselves, so the screen says what the realm mails say.
  * The theme adds words of its own only where Keycloak has none: the password requirements, which it
- * names only as refusals.
+ * names only as refusals, the password placeholders, the provider row of the registration and the
+ * Russian refusal for a password equal to the address. The Keycloakify build puts these messages
+ * into the theme bundle of the server too, so a refusal Keycloak renders reads them.
  */
 const { getI18n } = i18nBuilder
     .withThemeName<'rt'>()
@@ -19,6 +21,10 @@ const { getI18n } = i18nBuilder
             rtRuleSpecialChars: 'Special characters: at least {0}',
             rtRuleNotUsername: 'Not the same as the username',
             rtRuleNotEmail: 'Not the same as the email',
+            rtPasswordPlaceholder: 'Enter the password',
+            rtPasswordConfirmPlaceholder: 'Repeat the password',
+            rtRegisterProviders: 'Or sign up with',
+            invalidPasswordNotEmailMessage: 'Invalid password: must not be equal to the email.',
         },
         ru: {
             rtRuleList: 'Требования к паролю',
@@ -30,6 +36,10 @@ const { getI18n } = i18nBuilder
             rtRuleSpecialChars: 'Спецсимволов: не меньше {0}',
             rtRuleNotUsername: 'Не совпадает с логином',
             rtRuleNotEmail: 'Не совпадает с почтой',
+            rtPasswordPlaceholder: 'Введите пароль',
+            rtPasswordConfirmPlaceholder: 'Повторите пароль',
+            rtRegisterProviders: 'Или зарегистрируйтесь через',
+            invalidPasswordNotEmailMessage: 'Некорректный пароль: пароль не должен совпадать с почтой.',
         },
     })
     .build();

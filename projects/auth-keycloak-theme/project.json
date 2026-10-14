@@ -26,11 +26,6 @@
             "glob": "**/*.svg",
             "input": "projects/ui-kit-v2/src/assets/icons",
             "output": "icons"
-          },
-          {
-            "glob": "{google,apple}.svg",
-            "input": "node_modules/simple-icons/icons",
-            "output": "icons"
           }
         ],
         "styles": ["projects/auth-keycloak-theme/src/styles.scss"],

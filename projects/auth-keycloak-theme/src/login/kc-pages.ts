@@ -6,6 +6,7 @@ import { RtKcInfoComponent } from './pages/info/rt-kc-info.component';
 import { RtKcLoginComponent } from './pages/login/rt-kc-login.component';
 import { RtKcLogoutConfirmComponent } from './pages/logout-confirm/rt-kc-logout-confirm.component';
 import { RtKcPageExpiredComponent } from './pages/page-expired/rt-kc-page-expired.component';
+import { RtKcRegisterComponent } from './pages/register/rt-kc-register.component';
 import { RtKcResetPasswordComponent } from './pages/reset-password/rt-kc-reset-password.component';
 import { RtKcUpdatePasswordComponent } from './pages/update-password/rt-kc-update-password.component';
 import { RtKcVerifyEmailComponent } from './pages/verify-email/rt-kc-verify-email.component';
@@ -13,6 +14,7 @@ import { RtKcVerifyEmailComponent } from './pages/verify-email/rt-kc-verify-emai
 /** The pages the theme draws with the second kit. */
 const THEME_PAGES: Readonly<Partial<Record<TKcPageId, Type<unknown>>>> = Object.freeze({
     'login.ftl': RtKcLoginComponent,
+    'register.ftl': RtKcRegisterComponent,
     'login-reset-password.ftl': RtKcResetPasswordComponent,
     'login-update-password.ftl': RtKcUpdatePasswordComponent,
     'login-verify-email.ftl': RtKcVerifyEmailComponent,
