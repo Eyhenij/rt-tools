@@ -381,8 +381,8 @@ Put together by a hook before the compaction of the context (auto).
 ### Where we stand at the minute of the compaction
 
 - **State:** `этап-идёт`
-- **Stage:** 5 of 6 — The showcase and the owner's look, with stage 7 (requests 2 and 3) going component by component
-- **Next step:** the owner's look at the showcase after the branch review; then the code commit
+- **Stage:** 6 of 6 — Docs, version and the check suite
+- **Next step:** 6.3 — the agreement merged into the domain specs, and the snapshot references re-taken, when the owner says to open the PR
 - **PR:** not open yet
 
 The progress in full — `docs/tasks/RT-2812-kit2-field-label-icon-actions/progress.md`; the plan lies next to it.
@@ -390,31 +390,15 @@ The progress in full — `docs/tasks/RT-2812-kit2-field-label-icon-actions/progr
 ### Uncommitted
 
 ```
- M .claude/skills/browser-verification/SKILL.md
- M docs/specs/ui-kit-v2/proposed/field-label-icon-actions/scenarios.md
- M docs/specs/ui-kit-v2/proposed/field-label-icon-actions/spec.md
- M docs/tasks/RT-2812-kit2-field-label-icon-actions/grill.md
- M docs/tasks/RT-2812-kit2-field-label-icon-actions/progress.md
- M projects/ui-kit-v2/src/lib/components/autocomplete/Overview.mdx
- M projects/ui-kit-v2/src/lib/components/autocomplete/rt-autocomplete.component.html
- M projects/ui-kit-v2/src/lib/components/autocomplete/rt-autocomplete.component.scss
- M projects/ui-kit-v2/src/lib/components/autocomplete/rt-autocomplete.component.ts
- M projects/ui-kit-v2/src/lib/components/autocomplete/stories/autocomplete-matrix.stories.ts
- M projects/ui-kit-v2/src/lib/components/autocomplete/stories/component/test-autocomplete-matrix.component.ts
- M projects/ui-kit-v2/src/lib/components/checkbox/Overview.mdx
- M projects/ui-kit-v2/src/lib/components/checkbox/rt-checkbox.component.spec.ts
- M projects/ui-kit-v2/src/lib/components/checkbox/rt-checkbox.component.ts
- M projects/ui-kit-v2/src/lib/components/checkbox/stories/checkbox-matrix.stories.ts
- M projects/ui-kit-v2/src/lib/components/checkbox/stories/component/test-checkbox-matrix.component.ts
- M projects/ui-kit-v2/src/lib/components/color-palette/Overview.mdx
- M projects/ui-kit-v2/src/lib/components/container/CONTEXT.md
- M projects/ui-kit-v2/src/lib/components/container/Overview.mdx
- M projects/ui-kit-v2/src/lib/components/container/rt-container.component.html
+none
 ```
 
 ### Commits over the main branch
 
 ```
+f78ecefcf feat(rt:ui-kit-v2): кнопки не рисуют кольцо фокуса после нажатия мышью
+a9c2d527a feat(rt:ui-kit-v2): запросы приложения к полям и компонентам второго кита
+cac14b019 Merge remote-tracking branch 'origin/main' into RT-2812-kit2-field-label-icon-actions
 75d2bff91 docs(rt:ui-kit-v2): договорённость и план RT-2812 о пяти дополнениях к полям
 ```
 
