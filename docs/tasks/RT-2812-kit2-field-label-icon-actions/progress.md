@@ -351,6 +351,19 @@
   the merge (`chore(rt:ui-kit-v2): версия пакета поднята до …`); a `feat` commit makes it 0.24.0.
   A hand bump here would collide with that run. The archive built on 14 October for the owner's
   desktop carries 0.23.3 in its name for the same reason; its code is the branch's.
+- **2026-10-14, request 6 of the application: the focus ring after a mouse press.** The browser
+  marks focus from code after a pointer press as `:focus-visible`, so a side panel opened by a click
+  drew the ring on its first button. `rtButton` takes `CdkMonitorFocus` as a host directive, the
+  icon button puts it on its inner `<button>`, and the ring rule skips `.cdk-mouse-focused` and
+  `.cdk-touch-focused`. The CDK's own directive is taken rather than a kit directive of the same
+  job; its classes are the ones Material and the application already read. SC-UKV-906, specs of both
+  buttons, story `Atoms/Buttons/Button` → FocusOrigin. Measured live in both looks: after a pointer
+  press `:focus-visible` true, `cdk-mouse-focused`, shadow none; after Enter `cdk-keyboard-focused`
+  and the ring. The 12% background the application measured is its own style, not the kit's; it
+  keys on the same classes. Uncommitted: waits for the owner's look.
+- **SC-UKV-856 was taken twice after the main merge.** RT-2793 issued the same number in the
+  snapshots spec after this branch did. Main holds it, so the option-template scenario took the next
+  free number, SC-UKV-907, and its spec title with it.
 
 ## Sessions
 

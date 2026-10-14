@@ -3,7 +3,7 @@
 Numbers continue the second kit's numbering and do not change after the merge. While a scenario is
 not covered, it carries the mark «Не покрыто» with the reason.
 
-### SC-UKV-856 — the option template replaces the row label
+### SC-UKV-907 — the option template replaces the row label
 
 Given the select holds an option template
 When the list is opened
@@ -403,3 +403,13 @@ When it is drawn
 Then every mark is in the same neutral state, no step is announced as current, and no step takes focus
 
 Covered: `projects/ui-kit-v2/src/lib/components/stepper/rt-stepper-vertical.spec.ts`.
+
+### SC-UKV-906 — a button draws the focus ring only for focus not from the pointer
+
+Given a kit button or icon button
+When focus reaches it from code right after a mouse press or a touch
+Then the button has focus and no focus ring, and focus from the keyboard or from code after the
+keyboard draws the ring; the source stands on the button as the CDK classes `cdk-*-focused`
+
+Covered: `projects/ui-kit-v2/src/lib/components/button/rt-button.directive.spec.ts`,
+`projects/ui-kit-v2/src/lib/components/icon-button/rt-icon-button.component.spec.ts`.

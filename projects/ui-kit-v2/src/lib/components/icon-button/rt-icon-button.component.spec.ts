@@ -1,5 +1,6 @@
+import { FocusMonitor, FocusOrigin } from '@angular/cdk/a11y';
 import { DebugElement } from '@angular/core';
-import { ComponentFixture } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { classesOf, createRtFixture, el, hostClasses, qa } from '../../../testing/rt-kit-testing';
 import { RtIconButtonComponent } from './rt-icon-button.component';
@@ -45,6 +46,18 @@ describe('RtIconButtonComponent', (): void => {
 
         expect(document.querySelector('rt-tooltip')?.textContent?.trim()).toBe('Открепить');
         jest.useRealTimers();
+    });
+
+    it.each<[FocusOrigin, string]>([
+        ['keyboard', 'cdk-keyboard-focused'],
+        ['mouse', 'cdk-mouse-focused'],
+    ])('SC-UKV-906 — фокус от %s помечается на кнопке классом %s', (origin: FocusOrigin, mark: string): void => {
+        const fixture: ComponentFixture<RtIconButtonComponent> = setup();
+
+        TestBed.inject(FocusMonitor).focusVia(control(fixture)?.nativeElement as HTMLElement, origin);
+        fixture.detectChanges();
+
+        expect(controlClasses(fixture)).toContain(mark);
     });
 
     describe('оформление', (): void => {

@@ -1,3 +1,4 @@
+import { CdkMonitorFocus } from '@angular/cdk/a11y';
 import { BooleanInput } from '@angular/cdk/coercion';
 import { DOCUMENT } from '@angular/common';
 import {
@@ -60,9 +61,12 @@ const LOADING_FADE_OUT_BUFFER_MS: number = 50;
  */
 @Directive({
     selector: 'button[rtButton], a[rtButton]',
+    /* Источник фокуса пишет CDK классами `cdk-keyboard-focused`, `cdk-mouse-focused` и
+       соседними, как у Material: кольцо фокуса рисуется только не от мыши и не от касания. */
     hostDirectives: [
         { directive: RtRippleDirective, inputs: ['rippleDisabled'] },
         { directive: RtRadiusDirective, inputs: ['radius'] },
+        CdkMonitorFocus,
     ],
     /* Шаг скругления без входа берётся из настроек кита: приложение, скруглившее все кнопки разом,
        называет шаг один раз, а вход на кнопке по-прежнему сильнее. */

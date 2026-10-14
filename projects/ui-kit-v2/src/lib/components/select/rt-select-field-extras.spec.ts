@@ -76,7 +76,7 @@ function cross<T>(fixture: ComponentFixture<T>): HTMLButtonElement {
 
 describe('RtSelectComponent — строка списка, подпись на рамке, крестик', (): void => {
     describe('шаблон строки', (): void => {
-        it('SC-UKV-856 — шаблон встаёт на место подписи, галочка остаётся у выбранной строки', (): void => {
+        it('SC-UKV-907 — шаблон встаёт на место подписи, галочка остаётся у выбранной строки', (): void => {
             const fixture: ComponentFixture<SelectOptionHostComponent> = createRtFixture(SelectOptionHostComponent);
             open(fixture);
 

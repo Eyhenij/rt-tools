@@ -69,6 +69,9 @@ can be pressed and shows a hint, and a cross that the Tab key reaches.
   event comes from the shared base, so every field with a cross reports it.
 - **The cross is shown by default.** The default does not change: a form that never asked for the
   cross still gets it, and that is written in the docs of the input and the select.
+- **A button draws the focus ring only for focus not from the pointer.** The browser marks focus
+  from code after a mouse press as `:focus-visible`; the kit button and icon button read the source
+  from the CDK, as Material does, and keep the focus while hiding the ring.
 
 ## What is out of scope
 

@@ -1,3 +1,4 @@
+import { CdkMonitorFocus } from '@angular/cdk/a11y';
 import { BooleanInput, NumberInput } from '@angular/cdk/coercion';
 import {
     booleanAttribute,
@@ -51,6 +52,7 @@ const BEM_BLOCK: string = 'rt-icon-button';
         // standalone components / directives
         RtIconComponent,
         RtRippleDirective,
+        CdkMonitorFocus,
         RtTooltipDirective,
         BlockDirective,
         ElemDirective,

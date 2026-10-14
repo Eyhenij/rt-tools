@@ -1,5 +1,6 @@
+import { FocusMonitor, FocusOrigin } from '@angular/cdk/a11y';
 import { ChangeDetectionStrategy, Component, WritableSignal, signal } from '@angular/core';
-import { ComponentFixture } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { provideRtKit } from '../../config/rt-kit-config.providers';
 import { classesOf, createRtFixture, el, textOf } from '../../../testing/rt-kit-testing';
@@ -422,6 +423,33 @@ describe('RtButtonDirective', (): void => {
             expect(button(fixture).getAttribute('aria-pressed')).toBe('true');
             expect(classesOf(button(fixture))).toContain('rt-button--pressed');
             expect(button(fixture).disabled).toBe(true);
+        });
+    });
+
+    describe('источник фокуса — SC-UKV-906', (): void => {
+        it.each<[FocusOrigin, string]>([
+            ['keyboard', 'cdk-keyboard-focused'],
+            ['program', 'cdk-program-focused'],
+            ['mouse', 'cdk-mouse-focused'],
+            ['touch', 'cdk-touch-focused'],
+        ])('фокус от %s помечается классом %s: кольцо гасят мышь и касание', (origin: FocusOrigin, mark: string): void => {
+            const fixture: ComponentFixture<ButtonHostComponent> = setup();
+
+            TestBed.inject(FocusMonitor).focusVia(button(fixture), origin);
+            fixture.detectChanges();
+
+            expect(classesOf(button(fixture))).toContain(mark);
+            expect(classesOf(button(fixture))).toContain('cdk-focused');
+        });
+
+        it('уход фокуса снимает отметку источника', (): void => {
+            const fixture: ComponentFixture<ButtonHostComponent> = setup();
+            TestBed.inject(FocusMonitor).focusVia(button(fixture), 'mouse');
+
+            button(fixture).blur();
+            fixture.detectChanges();
+
+            expect(classesOf(button(fixture))).not.toContain('cdk-mouse-focused');
         });
     });
 });
