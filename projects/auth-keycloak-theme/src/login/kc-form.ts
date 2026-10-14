@@ -1,4 +1,10 @@
-import { AbstractControl } from '@angular/forms';
+import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
+
+/** The error key of a field that Keycloak refused: its text comes from the page context. */
+export const SERVER_ERROR: string = 'server';
+
+/** The error key of a confirmation that differs from its pair. */
+export const MISMATCH_ERROR: string = 'mismatch';
 
 /** The example a login field shows when it takes an address. Not translated: an address reads the same in every language. */
 const LOGIN_EXAMPLE: string = 'name@example.com';
@@ -30,4 +36,30 @@ export function holdInvalidSubmit(event: Event, form: AbstractControl): boolean 
     form.markAllAsTouched();
 
     return false;
+}
+
+/**
+ * A confirmation equal to its pair field of the same form. An empty confirmation is left to the
+ * required check, so it shows one error, not two.
+ */
+export function sameValueAs(pair: string): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+        const value: unknown = control.parent?.get(pair)?.value;
+        if (control.value === '' || value === undefined || control.value === value) {
+            return null;
+        }
+
+        return { [MISMATCH_ERROR]: true };
+    };
+}
+
+/**
+ * The error Keycloak rendered for a field, held while the field keeps the value Keycloak refused.
+ * A check rather than a set error: the form directive runs the checks again on start, and an error
+ * set by hand would be gone before the first frame. It goes first in the list of checks, so the
+ * field shows the refusal and not the required error of an emptied password.
+ */
+export function refusedValue(text: string, refused: string): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null =>
+        text !== '' && control.value === refused ? { [SERVER_ERROR]: true } : null;
 }

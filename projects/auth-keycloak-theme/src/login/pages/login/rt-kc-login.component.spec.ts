@@ -3,6 +3,11 @@ import { ComponentFixture } from '@angular/core/testing';
 import { IKcSubmitted, kcContextOf, kcNode, renderKcPage, submitForm, typeInto } from '../../../testing/kc-page-fixture';
 import { RtKcLoginComponent } from './rt-kc-login.component';
 
+/** A provider mark modifier of the button. */
+function isMark(name: string): boolean {
+    return name.startsWith('login__provider--');
+}
+
 describe('RtKcLoginComponent', () => {
     it('SC-AUTH-19 — the login form is sent with the standard field names', async () => {
         const fixture: ComponentFixture<RtKcLoginComponent> = await renderKcPage(
@@ -61,7 +66,7 @@ describe('RtKcLoginComponent', () => {
             (anchor: string): string | null | undefined => kcNode(fixture, anchor)?.querySelector('input')?.getAttribute('placeholder')
         );
 
-        expect(placeholders).toEqual(['name@example.com', '']);
+        expect(placeholders).toEqual(['name@example.com', 'Enter the password']);
     });
 
     it('SC-AUTH-60 — a login field that takes only a name has no placeholder', async () => {
@@ -76,7 +81,7 @@ describe('RtKcLoginComponent', () => {
         expect(inputs.every((input: HTMLInputElement | null | undefined): boolean => input instanceof HTMLInputElement)).toBe(true);
         expect(
             inputs.map((input: HTMLInputElement | null | undefined): string | null | undefined => input?.getAttribute('placeholder'))
-        ).toEqual(['', '']);
+        ).toEqual(['', 'Enter the password']);
     });
 
     it('SC-AUTH-22 — a Keycloak message stands above the form in the colour of its kind', async () => {
@@ -94,7 +99,7 @@ describe('RtKcLoginComponent', () => {
         expect(message?.closest('rt-kc-message')?.nextElementSibling).toBe(form);
     });
 
-    it('SC-AUTH-23 — every provider gets a button with its icon', async () => {
+    it('SC-AUTH-23, SC-AUTH-82 — every provider gets a button, and Google and Apple carry a mark picture', async () => {
         const fixture: ComponentFixture<RtKcLoginComponent> = await renderKcPage(
             RtKcLoginComponent,
             kcContextOf('login.ftl', {
@@ -117,10 +122,11 @@ describe('RtKcLoginComponent', () => {
             '/broker/apple',
             '/broker/corp',
         ]);
-        expect(buttons.map((button: HTMLAnchorElement): boolean => button.querySelector('.rt-button__icon') !== null)).toEqual([
-            true,
-            true,
-            false,
+        expect(buttons.map((button: HTMLAnchorElement): string[] => Array.from(button.classList).filter(isMark))).toEqual([
+            ['login__provider--google'],
+            ['login__provider--apple'],
+            [],
         ]);
+        expect(buttons.some((button: HTMLAnchorElement): boolean => button.querySelector('.rt-button__glyph') !== null)).toBe(false);
     });
 });

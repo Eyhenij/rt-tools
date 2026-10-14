@@ -33,11 +33,11 @@ Given a page whose context holds an error message
 When the page is drawn
 Then the message stands above the form with the danger kind
 
-### SC-AUTH-23 — every provider gets a button with its icon
+### SC-AUTH-23 — every provider gets a button with its mark
 
 Given a realm with Google, Apple and one more provider
 When the login page is drawn
-Then three buttons lead to the provider addresses, and only Google and Apple carry icons
+Then three buttons lead to the provider addresses, and only Google and Apple carry marks
 
 ### SC-AUTH-24 — the kit labels follow the page locale
 
@@ -87,13 +87,13 @@ Then the card has a border and a shadow
 
 Given the entry form of a realm where the login takes an address
 When it is drawn with empty fields
-Then the login field shows `name@example.com` inside it and the password field shows nothing
+Then the login field shows `name@example.com` inside it, and the password field asks for the password
 
 ### SC-AUTH-60 — a login field that takes only a name has no placeholder
 
 Given the entry form of a realm where the login takes only a name
 When it is drawn with empty fields
-Then neither the login field nor the password field shows anything inside it
+Then the login field shows nothing inside it, and the password field asks for the password
 
 ### SC-AUTH-61 — the dot field stands behind the card
 
@@ -151,3 +151,46 @@ Then those requirements are marked as met and the rest stay unmarked
 Given a realm without a password policy
 When the new password page is drawn
 Then no requirement list stands under the fields
+
+### SC-AUTH-77 — the registration form is sent with the standard field names
+
+Given the registration page with the address and both passwords typed
+When the form is sent
+Then the form posts to the registration address the fields `email`, `password` and `password-confirm`
+
+### SC-AUTH-78 — the registration form holds a wrong address and two different passwords
+
+Given the registration page with an address without `@` and two different passwords
+When the person sends it
+Then nothing is posted, and the address and the confirmation fields show their errors
+
+### SC-AUTH-79 — an error Keycloak puts on a field stands under it
+
+Given the registration page whose context holds an error for the address
+When the page is drawn
+Then the address field shows that error under it
+
+### SC-AUTH-80 — the registration page lists the requirements under the confirmation
+
+Given a realm whose policy asks for a length and a password unlike the login and the address, with
+the address used as the login
+When the registration page is drawn
+Then a list under the confirmation names the length and the address requirement, once each
+
+### SC-AUTH-81 — the registration page carries the provider buttons and the link back
+
+Given a realm with Google
+When the registration page is drawn
+Then a Google button leads to the provider address, and a link leads back to the sign-in
+
+### SC-AUTH-82 — a provider mark is a picture, not a font ligature
+
+Given a realm with Google and Apple
+When the login page is drawn
+Then their buttons carry a mark modifier and no ligature text
+
+### SC-AUTH-83 — the card head shows the realm logo
+
+Given a realm whose HTML display name holds an image, and a realm with plain text there
+When a page is drawn
+Then the first head shows the image, and the second shows the realm name

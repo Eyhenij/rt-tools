@@ -24,6 +24,7 @@
                     autocomplete="current-password"
                     iconLeft="lock"
                     qa-dataid="kc-password"
+                    [placeholder]="passwordPlaceholder"
                     [passwordToggle]="true"
                     [formControl]="form.controls.password" />
             </rt-field>
@@ -67,10 +68,10 @@
                     theme="secondary"
                     qa-dataid="kc-provider"
                     [attr.data-provider]="provider.alias"
+                    [rtMod]="provider.mods"
                     [href]="provider.href"
                     [label]="provider.label"
-                    [attr.aria-label]="provider.label"
-                    [icon]="provider.icon"></a>
+                    [attr.aria-label]="provider.label"></a>
             }
         </div>
     }

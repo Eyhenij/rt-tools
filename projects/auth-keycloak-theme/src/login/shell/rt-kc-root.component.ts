@@ -6,6 +6,7 @@ import { IRtSelect, RtDotFieldComponent, RtSelectComponent, RtThemeToggleCompone
 
 import { KC_CONTEXT, KC_PAGE, TKcContext } from '../kc-context';
 import { KC_MESSAGES, TKcMessages } from '../kc-i18n';
+import { IKcRealmLogo, realmLogoOf } from '../kc-realm-logo';
 
 const BEM_BLOCK: string = 'rt-kc-root';
 
@@ -17,8 +18,8 @@ interface IKcLanguage {
 }
 
 /**
- * The frame of every theme page: the locale and theme switches above the card, the realm name
- * and the page inside it. The page itself is the component the theme maps to the page id.
+ * The frame of every theme page: the locale and theme switches above the card, the realm logo or
+ * name and the page inside it. The page itself is the component the theme maps to the page id.
  */
 @Component({
     selector: 'rt-kc-root',
@@ -41,6 +42,7 @@ export class RtKcRootComponent {
 
     protected readonly page: Type<unknown> = inject(KC_PAGE);
     protected readonly realmName: string = this.#context.realm.displayName || this.#context.realm.name;
+    protected readonly logo: IKcRealmLogo | null = realmLogoOf(this.#context.realm.displayNameHtml ?? '', this.realmName);
 
     readonly #view: Document = inject(DOCUMENT);
     readonly #languages: readonly IKcLanguage[] = this.#i18n.enabledLanguages;

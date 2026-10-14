@@ -1,30 +1,19 @@
 import { ChangeDetectionStrategy, Component, inject, Signal, signal, WritableSignal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { BlockDirective, ElemDirective } from '@rt-tools/core';
+import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 import { IRtField, RtButtonDirective, RtCheckboxComponent, RtFieldComponent, RtInputComponent } from '@rt-tools/ui-kit-v2';
 import { map } from 'rxjs';
 
 import { KC_CONTEXT, TKcPageContext } from '../../kc-context';
 import { holdInvalidSubmit, loginPlaceholder } from '../../kc-form';
 import { KC_MESSAGES, TKcMessages } from '../../kc-i18n';
+import { IKcProviderButton, providerButtonsOf } from '../../kc-providers';
 import { RtKcMessageComponent } from '../../message/rt-kc-message.component';
 
 const BEM_BLOCK: string = 'rt-kc-page';
 
 type TLoginContext = TKcPageContext<'login.ftl'>;
-type TProvider = NonNullable<NonNullable<TLoginContext['social']>['providers']>[number];
-
-/** The providers with an icon of their own; the rest get a button with their name only. */
-const PROVIDER_ICONS: Readonly<Record<string, string>> = Object.freeze({ google: 'google', apple: 'apple' });
-
-/** A provider button: where it leads, what it says and the icon when the theme has one. */
-interface IKcProviderButton {
-    readonly alias: string;
-    readonly label: string;
-    readonly href: string;
-    readonly icon: string | null;
-}
 
 interface ILoginValue {
     readonly username: string;
@@ -39,6 +28,7 @@ interface ILoginValue {
         ReactiveFormsModule,
         BlockDirective,
         ElemDirective,
+        ModDirective,
         RtButtonDirective,
         RtCheckboxComponent,
         RtFieldComponent,
@@ -73,6 +63,7 @@ export class RtKcLoginComponent {
     protected readonly usernameLabel: string = this.#i18n.msgStr(this.#usernameKey());
     protected readonly usernamePlaceholder: string = loginPlaceholder(this.context.realm.loginWithEmailAllowed);
     protected readonly passwordLabel: string = this.#i18n.msgStr('password');
+    protected readonly passwordPlaceholder: string = this.#i18n.msgStr('rtPasswordPlaceholder');
     protected readonly rememberMeLabel: string = this.#i18n.msgStr('rememberMe');
     protected readonly submitLabel: string = this.#i18n.msgStr('doLogIn');
     protected readonly forgotLabel: string = this.#i18n.msgStr('doForgotPassword');
@@ -81,14 +72,7 @@ export class RtKcLoginComponent {
     protected readonly usernameErrors: IRtField.ErrorMessages = { required: this.#i18n.msgStr('missingUsernameMessage') };
     protected readonly passwordErrors: IRtField.ErrorMessages = { required: this.#i18n.msgStr('missingPasswordMessage') };
 
-    protected readonly providers: readonly IKcProviderButton[] = (this.context.social?.providers ?? []).map(
-        (provider: TProvider): IKcProviderButton => ({
-            alias: provider.alias,
-            label: provider.displayName,
-            href: provider.loginUrl,
-            icon: PROVIDER_ICONS[provider.providerId] ?? null,
-        })
-    );
+    protected readonly providers: readonly IKcProviderButton[] = providerButtonsOf(this.context);
 
     constructor() {
         if (this.context.usernameHidden) {
