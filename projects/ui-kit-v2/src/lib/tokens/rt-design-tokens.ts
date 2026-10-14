@@ -616,6 +616,7 @@ export type TRtConsumerHandleName =
     | '--rt-aside-header-title-size'
     | '--rt-aside-header-title-weight'
     | '--rt-aside-width'
+    | '--rt-bottom-sheet-max-height'
     | '--rt-data-table-scrollbar-color'
     | '--rt-data-table-scrollbar-horizontal-height'
     | '--rt-data-table-scrollbar-vertical-width'
@@ -1348,6 +1349,7 @@ export const RT_CONSUMER_HANDLE_NAMES: readonly TRtConsumerHandleName[] = [
     '--rt-aside-header-title-size',
     '--rt-aside-header-title-weight',
     '--rt-aside-width',
+    '--rt-bottom-sheet-max-height',
     '--rt-data-table-scrollbar-color',
     '--rt-data-table-scrollbar-horizontal-height',
     '--rt-data-table-scrollbar-vertical-width',
