@@ -2,7 +2,7 @@
 
 ## Where we stand
 
-- **State:** `замысел-записан`
+- **State:** `этап-идёт`
 - **Stage:** 1 of 1 — Declare the two values
 - **Done:** folder written
 - **Next step:** commit the folder, then edit the styles
