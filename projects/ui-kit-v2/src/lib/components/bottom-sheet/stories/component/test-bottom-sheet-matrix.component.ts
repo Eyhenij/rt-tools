@@ -1,13 +1,15 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 import { RtButtonDirective } from '../../../button/rt-button.directive';
+import { RtToggleSwitchComponent } from '../../../toggle-switch/rt-toggle-switch.component';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtBottomSheetComponent } from '../../rt-bottom-sheet.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TBottomSheetMatrixPart = 'open' | 'content' | 'presets' | 'themes';
+export type TBottomSheetMatrixPart = 'open' | 'content' | 'footer' | 'presets' | 'themes';
 
 /**
  * Матрицы состояний `rt-bottom-sheet` для витрины.
@@ -28,6 +30,11 @@ export type TBottomSheetMatrixPart = 'open' | 'content' | 'presets' | 'themes';
  * Своя ширина ящику нужна затем, что ячейка ряда объявлена гибкой строкой: ящик без ширины
  * ужимается по содержимому, а содержимого в нём нет — лист ушёл к окну. Ящик мерился двумя точками
  * при ячейке в 288, и в кадре от него оставалась одна пунктирная линия.
+ *
+ * Подвал показан на содержимом длиннее предела панели: тело прокручивается, а переключатель и две
+ * кнопки стоят внизу. Предел панели задан свойством `--rt-bottom-sheet-max-height` ниже высоты
+ * ящика: умолчание в `80vh` считается от окна, и в высоком кадре ящик срезал бы шапку, а не
+ * показал, что панель упёрлась в предел сама.
  *
  * Открытость задаётся привязкой `[open]="true"`, а не голым атрибутом: вход листа объявлен
  * логическим и строку в истину не превращает. Голый атрибут даёт ему пустую строку, и лист
@@ -96,6 +103,31 @@ export type TBottomSheetMatrixPart = 'open' | 'content' | 'presets' | 'themes';
                 </app-story-presets>
             }
 
+            @case ('footer') {
+                <app-story-presets caption="Подвал под длинным содержимым в обоих наборах">
+                    <ng-template>
+                        <div
+                            style="position: relative; contain: paint; height: 32rem; width: 28rem; border: 1px dashed var(--rt-color-border-subtle); --rt-bottom-sheet-max-height: 28rem">
+                            <rt-bottom-sheet [open]="true">
+                                <span sheetHeader>Фильтры</span>
+                                @for (action of longActions; track action) {
+                                    <button rtButton appearance="text" [label]="action" [attr.aria-label]="action"></button>
+                                }
+                                <rt-toggle-switch sheetFooter label="Свободные" [formControl]="onlyFree" />
+                                <button
+                                    sheetFooter
+                                    rtButton
+                                    label="Сбросить"
+                                    aria-label="Сбросить"
+                                    appearance="outlined"
+                                    style="margin-inline-start: auto"></button>
+                                <button sheetFooter rtButton label="Применить" aria-label="Применить"></button>
+                            </rt-bottom-sheet>
+                        </div>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('presets') {
                 <app-story-presets caption="Лист в обоих наборах">
                     <ng-template>
@@ -137,6 +169,10 @@ export type TBottomSheetMatrixPart = 'open' | 'content' | 'presets' | 'themes';
         // directives
         RtButtonDirective,
 
+        // forms
+        ReactiveFormsModule,
+        RtToggleSwitchComponent,
+
         // showcase
         StoryPresetsComponent,
         StoryRowComponent,
@@ -150,6 +186,13 @@ export class TestRtBottomSheetMatrixComponent {
     public readonly contents: readonly string[] = ['без шапки', 'с шапкой', 'длинное содержимое', 'пусто'];
 
     public readonly manyActions: readonly string[] = ['Скачать', 'Отправить', 'Переименовать', 'Дублировать', 'Архивировать', 'Удалить'];
+
+    public readonly longActions: readonly string[] = Array.from(
+        { length: 16 },
+        (_: unknown, index: number): string => `Пункт ${index + 1}`
+    );
+
+    public readonly onlyFree: FormControl<boolean> = new FormControl<boolean>(true, { nonNullable: true });
 
     public readonly openLabel: (value: boolean) => string = (value: boolean): string => (value ? 'открыт' : 'закрыт — остаётся в разметке');
 }

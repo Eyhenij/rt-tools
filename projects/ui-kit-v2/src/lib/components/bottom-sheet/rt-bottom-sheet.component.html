@@ -16,6 +16,11 @@
         <div rtElem="header" qa-dataid="bottom-sheet-header">
             <ng-content select="[sheetHeader]" />
         </div>
-        <ng-content />
+        <div rtElem="body" qa-dataid="bottom-sheet-body">
+            <ng-content />
+        </div>
+        <div rtElem="footer" qa-dataid="bottom-sheet-footer">
+            <ng-content select="[sheetFooter]" />
+        </div>
     </div>
 </ng-container>
