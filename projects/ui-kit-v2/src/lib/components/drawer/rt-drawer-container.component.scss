@@ -1,0 +1,16 @@
+@layer rt-kit.components {
+    /* rt-drawer-container — строка из содержимого и панелей. Панель поверх содержимого
+       отсчитывает своё место от контейнера, поэтому он и задаёт положение, и обрезает края. */
+    .rt-drawer-container {
+        position: relative;
+        display: flex;
+        overflow: hidden;
+        min-height: 0;
+
+        &__content {
+            overflow: auto;
+            min-width: 0;
+            flex: 1 1 auto;
+        }
+    }
+}

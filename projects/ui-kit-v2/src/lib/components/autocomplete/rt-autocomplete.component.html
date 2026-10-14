@@ -47,7 +47,13 @@
             (activedescendant), опции не focusable индивидуально.
         -->
         <!-- eslint-disable @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
-        <ul rtElem="panel" qa-dataid="autocomplete-panel" role="listbox" [id]="panelId">
+        <ul
+            rtElem="panel"
+            qa-dataid="autocomplete-panel"
+            role="listbox"
+            [id]="panelId"
+            [attr.aria-busy]="loading() || null"
+            (scroll)="onPanelScroll($event)">
             @for (item of suggestions(); track $index; let i = $index) {
                 <li
                     rtElem="option"
@@ -64,7 +70,20 @@
                     }
                 </li>
             } @empty {
-                <li rtElem="empty" qa-dataid="autocomplete-empty">{{ t().uiNothingFound }}</li>
+                @if (!loading()) {
+                    <li rtElem="empty" qa-dataid="autocomplete-empty">
+                        @if (emptyTemplate(); as tpl) {
+                            <ng-container *ngTemplateOutlet="tpl; context: { $implicit: inputText() }" />
+                        } @else {
+                            {{ emptyText() ?? t().uiNothingFound }}
+                        }
+                    </li>
+                }
+            }
+            @if (loading()) {
+                <li rtElem="loading" qa-dataid="autocomplete-loading" aria-hidden="true">
+                    <rt-spinner [diameter]="20" />
+                </li>
             }
         </ul>
     </ng-template>

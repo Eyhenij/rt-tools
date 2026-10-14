@@ -24,6 +24,7 @@
         --rt-expansion-panel-chevron-color: var(--rt-color-text-muted);
         --rt-expansion-panel-body-padding-inline: var(--rt-space-lg);
         --rt-expansion-panel-body-padding-end: var(--rt-space-md);
+        --rt-expansion-panel-actions-gap: var(--rt-space-xs);
 
         display: block;
         width: 100%;
@@ -45,6 +46,43 @@
             --rt-expansion-panel-header-font-weight: var(--rt-font-weight-regular);
             --rt-expansion-panel-body-padding-inline: var(--rt-space-0);
             --rt-expansion-panel-body-padding-end: var(--rt-space-0);
+        }
+
+        /* Строка заголовка. Без действий в ней одна кнопка, и строка ничего не рисует сама. */
+        &__head {
+            display: flex;
+            align-items: center;
+            border-radius: var(--rt-expansion-panel-header-radius);
+            transition: background-color var(--rt-expansion-panel-duration) ease;
+        }
+
+        /* С действиями подложку наведения рисует вся строка: действия и шеврон — части заголовка.
+           Кнопка уступает им край строки, и её правый отступ переходит к строке. */
+        &--with-actions &__head {
+            background: var(--rt-expansion-panel-header-bg);
+            gap: var(--rt-expansion-panel-header-gap);
+            padding-inline-end: var(--rt-expansion-panel-header-padding-end);
+
+            &:hover {
+                background: var(--rt-expansion-panel-header-hover-bg);
+            }
+        }
+
+        &--with-actions &__header {
+            min-width: 0;
+            flex: 1 1 auto;
+            padding-inline-end: var(--rt-space-0);
+
+            &:hover:not(:disabled) {
+                background: transparent;
+            }
+        }
+
+        &__actions {
+            display: inline-flex;
+            flex-shrink: 0;
+            align-items: center;
+            gap: var(--rt-expansion-panel-actions-gap);
         }
 
         /* Заголовок во всю ширину: нажатие принимает вся строка, а не один шеврон. */
@@ -97,6 +135,12 @@
             &--open {
                 transform: rotate(180deg);
             }
+
+            /* Шеврон после действий стоит вне кнопки и нажимается сам. */
+            &--outside {
+                cursor: pointer;
+                margin-inline-start: 0;
+            }
         }
 
         /* Раскрытие и сворачивание — высотой от нуля до своей и обратно. Высота «auto» становится
@@ -120,6 +164,18 @@
             &--leaving {
                 height: 0;
                 padding-block-end: 0;
+            }
+
+            /* Сохранённое тело свёрнутой панели: высота уходит в ноль, содержимое остаётся в разметке
+               со своим состоянием. Скрытость убирает его из порядка фокуса и от чтения с экрана. */
+            &--collapsed {
+                height: 0;
+                padding-block-end: 0;
+                transition:
+                    height var(--rt-expansion-panel-duration) ease,
+                    padding-block-end var(--rt-expansion-panel-duration) ease,
+                    visibility 0s linear var(--rt-expansion-panel-duration);
+                visibility: hidden;
             }
 
             @media (prefers-reduced-motion: reduce) {

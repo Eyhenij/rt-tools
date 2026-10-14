@@ -40,6 +40,8 @@ can be pressed and shows a hint, and a cross that the Tab key reaches.
 - **The select draws the consumer's option template in place of the row label.** The template gets
   the option and whether it is chosen; the tree toggle, the check mark, the choosing and the keys
   stay with the kit.
+- **The chosen value in the field is drawn by the same option template.** A colour mark seen in
+  the list stays at the chosen value; an empty field shows the placeholder.
 - **Without an option template the row is drawn as before.**
 - **The label on the border lies at the placeholder's place while the field is empty and at
   rest.** At rest means: the input is not focused, the select's list is closed. The placeholder is
@@ -48,8 +50,10 @@ can be pressed and shows a hint, and a cross that the Tab key reaches.
   the field does not change, and the label cuts the border under itself.
 - **The label on the border names the control for assistive technology when no aria label is
   given.**
-- **The label on the border has the kit look and the material look.** Its colours, size and the
-  gap it cuts come from properties of the field; the material preset reassigns them.
+- **The label on the border is drawn only under the material preset.** The kit look draws such a
+  field as before: with its placeholder and without the label; the label still names the control.
+  Under the preset the border is broken under the risen label, and a filled field keeps the risen
+  label inside itself, above the value.
 - **A field without the label on the border is drawn as before.**
 - **An icon of the input marked as actionable is a button.** It is reached by the Tab key, pressed by
   the mouse, Enter and Space, and each press is reported to the host by the output of its side.

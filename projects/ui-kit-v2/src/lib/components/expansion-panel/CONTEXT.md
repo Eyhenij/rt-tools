@@ -10,14 +10,15 @@
 </rt-expansion-panel>
 ```
 
-| вход         | тип                            | умолчание |
-| ------------ | ------------------------------ | --------- |
-| `expanded`   | `boolean` (model)              | `false`   |
-| `disabled`   | `boolean`                      | `false`   |
-| `hideToggle` | `boolean`                      | `false`   |
-| `appearance` | `IRtExpansionPanel.Appearance` | `'card'`  |
-| `headerId`   | `string \| null`               | `null`    |
-| `ariaLabel`  | `string \| null`               | `null`    |
+| вход              | тип                            | умолчание |
+| ----------------- | ------------------------------ | --------- |
+| `expanded`        | `boolean` (model)              | `false`   |
+| `disabled`        | `boolean`                      | `false`   |
+| `hideToggle`      | `boolean`                      | `false`   |
+| `appearance`      | `IRtExpansionPanel.Appearance` | `'card'`  |
+| `headerId`        | `string \| null`               | `null`    |
+| `ariaLabel`       | `string \| null`               | `null`    |
+| `preserveContent` | `boolean`                      | `false`   |
 
 Выход — `expandedChange`, половина двусторонней привязки.
 
@@ -34,6 +35,17 @@
 **Движение — средствами CSS.** Высота тела идёт от нуля через `@starting-style` и
 `interpolate-size`, уход доигрывает класс `rt-expansion-panel__body--leaving` через `animate.leave`.
 Браузер без `interpolate-size` показывает тело сразу.
+
+**Действия заголовка — узел с `rtExpansionPanelActions`.** Он стоит в строке заголовка вне кнопки,
+и нажатие по нему панель не раскрывает. Шеврон тогда выходит из кнопки и встаёт после действий.
+
+**Группа — `rtExpansionPanelGroup` на обёртке.** Раскрытие панели сворачивает остальные панели
+обёртки, и вложенные в обёртки владельца тоже; `multi` это отключает. Панель встаёт в группу сама,
+по токену `RT_EXPANSION_PANEL_GROUP`, и закрывает токен для своего тела: панель в теле панели в
+группу не входит. Действия заголовка и ленивое тело берутся только свои, не из вложенной панели.
+
+**`preserveContent` прячет свёрнутое тело, а не убирает.** Тело получает модификатор `--collapsed`
+и `inert`, высота уходит в ноль. Ленивое тело создаётся при первом раскрытии.
 
 ## Края
 

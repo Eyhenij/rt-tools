@@ -40,16 +40,18 @@
                             stretch: stretch(),
                         }"
                         [id]="'rt-tab-' + tab.id()"
-                        [disabled]="tab.disabled()"
+                        [attr.aria-disabled]="tab.disabled() || null"
+                        [attr.aria-label]="tab.ariaLabel()"
+                        [attr.aria-keyshortcuts]="tab.showClose() ? 'Delete' : null"
                         [attr.data-tabid]="tab.id()"
                         [attr.aria-selected]="tab.id() === selectedId()"
-                        [attr.aria-controls]="'rt-tabpanel-' + tab.id()"
+                        [attr.aria-controls]="headerOnly() ? null : 'rt-tabpanel-' + tab.id()"
                         [attr.tabindex]="tab.id() === selectedId() ? 0 : -1"
-                        [rtTooltip]="tab.invalid() ? tab.invalidTitle() : ''"
+                        [rtTooltip]="tab.buttonTooltip()"
                         (click)="selectTab(tab.id())"
-                        (keydown)="onTabKeydown($event)">
-                        @if (tab.icon(); as icon) {
-                            <rt-icon rtElem="icon" size="sm" [name]="icon" [color]="tab.iconColor()" />
+                        (keydown)="onTabKeydown($event, tab)">
+                        @if (tab.icon() || tab.glyph()) {
+                            <rt-icon rtElem="icon" size="sm" [name]="tab.icon()" [glyph]="tab.glyph()" [color]="tab.iconColor()" />
                         }
 
                         @if (tab.titleTemplate(); as titleTpl) {
@@ -62,6 +64,13 @@
                             <!-- В одну строку: перенос внутри добавил бы пробел в текст кнопки. -->
                             <!-- prettier-ignore -->
                             <span rtElem="badge" [rtTooltip]="tab.badgeTitle()" [attr.aria-label]="tab.badgeAriaLabel() || null">{{ tab.badge() }}</span>
+                        }
+
+                        @if (tab.showClose()) {
+                            <!-- Не кнопка: кнопка внутри кнопки-вкладки недопустима. С клавиатуры закрывает Delete. -->
+                            <span rtElem="close" qa-dataid="tabs-tab-close" aria-hidden="true" (click)="onCloseClick($event, tab)">
+                                <rt-icon name="close" color="current" size="xs" />
+                            </span>
                         }
                     </button>
                 }
@@ -87,7 +96,7 @@
         }
     </div>
 
-    @if (activeTab(); as tab) {
+    @if (headerOnly() ? null : activeTab(); as tab) {
         <div
             rtElem="content"
             qa-dataid="tabs-panel"

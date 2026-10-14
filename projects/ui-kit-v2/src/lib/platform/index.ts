@@ -1,6 +1,7 @@
 export * from './breakpoints.service';
 export * from './message-bus';
 export * from './notification-bus.service';
+export * from './notification-ref';
 export * from './notification.model';
 export * from './rt-theme-scope.directive';
 export * from './storage-keys.enum';

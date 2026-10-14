@@ -17,8 +17,10 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
+import { EMPTY, map, merge, mergeMap, Observable } from 'rxjs';
+
 import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
-import { INotification, NotificationBus } from '@rt-tools/ui-kit-v2/core';
+import { INotification, NotificationBus, NotificationRef } from '@rt-tools/ui-kit-v2/core';
 
 import { RtToastComponent } from './rt-toast.component';
 import { RT_TOASTER_GAP_PX, IRtToaster } from './rt-toaster.model';
@@ -111,10 +113,15 @@ export class RtToasterComponent {
     }
 
     constructor() {
+        // Ручка тоста слушается до его ухода: `markClosed` завершает её потоки, и подписка уходит сама.
         this.#notificationBus
             .onEmit()
-            .pipe(takeUntilDestroyed())
-            .subscribe((event: INotification.Event): void => this.#addToast(event));
+            .pipe(
+                map((event: INotification.Event): IRtToaster.Toast => this.#addToast(event)),
+                mergeMap((toast: IRtToaster.Toast): Observable<IRtToaster.Change> => this.#changesOf(toast)),
+                takeUntilDestroyed()
+            )
+            .subscribe((change: IRtToaster.Change): void => this.#applyChange(change));
     }
 
     protected onStackEnter(): void {
@@ -156,7 +163,7 @@ export class RtToasterComponent {
         );
     }
 
-    #addToast(event: INotification.Event): void {
+    #addToast(event: INotification.Event): IRtToaster.Toast {
         this.#toastCounter += 1;
         const toast: IRtToaster.Toast = {
             id: this.#toastCounter,
@@ -171,11 +178,38 @@ export class RtToasterComponent {
             progress: event.payload.progress,
             icon: event.payload.icon,
             onDismiss: event.payload.onDismiss,
+            progressValue: event.payload.progressValue,
+            details: event.payload.details,
+            component: event.payload.component,
+            data: event.payload.data,
+            ref: event.ref instanceof NotificationRef ? event.ref : undefined,
         };
         this.toasts.update((items: IRtToaster.Toast[]): IRtToaster.Toast[] => [
             toast,
             ...(this.mode() === 'replace' ? items.map((item: IRtToaster.Toast): IRtToaster.Toast => this.#replaced(item)) : items),
         ]);
+
+        return toast;
+    }
+
+    /** Изменения тоста от его ручки: обновление полей и просьба закрыть. Без ручки — ничего. */
+    #changesOf(toast: IRtToaster.Toast): Observable<IRtToaster.Change> {
+        const ref: NotificationRef | undefined = toast.ref;
+
+        if (ref === undefined) {
+            return EMPTY;
+        }
+
+        return merge(
+            ref.onUpdate().pipe(map((patch: INotification.Update): IRtToaster.Change => ({ toastId: toast.id, patch }))),
+            ref.onDismissRequest().pipe(map((): IRtToaster.Change => ({ toastId: toast.id, patch: { dismissRequested: true } })))
+        );
+    }
+
+    #applyChange(change: IRtToaster.Change): void {
+        this.toasts.update((items: IRtToaster.Toast[]): IRtToaster.Toast[] =>
+            items.map((item: IRtToaster.Toast): IRtToaster.Toast => (item.id === change.toastId ? { ...item, ...change.patch } : item))
+        );
     }
 
     #replaced(toast: IRtToaster.Toast): IRtToaster.Toast {

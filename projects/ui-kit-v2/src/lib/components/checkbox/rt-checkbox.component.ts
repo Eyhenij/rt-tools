@@ -8,6 +8,8 @@ import {
     input,
     InputSignal,
     InputSignalWithTransform,
+    output,
+    OutputEmitterRef,
     Signal,
     signal,
     ViewEncapsulation,
@@ -21,6 +23,11 @@ import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 
 const BEM_BLOCK: string = 'rt-checkbox';
+
+/** Вход отметки: не заданный вход — `null`, и тогда отметку решает форма. */
+function checkedAttribute(value: BooleanInput | null | undefined): boolean | null {
+    return value === null || value === undefined ? null : booleanAttribute(value);
+}
 
 /**
  * Чекбокс с `role="checkbox"` + `aria-checked` (`true`/`false`/`mixed`) поверх
@@ -38,6 +45,9 @@ const BEM_BLOCK: string = 'rt-checkbox';
  * связывании контрола, то есть раньше, чем чекбокс впервые обновит своё вью,
  * и мирроринг входа затирал бы её слово — контрол, созданный отключённым,
  * оказывался бы кликабельным.
+ *
+ * Без формы отметка ставится входом `checked`, а смена сообщается выходом `checkedChange` — так же,
+ * как у радиокнопки. Заданный вход решает раньше модели формы; выход приходит и при работе с формой.
  *
  * `indeterminate` — чисто визуальное mixed-состояние; клик по нему разрешается
  * в `true` (стандартное поведение tri-state чекбокса).
@@ -76,7 +86,10 @@ export class RtCheckboxComponent implements ControlValueAccessor {
     /** Отключение, назначенное формой через CVA (`setDisabledState`). */
     readonly #disabledByForm: WritableSignal<boolean> = signal<boolean>(false);
 
-    protected readonly isChecked: WritableSignal<boolean> = signal<boolean>(false);
+    /** Отметка, записанная формой или нажатием. */
+    readonly #model: WritableSignal<boolean> = signal<boolean>(false);
+
+    protected readonly isChecked: Signal<boolean> = computed((): boolean => this.checked() ?? this.#model());
     protected readonly isDisabled: Signal<boolean> = computed((): boolean => this.disabled() || this.#disabledByForm());
 
     public readonly inputId: InputSignal<string | null> = input<string | null>(null);
@@ -87,12 +100,21 @@ export class RtCheckboxComponent implements ControlValueAccessor {
         transform: booleanAttribute,
     });
 
+    /** Отметка без формы; не заданный вход оставляет решение форме. */
+    public readonly checked: InputSignalWithTransform<boolean | null, BooleanInput | null | undefined> = input<
+        boolean | null,
+        BooleanInput | null | undefined
+    >(null, { transform: checkedAttribute });
+
+    /** Отметку сменил человек: нажатием, пробелом или Enter. */
+    public readonly checkedChange: OutputEmitterRef<boolean> = output<boolean>();
+
     public readonly indeterminate: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
 
     public writeValue(value: boolean | null | undefined): void {
-        this.isChecked.set(value === true);
+        this.#model.set(value === true);
     }
 
     public registerOnChange(fn: (value: boolean) => void): void {
@@ -113,8 +135,9 @@ export class RtCheckboxComponent implements ControlValueAccessor {
         }
         // mixed-состояние при клике разрешается в checked (tri-state контракт).
         const next: boolean = this.indeterminate() ? true : !this.isChecked();
-        this.isChecked.set(next);
+        this.#model.set(next);
         this.#onChange(next);
         this.#onTouched();
+        this.checkedChange.emit(next);
     }
 }

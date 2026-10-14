@@ -5,6 +5,7 @@ import {
     forwardRef,
     inject,
     input,
+    output,
     signal,
     viewChild,
     ChangeDetectionStrategy,
@@ -12,6 +13,7 @@ import {
     ElementRef,
     InputSignal,
     InputSignalWithTransform,
+    OutputEmitterRef,
     Signal,
     ViewEncapsulation,
     WritableSignal,
@@ -20,7 +22,7 @@ import {
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
-import { RtFormControlBase } from '@rt-tools/ui-kit-v2/form-control';
+import { rtNotchWidth, RtFormControlBase } from '@rt-tools/ui-kit-v2/form-control';
 import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
@@ -29,11 +31,21 @@ import { IRtInput } from '@rt-tools/ui-kit-v2/core';
 
 const BEM_BLOCK: string = 'rt-input';
 
+let floatingLabelSeed: number = 0;
+
+function nextFloatingLabelId(): string {
+    floatingLabelSeed += 1;
+    return `rt-input-label-${floatingLabelSeed}`;
+}
+
 /**
  * Шеренный input common/ui. Поддерживает:
  * - интеграцию с Reactive Forms через общий `RtFormControlBase` (CVA-ядро,
  *   авто-подсветка invalid, `clearable`);
- * - левую и правую иконочные «слоты» (`iconLeft`, `iconRight`);
+ * - левую и правую иконочные «слоты» (`iconLeft`, `iconRight`); по `iconLeftAction` /
+ *   `iconRightAction` иконка становится кнопкой с подсказкой и своим выходом;
+ * - подпись на рамке (`floatingLabel`): у пустого поля в покое лежит на месте подсказки, при
+ *   значении или фокусе поднимается на верхнюю рамку, высоту поля не меняет;
  * - встроенный password-toggle (`passwordToggle=true` + `type="password"`);
  * - кнопку очистки (крестик) при наличии значения; на password-полях крестик
  *   не показывается (postfix занят toggle'ом).
@@ -43,7 +55,7 @@ const BEM_BLOCK: string = 'rt-input';
 @Component({
     selector: 'rt-input',
     templateUrl: './rt-input.component.html',
-    styleUrls: ['./rt-input.component.scss'],
+    styleUrls: ['./rt-input.component.scss', './rt-input-floating-label.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
     imports: [
@@ -72,6 +84,9 @@ const BEM_BLOCK: string = 'rt-input';
         '[class.rt-input--size--lg]': "size() === 'lg'",
         '[class.rt-input--with-icon-left]': '!!iconLeft()',
         '[class.rt-input--with-icon-right]': 'hasIconRight()',
+        '[class.rt-input--floating]': '!!floatingLabel()',
+        '[style.--rt-input-notch-width]': "notchWidth() + 'px'",
+        '[class.rt-input--filled]': 'hasValue()',
         '(mousedown)': 'onHostMousedown($event)',
     },
 })
@@ -80,9 +95,23 @@ export class RtInputComponent extends RtFormControlBase<string> {
 
     protected readonly fieldEl: Signal<ElementRef<HTMLInputElement> | undefined> = viewChild<ElementRef<HTMLInputElement>>('fieldEl');
 
+    /** Подпись на рамке: по её ширине материальный набор вырезает разрыв в рамке. `#`-поле `viewChild` не принимает. */
+    protected readonly floatingLabelEl: Signal<ElementRef<HTMLElement> | undefined> = viewChild<ElementRef<HTMLElement>>('floatingLabelEl');
+
+    /** Ширина подписи на рамке, px. */
+    protected readonly notchWidth: Signal<number> = rtNotchWidth(this.floatingLabelEl);
+
     protected readonly isPasswordVisible: WritableSignal<boolean> = signal<boolean>(false);
 
     protected readonly hasValue: Signal<boolean> = computed((): boolean => this.value() !== '');
+
+    /** Id подписи на рамке: на него ссылается `aria-labelledby` поля. */
+    protected readonly floatingLabelId: string = nextFloatingLabelId();
+
+    /** Подпись на рамке называет поле, только когда явного `ariaLabel` нет. */
+    protected readonly labelledBy: Signal<string | null> = computed((): string | null =>
+        this.floatingLabel() && !this.ariaLabel() ? this.floatingLabelId : null
+    );
 
     protected readonly effectiveType: Signal<string> = computed((): string => {
         const t: IRtInput.Type = this.type();
@@ -101,6 +130,7 @@ export class RtInputComponent extends RtFormControlBase<string> {
     );
 
     /** Вид рамки: `outline` — рамка со всех сторон, `fill` — залитое поле с чертой снизу. */
+    public override readonly fieldLabelInside: boolean = true;
     public readonly appearance: InputSignal<IRtInput.Appearance> = input<IRtInput.Appearance>('outline');
 
     public readonly displayText: Signal<string> = computed((): string => this.value());
@@ -113,6 +143,34 @@ export class RtInputComponent extends RtFormControlBase<string> {
         transform: booleanAttribute,
     });
     public readonly autocomplete: InputSignal<string | null> = input<string | null>(null);
+
+    /** Видимая подпись на рамке поля. `null` — подписи нет, поле как прежде. */
+    public readonly floatingLabel: InputSignal<string | null> = input<string | null>(null);
+
+    /** Левая иконка — кнопка: Tab, Enter, Space, нажатие уходит в `iconLeftClick`. */
+    public readonly iconLeftAction: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+
+    /**
+     * Правая иконка — кнопка, нажатие уходит в `iconRightClick`. На поле пароля с переключателем
+     * показа не действует: место занято переключателем.
+     */
+    public readonly iconRightAction: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+
+    /** Подсказка левой иконки-кнопки; она же её доступное имя. Без неё имя — имя иконки. */
+    public readonly iconLeftTooltip: InputSignal<string | null> = input<string | null>(null);
+
+    /** Подсказка правой иконки-кнопки; она же её доступное имя. */
+    public readonly iconRightTooltip: InputSignal<string | null> = input<string | null>(null);
+
+    /** Нажатие левой иконки-кнопки — мышью или клавишей (браузер шлёт click и на Enter/Space). */
+    public readonly iconLeftClick: OutputEmitterRef<MouseEvent> = output<MouseEvent>();
+
+    /** Нажатие правой иконки-кнопки. */
+    public readonly iconRightClick: OutputEmitterRef<MouseEvent> = output<MouseEvent>();
 
     protected getEmptyValue(): string {
         return '';

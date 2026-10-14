@@ -5,12 +5,33 @@ import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { IStoryState, STORY_STATES, storyStateLabel } from '../../../../../showcase/story-states';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
+import { RtIconComponent } from '../../../icon/rt-icon.component';
 import { IRtToggleButtonGroup } from '../../rt-toggle-button-group.model';
 import { RtToggleButtonGroupComponent } from '../../rt-toggle-button-group.component';
+import { RtToggleButtonOptionDirective } from '../../rt-toggle-button-option.directive';
+import { TestRtToggleButtonGroupFormsComponent } from './test-toggle-button-group-forms.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
 export type TToggleButtonGroupMatrixPart =
-    'size' | 'options' | 'value' | 'fullWidth' | 'multiple' | 'disabledOption' | 'states' | 'presets' | 'themes';
+    | 'size'
+    | 'options'
+    | 'value'
+    | 'fullWidth'
+    | 'multiple'
+    | 'disabledOption'
+    | 'states'
+    | 'forms'
+    | 'optionTemplate'
+    | 'layout'
+    | 'presets'
+    | 'themes';
+
+/** Раскладка и ширина, в которую группа поставлена: перенос виден только в узком месте. */
+interface IGroupLayoutCase {
+    readonly name: string;
+    readonly layout: IRtToggleButtonGroup.Layout;
+    readonly width: string;
+}
 
 /** Набор сегментов: подписи, подписи с иконками, две штуки против пяти. */
 interface IGroupOptionsCase {
@@ -49,6 +70,24 @@ const PERIOD_DISABLED_CHOSEN: ReadonlyArray<IRtToggleButtonGroup.Option> = [
     { value: 'day', label: 'День', disabled: true },
     { value: 'week', label: 'Неделя' },
     { value: 'month', label: 'Месяц' },
+];
+
+/** Форматы выгрузки: значок формата в сегменте нарисован своей разметкой. */
+const FORMATS: ReadonlyArray<IRtToggleButtonGroup.Option> = [
+    { value: 'pdf', label: 'PDF', icon: 'attach-pdf' },
+    { value: 'xlsx', label: 'Excel', icon: 'attach-xlsx-xls' },
+    { value: 'docx', label: 'Word', icon: 'attach-docx-doc' },
+    { value: 'zip', label: 'Архив', icon: 'attach-zip-rar' },
+];
+
+const DAYS: ReadonlyArray<IRtToggleButtonGroup.Option> = [
+    { value: 'mon', label: 'Понедельник' },
+    { value: 'tue', label: 'Вторник' },
+    { value: 'wed', label: 'Среда' },
+    { value: 'thu', label: 'Четверг' },
+    { value: 'fri', label: 'Пятница' },
+    { value: 'sat', label: 'Суббота' },
+    { value: 'sun', label: 'Воскресенье' },
 ];
 
 const VIEW: ReadonlyArray<IRtToggleButtonGroup.Option> = [
@@ -178,6 +217,52 @@ const VIEW: ReadonlyArray<IRtToggleButtonGroup.Option> = [
                 </app-story-presets>
             }
 
+            @case ('forms') {
+                <app-story-presets caption="Группа в форме в обоих наборах">
+                    <ng-template>
+                        <app-toggle-button-group-forms />
+                    </ng-template>
+                </app-story-presets>
+            }
+
+            @case ('optionTemplate') {
+                <app-story-presets caption="Своя разметка сегмента в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="sizes">
+                            <ng-template let-size>
+                                <rt-toggle-button-group ariaLabel="Формат" value="xlsx" layout="wrap" [options]="formats" [size]="size">
+                                    <ng-template rtToggleButtonOption let-option let-active="active">
+                                        <span class="app-toggle-matrix__tile">
+                                            <rt-icon size="xl" [name]="option.icon" />
+                                            <span [class.app-toggle-matrix__tile-label--active]="active">{{ option.label }}</span>
+                                        </span>
+                                    </ng-template>
+                                </rt-toggle-button-group>
+                            </ng-template>
+                        </app-story-row>
+                    </ng-template>
+                </app-story-presets>
+            }
+
+            @case ('layout') {
+                <app-story-presets caption="Раскладка в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="layoutCases" [itemLabel]="caseLabel">
+                            <ng-template let-layoutCase>
+                                <div class="app-toggle-matrix__frame" [style.inline-size]="layoutCase.width">
+                                    <rt-toggle-button-group
+                                        multiple
+                                        ariaLabel="Дни"
+                                        [layout]="layoutCase.layout"
+                                        [options]="days"
+                                        [values]="weekdays" />
+                                </div>
+                            </ng-template>
+                        </app-story-row>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('presets') {
                 <app-story-presets caption="Группа в обоих наборах">
                     <ng-template>
@@ -203,15 +288,36 @@ const VIEW: ReadonlyArray<IRtToggleButtonGroup.Option> = [
             }
         }
     `,
+    // native-ok: обёртка истории витрины — правила коробки живут рядом с показом, а не отдельным файлом
+    styles: `
+        .app-toggle-matrix__frame {
+            outline: 1px dashed var(--rt-color-border-default);
+        }
+
+        .app-toggle-matrix__tile {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            padding-block: var(--rt-space-2);
+            gap: var(--rt-space-1);
+        }
+
+        .app-toggle-matrix__tile-label--active {
+            text-decoration: underline;
+        }
+    `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // components
+        RtIconComponent,
         RtToggleButtonGroupComponent,
+        RtToggleButtonOptionDirective,
 
         // showcase
         StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
+        TestRtToggleButtonGroupFormsComponent,
     ],
 })
 export class TestRtToggleButtonGroupMatrixComponent {
@@ -225,6 +331,15 @@ export class TestRtToggleButtonGroupMatrixComponent {
 
     public readonly period: ReadonlyArray<IRtToggleButtonGroup.Option> = PERIOD;
     public readonly view: ReadonlyArray<IRtToggleButtonGroup.Option> = VIEW;
+    public readonly formats: ReadonlyArray<IRtToggleButtonGroup.Option> = FORMATS;
+    public readonly days: ReadonlyArray<IRtToggleButtonGroup.Option> = DAYS;
+    public readonly weekdays: ReadonlyArray<string> = ['mon', 'wed', 'fri'];
+
+    public readonly layoutCases: readonly IGroupLayoutCase[] = [
+        { name: 'row, по содержимому', layout: 'row', width: 'auto' },
+        { name: 'wrap, 22rem', layout: 'wrap', width: STORY_FIELD_WIDTH_WIDE },
+        { name: 'column', layout: 'column', width: 'auto' },
+    ];
 
     public readonly optionCases: readonly IGroupOptionsCase[] = [
         { name: 'только подписи', options: PERIOD, value: 'week' },

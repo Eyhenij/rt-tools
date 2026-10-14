@@ -10,6 +10,7 @@ import {
     DestroyRef,
     ElementRef,
     inject,
+    Injector,
     input,
     InputSignal,
     InputSignalWithTransform,
@@ -159,8 +160,25 @@ export class RtTabsComponent {
         transform: booleanAttribute,
     });
 
+    /**
+     * Только полоса, без панели: вкладки служат навигацией, а содержимое живёт в другом месте —
+     * например, полоса стоит в середине `rt-toolbar`. Панель `role="tabpanel"` не рисуется, и
+     * вкладки не ссылаются на неё.
+     */
+    public readonly headerOnly: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+
     /** Эмиттит id вкладки при её выборе (клик/клавиатура). */
     public readonly activeIdChange: OutputEmitterRef<IRtTabs.Id> = output<IRtTabs.Id>();
+
+    /**
+     * Просьба закрыть вкладку с `closable`: крестик или Delete на вкладке в фокусе. Набор вкладок
+     * держит потребитель — он и убирает вкладку; закрытая активная откатывается на первую доступную.
+     */
+    public readonly tabClose: OutputEmitterRef<IRtTabs.Id> = output<IRtTabs.Id>();
+
+    readonly #injector: Injector = inject(Injector);
 
     /** Внутренний выбор (uncontrolled-ветка). */
     readonly #internalId: WritableSignal<IRtTabs.Id | null> = signal<IRtTabs.Id | null>(null);
@@ -194,8 +212,19 @@ export class RtTabsComponent {
         this.#scrollTabIntoView(id);
     }
 
+    /** Крестик вкладки: клик не должен доходить до самой вкладки и выбирать её. */
+    protected onCloseClick(event: MouseEvent, tab: RtTabDirective): void {
+        event.stopPropagation();
+        this.#close(tab, false);
+    }
+
     /** Навигация по вкладкам с клавиатуры (automatic activation). */
-    protected onTabKeydown(event: KeyboardEvent): void {
+    protected onTabKeydown(event: KeyboardEvent, tab: RtTabDirective): void {
+        if (event.key === 'Delete') {
+            this.#closeByKey(event, tab);
+            return;
+        }
+
         const enabled: readonly RtTabDirective[] = this.visibleTabs().filter((tab: RtTabDirective): boolean => !tab.disabled());
 
         if (!enabled.length) {
@@ -245,6 +274,47 @@ export class RtTabsComponent {
 
     protected onTabListScroll(): void {
         this.#updateRestVisibility();
+    }
+
+    /**
+     * Delete на закрываемой вкладке. Фокус после перерисовки встаёт на активную вкладку: закрытая
+     * пропадёт из шапки, и фокус иначе упал бы на страницу.
+     */
+    #closeByKey(event: KeyboardEvent, tab: RtTabDirective): void {
+        if (!tab.showClose()) {
+            return;
+        }
+
+        event.preventDefault();
+        this.#close(tab, true);
+    }
+
+    /**
+     * Просьба закрыть вкладку. Владелец убирает её из набора; если она была активной, выбор после
+     * перерисовки переходит на первую доступную, и об этом сообщает `activeIdChange` — иначе владелец,
+     * держащий `activeId`, хранил бы id закрытой вкладки и показывал её содержимое снаружи.
+     */
+    #close(tab: RtTabDirective, focus: boolean): void {
+        const closedId: IRtTabs.Id = tab.id();
+        const wasActive: boolean = this.selectedId() === closedId;
+        this.tabClose.emit(closedId);
+
+        afterNextRender(
+            (): void => {
+                const id: IRtTabs.Id | null = this.selectedId();
+                if (id === null) {
+                    return;
+                }
+                if (wasActive && id !== closedId) {
+                    this.#internalId.set(id);
+                    this.activeIdChange.emit(id);
+                }
+                if (focus) {
+                    this.#focusTab(id);
+                }
+            },
+            { injector: this.#injector }
+        );
     }
 
     #clearScrollInterval(): void {

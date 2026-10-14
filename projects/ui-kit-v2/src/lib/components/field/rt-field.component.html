@@ -1,6 +1,6 @@
 <ng-container rtBlock="rt-field">
     @if (label()) {
-        <span rtElem="label-row">
+        <span #labelRow rtElem="label-row">
             <label rtElem="label" qa-dataid="field-label" [attr.for]="controlId()">
                 {{ label() }}
                 @if (isRequired() && !hideRequiredMark()) {

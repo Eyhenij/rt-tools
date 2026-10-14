@@ -5,6 +5,26 @@
         --rt-input-box-radius: var(--rt-input-radius);
         --rt-input-fill-radius: var(--rt-radius-sm);
         --rt-input-toggle-radius: var(--rt-radius-sm);
+        --rt-input-floating-label-color: var(--rt-input-color-text-placeholder);
+        --rt-input-floating-label-color-focus: var(--rt-input-color-border-focus);
+        --rt-input-floating-label-color-error: var(--rt-input-color-border-error);
+        --rt-input-floating-label-bg: var(--rt-input-color-bg);
+        --rt-input-floating-label-font-size: var(--rt-text-xs);
+        --rt-input-floating-label-start: var(--rt-input-padding-x);
+        --rt-input-floating-label-rest-start: var(--rt-input-floating-label-start);
+        --rt-input-floating-label-raised-start: var(--rt-input-floating-label-start);
+
+        /* Разрыв рамки под подписью: его начало в слое рамки, глубина — толщина рамки фокуса.
+           Ширину подписи ставит компонент замером; до замера разрыва нет. */
+        --rt-input-notch-start: calc(var(--rt-input-floating-label-raised-start) - var(--rt-space-1) + var(--rt-input-border-width));
+        --rt-input-notch-depth: calc(2 * var(--rt-input-border-width));
+        --rt-input-notch-width: 0px;
+
+        /* Высота залитого поля Material с подписью: подпись лежит внутри поля над значением. Она
+           равна средней высоте поля — под набором это высота Material при выбранной плотности. */
+        --rt-input-fill-floating-height: var(--rt-input-height-md);
+        --rt-input-color-border-hover: var(--rt-color-text-primary);
+        --rt-input-floating-label-duration: var(--rt-duration-fast);
 
         position: relative;
         display: inline-flex;
@@ -28,6 +48,13 @@
             box-shadow: var(--rt-input-focus-shadow);
             outline: 2px solid transparent;
             outline-offset: var(--rt-input-focus-outline-offset);
+        }
+
+        /* Наведение в материальном наборе — как у поля Material: рамка цвета текста. `:where` держит
+           силу правила на уровне вида, и фокус, ошибка, залитый вид и «без рамки» его перекрывают;
+           отключённое поле наведения не показывает. */
+        :where(.rt-preset-material, [data-preset='material']) &:where(:hover:not(:has(:disabled))) {
+            border-color: var(--rt-input-color-border-hover);
         }
 
         /* bordered=false: снимаем только resting-рамку; invalid/focus/readonly идут

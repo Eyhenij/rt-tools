@@ -67,6 +67,7 @@ export class RtTextareaComponent extends RtFormControlBase<string> {
 
     protected readonly hasValue: Signal<boolean> = computed((): boolean => this.value() !== '');
 
+    public override readonly fieldLabelInside: boolean = true;
     public readonly displayText: Signal<string> = computed((): string => this.value());
 
     public readonly placeholder: InputSignal<string> = input<string>('');

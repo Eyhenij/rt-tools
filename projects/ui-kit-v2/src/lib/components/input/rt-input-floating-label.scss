@@ -1,0 +1,168 @@
+@layer rt-kit.components {
+    /* Подпись на рамке и разрыв рамки под ней — отдельный лист стилей компонента. Одним листом с
+       остальными правилами он перешёл бы порог в 8 КБ на лист, который Angular по умолчанию ставит
+       приложению, и сборка потребителя упала бы. Лист подключается вторым, после основного. */
+    .rt-input {
+        /* Подпись на рамке. Лежит поверх поля и в поток не входит — высота поля от неё не меняется.
+           В покое стоит на месте подсказки (за левой иконкой, если она есть), при значении или
+           фокусе поднимается на верхнюю рамку и разрывает её своей подложкой. Клик проходит
+           сквозь подпись: поле фокусирует обработчик mousedown хоста. */
+        &--with-icon-left {
+            --rt-input-floating-label-rest-start: calc(
+                var(--rt-input-floating-label-start) + var(--rt-input-icon-size) + var(--rt-input-gap)
+            );
+        }
+
+        /* Обведённое поле материального набора прозрачное, и подпись на рамке подложки не имеет:
+           рамка под ней разорвана, как у поля Material. `:where` держит силу правила на уровне вида,
+           и залитый вид ниже его перекрывает. */
+        :where(.rt-preset-material, [data-preset='material']) & {
+            --rt-input-floating-label-bg: transparent;
+
+            /* Подпись на рамке начинается за скруглением угла: на изгибе верхней рамки нет, и
+               подпись легла бы на него без просвета слева. Скругление «таблетки» больше поля —
+               берётся половина высоты. */
+            --rt-input-floating-label-raised-start: max(
+                var(--rt-input-floating-label-start),
+                calc(min(var(--rt-input-box-radius), var(--rt-input-height) / 2) + var(--rt-space-2))
+            );
+        }
+
+        &--appearance--fill,
+        &--appearance--pill {
+            --rt-input-floating-label-bg: var(--rt-color-bg-surface-subtle-2);
+        }
+
+        /* У залитого поля скругление малое, и подпись встаёт у начала поля, как прежде. */
+        &--appearance--fill {
+            --rt-input-floating-label-raised-start: var(--rt-input-floating-label-start);
+        }
+
+        /* Подпись на рамке рисует только материальный набор: свой вид кита держит поле прежним — с
+           подсказкой и без подписи. Имя контролу подпись даёт в обоих видах. */
+        &__floating-label {
+            position: absolute;
+            top: 50%;
+            left: var(--rt-input-floating-label-rest-start);
+            display: none;
+            overflow: hidden;
+            max-width: calc(100% - var(--rt-input-floating-label-rest-start) - var(--rt-input-padding-x));
+            color: var(--rt-input-floating-label-color);
+            pointer-events: none;
+            text-overflow: ellipsis;
+            transform: translateY(-50%);
+            transform-origin: left center;
+            transition:
+                top var(--rt-input-floating-label-duration) ease,
+                left var(--rt-input-floating-label-duration) ease,
+                font-size var(--rt-input-floating-label-duration) ease,
+                color var(--rt-input-floating-label-duration) ease;
+            white-space: nowrap;
+        }
+
+        :is(.rt-preset-material, [data-preset='material']) &__floating-label {
+            display: block;
+        }
+
+        /* Пока подпись лежит на месте подсказки, подсказка не рисуется: они легли бы друг на друга. */
+        :is(.rt-preset-material, [data-preset='material']) &--floating:not(.rt-input--filled, :focus-within) &__field::placeholder {
+            color: transparent;
+        }
+
+        &--filled &__floating-label,
+        &:focus-within &__floating-label {
+            top: 0;
+            left: var(--rt-input-floating-label-raised-start);
+            max-width: calc(100% - var(--rt-input-floating-label-raised-start) - var(--rt-input-floating-label-start));
+            padding: 0 var(--rt-space-1);
+            margin-left: calc(-1 * var(--rt-space-1));
+            background-color: var(--rt-input-floating-label-bg);
+            font-size: var(--rt-input-floating-label-font-size);
+            line-height: 1;
+        }
+
+        &:focus-within &__floating-label {
+            color: var(--rt-input-floating-label-color-focus);
+        }
+
+        &--invalid &__floating-label {
+            color: var(--rt-input-floating-label-color-error);
+        }
+
+        /* Залитое поле материального набора — как поле Material: оно выше, и поднятая подпись
+           уменьшается и встаёт внутрь поля над значением, а не на рамку. Пустое поле держит подпись
+           на месте подсказки размером со значение. Свой вид кита не меняется. */
+        :is(.rt-preset-material, [data-preset='material']) & {
+            &--floating.rt-input--appearance--fill,
+            &--floating.rt-input--appearance--pill {
+                --rt-input-height: var(--rt-input-fill-floating-height);
+            }
+
+            &--floating.rt-input--appearance--fill.rt-input--filled .rt-input__floating-label,
+            &--floating.rt-input--appearance--fill:focus-within .rt-input__floating-label,
+            &--floating.rt-input--appearance--pill.rt-input--filled .rt-input__floating-label,
+            &--floating.rt-input--appearance--pill:focus-within .rt-input__floating-label {
+                top: var(--rt-space-1);
+                left: var(--rt-input-floating-label-rest-start);
+                padding: 0;
+                margin-left: 0;
+                background-color: transparent;
+                transform: none;
+            }
+        }
+
+        /* Разрыв рамки под подписью в материальном наборе. Рамку поля рисует слой поверх него, и
+           разрыв режется в этом слое: вырезать рамку самого поля нельзя — подпись лежит внутри
+           него и обрезалась бы вместе с рамкой. Залитый вид, «таблетка» и чтение рамки на
+           верху не имеют. */
+        :is(.rt-preset-material, [data-preset='material'])
+            &--floating:not(.rt-input--appearance--fill, .rt-input--appearance--pill, .rt-input--readonly) {
+            border-color: transparent;
+            box-shadow: none;
+
+            &:before {
+                position: absolute;
+                border: var(--rt-input-border-width) solid var(--rt-input-color-border);
+                border-radius: inherit;
+                content: '';
+                inset: calc(-1 * var(--rt-input-border-width));
+                pointer-events: none;
+            }
+
+            &:where(:hover:not(:has(:disabled))):before {
+                border-color: var(--rt-input-color-border-hover);
+            }
+
+            &:focus-within:before {
+                border-color: var(--rt-input-color-border-focus);
+                box-shadow: var(--rt-input-focus-shadow);
+            }
+
+            &.rt-input--invalid:before {
+                border-color: var(--rt-input-color-border-error);
+            }
+
+            &.rt-input--invalid:focus-within:before {
+                box-shadow: var(--rt-input-focus-shadow-error);
+            }
+
+            &.rt-input--borderless:not(:focus-within, .rt-input--invalid):before {
+                border-color: transparent;
+            }
+
+            &.rt-input--filled:before,
+            &:focus-within:before {
+                clip-path: polygon(
+                    0 0,
+                    var(--rt-input-notch-start) 0,
+                    var(--rt-input-notch-start) var(--rt-input-notch-depth),
+                    calc(var(--rt-input-notch-start) + var(--rt-input-notch-width)) var(--rt-input-notch-depth),
+                    calc(var(--rt-input-notch-start) + var(--rt-input-notch-width)) 0,
+                    100% 0,
+                    100% 100%,
+                    0 100%
+                );
+            }
+        }
+    }
+}

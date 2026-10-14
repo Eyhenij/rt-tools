@@ -44,6 +44,12 @@ export class RtTabDirective {
     /** Иконка слева от заголовка. */
     public readonly icon: InputSignal<IRtIcon.Name | null> = input<IRtIcon.Name | null>(null);
 
+    /**
+     * Имя значка Material вместо `icon` — рисуется так же, как вход `glyph` у `rt-icon`.
+     * Задан вместе с `icon` — решает `rt-icon`.
+     */
+    public readonly glyph: InputSignal<string | null> = input<string | null>(null);
+
     /** Семантический цвет иконки заголовка. */
     public readonly iconColor: InputSignal<IRtTabs.TitleColor> = input<IRtTabs.TitleColor>('current');
 
@@ -80,6 +86,31 @@ export class RtTabDirective {
     /** Подсказка для невалидной вкладки. Пусто — берётся переведённое умолчание. */
     public readonly invalidMessage: InputSignal<string> = input<string>('');
 
+    /**
+     * Подсказка при наведении на вкладку — в том числе на отключённую, чтобы объяснить, почему она
+     * недоступна. У вкладки без подписи она же становится её именем для чтения с экрана.
+     */
+    public readonly tooltip: InputSignal<string> = input<string>('');
+
+    /** Вкладку можно закрыть: крестик в шапке и клавиша Delete поднимают `tabClose` у `rt-tabs`. */
+    public readonly closable: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+
     /** Готовый текст подсказки: своя формулировка важнее умолчания. */
     public readonly invalidTitle: Signal<string> = computed((): string => this.invalidMessage() || this.#t_uiTabInvalid());
+
+    /** Подсказка кнопки вкладки: у неверной — объяснение ошибки, иначе своя подсказка. */
+    public readonly buttonTooltip: Signal<string> = computed((): string => (this.invalid() ? this.invalidTitle() : this.tooltip()));
+
+    /**
+     * Имя вкладки для чтения с экрана, когда видимой подписи нет: вкладка из одного значка
+     * называется своей подсказкой. С подписью или своим заголовком атрибут не ставится.
+     */
+    public readonly ariaLabel: Signal<string | null> = computed((): string | null =>
+        this.label() || this.titleTemplate() ? null : this.tooltip() || null
+    );
+
+    /** Крестик рисуется только у доступной вкладки: отключённую закрыть нельзя. */
+    public readonly showClose: Signal<boolean> = computed((): boolean => this.closable() && !this.disabled());
 }

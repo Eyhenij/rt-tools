@@ -1,0 +1,130 @@
+@layer rt-kit.components {
+    /* Подпись на рамке и разрыв рамки под ней — отдельный лист стилей компонента. Одним листом с
+       остальными правилами он перешёл бы порог в 8 КБ на лист, который Angular по умолчанию ставит
+       приложению, и сборка потребителя упала бы. Лист подключается вторым, после основного. */
+    .rt-select {
+        /* Подпись на рамке — как у поля ввода. Лежит поверх кнопки и в поток не входит, поэтому
+           высота поля от неё не меняется. Пока ничего не выбрано и список закрыт, стоит на месте
+           подсказки; при выбранном значении или открытом списке поднимается на верхнюю рамку. Клик
+           проходит сквозь подпись в кнопку. */
+        &--with-icon-left {
+            --rt-select-floating-label-rest-start: calc(
+                var(--rt-select-floating-label-start) + var(--rt-input-icon-size) + var(--rt-space-sm)
+            );
+        }
+
+        /* Обведённое поле материального набора прозрачное, и подпись на рамке подложки не имеет:
+           рамка под ней разорвана, как у поля Material. `:where` держит силу правила на уровне вида,
+           и залитый вид ниже его перекрывает. */
+        :where(.rt-preset-material, [data-preset='material']) & {
+            --rt-select-floating-label-bg: transparent;
+
+            /* Подпись на рамке начинается за скруглением угла: на изгибе верхней рамки нет, и
+               подпись легла бы на него без просвета слева. Скругление «таблетки» больше поля —
+               берётся половина высоты. */
+            --rt-select-floating-label-raised-start: max(
+                var(--rt-select-floating-label-start),
+                calc(min(var(--rt-select-radius), var(--rt-input-height) / 2) + var(--rt-space-2))
+            );
+        }
+
+        /* У залитого поля скругление малое, и подпись встаёт у начала поля, как прежде. */
+        &--appearance--fill {
+            --rt-select-floating-label-bg: var(--rt-color-bg-surface-subtle-2);
+            --rt-select-floating-label-raised-start: var(--rt-select-floating-label-start);
+        }
+
+        /* Подпись на рамке рисует только материальный набор: свой вид кита держит поле прежним — с
+           подсказкой и без подписи. Имя контролу подпись даёт в обоих видах. */
+        &__floating-label {
+            position: absolute;
+            top: 50%;
+            left: var(--rt-select-floating-label-rest-start);
+            display: none;
+            overflow: hidden;
+            max-width: calc(100% - var(--rt-select-floating-label-rest-start) - var(--rt-input-padding-x));
+            color: var(--rt-select-floating-label-color);
+            font-size: var(--rt-input-font-size);
+            line-height: var(--rt-input-line-height);
+            pointer-events: none;
+            text-overflow: ellipsis;
+            transform: translateY(-50%);
+            transition:
+                top var(--rt-select-floating-label-duration) ease,
+                left var(--rt-select-floating-label-duration) ease,
+                font-size var(--rt-select-floating-label-duration) ease,
+                color var(--rt-select-floating-label-duration) ease;
+            white-space: nowrap;
+        }
+
+        :is(.rt-preset-material, [data-preset='material']) &__floating-label {
+            display: block;
+        }
+
+        /* Пока подпись лежит на месте подсказки, подсказка не рисуется: они легли бы друг на друга. */
+        :is(.rt-preset-material, [data-preset='material']) &--floating:not(.rt-select--filled, .rt-select--open) &__label--placeholder {
+            color: transparent;
+        }
+
+        &--filled &__floating-label,
+        &--open &__floating-label {
+            top: 0;
+            left: var(--rt-select-floating-label-raised-start);
+            max-width: calc(100% - var(--rt-select-floating-label-raised-start) - var(--rt-select-floating-label-start));
+            padding: 0 var(--rt-space-1);
+            margin-left: calc(-1 * var(--rt-space-1));
+            background-color: var(--rt-select-floating-label-bg);
+            font-size: var(--rt-select-floating-label-font-size);
+            line-height: 1;
+        }
+
+        &--open &__floating-label {
+            color: var(--rt-select-floating-label-color-focus);
+        }
+
+        &--invalid &__floating-label {
+            color: var(--rt-select-floating-label-color-error);
+        }
+
+        /* Залитое поле материального набора — как поле Material: оно выше, и поднятая подпись
+           уменьшается и встаёт внутрь поля над значением, а не на рамку. Пустое поле держит подпись
+           на месте подсказки размером со значение. Свой вид кита не меняется. */
+        :is(.rt-preset-material, [data-preset='material']) & {
+            &--floating.rt-select--appearance--fill {
+                --rt-input-height: var(--rt-select-fill-floating-height);
+            }
+
+            &--floating.rt-select--appearance--fill.rt-select--filled .rt-select__floating-label,
+            &--floating.rt-select--appearance--fill.rt-select--open .rt-select__floating-label {
+                top: var(--rt-space-1);
+                left: var(--rt-select-floating-label-rest-start);
+                padding: 0;
+                margin-left: 0;
+                background-color: transparent;
+                transform: none;
+            }
+        }
+
+        /* Разрыв рамки под поднятой подписью в материальном наборе. Подпись лежит рядом с кнопкой,
+           а не в ней, поэтому разрыв режется прямо в рамке кнопки. У залитого вида рамки сверху нет. */
+        :is(.rt-preset-material, [data-preset='material']) &--floating:not(.rt-select--appearance--fill) {
+            &.rt-select--filled .rt-select__trigger,
+            &.rt-select--open .rt-select__trigger {
+                clip-path: polygon(
+                    0 0,
+                    var(--rt-select-notch-start) 0,
+                    var(--rt-select-notch-start) var(--rt-select-notch-depth),
+                    calc(var(--rt-select-notch-start) + var(--rt-select-notch-width)) var(--rt-select-notch-depth),
+                    calc(var(--rt-select-notch-start) + var(--rt-select-notch-width)) 0,
+                    100% 0,
+                    100% 100%,
+                    0 100%
+                );
+            }
+        }
+
+        &--readonly &__floating-label {
+            display: none;
+        }
+    }
+}

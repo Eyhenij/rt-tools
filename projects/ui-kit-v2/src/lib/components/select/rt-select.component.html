@@ -13,6 +13,7 @@
         [rtPopoverDisabled]="isDisabled()"
         [attr.id]="effectiveControlId()"
         [attr.aria-label]="ariaLabel()"
+        [attr.aria-labelledby]="labelledBy()"
         [attr.aria-haspopup]="'listbox'"
         [attr.aria-expanded]="isOpen()"
         [attr.aria-invalid]="isInvalid() || null"
@@ -33,23 +34,60 @@
             @if (iconLeft(); as left) {
                 <rt-icon rtElem="icon-left" size="sm" color="muted" [name]="left" />
             }
-            <span rtElem="label" [rtMod]="{ placeholder: !selectedLabel() }">
-                {{ selectedLabel() || placeholder() }}
+            <span rtElem="label" [id]="valueTextId" [rtMod]="{ placeholder: !selectedLabel() }">
+                <!-- Шаблон строки рисует и выбранное значение: цветная метка из списка не пропадает в поле. -->
+                @if (chosenOwn(); as own) {
+                    <span rtElem="option-content" qa-dataid="select-value-content">
+                        <ng-container [ngTemplateOutlet]="own.templateRef" [ngTemplateOutletContext]="own.context" />
+                    </span>
+                } @else {
+                    {{ selectedLabel() || placeholder() }}
+                }
             </span>
             @if (showClearButton()) {
-                <rt-icon-button
-                    rtElem="clear"
-                    icon="ico-close"
-                    size="sm"
-                    variant="ghost"
-                    iconColor="muted"
-                    [ariaLabel]="t().uiClear"
-                    [tabIndex]="-1"
-                    (clicked)="clear($event)" />
+                @if (clearTabbable()) {
+                    <!-- Место крестика в строке: сам крестик в порядке Tab стоит рядом с кнопкой, ниже. -->
+                    <span rtElem="clear-slot" aria-hidden="true"></span>
+                } @else {
+                    <rt-icon-button
+                        rtElem="clear"
+                        icon="ico-close"
+                        size="sm"
+                        variant="ghost"
+                        iconColor="muted"
+                        [ariaLabel]="t().uiClear"
+                        [tabIndex]="-1"
+                        (clicked)="clear($event)" />
+                }
             }
             <rt-icon rtElem="chevron" name="chevron-down" size="sm" color="muted" />
         }
     </button>
+
+    @if (showClearButton() && clearTabbable() && !triggerTpl()) {
+        <!--
+            Крестик в порядке обхода — соседняя кнопка поверх своего места в строке, а не кнопка в
+            кнопке: вложенную кнопку скринридер не объявляет, а её Enter открывал бы список.
+        -->
+        <rt-icon-button
+            rtElem="clear"
+            qa-dataid="select-clear"
+            icon="ico-close"
+            size="sm"
+            variant="ghost"
+            iconColor="muted"
+            [rtMod]="{ outside: true }"
+            [ariaLabel]="t().uiClear"
+            [tabIndex]="0"
+            (clicked)="clear($event)" />
+    }
+
+    @if (floatingLabel(); as label) {
+        <!-- Подпись — картинка поверх указателя: клик проходит сквозь неё в кнопку, имя кнопке она даёт по aria-labelledby. -->
+        <span #floatingLabelEl rtElem="floating-label" qa-dataid="select-floating-label" aria-hidden="true" [id]="floatingLabelId">
+            {{ label }}
+        </span>
+    }
 
     <ng-template #panelTpl>
         <div rtElem="panel" role="listbox" [style.--rt-select-panel-max-height]="panelMaxHeight()" [attr.aria-label]="ariaLabel()">
@@ -102,7 +140,15 @@
                                 <span rtElem="toggle-space"></span>
                             }
                         }
-                        <span rtElem="option-label">{{ row.option.label }}</span>
+                        @if (optionTpl(); as tpl) {
+                            <span rtElem="option-content" qa-dataid="select-option-content">
+                                <ng-container
+                                    [ngTemplateOutlet]="tpl.templateRef"
+                                    [ngTemplateOutletContext]="{ $implicit: row.option, selected: row.option.value === value() }" />
+                            </span>
+                        } @else {
+                            <span rtElem="option-label">{{ row.option.label }}</span>
+                        }
                         @if (row.option.value === value()) {
                             <rt-icon rtElem="check" name="check" size="sm" aria-hidden="true" />
                         }

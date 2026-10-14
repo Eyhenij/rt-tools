@@ -1,3 +1,5 @@
+import { TemplateRef } from '@angular/core';
+
 /**
  * Модель `<rt-select>`: один корневой неймспейс с префиксом `I`.
  * Generic-параметр `TValue` повторяет тип значения, который сидит в опциях.
@@ -43,6 +45,19 @@ export namespace IRtSelect {
         readonly label: string;
         /** Отключён ли выбор. */
         readonly isDisabled: boolean;
+    }
+
+    /** Обстановка шаблона строки списка: опция приходит как `$implicit`. */
+    export interface OptionContext<TValue> {
+        readonly $implicit: Option<TValue>;
+        /** Выбрана ли опция. */
+        readonly selected: boolean;
+    }
+
+    /** Шаблон строки с выбранной опцией: так указатель рисует выбранное той же разметкой, что и список. */
+    export interface ChosenView<TValue> {
+        readonly templateRef: TemplateRef<OptionContext<TValue>>;
+        readonly context: OptionContext<TValue>;
     }
 
     /** Обстановка шаблона указателя: состояние приходит как `$implicit`. */

@@ -1,17 +1,23 @@
 import { BooleanInput } from '@angular/cdk/coercion';
+import { NgTemplateOutlet } from '@angular/common';
 import {
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
     computed,
+    contentChild,
+    forwardRef,
     input,
     InputSignal,
     InputSignalWithTransform,
     output,
     OutputEmitterRef,
+    signal,
     Signal,
     ViewEncapsulation,
+    WritableSignal,
 } from '@angular/core';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
@@ -20,6 +26,7 @@ import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
 import { IRtToggleButtonGroup } from './rt-toggle-button-group.model';
+import { RtToggleButtonOptionDirective } from './rt-toggle-button-option.directive';
 
 const BEM_BLOCK: string = 'rt-toggle-button-group';
 
@@ -33,6 +40,11 @@ const ICON_SIZE_BY_SIZE: Readonly<Record<IRtToggleButtonGroup.Size, IRtIcon.Size
     md: 'sm',
     lg: 'sm',
 });
+
+/** Форма записала набор, а не одно значение: так пишет множественный выбор. */
+function isMany<T>(value: IRtToggleButtonGroup.FormValue<T>): value is ReadonlyArray<T> {
+    return Array.isArray(value);
+}
 
 /**
  * Generic segmented control кита.
@@ -59,6 +71,9 @@ const ICON_SIZE_BY_SIZE: Readonly<Record<IRtToggleButtonGroup.Size, IRtIcon.Size
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
     imports: [
+        // angular
+        NgTemplateOutlet,
+
         // standalone components / directives
         RtIconComponent,
         RtTooltipDirective,
@@ -66,15 +81,63 @@ const ICON_SIZE_BY_SIZE: Readonly<Record<IRtToggleButtonGroup.Size, IRtIcon.Size
         ElemDirective,
         ModDirective,
     ],
+    providers: [
+        {
+            provide: NG_VALUE_ACCESSOR,
+            useExisting: forwardRef((): typeof RtToggleButtonGroupComponent => RtToggleButtonGroupComponent),
+            multi: true,
+        },
+    ],
     hostDirectives: [{ directive: RtRadiusDirective, inputs: ['radius'] }],
     host: {
         class: BEM_BLOCK,
         '[class.rt-toggle-button-group--full-width]': 'fullWidth()',
+        '[class.rt-toggle-button-group--wrap]': "layout() === 'wrap'",
+        '[class.rt-toggle-button-group--column]': "layout() === 'column'",
         '[class.rt-toggle-button-group--md]': "size() === 'md'",
         '[class.rt-toggle-button-group--lg]': "size() === 'lg'",
     },
 })
-export class RtToggleButtonGroupComponent<T = string> {
+export class RtToggleButtonGroupComponent<T = string> implements ControlValueAccessor {
+    #onChange: (value: IRtToggleButtonGroup.FormValue<T>) => void = (): void => undefined;
+    #onTouched: () => void = (): void => undefined;
+
+    /** Группа связана с формой: нажатие тогда само переносит подсветку, без ответа хозяина. */
+    #bound: boolean = false;
+
+    /** Значение, записанное формой или нажатием; `undefined`, пока форма ничего не писала. */
+    readonly #formValue: WritableSignal<{ readonly value: IRtToggleButtonGroup.FormValue<T> } | undefined> = signal<
+        { readonly value: IRtToggleButtonGroup.FormValue<T> } | undefined
+    >(undefined);
+
+    /** Отключение, назначенное формой через CVA (`setDisabledState`). */
+    readonly #disabledByForm: WritableSignal<boolean> = signal<boolean>(false);
+
+    /** Выбранное при одиночном выборе: слово формы, если она его сказала, иначе вход. */
+    readonly #single: Signal<T | undefined> = computed((): T | undefined => {
+        const written: { readonly value: IRtToggleButtonGroup.FormValue<T> } | undefined = this.#formValue();
+        if (written === undefined) {
+            return this.value();
+        }
+
+        return isMany(written.value) ? undefined : (written.value ?? undefined);
+    });
+
+    /** Набор выбранного при множественном выборе: слово формы, если она его сказала, иначе вход. */
+    readonly #many: Signal<ReadonlyArray<T>> = computed((): ReadonlyArray<T> => {
+        const written: { readonly value: IRtToggleButtonGroup.FormValue<T> } | undefined = this.#formValue();
+        if (written === undefined) {
+            return this.values();
+        }
+
+        return isMany(written.value) ? written.value : [];
+    });
+
+    protected readonly isDisabled: Signal<boolean> = computed((): boolean => this.disabled() || this.#disabledByForm());
+
+    /** Своя разметка сегмента; без неё кнопка рисует значок и подпись. */
+    protected readonly optionTpl: Signal<RtToggleButtonOptionDirective<T> | undefined> = contentChild(RtToggleButtonOptionDirective);
+
     protected readonly iconSize: Signal<IRtIcon.Size> = computed((): IRtIcon.Size => ICON_SIZE_BY_SIZE[this.size()]);
 
     /**
@@ -87,15 +150,15 @@ export class RtToggleButtonGroupComponent<T = string> {
     protected readonly items: Signal<ReadonlyArray<IRtToggleButtonGroup.Rendered<T>>> = computed(
         (): ReadonlyArray<IRtToggleButtonGroup.Rendered<T>> => {
             const multiple: boolean = this.multiple();
-            const chosen: ReadonlyArray<T> = this.values();
-            const single: T | undefined = this.value();
-            const groupDisabled: boolean = this.disabled();
+            const chosen: ReadonlyArray<T> = this.#many();
+            const single: T | undefined = this.#single();
+            const groupDisabled: boolean = this.isDisabled();
 
-            return this.options().map((option: IRtToggleButtonGroup.Option<T>): IRtToggleButtonGroup.Rendered<T> => ({
-                option,
-                active: multiple ? chosen.includes(option.value) : single === option.value,
-                disabled: groupDisabled || !!option.disabled,
-            }));
+            return this.options().map((option: IRtToggleButtonGroup.Option<T>): IRtToggleButtonGroup.Rendered<T> => {
+                const active: boolean = multiple ? chosen.includes(option.value) : single === option.value;
+
+                return { option, active, disabled: groupDisabled || !!option.disabled, context: { $implicit: option, active } };
+            });
         }
     );
 
@@ -131,6 +194,12 @@ export class RtToggleButtonGroupComponent<T = string> {
         transform: booleanAttribute,
     });
 
+    /**
+     * Раскладка сегментов: одна строка, перенос на следующую или столбик. Перенос нужен длинным
+     * спискам во всплывающих окнах, столбик — спискам вроде дней недели.
+     */
+    public readonly layout: InputSignal<IRtToggleButtonGroup.Layout> = input<IRtToggleButtonGroup.Layout>('row');
+
     public readonly valueChange: OutputEmitterRef<T> = output<T>();
 
     /**
@@ -138,6 +207,23 @@ export class RtToggleButtonGroupComponent<T = string> {
      * своим состоянием сам, и каждый сводит по-своему.
      */
     public readonly valuesChange: OutputEmitterRef<ReadonlyArray<T>> = output<ReadonlyArray<T>>();
+
+    public writeValue(value: IRtToggleButtonGroup.FormValue<T>): void {
+        this.#formValue.set({ value });
+    }
+
+    public registerOnChange(fn: (value: IRtToggleButtonGroup.FormValue<T>) => void): void {
+        this.#bound = true;
+        this.#onChange = fn;
+    }
+
+    public registerOnTouched(fn: () => void): void {
+        this.#onTouched = fn;
+    }
+
+    public setDisabledState(disabled: boolean): void {
+        this.#disabledByForm.set(disabled);
+    }
 
     protected onOptionClick(item: IRtToggleButtonGroup.Rendered<T>): void {
         if (item.disabled) {
@@ -147,16 +233,28 @@ export class RtToggleButtonGroupComponent<T = string> {
         const option: IRtToggleButtonGroup.Option<T> = item.option;
 
         if (!this.multiple()) {
+            this.#commit(option.value);
             this.valueChange.emit(option.value);
 
             return;
         }
 
-        const chosen: ReadonlyArray<T> = this.values();
+        const chosen: ReadonlyArray<T> = this.#many();
         const next: T[] = chosen.includes(option.value)
             ? chosen.filter((one: T): boolean => one !== option.value)
             : [...chosen, option.value];
 
+        this.#commit(next);
         this.valuesChange.emit(next);
+    }
+
+    /** Нажатие уходит в форму, если группа с ней связана; без формы подсветку ведёт хозяин входами. */
+    #commit(value: IRtToggleButtonGroup.FormValue<T>): void {
+        if (!this.#bound) {
+            return;
+        }
+        this.#formValue.set({ value });
+        this.#onChange(value);
+        this.#onTouched();
     }
 }

@@ -34,3 +34,6 @@ export const States: TStory = {
 export const Presets: TStory = { args: { part: 'presets' } };
 
 export const Themes: TStory = { args: { part: 'themes' } };
+
+/** Список без формы: отметку ставит вход `checked`, смену сообщает `checkedChange`. */
+export const Standalone: TStory = { args: { part: 'standalone' } };

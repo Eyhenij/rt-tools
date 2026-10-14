@@ -218,4 +218,24 @@ describe('RtCheckboxComponent', (): void => {
     it('идентификатор кладётся на кнопку — по нему связывается внешний label', (): void => {
         expect(control(setup({ inputId: 'agree' }))?.attributes['id']).toBe('agree');
     });
+
+    describe('без формы', (): void => {
+        it('SC-UKV-867 — отметку ставит вход checked', (): void => {
+            expect(control(setup({ checked: true }))?.attributes['aria-checked']).toBe('true');
+            expect(control(setup({ checked: false }))?.attributes['aria-checked']).toBe('false');
+        });
+
+        it('SC-UKV-867 — нажатие сообщает новую отметку выходом checkedChange', (): void => {
+            const fixture: ComponentFixture<RtCheckboxComponent> = setup({ checked: false });
+            const seen: boolean[] = [];
+            fixture.componentInstance.checkedChange.subscribe((value: boolean): number => seen.push(value));
+
+            (control(fixture)?.nativeElement as HTMLButtonElement).click();
+            setInputs(fixture, { checked: true });
+            fixture.detectChanges();
+            (control(fixture)?.nativeElement as HTMLButtonElement).click();
+
+            expect(seen).toEqual([true, false]);
+        });
+    });
 });

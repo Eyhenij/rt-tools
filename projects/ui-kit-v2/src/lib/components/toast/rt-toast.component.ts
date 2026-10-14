@@ -1,5 +1,7 @@
 import { BooleanInput } from '@angular/cdk/coercion';
+import { NgComponentOutlet } from '@angular/common';
 import {
+    afterNextRender,
     AfterViewInit,
     booleanAttribute,
     ChangeDetectionStrategy,
@@ -9,6 +11,7 @@ import {
     ElementRef,
     HostBinding,
     inject,
+    Injector,
     input,
     InputSignal,
     InputSignalWithTransform,
@@ -24,13 +27,21 @@ import {
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
 import { RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
-import { INotification } from '@rt-tools/ui-kit-v2/core';
+import { INotification, NotificationRef } from '@rt-tools/ui-kit-v2/core';
 
 import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
+import { RtCopyValueComponent } from '@rt-tools/ui-kit-v2/copy-value';
+import { RtProgressBarComponent } from '@rt-tools/ui-kit-v2/progress-bar';
 import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
 import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
-import { RT_TOAST_SEVERITY_ICONS, RT_TOASTER_GAP_PX, IRtToaster } from './rt-toaster.model';
+import { RT_TOAST_DATA, RT_TOAST_SEVERITY_ICONS, RT_TOASTER_GAP_PX, IRtToaster } from './rt-toaster.model';
+
+/** Что нужно своему компоненту тоста: данные и ручка. Меняются они реже прочих полей тоста. */
+interface IToastComponentInputs {
+    readonly data: unknown;
+    readonly ref: NotificationRef | undefined;
+}
 
 const BEM_BLOCK: string = 'rt-toast';
 
@@ -42,7 +53,16 @@ const UNMOUNT_DELAY_MS: number = 200;
     styleUrl: './rt-toast.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
-    imports: [RtButtonDirective, RtIconComponent, RtIconButtonComponent, BlockDirective, ElemDirective],
+    imports: [
+        NgComponentOutlet,
+        RtButtonDirective,
+        RtCopyValueComponent,
+        RtIconComponent,
+        RtIconButtonComponent,
+        RtProgressBarComponent,
+        BlockDirective,
+        ElemDirective,
+    ],
     host: {
         class: BEM_BLOCK,
         role: 'status',
@@ -51,6 +71,20 @@ const UNMOUNT_DELAY_MS: number = 200;
 })
 export class RtToastComponent implements AfterViewInit, OnDestroy {
     readonly #host: ElementRef<HTMLElement> = inject(ElementRef);
+
+    readonly #injector: Injector = inject(Injector);
+
+    /**
+     * Данные и ручка своего компонента — отдельным сигналом с равенством по ним: живая доля
+     * меняет тост на каждом тике, и без этого компонент создавался бы заново вместе с инжектором.
+     */
+    readonly #componentInputs: Signal<IToastComponentInputs> = computed(
+        (): IToastComponentInputs => ({ data: this.toast().data, ref: this.toast().ref }),
+        {
+            equal: (left: IToastComponentInputs, right: IToastComponentInputs): boolean =>
+                left.data === right.data && left.ref === right.ref,
+        }
+    );
 
     readonly #severityIcons: Readonly<Record<INotification.Severity, IRtIcon.Name>> = inject(RT_TOAST_SEVERITY_ICONS);
 
@@ -103,6 +137,25 @@ export class RtToastComponent implements AfterViewInit, OnDestroy {
         const duration: number | null | undefined = this.toast().duration;
         return duration === undefined ? this.duration() : duration;
     });
+
+    /** Инжектор своего компонента: данные токеном `RT_TOAST_DATA` и ручка `NotificationRef`. */
+    protected readonly componentInjector: Signal<Injector> = computed((): Injector => {
+        const inputs: IToastComponentInputs = this.#componentInputs();
+
+        return Injector.create({
+            providers: [
+                { provide: RT_TOAST_DATA, useValue: inputs.data },
+                { provide: NotificationRef, useValue: inputs.ref ?? null },
+            ],
+            parent: this.#injector,
+        });
+    });
+
+    /** Живая доля задачи: число 0–100 — полоса стоит, `null` и пусто — её нет. */
+    protected readonly progressValue: Signal<number | null> = computed((): number | null => this.toast().progressValue ?? null);
+
+    /** Подробности раскрыты. */
+    protected readonly detailsOpen: WritableSignal<boolean> = signal<boolean>(false);
 
     protected readonly showProgress: Signal<boolean> = computed((): boolean => this.toast().progress === true && this.lifetime() !== null);
 
@@ -189,6 +242,23 @@ export class RtToastComponent implements AfterViewInit, OnDestroy {
                 this.#deleteToast('replaced');
             }
         });
+
+        // Закрытый ручкой приложения — тоже.
+        effect((): void => {
+            if (this.#mounted() && this.toast().dismissRequested === true) {
+                this.#deleteToast('dismiss');
+            }
+        });
+
+        // Новый текст, доля или раскрытые подробности меняют высоту: стопка пересчитывает сдвиги.
+        effect((): void => {
+            const toast: IRtToaster.Toast = this.toast();
+            this.detailsOpen();
+            if (!this.#mounted() || toast.replaced === true) {
+                return;
+            }
+            afterNextRender((): void => this.#remeasure(), { injector: this.#injector });
+        });
     }
 
     public ngAfterViewInit(): void {
@@ -204,6 +274,9 @@ export class RtToastComponent implements AfterViewInit, OnDestroy {
     public ngOnDestroy(): void {
         clearTimeout(this.#timeoutId);
         clearTimeout(this.#unmountTimeoutId);
+        // Тост ушёл не своим путём — вместе с тостером. Ушедший своим путём ручку уже закрыл, и
+        // повторная отметка ничего не делает.
+        this.toast().ref?.markClosed('destroyed');
     }
 
     protected onAction(): void {
@@ -220,22 +293,48 @@ export class RtToastComponent implements AfterViewInit, OnDestroy {
         this.#deleteToast('close');
     }
 
-    /** Уход тоста. Причина — для колбэка приложения; ушедший по действию её не сообщает: `null`. */
-    #deleteToast(reason: INotification.DismissReason | null): void {
+    protected toggleDetails(): void {
+        this.detailsOpen.update((open: boolean): boolean => !open);
+    }
+
+    /**
+     * Уход тоста. Причину получает ручка; колбэк приложения — только уход без действия и без
+     * `dismiss()`: действие уже вызвало свой обработчик, а закрыло тост само приложение.
+     */
+    #deleteToast(reason: INotification.CloseReason | null): void {
         if (this.#removed()) {
             return;
         }
 
         this.#removed.set(true);
 
-        if (reason !== null) {
+        if (reason !== null && reason !== 'action' && reason !== 'dismiss' && reason !== 'destroyed') {
             this.toast().onDismiss?.(reason);
         }
+
+        this.toast().ref?.markClosed(reason ?? 'action');
 
         this.#offsetBeforeRemove.set(this.#offset());
         this.heightRemoved.emit(this.toast().id);
 
         this.#unmountTimeoutId = setTimeout((): void => this.dismissed.emit(this.toast().id), UNMOUNT_DELAY_MS);
+    }
+
+    /** Высота по содержимому: своя высота стопки на время замера снимается. */
+    #remeasure(): void {
+        if (this.#removed()) {
+            return;
+        }
+
+        const host: HTMLElement = this.#host.nativeElement;
+        host.style.height = 'auto';
+        const height: number = host.offsetHeight;
+        host.style.height = '';
+
+        if (height !== this.#initialHeight()) {
+            this.#initialHeight.set(height);
+            this.heightAdded.emit({ toastId: this.toast().id, height });
+        }
     }
 
     #startTimer(): void {

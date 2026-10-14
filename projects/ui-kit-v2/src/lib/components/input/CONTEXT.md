@@ -9,15 +9,23 @@
 ```
 
 Свои входы поверх общих из [`RtFormControlBase`](../form-control/CONTEXT.md)
-(`size`, `disabled`, `controlId`, `ariaLabel`, `clearable`, `bordered`):
+(`size`, `disabled`, `controlId`, `ariaLabel`, `clearable`, `clearTabbable`, `bordered`):
 
-| вход                     | тип                                                  | умолчание |
-| ------------------------ | ---------------------------------------------------- | --------- |
-| `type`                   | `'text' \| 'password' \| 'email' \| 'time' \| 'url'` | `'text'`  |
-| `placeholder`            | `string`                                             | `''`      |
-| `iconLeft` / `iconRight` | `IRtIcon.Name \| null`                               | `null`    |
-| `passwordToggle`         | `boolean`                                            | `false`   |
-| `autocomplete`           | `string \| null`                                     | `null`    |
+| вход                                   | тип                                                  | умолчание |
+| -------------------------------------- | ---------------------------------------------------- | --------- |
+| `type`                                 | `'text' \| 'password' \| 'email' \| 'time' \| 'url'` | `'text'`  |
+| `placeholder`                          | `string`                                             | `''`      |
+| `iconLeft` / `iconRight`               | `IRtIcon.Name \| null`                               | `null`    |
+| `iconLeftAction` / `iconRightAction`   | `boolean`                                            | `false`   |
+| `iconLeftTooltip` / `iconRightTooltip` | `string \| null`                                     | `null`    |
+| `floatingLabel`                        | `string \| null`                                     | `null`    |
+| `passwordToggle`                       | `boolean`                                            | `false`   |
+| `autocomplete`                         | `string \| null`                                     | `null`    |
+
+| выход                              | тип          |
+| ---------------------------------- | ------------ |
+| `iconLeftClick` / `iconRightClick` | `MouseEvent` |
+| `cleared`                          | `void`       |
 
 Значение — `string`.
 
@@ -27,8 +35,15 @@
 переключателем крестика не будет: показать оба некуда.
 
 Крестик показывается при выполнении трёх условий сразу: `clearable` (по умолчанию включён),
-в поле есть значение, поле не отключено. Из таб-порядка он исключён (`tabindex="-1"`) — до
-вспомогательного аффорданса не должны доходить табом.
+в поле есть значение, поле не отключено. Из порядка Tab он исключён, пока поле не попросит
+`clearTabbable`. После сброса приходит `cleared` — когда пустое значение уже ушло в форму.
+
+**Иконка с `iconLeftAction` или `iconRightAction` становится кнопкой.** Она берёт фокус с
+клавиатуры, нажимается мышью, Enter и пробелом и показывает подсказку из `iconLeftTooltip`. Без
+входа иконка остаётся картинкой.
+
+**`floatingLabel` — подпись на рамке.** Пустое поле в покое показывает подпись на месте подсказки,
+значение или фокус поднимают её на рамку, и рамка под ней разрывается. Высота поля не меняется.
 
 ## Как этим пользоваться
 

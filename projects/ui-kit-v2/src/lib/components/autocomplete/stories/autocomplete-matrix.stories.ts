@@ -70,3 +70,39 @@ export const PanelEmpty: TStory = {
         await openStoryOverlay(canvasElement, { text: 'Мо', within: 'input' });
     },
 };
+
+/** Первая загрузка: строка со спиннером вместо пустого результата — вход `loading`. */
+export const PanelLoading: TStory = {
+    parameters: { snapshot: { fullPage: true } },
+    args: { part: 'panel', panel: 'loading-first' },
+    play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
+        await openStoryOverlay(canvasElement, { text: 'Мо', within: 'input' });
+    },
+};
+
+/** Подгрузка следующей страницы: спиннер под уже показанным списком. */
+export const PanelLoadingMore: TStory = {
+    parameters: { snapshot: { fullPage: true } },
+    args: { part: 'panel', panel: 'loading-more' },
+    play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
+        await openStoryOverlay(canvasElement, { text: 'Мо', within: 'input' });
+    },
+};
+
+/** Свой пустой результат — вход `emptyTemplate`, в обстановке набранная строка; есть и `emptyText`. */
+export const PanelEmptyOwn: TStory = {
+    parameters: { snapshot: { fullPage: true } },
+    args: { part: 'panel', panel: 'empty-own' },
+    play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
+        await openStoryOverlay(canvasElement, { text: 'Мо', within: 'input' });
+    },
+};
+
+/** Живая постраничность: долистайте до дна — `scrolledToEnd` просит страницу, `loading` показывает спиннер. */
+export const PanelPaged: TStory = {
+    parameters: { snapshot: { fullPage: true } },
+    args: { part: 'panel', panel: 'paged' },
+    play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
+        await openStoryOverlay(canvasElement, { text: 'Мо', within: 'input' });
+    },
+};

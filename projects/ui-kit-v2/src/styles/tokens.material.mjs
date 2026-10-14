@@ -366,4 +366,38 @@ export const material = [
     { name: `--rt-icon-button-disabled-opacity`, value: `1` },
     { name: `--rt-icon-button-disabled-color`, value: `var(--rt-color-text-disabled)` },
     { name: `--rt-icon-button-disabled-fill`, value: `0%` },
+    {
+        lead: `    /* Обведённое поле Material: прозрачное, рамка цвета outline темы, фокус — рамка в два
+       пикселя цветом марки без внешнего кольца. Вторая линия рамки фокуса — внутренняя тень. */`,
+        space: true,
+        name: `--rt-input-color-bg`,
+        value: `transparent`,
+    },
+    { name: `--rt-input-color-border`, value: `var(--mat-sys-outline, var(--rt-mat-neutral-60))` },
+    { name: `--rt-input-focus-shadow`, value: `inset 0 0 0 1px var(--rt-input-color-border-focus)` },
+    { name: `--rt-input-focus-shadow-error`, value: `inset 0 0 0 1px var(--rt-input-color-border-error)` },
+    {
+        lead: `    /* Размер поля Material при плотности 0: высота 56 px, значение 16 px. Меньшую плотность
+       назначает атрибут \`data-rt-density\` на поле или на любом предке — правила в \`_density.scss\`. */`,
+        space: true,
+        name: `--rt-input-height-md`,
+        value: `calc(var(--rt-size-12) + var(--rt-size-2))`,
+    },
+    { name: `--rt-input-height`, value: `var(--rt-input-height-md)` },
+    {
+        lead: `    /* Крупная ступень \`size\` не ниже средней высоты набора: 48 px кита под набором вышли бы ниже
+       поля по умолчанию (56 px). Малая ступень остаётся ступенью кита — по ней стоят поиск списка и
+       правка на месте. */`,
+        space: true,
+        name: `--rt-input-height-lg`,
+        value: `max(var(--rt-control-height-lg), var(--rt-input-height-md))`,
+    },
+    { name: `--rt-input-font-size`, value: `var(--rt-text-md)` },
+    {
+        lead: `    /* Звёздочка обязательного поля — цвета подписи, как у поля Material; цвет ошибки она берёт
+       только у недействительного поля, правилом самого поля. */`,
+        space: true,
+        name: `--rt-field-required-color`,
+        value: `currentcolor`,
+    },
 ];

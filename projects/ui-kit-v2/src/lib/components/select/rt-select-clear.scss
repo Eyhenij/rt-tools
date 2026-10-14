@@ -1,0 +1,31 @@
+@layer rt-kit.components {
+    /* Крестик в порядке обхода (`clearTabbable`) — отдельный лист стилей компонента: основной лист
+       стоит у порога в 8 КБ, который Angular по умолчанию ставит приложению. Крестик — соседняя
+       кнопка поверх своего места в строке указателя: место держит пустая ячейка той же ширины, и
+       подпись выбора не заходит под крестик. */
+    .rt-select {
+        --rt-select-chevron-width: var(--rt-size-4);
+
+        &__clear-slot {
+            width: var(--rt-control-height-sm);
+            height: var(--rt-control-height-sm);
+            flex-shrink: 0;
+        }
+
+        &__clear--outside {
+            position: absolute;
+            top: 50%;
+            right: calc(var(--rt-input-padding-x) + var(--rt-input-border-width) + var(--rt-select-chevron-width) + var(--rt-space-sm));
+            transform: translateY(-50%);
+        }
+
+        &--readonly &__clear--outside {
+            display: none;
+        }
+
+        /* Под материальным набором стрелка — треугольник шириной 10 px, а не значок. */
+        :is(.rt-preset-material, [data-preset='material']) & {
+            --rt-select-chevron-width: 10px;
+        }
+    }
+}

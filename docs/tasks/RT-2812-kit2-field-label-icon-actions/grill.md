@@ -34,6 +34,16 @@ The request the owner's word answers, sent by the application's session (five op
 Before the owner's word I offered the names below, one task, version 0.24.0; the owner answered
 with the line above.
 
+The application's session then sent two more requests (badge, toggle group, divider, progress bar;
+then tabs, expansion, toast, layout, autocomplete, checkbox, radio — 26 items in all, retold in the
+progress). The owner's word on them, 13 October 2026, verbatim:
+
+> какие несколько недель это минимальные правки?!
+
+> какие несколько дней лол тут пару часов макс?!
+
+> все правки в этой ветке, каждый компонент после правок расширить сторис и показать мне с пояснением что сделано
+
 ## What the tree already has
 
 - `rt-input` (`projects/ui-kit-v2/src/lib/components/input/`): `iconLeft` / `iconRight` are drawn as
@@ -98,6 +108,23 @@ input states for the label.
 - **`clearable` default stays `true`** — changing it removes the cross from every existing form;
   the behaviour is documented in the Overview of the input.
 - **Version 0.24.0** — new public API, nothing removed.
+
+**Requests 2 and 3 — an epic or this task?**
+«все правки в этой ветке» — all items go into RT-2812, no epic; each component gets its stories
+extended and is shown to the owner with an explanation before the next is counted done.
+
+**Request 4 of the application — this branch?**
+«бери» (13 October 2026) — request 4 joins RT-2812. It acts under the material preset only. The
+`rt-field` label lies inside the control for `rt-input`, `rt-textarea`, `rt-input-number` and
+`rt-select`: at the placeholder while empty and unfocused, on the top border when filled or focused.
+The field height does not change. The required asterisk takes the label colour, and the error colour
+only when the field is invalid. The `rt-select` triangle turns 180° while the list is open. Outside the
+preset nothing changes.
+
+**The owner's look at the label inside the field**
+«по ссылке аутлайн инпуты лейбл уходит на бордер но нет прмежутка в бордере для лейбла как у
+материал еще нужна вьюха для не аутлайнд инпутов» — the outline border is broken under the raised
+label as in Material, and the filled fields get their own showing.
 
 ## What is left unclear
 

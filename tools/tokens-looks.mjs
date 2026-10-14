@@ -110,6 +110,10 @@ export function mixOf(value) {
 
 /** A colour parsed: r, g, b and the share of opacity. */
 export function parseColor(text) {
+    // A transparent ground lets the page through: the contrast is then measured on the page.
+    if (/^transparent$/i.test(text)) {
+        return { r: 0, g: 0, b: 0, a: 0 };
+    }
     const hex = text.match(/^#([0-9a-f]{3,8})$/i)?.[1];
     if (hex) {
         const full = hex.length <= 4 ? [...hex].map((char) => char + char).join('') : hex;

@@ -311,4 +311,121 @@ describe('RtInputComponent', (): void => {
             expect(qa(setup(), 'input-control')?.attributes['aria-invalid']).toBeUndefined();
         });
     });
+
+    describe('подпись на рамке', (): void => {
+        it('без входа подписи нет и класса тоже', (): void => {
+            const fixture: ComponentFixture<RtInputComponent> = setup();
+
+            expect(qa(fixture, 'input-control')).not.toBeNull();
+            expect(qa(fixture, 'input-floating-label')).toBeNull();
+            expect(hostClasses(fixture)).not.toContain('rt-input--floating');
+        });
+
+        it('SC-UKV-858 — у пустого поля подпись лежит, поле не помечено заполненным', (): void => {
+            const fixture: ComponentFixture<RtInputComponent> = setup({ floatingLabel: 'Бюджет', placeholder: '0' });
+
+            expect(textOf(qa(fixture, 'input-floating-label'))).toBe('Бюджет');
+            expect(hostClasses(fixture)).toContain('rt-input--floating');
+            expect(hostClasses(fixture)).not.toContain('rt-input--filled');
+        });
+
+        it('SC-UKV-859 — значение помечает поле заполненным, и подпись поднимается', (): void => {
+            const fixture: ComponentFixture<RtInputComponent> = setup({ floatingLabel: 'Бюджет' });
+            type(fixture, '120');
+
+            expect(hostClasses(fixture)).toContain('rt-input--filled');
+        });
+
+        it('SC-UKV-861 — подпись называет поле, когда своего имени нет', (): void => {
+            const fixture: ComponentFixture<RtInputComponent> = setup({ floatingLabel: 'Бюджет' });
+            const labelId: string = (qa(fixture, 'input-floating-label')?.nativeElement as HTMLElement).id;
+
+            expect(labelId).not.toBe('');
+            expect(field(fixture).getAttribute('aria-labelledby')).toBe(labelId);
+            expect(field(setup({ floatingLabel: 'Бюджет', ariaLabel: 'Бюджет месяца' })).getAttribute('aria-labelledby')).toBeNull();
+        });
+    });
+
+    describe('иконки-кнопки', (): void => {
+        it('SC-UKV-864 — без признака иконки остаются картинками', (): void => {
+            const fixture: ComponentFixture<RtInputComponent> = setup({ iconLeft: 'ico-search', iconRight: 'ico-search' });
+
+            expect(el(fixture, '.rt-input__icon-left')).not.toBeNull();
+            expect(qa(fixture, 'input-icon-left-action')).toBeNull();
+            expect(qa(fixture, 'input-icon-right-action')).toBeNull();
+        });
+
+        it('SC-UKV-862 — нажатие левой иконки уходит в её выход и не уводит фокус в поле', (): void => {
+            const fixture: ComponentFixture<RtInputComponent> = setup({ iconLeft: 'ico-search', iconLeftAction: true });
+            const presses: MouseEvent[] = [];
+            fixture.componentInstance.iconLeftClick.subscribe((event: MouseEvent): number => presses.push(event));
+            const button: HTMLButtonElement = (qa(fixture, 'input-icon-left-action')?.nativeElement as HTMLElement).querySelector(
+                'button'
+            ) as HTMLButtonElement;
+
+            const down: MouseEvent = new MouseEvent('mousedown', { bubbles: true, cancelable: true });
+            button.dispatchEvent(down);
+            button.click();
+
+            expect(presses.length).toBe(1);
+            expect(down.defaultPrevented).toBe(false);
+            expect(button.getAttribute('tabindex')).toBe('0');
+        });
+
+        it('SC-UKV-863 — подсказка правой иконки-кнопки даёт ей имя', (): void => {
+            const fixture: ComponentFixture<RtInputComponent> = setup({
+                iconRight: 'ico-search',
+                iconRightAction: true,
+                iconRightTooltip: 'Минимум 3 символа',
+            });
+            const button: HTMLButtonElement = (qa(fixture, 'input-icon-right-action')?.nativeElement as HTMLElement).querySelector(
+                'button'
+            ) as HTMLButtonElement;
+
+            expect(button.getAttribute('aria-label')).toBe('Минимум 3 символа');
+        });
+
+        it('правая иконка поля пароля с переключателем кнопкой не становится', (): void => {
+            const fixture: ComponentFixture<RtInputComponent> = setup({
+                type: 'password',
+                passwordToggle: true,
+                iconRight: 'ico-search',
+                iconRightAction: true,
+            });
+
+            expect(qa(fixture, 'input-password-toggle')).not.toBeNull();
+            expect(qa(fixture, 'input-icon-right-action')).toBeNull();
+        });
+    });
+
+    describe('крестик', (): void => {
+        function cross(fixture: ComponentFixture<RtInputComponent>): HTMLButtonElement {
+            return (qa(fixture, 'input-clear')?.nativeElement as HTMLElement).querySelector('button') as HTMLButtonElement;
+        }
+
+        it('SC-UKV-865 — крестик вне порядка Tab, пока поле не попросит', (): void => {
+            const plain: ComponentFixture<RtInputComponent> = setup();
+            type(plain, 'а');
+            expect(cross(plain).getAttribute('tabindex')).toBe('-1');
+
+            const tabbable: ComponentFixture<RtInputComponent> = setup({ clearTabbable: true });
+            type(tabbable, 'а');
+            expect(cross(tabbable).getAttribute('tabindex')).toBe('0');
+        });
+
+        it('SC-UKV-866 — сброс сообщается один раз после того, как пустое значение ушло в форму', (): void => {
+            const fixture: ComponentFixture<InputHostComponent> = createRtFixture(InputHostComponent);
+            fixture.componentInstance.control.setValue('Анна');
+            fixture.detectChanges();
+            const seen: Array<string | null> = [];
+            const input: RtInputComponent = fixture.debugElement.query(
+                (node: DebugElement): boolean => node.componentInstance instanceof RtInputComponent
+            ).componentInstance as RtInputComponent;
+            input.cleared.subscribe((): number => seen.push(fixture.componentInstance.control.value));
+
+            (qa(fixture, 'input-clear')?.nativeElement as HTMLElement).querySelector('button')?.click();
+
+            expect(seen).toEqual(['']);
+        });
+    });
 });

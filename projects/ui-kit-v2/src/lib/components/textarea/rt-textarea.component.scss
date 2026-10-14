@@ -3,6 +3,7 @@
 @layer rt-kit.components {
     .rt-textarea {
         --rt-textarea-radius: var(--rt-input-radius);
+        --rt-textarea-color-border-hover: var(--rt-color-text-primary);
 
         display: block;
         width: 100%;
@@ -47,6 +48,12 @@
                 background-color: var(--rt-input-color-bg-disabled);
                 cursor: not-allowed;
             }
+        }
+
+        /* Наведение в материальном наборе — как у поля Material: рамка цвета текста. Сила правила —
+           на уровне поля, поэтому фокус, ошибка и «без рамки» его перекрывают. */
+        :where(.rt-preset-material, [data-preset='material']) &__control:where(:hover:not(:disabled)) {
+            border-color: var(--rt-textarea-color-border-hover);
         }
 
         &--size--sm &__control {

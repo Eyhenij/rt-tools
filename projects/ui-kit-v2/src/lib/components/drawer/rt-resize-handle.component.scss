@@ -1,0 +1,42 @@
+@layer rt-kit.components {
+    /* rt-resize-handle — полоса на краю панели. Сама линия видна на наведении, фокусе и во время
+       движения; в покое ручка прозрачна, чтобы край панели оставался краем. */
+    .rt-resize-handle {
+        --rt-resize-handle-hit: var(--rt-space-2);
+        --rt-resize-handle-line: var(--rt-border-width-medium);
+        --rt-resize-handle-color: var(--rt-color-action-primary);
+        --rt-resize-handle-duration: var(--rt-duration-fast);
+
+        position: absolute;
+        width: var(--rt-resize-handle-hit);
+        cursor: col-resize;
+        inset-block: 0;
+        outline: none;
+        touch-action: none;
+
+        &:after {
+            position: absolute;
+            width: var(--rt-resize-handle-line);
+            background-color: transparent;
+            content: '';
+            inset-block: 0;
+            inset-inline-start: calc(50% - var(--rt-resize-handle-line) / 2);
+            transition: background-color var(--rt-resize-handle-duration) ease;
+        }
+
+        &:hover:after,
+        &:focus-visible:after,
+        &--dragging:after {
+            background-color: var(--rt-resize-handle-color);
+        }
+
+        /* Ручка стоит внутри панели у её края: панель обрезает всё, что за краем. */
+        &--edge--start {
+            inset-inline-start: 0;
+        }
+
+        &--edge--end {
+            inset-inline-end: 0;
+        }
+    }
+}

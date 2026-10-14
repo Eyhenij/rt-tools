@@ -225,6 +225,28 @@
     --rt-icon-button-disabled-opacity: 1;
     --rt-icon-button-disabled-color: var(--rt-color-text-disabled);
     --rt-icon-button-disabled-fill: 0%;
+
+    /* Обведённое поле Material: прозрачное, рамка цвета outline темы, фокус — рамка в два
+       пикселя цветом марки без внешнего кольца. Вторая линия рамки фокуса — внутренняя тень. */
+    --rt-input-color-bg: transparent;
+    --rt-input-color-border: var(--mat-sys-outline, var(--rt-mat-neutral-60));
+    --rt-input-focus-shadow: inset 0 0 0 1px var(--rt-input-color-border-focus);
+    --rt-input-focus-shadow-error: inset 0 0 0 1px var(--rt-input-color-border-error);
+
+    /* Размер поля Material при плотности 0: высота 56 px, значение 16 px. Меньшую плотность
+       назначает атрибут `data-rt-density` на поле или на любом предке — правила в `_density.scss`. */
+    --rt-input-height-md: calc(var(--rt-size-12) + var(--rt-size-2));
+    --rt-input-height: var(--rt-input-height-md);
+
+    /* Крупная ступень `size` не ниже средней высоты набора: 48 px кита под набором вышли бы ниже
+       поля по умолчанию (56 px). Малая ступень остаётся ступенью кита — по ней стоят поиск списка и
+       правка на месте. */
+    --rt-input-height-lg: max(var(--rt-control-height-lg), var(--rt-input-height-md));
+    --rt-input-font-size: var(--rt-text-md);
+
+    /* Звёздочка обязательного поля — цвета подписи, как у поля Material; цвет ошибки она берёт
+       только у недействительного поля, правилом самого поля. */
+    --rt-field-required-color: currentcolor;
 }
 
 /* The preset under a dark theme: the names the preset reads from Material keep the Material chain,
@@ -268,6 +290,7 @@
     --rt-overlay-menu-bg: var(--mat-menu-container-color, var(--rt-color-bg-surface));
     --rt-overlay-select-selected-bg: color-mix(in srgb, var(--mat-sys-on-surface, var(--rt-mat-neutral-0)) 12%, transparent);
     --rt-overlay-menu-current-bg: color-mix(in srgb, var(--mat-sys-on-surface, var(--rt-mat-neutral-0)) 12%, transparent);
+    --rt-input-color-border: var(--mat-sys-outline, var(--rt-charcoal-border));
 }
 
 :root[data-preset='material'],

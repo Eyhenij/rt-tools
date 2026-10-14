@@ -123,6 +123,8 @@
         --rt-tab-item-border-width: var(--rt-border-width-thin);
         --rt-tab-item-badge-radius: var(--rt-radius-full);
         --rt-tab-item-transition-duration: var(--rt-duration-fast);
+        --rt-tab-item-close-size: var(--rt-size-5);
+        --rt-tab-item-close-radius: var(--rt-radius-full);
 
         position: relative;
         display: inline-flex;
@@ -191,6 +193,31 @@
             font-size: var(--rt-text-xs);
             font-weight: var(--rt-font-weight-medium);
             line-height: var(--rt-leading-none);
+        }
+
+        /* Крестик закрываемой вкладки: подложка при наведении отделяет его от самой вкладки,
+           иначе нажатие по нему читается как выбор вкладки. Отрицательный отступ по вертикали
+           держит высоту вкладки: крестик выше строки подписи, и без него полоса росла бы. */
+        &__close {
+            display: inline-flex;
+            width: var(--rt-tab-item-close-size);
+            height: var(--rt-tab-item-close-size);
+            flex-shrink: 0;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--rt-tab-item-close-radius);
+            color: var(--rt-color-text-muted);
+            cursor: pointer;
+            margin-block: calc(-1 * var(--rt-space-1));
+            margin-inline-end: calc(-1 * var(--rt-space-2));
+            transition:
+                color var(--rt-tab-item-transition-duration) linear,
+                background-color var(--rt-tab-item-transition-duration) linear;
+
+            &:hover {
+                background-color: var(--rt-color-bg-hover);
+                color: var(--rt-color-text-primary);
+            }
         }
 
         &--selected {

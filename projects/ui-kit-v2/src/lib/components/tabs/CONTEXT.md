@@ -18,8 +18,9 @@
 | `direction`         | `'horizontal' \| 'vertical'` | `'horizontal'` |
 | `stretch`           | `boolean`                    | `false`        |
 | `contentScrollable` | `boolean`                    | `true`         |
+| `headerOnly`        | `boolean`                    | `false`        |
 
-Выход: `activeIdChange: IRtTabs.Id`.
+Выходы: `activeIdChange: IRtTabs.Id`, `tabClose: IRtTabs.Id` — просьба закрыть вкладку с `closable`.
 
 ## `[rtTab]`
 
@@ -34,6 +35,9 @@
 | `badgeAriaLabel`                  | `string` — подпись метки для чтения с экрана  | `''`                  |
 | `disabled` / `hidden` / `invalid` | `boolean`                                     | `false`               |
 | `invalidMessage`                  | `string`                                      | `''` → `uiTabInvalid` |
+| `glyph`                           | `string \| null` — значок Material            | `null`                |
+| `tooltip`                         | `string` — подсказка, и у отключённой         | `''`                  |
+| `closable`                        | `boolean`                                     | `false`               |
 
 ## Главное, что нужно знать
 
@@ -61,5 +65,10 @@
 - У невалидной вкладки появляется подсказка с текстом `invalidMessage`.
 - Метка без `badgeTitle` и `badgeAriaLabel` рисуется как прежде: голое значение, без подсказки и
   без подписи. Подсказка метки — своя, на самой метке: подсказка кнопки занята неверной вкладкой.
+- Отключённая вкладка помечена `aria-disabled`, не `disabled`: иначе на неё не навести, и её
+  подсказка не показалась бы. Клик по ней ничего не выбирает.
+- Крестик закрываемой вкладки — `span` с `aria-hidden`, не кнопка: кнопка внутри кнопки-вкладки
+  недопустима. С клавиатуры закрывает `Delete`; фокус после закрытия встаёт на активную вкладку.
+- `headerOnly` убирает панель и `aria-controls` у вкладок; выбор по-прежнему уходит в `activeIdChange`.
 - Стрелки прокрутки шапки есть в разметке всегда — показывает их модификатор `--visible`,
   который выставляется по замеру ширины после отрисовки.
