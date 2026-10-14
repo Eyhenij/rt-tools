@@ -35,6 +35,9 @@ body {
     position: relative;
     overflow: hidden;
     background: radial-gradient(120% 90% at 50% 0%, var(--rt-color-bg-subtle) 0%, var(--rt-color-bg-surface-auth-card) 65%);
+
+    /* A card taller than the screen keeps a gap above and below instead of touching its edges. */
+    padding-block: var(--rt-space-5);
 }
 
 /**
@@ -107,6 +110,32 @@ body {
 
 .login__provider {
     width: 100%;
+}
+
+/**
+ * The provider mark is a picture of the theme in front of the label, of the kit button icon size.
+ * The Google mark keeps its four colours; the Apple mark takes the text colour of the button.
+ */
+.login__provider--google:before,
+.login__provider--apple:before {
+    width: var(--rt-btn-icon-size);
+    height: var(--rt-btn-icon-size);
+    flex-shrink: 0;
+    content: '';
+}
+
+.login__provider--google:before {
+    background: url('./login/brand/google.svg') center / contain no-repeat;
+}
+
+.login__provider--apple:before {
+    background-color: currentcolor;
+    mask: url('./login/brand/apple.svg') center / contain no-repeat;
+}
+
+/** The realm logo heads the card in place of the realm name. */
+.login__logo {
+    height: var(--rt-space-12);
 }
 
 /**

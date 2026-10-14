@@ -1,4 +1,4 @@
-import { ComponentFixture } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { kcContextOf, kcNode, renderKcPage } from '../../testing/kc-page-fixture';
 import { RtKcLoginComponent } from '../pages/login/rt-kc-login.component';
@@ -51,5 +51,23 @@ describe('RtKcRootComponent', () => {
 
         expect(chooser?.tagName.toLowerCase()).toBe('rt-select');
         expect((fixture.nativeElement as HTMLElement).querySelectorAll('[qa-dataid="kc-locale"]').length).toBe(0);
+    });
+    it('SC-AUTH-83 — the card head shows the realm logo, or the realm name without one', async () => {
+        const plain: ReturnType<typeof kcContextOf<'login.ftl'>> = kcContextOf('login.ftl');
+        const branded: ReturnType<typeof kcContextOf<'login.ftl'>> = kcContextOf('login.ftl');
+        Object.assign(branded, { realm: { ...branded.realm, displayNameHtml: '<img src="https://rt.localhost/logo.svg" alt="Rent">' } });
+        const withLogo: ComponentFixture<RtKcRootComponent> = await renderKcPage(RtKcRootComponent, branded, RtKcLoginComponent);
+        const logo: HTMLImageElement | null = kcNode<HTMLImageElement>(withLogo, 'kc-logo');
+
+        expect(logo?.getAttribute('src')).toBe('https://rt.localhost/logo.svg');
+        expect(logo?.getAttribute('alt')).toBe('Rent');
+        expect(kcNode(withLogo, 'kc-brand')).toBeNull();
+
+        TestBed.resetTestingModule();
+        Object.assign(plain, { realm: { ...plain.realm, displayNameHtml: 'Rent' } });
+        const withName: ComponentFixture<RtKcRootComponent> = await renderKcPage(RtKcRootComponent, plain, RtKcLoginComponent);
+
+        expect(kcNode(withName, 'kc-logo')).toBeNull();
+        expect(kcNode(withName, 'kc-brand')?.textContent).toBe(plain.realm.displayName || plain.realm.name);
     });
 });

@@ -46,8 +46,10 @@ the entry is not sure the page belongs to the admin.
 - **The fields and the buttons of the forms are of the large size.**
 - **An empty login field that takes an address shows the example `name@example.com`.** The label
   above already names the field, and a placeholder repeating it adds nothing.
-- **A login field that takes only a name, and a password field, have no placeholder.** An example
-  name or password tells the person nothing.
+- **A login field that takes only a name has no placeholder.** An example name tells the person
+  nothing.
+- **A password field asks for the password inside it, and a confirmation field asks to repeat it.**
+  The owner asked for it on the mockup: an empty password field reads as a field without a task.
 - **The language is chosen from a drop-down list, and a choice opens the page in that language.**
 - **The card of a page has an outline and a shadow.** The kit paints it the colour of the page.
 - **Behind the card the kit's dot field drifts over a soft radial gradient.** The page around the
@@ -67,8 +69,24 @@ the entry is not sure the page belongs to the admin.
 - **A requirement the typed password meets is marked as met while the person types.** The person
   learns the rules before the submit, not from a refusal after it.
 - **A message Keycloak puts on a page is shown above the form in the colour of its kind.**
-- **Every provider of the realm gets a button, and Google and Apple get their own icons.** A
-  provider without a known icon gets a button with its name only.
+- **Every provider of the realm gets a button, and Google and Apple get their own marks.** A
+  provider without a known mark gets a button with its name only.
+- **A provider mark is a picture of the theme, not a kit icon.** The Google mark is in four
+  colours. Given as a kit icon name, it was drawn as a font ligature, and the theme loads no such
+  font.
+- **The card head shows the realm logo when the HTML display name of the realm holds one.** Without
+  markup there, the head shows the realm name as text. The theme serves several realms, and the
+  logo belongs to the realm.
+- **The viewport keeps a 20 pixel gap above and below the card.** A card taller than the screen
+  does not touch its edges.
+- **The registration page asks for the address, the password and its confirmation.** The requirement
+  list stands under the confirmation, and the provider buttons and the link back to the sign-in
+  follow the form. With the address used as the login, the requirement "unlike the login" is the
+  requirement "unlike the address" and is listed once.
+- **An error Keycloak puts on a field stands under that field.** The form shows it on arrival, and
+  the field drops it once the person changes the value.
+- **The registration form checks the address and the match of the two passwords before the submit.**
+  The person learns about a typo before the page reloads.
 - **The dark theme follows the system until the person switches it on the page.**
 - **The stand realm uses the theme, and the raising command builds it first.** Without the JAR the
   realm falls back to the standard look.
@@ -97,6 +115,7 @@ the second kit.
 | Page                        | What the person does                          |
 | --------------------------- | --------------------------------------------- |
 | `login.ftl`                 | enters by address and password or a provider  |
+| `register.ftl`              | creates an account by address or a provider   |
 | `login-reset-password.ftl`  | asks for a reset letter                       |
 | `login-update-password.ftl` | sets a new password, also after an invitation |
 | `login-verify-email.ftl`    | is asked to confirm the address               |
@@ -124,7 +143,8 @@ The card takes the full width under 400 pixels and keeps a 20 pixel gutter.
 
 ### Several objects
 
-One theme for every admin of the realm. The realm display name heads the card.
+One theme for every admin of the realm. The realm logo from its HTML display name heads the card,
+or the realm display name without one.
 
 ## Decisions
 
@@ -135,6 +155,10 @@ One theme for every admin of the realm. The realm display name heads the card.
 - **The password requirements are the theme's own texts in English and Russian.** Keycloak has only
   refusal texts for the policy, and they read as errors before anything is typed. Rejected: the
   refusal texts with their prefix cut — the Russian set lacks the address requirement.
+- **The registration page draws no attribute of the user profile beyond the address.** The realm
+  of the consumer requires none. Rejected: a field per profile attribute — no mockup draws it.
+- **The theme adds the Russian refusal for a password equal to the address.** Keycloak has the
+  English one only. The theme messages reach the server through the Keycloakify build.
 
 ## Open questions
 
@@ -144,3 +168,4 @@ None.
 
 - 2026-10-05 — the theme, task RT-2530.
 - 2026-10-06 — the password requirements under the two password fields, task RT-2570.
+- 2026-10-14 — the registration page, the realm logo and the provider marks, task RT-2837.

@@ -95,6 +95,20 @@ export function passwordRulesOf(context: TKcContext): IKcPolicyRule[] {
 }
 
 /**
+ * The requirements as the registration page lists them. With the address used as the login,
+ * "unlike the login" and "unlike the address" are one requirement, and it is listed once.
+ */
+export function registrationRulesOf(context: TKcContext): IKcPolicyRule[] {
+    const rules: IKcPolicyRule[] = passwordRulesOf(context);
+    const hasEmailRule: boolean = rules.some((rule: IKcPolicyRule): boolean => rule.rule === EKcPolicyRule.NotEmail);
+    if (!context.realm.registrationEmailAsUsername || !hasEmailRule) {
+        return rules;
+    }
+
+    return rules.filter((rule: IKcPolicyRule): boolean => rule.rule !== EKcPolicyRule.NotUsername);
+}
+
+/**
  * Whether the typed password meets one requirement. A comparison with the account needs the login
  * the person entered; where the page does not know it, a typed password counts as unlike it, and
  * Keycloak still refuses a match after the submit.

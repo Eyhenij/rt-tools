@@ -19,7 +19,11 @@
                 <rt-theme-toggle qa-dataid="kc-theme" />
             </div>
 
-            <span rtElem="brand" qa-dataid="kc-brand">{{ realmName }}</span>
+            @if (logo; as shown) {
+                <img rtElem="logo" qa-dataid="kc-logo" [src]="shown.src" [alt]="shown.alt" />
+            } @else {
+                <span rtElem="brand" qa-dataid="kc-brand">{{ realmName }}</span>
+            }
 
             <ng-container *ngComponentOutlet="page" />
         </section>
