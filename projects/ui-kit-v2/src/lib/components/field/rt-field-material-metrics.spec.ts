@@ -67,6 +67,16 @@ describe('поле материального набора против поля
         );
     });
 
+    it('SC-UKV-909 — подпись на рамке и её разрыв действуют и при признаке набора на теге контрола', (): void => {
+        const preset: string = ':is(.rt-preset-material *, [data-preset=material] *, .rt-preset-material, [data-preset=material])';
+
+        expect(SELECT).toContain(`.rt-select--floating${preset}:not(.rt-select--appearance--fill)`);
+        expect(SELECT).toContain(`.rt-select${preset} .rt-select__floating-label`);
+        expect(INPUT_LABEL).toContain(`.rt-input--floating${preset}:not(.rt-input--appearance--fill`);
+        expect(INPUT_LABEL).toContain(`.rt-input${preset} .rt-input__floating-label`);
+        expect(`${SELECT} ${INPUT_LABEL} ${INPUT}`).not.toMatch(/:is\(\.rt-preset-material, \[data-preset=material\]\) \.rt-/);
+    });
+
     it('SC-UKV-910 — залитое поле: значение под поднятой подписью, подпись в 16 px от края', (): void => {
         expect(FIELD).toContain('top: calc(var(--rt-input-height) / 2 - var(--rt-space-5))');
         expect(FIELD).toContain('padding-top: calc(var(--rt-input-height) / 2 - var(--rt-space-1) - var(--rt-input-fill-edge))');
@@ -103,7 +113,7 @@ describe('поле материального набора против поля
     });
 
     it('SC-UKV-911 — значок слева в 12 px от края поля и в 16 px от текста', (): void => {
-        const body: string = ruleBody(INPUT, '.rt-input--with-icon-left:has(> rt-icon.rt-input__icon-left) {');
+        const body: string = ruleBody(INPUT, '[data-preset=material]):has(> rt-icon.rt-input__icon-left) {');
 
         expect(body).toContain('padding-left: calc(var(--rt-space-2) + var(--rt-space-1) - var(--rt-input-edge))');
         expect(INPUT).toContain('margin-right: calc(var(--rt-space-4) - var(--rt-input-gap))');

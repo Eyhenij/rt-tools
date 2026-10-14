@@ -1,6 +1,10 @@
 @use '../../../styles/mixins' as kv;
 
 @layer rt-kit.components {
+    /* Признак набора — на предке или на самом поле: приложение ставит его и на тег контрола. */
+    $preset: ':is(.rt-preset-material *, [data-preset="material"] *, .rt-preset-material, [data-preset="material"])';
+    $preset-weak: ':where(.rt-preset-material *, [data-preset="material"] *, .rt-preset-material, [data-preset="material"])';
+
     .rt-textarea {
         --rt-textarea-radius: var(--rt-input-radius);
         --rt-textarea-color-border-hover: var(--rt-color-text-primary);
@@ -52,7 +56,7 @@
 
         /* Наведение в материальном наборе — как у поля Material: рамка цвета текста. Сила правила —
            на уровне поля, поэтому фокус, ошибка и «без рамки» его перекрывают. */
-        :where(.rt-preset-material, [data-preset='material']) &__control:where(:hover:not(:disabled)) {
+        &#{$preset-weak} &__control:where(:hover:not(:disabled)) {
             border-color: var(--rt-textarea-color-border-hover);
         }
 

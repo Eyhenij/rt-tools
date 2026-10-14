@@ -1,4 +1,8 @@
 @layer rt-kit.components {
+    /* Признак набора — на предке или на самом поле: приложение ставит его и на тег контрола. */
+    $preset: ':is(.rt-preset-material *, [data-preset="material"] *, .rt-preset-material, [data-preset="material"])';
+    $preset-weak: ':where(.rt-preset-material *, [data-preset="material"] *, .rt-preset-material, [data-preset="material"])';
+
     /* Крестик — его размер и порядок обхода (`clearTabbable`) — отдельный лист стилей компонента:
        основной лист стоит у порога в 8 КБ, который Angular по умолчанию ставит приложению. Крестик
        не выше поля без рамки. Крестик в порядке обхода — соседняя
@@ -45,8 +49,25 @@
             display: none;
         }
 
+        /* Под материальным набором стрелка — залитый треугольник mat-select первого кита, 10 на 5 px.
+           Открытое поле переворачивает его, как mat-select, правилом `--open` основного листа. Свой вид кита
+           остаётся с шевроном. Размер значок ставит себе встроенным стилем, поэтому треугольник задан
+           пределами, а не шириной. */
+        &#{$preset} &__chevron {
+            --rt-icon-color-muted: var(--rt-input-icon-color);
+
+            max-width: 10px;
+            max-height: 5px;
+            background-color: currentcolor;
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+
+            svg {
+                display: none;
+            }
+        }
+
         /* Под материальным набором стрелка — треугольник шириной 10 px, а не значок. */
-        :is(.rt-preset-material, [data-preset='material']) & {
+        &#{$preset} {
             --rt-select-chevron-width: 10px;
         }
     }

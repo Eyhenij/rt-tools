@@ -100,6 +100,31 @@ function failing(): FormControl<string | null> {
             </ng-template>
         </app-story-row>
 
+        <app-story-row
+            caption="Подпись на рамке у самого контрола, признак набора на его теге"
+            [items]="ownCases"
+            [itemLabel]="caseLabel"
+            [slotWidth]="fieldWidth">
+            <ng-template let-ownCase>
+                @if (ownCase.kind === 'select') {
+                    <rt-select
+                        data-preset="material"
+                        floatingLabel="Бюджет"
+                        radius="sm"
+                        [appearance]="ownCase.appearance"
+                        [options]="hotels"
+                        [formControl]="ownCase.control" />
+                } @else {
+                    <rt-input
+                        data-preset="material"
+                        floatingLabel="Бюджет"
+                        radius="sm"
+                        [appearance]="ownCase.appearance"
+                        [formControl]="ownCase.control" />
+                }
+            </ng-template>
+        </app-story-row>
+
         <ng-template #field let-fieldCase let-preset="preset">
             <rt-field label="Гостиница" [attr.data-preset]="preset" [attr.data-story-state]="fieldCase.state">
                 @if (fieldCase.kind === 'select') {
@@ -152,6 +177,14 @@ export class TestRtFieldMaterialComponent {
     public readonly lowCases: readonly IFieldMaterialCase[] = [
         { name: 'выбор обведённый', kind: 'select', appearance: 'outline', state: null, iconLeft: null, control: value('station') },
         { name: 'поле обведённое', kind: 'input', appearance: 'outline', state: null, iconLeft: null, control: value('Вокзал') },
+    ];
+
+    public readonly ownCases: readonly IFieldMaterialCase[] = [
+        { name: 'выбор обведённый', kind: 'select', appearance: 'outline', state: null, iconLeft: null, control: value('station') },
+        { name: 'выбор пустой', kind: 'select', appearance: 'outline', state: null, iconLeft: null, control: value(null) },
+        { name: 'выбор залитый', kind: 'select', appearance: 'fill', state: null, iconLeft: null, control: value('station') },
+        { name: 'поле обведённое', kind: 'input', appearance: 'outline', state: null, iconLeft: null, control: value('Вокзал') },
+        { name: 'поле залитое', kind: 'input', appearance: 'fill', state: null, iconLeft: null, control: value('Вокзал') },
     ];
 
     public readonly widthCases: readonly IFieldWidthCase[] = [

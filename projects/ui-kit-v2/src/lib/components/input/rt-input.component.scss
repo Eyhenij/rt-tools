@@ -1,6 +1,10 @@
 @use '../../../styles/mixins' as kv;
 
 @layer rt-kit.components {
+    /* Признак набора — на предке или на самом поле: приложение ставит его и на тег контрола. */
+    $preset: ':is(.rt-preset-material *, [data-preset="material"] *, .rt-preset-material, [data-preset="material"])';
+    $preset-weak: ':where(.rt-preset-material *, [data-preset="material"] *, .rt-preset-material, [data-preset="material"])';
+
     .rt-input {
         --rt-input-box-radius: var(--rt-input-radius);
         --rt-input-fill-radius: var(--rt-radius-sm);
@@ -58,7 +62,7 @@
         /* Наведение в материальном наборе — как у поля Material: рамка цвета текста. `:where` держит
            силу правила на уровне вида, и фокус, ошибка, залитый вид и «без рамки» его перекрывают;
            отключённое поле наведения не показывает. */
-        :where(.rt-preset-material, [data-preset='material']) &:where(:hover:not(:has(:disabled))) {
+        &#{$preset-weak}:where(:hover:not(:has(:disabled))) {
             border-color: var(--rt-input-color-border-hover);
         }
 
@@ -235,7 +239,7 @@
 
         /* Значок слева в материальном наборе стоит, как у поля Material: 12 px от края поля и 16 px
            до текста. Кнопка-значок держит свои поля сама и остаётся на месте. */
-        :where(.rt-preset-material, [data-preset='material']) &--with-icon-left:has(> rt-icon.rt-input__icon-left) {
+        &--with-icon-left#{$preset-weak}:has(> rt-icon.rt-input__icon-left) {
             padding-left: calc(var(--rt-space-2) + var(--rt-space-1) - var(--rt-input-edge));
 
             > .rt-input__icon-left {

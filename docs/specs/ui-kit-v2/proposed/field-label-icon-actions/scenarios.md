@@ -424,9 +424,11 @@ Covered: `projects/ui-kit-v2/src/styles/density.styles.spec.ts`.
 
 ### SC-UKV-909 — the preset sign on the field itself puts the label inside
 
-Given a field carrying the material preset sign itself, with no sign on an ancestor
-When the field is drawn
-Then its label lies inside the control, as under a sign on an ancestor
+Given a field, an input or a select carrying the material preset sign itself, with no sign on an
+ancestor
+When it is drawn
+Then the field's label lies inside the control, and the control's own label on the border breaks
+the border, hides the placeholder and stands inside a filled control, as under a sign on an ancestor
 
 Covered: `projects/ui-kit-v2/src/lib/components/field/rt-field-material-metrics.spec.ts`.
 

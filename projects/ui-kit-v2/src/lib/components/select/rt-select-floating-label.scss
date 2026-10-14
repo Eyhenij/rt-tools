@@ -1,4 +1,8 @@
 @layer rt-kit.components {
+    /* Признак набора — на предке или на самом поле: приложение ставит его и на тег контрола. */
+    $preset: ':is(.rt-preset-material *, [data-preset="material"] *, .rt-preset-material, [data-preset="material"])';
+    $preset-weak: ':where(.rt-preset-material *, [data-preset="material"] *, .rt-preset-material, [data-preset="material"])';
+
     /* Подпись на рамке и разрыв рамки под ней — отдельный лист стилей компонента. Одним листом с
        остальными правилами он перешёл бы порог в 8 КБ на лист, который Angular по умолчанию ставит
        приложению, и сборка потребителя упала бы. Лист подключается вторым, после основного. */
@@ -16,7 +20,7 @@
         /* Обведённое поле материального набора прозрачное, и подпись на рамке подложки не имеет:
            рамка под ней разорвана, как у поля Material. `:where` держит силу правила на уровне вида,
            и залитый вид ниже его перекрывает. */
-        :where(.rt-preset-material, [data-preset='material']) & {
+        &#{$preset-weak} {
             --rt-select-floating-label-bg: transparent;
 
             /* Подпись на рамке начинается за скруглением угла: на изгибе верхней рамки нет, и
@@ -57,12 +61,12 @@
             white-space: nowrap;
         }
 
-        :is(.rt-preset-material, [data-preset='material']) &__floating-label {
+        &#{$preset} &__floating-label {
             display: block;
         }
 
         /* Пока подпись лежит на месте подсказки, подсказка не рисуется: они легли бы друг на друга. */
-        :is(.rt-preset-material, [data-preset='material']) &--floating:not(.rt-select--filled, .rt-select--open) &__label--placeholder {
+        &--floating#{$preset}:not(.rt-select--filled, .rt-select--open) &__label--placeholder {
             color: transparent;
         }
 
@@ -89,38 +93,36 @@
         /* Залитое поле материального набора — как поле Material: оно выше, и поднятая подпись
            уменьшается и встаёт внутрь поля над значением, а не на рамку. Пустое поле держит подпись
            на месте подсказки размером со значение. Свой вид кита не меняется. */
-        :is(.rt-preset-material, [data-preset='material']) & {
-            &--floating.rt-select--appearance--fill {
-                --rt-input-height: var(--rt-select-fill-floating-height);
-            }
+        &--floating#{$preset}.rt-select--appearance--fill {
+            --rt-input-height: var(--rt-select-fill-floating-height);
+        }
 
-            /* Подпись в покое — строкой Material, значение — ниже середины, под поднятой подписью:
-               при 52 px текст начинается в 22 px от верха строкой в 24 px. */
-            &--floating.rt-select--appearance--fill .rt-select__floating-label {
-                line-height: var(--rt-leading-tight);
-            }
+        /* Подпись в покое — строкой Material, значение — ниже середины, под поднятой подписью:
+           при 52 px текст начинается в 22 px от верха строкой в 24 px. */
+        &--floating#{$preset}.rt-select--appearance--fill .rt-select__floating-label {
+            line-height: var(--rt-leading-tight);
+        }
 
-            &--floating.rt-select--appearance--fill .rt-select__label {
-                align-self: stretch;
-                padding-top: calc(var(--rt-input-height) / 2 - var(--rt-space-1) - var(--rt-input-fill-edge));
-                padding-bottom: calc(var(--rt-input-height) / 2 - var(--rt-space-5) - var(--rt-input-border-width));
-                line-height: var(--rt-leading-normal);
-            }
+        &--floating#{$preset}.rt-select--appearance--fill .rt-select__label {
+            align-self: stretch;
+            padding-top: calc(var(--rt-input-height) / 2 - var(--rt-space-1) - var(--rt-input-fill-edge));
+            padding-bottom: calc(var(--rt-input-height) / 2 - var(--rt-space-5) - var(--rt-input-border-width));
+            line-height: var(--rt-leading-normal);
+        }
 
-            &--floating.rt-select--appearance--fill.rt-select--filled .rt-select__floating-label,
-            &--floating.rt-select--appearance--fill.rt-select--open .rt-select__floating-label {
-                top: calc(var(--rt-input-height) / 2 - var(--rt-space-5));
-                left: var(--rt-select-floating-label-rest-start);
-                padding: 0;
-                margin-left: 0;
-                background-color: transparent;
-                transform: none;
-            }
+        &--floating#{$preset}.rt-select--appearance--fill.rt-select--filled .rt-select__floating-label,
+        &--floating#{$preset}.rt-select--appearance--fill.rt-select--open .rt-select__floating-label {
+            top: calc(var(--rt-input-height) / 2 - var(--rt-space-5));
+            left: var(--rt-select-floating-label-rest-start);
+            padding: 0;
+            margin-left: 0;
+            background-color: transparent;
+            transform: none;
         }
 
         /* Разрыв рамки под поднятой подписью в материальном наборе. Подпись лежит рядом с кнопкой,
            а не в ней, поэтому разрыв режется прямо в рамке кнопки. У залитого вида рамки сверху нет. */
-        :is(.rt-preset-material, [data-preset='material']) &--floating:not(.rt-select--appearance--fill) {
+        &--floating#{$preset}:not(.rt-select--appearance--fill) {
             &.rt-select--filled .rt-select__trigger,
             &.rt-select--open .rt-select__trigger {
                 clip-path: polygon(

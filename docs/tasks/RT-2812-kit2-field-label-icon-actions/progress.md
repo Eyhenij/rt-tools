@@ -390,6 +390,16 @@
     field sheet grew to 11.8 KB and the select sheet to 8.7 KB over the 8 KB budget. The label-inside
     rules moved to `rt-field-label-inside.scss` under one `:is()` selector, the select's cross size
     and filled focus moved to its two sibling sheets; the sheets are now 1.8 + 7.4 KB and 7.95 KB.
+    Committed as `2acc951d9`, package 0.23.4 on the desktop.
+
+- **2026-10-14, request 7 follow-up: the preset sign on the control's own tag.** `<rt-select
+data-preset="material" floatingLabel>` drew the border through the risen label: every preset rule
+  of the input, select, number and text controls looked for the sign on an ancestor only. They now
+  take one `:is()`/`:where()` of the sign on an ancestor or on the node itself, so the specificity
+  stays and the sheets do not double. The select's triangle arrow moved to its second sheet to keep
+  the main sheet under 8 KB. Measured live in a new row of the Material story: the outlined select
+  and input have the cut under the label, the empty select hides the placeholder, the filled ones
+  raise the label inside. The 1 px of the risen label against Material is left as it is.
 
 ## Sessions
 
