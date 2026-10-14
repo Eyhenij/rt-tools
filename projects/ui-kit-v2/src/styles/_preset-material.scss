@@ -233,9 +233,16 @@
     --rt-input-focus-shadow: inset 0 0 0 1px var(--rt-input-color-border-focus);
     --rt-input-focus-shadow-error: inset 0 0 0 1px var(--rt-input-color-border-error);
 
-    /* Размер поля Material при плотности 0: высота 56 px, значение 16 px. Меньшую плотность
-       назначает атрибут `data-rt-density` на поле или на любом предке — правила в `_density.scss`. */
-    --rt-input-height-md: calc(var(--rt-size-12) + var(--rt-size-2));
+    /* Размер поля Material: 56 px при плотности 0 и на 4 px меньше за каждый шаг, значение 16 px.
+       Шаг приходит свойством `--rt-input-density`, которое ставит атрибут `data-rt-density` на поле
+       или на любом предке, — правила в `_density.scss`. Высота считается здесь, на узле с признаком
+       набора, из унаследованного шага: атрибут на корне приложения доходит и до поля со своим
+       признаком набора. Своя высота приложения — `--rt-input-height-app` на любом предке; она сильнее
+       плотности и не перебивается набором на самом поле. */
+    --rt-input-height-md: var(
+        --rt-input-height-app,
+        calc(var(--rt-size-12) + var(--rt-size-2) - var(--rt-input-density) * var(--rt-size-1))
+    );
     --rt-input-height: var(--rt-input-height-md);
 
     /* Крупная ступень `size` не ниже средней высоты набора: 48 px кита под набором вышли бы ниже
@@ -244,9 +251,23 @@
     --rt-input-height-lg: max(var(--rt-control-height-lg), var(--rt-input-height-md));
     --rt-input-font-size: var(--rt-text-md);
 
+    /* Подсказка, подпись в покое, значки и стрелка поля — цвета on-surface-variant темы Material,
+       каретка — цвета марки, значки 24 px, как у поля Material. Без темы Material цвета прежние. */
+    --rt-input-color-text-placeholder: var(--mat-sys-on-surface-variant, var(--rt-mat-neutral-60));
+    --rt-input-icon-color: var(--mat-sys-on-surface-variant, var(--rt-neutral-600));
+    --rt-input-icon-size: var(--rt-size-6);
+    --rt-input-caret-color: var(--rt-color-action-primary);
+
+    /* Залитое поле Material: рамки сверху и по бокам нет, только черта снизу; в фокусе черта
+       вдвое толще цветом марки, у недействительного поля — цветом ошибки. */
+    --rt-input-fill-edge: 0px;
+    --rt-input-fill-focus-shadow: inset 0 -1px 0 0 var(--rt-input-color-border-focus);
+    --rt-input-fill-focus-shadow-error: inset 0 -1px 0 0 var(--rt-input-color-border-error);
+
     /* Звёздочка обязательного поля — цвета подписи, как у поля Material; цвет ошибки она берёт
        только у недействительного поля, правилом самого поля. */
     --rt-field-required-color: currentcolor;
+    --rt-field-required-gap: 0px;
 }
 
 /* The preset under a dark theme: the names the preset reads from Material keep the Material chain,
@@ -291,6 +312,8 @@
     --rt-overlay-select-selected-bg: color-mix(in srgb, var(--mat-sys-on-surface, var(--rt-mat-neutral-0)) 12%, transparent);
     --rt-overlay-menu-current-bg: color-mix(in srgb, var(--mat-sys-on-surface, var(--rt-mat-neutral-0)) 12%, transparent);
     --rt-input-color-border: var(--mat-sys-outline, var(--rt-charcoal-border));
+    --rt-input-color-text-placeholder: var(--mat-sys-on-surface-variant, var(--rt-color-text-muted));
+    --rt-input-icon-color: var(--mat-sys-on-surface-variant, var(--rt-neutral-600));
 }
 
 :root[data-preset='material'],

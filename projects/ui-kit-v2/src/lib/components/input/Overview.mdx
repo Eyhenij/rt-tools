@@ -93,23 +93,34 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 `bordered=false` снимает **только** рамку покоя: рамку фокуса и ошибки поле показывает всё
 равно, иначе состояние пропадало бы вместе с оформлением.
 
+Наименьшая ширина — `--rt-input-min-width`, по умолчанию её нет; цвет каретки —
+`--rt-input-caret-color`. Кнопки-значки и крестик не выше поля без рамки, поэтому малое поле с
+крестиком остаётся 32 px. Поле под материальным набором сверено с полем Material — раздел
+«Материальный набор» у [`rt-field`](./?path=/docs/molecules-forms-field-overview--docs).
+
 ## Входы
 
-| вход               | тип                                         | умолчание                 |
-| ------------------ | ------------------------------------------- | ------------------------- |
-| `appearance`       | `'outline' \| 'fill' \| 'pill'`             | `'outline'`               |
-| `type`             | `'text' \| 'password' \| 'email' \| 'time'` | `'text'`                  |
-| `placeholder`      | `string`                                    | `''`                      |
-| `iconLeft`         | `IRtIcon.Name \| null`                      | `null`                    |
-| `iconRight`        | `IRtIcon.Name \| null`                      | `null`                    |
-| `passwordToggle`   | `boolean`                                   | `false`                   |
-| `autocomplete`     | `string \| null`                            | `null`                    |
-| `radius`           | `TRtRadius \| null`                         | `null` → скругление полей |
-| `floatingLabel`    | `string \| null`                            | `null`                    |
-| `iconLeftAction`   | `boolean`                                   | `false`                   |
-| `iconRightAction`  | `boolean`                                   | `false`                   |
-| `iconLeftTooltip`  | `string \| null`                            | `null`                    |
-| `iconRightTooltip` | `string \| null`                            | `null`                    |
+| вход                | тип                                         | умолчание                 |
+| ------------------- | ------------------------------------------- | ------------------------- |
+| `appearance`        | `'outline' \| 'fill' \| 'pill'`             | `'outline'`               |
+| `type`              | `'text' \| 'password' \| 'email' \| 'time'` | `'text'`                  |
+| `placeholder`       | `string`                                    | `''`                      |
+| `iconLeft`          | `IRtIcon.Name \| null`                      | `null`                    |
+| `iconRight`         | `IRtIcon.Name \| null`                      | `null`                    |
+| `passwordToggle`    | `boolean`                                   | `false`                   |
+| `autocomplete`      | `string \| null`                            | `null`                    |
+| `radius`            | `TRtRadius \| null`                         | `null` → скругление полей |
+| `floatingLabel`     | `string \| null`                            | `null`                    |
+| `iconLeftAction`    | `boolean`                                   | `false`                   |
+| `iconRightAction`   | `boolean`                                   | `false`                   |
+| `iconLeftTooltip`   | `string \| null`                            | `null`                    |
+| `iconRightTooltip`  | `string \| null`                            | `null`                    |
+| `iconLeftDisabled`  | `boolean`                                   | `false`                   |
+| `iconRightDisabled` | `boolean`                                   | `false`                   |
+
+**Кнопка-значок отключается своим входом, поле при этом остаётся доступным.** Так поиск не ищет,
+пока введено меньше трёх знаков, а подсказка кнопки объясняет почему — история
+`FieldExtras → IconActions`.
 
 **Крестик очистки и переключатель пароля делят один постфикс.** На поле пароля с включённым
 переключателем крестика не будет: показать оба некуда.

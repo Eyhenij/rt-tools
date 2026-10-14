@@ -162,6 +162,8 @@
     "--rt-icon-glyph-weight": "the weight axis of an icon's Material ligature; until the application sets it the kit takes 400",
     "--rt-icon-glyph-grade": "the grade axis of an icon's Material ligature; until the application sets it the kit takes 0",
     "--rt-icon-glyph-opsz": "the optical size axis of an icon's Material ligature; until the application sets it the kit takes the side of the icon in pixels, as the browser did without the axis",
-    "--rt-side-menu-sub-item-letter-spacing": "the letter spacing of a side menu submenu row and folder title; set on the row or above, until it is set the row inherits it from the page"
+    "--rt-side-menu-sub-item-letter-spacing": "the letter spacing of a side menu submenu row and folder title; set on the row or above, until it is set the row inherits it from the page",
+    "--rt-input-density": "the number of Material density steps under the material preset, from 0 to 5; the attribute data-rt-density sets it, the application may set it on any ancestor; it is registered with the initial 0",
+    "--rt-input-height-app": "the application's own field height under the material preset; set on any ancestor, it beats the density and is not overridden by the preset sign on the field itself"
   }
 }

@@ -13,7 +13,7 @@
                     [icon]="left"
                     [ariaLabel]="iconLeftTooltip() || left"
                     [tooltip]="iconLeftTooltip() ?? ''"
-                    [disabled]="isDisabled()"
+                    [disabled]="isIconLeftDisabled()"
                     (clicked)="iconLeftClick.emit($event)" />
             } @else {
                 <rt-icon rtElem="icon-left" size="sm" color="muted" [name]="left" />
@@ -73,7 +73,7 @@
                     [icon]="right"
                     [ariaLabel]="iconRightTooltip() || right"
                     [tooltip]="iconRightTooltip() ?? ''"
-                    [disabled]="isDisabled()"
+                    [disabled]="isIconRightDisabled()"
                     (clicked)="iconRightClick.emit($event)" />
             } @else {
                 <rt-icon rtElem="icon-right" size="sm" color="muted" [name]="right" />

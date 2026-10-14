@@ -94,9 +94,22 @@
                 --rt-input-height: var(--rt-select-fill-floating-height);
             }
 
+            /* Подпись в покое — строкой Material, значение — ниже середины, под поднятой подписью:
+               при 52 px текст начинается в 22 px от верха строкой в 24 px. */
+            &--floating.rt-select--appearance--fill .rt-select__floating-label {
+                line-height: var(--rt-leading-tight);
+            }
+
+            &--floating.rt-select--appearance--fill .rt-select__label {
+                align-self: stretch;
+                padding-top: calc(var(--rt-input-height) / 2 - var(--rt-space-1) - var(--rt-input-fill-edge));
+                padding-bottom: calc(var(--rt-input-height) / 2 - var(--rt-space-5) - var(--rt-input-border-width));
+                line-height: var(--rt-leading-normal);
+            }
+
             &--floating.rt-select--appearance--fill.rt-select--filled .rt-select__floating-label,
             &--floating.rt-select--appearance--fill.rt-select--open .rt-select__floating-label {
-                top: var(--rt-space-1);
+                top: calc(var(--rt-input-height) / 2 - var(--rt-space-5));
                 left: var(--rt-select-floating-label-rest-start);
                 padding: 0;
                 margin-left: 0;
@@ -121,6 +134,16 @@
                     0 100%
                 );
             }
+        }
+
+        /* Фокус залитого поля: в материальном наборе — черта снизу вдвое толще, а не кольцо по
+           периметру. Своим видом кита назначения равны общим, и фокус не меняется. */
+        &--appearance--fill &__trigger:not(.rt-select__trigger--own):focus {
+            box-shadow: var(--rt-input-fill-focus-shadow);
+        }
+
+        &--appearance--fill.rt-select--invalid &__trigger:not(.rt-select__trigger--own):focus {
+            box-shadow: var(--rt-input-fill-focus-shadow-error);
         }
 
         &--readonly &__floating-label {

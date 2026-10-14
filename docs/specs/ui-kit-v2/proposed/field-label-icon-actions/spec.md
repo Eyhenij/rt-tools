@@ -72,6 +72,23 @@ can be pressed and shows a hint, and a cross that the Tab key reaches.
 - **A button draws the focus ring only for focus not from the pointer.** The browser marks focus
   from code after a mouse press as `:focus-visible`; the kit button and icon button read the source
   from the CDK, as Material does, and keep the focus while hiding the ring.
+- **The preset sign on the field itself puts the label inside, the same as the sign on an
+  ancestor.**
+- **A density step set on an ancestor reaches a field that carries its own preset sign.** The
+  step is inherited, and the preset counts the height from it on its own node. The application's own
+  field height, set on an ancestor, beats the density.
+- **Under the preset a filled field follows the Material filled field.** The value starts below the
+  risen label, the risen label stands inside the field, the label starts 16 px from the edge, there
+  is only the bottom line, and focus thickens that line. The message under the field starts at the
+  field's text, right under the field.
+- **Under the preset the placeholder, the resting label, the icons and the arrow take the Material
+  theme's muted colour, and the caret takes the brand colour.** Without a Material theme on the page
+  the colours stay as they were. The left icon is 24 px, 12 px from the edge and 16 px from the text.
+- **Under the preset the required mark stands right after the label.** The kit look keeps a gap.
+- **An actionable icon is disabled by its own input while the field stays usable.** Its tooltip
+  stays and says why.
+- **A field's least width is a property set on an ancestor.** By default a field has none.
+- **An icon button inside a field is never taller than the field inside its border.**
 
 ## What is out of scope
 
@@ -139,6 +156,11 @@ Not applicable.
   there. Rejected: an input on two components — a third field would repeat it.
 - **The label on the border is an input of the two fields, not of the shared base.** Its markup and
   look belong to each field.
+- **The outlined field keeps the preset's rounding.** The rounding of 1.5 rem is the first kit's
+  look, and other screens under the preset stand on it. An application that wants the Material 4 px
+  sets it by the field's `radius` input. Rejected: changing the preset default.
+- **The least width is not a preset default.** A field with a least width of 212 px breaks narrow
+  cells and the pagination size field. Rejected: a default under the preset.
 
 ## Open questions
 
@@ -147,3 +169,4 @@ None.
 ## History of changes
 
 - 2026-10-13 — written before the code, from the application's request accepted by the owner.
+- 2026-10-14 — the application's measurement against Material: the field under the preset.

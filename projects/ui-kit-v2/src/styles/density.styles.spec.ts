@@ -28,16 +28,23 @@ describe('плотность полей материального набора'
         ['-1', '1'],
         ['-3', '3'],
         ['-5', '5'],
-    ])('SC-UKV-900 — шаг %s снимает с высоты Material %s шага шкалы, и поле берёт её как среднюю', (step: string, taken: string): void => {
-        const body: string | undefined = ruleBody(`[data-rt-density="${step}"]`);
-
-        expect(body).toContain(`--rt-input-height-md: calc(var(--rt-size-12) + var(--rt-size-2) - ${taken} * var(--rt-size-1))`);
-        expect(body).toContain('--rt-input-height: var(--rt-input-height-md)');
+    ])('SC-UKV-908 — атрибут %s ставит наследуемый шаг плотности %s', (step: string, taken: string): void => {
+        expect(ruleBody(`[data-rt-density="${step}"]`)).toBe(`--rt-input-density: ${taken};`);
     });
 
-    it('SC-UKV-900 — шаг действует только под материальным набором, на поле и на предке', (): void => {
-        expect(CSS).toContain(`:where(.rt-preset-material, [data-preset=material]) [data-rt-density="-2"]`);
-        expect(CSS).toContain(`:is(.rt-preset-material, [data-preset=material])[data-rt-density="-2"]`);
-        expect(CSS).not.toMatch(/(^|[},]\s*)\[data-rt-density=/);
+    it('SC-UKV-900 — узел с атрибутом под набором пересчитывает высоту Material из шага', (): void => {
+        const body: string | undefined = ruleBody(':where(.rt-preset-material, [data-preset=material]) [data-rt-density]');
+
+        expect(body).toContain('calc(var(--rt-size-12) + var(--rt-size-2) - var(--rt-input-density) * var(--rt-size-1))');
+        expect(body).toContain('--rt-input-height: var(--rt-input-height-md)');
+        expect(CSS).toContain(':is(.rt-preset-material, [data-preset=material])[data-rt-density]');
+    });
+
+    it('SC-UKV-908 — набор на самом поле считает высоту из шага предка, своя высота приложения сильнее', (): void => {
+        const preset: string | undefined = ruleBody(`[data-preset=material], .rt-preset-material {`.slice(0, -2));
+
+        expect(preset?.replace(/\s+/g, '')).toContain(
+            '--rt-input-height-md:var(--rt-input-height-app,calc(var(--rt-size-12)+var(--rt-size-2)-var(--rt-input-density)*var(--rt-size-1)))'
+        );
     });
 });

@@ -56,7 +56,7 @@ function nextAutoId(): string {
 @Component({
     selector: 'rt-field',
     templateUrl: './rt-field.component.html',
-    styleUrls: ['./rt-field.component.scss'],
+    styleUrls: ['./rt-field.component.scss', './rt-field-label-inside.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
     imports: [

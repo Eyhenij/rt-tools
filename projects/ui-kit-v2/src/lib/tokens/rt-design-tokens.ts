@@ -148,6 +148,7 @@ export type TRtDesignTokenName =
     | '--rt-field-label-font-weight'
     | '--rt-field-label-help-gap'
     | '--rt-field-required-color'
+    | '--rt-field-required-gap'
     | '--rt-field-value-color'
     | '--rt-field-value-empty-color'
     | '--rt-field-value-font-size'
@@ -171,6 +172,7 @@ export type TRtDesignTokenName =
     | '--rt-info-600'
     | '--rt-info-700'
     | '--rt-input-border-width'
+    | '--rt-input-caret-color'
     | '--rt-input-color-bg'
     | '--rt-input-color-bg-disabled'
     | '--rt-input-color-bg-hover'
@@ -180,6 +182,9 @@ export type TRtDesignTokenName =
     | '--rt-input-color-text'
     | '--rt-input-color-text-placeholder'
     | '--rt-input-disabled-opacity'
+    | '--rt-input-fill-edge'
+    | '--rt-input-fill-focus-shadow'
+    | '--rt-input-fill-focus-shadow-error'
     | '--rt-input-focus-outline-offset'
     | '--rt-input-focus-shadow'
     | '--rt-input-focus-shadow-error'
@@ -193,6 +198,7 @@ export type TRtDesignTokenName =
     | '--rt-input-icon-size'
     | '--rt-input-line-height'
     | '--rt-input-max-width'
+    | '--rt-input-min-width'
     | '--rt-input-padding-x'
     | '--rt-input-padding-y'
     | '--rt-input-panel-max-height'
@@ -687,6 +693,8 @@ export type TRtConsumerHandleName =
     | '--rt-icon-step-sm'
     | '--rt-icon-step-xl'
     | '--rt-icon-step-xs'
+    | '--rt-input-density'
+    | '--rt-input-height-app'
     | '--rt-logo-tagline'
     | '--rt-logo-tagline-dark'
     | '--rt-logo-wordmark'
@@ -871,6 +879,7 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-field-label-font-weight',
     '--rt-field-label-help-gap',
     '--rt-field-required-color',
+    '--rt-field-required-gap',
     '--rt-field-value-color',
     '--rt-field-value-empty-color',
     '--rt-field-value-font-size',
@@ -894,6 +903,7 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-info-600',
     '--rt-info-700',
     '--rt-input-border-width',
+    '--rt-input-caret-color',
     '--rt-input-color-bg',
     '--rt-input-color-bg-disabled',
     '--rt-input-color-bg-hover',
@@ -903,6 +913,9 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-input-color-text',
     '--rt-input-color-text-placeholder',
     '--rt-input-disabled-opacity',
+    '--rt-input-fill-edge',
+    '--rt-input-fill-focus-shadow',
+    '--rt-input-fill-focus-shadow-error',
     '--rt-input-focus-outline-offset',
     '--rt-input-focus-shadow',
     '--rt-input-focus-shadow-error',
@@ -916,6 +929,7 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-input-icon-size',
     '--rt-input-line-height',
     '--rt-input-max-width',
+    '--rt-input-min-width',
     '--rt-input-padding-x',
     '--rt-input-padding-y',
     '--rt-input-panel-max-height',
@@ -1411,6 +1425,8 @@ export const RT_CONSUMER_HANDLE_NAMES: readonly TRtConsumerHandleName[] = [
     '--rt-icon-step-sm',
     '--rt-icon-step-xl',
     '--rt-icon-step-xs',
+    '--rt-input-density',
+    '--rt-input-height-app',
     '--rt-logo-tagline',
     '--rt-logo-tagline-dark',
     '--rt-logo-wordmark',

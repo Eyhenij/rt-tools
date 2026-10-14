@@ -17,7 +17,9 @@ import { RtFieldComponent } from './rt-field.component';
  * проверяются признаки, по которым правило набора её двигает, и сами правила в источнике.
  */
 
-const FIELD_STYLES: string = readFileSync(join(__dirname, 'rt-field.component.scss'), 'utf8');
+const FIELD_STYLES: string = ['rt-field.component.scss', 'rt-field-label-inside.scss']
+    .map((file: string): string => readFileSync(join(__dirname, file), 'utf8'))
+    .join('\n');
 const SELECT_STYLES: string = readFileSync(join(__dirname, '../select/rt-select.component.scss'), 'utf8');
 const PRESET: string = readFileSync(join(__dirname, '../../../styles/_preset-material.scss'), 'utf8');
 
@@ -112,7 +114,7 @@ describe('rt-field под материальным набором', (): void => 
         });
 
         it('правило набора выводит подпись из потока и поднимает её на рамку', (): void => {
-            expect(FIELD_STYLES).toContain(":is(.rt-preset-material, [data-preset='material']) &--label-inside");
+            expect(FIELD_STYLES).toContain("&--label-inside:is(.rt-preset-material *, [data-preset='material'] *");
             expect(FIELD_STYLES).toMatch(/\.rt-field__label-row \{\s*position: absolute;/);
             expect(FIELD_STYLES).toMatch(/&\.rt-field--filled \.rt-field__label-row,\s*&:focus-within \.rt-field__label-row \{\s*top: 0;/);
         });

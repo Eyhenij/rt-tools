@@ -32,10 +32,12 @@ interface ILabelGroup {
     readonly cases: readonly ILabelCase[];
 }
 
-/** Случай нажимаемой иконки: подпись ряда и состояние иконки-кнопки. */
+/** Случай нажимаемой иконки: подпись ряда, состояние иконки-кнопки и отключена ли она одна. */
 interface IActionCase {
     readonly name: string;
     readonly state: string | null;
+    readonly disabled: boolean;
+    readonly tooltip: string;
 }
 
 /** Случай крестика: в порядке обхода он или нет. */
@@ -179,9 +181,10 @@ function labelCases(appearance: IRtInput.Appearance): readonly ILabelCase[] {
                                     ariaLabel="Поиск"
                                     placeholder="Минимум 3 символа"
                                     iconLeft="ico-search"
-                                    iconLeftTooltip="Найти на сервере"
                                     iconRight="ico-search"
+                                    [iconLeftTooltip]="actionCase.tooltip"
                                     [iconLeftAction]="true"
+                                    [iconLeftDisabled]="actionCase.disabled"
                                     [formControl]="searchControl"
                                     [attr.data-story-state]="actionCase.state"
                                     (iconLeftClick)="countSearch()" />
@@ -270,8 +273,9 @@ export class TestRtFieldExtrasComponent {
     public readonly optionColor: FormControl<string | null> = control('#1976d2');
 
     public readonly actionCases: readonly IActionCase[] = [
-        { name: 'обычное', state: null },
-        { name: 'фокус с клавиши', state: STORY_STATE_FOCUS_VISIBLE.state },
+        { name: 'обычное', state: null, disabled: false, tooltip: 'Найти на сервере' },
+        { name: 'фокус с клавиши', state: STORY_STATE_FOCUS_VISIBLE.state, disabled: false, tooltip: 'Найти на сервере' },
+        { name: 'кнопка отключена, поле нет', state: null, disabled: true, tooltip: 'Минимум 3 символа' },
     ];
 
     public readonly searchControl: FormControl<string | null> = control('офис');

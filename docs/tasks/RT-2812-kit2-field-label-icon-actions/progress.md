@@ -364,6 +364,32 @@
 - **SC-UKV-856 was taken twice after the main merge.** RT-2793 issued the same number in the
   snapshots spec after this branch did. Main holds it, so the option-template scenario took the next
   free number, SC-UKV-907, and its spec title with it.
+- **2026-10-14, request 7 of the application: the field under the preset against Material.** The
+  application measured the field at density −1 against Material 3 and listed the divergences.
+  Done:
+    - the preset sign on `rt-field` itself puts the label inside;
+    - the density step is an inherited registered property, and the preset counts the height from it
+      on its own node, so a step on the root reaches a field with its own preset sign;
+    - `--rt-input-height-app` is the application's own height;
+    - the filled field: value at `h/2 − 4` with a 24 px line, the risen label at `h/2 − 20`, label
+      16 px from the edge, only the bottom line, focus thickens it;
+    - the message under the field starts at the text, right under it;
+    - the required mark has no gap under the preset;
+    - Material muted colour for the placeholder, the resting label, the icons and the arrow;
+    - brand caret; left icon 24 px, 12 px from the edge, 16 px from the text;
+    - `iconLeftDisabled` and `iconRightDisabled`;
+    - `--rt-input-min-width`;
+    - an icon button inside a field is capped by the field height, which also cures the small field
+      with a cross at 34 px.
+
+    Not done on purpose: the outlined rounding stays the first kit's (the application sets `radius`),
+    and the least width is no preset default. Scenarios SC-UKV-908…915, spec
+    `rt-field-material-metrics.spec.ts`, story Molecules/Forms/Field → Material and the disabled case
+    in FieldExtras → IconActions. Measured live: 18 fields of the story match Material. The kit look of
+    the input appearance story is unchanged. The first full run failed three application builds: the
+    field sheet grew to 11.8 KB and the select sheet to 8.7 KB over the 8 KB budget. The label-inside
+    rules moved to `rt-field-label-inside.scss` under one `:is()` selector, the select's cross size
+    and filled focus moved to its two sibling sheets; the sheets are now 1.8 + 7.4 KB and 7.95 KB.
 
 ## Sessions
 

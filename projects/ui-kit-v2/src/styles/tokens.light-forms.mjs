@@ -93,6 +93,7 @@ export const lightForms = [
     {
         name: `--rt-input-color-text-placeholder`,
         value: `var(--rt-color-text-muted)`,
+        dark: `var(--rt-color-text-muted)`,
     },
     {
         name: `--rt-input-icon-color`,
@@ -106,6 +107,26 @@ export const lightForms = [
     {
         name: `--rt-input-gap`,
         value: `var(--rt-space-sm)`,
+    },
+    {
+        name: `--rt-input-caret-color`,
+        value: `auto`,
+    },
+    {
+        name: `--rt-input-min-width`,
+        value: `0px`,
+    },
+    {
+        name: `--rt-input-fill-edge`,
+        value: `var(--rt-input-border-width)`,
+    },
+    {
+        name: `--rt-input-fill-focus-shadow`,
+        value: `var(--rt-input-focus-shadow)`,
+    },
+    {
+        name: `--rt-input-fill-focus-shadow-error`,
+        value: `var(--rt-input-focus-shadow-error)`,
     },
     {
         lead: `    /* Sizes (single-line height scale) */`,

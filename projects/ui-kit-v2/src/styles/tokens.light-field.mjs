@@ -49,6 +49,10 @@ export const lightField = [
         value: `var(--rt-color-state-danger)`,
     },
     {
+        name: `--rt-field-required-gap`,
+        value: `var(--rt-space-1)`,
+    },
+    {
         name: `--rt-field-value-font-size`,
         value: `var(--rt-text-sm)`,
     },

@@ -377,11 +377,15 @@ export const material = [
     { name: `--rt-input-focus-shadow`, value: `inset 0 0 0 1px var(--rt-input-color-border-focus)` },
     { name: `--rt-input-focus-shadow-error`, value: `inset 0 0 0 1px var(--rt-input-color-border-error)` },
     {
-        lead: `    /* Размер поля Material при плотности 0: высота 56 px, значение 16 px. Меньшую плотность
-       назначает атрибут \`data-rt-density\` на поле или на любом предке — правила в \`_density.scss\`. */`,
+        lead: `    /* Размер поля Material: 56 px при плотности 0 и на 4 px меньше за каждый шаг, значение 16 px.
+       Шаг приходит свойством \`--rt-input-density\`, которое ставит атрибут \`data-rt-density\` на поле
+       или на любом предке, — правила в \`_density.scss\`. Высота считается здесь, на узле с признаком
+       набора, из унаследованного шага: атрибут на корне приложения доходит и до поля со своим
+       признаком набора. Своя высота приложения — \`--rt-input-height-app\` на любом предке; она сильнее
+       плотности и не перебивается набором на самом поле. */`,
         space: true,
         name: `--rt-input-height-md`,
-        value: `calc(var(--rt-size-12) + var(--rt-size-2))`,
+        value: `var(--rt-input-height-app, calc(var(--rt-size-12) + var(--rt-size-2) - var(--rt-input-density) * var(--rt-size-1)))`,
     },
     { name: `--rt-input-height`, value: `var(--rt-input-height-md)` },
     {
@@ -394,10 +398,34 @@ export const material = [
     },
     { name: `--rt-input-font-size`, value: `var(--rt-text-md)` },
     {
+        lead: `    /* Подсказка, подпись в покое, значки и стрелка поля — цвета on-surface-variant темы Material,
+       каретка — цвета марки, значки 24 px, как у поля Material. Без темы Material цвета прежние. */`,
+        space: true,
+        name: `--rt-input-color-text-placeholder`,
+        value: `var(--mat-sys-on-surface-variant, var(--rt-mat-neutral-60))`,
+    },
+    {
+        name: `--rt-input-icon-color`,
+        value: `var(--mat-sys-on-surface-variant, var(--rt-neutral-600))`,
+        dark: `var(--mat-sys-on-surface-variant, var(--rt-neutral-600))`,
+    },
+    { name: `--rt-input-icon-size`, value: `var(--rt-size-6)` },
+    { name: `--rt-input-caret-color`, value: `var(--rt-color-action-primary)` },
+    {
+        lead: `    /* Залитое поле Material: рамки сверху и по бокам нет, только черта снизу; в фокусе черта
+       вдвое толще цветом марки, у недействительного поля — цветом ошибки. */`,
+        space: true,
+        name: `--rt-input-fill-edge`,
+        value: `0px`,
+    },
+    { name: `--rt-input-fill-focus-shadow`, value: `inset 0 -1px 0 0 var(--rt-input-color-border-focus)` },
+    { name: `--rt-input-fill-focus-shadow-error`, value: `inset 0 -1px 0 0 var(--rt-input-color-border-error)` },
+    {
         lead: `    /* Звёздочка обязательного поля — цвета подписи, как у поля Material; цвет ошибки она берёт
        только у недействительного поля, правилом самого поля. */`,
         space: true,
         name: `--rt-field-required-color`,
         value: `currentcolor`,
     },
+    { name: `--rt-field-required-gap`, value: `0px` },
 ];

@@ -30,6 +30,7 @@
         position: relative;
         display: block;
         width: 100%;
+        min-width: var(--rt-input-min-width);
 
         /* bordered=false: снимаем только resting-рамку триггера. Объявлено ДО блока
            __trigger — его :focus и правила --open/--invalid/--readonly __trigger
@@ -43,6 +44,7 @@
            Объявлен до блоков состояний: фокус, ошибка и «только чтение» идут ниже и
            перекрывают его рамку. */
         &--appearance--fill &__trigger {
+            border-width: var(--rt-input-fill-edge) var(--rt-input-fill-edge) var(--rt-input-border-width);
             border-color: transparent;
             border-radius: var(--rt-select-fill-radius) var(--rt-select-fill-radius) 0 0;
             border-bottom-color: var(--rt-color-field-fill-underline);
@@ -218,6 +220,8 @@
            остаётся с шевроном. Размер значок ставит себе встроенным стилем, поэтому треугольник задан
            пределами, а не шириной. */
         :is(.rt-preset-material, [data-preset='material']) &__chevron {
+            --rt-icon-color-muted: var(--rt-input-icon-color);
+
             max-width: 10px;
             max-height: 5px;
             background-color: currentcolor;

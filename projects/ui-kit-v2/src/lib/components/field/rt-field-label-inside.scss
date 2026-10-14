@@ -1,0 +1,173 @@
+@layer rt-kit.components {
+    /* Подпись внутри поля под материальным набором — отдельный лист стилей компонента. Одним листом с
+       остальными правилами он перешёл бы порог в 8 КБ на лист, который Angular по умолчанию ставит
+       приложению, и сборка потребителя упала бы. Лист подключается вторым, после основного. */
+
+    /* Контролы залитого вида: подпись материального набора у них лежит внутри поля, а не на рамке. */
+    $filled-controls: '.rt-input--appearance--fill, .rt-input--appearance--pill, .rt-select--appearance--fill, .rt-input-number--appearance--fill, .rt-input-number--appearance--pill';
+
+    /* Залитые поля ввода и выбора, у которых значение стоит строкой Material под поднятой подписью. */
+    $fill-fields: '.rt-input--appearance--fill, .rt-input--appearance--pill, .rt-select--appearance--fill';
+    $fill-values: '.rt-input--appearance--fill .rt-input__field, .rt-input--appearance--pill .rt-input__field, .rt-select--appearance--fill .rt-select__label';
+
+    /* Верхняя рамка у залитого поля — своя, у «таблетки» — общая. */
+    $pill-values: '.rt-input--appearance--pill .rt-input__field';
+
+    .rt-field {
+        /* Материальный набор кладёт подпись внутрь контрола, как поле Material: пустое поле без
+           фокуса держит её на месте подсказки, значение или фокус её поднимают. У обведённого поля
+           она встаёт на верхнюю рамку, и рамка под ней разорвана; у залитого — внутрь поля над
+           значением. Подпись выходит из потока. Поле только для чтения и поле в загрузке рамки ввода
+           не имеют — у них подпись остаётся над значением. Обрезка подписи повторяет подпись на
+           рамке у самого поля ввода. Внутрь ложится только подпись поля с местом подсказки — ввода,
+           текста, числа и выбора: над палитрой, списком и выбором файла она остаётся сверху.
+           Признак набора действует и на предке, и на самом поле — одним селектором: пара селекторов
+           удвоила бы весь блок в собранном листе, а лист компонента держится под 8 КБ. */
+        &--label-inside:is(.rt-preset-material *, [data-preset='material'] *, .rt-preset-material, [data-preset='material']) {
+            position: relative;
+            isolation: isolate;
+
+            &:has(.rt-input--with-icon-left) {
+                --rt-field-floating-rest-start: calc(var(--rt-field-floating-start) + var(--rt-input-icon-size) + var(--rt-input-gap));
+            }
+
+            /* Значок слева стоит в 12 px от края поля и в 16 px от текста, как у поля Material, —
+               подпись в покое встаёт туда, где начинается текст. */
+            &:has(.rt-input--with-icon-left > rt-icon.rt-input__icon-left) {
+                --rt-field-floating-rest-start: calc(var(--rt-space-2) + var(--rt-space-1) + var(--rt-input-icon-size) + var(--rt-space-4));
+            }
+
+            /* Отказ и подсказка под полем начинаются от текста поля, вплотную к нему. */
+            .rt-field__messages {
+                margin-top: calc(-1 * var(--rt-field-gap));
+                padding-inline: var(--rt-input-padding-x);
+            }
+
+            /* Вход `size` у контрола меняет его высоту своей ступенью, а подпись поля считает место
+               от высоты поля: ступень контрола становится высотой поля, иначе подпись маленького
+               поля легла бы на его нижнюю рамку. */
+            &:has(.rt-input--size--sm, .rt-select--size--sm, .rt-input-number--size--sm) {
+                --rt-input-height: var(--rt-input-height-sm);
+            }
+
+            &:has(.rt-input--size--lg, .rt-select--size--lg, .rt-input-number--size--lg) {
+                --rt-input-height: var(--rt-input-height-lg);
+            }
+
+            .rt-field__label-row {
+                position: absolute;
+                z-index: var(--rt-field-floating-z);
+                top: calc(var(--rt-input-height) / 2);
+                left: var(--rt-field-floating-rest-start);
+                max-width: calc(100% - 2 * var(--rt-field-floating-start));
+                pointer-events: none;
+                transform: translateY(-50%);
+                transition:
+                    top var(--rt-field-floating-duration) ease,
+                    left var(--rt-field-floating-duration) ease;
+            }
+
+            .rt-field__label {
+                overflow: hidden;
+                color: var(--rt-input-color-text-placeholder);
+                font-size: var(--rt-input-font-size);
+                font-weight: inherit;
+                text-overflow: ellipsis;
+                transition:
+                    font-size var(--rt-field-floating-duration) ease,
+                    color var(--rt-field-floating-duration) ease;
+                white-space: nowrap;
+            }
+
+            /* Кнопка справки остаётся нажимаемой и в подписи, лежащей поверх поля. */
+            .rt-field__help {
+                pointer-events: auto;
+            }
+
+            /* Пока подпись лежит на месте подсказки, подсказка контрола не рисуется. */
+            &:not(.rt-field--filled, :focus-within) {
+                ::placeholder,
+                .rt-select__label--placeholder {
+                    color: transparent;
+                }
+            }
+
+            &.rt-field--filled .rt-field__label-row,
+            &:focus-within .rt-field__label-row {
+                top: 0;
+                left: var(--rt-field-raised-start);
+                max-width: calc(100% - var(--rt-field-raised-start) - var(--rt-field-floating-start));
+                padding: 0 var(--rt-space-1);
+                margin-left: calc(-1 * var(--rt-space-1));
+                line-height: 1;
+            }
+
+            /* Разрыв рамки под поднятой подписью: зона контрола вырезает у себя полосу толщиной в
+               рамку фокуса шириной в подпись. Поле в наборе прозрачное, поэтому вырезается только
+               рамка, а под ней виден тот же фон, что вокруг поля. */
+            &.rt-field--filled:not(:has(#{$filled-controls})) .rt-field__control,
+            &:focus-within:not(:has(#{$filled-controls})) .rt-field__control {
+                clip-path: polygon(
+                    0 0,
+                    var(--rt-field-notch-start) 0,
+                    var(--rt-field-notch-start) var(--rt-field-notch-depth),
+                    calc(var(--rt-field-notch-start) + var(--rt-field-notch-width)) var(--rt-field-notch-depth),
+                    calc(var(--rt-field-notch-start) + var(--rt-field-notch-width)) 0,
+                    100% 0,
+                    100% 100%,
+                    0 100%
+                );
+            }
+
+            /* Залитое поле Material выше обведённого, и поднятая подпись лежит внутри него, над
+               значением: рамки сверху у залитого поля нет. */
+            &:has(#{$filled-controls}) {
+                --rt-input-height: var(--rt-field-fill-height);
+            }
+
+            /* У залитого поля Material боковой рамки нет: подпись стоит в 16 px от края. */
+            &:has(.rt-input--appearance--fill, .rt-select--appearance--fill) {
+                --rt-field-floating-start: calc(var(--rt-input-padding-x) + var(--rt-input-fill-edge));
+            }
+
+            /* Подпись в покое — строкой Material; значение — ниже середины, под поднятой подписью:
+               при 52 px текст начинается в 22 px от верха строкой в 24 px. */
+            &:has(#{$fill-fields}) .rt-field__label {
+                line-height: var(--rt-leading-tight);
+            }
+
+            :is(#{$fill-values}) {
+                align-self: stretch;
+                padding-top: calc(var(--rt-input-height) / 2 - var(--rt-space-1) - var(--rt-input-fill-edge));
+                padding-bottom: calc(var(--rt-input-height) / 2 - var(--rt-space-5) - var(--rt-input-border-width));
+                line-height: var(--rt-leading-normal);
+            }
+
+            :is(#{$pill-values}) {
+                padding-top: calc(var(--rt-input-height) / 2 - var(--rt-space-1) - var(--rt-input-border-width));
+            }
+
+            &.rt-field--filled:has(#{$filled-controls}) .rt-field__label-row,
+            &:focus-within:has(#{$filled-controls}) .rt-field__label-row {
+                top: calc(var(--rt-input-height) / 2 - var(--rt-space-5));
+                left: var(--rt-field-floating-rest-start);
+                padding: 0;
+                margin-left: 0;
+                transform: none;
+            }
+
+            &.rt-field--filled .rt-field__label,
+            &:focus-within .rt-field__label {
+                font-size: var(--rt-text-xs);
+            }
+
+            &:focus-within .rt-field__label {
+                color: var(--rt-input-color-border-focus);
+            }
+
+            &.rt-field--invalid .rt-field__label {
+                color: var(--rt-input-color-border-error);
+            }
+        }
+    }
+}

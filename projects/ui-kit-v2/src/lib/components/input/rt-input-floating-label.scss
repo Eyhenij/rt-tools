@@ -28,6 +28,14 @@
             );
         }
 
+        /* Значок слева в наборе стоит в 12 px от края поля и в 16 px от текста — подпись в покое
+           встаёт туда же, где начинается текст. */
+        :where(.rt-preset-material, [data-preset='material']) &--with-icon-left:has(> rt-icon.rt-input__icon-left) {
+            --rt-input-floating-label-rest-start: calc(
+                var(--rt-space-2) + var(--rt-space-1) - var(--rt-input-edge) + var(--rt-input-icon-size) + var(--rt-space-4)
+            );
+        }
+
         &--appearance--fill,
         &--appearance--pill {
             --rt-input-floating-label-bg: var(--rt-color-bg-surface-subtle-2);
@@ -98,11 +106,26 @@
                 --rt-input-height: var(--rt-input-fill-floating-height);
             }
 
+            /* Подпись в покое — строкой Material, значение — ниже середины, под поднятой подписью:
+               при 52 px текст начинается в 22 px от верха строкой в 24 px. */
+            &--floating.rt-input--appearance--fill .rt-input__floating-label,
+            &--floating.rt-input--appearance--pill .rt-input__floating-label {
+                line-height: var(--rt-leading-tight);
+            }
+
+            &--floating.rt-input--appearance--fill .rt-input__field,
+            &--floating.rt-input--appearance--pill .rt-input__field {
+                align-self: stretch;
+                padding: calc(var(--rt-input-height) / 2 - var(--rt-space-1) - var(--rt-input-edge)) 0
+                    calc(var(--rt-input-height) / 2 - var(--rt-space-5) - var(--rt-input-border-width));
+                line-height: var(--rt-leading-normal);
+            }
+
             &--floating.rt-input--appearance--fill.rt-input--filled .rt-input__floating-label,
             &--floating.rt-input--appearance--fill:focus-within .rt-input__floating-label,
             &--floating.rt-input--appearance--pill.rt-input--filled .rt-input__floating-label,
             &--floating.rt-input--appearance--pill:focus-within .rt-input__floating-label {
-                top: var(--rt-space-1);
+                top: calc(var(--rt-input-height) / 2 - var(--rt-space-5) - var(--rt-input-edge));
                 left: var(--rt-input-floating-label-rest-start);
                 padding: 0;
                 margin-left: 0;

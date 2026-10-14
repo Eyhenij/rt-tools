@@ -266,6 +266,11 @@
     --rt-input-icon-color: var(--rt-neutral-600);
     --rt-input-icon-size: var(--rt-size-4);
     --rt-input-gap: var(--rt-space-sm);
+    --rt-input-caret-color: auto;
+    --rt-input-min-width: 0px;
+    --rt-input-fill-edge: var(--rt-input-border-width);
+    --rt-input-fill-focus-shadow: var(--rt-input-focus-shadow);
+    --rt-input-fill-focus-shadow-error: var(--rt-input-focus-shadow-error);
 
     /* Sizes (single-line height scale) */
     --rt-input-height-sm: var(--rt-control-height-sm);
@@ -469,6 +474,7 @@
     --rt-field-error-font-size: var(--rt-text-xs);
     --rt-field-error-color: var(--rt-color-state-danger);
     --rt-field-required-color: var(--rt-color-state-danger);
+    --rt-field-required-gap: var(--rt-space-1);
     --rt-field-value-font-size: var(--rt-text-sm);
     --rt-field-value-color: var(--rt-color-text-primary);
     --rt-field-value-empty-color: var(--rt-color-text-muted);

@@ -145,6 +145,9 @@ export const darkLayout = [
         name: `--rt-input-icon-color`,
     },
     {
+        name: `--rt-input-color-text-placeholder`,
+    },
+    {
         lead: `    /* Stepper — в dark рельса уходит от яркого синего к приглушённому серо-синему
        (текущий шаг остаётся янтарным из light-семантики). */`,
         space: true,

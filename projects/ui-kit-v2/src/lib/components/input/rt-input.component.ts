@@ -125,6 +125,10 @@ export class RtInputComponent extends RtFormControlBase<string> {
 
     protected readonly hasIconRight: Signal<boolean> = computed((): boolean => !!this.iconRight() || this.showPasswordToggle());
 
+    /** Иконка-кнопка отключена вместе с полем или своим входом. */
+    protected readonly isIconLeftDisabled: Signal<boolean> = computed((): boolean => this.isDisabled() || this.iconLeftDisabled());
+    protected readonly isIconRightDisabled: Signal<boolean> = computed((): boolean => this.isDisabled() || this.iconRightDisabled());
+
     protected readonly passwordToggleIcon: Signal<IRtIcon.Name> = computed((): IRtIcon.Name =>
         this.isPasswordVisible() ? 'ico-eyeClose' : 'ico-eye'
     );
@@ -157,6 +161,19 @@ export class RtInputComponent extends RtFormControlBase<string> {
      * показа не действует: место занято переключателем.
      */
     public readonly iconRightAction: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+
+    /**
+     * Левая иконка-кнопка отключена, хотя поле доступно: например, поиск, который не ищет, пока
+     * введено меньше трёх знаков. Подсказка у отключённой кнопки остаётся и объясняет почему.
+     */
+    public readonly iconLeftDisabled: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+
+    /** Правая иконка-кнопка отключена, хотя поле доступно. */
+    public readonly iconRightDisabled: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
 

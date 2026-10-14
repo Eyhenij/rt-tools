@@ -89,7 +89,10 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 Триггер берёт ту же группу свойств, что и остальные поля кита — `--rt-input-height`,
 `--rt-input-color-border`, `--rt-input-color-border-focus`, `--rt-input-color-border-error`,
-`--rt-input-radius`: поля в форме стоят одной высоты не по совпадению. Панель отдельно берёт
+`--rt-input-radius`: поля в форме стоят одной высоты не по совпадению. Наименьшая ширина —
+`--rt-input-min-width`, по умолчанию её нет; крестик не выше поля без рамки. Залитое поле под
+материальным набором сверено с полем Material — раздел «Материальный набор» у
+[`rt-field`](./?path=/docs/molecules-forms-field-overview--docs). Панель отдельно берёт
 `--rt-input-panel-max-height`, `--rt-color-bg-surface`, `--rt-color-border-subtle` и
 `--rt-shadow-md`.
 

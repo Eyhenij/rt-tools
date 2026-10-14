@@ -1,14 +1,36 @@
 @layer rt-kit.components {
-    /* Крестик в порядке обхода (`clearTabbable`) — отдельный лист стилей компонента: основной лист
-       стоит у порога в 8 КБ, который Angular по умолчанию ставит приложению. Крестик — соседняя
+    /* Крестик — его размер и порядок обхода (`clearTabbable`) — отдельный лист стилей компонента:
+       основной лист стоит у порога в 8 КБ, который Angular по умолчанию ставит приложению. Крестик
+       не выше поля без рамки. Крестик в порядке обхода — соседняя
        кнопка поверх своего места в строке указателя: место держит пустая ячейка той же ширины, и
        подпись выбора не заходит под крестик. */
     .rt-select {
         --rt-select-chevron-width: var(--rt-size-4);
 
+        /* Ступень размера — высота поля целиком: по ней считаются и крестик, и его место. */
+        &--size--sm {
+            --rt-input-height: var(--rt-input-height-sm);
+        }
+
+        &--size--lg {
+            --rt-input-height: var(--rt-input-height-lg);
+        }
+
+        /* Крестик не выше поля без рамки — как у поля ввода. */
+        &__clear .rt-icon-button {
+            width: min(
+                var(--rt-icon-button-size, var(--rt-icon-button-size-step)),
+                calc(var(--rt-input-height) - 2 * var(--rt-input-border-width))
+            );
+            height: min(
+                var(--rt-icon-button-size, var(--rt-icon-button-size-step)),
+                calc(var(--rt-input-height) - 2 * var(--rt-input-border-width))
+            );
+        }
+
         &__clear-slot {
-            width: var(--rt-control-height-sm);
-            height: var(--rt-control-height-sm);
+            width: min(var(--rt-control-height-sm), calc(var(--rt-input-height) - 2 * var(--rt-input-border-width)));
+            height: min(var(--rt-control-height-sm), calc(var(--rt-input-height) - 2 * var(--rt-input-border-width)));
             flex-shrink: 0;
         }
 

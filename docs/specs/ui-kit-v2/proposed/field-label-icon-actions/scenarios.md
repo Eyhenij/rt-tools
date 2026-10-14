@@ -413,3 +413,69 @@ keyboard draws the ring; the source stands on the button as the CDK classes `cdk
 
 Covered: `projects/ui-kit-v2/src/lib/components/button/rt-button.directive.spec.ts`,
 `projects/ui-kit-v2/src/lib/components/icon-button/rt-icon-button.component.spec.ts`.
+
+### SC-UKV-908 — a density step on an ancestor reaches a field with its own preset sign
+
+Given a density step on the page root and the material preset sign on the field itself
+When the field is drawn
+Then the field takes the height of that step, and an own field height set on an ancestor beats it
+
+Covered: `projects/ui-kit-v2/src/styles/density.styles.spec.ts`.
+
+### SC-UKV-909 — the preset sign on the field itself puts the label inside
+
+Given a field carrying the material preset sign itself, with no sign on an ancestor
+When the field is drawn
+Then its label lies inside the control, as under a sign on an ancestor
+
+Covered: `projects/ui-kit-v2/src/lib/components/field/rt-field-material-metrics.spec.ts`.
+
+### SC-UKV-910 — a filled field under the preset follows the Material filled field
+
+Given a filled input or select with a label under the material preset
+When the field is empty, holds a value or is in focus
+Then the value starts below the risen label, the label starts 16 px from the edge, only the bottom
+line is drawn and focus thickens it, and the message under the field starts at the field's text
+
+Covered: `projects/ui-kit-v2/src/lib/components/field/rt-field-material-metrics.spec.ts`.
+
+### SC-UKV-911 — field colours and the left icon under the preset follow the Material theme
+
+Given a field under the material preset on a page with a Material theme
+When the field is drawn
+Then the placeholder, the resting label, the icons and the arrow take the theme's muted colour, the
+caret takes the brand colour, and the left icon is 24 px, 12 px from the edge and 16 px from the text
+
+Covered: `projects/ui-kit-v2/src/lib/components/field/rt-field-material-metrics.spec.ts`.
+
+### SC-UKV-912 — the required mark stands right after the label under the preset
+
+Given a required field
+When it is drawn under the material preset and in the kit look
+Then under the preset the mark stands right after the label, and the kit look keeps a gap
+
+Covered: `projects/ui-kit-v2/src/lib/components/field/rt-field-material-metrics.spec.ts`.
+
+### SC-UKV-913 — an actionable icon is disabled while the field stays usable
+
+Given an input with an actionable left icon that the host disables
+When the field is drawn
+Then the icon button is disabled and keeps its tooltip, and the field still takes input
+
+Covered: `projects/ui-kit-v2/src/lib/components/field/rt-field-material-metrics.spec.ts`.
+
+### SC-UKV-914 — a field's least width is set on an ancestor
+
+Given an input or select in a row sized by its content
+When the application sets a least width on an ancestor
+Then the field is no narrower than it whatever the value, and without it the field is as before
+
+Covered: `projects/ui-kit-v2/src/lib/components/field/rt-field-material-metrics.spec.ts`.
+
+### SC-UKV-915 — an icon button inside a field is never taller than the field
+
+Given a small field or a field with an own low height, holding a clearing cross
+When the field is drawn
+Then the field keeps its height, and the cross shrinks to the field inside its border
+
+Covered: `projects/ui-kit-v2/src/lib/components/field/rt-field-material-metrics.spec.ts`.
