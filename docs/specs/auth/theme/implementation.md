@@ -33,3 +33,4 @@ without a line and a line without a rule is a divergence.
 - **The registration form checks the address and the match of the two passwords before the submit.** — `projects/auth-keycloak-theme/src/login/kc-form.ts:sameValueAs`
 - **The dark theme follows the system until the person switches it on the page.** — `projects/auth-keycloak-theme/src/login/kc-app.config.ts:themeAppConfig`
 - **The stand realm uses the theme, and the raising command builds it first.** — `deploy/auth/realm/rt.json:loginTheme`
+- **Every built file of the theme carries a hash of its content in its name.** — `projects/auth-keycloak-theme/project.json:outputHashing`

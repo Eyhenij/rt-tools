@@ -90,6 +90,10 @@ the entry is not sure the page belongs to the admin.
 - **The dark theme follows the system until the person switches it on the page.**
 - **The stand realm uses the theme, and the raising command builds it first.** Without the JAR the
   realm falls back to the standard look.
+- **Every built file of the theme carries a hash of its content in its name.** Keycloak serves the
+  theme files under one path across rollouts, and the browser keeps them for 30 days. Under an
+  unchanged name a returning person got the former entry file, it asked for a piece the server no
+  longer had, and the page stayed blank.
 
 ## What is out of scope
 
