@@ -54,6 +54,23 @@ class BottomSheetHostComponent {
     public lastChange: boolean | null = null;
 }
 
+/** Подвал приходит своим слотом — кнопки, которые не уезжают с прокруткой тела. */
+@Component({
+    selector: 'rt-bottom-sheet-footer-host',
+    template: `
+        <rt-bottom-sheet [open]="true" (openChange)="lastChange = $event">
+            <h2 sheetHeader>Фильтры</h2>
+            <p>Содержимое листа</p>
+            <button sheetFooter type="button">Применить</button>
+        </rt-bottom-sheet>
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtBottomSheetComponent],
+})
+class BottomSheetFooterHostComponent {
+    public lastChange: boolean | null = null;
+}
+
 function setup(open: boolean = true): ComponentFixture<RtBottomSheetComponent> {
     return createRtFixture(RtBottomSheetComponent, { open });
 }
@@ -201,6 +218,52 @@ describe('RtBottomSheetComponent', (): void => {
             const fixture: ComponentFixture<BottomSheetHostComponent> = createRtFixture(BottomSheetHostComponent);
 
             expect(renderedText(fixture)).toContain('Содержимое листа');
+        });
+
+        it('содержимое по умолчанию лежит в теле — единственной прокручиваемой зоне', (): void => {
+            const fixture: ComponentFixture<BottomSheetHostComponent> = createRtFixture(BottomSheetHostComponent);
+            const body: HTMLElement = qa(fixture, 'bottom-sheet-body')?.nativeElement as HTMLElement;
+
+            expect(body.classList).toContain('rt-bottom-sheet__body');
+            expect(body.textContent?.trim()).toBe('Содержимое листа');
+        });
+
+        it('подвал попадает в свой слот после тела, а не в тело', (): void => {
+            const fixture: ComponentFixture<BottomSheetFooterHostComponent> = createRtFixture(BottomSheetFooterHostComponent);
+            const body: HTMLElement = qa(fixture, 'bottom-sheet-body')?.nativeElement as HTMLElement;
+            const footer: HTMLElement = qa(fixture, 'bottom-sheet-footer')?.nativeElement as HTMLElement;
+
+            expect(footer.classList).toContain('rt-bottom-sheet__footer');
+            expect(footer.textContent?.trim()).toBe('Применить');
+            expect(body.textContent).not.toContain('Применить');
+            expect(body.nextElementSibling).toBe(footer);
+        });
+
+        it('без спроецированного подвала элемент пуст — правило :empty убирает его из раскладки', (): void => {
+            // Ни пробела, ни перевода строки: текстовый узел снял бы с элемента :empty,
+            // и пустой подвал занял бы место с линией сверху.
+            const fixture: ComponentFixture<BottomSheetHostComponent> = createRtFixture(BottomSheetHostComponent);
+            const footer: HTMLElement = qa(fixture, 'bottom-sheet-footer')?.nativeElement as HTMLElement;
+
+            expect(footer.childNodes.length).toBe(0);
+            expect(footer.matches(':empty')).toBe(true);
+        });
+
+        it('свайп за подвал лист не тянет — тянет только ручка', (): void => {
+            const fixture: ComponentFixture<BottomSheetFooterHostComponent> = createRtFixture(BottomSheetFooterHostComponent);
+
+            qa(fixture, 'bottom-sheet-footer')?.nativeElement.dispatchEvent(pointer('pointerdown', 0));
+            fixture.detectChanges();
+            document.dispatchEvent(pointer('pointermove', DRAG_DISMISS_THRESHOLD_PX + 1));
+            fixture.detectChanges();
+
+            const panel: HTMLElement = qa(fixture, 'bottom-sheet-panel')?.nativeElement as HTMLElement;
+            expect(panel.classList.contains('rt-bottom-sheet__panel--dragging')).toBe(false);
+
+            document.dispatchEvent(pointer('pointerup', 0));
+            fixture.detectChanges();
+
+            expect(fixture.componentInstance.lastChange).toBeNull();
         });
     });
 

@@ -27,13 +27,15 @@
             transition: opacity var(--rt-bottom-sheet-transition-duration) ease;
         }
 
+        /* Предел высоты панели — `--rt-bottom-sheet-max-height`, умолчание `80vh`; свойство приходит
+           от предка или с тега листа. */
         &__panel {
             position: absolute;
             right: 0;
             bottom: 0;
             left: 0;
             display: flex;
-            max-height: 80vh;
+            max-height: var(--rt-bottom-sheet-max-height, 80vh);
             flex-direction: column;
             border-radius: var(--rt-bottom-sheet-radius) var(--rt-bottom-sheet-radius) 0 0;
             background: var(--rt-color-bg-surface);
@@ -63,6 +65,38 @@
             padding: 0 var(--rt-space-5) var(--rt-space-4);
             color: var(--rt-color-text-primary);
             font-weight: var(--rt-font-weight-semibold);
+        }
+
+        /* Тело — единственная прокручиваемая зона: панель упирается в предел высоты, а ручка,
+           шапка и подвал остаются на месте. `min-height: 0` обязателен — без него элемент флекса
+           не сжимается ниже своего содержимого, и прокрутка не включается. Колонка флекса
+           сохраняет раскладку содержимого прежней: до тела оно стояло прямо в колонке панели. */
+        &__body {
+            display: flex;
+            min-width: 0;
+            min-height: 0;
+            flex: 1 1 auto;
+            flex-direction: column;
+            overflow-y: auto;
+            overscroll-behavior: contain;
+        }
+
+        /* Подвал не прокручивается: кнопки стоят внизу при любой длине тела. Нижний отступ
+           прибавляет вырез экрана, иначе кнопки уходят под полосу жестов телефона. Без
+           спроецированного подвала элемент пуст и места не занимает. Спроецированное встаёт в
+           строку с зазором и переносится, когда не помещается в ширину; прижать кнопки вправо — `margin-inline-start: auto` у первой. */
+        &__footer {
+            display: flex;
+            flex-shrink: 0;
+            flex-wrap: wrap;
+            align-items: center;
+            padding: var(--rt-space-4) var(--rt-space-5) calc(var(--rt-space-4) + env(safe-area-inset-bottom));
+            border-top: var(--rt-border-width-thin) solid var(--rt-color-border-default);
+            gap: var(--rt-space-2);
+
+            &:empty {
+                display: none;
+            }
         }
 
         &--open {
