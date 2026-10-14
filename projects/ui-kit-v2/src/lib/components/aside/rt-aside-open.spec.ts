@@ -120,6 +120,9 @@ describe('Колонка заголовка и открытие панели', (
         aside.open(OwnedContentComponent);
         aside.open(OwnedContentComponent, { disposeOnNavigation: false });
 
-        expect(configs.map((config: OverlayConfig): boolean | undefined => config.disposeOnNavigation)).toEqual([true, false]);
+        expect(configs.map((config: OverlayConfig): OverlayConfig['disposeOnNavigation'] => config.disposeOnNavigation)).toEqual([
+            true,
+            false,
+        ]);
     });
 });

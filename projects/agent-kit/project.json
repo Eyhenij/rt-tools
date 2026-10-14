@@ -55,6 +55,14 @@
       "options": {
         "command": "bash projects/agent-kit/tests/run.sh"
       }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": ["default", "^default"],
+      "options": {
+        "command": "tsc --noEmit -p projects/agent-kit/tsconfig.spec.json --rootDir ."
+      }
     }
   }
 }

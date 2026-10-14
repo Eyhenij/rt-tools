@@ -1,12 +1,12 @@
-import { Controller, Get, Inject, INestApplication } from '@nestjs/common';
+import { Controller, Get, Inject, INestApplication, Type } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { ICaller } from '@rt-tools/auth-contract';
+import type { ICaller } from '@rt-tools/auth-contract';
 
 import { PermittedOperation, OpenOperation, SignedInOperation } from './access.js';
-import { AuthServerModule, IAuthServerOptions } from './auth-server.module.js';
+import { AuthServerModule, type IAuthServerOptions } from './auth-server.module.js';
 import { AUTH_SERVER_OPTIONS, AUTH_TOKEN_VERIFIER } from './auth.tokens.js';
-import { clientSettingsOf, IAuthClientSettings } from './env-options.js';
+import { clientSettingsOf, type IAuthClientSettings } from './env-options.js';
 import { CurrentCaller } from './current-caller.decorator.js';
 import { ITestRealm, personClaims, TEST_CLIENT, TEST_ISSUER, testRealm } from './testing/keys.js';
 import { KeycloakTokenVerifier } from './token-verifier.js';
@@ -56,7 +56,7 @@ class ForgottenController {
     }
 }
 
-async function start(realm: ITestRealm, controllers: (new () => object)[]): Promise<INestApplication> {
+async function start(realm: ITestRealm, controllers: Type<object>[]): Promise<INestApplication> {
     const moduleRef: TestingModule = await Test.createTestingModule({
         imports: [AuthServerModule.forRoot({ issuer: TEST_ISSUER, clientId: TEST_CLIENT, catalog: ['orders:read'] })],
         controllers,

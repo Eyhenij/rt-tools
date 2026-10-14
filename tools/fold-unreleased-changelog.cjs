@@ -1,7 +1,7 @@
 /**
  * Folds a hand-written `## [Unreleased]` block into the release section generated above it.
  *
- * `conventional-changelog -i <file> -s` prepends the new release section to the top of the file. It
+ * `conventional-changelog -i <file>` prepends the new release section to the top of the file. It
  * does not know about the `Unreleased` block a PR wrote there, so that block is pushed *below* the
  * heading it was written for and its notes keep reading as pending after they shipped.
  *

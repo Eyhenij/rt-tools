@@ -1,6 +1,8 @@
 import { TComparatorType, safeCompare } from './safe-compare.js';
 
-const numeric: TComparatorType<number> = (a: number, b: number) => a - b;
+type TMaybeNumber = number | null | undefined;
+
+const numeric: TComparatorType<TMaybeNumber> = (a: TMaybeNumber, b: TMaybeNumber) => Number(a) - Number(b);
 
 describe(safeCompare.name, () => {
     it('should delegate to the comparator when both values are present', () => {
@@ -24,7 +26,9 @@ describe(safeCompare.name, () => {
     });
 
     it('should never call the comparator when either side is nullish', () => {
-        const comparator: jest.Mock<number, [number, number]> = jest.fn<number, [number, number]>().mockReturnValue(0);
+        const comparator: jest.Mock<number, [TMaybeNumber, TMaybeNumber]> = jest
+            .fn<number, [TMaybeNumber, TMaybeNumber]>()
+            .mockReturnValue(0);
 
         safeCompare(null, 1, comparator);
         safeCompare(1, null, comparator);

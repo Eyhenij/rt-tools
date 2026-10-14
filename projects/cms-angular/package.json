@@ -27,9 +27,9 @@
     "@angular/router": "^22.0.0",
     "@bufbuild/protobuf": "^2.11.0",
     "@connectrpc/connect": "^2.0.0",
-    "@rt-tools/core": "^0.5.0",
-    "@rt-tools/ui-kit-v2": "^0.17.0",
-    "@rt-tools/utils": "^0.4.0",
+    "@rt-tools/core": "^0.5.1",
+    "@rt-tools/ui-kit-v2": "^0.23.3",
+    "@rt-tools/utils": "^0.4.1",
     "rxjs": "^7.8.2"
   },
   "sideEffects": false,
