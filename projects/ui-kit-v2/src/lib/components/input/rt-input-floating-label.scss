@@ -32,11 +32,11 @@
             );
         }
 
-        /* Значок слева в наборе стоит в 12 px от края поля и в 16 px от текста — подпись в покое
+        /* Значок слева в наборе стоит в 12 px от края поля и в 4 px от текста — подпись в покое
            встаёт туда же, где начинается текст. */
         &--with-icon-left#{$preset-weak}:has(> rt-icon.rt-input__icon-left) {
             --rt-input-floating-label-rest-start: calc(
-                var(--rt-space-2) + var(--rt-space-1) - var(--rt-input-edge) + var(--rt-input-icon-size) + var(--rt-space-4)
+                var(--rt-space-2) + var(--rt-space-1) - var(--rt-input-edge) + var(--rt-input-icon-size) + var(--rt-space-1)
             );
         }
 

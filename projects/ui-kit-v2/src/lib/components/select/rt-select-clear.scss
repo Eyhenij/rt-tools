@@ -41,7 +41,7 @@
         &__clear--outside {
             position: absolute;
             top: 50%;
-            right: calc(var(--rt-input-padding-x) + var(--rt-input-border-width) + var(--rt-select-chevron-width) + var(--rt-space-sm));
+            right: calc(var(--rt-select-text-inset) + var(--rt-select-chevron-width) + var(--rt-space-sm));
             transform: translateY(-50%);
         }
 

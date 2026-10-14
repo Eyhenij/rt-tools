@@ -412,6 +412,17 @@ export const material = [
     { name: `--rt-input-icon-size`, value: `var(--rt-size-6)` },
     { name: `--rt-input-caret-color`, value: `var(--rt-color-action-primary)` },
     {
+        lead: `    /* Отключённое поле Material: поле не тускнеет целиком — рамка on-surface 12%, текст и
+       подсказка on-surface 38%. */`,
+        space: true,
+        name: `--rt-input-disabled-field-opacity`,
+        value: `1`,
+    },
+    { name: `--rt-input-color-border-disabled`, value: `var(--rt-color-action-disabled)` },
+    { name: `--rt-input-color-text-disabled`, value: `var(--rt-color-text-disabled)` },
+    { name: `--rt-input-color-placeholder-disabled`, value: `var(--rt-color-text-disabled)` },
+    { name: `--rt-input-color-bg-disabled`, value: `transparent` },
+    {
         lead: `    /* Залитое поле Material: рамки сверху и по бокам нет, только черта снизу; в фокусе черта
        вдвое толще цветом марки, у недействительного поля — цветом ошибки. */`,
         space: true,

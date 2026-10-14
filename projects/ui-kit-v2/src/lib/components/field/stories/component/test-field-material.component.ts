@@ -7,18 +7,29 @@ import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { IRtIcon } from '../../../icon/rt-icon.model';
 import { RtInputComponent } from '../../../input/rt-input.component';
 import { IRtInput } from '../../../input/rt-input.model';
+import { RtInputNumberComponent } from '../../../input-number/rt-input-number.component';
 import { RtSelectComponent } from '../../../select/rt-select.component';
+import { RtTextareaComponent } from '../../../textarea/rt-textarea.component';
 import { IRtSelect } from '../../../select/rt-select.model';
 import { RtFieldComponent } from '../../rt-field.component';
 
-/** Случай поля под материальным набором: контрол, вид, состояние и значок слева. */
+/** Контролы, которые показ кладёт в поле: ключи — имена случаев. */
+interface IFieldKinds {
+    readonly input: RtInputComponent;
+    readonly select: RtSelectComponent<string>;
+    readonly number: RtInputNumberComponent;
+    readonly textarea: RtTextareaComponent;
+}
+
+/** Случай поля под материальным набором: контрол, вид, состояние и значки по сторонам. */
 interface IFieldMaterialCase {
     readonly name: string;
-    readonly kind: 'input' | 'select';
+    readonly kind: keyof IFieldKinds;
     readonly appearance: IRtInput.Appearance;
     readonly state: string | null;
     readonly iconLeft: IRtIcon.Name | null;
-    readonly control: FormControl<string | null>;
+    readonly iconRight?: IRtIcon.Name;
+    readonly control: FormControl<string | null> | FormControl<number | null>;
 }
 
 /** Случай ширины: что задано на предке и какое значение стоит в поле. */
@@ -35,6 +46,15 @@ const HOTELS: ReadonlyArray<IRtSelect.Option<string>> = [
 
 function value(text: string | null): FormControl<string | null> {
     return new FormControl<string | null>(text);
+}
+
+function amount(count: number | null): FormControl<number | null> {
+    return new FormControl<number | null>(count);
+}
+
+/** Отключённое поле с заданным значением. */
+function off(text: string | null): FormControl<string | null> {
+    return new FormControl<string | null>({ value: text, disabled: true });
 }
 
 /** Обязательное тронутое поле без значения: звёздочка и отказ под полем. */
@@ -92,6 +112,18 @@ function failing(): FormControl<string | null> {
             </app-story-row>
         </div>
 
+        <div data-preset="material" data-rt-density="-1">
+            <app-story-row
+                caption="Обведённые поля: текст в 16 px от края, отключённые — без тусклости"
+                [items]="outlineCases"
+                [itemLabel]="caseLabel"
+                [slotWidth]="fieldWidth">
+                <ng-template let-fieldCase>
+                    <ng-container *ngTemplateOutlet="field; context: { $implicit: fieldCase, preset: null }" />
+                </ng-template>
+            </app-story-row>
+        </div>
+
         <app-story-row caption="Наименьшая ширина поля задана на предке или нет" [items]="widthCases" [itemLabel]="caseLabel">
             <ng-template let-widthCase>
                 <div data-preset="material" data-rt-density="-1" [style]="widthCase.style">
@@ -133,11 +165,16 @@ function failing(): FormControl<string | null> {
                         [appearance]="fieldCase.appearance"
                         [options]="hotels"
                         [formControl]="fieldCase.control" />
+                } @else if (fieldCase.kind === 'textarea') {
+                    <rt-textarea placeholder="Комментарий" [formControl]="fieldCase.control" />
+                } @else if (fieldCase.kind === 'number') {
+                    <rt-input-number placeholder="0" [appearance]="fieldCase.appearance" [formControl]="fieldCase.control" />
                 } @else {
                     <rt-input
                         placeholder="Название"
                         [appearance]="fieldCase.appearance"
                         [iconLeft]="fieldCase.iconLeft"
+                        [iconRight]="fieldCase.iconRight ?? null"
                         [formControl]="fieldCase.control" />
                 }
             </rt-field>
@@ -152,7 +189,9 @@ function failing(): FormControl<string | null> {
         // components
         RtFieldComponent,
         RtInputComponent,
+        RtInputNumberComponent,
         RtSelectComponent,
+        RtTextareaComponent,
 
         // showcase
         StoryRowComponent,
@@ -172,6 +211,34 @@ export class TestRtFieldMaterialComponent {
         { name: 'выбор залитый', kind: 'select', appearance: 'fill', state: null, iconLeft: null, control: value('station') },
         { name: 'обведённое со значком', kind: 'input', appearance: 'outline', state: null, iconLeft: 'search', control: value(null) },
         { name: 'залитое со значком', kind: 'input', appearance: 'fill', state: null, iconLeft: 'search', control: value('Вокзал') },
+        { name: 'залитое, значок пустого', kind: 'input', appearance: 'fill', state: null, iconLeft: 'search', control: value(null) },
+        {
+            name: 'значок справа',
+            kind: 'input',
+            appearance: 'fill',
+            state: null,
+            iconLeft: null,
+            iconRight: 'search',
+            control: value('Вокзал'),
+        },
+        { name: 'число залитое пустое', kind: 'number', appearance: 'fill', state: null, iconLeft: null, control: amount(null) },
+        { name: 'число залитое', kind: 'number', appearance: 'fill', state: null, iconLeft: null, control: amount(2) },
+    ];
+
+    public readonly outlineCases: readonly IFieldMaterialCase[] = [
+        { name: 'поле', kind: 'input', appearance: 'outline', state: null, iconLeft: null, control: value('Вокзал') },
+        { name: 'поле отключённое', kind: 'input', appearance: 'outline', state: null, iconLeft: null, control: off('Вокзал') },
+        { name: 'отключённое пустое', kind: 'input', appearance: 'outline', state: null, iconLeft: null, control: off(null) },
+        { name: 'выбор отключённый', kind: 'select', appearance: 'outline', state: null, iconLeft: null, control: off('station') },
+        {
+            name: 'число отключённое',
+            kind: 'number',
+            appearance: 'outline',
+            state: null,
+            iconLeft: null,
+            control: new FormControl<number | null>({ value: 2, disabled: true }),
+        },
+        { name: 'текст отключённый', kind: 'textarea', appearance: 'outline', state: null, iconLeft: null, control: off('Поздний заезд') },
     ];
 
     public readonly lowCases: readonly IFieldMaterialCase[] = [

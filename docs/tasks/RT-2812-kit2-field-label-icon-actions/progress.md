@@ -6,7 +6,7 @@
 - **Stage:** 6 of 6 — Docs, version and the check suite
 - **Done:** stages 1–5 and 7; 6.1; the review of the whole branch and its fixes; the owner's remarks of 14 October (chosen value by the option template, the muted sound icon); main merged in on 14 October
 - **Next step:** 6.3 — the agreement merged into the domain specs, and the snapshot references re-taken, when the owner says to open the PR
-- **Uncommitted:** nothing; the code went in by the commit the owner ordered on 14 October: «если все сделано и проблем нет комит по правила и собери пакет на рабочий стол»
+- **Uncommitted:** nothing; request 8 went in by the commit the owner ordered on 14 October: «проверь что нет регрессий и комить»
 - **Waiting for the owner:** «пр не открывай» — no PR, no push
 - **PR:** not open yet
 
@@ -401,6 +401,26 @@ data-preset="material" floatingLabel>` drew the border through the risen label: 
   and input have the cut under the label, the empty select hides the placeholder, the filled ones
   raise the label inside. The 1 px of the risen label against Material is left as it is.
 
+- **2026-10-14, request 8: four more preset deltas after the 16:56 package.**
+    - An icon stands 4 px from the text, not 16: after a left icon the text and the resting label
+      start at 40 px. The right icon got the same 12 px from the edge and 4 px to its neighbour.
+    - The filled number field takes the input's filled look: only the bottom line, value at 22 px
+      in a 24 px line, label 16 px from the edge.
+    - The text starts 16 px from the outer edge under the preset in the input, number, select and
+      text area; the kit look keeps 17 px.
+    - A disabled field under the preset is not faded: its own handle
+      `--rt-input-disabled-field-opacity` is 1 there. The shared `--rt-input-disabled-opacity` was
+      left alone, because eleven components read it. The border, text, placeholder and label take
+      Material's 12% and 38%, and the disabled text area lost its grey fill.
+    - The text area and the autocomplete have no filled look, so the filled-field request does not
+      apply to them. Scenarios SC-UKV-916 and SC-UKV-917. Measured live in the Material story and in
+      the input States story: the kit look is unchanged.
+    - The disabled select's arrow under the preset is on-surface 38% too, as the application asked.
+    - Before the commit: the full suite 358 of 358 and the showcase snapshots in the image. 234 of
+      929 frames diverge, all in the preset halves or in stories whose references carry old titles;
+      a count of the red pixels by half shows the kit look unchanged in every field story. The
+      references are re-taken at 6.3, as planned.
+
 ## Sessions
 
 ### 2026-10-13
@@ -432,6 +452,11 @@ none
 ### Commits over the main branch
 
 ```
+80ce8750f Merge remote-tracking branch 'origin/main' into RT-2812-kit2-field-label-icon-actions
+06df730ce fix(rt:ui-kit-v2): признак набора на теге поля включает подпись на рамке
+2acc951d9 feat(rt:ui-kit-v2): поле под материальным набором совпадает с полем Material
+b5cb28aa5 Merge remote-tracking branch 'origin/main' into RT-2812-kit2-field-label-icon-actions
+8b25554f7 docs(rt:ui-kit-v2): прогресс RT-2812 после коммита запроса о кольце фокуса
 f78ecefcf feat(rt:ui-kit-v2): кнопки не рисуют кольцо фокуса после нажатия мышью
 a9c2d527a feat(rt:ui-kit-v2): запросы приложения к полям и компонентам второго кита
 cac14b019 Merge remote-tracking branch 'origin/main' into RT-2812-kit2-field-label-icon-actions

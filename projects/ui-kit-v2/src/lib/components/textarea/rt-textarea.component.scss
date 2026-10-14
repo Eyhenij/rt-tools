@@ -76,8 +76,28 @@
             }
         }
 
+        /* Текст поля Material начинается в 16 px от внешнего края поля, рамка входит в этот отступ.
+           Своим видом кита отступ считается от рамки. */
+        &#{$preset-weak} &__control {
+            padding-inline: calc(var(--rt-input-padding-x) - var(--rt-input-border-width));
+        }
+
+        /* Отключённое поле в материальном наборе не тускнеет, а красит рамку, текст и подсказку —
+           как поле ввода. Своим видом цвета равны обычным. */
         &--disabled {
-            opacity: var(--rt-input-disabled-opacity);
+            opacity: var(--rt-input-disabled-field-opacity);
+        }
+
+        &--disabled &__control {
+            color: var(--rt-input-color-text-disabled);
+
+            &::placeholder {
+                color: var(--rt-input-color-placeholder-disabled);
+            }
+        }
+
+        &--disabled:not(.rt-textarea--invalid, .rt-textarea--borderless, .rt-textarea--readonly) &__control {
+            border-color: var(--rt-input-color-border-disabled);
         }
 
         /* Read-only: многострочное значение как плоский текст (переносы сохраняем). */

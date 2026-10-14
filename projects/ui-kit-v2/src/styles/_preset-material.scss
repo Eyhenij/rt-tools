@@ -258,6 +258,14 @@
     --rt-input-icon-size: var(--rt-size-6);
     --rt-input-caret-color: var(--rt-color-action-primary);
 
+    /* Отключённое поле Material: поле не тускнеет целиком — рамка on-surface 12%, текст и
+       подсказка on-surface 38%. */
+    --rt-input-disabled-field-opacity: 1;
+    --rt-input-color-border-disabled: var(--rt-color-action-disabled);
+    --rt-input-color-text-disabled: var(--rt-color-text-disabled);
+    --rt-input-color-placeholder-disabled: var(--rt-color-text-disabled);
+    --rt-input-color-bg-disabled: transparent;
+
     /* Залитое поле Material: рамки сверху и по бокам нет, только черта снизу; в фокусе черта
        вдвое толще цветом марки, у недействительного поля — цветом ошибки. */
     --rt-input-fill-edge: 0px;

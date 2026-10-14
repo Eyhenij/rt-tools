@@ -177,10 +177,14 @@ export type TRtDesignTokenName =
     | '--rt-input-color-bg-disabled'
     | '--rt-input-color-bg-hover'
     | '--rt-input-color-border'
+    | '--rt-input-color-border-disabled'
     | '--rt-input-color-border-error'
     | '--rt-input-color-border-focus'
+    | '--rt-input-color-placeholder-disabled'
     | '--rt-input-color-text'
+    | '--rt-input-color-text-disabled'
     | '--rt-input-color-text-placeholder'
+    | '--rt-input-disabled-field-opacity'
     | '--rt-input-disabled-opacity'
     | '--rt-input-fill-edge'
     | '--rt-input-fill-focus-shadow'
@@ -909,10 +913,14 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-input-color-bg-disabled',
     '--rt-input-color-bg-hover',
     '--rt-input-color-border',
+    '--rt-input-color-border-disabled',
     '--rt-input-color-border-error',
     '--rt-input-color-border-focus',
+    '--rt-input-color-placeholder-disabled',
     '--rt-input-color-text',
+    '--rt-input-color-text-disabled',
     '--rt-input-color-text-placeholder',
+    '--rt-input-disabled-field-opacity',
     '--rt-input-disabled-opacity',
     '--rt-input-fill-edge',
     '--rt-input-fill-focus-shadow',

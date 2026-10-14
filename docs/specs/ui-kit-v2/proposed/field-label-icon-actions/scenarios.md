@@ -434,7 +434,7 @@ Covered: `projects/ui-kit-v2/src/lib/components/field/rt-field-material-metrics.
 
 ### SC-UKV-910 — a filled field under the preset follows the Material filled field
 
-Given a filled input or select with a label under the material preset
+Given a filled input, number field or select with a label under the material preset
 When the field is empty, holds a value or is in focus
 Then the value starts below the risen label, the label starts 16 px from the edge, only the bottom
 line is drawn and focus thickens it, and the message under the field starts at the field's text
@@ -446,7 +446,8 @@ Covered: `projects/ui-kit-v2/src/lib/components/field/rt-field-material-metrics.
 Given a field under the material preset on a page with a Material theme
 When the field is drawn
 Then the placeholder, the resting label, the icons and the arrow take the theme's muted colour, the
-caret takes the brand colour, and the left icon is 24 px, 12 px from the edge and 16 px from the text
+caret takes the brand colour, and an icon on either side is 24 px, 12 px from the edge and 4 px from
+the text, so the text and the resting label after a left icon start at 40 px
 
 Covered: `projects/ui-kit-v2/src/lib/components/field/rt-field-material-metrics.spec.ts`.
 
@@ -479,5 +480,22 @@ Covered: `projects/ui-kit-v2/src/lib/components/field/rt-field-material-metrics.
 Given a small field or a field with an own low height, holding a clearing cross
 When the field is drawn
 Then the field keeps its height, and the cross shrinks to the field inside its border
+
+Covered: `projects/ui-kit-v2/src/lib/components/field/rt-field-material-metrics.spec.ts`.
+
+### SC-UKV-916 — under the preset the text starts 16 px from the outer edge
+
+Given an outlined or filled input, number field, select or text area under the material preset
+When it is drawn
+Then its text and its resting label start 16 px from the outer edge, and the kit look keeps 17 px
+
+Covered: `projects/ui-kit-v2/src/lib/components/field/rt-field-material-metrics.spec.ts`.
+
+### SC-UKV-917 — a disabled field under the preset is not faded as a whole
+
+Given a disabled input, number field, select or text area under the material preset
+When it is drawn
+Then the box keeps full opacity, the border is on-surface at 12%, the text, placeholder, label and
+the select's arrow are on-surface at 38%, and the kit look still fades the field
 
 Covered: `projects/ui-kit-v2/src/lib/components/field/rt-field-material-metrics.spec.ts`.

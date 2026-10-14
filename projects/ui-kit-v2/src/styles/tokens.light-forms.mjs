@@ -265,6 +265,22 @@ export const lightForms = [
         value: `var(--rt-opacity-disabled)`,
     },
     {
+        name: `--rt-input-disabled-field-opacity`,
+        value: `var(--rt-input-disabled-opacity)`,
+    },
+    {
+        name: `--rt-input-color-border-disabled`,
+        value: `var(--rt-input-color-border)`,
+    },
+    {
+        name: `--rt-input-color-text-disabled`,
+        value: `var(--rt-input-color-text)`,
+    },
+    {
+        name: `--rt-input-color-placeholder-disabled`,
+        value: `var(--rt-input-color-text-placeholder)`,
+    },
+    {
         name: `--rt-input-focus-shadow`,
         value: `var(--rt-shadow-focus-ring)`,
     },

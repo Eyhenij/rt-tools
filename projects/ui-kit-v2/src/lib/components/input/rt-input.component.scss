@@ -121,9 +121,27 @@
             box-shadow: var(--rt-input-fill-focus-shadow-error);
         }
 
+        /* Отключённое поле своим видом кита тускнеет целиком; материальный набор вместо этого красит
+           рамку, текст и подсказку, как поле Material. Своим видом цвета равны обычным. Рамку
+           недействительного, залитого, безрамочного поля и поля только для чтения правило не трогает. */
         &--disabled {
+            color: var(--rt-input-color-text-disabled);
             cursor: not-allowed;
-            opacity: var(--rt-input-disabled-opacity);
+            opacity: var(--rt-input-disabled-field-opacity);
+        }
+
+        &--disabled:not(
+                .rt-input--invalid,
+                .rt-input--appearance--fill,
+                .rt-input--appearance--pill,
+                .rt-input--borderless,
+                .rt-input--readonly
+            ) {
+            border-color: var(--rt-input-color-border-disabled);
+        }
+
+        &--disabled &__field::placeholder {
+            color: var(--rt-input-color-placeholder-disabled);
         }
 
         /* Ступень размера — высота поля целиком: по ней считаются и кнопки-значки внутри. */
@@ -137,6 +155,14 @@
             --rt-input-height: var(--rt-input-height-lg);
 
             min-height: var(--rt-input-height-lg);
+        }
+
+        /* Текст поля Material начинается в 16 px от внешнего края поля, рамка входит в этот отступ.
+           Своим видом кита отступ считается от рамки. Поле только для чтения ниже снимает отступ. */
+        &#{$preset-weak} {
+            --rt-input-floating-label-start: calc(var(--rt-input-padding-x) - var(--rt-input-edge));
+
+            padding-inline: calc(var(--rt-input-padding-x) - var(--rt-input-edge));
         }
 
         /* Read-only: контрол превращается в плоский текст — снимаем рамку/фон/паддинги,
@@ -237,13 +263,22 @@
             }
         }
 
-        /* Значок слева в материальном наборе стоит, как у поля Material: 12 px от края поля и 16 px
-           до текста. Кнопка-значок держит свои поля сама и остаётся на месте. */
+        /* Значок в материальном наборе стоит, как у поля Material: 12 px от края поля и 4 px до
+           текста, текст после значка слева — с 40 px. Кнопка-значок держит свои поля сама и остаётся
+           на месте. */
         &--with-icon-left#{$preset-weak}:has(> rt-icon.rt-input__icon-left) {
             padding-left: calc(var(--rt-space-2) + var(--rt-space-1) - var(--rt-input-edge));
 
             > .rt-input__icon-left {
-                margin-right: calc(var(--rt-space-4) - var(--rt-input-gap));
+                margin-right: calc(var(--rt-space-1) - var(--rt-input-gap));
+            }
+        }
+
+        &--with-icon-right#{$preset-weak}:has(> rt-icon.rt-input__icon-right) {
+            padding-right: calc(var(--rt-space-2) + var(--rt-space-1) - var(--rt-input-edge));
+
+            > .rt-input__icon-right {
+                margin-left: calc(var(--rt-space-1) - var(--rt-input-gap));
             }
         }
 

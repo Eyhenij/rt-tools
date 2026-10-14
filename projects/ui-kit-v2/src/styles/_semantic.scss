@@ -320,6 +320,10 @@
 
     /* State / motion */
     --rt-input-disabled-opacity: var(--rt-opacity-disabled);
+    --rt-input-disabled-field-opacity: var(--rt-input-disabled-opacity);
+    --rt-input-color-border-disabled: var(--rt-input-color-border);
+    --rt-input-color-text-disabled: var(--rt-input-color-text);
+    --rt-input-color-placeholder-disabled: var(--rt-input-color-text-placeholder);
     --rt-input-focus-shadow: var(--rt-shadow-focus-ring);
     --rt-input-focus-shadow-error: var(--rt-shadow-focus-ring-danger);
     --rt-input-transition: border-color var(--rt-duration-fast) ease, box-shadow var(--rt-duration-fast) ease;

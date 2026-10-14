@@ -83,12 +83,17 @@ can be pressed and shows a hint, and a cross that the Tab key reaches.
   field's text, right under the field.
 - **Under the preset the placeholder, the resting label, the icons and the arrow take the Material
   theme's muted colour, and the caret takes the brand colour.** Without a Material theme on the page
-  the colours stay as they were. The left icon is 24 px, 12 px from the edge and 16 px from the text.
+  the colours stay as they were. An icon on either side is 24 px, 12 px from the edge and 4 px from the text:
+  after a left icon the text and the resting label start at 40 px.
 - **Under the preset the required mark stands right after the label.** The kit look keeps a gap.
 - **An actionable icon is disabled by its own input while the field stays usable.** Its tooltip
   stays and says why.
 - **A field's least width is a property set on an ancestor.** By default a field has none.
 - **An icon button inside a field is never taller than the field inside its border.**
+- **Under the preset the text of a field starts 16 px from its outer edge.** The border is part of
+  that inset; the kit look counts it from the border.
+- **Under the preset a disabled field is not faded as a whole.** The border, the text, the
+  placeholder and the label take Material's disabled colours; the kit look still fades the field.
 
 ## What is out of scope
 

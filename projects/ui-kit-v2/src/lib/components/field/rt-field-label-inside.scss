@@ -6,12 +6,12 @@
     /* Контролы залитого вида: подпись материального набора у них лежит внутри поля, а не на рамке. */
     $filled-controls: '.rt-input--appearance--fill, .rt-input--appearance--pill, .rt-select--appearance--fill, .rt-input-number--appearance--fill, .rt-input-number--appearance--pill';
 
-    /* Залитые поля ввода и выбора, у которых значение стоит строкой Material под поднятой подписью. */
-    $fill-fields: '.rt-input--appearance--fill, .rt-input--appearance--pill, .rt-select--appearance--fill';
-    $fill-values: '.rt-input--appearance--fill .rt-input__field, .rt-input--appearance--pill .rt-input__field, .rt-select--appearance--fill .rt-select__label';
+    /* Залитые поля ввода, числа и выбора, у которых значение стоит строкой Material под поднятой подписью. */
+    $fill-fields: '#{$filled-controls}';
+    $fill-values: '.rt-input--appearance--fill .rt-input__field, .rt-input--appearance--pill .rt-input__field, .rt-select--appearance--fill .rt-select__label, .rt-input-number--appearance--fill .rt-input-number__field, .rt-input-number--appearance--pill .rt-input-number__field';
 
     /* Верхняя рамка у залитого поля — своя, у «таблетки» — общая. */
-    $pill-values: '.rt-input--appearance--pill .rt-input__field';
+    $pill-values: '.rt-input--appearance--pill .rt-input__field, .rt-input-number--appearance--pill .rt-input-number__field';
 
     .rt-field {
         /* Материальный набор кладёт подпись внутрь контрола, как поле Material: пустое поле без
@@ -24,6 +24,10 @@
            Признак набора действует и на предке, и на самом поле — одним селектором: пара селекторов
            удвоила бы весь блок в собранном листе, а лист компонента держится под 8 КБ. */
         &--label-inside:is(.rt-preset-material *, [data-preset='material'] *, .rt-preset-material, [data-preset='material']) {
+            /* Текст поля Material и подпись над ним стоят в 16 px от внешнего края поля — и у
+               обведённого, и у залитого: рамка входит в этот отступ. */
+            --rt-field-floating-start: var(--rt-input-padding-x);
+
             position: relative;
             isolation: isolate;
 
@@ -31,10 +35,10 @@
                 --rt-field-floating-rest-start: calc(var(--rt-field-floating-start) + var(--rt-input-icon-size) + var(--rt-input-gap));
             }
 
-            /* Значок слева стоит в 12 px от края поля и в 16 px от текста, как у поля Material, —
+            /* Значок слева стоит в 12 px от края поля и в 4 px от текста, как у поля Material, —
                подпись в покое встаёт туда, где начинается текст. */
             &:has(.rt-input--with-icon-left > rt-icon.rt-input__icon-left) {
-                --rt-field-floating-rest-start: calc(var(--rt-space-2) + var(--rt-space-1) + var(--rt-input-icon-size) + var(--rt-space-4));
+                --rt-field-floating-rest-start: calc(var(--rt-space-2) + var(--rt-space-1) + var(--rt-input-icon-size) + var(--rt-space-1));
             }
 
             /* Отказ и подсказка под полем начинаются от текста поля, вплотную к нему. */
@@ -125,11 +129,6 @@
                 --rt-input-height: var(--rt-field-fill-height);
             }
 
-            /* У залитого поля Material боковой рамки нет: подпись стоит в 16 px от края. */
-            &:has(.rt-input--appearance--fill, .rt-select--appearance--fill) {
-                --rt-field-floating-start: calc(var(--rt-input-padding-x) + var(--rt-input-fill-edge));
-            }
-
             /* Подпись в покое — строкой Material; значение — ниже середины, под поднятой подписью:
                при 52 px текст начинается в 22 px от верха строкой в 24 px. */
             &:has(#{$fill-fields}) .rt-field__label {
@@ -167,6 +166,11 @@
 
             &.rt-field--invalid .rt-field__label {
                 color: var(--rt-input-color-border-error);
+            }
+
+            /* Подпись отключённого поля — цвета отключённого текста, как у поля Material. */
+            &:has(.rt-input--disabled, .rt-select--disabled, .rt-input-number--disabled, .rt-textarea--disabled) .rt-field__label {
+                color: var(--rt-input-color-placeholder-disabled);
             }
         }
     }

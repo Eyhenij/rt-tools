@@ -161,8 +161,10 @@
             }
         }
 
+        /* Отключённый выбор своим видом кита тускнеет целиком; цвета материального набора — в листе
+           `rt-select-material.scss`. */
         &--disabled {
-            opacity: var(--rt-input-disabled-opacity);
+            opacity: var(--rt-input-disabled-field-opacity);
         }
 
         /* Read-only: триггер остаётся в DOM (нужен для viewChild.required popover'а),

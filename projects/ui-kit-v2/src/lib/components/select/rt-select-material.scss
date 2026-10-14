@@ -1,0 +1,45 @@
+@layer rt-kit.components {
+    /* Признак набора — на предке или на самом поле: приложение ставит его и на тег контрола. */
+    $preset: ':is(.rt-preset-material *, [data-preset="material"] *, .rt-preset-material, [data-preset="material"])';
+    $preset-weak: ':where(.rt-preset-material *, [data-preset="material"] *, .rt-preset-material, [data-preset="material"])';
+
+    /* Отступ текста и отключённый вид под материальным набором — отдельный лист стилей компонента:
+       основной лист стоит у порога в 8 КБ, который Angular по умолчанию ставит приложению. */
+    .rt-select {
+        /* Боковая рамка и отступ текста от внешнего края поля. Под материальным набором отступ — 16 px
+           от внешнего края, как у поля Material; своим видом кита он считается от рамки. */
+        --rt-select-edge: var(--rt-input-border-width);
+        --rt-select-text-inset: calc(var(--rt-input-padding-x) + var(--rt-select-edge));
+
+        &--appearance--fill {
+            --rt-select-edge: var(--rt-input-fill-edge);
+        }
+
+        &#{$preset-weak} {
+            --rt-select-text-inset: var(--rt-input-padding-x);
+        }
+
+        &#{$preset-weak} &__trigger {
+            padding-inline: calc(var(--rt-select-text-inset) - var(--rt-select-edge));
+        }
+
+        /* Отключённый выбор в материальном наборе не тускнеет, а красит рамку, текст и подсказку —
+           как поле ввода. Своим видом цвета равны обычным. */
+        &--disabled &__trigger {
+            color: var(--rt-input-color-text-disabled);
+        }
+
+        &--disabled &__label--placeholder {
+            color: var(--rt-input-color-placeholder-disabled);
+        }
+
+        &--disabled:not(.rt-select--invalid, .rt-select--appearance--fill, .rt-select--borderless) &__trigger {
+            border-color: var(--rt-input-color-border-disabled);
+        }
+
+        /* Треугольник отключённого выбора — цвета отключённого текста, как стрелка mat-select. */
+        &--disabled#{$preset} &__chevron {
+            --rt-icon-color-muted: var(--rt-input-color-placeholder-disabled);
+        }
+    }
+}
