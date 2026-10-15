@@ -10,8 +10,8 @@
         box-sizing: border-box;
         flex-direction: column;
         padding: var(--rt-profile-menu-padding);
-        border: var(--rt-border-width-thin) solid var(--rt-nav-panel-color-border);
-        border-radius: var(--rt-radius-md);
+        border: var(--rt-profile-menu-border-width) solid var(--rt-nav-panel-color-border);
+        border-radius: var(--rt-profile-menu-radius);
         background-color: var(--rt-nav-panel-color-bg);
         box-shadow: var(--rt-profile-menu-shadow);
         gap: var(--rt-space-2);
@@ -29,8 +29,8 @@
             height: var(--rt-profile-avatar-size);
             align-items: center;
             justify-content: center;
-            border: var(--rt-border-width-medium) solid var(--rt-nav-header-color-bg);
-            border-radius: var(--rt-radius-full);
+            border: var(--rt-profile-avatar-border-width) solid var(--rt-nav-header-color-bg);
+            border-radius: var(--rt-profile-avatar-radius);
             color: var(--rt-color-text-primary);
             font-size: var(--rt-profile-avatar-font-size);
             font-weight: var(--rt-font-weight-semibold);
@@ -96,7 +96,7 @@
             .rt-menu-item__icon {
                 box-sizing: content-box;
                 padding: var(--rt-profile-theme-icon-padding);
-                border-radius: var(--rt-radius-full);
+                border-radius: var(--rt-profile-theme-icon-radius);
                 background-color: var(--rt-color-action-primary-subtle);
             }
         }
