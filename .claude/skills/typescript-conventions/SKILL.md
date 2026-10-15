@@ -4,7 +4,7 @@ kind: rule
 law: code-structure
 description: Rule under the code-structure law. Load when editing any .ts except a component, service, directive, pipe, guard or interceptor — strict typing, access modifiers, file names, prefixes, no casting in a mapper. Pattern ts-procedure.
 ---
-<!-- rt-kit v0.31.0 · rules/typescript-conventions.md · c9c509405efe · правится надстройкой, не здесь -->
+<!-- rt-kit v0.31.0 · rules/typescript-conventions.md · cad977e30e67 · правится надстройкой, не здесь -->
 
 # Code structure — how it works here
 
@@ -141,6 +141,15 @@ not belong there: that is NestJS with constructor DI.
         for (const n of ["cyclomatic-complexity", "cognitive-complexity", "nested-control-flow"])
             console.log(n, JSON.stringify(s.rules[n].meta.defaultOptions));'
     ```
+
+- **A decision is moved into a pure function of the util layer before the handler is written.** A
+  choice over a closed set becomes a table keyed by the enumeration, and a chain of field checks
+  becomes a list of checks. The handler calls them and keeps its branchings for its own flow: the
+  complexity linter refused one file twice because both lay right in the handler and spent its limit.
+- **A file an edit pushed past the 500-line limit is split, not squeezed.** Joining comments or
+  dropping blank lines lowers the count and leaves the file just as long to read, and the next
+  edit hits the limit again. What the file does on its own moves out next to it: a mapping, a set of
+  derived values.
 
 - A cast through `as Type` in a mapper is forbidden but watched by nothing: it accepts any value
   and compiles. Instead — `this.typeCast`.

@@ -144,6 +144,12 @@ A stage revision — to the same place, not by editing the plan:
   прежний этап в замысле оставлен видимым.
 ```
 
+A new request of the owner inside the same task goes into the grill, not only into the progress.
+The grill leaves for the archive, the progress only when it holds decisions. The request is quoted
+verbatim under "The owner request"; under "Decisions" goes the answer, or the line "closed by
+assumption: <what is taken>" when the question was not put. Otherwise the archive keeps the first
+answer while the code carries the second.
+
 The session entry marks what was done and what confirms it:
 
 ```markdown

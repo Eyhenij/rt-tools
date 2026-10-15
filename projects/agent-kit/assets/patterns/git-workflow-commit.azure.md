@@ -147,7 +147,7 @@ GIT_COMMITTER_NAME="<бот>" GIT_COMMITTER_EMAIL="<почта бота>" \
 
 The subject — `type(scope): description`. Types: `feat`, `fix`, `refactor`, `docs`, `style`,
 `test`, `chore`, `perf`. Scopes are the tree's own, listed in `implementation.md`. A full stop
-at the end of the subject is not accepted.
+at the end of the subject is not accepted. The letter case is checked as well, by the `subject-case` rule of the commit check: a word in capitals, such as a file name, can trip it, so the allowed case is read in the commit check settings before the subject is written.
 
 The line `AB#<номер>` in the commit body attaches it to the work item. It does not replace the
 attachment of the PR itself: the commit is linked to the item, and the work queue reads the PR's
@@ -161,6 +161,10 @@ is mandatory:
 ```
 Docs-skip: правка только в тестах хука, зеркала у него нет
 ```
+
+The guard looks for the `Docs-skip` line in the command text only. A message read from a file by
+`git commit -F <file>` is invisible to it and the commit is refused; the body goes inside the command,
+as in `git commit -F -` with the text after it.
 
 ## Common misses
 

@@ -79,6 +79,8 @@ AZURE_DEVOPS_EXT_PAT="$TOKEN" az repos pr create \
     --description 'Закрывает рабочий элемент 86.'
 ```
 
+Before the target branch is named, its presence on the host is checked: `git ls-remote --heads origin <ветка>`. An empty answer means the base was merged and removed; the request then takes the next branch up the chain as its base.
+
 The reviewer is always the owner: without a review request the PR does not show in their queue.
 One PR closes the work item whole — half a task is not rolled out by one PR: a task has one
 branch, and work that does not fit it is split into tasks before the branch is created.
