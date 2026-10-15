@@ -2,10 +2,10 @@
 
 ## Where we stand
 
-- **State:** `задача-взята`
-- **Stage:** 1 of 6 — Refusals reach the executor
-- **Done:** epic RT-2843 declared, four tasks created, branches taken, plan written.
-- **Next step:** reproduce the empty refusal in the dispatcher test with split streams.
+- **State:** `этап-идёт`
+- **Stage:** 2 of 6 — The re-arm hook names the loaded rules
+- **Done:** stage 1: the dispatcher writes a refusal to the error stream too (SC-AK-1223), reproduced first by a failing test.
+- **Next step:** read the loaded rule names in the re-arm hook before the record is removed.
 - **Uncommitted:** nothing of this task.
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -14,10 +14,10 @@
 
 - `[x]` done · `[>]` going on right now · `[ ]` not begun
 
-- [>] 1.1 Reproduce the symptom: split stdout and stderr in the dispatcher test and call a refusing branch with code 2.
-- [ ] 1.2 If the text is lost, write the refusal to the error stream too and keep the output stream as it was.
-- [ ] 1.3 Add the scenario to the dispatch spec and the test.
-- [ ] 2.1 Read the unique rule names from the record before it is removed.
+- [x] 1.1 Reproduce the symptom: split stdout and stderr in the dispatcher test and call a refusing branch with code 2.
+- [x] 1.2 If the text is lost, write the refusal to the error stream too and keep the output stream as it was.
+- [x] 1.3 Add the scenario to the dispatch spec and the test.
+- [>] 2.1 Read the unique rule names from the record before it is removed.
 - [ ] 2.2 Put them into the context line with the one-turn instruction.
 - [ ] 2.3 Add the scenario and test for an empty and a missing record.
 - [ ] 3.1 Make a code argument a write only when the code holds a write call.
