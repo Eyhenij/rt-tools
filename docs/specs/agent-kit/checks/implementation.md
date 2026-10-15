@@ -30,6 +30,7 @@ whole.
 - **A changed list of files is named by its own kind.** — `projects/agent-kit/assets/checks/check-styles.mjs:changedFiles`
 - **The name of an element is assembled from the nesting, not read as one line.** — `projects/agent-kit/assets/checks/check-styles.mjs:elementNames`
 - **There are two length limits: code and the text of the rules layer.** — `projects/agent-kit/assets/checks/check-file-size.mjs:limitOf` — the limit is picked by the root of the file; the roots and the second number are declared in `projects/agent-kit/assets/checks/rt-kit-checks.config.mjs:DEFAULTS`.
+- **A binding cell that lost the colon between the file and the symbol is refused.** — `projects/agent-kit/assets/checks/spec-anchors.mjs:bare` — a path token without a colon in a row that has an anchor is named; scenario SC-AK-1229
 - **A binding is written in two shapes, and both are read.** — `projects/agent-kit/assets/checks/spec-anchors.mjs:cells` — a list line is parsed by the same place as a table row; scenarios SC-AK-662…664
 - **The text of the rules layer has a third limit — its weight in characters.** — `projects/agent-kit/assets/checks/check-file-size.mjs:charCount` — characters, not bytes: a letter outside Latin weighs two bytes, and a byte count would judge the language, not the text.
 - **The companions are taken out of the weight count.** — `projects/agent-kit/assets/checks/check-file-size.mjs:companion` — the companion of a rule and the scenario list of a spec.

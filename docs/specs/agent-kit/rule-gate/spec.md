@@ -75,6 +75,11 @@ The gate has no interface: only the executor sees it — as the text of a refusa
   while editing nothing in it; over two tasks about fifteen such refusals accumulated. The price of
   the narrowing: a script that writes files by its own body the gate no longer checks — it was
   checked when it was created, when it was put into the tree.
+- **Code handed to an interpreter as an argument is a write only when it holds a call that writes.**
+  A document at the input stays a write. Code that only reads a file or prints a value does not
+  name write targets: a read of one script from the package manifest by `node -e` demanded the
+  dependencies rule. The price of the narrowing: a write by a call that is not in the list of write
+  calls passes unseen, and the list grows by a miss.
 - **An arrow in the text of a command does not count as a redirection.** The sign in `->` and `=>` is
   the same as at a write into a file, and in the shell they mean nothing: a command printing a table
   with an arrow was declared writing and gave all its paths up to be judged. The closing bracket of a
@@ -103,6 +108,10 @@ The gate has no interface: only the executor sees it — as the text of a refusa
 - **The forgetting is told to the session in words.** A silent one reads as breakage: the summary
   says the rules are loaded, the gate answers that they are not, and the session spends a turn on
   which of the two is right.
+- **The line of the re-arming names the rules the session had loaded.** The gate asks for one rule
+  per refusal, and a session that does not know which rules it had loaded meets them one refusal at
+  a time. The hook reads the names from the record before removing it; an empty or missing record
+  gives no names, and the line stays as it was.
 
 ## What is out of scope
 

@@ -235,6 +235,10 @@ skill_for_default() {
         # The check through the browser is the only area where the rule is needed not for a file
         # edit but for a tool: what lies there is not the files but the stand and the coordinates.
         browser) printf '%s\n' 'browser-verification' ;;
+        # A call of the design tool needs the rule of mockups for the same reason: what lies there
+        # is a sheet, not a file. A tree without the rule is not refused: the gate skips a missing
+        # one.
+        design) printf '%s\n' 'mockups' ;;
     esac
 
     return 0

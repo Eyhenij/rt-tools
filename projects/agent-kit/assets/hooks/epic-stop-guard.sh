@@ -121,7 +121,7 @@ if [ -z "$checks" ] || [ "$checks" = null ]; then
     checks=tools
 fi
 
-reason="Refused: the epic is over — every task of it is merged or handed over by a request, and this call takes new work. The end of an epic is a stop: print the table by «npm run epic:table» (or «node $checks/epic-table.mjs»), tell the owner what was done on each task and what confirms it, and say outright that the session waits for their orders. New work is taken by their word, not by the count of what is left: their message or their answer to a menu that names the number of this work releases the call."
+reason="Refused: the epic is over — every task of it is merged or handed over by a request, and this call takes new work. The end of an epic is a stop: print the table by «npm run epic:table» (or «node $checks/epic-table.mjs»), tell the owner what was done on each task and what confirms it, and say outright that the session waits for their orders. New work is taken by their word, not by the count of what is left: their message or their answer to a menu that names the number of this work releases the call. A new epic the owner has declared needs the bypass line in the calls that create its card, its tasks and its branch; once the branch of the new epic is taken, the guard reads that epic and stops refusing."
 
 # shellcheck disable=SC1090
 [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \

@@ -71,6 +71,18 @@ no "SC-AK-857 — запуск с доводом-файлом" rt_shell_writes_d
 no "SC-AK-857 — запуск сценария другим интерпретатором" rt_shell_writes_default 'python3 tools/report.py --size 4'
 ok "SC-AK-857 — код доводом остаётся записью" rt_shell_writes_default "node -e \"require('fs').writeFileSync('a','b')\""
 
+# SC-AK-1225. Код доводом — запись, только когда в коде есть вызов, который пишет. Чтение манифеста
+# через `node -e` требовало правила зависимостей.
+no "SC-AK-1225 — чтение манифеста кодом доводом" rt_shell_writes_default "node -e \"console.log(require('./package.json').scripts['build'])\""
+no "SC-AK-1225 — python печатает, не пишет" rt_shell_writes_default "python3 -c 'print(open(\"a.json\").read())'"
+no "SC-AK-1225 — вывод значения флагом -p" rt_shell_writes_default "node -p \"require('./package.json').version\""
+ok "SC-AK-1225 — дозапись вызовом appendFile" rt_shell_writes_default "node -e \"require('fs').appendFileSync('a','b')\""
+ok "SC-AK-1225 — python открывает файл на запись" rt_shell_writes_default "python3 -c 'open(\"a.txt\", \"w\").write(\"x\")'"
+ok "SC-AK-1225 — python write_text" rt_shell_writes_default "python3 -c 'import pathlib; pathlib.Path(\"a\").write_text(\"x\")'"
+ok "SC-AK-1225 — переименование вызовом" rt_shell_writes_default "node -e \"require('fs').renameSync('a','b')\""
+ok "SC-AK-1225 — перенаправление после кода остаётся записью" rt_shell_writes_default "node -p \"1\" > out.txt"
+ok "SC-AK-1225 — документ на входе остаётся записью" rt_shell_writes_default 'node <<JS'
+
 # SC-AK-1192. Флаг правки на месте узнаётся словом, а не подстрокой: путь вида order-item-list
 # несёт «-i» внутри, и чтение по нему считалось правкой.
 no "SC-AK-1192 — чтение sed по пути с -i внутри" rt_shell_writes_default 'sed -n 5p src/order-item-list.html'
@@ -171,6 +183,8 @@ report "карта: запрос к поднятому приложению" "$(
 report "карта: адрес в тексте без вызова" "$(skill_for bash 'echo http://localhost:4200 >> notes.md' '')" ''
 # Проверка через браузер — единственная область, где правило нужно под инструмент, а не под файл.
 report "SC-AK-111 — правило под инструмент браузера" "$(skill_for browser mcp__claude-in-chrome__navigate '')" browser-verification
+# Инструмент макетов — второй такой: врёт не файл, а лист с рамками.
+report "SC-AK-1230 — правило под инструмент макетов" "$(skill_for design mcp__figma__use_figma '')" mockups
 # Проверка исполняет утверждения своего правила, и признаки, по которым она судит, объявлены у
 # него в привязке: правя признак, второе место открывают рядом.
 report "карта: сверка спеков" "$(skill_for edit /r/tools/check-specs.mjs '')" spec-driven

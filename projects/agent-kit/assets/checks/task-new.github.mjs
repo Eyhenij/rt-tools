@@ -195,6 +195,30 @@ const labels = args.epic && !args.labels.includes(EPIC_LABEL) ? [...args.labels,
 const token = botToken() ?? undefined;
 
 /**
+ * A label that is not in the repository breaks the creation whole: the hosting refuses the call
+ * with one line about a label that could not be added, and neither a card nor a number exists. The
+ * labels are asked before the creation, and the refusal names the missing ones, the existing ones
+ * and the fact that no task was created. The list that cannot be read — offline, no right — does
+ * not hold the creation: the hosting will refuse by itself if the label is really missing.
+ */
+if (labels.length > 0) {
+    let existing = null;
+    try {
+        existing = ghJson(['label', 'list', '--repo', `${OWNER}/${REPO}`, '--limit', '200', '--json', 'name'], { token }).map(
+            (label) => label.name
+        );
+    } catch {
+        existing = null;
+    }
+    const missing = existing === null ? [] : labels.filter((label) => !existing.includes(label));
+    if (missing.length > 0) {
+        fail(
+            `no task was created: the labels ${missing.map((label) => `«${label}»`).join(', ')} are not in the repository. Existing: ${existing.join(', ')}`
+        );
+    }
+}
+
+/**
  * The plan of the epic and the line about it in the card body.
  *
  * The audit takes the path to the plan from the body: the card has to name it anyway, and a

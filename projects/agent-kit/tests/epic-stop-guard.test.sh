@@ -61,6 +61,9 @@ stop_reason "SC-AK-981 — названа команда таблицы" 'git ch
 stop_reason "SC-AK-981 — названо ожидание приказа" 'git checkout -b RT-1999-probe main' 'waits for their orders'
 stop_reason "SC-AK-981 — названа лазейка со словом владельца" 'git checkout -b RT-1999-probe main' 'Epic-stop-skip'
 
+# --- SC-AK-1227 — отказ называет, до какого вызова нужна строка для нового эпика ----------------
+stop_reason "SC-AK-1227 — названа граница строки обхода для нового эпика" 'git checkout -b RT-1999-probe main' 'branch of the new epic is taken'
+
 # --- SC-AK-982 — задача и столбец судятся наравне с веткой -----------------------------------
 stop_decision "SC-AK-982 — заведение задачи отбито" 'npm run task:new -- "Проба"' deny
 stop_decision "SC-AK-982 — движение столбца в рабочий отбито" 'npm run task:move -- 1999 in-progress' deny

@@ -49,7 +49,7 @@ report "SC-AK-1002 — имена законов не повторяются" \
     "$(printf '%s\n' "$names" | sort | uniq -d | grep -c . || true)" 0
 
 # --- SC-AK-1003 — признак дерева стоит приставкой в имени файла -----------------------------
-declared="$(grep -oE '"(db|admin|app|packages)"' "$ASSETS/traits.json" | tr -d '"' | sort -u)"
+declared="$(jq -r 'keys[]' "$ASSETS/traits.json" | sort -u)"
 unknown_traits=0
 for law in "$LAWS"/*.md; do
     base="$(basename "$law" .md)"
@@ -61,12 +61,13 @@ for law in "$LAWS"/*.md; do
     esac
 done
 report "SC-AK-1003 — признак закона объявлен в наборе признаков" "$unknown_traits" 0
-report "SC-AK-1003 — набор признаков не пуст" "$(printf '%s\n' "$declared" | grep -c .)" 4
+report "SC-AK-1003 — набор признаков не пуст" "$(printf '%s\n' "$declared" | grep -c .)" 5
 
 # --- SC-AK-1004 — закон без правила объявляет себя договорённостью до кода ------------------
 lawless=0
 for law in "$LAWS"/*.md; do
     base="$(basename "$law" .md)"
+    base="${base%.needs-*}"
     if ! grep -rqE "^law: *$base *$" "$ASSETS/rules" 2>/dev/null; then
         grep -qiE '^\*\*Status' "$law" || lawless=$((lawless + 1))
     fi

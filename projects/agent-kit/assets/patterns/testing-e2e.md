@@ -134,6 +134,10 @@ comes from the template and is drawn before the request answers. A check or a fr
 it reads an empty grid. The wait names a node that exists only with data: a row, a booking, a
 selected record.
 
+After a change of the window width, layout values come from different sources at different
+moments: a media query applies at once, a breakpoint signal on the next frame. The test awaits by
+polling the very value it measures; a wait for one value proves nothing about another.
+
 ## Common misses
 
 - **A search on the stand matches by substring, and older seeds stay.** `editor@example.com` also
@@ -158,7 +162,17 @@ selected record.
 - **Not only what the screen requests is substituted, but also what the header requests.** The
   unread counter is requested on every screen under the header. Without a substitution the real
   server answers that request, refuses the fake sign-in, the interceptor drops the session, and
-  fifty-nine tests fail on the vanished header — it looks like a screen defect.
+  fifty-nine tests fail on the vanished header — it looks like a screen defect. The same holds for a
+  call the task itself adds to a screen: the list of substituted calls is read against the calls
+  the screen makes after the edit, and the new one is substituted in every end-to-end test of that
+  screen. Unsubstituted, it goes to the real server, which refuses the fake sign-in; the screen
+  turns into the sign-in form, and the test fails by its time limit with no visible cause.
+- **A default that matches the first option proves nothing.** A form that opens with a value taken
+  from context, such as the record of the card it was opened from, is checked with that value
+  standing anywhere but first in the substituted list. A form that ignored the context and took the
+  first option shows the same value, and the test stays green on the very defect it was written to
+  catch. A comment saying the test tells the two apart does not make it so; the order of the
+  substitution does.
 - **State that lives only during an operation is not checked by a test.** The upload list under the
   button is visible while the files are in flight: on substituted answers they land before the test
   manages to read it, and the test turns red every other run. What is checked is either the final

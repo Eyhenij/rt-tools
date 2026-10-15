@@ -98,6 +98,20 @@ Then this condition is not judged at all
 
 Covered: `projects/agent-kit/tests/guard-epic-base.test.sh`.
 
+### SC-AK-1226 — a merged epic is not demanded as the base of a task branch
+
+Given a task of an epic whose branch is not in the remote, and the remote main branch has no merge
+commit naming the epic
+When the guard judges the creation of the task branch
+Then it refuses with the former line: no branch of that epic is in the remote
+
+Given the remote main branch carries a merge commit that names the key and the number of the epic
+When the guard judges the creation of the task branch
+Then it does not refuse over the missing epic branch; a merge naming another epic that shares the
+first digits of the number does not count
+
+Covered: `projects/agent-kit/tests/guard-epic-base.test.sh`.
+
 ### SC-AK-1203 — a chain base of the same epic is lawful
 
 Given a task of an epic, and the base named is the branch of the task below, whose history carries

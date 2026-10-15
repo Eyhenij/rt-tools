@@ -44,6 +44,7 @@ cat > "$TQ_TREE/gh" <<'STUB'
 all="$*"
 printf '%s\n' "$all" >> "$TQ_LOG"
 case "$all" in
+    *"label list"*) printf '[{"name":"bug"},{"name":"epic"}]\n' ;;
     *"issue create"*) printf 'https://github.com/o/r/issues/4242\n' ;;
     *"addProjectV2ItemById"*) printf '{"data":{"addProjectV2ItemById":{"item":{"id":"IT_1"}}}}\n' ;;
     *projectItems*)
@@ -110,6 +111,27 @@ report "SC-AK-1216 — строка ответа называет, скольк�
 report "SC-AK-1216 — карточка спрошена по числу пауз плюс один" "$(cat "$TQ_COUNT")" 3
 if printf '%s' "$TQ_OUT" | grep -q 'exit=1'; then got="один"; else got="иначе"; fi
 report "SC-AK-1216 — вызов кончается кодом один" "$got" "один"
+
+# --- SC-AK-1228 — метка, которой нет в репозитории, называется до заведения -------------------
+#
+# Хостинг отказывал в создании одной строкой про метку, и ни карточки, ни номера не появлялось.
+tq_run_label() {
+    rm -f "$TQ_LOG" "$TQ_COUNT"
+    ( cd "$TQ_TREE" && TQ_LOG="$TQ_LOG" TQ_COUNT="$TQ_COUNT" TQ_APPEAR_AT=1 RT_TASK_NEW_PAUSES_MS='100' \
+        GH_BIN="$TQ_TREE/gh" RT_GH_RETRY_MS=1 \
+        node tools/task-new.mjs --outside-epic 'владелец попросил отдельно' --title 'Письма владельцу не уходят' \
+        --label "$1" < /dev/null 2>&1; printf 'exit=%s\n' "$?" )
+}
+
+TQ_OUT="$(tq_run_label ghost)"
+if printf '%s' "$TQ_OUT" | grep -q 'no task was created' && printf '%s' "$TQ_OUT" | grep -q '«ghost»'; then got="есть"; else got="нет"; fi
+report "SC-AK-1228 — названа отсутствующая метка и то, что задача не заведена" "$got" "есть"
+if printf '%s' "$TQ_OUT" | grep -q 'Existing: bug, epic'; then got="есть"; else got="нет"; fi
+report "SC-AK-1228 — названы существующие метки" "$got" "есть"
+report "SC-AK-1228 — карточка при этом не создавалась" "$(grep -c 'issue create' "$TQ_LOG")" 0
+
+TQ_OUT="$(tq_run_label bug)"
+report "SC-AK-1228 — существующая метка проходит к заведению" "$(grep -c 'issue create' "$TQ_LOG")" 1
 
 rm -rf "$TQ_TREE"
 

@@ -113,6 +113,18 @@ npm run check:docs && npm run check:specs && npm run check:dupes && npm run chec
 bash .claude/hooks/tests/run.sh       # if the conflict touched the hooks
 ```
 
+A merge without conflicts is not exempt: two branches can declare the same value apart, and the
+merge joins them silently — the duplicate check turns red only at the push. After every merge of the
+base, a conflict-free one included, the duplicate and the styles checks run (`npm run check:dupes`
+and `npm run check:styles`), and the value moves to its one shared place; no line goes into the
+known list.
+
+**After a merge of the base, the migrations it brought are read.** Those that set the rights of a
+role are opened. A branch migration that writes a role's full set of rights drops any right the base
+added meanwhile; git sees two different files and marks no conflict, and the fall shows later as a
+failing test on the count of rights, easy to take for a test error. The lost right returns by a new
+migration of the branch.
+
 The merge commit is signed by the bot the same way as any other — pattern
 `git-workflow-commit`. After the push the state is read from the PR itself, not from one's own
 tree — more on this in pattern `git-workflow-pr`:

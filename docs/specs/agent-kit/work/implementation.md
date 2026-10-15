@@ -47,6 +47,7 @@ needed sentence — and the statement stays green when the text of the role itse
 - **«NO» is printed only after the window of waiting, and the line names how long the command waited.** — `projects/agent-kit/assets/checks/task-new-queue.github.mjs:QUEUE_PAUSES_MS` — the pauses 1, 2, 4, 8 and 15 seconds, set in a suite by `RT_TASK_NEW_PAUSES_MS`; scenarios SC-AK-1215, SC-AK-1216
 - **A task that is not in the work queue ends the command of creating with a non-zero code.** — `projects/agent-kit/assets/checks/board.github.mjs:describeTaskState`
 - **A task without an executor is named by a line of its own.** — `projects/agent-kit/assets/checks/board.github.mjs:assignees`
+- **A label missing from the repository is named before the task is created.** — `projects/agent-kit/assets/checks/task-new.github.mjs:missing` — the label list is asked before the creation call; scenario SC-AK-1228
 - **A work queue that was not asked is no confirmation.** — `projects/agent-kit/assets/checks/task-new.github.mjs:OfflineError`
 - **The answer of the queue is put together into lines by a pure function.** — `projects/agent-kit/assets/checks/board.github.mjs:describeTaskState`
 - **An epic is created by the same command as a task, and by three things at once.** — `projects/agent-kit/assets/checks/task-new.github.mjs:writeEpicPlan` — scenario SC-AK-936

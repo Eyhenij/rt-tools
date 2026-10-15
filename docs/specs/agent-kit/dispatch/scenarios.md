@@ -143,6 +143,16 @@ empty; on a successful move the error stream does not go outward
 
 Covered: `projects/agent-kit/tests/dispatch.test.sh`.
 
+### SC-AK-1223 — a refusal at code 2 goes to the error stream too
+
+Given a branch refuses a call with the code 2, by either of its streams
+When the dispatcher gives the refusal to the agent
+Then the text goes to the error stream as well as the output stream: at code 2 the agent is given
+only the error stream, and a refusal printed only to the output stream arrives empty; a successful
+branch writes nothing to the error stream
+
+Covered: `projects/agent-kit/tests/dispatch.test.sh`.
+
 ### SC-AK-881 — a ban of a call at a zero code is recognised on a par with a block
 
 Given a branch answers with a decision to ban the call and leaves with zero, and one more branch
