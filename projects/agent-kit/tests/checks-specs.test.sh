@@ -207,8 +207,14 @@ colon_row() {
         > "$SPEC_TREE/.claude/skills/colon-rule/implementation.md"
 }
 
-colon_row '`tools/check-specs.mjs:checkSpecHeadings` и `tools/spec-common.mjs` в той же ячейке'
-report "SC-AK-1229 — путь без двоеточия рядом с якорем назван" "$(specs_says 'the colon between the file and the symbol is lost')" 1
+colon_row '`tools/check-specs.mjs:checkSpecHeadings` и `tools/spec-common.mjs` `REQUIRED_HEADINGS`'
+report "SC-AK-1229 — символ отдельно от пути рядом с якорем назван" "$(specs_says 'the colon between the file and the symbol is lost')" 1
+
+colon_row '`tools/check-specs.mjs:checkSpecHeadings` и `tools/spec-common.mjs`:REQUIRED_HEADINGS'
+report "SC-AK-1229 — двоеточие снаружи кавычек назван" "$(specs_says 'the colon between the file and the symbol is lost')" 1
+
+colon_row '`tools/check-specs.mjs:checkSpecHeadings`, а файл `tools/spec-common.mjs` лежит рядом'
+report "SC-AK-1229 — голый путь словами рядом с якорем не судится" "$(specs_says 'the colon between the file and the symbol is lost')" 0
 
 colon_row '`tools/check-specs.mjs:checkSpecHeadings` и `tools/spec-common.mjs:REQUIRED_HEADINGS`'
 report "SC-AK-1229 — оба токена с символом проходят" "$(specs_says 'the colon between the file and the symbol is lost')" 0

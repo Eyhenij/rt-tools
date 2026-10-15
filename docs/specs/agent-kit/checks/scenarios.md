@@ -473,12 +473,13 @@ Covered: `projects/agent-kit/tests/checks-specs-roots.test.sh`.
 
 ### SC-AK-1229 — a binding cell that lost the colon is refused
 
-Given a binding row holds an anchor and a path in backticks with a slash and an extension but no
-symbol
+Given a binding row holds an anchor and a path in backticks with a slash and an extension, and its
+symbol stands after it in separate backticks or after a colon outside them
 When the spec audit reads the row
 Then it refuses and names the token: the colon between the file and the symbol is lost
 
-Given the row is a verdict that names a file in prose, or every path in it carries its symbol
+Given the row names a file in prose without a symbol next to it, or every path in it carries its
+symbol
 When the spec audit reads the row
 Then it does not refuse
 

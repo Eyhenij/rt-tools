@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.31.0 · hooks/dispatch.sh · 96e5dc2b218c · правится надстройкой, не здесь
+# rt-kit v0.31.0 · hooks/dispatch.sh · 0f3f3c8ea2ac · правится надстройкой, не здесь
 # The dispatcher of agent events. NOT a guard: it has no `rt-hook:` declaration — on the contrary,
 # it reads such declarations in the others. In the agent settings it stands alone on an event
 # instead of a list.
@@ -108,17 +108,21 @@ EOF
     fi
     if [ "$code" -ne 0 ]; then
         if [ -n "$branch_out" ]; then
-            printf '%s\n' "$branch_out"
+            refusal="$branch_out"
         elif [ -n "$said_err" ]; then
-            printf '%s\n' "$said_err"
+            refusal="$said_err"
         else
             # The branch exited non-zero and said nothing by either stream. From the outside that
             # is indistinguishable from a refusal on the merits, and there is nothing to fix: nobody
             # knows which file is broken. So the dispatcher names it itself, otherwise nothing says
             # anything about a broken branch.
-            printf 'The guard %s exited with code %s and printed nothing: the file looks broken.\n' \
-                "$(basename "$branch")" "$code"
+            refusal="$(printf 'The guard %s exited with code %s and printed nothing: the file looks broken.' \
+                "$(basename "$branch")" "$code")"
         fi
+        printf '%s\n' "$refusal"
+        # At code 2 the agent is given only the error stream, and the output stream is dropped:
+        # a refusal printed only above reached the executor empty. The text goes to both.
+        printf '%s\n' "$refusal" >&2
         exit "$code"
     fi
 

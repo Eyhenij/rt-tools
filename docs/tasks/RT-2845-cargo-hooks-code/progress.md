@@ -30,8 +30,8 @@
 - [x] 5.2 Check labels against the repository list in `task:new`.
 - [x] 5.3 Refuse a path-like token without a colon in a binding cell.
 - [x] 5.4 Add the scenarios and tests of the three.
-- [>] 6.1 Lay the package out into the tree and rebuild.
-- [ ] 6.2 Run the checks of the package and the tree.
+- [x] 6.1 Lay the package out into the tree and rebuild.
+- [x] 6.2 Run the checks of the package and the tree.
 
 ## Decisions along the way
 

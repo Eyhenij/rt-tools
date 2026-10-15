@@ -151,8 +151,11 @@ function checkRuleImplementation(specFile, text, mapFile, heading = ['## Rules',
         const cell = cells[2].trim();
         rows.set(head, {
             anchors: [...cells[2].matchAll(ANCHOR)],
-            // A path-like token in backticks — a slash and an extension — that carries no colon.
-            bare: [...cells[2].matchAll(/`([\w./-]*\/[\w./-]*\.[A-Za-z]{2,10})`/g)],
+            // A path-like token in backticks — a slash and an extension — whose symbol follows it
+            // without the colon inside the backticks: `file.ts` `symbol`, or `file.ts`:symbol. A
+            // bare path alone is lawful: prose names files in the same cell, and the whole tree
+            // turned red on such mentions when every one of them was judged.
+            bare: [...cells[2].matchAll(/`([\w./-]*\/[\w./-]*\.[A-Za-z]{2,10})`(?::[\p{L}_#]|\s*`#?[\p{L}_][\p{L}\p{N}_-]*`)/gu)],
             verdict: VERDICT.test(cell) && cell.length >= VERDICT_MIN,
             used: false,
         });
