@@ -257,6 +257,37 @@ GE_OUT="$(ge_pull "$GE_NO_EPIC" "$GE_EPIC_PR")"
 if printf '%s' "$GE_OUT" | grep -q 'RT-1930-something'; then got="$(ge_silent "$GE_OUT")"; else got="прошло"; fi
 report "SC-AK-995 — у карточки без метки эпика это условие не судится" "$got" "прошло"
 
+# --- SC-AK-1226 — влитый эпик не требуется основанием ветки задачи ----------------------------
+#
+# Хост удаляет ветку эпика при слиянии, и задача, оставшаяся в нём, получала отказ «ветки эпика нет
+# в удалённом» без выхода. Влитый эпик узнаётся по слиянию в главной, которое называет его ключ и
+# номер целиком.
+git -C "$GE_REPO" update-ref -d refs/remotes/origin/RT-1921-work-by-epics
+git -C "$GE_REPO" checkout -q main
+GE_OUT="$(ge_decision "$GE_WITH_EPIC" origin/main)"
+if printf '%s' "$GE_OUT" | grep -q 'no branch of that epic\|нет в удалённом'; then got="отбито"; else got="прошло"; fi
+report "SC-AK-1226 — без ветки эпика и без слияния отказ прежний" "$got" "отбито"
+
+# Слияние, называющее другой эпик по первым цифрам номера, этот эпик не вливает.
+git -C "$GE_REPO" checkout -q -b side-other main 2>/dev/null
+fixture_commit "$GE_REPO" "docs/other-epic.md" "другой эпик" "docs: другой эпик"
+git -C "$GE_REPO" checkout -q main
+git -C "$GE_REPO" -c user.name=probe -c user.email=probe@example.com -c commit.gpgsign=false \
+    merge -q --no-ff -m "Merge pull request #8 from o/RT-19211-other-epic" side-other 2>/dev/null
+git -C "$GE_REPO" update-ref refs/remotes/origin/main "$(git -C "$GE_REPO" rev-parse main)"
+GE_OUT="$(ge_decision "$GE_WITH_EPIC" origin/main)"
+if printf '%s' "$GE_OUT" | grep -q 'no branch of that epic\|нет в удалённом'; then got="отбито"; else got="прошло"; fi
+report "SC-AK-1226 — слияние другого эпика с тем же началом номера не считается" "$got" "отбито"
+
+git -C "$GE_REPO" checkout -q -b side-epic main 2>/dev/null
+fixture_commit "$GE_REPO" "docs/epic-done.md" "эпик" "docs: эпик влит"
+git -C "$GE_REPO" checkout -q main
+git -C "$GE_REPO" -c user.name=probe -c user.email=probe@example.com -c commit.gpgsign=false \
+    merge -q --no-ff -m "Merge pull request #9 from o/RT-1921-work-by-epics" side-epic 2>/dev/null
+git -C "$GE_REPO" update-ref refs/remotes/origin/main "$(git -C "$GE_REPO" rev-parse main)"
+got="$(ge_silent "$(ge_decision "$GE_WITH_EPIC" origin/main)")"
+report "SC-AK-1226 — после слияния эпика ветка задачи от главной проходит" "$got" "прошло"
+
 rm -rf "$GE_REPO"
 rm -rf "$GE_TREE"
 suite_result "гард поставки: эпик задачи"

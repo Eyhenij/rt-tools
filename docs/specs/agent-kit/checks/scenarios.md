@@ -470,3 +470,16 @@ When the spec audit judges a binding to a function of that file
 Then the function counts as published and not as called by tests alone
 
 Covered: `projects/agent-kit/tests/checks-specs-roots.test.sh`.
+
+### SC-AK-1229 — a binding cell that lost the colon is refused
+
+Given a binding row holds an anchor and a path in backticks with a slash and an extension but no
+symbol
+When the spec audit reads the row
+Then it refuses and names the token: the colon between the file and the symbol is lost
+
+Given the row is a verdict that names a file in prose, or every path in it carries its symbol
+When the spec audit reads the row
+Then it does not refuse
+
+Covered: `projects/agent-kit/tests/checks-specs.test.sh`.

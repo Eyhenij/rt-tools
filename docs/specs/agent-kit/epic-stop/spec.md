@@ -47,6 +47,10 @@ There is no interface: the guard answers with a refusal in the executor's own tu
 - **The refusal names the stop, not only the ban.** The command that prints the table and the line
   about waiting for orders stand in the refusal text: without them the session invents a stop of its
   own, and the owner gets a report of another shape every time.
+- **The refusal says up to which call a new epic needs the bypass line.** A new epic the owner has
+  declared needs the line in the calls that create its card, its tasks and its branch. After the
+  branch of the new epic is taken, the guard reads that epic and stops refusing: without the
+  boundary the line is repeated in every call or never.
 - **The order to go on is carried in the call itself.** The owner's word lives in the conversation,
   and the guard does not read the conversation: the lawful form is the named line in the command,
   with the reason the owner gave. An empty reason is not a bypass.

@@ -3,9 +3,9 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 4 of 6 — A merged epic is not demanded as the base
-- **Done:** stage 1: the dispatcher writes a refusal to the error stream too (SC-AK-1223); stage 2: the re-arm hook names the loaded rules (SC-AK-1224); stage 3: code given to an interpreter is a write only when it writes (SC-AK-1225).
-- **Next step:** read how `git-guard-delivery-epic.sh` finds the epic branch and where it faults.
+- **Stage:** 6 of 6 — Layout and gate
+- **Done:** stage 1: the dispatcher writes a refusal to the error stream too (SC-AK-1223); stage 2: the re-arm hook names the loaded rules (SC-AK-1224); stage 3: code given to an interpreter is a write only when it writes (SC-AK-1225); stage 4: a merged epic is not demanded as the base (SC-AK-1226); stage 5: epic stop line boundary (SC-AK-1227), label precheck (SC-AK-1228), lost colon in a binding (SC-AK-1229).
+- **Next step:** lay the package out (`pnpm run agent-kit:sync`) and run the checks.
 - **Uncommitted:** nothing of this task.
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -23,20 +23,22 @@
 - [x] 3.1 Make a code argument a write only when the code holds a write call.
 - [x] 3.2 Name the new price in the header of the file.
 - [x] 3.3 Add the scenarios and extend the test.
-- [>] 4.1 Read how the delivery guard finds the epic branch and where it faults.
-- [ ] 4.2 Take the main branch as the base when the epic tip is reachable from the remote main branch.
-- [ ] 4.3 Add the scenario and the check of the base on the host.
-- [ ] 5.1 Name the end of the bypass line for a new epic in the epic stop refusal.
-- [ ] 5.2 Check labels against the repository list in `task:new`.
-- [ ] 5.3 Refuse a path-like token without a colon in a binding cell.
-- [ ] 5.4 Add the scenarios and tests of the three.
-- [ ] 6.1 Lay the package out into the tree and rebuild.
+- [x] 4.1 Read how the delivery guard finds the epic branch and where it faults.
+- [x] 4.2 Take the main branch as the base when the epic tip is reachable from the remote main branch.
+- [x] 4.3 Add the scenario and the check of the base on the host.
+- [x] 5.1 Name the end of the bypass line for a new epic in the epic stop refusal.
+- [x] 5.2 Check labels against the repository list in `task:new`.
+- [x] 5.3 Refuse a path-like token without a colon in a binding cell.
+- [x] 5.4 Add the scenarios and tests of the three.
+- [>] 6.1 Lay the package out into the tree and rebuild.
 - [ ] 6.2 Run the checks of the package and the tree.
 
 ## Decisions along the way
 
 - **The empty refusal is reproduced before it is changed.** Refusals of this session arrive with
   their text, so the sender's claim is checked by a test. Affected stage of the plan: 1.
+
+- **The base check on the host (record 615f8fa5) is a text edit** — it goes into the pattern `git-workflow-pr` in task RT-2846. Affected stage of the plan: 4.
 
 ## Sessions
 

@@ -83,6 +83,10 @@ outward is watched by is said by the subdomain of the delivery guards.
   spaces the formatter pads the table columns to a common width with: in the companions of the tree
   that is 191 820 characters. A mixed companion is read whole — the translation goes file by file,
   and half the tree stands in the former shape for a while.
+- **A binding cell that lost the colon between the file and the symbol is refused.** A path in
+  backticks with a slash and an extension but no `:symbol` is not read as an anchor, and a row that
+  still holds other anchors passed in silence. It is judged only in a row that has an anchor: a
+  verdict row names files in prose, and a bare path is lawful there.
 - **What accumulated before the limit was declared is listed by name.** The list marks debt, it does
   not issue permission: a file that got into it stays long and is visible in the list.
 - **The accepted and the debt in the list are told apart.** The accepted is what the tree does not

@@ -151,6 +151,8 @@ function checkRuleImplementation(specFile, text, mapFile, heading = ['## Rules',
         const cell = cells[2].trim();
         rows.set(head, {
             anchors: [...cells[2].matchAll(ANCHOR)],
+            // A path-like token in backticks — a slash and an extension — that carries no colon.
+            bare: [...cells[2].matchAll(/`([\w./-]*\/[\w./-]*\.[A-Za-z]{2,10})`/g)],
             verdict: VERDICT.test(cell) && cell.length >= VERDICT_MIN,
             used: false,
         });
@@ -178,6 +180,14 @@ function checkRuleImplementation(specFile, text, mapFile, heading = ['## Rules',
                 `the statement «${head.slice(0, 60)}…» has an empty binding — put \`file:symbol\` ` +
                     'or the verdict «Not carried out», «Not applicable», «Not checked» with a reason'
             );
+        }
+        // A binding that lost the colon between the file and the symbol is not read as an anchor,
+        // and a row that still has other anchors passed in silence. Judged only in a row that has an
+        // anchor: a verdict row names files in prose, and there a bare path is lawful.
+        if (row.anchors.length) {
+            for (const [, token] of row.bare) {
+                report(mapFile, `the colon between the file and the symbol is lost: \`${token}\``);
+            }
         }
         for (const [, path, symbol] of row.anchors) {
             if (!exists(path)) {
