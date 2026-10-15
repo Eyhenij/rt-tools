@@ -3,9 +3,9 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 2 of 6 — The re-arm hook names the loaded rules
-- **Done:** stage 1: the dispatcher writes a refusal to the error stream too (SC-AK-1223), reproduced first by a failing test.
-- **Next step:** read the loaded rule names in the re-arm hook before the record is removed.
+- **Stage:** 4 of 6 — A merged epic is not demanded as the base
+- **Done:** stage 1: the dispatcher writes a refusal to the error stream too (SC-AK-1223); stage 2: the re-arm hook names the loaded rules (SC-AK-1224); stage 3: code given to an interpreter is a write only when it writes (SC-AK-1225).
+- **Next step:** read how `git-guard-delivery-epic.sh` finds the epic branch and where it faults.
 - **Uncommitted:** nothing of this task.
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -17,13 +17,13 @@
 - [x] 1.1 Reproduce the symptom: split stdout and stderr in the dispatcher test and call a refusing branch with code 2.
 - [x] 1.2 If the text is lost, write the refusal to the error stream too and keep the output stream as it was.
 - [x] 1.3 Add the scenario to the dispatch spec and the test.
-- [>] 2.1 Read the unique rule names from the record before it is removed.
-- [ ] 2.2 Put them into the context line with the one-turn instruction.
-- [ ] 2.3 Add the scenario and test for an empty and a missing record.
-- [ ] 3.1 Make a code argument a write only when the code holds a write call.
-- [ ] 3.2 Name the new price in the header of the file.
-- [ ] 3.3 Add the scenarios and extend the test.
-- [ ] 4.1 Read how the delivery guard finds the epic branch and where it faults.
+- [x] 2.1 Read the unique rule names from the record before it is removed.
+- [x] 2.2 Put them into the context line with the one-turn instruction.
+- [x] 2.3 Add the scenario and test for an empty and a missing record.
+- [x] 3.1 Make a code argument a write only when the code holds a write call.
+- [x] 3.2 Name the new price in the header of the file.
+- [x] 3.3 Add the scenarios and extend the test.
+- [>] 4.1 Read how the delivery guard finds the epic branch and where it faults.
 - [ ] 4.2 Take the main branch as the base when the epic tip is reachable from the remote main branch.
 - [ ] 4.3 Add the scenario and the check of the base on the host.
 - [ ] 5.1 Name the end of the bypass line for a new epic in the epic stop refusal.

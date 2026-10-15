@@ -70,4 +70,31 @@ report "SC-AK-1050 — без признака сессии запись цел�
 printf '' | "$HOOKS/skill-gate-rearm.sh" >/dev/null 2>&1
 report "SC-AK-1050 — пустой ввод проходит" "$?" "0"
 
+# --- SC-AK-1224. Сказано, какие правила были загружены ---------------------------------------
+
+gate_session_load agent-kit git-workflow git-workflow
+said="$(start tests compact | "$HOOKS/skill-gate-rearm.sh" 2>/dev/null \
+    | jq -r '.hookSpecificOutput.additionalContext // ""' 2>/dev/null)"
+if printf '%s' "$said" | grep -q 'Loaded before the compaction: agent-kit, git-workflow\.'; then got="есть"; else got="нет"; fi
+report "SC-AK-1224 — названы загруженные правила, без повторов" "$got" "есть"
+if printf '%s' "$said" | grep -qi 'in one turn'; then got="есть"; else got="нет"; fi
+report "SC-AK-1224 — сказано загрузить их за один ход" "$got" "есть"
+
+# Пустой записи названия брать неоткуда: строка прежняя.
+gate_session_load agent-kit
+: > "$marker"
+said="$(start tests compact | "$HOOKS/skill-gate-rearm.sh" 2>/dev/null \
+    | jq -r '.hookSpecificOutput.additionalContext // ""' 2>/dev/null)"
+if printf '%s' "$said" | grep -q 'Loaded before'; then got="есть"; else got="нет"; fi
+report "SC-AK-1224 — пустая запись списка не даёт" "$got" "нет"
+
+# Записи нет вовсе: тоже прежняя строка, и перезарядка по-прежнему сказана.
+rm -f "$marker"
+said="$(start tests compact | "$HOOKS/skill-gate-rearm.sh" 2>/dev/null \
+    | jq -r '.hookSpecificOutput.additionalContext // ""' 2>/dev/null)"
+if printf '%s' "$said" | grep -q 'Loaded before'; then got="есть"; else got="нет"; fi
+report "SC-AK-1224 — без записи списка нет" "$got" "нет"
+if printf '%s' "$said" | grep -qi 'armed anew'; then got="есть"; else got="нет"; fi
+report "SC-AK-1224 — без записи перезарядка сказана" "$got" "есть"
+
 suite_result "перезарядка гейта правил"

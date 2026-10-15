@@ -14,8 +14,11 @@
 # from one laid down by the tool. The analysis — `2026-08-15-guard-denied-shell-wrote-anyway.md`.
 #
 # The list is wide on purpose, and the price of that is named: a read command that carries the name
-# of an interpreter will be refused on a par with an edit command. A narrow list would cost more — a
-# missed form of writing brings back the whole bypass, and it can be found only by a miss.
+# of an interpreter with a document on input will be refused on a par with an edit command. A narrow
+# list would cost more — a missed form of writing brings back the whole bypass, and it can be found
+# only by a miss. Code given to an interpreter as an argument is narrowed: it is a write only when
+# it holds a call that writes, and the price there is the opposite one — a write by a rarer call
+# passes unseen.
 #
 # Deletion and moving stand in the list on purpose, not by oversight. Removing a file is an edit
 # more destructive than any write. What was written is visible in the tree and rolls back, while
@@ -56,11 +59,21 @@ rt_shell_writes_default() {
     # demand for the shared-code rule without editing anything in it. Over two tasks such refusals
     # came to about fifteen, and part of them fell on commands that wrote nothing.
     #
-    # An interpreter's body comes in two kinds, and both remain a write: a document on input and
-    # code as an argument.
+    # An interpreter's body comes in two kinds. A document on input stays a write: it is a script
+    # nobody has read. Code as an argument is a write only when the code holds a call that writes —
+    # `writeFile`, `appendFile`, `fs.write`, a stream opened for writing, an opening for `w` or `a`,
+    # `write_text`, `write_bytes`, a rename, a copy or a removal. Code without one is a read, and
+    # the paths it names are not judged as write targets: a read of one script from the package
+    # manifest by `node -e` demanded the dependencies rule. The price of this is named: a write by a
+    # call that is not in the list passes unseen, and the list can only grow by a miss.
     interp='(^|[|;&(]|[[:space:]])(python3?|node|ruby|deno|bun|php|perl)'
+    if printf '%s' "$cleaned" | grep -Eq "${interp}([[:space:]][^|]*)?<<"; then
+        return 0
+    fi
     if printf '%s' "$cleaned" | grep -Eq \
-        "${interp}([[:space:]][^|]*)?<<|${interp}([[:space:]]+-[^[:space:]]*)*[[:space:]]+(-e|--eval|-c|-p|--print)([[:space:]]|\$)"; then
+        "${interp}([[:space:]]+-[^[:space:]]*)*[[:space:]]+(-e|--eval|-c|-p|--print)([[:space:]]|\$)" \
+        && printf '%s' "$cleaned" | grep -Eq \
+            'writeFile|appendFile|fs\.write|createWriteStream|\.write\(|write_text|write_bytes|open\([^)]*,[[:space:]]*["'"'"'][wa]|renameSync|copyFile|cpSync|unlinkSync|rmSync|os\.(rename|remove|unlink)|shutil\.|File\.(write|open)'; then
         return 0
     fi
 

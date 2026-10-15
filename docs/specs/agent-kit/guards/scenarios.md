@@ -481,8 +481,23 @@ Covered: `projects/agent-kit/tests/docs-guard.test.sh`.
 
 Given a command calls an interpreter and gives it the path of a file as the first argument
 When the gate decides whether it writes
-Then it does not count as a write; an interpreter with a document at the input, with code as an
-argument and an edit in place stay writes
+Then it does not count as a write; an interpreter with a document at the input and an edit in place
+stay writes, and code as an argument stays a write when it holds a call that writes
+(`SC-AK-1225`)
+
+Covered: `projects/agent-kit/tests/defaults.test.sh`.
+
+### SC-AK-1225 — code handed to an interpreter as an argument is a write only when it writes
+
+Given a command gives an interpreter code as an argument, and the code only reads a file or prints
+a value
+When the gate decides whether it writes
+Then it does not count as a write, and the paths the code names are not judged as targets
+
+Given the code holds a call that writes, such as `writeFile`, `appendFile`, an opening for `w` or
+`a`, `write_text`, a rename, a copy or a removal, or a redirect stands after it
+When the gate decides whether it writes
+Then it counts as a write, as before; a document at the input stays a write in any case
 
 Covered: `projects/agent-kit/tests/defaults.test.sh`.
 
