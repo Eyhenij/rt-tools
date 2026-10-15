@@ -48,3 +48,24 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 История **Presets** показывает три сочетания частей в обоих наборах, **Themes** — полное меню в
 обеих темах.
+
+## Входы
+
+| вход                 | тип                                    | умолчание  |
+| -------------------- | -------------------------------------- | ---------- |
+| `userName`           | `string`                               | `''`       |
+| `organizationName`   | `string`                               | `''`       |
+| `organizationChange` | `'hidden' \| 'denied' \| 'allowed'`    | `'hidden'` |
+| `passwordChange`     | `boolean`                              | `false`    |
+| `locales`            | `ReadonlyArray<IRtProfileMenu.Locale>` | `[]`       |
+| `locale`             | `string`                               | `''`       |
+| `signOutDisabled`    | `boolean`                              | `false`    |
+
+## Выходы
+
+| выход                | значение | когда                          |
+| -------------------- | -------- | ------------------------------ |
+| `changeOrganization` | —        | выбран пункт смены организации |
+| `changePassword`     | —        | выбран пункт смены пароля      |
+| `localeChange`       | `string` | выбран другой язык, код языка  |
+| `signOut`            | —        | выбран пункт выхода            |
