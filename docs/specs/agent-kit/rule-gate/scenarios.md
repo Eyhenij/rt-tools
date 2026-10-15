@@ -92,6 +92,14 @@ Then it demands the rule of checking through the browser
 
 Covered: `projects/agent-kit/tests/defaults.test.sh`, `projects/agent-kit/tests/skill-gate.test.sh`.
 
+### SC-AK-1230 — a call of the mockups tool demands the rule of mockups where the tree has it
+
+Given a call of the design tool is made, and no file is edited
+When the rules check decides what to demand
+Then it demands the rule of mockups, and a tree that carries no such rule is not refused
+
+Covered: `projects/agent-kit/tests/defaults.test.sh`, `projects/agent-kit/tests/skill-gate.test.sh`.
+
 ### SC-AK-249 — the same edit put by a shell command is refused
 
 Given a guard refuses an edit of a file by a tool, and the same edit goes by a redirection, an
