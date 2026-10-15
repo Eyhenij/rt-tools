@@ -713,7 +713,10 @@ describe('doctor', () => {
     });
 
     it('считает невыбранное — все законы, кроме названного', () => {
-        const laws: number = readCatalog(ASSETS).filter((entry: IEntryOfCatalog): boolean => entry.kind === 'laws').length;
+        // Закон, которому нужно свойство дерева, считается в другой строке сводки — «нужно свойство».
+        const laws: number = readCatalog(ASSETS).filter(
+            (entry: IEntryOfCatalog): boolean => entry.kind === 'laws' && entry.needs === null
+        ).length;
         start(['laws/delivery.md']);
 
         expect(said(doctor(env))).toContain(`не выбрано: ${laws - 1}`);

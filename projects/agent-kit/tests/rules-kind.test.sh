@@ -34,7 +34,7 @@ for rule in "$RULES"/*.md; do
         continue
     fi
     [ "$(sed -nE 's/^law:[[:space:]]*(.*)/\1/p' "$rule" 2>/dev/null | grep -c .)" -gt 1 ] && two_laws=$((two_laws + 1))
-    [ -f "$LAWS/$law.md" ] || [ -f "$LAWS/$law.needs-app.md" ] || [ -f "$LAWS/$law.needs-admin.md" ] || unknown_law=$((unknown_law + 1))
+    [ -f "$LAWS/$law.md" ] || compgen -G "$LAWS/$law.needs-*.md" >/dev/null || unknown_law=$((unknown_law + 1))
 done
 report "SC-AK-1016 — закон объявлен каждым правилом" "$no_law" 0
 report "SC-AK-1016 — объявленный закон есть в пакете" "$unknown_law" 0
@@ -74,8 +74,7 @@ report "SC-AK-1019 — длиннее предела описаний нет" "$
 without_pattern=0
 for rule in "$RULES"/*.md; do
     name="$(basename "$rule" .md)"
-    name="${name%.needs-app}"
-    name="${name%.needs-admin}"
+    name="${name%.needs-*}"
     name="${name%.github}"
     name="${name%.gitlab}"
     name="${name%.azure}"

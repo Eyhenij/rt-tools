@@ -181,6 +181,18 @@ expect_skill "SC-AK-111 — инструмент браузера требует
     "$(jq -n '{session_id:"tests",tool_name:"mcp__claude-in-chrome__navigate",tool_input:{url:"http://localhost:4200"}}')" \
     browser-verification
 
+# Вызов инструмента для макетов требует правило макетов. В дереве без особенности «макеты»
+# такого правила нет, и проверка его не требует: загружать это имя нечем.
+expect_skill "SC-AK-1230 — инструмент макетов без правила в дереве пропускается" \
+    "$(jq -n '{session_id:"tests",tool_name:"mcp__figma__use_figma",tool_input:{}}')" \
+    PASS
+mkdir -p "$TREE/.claude/skills/mockups"
+printf -- '---\nname: mockups\nkind: rule\n---\n' \
+    > "$TREE/.claude/skills/mockups/SKILL.md"
+expect_skill "SC-AK-1230 — инструмент макетов требует правило макетов" \
+    "$(jq -n '{session_id:"tests",tool_name:"mcp__figma__use_figma",tool_input:{}}')" \
+    mockups
+
 # Слияние PR требует два правила подряд: поставку и разбор папки задачи. Требуется первое
 # незагруженное — отказ, перечисляющий оба, читается как «загрузи оба», и однократность теряется.
 c "SC-AK-110 — слияние PR: первым правило поставки" 'gh pr merge 12 --merge'
