@@ -4,7 +4,7 @@ kind: pattern
 rule: lib-layers
 description: Pattern of rule lib-layers. Load when creating, renaming or removing a lib — the generator instead of bare nx g, the tag, the alias, the barrel, the README, and how to finish a removal. Moving code between existing libs — pattern lib-layers-move.
 ---
-<!-- rt-kit v0.31.0 · patterns/lib-layers-new.md · 4a93fc6eb6e6 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.31.0 · patterns/lib-layers-new.md · a97044dda529 · правится надстройкой, не здесь -->
 
 # Creating or removing a lib
 
@@ -95,3 +95,7 @@ rename or removal.
 - **A lib nobody imports is checked by nothing.** `nx lint` and `nx test` check the lib itself,
   not its contract with the consumer. The first importer is the first check: the models layer is
   accepted after `nx build` and a live run of the scenario, not by a green `lint test`.
+- **A lib's own `sourceTag` is written as a string literal.** The layout check finds the
+  description of a lib by the text `sourceTag: '<tag>'`, not by evaluating the module. A tag taken
+  from a constant passes the lint and is reported as "described in no file". Constants are for the
+  tags in `onlyDependOnLibsWithTags` only.

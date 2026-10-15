@@ -222,3 +222,7 @@ statement.
   author sees their edit, not what the subject will grow into: a domain created along the way
   turns out a month later to be half of its neighbour, and parting them means parting the scenario
   numbers too.
+- **A changed or removed scenario is edited in the live spec, not restated in `proposed/`.** The
+  spec audit refuses a second heading with a taken number. A changed promise or a removed
+  scenario goes into the domain's `scenarios.md` by the commit that changes the code and the test
+  title; the agreement names such scenarios by number in prose.

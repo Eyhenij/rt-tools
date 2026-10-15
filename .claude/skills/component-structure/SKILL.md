@@ -4,7 +4,7 @@ kind: rule
 law: frontend-application
 description: Rule under the frontend-application law. Load when editing any *.component.ts and its template. Names the order of decorator properties, import grouping, template conventions and the mandatory qa-dataid. Ready-made code is in pattern component-structure-new.
 ---
-<!-- rt-kit v0.31.0 · rules/component-structure.md · 124edd4bc1c4 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.31.0 · rules/component-structure.md · f10d44c07a7d · правится надстройкой, не здесь -->
 
 # Component file — how it works here
 
@@ -99,6 +99,9 @@ environment either — that is `Q-FA-1` in the law.
   draws the frame of an icon it did not find and says nothing. The build, the lint and the tests
   stay green, and the owner sees an empty square. Before the edit the name is looked up among the
   kit icon files: some names carry the `ico-` prefix and most do not.
+- **A component that grew past the file limit is split, not squeezed.** An edit of a component does
+  not load the rule of plain TypeScript files, where the 500-line article lives, so it is repeated
+  in one line here: what the component does on its own moves out into a file next to it.
 
 ## Content that arrived from outside is built as nodes
 

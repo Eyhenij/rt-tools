@@ -4,7 +4,7 @@ kind: rule
 law: delivery
 description: Rule under the delivery law for a tree on GitHub — the part about the rollout. Load when an edit goes to production — merge into the main branch, the pipeline, images and tags, storage migrations. Patterns git-workflow-migration, -restart, -docker, -secrets. Task and branch — rule git-workflow.
 ---
-<!-- rt-kit v0.31.0 · rules/deploy-flow.github.md · 01fdcbabf9b6 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.31.0 · rules/deploy-flow.github.md · a133073bdb2c · правится надстройкой, не здесь -->
 
 # Rollout — how it works here
 
@@ -158,6 +158,10 @@ flowchart TD
 - **The migration chain is run from an empty storage before the merge.** The apply order is
   lexicographic by directory name, and the timestamp is set at creation: a migration from a branch
   started earlier lands before the one it depends on.
+- **A migration without a reverse is merged only after a copy of the production storage, and the PR
+  body names the copy.** Rolling back the image does not bring a dropped column or table back. When
+  the executor cannot reach the server, the owner is told which step is blocked and what opens it:
+  the owner's word replaces a check only when the owner was told the check did not run.
 - **The divergence of migrations from the schema is measured on a shadow storage, not on the one
   the pusher works with.** That one lawfully carries the trace of any unfinished branch, and a
   check against it would hold up someone else's edit. The gate and the rollout call one and the

@@ -4,7 +4,7 @@ kind: pattern
 rule: task-flow
 description: Pattern of rule task-flow. Load when returning to unfinished work in a new session. What is already in the context, what not to ask the owner, how to edit "Where we stand", how to record a decision along the way and a stage revision. Not for starting work — that is pattern task-flow-start.
 ---
-<!-- rt-kit v0.31.0 · patterns/task-flow-resume.md · 86eed279bd72 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.31.0 · patterns/task-flow-resume.md · 74da4459cfe6 · правится надстройкой, не здесь -->
 
 # Returning to unfinished work
 
@@ -144,6 +144,12 @@ A stage revision — to the same place, not by editing the plan:
 - **2026-08-07. Этап 4 заменён: роли заводятся обе, а не одна.** Владелец решил при разборе;
   прежний этап в замысле оставлен видимым.
 ```
+
+A new request of the owner inside the same task goes into the grill, not only into the progress.
+The grill leaves for the archive, the progress only when it holds decisions. The request is quoted
+verbatim under "The owner request"; under "Decisions" goes the answer, or the line "closed by
+assumption: <what is taken>" when the question was not put. Otherwise the archive keeps the first
+answer while the code carries the second.
 
 The session entry marks what was done and what confirms it:
 

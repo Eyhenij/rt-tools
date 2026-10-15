@@ -98,3 +98,6 @@ environment either — that is `Q-FA-1` in the law.
   draws the frame of an icon it did not find and says nothing. The build, the lint and the tests
   stay green, and the owner sees an empty square. Before the edit the name is looked up among the
   kit icon files: some names carry the `ico-` prefix and most do not.
+- **A component that grew past the file limit is split, not squeezed.** An edit of a component does
+  not load the rule of plain TypeScript files, where the 500-line article lives, so it is repeated
+  in one line here: what the component does on its own moves out into a file next to it.
