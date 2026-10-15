@@ -25,6 +25,7 @@ const { getI18n } = i18nBuilder
             rtPasswordConfirmPlaceholder: 'Repeat the password',
             rtRegisterProviders: 'Or sign up with',
             invalidPasswordNotEmailMessage: 'Invalid password: must not be equal to the email.',
+            registerTitle: 'Register',
         },
         ru: {
             rtRuleList: 'Требования к паролю',
@@ -40,6 +41,7 @@ const { getI18n } = i18nBuilder
             rtPasswordConfirmPlaceholder: 'Повторите пароль',
             rtRegisterProviders: 'Или зарегистрируйтесь через',
             invalidPasswordNotEmailMessage: 'Некорректный пароль: пароль не должен совпадать с почтой.',
+            registerTitle: 'Регистрация',
         },
     })
     .build();
