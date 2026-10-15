@@ -71,6 +71,7 @@ export * from './photo-viewer';
 export * from './pagination/rt-pagination.component';
 export * from './pagination/rt-pagination.model';
 export * from './popover';
+export * from './profile-menu';
 export * from './prompt-suggestion';
 export * from './radio-button';
 export * from './radius';

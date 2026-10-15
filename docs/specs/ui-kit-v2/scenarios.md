@@ -35,6 +35,7 @@ The scenarios live in the subdomains, each at its own rules:
 | [The side menu](side-menu/scenarios.md)                                  | `SC-UKV-430`…`SC-UKV-435`, `SC-UKV-526`…`SC-UKV-533`                      |
 | [The inline edit](inline-edit/scenarios.md)                              | `SC-UKV-786`…`SC-UKV-792`                                                 |
 | [The quick menu](speed-menu/scenarios.md)                                | `SC-UKV-798`…`SC-UKV-805`                                                 |
+| [The profile menu](profile-menu/scenarios.md)                            | `SC-UKV-857`…`SC-UKV-862`                                                 |
 
 The prefix is shared across the domain, and the numbers were not recounted at the move: the number
 ties a scenario to the title of its test.

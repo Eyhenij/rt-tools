@@ -1,0 +1,36 @@
+@switch (part) {
+    @case ('presets') {
+        <app-story-presets caption="Меню профиля в обоих наборах">
+            <ng-template>
+                <app-story-row slotWidth="18rem" [items]="cases" [itemLabel]="caseLabel">
+                    <ng-template let-c>
+                        <rt-profile-menu
+                            locale="ru"
+                            [userName]="userName"
+                            [organizationName]="c.organizationName"
+                            [organizationChange]="c.organizationChange"
+                            [passwordChange]="c.passwordChange"
+                            [locales]="c.locales"
+                            [signOutDisabled]="c.signOutDisabled" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('themes') {
+        <app-story-presets caption="Меню профиля в обеих темах в обоих наборах">
+            <ng-template>
+                <app-story-themes>
+                    <ng-template>
+                        <rt-profile-menu
+                            organizationChange="allowed"
+                            passwordChange
+                            [userName]="userName"
+                            [organizationName]="cases[0].organizationName" />
+                    </ng-template>
+                </app-story-themes>
+            </ng-template>
+        </app-story-presets>
+    }
+}
