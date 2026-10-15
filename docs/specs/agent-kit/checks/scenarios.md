@@ -483,4 +483,4 @@ symbol
 When the spec audit reads the row
 Then it does not refuse
 
-Covered: `projects/agent-kit/tests/checks-specs.test.sh`.
+Covered: `projects/agent-kit/tests/checks-specs-colon.test.sh`.
