@@ -32,13 +32,7 @@ export const SHOWCASE_MESSAGES_RU: Readonly<Record<string, string>> = {
     navMailTemplates: 'Шаблоны писем',
     navMailSent: 'Отправленные',
 
-    // Попап профиля
-    profileOrganizationLabel: '— заведение',
-    profileChangeOrganization: 'Сменить заведение',
-    profileChangeOrganizationDenied: 'Заведение приходит из принадлежности: менять его некому.',
-    profilePasswordChange: 'Сменить пароль',
-    profileLogout: 'Выйти',
-    profileSwitchTheme: 'Сменить тему',
+    // Попап профиля: подписи самого меню — у кита, здесь только ответ показа на действие
     profileActionDemo: 'Показ: настоящее приложение здесь ушло бы своей дорогой',
 
     // Раздел

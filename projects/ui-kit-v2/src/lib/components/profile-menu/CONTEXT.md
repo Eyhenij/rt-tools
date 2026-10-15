@@ -1,0 +1,32 @@
+# `rt-profile-menu`
+
+Содержимое попапа профиля в шапке `rt-page-header`: человек, организация, действия, язык и тема.
+
+```html
+<rt-profile-menu organizationChange="allowed" [userName]="name" [organizationName]="org" (signOut)="signOut()" />
+```
+
+| вход                 | тип                                    | умолчание  |
+| -------------------- | -------------------------------------- | ---------- |
+| `userName`           | `string`                               | `''`       |
+| `organizationName`   | `string`                               | `''`       |
+| `organizationChange` | `'hidden' \| 'denied' \| 'allowed'`    | `'hidden'` |
+| `passwordChange`     | `boolean`                              | `false`    |
+| `locales`            | `ReadonlyArray<IRtProfileMenu.Locale>` | `[]`       |
+| `locale`             | `string`                               | `''`       |
+| `signOutDisabled`    | `boolean`                              | `false`    |
+
+Выходы: `changeOrganization`, `changePassword`, `localeChange` (код языка), `signOut`.
+
+## Главное, что нужно знать
+
+**Панель рисует само меню.** У поповера кита оформления нет, и голые пункты меню в попапе шапки
+легли бы прямо поверх страницы. Стили без инкапсуляции: попап живёт в перекрытии у конца `<body>`.
+
+**Тему переключает `ThemeService`**, как у `rt-theme-toggle`: значок показывает тему, к которой
+переведёт нажатие.
+
+## Края
+
+- Пустое название организации убирает её строку, пустой список языков — переключатель языка.
+- Смена организации в режиме `denied` стоит приглушённой и объясняет причину подсказкой.

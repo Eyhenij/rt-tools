@@ -113,12 +113,28 @@ export const lightNavigation = [
         value: `var(--rt-shadow-profile-menu)`,
     },
     {
+        name: `--rt-profile-menu-border-width`,
+        value: `var(--rt-border-width-thin)`,
+    },
+    {
+        name: `--rt-profile-menu-radius`,
+        value: `var(--rt-radius-md)`,
+    },
+    {
         name: `--rt-profile-avatar-size`,
         value: `var(--rt-size-10)`,
     },
     {
         name: `--rt-profile-avatar-font-size`,
         value: `var(--rt-text-2xl)`,
+    },
+    {
+        name: `--rt-profile-avatar-border-width`,
+        value: `var(--rt-border-width-medium)`,
+    },
+    {
+        name: `--rt-profile-avatar-radius`,
+        value: `var(--rt-radius-full)`,
     },
     {
         name: `--rt-profile-item-padding-y`,
@@ -151,6 +167,10 @@ export const lightNavigation = [
     {
         name: `--rt-profile-theme-icon-padding`,
         value: `var(--rt-space-2)`,
+    },
+    {
+        name: `--rt-profile-theme-icon-radius`,
+        value: `var(--rt-radius-full)`,
     },
     {
         lead: `    /* Габариты панели второго уровня: ширина считается числом колонок, поэтому
