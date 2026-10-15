@@ -149,15 +149,12 @@ flowchart TD
   justification under someone else's accepted decision reads as its appraisal. One exception:
   execution stopped by an obstacle — then the obstacle is named.
 - **The last run of the main branch is read first thing in a session and after every known
-  merge.** A red main branch after a merge lives until the owner notices; a red or pushed-out run is
-  fixed before new work is taken.
+  merge.** A red main branch lives until the owner notices; a red run is fixed before new work is taken.
 - **A session does not start work by itself.** The handover, the state from the startup hook and an
   assigned epic say what to do, not whether to work: a start needs the owner's word in the same
   session. An empty message, one word or one path order no work.
 - **A refusal by an external limiter removes the way, not the task.** It names no exit: the way is
   taken from the guard that already described this fix, and the task stays the same.
-- **An instruction to work by the progress covers all its steps, including those that change
-  history.** Questions are asked about what the progress lacks.
 - **A question written by a past session does not become a question to the owner.** It is addressed
   to the handover's author, and some are closed by a work step.
 - **The owner's instruction holds until they cancel it, and a new fact against it is a line in the
@@ -176,8 +173,7 @@ flowchart TD
 - **The task folder is taken apart by the last commit before the PR opens, not after approval.** A
   person merges as soon as they see green, and no room is left for a closing commit.
 - **After opening the PR, the executor tells the owner the number, what it waits for and what comes
-  next.** A draft waits for the run and is lifted after it; a PR opened ready waits for the owner's
-  hand, and that is said in the same words.
+  next.** A draft waits for the run, a PR opened ready waits for the owner's hand, and that is said.
 - **A request to merge never comes before the work is checked.** Where the pipeline wakes for this
   base: folder taken apart and pushed → PR as a draft → run green → draft lifted → the request to
   merge, naming the number. Where it does not wake, the green push gate is the check, and opening
@@ -186,22 +182,25 @@ flowchart TD
   open PR reads as an invitation to merge. Which of the two applies is decided by the bases the pipeline wakes for, and that is read from its file.
 - **The plan guard is the lower bound of the requirement, not its limit.** It demands a folder only
   for an edit of application code; the article above — for any work.
-- **An instruction to work by a rule is an instruction to do its steps, including those that change
-  history.** Marking a stage, a commit, a push and opening a PR are prescribed by the rule.
+- **An instruction to work by a rule or by the progress is an instruction to do all its steps,
+  including those that change history.** Marking a stage, a commit, a push and opening a PR are
+  prescribed by the rule; questions are asked about what the progress lacks.
 - **A taken task does not end a turn.** Creating the task, the branch, the column and the folder is
-  preparation: the work moves to the written-plan state, where the action is different. The
-  turn-exit guard names the first stage in its refusal.
+  preparation; the turn-exit guard names the first stage in its refusal.
 - **The stages of a plan cover its done-sign whole.** Otherwise every stage closes, the run is
   green, and half the order is not done. Either the stages are written up to the sign, or the sign
   is narrowed to what the stages give.
+- **Every rule of the product agreement becomes a step of some stage.** The plan names, per rule,
+  the stage that writes its code and the check that proves it, and is compared with the agreement
+  rule by rule before the first stage: a rule with no stage is found at the merge review, when the
+  code is written.
 - **A stage's readiness sign is taken from the output of a command run while the plan is written.**
   Written by a guess, it is checked at the stage itself — latest of everything that depended on it.
 - **A plan for work that ports a technique from outside is written by a measurement of one's own
   code.** Reading the sample says how it is built; what is needed here is said by a count over
   one's own files.
 - **A count that becomes the measure of the work is bounded by the declaration, not by the file.**
-  A file holds neighbouring sets too: a count over it took a neighbour's suite and came out twice
-  the real measure.
+  A file holds neighbouring sets too: a count over it came out twice the real measure.
 - **Waiting for one part of a stage is never a stop of the stage.** The parts independent of what is
   awaited are done in the same turn; the owner is told what is done and what is left for their step.
 - **A finding made mid-stage is checked against the plan's exit conditions before the first edit.**

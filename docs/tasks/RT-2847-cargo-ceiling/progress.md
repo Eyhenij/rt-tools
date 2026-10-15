@@ -3,9 +3,9 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 1 of 3 — Compress the pattern and add its three items
-- **Done:** task taken, folder written.
-- **Next step:** fold history in `task-flow-start.md`.
+- **Stage:** 3 of 3 — Layout and gate
+- **Done:** both texts compressed, four items added, package laid out, checks clean.
+- **Next step:** commit, take the folder apart, open the PR.
 - **Uncommitted:** nothing of this task.
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -14,14 +14,14 @@
 
 - `[x]` done · `[>]` going on right now · `[ ]` not begun
 
-- [>] 1.1 Fold history and repeated argument in `task-flow-start.md`.
-- [ ] 1.2 Add the identifier search item to the exploration step.
-- [ ] 1.3 Add the menu answer item after the answers code block.
-- [ ] 1.4 Add the executor decision check to the `разбор-закрыт` section.
-- [ ] 2.1 Fold one argument in `task-flow.md`.
-- [ ] 2.2 Add the item about every agreement rule becoming a step after the stages article.
-- [ ] 3.1 Lay the package out into the tree.
-- [ ] 3.2 Run the checks of the package and the tree.
+- [x] 1.1 Fold history and repeated argument in `task-flow-start.md`.
+- [x] 1.2 Add the identifier search item to the exploration step.
+- [x] 1.3 Add the menu answer item after the answers code block.
+- [x] 1.4 Add the executor decision check to the `разбор-закрыт` section.
+- [x] 2.1 Fold one argument in `task-flow.md`.
+- [x] 2.2 Add the item about every agreement rule becoming a step after the stages article.
+- [x] 3.1 Lay the package out into the tree.
+- [x] 3.2 Run the checks of the package and the tree.
 
 ## Decisions along the way
 
