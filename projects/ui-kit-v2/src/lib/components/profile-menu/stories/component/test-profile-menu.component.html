@@ -1,0 +1,9 @@
+<rt-profile-menu
+    [userName]="userName"
+    [organizationName]="organizationName"
+    [organizationChange]="organizationChange"
+    [passwordChange]="passwordChange"
+    [locales]="withLocales ? locales : noLocales"
+    [locale]="locale"
+    [signOutDisabled]="signOutDisabled"
+    (localeChange)="onLocaleChange($event)" />
