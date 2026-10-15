@@ -1,3 +1,14 @@
+# [0.24.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.23.4...rt-ui-kit-v2%400.24.0) (2026-10-15)
+
+### Bug Fixes
+
+- **rt:ui-kit-v2:** рамки меню профиля через токены компонента ([ccf465d](https://github.com/Eyhenij/rt-tools/commit/ccf465da3eafb704ceeceeebbe71fb14eaa2deb4))
+- **rt:ui-kit-v2:** токены подвала шторки объявлены ([c4b91d0](https://github.com/Eyhenij/rt-tools/commit/c4b91d06eaad6c30ffbe8db67aae68b206b314b7))
+
+### Features
+
+- **rt:ui-kit-v2:** попап профиля rt-profile-menu рисует свою панель ([afa4e65](https://github.com/Eyhenij/rt-tools/commit/afa4e65624f694a2560f7a59e7455e43ee097c32))
+
 ## [0.23.4](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.23.3...rt-ui-kit-v2%400.23.4) (2026-10-14)
 
 ### Bug Fixes
