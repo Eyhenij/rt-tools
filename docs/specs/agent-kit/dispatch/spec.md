@@ -60,6 +60,9 @@ edit guards and the turn-closing guards.
   printing its refusal there arrived as a line about a broken file — at a whole file and an
   understandable text nobody saw: in one session two refusals vanished that way in a row. The name of
   the branch is named only where both streams are empty — then there really is nothing to fix.
+- **A refusal at a non-zero code goes to the error stream as well.** At the code 2 the agent is given
+  only the error stream, and a refusal printed only to the output stream arrived empty: a guard that
+  said its reason in words was read as a silent one.
 - **The refusal of a branch is given to the agent as it is, and the branches after it are not
   called.** The exit code and the output belong to the guard: the dispatcher does not rewrite them and
   adds no text of its own to them.

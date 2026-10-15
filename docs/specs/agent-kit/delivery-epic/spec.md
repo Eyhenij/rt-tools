@@ -73,6 +73,10 @@ their own turn.
 - **The branch of an epic is looked for among the remote refs, and neither absence nor a second one
   is guessed at.** A branch living on one machine is a base nobody else has; two branches of one epic
   give no way to tell which the task grows from. Both are named by a refusal of their own.
+- **A merged epic is not demanded as the base of a task branch.** The host deletes the branch of an
+  epic on the merge, and a task left in it would be refused with no way out. A merge commit of the
+  remote main branch that names the epic by its key and its number, matched whole, is the sign of
+  the merge; the task then grows from the main branch.
 
 ## What is out of scope
 

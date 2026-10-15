@@ -463,6 +463,19 @@ Then no task is created, and the refusal says the card is not an epic
 
 Covered: `projects/agent-kit/tests/task-new-epic.test.sh`.
 
+### SC-AK-1228 — a label missing from the repository is named before the task is created
+
+Given the call names a label that is not in the repository
+When the command of creating is called
+Then no card is created, and the refusal names the missing label, the existing ones and the fact
+that no task was created
+
+Given every label named exists
+When the same call goes
+Then the creation proceeds as before
+
+Covered: `projects/agent-kit/tests/task-new-queue.test.sh`.
+
 ### SC-AK-939 — a task outside an epic is not created
 
 Given the tree named the label of an epic

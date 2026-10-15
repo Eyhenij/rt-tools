@@ -36,6 +36,15 @@ Then both calls are refused
 
 Covered: `projects/agent-kit/tests/epic-stop-guard.test.sh`.
 
+### SC-AK-1227 — the refusal says up to which call a new epic needs the bypass line
+
+Given the epic is over, and the owner declares a new one
+When the guard refuses a call that creates the card, a task or the branch of the new epic
+Then the refusal names the boundary: the line is needed up to the branch of the new epic, and after
+that branch is taken the guard reads the new epic
+
+Covered: `projects/agent-kit/tests/epic-stop-guard.test.sh`.
+
 ### SC-AK-983 — the order named in the call lets the work through
 
 Given the epic is over, and the owner said to take the next piece of work

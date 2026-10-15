@@ -481,8 +481,9 @@ Covered: `projects/agent-kit/tests/docs-guard.test.sh`.
 
 Given a command calls an interpreter and gives it the path of a file as the first argument
 When the gate decides whether it writes
-Then it does not count as a write; an interpreter with a document at the input, with code as an
-argument and an edit in place stay writes
+Then it does not count as a write; an interpreter with a document at the input and an edit in place
+stay writes, and code as an argument stays a write when it holds a call that writes
+(`SC-AK-1225`)
 
 Covered: `projects/agent-kit/tests/defaults.test.sh`.
 

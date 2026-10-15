@@ -218,6 +218,18 @@ refuses nothing
 
 Covered: `projects/agent-kit/tests/skill-gate-rearm.test.sh`.
 
+### SC-AK-1224 — the line of the re-arming names the rules the session had loaded
+
+Given the record holds the names of the rules loaded in this session, some of them twice
+When the hook removes the record and tells the session about it
+Then the line names each rule once and asks to load in one turn those the stage touches
+
+Given the record is empty or missing
+When the hook tells the session about the re-arming
+Then the line is as it was, without a list
+
+Covered: `projects/agent-kit/tests/skill-gate-rearm.test.sh`.
+
 ### SC-AK-1088 — the subject of the rollout rule is demanded by the rollout rule
 
 Given an edit of the image description, of the compose file, of the proxy config or of the sample of
@@ -249,5 +261,19 @@ Then it demands the rule of the queue audit
 Given an edit of the module of task folders, laid out on every host
 When the gate picks the rule
 Then it demands the rule about tasks and branches
+
+Covered: `projects/agent-kit/tests/defaults.test.sh`.
+
+### SC-AK-1225 — code handed to an interpreter as an argument is a write only when it writes
+
+Given a command gives an interpreter code as an argument, and the code only reads a file or prints
+a value
+When the gate decides whether it writes
+Then it does not count as a write, and the paths the code names are not judged as targets
+
+Given the code holds a call that writes, such as `writeFile`, `appendFile`, an opening for `w` or
+`a`, `write_text`, a rename, a copy or a removal, or a redirect stands after it
+When the gate decides whether it writes
+Then it counts as a write, as before; a document at the input stays a write in any case
 
 Covered: `projects/agent-kit/tests/defaults.test.sh`.

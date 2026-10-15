@@ -176,6 +176,11 @@ the merge, not after.
   invisible to whoever does it.
 - **A work queue that was not asked is no confirmation.** Not having asked it, the command says nothing
   about it: it names that the asking did not succeed and ends with a non-zero code.
+- **A label missing from the repository is named before the task is created.** The hosting refuses
+  the creation with one line about a label that could not be added, and neither a card nor a number
+  exists. The command asks the label list first and refuses with the missing labels, the existing
+  ones and the statement that no task was created; a list that cannot be read does not hold the
+  creation.
 - **The answer of the queue is put together into lines by a pure function.** The decision about what to
   print and what to end with is separated from the calls of the network: otherwise it is checked only
   by a live work queue.
