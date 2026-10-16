@@ -8,6 +8,7 @@
         disabled: isDisabled(),
         wrap: layout() === 'wrap',
         column: layout() === 'column',
+        chips: appearance() === 'chips',
     }"
     [attr.aria-label]="ariaLabel()">
     @for (item of items(); track item.option.value) {
@@ -20,11 +21,19 @@
                 active: item.active,
                 first: $first,
                 last: $last,
+                checked: checkmark() && item.active,
             }"
             [disabled]="item.disabled"
             [attr.aria-pressed]="item.active ? 'true' : 'false'"
             [rtTooltip]="item.option.title ?? ''"
             (click)="onOptionClick(item)">
+            @if (checkmark() && item.active) {
+                <span rtElem="check" aria-hidden="true">
+                    <svg rtElem="check-svg" viewBox="-2 -3 30 30" focusable="false">
+                        <path fill="none" stroke="currentColor" d="M1.73,12.91 8.1,19.28 22.79,4.59" />
+                    </svg>
+                </span>
+            }
             @if (optionTpl(); as tpl) {
                 <ng-container [ngTemplateOutlet]="tpl.templateRef" [ngTemplateOutletContext]="item.context" />
             } @else {

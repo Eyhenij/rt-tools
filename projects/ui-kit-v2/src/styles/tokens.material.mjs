@@ -423,6 +423,25 @@ export const material = [
     { name: `--rt-input-color-placeholder-disabled`, value: `var(--rt-color-text-disabled)` },
     { name: `--rt-input-color-bg-disabled`, value: `transparent` },
     {
+        lead: `    /* Крестик очистки — крестик первого кита: 19 px, значок 12 px, серый, в 8 px от края поля и в
+       4 px от текста. Отступ от края считается от правого поля в 4 px, как у поля Material с крестиком. */`,
+        space: true,
+        name: `--rt-input-clear-size`,
+        value: `19px`,
+    },
+    { name: `--rt-input-clear-icon-size`, value: `var(--rt-size-3)` },
+    { name: `--rt-input-clear-color`, value: `var(--rt-mat-neutral-60)`, dark: `var(--rt-mat-neutral-40)` },
+    { name: `--rt-input-clear-offset-end`, value: `calc(var(--rt-space-2) - var(--rt-space-1))` },
+    { name: `--rt-input-clear-offset-start`, value: `calc(var(--rt-space-1) - var(--rt-input-gap))` },
+    {
+        name: `--rt-input-fill-color-bg-disabled`,
+        value: `color-mix(in srgb, var(--mat-sys-on-surface, var(--rt-mat-neutral-100)) 4%, transparent)`,
+        dark: `color-mix(in srgb, var(--mat-sys-on-surface, var(--rt-mat-neutral-0)) 4%, transparent)`,
+    },
+    { name: `--rt-input-clear-bg`, value: `var(--rt-mat-neutral-25)`, dark: `var(--rt-mat-neutral-70)` },
+    { name: `--rt-input-clear-bg-hover`, value: `var(--rt-input-clear-bg)`, dark: `var(--rt-input-clear-bg)` },
+    { name: `--rt-input-clear-radius`, value: `var(--rt-radius-full)` },
+    {
         lead: `    /* Залитое поле Material: рамки сверху и по бокам нет, только черта снизу; в фокусе черта
        вдвое толще цветом марки, у недействительного поля — цветом ошибки. */`,
         space: true,
@@ -439,4 +458,35 @@ export const material = [
         value: `currentcolor`,
     },
     { name: `--rt-field-required-gap`, value: `0px` },
+    {
+        lead: `    /* Строка под полем — строка подсказки Material: 16 px высотой и 4 px над ней. */`,
+        space: true,
+        name: `--rt-field-messages-line-height`,
+        value: `var(--rt-size-4)`,
+    },
+    { name: `--rt-field-messages-padding-top`, value: `var(--rt-space-1)` },
+    {
+        lead: `    /* Группа переключателей видом «чипы» — фильтр-чип Material: обводка цвета outline темы,
+       выбранный залит secondary-container без обводки, отключённый — текст 38 %, обводка 12 %. */`,
+        space: true,
+        name: `--rt-toggle-chip-color-border`,
+        value: `var(--mat-sys-outline, var(--rt-mat-neutral-60))`,
+        dark: `var(--mat-sys-outline, var(--rt-mat-neutral-40))`,
+    },
+    { name: `--rt-toggle-chip-color-border-selected`, value: `transparent`, dark: `transparent` },
+    {
+        name: `--rt-toggle-chip-color-text`,
+        value: `var(--mat-sys-on-surface-variant, var(--rt-mat-neutral-70))`,
+        dark: `var(--mat-sys-on-surface-variant, var(--rt-mat-neutral-25))`,
+    },
+    {
+        name: `--rt-toggle-chip-color-text-selected`,
+        value: `var(--mat-sys-on-secondary-container, var(--rt-mat-neutral-100))`,
+        dark: `var(--mat-sys-on-secondary-container, var(--rt-mat-neutral-0))`,
+    },
+    {
+        name: `--rt-toggle-chip-color-bg-selected`,
+        value: `var(--mat-sys-secondary-container, var(--rt-mat-neutral-25))`,
+        dark: `var(--mat-sys-secondary-container, var(--rt-mat-neutral-70))`,
+    },
 ];

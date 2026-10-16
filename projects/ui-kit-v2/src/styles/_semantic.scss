@@ -324,6 +324,15 @@
     --rt-input-color-border-disabled: var(--rt-input-color-border);
     --rt-input-color-text-disabled: var(--rt-input-color-text);
     --rt-input-color-placeholder-disabled: var(--rt-input-color-text-placeholder);
+    --rt-input-clear-size: var(--rt-control-height-sm);
+    --rt-input-clear-icon-size: var(--rt-size-4);
+    --rt-input-clear-color: var(--rt-neutral-600);
+    --rt-input-clear-offset-end: 0px;
+    --rt-input-clear-bg: transparent;
+    --rt-input-clear-bg-hover: var(--rt-icon-button-color-bg-hover);
+    --rt-input-clear-radius: var(--rt-radius-md);
+    --rt-input-clear-offset-start: 0px;
+    --rt-input-fill-color-bg-disabled: var(--rt-color-bg-surface-subtle-2);
     --rt-input-focus-shadow: var(--rt-shadow-focus-ring);
     --rt-input-focus-shadow-error: var(--rt-shadow-focus-ring-danger);
     --rt-input-transition: border-color var(--rt-duration-fast) ease, box-shadow var(--rt-duration-fast) ease;
@@ -369,6 +378,15 @@
     /* Рамка off-трека — inset-тенью, а не border: у border своя коробка, и
        отступы бегунка с иконками пришлось бы пересчитывать на её толщину. */
     --rt-toggle-shadow-border: inset 0 0 0 var(--rt-border-width-thin) var(--rt-toggle-color-border);
+
+    /* Группа переключателей видом «чипы»: отдельные пункты с обводкой. Цвета — здесь, на корне:
+       они не зависят от размера группы; размеры объявлены на самом хосте группы. Выбранный пункт
+       в своём виде кита — мягкая марка, обводка у него та же, что у невыбранного. */
+    --rt-toggle-chip-color-border: var(--rt-color-border-default);
+    --rt-toggle-chip-color-border-selected: var(--rt-toggle-chip-color-border);
+    --rt-toggle-chip-color-text: var(--rt-color-text-muted);
+    --rt-toggle-chip-color-text-selected: var(--rt-color-action-primary-on-surface);
+    --rt-toggle-chip-color-bg-selected: var(--rt-color-action-primary-subtle);
 
     /* Навигация (rt-page-header). Шапка — отдельная плашка; отступ от краёв
        страницы задаёт тот, кто её ставит. */
@@ -476,6 +494,8 @@
     --rt-field-hint-font-size: var(--rt-text-xs);
     --rt-field-hint-color: var(--rt-color-text-muted);
     --rt-field-error-font-size: var(--rt-text-xs);
+    --rt-field-messages-line-height: normal;
+    --rt-field-messages-padding-top: 0px;
     --rt-field-error-color: var(--rt-color-state-danger);
     --rt-field-required-color: var(--rt-color-state-danger);
     --rt-field-required-gap: var(--rt-space-1);

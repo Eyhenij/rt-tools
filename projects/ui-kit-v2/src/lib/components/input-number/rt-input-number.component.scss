@@ -103,6 +103,11 @@
             opacity: var(--rt-input-disabled-field-opacity);
         }
 
+        /* Отключённое залитое поле в наборе залито, как поле Material: on-surface 4 %. */
+        &--appearance--fill.rt-input-number--disabled {
+            background-color: var(--rt-input-fill-color-bg-disabled);
+        }
+
         &--disabled:not(
                 .rt-input-number--invalid,
                 .rt-input-number--appearance--fill,

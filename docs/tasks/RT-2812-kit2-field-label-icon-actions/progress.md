@@ -6,7 +6,7 @@
 - **Stage:** 6 of 6 — Docs, version and the check suite
 - **Done:** stages 1–5 and 7; 6.1; the review of the whole branch and its fixes; the owner's remarks of 14 October (chosen value by the option template, the muted sound icon); main merged in on 14 October
 - **Next step:** 6.3 — the agreement merged into the domain specs, and the snapshot references re-taken, when the owner says to open the PR
-- **Uncommitted:** nothing; request 8 went in by the commit the owner ordered on 14 October: «проверь что нет регрессий и комить»
+- **Committed on 16 October by the owner's word «комит по правилам, подтяни мейн потом проверь всю ветку на регресси»:** requests 9 (the clearing cross), 10 (points after the Material comparison) and 11 (the chips appearance of the toggle button group); then main is merged in and the whole branch is checked for the kit's own look
 - **Waiting for the owner:** «пр не открывай» — no PR, no push
 - **PR:** not open yet
 
@@ -421,6 +421,98 @@ data-preset="material" floatingLabel>` drew the border through the risen label: 
       a count of the red pixels by half shows the kit look unchanged in every field story. The
       references are re-taken at 6.3, as planned.
 
+- **2026-10-14, request 9: the clearing cross under the preset is the first kit's cross.** The
+  0.23.4 package drew a 32 px button with a 16 px icon 16 px from the edge; the application asked
+  for the first kit's 19 px button, a grey 12 px icon and 8 px from the edge. Four handles of the
+  input — `--rt-input-clear-size`, `-clear-icon-size`, `-clear-color`, `-clear-offset-end` — carry
+  the old values in the kit look and the first kit's under the preset. The select takes the same
+  size, icon and colour; its cross stands before the arrow, so the 8 px applies to the input only.
+  The button's public `--rt-icon-button-size` was not used: the token graph refuses a fallback at
+  a token the kit declares. Scenario SC-UKV-918, two rows in the Material story.
+
+- **2026-10-15, request 10: five points after the application's comparison with Material.**
+  Uncommitted next to request 9. The owner added: «важно чтобы изменения в этой ветке не афектили
+  базовый вид компонентов кита».
+    - F1: under the preset the line under a field is Material's subscript — 16 px with 4 px above
+      it, `--rt-field-messages-line-height` and `-padding-top`; a reserved line makes 52 + 20 = 72.
+    - F2: `rt-textarea` takes `appearance` — `outline` or `fill`; the filled look copies the filled
+      input, and under the preset its label lies inside the field. Story Textarea → Appearance.
+    - F5: under the preset the cross lies on the first kit's round grey ground —
+      `--rt-input-clear-bg`, `-bg-hover`, `-radius`; a new primitive `--rt-mat-neutral-70` carries
+      the first kit's dark ground #3f3e43. The kit look keeps the cross without a ground.
+    - F6: under the preset an icon button stands where a plain icon stands: icon at 12 px, text
+      from 40 px, the button overhangs the icon equally on both sides. SC-UKV-919 to 922.
+    - F7: not done — the input renders no cross and no slot without a value; the empty field's
+      input is as wide as without `clearable`. The application was asked for its markup.
+    - The kit look checked against the last commit: computed styles of 640 nodes in 36 stories of
+      the input, select, number, textarea and field; 34 stories identical, the two textarea stories
+      identical except the new filled cells.
+    - The input's main sheet passed 8 KB, the size an application build refuses: the icons and the
+      cross moved to a sheet of their own, `rt-input-icons.scss`; the filled textarea's rule in a
+      field lives in the textarea's sheet. The full suite 358 of 358, the 11:23 package went to the
+      application.
+    - Second round from the application's measurement. F2 and F6 matched Material.
+    - F1 gave 68 in the application: its own `box-sizing: border-box` on every node is outside the
+      layers and beats the kit. The line now counts in `border-box`, and its least height includes
+      the 4 px: 72 with and without that rule.
+    - F7 done: under the preset a clearable input without a right icon keeps 4 px on the right, and
+      the cross stands 4 px after the text and 8 px from the edge — `--rt-input-clear-offset-start`
+      and the class `rt-input--clearable`. SC-UKV-923.
+    - F8: under the preset a disabled filled input, select, number and textarea are filled with
+      on-surface 4 % — `--rt-input-fill-color-bg-disabled`. SC-UKV-924.
+    - The kit look checked against the last commit again on a restarted showcase: 632 nodes in 36
+      stories match, apart from the computed `box-sizing` of the message line, whose size did not
+      move.
+    - Third round: F1, F5, F7 and F8 matched Material in the application. Two new points.
+    - F9: under the preset a select whose value is drawn by an option template grew to 57 px — the
+      template's inline row sat on the baseline. It now sits at the top: 52 px. SC-UKV-925.
+    - F10: under the preset a filled textarea of 4 rows was 127 px and the field 150. It now takes
+      6 px under the last line with the underline and stands at the top of its line: 124 and 144.
+      SC-UKV-926. The kit look keeps the baseline and 8 px — measured on the textarea and field
+      stories.
+    - The Material story wrapper passed 500 lines: its cases moved to `field-material-cases.ts`.
+    - The 13:12 package: F9 and F10 matched Material in the application. It has no open requests
+      left for this stage.
+- **Request 11 — the chips appearance of the toggle button group (the application's request 6, stage 5).**
+  The application keeps Material chips in eight places because the segmented look differs from them.
+    - New inputs `appearance: 'segmented' | 'chips'` and `checkmark`; the segmented look stays the
+      default. Chips: separate items 8 px apart, no track, each item outlined by an inset shadow.
+    - Colours are five root properties `--rt-toggle-chip-*` with base, dark and material values; the
+      hover layer and the unavailable outline are counted from the item's own text, 8 % and 32 % of
+      the faded text, as Material counts them. The first variant had eight colour names: every name
+      repeats about twenty times in the token CSS, and the sample page's first bundle went 3.17 KB
+      over its 1 MB budget. Five names fit it. Sizes follow the group's size steps. Under the preset: 28 px in the small
+      size, paddings 12 px, 14 px / 500, outline of the theme's outline colour, the chosen item
+      filled with secondary-container without outline, the check slot 36 px as in Material's sources.
+    - An unavailable chip fades its text and outline in both presets. An unavailable segment fades
+      its text only under the preset: the application asked for every appearance, but the owner's
+      rule keeps the kit's own look as it was. Named to the application.
+    - The rules live in a sheet of their own, `rt-toggle-button-group-chips.scss`, 3.6 KB compiled:
+      the main sheet was already over 5 KB.
+    - New stories Appearance and ChipsStates; chips cells in Presets and Themes; Playground controls.
+      SC-UKV-927 to 930.
+    - The kit look checked against the last commit: 396 nodes in 10 stories of the group, 0 differ —
+      measured again after the sheet was rewritten.
+    - Second round from the application's measurement on its pages: colours, 28 px, radius, font,
+      check offset and the disabled look matched. Three divergences fixed, all for chips only:
+      a column of chips now stretches its items to the width of the place, and `fullWidth` no longer
+      collapses their height; under the preset the group keeps 4 px above the first row and below
+      the last, as Material's chip margins give, and the label is tracked 0.1 px. Under the preset
+      chips are 28 px in every size: Material has one chip size, and the separate rule for the small
+      size pushed the sheet over the 4 KB warning. SC-UKV-931.
+    - Third round: the application measured Material's chip margins directly — 8 px above and below
+      every chip and 8 px before it, and they do not collapse. Under the preset the group now keeps
+      8 px above the first row and below the last, and rows stand 16 px apart; items in a row stay
+      8 px apart. A column of chips also takes the free width of a row flex parent itself. Measured
+      live: a one-row group is 44 px, wrapped rows step 44 px, a column of 7 days is 308 px with a
+      44 px step, and in a 476 px flex row the group and every chip are 476 px. The kit look against
+      the last commit: 396 nodes, 0 differ. `check:all` 358/358.
+    - The application re-measured the third-round package on its pages: no divergences left, every
+      chip position and size matches Material, and the keyboard behaves the same. Request 11 is
+      closed from its side.
+    - Not fixed: `fullWidth` with `layout="column"` collapses the segments' height in the segmented
+      appearance too. A fix there changes the kit's own look, so it waits for the owner's word.
+
 ## Sessions
 
 ### 2026-10-13
@@ -446,12 +538,33 @@ The progress in full — `docs/tasks/RT-2812-kit2-field-label-icon-actions/progr
 ### Uncommitted
 
 ```
-none
+ M docs/specs/ui-kit-v2/proposed/field-label-icon-actions/scenarios.md
+ M docs/specs/ui-kit-v2/proposed/field-label-icon-actions/spec.md
+ M docs/tasks/RT-2812-kit2-field-label-icon-actions/progress.md
+ M projects/ui-kit-v2/src/lib/components/field/Overview.mdx
+ M projects/ui-kit-v2/src/lib/components/field/rt-field-label-inside.scss
+ M projects/ui-kit-v2/src/lib/components/field/rt-field-material-metrics.spec.ts
+ M projects/ui-kit-v2/src/lib/components/field/rt-field.component.scss
+ M projects/ui-kit-v2/src/lib/components/field/stories/component/test-field-material.component.ts
+ M projects/ui-kit-v2/src/lib/components/input-number/rt-input-number.component.scss
+ M projects/ui-kit-v2/src/lib/components/input/rt-input-floating-label.scss
+ M projects/ui-kit-v2/src/lib/components/input/rt-input.component.scss
+ M projects/ui-kit-v2/src/lib/components/input/rt-input.component.ts
+ M projects/ui-kit-v2/src/lib/components/select/rt-select-clear.scss
+ M projects/ui-kit-v2/src/lib/components/select/rt-select-material.scss
+ M projects/ui-kit-v2/src/lib/components/select/rt-select.component.scss
+ M projects/ui-kit-v2/src/lib/components/textarea/Overview.mdx
+ M projects/ui-kit-v2/src/lib/components/textarea/rt-textarea.component.scss
+ M projects/ui-kit-v2/src/lib/components/textarea/rt-textarea.component.spec.ts
+ M projects/ui-kit-v2/src/lib/components/textarea/rt-textarea.component.ts
+ M projects/ui-kit-v2/src/lib/components/textarea/stories/component/test-textarea-matrix.component.ts
 ```
 
 ### Commits over the main branch
 
 ```
+093506703 fix(rt:ui-kit-v2): поля под материальным набором догоняют Material в отступах и отключённом виде
+eebabbda8 Merge remote-tracking branch 'origin/main' into RT-2812-kit2-field-label-icon-actions
 80ce8750f Merge remote-tracking branch 'origin/main' into RT-2812-kit2-field-label-icon-actions
 06df730ce fix(rt:ui-kit-v2): признак набора на теге поля включает подпись на рамке
 2acc951d9 feat(rt:ui-kit-v2): поле под материальным набором совпадает с полем Material

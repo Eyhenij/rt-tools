@@ -22,7 +22,7 @@ function compiled(file: string): string {
 }
 
 const FIELD: string = compiled('rt-field.component.scss') + compiled('rt-field-label-inside.scss');
-const INPUT: string = compiled('../input/rt-input.component.scss');
+const INPUT: string = compiled('../input/rt-input.component.scss') + compiled('../input/rt-input-icons.scss');
 const INPUT_LABEL: string = compiled('../input/rt-input-floating-label.scss');
 const SELECT: string = ['rt-select.component.scss', 'rt-select-clear.scss', 'rt-select-floating-label.scss', 'rt-select-material.scss']
     .map((file: string): string => compiled(`../select/${file}`))
@@ -125,8 +125,8 @@ describe('поле материального набора против поля
     });
 
     it('SC-UKV-911 — значок в 12 px от края поля и в 4 px от текста, подпись в покое — с начала текста', (): void => {
-        const left: string = ruleBody(INPUT, '[data-preset=material]):has(> rt-icon.rt-input__icon-left) {');
-        const right: string = ruleBody(INPUT, '[data-preset=material]):has(> rt-icon.rt-input__icon-right) {');
+        const left: string = ruleBody(INPUT, '[data-preset=material]):has(> .rt-input__icon-left) {');
+        const right: string = ruleBody(INPUT, '[data-preset=material]):has(> .rt-input__icon-right) {');
 
         expect(left).toContain('padding-left: calc(var(--rt-space-2) + var(--rt-space-1) - var(--rt-input-edge))');
         expect(right).toContain('padding-right: calc(var(--rt-space-2) + var(--rt-space-1) - var(--rt-input-edge))');
@@ -171,7 +171,8 @@ describe('поле материального набора против поля
         );
         expect(NUMBER).toContain('padding-inline: calc(var(--rt-input-padding-x) - var(--rt-input-number-edge))');
         expect(SELECT).toContain('padding-inline: calc(var(--rt-select-text-inset) - var(--rt-select-edge))');
-        expect(TEXTAREA).toContain('padding-inline: calc(var(--rt-input-padding-x) - var(--rt-input-border-width))');
+        expect(TEXTAREA).toContain('padding-inline: calc(var(--rt-input-padding-x) - var(--rt-textarea-edge))');
+        expect(TEXTAREA).toContain('--rt-textarea-edge: var(--rt-input-border-width)');
         expect(FIELD).toContain('--rt-field-floating-start: var(--rt-input-padding-x)');
     });
 
@@ -196,5 +197,99 @@ describe('поле материального набора против поля
         expect(ruleBody(INPUT, '.rt-input__clear .rt-icon-button')).toContain(cap);
         expect(ruleBody(SELECT, '.rt-select__clear .rt-icon-button')).toContain(cap);
         expect(ruleBody(INPUT, '.rt-input--size--sm {')).toContain('--rt-input-height: var(--rt-input-height-sm)');
+    });
+
+    it('SC-UKV-918 — под набором крестик очистки — крестик первого кита, своим видом — 32 px', (): void => {
+        for (const css of [INPUT, SELECT]) {
+            expect(css).toContain('--rt-icon-color-muted: var(--rt-input-clear-color)');
+            expect(css).toContain('--rt-icon-step-sm: var(--rt-input-clear-icon-size)');
+            expect(css).toContain('min(var(--rt-input-clear-size)');
+        }
+
+        expect(ruleBody(INPUT, '.rt-input__clear:last-child')).toContain('margin-inline-end: var(--rt-input-clear-offset-end)');
+        expect(SEMANTIC).toContain('--rt-input-clear-size: var(--rt-control-height-sm);');
+        expect(SEMANTIC).toContain('--rt-input-clear-offset-end: 0px;');
+        expect(PRESET).toContain('--rt-input-clear-size: 19px;');
+        expect(PRESET).toContain('--rt-input-clear-icon-size: var(--rt-size-3);');
+        expect(PRESET).toContain('--rt-input-clear-color: var(--rt-mat-neutral-60);');
+        expect(PRESET).toContain('--rt-input-clear-offset-end: calc(var(--rt-space-2) - var(--rt-space-1));');
+    });
+
+    it('SC-UKV-919 — под набором строка под полем — строка подсказки Material, своим видом — прежняя', (): void => {
+        expect(ruleBody(FIELD, '.rt-field__messages {')).toContain('line-height: var(--rt-field-messages-line-height)');
+        expect(ruleBody(FIELD, '.rt-field__messages {')).toContain('box-sizing: border-box');
+        expect(FIELD).toContain('min-block-size: calc(1lh + var(--rt-field-messages-padding-top))');
+        expect(FIELD).toContain(
+            '.rt-field__messages--reserved, .rt-field__messages:has(> *) { padding-top: var(--rt-field-messages-padding-top)'
+        );
+        expect(SEMANTIC).toContain('--rt-field-messages-line-height: normal;');
+        expect(SEMANTIC).toContain('--rt-field-messages-padding-top: 0px;');
+        expect(PRESET).toContain('--rt-field-messages-line-height: var(--rt-size-4);');
+        expect(PRESET).toContain('--rt-field-messages-padding-top: var(--rt-space-1);');
+    });
+
+    it('SC-UKV-920 — залитая область текста размечена, как залитое поле ввода', (): void => {
+        const fill: string = ruleBody(TEXTAREA, '.rt-textarea--appearance--fill .rt-textarea__control {');
+
+        expect(fill).toContain('border-bottom-color: var(--rt-color-field-fill-underline)');
+        expect(fill).toContain('background-color: var(--rt-color-bg-surface-subtle-2)');
+        expect(FIELD).toContain('.rt-textarea--appearance--fill');
+        expect(ruleBody(TEXTAREA, '[data-preset=material]) .rt-textarea--appearance--fill .rt-textarea__control {')).toContain(
+            'padding-bottom: calc(var(--rt-space-1) * 1.5 - var(--rt-input-border-width))'
+        );
+    });
+
+    it('SC-UKV-921 — под набором крестик лежит на сером круге первого кита, своим видом — без заливки', (): void => {
+        for (const css of [INPUT, SELECT]) {
+            expect(css).toContain('--rt-icon-button-bg-variant: var(--rt-input-clear-bg)');
+            expect(css).toContain('--rt-icon-button-radius: var(--rt-input-clear-radius)');
+        }
+
+        expect(SEMANTIC).toContain('--rt-input-clear-bg: transparent;');
+        expect(PRESET).toContain('--rt-input-clear-bg: var(--rt-mat-neutral-25);');
+        expect(PRESET).toContain('--rt-input-clear-radius: var(--rt-radius-full);');
+    });
+
+    it('SC-UKV-922 — под набором кнопка-значок стоит на месте простого значка', (): void => {
+        expect(INPUT).toContain(
+            ':has(> .rt-input__icon-left) { padding-left: calc(var(--rt-space-2) + var(--rt-space-1) - var(--rt-input-edge))'
+        );
+        expect(INPUT).toContain('margin-inline: calc(-1 * var(--rt-input-icon-overhang))');
+        expect(INPUT_LABEL).toContain(':has(> .rt-input__icon-left)');
+    });
+
+    it('SC-UKV-923 — под набором поле с крестиком: 4 px справа от текста, крестик в 4 px от текста и в 8 px от края', (): void => {
+        expect(INPUT).toContain(
+            '.rt-input--clearable:where(.rt-preset-material *, [data-preset=material] *, .rt-preset-material, [data-preset=material]):not(.rt-input--with-icon-right, .rt-input--readonly) { padding-right: calc(var(--rt-space-1) - var(--rt-input-edge))'
+        );
+        expect(INPUT).toContain('margin-inline-start: var(--rt-input-clear-offset-start)');
+        expect(SEMANTIC).toContain('--rt-input-clear-offset-start: 0px;');
+        expect(PRESET).toContain('--rt-input-clear-offset-start: calc(var(--rt-space-1) - var(--rt-input-gap));');
+    });
+
+    it('SC-UKV-924 — под набором отключённое залитое поле залито on-surface 4 %, своим видом — прежней заливкой', (): void => {
+        expect(INPUT).toContain(
+            '.rt-input--appearance--fill.rt-input--disabled { background-color: var(--rt-input-fill-color-bg-disabled)'
+        );
+        expect(SELECT).toContain(
+            '.rt-select--disabled.rt-select--appearance--fill .rt-select__trigger { background-color: var(--rt-input-fill-color-bg-disabled)'
+        );
+        expect(NUMBER).toContain('background-color: var(--rt-input-fill-color-bg-disabled)');
+        expect(TEXTAREA).toContain('background-color: var(--rt-input-fill-color-bg-disabled)');
+        expect(SEMANTIC).toContain('--rt-input-fill-color-bg-disabled: var(--rt-color-bg-surface-subtle-2);');
+        expect(PRESET).toContain(
+            '--rt-input-fill-color-bg-disabled: color-mix(in srgb, var(--mat-sys-on-surface, var(--rt-mat-neutral-100)) 4%, transparent);'
+        );
+    });
+
+    it('SC-UKV-925 — под набором выбор со своим шаблоном значения не выше поля Material', (): void => {
+        expect(SELECT).toContain('.rt-select__label > .rt-select__option-content { vertical-align: top');
+    });
+
+    it('SC-UKV-926 — под набором залитая область текста в 4 строки — 124 px, как у Material', (): void => {
+        expect(TEXTAREA).toContain('padding-bottom: calc(var(--rt-space-1) * 1.5 - var(--rt-input-border-width))');
+        expect(TEXTAREA).toContain(
+            '.rt-textarea:where(.rt-preset-material *, [data-preset=material] *, .rt-preset-material, [data-preset=material]) .rt-textarea__control { vertical-align: top'
+        );
     });
 });

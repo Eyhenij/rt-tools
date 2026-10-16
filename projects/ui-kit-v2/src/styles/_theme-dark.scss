@@ -70,6 +70,15 @@
     --rt-pagination-field-color-bg: var(--rt-input-color-bg);
     --rt-pagination-field-color-text: var(--rt-input-color-text);
     --rt-input-icon-color: var(--rt-neutral-600);
+    --rt-input-clear-color: var(--rt-neutral-600);
+    --rt-input-clear-bg: transparent;
+    --rt-input-clear-bg-hover: var(--rt-icon-button-color-bg-hover);
+    --rt-toggle-chip-color-border: var(--rt-color-border-default);
+    --rt-toggle-chip-color-border-selected: var(--rt-toggle-chip-color-border);
+    --rt-toggle-chip-color-text: var(--rt-color-text-muted);
+    --rt-toggle-chip-color-text-selected: var(--rt-color-action-primary-on-surface);
+    --rt-toggle-chip-color-bg-selected: var(--rt-color-action-primary-subtle);
+    --rt-input-fill-color-bg-disabled: var(--rt-color-bg-surface-subtle-2);
     --rt-input-color-text-placeholder: var(--rt-color-text-muted);
 
     /* Stepper — в dark рельса уходит от яркого синего к приглушённому серо-синему

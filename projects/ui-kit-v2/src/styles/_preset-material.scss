@@ -266,6 +266,18 @@
     --rt-input-color-placeholder-disabled: var(--rt-color-text-disabled);
     --rt-input-color-bg-disabled: transparent;
 
+    /* Крестик очистки — крестик первого кита: 19 px, значок 12 px, серый, в 8 px от края поля и в
+       4 px от текста. Отступ от края считается от правого поля в 4 px, как у поля Material с крестиком. */
+    --rt-input-clear-size: 19px;
+    --rt-input-clear-icon-size: var(--rt-size-3);
+    --rt-input-clear-color: var(--rt-mat-neutral-60);
+    --rt-input-clear-offset-end: calc(var(--rt-space-2) - var(--rt-space-1));
+    --rt-input-clear-offset-start: calc(var(--rt-space-1) - var(--rt-input-gap));
+    --rt-input-fill-color-bg-disabled: color-mix(in srgb, var(--mat-sys-on-surface, var(--rt-mat-neutral-100)) 4%, transparent);
+    --rt-input-clear-bg: var(--rt-mat-neutral-25);
+    --rt-input-clear-bg-hover: var(--rt-input-clear-bg);
+    --rt-input-clear-radius: var(--rt-radius-full);
+
     /* Залитое поле Material: рамки сверху и по бокам нет, только черта снизу; в фокусе черта
        вдвое толще цветом марки, у недействительного поля — цветом ошибки. */
     --rt-input-fill-edge: 0px;
@@ -276,6 +288,18 @@
        только у недействительного поля, правилом самого поля. */
     --rt-field-required-color: currentcolor;
     --rt-field-required-gap: 0px;
+
+    /* Строка под полем — строка подсказки Material: 16 px высотой и 4 px над ней. */
+    --rt-field-messages-line-height: var(--rt-size-4);
+    --rt-field-messages-padding-top: var(--rt-space-1);
+
+    /* Группа переключателей видом «чипы» — фильтр-чип Material: обводка цвета outline темы,
+       выбранный залит secondary-container без обводки, отключённый — текст 38 %, обводка 12 %. */
+    --rt-toggle-chip-color-border: var(--mat-sys-outline, var(--rt-mat-neutral-60));
+    --rt-toggle-chip-color-border-selected: transparent;
+    --rt-toggle-chip-color-text: var(--mat-sys-on-surface-variant, var(--rt-mat-neutral-70));
+    --rt-toggle-chip-color-text-selected: var(--mat-sys-on-secondary-container, var(--rt-mat-neutral-100));
+    --rt-toggle-chip-color-bg-selected: var(--mat-sys-secondary-container, var(--rt-mat-neutral-25));
 }
 
 /* The preset under a dark theme: the names the preset reads from Material keep the Material chain,
@@ -322,6 +346,15 @@
     --rt-input-color-border: var(--mat-sys-outline, var(--rt-charcoal-border));
     --rt-input-color-text-placeholder: var(--mat-sys-on-surface-variant, var(--rt-color-text-muted));
     --rt-input-icon-color: var(--mat-sys-on-surface-variant, var(--rt-neutral-600));
+    --rt-input-clear-color: var(--rt-mat-neutral-40);
+    --rt-input-fill-color-bg-disabled: color-mix(in srgb, var(--mat-sys-on-surface, var(--rt-mat-neutral-0)) 4%, transparent);
+    --rt-input-clear-bg: var(--rt-mat-neutral-70);
+    --rt-input-clear-bg-hover: var(--rt-input-clear-bg);
+    --rt-toggle-chip-color-border: var(--mat-sys-outline, var(--rt-mat-neutral-40));
+    --rt-toggle-chip-color-border-selected: transparent;
+    --rt-toggle-chip-color-text: var(--mat-sys-on-surface-variant, var(--rt-mat-neutral-25));
+    --rt-toggle-chip-color-text-selected: var(--mat-sys-on-secondary-container, var(--rt-mat-neutral-0));
+    --rt-toggle-chip-color-bg-selected: var(--mat-sys-secondary-container, var(--rt-mat-neutral-70));
 }
 
 :root[data-preset='material'],

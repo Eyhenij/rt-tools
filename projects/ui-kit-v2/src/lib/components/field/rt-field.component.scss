@@ -77,13 +77,24 @@
         /* Зона сообщений под контролом. С резервом (reserveHintSpace) hint и ошибка
            кладутся в одну ячейку грида: скрытый hint продолжает задавать высоту, и
            подмена сообщения не двигает форму ни вниз, ни вверх. Без hint высоту
-           держит min-height в одну строку — считаем по error-шрифту, он крупнее. */
+           держит min-height в одну строку — считаем по error-шрифту, он крупнее.
+           Под набором это строка подсказки Material: своя высота строки и отступ над ней. Отступ
+           есть, только когда строке есть что держать: резерв или сообщение. Своим видом кита
+           строка прежняя. Строка считается в `border-box`, и отступ входит в её наименьшую высоту: так
+           она та же и у приложения, которое ставит `border-box` всем узлам своим правилом вне слоёв. */
         &__messages {
             display: grid;
+            box-sizing: border-box;
+            line-height: var(--rt-field-messages-line-height);
+
+            &--reserved,
+            &:has(> *) {
+                padding-top: var(--rt-field-messages-padding-top);
+            }
 
             &--reserved {
                 font-size: var(--rt-field-error-font-size);
-                min-block-size: 1lh;
+                min-block-size: calc(1lh + var(--rt-field-messages-padding-top));
 
                 > * {
                     grid-area: 1 / 1;

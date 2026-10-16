@@ -1,68 +1,31 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 import { STORY_FIELD_WIDTH } from '../../../../../showcase/story-metrics';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
-import { IRtIcon } from '../../../icon/rt-icon.model';
+import { RtIconComponent } from '../../../icon/rt-icon.component';
 import { RtInputComponent } from '../../../input/rt-input.component';
-import { IRtInput } from '../../../input/rt-input.model';
 import { RtInputNumberComponent } from '../../../input-number/rt-input-number.component';
+import { RtSelectOptionDirective } from '../../../select/rt-select-option.directive';
 import { RtSelectComponent } from '../../../select/rt-select.component';
 import { RtTextareaComponent } from '../../../textarea/rt-textarea.component';
 import { IRtSelect } from '../../../select/rt-select.model';
 import { RtFieldComponent } from '../../rt-field.component';
-
-/** Контролы, которые показ кладёт в поле: ключи — имена случаев. */
-interface IFieldKinds {
-    readonly input: RtInputComponent;
-    readonly select: RtSelectComponent<string>;
-    readonly number: RtInputNumberComponent;
-    readonly textarea: RtTextareaComponent;
-}
-
-/** Случай поля под материальным набором: контрол, вид, состояние и значки по сторонам. */
-interface IFieldMaterialCase {
-    readonly name: string;
-    readonly kind: keyof IFieldKinds;
-    readonly appearance: IRtInput.Appearance;
-    readonly state: string | null;
-    readonly iconLeft: IRtIcon.Name | null;
-    readonly iconRight?: IRtIcon.Name;
-    readonly control: FormControl<string | null> | FormControl<number | null>;
-}
-
-/** Случай ширины: что задано на предке и какое значение стоит в поле. */
-interface IFieldWidthCase {
-    readonly name: string;
-    readonly style: Record<string, string>;
-    readonly control: FormControl<string | null>;
-}
-
-const HOTELS: ReadonlyArray<IRtSelect.Option<string>> = [
-    { label: 'Гостиница у вокзала', value: 'station' },
-    { label: 'Хостел', value: 'hostel' },
-];
-
-function value(text: string | null): FormControl<string | null> {
-    return new FormControl<string | null>(text);
-}
-
-function amount(count: number | null): FormControl<number | null> {
-    return new FormControl<number | null>(count);
-}
-
-/** Отключённое поле с заданным значением. */
-function off(text: string | null): FormControl<string | null> {
-    return new FormControl<string | null>({ value: text, disabled: true });
-}
-
-/** Обязательное тронутое поле без значения: звёздочка и отказ под полем. */
-function failing(): FormControl<string | null> {
-    const control: FormControl<string | null> = new FormControl<string | null>(null, { validators: [Validators.required] });
-    control.markAsTouched();
-    return control;
-}
+import {
+    amount,
+    clearing,
+    failing,
+    HOTELS,
+    IFieldMaterialCase,
+    IFieldWidthCase,
+    LATE_CHECKIN,
+    messages,
+    off,
+    SCHEMES,
+    texts,
+    value,
+} from './field-material-cases';
 
 /**
  * Поле материального набора против поля Material: залитое и обведённое при плотности −1.
@@ -124,6 +87,119 @@ function failing(): FormControl<string | null> {
             </app-story-row>
         </div>
 
+        <div data-preset="material" data-rt-density="-1">
+            <app-story-row
+                caption="Отключённые залитые поля — заливка Material, on-surface 4 %"
+                [items]="disabledFillCases"
+                [itemLabel]="caseLabel"
+                [slotWidth]="fieldWidth">
+                <ng-template let-fieldCase>
+                    <ng-container *ngTemplateOutlet="field; context: { $implicit: fieldCase, preset: null }" />
+                </ng-template>
+            </app-story-row>
+        </div>
+
+        <div data-preset="material" data-rt-density="-1">
+            <app-story-row
+                caption="Крестик очистки — крестик первого кита: 19 px, значок 12 px, в 8 px от края и 4 px от текста"
+                [items]="clearCases"
+                [itemLabel]="caseLabel"
+                [slotWidth]="fieldWidth">
+                <ng-template let-fieldCase>
+                    <ng-container *ngTemplateOutlet="field; context: { $implicit: fieldCase, preset: null }" />
+                </ng-template>
+            </app-story-row>
+        </div>
+
+        <app-story-row
+            caption="Свой вид кита: крестик прежний, 32 px"
+            [items]="kitClearCases"
+            [itemLabel]="caseLabel"
+            [slotWidth]="fieldWidth">
+            <ng-template let-fieldCase>
+                <ng-container *ngTemplateOutlet="field; context: { $implicit: fieldCase, preset: null }" />
+            </ng-template>
+        </app-story-row>
+
+        <div data-preset="material" data-rt-density="-1">
+            <app-story-row
+                caption="Строка под полем — строка подсказки Material: 16 px и 4 px над ней"
+                [items]="messageCases"
+                [itemLabel]="caseLabel"
+                [slotWidth]="fieldWidth">
+                <ng-template let-fieldCase>
+                    <ng-container *ngTemplateOutlet="field; context: { $implicit: fieldCase, preset: null }" />
+                </ng-template>
+            </app-story-row>
+        </div>
+
+        <app-story-row
+            caption="Свой вид кита: строка под полем прежняя"
+            [items]="kitMessageCases"
+            [itemLabel]="caseLabel"
+            [slotWidth]="fieldWidth">
+            <ng-template let-fieldCase>
+                <ng-container *ngTemplateOutlet="field; context: { $implicit: fieldCase, preset: null }" />
+            </ng-template>
+        </app-story-row>
+
+        <div data-preset="material" data-rt-density="-1">
+            <app-story-row
+                caption="Область текста залитая — как залитое поле ввода"
+                [items]="textCases"
+                [itemLabel]="caseLabel"
+                [slotWidth]="fieldWidth">
+                <ng-template let-fieldCase>
+                    <ng-container *ngTemplateOutlet="field; context: { $implicit: fieldCase, preset: null }" />
+                </ng-template>
+            </app-story-row>
+        </div>
+
+        <app-story-row
+            caption="Свой вид кита: область текста залитая"
+            [items]="kitTextCases"
+            [itemLabel]="caseLabel"
+            [slotWidth]="fieldWidth">
+            <ng-template let-fieldCase>
+                <ng-container *ngTemplateOutlet="field; context: { $implicit: fieldCase, preset: null }" />
+            </ng-template>
+        </app-story-row>
+
+        <div data-preset="material" data-rt-density="-1">
+            <app-story-row
+                caption="Кнопка-значок на месте значка: значок в 12 px от края, текст с 40 px"
+                [items]="actionCases"
+                [itemLabel]="caseLabel"
+                [slotWidth]="fieldWidth">
+                <ng-template let-fieldCase>
+                    <ng-container *ngTemplateOutlet="field; context: { $implicit: fieldCase, preset: null }" />
+                </ng-template>
+            </app-story-row>
+        </div>
+
+        <div data-preset="material" data-rt-density="-1">
+            <app-story-row
+                caption="Высота поля Material: выбор со своим шаблоном значения — 52 px, область текста в 4 строки — 124 px"
+                [items]="heightCases"
+                [itemLabel]="caseLabel"
+                [slotWidth]="fieldWidth">
+                <ng-template let-heightCase>
+                    <rt-field label="Оформление" [reserveHintSpace]="true">
+                        @if (heightCase.kind === 'select') {
+                            <rt-select appearance="fill" [clearable]="false" [options]="schemes" [formControl]="heightCase.control">
+                                <ng-template rtSelectOption let-option>
+                                    <rt-icon name="check-circle" [style.color]="option.value" />
+                                    {{ option.label }}
+                                </ng-template>
+                            </rt-select>
+                        } @else {
+                            <rt-textarea appearance="fill" [rows]="4" [formControl]="heightCase.control" />
+                        }
+                    </rt-field>
+                </ng-template>
+            </app-story-row>
+        </div>
+
         <app-story-row caption="Наименьшая ширина поля задана на предке или нет" [items]="widthCases" [itemLabel]="caseLabel">
             <ng-template let-widthCase>
                 <div data-preset="material" data-rt-density="-1" [style]="widthCase.style">
@@ -158,7 +234,12 @@ function failing(): FormControl<string | null> {
         </app-story-row>
 
         <ng-template #field let-fieldCase let-preset="preset">
-            <rt-field label="Гостиница" [attr.data-preset]="preset" [attr.data-story-state]="fieldCase.state">
+            <rt-field
+                label="Гостиница"
+                [hint]="fieldCase.hint ?? ''"
+                [reserveHintSpace]="fieldCase.reserve ?? false"
+                [attr.data-preset]="preset"
+                [attr.data-story-state]="fieldCase.state">
                 @if (fieldCase.kind === 'select') {
                     <rt-select
                         placeholder="Выберите"
@@ -166,15 +247,22 @@ function failing(): FormControl<string | null> {
                         [options]="hotels"
                         [formControl]="fieldCase.control" />
                 } @else if (fieldCase.kind === 'textarea') {
-                    <rt-textarea placeholder="Комментарий" [formControl]="fieldCase.control" />
+                    <rt-textarea
+                        placeholder="Комментарий"
+                        [appearance]="fieldCase.appearance === 'fill' ? 'fill' : 'outline'"
+                        [formControl]="fieldCase.control" />
                 } @else if (fieldCase.kind === 'number') {
                     <rt-input-number placeholder="0" [appearance]="fieldCase.appearance" [formControl]="fieldCase.control" />
                 } @else {
                     <rt-input
                         placeholder="Название"
+                        iconLeftTooltip="Найти"
+                        iconRightTooltip="Найти"
                         [appearance]="fieldCase.appearance"
                         [iconLeft]="fieldCase.iconLeft"
                         [iconRight]="fieldCase.iconRight ?? null"
+                        [iconLeftAction]="fieldCase.iconAction ?? false"
+                        [iconRightAction]="fieldCase.iconAction ?? false"
                         [formControl]="fieldCase.control" />
                 }
             </rt-field>
@@ -188,9 +276,11 @@ function failing(): FormControl<string | null> {
 
         // components
         RtFieldComponent,
+        RtIconComponent,
         RtInputComponent,
         RtInputNumberComponent,
         RtSelectComponent,
+        RtSelectOptionDirective,
         RtTextareaComponent,
 
         // showcase
@@ -200,6 +290,7 @@ function failing(): FormControl<string | null> {
 export class TestRtFieldMaterialComponent {
     public readonly fieldWidth: string = STORY_FIELD_WIDTH;
     public readonly hotels: ReadonlyArray<IRtSelect.Option<string>> = HOTELS;
+    public readonly schemes: ReadonlyArray<IRtSelect.Option<string>> = SCHEMES;
     public readonly ownHeight: Record<string, string> = { '--rt-input-height-app': '30px' };
 
     public readonly cases: readonly IFieldMaterialCase[] = [
@@ -238,7 +329,66 @@ export class TestRtFieldMaterialComponent {
             iconLeft: null,
             control: new FormControl<number | null>({ value: 2, disabled: true }),
         },
-        { name: 'текст отключённый', kind: 'textarea', appearance: 'outline', state: null, iconLeft: null, control: off('Поздний заезд') },
+        { name: 'текст отключённый', kind: 'textarea', appearance: 'outline', state: null, iconLeft: null, control: off(LATE_CHECKIN) },
+    ];
+
+    public readonly disabledFillCases: readonly IFieldMaterialCase[] = [
+        { name: 'поле', kind: 'input', appearance: 'fill', state: null, iconLeft: null, control: off('Вокзал') },
+        { name: 'выбор', kind: 'select', appearance: 'fill', state: null, iconLeft: null, control: off('station') },
+        {
+            name: 'число',
+            kind: 'number',
+            appearance: 'fill',
+            state: null,
+            iconLeft: null,
+            control: new FormControl<number | null>({ value: 2, disabled: true }),
+        },
+        { name: 'текст', kind: 'textarea', appearance: 'fill', state: null, iconLeft: null, control: off(LATE_CHECKIN) },
+    ];
+
+    public readonly clearCases: readonly IFieldMaterialCase[] = clearing();
+    public readonly kitClearCases: readonly IFieldMaterialCase[] = clearing();
+
+    public readonly messageCases: readonly IFieldMaterialCase[] = messages();
+    public readonly kitMessageCases: readonly IFieldMaterialCase[] = messages();
+    public readonly textCases: readonly IFieldMaterialCase[] = texts();
+    public readonly kitTextCases: readonly IFieldMaterialCase[] = texts();
+
+    public readonly actionCases: readonly IFieldMaterialCase[] = [
+        { name: 'значок слева', kind: 'input', appearance: 'outline', state: null, iconLeft: 'search', control: value('Вокзал') },
+        {
+            name: 'кнопка слева',
+            kind: 'input',
+            appearance: 'outline',
+            state: null,
+            iconLeft: 'search',
+            iconAction: true,
+            control: value('Вокзал'),
+        },
+        {
+            name: 'кнопка слева, пустое',
+            kind: 'input',
+            appearance: 'fill',
+            state: null,
+            iconLeft: 'search',
+            iconAction: true,
+            control: value(null),
+        },
+        {
+            name: 'кнопка справа',
+            kind: 'input',
+            appearance: 'outline',
+            state: null,
+            iconLeft: null,
+            iconRight: 'search',
+            iconAction: true,
+            control: value('Вокзал'),
+        },
+    ];
+
+    public readonly heightCases: readonly IFieldMaterialCase[] = [
+        { name: 'выбор со своим шаблоном', kind: 'select', appearance: 'fill', state: null, iconLeft: null, control: value('#1e88e5') },
+        { name: 'текст в 4 строки', kind: 'textarea', appearance: 'fill', state: null, iconLeft: null, control: value(LATE_CHECKIN) },
     ];
 
     public readonly lowCases: readonly IFieldMaterialCase[] = [

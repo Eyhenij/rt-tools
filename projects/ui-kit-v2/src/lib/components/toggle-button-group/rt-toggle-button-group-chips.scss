@@ -1,0 +1,145 @@
+@layer rt-kit.components {
+    /* Признак набора — на предке или на самой группе: приложение ставит его и на тег компонента. */
+    $preset: ':is(.rt-preset-material *, [data-preset="material"] *, .rt-preset-material, [data-preset="material"])';
+
+    /* Вид «чипы», галочка выбранного и недоступный сегмент под набором — отдельный лист стилей
+       компонента: одним листом с основным он перешёл бы порог в 8 КБ на лист, который Angular по
+       умолчанию ставит приложению. Лист подключается после основного, и при равной точности его
+       правила главнее. Свойства значения не дублируют: лист входит в первый пакет приложения, и
+       каждое промежуточное имя стоит ему места.
+
+       Свой вид кита держит высоту, отступы и шрифт сегмента своего размера; набор переназначает их
+       правилом сильнее. Цвета — свойства оформления корня, `--rt-toggle-chip-*`. */
+    rt-toggle-button-group .rt-toggle-button-group__check {
+        display: inline-flex;
+        flex: none;
+        align-items: center;
+        justify-content: center;
+        block-size: var(--rt-size-4);
+        inline-size: var(--rt-size-4);
+    }
+
+    rt-toggle-button-group .rt-toggle-button-group__check-svg {
+        display: block;
+        block-size: 100%;
+        inline-size: 100%;
+        stroke-width: 2px;
+    }
+
+    /* Дорожки нет: пункты стоят отдельно, с просветом и в строку, и между строками. Отключённая
+       группа не бледнеет целиком: каждый её пункт уже нарисован недоступным. */
+    rt-toggle-button-group.rt-toggle-button-group--chips .rt-toggle-button-group {
+        height: auto;
+        padding: 0;
+        border-radius: 0;
+        background-color: transparent;
+        gap: var(--rt-space-2);
+        opacity: 1;
+    }
+
+    /* Столбик чипов — столбик Material: пункты тянутся на ширину места, а не по своей подписи.
+       Растягивание на всю ширину их высоту не делит: в столбике ось растягивания — высота. В
+       строчном гибком родителе группа берёт его свободную ширину сама. */
+    rt-toggle-button-group.rt-toggle-button-group--chips.rt-toggle-button-group--column {
+        display: flex;
+        flex: 1 1 auto;
+
+        .rt-toggle-button-group {
+            flex: 1 1 auto;
+        }
+
+        .rt-toggle-button-group__button {
+            flex: none;
+        }
+    }
+
+    /* Обводка — внутренней тенью, а не рамкой: у выбранного чипа Material её нет, и рамка сузила
+       бы его на две точки против соседей. Цвет обводки состояние переназначает на самом пункте —
+       там же, где тень собрана, поэтому она его видит. Слой наведения — 8 % цвета текста пункта,
+       обводка недоступного — 32 % его бледного текста, то есть 12 % основного: так их считает
+       Material, и своих имён в наборе токенов им не нужно — каждое имя повторяется там по разу на
+       тему и набор. */
+    rt-toggle-button-group.rt-toggle-button-group--chips .rt-toggle-button-group__button {
+        --rt-toggle-chip-edge: var(--rt-toggle-chip-color-border);
+        --rt-toggle-chip-outline: inset 0 0 0 var(--rt-border-width-thin) var(--rt-toggle-chip-edge);
+
+        height: var(--rt-toggle-button-group-height);
+        min-height: 0;
+        box-sizing: border-box;
+        border-radius: var(--rt-toggle-button-group-track-radius);
+        background-color: transparent;
+        box-shadow: var(--rt-toggle-chip-outline);
+        color: var(--rt-toggle-chip-color-text);
+
+        &:hover:not(:disabled) {
+            --rt-toggle-chip-hover: color-mix(in srgb, currentcolor 8%, transparent);
+
+            background-image: linear-gradient(var(--rt-toggle-chip-hover), var(--rt-toggle-chip-hover));
+        }
+
+        /* Наведение сегмента красит текст в основной; чип под курсором держит свой. */
+        &:hover:not(:disabled, .rt-toggle-button-group__button--active) {
+            color: var(--rt-toggle-chip-color-text);
+        }
+
+        &.rt-toggle-button-group__button--active {
+            --rt-toggle-chip-edge: var(--rt-toggle-chip-color-border-selected);
+
+            background-color: var(--rt-toggle-chip-color-bg-selected);
+            color: var(--rt-toggle-chip-color-text-selected);
+        }
+
+        &:focus-visible {
+            --rt-toggle-chip-focus: var(--rt-toggle-chip-outline), var(--rt-toggle-button-group-focus-shadow);
+
+            box-shadow: var(--rt-toggle-chip-focus);
+        }
+
+        /* Состояние ниже вариантов: недоступный выбранный тоже бледнеет. */
+        &:disabled {
+            --rt-toggle-chip-edge: color-mix(in srgb, currentcolor 32%, transparent);
+
+            color: var(--rt-color-text-disabled);
+        }
+    }
+
+    /* Набор: фильтр-чип Material — 28 px, отступы 12 px, шрифт 14 px / 500 с разрядкой 0.1 px, у
+       выбранного слот галочки 36 px: 6 px, значок 24 px, 6 px. Размер у чипа Material один, и под
+       набором все три размера группы рисуют его. */
+    rt-toggle-button-group.rt-toggle-button-group--chips#{$preset} {
+        /* У чипа Material поле 8 px сверху и снизу, и поля соседних строк не схлопываются: группа
+           на 16 px выше своих строк, строки — через 16 px, пункты в строке — через 8 px. */
+        .rt-toggle-button-group {
+            padding-block: var(--rt-space-2);
+            row-gap: var(--rt-space-4);
+        }
+
+        .rt-toggle-button-group__button {
+            height: 28px;
+            padding: 0 calc(3 * var(--rt-space-1));
+            font-size: var(--rt-text-sm);
+            font-weight: var(--rt-font-weight-medium);
+            letter-spacing: 0.1px;
+            line-height: var(--rt-size-5);
+        }
+
+        .rt-toggle-button-group__check {
+            block-size: var(--rt-size-6);
+            inline-size: var(--rt-size-6);
+            margin-inline: calc(-1.5 * var(--rt-space-1)) calc(1.5 * var(--rt-space-1) - var(--rt-toggle-button-group-btn-gap));
+        }
+
+        .rt-toggle-button-group__check-svg {
+            block-size: var(--rt-size-5);
+            inline-size: var(--rt-size-5);
+        }
+    }
+
+    /* Недоступный сегмент под набором бледнеет текстом, как недоступный пункт Material; в своём
+       виде кита он прежний. В отключённой группе бледнеет вся группа, и правило её не трогает. */
+    rt-toggle-button-group#{$preset}:not(.rt-toggle-button-group--chips)
+        .rt-toggle-button-group:not(.rt-toggle-button-group--disabled)
+        .rt-toggle-button-group__button:disabled {
+        color: var(--rt-color-text-disabled);
+    }
+}

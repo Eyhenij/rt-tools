@@ -20,21 +20,29 @@
             --rt-input-height: var(--rt-input-height-lg);
         }
 
-        /* Крестик не выше поля без рамки — как у поля ввода. */
+        /* Размер, значок и цвет крестика — свойства поля ввода: набор оформления даёт крестику
+           выбора тот же вид первого кита. */
+        &__clear {
+            --rt-icon-color-muted: var(--rt-input-clear-color);
+            --rt-icon-step-sm: var(--rt-input-clear-icon-size);
+        }
+
+        /* Крестик не выше поля без рамки — как у поля ввода. Свой размер приложение задаёт
+           свойством `--rt-input-clear-size`. */
         &__clear .rt-icon-button {
-            width: min(
-                var(--rt-icon-button-size, var(--rt-icon-button-size-step)),
-                calc(var(--rt-input-height) - 2 * var(--rt-input-border-width))
-            );
-            height: min(
-                var(--rt-icon-button-size, var(--rt-icon-button-size-step)),
-                calc(var(--rt-input-height) - 2 * var(--rt-input-border-width))
-            );
+            width: min(var(--rt-input-clear-size), calc(var(--rt-input-height) - 2 * var(--rt-input-border-width)));
+            height: min(var(--rt-input-clear-size), calc(var(--rt-input-height) - 2 * var(--rt-input-border-width)));
+        }
+
+        & &__clear .rt-icon-button {
+            --rt-icon-button-radius: var(--rt-input-clear-radius);
+            --rt-icon-button-bg-variant: var(--rt-input-clear-bg);
+            --rt-icon-button-color-bg-hover: var(--rt-input-clear-bg-hover);
         }
 
         &__clear-slot {
-            width: min(var(--rt-control-height-sm), calc(var(--rt-input-height) - 2 * var(--rt-input-border-width)));
-            height: min(var(--rt-control-height-sm), calc(var(--rt-input-height) - 2 * var(--rt-input-border-width)));
+            width: min(var(--rt-input-clear-size), calc(var(--rt-input-height) - 2 * var(--rt-input-border-width)));
+            height: min(var(--rt-input-clear-size), calc(var(--rt-input-height) - 2 * var(--rt-input-border-width)));
             flex-shrink: 0;
         }
 

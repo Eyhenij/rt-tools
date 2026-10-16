@@ -499,3 +499,128 @@ Then the box keeps full opacity, the border is on-surface at 12%, the text, plac
 the select's arrow are on-surface at 38%, and the kit look still fades the field
 
 Covered: `projects/ui-kit-v2/src/lib/components/field/rt-field-material-metrics.spec.ts`.
+
+### SC-UKV-918 — under the preset the clearing cross is the first kit's cross
+
+Given a clearable input or select under the material preset
+When it holds a value
+Then the cross button is 19 px with a grey 12 px icon, the input's cross stands 8 px from the
+field edge, and the kit look keeps a 32 px button
+
+Covered: `projects/ui-kit-v2/src/lib/components/field/rt-field-material-metrics.spec.ts`.
+
+### SC-UKV-919 — under the preset the line under a field is Material's subscript
+
+Given a field under the material preset that reserves its message line or shows a hint
+When it is drawn
+Then the line is 16 px high with 4 px above it, a 52 px field with a reserved line takes 72 px,
+and the kit look keeps its line
+
+Covered: `projects/ui-kit-v2/src/lib/components/field/rt-field-material-metrics.spec.ts`.
+
+### SC-UKV-920 — a textarea takes the filled look
+
+Given a textarea with `appearance="fill"`
+When it is drawn, and when it lies in a field under the material preset
+Then it is filled with an underline like a filled input, and under the preset its label lies
+inside it above the first line
+
+Covered: `projects/ui-kit-v2/src/lib/components/textarea/rt-textarea.component.spec.ts`,
+`projects/ui-kit-v2/src/lib/components/field/rt-field-material-metrics.spec.ts`.
+
+### SC-UKV-921 — under the preset the clearing cross lies on a round grey ground
+
+Given a clearable input or select under the material preset
+When it holds a value
+Then the cross lies on the first kit's round grey ground, and the kit look keeps it transparent
+
+Covered: `projects/ui-kit-v2/src/lib/components/field/rt-field-material-metrics.spec.ts`.
+
+### SC-UKV-922 — under the preset an icon button stands where a plain icon stands
+
+Given an input under the material preset with an icon button on the left or on the right
+When it is drawn
+Then its icon stands 12 px from the field edge and the text starts at 40 px, as with a plain icon
+
+Covered: `projects/ui-kit-v2/src/lib/components/field/rt-field-material-metrics.spec.ts`.
+
+### SC-UKV-923 — under the preset a clearable input keeps Material's right inset
+
+Given a clearable input under the material preset without an icon on the right
+When it is empty, and when it holds a value
+Then the empty field's text runs to 4 px from the right edge, and with a value the cross stands
+4 px after the text and 8 px from the edge
+
+Covered: `projects/ui-kit-v2/src/lib/components/field/rt-field-material-metrics.spec.ts`.
+
+### SC-UKV-924 — under the preset a disabled filled field takes Material's disabled fill
+
+Given a disabled filled input, select, number or textarea under the material preset
+When it is drawn
+Then its fill is on-surface 4 %, and the kit look keeps its fill
+
+Covered: `projects/ui-kit-v2/src/lib/components/field/rt-field-material-metrics.spec.ts`.
+
+### SC-UKV-925 — under the preset a select whose value is drawn by an option template keeps Material's height
+
+Given a filled select under the material preset whose chosen value is drawn by an option template
+with an icon
+When it is drawn
+Then the select is 52 px high, as without the template
+
+Covered: `projects/ui-kit-v2/src/lib/components/field/rt-field-material-metrics.spec.ts`.
+
+### SC-UKV-926 — under the preset a filled textarea keeps Material's height
+
+Given a filled textarea of 4 rows in a field under the material preset
+When it is drawn
+Then it is 124 px high — 22 px above the text and 6 px below it with the underline — and no gap
+stands under it
+
+Covered: `projects/ui-kit-v2/src/lib/components/field/rt-field-material-metrics.spec.ts`.
+
+### SC-UKV-927 — the chips appearance draws separate items without a track
+
+Given a toggle button group with the chips appearance
+When it is drawn
+Then the host carries the chips mark, there is no track, the items stand 8 px apart, and every
+item has its own outline; the segmented appearance stays the default
+
+Covered: `projects/ui-kit-v2/src/lib/components/toggle-button-group/rt-toggle-button-group-chips.spec.ts`.
+
+### SC-UKV-928 — the checkmark stands before the label of a chosen item only
+
+Given a group with the checkmark switched on and one item chosen
+When it is drawn
+Then the chosen item holds a check before its label and the others hold none; without the
+checkmark no item holds one
+
+Covered: `projects/ui-kit-v2/src/lib/components/toggle-button-group/rt-toggle-button-group-chips.spec.ts`.
+
+### SC-UKV-929 — under the preset a chip is Material's filter chip
+
+Given a chips group of the small size under the material preset
+When it is drawn
+Then an item is 28 px high in every size, with 12 px side paddings, a 14 px / 500 font tracked
+0.1 px, 8 px above the first row and below the last and 16 px between rows, the outline takes the theme's outline colour, a chosen item is filled with secondary-container without an outline, and
+its check slot is 36 px
+
+Covered: `projects/ui-kit-v2/src/lib/components/toggle-button-group/rt-toggle-button-group-chips.spec.ts`.
+
+### SC-UKV-930 — an unavailable item looks unavailable
+
+Given an item of a group is unavailable
+When it is drawn
+Then a chip fades its text and outline in both presets, and a segment fades its text under the
+material preset while the kit's own segmented look stays as it was
+
+Covered: `projects/ui-kit-v2/src/lib/components/toggle-button-group/rt-toggle-button-group-chips.spec.ts`.
+
+### SC-UKV-931 — a column of chips stretches its items to the width of the place
+
+Given a chips group laid out as a column, with or without the full width
+When it is drawn
+Then every item is as wide as the place the group stands in and keeps its own height, and in a
+row flex parent the group takes the parent's free width itself
+
+Covered: `projects/ui-kit-v2/src/lib/components/toggle-button-group/rt-toggle-button-group-chips.spec.ts`.

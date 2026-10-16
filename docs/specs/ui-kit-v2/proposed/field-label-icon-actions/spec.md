@@ -94,6 +94,24 @@ can be pressed and shows a hint, and a cross that the Tab key reaches.
   that inset; the kit look counts it from the border.
 - **Under the preset a disabled field is not faded as a whole.** The border, the text, the
   placeholder and the label take Material's disabled colours; the kit look still fades the field.
+- **Under the preset the clearing cross is the first kit's cross.** The button is 19 px, the icon
+  12 px and grey, and the cross of an input stands 8 px from the field edge. The kit look keeps its
+  32 px button.
+- **Under the preset the cross lies on the first kit's round grey ground.** The kit look keeps the
+  cross without a ground.
+- **Under the preset the line under a field is Material's subscript.** It is 16 px high with 4 px
+  above it whenever it holds a message or a reserve; the kit look keeps its line.
+- **A textarea has the filled look of an input.** Under the preset its label lies inside the field
+  above the first line, 6 px stand under the last line with the underline, and no gap stands under
+  the field.
+- **Under the preset a value drawn by an option template does not raise the select.** The select
+  stays 52 px high.
+- **Under the preset a clearable input keeps Material's right inset.** The empty field's text runs
+  to 4 px from the edge; with a value the cross stands 4 px after the text and 8 px from the edge.
+- **Under the preset a disabled filled field is filled with on-surface 4 %.** The kit look keeps
+  its fill.
+- **Under the preset an icon button stands where a plain icon stands.** Its icon is 12 px from the
+  field edge, and the text starts at 40 px.
 
 ## What is out of scope
 

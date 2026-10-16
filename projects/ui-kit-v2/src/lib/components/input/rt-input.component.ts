@@ -55,7 +55,7 @@ function nextFloatingLabelId(): string {
 @Component({
     selector: 'rt-input',
     templateUrl: './rt-input.component.html',
-    styleUrls: ['./rt-input.component.scss', './rt-input-floating-label.scss'],
+    styleUrls: ['./rt-input.component.scss', './rt-input-floating-label.scss', './rt-input-icons.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
     imports: [
@@ -85,6 +85,7 @@ function nextFloatingLabelId(): string {
         '[class.rt-input--with-icon-left]': '!!iconLeft()',
         '[class.rt-input--with-icon-right]': 'hasIconRight()',
         '[class.rt-input--floating]': '!!floatingLabel()',
+        '[class.rt-input--clearable]': 'clearable()',
         '[style.--rt-input-notch-width]': "notchWidth() + 'px'",
         '[class.rt-input--filled]': 'hasValue()',
         '(mousedown)': 'onHostMousedown($event)',

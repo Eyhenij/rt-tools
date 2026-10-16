@@ -145,6 +145,33 @@ export const darkLayout = [
         name: `--rt-input-icon-color`,
     },
     {
+        name: `--rt-input-clear-color`,
+    },
+    {
+        name: `--rt-input-clear-bg`,
+    },
+    {
+        name: `--rt-input-clear-bg-hover`,
+    },
+    {
+        name: `--rt-toggle-chip-color-border`,
+    },
+    {
+        name: `--rt-toggle-chip-color-border-selected`,
+    },
+    {
+        name: `--rt-toggle-chip-color-text`,
+    },
+    {
+        name: `--rt-toggle-chip-color-text-selected`,
+    },
+    {
+        name: `--rt-toggle-chip-color-bg-selected`,
+    },
+    {
+        name: `--rt-input-fill-color-bg-disabled`,
+    },
+    {
         name: `--rt-input-color-text-placeholder`,
     },
     {

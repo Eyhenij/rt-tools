@@ -8,6 +8,11 @@
     .rt-textarea {
         --rt-textarea-radius: var(--rt-input-radius);
         --rt-textarea-color-border-hover: var(--rt-color-text-primary);
+        --rt-textarea-fill-radius: var(--rt-radius-sm);
+
+        /* Боковая рамка поля: от неё отсчитывается текст. У залитого поля материального набора
+           боковой рамки нет. */
+        --rt-textarea-edge: var(--rt-input-border-width);
 
         display: block;
         width: 100%;
@@ -60,6 +65,62 @@
             border-color: var(--rt-textarea-color-border-hover);
         }
 
+        /* Вид «fill» — залитое поле с чертой снизу, как залитое поле ввода: скругление малое и
+           только сверху. Объявлен после наведения и до блоков состояний: ошибка ниже перекрывает его
+           рамку, а заливка остаётся и у отключённого поля. */
+        &--appearance--fill {
+            --rt-textarea-edge: var(--rt-input-fill-edge);
+        }
+
+        &--appearance--fill &__control {
+            border-width: var(--rt-input-fill-edge) var(--rt-input-fill-edge) var(--rt-input-border-width);
+            border-color: transparent;
+            border-radius: var(--rt-textarea-fill-radius) var(--rt-textarea-fill-radius) 0 0;
+            border-bottom-color: var(--rt-color-field-fill-underline);
+            background-color: var(--rt-color-bg-surface-subtle-2);
+
+            /* Фокус: в материальном наборе — черта снизу вдвое толще, а не кольцо по периметру. */
+            &:focus-visible {
+                border-color: var(--rt-input-color-border-focus);
+                box-shadow: var(--rt-input-fill-focus-shadow);
+            }
+        }
+
+        &--appearance--fill.rt-textarea--invalid &__control:focus-visible {
+            border-color: var(--rt-input-color-border-error);
+            box-shadow: var(--rt-input-fill-focus-shadow-error);
+        }
+
+        /* Залитая область текста в поле материального набора: подпись лежит внутри поля, первая
+           строка — там же, где значение залитого поля ввода, и 6 px под последней строкой вместе с
+           чертой, как у области текста Material. Правило лежит здесь, а не в листе подписи поля: тот держится под
+           порогом в 8 КБ. */
+        @at-root .rt-field--label-inside:is(
+                    .rt-preset-material *,
+                    [data-preset='material'] *,
+                    .rt-preset-material,
+                    [data-preset='material']
+                )
+                .rt-textarea--appearance--fill
+                .rt-textarea__control {
+            padding-top: calc(var(--rt-input-height) / 2 - var(--rt-space-1) - var(--rt-input-fill-edge));
+            padding-bottom: calc(var(--rt-space-1) * 1.5 - var(--rt-input-border-width));
+            line-height: var(--rt-leading-normal);
+        }
+
+        /* Под набором поле стоит в строке по верху, а не по базовой линии: так под ним нет зазора, и
+           область текста не выше поля Material. Своим видом кита зазор остаётся. */
+        &#{$preset-weak} &__control {
+            vertical-align: top;
+        }
+
+        /* Шаг входа `radius` у залитого поля скругляет все четыре угла, и черта снизу не рисуется —
+           как у залитого поля ввода. */
+        &--appearance--fill:where([data-rt-radius]) &__control {
+            border-radius: var(--rt-textarea-radius);
+            border-bottom-color: transparent;
+        }
+
         &--size--sm &__control {
             min-height: var(--rt-textarea-min-height-sm);
         }
@@ -79,7 +140,7 @@
         /* Текст поля Material начинается в 16 px от внешнего края поля, рамка входит в этот отступ.
            Своим видом кита отступ считается от рамки. */
         &#{$preset-weak} &__control {
-            padding-inline: calc(var(--rt-input-padding-x) - var(--rt-input-border-width));
+            padding-inline: calc(var(--rt-input-padding-x) - var(--rt-textarea-edge));
         }
 
         /* Отключённое поле в материальном наборе не тускнеет, а красит рамку, текст и подсказку —
@@ -96,7 +157,13 @@
             }
         }
 
-        &--disabled:not(.rt-textarea--invalid, .rt-textarea--borderless, .rt-textarea--readonly) &__control {
+        /* Отключённая залитая область текста в наборе залита, как поле Material: on-surface 4 %. */
+        &--disabled.rt-textarea--appearance--fill &__control {
+            background-color: var(--rt-input-fill-color-bg-disabled);
+        }
+
+        &--disabled:not(.rt-textarea--invalid, .rt-textarea--appearance--fill, .rt-textarea--borderless, .rt-textarea--readonly)
+            &__control {
             border-color: var(--rt-input-color-border-disabled);
         }
 

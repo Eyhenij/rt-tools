@@ -56,6 +56,19 @@ export const OptionTemplate: TStory = { args: { part: 'optionTemplate' } };
 /** Раскладка: одна строка, перенос в узком месте (рамка — ширина места) и столбик. */
 export const Layout: TStory = { args: { part: 'layout' } };
 
+/**
+ * Вид «чипы» против сегментов: отдельные пункты с обводкой, выбранный залит, у выбранного может
+ * стоять галочка. Строки — размер, множественный выбор, недоступный пункт, отключённая группа,
+ * раскладка; в материальной половине — фильтр-чип Material.
+ */
+export const Appearance: TStory = { args: { part: 'appearance' } };
+
+/** Взаимодействие с чипом: наведение, фокус, нажатие, недоступность — как у сегмента в States. */
+export const ChipsStates: TStory = {
+    args: { part: 'chipsStates' },
+    parameters: { pseudo: storyPseudoParameters('.rt-toggle-button-group__button') },
+};
+
 export const Presets: TStory = { args: { part: 'presets' } };
 
 export const Themes: TStory = { args: { part: 'themes' } };

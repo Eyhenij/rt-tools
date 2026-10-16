@@ -24,6 +24,9 @@ const BEM_BLOCK: string = 'rt-textarea';
 
 export type TRtTextareaResize = 'none' | 'vertical';
 
+/** Вид рамки: `outline` — рамка со всех сторон, `fill` — залитое поле с чертой снизу, как у `rt-input`. */
+export type TRtTextareaAppearance = 'outline' | 'fill';
+
 /**
  * Шеренный textarea common/ui. CVA через общий `RtFormControlBase` —
  * авто-подсветка invalid. Размерные варианты sm/md/lg через host-класс. Resize
@@ -60,6 +63,7 @@ export type TRtTextareaResize = 'none' | 'vertical';
         '[class.rt-textarea--readonly]': 'readonly()',
         '[class.rt-textarea--invalid]': 'isInvalid()',
         '[class.rt-textarea--borderless]': '!bordered()',
+        '[class.rt-textarea--appearance--fill]': "appearance() === 'fill'",
     },
 })
 export class RtTextareaComponent extends RtFormControlBase<string> {
@@ -76,6 +80,7 @@ export class RtTextareaComponent extends RtFormControlBase<string> {
     });
     public readonly rows: InputSignalWithTransform<number, NumberInput> = input<number, NumberInput>(3, { transform: numberAttribute });
     public readonly resize: InputSignal<TRtTextareaResize> = input<TRtTextareaResize>('vertical');
+    public readonly appearance: InputSignal<TRtTextareaAppearance> = input<TRtTextareaAppearance>('outline');
 
     protected getEmptyValue(): string {
         return '';

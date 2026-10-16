@@ -10,6 +10,18 @@ import { IRtToggleButtonGroup } from '../../rt-toggle-button-group.model';
 import { RtToggleButtonGroupComponent } from '../../rt-toggle-button-group.component';
 import { RtToggleButtonOptionDirective } from '../../rt-toggle-button-option.directive';
 import { TestRtToggleButtonGroupFormsComponent } from './test-toggle-button-group-forms.component';
+import {
+    DAYS,
+    FORMATS,
+    IGroupLayoutCase,
+    IGroupMultipleCase,
+    IGroupOptionsCase,
+    IGroupValueCase,
+    PERIOD,
+    PERIOD_DISABLED_CHOSEN,
+    PERIOD_WITH_DISABLED,
+    VIEW,
+} from './toggle-button-group-cases';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
 export type TToggleButtonGroupMatrixPart =
@@ -23,77 +35,10 @@ export type TToggleButtonGroupMatrixPart =
     | 'forms'
     | 'optionTemplate'
     | 'layout'
+    | 'appearance'
+    | 'chipsStates'
     | 'presets'
     | 'themes';
-
-/** Раскладка и ширина, в которую группа поставлена: перенос виден только в узком месте. */
-interface IGroupLayoutCase {
-    readonly name: string;
-    readonly layout: IRtToggleButtonGroup.Layout;
-    readonly width: string;
-}
-
-/** Набор сегментов: подписи, подписи с иконками, две штуки против пяти. */
-interface IGroupOptionsCase {
-    readonly name: string;
-    readonly options: ReadonlyArray<IRtToggleButtonGroup.Option>;
-    readonly value: string;
-}
-
-/** Что выбрано в множественной группе: пусто, один, часть, всё. */
-interface IGroupMultipleCase {
-    readonly name: string;
-    readonly values: ReadonlyArray<string>;
-}
-
-/** Какой сегмент выбран: край группы и середина скругляются по-разному. */
-interface IGroupValueCase {
-    readonly name: string;
-    readonly value: string | undefined;
-}
-
-const PERIOD: ReadonlyArray<IRtToggleButtonGroup.Option> = [
-    { value: 'day', label: 'День' },
-    { value: 'week', label: 'Неделя' },
-    { value: 'month', label: 'Месяц' },
-];
-
-/** Недоступен средний сегмент: видно, что группа не схлопывается и края остаются прежними. */
-const PERIOD_WITH_DISABLED: ReadonlyArray<IRtToggleButtonGroup.Option> = [
-    { value: 'day', label: 'День' },
-    { value: 'week', label: 'Неделя', disabled: true },
-    { value: 'month', label: 'Месяц' },
-];
-
-/** Недоступен выбранный сегмент: подсветка выбранного и приглушённость показаны вместе. */
-const PERIOD_DISABLED_CHOSEN: ReadonlyArray<IRtToggleButtonGroup.Option> = [
-    { value: 'day', label: 'День', disabled: true },
-    { value: 'week', label: 'Неделя' },
-    { value: 'month', label: 'Месяц' },
-];
-
-/** Форматы выгрузки: значок формата в сегменте нарисован своей разметкой. */
-const FORMATS: ReadonlyArray<IRtToggleButtonGroup.Option> = [
-    { value: 'pdf', label: 'PDF', icon: 'attach-pdf' },
-    { value: 'xlsx', label: 'Excel', icon: 'attach-xlsx-xls' },
-    { value: 'docx', label: 'Word', icon: 'attach-docx-doc' },
-    { value: 'zip', label: 'Архив', icon: 'attach-zip-rar' },
-];
-
-const DAYS: ReadonlyArray<IRtToggleButtonGroup.Option> = [
-    { value: 'mon', label: 'Понедельник' },
-    { value: 'tue', label: 'Вторник' },
-    { value: 'wed', label: 'Среда' },
-    { value: 'thu', label: 'Четверг' },
-    { value: 'fri', label: 'Пятница' },
-    { value: 'sat', label: 'Суббота' },
-    { value: 'sun', label: 'Воскресенье' },
-];
-
-const VIEW: ReadonlyArray<IRtToggleButtonGroup.Option> = [
-    { value: 'list', label: 'Списком', icon: 'ico-listing', title: 'Показать списком' },
-    { value: 'grid', label: 'Плиткой', icon: 'bars', title: 'Показать плиткой' },
-];
 
 /**
  * Матрицы состояний `rt-toggle-button-group` для витрины.
@@ -263,12 +208,112 @@ const VIEW: ReadonlyArray<IRtToggleButtonGroup.Option> = [
                 </app-story-presets>
             }
 
+            @case ('appearance') {
+                <app-story-presets caption="Вид группы в обоих наборах">
+                    <ng-template>
+                        <app-story-row caption="Вид" [items]="appearances">
+                            <ng-template let-appearance>
+                                <rt-toggle-button-group ariaLabel="Период" value="week" [appearance]="appearance" [options]="period" />
+                            </ng-template>
+                        </app-story-row>
+
+                        <app-story-row caption="Чипы: галочка у выбранного" [items]="checkmarkNames">
+                            <ng-template let-checkmarkName>
+                                <rt-toggle-button-group
+                                    multiple
+                                    appearance="chips"
+                                    ariaLabel="Период"
+                                    [checkmark]="checkmarkName === 'с галочкой'"
+                                    [options]="period"
+                                    [values]="twoChosen" />
+                            </ng-template>
+                        </app-story-row>
+
+                        <app-story-row caption="Чипы: размер, с галочкой" [items]="sizes">
+                            <ng-template let-size>
+                                <rt-toggle-button-group
+                                    checkmark
+                                    appearance="chips"
+                                    ariaLabel="Период"
+                                    value="week"
+                                    [options]="period"
+                                    [size]="size" />
+                            </ng-template>
+                        </app-story-row>
+
+                        <app-story-row caption="Чипы: недоступный пункт" [items]="disabledCases" [itemLabel]="caseLabel">
+                            <ng-template let-disabledCase>
+                                <rt-toggle-button-group
+                                    checkmark
+                                    appearance="chips"
+                                    ariaLabel="Период"
+                                    value="day"
+                                    [options]="disabledCase.options" />
+                            </ng-template>
+                        </app-story-row>
+
+                        <app-story-row caption="Чипы: отключённая группа и значки" [items]="chipGroupCases" [itemLabel]="caseLabel">
+                            <ng-template let-chipCase>
+                                <rt-toggle-button-group
+                                    checkmark
+                                    appearance="chips"
+                                    [ariaLabel]="chipCase.name"
+                                    [disabled]="chipCase.name === 'отключена'"
+                                    [options]="chipCase.options"
+                                    [value]="chipCase.value" />
+                            </ng-template>
+                        </app-story-row>
+
+                        <app-story-row caption="Чипы: раскладка" [items]="chipLayoutCases" [itemLabel]="caseLabel">
+                            <ng-template let-layoutCase>
+                                <div class="app-toggle-matrix__frame" [style.inline-size]="layoutCase.width">
+                                    <rt-toggle-button-group
+                                        multiple
+                                        checkmark
+                                        appearance="chips"
+                                        ariaLabel="Дни"
+                                        [fullWidth]="!!layoutCase.fullWidth"
+                                        [layout]="layoutCase.layout"
+                                        [options]="days"
+                                        [values]="weekdays" />
+                                </div>
+                            </ng-template>
+                        </app-story-row>
+
+                        <app-story-row caption="Сегменты: недоступный пункт и галочка" [items]="disabledCases" [itemLabel]="caseLabel">
+                            <ng-template let-disabledCase>
+                                <rt-toggle-button-group checkmark ariaLabel="Период" value="day" [options]="disabledCase.options" />
+                            </ng-template>
+                        </app-story-row>
+                    </ng-template>
+                </app-story-presets>
+            }
+
+            @case ('chipsStates') {
+                <app-story-presets caption="Взаимодействие с чипом в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="states" [itemLabel]="stateLabel">
+                            <ng-template let-state>
+                                <rt-toggle-button-group
+                                    checkmark
+                                    appearance="chips"
+                                    ariaLabel="Период"
+                                    value="week"
+                                    [options]="period"
+                                    [attr.data-story-state]="state.state" />
+                            </ng-template>
+                        </app-story-row>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('presets') {
                 <app-story-presets caption="Группа в обоих наборах">
                     <ng-template>
                         <rt-toggle-button-group ariaLabel="Период" value="week" [options]="period" />
                         <rt-toggle-button-group ariaLabel="Вид" value="grid" [options]="view" />
                         <rt-toggle-button-group disabled ariaLabel="Отключена" value="week" [options]="period" />
+                        <rt-toggle-button-group checkmark appearance="chips" ariaLabel="Чипы" value="day" [options]="periodWithDisabled" />
                     </ng-template>
                 </app-story-presets>
             }
@@ -281,6 +326,12 @@ const VIEW: ReadonlyArray<IRtToggleButtonGroup.Option> = [
                                 <rt-toggle-button-group ariaLabel="Период" value="week" [options]="period" />
                                 <rt-toggle-button-group ariaLabel="Вид" value="grid" [options]="view" />
                                 <rt-toggle-button-group disabled ariaLabel="Отключена" value="week" [options]="period" />
+                                <rt-toggle-button-group
+                                    checkmark
+                                    appearance="chips"
+                                    ariaLabel="Чипы"
+                                    value="day"
+                                    [options]="periodWithDisabled" />
                             </ng-template>
                         </app-story-themes>
                     </ng-template>
@@ -328,8 +379,12 @@ export class TestRtToggleButtonGroupMatrixComponent {
     public readonly states: readonly IStoryState[] = STORY_STATES;
     public readonly stateLabel: (value: IStoryState) => string = storyStateLabel;
     public readonly widthNames: readonly string[] = ['по содержимому', 'fullWidth'];
+    public readonly appearances: readonly IRtToggleButtonGroup.Appearance[] = ['segmented', 'chips'];
+    public readonly checkmarkNames: readonly string[] = ['без галочки', 'с галочкой'];
+    public readonly twoChosen: ReadonlyArray<string> = ['day', 'month'];
 
     public readonly period: ReadonlyArray<IRtToggleButtonGroup.Option> = PERIOD;
+    public readonly periodWithDisabled: ReadonlyArray<IRtToggleButtonGroup.Option> = PERIOD_WITH_DISABLED;
     public readonly view: ReadonlyArray<IRtToggleButtonGroup.Option> = VIEW;
     public readonly formats: ReadonlyArray<IRtToggleButtonGroup.Option> = FORMATS;
     public readonly days: ReadonlyArray<IRtToggleButtonGroup.Option> = DAYS;
@@ -339,6 +394,13 @@ export class TestRtToggleButtonGroupMatrixComponent {
         { name: 'row, по содержимому', layout: 'row', width: 'auto' },
         { name: 'wrap, 22rem', layout: 'wrap', width: STORY_FIELD_WIDTH_WIDE },
         { name: 'column', layout: 'column', width: 'auto' },
+    ];
+
+    /** Столбик чипов стоит в рамке: видно, что пункты тянутся на её ширину и с `fullWidth`. */
+    public readonly chipLayoutCases: readonly IGroupLayoutCase[] = [
+        ...this.layoutCases.filter((layoutCase: IGroupLayoutCase): boolean => layoutCase.layout !== 'column'),
+        { name: 'column, 16rem', layout: 'column', width: '16rem' },
+        { name: 'column, fullWidth, 16rem', layout: 'column', width: '16rem', fullWidth: true },
     ];
 
     public readonly optionCases: readonly IGroupOptionsCase[] = [
@@ -367,6 +429,11 @@ export class TestRtToggleButtonGroupMatrixComponent {
     public readonly disabledCases: readonly IGroupOptionsCase[] = [
         { name: 'недоступен средний', options: PERIOD_WITH_DISABLED, value: 'day' },
         { name: 'недоступен выбранный', options: PERIOD_DISABLED_CHOSEN, value: 'day' },
+    ];
+
+    public readonly chipGroupCases: readonly IGroupOptionsCase[] = [
+        { name: 'отключена', options: PERIOD, value: 'week' },
+        { name: 'иконка и подпись', options: VIEW, value: 'grid' },
     ];
 
     public readonly valueCases: readonly IGroupValueCase[] = [

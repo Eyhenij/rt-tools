@@ -61,6 +61,13 @@ export namespace IRtToggleButtonGroup {
      */
     export type Layout = 'row' | 'wrap' | 'column';
 
+    /**
+     * Вид группы. `segmented` — дорожка с сегментами, выбранный светлее дорожки; `chips` — отдельные
+     * пункты с обводкой и просветом между ними, выбранный залит. Поведение у обоих одно: выбор,
+     * множественный выбор, раскладка и связь с формой от вида не зависят.
+     */
+    export type Appearance = 'segmented' | 'chips';
+
     /** Значение, которое группа пишет в форму: одно при одиночном выборе, набор — при множественном. */
     export type FormValue<T = string> = T | ReadonlyArray<T> | null | undefined;
 }

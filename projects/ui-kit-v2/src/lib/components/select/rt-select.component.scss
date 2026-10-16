@@ -167,6 +167,11 @@
             opacity: var(--rt-input-disabled-field-opacity);
         }
 
+        /* Отключённый залитый выбор в наборе залит, как поле Material: on-surface 4 %. */
+        &--disabled.rt-select--appearance--fill &__trigger {
+            background-color: var(--rt-input-fill-color-bg-disabled);
+        }
+
         /* Read-only: триггер остаётся в DOM (нужен для viewChild.required popover'а),
            но скрыт — значение показывает плоский текст __readonly. */
         &--readonly &__trigger {

@@ -67,7 +67,7 @@ function isMany<T>(value: IRtToggleButtonGroup.FormValue<T>): value is ReadonlyA
 @Component({
     selector: 'rt-toggle-button-group',
     templateUrl: './rt-toggle-button-group.component.html',
-    styleUrls: ['./rt-toggle-button-group.component.scss'],
+    styleUrls: ['./rt-toggle-button-group.component.scss', './rt-toggle-button-group-chips.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
     imports: [
@@ -96,6 +96,7 @@ function isMany<T>(value: IRtToggleButtonGroup.FormValue<T>): value is ReadonlyA
         '[class.rt-toggle-button-group--column]': "layout() === 'column'",
         '[class.rt-toggle-button-group--md]': "size() === 'md'",
         '[class.rt-toggle-button-group--lg]': "size() === 'lg'",
+        '[class.rt-toggle-button-group--chips]': "appearance() === 'chips'",
     },
 })
 export class RtToggleButtonGroupComponent<T = string> implements ControlValueAccessor {
@@ -199,6 +200,20 @@ export class RtToggleButtonGroupComponent<T = string> implements ControlValueAcc
      * спискам во всплывающих окнах, столбик — спискам вроде дней недели.
      */
     public readonly layout: InputSignal<IRtToggleButtonGroup.Layout> = input<IRtToggleButtonGroup.Layout>('row');
+
+    /**
+     * Вид группы: дорожка с сегментами или отдельные чипы. Вид — входом, а не классом потребителя:
+     * у чипов своя коробка пункта, свой просвет и своя подсветка, и класс снаружи до неё не достаёт.
+     */
+    public readonly appearance: InputSignal<IRtToggleButtonGroup.Appearance> = input<IRtToggleButtonGroup.Appearance>('segmented');
+
+    /**
+     * Галочка перед подписью выбранного пункта, как у фильтр-чипа Material. Выключена по умолчанию:
+     * в сегментах выбор и так виден подложкой, а место под галочку раздвигает пункт.
+     */
+    public readonly checkmark: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
 
     public readonly valueChange: OutputEmitterRef<T> = output<T>();
 

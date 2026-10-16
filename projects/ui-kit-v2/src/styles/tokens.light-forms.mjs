@@ -281,6 +281,46 @@ export const lightForms = [
         value: `var(--rt-input-color-text-placeholder)`,
     },
     {
+        name: `--rt-input-clear-size`,
+        value: `var(--rt-control-height-sm)`,
+    },
+    {
+        name: `--rt-input-clear-icon-size`,
+        value: `var(--rt-size-4)`,
+    },
+    {
+        name: `--rt-input-clear-color`,
+        value: `var(--rt-neutral-600)`,
+        dark: `var(--rt-neutral-600)`,
+    },
+    {
+        name: `--rt-input-clear-offset-end`,
+        value: `0px`,
+    },
+    {
+        name: `--rt-input-clear-bg`,
+        value: `transparent`,
+        dark: `transparent`,
+    },
+    {
+        name: `--rt-input-clear-bg-hover`,
+        value: `var(--rt-icon-button-color-bg-hover)`,
+        dark: `var(--rt-icon-button-color-bg-hover)`,
+    },
+    {
+        name: `--rt-input-clear-radius`,
+        value: `var(--rt-radius-md)`,
+    },
+    {
+        name: `--rt-input-clear-offset-start`,
+        value: `0px`,
+    },
+    {
+        name: `--rt-input-fill-color-bg-disabled`,
+        value: `var(--rt-color-bg-surface-subtle-2)`,
+        dark: `var(--rt-color-bg-surface-subtle-2)`,
+    },
+    {
         name: `--rt-input-focus-shadow`,
         value: `var(--rt-shadow-focus-ring)`,
     },
@@ -418,5 +458,34 @@ export const lightForms = [
         space: true,
         name: `--rt-toggle-shadow-border`,
         value: `inset 0 0 0 var(--rt-border-width-thin) var(--rt-toggle-color-border)`,
+    },
+    {
+        lead: `    /* Группа переключателей видом «чипы»: отдельные пункты с обводкой. Цвета — здесь, на корне:
+       они не зависят от размера группы; размеры объявлены на самом хосте группы. Выбранный пункт
+       в своём виде кита — мягкая марка, обводка у него та же, что у невыбранного. */`,
+        space: true,
+        name: `--rt-toggle-chip-color-border`,
+        value: `var(--rt-color-border-default)`,
+        dark: `var(--rt-color-border-default)`,
+    },
+    {
+        name: `--rt-toggle-chip-color-border-selected`,
+        value: `var(--rt-toggle-chip-color-border)`,
+        dark: `var(--rt-toggle-chip-color-border)`,
+    },
+    {
+        name: `--rt-toggle-chip-color-text`,
+        value: `var(--rt-color-text-muted)`,
+        dark: `var(--rt-color-text-muted)`,
+    },
+    {
+        name: `--rt-toggle-chip-color-text-selected`,
+        value: `var(--rt-color-action-primary-on-surface)`,
+        dark: `var(--rt-color-action-primary-on-surface)`,
+    },
+    {
+        name: `--rt-toggle-chip-color-bg-selected`,
+        value: `var(--rt-color-action-primary-subtle)`,
+        dark: `var(--rt-color-action-primary-subtle)`,
     },
 ];

@@ -4,7 +4,7 @@
        приложению, и сборка потребителя упала бы. Лист подключается вторым, после основного. */
 
     /* Контролы залитого вида: подпись материального набора у них лежит внутри поля, а не на рамке. */
-    $filled-controls: '.rt-input--appearance--fill, .rt-input--appearance--pill, .rt-select--appearance--fill, .rt-input-number--appearance--fill, .rt-input-number--appearance--pill';
+    $filled-controls: '.rt-input--appearance--fill, .rt-input--appearance--pill, .rt-select--appearance--fill, .rt-input-number--appearance--fill, .rt-input-number--appearance--pill, .rt-textarea--appearance--fill';
 
     /* Залитые поля ввода, числа и выбора, у которых значение стоит строкой Material под поднятой подписью. */
     $fill-fields: '#{$filled-controls}';
@@ -36,8 +36,8 @@
             }
 
             /* Значок слева стоит в 12 px от края поля и в 4 px от текста, как у поля Material, —
-               подпись в покое встаёт туда, где начинается текст. */
-            &:has(.rt-input--with-icon-left > rt-icon.rt-input__icon-left) {
+               подпись в покое встаёт туда, где начинается текст. Кнопка-значок стоит там же. */
+            &:has(.rt-input--with-icon-left > .rt-input__icon-left) {
                 --rt-field-floating-rest-start: calc(var(--rt-space-2) + var(--rt-space-1) + var(--rt-input-icon-size) + var(--rt-space-1));
             }
 

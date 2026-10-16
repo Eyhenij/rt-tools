@@ -147,6 +147,8 @@ export type TRtDesignTokenName =
     | '--rt-field-label-font-size'
     | '--rt-field-label-font-weight'
     | '--rt-field-label-help-gap'
+    | '--rt-field-messages-line-height'
+    | '--rt-field-messages-padding-top'
     | '--rt-field-required-color'
     | '--rt-field-required-gap'
     | '--rt-field-value-color'
@@ -173,6 +175,14 @@ export type TRtDesignTokenName =
     | '--rt-info-700'
     | '--rt-input-border-width'
     | '--rt-input-caret-color'
+    | '--rt-input-clear-bg'
+    | '--rt-input-clear-bg-hover'
+    | '--rt-input-clear-color'
+    | '--rt-input-clear-icon-size'
+    | '--rt-input-clear-offset-end'
+    | '--rt-input-clear-offset-start'
+    | '--rt-input-clear-radius'
+    | '--rt-input-clear-size'
     | '--rt-input-color-bg'
     | '--rt-input-color-bg-disabled'
     | '--rt-input-color-bg-hover'
@@ -186,6 +196,7 @@ export type TRtDesignTokenName =
     | '--rt-input-color-text-placeholder'
     | '--rt-input-disabled-field-opacity'
     | '--rt-input-disabled-opacity'
+    | '--rt-input-fill-color-bg-disabled'
     | '--rt-input-fill-edge'
     | '--rt-input-fill-focus-shadow'
     | '--rt-input-fill-focus-shadow-error'
@@ -295,6 +306,7 @@ export type TRtDesignTokenName =
     | '--rt-mat-neutral-40'
     | '--rt-mat-neutral-5'
     | '--rt-mat-neutral-60'
+    | '--rt-mat-neutral-70'
     | '--rt-mat-neutral-80'
     | '--rt-mat-neutral-active'
     | '--rt-mat-neutral-hover'
@@ -547,6 +559,11 @@ export type TRtDesignTokenName =
     | '--rt-textarea-min-height-md'
     | '--rt-textarea-min-height-sm'
     | '--rt-textarea-padding-y'
+    | '--rt-toggle-chip-color-bg-selected'
+    | '--rt-toggle-chip-color-border'
+    | '--rt-toggle-chip-color-border-selected'
+    | '--rt-toggle-chip-color-text'
+    | '--rt-toggle-chip-color-text-selected'
     | '--rt-toggle-color-border'
     | '--rt-toggle-color-icon'
     | '--rt-toggle-color-thumb'
@@ -883,6 +900,8 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-field-label-font-size',
     '--rt-field-label-font-weight',
     '--rt-field-label-help-gap',
+    '--rt-field-messages-line-height',
+    '--rt-field-messages-padding-top',
     '--rt-field-required-color',
     '--rt-field-required-gap',
     '--rt-field-value-color',
@@ -909,6 +928,14 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-info-700',
     '--rt-input-border-width',
     '--rt-input-caret-color',
+    '--rt-input-clear-bg',
+    '--rt-input-clear-bg-hover',
+    '--rt-input-clear-color',
+    '--rt-input-clear-icon-size',
+    '--rt-input-clear-offset-end',
+    '--rt-input-clear-offset-start',
+    '--rt-input-clear-radius',
+    '--rt-input-clear-size',
     '--rt-input-color-bg',
     '--rt-input-color-bg-disabled',
     '--rt-input-color-bg-hover',
@@ -922,6 +949,7 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-input-color-text-placeholder',
     '--rt-input-disabled-field-opacity',
     '--rt-input-disabled-opacity',
+    '--rt-input-fill-color-bg-disabled',
     '--rt-input-fill-edge',
     '--rt-input-fill-focus-shadow',
     '--rt-input-fill-focus-shadow-error',
@@ -1031,6 +1059,7 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-mat-neutral-40',
     '--rt-mat-neutral-5',
     '--rt-mat-neutral-60',
+    '--rt-mat-neutral-70',
     '--rt-mat-neutral-80',
     '--rt-mat-neutral-active',
     '--rt-mat-neutral-hover',
@@ -1283,6 +1312,11 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-textarea-min-height-md',
     '--rt-textarea-min-height-sm',
     '--rt-textarea-padding-y',
+    '--rt-toggle-chip-color-bg-selected',
+    '--rt-toggle-chip-color-border',
+    '--rt-toggle-chip-color-border-selected',
+    '--rt-toggle-chip-color-text',
+    '--rt-toggle-chip-color-text-selected',
     '--rt-toggle-color-border',
     '--rt-toggle-color-icon',
     '--rt-toggle-color-thumb',

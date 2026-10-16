@@ -41,5 +41,11 @@
         &--disabled#{$preset} &__chevron {
             --rt-icon-color-muted: var(--rt-input-color-placeholder-disabled);
         }
+
+        /* Выбранное значение, нарисованное шаблоном строки, стоит в строке подписи по верху, а не по
+           базовой линии: иначе строка подписи вырастает на 4 px, и поле выбора выше поля Material. */
+        &#{$preset} &__label > &__option-content {
+            vertical-align: top;
+        }
     }
 }
