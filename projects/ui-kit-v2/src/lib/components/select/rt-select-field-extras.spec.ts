@@ -100,7 +100,7 @@ describe('RtSelectComponent — строка списка, подпись на �
             expect(trigger(fixture).querySelector('.own-option')).toBeNull();
         });
 
-        it('SC-UKV-857 — без шаблона строка рисует подпись опции', (): void => {
+        it('SC-UKV-932 — без шаблона строка рисует подпись опции', (): void => {
             open(setup());
 
             expect(rows().map((row: HTMLElement): string => textOf(row.querySelector('.rt-select__option-label') as HTMLElement))).toEqual([
@@ -120,7 +120,7 @@ describe('RtSelectComponent — строка списка, подпись на �
             expect(hostClasses(fixture)).not.toContain('rt-select--floating');
         });
 
-        it('SC-UKV-860 — подпись поднимается при выбранном значении', (): void => {
+        it('SC-UKV-935 — подпись поднимается при выбранном значении', (): void => {
             const fixture: ComponentFixture<RtSelectComponent<string>> = setup({ floatingLabel: 'Цвет' });
 
             expect(textOf(qa(fixture, 'select-floating-label'))).toBe('Цвет');
@@ -131,7 +131,7 @@ describe('RtSelectComponent — строка списка, подпись на �
             expect(hostClasses(fixture)).toContain('rt-select--filled');
         });
 
-        it('SC-UKV-860 — подпись поднимается при открытом списке без значения', (): void => {
+        it('SC-UKV-935 — подпись поднимается при открытом списке без значения', (): void => {
             const fixture: ComponentFixture<RtSelectComponent<string>> = setup({ floatingLabel: 'Цвет' });
             open(fixture);
 
@@ -139,7 +139,7 @@ describe('RtSelectComponent — строка списка, подпись на �
             expect(hostClasses(fixture)).not.toContain('rt-select--filled');
         });
 
-        it('SC-UKV-861 — подпись называет указатель, когда своего имени нет', (): void => {
+        it('SC-UKV-936 — подпись называет указатель, когда своего имени нет', (): void => {
             const fixture: ComponentFixture<RtSelectComponent<string>> = setup({ floatingLabel: 'Цвет' });
             const labelId: string = (qa(fixture, 'select-floating-label')?.nativeElement as HTMLElement).id;
 

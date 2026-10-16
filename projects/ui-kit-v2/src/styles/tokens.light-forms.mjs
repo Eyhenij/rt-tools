@@ -469,19 +469,9 @@ export const lightForms = [
         dark: `var(--rt-color-border-default)`,
     },
     {
-        name: `--rt-toggle-chip-color-border-selected`,
-        value: `var(--rt-toggle-chip-color-border)`,
-        dark: `var(--rt-toggle-chip-color-border)`,
-    },
-    {
         name: `--rt-toggle-chip-color-text`,
         value: `var(--rt-color-text-muted)`,
         dark: `var(--rt-color-text-muted)`,
-    },
-    {
-        name: `--rt-toggle-chip-color-text-selected`,
-        value: `var(--rt-color-action-primary-on-surface)`,
-        dark: `var(--rt-color-action-primary-on-surface)`,
     },
     {
         name: `--rt-toggle-chip-color-bg-selected`,

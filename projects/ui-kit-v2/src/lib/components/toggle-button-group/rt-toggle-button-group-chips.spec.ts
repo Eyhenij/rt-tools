@@ -63,7 +63,10 @@ describe('RtToggleButtonGroupComponent — вид «чипы»', (): void => {
         );
         expect(CHIPS).toContain('.rt-toggle-button-group__check { block-size: var(--rt-size-6); inline-size: var(--rt-size-6)');
         expect(PRESET).toContain('--rt-toggle-chip-color-border: var(--mat-sys-outline, var(--rt-mat-neutral-60));');
-        expect(PRESET).toContain('--rt-toggle-chip-color-border-selected: transparent;');
+        expect(CHIPS).toContain(
+            '.rt-toggle-button-group__button--active:not(:disabled) { --rt-toggle-chip-edge: transparent; ' +
+                'color: var(--mat-sys-on-secondary-container, var(--rt-color-text-primary)); }'
+        );
         expect(PRESET).toContain('--rt-toggle-chip-color-bg-selected: var(--mat-sys-secondary-container, var(--rt-mat-neutral-25));');
     });
 

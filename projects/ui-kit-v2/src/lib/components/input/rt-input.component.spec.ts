@@ -321,7 +321,7 @@ describe('RtInputComponent', (): void => {
             expect(hostClasses(fixture)).not.toContain('rt-input--floating');
         });
 
-        it('SC-UKV-858 — у пустого поля подпись лежит, поле не помечено заполненным', (): void => {
+        it('SC-UKV-933 — у пустого поля подпись лежит, поле не помечено заполненным', (): void => {
             const fixture: ComponentFixture<RtInputComponent> = setup({ floatingLabel: 'Бюджет', placeholder: '0' });
 
             expect(textOf(qa(fixture, 'input-floating-label'))).toBe('Бюджет');
@@ -329,14 +329,14 @@ describe('RtInputComponent', (): void => {
             expect(hostClasses(fixture)).not.toContain('rt-input--filled');
         });
 
-        it('SC-UKV-859 — значение помечает поле заполненным, и подпись поднимается', (): void => {
+        it('SC-UKV-934 — значение помечает поле заполненным, и подпись поднимается', (): void => {
             const fixture: ComponentFixture<RtInputComponent> = setup({ floatingLabel: 'Бюджет' });
             type(fixture, '120');
 
             expect(hostClasses(fixture)).toContain('rt-input--filled');
         });
 
-        it('SC-UKV-861 — подпись называет поле, когда своего имени нет', (): void => {
+        it('SC-UKV-936 — подпись называет поле, когда своего имени нет', (): void => {
             const fixture: ComponentFixture<RtInputComponent> = setup({ floatingLabel: 'Бюджет' });
             const labelId: string = (qa(fixture, 'input-floating-label')?.nativeElement as HTMLElement).id;
 
@@ -355,7 +355,7 @@ describe('RtInputComponent', (): void => {
             expect(qa(fixture, 'input-icon-right-action')).toBeNull();
         });
 
-        it('SC-UKV-862 — нажатие левой иконки уходит в её выход и не уводит фокус в поле', (): void => {
+        it('SC-UKV-937 — нажатие левой иконки уходит в её выход и не уводит фокус в поле', (): void => {
             const fixture: ComponentFixture<RtInputComponent> = setup({ iconLeft: 'ico-search', iconLeftAction: true });
             const presses: MouseEvent[] = [];
             fixture.componentInstance.iconLeftClick.subscribe((event: MouseEvent): number => presses.push(event));

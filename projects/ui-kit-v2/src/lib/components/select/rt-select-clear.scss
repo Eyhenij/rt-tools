@@ -27,9 +27,10 @@
             --rt-icon-step-sm: var(--rt-input-clear-icon-size);
         }
 
-        /* Крестик не выше поля без рамки — как у поля ввода. Свой размер приложение задаёт
-           свойством `--rt-input-clear-size`. */
-        &__clear .rt-icon-button {
+        /* Под набором крестик не выше поля без рамки — как у поля ввода. Свой вид кита держит
+           прежний размер кнопки: малое поле с крестиком в нём 34 px, как до набора. Свой размер
+           приложение задаёт свойством `--rt-input-clear-size`. */
+        &#{$preset-weak} &__clear .rt-icon-button {
             width: min(var(--rt-input-clear-size), calc(var(--rt-input-height) - 2 * var(--rt-input-border-width)));
             height: min(var(--rt-input-clear-size), calc(var(--rt-input-height) - 2 * var(--rt-input-border-width)));
         }
@@ -41,9 +42,14 @@
         }
 
         &__clear-slot {
+            width: var(--rt-input-clear-size);
+            height: var(--rt-input-clear-size);
+            flex-shrink: 0;
+        }
+
+        &#{$preset-weak} &__clear-slot {
             width: min(var(--rt-input-clear-size), calc(var(--rt-input-height) - 2 * var(--rt-input-border-width)));
             height: min(var(--rt-input-clear-size), calc(var(--rt-input-height) - 2 * var(--rt-input-border-width)));
-            flex-shrink: 0;
         }
 
         &__clear--outside {

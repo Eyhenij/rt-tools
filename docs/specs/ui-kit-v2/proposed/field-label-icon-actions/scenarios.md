@@ -11,7 +11,7 @@ Then each row draws the template with its option, and the check mark stays on th
 
 Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-field-extras.spec.ts`.
 
-### SC-UKV-857 — without an option template the row draws the label
+### SC-UKV-932 — without an option template the row draws the label
 
 Given the select holds no option template
 When the list is opened
@@ -28,7 +28,7 @@ field draws the placeholder
 
 Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-field-extras.spec.ts`.
 
-### SC-UKV-858 — the label on the border lies at the placeholder's place on an empty field
+### SC-UKV-933 — the label on the border lies at the placeholder's place on an empty field
 
 Given the input names a label on the border and holds no value
 When the field is drawn at rest
@@ -36,7 +36,7 @@ Then the label is not risen and the native field has no placeholder
 
 Covered: `projects/ui-kit-v2/src/lib/components/input/rt-input.component.spec.ts`.
 
-### SC-UKV-859 — the label rises on a value and on focus
+### SC-UKV-934 — the label rises on a value and on focus
 
 Given the input names a label on the border
 When the field gets a value, or the field is focused while empty
@@ -44,7 +44,7 @@ Then the label is risen
 
 Covered: `projects/ui-kit-v2/src/lib/components/input/rt-input.component.spec.ts`.
 
-### SC-UKV-860 — the select's label rises on a value and on an open list
+### SC-UKV-935 — the select's label rises on a value and on an open list
 
 Given the select names a label on the border
 When an option is chosen, or the list is opened while nothing is chosen
@@ -52,7 +52,7 @@ Then the label is risen
 
 Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-field-extras.spec.ts`.
 
-### SC-UKV-861 — the label names the control without an aria label
+### SC-UKV-936 — the label names the control without an aria label
 
 Given the field names a label on the border and no aria label
 When the field is drawn
@@ -60,7 +60,7 @@ Then the control is named by the label's text
 
 Covered: `projects/ui-kit-v2/src/lib/components/input/rt-input.component.spec.ts`, `projects/ui-kit-v2/src/lib/components/select/rt-select-field-extras.spec.ts`.
 
-### SC-UKV-862 — an actionable icon is a button reported by its output
+### SC-UKV-937 — an actionable icon is a button reported by its output
 
 Given the input marks its left icon as actionable
 When the icon is pressed by the mouse, by Enter or by Space
@@ -475,11 +475,13 @@ Then the field is no narrower than it whatever the value, and without it the fie
 
 Covered: `projects/ui-kit-v2/src/lib/components/field/rt-field-material-metrics.spec.ts`.
 
-### SC-UKV-915 — an icon button inside a field is never taller than the field
+### SC-UKV-915 — under the preset an icon button inside a field is never taller than the field
 
-Given a small field or a field with an own low height, holding a clearing cross
+Given a small field or a field with an own low height under the material preset, holding a
+clearing cross
 When the field is drawn
-Then the field keeps its height, and the cross shrinks to the field inside its border
+Then the field keeps its height, and the cross shrinks to the field inside its border; the kit's own
+look keeps the button's own size, as before the preset work
 
 Covered: `projects/ui-kit-v2/src/lib/components/field/rt-field-material-metrics.spec.ts`.
 

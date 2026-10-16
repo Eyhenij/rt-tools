@@ -510,6 +510,32 @@ data-preset="material" floatingLabel>` drew the border through the risen label: 
     - The application re-measured the third-round package on its pages: no divergences left, every
       chip position and size matches Material, and the keyboard behaves the same. Request 11 is
       closed from its side.
+- **2026-10-16, main merged in after the commit of requests 9–11.** Two things broke only in the
+  merged tree:
+    - main's profile menu took SC-UKV-857…862, which this branch had issued too. Main holds them, so
+      the six scenarios of this branch moved to SC-UKV-932…937, their test titles with them; plan
+      steps 2.3, 3.3 and 4.4 keep the old numbers as written.
+    - the sample application's initial bundle went 878 bytes over its 1 MB budget: main's profile
+      menu tokens and this branch's tokens together. `--rt-toggle-chip-color-border-selected` is
+      gone — in the kit look it repeated the plain outline, and under the preset the chips sheet now
+      clears the outline of a chosen, available chip itself. After the preset-only cap below the
+      bundle went 474 bytes over again, so `--rt-toggle-chip-color-text-selected` is gone too: the kit
+      look reads `--rt-color-action-primary-on-surface` directly, and under the preset the chips sheet
+      takes on-secondary-container of the theme with the primary text colour as the fallback. With a
+      Material theme on the page that is the same colour; without one the dark fallback is
+      `--rt-neutral-50` instead of white. Measured live: kit chosen chip #155dfc with the grey outline,
+      preset chosen chip #181818 without one, as before. The bundle is 998.83 kB, about 1.2 kB under the
+      budget; the chips sheet is 4.26 kB, over the 4 KB warning but far from the 8 KB error.
+- **2026-10-16, the whole branch checked against main for the kit's own look.** The showcase
+  snapshots of main, shot in a second working copy by the same image browser, match main's references
+  886 of 886, so the references are main's look. The branch against them: 693 of 935 match; 47 stories
+  are new in the branch and have no reference; 194 frames diverge. Each was sorted by where the red
+  lies: the material half, new rows of a story with the rows under them shifted, a frame height
+  strip, or anti-aliasing of at most 15 per channel. One divergence was the kit's own look: request 7
+  capped an icon button and the clearing cross by the field height everywhere, so a small field with
+  a cross went 34 → 32 px — the side menu's search shows it. The cap now applies under the preset
+  only; the kit look is 34 px with a 32 px cross again, as on main, and the preset keeps the 19 px
+  cross at every density step. SC-UKV-915 says so, its test title with it.
     - Not fixed: `fullWidth` with `layout="column"` collapses the segments' height in the segmented
       appearance too. A fix there changes the kit's own look, so it waits for the owner's word.
 

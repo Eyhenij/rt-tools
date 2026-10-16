@@ -157,13 +157,7 @@ export const darkLayout = [
         name: `--rt-toggle-chip-color-border`,
     },
     {
-        name: `--rt-toggle-chip-color-border-selected`,
-    },
-    {
         name: `--rt-toggle-chip-color-text`,
-    },
-    {
-        name: `--rt-toggle-chip-color-text-selected`,
     },
     {
         name: `--rt-toggle-chip-color-bg-selected`,

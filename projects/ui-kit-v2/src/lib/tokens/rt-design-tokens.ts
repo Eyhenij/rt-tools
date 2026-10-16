@@ -566,9 +566,7 @@ export type TRtDesignTokenName =
     | '--rt-textarea-padding-y'
     | '--rt-toggle-chip-color-bg-selected'
     | '--rt-toggle-chip-color-border'
-    | '--rt-toggle-chip-color-border-selected'
     | '--rt-toggle-chip-color-text'
-    | '--rt-toggle-chip-color-text-selected'
     | '--rt-toggle-color-border'
     | '--rt-toggle-color-icon'
     | '--rt-toggle-color-thumb'
@@ -1324,9 +1322,7 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-textarea-padding-y',
     '--rt-toggle-chip-color-bg-selected',
     '--rt-toggle-chip-color-border',
-    '--rt-toggle-chip-color-border-selected',
     '--rt-toggle-chip-color-text',
-    '--rt-toggle-chip-color-text-selected',
     '--rt-toggle-color-border',
     '--rt-toggle-color-icon',
     '--rt-toggle-color-thumb',

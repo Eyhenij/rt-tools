@@ -383,9 +383,7 @@
        они не зависят от размера группы; размеры объявлены на самом хосте группы. Выбранный пункт
        в своём виде кита — мягкая марка, обводка у него та же, что у невыбранного. */
     --rt-toggle-chip-color-border: var(--rt-color-border-default);
-    --rt-toggle-chip-color-border-selected: var(--rt-toggle-chip-color-border);
     --rt-toggle-chip-color-text: var(--rt-color-text-muted);
-    --rt-toggle-chip-color-text-selected: var(--rt-color-action-primary-on-surface);
     --rt-toggle-chip-color-bg-selected: var(--rt-color-action-primary-subtle);
 
     /* Навигация (rt-page-header). Шапка — отдельная плашка; отступ от краёв

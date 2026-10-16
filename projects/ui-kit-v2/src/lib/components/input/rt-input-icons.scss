@@ -6,11 +6,12 @@
        остальными правилами он перешёл бы порог в 8 КБ на лист, который Angular по умолчанию ставит
        приложению. Лист подключается после основного. */
     .rt-input {
-        /* Кнопка-значок в поле не выше поля без рамки: иначе малое поле с крестиком вырастает на
-           две точки, а низкое поле своей высоты приложения — до высоты кнопки. Свой размер кнопки
-           приложения остаётся в силе, пока помещается. */
-        &__icon-left .rt-icon-button,
-        &__icon-right .rt-icon-button {
+        /* Под набором кнопка-значок в поле не выше поля без рамки: иначе низкое поле плотности или
+           своей высоты приложения вырастает до высоты кнопки. Свой вид кита держит прежний размер
+           кнопки: малое поле с кнопкой в нём 34 px, как до набора. Свой размер кнопки приложения
+           остаётся в силе, пока помещается. */
+        &#{$preset-weak} &__icon-left .rt-icon-button,
+        &#{$preset-weak} &__icon-right .rt-icon-button {
             width: min(
                 var(--rt-icon-button-size, var(--rt-icon-button-size-step)),
                 calc(var(--rt-input-height) - 2 * var(--rt-input-border-width))
@@ -51,7 +52,7 @@
             padding-right: calc(var(--rt-space-1) - var(--rt-input-edge));
         }
 
-        &__clear .rt-icon-button {
+        &#{$preset-weak} &__clear .rt-icon-button {
             width: min(var(--rt-input-clear-size), calc(var(--rt-input-height) - 2 * var(--rt-input-border-width)));
             height: min(var(--rt-input-clear-size), calc(var(--rt-input-height) - 2 * var(--rt-input-border-width)));
         }

@@ -467,22 +467,18 @@ export const material = [
     { name: `--rt-field-messages-padding-top`, value: `var(--rt-space-1)` },
     {
         lead: `    /* Группа переключателей видом «чипы» — фильтр-чип Material: обводка цвета outline темы,
-       выбранный залит secondary-container без обводки, отключённый — текст 38 %, обводка 12 %. */`,
+       выбранный залит secondary-container, отключённый — текст 38 %, обводка 12 %. Обводку и цвет
+       текста у выбранного задаёт лист чипов: своё имя каждому стоило бы по разу на тему, набор и
+       островок, а начальный пакет приложения-образца стоит у порога. */`,
         space: true,
         name: `--rt-toggle-chip-color-border`,
         value: `var(--mat-sys-outline, var(--rt-mat-neutral-60))`,
         dark: `var(--mat-sys-outline, var(--rt-mat-neutral-40))`,
     },
-    { name: `--rt-toggle-chip-color-border-selected`, value: `transparent`, dark: `transparent` },
     {
         name: `--rt-toggle-chip-color-text`,
         value: `var(--mat-sys-on-surface-variant, var(--rt-mat-neutral-70))`,
         dark: `var(--mat-sys-on-surface-variant, var(--rt-mat-neutral-25))`,
-    },
-    {
-        name: `--rt-toggle-chip-color-text-selected`,
-        value: `var(--mat-sys-on-secondary-container, var(--rt-mat-neutral-100))`,
-        dark: `var(--mat-sys-on-secondary-container, var(--rt-mat-neutral-0))`,
     },
     {
         name: `--rt-toggle-chip-color-bg-selected`,

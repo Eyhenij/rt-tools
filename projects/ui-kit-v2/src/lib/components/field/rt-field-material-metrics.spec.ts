@@ -191,11 +191,14 @@ describe('поле материального набора против поля
         expect(SELECT).toContain('--rt-icon-color-muted: var(--rt-input-color-placeholder-disabled)');
     });
 
-    it('SC-UKV-915 — кнопка-значок в поле не выше поля без рамки', (): void => {
+    it('SC-UKV-915 — под набором кнопка-значок в поле не выше поля без рамки, свой вид держит её размер', (): void => {
         const cap: string = 'var(--rt-input-height) - 2 * var(--rt-input-border-width)';
 
-        expect(ruleBody(INPUT, '.rt-input__clear .rt-icon-button')).toContain(cap);
-        expect(ruleBody(SELECT, '.rt-select__clear .rt-icon-button')).toContain(cap);
+        expect(ruleBody(INPUT, '[data-preset=material]) .rt-input__clear .rt-icon-button')).toContain(cap);
+        expect(ruleBody(INPUT, '[data-preset=material]) .rt-input__icon-left .rt-icon-button')).toContain(cap);
+        expect(ruleBody(SELECT, '[data-preset=material]) .rt-select__clear .rt-icon-button')).toContain(cap);
+        expect(INPUT).not.toMatch(/[{}] \.rt-input__(clear|icon-left|icon-right) \.rt-icon-button[ ,{]/);
+        expect(SELECT).not.toMatch(/[{}] \.rt-select__clear \.rt-icon-button \{/);
         expect(ruleBody(INPUT, '.rt-input--size--sm {')).toContain('--rt-input-height: var(--rt-input-height-sm)');
     });
 

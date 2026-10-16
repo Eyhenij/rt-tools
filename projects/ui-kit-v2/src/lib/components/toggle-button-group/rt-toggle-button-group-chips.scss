@@ -83,10 +83,8 @@
         }
 
         &.rt-toggle-button-group__button--active {
-            --rt-toggle-chip-edge: var(--rt-toggle-chip-color-border-selected);
-
             background-color: var(--rt-toggle-chip-color-bg-selected);
-            color: var(--rt-toggle-chip-color-text-selected);
+            color: var(--rt-color-action-primary-on-surface);
         }
 
         &:focus-visible {
@@ -121,6 +119,14 @@
             font-weight: var(--rt-font-weight-medium);
             letter-spacing: 0.1px;
             line-height: var(--rt-size-5);
+        }
+
+        /* У выбранного чипа Material обводки нет, текст — on-secondary-container темы; недоступный
+           выбранный сохраняет обводку и бледный текст. */
+        .rt-toggle-button-group__button--active:not(:disabled) {
+            --rt-toggle-chip-edge: transparent;
+
+            color: var(--mat-sys-on-secondary-container, var(--rt-color-text-primary));
         }
 
         .rt-toggle-button-group__check {

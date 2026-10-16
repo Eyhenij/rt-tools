@@ -294,11 +294,11 @@
     --rt-field-messages-padding-top: var(--rt-space-1);
 
     /* Группа переключателей видом «чипы» — фильтр-чип Material: обводка цвета outline темы,
-       выбранный залит secondary-container без обводки, отключённый — текст 38 %, обводка 12 %. */
+       выбранный залит secondary-container, отключённый — текст 38 %, обводка 12 %. Обводку и цвет
+       текста у выбранного задаёт лист чипов: своё имя каждому стоило бы по разу на тему, набор и
+       островок, а начальный пакет приложения-образца стоит у порога. */
     --rt-toggle-chip-color-border: var(--mat-sys-outline, var(--rt-mat-neutral-60));
-    --rt-toggle-chip-color-border-selected: transparent;
     --rt-toggle-chip-color-text: var(--mat-sys-on-surface-variant, var(--rt-mat-neutral-70));
-    --rt-toggle-chip-color-text-selected: var(--mat-sys-on-secondary-container, var(--rt-mat-neutral-100));
     --rt-toggle-chip-color-bg-selected: var(--mat-sys-secondary-container, var(--rt-mat-neutral-25));
 }
 
@@ -351,9 +351,7 @@
     --rt-input-clear-bg: var(--rt-mat-neutral-70);
     --rt-input-clear-bg-hover: var(--rt-input-clear-bg);
     --rt-toggle-chip-color-border: var(--mat-sys-outline, var(--rt-mat-neutral-40));
-    --rt-toggle-chip-color-border-selected: transparent;
     --rt-toggle-chip-color-text: var(--mat-sys-on-surface-variant, var(--rt-mat-neutral-25));
-    --rt-toggle-chip-color-text-selected: var(--mat-sys-on-secondary-container, var(--rt-mat-neutral-0));
     --rt-toggle-chip-color-bg-selected: var(--mat-sys-secondary-container, var(--rt-mat-neutral-70));
 }
 
