@@ -32,6 +32,7 @@ export interface IFieldMaterialCase {
     readonly iconAction?: boolean;
     readonly hint?: string;
     readonly reserve?: boolean;
+    readonly noLabel?: boolean;
     readonly control: FormControl<string | null> | FormControl<number | null>;
 }
 
@@ -110,6 +111,25 @@ export function messages(): readonly IFieldMaterialCase[] {
             reserve: true,
             control: failing(),
         },
+    ];
+}
+
+/** Залитые поля без подписи с резервом строки: значение посередине поля, подсказка видна. */
+export function unlabeled(): readonly IFieldMaterialCase[] {
+    const bare: Pick<IFieldMaterialCase, 'appearance' | 'state' | 'iconLeft' | 'reserve' | 'noLabel'> = {
+        appearance: 'fill',
+        state: null,
+        iconLeft: null,
+        reserve: true,
+        noLabel: true,
+    };
+
+    return [
+        { ...bare, name: 'ввод', kind: 'input', control: value('Вокзал') },
+        { ...bare, name: 'ввод пустой', kind: 'input', control: value(null) },
+        { ...bare, name: 'выбор', kind: 'select', control: value('station') },
+        { ...bare, name: 'число', kind: 'number', control: amount(12) },
+        { ...bare, name: 'текст', kind: 'textarea', control: value(LATE_CHECKIN) },
     ];
 }
 

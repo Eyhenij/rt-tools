@@ -536,6 +536,14 @@ data-preset="material" floatingLabel>` drew the border through the risen label: 
   a cross went 34 → 32 px — the side menu's search shows it. The cap now applies under the preset
   only; the kit look is 34 px with a 32 px cross again, as on main, and the preset keeps the 19 px
   cross at every density step. SC-UKV-915 says so, its test title with it.
+- **2026-10-16, request 12 (the application's request 7): a filled field without a label.** Under
+  the preset the field kept the room for a raised label even with no label: the value stood at 22 px
+  in a 52 px field, and an empty control hid its placeholder. Now the value padding and the hidden
+  placeholder apply only when the field draws its label row; without one the input, number and
+  select value stands in the middle, the placeholder shows, and the filled text area has equal room
+  above its first line and below its last. The hint row stays. SC-UKV-938, a new row in the
+  Material story. Measured live: field 72 with the hint row, control 52, value middle 0.5 px off
+  centre, text area first line at 14 px; labelled filled fields keep 22/5 px with a 24 px line.
     - Not fixed: `fullWidth` with `layout="column"` collapses the segments' height in the segmented
       appearance too. A fix there changes the kit's own look, so it waits for the owner's word.
 
@@ -565,30 +573,21 @@ The progress in full — `docs/tasks/RT-2812-kit2-field-label-icon-actions/progr
 
 ```
  M docs/specs/ui-kit-v2/proposed/field-label-icon-actions/scenarios.md
- M docs/specs/ui-kit-v2/proposed/field-label-icon-actions/spec.md
  M docs/tasks/RT-2812-kit2-field-label-icon-actions/progress.md
  M projects/ui-kit-v2/src/lib/components/field/Overview.mdx
  M projects/ui-kit-v2/src/lib/components/field/rt-field-label-inside.scss
  M projects/ui-kit-v2/src/lib/components/field/rt-field-material-metrics.spec.ts
- M projects/ui-kit-v2/src/lib/components/field/rt-field.component.scss
+ M projects/ui-kit-v2/src/lib/components/field/stories/component/field-material-cases.ts
  M projects/ui-kit-v2/src/lib/components/field/stories/component/test-field-material.component.ts
- M projects/ui-kit-v2/src/lib/components/input-number/rt-input-number.component.scss
- M projects/ui-kit-v2/src/lib/components/input/rt-input-floating-label.scss
- M projects/ui-kit-v2/src/lib/components/input/rt-input.component.scss
- M projects/ui-kit-v2/src/lib/components/input/rt-input.component.ts
- M projects/ui-kit-v2/src/lib/components/select/rt-select-clear.scss
- M projects/ui-kit-v2/src/lib/components/select/rt-select-material.scss
- M projects/ui-kit-v2/src/lib/components/select/rt-select.component.scss
- M projects/ui-kit-v2/src/lib/components/textarea/Overview.mdx
  M projects/ui-kit-v2/src/lib/components/textarea/rt-textarea.component.scss
- M projects/ui-kit-v2/src/lib/components/textarea/rt-textarea.component.spec.ts
- M projects/ui-kit-v2/src/lib/components/textarea/rt-textarea.component.ts
- M projects/ui-kit-v2/src/lib/components/textarea/stories/component/test-textarea-matrix.component.ts
 ```
 
 ### Commits over the main branch
 
 ```
+b5dd14bb8 fix(rt:ui-kit-v2): свой вид поля с крестиком прежний, ветка после слияния с main снова проходит проверки
+dffd422be Merge remote-tracking branch 'origin/main' into RT-2812-kit2-field-label-icon-actions
+bdd7f0299 feat(rt:ui-kit-v2): крестик и поля под материальным набором как у Material, вид «чипы» у группы переключателей
 093506703 fix(rt:ui-kit-v2): поля под материальным набором догоняют Material в отступах и отключённом виде
 eebabbda8 Merge remote-tracking branch 'origin/main' into RT-2812-kit2-field-label-icon-actions
 80ce8750f Merge remote-tracking branch 'origin/main' into RT-2812-kit2-field-label-icon-actions

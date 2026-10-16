@@ -24,6 +24,7 @@ import {
     off,
     SCHEMES,
     texts,
+    unlabeled,
     value,
 } from './field-material-cases';
 
@@ -200,6 +201,18 @@ import {
             </app-story-row>
         </div>
 
+        <div data-preset="material" data-rt-density="-1">
+            <app-story-row
+                caption="Залитое поле без подписи: места под подпись нет, значение посередине, строка подсказки держится"
+                [items]="unlabeledCases"
+                [itemLabel]="caseLabel"
+                [slotWidth]="fieldWidth">
+                <ng-template let-fieldCase>
+                    <ng-container *ngTemplateOutlet="field; context: { $implicit: fieldCase, preset: null }" />
+                </ng-template>
+            </app-story-row>
+        </div>
+
         <app-story-row caption="Наименьшая ширина поля задана на предке или нет" [items]="widthCases" [itemLabel]="caseLabel">
             <ng-template let-widthCase>
                 <div data-preset="material" data-rt-density="-1" [style]="widthCase.style">
@@ -235,7 +248,7 @@ import {
 
         <ng-template #field let-fieldCase let-preset="preset">
             <rt-field
-                label="Гостиница"
+                [label]="fieldCase.noLabel ? '' : 'Гостиница'"
                 [hint]="fieldCase.hint ?? ''"
                 [reserveHintSpace]="fieldCase.reserve ?? false"
                 [attr.data-preset]="preset"
@@ -351,6 +364,7 @@ export class TestRtFieldMaterialComponent {
 
     public readonly messageCases: readonly IFieldMaterialCase[] = messages();
     public readonly kitMessageCases: readonly IFieldMaterialCase[] = messages();
+    public readonly unlabeledCases: readonly IFieldMaterialCase[] = unlabeled();
     public readonly textCases: readonly IFieldMaterialCase[] = texts();
     public readonly kitTextCases: readonly IFieldMaterialCase[] = texts();
 

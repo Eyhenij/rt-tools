@@ -88,8 +88,9 @@
                 pointer-events: auto;
             }
 
-            /* Пока подпись лежит на месте подсказки, подсказка контрола не рисуется. */
-            &:not(.rt-field--filled, :focus-within) {
+            /* Пока подпись лежит на месте подсказки, подсказка контрола не рисуется; у поля без
+               подписи подсказка видна. */
+            &:has(.rt-field__label-row):not(.rt-field--filled, :focus-within) {
                 ::placeholder,
                 .rt-select__label--placeholder {
                     color: transparent;
@@ -130,19 +131,20 @@
             }
 
             /* Подпись в покое — строкой Material; значение — ниже середины, под поднятой подписью:
-               при 52 px текст начинается в 22 px от верха строкой в 24 px. */
+               при 52 px текст начинается в 22 px от верха строкой в 24 px. Поле без подписи места под
+               неё не держит, и значение стоит посередине, как у поля Material без mat-label. */
             &:has(#{$fill-fields}) .rt-field__label {
                 line-height: var(--rt-leading-tight);
             }
 
-            :is(#{$fill-values}) {
+            &:has(.rt-field__label-row) :is(#{$fill-values}) {
                 align-self: stretch;
                 padding-top: calc(var(--rt-input-height) / 2 - var(--rt-space-1) - var(--rt-input-fill-edge));
                 padding-bottom: calc(var(--rt-input-height) / 2 - var(--rt-space-5) - var(--rt-input-border-width));
                 line-height: var(--rt-leading-normal);
             }
 
-            :is(#{$pill-values}) {
+            &:has(.rt-field__label-row) :is(#{$pill-values}) {
                 padding-top: calc(var(--rt-input-height) / 2 - var(--rt-space-1) - var(--rt-input-border-width));
             }
 

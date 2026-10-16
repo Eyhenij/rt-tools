@@ -93,7 +93,9 @@
 
         /* Залитая область текста в поле материального набора: подпись лежит внутри поля, первая
            строка — там же, где значение залитого поля ввода, и 6 px под последней строкой вместе с
-           чертой, как у области текста Material. Правило лежит здесь, а не в листе подписи поля: тот держится под
+           чертой, как у области текста Material. Без подписи места под неё нет: первая строка стоит
+           там, где стояла бы посередине однострочного поля, и снизу столько же, как у области текста
+           Material без mat-label. Правило лежит здесь, а не в листе подписи поля: тот держится под
            порогом в 8 КБ. */
         @at-root .rt-field--label-inside:is(
                     .rt-preset-material *,
@@ -103,9 +105,21 @@
                 )
                 .rt-textarea--appearance--fill
                 .rt-textarea__control {
+            padding-top: calc(var(--rt-input-height) / 2 - var(--rt-space-6) / 2 - var(--rt-input-fill-edge));
+            padding-bottom: calc(var(--rt-input-height) / 2 - var(--rt-space-6) / 2 - var(--rt-input-border-width));
+            line-height: var(--rt-leading-normal);
+        }
+
+        @at-root .rt-field--label-inside:has(.rt-field__label-row):is(
+                    .rt-preset-material *,
+                    [data-preset='material'] *,
+                    .rt-preset-material,
+                    [data-preset='material']
+                )
+                .rt-textarea--appearance--fill
+                .rt-textarea__control {
             padding-top: calc(var(--rt-input-height) / 2 - var(--rt-space-1) - var(--rt-input-fill-edge));
             padding-bottom: calc(var(--rt-space-1) * 1.5 - var(--rt-input-border-width));
-            line-height: var(--rt-leading-normal);
         }
 
         /* Под набором поле стоит в строке по верху, а не по базовой линии: так под ним нет зазора, и

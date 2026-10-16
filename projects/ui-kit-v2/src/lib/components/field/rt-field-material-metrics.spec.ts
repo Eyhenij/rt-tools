@@ -237,9 +237,12 @@ describe('поле материального набора против поля
         expect(fill).toContain('border-bottom-color: var(--rt-color-field-fill-underline)');
         expect(fill).toContain('background-color: var(--rt-color-bg-surface-subtle-2)');
         expect(FIELD).toContain('.rt-textarea--appearance--fill');
-        expect(ruleBody(TEXTAREA, '[data-preset=material]) .rt-textarea--appearance--fill .rt-textarea__control {')).toContain(
-            'padding-bottom: calc(var(--rt-space-1) * 1.5 - var(--rt-input-border-width))'
-        );
+        expect(
+            ruleBody(
+                TEXTAREA,
+                'label-row):is(.rt-preset-material *, [data-preset=material] *, .rt-preset-material, [data-preset=material]) .rt-textarea--appearance--fill .rt-textarea__control {'
+            )
+        ).toContain('padding-bottom: calc(var(--rt-space-1) * 1.5 - var(--rt-input-border-width))');
     });
 
     it('SC-UKV-921 — под набором крестик лежит на сером круге первого кита, своим видом — без заливки', (): void => {
@@ -293,6 +296,24 @@ describe('поле материального набора против поля
         expect(TEXTAREA).toContain('padding-bottom: calc(var(--rt-space-1) * 1.5 - var(--rt-input-border-width))');
         expect(TEXTAREA).toContain(
             '.rt-textarea:where(.rt-preset-material *, [data-preset=material] *, .rt-preset-material, [data-preset=material]) .rt-textarea__control { vertical-align: top'
+        );
+    });
+
+    it('SC-UKV-938 — под набором залитое поле без подписи места под неё не держит', (): void => {
+        const preset: string = ':is(.rt-preset-material *, [data-preset=material] *, .rt-preset-material, [data-preset=material])';
+
+        expect(FIELD).toContain(
+            `.rt-field--label-inside${preset}:has(.rt-field__label-row) :is(.rt-input--appearance--fill .rt-input__field`
+        );
+        expect(FIELD).toContain(
+            `.rt-field--label-inside${preset}:has(.rt-field__label-row):not(.rt-field--filled, :focus-within) ::placeholder`
+        );
+        expect(TEXTAREA).toContain(
+            'padding-top: calc(var(--rt-input-height) / 2 - var(--rt-space-6) / 2 - var(--rt-input-fill-edge)); ' +
+                'padding-bottom: calc(var(--rt-input-height) / 2 - var(--rt-space-6) / 2 - var(--rt-input-border-width))'
+        );
+        expect(TEXTAREA).toContain(
+            `.rt-field--label-inside:has(.rt-field__label-row)${preset} .rt-textarea--appearance--fill .rt-textarea__control`
         );
     });
 });

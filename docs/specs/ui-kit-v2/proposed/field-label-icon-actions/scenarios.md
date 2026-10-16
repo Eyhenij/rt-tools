@@ -626,3 +626,13 @@ Then every item is as wide as the place the group stands in and keeps its own he
 row flex parent the group takes the parent's free width itself
 
 Covered: `projects/ui-kit-v2/src/lib/components/toggle-button-group/rt-toggle-button-group-chips.spec.ts`.
+
+### SC-UKV-938 — a filled field without a label keeps no room for one
+
+Given a filled input, number, select or text area in a field without a label under the material
+preset, with the hint row reserved
+When it is drawn
+Then the value stands in the middle of the field, an empty control shows its placeholder, the text
+area has equal room above its first line and below its last, and the field keeps its hint row
+
+Covered: `projects/ui-kit-v2/src/lib/components/field/rt-field-material-metrics.spec.ts`.
