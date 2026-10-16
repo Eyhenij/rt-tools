@@ -4,7 +4,7 @@ kind: pattern
 rule: spec-driven
 description: Pattern of rule spec-driven. Load when creating or editing a domain spec in docs/specs — the mandatory sections, the scenario form, binding a rule to code, the order of work from spec to code. Not for creating a law, a rule or a pattern — that is pattern spec-driven-rule.
 ---
-<!-- rt-kit v0.31.0 · patterns/spec-driven-domain.md · 4ea90b21dcc8 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.32.0 · patterns/spec-driven-domain.md · 851d6319feaf · правится надстройкой, не здесь -->
 
 # Domain spec
 
@@ -223,3 +223,7 @@ statement.
   author sees their edit, not what the subject will grow into: a domain created along the way
   turns out a month later to be half of its neighbour, and parting them means parting the scenario
   numbers too.
+- **A changed or removed scenario is edited in the live spec, not restated in `proposed/`.** The
+  spec audit refuses a second heading with a taken number. A changed promise or a removed
+  scenario goes into the domain's `scenarios.md` by the commit that changes the code and the test
+  title; the agreement names such scenarios by number in prose.

@@ -4,7 +4,7 @@ kind: pattern
 rule: task-flow
 description: Pattern of rule task-flow. Load at the start of work from the owner — exploration before the first question, the six mandatory questions, the product agreement, creating the task, the branch and the folder. Returning to work — pattern task-flow-resume.
 ---
-<!-- rt-kit v0.31.0 · patterns/task-flow-start.md · 30ad36be489e · правится надстройкой, не здесь -->
+<!-- rt-kit v0.32.0 · patterns/task-flow-start.md · 4f05ac2681ea · правится надстройкой, не здесь -->
 
 # Starting the work
 
@@ -41,9 +41,7 @@ is found is written into the tree in the same turn — into the epic plan if it 
 progress if it concerns one.
 
 Exploration that found nothing is no permission to ask: the epic plan, the archive and past sessions
-are reached first, and the question names where the search went.
-
-Exploration ends with command output, not with a feeling: the root memo, `ls` of the directory at
+are reached first, and the question names where the search went. Exploration ends with command output, not with a feeling: the root memo, `ls` of the directory at
 hand, a search over the documentation and the rules.
 
 A member added beside a list, not into it, is named at every reader of that list: each place that
@@ -58,6 +56,10 @@ A tree named as a sample is read as a layout whole — walking the directories t
 before questions about techniques: one folder generalised into a map leaves out its neighbours.
 
 What was inferred is marked right in the list, together with what confirms it.
+
+Removing an identifier that lives outside the code starts with a search for its value: a client of
+the authorization server, a key, an environment variable — over the code, the environment samples
+and the composition files. The plan names what uses the identifier now, not what it was created for.
 
 **A ready-made module of the same kind is looked for before the first question** — in this tree and
 in the trees recorded as samples of its layout. The one found is read whole: it closes the questions
@@ -87,10 +89,9 @@ All six questions are closed, and those the exploration did not answer are asked
 
 The list of six is the set of what is closed by the start of work, not a set of lines to be said. A
 question the owner has already answered is marked closed together with what closed it: the answer is
-sought in the documentation and in what was said in this same session, the original request
-included. It can be closed by an assumption too, when the answer is obvious — by the line "question
-closed by assumption: <what is taken>": a wrong assumption costs an edit, a question about the
-obvious costs a session.
+sought in the documentation and in this session, the original request included. An obvious answer
+closes by the line "question closed by assumption: <what is taken>": a wrong assumption costs an
+edit, a question about the obvious costs a session.
 
 **Two answers «recommended» in a row close the remaining questions by assumption.** An owner who took
 the recommended option twice running has shown that the decisions are not theirs. From the second
@@ -118,12 +119,9 @@ The message with which the executor stops begins with what they wait for:
 <Вопрос>
 ```
 
-Under the question goes the table of the epic's position — the same as in the handover. Under, not
-above: the stop is named by the first line, and the epic's position is what the owner decides from.
-Work outside an epic carries no table.
-
-Measurements, role findings and the list of decisions are by then written in the progress and are
-superfluous in the message: a report with a question at its end drowns the question.
+Under the question goes the table of the epic's position — the same as in the handover; work outside
+an epic carries no table. Measurements, role findings and the list of decisions are already in the
+progress and are left out of the message: a report with a question at its end drowns the question.
 
 The answers are written into `docs/tasks/_draft-<slug>/grill.md` — the folder is still a draft,
 there is no number.
@@ -132,6 +130,10 @@ there is no number.
 mkdir -p docs/tasks/_draft-<slug>
 cp docs/tasks/_template/grill.md docs/tasks/_draft-<slug>/grill.md
 ```
+
+An answer chosen from a menu is written with the options it was chosen from: the label alone does
+not show whether the owner took a ready option or wrote their own. A task that stands only on a
+chosen option says so in its body.
 
 **Next move:** the owner's answer is appended to the grill, and the next question follows. The
 answers are over — in the same turn the work goes into the roles pipeline.
@@ -152,7 +154,9 @@ The agreement that came out of the pipeline is checked against `grill.md` line b
 by it. The role writes the text without seeing the owner and can turn their answer into its
 opposite: the order of stages came out reversed, and included items moved to "not included". A
 critic's finding that diverges from the owner's answer is carried to the owner, not carried out in
-silence.
+silence. The same check holds for the executor's own decision on an open question of the agreement:
+it is compared with the grill before it goes to the writer — an open question lists the owner's
+answer among its variants without a mark, and is decided anew.
 
 The turn does not end on this boundary. A closed grill looks like a finished piece — the answers are
 on disk, the file is committed, there is something to report — and the report takes the place of the
@@ -183,9 +187,9 @@ an order is no order: two tasks whose order rested on understanding went into wo
 round, and the second was redone under the first. The assigned order holds to the end of the epic; a
 revision is the owner's decision.
 
-The cards are created for all the tasks at once, right here — by the same call with `--epic-of`, for
-every row of the makeup. The issued numbers return to the same table, and from this minute "take the
-next" answers with a number, not a name.
+The cards for all the tasks are created at once, right here — by the same call with `--epic-of`, for
+every row of the makeup. The issued numbers return to the same table: "take the next" answers with a
+number from now on.
 
 **Next move:** the declared epic is committed together with the task numbers, and in the same turn
 its branch is taken.
@@ -203,7 +207,7 @@ The plan of the epic is committed into it and the branch is pushed at once — t
 tasks are taken from it, and one that exists only on the machine is a base nobody else has. The card
 names the branch: the reader comes to the epic from the queue, and the queue holds no branches.
 
-Nothing else is committed into the epic branch: it carries the plan and the merges of the tasks. An
+Nothing else is committed into the epic branch: it carries the plan and the merges of the tasks; an
 edit made in it directly reaches the main branch unreviewed.
 
 **Next move:** the first task of the epic is taken — the branch of the task from the branch of the
@@ -230,10 +234,9 @@ call with `--outside-epic '<слово владельца>'` — a refusal witho
 branch is created by a second call: a compound "create and commit at once" is refused by the
 main-branch guard whole.
 
-The number is already issued — there is no draft and none is created: the folder opens straight
-under the branch name. Half of all work starts this way: the number comes from a past session, a
-noticed defect or a neighbouring task, and there is nothing to rename. The pitfall "the number never
-comes first" does not apply here — it is about not creating the task before the grill.
+The number is already issued — there is no draft: the folder opens straight under the branch name.
+Half of all work starts this way (a past session, a noticed defect, a neighbouring task). The pitfall
+"the number never comes first" does not apply: it is about not creating the task before the grill.
 
 The other two files are written, not laid down as templates for later: an empty `plan.md` cannot be
 told from a plan without stages, and the next session trusts the task folder. The template is opened
@@ -298,14 +301,11 @@ state line is rewritten to `этап-идёт`, and from there the work is led b
 - **Stage:** 1 из 3 — <название первого этапа из замысла>
 ```
 
-The turn does not end on this boundary. A written plan looks like a finished piece: the stages are
-laid out, the file is committed, there is something to report — and the report takes exactly the
-place the work should have taken. The owner reads it as done, and nothing is done: on 21 August a
-session ended with the line "next step — such-and-such" at a window fill of about two percent.
-
-Four things end a turn, and they are the same as for the other states: the window fill limit, a
-guard's refusal, a question to the owner and handed-in work with the next begun. A pattern read to
-the end is not among them — the text ended, the work did not.
+The turn does not end on this boundary. A written plan looks like a finished piece — the file is
+committed, there is something to report — and the report takes the place of the work: a session
+ended with "next step — such-and-such" at a window fill of about two percent. A turn ends by the
+window fill limit, a guard's refusal, a question to the owner or handed-in work with the next
+begun; a pattern read to the end is not among them.
 
 **Next move:** the first stage is done in the same turn, and it is declared closed after its command
 from the "Checked by" line has passed.

@@ -81,6 +81,10 @@ the repository's default branch: the request then carries the task past the epic
 branch stays a copy nobody merges. The epic's own request is the only one based on the main branch,
 and it opens when the last folder of its tasks is taken apart.
 
+Before `gh pr create --base <ветка>` the base is checked on the host by `git ls-remote --heads origin
+<ветка>`. An empty answer means the base was merged and removed: the request then takes the next
+branch up the chain as its base, not the removed one.
+
 Everything waiting for a pipeline run, a rework or an answer goes as a draft, and the question is
 asked in the PR itself: a person reads the PR, not the session's conversation.
 

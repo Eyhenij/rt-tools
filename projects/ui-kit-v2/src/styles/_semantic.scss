@@ -426,8 +426,12 @@
     --rt-profile-menu-min-width: var(--rt-size-60);
     --rt-profile-menu-padding: var(--rt-space-5);
     --rt-profile-menu-shadow: var(--rt-shadow-profile-menu);
+    --rt-profile-menu-border-width: var(--rt-border-width-thin);
+    --rt-profile-menu-radius: var(--rt-radius-md);
     --rt-profile-avatar-size: var(--rt-size-10);
     --rt-profile-avatar-font-size: var(--rt-text-2xl);
+    --rt-profile-avatar-border-width: var(--rt-border-width-medium);
+    --rt-profile-avatar-radius: var(--rt-radius-full);
     --rt-profile-item-padding-y: var(--rt-space-4);
     --rt-profile-item-content-gap: var(--rt-space-2);
     --rt-profile-item-font-size: var(--rt-text-md);
@@ -439,6 +443,7 @@
        вертикали с содержимым. Это же число — горизонтальный отступ строки. */
     --rt-profile-row-inset: var(--rt-space-2);
     --rt-profile-theme-icon-padding: var(--rt-space-2);
+    --rt-profile-theme-icon-radius: var(--rt-radius-full);
 
     /* Габариты панели второго уровня: ширина считается числом колонок, поэтому
        колонка, промежуток и внутренний отступ — токены, из которых панель

@@ -94,3 +94,7 @@ rename or removal.
 - **A lib nobody imports is checked by nothing.** `nx lint` and `nx test` check the lib itself,
   not its contract with the consumer. The first importer is the first check: the models layer is
   accepted after `nx build` and a live run of the scenario, not by a green `lint test`.
+- **A lib's own `sourceTag` is written as a string literal.** The layout check finds the
+  description of a lib by the text `sourceTag: '<tag>'`, not by evaluating the module. A tag taken
+  from a constant passes the lint and is reported as "described in no file". Constants are for the
+  tags in `onlyDependOnLibsWithTags` only.

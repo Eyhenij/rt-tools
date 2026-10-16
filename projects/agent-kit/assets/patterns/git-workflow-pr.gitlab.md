@@ -82,6 +82,8 @@ GITLAB_TOKEN="$TOKEN" glab mr create \
 …'
 ```
 
+Before the target branch is named, its presence on the host is checked: `git ls-remote --heads origin <ветка>`. An empty answer means the base was merged and removed; the request then takes the next branch up the chain as its base.
+
 The reviewer is always the owner: without a review request the MR does not show in their queue.
 The assignee is the same account the machine work goes from. Labels are read from the task, not
 picked from memory:

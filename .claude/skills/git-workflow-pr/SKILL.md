@@ -4,7 +4,7 @@ kind: pattern
 rule: git-workflow
 description: Pattern of rule git-workflow. Load for opening a PR and everything around it — title format, draft and leaving it, reading the PR state, the checklist. The link to the task, reviewer, labels and the body sample — pattern git-workflow-pr-body; creating the task and committing — git-workflow-commit.
 ---
-<!-- rt-kit v0.31.0 · patterns/git-workflow-pr.github.md · 112af1edcdb7 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.32.0 · patterns/git-workflow-pr.github.md · f13a8861f675 · правится надстройкой, не здесь -->
 
 # The PR
 
@@ -81,6 +81,10 @@ GH_TOKEN="$TOKEN" gh pr create --base <ветка эпика> --title '[<КЛЮ�
 the repository's default branch: the request then carries the task past the epic, and the epic
 branch stays a copy nobody merges. The epic's own request is the only one based on the main branch,
 and it opens when the last folder of its tasks is taken apart.
+
+Before `gh pr create --base <ветка>` the base is checked on the host by `git ls-remote --heads origin
+<ветка>`. An empty answer means the base was merged and removed: the request then takes the next
+branch up the chain as its base, not the removed one.
 
 Everything waiting for a pipeline run, a rework or an answer goes as a draft, and the question is
 asked in the PR itself: a person reads the PR, not the session's conversation.

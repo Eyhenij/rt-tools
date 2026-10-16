@@ -461,18 +461,23 @@ export type TRtDesignTokenName =
     | '--rt-pagination-per-page-gap'
     | '--rt-pagination-per-page-label-white-space'
     | '--rt-pagination-range-display'
+    | '--rt-profile-avatar-border-width'
     | '--rt-profile-avatar-font-size'
+    | '--rt-profile-avatar-radius'
     | '--rt-profile-avatar-size'
     | '--rt-profile-item-content-gap'
     | '--rt-profile-item-font-size'
     | '--rt-profile-item-font-weight'
     | '--rt-profile-item-padding-y'
     | '--rt-profile-item-radius'
+    | '--rt-profile-menu-border-width'
     | '--rt-profile-menu-min-width'
     | '--rt-profile-menu-padding'
+    | '--rt-profile-menu-radius'
     | '--rt-profile-menu-shadow'
     | '--rt-profile-row-inset'
     | '--rt-profile-theme-icon-padding'
+    | '--rt-profile-theme-icon-radius'
     | '--rt-radius-2xl'
     | '--rt-radius-control'
     | '--rt-radius-full'
@@ -1214,18 +1219,23 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-pagination-per-page-gap',
     '--rt-pagination-per-page-label-white-space',
     '--rt-pagination-range-display',
+    '--rt-profile-avatar-border-width',
     '--rt-profile-avatar-font-size',
+    '--rt-profile-avatar-radius',
     '--rt-profile-avatar-size',
     '--rt-profile-item-content-gap',
     '--rt-profile-item-font-size',
     '--rt-profile-item-font-weight',
     '--rt-profile-item-padding-y',
     '--rt-profile-item-radius',
+    '--rt-profile-menu-border-width',
     '--rt-profile-menu-min-width',
     '--rt-profile-menu-padding',
+    '--rt-profile-menu-radius',
     '--rt-profile-menu-shadow',
     '--rt-profile-row-inset',
     '--rt-profile-theme-icon-padding',
+    '--rt-profile-theme-icon-radius',
     '--rt-radius-2xl',
     '--rt-radius-control',
     '--rt-radius-full',

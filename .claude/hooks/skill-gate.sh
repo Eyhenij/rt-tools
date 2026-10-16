@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# rt-kit v0.31.0 · hooks/skill-gate.sh · 29b41c521d96 · правится надстройкой, не здесь
-# rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool|mcp__claude-in-chrome__.*
+# rt-kit v0.32.0 · hooks/skill-gate.sh · 6f7c81a34185 · правится надстройкой, не здесь
+# rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool|mcp__claude-in-chrome__.*|mcp__figma__use_figma
 # Requires: hooks/deny-tail.sh
 # The rules gate: it does not let a file be edited until the rule it falls under has been loaded.
 #
@@ -26,9 +26,10 @@
 # override is loaded second and may call the default back — `skill_for_default`. There is neither
 # — the gate passes everything: an empty gate is better than a gate that refuses at random.
 #
-# The call kind is `edit`, `bash` or `browser`. Browser verification is the only area where a rule
-# is needed not for a file edit but for a tool: what lies there is not the files but the stand and
-# the coordinates.
+# The call kind is `edit`, `bash`, `browser` or `design`. Browser verification and the design tool
+# are the areas where a rule is needed not for a file edit but for a tool: what lies there is not
+# the files but the stand and the coordinates, or the sheet of mockups. A rule the tree lacks is not
+# demanded, so the design kind costs a tree without mockups nothing.
 #
 # FAIL-OPEN: any error and any unrecognised path let the edit through (exit 0). A broken gate has
 # no right to stop the work altogether.
@@ -138,6 +139,10 @@ EOF
         req="$(skill_for browser "$tool" "" 2>/dev/null)"
         kind="browser"
         ;;
+    mcp__figma__use_figma)
+        req="$(skill_for design "$tool" "" 2>/dev/null)"
+        kind="design"
+        ;;
     *) exit 0 ;;
 esac
 
@@ -215,7 +220,7 @@ fi
 # itself. The rule whole stays the second move — for whoever finds the article not enough.
 # shellcheck disable=SC1090
 [ -f "$rt_hooks_dir/rule-article.sh" ] && . "$rt_hooks_dir/rule-article.sh" 2>/dev/null
-if [ "$kind" != "command" ] && [ "$kind" != "browser" ] && command -v rt_rule_article_heads >/dev/null 2>&1; then
+if [ "$kind" != "command" ] && [ "$kind" != "browser" ] && [ "$kind" != "design" ] && command -v rt_rule_article_heads >/dev/null 2>&1; then
     article="$(rt_rule_article_heads "$root/$rules_dir/${req}/SKILL.md" "$target" 2>/dev/null)"
     if [ -n "$article" ]; then
         reason="Refused by the rules gate. This edit falls under the articles of the rule «${req}»:

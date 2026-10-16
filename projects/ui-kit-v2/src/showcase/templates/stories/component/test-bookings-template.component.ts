@@ -12,12 +12,11 @@ import {
 } from '../../../../lib/components/container/rt-container.directives';
 import { RtPageHeaderComponent } from '../../../../lib/components/page-header/rt-page-header.component';
 import { IRtPageHeader } from '../../../../lib/components/page-header/rt-page-header.model';
-import { IRtSelect } from '../../../../lib/components/select/rt-select.model';
+import { RtProfileMenuComponent } from '../../../../lib/components/profile-menu/rt-profile-menu.component';
+import { IRtProfileMenu } from '../../../../lib/components/profile-menu/rt-profile-menu.model';
 import { NotificationBus } from '../../../../lib/platform/notification-bus.service';
-import { ThemeService } from '../../../../lib/platform/theme.service';
 import { APP_NAV_ITEMS, appNavLabelKeysOf, appNavSectionsOf, TAppNavLabel } from '../../app-nav.items';
 import { bookingsRoute } from '../../bookings/bookings.routes';
-import { AppProfileMenuComponent } from '../../profile-menu/app-profile-menu.component';
 
 /**
  * Демонстрационная обёртка для витрины: каркас приложения, в котором живёт целый экран.
@@ -59,7 +58,7 @@ const SHOWCASE_USER_NAME: string = 'Мария Ветрова';
 const SHOWCASE_ORGANIZATION: string = 'Лотос Резортс';
 
 /** Языки в переключателе подписаны на самих себе: свой ищут, не понимая интерфейса. */
-const LOCALE_OPTIONS: ReadonlyArray<IRtSelect.Option<string>> = [
+const LOCALE_OPTIONS: ReadonlyArray<IRtProfileMenu.Locale> = [
     { value: 'ru', label: 'Русский' },
     { value: 'en', label: 'English' },
 ];
@@ -87,19 +86,18 @@ const LOCALE_OPTIONS: ReadonlyArray<IRtSelect.Option<string>> = [
 
         <!-- Содержимое попапа профиля. Кит открывает его наведением и рисует в перекрытии. -->
         <ng-template #profileMenu>
-            <app-profile-menu
+            <rt-profile-menu
                 qa-dataid="header-profile-menu"
-                [canChangeOrganization]="true"
+                organizationChange="allowed"
+                passwordChange
                 [userName]="user.name"
                 [organizationName]="organizationName"
                 [locale]="locale()"
-                [localeOptions]="localeOptions"
-                [isDark]="isDark()"
+                [locales]="locales"
                 (changeOrganization)="onDemoAction()"
                 (localeChange)="onLocaleChange($event)"
-                (themeToggled)="onToggleTheme()"
-                (passwordChange)="onDemoAction()"
-                (logout)="onDemoAction()" />
+                (changePassword)="onDemoAction()"
+                (signOut)="onDemoAction()" />
         </ng-template>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -108,18 +106,17 @@ const LOCALE_OPTIONS: ReadonlyArray<IRtSelect.Option<string>> = [
         RouterOutlet,
 
         // components
-        AppProfileMenuComponent,
         RtContainerComponent,
         RtContainerContentDirective,
         RtContainerHeaderDirective,
         RtContainerRightSidenavDirective,
         RtPageHeaderComponent,
+        RtProfileMenuComponent,
     ],
 })
 export class TestRtBookingsTemplateComponent implements OnInit {
     readonly #router: Router = inject(Router);
     readonly #location: Location = inject(Location);
-    readonly #theme: ThemeService = inject(ThemeService);
     readonly #transloco: TranslocoService = inject(TranslocoService);
     readonly #notifications: NotificationBus = inject(NotificationBus);
 
@@ -146,11 +143,9 @@ export class TestRtBookingsTemplateComponent implements OnInit {
 
     public readonly organizationName: string = SHOWCASE_ORGANIZATION;
 
-    public readonly localeOptions: ReadonlyArray<IRtSelect.Option<string>> = LOCALE_OPTIONS;
+    public readonly locales: ReadonlyArray<IRtProfileMenu.Locale> = LOCALE_OPTIONS;
 
     public readonly locale: Signal<string> = this.#locale.asReadonly();
-
-    public readonly isDark: Signal<boolean> = this.#theme.isDark;
 
     public ngOnInit(): void {
         // Маршруты вносятся в уже поднятый роутер: набор, объявленный при его создании, разбирался
@@ -164,11 +159,6 @@ export class TestRtBookingsTemplateComponent implements OnInit {
         const requested: string = this.#location.path();
 
         void this.#router.navigateByUrl(requested.startsWith(SECTION_URL) ? requested : SECTION_URL);
-    }
-
-    /** Тему переключает служба кита — та же, что и в приложении: показ здесь ничего не имитирует. */
-    public onToggleTheme(): void {
-        this.#theme.toggle();
     }
 
     /** Язык у показа один: словарь второго нет, и выбор остаётся выбором. */

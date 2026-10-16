@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.31.0 · hooks/git-guard-delivery-epic.sh · 0e686c5781a2 · правится надстройкой, не здесь
+# rt-kit v0.32.0 · hooks/git-guard-delivery-epic.sh · 5b6653bc5c39 · правится надстройкой, не здесь
 # Delivery conditions about the epic of a task. NOT a guard: it has no `rt-hook:` declaration and
 # it hooks into no agent event. The delivery guard sources it — the same way it sources the task
 # folder conditions and the signature.
@@ -37,6 +37,19 @@ rt_epic_branch() {
     printf '%s' "$_found"
 }
 
+# Whether the epic is already merged into the main branch: a merge commit of the remote main branch
+# names it by the key and the number (`RT-12`) — in the branch name of a merge of the host or in the
+# title of the request. The number is matched whole, so `RT-1` does not match `RT-12`. Success — the
+# epic is merged. No remote main branch, or no such commit, is not merged: the refusal that follows
+# is the former one.
+rt_epic_is_merged() {
+    _num="$1"
+    [ -n "$_num" ] || return 1
+    git rev-parse --verify --quiet "origin/${main_branch}" >/dev/null 2>&1 || return 1
+    [ -n "$(git log "origin/${main_branch}" --merges -n 1 -E \
+        --grep="(^|[^0-9A-Za-z])[A-Za-z]+-${_num}([^0-9]|\$)" --format=%H 2>/dev/null)" ]
+}
+
 # The base of a new task branch against the branch of its epic.
 #
 # The task branch is taken from the branch of the epic, and a branch taken from the main one leaves
@@ -59,6 +72,14 @@ rt_epic_base() {
     _epic_branch="$(rt_epic_branch "$_epic")"
     case "$_epic_branch" in
         '')
+            # An epic that is already merged has no branch in the remote: the host deletes it on the
+            # merge, and a task left behind in it would be demanded a base nobody has — then a push
+            # recreates the branch with a merge nobody reviews. The merge of the epic is recognised
+            # by a merge commit of the main branch that names the epic; the task then grows from
+            # the main branch.
+            if rt_epic_is_merged "$_epic"; then
+                return 0
+            fi
             fault "the task belongs to the epic #${_epic}, and no branch of that epic is in the remote. The branch of the epic is taken before the first of its tasks and sent at once — a branch that exists only on one machine is a base nobody else has."
             return 0
             ;;

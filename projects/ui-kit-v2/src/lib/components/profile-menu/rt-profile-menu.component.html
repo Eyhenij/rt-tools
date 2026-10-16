@@ -1,0 +1,68 @@
+<ng-container rtBlock="rt-profile-menu">
+    <div rtElem="user">
+        <span rtElem="avatar" aria-hidden="true">{{ avatar() }}</span>
+        <span rtElem="name" qa-dataid="profile-user-name">{{ userName() }}</span>
+        @if (organizationName()) {
+            <span rtElem="organization" qa-dataid="profile-organization">
+                {{ organizationName() }}
+                <span rtElem="organization-label">{{ t().profileMenuOrganization }}</span>
+            </span>
+        }
+    </div>
+
+    <div rtElem="nav" role="menu">
+        @switch (organizationChange()) {
+            @case ('allowed') {
+                <rt-menu-item
+                    rtElem="item"
+                    qa-dataid="profile-change-organization"
+                    icon="refresh"
+                    [label]="t().profileMenuChangeOrganization"
+                    (selected)="changeOrganization.emit()" />
+            }
+            @case ('denied') {
+                <rt-menu-item
+                    rtElem="item"
+                    qa-dataid="profile-change-organization"
+                    icon="refresh"
+                    disabled
+                    [label]="t().profileMenuChangeOrganization"
+                    [tooltip]="t().profileMenuChangeOrganizationDenied" />
+            }
+        }
+
+        @if (passwordChange()) {
+            <rt-menu-item
+                rtElem="item"
+                qa-dataid="profile-password-change"
+                icon="ico-lock"
+                [label]="t().profileMenuChangePassword"
+                (selected)="changePassword.emit()" />
+        }
+
+        <rt-menu-item
+            rtElem="item"
+            qa-dataid="profile-logout"
+            icon="ico-exit"
+            [disabled]="signOutDisabled()"
+            [label]="t().profileMenuSignOut"
+            (selected)="signOut.emit()" />
+    </div>
+
+    <!-- Своего правила у переключателя языка нет: ширину ему задаёт колонка блока. -->
+    @if (locales().length) {
+        <rt-select
+            qa-dataid="profile-locale-select"
+            name="rtProfileMenuLocale"
+            [options]="locales()"
+            [ngModel]="locale()"
+            (ngModelChange)="localeChange.emit($event)" />
+    }
+
+    <rt-menu-item
+        rtElem="theme"
+        qa-dataid="profile-theme-toggle"
+        [icon]="themeIcon()"
+        [label]="t().profileMenuSwitchTheme"
+        (selected)="onToggleTheme()" />
+</ng-container>

@@ -21,8 +21,10 @@ branch() {
 }
 
 # Вывод диспетчера на заданном событии и вводе.
+# Выходной поток: отказ с кодом 2 дублируется ещё и в поток ошибок, и склейка потоков удвоила бы
+# строку (поток ошибок смотрит SC-AK-1223 отдельно).
 dispatch_says() {
-    printf '%s' "$2" | bash "$DISPATCH_DIR/dispatch.sh" "$1" 2>&1
+    printf '%s' "$2" | bash "$DISPATCH_DIR/dispatch.sh" "$1" 2>/dev/null
 }
 dispatch_code() {
     printf '%s' "$2" | bash "$DISPATCH_DIR/dispatch.sh" "$1" >/dev/null 2>&1
@@ -92,6 +94,38 @@ report "SC-AK-860 — шум удачной ветки наружу не идё�
     "$(dispatch_says PreToolUse "$INPUT_BASH" | grep -c 'шум ветки')" 0
 
 rm -f "$DISPATCH_DIR/noisy_ok.sh"
+
+# --- SC-AK-1223 — отказ при коде 2 дублируется в поток ошибок -----------------------------------
+# При коде 2 агент читает только поток ошибок, а отказ ветки диспетчер печатал только в выходной
+# поток: отказ приходил пустым. Потоки здесь разделены, в отличие от `2>&1` выше.
+{
+    printf '#!/usr/bin/env bash\n'
+    printf '# rt-hook: PreToolUse .*\n'
+    printf 'echo "отказ ветки в потоке ошибок" >&2\n'
+    printf 'exit 2\n'
+} > "$DISPATCH_DIR/refuses_by_stderr.sh"
+chmod +x "$DISPATCH_DIR/refuses_by_stderr.sh"
+dispatch_stderr_only() {
+    printf '%s' "$2" | bash "$DISPATCH_DIR/dispatch.sh" "$1" 2>&1 >/dev/null
+}
+dispatch_stdout_only() {
+    printf '%s' "$2" | bash "$DISPATCH_DIR/dispatch.sh" "$1" 2>/dev/null
+}
+report "SC-AK-1223 — отказ ветки доходит до агента по потоку ошибок" \
+    "$(dispatch_stderr_only PreToolUse "$INPUT_BASH" | grep -c 'отказ ветки в потоке ошибок')" 1
+report "SC-AK-1223 — выходной поток отказа прежний" \
+    "$(dispatch_stdout_only PreToolUse "$INPUT_BASH" | grep -c 'отказ ветки в потоке ошибок')" 1
+rm -f "$DISPATCH_DIR/refuses_by_stderr.sh"
+{
+    printf '#!/usr/bin/env bash\n'
+    printf '# rt-hook: PreToolUse .*\n'
+    printf 'echo "шум удачной ветки" >&2\n'
+    printf 'exit 0\n'
+} > "$DISPATCH_DIR/noisy_ok2.sh"
+chmod +x "$DISPATCH_DIR/noisy_ok2.sh"
+report "SC-AK-1223 — удачная ветка в поток ошибок не пишет" \
+    "$(dispatch_stderr_only PreToolUse "$INPUT_BASH" | grep -c 'шум удачной ветки')" 0
+rm -f "$DISPATCH_DIR/noisy_ok2.sh"
 
 # --- SC-AK-856 — событие без имени инструмента сверяет род запуска ------------------------------
 # У входа в сессию имени инструмента нет, и образец там называет род запуска. Сверка с пустым

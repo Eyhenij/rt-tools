@@ -125,18 +125,23 @@ jobs:
                   echo 'Keycloak не ответил за отведённое время'
                   exit 1
 
-            # Проба выше зелёная при любой теме. Здесь страница входа отдаёт `main.js`, и он
-            # сверяется с собранным в этой выкатке: иначе старая тема на проде не видна никому.
+            # Проба выше зелёная при любой теме. Здесь страница входа называет точку входа темы, и
+            # файл сверяется с собранным в этой выкатке: иначе старая тема на проде не видна никому.
+            # Имя точки входа несёт хэш содержимого: путь ресурсов Keycloak между выкатками не
+            # меняется, а браузер держит файл 30 дней, и под прежним именем он отдавал бы старую тему
             - name: Theme check
               if: github.ref == 'refs/heads/main'
               run: |
                   base='https://auth.message-bus.dev'
                   login="${base}/realms/rt/protocol/openid-connect/auth?client_id=rt-message-bus-admin&redirect_uri=https%3A%2F%2Fmessage-bus.dev%2F&response_type=code&scope=openid&code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM&code_challenge_method=S256"
-                  want="$(sha256sum dist/auth-keycloak-theme/app/main.js | cut -d' ' -f1)"
+                  entry="$(grep -oE 'main-[A-Za-z0-9_-]+\.js' dist/auth-keycloak-theme/app/index.html | head -1)"
+                  want="$(sha256sum "dist/auth-keycloak-theme/app/${entry}" | cut -d' ' -f1)"
                   for attempt in $(seq 1 6); do
-                      dir="$(curl -fsS -m 15 "${login}" | grep -oE '/resources/[^"]*/login/rt/dist/' | head -1)"
-                      got="$(curl -fsS -m 15 "${base}${dir}main.js" | sha256sum | cut -d' ' -f1)"
-                      if [ -n "${dir}" ] && [ "${got}" = "${want}" ]; then
+                      page="$(curl -fsS -m 15 "${login}")"
+                      dir="$(printf '%s' "${page}" | grep -oE '/resources/[^"]*/login/rt/dist/' | head -1)"
+                      served="$(printf '%s' "${page}" | grep -oE 'main-[A-Za-z0-9_-]+\.js' | head -1)"
+                      got="$(curl -fsS -m 15 "${base}${dir}${served}" | sha256sum | cut -d' ' -f1)"
+                      if [ -n "${dir}" ] && [ "${served}" = "${entry}" ] && [ "${got}" = "${want}" ]; then
                           echo 'Keycloak отдаёт тему этой сборки'
                           exit 0
                       fi

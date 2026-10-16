@@ -54,7 +54,7 @@ pick.
 
 | File | Where |
 | --- | --- |
-| `grill.md` | to `docs/archive/` — the owner's answers cannot be recovered, and this is the only record of why the task was set this way |
+| `grill.md` | to `docs/archive/` in the owner's language — the owner's answers cannot be recovered, and this is the only record of why the task was set this way. A grill in the layer's language is rewritten at the move; the quoted request stays verbatim |
 | `progress.md` | to `docs/archive/` if it holds decisions along the way with reasons; otherwise deleted |
 | `plan.md` | deleted — after the rollout its question is answered by the code, and "how it works" by the domain spec |
 | review findings | written straight next to the epic plan — they do not move from here; work outside an epic shows them to the owner in the same turn |
@@ -262,6 +262,9 @@ indistinguishable from a sent one.
   apart, and the owner's words are written only there, with nowhere to recover them from. So the
   guard demands that the branch add a record to the archive. What exactly was moved it does not
   check — the owner looks at that in review.
+- **The folder of a task created after the work enters by a commit of its own.** The next commit
+  takes it apart. A folder assembled and removed between two commits leaves no trace: the owner may
+  merge the PR in that minute, and the grill is gone.
 - **The closing steps are not agreed with the owner — they are listed here.** The rules review of
   the work is part of closing, as are merging the agreement and taking the folder apart. The owner
   decides not whether to launch it but what to do with the findings. A turn that ended with such a

@@ -4,7 +4,7 @@ kind: pattern
 rule: git-workflow
 description: Pattern of rule git-workflow. Load for creating a task and a branch, commit and push — the creation command with all four steps, moving the column, merging two tasks into one, working as the machine account, skipping the document requirement. Opening a PR — pattern git-workflow-pr.
 ---
-<!-- rt-kit v0.31.0 · patterns/git-workflow-commit.github.md · 7cdfce21d6b3 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.32.0 · patterns/git-workflow-commit.github.md · 07086f4bf929 · правится надстройкой, не здесь -->
 
 # Task, branch and commit
 
@@ -205,7 +205,7 @@ GIT_COMMITTER_NAME="<бот>" GIT_COMMITTER_EMAIL="<номер>+<бот>@users.n
 
 The subject — `type(scope): description`. Types: `feat`, `fix`, `refactor`, `docs`, `style`,
 `test`, `chore`, `perf`. Scopes: `site`, `admin`, `api`, `common`, `proto`, `deploy`. A full stop
-at the end of the subject is not accepted; the length — up to 150 characters.
+at the end of the subject is not accepted; the length — up to 150 characters. The letter case is checked as well, by the `subject-case` rule of the commit check: a word in capitals, such as a file name, can trip it, so the allowed case is read in the commit check settings before the subject is written.
 
 ```
 feat(<область>): availability calendar with season prices
@@ -235,6 +235,10 @@ is mandatory:
 ```
 Docs-skip: правка только в тестах хука, зеркала у него нет
 ```
+
+The guard looks for the `Docs-skip` line in the command text only. A message read from a file by
+`git commit -F <file>` is invisible to it and the commit is refused; the body goes inside the command,
+as in `git commit -F -` with the text after it.
 
 ## Common misses
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.31.0 · checks/task-new.github.mjs · b8af6c8c69ce · правится надстройкой, не здесь
+// rt-kit v0.32.0 · checks/task-new.github.mjs · 25445da930f9 · правится надстройкой, не здесь
 /**
  * Creating the task an edit starts with.
  *
@@ -194,6 +194,30 @@ const labels = args.epic && !args.labels.includes(EPIC_LABEL) ? [...args.labels,
  * is read off the task itself.
  */
 const token = botToken() ?? undefined;
+
+/**
+ * A label that is not in the repository breaks the creation whole: the hosting refuses the call
+ * with one line about a label that could not be added, and neither a card nor a number exists. The
+ * labels are asked before the creation, and the refusal names the missing ones, the existing ones
+ * and the fact that no task was created. The list that cannot be read — offline, no right — does
+ * not hold the creation: the hosting will refuse by itself if the label is really missing.
+ */
+if (labels.length > 0) {
+    let existing = null;
+    try {
+        existing = ghJson(['label', 'list', '--repo', `${OWNER}/${REPO}`, '--limit', '200', '--json', 'name'], { token }).map(
+            (label) => label.name
+        );
+    } catch {
+        existing = null;
+    }
+    const missing = existing === null ? [] : labels.filter((label) => !existing.includes(label));
+    if (missing.length > 0) {
+        fail(
+            `no task was created: the labels ${missing.map((label) => `«${label}»`).join(', ')} are not in the repository. Existing: ${existing.join(', ')}`
+        );
+    }
+}
 
 /**
  * The plan of the epic and the line about it in the card body.

@@ -7,6 +7,7 @@ statement: a removed statement is removed together with its line.
 - **The guard stands on taking new work, not on the end of a turn.** — `projects/agent-kit/assets/hooks/epic-stop-guard.sh:takes_work` — a branch by a number, a created task, a column moved to the working one; scenarios `SC-AK-979`, `SC-AK-982`, `SC-AK-986`
 - **The epic is over when no task of it is left unfinished.** — `projects/agent-kit/assets/checks/epic-table.github.mjs:unfinished` — the numbers of the unfinished ones, one per line; scenario `SC-AK-980`
 - **The refusal names the stop, not only the ban.** — `projects/agent-kit/assets/hooks/epic-stop-guard.sh:reason` — the table command and the line about waiting; scenario `SC-AK-981`
+- **The refusal says up to which call a new epic needs the bypass line.** — `projects/agent-kit/assets/hooks/epic-stop-guard.sh:reason` — the sentence about the card, the tasks and the branch of the new epic; scenario `SC-AK-1227`
 - **The order to go on is carried in the call itself.** — `projects/agent-kit/assets/hooks/epic-stop-guard.sh:Epic-stop-skip` — an empty reason is not a bypass; scenario `SC-AK-983`
 - **The owner's message or menu answer that names the number of the work releases the call.** — `projects/agent-kit/assets/hooks/epic-stop-guard.sh:named` — the number is `taken`, read from the call; scenario `SC-AK-1201`
 - **The state of the epic is asked by the same command that prints the table.** — `projects/agent-kit/assets/checks/epic-table.github.mjs:gathered` — one reading for both answers of the command

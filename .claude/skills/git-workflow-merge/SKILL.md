@@ -4,7 +4,7 @@ kind: pattern
 rule: git-workflow
 description: Pattern of rule git-workflow. Load when the base of a branch is merged into it and a conflict is resolved — the merge order, handling by file kind, checking what was appended against the work queue, re-reading the body of the open request. Branch and commit — pattern git-workflow-commit.
 ---
-<!-- rt-kit v0.31.0 · patterns/git-workflow-merge.md · 434f89fbbfa2 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.32.0 · patterns/git-workflow-merge.md · 5ceb1171ded8 · правится надстройкой, не здесь -->
 
 # Merging the base of a branch into it
 
@@ -113,6 +113,18 @@ grep -rn '^<<<<<<< \|^>>>>>>> ' --exclude-dir=node_modules --exclude-dir=.git .
 npm run check:docs && npm run check:specs && npm run check:dupes && npm run check:board
 bash .claude/hooks/tests/run.sh       # if the conflict touched the hooks
 ```
+
+A merge without conflicts is not exempt: two branches can declare the same value apart, and the
+merge joins them silently — the duplicate check turns red only at the push. After every merge of the
+base, a conflict-free one included, the duplicate and the styles checks run (`npm run check:dupes`
+and `npm run check:styles`), and the value moves to its one shared place; no line goes into the
+known list.
+
+**After a merge of the base, the migrations it brought are read.** Those that set the rights of a
+role are opened. A branch migration that writes a role's full set of rights drops any right the base
+added meanwhile; git sees two different files and marks no conflict, and the fall shows later as a
+failing test on the count of rights, easy to take for a test error. The lost right returns by a new
+migration of the branch.
 
 The merge commit is signed by the bot the same way as any other — pattern
 `git-workflow-commit`. After the push the state is read from the PR itself, not from one's own
