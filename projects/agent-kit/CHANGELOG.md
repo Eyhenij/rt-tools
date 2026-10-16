@@ -1,3 +1,15 @@
+# [0.32.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit%400.31.0...rt-agent-kit%400.32.0) (2026-10-16)
+
+### Bug Fixes
+
+- **rt:agent-kit:** отказ ветки при коде 2 дублируется в поток ошибок ([e8bee04](https://github.com/Eyhenij/rt-tools/commit/e8bee04a16c6970e3e3c48c9fddcf2e60cd4a94c))
+
+### Features
+
+- **rt:agent-kit:** влитый эпик не требуется основанием, отказы и проверки называют причину ([2a2c1db](https://github.com/Eyhenij/rt-tools/commit/2a2c1db08ebc2c3385c4f878c8e2488f42e6b8e4))
+- **rt:agent-kit:** особенность «макеты» несёт закон, правило и образец про рисунки экранов ([df6dfd4](https://github.com/Eyhenij/rt-tools/commit/df6dfd429df8c2f8de0a0885f9246eec72b59240))
+- **rt:agent-kit:** повторная постановка правил называет загруженные, чтение кодом не запись ([45e44b9](https://github.com/Eyhenij/rt-tools/commit/45e44b962e5046840d5c40bae19e1449ea85ecb1))
+
 # [0.31.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit@0.30.1...rt-agent-kit@0.31.0) (2026-10-10)
 
 ### Features
