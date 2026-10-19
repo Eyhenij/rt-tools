@@ -1,3 +1,9 @@
+# [0.25.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.24.0...rt-ui-kit-v2%400.25.0) (2026-10-19)
+
+### Features
+
+- **rt:ui-kit-v2:** ширина ленты и поля ввода rt-ai-chat задаётся токеном ([53ae77e](https://github.com/Eyhenij/rt-tools/commit/53ae77e4298d3f1f98528d0cee8ffb3098aeb311)), closes [#2885](https://github.com/Eyhenij/rt-tools/issues/2885)
+
 # [0.24.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.23.4...rt-ui-kit-v2%400.24.0) (2026-10-15)
 
 ### Bug Fixes
