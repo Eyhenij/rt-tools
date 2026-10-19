@@ -23,7 +23,8 @@ import {
 } from './ai-chat.fixture';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TAiChatMatrixPart = 'empty' | 'answer' | 'error' | 'threads' | 'fullScreen' | 'long' | 'extra' | 'presets' | 'themes';
+export type TAiChatMatrixPart =
+    'empty' | 'answer' | 'error' | 'threads' | 'fullScreen' | 'readingColumn' | 'long' | 'extra' | 'presets' | 'themes';
 
 /** Случай панели: подпись ячейки и то, что приходит входами. */
 interface IAiChatCase {
