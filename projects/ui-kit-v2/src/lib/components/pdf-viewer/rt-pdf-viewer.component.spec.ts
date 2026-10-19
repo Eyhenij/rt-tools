@@ -202,6 +202,18 @@ describe('RtPdfViewerComponent', (): void => {
             expect(text('pdf-viewer-zoom')).toBe('Fit to width');
         });
 
+        it('кнопка «По ширине» нажата, пока окно в этом режиме', async (): Promise<void> => {
+            open((): Promise<IRtPdfViewer.PdfJs> => Promise.resolve(fakePdfJs()));
+            await settle();
+            node('pdf-viewer-fit')?.click();
+            await settle();
+            expect(node('pdf-viewer-fit')?.getAttribute('aria-pressed')).toBe('true');
+
+            await press('pdf-viewer-zoom-in');
+
+            expect(node('pdf-viewer-fit')?.getAttribute('aria-pressed')).toBe('false');
+        });
+
         it('«+» и «−» ходят по ступеням, а на нижней границе «−» выключен', async (): Promise<void> => {
             open((): Promise<IRtPdfViewer.PdfJs> => Promise.resolve(fakePdfJs()));
             await settle();
@@ -258,6 +270,18 @@ describe('RtPdfViewerComponent', (): void => {
             document.querySelector('rt-pdf-viewer')?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
 
             await expect(closed).resolves.toBeUndefined();
+        });
+
+        it('Escape не уходит к окну под просмотрщиком', async (): Promise<void> => {
+            open((): Promise<IRtPdfViewer.PdfJs> => Promise.resolve(fakePdfJs()));
+            await settle();
+            const below: (event: KeyboardEvent) => void = jest.fn();
+            document.body.addEventListener('keydown', below);
+
+            document.querySelector('rt-pdf-viewer')?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+
+            document.body.removeEventListener('keydown', below);
+            expect(below).not.toHaveBeenCalled();
         });
 
         it('фокус возвращается туда, откуда окно открыли', async (): Promise<void> => {

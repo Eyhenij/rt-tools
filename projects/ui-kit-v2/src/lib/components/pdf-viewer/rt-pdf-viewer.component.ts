@@ -95,7 +95,7 @@ interface IRenderedPage {
         '[attr.aria-label]': 'fileName',
         // Клавиши слушает сам просмотрщик, поэтому фокус переводится на него сразу после открытия
         tabindex: '-1',
-        '(keydown.escape)': 'close()',
+        '(keydown.escape)': 'onEscape($event)',
         '(window:resize)': 'onResize()',
     },
 })
@@ -179,6 +179,12 @@ export class RtPdfViewerComponent {
 
     public close(): void {
         this.#dialogRef.close();
+    }
+
+    /** Esc закрывает только окно: окно под ним, например боковая панель, остаётся открытым */
+    protected onEscape(event: Event): void {
+        event.stopPropagation();
+        this.close();
     }
 
     protected zoomIn(): void {

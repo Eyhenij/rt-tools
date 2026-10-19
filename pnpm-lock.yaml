@@ -716,7 +716,7 @@ importers:
         specifier: ^0.4.1
         version: 0.4.1
       pdfjs-dist:
-        specifier: 6.4.299
+        specifier: ^6.4.299
         version: 6.4.299
       quill:
         specifier: ^2.0.3
