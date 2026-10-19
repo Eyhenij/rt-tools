@@ -23,6 +23,16 @@ import { RtChatComponent, RtMessageComposerComponent, RtRichEditorComponent } fr
 
 Основной вход quill не называет, и приложение без этих трёх компонентов собирается без него.
 
+`pdfjs-dist` нужен только тем, кто открывает просмотрщик документа PDF. Он стоит отдельным входом
+`@rt-tools/ui-kit-v2/pdf-viewer`, а файл воркера `pdf.worker.min.mjs` приложение кладёт себе в
+`assets/pdfjs/` при сборке — подробности на странице обзора `rt-pdf-viewer`:
+
+```typescript
+import { RtPdfViewerComponent } from '@rt-tools/ui-kit-v2/pdf-viewer';
+```
+
+Основной вход `pdfjs-dist` не называет, и приложение без просмотрщика собирается без него.
+
 ### Точки входа компонентов
 
 Каждый компонент собран своей точкой входа по имени своего каталога: `@rt-tools/ui-kit-v2/table`,
