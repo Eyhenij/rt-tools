@@ -645,3 +645,13 @@ Then the console gets no NG01354 warning, the host form keeps only its own contr
 with Enter applies the edit as before
 
 Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/dynamic-input/rt-dynamic-input-host-form.spec.ts`.
+
+### SC-UKV-940 — the inner fields of other kit components stay out of the host form
+
+Given one of seven kit components inside the host's form group: a select with a filter, a tree
+selector, a profile menu with locales, a filter control on a narrow screen, a theme toggle as a
+switch, workspace details with an agent and toggles, or a selectable dynamic list
+When its inner field is shown, and the select panel and the agent edit are opened by a press
+Then the console gets no NG01354 warning, and the host form keeps only its own controls
+
+Covered: `projects/ui-kit-v2/src/lib/components/rt-host-form-ngmodel.spec.ts`.

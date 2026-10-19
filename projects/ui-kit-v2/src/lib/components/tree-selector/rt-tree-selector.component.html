@@ -12,6 +12,7 @@
             [placeholder]="searchLabel()"
             [ariaLabel]="searchLabel()"
             [ngModel]="term()"
+            [ngModelOptions]="{ standalone: true }"
             (ngModelChange)="onTerm($event)"
             (keydown)="onSearchKeydown($event)" />
 

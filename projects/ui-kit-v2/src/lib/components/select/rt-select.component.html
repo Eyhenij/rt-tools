@@ -97,6 +97,7 @@
                         iconLeft="ico-search"
                         [placeholder]="filterPlaceholderText()"
                         [ngModel]="filterTerm()"
+                        [ngModelOptions]="{ standalone: true }"
                         (ngModelChange)="setFilter($event)" />
                 </div>
             }

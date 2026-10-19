@@ -554,9 +554,11 @@ data-preset="material" floatingLabel>` drew the border through the risen label: 
   without the edit and green with it. Checked live on :6007: story StringList — the pencil opens
   the field with the row value, Enter replaces `north@example.test` by the typed text, the new-row
   field opens; story Popup — the search narrows 5 rows to 0 and back. No console warning or error.
-    - Not fixed: the same unguarded `ngModel` stands in the select filter, the tree selector search,
-      the profile menu locale, the filter control, the theme toggle, the workspace details and the
-      dynamic list header. They wait for the owner's word.
+- **2026-10-19, request 14 (the owner's word through the application's session): the other seven.**
+  The select filter, the tree selector search, the profile menu locale, the filter control, the
+  theme toggle, the workspace details (agent select and toggles) and the dynamic list header now
+  carry `[ngModelOptions]="{ standalone: true }"` too. SC-UKV-940 hosts each inside a
+  `[formGroup]`: 8 cases red without the edit, green with it.
 
 ## Sessions
 
@@ -583,19 +585,14 @@ The progress in full — `docs/tasks/RT-2812-kit2-field-label-icon-actions/progr
 ### Uncommitted
 
 ```
- M docs/specs/ui-kit-v2/proposed/field-label-icon-actions/scenarios.md
- M docs/tasks/RT-2812-kit2-field-label-icon-actions/progress.md
- M projects/ui-kit-v2/src/lib/components/field/Overview.mdx
- M projects/ui-kit-v2/src/lib/components/field/rt-field-label-inside.scss
- M projects/ui-kit-v2/src/lib/components/field/rt-field-material-metrics.spec.ts
- M projects/ui-kit-v2/src/lib/components/field/stories/component/field-material-cases.ts
- M projects/ui-kit-v2/src/lib/components/field/stories/component/test-field-material.component.ts
- M projects/ui-kit-v2/src/lib/components/textarea/rt-textarea.component.scss
+none
 ```
 
 ### Commits over the main branch
 
 ```
+1e1516d3d fix(rt:ui-kit-v2): поля динамического селектора внутри формы страницы не пишут NG01354
+6907474e3 fix(rt:ui-kit-v2): залитое поле без подписи под материальным набором не держит места под неё
 b5dd14bb8 fix(rt:ui-kit-v2): свой вид поля с крестиком прежний, ветка после слияния с main снова проходит проверки
 dffd422be Merge remote-tracking branch 'origin/main' into RT-2812-kit2-field-label-icon-actions
 bdd7f0299 feat(rt:ui-kit-v2): крестик и поля под материальным набором как у Material, вид «чипы» у группы переключателей
