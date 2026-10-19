@@ -655,3 +655,11 @@ When its inner field is shown, and the select panel and the agent edit are opene
 Then the console gets no NG01354 warning, and the host form keeps only its own controls
 
 Covered: `projects/ui-kit-v2/src/lib/components/rt-host-form-ngmodel.spec.ts`.
+
+### SC-UKV-941 — a value the form writes back during typing shows in the input
+
+Given an input bound to a form control that shows a value
+When the person empties it, and the host sets the control back to that same value in the same call
+Then the field shows the value again, and the control holds it
+
+Covered: `projects/ui-kit-v2/src/lib/components/input/rt-input.component.spec.ts`.

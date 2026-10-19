@@ -559,6 +559,12 @@ data-preset="material" floatingLabel>` drew the border through the risen label: 
   theme toggle, the workspace details (agent select and toggles) and the dynamic list header now
   carry `[ngModelOptions]="{ standalone: true }"` too. SC-UKV-940 hosts each inside a
   `[formGroup]`: 8 cases red without the edit, green with it.
+- **2026-10-19, request 15 (the application's session): an emptied input stays empty.** The host
+  set the control back to the value drawn before the typing, in the same call stack as the input
+  event. The signal then equalled the last drawn value, the `[value]` binding did not fire, and
+  the field kept the typed text while the control held the old one. `writeValue` of the input now
+  writes the value into the field whenever the two differ. SC-UKV-941 is red without the edit and
+  green with it.
 
 ## Sessions
 
@@ -591,6 +597,7 @@ none
 ### Commits over the main branch
 
 ```
+54c0407ba fix(rt:ui-kit-v2): поля выбора, поиска и переключатели кита внутри формы страницы не пишут NG01354
 1e1516d3d fix(rt:ui-kit-v2): поля динамического селектора внутри формы страницы не пишут NG01354
 6907474e3 fix(rt:ui-kit-v2): залитое поле без подписи под материальным набором не держит места под неё
 b5dd14bb8 fix(rt:ui-kit-v2): свой вид поля с крестиком прежний, ветка после слияния с main снова проходит проверки

@@ -190,6 +190,19 @@ export class RtInputComponent extends RtFormControlBase<string> {
     /** Нажатие правой иконки-кнопки. */
     public readonly iconRightClick: OutputEmitterRef<MouseEvent> = output<MouseEvent>();
 
+    /**
+     * Форма может вернуть полю прежнее значение в том же стеке, что и ввод: сигнал тогда равен
+     * последнему отрисованному, привязка `[value]` не срабатывает, и поле остаётся с набранным.
+     * Поэтому расхождение с полем пишется в него сразу.
+     */
+    public override writeValue(value: string | null): void {
+        super.writeValue(value);
+        const field: HTMLInputElement | undefined = this.fieldEl()?.nativeElement;
+        if (field && field.value !== this.value()) {
+            field.value = this.value();
+        }
+    }
+
     protected getEmptyValue(): string {
         return '';
     }

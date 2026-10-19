@@ -27,6 +27,23 @@ class InputDisabledHostComponent {
     public readonly control: FormControl<string | null> = new FormControl<string | null>({ value: '', disabled: true });
 }
 
+/** Родитель в том же стеке, что и ввод, возвращает контролу прежнее значение. */
+@Component({
+    selector: 'rt-input-revert-host',
+    template: '<rt-input [formControl]="control" />',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtInputComponent, ReactiveFormsModule],
+})
+class InputRevertHostComponent {
+    public readonly control: FormControl<string | null> = new FormControl<string | null>('12/08/2026');
+
+    constructor() {
+        this.control.valueChanges.subscribe((): void => {
+            this.control.setValue('12/08/2026', { emitEvent: false, emitViewToModelChange: false });
+        });
+    }
+}
+
 function setup(inputs: Readonly<Record<string, unknown>> = {}): ComponentFixture<RtInputComponent> {
     return createRtFixture(RtInputComponent, inputs);
 }
@@ -276,6 +293,15 @@ describe('RtInputComponent', (): void => {
             const control: RtInputComponent = el(fixture, 'rt-input')?.componentInstance as RtInputComponent;
 
             expect(control.required()).toBe(true);
+        });
+
+        it('SC-UKV-941 — значение, записанное формой в стеке ввода, видно в поле, хоть и совпадает с прежним', (): void => {
+            const fixture: ComponentFixture<InputRevertHostComponent> = createRtFixture(InputRevertHostComponent);
+
+            type(fixture, '');
+
+            expect(fixture.componentInstance.control.value).toBe('12/08/2026');
+            expect(field(fixture).value).toBe('12/08/2026');
         });
 
         it('отключение формой отключает нативное поле', (): void => {
