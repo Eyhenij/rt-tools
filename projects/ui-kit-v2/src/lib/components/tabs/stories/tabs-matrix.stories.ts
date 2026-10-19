@@ -28,6 +28,9 @@ export const Stretch: TStory = { args: { part: 'stretch' } };
 
 export const Edges: TStory = { args: { part: 'edges' } };
 
+/** Переполненная полоса: стрелки поверх вкладок и стрелки в своих местах, неактивная — бледная. */
+export const ScrollArrows: TStory = { args: { part: 'scrollArrows' } };
+
 /** Закрываемые вкладки: крестик и Delete просят хозяина убрать вкладку; у отключённой крестика нет. */
 export const Closable: TStory = { args: { part: 'closable' } };
 

@@ -90,6 +90,33 @@
             }
         }
 
+        /* Стрелки в своих местах: при переполнении обе стоят по краям, полоса между ними уже.
+           Стрелка в сторону, куда прокручивать некуда, бледнеет и не нажимается. Черта снизу
+           продолжает черту полосы под стрелками. */
+        &__tab-list-wrapper--inline {
+            align-items: stretch;
+
+            .rt-tabs__rest {
+                position: static;
+                display: none;
+                flex-shrink: 0;
+                border: 0;
+                border-bottom: var(--rt-tabs-border-width) solid var(--rt-color-border-default);
+                background-color: transparent;
+            }
+
+            &.rt-tabs__tab-list-wrapper--overflowing .rt-tabs__rest {
+                display: flex;
+                visibility: visible;
+            }
+
+            .rt-tabs__rest--inactive {
+                color: var(--rt-color-text-disabled);
+                cursor: default;
+                pointer-events: none;
+            }
+        }
+
         &__controls {
             display: flex;
             flex-shrink: 0;
@@ -146,15 +173,18 @@
             background-color var(--rt-tab-item-transition-duration) linear;
         white-space: nowrap;
 
-        /* Нижний индикатор активной вкладки — поверх border-bottom полосы. */
+        /* Нижний индикатор активной вкладки — поверх border-bottom полосы. Сдвиг вниз на толщину
+           черты задан через translate, а не calc: `calc(-1 * 0)` даёт число без единиц, bottom
+           с ним недействителен, и при токене `0` полоса уходила в середину вкладки. */
         &:after {
             position: absolute;
-            bottom: calc(-1 * var(--rt-tab-item-border-width));
+            bottom: 0;
             height: 2px;
             background-color: transparent;
             content: '';
             inset-inline: 0;
             pointer-events: none;
+            translate: 0 var(--rt-tab-item-border-width);
         }
 
         &:hover:not(.rt-tab-item--disabled, .rt-tab-item--selected) {

@@ -8,14 +8,14 @@
             </div>
         }
 
-        <div rtElem="tab-list-wrapper">
+        <div rtElem="tab-list-wrapper" [rtMod]="{ inline: scrollArrows() === 'inline', overflowing: overflowing() }">
             <div
                 rtElem="rest"
                 qa-dataid="tabs-scroll-prev"
-                [rtMod]="{ before: true, visible: restBeforeVisible() }"
+                [rtMod]="{ before: true, visible: restBeforeVisible(), inactive: !restBeforeVisible() }"
                 (mousedown)="onRestPointerDown('before', $event)"
                 (mouseup)="onRestPointerUp()"
-                (mouseleave)="onRestPointerUp()">
+                (mouseleave)="onRestPointerLeave()">
                 <rt-icon name="chevron-left" color="current" size="sm" />
             </div>
 
@@ -46,7 +46,7 @@
                         [attr.data-tabid]="tab.id()"
                         [attr.aria-selected]="tab.id() === selectedId()"
                         [attr.aria-controls]="headerOnly() ? null : 'rt-tabpanel-' + tab.id()"
-                        [attr.tabindex]="tab.id() === selectedId() ? 0 : -1"
+                        [attr.tabindex]="tab.id() === focusId() ? 0 : -1"
                         [rtTooltip]="tab.buttonTooltip()"
                         (click)="selectTab(tab.id())"
                         (keydown)="onTabKeydown($event, tab)">
@@ -79,10 +79,10 @@
             <div
                 rtElem="rest"
                 qa-dataid="tabs-scroll-next"
-                [rtMod]="{ after: true, visible: restAfterVisible() }"
+                [rtMod]="{ after: true, visible: restAfterVisible(), inactive: !restAfterVisible() }"
                 (mousedown)="onRestPointerDown('after', $event)"
                 (mouseup)="onRestPointerUp()"
-                (mouseleave)="onRestPointerUp()">
+                (mouseleave)="onRestPointerLeave()">
                 <rt-icon name="chevron-right" color="current" size="sm" />
             </div>
         </div>

@@ -40,6 +40,9 @@ const SCROLL_STEP: number = 12;
 /** Интервал тика прокрутки при зажатой стрелке (мс). */
 const SCROLL_TICK_MS: number = 15;
 
+/** Сколько держать стрелку, чтобы нажатие стало прокруткой по удержанию, а не шагом на страницу (мс). */
+const HOLD_DELAY_MS: number = 300;
+
 /** Дебаунс пересчёта видимости стрелок прокрутки на resize/scroll (мс). */
 const REST_DEBOUNCE_MS: number = 50;
 
@@ -58,11 +61,13 @@ type TScrollDirection = 'before' | 'after';
  * эмиттят `activeIdChange`; синхронизацию `activeId` оставляем потребителю.
  *
  * Горизонтальная полоса при переполнении прячет вкладки под скролл и показывает
- * стрелки-«хвосты» (`__rest`) с прокруткой по удержанию. Вертикальная ориентация
- * раскладывает вкладки в колонку без стрелок.
+ * стрелки-«хвосты» (`__rest`): нажатие сдвигает полосу на ширину видимой области, удержание
+ * прокручивает непрерывно. Стрелки стоят поверх вкладок или, при `scrollArrows="inline"`, в своих
+ * местах по краям. Вертикальная ориентация раскладывает вкладки в колонку без стрелок.
  *
  * Доступность: `role="tablist"`/`role="tab"`/`role="tabpanel"`, `aria-selected`,
- * roving `tabindex`, навигация стрелками + Home/End.
+ * roving `tabindex`, навигация стрелками + Home/End; при `activation="manual"` они только
+ * переводят фокус, а вкладку открывают Enter и Space.
  */
 @Component({
     selector: 'rt-tabs',
@@ -138,9 +143,24 @@ export class RtTabsComponent {
         (): RtTabDirective | null => this.visibleTabs().find((tab: RtTabDirective): boolean => tab.id() === this.selectedId()) ?? null
     );
 
+    /**
+     * Вкладка в таб-порядке: та, на которую стрелками перевели фокус в ручном режиме, иначе
+     * активная. Фокус на вкладке, которой больше нет или которая отключилась, не держится.
+     */
+    protected readonly focusId: Signal<IRtTabs.Id | null> = computed((): IRtTabs.Id | null => {
+        const focused: IRtTabs.Id | null = this.#focusedId();
+        const valid: boolean =
+            focused !== null && this.visibleTabs().some((tab: RtTabDirective): boolean => tab.id() === focused && !tab.disabled());
+
+        return valid ? focused : this.selectedId();
+    });
+
     /** Видны ли стрелки прокрутки слева/справа (только горизонтальная полоса). */
     protected readonly restBeforeVisible: WritableSignal<boolean> = signal(false);
     protected readonly restAfterVisible: WritableSignal<boolean> = signal(false);
+
+    /** Полоса шире своего места: в раскладке `inline` по этому признаку встают обе стрелки. */
+    protected readonly overflowing: Signal<boolean> = computed((): boolean => this.restBeforeVisible() || this.restAfterVisible());
 
     protected readonly tabListRef: Signal<ElementRef<HTMLElement> | undefined> = viewChild<ElementRef<HTMLElement>>('tabList');
 
@@ -169,6 +189,12 @@ export class RtTabsComponent {
         transform: booleanAttribute,
     });
 
+    /** Стрелки и Home/End открывают вкладку сразу (`auto`) или только переводят фокус (`manual`). */
+    public readonly activation: InputSignal<IRtTabs.Activation> = input<IRtTabs.Activation>('auto');
+
+    /** Стрелки прокрутки поверх вкладок (`overlay`) или в своих местах по краям полосы (`inline`). */
+    public readonly scrollArrows: InputSignal<IRtTabs.ScrollArrows> = input<IRtTabs.ScrollArrows>('overlay');
+
     /** Эмиттит id вкладки при её выборе (клик/клавиатура). */
     public readonly activeIdChange: OutputEmitterRef<IRtTabs.Id> = output<IRtTabs.Id>();
 
@@ -183,8 +209,17 @@ export class RtTabsComponent {
     /** Внутренний выбор (uncontrolled-ветка). */
     readonly #internalId: WritableSignal<IRtTabs.Id | null> = signal<IRtTabs.Id | null>(null);
 
+    /** Вкладка, на которую перевели фокус стрелками в ручном режиме; сбрасывается выбором. */
+    readonly #focusedId: WritableSignal<IRtTabs.Id | null> = signal<IRtTabs.Id | null>(null);
+
     /** Хэндл интервала прокрутки по удержанию стрелки. */
     #scrollIntervalId: number | null = null;
+
+    /** Хэндл ожидания, после которого нажатие на стрелку становится удержанием. */
+    #holdTimeoutId: number | null = null;
+
+    /** Стрелка, нажатая и ещё не отпущенная. */
+    #pressed: TScrollDirection | null = null;
 
     constructor() {
         if (this.#win) {
@@ -208,6 +243,7 @@ export class RtTabsComponent {
         }
 
         this.#internalId.set(id);
+        this.#focusedId.set(null);
         this.activeIdChange.emit(id);
         this.#scrollTabIntoView(id);
     }
@@ -218,14 +254,17 @@ export class RtTabsComponent {
         this.#close(tab, false);
     }
 
-    /** Навигация по вкладкам с клавиатуры (automatic activation). */
+    /**
+     * Навигация по вкладкам с клавиатуры. Шаг считается от вкладки в фокусе: в ручном режиме она
+     * не совпадает с активной. Enter и Space ловит сама кнопка — они дают click и выбор.
+     */
     protected onTabKeydown(event: KeyboardEvent, tab: RtTabDirective): void {
         if (event.key === 'Delete') {
             this.#closeByKey(event, tab);
             return;
         }
 
-        const enabled: readonly RtTabDirective[] = this.visibleTabs().filter((tab: RtTabDirective): boolean => !tab.disabled());
+        const enabled: readonly RtTabDirective[] = this.visibleTabs().filter((item: RtTabDirective): boolean => !item.disabled());
 
         if (!enabled.length) {
             return;
@@ -234,7 +273,7 @@ export class RtTabsComponent {
         const isVertical: boolean = this.direction() === 'vertical';
         const nextKey: string = isVertical ? 'ArrowDown' : 'ArrowRight';
         const prevKey: string = isVertical ? 'ArrowUp' : 'ArrowLeft';
-        const currentIndex: number = enabled.findIndex((tab: RtTabDirective): boolean => tab.id() === this.selectedId());
+        const currentIndex: number = enabled.findIndex((item: RtTabDirective): boolean => item.id() === tab.id());
 
         // Карта клавиша → целевой индекс (без if/else-if цепочки).
         const moveByKey: ReadonlyMap<string, number> = new Map<string, number>([
@@ -252,23 +291,50 @@ export class RtTabsComponent {
 
         event.preventDefault();
         const targetId: IRtTabs.Id = enabled[targetIndex].id();
-        this.selectTab(targetId);
+
+        if (this.activation() === 'manual') {
+            this.#focusedId.set(targetId);
+            this.#scrollTabIntoView(targetId);
+        } else {
+            this.selectTab(targetId);
+        }
         this.#focusTab(targetId);
     }
 
-    /** Старт прокрутки полосы по удержанию ЛКМ на стрелке. */
+    /**
+     * Нажатие ЛКМ на стрелку. Отпущенная до `HOLD_DELAY_MS` стрелка сдвигает полосу на ширину
+     * видимой области, удержанная дольше — прокручивает её непрерывно, пока не отпустят.
+     */
     protected onRestPointerDown(direction: TScrollDirection, event: MouseEvent): void {
-        if (event.button !== 0 || this.#scrollIntervalId !== null || !this.#win) {
+        if (event.button !== 0 || this.#pressed !== null || !this.#win) {
             return;
         }
 
-        this.#scrollIntervalId = this.#win.setInterval((): void => {
-            this.#scrollStep(direction);
-            this.#updateRestVisibility();
-        }, SCROLL_TICK_MS);
+        this.#pressed = direction;
+        this.#holdTimeoutId = this.#win.setTimeout((): void => {
+            this.#holdTimeoutId = null;
+            this.#scrollIntervalId =
+                this.#win?.setInterval((): void => {
+                    this.#scrollStep(direction);
+                    this.#updateRestVisibility();
+                }, SCROLL_TICK_MS) ?? null;
+        }, HOLD_DELAY_MS);
     }
 
+    /** Стрелку отпустили: короткое нажатие — шаг на страницу, после удержания — только стоп. */
     protected onRestPointerUp(): void {
+        const direction: TScrollDirection | null = this.#pressed;
+        const shortPress: boolean = this.#holdTimeoutId !== null;
+
+        this.#clearScrollInterval();
+
+        if (direction !== null && shortPress) {
+            this.#scrollPage(direction);
+        }
+    }
+
+    /** Указатель ушёл со стрелки: прокрутка останавливается, шага на страницу нет. */
+    protected onRestPointerLeave(): void {
         this.#clearScrollInterval();
     }
 
@@ -318,10 +384,29 @@ export class RtTabsComponent {
     }
 
     #clearScrollInterval(): void {
+        this.#pressed = null;
+        if (this.#win && this.#holdTimeoutId !== null) {
+            this.#win.clearTimeout(this.#holdTimeoutId);
+            this.#holdTimeoutId = null;
+        }
         if (this.#win && this.#scrollIntervalId !== null) {
             this.#win.clearInterval(this.#scrollIntervalId);
             this.#scrollIntervalId = null;
         }
+    }
+
+    /** Сдвиг полосы на ширину её видимой области, не дальше края. */
+    #scrollPage(direction: TScrollDirection): void {
+        const list: HTMLElement | undefined = this.tabListRef()?.nativeElement;
+        if (!list) {
+            return;
+        }
+
+        const max: number = Math.max(0, list.scrollWidth - list.clientWidth);
+        const shift: number = direction === 'before' ? -list.clientWidth : list.clientWidth;
+
+        list.scrollLeft = Math.min(max, Math.max(0, list.scrollLeft + shift));
+        this.#updateRestVisibility();
     }
 
     #scrollStep(direction: TScrollDirection): void {
@@ -335,7 +420,7 @@ export class RtTabsComponent {
         const remaining: number = direction === 'before' ? scrolledLeft : scrolledRight;
 
         if (remaining > 0) {
-            list.scrollBy(direction === 'before' ? -SCROLL_STEP : SCROLL_STEP, 0);
+            list.scrollLeft += direction === 'before' ? -Math.min(SCROLL_STEP, remaining) : Math.min(SCROLL_STEP, remaining);
         }
 
         if (remaining - SCROLL_STEP <= 0) {

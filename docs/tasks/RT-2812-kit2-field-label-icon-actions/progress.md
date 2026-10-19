@@ -565,6 +565,15 @@ data-preset="material" floatingLabel>` drew the border through the risen label: 
   the field kept the typed text while the control held the old one. `writeValue` of the input now
   writes the value into the field whenever the two differ. SC-UKV-941 is red without the edit and
   green with it.
+- **2026-10-19, request 16 (the application's session): tabs keys and scroll arrows.** Four
+  points measured against the material tab group in a side panel with eight tabs. New input
+  `activation` (`auto` by default, `manual` moves focus only, Enter and Space open) — SC-UKV-942.
+  A short press on a scroll arrow now pages the list by its visible width; a hold over 300 ms
+  scrolls on as before — SC-UKV-943. New input `scrollArrows` (`overlay` by default, `inline`
+  puts both arrows beside the list, the idle one pale) — SC-UKV-944, story ScrollArrows. The
+  selected tab bar is offset by `translate`, so a zero border width keeps it at the bottom —
+  SC-UKV-945. 10 cases red without the edit, green with it. Not checked live: the owner stopped
+  the showcase on :6007 in the same hour.
 
 ## Sessions
 

@@ -5,11 +5,22 @@ import { StoryPresetsComponent } from '../../../../../showcase/story-presets.com
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtTabDirective } from '../../rt-tab.directive';
 import { RtTabsComponent } from '../../rt-tabs.component';
+import { IRtTabs } from '../../rt-tabs.model';
 import { TestRtTabsLiveComponent } from './test-tabs-live.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
 export type TTabsMatrixPart =
-    'direction' | 'title' | 'tabState' | 'stretch' | 'edges' | 'closable' | 'iconOnly' | 'headerOnly' | 'presets' | 'themes';
+    | 'direction'
+    | 'title'
+    | 'tabState'
+    | 'stretch'
+    | 'edges'
+    | 'scrollArrows'
+    | 'closable'
+    | 'iconOnly'
+    | 'headerOnly'
+    | 'presets'
+    | 'themes';
 
 /**
  * Матрицы состояний `rt-tabs` и `[rtTab]` для витрины.
@@ -157,6 +168,22 @@ export type TTabsMatrixPart =
                 </app-story-presets>
             }
 
+            @case ('scrollArrows') {
+                <app-story-presets caption="Стрелки прокрутки переполненной полосы в обоих наборах: поверх вкладок и в своих местах">
+                    <ng-template>
+                        <app-story-row slotWidth="24rem" [items]="arrowPlacements">
+                            <ng-template let-placement>
+                                <rt-tabs activeId="t1" [scrollArrows]="placement">
+                                    @for (index of many; track index) {
+                                        <ng-template [rtTab]="'t' + index" [label]="'Раздел ' + index">Содержимое</ng-template>
+                                    }
+                                </rt-tabs>
+                            </ng-template>
+                        </app-story-row>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('closable') {
                 <app-story-presets caption="Закрываемые вкладки в обоих наборах: крестик или Delete на вкладке в фокусе">
                     <ng-template>
@@ -273,6 +300,9 @@ export class TestRtTabsMatrixComponent {
     ];
 
     public readonly iconCases: readonly string[] = ['glyph и подсказка', 'glyph и подпись'];
+
+    /** Где стоят стрелки прокрутки: поверх вкладок и в своих местах по краям. */
+    public readonly arrowPlacements: readonly IRtTabs.ScrollArrows[] = ['overlay', 'inline'];
 
     /** Полоса, не влезающая в ширину: показывает стрелки прокрутки по краям. */
     public readonly many: readonly number[] = [1, 2, 3, 4, 5, 6, 7, 8];

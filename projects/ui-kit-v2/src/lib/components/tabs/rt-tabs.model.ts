@@ -11,6 +11,19 @@ export namespace IRtTabs {
     /** Ориентация полосы вкладок. */
     export type Direction = 'horizontal' | 'vertical';
 
+    /**
+     * Что делают стрелки и Home/End на вкладке: `auto` — сразу открывают вкладку, `manual` — только
+     * переводят фокус, а открывают Enter и Space.
+     */
+    export type Activation = 'auto' | 'manual';
+
+    /**
+     * Где стоят стрелки прокрутки переполненной полосы: `overlay` — поверх вкладок, только в ту
+     * сторону, куда можно прокрутить; `inline` — обе в своих местах по краям, полоса между ними уже,
+     * стрелка в сторону, куда прокручивать некуда, неактивна.
+     */
+    export type ScrollArrows = 'overlay' | 'inline';
+
     /** Сторона размещения header-контрола относительно полосы вкладок. */
     export type ControlSide = 'left' | 'right';
 

@@ -663,3 +663,41 @@ When the person empties it, and the host sets the control back to that same valu
 Then the field shows the value again, and the control holds it
 
 Covered: `projects/ui-kit-v2/src/lib/components/input/rt-input.component.spec.ts`.
+
+### SC-UKV-942 — manual activation moves focus, Enter and Space open the tab
+
+Given tabs with `activation="manual"`
+When the person presses an arrow, Home or End on a tab
+Then focus and the single tab stop move to the next enabled tab, the open tab and its panel stay,
+and nothing is emitted; Enter or Space on the focused tab opens it. Without the input an arrow
+opens the tab at once, as before
+
+Covered: `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-scroll-keys.spec.ts`.
+
+### SC-UKV-943 — a press on a scroll arrow pages the tab list
+
+Given a tab list wider than its place
+When the person presses a scroll arrow and lets go before 300 ms
+Then the list moves by its visible width, not past its edge; held longer, it scrolls on until let
+go and adds no page step on release; a pointer that leaves the arrow first moves nothing
+
+Covered: `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-scroll-keys.spec.ts`.
+
+### SC-UKV-944 — scroll arrows can stand in their own places
+
+Given tabs with `scrollArrows="inline"`
+When the list overflows
+Then both arrows stand at the edges beside the list, and the one with nothing to scroll to is
+pale and takes no press; without overflow neither is drawn. Without the input the arrows lie over
+the tabs, as before
+
+Covered: `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-scroll-keys.spec.ts`.
+
+### SC-UKV-945 — the selected tab bar survives a zero border width
+
+Given the tab border width property set to `0`
+When a tab is selected
+Then its bar stays at the bottom of the tab: the offset is a translate by the width, not a `calc`
+that turns unitless and invalid at `0`
+
+Covered: `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-scroll-keys.spec.ts`.
