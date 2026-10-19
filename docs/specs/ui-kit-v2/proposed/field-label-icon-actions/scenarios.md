@@ -636,3 +636,12 @@ Then the value stands in the middle of the field, an empty control shows its pla
 area has equal room above its first line and below its last, and the field keeps its hint row
 
 Covered: `projects/ui-kit-v2/src/lib/components/field/rt-field-material-metrics.spec.ts`.
+
+### SC-UKV-939 — the row fields of a dynamic selector stay out of the host form
+
+Given an editable dynamic input bound by a form control name inside the host's form group
+When the pencil of a row is pressed, or the field for a new row is opened
+Then the console gets no NG01354 warning, the host form keeps only its own controls, and typing
+with Enter applies the edit as before
+
+Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/dynamic-input/rt-dynamic-input-host-form.spec.ts`.

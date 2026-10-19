@@ -9,6 +9,7 @@
             [radius]="searchRadius()"
             [placeholder]="searchLabel()"
             [ngModel]="query()"
+            [ngModelOptions]="{ standalone: true }"
             (ngModelChange)="onQueryChange($event)" />
 
         @if (isMultiToggleVisible() || isSelectAllShown()) {

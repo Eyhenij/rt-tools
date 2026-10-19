@@ -546,6 +546,17 @@ data-preset="material" floatingLabel>` drew the border through the risen label: 
   centre, text area first line at 14 px; labelled filled fields keep 22/5 px with a 24 px line.
     - Not fixed: `fullWidth` with `layout="column"` collapses the segments' height in the segmented
       appearance too. A fix there changes the kit's own look, so it waits for the owner's word.
+- **2026-10-19, request 13 (the application's session): NG01354 on every pencil press.** An
+  editable dynamic selector inside the host's `[formGroup]` warned once per press: the row edit
+  field, the new-row field and the popup search bound `ngModel` and looked for the host's form
+  container. All four now carry `[ngModelOptions]="{ standalone: true }"`, as the tree, the table
+  and the pagination already do — the drafts are the list's own state. SC-UKV-939; the spec is red
+  without the edit and green with it. Checked live on :6007: story StringList — the pencil opens
+  the field with the row value, Enter replaces `north@example.test` by the typed text, the new-row
+  field opens; story Popup — the search narrows 5 rows to 0 and back. No console warning or error.
+    - Not fixed: the same unguarded `ngModel` stands in the select filter, the tree selector search,
+      the profile menu locale, the filter control, the theme toggle, the workspace details and the
+      dynamic list header. They wait for the owner's word.
 
 ## Sessions
 
