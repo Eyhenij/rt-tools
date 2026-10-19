@@ -1,0 +1,29 @@
+@switch (part) {
+    @case ('loading') {
+        <app-pdf-viewer-loading />
+    }
+
+    @case ('error') {
+        <app-pdf-viewer-error />
+    }
+
+    @case ('presets') {
+        <app-story-presets caption="Просмотрщик в обоих наборах">
+            <ng-template>
+                <div style="position: relative; width: 22rem; height: 16rem; overflow: hidden">
+                    <app-pdf-viewer />
+                </div>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('themes') {
+        <app-story-themes caption="Просмотрщик в обеих темах">
+            <ng-template>
+                <div style="position: relative; width: 22rem; height: 16rem; overflow: hidden">
+                    <app-pdf-viewer />
+                </div>
+            </ng-template>
+        </app-story-themes>
+    }
+}

@@ -1,0 +1,123 @@
+<ng-container rtBlock="rt-pdf-viewer">
+    <!-- Ловушка держит Tab внутри; фокус ставит сам компонент, поэтому авто-захвата здесь нет -->
+    <div rtElem="surface" cdkTrapFocus>
+        <!-- Полоса видна сразу, ещё до загрузки документа: человек видит, что открыл, и может закрыть -->
+        <header rtElem="bar">
+            <div rtElem="title">
+                <rt-icon rtElem="file-icon" name="attach-pdf" size="md" />
+                <span rtElem="file-name" qa-dataid="pdf-viewer-file-name" [attr.title]="fileName">{{ fileName }}</span>
+            </div>
+
+            <div rtElem="actions">
+                <rt-icon-button
+                    qa-dataid="pdf-viewer-print"
+                    icon="print"
+                    variant="ghost"
+                    [ariaLabel]="t().pdfViewerPrint"
+                    [tooltip]="t().pdfViewerPrint"
+                    [disabled]="status() !== 'ready'"
+                    [loading]="printing()"
+                    (clicked)="print()" />
+                <rt-icon-button
+                    qa-dataid="pdf-viewer-download"
+                    icon="ico-download"
+                    variant="ghost"
+                    [ariaLabel]="t().pdfViewerDownload"
+                    [tooltip]="t().pdfViewerDownload"
+                    (clicked)="download()" />
+                <rt-icon-button
+                    qa-dataid="pdf-viewer-close"
+                    icon="close"
+                    variant="ghost"
+                    [ariaLabel]="t().pdfViewerClose"
+                    [tooltip]="t().pdfViewerClose"
+                    (clicked)="close()" />
+            </div>
+        </header>
+
+        <div rtElem="scroller" qa-dataid="pdf-viewer-pages" #scroller (scroll)="onScroll()">
+            <!-- Столбец стоит и до загрузки: по его ширине выбирается начальный масштаб -->
+            <div rtElem="column" #column>
+                @if (status() === 'ready') {
+                    @for (box of boxes(); track box.index) {
+                        <div
+                            rtElem="page"
+                            qa-dataid="pdf-viewer-page"
+                            #page
+                            [attr.data-page-index]="box.index"
+                            [style.width.px]="box.width"
+                            [style.height.px]="box.height">
+                            <canvas rtElem="canvas" #canvas></canvas>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+
+        @switch (status()) {
+            @case ('loading') {
+                <div rtElem="center">
+                    <rt-spinner qa-dataid="pdf-viewer-spinner" color="on-primary" [diameter]="40" />
+                </div>
+            }
+
+            @case ('error') {
+                <div rtElem="center">
+                    <rt-empty-state
+                        rtElem="error"
+                        qa-dataid="pdf-viewer-error"
+                        [title]="t().pdfViewerErrorTitle"
+                        [description]="t().pdfViewerErrorText">
+                        <button
+                            rtButton
+                            rtElem="error-download"
+                            qa-dataid="pdf-viewer-error-download"
+                            type="button"
+                            icon="ico-download"
+                            [label]="t().pdfViewerDownload"
+                            [attr.aria-label]="t().pdfViewerDownload"
+                            (click)="download()"></button>
+                    </rt-empty-state>
+                </div>
+            }
+
+            @case ('ready') {
+                <div rtElem="toolbar" qa-dataid="pdf-viewer-toolbar">
+                    <span rtElem="counter" qa-dataid="pdf-viewer-counter" role="status" aria-live="off" [attr.aria-label]="pageOfLabel()">
+                        {{ counter() }}
+                    </span>
+                    <span rtElem="divider" aria-hidden="true"></span>
+                    <rt-icon-button
+                        qa-dataid="pdf-viewer-zoom-out"
+                        icon="minus"
+                        variant="ghost"
+                        size="sm"
+                        [ariaLabel]="t().pdfViewerZoomOut"
+                        [disabled]="!canZoomOut()"
+                        (clicked)="zoomOut()" />
+                    <span rtElem="zoom" qa-dataid="pdf-viewer-zoom">{{ zoomLabel() }}</span>
+                    <rt-icon-button
+                        qa-dataid="pdf-viewer-zoom-in"
+                        icon="ico-plus"
+                        variant="ghost"
+                        size="sm"
+                        [ariaLabel]="t().pdfViewerZoomIn"
+                        [disabled]="!canZoomIn()"
+                        (clicked)="zoomIn()" />
+                    <span rtElem="fit-divider" aria-hidden="true"></span>
+                    <button
+                        rtButton
+                        rtElem="fit"
+                        qa-dataid="pdf-viewer-fit"
+                        type="button"
+                        appearance="text"
+                        size="sm"
+                        [label]="t().pdfViewerFitWidth"
+                        [attr.aria-label]="t().pdfViewerFitWidth"
+                        [attr.aria-pressed]="isFit()"
+                        (click)="fitWidth()"></button>
+                </div>
+            }
+        }
+    </div>
+</ng-container>
