@@ -154,3 +154,11 @@ When «More actions» of a row is pressed, then «Copy ID» or «Delete»
 Then the menu holds «Copy ID» and «Delete» in the danger tone, «Copy ID» puts the conversation id into the clipboard, «Delete» reports the delete request without confirmation, neither opens the conversation, and Escape closes the menu and returns focus to «More actions»
 
 Covered by the component spec of the organism; the Playground switch `threadMenu` shows it.
+
+### SC-UKV-863 — the feed and the composer stand as a column in the middle
+
+Given a wide panel on full screen with the conversations as a column
+When the consumer caps the width of the feed and the composer
+Then the questions, the answers, the composer and the line under it stand in a column of that width in the middle of the conversation, and the feed scrolls at the conversation's edge; without the cap they take the whole conversation as before
+
+Covered by the frame `ReadingColumn`; the frame `FullScreen` shows the conversation without the cap.
