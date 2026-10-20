@@ -27,6 +27,10 @@
 - **The dynamic selector gives up `dynamicSelectorMatches` and `dynamicMatchParts`, the tree
   selector `rtTreeSelectorWords`.** A wrapper with the old name would be a re-export of the rule
   in another form. No code in this tree calls these names. Affected stage of the plan: 2.
+- **The side-menu search frame is retaken.** The plan said no frame changes, but the story types
+  «level 2» into the side menu. By the rule each word is marked, so «Level» is marked in the
+  folder row too. The new frame was looked at and is the intended one. Affected stage of the
+  plan: 3.
 - **An empty label gives no pieces in the dynamic selector too.** Its own copy returned one empty
   piece; the popup never draws a row without a label, so nothing changes on the screen. Affected
   stage of the plan: 2.
