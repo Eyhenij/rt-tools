@@ -65,7 +65,7 @@ multiselect; a standalone tree on the same logic gives the applications one look
 - **A cut label or description shows its whole text in the kit's tooltip.** The tooltip runs in the
   mode for a cut text, so a label that fits shows none.
 - **The search term filters the tree and marks the match in the label.** A row stays when its label or
-  a descendant's label holds the term, the path to a match is shown open, and the matched part of a
+  a descendant's label holds every word of the term, the path to a match is shown open, and the matched part of a
   label is drawn with the highlight tokens of the side-menu search.
 - **Every word of the search term is marked, in the label, the description and the badges.** The
   application splits its search on spaces, so a word found anywhere in the row is drawn with the same

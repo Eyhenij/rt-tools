@@ -1,55 +1,49 @@
+import { rtSearchFold, rtSearchWords } from './rt-search-match';
+
 /** Кусок подписи: текст и то, совпал ли он с запросом. */
 export interface IRtMatchPart {
     text: string;
     matched: boolean;
 }
 
+function markWord(marks: boolean[], folded: string, word: string): void {
+    for (let at: number = folded.indexOf(word); at !== -1; at = folded.indexOf(word, at + 1)) {
+        marks.fill(true, at, at + word.length);
+    }
+}
+
 /**
- * Резка подписи на совпавшие и несовпавшие куски.
+ * Подпись, разрезанная по словам запроса тем же правилом, что и отбор: совпавшие куски отмечены.
  *
- * Отмечаются все вхождения: отмеченное одно первое читается как «второго нет». Сравнение без учёта
- * регистра, а куски режутся из оригинала — приведение к нижнему регистру переписало бы названия.
+ * Отмечаются все вхождения каждого слова, а пересёкшиеся совпадения сливаются в один кусок. Куски
+ * режутся из оригинала — регистр остаётся тем, каким его написал потребитель. Подпись, длина
+ * которой меняется от смены регистра, остаётся одним куском без отметки: места совпадений в ней не
+ * совпали бы с местами в оригинале.
  */
 export function rtMatchParts(name: string, query: string): IRtMatchPart[] {
     if (name === '') {
         return [];
     }
 
-    const needle: string = query.trim().toLowerCase();
+    const words: string[] = rtSearchWords(query);
+    const folded: string = rtSearchFold(name);
 
-    if (needle === '') {
+    if (words.length === 0 || folded.length !== name.length) {
         return [{ text: name, matched: false }];
     }
 
-    const haystack: string = name.toLowerCase();
+    const marks: boolean[] = Array.from({ length: name.length }, (): boolean => false);
+    words.forEach((word: string): void => markWord(marks, folded, word));
+
     const parts: IRtMatchPart[] = [];
     let from: number = 0;
 
-    for (let at: number = haystack.indexOf(needle, from); at !== -1; at = haystack.indexOf(needle, from)) {
-        if (at > from) {
-            parts.push({ text: name.slice(from, at), matched: false });
+    for (let at: number = 1; at <= name.length; at++) {
+        if (at === name.length || marks[at] !== marks[from]) {
+            parts.push({ text: name.slice(from, at), matched: marks[from] });
+            from = at;
         }
-
-        parts.push({ text: name.slice(at, at + needle.length), matched: true });
-        from = at + needle.length;
-    }
-
-    if (from < name.length) {
-        parts.push({ text: name.slice(from), matched: false });
     }
 
     return parts;
-}
-
-/**
- * Резка подписи по каждому слову запроса. Приложение делит поиск по пробелам и ищет каждое слово
- * отдельно, поэтому и отмечено каждое. Слово внутри уже отмеченного куска не режет его второй раз.
- */
-export function rtMatchPartsByWords(name: string, query: string): IRtMatchPart[] {
-    const words: string[] = query.split(/\s+/).filter((word: string): boolean => word !== '');
-    return words.reduce(
-        (parts: IRtMatchPart[], word: string): IRtMatchPart[] =>
-            parts.flatMap((part: IRtMatchPart): IRtMatchPart[] => (part.matched ? [part] : rtMatchParts(part.text, word))),
-        rtMatchParts(name, '')
-    );
 }
