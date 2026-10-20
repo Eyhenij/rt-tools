@@ -6,7 +6,7 @@ import { TestRtSpeedMenuComponent } from './component/test-speed-menu.component'
 const RADIO: { readonly control: { readonly type: 'inline-radio' } } = { control: { type: 'inline-radio' } };
 
 export default {
-    title: 'Organisms/Buttons/SpeedMenu',
+    title: 'Molecules/Buttons/SpeedMenu',
     component: TestRtSpeedMenuComponent,
     argTypes: {
         direction: { ...RADIO, options: ['up', 'down', 'start', 'end'] },

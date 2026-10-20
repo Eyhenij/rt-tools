@@ -3,7 +3,7 @@ import { Meta, StoryObj } from '@storybook/angular';
 import { TestRtConfirmPopoverComponent } from './component/test-confirm-popover.component';
 
 export default {
-    title: 'Organisms/Dialog/Confirm/ConfirmPopover',
+    title: 'Molecules/Dialog/ConfirmPopover',
     component: TestRtConfirmPopoverComponent,
     parameters: { snapshot: { fullPage: true } },
     argTypes: {

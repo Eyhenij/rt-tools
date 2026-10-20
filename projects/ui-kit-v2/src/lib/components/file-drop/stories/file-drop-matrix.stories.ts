@@ -13,7 +13,7 @@ import { TestRtFileDropMatrixComponent } from './component/test-file-drop-matrix
  * настоящим файлом внутри.
  */
 export default {
-    title: 'Organisms/FileDrop',
+    title: 'Molecules/Forms/FileDrop',
     component: TestRtFileDropMatrixComponent,
     parameters: {
         controls: { disable: true },
