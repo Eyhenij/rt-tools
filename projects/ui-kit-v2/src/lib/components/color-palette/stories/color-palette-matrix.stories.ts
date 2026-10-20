@@ -9,7 +9,7 @@ import { TestRtColorPaletteMatrixComponent } from './component/test-color-palett
  * неотличимо от отсутствующего.
  */
 export default {
-    title: 'Organisms/Forms/ColorPalette',
+    title: 'Molecules/Forms/ColorPalette',
     component: TestRtColorPaletteMatrixComponent,
     parameters: {
         controls: { disable: true },

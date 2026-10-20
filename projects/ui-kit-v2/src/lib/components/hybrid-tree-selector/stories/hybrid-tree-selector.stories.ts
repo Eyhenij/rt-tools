@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtHybridTreeSelectorComponent } from './component/test-hybrid-tree-selector.component';
 
 export default {
-    title: 'Organisms/Forms/HybridTreeSelector',
+    title: 'Molecules/Forms/HybridTreeSelector',
     component: TestRtHybridTreeSelectorComponent,
     argTypes: {
         confirm: { control: { type: 'boolean' } },
