@@ -1,0 +1,68 @@
+@layer rt-kit.components {
+    /* rt-service-logo — знаки внешних служб в светлых кругах. ViewEncapsulation.None.
+       Корень шаблона — ng-container, поэтому класс блока висит только на хосте.
+       Числа — атома «Service Logo»: круг, высота знака, шаг внахлёст и размытие тени. */
+
+    .rt-service-logo {
+        --rt-service-logo-size: var(--rt-size-16);
+        --rt-service-logo-mark-height: var(--rt-size-8);
+        --rt-service-logo-step: var(--rt-size-10);
+        --rt-service-logo-shadow: var(--rt-shadow-service-logo-md);
+        --rt-service-logo-radius: var(--rt-radius-full);
+        --rt-service-logo-bg: var(--rt-color-service-logo-bg);
+        --rt-service-logo-color: var(--rt-color-service-logo-mark);
+
+        display: inline-flex;
+        align-items: center;
+        vertical-align: middle;
+
+        &--size-sm {
+            --rt-service-logo-size: var(--rt-size-10);
+            --rt-service-logo-mark-height: var(--rt-size-5);
+            --rt-service-logo-step: var(--rt-size-6);
+            --rt-service-logo-shadow: var(--rt-shadow-service-logo-sm);
+        }
+
+        &--size-lg {
+            --rt-service-logo-size: var(--rt-size-24);
+            --rt-service-logo-mark-height: var(--rt-size-12);
+            --rt-service-logo-step: calc(var(--rt-size-12) + var(--rt-size-3));
+            --rt-service-logo-shadow: var(--rt-shadow-service-logo-lg);
+        }
+
+        /* Круги без z-index: позиционированные соседи ложатся в порядке разметки, и следующий
+           круг стоит поверх предыдущего. Нахлёст — разница круга и шага. */
+        &__plate {
+            position: relative;
+            display: inline-flex;
+            width: var(--rt-service-logo-size);
+            height: var(--rt-service-logo-size);
+            flex: none;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--rt-service-logo-radius);
+            background: var(--rt-service-logo-bg);
+            box-shadow: var(--rt-service-logo-shadow);
+
+            /* Значок кита берёт цвет текста: круг светлый и в тёмной теме, и значок остаётся тёмным. */
+            color: var(--rt-service-logo-color);
+
+            & + & {
+                margin-inline-start: calc(var(--rt-service-logo-step) - var(--rt-service-logo-size));
+            }
+        }
+
+        /* Рамка знака шире высоты в 1.375 раза (27.5×20, 44×32, 66×48): картинка вписывается в неё
+           целиком, без растяжения и обрезки. */
+        &__image {
+            display: block;
+            width: calc(var(--rt-service-logo-mark-height) * 1.375);
+            height: var(--rt-service-logo-mark-height);
+            object-fit: contain;
+        }
+
+        &__icon {
+            display: inline-flex;
+        }
+    }
+}
