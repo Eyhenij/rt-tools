@@ -62,6 +62,8 @@ conversations. Every application repeats the same screen, and every copy drifts 
 
 - **In a narrow panel the conversations open in place of the feed, on full screen they stand as a column on the left, and choosing one returns to the feed.**
 
+- **The consumer can cap the width of the feed and the composer; they then stand as a column in the middle of the conversation, and the feed scrolls at the conversation's edge.**
+
 - **The search over conversations marks every match, and an empty result says «Nothing found» instead of «No conversations yet».**
 
 - **Deleting a conversation is an action of its row and does not open the conversation.**

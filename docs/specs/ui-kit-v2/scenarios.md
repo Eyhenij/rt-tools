@@ -25,7 +25,7 @@ The scenarios live in the subdomains, each at its own rules:
 | [The value with a copy button](copy-value/scenarios.md)                  | `SC-UKV-742`…`SC-UKV-746`                                                 |
 | [The breadcrumbs](breadcrumbs/scenarios.md)                              | `SC-UKV-775`…`SC-UKV-780`                                                 |
 | [The image cropper](image-cropper/scenarios.md)                          | `SC-UKV-491`…`SC-UKV-506`                                                 |
-| [The assistant chat](ai-chat/scenarios.md)                               | `SC-UKV-750`…`SC-UKV-761`                                                 |
+| [The assistant chat](ai-chat/scenarios.md)                               | `SC-UKV-750`…`SC-UKV-782`, `SC-UKV-863`                                   |
 | [The prompt suggestion](prompt-suggestion/scenarios.md)                  | `SC-UKV-747`…`SC-UKV-749`                                                 |
 | [The image uploader](image-upload/scenarios.md)                          | `SC-UKV-507`…`SC-UKV-518`                                                 |
 | [The tooltip of a cut text](tooltip-when-truncated/scenarios.md)         | `SC-UKV-458`…`SC-UKV-461`                                                 |

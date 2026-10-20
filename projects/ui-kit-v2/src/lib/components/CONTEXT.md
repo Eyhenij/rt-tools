@@ -41,7 +41,7 @@ tag/
 | списки выбора            | `select`, `multiselect`, `autocomplete`, `filter-control`, `dynamic-selector`                                                                  |
 | обёртка поля             | `field`, `form-control` (основа)                                                                                                               |
 | плавающие панели         | `popover`, `tooltip`, `confirm-popover`, `menu`, `toast`                                                                                       |
-| окна и панели            | `dialog`, `aside`, `aside-section`, `bottom-sheet`, `welcome-dialog`, `photo-viewer`                                                           |
+| окна и панели            | `dialog`, `aside`, `aside-section`, `bottom-sheet`, `welcome-dialog`, `photo-viewer`, `pdf-viewer`                                             |
 | каркас страницы          | `container`, `workspace`, `workspace-details`, `header`, `page-header`, `toolbar`, `section-nav`                                               |
 | данные                   | `table`, `pagination`, `thread-list`, `detail-list`, `money-list`, `bar-list`, `timeline`, `night-grid`, `calendar`                            |
 | переписка                | `chat`, `message`, `message-composer`                                                                                                          |

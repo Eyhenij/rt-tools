@@ -4,7 +4,7 @@ import { drawStoryCropperSample } from '../../image-cropper/stories/component/st
 import { TestRtImageUploadComponent } from './component/test-image-upload.component';
 
 export default {
-    title: 'Organisms/ImageUpload',
+    title: 'Molecules/Forms/ImageUpload',
     component: TestRtImageUploadComponent,
     // Загрузчик показан сам по себе, как в истории первого кита, без сетки витрины: кадр — вся страница.
     parameters: { snapshot: { fullPage: true } },

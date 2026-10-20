@@ -7,7 +7,7 @@ import { TestRtHybridTreeSelectorMatrixComponent } from './component/test-hybrid
  * и подвал у селектора общие с `rt-tree-selector` и показаны в его матрицах.
  */
 export default {
-    title: 'Organisms/Forms/HybridTreeSelector',
+    title: 'Molecules/Forms/HybridTreeSelector',
     component: TestRtHybridTreeSelectorMatrixComponent,
     parameters: {
         controls: { disable: true },
