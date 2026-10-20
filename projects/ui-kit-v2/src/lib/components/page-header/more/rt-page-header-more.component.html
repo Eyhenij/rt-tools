@@ -1,0 +1,174 @@
+<!--
+    Кнопка берёт элементы блока шапки, а не свои: «Ещё» стоит в том же ряду и выглядит как его пункт,
+    а второй набор тех же правил разошёлся бы с первым при первой правке.
+-->
+<ng-container rtBlock="rt-page-header">
+    <button
+        rtElem="link"
+        type="button"
+        qa-dataid="header-nav-more"
+        #morePopover="rtPopover"
+        rtPopoverTrigger="hover"
+        rtPopoverAlign="end"
+        rtPopoverFitViewport
+        rtPopoverOffsetY="14"
+        [rtMod]="{ isActive: active(), isOpen: morePopover.isOpen() }"
+        [attr.aria-haspopup]="true"
+        [attr.aria-expanded]="morePopover.isOpen()"
+        [rtPopover]="moreTpl"
+        (click)="morePopover.open()">
+        <span rtElem="label">{{ t().uiNavMore }}</span>
+        @if (unread()) {
+            <span rtElem="marker" role="img" qa-dataid="header-nav-marker" data-id="more" [attr.aria-label]="t().uiNavUnread"></span>
+        }
+        <span rtElem="caret" aria-hidden="true">
+            <rt-icon name="chevron-up-down" size="xs" />
+        </span>
+    </button>
+</ng-container>
+
+<!--
+    Панель «Ещё» — та же разметка, что меню узкого экрана, без аккордеона: раздел с панелью стоит
+    заголовком, а пункты его групп идут под ним сразу.
+-->
+<ng-template #moreTpl>
+    <div rtBlock="rt-page-header-mobile" role="menu" qa-dataid="header-nav-more-list" [rtMod]="{ more: true }">
+        @for (section of sections(); track section.id) {
+            @switch (section.kind) {
+                @case (EntryKind.Panel) {
+                    <div rtElem="heading" qa-dataid="header-nav-more-section" [attr.data-id]="section.id">
+                        <span rtElem="label">{{ section.label }}</span>
+                    </div>
+                    <div rtElem="children">
+                        @for (group of section.panelGroups; track group.id) {
+                            <div rtElem="group" role="group" [attr.aria-label]="group.label || null">
+                                @if (group.label) {
+                                    <div rtElem="group-title" qa-dataid="header-nav-more-group" [attr.data-id]="group.id">
+                                        <span rtElem="group-label">{{ group.label }}</span>
+                                    </div>
+                                }
+                                @for (entry of group.items; track entry.id) {
+                                    @if (entry.kind === EntryKind.Link) {
+                                        <a
+                                            rtElem="link"
+                                            role="menuitem"
+                                            qa-dataid="header-nav-more-item"
+                                            routerLinkActive="rt-page-header-mobile__link--is-active"
+                                            [rtMod]="{ child: true }"
+                                            [attr.data-id]="entry.id"
+                                            [routerLink]="entry.route"
+                                            [routerLinkActiveOptions]="{ exact: entry.routerLinkActiveExact }"
+                                            (click)="morePopover.close()">
+                                            <span rtElem="label">{{ entry.label }}</span>
+                                            @if (entry.unread) {
+                                                <span
+                                                    rtElem="marker"
+                                                    role="img"
+                                                    qa-dataid="header-nav-marker"
+                                                    [attr.data-id]="entry.id"
+                                                    [attr.aria-label]="t().uiNavUnread"></span>
+                                            }
+                                        </a>
+                                    } @else if (entry.disabled) {
+                                        <span
+                                            rtElem="disabled-slot"
+                                            role="none"
+                                            [rtTooltip]="'uiSectionInProgress' | rtKitLabel: translate() : { label: entry.label }">
+                                            <button
+                                                rtElem="link"
+                                                type="button"
+                                                role="menuitem"
+                                                qa-dataid="header-nav-more-item"
+                                                [rtMod]="{ child: true, disabled: true }"
+                                                [attr.data-id]="entry.id"
+                                                [attr.aria-disabled]="true">
+                                                <span rtElem="label">{{ entry.label }}</span>
+                                            </button>
+                                        </span>
+                                    } @else {
+                                        <button
+                                            rtElem="link"
+                                            type="button"
+                                            role="menuitem"
+                                            qa-dataid="header-nav-more-item"
+                                            [rtMod]="{ child: true }"
+                                            [attr.data-id]="entry.id"
+                                            (click)="onItemClick(entry.id); morePopover.close()">
+                                            <span rtElem="label">{{ entry.label }}</span>
+                                            @if (entry.unread) {
+                                                <span
+                                                    rtElem="marker"
+                                                    role="img"
+                                                    qa-dataid="header-nav-marker"
+                                                    [attr.data-id]="entry.id"
+                                                    [attr.aria-label]="t().uiNavUnread"></span>
+                                            }
+                                        </button>
+                                    }
+                                }
+                            </div>
+                        }
+                    </div>
+                }
+                @case (EntryKind.Link) {
+                    <a
+                        rtElem="link"
+                        role="menuitem"
+                        qa-dataid="header-nav-more-item"
+                        routerLinkActive="rt-page-header-mobile__link--is-active"
+                        [attr.data-id]="section.id"
+                        [routerLink]="section.route"
+                        [routerLinkActiveOptions]="{ exact: section.routerLinkActiveExact }"
+                        (click)="morePopover.close()">
+                        <span rtElem="label">{{ section.label }}</span>
+                        @if (section.unread) {
+                            <span
+                                rtElem="marker"
+                                role="img"
+                                qa-dataid="header-nav-marker"
+                                [attr.data-id]="section.id"
+                                [attr.aria-label]="t().uiNavUnread"></span>
+                        }
+                    </a>
+                }
+                @default {
+                    @if (section.disabled) {
+                        <span
+                            rtElem="disabled-slot"
+                            role="none"
+                            [rtTooltip]="'uiSectionInProgress' | rtKitLabel: translate() : { label: section.label }">
+                            <button
+                                rtElem="link"
+                                type="button"
+                                role="menuitem"
+                                qa-dataid="header-nav-more-item"
+                                [rtMod]="{ disabled: true }"
+                                [attr.data-id]="section.id"
+                                [attr.aria-disabled]="true">
+                                <span rtElem="label">{{ section.label }}</span>
+                            </button>
+                        </span>
+                    } @else {
+                        <button
+                            rtElem="link"
+                            type="button"
+                            role="menuitem"
+                            qa-dataid="header-nav-more-item"
+                            [attr.data-id]="section.id"
+                            (click)="onItemClick(section.id); morePopover.close()">
+                            <span rtElem="label">{{ section.label }}</span>
+                            @if (section.unread) {
+                                <span
+                                    rtElem="marker"
+                                    role="img"
+                                    qa-dataid="header-nav-marker"
+                                    [attr.data-id]="section.id"
+                                    [attr.aria-label]="t().uiNavUnread"></span>
+                            }
+                        </button>
+                    }
+                }
+            }
+        }
+    </div>
+</ng-template>
