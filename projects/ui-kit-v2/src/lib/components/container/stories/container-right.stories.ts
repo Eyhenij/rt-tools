@@ -20,6 +20,8 @@ export default {
 type TStory = StoryObj<TestRtContainerRightComponent>;
 
 export const RightSide: TStory = {
+    // Каркас рисует своя обёртка с рамкой, а не сетка витрины: корня показа у истории нет, снимается страница.
+    parameters: { snapshot: { fullPage: true } },
     args: { mode: 'side', backdrop: true, resizable: true, width: 280 },
 };
 

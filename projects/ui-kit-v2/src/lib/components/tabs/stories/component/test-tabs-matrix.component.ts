@@ -173,11 +173,15 @@ export type TTabsMatrixPart =
                     <ng-template>
                         <app-story-row slotWidth="24rem" [items]="arrowPlacements">
                             <ng-template let-placement>
-                                <rt-tabs activeId="t1" [scrollArrows]="placement">
-                                    @for (index of many; track index) {
-                                        <ng-template [rtTab]="'t' + index" [label]="'Раздел ' + index">Содержимое</ng-template>
-                                    }
-                                </rt-tabs>
+                                <!-- Ширину держит коробка: ячейка ряда — гибкий узел, и полоса в ней встаёт во всю длину
+                                     вкладок, вылезая за половину, — переполнения, ради которого стрелки, тогда нет. -->
+                                <div style="width: 24rem">
+                                    <rt-tabs activeId="t1" [scrollArrows]="placement">
+                                        @for (index of many; track index) {
+                                            <ng-template [rtTab]="'t' + index" [label]="'Раздел ' + index">Содержимое</ng-template>
+                                        }
+                                    </rt-tabs>
+                                </div>
                             </ng-template>
                         </app-story-row>
                     </ng-template>

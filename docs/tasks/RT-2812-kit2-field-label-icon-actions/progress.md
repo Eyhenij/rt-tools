@@ -574,6 +574,20 @@ data-preset="material" floatingLabel>` drew the border through the risen label: 
   selected tab bar is offset by `translate`, so a zero border width keeps it at the bottom —
   SC-UKV-945. 10 cases red without the edit, green with it. Not checked live: the owner stopped
   the showcase on :6007 in the same hour.
+- **2026-10-20, the owner: main merged in, the kit's own look unchanged.** Main 0.26.0 merged
+  without conflicts. The own half of every diverged story was compared node by node against a
+  showcase built from main: position, size, colour, font, borders, padding and shadow match. The
+  one shift is the required star, 0.24 px to the right, invisible in the frame. Every diverged
+  frame differs in the material half or by added rows.
+    - The kit's global styles grew by 31 kB and its scripts by 49 kB. The conversations page went
+      1.65 kB past its 1 MB initial budget; the owner raised the budget to 1.5 MB.
+    - 211 references re-taken and 50 taken new, each looked at first. Two story defects found that
+      way: the ScrollArrows tabs ran past their half and now sit in a 24rem box; RightSide had no
+      showing root and is now shot as a full page.
+    - A second raising: 940 of 942. The two PDF viewer frames diverge on main the same way, with the
+      «По ширине» button highlighted, and are left for the owner.
+    - Admin end-to-end 146 of 146, sign-in stand 10 of 10.
+    - The tabs Edges story overflows its half the same way; it comes from main and is left as is.
 
 ## Sessions
 
@@ -606,6 +620,8 @@ none
 ### Commits over the main branch
 
 ```
+0466fea09 feat(rt:ui-kit-v2): вкладки — ручной выбор с клавиатуры, шаг стрелкой прокрутки и стрелки в своих местах
+34da2f3a3 fix(rt:ui-kit-v2): поле ввода показывает значение, которое форма вернула ему во время набора
 54c0407ba fix(rt:ui-kit-v2): поля выбора, поиска и переключатели кита внутри формы страницы не пишут NG01354
 1e1516d3d fix(rt:ui-kit-v2): поля динамического селектора внутри формы страницы не пишут NG01354
 6907474e3 fix(rt:ui-kit-v2): залитое поле без подписи под материальным набором не держит места под неё
