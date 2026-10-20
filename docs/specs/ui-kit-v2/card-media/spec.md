@@ -1,6 +1,6 @@
 # The media of a card
 
-**Status:** proposed · **Revision:** 2026-10-20 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 2026-10-20 · **Scenario prefix:** `SC-UKV`
 **Laws:** `reuse-first`, `verifiability`
 **Procedures:** none
 
@@ -85,4 +85,4 @@ None.
 
 ## History of changes
 
-- 2026-10-20 — written by the task RT-2904.
+- 2026-10-20 — written and carried out by the task RT-2904.

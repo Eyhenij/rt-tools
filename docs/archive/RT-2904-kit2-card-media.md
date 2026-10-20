@@ -1,5 +1,7 @@
 # Grill
 
+Former address: docs/tasks/RT-2904-kit2-card-media/grill.md
+
 ## The owner request
 
 The cards of a services screen carry the mark of the service in the top left corner, with the
@@ -22,3 +24,8 @@ chose «Влил, выпускай сам (Рекомендую)» when asked ho
 - **A slot of its own above the header, `[rtCardMedia]`.** Rejected: moving `[rtCardHeader]` above
   the title — every card that puts actions next to its title would change its look.
 - **An empty slot takes no room.** Cards without a mark look as before.
+
+## Decisions along the way
+
+- **The story shows the mark as a kit icon.** The kit carries no marks of outside companies, so the
+  card of the slots story takes the wallet icon in a plate of the service logo.
