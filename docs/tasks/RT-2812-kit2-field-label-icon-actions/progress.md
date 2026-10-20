@@ -6,6 +6,8 @@
 - **Stage:** 6 of 6 — Docs, version and the check suite
 - **Done:** stages 1–5 and 7; 6.1; the review of the whole branch and its fixes; the owner's remarks of 14 October (chosen value by the option template, the muted sound icon); main merged in on 14 October
 - **Next step:** 6.3 — the agreement merged into the domain specs, and the snapshot references re-taken, when the owner says to open the PR
+- **Done on 20 October:** main merged in and references re-taken (d0b5e8e72); the application's requests 17–19 on tabs — motion of the bar and the panel (5f2fa9815), `preserveContent` (dff71d705), smooth list scroll with `scrollStep` (336e14823) and the scroll duration freed from `animationDuration` (8d0e58945). The package lies on the Desktop as `rt-tools-ui-kit-v2-0.26.0.tgz`, built 13:57
+- **Blocks the push, for 6.3:** the scenarios file of the agreement is 777 lines against the 500 limit — it is split when it merges into the domain specs; the two PDF viewer frames diverge the same way on main (the «По ширине» button highlighted) and wait for the owner's decision
 - **Committed on 16 October by the owner's word «комит по правилам, подтяни мейн потом проверь всю ветку на регресси»:** requests 9 (the clearing cross), 10 (points after the Material comparison) and 11 (the chips appearance of the toggle button group); then main is merged in and the whole branch is checked for the kit's own look
 - **Waiting for the owner:** «пр не открывай» — no PR, no push
 - **PR:** not open yet
