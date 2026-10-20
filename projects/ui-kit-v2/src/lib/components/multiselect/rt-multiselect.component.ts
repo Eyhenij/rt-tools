@@ -26,7 +26,7 @@ import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 import { RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
 import { IRtPopover } from '@rt-tools/ui-kit-v2/popover';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
-import { rtScrollActiveOptionIntoView } from '@rt-tools/ui-kit-v2/select';
+import { rtScrollActiveOptionIntoView } from '@rt-tools/ui-kit-v2/core';
 import {
     rtTreeBranchState,
     rtTreeFind,
@@ -36,7 +36,7 @@ import {
     rtTreeRows,
     rtTreeSideKey,
     rtTreeToggle,
-} from '@rt-tools/ui-kit-v2/select';
+} from '@rt-tools/ui-kit-v2/core';
 import { RtSelectTriggerDirective } from '@rt-tools/ui-kit-v2/select';
 import { IRtSelect } from '@rt-tools/ui-kit-v2/select';
 import { RtTagComponent } from '@rt-tools/ui-kit-v2/tag';

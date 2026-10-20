@@ -30,7 +30,7 @@ import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
 import { RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
-import { rtScrollActiveOptionIntoView } from '@rt-tools/ui-kit-v2/select';
+import { rtScrollActiveOptionIntoView } from '@rt-tools/ui-kit-v2/core';
 import { IRtAutocomplete } from './rt-autocomplete.model';
 
 const BEM_BLOCK: string = 'rt-autocomplete';

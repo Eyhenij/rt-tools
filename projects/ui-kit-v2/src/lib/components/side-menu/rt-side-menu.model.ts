@@ -1,3 +1,5 @@
+import { IRtMatchPart } from '@rt-tools/ui-kit-v2/core';
+
 export namespace IRtSideMenu {
     export type ItemData = string | number | object;
 
@@ -55,9 +57,6 @@ export namespace IRtSideMenu {
         };
     }
 
-    /** Кусок подписи: отмеченный — тот, которым она совпала с запросом. */
-    export interface TitlePart {
-        text: string;
-        matched: boolean;
-    }
+    /** Кусок подписи: отмеченный — тот, которым она совпала с запросом. Объявлен в ядре. */
+    export type TitlePart = IRtMatchPart;
 }

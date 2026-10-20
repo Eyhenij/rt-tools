@@ -30,8 +30,7 @@ import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { RtRadioButtonComponent } from '@rt-tools/ui-kit-v2/radio-button';
 import { RtTagComponent } from '@rt-tools/ui-kit-v2/tag';
 import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
-import { rtTreeOpenFor, rtTreeRows, rtTreeSideKey, rtTreeToggle } from '@rt-tools/ui-kit-v2/select';
-import { IRtSelect } from '@rt-tools/ui-kit-v2/select';
+import { IRtOptionTree, rtTreeOpenFor, rtTreeRows, rtTreeSideKey, rtTreeToggle } from '@rt-tools/ui-kit-v2/core';
 import { RtTreeNodeEndDirective, RtTreeNodeMetaDirective } from './rt-tree.directives';
 import { rtTreeChoose, rtTreeChooseAlone, rtTreeLabelParts, rtTreeMark, rtTreeSelectAll, rtTreeSelectAllMark } from './rt-tree.logic';
 import { IRtTree } from './rt-tree.model';
@@ -364,7 +363,7 @@ export class RtTreeComponent<TValue> {
     }
 
     #side(rows: ReadonlyArray<IRtTree.Row<TValue>>, index: number, key: string): void {
-        const answer: IRtSelect.SideKeyAnswer<TValue> = rtTreeSideKey(rows, index, key);
+        const answer: IRtOptionTree.SideKeyAnswer<TValue> = rtTreeSideKey(rows, index, key);
         if (answer.toggle !== null) {
             this.#toggle(answer.toggle);
         }
