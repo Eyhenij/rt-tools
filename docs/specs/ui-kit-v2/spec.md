@@ -80,6 +80,7 @@ agreement about their own subject and describe the surface of a component, not a
 | [The logo of a service](service-logo/spec.md)                             | marks of outside services in light round plates: three sizes, overlap by a step, a kit icon for a mark without an image         |
 | [The media of a card](card-media/spec.md)                                 | the place above the title of a card: a mark, a picture or an icon in the slot `[rtCardMedia]`                                   |
 | [The match rule of a search](search-match/spec.md)                        | one rule for every search of the kit: every word of the query in any order, case and «ё» aside, the highlight by the same rule  |
+| [The keys of an option list](option-list/spec.md)                         | the keyboard shared by the select, the multiselect and the autocomplete: open, move the highlight, choose, close                |
 | [The breadcrumbs](breadcrumbs/spec.md)                                    | the path to the open page: ancestors as links, the back button, the heading look, the fold on a narrow screen                   |
 | [The inline edit](inline-edit/spec.md)                                    | a short value changed where it is shown: the field on a press, save and cancel by keys and buttons, the saving wait             |
 | [The quick menu](speed-menu/spec.md)                                      | a round button that opens round action buttons beside it: the four sides, the choice, the keys, the closing                     |
