@@ -108,6 +108,7 @@ export class RtAutocompleteComponent<TItem> extends RtFormControlBase<TItem | nu
         count: (): number => this.suggestions().length,
         chooseKeys: new Set<string>(['Enter']),
         sideKeys: false,
+        edgeKeys: false,
     });
 
     protected readonly activeIndex: WritableSignal<number> = this.optionList.activeIndex;

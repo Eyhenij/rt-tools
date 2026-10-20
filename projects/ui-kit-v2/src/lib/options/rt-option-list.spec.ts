@@ -18,6 +18,7 @@ function createList(overrides: Partial<IRtOptionListConfig> = {}): IListHarness 
         isDisabled: (index: number): boolean => index === 1,
         chooseKeys: new Set<string>(['Enter', ' ']),
         sideKeys: true,
+        edgeKeys: true,
         ...overrides,
     };
     const list: RtOptionList = TestBed.runInInjectionContext((): RtOptionList => new RtOptionList(config));
@@ -91,5 +92,19 @@ describe('RtOptionList', (): void => {
         open.set(true);
         list.reset();
         expect(list.activeOptionId()).toBeNull();
+    });
+
+    it('SC-UKV-885 — Home and End go to the first and the last enabled option', (): void => {
+        const { list } = createList({ count: (): number => 4, isDisabled: (index: number): boolean => index === 0 });
+        const autocomplete: RtOptionList = createList({ edgeKeys: false }).list;
+
+        expect(list.actionOf('End')).toBe('last');
+        expect(list.actionOf('Home')).toBe('first');
+        list.last();
+        expect(list.activeIndex()).toBe(3);
+        list.first();
+        expect(list.activeIndex()).toBe(1);
+        expect(autocomplete.actionOf('Home')).toBe('none');
+        expect(autocomplete.actionOf('End')).toBe('none');
     });
 });

@@ -202,4 +202,57 @@ describe('RtDynamicSelectorPopupComponent', (): void => {
         expect(qa(setup({ navigateTitle: 'All people' }), 'dynamic-selector-nav')).toBeNull();
         expect(textOf(qa(setup({ navigateTitle: 'All people', navigateLink: '/people' }), 'dynamic-selector-nav'))).toBe('All people');
     });
+
+    describe('клавиши строк', (): void => {
+        function controls(fixture: TPopupFixture): HTMLElement[] {
+            return Array.from((fixture.nativeElement as HTMLElement).querySelectorAll<HTMLElement>('[role="checkbox"], [role="radio"]'));
+        }
+
+        function searchField(fixture: TPopupFixture): HTMLInputElement {
+            return (qa(fixture, 'dynamic-selector-search')?.nativeElement as HTMLElement).querySelector('input') as HTMLInputElement;
+        }
+
+        function pressOn(fixture: TPopupFixture, target: HTMLElement, key: string): KeyboardEvent {
+            const event: KeyboardEvent = new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true });
+            target.dispatchEvent(event);
+            fixture.detectChanges();
+            return event;
+        }
+
+        it('SC-UKV-886 — the arrows move the focus between the rows of the dynamic selector popup', (): void => {
+            const fixture: TPopupFixture = setup({ selectAllShown: false });
+            const rows: HTMLElement[] = controls(fixture);
+
+            pressOn(fixture, searchField(fixture), 'ArrowDown');
+            expect(document.activeElement).toBe(rows[0]);
+            pressOn(fixture, rows[0], 'ArrowUp');
+            expect(document.activeElement).toBe(rows[2]);
+            pressOn(fixture, rows[2], 'End');
+            expect(document.activeElement).toBe(rows[2]);
+            pressOn(fixture, rows[2], 'Home');
+            expect(document.activeElement).toBe(rows[0]);
+        });
+
+        it('SC-UKV-886 — Home and End in the search field stay with the caret', (): void => {
+            const fixture: TPopupFixture = setup();
+            const field: HTMLInputElement = searchField(fixture);
+            field.focus();
+
+            expect(pressOn(fixture, field, 'Home').defaultPrevented).toBe(false);
+            expect(pressOn(fixture, field, 'End').defaultPrevented).toBe(false);
+            expect(document.activeElement).toBe(field);
+        });
+
+        it('SC-UKV-887 — Enter ticks the focused row of the dynamic selector popup', (): void => {
+            const single: TPopupFixture = setup({ mode: 'single' });
+            const radios: HTMLElement[] = controls(single);
+            pressOn(single, searchField(single), 'ArrowDown');
+            pressOn(single, radios[0], 'ArrowDown');
+            pressOn(single, radios[1], 'Enter');
+
+            expect(radios[1].getAttribute('aria-checked')).toBe('true');
+            // Строка флажков — кнопка: Enter нажимает её сам браузер, как щелчок.
+            expect(controls(setup()).every((control: HTMLElement): boolean => control.tagName === 'BUTTON')).toBe(true);
+        });
+    });
 });
