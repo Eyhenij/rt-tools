@@ -15,7 +15,7 @@ import { RtTabDirective } from './rt-tab.directive';
 import { IRtTabs } from './rt-tabs.model';
 
 /** Признак, по которому пользователь просит обходиться без движения. */
-const REDUCED_MOTION_QUERY: string = '(prefers-reduced-motion: reduce)';
+export const RT_TABS_REDUCED_MOTION: string = '(prefers-reduced-motion: reduce)';
 
 /** Куда сдвигается содержимое: к вкладке правее (`forward`) или левее (`backward`). */
 export type TRtTabsPanelShift = 'forward' | 'backward';
@@ -93,28 +93,9 @@ export function rtTabsDurationMs(value: string): number {
     return text.endsWith('s') ? amount * 1000 : amount;
 }
 
-/** Сдвиг полосы вкладок на ширину её видимой области назад или вперёд, не дальше края. */
-export function rtTabsScrollPage(list: HTMLElement, back: boolean): void {
-    const max: number = Math.max(0, list.scrollWidth - list.clientWidth);
-    const shift: number = back ? -list.clientWidth : list.clientWidth;
-
-    list.scrollLeft = Math.min(max, Math.max(0, list.scrollLeft + shift));
-}
-
 /** Набор посещённых вкладок с вкладкой `id`: тот же набор, если она в нём уже есть. */
 function withVisited(visited: ReadonlySet<IRtTabs.Id>, id: IRtTabs.Id | null): ReadonlySet<IRtTabs.Id> {
     return id === null || visited.has(id) ? visited : new Set([...visited, id]);
-}
-
-/** Прокрутка полосы так, чтобы вкладка встала в видимую область целиком; видная целиком не двигает полосу. */
-export function rtTabsScrollIntoView(list: HTMLElement, tab: HTMLElement): void {
-    if (tab.offsetLeft < list.scrollLeft) {
-        list.scrollTo({ left: tab.offsetLeft });
-    } else if (tab.offsetLeft + tab.offsetWidth > list.scrollLeft + list.clientWidth) {
-        list.scrollTo({ left: tab.offsetLeft + tab.offsetWidth - list.clientWidth });
-    } else {
-        // вкладка целиком в зоне видимости — прокрутка не нужна
-    }
 }
 
 function sameInkBox(a: IInkBox | null, b: IInkBox | null): boolean {
@@ -142,7 +123,7 @@ export function rtTabsLeavingPanel(
         return null;
     }
 
-    if (win.matchMedia?.(REDUCED_MOTION_QUERY).matches) {
+    if (win.matchMedia?.(RT_TABS_REDUCED_MOTION).matches) {
         return null;
     }
 
@@ -213,8 +194,22 @@ export class RtTabsPanels {
     /** Длительность из входа `animationDuration` в виде CSS; `null` — длительности из токенов. */
     public readonly duration: Signal<string | null>;
 
+    /** Длительности полосы, панели и прокрутки на хосте из входа; без входа их держат токены. */
+    public readonly durations: Signal<Readonly<Record<string, string>> | null>;
+
     constructor(host: HTMLElement, win: Window | null, tabs: IRtTabsSet, shown: IRtTabsShown) {
         this.duration = computed((): string | null => rtTabsCssDuration(shown.duration()));
+        this.durations = computed((): Readonly<Record<string, string>> | null => {
+            const duration: string | null = this.duration();
+
+            return duration === null
+                ? null
+                : {
+                      '--rt-tabs-indicator-duration': duration,
+                      '--rt-tabs-panel-duration': duration,
+                      '--rt-tabs-scroll-duration': duration,
+                  };
+        });
         const ids: () => IRtTabs.Id[] = (): IRtTabs.Id[] => tabs.visible().map((tab: RtTabDirective): IRtTabs.Id => tab.id());
 
         this.leaving = linkedSignal<IRtTabs.Id | null, IRtTabsLeavingPanel | null>({

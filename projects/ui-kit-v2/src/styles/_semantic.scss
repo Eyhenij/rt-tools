@@ -492,6 +492,9 @@
     --rt-tabs-indicator-easing: ease-out;
     --rt-tabs-panel-duration: 0ms;
     --rt-tabs-panel-easing: ease-out;
+    /* Прокрутка полосы вкладок стрелками и к выбранной вкладке. */
+    --rt-tabs-scroll-duration: var(--rt-duration-base);
+    --rt-tabs-scroll-easing: ease-out;
 
     /* Form field (rt-field) — обёртка анатомии поля: label / help / hint / error /
        required-маркер / read-only значение. Визуал label+hint в стиле Tailwind

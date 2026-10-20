@@ -306,6 +306,8 @@
     --rt-tabs-indicator-easing: cubic-bezier(0.35, 0, 0.25, 1);
     --rt-tabs-panel-duration: var(--rt-duration-slower);
     --rt-tabs-panel-easing: cubic-bezier(0.35, 0, 0.25, 1);
+    --rt-tabs-scroll-duration: var(--rt-duration-slower);
+    --rt-tabs-scroll-easing: cubic-bezier(0.35, 0, 0.25, 1);
 }
 
 /* The preset under a dark theme: the names the preset reads from Material keep the Material chain,

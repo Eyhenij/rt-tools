@@ -33,10 +33,8 @@ import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
 import { RtTabDirective } from './rt-tab.directive';
 import { RtTabsControlDirective } from './rt-tabs-control.directive';
 import { IRtTabs } from './rt-tabs.model';
-import { RtTabsInk, RtTabsPanels, rtTabsScrollIntoView, rtTabsScrollPage } from './rt-tabs.motion';
-
-/** Шаг ручной прокрутки полосы вкладок за один тик удержания стрелки (px). */
-const SCROLL_STEP: number = 12;
+import { RtTabsInk, RtTabsPanels } from './rt-tabs.motion';
+import { rtTabsIntoViewTarget, rtTabsPageTarget, RtTabsScroller } from './rt-tabs.scroll';
 
 /** Интервал тика прокрутки при зажатой стрелке (мс). */
 const SCROLL_TICK_MS: number = 15;
@@ -97,8 +95,7 @@ type TScrollDirection = 'before' | 'after';
         '[class.rt-tabs--direction--horizontal]': "direction() === 'horizontal'",
         '[class.rt-tabs--direction--vertical]': "direction() === 'vertical'",
         '[class.rt-tabs--animating]': 'panels.shift() !== null',
-        '[style.--rt-tabs-indicator-duration]': 'panels.duration()',
-        '[style.--rt-tabs-panel-duration]': 'panels.duration()',
+        '[style]': 'panels.durations()',
     },
 })
 export class RtTabsComponent {
@@ -230,6 +227,9 @@ export class RtTabsComponent {
     /** Стрелки прокрутки поверх вкладок (`overlay`) или в своих местах по краям полосы (`inline`). */
     public readonly scrollArrows: InputSignal<IRtTabs.ScrollArrows> = input<IRtTabs.ScrollArrows>('overlay');
 
+    /** Шаг нажатия на стрелку: видимая ширина полосы (`page`) или её треть (`third`), как у Material. */
+    public readonly scrollStep: InputSignal<IRtTabs.ScrollStep> = input<IRtTabs.ScrollStep>('page');
+
     /**
      * Длительность движения при смене вкладки — и полосы, и панели, как у `mat-tab-group`: `500`,
      * `'500ms'`, `'0.5s'`; `0` выключает движение. Без входа длительности берутся из токенов.
@@ -246,6 +246,11 @@ export class RtTabsComponent {
     public readonly tabClose: OutputEmitterRef<IRtTabs.Id> = output<IRtTabs.Id>();
 
     readonly #injector: Injector = inject(Injector);
+
+    /** Плавная прокрутка полосы: стрелки и вкладка, встающая в видимую область. */
+    readonly #scroller: RtTabsScroller = new RtTabsScroller(this.#win, this.#host, (): ElementRef<HTMLElement> | undefined =>
+        this.tabListRef()
+    );
 
     /** Внутренний выбор (uncontrolled-ветка). */
     readonly #internalId: WritableSignal<IRtTabs.Id | null> = signal<IRtTabs.Id | null>(null);
@@ -273,7 +278,10 @@ export class RtTabsComponent {
 
         // Снимаем hold-scroll интервал при уничтожении: если компонент разрушить
         // с зажатой стрелкой (pointerdown без pointerup), интервал остался бы жив.
-        inject(DestroyRef).onDestroy((): void => this.#clearScrollInterval());
+        inject(DestroyRef).onDestroy((): void => {
+            this.#clearScrollInterval();
+            this.#scroller.stop();
+        });
     }
 
     protected selectTab(id: IRtTabs.Id): void {
@@ -440,26 +448,14 @@ export class RtTabsComponent {
     #scrollPage(direction: TScrollDirection): void {
         const list: HTMLElement | undefined = this.tabListRef()?.nativeElement;
         if (list) {
-            rtTabsScrollPage(list, direction === 'before');
+            this.#scroller.to(rtTabsPageTarget(list, this.#scroller.from(), direction === 'before', this.scrollStep()));
+            // Сразу — для прокрутки без движения; плавную ведут события прокрутки самой полосы.
             this.#updateRestVisibility();
         }
     }
 
     #scrollStep(direction: TScrollDirection): void {
-        const list: HTMLElement | undefined = this.tabListRef()?.nativeElement;
-        if (!list) {
-            return;
-        }
-
-        const scrolledLeft: number = list.scrollLeft;
-        const scrolledRight: number = list.scrollWidth - list.scrollLeft - list.clientWidth;
-        const remaining: number = direction === 'before' ? scrolledLeft : scrolledRight;
-
-        if (remaining > 0) {
-            list.scrollLeft += direction === 'before' ? -Math.min(SCROLL_STEP, remaining) : Math.min(SCROLL_STEP, remaining);
-        }
-
-        if (remaining - SCROLL_STEP <= 0) {
+        if (!this.#scroller.nudge(direction === 'before')) {
             this.#clearScrollInterval();
         }
     }
@@ -484,13 +480,16 @@ export class RtTabsComponent {
         const list: HTMLElement | undefined = this.tabListRef()?.nativeElement;
         const tab: HTMLElement | null | undefined = list?.querySelector<HTMLElement>(`[data-tabid="${id}"]`);
 
-        if (list && tab) {
-            rtTabsScrollIntoView(list, tab);
+        const target: number | null = list && tab ? rtTabsIntoViewTarget(list, tab) : null;
+
+        if (target !== null) {
+            this.#scroller.to(target);
         }
     }
 
     #focusTab(id: IRtTabs.Id): void {
         const list: HTMLElement | undefined = this.tabListRef()?.nativeElement;
-        list?.querySelector<HTMLElement>(`[data-tabid="${id}"]`)?.focus();
+        // Без прокрутки фокусом: вкладку в видимую область ведёт плавная прокрутка полосы.
+        list?.querySelector<HTMLElement>(`[data-tabid="${id}"]`)?.focus({ preventScroll: true });
     }
 }

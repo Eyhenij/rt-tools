@@ -551,6 +551,8 @@ export type TRtDesignTokenName =
     | '--rt-tabs-indicator-easing'
     | '--rt-tabs-panel-duration'
     | '--rt-tabs-panel-easing'
+    | '--rt-tabs-scroll-duration'
+    | '--rt-tabs-scroll-easing'
     | '--rt-text-2xl'
     | '--rt-text-2xs'
     | '--rt-text-3xl'
@@ -1311,6 +1313,8 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-tabs-indicator-easing',
     '--rt-tabs-panel-duration',
     '--rt-tabs-panel-easing',
+    '--rt-tabs-scroll-duration',
+    '--rt-tabs-scroll-easing',
     '--rt-text-2xl',
     '--rt-text-2xs',
     '--rt-text-3xl',

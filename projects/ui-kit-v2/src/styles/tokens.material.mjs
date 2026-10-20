@@ -407,4 +407,12 @@ export const material = [
         name: `--rt-tabs-panel-easing`,
         value: `cubic-bezier(0.35, 0, 0.25, 1)`,
     },
+    {
+        name: `--rt-tabs-scroll-duration`,
+        value: `var(--rt-duration-slower)`,
+    },
+    {
+        name: `--rt-tabs-scroll-easing`,
+        value: `cubic-bezier(0.35, 0, 0.25, 1)`,
+    },
 ];

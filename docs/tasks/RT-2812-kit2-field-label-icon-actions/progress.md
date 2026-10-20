@@ -613,6 +613,19 @@ data-preset="material" floatingLabel>` drew the border through the risen label: 
   `display: none` by a modifier. Snapshots 940 of 942, the two known PDF frames. Live on Playground:
   the same body comes back with its mark, the never-opened tab has no body, without the input the
   body is created anew as before.
+- **2026-10-20, request 19 (the application's session): the tab list scrolls smoothly.** The
+  material tab group slides its list by a transform over 500 ms and an arrow press moves a third of
+  the visible width. Here the list's own scroll moves instead, frame by frame along the curve from
+  the tokens `--rt-tabs-scroll-duration` and `--rt-tabs-scroll-easing`: a transform would take
+  the wheel and touch scrolling away from the browser. New input `scrollStep` (`page` by
+  default, `third`). The selected half-hidden tab scrolls in the same way, and focusing a tab no
+  longer scrolls the list by itself. `animationDuration` sets this duration too, reduced motion
+  scrolls at once; a hold tick stops the smooth scroll and moves at once — SC-UKV-952, 953.
+    - Own look 200 ms ease-out, the material preset 500 ms with the Material curve.
+    - The scroll lives in a file of its own next to the component, the hold step moved there too.
+    - Snapshots 940 of 942, the two known PDF frames. Live on ScrollArrows: the own half reaches
+      the target in 200 ms, the material half by 23, 175, 331 and 384 px at 60, 150, 300 and
+      600 ms; reduced motion jumps at once.
 
 ## Sessions
 

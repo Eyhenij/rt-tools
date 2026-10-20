@@ -317,4 +317,13 @@ export const lightNavigation = [
         name: `--rt-tabs-panel-easing`,
         value: `ease-out`,
     },
+    {
+        lead: `    /* Прокрутка полосы вкладок стрелками и к выбранной вкладке. */`,
+        name: `--rt-tabs-scroll-duration`,
+        value: `var(--rt-duration-base)`,
+    },
+    {
+        name: `--rt-tabs-scroll-easing`,
+        value: `ease-out`,
+    },
 ];

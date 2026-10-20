@@ -755,3 +755,22 @@ Then the live body of the previous tab leaves, the new one slides in, and after 
 previous body stays hidden rather than removed
 
 Covered: `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-preserve.spec.ts`.
+
+### SC-UKV-952 — an arrow scrolls the tab list smoothly by the chosen step
+
+Given a tab list wider than its place and a scroll duration above zero
+When the person presses a scroll arrow
+Then the list's own scroll moves along the scroll curve for its duration and stops exactly at the
+target, a page or a third of the visible width by `scrollStep`; a second press counts from the
+target of the running scroll, and a hold tick stops it and moves at once
+
+Covered: `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-scroll.spec.ts`.
+
+### SC-UKV-953 — a half-hidden selected tab scrolls in, and motion can be off
+
+Given a selected tab cut by the edge of the list
+When it is chosen
+Then the list scrolls it into view by the same motion; a fully visible tab does not move the list,
+and a zero duration or reduced motion scrolls at once
+
+Covered: `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-scroll.spec.ts`.
