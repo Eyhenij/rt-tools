@@ -1,5 +1,7 @@
 # Grill
 
+Former address: docs/tasks/RT-2903-page-header-more/grill.md
+
 ## The owner request
 
 > меню всегда должно быть показано в одну строку, еслине хватает места - нужно прятать пункты
@@ -34,3 +36,11 @@ Asked who edits the header, the owner chose «Задача в кит, делаю
   kit — the kit has no storage for it, the application passes the number.
 - **The fit is a pure function of measured widths.** Rejected: measuring inside the decision, it
   could not be checked by a call.
+
+## Decisions along the way
+
+- **The list keeps `row wrap`.** Without wrapping the list declares the width of all its sections
+  and widens a container that sizes itself by the header. The fit moves a section into «More»
+  before it could wrap.
+- **The top lines of the «More» panel are dark, as the sections of the narrow menu.** The first
+  version drew them grey, as second-level items.
