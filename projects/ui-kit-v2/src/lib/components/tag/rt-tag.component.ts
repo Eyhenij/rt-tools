@@ -28,7 +28,7 @@ import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
 import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
-import { IRtSideMenu, splitTitleByWords } from '@rt-tools/ui-kit-v2/side-menu';
+import { IRtMatchPart, rtMatchPartsByWords } from '@rt-tools/ui-kit-v2/core';
 import { IRtTag } from './rt-tag.model';
 
 const BEM_BLOCK: string = 'rt-tag';
@@ -81,8 +81,8 @@ export class RtTagComponent implements OnDestroy {
     protected readonly iconSize: Signal<IRtIcon.Size> = computed((): IRtIcon.Size => ICON_BY_SIZE[this.size()]);
 
     /** Подпись, разрезанная по словам `highlight`: без них — один кусок целиком. */
-    protected readonly parts: Signal<ReadonlyArray<IRtSideMenu.TitlePart>> = computed((): ReadonlyArray<IRtSideMenu.TitlePart> =>
-        splitTitleByWords(this.value(), this.highlight())
+    protected readonly parts: Signal<ReadonlyArray<IRtMatchPart>> = computed((): ReadonlyArray<IRtMatchPart> =>
+        rtMatchPartsByWords(this.value(), this.highlight())
     );
 
     public readonly value: InputSignal<string> = input.required<string>();

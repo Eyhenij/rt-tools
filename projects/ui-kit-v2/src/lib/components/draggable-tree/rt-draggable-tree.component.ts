@@ -24,8 +24,7 @@ import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { IRtIcon, RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
 import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
-import { rtTreeRows, rtTreeSideKey, rtTreeToggle } from '@rt-tools/ui-kit-v2/select';
-import { IRtSelect } from '@rt-tools/ui-kit-v2/select';
+import { IRtOptionTree, rtTreeRows, rtTreeSideKey, rtTreeToggle } from '@rt-tools/ui-kit-v2/core';
 import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
 import { IRtTree } from '@rt-tools/ui-kit-v2/tree';
 import { RtDraggableTreeNodeDirective } from './rt-draggable-tree.directives';
@@ -196,7 +195,7 @@ export class RtDraggableTreeComponent<TValue> {
             return false;
         }
         if (key === 'ArrowRight' || key === 'ArrowLeft') {
-            const answer: IRtSelect.SideKeyAnswer<TValue> = rtTreeSideKey(rows, index, key);
+            const answer: IRtOptionTree.SideKeyAnswer<TValue> = rtTreeSideKey(rows, index, key);
             if (answer.toggle !== null) {
                 this.#toggle(answer.toggle);
             }

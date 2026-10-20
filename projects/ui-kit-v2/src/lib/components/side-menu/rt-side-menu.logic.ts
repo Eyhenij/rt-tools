@@ -68,58 +68,6 @@ export function clampSideMenuWidth(width: number): number {
 }
 
 /**
- * Резка подписи на совпавшие и несовпавшие куски.
- *
- * Отмечаются все вхождения: отмеченное одно первое читается как «второго нет». Сравнение без учёта
- * регистра, а куски режутся из оригинала — приведение к нижнему регистру переписало бы названия.
- */
-export function splitSideMenuTitle(name: string, query: string): IRtSideMenu.TitlePart[] {
-    if (name === '') {
-        return [];
-    }
-
-    const needle: string = query.trim().toLowerCase();
-
-    if (needle === '') {
-        return [{ text: name, matched: false }];
-    }
-
-    const haystack: string = name.toLowerCase();
-    const parts: IRtSideMenu.TitlePart[] = [];
-    let from: number = 0;
-
-    for (let at: number = haystack.indexOf(needle, from); at !== -1; at = haystack.indexOf(needle, from)) {
-        if (at > from) {
-            parts.push({ text: name.slice(from, at), matched: false });
-        }
-
-        parts.push({ text: name.slice(at, at + needle.length), matched: true });
-        from = at + needle.length;
-    }
-
-    if (from < name.length) {
-        parts.push({ text: name.slice(from), matched: false });
-    }
-
-    return parts;
-}
-
-/**
- * Резка подписи по каждому слову запроса. Приложение делит поиск по пробелам и ищет каждое слово
- * отдельно, поэтому и отмечено каждое. Слово внутри уже отмеченного куска не режет его второй раз.
- */
-export function splitTitleByWords(name: string, query: string): IRtSideMenu.TitlePart[] {
-    const words: string[] = query.split(/\s+/).filter((word: string): boolean => word !== '');
-    return words.reduce(
-        (parts: IRtSideMenu.TitlePart[], word: string): IRtSideMenu.TitlePart[] =>
-            parts.flatMap((part: IRtSideMenu.TitlePart): IRtSideMenu.TitlePart[] =>
-                part.matched ? [part] : splitSideMenuTitle(part.text, word)
-            ),
-        splitSideMenuTitle(name, '')
-    );
-}
-
-/**
  * Пункты подменю в том порядке, в каком они стоят на экране. Внутрь папки список спускается, только
  * если та раскрыта: ходьба стрелками идёт по видимому, а не по всему набору.
  */
