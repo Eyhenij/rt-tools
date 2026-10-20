@@ -189,9 +189,9 @@ in its decorator: the next matrix of that same component comes up without it alr
 
     A disputed case is decided top down: opens an overlay or lives by records — an organism, even if
     there is little markup in it; neither of those, but another kit component stands inside — a
-    molecule; no kit inside — an atom. The number of inputs, the file length and "it is a simple
-    component after all" are not signs: by them the same component lands at different levels with
-    two authors, and a diverged level drags a rename of the references behind it.
+    molecule; no kit inside — an atom. A form field with its own choice panel stays a molecule.
+    The number of inputs, the file length and "it is a simple component after all" are not signs:
+    by them two authors put one component at different levels.
 
 - **A child part stands in its parent's group; the level is given to it by that same sign of
   composition.** A dialog's header next to the dialog, a menu item next to the menu — and most often
