@@ -626,6 +626,10 @@ data-preset="material" floatingLabel>` drew the border through the risen label: 
     - Snapshots 940 of 942, the two known PDF frames. Live on ScrollArrows: the own half reaches
       the target in 200 ms, the material half by 23, 175, 331 and 384 px at 60, 150, 300 and
       600 ms; reduced motion jumps at once.
+    - Follow-up of the same session: `animationDuration` no longer writes the scroll duration. On
+      the material tab group it governs the body and the bar only, and three side panels with
+      `animationDuration="0"` would have had their list jump. The scroll takes its duration from
+      the token alone; reduced motion still turns it off.
 
 ## Sessions
 

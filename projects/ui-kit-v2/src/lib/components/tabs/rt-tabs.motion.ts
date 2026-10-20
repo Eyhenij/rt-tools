@@ -194,7 +194,8 @@ export class RtTabsPanels {
     /** Длительность из входа `animationDuration` в виде CSS; `null` — длительности из токенов. */
     public readonly duration: Signal<string | null>;
 
-    /** Длительности полосы, панели и прокрутки на хосте из входа; без входа их держат токены. */
+    /** Длительности полосы и панели на хосте из входа; без входа их держат токены. Прокрутку полосы
+     * вход не трогает, как у `mat-tab-group`: её длительность — только токен. */
     public readonly durations: Signal<Readonly<Record<string, string>> | null>;
 
     constructor(host: HTMLElement, win: Window | null, tabs: IRtTabsSet, shown: IRtTabsShown) {
@@ -207,7 +208,6 @@ export class RtTabsPanels {
                 : {
                       '--rt-tabs-indicator-duration': duration,
                       '--rt-tabs-panel-duration': duration,
-                      '--rt-tabs-scroll-duration': duration,
                   };
         });
         const ids: () => IRtTabs.Id[] = (): IRtTabs.Id[] => tabs.visible().map((tab: RtTabDirective): IRtTabs.Id => tab.id());

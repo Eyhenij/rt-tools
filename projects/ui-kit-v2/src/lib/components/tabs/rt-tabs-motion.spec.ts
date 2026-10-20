@@ -172,6 +172,13 @@ describe('RtTabsComponent — движение при смене вкладки'
             expect(tabsHost(fixture).style.getPropertyValue('--rt-tabs-panel-duration')).toBe('0.5s');
         });
 
+        it('SC-UKV-948 — вход не трогает длительность прокрутки полосы: её держит токен', (): void => {
+            const fixture: THostFixture = setup(0);
+
+            expect(tabsHost(fixture).style.getPropertyValue('--rt-tabs-panel-duration')).toBe('0ms');
+            expect(tabsHost(fixture).style.getPropertyValue('--rt-tabs-scroll-duration')).toBe('');
+        });
+
         it('SC-UKV-948 — без входа длительности остаются токенам', (): void => {
             const fixture: THostFixture = setup(null);
 

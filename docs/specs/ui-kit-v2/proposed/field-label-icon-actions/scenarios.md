@@ -725,7 +725,8 @@ Covered: `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-motion.spec.ts`.
 Given `animationDuration` as a number, a string of digits or a CSS time
 When the tabs render
 Then the bar and panel duration properties on the host carry it, digits read as milliseconds;
-without the input the properties stay with the tokens
+without the input the properties stay with the tokens, and the list scroll duration stays with its
+token either way
 
 Covered: `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-motion.spec.ts`.
 
