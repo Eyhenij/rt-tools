@@ -52,6 +52,10 @@ const config: StorybookConfig = {
         // Второй набор значков отдаётся рядом с первым: без него материальная половина показа
         // молча рисует свои значки, и пара наборов выглядит совпадающей.
         { from: '../src/assets/icons-material', to: '/icons-material' },
+        // Воркер просмотрщика PDF лежит по адресу умолчания `assets/pdfjs/` — тем же путём его
+        // кладёт себе приложение. Файл берётся из того же пакета, что и рисовальщик: версии
+        // воркера и рисовальщика обязаны совпадать.
+        { from: '../../../node_modules/pdfjs-dist/build', to: '/assets/pdfjs' },
     ],
     webpackFinal: async (config) => {
         const definePlugin = config.plugins?.find((plugin) => plugin?.constructor?.name === 'DefinePlugin');

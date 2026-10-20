@@ -53,6 +53,9 @@
   «Delete» — `danger`, отдаёт `deleteThread` без `confirmMessage`, подтверждение на приложении.
   Подписи — `uiMoreActions`, `aiCopyThreadId`, `uiRemove`. Пока панель открыта, действия строки
   видны: правило `:has(.rt-menu--open)` в `rt-thread-list`.
+- `--rt-ai-chat-content-max-width` (по умолчанию `100%`) становится боковым отступом `feed`,
+  `composer` и `disclaimer`: колонка стоит по центру беседы, полоса прокрутки ленты остаётся у её
+  края. `max-inline-size` на самой ленте увёл бы полосу прокрутки внутрь колонки.
 - Подсветка совпадений поиска по беседам — `splitSideMenuTitle`.
 - Строки-превью пустого списка бесед — `emptyPreviewIcons`, по умолчанию `sparkle`, `bot`, `sparkle`:
   беседы идут с ассистентом, а не с людьми. Вход уходит в `rt-thread-list` как есть.

@@ -1,3 +1,19 @@
+# [0.26.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.25.0...rt-ui-kit-v2%400.26.0) (2026-10-19)
+
+### Bug Fixes
+
+- **rt:ui-kit-v2:** клавиша Esc в просмотрщике PDF закрывает только его окно ([d192aa1](https://github.com/Eyhenij/rt-tools/commit/d192aa10d59e63c6b28249ea1e557ee73c3869cd)), closes [#2888](https://github.com/Eyhenij/rt-tools/issues/2888)
+
+### Features
+
+- **rt:ui-kit-v2:** просмотрщик PDF в окне на весь экран ([3949c42](https://github.com/Eyhenij/rt-tools/commit/3949c423279f78290128b8dd65b5a8f03b656b31))
+
+# [0.25.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.24.0...rt-ui-kit-v2%400.25.0) (2026-10-19)
+
+### Features
+
+- **rt:ui-kit-v2:** ширина ленты и поля ввода rt-ai-chat задаётся токеном ([53ae77e](https://github.com/Eyhenij/rt-tools/commit/53ae77e4298d3f1f98528d0cee8ffb3098aeb311)), closes [#2885](https://github.com/Eyhenij/rt-tools/issues/2885)
+
 # [0.24.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.23.4...rt-ui-kit-v2%400.24.0) (2026-10-15)
 
 ### Bug Fixes
