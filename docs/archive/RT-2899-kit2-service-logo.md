@@ -1,5 +1,7 @@
 # Grill
 
+Former address: docs/tasks/RT-2899-kit2-service-logo/grill.md
+
 ## The owner request
 
 > нужно завести отдельный компонент в ui-kit v2 и написать под него тесты и сторибук, заведи
@@ -46,3 +48,16 @@ then named the copy: «работай в rt-worktree-2».
 
 - A row longer than three marks. The atom draws up to three; the component draws any number with
   the same step, and the consumer decides where to stop.
+
+## Decisions along the way
+
+- **The story stands among molecules.** The showcase rule sets the level by what a part is made of,
+  and the part holds the kit icon. The design system names it an atom; the owner may move it.
+- **The mark of a kit icon keeps a dark colour in both themes.** In the dark theme the icon took the
+  light text colour and vanished on the light plate. The token `--rt-color-service-logo-mark` is
+  shared by both themes.
+- **The row is a list.** The host is a list, each plate an item. An image carries its label as
+  `alt`; an icon sits in a wrapper with a role of an image and the label, because the kit icon is
+  hidden from a screen reader.
+- **The story marks are neutral shapes.** The first placeholder looked like a card network brand
+  and was replaced.
