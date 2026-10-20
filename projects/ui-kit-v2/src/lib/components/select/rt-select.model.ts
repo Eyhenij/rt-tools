@@ -1,34 +1,24 @@
+import { IRtOptionTree } from '@rt-tools/ui-kit-v2/core';
+
 /**
  * Модель `<rt-select>`: один корневой неймспейс с префиксом `I`.
  * Generic-параметр `TValue` повторяет тип значения, который сидит в опциях.
+ *
+ * Опция и строка дерева объявлены в ядре: их раскладывают и деревья кита, а те не берут выбор из
+ * списка. Здесь — те же типы под прежними именами.
  */
 export namespace IRtSelect {
     /** Одна опция dropdown'а. */
-    export interface Option<TValue> {
-        label: string;
-        value: TValue;
-        disabled?: boolean;
-        /** Дети опции того же вида. Хотя бы одна опция с детьми делает список деревом. */
-        children?: ReadonlyArray<Option<TValue>>;
-    }
+    export type Option<TValue> = IRtOptionTree.Option<TValue>;
 
     /** Видимая строка дерева: опция, её уровень и то, ветка ли она и раскрыта ли. */
-    export interface Row<TValue> {
-        readonly option: Option<TValue>;
-        readonly level: number;
-        readonly branch: boolean;
-        readonly open: boolean;
-        readonly parent: TValue | null;
-    }
+    export type Row<TValue> = IRtOptionTree.Row<TValue>;
 
     /** Сколько включённых листьев ветки выбрано: все, часть или ни одного. */
-    export type TBranchState = 'all' | 'some' | 'none';
+    export type TBranchState = IRtOptionTree.TBranchState;
 
     /** Что делать по боковой стрелке: какую ветку переключить и куда увести подсветку. */
-    export interface SideKeyAnswer<TValue> {
-        readonly toggle: TValue | null;
-        readonly index: number;
-    }
+    export type SideKeyAnswer<TValue> = IRtOptionTree.SideKeyAnswer<TValue>;
 
     /**
      * Что кит отдаёт своей разметке указателя. Три значения и не больше: большее привязало бы

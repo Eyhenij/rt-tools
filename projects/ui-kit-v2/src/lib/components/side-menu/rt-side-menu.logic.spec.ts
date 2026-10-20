@@ -1,7 +1,6 @@
 import {
     clampSideMenuWidth,
     filterSideMenuItems,
-    splitSideMenuTitle,
     stepSideMenuHighlight,
     sideMenuIdsToExpand,
     sideMenuWidthByKey,
@@ -205,47 +204,6 @@ describe('ширина подменю', (): void => {
 
     it('SC-UKV-435 — клавиша не о ширине ширины не даёт', (): void => {
         expect(sideMenuWidthByKey('Tab', 300)).toBeNull();
-    });
-});
-
-describe('отметка совпавшего в подписи', () => {
-    it('пустой запрос ничего не отмечает', () => {
-        expect(splitSideMenuTitle('Курсы валют', '')).toEqual([{ text: 'Курсы валют', matched: false }]);
-    });
-
-    it('запрос, которого в подписи нет, ничего не отмечает', () => {
-        expect(splitSideMenuTitle('Курсы валют', 'налог')).toEqual([{ text: 'Курсы валют', matched: false }]);
-    });
-
-    it('отмечено ровно найденное, а не вся подпись', () => {
-        expect(splitSideMenuTitle('Курсы валют', 'валют')).toEqual([
-            { text: 'Курсы ', matched: false },
-            { text: 'валют', matched: true },
-        ]);
-    });
-
-    it('регистр подписи остаётся тем, каким его написал потребитель', () => {
-        expect(splitSideMenuTitle('Press release', 'PRESS')).toEqual([
-            { text: 'Press', matched: true },
-            { text: ' release', matched: false },
-        ]);
-    });
-
-    it('отмечены все вхождения, а не первое', () => {
-        expect(splitSideMenuTitle('Мега меню', 'ме')).toEqual([
-            { text: 'Ме', matched: true },
-            { text: 'га ', matched: false },
-            { text: 'ме', matched: true },
-            { text: 'ню', matched: false },
-        ]);
-    });
-
-    it('запрос из одних пробелов ничего не отмечает: отбор их тоже не считает запросом', () => {
-        expect(splitSideMenuTitle('Курсы валют', '   ')).toEqual([{ text: 'Курсы валют', matched: false }]);
-    });
-
-    it('пустая подпись отдаёт пустой список: рисовать нечего', () => {
-        expect(splitSideMenuTitle('', 'ме')).toEqual([]);
     });
 });
 

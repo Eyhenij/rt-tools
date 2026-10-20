@@ -1,15 +1,15 @@
-import { IRtSelect } from './rt-select.model';
+import { IRtOptionTree } from './rt-option-tree.model';
 
 /**
- * Дерево опций выбора из списка — общее для `rt-select` и `rt-multiselect`.
+ * Дерево вариантов — общее для выбора из списка, множественного выбора и деревьев кита.
  *
- * Обе семьи раскладывают, ищут и считают дерево одинаково, поэтому это чистые функции в одном
- * месте: две копии разошлись бы на первой правке. Состояние — какие ветки раскрыты — живёт в семье,
+ * Все они раскладывают, ищут и считают дерево одинаково, поэтому это чистые функции в одном
+ * месте: копии разошлись бы на первой правке. Состояние — какие ветки раскрыты — живёт в семье,
  * здесь только расчёт по нему.
  */
 
-type TOption<TValue> = IRtSelect.Option<TValue>;
-type TRow<TValue> = IRtSelect.Row<TValue>;
+type TOption<TValue> = IRtOptionTree.Option<TValue>;
+type TRow<TValue> = IRtOptionTree.Row<TValue>;
 
 function childrenOf<TValue>(option: TOption<TValue>): ReadonlyArray<TOption<TValue>> {
     return option.children ?? [];
@@ -53,7 +53,7 @@ export function rtTreeLeaves<TValue>(option: TOption<TValue>): ReadonlyArray<TVa
 }
 
 /** Сколько включённых листьев ветки выбрано. Флажок ветки выводится из этого, а не хранится. */
-export function rtTreeBranchState<TValue>(option: TOption<TValue>, chosen: ReadonlyArray<TValue>): IRtSelect.TBranchState {
+export function rtTreeBranchState<TValue>(option: TOption<TValue>, chosen: ReadonlyArray<TValue>): IRtOptionTree.TBranchState {
     const leaves: ReadonlyArray<TValue> = rtTreeLeaves(option);
     const count: number = leaves.filter((leaf: TValue): boolean => chosen.includes(leaf)).length;
     if (count === 0) {
@@ -145,7 +145,7 @@ export function rtTreeRows<TValue>(
     return walk.rows;
 }
 
-function sideRight<TValue>(rows: ReadonlyArray<TRow<TValue>>, row: TRow<TValue>, index: number): IRtSelect.SideKeyAnswer<TValue> {
+function sideRight<TValue>(rows: ReadonlyArray<TRow<TValue>>, row: TRow<TValue>, index: number): IRtOptionTree.SideKeyAnswer<TValue> {
     if (row.branch && !row.open) {
         return { toggle: row.option.value, index };
     }
@@ -153,7 +153,7 @@ function sideRight<TValue>(rows: ReadonlyArray<TRow<TValue>>, row: TRow<TValue>,
     return { toggle: null, index: firstChild ? index + 1 : index };
 }
 
-function sideLeft<TValue>(rows: ReadonlyArray<TRow<TValue>>, row: TRow<TValue>, index: number): IRtSelect.SideKeyAnswer<TValue> {
+function sideLeft<TValue>(rows: ReadonlyArray<TRow<TValue>>, row: TRow<TValue>, index: number): IRtOptionTree.SideKeyAnswer<TValue> {
     if (row.branch && row.open) {
         return { toggle: row.option.value, index };
     }
@@ -165,7 +165,7 @@ function sideLeft<TValue>(rows: ReadonlyArray<TRow<TValue>>, row: TRow<TValue>, 
  * Ответ на боковую стрелку. Вправо: свёрнутая ветка раскрывается, раскрытая уводит подсветку на
  * первого ребёнка. Влево: раскрытая ветка сворачивается, иначе подсветка уходит на родителя.
  */
-export function rtTreeSideKey<TValue>(rows: ReadonlyArray<TRow<TValue>>, index: number, key: string): IRtSelect.SideKeyAnswer<TValue> {
+export function rtTreeSideKey<TValue>(rows: ReadonlyArray<TRow<TValue>>, index: number, key: string): IRtOptionTree.SideKeyAnswer<TValue> {
     const row: TRow<TValue> | undefined = rows[index];
     if (row && key === 'ArrowRight') {
         return sideRight(rows, row, index);
