@@ -77,6 +77,7 @@ export * from './radio-button';
 export * from './radius';
 export * from './ripple';
 export * from './section-nav';
+export * from './service-logo';
 export * from './side-menu';
 export * from './scroll-area';
 export * from './select';
