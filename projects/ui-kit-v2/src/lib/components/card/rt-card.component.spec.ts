@@ -19,6 +19,20 @@ import { RtCardComponent } from './rt-card.component';
 })
 class CardHostComponent {}
 
+/** Карточка со знаком над названием: слот `[rtCardMedia]`. */
+@Component({
+    selector: 'rt-card-media-host',
+    template: `
+        <rt-card header="Stripe">
+            <span rtCardMedia qa-dataid="host-media-slot">знак</span>
+            <p>Оплата картой</p>
+        </rt-card>
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtCardComponent],
+})
+class CardMediaHostComponent {}
+
 function setup(inputs: Readonly<Record<string, unknown>> = {}): ComponentFixture<RtCardComponent> {
     return createRtFixture(RtCardComponent, inputs);
 }
@@ -107,6 +121,25 @@ describe('RtCardComponent', (): void => {
 
             expect(textOf(qa(fixture, 'card-title'))).toBe('Тариф');
             expect(el(fixture, '.rt-card__header [qa-dataid="host-header-slot"]')).not.toBeNull();
+        });
+    });
+
+    describe('место над названием', (): void => {
+        it('SC-UKV-868 — содержимое слота стоит перед названием', (): void => {
+            const fixture: ComponentFixture<CardMediaHostComponent> = createRtFixture(CardMediaHostComponent);
+            const media: HTMLElement | undefined = el(fixture, '.rt-card__media [qa-dataid="host-media-slot"]')?.nativeElement;
+            const title: HTMLElement = qa(fixture, 'card-title')?.nativeElement as HTMLElement;
+
+            expect(media).not.toBeNull();
+            expect(media?.compareDocumentPosition(title) ?? 0).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
+        });
+
+        it('SC-UKV-869 — пустой слот пуст, и первым в карточке стоит название', (): void => {
+            const fixture: ComponentFixture<CardHostComponent> = createRtFixture(CardHostComponent);
+            const media: HTMLElement = qa(fixture, 'card-media')?.nativeElement as HTMLElement;
+
+            expect(media.childNodes).toHaveLength(0);
+            expect(textOf(qa(fixture, 'card-title'))).toBe('Тариф');
         });
     });
 });
