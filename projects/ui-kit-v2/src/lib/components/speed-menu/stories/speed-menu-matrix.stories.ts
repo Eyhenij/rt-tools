@@ -9,7 +9,7 @@ import { TestRtSpeedMenuMatrixComponent } from './component/test-speed-menu-matr
  * Контролов здесь нет намеренно.
  */
 export default {
-    title: 'Organisms/Buttons/SpeedMenu',
+    title: 'Molecules/Buttons/SpeedMenu',
     component: TestRtSpeedMenuMatrixComponent,
     parameters: {
         controls: { disable: true },

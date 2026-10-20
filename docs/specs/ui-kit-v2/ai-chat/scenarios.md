@@ -161,4 +161,5 @@ Given a wide panel on full screen with the conversations as a column
 When the consumer caps the width of the feed and the composer
 Then the questions, the answers, the composer and the line under it stand in a column of that width in the middle of the conversation, and the feed scrolls at the conversation's edge; without the cap they take the whole conversation as before
 
-Covered by the frame `ReadingColumn`; the frame `FullScreen` shows the conversation without the cap.
+Not covered: a test has no layout at all — the column is seen by the showcase frame `ReadingColumn`,
+and the frame `FullScreen` shows the conversation without the cap.
