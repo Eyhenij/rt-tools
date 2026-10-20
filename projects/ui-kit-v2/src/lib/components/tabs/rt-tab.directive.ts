@@ -8,11 +8,14 @@ import {
     InputSignal,
     InputSignalWithTransform,
     Signal,
+    signal,
     TemplateRef,
+    WritableSignal,
 } from '@angular/core';
 
 import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
 import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
+import { IRtTooltip } from '@rt-tools/ui-kit-v2/tooltip';
 import { IRtTabs } from './rt-tabs.model';
 
 /**
@@ -97,11 +100,33 @@ export class RtTabDirective {
         transform: booleanAttribute,
     });
 
+    /** Подсказка крестика закрываемой вкладки. Пусто — подсказки нет. */
+    public readonly closeTooltip: InputSignal<string> = input<string>('');
+
+    /** Сторона подсказки крестика. Не задана — сторона подсказки по умолчанию. */
+    public readonly closeTooltipPlacement: InputSignal<IRtTooltip.Placement | null> = input<IRtTooltip.Placement | null>(null);
+
+    /**
+     * Указатель стоит на крестике. Выставляет `rt-tabs`: пока он там, подсказка самой вкладки
+     * молчит, и видна только подсказка крестика.
+     */
+    public readonly closeHovered: WritableSignal<boolean> = signal<boolean>(false);
+
     /** Готовый текст подсказки: своя формулировка важнее умолчания. */
     public readonly invalidTitle: Signal<string> = computed((): string => this.invalidMessage() || this.#t_uiTabInvalid());
 
-    /** Подсказка кнопки вкладки: у неверной — объяснение ошибки, иначе своя подсказка. */
-    public readonly buttonTooltip: Signal<string> = computed((): string => (this.invalid() ? this.invalidTitle() : this.tooltip()));
+    /**
+     * Подсказка кнопки вкладки: у неверной — объяснение ошибки, иначе своя подсказка. Пока
+     * указатель на крестике, пусто: две подсказки разом читались бы как одна. Крестик, убранный
+     * из-под указателя, ухода не сообщает, поэтому признак читается вместе с `showClose`.
+     */
+    public readonly buttonTooltip: Signal<string> = computed((): string => {
+        if (this.closeHovered() && this.showClose()) {
+            return '';
+        }
+
+        return this.invalid() ? this.invalidTitle() : this.tooltip();
+    });
 
     /**
      * Имя вкладки для чтения с экрана, когда видимой подписи нет: вкладка из одного значка

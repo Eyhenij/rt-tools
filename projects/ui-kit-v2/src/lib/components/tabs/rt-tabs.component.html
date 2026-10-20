@@ -68,7 +68,15 @@
 
                         @if (tab.showClose()) {
                             <!-- Не кнопка: кнопка внутри кнопки-вкладки недопустима. С клавиатуры закрывает Delete. -->
-                            <span rtElem="close" qa-dataid="tabs-tab-close" aria-hidden="true" (click)="onCloseClick($event, tab)">
+                            <span
+                                rtElem="close"
+                                qa-dataid="tabs-tab-close"
+                                aria-hidden="true"
+                                [rtTooltip]="tab.closeTooltip()"
+                                [rtTooltipPlacement]="tab.closeTooltipPlacement()"
+                                (mouseenter)="tab.closeHovered.set(true)"
+                                (mouseleave)="tab.closeHovered.set(false)"
+                                (click)="onCloseClick($event, tab)">
                                 <rt-icon name="close" color="current" size="xs" />
                             </span>
                         }

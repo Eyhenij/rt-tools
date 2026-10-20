@@ -632,6 +632,19 @@ data-preset="material" floatingLabel>` drew the border through the risen label: 
       the material tab group it governs the body and the bar only, and three side panels with
       `animationDuration="0"` would have had their list jump. The scroll takes its duration from
       the token alone; reduced motion still turns it off.
+- **2026-10-20, request 20 (the application's session): the close cross gets a tooltip and its
+  look by properties.** The page headers of the application move to `rt-tabs`, and their own
+  close button cannot stay inside a tab that is a button. New tab inputs `closeTooltip` and
+  `closeTooltipPlacement`; while the pointer is on the cross the tab's own tooltip is empty, so
+  only the cross's shows — SC-UKV-954. The cross takes its background, colour, icon size and
+  inline margins from `--rt-tab-item-close-*` on `.rt-tab-item` — SC-UKV-955, measured, not
+  covered by a spec. The icon size goes through the icon's own `xs` step: the icon sets its width
+  by an inline style, and a rule could not beat it.
+    - The defaults equal the former look: measured in the showcase before and after, a 20 px
+      circle, a 12 px icon, 8 px from the label and to the edge, the same colours at rest and on hover.
+    - With the application's values the cross is 19.2 px, the icon 16 px, the background 224 grey,
+      12 px from the label and 24 px to the tab edge — what was measured in the application.
+    - The material preset sets none of these: the material tab group has no cross.
 
 ## Sessions
 
@@ -664,6 +677,11 @@ none
 ### Commits over the main branch
 
 ```
+b1418aca8 docs(rt:ui-kit-v2): прогресс RT-2812 после заявок о вкладках
+8d0e58945 fix(rt:ui-kit-v2): вкладки — animationDuration больше не задаёт длительность прокрутки полосы
+336e14823 feat(rt:ui-kit-v2): вкладки — полоса прокручивается плавно, шаг стрелки задаётся входом scrollStep
+dff71d705 feat(rt:ui-kit-v2): вкладки — вход preserveContent сохраняет тело посещённой вкладки
+5f2fa9815 feat(rt:ui-kit-v2): вкладки — полоса переезжает на новую вкладку, панель сменяется сдвигом
 d0b5e8e72 test(rt:ui-kit-v2): эталоны витрины пересняты после слияния с main, лимит страницы переписок поднят
 4def2d625 chore(rt:ui-kit-v2): в ветку влита главная ветка
 0466fea09 feat(rt:ui-kit-v2): вкладки — ручной выбор с клавиатуры, шаг стрелкой прокрутки и стрелки в своих местах
@@ -679,11 +697,6 @@ eebabbda8 Merge remote-tracking branch 'origin/main' into RT-2812-kit2-field-lab
 80ce8750f Merge remote-tracking branch 'origin/main' into RT-2812-kit2-field-label-icon-actions
 06df730ce fix(rt:ui-kit-v2): признак набора на теге поля включает подпись на рамке
 2acc951d9 feat(rt:ui-kit-v2): поле под материальным набором совпадает с полем Material
-b5cb28aa5 Merge remote-tracking branch 'origin/main' into RT-2812-kit2-field-label-icon-actions
-8b25554f7 docs(rt:ui-kit-v2): прогресс RT-2812 после коммита запроса о кольце фокуса
-f78ecefcf feat(rt:ui-kit-v2): кнопки не рисуют кольцо фокуса после нажатия мышью
-a9c2d527a feat(rt:ui-kit-v2): запросы приложения к полям и компонентам второго кита
-cac14b019 Merge remote-tracking branch 'origin/main' into RT-2812-kit2-field-label-icon-actions
 ```
 
 Written by a hook before the compaction of the context. Everything standing here is checked

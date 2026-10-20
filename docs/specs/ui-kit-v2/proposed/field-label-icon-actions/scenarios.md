@@ -775,3 +775,22 @@ Then the list scrolls it into view by the same motion; a fully visible tab does 
 and a zero duration or reduced motion scrolls at once
 
 Covered: `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-scroll.spec.ts`.
+
+### SC-UKV-954 — the close cross has its own tooltip, and the tab's own is silent over it
+
+Given a closable tab with its own `tooltip` and a `closeTooltip`
+When the pointer moves from the tab onto its close cross
+Then the tab's tooltip closes and only the cross's tooltip shows, on the side `closeTooltipPlacement`
+names; without `closeTooltip` no tooltip shows over the cross, and once the pointer leaves the cross,
+or the cross is removed from under it, the tab shows its own tooltip again
+
+Covered: `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-close.spec.ts`.
+
+### SC-UKV-955 — the look of the close cross comes from its properties
+
+Given a closable tab
+When the application sets the `--rt-tab-item-close-*` properties on `.rt-tab-item`
+Then the cross takes its rest and hover background, its rest and hover icon colour, its icon size and
+its inline margins from them; left unset, the cross looks as before
+
+Не покрыто: jsdom не считает стили компонента; вид крестика измерен в витрине до и после правки.

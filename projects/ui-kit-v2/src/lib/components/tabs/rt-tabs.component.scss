@@ -248,6 +248,13 @@
         --rt-tab-item-transition-duration: var(--rt-duration-fast);
         --rt-tab-item-close-size: var(--rt-size-5);
         --rt-tab-item-close-radius: var(--rt-radius-full);
+        --rt-tab-item-close-bg: transparent;
+        --rt-tab-item-close-bg-hover: var(--rt-color-bg-hover);
+        --rt-tab-item-close-color: var(--rt-color-text-muted);
+        --rt-tab-item-close-color-hover: var(--rt-color-text-primary);
+        --rt-tab-item-close-icon-size: var(--rt-icon-step-xs, var(--rt-size-3));
+        --rt-tab-item-close-margin-inline-start: 0;
+        --rt-tab-item-close-margin-inline-end: calc(-1 * var(--rt-space-2));
 
         position: relative;
         display: inline-flex;
@@ -323,8 +330,11 @@
 
         /* Крестик закрываемой вкладки: подложка при наведении отделяет его от самой вкладки,
            иначе нажатие по нему читается как выбор вкладки. Отрицательный отступ по вертикали
-           держит высоту вкладки: крестик выше строки подписи, и без него полоса росла бы. */
+           держит высоту вкладки: крестик выше строки подписи, и без него полоса росла бы.
+           Размер иконки идёт через шаг `xs` самой иконки: её ширина задана стилем на теге. */
         &__close {
+            --rt-icon-step-xs: var(--rt-tab-item-close-icon-size);
+
             display: inline-flex;
             width: var(--rt-tab-item-close-size);
             height: var(--rt-tab-item-close-size);
@@ -332,17 +342,18 @@
             align-items: center;
             justify-content: center;
             border-radius: var(--rt-tab-item-close-radius);
-            color: var(--rt-color-text-muted);
+            background-color: var(--rt-tab-item-close-bg);
+            color: var(--rt-tab-item-close-color);
             cursor: pointer;
             margin-block: calc(-1 * var(--rt-space-1));
-            margin-inline-end: calc(-1 * var(--rt-space-2));
+            margin-inline: var(--rt-tab-item-close-margin-inline-start) var(--rt-tab-item-close-margin-inline-end);
             transition:
                 color var(--rt-tab-item-transition-duration) linear,
                 background-color var(--rt-tab-item-transition-duration) linear;
 
             &:hover {
-                background-color: var(--rt-color-bg-hover);
-                color: var(--rt-color-text-primary);
+                background-color: var(--rt-tab-item-close-bg-hover);
+                color: var(--rt-tab-item-close-color-hover);
             }
         }
 

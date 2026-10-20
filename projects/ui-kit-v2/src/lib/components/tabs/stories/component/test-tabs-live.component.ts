@@ -41,7 +41,9 @@ const SECTIONS: readonly IReport[] = [
             <div class="app-tabs-live">
                 <rt-tabs [activeId]="activeId()" (activeIdChange)="activeId.set($event)" (tabClose)="close($event)">
                     @for (report of reports(); track report.id) {
-                        <ng-template closable [rtTab]="report.id" [label]="report.label">Отчёт «{{ report.label }}»</ng-template>
+                        <ng-template closable closeTooltip="Закрыть" [rtTab]="report.id" [label]="report.label">
+                            Отчёт «{{ report.label }}»
+                        </ng-template>
                     }
                     <ng-template rtTab="archive" label="Архив" closable disabled tooltip="Архив закрыт на пересчёт">Архив</ng-template>
                 </rt-tabs>
