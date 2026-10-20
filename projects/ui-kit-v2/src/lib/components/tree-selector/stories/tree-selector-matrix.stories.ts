@@ -8,7 +8,7 @@ import { REVERT_CHANGED, TestRtTreeSelectorMatrixComponent } from './component/t
  * неотличимо от отсутствующего.
  */
 export default {
-    title: 'Organisms/Forms/TreeSelector',
+    title: 'Molecules/Forms/TreeSelector',
     component: TestRtTreeSelectorMatrixComponent,
     parameters: {
         controls: { disable: true },

@@ -8,7 +8,7 @@ import { TestRtImageUploadMatrixComponent } from './component/test-image-upload-
  * при беглом просмотре неотличимо от отсутствующего.
  */
 export default {
-    title: 'Organisms/ImageUpload',
+    title: 'Molecules/Forms/ImageUpload',
     component: TestRtImageUploadMatrixComponent,
     parameters: {
         controls: { disable: true },

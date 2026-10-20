@@ -189,6 +189,18 @@
     "tokens.css": {
       "reason": "the file appears only after the build, and the tree never holds it",
       "task": "RT-362"
+    },
+    "pdf.worker.min.mjs": {
+      "reason": "a path in the application that installs the kit: the application copies the PDF worker from pdfjs-dist into its own assets at build time, and this tree never holds the file",
+      "task": "RT-2896"
+    },
+    "assets/pdfjs/": {
+      "reason": "a path in the application that installs the kit: the application copies the PDF worker from pdfjs-dist into its own assets at build time, and this tree never holds the file",
+      "task": "RT-2896"
+    },
+    "assets/pdfjs/pdf.worker.min.mjs": {
+      "reason": "a path in the application that installs the kit: the application copies the PDF worker from pdfjs-dist into its own assets at build time, and this tree never holds the file",
+      "task": "RT-2896"
     }
   }
 }

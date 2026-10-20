@@ -8,7 +8,7 @@ import { TestRtDateRangePanelMatrixComponent } from './component/test-date-range
  * витрины — 20 октября 2026 года, его задаёт вход панели `now`.
  */
 export default {
-    title: 'Organisms/Forms/DateRangePanel',
+    title: 'Molecules/Forms/DateRangePanel',
     component: TestRtDateRangePanelMatrixComponent,
     parameters: {
         controls: { disable: true },

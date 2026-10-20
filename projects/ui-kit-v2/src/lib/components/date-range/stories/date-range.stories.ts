@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtDateRangeComponent } from './component/test-date-range.component';
 
 export default {
-    title: 'Organisms/Forms/DateRange',
+    title: 'Molecules/Forms/DateRange',
     component: TestRtDateRangeComponent,
     argTypes: {
         min: { control: { type: 'text' } },
