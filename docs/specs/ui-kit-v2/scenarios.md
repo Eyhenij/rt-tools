@@ -23,6 +23,8 @@ The scenarios live in the subdomains, each at its own rules:
 | [The run status of the assistant](ai-run-status/scenarios.md)            | `SC-UKV-735`…`SC-UKV-741`                                                 |
 | [The expansion panel](expansion-panel/scenarios.md)                      | `SC-UKV-519`…`SC-UKV-525`                                                 |
 | [The value with a copy button](copy-value/scenarios.md)                  | `SC-UKV-742`…`SC-UKV-746`                                                 |
+| [The logo of a service](service-logo/scenarios.md)                       | `SC-UKV-864`…`SC-UKV-867`                                                 |
+| [The media of a card](card-media/scenarios.md)                           | `SC-UKV-868`…`SC-UKV-869`                                                 |
 | [The breadcrumbs](breadcrumbs/scenarios.md)                              | `SC-UKV-775`…`SC-UKV-780`                                                 |
 | [The image cropper](image-cropper/scenarios.md)                          | `SC-UKV-491`…`SC-UKV-506`                                                 |
 | [The assistant chat](ai-chat/scenarios.md)                               | `SC-UKV-750`…`SC-UKV-782`, `SC-UKV-863`                                   |

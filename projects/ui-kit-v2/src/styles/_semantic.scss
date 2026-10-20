@@ -236,6 +236,10 @@
     --rt-icon-button-disabled-color: currentcolor;
     --rt-icon-button-disabled-fill: 100%;
 
+    /* Service logo (rt-service-logo) — подложка круга под знаком внешней службы. */
+    --rt-color-service-logo-bg: var(--rt-mist-50); /* rt-theme-shared: знаки служб нарисованы под светлый фон */
+    --rt-color-service-logo-mark: var(--rt-neutral-900); /* rt-theme-shared: значок тёмный на светлом круге */
+
     /* Spacing aliases — named semantic aliases на primitive numeric scale */
     --rt-space-2xs: var(--rt-space-0-5); /* 2px */
     --rt-space-xs: var(--rt-space-1); /* 4px */

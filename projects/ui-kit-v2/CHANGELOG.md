@@ -1,3 +1,18 @@
+# [0.28.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.27.0...rt-ui-kit-v2%400.28.0) (2026-10-20)
+
+### Features
+
+- **rt:ui-kit-v2:** место над названием карточки ([31a25f1](https://github.com/Eyhenij/rt-tools/commit/31a25f1f9d41ce4dbf7bdf9ae049fdde5d3db5a9))
+
+# [0.27.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.26.0...rt-ui-kit-v2%400.27.0) (2026-10-20)
+
+### Features
+
+- **rt:ui-kit-v2:** компонент rt-service-logo — знак внешней службы в круге ([b43f6f8](https://github.com/Eyhenij/rt-tools/commit/b43f6f8bc684a032167b00f71efeb8e78db2658c))
+- **rt:ui-kit-v2:** подтверждение, зона файла и меню действий в молекулах сборника ([0e9f88b](https://github.com/Eyhenij/rt-tools/commit/0e9f88b34313a9164b545e13d3f1fe57b1f97e6c))
+- **rt:ui-kit-v2:** поле сообщения и редактор текста в молекулах сборника ([1631ba4](https://github.com/Eyhenij/rt-tools/commit/1631ba4d85336385962cdeb9a3754036e1ab042a))
+- **rt:ui-kit-v2:** поля выбора даты, цвета, дерева и загрузки картинки в молекулах сборника ([787f7dc](https://github.com/Eyhenij/rt-tools/commit/787f7dc65507c675b5fc16ae7de0f720febef832))
+
 # [0.26.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.25.0...rt-ui-kit-v2%400.26.0) (2026-10-19)
 
 ### Bug Fixes

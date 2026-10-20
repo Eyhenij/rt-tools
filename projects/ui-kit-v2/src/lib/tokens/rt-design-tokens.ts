@@ -85,6 +85,8 @@ export type TRtDesignTokenName =
     | '--rt-color-border-strong'
     | '--rt-color-border-subtle'
     | '--rt-color-field-fill-underline'
+    | '--rt-color-service-logo-bg'
+    | '--rt-color-service-logo-mark'
     | '--rt-color-skeleton-base'
     | '--rt-color-skeleton-wave'
     | '--rt-color-state-danger'
@@ -338,6 +340,7 @@ export type TRtDesignTokenName =
     | '--rt-mat-shadow-fab-hover'
     | '--rt-mat-shadow-level-2'
     | '--rt-mat-yellow-100'
+    | '--rt-mist-50'
     | '--rt-nav-caret-size'
     | '--rt-nav-color-disabled'
     | '--rt-nav-color-focus'
@@ -498,6 +501,9 @@ export type TRtDesignTokenName =
     | '--rt-shadow-nav-panel'
     | '--rt-shadow-none'
     | '--rt-shadow-profile-menu'
+    | '--rt-shadow-service-logo-lg'
+    | '--rt-shadow-service-logo-md'
+    | '--rt-shadow-service-logo-sm'
     | '--rt-shadow-sm'
     | '--rt-shadow-status-dot'
     | '--rt-shadow-step-indicator'
@@ -847,6 +853,8 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-color-border-strong',
     '--rt-color-border-subtle',
     '--rt-color-field-fill-underline',
+    '--rt-color-service-logo-bg',
+    '--rt-color-service-logo-mark',
     '--rt-color-skeleton-base',
     '--rt-color-skeleton-wave',
     '--rt-color-state-danger',
@@ -1100,6 +1108,7 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-mat-shadow-fab-hover',
     '--rt-mat-shadow-level-2',
     '--rt-mat-yellow-100',
+    '--rt-mist-50',
     '--rt-nav-caret-size',
     '--rt-nav-color-disabled',
     '--rt-nav-color-focus',
@@ -1260,6 +1269,9 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-shadow-nav-panel',
     '--rt-shadow-none',
     '--rt-shadow-profile-menu',
+    '--rt-shadow-service-logo-lg',
+    '--rt-shadow-service-logo-md',
+    '--rt-shadow-service-logo-sm',
     '--rt-shadow-sm',
     '--rt-shadow-status-dot',
     '--rt-shadow-step-indicator',

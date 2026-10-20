@@ -8,6 +8,7 @@
     (click)="onClick($event)"
     (keydown.enter)="onKeyActivate($event)"
     (keydown.space)="onKeyActivate($event)">
+    <div rtElem="media" qa-dataid="card-media"><ng-content select="[rtCardMedia]" /></div>
     <header rtElem="header">
         @if (header(); as h) {
             <h3 rtElem="title" qa-dataid="card-title">{{ h }}</h3>
