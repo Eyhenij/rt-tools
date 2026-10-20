@@ -737,3 +737,21 @@ Then one bar element of the list draws the selection, the tab's own bar goes tra
 bar turns the error colour under an invalid selected tab
 
 Covered: `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-motion.spec.ts`.
+
+### SC-UKV-950 — the body of a visited tab lives on with `preserveContent`
+
+Given tabs with `preserveContent`
+When the person types on a tab, leaves it and comes back
+Then the same body shows what was typed; while inactive it is hidden, out of reading and out of the
+tab order, a tab never opened is not created, and without the input the body is destroyed as before
+
+Covered: `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-preserve.spec.ts`.
+
+### SC-UKV-951 — with preserved bodies the live panel leaves
+
+Given tabs with `preserveContent` and a panel duration above zero
+When the selection moves
+Then the live body of the previous tab leaves, the new one slides in, and after the motion the
+previous body stays hidden rather than removed
+
+Covered: `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-preserve.spec.ts`.

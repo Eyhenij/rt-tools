@@ -20,7 +20,8 @@ import { IRtTabs } from '../../rt-tabs.model';
             [direction]="direction"
             [stretch]="stretch"
             [contentScrollable]="contentScrollable"
-            [animationDuration]="animationDuration">
+            [animationDuration]="animationDuration"
+            [preserveContent]="preserveContent">
             <ng-template rtTab="overview" label="Обзор">Сводка по договору</ng-template>
             <ng-template rtTab="members" label="Участники" [badge]="3">Список участников</ng-template>
             <ng-template rtTab="history" label="История" icon="ico-listing">Журнал изменений</ng-template>
@@ -40,4 +41,5 @@ export class TestRtTabsComponent {
     public contentScrollable: boolean = true;
     /** Длительность движения при смене вкладки; пустая строка — длительности из токенов. */
     public animationDuration: IRtTabs.AnimationDuration = '500ms';
+    public preserveContent: boolean = false;
 }

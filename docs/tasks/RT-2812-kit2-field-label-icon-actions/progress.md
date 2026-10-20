@@ -604,6 +604,15 @@ data-preset="material" floatingLabel>` drew the border through the risen label: 
       stands at the tab's left edge and width to the pixel, 1 px below its bottom as before, in
       both halves and in the vertical layout. Live on Playground at 500 ms: the old panel leaves to
       the left, the new one comes from the right, mirrored back; reduced motion switches at once.
+- **2026-10-20, request 18 (the application's session): tab bodies kept alive.** New input
+  `preserveContent`, as on the material tab group: a tab body is created on its first opening
+  and then lives hidden (`hidden`, `inert`, `aria-hidden`, out of the tab order, anchor
+  `tabs-panel-idle`); a tab never opened is not created. With preserved bodies they stand in tab
+  order, and the live previous body leaves on a switch and stays hidden after — SC-UKV-950, 951.
+  The panel's own `display` beats the browser rule for `hidden`, so the idle panel gets
+  `display: none` by a modifier. Snapshots 940 of 942, the two known PDF frames. Live on Playground:
+  the same body comes back with its mark, the never-opened tab has no body, without the input the
+  body is created anew as before.
 
 ## Sessions
 

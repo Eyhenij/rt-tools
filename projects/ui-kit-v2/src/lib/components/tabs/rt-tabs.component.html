@@ -104,19 +104,23 @@
         }
     </div>
 
-    <!-- Уходящая панель стоит первой и поверх: место ей задаёт замер, сделанный до смены. -->
+    <!-- Уходящая панель стоит поверх: место ей задаёт замер, сделанный до смены. Сохранённые
+         тела посещённых вкладок скрыты и вне таб-порядка. -->
     @for (panel of panels.list(); track panel.tab.id()) {
+        @let current = panel.leaving === null && !panel.idle;
         <div
             rtElem="content"
             role="tabpanel"
-            [attr.qa-dataid]="panel.leaving ? 'tabs-panel-leaving' : 'tabs-panel'"
-            [attr.tabindex]="panel.leaving ? -1 : 0"
-            [attr.aria-hidden]="panel.leaving ? 'true' : null"
-            [attr.inert]="panel.leaving ? '' : null"
+            [attr.qa-dataid]="current ? 'tabs-panel' : panel.idle ? 'tabs-panel-idle' : 'tabs-panel-leaving'"
+            [attr.tabindex]="current ? 0 : -1"
+            [attr.aria-hidden]="current ? null : 'true'"
+            [attr.inert]="current ? null : ''"
+            [hidden]="panel.idle"
             [rtMod]="{
                 scrollable: contentScrollable(),
+                idle: panel.idle,
                 leaving: panel.leaving !== null,
-                entering: panel.leaving === null && panels.shift() !== null,
+                entering: current && panels.shift() !== null,
                 shift: panels.shift(),
             }"
             [style.top.px]="panel.leaving?.top"

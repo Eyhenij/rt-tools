@@ -136,6 +136,18 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 <rt-tabs animationDuration="500ms">…</rt-tabs>
 ```
 
+## Сохранение содержимого вкладок
+
+По умолчанию тело вкладки создаётся, когда её открывают, и уничтожается, когда с неё уходят:
+введённое на ней пропадает. `preserveContent` держит тело открытой хоть раз вкладки, как
+`preserveContent` у `mat-tab-group`: неактивное тело скрыто, не читается с экрана и вне
+таб-порядка, а вкладка, которую не открывали, по-прежнему не создаётся. Смена панели движется так
+же: уходит живое тело прежней вкладки и после движения остаётся скрытым.
+
+```html
+<rt-tabs preserveContent animationDuration="500ms">…</rt-tabs>
+```
+
 ## Оформление
 
 Светлая и тёмная темы стоят рядом в истории **Themes**.
@@ -157,6 +169,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | `activation`        | `IRtTabs.Activation`        | `'auto'`       | стрелки открывают вкладку или только фокус      |
 | `scrollArrows`      | `IRtTabs.ScrollArrows`      | `'overlay'`    | стрелки поверх вкладок или в своих местах       |
 | `animationDuration` | `IRtTabs.AnimationDuration` | `null`         | длительность переезда полосы и смены панели     |
+| `preserveContent`   | `boolean`                   | `false`        | тело открытой хоть раз вкладки живёт скрытым    |
 | `side`              | `IRtTabs.ControlSide`       | `'right'`      | сторона, с которой встаёт `[rtTabsControl]`     |
 | `id`                | `IRtTabs.Id`                | —              | идентификатор вкладки                           |
 | `label`             | `string`                    | `''`           | подпись вкладки                                 |

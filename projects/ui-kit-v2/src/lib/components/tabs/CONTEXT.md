@@ -1,6 +1,7 @@
 # `rt-tabs` + `[rtTab]`
 
-Вкладки объявляются директивой на `<ng-template>` — содержимое неактивной вкладки не создаётся.
+Вкладки объявляются директивой на `<ng-template>` — содержимое неактивной вкладки не создаётся;
+с `preserveContent` тело открытой хоть раз вкладки живёт скрытым.
 
 ```html
 <rt-tabs stretch [activeId]="tab()" (activeIdChange)="tab.set($event)">
@@ -22,6 +23,7 @@
 | `activation`        | `'auto' \| 'manual'`         | `'auto'`       |
 | `scrollArrows`      | `'overlay' \| 'inline'`      | `'overlay'`    |
 | `animationDuration` | `string \| number \| null`   | `null`         |
+| `preserveContent`   | `boolean`                    | `false`        |
 
 Выходы: `activeIdChange: IRtTabs.Id`, `tabClose: IRtTabs.Id` — просьба закрыть вкладку с `closable`.
 
@@ -85,5 +87,8 @@
   `--rt-tabs-indicator-duration` и `--rt-tabs-panel-duration` (своё умолчание панели — `0ms`, смена
   на месте) или вход `animationDuration` для обоих; `prefers-reduced-motion` снимает движение.
   Пока панель уходит, якорь `tabs-panel` стоит только на новой, у уходящей — `tabs-panel-leaving`.
+- `preserveContent`: тело создаётся при первом открытии вкладки и дальше живёт; неактивное скрыто
+  (`hidden`, `inert`, `aria-hidden`, вне таб-порядка) с якорем `tabs-panel-idle`. Уходит при смене
+  живое тело прежней вкладки. Тело вкладки, убранной из набора, уничтожается вместе с ней.
 - `scrollArrows="inline"`: при переполнении обе стрелки стоят по краям, полоса между ними уже;
   стрелка, в сторону которой прокручивать некуда, бледная и не нажимается.

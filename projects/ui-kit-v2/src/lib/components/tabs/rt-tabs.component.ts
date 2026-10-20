@@ -33,7 +33,7 @@ import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
 import { RtTabDirective } from './rt-tab.directive';
 import { RtTabsControlDirective } from './rt-tabs-control.directive';
 import { IRtTabs } from './rt-tabs.model';
-import { RtTabsInk, RtTabsPanels, rtTabsScrollPage } from './rt-tabs.motion';
+import { RtTabsInk, RtTabsPanels, rtTabsScrollIntoView, rtTabsScrollPage } from './rt-tabs.motion';
 
 /** Шаг ручной прокрутки полосы вкладок за один тик удержания стрелки (px). */
 const SCROLL_STEP: number = 12;
@@ -179,11 +179,12 @@ export class RtTabsComponent {
     protected readonly panels: RtTabsPanels = new RtTabsPanels(
         this.#host,
         this.#win,
-        { visible: this.visibleTabs, selectedId: this.selectedId },
+        { all: this.tabs, visible: this.visibleTabs, selectedId: this.selectedId },
         {
             active: computed((): RtTabDirective | null => (this.headerOnly() ? null : this.activeTab())),
-            // Вход объявлен ниже: на этой строке его ещё нет, и он читается при каждом обращении.
+            // Входы объявлены ниже: на этой строке их ещё нет, и они читаются при каждом обращении.
             duration: (): IRtTabs.AnimationDuration => this.animationDuration(),
+            preserve: (): boolean => this.preserveContent(),
         }
     );
 
@@ -212,6 +213,14 @@ export class RtTabsComponent {
      * вкладки не ссылаются на неё.
      */
     public readonly headerOnly: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+
+    /**
+     * Тело вкладки создаётся при первом открытии и дальше живёт скрытым, как у `mat-tab-group` с
+     * `preserveContent`: введённое на вкладке переживает уход с неё. Неоткрытая вкладка не создаётся.
+     */
+    public readonly preserveContent: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
 
@@ -475,19 +484,8 @@ export class RtTabsComponent {
         const list: HTMLElement | undefined = this.tabListRef()?.nativeElement;
         const tab: HTMLElement | null | undefined = list?.querySelector<HTMLElement>(`[data-tabid="${id}"]`);
 
-        if (!list || !tab) {
-            return;
-        }
-
-        const viewLeft: number = list.scrollLeft;
-        const viewRight: number = list.scrollLeft + list.clientWidth;
-
-        if (tab.offsetLeft < viewLeft) {
-            list.scrollTo({ left: tab.offsetLeft });
-        } else if (tab.offsetLeft + tab.offsetWidth > viewRight) {
-            list.scrollTo({ left: tab.offsetLeft + tab.offsetWidth - list.clientWidth });
-        } else {
-            // вкладка целиком в зоне видимости — прокрутка не нужна
+        if (list && tab) {
+            rtTabsScrollIntoView(list, tab);
         }
     }
 

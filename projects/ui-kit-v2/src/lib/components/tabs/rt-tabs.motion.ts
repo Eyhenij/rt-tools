@@ -35,10 +35,28 @@ export interface IRtTabsMove {
     readonly duration: string | null;
 }
 
-/** Панель в области содержимого: активная (`leaving: null`) или уходящая. */
+/**
+ * Панель в области содержимого: активная, уходящая (`leaving`) или сохранённая скрытой (`idle`) —
+ * тело посещённой вкладки при `preserveContent`.
+ */
 export interface IRtTabsPanel {
     readonly tab: RtTabDirective;
     readonly leaving: IRtTabsLeavingPanel | null;
+    readonly idle: boolean;
+}
+
+/** Что показывает область содержимого: активная вкладка, длительность и сохранение посещённых. */
+export interface IRtTabsShown {
+    readonly active: Signal<RtTabDirective | null>;
+    readonly duration: () => IRtTabs.AnimationDuration;
+    readonly preserve: () => boolean;
+}
+
+/** Вкладки компонента: все объявленные, видимые и выбранная. */
+export interface IRtTabsSet {
+    readonly all: Signal<readonly RtTabDirective[]>;
+    readonly visible: Signal<readonly RtTabDirective[]>;
+    readonly selectedId: Signal<IRtTabs.Id | null>;
 }
 
 /** Место полосы выбранной вкладки внутри полосы вкладок: левый край, низ вкладки и ширина (px). */
@@ -81,6 +99,22 @@ export function rtTabsScrollPage(list: HTMLElement, back: boolean): void {
     const shift: number = back ? -list.clientWidth : list.clientWidth;
 
     list.scrollLeft = Math.min(max, Math.max(0, list.scrollLeft + shift));
+}
+
+/** Набор посещённых вкладок с вкладкой `id`: тот же набор, если она в нём уже есть. */
+function withVisited(visited: ReadonlySet<IRtTabs.Id>, id: IRtTabs.Id | null): ReadonlySet<IRtTabs.Id> {
+    return id === null || visited.has(id) ? visited : new Set([...visited, id]);
+}
+
+/** Прокрутка полосы так, чтобы вкладка встала в видимую область целиком; видная целиком не двигает полосу. */
+export function rtTabsScrollIntoView(list: HTMLElement, tab: HTMLElement): void {
+    if (tab.offsetLeft < list.scrollLeft) {
+        list.scrollTo({ left: tab.offsetLeft });
+    } else if (tab.offsetLeft + tab.offsetWidth > list.scrollLeft + list.clientWidth) {
+        list.scrollTo({ left: tab.offsetLeft + tab.offsetWidth - list.clientWidth });
+    } else {
+        // вкладка целиком в зоне видимости — прокрутка не нужна
+    }
 }
 
 function sameInkBox(a: IInkBox | null, b: IInkBox | null): boolean {
@@ -133,6 +167,29 @@ export function rtTabsLeavingPanel(
 }
 
 /**
+ * Панели при сохранении посещённых: тело вкладки появляется при первом открытии и дальше живёт
+ * скрытым. Порядок — порядок вкладок, чтобы вид панели не переставлялся в разметке при смене.
+ */
+export function rtTabsPreservedPanels(
+    all: readonly RtTabDirective[],
+    visited: ReadonlySet<IRtTabs.Id>,
+    active: RtTabDirective,
+    leaving: IRtTabsLeavingPanel | null
+): IRtTabsPanel[] {
+    return all
+        .filter((tab: RtTabDirective): boolean => tab === active || visited.has(tab.id()))
+        .map((tab: RtTabDirective): IRtTabsPanel => {
+            if (tab === active) {
+                return { leaving: null, idle: false, tab };
+            }
+
+            const isLeaving: boolean = leaving !== null && leaving.id === tab.id();
+
+            return { leaving: isLeaving ? leaving : null, idle: !isLeaving, tab };
+        });
+}
+
+/**
  * Смена панелей: уходящая панель прежней вкладки и въезжающая новая. Уходящая считается от смены
  * выбора и гасится концом её движения. Создаётся в контексте внедрения компонента.
  */
@@ -142,9 +199,13 @@ export class RtTabsPanels {
 
     /**
      * Панели области содержимого: активная и, пока она уходит, прежняя. Прежняя стоит первой, и
-     * `track` по id сохраняет её вид — уходит та же панель, а не её новая копия.
+     * `track` по id сохраняет её вид — уходит та же панель, а не её новая копия. При сохранении
+     * посещённых панели стоят в порядке вкладок, и неактивные остаются скрытыми.
      */
     public readonly list: Signal<readonly IRtTabsPanel[]>;
+
+    /** Вкладки, которые открывались хоть раз: их тела живут при `preserveContent`. */
+    readonly #visited: Signal<ReadonlySet<IRtTabs.Id>>;
 
     /** Направление идущей смены панели; `null` — панель стоит на месте. */
     public readonly shift: Signal<TRtTabsPanelShift | null>;
@@ -152,12 +213,7 @@ export class RtTabsPanels {
     /** Длительность из входа `animationDuration` в виде CSS; `null` — длительности из токенов. */
     public readonly duration: Signal<string | null>;
 
-    constructor(
-        host: HTMLElement,
-        win: Window | null,
-        tabs: { readonly visible: Signal<readonly RtTabDirective[]>; readonly selectedId: Signal<IRtTabs.Id | null> },
-        shown: { readonly active: Signal<RtTabDirective | null>; readonly duration: () => IRtTabs.AnimationDuration }
-    ) {
+    constructor(host: HTMLElement, win: Window | null, tabs: IRtTabsSet, shown: IRtTabsShown) {
         this.duration = computed((): string | null => rtTabsCssDuration(shown.duration()));
         const ids: () => IRtTabs.Id[] = (): IRtTabs.Id[] => tabs.visible().map((tab: RtTabDirective): IRtTabs.Id => tab.id());
 
@@ -169,6 +225,12 @@ export class RtTabsPanels {
                 ),
         });
 
+        this.#visited = linkedSignal<IRtTabs.Id | null, ReadonlySet<IRtTabs.Id>>({
+            source: tabs.selectedId,
+            computation: (id: IRtTabs.Id | null, previous: { value: ReadonlySet<IRtTabs.Id> } | undefined): ReadonlySet<IRtTabs.Id> =>
+                withVisited(previous?.value ?? new Set(), id),
+        });
+
         this.list = computed((): readonly IRtTabsPanel[] => {
             const active: RtTabDirective | null = shown.active();
             const leaving: IRtTabsLeavingPanel | null = this.leaving();
@@ -177,16 +239,22 @@ export class RtTabsPanels {
                 return [];
             }
 
-            const current: IRtTabsPanel = { tab: active, leaving: null };
+            if (shown.preserve()) {
+                return rtTabsPreservedPanels(tabs.all(), this.#visited(), active, leaving);
+            }
+
+            const current: IRtTabsPanel = { tab: active, leaving: null, idle: false };
             const leavingTab: RtTabDirective | undefined =
                 leaving === null || leaving.id === active.id()
                     ? undefined
                     : tabs.visible().find((tab: RtTabDirective): boolean => tab.id() === leaving.id);
 
-            return leaving && leavingTab ? [{ tab: leavingTab, leaving }, current] : [current];
+            return leaving && leavingTab ? [{ leaving, idle: false, tab: leavingTab }, current] : [current];
         });
 
-        this.shift = computed((): TRtTabsPanelShift | null => (this.list().length > 1 ? (this.leaving()?.shift ?? null) : null));
+        this.shift = computed((): TRtTabsPanelShift | null =>
+            this.list().some((panel: IRtTabsPanel): boolean => panel.leaving !== null) ? (this.leaving()?.shift ?? null) : null
+        );
     }
 
     /** Конец движения панели убирает уходящую. Движение вложенных узлов сюда не считается. */

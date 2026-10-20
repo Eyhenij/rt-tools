@@ -15,6 +15,7 @@ export default {
         stretch: { control: { type: 'boolean' } },
         contentScrollable: { control: { type: 'boolean' } },
         animationDuration: { control: { type: 'text' } },
+        preserveContent: { control: { type: 'boolean' } },
     },
 } as Meta<TestRtTabsComponent>;
 
@@ -28,5 +29,6 @@ export const Playground: TStory = {
         stretch: false,
         contentScrollable: true,
         animationDuration: '500ms',
+        preserveContent: false,
     },
 };
