@@ -1,3 +1,9 @@
+# [0.28.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.27.0...rt-ui-kit-v2%400.28.0) (2026-10-20)
+
+### Features
+
+- **rt:ui-kit-v2:** место над названием карточки ([31a25f1](https://github.com/Eyhenij/rt-tools/commit/31a25f1f9d41ce4dbf7bdf9ae049fdde5d3db5a9))
+
 # [0.27.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.26.0...rt-ui-kit-v2%400.27.0) (2026-10-20)
 
 ### Features
