@@ -40,6 +40,16 @@
                 }
             }
 
+            /* Место над названием: знак, картинка или иконка. Пустое места не занимает. */
+            &__media {
+                display: flex;
+                margin-block-end: var(--rt-space-md);
+
+                &:empty {
+                    display: none;
+                }
+            }
+
             &__header {
                 margin-block-end: var(--rt-space-md);
 
