@@ -24,7 +24,7 @@
                 rtElem="tab-list"
                 qa-dataid="tabs-tab-list"
                 role="tablist"
-                [rtMod]="{ stretch: stretch(), direction: direction() }"
+                [rtMod]="{ stretch: stretch(), direction: direction(), ink: ink.box() !== null }"
                 [attr.aria-orientation]="direction()"
                 (scroll)="onTabListScroll()">
                 @for (tab of visibleTabs(); track tab.id()) {
@@ -74,6 +74,14 @@
                         }
                     </button>
                 }
+
+                <!-- Полоса выбранной вкладки — одна на всю полосу: так она переезжает между вкладками. -->
+                <span
+                    rtElem="ink"
+                    aria-hidden="true"
+                    [rtMod]="{ placed: ink.box() !== null, animated: ink.animated(), invalid: ink.invalid() }"
+                    [style.width.px]="ink.box()?.width"
+                    [style.translate]="ink.translate()"></span>
             </div>
 
             <div
@@ -96,16 +104,28 @@
         }
     </div>
 
-    @if (headerOnly() ? null : activeTab(); as tab) {
+    <!-- Уходящая панель стоит первой и поверх: место ей задаёт замер, сделанный до смены. -->
+    @for (panel of panels.list(); track panel.tab.id()) {
         <div
             rtElem="content"
-            qa-dataid="tabs-panel"
             role="tabpanel"
-            tabindex="0"
-            [rtMod]="{ scrollable: contentScrollable() }"
-            [id]="'rt-tabpanel-' + tab.id()"
-            [attr.aria-labelledby]="'rt-tab-' + tab.id()">
-            <ng-container [ngTemplateOutlet]="tab.templateRef" />
+            [attr.qa-dataid]="panel.leaving ? 'tabs-panel-leaving' : 'tabs-panel'"
+            [attr.tabindex]="panel.leaving ? -1 : 0"
+            [attr.aria-hidden]="panel.leaving ? 'true' : null"
+            [attr.inert]="panel.leaving ? '' : null"
+            [rtMod]="{
+                scrollable: contentScrollable(),
+                leaving: panel.leaving !== null,
+                entering: panel.leaving === null && panels.shift() !== null,
+                shift: panels.shift(),
+            }"
+            [style.top.px]="panel.leaving?.top"
+            [style.left.px]="panel.leaving?.left"
+            [id]="'rt-tabpanel-' + panel.tab.id()"
+            [attr.aria-labelledby]="'rt-tab-' + panel.tab.id()"
+            (animationend)="panels.animationEnd($event)"
+            (animationcancel)="panels.animationEnd($event)">
+            <ng-container [ngTemplateOutlet]="panel.tab.templateRef" />
         </div>
     }
 </ng-container>

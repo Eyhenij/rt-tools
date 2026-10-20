@@ -547,6 +547,10 @@ export type TRtDesignTokenName =
     | '--rt-success-500'
     | '--rt-success-600'
     | '--rt-success-700'
+    | '--rt-tabs-indicator-duration'
+    | '--rt-tabs-indicator-easing'
+    | '--rt-tabs-panel-duration'
+    | '--rt-tabs-panel-easing'
     | '--rt-text-2xl'
     | '--rt-text-2xs'
     | '--rt-text-3xl'
@@ -1303,6 +1307,10 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-success-500',
     '--rt-success-600',
     '--rt-success-700',
+    '--rt-tabs-indicator-duration',
+    '--rt-tabs-indicator-easing',
+    '--rt-tabs-panel-duration',
+    '--rt-tabs-panel-easing',
     '--rt-text-2xl',
     '--rt-text-2xs',
     '--rt-text-3xl',

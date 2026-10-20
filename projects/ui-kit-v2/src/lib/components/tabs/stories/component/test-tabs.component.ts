@@ -15,7 +15,12 @@ import { IRtTabs } from '../../rt-tabs.model';
 @Component({
     selector: 'app-tabs',
     template: `
-        <rt-tabs [activeId]="activeId" [direction]="direction" [stretch]="stretch" [contentScrollable]="contentScrollable">
+        <rt-tabs
+            [activeId]="activeId"
+            [direction]="direction"
+            [stretch]="stretch"
+            [contentScrollable]="contentScrollable"
+            [animationDuration]="animationDuration">
             <ng-template rtTab="overview" label="Обзор">Сводка по договору</ng-template>
             <ng-template rtTab="members" label="Участники" [badge]="3">Список участников</ng-template>
             <ng-template rtTab="history" label="История" icon="ico-listing">Журнал изменений</ng-template>
@@ -33,4 +38,6 @@ export class TestRtTabsComponent {
     public direction: IRtTabs.Direction = 'horizontal';
     public stretch: boolean = false;
     public contentScrollable: boolean = true;
+    /** Длительность движения при смене вкладки; пустая строка — длительности из токенов. */
+    public animationDuration: IRtTabs.AnimationDuration = '500ms';
 }

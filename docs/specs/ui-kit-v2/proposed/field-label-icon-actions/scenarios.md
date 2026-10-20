@@ -701,3 +701,39 @@ Then its bar stays at the bottom of the tab: the offset is a translate by the wi
 that turns unitless and invalid at `0`
 
 Covered: `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-scroll-keys.spec.ts`.
+
+### SC-UKV-946 — the panel of the previous tab leaves, the new one slides in
+
+Given tabs with a panel duration above zero
+When the selection moves to another tab, by a click or by `activeId`
+Then the open panel itself, not a copy, leaves towards the side opposite to the move, and the new
+panel slides in from the other side; the leaving one is hidden from reading and from focus, carries
+its own anchor, and is removed when its own motion ends
+
+Covered: `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-motion.spec.ts`.
+
+### SC-UKV-947 — motion is off at a zero duration and for reduced motion
+
+Given the panel duration `0`, or a person who asked for reduced motion
+When the selection moves
+Then the panel changes in place, and the styles drop the bar transition and the panel animation
+
+Covered: `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-motion.spec.ts`.
+
+### SC-UKV-948 — the duration input sets both motions
+
+Given `animationDuration` as a number, a string of digits or a CSS time
+When the tabs render
+Then the bar and panel duration properties on the host carry it, digits read as milliseconds;
+without the input the properties stay with the tokens
+
+Covered: `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-motion.spec.ts`.
+
+### SC-UKV-949 — the selected tab bar is one element of the list
+
+Given tabs after their first render
+When the selected tab is measured
+Then one bar element of the list draws the selection, the tab's own bar goes transparent, and the
+bar turns the error colour under an invalid selected tab
+
+Covered: `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-motion.spec.ts`.

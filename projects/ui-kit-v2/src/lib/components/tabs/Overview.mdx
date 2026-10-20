@@ -113,6 +113,29 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 </rt-tabs>
 ```
 
+## Движение при смене вкладки
+
+Полоса выбранной вкладки — один элемент на всю полосу: при смене выбора она переезжает со старой
+вкладки на новую. Панель прежней вкладки уходит в сторону, обратную переходу, новая въезжает следом:
+к вкладке правее — справа, к вкладке левее — слева. Уходящая панель — та же, что была открыта, а не
+её копия, и пока она уходит, она не читается с экрана и не берёт фокус.
+
+| токен                          | своё умолчание            | что задаёт             |
+| ------------------------------ | ------------------------- | ---------------------- |
+| `--rt-tabs-indicator-duration` | `var(--rt-duration-base)` | время переезда полосы  |
+| `--rt-tabs-indicator-easing`   | `ease-out`                | кривая переезда полосы |
+| `--rt-tabs-panel-duration`     | `0ms`                     | время смены панели     |
+| `--rt-tabs-panel-easing`       | `ease-out`                | кривая смены панели    |
+
+В своём виде кита панель меняется на месте: её длительность — ноль. Материальный набор задаёт обоим
+движениям полсекунды с кривой вкладок Material. Вход `animationDuration` задаёт длительность обоим
+сразу, как у `mat-tab-group`: `500` и `'500'` — миллисекунды, `'0.5s'` — как есть, `0` выключает
+движение. `prefers-reduced-motion` снимает движение целиком.
+
+```html
+<rt-tabs animationDuration="500ms">…</rt-tabs>
+```
+
 ## Оформление
 
 Светлая и тёмная темы стоят рядом в истории **Themes**.
@@ -124,31 +147,32 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Входы
 
-| вход                | тип                        | умолчание      | что делает                                      |
-| ------------------- | -------------------------- | -------------- | ----------------------------------------------- |
-| `activeId`          | `IRtTabs.Id \| null`       | `null`         | открытая вкладка; без него компонент помнит сам |
-| `direction`         | `IRtTabs.Direction`        | `'horizontal'` | раскладка полосы                                |
-| `stretch`           | `boolean`                  | `false`        | вкладки делят ширину поровну                    |
-| `contentScrollable` | `boolean`                  | `true`         | содержимое прокручивается внутри своей области  |
-| `headerOnly`        | `boolean`                  | `false`        | только полоса, без панели содержимого           |
-| `activation`        | `IRtTabs.Activation`       | `'auto'`       | стрелки открывают вкладку или только фокус      |
-| `scrollArrows`      | `IRtTabs.ScrollArrows`     | `'overlay'`    | стрелки поверх вкладок или в своих местах       |
-| `side`              | `IRtTabs.ControlSide`      | `'right'`      | сторона, с которой встаёт `[rtTabsControl]`     |
-| `id`                | `IRtTabs.Id`               | —              | идентификатор вкладки                           |
-| `label`             | `string`                   | `''`           | подпись вкладки                                 |
-| `titleTemplate`     | `TemplateRef \| null`      | `null`         | свой заголовок вместо подписи                   |
-| `icon`              | `IRtIcon.Name \| null`     | `null`         | иконка слева от подписи                         |
-| `glyph`             | `string \| null`           | `null`         | значок Material вместо `icon`                   |
-| `iconColor`         | `IRtTabs.TitleColor`       | `'current'`    | цвет иконки                                     |
-| `badge`             | `string \| number \| null` | `null`         | значок справа от подписи                        |
-| `badgeTitle`        | `string`                   | `''`           | подсказка при наведении на значок               |
-| `badgeAriaLabel`    | `string`                   | `''`           | подпись значка для чтения с экрана              |
-| `disabled`          | `boolean`                  | `false`        | вкладка не выбирается и пропускается стрелками  |
-| `hidden`            | `boolean`                  | `false`        | вкладки нет в полосе вовсе                      |
-| `invalid`           | `boolean`                  | `false`        | вкладка помечена ошибкой                        |
-| `invalidMessage`    | `string`                   | `''`           | текст ошибки рядом с подписью                   |
-| `tooltip`           | `string`                   | `''`           | подсказка при наведении, и у отключённой        |
-| `closable`          | `boolean`                  | `false`        | крестик и `Delete` просят закрыть вкладку       |
+| вход                | тип                         | умолчание      | что делает                                      |
+| ------------------- | --------------------------- | -------------- | ----------------------------------------------- |
+| `activeId`          | `IRtTabs.Id \| null`        | `null`         | открытая вкладка; без него компонент помнит сам |
+| `direction`         | `IRtTabs.Direction`         | `'horizontal'` | раскладка полосы                                |
+| `stretch`           | `boolean`                   | `false`        | вкладки делят ширину поровну                    |
+| `contentScrollable` | `boolean`                   | `true`         | содержимое прокручивается внутри своей области  |
+| `headerOnly`        | `boolean`                   | `false`        | только полоса, без панели содержимого           |
+| `activation`        | `IRtTabs.Activation`        | `'auto'`       | стрелки открывают вкладку или только фокус      |
+| `scrollArrows`      | `IRtTabs.ScrollArrows`      | `'overlay'`    | стрелки поверх вкладок или в своих местах       |
+| `animationDuration` | `IRtTabs.AnimationDuration` | `null`         | длительность переезда полосы и смены панели     |
+| `side`              | `IRtTabs.ControlSide`       | `'right'`      | сторона, с которой встаёт `[rtTabsControl]`     |
+| `id`                | `IRtTabs.Id`                | —              | идентификатор вкладки                           |
+| `label`             | `string`                    | `''`           | подпись вкладки                                 |
+| `titleTemplate`     | `TemplateRef \| null`       | `null`         | свой заголовок вместо подписи                   |
+| `icon`              | `IRtIcon.Name \| null`      | `null`         | иконка слева от подписи                         |
+| `glyph`             | `string \| null`            | `null`         | значок Material вместо `icon`                   |
+| `iconColor`         | `IRtTabs.TitleColor`        | `'current'`    | цвет иконки                                     |
+| `badge`             | `string \| number \| null`  | `null`         | значок справа от подписи                        |
+| `badgeTitle`        | `string`                    | `''`           | подсказка при наведении на значок               |
+| `badgeAriaLabel`    | `string`                    | `''`           | подпись значка для чтения с экрана              |
+| `disabled`          | `boolean`                   | `false`        | вкладка не выбирается и пропускается стрелками  |
+| `hidden`            | `boolean`                   | `false`        | вкладки нет в полосе вовсе                      |
+| `invalid`           | `boolean`                   | `false`        | вкладка помечена ошибкой                        |
+| `invalidMessage`    | `string`                    | `''`           | текст ошибки рядом с подписью                   |
+| `tooltip`           | `string`                    | `''`           | подсказка при наведении, и у отключённой        |
+| `closable`          | `boolean`                   | `false`        | крестик и `Delete` просят закрыть вкладку       |
 
 ## Выходы
 

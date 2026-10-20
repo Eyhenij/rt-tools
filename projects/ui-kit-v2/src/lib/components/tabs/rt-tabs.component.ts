@@ -33,6 +33,7 @@ import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
 import { RtTabDirective } from './rt-tab.directive';
 import { RtTabsControlDirective } from './rt-tabs-control.directive';
 import { IRtTabs } from './rt-tabs.model';
+import { RtTabsInk, RtTabsPanels, rtTabsScrollPage } from './rt-tabs.motion';
 
 /** Шаг ручной прокрутки полосы вкладок за один тик удержания стрелки (px). */
 const SCROLL_STEP: number = 12;
@@ -65,6 +66,11 @@ type TScrollDirection = 'before' | 'after';
  * прокручивает непрерывно. Стрелки стоят поверх вкладок или, при `scrollArrows="inline"`, в своих
  * местах по краям. Вертикальная ориентация раскладывает вкладки в колонку без стрелок.
  *
+ * Смена вкладки движется: полоса выбранной вкладки — один элемент полосы, он переезжает на новую
+ * вкладку; панель прежней вкладки уходит в сторону, обратную переходу, новая въезжает следом.
+ * Длительности — токены `--rt-tabs-indicator-duration` и `--rt-tabs-panel-duration` или вход
+ * `animationDuration`; `prefers-reduced-motion` снимает движение целиком.
+ *
  * Доступность: `role="tablist"`/`role="tab"`/`role="tabpanel"`, `aria-selected`,
  * roving `tabindex`, навигация стрелками + Home/End; при `activation="manual"` они только
  * переводят фокус, а вкладку открывают Enter и Space.
@@ -90,11 +96,16 @@ type TScrollDirection = 'before' | 'after';
         class: BEM_BLOCK,
         '[class.rt-tabs--direction--horizontal]': "direction() === 'horizontal'",
         '[class.rt-tabs--direction--vertical]': "direction() === 'vertical'",
+        '[class.rt-tabs--animating]': 'panels.shift() !== null',
+        '[style.--rt-tabs-indicator-duration]': 'panels.duration()',
+        '[style.--rt-tabs-panel-duration]': 'panels.duration()',
     },
 })
 export class RtTabsComponent {
     /** `Window` через `DOCUMENT` (SSR-safe: `defaultView` может быть `null`). */
     readonly #win: Window | null = inject(DOCUMENT).defaultView;
+
+    readonly #host: HTMLElement = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
 
     /** Все задекларированные вкладки (включая скрытые). */
     protected readonly tabs: Signal<readonly RtTabDirective[]> = contentChildren(RtTabDirective);
@@ -164,6 +175,21 @@ export class RtTabsComponent {
 
     protected readonly tabListRef: Signal<ElementRef<HTMLElement> | undefined> = viewChild<ElementRef<HTMLElement>>('tabList');
 
+    /** Смена панелей: прежняя уходит в сторону, обратную переходу, новая въезжает следом. */
+    protected readonly panels: RtTabsPanels = new RtTabsPanels(
+        this.#host,
+        this.#win,
+        { visible: this.visibleTabs, selectedId: this.selectedId },
+        {
+            active: computed((): RtTabDirective | null => (this.headerOnly() ? null : this.activeTab())),
+            // Вход объявлен ниже: на этой строке его ещё нет, и он читается при каждом обращении.
+            duration: (): IRtTabs.AnimationDuration => this.animationDuration(),
+        }
+    );
+
+    /** Полоса выбранной вкладки: одна на всю полосу, переезжает при смене выбора. */
+    protected readonly ink: RtTabsInk = new RtTabsInk(this.#win, this.tabListRef, { visible: this.visibleTabs, active: this.activeTab });
+
     /** Контролируемый активный id. `null` — компонент сам выбирает первую вкладку. */
     public readonly activeId: InputSignal<IRtTabs.Id | null> = input<IRtTabs.Id | null>(null);
 
@@ -194,6 +220,12 @@ export class RtTabsComponent {
 
     /** Стрелки прокрутки поверх вкладок (`overlay`) или в своих местах по краям полосы (`inline`). */
     public readonly scrollArrows: InputSignal<IRtTabs.ScrollArrows> = input<IRtTabs.ScrollArrows>('overlay');
+
+    /**
+     * Длительность движения при смене вкладки — и полосы, и панели, как у `mat-tab-group`: `500`,
+     * `'500ms'`, `'0.5s'`; `0` выключает движение. Без входа длительности берутся из токенов.
+     */
+    public readonly animationDuration: InputSignal<IRtTabs.AnimationDuration> = input<IRtTabs.AnimationDuration>(null);
 
     /** Эмиттит id вкладки при её выборе (клик/клавиатура). */
     public readonly activeIdChange: OutputEmitterRef<IRtTabs.Id> = output<IRtTabs.Id>();
@@ -398,15 +430,10 @@ export class RtTabsComponent {
     /** Сдвиг полосы на ширину её видимой области, не дальше края. */
     #scrollPage(direction: TScrollDirection): void {
         const list: HTMLElement | undefined = this.tabListRef()?.nativeElement;
-        if (!list) {
-            return;
+        if (list) {
+            rtTabsScrollPage(list, direction === 'before');
+            this.#updateRestVisibility();
         }
-
-        const max: number = Math.max(0, list.scrollWidth - list.clientWidth);
-        const shift: number = direction === 'before' ? -list.clientWidth : list.clientWidth;
-
-        list.scrollLeft = Math.min(max, Math.max(0, list.scrollLeft + shift));
-        this.#updateRestVisibility();
     }
 
     #scrollStep(direction: TScrollDirection): void {

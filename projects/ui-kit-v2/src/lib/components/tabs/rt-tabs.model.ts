@@ -24,6 +24,13 @@ export namespace IRtTabs {
      */
     export type ScrollArrows = 'overlay' | 'inline';
 
+    /**
+     * Длительность движения при смене вкладки: переезда полосы и сдвига панели. Число — миллисекунды,
+     * строка — значение CSS (`'500ms'`, `'0.5s'`); строка из одних цифр читается как миллисекунды.
+     * `null` — длительности берутся из токенов `--rt-tabs-indicator-duration` и `--rt-tabs-panel-duration`.
+     */
+    export type AnimationDuration = string | number | null;
+
     /** Сторона размещения header-контрола относительно полосы вкладок. */
     export type ControlSide = 'left' | 'right';
 

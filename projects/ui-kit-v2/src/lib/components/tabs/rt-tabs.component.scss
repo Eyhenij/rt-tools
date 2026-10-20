@@ -14,6 +14,13 @@
             flex-direction: row;
         }
 
+        /* Пока панель сменяется, уходящая стоит поверх области содержимого от хоста, а сдвиг обеих
+           не выходит за его ширину. Обрезка только поперёк: вниз содержимое не режется. */
+        &--animating {
+            position: relative;
+            overflow-x: clip;
+        }
+
         &__header {
             display: flex;
             align-items: center;
@@ -28,6 +35,7 @@
         }
 
         &__tab-list {
+            position: relative;
             display: flex;
             border-bottom: var(--rt-tabs-border-width) solid var(--rt-color-border-default);
             margin: 0;
@@ -53,6 +61,41 @@
 
             &--stretch {
                 justify-content: space-between;
+            }
+
+            /* Полосу рисует общий элемент, и своя полоса выбранной вкладки гаснет. У неверной
+               вкладки своя полоса остаётся: она красная и у невыбранной. */
+            &--ink .rt-tab-item--selected:not(.rt-tab-item--invalid):after {
+                background-color: transparent;
+            }
+        }
+
+        /* Полоса выбранной вкладки. Место — от замера вкладки: сдвиг к её левому краю и низу,
+           подъём на свою высоту и спуск на толщину черты, как у полосы самой вкладки. До замера её
+           нет, и полосу рисует вкладка. */
+        &__ink {
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: none;
+            height: 2px;
+            margin-top: var(--rt-tabs-border-width);
+            background-color: var(--rt-color-action-primary);
+            pointer-events: none;
+            transform: translateY(-100%);
+
+            &--placed {
+                display: block;
+            }
+
+            &--animated {
+                transition:
+                    translate var(--rt-tabs-indicator-duration) var(--rt-tabs-indicator-easing),
+                    width var(--rt-tabs-indicator-duration) var(--rt-tabs-indicator-easing);
+            }
+
+            &--invalid {
+                background-color: var(--rt-color-state-danger);
             }
         }
 
@@ -143,6 +186,53 @@
             &--scrollable {
                 overflow: auto;
             }
+
+            /* Уходящая панель снята с потока и стоит в точке, где была. */
+            &--leaving {
+                position: absolute;
+                right: 0;
+                bottom: 0;
+                animation: rt-tabs-panel-leave var(--rt-tabs-panel-duration) var(--rt-tabs-panel-easing) forwards;
+                pointer-events: none;
+            }
+
+            &--entering {
+                animation: rt-tabs-panel-enter var(--rt-tabs-panel-duration) var(--rt-tabs-panel-easing);
+            }
+
+            /* К вкладке правее старая уходит влево, новая въезжает справа; к левее — зеркально. */
+            &--shift--forward {
+                --rt-tabs-panel-leave-to: -100%;
+                --rt-tabs-panel-enter-from: 100%;
+            }
+
+            &--shift--backward {
+                --rt-tabs-panel-leave-to: 100%;
+                --rt-tabs-panel-enter-from: -100%;
+            }
+        }
+    }
+
+    @keyframes rt-tabs-panel-leave {
+        to {
+            translate: var(--rt-tabs-panel-leave-to) 0;
+        }
+    }
+
+    @keyframes rt-tabs-panel-enter {
+        from {
+            translate: var(--rt-tabs-panel-enter-from) 0;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .rt-tabs__ink--animated {
+            transition: none;
+        }
+
+        .rt-tabs__content--leaving,
+        .rt-tabs__content--entering {
+            animation: none;
         }
     }
 

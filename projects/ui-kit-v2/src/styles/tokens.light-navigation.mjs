@@ -297,4 +297,24 @@ export const lightNavigation = [
         name: `--rt-nav-marker-color`,
         value: `var(--rt-color-state-danger)`,
     },
+    {
+        lead: `    /* Вкладки (rt-tabs). Полоса выбранной вкладки переезжает на новую, а панель
+       меняется сдвигом по направлению перехода. Сдвиг панели в своём виде кита выключен
+       нулевой длительностью: содержимое вкладки сменяется на месте, как раньше. */`,
+        space: true,
+        name: `--rt-tabs-indicator-duration`,
+        value: `var(--rt-duration-base)`,
+    },
+    {
+        name: `--rt-tabs-indicator-easing`,
+        value: `ease-out`,
+    },
+    {
+        name: `--rt-tabs-panel-duration`,
+        value: `0ms`,
+    },
+    {
+        name: `--rt-tabs-panel-easing`,
+        value: `ease-out`,
+    },
 ];

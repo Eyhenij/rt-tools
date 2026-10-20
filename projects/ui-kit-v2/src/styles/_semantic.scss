@@ -485,6 +485,14 @@
     --rt-nav-marker-size: var(--rt-size-1);
     --rt-nav-marker-color: var(--rt-color-state-danger);
 
+    /* Вкладки (rt-tabs). Полоса выбранной вкладки переезжает на новую, а панель
+       меняется сдвигом по направлению перехода. Сдвиг панели в своём виде кита выключен
+       нулевой длительностью: содержимое вкладки сменяется на месте, как раньше. */
+    --rt-tabs-indicator-duration: var(--rt-duration-base);
+    --rt-tabs-indicator-easing: ease-out;
+    --rt-tabs-panel-duration: 0ms;
+    --rt-tabs-panel-easing: ease-out;
+
     /* Form field (rt-field) — обёртка анатомии поля: label / help / hint / error /
        required-маркер / read-only значение. Визуал label+hint в стиле Tailwind
        form (мелкий medium label, muted hint). Компоненты потребляют только эти

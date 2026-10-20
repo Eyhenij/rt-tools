@@ -588,6 +588,22 @@ data-preset="material" floatingLabel>` drew the border through the risen label: 
       «По ширине» button highlighted, and are left for the owner.
     - Admin end-to-end 146 of 146, sign-in stand 10 of 10.
     - The tabs Edges story overflows its half the same way; it comes from main and is left as is.
+- **2026-10-20, request 17 (the application's session): tabs move on a switch.** Measured against
+  the material tab group: the bar slides to the new tab, the old panel leaves and the new one
+  slides in, both about 500 ms. The selected bar is now one element of the list, placed by
+  measuring the tab with fractional sizes; the tab keeps its own bar until the first measurement
+  and under an invalid state. The leaving panel is the same view kept by `track`, lifted out of the
+  flow at the point it stood. New tokens for the bar and the panel, the input
+  `animationDuration` for both, `prefers-reduced-motion` drops both — SC-UKV-946 to 949.
+    - The kit's own look keeps the panel in place: its duration token is `0ms`, so screens already
+      on the kit do not start sliding; the bar slides in 200 ms. The material preset sets both to
+      500 ms with the Material tab curve.
+    - The motion moved into a file of its own next to the component: the component went past 500
+      lines. The material field tokens moved into a file of their own for the same reason.
+    - Snapshots 940 of 942, the two known PDF viewer frames. Measured in the built showcase: the bar
+      stands at the tab's left edge and width to the pixel, 1 px below its bottom as before, in
+      both halves and in the vertical layout. Live on Playground at 500 ms: the old panel leaves to
+      the left, the new one comes from the right, mirrored back; reduced motion switches at once.
 
 ## Sessions
 
@@ -620,6 +636,8 @@ none
 ### Commits over the main branch
 
 ```
+d0b5e8e72 test(rt:ui-kit-v2): эталоны витрины пересняты после слияния с main, лимит страницы переписок поднят
+4def2d625 chore(rt:ui-kit-v2): в ветку влита главная ветка
 0466fea09 feat(rt:ui-kit-v2): вкладки — ручной выбор с клавиатуры, шаг стрелкой прокрутки и стрелки в своих местах
 34da2f3a3 fix(rt:ui-kit-v2): поле ввода показывает значение, которое форма вернула ему во время набора
 54c0407ba fix(rt:ui-kit-v2): поля выбора, поиска и переключатели кита внутри формы страницы не пишут NG01354
@@ -638,7 +656,6 @@ b5cb28aa5 Merge remote-tracking branch 'origin/main' into RT-2812-kit2-field-lab
 f78ecefcf feat(rt:ui-kit-v2): кнопки не рисуют кольцо фокуса после нажатия мышью
 a9c2d527a feat(rt:ui-kit-v2): запросы приложения к полям и компонентам второго кита
 cac14b019 Merge remote-tracking branch 'origin/main' into RT-2812-kit2-field-label-icon-actions
-75d2bff91 docs(rt:ui-kit-v2): договорённость и план RT-2812 о пяти дополнениях к полям
 ```
 
 Written by a hook before the compaction of the context. Everything standing here is checked
