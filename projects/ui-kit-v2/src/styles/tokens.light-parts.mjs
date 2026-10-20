@@ -249,4 +249,20 @@ export const lightParts = [
         name: `--rt-icon-button-disabled-fill`,
         value: `100%`,
     },
+    {
+        lead: `    /* Service logo (rt-service-logo) — подложка круга под знаком внешней службы. */`,
+        space: true,
+        name: `--rt-color-service-logo-bg`,
+        value: `var(--rt-mist-50)`,
+        note: `rt-theme-shared: знаки служб нарисованы под светлый фон`,
+        presetShared: `подложка повторяет цвет атома, а не роль палитры: материальный цвет поверхности
+       сдвинул бы круг от макета`,
+    },
+    {
+        name: `--rt-color-service-logo-mark`,
+        value: `var(--rt-neutral-900)`,
+        note: `rt-theme-shared: значок тёмный на светлом круге`,
+        presetShared: `значок стоит на подложке атома, а не на поверхности палитры: материальный цвет
+       текста считается от другой подложки`,
+    },
 ];
