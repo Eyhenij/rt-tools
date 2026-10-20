@@ -5,7 +5,8 @@ import { provideRouter } from '@angular/router';
 import { WINDOW } from '@rt-tools/core';
 
 import { classesOf, createRtFixture, qa, qaAll, textOf } from '../../../../testing/rt-kit-testing';
-import { RT_DYNAMIC_SELECTOR_SEARCH_DEBOUNCE, RtDynamicSelectorPopupComponent } from './rt-dynamic-selector-popup.component';
+import { RT_DYNAMIC_SELECTOR_SEARCH_DEBOUNCE } from './rt-dynamic-selector-popup.component';
+import { TestDynamicSelectorPopupFrameComponent } from '../stories/component/test-dynamic-selector-popup-frame.component';
 
 interface IPerson {
     readonly id: number;
@@ -18,7 +19,7 @@ const PEOPLE: IPerson[] = [
     { id: 3, name: 'Vera' },
 ];
 
-type TPopupFixture = ComponentFixture<RtDynamicSelectorPopupComponent<IPerson>>;
+type TPopupFixture = ComponentFixture<TestDynamicSelectorPopupFrameComponent<IPerson>>;
 
 /**
  * Двойник наблюдателя пересечений: в среде без браузера его нет, а догрузка держится на нём.
@@ -45,8 +46,8 @@ class ObserverDouble {
 }
 
 function setup(inputs: Readonly<Record<string, unknown>> = {}, providers: Provider[] = []): TPopupFixture {
-    return createRtFixture<RtDynamicSelectorPopupComponent<IPerson>>(
-        RtDynamicSelectorPopupComponent,
+    return createRtFixture<TestDynamicSelectorPopupFrameComponent<IPerson>>(
+        TestDynamicSelectorPopupFrameComponent,
         { entities: PEOPLE, keyExp: 'id', displayExp: 'name', ...inputs },
         { providers: [provideRouter([]), ...providers] }
     );

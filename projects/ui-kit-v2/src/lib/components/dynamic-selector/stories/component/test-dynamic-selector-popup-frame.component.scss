@@ -1,0 +1,6 @@
+@layer rt-kit.components {
+    // Рамка не рисует своего: окно внутри стоит так же, как без неё.
+    app-dynamic-selector-popup-frame {
+        display: contents;
+    }
+}

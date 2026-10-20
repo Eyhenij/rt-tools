@@ -3,24 +3,26 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 1 of 2 — The parts read the root
-- **Done:** the task folder
-- **Next step:** write the parts service
+- **Stage:** 2 of 2 — The check before the push
+- **Done:** the task folder; the parts read the root; 2939 tests and 895 snapshots green
+- **Next step:** step 2.1
 - **Uncommitted:** the owner's `.claude/rt-kit/assignments.md` row
 - **Waiting for the owner:** no
 - **PR:** not open yet
 
 ## Steps
 
-- [>] 1.1 Write the parts service and its source type.
-- [ ] 1.2 Move the popup and the list onto it, and bind the root.
-- [ ] 1.3 Give the popup specs and the showcase matrix a frame that provides the service.
-- [ ] 1.4 Mark the parts deprecated in the barrel.
-- [ ] 2.1 Run the push gate set, the showcase snapshots included.
+- [x] 1.1 Write the parts service and its source type.
+- [x] 1.2 Move the popup and the list onto it, and bind the root.
+- [x] 1.3 Give the popup specs and the showcase matrix a frame that provides the service.
+- [x] 1.4 Mark the parts deprecated in the barrel.
+- [>] 2.1 Run the push gate set, the showcase snapshots included.
 
 ## Decisions along the way
 
-None yet.
+- The list is shared by the selector and `rt-dynamic-input`, so both roots bind it.
+- The popup source carries the root itself as its settings: the input names are the same.
+- The frame of the popup lives in the showcase folder, and the popup specs draw it.
 
 ## Sessions
 
