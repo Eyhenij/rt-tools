@@ -661,6 +661,13 @@ data-preset="material" floatingLabel>` drew the border through the risen label: 
   straight to the field. The new input `contentTabIndex` (default `0`, the former behaviour) takes
   `null`, and the panel then carries no `tabindex` — SC-UKV-999. Checked in the showcase: with the
   default, Tab from the active tab lands on the panel; with `null`, on a field placed in the panel.
+- **2026-10-21, request 23 (the application's session): a toaster channel.** The application keeps
+  pinned status toasts (offline, update available, token errors, job progress) apart from ordinary
+  ones; with one toaster in `replace` mode an ordinary toast pushed a pinned one out. The toaster
+  takes the input `channel` (default `'default'`), a toast the field `channel`; a toaster shows only
+  its channel — SC-UKV-1000. A toast with `duration: null` in `stack` mode stays until `dismiss()`,
+  and several of them stack. The showcase story of the toast handle now shows two toasters: in the
+  centre «Сохранено» replaces the previous one, on the right the pinned toasts stay.
 
 ## Sessions
 

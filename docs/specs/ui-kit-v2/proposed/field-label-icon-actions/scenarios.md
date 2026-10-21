@@ -822,3 +822,14 @@ Then the focus goes straight to the field, and the panel carries no `tabindex`; 
 panel keeps `tabindex="0"` and takes the focus first, as before
 
 Покрытие: частичное — тест проверяет атрибут панели; переход фокуса по Tab проверен в витрине.
+
+### SC-UKV-1000 — a toaster shows only the toasts of its channel
+
+Given a toaster without `channel` and a second toaster with `channel="status"`
+When the application sends an ordinary toast and three toasts with `channel: 'status'` and
+`duration: null`
+Then the ordinary toast stands only in the first toaster, the three stand only in the second one,
+stacked, and stay there until the application dismisses each of them; a toast without a channel and
+a toaster without the input keep the former behaviour
+
+Covered: `projects/ui-kit-v2/src/lib/components/toast/rt-toaster-additions.spec.ts`.

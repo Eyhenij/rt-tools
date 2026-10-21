@@ -14,6 +14,9 @@ import { TestRtToastRefreshComponent } from './test-toast-refresh.component';
 const STEP: number = 9;
 const TICK_MS: number = 500;
 
+/** Канал закреплённых тостов: доля задачи и потерянная сеть живут в своей стопке справа. */
+const STATUS_CHANNEL: string = 'status';
+
 /**
  * Ручка тоста вживую: доля задачи идёт тиками и закрывает тост на ста, ошибка несёт подробности
  * с копированием, свой компонент закрывает себя сам. Строка внизу пишет, почему ушёл последний
@@ -34,10 +37,15 @@ const TICK_MS: number = 500;
                 <button rtButton qa-dataid="toaster-handle-component" size="sm" theme="secondary" type="button" (click)="sendComponent()">
                     Свой компонент
                 </button>
+                <button rtButton qa-dataid="toaster-handle-saved" size="sm" theme="secondary" type="button" (click)="sendSaved()">
+                    Сохранено
+                </button>
             </div>
             <span class="app-toaster-handle__log" qa-dataid="toaster-handle-log">Последний ушёл: {{ lastReason() }}</span>
         </div>
-        <rt-toaster position="bottom-right" />
+        <!-- Два канала: обычные тосты в центре вытесняют друг друга, закреплённые копятся справа. -->
+        <rt-toaster mode="replace" position="bottom-center" [visibleToasts]="1" />
+        <rt-toaster channel="status" position="bottom-right" />
     `,
     // native-ok: раскладка кнопок показа витрины, в пакет не уезжает
     styles: `
@@ -95,7 +103,13 @@ export class TestRtToasterHandleComponent {
         this.#stopTimer();
         let value: number = 0;
         const ref: NotificationRef = this.#track(
-            this.#bus.open({ message: 'Обновление набора «Продажи»', severity: 'info', duration: null, progressValue: 0 })
+            this.#bus.open({
+                message: 'Обновление набора «Продажи»',
+                severity: 'info',
+                duration: null,
+                progressValue: 0,
+                channel: STATUS_CHANNEL,
+            })
         );
 
         this.#timer = setInterval((): void => {
@@ -118,6 +132,7 @@ export class TestRtToasterHandleComponent {
                     severity: 'warning',
                     duration: null,
                     description: 'Изменения сохранятся позже',
+                    channel: STATUS_CHANNEL,
                 })
             );
             this.offline.set(true);
@@ -149,6 +164,11 @@ export class TestRtToasterHandleComponent {
                 duration: null,
             })
         );
+    }
+
+    /** Обычный тост: уходит в центр и не трогает закреплённые справа. */
+    public sendSaved(): void {
+        this.#bus.success('Сохранено');
     }
 
     #track(ref: NotificationRef): NotificationRef {

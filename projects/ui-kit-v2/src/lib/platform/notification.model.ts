@@ -75,6 +75,12 @@ export namespace INotification {
         readonly component?: Type<unknown>;
         /** Данные своего компонента. */
         readonly data?: unknown;
+        /**
+         * Тостер, который покажет тост: тот, у кого вход `channel` с этим именем. Не задано —
+         * `'default'`, его слушает тостер без входа. Свой канал держит закреплённые тосты отдельно:
+         * обычный тост в режиме `replace` их не вытесняет.
+         */
+        readonly channel?: string;
     }
 
     export type Options = Pick<
@@ -90,6 +96,7 @@ export namespace INotification {
         | 'onDismiss'
         | 'progressValue'
         | 'details'
+        | 'channel'
     >;
 
     /** Что меняет ручка показанного тоста: текст, важность, долю, подробности и данные компонента. */

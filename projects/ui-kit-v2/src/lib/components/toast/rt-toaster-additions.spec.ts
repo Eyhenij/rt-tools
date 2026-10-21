@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DebugElement, inject } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { createRtFixture, qa, qaAll, textOf } from '../../../testing/rt-kit-testing';
@@ -264,6 +264,49 @@ describe('RtToasterComponent — дополнения', (): void => {
             toggle().click();
             fixture.detectChanges();
             expect(qa(fixture, 'toast-details')).toBeNull();
+        });
+    });
+
+    describe('канал', (): void => {
+        function messages(fixture: ComponentFixture<RtToasterComponent>): string[] {
+            return qaAll(fixture, 'toast-message').map((node: DebugElement): string => textOf(node));
+        }
+
+        it('SC-UKV-1000 — тостер без входа показывает события без канала и не берёт чужой канал', (): void => {
+            const fixture: ComponentFixture<RtToasterComponent> = setup();
+
+            bus().success('Сохранено');
+            bus().warning('Нет сети', 'offline', { channel: 'status', duration: null });
+            fixture.detectChanges();
+
+            expect(messages(fixture)).toEqual(['Сохранено']);
+        });
+
+        it('SC-UKV-1000 — тостер своего канала показывает только его события', (): void => {
+            const fixture: ComponentFixture<RtToasterComponent> = createRtFixture(RtToasterComponent, { channel: 'status' });
+
+            bus().success('Сохранено');
+            bus().warning('Нет сети', 'offline', { channel: 'status', duration: null });
+            fixture.detectChanges();
+
+            expect(messages(fixture)).toEqual(['Нет сети']);
+        });
+
+        it('SC-UKV-1000 — закреплённые тосты копятся стопкой и держатся до dismiss()', (): void => {
+            const fixture: ComponentFixture<RtToasterComponent> = createRtFixture(RtToasterComponent, { channel: 'status' });
+            const refs: NotificationRef[] = ['Токен A', 'Токен B', 'Токен C'].map((message: string): NotificationRef =>
+                bus().open({ message, severity: 'danger', duration: null, channel: 'status' })
+            );
+            fixture.detectChanges();
+            jest.advanceTimersByTime(600000);
+            fixture.detectChanges();
+
+            expect(messages(fixture)).toEqual(['Токен C', 'Токен B', 'Токен A']);
+
+            refs[1].dismiss();
+            settle(fixture);
+
+            expect(messages(fixture)).toEqual(['Токен C', 'Токен A']);
         });
     });
 });

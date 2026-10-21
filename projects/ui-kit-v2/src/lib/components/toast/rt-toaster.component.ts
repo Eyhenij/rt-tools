@@ -17,7 +17,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-import { EMPTY, map, merge, mergeMap, Observable } from 'rxjs';
+import { EMPTY, filter, map, merge, mergeMap, Observable } from 'rxjs';
 
 import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
 import { INotification, NotificationBus, NotificationRef } from '@rt-tools/ui-kit-v2/core';
@@ -30,6 +30,9 @@ const BEM_BLOCK: string = 'rt-toaster';
 const DEFAULT_DURATION_MS: number = 4000;
 
 const DEFAULT_VISIBLE_TOASTS: number = 3;
+
+/** Канал события без своего `channel` и тостера без входа: один тостер по-прежнему получает всё. */
+const DEFAULT_CHANNEL: string = 'default';
 
 @Component({
     selector: 'rt-toaster',
@@ -96,6 +99,12 @@ export class RtToasterComponent {
         transform: booleanAttribute,
     });
 
+    /**
+     * Канал тостера: он показывает только события с этим `channel`. Второй тостер со своим каналом
+     * держит закреплённые тосты в своём углу и своей стопке.
+     */
+    public readonly channel: InputSignal<string> = input<string>(DEFAULT_CHANNEL);
+
     @HostBinding('class')
     public get hostModifierClasses(): Record<string, boolean> {
         return {
@@ -117,6 +126,7 @@ export class RtToasterComponent {
         this.#notificationBus
             .onEmit()
             .pipe(
+                filter((event: INotification.Event): boolean => (event.payload.channel ?? DEFAULT_CHANNEL) === this.channel()),
                 map((event: INotification.Event): IRtToaster.Toast => this.#addToast(event)),
                 mergeMap((toast: IRtToaster.Toast): Observable<IRtToaster.Change> => this.#changesOf(toast)),
                 takeUntilDestroyed()
