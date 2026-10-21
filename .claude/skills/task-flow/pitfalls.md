@@ -1,4 +1,4 @@
-<!-- rt-kit v0.32.0 · pitfalls/task-flow.md · f157b2fc8451 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.32.0 · pitfalls/task-flow.md · dd8ad614e7d3 · правится надстройкой, не здесь -->
 # Work conduct — cold part
 
 Pitfalls and behaviour from incident analyses. Loaded not with the rule but on demand: an ordinary
@@ -9,10 +9,9 @@ The rule is `task-flow`; the articles that hold the law stand there.
 ## Pitfalls
 
 - **A suspicion of a defect put off "until later" is postponed work, and the promise in the reply is
-  no record of it.** It goes into the work queue as a task, or as a line «not checked» in the record
-  of the task where it was noticed. Every next turn writes its summary anew from memory: the
-  suspicion about a menu turned into a remark about its look within three tasks, and the owner
-  learned it was never checked only by asking.
+  no record of it.** It goes into the queue as a task, or as a line «not checked» in the record of
+  the task where it was noticed. Each turn writes its summary anew: within three tasks the suspicion
+  about a menu turned into a remark about its look.
 - **A task picked into an epic by its body can be closed before the work starts.** Weeks pass
   between creating a task and taking it, and all that time the tree is edited by neighbouring work:
   two tasks of one epic had three parts out of four already done — the body described the tree of a

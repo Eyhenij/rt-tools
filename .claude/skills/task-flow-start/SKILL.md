@@ -4,7 +4,7 @@ kind: pattern
 rule: task-flow
 description: Pattern of rule task-flow. Load at the start of work from the owner — exploration before the first question, the six mandatory questions, the product agreement, creating the task, the branch and the folder. Returning to work — pattern task-flow-resume.
 ---
-<!-- rt-kit v0.32.0 · patterns/task-flow-start.md · fd6033058f8d · правится надстройкой, не здесь -->
+<!-- rt-kit v0.32.0 · patterns/task-flow-start.md · 35d4b240401c · правится надстройкой, не здесь -->
 
 # Starting the work
 
@@ -179,9 +179,8 @@ npm run task:new -- --epic --title '<Возможность, которая ра
 The call puts the epic label on the card, lays a draft of the plan in the tree's directory of plans
 and writes the path to it into the body: the audit reads the plan by that path, and a card without
 it points into emptiness. Everything the epic cannot be created without is asked before the card is
-made — an administrator alone can take a made one off the board. What the call does not write, the
-tree lists here as hand steps — a record in a file of epics, a line in an index of plans — and they
-go into the same commit as the plan: added after the push gate refused, they cost a second round.
+made — an administrator alone can take a made one off the board. What the call does not write — a
+file of epics, an index of plans — the tree lists as hand steps of the same commit as the plan.
 
 The draft is filled in by hand, and three things in it are derived from nothing: the opportunity in
 one phrase, the makeup of the tasks in order, and how the branches of the tasks stand. A set without
