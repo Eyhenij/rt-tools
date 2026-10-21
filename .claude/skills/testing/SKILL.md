@@ -4,7 +4,7 @@ kind: rule
 law: verifiability
 description: Rule under the verifiability law. Load when editing any test file and anything in the tree's end-to-end suites. Names the scenario id in the title, moving a decision into a pure function and what an end-to-end test closes. Patterns testing-unit, testing-e2e.
 ---
-<!-- rt-kit v0.32.0 · rules/testing.md · 025a753c6b34 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.32.0 · rules/testing.md · bb69eba9ea68 · правится надстройкой, не здесь -->
 
 # Verifiability — how it works here
 
@@ -107,6 +107,11 @@ flowchart TD
   settings — contacts, sender address, keys of external services — the seed does not create
   either: they are entered in the application. What is needed rarely is switched on by a sign in
   the environment, not seeded for all.
+- **An edit of a build step or of the pipeline is checked from scratch, and its PR waits for the run
+  on itself.** A cached build answers from what an earlier build left, and the edit looks green
+  while a clean runner fails on it. So the build runs twice past the cache with its output removed
+  between the runs, and its time is compared with the wait limit of whoever calls it. The request to
+  merge names the run on the PR itself: a fix of the pipeline merged unrun broke it a second time.
 - **A created check goes into the push gate or the pipeline, not only into the umbrella target.**
   The umbrella target is run by hand, and a check that lives only there answers whoever
   remembered it: such a check's silence reads as its green answer. Three checks stood outside the

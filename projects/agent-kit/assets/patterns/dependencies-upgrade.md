@@ -31,7 +31,11 @@ stop the install.
 ## Order
 
 1. `package.json` — exact numbers, not a single `^` or `~`.
-2. `pnpm install`; the snapshot goes in the same commit.
+2. `pnpm install`; the snapshot goes in the same commit. Then `pnpm install --frozen-lockfile`, in
+   every repository the edit goes to. Tests, the build and the linter run on modules already
+   installed and do not read the snapshot: a range in the declaration against an exact number in
+   the snapshot is found only by the strict install, and in a release pipeline that is after the
+   merge.
 3. The styling properties the tree reads from the package are checked against the new version by
    a command, not by a look: a removed property makes the declaration invalid, not wrong, and
    every check stays green. Every name from `var(--<prefix>-…)` in the tree is searched for in

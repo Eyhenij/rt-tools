@@ -43,6 +43,11 @@ A clone written next to it takes the edits onto itself and diverges from the ori
 first one. A renamed file and a "similar but own" component are the same departure, only
 undeclared.
 
+Before the kit PR is merged, the tree that ordered the edit runs its end-to-end suite against the
+packed build of that branch. The build is unpacked over the installed package without touching the
+declaration. The kit's own tests do not know the screen it stands on — a dialog over a side panel, a
+button whose state the consumer binds — and a defect found after the merge costs a second release.
+
 ## One's own primitive — only with the owner's approval
 
 Asked before the first file is written. The same goes for one's own base and one's own inline

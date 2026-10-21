@@ -116,6 +116,9 @@ flowchart TD
   when the tree has no such kind at all. A hardcoded value is refused by neither linter, build nor
   test: it is syntactically valid and simply does not belong to this tree — that is how a demo
   value from the vendor's documentation leaves for the production build.
+- **A logo of a foreign service is taken, not drawn.** It is taken from the owner of the mark or
+  from an open icon set, in a mockup the same as in code. A drawn mark next to the service name
+  reads as that service's logo, and a person at the screen does not recognise it.
 
 ## What of the law is not here
 
