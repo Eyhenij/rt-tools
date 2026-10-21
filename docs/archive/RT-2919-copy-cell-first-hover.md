@@ -1,5 +1,7 @@
 # Grill
 
+Former address: docs/tasks/RT-2919-copy-cell-first-hover/grill.md
+
 ## The owner request
 
 > Задача в кит, делаю сам (Рекомендую)
@@ -41,3 +43,7 @@ in, a cut e-mail in a bookings table cannot be read.
 ## What is left unclear
 
 - Nothing.
+
+## Decisions along the way
+
+- None: the fix went as planned. The test SC-UKV-882 was red before the fix and green after it.
