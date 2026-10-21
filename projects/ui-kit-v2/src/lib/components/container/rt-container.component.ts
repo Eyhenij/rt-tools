@@ -5,6 +5,7 @@ import {
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
+    DestroyRef,
     ElementRef,
     InputSignal,
     InputSignalWithTransform,
@@ -18,6 +19,7 @@ import {
     ViewContainerRef,
     ViewEncapsulation,
     WritableSignal,
+    afterNextRender,
     computed,
     contentChild,
     effect,
@@ -35,7 +37,7 @@ import { map, merge, Observable, Subject, switchMap, takeUntil } from 'rxjs';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { carryThemeScope, materialPresetClassesOf } from '@rt-tools/ui-kit-v2/core';
+import { BreakpointsService, carryThemeScope, materialPresetClassesOf } from '@rt-tools/ui-kit-v2/core';
 import { clampWidth, RtResizeHandleComponent } from '@rt-tools/ui-kit-v2/drawer';
 import { RtToasterComponent } from '@rt-tools/ui-kit-v2/toast';
 import { RtContainerStateService } from './rt-container-state.service';
@@ -48,9 +50,7 @@ import {
     RtContainerToolbarLeftDirective,
     RtContainerToolbarRightDirective,
 } from './rt-container.markers';
-
-/** Запас поверх длительности transition'а для страховочного таймера. */
-const ASIDE_TRANSITION_BUFFER_MS: number = 80;
+import { listenTransitionEnd } from './rt-container.transition';
 
 const BEM_BLOCK: string = 'rt-container';
 
@@ -221,6 +221,15 @@ export class RtContainerComponent {
     );
 
     constructor() {
+        // Контейнер — место страницы: узкий вид кита считается от его ширины. Боковая панель
+        // приложения рядом сужает его, а окно остаётся прежним. Место объявляется в браузере
+        // после первой отрисовки и снимается вместе с контейнером.
+        const breakpoints: BreakpointsService = inject(BreakpointsService);
+        const destroyRef: DestroyRef = inject(DestroyRef);
+        afterNextRender((): void => {
+            destroyRef.onDestroy(breakpoints.registerPlace(this.#host.nativeElement));
+        });
+
         // Backdrop-click / ESC подписки правого overlay живут в одном
         // конструкторном стриме: #createRightOverlay эмитит созданный OverlayRef,
         // switchMap переключается на его event-стримы (предыдущий overlay к этому
@@ -297,7 +306,7 @@ export class RtContainerComponent {
         // Slide-in: на следующий paint добавляем --open.
         requestAnimationFrame((): void => {
             this.#renderer.addClass(overlayRef.overlayElement, OVERLAY_OPEN_CLASS);
-            this.#listenTransitionEnd(overlayRef.overlayElement, 'transform', (): void => this.rightOpened.emit());
+            listenTransitionEnd(this.#window, overlayRef.overlayElement, 'transform', (): void => this.rightOpened.emit());
         });
 
         this.rightOpen.set(true);
@@ -322,7 +331,7 @@ export class RtContainerComponent {
             this.#renderer.removeClass(backdropEl, 'rt-aside-backdrop--visible');
         }
 
-        this.#listenTransitionEnd(overlayRef.overlayElement, 'transform', (): void => {
+        listenTransitionEnd(this.#window, overlayRef.overlayElement, 'transform', (): void => {
             this.#setScrollBlocked(false);
             // Объявления на узле возвращаются только после ухода: поставленные сразу, они
             // обрывают затухание подложки на первом же кадре.
@@ -360,7 +369,7 @@ export class RtContainerComponent {
             callback();
             return;
         }
-        this.#listenTransitionEnd(cell, 'inline-size', callback);
+        listenTransitionEnd(this.#window, cell, 'inline-size', callback);
     }
 
     /** Открытый вид оверлея без перехода: подложка видна, страница замирает, если подложка есть. */
@@ -445,55 +454,5 @@ export class RtContainerComponent {
         this.#rightOverlaySource.next(overlayRef);
 
         return overlayRef;
-    }
-
-    // Слушаем окончание одного свойства: на узле могут анимироваться и другие (opacity
-    // backdrop'а, например) — это даст ложные срабатывания.
-    #listenTransitionEnd(element: HTMLElement, property: string, callback: () => void): void {
-        // Нет анимации (reduced-motion / `transition: none`) → `transitionend` не
-        // придёт; teardown-callback (навигация `ro:null`) отрабатываем синхронно.
-        const durationMs: number = this.#transitionDurationMs(element);
-        if (durationMs === 0) {
-            callback();
-            return;
-        }
-
-        // settled-гард делает transitionend и fallback-таймаут взаимно
-        // идемпотентными — сработает и снимет listener только то, что раньше.
-        let settled: boolean = false;
-
-        const handler: (event: TransitionEvent) => void = (event: TransitionEvent): void => {
-            if (event.propertyName !== property || event.target !== element || settled) {
-                return;
-            }
-            settled = true;
-            element.removeEventListener('transitionend', handler);
-            callback();
-        };
-        element.addEventListener('transitionend', handler);
-
-        // Страховка на случай пропущенного `transitionend` (лаг рендера).
-        setTimeout((): void => {
-            if (settled) {
-                return;
-            }
-            settled = true;
-            element.removeEventListener('transitionend', handler);
-            callback();
-        }, durationMs + ASIDE_TRANSITION_BUFFER_MS);
-    }
-
-    // Максимальная длительность transition'а элемента в мс; `0` если анимации нет.
-    #transitionDurationMs(element: HTMLElement): number {
-        const durationCss: string | undefined = this.#window?.getComputedStyle(element).transitionDuration;
-        if (durationCss === undefined || durationCss === '') {
-            return 0;
-        }
-        const maxSeconds: number = durationCss.split(',').reduce((max: number, part: string): number => {
-            const trimmed: string = part.trim();
-            const seconds: number = trimmed.endsWith('ms') ? Number.parseFloat(trimmed) / 1000 : Number.parseFloat(trimmed);
-            return Number.isNaN(seconds) ? max : Math.max(max, seconds);
-        }, 0);
-        return maxSeconds * 1000;
     }
 }

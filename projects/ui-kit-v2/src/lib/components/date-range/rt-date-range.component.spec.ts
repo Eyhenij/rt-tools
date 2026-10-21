@@ -23,7 +23,7 @@ class DateRangeHostComponent {
 
 /** Подмена наблюдателя ширины: сам он в тестовой среде ничего не измеряет. */
 class NarrowBreakpointsService {
-    public readonly narrow: () => boolean = (): boolean => true;
+    public readonly viewportNarrow: () => boolean = (): boolean => true;
 }
 
 function setup(inputs: Readonly<Record<string, unknown>> = {}): ComponentFixture<RtDateRangeComponent> {

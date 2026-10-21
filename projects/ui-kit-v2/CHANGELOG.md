@@ -1,3 +1,15 @@
+# [0.29.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.28.0...rt-ui-kit-v2%400.29.0) (2026-10-21)
+
+### Bug Fixes
+
+- **rt:ui-kit-v2:** место на корне документа объявлено вне слоя ([0fdcb6a](https://github.com/Eyhenij/rt-tools/commit/0fdcb6a437bcfb550b3318b569b9591803089056))
+- **rt:ui-kit-v2:** сценарии шапки «Ещё» на свободных номерах ([424e9e3](https://github.com/Eyhenij/rt-tools/commit/424e9e3010680afa7091d1fa9f56e3dcfd069e58))
+
+### Features
+
+- **rt:ui-kit-v2:** кит выбирает вид по ширине места страницы ([37c7b9e](https://github.com/Eyhenij/rt-tools/commit/37c7b9e69ca928198b03073057ede226cb177c96))
+- **rt:ui-kit-v2:** шапка в одну строку, не влезшие разделы уходят в «Ещё» ([1f58128](https://github.com/Eyhenij/rt-tools/commit/1f58128c60ce7ca86604da55c46454227604382b))
+
 # [0.28.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.27.0...rt-ui-kit-v2%400.28.0) (2026-10-20)
 
 ### Features

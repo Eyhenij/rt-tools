@@ -335,7 +335,7 @@ describe('RtPageHeaderComponent', (): void => {
             jest.restoreAllMocks();
         });
 
-        it('SC-UKV-868: широкой шапке «Ещё» не нужен: все разделы в ряду', (): void => {
+        it('SC-UKV-870: широкой шапке «Ещё» не нужен: все разделы в ряду', (): void => {
             const fixture: ComponentFixture<RtPageHeaderComponent> = setupRow(1000);
 
             expect(qa(fixture, 'header-nav-more')).not.toBeNull();
@@ -343,7 +343,7 @@ describe('RtPageHeaderComponent', (): void => {
             expect(hiddenIds(fixture)).toEqual([]);
         });
 
-        it('SC-UKV-869: в узкой шапке разделы с конца уходят в «Ещё», и «Ещё» встаёт в ряд', (): void => {
+        it('SC-UKV-871: в узкой шапке разделы с конца уходят в «Ещё», и «Ещё» встаёт в ряд', (): void => {
             // Два раздела и «Ещё» с промежутками: 200 + 60 + 8 = 268 из 300.
             const fixture: ComponentFixture<RtPageHeaderComponent> = setupRow(300);
 
@@ -351,7 +351,7 @@ describe('RtPageHeaderComponent', (): void => {
             expect(hiddenIds(fixture)).toEqual(['reports', 'rates', 'clients']);
         });
 
-        it('SC-UKV-869: сужение шапки пересчитывает ряд', (): void => {
+        it('SC-UKV-871: сужение шапки пересчитывает ряд', (): void => {
             const fixture: ComponentFixture<RtPageHeaderComponent> = setupRow(1000);
             expect(hiddenIds(fixture)).toEqual([]);
 
@@ -362,7 +362,7 @@ describe('RtPageHeaderComponent', (): void => {
             expect(hiddenIds(fixture)).toEqual(['reports', 'rates', 'clients']);
         });
 
-        it('SC-UKV-871: панель «Ещё» показывает ушедшие разделы', (): void => {
+        it('SC-UKV-873: панель «Ещё» показывает ушедшие разделы', (): void => {
             const fixture: ComponentFixture<RtPageHeaderComponent> = setupRow(300);
 
             qa(fixture, 'header-nav-more')?.nativeElement.click();
@@ -375,7 +375,7 @@ describe('RtPageHeaderComponent', (): void => {
             ).toEqual(['reports', 'rates', 'clients']);
         });
 
-        it('SC-UKV-872: выбранный раздел внутри «Ещё» подсвечивает «Ещё»', async (): Promise<void> => {
+        it('SC-UKV-874: выбранный раздел внутри «Ещё» подсвечивает «Ещё»', async (): Promise<void> => {
             const fixture: ComponentFixture<RtPageHeaderComponent> = setupRow(300);
             const more: HTMLElement = qa(fixture, 'header-nav-more')?.nativeElement as HTMLElement;
             expect(more.classList).not.toContain('rt-page-header__link--is-active');
@@ -386,7 +386,7 @@ describe('RtPageHeaderComponent', (): void => {
             expect(more.classList).toContain('rt-page-header__link--is-active');
         });
 
-        it('SC-UKV-872: выбранный раздел в ряду «Ещё» не подсвечивает', async (): Promise<void> => {
+        it('SC-UKV-874: выбранный раздел в ряду «Ещё» не подсвечивает', async (): Promise<void> => {
             const fixture: ComponentFixture<RtPageHeaderComponent> = setupRow(300);
 
             await TestBed.inject(Router).navigateByUrl('/tours');

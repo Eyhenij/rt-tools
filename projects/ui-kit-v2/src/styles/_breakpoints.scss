@@ -5,3 +5,22 @@ $rt-bp-sm: 480px !default;
 $rt-bp-md: 768px !default;
 $rt-bp-lg: 1080px !default;
 $rt-bp-xl: 1380px !default;
+
+// Место страницы — контейнер с именем `rt-place`. Его объявляют корень документа и
+// `rt-container`: компонент внутри контейнера считает порог от его ширины, вне его — от корня,
+// то есть от окна. Имя записано буквами: линтер стилей не читает имя из переменной.
+
+// Порог по ширине места: `@include bp.place-max(bp.$rt-bp-md) { … }`. Окна и панели поверх
+// экрана сюда не идут: они лежат вне места страницы и остаются на `@media`.
+@mixin place-max($width) {
+    @container rt-place (width <= #{$width}) {
+        @content;
+    }
+}
+
+// Шире порога по месту — пара к `place-max`.
+@mixin place-min($width) {
+    @container rt-place (width > #{$width}) {
+        @content;
+    }
+}
