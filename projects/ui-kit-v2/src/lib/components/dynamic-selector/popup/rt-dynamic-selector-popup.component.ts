@@ -1,20 +1,14 @@
 import {
     afterNextRender,
-    booleanAttribute,
     computed,
     DestroyRef,
     ElementRef,
     inject,
     Injector,
-    input,
-    output,
     signal,
     ChangeDetectionStrategy,
     Component,
-    InputSignal,
-    InputSignalWithTransform,
     OnInit,
-    OutputEmitterRef,
     Signal,
     ViewEncapsulation,
     viewChild,
@@ -49,6 +43,8 @@ import {
     dynamicLabelCase,
 } from '../rt-dynamic-selector.logic';
 import { IRtDynamicSelector } from '../rt-dynamic-selector.model';
+import { RtDynamicSelectorPartsService } from '../rt-dynamic-selector-parts.service';
+import { IRtDynamicSelectorParts } from '../rt-dynamic-selector-parts.model';
 
 const BEM_BLOCK: string = 'rt-dynamic-selector-popup';
 
@@ -97,6 +93,8 @@ export class RtDynamicSelectorPopupComponent<TEntity extends object> implements 
     readonly #host: ElementRef<HTMLElement> = inject<ElementRef<HTMLElement>>(ElementRef);
     readonly #injector: Injector = inject(Injector);
     readonly #searchSource: Subject<string> = new Subject<string>();
+    readonly #source: IRtDynamicSelectorParts.PopupSource<TEntity> =
+        inject<RtDynamicSelectorPartsService<TEntity>>(RtDynamicSelectorPartsService).popup;
 
     /**
      * Клавиши строк. Окно не называет строку через `aria-activedescendant`: строки — флажки и
@@ -201,75 +199,38 @@ export class RtDynamicSelectorPopupComponent<TEntity extends object> implements 
     protected readonly isApplyDisabled: Signal<boolean> = computed((): boolean => this.ticked().length === 0 || this.loading());
     protected readonly isNavShown: Signal<boolean> = computed((): boolean => !!this.navigateTitle() && !!this.navigateLink());
 
-    /** Предлагаемые записи: ещё не выбранные, отсортированные селектором. */
-    public readonly entities: InputSignal<ReadonlyArray<TEntity>> = input<ReadonlyArray<TEntity>>([]);
-    public readonly keyExp: InputSignal<keyof TEntity & string> = input.required<keyof TEntity & string>();
-    public readonly displayExp: InputSignal<keyof TEntity & string> = input.required<keyof TEntity & string>();
-    /** Подпись записи для строки, пункта окна и поиска; не задана — поле `displayExp`. */
-    public readonly displayWith: InputSignal<((entity: TEntity) => string) | null> = input<((entity: TEntity) => string) | null>(null);
-    public readonly mode: InputSignal<IRtDynamicSelector.Mode> = input<IRtDynamicSelector.Mode>('multi');
-    public readonly multiToggleShown: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
-        transform: booleanAttribute,
-    });
-    public readonly selectAllShown: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
-        transform: booleanAttribute,
-    });
-    public readonly localSearch: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
-        transform: booleanAttribute,
-    });
-    public readonly lazyLoad: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
-        transform: booleanAttribute,
-    });
-    public readonly loading: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
-        transform: booleanAttribute,
-    });
-    public readonly fetching: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
-        transform: booleanAttribute,
-    });
-    public readonly pinnedKeys: InputSignal<ReadonlyArray<unknown>> = input<ReadonlyArray<unknown>>([]);
-    public readonly navigateTitle: InputSignal<string> = input<string>('');
-    public readonly navigateLink: InputSignal<string> = input<string>('');
-    /** Запрос, с которым выбор открывается; событием поиска он не уходит — вызывающий его знает. */
-    public readonly searchTerm: InputSignal<string> = input<string>('');
-    /** Вид поля поиска — тот же вход, что у поля кита. */
-    public readonly searchAppearance: InputSignal<IRtInput.Appearance> = input<IRtInput.Appearance>('outline');
-    /** Шаг скругления поля поиска; null — скругление самого поля. */
-    public readonly searchRadius: InputSignal<TRtRadius | null> = input<TRtRadius | null>(null);
-    /** Подпись пустого результата поиска; пустая строка оставляет подпись кита. */
-    public readonly emptyResultsText: InputSignal<string> = input<string>('');
-    /** Подпись кнопки применения; пустая строка оставляет подпись кита. */
-    public readonly applyLabel: InputSignal<string> = input<string>('');
-    /** Регистр подписи кнопки применения; `none` оставляет её как есть. */
-    public readonly applyLabelCase: InputSignal<IRtDynamicSelector.LabelCase> = input<IRtDynamicSelector.LabelCase>('none');
-    /** Поле поиска получает фокус при открытии окна; по умолчанию фокус остаётся там, где был. */
-    public readonly autofocusSearch: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
-        transform: booleanAttribute,
-    });
-    /** Подпись пункта переносится; `false` ведёт её одной строкой с многоточием и подсказкой при обрезке. */
-    public readonly titleWrap: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
-        transform: booleanAttribute,
-    });
-    /** Символы подписи пункта, совпавшие со словами поиска, выделены. */
-    public readonly highlightSearch: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
-        transform: booleanAttribute,
-    });
-
-    /** Применённые ключи в порядке отметок. */
-    public readonly applied: OutputEmitterRef<unknown[]> = output<unknown[]>();
-    public readonly cancelled: OutputEmitterRef<void> = output<void>();
-    /** Запрос для поиска на сервере: через паузу после последней клавиши, стёртый — пустой строкой. */
-    public readonly searchChange: OutputEmitterRef<string> = output<string>();
-    public readonly loadMore: OutputEmitterRef<void> = output<void>();
-    /** Отмеченные записи: пустой список при открытии и текущие отметки после каждого поиска. */
-    public readonly temporaryChoiceChange: OutputEmitterRef<TEntity[]> = output<TEntity[]>();
+    /* Настройки окна приходят от корня: окно стоит только внутри него. */
+    protected readonly entities: Signal<ReadonlyArray<TEntity>> = this.#source.entities;
+    protected readonly keyExp: Signal<keyof TEntity & string> = this.#source.settings.keyExp;
+    protected readonly displayExp: Signal<keyof TEntity & string> = this.#source.settings.displayExp;
+    protected readonly displayWith: Signal<((entity: TEntity) => string) | null> = this.#source.settings.displayWith;
+    protected readonly mode: Signal<IRtDynamicSelector.Mode> = this.#source.settings.mode;
+    protected readonly multiToggleShown: Signal<boolean> = this.#source.settings.multiToggleShown;
+    protected readonly selectAllShown: Signal<boolean> = this.#source.settings.selectAllShown;
+    protected readonly localSearch: Signal<boolean> = this.#source.settings.localSearch;
+    protected readonly lazyLoad: Signal<boolean> = this.#source.settings.lazyLoad;
+    protected readonly loading: Signal<boolean> = this.#source.settings.loading;
+    protected readonly fetching: Signal<boolean> = this.#source.settings.fetching;
+    protected readonly pinnedKeys: Signal<ReadonlyArray<unknown>> = this.#source.settings.pinnedKeys;
+    protected readonly navigateTitle: Signal<string> = this.#source.settings.navigateTitle;
+    protected readonly navigateLink: Signal<string> = this.#source.settings.navigateLink;
+    protected readonly searchTerm: Signal<string> = this.#source.settings.searchTerm;
+    protected readonly searchAppearance: Signal<IRtInput.Appearance> = this.#source.settings.searchAppearance;
+    protected readonly searchRadius: Signal<TRtRadius | null> = this.#source.settings.searchRadius;
+    protected readonly emptyResultsText: Signal<string> = this.#source.settings.emptyResultsText;
+    protected readonly applyLabel: Signal<string> = this.#source.settings.applyLabel;
+    protected readonly applyLabelCase: Signal<IRtDynamicSelector.LabelCase> = this.#source.settings.applyLabelCase;
+    protected readonly autofocusSearch: Signal<boolean> = this.#source.settings.autofocusSearch;
+    protected readonly titleWrap: Signal<boolean> = this.#source.settings.titleWrap;
+    protected readonly highlightSearch: Signal<boolean> = this.#source.settings.highlightSearch;
 
     public ngOnInit(): void {
         // Выбор живёт в шаблоне и создаётся заново при каждом открытии: запрос начинается с входа.
         this.query.set(this.searchTerm());
-        this.temporaryChoiceChange.emit([]);
+        this.#source.temporaryChoice([]);
         this.#searchSource
             .pipe(debounceTime(RT_DYNAMIC_SELECTOR_SEARCH_DEBOUNCE), takeUntilDestroyed(this.#destroyRef))
-            .subscribe((query: string): void => this.searchChange.emit(query));
+            .subscribe((query: string): void => this.#source.search(query));
 
         if (this.autofocusSearch()) {
             afterNextRender((): void => this.searchField()?.nativeElement.querySelector('input')?.focus({ preventScroll: true }), {
@@ -283,7 +244,7 @@ export class RtDynamicSelectorPopupComponent<TEntity extends object> implements 
 
         this.raised.set([...this.ticked()]);
         this.query.set(query);
-        this.temporaryChoiceChange.emit(this.#tickedEntities());
+        this.#source.temporaryChoice(this.#tickedEntities());
 
         if (!this.localSearch()) {
             this.#searchSource.next(query);
@@ -313,12 +274,16 @@ export class RtDynamicSelectorPopupComponent<TEntity extends object> implements 
 
     protected onApply(): void {
         if (!this.isApplyDisabled()) {
-            this.applied.emit([...this.ticked()]);
+            this.#source.apply([...this.ticked()]);
         }
     }
 
     protected onCancel(): void {
-        this.cancelled.emit();
+        this.#source.cancel();
+    }
+
+    protected onLoadMore(): void {
+        this.#source.loadMore();
     }
 
     /** Стрелки, Home и End ведут фокус по строкам; в поле поиска Home и End остаются у курсора. */

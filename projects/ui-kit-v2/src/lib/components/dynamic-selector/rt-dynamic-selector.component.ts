@@ -3,6 +3,7 @@ import {
     computed,
     contentChild,
     forwardRef,
+    inject,
     input,
     model,
     output,
@@ -42,6 +43,7 @@ import {
     selectableDynamicItems,
 } from './rt-dynamic-selector.logic';
 import { IRtDynamicSelector } from './rt-dynamic-selector.model';
+import { RtDynamicSelectorPartsService } from './rt-dynamic-selector-parts.service';
 
 const BEM_BLOCK: string = 'rt-dynamic-selector';
 
@@ -74,12 +76,14 @@ const BEM_BLOCK: string = 'rt-dynamic-selector';
     providers: [
         // Алиас базового токена — для contentChild(RtFormControlBase) в rt-field.
         { provide: RtFormControlBase, useExisting: forwardRef(() => RtDynamicSelectorComponent) },
+        RtDynamicSelectorPartsService,
     ],
     host: { class: BEM_BLOCK },
 })
 export class RtDynamicSelectorComponent<TEntity extends object> extends RtFormControlBase<unknown[]> {
     /** Последнее значение, записанное формой: к нему возвращает сброс. */
     readonly #initial: WritableSignal<unknown[]> = signal<unknown[]>([]);
+    readonly #parts: RtDynamicSelectorPartsService<TEntity> = inject<RtDynamicSelectorPartsService<TEntity>>(RtDynamicSelectorPartsService);
     /* Умолчания входов считаются из настроек кита при объявлении: вход в разметке перебивает их. */
     readonly #invitationButtonIconDefault: IRtIcon.Name | null = rtKitDefault(
         'dynamicSelector',
@@ -322,6 +326,7 @@ export class RtDynamicSelectorComponent<TEntity extends object> extends RtFormCo
         toObservable(this.chosenEntities)
             .pipe(takeUntilDestroyed())
             .subscribe((list: TEntity[]): void => this.#takeChosen(list));
+        this.#bindParts();
     }
 
     /** Записанное формой становится и списком, и значением для сброса; пустой массив список опустошает. */
@@ -391,6 +396,40 @@ export class RtDynamicSelectorComponent<TEntity extends object> extends RtFormCo
     protected onClosed(): void {
         this.markTouched();
         this.popupOpenChange.emit(false);
+    }
+
+    /** Окно выбора и список читают корень: его входы, вычисленное и обработчики. */
+    #bindParts(): void {
+        this.#parts.bindPopup({
+            settings: this,
+            entities: this.offered,
+            apply: (keys: unknown[]): void => this.onApplied(keys),
+            cancel: (): void => this.onCancelled(),
+            search: (query: string): void => this.searchChange.emit(query),
+            loadMore: (): void => this.loadMore.emit(),
+            temporaryChoice: (entities: TEntity[]): void => this.temporaryChoiceChange.emit(entities),
+        });
+        this.#parts.bindList({
+            rows: this.rows,
+            draggable: this.draggable,
+            editable: signal<boolean>(false),
+            disabled: this.isDisabled,
+            actionsShown: computed((): boolean => !this.invitation()),
+            resetClearShown: this.listActionsShown,
+            removeShown: this.removeShown,
+            resetDisabled: this.isResetDisabled,
+            clearDisabled: this.isClearDisabled,
+            buttonRadius: this.buttonRadius,
+            clearIcon: this.clearIcon,
+            titleWrap: this.titleWrap,
+            titleTpl: this.titleTpl,
+            controlsTpl: this.controlsTpl,
+            remove: (key: unknown): void => this.onRemoved(key),
+            move: (move: IRtDynamicSelector.Move): void => this.onMoved(move),
+            edit: (): void => undefined,
+            reset: (): void => this.onReset(),
+            clear: (): void => this.onCleared(),
+        });
     }
 
     #closePopup(): void {

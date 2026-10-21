@@ -109,7 +109,7 @@
                     <ng-template let-popupCase>
                         <!-- Свойства окна стоят на предке, как приложение задаёт их на панели оверлея; обёртка без коробки. -->
                         <div style="display: contents" [style]="popupCase.tuned ? tunedPopupStyle : {}">
-                            <rt-dynamic-selector-popup
+                            <app-dynamic-selector-popup-frame
                                 keyExp="id"
                                 displayExp="name"
                                 searchAppearance="fill"
@@ -180,7 +180,7 @@
             <ng-template>
                 <app-story-row [items]="popupCases" [itemLabel]="caseLabel" [slotWidth]="popupWidth">
                     <ng-template let-popupCase>
-                        <rt-dynamic-selector-popup
+                        <app-dynamic-selector-popup-frame
                             keyExp="id"
                             displayExp="name"
                             [entities]="popupCase.entities"
@@ -243,7 +243,7 @@
                 <!-- Одно окно: случай один, а ширину половины ему задаёт ряд. -->
                 <app-story-row [items]="['начальный запрос «Ma»']" [slotWidth]="popupWidth">
                     <ng-template>
-                        <rt-dynamic-selector-popup keyExp="id" displayExp="name" searchTerm="Ma" [entities]="initialQueryEntities" />
+                        <app-dynamic-selector-popup-frame keyExp="id" displayExp="name" searchTerm="Ma" [entities]="initialQueryEntities" />
                     </ng-template>
                 </app-story-row>
             </ng-template>
@@ -262,7 +262,7 @@
                         [entities]="people"
                         [readonlyKeys]="themeReadonly"
                         [formControl]="presetsControl" />
-                    <rt-dynamic-selector-popup keyExp="id" displayExp="name" [entities]="people" [pinnedKeys]="themePinned" />
+                    <app-dynamic-selector-popup-frame keyExp="id" displayExp="name" [entities]="people" [pinnedKeys]="themePinned" />
                 </div>
             </ng-template>
         </app-story-presets>
@@ -282,7 +282,11 @@
                                 [entities]="people"
                                 [readonlyKeys]="themeReadonly"
                                 [formControl]="themeControl" />
-                            <rt-dynamic-selector-popup keyExp="id" displayExp="name" [entities]="people" [pinnedKeys]="themePinned" />
+                            <app-dynamic-selector-popup-frame
+                                keyExp="id"
+                                displayExp="name"
+                                [entities]="people"
+                                [pinnedKeys]="themePinned" />
                         </div>
                     </ng-template>
                 </app-story-themes>
