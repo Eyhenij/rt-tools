@@ -1,3 +1,10 @@
+## [0.29.1](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.29.0...rt-ui-kit-v2%400.29.1) (2026-10-21)
+
+### Bug Fixes
+
+- **rt:ui-kit-v2:** короткая панель всплывашки высотой со своё содержимое ([03ad6c9](https://github.com/Eyhenij/rt-tools/commit/03ad6c9002c43b955d74b70f8b032350a5a39f74))
+- **rt:ui-kit-v2:** ячейка с копированием показывает подсказку с первого наведения ([4ffd0af](https://github.com/Eyhenij/rt-tools/commit/4ffd0af33b7186cff83a16a8e96b6c275b5bb155))
+
 # [0.29.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.28.0...rt-ui-kit-v2%400.29.0) (2026-10-21)
 
 ### Bug Fixes

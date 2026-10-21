@@ -60,6 +60,7 @@ agreement about their own subject and describe the surface of a component, not a
 | [The accordion](accordion/spec.md)                                        | a list of headed items whose texts open on a press, independently of one another                                                                |
 | [The expansion panel](expansion-panel/spec.md)                            | a header button over a body that opens with motion                                                                                              |
 | [The tooltip of a cut text](tooltip-when-truncated/spec.md)               | the mode where the tooltip shows only over a text that did not fit its node                                                                     |
+| [A short panel of the popover](popover-short-panel/spec.md)               | the height of a short panel in the fit-viewport mode: its content, not the fit threshold                                                        |
 | [The tooltip that stays on a click](tooltip-keep-on-click/spec.md)        | the input that keeps an open tooltip on a click of a toggle, and a new text shown in place                                                      |
 | [The assistant chat](ai-chat/spec.md)                                     | the panel of an AI assistant as one component: the feed, the run line, the rating, the error, the conversations                                 |
 | [The prompt suggestion](prompt-suggestion/spec.md)                        | a card with a ready question on the empty screen of an assistant: the text, the arrow at the edge, the press                                    |
@@ -87,6 +88,7 @@ agreement about their own subject and describe the surface of a component, not a
 | [The profile menu](profile-menu/spec.md)                                  | the content of the header's profile popup: the person, the organization, the actions, the language and the theme                                |
 | [The header's «More» item](page-header-more/spec.md)                      | the sections that did not fit the header's row: the fit by importance, the panel, the highlight                                                 |
 | [The width of the page place](place-width/spec.md)                        | the width the thresholds count from: the page place, the root, the overlays                                                                     |
+| [The hint of a cut value in the copy cell](copy-cell-first-hover/spec.md) | the hint with the whole value of a cut copy cell, from the first hover                                                                          |
 
 ## What is out of scope
 
