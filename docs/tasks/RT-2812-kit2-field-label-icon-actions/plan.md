@@ -28,7 +28,7 @@
 - **Steps:**
     1. `clearTabbable` and `cleared` in the shared base of the fields
     2. the input and the select take `clearTabbable` into the cross
-    3. tests for SC-UKV-865 and SC-UKV-866
+    3. tests for SC-UKV-906 and SC-UKV-907
 - **Readiness sign:** the specs of the input and the select pass with the new scenarios.
 - **Verified by:** `pnpm exec nx test @rt-tools/ui-kit-v2 --testFile=projects/ui-kit-v2/src/lib/components/input/rt-input.component.spec.ts` — «Tests: N passed», no «failed»
 
@@ -37,7 +37,7 @@
 - **Steps:**
     1. the icon inputs, outputs and tooltips of the input
     2. the template draws an actionable icon as a button with the tooltip
-    3. tests for SC-UKV-862, SC-UKV-863, SC-UKV-864
+    3. tests for SC-UKV-862, SC-UKV-904, SC-UKV-905
 - **Readiness sign:** the input spec passes with the new scenarios.
 - **Verified by:** `pnpm exec nx test @rt-tools/ui-kit-v2 --testFile=projects/ui-kit-v2/src/lib/components/input/rt-input.component.spec.ts` — «Tests: N passed», no «failed»
 

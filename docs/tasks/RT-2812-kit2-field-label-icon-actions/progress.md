@@ -16,10 +16,10 @@
 
 - [x] 1.1 `clearTabbable` and `cleared` in the shared base of the fields
 - [x] 1.2 the input and the select take `clearTabbable` into the cross
-- [x] 1.3 tests for SC-UKV-865 and SC-UKV-866
+- [x] 1.3 tests for SC-UKV-906 and SC-UKV-907
 - [x] 2.1 the icon inputs, outputs and tooltips of the input
 - [x] 2.2 the template draws an actionable icon as a button with the tooltip
-- [x] 2.3 tests for SC-UKV-862, SC-UKV-863, SC-UKV-864
+- [x] 2.3 tests for SC-UKV-862, SC-UKV-904, SC-UKV-905
 - [x] 3.1 the marker directive and its context type
 - [x] 3.2 the select draws the template in the row
 - [x] 3.3 tests for SC-UKV-856 and SC-UKV-857
@@ -66,7 +66,7 @@
 - **The Escape bug from the application's session goes into this branch.** Escape in an open list
   bubbled to the document after the panel closed, and the side panel under it closed too. The fix is
   `stopPropagation` in the open-state Escape branch of select, multiselect, autocomplete and the menu
-  panel; one line each, scenario SC-UKV-871. Affected stage: 7.
+  panel; one line each, scenario SC-UKV-912. Affected stage: 7.
 - **7.1 done.** Checkbox: `checked` input and `checkedChange` output, as the radio button has.
   `rt-radio-group`: `role=radiogroup`, `ariaLabel`, `orientation`; arrows choose and focus the next
   enabled radio button, wrapping around; the group hands out one Tab stop after render
@@ -75,7 +75,7 @@
 
 - **7.2 done.** Autocomplete: `loading` (spinner row instead of the empty result, or under the list),
   `scrolledToEnd` (once per list length, never while loading), `emptyText` and `emptyTemplate` (the
-  typed query in its context). SC-UKV-872…874. Stories `Molecules/Forms/Autocomplete` → PanelLoading,
+  typed query in its context). SC-UKV-913…874. Stories `Molecules/Forms/Autocomplete` → PanelLoading,
   PanelLoadingMore, PanelEmptyOwn, PanelPaged.
 - **The application's note on `cleared` with `[ngModel]` needs no kit change.** A host writing the same
   value back after a clear is not redrawn by Angular; the application handles it on its side.
@@ -95,7 +95,7 @@
   (`displayText`) and carries `--filled`; the preset rule places the label over the control. The
   `floatingLabel` inputs of the input and the select are not reused: the textarea and the number
   field have none, and four copies would drift. The fill appearance keeps the label on the border,
-  as the input's own `floatingLabel` does, so the field height stays. Scenarios SC-UKV-875…877
+  as the input's own `floatingLabel` does, so the field height stays. Scenarios SC-UKV-916…877
   follow 874: `spec:next-id` does not see the numbers of the proposed folder. Affected stage: 7.
 - **7.9 items 1–3 done and checked live.** Story `Molecules/Forms/Field` → LabelInside. Under the
   material preset the field top equals the control top, and the control stays 40 px. The label rests
@@ -154,7 +154,7 @@
   `[formControl]` and the signal `[formField]`, single and multiple. A press writes the value and
   marks the control touched. A control disabled by the form takes no press. Without a form the group
   still waits for the host, as before. `rtToggleButtonOption` draws own segment content and gets the
-  option and whether it is pressed. The `layout` input takes `row`, `wrap` or `column`. SC-UKV-878…880;
+  option and whether it is pressed. The `layout` input takes `row`, `wrap` or `column`. SC-UKV-919…880;
   specs: forms 9, the group 26. Stories `Molecules/Forms/ToggleButtonGroup` → Forms, OptionTemplate,
   Layout. The forms showing is a component of its own, so each half of the preset pair holds its own
   controls. Angular does not return a press to the other bindings of one control. A shared control
@@ -165,7 +165,7 @@
   a button inside the tab button is invalid HTML. Delete closes the focused closable tab, and focus
   moves to the tab that became active. A disabled tab now carries `aria-disabled` instead of the
   `disabled` attribute, so it takes the hover and shows its tooltip; a click still chooses nothing.
-  A tab without a label is named by its tooltip. SC-UKV-881…885; specs: additions 13, tabs 23. Stories
+  A tab without a label is named by its tooltip. SC-UKV-922…885; specs: additions 13, tabs 23. Stories
   `Molecules/Navigation/Tabs` → Closable, IconOnly, HeaderOnly. Measured live: a closable tab stays
   30 px like a plain one, the cross is 20 px and centred; the disabled tab shows its tooltip; the
   header-only strip draws no panel and no `aria-controls`. The sweep is clean: 895 stories, 107
@@ -183,7 +183,7 @@
   panel finds it by the token `RT_EXPANSION_PANEL_GROUP` and reports its own opening. `rt-accordion`
   stays a list of items from its input: changing its default would break its present users.
   `preserveContent` keeps the body after the first opening and hides it collapsed (height 0,
-  `visibility: hidden`, `inert`). SC-UKV-886…888; specs: additions 10, panel 7. Stories
+  `visibility: hidden`, `inert`). SC-UKV-927…888; specs: additions 10, panel 7. Stories
   `Molecules/ExpansionPanel` → HeaderActions, Group, PreserveContent. Measured live: the checkbox and
   the add button in the header did their work and the panel stayed collapsed. The group showed 100 →
   010 → 001 on the left and 100 → 110 → 111 with `multi`. The kept panel went 104 → 48 → 104 px and
@@ -199,7 +199,7 @@
   shown, an empty value is not. `rt-divider` is the host's own border with `role="separator"`;
   `inset` shifts a horizontal line to the text and shortens a vertical one. `rt-progress-bar` has a
   share clamped once by `clampProgress`, an indeterminate sweep, a colour, and `ariaLabel`. The
-  coverage list names the five new markers shown inside a neighbour's story. SC-UKV-889…891; specs:
+  coverage list names the five new markers shown inside a neighbour's story. SC-UKV-930…891; specs:
   badge 5, divider 3, progress bar 10. Stories `Atoms/Badge` (Playground, Position, Color, Value),
   `Atoms/Divider` (Playground, Orientation), `Atoms/Feedback/ProgressBar` (Playground, Value, Mode,
   Color, Live), each with Presets and Themes. Measured live: the overlap bubble centres on the host
@@ -217,7 +217,7 @@
   up in its constructor. The toast takes `progressValue` (drawn by `rt-progress-bar`) and `details`
   (behind a «Детали» button, drawn by `rt-copy-value`, which gained `wrap`). It re-measures its
   height after each change. Its own component gets `RT_TOAST_DATA` and the handle by injection, and
-  a live share does not recreate it. SC-UKV-892…894; specs: toast 55 (13 new), copy-value 6. Stories
+  a live share does not recreate it. SC-UKV-933…894; specs: toast 55 (13 new), copy-value 6. Stories
   `Atoms/Feedback/Toast` → Extras, `Molecules/Feedback/Toaster` → Handle. Measured live: the details
   opened with the text wrapped and the toast grew to 180 px. The log read `close` after the cross
   and `dismiss` after the network came back and after the component's own button. The share went
@@ -238,7 +238,7 @@
       move with it. One template cannot stand in the overlay and in the grid at once.
     - Divergence 2: beside the content, neither the drawer nor the right panel closes on Escape.
       Material closes a side drawer too; here a side panel is part of the page.
-    - Scenarios SC-UKV-895…899.
+    - Scenarios SC-UKV-936…899.
     - Specs:
         - drawer: 21;
         - the container's right panel: 7 new;
@@ -271,7 +271,7 @@
     - Item 4, the rest: under the preset, hovering darkens the border to the text colour. The
       input, select, multiselect, autocomplete, textarea, number and both date fields each carry
       their own rule and property. Focus, error, fill and borderless override it.
-    - Scenarios SC-UKV-900…901. Specs: density styles 5; the field controls' specs stay green
+    - Scenarios SC-UKV-941…901. Specs: density styles 5; the field controls' specs stay green
       (35, 80, 69, 33, 29, 20, 31, 50, 27). Story `Molecules/Forms/Field` → Density.
     - Measured live:
         - under the preset, density 0…−5 gives 56/52/48/44/40/36 px with a 16 px value;
@@ -293,7 +293,7 @@
       on a complete step is the inverse text colour, the upcoming digit is the primary text colour.
       The lowest pair left is the complete step under the material preset, 3.8:1: the preset's own
       primary and inverse colours.
-    - Scenarios SC-UKV-902…904. Specs: vertical 6, stepper total 26. Stories
+    - Scenarios SC-UKV-943…904. Specs: vertical 6, stepper total 26. Stories
       `Atoms/Feedback/Stepper` → Vertical, and Themes now holds both vertical cases.
     - Measured live: mark 24 × 24 px, line 1 px with a 4 px gap at both marks, list style none,
       no horizontal overflow, `LOGIN` drawn bold (700).
@@ -328,7 +328,7 @@
     - The badge bubble stood first in its host; the notch kept its width after the label went; the
       resize handle could stay dragging after a lost pointer capture; the drawer over the content
       let Tab out; the vertical stepper list carries `role="list"` for Safari.
-    - Scenario coverage lines name their specs; SC-UKV-901 (hover border) stays measured only.
+    - Scenario coverage lines name their specs; SC-UKV-942 (hover border) stays measured only.
     - Not fixed, named: a small field with a cross is 34 px, not 32 — the 32 px cross plus borders;
       the same on main and in both looks. The right panel's handle has no `aria-valuenow` until the
       width is set. Two toasters on one page duplicate a toast, as before this branch.
@@ -337,7 +337,7 @@
       are green; the package and the three applications build.
 - **2026-10-14, the owner's remark:** «в селекте с опциями цветые кружки видны в дропдауне но не
   отобрааются у выбранной опции». The select field now draws the chosen value by the same option
-  template (`chosenOwn`); an empty field shows the placeholder. SC-UKV-905, its spec, the select
+  template (`chosenOwn`); an empty field shows the placeholder. SC-UKV-946, its spec, the select
   overview section «Своя строка списка». Measured live on OptionTemplate: a 12 px circle in the
   field, its centre 1 px off the text's. The snapshot reference of that story waits for a re-take.
 - **2026-10-14, the owner's remark:** «иконка звука когда выключен не хватает крстика». The
@@ -358,14 +358,14 @@
   drew the ring on its first button. `rtButton` takes `CdkMonitorFocus` as a host directive, the
   icon button puts it on its inner `<button>`, and the ring rule skips `.cdk-mouse-focused` and
   `.cdk-touch-focused`. The CDK's own directive is taken rather than a kit directive of the same
-  job; its classes are the ones Material and the application already read. SC-UKV-906, specs of both
+  job; its classes are the ones Material and the application already read. SC-UKV-947, specs of both
   buttons, story `Atoms/Buttons/Button` → FocusOrigin. Measured live in both looks: after a pointer
   press `:focus-visible` true, `cdk-mouse-focused`, shadow none; after Enter `cdk-keyboard-focused`
   and the ring. The 12% background the application measured is its own style, not the kit's; it
   keys on the same classes. Uncommitted: waits for the owner's look.
 - **SC-UKV-856 was taken twice after the main merge.** RT-2793 issued the same number in the
   snapshots spec after this branch did. Main holds it, so the option-template scenario took the next
-  free number, SC-UKV-907, and its spec title with it.
+  free number, SC-UKV-948, and its spec title with it.
 - **2026-10-14, request 7 of the application: the field under the preset against Material.** The
   application measured the field at density −1 against Material 3 and listed the divergences.
   Done:
@@ -385,7 +385,7 @@
       with a cross at 34 px.
 
     Not done on purpose: the outlined rounding stays the first kit's (the application sets `radius`),
-    and the least width is no preset default. Scenarios SC-UKV-908…915, spec
+    and the least width is no preset default. Scenarios SC-UKV-949…915, spec
     `rt-field-material-metrics.spec.ts`, story Molecules/Forms/Field → Material and the disabled case
     in FieldExtras → IconActions. Measured live: 18 fields of the story match Material. The kit look of
     the input appearance story is unchanged. The first full run failed three application builds: the
@@ -415,7 +415,7 @@ data-preset="material" floatingLabel>` drew the border through the risen label: 
       left alone, because eleven components read it. The border, text, placeholder and label take
       Material's 12% and 38%, and the disabled text area lost its grey fill.
     - The text area and the autocomplete have no filled look, so the filled-field request does not
-      apply to them. Scenarios SC-UKV-916 and SC-UKV-917. Measured live in the Material story and in
+      apply to them. Scenarios SC-UKV-957 and SC-UKV-958. Measured live in the Material story and in
       the input States story: the kit look is unchanged.
     - The disabled select's arrow under the preset is on-surface 38% too, as the application asked.
     - Before the commit: the full suite 358 of 358 and the showcase snapshots in the image. 234 of
@@ -430,7 +430,7 @@ data-preset="material" floatingLabel>` drew the border through the risen label: 
   the old values in the kit look and the first kit's under the preset. The select takes the same
   size, icon and colour; its cross stands before the arrow, so the 8 px applies to the input only.
   The button's public `--rt-icon-button-size` was not used: the token graph refuses a fallback at
-  a token the kit declares. Scenario SC-UKV-918, two rows in the Material story.
+  a token the kit declares. Scenario SC-UKV-959, two rows in the Material story.
 
 - **2026-10-15, request 10: five points after the application's comparison with Material.**
   Uncommitted next to request 9. The owner added: «важно чтобы изменения в этой ветке не афектили
@@ -443,7 +443,7 @@ data-preset="material" floatingLabel>` drew the border through the risen label: 
       `--rt-input-clear-bg`, `-bg-hover`, `-radius`; a new primitive `--rt-mat-neutral-70` carries
       the first kit's dark ground #3f3e43. The kit look keeps the cross without a ground.
     - F6: under the preset an icon button stands where a plain icon stands: icon at 12 px, text
-      from 40 px, the button overhangs the icon equally on both sides. SC-UKV-919 to 922.
+      from 40 px, the button overhangs the icon equally on both sides. SC-UKV-960 to 922.
     - F7: not done — the input renders no cross and no slot without a value; the empty field's
       input is as wide as without `clearable`. The application was asked for its markup.
     - The kit look checked against the last commit: computed styles of 640 nodes in 36 stories of
@@ -459,18 +459,18 @@ data-preset="material" floatingLabel>` drew the border through the risen label: 
       the 4 px: 72 with and without that rule.
     - F7 done: under the preset a clearable input without a right icon keeps 4 px on the right, and
       the cross stands 4 px after the text and 8 px from the edge — `--rt-input-clear-offset-start`
-      and the class `rt-input--clearable`. SC-UKV-923.
+      and the class `rt-input--clearable`. SC-UKV-964.
     - F8: under the preset a disabled filled input, select, number and textarea are filled with
-      on-surface 4 % — `--rt-input-fill-color-bg-disabled`. SC-UKV-924.
+      on-surface 4 % — `--rt-input-fill-color-bg-disabled`. SC-UKV-965.
     - The kit look checked against the last commit again on a restarted showcase: 632 nodes in 36
       stories match, apart from the computed `box-sizing` of the message line, whose size did not
       move.
     - Third round: F1, F5, F7 and F8 matched Material in the application. Two new points.
     - F9: under the preset a select whose value is drawn by an option template grew to 57 px — the
-      template's inline row sat on the baseline. It now sits at the top: 52 px. SC-UKV-925.
+      template's inline row sat on the baseline. It now sits at the top: 52 px. SC-UKV-966.
     - F10: under the preset a filled textarea of 4 rows was 127 px and the field 150. It now takes
       6 px under the last line with the underline and stands at the top of its line: 124 and 144.
-      SC-UKV-926. The kit look keeps the baseline and 8 px — measured on the textarea and field
+      SC-UKV-967. The kit look keeps the baseline and 8 px — measured on the textarea and field
       stories.
     - The Material story wrapper passed 500 lines: its cases moved to `field-material-cases.ts`.
     - The 13:12 package: F9 and F10 matched Material in the application. It has no open requests
@@ -492,7 +492,7 @@ data-preset="material" floatingLabel>` drew the border through the risen label: 
     - The rules live in a sheet of their own, `rt-toggle-button-group-chips.scss`, 3.6 KB compiled:
       the main sheet was already over 5 KB.
     - New stories Appearance and ChipsStates; chips cells in Presets and Themes; Playground controls.
-      SC-UKV-927 to 930.
+      SC-UKV-968 to 930.
     - The kit look checked against the last commit: 396 nodes in 10 stories of the group, 0 differ —
       measured again after the sheet was rewritten.
     - Second round from the application's measurement on its pages: colours, 28 px, radius, font,
@@ -501,7 +501,7 @@ data-preset="material" floatingLabel>` drew the border through the risen label: 
       collapses their height; under the preset the group keeps 4 px above the first row and below
       the last, as Material's chip margins give, and the label is tracked 0.1 px. Under the preset
       chips are 28 px in every size: Material has one chip size, and the separate rule for the small
-      size pushed the sheet over the 4 KB warning. SC-UKV-931.
+      size pushed the sheet over the 4 KB warning. SC-UKV-972.
     - Third round: the application measured Material's chip margins directly — 8 px above and below
       every chip and 8 px before it, and they do not collapse. Under the preset the group now keeps
       8 px above the first row and below the last, and rows stand 16 px apart; items in a row stay
@@ -515,7 +515,7 @@ data-preset="material" floatingLabel>` drew the border through the risen label: 
 - **2026-10-16, main merged in after the commit of requests 9–11.** Two things broke only in the
   merged tree:
     - main's profile menu took SC-UKV-857…862, which this branch had issued too. Main holds them, so
-      the six scenarios of this branch moved to SC-UKV-932…937, their test titles with them; plan
+      the six scenarios of this branch moved to SC-UKV-973…937, their test titles with them; plan
       steps 2.3, 3.3 and 4.4 keep the old numbers as written.
     - the sample application's initial bundle went 878 bytes over its 1 MB budget: main's profile
       menu tokens and this branch's tokens together. `--rt-toggle-chip-color-border-selected` is
@@ -537,13 +537,13 @@ data-preset="material" floatingLabel>` drew the border through the risen label: 
   capped an icon button and the clearing cross by the field height everywhere, so a small field with
   a cross went 34 → 32 px — the side menu's search shows it. The cap now applies under the preset
   only; the kit look is 34 px with a 32 px cross again, as on main, and the preset keeps the 19 px
-  cross at every density step. SC-UKV-915 says so, its test title with it.
+  cross at every density step. SC-UKV-956 says so, its test title with it.
 - **2026-10-16, request 12 (the application's request 7): a filled field without a label.** Under
   the preset the field kept the room for a raised label even with no label: the value stood at 22 px
   in a 52 px field, and an empty control hid its placeholder. Now the value padding and the hidden
   placeholder apply only when the field draws its label row; without one the input, number and
   select value stands in the middle, the placeholder shows, and the filled text area has equal room
-  above its first line and below its last. The hint row stays. SC-UKV-938, a new row in the
+  above its first line and below its last. The hint row stays. SC-UKV-979, a new row in the
   Material story. Measured live: field 72 with the hint row, control 52, value middle 0.5 px off
   centre, text area first line at 14 px; labelled filled fields keep 22/5 px with a 24 px line.
     - Not fixed: `fullWidth` with `layout="column"` collapses the segments' height in the segmented
@@ -552,29 +552,29 @@ data-preset="material" floatingLabel>` drew the border through the risen label: 
   editable dynamic selector inside the host's `[formGroup]` warned once per press: the row edit
   field, the new-row field and the popup search bound `ngModel` and looked for the host's form
   container. All four now carry `[ngModelOptions]="{ standalone: true }"`, as the tree, the table
-  and the pagination already do — the drafts are the list's own state. SC-UKV-939; the spec is red
+  and the pagination already do — the drafts are the list's own state. SC-UKV-980; the spec is red
   without the edit and green with it. Checked live on :6007: story StringList — the pencil opens
   the field with the row value, Enter replaces `north@example.test` by the typed text, the new-row
   field opens; story Popup — the search narrows 5 rows to 0 and back. No console warning or error.
 - **2026-10-19, request 14 (the owner's word through the application's session): the other seven.**
   The select filter, the tree selector search, the profile menu locale, the filter control, the
   theme toggle, the workspace details (agent select and toggles) and the dynamic list header now
-  carry `[ngModelOptions]="{ standalone: true }"` too. SC-UKV-940 hosts each inside a
+  carry `[ngModelOptions]="{ standalone: true }"` too. SC-UKV-981 hosts each inside a
   `[formGroup]`: 8 cases red without the edit, green with it.
 - **2026-10-19, request 15 (the application's session): an emptied input stays empty.** The host
   set the control back to the value drawn before the typing, in the same call stack as the input
   event. The signal then equalled the last drawn value, the `[value]` binding did not fire, and
   the field kept the typed text while the control held the old one. `writeValue` of the input now
-  writes the value into the field whenever the two differ. SC-UKV-941 is red without the edit and
+  writes the value into the field whenever the two differ. SC-UKV-982 is red without the edit and
   green with it.
 - **2026-10-19, request 16 (the application's session): tabs keys and scroll arrows.** Four
   points measured against the material tab group in a side panel with eight tabs. New input
-  `activation` (`auto` by default, `manual` moves focus only, Enter and Space open) — SC-UKV-942.
+  `activation` (`auto` by default, `manual` moves focus only, Enter and Space open) — SC-UKV-983.
   A short press on a scroll arrow now pages the list by its visible width; a hold over 300 ms
-  scrolls on as before — SC-UKV-943. New input `scrollArrows` (`overlay` by default, `inline`
-  puts both arrows beside the list, the idle one pale) — SC-UKV-944, story ScrollArrows. The
+  scrolls on as before — SC-UKV-984. New input `scrollArrows` (`overlay` by default, `inline`
+  puts both arrows beside the list, the idle one pale) — SC-UKV-985, story ScrollArrows. The
   selected tab bar is offset by `translate`, so a zero border width keeps it at the bottom —
-  SC-UKV-945. 10 cases red without the edit, green with it. Not checked live: the owner stopped
+  SC-UKV-986. 10 cases red without the edit, green with it. Not checked live: the owner stopped
   the showcase on :6007 in the same hour.
 - **2026-10-20, the owner: main merged in, the kit's own look unchanged.** Main 0.26.0 merged
   without conflicts. The own half of every diverged story was compared node by node against a
@@ -596,7 +596,7 @@ data-preset="material" floatingLabel>` drew the border through the risen label: 
   measuring the tab with fractional sizes; the tab keeps its own bar until the first measurement
   and under an invalid state. The leaving panel is the same view kept by `track`, lifted out of the
   flow at the point it stood. New tokens for the bar and the panel, the input
-  `animationDuration` for both, `prefers-reduced-motion` drops both — SC-UKV-946 to 949.
+  `animationDuration` for both, `prefers-reduced-motion` drops both — SC-UKV-987 to 949.
     - The kit's own look keeps the panel in place: its duration token is `0ms`, so screens already
       on the kit do not start sliding; the bar slides in 200 ms. The material preset sets both to
       500 ms with the Material tab curve.
@@ -610,7 +610,7 @@ data-preset="material" floatingLabel>` drew the border through the risen label: 
   `preserveContent`, as on the material tab group: a tab body is created on its first opening
   and then lives hidden (`hidden`, `inert`, `aria-hidden`, out of the tab order, anchor
   `tabs-panel-idle`); a tab never opened is not created. With preserved bodies they stand in tab
-  order, and the live previous body leaves on a switch and stays hidden after — SC-UKV-950, 951.
+  order, and the live previous body leaves on a switch and stays hidden after — SC-UKV-991, 951.
   The panel's own `display` beats the browser rule for `hidden`, so the idle panel gets
   `display: none` by a modifier. Snapshots 940 of 942, the two known PDF frames. Live on Playground:
   the same body comes back with its mark, the never-opened tab has no body, without the input the
@@ -622,7 +622,7 @@ data-preset="material" floatingLabel>` drew the border through the risen label: 
   the wheel and touch scrolling away from the browser. New input `scrollStep` (`page` by
   default, `third`). The selected half-hidden tab scrolls in the same way, and focusing a tab no
   longer scrolls the list by itself. `animationDuration` sets this duration too, reduced motion
-  scrolls at once; a hold tick stops the smooth scroll and moves at once — SC-UKV-952, 953.
+  scrolls at once; a hold tick stops the smooth scroll and moves at once — SC-UKV-993, 953.
     - Own look 200 ms ease-out, the material preset 500 ms with the Material curve.
     - The scroll lives in a file of its own next to the component, the hold step moved there too.
     - Snapshots 940 of 942, the two known PDF frames. Live on ScrollArrows: the own half reaches
@@ -636,8 +636,8 @@ data-preset="material" floatingLabel>` drew the border through the risen label: 
   look by properties.** The page headers of the application move to `rt-tabs`, and their own
   close button cannot stay inside a tab that is a button. New tab inputs `closeTooltip` and
   `closeTooltipPlacement`; while the pointer is on the cross the tab's own tooltip is empty, so
-  only the cross's shows — SC-UKV-954. The cross takes its background, colour, icon size and
-  inline margins from `--rt-tab-item-close-*` on `.rt-tab-item` — SC-UKV-955, measured, not
+  only the cross's shows — SC-UKV-995. The cross takes its background, colour, icon size and
+  inline margins from `--rt-tab-item-close-*` on `.rt-tab-item` — SC-UKV-996, measured, not
   covered by a spec. The icon size goes through the icon's own `xs` step: the icon sets its width
   by an inline style, and a rule could not beat it.
     - The defaults equal the former look: measured in the showcase before and after, a 20 px
@@ -645,6 +645,16 @@ data-preset="material" floatingLabel>` drew the border through the risen label: 
     - With the application's values the cross is 19.2 px, the icon 16 px, the background 224 grey,
       12 px from the label and 24 px to the tab edge — what was measured in the application.
     - The material preset sets none of these: the material tab group has no cross.
+- **2026-10-21, request 21 (the application's session): the side menu search as in the
+  application's former menu.** Taken by the owner's word «делай просьбу в этой ветке как сделаеш
+  проверь живьем закомить и собери пакет на рабочийстол уведоми апку». Two differences the
+  application's end-to-end suite catches:
+    - A folder matched by its name alone stands open during the search — SC-UKV-997. Its rows are
+      still only those that matched themselves, so it stays without children (SC-UKV-431); only
+      the folder's own open state changes.
+    - A favourites block the person collapsed keeps its count in the title during the search, the
+      count of the rows that matched — SC-UKV-998. The block still shows its matching rows open
+      while the search lasts, and comes back collapsed when the search is cleared.
 
 ## Sessions
 
@@ -671,12 +681,18 @@ The progress in full — `docs/tasks/RT-2812-kit2-field-label-icon-actions/progr
 ### Uncommitted
 
 ```
-none
+ M docs/tasks/RT-2812-kit2-field-label-icon-actions/progress.md
 ```
 
 ### Commits over the main branch
 
 ```
+b58674e7c Merge remote-tracking branch 'origin/main' into RT-2812-kit2-field-label-icon-actions
+ca512a627 Merge remote-tracking branch 'origin/main' into RT-2812-kit2-field-label-icon-actions
+3d570a9f0 Merge remote-tracking branch 'origin/main' into RT-2812-kit2-field-label-icon-actions
+e47609e52 Merge remote-tracking branch 'origin/main' into RT-2812-kit2-field-label-icon-actions
+5aafc6c7c Merge remote-tracking branch 'origin/main' into RT-2812-kit2-field-label-icon-actions
+d2920fbe0 feat(rt:ui-kit-v2): вкладки — у крестика своя подсказка, вид крестика задаётся свойствами
 b1418aca8 docs(rt:ui-kit-v2): прогресс RT-2812 после заявок о вкладках
 8d0e58945 fix(rt:ui-kit-v2): вкладки — animationDuration больше не задаёт длительность прокрутки полосы
 336e14823 feat(rt:ui-kit-v2): вкладки — полоса прокручивается плавно, шаг стрелки задаётся входом scrollStep
@@ -691,12 +707,6 @@ d0b5e8e72 test(rt:ui-kit-v2): эталоны витрины пересняты �
 6907474e3 fix(rt:ui-kit-v2): залитое поле без подписи под материальным набором не держит места под неё
 b5dd14bb8 fix(rt:ui-kit-v2): свой вид поля с крестиком прежний, ветка после слияния с main снова проходит проверки
 dffd422be Merge remote-tracking branch 'origin/main' into RT-2812-kit2-field-label-icon-actions
-bdd7f0299 feat(rt:ui-kit-v2): крестик и поля под материальным набором как у Material, вид «чипы» у группы переключателей
-093506703 fix(rt:ui-kit-v2): поля под материальным набором догоняют Material в отступах и отключённом виде
-eebabbda8 Merge remote-tracking branch 'origin/main' into RT-2812-kit2-field-label-icon-actions
-80ce8750f Merge remote-tracking branch 'origin/main' into RT-2812-kit2-field-label-icon-actions
-06df730ce fix(rt:ui-kit-v2): признак набора на теге поля включает подпись на рамке
-2acc951d9 feat(rt:ui-kit-v2): поле под материальным набором совпадает с полем Material
 ```
 
 Written by a hook before the compaction of the context. Everything standing here is checked

@@ -794,3 +794,22 @@ Then the cross takes its rest and hover background, its rest and hover icon colo
 its inline margins from them; left unset, the cross looks as before
 
 Не покрыто: jsdom не считает стили компонента; вид крестика измерен в витрине до и после правки.
+
+### SC-UKV-997 — a folder matched by its name alone stands open during the search
+
+Given the submenu holds the folder «Отчёты» with the item «Выручка»
+When the person types «отч»
+Then the folder «Отчёты» stands open, still with no items inside, and the folders on the way to a
+matched item stand open as before
+
+Covered: `projects/ui-kit-v2/src/lib/components/side-menu/rt-side-menu.logic.spec.ts`.
+
+### SC-UKV-998 — a collapsed favourites block keeps its count during the search
+
+Given the favourites block of the section is collapsed and the count is shown for a collapsed block
+When the person types a query that matches one of its rows
+Then the block shows that row, and its title keeps the count of the rows that matched; once the
+query is cleared, the block is collapsed again with the count of all its rows, and an open block
+without a search shows no count
+
+Covered: `projects/ui-kit-v2/src/lib/components/side-menu/rt-side-menu-favorites.logic.spec.ts`.
