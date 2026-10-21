@@ -1,3 +1,5 @@
+@use '../../../styles/breakpoints' as bp;
+
 @layer rt-kit.components {
     .rt-workspace {
         --rt-workspace-border-width: var(--rt-border-width-thin);
@@ -77,12 +79,12 @@
         }
 
         &__desktop-only {
-            @media (width <= 1080px) {
+            @include bp.place-max(1080px) {
                 display: none;
             }
         }
 
-        @media (width <= 1080px) {
+        @include bp.place-max(1080px) {
             &__mobile-toolbar {
                 display: flex;
                 justify-content: space-between;
@@ -111,13 +113,13 @@
             }
         }
 
-        @media (width <= 768px) {
+        @include bp.place-max(768px) {
             &__list {
                 flex-basis: 100%;
             }
         }
 
-        @media (width > 1080px) {
+        @include bp.place-min(1080px) {
             &__aside {
                 overflow: hidden;
                 transition:
@@ -129,7 +131,7 @@
         }
 
         &--has-active {
-            @media (width <= 768px) {
+            @include bp.place-max(768px) {
                 .rt-workspace__list {
                     display: none;
                 }
@@ -141,7 +143,7 @@
         }
 
         &--aside-collapsed {
-            @media (width > 1080px) {
+            @include bp.place-min(1080px) {
                 .rt-workspace__aside {
                     flex-basis: 0;
                     border-inline-start-width: 0;

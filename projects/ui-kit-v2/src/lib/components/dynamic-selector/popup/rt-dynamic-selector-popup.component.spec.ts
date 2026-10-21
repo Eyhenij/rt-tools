@@ -220,7 +220,7 @@ describe('RtDynamicSelectorPopupComponent', (): void => {
             return event;
         }
 
-        it('SC-UKV-886 — the arrows move the focus between the rows of the dynamic selector popup', (): void => {
+        it('SC-UKV-901 — the arrows move the focus between the rows of the dynamic selector popup', (): void => {
             const fixture: TPopupFixture = setup({ selectAllShown: false });
             const rows: HTMLElement[] = controls(fixture);
 
@@ -234,7 +234,7 @@ describe('RtDynamicSelectorPopupComponent', (): void => {
             expect(document.activeElement).toBe(rows[0]);
         });
 
-        it('SC-UKV-886 — Home and End in the search field stay with the caret', (): void => {
+        it('SC-UKV-901 — Home and End in the search field stay with the caret', (): void => {
             const fixture: TPopupFixture = setup();
             const field: HTMLInputElement = searchField(fixture);
             field.focus();
@@ -244,7 +244,7 @@ describe('RtDynamicSelectorPopupComponent', (): void => {
             expect(document.activeElement).toBe(field);
         });
 
-        it('SC-UKV-887 — Enter ticks the focused row of the dynamic selector popup', (): void => {
+        it('SC-UKV-902 — Enter ticks the focused row of the dynamic selector popup', (): void => {
             const single: TPopupFixture = setup({ mode: 'single' });
             const radios: HTMLElement[] = controls(single);
             pressOn(single, searchField(single), 'ArrowDown');

@@ -62,7 +62,7 @@ describe('rt-tree-selector logic', (): void => {
 });
 
 describe('rtTreeSelectorFilter — правило поиска кита', (): void => {
-    it('SC-UKV-879 — the tree selector finds a row whose words stand in another order', (): void => {
+    it('SC-UKV-894 — the tree selector finds a row whose words stand in another order', (): void => {
         const nodes: ReadonlyArray<IRtTree.Node<string>> = [
             { label: 'Отчёт за март', value: 'march' },
             { label: 'Отчёт за апрель', value: 'april' },

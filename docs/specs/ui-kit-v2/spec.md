@@ -86,6 +86,7 @@ agreement about their own subject and describe the surface of a component, not a
 | [The quick menu](speed-menu/spec.md)                                      | a round button that opens round action buttons beside it: the four sides, the choice, the keys, the closing                                     |
 | [The profile menu](profile-menu/spec.md)                                  | the content of the header's profile popup: the person, the organization, the actions, the language and the theme                                |
 | [The header's «More» item](page-header-more/spec.md)                      | the sections that did not fit the header's row: the fit by importance, the panel, the highlight                                                 |
+| [The width of the page place](place-width/spec.md)                        | the width the thresholds count from: the page place, the root, the overlays                                                                     |
 
 ## What is out of scope
 

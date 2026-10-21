@@ -160,7 +160,7 @@ describe('rt-dynamic-selector.logic', (): void => {
 });
 
 describe('selectableDynamicItems — правило поиска кита', (): void => {
-    it('SC-UKV-879 — the dynamic selector finds a row whose words stand in another order', (): void => {
+    it('SC-UKV-894 — the dynamic selector finds a row whose words stand in another order', (): void => {
         const items: readonly IItem[] = [
             { id: 1, name: 'Отчёт за март' },
             { id: 2, name: 'Отчёт за апрель' },

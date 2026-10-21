@@ -196,7 +196,7 @@
             --rt-btn-bg-hover: var(--rt-pdf-viewer-control-bg-hover);
         }
 
-        @media (width <= #{bp.$rt-bp-sm}) {
+        @include bp.place-max(bp.$rt-bp-sm) {
             --rt-pdf-viewer-bar-height: var(--rt-control-height-xl);
 
             &__fit,
