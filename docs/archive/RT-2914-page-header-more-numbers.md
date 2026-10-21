@@ -1,5 +1,7 @@
 # Grill
 
+Former address: docs/tasks/RT-2914-page-header-more-numbers/grill.md
+
 ## The owner request
 
 > меню всегда должно быть показано в одну строку
@@ -29,3 +31,7 @@ None: the fix follows the rule.
 ## What is left unclear
 
 - Nothing.
+
+## Decisions along the way
+
+- None: the renumbering went as planned, and the spec check named no taken identifier after it.
