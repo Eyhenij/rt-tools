@@ -26,6 +26,7 @@ The scenarios live in the subdomains, each at its own rules:
 | [The logo of a service](service-logo/scenarios.md)                       | `SC-UKV-864`…`SC-UKV-867`                                                 |
 | [The media of a card](card-media/scenarios.md)                           | `SC-UKV-868`…`SC-UKV-869`                                                 |
 | [The match rule of a search](search-match/scenarios.md)                  | `SC-UKV-874`…`SC-UKV-879`                                                 |
+| [The keys of an option list](option-list/scenarios.md)                   | `SC-UKV-880`…`SC-UKV-884`                                                 |
 | [The breadcrumbs](breadcrumbs/scenarios.md)                              | `SC-UKV-775`…`SC-UKV-780`                                                 |
 | [The image cropper](image-cropper/scenarios.md)                          | `SC-UKV-491`…`SC-UKV-506`                                                 |
 | [The assistant chat](ai-chat/scenarios.md)                               | `SC-UKV-750`…`SC-UKV-782`, `SC-UKV-863`                                   |
