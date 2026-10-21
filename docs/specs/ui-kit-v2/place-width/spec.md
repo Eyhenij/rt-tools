@@ -17,7 +17,8 @@ tables inside then kept the wide look in a narrow place and broke the row.
 ## Terminology
 
 - **The page place** — the `rt-container` node; its width is what the page has.
-- **The root place** — the document root; its width is the window width.
+- **A page without a place** — a document with no `rt-container` in it; the kit thresholds there
+  count from the window.
 - **An overlay** — a window, a list, a sheet or a panel opened above the page.
 
 ### What it is called in the interface
@@ -39,6 +40,8 @@ tables inside then kept the wide look in a narrow place and broke the row.
 
 - The application's own styles and code that read the window: the application moves them itself.
 - Two page places on one screen at once: the last declared answers the breakpoint service.
+- A kit component outside the page container on a page that has one: its styles get no window
+  threshold. The application puts such a component into the frame or gives it its own rules.
 
 ## Contract
 
@@ -81,11 +84,13 @@ Not applicable: a screen has one page place.
 
 ## Decisions
 
-- **The place is a named container `rt-place`, declared on the page container and on the root.**
-  A named query finds the nearest place and skips the containers of the pagination and the file
-  drop.
-- **The root counts its width without the window scrollbar.** On a window with a classic
-  scrollbar a threshold moves by its width; the look on both sides stays the same.
+- **The place is a named container `rt-place`, declared on the page container only.** A named
+  query finds the nearest place and skips the containers of the pagination and the file drop.
+- **A page without a place gets its thresholds from a window query, not from a container on the
+  root.** A container on the root or on `body` stops the browser from spreading the `body`
+  background over the whole window: the page background then ended under the content. The window
+  query stands under the ancestor `html:not(:has(.rt-container))`, so the nested element rules of a
+  component keep their form.
 - **The page container takes its width from its parent.** A container of width declares no width by
   its content: in a parent that sizes itself by content it collapses. An application frame puts
   it in a grid column or a block of its own width.
@@ -99,3 +104,5 @@ None.
 ## History of changes
 
 - 21 October 2026 — written by the task RT-2913 straight into the kit spec.
+- 21 October 2026 — task RT-2924: the root no longer declares a place, a window query takes its
+  part.

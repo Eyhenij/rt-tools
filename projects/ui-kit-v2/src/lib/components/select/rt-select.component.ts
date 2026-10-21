@@ -33,15 +33,14 @@ import { RtInputComponent } from '@rt-tools/ui-kit-v2/input';
 import { RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
 import { IRtPopover } from '@rt-tools/ui-kit-v2/popover';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
-import { rtScrollActiveOptionIntoView } from './rt-select-active-option';
-import { rtTreeFind, rtTreeIsTree, rtTreeOpenFor, rtTreeRows, rtTreeSideKey, rtTreeToggle } from './rt-select-tree';
+import { RtOptionList, TRtOptionListAction } from '@rt-tools/ui-kit-v2/core';
+import { rtTreeFind, rtTreeIsTree, rtTreeOpenFor, rtTreeRows, rtTreeSideKey, rtTreeToggle } from '@rt-tools/ui-kit-v2/core';
 import { RtSelectTriggerDirective } from './rt-select-trigger.directive';
 import { IRtSelect } from './rt-select.model';
 
 const BEM_BLOCK: string = 'rt-select';
 
 /** Клавиши, открывающие закрытый dropdown с фокуса на trigger'е. */
-const OPEN_KEYS: ReadonlySet<string> = new Set<string>(['ArrowDown', 'ArrowUp', 'Enter', ' ']);
 
 type TBooleanInput = boolean | string;
 
@@ -116,16 +115,26 @@ export class RtSelectComponent<TValue> extends RtFormControlBase<TValue | null> 
     protected readonly triggerEl: Signal<ElementRef<HTMLButtonElement> | undefined> = viewChild<ElementRef<HTMLButtonElement>>('triggerEl');
 
     protected readonly filterTerm: WritableSignal<string> = signal<string>('');
-    protected readonly activeIndex: WritableSignal<number> = signal<number>(-1);
     /** Раскрытые ветки дерева. Живут, пока открыта панель: при открытии раскрыты ветки над выбранным. */
     protected readonly openBranches: WritableSignal<ReadonlySet<TValue>> = signal<ReadonlySet<TValue>>(new Set<TValue>());
 
     protected readonly isOpen: Signal<boolean> = computed((): boolean => this.popover().isOpen());
 
+    /** Клавиатура списка: подсветка, клавиши открытия, id для `aria-activedescendant`, прокрутка к опции. */
+    protected readonly optionList: RtOptionList = new RtOptionList({
+        panelId: (): string => this.panelId,
+        isOpen: (): boolean => this.isOpen(),
+        count: (): number => this.rows().length,
+        isDisabled: (index: number): boolean => Boolean(this.rows()[index]?.option.disabled),
+        chooseKeys: new Set<string>(['Enter', ' ']),
+        sideKeys: true,
+        edgeKeys: true,
+    });
+
+    protected readonly activeIndex: WritableSignal<number> = this.optionList.activeIndex;
+
     /** Идентификатор подсвеченной опции — тот же, что уходит в `aria-activedescendant`. */
-    protected readonly activeOptionId: Signal<string | null> = computed((): string | null =>
-        this.isOpen() && this.activeIndex() >= 0 ? `${this.panelId}-opt-${this.activeIndex()}` : null
-    );
+    protected readonly activeOptionId: Signal<string | null> = this.optionList.activeOptionId;
 
     /**
      * Своя разметка указателя, если потребитель её объявил. Не объявил — кит рисует свою, и ни один
@@ -195,12 +204,6 @@ export class RtSelectComponent<TValue> extends RtFormControlBase<TValue | null> 
     public readonly panelMaxHeight: InputSignal<string | null> = input<string | null>(null);
 
     public readonly selectionChange: OutputEmitterRef<TValue | null> = output<TValue | null>();
-
-    constructor() {
-        super();
-        // Подсветка, сдвинутая клавишами, не уходит за край панели с пределом высоты.
-        rtScrollActiveOptionIntoView(this.activeOptionId);
-    }
 
     public override setDisabledState(disabled: boolean): void {
         super.setDisabledState(disabled);
@@ -274,11 +277,11 @@ export class RtSelectComponent<TValue> extends RtFormControlBase<TValue | null> 
             return;
         }
         if (!this.isOpen()) {
-            if (OPEN_KEYS.has(event.key)) {
+            if (this.optionList.opensBy(event.key)) {
                 event.preventDefault();
                 this.popover().open();
                 if (this.activeIndex() < 0) {
-                    this.#moveActive(1);
+                    this.optionList.move(1);
                 }
             }
             return;
@@ -287,30 +290,32 @@ export class RtSelectComponent<TValue> extends RtFormControlBase<TValue | null> 
     }
 
     #handleOpenKeydown(event: KeyboardEvent): void {
-        switch (event.key) {
-            case 'ArrowDown':
-                event.preventDefault();
-                this.#moveActive(1);
+        const action: TRtOptionListAction = this.optionList.actionOf(event.key);
+        if (action === 'none') {
+            return;
+        }
+        event.preventDefault();
+        switch (action) {
+            case 'next':
+                this.optionList.move(1);
                 break;
-            case 'ArrowUp':
-                event.preventDefault();
-                this.#moveActive(-1);
+            case 'previous':
+                this.optionList.move(-1);
                 break;
-            case 'Enter':
-            case ' ':
-                event.preventDefault();
+            case 'first':
+                this.optionList.first();
+                break;
+            case 'last':
+                this.optionList.last();
+                break;
+            case 'choose':
                 this.#selectActive();
                 break;
-            case 'Escape':
-                event.preventDefault();
+            case 'close':
                 this.popover().close();
                 break;
-            case 'ArrowRight':
-            case 'ArrowLeft':
-                event.preventDefault();
+            case 'side':
                 this.#sideKey(event.key);
-                break;
-            default:
                 break;
         }
     }
@@ -322,24 +327,6 @@ export class RtSelectComponent<TValue> extends RtFormControlBase<TValue | null> 
             this.openBranches.update((open: ReadonlySet<TValue>): ReadonlySet<TValue> => rtTreeToggle(open, toggle));
         }
         this.activeIndex.set(answer.index);
-    }
-
-    #moveActive(delta: number): void {
-        const opts: ReadonlyArray<IRtSelect.Option<TValue>> = this.rows().map(
-            (row: IRtSelect.Row<TValue>): IRtSelect.Option<TValue> => row.option
-        );
-        if (opts.length === 0) {
-            this.activeIndex.set(-1);
-            return;
-        }
-        let index: number = this.activeIndex();
-        for (let step: number = 0; step < opts.length; step += 1) {
-            index = (index + delta + opts.length) % opts.length;
-            if (!opts[index].disabled) {
-                this.activeIndex.set(index);
-                return;
-            }
-        }
     }
 
     #selectActive(): void {

@@ -4,7 +4,7 @@ import { provideRouter } from '@angular/router';
 
 import { createRtFixture, qa, textOf } from '../../../../testing/rt-kit-testing';
 import { RtRadiusDirective } from '../../radius/rt-radius.directive';
-import { RtDynamicSelectorPopupComponent } from './rt-dynamic-selector-popup.component';
+import { TestDynamicSelectorPopupFrameComponent } from '../stories/component/test-dynamic-selector-popup-frame.component';
 
 interface IPerson {
     readonly id: number;
@@ -16,11 +16,11 @@ const PEOPLE: IPerson[] = [
     { id: 2, name: 'Boris' },
 ];
 
-type TPopupFixture = ComponentFixture<RtDynamicSelectorPopupComponent<IPerson>>;
+type TPopupFixture = ComponentFixture<TestDynamicSelectorPopupFrameComponent<IPerson>>;
 
 function setup(inputs: Readonly<Record<string, unknown>> = {}): TPopupFixture {
-    return createRtFixture<RtDynamicSelectorPopupComponent<IPerson>>(
-        RtDynamicSelectorPopupComponent,
+    return createRtFixture<TestDynamicSelectorPopupFrameComponent<IPerson>>(
+        TestDynamicSelectorPopupFrameComponent,
         { entities: PEOPLE, keyExp: 'id', displayExp: 'name', ...inputs },
         { providers: [provideRouter([])] }
     );

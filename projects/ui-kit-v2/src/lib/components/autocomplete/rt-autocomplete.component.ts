@@ -30,7 +30,7 @@ import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
 import { RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
-import { rtScrollActiveOptionIntoView } from '@rt-tools/ui-kit-v2/select';
+import { RtOptionList, TRtOptionListAction } from '@rt-tools/ui-kit-v2/core';
 import { IRtAutocomplete } from './rt-autocomplete.model';
 
 const BEM_BLOCK: string = 'rt-autocomplete';
@@ -98,14 +98,23 @@ export class RtAutocompleteComponent<TItem> extends RtFormControlBase<TItem | nu
     protected readonly fieldEl: Signal<ElementRef<HTMLInputElement> | undefined> = viewChild<ElementRef<HTMLInputElement>>('fieldEl');
 
     protected readonly inputText: WritableSignal<string> = signal<string>('');
-    protected readonly activeIndex: WritableSignal<number> = signal<number>(-1);
 
     protected readonly isOpen: Signal<boolean> = computed((): boolean => this.popover().isOpen());
 
+    /** Клавиатура списка: подсветка, клавиши открытия, id для `aria-activedescendant`, прокрутка к опции. */
+    protected readonly optionList: RtOptionList = new RtOptionList({
+        panelId: (): string => this.panelId,
+        isOpen: (): boolean => this.isOpen(),
+        count: (): number => this.suggestions().length,
+        chooseKeys: new Set<string>(['Enter']),
+        sideKeys: false,
+        edgeKeys: false,
+    });
+
+    protected readonly activeIndex: WritableSignal<number> = this.optionList.activeIndex;
+
     /** Идентификатор подсвеченной опции — тот же, что уходит в `aria-activedescendant`. */
-    protected readonly activeOptionId: Signal<string | null> = computed((): string | null =>
-        this.isOpen() && this.activeIndex() >= 0 ? `${this.panelId}-opt-${this.activeIndex()}` : null
-    );
+    protected readonly activeOptionId: Signal<string | null> = this.optionList.activeOptionId;
 
     protected readonly hasValue: Signal<boolean> = computed((): boolean => this.inputText() !== '');
 
@@ -134,12 +143,6 @@ export class RtAutocompleteComponent<TItem> extends RtFormControlBase<TItem | nu
     public readonly complete: OutputEmitterRef<IRtAutocomplete.CompleteEvent> = output<IRtAutocomplete.CompleteEvent>();
 
     public readonly itemSelect: OutputEmitterRef<TItem> = output<TItem>();
-
-    constructor() {
-        super();
-        // Подсветка, сдвинутая клавишами, не уходит за край панели с пределом высоты.
-        rtScrollActiveOptionIntoView(this.activeOptionId);
-    }
 
     public override writeValue(value: TItem | null): void {
         super.writeValue(value);
@@ -211,37 +214,25 @@ export class RtAutocompleteComponent<TItem> extends RtFormControlBase<TItem | nu
         if (!this.isOpen()) {
             return;
         }
-        switch (key) {
-            case 'ArrowDown':
-                event.preventDefault();
-                this.#moveActive(1);
-                break;
-            case 'ArrowUp':
-                event.preventDefault();
-                this.#moveActive(-1);
-                break;
-            case 'Enter':
-                event.preventDefault();
-                this.#selectActive();
-                break;
-            case 'Escape':
-                event.preventDefault();
-                this.popover().close();
-                break;
-            default:
-                break;
-        }
-    }
-
-    #moveActive(delta: number): void {
-        const items: ReadonlyArray<TItem> = this.suggestions();
-        if (items.length === 0) {
-            this.activeIndex.set(-1);
+        const action: TRtOptionListAction = this.optionList.actionOf(key);
+        if (action === 'none' || action === 'side') {
             return;
         }
-        const index: number = this.activeIndex();
-        const next: number = (index + delta + items.length) % items.length;
-        this.activeIndex.set(next);
+        event.preventDefault();
+        switch (action) {
+            case 'next':
+                this.optionList.move(1);
+                break;
+            case 'previous':
+                this.optionList.move(-1);
+                break;
+            case 'choose':
+                this.#selectActive();
+                break;
+            case 'close':
+                this.popover().close();
+                break;
+        }
     }
 
     #selectActive(): void {

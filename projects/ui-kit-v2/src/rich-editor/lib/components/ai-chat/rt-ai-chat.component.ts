@@ -46,7 +46,7 @@ import {
     RtThreadListComponent,
     RtThreadListRowActionsDirective,
     RtThreadListRowDirective,
-    splitSideMenuTitle,
+    rtMatchParts,
     TRtKitLabelMap,
 } from '@rt-tools/ui-kit-v2';
 
@@ -170,7 +170,7 @@ export class RtAiChatComponent {
             id: thread.id,
             hasUnread: (thread.unreadCount ?? 0) > 0,
             title: thread.title,
-            titleParts: splitSideMenuTitle(thread.title, query),
+            titleParts: rtMatchParts(thread.title, query),
             time: thread.time ?? '',
             unreadCount: thread.unreadCount ?? 0,
         }));
