@@ -1,4 +1,4 @@
-import { ConnectedPosition, FlexibleConnectedPositionStrategy } from '@angular/cdk/overlay';
+import { ConnectedPosition, FlexibleConnectedPositionStrategy, Overlay, OverlayConfig } from '@angular/cdk/overlay';
 import { ChangeDetectionStrategy, Component, Signal, WritableSignal, signal, viewChild } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
 
@@ -30,6 +30,7 @@ function panelText(): string {
             [rtPopoverDisabled]="disabled()"
             [rtPopoverPanelClass]="panelClass()"
             [rtPopoverPositions]="positions()"
+            [rtPopoverFitViewport]="fitViewport()"
             (rtPopoverOpened)="openedCount = openedCount + 1"
             (rtPopoverClosed)="closedCount = closedCount + 1">
             Открыть
@@ -48,6 +49,7 @@ class PopoverHostComponent {
     public readonly disabled: WritableSignal<boolean> = signal<boolean>(false);
     public readonly panelClass: WritableSignal<string> = signal<string>('');
     public readonly positions: WritableSignal<readonly ConnectedPosition[] | null> = signal<readonly ConnectedPosition[] | null>(null);
+    public readonly fitViewport: WritableSignal<boolean> = signal<boolean>(false);
     public openedCount: number = 0;
     public closedCount: number = 0;
 }
@@ -324,6 +326,29 @@ describe('RtPopoverDirective', (): void => {
             clickTrigger(fixture);
 
             expect(lastPositions(spy)).toEqual([START]);
+        });
+    });
+
+    describe('подгонка под окно', (): void => {
+        afterEach((): void => {
+            jest.restoreAllMocks();
+        });
+
+        it('SC-UKV-883 — короткая панель высотой со своё содержимое, порог подгонки остаётся', (): void => {
+            // Порог 120 нужен оверлею, чтобы решить, сдвинуть панель или ужать. Стоя в стиле
+            // коробки, он же растягивал панель из двух пунктов, и под ними стояла пустая полоса.
+            const create: jest.SpyInstance = jest.spyOn(Overlay.prototype, 'create');
+            const fixture: ComponentFixture<PopoverHostComponent> = setup();
+            fixture.componentInstance.fitViewport.set(true);
+            fixture.detectChanges();
+
+            clickTrigger(fixture);
+
+            const config: OverlayConfig | undefined = create.mock.calls.at(-1)?.[0];
+            const box: HTMLElement | null = document.querySelector('.cdk-overlay-pane');
+            expect(config?.minHeight).toBe(120);
+            expect(box).not.toBeNull();
+            expect(box?.style.minHeight).toBe('');
         });
     });
 });
