@@ -813,3 +813,12 @@ query is cleared, the block is collapsed again with the count of all its rows, a
 without a search shows no count
 
 Covered: `projects/ui-kit-v2/src/lib/components/side-menu/rt-side-menu-favorites.logic.spec.ts`.
+
+### SC-UKV-999 — the open panel can leave the Tab order
+
+Given tabs whose open panel holds a field
+When the application sets `contentTabIndex` to `null` and the person presses Tab on the active tab
+Then the focus goes straight to the field, and the panel carries no `tabindex`; without the input the
+panel keeps `tabindex="0"` and takes the focus first, as before
+
+Покрытие: частичное — тест проверяет атрибут панели; переход фокуса по Tab проверен в витрине.

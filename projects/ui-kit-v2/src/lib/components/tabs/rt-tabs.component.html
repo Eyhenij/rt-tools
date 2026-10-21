@@ -120,7 +120,7 @@
             rtElem="content"
             role="tabpanel"
             [attr.qa-dataid]="current ? 'tabs-panel' : panel.idle ? 'tabs-panel-idle' : 'tabs-panel-leaving'"
-            [attr.tabindex]="current ? 0 : -1"
+            [attr.tabindex]="current ? contentTabIndex() : -1"
             [attr.aria-hidden]="current ? null : 'true'"
             [attr.inert]="current ? null : ''"
             [hidden]="panel.idle"

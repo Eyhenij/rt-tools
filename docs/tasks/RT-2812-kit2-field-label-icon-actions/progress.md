@@ -655,6 +655,12 @@ data-preset="material" floatingLabel>` drew the border through the risen label: 
     - A favourites block the person collapsed keeps its count in the title during the search, the
       count of the rows that matched — SC-UKV-998. The block still shows its matching rows open
       while the search lasts, and comes back collapsed when the search is cleared.
+- **2026-10-21, request 22 (the application's session): the tab panel leaves the Tab order on
+  request.** Taken the same way as request 21. The open panel always carried `tabindex="0"`, so
+  Tab from the tab list stopped on the panel before its first field; the material tab group goes
+  straight to the field. The new input `contentTabIndex` (default `0`, the former behaviour) takes
+  `null`, and the panel then carries no `tabindex` — SC-UKV-999. Checked in the showcase: with the
+  default, Tab from the active tab lands on the panel; with `null`, on a field placed in the panel.
 
 ## Sessions
 
@@ -681,12 +687,14 @@ The progress in full — `docs/tasks/RT-2812-kit2-field-label-icon-actions/progr
 ### Uncommitted
 
 ```
- M docs/tasks/RT-2812-kit2-field-label-icon-actions/progress.md
+none
 ```
 
 ### Commits over the main branch
 
 ```
+32b67926e feat(rt:ui-kit-v2): боковое меню — поиск раскрывает папку, совпавшую по имени, свёрнутое избранное держит число
+f5a118015 Merge remote-tracking branch 'origin/main' into RT-2812-kit2-field-label-icon-actions
 b58674e7c Merge remote-tracking branch 'origin/main' into RT-2812-kit2-field-label-icon-actions
 ca512a627 Merge remote-tracking branch 'origin/main' into RT-2812-kit2-field-label-icon-actions
 3d570a9f0 Merge remote-tracking branch 'origin/main' into RT-2812-kit2-field-label-icon-actions
@@ -705,8 +713,6 @@ d0b5e8e72 test(rt:ui-kit-v2): эталоны витрины пересняты �
 54c0407ba fix(rt:ui-kit-v2): поля выбора, поиска и переключатели кита внутри формы страницы не пишут NG01354
 1e1516d3d fix(rt:ui-kit-v2): поля динамического селектора внутри формы страницы не пишут NG01354
 6907474e3 fix(rt:ui-kit-v2): залитое поле без подписи под материальным набором не держит места под неё
-b5dd14bb8 fix(rt:ui-kit-v2): свой вид поля с крестиком прежний, ветка после слияния с main снова проходит проверки
-dffd422be Merge remote-tracking branch 'origin/main' into RT-2812-kit2-field-label-icon-actions
 ```
 
 Written by a hook before the compaction of the context. Everything standing here is checked

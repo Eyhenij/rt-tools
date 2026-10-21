@@ -236,6 +236,9 @@ export class RtTabsComponent {
      */
     public readonly animationDuration: InputSignal<IRtTabs.AnimationDuration> = input<IRtTabs.AnimationDuration>(null);
 
+    /** Таб-стоп открытой панели, как `contentTabIndex` у `mat-tab-group`: `null` — Tab идёт с полосы прямо в поля панели. */
+    public readonly contentTabIndex: InputSignal<number | null> = input<number | null>(0);
+
     /** Эмиттит id вкладки при её выборе (клик/клавиатура). */
     public readonly activeIdChange: OutputEmitterRef<IRtTabs.Id> = output<IRtTabs.Id>();
 
