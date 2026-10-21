@@ -40,8 +40,42 @@ export namespace IRtPageHeaderView {
         readonly panelItems: ReadonlyArray<Entry>;
         /** Группы всех колонок подряд: на узком экране колонок нет, а группы есть. */
         readonly panelGroups: ReadonlyArray<Group>;
+        /** Очередь ухода в «Ещё»: меньшее число уходит раньше. */
+        readonly priority: number;
     }
 }
+
+export namespace IRtPageHeaderFit {
+    /** Раздел верхнего ряда с замеренной шириной и важностью. */
+    export interface Slot {
+        readonly id: string;
+        readonly width: number;
+        readonly priority: number;
+    }
+
+    export interface Input {
+        /** Разделы в порядке списка. */
+        readonly slots: ReadonlyArray<Slot>;
+        /** Ширина пункта «Ещё». */
+        readonly moreWidth: number;
+        /** Ширина, которую ряд может занять. */
+        readonly available: number;
+        /** Промежуток между соседними пунктами ряда. */
+        readonly gap: number;
+    }
+
+    /** Раскладка ряда: оба списка идут в порядке исходного списка. */
+    export interface Result {
+        readonly row: ReadonlyArray<string>;
+        readonly more: ReadonlyArray<string>;
+    }
+}
+
+/**
+ * Запас на дробные пиксели замера: сумма округлённых браузером ширин расходится с шириной ряда на
+ * доли пикселя, и без запаса последний раздел уходил бы в «Ещё», хотя на глаз помещается.
+ */
+const FIT_TOLERANCE: number = 0.5;
 
 /** Пункты панели одним списком — колонки и группы для этого раскрываются. */
 export function panelItemsOf(item: IRtPageHeader.Item): ReadonlyArray<IRtPageHeader.Item> {
@@ -115,6 +149,7 @@ export function toSections(items: ReadonlyArray<IRtPageHeader.Item>): ReadonlyAr
             columnCount: columns.length,
             panelItems: panelItemsOf(item).map(toEntry),
             panelGroups: panelGroupsOf(columns),
+            priority: item.priority ?? 0,
         };
     });
 }
@@ -132,11 +167,6 @@ export function isEntryActive(entry: IRtPageHeaderView.Entry, path: string): boo
     return entry.routerLinkActiveExact ? path === entry.route : path.startsWith(entry.route);
 }
 
-/**
- * Разделы, у которых активен хоть один пункт панели. Обход идёт по раскрытому
- * списку пунктов: своего адреса у раздела с панелью нет, и подсветить его больше
- * нечем.
- */
 /**
  * Разделы для кругов сжатой полосы: первые `count` из тех, у кого есть иконка. Раздел без
  * иконки в круг не попадает — показать в нём нечего, и он остаётся под кнопкой «ещё».
@@ -157,6 +187,11 @@ export function isStuck(intersectionRatio: number, isIntersecting: boolean): boo
     return isIntersecting && intersectionRatio < 1;
 }
 
+/**
+ * Разделы, у которых активен хоть один пункт панели. Обход идёт по раскрытому
+ * списку пунктов: своего адреса у раздела с панелью нет, и подсветить его больше
+ * нечем.
+ */
 export function activeSectionIds(sections: ReadonlyArray<IRtPageHeaderView.Section>, url: string): ReadonlySet<string> {
     const path: string = pathOf(url);
     const ids: Set<string> = new Set<string>();
@@ -167,4 +202,67 @@ export function activeSectionIds(sections: ReadonlyArray<IRtPageHeaderView.Secti
     }
 
     return ids;
+}
+
+function idOf(slot: IRtPageHeaderFit.Slot): string {
+    return slot.id;
+}
+
+/** Ширина ряда из пунктов заданной ширины с промежутками между соседями. */
+function rowWidthOf(widths: ReadonlyArray<number>, gap: number): number {
+    const total: number = widths.reduce((sum: number, width: number): number => sum + width, 0);
+
+    return total + gap * Math.max(0, widths.length - 1);
+}
+
+/**
+ * Какие разделы стоят в ряду, а какие уходят в «Ещё». Всё помещается — «Ещё» нет. Иначе разделы
+ * уходят по очереди важности, пока оставшиеся вместе с «Ещё» не встанут в доступную ширину:
+ * меньшая важность уходит раньше, а при равной — стоящий дальше от начала списка. Порядок
+ * оставшихся не меняется.
+ */
+export function fitRow(input: IRtPageHeaderFit.Input): IRtPageHeaderFit.Result {
+    const { slots, moreWidth, available, gap } = input;
+    const limit: number = available + FIT_TOLERANCE;
+    if (
+        rowWidthOf(
+            slots.map((slot: IRtPageHeaderFit.Slot): number => slot.width),
+            gap
+        ) <= limit
+    ) {
+        return { row: slots.map(idOf), more: [] };
+    }
+
+    const departure: ReadonlyArray<number> = Array.from(slots.keys()).sort(
+        (a: number, b: number): number => slots[a].priority - slots[b].priority || b - a
+    );
+    const kept: Set<number> = new Set<number>(slots.keys());
+    for (const index of departure) {
+        const keptWidths: ReadonlyArray<number> = Array.from(kept, (at: number): number => slots[at].width);
+        if (rowWidthOf([...keptWidths, moreWidth], gap) <= limit) {
+            break;
+        }
+        kept.delete(index);
+    }
+
+    return {
+        row: Array.from(slots.keys())
+            .filter((index: number): boolean => kept.has(index))
+            .map((index: number): string => slots[index].id),
+        more: Array.from(slots.keys())
+            .filter((index: number): boolean => !kept.has(index))
+            .map((index: number): string => slots[index].id),
+    };
+}
+
+/** Активен ли раздел: своим адресом или адресом пункта своей панели. */
+export function isSectionActive(section: IRtPageHeaderView.Section, path: string): boolean {
+    return isEntryActive(section, path) || section.panelItems.some((entry: IRtPageHeaderView.Entry): boolean => isEntryActive(entry, path));
+}
+
+/** Есть ли среди разделов активный — по нему «Ещё» подсвечивается, как выбранный пункт ряда. */
+export function hasActiveSection(sections: ReadonlyArray<IRtPageHeaderView.Section>, url: string): boolean {
+    const path: string = pathOf(url);
+
+    return sections.some((section: IRtPageHeaderView.Section): boolean => isSectionActive(section, path));
 }
