@@ -30,3 +30,12 @@ Then the refusal says the assignment outlived its epic; a live epic, a silent qu
 a dash give no such refusal
 
 Covered: `projects/agent-kit/tests/guard-tree-assignment.test.sh`.
+
+### SC-AK-1232 — the refusal names the owner's word as the move of the assignment
+
+Given the row of this copy is missing, holds a dash, names another epic or names a closed one
+When work is taken
+Then the refusal says that a message of the owner naming this work is the move: the row is written
+with their words, and the work goes on
+
+Covered: `projects/agent-kit/tests/guard-tree-assignment.test.sh`.

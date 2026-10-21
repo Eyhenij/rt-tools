@@ -3,9 +3,9 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 2 of 4 — The assignment refusal names the owner's word as the move
-- **Done:** stage 1 — the option list after a refused menu is a question, SC-AK-1231 covered.
-- **Next step:** scenario SC-AK-1232 in the tree-assignment spec.
+- **Stage:** 3 of 4 — A push into a merged branch is refused
+- **Done:** stage 1 — SC-AK-1231 covered; stage 2 — SC-AK-1232 covered, the assignment suite 23 ok.
+- **Next step:** scenario SC-AK-1233 in the delivery spec.
 - **Uncommitted:** nothing of this task.
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -17,10 +17,10 @@
 - [x] 1.1 Write scenario SC-AK-1231 into the grill spec
 - [x] 1.2 Recognise the option list in the fourth sign of `grill-gate.sh` and add the line to the quiz refusal
 - [x] 1.3 Cover SC-AK-1231 in `grill-gate.test.sh`
-- [>] 2.1 Write scenario SC-AK-1232 into the tree-assignment spec
-- [ ] 2.2 Rewrite the refusal texts in `tree-assignment.mjs` and `git-guard-tree-assignment.sh`
-- [ ] 2.3 Cover SC-AK-1232 in `guard-tree-assignment.test.sh`
-- [ ] 3.1 Write scenario SC-AK-1233 into the delivery spec
+- [x] 2.1 Write scenario SC-AK-1232 into the tree-assignment spec
+- [x] 2.2 Rewrite the refusal texts in `tree-assignment.mjs` and `git-guard-tree-assignment.sh`
+- [x] 2.3 Cover SC-AK-1232 in `guard-tree-assignment.test.sh`
+- [>] 3.1 Write scenario SC-AK-1233 into the delivery spec
 - [ ] 3.2 Add the merged-PR reading to the board helper and the profile default
 - [ ] 3.3 Add the push refusal to the delivery guard
 - [ ] 3.4 Cover SC-AK-1233 in a suite of its own, `git-guards-merged.test.sh`
