@@ -1,5 +1,7 @@
 # Grill
 
+Former address: docs/tasks/RT-2921-popover-short-panel/grill.md
+
 ## The owner request
 
 > Задача в кит, делаю сам (Рекомендую)
@@ -37,3 +39,8 @@ is 240×120 while its content needs about 76, and an empty strip stands under th
 ## What is left unclear
 
 - Nothing.
+
+## Decisions along the way
+
+- **The table rows of the subdomain stand apart from those of RT-2919.** Both branches open from
+  the same main, and rows put after the same line would conflict at the second merge.
