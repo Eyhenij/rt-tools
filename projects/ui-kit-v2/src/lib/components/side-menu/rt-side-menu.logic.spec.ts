@@ -271,7 +271,7 @@ describe('stepSideMenuHighlight', (): void => {
 });
 
 describe('filterSideMenuItems — правило поиска кита', (): void => {
-    it('SC-UKV-879 — the side menu finds a row whose words stand in another order', (): void => {
+    it('SC-UKV-894 — the side menu finds a row whose words stand in another order', (): void => {
         const items: IRtSideMenu.Item[] = [
             { id: 'march', name: 'Отчёт за март' },
             { id: 'april', name: 'Отчёт за апрель' },

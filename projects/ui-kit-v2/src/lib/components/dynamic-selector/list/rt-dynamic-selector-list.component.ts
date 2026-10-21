@@ -55,7 +55,7 @@ export class RtDynamicSelectorListComponent<TItem> {
         inject<RtDynamicSelectorPartsService<TItem>>(RtDynamicSelectorPartsService).list;
 
     /** На узком экране подсказки кнопок не показываются: наведения там нет. */
-    protected readonly isNarrow: Signal<boolean> = this.#breakpoints.narrow;
+    protected readonly isNarrow: Signal<boolean> = this.#breakpoints.viewportNarrow;
     protected readonly dragLabel: Signal<string> = rtKitLabel('dynamicSelectorDrag');
     protected readonly removeLabel: Signal<string> = rtKitLabel('dynamicSelectorRemove');
     protected readonly editLabel: Signal<string> = rtKitLabel('dynamicSelectorEdit');

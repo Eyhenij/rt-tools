@@ -370,7 +370,7 @@ describe('RtTreeSelectorComponent', (): void => {
         expect(fixture.componentInstance.value()).toEqual(['ph']);
     });
 
-    it('SC-UKV-888 — Home and End in the tree move the highlight while a row is highlighted', async (): Promise<void> => {
+    it('SC-UKV-903 — Home and End in the tree move the highlight while a row is highlighted', async (): Promise<void> => {
         const fixture: TFixture = setup({ expandOnStart: 'all' });
         await fixture.whenStable();
         fixture.detectChanges();

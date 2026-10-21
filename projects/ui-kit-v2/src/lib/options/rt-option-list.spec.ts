@@ -26,7 +26,7 @@ function createList(overrides: Partial<IRtOptionListConfig> = {}): IListHarness 
 }
 
 describe('RtOptionList', (): void => {
-    it('SC-UKV-880 — a closed select opens by an arrow, Enter or Space', (): void => {
+    it('SC-UKV-895 — a closed select opens by an arrow, Enter or Space', (): void => {
         const { list } = createList();
 
         expect(['ArrowDown', 'ArrowUp', 'Enter', ' '].every((key: string): boolean => list.opensBy(key))).toBe(true);
@@ -34,7 +34,7 @@ describe('RtOptionList', (): void => {
         expect(list.opensBy('Escape')).toBe(false);
     });
 
-    it('SC-UKV-881 — the arrows wrap and pass over disabled options', (): void => {
+    it('SC-UKV-896 — the arrows wrap and pass over disabled options', (): void => {
         const { list } = createList();
 
         list.move(1);
@@ -47,14 +47,14 @@ describe('RtOptionList', (): void => {
         expect(list.activeIndex()).toBe(2);
     });
 
-    it('SC-UKV-881 — an empty list holds no highlight', (): void => {
+    it('SC-UKV-896 — an empty list holds no highlight', (): void => {
         const { list } = createList({ count: (): number => 0 });
 
         list.move(1);
         expect(list.activeIndex()).toBe(-1);
     });
 
-    it('SC-UKV-882 — Enter chooses, and Space chooses only where it does not type', (): void => {
+    it('SC-UKV-897 — Enter chooses, and Space chooses only where it does not type', (): void => {
         const select: RtOptionList = createList().list;
         const autocomplete: RtOptionList = createList({ chooseKeys: new Set<string>(['Enter']), sideKeys: false }).list;
 
@@ -64,7 +64,7 @@ describe('RtOptionList', (): void => {
         expect(autocomplete.actionOf(' ')).toBe('none');
     });
 
-    it('SC-UKV-883 — Escape closes the list', (): void => {
+    it('SC-UKV-898 — Escape closes the list', (): void => {
         expect(createList().list.actionOf('Escape')).toBe('close');
     });
 
@@ -79,7 +79,7 @@ describe('RtOptionList', (): void => {
         expect(select.actionOf('Tab')).toBe('none');
     });
 
-    it('SC-UKV-884 — the highlighted option is named while the list is open', (): void => {
+    it('SC-UKV-899 — the highlighted option is named while the list is open', (): void => {
         const { list, open } = createList({ isDisabled: (): boolean => false });
 
         list.move(1);
@@ -94,7 +94,7 @@ describe('RtOptionList', (): void => {
         expect(list.activeOptionId()).toBeNull();
     });
 
-    it('SC-UKV-885 — Home and End go to the first and the last enabled option', (): void => {
+    it('SC-UKV-900 — Home and End go to the first and the last enabled option', (): void => {
         const { list } = createList({ count: (): number => 4, isDisabled: (index: number): boolean => index === 0 });
         const autocomplete: RtOptionList = createList({ edgeKeys: false }).list;
 

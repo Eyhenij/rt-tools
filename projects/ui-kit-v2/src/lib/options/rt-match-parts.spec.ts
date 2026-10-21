@@ -1,12 +1,12 @@
 import { rtMatchParts } from './rt-match-parts';
 
 describe('rt-match-parts', (): void => {
-    it('SC-UKV-877 — a query of spaces marks nothing', (): void => {
+    it('SC-UKV-892 — a query of spaces marks nothing', (): void => {
         expect(rtMatchParts('Курсы валют', '')).toEqual([{ text: 'Курсы валют', matched: false }]);
         expect(rtMatchParts('Курсы валют', '   ')).toEqual([{ text: 'Курсы валют', matched: false }]);
     });
 
-    it('SC-UKV-878 — the highlight marks every word, overlaps as one piece', (): void => {
+    it('SC-UKV-893 — the highlight marks every word, overlaps as one piece', (): void => {
         expect(rtMatchParts('Мегамаркет Ёлка', 'мега гама елка')).toEqual([
             { text: 'Мегама', matched: true },
             { text: 'ркет ', matched: false },

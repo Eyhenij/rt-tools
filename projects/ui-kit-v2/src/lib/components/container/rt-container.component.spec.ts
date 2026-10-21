@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, DebugElement } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
 
+import { BreakpointsService } from '../../platform';
 import { createRtFixture, el, hostClasses, qa, qaAll, textOf } from '../../../testing/rt-kit-testing';
 import { RtContainerComponent } from './rt-container.component';
 import {
@@ -106,6 +107,25 @@ describe('RtContainerComponent', (): void => {
 
     it('стопка уведомлений встроена в каркас — заводить её отдельно не нужно', (): void => {
         expect(el(setup(), 'rt-toaster')).not.toBeNull();
+    });
+
+    describe('место страницы', (): void => {
+        it('SC-UKV-877: контейнер объявляет себя местом и снимает объявление вместе с собой', async (): Promise<void> => {
+            const release: jest.Mock = jest.fn();
+            const registerPlace: jest.Mock = jest.fn((): (() => void) => release);
+            const fixture: ComponentFixture<RtContainerComponent> = createRtFixture(
+                RtContainerComponent,
+                {},
+                { providers: [{ provide: BreakpointsService, useValue: { registerPlace } }] }
+            );
+            await fixture.whenStable();
+
+            expect(registerPlace).toHaveBeenCalledWith(fixture.nativeElement);
+            expect(release).not.toHaveBeenCalled();
+
+            fixture.destroy();
+            expect(release).toHaveBeenCalledTimes(1);
+        });
     });
 
     describe('раскладка', (): void => {

@@ -106,7 +106,7 @@ describe('rt-option-tree', (): void => {
 });
 
 describe('rtTreeRows — правило поиска кита', (): void => {
-    it('SC-UKV-879 — the tree walk finds a row whose words stand in another order', (): void => {
+    it('SC-UKV-894 — the tree walk finds a row whose words stand in another order', (): void => {
         const options: ReadonlyArray<IRtOptionTree.Option<string>> = [
             { label: 'Отчёт за март', value: 'march' },
             { label: 'Отчёт за апрель', value: 'april' },
