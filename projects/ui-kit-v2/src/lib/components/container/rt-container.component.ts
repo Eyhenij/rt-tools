@@ -4,6 +4,7 @@ import { DOCUMENT, NgTemplateOutlet } from '@angular/common';
 import {
     ChangeDetectionStrategy,
     Component,
+    DestroyRef,
     ElementRef,
     InputSignal,
     OutputEmitterRef,
@@ -14,6 +15,7 @@ import {
     ViewContainerRef,
     ViewEncapsulation,
     WritableSignal,
+    afterNextRender,
     computed,
     contentChild,
     effect,
@@ -28,7 +30,7 @@ import { map, merge, Observable, Subject, switchMap, takeUntil } from 'rxjs';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { carryThemeScope, materialPresetClassesOf } from '@rt-tools/ui-kit-v2/core';
+import { BreakpointsService, carryThemeScope, materialPresetClassesOf } from '@rt-tools/ui-kit-v2/core';
 import { RtToasterComponent } from '@rt-tools/ui-kit-v2/toast';
 import { RtContainerStateService } from './rt-container-state.service';
 import {
@@ -160,6 +162,15 @@ export class RtContainerComponent {
     public readonly rightOverlayReady: Signal<boolean> = computed((): boolean => this.#overlayRefSignal() !== null);
 
     constructor() {
+        // Контейнер — место страницы: узкий вид кита считается от его ширины. Боковая панель
+        // приложения рядом сужает его, а окно остаётся прежним. Место объявляется в браузере
+        // после первой отрисовки и снимается вместе с контейнером.
+        const breakpoints: BreakpointsService = inject(BreakpointsService);
+        const destroyRef: DestroyRef = inject(DestroyRef);
+        afterNextRender((): void => {
+            destroyRef.onDestroy(breakpoints.registerPlace(this.#host.nativeElement));
+        });
+
         // Backdrop-click / ESC подписки правого overlay живут в одном
         // конструкторном стриме: #createRightOverlay эмитит созданный OverlayRef,
         // switchMap переключается на его event-стримы (предыдущий overlay к этому

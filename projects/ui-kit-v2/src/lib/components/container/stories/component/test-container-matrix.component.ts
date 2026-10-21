@@ -3,6 +3,8 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
+import { IRtFilterControl } from '../../../filter-control/rt-filter-control.model';
+import { RtFilterControlComponent } from '../../../filter-control/rt-filter-control.component';
 import { RtContainerComponent } from '../../rt-container.component';
 import {
     RtContainerContentDirective,
@@ -13,7 +15,7 @@ import {
 } from '../../rt-container.directives';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TContainerMatrixPart = 'zones' | 'presets' | 'themes';
+export type TContainerMatrixPart = 'zones' | 'presets' | 'themes' | 'place';
 
 /** Какие зоны объявлены: необъявленная зона не создаёт пустого узла, и каркас меняет вид. */
 interface IContainerZonesCase {
@@ -125,12 +127,40 @@ interface IContainerZonesCase {
                     </ng-template>
                 </app-story-presets>
             }
+
+            @case ('place') {
+                <app-story-presets caption="Узкий каркас в широком окне: фильтр списком, как на узком экране">
+                    <ng-template>
+                        <div class="app-container-matrix__frame app-container-matrix__frame--place">
+                            <rt-container height="auto">
+                                <ng-template rtContainerHeader>
+                                    <div class="app-container-matrix__band">шапка</div>
+                                </ng-template>
+                                <ng-template rtContainerToolbarLeft>
+                                    <rt-filter-control
+                                        qa-dataid="place-filter"
+                                        ariaLabel="Статус"
+                                        value="work"
+                                        placeholder="Статус"
+                                        [options]="status" />
+                                </ng-template>
+                                <ng-template rtContainerContent>
+                                    <div class="app-container-matrix__band app-container-matrix__band--tall">содержимое</div>
+                                </ng-template>
+                            </rt-container>
+                        </div>
+                    </ng-template>
+                </app-story-presets>
+            }
         }
     `,
     styles: `
         /* Настоящий каркас занимает окно целиком: в ячейке он показан уменьшенным, иначе рядом
            два таких не поставить. */
         .app-container-matrix__frame {
+            /* Каркас — контейнер ширины и своей ширины по содержимому не объявляет: ширину ему
+               даёт ячейка. */
+            inline-size: 100%;
             height: 16rem;
             overflow: hidden;
             border: 1px solid var(--rt-color-border-subtle);
@@ -151,6 +181,11 @@ interface IContainerZonesCase {
         .app-container-matrix__band--tall {
             height: 100%;
         }
+
+        /* Каркас уже порога 1080 при окне шире него: вид внутри считается от каркаса. */
+        .app-container-matrix__frame--place {
+            width: 56rem;
+        }
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
@@ -162,6 +197,8 @@ interface IContainerZonesCase {
         RtContainerToolbarLeftDirective,
         RtContainerToolbarRightDirective,
 
+        RtFilterControlComponent,
+
         // showcase
         StoryPresetsComponent,
         StoryRowComponent,
@@ -170,6 +207,14 @@ interface IContainerZonesCase {
 })
 export class TestRtContainerMatrixComponent {
     public part: TContainerMatrixPart = 'zones';
+
+    /** Набор фильтра для узкого каркаса: на широком месте он стоит сегментами. */
+    public readonly status: ReadonlyArray<IRtFilterControl.Option> = [
+        { value: 'all', label: 'Все' },
+        { value: 'new', label: 'Новые' },
+        { value: 'work', label: 'В работе' },
+        { value: 'done', label: 'Готовы' },
+    ];
 
     /** Ширина ячейки: каркас тянется на всю ширину родителя и по содержимому схлопнулся бы. */
     public readonly frameWidth: string = '20rem';
