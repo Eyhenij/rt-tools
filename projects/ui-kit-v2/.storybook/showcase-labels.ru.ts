@@ -242,6 +242,7 @@ export const RT_KIT_LABELS_RU: Readonly<Record<TRtKitLabelKey, string>> = {
     uiMoveStage: 'Перевести',
     uiMoveStageAria: 'Перевести этап',
     uiNavMenu: 'Меню навигации',
+    uiNavMore: 'Ещё',
     uiNavUnread: 'Непросмотренное',
     uiNextMonth: 'Следующий месяц',
     uiNextPage: 'Следующая страница',

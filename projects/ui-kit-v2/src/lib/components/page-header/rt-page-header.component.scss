@@ -24,12 +24,21 @@
         color: var(--rt-nav-item-color);
         gap: var(--rt-space-2);
 
+        /* Навигация занимает всё свободное место полосы. По этой ширине шапка решает, сколько разделов
+           встаёт в ряд, и ушедший в «Ещё» раздел её не меняет. */
         &__nav {
             min-width: 0;
-            flex: 1 1 auto;
+            flex: 1 1 0;
         }
 
+        /* Ряд всегда в одну строку: перенос удваивал высоту шапки. Что не встало, уходит в
+           пункт «Ещё» в конце ряда. */
+
+        /* Перенос оставлен ради ширины по содержимому: без него ряд объявил бы сумму всех пунктов
+           и распёр бы контейнер, который считает свою ширину по шапке. Во вторую строку пункт не
+           встаёт, его раньше уводит в «Ещё» расчёт ряда. */
         &__list {
+            position: relative;
             display: flex;
             flex-flow: row wrap;
             align-items: center;
@@ -43,10 +52,21 @@
            видно — проступает только активный раздел, у которого фон белый. */
         &__item {
             display: inline-flex;
+            flex-shrink: 0;
             align-items: center;
             border: var(--rt-nav-item-border-width) solid var(--rt-nav-item-color-border);
             border-radius: var(--rt-nav-item-radius);
             background-color: var(--rt-nav-item-color-bg);
+        }
+
+        /* Раздел, ушедший в «Ещё», и «Ещё», когда уходить некому, из ряда вынуты, но стоят в
+           разметке: их ширину шапка меряет и в таком виде, чтобы знать, встанут ли они обратно. */
+        &__item--is-overflow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            visibility: hidden;
         }
 
         &__disabled-slot {

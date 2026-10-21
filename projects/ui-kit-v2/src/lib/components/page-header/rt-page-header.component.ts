@@ -1,6 +1,7 @@
 import { BooleanInput, NumberInput } from '@angular/cdk/coercion';
 import {
     afterNextRender,
+    afterRenderEffect,
     booleanAttribute,
     computed,
     effect,
@@ -35,7 +36,18 @@ import { BreakpointsService } from '@rt-tools/ui-kit-v2/core';
 import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
 import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
-import { activeSectionIds, compactSectionsOf, ERtPageHeaderEntry, IRtPageHeaderView, isStuck, toSections } from './rt-page-header.logic';
+import { RtPageHeaderMoreComponent } from './more/rt-page-header-more.component';
+import {
+    activeSectionIds,
+    compactSectionsOf,
+    fitRow,
+    hasActiveSection,
+    ERtPageHeaderEntry,
+    IRtPageHeaderFit,
+    IRtPageHeaderView,
+    isStuck,
+    toSections,
+} from './rt-page-header.logic';
 import { IRtPageHeader } from './rt-page-header.model';
 
 const BEM_BLOCK: string = 'rt-page-header';
@@ -78,6 +90,7 @@ const BEM_BLOCK: string = 'rt-page-header';
         RtIconComponent,
         RtPopoverDirective,
         RtTooltipDirective,
+        RtPageHeaderMoreComponent,
         BlockDirective,
         ElemDirective,
         ModDirective,
@@ -106,6 +119,21 @@ export class RtPageHeaderComponent {
     readonly #stuck: WritableSignal<boolean> = signal<boolean>(false);
 
     readonly #t_uiMainNav: Signal<string> = rtKitLabel('uiMainNav');
+
+    /** Наблюдатель ширины навигации и пунктов ряда: по нему ряд пересчитывает, что уходит в «Ещё». */
+    #rowWatch: ResizeObserver | null = null;
+
+    /** id разделов, ушедших в «Ещё». До первого замера уходить некому. */
+    readonly #overflowIds: WritableSignal<ReadonlySet<string>> = signal<ReadonlySet<string>>(new Set<string>(), {
+        equal: (a: ReadonlySet<string>, b: ReadonlySet<string>): boolean =>
+            a.size === b.size && [...a].every((id: string): boolean => b.has(id)),
+    });
+
+    protected readonly navRef: Signal<ElementRef<HTMLElement> | undefined> = viewChild<ElementRef<HTMLElement>>('nav');
+
+    protected readonly listRef: Signal<ElementRef<HTMLElement> | undefined> = viewChild<ElementRef<HTMLElement>>('list');
+
+    protected readonly moreItemRef: Signal<ElementRef<HTMLElement> | undefined> = viewChild<ElementRef<HTMLElement>>('moreItem');
 
     /* Реактивный URL для подсветки раздела: у раздела с панелью нет своего
        route, поэтому RouterLinkActive не применим — сравниваем по факту навигации. */
@@ -142,6 +170,21 @@ export class RtPageHeaderComponent {
     protected readonly compactSections: Signal<ReadonlyArray<IRtPageHeaderView.Section>> = computed(
         (): ReadonlyArray<IRtPageHeaderView.Section> => compactSectionsOf(this.sections(), this.compactVisibleCount())
     );
+
+    /** Разделы, ушедшие из ряда в «Ещё»: шаблон вынимает их из ряда, сохраняя в разметке для замера. */
+    protected readonly overflowIds: Signal<ReadonlySet<string>> = this.#overflowIds.asReadonly();
+
+    /** Разделы панели «Ещё» в порядке списка. */
+    protected readonly moreSections: Signal<ReadonlyArray<IRtPageHeaderView.Section>> = computed(
+        (): ReadonlyArray<IRtPageHeaderView.Section> =>
+            this.sections().filter((section: IRtPageHeaderView.Section): boolean => this.overflowIds().has(section.id))
+    );
+
+    /** «Ещё» стоит в ряду, только когда в ряд не встал хоть один раздел. */
+    protected readonly moreShown: Signal<boolean> = computed((): boolean => this.moreSections().length > 0);
+
+    /** Выбранный раздел ушёл в «Ещё» — подсвечивается сам «Ещё». */
+    protected readonly moreActive: Signal<boolean> = computed((): boolean => hasActiveSection(this.moreSections(), this.#currentUrl()));
 
     /** Форма пункта решается один раз здесь, а не ветвлениями в шаблоне. */
     protected readonly sections: Signal<ReadonlyArray<IRtPageHeaderView.Section>> = computed((): ReadonlyArray<IRtPageHeaderView.Section> =>
@@ -220,6 +263,64 @@ export class RtPageHeaderComponent {
         });
 
         afterNextRender((): void => this.#observeStuck());
+
+        // Ряд пересчитывается при смене состава и подписей — и разделов, и самого «Ещё»: ширины
+        // пунктов меняются вместе с ними. Смену ширины шапки и шрифт, пришедший после первой
+        // отрисовки, ловит наблюдатель размера. Эффект после отрисовки идёт только в браузере.
+        afterRenderEffect((): void => {
+            this.sections();
+            this.t();
+            this.#watchRow();
+            this.#measureRow();
+        });
+
+        this.#destroyRef.onDestroy((): void => this.#rowWatch?.disconnect());
+    }
+
+    /** Наблюдение ставится заново на каждый состав: пришедшие пункты должны попасть под него. */
+    #watchRow(): void {
+        const nav: HTMLElement | undefined = this.navRef()?.nativeElement;
+        const list: HTMLElement | undefined = this.listRef()?.nativeElement;
+        if (nav === undefined || list === undefined || !('ResizeObserver' in this.#window)) {
+            return;
+        }
+        this.#rowWatch?.disconnect();
+        this.#rowWatch = new this.#window.ResizeObserver((): void => this.#measureRow());
+        this.#rowWatch.observe(nav);
+        Array.from(list.children).forEach((item: Element): void => this.#rowWatch?.observe(item));
+    }
+
+    /**
+     * Замер ряда: ширина навигации, ширина каждого раздела и «Ещё», промежуток между пунктами.
+     * Навигация без ширины спрятана — узкий экран или сжатая полоса, — и прежняя раскладка
+     * остаётся до её возвращения.
+     */
+    #measureRow(): void {
+        const nav: HTMLElement | undefined = this.navRef()?.nativeElement;
+        const list: HTMLElement | undefined = this.listRef()?.nativeElement;
+        const moreItem: HTMLElement | undefined = this.moreItemRef()?.nativeElement;
+        if (nav === undefined || list === undefined || moreItem === undefined) {
+            return;
+        }
+        const available: number = nav.getBoundingClientRect().width;
+        if (available <= 0) {
+            return;
+        }
+        const widths: Map<string, number> = new Map<string, number>();
+        list.querySelectorAll<HTMLElement>('[qa-dataid="header-nav-item"]').forEach((item: HTMLElement): void => {
+            widths.set(item.dataset['id'] ?? '', item.getBoundingClientRect().width);
+        });
+        const fit: IRtPageHeaderFit.Result = fitRow({
+            slots: this.sections().map((section: IRtPageHeaderView.Section): IRtPageHeaderFit.Slot => ({
+                id: section.id,
+                width: widths.get(section.id) ?? 0,
+                priority: section.priority,
+            })),
+            moreWidth: moreItem.getBoundingClientRect().width,
+            gap: parseFloat(this.#window.getComputedStyle(list).columnGap) || 0,
+            available,
+        });
+        this.#overflowIds.set(new Set<string>(fit.more));
     }
 
     /**
