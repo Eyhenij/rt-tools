@@ -222,6 +222,7 @@ export class RtPopoverDirective implements OnDestroy {
             $implicit: this.context(),
         });
         overlayRef.attach(portal);
+        this.#releasePaneMinHeight(overlayRef);
         this.isOpenState.set(true);
         this.opened.emit();
     }
@@ -375,6 +376,17 @@ export class RtPopoverDirective implements OnDestroy {
         const panes: readonly Element[] = Array.from(container.querySelectorAll('.cdk-overlay-pane'));
 
         return panes.indexOf(nested) > panes.indexOf(panel);
+    }
+
+    /**
+     * Порог подгонки остаётся в настройке оверлея и уходит из стиля коробки.
+     *
+     * CDK читает порог из настройки, когда решает, сдвинуть панель или ужать. Но при `attach` и
+     * при каждом `updateSize` он пишет то же число в стиль коробки, и короткая панель
+     * растягивалась до порога: под двумя пунктами «Ещё» шапки стояла пустая полоса.
+     */
+    #releasePaneMinHeight(overlayRef: OverlayRef): void {
+        overlayRef.overlayElement.style.minHeight = '';
     }
 
     #resolvePanelClasses(): string[] {
