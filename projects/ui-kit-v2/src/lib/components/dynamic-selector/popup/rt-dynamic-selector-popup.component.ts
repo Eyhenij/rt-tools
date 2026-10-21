@@ -29,7 +29,7 @@ import { debounceTime, Subject } from 'rxjs';
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { rtKitLabel, IRtInput, TRtRadius } from '@rt-tools/ui-kit-v2/core';
-import { RtInfiniteScrollDirective } from '@rt-tools/ui-kit-v2/core';
+import { RtInfiniteScrollDirective, rtMatchParts, rtSearchMatches } from '@rt-tools/ui-kit-v2/core';
 import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
 import { RtCheckboxComponent } from '@rt-tools/ui-kit-v2/checkbox';
 import { RtEmptyStateComponent } from '@rt-tools/ui-kit-v2/empty-state';
@@ -40,11 +40,9 @@ import { RtSpinnerComponent } from '@rt-tools/ui-kit-v2/spinner';
 import { RtToggleSwitchComponent } from '@rt-tools/ui-kit-v2/toggle-switch';
 import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
 import {
-    dynamicMatchParts,
     dynamicPopupRows,
     dynamicSelectAllState,
     dynamicSelectorLabel,
-    dynamicSelectorMatches,
     lastPinnedDynamicKey,
     selectAllDynamicKeys,
     toggleDynamicKey,
@@ -130,7 +128,7 @@ export class RtDynamicSelectorPopupComponent<TEntity extends object> implements 
         return this.entities().filter((item: TEntity): boolean => {
             const label: string | null = dynamicSelectorLabel(item, (entity: TEntity): unknown => this.#labelOf(entity));
 
-            return label !== null && dynamicSelectorMatches(label, query);
+            return label !== null && rtSearchMatches(label, query);
         });
     });
     protected readonly rows: Signal<IRtDynamicSelector.PopupRows<TEntity>> = computed((): IRtDynamicSelector.PopupRows<TEntity> =>
@@ -155,7 +153,7 @@ export class RtDynamicSelectorPopupComponent<TEntity extends object> implements 
             entity: item,
             key: this.#keyOf(item),
             label: labelOf(item),
-            parts: highlight ? dynamicMatchParts(labelOf(item), query) : [{ text: labelOf(item), matched: false }],
+            parts: highlight ? rtMatchParts(labelOf(item), query) : [{ text: labelOf(item), matched: false }],
             ticked: ticked.includes(this.#keyOf(item)),
             separated,
         });

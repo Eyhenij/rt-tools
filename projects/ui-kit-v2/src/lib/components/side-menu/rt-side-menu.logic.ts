@@ -1,12 +1,14 @@
+import { rtSearchMatches, rtSearchWords } from '@rt-tools/ui-kit-v2/core';
+
 import { IRtSideMenu } from './rt-side-menu.model';
 
 /**
- * Отбор пунктов подменю по подстроке подписи.
+ * Отбор пунктов подменю по подписи — правилом поиска кита: каждое слово запроса в любом порядке.
  *
  * Отбор спускается внутрь папок на любую глубину: потребитель кладёт в папки то, что человек и ищет
  * по имени, и по одному верхнему уровню такой пункт не нашёлся бы.
  *
- * В выдаче стоят только строки, содержащие запрос. Папка остаётся путём к совпавшим детям, а её
+ * В выдаче стоят только строки, совпавшие с запросом. Папка остаётся путём к совпавшим детям, а её
  * состав отбирается тем же правилом: иначе одно совпадение по имени папки вытаскивало бы весь её
  * состав. Папка, совпавшая только по имени, остаётся одной строкой без детей.
  *
@@ -14,9 +16,7 @@ import { IRtSideMenu } from './rt-side-menu.model';
  * запрос вернул бы урезанное меню.
  */
 export function filterSideMenuItems(items: ReadonlyArray<IRtSideMenu.Item>, query: string): IRtSideMenu.Item[] {
-    const needle: string = query.trim().toLowerCase();
-
-    if (needle === '') {
+    if (rtSearchWords(query).length === 0) {
         return [...items];
     }
 
@@ -30,7 +30,7 @@ export function filterSideMenuItems(items: ReadonlyArray<IRtSideMenu.Item>, quer
             return kept;
         }
 
-        if (item.name?.toLowerCase().includes(needle)) {
+        if (rtSearchMatches(item.name ?? '', query)) {
             kept.push(isFolder ? { ...item, submenu: [] } : item);
         }
 

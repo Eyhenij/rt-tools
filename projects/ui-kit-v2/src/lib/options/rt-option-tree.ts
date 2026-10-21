@@ -1,3 +1,4 @@
+import { rtSearchMatches, rtSearchWords } from './rt-search-match';
 import { IRtOptionTree } from './rt-option-tree.model';
 
 /**
@@ -83,7 +84,7 @@ export function rtTreeOpenFor<TValue>(options: ReadonlyArray<TOption<TValue>>, c
 }
 
 function matches<TValue>(option: TOption<TValue>, term: string): boolean {
-    return option.label.toLowerCase().includes(term);
+    return rtSearchMatches(option.label, term);
 }
 
 function descendantMatches<TValue>(option: TOption<TValue>, term: string): boolean {
@@ -139,9 +140,9 @@ export function rtTreeRows<TValue>(
     open: ReadonlySet<TValue>,
     rawTerm: string = ''
 ): ReadonlyArray<TRow<TValue>> {
-    const term: string = rawTerm.toLowerCase().trim();
+    const term: string = rawTerm;
     const walk: ITreeWalk<TValue> = { open, term, rows: [] };
-    walkRows(walk, options, { level: 0, parent: null, filtered: term.length > 0 });
+    walkRows(walk, options, { level: 0, parent: null, filtered: rtSearchWords(term).length > 0 });
     return walk.rows;
 }
 

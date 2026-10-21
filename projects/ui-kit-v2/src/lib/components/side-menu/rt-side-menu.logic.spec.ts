@@ -269,3 +269,14 @@ describe('stepSideMenuHighlight', (): void => {
         expect(stepSideMenuHighlight(WALK, 'нет такого пункта', 1)).toBe('dashboard');
     });
 });
+
+describe('filterSideMenuItems — правило поиска кита', (): void => {
+    it('SC-UKV-879 — the side menu finds a row whose words stand in another order', (): void => {
+        const items: IRtSideMenu.Item[] = [
+            { id: 'march', name: 'Отчёт за март' },
+            { id: 'april', name: 'Отчёт за апрель' },
+        ];
+
+        expect(filterSideMenuItems(items, 'март отчёт').map((item: IRtSideMenu.Item): string | number => item.id)).toEqual(['march']);
+    });
+});

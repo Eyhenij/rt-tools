@@ -1,3 +1,5 @@
+import { rtSearchMatches } from '@rt-tools/ui-kit-v2/core';
+
 import { IRtDynamicSelector } from './rt-dynamic-selector.model';
 
 /** Подпись пункта строкой: число приводится, всё прочее подписью не считается. */
@@ -5,54 +7,6 @@ export function dynamicSelectorLabel<T>(item: T, labelOf: (item: T) => unknown):
     const label: unknown = labelOf(item);
 
     return typeof label === 'string' || typeof label === 'number' ? String(label) : null;
-}
-
-/**
- * Совпадает ли подпись с запросом. Запрос режется по пробелам, и каждое слово обязано найтись в
- * подписи без учёта регистра: «отчёт март» находит «Март, отчёт по складу».
- */
-export function dynamicSelectorMatches(label: string, query: string): boolean {
-    const words: string[] = query.toLowerCase().trim().split(/\s+/).filter(Boolean);
-    const text: string = label.toLowerCase();
-
-    return words.every((word: string): boolean => text.includes(word));
-}
-
-/**
- * Подпись, разрезанная по словам запроса: совпавшие куски помечены. Слова ищутся так же, как при
- * отборе, — без учёта регистра и везде, где встречаются; пересёкшиеся совпадения сливаются в один
- * кусок. Подпись, длина которой меняется от смены регистра, остаётся одним куском без отметки.
- */
-export function dynamicMatchParts(label: string, query: string): IRtDynamicSelector.MatchPart[] {
-    const words: string[] = query.toLowerCase().trim().split(/\s+/).filter(Boolean);
-    const text: string = label.toLowerCase();
-
-    if (words.length === 0 || label === '' || text.length !== label.length) {
-        return [{ text: label, matched: false }];
-    }
-
-    const marks: boolean[] = Array.from({ length: label.length }, (): boolean => false);
-
-    for (const word of words) {
-        let from: number = text.indexOf(word);
-
-        while (from !== -1) {
-            marks.fill(true, from, from + word.length);
-            from = text.indexOf(word, from + 1);
-        }
-    }
-
-    const parts: IRtDynamicSelector.MatchPart[] = [];
-    let start: number = 0;
-
-    for (let index: number = 1; index <= label.length; index++) {
-        if (index === label.length || marks[index] !== marks[start]) {
-            parts.push({ text: label.slice(start, index), matched: marks[start] });
-            start = index;
-        }
-    }
-
-    return parts;
 }
 
 /**
@@ -71,7 +25,7 @@ export function selectableDynamicItems<T, K>(
     const found: T[] = items.filter((item: T): boolean => {
         const label: string | null = dynamicSelectorLabel(item, labelOf);
 
-        return label !== null && !chosen.has(keyOf(item)) && dynamicSelectorMatches(label, query);
+        return label !== null && !chosen.has(keyOf(item)) && rtSearchMatches(label, query);
     });
 
     return found.sort(

@@ -60,3 +60,14 @@ describe('rt-tree-selector logic', (): void => {
         expect(rtTreeSelectorCanApply(['b'], ['a'], false)).toBe(true);
     });
 });
+
+describe('rtTreeSelectorFilter — правило поиска кита', (): void => {
+    it('SC-UKV-879 — the tree selector finds a row whose words stand in another order', (): void => {
+        const nodes: ReadonlyArray<IRtTree.Node<string>> = [
+            { label: 'Отчёт за март', value: 'march' },
+            { label: 'Отчёт за апрель', value: 'april' },
+        ];
+
+        expect(values(rtTreeSelectorFilter(nodes, 'март отчёт'))).toEqual(['march']);
+    });
+});
