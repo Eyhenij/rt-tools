@@ -1,5 +1,7 @@
 # Grill
 
+Former address: docs/tasks/RT-2913-kit2-place-width/grill.md
+
 ## The owner request
 
 > шарина контента становится меньше но при этом меню и вообще весь ui контента продолжает
@@ -52,3 +54,13 @@ The owner speaks of the assistant panel opened next to the content.
 - The root container counts its width without the window scrollbar, while `@media` counts with
   it. On a window with a classic scrollbar a threshold moves by its width. It does not block the
   work: the look on both sides of the threshold is the same as before.
+
+## Decisions along the way
+
+- **The form vocabulary of the panel stays on `@media`.** Its tests demand the threshold of the
+  panel itself, and the panel is an overlay. Affected stage of the plan: 2.
+- **The container frames of the showcase get the width of their cell.** A container of width
+  declares no width by its content, and in a cell sized by content it collapsed. Affected stage of
+  the plan: 3.
+- **The scenario numbers of the «More» header collided with the card media on the main branch.**
+  The fix went as its own task RT-2914, and this branch stands on it. Affected stage of the plan: 1.
