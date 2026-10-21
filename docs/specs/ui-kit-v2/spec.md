@@ -85,6 +85,7 @@ agreement about their own subject and describe the surface of a component, not a
 | [The profile menu](profile-menu/spec.md)                                  | the content of the header's profile popup: the person, the organization, the actions, the language and the theme                |
 | [The header's «More» item](page-header-more/spec.md)                      | the sections that did not fit the header's row: the fit by importance, the panel, the highlight                                 |
 | [The width of the page place](place-width/spec.md)                        | the width the thresholds count from: the page place, the root, the overlays                                                     |
+| [The hint of a cut value in the copy cell](copy-cell-first-hover/spec.md) | the hint with the whole value of a cut copy cell, from the first hover                                                          |
 
 ## What is out of scope
 
