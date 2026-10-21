@@ -25,10 +25,10 @@
 - [x] 3.2 Add the merged-PR reading to the board helper and the profile default
 - [x] 3.3 Add the push refusal to the delivery guard
 - [x] 3.4 Cover SC-AK-1233 in a suite of its own, `git-guards-merged.test.sh`
-- [>] 4.1 Bring the pattern `git-workflow-commit` and the rule `task-flow` up to the new refusals
-- [ ] 4.2 Write the changelog entry
-- [ ] 4.3 Lay out the package and run the checks
-- [ ] 4.4 Mark the four records fixed
+- [x] 4.1 Bring the pattern `git-workflow-commit` and the rule `task-flow` up to the new refusals
+- [x] 4.2 Write the changelog entry
+- [x] 4.3 Lay out the package and run the checks
+- [>] 4.4 Mark the four records fixed
 
 ## Decisions along the way
 
@@ -40,6 +40,14 @@
 - **The host function `rt_pull_merged` is declared in `git-guard-delivery-merged.sh`, not in the
   profile defaults.** The defaults file reached 513 lines; a tree still overrides the function by its
   profile. Affected stage of the plan: 3.
+- **The rule `task-flow` is not edited.** Its article already says the guard refuses «until their
+  word», and the rule stands at 23 975 characters of the 24 000 limit. The refusal text now names
+  the word itself. Affected stage of the plan: 4.
+- **The changelog is not written by hand.** The release pipeline writes `CHANGELOG.md` from the
+  commit subjects with their links. Affected stage of the plan: 4.
+- **The layout is checked live.** `node tools/board.mjs merged` answered 2925 for RT-2924 and null
+  for RT-2928. The laid-out delivery guard refused a push into RT-2924 and let RT-2928 through.
+  Affected stage of the plan: 4.
 
 ## Sessions
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.32.0 · checks/board.github.mjs · 32de6d7c9cb2 · правится надстройкой, не здесь
+// rt-kit v0.32.0 · checks/board.github.mjs · 15f763fd6638 · правится надстройкой, не здесь
 /**
  * Shared work with the work queue: the project board, the tasks and their state.
  *
@@ -223,6 +223,19 @@ export function pullState(ref, options) {
 }
 
 /**
+ * Whether the branch has a merged PR and no open one: `{merged: <number> | null}`. The host deletes
+ * the branch of a merged PR, and a push into it recreates the branch with the commit nobody will
+ * merge. A branch reopened by a new PR after the merge is lawful work, so an open PR clears it.
+ */
+export function pullMerged(branch, options) {
+    const pulls = ghJson(['pr', 'list', '--head', `${branch}`, '--state', 'all', '--limit', '20', '--json', 'number,state'], options) ?? [];
+    if (pulls.some((pull) => pull.state === 'OPEN')) {
+        return { merged: null };
+    }
+    return { merged: pulls.find((pull) => pull.state === 'MERGED')?.number ?? null };
+}
+
+/**
  * How many commits the PR branch is behind main. The guard judges the base at the minute of
  * opening, and a PR stands for days: what was merged in that time is seen neither by it nor by a
  * green run. Nothing to compare with — zero: an audit without access would refuse work instead
@@ -392,6 +405,20 @@ if (isEntryPoint && process.argv[2] === 'pr') {
         // rights entirely. A client without a token goes as whoever is logged in, and for a person
         // it answers.
         process.stdout.write(`${JSON.stringify(pullState(process.argv[3]))}\n`);
+    } catch (error) {
+        if (error instanceof OfflineError) {
+            process.stdout.write('{"offline":true}\n');
+        } else {
+            process.stdout.write(`${JSON.stringify({ error: String(error.message ?? error) })}\n`);
+            process.exit(1);
+        }
+    }
+}
+
+// The merged PR of a branch as one line of JSON, for the push refusal of the delivery guard.
+if (isEntryPoint && process.argv[2] === 'merged' && process.argv[3]) {
+    try {
+        process.stdout.write(`${JSON.stringify(pullMerged(process.argv[3], { token: botToken() ?? undefined }))}\n`);
     } catch (error) {
         if (error instanceof OfflineError) {
             process.stdout.write('{"offline":true}\n');
