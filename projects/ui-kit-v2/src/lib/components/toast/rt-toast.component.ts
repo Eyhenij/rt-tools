@@ -157,7 +157,12 @@ export class RtToastComponent implements AfterViewInit, OnDestroy {
     /** Подробности раскрыты. */
     protected readonly detailsOpen: WritableSignal<boolean> = signal<boolean>(false);
 
-    protected readonly showProgress: Signal<boolean> = computed((): boolean => this.toast().progress === true && this.lifetime() !== null);
+    /** Голый тост: значка, крестика и полосы срока нет, оболочку снимает модификатор. */
+    protected readonly bare: Signal<boolean> = computed((): boolean => this.toast().bare === true);
+
+    protected readonly showProgress: Signal<boolean> = computed(
+        (): boolean => !this.bare() && this.toast().progress === true && this.lifetime() !== null
+    );
 
     /** Таймер и полоса срока встают от одного признака, чтобы не разойтись. */
     protected readonly paused: Signal<boolean> = computed((): boolean => this.expanded() || this.interacting());
@@ -199,6 +204,7 @@ export class RtToastComponent implements AfterViewInit, OnDestroy {
         return {
             [`${BEM_BLOCK}--severity--${this.toast().severity}`]: true,
             [`${BEM_BLOCK}--filled`]: this.toast().filled === true,
+            [`${BEM_BLOCK}--bare`]: this.bare(),
             [`${BEM_BLOCK}--y--${this.#positionY()}`]: true,
             [`${BEM_BLOCK}--mounted`]: this.#mounted(),
             [`${BEM_BLOCK}--removed`]: this.#removed(),

@@ -54,6 +54,8 @@ export namespace IRtToaster {
         readonly details?: string;
         readonly component?: Type<unknown>;
         readonly data?: unknown;
+        /** Голый тост: оболочки нет, свой компонент рисует карточку сам. */
+        readonly bare?: boolean;
         /** Ручка тоста: тост сообщает ей, почему ушёл. */
         readonly ref?: NotificationRef;
         /** Приложение закрыло тост ручкой: он уходит своей анимацией, как вытесненный. */

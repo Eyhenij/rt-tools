@@ -1,5 +1,5 @@
 <ng-container rtBlock="rt-toast">
-    @if (icon(); as icon) {
+    @if (!bare() && icon(); as icon) {
         <rt-icon rtElem="icon" qa-dataid="toast-icon" size="sm" [name]="icon" />
     }
     <div rtElem="content" qa-dataid="toast-content">
@@ -63,14 +63,16 @@
             </div>
         }
     </div>
-    <rt-icon-button
-        rtElem="close"
-        qa-dataid="toast-close"
-        icon="ico-close"
-        variant="ghost"
-        size="sm"
-        [ariaLabel]="t().uiClose"
-        (clicked)="onClose()" />
+    @if (!bare()) {
+        <rt-icon-button
+            rtElem="close"
+            qa-dataid="toast-close"
+            icon="ico-close"
+            variant="ghost"
+            size="sm"
+            [ariaLabel]="t().uiClose"
+            (clicked)="onClose()" />
+    }
     @if (showProgress()) {
         <span rtElem="progress" qa-dataid="toast-progress" aria-hidden="true"></span>
     }

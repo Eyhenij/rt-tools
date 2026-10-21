@@ -8,6 +8,7 @@ import { NotificationBus } from '../../../../platform/notification-bus.service';
 import { NotificationRef } from '../../../../platform/notification-ref';
 import { RtButtonDirective } from '../../../button/rt-button.directive';
 import { RtToasterComponent } from '../../rt-toaster.component';
+import { TestRtToastCardComponent } from './test-toast-card.component';
 import { TestRtToastRefreshComponent } from './test-toast-refresh.component';
 
 /** Шаг живой доли за тик и пауза между тиками. */
@@ -39,6 +40,9 @@ const STATUS_CHANNEL: string = 'status';
                 </button>
                 <button rtButton qa-dataid="toaster-handle-saved" size="sm" theme="secondary" type="button" (click)="sendSaved()">
                     Сохранено
+                </button>
+                <button rtButton qa-dataid="toaster-handle-bare" size="sm" theme="secondary" type="button" (click)="sendBare()">
+                    Своя карточка
                 </button>
             </div>
             <span class="app-toaster-handle__log" qa-dataid="toaster-handle-log">Последний ушёл: {{ lastReason() }}</span>
@@ -162,6 +166,18 @@ export class TestRtToasterHandleComponent {
                 message: 'Обновление набора',
                 data: { dataset: 'Гости' },
                 duration: null,
+            })
+        );
+    }
+
+    /** Голый тост: карточку и кнопку закрытия рисует свой компонент, тост — только место в стопке. */
+    public sendBare(): void {
+        this.#track(
+            this.#bus.openFromComponent(TestRtToastCardComponent, {
+                message: 'Доступна новая версия',
+                duration: null,
+                bare: true,
+                channel: STATUS_CHANNEL,
             })
         );
     }

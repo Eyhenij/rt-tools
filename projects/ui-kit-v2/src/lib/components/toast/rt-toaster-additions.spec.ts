@@ -105,6 +105,55 @@ describe('RtToasterComponent — дополнения', (): void => {
 
             expect(qa(fixture, 'custom-dataset')?.nativeElement).toBe(before);
         });
+
+        it('SC-UKV-1001 — голый тост рисует только компонент: без значка, крестика и полосы срока', (): void => {
+            const fixture: ComponentFixture<RtToasterComponent> = setup();
+
+            bus().openFromComponent(RefreshToastComponent, {
+                data: { dataset: 'Продажи' },
+                message: 'Обновление набора',
+                duration: 60000,
+                progress: true,
+                bare: true,
+            });
+            fixture.detectChanges();
+            const toast: HTMLElement = qa(fixture, 'toast')?.nativeElement as HTMLElement;
+
+            // Пара к утверждениям ниже: компонент и имя для чтения с экрана на месте.
+            expect(textOf(qa(fixture, 'custom-dataset'))).toBe('Продажи');
+            expect(host(fixture).querySelector('.rt-toast__sr-message')?.textContent).toBe('Обновление набора');
+            expect(toast.classList.contains('rt-toast--bare')).toBe(true);
+            expect(qa(fixture, 'toast-icon')).toBeNull();
+            expect(qa(fixture, 'toast-close')).toBeNull();
+            expect(qa(fixture, 'toast-progress')).toBeNull();
+        });
+
+        it('SC-UKV-1001 — голый тост закрывается ручкой своего компонента', (): void => {
+            const fixture: ComponentFixture<RtToasterComponent> = setup();
+            const ref: NotificationRef = bus().openFromComponent(RefreshToastComponent, {
+                data: { dataset: 'Продажи' },
+                duration: null,
+                bare: true,
+            });
+            const reasons: INotification.CloseReason[] = reasonsOf(ref);
+            fixture.detectChanges();
+
+            (qa(fixture, 'custom-close')?.nativeElement as HTMLButtonElement).click();
+            settle(fixture);
+
+            expect(qaAll(fixture, 'toast').length).toBe(0);
+            expect(reasons).toEqual(['dismiss']);
+        });
+
+        it('SC-UKV-1001 — без bare оболочка тоста прежняя', (): void => {
+            const fixture: ComponentFixture<RtToasterComponent> = setup();
+
+            bus().openFromComponent(RefreshToastComponent, { data: { dataset: 'Продажи' }, duration: null });
+            fixture.detectChanges();
+
+            expect((qa(fixture, 'toast')?.nativeElement as HTMLElement).classList.contains('rt-toast--bare')).toBe(false);
+            expect(qa(fixture, 'toast-close')).not.toBeNull();
+        });
     });
 
     describe('ручка', (): void => {

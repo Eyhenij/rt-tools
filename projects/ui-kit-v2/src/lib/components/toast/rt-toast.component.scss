@@ -114,6 +114,17 @@
             }
         }
 
+        /* Голый тост: оболочку рисует свой компонент. Два класса и место после залитого — чтобы
+           залитый и набор, задающий ручки тоста, оболочку не вернули. */
+        &.rt-toast--bare {
+            --rt-toast-radius: 0;
+            --rt-toast-border-width: 0;
+            --rt-toast-shadow: none;
+
+            padding: 0;
+            background: transparent;
+        }
+
         &--mounted {
             --y: translateY(0);
 

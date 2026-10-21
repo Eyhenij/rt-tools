@@ -668,6 +668,13 @@ data-preset="material" floatingLabel>` drew the border through the risen label: 
   its channel — SC-UKV-1000. A toast with `duration: null` in `stack` mode stays until `dismiss()`,
   and several of them stack. The showcase story of the toast handle now shows two toasters: in the
   centre «Сохранено» replaces the previous one, on the right the pinned toasts stay.
+- **2026-10-21, request 24 (the application's session): a bare toast.** The application's status
+  toasts are whole cards with their own background, shadow, rounding and close button; inside the
+  toast shell they came out a card in a card with two close buttons. The toast field `bare` removes
+  the shell — background, border, padding, shadow, rounding, icon, cross and timer bar — and keeps
+  the place in the stack, the motion, the handle and the screen reader name — SC-UKV-1001. Measured
+  in the showcase: the bare toast's box equals the card's box (57 px high, same top), the toast has
+  no padding, border, background or shadow, and the card's own button closes it with `dismiss`.
 
 ## Sessions
 

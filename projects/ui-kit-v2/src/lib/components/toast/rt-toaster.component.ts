@@ -192,6 +192,7 @@ export class RtToasterComponent {
             details: event.payload.details,
             component: event.payload.component,
             data: event.payload.data,
+            bare: event.payload.bare,
             ref: event.ref instanceof NotificationRef ? event.ref : undefined,
         };
         this.toasts.update((items: IRtToaster.Toast[]): IRtToaster.Toast[] => [

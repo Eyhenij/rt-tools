@@ -833,3 +833,14 @@ stacked, and stay there until the application dismisses each of them; a toast wi
 a toaster without the input keep the former behaviour
 
 Covered: `projects/ui-kit-v2/src/lib/components/toast/rt-toaster-additions.spec.ts`.
+
+### SC-UKV-1001 — a bare toast draws only its component
+
+Given a component that draws its own card and its own close button
+When the application opens it with `bare: true`
+Then the toast draws no background, border, padding, shadow, rounding, icon, close cross or timer
+bar; the component keeps its place in the stack, the enter and leave motion, the handle and the
+name for screen readers, and closes the toast through the handle; without `bare` the toast looks
+as before
+
+Покрытие: частичное — тест проверяет разметку и ручку; снятая оболочка проверена измерением в витрине.
