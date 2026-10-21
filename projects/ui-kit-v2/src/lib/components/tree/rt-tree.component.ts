@@ -335,8 +335,13 @@ export class RtTreeComponent<TValue> {
         if (key === 'ArrowDown' || key === 'ArrowUp') {
             return this.#move(rows, index, key === 'ArrowDown' ? 1 : -1);
         }
-        if (index < 0) {
-            return false;
+        return index >= 0 && this.#takeRowKey(rows, index, key, additive);
+    }
+
+    /** Клавиши, которым нужна подсвеченная строка. */
+    #takeRowKey(rows: ReadonlyArray<IRtTree.Row<TValue>>, index: number, key: string, additive: boolean): boolean {
+        if (key === 'Home' || key === 'End') {
+            return this.#edge(rows, key);
         }
         if (key === 'ArrowRight' || key === 'ArrowLeft') {
             this.#side(rows, index, key);
@@ -359,6 +364,12 @@ export class RtTreeComponent<TValue> {
         }
         const next: number = index < 0 ? 0 : Math.min(rows.length - 1, Math.max(0, index + step));
         this.#highlighted.set(rows[next].option.value);
+        return true;
+    }
+
+    /** Home и End ведут подсветку к первой и последней строке; без подсветки они остаются у курсора поля. */
+    #edge(rows: ReadonlyArray<IRtTree.Row<TValue>>, key: string): boolean {
+        this.#highlighted.set(rows[key === 'Home' ? 0 : rows.length - 1].option.value);
         return true;
     }
 

@@ -29,7 +29,7 @@ import { debounceTime, Subject } from 'rxjs';
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { rtKitLabel, IRtInput, TRtRadius } from '@rt-tools/ui-kit-v2/core';
-import { RtInfiniteScrollDirective, rtMatchParts, rtSearchMatches } from '@rt-tools/ui-kit-v2/core';
+import { RtInfiniteScrollDirective, RtOptionList, rtMatchParts, rtSearchMatches, TRtOptionListAction } from '@rt-tools/ui-kit-v2/core';
 import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
 import { RtCheckboxComponent } from '@rt-tools/ui-kit-v2/checkbox';
 import { RtEmptyStateComponent } from '@rt-tools/ui-kit-v2/empty-state';
@@ -51,6 +51,9 @@ import {
 import { IRtDynamicSelector } from '../rt-dynamic-selector.model';
 
 const BEM_BLOCK: string = 'rt-dynamic-selector-popup';
+
+/** Управление строки, которое держит фокус: флажок или переключатель. */
+const ROW_CONTROL: string = `.${BEM_BLOCK}__row [role="checkbox"], .${BEM_BLOCK}__row [role="radio"]`;
 
 /** Сколько ждёт поиск на сервере после последней нажатой клавиши. */
 export const RT_DYNAMIC_SELECTOR_SEARCH_DEBOUNCE: number = 500;
@@ -87,12 +90,26 @@ export const RT_DYNAMIC_SELECTOR_SEARCH_DEBOUNCE: number = 500;
         RtToggleSwitchComponent,
         RtTooltipDirective,
     ],
-    host: { class: BEM_BLOCK },
+    host: { class: BEM_BLOCK, '(keydown)': 'onKeydown($event)' },
 })
 export class RtDynamicSelectorPopupComponent<TEntity extends object> implements OnInit {
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
+    readonly #host: ElementRef<HTMLElement> = inject<ElementRef<HTMLElement>>(ElementRef);
     readonly #injector: Injector = inject(Injector);
     readonly #searchSource: Subject<string> = new Subject<string>();
+
+    /**
+     * Клавиши строк. Окно не называет строку через `aria-activedescendant`: строки — флажки и
+     * переключатели со своими ролями, и клавиши ведут сам фокус. Enter и пробел они отмечают сами.
+     */
+    protected readonly optionList: RtOptionList = new RtOptionList({
+        panelId: (): string => BEM_BLOCK,
+        isOpen: (): boolean => false,
+        count: (): number => this.rowItems().length,
+        chooseKeys: new Set<string>(),
+        sideKeys: false,
+        edgeKeys: true,
+    });
 
     protected readonly searchLabel: Signal<string> = rtKitLabel('dynamicSelectorSearch');
     protected readonly searchField: Signal<ElementRef<HTMLElement> | undefined> = viewChild('searchField', { read: ElementRef });
@@ -302,6 +319,54 @@ export class RtDynamicSelectorPopupComponent<TEntity extends object> implements 
 
     protected onCancel(): void {
         this.cancelled.emit();
+    }
+
+    /** Стрелки, Home и End ведут фокус по строкам; в поле поиска Home и End остаются у курсора. */
+    protected onKeydown(event: KeyboardEvent): void {
+        const target: EventTarget | null = event.target;
+        if (!(target instanceof Node)) {
+            return;
+        }
+        const controls: HTMLElement[] = Array.from(this.#host.nativeElement.querySelectorAll<HTMLElement>(ROW_CONTROL));
+        const index: number = controls.findIndex((control: HTMLElement): boolean => control.contains(target));
+        const inSearch: boolean = this.searchField()?.nativeElement.contains(target) ?? false;
+        if (controls.length === 0 || (index < 0 && !inSearch)) {
+            return;
+        }
+        this.optionList.activeIndex.set(index);
+        if (this.#moveBy(this.optionList.actionOf(event.key), inSearch)) {
+            event.preventDefault();
+            controls[this.optionList.activeIndex()]?.focus();
+        }
+    }
+
+    /** Сдвигает строку по действию клавиши; `false` — клавиша не строк. */
+    #moveBy(action: TRtOptionListAction, inSearch: boolean): boolean {
+        switch (action) {
+            case 'next':
+                this.optionList.move(1);
+                return true;
+            case 'previous':
+                if (inSearch) {
+                    this.optionList.last();
+                } else {
+                    this.optionList.move(-1);
+                }
+                return true;
+            case 'first':
+            case 'last':
+                if (inSearch) {
+                    return false;
+                }
+                if (action === 'first') {
+                    this.optionList.first();
+                } else {
+                    this.optionList.last();
+                }
+                return true;
+            default:
+                return false;
+        }
     }
 
     #tickedEntities(): TEntity[] {

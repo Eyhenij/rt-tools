@@ -369,4 +369,20 @@ describe('RtTreeSelectorComponent', (): void => {
         expect(fixture.componentInstance.canApply()).toBe(false);
         expect(fixture.componentInstance.value()).toEqual(['ph']);
     });
+
+    it('SC-UKV-888 — Home and End in the tree move the highlight while a row is highlighted', async (): Promise<void> => {
+        const fixture: TFixture = setup({ expandOnStart: 'all' });
+        await fixture.whenStable();
+        fixture.detectChanges();
+        const highlighted: () => string | null = (): string | null =>
+            host(fixture).querySelector('[qa-dataid="tree-row"].rt-tree__row--highlighted')?.getAttribute('data-value') ?? null;
+
+        press(fixture, 'End');
+        expect(highlighted()).toBeNull();
+        press(fixture, 'ArrowDown');
+        press(fixture, 'End');
+        expect(highlighted()).toBe(rowValues(fixture).at(-1));
+        press(fixture, 'Home');
+        expect(highlighted()).toBe(rowValues(fixture)[0]);
+    });
 });

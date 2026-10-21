@@ -128,6 +128,7 @@ export class RtSelectComponent<TValue> extends RtFormControlBase<TValue | null> 
         isDisabled: (index: number): boolean => Boolean(this.rows()[index]?.option.disabled),
         chooseKeys: new Set<string>(['Enter', ' ']),
         sideKeys: true,
+        edgeKeys: true,
     });
 
     protected readonly activeIndex: WritableSignal<number> = this.optionList.activeIndex;
@@ -300,6 +301,12 @@ export class RtSelectComponent<TValue> extends RtFormControlBase<TValue | null> 
                 break;
             case 'previous':
                 this.optionList.move(-1);
+                break;
+            case 'first':
+                this.optionList.first();
+                break;
+            case 'last':
+                this.optionList.last();
                 break;
             case 'choose':
                 this.#selectActive();

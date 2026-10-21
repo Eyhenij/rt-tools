@@ -7,7 +7,8 @@
 
 A subdomain of the second kit about the keyboard of a field that offers a list of options: how a
 key opens the list, moves the highlight, chooses and closes. The select, the multiselect and the
-autocomplete share it.
+autocomplete share it; the dynamic selector popup takes its moving, and the tree has its own walk
+with the same Home and End.
 
 ## Why
 
@@ -19,7 +20,8 @@ lists in one form.
 ## Terminology
 
 - **The highlight** — the option the keys stand on. The focus stays on the field; a screen reader
-  learns the highlight by `aria-activedescendant`.
+  learns the highlight by `aria-activedescendant`. The dynamic selector popup has no highlight:
+  its keys move the focus itself.
 - **An open list** — the panel of options under the field.
 
 ### What it is called in the interface
@@ -43,9 +45,24 @@ The keys have no text of their own.
 
 - **A closed list drops the highlight.**
 
+- **Home and End move the highlight to the first and the last enabled option in the select and
+  the multiselect.** In the autocomplete they stay with the caret of the text.
+
+- **In the dynamic selector popup the arrows move the focus between the rows and wrap around at
+  the ends, and Home and End move it to the first and the last row.** ArrowDown in the search
+  field moves the focus to the first row; Home and End in the search field stay with the caret.
+
+- **Enter on a focused row of the dynamic selector popup ticks it as a click does.** Space ticks
+  it natively.
+
+- **In the tree and the tree selector Home and End move the highlight to the first and the last
+  row while a row is highlighted.** Before the first arrow they stay with the caret of the search
+  field.
+
 ## What is out of scope
 
-- Home, End and the search by the first letter: no field has them.
+- The search by the first letter: no field has it.
+- The wrap of the arrows in the tree: the highlight stops at the ends.
 - The side arrows of a tree: the tree walk answers them.
 - Where the highlight lands when the list opens: each field decides it.
 
@@ -91,6 +108,11 @@ Not applicable.
 
 - **One controller for the three fields, and each field keeps what differs.** The keys that choose
   and the side arrows differ by field; the moving, the naming and the scroll are the same.
+- **The dynamic selector popup moves the real focus, not a highlight.** Its rows are checkboxes
+  and radio buttons with roles of their own, and a listbox named by `aria-activedescendant` cannot
+  hold them.
+- **Home and End stay with the caret where the focus is in a text field.** The person edits the
+  query there; the tree takes them only once a row is highlighted.
 
 ## Open questions
 
@@ -99,3 +121,5 @@ None.
 ## History of changes
 
 - 2026-10-21 — written and carried out by the task RT-2870 of the epic RT-2861.
+- 2026-10-21 — Home and End, the keys of the dynamic selector popup and of the tree: the task
+  RT-2871 of the epic RT-2861.

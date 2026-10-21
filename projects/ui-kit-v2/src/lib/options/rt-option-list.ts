@@ -6,7 +6,22 @@ import { rtScrollActiveOptionIntoView } from './rt-active-option';
 const OPEN_KEYS: ReadonlySet<string> = new Set<string>(['ArrowDown', 'ArrowUp', 'Enter', ' ']);
 
 /** Что делать по клавише в открытом списке. `none` — клавиша не списка, её не трогают. */
-export type TRtOptionListAction = 'next' | 'previous' | 'choose' | 'close' | 'side' | 'none';
+export type TRtOptionListAction = 'next' | 'previous' | 'first' | 'last' | 'choose' | 'close' | 'side' | 'none';
+
+/** Стрелки вверх и вниз — у каждого поля. */
+const MOVE_KEYS: ReadonlyMap<string, TRtOptionListAction> = new Map<string, TRtOptionListAction>([
+    ['ArrowDown', 'next'],
+    ['ArrowUp', 'previous'],
+]);
+
+/** Home и End — там, где поле их разрешает. */
+const EDGE_KEYS: ReadonlyMap<string, TRtOptionListAction> = new Map<string, TRtOptionListAction>([
+    ['Home', 'first'],
+    ['End', 'last'],
+]);
+
+/** Боковые стрелки — у дерева вариантов. */
+const SIDE_KEYS: ReadonlySet<string> = new Set<string>(['ArrowRight', 'ArrowLeft']);
 
 /** Чем поле отличается от соседних: число опций, отключённые, клавиши выбора, боковые стрелки. */
 export interface IRtOptionListConfig {
@@ -20,6 +35,8 @@ export interface IRtOptionListConfig {
     readonly chooseKeys: ReadonlySet<string>;
     /** Работают ли боковые стрелки: у дерева вариантов да. */
     readonly sideKeys: boolean;
+    /** Ведут ли Home и End к краям списка. В текстовом поле они остаются у курсора. */
+    readonly edgeKeys: boolean;
 }
 
 /**
@@ -54,11 +71,10 @@ export class RtOptionList {
 
     /** Что делать по клавише в открытом списке. */
     public actionOf(key: string): TRtOptionListAction {
-        if (key === 'ArrowDown') {
-            return 'next';
-        }
-        if (key === 'ArrowUp') {
-            return 'previous';
+        const edge: TRtOptionListAction | undefined = this.#config.edgeKeys ? EDGE_KEYS.get(key) : undefined;
+        const fixed: TRtOptionListAction | undefined = MOVE_KEYS.get(key) ?? edge;
+        if (fixed !== undefined) {
+            return fixed;
         }
         if (this.#config.chooseKeys.has(key)) {
             return 'choose';
@@ -66,7 +82,7 @@ export class RtOptionList {
         if (key === 'Escape') {
             return 'close';
         }
-        return this.#config.sideKeys && (key === 'ArrowRight' || key === 'ArrowLeft') ? 'side' : 'none';
+        return this.#config.sideKeys && SIDE_KEYS.has(key) ? 'side' : 'none';
     }
 
     /** Ведёт подсветку на шаг вперёд или назад по кругу, мимо отключённых опций. */
@@ -84,6 +100,18 @@ export class RtOptionList {
                 return;
             }
         }
+    }
+
+    /** Ведёт подсветку на первую опцию, мимо отключённых. */
+    public first(): void {
+        this.activeIndex.set(-1);
+        this.move(1);
+    }
+
+    /** Ведёт подсветку на последнюю опцию, мимо отключённых. */
+    public last(): void {
+        this.activeIndex.set(0);
+        this.move(-1);
     }
 
     /** Снимает подсветку: список закрыт или набор опций сменился. */
