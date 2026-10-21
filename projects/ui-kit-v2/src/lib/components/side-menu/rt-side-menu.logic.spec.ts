@@ -1,7 +1,6 @@
 import {
     clampSideMenuWidth,
     filterSideMenuItems,
-    splitSideMenuTitle,
     stepSideMenuHighlight,
     sideMenuIdsToExpand,
     sideMenuWidthByKey,
@@ -208,47 +207,6 @@ describe('ширина подменю', (): void => {
     });
 });
 
-describe('отметка совпавшего в подписи', () => {
-    it('пустой запрос ничего не отмечает', () => {
-        expect(splitSideMenuTitle('Курсы валют', '')).toEqual([{ text: 'Курсы валют', matched: false }]);
-    });
-
-    it('запрос, которого в подписи нет, ничего не отмечает', () => {
-        expect(splitSideMenuTitle('Курсы валют', 'налог')).toEqual([{ text: 'Курсы валют', matched: false }]);
-    });
-
-    it('отмечено ровно найденное, а не вся подпись', () => {
-        expect(splitSideMenuTitle('Курсы валют', 'валют')).toEqual([
-            { text: 'Курсы ', matched: false },
-            { text: 'валют', matched: true },
-        ]);
-    });
-
-    it('регистр подписи остаётся тем, каким его написал потребитель', () => {
-        expect(splitSideMenuTitle('Press release', 'PRESS')).toEqual([
-            { text: 'Press', matched: true },
-            { text: ' release', matched: false },
-        ]);
-    });
-
-    it('отмечены все вхождения, а не первое', () => {
-        expect(splitSideMenuTitle('Мега меню', 'ме')).toEqual([
-            { text: 'Ме', matched: true },
-            { text: 'га ', matched: false },
-            { text: 'ме', matched: true },
-            { text: 'ню', matched: false },
-        ]);
-    });
-
-    it('запрос из одних пробелов ничего не отмечает: отбор их тоже не считает запросом', () => {
-        expect(splitSideMenuTitle('Курсы валют', '   ')).toEqual([{ text: 'Курсы валют', matched: false }]);
-    });
-
-    it('пустая подпись отдаёт пустой список: рисовать нечего', () => {
-        expect(splitSideMenuTitle('', 'ме')).toEqual([]);
-    });
-});
-
 describe('walkSideMenuItems', (): void => {
     it('SC-UKV-432 — закрытая папка стоит в списке одной строкой', (): void => {
         expect(walkSideMenuItems(NESTED, []).map((item: IRtSideMenu.Item): string | number => item.id)).toEqual([
@@ -309,5 +267,16 @@ describe('stepSideMenuHighlight', (): void => {
     it('номер, которого в видимом списке нет, читается как отсутствие подсветки', (): void => {
         // Список пересобирается на каждую букву запроса, и прежний пункт из него уходит.
         expect(stepSideMenuHighlight(WALK, 'нет такого пункта', 1)).toBe('dashboard');
+    });
+});
+
+describe('filterSideMenuItems — правило поиска кита', (): void => {
+    it('SC-UKV-894 — the side menu finds a row whose words stand in another order', (): void => {
+        const items: IRtSideMenu.Item[] = [
+            { id: 'march', name: 'Отчёт за март' },
+            { id: 'april', name: 'Отчёт за апрель' },
+        ];
+
+        expect(filterSideMenuItems(items, 'март отчёт').map((item: IRtSideMenu.Item): string | number => item.id)).toEqual(['march']);
     });
 });

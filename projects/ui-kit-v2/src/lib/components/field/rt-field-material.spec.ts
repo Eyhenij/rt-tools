@@ -71,7 +71,7 @@ function filledFlags(fixture: ComponentFixture<unknown>): boolean[] {
 }
 
 describe('rt-field под материальным набором', (): void => {
-    describe('SC-UKV-875: подпись внутри контрола', (): void => {
+    describe('SC-UKV-916: подпись внутри контрола', (): void => {
         it('пустые поля не помечены значением — подпись лежит на месте подсказки', (): void => {
             expect(filledFlags(setup())).toEqual([false, false, false, false]);
         });
@@ -120,7 +120,7 @@ describe('rt-field под материальным набором', (): void => 
         });
     });
 
-    describe('SC-UKV-876: звёздочка цвета подписи', (): void => {
+    describe('SC-UKV-917: звёздочка цвета подписи', (): void => {
         it('набор красит звёздочку цветом подписи', (): void => {
             expect(PRESET).toMatch(/--rt-field-required-color:\s*currentcolor;/);
         });
@@ -139,7 +139,7 @@ describe('rt-field под материальным набором', (): void => 
         });
     });
 
-    describe('SC-UKV-877: стрелка выбора', (): void => {
+    describe('SC-UKV-918: стрелка выбора', (): void => {
         it('правило набора не запрещает поворот, и открытое поле переворачивает треугольник', (): void => {
             const fromPreset: string = SELECT_STYLES.slice(
                 SELECT_STYLES.indexOf(":is(.rt-preset-material, [data-preset='material']) &__chevron")

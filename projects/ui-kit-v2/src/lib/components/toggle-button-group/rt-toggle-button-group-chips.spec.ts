@@ -38,23 +38,23 @@ function checks(fixture: ComponentFixture<RtToggleButtonGroupComponent<string>>)
 }
 
 describe('RtToggleButtonGroupComponent — вид «чипы»', (): void => {
-    it('SC-UKV-927 — вид «чипы» помечает хост, по умолчанию вид сегментов', (): void => {
+    it('SC-UKV-968 — вид «чипы» помечает хост, по умолчанию вид сегментов', (): void => {
         expect(host(setup()).classList.contains('rt-toggle-button-group--chips')).toBe(false);
         expect(host(setup({ appearance: 'chips' })).classList.contains('rt-toggle-button-group--chips')).toBe(true);
     });
 
-    it('SC-UKV-927 — у чипов нет дорожки, просвет 8 px и обводка у каждого пункта', (): void => {
+    it('SC-UKV-968 — у чипов нет дорожки, просвет 8 px и обводка у каждого пункта', (): void => {
         expect(CHIPS).toContain('background-color: transparent; gap: var(--rt-space-2)');
         expect(CHIPS).toContain('--rt-toggle-chip-outline: inset 0 0 0 var(--rt-border-width-thin) var(--rt-toggle-chip-edge)');
         expect(CHIPS).toContain('box-shadow: var(--rt-toggle-chip-outline);');
     });
 
-    it('SC-UKV-928 — галочка стоит только у выбранного и только со входом', (): void => {
+    it('SC-UKV-969 — галочка стоит только у выбранного и только со входом', (): void => {
         expect(checks(setup({ appearance: 'chips' }))).toEqual([false, false, false]);
         expect(checks(setup({ appearance: 'chips', checkmark: true }))).toEqual([true, false, false]);
     });
 
-    it('SC-UKV-929 — под набором чип — фильтр-чип Material', (): void => {
+    it('SC-UKV-970 — под набором чип — фильтр-чип Material', (): void => {
         expect(CHIPS).toContain('padding-block: var(--rt-space-2); row-gap: var(--rt-space-4)');
         expect(CHIPS).toContain('height: 28px; padding: 0 calc(3 * var(--rt-space-1))');
         expect(CHIPS).toContain('letter-spacing: 0.1px');
@@ -70,7 +70,7 @@ describe('RtToggleButtonGroupComponent — вид «чипы»', (): void => {
         expect(PRESET).toContain('--rt-toggle-chip-color-bg-selected: var(--mat-sys-secondary-container, var(--rt-mat-neutral-25));');
     });
 
-    it('SC-UKV-931 — столбик чипов тянет пункты на ширину места, и растягивание не схлопывает их высоту', (): void => {
+    it('SC-UKV-972 — столбик чипов тянет пункты на ширину места, и растягивание не схлопывает их высоту', (): void => {
         expect(CHIPS).toContain(
             'rt-toggle-button-group.rt-toggle-button-group--chips.rt-toggle-button-group--column { display: flex; flex: 1 1 auto; }'
         );
@@ -79,7 +79,7 @@ describe('RtToggleButtonGroupComponent — вид «чипы»', (): void => {
         );
     });
 
-    it('SC-UKV-930 — недоступный пункт бледнеет: чип всегда, сегмент только под набором', (): void => {
+    it('SC-UKV-971 — недоступный пункт бледнеет: чип всегда, сегмент только под набором', (): void => {
         expect(CHIPS).toContain(
             '--rt-toggle-chip-edge: color-mix(in srgb, currentcolor 32%, transparent); color: var(--rt-color-text-disabled)'
         );

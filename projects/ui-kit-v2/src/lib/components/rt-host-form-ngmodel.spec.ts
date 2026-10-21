@@ -171,7 +171,7 @@ describe('Поля кита внутри формы страницы', (): void 
         localStorage.clear();
     });
 
-    it.each(CASES)('SC-UKV-940 — $name: поле показано без NG01354, форма родителя держит только свои поля', (item: ICase): void => {
+    it.each(CASES)('SC-UKV-981 — $name: поле показано без NG01354, форма родителя держит только свои поля', (item: ICase): void => {
         const fixture: ComponentFixture<HostForm> = createRtFixture(
             item.host,
             {},

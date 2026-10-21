@@ -426,7 +426,7 @@ describe('RtButtonDirective', (): void => {
         });
     });
 
-    describe('источник фокуса — SC-UKV-906', (): void => {
+    describe('источник фокуса — SC-UKV-947', (): void => {
         it.each<[FocusOrigin, string]>([
             ['keyboard', 'cdk-keyboard-focused'],
             ['program', 'cdk-program-focused'],

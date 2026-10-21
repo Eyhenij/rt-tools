@@ -28,11 +28,11 @@ describe('RtProgressBarComponent', (): void => {
         [100, 100],
         [140, 100],
         [Number.NaN, 0],
-    ])('SC-UKV-891 — доля %s прижимается к %s', (value: number, expected: number): void => {
+    ])('SC-UKV-932 — доля %s прижимается к %s', (value: number, expected: number): void => {
         expect(clampProgress(value)).toBe(expected);
     });
 
-    it('SC-UKV-891 — доля задаёт ширину заполнения и объявляется для чтения с экрана', (): void => {
+    it('SC-UKV-932 — доля задаёт ширину заполнения и объявляется для чтения с экрана', (): void => {
         const fixture: ComponentFixture<RtProgressBarComponent> = setup({ value: 42, ariaLabel: 'Обновление набора данных' });
 
         expect(hostOf(fixture).getAttribute('role')).toBe('progressbar');
@@ -43,7 +43,7 @@ describe('RtProgressBarComponent', (): void => {
         expect(fillOf(fixture).style.width).toBe('42%');
     });
 
-    it('SC-UKV-891 — доля из потока идёт следом и не выходит за 100', (): void => {
+    it('SC-UKV-932 — доля из потока идёт следом и не выходит за 100', (): void => {
         const fixture: ComponentFixture<RtProgressBarComponent> = setup({ value: 10 });
 
         setInputs(fixture, { value: 75 });
@@ -56,7 +56,7 @@ describe('RtProgressBarComponent', (): void => {
         expect(hostOf(fixture).getAttribute('aria-valuenow')).toBe('100');
     });
 
-    it('SC-UKV-891 — без доли бежит отрезок, и число не объявляется', (): void => {
+    it('SC-UKV-932 — без доли бежит отрезок, и число не объявляется', (): void => {
         const fixture: ComponentFixture<RtProgressBarComponent> = setup({ mode: 'indeterminate', value: 30 });
 
         expect(hostOf(fixture).classList).toContain('rt-progress-bar--indeterminate');
@@ -64,7 +64,7 @@ describe('RtProgressBarComponent', (): void => {
         expect(fillOf(fixture).style.width).toBe('');
     });
 
-    it('SC-UKV-891 — цвет доезжает до хоста, класс блока остаётся', (): void => {
+    it('SC-UKV-932 — цвет доезжает до хоста, класс блока остаётся', (): void => {
         const fixture: ComponentFixture<RtProgressBarComponent> = setup({ color: 'success' });
 
         expect(hostOf(fixture).classList).toContain('rt-progress-bar');

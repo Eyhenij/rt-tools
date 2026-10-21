@@ -60,7 +60,7 @@ describe('RtToasterComponent — дополнения', (): void => {
         jest.useRealTimers();
     });
     describe('свой компонент', (): void => {
-        it('SC-UKV-892 — компонент встаёт на место сообщения и читает данные', (): void => {
+        it('SC-UKV-933 — компонент встаёт на место сообщения и читает данные', (): void => {
             const fixture: ComponentFixture<RtToasterComponent> = setup();
 
             bus().openFromComponent(RefreshToastComponent, {
@@ -77,7 +77,7 @@ describe('RtToasterComponent — дополнения', (): void => {
             expect(host(fixture).querySelector('.rt-toast__icon')).not.toBeNull();
         });
 
-        it('SC-UKV-892 — компонент закрывает тост ручкой, полученной инъекцией', (): void => {
+        it('SC-UKV-933 — компонент закрывает тост ручкой, полученной инъекцией', (): void => {
             const fixture: ComponentFixture<RtToasterComponent> = setup();
             const ref: NotificationRef = bus().openFromComponent(RefreshToastComponent, { data: { dataset: 'Гости' }, duration: null });
             const reasons: INotification.CloseReason[] = reasonsOf(ref);
@@ -90,7 +90,7 @@ describe('RtToasterComponent — дополнения', (): void => {
             expect(reasons).toEqual(['dismiss']);
         });
 
-        it('SC-UKV-892 — живая доля не создаёт компонент заново', (): void => {
+        it('SC-UKV-933 — живая доля не создаёт компонент заново', (): void => {
             const fixture: ComponentFixture<RtToasterComponent> = setup();
             const ref: NotificationRef = bus().openFromComponent(RefreshToastComponent, {
                 data: { dataset: 'Продажи' },
@@ -108,7 +108,7 @@ describe('RtToasterComponent — дополнения', (): void => {
     });
 
     describe('ручка', (): void => {
-        it('SC-UKV-893 — тост, ушедший вместе с тостером, сообщает ручке причину destroyed', (): void => {
+        it('SC-UKV-934 — тост, ушедший вместе с тостером, сообщает ручке причину destroyed', (): void => {
             const fixture: ComponentFixture<RtToasterComponent> = setup();
             const ref: NotificationRef = bus().open({ message: 'Нет сети', severity: 'warning', duration: null });
             const reasons: INotification.CloseReason[] = reasonsOf(ref);
@@ -119,7 +119,7 @@ describe('RtToasterComponent — дополнения', (): void => {
             expect(reasons).toEqual(['destroyed']);
         });
 
-        it('SC-UKV-893 — обновление меняет текст показанного тоста на месте', (): void => {
+        it('SC-UKV-934 — обновление меняет текст показанного тоста на месте', (): void => {
             const fixture: ComponentFixture<RtToasterComponent> = setup();
             const ref: NotificationRef = bus().open({ message: 'Нет сети', severity: 'warning', duration: null });
             fixture.detectChanges();
@@ -133,7 +133,7 @@ describe('RtToasterComponent — дополнения', (): void => {
             expect(host(fixture).querySelector('rt-toast')?.classList).toContain('rt-toast--severity--success');
         });
 
-        it('SC-UKV-893 — dismiss уводит тост, ручка сообщает причину один раз, onDismiss молчит', (): void => {
+        it('SC-UKV-934 — dismiss уводит тост, ручка сообщает причину один раз, onDismiss молчит', (): void => {
             const fixture: ComponentFixture<RtToasterComponent> = setup();
             const onDismiss: jest.Mock = jest.fn();
             const ref: NotificationRef = bus().open({ message: 'Задача идёт', severity: 'info', duration: null, onDismiss });
@@ -164,7 +164,7 @@ describe('RtToasterComponent — дополнения', (): void => {
                     (qa(fixture, 'toast-action')?.nativeElement as HTMLButtonElement).click(),
                 'action',
             ],
-        ])('SC-UKV-893 — %s: ручка узнаёт причину ухода', (_name: string, press, expected: INotification.CloseReason): void => {
+        ])('SC-UKV-934 — %s: ручка узнаёт причину ухода', (_name: string, press, expected: INotification.CloseReason): void => {
             const fixture: ComponentFixture<RtToasterComponent> = setup();
             const ref: NotificationRef = bus().open({
                 message: 'Готово',
@@ -181,7 +181,7 @@ describe('RtToasterComponent — дополнения', (): void => {
             expect(reasons).toEqual([expected]);
         });
 
-        it('SC-UKV-893 — истёкший срок: ручка сообщает timeout; подписка после ухода тоже получает ответ', (): void => {
+        it('SC-UKV-934 — истёкший срок: ручка сообщает timeout; подписка после ухода тоже получает ответ', (): void => {
             const fixture: ComponentFixture<RtToasterComponent> = setup();
             const ref: NotificationRef = bus().open({ message: 'Сохранено', severity: 'success', duration: 1000 });
             fixture.detectChanges();
@@ -192,7 +192,7 @@ describe('RtToasterComponent — дополнения', (): void => {
             expect(reasonsOf(ref)).toEqual(['timeout']);
         });
 
-        it('SC-UKV-893 — после ухода обновление и закрытие ничего не делают', (): void => {
+        it('SC-UKV-934 — после ухода обновление и закрытие ничего не делают', (): void => {
             const fixture: ComponentFixture<RtToasterComponent> = setup();
             const ref: NotificationRef = bus().open({ message: 'Раз', severity: 'info', duration: null });
             fixture.detectChanges();
@@ -214,7 +214,7 @@ describe('RtToasterComponent — дополнения', (): void => {
     });
 
     describe('доля и подробности', (): void => {
-        it('SC-UKV-894 — полоса стоит под сообщением и идёт за долей из ручки', (): void => {
+        it('SC-UKV-935 — полоса стоит под сообщением и идёт за долей из ручки', (): void => {
             const fixture: ComponentFixture<RtToasterComponent> = setup();
             const ref: NotificationRef = bus().open({ message: 'Обновление набора', severity: 'info', duration: null, progressValue: 10 });
             fixture.detectChanges();
@@ -232,7 +232,7 @@ describe('RtToasterComponent — дополнения', (): void => {
             expect(qa(fixture, 'toast-progress-value')).toBeNull();
         });
 
-        it('SC-UKV-894 — без доли полосы нет', (): void => {
+        it('SC-UKV-935 — без доли полосы нет', (): void => {
             const fixture: ComponentFixture<RtToasterComponent> = setup();
 
             bus().info('Готово');
@@ -242,7 +242,7 @@ describe('RtToasterComponent — дополнения', (): void => {
             expect(qa(fixture, 'toast-details-toggle')).toBeNull();
         });
 
-        it('SC-UKV-894 — подробности раскрываются кнопкой и стоят с копированием', (): void => {
+        it('SC-UKV-935 — подробности раскрываются кнопкой и стоят с копированием', (): void => {
             const fixture: ComponentFixture<RtToasterComponent> = setup();
             bus().error('Токен отклонён', 'danger', { duration: null, details: 'HTTP 401\nrequest-id: 7f3a' });
             fixture.detectChanges();

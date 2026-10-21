@@ -7,10 +7,10 @@ import {
     rtTreeRows,
     rtTreeSideKey,
     rtTreeToggle,
-} from './rt-select-tree';
-import { IRtSelect } from './rt-select.model';
+} from './rt-option-tree';
+import { IRtOptionTree } from './rt-option-tree.model';
 
-const TREE: ReadonlyArray<IRtSelect.Option<string>> = [
+const TREE: ReadonlyArray<IRtOptionTree.Option<string>> = [
     {
         label: 'Россия',
         value: 'ru',
@@ -30,11 +30,13 @@ const TREE: ReadonlyArray<IRtSelect.Option<string>> = [
     { label: 'Минск', value: 'msq' },
 ];
 
-function shape(rows: ReadonlyArray<IRtSelect.Row<string>>): string[] {
-    return rows.map((row: IRtSelect.Row<string>): string => `${row.level}:${row.option.value}${row.branch ? (row.open ? 'v' : '>') : ''}`);
+function shape(rows: ReadonlyArray<IRtOptionTree.Row<string>>): string[] {
+    return rows.map(
+        (row: IRtOptionTree.Row<string>): string => `${row.level}:${row.option.value}${row.branch ? (row.open ? 'v' : '>') : ''}`
+    );
 }
 
-describe('rt-select-tree', (): void => {
+describe('rt-option-tree', (): void => {
     it('SC-UKV-408 — плоский список деревом не считается', (): void => {
         expect(rtTreeIsTree([{ label: 'Минск', value: 'msq' }])).toBe(false);
         expect(rtTreeIsTree(TREE)).toBe(true);
@@ -65,7 +67,7 @@ describe('rt-select-tree', (): void => {
     });
 
     it('SC-UKV-413 — состояние ветки выводится из её включённых листьев', (): void => {
-        const centre: IRtSelect.Option<string> = TREE[0].children?.[0] as IRtSelect.Option<string>;
+        const centre: IRtOptionTree.Option<string> = TREE[0].children?.[0] as IRtOptionTree.Option<string>;
 
         expect(rtTreeBranchState(centre, [])).toBe('none');
         expect(rtTreeBranchState(centre, ['msk'])).toBe('some');
@@ -85,9 +87,9 @@ describe('rt-select-tree', (): void => {
 
     it('SC-UKV-416 — боковые стрелки раскрывают, спускаются к ребёнку, поднимаются к родителю и сворачивают', (): void => {
         let open: ReadonlySet<string> = new Set<string>();
-        let rows: ReadonlyArray<IRtSelect.Row<string>> = rtTreeRows(TREE, open);
+        let rows: ReadonlyArray<IRtOptionTree.Row<string>> = rtTreeRows(TREE, open);
 
-        let answer: IRtSelect.SideKeyAnswer<string> = rtTreeSideKey(rows, 0, 'ArrowRight');
+        let answer: IRtOptionTree.SideKeyAnswer<string> = rtTreeSideKey(rows, 0, 'ArrowRight');
         expect(answer).toEqual({ toggle: 'ru', index: 0 });
         open = rtTreeToggle(open, 'ru');
         rows = rtTreeRows(TREE, open);
@@ -100,5 +102,16 @@ describe('rt-select-tree', (): void => {
 
         answer = rtTreeSideKey(rows, 0, 'ArrowLeft');
         expect(answer).toEqual({ toggle: 'ru', index: 0 });
+    });
+});
+
+describe('rtTreeRows — правило поиска кита', (): void => {
+    it('SC-UKV-894 — the tree walk finds a row whose words stand in another order', (): void => {
+        const options: ReadonlyArray<IRtOptionTree.Option<string>> = [
+            { label: 'Отчёт за март', value: 'march' },
+            { label: 'Отчёт за апрель', value: 'april' },
+        ];
+
+        expect(shape(rtTreeRows(options, new Set<string>(), 'март отчёт'))).toEqual(['0:march']);
     });
 });

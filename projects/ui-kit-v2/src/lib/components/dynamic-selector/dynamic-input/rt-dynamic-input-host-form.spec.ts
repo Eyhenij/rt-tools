@@ -50,7 +50,7 @@ describe('RtDynamicInputComponent — внутри формы родителя',
         warn.mockRestore();
     });
 
-    it('SC-UKV-939 — карандаш открывает правку без NG01354, Enter применяет её, форма родителя не получает чужих полей', (): void => {
+    it('SC-UKV-980 — карандаш открывает правку без NG01354, Enter применяет её, форма родителя не получает чужих полей', (): void => {
         const fixture: THostFixture = createRtFixture(HostFormComponent);
 
         click(fixture, 'dynamic-selector-edit');
@@ -68,7 +68,7 @@ describe('RtDynamicInputComponent — внутри формы родителя',
         expect(Object.keys(fixture.componentInstance.form.controls)).toEqual(['tags']);
     });
 
-    it('SC-UKV-939 — поле набора новой строки открывается без NG01354', (): void => {
+    it('SC-UKV-980 — поле набора новой строки открывается без NG01354', (): void => {
         const fixture: THostFixture = createRtFixture(HostFormComponent);
 
         click(fixture, 'dynamic-input-add');

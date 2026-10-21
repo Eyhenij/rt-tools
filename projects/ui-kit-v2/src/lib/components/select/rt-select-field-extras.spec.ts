@@ -76,7 +76,7 @@ function cross<T>(fixture: ComponentFixture<T>): HTMLButtonElement {
 
 describe('RtSelectComponent — строка списка, подпись на рамке, крестик', (): void => {
     describe('шаблон строки', (): void => {
-        it('SC-UKV-907 — шаблон встаёт на место подписи, галочка остаётся у выбранной строки', (): void => {
+        it('SC-UKV-948 — шаблон встаёт на место подписи, галочка остаётся у выбранной строки', (): void => {
             const fixture: ComponentFixture<SelectOptionHostComponent> = createRtFixture(SelectOptionHostComponent);
             open(fixture);
 
@@ -88,7 +88,7 @@ describe('RtSelectComponent — строка списка, подпись на �
             expect(rows()[0].querySelector('.rt-select__check')).toBeNull();
         });
 
-        it('SC-UKV-905 — шаблон строки рисует и выбранное значение в поле', (): void => {
+        it('SC-UKV-946 — шаблон строки рисует и выбранное значение в поле', (): void => {
             const fixture: ComponentFixture<SelectOptionHostComponent> = createRtFixture(SelectOptionHostComponent);
             const own: HTMLElement | null = trigger(fixture).querySelector('.own-option');
 
@@ -100,7 +100,7 @@ describe('RtSelectComponent — строка списка, подпись на �
             expect(trigger(fixture).querySelector('.own-option')).toBeNull();
         });
 
-        it('SC-UKV-932 — без шаблона строка рисует подпись опции', (): void => {
+        it('SC-UKV-973 — без шаблона строка рисует подпись опции', (): void => {
             open(setup());
 
             expect(rows().map((row: HTMLElement): string => textOf(row.querySelector('.rt-select__option-label') as HTMLElement))).toEqual([
@@ -120,7 +120,7 @@ describe('RtSelectComponent — строка списка, подпись на �
             expect(hostClasses(fixture)).not.toContain('rt-select--floating');
         });
 
-        it('SC-UKV-935 — подпись поднимается при выбранном значении', (): void => {
+        it('SC-UKV-976 — подпись поднимается при выбранном значении', (): void => {
             const fixture: ComponentFixture<RtSelectComponent<string>> = setup({ floatingLabel: 'Цвет' });
 
             expect(textOf(qa(fixture, 'select-floating-label'))).toBe('Цвет');
@@ -131,7 +131,7 @@ describe('RtSelectComponent — строка списка, подпись на �
             expect(hostClasses(fixture)).toContain('rt-select--filled');
         });
 
-        it('SC-UKV-935 — подпись поднимается при открытом списке без значения', (): void => {
+        it('SC-UKV-976 — подпись поднимается при открытом списке без значения', (): void => {
             const fixture: ComponentFixture<RtSelectComponent<string>> = setup({ floatingLabel: 'Цвет' });
             open(fixture);
 
@@ -139,7 +139,7 @@ describe('RtSelectComponent — строка списка, подпись на �
             expect(hostClasses(fixture)).not.toContain('rt-select--filled');
         });
 
-        it('SC-UKV-936 — подпись называет указатель, когда своего имени нет', (): void => {
+        it('SC-UKV-977 — подпись называет указатель, когда своего имени нет', (): void => {
             const fixture: ComponentFixture<RtSelectComponent<string>> = setup({ floatingLabel: 'Цвет' });
             const labelId: string = (qa(fixture, 'select-floating-label')?.nativeElement as HTMLElement).id;
 
@@ -157,7 +157,7 @@ describe('RtSelectComponent — строка списка, подпись на �
     });
 
     describe('крестик', (): void => {
-        it('SC-UKV-865 — крестик вне порядка Tab, пока поле не попросит', (): void => {
+        it('SC-UKV-906 — крестик вне порядка Tab, пока поле не попросит', (): void => {
             const fixture: ComponentFixture<RtSelectComponent<string>> = setup();
             choose(fixture, 'red');
             expect(cross(fixture).getAttribute('tabindex')).toBe('-1');
@@ -167,7 +167,7 @@ describe('RtSelectComponent — строка списка, подпись на �
             expect(cross(tabbable).getAttribute('tabindex')).toBe('0');
         });
 
-        it('SC-UKV-865 — крестик в порядке Tab стоит рядом с кнопкой, а не в ней', (): void => {
+        it('SC-UKV-906 — крестик в порядке Tab стоит рядом с кнопкой, а не в ней', (): void => {
             const fixture: ComponentFixture<RtSelectComponent<string>> = setup({ clearTabbable: true });
             choose(fixture, 'red');
 
@@ -176,7 +176,7 @@ describe('RtSelectComponent — строка списка, подпись на �
             expect(trigger(fixture).querySelector('.rt-select__clear-slot')).not.toBeNull();
         });
 
-        it('SC-UKV-866 — нажатие на крестик в порядке Tab очищает поле', (): void => {
+        it('SC-UKV-907 — нажатие на крестик в порядке Tab очищает поле', (): void => {
             const fixture: ComponentFixture<RtSelectComponent<string>> = setup({ clearTabbable: true });
             choose(fixture, 'red');
 
@@ -187,7 +187,7 @@ describe('RtSelectComponent — строка списка, подпись на �
             expect(cross(fixture)).toBeNull();
         });
 
-        it('SC-UKV-865 — Enter на крестике не открывает список', (): void => {
+        it('SC-UKV-906 — Enter на крестике не открывает список', (): void => {
             const fixture: ComponentFixture<RtSelectComponent<string>> = setup({ clearTabbable: true });
             choose(fixture, 'red');
 
@@ -198,7 +198,7 @@ describe('RtSelectComponent — строка списка, подпись на �
             expect(hostClasses(fixture)).not.toContain('rt-select--open');
         });
 
-        it('SC-UKV-871 — Escape закрывает только панель и не доходит до слоя под ней', (): void => {
+        it('SC-UKV-912 — Escape закрывает только панель и не доходит до слоя под ней', (): void => {
             const fixture: ComponentFixture<RtSelectComponent<string>> = setup();
             const reached: string[] = [];
             const listen: (event: KeyboardEvent) => void = (event: KeyboardEvent): void => {
@@ -216,7 +216,7 @@ describe('RtSelectComponent — строка списка, подпись на �
             expect(reached).toEqual([]);
         });
 
-        it('SC-UKV-866 — сброс сообщается хосту после того, как пустое значение ушло в форму', (): void => {
+        it('SC-UKV-907 — сброс сообщается хосту после того, как пустое значение ушло в форму', (): void => {
             const fixture: ComponentFixture<SelectClearedHostComponent> = createRtFixture(SelectClearedHostComponent);
 
             cross(fixture).click();

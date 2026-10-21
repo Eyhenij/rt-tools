@@ -76,7 +76,7 @@ function pressHeader(fixture: ComponentFixture<AdditionsHostComponent>, panel: s
 
 describe('RtExpansionPanelComponent — дополнения', (): void => {
     describe('действия заголовка', (): void => {
-        it('SC-UKV-886 — действие стоит вне кнопки заголовка, а шеврон — после действий', (): void => {
+        it('SC-UKV-927 — действие стоит вне кнопки заголовка, а шеврон — после действий', (): void => {
             const fixture: ComponentFixture<AdditionsHostComponent> = setup();
             const header: HTMLElement = within(fixture, 'with-actions', 'expansion-panel-header') as HTMLElement;
             const actions: HTMLElement = within(fixture, 'with-actions', 'expansion-panel-actions') as HTMLElement;
@@ -88,7 +88,7 @@ describe('RtExpansionPanelComponent — дополнения', (): void => {
             expect(header.querySelector('.rt-expansion-panel__chevron')).toBeNull();
         });
 
-        it('SC-UKV-886 — нажатие на действие делает своё и не раскрывает панель', (): void => {
+        it('SC-UKV-927 — нажатие на действие делает своё и не раскрывает панель', (): void => {
             const fixture: ComponentFixture<AdditionsHostComponent> = setup();
 
             (qa(fixture, 'host-action')?.nativeElement as HTMLButtonElement).click();
@@ -98,7 +98,7 @@ describe('RtExpansionPanelComponent — дополнения', (): void => {
             expect(fixture.componentInstance.actionsOpen()).toBe(false);
         });
 
-        it('SC-UKV-886 — заголовок и шеврон раскрывают и сворачивают панель с действиями', (): void => {
+        it('SC-UKV-927 — заголовок и шеврон раскрывают и сворачивают панель с действиями', (): void => {
             const fixture: ComponentFixture<AdditionsHostComponent> = setup();
 
             pressHeader(fixture, 'with-actions');
@@ -119,7 +119,7 @@ describe('RtExpansionPanelComponent — дополнения', (): void => {
     });
 
     describe('группа', (): void => {
-        it('SC-UKV-887 — раскрытие панели сворачивает соседей, и вложенную в обёртку тоже', (): void => {
+        it('SC-UKV-928 — раскрытие панели сворачивает соседей, и вложенную в обёртку тоже', (): void => {
             const fixture: ComponentFixture<AdditionsHostComponent> = setup();
 
             pressHeader(fixture, 'group-b');
@@ -134,7 +134,7 @@ describe('RtExpansionPanelComponent — дополнения', (): void => {
             expect(fixture.componentInstance.c()).toBe(true);
         });
 
-        it('SC-UKV-887 — раскрытие владельцем своим значением тоже сворачивает соседей', (): void => {
+        it('SC-UKV-928 — раскрытие владельцем своим значением тоже сворачивает соседей', (): void => {
             const fixture: ComponentFixture<AdditionsHostComponent> = setup();
 
             pressHeader(fixture, 'group-a');
@@ -145,7 +145,7 @@ describe('RtExpansionPanelComponent — дополнения', (): void => {
             expect(fixture.componentInstance.c()).toBe(true);
         });
 
-        it('SC-UKV-887 — с multi панели раскрываются независимо', (): void => {
+        it('SC-UKV-928 — с multi панели раскрываются независимо', (): void => {
             const fixture: ComponentFixture<AdditionsHostComponent> = setup();
 
             fixture.componentInstance.multi.set(true);
@@ -157,7 +157,7 @@ describe('RtExpansionPanelComponent — дополнения', (): void => {
             expect(fixture.componentInstance.b()).toBe(true);
         });
 
-        it('SC-UKV-887 — панель в теле панели группы в группу не входит и родителя не сворачивает', (): void => {
+        it('SC-UKV-928 — панель в теле панели группы в группу не входит и родителя не сворачивает', (): void => {
             const fixture: ComponentFixture<AdditionsHostComponent> = setup();
 
             pressHeader(fixture, 'group-c');
@@ -167,7 +167,7 @@ describe('RtExpansionPanelComponent — дополнения', (): void => {
             expect(fixture.componentInstance.nested()).toBe(true);
         });
 
-        it('SC-UKV-886 — действия вложенной панели не достаются родителю', (): void => {
+        it('SC-UKV-927 — действия вложенной панели не достаются родителю', (): void => {
             const fixture: ComponentFixture<AdditionsHostComponent> = setup();
 
             pressHeader(fixture, 'group-c');
@@ -178,7 +178,7 @@ describe('RtExpansionPanelComponent — дополнения', (): void => {
     });
 
     describe('сохранение тела', (): void => {
-        it('SC-UKV-888 — до первого раскрытия тела нет, после сворачивания оно остаётся с набранным текстом', (): void => {
+        it('SC-UKV-929 — до первого раскрытия тела нет, после сворачивания оно остаётся с набранным текстом', (): void => {
             const fixture: ComponentFixture<AdditionsHostComponent> = setup();
 
             expect(within(fixture, 'kept', 'expansion-panel-body')).toBeNull();
@@ -201,7 +201,7 @@ describe('RtExpansionPanelComponent — дополнения', (): void => {
             expect((qa(fixture, 'kept-input')?.nativeElement as HTMLInputElement).value).toBe('Москва');
         });
 
-        it('SC-UKV-888 — заголовок ссылается на сохранённое тело и в свёрнутой панели', (): void => {
+        it('SC-UKV-929 — заголовок ссылается на сохранённое тело и в свёрнутой панели', (): void => {
             const fixture: ComponentFixture<AdditionsHostComponent> = setup();
 
             pressHeader(fixture, 'kept');

@@ -5,7 +5,8 @@ import { provideRouter } from '@angular/router';
 import { WINDOW } from '@rt-tools/core';
 
 import { classesOf, createRtFixture, qa, qaAll, textOf } from '../../../../testing/rt-kit-testing';
-import { RT_DYNAMIC_SELECTOR_SEARCH_DEBOUNCE, RtDynamicSelectorPopupComponent } from './rt-dynamic-selector-popup.component';
+import { RT_DYNAMIC_SELECTOR_SEARCH_DEBOUNCE } from './rt-dynamic-selector-popup.component';
+import { TestDynamicSelectorPopupFrameComponent } from '../stories/component/test-dynamic-selector-popup-frame.component';
 
 interface IPerson {
     readonly id: number;
@@ -18,7 +19,7 @@ const PEOPLE: IPerson[] = [
     { id: 3, name: 'Vera' },
 ];
 
-type TPopupFixture = ComponentFixture<RtDynamicSelectorPopupComponent<IPerson>>;
+type TPopupFixture = ComponentFixture<TestDynamicSelectorPopupFrameComponent<IPerson>>;
 
 /**
  * Двойник наблюдателя пересечений: в среде без браузера его нет, а догрузка держится на нём.
@@ -45,8 +46,8 @@ class ObserverDouble {
 }
 
 function setup(inputs: Readonly<Record<string, unknown>> = {}, providers: Provider[] = []): TPopupFixture {
-    return createRtFixture<RtDynamicSelectorPopupComponent<IPerson>>(
-        RtDynamicSelectorPopupComponent,
+    return createRtFixture<TestDynamicSelectorPopupFrameComponent<IPerson>>(
+        TestDynamicSelectorPopupFrameComponent,
         { entities: PEOPLE, keyExp: 'id', displayExp: 'name', ...inputs },
         { providers: [provideRouter([]), ...providers] }
     );
@@ -201,5 +202,58 @@ describe('RtDynamicSelectorPopupComponent', (): void => {
     it('ссылка внизу появляется, когда названы и заголовок, и адрес', (): void => {
         expect(qa(setup({ navigateTitle: 'All people' }), 'dynamic-selector-nav')).toBeNull();
         expect(textOf(qa(setup({ navigateTitle: 'All people', navigateLink: '/people' }), 'dynamic-selector-nav'))).toBe('All people');
+    });
+
+    describe('клавиши строк', (): void => {
+        function controls(fixture: TPopupFixture): HTMLElement[] {
+            return Array.from((fixture.nativeElement as HTMLElement).querySelectorAll<HTMLElement>('[role="checkbox"], [role="radio"]'));
+        }
+
+        function searchField(fixture: TPopupFixture): HTMLInputElement {
+            return (qa(fixture, 'dynamic-selector-search')?.nativeElement as HTMLElement).querySelector('input') as HTMLInputElement;
+        }
+
+        function pressOn(fixture: TPopupFixture, target: HTMLElement, key: string): KeyboardEvent {
+            const event: KeyboardEvent = new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true });
+            target.dispatchEvent(event);
+            fixture.detectChanges();
+            return event;
+        }
+
+        it('SC-UKV-901 — the arrows move the focus between the rows of the dynamic selector popup', (): void => {
+            const fixture: TPopupFixture = setup({ selectAllShown: false });
+            const rows: HTMLElement[] = controls(fixture);
+
+            pressOn(fixture, searchField(fixture), 'ArrowDown');
+            expect(document.activeElement).toBe(rows[0]);
+            pressOn(fixture, rows[0], 'ArrowUp');
+            expect(document.activeElement).toBe(rows[2]);
+            pressOn(fixture, rows[2], 'End');
+            expect(document.activeElement).toBe(rows[2]);
+            pressOn(fixture, rows[2], 'Home');
+            expect(document.activeElement).toBe(rows[0]);
+        });
+
+        it('SC-UKV-901 — Home and End in the search field stay with the caret', (): void => {
+            const fixture: TPopupFixture = setup();
+            const field: HTMLInputElement = searchField(fixture);
+            field.focus();
+
+            expect(pressOn(fixture, field, 'Home').defaultPrevented).toBe(false);
+            expect(pressOn(fixture, field, 'End').defaultPrevented).toBe(false);
+            expect(document.activeElement).toBe(field);
+        });
+
+        it('SC-UKV-902 — Enter ticks the focused row of the dynamic selector popup', (): void => {
+            const single: TPopupFixture = setup({ mode: 'single' });
+            const radios: HTMLElement[] = controls(single);
+            pressOn(single, searchField(single), 'ArrowDown');
+            pressOn(single, radios[0], 'ArrowDown');
+            pressOn(single, radios[1], 'Enter');
+
+            expect(radios[1].getAttribute('aria-checked')).toBe('true');
+            // Строка флажков — кнопка: Enter нажимает её сам браузер, как щелчок.
+            expect(controls(setup()).every((control: HTMLElement): boolean => control.tagName === 'BUTTON')).toBe(true);
+        });
     });
 });

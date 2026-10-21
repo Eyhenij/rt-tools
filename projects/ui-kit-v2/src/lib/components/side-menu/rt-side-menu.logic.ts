@@ -1,12 +1,14 @@
+import { rtSearchMatches, rtSearchWords } from '@rt-tools/ui-kit-v2/core';
+
 import { IRtSideMenu } from './rt-side-menu.model';
 
 /**
- * Отбор пунктов подменю по подстроке подписи.
+ * Отбор пунктов подменю по подписи — правилом поиска кита: каждое слово запроса в любом порядке.
  *
  * Отбор спускается внутрь папок на любую глубину: потребитель кладёт в папки то, что человек и ищет
  * по имени, и по одному верхнему уровню такой пункт не нашёлся бы.
  *
- * В выдаче стоят только строки, содержащие запрос. Папка остаётся путём к совпавшим детям, а её
+ * В выдаче стоят только строки, совпавшие с запросом. Папка остаётся путём к совпавшим детям, а её
  * состав отбирается тем же правилом: иначе одно совпадение по имени папки вытаскивало бы весь её
  * состав. Папка, совпавшая только по имени, остаётся одной строкой без детей.
  *
@@ -14,9 +16,7 @@ import { IRtSideMenu } from './rt-side-menu.model';
  * запрос вернул бы урезанное меню.
  */
 export function filterSideMenuItems(items: ReadonlyArray<IRtSideMenu.Item>, query: string): IRtSideMenu.Item[] {
-    const needle: string = query.trim().toLowerCase();
-
-    if (needle === '') {
+    if (rtSearchWords(query).length === 0) {
         return [...items];
     }
 
@@ -30,7 +30,7 @@ export function filterSideMenuItems(items: ReadonlyArray<IRtSideMenu.Item>, quer
             return kept;
         }
 
-        if (item.name?.toLowerCase().includes(needle)) {
+        if (rtSearchMatches(item.name ?? '', query)) {
             kept.push(isFolder ? { ...item, submenu: [] } : item);
         }
 
@@ -65,58 +65,6 @@ export const RT_SIDE_MENU_WIDTH_STEP: number = 16;
 /** Приведение ширины к пределам. */
 export function clampSideMenuWidth(width: number): number {
     return Math.min(RT_SIDE_MENU_WIDTH_MAX, Math.max(RT_SIDE_MENU_WIDTH_MIN, width));
-}
-
-/**
- * Резка подписи на совпавшие и несовпавшие куски.
- *
- * Отмечаются все вхождения: отмеченное одно первое читается как «второго нет». Сравнение без учёта
- * регистра, а куски режутся из оригинала — приведение к нижнему регистру переписало бы названия.
- */
-export function splitSideMenuTitle(name: string, query: string): IRtSideMenu.TitlePart[] {
-    if (name === '') {
-        return [];
-    }
-
-    const needle: string = query.trim().toLowerCase();
-
-    if (needle === '') {
-        return [{ text: name, matched: false }];
-    }
-
-    const haystack: string = name.toLowerCase();
-    const parts: IRtSideMenu.TitlePart[] = [];
-    let from: number = 0;
-
-    for (let at: number = haystack.indexOf(needle, from); at !== -1; at = haystack.indexOf(needle, from)) {
-        if (at > from) {
-            parts.push({ text: name.slice(from, at), matched: false });
-        }
-
-        parts.push({ text: name.slice(at, at + needle.length), matched: true });
-        from = at + needle.length;
-    }
-
-    if (from < name.length) {
-        parts.push({ text: name.slice(from), matched: false });
-    }
-
-    return parts;
-}
-
-/**
- * Резка подписи по каждому слову запроса. Приложение делит поиск по пробелам и ищет каждое слово
- * отдельно, поэтому и отмечено каждое. Слово внутри уже отмеченного куска не режет его второй раз.
- */
-export function splitTitleByWords(name: string, query: string): IRtSideMenu.TitlePart[] {
-    const words: string[] = query.split(/\s+/).filter((word: string): boolean => word !== '');
-    return words.reduce(
-        (parts: IRtSideMenu.TitlePart[], word: string): IRtSideMenu.TitlePart[] =>
-            parts.flatMap((part: IRtSideMenu.TitlePart): IRtSideMenu.TitlePart[] =>
-                part.matched ? [part] : splitSideMenuTitle(part.text, word)
-            ),
-        splitSideMenuTitle(name, '')
-    );
 }
 
 /**

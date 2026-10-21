@@ -5,24 +5,7 @@
         <div rtElem="content">
             <!-- Под приглашением пустой список не рисуется: узел нулевой высоты сдвигал бы приглашение зазором. -->
             @if (rows().length > 0 || !invitation()) {
-                <rt-dynamic-selector-list
-                    [rows]="rows()"
-                    [draggable]="draggable()"
-                    [buttonRadius]="buttonRadius()"
-                    [clearIcon]="clearIcon()"
-                    [titleWrap]="titleWrap()"
-                    [disabled]="isDisabled()"
-                    [actionsShown]="!invitation()"
-                    [resetClearShown]="listActionsShown()"
-                    [removeShown]="removeShown()"
-                    [resetDisabled]="isResetDisabled()"
-                    [clearDisabled]="isClearDisabled()"
-                    [titleTpl]="titleTpl()"
-                    [controlsTpl]="controlsTpl()"
-                    (removed)="onRemoved($event)"
-                    (moved)="onMoved($event)"
-                    (resetClicked)="onReset()"
-                    (cleared)="onCleared()">
+                <rt-dynamic-selector-list>
                     @if (isAddShown()) {
                         <button
                             rtButton
@@ -75,34 +58,6 @@
     }
 
     <ng-template #popupTpl>
-        <rt-dynamic-selector-popup
-            [entities]="offered()"
-            [keyExp]="keyExp()"
-            [displayExp]="displayExp()"
-            [displayWith]="displayWith()"
-            [mode]="mode()"
-            [multiToggleShown]="multiToggleShown()"
-            [selectAllShown]="selectAllShown()"
-            [localSearch]="localSearch()"
-            [lazyLoad]="lazyLoad()"
-            [loading]="loading()"
-            [fetching]="fetching()"
-            [pinnedKeys]="pinnedKeys()"
-            [navigateTitle]="navigateTitle()"
-            [navigateLink]="navigateLink()"
-            [searchTerm]="searchTerm()"
-            [searchAppearance]="searchAppearance()"
-            [searchRadius]="searchRadius()"
-            [emptyResultsText]="emptyResultsText()"
-            [titleWrap]="titleWrap()"
-            [highlightSearch]="highlightSearch()"
-            [applyLabel]="applyLabel()"
-            [applyLabelCase]="applyLabelCase()"
-            [autofocusSearch]="autofocusSearch()"
-            (applied)="onApplied($event)"
-            (cancelled)="onCancelled()"
-            (searchChange)="searchChange.emit($event)"
-            (loadMore)="loadMore.emit()"
-            (temporaryChoiceChange)="temporaryChoiceChange.emit($event)" />
+        <rt-dynamic-selector-popup />
     </ng-template>
 </ng-container>

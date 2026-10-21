@@ -46,7 +46,7 @@ function items(fixture: ComponentFixture<VerticalHostComponent>, stepper: string
 }
 
 describe('RtStepperComponent — вертикальный список', (): void => {
-    it('SC-UKV-902 — все шаги стоят нумерованным списком с меткой и подписью', (): void => {
+    it('SC-UKV-943 — все шаги стоят нумерованным списком с меткой и подписью', (): void => {
         const fixture: ComponentFixture<VerticalHostComponent> = setup();
         const list: HTMLElement = (qa(fixture, 'plain')?.nativeElement as HTMLElement).querySelector(
             '[qa-dataid="stepper-list"]'
@@ -60,7 +60,7 @@ describe('RtStepperComponent — вертикальный список', (): voi
         expect(qa(fixture, 'plain')?.nativeElement.querySelector('[role="progressbar"]')).toBeNull();
     });
 
-    it('SC-UKV-902 — пройденные, текущий и будущие шаги различаются, текущий объявлен', (): void => {
+    it('SC-UKV-943 — пройденные, текущий и будущие шаги различаются, текущий объявлен', (): void => {
         const fixture: ComponentFixture<VerticalHostComponent> = setup();
         const states: string[] = items(fixture, 'plain').map(
             (item: HTMLElement): string =>
@@ -77,7 +77,7 @@ describe('RtStepperComponent — вертикальный список', (): voi
         expect(items(fixture, 'plain')[0].hasAttribute('aria-current')).toBe(false);
     });
 
-    it('SC-UKV-902 — пояснение рисуется только у шага, у которого оно есть', (): void => {
+    it('SC-UKV-943 — пояснение рисуется только у шага, у которого оно есть', (): void => {
         const fixture: ComponentFixture<VerticalHostComponent> = setup();
         const descriptions: HTMLElement[] = items(fixture, 'plain').flatMap((item: HTMLElement): HTMLElement[] => [
             ...item.querySelectorAll<HTMLElement>('[qa-dataid="stepper-step-description"]'),
@@ -86,7 +86,7 @@ describe('RtStepperComponent — вертикальный список', (): voi
         expect(descriptions.map((node: HTMLElement): string => textOf(node))).toEqual(['Оно приходит за минуту']);
     });
 
-    it('SC-UKV-903 — подпись рисует шаблон с шагом и номером', (): void => {
+    it('SC-UKV-944 — подпись рисует шаблон с шагом и номером', (): void => {
         const fixture: ComponentFixture<VerticalHostComponent> = setup();
         const labels: string[] = items(fixture, 'templated').map((item: HTMLElement): string =>
             textOf(item.querySelector('[qa-dataid="stepper-step-label"]'))
@@ -97,7 +97,7 @@ describe('RtStepperComponent — вертикальный список', (): voi
         expect(qa(fixture, 'login')?.nativeElement.tagName).toBe('STRONG');
     });
 
-    it('SC-UKV-904 — без текущего шага все метки нейтральные, текущим ничего не объявлено, фокуса нет', (): void => {
+    it('SC-UKV-945 — без текущего шага все метки нейтральные, текущим ничего не объявлено, фокуса нет', (): void => {
         const fixture: ComponentFixture<VerticalHostComponent> = setup();
         const list: HTMLElement[] = items(fixture, 'templated');
 
@@ -107,7 +107,7 @@ describe('RtStepperComponent — вертикальный список', (): voi
         expect((qa(fixture, 'templated')?.nativeElement as HTMLElement).querySelectorAll('[tabindex], button, a').length).toBe(0);
     });
 
-    it('SC-UKV-904 — смена номера текущего перекрашивает шаги на месте', (): void => {
+    it('SC-UKV-945 — смена номера текущего перекрашивает шаги на месте', (): void => {
         const fixture: ComponentFixture<VerticalHostComponent> = setup();
 
         fixture.componentInstance.current.set(-1);

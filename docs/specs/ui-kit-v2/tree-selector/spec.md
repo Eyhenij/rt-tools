@@ -185,8 +185,8 @@ Not applicable.
 - **The selector stands on `rt-tree`, not on the application's tree.** The application's tree changed
   the nodes in place and kept the expansion in classes; `rt-tree` already does the marks, the keys
   and the search marks the application relies on.
-- **The search is done by the selector, by every word.** The tree filters by the whole term as one
-  substring; the application's panels keep a node only when every typed word is in it.
+- **The search is done by the selector, over the label, the description and the badges.** The tree
+  looks at the label alone; the application's panels find a node by any of the three.
 - **«Apply» off when nothing changed is a rule here.** The application computed that flag and bound it
   nowhere, so its «Apply» sent an unchanged choice.
 

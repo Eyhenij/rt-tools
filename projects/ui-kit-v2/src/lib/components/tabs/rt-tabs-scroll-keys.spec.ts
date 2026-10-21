@@ -97,8 +97,8 @@ function ruleBody(css: string, selector: string): string {
 }
 
 describe('RtTabsComponent — клавиатура и стрелки прокрутки', (): void => {
-    describe('SC-UKV-942 — ручной выбор с клавиатуры', (): void => {
-        it('SC-UKV-942 — в ручном режиме стрелки и Home/End переводят фокус, не открывая вкладку', (): void => {
+    describe('SC-UKV-983 — ручной выбор с клавиатуры', (): void => {
+        it('SC-UKV-983 — в ручном режиме стрелки и Home/End переводят фокус, не открывая вкладку', (): void => {
             const fixture: THostFixture = setup('manual');
 
             press(fixture, tabs(fixture)[0], 'ArrowRight');
@@ -120,7 +120,7 @@ describe('RtTabsComponent — клавиатура и стрелки прокр�
             expect(panelText(fixture)).toBe('Первая панель');
         });
 
-        it('SC-UKV-942 — Enter или Space на вкладке в фокусе открывают её', (): void => {
+        it('SC-UKV-983 — Enter или Space на вкладке в фокусе открывают её', (): void => {
             const fixture: THostFixture = setup('manual');
 
             press(fixture, tabs(fixture)[0], 'ArrowRight');
@@ -135,7 +135,7 @@ describe('RtTabsComponent — клавиатура и стрелки прокр�
             expect(tabindexes(fixture)).toEqual(['-1', '-1', '-1', '0', '-1', '-1', '-1', '-1']);
         });
 
-        it('SC-UKV-942 — по умолчанию стрелка открывает вкладку сразу, как прежде', (): void => {
+        it('SC-UKV-983 — по умолчанию стрелка открывает вкладку сразу, как прежде', (): void => {
             const fixture: THostFixture = setup();
 
             press(fixture, tabs(fixture)[0], 'ArrowRight');
@@ -146,12 +146,12 @@ describe('RtTabsComponent — клавиатура и стрелки прокр�
         });
     });
 
-    describe('SC-UKV-943 — нажатие на стрелку прокрутки', (): void => {
+    describe('SC-UKV-984 — нажатие на стрелку прокрутки', (): void => {
         afterEach((): void => {
             jest.useRealTimers();
         });
 
-        it('SC-UKV-943 — короткое нажатие сдвигает полосу на ширину видимой области, не дальше края', (): void => {
+        it('SC-UKV-984 — короткое нажатие сдвигает полосу на ширину видимой области, не дальше края', (): void => {
             jest.useFakeTimers();
             const fixture: THostFixture = setup();
             const list: HTMLElement = overflow(fixture, 1000, 400);
@@ -172,7 +172,7 @@ describe('RtTabsComponent — клавиатура и стрелки прокр�
             expect(classesOf(arrow(fixture, 'tabs-scroll-next'))).not.toContain('rt-tabs__rest--visible');
         });
 
-        it('SC-UKV-943 — удержание прокручивает непрерывно, а отпускание после него не добавляет шага', (): void => {
+        it('SC-UKV-984 — удержание прокручивает непрерывно, а отпускание после него не добавляет шага', (): void => {
             jest.useFakeTimers();
             const fixture: THostFixture = setup();
             const list: HTMLElement = overflow(fixture, 1000, 400);
@@ -186,7 +186,7 @@ describe('RtTabsComponent — клавиатура и стрелки прокр�
             expect(list.scrollLeft).toBe(60);
         });
 
-        it('SC-UKV-943 — указатель ушёл со стрелки до отпускания: полоса не сдвигается', (): void => {
+        it('SC-UKV-984 — указатель ушёл со стрелки до отпускания: полоса не сдвигается', (): void => {
             jest.useFakeTimers();
             const fixture: THostFixture = setup();
             const list: HTMLElement = overflow(fixture, 1000, 400);
@@ -201,8 +201,8 @@ describe('RtTabsComponent — клавиатура и стрелки прокр�
         });
     });
 
-    describe('SC-UKV-944 — стрелки в своих местах', (): void => {
-        it('SC-UKV-944 — при переполнении обе стрелки стоят, а та, куда прокручивать некуда, неактивна', (): void => {
+    describe('SC-UKV-985 — стрелки в своих местах', (): void => {
+        it('SC-UKV-985 — при переполнении обе стрелки стоят, а та, куда прокручивать некуда, неактивна', (): void => {
             const fixture: THostFixture = setup('auto', 'inline');
             const wrapper: HTMLElement = arrow(fixture, 'tabs-scroll-next').parentElement as HTMLElement;
 
@@ -216,7 +216,7 @@ describe('RtTabsComponent — клавиатура и стрелки прокр�
             expect(classesOf(arrow(fixture, 'tabs-scroll-next'))).not.toContain('rt-tabs__rest--inactive');
         });
 
-        it('SC-UKV-944 — по умолчанию стрелки остаются поверх вкладок, как прежде', (): void => {
+        it('SC-UKV-985 — по умолчанию стрелки остаются поверх вкладок, как прежде', (): void => {
             const fixture: THostFixture = setup();
             overflow(fixture, 1000, 400);
 
@@ -225,7 +225,7 @@ describe('RtTabsComponent — клавиатура и стрелки прокр�
             );
         });
 
-        it('SC-UKV-944 — стили прячут обе стрелки без переполнения и гасят неактивную', (): void => {
+        it('SC-UKV-985 — стили прячут обе стрелки без переполнения и гасят неактивную', (): void => {
             const css: string = compiledStyles();
 
             expect(ruleBody(css, '.rt-tabs__tab-list-wrapper--inline .rt-tabs__rest {')).toContain('display: none');
@@ -236,7 +236,7 @@ describe('RtTabsComponent — клавиатура и стрелки прокр�
         });
     });
 
-    it('SC-UKV-945 — полоса выбранной вкладки не опирается на calc от толщины черты', (): void => {
+    it('SC-UKV-986 — полоса выбранной вкладки не опирается на calc от толщины черты', (): void => {
         // calc(-1 * 0) — число без единиц: bottom с ним недействителен, и при токене 0 полоса уезжала.
         const body: string = ruleBody(compiledStyles(), '.rt-tab-item:after {');
 

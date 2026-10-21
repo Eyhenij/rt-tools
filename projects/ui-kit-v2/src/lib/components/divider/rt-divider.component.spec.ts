@@ -13,7 +13,7 @@ function setup(inputs: Partial<{ vertical: boolean; inset: boolean }> = {}): HTM
 }
 
 describe('RtDividerComponent', (): void => {
-    it('SC-UKV-890 — по умолчанию горизонтальный разделитель без отступа', (): void => {
+    it('SC-UKV-931 — по умолчанию горизонтальный разделитель без отступа', (): void => {
         const host: HTMLElement = setup();
 
         expect(host.getAttribute('role')).toBe('separator');
@@ -23,14 +23,14 @@ describe('RtDividerComponent', (): void => {
         expect(host.classList).not.toContain('rt-divider--inset');
     });
 
-    it('SC-UKV-890 — vertical ставит линию вертикально и объявляет это', (): void => {
+    it('SC-UKV-931 — vertical ставит линию вертикально и объявляет это', (): void => {
         const host: HTMLElement = setup({ vertical: true });
 
         expect(host.getAttribute('aria-orientation')).toBe('vertical');
         expect(host.classList).toContain('rt-divider--vertical');
     });
 
-    it('SC-UKV-890 — inset даёт отступ', (): void => {
+    it('SC-UKV-931 — inset даёт отступ', (): void => {
         expect(setup({ inset: true }).classList).toContain('rt-divider--inset');
     });
 });

@@ -63,8 +63,8 @@ describe('RtTabsComponent — закрытие, подсказки, glyph, то�
         jest.useRealTimers();
     });
 
-    describe('SC-UKV-881 — закрываемая вкладка', (): void => {
-        it('SC-UKV-881 — крестик просит закрыть вкладку и не выбирает её', (): void => {
+    describe('SC-UKV-922 — закрываемая вкладка', (): void => {
+        it('SC-UKV-922 — крестик просит закрыть вкладку и не выбирает её', (): void => {
             const fixture: ComponentFixture<TabsAdditionsHostComponent> = setup();
             const closes: DebugElement[] = qaAll(fixture, 'tabs-tab-close');
 
@@ -78,7 +78,7 @@ describe('RtTabsComponent — закрытие, подсказки, glyph, то�
             expect(tab(fixture, 'b')).toBeNull();
         });
 
-        it('SC-UKV-881 — крестик не кнопка внутри кнопки и спрятан от чтения с экрана', (): void => {
+        it('SC-UKV-922 — крестик не кнопка внутри кнопки и спрятан от чтения с экрана', (): void => {
             const close: HTMLElement = qaAll(setup(), 'tabs-tab-close')[0].nativeElement as HTMLElement;
 
             expect(close.tagName).toBe('SPAN');
@@ -86,7 +86,7 @@ describe('RtTabsComponent — закрытие, подсказки, glyph, то�
             expect(close.closest('button')?.getAttribute('aria-keyshortcuts')).toBe('Delete');
         });
 
-        it('SC-UKV-881 — Delete на активной вкладке закрывает её, выбор уходит на первую доступную', (): void => {
+        it('SC-UKV-922 — Delete на активной вкладке закрывает её, выбор уходит на первую доступную', (): void => {
             const fixture: ComponentFixture<TabsAdditionsHostComponent> = setup();
             tab(fixture, 'a').dispatchEvent(new KeyboardEvent('keydown', { key: 'Delete', bubbles: true }));
             fixture.detectChanges();
@@ -95,7 +95,7 @@ describe('RtTabsComponent — закрытие, подсказки, glyph, то�
             expect(tab(fixture, 'b').getAttribute('aria-selected')).toBe('true');
         });
 
-        it('SC-UKV-881 — закрытие активной вкладки сообщает владельцу новую активную', async (): Promise<void> => {
+        it('SC-UKV-922 — закрытие активной вкладки сообщает владельцу новую активную', async (): Promise<void> => {
             const fixture: ComponentFixture<TabsAdditionsHostComponent> = setup();
             tab(fixture, 'b').click();
             fixture.detectChanges();
@@ -109,7 +109,7 @@ describe('RtTabsComponent — закрытие, подсказки, glyph, то�
             expect(fixture.componentInstance.activeId()).toBe('a');
         });
 
-        it('SC-UKV-881 — закрытие неактивной вкладки выбор не трогает', async (): Promise<void> => {
+        it('SC-UKV-922 — закрытие неактивной вкладки выбор не трогает', async (): Promise<void> => {
             const fixture: ComponentFixture<TabsAdditionsHostComponent> = setup();
             tab(fixture, 'a').click();
             fixture.detectChanges();
@@ -121,7 +121,7 @@ describe('RtTabsComponent — закрытие, подсказки, glyph, то�
             expect(fixture.componentInstance.activeId()).toBe('a');
         });
 
-        it('SC-UKV-881 — у отключённой вкладки крестика нет, и Delete её не закрывает', (): void => {
+        it('SC-UKV-922 — у отключённой вкладки крестика нет, и Delete её не закрывает', (): void => {
             const fixture: ComponentFixture<TabsAdditionsHostComponent> = setup();
             const locked: HTMLButtonElement = tab(fixture, 'locked');
 
@@ -133,7 +133,7 @@ describe('RtTabsComponent — закрытие, подсказки, glyph, то�
             expect(fixture.componentInstance.closed).toEqual([]);
         });
 
-        it('SC-UKV-881 — вкладка без closable не закрывается по Delete', (): void => {
+        it('SC-UKV-922 — вкладка без closable не закрывается по Delete', (): void => {
             const fixture: ComponentFixture<TabsAdditionsHostComponent> = setup();
             const iconOnly: HTMLButtonElement = tab(fixture, 'icon-only');
 
@@ -146,37 +146,37 @@ describe('RtTabsComponent — закрытие, подсказки, glyph, то�
         });
     });
 
-    describe('SC-UKV-882 — подсказка вкладки', (): void => {
+    describe('SC-UKV-923 — подсказка вкладки', (): void => {
         beforeEach((): void => {
             jest.useFakeTimers();
         });
 
-        it('SC-UKV-882 — подсказка показывается при наведении на вкладку', (): void => {
+        it('SC-UKV-923 — подсказка показывается при наведении на вкладку', (): void => {
             const fixture: ComponentFixture<TabsAdditionsHostComponent> = setup();
 
             expect(hoverTooltip(fixture, tab(fixture, 'icon-only'))).toBe('Питомцы');
         });
 
-        it('SC-UKV-882 — у вкладки из одного значка подсказка становится её именем', (): void => {
+        it('SC-UKV-923 — у вкладки из одного значка подсказка становится её именем', (): void => {
             const fixture: ComponentFixture<TabsAdditionsHostComponent> = setup();
 
             expect(tab(fixture, 'icon-only').getAttribute('aria-label')).toBe('Питомцы');
             expect(tab(fixture, 'locked').getAttribute('aria-label')).toBeNull();
         });
 
-        it('SC-UKV-882 — у неверной вкладки подсказка объясняет ошибку', (): void => {
+        it('SC-UKV-923 — у неверной вкладки подсказка объясняет ошибку', (): void => {
             const fixture: ComponentFixture<TabsAdditionsHostComponent> = setup();
 
             expect(hoverTooltip(fixture, tab(fixture, 'bad'))).toBe('Не заполнено имя');
         });
     });
 
-    describe('SC-UKV-883 — подсказка отключённой вкладки', (): void => {
+    describe('SC-UKV-924 — подсказка отключённой вкладки', (): void => {
         beforeEach((): void => {
             jest.useFakeTimers();
         });
 
-        it('SC-UKV-883 — отключённая вкладка принимает наведение и показывает, почему недоступна', (): void => {
+        it('SC-UKV-924 — отключённая вкладка принимает наведение и показывает, почему недоступна', (): void => {
             const fixture: ComponentFixture<TabsAdditionsHostComponent> = setup();
             const locked: HTMLButtonElement = tab(fixture, 'locked');
 
@@ -185,7 +185,7 @@ describe('RtTabsComponent — закрытие, подсказки, glyph, то�
             expect(hoverTooltip(fixture, locked)).toBe('Нет прав на отчёт');
         });
 
-        it('SC-UKV-883 — клик по отключённой вкладке её не выбирает', (): void => {
+        it('SC-UKV-924 — клик по отключённой вкладке её не выбирает', (): void => {
             const fixture: ComponentFixture<TabsAdditionsHostComponent> = setup();
 
             tab(fixture, 'locked').click();
@@ -196,14 +196,14 @@ describe('RtTabsComponent — закрытие, подсказки, glyph, то�
         });
     });
 
-    it('SC-UKV-884 — glyph рисует значок Material в заголовке', (): void => {
+    it('SC-UKV-925 — glyph рисует значок Material в заголовке', (): void => {
         const fixture: ComponentFixture<TabsAdditionsHostComponent> = setup();
 
         expect(tab(fixture, 'icon-only').querySelector('.rt-icon__glyph')?.textContent?.trim()).toBe('pets');
     });
 
-    describe('SC-UKV-885 — только полоса', (): void => {
-        it('SC-UKV-885 — без панели и без ссылок на неё, выбор по-прежнему сообщается', (): void => {
+    describe('SC-UKV-926 — только полоса', (): void => {
+        it('SC-UKV-926 — без панели и без ссылок на неё, выбор по-прежнему сообщается', (): void => {
             const fixture: ComponentFixture<TabsAdditionsHostComponent> = createRtFixture(
                 TabsAdditionsHostComponent,
                 {},
@@ -223,7 +223,7 @@ describe('RtTabsComponent — закрытие, подсказки, glyph, то�
             expect(tab(fixture, 'b').getAttribute('aria-selected')).toBe('true');
         });
 
-        it('SC-UKV-885 — без режима панель на месте и связана с вкладкой', (): void => {
+        it('SC-UKV-926 — без режима панель на месте и связана с вкладкой', (): void => {
             const fixture: ComponentFixture<TabsAdditionsHostComponent> = setup();
 
             expect(qa(fixture, 'tabs-panel')).not.toBeNull();

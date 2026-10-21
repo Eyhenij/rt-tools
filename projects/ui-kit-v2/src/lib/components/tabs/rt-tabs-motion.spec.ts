@@ -81,8 +81,8 @@ describe('RtTabsComponent — движение при смене вкладки'
         Object.defineProperty(window, 'matchMedia', { configurable: true, writable: true, value: ownMatchMedia });
     });
 
-    describe('SC-UKV-946 — панель прежней вкладки уходит, новая въезжает', (): void => {
-        it('SC-UKV-946 — к вкладке правее прежняя панель уходит влево, новая въезжает справа', (): void => {
+    describe('SC-UKV-987 — панель прежней вкладки уходит, новая въезжает', (): void => {
+        it('SC-UKV-987 — к вкладке правее прежняя панель уходит влево, новая въезжает справа', (): void => {
             const fixture: THostFixture = setup();
 
             pick(fixture, 'c');
@@ -96,7 +96,7 @@ describe('RtTabsComponent — движение при смене вкладки'
             expect(tabsHost(fixture).classList).toContain('rt-tabs--animating');
         });
 
-        it('SC-UKV-946 — к вкладке левее движение зеркальное', (): void => {
+        it('SC-UKV-987 — к вкладке левее движение зеркальное', (): void => {
             const fixture: THostFixture = setup();
             pick(fixture, 'c');
             endMotion(fixture, panels(fixture)[0]);
@@ -107,7 +107,7 @@ describe('RtTabsComponent — движение при смене вкладки'
             expect(classesOf(panels(fixture)[1])).toContain('rt-tabs__content--shift--backward');
         });
 
-        it('SC-UKV-946 — уходящая панель не читается и не берёт фокус, якорь панели один', (): void => {
+        it('SC-UKV-987 — уходящая панель не читается и не берёт фокус, якорь панели один', (): void => {
             const fixture: THostFixture = setup();
 
             pick(fixture, 'b');
@@ -120,7 +120,7 @@ describe('RtTabsComponent — движение при смене вкладки'
             expect(((qa(fixture, 'tabs-panel')?.nativeElement as HTMLElement).textContent ?? '').trim()).toBe('Вторая панель');
         });
 
-        it('SC-UKV-946 — конец движения убирает уходящую панель, а движение вложенного узла — нет', (): void => {
+        it('SC-UKV-987 — конец движения убирает уходящую панель, а движение вложенного узла — нет', (): void => {
             const fixture: THostFixture = setup();
             pick(fixture, 'b');
             const leaving: HTMLElement = panels(fixture)[0];
@@ -136,8 +136,8 @@ describe('RtTabsComponent — движение при смене вкладки'
         });
     });
 
-    describe('SC-UKV-947 — движение выключается', (): void => {
-        it('SC-UKV-947 — нулевая длительность меняет панель на месте', (): void => {
+    describe('SC-UKV-988 — движение выключается', (): void => {
+        it('SC-UKV-988 — нулевая длительность меняет панель на месте', (): void => {
             const fixture: THostFixture = setup(0);
 
             pick(fixture, 'b');
@@ -146,7 +146,7 @@ describe('RtTabsComponent — движение при смене вкладки'
             expect(panels(fixture)[0].textContent?.trim()).toBe('Вторая панель');
         });
 
-        it('SC-UKV-947 — prefers-reduced-motion меняет панель на месте', (): void => {
+        it('SC-UKV-988 — prefers-reduced-motion меняет панель на месте', (): void => {
             reduced = true;
             const fixture: THostFixture = setup();
 
@@ -155,7 +155,7 @@ describe('RtTabsComponent — движение при смене вкладки'
             expect(panels(fixture)).toHaveLength(1);
         });
 
-        it('SC-UKV-947 — стили снимают движение у того, кто просил обходиться без него', (): void => {
+        it('SC-UKV-988 — стили снимают движение у того, кто просил обходиться без него', (): void => {
             const css: string = compiledStyles();
             const media: string = css.slice(css.indexOf('@media (prefers-reduced-motion: reduce)'));
 
@@ -164,28 +164,28 @@ describe('RtTabsComponent — движение при смене вкладки'
         });
     });
 
-    describe('SC-UKV-948 — длительность задаётся входом', (): void => {
-        it('SC-UKV-948 — вход пишет длительность в свойства полосы и панели', (): void => {
+    describe('SC-UKV-989 — длительность задаётся входом', (): void => {
+        it('SC-UKV-989 — вход пишет длительность в свойства полосы и панели', (): void => {
             const fixture: THostFixture = setup('0.5s');
 
             expect(tabsHost(fixture).style.getPropertyValue('--rt-tabs-indicator-duration')).toBe('0.5s');
             expect(tabsHost(fixture).style.getPropertyValue('--rt-tabs-panel-duration')).toBe('0.5s');
         });
 
-        it('SC-UKV-948 — вход не трогает длительность прокрутки полосы: её держит токен', (): void => {
+        it('SC-UKV-989 — вход не трогает длительность прокрутки полосы: её держит токен', (): void => {
             const fixture: THostFixture = setup(0);
 
             expect(tabsHost(fixture).style.getPropertyValue('--rt-tabs-panel-duration')).toBe('0ms');
             expect(tabsHost(fixture).style.getPropertyValue('--rt-tabs-scroll-duration')).toBe('');
         });
 
-        it('SC-UKV-948 — без входа длительности остаются токенам', (): void => {
+        it('SC-UKV-989 — без входа длительности остаются токенам', (): void => {
             const fixture: THostFixture = setup(null);
 
             expect(tabsHost(fixture).style.getPropertyValue('--rt-tabs-panel-duration')).toBe('');
         });
 
-        it('SC-UKV-948 — число и строка из цифр — миллисекунды', (): void => {
+        it('SC-UKV-989 — число и строка из цифр — миллисекунды', (): void => {
             expect(rtTabsCssDuration(500)).toBe('500ms');
             expect(rtTabsCssDuration('250')).toBe('250ms');
             expect(rtTabsCssDuration('0.3s')).toBe('0.3s');
@@ -197,8 +197,8 @@ describe('RtTabsComponent — движение при смене вкладки'
         });
     });
 
-    describe('SC-UKV-949 — полоса выбранной вкладки — один элемент', (): void => {
-        it('SC-UKV-949 — после замера полосу рисует общий элемент, своя у вкладки гаснет', (): void => {
+    describe('SC-UKV-990 — полоса выбранной вкладки — один элемент', (): void => {
+        it('SC-UKV-990 — после замера полосу рисует общий элемент, своя у вкладки гаснет', (): void => {
             const fixture: THostFixture = setup();
 
             expect(classesOf(el(fixture, '.rt-tabs__ink'))).toContain('rt-tabs__ink--placed');
@@ -208,7 +208,7 @@ describe('RtTabsComponent — движение при смене вкладки'
             );
         });
 
-        it('SC-UKV-949 — полоса неверной выбранной вкладки красная', (): void => {
+        it('SC-UKV-990 — полоса неверной выбранной вкладки красная', (): void => {
             const fixture: THostFixture = setup();
             fixture.componentInstance.invalid.set(true);
 

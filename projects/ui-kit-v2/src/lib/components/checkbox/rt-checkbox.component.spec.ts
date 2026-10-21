@@ -220,12 +220,12 @@ describe('RtCheckboxComponent', (): void => {
     });
 
     describe('без формы', (): void => {
-        it('SC-UKV-867 — отметку ставит вход checked', (): void => {
+        it('SC-UKV-908 — отметку ставит вход checked', (): void => {
             expect(control(setup({ checked: true }))?.attributes['aria-checked']).toBe('true');
             expect(control(setup({ checked: false }))?.attributes['aria-checked']).toBe('false');
         });
 
-        it('SC-UKV-867 — нажатие сообщает новую отметку выходом checkedChange', (): void => {
+        it('SC-UKV-908 — нажатие сообщает новую отметку выходом checkedChange', (): void => {
             const fixture: ComponentFixture<RtCheckboxComponent> = setup({ checked: false });
             const seen: boolean[] = [];
             fixture.componentInstance.checkedChange.subscribe((value: boolean): number => seen.push(value));

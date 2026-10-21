@@ -62,7 +62,7 @@ describe('RtContainerComponent — правая панель', (): void => {
     });
 
     describe('рядом с содержимым', (): void => {
-        it('SC-UKV-895 — панель стоит колонкой в сетке, оверлея нет, панель готова к открытию', (): void => {
+        it('SC-UKV-936 — панель стоит колонкой в сетке, оверлея нет, панель готова к открытию', (): void => {
             const fixture: ComponentFixture<RightPanelHostComponent> = setup();
             const host: HTMLElement = el(fixture, 'rt-container')?.nativeElement as HTMLElement;
 
@@ -74,7 +74,7 @@ describe('RtContainerComponent — правая панель', (): void => {
             expect(containerOf(fixture).rightOverlayReady()).toBe(true);
         });
 
-        it('SC-UKV-895 — открытие и закрытие ставят колонку и сообщают о себе', (): void => {
+        it('SC-UKV-936 — открытие и закрытие ставят колонку и сообщают о себе', (): void => {
             const fixture: ComponentFixture<RightPanelHostComponent> = setup();
 
             expect(cell(fixture)?.hasAttribute('inert')).toBe(true);
@@ -93,7 +93,7 @@ describe('RtContainerComponent — правая панель', (): void => {
             expect(fixture.componentInstance.events).toEqual(['opened', 'closed']);
         });
 
-        it('SC-UKV-895 — открытая панель при смене места на «поверх» остаётся открытой', (): void => {
+        it('SC-UKV-936 — открытая панель при смене места на «поверх» остаётся открытой', (): void => {
             const fixture: ComponentFixture<RightPanelHostComponent> = setup();
             containerOf(fixture).openRight();
             fixture.detectChanges();
@@ -110,7 +110,7 @@ describe('RtContainerComponent — правая панель', (): void => {
     });
 
     describe('поверх страницы', (): void => {
-        it('SC-UKV-896 — без подложки оверлей создаётся без неё', (): void => {
+        it('SC-UKV-937 — без подложки оверлей создаётся без неё', (): void => {
             const fixture: ComponentFixture<RightPanelHostComponent> = setup((it: RightPanelHostComponent): void => {
                 it.mode.set('over');
                 it.backdrop.set(false);
@@ -131,7 +131,7 @@ describe('RtContainerComponent — правая панель', (): void => {
     });
 
     describe('ширина', (): void => {
-        it('SC-UKV-897 — ручка у левого края пишет ширину владельцу в пределах', (): void => {
+        it('SC-UKV-938 — ручка у левого края пишет ширину владельцу в пределах', (): void => {
             const fixture: ComponentFixture<RightPanelHostComponent> = setup((it: RightPanelHostComponent): void => it.resizable.set(true));
             const handle: HTMLElement = qa(fixture, 'resize-handle')?.nativeElement as HTMLElement;
 

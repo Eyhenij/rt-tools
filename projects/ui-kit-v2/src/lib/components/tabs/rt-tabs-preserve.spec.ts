@@ -71,8 +71,8 @@ describe('RtTabsComponent — тела посещённых вкладок', ():
         Object.defineProperty(window, 'matchMedia', { configurable: true, writable: true, value: ownMatchMedia });
     });
 
-    describe('SC-UKV-950 — тело посещённой вкладки живёт после ухода с неё', (): void => {
-        it('SC-UKV-950 — введённое на вкладке остаётся, когда на неё вернулись', (): void => {
+    describe('SC-UKV-991 — тело посещённой вкладки живёт после ухода с неё', (): void => {
+        it('SC-UKV-991 — введённое на вкладке остаётся, когда на неё вернулись', (): void => {
             const fixture: THostFixture = setup(true);
             const typed: HTMLInputElement | undefined = field(fixture, 'field-a');
             (typed as HTMLInputElement).value = 'введено';
@@ -84,7 +84,7 @@ describe('RtTabsComponent — тела посещённых вкладок', ():
             expect(field(fixture, 'field-a')?.value).toBe('введено');
         });
 
-        it('SC-UKV-950 — неактивное тело скрыто, не читается и вне таб-порядка; панель с якорем одна', (): void => {
+        it('SC-UKV-991 — неактивное тело скрыто, не читается и вне таб-порядка; панель с якорем одна', (): void => {
             const fixture: THostFixture = setup(true);
 
             pick(fixture, 'b');
@@ -100,7 +100,7 @@ describe('RtTabsComponent — тела посещённых вкладок', ():
             expect(panelOf(field(fixture, 'field-b'))?.getAttribute('qa-dataid')).toBe('tabs-panel');
         });
 
-        it('SC-UKV-950 — вкладка, которую не открывали, не создаётся', (): void => {
+        it('SC-UKV-991 — вкладка, которую не открывали, не создаётся', (): void => {
             const fixture: THostFixture = setup(true);
 
             pick(fixture, 'b');
@@ -111,7 +111,7 @@ describe('RtTabsComponent — тела посещённых вкладок', ():
             expect(panels(fixture)).toHaveLength(2);
         });
 
-        it('SC-UKV-950 — без входа тело ушедшей вкладки уничтожается, как прежде', (): void => {
+        it('SC-UKV-991 — без входа тело ушедшей вкладки уничтожается, как прежде', (): void => {
             const fixture: THostFixture = setup(false);
             const typed: HTMLInputElement | undefined = field(fixture, 'field-a');
 
@@ -123,15 +123,15 @@ describe('RtTabsComponent — тела посещённых вкладок', ():
             expect(panels(fixture)).toHaveLength(1);
         });
 
-        it('SC-UKV-950 — скрытое тело не рисуется: своё display панели сильнее правила браузера', (): void => {
+        it('SC-UKV-991 — скрытое тело не рисуется: своё display панели сильнее правила браузера', (): void => {
             const css: string = sass.compile(join(__dirname, 'rt-tabs.component.scss')).css.replace(/\s+/g, ' ');
 
             expect(css).toContain('.rt-tabs__content--idle { display: none');
         });
     });
 
-    describe('SC-UKV-951 — при сохранении тел уходит живая панель', (): void => {
-        it('SC-UKV-951 — уходит то же тело, а после конца движения оно остаётся скрытым', (): void => {
+    describe('SC-UKV-992 — при сохранении тел уходит живая панель', (): void => {
+        it('SC-UKV-992 — уходит то же тело, а после конца движения оно остаётся скрытым', (): void => {
             const fixture: THostFixture = setup(true, 500);
             const typed: HTMLInputElement | undefined = field(fixture, 'field-a');
 

@@ -46,7 +46,7 @@ function press(fixture: ComponentFixture<RtResizeHandleComponent>, key: string):
 }
 
 describe('RtResizeHandleComponent', (): void => {
-    it('SC-UKV-897 — ручка объявлена разделителем с текущей шириной и пределами', (): void => {
+    it('SC-UKV-938 — ручка объявлена разделителем с текущей шириной и пределами', (): void => {
         const { fixture } = setup();
 
         expect(host(fixture).getAttribute('role')).toBe('separator');
@@ -57,7 +57,7 @@ describe('RtResizeHandleComponent', (): void => {
         expect(host(fixture).getAttribute('aria-valuemax')).toBe('400');
     });
 
-    it('SC-UKV-897 — ручка у правого края панели: движение вправо расширяет, предел держит', (): void => {
+    it('SC-UKV-938 — ручка у правого края панели: движение вправо расширяет, предел держит', (): void => {
         const { fixture, reported } = setup({ edge: 'end' });
 
         host(fixture).dispatchEvent(pointer('pointerdown', 100));
@@ -69,7 +69,7 @@ describe('RtResizeHandleComponent', (): void => {
         expect(reported).toEqual([350, 400]);
     });
 
-    it('SC-UKV-897 — ручка у левого края панели: движение влево расширяет', (): void => {
+    it('SC-UKV-938 — ручка у левого края панели: движение влево расширяет', (): void => {
         const { fixture, reported } = setup({ edge: 'start' });
 
         host(fixture).dispatchEvent(pointer('pointerdown', 500));
@@ -86,7 +86,7 @@ describe('RtResizeHandleComponent', (): void => {
         ['start', 'ArrowRight', 284],
         ['end', 'Home', 200],
         ['end', 'End', 400],
-    ])('SC-UKV-897 — край %s, клавиша %s: ширина %d', (edge: IRtDrawer.Edge, key: string, expected: number): void => {
+    ])('SC-UKV-938 — край %s, клавиша %s: ширина %d', (edge: IRtDrawer.Edge, key: string, expected: number): void => {
         const { fixture, reported } = setup({ edge });
 
         press(fixture, key);
@@ -94,7 +94,7 @@ describe('RtResizeHandleComponent', (): void => {
         expect(reported).toEqual([expected]);
     });
 
-    it('SC-UKV-897 — на пределе стрелка ничего не сообщает', (): void => {
+    it('SC-UKV-938 — на пределе стрелка ничего не сообщает', (): void => {
         const { fixture, reported } = setup({ width: 400, edge: 'end' });
 
         press(fixture, 'ArrowRight');

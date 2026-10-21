@@ -65,8 +65,8 @@ describe('RtTabsComponent — подсказка крестика закрыва
         jest.useRealTimers();
     });
 
-    describe('SC-UKV-954 — у крестика своя подсказка, подсказка вкладки над ним молчит', (): void => {
-        it('SC-UKV-954 — наведение на крестик показывает его подсказку', (): void => {
+    describe('SC-UKV-995 — у крестика своя подсказка, подсказка вкладки над ним молчит', (): void => {
+        it('SC-UKV-995 — наведение на крестик показывает его подсказку', (): void => {
             const fixture: ComponentFixture<TabsCloseHostComponent> = setup();
 
             pointer(fixture, close(fixture), 'mouseenter');
@@ -74,7 +74,7 @@ describe('RtTabsComponent — подсказка крестика закрыва
             expect(tooltips()).toEqual(['Закрыть']);
         });
 
-        it('SC-UKV-954 — указатель с вкладки на крестик: подсказка вкладки уходит, остаётся только крестика', (): void => {
+        it('SC-UKV-995 — указатель с вкладки на крестик: подсказка вкладки уходит, остаётся только крестика', (): void => {
             const fixture: ComponentFixture<TabsCloseHostComponent> = setup();
 
             pointer(fixture, tab(fixture), 'mouseenter');
@@ -85,7 +85,7 @@ describe('RtTabsComponent — подсказка крестика закрыва
             expect(tooltips()).toEqual(['Закрыть']);
         });
 
-        it('SC-UKV-954 — без подсказки крестика над ним нет ни одной подсказки', (): void => {
+        it('SC-UKV-995 — без подсказки крестика над ним нет ни одной подсказки', (): void => {
             const fixture: ComponentFixture<TabsCloseHostComponent> = setup();
             fixture.componentInstance.closeTooltip.set('');
             fixture.detectChanges();
@@ -96,7 +96,7 @@ describe('RtTabsComponent — подсказка крестика закрыва
             expect(tooltips()).toEqual([]);
         });
 
-        it('SC-UKV-954 — уход с крестика возвращает подсказку вкладке при следующем наведении', (): void => {
+        it('SC-UKV-995 — уход с крестика возвращает подсказку вкладке при следующем наведении', (): void => {
             const fixture: ComponentFixture<TabsCloseHostComponent> = setup();
 
             pointer(fixture, close(fixture), 'mouseenter');
@@ -107,7 +107,7 @@ describe('RtTabsComponent — подсказка крестика закрыва
             expect(tooltips()).toEqual(['Счета гостей']);
         });
 
-        it('SC-UKV-954 — крестик, убранный из-под указателя, не держит подсказку вкладки молчащей', (): void => {
+        it('SC-UKV-995 — крестик, убранный из-под указателя, не держит подсказку вкладки молчащей', (): void => {
             const fixture: ComponentFixture<TabsCloseHostComponent> = setup();
 
             pointer(fixture, close(fixture), 'mouseenter');

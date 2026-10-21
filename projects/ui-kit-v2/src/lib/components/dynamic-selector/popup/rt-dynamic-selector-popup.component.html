@@ -94,7 +94,7 @@
                 </div>
             }
 
-            <div rtElem="sentinel" rtInfiniteScroll [disabled]="!lazyLoad() || fetching()" (loadMore)="loadMore.emit()"></div>
+            <div rtElem="sentinel" rtInfiniteScroll [disabled]="!lazyLoad() || fetching()" (loadMore)="onLoadMore()"></div>
 
             @if (fetching()) {
                 <div rtElem="fetching" qa-dataid="dynamic-selector-fetching">

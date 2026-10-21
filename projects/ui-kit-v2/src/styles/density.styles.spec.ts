@@ -28,11 +28,11 @@ describe('плотность полей материального набора'
         ['-1', '1'],
         ['-3', '3'],
         ['-5', '5'],
-    ])('SC-UKV-908 — атрибут %s ставит наследуемый шаг плотности %s', (step: string, taken: string): void => {
+    ])('SC-UKV-949 — атрибут %s ставит наследуемый шаг плотности %s', (step: string, taken: string): void => {
         expect(ruleBody(`[data-rt-density="${step}"]`)).toBe(`--rt-input-density: ${taken};`);
     });
 
-    it('SC-UKV-900 — узел с атрибутом под набором пересчитывает высоту Material из шага', (): void => {
+    it('SC-UKV-941 — узел с атрибутом под набором пересчитывает высоту Material из шага', (): void => {
         const body: string | undefined = ruleBody(':where(.rt-preset-material, [data-preset=material]) [data-rt-density]');
 
         expect(body).toContain('calc(var(--rt-size-12) + var(--rt-size-2) - var(--rt-input-density) * var(--rt-size-1))');
@@ -40,7 +40,7 @@ describe('плотность полей материального набора'
         expect(CSS).toContain(':is(.rt-preset-material, [data-preset=material])[data-rt-density]');
     });
 
-    it('SC-UKV-908 — набор на самом поле считает высоту из шага предка, своя высота приложения сильнее', (): void => {
+    it('SC-UKV-949 — набор на самом поле считает высоту из шага предка, своя высота приложения сильнее', (): void => {
         const preset: string | undefined = ruleBody(`[data-preset=material], .rt-preset-material {`.slice(0, -2));
 
         expect(preset?.replace(/\s+/g, '')).toContain(

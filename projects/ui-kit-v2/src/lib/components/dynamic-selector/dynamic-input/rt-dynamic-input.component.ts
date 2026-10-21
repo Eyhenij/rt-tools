@@ -37,6 +37,7 @@ import { RtDynamicSelectorListComponent } from '../list/rt-dynamic-selector-list
 import { RtDynamicSelectorRowControlsDirective } from '../rt-dynamic-selector.directives';
 import { addDynamicText, clearDynamicKeys, moveDynamicKey, renameDynamicText, sameDynamicKeys } from '../rt-dynamic-selector.logic';
 import { IRtDynamicSelector } from '../rt-dynamic-selector.model';
+import { RtDynamicSelectorPartsService } from '../rt-dynamic-selector-parts.service';
 
 const BEM_BLOCK: string = 'rt-dynamic-input';
 
@@ -72,11 +73,13 @@ const BEM_BLOCK: string = 'rt-dynamic-input';
     providers: [
         // Алиас базового токена — для contentChild(RtFormControlBase) в rt-field.
         { provide: RtFormControlBase, useExisting: forwardRef(() => RtDynamicInputComponent) },
+        RtDynamicSelectorPartsService,
     ],
     host: { class: BEM_BLOCK },
 })
 export class RtDynamicInputComponent extends RtFormControlBase<string[]> {
     readonly #injector: Injector = inject(Injector);
+    readonly #parts: RtDynamicSelectorPartsService<string> = inject<RtDynamicSelectorPartsService<string>>(RtDynamicSelectorPartsService);
     /** Последнее значение, записанное формой: к нему возвращает сброс. */
     readonly #initial: WritableSignal<string[]> = signal<string[]>([]);
     /* Умолчания входов считаются из настроек кита при объявлении: вход в разметке перебивает их. */
@@ -197,6 +200,32 @@ export class RtDynamicInputComponent extends RtFormControlBase<string[]> {
     public readonly listCleared: OutputEmitterRef<void> = output<void>();
 
     public readonly displayText: Signal<string> = computed((): string => this.value().join(', '));
+
+    constructor() {
+        super();
+        // Список читает поле: его строки, настройки и обработчики.
+        this.#parts.bindList({
+            rows: this.rows,
+            draggable: this.draggable,
+            editable: this.editable,
+            disabled: this.isDisabled,
+            actionsShown: computed((): boolean => !this.isInvitationShown()),
+            resetClearShown: this.listActionsShown,
+            removeShown: this.removeShown,
+            resetDisabled: this.isResetDisabled,
+            clearDisabled: this.isClearDisabled,
+            buttonRadius: this.buttonRadius,
+            clearIcon: this.clearIcon,
+            titleWrap: this.titleWrap,
+            titleTpl: signal<null>(null),
+            controlsTpl: this.controlsTpl,
+            remove: (key: unknown): void => this.onRemoved(key),
+            move: (move: IRtDynamicSelector.Move): void => this.onMoved(move),
+            edit: (edit: IRtDynamicSelector.TextEdit): void => this.onEdited(edit),
+            reset: (): void => this.onReset(),
+            clear: (): void => this.onCleared(),
+        });
+    }
 
     /** Записанное формой становится и списком, и значением для сброса; пустой массив список опустошает. */
     public override writeValue(value: string[] | null): void {

@@ -295,7 +295,7 @@ describe('RtInputComponent', (): void => {
             expect(control.required()).toBe(true);
         });
 
-        it('SC-UKV-941 — значение, записанное формой в стеке ввода, видно в поле, хоть и совпадает с прежним', (): void => {
+        it('SC-UKV-982 — значение, записанное формой в стеке ввода, видно в поле, хоть и совпадает с прежним', (): void => {
             const fixture: ComponentFixture<InputRevertHostComponent> = createRtFixture(InputRevertHostComponent);
 
             type(fixture, '');
@@ -347,7 +347,7 @@ describe('RtInputComponent', (): void => {
             expect(hostClasses(fixture)).not.toContain('rt-input--floating');
         });
 
-        it('SC-UKV-933 — у пустого поля подпись лежит, поле не помечено заполненным', (): void => {
+        it('SC-UKV-974 — у пустого поля подпись лежит, поле не помечено заполненным', (): void => {
             const fixture: ComponentFixture<RtInputComponent> = setup({ floatingLabel: 'Бюджет', placeholder: '0' });
 
             expect(textOf(qa(fixture, 'input-floating-label'))).toBe('Бюджет');
@@ -355,14 +355,14 @@ describe('RtInputComponent', (): void => {
             expect(hostClasses(fixture)).not.toContain('rt-input--filled');
         });
 
-        it('SC-UKV-934 — значение помечает поле заполненным, и подпись поднимается', (): void => {
+        it('SC-UKV-975 — значение помечает поле заполненным, и подпись поднимается', (): void => {
             const fixture: ComponentFixture<RtInputComponent> = setup({ floatingLabel: 'Бюджет' });
             type(fixture, '120');
 
             expect(hostClasses(fixture)).toContain('rt-input--filled');
         });
 
-        it('SC-UKV-936 — подпись называет поле, когда своего имени нет', (): void => {
+        it('SC-UKV-977 — подпись называет поле, когда своего имени нет', (): void => {
             const fixture: ComponentFixture<RtInputComponent> = setup({ floatingLabel: 'Бюджет' });
             const labelId: string = (qa(fixture, 'input-floating-label')?.nativeElement as HTMLElement).id;
 
@@ -373,7 +373,7 @@ describe('RtInputComponent', (): void => {
     });
 
     describe('иконки-кнопки', (): void => {
-        it('SC-UKV-864 — без признака иконки остаются картинками', (): void => {
+        it('SC-UKV-905 — без признака иконки остаются картинками', (): void => {
             const fixture: ComponentFixture<RtInputComponent> = setup({ iconLeft: 'ico-search', iconRight: 'ico-search' });
 
             expect(el(fixture, '.rt-input__icon-left')).not.toBeNull();
@@ -381,7 +381,7 @@ describe('RtInputComponent', (): void => {
             expect(qa(fixture, 'input-icon-right-action')).toBeNull();
         });
 
-        it('SC-UKV-937 — нажатие левой иконки уходит в её выход и не уводит фокус в поле', (): void => {
+        it('SC-UKV-978 — нажатие левой иконки уходит в её выход и не уводит фокус в поле', (): void => {
             const fixture: ComponentFixture<RtInputComponent> = setup({ iconLeft: 'ico-search', iconLeftAction: true });
             const presses: MouseEvent[] = [];
             fixture.componentInstance.iconLeftClick.subscribe((event: MouseEvent): number => presses.push(event));
@@ -398,7 +398,7 @@ describe('RtInputComponent', (): void => {
             expect(button.getAttribute('tabindex')).toBe('0');
         });
 
-        it('SC-UKV-863 — подсказка правой иконки-кнопки даёт ей имя', (): void => {
+        it('SC-UKV-904 — подсказка правой иконки-кнопки даёт ей имя', (): void => {
             const fixture: ComponentFixture<RtInputComponent> = setup({
                 iconRight: 'ico-search',
                 iconRightAction: true,
@@ -429,7 +429,7 @@ describe('RtInputComponent', (): void => {
             return (qa(fixture, 'input-clear')?.nativeElement as HTMLElement).querySelector('button') as HTMLButtonElement;
         }
 
-        it('SC-UKV-865 — крестик вне порядка Tab, пока поле не попросит', (): void => {
+        it('SC-UKV-906 — крестик вне порядка Tab, пока поле не попросит', (): void => {
             const plain: ComponentFixture<RtInputComponent> = setup();
             type(plain, 'а');
             expect(cross(plain).getAttribute('tabindex')).toBe('-1');
@@ -439,7 +439,7 @@ describe('RtInputComponent', (): void => {
             expect(cross(tabbable).getAttribute('tabindex')).toBe('0');
         });
 
-        it('SC-UKV-866 — сброс сообщается один раз после того, как пустое значение ушло в форму', (): void => {
+        it('SC-UKV-907 — сброс сообщается один раз после того, как пустое значение ушло в форму', (): void => {
             const fixture: ComponentFixture<InputHostComponent> = createRtFixture(InputHostComponent);
             fixture.componentInstance.control.setValue('Анна');
             fixture.detectChanges();

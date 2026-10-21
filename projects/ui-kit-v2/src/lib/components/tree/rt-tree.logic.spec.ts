@@ -1,4 +1,4 @@
-import { rtTreeOpenFor, rtTreeRows } from '../select/rt-select-tree';
+import { rtTreeOpenFor, rtTreeRows } from '../../options/rt-option-tree';
 import { rtTreeChoose, rtTreeChooseAlone, rtTreeLabelParts, rtTreeMark, rtTreeSelectAll, rtTreeSelectAllMark } from './rt-tree.logic';
 import { IRtTree } from './rt-tree.model';
 

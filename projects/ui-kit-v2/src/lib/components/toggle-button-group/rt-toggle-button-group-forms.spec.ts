@@ -84,7 +84,7 @@ function press(fixture: ComponentFixture<unknown>, value: string, group: number 
 }
 
 describe('rt-toggle-button-group и формы', (): void => {
-    describe('SC-UKV-878: значение из формы', (): void => {
+    describe('SC-UKV-919: значение из формы', (): void => {
         it('форма пишет значение одиночного и множественного выбора', (): void => {
             const fixture: ComponentFixture<ReactiveHostComponent> = createRtFixture(ReactiveHostComponent);
             fixture.detectChanges();
@@ -132,7 +132,7 @@ describe('rt-toggle-button-group и формы', (): void => {
         });
     });
 
-    describe('SC-UKV-879: своя разметка сегмента', (): void => {
+    describe('SC-UKV-920: своя разметка сегмента', (): void => {
         it('шаблон стоит на месте подписи и знает, нажат ли сегмент', (): void => {
             const fixture: ComponentFixture<TemplateHostComponent> = createRtFixture(TemplateHostComponent);
             fixture.detectChanges();
@@ -144,7 +144,7 @@ describe('rt-toggle-button-group и формы', (): void => {
         });
     });
 
-    describe('SC-UKV-880: перенос и столбик', (): void => {
+    describe('SC-UKV-921: перенос и столбик', (): void => {
         it.each<[IRtToggleButtonGroup.Layout, string | null]>([
             ['row', null],
             ['wrap', 'rt-toggle-button-group--wrap'],

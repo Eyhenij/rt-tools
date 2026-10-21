@@ -55,7 +55,7 @@ describe('RtTextareaComponent', (): void => {
         expect(field(setup({ rows: '5' })).rows).toBe(5);
     });
 
-    it('SC-UKV-920 — вид рамки: по умолчанию обведённое, `fill` выводит класс залитого вида', (): void => {
+    it('SC-UKV-961 — вид рамки: по умолчанию обведённое, `fill` выводит класс залитого вида', (): void => {
         expect(hostClasses(setup())).not.toContain('rt-textarea--appearance--fill');
         expect(hostClasses(setup({ appearance: 'fill' }))).toContain('rt-textarea--appearance--fill');
     });

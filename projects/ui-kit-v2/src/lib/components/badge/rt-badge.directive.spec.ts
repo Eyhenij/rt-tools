@@ -50,7 +50,7 @@ function change(fixture: ComponentFixture<BadgeHostComponent>, apply: (host: Bad
 }
 
 describe('RtBadgeDirective', (): void => {
-    it('SC-UKV-889 — пузырёк стоит последним узлом хоста и показывает значение', (): void => {
+    it('SC-UKV-930 — пузырёк стоит последним узлом хоста и показывает значение', (): void => {
         const fixture: ComponentFixture<BadgeHostComponent> = setup();
 
         expect(host(fixture).classList).toContain('rt-badge-host');
@@ -59,7 +59,7 @@ describe('RtBadgeDirective', (): void => {
         expect(bubble(fixture).classList).toContain('rt-badge');
     });
 
-    it('SC-UKV-889 — по умолчанию пузырёк над углом сверху-после, среднего размера и основного цвета', (): void => {
+    it('SC-UKV-930 — по умолчанию пузырёк над углом сверху-после, среднего размера и основного цвета', (): void => {
         const classes: DOMTokenList = bubble(setup()).classList;
 
         expect(classes).toContain('rt-badge--overlap');
@@ -68,7 +68,7 @@ describe('RtBadgeDirective', (): void => {
         expect(classes).toContain('rt-badge--color--primary');
     });
 
-    it('SC-UKV-889 — угол, размер, цвет и «рядом» доезжают до пузырька', (): void => {
+    it('SC-UKV-930 — угол, размер, цвет и «рядом» доезжают до пузырька', (): void => {
         const fixture: ComponentFixture<BadgeHostComponent> = setup();
 
         change(fixture, (it: BadgeHostComponent): void => {
@@ -85,7 +85,7 @@ describe('RtBadgeDirective', (): void => {
         expect(classes).toContain('rt-badge--color--danger');
     });
 
-    it('SC-UKV-889 — пустое значение, null, undefined и hidden убирают пузырёк', (): void => {
+    it('SC-UKV-930 — пустое значение, null, undefined и hidden убирают пузырёк', (): void => {
         const fixture: ComponentFixture<BadgeHostComponent> = setup();
 
         expect(bubble(fixture).classList).not.toContain('rt-badge--hidden');
@@ -106,7 +106,7 @@ describe('RtBadgeDirective', (): void => {
         expect(bubble(fixture).classList).not.toContain('rt-badge--hidden');
     });
 
-    it('SC-UKV-889 — ноль показывается: это значение, а не пустота', (): void => {
+    it('SC-UKV-930 — ноль показывается: это значение, а не пустота', (): void => {
         const fixture: ComponentFixture<BadgeHostComponent> = setup();
 
         change(fixture, (it: BadgeHostComponent): void => it.value.set(0));

@@ -61,8 +61,8 @@ const MATERIAL: Readonly<Record<string, string>> = {
 };
 
 describe('RtTabsScroller — плавная прокрутка полосы вкладок', (): void => {
-    describe('SC-UKV-952 — стрелка сдвигает полосу плавно и на заданный шаг', (): void => {
-        it('SC-UKV-952 — шаг «треть» сдвигает на треть видимой ширины, «страница» — на всю, не дальше края', (): void => {
+    describe('SC-UKV-993 — стрелка сдвигает полосу плавно и на заданный шаг', (): void => {
+        it('SC-UKV-993 — шаг «треть» сдвигает на треть видимой ширины, «страница» — на всю, не дальше края', (): void => {
             const list: HTMLElement = strip();
 
             expect(rtTabsPageTarget(list, 0, false, 'third')).toBeCloseTo(134.67, 2);
@@ -70,7 +70,7 @@ describe('RtTabsScroller — плавная прокрутка полосы вк
             expect(rtTabsPageTarget(list, 100, true, 'third')).toBe(0);
         });
 
-        it('SC-UKV-952 — прокрутка идёт по кривой за свою длительность и встаёт точно в цель', (): void => {
+        it('SC-UKV-993 — прокрутка идёт по кривой за свою длительность и встаёт точно в цель', (): void => {
             const fake: IFakeWindow = fakeWindow(MATERIAL);
             const list: HTMLElement = strip();
 
@@ -87,7 +87,7 @@ describe('RtTabsScroller — плавная прокрутка полосы вк
             expect(list.scrollLeft).toBe(135);
         });
 
-        it('SC-UKV-952 — следующее нажатие считается от цели идущей прокрутки, а не от середины пути', (): void => {
+        it('SC-UKV-993 — следующее нажатие считается от цели идущей прокрутки, а не от середины пути', (): void => {
             const fake: IFakeWindow = fakeWindow(MATERIAL);
             const list: HTMLElement = strip();
             const run: RtTabsScroller = scroller(fake, list);
@@ -100,7 +100,7 @@ describe('RtTabsScroller — плавная прокрутка полосы вк
             expect(list.scrollLeft).toBeCloseTo(269.33, 2);
         });
 
-        it('SC-UKV-952 — тик удержания останавливает плавную прокрутку и сдвигает сразу', (): void => {
+        it('SC-UKV-993 — тик удержания останавливает плавную прокрутку и сдвигает сразу', (): void => {
             const fake: IFakeWindow = fakeWindow(MATERIAL);
             const list: HTMLElement = strip();
             const run: RtTabsScroller = scroller(fake, list);
@@ -115,8 +115,8 @@ describe('RtTabsScroller — плавная прокрутка полосы вк
         });
     });
 
-    describe('SC-UKV-953 — прокрутка к вкладке и выключение движения', (): void => {
-        it('SC-UKV-953 — вкладка, скрытая с края, даёт цель прокрутки, видная целиком — нет', (): void => {
+    describe('SC-UKV-994 — прокрутка к вкладке и выключение движения', (): void => {
+        it('SC-UKV-994 — вкладка, скрытая с края, даёт цель прокрутки, видная целиком — нет', (): void => {
             const list: HTMLElement = strip(100);
 
             expect(rtTabsIntoViewTarget(list, tab(50, 80))).toBe(50);
@@ -124,7 +124,7 @@ describe('RtTabsScroller — плавная прокрутка полосы вк
             expect(rtTabsIntoViewTarget(list, tab(200, 100))).toBeNull();
         });
 
-        it('SC-UKV-953 — нулевая длительность прокручивает сразу', (): void => {
+        it('SC-UKV-994 — нулевая длительность прокручивает сразу', (): void => {
             const fake: IFakeWindow = fakeWindow({ '--rt-tabs-scroll-duration': '0ms' });
             const list: HTMLElement = strip();
 
@@ -133,7 +133,7 @@ describe('RtTabsScroller — плавная прокрутка полосы вк
             expect(list.scrollLeft).toBe(200);
         });
 
-        it('SC-UKV-953 — prefers-reduced-motion прокручивает сразу', (): void => {
+        it('SC-UKV-994 — prefers-reduced-motion прокручивает сразу', (): void => {
             const fake: IFakeWindow = fakeWindow(MATERIAL, true);
             const list: HTMLElement = strip();
 
@@ -142,7 +142,7 @@ describe('RtTabsScroller — плавная прокрутка полосы вк
             expect(list.scrollLeft).toBe(200);
         });
 
-        it('SC-UKV-953 — кривая CSS читается как функция: концы, именованные и cubic-bezier', (): void => {
+        it('SC-UKV-994 — кривая CSS читается как функция: концы, именованные и cubic-bezier', (): void => {
             const material: (progress: number) => number = rtTabsEasing('cubic-bezier(0.35, 0, 0.25, 1)');
 
             expect(rtTabsEasing('linear')(0.3)).toBeCloseTo(0.3, 3);

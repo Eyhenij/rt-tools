@@ -1,3 +1,14 @@
+# [0.30.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.29.1...rt-ui-kit-v2%400.30.0) (2026-10-21)
+
+### Bug Fixes
+
+- **rt:ui-kit-v2:** корень документа не объявлен местом страницы, фон body снова на всё окно ([af90546](https://github.com/Eyhenij/rt-tools/commit/af90546eef07306c41a6d4b8fd85fb2c9d53c8c0))
+
+### Features
+
+- **rt:ui-kit-v2:** одно правило совпадения для поиска во всём ките ([0f27aee](https://github.com/Eyhenij/rt-tools/commit/0f27aeef31d14e52f3f34494a1b7378cd241c25d))
+- **rt:ui-kit-v2:** стрелки, Home и End в динамическом селекторе и в дереве ([dcb371e](https://github.com/Eyhenij/rt-tools/commit/dcb371ed785c4f4085219183cb06e575df69504f))
+
 ## [0.29.1](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.29.0...rt-ui-kit-v2%400.29.1) (2026-10-21)
 
 ### Bug Fixes

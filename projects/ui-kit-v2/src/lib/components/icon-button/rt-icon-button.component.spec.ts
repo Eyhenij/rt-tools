@@ -51,7 +51,7 @@ describe('RtIconButtonComponent', (): void => {
     it.each<[FocusOrigin, string]>([
         ['keyboard', 'cdk-keyboard-focused'],
         ['mouse', 'cdk-mouse-focused'],
-    ])('SC-UKV-906 — фокус от %s помечается на кнопке классом %s', (origin: FocusOrigin, mark: string): void => {
+    ])('SC-UKV-947 — фокус от %s помечается на кнопке классом %s', (origin: FocusOrigin, mark: string): void => {
         const fixture: ComponentFixture<RtIconButtonComponent> = setup();
 
         TestBed.inject(FocusMonitor).focusVia(control(fixture)?.nativeElement as HTMLElement, origin);
