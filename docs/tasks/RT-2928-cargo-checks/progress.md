@@ -3,9 +3,9 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 1 of 4 — A list of options after a refused quiz is a question
-- **Done:** the plan and the grill are written.
-- **Next step:** scenario SC-AK-1231 in the grill spec.
+- **Stage:** 2 of 4 — The assignment refusal names the owner's word as the move
+- **Done:** stage 1 — the option list after a refused menu is a question, SC-AK-1231 covered.
+- **Next step:** scenario SC-AK-1232 in the tree-assignment spec.
 - **Uncommitted:** nothing of this task.
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -14,10 +14,10 @@
 
 - `[x]` done · `[>]` going on right now · `[ ]` not begun
 
-- [>] 1.1 Write scenario SC-AK-1231 into the grill spec
-- [ ] 1.2 Recognise the option list in the fourth sign of `grill-gate.sh` and add the line to the quiz refusal
-- [ ] 1.3 Cover SC-AK-1231 in `grill-gate.test.sh`
-- [ ] 2.1 Write scenario SC-AK-1232 into the tree-assignment spec
+- [x] 1.1 Write scenario SC-AK-1231 into the grill spec
+- [x] 1.2 Recognise the option list in the fourth sign of `grill-gate.sh` and add the line to the quiz refusal
+- [x] 1.3 Cover SC-AK-1231 in `grill-gate.test.sh`
+- [>] 2.1 Write scenario SC-AK-1232 into the tree-assignment spec
 - [ ] 2.2 Rewrite the refusal texts in `tree-assignment.mjs` and `git-guard-tree-assignment.sh`
 - [ ] 2.3 Cover SC-AK-1232 in `guard-tree-assignment.test.sh`
 - [ ] 3.1 Write scenario SC-AK-1233 into the delivery spec
@@ -30,6 +30,10 @@
 - [ ] 4.4 Mark the four records fixed
 
 ## Decisions along the way
+
+- **The option-list sign lives in `grill-gate-options.sh`, its cases in `grill-gate-options.test.sh`.**
+  Added in place, the guard reached 511 lines and its suite 520, over the limit of 500. Affected
+  stage of the plan: 1.
 
 ## Sessions
 
