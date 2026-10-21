@@ -1,8 +1,14 @@
 <ng-container rtBlock="rt-page-header">
-    <nav rtElem="nav" [attr.aria-label]="navAriaLabel()">
-        <ul rtElem="list" role="list">
+    <nav rtElem="nav" #nav [attr.aria-label]="navAriaLabel()">
+        <ul rtElem="list" role="list" #list>
             @for (section of sections(); track section.id) {
-                <li rtElem="item" qa-dataid="header-nav-item" [attr.data-id]="section.id">
+                <li
+                    rtElem="item"
+                    qa-dataid="header-nav-item"
+                    [rtMod]="{ isOverflow: overflowIds().has(section.id) }"
+                    [attr.data-id]="section.id"
+                    [attr.aria-hidden]="overflowIds().has(section.id) || null"
+                    [attr.inert]="overflowIds().has(section.id) || null">
                     @switch (section.kind) {
                         @case (EntryKind.Panel) {
                             <button
@@ -170,6 +176,14 @@
                     }
                 </li>
             }
+            <li
+                rtElem="item"
+                #moreItem
+                [rtMod]="{ isOverflow: !moreShown() }"
+                [attr.aria-hidden]="!moreShown() || null"
+                [attr.inert]="!moreShown() || null">
+                <rt-page-header-more [sections]="moreSections()" [active]="moreActive()" (itemClick)="onItemClick($event)" />
+            </li>
         </ul>
     </nav>
 

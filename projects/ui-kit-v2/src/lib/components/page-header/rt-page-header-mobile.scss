@@ -160,5 +160,29 @@
         &__icon {
             flex-shrink: 0;
         }
+
+        /* Панель пункта «Ещё» — тот же блок без аккордеона: раздел с панелью стоит
+           заголовком, пункты его групп идут под ним сразу, без отступа вложенности. */
+        &__heading {
+            display: flex;
+            min-height: var(--rt-nav-panel-item-height);
+            align-items: center;
+            padding: var(--rt-nav-panel-item-padding);
+            color: var(--rt-nav-item-color);
+            cursor: default;
+            font-size: var(--rt-nav-item-font-size);
+            font-weight: var(--rt-nav-item-font-weight);
+            line-height: var(--rt-leading-tight);
+            white-space: nowrap;
+        }
+
+        &--more &__children {
+            padding-left: 0;
+        }
+
+        &--more &__group-title {
+            letter-spacing: var(--rt-letter-spacing-wide);
+            text-transform: uppercase;
+        }
     }
 }

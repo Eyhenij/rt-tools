@@ -249,6 +249,7 @@ export const RT_KIT_LABELS_EN = {
     uiMoveStage: 'Move',
     uiMoveStageAria: 'Move stage',
     uiNavMenu: 'Navigation menu',
+    uiNavMore: 'More',
     uiNavUnread: 'Unread',
     uiNextMonth: 'Next month',
     uiNextPage: 'Next page',
