@@ -12,6 +12,10 @@
         flex: 1 1 auto;
         background-color: var(--rt-color-bg-page);
         color: var(--rt-color-text-primary);
+
+        /* Контейнер — место страницы: компоненты внутри считают пороги от его ширины. Боковая
+           панель приложения рядом сужает его, и вид внутри сужается вместе с ним. */
+        container: rt-place / inline-size;
         grid-template: 'header header' auto 'left-sidenav toolbar' auto 'left-sidenav content' 1fr / auto 1fr;
 
         &__header {

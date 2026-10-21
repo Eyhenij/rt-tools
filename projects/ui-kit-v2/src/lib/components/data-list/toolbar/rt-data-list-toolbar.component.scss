@@ -115,7 +115,7 @@
             --rt-input-fill-radius: var(--rt-list-search-radius);
         }
 
-        @media (width <= #{bp.$rt-bp-lg}) {
+        @include bp.place-max(bp.$rt-bp-lg) {
             &__right {
                 flex-wrap: wrap;
             }

@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/angular';
 
-import { storyWidthAtMost } from '../../../../showcase';
+import { storySnapshotWidths, storyWidthAtMost } from '../../../../showcase';
 import { TestRtContainerMatrixComponent } from './component/test-container-matrix.component';
 
 /**
@@ -29,3 +29,9 @@ export const Zones: TStory = { args: { part: 'zones' } };
 export const Presets: TStory = { args: { part: 'presets' } };
 
 export const Themes: TStory = { args: { part: 'themes' } };
+
+/**
+ * Каркас уже порога в окне шире порога: вид внутри считается от ширины каркаса. Кадр снимается
+ * в широком окне, иначе узкий вид не отличить от узкого окна.
+ */
+export const Place: TStory = { args: { part: 'place' }, parameters: storySnapshotWidths(1440) };

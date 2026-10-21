@@ -1,3 +1,5 @@
+@use '../../../../styles/breakpoints' as bp;
+
 @layer rt-kit.components {
     .rt-chat {
         --rt-chat-bubble-radius: var(--rt-radius-lg);
@@ -37,9 +39,9 @@
         &--expanded > .rt-file-drop {
             block-size: 100%;
 
-            // На широких экранах чат не растягивается на весь вьюпорт: тред и
-            // композер иначе разрежены. Свыше 1440px фиксируем колонку по центру.
-            @media (width >= 1441px) {
+            // На широком месте чат не растягивается во всю ширину: тред и композер иначе
+            // разрежены. Шире 1440px колонка стоит по центру.
+            @include bp.place-min(1440px) {
                 inline-size: 1000px;
                 margin-inline: auto;
                 max-inline-size: 100%;

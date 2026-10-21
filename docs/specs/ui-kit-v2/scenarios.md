@@ -27,6 +27,7 @@ The scenarios live in the subdomains, each at its own rules:
 | [The media of a card](card-media/scenarios.md)                           | `SC-UKV-868`…`SC-UKV-869`                                                 |
 | [The breadcrumbs](breadcrumbs/scenarios.md)                              | `SC-UKV-775`…`SC-UKV-780`                                                 |
 | [The header's «More» item](page-header-more/scenarios.md)                | `SC-UKV-870`…`SC-UKV-875`                                                 |
+| [The width of the page place](place-width/scenarios.md)                  | `SC-UKV-876`…`SC-UKV-881`                                                 |
 | [The image cropper](image-cropper/scenarios.md)                          | `SC-UKV-491`…`SC-UKV-506`                                                 |
 | [The assistant chat](ai-chat/scenarios.md)                               | `SC-UKV-750`…`SC-UKV-782`, `SC-UKV-863`                                   |
 | [The prompt suggestion](prompt-suggestion/scenarios.md)                  | `SC-UKV-747`…`SC-UKV-749`                                                 |
