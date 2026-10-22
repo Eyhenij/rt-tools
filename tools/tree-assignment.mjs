@@ -1,4 +1,4 @@
-// rt-kit v0.32.0 · checks/tree-assignment.mjs · 17467424ebbc · правится надстройкой, не здесь
+// rt-kit v0.32.0 · checks/tree-assignment.mjs · db384b3725cb · правится надстройкой, не здесь
 /**
  * The epic assigned to this working copy.
  *
@@ -82,6 +82,14 @@ export function assignmentOf(root = ROOT) {
 }
 
 /**
+ * What lifts the refusal, said in the refusal itself. Told only «the owner moves the assignment»,
+ * the executor stopped after a direct order and asked the owner a second time: the order already
+ * was that move.
+ */
+const OWNER_WORD =
+    "A message of the owner in this conversation that names this work is that move: write the row with their words and go on; ask only when no message of theirs names it";
+
+/**
  * What is wrong with taking work under this epic — or an empty string where nothing is.
  *
  * Three answers, and they are different states, not degrees of one: the table names no such copy,
@@ -106,15 +114,15 @@ export function assignmentFault(epic, root = ROOT) {
     const row = assignmentOf(root);
 
     if (row === null) {
-        return `the table ${CONFIG.assignmentsFile} holds no row for the copy «${name}». Ask the owner what this copy leads; work is not taken by guesswork`;
+        return `the table ${CONFIG.assignmentsFile} holds no row for the copy «${name}». Ask the owner what this copy leads; work is not taken by guesswork. ${OWNER_WORD}`;
     }
 
     if (row.epic === null) {
-        return `no epic is assigned to the copy «${name}» — the row in ${CONFIG.assignmentsFile} holds a dash. Ask the owner what to take; an epic chosen by oneself is not an order`;
+        return `no epic is assigned to the copy «${name}» — the row in ${CONFIG.assignmentsFile} holds a dash. Ask the owner what to take; an epic chosen by oneself is not an order. ${OWNER_WORD}`;
     }
 
     if (epic !== null && epic !== undefined && String(epic) !== '' && Number(epic) !== row.epic) {
-        return `the copy «${name}» leads the epic ${key}-${row.epic}, and this work belongs to ${key}-${epic}. Someone else's epic is not taken by one's own decision: the owner moves the assignment`;
+        return `the copy «${name}» leads the epic ${key}-${row.epic}, and this work belongs to ${key}-${epic}. Someone else's epic is not taken by one's own decision: the owner moves the assignment. ${OWNER_WORD}`;
     }
 
     return '';
