@@ -1,3 +1,9 @@
+# [0.31.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.30.0...rt-ui-kit-v2%400.31.0) (2026-10-22)
+
+### Features
+
+- **rt:ui-kit-v2:** блок службы rt-service-block для панели подключения — RT-2934 ([2572689](https://github.com/Eyhenij/rt-tools/commit/2572689e4719cc671193f71b425332e60cb6b41e))
+
 # [0.30.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.29.1...rt-ui-kit-v2%400.30.0) (2026-10-21)
 
 ### Bug Fixes
