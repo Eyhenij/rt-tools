@@ -707,6 +707,27 @@ data-preset="material" floatingLabel>` drew the border through the risen label: 
   `content-box` gives the circle 20 px, the panel 352 px against its 352 px container, 0 px past
   the edge, the host stays `border-box`; without the property the body is `border-box` from the
   host. An unlayered reset beats the kit rule on the body, and the property does nothing there.
+- **2026-10-22, the owner's review: the arrow step and four defects in new code.**
+    - Tabs: a short press on an arrow paged the whole visible width, while main moved about 80 px.
+      `scrollStep` gains `fixed` (80 px) as the default; `page` and `third` stay opt-in — SC-UKV-984
+      and SC-UKV-993 reworded under the same numbers. Measured in the showcase: strips 384 and 288 px
+      wide move 80, then 160 px.
+    - Drawer: the over panel and the backdrop stand on `--rt-drawer-over-z-index` and
+      `--rt-drawer-backdrop-z-index`, and the container isolates them; a closed over panel leaves by
+      its own edge right to left; a panel opened from the first render takes no focus. Measured: a
+      content node with `z-index: 50` stays under the open over panel, the start panel translates
+      −200 px left to right and +200 px right to left, focus stays on the page body.
+    - Drawer, request 20 of the application's session: `--rt-drawer-z-index` (default `auto`) for the
+      side panel, `--rt-drawer-side-shadow` (default none). Measured: set to `2`, the side panel reads
+      `z-index: 2`, the side shadow draws.
+    - Expansion panel: the lazy body and the header actions are found at any depth and only the
+      panel's own are taken, by the owner token `RT_EXPANSION_PANEL_OWNER`; a template inside the
+      owner's wrapper was an empty body before.
+    - Badge: the bubble carries `data-rt-badge`, and the client takes a server-rendered bubble over
+      instead of adding a second.
+    - Button: `rtButton` watches focus through `FocusMonitor` itself instead of the
+      `CdkMonitorFocus` host directive; `cdkMonitorElementFocus` on the same button no longer
+      throws NG0309.
 
 ## Sessions
 
@@ -739,6 +760,10 @@ none
 ### Commits over the main branch
 
 ```
+ce29dab08 feat(rt:ui-kit-v2): раскрывающаяся панель — box-sizing тела отдельно от панели
+58027acde chore(rt:ui-kit-v2): совпадение значения default у канала тостера принято проверкой повторов
+d676f2dcb Merge remote-tracking branch 'origin/main' into RT-2812-kit2-field-label-icon-actions
+0a05bc2d6 feat(rt:ui-kit-v2): раскрывающаяся панель — высота строки, шрифт тела и box-sizing из свойств
 e77a33fc0 feat(rt:ui-kit-v2): боковая панель — содержимое за краем, ширина по содержимому, события перехода и выбор фокуса
 c2305b053 feat(rt:ui-kit-v2): тост — голый вид для своего компонента-карточки
 40845c87f feat(rt:ui-kit-v2): тостер — свой канал для закреплённых тостов
@@ -755,10 +780,6 @@ b1418aca8 docs(rt:ui-kit-v2): прогресс RT-2812 после заявок �
 8d0e58945 fix(rt:ui-kit-v2): вкладки — animationDuration больше не задаёт длительность прокрутки полосы
 336e14823 feat(rt:ui-kit-v2): вкладки — полоса прокручивается плавно, шаг стрелки задаётся входом scrollStep
 dff71d705 feat(rt:ui-kit-v2): вкладки — вход preserveContent сохраняет тело посещённой вкладки
-5f2fa9815 feat(rt:ui-kit-v2): вкладки — полоса переезжает на новую вкладку, панель сменяется сдвигом
-d0b5e8e72 test(rt:ui-kit-v2): эталоны витрины пересняты после слияния с main, лимит страницы переписок поднят
-4def2d625 chore(rt:ui-kit-v2): в ветку влита главная ветка
-0466fea09 feat(rt:ui-kit-v2): вкладки — ручной выбор с клавиатуры, шаг стрелкой прокрутки и стрелки в своих местах
 ```
 
 Written by a hook before the compaction of the context. Everything standing here is checked

@@ -62,8 +62,12 @@ const MATERIAL: Readonly<Record<string, string>> = {
 
 describe('RtTabsScroller — плавная прокрутка полосы вкладок', (): void => {
     describe('SC-UKV-993 — стрелка сдвигает полосу плавно и на заданный шаг', (): void => {
-        it('SC-UKV-993 — шаг «треть» сдвигает на треть видимой ширины, «страница» — на всю, не дальше края', (): void => {
+        it('SC-UKV-993 — шаг «fixed» сдвигает на 80 px, «треть» — на треть видимой ширины, «страница» — на всю, не дальше края', (): void => {
             const list: HTMLElement = strip();
+
+            expect(rtTabsPageTarget(list, 0, false, 'fixed')).toBe(80);
+            expect(rtTabsPageTarget(list, 300, false, 'fixed')).toBe(316);
+            expect(rtTabsPageTarget(list, 50, true, 'fixed')).toBe(0);
 
             expect(rtTabsPageTarget(list, 0, false, 'third')).toBeCloseTo(134.67, 2);
             expect(rtTabsPageTarget(list, 0, false, 'page')).toBe(316);

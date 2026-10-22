@@ -32,6 +32,20 @@ class BadgeHostComponent {
     public readonly color: WritableSignal<IRtBadge.Color> = signal<IRtBadge.Color>('primary');
 }
 
+/** Хост после серверной отрисовки: пузырёк с меткой уже лежит в разметке. */
+@Component({
+    selector: 'rt-badge-hydrated-host',
+    template: `
+        <span qa-dataid="host" [rtBadge]="7">
+            <b>Отели</b>
+            <span qa-dataid="badge" data-rt-badge>7</span>
+        </span>
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtBadgeDirective],
+})
+class HydratedBadgeHostComponent {}
+
 function setup(): ComponentFixture<BadgeHostComponent> {
     return createRtFixture(BadgeHostComponent);
 }
@@ -113,5 +127,15 @@ describe('RtBadgeDirective', (): void => {
 
         expect(bubble(fixture).textContent).toBe('0');
         expect(bubble(fixture).classList).not.toContain('rt-badge--hidden');
+    });
+
+    it('пузырёк из серверной разметки берётся, а не ставится вторым', (): void => {
+        const fixture: ComponentFixture<HydratedBadgeHostComponent> = createRtFixture(HydratedBadgeHostComponent);
+        const node: HTMLElement = qa(fixture, 'host')?.nativeElement as HTMLElement;
+        const bubbles: NodeListOf<HTMLElement> = node.querySelectorAll('[qa-dataid="badge"]');
+
+        expect(bubbles.length).toBe(1);
+        expect(bubbles[0].classList).toContain('rt-badge');
+        expect(bubbles[0].textContent).toBe('7');
     });
 });

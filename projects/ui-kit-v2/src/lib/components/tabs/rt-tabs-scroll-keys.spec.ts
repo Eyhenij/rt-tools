@@ -13,7 +13,7 @@ import { IRtTabs } from './rt-tabs.model';
 @Component({
     selector: 'rt-tabs-scroll-keys-host',
     template: `
-        <rt-tabs [activation]="activation()" [scrollArrows]="scrollArrows()" (activeIdChange)="picked = $event">
+        <rt-tabs [activation]="activation()" [scrollArrows]="scrollArrows()" [scrollStep]="scrollStep()" (activeIdChange)="picked = $event">
             <ng-template rtTab="a" label="Первая">Первая панель</ng-template>
             <ng-template rtTab="b" label="Вторая">Вторая панель</ng-template>
             <ng-template rtTab="c" label="Третья" [disabled]="true">Третья панель</ng-template>
@@ -30,6 +30,7 @@ import { IRtTabs } from './rt-tabs.model';
 class ScrollKeysHostComponent {
     public readonly activation: WritableSignal<IRtTabs.Activation> = signal<IRtTabs.Activation>('auto');
     public readonly scrollArrows: WritableSignal<IRtTabs.ScrollArrows> = signal<IRtTabs.ScrollArrows>('overlay');
+    public readonly scrollStep: WritableSignal<IRtTabs.ScrollStep> = signal<IRtTabs.ScrollStep>('fixed');
     public picked: IRtTabs.Id | null = null;
 }
 
@@ -151,7 +152,7 @@ describe('RtTabsComponent — клавиатура и стрелки прокр�
             jest.useRealTimers();
         });
 
-        it('SC-UKV-984 — короткое нажатие сдвигает полосу на ширину видимой области, не дальше края', (): void => {
+        it('SC-UKV-984 — короткое нажатие по умолчанию сдвигает полосу на 80 px, не дальше края', (): void => {
             jest.useFakeTimers();
             const fixture: THostFixture = setup();
             const list: HTMLElement = overflow(fixture, 1000, 400);
@@ -161,15 +162,32 @@ describe('RtTabsComponent — клавиатура и стрелки прокр�
             next.dispatchEvent(new MouseEvent('mouseup', { button: 0 }));
             fixture.detectChanges();
 
-            expect(list.scrollLeft).toBe(400);
+            expect(list.scrollLeft).toBe(80);
             expect(classesOf(arrow(fixture, 'tabs-scroll-prev'))).toContain('rt-tabs__rest--visible');
+            expect(classesOf(arrow(fixture, 'tabs-scroll-next'))).toContain('rt-tabs__rest--visible');
 
+            list.scrollLeft = 560;
             next.dispatchEvent(new MouseEvent('mousedown', { button: 0 }));
             next.dispatchEvent(new MouseEvent('mouseup', { button: 0 }));
             fixture.detectChanges();
 
             expect(list.scrollLeft).toBe(600);
             expect(classesOf(arrow(fixture, 'tabs-scroll-next'))).not.toContain('rt-tabs__rest--visible');
+        });
+
+        it('SC-UKV-984 — со scrollStep="page" короткое нажатие сдвигает на ширину видимой области', (): void => {
+            jest.useFakeTimers();
+            const fixture: THostFixture = setup();
+            fixture.componentInstance.scrollStep.set('page');
+            fixture.detectChanges();
+            const list: HTMLElement = overflow(fixture, 1000, 400);
+            const next: HTMLElement = arrow(fixture, 'tabs-scroll-next');
+
+            next.dispatchEvent(new MouseEvent('mousedown', { button: 0 }));
+            next.dispatchEvent(new MouseEvent('mouseup', { button: 0 }));
+            fixture.detectChanges();
+
+            expect(list.scrollLeft).toBe(400);
         });
 
         it('SC-UKV-984 — удержание прокручивает непрерывно, а отпускание после него не добавляет шага', (): void => {

@@ -11,9 +11,18 @@
         --rt-drawer-border-width: var(--rt-border-width-thin);
         --rt-drawer-border-color: var(--rt-color-border-subtle);
         --rt-drawer-shadow: var(--rt-shadow-lg);
+        --rt-drawer-side-shadow: none;
         --rt-drawer-duration: var(--rt-duration-base);
 
+        /* Ярус панели рядом с содержимым. Начальная панель стоит в строке раньше содержимого, и
+           содержимое со своим контекстом наложения рисуется поверх её тени; ярус выше `auto` это
+           меняет. Поверх содержимого ярус свой, выше подложки: `isolation` контейнера не пускает
+           оба над страницей. */
+        --rt-drawer-z-index: auto;
+        --rt-drawer-over-z-index: var(--rt-z-modal);
+
         position: relative;
+        z-index: var(--rt-drawer-z-index);
         display: flex;
         overflow: clip;
         min-height: 0;
@@ -34,6 +43,10 @@
             order: 1;
         }
 
+        &--mode--side {
+            box-shadow: var(--rt-drawer-side-shadow);
+        }
+
         &--mode--side#{&}--position--start {
             border-inline-end: var(--rt-drawer-border-width) solid var(--rt-drawer-border-color);
         }
@@ -45,6 +58,7 @@
         /* Поверх содержимого: панель снята со строки и прижата к своему краю контейнера. */
         &--mode--over {
             position: absolute;
+            z-index: var(--rt-drawer-over-z-index);
             box-shadow: var(--rt-drawer-shadow);
             inset-block: 0;
         }
@@ -92,6 +106,15 @@
             transform: translateX(100%);
         }
 
+        /* Справа налево начало строки справа: панель уезжает за правый край, а конечная — за левый. */
+        &--mode--over#{&}--position--start:not(#{&}--opened):dir(rtl) {
+            transform: translateX(100%);
+        }
+
+        &--mode--over#{&}--position--end:not(#{&}--opened):dir(rtl) {
+            transform: translateX(-100%);
+        }
+
         /* Пока ручку тянут, ширина идёт за указателем без запаздывания. */
         &--resizing {
             transition: none;
@@ -118,7 +141,11 @@
         --rt-drawer-backdrop-bg: var(--rt-color-bg-overlay);
         --rt-drawer-backdrop-duration: var(--rt-duration-base);
 
+        /* Подложка под панелью, но над содержимым и его ярусами. */
+        --rt-drawer-backdrop-z-index: var(--rt-z-modal-backdrop);
+
         position: absolute;
+        z-index: var(--rt-drawer-backdrop-z-index);
         background: var(--rt-drawer-backdrop-bg);
         inset: 0;
         opacity: 0;

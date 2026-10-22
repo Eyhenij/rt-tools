@@ -678,7 +678,8 @@ Covered: `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-scroll-keys.spec.ts
 
 Given a tab list wider than its place
 When the person presses a scroll arrow and lets go before 300 ms
-Then the list moves by its visible width, not past its edge; held longer, it scrolls on until let
+Then the list moves by 80 px by default, or by its visible width with `scrollStep="page"`, not past
+its edge; held longer, it scrolls on until let
 go and adds no page step on release; a pointer that leaves the arrow first moves nothing
 
 Covered: `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-scroll-keys.spec.ts`.
@@ -762,7 +763,7 @@ Covered: `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-preserve.spec.ts`.
 Given a tab list wider than its place and a scroll duration above zero
 When the person presses a scroll arrow
 Then the list's own scroll moves along the scroll curve for its duration and stops exactly at the
-target, a page or a third of the visible width by `scrollStep`; a second press counts from the
+target, 80 px, a page or a third of the visible width by `scrollStep`; a second press counts from the
 target of the running scroll, and a hold tick stops it and moves at once
 
 Covered: `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-scroll.spec.ts`.

@@ -24,8 +24,11 @@ export namespace IRtTabs {
      */
     export type ScrollArrows = 'overlay' | 'inline';
 
-    /** На сколько сдвигает полосу одно нажатие на стрелку: на видимую ширину или на её треть. */
-    export type ScrollStep = 'page' | 'third';
+    /**
+     * На сколько сдвигает полосу одно нажатие на стрелку: `fixed` — на 80 px, как прежде; `page` —
+     * на видимую ширину, `third` — на её треть, как у Material.
+     */
+    export type ScrollStep = 'fixed' | 'page' | 'third';
 
     /**
      * Длительность движения при смене вкладки: переезда полосы и сдвига панели. Число — миллисекунды,

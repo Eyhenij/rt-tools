@@ -37,6 +37,19 @@ import { RtExpansionPanelComponent } from './rt-expansion-panel.component';
             </rt-expansion-panel>
         </div>
 
+        <rt-expansion-panel qa-dataid="wrapped" [(expanded)]="wrapped">
+            <span>Обёрнутое тело</span>
+            <div>
+                <ng-template rtExpansionPanelContent>
+                    <p qa-dataid="wrapped-body">Тело в обёртке</p>
+                    <rt-expansion-panel qa-dataid="inner" [(expanded)]="inner">
+                        <span>Внутренняя</span>
+                        <ng-template rtExpansionPanelContent><p qa-dataid="inner-body">Своё тело</p></ng-template>
+                    </rt-expansion-panel>
+                </ng-template>
+            </div>
+        </rt-expansion-panel>
+
         <rt-expansion-panel qa-dataid="kept" preserveContent [(expanded)]="kept">
             <span>Фильтр</span>
             <ng-template rtExpansionPanelContent>
@@ -61,6 +74,8 @@ class AdditionsHostComponent {
     public readonly c: WritableSignal<boolean> = signal(false);
     public readonly nested: WritableSignal<boolean> = signal(false);
     public readonly kept: WritableSignal<boolean> = signal(false);
+    public readonly wrapped: WritableSignal<boolean> = signal(false);
+    public readonly inner: WritableSignal<boolean> = signal(false);
 }
 
 const STYLES: string = readFileSync(join(__dirname, 'rt-expansion-panel.component.scss'), 'utf8');
@@ -223,6 +238,22 @@ describe('RtExpansionPanelComponent — дополнения', (): void => {
             pressHeader(fixture, 'group-a');
 
             expect(qaAll(fixture, 'expansion-panel-body').length).toBe(0);
+        });
+    });
+
+    describe('ленивое тело в обёртке', (): void => {
+        it('шаблон тела внутри обёртки владельца находится, а шаблон вложенной панели остаётся ей', (): void => {
+            const fixture: ComponentFixture<AdditionsHostComponent> = setup();
+
+            pressHeader(fixture, 'wrapped');
+
+            expect(qa(fixture, 'wrapped-body')).not.toBeNull();
+            expect(qa(fixture, 'inner-body')).toBeNull();
+
+            pressHeader(fixture, 'inner');
+
+            expect(qa(fixture, 'inner-body')).not.toBeNull();
+            expect(qaAll(fixture, 'wrapped-body').length).toBe(1);
         });
     });
 

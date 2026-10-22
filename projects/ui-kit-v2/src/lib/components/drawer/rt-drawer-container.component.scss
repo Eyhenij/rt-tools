@@ -7,6 +7,9 @@
         overflow: hidden;
         min-height: 0;
 
+        /* Ярусы панели и подложки — внутри контейнера, а содержимое со своим z-index их не перекрывает. */
+        isolation: isolate;
+
         &__content {
             overflow: auto;
             min-width: 0;

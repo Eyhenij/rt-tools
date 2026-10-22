@@ -18,6 +18,12 @@ export interface IRtExpansionPanelGroupMember {
     readonly expanded: WritableSignal<boolean>;
 }
 
+/**
+ * Ближайшая панель над узлом. Директивы тела и действий запоминают её, и панель берёт из своего
+ * содержимого только свои: шаблон в обёртке владельца находится, а шаблон вложенной панели — нет.
+ */
+export const RT_EXPANSION_PANEL_OWNER: InjectionToken<object> = new InjectionToken<object>('RT_EXPANSION_PANEL_OWNER');
+
 export const RT_EXPANSION_PANEL_GROUP: InjectionToken<IRtExpansionPanelGroupHost> = new InjectionToken<IRtExpansionPanelGroupHost>(
     'RT_EXPANSION_PANEL_GROUP'
 );

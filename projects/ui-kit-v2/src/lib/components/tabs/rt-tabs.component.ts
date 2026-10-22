@@ -39,7 +39,7 @@ import { rtTabsIntoViewTarget, rtTabsPageTarget, RtTabsScroller } from './rt-tab
 /** Интервал тика прокрутки при зажатой стрелке (мс). */
 const SCROLL_TICK_MS: number = 15;
 
-/** Сколько держать стрелку, чтобы нажатие стало прокруткой по удержанию, а не шагом на страницу (мс). */
+/** Сколько держать стрелку, чтобы нажатие стало прокруткой по удержанию, а не шагом (мс). */
 const HOLD_DELAY_MS: number = 300;
 
 /** Дебаунс пересчёта видимости стрелок прокрутки на resize/scroll (мс). */
@@ -60,7 +60,7 @@ type TScrollDirection = 'before' | 'after';
  * эмиттят `activeIdChange`; синхронизацию `activeId` оставляем потребителю.
  *
  * Горизонтальная полоса при переполнении прячет вкладки под скролл и показывает
- * стрелки-«хвосты» (`__rest`): нажатие сдвигает полосу на ширину видимой области, удержание
+ * стрелки-«хвосты» (`__rest`): нажатие сдвигает полосу на шаг `scrollStep`, удержание
  * прокручивает непрерывно. Стрелки стоят поверх вкладок или, при `scrollArrows="inline"`, в своих
  * местах по краям. Вертикальная ориентация раскладывает вкладки в колонку без стрелок.
  *
@@ -227,8 +227,8 @@ export class RtTabsComponent {
     /** Стрелки прокрутки поверх вкладок (`overlay`) или в своих местах по краям полосы (`inline`). */
     public readonly scrollArrows: InputSignal<IRtTabs.ScrollArrows> = input<IRtTabs.ScrollArrows>('overlay');
 
-    /** Шаг нажатия на стрелку: видимая ширина полосы (`page`) или её треть (`third`), как у Material. */
-    public readonly scrollStep: InputSignal<IRtTabs.ScrollStep> = input<IRtTabs.ScrollStep>('page');
+    /** Шаг нажатия на стрелку: 80 px (`fixed`), видимая ширина полосы (`page`) или её треть (`third`), как у Material. */
+    public readonly scrollStep: InputSignal<IRtTabs.ScrollStep> = input<IRtTabs.ScrollStep>('fixed');
 
     /**
      * Длительность движения при смене вкладки — и полосы, и панели, как у `mat-tab-group`: `500`,
@@ -354,8 +354,8 @@ export class RtTabsComponent {
     }
 
     /**
-     * Нажатие ЛКМ на стрелку. Отпущенная до `HOLD_DELAY_MS` стрелка сдвигает полосу на ширину
-     * видимой области, удержанная дольше — прокручивает её непрерывно, пока не отпустят.
+     * Нажатие ЛКМ на стрелку. Отпущенная до `HOLD_DELAY_MS` стрелка сдвигает полосу на шаг
+     * `scrollStep`, удержанная дольше — прокручивает её непрерывно, пока не отпустят.
      */
     protected onRestPointerDown(direction: TScrollDirection, event: MouseEvent): void {
         if (event.button !== 0 || this.#pressed !== null || !this.#win) {
@@ -373,7 +373,7 @@ export class RtTabsComponent {
         }, HOLD_DELAY_MS);
     }
 
-    /** Стрелку отпустили: короткое нажатие — шаг на страницу, после удержания — только стоп. */
+    /** Стрелку отпустили: короткое нажатие — шаг `scrollStep`, после удержания — только стоп. */
     protected onRestPointerUp(): void {
         const direction: TScrollDirection | null = this.#pressed;
         const shortPress: boolean = this.#holdTimeoutId !== null;
@@ -385,7 +385,7 @@ export class RtTabsComponent {
         }
     }
 
-    /** Указатель ушёл со стрелки: прокрутка останавливается, шага на страницу нет. */
+    /** Указатель ушёл со стрелки: прокрутка останавливается, шага нет. */
     protected onRestPointerLeave(): void {
         this.#clearScrollInterval();
     }
@@ -447,7 +447,7 @@ export class RtTabsComponent {
         }
     }
 
-    /** Сдвиг полосы на ширину её видимой области, не дальше края. */
+    /** Сдвиг полосы на шаг `scrollStep`, не дальше края. */
     #scrollPage(direction: TScrollDirection): void {
         const list: HTMLElement | undefined = this.tabListRef()?.nativeElement;
         if (list) {

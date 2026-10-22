@@ -18,6 +18,9 @@ import { IRtBadge } from './rt-badge.model';
 
 const BEM_BLOCK: string = 'rt-badge';
 
+/** Метка узла пузырька: по ней клиент находит пузырёк из серверной разметки и не ставит второй. */
+const BUBBLE_MARK: string = 'data-rt-badge';
+
 /**
  * Пузырёк-счётчик на углу любого элемента: «Отели 12» у подписи вкладки, непрочитанные у пункта
  * меню, отметка на дне календаря. Своей обёртки нет: директива ставится на сам элемент, и пузырёк
@@ -38,7 +41,7 @@ export class RtBadgeDirective {
     readonly #host: ElementRef<HTMLElement> = inject<ElementRef<HTMLElement>>(ElementRef);
     readonly #renderer: Renderer2 = inject(Renderer2);
     readonly #doc: Document = inject(DOCUMENT);
-    readonly #bubble: HTMLElement = this.#doc.createElement('span');
+    #bubble: HTMLElement | null = null;
 
     /** Текст пузырька: число как есть, пустая строка и `null` — пузырька нет. */
     protected readonly text: Signal<string> = computed((): string => {
@@ -74,17 +77,35 @@ export class RtBadgeDirective {
     public readonly rtBadgeColor: InputSignal<IRtBadge.Color> = input<IRtBadge.Color>('primary');
 
     constructor() {
-        this.#bubble.setAttribute('qa-dataid', 'badge');
-        inject(DestroyRef).onDestroy((): void => this.#bubble.remove());
+        inject(DestroyRef).onDestroy((): void => this.#bubble?.remove());
 
         effect((): void => {
             // Пузырёк встаёт в хост при первом проходе, а не в конструкторе: в конструкторе детей
             // хоста ещё нет, и пузырёк оказался бы первым узлом — число читалось бы до подписи.
-            if (this.#bubble.parentNode !== this.#host.nativeElement) {
-                this.#renderer.appendChild(this.#host.nativeElement, this.#bubble);
+            const bubble: HTMLElement = (this.#bubble ??= this.#takeBubble());
+            if (bubble.parentNode !== this.#host.nativeElement) {
+                this.#renderer.appendChild(this.#host.nativeElement, bubble);
             }
-            this.#bubble.textContent = this.text();
-            this.#bubble.className = this.classes().join(' ');
+            bubble.textContent = this.text();
+            bubble.className = this.classes().join(' ');
         });
+    }
+
+    /**
+     * Пузырёк хоста. После серверной отрисовки он уже стоит в хосте: гидратация оставляет узлы, а
+     * директива на клиенте создаётся заново, и новый узел встал бы вторым пузырьком рядом.
+     */
+    #takeBubble(): HTMLElement {
+        const rendered: Element | undefined = Array.from(this.#host.nativeElement.children).find((child: Element): boolean =>
+            child.hasAttribute(BUBBLE_MARK)
+        );
+        if (rendered instanceof HTMLElement) {
+            return rendered;
+        }
+
+        const bubble: HTMLElement = this.#doc.createElement('span');
+        bubble.setAttribute('qa-dataid', 'badge');
+        bubble.setAttribute(BUBBLE_MARK, '');
+        return bubble;
     }
 }

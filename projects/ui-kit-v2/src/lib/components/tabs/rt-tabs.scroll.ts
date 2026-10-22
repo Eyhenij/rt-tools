@@ -21,8 +21,11 @@ const NAMED_EASINGS: ReadonlyMap<string, readonly [number, number, number, numbe
 /** Шаг прокрутки полосы за один тик удержания стрелки (px). */
 const HOLD_STEP: number = 12;
 
-/** Доля видимой ширины полосы, на которую сдвигает одно нажатие на стрелку. */
-const STEP_SHARE: Readonly<Record<IRtTabs.ScrollStep, number>> = { page: 1, third: 1 / 3 };
+/** Сдвиг одного нажатия на стрелку при шаге `fixed` (px): столько давал короткий клик до шага на страницу. */
+const FIXED_STEP: number = 80;
+
+/** Доля видимой ширины полосы, на которую сдвигает одно нажатие на стрелку при шагах `page` и `third`. */
+const STEP_SHARE: Readonly<Record<Exclude<IRtTabs.ScrollStep, 'fixed'>, number>> = { page: 1, third: 1 / 3 };
 
 /** Точка кубической кривой Безье с концами 0 и 1 по одной оси. */
 function bezierAt(t: number, p1: number, p2: number): number {
@@ -64,10 +67,10 @@ export function rtTabsEasing(value: string): (progress: number) => number {
     };
 }
 
-/** Куда прокрутить полосу нажатием на стрелку: на долю видимой ширины от `from`, не дальше края. */
+/** Куда прокрутить полосу нажатием на стрелку: на шаг `step` от `from`, не дальше края. */
 export function rtTabsPageTarget(list: HTMLElement, from: number, back: boolean, step: IRtTabs.ScrollStep): number {
     const max: number = Math.max(0, list.scrollWidth - list.clientWidth);
-    const shift: number = list.clientWidth * STEP_SHARE[step];
+    const shift: number = step === 'fixed' ? FIXED_STEP : list.clientWidth * STEP_SHARE[step];
 
     return Math.min(max, Math.max(0, from + (back ? -shift : shift)));
 }

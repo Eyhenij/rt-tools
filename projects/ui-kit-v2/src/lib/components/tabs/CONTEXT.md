@@ -13,18 +13,18 @@
 
 ## `rt-tabs`
 
-| вход                | тип                          | умолчание      |
-| ------------------- | ---------------------------- | -------------- |
-| `activeId`          | `IRtTabs.Id \| null`         | `null`         |
-| `direction`         | `'horizontal' \| 'vertical'` | `'horizontal'` |
-| `stretch`           | `boolean`                    | `false`        |
-| `contentScrollable` | `boolean`                    | `true`         |
-| `headerOnly`        | `boolean`                    | `false`        |
-| `activation`        | `'auto' \| 'manual'`         | `'auto'`       |
-| `scrollArrows`      | `'overlay' \| 'inline'`      | `'overlay'`    |
-| `scrollStep`        | `'page' \| 'third'`          | `'page'`       |
-| `animationDuration` | `string \| number \| null`   | `null`         |
-| `preserveContent`   | `boolean`                    | `false`        |
+| вход                | тип                            | умолчание      |
+| ------------------- | ------------------------------ | -------------- |
+| `activeId`          | `IRtTabs.Id \| null`           | `null`         |
+| `direction`         | `'horizontal' \| 'vertical'`   | `'horizontal'` |
+| `stretch`           | `boolean`                      | `false`        |
+| `contentScrollable` | `boolean`                      | `true`         |
+| `headerOnly`        | `boolean`                      | `false`        |
+| `activation`        | `'auto' \| 'manual'`           | `'auto'`       |
+| `scrollArrows`      | `'overlay' \| 'inline'`        | `'overlay'`    |
+| `scrollStep`        | `'fixed' \| 'page' \| 'third'` | `'fixed'`      |
+| `animationDuration` | `string \| number \| null`     | `null`         |
+| `preserveContent`   | `boolean`                      | `false`        |
 
 Выходы: `activeIdChange: IRtTabs.Id`, `tabClose: IRtTabs.Id` — просьба закрыть вкладку с `closable`.
 
@@ -89,8 +89,8 @@
 - `headerOnly` убирает панель и `aria-controls` у вкладок; выбор по-прежнему уходит в `activeIdChange`.
 - Стрелки прокрутки шапки есть в разметке всегда — показывает их модификатор `--visible`,
   который выставляется по замеру ширины после отрисовки.
-- Нажатие на стрелку плавно сдвигает полосу на ширину видимой области (`scrollStep="third"` — на её
-  треть), удержание дольше 300 мс прокручивает непрерывно. Вкладка, выбранная частично скрытой,
+- Нажатие на стрелку плавно сдвигает полосу на 80 px, как до шага на страницу; `scrollStep="page"`
+  — на ширину видимой области, `"third"` — на её треть. Удержание дольше 300 мс прокручивает непрерывно. Вкладка, выбранная частично скрытой,
   въезжает в видимую область так же плавно; длительность и кривая — `--rt-tabs-scroll-duration` и
   `--rt-tabs-scroll-easing`, вход `animationDuration` их не трогает. Указатель, ушедший со стрелки до отпускания, полосу не сдвигает.
 - Смена вкладки движется: полоса — один элемент полосы вкладок, переезжает на новую вкладку; панель

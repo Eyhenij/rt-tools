@@ -1,10 +1,11 @@
-import { CdkMonitorFocus } from '@angular/cdk/a11y';
+import { FocusMonitor } from '@angular/cdk/a11y';
 import { BooleanInput } from '@angular/cdk/coercion';
 import { DOCUMENT } from '@angular/common';
 import {
     afterNextRender,
     booleanAttribute,
     computed,
+    DestroyRef,
     Directive,
     effect,
     ElementRef,
@@ -61,12 +62,9 @@ const LOADING_FADE_OUT_BUFFER_MS: number = 50;
  */
 @Directive({
     selector: 'button[rtButton], a[rtButton]',
-    /* Источник фокуса пишет CDK классами `cdk-keyboard-focused`, `cdk-mouse-focused` и
-       соседними, как у Material: кольцо фокуса рисуется только не от мыши и не от касания. */
     hostDirectives: [
         { directive: RtRippleDirective, inputs: ['rippleDisabled'] },
         { directive: RtRadiusDirective, inputs: ['radius'] },
-        CdkMonitorFocus,
     ],
     /* Шаг скругления без входа берётся из настроек кита: приложение, скруглившее все кнопки разом,
        называет шаг один раз, а вход на кнопке по-прежнему сильнее. */
@@ -81,6 +79,7 @@ const LOADING_FADE_OUT_BUFFER_MS: number = 50;
 export class RtButtonDirective {
     readonly #el: ElementRef<HTMLButtonElement | HTMLAnchorElement> = inject<ElementRef<HTMLButtonElement | HTMLAnchorElement>>(ElementRef);
     readonly #renderer: Renderer2 = inject(Renderer2);
+    readonly #focusMonitor: FocusMonitor = inject(FocusMonitor);
     readonly #doc: Document = inject(DOCUMENT);
     readonly #iconRegistry: RtIconRegistry = inject(RtIconRegistry);
     readonly #glyphStrategy: IRtIcon.GlyphStrategy = inject(RT_ICON_GLYPH_STRATEGY);
@@ -150,6 +149,13 @@ export class RtButtonDirective {
 
     constructor() {
         afterNextRender(() => untracked(() => this.#updateContent()));
+
+        /* Источник фокуса пишет CDK классами `cdk-keyboard-focused`, `cdk-mouse-focused` и
+           соседними, как у Material: кольцо фокуса рисуется только не от мыши и не от касания.
+           Сам монитор, а не `CdkMonitorFocus` хозяином: приложение вправе поставить на ту же
+           кнопку `cdkMonitorElementFocus`, и директива дважды на узле — ошибка NG0309. */
+        this.#focusMonitor.monitor(this.#el);
+        inject(DestroyRef).onDestroy((): void => this.#focusMonitor.stopMonitoring(this.#el));
 
         effect(() => {
             this.label();

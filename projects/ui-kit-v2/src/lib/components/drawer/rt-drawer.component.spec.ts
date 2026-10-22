@@ -286,6 +286,16 @@ describe('RtDrawerComponent', (): void => {
             expect(document.activeElement).toBe(panel(fixture));
         });
 
+        it('панель поверх, открытая с первой отрисовки, фокус не забирает', async (): Promise<void> => {
+            const fixture: ComponentFixture<DrawerHostComponent> = createRtFixture(DrawerHostComponent, {}, { skipInitialDetect: true });
+            fixture.componentInstance.mode.set('over');
+            fixture.componentInstance.opened.set(true);
+            fixture.detectChanges();
+            await fixture.whenStable();
+
+            expect(document.activeElement).not.toBe(panel(fixture));
+        });
+
         it('SC-UKV-1004 — нажатие на подложку приходит до закрытия и с disableClose', (): void => {
             const fixture: ComponentFixture<DrawerHostComponent> = setup((it: DrawerHostComponent): void => it.disableClose.set(true));
             over(fixture);
