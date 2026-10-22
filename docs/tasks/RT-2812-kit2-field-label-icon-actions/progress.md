@@ -9,6 +9,14 @@
 - **Done on 20 October:** main merged in and references re-taken (d0b5e8e72); the application's requests 17–19 on tabs — motion of the bar and the panel (5f2fa9815), `preserveContent` (dff71d705), smooth list scroll with `scrollStep` (336e14823) and the scroll duration freed from `animationDuration` (8d0e58945). The package lies on the Desktop as `rt-tools-ui-kit-v2-0.26.0.tgz`, built 13:57
 - **Blocks the push, for 6.3:** the scenarios file of the agreement is 777 lines against the 500 limit — it is split when it merges into the domain specs; the two PDF viewer frames diverge the same way on main (the «По ширине» button highlighted) and wait for the owner's decision
 - **Committed on 16 October by the owner's word «комит по правилам, подтяни мейн потом проверь всю ветку на регресси»:** requests 9 (the clearing cross), 10 (points after the Material comparison) and 11 (the chips appearance of the toggle button group); then main is merged in and the whole branch is checked for the kit's own look
+- **Done on 22 October:** main merged in (d676f2dcb); requests 26 and 26b on the expansion panel body;
+  the owner's review — the tabs arrow step and four defects (3e2176d72, with request 20 on the
+  drawer); request 21 — tooltip defaults in `provideRtKit` (4ae6e16f4); request 22 — the kit reads
+  no `--mat-*`, theme roles `--rt-sys-*`. Each package went to the Desktop as
+  `rt-tools-ui-kit-v2-0.30.0.tgz`
+- **Deferred:** `pnpm install` with main's lockfile after 13:10 UTC on 22 October (rolldown 1.2.15
+  passes the release age then); asked of the owner, no answer yet. `node_modules` holds the set from
+  before the merge
 - **Waiting for the owner:** «пр не открывай» — no PR, no push
 - **PR:** not open yet
 
@@ -736,6 +744,19 @@ data-preset="material" floatingLabel>` drew the border through the risen label: 
   `rt-icon-button` takes its `tooltipHideOnClick` default from the same section, otherwise its own
   `true` would beat the setting. Checked by specs only: the showcase has no settings section to
   switch it on.
+- **2026-10-22, request 22 (the application's session): the kit reads no `--mat-*` name.** The
+  application drops Angular Material and wants no Material names in code. Every `--mat-sys-<role>`
+  read became `--rt-sys-<role>` with the same role names; four component names became
+  `--rt-field-filled-container-color`, `--rt-fab-small-container-color`,
+  `--rt-option-selected-state-layer-color` and `--rt-menu-container-color`. All 25 are consumer
+  handles, not declared by the kit, with the former fallbacks. The extra roles the application
+  listed are not declared: the kit does not read them, and a declared unused name is a dead token;
+  the application declares them itself. Breaking for an application that recoloured the kit by a
+  Material theme: it now declares `--rt-sys-*` itself. Checked: the built CSS and code against the
+  former build differ only by the names, the generated handle list and line wrapping; the
+  showcase's violet theme on `--rt-sys-*` gives the list `#7d00fa` brand, `#fef8fc` surface and
+  `#e8e0eb` fill; no `--mat-` string is left in the package outside the first kit's shared lint
+  rule, which is not shipped.
 
 ## Sessions
 

@@ -205,8 +205,8 @@ theme.setTheme('auto');`}
 ```
 
 Схема отвечает только на корне страницы: назначения объявлены там, и узел внутри со своей схемой
-остался бы со старым акцентом. В материальном наборе тема Material приложения сильнее схемы — её
-`--mat-sys-primary` стоит в назначениях набора раньше ступени. В витрине схему переключает
+остался бы со старым акцентом. В материальном наборе тема приложения сильнее схемы — её роль
+`--rt-sys-primary` стоит в назначениях набора раньше ступени. В витрине схему переключает
 «Схема» в панели, бирюзовая — та же, что в примере первого кита.
 
 ---
@@ -248,6 +248,10 @@ theme.setTheme('auto');`}
 | `--rt-expansion-panel-body-line-height`             | высота строки тела раскрывающейся панели                      | наследуется                                    |
 | `--rt-expansion-panel-body-font-size`               | размер шрифта тела раскрывающейся панели                      | наследуется                                    |
 | `--rt-expansion-panel-body-box-sizing`              | box-sizing тела раскрывающейся панели                         | наследуется от панели                          |
+| `--rt-field-filled-container-color`                 | заливка поля и шапки таблицы в материальном наборе            | `--rt-sys-surface-variant`, затем ступень      |
+| `--rt-fab-small-container-color`                    | круг действия меню быстрых действий в материальном наборе     | цвет набора                                    |
+| `--rt-option-selected-state-layer-color`            | слой выбранного пункта в материальном наборе                  | цвет набора                                    |
+| `--rt-menu-container-color`                         | подложка меню в материальном наборе                           | цвет набора                                    |
 | `--rt-header-height`                                | высота шапки приложения                                       | `0px` — кит её не рисует                       |
 | `--rt-header-content-max-width`                     | кап ширины содержимого шапки                                  | `100%`                                         |
 | `--rt-logo-wordmark`                                | начертание логотипа, светлая тема                             | `none`                                         |
@@ -410,6 +414,17 @@ theme.setTheme('auto');`}
 | `--rt-side-menu-sub-item-letter-spacing`            | межбуквенный интервал строки подменю бокового меню            | от родителя                                    |
 | `--rt-input-density`                                | число шагов плотности Material под материальным набором, 0–5  | 0; ставит и атрибут `data-rt-density`          |
 | `--rt-input-height-app`                             | своя высота поля приложения под материальным набором          | высота по плотности                            |
+
+**Роли темы приложения — `--rt-sys-<роль>`.** Материальный набор читает их там, где первый кит
+читал системные имена темы Material: имена ролей те же, приставка своя. Объявляет их приложение,
+под каждую цветовую схему и тему; пока роль не задана, работает ступень набора. Роли, которые
+читает кит: `--rt-sys-primary`, `--rt-sys-on-primary`, `--rt-sys-primary-container`,
+`--rt-sys-on-primary-container`, `--rt-sys-primary-fixed-dim`, `--rt-sys-secondary-container`,
+`--rt-sys-on-secondary-container`, `--rt-sys-error`, `--rt-sys-error-container`,
+`--rt-sys-surface`, `--rt-sys-surface-variant`, `--rt-sys-surface-container-lowest`,
+`--rt-sys-on-surface`, `--rt-sys-on-surface-variant`, `--rt-sys-inverse-surface`,
+`--rt-sys-inverse-on-surface`, `--rt-sys-outline`, `--rt-sys-outline-variant`, `--rt-sys-level2`,
+`--rt-sys-level3`, `--rt-sys-level4`. Имён `--mat-*` кит не читает.
 
 <div style={warn}>
     <strong>Ручка — обещание, а не забытое объявление.</strong> Имя, которого нет ни в этой таблице, ни в слоях оформления, — мёртвая

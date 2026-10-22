@@ -126,7 +126,7 @@
         .rt-toggle-button-group__button--active:not(:disabled) {
             --rt-toggle-chip-edge: transparent;
 
-            color: var(--mat-sys-on-secondary-container, var(--rt-color-text-primary));
+            color: var(--rt-sys-on-secondary-container, var(--rt-color-text-primary));
         }
 
         .rt-toggle-button-group__check {

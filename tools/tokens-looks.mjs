@@ -54,11 +54,18 @@ export function mixinBody(text, name) {
 }
 
 /**
- * A Material name with a fallback: `var(--mat-sys-primary, #4284d7)`. The material preset reads
+ * The application's theme roles the material preset reads: the system roles `--rt-sys-*` and four
+ * component roles. The kit does not declare them — the application does, per colour scheme.
+ */
+export const APP_THEME_NAME =
+    '--rt-(?:sys-[a-z0-9-]+|field-filled-container-color|fab-small-container-color|option-selected-state-layer-color|menu-container-color)';
+
+/**
+ * A theme role with a fallback: `var(--rt-sys-primary, #4284d7)`. The material preset reads
  * the theme of the page this way, and a page without one gets the fallback. The checks judge the kit
  * on its own, so the value they see is the fallback.
  */
-const MATERIAL_THEME_RE = /^var\(\s*--mat-[a-z0-9-]+\s*,\s*(.+)\)$/;
+const MATERIAL_THEME_RE = new RegExp(`^var\\(\\s*${APP_THEME_NAME}\\s*,\\s*(.+)\\)$`);
 
 /** A value with its Material names unwrapped, name by name, down to the kit's own fallback. */
 export function withoutMaterial(value) {

@@ -17,6 +17,8 @@ import { fileURLToPath } from 'node:url';
 
 import * as prettier from 'prettier';
 
+import { APP_THEME_NAME } from './tokens-looks.mjs';
+
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const stylesDir = resolve(root, 'projects/ui-kit-v2/src/styles');
 const typesFile = resolve(root, 'projects/ui-kit-v2/src/lib/tokens/rt-design-tokens.ts');
@@ -241,7 +243,7 @@ COEXIST_NAMES.forEach((name, index) => {
     if (!coexistNodes[index]) fail(`the coexistence file names '${name}', which the scale does not declare`);
 });
 
-// The preset under a dark theme. A preset name read from Material by a chain `var(--mat-…)` follows the
+// The preset under a dark theme. A preset name read from the application's theme by a chain `var(--rt-sys-…)` follows the
 // application's Material theme, and that theme answers dark by itself — the kit's graphite answer laid
 // over it drew the search, the filter fields and the pagination unlike the page around them. So such a
 // name keeps its chain under a dark theme too, and the last fallback of the chain — the light step —
@@ -249,10 +251,11 @@ COEXIST_NAMES.forEach((name, index) => {
 // to the dot. A name mixed by `color-mix` stays on its dark answer: there is no fallback to swap there.
 const darkByName = new Map(darkNodes.filter((n) => n.name).map((n) => [n.name, n.value]));
 const LIGHT_STEP = /var\(--rt-mat-[\w-]+\)/g;
+const APP_THEME_READ = new RegExp(`^var\\(${APP_THEME_NAME}`);
 // A preset name whose look in the dark comes from the first kit's own dark palette rather than from
 // Material carries that value in the field `dark`, and it goes into the same dark preset set as is.
 const materialDark = material
-    .filter((node) => node.name && (node.dark !== undefined || (node.value.startsWith('var(--mat-') && darkByName.has(node.name))))
+    .filter((node) => node.name && (node.dark !== undefined || (APP_THEME_READ.test(node.value) && darkByName.has(node.name))))
     .map((node) => {
         if (node.dark !== undefined) return { name: node.name, value: node.dark };
         const steps = node.value.match(LIGHT_STEP) ?? [];

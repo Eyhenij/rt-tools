@@ -708,6 +708,8 @@ export type TRtConsumerHandleName =
     | '--rt-expansion-panel-body-box-sizing'
     | '--rt-expansion-panel-body-font-size'
     | '--rt-expansion-panel-body-line-height'
+    | '--rt-fab-small-container-color'
+    | '--rt-field-filled-container-color'
     | '--rt-header-content-max-width'
     | '--rt-header-height'
     | '--rt-icon-button-bg'
@@ -739,8 +741,31 @@ export type TRtConsumerHandleName =
     | '--rt-logo-tagline-dark'
     | '--rt-logo-wordmark'
     | '--rt-logo-wordmark-dark'
+    | '--rt-menu-container-color'
+    | '--rt-option-selected-state-layer-color'
     | '--rt-page-header-bg'
     | '--rt-side-menu-sub-item-letter-spacing'
+    | '--rt-sys-error'
+    | '--rt-sys-error-container'
+    | '--rt-sys-inverse-on-surface'
+    | '--rt-sys-inverse-surface'
+    | '--rt-sys-level2'
+    | '--rt-sys-level3'
+    | '--rt-sys-level4'
+    | '--rt-sys-on-primary'
+    | '--rt-sys-on-primary-container'
+    | '--rt-sys-on-secondary-container'
+    | '--rt-sys-on-surface'
+    | '--rt-sys-on-surface-variant'
+    | '--rt-sys-outline'
+    | '--rt-sys-outline-variant'
+    | '--rt-sys-primary'
+    | '--rt-sys-primary-container'
+    | '--rt-sys-primary-fixed-dim'
+    | '--rt-sys-secondary-container'
+    | '--rt-sys-surface'
+    | '--rt-sys-surface-container-lowest'
+    | '--rt-sys-surface-variant'
     | '--rt-table-actions-bg'
     | '--rt-tag-color-bg'
     | '--rt-tag-color-border'
@@ -1480,6 +1505,8 @@ export const RT_CONSUMER_HANDLE_NAMES: readonly TRtConsumerHandleName[] = [
     '--rt-expansion-panel-body-box-sizing',
     '--rt-expansion-panel-body-font-size',
     '--rt-expansion-panel-body-line-height',
+    '--rt-fab-small-container-color',
+    '--rt-field-filled-container-color',
     '--rt-header-content-max-width',
     '--rt-header-height',
     '--rt-icon-button-bg',
@@ -1511,8 +1538,31 @@ export const RT_CONSUMER_HANDLE_NAMES: readonly TRtConsumerHandleName[] = [
     '--rt-logo-tagline-dark',
     '--rt-logo-wordmark',
     '--rt-logo-wordmark-dark',
+    '--rt-menu-container-color',
+    '--rt-option-selected-state-layer-color',
     '--rt-page-header-bg',
     '--rt-side-menu-sub-item-letter-spacing',
+    '--rt-sys-error',
+    '--rt-sys-error-container',
+    '--rt-sys-inverse-on-surface',
+    '--rt-sys-inverse-surface',
+    '--rt-sys-level2',
+    '--rt-sys-level3',
+    '--rt-sys-level4',
+    '--rt-sys-on-primary',
+    '--rt-sys-on-primary-container',
+    '--rt-sys-on-secondary-container',
+    '--rt-sys-on-surface',
+    '--rt-sys-on-surface-variant',
+    '--rt-sys-outline',
+    '--rt-sys-outline-variant',
+    '--rt-sys-primary',
+    '--rt-sys-primary-container',
+    '--rt-sys-primary-fixed-dim',
+    '--rt-sys-secondary-container',
+    '--rt-sys-surface',
+    '--rt-sys-surface-container-lowest',
+    '--rt-sys-surface-variant',
     '--rt-table-actions-bg',
     '--rt-tag-color-bg',
     '--rt-tag-color-border',

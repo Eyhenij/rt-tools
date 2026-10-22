@@ -115,8 +115,8 @@ describe('поле материального набора против поля
     });
 
     it('SC-UKV-952 — подсказка, значки и стрелка — цвета темы Material, каретка — цвета марки, значок 24 px', (): void => {
-        expect(PRESET).toContain('--rt-input-color-text-placeholder: var(--mat-sys-on-surface-variant,');
-        expect(PRESET).toContain('--rt-input-icon-color: var(--mat-sys-on-surface-variant,');
+        expect(PRESET).toContain('--rt-input-color-text-placeholder: var(--rt-sys-on-surface-variant,');
+        expect(PRESET).toContain('--rt-input-icon-color: var(--rt-sys-on-surface-variant,');
         expect(PRESET).toContain('--rt-input-caret-color: var(--rt-color-action-primary);');
         expect(PRESET).toContain('--rt-input-icon-size: var(--rt-size-6);');
         expect(INPUT).toContain('caret-color: var(--rt-input-caret-color)');
@@ -284,7 +284,7 @@ describe('поле материального набора против поля
         expect(TEXTAREA).toContain('background-color: var(--rt-input-fill-color-bg-disabled)');
         expect(SEMANTIC).toContain('--rt-input-fill-color-bg-disabled: var(--rt-color-bg-surface-subtle-2);');
         expect(PRESET).toContain(
-            '--rt-input-fill-color-bg-disabled: color-mix(in srgb, var(--mat-sys-on-surface, var(--rt-mat-neutral-100)) 4%, transparent);'
+            '--rt-input-fill-color-bg-disabled: color-mix(in srgb, var(--rt-sys-on-surface, var(--rt-mat-neutral-100)) 4%, transparent);'
         );
     });
 
