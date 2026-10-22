@@ -884,3 +884,13 @@ Then the body takes the preset's line height and font size, and the panel takes 
 without the preset the body inherits both as before, and the panel stays `border-box`
 
 Покрытие: частичное. Тест читает стили панели; сами значения проверены измерением в витрине.
+
+### SC-UKV-1006 — an expansion panel body takes its box sizing apart from the panel
+
+Given an expansion panel whose host keeps `border-box` and fills its container
+When a styling preset sets `--rt-expansion-panel-body-box-sizing: content-box`
+Then only the body and, under an inheriting reset, its content take `content-box`, and the panel
+stays as wide as its container; without the property the body inherits the panel's box sizing
+
+Покрытие: частичное. Тест читает стили панели; ширина панели и размер кружка проверены измерением в
+витрине.

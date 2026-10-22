@@ -237,5 +237,10 @@ describe('RtExpansionPanelComponent — дополнения', (): void => {
             expect(STYLES).toContain('--rt-expansion-panel-box-sizing: border-box;');
             expect(STYLES).toContain('box-sizing: var(--rt-expansion-panel-box-sizing);');
         });
+
+        it('SC-UKV-1006 — box-sizing тела берётся из своего свойства и без него наследуется от панели', (): void => {
+            expect(STYLES).toContain('box-sizing: var(--rt-expansion-panel-body-box-sizing, inherit);');
+            expect(STYLES).not.toMatch(/--rt-expansion-panel-body-box-sizing:/);
+        });
     });
 });

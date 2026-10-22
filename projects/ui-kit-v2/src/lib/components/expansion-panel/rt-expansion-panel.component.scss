@@ -149,10 +149,13 @@
            показывает и убирает тело сразу.
            Высота строки и размер шрифта тела объявлены без значения по умолчанию: оба наследуются,
            и необъявленное свойство оставляет телу наследованное, как было. Набор оформления даёт
-           свои, когда строкам внутри нужна высота строки образца. */
+           свои, когда строкам внутри нужна высота строки образца. box-sizing тела тоже не объявлен
+           и по умолчанию наследуется от хоста: набор даёт телу content-box, не трогая хост с его
+           шириной во весь контейнер. */
         &__body {
             overflow: hidden;
             height: auto;
+            box-sizing: var(--rt-expansion-panel-body-box-sizing, inherit);
             font-size: var(--rt-expansion-panel-body-font-size);
             interpolate-size: allow-keywords;
             line-height: var(--rt-expansion-panel-body-line-height);

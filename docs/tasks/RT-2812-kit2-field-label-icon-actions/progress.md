@@ -699,6 +699,14 @@ data-preset="material" floatingLabel>` drew the border through the risen label: 
   `1.5rem`, a row with 8 px paddings from 35.5 px to 40 px; under a reset that inherits box sizing
   the circle grows from 16 px to 20 px with `content-box`, the panel width stays 352 px, and all
   values return when the properties are removed.
+- **2026-10-22, request 26b (the application's session): box sizing for the body alone.** With
+  `content-box` on the host the application's panel, 100% wide with a 1 px border, stood 2 px past
+  its container. A third consumer handle `--rt-expansion-panel-body-box-sizing` sets the body
+  alone; without it the body inherits the host's value — SC-UKV-1006. Measured in the showcase with
+  a 1 px host border and an inheriting reset in a layer below the kit: the body set to
+  `content-box` gives the circle 20 px, the panel 352 px against its 352 px container, 0 px past
+  the edge, the host stays `border-box`; without the property the body is `border-box` from the
+  host. An unlayered reset beats the kit rule on the body, and the property does nothing there.
 
 ## Sessions
 

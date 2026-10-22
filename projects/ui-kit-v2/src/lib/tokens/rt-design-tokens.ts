@@ -705,6 +705,7 @@ export type TRtConsumerHandleName =
     | '--rt-dynamic-selector-popup-radius'
     | '--rt-dynamic-selector-popup-shadow'
     | '--rt-dynamic-selector-popup-width'
+    | '--rt-expansion-panel-body-box-sizing'
     | '--rt-expansion-panel-body-font-size'
     | '--rt-expansion-panel-body-line-height'
     | '--rt-header-content-max-width'
@@ -1476,6 +1477,7 @@ export const RT_CONSUMER_HANDLE_NAMES: readonly TRtConsumerHandleName[] = [
     '--rt-dynamic-selector-popup-radius',
     '--rt-dynamic-selector-popup-shadow',
     '--rt-dynamic-selector-popup-width',
+    '--rt-expansion-panel-body-box-sizing',
     '--rt-expansion-panel-body-font-size',
     '--rt-expansion-panel-body-line-height',
     '--rt-header-content-max-width',

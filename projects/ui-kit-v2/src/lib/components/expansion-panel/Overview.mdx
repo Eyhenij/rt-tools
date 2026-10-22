@@ -128,7 +128,9 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 Высоту строки и размер шрифта тела задают `--rt-expansion-panel-body-line-height` и
 `--rt-expansion-panel-body-font-size`. Панель их не объявляет: пока их не задали, тело наследует
 оба значения. `--rt-expansion-panel-box-sizing` (по умолчанию `border-box`) задаёт box-sizing
-панели. Набор оформления Material даёт здесь `1.5rem` и `content-box`, как у панели Material.
+панели, `--rt-expansion-panel-body-box-sizing` — тела; тело без него наследует значение панели.
+Набор оформления Material даёт телу `1.5rem` и `content-box`, как у панели Material, а панель
+оставляет во всю ширину контейнера.
 
 ## Рядом
 
