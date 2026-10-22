@@ -710,6 +710,7 @@ export type TRtConsumerHandleName =
     | '--rt-expansion-panel-body-line-height'
     | '--rt-fab-small-container-color'
     | '--rt-field-filled-container-color'
+    | '--rt-field-label-letter-spacing'
     | '--rt-header-content-max-width'
     | '--rt-header-height'
     | '--rt-icon-button-bg'
@@ -737,6 +738,7 @@ export type TRtConsumerHandleName =
     | '--rt-icon-step-xs'
     | '--rt-input-density'
     | '--rt-input-height-app'
+    | '--rt-input-letter-spacing'
     | '--rt-logo-tagline'
     | '--rt-logo-tagline-dark'
     | '--rt-logo-wordmark'
@@ -744,6 +746,7 @@ export type TRtConsumerHandleName =
     | '--rt-menu-container-color'
     | '--rt-option-selected-state-layer-color'
     | '--rt-page-header-bg'
+    | '--rt-pagination-field-font-size'
     | '--rt-side-menu-sub-item-letter-spacing'
     | '--rt-sys-error'
     | '--rt-sys-error-container'
@@ -1507,6 +1510,7 @@ export const RT_CONSUMER_HANDLE_NAMES: readonly TRtConsumerHandleName[] = [
     '--rt-expansion-panel-body-line-height',
     '--rt-fab-small-container-color',
     '--rt-field-filled-container-color',
+    '--rt-field-label-letter-spacing',
     '--rt-header-content-max-width',
     '--rt-header-height',
     '--rt-icon-button-bg',
@@ -1534,6 +1538,7 @@ export const RT_CONSUMER_HANDLE_NAMES: readonly TRtConsumerHandleName[] = [
     '--rt-icon-step-xs',
     '--rt-input-density',
     '--rt-input-height-app',
+    '--rt-input-letter-spacing',
     '--rt-logo-tagline',
     '--rt-logo-tagline-dark',
     '--rt-logo-wordmark',
@@ -1541,6 +1546,7 @@ export const RT_CONSUMER_HANDLE_NAMES: readonly TRtConsumerHandleName[] = [
     '--rt-menu-container-color',
     '--rt-option-selected-state-layer-color',
     '--rt-page-header-bg',
+    '--rt-pagination-field-font-size',
     '--rt-side-menu-sub-item-letter-spacing',
     '--rt-sys-error',
     '--rt-sys-error-container',

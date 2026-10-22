@@ -38,6 +38,9 @@
                monospace) — задаём inherit явно, иначе шрифт отваливается. */
             font-family: inherit;
             font-size: var(--rt-input-font-size);
+
+            /* Межбуквенный интервал значения — ручка приложения: кит её не объявляет, без неё normal. */
+            letter-spacing: var(--rt-input-letter-spacing, normal);
             line-height: var(--rt-textarea-line-height);
             transition: var(--rt-input-transition);
 

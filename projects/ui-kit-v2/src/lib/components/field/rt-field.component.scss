@@ -37,6 +37,9 @@
             color: var(--rt-field-label-color);
             font-size: var(--rt-field-label-font-size);
             font-weight: var(--rt-field-label-font-weight);
+
+            /* Межбуквенный интервал подписи — ручка приложения: кит её не объявляет, без неё normal. */
+            letter-spacing: var(--rt-field-label-letter-spacing, normal);
         }
 
         &__required {

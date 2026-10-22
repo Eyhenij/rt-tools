@@ -162,6 +162,9 @@
             background: transparent;
             color: inherit;
             font: inherit;
+
+            /* Межбуквенный интервал значения — ручка приложения: кит её не объявляет, без неё normal. */
+            letter-spacing: var(--rt-input-letter-spacing, normal);
             outline: none;
 
             &::placeholder {

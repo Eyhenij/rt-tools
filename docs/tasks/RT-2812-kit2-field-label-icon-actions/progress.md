@@ -20,6 +20,12 @@
   main after the branch re-took its references (d0b5e8e72), and they draw the material field without
   this branch's field look (2acc951d9) — the branch's own `sidemenu--presets` reference holds the
   same outlined field. The kit's own half matches in both. They are re-taken at 6.3 with the rest
+- **Requests 23 and 24, 22 October:** consumer handles `--rt-input-letter-spacing` (the value of
+  input, number, select and text area), `--rt-field-label-letter-spacing` (the field label) and
+  `--rt-pagination-field-font-size` (the per-page value) — SC-UKV-1012. Asked with the default
+  `var(--rt-text-sm)` for the per-page size; kept at the field's size instead, so neither look moves
+  by itself. Measured: spacing `normal` by default and 0.496px at `0.031rem`, the label 43.2 → 45.7px;
+  the per-page value 14px own and 16px material by default, 14px material with the handle
 - **Scenario numbers moved on 22 October:** main's service block (RT-2934) took SC-UKV-904–907 first,
   so this branch's four took SC-UKV-1008–1011 (904→1008, 905→1009, 906→1010, 907→1011) in the
   agreement and the test titles. The plan and the step names above keep the old numbers: the plan is

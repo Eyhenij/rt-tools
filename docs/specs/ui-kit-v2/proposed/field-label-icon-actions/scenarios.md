@@ -906,3 +906,13 @@ still wins, and without the settings the kit keeps `true`, its own side and 300 
 Covered: `projects/ui-kit-v2/src/lib/components/tooltip/rt-tooltip.directive.spec.ts`,
 `projects/ui-kit-v2/src/lib/components/tooltip/rt-tooltip.logic.spec.ts`,
 `projects/ui-kit-v2/src/lib/components/icon-button/rt-icon-button.component.spec.ts`.
+
+### SC-UKV-1012 — field letter spacing and the per-page font size come from consumer handles
+
+Given an application that sets `--rt-input-letter-spacing`, `--rt-field-label-letter-spacing` or
+`--rt-pagination-field-font-size`
+When a field, a select, a number field, a text area or the pagination's per-page value is drawn
+Then the value and the label take that spacing and the per-page value that size; without the handles
+the spacing stays `normal` and the per-page value keeps the field's size
+
+Покрытие: частичное. Тест читает стили компонентов; значения проверены измерением в витрине.
