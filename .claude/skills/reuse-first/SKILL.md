@@ -4,7 +4,7 @@ kind: rule
 law: reuse-first
 description: Rule under the reuse-first law. Load before creating any new screen, component, field, store, service, mapper or procedure — what to build on, and by which signs it is visible that something ready-made was bypassed. Pattern reuse-first-extend.
 ---
-<!-- rt-kit v0.32.0 · rules/reuse-first.md · afe13785b343 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.32.0 · rules/reuse-first.md · ec2b39c66a78 · правится надстройкой, не здесь -->
 
 # Uniformity — how it works here
 
@@ -117,6 +117,9 @@ flowchart TD
   when the tree has no such kind at all. A hardcoded value is refused by neither linter, build nor
   test: it is syntactically valid and simply does not belong to this tree — that is how a demo
   value from the vendor's documentation leaves for the production build.
+- **A logo of a foreign service is taken, not drawn.** It is taken from the owner of the mark or
+  from an open icon set, in a mockup the same as in code. A drawn mark next to the service name
+  reads as that service's logo, and a person at the screen does not recognise it.
 
 ## What of the law is not here
 
