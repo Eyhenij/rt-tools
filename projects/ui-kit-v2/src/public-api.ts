@@ -82,6 +82,7 @@ export * from '@rt-tools/ui-kit-v2/radius';
 export * from '@rt-tools/ui-kit-v2/ripple';
 export * from '@rt-tools/ui-kit-v2/scroll-area';
 export * from '@rt-tools/ui-kit-v2/section-nav';
+export * from '@rt-tools/ui-kit-v2/service-block';
 export * from '@rt-tools/ui-kit-v2/service-logo';
 export * from '@rt-tools/ui-kit-v2/select';
 export * from '@rt-tools/ui-kit-v2/side-menu';
