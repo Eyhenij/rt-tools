@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, signal, WritableSignal } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 
 import { createRtFixture, qa, qaAll } from '../../../testing/rt-kit-testing';
 import { RtExpansionPanelActionsDirective } from './rt-expansion-panel-actions.directive';
@@ -60,6 +62,8 @@ class AdditionsHostComponent {
     public readonly nested: WritableSignal<boolean> = signal(false);
     public readonly kept: WritableSignal<boolean> = signal(false);
 }
+
+const STYLES: string = readFileSync(join(__dirname, 'rt-expansion-panel.component.scss'), 'utf8');
 
 function setup(): ComponentFixture<AdditionsHostComponent> {
     return createRtFixture(AdditionsHostComponent);
@@ -219,6 +223,19 @@ describe('RtExpansionPanelComponent — дополнения', (): void => {
             pressHeader(fixture, 'group-a');
 
             expect(qaAll(fixture, 'expansion-panel-body').length).toBe(0);
+        });
+    });
+
+    describe('свойства тела для набора оформления', (): void => {
+        it('SC-UKV-1005 — высота строки и шрифт тела берутся из свойств без своего значения, тело наследует их, как прежде', (): void => {
+            expect(STYLES).toContain('line-height: var(--rt-expansion-panel-body-line-height);');
+            expect(STYLES).toContain('font-size: var(--rt-expansion-panel-body-font-size);');
+            expect(STYLES).not.toMatch(/--rt-expansion-panel-body-(line-height|font-size):/);
+        });
+
+        it('SC-UKV-1005 — box-sizing панели берётся из свойства, по умолчанию border-box', (): void => {
+            expect(STYLES).toContain('--rt-expansion-panel-box-sizing: border-box;');
+            expect(STYLES).toContain('box-sizing: var(--rt-expansion-panel-box-sizing);');
         });
     });
 });

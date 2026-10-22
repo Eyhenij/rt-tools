@@ -125,6 +125,11 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 `--rt-expansion-panel-*`: владелец переназначает их правилом большей силы. Светлая и тёмная темы
 стоят рядом в истории **Themes**.
 
+Высоту строки и размер шрифта тела задают `--rt-expansion-panel-body-line-height` и
+`--rt-expansion-panel-body-font-size`. Панель их не объявляет: пока их не задали, тело наследует
+оба значения. `--rt-expansion-panel-box-sizing` (по умолчанию `border-box`) задаёт box-sizing
+панели. Набор оформления Material даёт здесь `1.5rem` и `content-box`, как у панели Material.
+
 ## Рядом
 
 - [`rt-accordion`](./?path=/docs/molecules-accordion-overview--docs) — список вопросов с ответами.

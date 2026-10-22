@@ -874,3 +874,13 @@ without the input the drawer over the content focuses itself as before; the back
 `backdropClick` before the close, and also with `disableClose`
 
 Covered: `projects/ui-kit-v2/src/lib/components/drawer/rt-drawer.component.spec.ts`.
+
+### SC-UKV-1005 — an expansion panel takes its body line height, font size and box sizing from properties
+
+Given an expansion panel inside a styling preset that sets `--rt-expansion-panel-body-line-height`,
+`--rt-expansion-panel-body-font-size` and `--rt-expansion-panel-box-sizing`
+When the panel body is drawn
+Then the body takes the preset's line height and font size, and the panel takes its box sizing;
+without the preset the body inherits both as before, and the panel stays `border-box`
+
+Покрытие: частичное. Тест читает стили панели; сами значения проверены измерением в витрине.

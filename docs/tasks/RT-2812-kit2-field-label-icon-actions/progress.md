@@ -689,6 +689,16 @@ data-preset="material" floatingLabel>` drew the border through the risen label: 
   handle, 0 when closed; the start of closing comes within 30 ms, the end after the 0.2 s motion;
   the selector and `first-tabbable` put the focus on the field beside the content, the default over
   the content focuses the panel and returns the focus to the button after a backdrop press.
+- **2026-10-22, request 26 (the application's session): the expansion panel body takes the
+  Material line height and box sizing.** Inside a panel under the Material preset the list rows
+  stood 32.5 px high instead of 40 px and the radio circle 16 px instead of 20 px: the body had no
+  property for the line height, and the panel had no property for box sizing. Two consumer handles
+  `--rt-expansion-panel-body-line-height` and `--rt-expansion-panel-body-font-size` stay undeclared,
+  so the body inherits both as before; `--rt-expansion-panel-box-sizing` defaults to `border-box` —
+  SC-UKV-1005. Measured in the showcase: the body line height goes from `normal` to 24 px with
+  `1.5rem`, a row with 8 px paddings from 35.5 px to 40 px; under a reset that inherits box sizing
+  the circle grows from 16 px to 20 px with `content-box`, the panel width stays 352 px, and all
+  values return when the properties are removed.
 
 ## Sessions
 
@@ -721,6 +731,7 @@ none
 ### Commits over the main branch
 
 ```
+e77a33fc0 feat(rt:ui-kit-v2): боковая панель — содержимое за краем, ширина по содержимому, события перехода и выбор фокуса
 c2305b053 feat(rt:ui-kit-v2): тост — голый вид для своего компонента-карточки
 40845c87f feat(rt:ui-kit-v2): тостер — свой канал для закреплённых тостов
 5058d4c62 feat(rt:ui-kit-v2): вкладки — открытую панель можно убрать из обхода по Tab
@@ -740,7 +751,6 @@ dff71d705 feat(rt:ui-kit-v2): вкладки — вход preserveContent сох
 d0b5e8e72 test(rt:ui-kit-v2): эталоны витрины пересняты после слияния с main, лимит страницы переписок поднят
 4def2d625 chore(rt:ui-kit-v2): в ветку влита главная ветка
 0466fea09 feat(rt:ui-kit-v2): вкладки — ручной выбор с клавиатуры, шаг стрелкой прокрутки и стрелки в своих местах
-34da2f3a3 fix(rt:ui-kit-v2): поле ввода показывает значение, которое форма вернула ему во время набора
 ```
 
 Written by a hook before the compaction of the context. Everything standing here is checked

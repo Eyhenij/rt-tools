@@ -165,6 +165,8 @@
     "--rt-bottom-sheet-max-height": "The cap on the height of the sheet panel; until it is set the cap is 80vh.",
     "--rt-side-menu-sub-item-letter-spacing": "the letter spacing of a side menu submenu row and folder title; set on the row or above, until it is set the row inherits it from the page",
     "--rt-input-density": "the number of Material density steps under the material preset, from 0 to 5; the attribute data-rt-density sets it, the application may set it on any ancestor; it is registered with the initial 0",
-    "--rt-input-height-app": "the application's own field height under the material preset; set on any ancestor, it beats the density and is not overridden by the preset sign on the field itself"
+    "--rt-input-height-app": "the application's own field height under the material preset; set on any ancestor, it beats the density and is not overridden by the preset sign on the field itself",
+    "--rt-expansion-panel-body-line-height": "The line height of the expansion panel's body; until it is set the body inherits it, as before.",
+    "--rt-expansion-panel-body-font-size": "The font size of the expansion panel's body; until it is set the body inherits it, as before."
   }
 }

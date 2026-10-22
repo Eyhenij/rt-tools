@@ -25,10 +25,11 @@
         --rt-expansion-panel-body-padding-inline: var(--rt-space-lg);
         --rt-expansion-panel-body-padding-end: var(--rt-space-md);
         --rt-expansion-panel-actions-gap: var(--rt-space-xs);
+        --rt-expansion-panel-box-sizing: border-box;
 
         display: block;
         width: 100%;
-        box-sizing: border-box;
+        box-sizing: var(--rt-expansion-panel-box-sizing);
         border-radius: var(--rt-expansion-panel-radius);
         background: var(--rt-expansion-panel-bg);
         box-shadow: var(--rt-expansion-panel-shadow);
@@ -145,11 +146,16 @@
 
         /* Раскрытие и сворачивание — высотой от нуля до своей и обратно. Высота «auto» становится
            величиной, между которой можно вести движение, через `interpolate-size`; браузер без него
-           показывает и убирает тело сразу. */
+           показывает и убирает тело сразу.
+           Высота строки и размер шрифта тела объявлены без значения по умолчанию: оба наследуются,
+           и необъявленное свойство оставляет телу наследованное, как было. Набор оформления даёт
+           свои, когда строкам внутри нужна высота строки образца. */
         &__body {
             overflow: hidden;
             height: auto;
+            font-size: var(--rt-expansion-panel-body-font-size);
             interpolate-size: allow-keywords;
+            line-height: var(--rt-expansion-panel-body-line-height);
             padding-block-end: var(--rt-expansion-panel-body-padding-end);
             padding-inline: var(--rt-expansion-panel-body-padding-inline);
             transition:
