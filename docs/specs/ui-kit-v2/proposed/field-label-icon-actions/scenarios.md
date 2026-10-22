@@ -844,3 +844,33 @@ name for screen readers, and closes the toast through the handle; without `bare`
 as before
 
 Покрытие: частичное — тест проверяет разметку и ручку; снятая оболочка проверена измерением в витрине.
+
+### SC-UKV-1002 — a drawer lets its content spill out and takes the width of its content
+
+Given an open drawer whose content holds a sub-panel placed beside it
+When the application sets `overflow` to `visible` and `width` to `null`
+Then the sub-panel shows outside the drawer edge, and the drawer is as wide as its content, with no
+resize handle; a closing drawer clips its content at once; without the inputs the drawer clips its
+content and keeps its width in pixels, as before
+
+Покрытие: частичное — тест проверяет модификаторы и ширину; выход подпанели за край проверен измерением в витрине.
+
+### SC-UKV-1003 — a drawer reports the start and the end of opening and closing
+
+Given a drawer whose owner listens to `openedStart`, `closedStart`, `afterOpened` and `afterClosed`
+When the drawer opens or closes
+Then the start comes at the moment `opened` changes, and the end comes after the width or slide
+transition, at once without motion; the initial state reports nothing, and an end overtaken by a
+new change stays silent
+
+Covered: `projects/ui-kit-v2/src/lib/components/drawer/rt-drawer.component.spec.ts`.
+
+### SC-UKV-1004 — a drawer puts the focus where the application says and reports a backdrop press
+
+Given a drawer with `autoFocus` and a backdrop
+When the drawer opens, and then the person presses the backdrop
+Then a selector puts the focus on its node in any mode, `false` leaves the focus where it was, and
+without the input the drawer over the content focuses itself as before; the backdrop press comes as
+`backdropClick` before the close, and also with `disableClose`
+
+Covered: `projects/ui-kit-v2/src/lib/components/drawer/rt-drawer.component.spec.ts`.

@@ -10,20 +10,23 @@
 </rt-drawer-container>
 ```
 
-| вход           | тип                | умолчание |
-| -------------- | ------------------ | --------- |
-| `opened`       | `boolean`          | `false`   |
-| `mode`         | `'side' \| 'over'` | `'side'`  |
-| `position`     | `'start' \| 'end'` | `'start'` |
-| `hasBackdrop`  | `boolean`          | `true`    |
-| `disableClose` | `boolean`          | `false`   |
-| `width`        | `number`           | `320`     |
-| `minWidth`     | `number`           | `200`     |
-| `maxWidth`     | `number`           | `640`     |
-| `resizable`    | `boolean`          | `false`   |
-| `ariaLabel`    | `string \| null`   | `null`    |
+| вход           | тип                   | умолчание |
+| -------------- | --------------------- | --------- |
+| `opened`       | `boolean`             | `false`   |
+| `mode`         | `'side' \| 'over'`    | `'side'`  |
+| `position`     | `'start' \| 'end'`    | `'start'` |
+| `hasBackdrop`  | `boolean`             | `true`    |
+| `disableClose` | `boolean`             | `false`   |
+| `width`        | `number \| null`      | `320`     |
+| `minWidth`     | `number`              | `200`     |
+| `maxWidth`     | `number`              | `640`     |
+| `resizable`    | `boolean`             | `false`   |
+| `ariaLabel`    | `string \| null`      | `null`    |
+| `overflow`     | `'clip' \| 'visible'` | `'clip'`  |
+| `autoFocus`    | `boolean \| string`   | `true`    |
 
-Выходы: `openedChange`, `widthChange`. Методы: `open()`, `close()`, `toggle()`.
+Выходы: `openedChange`, `widthChange`, `openedStart`, `closedStart`, `afterOpened`, `afterClosed`,
+`backdropClick`. Методы: `open()`, `close()`, `toggle()`.
 
 ## Главное, что нужно знать
 
@@ -38,3 +41,24 @@
 
 **Ручка ширину не хранит.** Она сообщает новую в пределах; без `width` меряет родителя в момент
 первого движения — так её берёт правая панель `rt-container` шириной по содержимому.
+
+**Начало и конец смены — разные выходы.** `openedStart` и `closedStart` приходят в момент смены
+`opened`, `afterOpened` и `afterClosed` — по `transitionend` ширины рядом и сдвига поверх, со
+страховочным таймером на случай, когда перехода нет. Исходное состояние ничего не сообщает; конец,
+обогнанный новой сменой, молчит.
+
+**`overflow: 'visible'` снимает обрезку только с открытой панели.** Закрываясь, панель обрезает
+содержимое сразу: иначе оно висело бы над страницей, пока панель сжимается.
+
+**`width: null` — ширина по содержимому.** Своей ширины нет, ручки ширины тоже; переход рядом от
+неё к нулю не анимируется, конец закрытия приходит по таймеру.
+
+**`autoFocus` по умолчанию — как раньше:** поверх содержимого фокус встаёт на панель, рядом не
+трогается. Селектор и `'first-tabbable'` работают в обоих местах; узел не нашёлся — фокус на панели.
+Пустой атрибут и строка `'true'` значат `true`, строка `'false'` — `false`.
+
+**`backdropClick` приходит до закрытия и с `disableClose`.** Так приложение узнаёт о нажатии, даже
+когда закрывать панель решает само.
+
+**Высота окна — от контейнера.** Контейнер высотой в окно обрезает края, а прокручивается его
+содержимое: панели остаются высотой в окно без отдельного входа.

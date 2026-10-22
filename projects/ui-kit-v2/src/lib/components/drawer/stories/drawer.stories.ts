@@ -12,6 +12,15 @@ export default {
         hasBackdrop: { control: { type: 'boolean' } },
         disableClose: { control: { type: 'boolean' } },
         resizable: { control: { type: 'boolean' } },
+        overflow: { options: ['clip', 'visible'], control: { type: 'select' } },
+        autoWidth: { control: { type: 'boolean' } },
+        // Варианты — строки: смешанный список с признаками Storybook из адреса не читает, признаки
+        // возвращает отображение.
+        autoFocus: {
+            options: ['true', 'false', 'first-tabbable', 'input'],
+            mapping: { true: true, false: false },
+            control: { type: 'select' },
+        },
     },
 } as Meta<TestRtDrawerComponent>;
 
@@ -25,5 +34,8 @@ export const Playground: TStory = {
         hasBackdrop: true,
         disableClose: false,
         resizable: true,
+        overflow: 'clip',
+        autoWidth: false,
+        autoFocus: 'true',
     },
 };

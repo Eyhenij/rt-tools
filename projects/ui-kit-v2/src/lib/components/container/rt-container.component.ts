@@ -38,7 +38,7 @@ import { map, merge, Observable, Subject, switchMap, takeUntil } from 'rxjs';
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { BreakpointsService, carryThemeScope, materialPresetClassesOf } from '@rt-tools/ui-kit-v2/core';
-import { clampWidth, RtResizeHandleComponent } from '@rt-tools/ui-kit-v2/drawer';
+import { clampWidth, listenTransitionEnd, RtResizeHandleComponent } from '@rt-tools/ui-kit-v2/drawer';
 import { RtToasterComponent } from '@rt-tools/ui-kit-v2/toast';
 import { RtContainerStateService } from './rt-container-state.service';
 import {
@@ -50,7 +50,6 @@ import {
     RtContainerToolbarLeftDirective,
     RtContainerToolbarRightDirective,
 } from './rt-container.markers';
-import { listenTransitionEnd } from './rt-container.transition';
 
 const BEM_BLOCK: string = 'rt-container';
 

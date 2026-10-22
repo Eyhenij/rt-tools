@@ -675,6 +675,20 @@ data-preset="material" floatingLabel>` drew the border through the risen label: 
   the place in the stack, the motion, the handle and the screen reader name — SC-UKV-1001. Measured
   in the showcase: the bare toast's box equals the card's box (57 px high, same top), the toast has
   no padding, border, background or shadow, and the card's own button closes it with `dismiss`.
+- **2026-10-22, request 25 (the application's session): the drawer replaces the Material side
+  panels.** The application shell and a builder toolbox still stood on Material side panels because
+  the kit drawer clipped its content, had a fixed width, reported no end of motion, chose no focus
+  target and said nothing about a backdrop press. New optional inputs and outputs, every default
+  unchanged: `overflow` (`clip` / `visible`, the open panel stops clipping) and `width: null` (width
+  by content, no handle) — SC-UKV-1002; `openedStart`, `closedStart`, `afterOpened`, `afterClosed`
+  — SC-UKV-1003; `autoFocus` (`true` / `false` / `'first-tabbable'` / a selector) and
+  `backdropClick` before the close, also with `disableClose` — SC-UKV-1004. Keeping both panels at
+  window height needs no input: a container of window height clips its edges and scrolls its
+  content. Measured in the showcase: the sub-panel reaches 410 px past the panel edge at 258 px and
+  lies on top; the clipped default hides it; width by content 232.5 px against 240 px fixed, no
+  handle, 0 when closed; the start of closing comes within 30 ms, the end after the 0.2 s motion;
+  the selector and `first-tabbable` put the focus on the field beside the content, the default over
+  the content focuses the panel and returns the focus to the button after a backdrop press.
 
 ## Sessions
 
@@ -707,6 +721,9 @@ none
 ### Commits over the main branch
 
 ```
+c2305b053 feat(rt:ui-kit-v2): тост — голый вид для своего компонента-карточки
+40845c87f feat(rt:ui-kit-v2): тостер — свой канал для закреплённых тостов
+5058d4c62 feat(rt:ui-kit-v2): вкладки — открытую панель можно убрать из обхода по Tab
 32b67926e feat(rt:ui-kit-v2): боковое меню — поиск раскрывает папку, совпавшую по имени, свёрнутое избранное держит число
 f5a118015 Merge remote-tracking branch 'origin/main' into RT-2812-kit2-field-label-icon-actions
 b58674e7c Merge remote-tracking branch 'origin/main' into RT-2812-kit2-field-label-icon-actions
@@ -724,9 +741,6 @@ d0b5e8e72 test(rt:ui-kit-v2): эталоны витрины пересняты �
 4def2d625 chore(rt:ui-kit-v2): в ветку влита главная ветка
 0466fea09 feat(rt:ui-kit-v2): вкладки — ручной выбор с клавиатуры, шаг стрелкой прокрутки и стрелки в своих местах
 34da2f3a3 fix(rt:ui-kit-v2): поле ввода показывает значение, которое форма вернула ему во время набора
-54c0407ba fix(rt:ui-kit-v2): поля выбора, поиска и переключатели кита внутри формы страницы не пишут NG01354
-1e1516d3d fix(rt:ui-kit-v2): поля динамического селектора внутри формы страницы не пишут NG01354
-6907474e3 fix(rt:ui-kit-v2): залитое поле без подписи под материальным набором не держит места под неё
 ```
 
 Written by a hook before the compaction of the context. Everything standing here is checked

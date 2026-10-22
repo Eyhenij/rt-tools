@@ -57,6 +57,18 @@
             inset-inline-end: 0;
         }
 
+        /* Открытая панель с visible не обрезает своё: подпанель выходит вбок, ручка ложится на
+           край. Закрываясь, панель обрезает сразу — содержимое не висит над страницей, пока она
+           сжимается. */
+        &--overflow--visible#{&}--opened {
+            overflow: visible;
+        }
+
+        /* Ширина по содержимому: своей ширины нет, переход от неё к нулю не анимируется. */
+        &--auto-width {
+            inline-size: fit-content;
+        }
+
         /* Закрытая панель остаётся в разметке: рядом с содержимым она сжимается до нуля, поверх —
            уезжает за свой край. Видимость гаснет после перехода, иначе уход не виден. */
         &:not(#{&}--opened) {
@@ -92,6 +104,14 @@
         overflow: auto;
         min-width: 0;
         flex: 0 0 var(--rt-drawer-width);
+    }
+
+    .rt-drawer__panel--overflow--visible.rt-drawer__panel--opened > .rt-drawer__inner {
+        overflow: visible;
+    }
+
+    .rt-drawer__panel--auto-width > .rt-drawer__inner {
+        flex-basis: auto;
     }
 
     .rt-drawer__backdrop {

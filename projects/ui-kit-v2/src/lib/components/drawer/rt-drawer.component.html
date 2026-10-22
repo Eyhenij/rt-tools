@@ -3,7 +3,7 @@
         <!-- Подложка закрывается и с клавиатуры: Escape в панели, которая держит фокус. Своя клавиша
              у подложки была бы второй точкой фокуса без названия. -->
         <!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
-        <div rtElem="backdrop" qa-dataid="drawer-backdrop" [rtMod]="{ visible: opened() }" (click)="onBackdrop()"></div>
+        <div rtElem="backdrop" qa-dataid="drawer-backdrop" [rtMod]="{ visible: opened() }" (click)="onBackdrop($event)"></div>
     }
 
     <aside
@@ -12,7 +12,14 @@
         qa-dataid="drawer-panel"
         tabindex="-1"
         [cdkTrapFocus]="trapFocus()"
-        [rtMod]="{ mode: mode(), position: position(), opened: opened(), resizing: resizing() }"
+        [rtMod]="{
+            mode: mode(),
+            position: position(),
+            opened: opened(),
+            resizing: resizing(),
+            overflow: overflow(),
+            'auto-width': autoWidth(),
+        }"
         [attr.inert]="opened() ? null : ''"
         [attr.aria-label]="ariaLabel()"
         [style.--rt-drawer-width.px]="shownWidth()"
@@ -21,7 +28,7 @@
             <ng-content />
         </div>
 
-        @if (resizable()) {
+        @if (handleShown()) {
             <rt-resize-handle
                 [width]="shownWidth()"
                 [min]="minWidth()"

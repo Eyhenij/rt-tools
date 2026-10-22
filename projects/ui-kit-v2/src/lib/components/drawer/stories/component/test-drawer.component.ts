@@ -22,15 +22,24 @@ import { IRtDrawer } from '../../rt-drawer.model';
                     [hasBackdrop]="hasBackdrop"
                     [disableClose]="disableClose"
                     [resizable]="resizable"
+                    [overflow]="overflow"
+                    [autoFocus]="autoFocus"
+                    [width]="autoWidth ? null : width()"
                     [(opened)]="opened"
-                    [(width)]="width">
+                    (widthChange)="onWidth($event)"
+                    (openedStart)="note('openedStart')"
+                    (closedStart)="note('closedStart')"
+                    (afterOpened)="note('afterOpened')"
+                    (afterClosed)="note('afterClosed')"
+                    (backdropClick)="note('backdropClick')">
                     <div class="app-drawer__filters">
                         <strong>Фильтры</strong>
                         <label>
                             Город
                             <input qa-dataid="drawer-demo-city" />
                         </label>
-                        <span>Ширина: {{ width() }}px</span>
+                        <span>Ширина: {{ autoWidth ? 'по содержимому' : width() + 'px' }}</span>
+                        <div class="app-drawer__flyout" qa-dataid="drawer-demo-flyout">Подпанель сбоку</div>
                     </div>
                 </rt-drawer>
                 <section class="app-drawer__report">
@@ -41,6 +50,7 @@ import { IRtDrawer } from '../../rt-drawer.model';
                         Отчёт по продажам за квартал. Содержимое сужается, когда панель стоит рядом, и остаётся на месте, когда она ложится
                         поверх.
                     </p>
+                    <p qa-dataid="drawer-demo-events">События: {{ events().join(' → ') || 'нет' }}</p>
                 </section>
             </rt-drawer-container>
         </div>
@@ -70,6 +80,23 @@ import { IRtDrawer } from '../../rt-drawer.model';
         .app-drawer__report {
             align-items: flex-start;
         }
+
+        .app-drawer__filters {
+            position: relative;
+            min-height: 100%;
+            box-sizing: border-box;
+        }
+
+        .app-drawer__flyout {
+            position: absolute;
+            padding: var(--rt-space-2);
+            border: 1px solid var(--rt-color-border-subtle);
+            background: var(--rt-color-bg-surface);
+            box-shadow: var(--rt-shadow-lg);
+            inset-block-end: var(--rt-space-4);
+            inset-inline-start: calc(100% + var(--rt-space-2));
+            white-space: nowrap;
+        }
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
@@ -85,7 +112,21 @@ export class TestRtDrawerComponent {
     public hasBackdrop: boolean = true;
     public disableClose: boolean = false;
     public resizable: boolean = true;
+    public overflow: IRtDrawer.Overflow = 'clip';
+    public autoWidth: boolean = false;
+    public autoFocus: IRtDrawer.AutoFocus = true;
 
     public readonly opened: WritableSignal<boolean> = signal(true);
     public readonly width: WritableSignal<number> = signal(240);
+    public readonly events: WritableSignal<string[]> = signal<string[]>([]);
+
+    public onWidth(width: number | null): void {
+        if (width !== null) {
+            this.width.set(width);
+        }
+    }
+
+    public note(event: string): void {
+        this.events.update((events: string[]): string[] => [...events.slice(-3), event]);
+    }
 }
