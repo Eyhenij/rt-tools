@@ -14,9 +14,14 @@
   drawer); request 21 — tooltip defaults in `provideRtKit` (4ae6e16f4); request 22 — the kit reads
   no `--mat-*`, theme roles `--rt-sys-*`. Each package went to the Desktop as
   `rt-tools-ui-kit-v2-0.30.0.tgz`
-- **Deferred:** `pnpm install` with main's lockfile after 13:10 UTC on 22 October (rolldown 1.2.15
-  passes the release age then); asked of the owner, no answer yet. `node_modules` holds the set from
-  before the merge
+- **Snapshot run of 22 October (`node tools/visual-gate.mjs ui-kit-v2`, the image browser):** 946 of
+  948 frames match. Two diverge, both only in the material half: `organisms-navigation-sidemenu--search`
+  (1.66%) and `organisms-layout-container--place` (1.79%). Both stories and their references came from
+  main after the branch re-took its references (d0b5e8e72), and they draw the material field without
+  this branch's field look (2acc951d9) — the branch's own `sidemenu--presets` reference holds the
+  same outlined field. The kit's own half matches in both. They are re-taken at 6.3 with the rest
+- **`pnpm install` with main's lockfile:** done on 22 October after the release-age term; types, the
+  suite and the package build pass on it
 - **Waiting for the owner:** «пр не открывай» — no PR, no push
 - **PR:** not open yet
 
