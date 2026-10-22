@@ -4,7 +4,7 @@ kind: pattern
 rule: reuse-first
 description: Pattern of rule reuse-first. Load when what the kit or the base class offers was not enough. What to check before writing your own, how to extend the ready-made, how to declare a one-off deviation with the native-ok marker and when to remove it.
 ---
-<!-- rt-kit v0.33.0 · patterns/reuse-first-extend.md · 253bfb67c0f5 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.33.1 · patterns/reuse-first-extend.md · 253bfb67c0f5 · правится надстройкой, не здесь -->
 
 # The ready-made was not enough
 

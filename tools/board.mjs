@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.33.0 · checks/board.github.mjs · 15f763fd6638 · правится надстройкой, не здесь
+// rt-kit v0.33.1 · checks/board.github.mjs · 15f763fd6638 · правится надстройкой, не здесь
 /**
  * Shared work with the work queue: the project board, the tasks and their state.
  *

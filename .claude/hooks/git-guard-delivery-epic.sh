@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.33.0 · hooks/git-guard-delivery-epic.sh · 5b6653bc5c39 · правится надстройкой, не здесь
+# rt-kit v0.33.1 · hooks/git-guard-delivery-epic.sh · 5b6653bc5c39 · правится надстройкой, не здесь
 # Delivery conditions about the epic of a task. NOT a guard: it has no `rt-hook:` declaration and
 # it hooks into no agent event. The delivery guard sources it — the same way it sources the task
 # folder conditions and the signature.
