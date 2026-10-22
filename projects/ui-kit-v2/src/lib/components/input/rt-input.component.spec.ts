@@ -373,7 +373,7 @@ describe('RtInputComponent', (): void => {
     });
 
     describe('иконки-кнопки', (): void => {
-        it('SC-UKV-905 — без признака иконки остаются картинками', (): void => {
+        it('SC-UKV-1009 — без признака иконки остаются картинками', (): void => {
             const fixture: ComponentFixture<RtInputComponent> = setup({ iconLeft: 'ico-search', iconRight: 'ico-search' });
 
             expect(el(fixture, '.rt-input__icon-left')).not.toBeNull();
@@ -398,7 +398,7 @@ describe('RtInputComponent', (): void => {
             expect(button.getAttribute('tabindex')).toBe('0');
         });
 
-        it('SC-UKV-904 — подсказка правой иконки-кнопки даёт ей имя', (): void => {
+        it('SC-UKV-1008 — подсказка правой иконки-кнопки даёт ей имя', (): void => {
             const fixture: ComponentFixture<RtInputComponent> = setup({
                 iconRight: 'ico-search',
                 iconRightAction: true,
@@ -429,7 +429,7 @@ describe('RtInputComponent', (): void => {
             return (qa(fixture, 'input-clear')?.nativeElement as HTMLElement).querySelector('button') as HTMLButtonElement;
         }
 
-        it('SC-UKV-906 — крестик вне порядка Tab, пока поле не попросит', (): void => {
+        it('SC-UKV-1010 — крестик вне порядка Tab, пока поле не попросит', (): void => {
             const plain: ComponentFixture<RtInputComponent> = setup();
             type(plain, 'а');
             expect(cross(plain).getAttribute('tabindex')).toBe('-1');
@@ -439,7 +439,7 @@ describe('RtInputComponent', (): void => {
             expect(cross(tabbable).getAttribute('tabindex')).toBe('0');
         });
 
-        it('SC-UKV-907 — сброс сообщается один раз после того, как пустое значение ушло в форму', (): void => {
+        it('SC-UKV-1011 — сброс сообщается один раз после того, как пустое значение ушло в форму', (): void => {
             const fixture: ComponentFixture<InputHostComponent> = createRtFixture(InputHostComponent);
             fixture.componentInstance.control.setValue('Анна');
             fixture.detectChanges();

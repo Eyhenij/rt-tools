@@ -20,6 +20,10 @@
   main after the branch re-took its references (d0b5e8e72), and they draw the material field without
   this branch's field look (2acc951d9) — the branch's own `sidemenu--presets` reference holds the
   same outlined field. The kit's own half matches in both. They are re-taken at 6.3 with the rest
+- **Scenario numbers moved on 22 October:** main's service block (RT-2934) took SC-UKV-904–907 first,
+  so this branch's four took SC-UKV-1008–1011 (904→1008, 905→1009, 906→1010, 907→1011) in the
+  agreement and the test titles. The plan and the step names above keep the old numbers: the plan is
+  not edited after it is written
 - **`pnpm install` with main's lockfile:** done on 22 October after the release-age term; types, the
   suite and the package build pass on it
 - **Waiting for the owner:** «пр не открывай» — no PR, no push

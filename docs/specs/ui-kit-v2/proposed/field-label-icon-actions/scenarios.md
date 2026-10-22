@@ -68,7 +68,7 @@ Then the left output reports each press, and the focus does not move into the na
 
 Covered: `projects/ui-kit-v2/src/lib/components/input/rt-input.component.spec.ts`.
 
-### SC-UKV-904 — an actionable icon carries a tooltip and a name
+### SC-UKV-1008 — an actionable icon carries a tooltip and a name
 
 Given the input marks its right icon as actionable and gives it a tooltip
 When the field is drawn
@@ -76,7 +76,7 @@ Then the icon button is named by the tooltip text and shows it on hover and focu
 
 Covered: `projects/ui-kit-v2/src/lib/components/input/rt-input.component.spec.ts`.
 
-### SC-UKV-905 — an icon not marked as actionable stays a picture
+### SC-UKV-1009 — an icon not marked as actionable stays a picture
 
 Given the input names icons and marks neither as actionable
 When the field is drawn
@@ -84,7 +84,7 @@ Then no icon is a button
 
 Covered: `projects/ui-kit-v2/src/lib/components/input/rt-input.component.spec.ts`.
 
-### SC-UKV-906 — the cross enters the Tab order on demand
+### SC-UKV-1010 — the cross enters the Tab order on demand
 
 Given the input or the select asks for a tabbable cross and holds a value
 When the field is drawn
@@ -92,7 +92,7 @@ Then the cross is reached by the Tab key; without the demand it stays out of the
 
 Covered: `projects/ui-kit-v2/src/lib/components/input/rt-input.component.spec.ts`, `projects/ui-kit-v2/src/lib/components/select/rt-select-field-extras.spec.ts`.
 
-### SC-UKV-907 — clearing reports to the host
+### SC-UKV-1011 — clearing reports to the host
 
 Given a field holds a value
 When the cross is pressed

@@ -157,7 +157,7 @@ describe('RtSelectComponent — строка списка, подпись на �
     });
 
     describe('крестик', (): void => {
-        it('SC-UKV-906 — крестик вне порядка Tab, пока поле не попросит', (): void => {
+        it('SC-UKV-1010 — крестик вне порядка Tab, пока поле не попросит', (): void => {
             const fixture: ComponentFixture<RtSelectComponent<string>> = setup();
             choose(fixture, 'red');
             expect(cross(fixture).getAttribute('tabindex')).toBe('-1');
@@ -167,7 +167,7 @@ describe('RtSelectComponent — строка списка, подпись на �
             expect(cross(tabbable).getAttribute('tabindex')).toBe('0');
         });
 
-        it('SC-UKV-906 — крестик в порядке Tab стоит рядом с кнопкой, а не в ней', (): void => {
+        it('SC-UKV-1010 — крестик в порядке Tab стоит рядом с кнопкой, а не в ней', (): void => {
             const fixture: ComponentFixture<RtSelectComponent<string>> = setup({ clearTabbable: true });
             choose(fixture, 'red');
 
@@ -176,7 +176,7 @@ describe('RtSelectComponent — строка списка, подпись на �
             expect(trigger(fixture).querySelector('.rt-select__clear-slot')).not.toBeNull();
         });
 
-        it('SC-UKV-907 — нажатие на крестик в порядке Tab очищает поле', (): void => {
+        it('SC-UKV-1011 — нажатие на крестик в порядке Tab очищает поле', (): void => {
             const fixture: ComponentFixture<RtSelectComponent<string>> = setup({ clearTabbable: true });
             choose(fixture, 'red');
 
@@ -187,7 +187,7 @@ describe('RtSelectComponent — строка списка, подпись на �
             expect(cross(fixture)).toBeNull();
         });
 
-        it('SC-UKV-906 — Enter на крестике не открывает список', (): void => {
+        it('SC-UKV-1010 — Enter на крестике не открывает список', (): void => {
             const fixture: ComponentFixture<RtSelectComponent<string>> = setup({ clearTabbable: true });
             choose(fixture, 'red');
 
@@ -216,7 +216,7 @@ describe('RtSelectComponent — строка списка, подпись на �
             expect(reached).toEqual([]);
         });
 
-        it('SC-UKV-907 — сброс сообщается хосту после того, как пустое значение ушло в форму', (): void => {
+        it('SC-UKV-1011 — сброс сообщается хосту после того, как пустое значение ушло в форму', (): void => {
             const fixture: ComponentFixture<SelectClearedHostComponent> = createRtFixture(SelectClearedHostComponent);
 
             cross(fixture).click();
