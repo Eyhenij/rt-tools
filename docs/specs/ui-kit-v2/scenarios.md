@@ -24,6 +24,7 @@ The scenarios live in the subdomains, each at its own rules:
 | [The expansion panel](expansion-panel/scenarios.md)                            | `SC-UKV-519`…`SC-UKV-525`                                                 |
 | [The value with a copy button](copy-value/scenarios.md)                        | `SC-UKV-742`…`SC-UKV-746`                                                 |
 | [The logo of a service](service-logo/scenarios.md)                             | `SC-UKV-864`…`SC-UKV-867`                                                 |
+| [The block of a service](service-block/scenarios.md)                           | `SC-UKV-904`…`SC-UKV-907`                                                 |
 | [The media of a card](card-media/scenarios.md)                                 | `SC-UKV-868`…`SC-UKV-869`                                                 |
 | [The match rule of a search](search-match/scenarios.md)                        | `SC-UKV-889`…`SC-UKV-894`                                                 |
 | [The keys of an option list](option-list/scenarios.md)                         | `SC-UKV-895`…`SC-UKV-903`                                                 |
