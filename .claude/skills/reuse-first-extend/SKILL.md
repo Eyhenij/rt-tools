@@ -4,7 +4,7 @@ kind: pattern
 rule: reuse-first
 description: Pattern of rule reuse-first. Load when what the kit or the base class offers was not enough. What to check before writing your own, how to extend the ready-made, how to declare a one-off deviation with the native-ok marker and when to remove it.
 ---
-<!-- rt-kit v0.32.0 · patterns/reuse-first-extend.md · bb9bc17326bc · правится надстройкой, не здесь -->
+<!-- rt-kit v0.32.0 · patterns/reuse-first-extend.md · 253bfb67c0f5 · правится надстройкой, не здесь -->
 
 # The ready-made was not enough
 
@@ -43,6 +43,11 @@ The missing variant is created **in the kit or in the base class**, and the othe
 A clone written next to it takes the edits onto itself and diverges from the original with the
 first one. A renamed file and a "similar but own" component are the same departure, only
 undeclared.
+
+Before the kit PR is merged, the tree that ordered the edit runs its end-to-end suite against the
+packed build of that branch. The build is unpacked over the installed package without touching the
+declaration. The kit's own tests do not know the screen it stands on — a dialog over a side panel, a
+button whose state the consumer binds — and a defect found after the merge costs a second release.
 
 ## One's own primitive — only with the owner's approval
 

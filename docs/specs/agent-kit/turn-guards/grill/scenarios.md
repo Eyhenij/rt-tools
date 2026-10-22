@@ -74,6 +74,19 @@ Given the line stands and an edit or a working command followed the refusal, or 
 When the executor asks the owner
 Then the question leaves
 
+### SC-AK-1231 — after a refused menu, a list of options in prose is a question
+
+Given the menu was refused in the turn
+When the turn ends with a numbered list of two or more options under a line ending with a colon,
+without the line of what was done
+Then the turn does not end, and the menu refusal says that prose does not walk around it
+
+Given the turn had no refused menu, or the list has one item
+When the turn ends with such a list
+Then this sign does not judge it
+
+Covered: `projects/agent-kit/tests/grill-gate-options.test.sh`.
+
 Covered: `projects/agent-kit/tests/grill-gate.test.sh`.
 
 ### SC-AK-1168 — a loaded rule and a subagent report are not the owner's remark

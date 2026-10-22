@@ -71,7 +71,7 @@ rt_assignment_stale() {
     # a missing field and for `false`, that is, exactly for the state this refusal is written for.
     case "$(printf '%s' "$_state" | jq -r 'if .open == false then "false" else "" end' 2>/dev/null)" in
         false)
-            fault "${_what} is not taken: the epic assigned to this copy is closed — the assignment outlived it. Ask the owner for a new one and write it into the table; an epic chosen instead of the closed one is not an order."
+            fault "${_what} is not taken: the epic assigned to this copy is closed — the assignment outlived it. Ask the owner for a new one and write it into the table; an epic chosen instead of the closed one is not an order. A message of the owner in this conversation that names this work is that new assignment: write the row with their words and go on; ask only when no message of theirs names it."
             ;;
     esac
 }

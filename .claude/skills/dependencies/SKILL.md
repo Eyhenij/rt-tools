@@ -4,7 +4,7 @@ kind: rule
 law: delivery
 description: Rule under the delivery law. Load when editing package.json, the lockfile and the workspace settings, and when upgrading any package. Names the exact version number instead of a range and the waiting period for a new version. Pattern dependencies-upgrade.
 ---
-<!-- rt-kit v0.32.0 · rules/dependencies.md · 01ebf036354d · правится надстройкой, не здесь -->
+<!-- rt-kit v0.32.0 · rules/dependencies.md · 6d8d5da30dd0 · правится надстройкой, не здесь -->
 
 # Dependencies — how it works here
 
@@ -66,7 +66,9 @@ flowchart TD
   neither the linter, nor the build, nor the tests read styling properties, and the person at the
   screen sees the breakage. Gone into a shared update, such a raise is reverted only together with
   the others, and tying the breakage to it costs a separate investigation; its own branch is
-  reverted alone.
+  reverted alone. A feature that needs a component several releases ahead raises the skipped ones
+  first, by that task of its own, and its branch takes only the last step: each skipped release
+  brings changes of its own, and in the feature branch they read as the feature's breakage.
 
 ## What of the law is not here
 
