@@ -4,7 +4,7 @@ kind: pattern
 rule: dependencies
 description: Pattern of rule dependencies. Load when raising package versions — choosing the upper bound by peer ranges, the order of checks, the reformatting boundary after a formatter upgrade, handling new linter rules. Not for the branch and commit — pattern git-workflow-commit; for the PR — git-workflow-pr.
 ---
-<!-- rt-kit v0.32.0 · patterns/dependencies-upgrade.md · 53e98dc24268 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.33.1 · patterns/dependencies-upgrade.md · 896cfd43beb4 · правится надстройкой, не здесь -->
 
 # Raising versions
 
@@ -32,7 +32,11 @@ stop the install.
 ## Order
 
 1. `package.json` — exact numbers, not a single `^` or `~`.
-2. `pnpm install`; the snapshot goes in the same commit.
+2. `pnpm install`; the snapshot goes in the same commit. Then `pnpm install --frozen-lockfile`, in
+   every repository the edit goes to. Tests, the build and the linter run on modules already
+   installed and do not read the snapshot: a range in the declaration against an exact number in
+   the snapshot is found only by the strict install, and in a release pipeline that is after the
+   merge.
 3. The styling properties the tree reads from the package are checked against the new version by
    a command, not by a look: a removed property makes the declaration invalid, not wrong, and
    every check stays green. Every name from `var(--<prefix>-…)` in the tree is searched for in

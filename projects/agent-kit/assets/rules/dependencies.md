@@ -65,7 +65,9 @@ flowchart TD
   neither the linter, nor the build, nor the tests read styling properties, and the person at the
   screen sees the breakage. Gone into a shared update, such a raise is reverted only together with
   the others, and tying the breakage to it costs a separate investigation; its own branch is
-  reverted alone.
+  reverted alone. A feature that needs a component several releases ahead raises the skipped ones
+  first, by that task of its own, and its branch takes only the last step: each skipped release
+  brings changes of its own, and in the feature branch they read as the feature's breakage.
 
 ## What of the law is not here
 

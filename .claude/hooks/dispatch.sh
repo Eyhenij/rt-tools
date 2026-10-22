@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.32.0 · hooks/dispatch.sh · 0f3f3c8ea2ac · правится надстройкой, не здесь
+# rt-kit v0.33.1 · hooks/dispatch.sh · 0f3f3c8ea2ac · правится надстройкой, не здесь
 # The dispatcher of agent events. NOT a guard: it has no `rt-hook:` declaration — on the contrary,
 # it reads such declarations in the others. In the agent settings it stands alone on an event
 # instead of a list.

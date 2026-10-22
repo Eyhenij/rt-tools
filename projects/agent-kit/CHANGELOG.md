@@ -1,3 +1,17 @@
+## [0.33.1](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit%400.33.0...rt-agent-kit%400.33.1) (2026-10-22)
+
+# [0.33.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit%400.32.0...rt-agent-kit%400.33.0) (2026-10-22)
+
+### Bug Fixes
+
+- **rt:agent-kit:** две новые части проверок исполняемы, как соседние ([a9e7de0](https://github.com/Eyhenij/rt-tools/commit/a9e7de07311088e3bcad86a34ddc9c5b3afb24c1))
+
+### Features
+
+- **rt:agent-kit:** отказ назначений называет слово владельца переносом ([5cd454d](https://github.com/Eyhenij/rt-tools/commit/5cd454d8af1492f873e126a2ef689c4fe29cebbf))
+- **rt:agent-kit:** отправка в ветку влитой заявки отбита ([fc346a1](https://github.com/Eyhenij/rt-tools/commit/fc346a1c14105a8f6072ba48d973572e51e172e7))
+- **rt:agent-kit:** после отбитого меню список вариантов прозой тоже вопрос ([0fcd5f7](https://github.com/Eyhenij/rt-tools/commit/0fcd5f7dd0b284c9e91dcc23b379eb68de1d96db))
+
 # [0.32.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit%400.31.0...rt-agent-kit%400.32.0) (2026-10-16)
 
 ### Bug Fixes

@@ -289,3 +289,6 @@ as in `git commit -F -` with the text after it.
   with a zero exit. The defaults are sourced first, and the line count is compared with the last
   push before the run.
 - The owner's edit takes neither the token nor the variables — they are only for machine work.
+- A commit into the branch of a merged PR reaches no one: the host deleted the branch, and a push
+  creates it anew with an answer `new branch`. The delivery guard refuses such a push and names the
+  merged PR. The commit moves to a new branch from the fresh base by `git cherry-pick`.
