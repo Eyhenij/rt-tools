@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.32.0 · hooks/grill-gate-options.sh · 19cdc541d4d2 · правится надстройкой, не здесь
+# rt-kit v0.33.0 · hooks/grill-gate-options.sh · 19cdc541d4d2 · правится надстройкой, не здесь
 # A part of the fourth sign of the conversation guard: after a refused menu a list of options in
 # prose is a question too. NOT a guard: it has no `rt-hook:` declaration and hooks into no agent
 # event. The conversation guard sources it — it was moved out when the guard crossed the file
