@@ -4,21 +4,21 @@
 <rt-icon-button icon="ico-trash" ariaLabel="Удалить" variant="danger" size="md" (clicked)="remove()" />
 ```
 
-| вход                                            | тип                                                                           | умолчание                    |
-| ----------------------------------------------- | ----------------------------------------------------------------------------- | ---------------------------- |
-| `icon`                                          | `IRtIcon.Name \| null` — нужен он или `glyph`; без обоих показывает вложенное | `null`                       |
-| `glyph`                                         | `string \| null` — имя Material, как `glyph` у `rt-icon`                      | `null`                       |
-| `ariaLabel`                                     | `string`                                                                      | **обязателен**               |
-| `variant`                                       | `'primary' \| 'secondary' \| 'ghost' \| 'danger' \| 'success' \| 'warning'`   | `'ghost'`                    |
-| `size`                                          | `'2xs' \| 'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| '2xl'`                      | `'md'`                       |
-| `iconSize`                                      | `IRtIcon.Size \| null`                                                        | `null` → от размера кнопки   |
-| `iconColor`                                     | `IRtIcon.Color`                                                               | `'current'`                  |
-| `radius`                                        | `TRtRadius \| null` — шаг общей шкалы                                         | `null` → `md`                |
-| `type`                                          | `'button' \| 'submit'`                                                        | `'button'`                   |
-| `tooltip`                                       | `string`                                                                      | `''` (пусто → подсказки нет) |
-| `tooltipHideOnClick`                            | `boolean` — `false` у переключателя: подсказка остаётся после клика           | `true`                       |
-| `tabIndex`                                      | `number`                                                                      | `0`                          |
-| `loading` / `disabled` / `active` / `indicator` | `boolean`                                                                     | `false`                      |
+| вход                                            | тип                                                                           | умолчание                          |
+| ----------------------------------------------- | ----------------------------------------------------------------------------- | ---------------------------------- |
+| `icon`                                          | `IRtIcon.Name \| null` — нужен он или `glyph`; без обоих показывает вложенное | `null`                             |
+| `glyph`                                         | `string \| null` — имя Material, как `glyph` у `rt-icon`                      | `null`                             |
+| `ariaLabel`                                     | `string`                                                                      | **обязателен**                     |
+| `variant`                                       | `'primary' \| 'secondary' \| 'ghost' \| 'danger' \| 'success' \| 'warning'`   | `'ghost'`                          |
+| `size`                                          | `'2xs' \| 'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| '2xl'`                      | `'md'`                             |
+| `iconSize`                                      | `IRtIcon.Size \| null`                                                        | `null` → от размера кнопки         |
+| `iconColor`                                     | `IRtIcon.Color`                                                               | `'current'`                        |
+| `radius`                                        | `TRtRadius \| null` — шаг общей шкалы                                         | `null` → `md`                      |
+| `type`                                          | `'button' \| 'submit'`                                                        | `'button'`                         |
+| `tooltip`                                       | `string`                                                                      | `''` (пусто → подсказки нет)       |
+| `tooltipHideOnClick`                            | `boolean` — `false` у переключателя: подсказка остаётся после клика           | из `provideRtKit`, без него `true` |
+| `tabIndex`                                      | `number`                                                                      | `0`                                |
+| `loading` / `disabled` / `active` / `indicator` | `boolean`                                                                     | `false`                            |
 
 | выход     | тип          |
 | --------- | ------------ |

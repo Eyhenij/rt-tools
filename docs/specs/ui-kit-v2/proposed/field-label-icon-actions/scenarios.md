@@ -895,3 +895,14 @@ stays as wide as its container; without the property the body inherits the panel
 
 Покрытие: частичное. Тест читает стили панели; ширина панели и размер кружка проверены измерением в
 витрине.
+
+### SC-UKV-1007 — tooltip defaults come from the kit settings
+
+Given an application that passes `provideRtKit({ components: { tooltip: { … } } })`
+When a tooltip or an icon button with a tooltip has no input of its own for that value
+Then it takes `hideOnClick`, `placement` and `showDelay` from the settings; an input on the element
+still wins, and without the settings the kit keeps `true`, its own side and 300 ms
+
+Covered: `projects/ui-kit-v2/src/lib/components/tooltip/rt-tooltip.directive.spec.ts`,
+`projects/ui-kit-v2/src/lib/components/tooltip/rt-tooltip.logic.spec.ts`,
+`projects/ui-kit-v2/src/lib/components/icon-button/rt-icon-button.component.spec.ts`.

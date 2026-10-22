@@ -4,6 +4,7 @@ import { IRtDynamicSelector } from '../components/dynamic-selector/rt-dynamic-se
 import { IRtIcon } from '../components/icon/rt-icon.model';
 import { IRtInput } from '../components/input/rt-input.model';
 import { TRtRadius } from '../components/radius/rt-radius.model';
+import { IRtTooltip } from '../components/tooltip/rt-tooltip.model';
 import { ITheme } from '../platform/theme.model';
 
 /**
@@ -83,6 +84,19 @@ export namespace IRtKitConfig {
         autofocusSearch?: boolean;
     }
 
+    /**
+     * Умолчания подсказки `rtTooltip`. Вход на элементе перебивает их, как у кнопки: приложению с
+     * сотнями подсказок не приходится повторять одно и то же на каждой.
+     */
+    export interface Tooltip {
+        /** Прячет ли клик открытую подсказку. Умолчание кита — прячет; `false` — как у Material. */
+        hideOnClick?: boolean;
+        /** Сторона подсказки. Умолчание кита — сверху, под материальным набором снизу. */
+        placement?: IRtTooltip.Placement;
+        /** Задержка показа при наведении, мс. Умолчание кита — 300. */
+        showDelay?: number;
+    }
+
     /** Умолчания по узлам: каждое действует на одну семью и перебивает общее. */
     export interface Components {
         button?: Button;
@@ -90,6 +104,7 @@ export namespace IRtKitConfig {
         dataTable?: DataTable;
         dataList?: DataList;
         dynamicSelector?: DynamicSelector;
+        tooltip?: Tooltip;
     }
 
     /** Весь объект настроек целиком. */

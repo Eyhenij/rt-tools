@@ -728,6 +728,14 @@ data-preset="material" floatingLabel>` drew the border through the risen label: 
     - Button: `rtButton` watches focus through `FocusMonitor` itself instead of the
       `CdkMonitorFocus` host directive; `cdkMonitorElementFocus` on the same button no longer
       throws NG0309.
+- **2026-10-22, request 21 (the application's session): tooltip defaults for the whole
+  application.** Asked for a token of its own; done as a `tooltip` section of `provideRtKit`, where
+  the kit already keeps its defaults — `hideOnClick`, `placement`, `showDelay`; an input on the
+  element still wins — SC-UKV-1007. The side from the settings is read when the side is chosen, not
+  as the input default: the tabs pass `null` for the close cross and would have beaten it.
+  `rt-icon-button` takes its `tooltipHideOnClick` default from the same section, otherwise its own
+  `true` would beat the setting. Checked by specs only: the showcase has no settings section to
+  switch it on.
 
 ## Sessions
 

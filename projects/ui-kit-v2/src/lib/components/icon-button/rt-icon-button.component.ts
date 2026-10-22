@@ -18,7 +18,7 @@ import {
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
-import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
+import { IRtIcon, IRtKitConfig, rtKitDefault } from '@rt-tools/ui-kit-v2/core';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 import { RtRippleDirective } from '@rt-tools/ui-kit-v2/ripple';
 import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
@@ -148,11 +148,15 @@ export class RtIconButtonComponent {
 
     /**
      * Прячет ли клик открытую подсказку (`rtTooltipHideOnClick`). `false` — у переключателя:
-     * подсказка остаётся и показывает новое состояние на месте.
+     * подсказка остаётся и показывает новое состояние на месте. Умолчание — из настроек кита
+     * `components.tooltip.hideOnClick`, как у самой подсказки: иначе своё `true` кнопки перебивало бы их.
      */
-    public readonly tooltipHideOnClick: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
-        transform: booleanAttribute,
-    });
+    public readonly tooltipHideOnClick: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(
+        rtKitDefault('tooltip', (it: IRtKitConfig.Tooltip): boolean | undefined => it.hideOnClick, true),
+        {
+            transform: booleanAttribute,
+        }
+    );
 
     /**
      * Tabindex внутренней `<button>`. Default `0` (в обычном таб-порядке).
