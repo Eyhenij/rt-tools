@@ -783,7 +783,17 @@ data-preset="material" floatingLabel>` drew the border through the risen label: 
   24px, the preset keeps 16px; the label takes 0.5px; a disabled own trigger is transparent in both
   looks. The review's behaviour items (tab indicator motion, focus ring by mouse, Escape stopping at
   the list, `Step.description`, the right pane wrapper, the breaking `--mat-sys-*` rename) wait for
-  the owner's word.
+  the owner's word. The owner's answer came through the reviewing session: tabs, the focus ring,
+  Escape and `Step.description` stay as they are; the `--rt-sys-*` rename stays, with one line about
+  it in the PR. The right pane wrapper of `rt-container` in the over mode does not shrink in a
+  narrow overlay (1086px in a 375px frame by the reviewer's measurement); the fix
+  `.cdk-overlay-pane > .rt-container__right-pane { flex-shrink: 1; }` waits for the owner's word.
+- **2026-10-23, the popup works on its own again.** An application opens `rt-dynamic-selector-popup`
+  from its own button in its own overlay, and since the parts refactor the popup failed outside the
+  root with `NG0201`. The popup now takes the parts service optionally: inside the root it reads the
+  root, on its own it reads its former inputs and reports by its former outputs. The deprecation
+  mark on its export is removed. The showcase frame that stood in for the root is gone: the matrix
+  and the popup specs place the popup itself, the way the application does. SC-UKV-1013.
 
 ## Sessions
 
@@ -816,6 +826,7 @@ none
 ### Commits over the main branch
 
 ```
+40b980bfd fix(rt:ui-kit-v2): базовый вид поля и выбора снова как на main — рамка своего указателя, строка подсказки, интервал
 36c1fc17e feat(rt:ui-kit-v2): межбуквенный интервал полей и размер шрифта «на странице» из ручек приложения
 5115094a8 test(rt:ui-kit-v2): сценарии поля перенесены на SC-UKV-1008–1011 — номера 904–907 занял блок службы из main
 173b4add9 Merge remote-tracking branch 'origin/main' into RT-2812-kit2-field-label-icon-actions
@@ -835,7 +846,6 @@ c2305b053 feat(rt:ui-kit-v2): тост — голый вид для своего
 f5a118015 Merge remote-tracking branch 'origin/main' into RT-2812-kit2-field-label-icon-actions
 b58674e7c Merge remote-tracking branch 'origin/main' into RT-2812-kit2-field-label-icon-actions
 ca512a627 Merge remote-tracking branch 'origin/main' into RT-2812-kit2-field-label-icon-actions
-3d570a9f0 Merge remote-tracking branch 'origin/main' into RT-2812-kit2-field-label-icon-actions
 ```
 
 Written by a hook before the compaction of the context. Everything standing here is checked

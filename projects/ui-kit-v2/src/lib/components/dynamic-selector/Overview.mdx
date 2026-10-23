@@ -10,7 +10,21 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 `rt-dynamic-input`: строки в нём набирают вручную, остальное у них общее.
 
 Страница одна на семью: всплывающий выбор `rt-dynamic-selector-popup` и список выбранного
-`rt-dynamic-selector-list` — части селектора и поля строк, в разметку их не ставят.
+`rt-dynamic-selector-list` — части селектора и поля строк. Список в разметку не ставят. Окно выбора
+можно поставить и само по себе, в свой оверлей приложения под свою кнопку: тогда оно берёт записи
+и настройки из своих входов (`keyExp` и `displayExp` обязательны), а о «Применить», «Отмена»,
+поиске, догрузке и отметках сообщает своими событиями `applied`, `cancelled`, `searchChange`,
+`loadMore` и `temporaryChoiceChange`. Внутри селектора его входы молчат: окно читает селектор.
+
+```html
+<rt-dynamic-selector-popup
+    keyExp="id"
+    displayExp="name"
+    [entities]="people()"
+    [selectAllShown]="false"
+    (applied)="share($event)"
+    (cancelled)="close()" />
+```
 
 ```html
 <rt-dynamic-selector keyExp="id" displayExp="name" draggable [entities]="people()" [formControl]="team" />

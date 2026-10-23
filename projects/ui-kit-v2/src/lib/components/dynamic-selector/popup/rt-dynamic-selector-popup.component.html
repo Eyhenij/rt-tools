@@ -5,8 +5,8 @@
             rtElem="search"
             qa-dataid="dynamic-selector-search"
             iconLeft="search"
-            [appearance]="searchAppearance()"
-            [radius]="searchRadius()"
+            [appearance]="settings.searchAppearance()"
+            [radius]="settings.searchRadius()"
             [placeholder]="searchLabel()"
             [ngModel]="query()"
             [ngModelOptions]="{ standalone: true }"
@@ -43,14 +43,14 @@
         }
     </div>
 
-    @if (loading()) {
+    @if (settings.loading()) {
         <div rtElem="state" qa-dataid="dynamic-selector-loading">
             <rt-spinner [diameter]="24" />
         </div>
     } @else if (hasRows()) {
         <div rtElem="list" qa-dataid="dynamic-selector-options">
             @for (row of rowItems(); track row.key) {
-                <div rtElem="row" [rtMod]="{ separated: row.separated, nowrap: !titleWrap(), own: isSingle() && ownLabel() }">
+                <div rtElem="row" [rtMod]="{ separated: row.separated, nowrap: !settings.titleWrap(), own: isSingle() && ownLabel() }">
                     @if (isSingle()) {
                         <!-- Без переноса и при подсветке поиска подпись рисует окно рядом с кнопкой: подсказка
                              меряет обрезку своего узла, а подпись внутри кнопки окну недоступна. -->
@@ -70,7 +70,7 @@
                                 rtElem="option-label"
                                 qa-dataid="dynamic-selector-option-label"
                                 rtTooltipWhenTruncated
-                                [rtTooltip]="titleWrap() ? '' : row.label"
+                                [rtTooltip]="settings.titleWrap() ? '' : row.label"
                                 (click)="onRadioChange(row.entity)">
                                 <ng-container *ngTemplateOutlet="labelParts; context: { $implicit: row.parts }" />
                             </span>
@@ -86,7 +86,7 @@
                                 rtElem="option-label"
                                 qa-dataid="dynamic-selector-option-label"
                                 rtTooltipWhenTruncated
-                                [rtTooltip]="titleWrap() ? '' : row.label">
+                                [rtTooltip]="settings.titleWrap() ? '' : row.label">
                                 <ng-container *ngTemplateOutlet="labelParts; context: { $implicit: row.parts }" />
                             </span>
                         </rt-checkbox>
@@ -94,9 +94,13 @@
                 </div>
             }
 
-            <div rtElem="sentinel" rtInfiniteScroll [disabled]="!lazyLoad() || fetching()" (loadMore)="onLoadMore()"></div>
+            <div
+                rtElem="sentinel"
+                rtInfiniteScroll
+                [disabled]="!settings.lazyLoad() || settings.fetching()"
+                (loadMore)="onLoadMore()"></div>
 
-            @if (fetching()) {
+            @if (settings.fetching()) {
                 <div rtElem="fetching" qa-dataid="dynamic-selector-fetching">
                     <rt-spinner [diameter]="20" />
                 </div>
@@ -108,8 +112,8 @@
 
     <div rtElem="foot" [rtMod]="{ nav: isNavShown() }">
         @if (isNavShown()) {
-            <a rtElem="nav" qa-dataid="dynamic-selector-nav" [routerLink]="navigateLink()" [rtTooltip]="navigateTitle()">
-                {{ navigateTitle() }}
+            <a rtElem="nav" qa-dataid="dynamic-selector-nav" [routerLink]="settings.navigateLink()" [rtTooltip]="settings.navigateTitle()">
+                {{ settings.navigateTitle() }}
             </a>
         }
 
