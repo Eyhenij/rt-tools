@@ -4,8 +4,8 @@ import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
  * Модель `<rt-service-logo>`: один корневой неймспейс с префиксом `I`.
  */
 export namespace IRtServiceLogo {
-    /** Размер круга. Числа — атома «Service Logo»: круг 40 / 64 / 96, знак 20 / 32 / 48. */
-    export type Size = 'sm' | 'md' | 'lg';
+    /** Размер круга. Числа — атома «Service Logo»: круг 32 / 40 / 64 / 96, знак 16 / 20 / 32 / 48. */
+    export type Size = 'xs' | 'sm' | 'md' | 'lg';
 
     /** Знак картинкой: адрес даёт приложение, знаков чужих компаний в пакете нет. */
     export interface ImageItem {

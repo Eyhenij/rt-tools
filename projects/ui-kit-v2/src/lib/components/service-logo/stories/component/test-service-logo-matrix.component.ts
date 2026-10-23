@@ -40,7 +40,7 @@ interface IServiceLogoIconCase {
 export class TestRtServiceLogoMatrixComponent {
     public part: TServiceLogoMatrixPart = 'size';
 
-    public readonly sizes: readonly IRtServiceLogo.Size[] = ['sm', 'md', 'lg'];
+    public readonly sizes: readonly IRtServiceLogo.Size[] = ['xs', 'sm', 'md', 'lg'];
     public readonly counts: readonly number[] = [1, 2, 3];
     public readonly rows: readonly (readonly IRtServiceLogo.Item[])[] = PLACEHOLDER_ROWS;
 

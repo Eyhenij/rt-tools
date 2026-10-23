@@ -9,7 +9,7 @@ export default {
     component: TestRtServiceLogoComponent,
     argTypes: {
         size: {
-            options: ['sm', 'md', 'lg'],
+            options: ['xs', 'sm', 'md', 'lg'],
             control: { type: 'select' },
         },
         logos: { control: { type: 'object' } },

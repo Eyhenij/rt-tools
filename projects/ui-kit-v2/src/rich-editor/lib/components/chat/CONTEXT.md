@@ -16,8 +16,8 @@
 ```
 
 Основные входы: `messages`, `hasThread`, `canReply`, `replyBlockReason`, `loading`, `fetching`,
-`sending`, `attachments`, `accept`, `formatting`, `title`, `showRefresh`, `showExpand`, `fill`,
-`typingText`. Выходы: `send`, `refresh`, `typing` и события по сообщениям (повтор, удаление).
+`sending`, `attachments`, `accept`, `formatting`, `title`, `sign`, `showRefresh`, `showExpand`,
+`fill`, `typingText`. Выходы: `send`, `refresh`, `typing` и события по сообщениям (повтор, удаление).
 
 ## Главное, что нужно знать
 
@@ -31,6 +31,10 @@ rtChatMessageActions let-message>` рисуется в меню «…» у ре�
 
 **Шапка появляется только вместе с кнопками**: `showHeader = showRefresh || showExpand`.
 Один `title` шапку не создаёт.
+
+**Знак канала — вход `sign`, круг [`rt-service-logo`](../../../../lib/components/service-logo/CONTEXT.md)
+размера `xs` перед заголовком.** Стоит в левой полосе тулбара, отступ до заголовка — её же, 8. Шапку
+сам не создаёт, как и `title`.
 
 **Поле ответа гейтится `canReply`.** Когда отвечать нельзя, вместо него рисуется причина
 из `replyBlockReason`.

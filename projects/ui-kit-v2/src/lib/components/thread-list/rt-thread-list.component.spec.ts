@@ -120,6 +120,42 @@ describe('RtThreadListComponent', (): void => {
         expect(rows(fixture)[0].getAttribute('data-id')).toBe('1');
     });
 
+    describe('знак канала', (): void => {
+        const SIGNED: ReadonlyArray<IThread> = [
+            { id: 7, hasUnread: false, title: 'Гость из мессенджера', sign: { icon: 'globe', label: 'Telegram' } },
+        ];
+
+        it('SC-UKV-909 — строка со знаком рисует его первым в кнопке строки, размером xs', (): void => {
+            const fixture: ComponentFixture<ThreadListHostComponent> = setup();
+            fixture.componentInstance.rows.set(SIGNED);
+            render(fixture);
+
+            const row: HTMLButtonElement = rows(fixture)[0];
+            const sign: HTMLElement = row.firstElementChild as HTMLElement;
+            expect(sign.getAttribute('qa-dataid')).toBe('thread-list-row-sign');
+            expect(classesOf(sign)).toContain('rt-service-logo--size-xs');
+            expect(row.querySelector('.rt-thread-list__row-content [qa-dataid="row-title"]')).not.toBeNull();
+        });
+
+        it('SC-UKV-910 — строка без знака рисует только шаблон потребителя', (): void => {
+            const fixture: ComponentFixture<ThreadListHostComponent> = render(setup());
+
+            expect(qa(fixture, 'thread-list-row-sign')).toBeNull();
+            expect(el(fixture, '.rt-thread-list__row-content')).toBeNull();
+            expect((rows(fixture)[0].firstElementChild as HTMLElement).getAttribute('qa-dataid')).toBe('row-title');
+        });
+
+        it('SC-UKV-913 — знак читается именем канала и своего фокуса не берёт', (): void => {
+            const fixture: ComponentFixture<ThreadListHostComponent> = setup();
+            fixture.componentInstance.rows.set(SIGNED);
+            render(fixture);
+
+            const sign: HTMLElement = qa(fixture, 'thread-list-row-sign')?.nativeElement as HTMLElement;
+            expect(sign.querySelector('[role="img"]')?.getAttribute('aria-label')).toBe('Telegram');
+            expect(sign.querySelector('button, a, [tabindex]')).toBeNull();
+        });
+    });
+
     describe('состояния строки', (): void => {
         it('непрочитанная и просроченная помечаются модификаторами', (): void => {
             const fixture: ComponentFixture<ThreadListHostComponent> = render(setup());

@@ -15,6 +15,22 @@ export const RT_CHAT_NEAR_BOTTOM_THRESHOLD_PX: number = 64;
  */
 export const RT_CHAT_PIN_RETRY_DELAYS_MS: ReadonlyArray<number> = [50, 150, 300, 500, 800];
 
+/**
+ * Серия отложенных подтягиваний ленты к низу: присланное содержимое дорисовывается несколькими
+ * проходами, и одной прокрутки мало. Каждый тик берёт тред заново — он бывает пересоздан — и
+ * дотягивает ленту, пока читатель стоит у нижнего края.
+ */
+export function pinToBottomDeferred(thread: () => HTMLElement | undefined, atBottom: () => boolean): void {
+    for (const delay of RT_CHAT_PIN_RETRY_DELAYS_MS) {
+        setTimeout((): void => {
+            const el: HTMLElement | undefined = thread();
+            if (el !== undefined && atBottom()) {
+                el.scrollTop = el.scrollHeight;
+            }
+        }, delay);
+    }
+}
+
 /** Стоит ли читатель у нижнего края треда. */
 export function isNearBottom(metrics: IRtChatThreadMetrics): boolean {
     return metrics.scrollHeight - metrics.clientHeight - metrics.scrollTop <= RT_CHAT_NEAR_BOTTOM_THRESHOLD_PX;
