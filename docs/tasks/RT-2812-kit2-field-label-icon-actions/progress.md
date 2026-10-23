@@ -26,6 +26,9 @@
   `var(--rt-text-sm)` for the per-page size; kept at the field's size instead, so neither look moves
   by itself. Measured: spacing `normal` by default and 0.496px at `0.031rem`, the label 43.2 → 45.7px;
   the per-page value 14px own and 16px material by default, 14px material with the handle
+- **Scenario numbers moved on 23 October:** main's channel sign (RT-2936) took SC-UKV-909–913 first,
+  so this branch's five took SC-UKV-1020–1024 (909→1020, 910→1021, 911→1022, 912→1023, 913→1024)
+  in the agreement and the test titles; the plan keeps the old numbers
 - **Scenario numbers moved on 22 October:** main's service block (RT-2934) took SC-UKV-904–907 first,
   so this branch's four took SC-UKV-1008–1011 (904→1008, 905→1009, 906→1010, 907→1011) in the
   agreement and the test titles. The plan and the step names above keep the old numbers: the plan is
@@ -89,7 +92,7 @@
 - **The Escape bug from the application's session goes into this branch.** Escape in an open list
   bubbled to the document after the panel closed, and the side panel under it closed too. The fix is
   `stopPropagation` in the open-state Escape branch of select, multiselect, autocomplete and the menu
-  panel; one line each, scenario SC-UKV-912. Affected stage: 7.
+  panel; one line each, scenario SC-UKV-1023. Affected stage: 7.
 - **7.1 done.** Checkbox: `checked` input and `checkedChange` output, as the radio button has.
   `rt-radio-group`: `role=radiogroup`, `ariaLabel`, `orientation`; arrows choose and focus the next
   enabled radio button, wrapping around; the group hands out one Tab stop after render
@@ -98,7 +101,7 @@
 
 - **7.2 done.** Autocomplete: `loading` (spinner row instead of the empty result, or under the list),
   `scrolledToEnd` (once per list length, never while loading), `emptyText` and `emptyTemplate` (the
-  typed query in its context). SC-UKV-913…874. Stories `Molecules/Forms/Autocomplete` → PanelLoading,
+  typed query in its context). SC-UKV-1024…874. Stories `Molecules/Forms/Autocomplete` → PanelLoading,
   PanelLoadingMore, PanelEmptyOwn, PanelPaged.
 - **The application's note on `cleared` with `[ngModel]` needs no kit change.** A host writing the same
   value back after a clear is not redrawn by Angular; the application handles it on its side.

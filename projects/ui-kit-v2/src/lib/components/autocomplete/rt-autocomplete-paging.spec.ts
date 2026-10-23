@@ -56,7 +56,7 @@ function scrollToEnd(panel: HTMLElement): void {
 }
 
 describe('RtAutocompleteComponent — загрузка, конец списка, пустой результат', (): void => {
-    it('SC-UKV-913 — при первой загрузке вместо пустого результата строка со спиннером', (): void => {
+    it('SC-UKV-1024 — при первой загрузке вместо пустого результата строка со спиннером', (): void => {
         const fixture: ComponentFixture<RtAutocompleteComponent<ICity>> = setup({ suggestions: [], loading: true });
         type(fixture, 'Мо');
 
@@ -65,7 +65,7 @@ describe('RtAutocompleteComponent — загрузка, конец списка,
         expect(byQa('autocomplete-empty')).toBeNull();
     });
 
-    it('SC-UKV-913 — при подгрузке строка со спиннером стоит под списком', (): void => {
+    it('SC-UKV-1024 — при подгрузке строка со спиннером стоит под списком', (): void => {
         const fixture: ComponentFixture<RtAutocompleteComponent<ICity>> = setup({ loading: true });
         type(fixture, 'М');
 

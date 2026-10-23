@@ -108,7 +108,7 @@ Then the mark shown is the input's, and the new mark is reported by the change o
 
 Covered: `projects/ui-kit-v2/src/lib/components/checkbox/rt-checkbox.component.spec.ts`.
 
-### SC-UKV-909 — a radio group names itself to assistive technology
+### SC-UKV-1020 — a radio group names itself to assistive technology
 
 Given radio buttons inside a radio group with a name
 When the group is drawn
@@ -116,7 +116,7 @@ Then it is declared a radio group under that name
 
 Covered: `projects/ui-kit-v2/src/lib/components/radio-button/rt-radio-group.component.spec.ts`.
 
-### SC-UKV-910 — arrows move the choice and the focus inside the group
+### SC-UKV-1021 — arrows move the choice and the focus inside the group
 
 Given a radio group with a disabled member
 When the person presses an arrow on a radio button
@@ -124,7 +124,7 @@ Then the next enabled radio button, wrapping around, is chosen and focused
 
 Covered: `projects/ui-kit-v2/src/lib/components/radio-button/rt-radio-group.component.spec.ts`.
 
-### SC-UKV-911 — a radio group has one Tab stop
+### SC-UKV-1022 — a radio group has one Tab stop
 
 Given a radio group
 When it is drawn without a choice, and then with one
@@ -132,7 +132,7 @@ Then only the first enabled radio button, and then only the chosen one, is in th
 
 Covered: `projects/ui-kit-v2/src/lib/components/radio-button/rt-radio-group.component.spec.ts`.
 
-### SC-UKV-912 — Escape in an open list closes one layer
+### SC-UKV-1023 — Escape in an open list closes one layer
 
 Given a select, multiselect, autocomplete or menu is open inside a side panel or a dialog
 When the person presses Escape
@@ -140,7 +140,7 @@ Then only the list closes, and the event does not reach the layer under it
 
 Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-field-extras.spec.ts`.
 
-### SC-UKV-913 — the autocomplete shows that suggestions are loading
+### SC-UKV-1024 — the autocomplete shows that suggestions are loading
 
 Given suggestions are loading
 When the panel is open with no suggestions yet, or with a page already shown

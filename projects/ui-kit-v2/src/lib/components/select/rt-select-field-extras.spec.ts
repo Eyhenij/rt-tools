@@ -198,7 +198,7 @@ describe('RtSelectComponent — строка списка, подпись на �
             expect(hostClasses(fixture)).not.toContain('rt-select--open');
         });
 
-        it('SC-UKV-912 — Escape закрывает только панель и не доходит до слоя под ней', (): void => {
+        it('SC-UKV-1023 — Escape закрывает только панель и не доходит до слоя под ней', (): void => {
             const fixture: ComponentFixture<RtSelectComponent<string>> = setup();
             const reached: string[] = [];
             const listen: (event: KeyboardEvent) => void = (event: KeyboardEvent): void => {

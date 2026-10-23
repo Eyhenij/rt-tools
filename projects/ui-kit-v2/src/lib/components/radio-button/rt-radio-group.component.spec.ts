@@ -69,7 +69,7 @@ function setup(middleOff: boolean = false): ComponentFixture<RadioGroupHostCompo
 }
 
 describe('RtRadioGroupComponent', (): void => {
-    it('SC-UKV-911 — радиокнопка из шаблона обёртки входит в группу: шаг Tab и стрелки доходят до неё', (): void => {
+    it('SC-UKV-1022 — радиокнопка из шаблона обёртки входит в группу: шаг Tab и стрелки доходят до неё', (): void => {
         const fixture: ComponentFixture<WrappedRadioHostComponent> = createRtFixture(WrappedRadioHostComponent);
         fixture.detectChanges();
 
@@ -79,18 +79,18 @@ describe('RtRadioGroupComponent', (): void => {
         expect(document.activeElement).toBe(radios(fixture)[1]);
     });
 
-    it('SC-UKV-909 — группа объявляет себя radiogroup и носит имя', (): void => {
+    it('SC-UKV-1020 — группа объявляет себя radiogroup и носит имя', (): void => {
         const host: HTMLElement = group(setup());
 
         expect(host.getAttribute('role')).toBe('radiogroup');
         expect(host.getAttribute('aria-label')).toBe('Тип номера');
     });
 
-    it('SC-UKV-911 — без выбора в порядке обхода стоит только первая радиокнопка', (): void => {
+    it('SC-UKV-1022 — без выбора в порядке обхода стоит только первая радиокнопка', (): void => {
         expect(radios(setup()).map((radio: HTMLElement): string | null => radio.getAttribute('tabindex'))).toEqual(['0', '-1', '-1']);
     });
 
-    it('SC-UKV-911 — с выбором в порядке обхода стоит выбранная', (): void => {
+    it('SC-UKV-1022 — с выбором в порядке обхода стоит выбранная', (): void => {
         const fixture: ComponentFixture<RadioGroupHostComponent> = setup();
         fixture.componentInstance.control.setValue('suite');
         fixture.detectChanges();
@@ -98,7 +98,7 @@ describe('RtRadioGroupComponent', (): void => {
         expect(radios(fixture).map((radio: HTMLElement): string | null => radio.getAttribute('tabindex'))).toEqual(['-1', '-1', '0']);
     });
 
-    it('SC-UKV-910 — стрелка вниз выбирает следующую и переводит на неё фокус', (): void => {
+    it('SC-UKV-1021 — стрелка вниз выбирает следующую и переводит на неё фокус', (): void => {
         const fixture: ComponentFixture<RadioGroupHostComponent> = setup();
         arrow(fixture, radios(fixture)[0], 'ArrowDown');
 
@@ -106,14 +106,14 @@ describe('RtRadioGroupComponent', (): void => {
         expect(document.activeElement).toBe(radios(fixture)[1]);
     });
 
-    it('SC-UKV-910 — стрелка вверх с первой уходит по кругу на последнюю', (): void => {
+    it('SC-UKV-1021 — стрелка вверх с первой уходит по кругу на последнюю', (): void => {
         const fixture: ComponentFixture<RadioGroupHostComponent> = setup();
         arrow(fixture, radios(fixture)[0], 'ArrowUp');
 
         expect(fixture.componentInstance.control.value).toBe('suite');
     });
 
-    it('SC-UKV-910 — отключённую стрелка пропускает', (): void => {
+    it('SC-UKV-1021 — отключённую стрелка пропускает', (): void => {
         const fixture: ComponentFixture<RadioGroupHostComponent> = setup(true);
         arrow(fixture, radios(fixture)[0], 'ArrowRight');
 
