@@ -112,6 +112,12 @@ can be pressed and shows a hint, and a cross that the Tab key reaches.
   its fill.
 - **Under the preset an icon button stands where a plain icon stands.** Its icon is 12 px from the
   field edge, and the text starts at 40 px.
+- **An input and a textarea take a length limit that goes onto the native field.** The browser
+  then refuses a character past the limit, typed or pasted. Without the limit the field carries no
+  such attribute. The form's own length check stays with the application: a value set by code is
+  not cut.
+- **A tooltip takes a show delay of its own.** It wins over the delay from the kit settings for that
+  one element; without it the element waits the shared delay, 300 ms by default.
 
 ## What is out of scope
 
@@ -193,3 +199,5 @@ None.
 
 - 2026-10-13 — written before the code, from the application's request accepted by the owner.
 - 2026-10-14 — the application's measurement against Material: the field under the preset.
+- 2026-10-23 — the application's request: the length limit of the input and the textarea, the show
+  delay of one tooltip.

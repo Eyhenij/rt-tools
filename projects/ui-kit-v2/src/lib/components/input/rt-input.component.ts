@@ -1,4 +1,4 @@
-import { BooleanInput } from '@angular/cdk/coercion';
+import { BooleanInput, NumberInput } from '@angular/cdk/coercion';
 import {
     booleanAttribute,
     computed,
@@ -22,7 +22,7 @@ import {
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
-import { rtNotchWidth, RtFormControlBase } from '@rt-tools/ui-kit-v2/form-control';
+import { rtMaxlength, rtNotchWidth, RtFormControlBase } from '@rt-tools/ui-kit-v2/form-control';
 import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
@@ -148,6 +148,15 @@ export class RtInputComponent extends RtFormControlBase<string> {
         transform: booleanAttribute,
     });
     public readonly autocomplete: InputSignal<string | null> = input<string | null>(null);
+
+    /**
+     * Предел длины значения: уходит атрибутом `maxlength` на поле, и браузер не даёт набрать лишний
+     * знак. `null` — предела нет. Проверку формы вход не заменяет: значение, записанное кодом,
+     * браузер не режет.
+     */
+    public readonly maxlength: InputSignalWithTransform<number | null, NumberInput> = input<number | null, NumberInput>(null, {
+        transform: rtMaxlength,
+    });
 
     /** Видимая подпись на рамке поля. `null` — подписи нет, поле как прежде. */
     public readonly floatingLabel: InputSignal<string | null> = input<string | null>(null);

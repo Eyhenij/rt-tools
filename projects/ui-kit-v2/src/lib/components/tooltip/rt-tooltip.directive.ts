@@ -1,4 +1,5 @@
 import { FocusMonitor, FocusOrigin } from '@angular/cdk/a11y';
+import { NumberInput } from '@angular/cdk/coercion';
 import {
     ConnectedPosition,
     FlexibleConnectedPositionStrategy,
@@ -18,6 +19,7 @@ import {
     input,
     InputSignal,
     InputSignalWithTransform,
+    numberAttribute,
     OnDestroy,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -68,7 +70,6 @@ export class RtTooltipDirective implements OnDestroy {
     #overlayRef: OverlayRef | null = null;
     #tooltipRef: ComponentRef<RtTooltipComponent> | null = null;
     #showTimer: ReturnType<typeof setTimeout> | null = null;
-    /** Задержка показа: из настроек кита `components.tooltip.showDelay`, без них — `SHOW_DELAY_MS`. */
     /**
      * Сторона из настроек кита. Не умолчание входа: обёртка кита, передающая свой `null`, перебила
      * бы настройку приложения.
@@ -78,7 +79,15 @@ export class RtTooltipDirective implements OnDestroy {
         (it: IRtKitConfig.Tooltip): IRtTooltip.Placement | undefined => it.placement,
         null
     );
-    readonly #showDelay: number = rtKitDefault('tooltip', (it: IRtKitConfig.Tooltip): number | undefined => it.showDelay, SHOW_DELAY_MS);
+    /**
+     * Задержка показа по умолчанию: из настроек кита `components.tooltip.showDelay`, без них —
+     * `SHOW_DELAY_MS`. Не умолчание входа — по той же причине, что и сторона.
+     */
+    readonly #showDelayDefault: number = rtKitDefault(
+        'tooltip',
+        (it: IRtKitConfig.Tooltip): number | undefined => it.showDelay,
+        SHOW_DELAY_MS
+    );
 
     /**
      * Текст подсказки. Принимает `null`/`undefined` (частый результат date-пайпа
@@ -97,6 +106,18 @@ export class RtTooltipDirective implements OnDestroy {
      */
     public readonly placement: InputSignal<IRtTooltip.Placement | null> = input<IRtTooltip.Placement | null>(null, {
         alias: 'rtTooltipPlacement',
+    });
+
+    /**
+     * Задержка показа этой подсказки в миллисекундах. `null` — общая задержка из настроек кита, без
+     * них 300.
+     */
+    public readonly showDelay: InputSignalWithTransform<number | null, NumberInput> = input<number | null, NumberInput>(null, {
+        alias: 'rtTooltipShowDelay',
+        transform: (value: NumberInput): number | null => {
+            const delay: number = value === null || value === undefined || value === '' ? Number.NaN : numberAttribute(value, Number.NaN);
+            return delay >= 0 ? delay : null;
+        },
     });
 
     /**
@@ -148,7 +169,7 @@ export class RtTooltipDirective implements OnDestroy {
             return;
         }
         this.#clearTimer();
-        this.#showTimer = setTimeout((): void => this.#attach(), this.#showDelay);
+        this.#showTimer = setTimeout((): void => this.#attach(), this.showDelay() ?? this.#showDelayDefault);
     }
 
     protected hide(): void {

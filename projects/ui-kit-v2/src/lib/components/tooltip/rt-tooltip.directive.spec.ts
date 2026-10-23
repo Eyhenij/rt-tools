@@ -48,6 +48,7 @@ class TooltipPresetHostComponent {}
     template: `
         <button type="button" qa-dataid="plain" rtTooltip="Удалить строку">Кнопка</button>
         <button type="button" qa-dataid="own" rtTooltip="Сохранить" [rtTooltipHideOnClick]="true">Кнопка</button>
+        <button type="button" qa-dataid="delayed" rtTooltip="Вид" rtTooltipShowDelay="500">Кнопка</button>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [RtTooltipDirective],
@@ -387,6 +388,38 @@ describe('RtTooltipDirective', (): void => {
             node(fixture, 'own').click();
             fixture.detectChanges();
             expect(tip()).toBeNull();
+        });
+
+        it('SC-UKV-1017 — своя задержка на элементе перебивает задержку из настроек кита', (): void => {
+            const fixture: ComponentFixture<TooltipConfigHostComponent> = configured();
+
+            node(fixture, 'delayed').dispatchEvent(new Event('mouseenter'));
+            jest.advanceTimersByTime(499);
+            fixture.detectChanges();
+            expect(tip()).toBeNull();
+
+            jest.advanceTimersByTime(1);
+            fixture.detectChanges();
+            expect(tip()?.textContent).toBe('Вид');
+        });
+
+        it('SC-UKV-1018 — без своей задержки подсказка ждёт умолчание кита, соседняя со своей — свою', (): void => {
+            const fixture: ComponentFixture<TooltipConfigHostComponent> = createRtFixture(TooltipConfigHostComponent);
+
+            node(fixture, 'plain').dispatchEvent(new Event('mouseenter'));
+            jest.advanceTimersByTime(300);
+            fixture.detectChanges();
+            expect(tip()?.textContent).toBe('Удалить строку');
+            node(fixture, 'plain').dispatchEvent(new Event('mouseleave'));
+            fixture.detectChanges();
+
+            node(fixture, 'delayed').dispatchEvent(new Event('mouseenter'));
+            jest.advanceTimersByTime(300);
+            fixture.detectChanges();
+            expect(tip()).toBeNull();
+            jest.advanceTimersByTime(200);
+            fixture.detectChanges();
+            expect(tip()?.textContent).toBe('Вид');
         });
     });
 });

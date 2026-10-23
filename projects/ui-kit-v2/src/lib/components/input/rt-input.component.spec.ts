@@ -44,6 +44,17 @@ class InputRevertHostComponent {
     }
 }
 
+/** Предел и контрол формы на одном поле: тот же атрибут читает и проверка формы. */
+@Component({
+    selector: 'rt-input-maxlength-host',
+    template: '<rt-input maxlength="4" [formControl]="control" />',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtInputComponent, ReactiveFormsModule],
+})
+class InputMaxlengthHostComponent {
+    public readonly control: FormControl<string | null> = new FormControl<string | null>('');
+}
+
 function setup(inputs: Readonly<Record<string, unknown>> = {}): ComponentFixture<RtInputComponent> {
     return createRtFixture(RtInputComponent, inputs);
 }
@@ -85,6 +96,22 @@ describe('RtInputComponent', (): void => {
 
     it('подсказка уезжает на нативное поле', (): void => {
         expect(field(setup({ placeholder: 'Введите имя' })).placeholder).toBe('Введите имя');
+    });
+
+    it('SC-UKV-1015 — предел длины уезжает на нативное поле, без него атрибута нет', (): void => {
+        expect(field(setup({ maxlength: 4 })).getAttribute('maxlength')).toBe('4');
+        expect(field(setup({ maxlength: '4' })).maxLength).toBe(4);
+        expect(field(setup()).hasAttribute('maxlength')).toBe(false);
+        expect(field(setup({ maxlength: null })).hasAttribute('maxlength')).toBe(false);
+        expect(field(setup({ maxlength: 'много' })).hasAttribute('maxlength')).toBe(false);
+    });
+
+    it('SC-UKV-1015 — предел рядом с контролом формы: поле режет ввод, проверка формы остаётся', (): void => {
+        const fixture: ComponentFixture<InputMaxlengthHostComponent> = createRtFixture(InputMaxlengthHostComponent);
+
+        expect(field(fixture).maxLength).toBe(4);
+        fixture.componentInstance.control.setValue('ABCDE');
+        expect(fixture.componentInstance.control.hasError('maxlength')).toBe(true);
     });
 
     describe('размер', (): void => {

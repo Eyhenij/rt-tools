@@ -17,7 +17,7 @@ import {
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { RtFormControlBase } from '@rt-tools/ui-kit-v2/form-control';
+import { rtMaxlength, RtFormControlBase } from '@rt-tools/ui-kit-v2/form-control';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 
 const BEM_BLOCK: string = 'rt-textarea';
@@ -81,6 +81,11 @@ export class RtTextareaComponent extends RtFormControlBase<string> {
     public readonly rows: InputSignalWithTransform<number, NumberInput> = input<number, NumberInput>(3, { transform: numberAttribute });
     public readonly resize: InputSignal<TRtTextareaResize> = input<TRtTextareaResize>('vertical');
     public readonly appearance: InputSignal<TRtTextareaAppearance> = input<TRtTextareaAppearance>('outline');
+
+    /** Предел длины значения: атрибут `maxlength` на поле, браузер не даёт набрать больше. `null` — предела нет. */
+    public readonly maxlength: InputSignalWithTransform<number | null, NumberInput> = input<number | null, NumberInput>(null, {
+        transform: rtMaxlength,
+    });
 
     protected getEmptyValue(): string {
         return '';

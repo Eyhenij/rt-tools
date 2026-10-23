@@ -11,7 +11,13 @@ import { TRtTextareaAppearance, TRtTextareaResize } from '../../rt-textarea.comp
 @Component({
     selector: 'app-textarea',
     template: `
-        <rt-textarea [placeholder]="placeholder" [readonly]="readonly" [rows]="rows" [resize]="resize" [appearance]="appearance" />
+        <rt-textarea
+            [placeholder]="placeholder"
+            [readonly]="readonly"
+            [rows]="rows"
+            [resize]="resize"
+            [appearance]="appearance"
+            [maxlength]="maxlength" />
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
@@ -25,4 +31,5 @@ export class TestRtTextareaComponent {
     public rows: number = 3;
     public resize: TRtTextareaResize = 'vertical';
     public appearance: TRtTextareaAppearance = 'outline';
+    public maxlength: number | null = null;
 }

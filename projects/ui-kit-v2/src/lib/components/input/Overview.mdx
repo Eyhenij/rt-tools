@@ -109,6 +109,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | `iconRight`         | `IRtIcon.Name \| null`                      | `null`                    |
 | `passwordToggle`    | `boolean`                                   | `false`                   |
 | `autocomplete`      | `string \| null`                            | `null`                    |
+| `maxlength`         | `number \| null`                            | `null` — без предела      |
 | `radius`            | `TRtRadius \| null`                         | `null` → скругление полей |
 | `floatingLabel`     | `string \| null`                            | `null`                    |
 | `iconLeftAction`    | `boolean`                                   | `false`                   |
@@ -121,6 +122,10 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 **Кнопка-значок отключается своим входом, поле при этом остаётся доступным.** Так поиск не ищет,
 пока введено меньше трёх знаков, а подсказка кнопки объясняет почему — история
 `FieldExtras → IconActions`.
+
+**`maxlength` уходит атрибутом на поле, и браузер не даёт набрать лишний знак.** Вставка тоже
+обрезается. Проверку формы вход не заменяет: значение из кода браузер не режет, и
+`Validators.maxLength` в форме остаётся.
 
 **Крестик очистки и переключатель пароля делят один постфикс.** На поле пароля с включённым
 переключателем крестика не будет: показать оба некуда.

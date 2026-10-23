@@ -64,6 +64,12 @@ describe('RtTextareaComponent', (): void => {
         expect(field(setup({ placeholder: 'Комментарий' })).placeholder).toBe('Комментарий');
     });
 
+    it('SC-UKV-1016 — предел длины уезжает на нативное поле, без него атрибута нет', (): void => {
+        expect(field(setup({ maxlength: 200 })).maxLength).toBe(200);
+        expect(field(setup({ maxlength: '20' })).getAttribute('maxlength')).toBe('20');
+        expect(field(setup()).hasAttribute('maxlength')).toBe(false);
+    });
+
     describe('изменение размера', (): void => {
         it('по умолчанию тянется только по вертикали', (): void => {
             expect(field(setup()).style.resize).toBe('vertical');

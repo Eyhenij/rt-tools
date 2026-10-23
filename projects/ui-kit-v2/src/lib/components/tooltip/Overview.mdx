@@ -79,6 +79,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | `placement`     | `'top' \| 'bottom' \| 'left' \| 'right' \| null` | `null` — из настроек кита, без них сверху, под материальным набором снизу |
 | `whenTruncated` | `boolean`                                        | `false`                                                                   |
 | `hideOnClick`   | `boolean`                                        | из настроек кита, без них `true`                                          |
+| `showDelay`     | `number \| null`                                 | `null` — задержка из настроек кита, без них 300 мс                        |
 
 **Умолчания на всё приложение — раздел `tooltip` в `provideRtKit`.** `hideOnClick`, `placement` и
 `showDelay` (задержка показа, по умолчанию 300 мс) задаются один раз; вход на элементе их перебивает.
@@ -88,7 +89,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 provideRtKit({ components: { tooltip: { hideOnClick: false } } });
 ```
 
-В разметке они пишутся под алиасами `rtTooltip`, `rtTooltipPlacement`, `rtTooltipWhenTruncated` и `rtTooltipHideOnClick`:
+В разметке они пишутся под алиасами `rtTooltip`, `rtTooltipPlacement`, `rtTooltipWhenTruncated`, `rtTooltipHideOnClick` и `rtTooltipShowDelay`:
 имя директивы и есть имя входа текста. Вход текста принимает `null` и `undefined` и сам приводит
 их к пустой строке — так `[rtTooltip]="value | date"` не ломает строгую типизацию шаблона.
 
@@ -101,6 +102,9 @@ provideRtKit({ components: { tooltip: { hideOnClick: false } } });
 кнопка-переключатель: после нажатия подсказка остаётся и показывает новое состояние, потому что новый
 текст `[rtTooltip]` меняется в открытой панели на месте. Касание на тач-экране подсказку не
 показывает и с этим входом: клик снимает отложенный показ. Режим показан историей `KeepOnClick`.
+
+**`rtTooltipShowDelay` задаёт задержку одной подсказке.** `rtTooltipShowDelay="500"` у группы
+переключателей не трогает остальные подсказки приложения; `null` берёт общую задержку.
 
 ## Выходы
 

@@ -21,13 +21,15 @@
 | `floatingLabel`                        | `string \| null`                                     | `null`    |
 | `passwordToggle`                       | `boolean`                                            | `false`   |
 | `autocomplete`                         | `string \| null`                                     | `null`    |
+| `maxlength`                            | `number \| null`                                     | `null`    |
 
 | выход                              | тип          |
 | ---------------------------------- | ------------ |
 | `iconLeftClick` / `iconRightClick` | `MouseEvent` |
 | `cleared`                          | `void`       |
 
-Значение — `string`.
+Значение — `string`. `maxlength` уходит атрибутом на поле: браузер не даёт набрать больше, а
+значение из кода не режет, поэтому проверка формы остаётся за приложением.
 
 ## Главное, что нужно знать
 

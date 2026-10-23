@@ -15,8 +15,9 @@
 | `resize`      | `'none' \| 'vertical'` | `'vertical'` |
 | `readonly`    | `boolean`              | `false`      |
 | `appearance`  | `'outline' \| 'fill'`  | `'outline'`  |
+| `maxlength`   | `number \| null`       | `null`       |
 
-Значение — `string`.
+Значение — `string`. `maxlength` уходит атрибутом на поле, как у `rt-input`.
 
 ## Главное, что нужно знать
 

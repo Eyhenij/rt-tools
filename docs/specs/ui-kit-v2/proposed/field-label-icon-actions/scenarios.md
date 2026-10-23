@@ -932,3 +932,36 @@ number field and text area keep the browser's `normal`, and the per-page value k
 size
 
 Покрытие: частичное. Тест читает стили компонентов; значения проверены измерением в витрине.
+
+### SC-UKV-1015 — the input's length limit goes onto the native field
+
+Given an input with a length limit, given as a number or as a markup attribute
+When the field is drawn, alone or bound to a form control
+Then the native field carries that limit; without a limit, with `null` or with a non-number it
+carries none, and the form's own length check still answers for a value set by code
+
+Covered: `projects/ui-kit-v2/src/lib/components/input/rt-input.component.spec.ts`.
+
+### SC-UKV-1016 — the textarea's length limit goes onto the native field
+
+Given a textarea with a length limit
+When the field is drawn
+Then the native field carries that limit; without one it carries none
+
+Covered: `projects/ui-kit-v2/src/lib/components/textarea/rt-textarea.component.spec.ts`.
+
+### SC-UKV-1017 — a tooltip's own delay wins over the kit settings
+
+Given an application whose kit settings set the tooltip delay to 100 ms
+When the pointer enters an element whose tooltip has a delay of 500 ms of its own
+Then the tooltip is not shown at 499 ms and is shown at 500 ms
+
+Covered: `projects/ui-kit-v2/src/lib/components/tooltip/rt-tooltip.directive.spec.ts`.
+
+### SC-UKV-1018 — without a delay of its own a tooltip waits the shared one
+
+Given no kit settings, one tooltip without a delay of its own and one with 500 ms
+When the pointer enters each in turn
+Then the first is shown at 300 ms, and the second is still hidden at 300 ms and shown at 500 ms
+
+Covered: `projects/ui-kit-v2/src/lib/components/tooltip/rt-tooltip.directive.spec.ts`.

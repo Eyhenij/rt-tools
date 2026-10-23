@@ -795,6 +795,14 @@ data-preset="material" floatingLabel>` drew the border through the risen label: 
   root, on its own it reads its former inputs and reports by its former outputs. The deprecation
   mark on its export is removed. The showcase frame that stood in for the root is gone: the matrix
   and the popup specs place the popup itself, the way the application does. SC-UKV-1013.
+- **2026-10-23, a length limit and a delay of one tooltip.** The application's field lost the
+  browser's length limit with the move to the kit: a fifth character was typed and the form then
+  refused it. `rt-input` and `rt-textarea` take `maxlength`, which goes onto the native field; the
+  form's own check stays with the application. `rtTooltip` takes `rtTooltipShowDelay`, which wins
+  over the kit settings for that element only; the kit default of 300 ms and the settings are
+  unchanged. Checked in the showcase: five typed letters leave four in the input and three of five
+  in a textarea limited to 3; a tooltip with 1000 ms shows after 1020 ms, one without it after
+  327 ms. SC-UKV-1015–1018.
 
 ## Sessions
 
@@ -821,15 +829,13 @@ The progress in full — `docs/tasks/RT-2812-kit2-field-label-icon-actions/progr
 ### Uncommitted
 
 ```
- M docs/specs/ui-kit-v2/proposed/field-label-icon-actions/scenarios.md
- M projects/ui-kit-v2/src/lib/components/container/CONTEXT.md
- M projects/ui-kit-v2/src/lib/components/container/Overview.mdx
- M projects/ui-kit-v2/src/lib/components/container/rt-container.component.scss
+none
 ```
 
 ### Commits over the main branch
 
 ```
+34076a9ac fix(rt:ui-kit-v2): правая панель каркаса поверх страницы не шире окна
 b2a89b06a fix(rt:ui-kit-v2): окно выбора динамического селектора снова работает само по себе
 40b980bfd fix(rt:ui-kit-v2): базовый вид поля и выбора снова как на main — рамка своего указателя, строка подсказки, интервал
 36c1fc17e feat(rt:ui-kit-v2): межбуквенный интервал полей и размер шрифта «на странице» из ручек приложения
@@ -849,7 +855,6 @@ c2305b053 feat(rt:ui-kit-v2): тост — голый вид для своего
 5058d4c62 feat(rt:ui-kit-v2): вкладки — открытую панель можно убрать из обхода по Tab
 32b67926e feat(rt:ui-kit-v2): боковое меню — поиск раскрывает папку, совпавшую по имени, свёрнутое избранное держит число
 f5a118015 Merge remote-tracking branch 'origin/main' into RT-2812-kit2-field-label-icon-actions
-b58674e7c Merge remote-tracking branch 'origin/main' into RT-2812-kit2-field-label-icon-actions
 ```
 
 Written by a hook before the compaction of the context. Everything standing here is checked

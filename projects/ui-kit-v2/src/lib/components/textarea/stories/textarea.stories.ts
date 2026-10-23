@@ -18,6 +18,7 @@ export default {
             options: ['outline', 'fill'],
             control: { type: 'select' },
         },
+        maxlength: { control: { type: 'number' } },
     },
 } as Meta<TestRtTextareaComponent>;
 
@@ -31,5 +32,6 @@ export const Playground: TStory = {
         rows: 3,
         resize: 'vertical',
         appearance: 'outline',
+        maxlength: null,
     },
 };
