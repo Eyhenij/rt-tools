@@ -61,6 +61,10 @@ export const scaleEffects = [
         lead: `    /* Тень круга логотипа службы — ореол без сдвига цвета почти чёрного на 15%;
        размытие растёт с размером круга, по ступени на размер атома. */`,
         space: true,
+        name: `--rt-shadow-service-logo-xs`,
+        value: `0 0 16px rgb(24 24 24 / 15%)`,
+    },
+    {
         name: `--rt-shadow-service-logo-sm`,
         value: `0 0 24px rgb(24 24 24 / 15%)`,
     },

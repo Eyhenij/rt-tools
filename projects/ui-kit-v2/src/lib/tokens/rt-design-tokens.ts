@@ -504,6 +504,7 @@ export type TRtDesignTokenName =
     | '--rt-shadow-service-logo-lg'
     | '--rt-shadow-service-logo-md'
     | '--rt-shadow-service-logo-sm'
+    | '--rt-shadow-service-logo-xs'
     | '--rt-shadow-sm'
     | '--rt-shadow-status-dot'
     | '--rt-shadow-step-indicator'
@@ -1303,6 +1304,7 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-shadow-service-logo-lg',
     '--rt-shadow-service-logo-md',
     '--rt-shadow-service-logo-sm',
+    '--rt-shadow-service-logo-xs',
     '--rt-shadow-sm',
     '--rt-shadow-status-dot',
     '--rt-shadow-step-indicator',

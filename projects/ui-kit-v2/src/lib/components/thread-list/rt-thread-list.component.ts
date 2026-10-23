@@ -34,6 +34,7 @@ import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 import { RtInputComponent } from '@rt-tools/ui-kit-v2/input';
 import { RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
+import { RtServiceLogoComponent } from '@rt-tools/ui-kit-v2/service-logo';
 import { RtSkeletonComponent } from '@rt-tools/ui-kit-v2/skeleton';
 import {
     RtThreadListFiltersDirective,
@@ -78,6 +79,7 @@ const PREVIEW_ICONS: readonly IRtIcon.Name[] = ['user', 'users', 'user'];
         RtIconButtonComponent,
         RtInputComponent,
         RtPopoverDirective,
+        RtServiceLogoComponent,
         RtSkeletonComponent,
         BlockDirective,
         ElemDirective,

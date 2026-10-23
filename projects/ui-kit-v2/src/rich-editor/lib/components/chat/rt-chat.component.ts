@@ -39,12 +39,14 @@ import {
     RtIconComponent,
     RtMenuComponent,
     RtNoteComponent,
+    RtServiceLogoComponent,
     RtSkeletonWrapperComponent,
     RtSpinnerComponent,
     RtToolbarComponent,
     RtToolbarLeftDirective,
     RtToolbarRightDirective,
 } from '@rt-tools/ui-kit-v2';
+import { IRtServiceLogo } from '@rt-tools/ui-kit-v2';
 import { RT_KIT_LABELS, RT_KIT_LOCALE, rtKitLabel, TRtKitLabelKey, TRtKitLabelMap } from '@rt-tools/ui-kit-v2';
 import { RtChatMessageActionsDirective } from './rt-chat-message-actions.directive';
 import { RtChatMessageHasActionsPipe } from './rt-chat-message-actions.pipe';
@@ -53,7 +55,7 @@ import { RtMessageComposerComponent } from '../message-composer/rt-message-compo
 import { IRtMessageComposer } from '../message-composer/rt-message-composer.model';
 import { TRtRichEditorToolbar } from '../rich-editor/rt-rich-editor.component';
 import { pickedFiles, withAppendedFiles, withoutFileAt } from './rt-chat-files.logic';
-import { nextAtBottom, RT_CHAT_PIN_RETRY_DELAYS_MS } from './rt-chat-thread.logic';
+import { nextAtBottom, pinToBottomDeferred } from './rt-chat-thread.logic';
 import { typingDraft, RtChatTypingTracker } from './rt-chat-typing.logic';
 import { ERtChatMessageStatus, IRtChat } from './rt-chat.model';
 
@@ -95,6 +97,7 @@ const ATTACHMENT_FALLBACK_KEY: TRtKitLabelKey = 'chatAttachmentFallback';
         RtMenuComponent,
         RtMessageComposerComponent,
         RtNoteComponent,
+        RtServiceLogoComponent,
         RtSkeletonWrapperComponent,
         RtSpinnerComponent,
         RtToolbarComponent,
@@ -259,6 +262,12 @@ export class RtChatComponent {
 
     public readonly title: InputSignal<string> = input<string>('');
 
+    /**
+     * Знак канала разговора (сайт, мессенджер) слева от заголовка шапки: круг `rt-service-logo`
+     * размера `xs`. Шапку сам не создаёт — как и `title`, рисуется только в ней.
+     */
+    public readonly sign: InputSignal<IRtServiceLogo.Item | null> = input<IRtServiceLogo.Item | null>(null);
+
     /** Текст, когда треда ещё нет (заявка не создана). */
     public readonly emptyHint: InputSignal<string> = input<string>('');
 
@@ -369,7 +378,10 @@ export class RtChatComponent {
             if (this.#forceScroll || this.#atBottom) {
                 el.scrollTop = el.scrollHeight;
                 this.#atBottom = true;
-                this.#pinToBottomDeferred();
+                pinToBottomDeferred(
+                    (): HTMLElement | undefined => this.thread()?.nativeElement,
+                    (): boolean => this.#atBottom
+                );
             }
             this.#forceScroll = false;
         });
@@ -473,22 +485,6 @@ export class RtChatComponent {
 
         this.#atBottom = nextAtBottom(this.#atBottom, this.#lastScrollTop, el);
         this.#lastScrollTop = el.scrollTop;
-    }
-
-    /**
-     * Серия отложенных подтягиваний ленты к низу: присланное содержимое дорисовывается несколькими
-     * проходами, и одной прокрутки мало. Каждый тик берёт тред заново — он бывает пересоздан — и
-     * дотягивает ленту, пока читатель стоит у нижнего края.
-     */
-    #pinToBottomDeferred(): void {
-        for (const delay of RT_CHAT_PIN_RETRY_DELAYS_MS) {
-            setTimeout((): void => {
-                const el: HTMLElement | undefined = this.thread()?.nativeElement;
-                if (el !== undefined && this.#atBottom) {
-                    el.scrollTop = el.scrollHeight;
-                }
-            }, delay);
-        }
     }
 
     protected toggleExpand(): void {

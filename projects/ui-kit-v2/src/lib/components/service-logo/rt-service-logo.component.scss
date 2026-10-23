@@ -16,6 +16,13 @@
         align-items: center;
         vertical-align: middle;
 
+        &--size-xs {
+            --rt-service-logo-size: var(--rt-size-8);
+            --rt-service-logo-mark-height: var(--rt-size-4);
+            --rt-service-logo-step: var(--rt-size-5);
+            --rt-service-logo-shadow: var(--rt-shadow-service-logo-xs);
+        }
+
         &--size-sm {
             --rt-service-logo-size: var(--rt-size-10);
             --rt-service-logo-mark-height: var(--rt-size-5);
@@ -52,7 +59,7 @@
             }
         }
 
-        /* Рамка знака шире высоты в 1.375 раза (27.5×20, 44×32, 66×48): картинка вписывается в неё
+        /* Рамка знака шире высоты в 1.375 раза (22×16, 27.5×20, 44×32, 66×48): картинка вписывается в неё
            целиком, без растяжения и обрезки. */
         &__image {
             display: block;

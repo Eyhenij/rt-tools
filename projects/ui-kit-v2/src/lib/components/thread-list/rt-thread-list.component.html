@@ -39,8 +39,19 @@
                 overdue: !!row.overdue,
             }"
             (click)="onSelect(row.id, $event)">
-            <ng-container [ngTemplateOutlet]="rowTemplate()?.templateRef ?? null" [ngTemplateOutletContext]="{ $implicit: row }" />
+            @if (row.sign; as sign) {
+                <rt-service-logo rtElem="row-sign" qa-dataid="thread-list-row-sign" size="xs" [logos]="[sign]" />
+                <span rtElem="row-content">
+                    <ng-container [ngTemplateOutlet]="rowContent" [ngTemplateOutletContext]="{ $implicit: row }" />
+                </span>
+            } @else {
+                <ng-container [ngTemplateOutlet]="rowContent" [ngTemplateOutletContext]="{ $implicit: row }" />
+            }
         </button>
+    </ng-template>
+
+    <ng-template #rowContent let-row>
+        <ng-container [ngTemplateOutlet]="rowTemplate()?.templateRef ?? null" [ngTemplateOutletContext]="{ $implicit: row }" />
     </ng-template>
 
     <ng-template #filtersPanel>

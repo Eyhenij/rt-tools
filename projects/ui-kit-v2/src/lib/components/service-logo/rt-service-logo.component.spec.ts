@@ -43,6 +43,10 @@ describe('RtServiceLogoComponent', (): void => {
 
         expect(iconSize(setup({ logos: [ICON] }))).toBe('xl');
 
+        const xs: ComponentFixture<RtServiceLogoComponent> = setup({ logos: [ICON], size: 'xs' });
+        expect(hostClasses(xs)).toContain('rt-service-logo--size-xs');
+        expect(iconSize(xs)).toBe('sm');
+
         const sm: ComponentFixture<RtServiceLogoComponent> = setup({ logos: [ICON], size: 'sm' });
         expect(hostClasses(sm)).toContain('rt-service-logo--size-sm');
         expect(iconSize(sm)).toBe('md');

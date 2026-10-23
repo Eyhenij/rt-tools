@@ -4,6 +4,8 @@ import { StoryRowComponent } from '../../../../../../showcase/story-row.componen
 import { StoryPresetsComponent } from '../../../../../../showcase/story-presets.component';
 import { StoryThemesComponent } from '../../../../../../showcase/story-themes.component';
 import { RtMenuItemComponent } from '../../../../../../lib/components/menu/rt-menu-item.component';
+import { IRtServiceLogo } from '../../../../../../lib/components/service-logo/rt-service-logo.model';
+import { PLACEHOLDER_MARK_BLOCK } from '../../../../../../lib/components/service-logo/stories/component/story-placeholder-marks';
 import { RtChatMessageActionsDirective } from '../../rt-chat-message-actions.directive';
 import { RtChatComponent } from '../../rt-chat.component';
 import { ERtChatMessageStatus, IRtChat } from '../../rt-chat.model';
@@ -11,7 +13,7 @@ import { CHAT_MESSAGES, CHAT_PEER } from './chat.fixture';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
 export type TChatMatrixPart =
-    'thread' | 'messageKind' | 'status' | 'messageActions' | 'reply' | 'typing' | 'header' | 'loading' | 'presets' | 'themes';
+    'thread' | 'messageKind' | 'status' | 'messageActions' | 'reply' | 'typing' | 'header' | 'sign' | 'loading' | 'presets' | 'themes';
 
 const NOW: string = '2026-03-14T16:02:00.000Z';
 
@@ -203,6 +205,29 @@ const NOW: string = '2026-03-14T16:02:00.000Z';
                 </app-story-presets>
             }
 
+            @case ('sign') {
+                <app-story-presets caption="Знак канала в шапке в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="24rem" [items]="signCases" [itemLabel]="caseLabel">
+                            <ng-template let-item>
+                                <div
+                                    style="box-sizing: border-box; inline-size: 100%; block-size: 22rem; padding: 1rem; border: 1px solid var(--rt-color-border-subtle); border-radius: var(--rt-radius-lg); background-color: var(--rt-color-bg-surface)">
+                                    <rt-chat
+                                        style="height: 100%"
+                                        hasThread
+                                        canReply
+                                        showRefresh
+                                        placeholder="Написать сообщение"
+                                        title="Анна Смирнова"
+                                        [messages]="messages"
+                                        [sign]="item.sign" />
+                                </div>
+                            </ng-template>
+                        </app-story-row>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('loading') {
                 <app-story-presets caption="Загрузка и догрузка в обоих наборах">
                     <ng-template>
@@ -332,6 +357,13 @@ export class TestRtChatMatrixComponent {
         { name: 'с обновлением', refresh: true, expand: false },
         { name: 'с разворотом', refresh: false, expand: true },
         { name: 'обе кнопки', refresh: true, expand: true },
+    ];
+
+    /** Знак компании — заглушка витрины: знаков чужих компаний в пакете нет. Сайт — значок кита. */
+    public readonly signCases: readonly { name: string; sign: IRtServiceLogo.Item | null }[] = [
+        { name: 'без знака', sign: null },
+        { name: 'знак картинкой', sign: PLACEHOLDER_MARK_BLOCK },
+        { name: 'сайт — значок кита', sign: { icon: 'globe', label: 'Сайт' } },
     ];
 
     public readonly loadingCases: readonly { name: string; loading: boolean; fetching: boolean; empty: boolean }[] = [
