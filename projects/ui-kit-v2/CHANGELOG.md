@@ -1,3 +1,9 @@
+# [0.33.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.32.0...rt-ui-kit-v2%400.33.0) (2026-10-23)
+
+### Features
+
+- **rt:ui-kit-v2:** статус «не доставлено» у реплики чата ([299b342](https://github.com/Eyhenij/rt-tools/commit/299b34211877b9db4fa3d1b097d33c8ff4428451))
+
 # [0.32.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.31.0...rt-ui-kit-v2%400.32.0) (2026-10-23)
 
 ### Features

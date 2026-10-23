@@ -315,6 +315,14 @@ export class TestRtChatMatrixComponent {
         { id: 12, author: 'Вы', own: true, status: ERtChatMessageStatus.Sent, text: 'Доставлено', createdAt: NOW },
         { id: 13, author: 'Вы', own: true, status: ERtChatMessageStatus.Read, text: 'Прочитано', createdAt: NOW },
         { id: 14, author: 'Вы', own: true, status: ERtChatMessageStatus.Failed, text: 'Не ушло', createdAt: NOW },
+        {
+            id: 15,
+            author: 'Вы',
+            own: true,
+            status: ERtChatMessageStatus.Undelivered,
+            text: 'Записано, служба гостя не приняла',
+            createdAt: NOW,
+        },
     ];
 
     public readonly threadCases: readonly { name: string; hasThread: boolean; messages: readonly IRtChat.Message[] }[] = [
