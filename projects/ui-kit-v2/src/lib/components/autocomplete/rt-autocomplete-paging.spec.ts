@@ -75,7 +75,7 @@ describe('RtAutocompleteComponent — загрузка, конец списка,
         expect(rows).toEqual(['autocomplete-option', 'autocomplete-option', 'autocomplete-loading']);
     });
 
-    it('SC-UKV-914 — дно панели сообщается один раз на длину списка и не во время загрузки', (): void => {
+    it('SC-UKV-1025 — дно панели сообщается один раз на длину списка и не во время загрузки', (): void => {
         const fixture: ComponentFixture<RtAutocompleteComponent<ICity>> = setup();
         let ends: number = 0;
         fixture.componentInstance.scrolledToEnd.subscribe((): number => (ends += 1));
@@ -97,7 +97,7 @@ describe('RtAutocompleteComponent — загрузка, конец списка,
         expect(ends).toBe(2);
     });
 
-    it('SC-UKV-914 — новый запрос с первой страницей той же длины снова сообщает о дне', (): void => {
+    it('SC-UKV-1025 — новый запрос с первой страницей той же длины снова сообщает о дне', (): void => {
         const fixture: ComponentFixture<RtAutocompleteComponent<ICity>> = setup();
         let ends: number = 0;
         fixture.componentInstance.scrolledToEnd.subscribe((): number => (ends += 1));
@@ -110,14 +110,14 @@ describe('RtAutocompleteComponent — загрузка, конец списка,
         expect(ends).toBe(2);
     });
 
-    it('SC-UKV-915 — свой текст пустого результата', (): void => {
+    it('SC-UKV-1026 — свой текст пустого результата', (): void => {
         const fixture: ComponentFixture<RtAutocompleteComponent<ICity>> = setup({ suggestions: [], emptyText: 'Нет таких ролей' });
         type(fixture, 'Мо');
 
         expect(textOf(byQa('autocomplete-empty'))).toBe('Нет таких ролей');
     });
 
-    it('SC-UKV-915 — своя разметка пустого результата получает набранную строку', (): void => {
+    it('SC-UKV-1026 — своя разметка пустого результата получает набранную строку', (): void => {
         const fixture: ComponentFixture<AutocompleteEmptyHostComponent> = createRtFixture(AutocompleteEmptyHostComponent);
         type(fixture, 'Мо');
 

@@ -157,7 +157,7 @@ Then a spinner row stands in place of the empty result, or under the list
 
 Covered: `projects/ui-kit-v2/src/lib/components/autocomplete/rt-autocomplete-paging.spec.ts`.
 
-### SC-UKV-914 — the autocomplete reports the end of the list
+### SC-UKV-1025 — the autocomplete reports the end of the list
 
 Given the panel is scrolled to its end
 When the person keeps scrolling at the end, and a new page is loading
@@ -165,7 +165,7 @@ Then the end is reported once per list length and never while loading
 
 Covered: `projects/ui-kit-v2/src/lib/components/autocomplete/rt-autocomplete-paging.spec.ts`.
 
-### SC-UKV-915 — the autocomplete takes its own empty result
+### SC-UKV-1026 — the autocomplete takes its own empty result
 
 Given an own empty text or an own empty template
 When nothing is found
