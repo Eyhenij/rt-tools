@@ -1,6 +1,6 @@
 # The logo of a service
 
-**Status:** in force · **Revision:** 2026-10-20 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 2026-10-23 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the icon of the kit — a mark without an image of its own is drawn by it
 **Laws:** `frontend-application`, `reuse-first`, `verifiability`
 **Procedures:** none
@@ -40,12 +40,14 @@ over one another in one row.
   round, its fill is the light grey of the atom, its shadow is centred and has the colour of near
   black at 15%.
 
-- **The size takes three values, and each one carries the numbers of the atom.** `sm` — plate 40,
-  mark 20 high, step 24, shadow blur 24; `md` — plate 64, mark 32, step 40, blur 40; `lg` —
-  plate 96, mark 48, step 60, blur 56. Without a size the part draws `md`.
+- **The size takes four values, and each one carries the numbers of the atom.** `xs` — plate 32,
+  mark 16 high, step 20, shadow blur 16; `sm` — plate 40, mark 20 high, step 24, shadow blur 24;
+  `md` — plate 64, mark 32, step 40, blur 40; `lg` — plate 96, mark 48, step 60, blur 56. Without
+  a size the part draws `md`.
 
 - **An image mark fits its box and keeps its proportions.** The box of the mark is wider than high
-  (27.5×20, 44×32, 66×48); the image is contained in it whole and centred, never stretched or cut.
+  (22×16, 27.5×20, 44×32, 66×48); the image is contained in it whole and centred, never stretched
+  or cut.
 
 - **Several marks overlap with the step, and a later mark lies on top of the earlier one.** All
   plates of a row are the same; the row is as wide as one plate plus the step for every mark after
@@ -123,3 +125,4 @@ None.
 ## History of changes
 
 - 2026-10-20 — written by the task RT-2899.
+- 2026-10-23 — the size `xs` for the sign of a conversation channel, task RT-2936.

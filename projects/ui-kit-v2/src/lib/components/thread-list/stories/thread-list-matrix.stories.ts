@@ -20,6 +20,9 @@ type TStory = StoryObj<TestRtThreadListMatrixComponent>;
 /** Все виды строки в одном списке: выбранная читается только рядом с невыбранными. */
 export const RowState: TStory = { args: { part: 'rowState' }, parameters: { snapshot: { fullPage: true } } };
 
+/** Знак канала слева от содержимого строки: у каждого вида строки, и строка без знака рядом. */
+export const Sign: TStory = { args: { part: 'sign' }, parameters: { snapshot: { fullPage: true } } };
+
 export const Loading: TStory = { args: { part: 'loading' } };
 
 export const More: TStory = { args: { part: 'more' } };

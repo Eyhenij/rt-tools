@@ -21,7 +21,13 @@
 Входы: `rows`, `activeId`, `searchPlaceholder`, `emptyText`, `loading`, `fetching`, `hasMore`,
 `filtersActive`, `emptyPreviewIcons`. Выходы: `selectRow`, `openInNewTab`, `searchChange`, `loadMore`.
 
-Строка обязана иметь `id`, `hasUnread` и (необязательно) `overdue` — это всё, что список о ней знает.
+Строка обязана иметь `id`, `hasUnread` и (необязательно) `overdue` и `sign` — это всё, что список о
+ней знает.
+
+Знак канала — поле `sign` строки (`IRtServiceLogo.Item`: картинка по адресу или значок кита).
+Оболочка рисует его первым в кнопке строки: [`rt-service-logo`](../service-logo/CONTEXT.md) размера
+`xs`, круг 32. Содержимое шаблона при знаке стоит в обёртке `__row-content`: кнопка разводит детей
+по краям, и третий ребёнок встал бы посередине. Строка без знака рисуется без обёртки, как раньше.
 Номер строки — число или строка: у записей домена ключ не всегда числовой. Тем же типом приходит
 `activeId` и уходят `selectRow` и `openInNewTab`.
 

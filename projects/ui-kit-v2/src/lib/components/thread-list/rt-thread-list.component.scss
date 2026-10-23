@@ -158,6 +158,21 @@
             background: var(--rt-color-state-info-bg);
         }
 
+        // Знак канала стоит слева от содержимого строки. Содержимое при знаке собрано в свою обёртку:
+        // кнопка разводит детей по краям, и третий ребёнок встал бы посередине строки.
+        &__row-sign {
+            flex: none;
+        }
+
+        &__row-content {
+            display: flex;
+            flex: 1 1 auto;
+            align-items: center;
+            justify-content: space-between;
+            gap: var(--rt-space-4);
+            min-inline-size: 0;
+        }
+
         &__row-body {
             display: flex;
             flex-direction: column;

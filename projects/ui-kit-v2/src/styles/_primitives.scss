@@ -210,6 +210,7 @@
 
     /* Тень круга логотипа службы — ореол без сдвига цвета почти чёрного на 15%;
        размытие растёт с размером круга, по ступени на размер атома. */
+    --rt-shadow-service-logo-xs: 0 0 16px rgb(24 24 24 / 15%);
     --rt-shadow-service-logo-sm: 0 0 24px rgb(24 24 24 / 15%);
     --rt-shadow-service-logo-md: 0 0 40px rgb(24 24 24 / 15%);
     --rt-shadow-service-logo-lg: 0 0 56px rgb(24 24 24 / 15%);

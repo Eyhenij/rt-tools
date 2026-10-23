@@ -9,8 +9,9 @@ import { IRtServiceLogo } from './rt-service-logo.model';
 
 const BEM_BLOCK: string = 'rt-service-logo';
 
-/** Высота знака — ступенью значка кита: 20 / 32 / 48, те же числа, что у знака-картинки. */
+/** Высота знака — ступенью значка кита: 16 / 20 / 32 / 48, те же числа, что у знака-картинки. */
 const ICON_SIZES: Readonly<Record<IRtServiceLogo.Size, IRtIcon.Size>> = Object.freeze({
+    xs: 'sm',
     sm: 'md',
     md: 'xl',
     lg: '3xl',
@@ -47,6 +48,7 @@ function toMark(item: IRtServiceLogo.Item): IRtServiceLogoMark {
     host: {
         class: BEM_BLOCK,
         role: 'list',
+        '[class.rt-service-logo--size-xs]': "size() === 'xs'",
         '[class.rt-service-logo--size-sm]': "size() === 'sm'",
         '[class.rt-service-logo--size-lg]': "size() === 'lg'",
     },

@@ -72,6 +72,11 @@
             max-height: none;
         }
 
+        // Знак канала стоит перед заголовком и не сжимается, когда длинный заголовок переносится.
+        &__sign {
+            flex: none;
+        }
+
         &__title {
             margin: 0;
             color: var(--rt-color-text-primary);

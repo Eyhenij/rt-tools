@@ -7,6 +7,9 @@
         @if (showHeader()) {
             <rt-toolbar rtElem="header" dense>
                 <ng-template rtToolbarLeft>
+                    @if (sign(); as channel) {
+                        <rt-service-logo rtElem="sign" qa-dataid="chat-sign" size="xs" [logos]="[channel]" />
+                    }
                     <h3 rtElem="title" qa-dataid="chat-title">{{ title() }}</h3>
                 </ng-template>
                 <ng-template rtToolbarRight>

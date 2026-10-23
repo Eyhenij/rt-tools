@@ -6,8 +6,8 @@ change after the merge. What a scenario is covered by is said under it.
 ### SC-UKV-864 — one mark of each size draws the plate and the mark of the atom
 
 Given one image mark
-When it is drawn at the size `sm`, `md` or `lg`
-Then the plate is 40, 64 or 96 across and the mark box is 20, 32 or 48 high
+When it is drawn at the size `xs`, `sm`, `md` or `lg`
+Then the plate is 32, 40, 64 or 96 across and the mark box is 16, 20, 32 or 48 high
 
 Covered by the component spec of the part and the frame of the sizes.
 

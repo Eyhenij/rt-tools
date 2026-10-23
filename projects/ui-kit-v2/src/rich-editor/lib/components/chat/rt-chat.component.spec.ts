@@ -202,6 +202,26 @@ describe('RtChatComponent', (): void => {
             expect(textOf(qa(setup({ title: 'Переписка по заявке', showRefresh: true }), 'chat-title'))).toBe('Переписка по заявке');
         });
 
+        it('SC-UKV-911 — знак канала стоит перед заголовком, размером xs', (): void => {
+            const fixture: ComponentFixture<RtChatComponent> = setup({
+                title: 'Анна Смирнова',
+                showRefresh: true,
+                sign: { icon: 'globe', label: 'Сайт' },
+            });
+
+            const sign: HTMLElement = qa(fixture, 'chat-sign')?.nativeElement as HTMLElement;
+            expect(sign.classList).toContain('rt-service-logo--size-xs');
+            expect(sign.nextElementSibling?.getAttribute('qa-dataid')).toBe('chat-title');
+            expect(sign.querySelector('[role="img"]')?.getAttribute('aria-label')).toBe('Сайт');
+        });
+
+        it('SC-UKV-912 — без знака шапка рисует только заголовок', (): void => {
+            const fixture: ComponentFixture<RtChatComponent> = setup({ title: 'Анна Смирнова', showRefresh: true });
+
+            expect(qa(fixture, 'chat-sign')).toBeNull();
+            expect(textOf(qa(fixture, 'chat-title'))).toBe('Анна Смирнова');
+        });
+
         it('кнопки обновления и разворота появляются по входам', (): void => {
             expect(qa(setup(), 'chat-refresh')).toBeNull();
             expect(qa(setup({ showRefresh: true }), 'chat-refresh')).not.toBeNull();

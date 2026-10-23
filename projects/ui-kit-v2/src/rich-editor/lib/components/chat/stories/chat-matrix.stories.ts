@@ -46,6 +46,9 @@ export const Typing: TStory = { args: { part: 'typing' } };
 
 export const Header: TStory = { args: { part: 'header' } };
 
+/** Знак канала перед заголовком шапки: без знака, картинкой и значком кита. */
+export const Sign: TStory = { args: { part: 'sign' } };
+
 export const Loading: TStory = { args: { part: 'loading' } };
 
 export const Presets: TStory = { args: { part: 'presets' } };
