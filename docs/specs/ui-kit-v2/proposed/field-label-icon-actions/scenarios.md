@@ -340,6 +340,19 @@ Then no backdrop is drawn and the page keeps scrolling and taking presses
 
 Covered: `projects/ui-kit-v2/src/lib/components/container/rt-container-right-panel.spec.ts`.
 
+### SC-UKV-1014 — the right panel over the page fits a narrow window
+
+Given a shell whose right panel lies over the page, in a window 375px wide
+When the panel opens with a long paragraph inside, once without a width and once with a width of 320px
+Then the panel is 375px wide and the paragraph wraps, in both cases; in a window 1100px wide the panel
+with a width stands at the right edge 320px wide, and the panel beside the content keeps its width
+
+Not covered: a test has no layout. Measured on the showcase in the stories **RightOver** and
+**RightSide** with the paragraph added: before the fix the panel without a width was 9551px in a
+375px window with the paragraph in one line, and the panel with a width stood 0–320 in a 375px
+overlay; after it both stand 0–375 and the paragraph is 332px wide; at 1100px the panel with a width
+stands 780–1100, and the panel beside the content is 280px as before.
+
 ### SC-UKV-938 — the panel width is changed by a handle
 
 Given a panel with a width handle and width limits
