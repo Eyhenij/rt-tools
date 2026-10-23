@@ -772,6 +772,18 @@ data-preset="material" floatingLabel>` drew the border through the risen label: 
   showcase's violet theme on `--rt-sys-*` gives the list `#7d00fa` brand, `#fef8fc` surface and
   `#e8e0eb` fill; no `--mat-` string is left in the package outside the first kit's shared lint
   rule, which is not shipped.
+- **2026-10-23, the branch review against main: three base-look changes undone.** A disabled select
+  with its own trigger got the field border from the preset sheet's disabled rule; the condition
+  now skips `rt-select__trigger--own` inside `:where`, so the rule keeps its weight. The message
+  line under a field took `normal` as its line height in the kit look; the rule now stands only
+  under the preset, and the kit look inherits it from the page as on main. The field label and the
+  select value fell back to `normal` spacing; they fall back to `inherit` now (the select value sits
+  in a button, which keeps the browser's `normal` either way). Measured in the showcase with
+  `line-height: 1.5` and `letter-spacing: 0.5px` on the page: the kit-look message line inherits
+  24px, the preset keeps 16px; the label takes 0.5px; a disabled own trigger is transparent in both
+  looks. The review's behaviour items (tab indicator motion, focus ring by mouse, Escape stopping at
+  the list, `Step.description`, the right pane wrapper, the breaking `--mat-sys-*` rename) wait for
+  the owner's word.
 
 ## Sessions
 
@@ -804,6 +816,13 @@ none
 ### Commits over the main branch
 
 ```
+36c1fc17e feat(rt:ui-kit-v2): межбуквенный интервал полей и размер шрифта «на странице» из ручек приложения
+5115094a8 test(rt:ui-kit-v2): сценарии поля перенесены на SC-UKV-1008–1011 — номера 904–907 занял блок службы из main
+173b4add9 Merge remote-tracking branch 'origin/main' into RT-2812-kit2-field-label-icon-actions
+203c14920 docs(rt:ui-kit-v2): прогресс RT-2812 — сверка снимков второго кита и установка зависимостей main
+82a37ee36 feat(rt:ui-kit-v2): кит не читает имён Material — роли темы приложения --rt-sys-*
+4ae6e16f4 feat(rt:ui-kit-v2): умолчания подсказки на всё приложение в настройках кита
+3e2176d72 fix(rt:ui-kit-v2): шаг стрелки вкладок 80 px, ярусы и направление боковой панели, тело панели в обёртке, пузырёк и кнопка
 ce29dab08 feat(rt:ui-kit-v2): раскрывающаяся панель — box-sizing тела отдельно от панели
 58027acde chore(rt:ui-kit-v2): совпадение значения default у канала тостера принято проверкой повторов
 d676f2dcb Merge remote-tracking branch 'origin/main' into RT-2812-kit2-field-label-icon-actions
@@ -817,13 +836,6 @@ f5a118015 Merge remote-tracking branch 'origin/main' into RT-2812-kit2-field-lab
 b58674e7c Merge remote-tracking branch 'origin/main' into RT-2812-kit2-field-label-icon-actions
 ca512a627 Merge remote-tracking branch 'origin/main' into RT-2812-kit2-field-label-icon-actions
 3d570a9f0 Merge remote-tracking branch 'origin/main' into RT-2812-kit2-field-label-icon-actions
-e47609e52 Merge remote-tracking branch 'origin/main' into RT-2812-kit2-field-label-icon-actions
-5aafc6c7c Merge remote-tracking branch 'origin/main' into RT-2812-kit2-field-label-icon-actions
-d2920fbe0 feat(rt:ui-kit-v2): вкладки — у крестика своя подсказка, вид крестика задаётся свойствами
-b1418aca8 docs(rt:ui-kit-v2): прогресс RT-2812 после заявок о вкладках
-8d0e58945 fix(rt:ui-kit-v2): вкладки — animationDuration больше не задаёт длительность прокрутки полосы
-336e14823 feat(rt:ui-kit-v2): вкладки — полоса прокручивается плавно, шаг стрелки задаётся входом scrollStep
-dff71d705 feat(rt:ui-kit-v2): вкладки — вход preserveContent сохраняет тело посещённой вкладки
 ```
 
 Written by a hook before the compaction of the context. Everything standing here is checked

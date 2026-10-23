@@ -33,7 +33,10 @@
             color: var(--rt-input-color-placeholder-disabled);
         }
 
-        &--disabled:not(.rt-select--invalid, .rt-select--appearance--fill, .rt-select--borderless) &__trigger {
+        /* Свой указатель (`rtSelectTrigger`) рамки не имеет и отключённым её не получает. Условие стоит
+           в `:where`, чтобы сила правила осталась прежней. */
+        &--disabled:not(.rt-select--invalid, .rt-select--appearance--fill, .rt-select--borderless)
+            &__trigger:where(:not(.rt-select__trigger--own)) {
             border-color: var(--rt-input-color-border-disabled);
         }
 

@@ -194,8 +194,8 @@
     "--rt-fab-small-container-color": "The application theme's small floating button container colour; the speed menu reads it, and until it is set it falls back to the preset's colour.",
     "--rt-option-selected-state-layer-color": "The application theme's selected option layer colour; until it is set the preset's colour works.",
     "--rt-menu-container-color": "The application theme's menu container colour; until it is set the preset's colour works.",
-    "--rt-input-letter-spacing": "The letter spacing of a field's value (input, number, select, textarea); until it is set it is normal.",
-    "--rt-field-label-letter-spacing": "The letter spacing of a field's label; until it is set it is normal.",
+    "--rt-input-letter-spacing": "The letter spacing of a field's value (input, number, select, textarea); until it is set the select inherits it from its parent and the native controls keep normal.",
+    "--rt-field-label-letter-spacing": "The letter spacing of a field's label; until it is set the label inherits it from its parent.",
     "--rt-pagination-field-font-size": "The font size of the pagination's per-page value; until it is set the value keeps the field's size --rt-input-font-size."
   }
 }

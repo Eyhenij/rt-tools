@@ -189,6 +189,9 @@ describe('поле материального набора против поля
         expect(PRESET).toContain('--rt-input-color-text-disabled: var(--rt-color-text-disabled);');
         expect(FIELD).toContain('color: var(--rt-input-color-placeholder-disabled)');
         expect(SELECT).toContain('--rt-icon-color-muted: var(--rt-input-color-placeholder-disabled)');
+        expect(SELECT).toContain(
+            '.rt-select__trigger:where(:not(.rt-select__trigger--own)) { border-color: var(--rt-input-color-border-disabled)'
+        );
     });
 
     it('SC-UKV-956 — под набором кнопка-значок в поле не выше поля без рамки, свой вид держит её размер', (): void => {
@@ -219,7 +222,10 @@ describe('поле материального набора против поля
     });
 
     it('SC-UKV-960 — под набором строка под полем — строка подсказки Material, своим видом — прежняя', (): void => {
-        expect(ruleBody(FIELD, '.rt-field__messages {')).toContain('line-height: var(--rt-field-messages-line-height)');
+        expect(ruleBody(FIELD, '.rt-field__messages {')).not.toContain('line-height');
+        expect(ruleBody(FIELD, '.rt-field__messages:is(.rt-preset-material *, [data-preset=material] *) {')).toContain(
+            'line-height: var(--rt-field-messages-line-height)'
+        );
         expect(ruleBody(FIELD, '.rt-field__messages {')).toContain('box-sizing: border-box');
         expect(FIELD).toContain('min-block-size: calc(1lh + var(--rt-field-messages-padding-top))');
         expect(FIELD).toContain(

@@ -498,7 +498,8 @@ Covered: `projects/ui-kit-v2/src/lib/components/field/rt-field-material-metrics.
 Given a disabled input, number field, select or text area under the material preset
 When it is drawn
 Then the box keeps full opacity, the border is on-surface at 12%, the text, placeholder, label and
-the select's arrow are on-surface at 38%, and the kit look still fades the field
+the select's arrow are on-surface at 38%, and the kit look still fades the field; a select drawn by
+its own trigger gets no border when disabled
 
 Covered: `projects/ui-kit-v2/src/lib/components/field/rt-field-material-metrics.spec.ts`.
 
@@ -516,7 +517,7 @@ Covered: `projects/ui-kit-v2/src/lib/components/field/rt-field-material-metrics.
 Given a field under the material preset that reserves its message line or shows a hint
 When it is drawn
 Then the line is 16 px high with 4 px above it, a 52 px field with a reserved line takes 72 px,
-and the kit look keeps its line
+and the kit look keeps its line: its height is inherited from the page as before
 
 Covered: `projects/ui-kit-v2/src/lib/components/field/rt-field-material-metrics.spec.ts`.
 
@@ -913,6 +914,8 @@ Given an application that sets `--rt-input-letter-spacing`, `--rt-field-label-le
 `--rt-pagination-field-font-size`
 When a field, a select, a number field, a text area or the pagination's per-page value is drawn
 Then the value and the label take that spacing and the per-page value that size; without the handles
-the spacing stays `normal` and the per-page value keeps the field's size
+the field label and the select's value inherit the spacing from the page as before, the input,
+number field and text area keep the browser's `normal`, and the per-page value keeps the field's
+size
 
 Покрытие: частичное. Тест читает стили компонентов; значения проверены измерением в витрине.

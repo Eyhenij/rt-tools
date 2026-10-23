@@ -10,14 +10,17 @@ describe('ручки интервала и шрифта полей для наб
     it.each<[string, string]>([
         ['input', 'rt-input.component.scss'],
         ['input-number', 'rt-input-number.component.scss'],
-        ['select', 'rt-select.component.scss'],
         ['textarea', 'rt-textarea.component.scss'],
-    ])('SC-UKV-1012 — значение %s берёт интервал из ручки, без неё normal', (folder: string, file: string): void => {
+    ])('SC-UKV-1012 — значение %s берёт интервал из ручки, без неё normal браузера', (folder: string, file: string): void => {
         expect(stylesOf(folder, file)).toContain('letter-spacing: var(--rt-input-letter-spacing, normal);');
     });
 
-    it('SC-UKV-1012 — подпись поля берёт интервал из своей ручки, без неё normal', (): void => {
-        expect(stylesOf('field', 'rt-field.component.scss')).toContain('letter-spacing: var(--rt-field-label-letter-spacing, normal);');
+    it('SC-UKV-1012 — подпись выбора без ручки наследует интервал кнопки, как раньше', (): void => {
+        expect(stylesOf('select', 'rt-select.component.scss')).toContain('letter-spacing: var(--rt-input-letter-spacing, inherit);');
+    });
+
+    it('SC-UKV-1012 — подпись поля берёт интервал из своей ручки, без неё наследует от приложения', (): void => {
+        expect(stylesOf('field', 'rt-field.component.scss')).toContain('letter-spacing: var(--rt-field-label-letter-spacing, inherit);');
     });
 
     it('SC-UKV-1012 — значение «на странице» берёт размер из ручки пагинации, без неё размер поля', (): void => {

@@ -38,8 +38,9 @@
             font-size: var(--rt-field-label-font-size);
             font-weight: var(--rt-field-label-font-weight);
 
-            /* Межбуквенный интервал подписи — ручка приложения: кит её не объявляет, без неё normal. */
-            letter-spacing: var(--rt-field-label-letter-spacing, normal);
+            /* Межбуквенный интервал подписи — ручка приложения: кит её не объявляет, без неё интервал
+               наследуется от приложения, как раньше. */
+            letter-spacing: var(--rt-field-label-letter-spacing, inherit);
         }
 
         &__required {
@@ -88,7 +89,11 @@
         &__messages {
             display: grid;
             box-sizing: border-box;
-            line-height: var(--rt-field-messages-line-height);
+
+            /* Своим видом высота строки наследуется от приложения, как раньше: правило стоит только под набором. */
+            &:is(.rt-preset-material *, [data-preset='material'] *) {
+                line-height: var(--rt-field-messages-line-height);
+            }
 
             &--reserved,
             &:has(> *) {
