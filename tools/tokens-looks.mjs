@@ -19,6 +19,7 @@ export const STYLES = 'projects/ui-kit-v2/src/styles';
 
 const LIGHT_MIXIN = 'rt-theme-light-tokens';
 const LIGHT_LIST_MIXIN = 'rt-theme-light-list-tokens';
+const LIGHT_NAVIGATION_MIXIN = 'rt-theme-light-navigation-tokens';
 const DARK_MIXIN = 'rt-theme-dark-tokens';
 const PRESET_MIXIN = 'rt-preset-material-tokens';
 
@@ -91,9 +92,12 @@ export const primitives = declarations(read(`${STYLES}/_primitives.scss`));
 // The light mixin includes the list assignments from a file of their own: the light set outgrew the
 // length limit. A tree without that file has the whole set in the first one.
 const LIGHT_LISTS = `${STYLES}/_semantic-lists.scss`;
+// The navigation assignments went to a file of their own by the same limit.
+const LIGHT_NAVIGATION = `${STYLES}/_semantic-navigation.scss`;
 export const light = new Map([
     ...declarations(mixinBody(read(`${STYLES}/_semantic.scss`), LIGHT_MIXIN)),
     ...(existsSync(join(ROOT, LIGHT_LISTS)) ? declarations(mixinBody(read(LIGHT_LISTS), LIGHT_LIST_MIXIN)) : []),
+    ...(existsSync(join(ROOT, LIGHT_NAVIGATION)) ? declarations(mixinBody(read(LIGHT_NAVIGATION), LIGHT_NAVIGATION_MIXIN)) : []),
 ]);
 export const dark = declarations(mixinBody(read(`${STYLES}/_theme-dark.scss`), DARK_MIXIN));
 export const preset = declarations(mixinBody(read(`${STYLES}/_preset-material.scss`), PRESET_MIXIN));

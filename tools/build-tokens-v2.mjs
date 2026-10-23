@@ -24,12 +24,13 @@ const stylesDir = resolve(root, 'projects/ui-kit-v2/src/styles');
 const typesFile = resolve(root, 'projects/ui-kit-v2/src/lib/tokens/rt-design-tokens.ts');
 
 const source = await import(`file://${stylesDir}/tokens.source.mjs`);
-const { scale, light, lightLists, darkLayout, coarsePointer, material } = source;
+const { scale, light, lightLists, lightNavigation, darkLayout, coarsePointer, material } = source;
 
-// The list assignments are built into a file of their own and included by the light mixin: together
-// with the rest of the light set the file outgrew the length limit.
+// The list and the navigation assignments are built into files of their own and included by the light
+// mixin: together with the rest of the light set the file outgrew the length limit.
 const listNodes = new Set(lightLists);
-const lightBase = light.filter((node) => !listNodes.has(node));
+const navigationNodes = new Set(lightNavigation);
+const lightBase = light.filter((node) => !listNodes.has(node) && !navigationNodes.has(node));
 
 const BANNER = `/* Built by the generator \`tools/build-tokens-v2.mjs\` from \`tokens.source.mjs\` — edited there, not here:
    an edit on the spot is lost on the next build, and \`pnpm run check:tokens-build\` names it. */`;
@@ -278,9 +279,15 @@ const files = {
     [`${stylesDir}/_primitives.scss`]: `${BANNER}\n\n${PREAMBLE.primitives}\n\n:root {\n${renderNodes(scale)}\n}\n`,
 
     [`${stylesDir}/_semantic.scss`]:
-        `${BANNER}\n\n${PREAMBLE.semantic}\n\n@use './semantic-lists' as lists;\n\n` +
-        `@mixin rt-theme-light-tokens {\n${renderNodes(lightBase)}\n\n    @include lists.rt-theme-light-list-tokens;\n}\n\n` +
+        `${BANNER}\n\n${PREAMBLE.semantic}\n\n@use './semantic-lists' as lists;\n@use './semantic-navigation' as navigation;\n\n` +
+        `@mixin rt-theme-light-tokens {\n${renderNodes(lightBase)}\n\n    @include lists.rt-theme-light-list-tokens;\n    @include navigation.rt-theme-light-navigation-tokens;\n}\n\n` +
         `:root {\n    @include rt-theme-light-tokens;\n}\n`,
+
+    // The navigation assignments — the menus, the tabs, the breadcrumbs — went to a file of their own by
+    // the same length limit, the same way as the list ones.
+    [`${stylesDir}/_semantic-navigation.scss`]:
+        `${BANNER}\n\n/* The light theme's assignments of the navigation: menus, tabs, breadcrumbs. */\n\n` +
+        `@mixin rt-theme-light-navigation-tokens {\n${renderNodes(lightNavigation)}\n}\n`,
 
     // The list panel and the pagination bar live in a file of their own, included by the light mixin:
     // every place that lays out the light set gets them with it.

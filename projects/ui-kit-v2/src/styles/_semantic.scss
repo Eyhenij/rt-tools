@@ -9,6 +9,7 @@
    the container would inherit the dark values, and both halves would show the same. */
 
 @use './semantic-lists' as lists;
+@use './semantic-navigation' as navigation;
 
 @mixin rt-theme-light-tokens {
     /* Background */
@@ -390,117 +391,6 @@
     --rt-toggle-chip-color-text: var(--rt-color-text-muted);
     --rt-toggle-chip-color-bg-selected: var(--rt-color-action-primary-subtle);
 
-    /* Навигация (rt-page-header). Шапка — отдельная плашка; отступ от краёв
-       страницы задаёт тот, кто её ставит. */
-    --rt-nav-header-padding: var(--rt-space-2) var(--rt-space-4);
-    --rt-nav-header-color-bg: var(--rt-neutral-50);
-
-    /* Первый уровень. Пункт ряда несёт плашку цвета самой шапки: на общем фоне её
-       не видно, и белым проступает только активный раздел. Наведение красит
-       подпись, а не фон — иначе оно спорит с этой подсветкой. */
-    --rt-nav-item-height: var(--rt-size-6);
-    --rt-nav-item-gap: var(--rt-space-1);
-    --rt-nav-item-padding: var(--rt-space-2) var(--rt-space-2);
-    --rt-nav-item-content-gap: var(--rt-space-2);
-    --rt-nav-item-font-size: var(--rt-text-sm);
-    --rt-nav-item-font-weight: var(--rt-font-weight-semibold);
-    --rt-nav-item-line-height: var(--rt-leading-none);
-    --rt-nav-item-color: var(--rt-color-text-primary);
-    --rt-nav-item-color-hover: var(--rt-color-action-primary);
-    --rt-nav-item-color-pressed: var(--rt-color-action-primary-hover);
-    --rt-nav-item-color-bg: var(--rt-neutral-50);
-    --rt-nav-item-color-border: var(--rt-neutral-50);
-    --rt-nav-item-color-bg-active: var(--rt-color-bg-surface);
-    --rt-nav-item-color-caret: var(--rt-neutral-200);
-
-    /* Фокус обведён пунктиром: сплошная рамка на плашке пункта неотличима от его
-       же границы. */
-    --rt-nav-color-focus: var(--rt-color-action-primary);
-
-    /* Недоступный пункт светлее доступного, а не другого оттенка: общий
-       `text-disabled` уходит в сине-стальной и рядом с серой подписью читается
-       как второй цвет, а не как выключенное состояние. */
-    --rt-nav-color-disabled: var(--rt-neutral-300);
-
-    /* Попап профиля. Подложку берёт у панели навигации, своего здесь — габариты
-       блока пользователя, тень и набор строк: строк четыре, и они читаются как
-       список действий, а не как выпадающее меню. */
-    --rt-profile-menu-min-width: var(--rt-size-60);
-    --rt-profile-menu-padding: var(--rt-space-5);
-    --rt-profile-menu-shadow: var(--rt-shadow-profile-menu);
-    --rt-profile-menu-border-width: var(--rt-border-width-thin);
-    --rt-profile-menu-radius: var(--rt-radius-md);
-    --rt-profile-avatar-size: var(--rt-size-10);
-    --rt-profile-avatar-font-size: var(--rt-text-2xl);
-    --rt-profile-avatar-border-width: var(--rt-border-width-medium);
-    --rt-profile-avatar-radius: var(--rt-radius-full);
-    --rt-profile-item-padding-y: var(--rt-space-4);
-    --rt-profile-item-content-gap: var(--rt-space-2);
-    --rt-profile-item-font-size: var(--rt-text-md);
-    --rt-profile-item-font-weight: var(--rt-font-weight-medium);
-    --rt-profile-item-radius: var(--rt-radius-md);
-
-    /* Строки выступают за содержимое панели на половину её отступа: так
-       подсветка на наведении не упирается в рамку, а иконка остаётся на одной
-       вертикали с содержимым. Это же число — горизонтальный отступ строки. */
-    --rt-profile-row-inset: var(--rt-space-2);
-    --rt-profile-theme-icon-padding: var(--rt-space-2);
-    --rt-profile-theme-icon-radius: var(--rt-radius-full);
-
-    /* Габариты панели второго уровня: ширина считается числом колонок, поэтому
-       колонка, промежуток и внутренний отступ — токены, из которых панель
-       складывает свою ширину. По вертикали отступ крупнее: у первой группы над
-       заголовком нет ничего, и панель иначе начинается впритык. */
-    --rt-nav-panel-column-width: var(--rt-size-60);
-    --rt-nav-panel-column-gap: var(--rt-space-5);
-    --rt-nav-panel-padding: var(--rt-space-4);
-    --rt-nav-panel-padding-y: var(--rt-space-md);
-    --rt-nav-panel-group-gap: var(--rt-space-8);
-    --rt-nav-panel-item-gap: var(--rt-space-0-5);
-    --rt-nav-panel-item-height: var(--rt-size-6);
-    --rt-nav-panel-item-padding: var(--rt-space-1) var(--rt-space-2);
-    --rt-nav-panel-columns: 1;
-    --rt-nav-panel-color-bg: var(--rt-color-bg-surface);
-    --rt-nav-panel-color-border: var(--rt-neutral-200);
-    --rt-nav-panel-shadow: var(--rt-shadow-nav-panel);
-
-    /* Второй уровень набран легче первого: ряд разделов держит вес, а полтора
-       десятка пунктов под ним читаются построчно. */
-    --rt-nav-panel-item-font-size: var(--rt-text-sm);
-    --rt-nav-panel-item-font-weight: var(--rt-font-weight-medium);
-    --rt-nav-panel-item-content-gap: var(--rt-space-1);
-    --rt-nav-panel-item-color: var(--rt-neutral-600);
-    --rt-nav-panel-item-color-bg-hover: var(--rt-neutral-50);
-    --rt-nav-panel-item-color-active: var(--rt-color-text-inverse);
-    --rt-nav-panel-item-color-bg-active: var(--rt-color-action-primary);
-    --rt-nav-panel-group-font-size: var(--rt-text-xs);
-    --rt-nav-panel-group-font-weight: var(--rt-font-weight-medium);
-
-    /* Заголовок группы светлее пункта, и оба берут порог контраста на белой панели.
-       Отношения обеих пар считает проверка тёмной темы; таблица замера — на странице
-       «Colors» витрины. */
-    --rt-nav-panel-group-color: var(--rt-neutral-600);
-    --rt-nav-panel-group-content-gap: var(--rt-space-2);
-
-    /* Маркер непросмотренного. Точка стоит в потоке следом за подписью — и в ряду
-       разделов, и в панели, и на узком экране: место ей даёт общий зазор
-       содержимого пункта. */
-    --rt-nav-caret-size: var(--rt-size-3);
-    --rt-nav-marker-size: var(--rt-size-1);
-    --rt-nav-marker-color: var(--rt-color-state-danger);
-
-    /* Вкладки (rt-tabs). Полоса выбранной вкладки переезжает на новую, а панель
-       меняется сдвигом по направлению перехода. Сдвиг панели в своём виде кита выключен
-       нулевой длительностью: содержимое вкладки сменяется на месте, как раньше. */
-    --rt-tabs-indicator-duration: var(--rt-duration-base);
-    --rt-tabs-indicator-easing: ease-out;
-    --rt-tabs-panel-duration: 0ms;
-    --rt-tabs-panel-easing: ease-out;
-
-    /* Прокрутка полосы вкладок стрелками и к выбранной вкладке. */
-    --rt-tabs-scroll-duration: var(--rt-duration-base);
-    --rt-tabs-scroll-easing: ease-out;
-
     /* Form field (rt-field) — обёртка анатомии поля: label / help / hint / error /
        required-маркер / read-only значение. Визуал label+hint в стиле Tailwind
        form (мелкий medium label, muted hint). Компоненты потребляют только эти
@@ -523,6 +413,7 @@
     --rt-field-value-empty-color: var(--rt-color-text-muted);
 
     @include lists.rt-theme-light-list-tokens;
+    @include navigation.rt-theme-light-navigation-tokens;
 }
 
 :root {

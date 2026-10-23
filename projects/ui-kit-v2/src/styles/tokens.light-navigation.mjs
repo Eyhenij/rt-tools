@@ -319,6 +319,7 @@ export const lightNavigation = [
     },
     {
         lead: `    /* Прокрутка полосы вкладок стрелками и к выбранной вкладке. */`,
+        space: true,
         name: `--rt-tabs-scroll-duration`,
         value: `var(--rt-duration-base)`,
     },
