@@ -1,3 +1,9 @@
+# [0.32.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.31.0...rt-ui-kit-v2%400.32.0) (2026-10-23)
+
+### Features
+
+- **rt:ui-kit-v2:** знак канала в строке списка разговоров и в шапке чата ([dc67044](https://github.com/Eyhenij/rt-tools/commit/dc6704404d0143c0256e5ba335d62d8856a0f8fa))
+
 # [0.31.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.30.0...rt-ui-kit-v2%400.31.0) (2026-10-22)
 
 ### Features
