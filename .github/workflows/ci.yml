@@ -292,6 +292,27 @@ jobs:
             - name: Boolean inputs of kit two
               run: node tools/check-boolean-inputs.mjs
 
+            # Сборка темы Keycloak зовёт `mvn --version` и без Maven падает строкой «Apache Maven
+            # required». Раннеров у дерева два, и Maven стоит не на обоих: задание, попавшее на
+            # машину без него, краснеет, хотя код цел. Поэтому JDK и Maven ставятся здесь, в
+            # каталог самого задания, а не ждутся от машины.
+            - name: Java for the Keycloak theme
+              uses: actions/setup-java@v6
+              with:
+                  distribution: temurin
+                  java-version: '21'
+
+            - name: Maven for the Keycloak theme
+              run: |
+                  if mvn --version >/dev/null 2>&1; then
+                      mvn --version | head -1
+                      exit 0
+                  fi
+                  v=3.9.11
+                  curl -fsSL "https://archive.apache.org/dist/maven/maven-3/$v/binaries/apache-maven-$v-bin.tar.gz" | tar -xz -C "$RUNNER_TEMP"
+                  echo "$RUNNER_TEMP/apache-maven-$v/bin" >> "$GITHUB_PATH"
+                  "$RUNNER_TEMP/apache-maven-$v/bin/mvn" --version | head -1
+
             # `typecheck` проверяет типы там, где их не проверяет ничто другое:
             # Jest транспилирует спеки без проверки типов, а ESLint здесь не
             # type-aware, так что спека могла годами гонять форму, которой по
