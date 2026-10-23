@@ -16,15 +16,7 @@ const TICK_MS: number = 400;
  */
 @Component({
     selector: 'app-progress-bar-live',
-    template: `
-        <div class="app-progress-bar-live">
-            <span class="app-progress-bar-live__note">Обновление набора данных: {{ value() }}%</span>
-            <rt-progress-bar ariaLabel="Обновление набора данных" [value]="value()" />
-            <button rtButton qa-dataid="progress-bar-live-run" type="button" size="sm" appearance="outlined" (click)="run()">
-                Запустить заново
-            </button>
-        </div>
-    `,
+    templateUrl: './test-progress-bar-live.component.html',
     // native-ok: раскладка показа витрины, в пакет не уезжает
     styles: `
         .app-progress-bar-live {

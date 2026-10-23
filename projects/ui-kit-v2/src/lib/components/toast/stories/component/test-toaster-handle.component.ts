@@ -25,32 +25,7 @@ const STATUS_CHANNEL: string = 'status';
  */
 @Component({
     selector: 'app-toaster-handle',
-    template: `
-        <div class="app-toaster-handle">
-            <div class="app-toaster-handle__buttons">
-                <button rtButton qa-dataid="toaster-handle-progress" size="sm" type="button" (click)="runRefresh()">Обновить набор</button>
-                <button rtButton qa-dataid="toaster-handle-network" size="sm" theme="secondary" type="button" (click)="toggleNetwork()">
-                    {{ offline() ? 'Сеть вернулась' : 'Сеть пропала' }}
-                </button>
-                <button rtButton qa-dataid="toaster-handle-details" size="sm" theme="secondary" type="button" (click)="sendError()">
-                    Ошибка с подробностями
-                </button>
-                <button rtButton qa-dataid="toaster-handle-component" size="sm" theme="secondary" type="button" (click)="sendComponent()">
-                    Свой компонент
-                </button>
-                <button rtButton qa-dataid="toaster-handle-saved" size="sm" theme="secondary" type="button" (click)="sendSaved()">
-                    Сохранено
-                </button>
-                <button rtButton qa-dataid="toaster-handle-bare" size="sm" theme="secondary" type="button" (click)="sendBare()">
-                    Своя карточка
-                </button>
-            </div>
-            <span class="app-toaster-handle__log" qa-dataid="toaster-handle-log">Последний ушёл: {{ lastReason() }}</span>
-        </div>
-        <!-- Два канала: обычные тосты в центре вытесняют друг друга, закреплённые копятся справа. -->
-        <rt-toaster mode="replace" position="bottom-center" [visibleToasts]="1" />
-        <rt-toaster channel="status" position="bottom-right" />
-    `,
+    templateUrl: './test-toaster-handle.component.html',
     // native-ok: раскладка кнопок показа витрины, в пакет не уезжает
     styles: `
         .app-toaster-handle {

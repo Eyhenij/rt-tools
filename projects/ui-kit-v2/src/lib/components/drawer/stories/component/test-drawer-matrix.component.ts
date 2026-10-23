@@ -37,73 +37,7 @@ function cellsOf(mode: IRtDrawer.Mode): Readonly<Record<string, IDrawerCell>> {
  */
 @Component({
     selector: 'app-drawer-matrix',
-    template: `
-        <ng-template #area let-cell>
-            <rt-drawer-container class="app-drawer-matrix__area">
-                <rt-drawer
-                    ariaLabel="Фильтры"
-                    [mode]="cell.mode"
-                    [position]="cell.position"
-                    [opened]="cell.opened"
-                    [resizable]="cell.resizable"
-                    [width]="128">
-                    <div class="app-drawer-matrix__panel">Фильтры</div>
-                </rt-drawer>
-                <div class="app-drawer-matrix__content">Отчёт по продажам за квартал</div>
-            </rt-drawer-container>
-        </ng-template>
-
-        @switch (part) {
-            @case ('mode') {
-                <app-story-presets caption="Место × край в обоих наборах">
-                    <ng-template>
-                        <app-story-grid [rows]="modes" [columns]="positions">
-                            <ng-template let-mode let-position="col">
-                                <ng-container
-                                    [ngTemplateOutlet]="area"
-                                    [ngTemplateOutletContext]="{ $implicit: { mode, position, opened: true, resizable: false } }" />
-                            </ng-template>
-                        </app-story-grid>
-                    </ng-template>
-                </app-story-presets>
-            }
-
-            @case ('states') {
-                <app-story-presets caption="Открытая, закрытая и с ручкой ширины">
-                    <ng-template>
-                        <app-story-grid [rows]="modes" [columns]="states" [columnLabel]="stateLabel">
-                            <ng-template let-mode let-state="col">
-                                <ng-container
-                                    [ngTemplateOutlet]="area"
-                                    [ngTemplateOutletContext]="{ $implicit: stateCells[mode][state] }" />
-                            </ng-template>
-                        </app-story-grid>
-                    </ng-template>
-                </app-story-presets>
-            }
-
-            @case ('presets') {
-                <app-story-presets caption="Панель рядом с содержимым в обоих наборах">
-                    <ng-template>
-                        <ng-container [ngTemplateOutlet]="area" [ngTemplateOutletContext]="{ $implicit: sideCell }" />
-                    </ng-template>
-                </app-story-presets>
-            }
-
-            @case ('themes') {
-                <app-story-presets caption="Панель в обеих темах в обоих наборах">
-                    <ng-template>
-                        <app-story-themes>
-                            <ng-template>
-                                <ng-container [ngTemplateOutlet]="area" [ngTemplateOutletContext]="{ $implicit: sideCell }" />
-                                <ng-container [ngTemplateOutlet]="area" [ngTemplateOutletContext]="{ $implicit: overCell }" />
-                            </ng-template>
-                        </app-story-themes>
-                    </ng-template>
-                </app-story-presets>
-            }
-        }
-    `,
+    templateUrl: './test-drawer-matrix.component.html',
     // native-ok: рамка участка страницы в ячейке матрицы, в пакет не уезжает
     styles: `
         .app-drawer-matrix__area {

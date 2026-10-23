@@ -10,11 +10,7 @@ import { IRtProgressBar } from '../../rt-progress-bar.model';
  */
 @Component({
     selector: 'app-progress-bar',
-    template: `
-        <div style="width: 20rem">
-            <rt-progress-bar ariaLabel="Обновление набора данных" [mode]="mode" [value]="value" [color]="color" />
-        </div>
-    `,
+    templateUrl: './test-progress-bar.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // components

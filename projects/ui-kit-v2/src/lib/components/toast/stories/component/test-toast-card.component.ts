@@ -9,15 +9,7 @@ import { RtIconButtonComponent } from '../../../icon-button/rt-icon-button.compo
  */
 @Component({
     selector: 'app-toast-card',
-    template: `
-        <div class="app-toast-card" qa-dataid="toast-card">
-            <div class="app-toast-card__body">
-                <span class="app-toast-card__title">Доступна новая версия</span>
-                <span class="app-toast-card__text">Обновите страницу, чтобы её получить.</span>
-            </div>
-            <rt-icon-button qa-dataid="toast-card-close" icon="ico-close" variant="ghost" size="sm" ariaLabel="Скрыть" (clicked)="hide()" />
-        </div>
-    `,
+    templateUrl: './test-toast-card.component.html',
     // native-ok: карточка своего тоста в витрине — она и показывает, что голый тост оболочки не рисует; в пакет не уезжает
     styles: `
         .app-toast-card {

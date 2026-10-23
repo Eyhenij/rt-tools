@@ -9,21 +9,7 @@ import { RtDividerComponent } from '../../rt-divider.component';
  */
 @Component({
     selector: 'app-divider',
-    template: `
-        @if (vertical) {
-            <div class="app-divider-demo__row">
-                <span>Номера</span>
-                <rt-divider vertical [inset]="inset" />
-                <span>Тарифы</span>
-            </div>
-        } @else {
-            <div class="app-divider-demo__column">
-                <span>Номера</span>
-                <rt-divider [inset]="inset" />
-                <span>Тарифы</span>
-            </div>
-        }
-    `,
+    templateUrl: './test-divider.component.html',
     // native-ok: раскладка соседей разделителя в витрине, в пакет не уезжает
     styles: `
         .app-divider-demo__column {

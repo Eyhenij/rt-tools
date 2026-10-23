@@ -15,15 +15,7 @@ export interface IToastRefreshData {
  */
 @Component({
     selector: 'app-toast-refresh',
-    template: `
-        <div class="app-toast-refresh">
-            <span class="app-toast-refresh__title">Набор «{{ data.dataset }}» обновляется</span>
-            <span class="app-toast-refresh__text">Отчёты покажут новые цифры после обновления.</span>
-            <button rtButton qa-dataid="toast-refresh-hide" size="sm" theme="secondary" appearance="text" type="button" (click)="hide()">
-                Скрыть
-            </button>
-        </div>
-    `,
+    templateUrl: './test-toast-refresh.component.html',
     // native-ok: раскладка своего содержимого тоста в витрине, в пакет не уезжает
     styles: `
         .app-toast-refresh {

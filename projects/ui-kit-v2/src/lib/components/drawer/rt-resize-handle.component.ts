@@ -38,7 +38,7 @@ interface IDragStart {
  */
 @Component({
     selector: 'rt-resize-handle',
-    template: '',
+    templateUrl: './rt-resize-handle.component.html',
     styleUrl: './rt-resize-handle.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,

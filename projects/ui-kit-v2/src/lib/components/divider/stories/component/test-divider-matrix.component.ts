@@ -26,68 +26,7 @@ interface IGroupRow {
  */
 @Component({
     selector: 'app-divider-matrix',
-    template: `
-        <ng-template #horizontal let-inset>
-            <div class="app-divider-matrix__list">
-                @for (row of rows; track row.label; let last = $last) {
-                    <div class="app-divider-matrix__item">
-                        <span class="app-divider-matrix__icon"><rt-icon size="sm" [name]="row.icon" /></span>
-                        <span>{{ row.label }}</span>
-                    </div>
-                    @if (!last) {
-                        <rt-divider [inset]="inset" />
-                    }
-                }
-            </div>
-        </ng-template>
-
-        <ng-template #vertical let-inset>
-            <div class="app-divider-matrix__bar">
-                <span>Номера</span>
-                <rt-divider vertical [inset]="inset" />
-                <span>Тарифы</span>
-                <rt-divider vertical [inset]="inset" />
-                <span>Услуги</span>
-            </div>
-        </ng-template>
-
-        @switch (part) {
-            @case ('orientation') {
-                <app-story-presets caption="Направление × отступ в обоих наборах">
-                    <ng-template>
-                        <app-story-grid [rows]="orientations" [columns]="insets" [columnLabel]="insetLabel">
-                            <ng-template let-orientation let-inset="col">
-                                <ng-container
-                                    [ngTemplateOutlet]="orientation === 'vertical' ? vertical : horizontal"
-                                    [ngTemplateOutletContext]="{ $implicit: inset }" />
-                            </ng-template>
-                        </app-story-grid>
-                    </ng-template>
-                </app-story-presets>
-            }
-
-            @case ('presets') {
-                <app-story-presets caption="Разделитель в обоих наборах">
-                    <ng-template>
-                        <ng-container [ngTemplateOutlet]="horizontal" [ngTemplateOutletContext]="{ $implicit: false }" />
-                    </ng-template>
-                </app-story-presets>
-            }
-
-            @case ('themes') {
-                <app-story-presets caption="Разделитель в обеих темах в обоих наборах">
-                    <ng-template>
-                        <app-story-themes>
-                            <ng-template>
-                                <ng-container [ngTemplateOutlet]="horizontal" [ngTemplateOutletContext]="{ $implicit: false }" />
-                                <ng-container [ngTemplateOutlet]="vertical" [ngTemplateOutletContext]="{ $implicit: false }" />
-                            </ng-template>
-                        </app-story-themes>
-                    </ng-template>
-                </app-story-presets>
-            }
-        }
-    `,
+    templateUrl: './test-divider-matrix.component.html',
     // native-ok: раскладка соседей разделителя в витрине, в пакет не уезжает
     styles: `
         .app-divider-matrix__list {

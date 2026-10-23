@@ -16,43 +16,7 @@ import {
  */
 @Component({
     selector: 'app-container-right',
-    template: `
-        <div class="app-container-right__frame">
-            <rt-container
-                #shell
-                [rightMode]="mode"
-                [rightBackdrop]="backdrop"
-                [rightResizable]="resizable"
-                [(rightWidth)]="width"
-                (backdropClick)="shell.closeRight()">
-                <ng-template rtContainerToolbarLeft>
-                    <div class="app-container-right__tools">
-                        <button rtButton type="button" qa-dataid="container-demo-toggle" (click)="toggle()">
-                            {{ shell.rightOpen() ? 'Скрыть помощника' : 'Показать помощника' }}
-                        </button>
-                        <button rtButton appearance="outlined" type="button" qa-dataid="container-demo-place" (click)="switchPlace()">
-                            {{ mode === 'side' ? 'Положить поверх' : 'Поставить рядом' }}
-                        </button>
-                    </div>
-                </ng-template>
-                <ng-template rtContainerContent>
-                    <div class="app-container-right__content">
-                        <p>Список отчётов. Рядом с содержимым панель сужает его, поверх — ложится на страницу.</p>
-                        <p>Ширина панели: {{ width ?? 'по содержимому' }}</p>
-                    </div>
-                </ng-template>
-                <ng-template rtContainerRightSidenav>
-                    <div class="app-container-right__panel">
-                        <strong>Помощник</strong>
-                        <label>
-                            Вопрос
-                            <input qa-dataid="container-demo-question" />
-                        </label>
-                    </div>
-                </ng-template>
-            </rt-container>
-        </div>
-    `,
+    templateUrl: './test-container-right.component.html',
     // native-ok: уменьшенная рамка каркаса и демонстрационное содержимое, в пакет не уезжает
     styles: `
         .app-container-right__frame {

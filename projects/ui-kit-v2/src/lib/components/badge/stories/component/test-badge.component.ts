@@ -10,18 +10,7 @@ import { IRtBadge } from '../../rt-badge.model';
  */
 @Component({
     selector: 'app-badge',
-    template: `
-        <span
-            style="display: inline-block; padding: 0.25rem 0"
-            [rtBadge]="value"
-            [rtBadgeOverlap]="overlap"
-            [rtBadgeHidden]="hidden"
-            [rtBadgePosition]="position"
-            [rtBadgeSize]="size"
-            [rtBadgeColor]="color">
-            {{ label }}
-        </span>
-    `,
+    templateUrl: './test-badge.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // directives
