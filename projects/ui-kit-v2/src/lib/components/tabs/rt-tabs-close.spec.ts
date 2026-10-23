@@ -119,4 +119,17 @@ describe('RtTabsComponent — подсказка крестика закрыва
             expect(tooltips()).toEqual(['Счета гостей']);
         });
     });
+
+    describe('SC-UKV-1019 — крестик вкладки доступен с клавиатуры', (): void => {
+        it('SC-UKV-1019 — имя крестика для чтения с экрана — текст его подсказки', (): void => {
+            const fixture: ComponentFixture<TabsCloseHostComponent> = setup();
+
+            expect(close(fixture).getAttribute('aria-label')).toBe('Закрыть');
+
+            fixture.componentInstance.closeTooltip.set('Убрать вкладку');
+            fixture.detectChanges();
+
+            expect(close(fixture).getAttribute('aria-label')).toBe('Убрать вкладку');
+        });
+    });
 });

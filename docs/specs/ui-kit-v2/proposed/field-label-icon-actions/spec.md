@@ -118,6 +118,10 @@ can be pressed and shows a hint, and a cross that the Tab key reaches.
   not cut.
 - **A tooltip takes a show delay of its own.** It wins over the delay from the kit settings for that
   one element; without it the element waits the shared delay, 300 ms by default.
+- **The cross of a closable tab is a button of its own next to the tab.** Tab from the tab in focus
+  reaches its cross, and Enter or Space there closes the tab. The cross is named by its tooltip,
+  or by the translated "Close" without one. After a close from the keyboard the focus goes to the
+  tab that became active. Delete on the tab still closes it, and the look stays as before.
 
 ## What is out of scope
 
@@ -201,3 +205,4 @@ None.
 - 2026-10-14 — the application's measurement against Material: the field under the preset.
 - 2026-10-23 — the application's request: the length limit of the input and the textarea, the show
   delay of one tooltip.
+- 2026-10-23 — the application's request: the cross of a closable tab is reached from the keyboard.

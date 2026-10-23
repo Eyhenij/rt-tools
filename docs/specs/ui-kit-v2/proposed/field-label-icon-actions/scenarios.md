@@ -965,3 +965,13 @@ When the pointer enters each in turn
 Then the first is shown at 300 ms, and the second is still hidden at 300 ms and shown at 500 ms
 
 Covered: `projects/ui-kit-v2/src/lib/components/tooltip/rt-tooltip.directive.spec.ts`.
+
+### SC-UKV-1019 — the cross of a tab is reached from the keyboard
+
+Given tabs where some tabs are closable
+When the person moves with Tab from the tab in focus, and presses the cross
+Then the cross is a button of its own next to the tab, named by its tooltip; only the cross of the
+tab in focus is in the tab order; the tab closes, and the focus goes to the tab that became active
+
+Covered: `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-additions.spec.ts`,
+`projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-close.spec.ts`.

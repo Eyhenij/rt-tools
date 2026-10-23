@@ -78,14 +78,6 @@ describe('RtTabsComponent — закрытие, подсказки, glyph, то�
             expect(tab(fixture, 'b')).toBeNull();
         });
 
-        it('SC-UKV-922 — крестик не кнопка внутри кнопки и спрятан от чтения с экрана', (): void => {
-            const close: HTMLElement = qaAll(setup(), 'tabs-tab-close')[0].nativeElement as HTMLElement;
-
-            expect(close.tagName).toBe('SPAN');
-            expect(close.getAttribute('aria-hidden')).toBe('true');
-            expect(close.closest('button')?.getAttribute('aria-keyshortcuts')).toBe('Delete');
-        });
-
         it('SC-UKV-922 — Delete на активной вкладке закрывает её, выбор уходит на первую доступную', (): void => {
             const fixture: ComponentFixture<TabsAdditionsHostComponent> = setup();
             tab(fixture, 'a').dispatchEvent(new KeyboardEvent('keydown', { key: 'Delete', bubbles: true }));
@@ -125,7 +117,7 @@ describe('RtTabsComponent — закрытие, подсказки, glyph, то�
             const fixture: ComponentFixture<TabsAdditionsHostComponent> = setup();
             const locked: HTMLButtonElement = tab(fixture, 'locked');
 
-            expect(locked.querySelector('[qa-dataid="tabs-tab-close"]')).toBeNull();
+            expect(locked.parentElement?.querySelector('[qa-dataid="tabs-tab-close"]')).toBeNull();
 
             locked.dispatchEvent(new KeyboardEvent('keydown', { key: 'Delete', bubbles: true }));
             fixture.detectChanges();
@@ -133,16 +125,63 @@ describe('RtTabsComponent — закрытие, подсказки, glyph, то�
             expect(fixture.componentInstance.closed).toEqual([]);
         });
 
-        it('SC-UKV-922 — вкладка без closable не закрывается по Delete', (): void => {
+        it('SC-UKV-922 — вкладка без closable крестика не имеет и не закрывается по Delete', (): void => {
             const fixture: ComponentFixture<TabsAdditionsHostComponent> = setup();
             const iconOnly: HTMLButtonElement = tab(fixture, 'icon-only');
 
             expect(iconOnly.getAttribute('aria-keyshortcuts')).toBeNull();
+            expect(iconOnly.parentElement?.querySelector('[qa-dataid="tabs-tab-close"]')).toBeNull();
 
             iconOnly.dispatchEvent(new KeyboardEvent('keydown', { key: 'Delete', bubbles: true }));
             fixture.detectChanges();
 
             expect(fixture.componentInstance.closed).toEqual([]);
+        });
+    });
+
+    describe('SC-UKV-1019 — крестик вкладки доступен с клавиатуры', (): void => {
+        function closeOf(fixture: ComponentFixture<TabsAdditionsHostComponent>, id: string): HTMLButtonElement | null {
+            return tab(fixture, id)?.parentElement?.querySelector<HTMLButtonElement>('[qa-dataid="tabs-tab-close"]') ?? null;
+        }
+
+        it('SC-UKV-1019 — крестик — своя кнопка рядом с вкладкой, не внутри неё, и названа подписью', (): void => {
+            const fixture: ComponentFixture<TabsAdditionsHostComponent> = setup();
+            const close: HTMLButtonElement = closeOf(fixture, 'a') as HTMLButtonElement;
+
+            expect(close.tagName).toBe('BUTTON');
+            expect(close.getAttribute('type')).toBe('button');
+            expect(close.closest('[role="tab"]')).toBeNull();
+            expect(close.previousElementSibling).toBe(tab(fixture, 'a'));
+            expect(close.getAttribute('aria-hidden')).toBeNull();
+            expect(close.getAttribute('aria-label')).toBe('Close');
+            expect(tab(fixture, 'a').getAttribute('aria-keyshortcuts')).toBe('Delete');
+        });
+
+        it('SC-UKV-1019 — в таб-порядке только крестик вкладки в фокусе', (): void => {
+            const fixture: ComponentFixture<TabsAdditionsHostComponent> = setup();
+
+            expect(tab(fixture, 'a').getAttribute('tabindex')).toBe('0');
+            expect(closeOf(fixture, 'a')?.getAttribute('tabindex')).toBe('0');
+            expect(closeOf(fixture, 'b')?.getAttribute('tabindex')).toBe('-1');
+
+            tab(fixture, 'b').click();
+            fixture.detectChanges();
+
+            expect(closeOf(fixture, 'a')?.getAttribute('tabindex')).toBe('-1');
+            expect(closeOf(fixture, 'b')?.getAttribute('tabindex')).toBe('0');
+        });
+
+        it('SC-UKV-1019 — нажатие крестика в фокусе закрывает вкладку и отдаёт фокус оставшейся', async (): Promise<void> => {
+            const fixture: ComponentFixture<TabsAdditionsHostComponent> = setup();
+            const close: HTMLButtonElement = closeOf(fixture, 'a') as HTMLButtonElement;
+
+            close.focus();
+            close.click();
+            fixture.detectChanges();
+            await fixture.whenStable();
+
+            expect(fixture.componentInstance.closed).toEqual(['a']);
+            expect(document.activeElement).toBe(tab(fixture, 'b'));
         });
     });
 

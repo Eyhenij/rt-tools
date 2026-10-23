@@ -300,10 +300,10 @@ export class RtTabsComponent {
         this.#scrollTabIntoView(id);
     }
 
-    /** Крестик вкладки: клик не должен доходить до самой вкладки и выбирать её. */
+    /** Крестик: нажатие не выбирает вкладку; фокус с крестика после закрытия уходит на вкладку, не на страницу. */
     protected onCloseClick(event: MouseEvent, tab: RtTabDirective): void {
         event.stopPropagation();
-        this.#close(tab, false);
+        this.#close(tab, event.currentTarget instanceof HTMLElement && event.currentTarget.matches(':focus'));
     }
 
     /**
@@ -481,7 +481,7 @@ export class RtTabsComponent {
 
     #scrollTabIntoView(id: IRtTabs.Id): void {
         const list: HTMLElement | undefined = this.tabListRef()?.nativeElement;
-        const tab: HTMLElement | null | undefined = list?.querySelector<HTMLElement>(`[data-tabid="${id}"]`);
+        const tab: HTMLElement | null | undefined = list?.querySelector<HTMLElement>(`[data-tabitem="${id}"]`);
 
         const target: number | null = list && tab ? rtTabsIntoViewTarget(list, tab) : null;
 

@@ -803,6 +803,12 @@ data-preset="material" floatingLabel>` drew the border through the risen label: 
   unchanged. Checked in the showcase: five typed letters leave four in the input and three of five
   in a textarea limited to 3; a tooltip with 1000 ms shows after 1020 ms, one without it after
   327 ms. SC-UKV-1015–1018.
+- **2026-10-23, the cross of a tab from the keyboard.** The cross of a closable tab was a hidden
+  span inside the tab button: Tab never reached it, and a screen reader did not see it. The tab is
+  now a wrapper `.rt-tab-item` holding the tab button and the cross button side by side. The
+  classes, the `--rt-tab-item-close-*` properties and the sizes stay as they were. Only the cross
+  of the tab in focus is in the tab order. Its name is `closeTooltip` or the translated "Close".
+  After a close from the keyboard the focus goes to the active tab. SC-UKV-1019.
 
 ## Sessions
 
@@ -835,6 +841,7 @@ none
 ### Commits over the main branch
 
 ```
+d4670c558 feat(rt:ui-kit-v2): предел длины у поля и многострочного поля, своя задержка у подсказки
 34076a9ac fix(rt:ui-kit-v2): правая панель каркаса поверх страницы не шире окна
 b2a89b06a fix(rt:ui-kit-v2): окно выбора динамического селектора снова работает само по себе
 40b980bfd fix(rt:ui-kit-v2): базовый вид поля и выбора снова как на main — рамка своего указателя, строка подсказки, интервал
@@ -854,7 +861,6 @@ c2305b053 feat(rt:ui-kit-v2): тост — голый вид для своего
 40845c87f feat(rt:ui-kit-v2): тостер — свой канал для закреплённых тостов
 5058d4c62 feat(rt:ui-kit-v2): вкладки — открытую панель можно убрать из обхода по Tab
 32b67926e feat(rt:ui-kit-v2): боковое меню — поиск раскрывает папку, совпавшую по имени, свёрнутое избранное держит число
-f5a118015 Merge remote-tracking branch 'origin/main' into RT-2812-kit2-field-label-icon-actions
 ```
 
 Written by a hook before the compaction of the context. Everything standing here is checked

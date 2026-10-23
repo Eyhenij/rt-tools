@@ -31,6 +31,7 @@ import { IRtTabs } from './rt-tabs.model';
 })
 export class RtTabDirective {
     readonly #t_uiTabInvalid: Signal<string> = rtKitLabel('uiTabInvalid');
+    readonly #t_uiClose: Signal<string> = rtKitLabel('uiClose');
 
     /** Шаблон тела панели — рендерится в области контента при активной вкладке. */
     public readonly templateRef: TemplateRef<unknown> = inject<TemplateRef<unknown>>(TemplateRef);
@@ -135,6 +136,12 @@ export class RtTabDirective {
     public readonly ariaLabel: Signal<string | null> = computed((): string | null =>
         this.label() || this.titleTemplate() ? null : this.tooltip() || null
     );
+
+    /**
+     * Имя крестика для чтения с экрана: текст его подсказки, без подсказки — переведённое «Закрыть».
+     * Крестик — отдельная кнопка, и без имени диктор назвал бы её просто «кнопка».
+     */
+    public readonly closeLabel: Signal<string> = computed((): string => this.closeTooltip() || this.#t_uiClose());
 
     /** Крестик рисуется только у доступной вкладки: отключённую закрыть нельзя. */
     public readonly showClose: Signal<boolean> = computed((): boolean => this.closable() && !this.disabled());

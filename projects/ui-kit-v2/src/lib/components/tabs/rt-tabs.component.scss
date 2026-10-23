@@ -260,8 +260,6 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        padding: var(--rt-space-2) var(--rt-space-4);
-        border: 0;
         margin: 0;
         background-color: transparent;
         color: var(--rt-color-text-muted);
@@ -298,9 +296,33 @@
         /* Inset-outline вместо box-shadow ring: полоса вкладок — scroll-контейнер
            (overflow), который обрезал бы внешнее кольцо. Inset рисуется внутри
            элемента, не клиппится и переживает forced-colors. */
-        &:focus-visible {
+        &:has(> .rt-tab-item__trigger:focus-visible) {
             outline: 2px solid var(--rt-color-action-primary);
             outline-offset: -3px;
+        }
+
+        /* Сама вкладка внутри обёртки: несёт отступы и содержимое, вид берёт у обёртки. Кольцо
+           фокуса рисует обёртка, чтобы оно обходило и крестик. У закрываемой вкладки правый
+           отступ переходит к крестику: он стоит после кнопки, и место до края вкладки — его. */
+        &__trigger {
+            display: inline-flex;
+            min-width: 0;
+            align-items: center;
+            justify-content: center;
+            padding: var(--rt-space-2) var(--rt-space-4);
+            border: 0;
+            margin: 0;
+            background: none;
+            color: inherit;
+            cursor: inherit;
+            font: inherit;
+            gap: inherit;
+            line-height: inherit;
+            outline: none;
+
+            &--closable {
+                padding-inline-end: 0;
+            }
         }
 
         &__title {
@@ -331,7 +353,9 @@
         /* Крестик закрываемой вкладки: подложка при наведении отделяет его от самой вкладки,
            иначе нажатие по нему читается как выбор вкладки. Отрицательный отступ по вертикали
            держит высоту вкладки: крестик выше строки подписи, и без него полоса росла бы.
-           Размер иконки идёт через шаг `xs` самой иконки: её ширина задана стилем на теге. */
+           Размер иконки идёт через шаг `xs` самой иконки: её ширина задана стилем на теге.
+           Крестик — своя кнопка рядом с кнопкой вкладки, поэтому правый отступ вкладки входит в
+           его отступ до края: вид тот же, что у крестика внутри вкладки. */
         &__close {
             --rt-icon-step-xs: var(--rt-tab-item-close-icon-size);
 
@@ -341,12 +365,15 @@
             flex-shrink: 0;
             align-items: center;
             justify-content: center;
+            padding: 0;
+            border: 0;
             border-radius: var(--rt-tab-item-close-radius);
             background-color: var(--rt-tab-item-close-bg);
             color: var(--rt-tab-item-close-color);
             cursor: pointer;
+            font: inherit;
             margin-block: calc(-1 * var(--rt-space-1));
-            margin-inline: var(--rt-tab-item-close-margin-inline-start) var(--rt-tab-item-close-margin-inline-end);
+            margin-inline: var(--rt-tab-item-close-margin-inline-start) calc(var(--rt-space-4) + var(--rt-tab-item-close-margin-inline-end));
             transition:
                 color var(--rt-tab-item-transition-duration) linear,
                 background-color var(--rt-tab-item-transition-duration) linear;
@@ -354,6 +381,11 @@
             &:hover {
                 background-color: var(--rt-tab-item-close-bg-hover);
                 color: var(--rt-tab-item-close-color-hover);
+            }
+
+            &:focus-visible {
+                outline: 2px solid var(--rt-color-action-primary);
+                outline-offset: 0;
             }
         }
 

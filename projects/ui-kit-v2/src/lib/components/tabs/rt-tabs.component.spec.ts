@@ -226,7 +226,7 @@ describe('RtTabsComponent', (): void => {
             fixture.detectChanges();
 
             expect(classesOf(qa(fixture, 'tabs-tab-list'))).toContain('rt-tabs__tab-list--stretch');
-            expect(classesOf(tabs(fixture)[0])).toContain('rt-tab-item--stretch');
+            expect(Array.from(tabs(fixture)[0].parentElement?.classList ?? [])).toContain('rt-tab-item--stretch');
         });
 
         it('счётчик рисуется отдельным элементом рядом с подписью', (): void => {

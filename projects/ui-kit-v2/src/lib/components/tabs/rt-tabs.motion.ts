@@ -325,14 +325,14 @@ export class RtTabsInk {
         const watch: ResizeObserver = this.#watch;
         watch.disconnect();
         watch.observe(list);
-        list.querySelectorAll<HTMLElement>('[data-tabid]').forEach((node: HTMLElement): void => watch.observe(node));
+        list.querySelectorAll<HTMLElement>('[data-tabitem]').forEach((node: HTMLElement): void => watch.observe(node));
     }
 
     /** Ставит полосу под выбранную вкладку. Дробные размеры сохраняются: полоса ложится ровно по вкладке. */
     #place(): void {
         const list: HTMLElement | undefined = this.#list()?.nativeElement;
         const id: IRtTabs.Id | undefined = this.#active()?.id();
-        const tab: HTMLElement | null | undefined = id === undefined ? null : list?.querySelector<HTMLElement>(`[data-tabid="${id}"]`);
+        const tab: HTMLElement | null | undefined = id === undefined ? null : list?.querySelector<HTMLElement>(`[data-tabitem="${id}"]`);
 
         if (!list || !tab) {
             this.box.set(null);
