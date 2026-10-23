@@ -90,6 +90,16 @@ describe('RtChatComponent', (): void => {
             expect(qa(fixture, 'chat-message-retry')).not.toBeNull();
         });
 
+        it('SC-UKV-914 — недоставленный ответ рисует значок и подпись без кнопки повтора', (): void => {
+            const fixture: ComponentFixture<RtChatComponent> = setup({
+                messages: [message({ own: true, status: ERtChatMessageStatus.Undelivered })],
+            });
+
+            expect(el(fixture, '[qa-dataid="chat-message-status"] rt-icon')).not.toBeNull();
+            expect(textOf(qa(fixture, 'chat-message-undelivered'))).toContain('Not delivered');
+            expect(qa(fixture, 'chat-message-retry')).toBeNull();
+        });
+
         it('вложения сообщения рисуются списком', (): void => {
             const fixture: ComponentFixture<RtChatComponent> = setup({
                 messages: [message({ attachments: [{ id: 1, name: 'Договор.pdf', publicId: 'abc' }] })],

@@ -52,4 +52,7 @@ rtChatMessageActions let-message>` рисуется в меню «…» у ре�
 - Режим `formatting` подменяет простое поле [`rt-rich-editor`](../rich-editor/CONTEXT.md);
   тот грузит Quill динамическим импортом.
 - Неотправленное сообщение (`status: 'failed'`) получает кнопку повтора.
+- Недоставленное (`status: 'undelivered'`): ответ записан, служба собеседника его не приняла. Значок
+  предупреждения и подпись `rtKit.chatStatusUndelivered`, кнопки повтора нет — повтор записал бы ответ
+  второй раз.
 - Файлы можно бросать прямо в ленту — чат обёрнут в [`rt-file-drop`](../../../../lib/components/file-drop/CONTEXT.md).

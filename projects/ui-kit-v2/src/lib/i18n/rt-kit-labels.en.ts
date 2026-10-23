@@ -70,6 +70,7 @@ export const RT_KIT_LABELS_EN = {
     chatStatusRead: 'Read',
     chatStatusSending: 'Sending',
     chatStatusSent: 'Delivered',
+    chatStatusUndelivered: 'Not delivered',
     chatStopAria: 'Stop the answer',
     chatStopLabel: 'Stop',
     chatTitle: 'Chat',

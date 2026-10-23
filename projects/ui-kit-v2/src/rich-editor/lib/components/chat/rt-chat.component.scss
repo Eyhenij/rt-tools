@@ -294,10 +294,19 @@
             &--status--failed {
                 color: var(--rt-color-state-danger);
             }
+
+            &--status--undelivered {
+                color: var(--rt-color-state-warning-text);
+            }
         }
 
         &__status-icon {
             font-size: var(--rt-text-sm);
+        }
+
+        &__status-caption {
+            font-size: var(--rt-text-xs);
+            line-height: var(--rt-leading-none);
         }
 
         // Скелетон-пузырь повторяет геометрию `&__message`, чтобы подмена на реальное

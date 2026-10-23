@@ -170,6 +170,13 @@
                                                         [ariaLabel]="t().chatRetryAria"
                                                         [tooltip]="t().chatRetryTooltip"
                                                         (clicked)="retryMessage.emit(m)" />
+                                                } @else if (m.status === MessageStatus.Undelivered) {
+                                                    <!-- Ответ записан, служба собеседника его не приняла: подпись видна глазом,
+                                                         повтора нет — он записал бы ответ второй раз. -->
+                                                    <rt-icon rtElem="status-icon" name="warning" size="sm" />
+                                                    <span rtElem="status-caption" qa-dataid="chat-message-undelivered">
+                                                        {{ t().chatStatusUndelivered }}
+                                                    </span>
                                                 } @else {
                                                     <!-- Часы, пока сообщение в пути; дальше двойной чек, цвет которого
                                                          (серый/синий) различает доставлено и прочитано. -->
