@@ -4,6 +4,7 @@
     .rt-date-range {
         --rt-date-range-radius: var(--rt-input-radius);
         --rt-date-range-fill-radius: var(--rt-radius-sm);
+        --rt-date-range-color-border-hover: var(--rt-color-text-primary);
 
         position: relative;
         display: inline-flex;
@@ -27,6 +28,12 @@
             box-shadow: var(--rt-input-focus-shadow);
             outline: 2px solid transparent;
             outline-offset: var(--rt-input-focus-outline-offset);
+        }
+
+        /* Наведение в материальном наборе — как у поля Material: рамка цвета текста. `:where` держит
+           силу правила на уровне вида, и фокус, ошибка, залитый вид и «без рамки» его перекрывают. */
+        :where(.rt-preset-material, [data-preset='material']) &:where(:hover:not(:has(:disabled))) {
+            border-color: var(--rt-date-range-color-border-hover);
         }
 
         /* bordered=false: снимаем только resting-рамку; invalid/focus/readonly идут

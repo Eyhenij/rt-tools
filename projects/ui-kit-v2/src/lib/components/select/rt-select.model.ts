@@ -1,3 +1,5 @@
+import { TemplateRef } from '@angular/core';
+
 import { IRtOptionTree } from '@rt-tools/ui-kit-v2/core';
 
 /**
@@ -33,6 +35,19 @@ export namespace IRtSelect {
         readonly label: string;
         /** Отключён ли выбор. */
         readonly isDisabled: boolean;
+    }
+
+    /** Обстановка шаблона строки списка: опция приходит как `$implicit`. */
+    export interface OptionContext<TValue> {
+        readonly $implicit: Option<TValue>;
+        /** Выбрана ли опция. */
+        readonly selected: boolean;
+    }
+
+    /** Шаблон строки с выбранной опцией: так указатель рисует выбранное той же разметкой, что и список. */
+    export interface ChosenView<TValue> {
+        readonly templateRef: TemplateRef<OptionContext<TValue>>;
+        readonly context: OptionContext<TValue>;
     }
 
     /** Обстановка шаблона указателя: состояние приходит как `$implicit`. */

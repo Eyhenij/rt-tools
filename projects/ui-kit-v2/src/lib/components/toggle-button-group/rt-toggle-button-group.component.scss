@@ -115,10 +115,45 @@
             &--disabled {
                 opacity: 0.5;
             }
+
+            /* Перенос и столбик: дорожка растёт по сегментам, а сегмент держит высоту строки
+               прежней раскладки. Между строками — тот же просвет, что и внутри дорожки. */
+            &--wrap,
+            &--column {
+                height: auto;
+                gap: var(--rt-toggle-button-group-track-padding);
+
+                .rt-toggle-button-group__button {
+                    min-height: calc(var(--rt-toggle-button-group-height) - 2 * var(--rt-toggle-button-group-track-padding));
+                }
+            }
+
+            &--wrap {
+                flex-wrap: wrap;
+            }
+
+            &--column {
+                flex-direction: column;
+
+                .rt-toggle-button-group__button {
+                    justify-content: flex-start;
+                }
+            }
         }
 
         /* Шаг входа `radius` переназначает скругление дорожки; сегменты держат своё. */
         @include kv.radius-steps('--rt-toggle-button-group-track-radius');
+    }
+
+    /* Перенос: хост занимает строку контейнера, и дорожка, не влезшая в неё, сжимается до его
+       ширины — тогда сегменты уходят на следующую строку. Фон дорожки по-прежнему по сегментам. */
+    rt-toggle-button-group.rt-toggle-button-group--wrap {
+        display: flex;
+
+        .rt-toggle-button-group {
+            min-width: 0;
+            flex: 0 1 auto;
+        }
     }
 
     /* full-width: группа растягивается на контейнер, опции делят ширину поровну. */

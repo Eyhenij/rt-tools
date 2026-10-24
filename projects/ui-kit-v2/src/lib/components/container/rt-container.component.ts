@@ -2,11 +2,15 @@ import { BlockScrollStrategy, Overlay, OverlayConfig, OverlayRef, PositionStrate
 import { TemplatePortal } from '@angular/cdk/portal';
 import { DOCUMENT, NgTemplateOutlet } from '@angular/common';
 import {
+    booleanAttribute,
     ChangeDetectionStrategy,
     Component,
     DestroyRef,
     ElementRef,
     InputSignal,
+    InputSignalWithTransform,
+    ModelSignal,
+    numberAttribute,
     OutputEmitterRef,
     Renderer2,
     RendererFactory2,
@@ -21,8 +25,11 @@ import {
     effect,
     inject,
     input,
+    model,
     output,
     signal,
+    untracked,
+    viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -31,6 +38,7 @@ import { map, merge, Observable, Subject, switchMap, takeUntil } from 'rxjs';
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { BreakpointsService, carryThemeScope, materialPresetClassesOf } from '@rt-tools/ui-kit-v2/core';
+import { clampWidth, listenTransitionEnd, RtResizeHandleComponent } from '@rt-tools/ui-kit-v2/drawer';
 import { RtToasterComponent } from '@rt-tools/ui-kit-v2/toast';
 import { RtContainerStateService } from './rt-container-state.service';
 import {
@@ -43,10 +51,17 @@ import {
     RtContainerToolbarRightDirective,
 } from './rt-container.markers';
 
-/** Запас поверх длительности transition'а для страховочного таймера. */
-const ASIDE_TRANSITION_BUFFER_MS: number = 80;
-
 const BEM_BLOCK: string = 'rt-container';
+
+const OVERLAY_OPEN_CLASS: string = 'rt-aside-overlay--open';
+
+/** Пределы ширины правой панели по умолчанию, в пикселях. */
+const RIGHT_MIN_WIDTH: number = 240;
+
+const RIGHT_MAX_WIDTH: number = 960;
+
+/** Где стоит правая панель: поверх страницы в оверлее или колонкой рядом с содержимым. */
+export type TRtContainerRightMode = 'over' | 'side';
 
 /**
  * Multi-slot container с CSS-grid layout. Slot consumers wrap content в
@@ -54,10 +69,15 @@ const BEM_BLOCK: string = 'rt-container';
  * `contentChild(..., { read: TemplateRef })` + рендерит через `*ngTemplateOutlet`.
  *
  * Slots: `header`, `leftSidenav`, `toolbarLeft/Center/Right`, `content` — живут в
- * CSS-grid. `rightSidenav` рендерится через CDK Overlay поверх grid'а (slide-in
- * side-sheet), а не как grid-cell — overlay переиспользует глобальные
+ * CSS-grid. `rightSidenav` по умолчанию (`rightMode="over"`) рендерится через CDK Overlay
+ * поверх grid'а (slide-in side-sheet) — overlay переиспользует глобальные
  * `rt-aside-overlay` / `rt-aside-backdrop` классы из rt-aside, чтобы анимация и
- * backdrop вели себя идентично программно открываемым asides.
+ * backdrop вели себя идентично программно открываемым asides. С `rightMode="side"` та же
+ * панель стоит колонкой справа от содержимого и сужает его; режим переключается на ходу,
+ * и при переключении содержимое панели создаётся заново на новом месте.
+ *
+ * Ширину правой панели задаёт `rightWidth` (без него — по содержимому), а с `rightResizable`
+ * у её левого края стоит ручка: ширину тянут указателем и двигают стрелками.
  *
  * Driver-directives (`[rtContainerLeftSidenavPanel/RightSidenavPanel]`) общаются с
  * контейнером через `RtContainerStateService` (для левой docked) и через
@@ -75,6 +95,7 @@ const BEM_BLOCK: string = 'rt-container';
 
         // standalone components / directives
         RtToasterComponent,
+        RtResizeHandleComponent,
         BlockDirective,
         ElemDirective,
         ModDirective,
@@ -84,6 +105,7 @@ const BEM_BLOCK: string = 'rt-container';
         class: BEM_BLOCK,
         '[class.rt-container--mobile-left-bottom]': "mobileLeftNav() === 'bottom'",
         '[class.rt-container--viewport]': "height() === 'viewport'",
+        '[class.rt-container--right-side]': "rightMode() === 'side' && rightSidenavTpl() !== undefined",
     },
 })
 export class RtContainerComponent {
@@ -98,6 +120,9 @@ export class RtContainerComponent {
     readonly #rightOverlaySource: Subject<OverlayRef> = new Subject<OverlayRef>();
 
     #overlayRef: OverlayRef | null = null;
+
+    /** Страница замерла под подложкой: снимается ровно то, что было поставлено. */
+    #scrollBlocked: boolean = false;
 
     readonly #overlayRefSignal: WritableSignal<OverlayRef | null> = signal<OverlayRef | null>(null);
 
@@ -129,6 +154,21 @@ export class RtContainerComponent {
         read: TemplateRef,
     });
 
+    /** Обёртка правой панели — ширина и ручка; ставится и в оверлей, и в колонку сетки. */
+    protected readonly rightPaneTpl: Signal<TemplateRef<unknown> | undefined> = viewChild('rightPane', { read: TemplateRef });
+
+    protected readonly rightCell: Signal<ElementRef<HTMLElement> | undefined> = viewChild<ElementRef<HTMLElement>>('rightCell');
+
+    /** Ручку тянут: колонка панели гасит переход ширины. */
+    protected readonly rightResizing: WritableSignal<boolean> = signal(false);
+
+    /** Ширина, которую рисует правая панель: вход в пределах, или `null` — по содержимому. */
+    protected readonly rightShownWidth: Signal<number | null> = computed((): number | null => {
+        const width: number | null = this.rightWidth();
+
+        return width === null ? null : clampWidth(width, this.rightMinWidth(), this.rightMaxWidth());
+    });
+
     /**
      * Поведение левого sidenav на мобилке (<=768px): `keep` — остаётся боковой
      * колонкой (по умолчанию, десктоп-стиль); `bottom` — сворачивается в нижний
@@ -144,6 +184,22 @@ export class RtContainerComponent {
      */
     public readonly height: InputSignal<'auto' | 'viewport'> = input<'auto' | 'viewport'>('auto');
 
+    /** `over` — правая панель поверх страницы (по умолчанию), `side` — колонкой рядом с содержимым. */
+    public readonly rightMode: InputSignal<TRtContainerRightMode> = input<TRtContainerRightMode>('over');
+
+    /** Подложка под правой панелью в режиме `over`. Без неё страница остаётся доступной и не замирает. */
+    public readonly rightBackdrop: InputSignalWithTransform<boolean, unknown> = input(true, { transform: booleanAttribute });
+
+    /** Ширина правой панели в пикселях; `null` — по содержимому, как прежде. Ручка пишет сюда. */
+    public readonly rightWidth: ModelSignal<number | null> = model<number | null>(null);
+
+    /** Ручка ширины у левого края правой панели. */
+    public readonly rightResizable: InputSignalWithTransform<boolean, unknown> = input(false, { transform: booleanAttribute });
+
+    public readonly rightMinWidth: InputSignalWithTransform<number, unknown> = input(RIGHT_MIN_WIDTH, { transform: numberAttribute });
+
+    public readonly rightMaxWidth: InputSignalWithTransform<number, unknown> = input(RIGHT_MAX_WIDTH, { transform: numberAttribute });
+
     public readonly backdropClick: OutputEmitterRef<void> = output<void>();
 
     public readonly rightOpened: OutputEmitterRef<void> = output<void>();
@@ -153,13 +209,15 @@ export class RtContainerComponent {
     public readonly rightOpen: WritableSignal<boolean> = signal<boolean>(false);
 
     /**
-     * `true` когда CDK Overlay для правой sidenav создан и attache'нут (см.
-     * effect в constructor'е). Дёргать panel.open() из консьюмера можно только
-     * когда это true — иначе openRight() видит null overlayRef и early-return'ит,
-     * --entering modifier остаётся, панель остаётся за экраном. Re-exposed на
-     * driver через `panel.ready` для удобства route-driven dialog'ов.
+     * `true` когда правой панели есть где открыться: в режиме `over` — CDK Overlay создан и
+     * attache'нут (см. effect в constructor'е), в режиме `side` — шаблон панели объявлен.
+     * Дёргать panel.open() из консьюмера можно только когда это true — иначе openRight()
+     * видит null overlayRef и early-return'ит, --entering modifier остаётся, панель остаётся за
+     * экраном. Re-exposed на driver через `panel.ready` для удобства route-driven dialog'ов.
      */
-    public readonly rightOverlayReady: Signal<boolean> = computed((): boolean => this.#overlayRefSignal() !== null);
+    public readonly rightOverlayReady: Signal<boolean> = computed((): boolean =>
+        this.rightMode() === 'side' ? this.rightSidenavTpl() !== undefined : this.#overlayRefSignal() !== null
+    );
 
     constructor() {
         // Контейнер — место страницы: узкий вид кита считается от его ширины. Боковая панель
@@ -201,18 +259,29 @@ export class RtContainerComponent {
         // внутри slot template'а материализовался и мог активировать route.
         // Без auto-attach landmine: route не активируется → driver не вызывается
         // → ничего не открывается (chicken-and-egg).
+        // Смена режима или подложки пересоздаёт overlay; открытая панель остаётся открытой на
+        // новом месте без повторного `rightOpened`.
         effect((onCleanup: (cleanup: () => void) => void): void => {
             const tpl: TemplateRef<unknown> | undefined = this.rightSidenavTpl();
+            const pane: TemplateRef<unknown> | undefined = this.rightPaneTpl();
+            const over: boolean = this.rightMode() === 'over';
+            const backdrop: boolean = this.rightBackdrop();
 
-            if (tpl === undefined || this.#overlayRef !== null) {
+            if (tpl === undefined || pane === undefined || !over || this.#overlayRef !== null) {
                 return;
             }
 
-            const overlayRef: OverlayRef = this.#createRightOverlay(tpl);
+            const overlayRef: OverlayRef = this.#createRightOverlay(pane, backdrop);
             this.#overlayRef = overlayRef;
             this.#overlayRefSignal.set(overlayRef);
 
+            if (untracked(this.rightOpen)) {
+                this.#showOverlay(overlayRef);
+                this.#renderer.addClass(overlayRef.overlayElement, OVERLAY_OPEN_CLASS);
+            }
+
             onCleanup((): void => {
+                this.#setScrollBlocked(false);
                 overlayRef.dispose();
                 this.#overlayRef = null;
                 this.#overlayRefSignal.set(null);
@@ -221,12 +290,89 @@ export class RtContainerComponent {
     }
 
     public openRight(): void {
+        if (this.rightMode() === 'side') {
+            this.#openSide();
+            return;
+        }
+
         const overlayRef: OverlayRef | null = this.#overlayRef;
         if (overlayRef === null) {
             return;
         }
 
-        this.#blockScroll.enable();
+        this.#showOverlay(overlayRef);
+
+        // Slide-in: на следующий paint добавляем --open.
+        requestAnimationFrame((): void => {
+            this.#renderer.addClass(overlayRef.overlayElement, OVERLAY_OPEN_CLASS);
+            listenTransitionEnd(this.#window, overlayRef.overlayElement, 'transform', (): void => this.rightOpened.emit());
+        });
+
+        this.rightOpen.set(true);
+    }
+
+    public closeRight(): void {
+        if (this.rightMode() === 'side') {
+            this.#closeSide();
+            return;
+        }
+
+        const overlayRef: OverlayRef | null = this.#overlayRef;
+        if (overlayRef === null || !this.rightOpen()) {
+            return;
+        }
+
+        this.#renderer.removeClass(overlayRef.overlayElement, OVERLAY_OPEN_CLASS);
+        this.#renderer.addClass(overlayRef.overlayElement, 'rt-aside-overlay--leaving');
+
+        const backdropEl: HTMLElement | null = overlayRef.backdropElement;
+        if (backdropEl !== null) {
+            this.#renderer.removeClass(backdropEl, 'rt-aside-backdrop--visible');
+        }
+
+        listenTransitionEnd(this.#window, overlayRef.overlayElement, 'transform', (): void => {
+            this.#setScrollBlocked(false);
+            // Объявления на узле возвращаются только после ухода: поставленные сразу, они
+            // обрывают затухание подложки на первом же кадре.
+            this.#hideBackdrop(overlayRef);
+            this.rightOpen.set(false);
+            this.rightClosed.emit();
+        });
+    }
+
+    protected onRightWidth(width: number): void {
+        this.rightWidth.set(width);
+    }
+
+    /** Колонка рядом с содержимым: открытие — это ширина колонки, оверлея здесь нет. */
+    #openSide(): void {
+        if (this.rightOpen()) {
+            return;
+        }
+        this.rightOpen.set(true);
+        requestAnimationFrame((): void => this.#afterSideTransition((): void => this.rightOpened.emit()));
+    }
+
+    #closeSide(): void {
+        if (!this.rightOpen()) {
+            return;
+        }
+        this.rightOpen.set(false);
+        this.#afterSideTransition((): void => this.rightClosed.emit());
+    }
+
+    #afterSideTransition(callback: () => void): void {
+        const cell: HTMLElement | undefined = this.rightCell()?.nativeElement;
+
+        if (cell === undefined) {
+            callback();
+            return;
+        }
+        listenTransitionEnd(this.#window, cell, 'inline-size', callback);
+    }
+
+    /** Открытый вид оверлея без перехода: подложка видна, страница замирает, если подложка есть. */
+    #showOverlay(overlayRef: OverlayRef): void {
         // Коробка постоянная и лежит в конце страницы, а кусок темы вокруг контейнера мог смениться.
         carryThemeScope(overlayRef.overlayElement, this.#host.nativeElement);
 
@@ -235,42 +381,23 @@ export class RtContainerComponent {
 
         const backdropEl: HTMLElement | null = overlayRef.backdropElement;
         if (backdropEl !== null) {
+            this.#setScrollBlocked(true);
             this.#renderer.addClass(backdropEl, 'rt-aside-backdrop--visible');
             this.#renderer.removeStyle(backdropEl, 'opacity');
             this.#renderer.removeStyle(backdropEl, 'pointer-events');
         }
-
-        // Slide-in: на следующий paint добавляем --open.
-        requestAnimationFrame((): void => {
-            this.#renderer.addClass(overlayRef.overlayElement, 'rt-aside-overlay--open');
-            this.#listenTransitionEnd(overlayRef, (): void => this.rightOpened.emit());
-        });
-
-        this.rightOpen.set(true);
     }
 
-    public closeRight(): void {
-        const overlayRef: OverlayRef | null = this.#overlayRef;
-        if (overlayRef === null || !this.rightOpen()) {
+    #setScrollBlocked(blocked: boolean): void {
+        if (blocked === this.#scrollBlocked) {
             return;
         }
-
-        this.#renderer.removeClass(overlayRef.overlayElement, 'rt-aside-overlay--open');
-        this.#renderer.addClass(overlayRef.overlayElement, 'rt-aside-overlay--leaving');
-
-        const backdropEl: HTMLElement | null = overlayRef.backdropElement;
-        if (backdropEl !== null) {
-            this.#renderer.removeClass(backdropEl, 'rt-aside-backdrop--visible');
-        }
-
-        this.#listenTransitionEnd(overlayRef, (): void => {
+        this.#scrollBlocked = blocked;
+        if (blocked) {
+            this.#blockScroll.enable();
+        } else {
             this.#blockScroll.disable();
-            // Объявления на узле возвращаются только после ухода: поставленные сразу, они
-            // обрывают затухание подложки на первом же кадре.
-            this.#hideBackdrop(overlayRef);
-            this.rightOpen.set(false);
-            this.rightClosed.emit();
-        });
+        }
     }
 
     /**
@@ -296,16 +423,16 @@ export class RtContainerComponent {
         this.#renderer.setStyle(backdropEl, 'pointer-events', 'none');
     }
 
-    #createRightOverlay(tpl: TemplateRef<unknown>): OverlayRef {
+    #createRightOverlay(tpl: TemplateRef<unknown>, hasBackdrop: boolean): OverlayRef {
         const positionStrategy: PositionStrategy = this.#overlay.position().global().right('0').top('0');
 
         const overlayConfig: OverlayConfig = {
             positionStrategy,
+            hasBackdrop,
             // noop здесь, scroll-block управляется вручную через #blockScroll
             // в openRight/closeRight — иначе scroll заблокирован всегда
             // (overlay persistent), пока aside ещё не открыт.
             scrollStrategy: this.#overlay.scrollStrategies.noop(),
-            hasBackdrop: true,
             backdropClass: 'rt-aside-backdrop',
             panelClass: [
                 'rt-aside-overlay',
@@ -326,57 +453,5 @@ export class RtContainerComponent {
         this.#rightOverlaySource.next(overlayRef);
 
         return overlayRef;
-    }
-
-    // Слушаем именно transform-окончание: на overlay host'е могут анимироваться
-    // и другие свойства (opacity backdrop'а, например) — это даст ложные срабатывания.
-    #listenTransitionEnd(overlayRef: OverlayRef, callback: () => void): void {
-        const element: HTMLElement = overlayRef.overlayElement;
-
-        // Нет анимации (reduced-motion / `transition: none`) → `transitionend` не
-        // придёт; teardown-callback (навигация `ro:null`) отрабатываем синхронно.
-        const durationMs: number = this.#transitionDurationMs(element);
-        if (durationMs === 0) {
-            callback();
-            return;
-        }
-
-        // settled-гард делает transitionend и fallback-таймаут взаимно
-        // идемпотентными — сработает и снимет listener только то, что раньше.
-        let settled: boolean = false;
-
-        const handler: (event: TransitionEvent) => void = (event: TransitionEvent): void => {
-            if (event.propertyName !== 'transform' || settled) {
-                return;
-            }
-            settled = true;
-            element.removeEventListener('transitionend', handler);
-            callback();
-        };
-        element.addEventListener('transitionend', handler);
-
-        // Страховка на случай пропущенного `transitionend` (лаг рендера).
-        setTimeout((): void => {
-            if (settled) {
-                return;
-            }
-            settled = true;
-            element.removeEventListener('transitionend', handler);
-            callback();
-        }, durationMs + ASIDE_TRANSITION_BUFFER_MS);
-    }
-
-    // Максимальная длительность transition'а элемента в мс; `0` если анимации нет.
-    #transitionDurationMs(element: HTMLElement): number {
-        const durationCss: string | undefined = this.#window?.getComputedStyle(element).transitionDuration;
-        if (durationCss === undefined || durationCss === '') {
-            return 0;
-        }
-        const maxSeconds: number = durationCss.split(',').reduce((max: number, part: string): number => {
-            const trimmed: string = part.trim();
-            const seconds: number = trimmed.endsWith('ms') ? Number.parseFloat(trimmed) / 1000 : Number.parseFloat(trimmed);
-            return Number.isNaN(seconds) ? max : Math.max(max, seconds);
-        }, 0);
-        return maxSeconds * 1000;
     }
 }

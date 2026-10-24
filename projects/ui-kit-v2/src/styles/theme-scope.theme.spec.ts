@@ -85,7 +85,7 @@ describe('материальный набор под тёмной темой', (
         (name: string): void => {
             const light: string = mixinBody(PRESET, 'rt-preset-material-tokens');
 
-            expect(light).toContain(`${name}: var(--mat-sys-on-surface-variant, var(--rt-mat-neutral-60));`);
+            expect(light).toContain(`${name}: var(--rt-sys-on-surface-variant, var(--rt-mat-neutral-60));`);
         }
     );
 });

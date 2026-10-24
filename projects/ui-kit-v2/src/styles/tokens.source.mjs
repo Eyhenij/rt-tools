@@ -39,8 +39,8 @@ export const scale = [...scaleColor, ...scaleMetrics, ...scaleEffects, ...scaleM
 
 export const light = [...lightColor, ...lightParts, ...lightForms, ...lightLists, ...lightNavigation, ...lightField];
 
-/* Назначения списка генератор собирает в свой файл — светлый набор перерос предел длины. */
-export { lightLists };
+/* Назначения списка и навигации генератор собирает в свои файлы — светлый набор перерос предел длины. */
+export { lightLists, lightNavigation };
 
 export { darkLayout } from './tokens.dark-layout.mjs';
 export { coarsePointer } from './tokens.coarse-pointer.mjs';

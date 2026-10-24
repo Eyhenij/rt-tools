@@ -30,6 +30,9 @@ export const Edges: TStory = { args: { part: 'edges' } };
 
 export const Options: TStory = { args: { part: 'options' } };
 
+/** Живая доля, свёрнутые подробности и свой компонент на месте сообщения. */
+export const Extras: TStory = { args: { part: 'extras' } };
+
 export const Handles: TStory = { args: { part: 'handles' } };
 
 export const Presets: TStory = { args: { part: 'presets' } };

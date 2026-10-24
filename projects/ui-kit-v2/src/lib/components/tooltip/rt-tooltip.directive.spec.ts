@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, WritableSignal, signal } from '@ang
 import { FocusMonitor } from '@angular/cdk/a11y';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { provideRtKit } from '../../config/rt-kit-config.providers';
 import { createRtFixture, el } from '../../../testing/rt-kit-testing';
 import { RtTooltipDirective } from './rt-tooltip.directive';
 import { IRtTooltip } from './rt-tooltip.model';
@@ -40,6 +41,19 @@ class TooltipHostComponent {
     imports: [RtTooltipDirective],
 })
 class TooltipPresetHostComponent {}
+
+/** Подсказки без своих входов и одна со своим: умолчания приходят из настроек кита. */
+@Component({
+    selector: 'rt-tooltip-config-host',
+    template: `
+        <button type="button" qa-dataid="plain" rtTooltip="Удалить строку">Кнопка</button>
+        <button type="button" qa-dataid="own" rtTooltip="Сохранить" [rtTooltipHideOnClick]="true">Кнопка</button>
+        <button type="button" qa-dataid="delayed" rtTooltip="Вид" rtTooltipShowDelay="500">Кнопка</button>
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtTooltipDirective],
+})
+class TooltipConfigHostComponent {}
 
 function setup(text: string | null | undefined = 'Удалить строку'): ComponentFixture<TooltipHostComponent> {
     const fixture: ComponentFixture<TooltipHostComponent> = createRtFixture(TooltipHostComponent, {}, { skipInitialDetect: true });
@@ -323,6 +337,89 @@ describe('RtTooltipDirective', (): void => {
             const pane: Element | null | undefined = tip()?.closest('.cdk-overlay-pane');
             expect(pane).not.toBeNull();
             expect(pane?.hasAttribute('data-theme')).toBe(false);
+        });
+    });
+
+    describe('SC-UKV-1007 — умолчания подсказки из настроек кита', (): void => {
+        beforeEach((): void => {
+            jest.useFakeTimers();
+        });
+
+        afterEach((): void => {
+            jest.useRealTimers();
+        });
+
+        function configured(): ComponentFixture<TooltipConfigHostComponent> {
+            return createRtFixture(
+                TooltipConfigHostComponent,
+                {},
+                {
+                    providers: [provideRtKit({ components: { tooltip: { hideOnClick: false, placement: 'bottom', showDelay: 100 } } })],
+                }
+            );
+        }
+
+        function node(fixture: ComponentFixture<TooltipConfigHostComponent>, id: string): HTMLElement {
+            return el(fixture, `[qa-dataid="${id}"]`)?.nativeElement as HTMLElement;
+        }
+
+        it('SC-UKV-1007 — подсказка без входов берёт задержку из настроек, клик её не прячет', (): void => {
+            const fixture: ComponentFixture<TooltipConfigHostComponent> = configured();
+            node(fixture, 'plain').dispatchEvent(new Event('mouseenter'));
+            jest.advanceTimersByTime(99);
+            expect(tip()).toBeNull();
+            jest.advanceTimersByTime(1);
+            fixture.detectChanges();
+            expect(tip()).not.toBeNull();
+
+            node(fixture, 'plain').click();
+            fixture.detectChanges();
+            expect(tip()).not.toBeNull();
+        });
+
+        it('SC-UKV-1007 — вход на элементе перебивает настройки кита', (): void => {
+            const fixture: ComponentFixture<TooltipConfigHostComponent> = configured();
+
+            node(fixture, 'own').dispatchEvent(new Event('mouseenter'));
+            jest.advanceTimersByTime(100);
+            fixture.detectChanges();
+            expect(tip()).not.toBeNull();
+
+            node(fixture, 'own').click();
+            fixture.detectChanges();
+            expect(tip()).toBeNull();
+        });
+
+        it('SC-UKV-1017 — своя задержка на элементе перебивает задержку из настроек кита', (): void => {
+            const fixture: ComponentFixture<TooltipConfigHostComponent> = configured();
+
+            node(fixture, 'delayed').dispatchEvent(new Event('mouseenter'));
+            jest.advanceTimersByTime(499);
+            fixture.detectChanges();
+            expect(tip()).toBeNull();
+
+            jest.advanceTimersByTime(1);
+            fixture.detectChanges();
+            expect(tip()?.textContent).toBe('Вид');
+        });
+
+        it('SC-UKV-1018 — без своей задержки подсказка ждёт умолчание кита, соседняя со своей — свою', (): void => {
+            const fixture: ComponentFixture<TooltipConfigHostComponent> = createRtFixture(TooltipConfigHostComponent);
+
+            node(fixture, 'plain').dispatchEvent(new Event('mouseenter'));
+            jest.advanceTimersByTime(300);
+            fixture.detectChanges();
+            expect(tip()?.textContent).toBe('Удалить строку');
+            node(fixture, 'plain').dispatchEvent(new Event('mouseleave'));
+            fixture.detectChanges();
+
+            node(fixture, 'delayed').dispatchEvent(new Event('mouseenter'));
+            jest.advanceTimersByTime(300);
+            fixture.detectChanges();
+            expect(tip()).toBeNull();
+            jest.advanceTimersByTime(200);
+            fixture.detectChanges();
+            expect(tip()?.textContent).toBe('Вид');
         });
     });
 });

@@ -114,6 +114,17 @@
             }
         }
 
+        /* Голый тост: оболочку рисует свой компонент. Два класса и место после залитого — чтобы
+           залитый и набор, задающий ручки тоста, оболочку не вернули. */
+        &.rt-toast--bare {
+            --rt-toast-radius: 0;
+            --rt-toast-border-width: 0;
+            --rt-toast-shadow: none;
+
+            padding: 0;
+            background: transparent;
+        }
+
         &--mounted {
             --y: translateY(0);
 
@@ -211,6 +222,32 @@
             color: var(--rt-color-text-muted);
             font-size: var(--rt-text-xs);
             font-weight: var(--rt-font-weight-regular);
+        }
+
+        /* Сообщение тоста со своим компонентом: видно только чтению с экрана. */
+        &__sr-message {
+            position: absolute;
+            overflow: hidden;
+            width: 1px;
+            height: 1px;
+            clip-path: inset(50%);
+            white-space: nowrap;
+        }
+
+        &__custom {
+            min-width: 0;
+        }
+
+        &__value {
+            margin-block: var(--rt-space-1);
+        }
+
+        & &__details-toggle {
+            align-self: flex-start;
+        }
+
+        &__details {
+            display: flex;
         }
 
         &__actions {

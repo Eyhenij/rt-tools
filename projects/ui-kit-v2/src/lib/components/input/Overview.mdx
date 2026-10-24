@@ -93,18 +93,39 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 `bordered=false` снимает **только** рамку покоя: рамку фокуса и ошибки поле показывает всё
 равно, иначе состояние пропадало бы вместе с оформлением.
 
+Наименьшая ширина — `--rt-input-min-width`, по умолчанию её нет; цвет каретки —
+`--rt-input-caret-color`. Под материальным набором кнопки-значки и крестик не выше поля без
+рамки, поэтому малое поле с крестиком там остаётся 32 px; в своём виде кита оно 34 px, как прежде. Поле под материальным набором сверено с полем Material — раздел
+«Материальный набор» у [`rt-field`](./?path=/docs/molecules-forms-field-overview--docs).
+
 ## Входы
 
-| вход             | тип                                         | умолчание                 |
-| ---------------- | ------------------------------------------- | ------------------------- |
-| `appearance`     | `'outline' \| 'fill' \| 'pill'`             | `'outline'`               |
-| `type`           | `'text' \| 'password' \| 'email' \| 'time'` | `'text'`                  |
-| `placeholder`    | `string`                                    | `''`                      |
-| `iconLeft`       | `IRtIcon.Name \| null`                      | `null`                    |
-| `iconRight`      | `IRtIcon.Name \| null`                      | `null`                    |
-| `passwordToggle` | `boolean`                                   | `false`                   |
-| `autocomplete`   | `string \| null`                            | `null`                    |
-| `radius`         | `TRtRadius \| null`                         | `null` → скругление полей |
+| вход                | тип                                         | умолчание                 |
+| ------------------- | ------------------------------------------- | ------------------------- |
+| `appearance`        | `'outline' \| 'fill' \| 'pill'`             | `'outline'`               |
+| `type`              | `'text' \| 'password' \| 'email' \| 'time'` | `'text'`                  |
+| `placeholder`       | `string`                                    | `''`                      |
+| `iconLeft`          | `IRtIcon.Name \| null`                      | `null`                    |
+| `iconRight`         | `IRtIcon.Name \| null`                      | `null`                    |
+| `passwordToggle`    | `boolean`                                   | `false`                   |
+| `autocomplete`      | `string \| null`                            | `null`                    |
+| `maxlength`         | `number \| null`                            | `null` — без предела      |
+| `radius`            | `TRtRadius \| null`                         | `null` → скругление полей |
+| `floatingLabel`     | `string \| null`                            | `null`                    |
+| `iconLeftAction`    | `boolean`                                   | `false`                   |
+| `iconRightAction`   | `boolean`                                   | `false`                   |
+| `iconLeftTooltip`   | `string \| null`                            | `null`                    |
+| `iconRightTooltip`  | `string \| null`                            | `null`                    |
+| `iconLeftDisabled`  | `boolean`                                   | `false`                   |
+| `iconRightDisabled` | `boolean`                                   | `false`                   |
+
+**Кнопка-значок отключается своим входом, поле при этом остаётся доступным.** Так поиск не ищет,
+пока введено меньше трёх знаков, а подсказка кнопки объясняет почему — история
+`FieldExtras → IconActions`.
+
+**`maxlength` уходит атрибутом на поле, и браузер не даёт набрать лишний знак.** Вставка тоже
+обрезается. Проверку формы вход не заменяет: значение из кода браузер не режет, и
+`Validators.maxLength` в форме остаётся.
 
 **Крестик очистки и переключатель пароля делят один постфикс.** На поле пароля с включённым
 переключателем крестика не будет: показать оба некуда.
@@ -114,19 +135,30 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 Достались от `RtFormControlBase` — общей основы полей кита; в ней же они и меняются, сразу для
 всех наследников.
 
-| вход        | тип                    | умолчание |
-| ----------- | ---------------------- | --------- |
-| `size`      | `'sm' \| 'md' \| 'lg'` | `'md'`    |
-| `disabled`  | `boolean`              | `false`   |
-| `controlId` | `string \| null`       | `null`    |
-| `ariaLabel` | `string \| null`       | `null`    |
-| `clearable` | `boolean`              | `true`    |
-| `bordered`  | `boolean`              | `true`    |
+| вход            | тип                    | умолчание |
+| --------------- | ---------------------- | --------- |
+| `size`          | `'sm' \| 'md' \| 'lg'` | `'md'`    |
+| `disabled`      | `boolean`              | `false`   |
+| `controlId`     | `string \| null`       | `null`    |
+| `ariaLabel`     | `string \| null`       | `null`    |
+| `clearable`     | `boolean`              | `true`    |
+| `clearTabbable` | `boolean`              | `false`   |
+| `bordered`      | `boolean`              | `true`    |
+
+**Крестик очистки включён по умолчанию.** `clearable` равен `true`, поэтому у простого
+`<rt-input formControlName="…" />` с непустым значением появляется крестик. Форма, где его быть не
+должно, ставит `[clearable]="false"`.
 
 ## Выходы
 
-Своих выходов нет: значение уходит через `ControlValueAccessor`, то есть в связанный контрол
-формы.
+| выход            | тип          | когда                                                          |
+| ---------------- | ------------ | -------------------------------------------------------------- |
+| `iconLeftClick`  | `MouseEvent` | нажатие на левую иконку с `iconLeftAction`, мышью и клавишей   |
+| `iconRightClick` | `MouseEvent` | нажатие на правую иконку с `iconRightAction`, мышью и клавишей |
+| `cleared`        | `void`       | сброс крестиком, после того как пустое значение ушло в форму   |
+
+`cleared` достался от основы полей. Значение уходит через `ControlValueAccessor`, то есть в
+связанный контрол формы.
 
 ## Рядом
 

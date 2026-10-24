@@ -41,12 +41,24 @@ export const lightField = [
         value: `var(--rt-text-xs)`,
     },
     {
+        name: `--rt-field-messages-line-height`,
+        value: `normal`,
+    },
+    {
+        name: `--rt-field-messages-padding-top`,
+        value: `0px`,
+    },
+    {
         name: `--rt-field-error-color`,
         value: `var(--rt-color-state-danger)`,
     },
     {
         name: `--rt-field-required-color`,
         value: `var(--rt-color-state-danger)`,
+    },
+    {
+        name: `--rt-field-required-gap`,
+        value: `var(--rt-space-1)`,
     },
     {
         name: `--rt-field-value-font-size`,

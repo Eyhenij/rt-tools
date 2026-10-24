@@ -72,7 +72,9 @@
             background: var(--rt-btn-bg-active);
         }
 
-        &:focus-visible {
+        /* Фокус от мыши и касания кольца не рисует, как у Material: браузер ставит `:focus-visible` и
+           на фокус из кода после нажатия мышью — окно открылось кликом и перевело фокус на кнопку. */
+        &:focus-visible:not(.cdk-mouse-focused, .cdk-touch-focused) {
             box-shadow: var(--rt-btn-focus-shadow);
             outline: 2px solid transparent;
             outline-offset: 2px;

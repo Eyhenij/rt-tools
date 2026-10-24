@@ -75,7 +75,7 @@
             --rt-tree-row-min-height: var(--rt-size-8);
             --rt-tree-row-box-sizing: border-box;
             --rt-tree-row-radius: var(--rt-radius-ms);
-            --rt-tree-guide-color: var(--mat-sys-outline-variant, var(--rt-color-border-subtle));
+            --rt-tree-guide-color: var(--rt-sys-outline-variant, var(--rt-color-border-subtle));
             --rt-tree-toggle-color: var(--rt-color-action-primary);
             --rt-tree-leaf-space-display: none;
             --rt-tree-check-size: calc(var(--rt-size-4) - 2 * var(--rt-input-border-width));
@@ -83,7 +83,7 @@
             --rt-tree-match-bg: var(--rt-mat-yellow-100);
             --rt-tree-match-font-weight: var(--rt-font-weight-semibold);
             --rt-tree-count-bg: var(--rt-color-action-primary);
-            --rt-tree-count-color: var(--mat-sys-on-primary, var(--rt-color-text-inverse));
+            --rt-tree-count-color: var(--rt-sys-on-primary, var(--rt-color-text-inverse));
             --rt-tree-count-font-size: var(--rt-text-xs);
             --rt-tree-count-padding-inline: calc(var(--rt-space-1) + var(--rt-space-0-5));
             --rt-tree-count-min-size: var(--rt-size-5);

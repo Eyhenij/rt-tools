@@ -14,20 +14,24 @@
 
 Свои входы поверх общих из [`RtFormControlBase`](../form-control/CONTEXT.md):
 
-| вход           | тип                                         | умолчание            |
-| -------------- | ------------------------------------------- | -------------------- |
-| `suggestions`  | `ReadonlyArray<TItem>`                      | `[]`                 |
-| `displayWith`  | `(item: TItem \| null) => string`           | `String(item ?? '')` |
-| `placeholder`  | `string`                                    | `''`                 |
-| `minLength`    | `number`                                    | `1`                  |
-| `openOnFocus`  | `boolean`                                   | `false`              |
-| `iconLeft`     | `IRtIcon.Name \| null`                      | `null`               |
-| `itemTemplate` | `TemplateRef<{ $implicit: TItem }> \| null` | `null`               |
+| вход            | тип                                          | умолчание                 |
+| --------------- | -------------------------------------------- | ------------------------- |
+| `suggestions`   | `ReadonlyArray<TItem>`                       | `[]`                      |
+| `displayWith`   | `(item: TItem \| null) => string`            | `String(item ?? '')`      |
+| `placeholder`   | `string`                                     | `''`                      |
+| `minLength`     | `number`                                     | `1`                       |
+| `openOnFocus`   | `boolean`                                    | `false`                   |
+| `iconLeft`      | `IRtIcon.Name \| null`                       | `null`                    |
+| `itemTemplate`  | `TemplateRef<{ $implicit: TItem }> \| null`  | `null`                    |
+| `loading`       | `boolean`                                    | `false`                   |
+| `emptyText`     | `string \| null`                             | `null` → `uiNothingFound` |
+| `emptyTemplate` | `TemplateRef<{ $implicit: string }> \| null` | `null`                    |
 
-| выход        | тип                        |
-| ------------ | -------------------------- |
-| `complete`   | `{ query, originalEvent }` |
-| `itemSelect` | `TItem`                    |
+| выход           | тип                        |
+| --------------- | -------------------------- |
+| `complete`      | `{ query, originalEvent }` |
+| `itemSelect`    | `TItem`                    |
+| `scrolledToEnd` | `void`                     |
 
 Значение — `TItem | null` (объект, а не строка).
 
@@ -49,6 +53,13 @@
 - `openOnFocus` дополнительно запрашивает подсказки при фокусе — для списков «последнее
   выбранное».
 - `itemTemplate` рисует свою разметку подсказки (иконка, две строки); контекст — `$implicit`.
+- `loading` рисует строку со спиннером: вместо пустого результата при первой загрузке и под
+  списком при подгрузке следующей страницы.
+- Пустой результат пишет `emptyText` или рисует `emptyTemplate` с набранной строкой; шаблон
+  сильнее текста.
+- `scrolledToEnd` просит следующую страницу, когда панель долистали до конца. Пока идёт загрузка,
+  он не приходит, и приходит один раз на каждую длину списка. Новый запрос и очистка поля снова
+  разрешают его.
 - Крестик очистки стирает и текст, и значение.
 - Клавиатура: `ArrowDown`/`ArrowUp` водят по подсказкам, `Enter` выбирает, `Escape` закрывает.
   При закрытой панели клавиши ничего не делают. Подсвеченная подсказка прокручивается в видимую

@@ -120,6 +120,7 @@
                                         qa-dataid="workspace-details-agent-select"
                                         [placeholder]="t().uiPickAgent"
                                         [ngModel]="selectedAgentId()"
+                                        [ngModelOptions]="{ standalone: true }"
                                         [options]="edit.options"
                                         [clearable]="false"
                                         (ngModelChange)="onSelectedAgentChange($event)" />
@@ -179,6 +180,7 @@
                             [inputId]="toggle.id"
                             [ariaLabel]="toggle.label"
                             [ngModel]="toggle.value"
+                            [ngModelOptions]="{ standalone: true }"
                             [disabled]="(toggle.disabled ?? false) || busy()"
                             (ngModelChange)="onToggleChange(toggle, $event)" />
                     </div>

@@ -25,6 +25,18 @@ const FALLBACKS: Readonly<Record<IRtTooltip.Placement, readonly IRtTooltip.Place
  * к краю, легла бы на сам host. Бока заданы логическими `start`/`end`: в письме справа налево
  * `left` встаёт справа — как и вся раскладка кита.
  */
+/**
+ * Сторона подсказки: своя на элементе, иначе из настроек кита, иначе сверху, а под материальным
+ * набором снизу, как у первого кита.
+ */
+export function tooltipPlacement(
+    own: IRtTooltip.Placement | null,
+    configured: IRtTooltip.Placement | null,
+    materialPreset: boolean
+): IRtTooltip.Placement {
+    return own ?? configured ?? (materialPreset ? 'bottom' : 'top');
+}
+
 export function tooltipPositions(placement: IRtTooltip.Placement): ConnectedPosition[] {
     return FALLBACKS[placement].map((side: IRtTooltip.Placement): ConnectedPosition => ({ ...POSITION_BY_PLACEMENT[side] }));
 }

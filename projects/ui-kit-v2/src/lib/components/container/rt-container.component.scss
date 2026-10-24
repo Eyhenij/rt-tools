@@ -6,6 +6,7 @@
 @layer rt-kit.components {
     .rt-container {
         --rt-container-border-width: var(--rt-border-width-thin);
+        --rt-container-right-duration: var(--rt-duration-base);
 
         display: grid;
         min-height: 100%;
@@ -16,7 +17,11 @@
         /* Контейнер — место страницы: компоненты внутри считают пороги от его ширины. Боковая
            панель приложения рядом сужает его, и вид внутри сужается вместе с ним. */
         container: rt-place / inline-size;
-        grid-template: 'header header' auto 'left-sidenav toolbar' auto 'left-sidenav content' 1fr / auto 1fr;
+        grid-template:
+            'header header header' auto
+            'left-sidenav toolbar right-sidenav' auto
+            'left-sidenav content right-sidenav' 1fr
+            / auto 1fr auto;
 
         &__header {
             // Хедер закреплён вверху: при скролле документа (высота контейнера не
@@ -78,6 +83,68 @@
             flex-direction: column;
             grid-area: content;
         }
+
+        /* Правая панель колонкой рядом с содержимым (`rightMode="side"`). Закрытая сжимается до
+           нуля и гаснет после перехода; содержимое панели держит свою ширину и не переносится
+           заново на каждом кадре. */
+        &__right-sidenav {
+            --rt-container-right-width: auto;
+
+            display: flex;
+            overflow: clip;
+            min-height: 0;
+            border-left: var(--rt-container-border-width) solid var(--rt-color-border-subtle);
+            background-color: var(--rt-color-bg-surface);
+            grid-area: right-sidenav;
+            inline-size: var(--rt-container-right-width);
+            transition:
+                inline-size var(--rt-container-right-duration) ease,
+                visibility 0s linear;
+
+            &:not(#{&}--open) {
+                border-left-width: 0;
+                inline-size: 0;
+                transition:
+                    inline-size var(--rt-container-right-duration) ease,
+                    visibility 0s linear var(--rt-container-right-duration);
+                visibility: hidden;
+            }
+
+            &--resizing {
+                transition: none;
+            }
+        }
+    }
+
+    /* Обёртка правой панели: ширина и ручка. Живёт и в колонке сетки, и в оверлее в конце
+       страницы, поэтому стоит своим правилом, а не внутри блока. */
+    .rt-container__right-pane {
+        --rt-container-right-width: auto;
+
+        position: relative;
+        display: flex;
+        overflow: auto;
+        min-height: 0;
+        flex: 0 0 auto;
+        block-size: 100%;
+
+        /* Строка, как у панели оверлея: содержимое растягивается на всю высоту, и его
+           `height: 100%` считается от панели, а не от собственного содержимого. */
+        > :not(rt-resize-handle) {
+            min-width: 0;
+            flex: 1 1 auto;
+        }
+
+        &--sized {
+            inline-size: var(--rt-container-right-width);
+        }
+    }
+
+    /* В оверлее обёртка сжимается до его ширины: панель не шире окна, и содержимое переносится,
+       а не уходит за край. Колонке рядом с содержимым сжатие по-прежнему запрещено — там ширина
+       держит содержимое во время перехода. */
+    .cdk-overlay-pane > .rt-container__right-pane {
+        flex-shrink: 1;
     }
 
     /* App-shell раскладка (opt-in `height="viewport"`): контейнер жёстко равен
@@ -104,7 +171,29 @@
         }
     }
 
+    @media (prefers-reduced-motion: reduce) {
+        .rt-container__right-sidenav,
+        .rt-container__right-sidenav:not(.rt-container__right-sidenav--open) {
+            transition: none;
+        }
+    }
+
     @media (width <= 768px) {
+        /* На узком экране колонке рядом с содержимым нет места: панель ложится на зону
+           содержимого и панели инструментов, на всю их ширину. */
+        .rt-container__right-sidenav {
+            grid-column: content;
+            grid-row: toolbar / content;
+            inline-size: auto;
+        }
+
+        /* Оверлей здесь во всё окно, и панель поверх с заданной шириной заполняет его так же, а не
+           стоит у левого края с щелью справа. */
+        .rt-container__right-sidenav .rt-container__right-pane--sized,
+        .cdk-overlay-pane > .rt-container__right-pane--sized {
+            inline-size: 100%;
+        }
+
         // Opt-in: левый sidenav сворачивается в нижний ряд grid'а (таб-бар).
         // Контент занимает всю ширину и скроллится в своём `1fr` над баром —
         // бар остаётся видимым без position:fixed и без привязки к его высоте.

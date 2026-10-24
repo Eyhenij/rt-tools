@@ -311,6 +311,9 @@ export class RtMultiselectComponent<TValue> extends RtFormControlBase<ReadonlyAr
                 this.#toggleActive();
                 break;
             case 'close':
+                // Escape закрывает один слой: панель. Без остановки событие всплывает до document,
+                // и оверлей под панелью — боковая панель, окно — закрывается вместе с ней.
+                event.stopPropagation();
                 this.popover().close();
                 break;
             case 'side':

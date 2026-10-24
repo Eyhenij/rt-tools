@@ -41,10 +41,13 @@ export function filterSideMenuItems(items: ReadonlyArray<IRtSideMenu.Item>, quer
 /**
  * Папки отобранного списка — те, что должны стоять раскрытыми. Возвращаются номера, а не пункты:
  * отобранный список пересобирается на каждую букву запроса, и ссылка на пункт этого не переживает.
+ *
+ * Раскрыта и папка, совпавшая только по имени: отбор оставляет её без детей, но человек искал
+ * именно её, и закрытый заголовок читался бы как «внутри ничего не нашлось».
  */
 export function sideMenuIdsToExpand(items: ReadonlyArray<IRtSideMenu.Item>): Array<string | number> {
     return items.reduce((ids: Array<string | number>, item: IRtSideMenu.Item): Array<string | number> => {
-        if (item.submenu?.length) {
+        if (item.submenu) {
             ids.push(item.id, ...sideMenuIdsToExpand(item.submenu));
         }
 

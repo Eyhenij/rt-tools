@@ -16,6 +16,11 @@ export default {
         },
         disabled: { control: { type: 'boolean' } },
         fullWidth: { control: { type: 'boolean' } },
+        appearance: {
+            options: ['segmented', 'chips'],
+            control: { type: 'inline-radio' },
+        },
+        checkmark: { control: { type: 'boolean' } },
     },
 } as Meta<TestRtToggleButtonGroupComponent>;
 
@@ -31,5 +36,7 @@ export const Playground: TStory = {
         size: 'sm',
         disabled: false,
         fullWidth: false,
+        appearance: 'segmented',
+        checkmark: false,
     },
 };

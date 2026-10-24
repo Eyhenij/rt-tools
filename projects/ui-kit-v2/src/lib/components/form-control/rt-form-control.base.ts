@@ -9,6 +9,8 @@ import {
     InputSignal,
     InputSignalWithTransform,
     OnInit,
+    output,
+    OutputEmitterRef,
     Signal,
     signal,
     WritableSignal,
@@ -25,8 +27,8 @@ import { IRtInput } from '@rt-tools/ui-kit-v2/core';
  *   что даёт доступ к `control.invalid/touched` для авто-подсветки ошибки;
  * - сигнал значения `value`, состояния `isDisabled`/`isInvalid` (отключение
  *   складывается из входа `disabled` и слова формы — см. `isDisabled`);
- * - общие инпуты `size`/`disabled`/`controlId`/`ariaLabel`/`clearable`;
- * - оркестрацию очистки (`clear`) через абстрактные хуки конкретного поля.
+ * - общие инпуты `size`/`disabled`/`controlId`/`ariaLabel`/`clearable`/`clearTabbable`;
+ * - оркестрацию очистки (`clear`) через абстрактные хуки конкретного поля и выход `cleared`.
  *
  * Конкретные поля реализуют `getEmptyValue`/`hasValue`/`focusAfterClear`. Поля
  * с отдельным display-состоянием (autocomplete, input-number) дополнительно
@@ -123,6 +125,9 @@ export abstract class RtFormControlBase<TValue> implements ControlValueAccessor,
         (): boolean => this.clearable() && this.hasValue() && !this.isDisabled()
     );
 
+    /** Tabindex крестика очистки: в порядке обхода только по `clearTabbable`. */
+    protected readonly clearTabIndex: Signal<number> = computed((): number => (this.clearTabbable() ? 0 : -1));
+
     /** Есть ли в поле значение — гейт видимости крестика. */
     protected abstract readonly hasValue: Signal<boolean>;
 
@@ -135,6 +140,21 @@ export abstract class RtFormControlBase<TValue> implements ControlValueAccessor,
     public readonly clearable: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
         transform: booleanAttribute,
     });
+
+    /**
+     * Ставит крестик очистки в порядок обхода по Tab. По умолчанию `false`: крестик достаётся мышью,
+     * а Tab идёт от поля к полю, как прежде. Учитывают его поле ввода и выбор из списка.
+     */
+    public readonly clearTabbable: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+
+    /**
+     * Подпись `rt-field` в материальном наборе ложится внутрь этого контрола, на место подсказки.
+     * Ставят поле ввода, область текста, число и выбор: у палитры, списка и выбора файла места
+     * подсказки нет, и подпись над ними остаётся над контролом.
+     */
+    public readonly fieldLabelInside: boolean = false;
 
     /**
      * Видимая resting-рамка контрола. По умолчанию `true` — рамка видна на обеих
@@ -155,6 +175,12 @@ export abstract class RtFormControlBase<TValue> implements ControlValueAccessor,
 
     /** Публичный invalid для rt-field (touched/dirty учтён в состоянии). */
     public readonly invalid: Signal<boolean> = computed((): boolean => this.isInvalid());
+
+    /**
+     * Сообщает о сбросе крестиком. Приходит после того, как значение уже пустое и ушло в форму:
+     * DOM-событий `input`/`change` сброс не рождает, и хосту, который слушает их, нужен свой сигнал.
+     */
+    public readonly cleared: OutputEmitterRef<void> = output<void>();
 
     /** Текущие ошибки связанного контрола — источник текста ошибки в rt-field. */
     public readonly errors: Signal<ValidationErrors | null> = computed(
@@ -237,6 +263,7 @@ export abstract class RtFormControlBase<TValue> implements ControlValueAccessor,
         this.#onChange(this.value());
         this.#onTouched();
         this.focusAfterClear();
+        this.cleared.emit();
     }
 
     /** Сбрасывает значение к пустому. Поля с display-сигналом расширяют. */

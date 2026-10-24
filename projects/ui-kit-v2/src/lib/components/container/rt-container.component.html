@@ -35,5 +35,40 @@
         </main>
     }
 
+    @if (rightSidenavTpl() !== undefined && rightMode() === 'side') {
+        <aside
+            #rightCell
+            rtElem="right-sidenav"
+            qa-dataid="container-right-sidenav"
+            [rtMod]="{ open: rightOpen(), resizing: rightResizing() }"
+            [attr.inert]="rightOpen() ? null : ''"
+            [style.--rt-container-right-width.px]="rightShownWidth()">
+            <ng-container [ngTemplateOutlet]="rightPane" />
+        </aside>
+    }
+
     <rt-toaster position="bottom-center" />
+
+    <!-- Правая панель с шириной и ручкой: одна разметка для оверлея и для колонки рядом с содержимым. -->
+    <ng-template #rightPane>
+        <div
+            rtElem="right-pane"
+            qa-dataid="container-right-pane"
+            [rtMod]="{ sized: rightShownWidth() !== null }"
+            [style.--rt-container-right-width.px]="rightShownWidth()">
+            @if (rightSidenavTpl(); as tpl) {
+                <ng-container [ngTemplateOutlet]="tpl" />
+            }
+
+            @if (rightResizable()) {
+                <rt-resize-handle
+                    edge="start"
+                    [width]="rightShownWidth()"
+                    [min]="rightMinWidth()"
+                    [max]="rightMaxWidth()"
+                    (widthChange)="onRightWidth($event)"
+                    (resizing)="rightResizing.set($event)" />
+            }
+        </div>
+    </ng-template>
 </ng-container>

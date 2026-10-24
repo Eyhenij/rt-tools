@@ -124,6 +124,14 @@ Then the popup shows «No results» instead of the rows
 
 Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/popup/rt-dynamic-selector-popup.component.spec.ts`.
 
+### SC-UKV-1013 — the popup works on its own
+
+Given the popup stands outside a selector and gets «Anna», «Boris» and «Vera» by its own inputs
+When the person ticks «Boris» and presses «Apply», and then presses «Cancel»
+Then the popup reports the key 2 by its apply output, and then fires its cancel output
+
+Covered: `projects/ui-kit-v2/src/lib/components/dynamic-selector/popup/rt-dynamic-selector-popup-standalone.spec.ts`.
+
 ### SC-UKV-451 — a divider follows the last visible pinned row
 
 Given the popup offers «Anna», «Boris» and «Vera», and «Anna» and «Boris» are pinned
