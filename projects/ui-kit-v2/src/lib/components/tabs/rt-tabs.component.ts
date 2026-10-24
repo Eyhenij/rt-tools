@@ -2,6 +2,7 @@ import { BooleanInput } from '@angular/cdk/coercion';
 import { DOCUMENT, NgTemplateOutlet } from '@angular/common';
 import {
     afterNextRender,
+    afterRenderEffect,
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
@@ -168,6 +169,9 @@ export class RtTabsComponent {
     /** Хэндл интервала прокрутки по удержанию стрелки. */
     #scrollIntervalId: number | null = null;
 
+    /** Вкладка, к которой полоса прокручена последней: второй прокрутки к ней не нужно. */
+    #scrolledId: IRtTabs.Id | null = null;
+
     constructor() {
         if (this.#win) {
             fromEvent(this.#win, 'resize')
@@ -175,7 +179,14 @@ export class RtTabsComponent {
                 .subscribe((): void => this.#updateRestVisibility());
         }
 
-        afterNextRender((): void => this.#updateRestVisibility());
+        afterNextRender((): void => {
+            this.#scrollToSelected();
+            this.#updateRestVisibility();
+        });
+
+        // Смена вкладки извне — входом `activeId` или новым набором вкладок. После клика
+        // полоса уже прокручена из `selectTab`, и `#scrolledId` пропускает вторую прокрутку.
+        afterRenderEffect((): void => this.#scrollToSelected());
 
         // Снимаем hold-scroll интервал при уничтожении: если компонент разрушить
         // с зажатой стрелкой (pointerdown без pointerup), интервал остался бы жив.
@@ -289,24 +300,44 @@ export class RtTabsComponent {
         this.restAfterVisible.set(scrolledRight > 1);
     }
 
+    #scrollToSelected(): void {
+        const id: IRtTabs.Id | null = this.selectedId();
+
+        if (id !== null && id !== this.#scrolledId) {
+            this.#scrollTabIntoView(id);
+        }
+    }
+
+    /**
+     * Ставит вкладку в полосу целиком. Стрелки лежат поверх краёв полосы, поэтому вкладка
+     * не у конца полосы отступает от края на ширину стрелки. Место вкладки меряется по
+     * прямоугольникам: `offsetLeft` считался бы от обёртки полосы и ехал бы с прокруткой.
+     */
     #scrollTabIntoView(id: IRtTabs.Id): void {
         const list: HTMLElement | undefined = this.tabListRef()?.nativeElement;
         const tab: HTMLElement | null | undefined = list?.querySelector<HTMLElement>(`[data-tabid="${id}"]`);
 
-        if (!list || !tab) {
+        if (!list || !tab || this.direction() !== 'horizontal') {
             return;
         }
 
-        const viewLeft: number = list.scrollLeft;
-        const viewRight: number = list.scrollLeft + list.clientWidth;
+        this.#scrolledId = id;
 
-        if (tab.offsetLeft < viewLeft) {
-            list.scrollTo({ left: tab.offsetLeft });
-        } else if (tab.offsetLeft + tab.offsetWidth > viewRight) {
-            list.scrollTo({ left: tab.offsetLeft + tab.offsetWidth - list.clientWidth });
+        const restWidth: number = list.parentElement?.querySelector<HTMLElement>('.rt-tabs__rest')?.offsetWidth ?? 0;
+        const tabLeft: number = tab.getBoundingClientRect().left - list.getBoundingClientRect().left + list.scrollLeft;
+        const tabRight: number = tabLeft + tab.offsetWidth;
+        const insetBefore: number = tabLeft > 0 ? restWidth : 0;
+        const insetAfter: number = list.scrollWidth - tabRight > 1 ? restWidth : 0;
+
+        if (tabLeft - insetBefore < list.scrollLeft) {
+            list.scrollTo({ left: Math.max(tabLeft - insetBefore, 0) });
+        } else if (tabRight + insetAfter > list.scrollLeft + list.clientWidth) {
+            list.scrollTo({ left: tabRight + insetAfter - list.clientWidth });
         } else {
             // вкладка целиком в зоне видимости — прокрутка не нужна
         }
+
+        this.#updateRestVisibility();
     }
 
     #focusTab(id: IRtTabs.Id): void {
