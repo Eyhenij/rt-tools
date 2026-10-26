@@ -1,0 +1,220 @@
+<div data-rt-density="-1">
+    <app-story-row
+        caption="Признак набора на самом поле, плотность −1 на предке"
+        [items]="cases"
+        [itemLabel]="caseLabel"
+        [slotWidth]="fieldWidth">
+        <ng-template let-fieldCase>
+            <ng-container *ngTemplateOutlet="field; context: { $implicit: fieldCase, preset: 'material' }" />
+        </ng-template>
+    </app-story-row>
+</div>
+
+<div data-preset="material" data-rt-density="-1">
+    <app-story-row caption="Признак набора и плотность −1 на предке" [items]="cases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
+        <ng-template let-fieldCase>
+            <ng-container *ngTemplateOutlet="field; context: { $implicit: fieldCase, preset: null }" />
+        </ng-template>
+    </app-story-row>
+</div>
+
+<div [style]="ownHeight">
+    <app-story-row
+        caption="Своя высота приложения 30 px на предке сильнее набора на поле"
+        [items]="lowCases"
+        [itemLabel]="caseLabel"
+        [slotWidth]="fieldWidth">
+        <ng-template let-fieldCase>
+            <ng-container *ngTemplateOutlet="field; context: { $implicit: fieldCase, preset: 'material' }" />
+        </ng-template>
+    </app-story-row>
+</div>
+
+<div data-preset="material" data-rt-density="-1">
+    <app-story-row
+        caption="Обведённые поля: текст в 16 px от края, отключённые — без тусклости"
+        [items]="outlineCases"
+        [itemLabel]="caseLabel"
+        [slotWidth]="fieldWidth">
+        <ng-template let-fieldCase>
+            <ng-container *ngTemplateOutlet="field; context: { $implicit: fieldCase, preset: null }" />
+        </ng-template>
+    </app-story-row>
+</div>
+
+<div data-preset="material" data-rt-density="-1">
+    <app-story-row
+        caption="Отключённые залитые поля — заливка Material, on-surface 4 %"
+        [items]="disabledFillCases"
+        [itemLabel]="caseLabel"
+        [slotWidth]="fieldWidth">
+        <ng-template let-fieldCase>
+            <ng-container *ngTemplateOutlet="field; context: { $implicit: fieldCase, preset: null }" />
+        </ng-template>
+    </app-story-row>
+</div>
+
+<div data-preset="material" data-rt-density="-1">
+    <app-story-row
+        caption="Крестик очистки — крестик первого кита: 19 px, значок 12 px, в 8 px от края и 4 px от текста"
+        [items]="clearCases"
+        [itemLabel]="caseLabel"
+        [slotWidth]="fieldWidth">
+        <ng-template let-fieldCase>
+            <ng-container *ngTemplateOutlet="field; context: { $implicit: fieldCase, preset: null }" />
+        </ng-template>
+    </app-story-row>
+</div>
+
+<app-story-row caption="Свой вид кита: крестик прежний, 32 px" [items]="kitClearCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
+    <ng-template let-fieldCase>
+        <ng-container *ngTemplateOutlet="field; context: { $implicit: fieldCase, preset: null }" />
+    </ng-template>
+</app-story-row>
+
+<div data-preset="material" data-rt-density="-1">
+    <app-story-row
+        caption="Строка под полем — строка подсказки Material: 16 px и 4 px над ней"
+        [items]="messageCases"
+        [itemLabel]="caseLabel"
+        [slotWidth]="fieldWidth">
+        <ng-template let-fieldCase>
+            <ng-container *ngTemplateOutlet="field; context: { $implicit: fieldCase, preset: null }" />
+        </ng-template>
+    </app-story-row>
+</div>
+
+<app-story-row caption="Свой вид кита: строка под полем прежняя" [items]="kitMessageCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
+    <ng-template let-fieldCase>
+        <ng-container *ngTemplateOutlet="field; context: { $implicit: fieldCase, preset: null }" />
+    </ng-template>
+</app-story-row>
+
+<div data-preset="material" data-rt-density="-1">
+    <app-story-row
+        caption="Область текста залитая — как залитое поле ввода"
+        [items]="textCases"
+        [itemLabel]="caseLabel"
+        [slotWidth]="fieldWidth">
+        <ng-template let-fieldCase>
+            <ng-container *ngTemplateOutlet="field; context: { $implicit: fieldCase, preset: null }" />
+        </ng-template>
+    </app-story-row>
+</div>
+
+<app-story-row caption="Свой вид кита: область текста залитая" [items]="kitTextCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
+    <ng-template let-fieldCase>
+        <ng-container *ngTemplateOutlet="field; context: { $implicit: fieldCase, preset: null }" />
+    </ng-template>
+</app-story-row>
+
+<div data-preset="material" data-rt-density="-1">
+    <app-story-row
+        caption="Кнопка-значок на месте значка: значок в 12 px от края, текст с 40 px"
+        [items]="actionCases"
+        [itemLabel]="caseLabel"
+        [slotWidth]="fieldWidth">
+        <ng-template let-fieldCase>
+            <ng-container *ngTemplateOutlet="field; context: { $implicit: fieldCase, preset: null }" />
+        </ng-template>
+    </app-story-row>
+</div>
+
+<div data-preset="material" data-rt-density="-1">
+    <app-story-row
+        caption="Высота поля Material: выбор со своим шаблоном значения — 52 px, область текста в 4 строки — 124 px"
+        [items]="heightCases"
+        [itemLabel]="caseLabel"
+        [slotWidth]="fieldWidth">
+        <ng-template let-heightCase>
+            <rt-field label="Оформление" [reserveHintSpace]="true">
+                @if (heightCase.kind === 'select') {
+                    <rt-select appearance="fill" [clearable]="false" [options]="schemes" [formControl]="heightCase.control">
+                        <ng-template rtSelectOption let-option>
+                            <rt-icon name="check-circle" [style.color]="option.value" />
+                            {{ option.label }}
+                        </ng-template>
+                    </rt-select>
+                } @else {
+                    <rt-textarea appearance="fill" [rows]="4" [formControl]="heightCase.control" />
+                }
+            </rt-field>
+        </ng-template>
+    </app-story-row>
+</div>
+
+<div data-preset="material" data-rt-density="-1">
+    <app-story-row
+        caption="Залитое поле без подписи: места под подпись нет, значение посередине, строка подсказки держится"
+        [items]="unlabeledCases"
+        [itemLabel]="caseLabel"
+        [slotWidth]="fieldWidth">
+        <ng-template let-fieldCase>
+            <ng-container *ngTemplateOutlet="field; context: { $implicit: fieldCase, preset: null }" />
+        </ng-template>
+    </app-story-row>
+</div>
+
+<app-story-row caption="Наименьшая ширина поля задана на предке или нет" [items]="widthCases" [itemLabel]="caseLabel">
+    <ng-template let-widthCase>
+        <div data-preset="material" data-rt-density="-1" [style]="widthCase.style">
+            <rt-select appearance="outline" placeholder="Гостиница" [options]="hotels" [formControl]="widthCase.control" />
+        </div>
+    </ng-template>
+</app-story-row>
+
+<app-story-row
+    caption="Подпись на рамке у самого контрола, признак набора на его теге"
+    [items]="ownCases"
+    [itemLabel]="caseLabel"
+    [slotWidth]="fieldWidth">
+    <ng-template let-ownCase>
+        @if (ownCase.kind === 'select') {
+            <rt-select
+                data-preset="material"
+                floatingLabel="Бюджет"
+                radius="sm"
+                [appearance]="ownCase.appearance"
+                [options]="hotels"
+                [formControl]="ownCase.control" />
+        } @else {
+            <rt-input
+                data-preset="material"
+                floatingLabel="Бюджет"
+                radius="sm"
+                [appearance]="ownCase.appearance"
+                [formControl]="ownCase.control" />
+        }
+    </ng-template>
+</app-story-row>
+
+<ng-template #field let-fieldCase let-preset="preset">
+    <rt-field
+        [label]="fieldCase.noLabel ? '' : 'Гостиница'"
+        [hint]="fieldCase.hint ?? ''"
+        [reserveHintSpace]="fieldCase.reserve ?? false"
+        [attr.data-preset]="preset"
+        [attr.data-story-state]="fieldCase.state">
+        @if (fieldCase.kind === 'select') {
+            <rt-select placeholder="Выберите" [appearance]="fieldCase.appearance" [options]="hotels" [formControl]="fieldCase.control" />
+        } @else if (fieldCase.kind === 'textarea') {
+            <rt-textarea
+                placeholder="Комментарий"
+                [appearance]="fieldCase.appearance === 'fill' ? 'fill' : 'outline'"
+                [formControl]="fieldCase.control" />
+        } @else if (fieldCase.kind === 'number') {
+            <rt-input-number placeholder="0" [appearance]="fieldCase.appearance" [formControl]="fieldCase.control" />
+        } @else {
+            <rt-input
+                placeholder="Название"
+                iconLeftTooltip="Найти"
+                iconRightTooltip="Найти"
+                [appearance]="fieldCase.appearance"
+                [iconLeft]="fieldCase.iconLeft"
+                [iconRight]="fieldCase.iconRight ?? null"
+                [iconLeftAction]="fieldCase.iconAction ?? false"
+                [iconRightAction]="fieldCase.iconAction ?? false"
+                [formControl]="fieldCase.control" />
+        }
+    </rt-field>
+</ng-template>

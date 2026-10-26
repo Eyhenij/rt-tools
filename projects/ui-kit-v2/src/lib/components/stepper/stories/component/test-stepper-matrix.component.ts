@@ -1,8 +1,10 @@
+import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
+import { RtStepLabelDirective } from '../../rt-step-label.directive';
 import { RtStepperComponent } from '../../rt-stepper.component';
 import { IRtStepper } from '../../rt-stepper.model';
 
@@ -10,7 +12,7 @@ import { IRtStepper } from '../../rt-stepper.model';
 const STEP_DESCRIPTION: string = 'Готовим договор и согласуем условия.';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TStepperMatrixPart = 'position' | 'length' | 'description' | 'edges' | 'presets' | 'themes';
+export type TStepperMatrixPart = 'position' | 'length' | 'description' | 'edges' | 'vertical' | 'presets' | 'themes';
 
 /** Случай набора шагов: имя для подписи ячейки, сам набор и номер текущего шага. */
 interface IStepperCase {
@@ -31,6 +33,14 @@ const STEPS_FIVE: readonly IRtStepper.Step[] = [
     { label: 'Договор', description: STEP_DESCRIPTION },
     { label: 'Оплата', description: 'Ждём поступления по счёту.' },
     { label: 'Подключение', description: 'Открываем доступ и передаём ключи.' },
+];
+
+/** Шаги инструкции: у последнего в подписи выделено слово, поэтому подпись рисует шаблон. */
+const STEPS_INSTRUCTION: readonly IRtStepper.Step[] = [
+    { label: 'Откройте письмо с приглашением', description: 'Оно приходит в течение минуты.' },
+    { label: 'Перейдите по ссылке из письма' },
+    { label: 'Задайте пароль' },
+    { label: 'Войдите под логином' },
 ];
 
 /**
@@ -95,6 +105,25 @@ const STEPS_FIVE: readonly IRtStepper.Step[] = [
                 </app-story-presets>
             }
 
+            @case ('vertical') {
+                <app-story-presets caption="Вертикальный список в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="20rem" [items]="verticals" [itemLabel]="caseLabel">
+                            <ng-template let-item>
+                                <rt-stepper orientation="vertical" [steps]="item.steps" [currentIndex]="item.currentIndex" />
+                            </ng-template>
+                        </app-story-row>
+                        <p>
+                            Инструкция без текущего шага, подпись рисует шаблон
+                            <code>rtStepLabel</code>
+                        </p>
+                        <div style="width: 20rem">
+                            <ng-container [ngTemplateOutlet]="instruction" />
+                        </div>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('presets') {
                 <app-story-presets caption="Полоса в обоих наборах">
                     <ng-template>
@@ -113,17 +142,38 @@ const STEPS_FIVE: readonly IRtStepper.Step[] = [
                                 <div style="width: 26rem">
                                     <rt-stepper [steps]="stepsThree" [currentIndex]="1" />
                                 </div>
+                                <div style="width: 20rem; margin-block-start: 24px">
+                                    <rt-stepper orientation="vertical" [steps]="stepsThree" [currentIndex]="1" />
+                                </div>
+                                <div style="width: 20rem; margin-block-start: 24px">
+                                    <ng-container [ngTemplateOutlet]="instruction" />
+                                </div>
                             </ng-template>
                         </app-story-themes>
                     </ng-template>
                 </app-story-presets>
             }
         }
+
+        <ng-template #instruction>
+            <rt-stepper orientation="vertical" [steps]="stepsInstruction" [currentIndex]="-1">
+                <ng-template rtStepLabel let-step let-index="index">
+                    @if (index === stepsInstruction.length - 1) {
+                        {{ step.label }}
+                        <strong>LOGIN</strong>
+                    } @else {
+                        {{ step.label }}
+                    }
+                </ng-template>
+            </rt-stepper>
+        </ng-template>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // components
         RtStepperComponent,
+        RtStepLabelDirective,
+        NgTemplateOutlet,
 
         // showcase
         StoryPresetsComponent,
@@ -182,6 +232,15 @@ export class TestRtStepperMatrixComponent {
         { name: 'номер за пределами набора', steps: STEPS_THREE, currentIndex: 99 },
         { name: 'отрицательный номер', steps: STEPS_THREE, currentIndex: -3 },
         { name: 'пустой набор', steps: [], currentIndex: 0 },
+    ];
+
+    public readonly stepsInstruction: readonly IRtStepper.Step[] = STEPS_INSTRUCTION;
+
+    /** Вертикальный список: текущий в начале, в середине, все пройдены — номер за последним. */
+    public readonly verticals: readonly IStepperCase[] = [
+        { name: 'текущий — первый', steps: STEPS_FIVE, currentIndex: 0 },
+        { name: 'текущий — третий', steps: STEPS_FIVE, currentIndex: 2 },
+        { name: 'все пройдены', steps: STEPS_FIVE, currentIndex: 5 },
     ];
 
     public readonly caseLabel: (value: IStepperCase) => string = (value: IStepperCase): string => value.name;

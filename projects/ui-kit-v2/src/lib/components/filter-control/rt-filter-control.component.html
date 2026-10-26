@@ -8,6 +8,7 @@
         [clearable]="false"
         [disabled]="disabled()"
         [ngModel]="value()"
+        [ngModelOptions]="{ standalone: true }"
         (selectionChange)="onSelectionChange($event)" />
 } @else {
     <rt-toggle-button-group

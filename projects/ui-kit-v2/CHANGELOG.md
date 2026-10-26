@@ -1,3 +1,46 @@
+# [0.34.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.33.0...rt-ui-kit-v2%400.34.0) (2026-10-26)
+
+### Bug Fixes
+
+- **rt:ui-kit-v2:** базовый вид поля и выбора снова как на main — рамка своего указателя, строка подсказки, интервал ([40b980b](https://github.com/Eyhenij/rt-tools/commit/40b980bfdb04107f73ad05730db245def75ad17c))
+- **rt:ui-kit-v2:** вкладки — animationDuration больше не задаёт длительность прокрутки полосы ([8d0e589](https://github.com/Eyhenij/rt-tools/commit/8d0e58945e867a1ff12befbb4bfbd3ee88057853))
+- **rt:ui-kit-v2:** залитое поле без подписи под материальным набором не держит места под неё ([6907474](https://github.com/Eyhenij/rt-tools/commit/6907474e3c99d5825dd98a31a5e3b79b0d6dcb6f))
+- **rt:ui-kit-v2:** назначения навигации в своём файле токенов, пустая строка через исходник ([79013e7](https://github.com/Eyhenij/rt-tools/commit/79013e766d22e8736c9b5a279bd30755679d6a4c))
+- **rt:ui-kit-v2:** окно выбора динамического селектора снова работает само по себе ([b2a89b0](https://github.com/Eyhenij/rt-tools/commit/b2a89b06a42d69e3444741f8d48506747a112bc6))
+- **rt:ui-kit-v2:** поле ввода показывает значение, которое форма вернула ему во время набора ([34da2f3](https://github.com/Eyhenij/rt-tools/commit/34da2f3a3748c07d2c6ffd3effe993aeffd1d69e))
+- **rt:ui-kit-v2:** поля выбора, поиска и переключатели кита внутри формы страницы не пишут NG01354 ([54c0407](https://github.com/Eyhenij/rt-tools/commit/54c0407ba31d2f1ebb1ed57d7a21865398755da1))
+- **rt:ui-kit-v2:** поля динамического селектора внутри формы страницы не пишут NG01354 ([1e1516d](https://github.com/Eyhenij/rt-tools/commit/1e1516d3d79159896a7833212112f8349cb8e24a))
+- **rt:ui-kit-v2:** поля под материальным набором догоняют Material в отступах и отключённом виде ([0935067](https://github.com/Eyhenij/rt-tools/commit/093506703b47ea1a481afefa6411802182046adc))
+- **rt:ui-kit-v2:** правая панель каркаса поверх страницы не шире окна ([34076a9](https://github.com/Eyhenij/rt-tools/commit/34076a9acd4cb916b4216dc2710ee43a901c8010))
+- **rt:ui-kit-v2:** признак набора на теге поля включает подпись на рамке ([06df730](https://github.com/Eyhenij/rt-tools/commit/06df730ce989f5b40fbf0837b0f2e858450a1a83))
+- **rt:ui-kit-v2:** свой вид поля с крестиком прежний, ветка после слияния с main снова проходит проверки ([b5dd14b](https://github.com/Eyhenij/rt-tools/commit/b5dd14bb8b09cf461924e0636dc94c313e4cae9d))
+- **rt:ui-kit-v2:** три замечания проверок перед отправкой ([d4776c6](https://github.com/Eyhenij/rt-tools/commit/d4776c6209c3637068c98bb533b151368f38370e))
+- **rt:ui-kit-v2:** шаг стрелки вкладок 80 px, ярусы и направление боковой панели, тело панели в обёртке, пузырёк и кнопка ([3e2176d](https://github.com/Eyhenij/rt-tools/commit/3e2176d72de3d706b94edaffc66443ff4686e5eb))
+
+### Features
+
+- **rt:ui-kit-v2:** боковая панель — содержимое за краем, ширина по содержимому, события перехода и выбор фокуса ([e77a33f](https://github.com/Eyhenij/rt-tools/commit/e77a33fc02e36b6603970f30759df60cb60354ac))
+- **rt:ui-kit-v2:** боковое меню — поиск раскрывает папку, совпавшую по имени, свёрнутое избранное держит число ([32b6792](https://github.com/Eyhenij/rt-tools/commit/32b67926e6370ad6244089c79fd22ff5ef91895d))
+- **rt:ui-kit-v2:** вкладки — вход preserveContent сохраняет тело посещённой вкладки ([dff71d7](https://github.com/Eyhenij/rt-tools/commit/dff71d70556abeb85e4ec3c49d7a80c4d0a5c8f7))
+- **rt:ui-kit-v2:** вкладки — открытую панель можно убрать из обхода по Tab ([5058d4c](https://github.com/Eyhenij/rt-tools/commit/5058d4c62805a9a039f24bd1eb1fb0c2d5b77f88))
+- **rt:ui-kit-v2:** вкладки — полоса переезжает на новую вкладку, панель сменяется сдвигом ([5f2fa98](https://github.com/Eyhenij/rt-tools/commit/5f2fa9815ac957c3d3032737d7ee46096768e015))
+- **rt:ui-kit-v2:** вкладки — полоса прокручивается плавно, шаг стрелки задаётся входом scrollStep ([336e148](https://github.com/Eyhenij/rt-tools/commit/336e14823325aa0450135f1436cdf66076dde563))
+- **rt:ui-kit-v2:** вкладки — ручной выбор с клавиатуры, шаг стрелкой прокрутки и стрелки в своих местах ([0466fea](https://github.com/Eyhenij/rt-tools/commit/0466fea0912f1aae36e8893374a914b369c9e793))
+- **rt:ui-kit-v2:** вкладки — у крестика своя подсказка, вид крестика задаётся свойствами ([d2920fb](https://github.com/Eyhenij/rt-tools/commit/d2920fbe0b5818553d35a06363443fbe577fd89f))
+- **rt:ui-kit-v2:** запросы приложения к полям и компонентам второго кита ([a9c2d52](https://github.com/Eyhenij/rt-tools/commit/a9c2d527a9afcd0017529ce5612a1ac1e1b1d2b1))
+- **rt:ui-kit-v2:** кит не читает имён Material — роли темы приложения --rt-sys-* ([82a37ee](https://github.com/Eyhenij/rt-tools/commit/82a37ee364110c12b106bcd4dd2ff1a6ef5c649f))
+- **rt:ui-kit-v2:** кнопки не рисуют кольцо фокуса после нажатия мышью ([f78ecef](https://github.com/Eyhenij/rt-tools/commit/f78ecefcf2ae92529e14ee06d16144e81c81dab0))
+- **rt:ui-kit-v2:** крестик вкладки — своя кнопка, доступная с клавиатуры ([7c05f83](https://github.com/Eyhenij/rt-tools/commit/7c05f83f266f8994e04ad95766cd3fb86fb15853))
+- **rt:ui-kit-v2:** крестик и поля под материальным набором как у Material, вид «чипы» у группы переключателей ([bdd7f02](https://github.com/Eyhenij/rt-tools/commit/bdd7f02991ac44988d16f7e0c88f5f6600b422ab))
+- **rt:ui-kit-v2:** межбуквенный интервал полей и размер шрифта «на странице» из ручек приложения ([36c1fc1](https://github.com/Eyhenij/rt-tools/commit/36c1fc17e27a2941ce1d931a7bb17deca5249542))
+- **rt:ui-kit-v2:** поле под материальным набором совпадает с полем Material ([2acc951](https://github.com/Eyhenij/rt-tools/commit/2acc951d9b33b7eb6b8a258d4a956e7aa40958e2))
+- **rt:ui-kit-v2:** предел длины у поля и многострочного поля, своя задержка у подсказки ([d4670c5](https://github.com/Eyhenij/rt-tools/commit/d4670c55892dfea6d57e6f43eb948bccf790dd08))
+- **rt:ui-kit-v2:** раскрывающаяся панель — box-sizing тела отдельно от панели ([ce29dab](https://github.com/Eyhenij/rt-tools/commit/ce29dab088d1826b79862b3566d2abd24bce90d3))
+- **rt:ui-kit-v2:** раскрывающаяся панель — высота строки, шрифт тела и box-sizing из свойств ([0a05bc2](https://github.com/Eyhenij/rt-tools/commit/0a05bc2d658c002c3861caa574598292f0011d5f))
+- **rt:ui-kit-v2:** тост — голый вид для своего компонента-карточки ([c2305b0](https://github.com/Eyhenij/rt-tools/commit/c2305b053f30a2b276be6260a0cde398bc7da327))
+- **rt:ui-kit-v2:** тостер — свой канал для закреплённых тостов ([40845c8](https://github.com/Eyhenij/rt-tools/commit/40845c87f275b0d6cf2ad3e7ea79dab9bd75878a))
+- **rt:ui-kit-v2:** умолчания подсказки на всё приложение в настройках кита ([4ae6e16](https://github.com/Eyhenij/rt-tools/commit/4ae6e16f44340f334ac98fc2cf5a4279f7ef7e67))
+
 # [0.33.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.32.0...rt-ui-kit-v2%400.33.0) (2026-10-23)
 
 ### Features

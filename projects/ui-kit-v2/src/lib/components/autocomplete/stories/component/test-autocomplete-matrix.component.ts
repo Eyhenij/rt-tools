@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, WritableSignal } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { STORY_FIELD_WIDTH } from '../../../../../showcase/story-metrics';
@@ -12,11 +12,16 @@ import { RtIconComponent } from '../../../icon/rt-icon.component';
 import { IRtInput } from '../../../input/rt-input.model';
 import { RtAutocompleteComponent } from '../../rt-autocomplete.component';
 
+/** Страница выдуманных городов с номерами — длинный список для прокрутки до дна. */
+function pageOf(from: number, size: number): ReadonlyArray<string> {
+    return Array.from({ length: size }, (_: unknown, index: number): string => `Город ${from + index + 1}`);
+}
+
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
 export type TAutocompleteMatrixPart = 'size' | 'filling' | 'bordered' | 'states' | 'presets' | 'themes' | 'panel';
 
 /** Что показывает открытая панель: подсказки, своя разметка подсказки, ничего не найдено. */
-export type TAutocompletePanelCase = 'suggestions' | 'template' | 'empty';
+export type TAutocompletePanelCase = 'suggestions' | 'template' | 'empty' | 'loading-first' | 'loading-more' | 'empty-own' | 'paged';
 
 /** Наполненность поля: она решает, видно ли крестик очистки и текст вместо подсказки. */
 interface IAutocompleteFillingCase {
@@ -226,13 +231,62 @@ function invalid(): FormControl<string | null> {
                         </span>
                     </ng-template>
 
-                    <rt-autocomplete
-                        ariaLabel="Открытые подсказки"
-                        placeholder="Начните вводить город"
-                        [attr.data-story-trigger]="triggerAttribute"
-                        [suggestions]="panel === 'empty' ? noSuggestions : suggestions"
-                        [displayWith]="displayWith"
-                        [itemTemplate]="panel === 'template' ? richItem : null" />
+                    <ng-template #ownEmpty let-query>
+                        <span class="app-autocomplete-matrix__item">
+                            <rt-icon name="search" size="sm" color="muted" />
+                            Нет роли «{{ query }}»
+                        </span>
+                    </ng-template>
+
+                    @switch (panel) {
+                        @case ('loading-first') {
+                            <rt-autocomplete
+                                ariaLabel="Первая загрузка"
+                                placeholder="Начните вводить город"
+                                [attr.data-story-trigger]="triggerAttribute"
+                                [suggestions]="noSuggestions"
+                                [loading]="true"
+                                [displayWith]="displayWith" />
+                        }
+                        @case ('loading-more') {
+                            <rt-autocomplete
+                                ariaLabel="Подгрузка страницы"
+                                placeholder="Начните вводить город"
+                                [attr.data-story-trigger]="triggerAttribute"
+                                [suggestions]="suggestions"
+                                [loading]="true"
+                                [displayWith]="displayWith" />
+                        }
+                        @case ('empty-own') {
+                            <rt-autocomplete
+                                ariaLabel="Свой пустой результат"
+                                placeholder="Начните вводить роль"
+                                [attr.data-story-trigger]="triggerAttribute"
+                                [suggestions]="noSuggestions"
+                                [emptyTemplate]="ownEmpty"
+                                [displayWith]="displayWith" />
+                        }
+                        @case ('paged') {
+                            <rt-autocomplete
+                                ariaLabel="Постраничные подсказки"
+                                placeholder="Начните вводить город"
+                                [attr.data-story-trigger]="triggerAttribute"
+                                [suggestions]="pagedItems()"
+                                [loading]="pagedLoading()"
+                                [displayWith]="displayWith"
+                                (scrolledToEnd)="loadNextPage()" />
+                            <p>Страниц загружено: {{ pagedItems().length / pageSize }}</p>
+                        }
+                        @default {
+                            <rt-autocomplete
+                                ariaLabel="Открытые подсказки"
+                                placeholder="Начните вводить город"
+                                [attr.data-story-trigger]="triggerAttribute"
+                                [suggestions]="panel === 'empty' ? noSuggestions : suggestions"
+                                [displayWith]="displayWith"
+                                [itemTemplate]="panel === 'template' ? richItem : null" />
+                        }
+                    }
                 </div>
             }
         }
@@ -283,6 +337,14 @@ export class TestRtAutocompleteMatrixComponent {
     /** Подсказки одни на все матрицы: разойдись наборы, разница читалась бы как разница состояний. */
     public readonly suggestions: ReadonlyArray<string> = ['Минск', 'Могилёв', 'Мозырь', 'Молодечно'];
 
+    /**
+     * Постраничные подсказки: страница по двадцать — заметно выше предела панели, иначе до дна
+     * докатывались бы одним движением колеса и прокрутки почти не было бы видно.
+     */
+    public readonly pageSize: number = 20;
+    public readonly pagedItems: WritableSignal<ReadonlyArray<string>> = signal<ReadonlyArray<string>>(pageOf(0, 20));
+    public readonly pagedLoading: WritableSignal<boolean> = signal<boolean>(false);
+
     public readonly fillingCases: readonly IAutocompleteFillingCase[] = [
         { name: 'пусто', iconLeft: false, control: picked(null) },
         { name: 'со значением', iconLeft: false, control: picked('Минск') },
@@ -318,4 +380,16 @@ export class TestRtAutocompleteMatrixComponent {
      * стоит после остальных полей.
      */
     public readonly displayWith: (item: string | null) => string = (item: string | null): string => String(item ?? '');
+
+    /** Следующая страница: признак загрузки на полсекунды, затем ещё страница городов. */
+    public loadNextPage(): void {
+        this.pagedLoading.set(true);
+        setTimeout((): void => {
+            this.pagedItems.update((items: ReadonlyArray<string>): ReadonlyArray<string> => [
+                ...items,
+                ...pageOf(items.length, this.pageSize),
+            ]);
+            this.pagedLoading.set(false);
+        }, 500);
+    }
 }

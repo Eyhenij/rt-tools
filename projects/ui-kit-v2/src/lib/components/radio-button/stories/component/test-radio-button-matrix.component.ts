@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 import { StoryGridComponent } from '../../../../../showcase/story-grid.component';
 import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
@@ -6,13 +7,20 @@ import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { IStoryState, STORY_CONTROL_STATES, storyStateLabel } from '../../../../../showcase/story-states';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtRadioButtonComponent } from '../../rt-radio-button.component';
+import { RtRadioGroupComponent, TRtRadioGroupOrientation } from '../../rt-radio-group.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TRadioButtonMatrixPart = 'value' | 'label' | 'card' | 'states' | 'presets' | 'themes';
+export type TRadioButtonMatrixPart = 'value' | 'label' | 'card' | 'states' | 'presets' | 'themes' | 'group';
 
 interface IRadioValueCase {
     readonly name: string;
     readonly checked: boolean;
+}
+
+interface IRadioRoom {
+    readonly value: string;
+    readonly label: string;
+    readonly disabled: boolean;
 }
 
 interface IRadioLabelCase {
@@ -36,8 +44,12 @@ interface IRadioLabelCase {
     templateUrl: './test-radio-button-matrix.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
+        // Angular
+        ReactiveFormsModule,
+
         // components
         RtRadioButtonComponent,
+        RtRadioGroupComponent,
 
         // showcase
         StoryGridComponent,
@@ -69,8 +81,24 @@ export class TestRtRadioButtonMatrixComponent {
         { name: 'подпись и пояснение', label: 'Москва', description: 'Столица, доставка за день' },
     ];
 
+    /** Раскладки группы и выбор у каждой своей формой: строка и столбец не делят одну точку. */
+    public readonly orientations: readonly TRtRadioGroupOrientation[] = ['vertical', 'horizontal'];
+
+    /** Средний вариант отключён: стрелка его пропускает. */
+    public readonly rooms: readonly IRadioRoom[] = [
+        { value: 'single', label: 'Одноместный', disabled: false },
+        { value: 'double', label: 'Двухместный', disabled: true },
+        { value: 'suite', label: 'Люкс', disabled: false },
+    ];
+
+    public readonly verticalRoom: FormControl<string | null> = new FormControl<string | null>('suite');
+    public readonly horizontalRoom: FormControl<string | null> = new FormControl<string | null>(null);
+
     public readonly switchLabel: (value: boolean) => string = (value: boolean): string => (value ? 'отключена' : 'включена');
     public readonly lookLabel: (value: boolean) => string = (value: boolean): string => (value ? 'карточка' : 'обычный');
+
+    public readonly orientationLabel: (value: TRtRadioGroupOrientation) => string = (value: TRtRadioGroupOrientation): string =>
+        value === 'vertical' ? 'столбцом' : 'строкой';
 
     /** Подпись случая: у всех наборов этой матрицы имя лежит в одном поле. */
     public readonly caseLabel: (value: { readonly name: string }) => string = (value: { readonly name: string }): string => value.name;

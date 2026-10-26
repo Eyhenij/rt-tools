@@ -57,3 +57,9 @@ export const Presets: TStory = {
 };
 
 export const Themes: TStory = { args: { part: 'themes' } };
+
+/**
+ * Фокус из кода: кнопка слева переводит его на соседнюю, как окно, открытое кликом. Кольцо
+ * рисуется только при фокусе с клавиатуры — нажмите «Открыть окно» мышью, затем Tab и Enter.
+ */
+export const FocusOrigin: TStory = { args: { part: 'focus-origin' } };

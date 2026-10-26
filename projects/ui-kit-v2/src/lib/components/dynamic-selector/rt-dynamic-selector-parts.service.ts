@@ -12,6 +12,11 @@ export class RtDynamicSelectorPartsService<T> {
     #popup: IRtDynamicSelectorParts.PopupSource<T> | null = null;
     #list: IRtDynamicSelectorParts.ListSource<T> | null = null;
 
+    /** Корень привязал источник окна; без него окно берёт свои входы. */
+    public get hasPopup(): boolean {
+        return this.#popup !== null;
+    }
+
     /** Источник окна выбора; часть вне корня падает с названием своего места. */
     public get popup(): IRtDynamicSelectorParts.PopupSource<T> {
         if (this.#popup === null) {

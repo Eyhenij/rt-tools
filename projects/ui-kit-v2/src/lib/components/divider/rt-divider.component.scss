@@ -1,0 +1,34 @@
+@layer rt-kit.components {
+    /* rt-divider — линия-разделитель. ViewEncapsulation.None, линия — граница хоста. */
+    .rt-divider {
+        --rt-divider-width: var(--rt-border-width-thin);
+        --rt-divider-color: var(--rt-color-border-default);
+        --rt-divider-inset: var(--rt-space-16);
+        --rt-divider-inset-block: var(--rt-space-2);
+
+        display: block;
+        flex-shrink: 0;
+        border: 0;
+        border-top: var(--rt-divider-width) solid var(--rt-divider-color);
+        margin: 0;
+
+        &--inset {
+            margin-inline-start: var(--rt-divider-inset);
+        }
+
+        /* Вертикальная линия тянется по высоте строки: в гибкой строке — по поперечной оси. */
+        &--vertical {
+            display: inline-block;
+            min-height: 1em;
+            align-self: stretch;
+            border-top: 0;
+            border-inline-start: var(--rt-divider-width) solid var(--rt-divider-color);
+        }
+
+        /* Вертикальной линии отступ не от начала строки, а сверху и снизу: она короче соседей. */
+        &--vertical#{&}--inset {
+            margin-block: var(--rt-divider-inset-block);
+            margin-inline-start: 0;
+        }
+    }
+}

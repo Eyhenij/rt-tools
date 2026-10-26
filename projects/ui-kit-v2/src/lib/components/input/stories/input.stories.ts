@@ -16,6 +16,7 @@ export default {
         iconRight: { control: false },
         passwordToggle: { control: { type: 'boolean' } },
         autocomplete: { control: { type: 'text' } },
+        maxlength: { control: { type: 'number' } },
     },
 } as Meta<TestRtInputComponent>;
 
@@ -30,5 +31,6 @@ export const Playground: TStory = {
         iconRight: null,
         passwordToggle: false,
         autocomplete: null,
+        maxlength: null,
     },
 };

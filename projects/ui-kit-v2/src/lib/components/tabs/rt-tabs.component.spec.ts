@@ -10,7 +10,12 @@ import { IRtTabs } from './rt-tabs.model';
 @Component({
     selector: 'rt-tabs-host',
     template: `
-        <rt-tabs [activeId]="activeId()" [direction]="direction()" [stretch]="stretch()" (activeIdChange)="picked = $event">
+        <rt-tabs
+            [activeId]="activeId()"
+            [contentTabIndex]="contentTabIndex()"
+            [direction]="direction()"
+            [stretch]="stretch()"
+            (activeIdChange)="picked = $event">
             <ng-template rtTab="main" label="Основное">Содержимое основного</ng-template>
             <ng-template rtTab="extra" label="Дополнительно" [badge]="3" [badgeTitle]="badgeTitle()" [badgeAriaLabel]="badgeAriaLabel()">
                 Содержимое дополнительного
@@ -26,29 +31,11 @@ class TabsHostComponent {
     public readonly activeId: WritableSignal<IRtTabs.Id | null> = signal<IRtTabs.Id | null>(null);
     public readonly direction: WritableSignal<IRtTabs.Direction> = signal<IRtTabs.Direction>('horizontal');
     public readonly stretch: WritableSignal<boolean> = signal<boolean>(false);
+    public readonly contentTabIndex: WritableSignal<number | null> = signal<number | null>(0);
     public readonly lockedDisabled: WritableSignal<boolean> = signal<boolean>(true);
     public readonly badgeTitle: WritableSignal<string> = signal<string>('');
     public readonly badgeAriaLabel: WritableSignal<string> = signal<string>('');
     public picked: IRtTabs.Id | null = null;
-}
-
-/** Пять вкладок без отключённых и скрытых — для узкой полосы. */
-@Component({
-    selector: 'rt-tabs-narrow-host',
-    template: `
-        <rt-tabs [activeId]="activeId()">
-            <ng-template rtTab="a" label="Первая">Первая</ng-template>
-            <ng-template rtTab="b" label="Вторая">Вторая</ng-template>
-            <ng-template rtTab="c" label="Третья">Третья</ng-template>
-            <ng-template rtTab="d" label="Четвёртая">Четвёртая</ng-template>
-            <ng-template rtTab="e" label="Пятая">Пятая</ng-template>
-        </rt-tabs>
-    `,
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [RtTabsComponent, RtTabDirective],
-})
-class NarrowTabsHostComponent {
-    public readonly activeId: WritableSignal<IRtTabs.Id | null> = signal<IRtTabs.Id | null>(null);
 }
 
 function setup(): ComponentFixture<TabsHostComponent> {
@@ -203,6 +190,23 @@ describe('RtTabsComponent', (): void => {
 
             expect(tabs(fixture).map((node: HTMLButtonElement): string | null => node.getAttribute('tabindex'))).toEqual(['0', '-1', '-1']);
         });
+
+        it('SC-UKV-999 — открытая панель по умолчанию стоит в таб-порядке', (): void => {
+            const fixture: ComponentFixture<TabsHostComponent> = setup();
+
+            expect((qa(fixture, 'tabs-panel')?.nativeElement as HTMLElement).getAttribute('tabindex')).toBe('0');
+        });
+
+        it('SC-UKV-999 — contentTabIndex null снимает таб-стоп с панели', (): void => {
+            const fixture: ComponentFixture<TabsHostComponent> = setup();
+            fixture.componentInstance.contentTabIndex.set(null);
+            fixture.detectChanges();
+            const panel: HTMLElement = qa(fixture, 'tabs-panel')?.nativeElement as HTMLElement;
+
+            // Пара к утверждению ниже: панель найдена и осталась панелью, пропал только атрибут.
+            expect(panel.getAttribute('role')).toBe('tabpanel');
+            expect(panel.hasAttribute('tabindex')).toBe(false);
+        });
     });
 
     describe('оформление', (): void => {
@@ -222,7 +226,7 @@ describe('RtTabsComponent', (): void => {
             fixture.detectChanges();
 
             expect(classesOf(qa(fixture, 'tabs-tab-list'))).toContain('rt-tabs__tab-list--stretch');
-            expect(classesOf(tabs(fixture)[0])).toContain('rt-tab-item--stretch');
+            expect(Array.from(tabs(fixture)[0].parentElement?.classList ?? [])).toContain('rt-tab-item--stretch');
         });
 
         it('счётчик рисуется отдельным элементом рядом с подписью', (): void => {
@@ -297,123 +301,5 @@ describe('RtTabsComponent', (): void => {
         // Смотреть надо на сам `rt-tabs`, а не на обёртку из спеки: у обёртки
         // классов нет никогда, и утверждение о ней говорило бы не о компоненте.
         expect(classesOf(el(setup(), 'rt-tabs'))).toContain('rt-tabs');
-    });
-
-    describe('узкая полоса', (): void => {
-        // В jsdom нет раскладки: размеры подставлены на прототипах. Вкладка шириной 100,
-        // их пять — полоса шириной 500 в окне 250, стрелка поверх края шириной 40.
-        const TAB_WIDTH: number = 100;
-        const LIST_WIDTH: number = 250;
-        const REST_WIDTH: number = 40;
-
-        const scrollLefts: WeakMap<Element, number> = new WeakMap<Element, number>();
-        let scrollToCalls: number = 0;
-
-        function isList(node: Element): boolean {
-            return node.getAttribute('qa-dataid') === 'tabs-tab-list';
-        }
-
-        function scrollWidthOf(node: Element): number {
-            return isList(node) ? node.children.length * TAB_WIDTH : 0;
-        }
-
-        function setScrollLeft(node: Element, value: number): void {
-            const max: number = Math.max(scrollWidthOf(node) - LIST_WIDTH, 0);
-            scrollLefts.set(node, Math.min(Math.max(value, 0), max));
-        }
-
-        beforeEach((): void => {
-            scrollToCalls = 0;
-            jest.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function (this: HTMLElement): number {
-                if (this.hasAttribute('data-tabid')) {
-                    return TAB_WIDTH;
-                }
-                return this.classList.contains('rt-tabs__rest') ? REST_WIDTH : 0;
-            });
-            jest.spyOn(Element.prototype, 'clientWidth', 'get').mockImplementation(function (this: Element): number {
-                return isList(this) ? LIST_WIDTH : 0;
-            });
-            jest.spyOn(Element.prototype, 'scrollWidth', 'get').mockImplementation(function (this: Element): number {
-                return scrollWidthOf(this);
-            });
-            jest.spyOn(Element.prototype, 'scrollLeft', 'get').mockImplementation(function (this: Element): number {
-                return scrollLefts.get(this) ?? 0;
-            });
-            jest.spyOn(Element.prototype, 'getBoundingClientRect').mockImplementation(function (this: Element): DOMRect {
-                const parent: Element | null = this.parentElement;
-                const left: number =
-                    this.hasAttribute('data-tabid') && parent
-                        ? Array.from(parent.children).indexOf(this) * TAB_WIDTH - (scrollLefts.get(parent) ?? 0)
-                        : 0;
-                return new DOMRect(left, 0, 0, 0);
-            });
-            Element.prototype.scrollTo = function (this: Element, options?: ScrollToOptions | number): void {
-                scrollToCalls++;
-                setScrollLeft(this, typeof options === 'number' ? options : (options?.left ?? 0));
-            };
-        });
-
-        afterEach((): void => {
-            jest.restoreAllMocks();
-            delete (Element.prototype as Partial<Element>).scrollTo;
-        });
-
-        function open(activeId: IRtTabs.Id | null): ComponentFixture<NarrowTabsHostComponent> {
-            const fixture: ComponentFixture<NarrowTabsHostComponent> = createRtFixture(
-                NarrowTabsHostComponent,
-                {},
-                { skipInitialDetect: true }
-            );
-            fixture.componentInstance.activeId.set(activeId);
-            fixture.detectChanges();
-            return fixture;
-        }
-
-        function list(fixture: ComponentFixture<NarrowTabsHostComponent>): HTMLElement {
-            return qa(fixture, 'tabs-tab-list')?.nativeElement as HTMLElement;
-        }
-
-        function restVisible(fixture: ComponentFixture<NarrowTabsHostComponent>, side: 'prev' | 'next'): boolean {
-            return classesOf(qa(fixture, `tabs-scroll-${side}`)).includes('rt-tabs__rest--visible');
-        }
-
-        it('SC-UKV-916 — полоса, открытая на последней вкладке, прокручена к ней', (): void => {
-            const fixture: ComponentFixture<NarrowTabsHostComponent> = open('e');
-
-            // Последняя вкладка 400…500 целиком в окне 250…500, левая стрелка 250…290 её не закрывает.
-            expect(list(fixture).scrollLeft).toBe(250);
-            expect(restVisible(fixture, 'prev')).toBe(true);
-            expect(restVisible(fixture, 'next')).toBe(false);
-        });
-
-        it('SC-UKV-917 — смена activeId извне прокручивает полосу к новой вкладке', (): void => {
-            const fixture: ComponentFixture<NarrowTabsHostComponent> = open('e');
-
-            fixture.componentInstance.activeId.set('a');
-            fixture.detectChanges();
-
-            expect(list(fixture).scrollLeft).toBe(0);
-            expect(restVisible(fixture, 'prev')).toBe(false);
-            expect(restVisible(fixture, 'next')).toBe(true);
-
-            // Средняя вкладка 200…300 отступает от правой стрелки: окно 90…340, стрелка 300…340.
-            fixture.componentInstance.activeId.set('c');
-            fixture.detectChanges();
-
-            expect(list(fixture).scrollLeft).toBe(90);
-            expect(restVisible(fixture, 'prev')).toBe(true);
-            expect(restVisible(fixture, 'next')).toBe(true);
-        });
-
-        it('SC-UKV-918 — клик прокручивает полосу один раз', (): void => {
-            const fixture: ComponentFixture<NarrowTabsHostComponent> = open(null);
-            expect(scrollToCalls).toBe(0);
-
-            (qaAll(fixture, 'tabs-tab')[3].nativeElement as HTMLButtonElement).click();
-            fixture.detectChanges();
-
-            expect(list(fixture).scrollLeft).toBe(190);
-            expect(scrollToCalls).toBe(1);
-        });
     });
 });

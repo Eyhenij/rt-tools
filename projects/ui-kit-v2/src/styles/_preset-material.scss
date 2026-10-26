@@ -15,24 +15,24 @@
 @mixin rt-preset-material-tokens {
     /* Подложки */
     --rt-color-bg-page: var(--rt-mat-neutral-5);
-    --rt-color-bg-surface: var(--mat-sys-surface, var(--rt-mat-neutral-0));
+    --rt-color-bg-surface: var(--rt-sys-surface, var(--rt-mat-neutral-0));
     --rt-color-bg-surface-subtle: var(--rt-mat-overlay-black-4);
-    --rt-color-bg-surface-subtle-2: var(--mat-form-field-filled-container-color, var(--mat-sys-surface-variant, var(--rt-mat-neutral-15)));
+    --rt-color-bg-surface-subtle-2: var(--rt-field-filled-container-color, var(--rt-sys-surface-variant, var(--rt-mat-neutral-15)));
     --rt-color-bg-hover: var(--rt-mat-neutral-10);
     --rt-color-bg-subtle: var(--rt-mat-neutral-10);
     --rt-color-bg-overlay: var(--rt-mat-overlay-black-32);
-    --rt-color-bg-inverse: var(--mat-sys-inverse-surface, var(--rt-mat-neutral-100));
-    --rt-color-bg-nav: var(--mat-sys-primary, var(--rt-mat-navy-100)); /* марка первого кита: обвязка тёмная в обоих наборах */
+    --rt-color-bg-inverse: var(--rt-sys-inverse-surface, var(--rt-mat-neutral-100));
+    --rt-color-bg-nav: var(--rt-sys-primary, var(--rt-mat-navy-100)); /* марка первого кита: обвязка тёмная в обоих наборах */
     --rt-color-bg-page-auth: var(--rt-mat-neutral-5);
     --rt-color-bg-surface-auth-card: var(--rt-mat-neutral-0);
 
     /* Текст */
-    --rt-color-text-primary: var(--mat-sys-on-surface, var(--rt-mat-neutral-100));
+    --rt-color-text-primary: var(--rt-sys-on-surface, var(--rt-mat-neutral-100));
     --rt-color-text-muted: var(--rt-mat-neutral-60);
-    --rt-color-text-disabled: color-mix(in srgb, var(--mat-sys-on-surface, var(--rt-mat-neutral-100)) 38%, transparent);
-    --rt-color-text-inverse: var(--mat-sys-inverse-on-surface, var(--rt-mat-neutral-0));
-    --rt-color-text-link: var(--mat-sys-primary, var(--rt-mat-blue-100));
-    --rt-color-text-link-hover: color-mix(in srgb, var(--mat-sys-primary, var(--rt-mat-blue-100)) 90%, #000);
+    --rt-color-text-disabled: color-mix(in srgb, var(--rt-sys-on-surface, var(--rt-mat-neutral-100)) 38%, transparent);
+    --rt-color-text-inverse: var(--rt-sys-inverse-on-surface, var(--rt-mat-neutral-0));
+    --rt-color-text-link: var(--rt-sys-primary, var(--rt-mat-blue-100));
+    --rt-color-text-link-hover: color-mix(in srgb, var(--rt-sys-primary, var(--rt-mat-blue-100)) 90%, #000);
 
     /* Рамки */
     --rt-color-border-default: var(--rt-mat-neutral-25);
@@ -41,11 +41,11 @@
     --rt-color-border-focus: var(--rt-mat-blue-40); /* кольцо фокуса первого кита светлее его действия */
 
     /* Действие: подложка, наведение, нажатие, подпись на них и цвет роли на поверхности */
-    --rt-color-action-primary: var(--mat-sys-primary, var(--rt-mat-blue-100));
-    --rt-color-action-primary-hover: color-mix(in srgb, var(--mat-sys-primary, var(--rt-mat-blue-100)) 90%, #000);
-    --rt-color-action-primary-active: color-mix(in srgb, var(--mat-sys-primary, var(--rt-mat-blue-100)) 80%, #000);
-    --rt-color-action-primary-subtle: color-mix(in srgb, var(--mat-sys-primary, var(--rt-mat-blue-100)) 8%, transparent);
-    --rt-color-action-primary-soft: color-mix(in srgb, var(--mat-sys-primary, var(--rt-mat-blue-100)) 24%, transparent);
+    --rt-color-action-primary: var(--rt-sys-primary, var(--rt-mat-blue-100));
+    --rt-color-action-primary-hover: color-mix(in srgb, var(--rt-sys-primary, var(--rt-mat-blue-100)) 90%, #000);
+    --rt-color-action-primary-active: color-mix(in srgb, var(--rt-sys-primary, var(--rt-mat-blue-100)) 80%, #000);
+    --rt-color-action-primary-subtle: color-mix(in srgb, var(--rt-sys-primary, var(--rt-mat-blue-100)) 8%, transparent);
+    --rt-color-action-primary-soft: color-mix(in srgb, var(--rt-sys-primary, var(--rt-mat-blue-100)) 24%, transparent);
     --rt-color-action-on-primary: var(--rt-mat-neutral-0);
     --rt-color-action-secondary: var(--rt-mat-neutral-60);
     --rt-color-action-secondary-hover: var(--rt-mat-neutral-hover);
@@ -60,15 +60,15 @@
     --rt-color-action-warning-hover: var(--rt-mat-orange-hover);
     --rt-color-action-warning-active: var(--rt-mat-orange-active);
     --rt-color-action-on-warning: var(--rt-mat-neutral-0);
-    --rt-color-action-danger: var(--mat-sys-error, var(--rt-mat-red-100));
-    --rt-color-action-danger-hover: color-mix(in srgb, var(--mat-sys-error, var(--rt-mat-red-100)) 90%, #000);
-    --rt-color-action-danger-active: color-mix(in srgb, var(--mat-sys-error, var(--rt-mat-red-100)) 80%, #000);
+    --rt-color-action-danger: var(--rt-sys-error, var(--rt-mat-red-100));
+    --rt-color-action-danger-hover: color-mix(in srgb, var(--rt-sys-error, var(--rt-mat-red-100)) 90%, #000);
+    --rt-color-action-danger-active: color-mix(in srgb, var(--rt-sys-error, var(--rt-mat-red-100)) 80%, #000);
     --rt-color-action-on-danger: var(--rt-mat-neutral-0);
-    --rt-color-action-info: var(--mat-sys-primary, var(--rt-mat-blue-100));
-    --rt-color-action-info-hover: color-mix(in srgb, var(--mat-sys-primary, var(--rt-mat-blue-100)) 90%, #000);
-    --rt-color-action-info-active: color-mix(in srgb, var(--mat-sys-primary, var(--rt-mat-blue-100)) 80%, #000);
+    --rt-color-action-info: var(--rt-sys-primary, var(--rt-mat-blue-100));
+    --rt-color-action-info-hover: color-mix(in srgb, var(--rt-sys-primary, var(--rt-mat-blue-100)) 90%, #000);
+    --rt-color-action-info-active: color-mix(in srgb, var(--rt-sys-primary, var(--rt-mat-blue-100)) 80%, #000);
     --rt-color-action-on-info: var(--rt-mat-neutral-0);
-    --rt-color-action-disabled: color-mix(in srgb, var(--mat-sys-on-surface, var(--rt-mat-neutral-100)) 12%, transparent);
+    --rt-color-action-disabled: color-mix(in srgb, var(--rt-sys-on-surface, var(--rt-mat-neutral-100)) 12%, transparent);
 
     /* Состояния: цвет роли и её светлая подложка */
     --rt-color-state-success: var(--rt-mat-green-100);
@@ -77,11 +77,11 @@
     --rt-color-state-warning: var(--rt-mat-orange-100);
     --rt-color-state-warning-bg: var(--rt-mat-orange-5);
     --rt-color-state-warning-text: var(--rt-mat-orange-100);
-    --rt-color-state-danger: var(--mat-sys-error, var(--rt-mat-red-100));
-    --rt-color-state-danger-bg: var(--mat-sys-error-container, var(--rt-mat-red-10));
-    --rt-color-state-error-text: var(--mat-sys-error, var(--rt-mat-red-100));
-    --rt-color-state-info: var(--mat-sys-primary, var(--rt-mat-blue-100));
-    --rt-color-state-info-bg: var(--mat-sys-primary-container, var(--rt-mat-blue-20));
+    --rt-color-state-danger: var(--rt-sys-error, var(--rt-mat-red-100));
+    --rt-color-state-danger-bg: var(--rt-sys-error-container, var(--rt-mat-red-10));
+    --rt-color-state-error-text: var(--rt-sys-error, var(--rt-mat-red-100));
+    --rt-color-state-info: var(--rt-sys-primary, var(--rt-mat-blue-100));
+    --rt-color-state-info-bg: var(--rt-sys-primary-container, var(--rt-mat-blue-20));
 
     /* Рельса шагов */
     --rt-color-stepper-track: var(--rt-mat-neutral-30);
@@ -92,30 +92,30 @@
     --rt-color-skeleton-wave: var(--rt-mat-neutral-25);
 
     /* Шапка таблицы первого кита залита тем же цветом, что залитое поле Material. */
-    --rt-color-table-head-bg: var(--mat-form-field-filled-container-color, var(--mat-sys-surface-variant, var(--rt-mat-overlay-black-4)));
+    --rt-color-table-head-bg: var(--rt-field-filled-container-color, var(--rt-sys-surface-variant, var(--rt-mat-overlay-black-4)));
 
     /* Черта снизу у залитого поля Material — цвет on-surface-variant темы. */
-    --rt-color-field-fill-underline: var(--mat-sys-on-surface-variant, var(--rt-mat-neutral-30));
+    --rt-color-field-fill-underline: var(--rt-sys-on-surface-variant, var(--rt-mat-neutral-30));
 
     /* Поиск списка первого кита — обведённое или залитое поле Material при плотности −1:
        52px, скругление 4px, рамка цвета outline темы, внутри прозрачное. Ступени 52px нет, высота собрана из ступени
        xl без ступени 1. */
     --rt-list-search-height: calc(var(--rt-control-height-xl) - var(--rt-space-1));
     --rt-list-search-radius: var(--rt-radius-sm);
-    --rt-list-search-color-border: var(--mat-sys-outline, var(--rt-mat-neutral-25));
+    --rt-list-search-color-border: var(--rt-sys-outline, var(--rt-mat-neutral-25));
     --rt-list-search-color-bg: transparent;
     --rt-list-search-width: calc(var(--rt-size-64) + var(--rt-size-24));
     --rt-list-search-padding-x: calc(var(--rt-space-2) + var(--rt-space-1) - var(--rt-border-width-thin));
     --rt-list-search-gap: var(--rt-space-4);
     --rt-list-search-font-size: var(--rt-text-md);
     --rt-list-search-icon-size: var(--rt-size-6);
-    --rt-list-search-icon-color: var(--mat-sys-on-surface-variant, var(--rt-mat-neutral-60));
-    --rt-list-search-color-placeholder: var(--mat-sys-on-surface-variant, var(--rt-mat-neutral-60));
+    --rt-list-search-icon-color: var(--rt-sys-on-surface-variant, var(--rt-mat-neutral-60));
+    --rt-list-search-color-placeholder: var(--rt-sys-on-surface-variant, var(--rt-mat-neutral-60));
 
     /* Панель настройки колонок первого кита: плашка колонки залита цветом выбранного пункта
        Material, значки — в тоне on-surface-variant темы. Сняты с панели на витрине первого кита. */
-    --rt-list-settings-item-bg: var(--mat-option-selected-state-layer-color, var(--mat-sys-secondary-container, var(--rt-mat-neutral-10)));
-    --rt-list-settings-icon-color: var(--mat-sys-on-surface-variant, var(--rt-mat-neutral-60));
+    --rt-list-settings-item-bg: var(--rt-option-selected-state-layer-color, var(--rt-sys-secondary-container, var(--rt-mat-neutral-10)));
+    --rt-list-settings-icon-color: var(--rt-sys-on-surface-variant, var(--rt-mat-neutral-60));
 
     /* Кнопки действий панели списка — mat-mini-fab первого кита: круг без заливки с подъёмом 6,
        под указателем подъём 8 и тёмный значок вместо серого; значок 24px, промежуток 16px. */
@@ -127,16 +127,16 @@
     --rt-list-action-icon-size: var(--rt-size-6);
     --rt-list-action-color: var(--rt-mat-neutral-60);
     --rt-list-table-icon-size: var(--rt-size-6);
-    --rt-list-table-icon-color: var(--mat-sys-on-surface-variant, var(--rt-mat-neutral-60));
-    --rt-list-table-head-divider-color: var(--mat-sys-outline, var(--rt-mat-neutral-30));
+    --rt-list-table-icon-color: var(--rt-sys-on-surface-variant, var(--rt-mat-neutral-60));
+    --rt-list-table-head-divider-color: var(--rt-sys-outline, var(--rt-mat-neutral-30));
     --rt-list-table-button-size: calc(var(--rt-size-8) + var(--rt-size-1));
     --rt-list-table-button-radius: var(--rt-radius-full);
     --rt-list-copy-button-size: var(--rt-size-6);
     --rt-list-copy-button-radius: var(--rt-mat-radius-5);
     --rt-list-settings-item-radius: var(--rt-mat-radius-5);
     --rt-list-filter-line-height: var(--rt-size-6);
-    --rt-list-copy-button-bg: var(--mat-fab-small-container-color, var(--rt-mat-neutral-0));
-    --rt-list-copy-button-bg-hover: var(--mat-fab-small-container-color, var(--rt-mat-neutral-0));
+    --rt-list-copy-button-bg: var(--rt-fab-small-container-color, var(--rt-mat-neutral-0));
+    --rt-list-copy-button-bg-hover: var(--rt-fab-small-container-color, var(--rt-mat-neutral-0));
     --rt-list-copy-button-color: var(--rt-mat-neutral-60);
     --rt-list-action-color-hover: var(--rt-mat-neutral-100);
     --rt-list-action-color-bg-hover: transparent;
@@ -194,24 +194,24 @@
        скруглён только снизу, подсказка 4px без тени. Тень — подъём 2 Material, как у mat-menu и
        mat-select. */
     --rt-overlay-menu-radius: var(--rt-mat-radius-4);
-    --rt-overlay-menu-shadow: var(--mat-sys-level2, var(--rt-mat-shadow-level-2));
+    --rt-overlay-menu-shadow: var(--rt-sys-level2, var(--rt-mat-shadow-level-2));
     --rt-overlay-select-radius: 0 0 var(--rt-mat-radius-4) var(--rt-mat-radius-4);
-    --rt-overlay-select-shadow: var(--mat-sys-level2, var(--rt-mat-shadow-level-2));
+    --rt-overlay-select-shadow: var(--rt-sys-level2, var(--rt-mat-shadow-level-2));
     --rt-overlay-tooltip-radius: var(--rt-mat-radius-4);
     --rt-overlay-tooltip-shadow: none;
 
     /* Меню строки — mat-menu первого кита: фон контейнера Material, отступ 8px сверху и снизу,
        подписи весом 500, опасный пункт красным первого кита. Выпадающий список — mat-select: пункты
        16px, выбранный — фон текста 12% без жирного и с галочкой. */
-    --rt-overlay-menu-bg: var(--mat-menu-container-color, var(--rt-mat-neutral-0));
+    --rt-overlay-menu-bg: var(--rt-menu-container-color, var(--rt-mat-neutral-0));
     --rt-overlay-menu-padding-y: var(--rt-space-sm);
     --rt-overlay-menu-item-weight: var(--rt-font-weight-medium);
     --rt-overlay-menu-danger-color: var(--rt-mat-red-100);
     --rt-overlay-select-option-font-size: var(--rt-text-md);
-    --rt-overlay-select-selected-bg: color-mix(in srgb, var(--mat-sys-on-surface, var(--rt-mat-neutral-100)) 12%, transparent);
+    --rt-overlay-select-selected-bg: color-mix(in srgb, var(--rt-sys-on-surface, var(--rt-mat-neutral-100)) 12%, transparent);
     --rt-overlay-select-selected-weight: var(--rt-font-weight-regular);
     --rt-overlay-select-check-display: inline-flex;
-    --rt-overlay-menu-current-bg: color-mix(in srgb, var(--mat-sys-on-surface, var(--rt-mat-neutral-100)) 12%, transparent);
+    --rt-overlay-menu-current-bg: color-mix(in srgb, var(--rt-sys-on-surface, var(--rt-mat-neutral-100)) 12%, transparent);
     --rt-overlay-menu-min-width: var(--rt-mat-menu-min-width);
     --rt-overlay-menu-item-min-height: var(--rt-size-12);
     --rt-overlay-menu-item-padding-y: 0px;
@@ -225,6 +225,89 @@
     --rt-icon-button-disabled-opacity: 1;
     --rt-icon-button-disabled-color: var(--rt-color-text-disabled);
     --rt-icon-button-disabled-fill: 0%;
+
+    /* Обведённое поле Material: прозрачное, рамка цвета outline темы, фокус — рамка в два
+       пикселя цветом марки без внешнего кольца. Вторая линия рамки фокуса — внутренняя тень. */
+    --rt-input-color-bg: transparent;
+    --rt-input-color-border: var(--rt-sys-outline, var(--rt-mat-neutral-60));
+    --rt-input-focus-shadow: inset 0 0 0 1px var(--rt-input-color-border-focus);
+    --rt-input-focus-shadow-error: inset 0 0 0 1px var(--rt-input-color-border-error);
+
+    /* Размер поля Material: 56 px при плотности 0 и на 4 px меньше за каждый шаг, значение 16 px.
+       Шаг приходит свойством `--rt-input-density`, которое ставит атрибут `data-rt-density` на поле
+       или на любом предке, — правила в `_density.scss`. Высота считается здесь, на узле с признаком
+       набора, из унаследованного шага: атрибут на корне приложения доходит и до поля со своим
+       признаком набора. Своя высота приложения — `--rt-input-height-app` на любом предке; она сильнее
+       плотности и не перебивается набором на самом поле. */
+    --rt-input-height-md: var(
+        --rt-input-height-app,
+        calc(var(--rt-size-12) + var(--rt-size-2) - var(--rt-input-density) * var(--rt-size-1))
+    );
+    --rt-input-height: var(--rt-input-height-md);
+
+    /* Крупная ступень `size` не ниже средней высоты набора: 48 px кита под набором вышли бы ниже
+       поля по умолчанию (56 px). Малая ступень остаётся ступенью кита — по ней стоят поиск списка и
+       правка на месте. */
+    --rt-input-height-lg: max(var(--rt-control-height-lg), var(--rt-input-height-md));
+    --rt-input-font-size: var(--rt-text-md);
+
+    /* Подсказка, подпись в покое, значки и стрелка поля — цвета on-surface-variant темы Material,
+       каретка — цвета марки, значки 24 px, как у поля Material. Без темы Material цвета прежние. */
+    --rt-input-color-text-placeholder: var(--rt-sys-on-surface-variant, var(--rt-mat-neutral-60));
+    --rt-input-icon-color: var(--rt-sys-on-surface-variant, var(--rt-neutral-600));
+    --rt-input-icon-size: var(--rt-size-6);
+    --rt-input-caret-color: var(--rt-color-action-primary);
+
+    /* Отключённое поле Material: поле не тускнеет целиком — рамка on-surface 12%, текст и
+       подсказка on-surface 38%. */
+    --rt-input-disabled-field-opacity: 1;
+    --rt-input-color-border-disabled: var(--rt-color-action-disabled);
+    --rt-input-color-text-disabled: var(--rt-color-text-disabled);
+    --rt-input-color-placeholder-disabled: var(--rt-color-text-disabled);
+    --rt-input-color-bg-disabled: transparent;
+
+    /* Крестик очистки — крестик первого кита: 19 px, значок 12 px, серый, в 8 px от края поля и в
+       4 px от текста. Отступ от края считается от правого поля в 4 px, как у поля Material с крестиком. */
+    --rt-input-clear-size: 19px;
+    --rt-input-clear-icon-size: var(--rt-size-3);
+    --rt-input-clear-color: var(--rt-mat-neutral-60);
+    --rt-input-clear-offset-end: calc(var(--rt-space-2) - var(--rt-space-1));
+    --rt-input-clear-offset-start: calc(var(--rt-space-1) - var(--rt-input-gap));
+    --rt-input-fill-color-bg-disabled: color-mix(in srgb, var(--rt-sys-on-surface, var(--rt-mat-neutral-100)) 4%, transparent);
+    --rt-input-clear-bg: var(--rt-mat-neutral-25);
+    --rt-input-clear-bg-hover: var(--rt-input-clear-bg);
+    --rt-input-clear-radius: var(--rt-radius-full);
+
+    /* Залитое поле Material: рамки сверху и по бокам нет, только черта снизу; в фокусе черта
+       вдвое толще цветом марки, у недействительного поля — цветом ошибки. */
+    --rt-input-fill-edge: 0px;
+    --rt-input-fill-focus-shadow: inset 0 -1px 0 0 var(--rt-input-color-border-focus);
+    --rt-input-fill-focus-shadow-error: inset 0 -1px 0 0 var(--rt-input-color-border-error);
+
+    /* Звёздочка обязательного поля — цвета подписи, как у поля Material; цвет ошибки она берёт
+       только у недействительного поля, правилом самого поля. */
+    --rt-field-required-color: currentcolor;
+    --rt-field-required-gap: 0px;
+
+    /* Строка под полем — строка подсказки Material: 16 px высотой и 4 px над ней. */
+    --rt-field-messages-line-height: var(--rt-size-4);
+    --rt-field-messages-padding-top: var(--rt-space-1);
+
+    /* Группа переключателей видом «чипы» — фильтр-чип Material: обводка цвета outline темы,
+       выбранный залит secondary-container, отключённый — текст 38 %, обводка 12 %. Обводку и цвет
+       текста у выбранного задаёт лист чипов: своё имя каждому стоило бы по разу на тему, набор и
+       островок, а начальный пакет приложения-образца стоит у порога. */
+    --rt-toggle-chip-color-border: var(--rt-sys-outline, var(--rt-mat-neutral-60));
+    --rt-toggle-chip-color-text: var(--rt-sys-on-surface-variant, var(--rt-mat-neutral-70));
+    --rt-toggle-chip-color-bg-selected: var(--rt-sys-secondary-container, var(--rt-mat-neutral-25));
+
+    /* Вкладки: полоса и панель движутся, как у вкладок Material, — полсекунды с той же кривой. */
+    --rt-tabs-indicator-duration: var(--rt-duration-slower);
+    --rt-tabs-indicator-easing: cubic-bezier(0.35, 0, 0.25, 1);
+    --rt-tabs-panel-duration: var(--rt-duration-slower);
+    --rt-tabs-panel-easing: cubic-bezier(0.35, 0, 0.25, 1);
+    --rt-tabs-scroll-duration: var(--rt-duration-slower);
+    --rt-tabs-scroll-easing: cubic-bezier(0.35, 0, 0.25, 1);
 }
 
 /* The preset under a dark theme: the names the preset reads from Material keep the Material chain,
@@ -232,42 +315,49 @@
    theme, so the search, the fields and the pagination follow the page; without Material the look is
    the former dark one. A name mixed by `color-mix` has no fallback to swap and stays on its dark answer. */
 @mixin rt-preset-material-dark-tokens {
-    --rt-color-bg-surface: var(--mat-sys-surface, var(--rt-charcoal-800));
-    --rt-color-bg-surface-subtle-2: var(--mat-form-field-filled-container-color, var(--mat-sys-surface-variant, var(--rt-charcoal-950)));
-    --rt-color-bg-inverse: var(--mat-sys-inverse-surface, var(--rt-neutral-0));
-    --rt-color-text-primary: var(--mat-sys-on-surface, var(--rt-neutral-50));
-    --rt-color-text-disabled: color-mix(in srgb, var(--mat-sys-on-surface, var(--rt-mat-neutral-0)) 38%, transparent);
-    --rt-color-text-inverse: var(--mat-sys-inverse-on-surface, var(--rt-neutral-900));
-    --rt-color-text-link: var(--mat-sys-primary, var(--rt-brand-300));
+    --rt-color-bg-surface: var(--rt-sys-surface, var(--rt-charcoal-800));
+    --rt-color-bg-surface-subtle-2: var(--rt-field-filled-container-color, var(--rt-sys-surface-variant, var(--rt-charcoal-950)));
+    --rt-color-bg-inverse: var(--rt-sys-inverse-surface, var(--rt-neutral-0));
+    --rt-color-text-primary: var(--rt-sys-on-surface, var(--rt-neutral-50));
+    --rt-color-text-disabled: color-mix(in srgb, var(--rt-sys-on-surface, var(--rt-mat-neutral-0)) 38%, transparent);
+    --rt-color-text-inverse: var(--rt-sys-inverse-on-surface, var(--rt-neutral-900));
+    --rt-color-text-link: var(--rt-sys-primary, var(--rt-brand-300));
     --rt-color-border-subtle: var(--rt-mat-dark-20);
-    --rt-color-action-disabled: color-mix(in srgb, var(--mat-sys-on-surface, var(--rt-mat-neutral-0)) 12%, transparent);
-    --rt-color-state-danger-bg: var(--mat-sys-error-container, color-mix(in srgb, var(--rt-danger-500) 12%, transparent));
-    --rt-color-state-error-text: var(--mat-sys-error, var(--rt-danger-500));
-    --rt-color-state-info-bg: var(--mat-sys-primary-container, color-mix(in srgb, var(--rt-info-500) 12%, transparent));
-    --rt-color-table-head-bg: var(
-        --mat-form-field-filled-container-color,
-        var(--mat-sys-surface-variant, var(--rt-color-bg-surface-subtle))
-    );
-    --rt-color-field-fill-underline: var(--mat-sys-on-surface-variant, var(--rt-color-border-strong));
-    --rt-list-search-color-border: var(--mat-sys-outline, var(--rt-input-color-border));
+    --rt-color-action-disabled: color-mix(in srgb, var(--rt-sys-on-surface, var(--rt-mat-neutral-0)) 12%, transparent);
+    --rt-color-state-danger-bg: var(--rt-sys-error-container, color-mix(in srgb, var(--rt-danger-500) 12%, transparent));
+    --rt-color-state-error-text: var(--rt-sys-error, var(--rt-danger-500));
+    --rt-color-state-info-bg: var(--rt-sys-primary-container, color-mix(in srgb, var(--rt-info-500) 12%, transparent));
+    --rt-color-table-head-bg: var(--rt-field-filled-container-color, var(--rt-sys-surface-variant, var(--rt-color-bg-surface-subtle)));
+    --rt-color-field-fill-underline: var(--rt-sys-on-surface-variant, var(--rt-color-border-strong));
+    --rt-list-search-color-border: var(--rt-sys-outline, var(--rt-input-color-border));
     --rt-list-search-color-bg: transparent;
-    --rt-list-search-icon-color: var(--mat-sys-on-surface-variant, var(--rt-input-icon-color));
-    --rt-list-search-color-placeholder: var(--mat-sys-on-surface-variant, var(--rt-input-color-text-placeholder));
-    --rt-list-settings-item-bg: var(--mat-option-selected-state-layer-color, var(--mat-sys-secondary-container, var(--rt-color-bg-subtle)));
-    --rt-list-settings-icon-color: var(--mat-sys-on-surface-variant, var(--rt-color-text-muted));
-    --rt-list-table-icon-color: var(--mat-sys-on-surface-variant, var(--rt-color-text-primary));
-    --rt-list-table-head-divider-color: var(--mat-sys-outline, var(--rt-color-border-strong));
-    --rt-list-copy-button-bg: var(--mat-fab-small-container-color, transparent);
-    --rt-list-copy-button-bg-hover: var(--mat-fab-small-container-color, var(--rt-icon-button-color-bg-hover));
+    --rt-list-search-icon-color: var(--rt-sys-on-surface-variant, var(--rt-input-icon-color));
+    --rt-list-search-color-placeholder: var(--rt-sys-on-surface-variant, var(--rt-input-color-text-placeholder));
+    --rt-list-settings-item-bg: var(--rt-option-selected-state-layer-color, var(--rt-sys-secondary-container, var(--rt-color-bg-subtle)));
+    --rt-list-settings-icon-color: var(--rt-sys-on-surface-variant, var(--rt-color-text-muted));
+    --rt-list-table-icon-color: var(--rt-sys-on-surface-variant, var(--rt-color-text-primary));
+    --rt-list-table-head-divider-color: var(--rt-sys-outline, var(--rt-color-border-strong));
+    --rt-list-copy-button-bg: var(--rt-fab-small-container-color, transparent);
+    --rt-list-copy-button-bg-hover: var(--rt-fab-small-container-color, var(--rt-icon-button-color-bg-hover));
     --rt-pagination-box-color-border: var(--rt-mat-dark-30);
     --rt-pagination-box-color-text: var(--rt-mat-neutral-40);
     --rt-pagination-box-current-color-bg: var(--rt-mat-neutral-40);
     --rt-pagination-box-current-color-text: var(--rt-mat-neutral-0);
     --rt-pagination-box-current-color-border: var(--rt-mat-dark-30);
     --rt-pagination-arrow-shadow: inset 0 0 0 var(--rt-border-width-thin) var(--rt-mat-dark-30);
-    --rt-overlay-menu-bg: var(--mat-menu-container-color, var(--rt-color-bg-surface));
-    --rt-overlay-select-selected-bg: color-mix(in srgb, var(--mat-sys-on-surface, var(--rt-mat-neutral-0)) 12%, transparent);
-    --rt-overlay-menu-current-bg: color-mix(in srgb, var(--mat-sys-on-surface, var(--rt-mat-neutral-0)) 12%, transparent);
+    --rt-overlay-menu-bg: var(--rt-menu-container-color, var(--rt-color-bg-surface));
+    --rt-overlay-select-selected-bg: color-mix(in srgb, var(--rt-sys-on-surface, var(--rt-mat-neutral-0)) 12%, transparent);
+    --rt-overlay-menu-current-bg: color-mix(in srgb, var(--rt-sys-on-surface, var(--rt-mat-neutral-0)) 12%, transparent);
+    --rt-input-color-border: var(--rt-sys-outline, var(--rt-charcoal-border));
+    --rt-input-color-text-placeholder: var(--rt-sys-on-surface-variant, var(--rt-color-text-muted));
+    --rt-input-icon-color: var(--rt-sys-on-surface-variant, var(--rt-neutral-600));
+    --rt-input-clear-color: var(--rt-mat-neutral-40);
+    --rt-input-fill-color-bg-disabled: color-mix(in srgb, var(--rt-sys-on-surface, var(--rt-mat-neutral-0)) 4%, transparent);
+    --rt-input-clear-bg: var(--rt-mat-neutral-70);
+    --rt-input-clear-bg-hover: var(--rt-input-clear-bg);
+    --rt-toggle-chip-color-border: var(--rt-sys-outline, var(--rt-mat-neutral-40));
+    --rt-toggle-chip-color-text: var(--rt-sys-on-surface-variant, var(--rt-mat-neutral-25));
+    --rt-toggle-chip-color-bg-selected: var(--rt-sys-secondary-container, var(--rt-mat-neutral-70));
 }
 
 :root[data-preset='material'],

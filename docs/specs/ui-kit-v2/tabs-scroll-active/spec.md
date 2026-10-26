@@ -32,15 +32,17 @@ A person sees the row of tabs; the selected one is underlined.
 - **An outside change of the selected tab scrolls the strip to the new one.**
 - **A click or a key scrolls the strip once.** The scroll runs from the selection, and the render
   after it does not scroll again.
-- **The selected tab is seen whole.** A tab that is not at the end of the strip is scrolled past
-  the width of the arrow that stays over it.
+- **The first scroll goes at once, a later one moves as a click does.** An opened page does not
+  ride to its tab; a change on an open page moves the strip with the motion of `animationDuration`.
+- **The selected tab is seen whole.** With the arrows over the strip, a tab that is not at the end
+  of the strip is scrolled past the width of the arrow that stays over it. With `scrollArrows`
+  `inline` the arrows stand beside the strip, and the tab goes up to the edge.
 - **The arrows are recomputed after every such scroll.**
 - **A tab already seen whole does not move the strip.**
 
 ## What is out of scope
 
 - The vertical direction: it has no arrows, and its column is scrolled by the page.
-- A smooth scroll: the strip moves at once, as on a click.
 
 ## Contract
 
@@ -85,8 +87,8 @@ Every strip scrolls apart.
 
 - **The initial scroll runs in `afterNextRender`, a later one in an after-render effect.** Both
   remember the tab they scrolled to, so the effect skips a tab the click already scrolled to.
-- **The tab place is measured by layout rects, not by `offsetLeft`.** The offset parent of a tab is
-  the strip wrapper, and a measure against it would drift with the scroll.
+- **The arrow width goes into `rtTabsIntoViewTarget` as an argument.** The target stays a pure
+  function checked by a call, and a click and an outside change get the same target.
 
 ## Open questions
 

@@ -3,6 +3,7 @@
 @layer rt-kit.components {
     .rt-autocomplete {
         --rt-autocomplete-radius: var(--rt-input-radius);
+        --rt-autocomplete-color-border-hover: var(--rt-color-text-primary);
 
         position: relative;
         display: block;
@@ -33,6 +34,12 @@
                 outline: 2px solid transparent;
                 outline-offset: var(--rt-input-focus-outline-offset);
             }
+        }
+
+        /* Наведение в материальном наборе — как у поля Material: рамка цвета текста. Сила правила —
+           на уровне поля, поэтому фокус, открытый список, ошибка и «без рамки» его перекрывают. */
+        :where(.rt-preset-material, [data-preset='material']) &__field:where(:hover:not(:has(:disabled))) {
+            border-color: var(--rt-autocomplete-color-border-hover);
         }
 
         /* bordered=false: снимаем только resting-рамку; --open/--invalid ниже по
@@ -144,10 +151,22 @@
             }
         }
 
+        /* Строка загрузки: спиннер по центру — вместо пустого результата или под списком. */
+        &__loading {
+            display: flex;
+            justify-content: center;
+            padding: var(--rt-space-sm) var(--rt-space-md);
+        }
+
+        /* Строка пустого результата выстраивает своё в ряд: своя разметка потребителя — значок и
+           текст — встаёт в одну строку, а не столбиком; один текст рисуется как прежде. */
         &__empty {
+            display: flex;
+            align-items: center;
             padding: var(--rt-space-sm) var(--rt-space-md);
             color: var(--rt-input-color-text-placeholder);
             font-style: italic;
+            gap: var(--rt-space-sm);
         }
 
         /* Шаг входа `radius` переназначает скругление поля; панель в оверлее держит своё. */

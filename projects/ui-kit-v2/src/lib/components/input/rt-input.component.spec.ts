@@ -27,6 +27,34 @@ class InputDisabledHostComponent {
     public readonly control: FormControl<string | null> = new FormControl<string | null>({ value: '', disabled: true });
 }
 
+/** Родитель в том же стеке, что и ввод, возвращает контролу прежнее значение. */
+@Component({
+    selector: 'rt-input-revert-host',
+    template: '<rt-input [formControl]="control" />',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtInputComponent, ReactiveFormsModule],
+})
+class InputRevertHostComponent {
+    public readonly control: FormControl<string | null> = new FormControl<string | null>('12/08/2026');
+
+    constructor() {
+        this.control.valueChanges.subscribe((): void => {
+            this.control.setValue('12/08/2026', { emitEvent: false, emitViewToModelChange: false });
+        });
+    }
+}
+
+/** Предел и контрол формы на одном поле: тот же атрибут читает и проверка формы. */
+@Component({
+    selector: 'rt-input-maxlength-host',
+    template: '<rt-input maxlength="4" [formControl]="control" />',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtInputComponent, ReactiveFormsModule],
+})
+class InputMaxlengthHostComponent {
+    public readonly control: FormControl<string | null> = new FormControl<string | null>('');
+}
+
 function setup(inputs: Readonly<Record<string, unknown>> = {}): ComponentFixture<RtInputComponent> {
     return createRtFixture(RtInputComponent, inputs);
 }
@@ -68,6 +96,22 @@ describe('RtInputComponent', (): void => {
 
     it('подсказка уезжает на нативное поле', (): void => {
         expect(field(setup({ placeholder: 'Введите имя' })).placeholder).toBe('Введите имя');
+    });
+
+    it('SC-UKV-1015 — предел длины уезжает на нативное поле, без него атрибута нет', (): void => {
+        expect(field(setup({ maxlength: 4 })).getAttribute('maxlength')).toBe('4');
+        expect(field(setup({ maxlength: '4' })).maxLength).toBe(4);
+        expect(field(setup()).hasAttribute('maxlength')).toBe(false);
+        expect(field(setup({ maxlength: null })).hasAttribute('maxlength')).toBe(false);
+        expect(field(setup({ maxlength: 'много' })).hasAttribute('maxlength')).toBe(false);
+    });
+
+    it('SC-UKV-1015 — предел рядом с контролом формы: поле режет ввод, проверка формы остаётся', (): void => {
+        const fixture: ComponentFixture<InputMaxlengthHostComponent> = createRtFixture(InputMaxlengthHostComponent);
+
+        expect(field(fixture).maxLength).toBe(4);
+        fixture.componentInstance.control.setValue('ABCDE');
+        expect(fixture.componentInstance.control.hasError('maxlength')).toBe(true);
     });
 
     describe('размер', (): void => {
@@ -278,6 +322,15 @@ describe('RtInputComponent', (): void => {
             expect(control.required()).toBe(true);
         });
 
+        it('SC-UKV-982 — значение, записанное формой в стеке ввода, видно в поле, хоть и совпадает с прежним', (): void => {
+            const fixture: ComponentFixture<InputRevertHostComponent> = createRtFixture(InputRevertHostComponent);
+
+            type(fixture, '');
+
+            expect(fixture.componentInstance.control.value).toBe('12/08/2026');
+            expect(field(fixture).value).toBe('12/08/2026');
+        });
+
         it('отключение формой отключает нативное поле', (): void => {
             const fixture: ComponentFixture<InputHostComponent> = createRtFixture(InputHostComponent);
 
@@ -309,6 +362,123 @@ describe('RtInputComponent', (): void => {
 
         it('признак ошибки не пишется, пока ошибки нет', (): void => {
             expect(qa(setup(), 'input-control')?.attributes['aria-invalid']).toBeUndefined();
+        });
+    });
+
+    describe('подпись на рамке', (): void => {
+        it('без входа подписи нет и класса тоже', (): void => {
+            const fixture: ComponentFixture<RtInputComponent> = setup();
+
+            expect(qa(fixture, 'input-control')).not.toBeNull();
+            expect(qa(fixture, 'input-floating-label')).toBeNull();
+            expect(hostClasses(fixture)).not.toContain('rt-input--floating');
+        });
+
+        it('SC-UKV-974 — у пустого поля подпись лежит, поле не помечено заполненным', (): void => {
+            const fixture: ComponentFixture<RtInputComponent> = setup({ floatingLabel: 'Бюджет', placeholder: '0' });
+
+            expect(textOf(qa(fixture, 'input-floating-label'))).toBe('Бюджет');
+            expect(hostClasses(fixture)).toContain('rt-input--floating');
+            expect(hostClasses(fixture)).not.toContain('rt-input--filled');
+        });
+
+        it('SC-UKV-975 — значение помечает поле заполненным, и подпись поднимается', (): void => {
+            const fixture: ComponentFixture<RtInputComponent> = setup({ floatingLabel: 'Бюджет' });
+            type(fixture, '120');
+
+            expect(hostClasses(fixture)).toContain('rt-input--filled');
+        });
+
+        it('SC-UKV-977 — подпись называет поле, когда своего имени нет', (): void => {
+            const fixture: ComponentFixture<RtInputComponent> = setup({ floatingLabel: 'Бюджет' });
+            const labelId: string = (qa(fixture, 'input-floating-label')?.nativeElement as HTMLElement).id;
+
+            expect(labelId).not.toBe('');
+            expect(field(fixture).getAttribute('aria-labelledby')).toBe(labelId);
+            expect(field(setup({ floatingLabel: 'Бюджет', ariaLabel: 'Бюджет месяца' })).getAttribute('aria-labelledby')).toBeNull();
+        });
+    });
+
+    describe('иконки-кнопки', (): void => {
+        it('SC-UKV-1009 — без признака иконки остаются картинками', (): void => {
+            const fixture: ComponentFixture<RtInputComponent> = setup({ iconLeft: 'ico-search', iconRight: 'ico-search' });
+
+            expect(el(fixture, '.rt-input__icon-left')).not.toBeNull();
+            expect(qa(fixture, 'input-icon-left-action')).toBeNull();
+            expect(qa(fixture, 'input-icon-right-action')).toBeNull();
+        });
+
+        it('SC-UKV-978 — нажатие левой иконки уходит в её выход и не уводит фокус в поле', (): void => {
+            const fixture: ComponentFixture<RtInputComponent> = setup({ iconLeft: 'ico-search', iconLeftAction: true });
+            const presses: MouseEvent[] = [];
+            fixture.componentInstance.iconLeftClick.subscribe((event: MouseEvent): number => presses.push(event));
+            const button: HTMLButtonElement = (qa(fixture, 'input-icon-left-action')?.nativeElement as HTMLElement).querySelector(
+                'button'
+            ) as HTMLButtonElement;
+
+            const down: MouseEvent = new MouseEvent('mousedown', { bubbles: true, cancelable: true });
+            button.dispatchEvent(down);
+            button.click();
+
+            expect(presses.length).toBe(1);
+            expect(down.defaultPrevented).toBe(false);
+            expect(button.getAttribute('tabindex')).toBe('0');
+        });
+
+        it('SC-UKV-1008 — подсказка правой иконки-кнопки даёт ей имя', (): void => {
+            const fixture: ComponentFixture<RtInputComponent> = setup({
+                iconRight: 'ico-search',
+                iconRightAction: true,
+                iconRightTooltip: 'Минимум 3 символа',
+            });
+            const button: HTMLButtonElement = (qa(fixture, 'input-icon-right-action')?.nativeElement as HTMLElement).querySelector(
+                'button'
+            ) as HTMLButtonElement;
+
+            expect(button.getAttribute('aria-label')).toBe('Минимум 3 символа');
+        });
+
+        it('правая иконка поля пароля с переключателем кнопкой не становится', (): void => {
+            const fixture: ComponentFixture<RtInputComponent> = setup({
+                type: 'password',
+                passwordToggle: true,
+                iconRight: 'ico-search',
+                iconRightAction: true,
+            });
+
+            expect(qa(fixture, 'input-password-toggle')).not.toBeNull();
+            expect(qa(fixture, 'input-icon-right-action')).toBeNull();
+        });
+    });
+
+    describe('крестик', (): void => {
+        function cross(fixture: ComponentFixture<RtInputComponent>): HTMLButtonElement {
+            return (qa(fixture, 'input-clear')?.nativeElement as HTMLElement).querySelector('button') as HTMLButtonElement;
+        }
+
+        it('SC-UKV-1010 — крестик вне порядка Tab, пока поле не попросит', (): void => {
+            const plain: ComponentFixture<RtInputComponent> = setup();
+            type(plain, 'а');
+            expect(cross(plain).getAttribute('tabindex')).toBe('-1');
+
+            const tabbable: ComponentFixture<RtInputComponent> = setup({ clearTabbable: true });
+            type(tabbable, 'а');
+            expect(cross(tabbable).getAttribute('tabindex')).toBe('0');
+        });
+
+        it('SC-UKV-1011 — сброс сообщается один раз после того, как пустое значение ушло в форму', (): void => {
+            const fixture: ComponentFixture<InputHostComponent> = createRtFixture(InputHostComponent);
+            fixture.componentInstance.control.setValue('Анна');
+            fixture.detectChanges();
+            const seen: Array<string | null> = [];
+            const input: RtInputComponent = fixture.debugElement.query(
+                (node: DebugElement): boolean => node.componentInstance instanceof RtInputComponent
+            ).componentInstance as RtInputComponent;
+            input.cleared.subscribe((): number => seen.push(fixture.componentInstance.control.value));
+
+            (qa(fixture, 'input-clear')?.nativeElement as HTMLElement).querySelector('button')?.click();
+
+            expect(seen).toEqual(['']);
         });
     });
 });

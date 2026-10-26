@@ -16,8 +16,9 @@ and the owner read it as "nothing like the first kit".
 
 ## Terminology
 
-- **Material theme** — the custom properties a Material theme declares on a page: the system names
-  `--mat-sys-*` and the properties of Material's own parts, such as the fill field.
+- **Material theme** — the custom properties the application's theme declares on a page in the
+  kit's names: the system roles `--rt-sys-*` and four roles of parts, such as the fill field
+  `--rt-field-filled-container-color`. The kit reads no `--mat-*` name.
 - **Fill search** — the search field of the list in the `fill` look: the Material fill field of the
   first kit.
 - **Outline search** — the same field in the `outline` look: the Material outline field of the first
@@ -42,8 +43,8 @@ Nothing new is shown to a person: the list keeps its labels, only its look follo
   `outline`, the first kit's.
 
 - **The table header in the material preset is filled with the colour of the Material fill field.**
-  The name is `--rt-color-table-head-bg`; the preset reads `--mat-form-field-filled-container-color`,
-  then `--mat-sys-surface-variant`, then its own scale step. The dark theme answers the name itself,
+  The name is `--rt-color-table-head-bg`; the preset reads `--rt-field-filled-container-color`,
+  then `--rt-sys-surface-variant`, then its own scale step. The dark theme answers the name itself,
   so a dark header keeps a dark fill under the preset.
 
 - **The table header is 44 px high, as the first kit's.** The height belongs to the header row, not
@@ -67,7 +68,7 @@ Nothing new is shown to a person: the list keeps its labels, only its look follo
   look of Material when nothing is said; the filter fields stay outline by default in both kits.
 
 - **The underline of a fill field has a colour name of its own.** The name is
-  `--rt-color-field-fill-underline`; the material preset reads `--mat-sys-on-surface-variant` for
+  `--rt-color-field-fill-underline`; the material preset reads `--rt-sys-on-surface-variant` for
   it, as the Material fill field does, and the dark theme answers it itself.
 
 - **The column settings panel of the list draws the first kit's panel in the material preset.** The
@@ -90,7 +91,7 @@ Nothing new is shown to a person: the list keeps its labels, only its look follo
   font ignores the weight and draws thinner.
 
 - **The icons of the filter row and of the row actions are 24 px in the grey of the theme in the
-  material preset.** That is the first kit's Material icon button: `--mat-sys-on-surface-variant`,
+  material preset.** That is the first kit's Material icon button: `--rt-sys-on-surface-variant`,
   24 px. The own preset keeps them as they were.
 
 - **The buttons of the filter row and of the row actions are round and 36 px in the material

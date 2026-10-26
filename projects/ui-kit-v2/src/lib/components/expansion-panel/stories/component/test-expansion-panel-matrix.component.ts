@@ -11,9 +11,11 @@ import { RtTooltipDirective } from '../../../tooltip';
 import { RtExpansionPanelContentDirective } from '../../rt-expansion-panel-content.directive';
 import { RtExpansionPanelComponent } from '../../rt-expansion-panel.component';
 import { IRtExpansionPanel } from '../../rt-expansion-panel.model';
+import { TestRtExpansionPanelLiveComponent } from './test-expansion-panel-live.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TExpansionPanelMatrixPart = 'appearance' | 'opening' | 'length' | 'states' | 'presets' | 'themes';
+export type TExpansionPanelMatrixPart =
+    'appearance' | 'opening' | 'length' | 'states' | 'actions' | 'group' | 'preserve' | 'presets' | 'themes';
 
 /** Случай вида: имя для подписи ячейки и вид панели. */
 interface IExpansionPanelAppearanceCase {
@@ -73,6 +75,7 @@ const TEXT: string = 'Имя, телефон и адрес доставки. И�
         StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
+        TestRtExpansionPanelLiveComponent,
     ],
 })
 export class TestRtExpansionPanelMatrixComponent {
