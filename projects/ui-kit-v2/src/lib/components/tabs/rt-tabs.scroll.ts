@@ -75,14 +75,24 @@ export function rtTabsPageTarget(list: HTMLElement, from: number, back: boolean,
     return Math.min(max, Math.max(0, from + (back ? -shift : shift)));
 }
 
-/** Куда прокрутить полосу, чтобы вкладка встала целиком; `null` — она уже видна целиком. */
-export function rtTabsIntoViewTarget(list: HTMLElement, tab: HTMLElement): number | null {
-    if (tab.offsetLeft < list.scrollLeft) {
-        return tab.offsetLeft;
+/**
+ * Куда прокрутить полосу, чтобы вкладка встала целиком; `null` — она уже видна целиком. `inset` —
+ * ширина стрелки поверх края полосы: вкладка не у конца полосы отступает от края на неё, иначе
+ * встала бы под стрелку.
+ */
+export function rtTabsIntoViewTarget(list: HTMLElement, tab: HTMLElement, inset: number = 0): number | null {
+    const left: number = tab.offsetLeft;
+    const right: number = left + tab.offsetWidth;
+    const before: number = left > 0 ? inset : 0;
+    // 1px — погрешность субпиксельного scrollWidth
+    const after: number = list.scrollWidth - right > 1 ? inset : 0;
+
+    if (left - before < list.scrollLeft) {
+        return Math.max(left - before, 0);
     }
 
-    if (tab.offsetLeft + tab.offsetWidth > list.scrollLeft + list.clientWidth) {
-        return tab.offsetLeft + tab.offsetWidth - list.clientWidth;
+    if (right + after > list.scrollLeft + list.clientWidth) {
+        return right + after - list.clientWidth;
     }
 
     return null;

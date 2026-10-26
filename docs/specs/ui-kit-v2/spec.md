@@ -93,6 +93,7 @@ agreement about their own subject and describe the surface of a component, not a
 | [The label on the border and actionable icons](field-label-icon-actions/spec.md) | the option template of the select, the label on the border, actionable icons, the cross in the Tab order, the length limit                      |
 | [The look of a field under the material preset](field-material-look/spec.md)     | the label inside, the filled field, the colours, the insets, the cross and the line under a field, as in Material                               |
 | [What the tabs give from Material](tab-additions/spec.md)                        | the closable tab and its cross, the tooltip, the strip without panels, manual activation, scroll arrows, motion, preserved bodies               |
+| [The tab strip scrolled to the selected tab](tabs-scroll-active/spec.md)         | the strip of `rt-tabs` scrolls to the tab chosen by `activeId` after the first render and on an outside change                                  |
 | [What other parts give from Material](component-additions/spec.md)               | the toggle group with a form and chips, panels in a group, toasts, the drawer, the stepper, the focus ring, the tooltip delay                   |
 
 ## What is out of scope

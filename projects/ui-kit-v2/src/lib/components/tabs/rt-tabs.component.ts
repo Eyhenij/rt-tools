@@ -2,6 +2,7 @@ import { BooleanInput } from '@angular/cdk/coercion';
 import { DOCUMENT, NgTemplateOutlet } from '@angular/common';
 import {
     afterNextRender,
+    afterRenderEffect,
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
@@ -31,23 +32,16 @@ import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
 import { RtTabDirective } from './rt-tab.directive';
+import { RtTabsArrowPress, TRtTabsScrollDirection } from './rt-tabs.arrow-press';
 import { RtTabsControlDirective } from './rt-tabs-control.directive';
 import { IRtTabs } from './rt-tabs.model';
 import { RtTabsInk, RtTabsPanels } from './rt-tabs.motion';
-import { rtTabsIntoViewTarget, rtTabsPageTarget, RtTabsScroller } from './rt-tabs.scroll';
-
-/** Интервал тика прокрутки при зажатой стрелке (мс). */
-const SCROLL_TICK_MS: number = 15;
-
-/** Сколько держать стрелку, чтобы нажатие стало прокруткой по удержанию, а не шагом (мс). */
-const HOLD_DELAY_MS: number = 300;
+import { rtTabsIntoViewTarget, RtTabsScroller } from './rt-tabs.scroll';
 
 /** Дебаунс пересчёта видимости стрелок прокрутки на resize/scroll (мс). */
 const REST_DEBOUNCE_MS: number = 50;
 
 const BEM_BLOCK: string = 'rt-tabs';
-
-type TScrollDirection = 'before' | 'after';
 
 /**
  * Полоса вкладок с проекцией контента. Вкладки декларируются через
@@ -261,14 +255,17 @@ export class RtTabsComponent {
     /** Вкладка, на которую перевели фокус стрелками в ручном режиме; сбрасывается выбором. */
     readonly #focusedId: WritableSignal<IRtTabs.Id | null> = signal<IRtTabs.Id | null>(null);
 
-    /** Хэндл интервала прокрутки по удержанию стрелки. */
-    #scrollIntervalId: number | null = null;
+    /** Нажатие и удержание стрелок прокрутки. */
+    readonly #press: RtTabsArrowPress = new RtTabsArrowPress(
+        this.#win,
+        this.#scroller,
+        (): HTMLElement | undefined => this.tabListRef()?.nativeElement,
+        (): IRtTabs.ScrollStep => this.scrollStep(),
+        (): void => this.#updateRestVisibility()
+    );
 
-    /** Хэндл ожидания, после которого нажатие на стрелку становится удержанием. */
-    #holdTimeoutId: number | null = null;
-
-    /** Стрелка, нажатая и ещё не отпущенная. */
-    #pressed: TScrollDirection | null = null;
+    /** Вкладка, к которой полоса прокручена последней: второй прокрутки к ней не нужно. */
+    #scrolledId: IRtTabs.Id | null = null;
 
     constructor() {
         if (this.#win) {
@@ -277,12 +274,19 @@ export class RtTabsComponent {
                 .subscribe((): void => this.#updateRestVisibility());
         }
 
-        afterNextRender((): void => this.#updateRestVisibility());
+        afterNextRender((): void => {
+            this.#scrollToSelected();
+            this.#updateRestVisibility();
+        });
+
+        // Смена вкладки извне — входом `activeId` или новым набором вкладок. После клика
+        // полоса уже прокручена из `selectTab`, и `#scrolledId` пропускает вторую прокрутку.
+        afterRenderEffect((): void => this.#scrollToSelected());
 
         // Снимаем hold-scroll интервал при уничтожении: если компонент разрушить
         // с зажатой стрелкой (pointerdown без pointerup), интервал остался бы жив.
         inject(DestroyRef).onDestroy((): void => {
-            this.#clearScrollInterval();
+            this.#press.stop();
             this.#scroller.stop();
         });
     }
@@ -353,41 +357,20 @@ export class RtTabsComponent {
         this.#focusTab(targetId);
     }
 
-    /**
-     * Нажатие ЛКМ на стрелку. Отпущенная до `HOLD_DELAY_MS` стрелка сдвигает полосу на шаг
-     * `scrollStep`, удержанная дольше — прокручивает её непрерывно, пока не отпустят.
-     */
-    protected onRestPointerDown(direction: TScrollDirection, event: MouseEvent): void {
-        if (event.button !== 0 || this.#pressed !== null || !this.#win) {
-            return;
+    /** Нажатие ЛКМ на стрелку: шаг или прокрутка по удержанию — {@link RtTabsArrowPress}. */
+    protected onRestPointerDown(direction: TRtTabsScrollDirection, event: MouseEvent): void {
+        if (event.button === 0) {
+            this.#press.down(direction);
         }
-
-        this.#pressed = direction;
-        this.#holdTimeoutId = this.#win.setTimeout((): void => {
-            this.#holdTimeoutId = null;
-            this.#scrollIntervalId =
-                this.#win?.setInterval((): void => {
-                    this.#scrollStep(direction);
-                    this.#updateRestVisibility();
-                }, SCROLL_TICK_MS) ?? null;
-        }, HOLD_DELAY_MS);
     }
 
-    /** Стрелку отпустили: короткое нажатие — шаг `scrollStep`, после удержания — только стоп. */
     protected onRestPointerUp(): void {
-        const direction: TScrollDirection | null = this.#pressed;
-        const shortPress: boolean = this.#holdTimeoutId !== null;
-
-        this.#clearScrollInterval();
-
-        if (direction !== null && shortPress) {
-            this.#scrollPage(direction);
-        }
+        this.#press.up();
     }
 
     /** Указатель ушёл со стрелки: прокрутка останавливается, шага нет. */
     protected onRestPointerLeave(): void {
-        this.#clearScrollInterval();
+        this.#press.stop();
     }
 
     protected onTabListScroll(): void {
@@ -435,34 +418,6 @@ export class RtTabsComponent {
         );
     }
 
-    #clearScrollInterval(): void {
-        this.#pressed = null;
-        if (this.#win && this.#holdTimeoutId !== null) {
-            this.#win.clearTimeout(this.#holdTimeoutId);
-            this.#holdTimeoutId = null;
-        }
-        if (this.#win && this.#scrollIntervalId !== null) {
-            this.#win.clearInterval(this.#scrollIntervalId);
-            this.#scrollIntervalId = null;
-        }
-    }
-
-    /** Сдвиг полосы на шаг `scrollStep`, не дальше края. */
-    #scrollPage(direction: TScrollDirection): void {
-        const list: HTMLElement | undefined = this.tabListRef()?.nativeElement;
-        if (list) {
-            this.#scroller.to(rtTabsPageTarget(list, this.#scroller.from(), direction === 'before', this.scrollStep()));
-            // Сразу — для прокрутки без движения; плавную ведут события прокрутки самой полосы.
-            this.#updateRestVisibility();
-        }
-    }
-
-    #scrollStep(direction: TScrollDirection): void {
-        if (!this.#scroller.nudge(direction === 'before')) {
-            this.#clearScrollInterval();
-        }
-    }
-
     #updateRestVisibility(): void {
         const list: HTMLElement | undefined = this.tabListRef()?.nativeElement;
 
@@ -479,15 +434,43 @@ export class RtTabsComponent {
         this.restAfterVisible.set(scrolledRight > 1);
     }
 
+    #scrollToSelected(): void {
+        const id: IRtTabs.Id | null = this.selectedId();
+
+        if (id !== null && id !== this.#scrolledId) {
+            this.#scrollTabIntoView(id);
+        }
+    }
+
+    /**
+     * Ставит вкладку в полосу целиком. Стрелки поверх полосы закрывают её края, поэтому вкладка
+     * отступает от края на ширину стрелки. Первая прокрутка — сразу: открытая страница не едет.
+     */
     #scrollTabIntoView(id: IRtTabs.Id): void {
         const list: HTMLElement | undefined = this.tabListRef()?.nativeElement;
         const tab: HTMLElement | null | undefined = list?.querySelector<HTMLElement>(`[data-tabitem="${id}"]`);
 
-        const target: number | null = list && tab ? rtTabsIntoViewTarget(list, tab) : null;
-
-        if (target !== null) {
-            this.#scroller.to(target);
+        if (!list || !tab) {
+            return;
         }
+
+        const first: boolean = this.#scrolledId === null;
+        const rest: HTMLElement | null | undefined = list.parentElement?.querySelector<HTMLElement>('.rt-tabs__rest');
+        const inset: number = this.scrollArrows() === 'overlay' ? (rest?.offsetWidth ?? 0) : 0;
+        const target: number | null = rtTabsIntoViewTarget(list, tab, inset);
+        this.#scrolledId = id;
+
+        if (target !== null && first) {
+            this.#scroller.stop();
+            list.scrollLeft = target;
+        } else if (target !== null) {
+            this.#scroller.to(target);
+        } else {
+            // вкладка целиком в зоне видимости — прокрутка не нужна
+        }
+
+        // Сразу — для прокрутки без движения; плавную ведут события прокрутки самой полосы.
+        this.#updateRestVisibility();
     }
 
     #focusTab(id: IRtTabs.Id): void {
