@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { RtTextareaComponent } from '../../rt-textarea.component';
-import { TRtTextareaResize } from '../../rt-textarea.component';
+import { TRtTextareaAppearance, TRtTextareaResize } from '../../rt-textarea.component';
 
 /**
  * Демонстрационная обёртка для витрины: держит изменяемое состояние, на которое
@@ -11,7 +11,13 @@ import { TRtTextareaResize } from '../../rt-textarea.component';
 @Component({
     selector: 'app-textarea',
     template: `
-        <rt-textarea [placeholder]="placeholder" [readonly]="readonly" [rows]="rows" [resize]="resize" />
+        <rt-textarea
+            [placeholder]="placeholder"
+            [readonly]="readonly"
+            [rows]="rows"
+            [resize]="resize"
+            [appearance]="appearance"
+            [maxlength]="maxlength" />
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
@@ -24,4 +30,6 @@ export class TestRtTextareaComponent {
     public readonly: boolean = false;
     public rows: number = 3;
     public resize: TRtTextareaResize = 'vertical';
+    public appearance: TRtTextareaAppearance = 'outline';
+    public maxlength: number | null = null;
 }

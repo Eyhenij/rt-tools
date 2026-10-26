@@ -124,4 +124,24 @@
             </ng-template>
         </app-story-presets>
     }
+
+    @case ('group') {
+        <app-story-presets caption="Группа: имя, стрелки и один шаг Tab — столбцом и строкой">
+            <ng-template>
+                <app-story-row [items]="orientations" [itemLabel]="orientationLabel">
+                    <ng-template let-orientation>
+                        <rt-radio-group ariaLabel="Тип номера" [orientation]="orientation">
+                            @for (room of rooms; track room.value) {
+                                <rt-radio-button
+                                    [value]="room.value"
+                                    [label]="room.label"
+                                    [disabled]="room.disabled"
+                                    [formControl]="orientation === 'vertical' ? verticalRoom : horizontalRoom" />
+                            }
+                        </rt-radio-group>
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
 }

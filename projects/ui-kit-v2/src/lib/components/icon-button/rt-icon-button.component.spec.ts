@@ -1,7 +1,10 @@
+import { FocusMonitor, FocusOrigin } from '@angular/cdk/a11y';
 import { DebugElement } from '@angular/core';
-import { ComponentFixture } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { provideRtKit } from '../../config/rt-kit-config.providers';
 import { classesOf, createRtFixture, el, hostClasses, qa } from '../../../testing/rt-kit-testing';
+import { RtTooltipDirective } from '../tooltip/rt-tooltip.directive';
 import { RtIconButtonComponent } from './rt-icon-button.component';
 import { IRtIconButton } from './rt-icon-button.model';
 
@@ -17,7 +20,29 @@ function controlClasses(fixture: ComponentFixture<RtIconButtonComponent>): strin
     return classesOf(control(fixture));
 }
 
+function tooltipOf(fixture: ComponentFixture<RtIconButtonComponent>): RtTooltipDirective {
+    return control(fixture)?.injector.get(RtTooltipDirective) as RtTooltipDirective;
+}
+
 describe('RtIconButtonComponent', (): void => {
+    it('SC-UKV-1007 — умолчание hideOnClick подсказки кнопки берётся из настроек кита, вход его перебивает', (): void => {
+        const kept: ComponentFixture<RtIconButtonComponent> = createRtFixture(
+            RtIconButtonComponent,
+            { icon: 'ico-trash', ariaLabel: 'Удалить', tooltip: 'Удалить' },
+            { providers: [provideRtKit({ components: { tooltip: { hideOnClick: false } } })] }
+        );
+
+        expect(tooltipOf(kept).hideOnClick()).toBe(false);
+
+        const own: ComponentFixture<RtIconButtonComponent> = createRtFixture(
+            RtIconButtonComponent,
+            { icon: 'ico-trash', ariaLabel: 'Удалить', tooltip: 'Удалить', tooltipHideOnClick: true },
+            { providers: [provideRtKit({ components: { tooltip: { hideOnClick: false } } })] }
+        );
+
+        expect(tooltipOf(own).hideOnClick()).toBe(true);
+    });
+
     it('рисует свою кнопку внутри, а не превращает host в кнопку', (): void => {
         const fixture: ComponentFixture<RtIconButtonComponent> = setup();
 
@@ -45,6 +70,18 @@ describe('RtIconButtonComponent', (): void => {
 
         expect(document.querySelector('rt-tooltip')?.textContent?.trim()).toBe('Открепить');
         jest.useRealTimers();
+    });
+
+    it.each<[FocusOrigin, string]>([
+        ['keyboard', 'cdk-keyboard-focused'],
+        ['mouse', 'cdk-mouse-focused'],
+    ])('SC-UKV-947 — фокус от %s помечается на кнопке классом %s', (origin: FocusOrigin, mark: string): void => {
+        const fixture: ComponentFixture<RtIconButtonComponent> = setup();
+
+        TestBed.inject(FocusMonitor).focusVia(control(fixture)?.nativeElement as HTMLElement, origin);
+        fixture.detectChanges();
+
+        expect(controlClasses(fixture)).toContain(mark);
     });
 
     describe('оформление', (): void => {

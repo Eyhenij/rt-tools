@@ -25,6 +25,8 @@ export const Description: TStory = { args: { part: 'description' } };
 
 export const Edges: TStory = { args: { part: 'edges' } };
 
+export const Vertical: TStory = { args: { part: 'vertical' } };
+
 export const Presets: TStory = { args: { part: 'presets' } };
 
 export const Themes: TStory = { args: { part: 'themes' } };

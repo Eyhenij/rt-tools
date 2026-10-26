@@ -14,7 +14,7 @@
    and the assignments are declared on the root: a scheme on an inner node would change the steps under
    assignments already resolved, and the piece would keep the old accent.
 
-   A Material theme of the application wins over the scheme in the material set: its `--mat-sys-primary`
+   A Material theme of the application wins over the scheme in the material set: its `--rt-sys-primary`
    stands in front of the step in that set's assignments.
 
    Usage:

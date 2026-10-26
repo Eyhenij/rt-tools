@@ -5,6 +5,7 @@ import {
     Component,
     computed,
     DestroyRef,
+    ElementRef,
     forwardRef,
     inject,
     Injector,
@@ -25,6 +26,8 @@ import { distinctUntilChanged, EMPTY, Observable, Subject, switchMap } from 'rxj
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
+
+import { IRtRadioGroupHost, RT_RADIO_GROUP } from './rt-radio-group.token';
 
 const BEM_BLOCK: string = 'rt-radio-button';
 
@@ -47,6 +50,9 @@ function checkedAttribute(value: BooleanInput | null | undefined): boolean | nul
  *
  * Отключение складывается из входа `disabled` и слова формы: форма зовёт `setDisabledState`
  * раньше первого обновления вида, и один общий signal затёр бы её слово.
+ *
+ * Внутри `rt-radio-group` в порядке обхода по Tab стоит одна радиокнопка группы, а соседей выбирают
+ * стрелки; вне группы каждая радиокнопка стоит в порядке обхода сама, как прежде.
  *
  * Каждая радиокнопка — свой `ControlValueAccessor`, и значение, отданное одной, форма соседям на
  * том же контроле не пишет: поэтому модель берётся и у самого контрола.
@@ -78,6 +84,8 @@ function checkedAttribute(value: BooleanInput | null | undefined): boolean | nul
 export class RtRadioButtonComponent implements ControlValueAccessor {
     readonly #injector: Injector = inject(Injector);
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
+    readonly #host: ElementRef<HTMLElement> = inject<ElementRef<HTMLElement>>(ElementRef);
+    readonly #group: IRtRadioGroupHost | null = inject(RT_RADIO_GROUP, { optional: true });
 
     #onChange: (value: unknown) => void = (): void => undefined;
     #onTouched: () => void = (): void => undefined;
@@ -98,6 +106,15 @@ export class RtRadioButtonComponent implements ControlValueAccessor {
 
     protected readonly isChecked: Signal<boolean> = computed((): boolean => this.checked() ?? this.value() === this.#model());
     protected readonly isDisabled: Signal<boolean> = computed((): boolean => this.disabled() || this.#disabledByForm());
+
+    /** Шаг Tab, отданный группой; до первого слова группы радиокнопка в группе вне обхода. */
+    readonly #tabStop: WritableSignal<boolean> = signal<boolean>(false);
+
+    /** Место в порядке обхода: в группе — только у той, на которую указала группа. */
+    protected readonly tabIndex: Signal<number> = computed((): number => (this.#group === null || this.#tabStop() ? 0 : -1));
+
+    /** Узел радиокнопки: по нему группа ставит радиокнопки в порядок страницы. */
+    public readonly element: HTMLElement = this.#host.nativeElement;
 
     /** Значение радиокнопки: выбрана та, чьё значение — модель формы. */
     public readonly value: InputSignal<unknown> = input.required<unknown>();
@@ -123,6 +140,12 @@ export class RtRadioButtonComponent implements ControlValueAccessor {
     /** Имя для вспомогательных средств, когда видимой подписи нет — кружок в строке таблицы. */
     public readonly ariaLabel: InputSignal<string | null> = input<string | null>(null);
 
+    /** Выбрана ли радиокнопка — для группы, которая ведёт по ним стрелками. */
+    public readonly selected: Signal<boolean> = computed((): boolean => this.isChecked());
+
+    /** Отключена ли радиокнопка — группа её пропускает. */
+    public readonly off: Signal<boolean> = computed((): boolean => this.isDisabled());
+
     /** Каждое нажатие указателем, сменило оно выбор или нет. */
     public readonly clickAction: OutputEmitterRef<MouseEvent> = output<MouseEvent>();
 
@@ -130,6 +153,10 @@ export class RtRadioButtonComponent implements ControlValueAccessor {
     public readonly checkedChange: OutputEmitterRef<boolean> = output<boolean>();
 
     constructor() {
+        // Радиокнопка встаёт в группу сама: так группа знает и радиокнопку из шаблона обёртки.
+        this.#group?.register(this);
+        this.#destroyRef.onDestroy((): void => this.#group?.unregister(this));
+
         // Значение, отданное соседкой, форма этой радиокнопке не пишет — модель берётся у самого
         // контрола, иначе точка осталась бы у двух сразу. Подписка идёт за сменой контрола и
         // бросает прежний.
@@ -163,6 +190,22 @@ export class RtRadioButtonComponent implements ControlValueAccessor {
 
     public setDisabledState(disabled: boolean): void {
         this.#disabledByForm.set(disabled);
+    }
+
+    /** Группа отдаёт или забирает шаг Tab. */
+    public setTabStop(on: boolean): void {
+        this.#tabStop.set(on);
+    }
+
+    /** Лежит ли узел внутри радиокнопки — группа так находит, с какой ушла стрелка. */
+    public contains(target: EventTarget | null): boolean {
+        return target instanceof Node && this.#host.nativeElement.contains(target);
+    }
+
+    /** Выбор стрелкой из группы: фокус и выбор переходят сюда вместе. */
+    public selectFromKeyboard(): void {
+        this.#host.nativeElement.querySelector<HTMLElement>('[role="radio"]')?.focus();
+        this.#select();
     }
 
     protected onClick(event: MouseEvent): void {

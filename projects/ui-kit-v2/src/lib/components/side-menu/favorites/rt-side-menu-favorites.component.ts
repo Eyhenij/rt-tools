@@ -26,7 +26,12 @@ import { RtExpansionPanelComponent, RtExpansionPanelContentDirective } from '@rt
 import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
-import { sideMenuFavoritesSection, findSideMenuFavoriteItems, isSideMenuDropOutside } from '../rt-side-menu-favorites.logic';
+import {
+    sideMenuFavoritesSection,
+    findSideMenuFavoriteItems,
+    isSideMenuDropOutside,
+    isSideMenuFavoritesCountShown,
+} from '../rt-side-menu-favorites.logic';
 import { RtSideMenuSettingsService } from '../rt-side-menu-settings.service';
 import { filterSideMenuItems } from '../rt-side-menu.logic';
 import { IRtSideMenu } from '../rt-side-menu.model';
@@ -117,12 +122,13 @@ export class RtSideMenuFavoritesComponent {
         source: (): { collapsed: boolean; searching: boolean } => ({ collapsed: this.collapsed(), searching: this.searching() }),
         computation: (state: { collapsed: boolean; searching: boolean }): boolean => !state.collapsed || state.searching,
     });
-    /** Заголовок показывает число строк: всегда, у свёрнутого блока или никогда — по входу меню. */
-    protected readonly countShown: Signal<boolean> = computed((): boolean => {
-        const mode: IRtSideMenu.FavoritesCount = this.#menu.favoritesCount();
-
-        return mode === 'always' || (mode === 'collapsed' && !this.open());
-    });
+    /**
+     * Заголовок показывает число строк: всегда, у свёрнутого блока или никогда — по входу меню.
+     * Свёрнутый блок держит число и раскрытым на время поиска.
+     */
+    protected readonly countShown: Signal<boolean> = computed((): boolean =>
+        isSideMenuFavoritesCountShown(this.#menu.favoritesCount(), this.open(), this.collapsed())
+    );
     /** Ручки строк по порядку: стрелка возвращает фокус на ручку переставленной строки. */
     protected readonly handles: Signal<ReadonlyArray<ElementRef<HTMLElement>>> = viewChildren<string, ElementRef<HTMLElement>>('handle', {
         read: ElementRef,

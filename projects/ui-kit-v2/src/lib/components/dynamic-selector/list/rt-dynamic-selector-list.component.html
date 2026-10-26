@@ -27,6 +27,7 @@
                             rtElem="field"
                             qa-dataid="dynamic-selector-edit-field"
                             [ngModel]="draft()"
+                            [ngModelOptions]="{ standalone: true }"
                             (ngModelChange)="draft.set($event ?? '')"
                             (keydown.enter)="onEditApply(row)" />
                     } @else if (titleTpl(); as tpl) {

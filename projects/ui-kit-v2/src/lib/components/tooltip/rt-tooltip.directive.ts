@@ -1,4 +1,5 @@
 import { FocusMonitor, FocusOrigin } from '@angular/cdk/a11y';
+import { NumberInput } from '@angular/cdk/coercion';
 import {
     ConnectedPosition,
     FlexibleConnectedPositionStrategy,
@@ -18,13 +19,14 @@ import {
     input,
     InputSignal,
     InputSignalWithTransform,
+    numberAttribute,
     OnDestroy,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-import { carryThemeScope, materialPresetClassesOf } from '@rt-tools/ui-kit-v2/core';
+import { carryThemeScope, IRtKitConfig, materialPresetClassesOf, rtKitDefault } from '@rt-tools/ui-kit-v2/core';
 import { RtTooltipComponent } from './rt-tooltip.component';
-import { isTooltipTextCut, tooltipPositions } from './rt-tooltip.logic';
+import { isTooltipTextCut, tooltipPlacement, tooltipPositions } from './rt-tooltip.logic';
 import { IRtTooltip } from './rt-tooltip.model';
 
 const SHOW_DELAY_MS: number = 300;
@@ -68,6 +70,24 @@ export class RtTooltipDirective implements OnDestroy {
     #overlayRef: OverlayRef | null = null;
     #tooltipRef: ComponentRef<RtTooltipComponent> | null = null;
     #showTimer: ReturnType<typeof setTimeout> | null = null;
+    /**
+     * Сторона из настроек кита. Не умолчание входа: обёртка кита, передающая свой `null`, перебила
+     * бы настройку приложения.
+     */
+    readonly #placementDefault: IRtTooltip.Placement | null = rtKitDefault(
+        'tooltip',
+        (it: IRtKitConfig.Tooltip): IRtTooltip.Placement | undefined => it.placement,
+        null
+    );
+    /**
+     * Задержка показа по умолчанию: из настроек кита `components.tooltip.showDelay`, без них —
+     * `SHOW_DELAY_MS`. Не умолчание входа — по той же причине, что и сторона.
+     */
+    readonly #showDelayDefault: number = rtKitDefault(
+        'tooltip',
+        (it: IRtKitConfig.Tooltip): number | undefined => it.showDelay,
+        SHOW_DELAY_MS
+    );
 
     /**
      * Текст подсказки. Принимает `null`/`undefined` (частый результат date-пайпа
@@ -80,9 +100,24 @@ export class RtTooltipDirective implements OnDestroy {
         transform: (value: string | null | undefined): string => value ?? '',
     });
 
-    /** Сторона подсказки. Не задана — сверху, а под материальным набором снизу, как у первого кита. */
+    /**
+     * Сторона подсказки. `null` — сторона из настроек кита `components.tooltip.placement`, без них
+     * сверху, а под материальным набором снизу, как у первого кита.
+     */
     public readonly placement: InputSignal<IRtTooltip.Placement | null> = input<IRtTooltip.Placement | null>(null, {
         alias: 'rtTooltipPlacement',
+    });
+
+    /**
+     * Задержка показа этой подсказки в миллисекундах. `null` — общая задержка из настроек кита, без
+     * них 300.
+     */
+    public readonly showDelay: InputSignalWithTransform<number | null, NumberInput> = input<number | null, NumberInput>(null, {
+        alias: 'rtTooltipShowDelay',
+        transform: (value: NumberInput): number | null => {
+            const delay: number = value === null || value === undefined || value === '' ? Number.NaN : numberAttribute(value, Number.NaN);
+            return delay >= 0 ? delay : null;
+        },
     });
 
     /**
@@ -96,15 +131,19 @@ export class RtTooltipDirective implements OnDestroy {
     });
 
     /**
-     * Клик прячет открытую подсказку — по умолчанию, как раньше. `false` оставляет её открытой:
+     * Клик прячет открытую подсказку — по умолчанию, как раньше; умолчание на всё приложение —
+     * `components.tooltip.hideOnClick` в настройках кита. `false` оставляет её открытой:
      * кнопка-переключатель показывает в ней новое состояние сразу после нажатия. Отложенный показ
      * клик снимает при любом значении — касание на тач-экране (mouseenter + click) подсказку не
      * показывает.
      */
-    public readonly hideOnClick: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
-        alias: 'rtTooltipHideOnClick',
-        transform: booleanAttribute,
-    });
+    public readonly hideOnClick: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(
+        rtKitDefault('tooltip', (it: IRtKitConfig.Tooltip): boolean | undefined => it.hideOnClick, true),
+        {
+            alias: 'rtTooltipHideOnClick',
+            transform: booleanAttribute,
+        }
+    );
 
     constructor() {
         // Новый текст доходит до открытой панели на месте, без повторного наведения.
@@ -130,7 +169,7 @@ export class RtTooltipDirective implements OnDestroy {
             return;
         }
         this.#clearTimer();
-        this.#showTimer = setTimeout((): void => this.#attach(), SHOW_DELAY_MS);
+        this.#showTimer = setTimeout((): void => this.#attach(), this.showDelay() ?? this.#showDelayDefault);
     }
 
     protected hide(): void {
@@ -176,7 +215,7 @@ export class RtTooltipDirective implements OnDestroy {
             return this.#overlayRef;
         }
         const presetClasses: string[] = materialPresetClassesOf(this.#elementRef.nativeElement);
-        const placement: IRtTooltip.Placement = this.placement() ?? (presetClasses.length > 0 ? 'bottom' : 'top');
+        const placement: IRtTooltip.Placement = tooltipPlacement(this.placement(), this.#placementDefault, presetClasses.length > 0);
         const positions: ConnectedPosition[] = tooltipPositions(placement);
 
         const positionStrategy: FlexibleConnectedPositionStrategy = this.#overlay

@@ -5,13 +5,25 @@ import { StoryPresetsComponent } from '../../../../../showcase/story-presets.com
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { IStoryState, STORY_STATES, storyStateLabel } from '../../../../../showcase/story-states';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
+import { RtIconButtonComponent } from '../../../icon-button/rt-icon-button.component';
 import { RtButtonDirective } from '../../rt-button.directive';
 import { RT_RADIUS_STEPS, TRtRadius } from '../../../radius/rt-radius.model';
 import { IButton } from '../../rt-button.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
 export type TButtonMatrixPart =
-    'appearance' | 'disabled' | 'pressed' | 'size' | 'icon' | 'radius' | 'loading' | 'loading-label' | 'states' | 'presets' | 'themes';
+    | 'appearance'
+    | 'disabled'
+    | 'pressed'
+    | 'size'
+    | 'icon'
+    | 'radius'
+    | 'loading'
+    | 'loading-label'
+    | 'states'
+    | 'presets'
+    | 'themes'
+    | 'focus-origin';
 
 /** Случай иконки — не значение оси, а различимая комбинация подписи и стороны. */
 interface IButtonIconCase {
@@ -175,6 +187,48 @@ interface IButtonIconCase {
                 </app-story-presets>
             }
 
+            @case ('focus-origin') {
+                <!--
+                    Кнопка слева переводит фокус на соседнюю из кода — как окно, открытое кликом,
+                    фокусирует свою кнопку. Мышью кольца у соседней нет, с клавиатуры (Tab, Enter) —
+                    есть. Вторая строка — то же для кнопки-иконки.
+                -->
+                <app-story-presets caption="Фокус из кода после мыши и после клавиатуры в обоих наборах">
+                    <ng-template>
+                        <app-story-row caption="Кнопка" [items]="focusOriginCases">
+                            <ng-template>
+                                <button
+                                    rtButton
+                                    qa-dataid="story-focus-trigger"
+                                    label="Открыть окно"
+                                    appearance="outlined"
+                                    (click)="discard.focus()"></button>
+                                <button
+                                    #discard
+                                    rtButton
+                                    qa-dataid="story-focus-target"
+                                    label="Отменить изменения"
+                                    appearance="text"></button>
+                            </ng-template>
+                        </app-story-row>
+
+                        <app-story-row caption="Кнопка-иконка" [items]="focusOriginCases">
+                            <ng-template>
+                                <button
+                                    rtButton
+                                    qa-dataid="story-focus-icon-trigger"
+                                    label="Открыть окно"
+                                    appearance="outlined"
+                                    (click)="closeBox.querySelector('button')?.focus()"></button>
+                                <span #closeBox>
+                                    <rt-icon-button qa-dataid="story-focus-icon-target" icon="ico-close" ariaLabel="Закрыть" />
+                                </span>
+                            </ng-template>
+                        </app-story-row>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('presets') {
                 <app-story-presets caption="Взаимодействие по видам оформления в обоих наборах">
                     <ng-template>
@@ -213,6 +267,7 @@ interface IButtonIconCase {
     imports: [
         // directives
         RtButtonDirective,
+        RtIconButtonComponent,
 
         // showcase
         StoryGridComponent,
@@ -223,6 +278,9 @@ interface IButtonIconCase {
 })
 export class TestRtButtonMatrixComponent {
     public part: TButtonMatrixPart = 'appearance';
+
+    /** Одна ячейка на строку: пара «кнопка, переводящая фокус, и кнопка, принимающая его». */
+    public readonly focusOriginCases: readonly string[] = ['фокус из кода'];
 
     /** Строки — режим подписи, столбцы — покой и загрузка: у `hide` ширина в обоих столбцах одна. */
     public readonly loadingLabels: readonly IButton.LoadingLabel[] = ['keep', 'hide'];

@@ -45,5 +45,29 @@ export namespace IRtToggleButtonGroup {
         readonly option: Option<T>;
         readonly active: boolean;
         readonly disabled: boolean;
+        readonly context: OptionContext<T>;
     }
+
+    /** Обстановка шаблона сегмента: опция приходит как `$implicit`. */
+    export interface OptionContext<T = string> {
+        readonly $implicit: Option<T>;
+        /** Нажат ли сегмент. */
+        readonly active: boolean;
+    }
+
+    /**
+     * Раскладка сегментов. `row` — одна строка, как прежде; `wrap` — сегменты, не влезшие в строку,
+     * уходят на следующую; `column` — сегменты стоят один под другим.
+     */
+    export type Layout = 'row' | 'wrap' | 'column';
+
+    /**
+     * Вид группы. `segmented` — дорожка с сегментами, выбранный светлее дорожки; `chips` — отдельные
+     * пункты с обводкой и просветом между ними, выбранный залит. Поведение у обоих одно: выбор,
+     * множественный выбор, раскладка и связь с формой от вида не зависят.
+     */
+    export type Appearance = 'segmented' | 'chips';
+
+    /** Значение, которое группа пишет в форму: одно при одиночном выборе, набор — при множественном. */
+    export type FormValue<T = string> = T | ReadonlyArray<T> | null | undefined;
 }

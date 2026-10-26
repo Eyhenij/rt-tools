@@ -8,13 +8,13 @@ import { IStoryState, STORY_CONTROL_STATES, storyStateLabel } from '../../../../
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtFieldComponent } from '../../../field/rt-field.component';
 import { IRtInput } from '../../../input/rt-input.model';
-import { TRtTextareaResize, RtTextareaComponent } from '../../rt-textarea.component';
+import { TRtTextareaAppearance, TRtTextareaResize, RtTextareaComponent } from '../../rt-textarea.component';
 
 /** Короткий текст — им показаны состояния поля. */
 const SHORT_TEXT: string = 'Согласовано.';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TTextareaMatrixPart = 'size' | 'rows' | 'resize' | 'filling' | 'bordered' | 'states' | 'presets' | 'themes';
+export type TTextareaMatrixPart = 'size' | 'rows' | 'resize' | 'filling' | 'bordered' | 'appearance' | 'states' | 'presets' | 'themes';
 
 /** Случай с подписью и своим значением: без набранного текста ось высоты не видно. */
 interface ITextareaCase {
@@ -35,6 +35,7 @@ interface ITextareaBorderedCase extends ITextareaCase {
 /** Отключённость — единственное, что светло-тёмная пара меняет от ячейки к ячейке. */
 interface ITextareaThemeCase extends ITextareaCase {
     readonly disabled: boolean;
+    readonly appearance?: TRtTextareaAppearance;
 }
 
 /** Состояние, которое задаётся не псевдоклассом, а значением, входом или обёрткой. */
@@ -118,6 +119,24 @@ function invalid(): FormControl<string> {
                 </app-story-row>
             }
 
+            @case ('appearance') {
+                <app-story-row caption="Вид рамки" [items]="appearances" [slotWidth]="fieldWidth">
+                    <ng-template let-appearance>
+                        <rt-textarea ariaLabel="Вид рамки" [appearance]="appearance" [formControl]="appearanceControl" />
+                    </ng-template>
+                </app-story-row>
+
+                <app-story-row caption="Залитое: взаимодействие" [items]="states" [itemLabel]="stateLabel" [slotWidth]="fieldWidth">
+                    <ng-template let-state>
+                        <rt-textarea
+                            placeholder="Комментарий"
+                            ariaLabel="Состояние"
+                            appearance="fill"
+                            [attr.data-story-state]="state.state" />
+                    </ng-template>
+                </app-story-row>
+            }
+
             @case ('states') {
                 <app-story-row caption="Взаимодействие" [items]="states" [itemLabel]="stateLabel" [slotWidth]="fieldWidth">
                     <ng-template let-state>
@@ -151,6 +170,7 @@ function invalid(): FormControl<string> {
                                 placeholder="Комментарий"
                                 [rows]="2"
                                 [disabled]="themeCase.disabled"
+                                [appearance]="themeCase.appearance ?? 'outline'"
                                 [ariaLabel]="themeCase.name"
                                 [formControl]="themeCase.control" />
                         }
@@ -166,6 +186,7 @@ function invalid(): FormControl<string> {
                                 placeholder="Комментарий"
                                 [rows]="2"
                                 [disabled]="themeCase.disabled"
+                                [appearance]="themeCase.appearance ?? 'outline'"
                                 [ariaLabel]="themeCase.name"
                                 [formControl]="themeCase.control" />
                         }
@@ -195,6 +216,8 @@ export class TestRtTextareaMatrixComponent {
     public readonly fieldWidth: string = STORY_FIELD_WIDTH_WIDE;
     public readonly sizes: readonly IRtInput.Size[] = ['sm', 'md', 'lg'];
     public readonly resizes: readonly TRtTextareaResize[] = ['none', 'vertical'];
+    public readonly appearances: readonly TRtTextareaAppearance[] = ['outline', 'fill'];
+    public readonly appearanceControl: FormControl<string> = filled(SHORT_TEXT);
     public readonly states: readonly IStoryState[] = STORY_CONTROL_STATES;
     public readonly stateLabel: (value: IStoryState) => string = storyStateLabel;
 
@@ -228,6 +251,8 @@ export class TestRtTextareaMatrixComponent {
         { name: 'со значением', control: filled(SAMPLE), disabled: false },
         { name: 'ошибка', control: invalid(), disabled: false },
         { name: 'отключено', control: filled(SAMPLE), disabled: true },
+        { name: 'залитое', control: filled(SAMPLE), disabled: false, appearance: 'fill' },
+        { name: 'залитое отключённое', control: filled(SAMPLE), disabled: true, appearance: 'fill' },
     ];
 
     /** Подпись случая: у всех наборов этой матрицы имя лежит в одном поле. */

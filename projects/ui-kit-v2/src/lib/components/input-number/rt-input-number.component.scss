@@ -1,9 +1,17 @@
 @use '../../../styles/mixins' as kv;
 
 @layer rt-kit.components {
+    /* Признак набора — на предке или на самом поле: приложение ставит его и на тег контрола. */
+    $preset: ':is(.rt-preset-material *, [data-preset="material"] *, .rt-preset-material, [data-preset="material"])';
+    $preset-weak: ':where(.rt-preset-material *, [data-preset="material"] *, .rt-preset-material, [data-preset="material"])';
+
     .rt-input-number {
         --rt-input-number-radius: var(--rt-input-radius);
         --rt-input-number-fill-radius: var(--rt-radius-sm);
+        --rt-input-number-color-border-hover: var(--rt-color-text-primary);
+
+        /* Толщина боковой рамки: от неё под материальным набором считается отступ текста. */
+        --rt-input-number-edge: var(--rt-input-border-width);
 
         position: relative;
         display: inline-flex;
@@ -29,6 +37,12 @@
             outline-offset: var(--rt-input-focus-outline-offset);
         }
 
+        /* Наведение в материальном наборе — как у поля Material: рамка цвета текста. `:where` держит
+           силу правила на уровне вида, и фокус, ошибка, залитый вид и «без рамки» его перекрывают. */
+        &#{$preset-weak}:where(:hover:not(:has(:disabled))) {
+            border-color: var(--rt-input-number-color-border-hover);
+        }
+
         /* bordered=false: снимаем только resting-рамку; invalid/focus/readonly идут
            ниже по source-order и перекрывают её своей рамкой. */
         &--borderless {
@@ -40,6 +54,9 @@
            Объявлен до блоков состояний: фокус, ошибка и «только чтение» идут ниже и
            перекрывают его рамку. */
         &--appearance--fill {
+            --rt-input-number-edge: var(--rt-input-fill-edge);
+
+            border-width: var(--rt-input-fill-edge) var(--rt-input-fill-edge) var(--rt-input-border-width);
             border-color: transparent;
             border-radius: var(--rt-input-number-fill-radius) var(--rt-input-number-fill-radius) 0 0;
             border-bottom-color: var(--rt-color-field-fill-underline);
@@ -69,9 +86,40 @@
             }
         }
 
+        /* Фокус залитого поля: в материальном наборе — черта снизу вдвое толще, как у поля ввода. */
+        &--appearance--fill:focus-within {
+            box-shadow: var(--rt-input-fill-focus-shadow);
+        }
+
+        &--appearance--fill.rt-input-number--invalid:focus-within {
+            box-shadow: var(--rt-input-fill-focus-shadow-error);
+        }
+
+        /* Отключённое поле в материальном наборе не тускнеет, а красит рамку, текст и подсказку —
+           как поле ввода. Своим видом цвета равны обычным. */
         &--disabled {
+            color: var(--rt-input-color-text-disabled);
             cursor: not-allowed;
-            opacity: var(--rt-input-disabled-opacity);
+            opacity: var(--rt-input-disabled-field-opacity);
+        }
+
+        /* Отключённое залитое поле в наборе залито, как поле Material: on-surface 4 %. */
+        &--appearance--fill.rt-input-number--disabled {
+            background-color: var(--rt-input-fill-color-bg-disabled);
+        }
+
+        &--disabled:not(
+                .rt-input-number--invalid,
+                .rt-input-number--appearance--fill,
+                .rt-input-number--appearance--pill,
+                .rt-input-number--borderless,
+                .rt-input-number--readonly
+            ) {
+            border-color: var(--rt-input-color-border-disabled);
+        }
+
+        &--disabled &__field::placeholder {
+            color: var(--rt-input-color-placeholder-disabled);
         }
 
         &--size--sm {
@@ -80,6 +128,12 @@
 
         &--size--lg {
             min-height: var(--rt-input-height-lg);
+        }
+
+        /* Текст поля Material начинается в 16 px от внешнего края поля, рамка входит в этот отступ.
+           Своим видом кита отступ считается от рамки. Поле только для чтения ниже снимает отступ. */
+        &#{$preset-weak} {
+            padding-inline: calc(var(--rt-input-padding-x) - var(--rt-input-number-edge));
         }
 
         /* Read-only: плоский текст вместо input — снимаем рамку/фон/паддинги. */
@@ -108,6 +162,9 @@
             background: transparent;
             color: inherit;
             font: inherit;
+
+            /* Межбуквенный интервал значения — ручка приложения: кит её не объявляет, без неё normal. */
+            letter-spacing: var(--rt-input-letter-spacing, normal);
             outline: none;
 
             &::placeholder {

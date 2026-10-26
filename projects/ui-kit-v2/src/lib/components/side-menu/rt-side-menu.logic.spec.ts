@@ -171,6 +171,20 @@ describe('sideMenuIdsToExpand', (): void => {
         expect(sideMenuIdsToExpand(filterSideMenuItems(NESTED, '2024'))).toEqual(['saved', 'past']);
     });
 
+    it('SC-UKV-997 — папка, совпавшая только по имени, названа раскрытой и стоит без детей', (): void => {
+        const found: IRtSideMenu.Item[] = filterSideMenuItems(NESTED, 'сохранён');
+
+        expect(found[0].submenu).toEqual([]);
+        expect(sideMenuIdsToExpand(found)).toEqual(['saved']);
+    });
+
+    it('SC-UKV-997 — совпавший пункт без детей раскрытым не назван', (): void => {
+        const found: IRtSideMenu.Item[] = filterSideMenuItems(NESTED, 'создание');
+
+        expect(found.map((item: IRtSideMenu.Item): string | number => item.id)).toEqual(['create']);
+        expect(sideMenuIdsToExpand(found)).toEqual([]);
+    });
+
     it('в списке без папок раскрывать нечего', (): void => {
         // Утверждение об отсутствии идёт в паре с положительным: без него оно зелено и на пустом
         // отборе, где искать нечего вовсе.

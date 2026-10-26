@@ -1,14 +1,44 @@
 <ng-container rtBlock="rt-toast">
-    @if (icon(); as icon) {
+    @if (!bare() && icon(); as icon) {
         <rt-icon rtElem="icon" qa-dataid="toast-icon" size="sm" [name]="icon" />
     }
     <div rtElem="content" qa-dataid="toast-content">
         @if (toast().meta; as meta) {
             <span rtElem="meta" qa-dataid="toast-meta">{{ meta }}</span>
         }
-        <span rtElem="message" qa-dataid="toast-message">{{ toast().message }}</span>
-        @if (toast().description; as description) {
-            <span rtElem="description" qa-dataid="toast-description">{{ description }}</span>
+        @if (toast().component; as component) {
+            <!-- Свой компонент встаёт на место сообщения; сообщение остаётся именем для чтения с экрана. -->
+            @if (toast().message) {
+                <span rtElem="sr-message">{{ toast().message }}</span>
+            }
+            <div rtElem="custom" qa-dataid="toast-custom">
+                <ng-container [ngComponentOutlet]="component" [ngComponentOutletInjector]="componentInjector()" />
+            </div>
+        } @else {
+            <span rtElem="message" qa-dataid="toast-message">{{ toast().message }}</span>
+            @if (toast().description; as description) {
+                <span rtElem="description" qa-dataid="toast-description">{{ description }}</span>
+            }
+        }
+        @if (progressValue() !== null) {
+            <rt-progress-bar rtElem="value" qa-dataid="toast-progress-value" [value]="progressValue() ?? 0" [ariaLabel]="toast().message" />
+        }
+        @if (toast().details; as details) {
+            <button
+                rtButton
+                rtElem="details-toggle"
+                qa-dataid="toast-details-toggle"
+                size="sm"
+                theme="secondary"
+                appearance="text"
+                type="button"
+                [attr.aria-expanded]="detailsOpen()"
+                (click)="toggleDetails()">
+                {{ detailsOpen() ? t().uiHide : t().uiDetails }}
+            </button>
+            @if (detailsOpen()) {
+                <rt-copy-value rtElem="details" qa-dataid="toast-details" wrap [value]="details" />
+            }
         }
         @if (toast().action || toast().secondaryAction) {
             <div rtElem="actions">
@@ -33,14 +63,16 @@
             </div>
         }
     </div>
-    <rt-icon-button
-        rtElem="close"
-        qa-dataid="toast-close"
-        icon="ico-close"
-        variant="ghost"
-        size="sm"
-        [ariaLabel]="t().uiClose"
-        (clicked)="onClose()" />
+    @if (!bare()) {
+        <rt-icon-button
+            rtElem="close"
+            qa-dataid="toast-close"
+            icon="ico-close"
+            variant="ghost"
+            size="sm"
+            [ariaLabel]="t().uiClose"
+            (clicked)="onClose()" />
+    }
     @if (showProgress()) {
         <span rtElem="progress" qa-dataid="toast-progress" aria-hidden="true"></span>
     }

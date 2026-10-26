@@ -4,11 +4,12 @@
 <rt-copy-value label="Reference" copyLabel="Copy reference" [value]="error.referenceId" />
 ```
 
-| вход        | тип      | умолчание                    |
-| ----------- | -------- | ---------------------------- |
-| `value`     | `string` | обязателен                   |
-| `label`     | `string` | `''` — не рисуется           |
-| `copyLabel` | `string` | `''` → переведённое `uiCopy` |
+| вход        | тип       | умолчание                                     |
+| ----------- | --------- | --------------------------------------------- |
+| `value`     | `string`  | обязателен                                    |
+| `label`     | `string`  | `''` — не рисуется                            |
+| `copyLabel` | `string`  | `''` → переведённое `uiCopy`                  |
+| `wrap`      | `boolean` | `false` — многострочное значение с прокруткой |
 
 Выход: `copiedValue` — значение, ушедшее в буфер.
 

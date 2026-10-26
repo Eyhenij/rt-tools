@@ -36,3 +36,9 @@ export const States: TStory = {
 export const Presets: TStory = { args: { part: 'presets' } };
 
 export const Themes: TStory = { args: { part: 'themes' } };
+
+/**
+ * Группа `rt-radio-group`: стрелки переводят выбор и фокус на соседа по кругу, отключённого пропуская;
+ * Tab встаёт только на выбранную, а без выбора — на первую включённую.
+ */
+export const Group: TStory = { args: { part: 'group' } };

@@ -96,6 +96,10 @@ stands next to it as components of its own, drawn on the parts of the second kit
 - **The end of the popup list asks for the next page when lazy loading is on.** The request pauses
   while the caller reports fetching, and a spinner stands under the last row meanwhile.
 - **A popup with no rows to show says «No results», and a loading popup shows a spinner.**
+- **The popup also works on its own, opened by the application's own button.** Inside the selector
+  it reads the selector's entities and settings, and its own inputs stay silent. On its own it reads
+  its own inputs and reports apply, cancel, the search, the next page and the ticks by its own
+  outputs. Without the key and the label field it stops with an error that names them.
 - **A divider follows the last visible pinned row of the popup.** Pins change no order of the rows:
   the order stays the caller's.
 - **The add button stands while the popup has something to offer.** The caller can hide it; reset

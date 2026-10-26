@@ -11,7 +11,7 @@
    в базовом наборе.
 
    Марка, ошибка, подложка, обратная подложка и заливка поля читают тему Material, если она есть
-   на странице, — те же системные имена, что у первого кита: `var(--mat-sys-primary, <ступень>)`.
+   на странице, — те же системные имена, что у первого кита: `var(--rt-sys-primary, <ступень>)`.
    Запасным стоит ступень шкалы, и страница без темы Material получает прежний вид; зависимости от
    Material у кита нет — неизвестное свойство браузер заменяет запасным значением. Имена стоят в
    назначениях, а не в шкале: назначения объявляются на узле с признаком набора, и тема Material,
@@ -24,25 +24,27 @@
    Значения выбираются из ступеней материальной шкалы (`tokens.scale-material.mjs`), а не
    пишутся кодами цвета: ступень правится в одном месте, а назначение говорит роль. */
 
+import { materialField } from './tokens.material-field.mjs';
+
 export const material = [
     {
         lead: `    /* Подложки */`,
         name: `--rt-color-bg-page`,
         value: `var(--rt-mat-neutral-5)`,
     },
-    { name: `--rt-color-bg-surface`, value: `var(--mat-sys-surface, var(--rt-mat-neutral-0))` },
+    { name: `--rt-color-bg-surface`, value: `var(--rt-sys-surface, var(--rt-mat-neutral-0))` },
     { name: `--rt-color-bg-surface-subtle`, value: `var(--rt-mat-overlay-black-4)` },
     {
         name: `--rt-color-bg-surface-subtle-2`,
-        value: `var(--mat-form-field-filled-container-color, var(--mat-sys-surface-variant, var(--rt-mat-neutral-15)))`,
+        value: `var(--rt-field-filled-container-color, var(--rt-sys-surface-variant, var(--rt-mat-neutral-15)))`,
     },
     { name: `--rt-color-bg-hover`, value: `var(--rt-mat-neutral-10)` },
     { name: `--rt-color-bg-subtle`, value: `var(--rt-mat-neutral-10)` },
     { name: `--rt-color-bg-overlay`, value: `var(--rt-mat-overlay-black-32)` },
-    { name: `--rt-color-bg-inverse`, value: `var(--mat-sys-inverse-surface, var(--rt-mat-neutral-100))` },
+    { name: `--rt-color-bg-inverse`, value: `var(--rt-sys-inverse-surface, var(--rt-mat-neutral-100))` },
     {
         name: `--rt-color-bg-nav`,
-        value: `var(--mat-sys-primary, var(--rt-mat-navy-100))`,
+        value: `var(--rt-sys-primary, var(--rt-mat-navy-100))`,
         note: `марка первого кита: обвязка тёмная в обоих наборах`,
     },
     { name: `--rt-color-bg-page-auth`, value: `var(--rt-mat-neutral-5)` },
@@ -52,17 +54,17 @@ export const material = [
         lead: `    /* Текст */`,
         space: true,
         name: `--rt-color-text-primary`,
-        value: `var(--mat-sys-on-surface, var(--rt-mat-neutral-100))`,
+        value: `var(--rt-sys-on-surface, var(--rt-mat-neutral-100))`,
     },
     { name: `--rt-color-text-muted`, value: `var(--rt-mat-neutral-60)` },
     {
         name: `--rt-color-text-disabled`,
-        value: `color-mix(in srgb, var(--mat-sys-on-surface, var(--rt-mat-neutral-100)) 38%, transparent)`,
-        dark: `color-mix(in srgb, var(--mat-sys-on-surface, var(--rt-mat-neutral-0)) 38%, transparent)`,
+        value: `color-mix(in srgb, var(--rt-sys-on-surface, var(--rt-mat-neutral-100)) 38%, transparent)`,
+        dark: `color-mix(in srgb, var(--rt-sys-on-surface, var(--rt-mat-neutral-0)) 38%, transparent)`,
     },
-    { name: `--rt-color-text-inverse`, value: `var(--mat-sys-inverse-on-surface, var(--rt-mat-neutral-0))` },
-    { name: `--rt-color-text-link`, value: `var(--mat-sys-primary, var(--rt-mat-blue-100))` },
-    { name: `--rt-color-text-link-hover`, value: `color-mix(in srgb, var(--mat-sys-primary, var(--rt-mat-blue-100)) 90%, #000)` },
+    { name: `--rt-color-text-inverse`, value: `var(--rt-sys-inverse-on-surface, var(--rt-mat-neutral-0))` },
+    { name: `--rt-color-text-link`, value: `var(--rt-sys-primary, var(--rt-mat-blue-100))` },
+    { name: `--rt-color-text-link-hover`, value: `color-mix(in srgb, var(--rt-sys-primary, var(--rt-mat-blue-100)) 90%, #000)` },
 
     {
         lead: `    /* Рамки */`,
@@ -82,17 +84,17 @@ export const material = [
         lead: `    /* Действие: подложка, наведение, нажатие, подпись на них и цвет роли на поверхности */`,
         space: true,
         name: `--rt-color-action-primary`,
-        value: `var(--mat-sys-primary, var(--rt-mat-blue-100))`,
+        value: `var(--rt-sys-primary, var(--rt-mat-blue-100))`,
     },
-    { name: `--rt-color-action-primary-hover`, value: `color-mix(in srgb, var(--mat-sys-primary, var(--rt-mat-blue-100)) 90%, #000)` },
-    { name: `--rt-color-action-primary-active`, value: `color-mix(in srgb, var(--mat-sys-primary, var(--rt-mat-blue-100)) 80%, #000)` },
+    { name: `--rt-color-action-primary-hover`, value: `color-mix(in srgb, var(--rt-sys-primary, var(--rt-mat-blue-100)) 90%, #000)` },
+    { name: `--rt-color-action-primary-active`, value: `color-mix(in srgb, var(--rt-sys-primary, var(--rt-mat-blue-100)) 80%, #000)` },
     {
         name: `--rt-color-action-primary-subtle`,
-        value: `color-mix(in srgb, var(--mat-sys-primary, var(--rt-mat-blue-100)) 8%, transparent)`,
+        value: `color-mix(in srgb, var(--rt-sys-primary, var(--rt-mat-blue-100)) 8%, transparent)`,
     },
     {
         name: `--rt-color-action-primary-soft`,
-        value: `color-mix(in srgb, var(--mat-sys-primary, var(--rt-mat-blue-100)) 24%, transparent)`,
+        value: `color-mix(in srgb, var(--rt-sys-primary, var(--rt-mat-blue-100)) 24%, transparent)`,
     },
     { name: `--rt-color-action-on-primary`, value: `var(--rt-mat-neutral-0)` },
 
@@ -123,24 +125,24 @@ export const material = [
 
     {
         name: `--rt-color-action-danger`,
-        value: `var(--mat-sys-error, var(--rt-mat-red-100))`,
+        value: `var(--rt-sys-error, var(--rt-mat-red-100))`,
     },
-    { name: `--rt-color-action-danger-hover`, value: `color-mix(in srgb, var(--mat-sys-error, var(--rt-mat-red-100)) 90%, #000)` },
-    { name: `--rt-color-action-danger-active`, value: `color-mix(in srgb, var(--mat-sys-error, var(--rt-mat-red-100)) 80%, #000)` },
+    { name: `--rt-color-action-danger-hover`, value: `color-mix(in srgb, var(--rt-sys-error, var(--rt-mat-red-100)) 90%, #000)` },
+    { name: `--rt-color-action-danger-active`, value: `color-mix(in srgb, var(--rt-sys-error, var(--rt-mat-red-100)) 80%, #000)` },
     { name: `--rt-color-action-on-danger`, value: `var(--rt-mat-neutral-0)` },
 
     {
         name: `--rt-color-action-info`,
-        value: `var(--mat-sys-primary, var(--rt-mat-blue-100))`,
+        value: `var(--rt-sys-primary, var(--rt-mat-blue-100))`,
     },
-    { name: `--rt-color-action-info-hover`, value: `color-mix(in srgb, var(--mat-sys-primary, var(--rt-mat-blue-100)) 90%, #000)` },
-    { name: `--rt-color-action-info-active`, value: `color-mix(in srgb, var(--mat-sys-primary, var(--rt-mat-blue-100)) 80%, #000)` },
+    { name: `--rt-color-action-info-hover`, value: `color-mix(in srgb, var(--rt-sys-primary, var(--rt-mat-blue-100)) 90%, #000)` },
+    { name: `--rt-color-action-info-active`, value: `color-mix(in srgb, var(--rt-sys-primary, var(--rt-mat-blue-100)) 80%, #000)` },
     { name: `--rt-color-action-on-info`, value: `var(--rt-mat-neutral-0)` },
 
     {
         name: `--rt-color-action-disabled`,
-        value: `color-mix(in srgb, var(--mat-sys-on-surface, var(--rt-mat-neutral-100)) 12%, transparent)`,
-        dark: `color-mix(in srgb, var(--mat-sys-on-surface, var(--rt-mat-neutral-0)) 12%, transparent)`,
+        value: `color-mix(in srgb, var(--rt-sys-on-surface, var(--rt-mat-neutral-100)) 12%, transparent)`,
+        dark: `color-mix(in srgb, var(--rt-sys-on-surface, var(--rt-mat-neutral-0)) 12%, transparent)`,
     },
 
     {
@@ -154,11 +156,11 @@ export const material = [
     { name: `--rt-color-state-warning`, value: `var(--rt-mat-orange-100)` },
     { name: `--rt-color-state-warning-bg`, value: `var(--rt-mat-orange-5)` },
     { name: `--rt-color-state-warning-text`, value: `var(--rt-mat-orange-100)` },
-    { name: `--rt-color-state-danger`, value: `var(--mat-sys-error, var(--rt-mat-red-100))` },
-    { name: `--rt-color-state-danger-bg`, value: `var(--mat-sys-error-container, var(--rt-mat-red-10))` },
-    { name: `--rt-color-state-error-text`, value: `var(--mat-sys-error, var(--rt-mat-red-100))` },
-    { name: `--rt-color-state-info`, value: `var(--mat-sys-primary, var(--rt-mat-blue-100))` },
-    { name: `--rt-color-state-info-bg`, value: `var(--mat-sys-primary-container, var(--rt-mat-blue-20))` },
+    { name: `--rt-color-state-danger`, value: `var(--rt-sys-error, var(--rt-mat-red-100))` },
+    { name: `--rt-color-state-danger-bg`, value: `var(--rt-sys-error-container, var(--rt-mat-red-10))` },
+    { name: `--rt-color-state-error-text`, value: `var(--rt-sys-error, var(--rt-mat-red-100))` },
+    { name: `--rt-color-state-info`, value: `var(--rt-sys-primary, var(--rt-mat-blue-100))` },
+    { name: `--rt-color-state-info-bg`, value: `var(--rt-sys-primary-container, var(--rt-mat-blue-20))` },
 
     {
         lead: `    /* Рельса шагов */`,
@@ -179,14 +181,14 @@ export const material = [
         lead: `    /* Шапка таблицы первого кита залита тем же цветом, что залитое поле Material. */`,
         space: true,
         name: `--rt-color-table-head-bg`,
-        value: `var(--mat-form-field-filled-container-color, var(--mat-sys-surface-variant, var(--rt-mat-overlay-black-4)))`,
+        value: `var(--rt-field-filled-container-color, var(--rt-sys-surface-variant, var(--rt-mat-overlay-black-4)))`,
     },
 
     {
         lead: `    /* Черта снизу у залитого поля Material — цвет on-surface-variant темы. */`,
         space: true,
         name: `--rt-color-field-fill-underline`,
-        value: `var(--mat-sys-on-surface-variant, var(--rt-mat-neutral-30))`,
+        value: `var(--rt-sys-on-surface-variant, var(--rt-mat-neutral-30))`,
     },
 
     {
@@ -198,7 +200,7 @@ export const material = [
         value: `calc(var(--rt-control-height-xl) - var(--rt-space-1))`,
     },
     { name: `--rt-list-search-radius`, value: `var(--rt-radius-sm)` },
-    { name: `--rt-list-search-color-border`, value: `var(--mat-sys-outline, var(--rt-mat-neutral-25))` },
+    { name: `--rt-list-search-color-border`, value: `var(--rt-sys-outline, var(--rt-mat-neutral-25))` },
     { name: `--rt-list-search-color-bg`, value: `transparent`, dark: `transparent` },
     /* The search field of the first kit's list, measured on its showcase: 22rem wide, the icon of 24px
        12px in from the edge, 16px from the icon to a 16px text, icon and text in the variant tone.
@@ -210,17 +212,17 @@ export const material = [
     { name: `--rt-list-search-gap`, value: `var(--rt-space-4)` },
     { name: `--rt-list-search-font-size`, value: `var(--rt-text-md)` },
     { name: `--rt-list-search-icon-size`, value: `var(--rt-size-6)` },
-    { name: `--rt-list-search-icon-color`, value: `var(--mat-sys-on-surface-variant, var(--rt-mat-neutral-60))` },
-    { name: `--rt-list-search-color-placeholder`, value: `var(--mat-sys-on-surface-variant, var(--rt-mat-neutral-60))` },
+    { name: `--rt-list-search-icon-color`, value: `var(--rt-sys-on-surface-variant, var(--rt-mat-neutral-60))` },
+    { name: `--rt-list-search-color-placeholder`, value: `var(--rt-sys-on-surface-variant, var(--rt-mat-neutral-60))` },
 
     {
         lead: `    /* Панель настройки колонок первого кита: плашка колонки залита цветом выбранного пункта
        Material, значки — в тоне on-surface-variant темы. Сняты с панели на витрине первого кита. */`,
         space: true,
         name: `--rt-list-settings-item-bg`,
-        value: `var(--mat-option-selected-state-layer-color, var(--mat-sys-secondary-container, var(--rt-mat-neutral-10)))`,
+        value: `var(--rt-option-selected-state-layer-color, var(--rt-sys-secondary-container, var(--rt-mat-neutral-10)))`,
     },
-    { name: `--rt-list-settings-icon-color`, value: `var(--mat-sys-on-surface-variant, var(--rt-mat-neutral-60))` },
+    { name: `--rt-list-settings-icon-color`, value: `var(--rt-sys-on-surface-variant, var(--rt-mat-neutral-60))` },
 
     {
         lead: `    /* Кнопки действий панели списка — mat-mini-fab первого кита: круг без заливки с подъёмом 6,
@@ -236,16 +238,16 @@ export const material = [
     { name: `--rt-list-action-icon-size`, value: `var(--rt-size-6)` },
     { name: `--rt-list-action-color`, value: `var(--rt-mat-neutral-60)` },
     { name: `--rt-list-table-icon-size`, value: `var(--rt-size-6)` },
-    { name: `--rt-list-table-icon-color`, value: `var(--mat-sys-on-surface-variant, var(--rt-mat-neutral-60))` },
-    { name: `--rt-list-table-head-divider-color`, value: `var(--mat-sys-outline, var(--rt-mat-neutral-30))` },
+    { name: `--rt-list-table-icon-color`, value: `var(--rt-sys-on-surface-variant, var(--rt-mat-neutral-60))` },
+    { name: `--rt-list-table-head-divider-color`, value: `var(--rt-sys-outline, var(--rt-mat-neutral-30))` },
     { name: `--rt-list-table-button-size`, value: `calc(var(--rt-size-8) + var(--rt-size-1))` },
     { name: `--rt-list-table-button-radius`, value: `var(--rt-radius-full)` },
     { name: `--rt-list-copy-button-size`, value: `var(--rt-size-6)` },
     { name: `--rt-list-copy-button-radius`, value: `var(--rt-mat-radius-5)` },
     { name: `--rt-list-settings-item-radius`, value: `var(--rt-mat-radius-5)` },
     { name: `--rt-list-filter-line-height`, value: `var(--rt-size-6)` },
-    { name: `--rt-list-copy-button-bg`, value: `var(--mat-fab-small-container-color, var(--rt-mat-neutral-0))` },
-    { name: `--rt-list-copy-button-bg-hover`, value: `var(--mat-fab-small-container-color, var(--rt-mat-neutral-0))` },
+    { name: `--rt-list-copy-button-bg`, value: `var(--rt-fab-small-container-color, var(--rt-mat-neutral-0))` },
+    { name: `--rt-list-copy-button-bg-hover`, value: `var(--rt-fab-small-container-color, var(--rt-mat-neutral-0))` },
     { name: `--rt-list-copy-button-color`, value: `var(--rt-mat-neutral-60)` },
     { name: `--rt-list-action-color-hover`, value: `var(--rt-mat-neutral-100)` },
     { name: `--rt-list-action-color-bg-hover`, value: `transparent` },
@@ -323,9 +325,9 @@ export const material = [
         name: `--rt-overlay-menu-radius`,
         value: `var(--rt-mat-radius-4)`,
     },
-    { name: `--rt-overlay-menu-shadow`, value: `var(--mat-sys-level2, var(--rt-mat-shadow-level-2))` },
+    { name: `--rt-overlay-menu-shadow`, value: `var(--rt-sys-level2, var(--rt-mat-shadow-level-2))` },
     { name: `--rt-overlay-select-radius`, value: `0 0 var(--rt-mat-radius-4) var(--rt-mat-radius-4)` },
-    { name: `--rt-overlay-select-shadow`, value: `var(--mat-sys-level2, var(--rt-mat-shadow-level-2))` },
+    { name: `--rt-overlay-select-shadow`, value: `var(--rt-sys-level2, var(--rt-mat-shadow-level-2))` },
     { name: `--rt-overlay-tooltip-radius`, value: `var(--rt-mat-radius-4)` },
     { name: `--rt-overlay-tooltip-shadow`, value: `none` },
     {
@@ -334,8 +336,8 @@ export const material = [
        16px, выбранный — фон текста 12% без жирного и с галочкой. */`,
         space: true,
         name: `--rt-overlay-menu-bg`,
-        value: `var(--mat-menu-container-color, var(--rt-mat-neutral-0))`,
-        dark: `var(--mat-menu-container-color, var(--rt-color-bg-surface))`,
+        value: `var(--rt-menu-container-color, var(--rt-mat-neutral-0))`,
+        dark: `var(--rt-menu-container-color, var(--rt-color-bg-surface))`,
     },
     { name: `--rt-overlay-menu-padding-y`, value: `var(--rt-space-sm)` },
     { name: `--rt-overlay-menu-item-weight`, value: `var(--rt-font-weight-medium)` },
@@ -343,15 +345,15 @@ export const material = [
     { name: `--rt-overlay-select-option-font-size`, value: `var(--rt-text-md)` },
     {
         name: `--rt-overlay-select-selected-bg`,
-        value: `color-mix(in srgb, var(--mat-sys-on-surface, var(--rt-mat-neutral-100)) 12%, transparent)`,
-        dark: `color-mix(in srgb, var(--mat-sys-on-surface, var(--rt-mat-neutral-0)) 12%, transparent)`,
+        value: `color-mix(in srgb, var(--rt-sys-on-surface, var(--rt-mat-neutral-100)) 12%, transparent)`,
+        dark: `color-mix(in srgb, var(--rt-sys-on-surface, var(--rt-mat-neutral-0)) 12%, transparent)`,
     },
     { name: `--rt-overlay-select-selected-weight`, value: `var(--rt-font-weight-regular)` },
     { name: `--rt-overlay-select-check-display`, value: `inline-flex` },
     {
         name: `--rt-overlay-menu-current-bg`,
-        value: `color-mix(in srgb, var(--mat-sys-on-surface, var(--rt-mat-neutral-100)) 12%, transparent)`,
-        dark: `color-mix(in srgb, var(--mat-sys-on-surface, var(--rt-mat-neutral-0)) 12%, transparent)`,
+        value: `color-mix(in srgb, var(--rt-sys-on-surface, var(--rt-mat-neutral-100)) 12%, transparent)`,
+        dark: `color-mix(in srgb, var(--rt-sys-on-surface, var(--rt-mat-neutral-0)) 12%, transparent)`,
     },
     { name: `--rt-overlay-menu-min-width`, value: `var(--rt-mat-menu-min-width)` },
     { name: `--rt-overlay-menu-item-min-height`, value: `var(--rt-size-12)` },
@@ -366,4 +368,51 @@ export const material = [
     { name: `--rt-icon-button-disabled-opacity`, value: `1` },
     { name: `--rt-icon-button-disabled-color`, value: `var(--rt-color-text-disabled)` },
     { name: `--rt-icon-button-disabled-fill`, value: `0%` },
+    ...materialField,
+    {
+        lead: `    /* Группа переключателей видом «чипы» — фильтр-чип Material: обводка цвета outline темы,
+       выбранный залит secondary-container, отключённый — текст 38 %, обводка 12 %. Обводку и цвет
+       текста у выбранного задаёт лист чипов: своё имя каждому стоило бы по разу на тему, набор и
+       островок, а начальный пакет приложения-образца стоит у порога. */`,
+        space: true,
+        name: `--rt-toggle-chip-color-border`,
+        value: `var(--rt-sys-outline, var(--rt-mat-neutral-60))`,
+        dark: `var(--rt-sys-outline, var(--rt-mat-neutral-40))`,
+    },
+    {
+        name: `--rt-toggle-chip-color-text`,
+        value: `var(--rt-sys-on-surface-variant, var(--rt-mat-neutral-70))`,
+        dark: `var(--rt-sys-on-surface-variant, var(--rt-mat-neutral-25))`,
+    },
+    {
+        name: `--rt-toggle-chip-color-bg-selected`,
+        value: `var(--rt-sys-secondary-container, var(--rt-mat-neutral-25))`,
+        dark: `var(--rt-sys-secondary-container, var(--rt-mat-neutral-70))`,
+    },
+    {
+        lead: `    /* Вкладки: полоса и панель движутся, как у вкладок Material, — полсекунды с той же кривой. */`,
+        space: true,
+        name: `--rt-tabs-indicator-duration`,
+        value: `var(--rt-duration-slower)`,
+    },
+    {
+        name: `--rt-tabs-indicator-easing`,
+        value: `cubic-bezier(0.35, 0, 0.25, 1)`,
+    },
+    {
+        name: `--rt-tabs-panel-duration`,
+        value: `var(--rt-duration-slower)`,
+    },
+    {
+        name: `--rt-tabs-panel-easing`,
+        value: `cubic-bezier(0.35, 0, 0.25, 1)`,
+    },
+    {
+        name: `--rt-tabs-scroll-duration`,
+        value: `var(--rt-duration-slower)`,
+    },
+    {
+        name: `--rt-tabs-scroll-easing`,
+        value: `cubic-bezier(0.35, 0, 0.25, 1)`,
+    },
 ];

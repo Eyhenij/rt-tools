@@ -29,6 +29,7 @@
                     [controlId]="effectiveControlId()"
                     [placeholder]="fieldPlaceholder()"
                     [ngModel]="draft()"
+                    [ngModelOptions]="{ standalone: true }"
                     (ngModelChange)="draft.set($event ?? '')"
                     (keydown.enter)="onCommit()"
                     (focusout)="onCommit()" />
@@ -42,6 +43,7 @@
                 [controlId]="effectiveControlId()"
                 [placeholder]="fieldPlaceholder()"
                 [ngModel]="draft()"
+                [ngModelOptions]="{ standalone: true }"
                 (ngModelChange)="draft.set($event ?? '')"
                 (keydown.enter)="onCommit()"
                 (focusout)="onCommit()" />

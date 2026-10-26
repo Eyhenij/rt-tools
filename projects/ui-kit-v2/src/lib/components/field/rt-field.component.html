@@ -1,8 +1,10 @@
 <ng-container rtBlock="rt-field">
     @if (label()) {
-        <span rtElem="label-row">
+        <span #labelRow rtElem="label-row">
+            <!-- Текст подписи — свой узел: пробел между ним и звёздочкой сборка выбрасывает, и зазор до
+                 звёздочки задаёт свойство, а не пробел в разметке. -->
             <label rtElem="label" qa-dataid="field-label" [attr.for]="controlId()">
-                {{ label() }}
+                <span>{{ label() }}</span>
                 @if (isRequired() && !hideRequiredMark()) {
                     <span rtElem="required" qa-dataid="field-required" aria-hidden="true">*</span>
                 }

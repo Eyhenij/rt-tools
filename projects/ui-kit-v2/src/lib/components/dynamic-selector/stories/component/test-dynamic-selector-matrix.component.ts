@@ -6,7 +6,7 @@ import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtIconButtonComponent } from '../../../icon-button/rt-icon-button.component';
 import { RtDynamicInputComponent } from '../../dynamic-input/rt-dynamic-input.component';
-import { TestDynamicSelectorPopupFrameComponent } from './test-dynamic-selector-popup-frame.component';
+import { RtDynamicSelectorPopupComponent } from '../../popup/rt-dynamic-selector-popup.component';
 import { RtDynamicSelectorComponent } from '../../rt-dynamic-selector.component';
 import { RtDynamicSelectorRowControlsDirective, RtDynamicSelectorRowTitleDirective } from '../../rt-dynamic-selector.directives';
 import { IRtDynamicSelector } from '../../rt-dynamic-selector.model';
@@ -143,7 +143,7 @@ function texts(values: string[]): FormControl<string[] | null> {
         RtDynamicSelectorRowTitleDirective,
         RtIconButtonComponent,
         RtDynamicSelectorComponent,
-        TestDynamicSelectorPopupFrameComponent,
+        RtDynamicSelectorPopupComponent,
 
         // showcase
         StoryPresetsComponent,

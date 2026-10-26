@@ -3,6 +3,7 @@ import {
     sideMenuFavoritesSection,
     findSideMenuFavoriteItems,
     isSideMenuFavoriteCandidate,
+    isSideMenuFavoritesCountShown,
     moveSideMenuFavorite,
     moveVisibleSideMenuFavorite,
     normalizeSideMenuFavorites,
@@ -132,5 +133,25 @@ describe('isSideMenuFavoriteCandidate', (): void => {
         }));
 
         expect(sideMenuFavoritesSection(rebuilt, shown)?.id).toBe('cargo');
+    });
+});
+
+describe('isSideMenuFavoritesCountShown', (): void => {
+    it('SC-UKV-998 — свёрнутый блок показывает число', (): void => {
+        expect(isSideMenuFavoritesCountShown('collapsed', false, true)).toBe(true);
+    });
+
+    it('SC-UKV-998 — свёрнутый блок, раскрытый на время поиска, число держит', (): void => {
+        expect(isSideMenuFavoritesCountShown('collapsed', true, true)).toBe(true);
+    });
+
+    it('SC-UKV-998 — раскрытый без поиска блок числа не несёт', (): void => {
+        // Пара к утверждению выше: тот же режим и раскрытая панель, отличается только сохранённый выбор.
+        expect(isSideMenuFavoritesCountShown('collapsed', true, false)).toBe(false);
+    });
+
+    it('SC-UKV-998 — режимы always и never от поиска не зависят', (): void => {
+        expect(isSideMenuFavoritesCountShown('always', true, false)).toBe(true);
+        expect(isSideMenuFavoritesCountShown('never', false, true)).toBe(false);
     });
 });

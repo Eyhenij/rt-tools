@@ -58,6 +58,16 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 - Пробел и Enter выбирают; пробел страницу не прокручивает.
 - Кружку без подписи имя даёт `ariaLabel`.
 
+## Группа
+
+`rt-radio-group` объявляет `role="radiogroup"` с именем из `ariaLabel`. Стрелки переводят фокус и
+выбор на соседнюю включённую радиокнопку по кругу, а в порядке Tab стоит одна радиокнопка группы.
+В группу входит и радиокнопка из шаблона обёртки потребителя: радиокнопка встаёт в группу сама.
+
+Значения группа не держит. Радиокнопки группы привязываются к одному контролу формы или получают
+`[checked]` от владельца: без этого каждая помнит свой выбор, и стрелки оставили бы отмеченными
+несколько.
+
 ## Оформление
 
 Кружок, точка, подпись и пояснение — элементы блока `rt-radio-button`. Цвет выбора —
@@ -66,16 +76,17 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Входы
 
-| вход          | тип                 | умолчание                |
-| ------------- | ------------------- | ------------------------ |
-| `value`       | `unknown`           | —                        |
-| `checked`     | `boolean \| null`   | `null`                   |
-| `disabled`    | `boolean`           | `false`                  |
-| `card`        | `boolean`           | `false`                  |
-| `label`       | `string`            | `''`                     |
-| `description` | `string`            | `''`                     |
-| `ariaLabel`   | `string \| null`    | `null`                   |
-| `radius`      | `TRtRadius \| null` | `null` → `md` у карточки |
+| вход          | тип                          | умолчание                |
+| ------------- | ---------------------------- | ------------------------ |
+| `value`       | `unknown`                    | —                        |
+| `checked`     | `boolean \| null`            | `null`                   |
+| `disabled`    | `boolean`                    | `false`                  |
+| `card`        | `boolean`                    | `false`                  |
+| `label`       | `string`                     | `''`                     |
+| `description` | `string`                     | `''`                     |
+| `ariaLabel`   | `string \| null`             | `null`                   |
+| `radius`      | `TRtRadius \| null`          | `null` → `md` у карточки |
+| `orientation` | `'vertical' \| 'horizontal'` | `'vertical'` у группы    |
 
 Не заданный `checked` оставляет выбор форме.
 

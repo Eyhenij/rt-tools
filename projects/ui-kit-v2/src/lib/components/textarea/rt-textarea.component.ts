@@ -17,12 +17,15 @@ import {
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { RtFormControlBase } from '@rt-tools/ui-kit-v2/form-control';
+import { rtMaxlength, RtFormControlBase } from '@rt-tools/ui-kit-v2/form-control';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 
 const BEM_BLOCK: string = 'rt-textarea';
 
 export type TRtTextareaResize = 'none' | 'vertical';
+
+/** Вид рамки: `outline` — рамка со всех сторон, `fill` — залитое поле с чертой снизу, как у `rt-input`. */
+export type TRtTextareaAppearance = 'outline' | 'fill';
 
 /**
  * Шеренный textarea common/ui. CVA через общий `RtFormControlBase` —
@@ -60,6 +63,7 @@ export type TRtTextareaResize = 'none' | 'vertical';
         '[class.rt-textarea--readonly]': 'readonly()',
         '[class.rt-textarea--invalid]': 'isInvalid()',
         '[class.rt-textarea--borderless]': '!bordered()',
+        '[class.rt-textarea--appearance--fill]': "appearance() === 'fill'",
     },
 })
 export class RtTextareaComponent extends RtFormControlBase<string> {
@@ -67,6 +71,7 @@ export class RtTextareaComponent extends RtFormControlBase<string> {
 
     protected readonly hasValue: Signal<boolean> = computed((): boolean => this.value() !== '');
 
+    public override readonly fieldLabelInside: boolean = true;
     public readonly displayText: Signal<string> = computed((): string => this.value());
 
     public readonly placeholder: InputSignal<string> = input<string>('');
@@ -75,6 +80,12 @@ export class RtTextareaComponent extends RtFormControlBase<string> {
     });
     public readonly rows: InputSignalWithTransform<number, NumberInput> = input<number, NumberInput>(3, { transform: numberAttribute });
     public readonly resize: InputSignal<TRtTextareaResize> = input<TRtTextareaResize>('vertical');
+    public readonly appearance: InputSignal<TRtTextareaAppearance> = input<TRtTextareaAppearance>('outline');
+
+    /** Предел длины значения: атрибут `maxlength` на поле, браузер не даёт набрать больше. `null` — предела нет. */
+    public readonly maxlength: InputSignalWithTransform<number | null, NumberInput> = input<number | null, NumberInput>(null, {
+        transform: rtMaxlength,
+    });
 
     protected getEmptyValue(): string {
         return '';

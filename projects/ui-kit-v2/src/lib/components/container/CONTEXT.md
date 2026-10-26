@@ -13,12 +13,18 @@
 </rt-container>
 ```
 
-| вход            | тип                    | умолчание |
-| --------------- | ---------------------- | --------- |
-| `mobileLeftNav` | `'keep' \| 'bottom'`   | `'keep'`  |
-| `height`        | `'auto' \| 'viewport'` | `'auto'`  |
+| вход             | тип                    | умолчание |
+| ---------------- | ---------------------- | --------- |
+| `mobileLeftNav`  | `'keep' \| 'bottom'`   | `'keep'`  |
+| `height`         | `'auto' \| 'viewport'` | `'auto'`  |
+| `rightMode`      | `'over' \| 'side'`     | `'over'`  |
+| `rightBackdrop`  | `boolean`              | `true`    |
+| `rightWidth`     | `number \| null`       | `null`    |
+| `rightResizable` | `boolean`              | `false`   |
+| `rightMinWidth`  | `number`               | `240`     |
+| `rightMaxWidth`  | `number`               | `960`     |
 
-Выходы: `backdropClick`, `rightOpened`, `rightClosed`. Публичное API: `openRight()`,
+Выходы: `backdropClick`, `rightOpened`, `rightClosed`, `rightWidthChange`. Публичное API: `openRight()`,
 `closeRight()`, `rightOpen()`, `rightOverlayReady()`.
 
 ## Главное, что нужно знать
@@ -34,6 +40,17 @@
 
 **Правая панель существует, только когда её зона объявлена.** Оверлей под неё создаётся заранее
 (`rightOverlayReady()`), а `openRight()` без объявленной зоны — no-op.
+
+**Место правой панели — `rightMode`, и оно переключается на ходу.** `side` ставит панель
+колонкой справа (сетка `auto 1fr auto`), `over` — прежний оверлей. Смена места или подложки
+пересоздаёт оверлей; открытая панель остаётся открытой без второго `rightOpened`, а содержимое
+создаётся заново. Готовность (`rightOverlayReady()`) в `side` — это объявленная зона.
+
+**Ширина — `rightWidth` и ручка `rt-resize-handle` из `@rt-tools/ui-kit-v2/drawer`.** Одна
+обёртка (`#rightPane`) с шириной и ручкой ставится и в колонку, и в оверлей. В оверлее она
+сжимается до его ширины: панель не шире окна, и длинное содержимое переносится. На узком экране
+(не более 768 px) оверлей во всё окно, и панель с заданной шириной заполняет его, как колонка.
+В колонке рядом с содержимым сжатие запрещено: ширина держит содержимое во время перехода.
 
 **`rightOpened` / `rightClosed` привязаны к `transitionend` панели.** Там, где анимаций нет
 (тест, `prefers-reduced-motion`), события не придут, а `rightOpen()` уже верен — смотреть надо

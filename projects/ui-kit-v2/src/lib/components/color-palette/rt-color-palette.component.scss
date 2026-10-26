@@ -37,7 +37,7 @@
         :is(.rt-preset-material, [data-preset='material']) & {
             --rt-color-palette-custom-gap: var(--rt-space-md);
             --rt-color-palette-custom-height: var(--rt-control-height-sm);
-            --rt-color-palette-custom-color: var(--mat-sys-on-surface-variant, var(--rt-color-text-muted));
+            --rt-color-palette-custom-color: var(--rt-sys-on-surface-variant, var(--rt-color-text-muted));
             --rt-color-palette-swatch-size: calc(var(--rt-size-8) - var(--rt-space-2xs));
             --rt-color-palette-swatch-border-width: 0px;
             --rt-color-palette-swatch-scale-hover: 1.2;
@@ -47,7 +47,7 @@
             --rt-color-palette-checked-inset: var(--rt-border-width-thick);
             --rt-color-palette-checked-hollow: 100%;
             --rt-color-palette-checked-glow: calc(var(--rt-space-xs) + 1px);
-            --rt-color-palette-empty-bg: var(--mat-sys-surface-container-lowest, var(--rt-neutral-0));
+            --rt-color-palette-empty-bg: var(--rt-sys-surface-container-lowest, var(--rt-neutral-0));
         }
 
         &__swatches {

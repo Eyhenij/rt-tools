@@ -199,6 +199,10 @@
     "table LONG_TITLES @ projects/ui-kit ~ LONG_TITLES @ projects/ui-kit-v2": {
       "reason": "the showcase data of the favourites stories: the second kit takes the first kit long titles as they are, so the owner compares the two frames row by row",
       "task": "RT-2440"
+    },
+    "value default @ DEFAULT_CHANNEL @ projects/ui-kit-v2 ~ DEFAULT_MENU_ID @ projects/ui-kit ~ RT_DEFAULT_SCHEME @ projects/ui-kit": {
+      "reason": "three unrelated notions share the word: the second kit's toaster channel that toasts without a channel go to, the first kit's menu id and colour scheme. The two kits share no code by design, and a shared constant would tie a toaster to a menu that has nothing to do with it",
+      "task": "RT-2812"
     }
   },
   "debt": {}
