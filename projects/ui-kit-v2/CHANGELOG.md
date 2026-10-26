@@ -1,3 +1,9 @@
+## [0.34.1](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.34.0...rt-ui-kit-v2%400.34.1) (2026-10-26)
+
+### Bug Fixes
+
+- **rt:ui-kit-v2:** полоса rt-tabs прокручивается к вкладке из activeId — RT-2940 ([33b081d](https://github.com/Eyhenij/rt-tools/commit/33b081d5091f90b6526d21a5ce15ebeaac0a6736))
+
 # [0.34.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.33.0...rt-ui-kit-v2%400.34.0) (2026-10-26)
 
 ### Bug Fixes
