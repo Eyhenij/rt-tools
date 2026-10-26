@@ -1,6 +1,6 @@
 # The tab strip scrolled to the selected tab
 
-**Status:** in force · **Revision:** 24 October 2026 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 26 October 2026 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the tabs of the second kit — the behaviour lives inside `rt-tabs`
 **Laws:** `frontend-application`, `verifiability`
 **Procedures:** none
@@ -39,6 +39,12 @@ A person sees the row of tabs; the selected one is underlined.
   `inline` the arrows stand beside the strip, and the tab goes up to the edge.
 - **The arrows are recomputed after every such scroll.**
 - **A tab already seen whole does not move the strip.**
+- **When the tabs change size, the strip is scrolled to the selected tab again.** Badges that
+  arrive with the data make the tabs wider after the first render. The selected tab stays seen
+  whole.
+- **A person who scrolled the strip stops the following.** The wheel, a touch or an arrow leave
+  the strip where the person put it. A change of tab sizes does not move it until the next
+  selection.
 
 ## What is out of scope
 
@@ -63,6 +69,8 @@ Not applicable: the behaviour keeps nothing.
 | opened with `activeId` on the last tab         | the strip scrolled to its end, the left arrow shown |
 | `activeId` changed to a tab past the left edge | the strip scrolled back, the tab clear of the arrow |
 | the selected tab fits in the strip             | the strip stays where it was                        |
+| the tabs grew wider after the first render     | the strip scrolled again, the selected tab whole    |
+| the strip scrolled by hand, then the tabs grew | the strip stays where the person put it             |
 
 ## Cross-cutting requirements
 
@@ -89,6 +97,9 @@ Every strip scrolls apart.
   remember the tab they scrolled to, so the effect skips a tab the click already scrolled to.
 - **The arrow width goes into `rtTabsIntoViewTarget` as an argument.** The target stays a pure
   function checked by a call, and a click and an outside change get the same target.
+- **The tab sizes are watched by a `ResizeObserver` on the strip and on every tab.** A badge
+  changes the width of a tab but not always the width of the strip. Without a `ResizeObserver`
+  the strip does not follow, and nothing else changes.
 
 ## Open questions
 
@@ -97,3 +108,4 @@ None.
 ## History of changes
 
 - 24 October 2026 — written together with the code by task RT-2940 from the application's request.
+- 26 October 2026 — task RT-2946: the strip follows the selected tab when the tabs change size.
