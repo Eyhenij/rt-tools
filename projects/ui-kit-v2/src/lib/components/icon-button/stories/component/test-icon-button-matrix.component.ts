@@ -12,7 +12,7 @@ import { IRtIconButton } from '../../rt-icon-button.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
 export type TIconButtonMatrixPart =
-    'variant' | 'size' | 'iconSize' | 'hostRule' | 'radius' | 'flags' | 'content' | 'states' | 'presets' | 'themes';
+    'variant' | 'size' | 'iconSize' | 'hostRule' | 'radius' | 'flags' | 'content' | 'link' | 'states' | 'presets' | 'themes';
 
 /** Случай признака: какой из булевых входов включён и как он называется словами. */
 interface IIconButtonFlagCase {
@@ -144,6 +144,36 @@ interface IIconButtonFlagCase {
                 </app-story-presets>
             }
 
+            <!-- Ссылка рядом с кнопкой той же палитры: вид у них один, и расхождение видно в одной
+                 строке. Ниже — недоступная и загружающаяся ссылка: у них нет адреса. -->
+            @case ('link') {
+                <app-story-presets caption="Палитра × кнопка или ссылка в обоих наборах">
+                    <ng-template>
+                        <app-story-grid [rows]="variants" [columns]="linkCases" [columnLabel]="linkCaseLabel">
+                            <ng-template let-variant let-asLink="col">
+                                <rt-icon-button
+                                    icon="ico-user"
+                                    [ariaLabel]="variant"
+                                    [variant]="variant"
+                                    [link]="asLink ? linkRoute : null"
+                                    [tooltip]="asLink ? 'Ссылка' : 'Кнопка'" />
+                            </ng-template>
+                        </app-story-grid>
+                        <app-story-row caption="Ссылка: отключена, загрузка" [items]="linkFlagCases" [itemLabel]="flagCaseLabel">
+                            <ng-template let-flagCase>
+                                <rt-icon-button
+                                    icon="ico-user"
+                                    variant="secondary"
+                                    [ariaLabel]="flagCase.name"
+                                    [link]="linkRoute"
+                                    [loading]="flagCase.loading"
+                                    [disabled]="flagCase.disabled" />
+                            </ng-template>
+                        </app-story-row>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('states') {
                 <app-story-presets caption="Взаимодействие в обоих наборах">
                     <ng-template>
@@ -248,10 +278,23 @@ export class TestRtIconButtonMatrixComponent {
         { name: 'отключена', loading: false, disabled: true, active: false, indicator: false },
     ];
 
+    /** `false` — кнопка, `true` — ссылка по входу `link`. */
+    public readonly linkCases: readonly boolean[] = [false, true];
+
+    /** Маршрут ссылки: витрина не переходит по нему, адрес нужен ради `href`. */
+    public readonly linkRoute: string = '/personal-settings';
+
+    public readonly linkFlagCases: readonly IIconButtonFlagCase[] = [
+        { name: 'отключена', loading: false, disabled: true, active: false, indicator: false },
+        { name: 'загрузка', loading: true, disabled: false, active: false, indicator: false },
+    ];
+
     /** `false` — значок кита, `true` — своё содержимое при `icon = null`. */
     public readonly contentCases: readonly boolean[] = [false, true];
 
     public readonly contentCaseLabel: (value: boolean) => string = (value: boolean): string => (value ? 'вложенное' : 'значок кита');
+
+    public readonly linkCaseLabel: (value: boolean) => string = (value: boolean): string => (value ? 'ссылка' : 'кнопка');
 
     public readonly iconSizeLabel: (value: IRtIcon.Size | null) => string = (value: IRtIcon.Size | null): string =>
         value === null ? 'от кнопки' : value;
