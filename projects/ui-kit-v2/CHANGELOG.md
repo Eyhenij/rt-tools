@@ -1,3 +1,9 @@
+## [0.34.3](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.34.2...rt-ui-kit-v2%400.34.3) (2026-10-27)
+
+### Bug Fixes
+
+- **rt:ui-kit-v2:** подсказка rtTooltip закрывается по Escape ([119cfaf](https://github.com/Eyhenij/rt-tools/commit/119cfaf0281c79330aa69f1417f5a3a221d43c75))
+
 ## [0.34.2](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.34.1...rt-ui-kit-v2%400.34.2) (2026-10-27)
 
 ### Bug Fixes
