@@ -1,3 +1,9 @@
+## [0.34.2](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.34.1...rt-ui-kit-v2%400.34.2) (2026-10-27)
+
+### Bug Fixes
+
+- **rt:ui-kit-v2:** полоса rt-tabs снова встаёт к выбранной вкладке, когда вкладки стали шире ([1683cb2](https://github.com/Eyhenij/rt-tools/commit/1683cb2a1bea31d2180f443bf601b4a60a9fbd95))
+
 ## [0.34.1](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.34.0...rt-ui-kit-v2%400.34.1) (2026-10-26)
 
 ### Bug Fixes
