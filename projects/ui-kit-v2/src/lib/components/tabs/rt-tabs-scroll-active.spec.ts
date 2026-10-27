@@ -31,12 +31,35 @@ type THostFixture = ComponentFixture<ScrollActiveHostComponent>;
 
 // Полоса прокручивается уже на первой отрисовке, поэтому размеры подставлены на прототипах до
 // создания компонента: вкладка шириной 100, их пять — полоса 500 в окне 250, стрелка 40.
-const TAB_WIDTH: number = 100;
+let TAB_WIDTH: number = 100;
 const LIST_WIDTH: number = 250;
 const REST_WIDTH: number = 40;
 
 const scrollLefts: WeakMap<Element, number> = new WeakMap<Element, number>();
 let scrollWrites: number = 0;
+
+/** Наблюдатель размеров, которого в jsdom нет: тест сам сообщает, что вкладки сменили размер. */
+const resizeCallbacks: (() => void)[] = [];
+
+class FakeResizeObserver {
+    constructor(callback: () => void) {
+        resizeCallbacks.push(callback);
+    }
+
+    public observe(): void {
+        // размеры сообщает тест
+    }
+
+    public disconnect(): void {
+        // нечего снимать
+    }
+}
+
+function growTabs(fixture: THostFixture, width: number): void {
+    TAB_WIDTH = width;
+    resizeCallbacks.forEach((callback: () => void): void => callback());
+    fixture.detectChanges();
+}
 
 function isList(node: Element): boolean {
     return node.getAttribute('qa-dataid') === 'tabs-tab-list';
@@ -70,6 +93,9 @@ function restVisible(fixture: THostFixture, side: 'prev' | 'next'): boolean {
 describe('RtTabsComponent — полоса прокручена к выбранной вкладке', (): void => {
     beforeEach((): void => {
         scrollWrites = 0;
+        TAB_WIDTH = 100;
+        resizeCallbacks.length = 0;
+        (window as unknown as { ResizeObserver: unknown }).ResizeObserver = FakeResizeObserver;
         jest.spyOn(HTMLElement.prototype, 'offsetLeft', 'get').mockImplementation(function (this: HTMLElement): number {
             const parent: Element | null = this.parentElement;
             return this.hasAttribute('data-tabitem') && parent ? tabItems(parent).indexOf(this) * TAB_WIDTH : 0;
@@ -97,6 +123,7 @@ describe('RtTabsComponent — полоса прокручена к выбран�
     });
 
     afterEach((): void => {
+        delete (window as unknown as { ResizeObserver?: unknown }).ResizeObserver;
         jest.restoreAllMocks();
     });
 
@@ -162,5 +189,45 @@ describe('RtTabsComponent — полоса прокручена к выбран�
         expect(rtTabsIntoViewTarget(strip, items[3], REST_WIDTH)).toBe(190);
         expect(rtTabsIntoViewTarget(strip, items[0], REST_WIDTH)).toBeNull();
         expect(rtTabsIntoViewTarget(strip, items[3])).toBe(150);
+    });
+
+    it('SC-UKV-1030 — вкладки стали шире после первой отрисовки, выбранная последняя видна целиком', (): void => {
+        const fixture: THostFixture = open('e');
+        expect(list(fixture).scrollLeft).toBe(250);
+
+        // У вкладок появились счётчики: ширина 130, последняя вкладка 520…650 — окно 400…650.
+        growTabs(fixture, 130);
+
+        expect(list(fixture).scrollLeft).toBe(400);
+        expect(restVisible(fixture, 'next')).toBe(false);
+    });
+
+    it('SC-UKV-1031 — прокрутка колесом снимает слежение до следующего выбора', (): void => {
+        const fixture: THostFixture = open('e');
+
+        list(fixture).dispatchEvent(new Event('wheel'));
+        growTabs(fixture, 130);
+        expect(list(fixture).scrollLeft).toBe(250);
+
+        // Выбор вкладки возвращает слежение: четвёртая 390…520 и стрелка за ней — окно 310…560.
+        fixture.componentInstance.activeId.set('d');
+        fixture.detectChanges();
+        expect(list(fixture).scrollLeft).toBe(310);
+
+        // Четвёртая 480…640 и стрелка за ней — окно 430…680.
+        growTabs(fixture, 160);
+        expect(list(fixture).scrollLeft).toBe(430);
+    });
+
+    it('SC-UKV-1031 — нажатие на стрелку снимает слежение', (): void => {
+        const fixture: THostFixture = open('e');
+        const prev: HTMLElement = qa(fixture, 'tabs-scroll-prev')?.nativeElement as HTMLElement;
+
+        prev.dispatchEvent(new MouseEvent('mousedown', { button: 0 }));
+        prev.dispatchEvent(new MouseEvent('mouseleave'));
+        const left: number = list(fixture).scrollLeft;
+
+        growTabs(fixture, 130);
+        expect(list(fixture).scrollLeft).toBe(left);
     });
 });

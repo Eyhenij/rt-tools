@@ -25,3 +25,19 @@ When a tab past the right edge is clicked
 Then the strip is scrolled to it once, and the render after the click does not scroll again
 
 Covered: `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-scroll-active.spec.ts`.
+
+### SC-UKV-1030 — the tabs grow after the first render, and the selected last tab stays whole
+
+Given a narrow strip opened on the last tab and scrolled to its end
+When the tabs become wider
+Then the strip is scrolled to its new end, and the last tab is seen whole
+
+Covered: `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-scroll-active.spec.ts`.
+
+### SC-UKV-1031 — a manual scroll stops the following until the next selection
+
+Given a narrow strip opened on the last tab
+When a person scrolls it by the wheel or presses an arrow, and then the tabs become wider
+Then the strip stays where it was, and after the next selection it follows the tab sizes again
+
+Covered: `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-scroll-active.spec.ts`.

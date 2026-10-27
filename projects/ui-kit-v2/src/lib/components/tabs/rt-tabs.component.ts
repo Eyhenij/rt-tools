@@ -33,6 +33,7 @@ import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
 import { RtTabDirective } from './rt-tab.directive';
 import { RtTabsArrowPress, TRtTabsScrollDirection } from './rt-tabs.arrow-press';
+import { RtTabsFollow } from './rt-tabs.follow';
 import { RtTabsControlDirective } from './rt-tabs-control.directive';
 import { IRtTabs } from './rt-tabs.model';
 import { RtTabsInk, RtTabsPanels } from './rt-tabs.motion';
@@ -264,6 +265,9 @@ export class RtTabsComponent {
         (): void => this.#updateRestVisibility()
     );
 
+    /** Вкладки стали шире или уже — полоса снова встаёт к выбранной, пока её не прокрутили рукой. */
+    readonly #follow: RtTabsFollow = new RtTabsFollow((): void => this.#scrollToSelected(true));
+
     /** Вкладка, к которой полоса прокручена последней: второй прокрутки к ней не нужно. */
     #scrolledId: IRtTabs.Id | null = null;
 
@@ -283,10 +287,14 @@ export class RtTabsComponent {
         // полоса уже прокручена из `selectTab`, и `#scrolledId` пропускает вторую прокрутку.
         afterRenderEffect((): void => this.#scrollToSelected());
 
+        // Новый набор вкладок — наблюдение за их размерами ставится заново.
+        afterRenderEffect((): void => this.#follow.watch(this.tabListRef()?.nativeElement, this.visibleTabs().length));
+
         // Снимаем hold-scroll интервал при уничтожении: если компонент разрушить
         // с зажатой стрелкой (pointerdown без pointerup), интервал остался бы жив.
         inject(DestroyRef).onDestroy((): void => {
             this.#press.stop();
+            this.#follow.stop();
             this.#scroller.stop();
         });
     }
@@ -301,6 +309,7 @@ export class RtTabsComponent {
         this.#internalId.set(id);
         this.#focusedId.set(null);
         this.activeIdChange.emit(id);
+        this.#follow.follow();
         this.#scrollTabIntoView(id);
     }
 
@@ -360,6 +369,7 @@ export class RtTabsComponent {
     /** Нажатие ЛКМ на стрелку: шаг или прокрутка по удержанию — {@link RtTabsArrowPress}. */
     protected onRestPointerDown(direction: TRtTabsScrollDirection, event: MouseEvent): void {
         if (event.button === 0) {
+            this.#follow.manual();
             this.#press.down(direction);
         }
     }
@@ -434,10 +444,12 @@ export class RtTabsComponent {
         this.restAfterVisible.set(scrolledRight > 1);
     }
 
-    #scrollToSelected(): void {
+    /** `again` — вкладки сменили размер: та же вкладка встаёт на место ещё раз. */
+    #scrollToSelected(again: boolean = false): void {
         const id: IRtTabs.Id | null = this.selectedId();
 
-        if (id !== null && id !== this.#scrolledId) {
+        if (id !== null && (again || id !== this.#scrolledId)) {
+            this.#follow.follow();
             this.#scrollTabIntoView(id);
         }
     }
