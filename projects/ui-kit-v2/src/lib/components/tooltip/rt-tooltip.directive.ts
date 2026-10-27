@@ -1,5 +1,6 @@
 import { FocusMonitor, FocusOrigin } from '@angular/cdk/a11y';
 import { NumberInput } from '@angular/cdk/coercion';
+import { hasModifierKey } from '@angular/cdk/keycodes';
 import {
     ConnectedPosition,
     FlexibleConnectedPositionStrategy,
@@ -39,7 +40,7 @@ const VIEWPORT_MARGIN: number = 8;
  * режется `overflow: hidden` предками (таблицы, aside, карточки).
  *
  * Триггеры: `mouseenter` и фокус с клавиатуры показывают (с задержкой `SHOW_DELAY_MS`),
- * `mouseleave`/`focusout`/`click` прячут. Фокус, поставленный мышью или кодом, подсказку не
+ * `mouseleave`/`focusout`/`click`/Escape прячут. Фокус, поставленный мышью или кодом, подсказку не
  * показывает, как у Material: меню возвращает фокус кнопке после выбора пункта мышью, и
  * подсказка кнопки всплывала поверх того, что пункт открыл. Пустой текст → no-op (директива
  * выключена), поэтому её можно безусловно вешать на icon-кнопки и включать
@@ -59,6 +60,7 @@ const VIEWPORT_MARGIN: number = 8;
         '(mouseleave)': 'hide()',
         '(focusout)': 'hide()',
         '(click)': 'onClick()',
+        '(keydown)': 'onKeydown($event)',
     },
 })
 export class RtTooltipDirective implements OnDestroy {
@@ -181,6 +183,22 @@ export class RtTooltipDirective implements OnDestroy {
     protected onClick(): void {
         if (this.hideOnClick() || this.#tooltipRef === null) {
             this.hide();
+        }
+    }
+
+    /**
+     * Escape прячет подсказку и снимает отложенный показ, фокус остаётся на хосте. Событие гасится,
+     * только когда панель была открыта: при закрытой Escape доходит до диалога или панели выше.
+     */
+    protected onKeydown(event: KeyboardEvent): void {
+        if (event.key !== 'Escape' || hasModifierKey(event)) {
+            return;
+        }
+        const wasOpen: boolean = this.#tooltipRef !== null;
+        this.hide();
+        if (wasOpen) {
+            event.preventDefault();
+            event.stopPropagation();
         }
     }
 

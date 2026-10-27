@@ -373,3 +373,27 @@ When it is drawn without a choice, and then with one
 Then only the first enabled radio button, and then only the chosen one, is in the Tab order
 
 Covered: `projects/ui-kit-v2/src/lib/components/radio-button/rt-radio-group.component.spec.ts`.
+
+### SC-UKV-1032 — Escape closes an open tooltip and stops at the host
+
+Given a host focused from the keyboard with its tooltip open
+When the person presses Escape
+Then the tooltip hides, the key does not reach the parent and the focus stays on the host
+
+Covered: `projects/ui-kit-v2/src/lib/components/tooltip/rt-tooltip.directive.spec.ts`.
+
+### SC-UKV-1033 — Escape with no tooltip open reaches the parent
+
+Given a host whose tooltip is not shown, or is still waiting for its delay
+When the person presses Escape
+Then the key reaches the parent, and no tooltip appears after the delay
+
+Covered: `projects/ui-kit-v2/src/lib/components/tooltip/rt-tooltip.directive.spec.ts`.
+
+### SC-UKV-1034 — after Escape the tooltip shows again
+
+Given a host whose tooltip was closed by Escape
+When the host gets keyboard focus again, or the pointer comes in
+Then the tooltip shows after the delay
+
+Covered: `projects/ui-kit-v2/src/lib/components/tooltip/rt-tooltip.directive.spec.ts`.

@@ -1,6 +1,6 @@
 # What the other parts of the kit give an application moving from Material
 
-**Status:** in force · **Revision:** 2026-10-23 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 2026-10-27 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the toggle group, the expansion panel, the toast, the shell, the drawer, the stepper, the button, the side menu, the tooltip and the radio group of the kit
 **Laws:** `frontend-application`, `verifiability`, `reuse-first`
 **Procedures:** none
@@ -9,8 +9,8 @@ A subdomain of the second kit about what the parts of the kit other than the fie
 took over from Material for an application that moves onto the kit: the toggle group with a form
 and chips, the expansion panel in a group, the toast with the application's own component, the
 right panel of the shell, the embedded drawer, the vertical stepper, the badge, the divider, the
-progress bar, the focus ring of a button, the search of the side menu, the tooltip delay and the
-radio group.
+progress bar, the focus ring of a button, the search of the side menu, the tooltip delay, the
+tooltip closed by Escape and the radio group.
 
 ## Why
 
@@ -43,6 +43,11 @@ none of them looks and behaves as before.
   from the CDK, as Material does, and keep the focus while hiding the ring.
 - **A tooltip takes a show delay of its own.** It wins over the delay from the kit settings for that
   one element; without it the element waits the shared delay, 300 ms by default.
+- **Escape on the host closes an open tooltip and stops there.** The key goes no further than the
+  host, as with Material; the focus stays on the host, and the next hover or keyboard focus shows the
+  tooltip again.
+- **Escape with no tooltip open goes on to the parent.** A dialog or a panel above the host closes
+  on it as before; a pending showing is cleared, and nothing appears after the delay.
 
 ## What is out of scope
 
@@ -72,6 +77,7 @@ Not applicable: nothing is stored.
 | a button focused by code after a press | no ring, the focus stays on the button |
 | a tooltip with its own delay           | shown after that delay                 |
 | a tooltip without its own delay        | shown after the shared delay           |
+| an open tooltip after Escape           | hidden, the focus stays on the host    |
 
 ## Cross-cutting requirements
 
@@ -105,3 +111,4 @@ None.
 - 2026-10-13 — written before the code, from the application's request accepted by the owner.
 - 2026-10-23 — the application's request: the show delay of one tooltip.
 - 2026-10-23 — merged from the agreement into the subdomain, task RT-2812.
+- 2026-10-27 — Escape closes an open tooltip, task RT-2948.

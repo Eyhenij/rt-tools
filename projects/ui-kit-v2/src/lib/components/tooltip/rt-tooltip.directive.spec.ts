@@ -178,6 +178,80 @@ describe('RtTooltipDirective', (): void => {
         expect(tip()).toBeNull();
     });
 
+    describe('Escape', (): void => {
+        function escape(fixture: ComponentFixture<TooltipHostComponent>): KeyboardEvent {
+            const event: KeyboardEvent = new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true });
+            el(fixture, '[qa-dataid="tooltip-host"]')?.nativeElement.dispatchEvent(event);
+            fixture.detectChanges();
+            return event;
+        }
+
+        function reachedParent(fixture: ComponentFixture<TooltipHostComponent>): jest.Mock {
+            const listener: jest.Mock = jest.fn();
+            (fixture.nativeElement as HTMLElement).addEventListener('keydown', listener);
+            return listener;
+        }
+
+        it('SC-UKV-1032 — Escape закрывает открытую подсказку и не уходит выше хоста', (): void => {
+            const fixture: ComponentFixture<TooltipHostComponent> = setup();
+            const parent: jest.Mock = reachedParent(fixture);
+            focusVia(fixture, 'keyboard');
+            jest.advanceTimersByTime(300);
+            fixture.detectChanges();
+            expect(tip()).not.toBeNull();
+
+            const event: KeyboardEvent = escape(fixture);
+
+            expect(tip()).toBeNull();
+            expect(event.defaultPrevented).toBe(true);
+            expect(parent).not.toHaveBeenCalled();
+            expect(document.activeElement).toBe(el(fixture, '[qa-dataid="tooltip-host"]')?.nativeElement);
+        });
+
+        it('SC-UKV-1033 — Escape при закрытой подсказке доходит до родителя', (): void => {
+            const fixture: ComponentFixture<TooltipHostComponent> = setup();
+            const parent: jest.Mock = reachedParent(fixture);
+
+            const event: KeyboardEvent = escape(fixture);
+
+            expect(event.defaultPrevented).toBe(false);
+            expect(parent).toHaveBeenCalledTimes(1);
+        });
+
+        it('SC-UKV-1033 — Escape до истечения задержки снимает показ и доходит до родителя', (): void => {
+            const fixture: ComponentFixture<TooltipHostComponent> = setup();
+            const parent: jest.Mock = reachedParent(fixture);
+            focusVia(fixture, 'keyboard');
+
+            escape(fixture);
+            jest.advanceTimersByTime(500);
+            fixture.detectChanges();
+
+            expect(tip()).toBeNull();
+            expect(parent).toHaveBeenCalledTimes(1);
+        });
+
+        it('SC-UKV-1034 — после Escape новый фокус с клавиатуры и наведение снова показывают подсказку', (): void => {
+            const fixture: ComponentFixture<TooltipHostComponent> = setup();
+            focusVia(fixture, 'keyboard');
+            jest.advanceTimersByTime(300);
+            fixture.detectChanges();
+            escape(fixture);
+
+            hover(fixture, 'focusout');
+            focusVia(fixture, 'keyboard');
+            jest.advanceTimersByTime(300);
+            fixture.detectChanges();
+            expect(tip()).not.toBeNull();
+
+            escape(fixture);
+            hover(fixture, 'mouseenter');
+            jest.advanceTimersByTime(300);
+            fixture.detectChanges();
+            expect(tip()).not.toBeNull();
+        });
+    });
+
     describe('клик по переключателю и смена текста', (): void => {
         function open(fixture: ComponentFixture<TooltipHostComponent>): void {
             hover(fixture, 'mouseenter');
