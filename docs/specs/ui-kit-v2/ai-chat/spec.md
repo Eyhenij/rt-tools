@@ -82,6 +82,8 @@ conversations. Every application repeats the same screen, and every copy drifts 
 
 - **The feed is no wider than the panel: a long word and an address in an answer wrap.**
 
+- **A swipe that reaches the edge of the feed or of the list of conversations stays in the chat.**
+
 - **The title, the placeholder, the empty-screen texts and the line under the composer come from the consumer, and the kit's English text stands in when one is not given.**
 
 ## What is out of scope
@@ -166,3 +168,4 @@ None.
 - 2026-10-28 — the task RT-2961 of the epic RT-2958: a bare address in an answer becomes a link, an
   underscore inside a word stays a sign.
 - 2026-10-28 — the task RT-2959 of the epic RT-2958: a long word and an address in an answer wrap.
+- 2026-10-28 — the task RT-2960 of the epic RT-2958: a swipe at the edge of the feed and of the list of conversations stays in the chat.

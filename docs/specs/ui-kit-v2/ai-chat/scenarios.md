@@ -187,3 +187,11 @@ When the answer is drawn
 Then the address wraps inside the panel, and the feed does not scroll sideways
 
 Covered by the styles spec of the markdown text; the showcase frame of the answer shows the look.
+
+### SC-UKV-1043 — a swipe at the edge stays in the chat
+
+Given the chat over a page that scrolls
+When the feed or the list of conversations is swiped past its edge
+Then the page under the chat stays where it was
+
+Covered by the styles spec of the chat.

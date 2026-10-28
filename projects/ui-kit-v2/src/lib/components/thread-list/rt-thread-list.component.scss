@@ -52,6 +52,7 @@
             flex-direction: column;
             min-block-size: 0;
             overflow-y: auto;
+            overscroll-behavior: contain;
         }
 
         &__row {

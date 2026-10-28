@@ -96,6 +96,7 @@
             gap: var(--rt-space-md);
             min-block-size: 0;
             overflow-y: auto;
+            overscroll-behavior: contain;
             padding-block: var(--rt-space-md);
             padding-inline: max(var(--rt-space-md), calc((100% - var(--rt-ai-chat-content-max-width)) / 2));
         }
