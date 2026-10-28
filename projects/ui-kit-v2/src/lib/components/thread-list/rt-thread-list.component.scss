@@ -131,15 +131,6 @@
         // кнопка в `<button>` недопустима. Подложка повторяет фон строки, чтобы закрыть время.
         &__row-wrap {
             position: relative;
-
-            // Открытое меню действий держит их видимыми: фокус ушёл в панель поверх страницы, и без
-            // этого кнопка меню гасла под своей же панелью, когда указатель покидал строку.
-            &:hover .rt-thread-list__row-actions,
-            &:focus-within .rt-thread-list__row-actions,
-            &:has(.rt-menu--open) .rt-thread-list__row-actions {
-                opacity: 1;
-                pointer-events: auto;
-            }
         }
 
         &__row-actions {
@@ -150,9 +141,25 @@
             gap: var(--rt-space-1);
             inset-block: 0;
             inset-inline-end: 0;
-            opacity: 0;
             padding-inline: var(--rt-space-2) var(--rt-space-4);
-            pointer-events: none;
+        }
+
+        // Действия прячутся только там, где есть наведение. На сенсорном экране наведения нет,
+        // и кнопка меню видна всегда: иначе беседу не переименовать и не удалить.
+        @media (hover: hover) {
+            &__row-actions {
+                opacity: 0;
+                pointer-events: none;
+            }
+
+            // Открытое меню действий держит их видимыми: фокус ушёл в панель поверх страницы, и без
+            // этого кнопка меню гасла под своей же панелью, когда указатель покидал строку.
+            &__row-wrap:hover .rt-thread-list__row-actions,
+            &__row-wrap:focus-within .rt-thread-list__row-actions,
+            &__row-wrap:has(.rt-menu--open) .rt-thread-list__row-actions {
+                opacity: 1;
+                pointer-events: auto;
+            }
         }
 
         &__row--active + .rt-thread-list__row-actions {

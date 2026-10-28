@@ -195,3 +195,11 @@ When the feed or the list of conversations is swiped past its edge
 Then the page under the chat stays where it was
 
 Covered by the styles spec of the chat.
+
+### SC-UKV-1044 — the conversation menu is visible on a touch screen
+
+Given the list of conversations on a screen without hover
+When the list is drawn
+Then every row shows its actions without a touch; with a mouse they appear on hover, focus and an open menu
+
+Covered by the styles spec of the thread list.

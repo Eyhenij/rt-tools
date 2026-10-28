@@ -84,6 +84,8 @@ conversations. Every application repeats the same screen, and every copy drifts 
 
 - **A swipe that reaches the edge of the feed or of the list of conversations stays in the chat.**
 
+- **On a touch screen the row actions of a conversation are always visible; with a mouse they appear on hover, focus and an open menu.**
+
 - **The title, the placeholder, the empty-screen texts and the line under the composer come from the consumer, and the kit's English text stands in when one is not given.**
 
 ## What is out of scope
@@ -169,3 +171,4 @@ None.
   underscore inside a word stays a sign.
 - 2026-10-28 — the task RT-2959 of the epic RT-2958: a long word and an address in an answer wrap.
 - 2026-10-28 — the task RT-2960 of the epic RT-2958: a swipe at the edge of the feed and of the list of conversations stays in the chat.
+- 2026-10-28 — the task RT-2962 of the epic RT-2958: the row actions of a conversation are visible on a touch screen.
