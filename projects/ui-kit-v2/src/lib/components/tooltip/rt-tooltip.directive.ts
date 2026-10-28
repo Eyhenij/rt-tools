@@ -24,6 +24,7 @@ import {
     OnDestroy,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { filter, Observable, Subject, switchMap } from 'rxjs';
 
 import { carryThemeScope, IRtKitConfig, materialPresetClassesOf, rtKitDefault } from '@rt-tools/ui-kit-v2/core';
 import { RtTooltipComponent } from './rt-tooltip.component';
@@ -72,6 +73,8 @@ export class RtTooltipDirective implements OnDestroy {
     #overlayRef: OverlayRef | null = null;
     #tooltipRef: ComponentRef<RtTooltipComponent> | null = null;
     #showTimer: ReturnType<typeof setTimeout> | null = null;
+    /** Коробка подсказки, созданная при первом показе: на её нажатия вне хоста подписан конструктор */
+    readonly #overlaySource: Subject<OverlayRef> = new Subject<OverlayRef>();
     /**
      * Сторона из настроек кита. Не умолчание входа: обёртка кита, передающая свой `null`, перебила
      * бы настройку приложения.
@@ -147,6 +150,17 @@ export class RtTooltipDirective implements OnDestroy {
         }
     );
 
+    /**
+     * Нажатие открывает подсказку сразу, повторное нажатие или нажатие вне хоста закрывает. Для
+     * хоста без своего действия — значка или кольца, подсказка которого и есть то, ради чего на него
+     * нажимают. У кнопки вход не ставят: её нажатие выполняет действие, и касание подсказку не
+     * показывает.
+     */
+    public readonly showOnTap: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
+        alias: 'rtTooltipShowOnTap',
+        transform: booleanAttribute,
+    });
+
     constructor() {
         // Новый текст доходит до открытой панели на месте, без повторного наведения.
         effect((): void => this.#syncText(this.text()));
@@ -158,6 +172,14 @@ export class RtTooltipDirective implements OnDestroy {
                     this.show();
                 }
             });
+        // Подсказку, открытую нажатием, закрывает нажатие вне хоста; нажатие по хосту решает сам хост
+        this.#overlaySource
+            .pipe(
+                switchMap((overlayRef: OverlayRef): Observable<MouseEvent> => overlayRef.outsidePointerEvents()),
+                filter((event: MouseEvent): boolean => this.showOnTap() && !this.#isOnHost(event.target)),
+                takeUntilDestroyed()
+            )
+            .subscribe((): void => this.hide());
     }
 
     public ngOnDestroy(): void {
@@ -181,6 +203,10 @@ export class RtTooltipDirective implements OnDestroy {
     }
 
     protected onClick(): void {
+        if (this.showOnTap()) {
+            this.#toggleNow();
+            return;
+        }
         if (this.hideOnClick() || this.#tooltipRef === null) {
             this.hide();
         }
@@ -199,6 +225,19 @@ export class RtTooltipDirective implements OnDestroy {
         if (wasOpen) {
             event.preventDefault();
             event.stopPropagation();
+        }
+    }
+
+    #isOnHost(target: EventTarget | null): boolean {
+        return target instanceof Node && this.#elementRef.nativeElement.contains(target);
+    }
+
+    /** Нажатие по хосту с `showOnTap`: открытая подсказка закрывается, закрытая открывается без задержки */
+    #toggleNow(): void {
+        const wasOpen: boolean = this.#tooltipRef !== null;
+        this.hide();
+        if (!wasOpen) {
+            this.#attach();
         }
     }
 
@@ -251,6 +290,7 @@ export class RtTooltipDirective implements OnDestroy {
             panelClass: ['rt-tooltip-panel', ...presetClasses],
         });
         this.#overlayRef = this.#overlay.create(config);
+        this.#overlaySource.next(this.#overlayRef);
         return this.#overlayRef;
     }
 
