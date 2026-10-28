@@ -10,6 +10,7 @@ export * from '@rt-tools/ui-kit-v2/core';
 
 // компоненты
 export * from '@rt-tools/ui-kit-v2/accordion';
+export * from '@rt-tools/ui-kit-v2/ai-prompt-input';
 export * from '@rt-tools/ui-kit-v2/ai-run-status';
 export * from '@rt-tools/ui-kit-v2/action-bar';
 export * from '@rt-tools/ui-kit-v2/aside-section';
@@ -111,6 +112,7 @@ export * from '@rt-tools/ui-kit-v2/toolbar';
 export * from '@rt-tools/ui-kit-v2/tooltip';
 export * from '@rt-tools/ui-kit-v2/tree';
 export * from '@rt-tools/ui-kit-v2/tree-selector';
+export * from '@rt-tools/ui-kit-v2/usage-ring';
 export * from '@rt-tools/ui-kit-v2/welcome-dialog';
 export * from '@rt-tools/ui-kit-v2/workspace-details';
 export * from '@rt-tools/ui-kit-v2/workspace';

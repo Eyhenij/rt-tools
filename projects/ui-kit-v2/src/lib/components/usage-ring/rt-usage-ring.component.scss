@@ -1,0 +1,60 @@
+@layer rt-kit.components {
+    .rt-usage-ring {
+        --rt-usage-ring-size: var(--rt-control-height-sm);
+        --rt-usage-ring-mark-size: var(--rt-space-4);
+        --rt-usage-ring-stroke: 2.5;
+        --rt-usage-ring-color: var(--rt-color-action-primary);
+        --rt-usage-ring-track: var(--rt-color-border-default);
+
+        display: inline-flex;
+        flex: none;
+
+        &__ring {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--rt-radius-md);
+            block-size: var(--rt-usage-ring-size);
+            inline-size: var(--rt-usage-ring-size);
+            outline: 0;
+            transition: background var(--rt-duration-fast) ease;
+
+            &:hover,
+            &:focus-visible {
+                background: var(--rt-color-bg-subtle);
+            }
+
+            &:focus-visible {
+                box-shadow: var(--rt-shadow-focus-ring);
+            }
+
+            &--warning {
+                --rt-usage-ring-color: var(--rt-color-state-warning);
+            }
+        }
+
+        &__svg {
+            block-size: var(--rt-usage-ring-mark-size);
+            inline-size: var(--rt-usage-ring-mark-size);
+
+            /* Дуга начинается сверху и идёт по часовой стрелке. */
+            transform: rotate(-90deg);
+        }
+
+        &__track,
+        &__arc {
+            fill: none;
+            stroke-width: var(--rt-usage-ring-stroke);
+        }
+
+        &__track {
+            stroke: var(--rt-usage-ring-track);
+        }
+
+        &__arc {
+            stroke: var(--rt-usage-ring-color);
+            stroke-linecap: round;
+            transition: stroke-dashoffset var(--rt-duration-base) ease;
+        }
+    }
+}

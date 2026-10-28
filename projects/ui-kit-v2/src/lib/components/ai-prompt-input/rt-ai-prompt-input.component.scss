@@ -1,0 +1,105 @@
+@layer rt-kit.components {
+    .rt-ai-prompt-input {
+        --rt-ai-prompt-input-radius: var(--rt-radius-xl);
+        --rt-ai-prompt-input-border-width: var(--rt-border-width-thin);
+
+        display: flex;
+        flex-direction: column;
+        gap: calc(var(--rt-space-1) * 1.5);
+
+        /* Ширина приходит от хозяина: textarea без объявленной ширины считает её от знака. */
+        inline-size: 100%;
+
+        &__box {
+            display: flex;
+            flex-direction: column;
+            border: var(--rt-ai-prompt-input-border-width) solid var(--rt-input-color-border);
+            border-radius: var(--rt-ai-prompt-input-radius);
+            background: var(--rt-color-bg-surface);
+            box-shadow: var(--rt-shadow-sm);
+            padding-block-start: var(--rt-space-1);
+
+            // Фокус — как у полей кита: рамка фокуса и кольцо.
+            &:focus-within {
+                border-color: var(--rt-input-color-border-focus);
+                box-shadow: var(--rt-input-focus-shadow);
+            }
+
+            &--disabled {
+                background: var(--rt-input-color-bg-disabled);
+            }
+        }
+
+        &__files {
+            display: flex;
+            flex-direction: column;
+            padding: var(--rt-space-2) var(--rt-space-2) 0;
+            gap: var(--rt-space-1);
+        }
+
+        &__input {
+            /* Автовысота CDK пишет в height высоту самого текста: при border-box её съели бы
+               отступы, и вторая строка уезжала бы под верхний край. */
+            box-sizing: content-box;
+            padding: calc(var(--rt-space-1) * 3) calc(var(--rt-space-1) * 3) var(--rt-space-2) var(--rt-space-4);
+            border: 0;
+            margin: 0;
+            background: transparent;
+            color: var(--rt-input-color-text);
+            font: inherit;
+            font-size: var(--rt-text-base);
+            inline-size: auto;
+            line-height: var(--rt-leading-normal);
+            min-inline-size: 0;
+            outline: 0;
+            resize: none;
+            scrollbar-color: var(--rt-color-border-default) transparent;
+            scrollbar-gutter: stable;
+            scrollbar-width: thin;
+
+            &::placeholder {
+                color: var(--rt-input-color-text-placeholder);
+            }
+
+            &:disabled {
+                cursor: not-allowed;
+
+                &::placeholder {
+                    color: var(--rt-color-text-disabled);
+                }
+            }
+        }
+
+        // Ряд действий стоит внутри рамки снизу: слева «+», справа контролы и отправка.
+        &__actions {
+            display: flex;
+            align-items: center;
+            padding: 0 var(--rt-space-2) var(--rt-space-2);
+            gap: var(--rt-space-1);
+        }
+
+        &__controls {
+            display: flex;
+            align-items: center;
+            gap: var(--rt-space-1);
+            margin-inline-start: auto;
+            min-inline-size: 0;
+        }
+
+        &__control {
+            padding-inline: calc(var(--rt-space-1) * 1.5);
+
+            &--muted {
+                color: var(--rt-color-text-muted);
+            }
+        }
+
+        &__hint {
+            margin: 0;
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-xs);
+            line-height: var(--rt-leading-snug);
+            text-align: center;
+        }
+    }
+}
