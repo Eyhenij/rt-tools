@@ -17,6 +17,9 @@
         letter-spacing: var(--rt-letter-spacing-wide);
         line-height: var(--rt-leading-snug);
 
+        /* Длинное слово и адрес переносятся: иначе текст шире своего места и тянет ленту вширь. */
+        overflow-wrap: anywhere;
+
         &__heading {
             margin: 0;
             color: var(--rt-color-text-primary);
