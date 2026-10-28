@@ -1,3 +1,20 @@
+# [0.35.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.34.5...rt-ui-kit-v2%400.35.0) (2026-10-28)
+
+### Bug Fixes
+
+- **rt:ui-kit-v2:** голый адрес в ответе становится ссылкой, подчёркивание внутри слова остаётся знаком ([a877732](https://github.com/Eyhenij/rt-tools/commit/a8777328b76505cdd2db7d433035d5be28f8a5ad))
+- **rt:ui-kit-v2:** длинное слово и адрес в ответе ассистента переносятся ([cc82fa5](https://github.com/Eyhenij/rt-tools/commit/cc82fa5d7fba3ccba23ef517a1c256efa2a8461f))
+- **rt:ui-kit-v2:** меню беседы в списке бесед видно на сенсорном экране ([1b7fb4f](https://github.com/Eyhenij/rt-tools/commit/1b7fb4f26f1b32fe1bb089062826ae75c3c50de2))
+- **rt:ui-kit-v2:** модель в строке поля основным тоном, усилие и режим приглушены ([de40fce](https://github.com/Eyhenij/rt-tools/commit/de40fcea3bc31517aed9a97229dc92a81cdfa4a6))
+- **rt:ui-kit-v2:** поле ввода ИИ-чата и кольцо расхода показаны в витрине в обоих наборах ([34e2d3c](https://github.com/Eyhenij/rt-tools/commit/34e2d3c40a67246356cba9f66b5949d381fc4245)), closes [#2973](https://github.com/Eyhenij/rt-tools/issues/2973)
+- **rt:ui-kit-v2:** прокрутка с краёв ленты и списка бесед остаётся в чате ([920215f](https://github.com/Eyhenij/rt-tools/commit/920215fee28703a94bef99e590d12530efffc2f7))
+- **rt:ui-kit-v2:** разбор подписи ссылки принимает список узлов только для чтения ([72df7c5](https://github.com/Eyhenij/rt-tools/commit/72df7c540b274719f785c738d303a85146616334))
+- **rt:ui-kit-v2:** русские подписи витрины знают ключи поля ввода ИИ-чата и кольца расхода ([159b676](https://github.com/Eyhenij/rt-tools/commit/159b676c9ae225e516a1d9dfe92b99e3d4918dd6))
+
+### Features
+
+- **rt:ui-kit-v2:** поле ввода ИИ-чата со строкой действий и кольцом расхода ([c624cf3](https://github.com/Eyhenij/rt-tools/commit/c624cf37605e083887d25e7441d6a0d61baedad2))
+
 ## [0.34.5](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.34.4...rt-ui-kit-v2%400.34.5) (2026-10-28)
 
 ### Bug Fixes

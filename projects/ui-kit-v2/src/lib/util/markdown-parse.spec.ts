@@ -142,6 +142,52 @@ describe('parseMarkdown', (): void => {
         });
     });
 
+    describe('адреса и подчёркивания', (): void => {
+        it('SC-UKV-1040 — голый адрес становится ссылкой, точка после него остаётся текстом', (): void => {
+            const block: IRtMarkdownBlockNode = firstBlock('см. https://example.test/a_b_c?x=1.');
+
+            expect(kinds(block.content)).toEqual([ERtMarkdownInline.Text, ERtMarkdownInline.Link, ERtMarkdownInline.Text]);
+            expect(block.content[1].href).toBe('https://example.test/a_b_c?x=1');
+            expect(plainText([block.content[1]])).toBe('https://example.test/a_b_c?x=1');
+            expect(plainText([block.content[2]])).toBe('.');
+        });
+
+        it('SC-UKV-1040 — адрес в скобках не забирает закрывающую скобку, а парную внутри оставляет', (): void => {
+            const first: IRtMarkdownBlockNode = firstBlock('(http://example.test/one)');
+            const second: IRtMarkdownBlockNode = firstBlock('https://example.test/wiki/A_(b)');
+
+            expect(first.content[1].href).toBe('http://example.test/one');
+            expect(plainText([first.content[2]])).toBe(')');
+            expect(second.content[0].href).toBe('https://example.test/wiki/A_(b)');
+        });
+
+        it('SC-UKV-1040 — адрес внутри слова и схема без адреса ссылкой не становятся', (): void => {
+            expect(kinds(firstBlock('xhttps://example.test').content)).toEqual([ERtMarkdownInline.Text]);
+            expect(kinds(firstBlock('ftp://example.test и https://').content)).toEqual([ERtMarkdownInline.Text]);
+        });
+
+        it('SC-UKV-1040 — адрес подписью ссылки не рисует ссылку внутри ссылки', (): void => {
+            const block: IRtMarkdownBlockNode = firstBlock('[https://example.test](https://example.test/one)');
+
+            expect(kinds(block.content)).toEqual([ERtMarkdownInline.Link]);
+            expect(kinds(block.content[0].children)).toEqual([ERtMarkdownInline.Text]);
+        });
+
+        it('SC-UKV-1041 — подчёркивания внутри слова остаются знаками', (): void => {
+            const block: IRtMarkdownBlockNode = firstBlock('поле booking_source_id и __init__ файла');
+
+            expect(kinds(block.content)).toEqual([ERtMarkdownInline.Text, ERtMarkdownInline.Strong, ERtMarkdownInline.Text]);
+            expect(plainText([block.content[0]])).toBe('поле booking_source_id и ');
+        });
+
+        it('SC-UKV-1041 — подчёркивание на краях слова делает курсив', (): void => {
+            const block: IRtMarkdownBlockNode = firstBlock('это _важно_ и snake_case');
+
+            expect(kinds(block.content)).toEqual([ERtMarkdownInline.Text, ERtMarkdownInline.Emphasis, ERtMarkdownInline.Text]);
+            expect(plainText([block.content[2]])).toBe(' и snake_case');
+        });
+    });
+
     describe('то, чего в перечне нет', (): void => {
         it('строка скрипта остаётся текстом целиком', (): void => {
             const block: IRtMarkdownBlockNode = firstBlock('<script>window.ran = true;</script>');
