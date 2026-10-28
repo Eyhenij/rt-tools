@@ -1,3 +1,13 @@
+## [0.34.4](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.34.3...rt-ui-kit-v2%400.34.4) (2026-10-28)
+
+### Bug Fixes
+
+- **rt:ui-kit-v2:** строка кнопок формы на узком экране встаёт столбиком ([4fdb9d2](https://github.com/Eyhenij/rt-tools/commit/4fdb9d2751a06eb559f4317825f67d3df419905b))
+
+### Features
+
+- **rt:ui-kit-v2:** rt-icon-button рисует ссылку по входу link, rt-icon-button и rt-input фокусируются методом focus() ([438f7cf](https://github.com/Eyhenij/rt-tools/commit/438f7cf6a1f03afaf7b4ba71cb3125cd6ebd09fd))
+
 ## [0.34.3](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.34.2...rt-ui-kit-v2%400.34.3) (2026-10-27)
 
 ### Bug Fixes
