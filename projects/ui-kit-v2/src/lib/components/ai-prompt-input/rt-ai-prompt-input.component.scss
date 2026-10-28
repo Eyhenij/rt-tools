@@ -90,8 +90,15 @@
         &__control {
             padding-inline: calc(var(--rt-space-1) * 1.5);
 
-            &--muted {
-                color: var(--rt-color-text-muted);
+            // Текстовая кнопка кита по умолчанию приглушена и красит подпись своим свойством
+            // двумя классами. Модель поднимается до основного тона, усилие и режим остаются
+            // приглушёнными.
+            &.rt-button {
+                --rt-btn-color: var(--rt-color-text-primary);
+            }
+
+            &--muted.rt-button {
+                --rt-btn-color: var(--rt-color-text-muted);
             }
         }
 
