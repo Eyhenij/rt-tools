@@ -147,17 +147,28 @@
                 }
             </div>
 
-            <rt-message-composer
+            @if (disclaimerText() && disclaimerAbove()) {
+                <p rtElem="disclaimer" qa-dataid="ai-chat-disclaimer" [rtMod]="{ above: true }">{{ disclaimerText() }}</p>
+            }
+
+            <rt-ai-prompt-input
                 rtElem="composer"
                 qa-dataid="ai-chat-composer"
                 stoppable
+                hint=""
                 [placeholder]="placeholder()"
+                [model]="model()"
+                [effort]="effort()"
+                [mode]="mode()"
+                [usage]="usage()"
+                [usageHint]="usageHint()"
                 [sending]="sending()"
                 [(text)]="draft"
                 (submitted)="onSubmitted($event)"
-                (stopped)="onStop()" />
+                (stopped)="onStop()"
+                (controlPicked)="controlPicked.emit($event)" />
 
-            @if (disclaimerText()) {
+            @if (disclaimerText() && !disclaimerAbove()) {
                 <p rtElem="disclaimer" qa-dataid="ai-chat-disclaimer">{{ disclaimerText() }}</p>
             }
         }
