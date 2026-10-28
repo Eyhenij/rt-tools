@@ -163,3 +163,91 @@ Then the questions, the answers, the composer and the line under it stand in a c
 
 Not covered: a test has no layout at all — the column is seen by the showcase frame `ReadingColumn`,
 and the frame `FullScreen` shows the conversation without the cap.
+
+### SC-UKV-1040 — a bare address becomes a link
+
+Given an answer with a bare `https://` address followed by a full stop
+When the answer is drawn
+Then the address is a link to itself, and the full stop after it stays text. A closing bracket without a pair inside the address stays text. An address inside a word or of another scheme stays text
+
+Covered by the spec of the markdown parser.
+
+### SC-UKV-1041 — an underscore inside a word stays a sign
+
+Given an answer with `booking_source_id` and `_important_`
+When the answer is drawn
+Then `booking_source_id` keeps both underscores and no emphasis, and `_important_` is emphasis
+
+Covered by the spec of the markdown parser.
+
+### SC-UKV-1042 — a long word and an address in an answer wrap
+
+Given a narrow panel and an answer with an address longer than the panel
+When the answer is drawn
+Then the address wraps inside the panel, and the feed does not scroll sideways
+
+Covered by the styles spec of the markdown text; the showcase frame of the answer shows the look.
+
+### SC-UKV-1043 — a swipe at the edge stays in the chat
+
+Given the chat over a page that scrolls
+When the feed or the list of conversations is swiped past its edge
+Then the page under the chat stays where it was
+
+Covered by the styles spec of the chat.
+
+### SC-UKV-1044 — the conversation menu is visible on a touch screen
+
+Given the list of conversations on a screen without hover
+When the list is drawn
+Then every row shows its actions without a touch; with a mouse they appear on hover, focus and an open menu
+
+Covered by the styles spec of the thread list.
+
+### SC-UKV-1045 — the row of actions draws only what the consumer gives
+
+Given the composer without inputs, and then with the model, the effort, the mode, the usage and attachments
+When it is drawn and the model, the effort and the mode are pressed
+Then without inputs the row holds only Send; with them it holds «+», the three labels and the ring, and each press reports which control it was
+
+Covered by the component spec of the composer.
+
+### SC-UKV-1046 — the usage ring shows the share and the warning
+
+Given the ring at 32, 79, 81 and 100 percent, with and without a hint
+When it is drawn
+Then the arc covers the share, the screen reader hears the percent, the ring is orange from 80, and only a ring with a hint takes focus
+
+Covered by the component spec of the ring.
+
+### SC-UKV-1047 — the line about mistakes stands under or above the composer
+
+Given the composer with the hint and the position above
+When it is drawn, and then the hint becomes an empty line
+Then the hint is the first line above the box, and the empty line removes it
+
+Covered by the component spec of the composer.
+
+### SC-UKV-1048 — Enter sends the question
+
+Given the composer with blank text, and then with a question
+When Enter, Shift + Enter and Send are pressed
+Then blank text is not sent, Shift + Enter sends nothing, Enter and Send give the trimmed question and the field empties
+
+Covered by the component spec of the composer.
+
+### SC-UKV-1049 — Stop while the answer is written
+
+Given the composer sending with and without `stoppable`, and a disabled one
+When it is drawn and Stop is pressed
+Then with `stoppable` Stop replaces Send and the field is open; without it and when disabled the field is closed
+
+Covered by the component spec of the composer.
+
+### SC-UKV-1050 — the chat passes its controls to the composer
+
+Given the chat with a model, a usage share and the line above the composer
+When it is drawn
+Then the composer shows the model and the ring, has no hint of its own, and the line stands right above it
+
+Covered by the component spec of the organism.
