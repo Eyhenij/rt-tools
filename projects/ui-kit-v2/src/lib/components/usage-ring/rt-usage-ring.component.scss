@@ -5,6 +5,10 @@
         --rt-usage-ring-stroke: 2.5;
         --rt-usage-ring-color: var(--rt-color-action-primary);
         --rt-usage-ring-track: var(--rt-color-border-default);
+        --rt-usage-ring-radius: var(--rt-radius-md);
+        --rt-usage-ring-focus-shadow: var(--rt-shadow-focus-ring);
+        --rt-usage-ring-duration: var(--rt-duration-fast);
+        --rt-usage-ring-arc-duration: var(--rt-duration-base);
 
         display: inline-flex;
         flex: none;
@@ -13,11 +17,11 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            border-radius: var(--rt-radius-md);
+            border-radius: var(--rt-usage-ring-radius);
             block-size: var(--rt-usage-ring-size);
             inline-size: var(--rt-usage-ring-size);
             outline: 0;
-            transition: background var(--rt-duration-fast) ease;
+            transition: background var(--rt-usage-ring-duration) ease;
 
             &:hover,
             &:focus-visible {
@@ -25,7 +29,7 @@
             }
 
             &:focus-visible {
-                box-shadow: var(--rt-shadow-focus-ring);
+                box-shadow: var(--rt-usage-ring-focus-shadow);
             }
 
             &--warning {
@@ -54,7 +58,7 @@
         &__arc {
             stroke: var(--rt-usage-ring-color);
             stroke-linecap: round;
-            transition: stroke-dashoffset var(--rt-duration-base) ease;
+            transition: stroke-dashoffset var(--rt-usage-ring-arc-duration) ease;
         }
     }
 }

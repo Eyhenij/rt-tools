@@ -2,6 +2,7 @@
     .rt-ai-prompt-input {
         --rt-ai-prompt-input-radius: var(--rt-radius-xl);
         --rt-ai-prompt-input-border-width: var(--rt-border-width-thin);
+        --rt-ai-prompt-input-shadow: var(--rt-shadow-sm);
 
         display: flex;
         flex-direction: column;
@@ -16,7 +17,7 @@
             border: var(--rt-ai-prompt-input-border-width) solid var(--rt-input-color-border);
             border-radius: var(--rt-ai-prompt-input-radius);
             background: var(--rt-color-bg-surface);
-            box-shadow: var(--rt-shadow-sm);
+            box-shadow: var(--rt-ai-prompt-input-shadow);
             padding-block-start: var(--rt-space-1);
 
             // Фокус — как у полей кита: рамка фокуса и кольцо.
