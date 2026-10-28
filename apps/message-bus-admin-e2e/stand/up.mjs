@@ -109,6 +109,13 @@ await run('npx', ['nx', 'build', 'chat-talks-page', '--configuration', 'producti
     NX_SKIP_NX_INSTALL_CHECK: 'true',
 });
 
+/*
+ * Контейнер базы стенд поднимает сам, как Keycloak выше: остановленный, он ронял подготовку базы на
+ * `P1001`, и проверка перед push стояла, пока кто-нибудь не вспоминал поднять его руками.
+ * `--wait` ждёт готовности по проверке здоровья контейнера, а не одного запуска процесса.
+ */
+await run('docker', ['compose', 'up', '-d', '--wait', 'db']);
+
 await prepareDatabase();
 
 start('node', ['dist/apps/message-bus/main.js'], {
