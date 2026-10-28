@@ -57,4 +57,12 @@ describe('RtConfirmPopoverComponent', (): void => {
 
         expect(classesOf(qa(fixture, 'confirm-accept'))).not.toContain('rt-button--danger');
     });
+
+    it('SC-UKV-1044 — «Отмена» стоит в рамке темы secondary', (): void => {
+        // Текстовая «Отмена» рядом с залитым согласием читалась подписью, а не кнопкой.
+        const fixture: ComponentFixture<RtConfirmPopoverComponent> = setup();
+
+        expect(classesOf(qa(fixture, 'confirm-cancel'))).toContain('rt-button--outlined');
+        expect(classesOf(qa(fixture, 'confirm-cancel'))).toContain('rt-button--secondary');
+    });
 });

@@ -1,16 +1,39 @@
-import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
+import { contentChildren, effect, inject, ChangeDetectionStrategy, Component, ElementRef, Signal, ViewEncapsulation } from '@angular/core';
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
+import { BreakpointsService, IButton, rtKitLabel } from '@rt-tools/ui-kit-v2/core';
+import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
+
 const BEM_BLOCK: string = 'rt-aside-footer';
+
+/** Вид кнопки слота `[asidePrimary]`: залитая, основного цвета, без значка. */
+const PRIMARY_LOOK: IButton.PlaceLook = { appearance: 'filled', theme: 'primary', icon: null };
+
+/** Вид кнопки по слоту, в котором она стоит сама или внутри его обёртки; вне слотов вида нет. */
+function slotLook(host: HTMLElement | undefined, dismissLook: IButton.PlaceLook): IButton.PlaceLook | null {
+    if (host?.closest('[asideDismiss]')) {
+        return dismissLook;
+    }
+    if (host?.closest('[asidePrimary]')) {
+        return PRIMARY_LOOK;
+    }
+
+    return null;
+}
 
 /**
  * Footer-слот для композиции внутри `<rt-aside>`. Две зоны через именованные
- * слоты: `[asideDismiss]` (слева — «Закрыть», `appearance="text"`, всегда) и
- * `[asidePrimary]` (справа — единственный позитивный глагол: Сохранить /
- * Отправить / Опубликовать, если есть). Раскладка `justify-content:
- * space-between`. Доменные/деструктивные действия в футер не кладём — они
+ * слоты: `[asideDismiss]` (слева — «Закрыть») и `[asidePrimary]` (справа —
+ * единственный позитивный глагол: Сохранить / Отправить / Опубликовать, если
+ * есть). Раскладка `justify-content: space-between`, кнопки стоят в одну строку
+ * на любой ширине. Доменные/деструктивные действия в футер не кладём — они
  * проецируются иконками в `<rt-aside-header>` слот `[asideActions]`.
+ *
+ * Вид кнопок задаёт подвал, а не разметка потребителя: «Закрыть» в рамке темы
+ * secondary, позитивный глагол залитый и без значка. На телефоне первая кнопка
+ * подписана коротко — «Закрыть» из подписей кита. Кнопка может стоять в слоте
+ * не сама, а внутри обёртки с атрибутом слота: так ставят подсказку на кнопку.
  *
  * Только две именованные зоны — безатрибутный контент НЕ проецируется (контент
  * без `asideDismiss`/`asidePrimary` не отрендерится).
@@ -20,8 +43,8 @@ const BEM_BLOCK: string = 'rt-aside-footer';
  * @example
  * \`\`\`html
  * <rt-aside-footer>
- *   <button rtButton asideDismiss appearance="text" (click)="onClose()">Закрыть</button>
- *   <button rtButton asidePrimary theme="primary" (click)="save()">Сохранить</button>
+ *   <button rtButton asideDismiss label="Закрыть и не сохранять" (click)="onClose()"></button>
+ *   <button rtButton asidePrimary label="Сохранить" (click)="save()"></button>
  * </rt-aside-footer>
  * \`\`\`
  */
@@ -36,4 +59,29 @@ const BEM_BLOCK: string = 'rt-aside-footer';
         class: BEM_BLOCK,
     },
 })
-export class RtAsideFooterComponent {}
+export class RtAsideFooterComponent {
+    readonly #phone: Signal<boolean> = inject(BreakpointsService).phone;
+    readonly #closeLabel: Signal<string> = rtKitLabel('uiClose');
+
+    /* Кнопки ищутся и внутри обёрток слота; оба списка идут в одном порядке документа. */
+    protected readonly buttons: Signal<readonly RtButtonDirective[]> = contentChildren(RtButtonDirective, { descendants: true });
+    protected readonly hosts: Signal<readonly ElementRef<HTMLElement>[]> = contentChildren(RtButtonDirective, {
+        descendants: true,
+        read: ElementRef,
+    });
+
+    constructor() {
+        effect((): void => {
+            const hosts: readonly ElementRef<HTMLElement>[] = this.hosts();
+            const dismissLook: IButton.PlaceLook = {
+                appearance: 'outlined',
+                theme: 'secondary',
+                ...(this.#phone() ? { label: this.#closeLabel() } : {}),
+            };
+
+            this.buttons().forEach((button: RtButtonDirective, index: number): void => {
+                button.placeLook.set(slotLook(hosts[index]?.nativeElement, dismissLook));
+            });
+        });
+    }
+}
