@@ -1,7 +1,9 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { signal, ChangeDetectionStrategy, Component, Signal } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
 
 import { createRtFixture, qa, textOf } from '../../../../testing/rt-kit-testing';
+import { RtButtonDirective } from '../../button/rt-button.directive';
+import { BreakpointsService } from '../../../platform';
 import { RtAsideFooterComponent } from './rt-aside-footer.component';
 
 /** Подвал показывает только то, что в него спроецировали, — своей разметки у него нет. */
@@ -21,6 +23,49 @@ class AsideFooterHostComponent {}
 
 function setup(): ComponentFixture<AsideFooterHostComponent> {
     return createRtFixture(AsideFooterHostComponent);
+}
+
+/** Подвал с кнопками кита, как его собирает приложение: со своим видом, значком и обёрткой слота. */
+@Component({
+    selector: 'rt-aside-footer-look-host',
+    template: `
+        <rt-aside-footer>
+            <button rtButton asideDismiss qa-dataid="look-dismiss" type="button" appearance="text" label="Закрыть и не сохранять"></button>
+            <span asidePrimary>
+                <button
+                    rtButton
+                    qa-dataid="look-primary"
+                    type="button"
+                    theme="success"
+                    appearance="text"
+                    icon="check"
+                    label="Сохранить"></button>
+            </span>
+        </rt-aside-footer>
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtAsideFooterComponent, RtButtonDirective],
+})
+class AsideFooterLookHostComponent {}
+
+/** Окно телефона: подвал подписывает первую кнопку коротко. */
+class PhoneBreakpointsService {
+    public readonly phone: Signal<boolean> = signal(true);
+}
+
+function setupLook(phone: boolean = false): ComponentFixture<AsideFooterLookHostComponent> {
+    const fixture: ComponentFixture<AsideFooterLookHostComponent> = createRtFixture(
+        AsideFooterLookHostComponent,
+        {},
+        { providers: phone ? [{ provide: BreakpointsService, useClass: PhoneBreakpointsService }] : [] }
+    );
+    fixture.detectChanges();
+
+    return fixture;
+}
+
+function classesOf(fixture: ComponentFixture<unknown>, id: string): DOMTokenList {
+    return (qa(fixture, id)?.nativeElement as HTMLElement).classList;
 }
 
 describe('RtAsideFooterComponent', (): void => {
@@ -48,5 +93,31 @@ describe('RtAsideFooterComponent', (): void => {
         const footer: HTMLElement = qa(fixture, 'aside-footer')?.nativeElement as HTMLElement;
 
         expect(footer.querySelector('[qa-dataid="host-stray"]')).toBeNull();
+    });
+
+    it('SC-UKV-1040 — вид кнопок задаёт подвал: «Закрыть» в рамке secondary, глагол залит и без значка', (): void => {
+        // Приложение написало обеим кнопкам текстовый вид, а глаголу ещё и значок с чужой темой:
+        // подвал сильнее входов, иначе вид разъезжается от панели к панели.
+        const fixture: ComponentFixture<AsideFooterLookHostComponent> = setupLook();
+        const dismiss: DOMTokenList = classesOf(fixture, 'look-dismiss');
+        const primary: DOMTokenList = classesOf(fixture, 'look-primary');
+
+        expect(dismiss.contains('rt-button--outlined')).toBe(true);
+        expect(dismiss.contains('rt-button--secondary')).toBe(true);
+        expect(dismiss.contains('rt-button--text')).toBe(false);
+        expect(primary.contains('rt-button--text')).toBe(false);
+        expect(primary.contains('rt-button--outlined')).toBe(false);
+        expect(primary.contains('rt-button--success')).toBe(false);
+        expect((qa(fixture, 'look-primary')?.nativeElement as HTMLElement).querySelector('.rt-button__icon')).toBeNull();
+        expect(textOf(qa(fixture, 'look-primary'))).toBe('Сохранить');
+    });
+
+    it('SC-UKV-1041 — на телефоне первая кнопка подвала подписана «Закрыть», шире — своей подписью', (): void => {
+        const wide: ComponentFixture<AsideFooterLookHostComponent> = setupLook();
+        expect(textOf(qa(wide, 'look-dismiss'))).toBe('Закрыть и не сохранять');
+        wide.destroy();
+
+        const phone: ComponentFixture<AsideFooterLookHostComponent> = setupLook(true);
+        expect(textOf(qa(phone, 'look-dismiss'))).toBe('Close');
     });
 });
