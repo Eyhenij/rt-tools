@@ -1,7 +1,7 @@
 import { ERtMarkdownInline, IRtMarkdownInlineNode } from './markdown.model';
 
 /**
- * Разбор строки на куски: жирный, курсив, зачёркнутый, код и ссылка.
+ * Разбор строки на куски: жирный, курсив, зачёркнутый, код, ссылка и голый адрес.
  *
  * Всё, чего в этом перечне нет, остаётся текстом — включая угловые скобки, разметку картинки и
  * ссылку чужой схемы. Вычистки здесь нет и быть не может: разборщик не строит узла, которого не
@@ -10,6 +10,15 @@ import { ERtMarkdownInline, IRtMarkdownInlineNode } from './markdown.model';
 
 /** Схемы, при которых адрес становится ссылкой. Любая другая ссылкой не становится. */
 const ALLOWED_SCHEMES: readonly string[] = ['http://', 'https://', 'mailto:'];
+
+/** Схемы голого адреса в тексте: он становится ссылкой без скобок разметки. */
+const BARE_SCHEMES: readonly string[] = ['http://', 'https://'];
+
+/** Знаки, которыми кончается предложение после адреса: в адрес они не входят. */
+const TRAILING_PUNCTUATION: ReadonlySet<string> = new Set<string>(['.', ',', ';', ':', '!', '?', "'", '"', '»', ')', ']']);
+
+/** Буква или цифра любого письма: рядом с ней знак разметки стоит внутри слова. */
+const WORD_CHAR: RegExp = /[\p{L}\p{N}]/u;
 
 /** Парная разметка: открывающая строка, её род и то, разбираются ли куски внутри. */
 interface IPairedMark {
@@ -62,6 +71,63 @@ function isAllowedHref(value: string): boolean {
     return ALLOWED_SCHEMES.some((scheme: string): boolean => lowered.startsWith(scheme));
 }
 
+/** Знак в этом месте строки — буква или цифра. За краями строки знака нет. */
+function isWordChar(source: string, index: number): boolean {
+    return index >= 0 && index < source.length && WORD_CHAR.test(source[index]);
+}
+
+/** Узлы ссылки внутри подписи ссылки становятся текстом: ссылка в ссылке не рисуется. */
+function unlink(nodes: IRtMarkdownInlineNode[]): IRtMarkdownInlineNode[] {
+    return nodes.flatMap((node: IRtMarkdownInlineNode): IRtMarkdownInlineNode[] =>
+        node.kind === ERtMarkdownInline.Link ? unlink(node.children) : [{ ...node, children: unlink(node.children) }]
+    );
+}
+
+/** Сколько раз знак встречается в строке. */
+function countOf(value: string, sign: string): number {
+    return value.split(sign).length - 1;
+}
+
+/**
+ * Читает голый адрес `http://` или `https://` до пробела.
+ *
+ * Адрес начинается на границе слова. Точка, запятая и закрывающая скобка в конце остаются текстом:
+ * так кончается предложение. Скобка, у которой в адресе есть пара, остаётся в адресе.
+ */
+function readBareUrl(source: string, start: number): ITaken | null {
+    if (source[start]?.toLowerCase() !== 'h' || isWordChar(source, start - 1)) {
+        return null;
+    }
+
+    const rest: string = source.slice(start);
+    const lowered: string = rest.toLowerCase();
+    const scheme: string | undefined = BARE_SCHEMES.find((candidate: string): boolean => lowered.startsWith(candidate));
+
+    if (scheme === undefined) {
+        return null;
+    }
+
+    const whole: string = rest.split(/\s/u, 1)[0];
+    let address: string = whole;
+
+    while (address.length > 0 && TRAILING_PUNCTUATION.has(address[address.length - 1])) {
+        address = address.slice(0, -1);
+    }
+
+    while (address.length < whole.length && whole[address.length] === ')' && countOf(address, '(') > countOf(address, ')')) {
+        address += ')';
+    }
+
+    if (address.length <= scheme.length) {
+        return null;
+    }
+
+    return {
+        length: address.length,
+        node: { kind: ERtMarkdownInline.Link, text: address, children: [textNode(address)], href: address },
+    };
+}
+
 /** Разметка картинки узлом не становится и остаётся текстом целиком. */
 function readImage(source: string, start: number): ITaken | null {
     if (source[start] !== '!' || source[start + 1] !== '[') {
@@ -107,8 +173,24 @@ function readLink(source: string, start: number, nested: TNested): ITaken | null
 
     return {
         length: end - start + 1,
-        node: { kind: ERtMarkdownInline.Link, text: label, children: nested(label), href: address },
+        node: { kind: ERtMarkdownInline.Link, text: label, children: unlink(nested(label)), href: address },
     };
+}
+
+/**
+ * Закрывающая строка парной разметки.
+ *
+ * У подчёркивания закрывающая строка стоит на конце слова: `snake_case_name` курсивом не
+ * становится, подчёркивания в нём остаются знаками.
+ */
+function findClose(source: string, mark: string, from: number, intraword: boolean): number {
+    let close: number = source.indexOf(mark, from);
+
+    while (intraword && close !== -1 && isWordChar(source, close + mark.length)) {
+        close = source.indexOf(mark, close + 1);
+    }
+
+    return close;
 }
 
 /** Читает парную разметку, начиная с её открывающей строки. */
@@ -119,8 +201,14 @@ function readPaired(source: string, start: number, nested: TNested): ITaken | nu
         return null;
     }
 
+    const intraword: boolean = pair.mark.startsWith('_');
+
+    if (intraword && isWordChar(source, start - 1)) {
+        return null;
+    }
+
     const from: number = start + pair.mark.length;
-    const close: number = source.indexOf(pair.mark, from);
+    const close: number = findClose(source, pair.mark, from, intraword);
 
     if (close === -1 || close === from) {
         return null;
@@ -141,7 +229,8 @@ function readPaired(source: string, start: number, nested: TNested): ITaken | nu
 
 /** Кусок, начинающийся в этом месте строки. Пустой узел — знаки остаются текстом. */
 function readAt(source: string, index: number, nested: TNested): ITaken {
-    const taken: ITaken | null = readImage(source, index) ?? readLink(source, index, nested) ?? readPaired(source, index, nested);
+    const taken: ITaken | null =
+        readImage(source, index) ?? readLink(source, index, nested) ?? readBareUrl(source, index) ?? readPaired(source, index, nested);
 
     return taken ?? { length: 1, node: null };
 }

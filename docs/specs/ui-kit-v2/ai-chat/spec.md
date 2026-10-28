@@ -76,6 +76,10 @@ conversations. Every application repeats the same screen, and every copy drifts 
 
 - **The attachments of an answer come from the consumer's template, which receives the message.**
 
+- **A bare `http://` or `https://` address in an answer becomes a link, and the punctuation after it stays text.**
+
+- **An underscore inside a word stays a sign: only an underscore at a word's edge marks emphasis.**
+
 - **The title, the placeholder, the empty-screen texts and the line under the composer come from the consumer, and the kit's English text stands in when one is not given.**
 
 ## What is out of scope
@@ -157,3 +161,5 @@ None.
 - 2026-10-09 — the task RT-2722: the header icons by the material drawings without the material preset.
 - 2026-10-09 — the task RT-2729: the conversation menu «More actions» with «Copy ID» and «Delete» in
   place of the delete button.
+- 2026-10-28 — the task RT-2961 of the epic RT-2958: a bare address in an answer becomes a link, an
+  underscore inside a word stays a sign.

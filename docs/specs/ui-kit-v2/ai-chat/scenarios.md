@@ -163,3 +163,19 @@ Then the questions, the answers, the composer and the line under it stand in a c
 
 Not covered: a test has no layout at all — the column is seen by the showcase frame `ReadingColumn`,
 and the frame `FullScreen` shows the conversation without the cap.
+
+### SC-UKV-1040 — a bare address becomes a link
+
+Given an answer with a bare `https://` address followed by a full stop
+When the answer is drawn
+Then the address is a link to itself, and the full stop after it stays text. A closing bracket without a pair inside the address stays text. An address inside a word or of another scheme stays text
+
+Covered by the spec of the markdown parser.
+
+### SC-UKV-1041 — an underscore inside a word stays a sign
+
+Given an answer with `booking_source_id` and `_important_`
+When the answer is drawn
+Then `booking_source_id` keeps both underscores and no emphasis, and `_important_` is emphasis
+
+Covered by the spec of the markdown parser.
