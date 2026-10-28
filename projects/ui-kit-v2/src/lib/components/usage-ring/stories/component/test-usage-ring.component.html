@@ -1,5 +1,17 @@
-<div style="display: flex; gap: 16px; align-items: center">
-    <rt-usage-ring [value]="value" [warnAt]="warnAt" [hint]="hint" />
-    <rt-usage-ring hint="81% of the monthly limit · Resets on 1 November" [value]="81" />
-    <rt-usage-ring [value]="100" />
-</div>
+@if (part === 'presets') {
+    <app-story-presets caption="Кольцо расхода в обоих наборах">
+        <ng-template>
+            <div style="display: flex; gap: 16px; align-items: center">
+                <rt-usage-ring [value]="value" [warnAt]="warnAt" [hint]="hint" />
+                <rt-usage-ring hint="81% of the monthly limit · Resets on 1 November" [value]="81" />
+                <rt-usage-ring [value]="100" />
+            </div>
+        </ng-template>
+    </app-story-presets>
+} @else {
+    <div style="display: flex; gap: 16px; align-items: center">
+        <rt-usage-ring [value]="value" [warnAt]="warnAt" [hint]="hint" />
+        <rt-usage-ring hint="81% of the monthly limit · Resets on 1 November" [value]="81" />
+        <rt-usage-ring [value]="100" />
+    </div>
+}

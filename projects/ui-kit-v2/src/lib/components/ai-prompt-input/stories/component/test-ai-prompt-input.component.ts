@@ -1,7 +1,11 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
+import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { IRtAiPromptInput } from '../../rt-ai-prompt-input.model';
 import { RtAiPromptInputComponent } from '../../rt-ai-prompt-input.component';
+
+/** Какой показ рисовать: площадку с контролами или пару наборов. */
+export type TAiPromptInputStoryPart = 'playground' | 'presets';
 
 /**
  * Демонстрационная обёртка для витрины: держит изменяемое состояние, на которое
@@ -14,9 +18,13 @@ import { RtAiPromptInputComponent } from '../../rt-ai-prompt-input.component';
     imports: [
         // components
         RtAiPromptInputComponent,
+
+        // showcase
+        StoryPresetsComponent,
     ],
 })
 export class TestRtAiPromptInputComponent {
+    public part: TAiPromptInputStoryPart = 'playground';
     public model: string = 'Opus 5.5';
     public effort: string = 'Medium';
     public mode: string = 'Auto';

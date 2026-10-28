@@ -18,6 +18,7 @@ export default {
         stoppable: { control: { type: 'boolean' } },
         disabled: { control: { type: 'boolean' } },
         text: { control: { type: 'text' } },
+        part: { table: { disable: true } },
     },
 } as Meta<TestRtAiPromptInputComponent>;
 
@@ -58,4 +59,10 @@ export const Disabled: TStory = {
 export const HintAbove: TStory = {
     parameters: storySnapshotSkip(SKIP),
     args: { hintPosition: 'above', usage: 81, usageHint: '81% of the monthly limit · Resets on 1 November' },
+};
+
+/** Поле в обоих наборах: пресет перекрашивает рамку, ряд действий и кольцо, разницу видно только парой. */
+export const Presets: TStory = {
+    parameters: { ...storySnapshotSkip(SKIP), controls: { disable: true } },
+    args: { part: 'presets', usage: 81, usageHint: '81% of the monthly limit · Resets on 1 November' },
 };
