@@ -28,7 +28,7 @@ describe('RtAiPromptInputComponent', (): void => {
         expect(hostClasses(setup())).toContain('rt-ai-prompt-input');
     });
 
-    it('SC-UKV-1045 — по умолчанию в ряду только отправка, а подсказка стоит под полем', (): void => {
+    it('SC-UKV-1056 —по умолчанию в ряду только отправка, а подсказка стоит под полем', (): void => {
         const fixture: ComponentFixture<RtAiPromptInputComponent> = setup();
         const host: HTMLElement = fixture.nativeElement;
 
@@ -42,7 +42,7 @@ describe('RtAiPromptInputComponent', (): void => {
         expect(host.lastElementChild?.getAttribute('qa-dataid')).toBe('ai-prompt-input-hint');
     });
 
-    it('SC-UKV-1045 — каждый элемент ряда включается своим входом', (): void => {
+    it('SC-UKV-1056 —каждый элемент ряда включается своим входом', (): void => {
         const fixture: ComponentFixture<RtAiPromptInputComponent> = setup({
             attachments: true,
             model: 'Opus 5.5',
@@ -58,7 +58,7 @@ describe('RtAiPromptInputComponent', (): void => {
         expect(qa(fixture, 'ai-prompt-input-usage')).toBeTruthy();
     });
 
-    it('SC-UKV-1045 — нажатие на модель, усилие и режим сообщает, какую кнопку нажали', (): void => {
+    it('SC-UKV-1056 —нажатие на модель, усилие и режим сообщает, какую кнопку нажали', (): void => {
         const fixture: ComponentFixture<RtAiPromptInputComponent> = setup({ model: 'Opus 5.5', effort: 'Medium', mode: 'Auto' });
         const seen: IRtAiPromptInput.Control[] = [];
         fixture.componentInstance.controlPicked.subscribe((value: IRtAiPromptInput.Control): number => seen.push(value));

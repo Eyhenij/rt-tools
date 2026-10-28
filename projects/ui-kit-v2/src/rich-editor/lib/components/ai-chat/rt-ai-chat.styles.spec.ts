@@ -25,14 +25,14 @@ function ruleBody(css: string, selector: string): string {
 }
 
 describe('стили прокрутки чата', (): void => {
-    it('SC-UKV-1043 — лента держит прокрутку у себя на краю', (): void => {
+    it('SC-UKV-1054 —лента держит прокрутку у себя на краю', (): void => {
         const body: string = ruleBody(sass.compile(CHAT).css, '.rt-ai-chat__feed');
 
         expect(body).toContain('overflow-y: auto');
         expect(body).toContain('overscroll-behavior: contain');
     });
 
-    it('SC-UKV-1043 — список бесед держит прокрутку у себя на краю', (): void => {
+    it('SC-UKV-1054 —список бесед держит прокрутку у себя на краю', (): void => {
         const body: string = ruleBody(sass.compile(THREADS).css, '.rt-thread-list__rows');
 
         expect(body).toContain('overflow-y: auto');
