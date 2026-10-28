@@ -11,6 +11,11 @@ export const RT_NARROW_WIDTH: number = 1080;
 
 const NARROW_VIEWPORT_QUERY: string = `(max-width: ${RT_NARROW_WIDTH}px)`;
 
+/** Порог телефона — тот же, что у `$rt-bp-sm` в стилях кита. */
+export const RT_PHONE_WIDTH: number = 480;
+
+const PHONE_VIEWPORT_QUERY: string = `(max-width: ${RT_PHONE_WIDTH}px)`;
+
 /**
  * Узок ли вид. Ширина места страницы решает, когда место объявлено; без него решает окно.
  */
@@ -56,6 +61,14 @@ export class BreakpointsService {
      * `initialValue: false` — на SSR/CSR до первого matchMedia рендерим desktop-вариант.
      */
     public readonly viewportNarrow: Signal<boolean> = toSignal(this.#match([NARROW_VIEWPORT_QUERY]), {
+        initialValue: false,
+    });
+
+    /**
+     * Окно телефона (≤480px). На нём то, что на экране шире стоит в строку, встаёт короче или
+     * столбиком: подпись первой кнопки подвала панели. `initialValue: false` — как у узкого окна.
+     */
+    public readonly phone: Signal<boolean> = toSignal(this.#match([PHONE_VIEWPORT_QUERY]), {
         initialValue: false,
     });
 

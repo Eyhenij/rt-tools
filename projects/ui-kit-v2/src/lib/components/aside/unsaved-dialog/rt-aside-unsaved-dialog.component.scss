@@ -1,3 +1,5 @@
+@use '../../../../styles/breakpoints' as bp;
+
 @layer rt-kit.components {
     /* rt-aside-unsaved-dialog — окно о несохранённых правках при закрытии панели.
        ViewEncapsulation.None — селекторы префиксованы `.rt-aside-unsaved-dialog`.
@@ -29,13 +31,18 @@
             font-size: var(--rt-text-sm);
         }
 
-        /* Три кнопки идут в одну строку, а когда она их не вмещает — переносятся и
-           выравниваются по правому краю, сохраняя порядок. */
+        /* Три кнопки стоят в одну строку по правому краю: окну средней ширины их хватает. На
+           телефоне строка их не вмещает, и они встают столбиком во всю ширину в том же порядке. */
         &__footer {
             display: flex;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
             justify-content: flex-end;
             gap: var(--rt-space-sm);
+
+            @media (width <= #{bp.$rt-bp-sm}) {
+                flex-direction: column;
+                align-items: stretch;
+            }
         }
     }
 }

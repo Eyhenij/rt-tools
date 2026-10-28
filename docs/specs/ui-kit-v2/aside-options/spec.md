@@ -1,6 +1,6 @@
 # The options, focus, pending state and properties of the side panel
 
-**Status:** in force · **Revision:** 2 October 2026 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 28 October 2026 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the side panel and the dialog of the second kit
 **Laws:** `frontend-application`, `verifiability`, `reuse-first`
 **Procedures:** none
@@ -48,6 +48,14 @@ options, the stream and the properties are invisible to them.
 - **A panel removed before its first frame plays no entrance.**
 - **The caller decides whether a navigation removes the panel; by default it does.**
 - **Without the new options, inputs, slot and properties the panel draws as before.**
+- **The footer sets the look of its buttons.** The button in the dismiss slot is outlined with the
+  secondary theme. The button in the primary slot is filled with the primary theme and carries no
+  icon. The application's inputs of these buttons do not change it.
+- **The footer buttons stand in one row at any width.** On a phone, 480 points and narrower, the
+  dismiss button is labelled with the kit's short «Close».
+- **The cancel button of the confirm popover is outlined with the secondary theme.**
+- **The window about the unsaved edits is of the medium width, and its stay button is outlined.**
+  Its three buttons stand in one row, and on a phone they stand in a column across the whole width.
 
 ## What is out of scope
 
@@ -87,7 +95,8 @@ Not applicable: the kit lives inside an application behind a sign-in.
 ### Mobile layout
 
 The panel keeps its full-window width on a narrow screen; the pending layer and the header row
-follow it.
+follow it. The footer buttons stay in one row there, and the first of them
+gets the short label. The buttons of the window about the unsaved edits stand in a column.
 
 ### Several objects
 

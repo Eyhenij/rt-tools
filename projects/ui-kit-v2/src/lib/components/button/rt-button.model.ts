@@ -22,4 +22,16 @@ export namespace IButton {
      * невидимы, но держат ширину кнопки, а спиннер стоит по центру.
      */
     export type LoadingLabel = 'keep' | 'hide';
+
+    /**
+     * Вид, который кнопке задаёт место, где она стоит, — например слот подвала панели. Названное
+     * здесь сильнее входов кнопки, неназванное берётся из входов. `icon: null` снимает значок,
+     * `label` подменяет подпись.
+     */
+    export interface PlaceLook {
+        readonly theme?: Theme;
+        readonly appearance?: Appearance;
+        readonly icon?: null;
+        readonly label?: string;
+    }
 }

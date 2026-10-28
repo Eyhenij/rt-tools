@@ -1,4 +1,4 @@
-<rt-dialog width="440px" qa-dataid="aside-unsaved-dialog" [ariaLabel]="t().uiUnsavedTitle">
+<rt-dialog size="md" qa-dataid="aside-unsaved-dialog" [ariaLabel]="t().uiUnsavedTitle">
     <div rtBlock="rt-aside-unsaved-dialog">
         <div rtElem="text">
             <h2 rtElem="title" qa-dataid="aside-unsaved-title">{{ t().uiUnsavedTitle }}</h2>
@@ -20,7 +20,7 @@
                 qa-dataid="aside-unsaved-stay"
                 type="button"
                 theme="secondary"
-                appearance="text"
+                appearance="outlined"
                 [label]="t().uiUnsavedStay"
                 [attr.aria-label]="t().uiUnsavedStay"
                 (click)="onStay()"></button>
