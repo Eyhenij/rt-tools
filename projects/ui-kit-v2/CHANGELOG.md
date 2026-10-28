@@ -1,3 +1,9 @@
+## [0.34.5](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.34.4...rt-ui-kit-v2%400.34.5) (2026-10-28)
+
+### Bug Fixes
+
+- **rt:ui-kit-v2:** вид кнопок подвала панели и окон подтверждения задаёт кит ([e9d3ba5](https://github.com/Eyhenij/rt-tools/commit/e9d3ba5cb6d0b9e84951857e71b8817add1555ea))
+
 ## [0.34.4](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.34.3...rt-ui-kit-v2%400.34.4) (2026-10-28)
 
 ### Bug Fixes
