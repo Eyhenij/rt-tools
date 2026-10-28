@@ -18,6 +18,8 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
   карточки.
 - Кнопка-переключатель — тогда `active` превращается в `aria-pressed`.
 - Рисунок не из набора кита — `[icon]="null"` и рисунок внутри кнопки, история `Content`.
+- Переход на страницу приложения — вход `link`: кнопка рисуется ссылкой `<a href>` того же вида,
+  её можно открыть в новой вкладке, история `Link`.
 
 ## Когда не применять
 
@@ -111,6 +113,8 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | `disabled`           | `boolean`                                                                                   | `false`                            |
 | `active`             | `boolean`                                                                                   | `false`                            |
 | `expanded`           | `boolean \| null` — раскрыта ли панель кнопки, пишется в `aria-expanded`                    | `null` — атрибута нет              |
+| `ariaHaspopup`       | `'menu' \| 'listbox' \| 'tree' \| 'grid' \| 'dialog' \| null` — пишется в `aria-haspopup`   | `null` — атрибута нет              |
+| `link`               | `RouterLink['routerLink']` — маршрут приложения: рисуется ссылка `<a href>` того же вида    | `null` — кнопка                    |
 | `indicator`          | `boolean`                                                                                   | `false`                            |
 
 ## Выходы
@@ -118,6 +122,12 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | выход     | тип          | когда                                          |
 | --------- | ------------ | ---------------------------------------------- |
 | `clicked` | `MouseEvent` | клик; в загрузке и отключении наружу не уходит |
+
+## Методы
+
+| метод             | что делает                          |
+| ----------------- | ----------------------------------- |
+| `focus(options?)` | фокусирует кнопку или ссылку внутри |
 
 ## Рядом
 

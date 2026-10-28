@@ -212,12 +212,17 @@ export class RtInputComponent extends RtFormControlBase<string> {
         }
     }
 
+    /** Фокусирует поле ввода внутри — например, поиск, когда открылась его панель. */
+    public focus(options?: FocusOptions): void {
+        this.fieldEl()?.nativeElement.focus(options);
+    }
+
     protected getEmptyValue(): string {
         return '';
     }
 
     protected focusAfterClear(): void {
-        this.fieldEl()?.nativeElement.focus();
+        this.focus();
     }
 
     /**

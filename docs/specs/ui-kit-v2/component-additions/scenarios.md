@@ -397,3 +397,46 @@ When the host gets keyboard focus again, or the pointer comes in
 Then the tooltip shows after the delay
 
 Covered: `projects/ui-kit-v2/src/lib/components/tooltip/rt-tooltip.directive.spec.ts`.
+
+### SC-UKV-1035 — an icon button given a route draws a link with the look of the button
+
+Given an icon button with a route of the application
+When it is drawn and pressed
+Then the control is a link with the address of the route, the block, the look, the label and the
+tooltip of the button, and the press reaches the application; without a route the control is a
+button
+
+Covered: `projects/ui-kit-v2/src/lib/components/icon-button/rt-icon-button.component.spec.ts`.
+
+### SC-UKV-1036 — an unavailable icon-button link leads nowhere
+
+Given an icon-button link that is disabled or loading
+When the person presses it
+Then the link has no address, is marked unavailable, leaves the Tab order, and the press goes no
+further
+
+Covered: `projects/ui-kit-v2/src/lib/components/icon-button/rt-icon-button.component.spec.ts`.
+
+### SC-UKV-1037 — an icon button names the panel it opens
+
+Given an icon button that opens a menu
+When it is drawn
+Then the button carries `aria-haspopup` with the kind of the panel; without the input it carries none
+
+Covered: `projects/ui-kit-v2/src/lib/components/icon-button/rt-icon-button.component.spec.ts`.
+
+### SC-UKV-1038 — the application focuses an icon button
+
+Given an icon button, drawn as a button or as a link
+When the application calls its focus method
+Then the focus lands on the button or the link inside
+
+Covered: `projects/ui-kit-v2/src/lib/components/icon-button/rt-icon-button.component.spec.ts`.
+
+### SC-UKV-1039 — the application focuses a field
+
+Given a text field
+When the application calls its focus method
+Then the focus lands on the input inside
+
+Covered: `projects/ui-kit-v2/src/lib/components/input/rt-input.component.spec.ts`.

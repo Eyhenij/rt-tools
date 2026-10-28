@@ -83,6 +83,16 @@ describe('RtInputComponent', (): void => {
         expect(hostClasses(setup())).toContain('rt-input');
     });
 
+    it('SC-UKV-1039 — focus() фокусирует поле ввода внутри', (): void => {
+        const fixture: ComponentFixture<RtInputComponent> = setup();
+
+        expect(document.activeElement).not.toBe(field(fixture));
+
+        fixture.componentInstance.focus();
+
+        expect(document.activeElement).toBe(field(fixture));
+    });
+
     it('без входов — обычное текстовое поле', (): void => {
         expect(field(setup()).type).toBe('text');
     });

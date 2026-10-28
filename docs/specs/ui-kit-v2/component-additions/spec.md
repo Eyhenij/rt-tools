@@ -1,7 +1,7 @@
 # What the other parts of the kit give an application moving from Material
 
 **Status:** in force · **Revision:** 2026-10-27 · **Scenario prefix:** `SC-UKV`
-**Depends on:** the toggle group, the expansion panel, the toast, the shell, the drawer, the stepper, the button, the side menu, the tooltip and the radio group of the kit
+**Depends on:** the toggle group, the expansion panel, the toast, the shell, the drawer, the stepper, the button, the icon button, the field, the side menu, the tooltip and the radio group of the kit
 **Laws:** `frontend-application`, `verifiability`, `reuse-first`
 **Procedures:** none
 
@@ -10,7 +10,8 @@ took over from Material for an application that moves onto the kit: the toggle g
 and chips, the expansion panel in a group, the toast with the application's own component, the
 right panel of the shell, the embedded drawer, the vertical stepper, the badge, the divider, the
 progress bar, the focus ring of a button, the search of the side menu, the tooltip delay, the
-tooltip closed by Escape and the radio group.
+tooltip closed by Escape, the radio group, the icon button as a link and the focus of the icon
+button and the field from the application's code.
 
 ## Why
 
@@ -48,6 +49,15 @@ none of them looks and behaves as before.
   tooltip again.
 - **Escape with no tooltip open goes on to the parent.** A dialog or a panel above the host closes
   on it as before; a pending showing is cleared, and nothing appears after the delay.
+- **An icon button given a route draws a link with the look of the button.** The browser then opens
+  it in a new tab from its context menu, and a screen reader calls it a link, as with the Material
+  icon button on `<a>`. Without a route the markup stays a button.
+- **An unavailable icon-button link leads nowhere.** Disabled or loading, it loses its address,
+  leaves the Tab order, and its click goes no further, as the button does.
+- **An icon button names the panel it opens.** The kind of the panel goes to `aria-haspopup`; without
+  it the attribute is absent.
+- **The application focuses the icon button and the field by a method of the component.** It reaches
+  the inner element through the component, not through the markup of the kit.
 
 ## What is out of scope
 
@@ -112,3 +122,5 @@ None.
 - 2026-10-23 — the application's request: the show delay of one tooltip.
 - 2026-10-23 — merged from the agreement into the subdomain, task RT-2812.
 - 2026-10-27 — Escape closes an open tooltip, task RT-2948.
+- 2026-10-27 — the icon button as a link, its `aria-haspopup` and the focus methods of the icon
+  button and the field, task RT-2951.

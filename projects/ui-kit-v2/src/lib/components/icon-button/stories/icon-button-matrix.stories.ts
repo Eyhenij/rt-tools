@@ -33,6 +33,9 @@ export const Flags: TStory = { args: { part: 'flags' } };
 /** `icon = null`: кнопка показывает вложенный рисунок, которого нет в наборе кита. */
 export const Content: TStory = { args: { part: 'content' } };
 
+/** `link` задан: компонент рисует ссылку `<a href>` того же вида, что и кнопка рядом. */
+export const Link: TStory = { args: { part: 'link' } };
+
 /**
  * Признак ставится на хост, а стилизована `<button>` внутри шаблона — поэтому аддону
  * псевдосостояний передан спуск до неё.

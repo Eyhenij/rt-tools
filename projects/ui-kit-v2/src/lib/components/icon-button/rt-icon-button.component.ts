@@ -1,10 +1,12 @@
 import { CdkMonitorFocus } from '@angular/cdk/a11y';
 import { BooleanInput, NumberInput } from '@angular/cdk/coercion';
+import { NgTemplateOutlet } from '@angular/common';
 import {
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
     computed,
+    ElementRef,
     input,
     InputSignal,
     InputSignalWithTransform,
@@ -12,8 +14,10 @@ import {
     output,
     OutputEmitterRef,
     Signal,
+    viewChild,
     ViewEncapsulation,
 } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
@@ -29,7 +33,8 @@ const BEM_BLOCK: string = 'rt-icon-button';
 /**
  * Универсальная icon-only кнопка кита.
  *
- * Рендерит свой собственный `<button type="...">` внутри template (НЕ host-button).
+ * Рендерит свой собственный `<button type="...">` внутри template (НЕ host-button), а с входом
+ * `link` — ссылку `<a>` с тем же видом: её можно открыть в новой вкладке, и скринридер называет её ссылкой.
  * Все цвета и размеры — через семантические `--rt-*` токены; геометрия квадрата
  * берётся из `--rt-icon-button-size`, а без него — из шага `size`. Свойство, заданное на теге
  * `<rt-icon-button>` или выше, доходит до кнопки; так же и `--rt-icon-button-bg`.
@@ -50,6 +55,8 @@ const BEM_BLOCK: string = 'rt-icon-button';
     encapsulation: ViewEncapsulation.None,
     imports: [
         // standalone components / directives
+        NgTemplateOutlet,
+        RouterLink,
         RtIconComponent,
         RtRippleDirective,
         CdkMonitorFocus,
@@ -82,6 +89,21 @@ export class RtIconButtonComponent {
         };
         return this.iconSize() ?? map[this.size()];
     });
+
+    protected readonly buttonEl: Signal<ElementRef<HTMLButtonElement> | undefined> = viewChild<ElementRef<HTMLButtonElement>>('buttonEl');
+
+    protected readonly linkEl: Signal<ElementRef<HTMLAnchorElement> | undefined> = viewChild<ElementRef<HTMLAnchorElement>>('linkEl');
+
+    /** Компонент рисует ссылку: задан `link`. */
+    protected readonly isLink: Signal<boolean> = computed((): boolean => this.link() !== null);
+
+    /** Адрес ссылки: у недоступной или загружающейся его нет, и ссылка никуда не ведёт. */
+    protected readonly linkTarget: Signal<RouterLink['routerLink']> = computed((): RouterLink['routerLink'] =>
+        this.isDisabled() ? null : this.link()
+    );
+
+    /** Недоступная ссылка выпадает из порядка Tab, как отключённая кнопка. */
+    protected readonly linkTabIndex: Signal<number> = computed((): number => (this.isDisabled() ? -1 : this.tabIndex()));
 
     /** Кнопка отключена, если установлен disabled ИЛИ loading. */
     protected readonly isDisabled: Signal<boolean> = computed((): boolean => this.disabled() || this.loading());
@@ -186,6 +208,20 @@ export class RtIconButtonComponent {
      */
     public readonly expanded: InputSignal<boolean | null> = input<boolean | null>(null);
 
+    /**
+     * Какую панель открывает кнопка — превращается в `aria-haspopup`: `'menu'` у кнопки, которая
+     * раскрывает меню. `null` — атрибута нет.
+     */
+    public readonly ariaHaspopup: InputSignal<IRtIconButton.HasPopup | null> = input<IRtIconButton.HasPopup | null>(null);
+
+    /**
+     * Команды маршрута приложения, как у `routerLink`. Задан — компонент рисует ссылку `<a href>` с тем
+     * же видом, подсказкой и рябью: Ctrl/Cmd-click, Shift-click, средняя кнопка и контекстное меню
+     * браузера открывают её в новой вкладке или окне. `type`, `active` и `aria-pressed` у ссылки не
+     * пишутся. `null` — обычная кнопка.
+     */
+    public readonly link: InputSignal<RouterLink['routerLink']> = input<RouterLink['routerLink']>(null);
+
     /** Бейдж-индикатор (dot top-right через BEM-модификатор). */
     public readonly indicator: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
@@ -194,8 +230,15 @@ export class RtIconButtonComponent {
     /** Эмиттит MouseEvent при клике (только когда не disabled и не loading). */
     public readonly clicked: OutputEmitterRef<MouseEvent> = output<MouseEvent>();
 
+    /** Фокусирует кнопку или ссылку внутри — например, когда закрылось меню, которое она открыла. */
+    public focus(options?: FocusOptions): void {
+        (this.linkEl() ?? this.buttonEl())?.nativeElement.focus(options);
+    }
+
     protected onClick(event: MouseEvent): void {
         if (this.isDisabled()) {
+            // У недоступной ссылки нет адреса, но клик по `<a>` без `href` всё равно не должен уйти наружу.
+            event.preventDefault();
             return;
         }
         this.clicked.emit(event);

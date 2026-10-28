@@ -4,25 +4,32 @@
 <rt-icon-button icon="ico-trash" ariaLabel="Удалить" variant="danger" size="md" (clicked)="remove()" />
 ```
 
-| вход                                            | тип                                                                           | умолчание                          |
-| ----------------------------------------------- | ----------------------------------------------------------------------------- | ---------------------------------- |
-| `icon`                                          | `IRtIcon.Name \| null` — нужен он или `glyph`; без обоих показывает вложенное | `null`                             |
-| `glyph`                                         | `string \| null` — имя Material, как `glyph` у `rt-icon`                      | `null`                             |
-| `ariaLabel`                                     | `string`                                                                      | **обязателен**                     |
-| `variant`                                       | `'primary' \| 'secondary' \| 'ghost' \| 'danger' \| 'success' \| 'warning'`   | `'ghost'`                          |
-| `size`                                          | `'2xs' \| 'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| '2xl'`                      | `'md'`                             |
-| `iconSize`                                      | `IRtIcon.Size \| null`                                                        | `null` → от размера кнопки         |
-| `iconColor`                                     | `IRtIcon.Color`                                                               | `'current'`                        |
-| `radius`                                        | `TRtRadius \| null` — шаг общей шкалы                                         | `null` → `md`                      |
-| `type`                                          | `'button' \| 'submit'`                                                        | `'button'`                         |
-| `tooltip`                                       | `string`                                                                      | `''` (пусто → подсказки нет)       |
-| `tooltipHideOnClick`                            | `boolean` — `false` у переключателя: подсказка остаётся после клика           | из `provideRtKit`, без него `true` |
-| `tabIndex`                                      | `number`                                                                      | `0`                                |
-| `loading` / `disabled` / `active` / `indicator` | `boolean`                                                                     | `false`                            |
+| вход                                            | тип                                                                             | умолчание                          |
+| ----------------------------------------------- | ------------------------------------------------------------------------------- | ---------------------------------- |
+| `icon`                                          | `IRtIcon.Name \| null` — нужен он или `glyph`; без обоих показывает вложенное   | `null`                             |
+| `glyph`                                         | `string \| null` — имя Material, как `glyph` у `rt-icon`                        | `null`                             |
+| `ariaLabel`                                     | `string`                                                                        | **обязателен**                     |
+| `variant`                                       | `'primary' \| 'secondary' \| 'ghost' \| 'danger' \| 'success' \| 'warning'`     | `'ghost'`                          |
+| `size`                                          | `'2xs' \| 'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| '2xl'`                        | `'md'`                             |
+| `iconSize`                                      | `IRtIcon.Size \| null`                                                          | `null` → от размера кнопки         |
+| `iconColor`                                     | `IRtIcon.Color`                                                                 | `'current'`                        |
+| `radius`                                        | `TRtRadius \| null` — шаг общей шкалы                                           | `null` → `md`                      |
+| `type`                                          | `'button' \| 'submit'`                                                          | `'button'`                         |
+| `tooltip`                                       | `string`                                                                        | `''` (пусто → подсказки нет)       |
+| `tooltipHideOnClick`                            | `boolean` — `false` у переключателя: подсказка остаётся после клика             | из `provideRtKit`, без него `true` |
+| `tabIndex`                                      | `number`                                                                        | `0`                                |
+| `link`                                          | `RouterLink['routerLink']` — маршрут: компонент рисует ссылку `<a>`             | `null` → кнопка                    |
+| `expanded`                                      | `boolean \| null` → `aria-expanded`                                             | `null` (атрибута нет)              |
+| `ariaHaspopup`                                  | `'menu' \| 'listbox' \| 'tree' \| 'grid' \| 'dialog' \| null` → `aria-haspopup` | `null` (атрибута нет)              |
+| `loading` / `disabled` / `active` / `indicator` | `boolean`                                                                       | `false`                            |
 
 | выход     | тип          |
 | --------- | ------------ |
 | `clicked` | `MouseEvent` |
+
+| метод             | что делает                          |
+| ----------------- | ----------------------------------- |
+| `focus(options?)` | фокусирует кнопку или ссылку внутри |
 
 ## Главное, что нужно знать
 
@@ -48,7 +55,16 @@
 - `loading` = `disabled` плюс кольцо вместо иконки. Клик в этом состоянии наружу не уходит.
 - `active` превращается в `aria-pressed="true"` — для кнопок-переключателей.
 - `expanded` пишет `aria-expanded` кнопке, которая открывает панель, — так делает `rt-speed-menu`.
-  Без входа атрибута нет вовсе.
+  Без входа атрибута нет вовсе. `ariaHaspopup` называет вид панели: `'menu'` у кнопки «Ещё».
+- `link` превращает кнопку в ссылку `<a href>` с тем же видом, рябью и подсказкой: браузер
+  открывает её в новой вкладке из контекстного меню, а скринридер называет ссылкой. `clicked`
+  приходит и от ссылки. Недоступная или загружающаяся ссылка теряет адрес, получает
+  `aria-disabled` и никуда не ведёт. `type` и `active` у ссылки не действуют. Нужен
+  `provideRouter` в приложении. Кнопка у ссылки остаётся в разметке пустой и спрятанной: в шаблоне
+  она без условия, чтобы появляться с первым проходом — родитель, который меряет соседей на первой
+  проверке (автовысота поля), иначе считал бы ряд без неё.
+- `focus()` возвращает фокус на кнопку из кода — например, когда закрылось меню, которое она
+  открыла. Искать `button` внутри компонента не нужно.
 - `tabIndex="-1"` оставляет клик мышью, но убирает кнопку из таб-порядка: так сделаны
   вспомогательные крестики внутри полей.
 - `iconSize` нужен, когда крупная кнопка должна остаться крупной (в неё целятся пальцем), а
