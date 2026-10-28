@@ -80,6 +80,8 @@ conversations. Every application repeats the same screen, and every copy drifts 
 
 - **An underscore inside a word stays a sign: only an underscore at a word's edge marks emphasis.**
 
+- **The feed is no wider than the panel: a long word and an address in an answer wrap.**
+
 - **The title, the placeholder, the empty-screen texts and the line under the composer come from the consumer, and the kit's English text stands in when one is not given.**
 
 ## What is out of scope
@@ -163,3 +165,4 @@ None.
   place of the delete button.
 - 2026-10-28 — the task RT-2961 of the epic RT-2958: a bare address in an answer becomes a link, an
   underscore inside a word stays a sign.
+- 2026-10-28 — the task RT-2959 of the epic RT-2958: a long word and an address in an answer wrap.

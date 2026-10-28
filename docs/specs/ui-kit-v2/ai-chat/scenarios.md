@@ -179,3 +179,11 @@ When the answer is drawn
 Then `booking_source_id` keeps both underscores and no emphasis, and `_important_` is emphasis
 
 Covered by the spec of the markdown parser.
+
+### SC-UKV-1042 — a long word and an address in an answer wrap
+
+Given a narrow panel and an answer with an address longer than the panel
+When the answer is drawn
+Then the address wraps inside the panel, and the feed does not scroll sideways
+
+Covered by the styles spec of the markdown text; the showcase frame of the answer shows the look.
