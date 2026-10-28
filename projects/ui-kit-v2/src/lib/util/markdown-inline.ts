@@ -77,7 +77,7 @@ function isWordChar(source: string, index: number): boolean {
 }
 
 /** Узлы ссылки внутри подписи ссылки становятся текстом: ссылка в ссылке не рисуется. */
-function unlink(nodes: IRtMarkdownInlineNode[]): IRtMarkdownInlineNode[] {
+function unlink(nodes: readonly IRtMarkdownInlineNode[]): IRtMarkdownInlineNode[] {
     return nodes.flatMap((node: IRtMarkdownInlineNode): IRtMarkdownInlineNode[] =>
         node.kind === ERtMarkdownInline.Link ? unlink(node.children) : [{ ...node, children: unlink(node.children) }]
     );
