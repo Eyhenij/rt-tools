@@ -87,6 +87,31 @@
             line-height: var(--rt-leading-snug);
         }
 
+        // Заголовок и строка под ним стоят столбцом; длинный контакт режется многоточием,
+        // кнопки шапки остаются на месте
+        &__names {
+            display: flex;
+            flex-direction: column;
+            gap: var(--rt-space-0-5);
+            min-inline-size: 0;
+        }
+
+        &__subtitle {
+            overflow: hidden;
+            margin: 0;
+            color: var(--rt-color-text-muted);
+            font-family: var(--rt-font-family-sans);
+            font-size: var(--rt-text-xs);
+            line-height: var(--rt-leading-snug);
+            text-overflow: ellipsis;
+            white-space: nowrap;
+
+            // Пустая строка скрыта признаком `hidden`, и шапка без неё прежней высоты
+            &[hidden] {
+                display: none;
+            }
+        }
+
         &__thread-viewport {
             position: relative;
             display: flex;

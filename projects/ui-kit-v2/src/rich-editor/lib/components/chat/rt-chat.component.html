@@ -10,7 +10,10 @@
                     @if (sign(); as channel) {
                         <rt-service-logo rtElem="sign" qa-dataid="chat-sign" size="xs" [logos]="[channel]" />
                     }
-                    <h3 rtElem="title" qa-dataid="chat-title">{{ title() }}</h3>
+                    <div rtElem="names">
+                        <h3 rtElem="title" qa-dataid="chat-title">{{ title() }}</h3>
+                        <p rtElem="subtitle" qa-dataid="chat-subtitle" [hidden]="!subtitle()">{{ subtitle() }}</p>
+                    </div>
                 </ng-template>
                 <ng-template rtToolbarRight>
                     @if (showRefresh()) {

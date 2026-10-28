@@ -268,6 +268,9 @@ export class RtChatComponent {
      */
     public readonly sign: InputSignal<IRtServiceLogo.Item | null> = input<IRtServiceLogo.Item | null>(null);
 
+    /** Строка под заголовком шапки: канал и контакт собеседника; пустая не показывается. */
+    public readonly subtitle: InputSignal<string> = input<string>('');
+
     /** Текст, когда треда ещё нет (заявка не создана). */
     public readonly emptyHint: InputSignal<string> = input<string>('');
 

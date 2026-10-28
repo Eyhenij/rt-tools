@@ -221,7 +221,7 @@ describe('RtChatComponent', (): void => {
 
             const sign: HTMLElement = qa(fixture, 'chat-sign')?.nativeElement as HTMLElement;
             expect(sign.classList).toContain('rt-service-logo--size-xs');
-            expect(sign.nextElementSibling?.getAttribute('qa-dataid')).toBe('chat-title');
+            expect(sign.nextElementSibling?.querySelector('[qa-dataid="chat-title"]')).not.toBeNull();
             expect(sign.querySelector('[role="img"]')?.getAttribute('aria-label')).toBe('Сайт');
         });
 
@@ -230,6 +230,29 @@ describe('RtChatComponent', (): void => {
 
             expect(qa(fixture, 'chat-sign')).toBeNull();
             expect(textOf(qa(fixture, 'chat-title'))).toBe('Анна Смирнова');
+        });
+
+        it('SC-UKV-1062 — строка под заголовком стоит под ним в одном столбце', (): void => {
+            const fixture: ComponentFixture<RtChatComponent> = setup({
+                title: '№12 Анна Смирнова',
+                subtitle: 'WhatsApp · +66 81 234 5678',
+                showRefresh: true,
+                sign: { icon: 'globe', label: 'WhatsApp' },
+            });
+
+            const subtitle: HTMLElement = qa(fixture, 'chat-subtitle')?.nativeElement as HTMLElement;
+            expect(textOf(qa(fixture, 'chat-subtitle'))).toBe('WhatsApp · +66 81 234 5678');
+            expect(subtitle.previousElementSibling?.getAttribute('qa-dataid')).toBe('chat-title');
+            expect(subtitle.parentElement?.classList).toContain('rt-chat__names');
+            expect(qa(fixture, 'chat-sign')?.nativeElement.nextElementSibling?.classList).toContain('rt-chat__names');
+            expect(subtitle.hidden).toBe(false);
+        });
+
+        it('SC-UKV-1063 — без строки шапка прежняя: строка под заголовком скрыта', (): void => {
+            const fixture: ComponentFixture<RtChatComponent> = setup({ title: 'Анна Смирнова', showRefresh: true });
+
+            expect(textOf(qa(fixture, 'chat-title'))).toBe('Анна Смирнова');
+            expect((qa(fixture, 'chat-subtitle')?.nativeElement as HTMLElement).hidden).toBe(true);
         });
 
         it('кнопки обновления и разворота появляются по входам', (): void => {

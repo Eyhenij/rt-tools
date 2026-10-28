@@ -25,6 +25,12 @@
         }
     </header>
 
+    @if (tabsTemplate(); as tabs) {
+        <div rtElem="tabs" qa-dataid="thread-list-tabs">
+            <ng-container [ngTemplateOutlet]="tabs.templateRef" />
+        </div>
+    }
+
     <ng-template #rowButton let-row>
         <button
             rtElem="row"
