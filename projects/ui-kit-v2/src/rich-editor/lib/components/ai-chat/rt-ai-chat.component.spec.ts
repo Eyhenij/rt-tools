@@ -283,7 +283,7 @@ describe('RtAiChatComponent', (): void => {
     it('SC-UKV-754 — пока ответ пишется, поле предлагает «Стоп», подсказки и новая беседа выключены', (): void => {
         const fixture: ComponentFixture<AiChatHostComponent> = setup({ sending: true, suggestions: ['Give me an overview'] });
 
-        expect(qa(fixture, 'message-composer-stop')).not.toBeNull();
+        expect(qa(fixture, 'ai-prompt-input-stop')).not.toBeNull();
         expect(isDisabled(fixture, 'ai-chat-new-thread')).toBe(true);
         expect((qa(fixture, 'prompt-suggestion')?.nativeElement as HTMLButtonElement).disabled).toBe(true);
     });
@@ -456,6 +456,21 @@ describe('RtAiChatComponent', (): void => {
         expect(qa(fixture, 'ai-chat-disclaimer')).toBeNull();
     });
 
+    it('SC-UKV-1050 — чат отдаёт полю модель и расход, а подпись ставит над полем по входу', (): void => {
+        const fixture: ComponentFixture<RtAiChatComponent> = createRtFixture(RtAiChatComponent, {
+            model: 'Opus 5.5',
+            usage: 81,
+            disclaimerPosition: 'above',
+        });
+        const composer: HTMLElement = qa(fixture, 'ai-chat-composer')?.nativeElement;
+        const disclaimer: HTMLElement = qa(fixture, 'ai-chat-disclaimer')?.nativeElement;
+
+        expect(textOf(qa(fixture, 'ai-prompt-input-model'))).toBe('Opus 5.5');
+        expect(qa(fixture, 'ai-prompt-input-usage')).not.toBeNull();
+        expect(qa(fixture, 'ai-prompt-input-hint')).toBeNull();
+        expect(disclaimer.nextElementSibling).toBe(composer);
+    });
+
     it('SC-UKV-761 — открытый список бесед ставит фокус на «назад», выбор беседы — в поле сообщения', async (): Promise<void> => {
         const fixture: ComponentFixture<AiChatHostComponent> = setup({ messages: [QUESTION, ANSWER], threads: THREADS });
         const documentRef: Document = (fixture.nativeElement as HTMLElement).ownerDocument;
@@ -469,6 +484,6 @@ describe('RtAiChatComponent', (): void => {
         press(fixture, 'thread-list-row', 0);
         await fixture.whenStable();
 
-        expect(documentRef.activeElement).toBe(qa(fixture, 'message-composer-input')?.nativeElement);
+        expect(documentRef.activeElement).toBe(qa(fixture, 'ai-prompt-input-field')?.nativeElement);
     });
 });

@@ -187,6 +187,11 @@
             padding-block: var(--rt-space-xs) var(--rt-space-sm);
             padding-inline: max(var(--rt-space-md), calc((100% - var(--rt-ai-chat-content-max-width)) / 2));
             text-align: center;
+
+            // Над полем подпись отходит от ленты и прижимается к полю.
+            &--above {
+                padding-block: var(--rt-space-sm) 0;
+            }
         }
 
         &__threads {
