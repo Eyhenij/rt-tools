@@ -9,6 +9,7 @@
  */
 export * from './accordion';
 export * from './action-bar';
+export * from './ai-prompt-input';
 export * from './ai-run-status';
 export * from './aside';
 export * from './aside-section';
@@ -105,6 +106,7 @@ export * from './tree';
 export * from './hybrid-tree';
 export * from './hybrid-tree-selector';
 export * from './tree-selector';
+export * from './usage-ring';
 export * from './welcome-dialog';
 export * from './workspace';
 export * from './workspace-details';
