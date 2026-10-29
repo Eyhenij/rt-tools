@@ -126,6 +126,15 @@ export class RtPopoverDirective implements OnDestroy {
         alias: 'rtPopoverPanelClass',
     });
 
+    /**
+     * Класс подложки под панелью. Пусто — подложки нет, и страница рядом с панелью остаётся
+     * открытой. Заданный ставит подложку на весь экран: её вид задаёт класс, а нажатие по ней
+     * закрывает панель так же, как нажатие снаружи. Читается при первом открытии.
+     */
+    public readonly backdropClass: InputSignal<string> = input<string>('', {
+        alias: 'rtPopoverBackdropClass',
+    });
+
     public readonly disabled: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         alias: 'rtPopoverDisabled',
         transform: booleanAttribute,
@@ -179,6 +188,8 @@ export class RtPopoverDirective implements OnDestroy {
                                 this.close();
                             })
                         ),
+                        // Подложка ловит нажатие раньше документа: снаружи оно уже не приходит
+                        overlayRef.backdropClick().pipe(map((): (() => void) => (): void => this.close())),
                         overlayRef.keydownEvents().pipe(
                             map((event: KeyboardEvent): (() => void) => (): void => {
                                 if (event.key === 'Escape') {
@@ -314,7 +325,8 @@ export class RtPopoverDirective implements OnDestroy {
         const config: OverlayConfig = new OverlayConfig({
             positionStrategy,
             scrollStrategy: this.#scrollStrategies.reposition(),
-            hasBackdrop: false,
+            hasBackdrop: this.backdropClass().trim() !== '',
+            backdropClass: this.backdropClass().trim() || undefined,
             panelClass: this.#resolvePanelClasses(),
             // Порог, ниже которого свободного места под триггером считается
             // недостаточно и панель не ужимается, а сдвигается целиком.
