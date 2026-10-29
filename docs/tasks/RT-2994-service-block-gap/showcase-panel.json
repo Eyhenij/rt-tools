@@ -1,5 +1,7 @@
 {
-  "header.height": 90.7,
+  "header.height": 95,
+  "header.overline.height": 18,
+  "header.title.height": 27,
   "block.top": 24,
   "block.left": 24,
   "block.width": 492,
@@ -8,8 +10,13 @@
   "logo.height": 64,
   "name.dx": 80,
   "gap.blockToField": 16,
-  "field.height": 79.5,
-  "field.pitch": 95.5,
-  "footer.dismiss": "outlined",
-  "footer.primaryIcon": "none"
+  "field.height": 80,
+  "field.label.height": 14,
+  "field.control.top": 18,
+  "field.control.height": 40,
+  "field.hint.height": 18,
+  "field.pitch": 96,
+  "footer.height": 65,
+  "footer.button.height": 40,
+  "footer.bottom": 24
 }

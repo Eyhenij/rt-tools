@@ -55,7 +55,9 @@
             margin: 0;
             color: var(--rt-color-text-muted);
             font-size: var(--rt-text-xs);
-            line-height: var(--rt-leading-snug);
+
+            /* 18 при кегле 12, как в макете шапки панели. */
+            line-height: var(--rt-leading-normal);
             text-overflow: ellipsis;
             white-space: nowrap;
         }
@@ -68,8 +70,8 @@
             font-size: var(--rt-aside-header-title-size, var(--rt-aside-header-title-size-default));
             font-weight: var(--rt-aside-header-title-weight, var(--rt-aside-header-title-weight-default));
 
-            /* Высота строки — ручка приложения; без неё наследуется, как было. */
-            line-height: var(--rt-aside-header-title-leading, inherit);
+            /* Высота строки — ручка приложения; без неё 27 при кегле 20, как в макете шапки панели. */
+            line-height: var(--rt-aside-header-title-leading, var(--rt-leading-snug));
 
             /* Ellipsis для длинного заголовка: skeleton-wrapper рендерит `{{ title }}`
                как ng-content внутри inline-flex; чтобы `text-overflow: ellipsis`

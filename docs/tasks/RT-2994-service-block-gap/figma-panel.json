@@ -1,5 +1,7 @@
 {
   "header.height": 95,
+  "header.overline.height": 18,
+  "header.title.height": 27,
   "block.top": 24,
   "block.left": 24,
   "block.width": 492,
@@ -9,7 +11,12 @@
   "name.dx": 80,
   "gap.blockToField": 16,
   "field.height": 80,
+  "field.label.height": 14,
+  "field.control.top": 18,
+  "field.control.height": 40,
+  "field.hint.height": 18,
   "field.pitch": 96,
-  "footer.dismiss": "text",
-  "footer.primaryIcon": "check"
+  "footer.height": 65,
+  "footer.button.height": 40,
+  "footer.bottom": 24
 }
