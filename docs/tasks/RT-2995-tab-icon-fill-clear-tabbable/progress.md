@@ -69,3 +69,78 @@
 
 - Task RT-2995 created outside an epic, branch from main, card in progress.
 - The application sent a third request, a badge over the tab icon; the owner put it into this task.
+
+## Handover of the session
+
+Put together by a hook before the compaction of the context (auto).
+
+**Working tree:** /Users/sviatoslavkhutornoy/WebstormProjects/rt-tools
+**Branch:** RT-2995-tab-icon-fill-clear-tabbable
+
+### Where we stand at the minute of the compaction
+
+- **State:** `этап-идёт`
+- **Stage:** 3 of 4 — The showcase
+- **Next step:** 3.1 is begun — `Playground` of the tab takes `iconFill` and `badgePosition`. Next:
+- **PR:** not open yet
+
+The progress in full — `docs/tasks/RT-2995-tab-icon-fill-clear-tabbable/progress.md`; the plan lies next to it.
+
+### Uncommitted
+
+```
+none
+```
+
+### Commits over the main branch
+
+```
+97dca066d feat(rt:ui-kit-v2): песочница вкладки берёт iconFill и badgePosition
+55ff5ad43 feat(rt:ui-kit-v2): крестик мультиселекта доходит по Tab соседней кнопкой, как у выбора
+6ddc42ef9 docs(rt:ui-kit-v2): кадр мультиселекта RT-2995 одобрен владельцем
+0bc5e64ce docs(rt:ui-kit-v2): задача RT-2995 ждёт одобрения кадра мультиселекта
+3d4609009 docs(rt:ui-kit-v2): крестик мультиселекта входит в RT-2995, кадр нарисован
+d1d600bb0 feat(rt:ui-kit-v2): вкладка заливает иконку и ставит бейдж над ней, крестик полей доходит по Tab от умолчания кита
+52970b19d docs(rt:ui-kit-v2): макет RT-2995 одобрен владельцем
+a7adfa1fd docs(rt:ui-kit-v2): задача RT-2995 ждёт одобрения кадров Figma
+0780a6c95 docs(rt:ui-kit-v2): кадры RT-2995 нарисованы в Figma, договорённость уточнена по ним
+2c39ce1cc docs(rt:ui-kit-v2): бейдж поверх иконки вкладки входит в RT-2995
+8a8e5569a docs(rt:ui-kit-v2): задача RT-2995 ждёт файл Figma кита и ответ о бейдже вкладки
+2e496f431 docs(rt:ui-kit-v2): задача RT-2995 — разбор, договорённость и план
+```
+
+Written by a hook before the compaction of the context. Everything standing here is checked
+against the tree: a handover retells what was written and describes the minute it was put together.
+
+## Handover of the session
+
+### Work
+
+RT-2995 "Вкладка заливает иконку, крестик очистки доходит по Tab от умолчания кита". Working tree —
+`/Users/sviatoslavkhutornoy/WebstormProjects/rt-tools`, branch
+`RT-2995-tab-icon-fill-clear-tabbable` (from main, card in progress, not pushed, no PR). Work
+outside an epic. The owner's last word: «делай обе задачи» — RT-2995 and RT-2996.
+
+### Where to look
+
+The progress and the plan arrive by the hook. The grill and `approvals.md` lie in the task folder.
+RT-2996 has its whole description in the issue: `gh issue view 2996`.
+
+### Done and the next step
+
+Done: stages 1 and 2 with the multiselect; `Playground` of the tab takes the two new inputs.
+Next step: RT-2996 first — its branch from `origin/main`, fix the chat spec types, the messenger
+styles for `check:tokens-styles`, the five tab token fallbacks for `check:tokens-graph`; then merge
+main into this branch and go on with 3.1 as «Next step» above says.
+
+### What to keep in mind
+
+- RT-2996 is not a branch yet; `task:new` already created the issue, its folder was removed —
+  `git checkout -b RT-2996-kit2-main-checks-red origin/main` and `npm run task:move -- 2996
+in-progress`, then the task folder from the template.
+- The assignment row of `rt-tools` in `.claude/rt-kit/assignments.md` names RT-2995 in this branch
+  only; for RT-2996 the row is rewritten with the owner's word «делай обе задачи».
+- Commits are signed by rt-tools-dev, the owner: «2 не важно».
+- The showcase on 6007 is the owner's; nothing was raised by this session.
+- Figma file: Design System V2, key `vyV42sJXccfKNG8yFSCpSL`, session frames `7327:531`,
+  `7327:1317`, `7330:2735`.
