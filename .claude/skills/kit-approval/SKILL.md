@@ -35,6 +35,10 @@ The table in `implementation.md` next to it.
   states are the ones the showcase contract of the kit names; a state not shown is not approved.
 - **The showcase matches the mockup at 100%, and that is measured, not looked at.** The measurement
   and its number go to the owner together with the showcase.
+- **The 100% is a match of numbers, and the overlay is the picture beside it.** Sizes, gaps, radii,
+  colours and type of every Figma layer are compared with the computed styles of the same elements
+  in the showcase. Every number must be equal. The overlay of the two frames shows the owner where
+  they diverge; text is rastered differently by Figma and a browser, so its share is shown, not gated.
 - **The whole block of components is compared at once, not one component by one.** A part that
   matches alone can still sit wrong next to its neighbours: the gaps, the alignment and the order
   live between components. The frame of the whole block in the showcase is laid over the frame of
@@ -52,8 +56,12 @@ The table in `implementation.md` next to it.
 
 ```markdown
 - **Макет:** «<the owner's words>» — https://www.figma.com/design/<file>?node-id=<node>
+- **Совпадение:** <N> из <N> чисел
 - **Витрина:** «<the owner's words>»
 ```
+
+The match line is printed by `node tools/kit-match.mjs numbers <figma.json> <showcase.json>`; the
+overlay frame by `node tools/kit-match.mjs overlay <figma.png> <showcase.png> <diff.png>`.
 
 The record moves into the archive record when the task folder is taken apart, with both lines
 verbatim: the release check reads them there.

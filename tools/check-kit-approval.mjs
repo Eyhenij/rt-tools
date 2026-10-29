@@ -53,11 +53,13 @@ function git(...args) {
 export function parseApprovals(text) {
     const mockup = /^- \*\*Макет:\*\* «(.+?)» — (https:\/\/(?:www\.)?figma\.com\/\S+)/m.exec(text);
     const showcase = /^- \*\*Витрина:\*\* «(.+?)»/m.exec(text);
+    const match = /^- \*\*Совпадение:\*\* (\d+) из (\d+) чисел/m.exec(text);
 
     return {
         mockup: mockup ? mockup[1] : null,
         figma: mockup ? mockup[2] : null,
         showcase: showcase ? showcase[1] : null,
+        match: match ? { matched: Number(match[1]), total: Number(match[2]) } : null,
     };
 }
 
@@ -146,6 +148,12 @@ export function faultsOf(name, record, said = ownerSaid) {
         faults.push(`${record.path}: no line «- **Макет:** «…» — <Figma link>»`);
     } else if (!said(found.mockup)) {
         faults.push(`${record.path}: the mockup quote «${found.mockup}» is in no message of the owner`);
+    }
+
+    if (found.match === null) {
+        faults.push(`${record.path}: no line «- **Совпадение:** N из N чисел» — the output of tools/kit-match.mjs numbers`);
+    } else if (found.match.total === 0 || found.match.matched !== found.match.total) {
+        faults.push(`${record.path}: the match is ${found.match.matched} of ${found.match.total} numbers, not 100%`);
     }
 
     if (found.showcase === null) {

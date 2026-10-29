@@ -15,7 +15,8 @@ The names and bindings of this tree next to the rule `SKILL.md`.
 - **A visible kit edit starts in Figma, not in code.** — **Not checked by anything.** The order of the work leaves no trace a machine reads; the mockup line of the record with its Figma link is the only sign.
 - **The owner is asked whether they approve, and only their answer is written down.** — `tools/check-kit-approval.mjs:ownerSaid` — the quote is looked for among the owner's own messages; the executor's words and tool results do not count.
 - **The code is written after the mockup approval, and every state is shown in the showcase.** — **Not checked by anything.** The state contract of the showcase is held by the rule `rt-tools-storybook`.
-- **The showcase matches the mockup at 100%, and that is measured, not looked at.** — **Not checked by anything** yet: the measuring tool is an open question of task RT-2990.
+- **The showcase matches the mockup at 100%, and that is measured, not looked at.** — `tools/check-kit-approval.mjs:faultsOf` — the match line is demanded at N of N, and N above zero.
+- **The 100% is a match of numbers, and the overlay is the picture beside it.** — `tools/kit-match.mjs:compareNumbers` for the numbers, `tools/kit-match.mjs:overlay` for the frame of the divergence.
 - **The whole block of components is compared at once, not one component by one.** — **Not checked by anything.** The overlay is made by the executor; the check sees only the approval it ends with.
 - **A redrawn page is built in the showcase whole and compared by overlay with its mockup.** — **Not checked by anything.** The page story is held by the rule `rt-tools-storybook`, the overlay by the executor.
 - **The showcase is shown to the owner and approved by a second answer.** — `tools/check-kit-approval.mjs:faultsOf` — the showcase line is demanded apart from the mockup line.
