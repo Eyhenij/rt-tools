@@ -1,56 +1,41 @@
 # Plan
 
 **Task:** RT-2990 · **Branch:** RT-2990-kit-figma-approval-gate
-**Draft:** `<path to the product agreement>`
-**Behaviour:** changes
-
-A tree that writes the agreement straight into the domain spec names it instead of the draft:
-`**Spec:** `<path to the spec>``.
-
-Work that does not touch application code needs no agreement — then instead of the draft line
-stands `**Behaviour:** unchanged — <the owner's reason>`; an empty reason is not accepted.
-
-After it is written this file is not edited. A stage revision goes to `progress.md` as a decision
-along the way.
+**Behaviour:** unchanged — «заведи правила … заведи гейт на это правило»: правило и гард слоя правил, код кита не меняется
 
 ## Task footprint
 
-<What the work touches. Filled in by exploration before the grill and confirmed by the owner. By
-this same table, at closing, one sees what of the specs, rules and patterns has gone stale: what
-is named here is read twice — before the work and after it.>
-
-| What  | Where                         |
-| ----- | ----------------------------- |
-| Specs | `docs/specs/<domain>/`        |
-| Laws  | `docs/constitution/<name>.md` |
-| Rules | `.claude/skills/<name>/`      |
-| Code  | `projects/<package>/`         |
+| What  | Where                                                                                              |
+| ----- | -------------------------------------------------------------------------------------------------- |
+| Laws  | `docs/constitution/mockups.md`                                                                     |
+| Rules | `.claude/skills/mockups/`, `.claude/skills/kit-approval/`, `.claude/skills/kit-approval-record/`   |
+| Code  | `tools/check-kit-approval.mjs`, `.claude/hooks/kit-approval-guard.sh`, `.claude/rt-kit/project.sh` |
 
 ## What counts as done
 
-- <a statement that can be checked>
+- Пуш, открытие PR и запуск выпуска кита с видимой правкой отказываются без двух цитат одобрения владельца.
+- Совпадение витрины с макетом на 100% измеряется выбранным владельцем инструментом.
 
 ## Stages
 
-### 1. <name>
+### 1. Правило и гард одобрений
 
 - **Steps:**
-    1. <what is done first>
-    2. <what is done after it>
-- **Readiness sign:** <what must become true>
-- **Verified by:** `<command>` — <what in its output means "it matched">
+    1. Закон и правило `mockups` включены и заполнены
+    2. Правило `kit-approval` и паттерн записи одобрения
+    3. Проверка `tools/check-kit-approval.mjs` и её сценарии
+    4. Гард на PR и выпуск, строка в наборе пуша
+- **Readiness sign:** сценарии проверки проходят, раскладка сходится с пакетом
+- **Verified by:** `bash tools/tests/check-kit-approval.test.sh` — «13 ok, 0 failures»
 
-The steps are the smallest unit of the work, and they are written here in full: the progress
-mirrors this list with its marks, and a check matches the two by number and by name. A step is
-named by what is done, not by what is thought over — a line nobody can call done is not a step.
+### 2. Проверка совпадения с макетом
 
-The command is written in backticks: the turn exit guard reads it and does not let out a turn in
-which the stage is declared closed and the command was not run. An acceptance written in prose
-cannot be confirmed by anything. The command is run right here, while the plan is written, not at
-the end of the stage: its output is what names the readiness sign. A sign written by a guess is
-sometimes impossible to meet — the line the stage must put out comes from an unconfigured tree
-rather than from the work — and that is found out latest of everything that depended on it.
+- **Steps:**
+    1. Инструмент сравнения кадра Figma и кадра витрины по выбору владельца
+    2. Число совпадения в записи одобрения и его проверка
+- **Readiness sign:** сравнение кадра с самим собой даёт 100%, с изменённым — меньше
+- **Verified by:** `bash tools/tests/check-kit-approval.test.sh` — новые сценарии сравнения проходят
 
 ## What this work does not do
 
-- <neighbouring work that is not dragged in here, and where it is created>
+- RT-2987 через Figma — работа той задачи по новому правилу.

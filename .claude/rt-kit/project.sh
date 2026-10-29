@@ -192,6 +192,7 @@ node tools/check-cascade-layer.mjs
 node tools/check-format-ignore.mjs
 node tools/check-publish-lockfile.mjs
 node tools/check-package-imports.mjs
+node tools/check-kit-approval.mjs
 bash tools/tests/run.sh
 EOF
 

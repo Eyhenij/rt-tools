@@ -2,36 +2,31 @@
 
 ## Where we stand
 
-Rewritten by every session, not appended to.
-
-- **State:** `<name from the state list of rule task-flow>`
-- **Stage:** <number> of <total> — <name>
-- **Done:** <briefly>
-- **Next step:** <what is done first in the new session>
-- **Uncommitted:** <what lies in the tree outside the index>
-- **Waiting for the owner:** <what exactly, or "no"; the owner's standing word about a stop is quoted in « »>
-- **PR:** <number and state, or "not open yet">
+- **State:** `этап-идёт`
+- **Stage:** 2 of 2 — Проверка совпадения с макетом
+- **Done:** закон и правило `mockups` включены; правило `kit-approval`, паттерн записи, проверка, сценарии 13/13, гард на PR и выпуск, строка в наборе пуша
+- **Next step:** владелец выбирает инструмент pixel perfect; по выбору — шаг 2.1
+- **Uncommitted:** no
+- **Waiting for the owner:** выбор инструмента сравнения с макетом — он спросил «какие есть инструменты для pixel perfect review?», ответ дан в чате
+- **PR:** not open yet
 
 ## Steps
 
-The steps of the plan, all of them, with a mark each. Rewritten by every turn that moves the work.
-
-- `[x]` done · `[>]` going on right now · `[ ]` not begun
-
-Exactly one step carries `[>]`. The numbers and the names are copied from the plan and not
-reworded: a check matches the two lists, and the turn exit guard counts what is not done yet.
-
-- [x] 1.1 <name of the first step of the first stage>
-- [>] 1.2 <name of the second step of the first stage>
-- [ ] 2.1 <name of the first step of the second stage>
+- [x] 1.1 Закон и правило `mockups` включены и заполнены
+- [x] 1.2 Правило `kit-approval` и паттерн записи одобрения
+- [x] 1.3 Проверка `tools/check-kit-approval.mjs` и её сценарии
+- [x] 1.4 Гард на PR и выпуск, строка в наборе пуша
+- [>] 2.1 Инструмент сравнения кадра Figma и кадра витрины по выбору владельца
+- [ ] 2.2 Число совпадения в записи одобрения и его проверка
 
 ## Decisions along the way
 
-- **<decision>** — <reason>. Affected stage of the plan: <number>.
+- **Выпуск судит только слияния после прихода проверки в main** — работа до правила одобрений не спрашивала, иначе первый же выпуск отказал бы на RT-2985. Affected stage of the plan: 1.
+- **Карта гейта правило `kit-approval` на правку кита не вызывает** — карта даёт одно правило на правку, у файлов кита оно уже своё. Affected stage of the plan: 1.
 
 ## Sessions
 
-### <date>
+### 2026-10-29
 
-- <what was done, in numbers: files, commits, what is green>
-- <what we stumbled on and what caught it>
+- Сценарии проверки: 13 из 13. `agent-kit:check` сходится, `check-doc-paths` без расхождений; `check-specs` — только семь чужих расхождений RT-2982 на `main`.
+- На ветке RT-2987 проверка видит три видимых файла и отказала бы; RT-2982 видимых правок не несёт.
