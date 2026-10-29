@@ -138,7 +138,9 @@ jobs:
               run: |
                   dir="$RUNNER_TEMP/docker-config"
                   mkdir -p "$dir"
-                  printf '{}' > "$dir/config.json"
+                  # Свой каталог уносит и плагины клиента: без этой строки `docker compose`
+                  # отвечает «unknown shorthand flag: 'd'», плагин лежит в домашнем каталоге.
+                  printf '{"cliPluginsExtraDirs":["%s"]}' "$HOME/.docker/cli-plugins" > "$dir/config.json"
                   echo "DOCKER_CONFIG=$dir" >> "$GITHUB_ENV"
                   host="${DOCKER_HOST:-}"
                   for sock in "$HOME/.docker/run/docker.sock" "$HOME/.colima/default/docker.sock"; do
