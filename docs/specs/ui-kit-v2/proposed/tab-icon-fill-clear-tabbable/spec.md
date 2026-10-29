@@ -37,12 +37,16 @@ person without a mouse cannot reach.
 ## Rules
 
 - **A tab fills its icon when it asks for it.** `rtTab` takes `iconFill`, `false` by default, and
-  passes it to the icon as `fill`, for an icon by `icon` and by `glyph` alike. A tab without it is
-  drawn as before.
+  passes it to the icon as `fill`, for an icon by `icon` and by `glyph` alike. The icon draws filled
+  where it has a filled drawing: a Material glyph always, a kit name under the material preset. A
+  kit name in the base preset has one drawing and stays as it is. A tab without `iconFill` is drawn
+  as before.
 - **A tab puts its badge over the icon when it asks for it.** `rtTab` takes `badgePosition`,
   `'inline'` by default, which keeps the badge after the title as before. With `'overlay'` the
   badge is a circle of 16 pixels over the top right corner of the icon and moves nothing in the tab.
-  A tab without an icon keeps the badge inline.
+  Its top stands 8 pixels above the icon and its right edge 6 pixels past it, so a longer count
+  grows over the icon, not over the title. It is filled with the primary action colour. A tab
+  without an icon keeps the badge inline.
 - **The kit settings name whether the clearing cross goes by Tab.** The fields node takes
   `clearTabbable`. `clearTabbable` on the element wins over it, and without either the cross stays
   out of the Tab order, as before.
@@ -100,7 +104,7 @@ Not applicable.
 ## Decisions
 
 - **`iconFill` rather than `glyphFill`.** The application asked for `glyphFill`; the input stands
-  next to `icon`, `glyph` and `iconColor` and works for both sources of the icon.
+  next to `icon`, `glyph` and `iconColor` and reaches both sources of the icon.
 - **A node of its own rather than a field of the common settings.** The common settings hold what
   acts on the whole page, such as the theme; the cross belongs to one family of controls.
 

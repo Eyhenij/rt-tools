@@ -7,7 +7,7 @@ going after the merge.
 
 Given tabs where one tab has `iconFill` and an icon by `glyph`, and another has `iconFill` and an icon by `icon`
 When the tab strip is drawn
-Then both icons are drawn filled, and the tabs without `iconFill` keep the outlined icon
+Then the icon of each such tab gets `fill`: the glyph is drawn filled, the kit name is filled under the material preset; the tabs without `iconFill` keep the outlined icon
 
 Covered: `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-additions.spec.ts`.
 
