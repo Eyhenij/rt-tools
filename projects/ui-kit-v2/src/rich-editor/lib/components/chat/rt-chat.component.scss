@@ -72,12 +72,15 @@
             max-height: none;
         }
 
-        // Знак канала стоит перед заголовком и не сжимается, когда длинный заголовок переносится.
+        // Знак канала стоит перед заголовком и не сжимается рядом с длинным заголовком.
         &__sign {
             flex: none;
         }
 
+        // Шапка — плотная полоса постоянной высоты: перенесённый заголовок вышел бы из неё вверх
+        // и вниз, поэтому длинный режется многоточием, а целиком виден в подсказке
         &__title {
+            overflow: hidden;
             margin: 0;
             color: var(--rt-color-text-primary);
             font-family: var(--rt-font-family-sans);
@@ -85,6 +88,8 @@
             font-weight: var(--rt-font-weight-bold);
             letter-spacing: var(--rt-letter-spacing-wide);
             line-height: var(--rt-leading-snug);
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         // Заголовок и строка под ним стоят столбцом; длинный контакт режется многоточием,
