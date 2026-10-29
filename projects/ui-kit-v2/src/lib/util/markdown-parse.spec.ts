@@ -152,7 +152,7 @@ describe('parseMarkdown', (): void => {
             expect(plainText([block.content[2]])).toBe('.');
         });
 
-        it('SC-UKV-1073 — адрес вскобках не забирает закрывающую скобку, а парную внутри оставляет', (): void => {
+        it('SC-UKV-1073 — адрес в скобках не забирает закрывающую скобку, а парную внутри оставляет', (): void => {
             const first: IRtMarkdownBlockNode = firstBlock('(http://example.test/one)');
             const second: IRtMarkdownBlockNode = firstBlock('https://example.test/wiki/A_(b)');
 

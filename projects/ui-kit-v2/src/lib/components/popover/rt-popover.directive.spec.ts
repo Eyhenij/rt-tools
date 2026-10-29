@@ -31,6 +31,7 @@ function panelText(): string {
             [rtPopoverPanelClass]="panelClass()"
             [rtPopoverPositions]="positions()"
             [rtPopoverFitViewport]="fitViewport()"
+            [rtPopoverBackdropClass]="backdropClass()"
             (rtPopoverOpened)="openedCount = openedCount + 1"
             (rtPopoverClosed)="closedCount = closedCount + 1">
             Открыть
@@ -50,6 +51,7 @@ class PopoverHostComponent {
     public readonly panelClass: WritableSignal<string> = signal<string>('');
     public readonly positions: WritableSignal<readonly ConnectedPosition[] | null> = signal<readonly ConnectedPosition[] | null>(null);
     public readonly fitViewport: WritableSignal<boolean> = signal<boolean>(false);
+    public readonly backdropClass: WritableSignal<string> = signal<string>('');
     public openedCount: number = 0;
     public closedCount: number = 0;
 }
@@ -349,6 +351,33 @@ describe('RtPopoverDirective', (): void => {
             expect(config?.minHeight).toBe(120);
             expect(box).not.toBeNull();
             expect(box?.style.minHeight).toBe('');
+        });
+    });
+
+    describe('подложка', (): void => {
+        it('SC-UKV-1070: без класса подложки страница рядом с панелью открыта', (): void => {
+            const fixture: ComponentFixture<PopoverHostComponent> = setup();
+
+            clickTrigger(fixture);
+
+            expect(panel()).not.toBeNull();
+            expect(document.querySelector('.cdk-overlay-backdrop')).toBeNull();
+        });
+
+        it('SC-UKV-1071: класс подложки ставит её под панель, и нажатие по ней закрывает панель', (): void => {
+            const fixture: ComponentFixture<PopoverHostComponent> = setup();
+            fixture.componentInstance.backdropClass.set('spec-backdrop');
+            fixture.detectChanges();
+
+            clickTrigger(fixture);
+            const backdrop: HTMLElement | null = document.querySelector('.cdk-overlay-backdrop.spec-backdrop');
+            expect(backdrop).not.toBeNull();
+
+            backdrop?.click();
+            fixture.detectChanges();
+
+            expect(panel()).toBeNull();
+            expect(fixture.componentInstance.popover()?.isOpen()).toBe(false);
         });
     });
 });
