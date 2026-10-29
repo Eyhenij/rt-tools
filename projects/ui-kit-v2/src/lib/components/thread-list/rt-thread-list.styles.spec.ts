@@ -53,13 +53,13 @@ describe('стили действий строки списка бесед', ():
     const hover: string = mediaBody(css, '(hover: hover)');
     const outside: string = css.replace(hover, '');
 
-    it('SC-UKV-1055 —без наведения действия строки видны: вне медиазапроса их ничто не прячет', (): void => {
+    it('SC-UKV-1068 — без наведения действия строки видны: вне медиазапроса их ничто не прячет', (): void => {
         expect(ruleBody(outside, '.rt-thread-list__row-actions')).toContain('position: absolute');
         expect(ruleBody(outside, '.rt-thread-list__row-actions')).not.toContain('opacity: 0');
         expect(ruleBody(outside, '.rt-thread-list__row-actions')).not.toContain('pointer-events: none');
     });
 
-    it('SC-UKV-1055 —с наведением действия прячутся и появляются по наведению, фокусу и открытому меню', (): void => {
+    it('SC-UKV-1068 — с наведением действия прячутся и появляются по наведению, фокусу и открытому меню', (): void => {
         expect(ruleBody(hover, '.rt-thread-list__row-actions')).toContain('opacity: 0');
         expect(hover).toContain('.rt-thread-list__row-wrap:hover .rt-thread-list__row-actions');
         expect(hover).toContain('.rt-thread-list__row-wrap:focus-within .rt-thread-list__row-actions');
