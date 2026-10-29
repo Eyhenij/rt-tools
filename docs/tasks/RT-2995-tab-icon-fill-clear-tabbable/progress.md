@@ -9,7 +9,8 @@
 - **Next step:** the owner's answer on the frames: tabs `7327:531` on the page Tabs, fields
   `7327:1317` on the page Input of Design System V2.
 - **Uncommitted:** nothing after the last commit.
-- **Waiting for the owner:** no
+- **Waiting for the owner:** the answer «одобряете?» on the frames `7327:531` and `7327:1317`; the
+  code is not written before it
 - **PR:** not open yet
 
 ## Steps
