@@ -7,7 +7,9 @@
 - **Done:** task, branch, grill, agreement and plan.
 - **Next step:** draw the Figma frame and show it to the owner.
 - **Uncommitted:** nothing after the first commit.
-- **Waiting for the owner:** no
+- **Waiting for the owner:** the link to the Figma file of the second kit's design system: neither
+  the tree nor past sessions of this tree name it; and the answer on the third request of the
+  application, a badge over the tab icon
 - **PR:** not open yet
 
 ## Steps
