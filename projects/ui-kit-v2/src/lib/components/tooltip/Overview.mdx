@@ -80,6 +80,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | `whenTruncated` | `boolean`                                        | `false`                                                                   |
 | `hideOnClick`   | `boolean`                                        | из настроек кита, без них `true`                                          |
 | `showDelay`     | `number \| null`                                 | `null` — задержка из настроек кита, без них 300 мс                        |
+| `showOnTap`     | `boolean`                                        | `false` — касание подсказку не открывает                                  |
 
 **Умолчания на всё приложение — раздел `tooltip` в `provideRtKit`.** `hideOnClick`, `placement` и
 `showDelay` (задержка показа, по умолчанию 300 мс) задаются один раз; вход на элементе их перебивает.
@@ -89,7 +90,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 provideRtKit({ components: { tooltip: { hideOnClick: false } } });
 ```
 
-В разметке они пишутся под алиасами `rtTooltip`, `rtTooltipPlacement`, `rtTooltipWhenTruncated`, `rtTooltipHideOnClick` и `rtTooltipShowDelay`:
+В разметке они пишутся под алиасами `rtTooltip`, `rtTooltipPlacement`, `rtTooltipWhenTruncated`, `rtTooltipHideOnClick`, `rtTooltipShowDelay` и `rtTooltipShowOnTap`:
 имя директивы и есть имя входа текста. Вход текста принимает `null` и `undefined` и сам приводит
 их к пустой строке — так `[rtTooltip]="value | date"` не ломает строгую типизацию шаблона.
 
