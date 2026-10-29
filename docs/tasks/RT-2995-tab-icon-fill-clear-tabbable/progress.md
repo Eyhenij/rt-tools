@@ -3,21 +3,19 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 1 of 4 — The mockup
-- **Done:** task, branch, grill, agreement and plan; the badge over the tab icon is added to the
-  agreement as SC-UKV-1083.
-- **Next step:** the owner's answer on the frames: tabs `7327:531` on the page Tabs, fields
-  `7327:1317` on the page Input of Design System V2.
+- **Stage:** 2 of 4 — The code
+- **Done:** stage 1: the frames `7327:531` and `7327:1317` in Design System V2 are approved by the
+  owner, the record is in `approvals.md`.
+- **Next step:** `iconFill` on `rtTab`.
 - **Uncommitted:** nothing after the last commit.
-- **Waiting for the owner:** the answer «одобряете?» on the frames `7327:531` and `7327:1317`; the
-  code is not written before it
+- **Waiting for the owner:** no
 - **PR:** not open yet
 
 ## Steps
 
 - [x] 1.1 Draw the Figma frame: a tab strip with a filled and an outlined icon, and the four fields with the cross in focus.
-- [>] 1.2 Show the frame to the owner and write the approval into `approvals.md`.
-- [ ] 2.1 Add `iconFill` to `rtTab` and pass it to the tab icon as `fill`.
+- [x] 1.2 Show the frame to the owner and write the approval into `approvals.md`.
+- [>] 2.1 Add `iconFill` to `rtTab` and pass it to the tab icon as `fill`.
 - [ ] 2.2 Add the node `formControl` with `clearTabbable` to the kit settings and read it in the shared base.
 - [ ] 2.3 Bind the cross of the autocomplete, the number field, the date picker and the date range to `clearTabIndex()`.
 - [ ] 2.4 Write the tests of SC-UKV-1080, SC-UKV-1081 and SC-UKV-1082.
