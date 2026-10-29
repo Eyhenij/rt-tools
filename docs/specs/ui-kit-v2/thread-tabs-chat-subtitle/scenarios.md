@@ -34,3 +34,12 @@ When the correspondence is drawn
 Then the header holds the title, and the subtitle line is hidden
 
 Covered: `projects/ui-kit-v2/src/rich-editor/lib/components/chat/rt-chat.component.spec.ts`.
+
+### SC-UKV-1064 — a long title holds one line and shows itself in the hint
+
+Given the correspondence header has a title longer than its place
+When the correspondence is drawn
+Then the title stays on one line cut by the ellipsis, and its hint holds the whole title
+
+Covered: `projects/ui-kit-v2/src/rich-editor/lib/components/chat/rt-chat.component.spec.ts`.
+Coverage: partial — the test reads the title styles and the hint; one line is measured on the consumer screen at widths 375 to 1440.

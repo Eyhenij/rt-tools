@@ -41,6 +41,9 @@ the reply goes to. The header holds one title line, and a consumer would glue bo
   cut by the ellipsis, and the header buttons keep their place.
 - **A header without the subtitle is drawn as before.** The empty line is hidden, and the header
   keeps its height.
+- **The title holds one line.** A long title is cut by the ellipsis, and its hint shows it whole.
+  The header is a dense strip of fixed height, and a wrapped title would leave it upwards and
+  downwards.
 
 ## What is out of scope
 
@@ -81,8 +84,8 @@ Not applicable.
 
 ### Mobile layout
 
-The tabs strip takes the width of the list column. The subtitle is cut by the ellipsis on a narrow
-screen.
+The tabs strip takes the width of the list column. The title and the subtitle are cut by the
+ellipsis on a narrow screen.
 
 ### Several objects
 
@@ -104,3 +107,4 @@ Not applicable.
 
 - 2026-10-28 — created by the work about the tabs of the conversation list and the header line,
   task RT-2977.
+- 2026-10-29 — the title holds one line, task RT-2985.
