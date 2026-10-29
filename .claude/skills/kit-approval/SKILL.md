@@ -35,6 +35,13 @@ The table in `implementation.md` next to it.
   states are the ones the showcase contract of the kit names; a state not shown is not approved.
 - **The showcase matches the mockup at 100%, and that is measured, not looked at.** The measurement
   and its number go to the owner together with the showcase.
+- **The whole block of components is compared at once, not one component by one.** A part that
+  matches alone can still sit wrong next to its neighbours: the gaps, the alignment and the order
+  live between components. The frame of the whole block in the showcase is laid over the frame of
+  the whole block in Figma.
+- **A redrawn page is built in the showcase whole and compared by overlay with its mockup.** The
+  page is a story of its own, with every block the mockup draws, at the mockup's width. Its frame
+  is laid over the Figma frame of the page, and the overlay goes to the owner with the showcase.
 - **The showcase is shown to the owner and approved by a second answer.** The first approval was of
   a picture; the second is of the component a consumer will get.
 - **The push, the PR and the release go only after both approvals.** The check refuses all three
