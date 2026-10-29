@@ -87,23 +87,24 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Входы
 
-| вход          | тип                                    | умолчание                                    |
-| ------------- | -------------------------------------- | -------------------------------------------- |
-| `template`    | `TemplateRef \| null`                  | `null`                                       |
-| `trigger`     | `'click' \| 'hover' \| 'manual'`       | `'click'`                                    |
-| `width`       | `'trigger' \| 'auto'`                  | `'auto'`                                     |
-| `align`       | `'start' \| 'end'`                     | `'start'`                                    |
-| `fitViewport` | `boolean`                              | `false`                                      |
-| `context`     | `unknown`                              | `null`                                       |
-| `panelClass`  | `string`                               | `''`                                         |
-| `disabled`    | `boolean`                              | `false`                                      |
-| `offsetY`     | `number`                               | `4`                                          |
-| `offsetX`     | `number`                               | `0`                                          |
-| `positions`   | `readonly ConnectedPosition[] \| null` | `null` — под host'ом, запасное место над ним |
+| вход            | тип                                    | умолчание                                    |
+| --------------- | -------------------------------------- | -------------------------------------------- |
+| `template`      | `TemplateRef \| null`                  | `null`                                       |
+| `trigger`       | `'click' \| 'hover' \| 'manual'`       | `'click'`                                    |
+| `width`         | `'trigger' \| 'auto'`                  | `'auto'`                                     |
+| `align`         | `'start' \| 'end'`                     | `'start'`                                    |
+| `fitViewport`   | `boolean`                              | `false`                                      |
+| `context`       | `unknown`                              | `null`                                       |
+| `panelClass`    | `string`                               | `''`                                         |
+| `backdropClass` | `string`                               | `''` — без подложки                          |
+| `disabled`      | `boolean`                              | `false`                                      |
+| `offsetY`       | `number`                               | `4`                                          |
+| `offsetX`       | `number`                               | `0`                                          |
+| `positions`     | `readonly ConnectedPosition[] \| null` | `null` — под host'ом, запасное место над ним |
 
 В разметке они пишутся под алиасами: `rtPopover` (шаблон), `rtPopoverTrigger`, `rtPopoverWidth`,
 `rtPopoverAlign`, `rtPopoverFitViewport`, `rtPopoverContext`, `rtPopoverPanelClass`,
-`rtPopoverDisabled`, `rtPopoverOffsetY`, `rtPopoverOffsetX`.
+`rtPopoverBackdropClass`, `rtPopoverDisabled`, `rtPopoverOffsetY`, `rtPopoverOffsetX`.
 
 ## Выходы
 
