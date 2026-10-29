@@ -35,3 +35,11 @@ Then the badge of the first stands over the icon corner and the tab is as wide a
 
 Covered: `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-icon-badge.spec.ts`.
 Покрытие: частичное — ширину вкладки jsdom не меряет; её меряет витрина против макета.
+
+### SC-UKV-1084 — the cross of the multiselect goes by Tab as a button next to the trigger
+
+Given a multiselect with a chosen value and `clearTabbable`
+When the person presses Tab from the trigger and then Enter
+Then the focus lands on the cross, which is a button outside the trigger, and Enter clears the choice without opening the list; without `clearTabbable` the cross stays out of the Tab order
+
+Covered: `projects/ui-kit-v2/src/lib/components/form-control/rt-clear-tabbable.spec.ts`.

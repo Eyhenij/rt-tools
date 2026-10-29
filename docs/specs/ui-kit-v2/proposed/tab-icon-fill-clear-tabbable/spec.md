@@ -53,13 +53,15 @@ person without a mouse cannot reach.
 - **Every control of the shared base with a clearing cross obeys `clearTabbable`.** Besides the
   field of text and the select, so do the autocomplete, the number field, the date picker and the
   date range. None of them keeps its cross out of the Tab order by a fixed index.
+- **The cross of the multiselect goes by Tab as a button next to the trigger.** With
+  `clearTabbable` the multiselect draws its cross as a neighbouring button over its place in the
+  row, as the select does: a button inside the trigger is not announced by a screen reader, and
+  its Enter would open the list. Tab from the trigger reaches the cross, Enter on it clears the
+  choice and leaves the list closed.
 
 ## What is out of scope
 
 - The list clear of the dynamic selector: it is a button of its own and already goes by Tab.
-- The cross of the multiselect. It stands inside the trigger button, and a nested button is not
-  announced by a screen reader; it needs a neighbouring button, as the select has, and a frame of
-  its own. The select already obeys `clearTabbable` and reads the new default as it is.
 - The first kit.
 - The edits of the application that asked.
 

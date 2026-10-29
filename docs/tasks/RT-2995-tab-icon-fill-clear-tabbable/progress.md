@@ -8,8 +8,9 @@
   `badgePosition` on `rtTab`, `components.formControl.clearTabbable`, four crosses on
   `clearTabIndex()`, specs `rt-tabs-icon-badge.spec.ts` (6) and `rt-clear-tabbable.spec.ts` (4).
   The whole kit run: 282 files green before the last two tests were fixed; both rerun green.
-- **Next step:** stories for 3.1 on the second showcase (port 6007, the owner's — work with the
-  running one), then the measurement against the frames by `tools/kit-match.mjs`.
+- **Next step:** the multiselect frame on the page Multiselect of Design System V2 and its
+  approval, then its code; then the stories for 3.1 on the second showcase (port 6007, the
+  owner's — work with the running one) and the measurement by `tools/kit-match.mjs`.
 - **Uncommitted:** nothing after the last commit.
 - **Waiting for the owner:** no
 - **Main is red apart from this work:** typecheck fails on
@@ -43,11 +44,11 @@
 - **The overlay badge is anchored by its right edge 6 px past the icon and filled with the primary
   action colour.** Anchored at the icon corner, a two-digit count covered the title start. Affected
   stages: 1, 2.
-- **The multiselect cross stays out of this task.** Found in stage 2: it has a fixed `-1` inside
-  the trigger button and needs the neighbouring-button technique of the select plus a frame of its
-  own; no exit condition of the plan names it. The task for it could not be filed: the session
-  was refused creating an issue without the owner's word. Affected stage: none; the agreement names
-  it out of scope.
+- **The multiselect cross joins this task.** Found in stage 2: a fixed `-1` inside the trigger
+  button. The owner answered «1 тоже». It goes as the select's neighbouring button, SC-UKV-1084,
+  with a frame of its own approved before the code. Added steps, marked «m»: 1.m frame and
+  approval, 2.m code and test. Affected stages: 1, 2.
+- **The commit signature stays rt-tools-dev.** The owner: «2 не важно».
 - **The Figma tab examples are detached copies of the Tab component with an icon added.** The Tab
   component has no icon slot; the frame shows the look, the component is not changed. Affected
   stage: 1.

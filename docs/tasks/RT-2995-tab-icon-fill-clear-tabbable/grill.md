@@ -81,3 +81,6 @@ It answers a request from the session of an application moving onto the second k
 **Третий запрос приложения, бейдж поверх иконки вкладки. Как взять?** Options: «В RT-2995»,
 «Отдельной задачей», «Не брать пока».
 «В RT-2995»
+
+**Мультиселект и подпись коммитов.** The owner, on the question about the multiselect cross and the
+commit signature: «1 тоже», «2 не важно», «работай». The multiselect cross joins this task.
