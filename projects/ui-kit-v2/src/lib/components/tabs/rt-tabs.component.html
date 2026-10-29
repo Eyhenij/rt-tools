@@ -59,8 +59,20 @@
                             [attr.tabindex]="focusable ? 0 : -1"
                             [rtTooltip]="tab.buttonTooltip()"
                             (keydown)="onTabKeydown($event, tab)">
-                            @if (tab.icon() || tab.glyph()) {
-                                <rt-icon rtElem="icon" size="sm" [name]="tab.icon()" [glyph]="tab.glyph()" [color]="tab.iconColor()" />
+                            @if (tab.hasIcon()) {
+                                <span rtElem="icon-box">
+                                    <rt-icon
+                                        rtElem="icon"
+                                        size="sm"
+                                        [name]="tab.icon()"
+                                        [glyph]="tab.glyph()"
+                                        [color]="tab.iconColor()"
+                                        [fill]="tab.iconFill()" />
+                                    @if (tab.badgeOverlay()) {
+                                        <!-- prettier-ignore -->
+                                        <span rtElem="badge" [rtMod]="{ overlay: true }" [rtTooltip]="tab.badgeTitle()" [attr.aria-label]="tab.badgeAriaLabel() || null">{{ tab.badge() }}</span>
+                                    }
+                                </span>
                             }
 
                             @if (tab.titleTemplate(); as titleTpl) {
@@ -69,7 +81,7 @@
                                 <span rtElem="title">{{ tab.label() }}</span>
                             }
 
-                            @if (tab.badge() !== null) {
+                            @if (tab.badge() !== null && !tab.badgeOverlay()) {
                                 <!-- В одну строку: перенос внутри добавил бы пробел в текст кнопки. -->
                                 <!-- prettier-ignore -->
                                 <span rtElem="badge" [rtTooltip]="tab.badgeTitle()" [attr.aria-label]="tab.badgeAriaLabel() || null">{{ tab.badge() }}</span>

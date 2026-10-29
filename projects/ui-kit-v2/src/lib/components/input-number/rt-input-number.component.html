@@ -37,7 +37,7 @@
                 variant="ghost"
                 iconColor="muted"
                 [ariaLabel]="t().uiClear"
-                [tabIndex]="-1"
+                [tabIndex]="clearTabIndex()"
                 (clicked)="clear($event)" />
         }
     }

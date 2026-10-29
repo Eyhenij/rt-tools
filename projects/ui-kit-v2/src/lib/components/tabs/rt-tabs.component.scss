@@ -251,6 +251,11 @@
     .rt-tab-item {
         --rt-tab-item-border-width: var(--rt-border-width-thin);
         --rt-tab-item-badge-radius: var(--rt-radius-full);
+        --rt-tab-item-badge-bg: var(--rt-color-bg-surface-subtle);
+        --rt-tab-item-badge-color: var(--rt-color-text-muted);
+        --rt-tab-item-badge-overlay-size: var(--rt-size-4);
+        --rt-tab-item-badge-overlay-bg: var(--rt-color-action-primary);
+        --rt-tab-item-badge-overlay-color: var(--rt-color-action-on-primary);
         --rt-tab-item-transition-duration: var(--rt-duration-fast);
         --rt-tab-item-close-size: var(--rt-size-5);
         --rt-tab-item-close-radius: var(--rt-radius-full);
@@ -346,6 +351,13 @@
             flex-shrink: 0;
         }
 
+        /* Опора бейджа над иконкой: вкладка не знает, где иконка, и кружок ставится от её коробки. */
+        &__icon-box {
+            position: relative;
+            display: inline-flex;
+            flex-shrink: 0;
+        }
+
         &__badge {
             display: inline-flex;
             min-width: 18px;
@@ -354,11 +366,26 @@
             justify-content: center;
             padding: 0 var(--rt-space-2);
             border-radius: var(--rt-tab-item-badge-radius);
-            background-color: var(--rt-color-bg-surface-subtle);
-            color: var(--rt-color-text-muted);
+            background-color: var(--rt-tab-item-badge-bg);
+            color: var(--rt-tab-item-badge-color);
             font-size: var(--rt-text-xs);
             font-weight: var(--rt-font-weight-medium);
             line-height: var(--rt-leading-none);
+
+            /* Кружок над правым верхним углом иконки, как `matBadge` у Material: из потока вынут, и
+               вкладка той же ширины, что без бейджа. Привязан правым краем — длинное число растёт
+               на иконку, а не на подпись. */
+            &--overlay {
+                position: absolute;
+                top: calc(-1 * var(--rt-space-2));
+                right: calc(-1 * (var(--rt-space-1) + var(--rt-space-0-5)));
+                min-width: var(--rt-tab-item-badge-overlay-size);
+                height: var(--rt-tab-item-badge-overlay-size);
+                padding: 0 var(--rt-space-1);
+                background-color: var(--rt-tab-item-badge-overlay-bg);
+                color: var(--rt-tab-item-badge-overlay-color);
+                font-size: var(--rt-text-2xs);
+            }
         }
 
         /* Крестик закрываемой вкладки: подложка при наведении отделяет его от самой вкладки,
@@ -403,6 +430,9 @@
         // Черта выбранной вкладки входит в её высоту, как в компоненте Tab дизайн-системы: вкладка
         // выше соседних на толщину черты, и при прижатии полосы к низу подпись стоит выше их подписей
         &--selected {
+            --rt-tab-item-badge-bg: var(--rt-color-action-primary-soft);
+            --rt-tab-item-badge-color: var(--rt-color-action-primary);
+
             color: var(--rt-color-action-primary);
             cursor: default;
 
@@ -412,11 +442,6 @@
 
             &:after {
                 background-color: var(--rt-color-action-primary);
-            }
-
-            .rt-tab-item__badge {
-                background-color: var(--rt-color-action-primary-soft);
-                color: var(--rt-color-action-primary);
             }
         }
 

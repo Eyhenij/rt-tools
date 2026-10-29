@@ -9,7 +9,7 @@ Given tabs where one tab has `iconFill` and an icon by `glyph`, and another has 
 When the tab strip is drawn
 Then the icon of each such tab gets `fill`: the glyph is drawn filled, the kit name is filled under the material preset; the tabs without `iconFill` keep the outlined icon
 
-Covered: `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-additions.spec.ts`.
+Covered: `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-icon-badge.spec.ts`.
 
 ### SC-UKV-1081 — the kit settings put the clearing cross into the Tab order
 
@@ -17,7 +17,7 @@ Given the kit settings with `formControl.clearTabbable` on
 When a field of the shared base with a value is drawn without `clearTabbable` of its own
 Then its clearing cross is in the Tab order; with `clearTabbable` off on the field it is not; without the setting it is not
 
-Covered: `projects/ui-kit-v2/src/lib/components/form-control/rt-form-control.base.spec.ts`.
+Covered: `projects/ui-kit-v2/src/lib/components/form-control/rt-clear-tabbable.spec.ts`.
 
 ### SC-UKV-1082 — the autocomplete, the number field and the date fields obey `clearTabbable`
 
@@ -33,4 +33,5 @@ Given tabs with an icon and a badge, one with `badgePosition` `'overlay'` and on
 When the tab strip is drawn
 Then the badge of the first stands over the icon corner and the tab is as wide as without a badge; the second keeps the badge after the title; the tab without an icon keeps it inline
 
-Covered: `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-additions.spec.ts`.
+Covered: `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-icon-badge.spec.ts`.
+Покрытие: частичное — ширину вкладки jsdom не меряет; её меряет витрина против макета.

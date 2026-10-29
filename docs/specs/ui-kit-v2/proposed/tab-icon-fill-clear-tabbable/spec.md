@@ -51,12 +51,15 @@ person without a mouse cannot reach.
   `clearTabbable`. `clearTabbable` on the element wins over it, and without either the cross stays
   out of the Tab order, as before.
 - **Every control of the shared base with a clearing cross obeys `clearTabbable`.** Besides the
-  field of text, so do the autocomplete, the number field, the date picker and the date range. None
-  of them keeps its cross out of the Tab order by a fixed index.
+  field of text and the select, so do the autocomplete, the number field, the date picker and the
+  date range. None of them keeps its cross out of the Tab order by a fixed index.
 
 ## What is out of scope
 
 - The list clear of the dynamic selector: it is a button of its own and already goes by Tab.
+- The cross of the multiselect. It stands inside the trigger button, and a nested button is not
+  announced by a screen reader; it needs a neighbouring button, as the select has, and a frame of
+  its own. The select already obeys `clearTabbable` and reads the new default as it is.
 - The first kit.
 - The edits of the application that asked.
 
