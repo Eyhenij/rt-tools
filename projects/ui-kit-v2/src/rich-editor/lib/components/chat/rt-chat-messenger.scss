@@ -41,6 +41,11 @@
         &--messenger {
             --rt-chat-bubble-radius: var(--rt-radius-xl);
             --rt-chat-bubble-own-bg: var(--rt-color-action-primary);
+            --rt-chat-bubble-in-bg: var(--rt-color-bg-surface);
+
+            .rt-chat__composer-rich {
+                margin-block-start: 0;
+            }
 
             .rt-chat__thread {
                 padding: var(--rt-space-5) var(--rt-space-6);
@@ -51,11 +56,13 @@
 
             .rt-chat__message {
                 padding: var(--rt-space-2) calc(var(--rt-space-2) + var(--rt-space-1)) var(--rt-space-1);
+                border-radius: var(--rt-chat-bubble-radius) var(--rt-chat-bubble-radius) var(--rt-chat-bubble-radius) var(--rt-radius-sm);
                 box-shadow: var(--rt-shadow-sm);
                 gap: var(--rt-space-0-5);
             }
 
             .rt-chat__message--own {
+                border-radius: var(--rt-chat-bubble-radius) var(--rt-chat-bubble-radius) var(--rt-radius-sm) var(--rt-chat-bubble-radius);
                 box-shadow: none;
             }
 
@@ -77,10 +84,6 @@
                 font-size: var(--rt-text-2xs);
             }
 
-            .rt-chat__message--own .rt-chat__message-date {
-                opacity: 0.75;
-            }
-
             .rt-chat__message-author {
                 display: none;
             }
@@ -89,7 +92,6 @@
                 display: flex;
                 align-items: center;
                 gap: var(--rt-space-1);
-                padding-block-start: var(--rt-space-2);
             }
         }
     }

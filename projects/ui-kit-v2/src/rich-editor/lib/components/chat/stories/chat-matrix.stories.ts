@@ -49,6 +49,9 @@ export const Header: TStory = { args: { part: 'header' } };
 /** Знак канала перед заголовком шапки: без знака, картинкой и значком кита. */
 export const Sign: TStory = { args: { part: 'sign' } };
 
+/** Вид мессенджера по входу `messenger`: метка дня, без подписи автора, ряд кнопок под полем */
+export const Messenger: TStory = { args: { part: 'messenger' } };
+
 export const Loading: TStory = { args: { part: 'loading' } };
 
 export const Presets: TStory = { args: { part: 'presets' } };

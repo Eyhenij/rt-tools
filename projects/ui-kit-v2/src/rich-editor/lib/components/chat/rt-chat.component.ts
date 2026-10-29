@@ -193,7 +193,7 @@ export class RtChatComponent {
     );
 
     /** Показывать ли шапку: только когда включена хотя бы одна иконка. */
-    protected readonly showHeader: Signal<boolean> = computed((): boolean => this.showRefresh() || this.showExpand());
+    protected readonly showHeader: Signal<boolean> = computed((): boolean => this.messenger() || this.showRefresh() || this.showExpand());
 
     /** Подпись кнопки fullscreen: тернарник в шаблоне переводом не покрыть. */
     protected readonly expandLabel: Signal<string> = rtKitLabel(
