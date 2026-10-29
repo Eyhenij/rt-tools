@@ -1,0 +1,39 @@
+<rt-aside width="540px" ariaLabel="Оплата тарифов" qa-dataid="service-block-panel">
+    <rt-aside-header title="Оплата тарифов" overline="Настройка подключения" />
+
+    <div rtBlock="rt-form" qa-dataid="service-block-panel-form">
+        <rt-service-block qa-dataid="service-block-panel-block" name="Stripe" description="Приём оплаты тарифов картой" [logos]="logos" />
+
+        <div rtElem="item">
+            <div rtElem="controls">
+                @for (field of fields; track field.label) {
+                    <div rtElem="control-item">
+                        <rt-field [label]="field.label" [hint]="field.hint" [required]="field.required">
+                            <rt-input qa-dataid="service-block-panel-input" [clearable]="false" [ngModel]="field.value" />
+                        </rt-field>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <rt-aside-footer>
+        <button
+            rtButton
+            asideDismiss
+            type="button"
+            theme="secondary"
+            appearance="text"
+            label="Закрыть и не сохранять"
+            aria-label="Закрыть и не сохранять"
+            qa-dataid="service-block-panel-dismiss"></button>
+        <button
+            rtButton
+            asidePrimary
+            type="button"
+            icon="ico-check"
+            label="Сохранить"
+            aria-label="Сохранить"
+            qa-dataid="service-block-panel-save"></button>
+    </rt-aside-footer>
+</rt-aside>

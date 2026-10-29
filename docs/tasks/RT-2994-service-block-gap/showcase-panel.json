@@ -1,0 +1,15 @@
+{
+  "header.height": 90.7,
+  "block.top": 24,
+  "block.left": 24,
+  "block.width": 492,
+  "block.height": 85,
+  "logo.width": 64,
+  "logo.height": 64,
+  "name.dx": 80,
+  "gap.blockToField": 16,
+  "field.height": 79.5,
+  "field.pitch": 95.5,
+  "footer.dismiss": "outlined",
+  "footer.primaryIcon": "none"
+}
