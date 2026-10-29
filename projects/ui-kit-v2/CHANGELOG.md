@@ -1,3 +1,15 @@
+# [0.36.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.35.1...rt-ui-kit-v2%400.36.0) (2026-10-29)
+
+### Bug Fixes
+
+- **rt:ui-kit-v2:** заголовок шапки чата держится одной строкой ([9ca583b](https://github.com/Eyhenij/rt-tools/commit/9ca583bf83cf6f457373b5381545710ac1f9e4dc))
+- **rt:ui-kit-v2:** спек шапки чата берёт подсказку относительным импортом ([9a04cca](https://github.com/Eyhenij/rt-tools/commit/9a04cca70d751ffa148206838206b67c5834616b))
+- **rt:ui-kit-v2:** сценарии ИИ-чата получили свои номера SC-UKV-1073…1079 ([97ce562](https://github.com/Eyhenij/rt-tools/commit/97ce5626c31d7a6638053c7235f80729a19088b7)), closes [#2982](https://github.com/Eyhenij/rt-tools/issues/2982)
+
+### Features
+
+- **rt:ui-kit-v2:** мобильное меню шапки открывается на затемнении страницы ([985f349](https://github.com/Eyhenij/rt-tools/commit/985f34953bed0c8fac3b931c74ac6dd7340b0d1c)), closes [#2987](https://github.com/Eyhenij/rt-tools/issues/2987)
+
 ## [0.35.1](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.35.0...rt-ui-kit-v2%400.35.1) (2026-10-29)
 
 ### Bug Fixes

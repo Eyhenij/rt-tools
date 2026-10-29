@@ -14,19 +14,22 @@ allowBuilds:
   nx: true
   unrs-resolver: true
   '@bufbuild/buf': false
-# Security patches for transitive build-tooling dependencies whose direct parents
-# still pin a vulnerable range. None of these ship inside the published packages —
-# they exist only in the dev/build graph. Drop an entry once the parent bumps it itself.
+# Security patches for transitive dependencies whose direct parents still pin a
+# vulnerable range. None of these ship inside the published packages — they exist only
+# in the dev/build graph and in the server of the applications. Drop an entry once the
+# parent bumps it itself.
 overrides:
   '@babel/core': '^7.29.7'
   axios: '^1.20.0'
+  'body-parser@2': '^2.4.0'
   'brace-expansion@<2': '^1.1.21'
   'brace-expansion@>=2.0.0 <3': '^2.1.7'
   'brace-expansion@>=5.0.0 <5.0.7': '^5.0.9'
   compression: '^1.8.2'
   deepmerge-ts: '^8.0.0'
   esbuild: '^0.28.1'
-  'fast-uri@3': '^3.1.8'
+  'fast-uri@3': '^3.1.9'
+  follow-redirects: '^1.16.1'
   handlebars: '^4.7.10'
   http-cache-semantics: '^4.3.0'
   'http-proxy-middleware@2': '^2.0.10'
@@ -34,14 +37,19 @@ overrides:
   'joi@17': '^17.13.8'
   'js-yaml@3': '^3.15.2'
   'js-yaml@4': '^4.3.2'
+  launch-editor: '^2.14.2'
+  'multer@2': '^2.5.0'
   mysql2: '^3.23.1'
   postcss: '^8.5.29'
   probe-image-size: '^7.4.0'
-  qs: '^6.16.0'
+  qs: '^6.16.1'
+  serialize-javascript: '^7.1.3'
   shell-quote: '^1.11.0'
   svgo: '^4.1.0'
-  'undici@7': '^7.29.1'
+  'undici@7': '^7.30.1'
+  'undici@8': '^8.12.2'
   uuid: '^11.1.1'
+  'vite@8': '^8.3.3'
   'webpack-dev-middleware@6': '^7.4.5'
   websocket-driver: '^0.7.5'
   ws: '^8.21.1'
