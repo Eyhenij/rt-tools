@@ -1,8 +1,13 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
 import { DebugElement } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 
 import { QuillMock } from '../../../../testing/quill-mock';
 import { createRtFixture, el, hostClasses, qa, qaAll, textOf } from '../../../../testing/rt-kit-testing';
+import { RtTooltipDirective } from '@rt-tools/ui-kit-v2';
 import { ERtChatMessageStatus, IRtChat } from './rt-chat.model';
 import { RtChatComponent } from './rt-chat.component';
 
@@ -253,6 +258,22 @@ describe('RtChatComponent', (): void => {
 
             expect(textOf(qa(fixture, 'chat-title'))).toBe('Анна Смирнова');
             expect((qa(fixture, 'chat-subtitle')?.nativeElement as HTMLElement).hidden).toBe(true);
+        });
+
+        it('SC-UKV-1064 — длинный заголовок держится одной строкой и целиком виден в подсказке', (): void => {
+            const title: string = '№1287 Александра Константинопольская-Вознесенская';
+            const fixture: ComponentFixture<RtChatComponent> = setup({ title, subtitle: 'WhatsApp · +66 81 234 5678', showRefresh: true });
+
+            const node: DebugElement = fixture.debugElement.query(By.css('[qa-dataid="chat-title"]'));
+            const tip: RtTooltipDirective = node.injector.get(RtTooltipDirective);
+            expect(tip.text()).toBe(title);
+            expect(tip.whenTruncated()).toBe(true);
+
+            const scss: string = readFileSync(join(__dirname, 'rt-chat.component.scss'), 'utf8');
+            const rule: string = scss.slice(scss.indexOf('&__title {'), scss.indexOf('}', scss.indexOf('&__title {')));
+            expect(rule).toContain('white-space: nowrap');
+            expect(rule).toContain('text-overflow: ellipsis');
+            expect(rule).toContain('overflow: hidden');
         });
 
         it('кнопки обновления и разворота появляются по входам', (): void => {

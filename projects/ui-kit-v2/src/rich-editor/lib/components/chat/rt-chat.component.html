@@ -11,7 +11,7 @@
                         <rt-service-logo rtElem="sign" qa-dataid="chat-sign" size="xs" [logos]="[channel]" />
                     }
                     <div rtElem="names">
-                        <h3 rtElem="title" qa-dataid="chat-title">{{ title() }}</h3>
+                        <h3 rtElem="title" qa-dataid="chat-title" rtTooltipWhenTruncated [rtTooltip]="title()">{{ title() }}</h3>
                         <p rtElem="subtitle" qa-dataid="chat-subtitle" [hidden]="!subtitle()">{{ subtitle() }}</p>
                     </div>
                 </ng-template>

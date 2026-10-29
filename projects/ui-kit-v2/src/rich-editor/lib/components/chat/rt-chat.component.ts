@@ -45,6 +45,7 @@ import {
     RtToolbarComponent,
     RtToolbarLeftDirective,
     RtToolbarRightDirective,
+    RtTooltipDirective,
 } from '@rt-tools/ui-kit-v2';
 import { IRtServiceLogo } from '@rt-tools/ui-kit-v2';
 import { RT_KIT_LABELS, RT_KIT_LOCALE, rtKitLabel, TRtKitLabelKey, TRtKitLabelMap } from '@rt-tools/ui-kit-v2';
@@ -103,6 +104,7 @@ const ATTACHMENT_FALLBACK_KEY: TRtKitLabelKey = 'chatAttachmentFallback';
         RtToolbarComponent,
         RtToolbarLeftDirective,
         RtToolbarRightDirective,
+        RtTooltipDirective,
         BlockDirective,
         ElemDirective,
         ModDirective,
