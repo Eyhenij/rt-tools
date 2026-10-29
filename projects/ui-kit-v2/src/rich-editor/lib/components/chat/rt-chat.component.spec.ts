@@ -7,7 +7,7 @@ import { By } from '@angular/platform-browser';
 
 import { QuillMock } from '../../../../testing/quill-mock';
 import { createRtFixture, el, hostClasses, qa, qaAll, textOf } from '../../../../testing/rt-kit-testing';
-import { RtTooltipDirective } from '@rt-tools/ui-kit-v2';
+import { RtTooltipDirective } from '../../../../lib/components/tooltip/rt-tooltip.directive';
 import { ERtChatMessageStatus, IRtChat } from './rt-chat.model';
 import { RtChatComponent } from './rt-chat.component';
 
