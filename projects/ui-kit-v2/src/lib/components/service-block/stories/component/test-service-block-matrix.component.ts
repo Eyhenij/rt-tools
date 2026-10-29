@@ -1,8 +1,12 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
+import { BlockDirective, ElemDirective } from '@rt-tools/core';
+
 import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
+import { RtFieldComponent } from '../../../field/rt-field.component';
+import { RtInputComponent } from '../../../input/rt-input.component';
 import { IRtServiceLogo } from '../../../service-logo/rt-service-logo.model';
 import {
     PLACEHOLDER_MARK_BARS,
@@ -13,7 +17,7 @@ import {
 import { RtServiceBlockComponent } from '../../rt-service-block.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TServiceBlockMatrixPart = 'content' | 'width' | 'presets' | 'themes';
+export type TServiceBlockMatrixPart = 'content' | 'width' | 'presets' | 'themes' | 'form';
 
 /** Случай состава: какие знаки и какой текст переданы. */
 export interface IServiceBlockCase {
@@ -31,7 +35,9 @@ const LONG_DESCRIPTION: string = 'Приём оплаты тарифов кар�
 /**
  * Матрицы `rt-service-block` для витрины. Ось состава — что передали: один знак, несколько,
  * знак значком, без описания. Ось ширины — место панели и место телефона: на узком описание
- * переносится, а знак держит размер. Знаки — безымянные заглушки, а не логотипы компаний.
+ * переносится, а знак держит размер. Ось формы — блок в теле панели: следующий раздел стоит под
+ * чертой на шаг строк при любой ширине окна, как на макете панели подключения. Знаки —
+ * безымянные заглушки, а не логотипы компаний.
  *
  * В пакет не уезжает: `tsconfig.lib.json` исключает папки историй.
  */
@@ -40,7 +46,13 @@ const LONG_DESCRIPTION: string = 'Приём оплаты тарифов кар�
     templateUrl: './test-service-block-matrix.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
+        // standalone components / directives
+        BlockDirective,
+        ElemDirective,
+
         // components
+        RtFieldComponent,
+        RtInputComponent,
         RtServiceBlockComponent,
 
         // showcase

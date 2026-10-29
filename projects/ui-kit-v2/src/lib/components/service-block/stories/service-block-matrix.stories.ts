@@ -23,3 +23,5 @@ export const Width: TStory = { args: { part: 'width' } };
 export const Presets: TStory = { args: { part: 'presets' } };
 
 export const Themes: TStory = { args: { part: 'themes' } };
+
+export const InForm: TStory = { args: { part: 'form' } };
