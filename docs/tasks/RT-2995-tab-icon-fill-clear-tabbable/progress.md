@@ -12,7 +12,8 @@
   approval, then its code; then the stories for 3.1 on the second showcase (port 6007, the
   owner's — work with the running one) and the measurement by `tools/kit-match.mjs`.
 - **Uncommitted:** nothing after the last commit.
-- **Waiting for the owner:** no
+- **Waiting for the owner:** the answer «одобряете?» on the multiselect frame `7330:2735`; its code
+  waits for it, the stories of the approved frames do not
 - **Main is red apart from this work:** typecheck fails on
   `projects/ui-kit-v2/src/rich-editor/lib/components/chat/rt-chat.component.spec.ts` (4 errors) and
   `check:tokens-styles` reports 12 divergences in the messenger styles — both already on
