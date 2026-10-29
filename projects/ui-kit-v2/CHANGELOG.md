@@ -1,3 +1,13 @@
+## [0.35.1](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.35.0...rt-ui-kit-v2%400.35.1) (2026-10-29)
+
+### Bug Fixes
+
+- **rt:ui-kit-v2:** подсказка кольца расхода открывается касанием на телефоне ([bf18a3e](https://github.com/Eyhenij/rt-tools/commit/bf18a3e58bb394667771e74d134b44d453affaa5)), closes [#2980](https://github.com/Eyhenij/rt-tools/issues/2980)
+
+### Features
+
+- **rt:ui-kit-v2:** полоса вкладок списка разговоров и строка под заголовком шапки чата ([1804175](https://github.com/Eyhenij/rt-tools/commit/18041750d9d731cfaedd59ef41d612c29ba048f8))
+
 # [0.35.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.34.5...rt-ui-kit-v2%400.35.0) (2026-10-28)
 
 ### Bug Fixes
