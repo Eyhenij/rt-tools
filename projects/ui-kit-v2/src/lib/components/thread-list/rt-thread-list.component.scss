@@ -38,6 +38,13 @@
             flex: 0 0 auto;
         }
 
+        // Полоса вкладок стоит под шапкой во всю ширину колонки; отступ по краям держит её
+        // содержимое на одной линии с полем поиска
+        &__tabs {
+            flex: 0 0 auto;
+            padding: var(--rt-space-0-5) var(--rt-space-2) 0;
+        }
+
         &__filters-panel {
             display: flex;
             flex-direction: column;

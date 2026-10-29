@@ -41,4 +41,14 @@ describe('RtUsageRingComponent', (): void => {
         expect(ring(setup({ hint: '32% of the monthly limit' })).getAttribute('tabindex')).toBe('0');
         expect(ring(setup()).hasAttribute('tabindex')).toBe(false);
     });
+
+    it('SC-UKV-1055 — касание кольца открывает подсказку сразу: на телефоне наведения нет', (): void => {
+        const fixture: ComponentFixture<RtUsageRingComponent> = setup({ value: 81, hint: '81% of the monthly limit' });
+
+        ring(fixture).dispatchEvent(new Event('mouseenter'));
+        ring(fixture).click();
+        fixture.detectChanges();
+
+        expect(document.querySelector('rt-tooltip')?.textContent?.trim()).toBe('81% of the monthly limit');
+    });
 });

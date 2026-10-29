@@ -75,3 +75,10 @@ export class RtThreadListFiltersDirective {
 export class RtThreadListSearchDirective {
     public readonly templateRef: TemplateRef<unknown> = inject<TemplateRef<unknown>>(TemplateRef);
 }
+
+@Directive({
+    selector: 'ng-template[rtThreadListTabs]',
+})
+export class RtThreadListTabsDirective {
+    public readonly templateRef: TemplateRef<unknown> = inject<TemplateRef<unknown>>(TemplateRef);
+}

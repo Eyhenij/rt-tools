@@ -10,12 +10,14 @@ import {
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
+import { RtToggleButtonGroupComponent } from '../../../toggle-button-group/rt-toggle-button-group.component';
+import { IRtToggleButtonGroup } from '../../../toggle-button-group/rt-toggle-button-group.model';
 import { RtThreadListComponent } from '../../rt-thread-list.component';
-import { RtThreadListRowDirective } from '../../rt-thread-list.directives';
+import { RtThreadListFiltersDirective, RtThreadListRowDirective, RtThreadListTabsDirective } from '../../rt-thread-list.directives';
 import { IRtThreadList } from '../../rt-thread-list.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TThreadListMatrixPart = 'rowState' | 'sign' | 'loading' | 'more' | 'empty' | 'presets' | 'themes';
+export type TThreadListMatrixPart = 'rowState' | 'sign' | 'tabs' | 'loading' | 'more' | 'empty' | 'presets' | 'themes';
 
 /** Строка списка витрины: к обязательным полям добавлены подпись и приписка. */
 interface IThreadRow extends IRtThreadList.Row {
@@ -82,6 +84,39 @@ const SIGNED_ROWS: readonly IThreadRow[] = [
                             <ng-template>
                                 <div style="width: 22rem; height: 24rem">
                                     <rt-thread-list searchPlaceholder="Поиск" [rows]="signedRows" [activeId]="2">
+                                        <ng-template rtThreadListRow let-row>
+                                            <div style="display: grid; gap: 0.125rem; min-inline-size: 0">
+                                                <strong>{{ row.title }}</strong>
+                                                <span style="color: var(--rt-color-text-muted); font-size: var(--rt-text-sm)">
+                                                    {{ row.meta }}
+                                                </span>
+                                            </div>
+                                        </ng-template>
+                                    </rt-thread-list>
+                                </div>
+                            </ng-template>
+                        </app-story-themes>
+                    </ng-template>
+                </app-story-presets>
+            }
+
+            @case ('tabs') {
+                <app-story-presets caption="Полоса вкладок под поиском в обоих наборах и обеих темах">
+                    <ng-template>
+                        <app-story-themes>
+                            <ng-template>
+                                <div style="width: 22rem; height: 24rem">
+                                    <rt-thread-list searchPlaceholder="Поиск" [rows]="signedRows" [activeId]="1">
+                                        <ng-template rtThreadListFilters>
+                                            <span>Канал</span>
+                                        </ng-template>
+                                        <ng-template rtThreadListTabs>
+                                            <rt-toggle-button-group
+                                                fullWidth
+                                                ariaLabel="Вкладки списка"
+                                                value="all"
+                                                [options]="tabOptions" />
+                                        </ng-template>
                                         <ng-template rtThreadListRow let-row>
                                             <div style="display: grid; gap: 0.125rem; min-inline-size: 0">
                                                 <strong>{{ row.title }}</strong>
@@ -214,8 +249,12 @@ const SIGNED_ROWS: readonly IThreadRow[] = [
         // components
         RtThreadListComponent,
 
+        RtToggleButtonGroupComponent,
+
         // directives
+        RtThreadListFiltersDirective,
         RtThreadListRowDirective,
+        RtThreadListTabsDirective,
 
         // showcase
         StoryPresetsComponent,
@@ -228,6 +267,11 @@ export class TestRtThreadListMatrixComponent {
 
     public readonly rows: readonly IThreadRow[] = ROWS;
     public readonly signedRows: readonly IThreadRow[] = SIGNED_ROWS;
+    public readonly tabOptions: ReadonlyArray<IRtToggleButtonGroup.Option<string>> = [
+        { value: 'all', label: 'Все' },
+        { value: 'waiting', label: 'Ждут ответа' },
+        { value: 'archive', label: 'Архив' },
+    ];
     public readonly none: readonly IThreadRow[] = [];
 
     public readonly loadingCases: readonly { name: string; loading: boolean; fetching: boolean; empty: boolean }[] = [

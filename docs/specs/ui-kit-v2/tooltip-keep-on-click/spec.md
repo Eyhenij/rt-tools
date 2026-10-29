@@ -1,6 +1,6 @@
 # The tooltip that stays on a click
 
-**Status:** in force · **Revision:** 12 October 2026 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 28 October 2026 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the tooltip of the second kit — the behaviour is an input of `[rtTooltip]`
 **Laws:** `frontend-application`, `verifiability`, `reuse-first`
 **Procedures:** none
@@ -40,6 +40,12 @@ A person sees the same tooltip panel; the input decides only whether a click hid
   or not.
 - **`rt-icon-button` passes the input through as `tooltipHideOnClick`.** Its inner button carries the
   directive, and the consumer cannot reach it.
+- **With `rtTooltipShowOnTap` a tap opens the tooltip at once.** The input is for a host with no
+  action of its own: an icon or a ring whose tooltip is what a person taps it for. A button does not
+  set it: its tap performs the action.
+- **A second tap on the host or a tap outside it closes a tooltip opened by a tap.**
+- **`rt-usage-ring` sets `rtTooltipShowOnTap` on its ring.** A phone has no hover, and the hint of
+  the ring carries the share of the limit and the reset date.
 
 ## What is out of scope
 
@@ -65,6 +71,8 @@ Not applicable: the behaviour keeps nothing.
 | input false, the tooltip open, a click      | the tooltip stays, with the text of the new state |
 | input by default, the tooltip open, a click | the tooltip hides                                 |
 | a tap on a touch screen                     | no tooltip with either value                      |
+| `rtTooltipShowOnTap`, a tap on the host     | the tooltip opens at once; a second tap closes it |
+| `rtTooltipShowOnTap`, a tap outside         | the open tooltip closes                           |
 
 ## Cross-cutting requirements
 
@@ -78,7 +86,8 @@ Not applicable: the kit lives inside an application behind a sign-in.
 
 ### Mobile layout
 
-A tap shows no tooltip, with either value of the input: the click clears the pending showing.
+A tap shows no tooltip, with either value of the input: the click clears the pending showing. A host
+with `rtTooltipShowOnTap` is the exception: its tap opens the tooltip without the delay.
 
 ### Several objects
 
@@ -91,6 +100,10 @@ row.
   offered; the default keeps every present consumer unchanged.
 - **The text reaches the panel by an effect on the text input, not by reopening the panel.** A
   reopening would flash the panel and run the delay again.
+- **A tap opens a tooltip only on a host that asked for it — `rtTooltipShowOnTap`, default
+  `false`.** Task RT-2980, the owner's word of 28 October 2026: «Только у элементов без действия».
+  Rejected: a tap opening every tooltip of the kit. On a button the tooltip would cover the result of
+  the press.
 
 ## Open questions
 
@@ -99,3 +112,5 @@ None.
 ## History of changes
 
 - 12 October 2026 — written together with the code by task RT-2788 from the application's request.
+- 28 October 2026 — task RT-2980: `rtTooltipShowOnTap`, a tap opens the tooltip of a host without an
+  action; the usage ring sets it.

@@ -41,6 +41,7 @@ import {
     RtThreadListRowActionsDirective,
     RtThreadListRowDirective,
     RtThreadListSearchDirective,
+    RtThreadListTabsDirective,
 } from './rt-thread-list.directives';
 import { IRtThreadList } from './rt-thread-list.model';
 
@@ -126,6 +127,8 @@ export class RtThreadListComponent<TRow extends IRtThreadList.Row> implements On
     protected readonly filtersTemplate: Signal<RtThreadListFiltersDirective | undefined> = contentChild(RtThreadListFiltersDirective);
 
     protected readonly searchTemplate: Signal<RtThreadListSearchDirective | undefined> = contentChild(RtThreadListSearchDirective);
+
+    protected readonly tabsTemplate: Signal<RtThreadListTabsDirective | undefined> = contentChild(RtThreadListTabsDirective);
 
     public readonly rows: InputSignal<readonly TRow[]> = input<readonly TRow[]>([]);
 

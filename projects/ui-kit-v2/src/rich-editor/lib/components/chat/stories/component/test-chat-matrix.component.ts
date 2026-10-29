@@ -206,7 +206,7 @@ const NOW: string = '2026-03-14T16:02:00.000Z';
             }
 
             @case ('sign') {
-                <app-story-presets caption="Знак канала в шапке в обоих наборах">
+                <app-story-presets caption="Знак канала и строка под заголовком в шапке в обоих наборах">
                     <ng-template>
                         <app-story-row slotWidth="24rem" [items]="signCases" [itemLabel]="caseLabel">
                             <ng-template let-item>
@@ -220,7 +220,8 @@ const NOW: string = '2026-03-14T16:02:00.000Z';
                                         placeholder="Написать сообщение"
                                         title="Анна Смирнова"
                                         [messages]="messages"
-                                        [sign]="item.sign" />
+                                        [sign]="item.sign"
+                                        [subtitle]="item.subtitle" />
                                 </div>
                             </ng-template>
                         </app-story-row>
@@ -368,10 +369,11 @@ export class TestRtChatMatrixComponent {
     ];
 
     /** Знак компании — заглушка витрины: знаков чужих компаний в пакете нет. Сайт — значок кита. */
-    public readonly signCases: readonly { name: string; sign: IRtServiceLogo.Item | null }[] = [
-        { name: 'без знака', sign: null },
-        { name: 'знак картинкой', sign: PLACEHOLDER_MARK_BLOCK },
-        { name: 'сайт — значок кита', sign: { icon: 'globe', label: 'Сайт' } },
+    public readonly signCases: readonly { name: string; sign: IRtServiceLogo.Item | null; subtitle: string }[] = [
+        { name: 'без знака', sign: null, subtitle: '' },
+        { name: 'знак картинкой', sign: PLACEHOLDER_MARK_BLOCK, subtitle: '' },
+        { name: 'сайт — значок кита', sign: { icon: 'globe', label: 'Сайт' }, subtitle: '' },
+        { name: 'строка под заголовком', sign: PLACEHOLDER_MARK_BLOCK, subtitle: 'WhatsApp · +66 81 234 5678' },
     ];
 
     public readonly loadingCases: readonly { name: string; loading: boolean; fetching: boolean; empty: boolean }[] = [
