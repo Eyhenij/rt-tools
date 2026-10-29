@@ -125,7 +125,7 @@ jobs:
             # cannot be accessed because the current session does not allow user interaction».
             # Задание падает на первой же строке шага стенда, и выглядит это поломкой стенда.
             #
-            # Свой каталог настроек пуст: ни помощника, ни записей входа. Всё, что тянет
+            # Свой каталог настроек без записей входа, а помощник в нём — свой, без ключей. Всё, что тянет
             # конвейер, лежит в открытых реестрах, и вход ему не нужен; понадобится — пароль
             # пишется в этот же файл прямо, а не командой входа.
             #
@@ -141,9 +141,24 @@ jobs:
               run: |
                   dir="$RUNNER_TEMP/docker-config"
                   mkdir -p "$dir"
+                  # Пустой `credsStore` не значит «без помощника»: на macOS клиент тогда сам берёт
+                  # `osxkeychain`, если тот лежит в PATH, и сборка образа падала тем же отказом
+                  # связки ключей. Поэтому помощник назван явно — свой, и на любой вопрос он
+                  # отвечает «ключей нет», а этот ответ клиент принимает как анонимный вход.
+                  mkdir -p "$dir/bin"
+                  cat > "$dir/bin/docker-credential-rt-none" <<'HELPER'
+                  #!/bin/sh
+                  case "$1" in
+                      get) cat >/dev/null; echo 'credentials not found in native keychain'; exit 1 ;;
+                      list) echo '{}' ;;
+                      *) cat >/dev/null ;;
+                  esac
+                  HELPER
+                  chmod +x "$dir/bin/docker-credential-rt-none"
+                  echo "$dir/bin" >> "$GITHUB_PATH"
                   # Свой каталог уносит и плагины клиента: без этой строки `docker compose`
                   # отвечает «unknown shorthand flag: 'd'», плагин лежит в домашнем каталоге.
-                  printf '{"cliPluginsExtraDirs":["%s"]}' "$HOME/.docker/cli-plugins" > "$dir/config.json"
+                  printf '{"credsStore":"rt-none","cliPluginsExtraDirs":["%s"]}' "$HOME/.docker/cli-plugins" > "$dir/config.json"
                   echo "DOCKER_CONFIG=$dir" >> "$GITHUB_ENV"
                   host="${DOCKER_HOST:-}"
                   for sock in "$HOME/.docker/run/docker.sock" "$HOME/.colima/default/docker.sock"; do
