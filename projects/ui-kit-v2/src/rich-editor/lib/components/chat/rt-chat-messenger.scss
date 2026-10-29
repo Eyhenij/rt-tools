@@ -6,16 +6,9 @@
             display: none;
         }
 
-        &__composer-tools {
-            display: none;
-        }
-
-        &__composer-tools-attach {
-            display: none;
-
-            &--shown {
-                display: inline-flex;
-            }
+        // Поле ответа мессенджера — рамка кита с рядом действий внутри, по ширине колонки
+        &__composer-prompt {
+            flex: 0 0 auto;
         }
 
         &__day {
@@ -37,28 +30,52 @@
             }
         }
 
-        // Вид мессенджера: пузырь мягкий, свой — цвета действия, время и знак доставки справа внизу
+        // Вид мессенджера: пузырь мягкий, свой — цвета действия, пузырь гостя серый на белой ленте,
+        // время и знак доставки справа внизу
         &--messenger {
             --rt-chat-bubble-radius: var(--rt-radius-xl);
             --rt-chat-bubble-own-bg: var(--rt-color-action-primary);
-            --rt-chat-bubble-in-bg: var(--rt-color-bg-surface);
+            --rt-chat-bubble-in-bg: var(--rt-color-bg-subtle);
 
-            .rt-chat__composer-rich {
-                margin-block-start: 0;
+            box-sizing: border-box;
+            padding: var(--rt-space-4);
+
+            // Высоту шапке дают имя и строка под ним, плотная полоса панели здесь не нужна
+            .rt-chat__header {
+                --rt-toolbar-height: auto;
+                --rt-toolbar-padding-top: 0;
+                --rt-toolbar-padding-bottom: calc(var(--rt-space-2) + var(--rt-space-1));
+
+                border-block-end: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
+
+                .rt-toolbar__bar--left {
+                    gap: calc(var(--rt-space-2) + var(--rt-space-1));
+                }
             }
 
+            // Реплики прижаты к низу ленты, к полю ответа: короткий разговор не висит под шапкой
             .rt-chat__thread {
                 padding: var(--rt-space-5) var(--rt-space-6);
                 border-radius: var(--rt-radius-lg);
-                background: var(--rt-color-bg-page);
+                background: var(--rt-color-bg-surface);
                 gap: var(--rt-space-1);
+
+                > :first-child {
+                    margin-block-start: auto;
+                }
             }
 
             .rt-chat__message {
                 padding: var(--rt-space-2) calc(var(--rt-space-2) + var(--rt-space-1)) var(--rt-space-1);
                 border-radius: var(--rt-chat-bubble-radius) var(--rt-chat-bubble-radius) var(--rt-chat-bubble-radius) var(--rt-radius-sm);
-                box-shadow: var(--rt-shadow-sm);
                 gap: var(--rt-space-0-5);
+            }
+
+            // Смена стороны отбита сильнее, чем реплики одного автора подряд. Между репликами
+            // стоит скрытая метка дня, поэтому сосед ищется через неё
+            .rt-chat__message-row--own + .rt-chat__day[hidden] + .rt-chat__message-row:not(.rt-chat__message-row--own),
+            .rt-chat__message-row:not(.rt-chat__message-row--own) + .rt-chat__day[hidden] + .rt-chat__message-row--own {
+                margin-block-start: calc(var(--rt-space-2) + var(--rt-space-1));
             }
 
             .rt-chat__message--own {
@@ -66,8 +83,19 @@
                 box-shadow: none;
             }
 
+            .rt-chat__title {
+                line-height: var(--rt-leading-normal);
+            }
+
+            // Высота строки округлена до целого пикселя, как у текстового блока макета: иначе дробные
+            // доли копятся от строки к строке и сдвигают всё ниже
+            .rt-chat__subtitle {
+                line-height: round(1em * var(--rt-leading-tight), 1px);
+            }
+
             .rt-chat__message-text {
                 font-size: var(--rt-text-sm);
+                line-height: round(1em * var(--rt-leading-tight), 1px);
             }
 
             .rt-chat__message--own .rt-chat__message-text,
@@ -76,22 +104,42 @@
                 color: var(--rt-color-action-on-primary);
             }
 
+            // На своём пузыре время и галочки тише текста: время прозрачнее, галочки чуть плотнее
+            .rt-chat__message--own .rt-chat__message-date {
+                opacity: 0.75;
+            }
+
+            .rt-chat__message--own .rt-chat__message-status {
+                opacity: 0.85;
+            }
+
             .rt-chat__message-footer {
                 justify-content: flex-end;
             }
 
+            // Кнопки у реплики стоят одной панелью: у входящей справа от пузыря, у своей слева
+            .rt-chat__message-actions {
+                display: flex;
+                align-items: center;
+                padding: var(--rt-space-0-5);
+                border: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
+                border-radius: var(--rt-radius-lg);
+                background: var(--rt-color-bg-surface);
+                box-shadow: var(--rt-shadow-sm);
+                gap: var(--rt-space-0-5);
+            }
+
+            .rt-chat__message-row:not(.rt-chat__message-row--own) .rt-chat__message-actions {
+                order: 1;
+            }
+
             .rt-chat__message-date {
                 font-size: var(--rt-text-2xs);
+                line-height: round(1em * var(--rt-leading-tight), 1px);
             }
 
             .rt-chat__message-author {
                 display: none;
-            }
-
-            .rt-chat__composer-tools {
-                display: flex;
-                align-items: center;
-                gap: var(--rt-space-1);
             }
         }
     }

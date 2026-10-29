@@ -90,6 +90,7 @@ const BEM_BLOCK: string = 'rt-tabs';
         '[class.rt-tabs--direction--horizontal]': "direction() === 'horizontal'",
         '[class.rt-tabs--direction--vertical]': "direction() === 'vertical'",
         '[class.rt-tabs--animating]': 'panels.shift() !== null',
+        '[class.rt-tabs--dense]': 'dense()',
         '[style]': 'panels.durations()',
     },
 })
@@ -191,6 +192,11 @@ export class RtTabsComponent {
 
     /** Растягивать вкладки на всю ширину полосы. */
     public readonly stretch: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+
+    /** Плотные вкладки: отступ 8 по бокам, чтобы в узкую панель влезло больше вкладок */
+    public readonly dense: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
 

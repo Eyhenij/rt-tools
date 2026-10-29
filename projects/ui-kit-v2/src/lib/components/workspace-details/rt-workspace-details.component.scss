@@ -26,9 +26,10 @@
             flex: 1 1 auto;
             min-block-size: 0;
 
+            // Низ полки вкладок стоит на одной линии с низом шапки переписки
             .rt-tabs__header {
                 align-items: flex-end;
-                block-size: 56px;
+                block-size: calc(56px + var(--rt-space-2) + var(--rt-space-1) + var(--rt-border-width-thin));
                 border-block-end: var(--rt-workspace-details-border-width) solid var(--rt-color-border-strong);
                 padding-inline: var(--rt-space-lg);
             }
@@ -51,6 +52,30 @@
             gap: var(--rt-space-md);
             min-block-size: 0;
             overflow-y: auto;
+        }
+
+        // Верх сведений о человеке: знак, имя и контакт столбцом по центру, линия отделяет строки
+        &__profile {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-block-end: var(--rt-workspace-details-border-width) solid var(--rt-color-border-subtle);
+            gap: calc(var(--rt-space-1) * 1.5);
+            padding-block: var(--rt-space-2) var(--rt-space-5);
+            text-align: center;
+        }
+
+        &__profile-name {
+            color: var(--rt-color-text-primary);
+            font-size: var(--rt-text-lg);
+            font-weight: var(--rt-font-weight-semibold);
+            line-height: round(1em * var(--rt-leading-tight), 1px);
+        }
+
+        &__profile-contact {
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-xs);
+            line-height: round(1em * var(--rt-leading-tight), 1px);
         }
 
         &__agent-view,

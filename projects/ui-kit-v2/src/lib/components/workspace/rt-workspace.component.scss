@@ -36,6 +36,13 @@
         }
 
         &__aside {
+            // Вкладки панели прижаты к своей линии того же цвета, низ полки вровень с низом шапки переписки
+            --rt-tabs-list-min-height: calc(56px + var(--rt-space-2) + var(--rt-space-1) + var(--rt-border-width-thin));
+            --rt-tabs-list-align: flex-end;
+            --rt-tabs-list-padding-inline: var(--rt-space-1);
+            --rt-tabs-list-border-color: var(--rt-color-border-strong);
+            --rt-tabs-content-padding-top: 0;
+
             display: flex;
             flex: 0 0 var(--rt-workspace-aside-size, 360px);
             flex-direction: column;

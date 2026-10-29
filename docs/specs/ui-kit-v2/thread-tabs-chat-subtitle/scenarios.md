@@ -58,8 +58,8 @@ Covered: `projects/ui-kit-v2/src/rich-editor/lib/components/chat/rt-chat-days.lo
 Given the correspondence is drawn with the `messenger` input
 When the thread and the reply field are drawn
 Then a day label stands above the first message of the day, the author line is hidden, the own
-bubble takes the action colour, and the reply field is the kit one-line field with a row of
-buttons under it, the attach button first
+bubble takes the action colour, and the reply field is the kit prompt field: one frame with the
+text on top and a row of buttons inside it, the attach button first on the left
 
 Covered: `projects/ui-kit-v2/src/rich-editor/lib/components/chat/rt-chat.component.spec.ts`.
 Coverage: partial — the test reads the markup and the styles; the look is measured on the consumer screen.

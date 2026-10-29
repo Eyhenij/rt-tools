@@ -301,7 +301,7 @@ describe('RtChatComponent', (): void => {
     });
 
     describe('вид мессенджера', (): void => {
-        it('SC-UKV-1067 — вид мессенджера ставит метку дня, поле кита и ряд кнопок со скрепкой', (): void => {
+        it('SC-UKV-1067 — вид мессенджера ставит метку дня и поле кита со скрепкой внутри рамки', (): void => {
             const today: string = new Date().toISOString();
             const fixture: ComponentFixture<RtChatComponent> = setup({
                 messenger: true,
@@ -316,10 +316,12 @@ describe('RtChatComponent', (): void => {
             const days: HTMLElement[] = qaAll(fixture, 'chat-day').map((node: DebugElement): HTMLElement => node.nativeElement);
             expect(days.map((day: HTMLElement): boolean => day.hidden)).toEqual([false, true]);
             expect(textOf(qa(fixture, 'chat-day'))).toBe('today');
-            expect(qa(fixture, 'chat-composer-rich')).not.toBeNull();
+            const prompt: HTMLElement = qa(fixture, 'chat-composer-prompt').nativeElement;
+            expect(qa(fixture, 'chat-composer-rich')).toBeNull();
             expect(qa(fixture, 'chat-composer')).toBeNull();
             const attach: HTMLElement = qa(fixture, 'chat-composer-tools-attach').nativeElement;
-            expect(attach.classList).toContain('rt-chat__composer-tools-attach--shown');
+            expect(prompt.contains(attach)).toBe(true);
+            expect(attach.hidden).toBe(false);
 
             const scss: string = readFileSync(join(__dirname, 'rt-chat-messenger.scss'), 'utf8');
             expect(scss).toContain('.rt-chat__message-author {\n                display: none;');

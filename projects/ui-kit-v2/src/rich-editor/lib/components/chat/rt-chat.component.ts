@@ -30,6 +30,7 @@ import { NgTemplateOutlet } from '@angular/common';
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import {
+    RtAiPromptInputComponent,
     RtButtonDirective,
     RtConfirmDirective,
     RtDeltaViewComponent,
@@ -49,7 +50,7 @@ import {
 } from '@rt-tools/ui-kit-v2';
 import { IRtServiceLogo } from '@rt-tools/ui-kit-v2';
 import { RT_KIT_LABELS, RT_KIT_LOCALE, rtKitLabel, TRtKitLabelKey, TRtKitLabelMap } from '@rt-tools/ui-kit-v2';
-import { RtChatMessageActionsDirective } from './rt-chat-message-actions.directive';
+import { RtChatMessageActionsDirective, RtChatMessageButtonsDirective } from './rt-chat-message-actions.directive';
 import { RtChatMessageHasActionsPipe } from './rt-chat-message-actions.pipe';
 import { RtChatStatusLabelPipe } from '../../pipes/rt-chat-status-label.pipe';
 import { RtMessageComposerComponent } from '../message-composer/rt-message-composer.component';
@@ -87,6 +88,7 @@ const ATTACHMENT_FALLBACK_KEY: TRtKitLabelKey = 'chatAttachmentFallback';
         ReactiveFormsModule,
 
         // standalone components / directives
+        RtAiPromptInputComponent,
         RtButtonDirective,
         RtChatStatusLabelPipe,
         RtConfirmDirective,
@@ -213,6 +215,9 @@ export class RtChatComponent {
 
     /** Шаблон действий у реплики `<ng-template rtChatMessageActions>`; не объявлен — кнопки нет */
     protected readonly messageActions: Signal<RtChatMessageActionsDirective | undefined> = contentChild(RtChatMessageActionsDirective);
+
+    /** Кнопки у реплики перед меню `<ng-template rtChatMessageButtons>`; не объявлены — кнопок нет */
+    protected readonly messageButtons: Signal<RtChatMessageButtonsDirective | undefined> = contentChild(RtChatMessageButtonsDirective);
 
     /** История сообщений (consumer уже смаппил из доменной модели). */
     public readonly messages: InputSignal<readonly IRtChat.Message[]> = input<readonly IRtChat.Message[]>([]);

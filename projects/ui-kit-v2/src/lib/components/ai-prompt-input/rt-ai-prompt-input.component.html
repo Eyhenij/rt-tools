@@ -55,7 +55,11 @@
                     (clicked)="openPicker()" />
             }
 
+            <ng-content select="[rtPromptInputStart]" />
+
             <div rtElem="controls">
+                <ng-content select="[rtPromptInputEnd]" />
+
                 @if (model()) {
                     <button
                         rtButton

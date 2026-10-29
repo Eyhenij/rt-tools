@@ -99,16 +99,21 @@
                                             (clicked)="deleteMessage.emit(m)" />
                                     }
                                 }
-                                @if (messageActions()?.template; as actionsTpl) {
-                                    @if (m | rtChatMessageHasActions: messageHasActions()) {
-                                        <div rtElem="message-actions" qa-dataid="chat-message-actions">
-                                            <rt-menu>
+                                @if ((messageActions() || messageButtons()) && (m | rtChatMessageHasActions: messageHasActions())) {
+                                    <div rtElem="message-actions" qa-dataid="chat-message-actions">
+                                        <ng-container
+                                            [ngTemplateOutlet]="messageButtons()?.template ?? null"
+                                            [ngTemplateOutletContext]="{ $implicit: m }" />
+                                        @if (messageActions()?.template; as actionsTpl) {
+                                            <rt-menu
+                                                [icon]="messenger() ? 'ellipsis-v' : 'ellipsis-h'"
+                                                [triggerSize]="messenger() ? 'sm' : 'md'">
                                                 <ng-container
                                                     [ngTemplateOutlet]="actionsTpl"
                                                     [ngTemplateOutletContext]="{ $implicit: m }" />
                                             </rt-menu>
-                                        </div>
-                                    }
+                                        }
+                                    </div>
                                 }
                                 <div rtElem="message" [rtMod]="{ own: m.own, deleted: m.deleted }">
                                     <p rtElem="message-author" qa-dataid="chat-message-author">{{ m.author }}</p>
@@ -188,7 +193,7 @@
                                                          (серый/синий) различает доставлено и прочитано. -->
                                                     <rt-icon
                                                         rtElem="status-icon"
-                                                        size="sm"
+                                                        [size]="messenger() ? 'xs' : 'sm'"
                                                         [name]="m.status === MessageStatus.Sending ? 'clock' : 'check-double'" />
                                                 }
                                             </span>
@@ -212,14 +217,49 @@
             </div>
 
             @if (canReply()) {
-                @if (richComposer() || messenger()) {
+                @if (messenger()) {
+                    <!-- Поле ответа мессенджера: одна рамка, скрепка и кнопки потребителя внутри неё слева -->
+                    <input
+                        #composerFileEl
+                        qa-dataid="chat-composer-tools-file-input"
+                        type="file"
+                        hidden
+                        multiple
+                        [attr.accept]="accept() || null"
+                        (change)="onFilesPicked($event)" />
+                    <rt-ai-prompt-input
+                        rtElem="composer-prompt"
+                        qa-dataid="chat-composer-prompt"
+                        hint=""
+                        [placeholder]="placeholder()"
+                        [sending]="sending()"
+                        [disabled]="loading() || fetching()"
+                        (submitted)="onComposerSubmit($event)"
+                        (input)="onReplyInput($event)">
+                        <rt-icon-button
+                            rtPromptInputStart
+                            qa-dataid="chat-composer-tools-attach"
+                            icon="paperclip"
+                            variant="ghost"
+                            size="sm"
+                            iconColor="muted"
+                            [hidden]="!attachments()"
+                            [ariaLabel]="t().chatAttachAria"
+                            [tooltip]="t().chatAttachTooltip"
+                            [disabled]="composerDisabled()"
+                            (clicked)="openFilePicker()" />
+                        <ng-container ngProjectAs="[rtPromptInputStart]">
+                            <ng-content select="[rtChatComposerTools]" />
+                        </ng-container>
+                    </rt-ai-prompt-input>
+                } @else if (richComposer()) {
                     <rt-message-composer
                         rtElem="composer-rich"
                         qa-dataid="chat-composer-rich"
                         [placeholder]="placeholder()"
                         [accept]="accept()"
-                        [attachments]="attachments() && !messenger()"
-                        [formatting]="formatting() && !messenger()"
+                        [attachments]="attachments()"
+                        [formatting]="formatting()"
                         [toolbar]="formattingToolbar()"
                         [sending]="sending()"
                         [disabled]="loading() || fetching()"
@@ -290,30 +330,6 @@
                             [disabled]="!canSend()"></button>
                     </form>
                 }
-                <!-- Ряд кнопок под полем в виде мессенджера: скрепка кита первой, дальше кнопки потребителя -->
-                <div rtElem="composer-tools" qa-dataid="chat-composer-tools">
-                    <input
-                        #composerFileEl
-                        qa-dataid="chat-composer-tools-file-input"
-                        type="file"
-                        hidden
-                        multiple
-                        [attr.accept]="accept() || null"
-                        (change)="onFilesPicked($event)" />
-                    <rt-icon-button
-                        rtElem="composer-tools-attach"
-                        qa-dataid="chat-composer-tools-attach"
-                        icon="paperclip"
-                        variant="ghost"
-                        size="sm"
-                        iconColor="muted"
-                        [rtMod]="{ shown: attachments() }"
-                        [ariaLabel]="t().chatAttachAria"
-                        [tooltip]="t().chatAttachTooltip"
-                        [disabled]="composerDisabled()"
-                        (clicked)="openFilePicker()" />
-                    <ng-content select="[rtChatComposerTools]" />
-                </div>
             } @else if (replyBlockReason()) {
                 <rt-note rtElem="reply-block" qa-dataid="chat-reply-block">{{ replyBlockReason() }}</rt-note>
             }

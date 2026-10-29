@@ -34,13 +34,19 @@
             align-items: center;
         }
 
+        // Высоту полосы и прижим вкладок задаёт место, где вкладки стоят: в колонке рабочего места
+        // полоса встаёт полкой вровень с шапками соседних колонок
         &__tab-list {
             position: relative;
             display: flex;
-            border-bottom: var(--rt-tabs-border-width) solid var(--rt-color-border-default);
+            box-sizing: border-box;
+            align-items: var(--rt-tabs-list-align, stretch);
+            border-bottom: var(--rt-tabs-border-width) solid var(--rt-tabs-list-border-color, var(--rt-color-border-default));
             margin: 0;
+            min-block-size: var(--rt-tabs-list-min-height, auto);
             -ms-overflow-style: none;
             overflow-x: auto;
+            padding-inline: var(--rt-tabs-list-padding-inline, 0);
             scrollbar-width: none;
             white-space: nowrap;
 
@@ -179,7 +185,7 @@
             min-height: 0;
             flex: 1 1 auto;
             flex-direction: column;
-            padding-top: var(--rt-space-md);
+            padding-top: var(--rt-tabs-content-padding-top, var(--rt-space-md));
             gap: var(--rt-space-md);
             line-height: var(--rt-leading-relaxed);
 
@@ -325,6 +331,11 @@
             }
         }
 
+        // Плотные вкладки: класс ставит полоса, а отступ несёт сама вкладка
+        .rt-tabs--dense &__trigger {
+            padding-inline: var(--rt-space-2);
+        }
+
         &__title {
             overflow: hidden;
             max-width: 200px;
@@ -389,9 +400,15 @@
             }
         }
 
+        // Черта выбранной вкладки входит в её высоту, как в компоненте Tab дизайн-системы: вкладка
+        // выше соседних на толщину черты, и при прижатии полосы к низу подпись стоит выше их подписей
         &--selected {
             color: var(--rt-color-action-primary);
             cursor: default;
+
+            .rt-tab-item__trigger {
+                padding-block-end: calc(var(--rt-space-2) + 2px);
+            }
 
             &:after {
                 background-color: var(--rt-color-action-primary);
