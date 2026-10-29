@@ -26,3 +26,11 @@ When they are drawn
 Then the clearing cross of each is in the Tab order; without `clearTabbable` it is not
 
 Covered: `projects/ui-kit-v2/src/lib/components/form-control/rt-clear-tabbable.spec.ts`.
+
+### SC-UKV-1083 — a tab puts its badge over the icon when it asks for it
+
+Given tabs with an icon and a badge, one with `badgePosition` `'overlay'` and one without it, and a tab with `'overlay'` and no icon
+When the tab strip is drawn
+Then the badge of the first stands over the icon corner and the tab is as wide as without a badge; the second keeps the badge after the title; the tab without an icon keeps it inline
+
+Covered: `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-additions.spec.ts`.

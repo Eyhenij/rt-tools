@@ -39,6 +39,10 @@ person without a mouse cannot reach.
 - **A tab fills its icon when it asks for it.** `rtTab` takes `iconFill`, `false` by default, and
   passes it to the icon as `fill`, for an icon by `icon` and by `glyph` alike. A tab without it is
   drawn as before.
+- **A tab puts its badge over the icon when it asks for it.** `rtTab` takes `badgePosition`,
+  `'inline'` by default, which keeps the badge after the title as before. With `'overlay'` the
+  badge is a circle of 16 pixels over the top right corner of the icon and moves nothing in the tab.
+  A tab without an icon keeps the badge inline.
 - **The kit settings name whether the clearing cross goes by Tab.** The fields node takes
   `clearTabbable`. `clearTabbable` on the element wins over it, and without either the cross stays
   out of the Tab order, as before.
@@ -54,7 +58,7 @@ person without a mouse cannot reach.
 
 ## Contract
 
-Not applicable: the surface is the input `iconFill` of `rtTab` and the setting
+Not applicable: the surface is the inputs `iconFill` and `badgePosition` of `rtTab` and the setting
 `components.formControl.clearTabbable` of `provideRtKit`; the subdomain serves no procedures.
 
 ### Refusal codes
@@ -67,12 +71,13 @@ Not applicable: nothing is stored.
 
 ## Screens and states
 
-| State                                                           | What is visible                                 |
-| --------------------------------------------------------------- | ----------------------------------------------- |
-| a tab with `iconFill`                                           | its icon is filled, the other tabs are outlined |
-| a field with a value, the setting on                            | Tab from the field reaches its cross            |
-| a field with a value, the setting on, `clearTabbable` off on it | Tab goes past the cross                         |
-| a field without a value                                         | no cross, Tab goes to the next field            |
+| State                                                           | What is visible                                                                  |
+| --------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| a tab with `iconFill`                                           | its icon is filled, the other tabs are outlined                                  |
+| a tab with an icon, a badge and `badgePosition` `'overlay'`     | a circle with the count over the icon corner, the tab as wide as without a badge |
+| a field with a value, the setting on                            | Tab from the field reaches its cross                                             |
+| a field with a value, the setting on, `clearTabbable` off on it | Tab goes past the cross                                                          |
+| a field without a value                                         | no cross, Tab goes to the next field                                             |
 
 ## Cross-cutting requirements
 
@@ -107,3 +112,5 @@ None.
 
 - 2026-10-29 — the application's request: a filled tab icon and the clearing cross by Tab from the
   kit settings.
+- 2026-10-29 — the application's third request, a badge over the tab icon; the owner put it into
+  the same task.

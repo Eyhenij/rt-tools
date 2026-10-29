@@ -4,12 +4,11 @@
 
 - **State:** `этап-идёт`
 - **Stage:** 1 of 4 — The mockup
-- **Done:** task, branch, grill, agreement and plan.
-- **Next step:** draw the Figma frame and show it to the owner.
-- **Uncommitted:** nothing after the first commit.
-- **Waiting for the owner:** the link to the Figma file of the second kit's design system: neither
-  the tree nor past sessions of this tree name it; and the answer on the third request of the
-  application, a badge over the tab icon
+- **Done:** task, branch, grill, agreement and plan; the badge over the tab icon is added to the
+  agreement as SC-UKV-1083.
+- **Next step:** draw the Figma frame in Design System V2 and show it to the owner.
+- **Uncommitted:** nothing after the last commit.
+- **Waiting for the owner:** no
 - **PR:** not open yet
 
 ## Steps
@@ -27,11 +26,17 @@
 
 ## Decisions along the way
 
-- None yet.
+- **The badge over the tab icon joins this task.** The owner answered «В RT-2995». It widens the
+  steps without new ones: 1.1 draws a tab with the badge over its icon too, 2.1 adds
+  `badgePosition` next to `iconFill`, 2.4 writes SC-UKV-1083 too, 3.1 shows the badge in the
+  stories. Affected stages of the plan: 1, 2, 3.
+- **The mockup goes into the file Design System V2** named by the owner. Affected stage: 1.
+- **The branch commits are signed by rt-tools-dev.** The tree guard refuses any other signature;
+  the first commit was re-signed before any push. Affected stage: none.
 
 ## Sessions
 
 ### 2026-10-29
 
 - Task RT-2995 created outside an epic, branch from main, card in progress.
-- The application sent a third request, a badge over the tab icon; it is put to the owner apart.
+- The application sent a third request, a badge over the tab icon; the owner put it into this task.

@@ -72,3 +72,12 @@ It answers a request from the session of an application moving onto the second k
 ## What is left unclear
 
 - Nothing blocks the work.
+
+## Answers after the plan
+
+**Где рисовать кадр?** Options: «Дам ссылку», «Новый файл».
+«https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL/Design-System-V2?node-id=4630-21160&p=f&t=ZwN2u8eqjvDObDL1-0»
+
+**Третий запрос приложения, бейдж поверх иконки вкладки. Как взять?** Options: «В RT-2995»,
+«Отдельной задачей», «Не брать пока».
+«В RT-2995»
