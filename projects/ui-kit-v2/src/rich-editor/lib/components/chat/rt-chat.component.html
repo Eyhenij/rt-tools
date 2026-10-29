@@ -67,6 +67,9 @@
                         [attr.aria-busy]="fetching() ? 'true' : null"
                         (scroll)="onThreadScroll()">
                         @for (m of messages(); track m.id) {
+                            <div rtElem="day" qa-dataid="chat-day" [hidden]="!dayLabels().has(m.id)">
+                                <span rtElem="day-label">{{ dayLabels().get(m.id) }}</span>
+                            </div>
                             <div
                                 rtElem="message-row"
                                 qa-dataid="chat-message"
@@ -155,7 +158,7 @@
                                     }
                                     <span rtElem="message-footer">
                                         <span rtElem="message-date" qa-dataid="chat-message-date">
-                                            {{ m.createdAt | date: 'short' : undefined : locale() }}
+                                            {{ m.createdAt | date: (messenger() ? 'shortTime' : 'short') : undefined : locale() }}
                                         </span>
                                         @if (m.status) {
                                             <span
@@ -209,14 +212,14 @@
             </div>
 
             @if (canReply()) {
-                @if (richComposer()) {
+                @if (richComposer() || messenger()) {
                     <rt-message-composer
                         rtElem="composer-rich"
                         qa-dataid="chat-composer-rich"
                         [placeholder]="placeholder()"
                         [accept]="accept()"
-                        [attachments]="attachments()"
-                        [formatting]="formatting()"
+                        [attachments]="attachments() && !messenger()"
+                        [formatting]="formatting() && !messenger()"
                         [toolbar]="formattingToolbar()"
                         [sending]="sending()"
                         [disabled]="loading() || fetching()"
@@ -287,6 +290,30 @@
                             [disabled]="!canSend()"></button>
                     </form>
                 }
+                <!-- Ряд кнопок под полем в виде мессенджера: скрепка кита первой, дальше кнопки потребителя -->
+                <div rtElem="composer-tools" qa-dataid="chat-composer-tools">
+                    <input
+                        #composerFileEl
+                        qa-dataid="chat-composer-tools-file-input"
+                        type="file"
+                        hidden
+                        multiple
+                        [attr.accept]="accept() || null"
+                        (change)="onFilesPicked($event)" />
+                    <rt-icon-button
+                        rtElem="composer-tools-attach"
+                        qa-dataid="chat-composer-tools-attach"
+                        icon="paperclip"
+                        variant="ghost"
+                        size="sm"
+                        iconColor="muted"
+                        [rtMod]="{ shown: attachments() }"
+                        [ariaLabel]="t().chatAttachAria"
+                        [tooltip]="t().chatAttachTooltip"
+                        [disabled]="composerDisabled()"
+                        (clicked)="openFilePicker()" />
+                    <ng-content select="[rtChatComposerTools]" />
+                </div>
             } @else if (replyBlockReason()) {
                 <rt-note rtElem="reply-block" qa-dataid="chat-reply-block">{{ replyBlockReason() }}</rt-note>
             }

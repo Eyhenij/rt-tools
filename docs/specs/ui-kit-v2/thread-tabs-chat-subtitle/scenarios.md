@@ -43,3 +43,23 @@ Then the title stays on one line cut by the ellipsis, and its hint holds the who
 
 Covered: `projects/ui-kit-v2/src/rich-editor/lib/components/chat/rt-chat.component.spec.ts`.
 Coverage: partial — the test reads the title styles and the hint; one line is measured on the consumer screen at widths 375 to 1440.
+
+### SC-UKV-1066 — the day label names today and yesterday in words, earlier days by date
+
+Given a thread with messages of yesterday and of today
+When the day labels are computed
+Then only the first message of each day carries a label: «today» and «yesterday» in the language
+of the thread, an earlier day by its date, and the year only for past years
+
+Covered: `projects/ui-kit-v2/src/rich-editor/lib/components/chat/rt-chat-days.logic.spec.ts`.
+
+### SC-UKV-1067 — the messenger look of the correspondence
+
+Given the correspondence is drawn with the `messenger` input
+When the thread and the reply field are drawn
+Then a day label stands above the first message of the day, the author line is hidden, the own
+bubble takes the action colour, and the reply field is the kit one-line field with a row of
+buttons under it, the attach button first
+
+Covered: `projects/ui-kit-v2/src/rich-editor/lib/components/chat/rt-chat.component.spec.ts`.
+Coverage: partial — the test reads the markup and the styles; the look is measured on the consumer screen.

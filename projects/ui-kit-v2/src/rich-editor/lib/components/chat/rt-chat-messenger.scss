@@ -1,0 +1,96 @@
+// Вид мессенджера чата: метки дней, ряд кнопок под полем, пузыри мягкие, свой — цвета действия.
+// Лежит отдельно от стилей чата, чтобы оба файла уместились в предел длины.
+@layer rt-kit.components {
+    .rt-chat {
+        &__day[hidden] {
+            display: none;
+        }
+
+        &__composer-tools {
+            display: none;
+        }
+
+        &__composer-tools-attach {
+            display: none;
+
+            &--shown {
+                display: inline-flex;
+            }
+        }
+
+        &__day {
+            display: flex;
+            justify-content: center;
+            padding-block-end: var(--rt-space-2);
+        }
+
+        &__day-label {
+            padding: var(--rt-space-1) calc(var(--rt-space-2) + var(--rt-space-1));
+            border-radius: var(--rt-radius-full);
+            background: var(--rt-color-bg-surface);
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-xs);
+            font-weight: var(--rt-font-weight-medium);
+
+            &:first-letter {
+                text-transform: uppercase;
+            }
+        }
+
+        // Вид мессенджера: пузырь мягкий, свой — цвета действия, время и знак доставки справа внизу
+        &--messenger {
+            --rt-chat-bubble-radius: var(--rt-radius-xl);
+            --rt-chat-bubble-own-bg: var(--rt-color-action-primary);
+
+            .rt-chat__thread {
+                padding: var(--rt-space-5) var(--rt-space-6);
+                border-radius: var(--rt-radius-lg);
+                background: var(--rt-color-bg-page);
+                gap: var(--rt-space-1);
+            }
+
+            .rt-chat__message {
+                padding: var(--rt-space-2) calc(var(--rt-space-2) + var(--rt-space-1)) var(--rt-space-1);
+                box-shadow: var(--rt-shadow-sm);
+                gap: var(--rt-space-0-5);
+            }
+
+            .rt-chat__message--own {
+                box-shadow: none;
+            }
+
+            .rt-chat__message-text {
+                font-size: var(--rt-text-sm);
+            }
+
+            .rt-chat__message--own .rt-chat__message-text,
+            .rt-chat__message--own .rt-chat__message-date,
+            .rt-chat__message--own .rt-chat__message-status {
+                color: var(--rt-color-action-on-primary);
+            }
+
+            .rt-chat__message-footer {
+                justify-content: flex-end;
+            }
+
+            .rt-chat__message-date {
+                font-size: var(--rt-text-2xs);
+            }
+
+            .rt-chat__message--own .rt-chat__message-date {
+                opacity: 0.75;
+            }
+
+            .rt-chat__message-author {
+                display: none;
+            }
+
+            .rt-chat__composer-tools {
+                display: flex;
+                align-items: center;
+                gap: var(--rt-space-1);
+                padding-block-start: var(--rt-space-2);
+            }
+        }
+    }
+}

@@ -55,7 +55,8 @@ import { RtChatStatusLabelPipe } from '../../pipes/rt-chat-status-label.pipe';
 import { RtMessageComposerComponent } from '../message-composer/rt-message-composer.component';
 import { IRtMessageComposer } from '../message-composer/rt-message-composer.model';
 import { TRtRichEditorToolbar } from '../rich-editor/rt-rich-editor.component';
-import { pickedFiles, withAppendedFiles, withoutFileAt } from './rt-chat-files.logic';
+import { pickedFiles, rtChatCanSend, withAppendedFiles, withoutFileAt } from './rt-chat-files.logic';
+import { rtChatDayLabels } from './rt-chat-days.logic';
 import { nextAtBottom, pinToBottomDeferred } from './rt-chat-thread.logic';
 import { typingDraft, RtChatTypingTracker } from './rt-chat-typing.logic';
 import { ERtChatMessageStatus, IRtChat } from './rt-chat.model';
@@ -75,7 +76,7 @@ const ATTACHMENT_FALLBACK_KEY: TRtKitLabelKey = 'chatAttachmentFallback';
 @Component({
     selector: 'rt-chat',
     templateUrl: './rt-chat.component.html',
-    styleUrls: ['./rt-chat.component.scss'],
+    styleUrls: ['./rt-chat.component.scss', './rt-chat-messenger.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
     imports: [
@@ -113,6 +114,7 @@ const ATTACHMENT_FALLBACK_KEY: TRtKitLabelKey = 'chatAttachmentFallback';
         class: BEM_BLOCK,
         '[class.rt-chat--expanded]': 'expanded()',
         '[class.rt-chat--fill]': 'fill()',
+        '[class.rt-chat--messenger]': 'messenger()',
     },
 })
 export class RtChatComponent {
@@ -180,20 +182,15 @@ export class RtChatComponent {
     /** Композер заблокирован при загрузке/рефреше треда или отправке in-flight. */
     protected readonly composerDisabled: Signal<boolean> = computed((): boolean => this.loading() || this.fetching() || this.sending());
 
-    /**
-     * Можно ли отправить: композер активен и есть содержимое — непустой текст или
-     * (при включённых вложениях) хотя бы один файл. Сообщение само по себе не
-     * бывает «невалидным» — пустоту гасим дизейблом кнопки, а не подсветкой поля.
-     */
-    protected readonly canSend: Signal<boolean> = computed((): boolean => {
-        if (this.composerDisabled()) {
-            return false;
-        }
-        const value: Partial<{ message: string; files: File[] }> = this.#formValue();
-        const hasText: boolean = (value.message ?? '').trim().length > 0;
-        const hasFiles: boolean = this.attachments() && (value.files?.length ?? 0) > 0;
-        return hasText || hasFiles;
-    });
+    /** Можно ли отправить: пустоту гасит выключенная кнопка, поле не подсвечивается ошибкой */
+    protected readonly canSend: Signal<boolean> = computed((): boolean =>
+        rtChatCanSend(this.composerDisabled(), this.#formValue(), this.attachments())
+    );
+
+    /** Подписи дней над первым сообщением каждого дня — только в виде мессенджера */
+    protected readonly dayLabels: Signal<ReadonlyMap<number | string, string>> = computed((): ReadonlyMap<number | string, string> =>
+        this.messenger() ? rtChatDayLabels(this.messages(), new Date(), this.locale()) : new Map<number | string, string>()
+    );
 
     /** Показывать ли шапку: только когда включена хотя бы одна иконка. */
     protected readonly showHeader: Signal<boolean> = computed((): boolean => this.showRefresh() || this.showExpand());
@@ -206,27 +203,15 @@ export class RtChatComponent {
     /** Выбранные, но ещё не отправленные файлы — карточки над полем ввода. */
     protected readonly selectedFiles: Signal<File[]> = computed((): File[] => this.#formValue().files ?? []);
 
-    /**
-     * Drop-зона активна только когда вложения включены, ответ доступен и композер
-     * не занят (загрузка/рефреш/отправка). Иначе обёртка `rt-file-drop` просто
-     * пропускает контент без оверлея.
-     */
+    /** Drop-зона активна при включённых вложениях, доступном ответе и свободном композере */
     protected readonly dropDisabled: Signal<boolean> = computed(
         (): boolean => !this.attachments() || !this.canReply() || this.composerDisabled()
     );
 
-    /**
-     * Файл из drag-n-drop для rich-композера: каждый drop кладёт новый `File`,
-     * пробрасывается в `rt-message-composer` через input. Классический композер
-     * принимает drop напрямую в свой `replyForm`.
-     */
+    /** Файлы drop для rich-композера; классический композер принимает drop в свой `replyForm` */
     protected readonly droppedFiles: WritableSignal<File[] | null> = signal<File[] | null>(null);
 
-    /**
-     * Шаблон действий у реплики: `<ng-template rtChatMessageActions let-message>`.
-     *
-     * Не объявлен — разметка реплики прежняя, и лишней кнопки у неё не появляется.
-     */
+    /** Шаблон действий у реплики `<ng-template rtChatMessageActions>`; не объявлен — кнопки нет */
     protected readonly messageActions: Signal<RtChatMessageActionsDirective | undefined> = contentChild(RtChatMessageActionsDirective);
 
     /** История сообщений (consumer уже смаппил из доменной модели). */
@@ -319,6 +304,14 @@ export class RtChatComponent {
     });
 
     /** Показать иконку refresh в шапке. */
+    /**
+     * Вид мессенджера: без подписи автора, свой пузырь цвета действия, время без даты, над
+     * сообщениями дня — его подпись, поле ответа в одну строку с рядом кнопок под ним.
+     */
+    public readonly messenger: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+
     public readonly showRefresh: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
@@ -455,7 +448,7 @@ export class RtChatComponent {
         if (files.length === 0) {
             return;
         }
-        if (this.richComposer()) {
+        if (this.richComposer() || this.messenger()) {
             // Новый массив на каждый drop — effect композера видит каждое перетаскивание.
             this.droppedFiles.set([...files]);
             return;
@@ -469,10 +462,7 @@ export class RtChatComponent {
 
     protected onFilesPicked(event: Event): void {
         const inputEl: HTMLInputElement = event.target as HTMLInputElement;
-        const picked: File[] = pickedFiles(inputEl.files);
-        if (picked.length > 0) {
-            this.replyForm.controls.files.setValue(withAppendedFiles(this.replyForm.controls.files.value, picked));
-        }
+        this.onFilesDropped(pickedFiles(inputEl.files));
         // Сброс значения: без него повторный выбор того же файла не даёт `change`.
         inputEl.value = '';
     }
