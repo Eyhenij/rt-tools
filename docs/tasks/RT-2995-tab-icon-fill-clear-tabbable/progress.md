@@ -10,10 +10,15 @@
   The whole kit run: 282 files green before the last two tests were fixed; both rerun green.
   The multiselect: frame `7330:2735` approved, the cross goes as a neighbouring button with
   `clearTabbable` (SC-UKV-1084), `rt-clear-tabbable.spec.ts` now 7 green, the multiselect spec 25.
-- **Next step:** stories for 3.1 on the second showcase (port 6007, the owner's — work with the
-  running one): tabs with `iconFill` and the overlay badge, the fields and the multiselect with the
-  cross by Tab from the kit setting; then the measurement against the three frames by
-  `tools/kit-match.mjs` and the question «одобряете?» on the showcase.
+- **Next step:** 3.1 is begun — `Playground` of the tab takes `iconFill` and `badgePosition`. Next:
+  a part `iconBadge` in `tabs/stories/component/test-tabs-matrix.component.ts` and a story of it in
+  `tabs-matrix.stories.ts`, five strips as on the frame `7327:531`, laid by `app-story-row` with an
+  items list like the part `iconOnly` (no bare stacking class: the showcase has none). Icons by
+  Material glyphs that are not kit names — `grade`, `label`, `sell`: a kit name in the base preset
+  does not fill, so the frame's `star`/`star-fill` pair is drawn by glyphs. Then the fields and the
+  multiselect with the cross by Tab from the kit setting, the measurement against the three frames
+  by `tools/kit-match.mjs`, and «одобряете?» on the showcase. The showcase on 6007 is the owner's:
+  work with the running one.
 - **Uncommitted:** nothing after the last commit.
 - **Waiting for the owner:** no
 - **Main is red apart from this work, task RT-2996:** typecheck of the chat spec (4 errors),
