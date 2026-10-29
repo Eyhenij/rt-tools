@@ -7,7 +7,7 @@
 - **Done:** оба этапа; инструмент `tools/kit-match.mjs` (числа — гейт, наложение — кадр для владельца), строка «Совпадение» в записи и её проверка, сценарии 21/21
 - **Next step:** разобрать папку задачи последним коммитом, пуш, PR в main
 - **Uncommitted:** no
-- **Waiting for the owner:** no
+- **Waiting for the owner:** ответ, как `git push` входит в GitHub: пуш падает с `could not read Username`. Сверх того набор пуша красный, пока RT-2982 (двойные номера сценариев) не влит в main
 - **PR:** not open yet
 
 ## Steps
