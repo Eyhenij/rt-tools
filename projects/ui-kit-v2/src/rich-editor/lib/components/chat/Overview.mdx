@@ -98,29 +98,30 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Входы
 
-| вход                | тип                                       | умолчание | что делает                                         |
-| ------------------- | ----------------------------------------- | --------- | -------------------------------------------------- |
-| `messages`          | `readonly IRtChat.Message[]`              | `[]`      | лента сообщений                                    |
-| `loading`           | `boolean`                                 | `false`   | первая загрузка: вместо ленты заглушки             |
-| `fetching`          | `boolean`                                 | `false`   | догрузка: лента остаётся на месте                  |
-| `canReply`          | `boolean`                                 | `false`   | показывать ли поле ответа                          |
-| `replyBlockReason`  | `string \| null`                          | `null`    | почему отвечать нельзя — вместо поля               |
-| `sending`           | `boolean`                                 | `false`   | отправка в пути: поле заблокировано                |
-| `placeholder`       | `string`                                  | `''`      | подсказка в поле ответа                            |
-| `title`             | `string`                                  | `''`      | заголовок шапки; сам по себе шапку не создаёт      |
-| `sign`              | `IRtServiceLogo.Item \| null`             | `null`    | знак канала перед заголовком; шапку не создаёт     |
-| `emptyHint`         | `string`                                  | `''`      | подсказка, когда переписка не выбрана              |
-| `hasThread`         | `boolean`                                 | `false`   | выбрана ли переписка                               |
-| `attachments`       | `boolean`                                 | `false`   | скрепка в поле ответа                              |
-| `accept`            | `string`                                  | `''`      | какие файлы принимает скрепка                      |
-| `richComposer`      | `boolean`                                 | `false`   | поле ответа с оформлением                          |
-| `formatting`        | `boolean`                                 | `false`   | панель оформления в поле ответа                    |
-| `formattingToolbar` | `TRtRichEditorToolbar`                    | —         | какие кнопки в панели оформления                   |
-| `fill`              | `boolean`                                 | `false`   | занимать всю высоту родителя                       |
-| `showRefresh`       | `boolean`                                 | `false`   | кнопка обновления в шапке — она же создаёт шапку   |
-| `showExpand`        | `boolean`                                 | `false`   | кнопка разворота в шапке                           |
-| `messageHasActions` | `IRtChat.MessageActionsPredicate \| null` | `null`    | есть ли у реплики свои действия — гейт кнопки «…»  |
-| `typingText`        | `string`                                  | `''`      | строка «печатает» поверх низа ленты; пустая прячет |
+| вход                | тип                                       | умолчание | что делает                                          |
+| ------------------- | ----------------------------------------- | --------- | --------------------------------------------------- |
+| `messages`          | `readonly IRtChat.Message[]`              | `[]`      | лента сообщений                                     |
+| `loading`           | `boolean`                                 | `false`   | первая загрузка: вместо ленты заглушки              |
+| `fetching`          | `boolean`                                 | `false`   | догрузка: лента остаётся на месте                   |
+| `canReply`          | `boolean`                                 | `false`   | показывать ли поле ответа                           |
+| `replyBlockReason`  | `string \| null`                          | `null`    | почему отвечать нельзя — вместо поля                |
+| `sending`           | `boolean`                                 | `false`   | отправка в пути: поле заблокировано                 |
+| `placeholder`       | `string`                                  | `''`      | подсказка в поле ответа                             |
+| `title`             | `string`                                  | `''`      | заголовок шапки; сам по себе шапку не создаёт       |
+| `sign`              | `IRtServiceLogo.Item \| null`             | `null`    | знак канала перед заголовком; шапку не создаёт      |
+| `subtitle`          | `string`                                  | `''`      | строка под заголовком шапки; пустая не показывается |
+| `emptyHint`         | `string`                                  | `''`      | подсказка, когда переписка не выбрана               |
+| `hasThread`         | `boolean`                                 | `false`   | выбрана ли переписка                                |
+| `attachments`       | `boolean`                                 | `false`   | скрепка в поле ответа                               |
+| `accept`            | `string`                                  | `''`      | какие файлы принимает скрепка                       |
+| `richComposer`      | `boolean`                                 | `false`   | поле ответа с оформлением                           |
+| `formatting`        | `boolean`                                 | `false`   | панель оформления в поле ответа                     |
+| `formattingToolbar` | `TRtRichEditorToolbar`                    | —         | какие кнопки в панели оформления                    |
+| `fill`              | `boolean`                                 | `false`   | занимать всю высоту родителя                        |
+| `showRefresh`       | `boolean`                                 | `false`   | кнопка обновления в шапке — она же создаёт шапку    |
+| `showExpand`        | `boolean`                                 | `false`   | кнопка разворота в шапке                            |
+| `messageHasActions` | `IRtChat.MessageActionsPredicate \| null` | `null`    | есть ли у реплики свои действия — гейт кнопки «…»   |
+| `typingText`        | `string`                                  | `''`      | строка «печатает» поверх низа ленты; пустая прячет  |
 
 ## Проекция содержимого
 
