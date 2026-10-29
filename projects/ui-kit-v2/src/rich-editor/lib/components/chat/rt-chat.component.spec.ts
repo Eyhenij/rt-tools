@@ -299,4 +299,41 @@ describe('RtChatComponent', (): void => {
 
         expect(qa(fixture, 'chat-empty-hint')).not.toBeNull();
     });
+
+    describe('вид мессенджера', (): void => {
+        it('SC-UKV-1067 — вид мессенджера ставит метку дня и поле кита со скрепкой внутри рамки', (): void => {
+            const today: string = new Date().toISOString();
+            const fixture: ComponentFixture<RtChatComponent> = setup({
+                messenger: true,
+                canReply: true,
+                attachments: true,
+                richComposer: true,
+                formatting: true,
+                messages: [message({ createdAt: today }), message({ id: 2, own: true, createdAt: today })],
+            });
+
+            expect(hostClasses(fixture)).toContain('rt-chat--messenger');
+            const days: HTMLElement[] = qaAll(fixture, 'chat-day').map((node: DebugElement): HTMLElement => node.nativeElement);
+            expect(days.map((day: HTMLElement): boolean => day.hidden)).toEqual([false, true]);
+            expect(textOf(qa(fixture, 'chat-day'))).toBe('today');
+            const prompt: HTMLElement = qa(fixture, 'chat-composer-prompt').nativeElement;
+            expect(qa(fixture, 'chat-composer-rich')).toBeNull();
+            expect(qa(fixture, 'chat-composer')).toBeNull();
+            const attach: HTMLElement = qa(fixture, 'chat-composer-tools-attach').nativeElement;
+            expect(prompt.contains(attach)).toBe(true);
+            expect(attach.hidden).toBe(false);
+
+            const scss: string = readFileSync(join(__dirname, 'rt-chat-messenger.scss'), 'utf8');
+            expect(scss).toContain('.rt-chat__message-author {\n                display: none;');
+            expect(scss).toContain('--rt-chat-bubble-own-bg: var(--rt-color-action-primary);');
+        });
+
+        it('SC-UKV-1067 — без входа меток дня не видно и подпись автора на месте', (): void => {
+            const fixture: ComponentFixture<RtChatComponent> = setup({ messages: [message()] });
+
+            expect(hostClasses(fixture)).not.toContain('rt-chat--messenger');
+            expect((qa(fixture, 'chat-day').nativeElement as HTMLElement).hidden).toBe(true);
+            expect(qa(fixture, 'chat-message-author')).not.toBeNull();
+        });
+    });
 });

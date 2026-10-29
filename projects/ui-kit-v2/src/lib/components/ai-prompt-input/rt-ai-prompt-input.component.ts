@@ -46,6 +46,19 @@ export function rtPromptCanSend(text: string, files: number, busy: boolean): boo
  * элемент ряда включается своим входом: без значения его нет. Что открывает нажатие на модель,
  * усилие и режим, решает приложение: поле сообщает, какую кнопку нажали.
  *
+ * Свои элементы ряда приложение кладёт проекцией: с меткой `rtPromptInputStart` они встают слева
+ * после «+», с меткой `rtPromptInputEnd` справа перед моделью и отправкой. Подходит любой
+ * элемент высотой с кнопку sm: кнопка-иконка, кнопка с текстом, выпадающий список.
+ *
+ * @example
+ * ```html
+ * <rt-ai-prompt-input attachments>
+ *     <rt-icon-button rtPromptInputStart icon="bolt" variant="ghost" size="sm" ariaLabel="Быстрые ответы" />
+ *     <button rtButton rtPromptInputStart appearance="text" size="sm" label="Отправить позже"></button>
+ *     <rt-icon-button rtPromptInputEnd icon="mic" variant="ghost" size="sm" ariaLabel="Голос" />
+ * </rt-ai-prompt-input>
+ * ```
+ *
  * Подсказка стоит отдельной строкой под полем или над ним, в ряд действий она не входит.
  *
  * Отправка — `Enter` без Shift или кнопка со стрелкой; `Shift+Enter` переносит строку. Со

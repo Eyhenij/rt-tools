@@ -97,6 +97,15 @@
     }
 
     <ng-template #detailsTpl>
+        @if (profile(); as person) {
+            <div rtElem="profile" qa-dataid="workspace-details-profile">
+                @if (person.sign; as sign) {
+                    <rt-service-logo size="md" [logos]="[sign]" />
+                }
+                <span rtElem="profile-name">{{ person.name }}</span>
+                <span rtElem="profile-contact">{{ person.contact }}</span>
+            </div>
+        }
         @if (rows().length > 0) {
             <rt-detail-list>
                 @for (row of rows(); track row.label) {

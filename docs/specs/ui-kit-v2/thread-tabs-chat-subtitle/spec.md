@@ -108,3 +108,5 @@ Not applicable.
 - 2026-10-28 — created by the work about the tabs of the conversation list and the header line,
   task RT-2977.
 - 2026-10-29 — the title holds one line, task RT-2985.
+- 2026-10-29 — the messenger look: day labels, no author line, own bubble in the action colour,
+  one-line reply field with a row of buttons, task RT-2988.

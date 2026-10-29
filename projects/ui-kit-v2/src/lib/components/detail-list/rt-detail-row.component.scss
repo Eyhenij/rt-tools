@@ -13,11 +13,13 @@
             color: var(--rt-field-label-color);
             font-size: var(--rt-field-label-font-size);
             font-weight: var(--rt-field-label-font-weight);
+            line-height: round(1em * var(--rt-leading-snug), 1px);
         }
 
         &__value {
             color: var(--rt-field-value-color);
             font-size: var(--rt-field-value-font-size);
+            line-height: var(--rt-leading-normal);
         }
     }
 }

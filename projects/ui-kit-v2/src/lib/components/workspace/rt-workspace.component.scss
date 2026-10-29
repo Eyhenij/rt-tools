@@ -36,6 +36,13 @@
         }
 
         &__aside {
+            // Вкладки панели прижаты к своей линии того же цвета, низ полки вровень с низом шапки переписки
+            --rt-tabs-list-min-height: calc(56px + var(--rt-space-2) + var(--rt-space-1) + var(--rt-border-width-thin));
+            --rt-tabs-list-align: flex-end;
+            --rt-tabs-list-padding-inline: var(--rt-space-1);
+            --rt-tabs-list-border-color: var(--rt-color-border-strong);
+            --rt-tabs-content-padding-top: 0;
+
             display: flex;
             flex: 0 0 var(--rt-workspace-aside-size, 360px);
             flex-direction: column;
@@ -161,6 +168,39 @@
                 .rt-workspace__handle--aside {
                     display: none;
                 }
+            }
+        }
+
+        // Карточки: у каждой колонки своя рамка и скругление, зазор между ними держит ручка
+        &--cards {
+            --rt-workspace-card-gap: var(--rt-space-4);
+
+            gap: 0;
+
+            .rt-workspace__list,
+            .rt-workspace__center,
+            .rt-workspace__aside {
+                overflow: hidden;
+                border: var(--rt-workspace-border-width) solid var(--rt-color-border-subtle);
+                border-radius: var(--rt-radius-xl);
+                background: var(--rt-color-bg-surface);
+            }
+
+            .rt-workspace__center {
+                padding-inline: 0;
+            }
+
+            .rt-workspace__handle {
+                inline-size: var(--rt-workspace-card-gap);
+                margin-inline: 0;
+            }
+
+            @include bp.place-max(1080px) {
+                gap: var(--rt-workspace-card-gap);
+            }
+
+            @include bp.place-max(768px) {
+                gap: 0;
             }
         }
 

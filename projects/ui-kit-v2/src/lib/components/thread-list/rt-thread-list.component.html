@@ -46,7 +46,7 @@
             }"
             (click)="onSelect(row.id, $event)">
             @if (row.sign; as sign) {
-                <rt-service-logo rtElem="row-sign" qa-dataid="thread-list-row-sign" size="xs" [logos]="[sign]" />
+                <rt-service-logo rtElem="row-sign" qa-dataid="thread-list-row-sign" [size]="messenger() ? 'sm' : 'xs'" [logos]="[sign]" />
                 <span rtElem="row-content">
                     <ng-container [ngTemplateOutlet]="rowContent" [ngTemplateOutletContext]="{ $implicit: row }" />
                 </span>

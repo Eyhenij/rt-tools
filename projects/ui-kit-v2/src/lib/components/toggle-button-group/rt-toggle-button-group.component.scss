@@ -85,8 +85,10 @@
                     color: var(--rt-color-text-primary);
                 }
 
+                // Выбранный сегмент — плашка над дорожкой: тень RT/Shadow/sm, как в макете сегмента
                 &--active {
                     background-color: var(--rt-toggle-button-group-active-bg);
+                    box-shadow: var(--rt-shadow-sm);
                     color: var(--rt-color-text-primary);
                 }
 
@@ -166,8 +168,15 @@
             width: 100%;
             flex: 1 1 auto;
 
+            /* Поровну и при длинной подписи: своя ширина подписи сегмент не раздвигает, текст
+               стоит по центру сегмента и заходит в его боковые отступы. */
             .rt-toggle-button-group__button {
+                min-width: 0;
                 flex: 1 1 0;
+            }
+
+            .rt-toggle-button-group__label {
+                flex-shrink: 0;
             }
         }
     }

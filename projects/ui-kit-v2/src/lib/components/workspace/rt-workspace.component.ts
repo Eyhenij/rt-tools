@@ -61,6 +61,7 @@ interface IDragState {
     host: {
         class: BEM_BLOCK,
         '[class.rt-workspace--has-active]': 'hasActive()',
+        '[class.rt-workspace--cards]': 'cards()',
         '[class.rt-workspace--aside-collapsed]': 'asideCollapsed()',
         '[class.rt-workspace--resizing]': 'resizing()',
         '[style.--rt-workspace-list-size]': "listWidth() + 'px'",
@@ -107,6 +108,11 @@ export class RtWorkspaceComponent implements IRtWorkspace.PanelApi {
     public readonly storageKey: InputSignal<string | null> = input<string | null>(null);
 
     public readonly hasActive: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+
+    /** Колонки стоят отдельными карточками с зазором, без линий между ними */
+    public readonly cards: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
 

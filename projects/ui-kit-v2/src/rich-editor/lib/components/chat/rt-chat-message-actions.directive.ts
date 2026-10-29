@@ -46,3 +46,33 @@ export class RtChatMessageActionsDirective {
         return true;
     }
 }
+
+/**
+ * Захватывает `<ng-template rtChatMessageButtons let-message>` — кнопки у реплики перед «…»-меню.
+ * Частое действие, например «ответить», стоит кнопкой и не прячется в меню. В виде мессенджера
+ * кнопки и меню стоят одной панелью у пузыря.
+ *
+ * @example
+ * ```html
+ * <rt-chat messenger [messages]="messages()">
+ *     <ng-template rtChatMessageButtons let-message>
+ *         <rt-icon-button icon="reply" variant="ghost" size="sm" ariaLabel="Ответить" (clicked)="reply(message)" />
+ *     </ng-template>
+ * </rt-chat>
+ * ```
+ */
+@Directive({
+    selector: 'ng-template[rtChatMessageButtons]',
+})
+export class RtChatMessageButtonsDirective {
+    public readonly template: TemplateRef<IRtChatMessageActionsContext> = inject<TemplateRef<IRtChatMessageActionsContext>>(TemplateRef);
+
+    /** Type-guard: сужает контекст шаблона до реплики при проверке шаблонов. */
+    public static ngTemplateContextGuard(
+        _directive: RtChatMessageButtonsDirective,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars -- второй довод стража контекста шаблона стоит только в типе-предикате; убрать его нечем, подпись задаёт каркас
+        context: unknown
+    ): context is IRtChatMessageActionsContext {
+        return true;
+    }
+}
