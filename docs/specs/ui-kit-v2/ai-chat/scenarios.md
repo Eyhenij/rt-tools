@@ -164,7 +164,7 @@ Then the questions, the answers, the composer and the line under it stand in a c
 Not covered: a test has no layout at all — the column is seen by the showcase frame `ReadingColumn`,
 and the frame `FullScreen` shows the conversation without the cap.
 
-### SC-UKV-1064 — a bare address becomes a link
+### SC-UKV-1073 — a bare address becomes a link
 
 Given an answer with a bare `https://` address followed by a full stop
 When the answer is drawn
@@ -172,7 +172,7 @@ Then the address is a link to itself, and the full stop after it stays text. A c
 
 Covered by the spec of the markdown parser.
 
-### SC-UKV-1065 — an underscore inside a word stays a sign
+### SC-UKV-1074 — an underscore inside a word stays a sign
 
 Given an answer with `booking_source_id` and `_important_`
 When the answer is drawn
@@ -180,7 +180,7 @@ Then `booking_source_id` keeps both underscores and no emphasis, and `_important
 
 Covered by the spec of the markdown parser.
 
-### SC-UKV-1066 — a long word and an address in an answer wrap
+### SC-UKV-1075 — a long word and an address in an answer wrap
 
 Given a narrow panel and an answer with an address longer than the panel
 When the answer is drawn
@@ -188,7 +188,7 @@ Then the address wraps inside the panel, and the feed does not scroll sideways
 
 Covered by the styles spec of the markdown text; the showcase frame of the answer shows the look.
 
-### SC-UKV-1067 — a swipe at the edge stays in the chat
+### SC-UKV-1076 — a swipe at the edge stays in the chat
 
 Given the chat over a page that scrolls
 When the feed or the list of conversations is swiped past its edge
@@ -196,7 +196,7 @@ Then the page under the chat stays where it was
 
 Covered by the styles spec of the chat.
 
-### SC-UKV-1068 — the conversation menu is visible on a touch screen
+### SC-UKV-1077 — the conversation menu is visible on a touch screen
 
 Given the list of conversations on a screen without hover
 When the list is drawn
@@ -204,7 +204,7 @@ Then every row shows its actions without a touch; with a mouse they appear on ho
 
 Covered by the styles spec of the thread list.
 
-### SC-UKV-1069 — the row of actions draws only what the consumer gives
+### SC-UKV-1078 — the row of actions draws only what the consumer gives
 
 Given the composer without inputs, and then with the model, the effort, the mode, the usage and attachments
 When it is drawn and the model, the effort and the mode are pressed
@@ -212,7 +212,7 @@ Then without inputs the row holds only Send; with them it holds «+», the three
 
 Covered by the component spec of the composer.
 
-### SC-UKV-1070 — the usage ring shows the share and the warning
+### SC-UKV-1079 — the usage ring shows the share and the warning
 
 Given the ring at 32, 79, 81 and 100 percent, with and without a hint
 When it is drawn
