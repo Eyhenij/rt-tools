@@ -25,11 +25,11 @@ function ruleBody(css: string, selector: string): string {
 }
 
 describe('стили переноса в ответе', (): void => {
-    it('SC-UKV-1042 — текст разметки переносит длинное слово и адрес', (): void => {
+    it('SC-UKV-1075 — текст разметки переносит длинное слово и адрес', (): void => {
         expect(ruleBody(sass.compile(MARKDOWN).css, '.rt-markdown-text')).toContain('overflow-wrap: anywhere');
     });
 
-    it('SC-UKV-1042 — ответ сужается до места в ленте', (): void => {
+    it('SC-UKV-1075 — ответ сужается до места в ленте', (): void => {
         expect(ruleBody(sass.compile(ANSWER).css, '.rt-ai-chat-answer')).toContain('min-width: 0');
     });
 });

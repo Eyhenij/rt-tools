@@ -1,9 +1,10 @@
-import { ChangeDetectionStrategy, Component, DebugElement } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DebugElement, Signal, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 
 import { WINDOW } from '@rt-tools/core';
 
+import { BreakpointsService } from '../../platform';
 import { createRtFixture, el, hostClasses, qa, qaAll, textOf } from '../../../testing/rt-kit-testing';
 import { IRtPageHeader } from './rt-page-header.model';
 import { RtPageHeaderComponent } from './rt-page-header.component';
@@ -79,6 +80,11 @@ function setup(inputs: Readonly<Record<string, unknown>> = {}): ComponentFixture
         { items: ITEMS, ...inputs },
         { providers: [provideRouter([]), { provide: WINDOW, useFactory: windowDouble }] }
     );
+}
+
+/** Подмена наблюдателя ширины: узкий экран, на котором шапка показывает бургер. */
+class NarrowBreakpointsService {
+    public readonly narrow: Signal<boolean> = signal(true).asReadonly();
 }
 
 function navItems(fixture: ComponentFixture<RtPageHeaderComponent>): HTMLElement[] {
@@ -199,6 +205,33 @@ describe('RtPageHeaderComponent', (): void => {
         // Навигация не сворачивается стилями: узкая разметка отдельная,
         // и живёт она в той же шапке.
         expect(qa(setup(), 'header-nav-burger')).not.toBeNull();
+    });
+
+    it('SC-UKV-1072: открытое мобильное меню стоит на затемнении, и нажатие по нему меню закрывает', (): void => {
+        // Шапка закрывает мобильное меню, как только экран перестаёт быть узким, а в тестовой
+        // среде наблюдатель ширины ничего не измеряет
+        const fixture: ComponentFixture<RtPageHeaderComponent> = createRtFixture(
+            RtPageHeaderComponent,
+            { items: ITEMS },
+            {
+                providers: [
+                    provideRouter([]),
+                    { provide: WINDOW, useFactory: windowDouble },
+                    { provide: BreakpointsService, useClass: NarrowBreakpointsService },
+                ],
+            }
+        );
+
+        qa(fixture, 'header-nav-burger')?.nativeElement.click();
+        fixture.detectChanges();
+        const backdrop: HTMLElement | null = document.querySelector('.cdk-overlay-backdrop.rt-page-header-mobile-backdrop');
+        expect(document.querySelector('[qa-dataid="header-nav-mobile-trigger"]')).not.toBeNull();
+        expect(backdrop).not.toBeNull();
+
+        backdrop?.click();
+        fixture.detectChanges();
+
+        expect(document.querySelector('[qa-dataid="header-nav-mobile-trigger"]')).toBeNull();
     });
 
     it('пустой набор разделов рисует шапку без пунктов', (): void => {
