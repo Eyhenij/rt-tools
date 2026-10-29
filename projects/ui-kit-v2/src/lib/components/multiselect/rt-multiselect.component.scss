@@ -186,6 +186,25 @@
             flex-shrink: 0;
         }
 
+        /* Крестик в порядке обхода — соседняя кнопка поверх своего места в строке указателя, как у
+           выбора: место держит пустая ячейка размером с крестик, и чипы не заходят под него. */
+        &__clear-slot {
+            width: var(--rt-control-height-sm);
+            height: var(--rt-control-height-sm);
+            flex-shrink: 0;
+        }
+
+        &__clear--outside {
+            position: absolute;
+            top: 50%;
+            right: calc(var(--rt-input-padding-x) + var(--rt-size-4) + var(--rt-space-sm));
+            transform: translateY(-50%);
+        }
+
+        &--readonly &__clear--outside {
+            display: none;
+        }
+
         &__chevron {
             flex-shrink: 0;
             transition: transform var(--rt-multiselect-caret-transition-duration) ease;

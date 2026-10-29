@@ -10,6 +10,8 @@ import { RtDateRangeComponent } from '../date-range/rt-date-range.component';
 import { IRtDateRange } from '../date-range/rt-date-range.model';
 import { RtInputNumberComponent } from '../input-number/rt-input-number.component';
 import { RtInputComponent } from '../input/rt-input.component';
+import { RtMultiselectComponent } from '../multiselect/rt-multiselect.component';
+import { IRtSelect } from '../select/rt-select.model';
 
 /** Крестики полей, чьё место в обходе проверяется, в порядке разметки хозяев. */
 const CLEARS: readonly string[] = ['input-clear', 'autocomplete-clear', 'input-number-clear', 'date-picker-clear', 'date-range-clear'];
@@ -81,6 +83,22 @@ class OffHostComponent extends FieldsHost {}
 })
 class OnHostComponent extends FieldsHost {}
 
+/** Мультиселект с выбором: крестик виден; `tabbable` переключает `clearTabbable`. */
+@Component({
+    selector: 'rt-clear-tabbable-multiselect-host',
+    template: '<rt-multiselect [formControl]="cities" [options]="options" [clearTabbable]="tabbable" />',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [ReactiveFormsModule, RtMultiselectComponent],
+})
+class MultiselectHostComponent {
+    public tabbable: boolean = true;
+    public readonly options: IRtSelect.Option<string>[] = [
+        { value: 'msk', label: 'Москва' },
+        { value: 'kzn', label: 'Казань' },
+    ];
+    public readonly cities: FormControl<string[] | null> = new FormControl<string[] | null>(['msk', 'kzn']);
+}
+
 const TABBABLE_SETTING: (Provider | EnvironmentProviders)[] = [provideRtKit({ components: { formControl: { clearTabbable: true } } })];
 
 /** `tabindex` кнопки каждого крестика по порядку `CLEARS`; `null` — крестика не нашлось. */
@@ -114,5 +132,47 @@ describe('Крестик очистки полей общей базы в пор
         const fixture: ComponentFixture<OnHostComponent> = createRtFixture(OnHostComponent);
 
         expect(clearTabIndexes(fixture)).toEqual(['0', '0', '0', '0', '0']);
+    });
+
+    describe('SC-UKV-1084 — крестик мультиселекта', (): void => {
+        it('SC-UKV-1084 — с clearTabbable крестик — кнопка рядом с триггером, в порядке Tab', (): void => {
+            const fixture: ComponentFixture<MultiselectHostComponent> = createRtFixture(MultiselectHostComponent);
+            const root: HTMLElement = fixture.nativeElement as HTMLElement;
+            const trigger: HTMLElement = root.querySelector<HTMLElement>('[qa-dataid="multiselect-trigger"]') as HTMLElement;
+            const clearHost: HTMLElement | null = root.querySelector<HTMLElement>('[qa-dataid="multiselect-clear"]');
+
+            expect(clearHost).not.toBeNull();
+            expect(trigger.contains(clearHost)).toBe(false);
+            expect(trigger.querySelector('.rt-multiselect__clear-slot')).not.toBeNull();
+            expect(clearHost?.querySelector('[tabindex]')?.getAttribute('tabindex')).toBe('0');
+        });
+
+        it('SC-UKV-1084 — нажатие крестика очищает выбор и не открывает список', (): void => {
+            const fixture: ComponentFixture<MultiselectHostComponent> = createRtFixture(MultiselectHostComponent);
+            const root: HTMLElement = fixture.nativeElement as HTMLElement;
+
+            root.querySelector<HTMLElement>('[qa-dataid="multiselect-clear"] [tabindex]')?.click();
+            fixture.detectChanges();
+
+            expect(fixture.componentInstance.cities.value).toEqual([]);
+            expect(root.querySelector('[qa-dataid="multiselect-trigger"]')?.getAttribute('aria-expanded')).toBe('false');
+        });
+
+        it('SC-UKV-1084 — без clearTabbable крестик внутри триггера и вне порядка Tab, как прежде', (): void => {
+            const fixture: ComponentFixture<MultiselectHostComponent> = createRtFixture(
+                MultiselectHostComponent,
+                {},
+                { skipInitialDetect: true }
+            );
+            fixture.componentInstance.tabbable = false;
+            fixture.detectChanges();
+            const root: HTMLElement = fixture.nativeElement as HTMLElement;
+            const trigger: HTMLElement = root.querySelector<HTMLElement>('[qa-dataid="multiselect-trigger"]') as HTMLElement;
+            const clearHost: HTMLElement | null = root.querySelector<HTMLElement>('[qa-dataid="multiselect-clear"]');
+
+            expect(clearHost).not.toBeNull();
+            expect(trigger.contains(clearHost)).toBe(true);
+            expect(clearHost?.querySelector('[tabindex]')?.getAttribute('tabindex')).toBe('-1');
+        });
     });
 });

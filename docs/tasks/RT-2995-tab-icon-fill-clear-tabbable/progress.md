@@ -8,16 +8,18 @@
   `badgePosition` on `rtTab`, `components.formControl.clearTabbable`, four crosses on
   `clearTabIndex()`, specs `rt-tabs-icon-badge.spec.ts` (6) and `rt-clear-tabbable.spec.ts` (4).
   The whole kit run: 282 files green before the last two tests were fixed; both rerun green.
-- **Next step:** the multiselect frame on the page Multiselect of Design System V2 and its
-  approval, then its code; then the stories for 3.1 on the second showcase (port 6007, the
-  owner's — work with the running one) and the measurement by `tools/kit-match.mjs`.
+  The multiselect: frame `7330:2735` approved, the cross goes as a neighbouring button with
+  `clearTabbable` (SC-UKV-1084), `rt-clear-tabbable.spec.ts` now 7 green, the multiselect spec 25.
+- **Next step:** stories for 3.1 on the second showcase (port 6007, the owner's — work with the
+  running one): tabs with `iconFill` and the overlay badge, the fields and the multiselect with the
+  cross by Tab from the kit setting; then the measurement against the three frames by
+  `tools/kit-match.mjs` and the question «одобряете?» on the showcase.
 - **Uncommitted:** nothing after the last commit.
-- **Waiting for the owner:** the answer «одобряете?» on the multiselect frame `7330:2735`; its code
-  waits for it, the stories of the approved frames do not
-- **Main is red apart from this work:** typecheck fails on
-  `projects/ui-kit-v2/src/rich-editor/lib/components/chat/rt-chat.component.spec.ts` (4 errors) and
-  `check:tokens-styles` reports 12 divergences in the messenger styles — both already on
-  `origin/main` at `be82163f7`; told to the owner.
+- **Waiting for the owner:** no
+- **Main is red apart from this work, task RT-2996:** typecheck of the chat spec (4 errors),
+  `check:tokens-styles` 12 divergences in the messenger styles, `check:tokens-graph` 5 fallbacks in
+  `rt-tabs.component.scss`. This branch touches that file, so its push waits for RT-2996 or goes
+  with it.
 - **PR:** not open yet
 
 ## Steps
