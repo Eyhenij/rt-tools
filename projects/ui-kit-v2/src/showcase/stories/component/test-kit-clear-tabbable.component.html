@@ -1,0 +1,37 @@
+<app-story-presets caption="Крестик очистки в обходе по Tab от умолчания кита — в обоих наборах">
+    <ng-template>
+        <div class="app-kit-clear-tabbable__cases">
+            <div class="app-kit-clear-tabbable__case">
+                <span class="app-kit-clear-tabbable__label">rt-input — крестик в фокусе</span>
+                <rt-input ariaLabel="Имя" data-story-state="cross" [formControl]="text" />
+            </div>
+
+            <div class="app-kit-clear-tabbable__case">
+                <span class="app-kit-clear-tabbable__label">rt-autocomplete — крестик в фокусе</span>
+                <rt-autocomplete ariaLabel="Город" data-story-state="cross" [formControl]="city" [suggestions]="cities" />
+            </div>
+
+            <div class="app-kit-clear-tabbable__case">
+                <span class="app-kit-clear-tabbable__label">rt-input-number — крестик в фокусе</span>
+                <rt-input-number ariaLabel="Сумма" data-story-state="cross" [formControl]="amount" />
+            </div>
+
+            <div class="app-kit-clear-tabbable__case">
+                <span class="app-kit-clear-tabbable__label">rt-date-picker — крестик в фокусе</span>
+                <rt-date-picker ariaLabel="Дата" data-story-state="cross" [formControl]="day" />
+            </div>
+
+            <div class="app-kit-clear-tabbable__case">
+                <span class="app-kit-clear-tabbable__label">rt-date-range — крестик в фокусе</span>
+                <rt-date-range ariaLabel="Период" data-story-state="cross" [formControl]="range" />
+            </div>
+
+            <div class="app-kit-clear-tabbable__case">
+                <span class="app-kit-clear-tabbable__label">
+                    clearTabbable="false" на поле перебивает умолчание: Tab идёт мимо крестика
+                </span>
+                <rt-input ariaLabel="Имя" [clearTabbable]="false" [formControl]="offText" />
+            </div>
+        </div>
+    </ng-template>
+</app-story-presets>
