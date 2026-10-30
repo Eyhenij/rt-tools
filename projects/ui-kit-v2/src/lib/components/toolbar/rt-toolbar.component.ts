@@ -6,20 +6,23 @@ import {
     computed,
     contentChild,
     Directive,
+    effect,
     inject,
+    Injector,
     input,
     InputSignalWithTransform,
     output,
     OutputEmitterRef,
     Signal,
     TemplateRef,
+    untracked,
     ViewEncapsulation,
 } from '@angular/core';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { BreakpointsService, rtKitLabel } from '@rt-tools/ui-kit-v2/core';
-import { RtAsideService } from '@rt-tools/ui-kit-v2/aside';
+import { RtAsideRef, RtAsideService } from '@rt-tools/ui-kit-v2/aside';
 import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
 import { RtToolbarFiltersAsideComponent } from './filters-aside/rt-toolbar-filters-aside.component';
 import { IRtToolbar } from './rt-toolbar.model';
@@ -152,8 +155,18 @@ const BEM_BLOCK: string = 'rt-toolbar';
 export class RtToolbarComponent {
     readonly #narrow: Signal<boolean> = inject(BreakpointsService).narrow;
     readonly #asideService: RtAsideService = inject(RtAsideService);
+    readonly #injector: Injector = inject(Injector);
+    readonly #filtersActiveLabel: Signal<string> = rtKitLabel('uiFiltersActive');
+
+    /** Открытая панель отборов: на широком месте её закрывают, чтобы поля не жили в двух местах. */
+    #filtersRef: RtAsideRef | null = null;
 
     protected readonly filtersLabel: Signal<string> = rtKitLabel('uiFilters');
+
+    /** Имя кнопки для скринридера: точку в углу он не видит, и включённый отбор назван словами. */
+    protected readonly filtersAriaLabel: Signal<string> = computed((): string =>
+        this.filtersActive() ? this.#filtersActiveLabel() : this.filtersLabel()
+    );
 
     protected readonly filtersTpl: Signal<TemplateRef<IRtToolbar.IFiltersContext> | undefined> = contentChild(RtToolbarFiltersDirective, {
         read: TemplateRef,
@@ -191,20 +204,40 @@ export class RtToolbarComponent {
     /** Нажата «Сбросить» панели отборов; панель остаётся открытой. */
     public readonly filtersReset: OutputEmitterRef<void> = output<void>();
 
+    constructor() {
+        // Место расширилось при открытой панели: отборы вернулись в полосу, и второй экземпляр
+        // полей в панели закрывается, иначе одни и те же отборы показаны дважды
+        effect((): void => {
+            if (this.filtersInBar()) {
+                untracked((): void => this.#closeFilters());
+            }
+        });
+    }
+
     protected openFilters(): void {
         const template: TemplateRef<IRtToolbar.IFiltersContext> | undefined = this.filtersTpl();
         if (template === undefined) {
             return;
         }
 
-        this.#asideService.open<RtToolbarFiltersAsideComponent, IRtToolbar.IFiltersPanelData>(RtToolbarFiltersAsideComponent, {
-            data: {
-                template,
-                reset: (): void => this.filtersReset.emit(),
-                apply: (): void => this.filtersApply.emit(),
-            },
-            position: 'right',
-            backdropClass: 'rt-aside-backdrop',
-        });
+        // Инжектор полосы — хозяин панели: уничтожение полосы закрывает и панель
+        this.#filtersRef = this.#asideService.open<RtToolbarFiltersAsideComponent, IRtToolbar.IFiltersPanelData>(
+            RtToolbarFiltersAsideComponent,
+            {
+                injector: this.#injector,
+                data: {
+                    template,
+                    reset: (): void => this.filtersReset.emit(),
+                    apply: (): void => this.filtersApply.emit(),
+                },
+                position: 'right',
+                backdropClass: 'rt-aside-backdrop',
+            }
+        );
+    }
+
+    #closeFilters(): void {
+        this.#filtersRef?.close();
+        this.#filtersRef = null;
     }
 }

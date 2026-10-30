@@ -1,3 +1,4 @@
+import { InteractivityChecker } from '@angular/cdk/a11y';
 import { ChangeDetectionStrategy, Component, Signal, signal, WritableSignal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
@@ -43,7 +44,20 @@ function setup(narrow: boolean): { fixture: ComponentFixture<ToolbarFiltersHostC
     breakpoints.narrow.set(narrow);
     breakpoints.phone.set(narrow);
     TestBed.configureTestingModule({
-        providers: [...provideRtKitTesting(), { provide: BreakpointsService, useValue: breakpoints }],
+        providers: [
+            ...provideRtKitTesting(),
+            { provide: BreakpointsService, useValue: breakpoints },
+            // jsdom не раскладывает страницу, и ловушка фокуса без подмены не видит ни одной кнопки
+            {
+                provide: InteractivityChecker,
+                useValue: {
+                    isDisabled: (): boolean => false,
+                    isVisible: (): boolean => true,
+                    isFocusable: (element: HTMLElement): boolean => element.tabIndex >= -1,
+                    isTabbable: (element: HTMLElement): boolean => element.tabIndex >= 0,
+                },
+            },
+        ],
     });
     const fixture: ComponentFixture<ToolbarFiltersHostComponent> = TestBed.createComponent(ToolbarFiltersHostComponent);
     fixture.detectChanges();
@@ -166,6 +180,51 @@ describe('RtToolbarComponent — отборы за кнопкой', (): void => 
         await openPanel(fixture);
 
         expect(textOf(panel()?.querySelector('[qa-dataid="toolbar-filters-reset"]') ?? null)).toBe('Reset');
+    });
+
+    it('SC-UKV-1093 — расширение места закрывает открытую панель: поля не живут в двух местах', async (): Promise<void> => {
+        const { fixture, breakpoints } = setup(true);
+        await openPanel(fixture);
+        expect(panel()).not.toBeNull();
+
+        breakpoints.narrow.set(false);
+        await settle(fixture, 300);
+
+        expect(panel()).toBeNull();
+        expect(root(fixture).querySelectorAll('[qa-dataid="slot-filter"]').length).toBe(1);
+    });
+
+    it('SC-UKV-1093 — уничтожение полосы закрывает открытую панель', async (): Promise<void> => {
+        const { fixture } = setup(true);
+        await openPanel(fixture);
+        expect(panel()).not.toBeNull();
+
+        fixture.destroy();
+        await new Promise<void>((resolve: () => void): void => {
+            setTimeout(resolve, 300);
+        });
+
+        expect(panel()).toBeNull();
+    });
+
+    it('SC-UKV-1094 — панель отборов держит фокус внутри себя', async (): Promise<void> => {
+        const { fixture } = setup(true);
+        await openPanel(fixture);
+        await settle(fixture, 50);
+
+        expect(panel()?.contains(document.activeElement)).toBe(true);
+    });
+
+    it('SC-UKV-1095 — включённый отбор назван скринридеру словами', (): void => {
+        const { fixture } = setup(true);
+        const name: () => string | null | undefined = (): string | null | undefined =>
+            trigger(fixture)?.querySelector('button')?.getAttribute('aria-label');
+        expect(name()).toBe('Filters');
+
+        fixture.componentInstance.active.set(true);
+        fixture.detectChanges();
+
+        expect(name()).toBe('Filters, applied');
     });
 
     it('без слота отборов кнопки фильтров нет', (): void => {

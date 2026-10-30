@@ -46,3 +46,21 @@ Then the heading block is as high as the back button and centres the title verti
 Given an aside footer with `phoneCloseLabel` set to `false` and a dismiss button «Сбросить»
 When the screen is a phone
 Then the button reads «Сбросить», not «Закрыть»
+
+### SC-UKV-1093 — the filters panel closes with its toolbar and on a wide screen
+
+Given an open filters panel
+When the screen widens, or the toolbar is destroyed
+Then the panel closes, and the filter fields stand only in the toolbar or nowhere
+
+### SC-UKV-1094 — the filters panel holds the focus
+
+Given a narrow screen and the filter button
+When the panel is opened
+Then the panel holds the keyboard focus inside itself
+
+### SC-UKV-1095 — a filter on is named to a screen reader
+
+Given a narrow screen and the filter button
+When `filtersActive` turns on
+Then the button name for a screen reader reads «Фильтры, отбор включён» instead of «Фильтры»
