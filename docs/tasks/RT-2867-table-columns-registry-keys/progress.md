@@ -13,8 +13,8 @@
 
 ### Stage 2 — closing
 
-- [ ] 1. The agreement merged into `table-full-port` ← now
-- [ ] 2. The kit tests, lint and the visual gate
+- [x] 1. The agreement merged into `table-full-port`
+- [ ] 2. The kit tests, lint and the visual gate ← now
 - [ ] 3. The folder taken apart, the PR into the RT-2866 branch
 
 ## Decisions along the way
