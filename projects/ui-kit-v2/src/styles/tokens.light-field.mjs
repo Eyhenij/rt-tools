@@ -21,6 +21,10 @@ export const lightField = [
         value: `var(--rt-font-weight-medium)`,
     },
     {
+        name: `--rt-field-label-line-height`,
+        value: `var(--rt-leading-none)`,
+    },
+    {
         name: `--rt-field-label-color`,
         value: `var(--rt-color-text-muted)`,
     },
@@ -58,7 +62,7 @@ export const lightField = [
     },
     {
         name: `--rt-field-required-gap`,
-        value: `var(--rt-space-1)`,
+        value: `var(--rt-space-0-5)`,
     },
     {
         name: `--rt-field-value-font-size`,
