@@ -19,3 +19,9 @@ Then the panel opens on the first press and stays open after the second
 Given the page header on a narrow screen with a user and a profile menu
 When the user name is tapped and then the backdrop is tapped
 Then after the first tap one backdrop stands under the open menu, and after the second the menu and every backdrop are gone
+
+### SC-UKV-1085 — the profile menu fits the room under the user name
+
+Given the page header with a user and a profile menu
+When the user name opens the profile menu
+Then the menu panel is fitted to the viewport, so on a low screen it ends at the bottom edge and its items scroll

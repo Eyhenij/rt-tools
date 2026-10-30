@@ -30,6 +30,9 @@ No new words on the screen.
 - **A press on the host of a hover popover opens the panel.** A tap opens it once, and a popover
   with no press handler of its own in the template opens by it too.
 - **A tap on the backdrop of a hover popover closes the panel and leaves no backdrop.**
+- **The profile menu fits the room under the user name, and its items scroll inside it.** On a low
+  screen — a phone on its side, a short window — the lower items went past the bottom edge, and
+  "Sign out" could not be reached.
 
 ## What is out of scope
 
@@ -69,7 +72,7 @@ Not applicable.
 ### Mobile layout
 
 A tap on the user name of the page header on a narrow screen opens the profile menu once, on one
-backdrop.
+backdrop. On a screen lower than the menu, the menu ends at the bottom edge and scrolls.
 
 ### Several objects
 

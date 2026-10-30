@@ -36,6 +36,12 @@
   header get the same events. Affected stage of the plan: 2.
 - **The touch test of the page header lives in a file of its own.** The header spec stood at 494
   lines, and the test took it past the limit of 500. Affected stage of the plan: 2.
+- **The profile menu on a low screen is fixed in this task, SC-UKV-1085.** The owner asked what
+  happens where the screen is lower than the menu and told to test it: «что на экранах где высота
+  меньше высоты попапа?», «пиздуй смотри свои измеенния и тестируй всё сам». Measured: at 375×360,
+  667×375, 844×390 and 1440×400 the menu went 73–76 below the bottom edge, 5–6 of 13 items out of
+  reach. The menu now has the fit-viewport mode of the section menus and scrolls inside. The
+  defect is older than this task. Affected stage of the plan: 2 and 3.
 - **The test "a click in the hover mode toggles nothing" is replaced by SC-UKV-1083.** The press now
   opens the panel in the hover mode: that is the touch's way to open it. Affected stage of the plan: 2.
 
@@ -54,3 +60,14 @@
 - The match with the frame `7332-17833` after a real tap at 375: 7 of 7 numbers — the menu 14 under
   the name, its right edge on the name's, radius 8, the backdrop `rgba(0,0,0,0.5)` from the left and
   top edges across the full width 375.
+- Low screens after the fit: at 375×360, 667×375, 844×390 and 1440×400 the menu ends at the bottom
+  edge and scrolls; a touch swipe (CDP `synthesizeScrollGesture`) scrolls it to the end at 667×375
+  and 375×360, the last item in view. At 375×667 nothing changes: the menu fits and does not scroll.
+- Specs of the components on `p`: 240 of 240; tokens and cascade layer checks clean.
+- The showcase snapshots in the image: 56 of 943 diverged. Two were this edit's: the profile menu
+  outside a panel took the scroll too — the fit and the scroll now act only inside the popover
+  panel — and the profile menu in the list page template, a raster shift of the menu text, its
+  reference re-taken. The rest predate the task: tabs, chat, the message composer, the toggle group
+  (and the compact header through it), the detail list, the workspace details, the date panel,
+  filter control references without a story, and the narrow profile menu of RT-2997 without a
+  reference at all. None of those stories opens a popover.

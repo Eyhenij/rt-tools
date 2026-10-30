@@ -1,11 +1,13 @@
 import { ChangeDetectionStrategy, Component, Signal, signal } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
 
 import { WINDOW } from '@rt-tools/core';
 
 import { BreakpointsService } from '../../platform';
 import { createRtFixture } from '../../../testing/rt-kit-testing';
+import { RtPopoverDirective } from '../popover/rt-popover.directive';
 import { IRtPageHeader } from './rt-page-header.model';
 import { RtPageHeaderComponent } from './rt-page-header.component';
 
@@ -87,5 +89,18 @@ describe('RtPageHeaderComponent — касание', (): void => {
 
         expect(document.querySelector('[qa-dataid="host-user-menu"]')).toBeNull();
         expect(document.querySelectorAll('.cdk-overlay-backdrop').length).toBe(0);
+    });
+
+    it('SC-UKV-1085: меню профиля подгоняется под окно, и на низком экране его пункты прокручиваются', (): void => {
+        const fixture: ComponentFixture<PageHeaderTouchHostComponent> = createRtFixture(
+            PageHeaderTouchHostComponent,
+            {},
+            { providers: [provideRouter([]), { provide: WINDOW, useFactory: windowDouble }] }
+        );
+        const popover: RtPopoverDirective = fixture.debugElement
+            .query(By.css('[qa-dataid="header-user-menu"]'))
+            .injector.get(RtPopoverDirective);
+
+        expect(popover.fitViewport()).toBe(true);
     });
 });
