@@ -209,6 +209,7 @@ export const RT_KIT_LABELS_RU: Readonly<Record<TRtKitLabelKey, string>> = {
     uiFilterStartsWith: 'Начинается с',
     uiFilterValue: 'Значение отбора',
     uiFilters: 'Фильтры',
+    uiFiltersActive: 'Фильтры, отбор включён',
     uiForward: 'Вперёд',
     uiHide: 'Скрыть',
     uiHideColumn: 'Скрыть колонку',

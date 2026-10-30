@@ -96,6 +96,8 @@ ref.afterClosed().subscribe((result?: ITour): void => …);
 
 - Панель объявлена `role="complementary"`, **а не диалогом**: она не модальна, и страница за ней
   остаётся видна. Это осознанный выбор — карточку смотрят, не теряя список.
+- Панель, которая блокирует страницу подложкой и держит фокус, включает вход `modal`: рамка
+  объявлена `role="dialog"` с `aria-modal="true"`.
 - Доступное имя — заголовок шапки или `ariaLabel`.
 - `Escape` закрывает панель, пока содержимое не запретило это через `disableClose`.
 - Вход `trapFocus` держит Tab внутри панели: фокус встаёт на элемент с `cdkFocusInitial` или на
@@ -128,6 +130,7 @@ ref.afterClosed().subscribe((result?: ITour): void => …);
 | `ariaLabel`     | `string \| null`       | `null`      |
 | `requestError`  | `unknown`              | `null`      |
 | `trapFocus`     | `boolean`              | `false`     |
+| `modal`         | `boolean`              | `false`     |
 | `pending`       | `boolean`              | `false`     |
 
 ## Выходы

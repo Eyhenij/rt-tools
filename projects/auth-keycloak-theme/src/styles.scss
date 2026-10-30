@@ -139,6 +139,47 @@ body {
 }
 
 /**
+ * Google draws the reCAPTCHA widget 304 by 78 pixels and does not follow the form. The widget
+ * stands on the axis of the form, under the full-width button's centre, and its place is kept
+ * before the script draws it, so the button does not jump down. A form narrower than the widget,
+ * on a phone, scales it down by the step that still fits, and the block shrinks to the scaled
+ * height.
+ */
+.login__captcha {
+    display: flex;
+    justify-content: center;
+    container-type: inline-size;
+}
+
+.login__captcha > div {
+    --rt-kc-captcha-scale: 1;
+
+    min-width: 304px;
+    min-height: 78px;
+    margin-bottom: calc(78px * (var(--rt-kc-captcha-scale) - 1));
+    scale: var(--rt-kc-captcha-scale);
+    transform-origin: center top;
+}
+
+@container (width < 304px) {
+    .login__captcha > div {
+        --rt-kc-captcha-scale: 0.95;
+    }
+}
+
+@container (width < 289px) {
+    .login__captcha > div {
+        --rt-kc-captcha-scale: 0.85;
+    }
+}
+
+@container (width < 259px) {
+    .login__captcha > div {
+        --rt-kc-captcha-scale: 0.75;
+    }
+}
+
+/**
  * The requirements of the realm password policy under the new password field. An unmet requirement
  * is muted; a met one takes the success colour and a filled mark.
  */

@@ -2,7 +2,8 @@
     #frame
     rtBlock="rt-aside"
     qa-dataid="aside"
-    role="complementary"
+    [attr.role]="modal() ? 'dialog' : 'complementary'"
+    [attr.aria-modal]="modal() || null"
     [rtMod]="{ size: size(), content: contentLayout() }"
     [style.--rt-aside-width]="width()"
     [attr.aria-label]="ariaLabel()"

@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { kcContextOf, kcNode, renderKcPage } from '../../testing/kc-page-fixture';
 import { RtKcLoginComponent } from '../pages/login/rt-kc-login.component';
+import { RtKcRegisterComponent } from '../pages/register/rt-kc-register.component';
 import { RtKcRootComponent } from './rt-kc-root.component';
 
 describe('RtKcRootComponent', () => {
@@ -69,5 +70,28 @@ describe('RtKcRootComponent', () => {
 
         expect(kcNode(withName, 'kc-logo')).toBeNull();
         expect(kcNode(withName, 'kc-brand')?.textContent).toBe(plain.realm.displayName || plain.realm.name);
+    });
+
+    it('SC-AUTH-87 — the frame loads the scripts Keycloak lists for the page, after the page content', async () => {
+        const address: string = 'https://www.google.com/recaptcha/api.js?hl=en';
+        const context: ReturnType<typeof kcContextOf<'register.ftl'>> = kcContextOf('register.ftl');
+        Object.assign(context, { scripts: [address], recaptchaRequired: true, recaptchaVisible: true, recaptchaSiteKey: 'site-key' });
+        let widgetOnLoad: boolean = false;
+        const append: jest.SpyInstance = jest
+            .spyOn(document.head, 'appendChild')
+            .mockImplementation(<NODE extends Node>(node: NODE): NODE => {
+                widgetOnLoad = document.querySelector('[qa-dataid="kc-recaptcha"]') !== null;
+
+                return HTMLElement.prototype.appendChild.call(document.head, node) as NODE;
+            });
+        await renderKcPage(RtKcRootComponent, context, RtKcRegisterComponent);
+        const added: HTMLScriptElement[] = Array.from(document.scripts).filter(
+            (script: HTMLScriptElement): boolean => script.getAttribute('src') === address
+        );
+        append.mockRestore();
+        added.forEach((script: HTMLScriptElement): void => script.remove());
+
+        expect(added.length).toBe(1);
+        expect(widgetOnLoad).toBe(true);
     });
 });

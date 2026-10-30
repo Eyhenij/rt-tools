@@ -78,7 +78,9 @@ test.describe('встраиваемая страница переписок', ()
         await openConsumerAdmin(page);
         await rows(page).first().click();
 
-        expect(await feedTexts(page)).toEqual([CHAT.embed.talks[1].text]);
+        // Лента приезжает после нажатия по сети: снимок её текстов сразу после нажатия на медленной
+        // машине пуст, поэтому реплика ждётся проверкой, которая повторяет себя сама.
+        await expect(inside(page).locator('[qa-dataid="chat-message-text"]')).toHaveText([CHAT.embed.talks[1].text]);
 
         await inside(page).locator('[qa-dataid="message-composer-input"]').fill('Ответ из админки потребителя');
         await inside(page).locator('[qa-dataid="message-composer-send"]').click();
