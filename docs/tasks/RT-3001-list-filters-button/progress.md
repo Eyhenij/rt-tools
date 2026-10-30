@@ -5,8 +5,8 @@
 - **State:** `этап-идёт`
 - **Stage:** 3 of 4 — The showcase, the match and the approvals
 - **Done:** the agreement `toolbar-filters`; the slot `rtToolbarFilters`, the filter button, the filters panel, the heading line of the aside header, `phoneCloseLabel` of the aside footer; SC-UKV-1086…1092 tested
-- **Next step:** the stories of the three states
-- **Uncommitted:** the kit code and its tests — they are committed after the match with the mockup
+- **Next step:** fit the Figma components to the kit — the title of Aside Header to weight 700, the body of frame 7349-4846 to 24 under the header, the label row of Field to the kit's height — then measure 7349-4846 again to 35 of 35
+- **Uncommitted:** the kit code, its tests and the stories `Organisms/Table/ToolbarFilters` — they are committed after the match with the mockup
 - **Waiting for the owner:** nothing
 - **PR:** not open yet
 
@@ -21,8 +21,8 @@
 - [x] 2.3 Open the filters panel from the button
 - [x] 2.4 Keep the indicator dot uncut by the toolbar
 - [x] 2.5 Write the tests of the scenarios
-- [>] 3.1 Write the stories of the three states
-- [ ] 3.2 Measure the stories against the frames and print the match line
+- [x] 3.1 Write the stories of the three states
+- [>] 3.2 Measure the stories against the frames and print the match line
 - [ ] 3.3 Draw the overlay of the whole block
 - [ ] 3.4 Show the owner the showcase and ask about it
 - [ ] 3.5 Write the approval record
@@ -33,6 +33,12 @@
 - [ ] 4.5 Release the kit by the owner's word and send the version to the consumer
 
 ## Decisions along the way
+
+- **The mockup is fitted to the kit, not the kit to the mockup.** The panel matched 30 of 35; the
+  five misses are the title weight of Aside Header, the body top gap and the label row of Field —
+  values every aside and field of the kit already draws. The owner chose «Макет под кит
+  (Рекомендую)» against «Кит под макет». The kit code stays; the Figma components change, and the
+  match goes by the updated frame. Affected stage of the plan: 3.
 
 ## Sessions
 
@@ -48,3 +54,16 @@
   `phoneCloseLabel` of the aside footer, the heading column of the aside header as high as the back
   button. Specs of the kit: 283 files, 3363 tests passed; types, eslint, stylelint, the cascade
   layer and the token checks clean.
+- The stories `Organisms/Table/ToolbarFilters` — `FilterOff`, `FilterOn`, `PanelOpen` — measured at
+  375×812 in the showcase on port 6017 of this copy. The toolbar against 7349-5090: 20 of 20 numbers
+  (the filter button 12/12, 40, radius 8, `#155dfc`; the dot 46/10, 8, `#dc2626`, clipped by nothing;
+  the next buttons at 60, 108, 156). The panel against 7349-4846: 30 of 35. The five misses are
+  three divergences between ready kit parts and the Figma components, not the new code: the title
+  weight of `rt-aside-header` is 700 in the kit and 600 in the frame; the body of `rt-aside` starts
+  24 under the header in the kit and 8 in the frame; `rt-field` with a label is 65 high in the kit
+  (label line height `normal`, 17) and 58 in the frame (label line height 1). The numbers files lie
+  outside the tree, in the session scratchpad `fig/`.
+- What the kit draws, for fitting the Figma components: the aside title Montserrat 20, weight 700,
+  line height `normal` (24.5 high); the body of `rt-aside` 24 under the header (80), so the first
+  field at 104; `rt-field` = label row 17 (14, weight 500, line height `normal`) + 4 + control 40 +
+  4 + an empty messages row 0 = 65; the gap between fields 16, so the second field at 185.
