@@ -41,12 +41,15 @@
         }
 
         /* Колонка overline + title. flex/min-width живут здесь, чтобы ellipsis
-           у title работал и в двухстрочном варианте. */
+           у title работал и в двухстрочном варианте. Колонка не ниже кнопки «назад» и держит
+           содержимое посередине: заголовок без надзаголовка стоит на линии стрелки. */
         &__heading {
             display: flex;
             min-width: 0;
+            min-height: var(--rt-aside-header-back-size, var(--rt-control-height-sm));
             flex: 1 1 auto;
             flex-direction: column;
+            justify-content: center;
             gap: var(--rt-space-0-5);
         }
 
