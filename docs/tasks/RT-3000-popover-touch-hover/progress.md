@@ -7,7 +7,7 @@
 - **Done:** the symptom reproduced, the directive fixed, SC-UKV-1082…1084 tested
 - **Next step:** ask the owner about the mockup frame of the profile menu on the backdrop
 - **Uncommitted:** nothing
-- **Waiting for the owner:** no
+- **Waiting for the owner:** the answer to «Макет: https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL/RT-Tools-DS?node-id=7332-17833. Одобряете?»
 - **PR:** not open yet
 
 ## Steps
@@ -51,3 +51,6 @@
   `{"backdrops":0,"panels":0}`. The mouse at 1440: hover opens the menu, leave closes it.
 - Specs: the popover 25 of 25, the page header 77 of 77; on the directive of `main` the three new
   tests fail and the rest pass. Lint and types are green.
+- The match with the frame `7332-17833` after a real tap at 375: 7 of 7 numbers — the menu 14 under
+  the name, its right edge on the name's, radius 8, the backdrop `rgba(0,0,0,0.5)` from the left and
+  top edges across the full width 375.
