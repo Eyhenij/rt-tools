@@ -59,8 +59,10 @@ first kit. So the core holds both behaviours, and each table keeps its own; a pe
 
 ## Contract
 
-Not applicable: the inputs and outputs of both tables stay as they are; the core is inner code of
-the kit and is not exported.
+Not applicable: the inputs and outputs of both tables stay as they are, and so do the functions and
+types the two tables already gave to applications — they now call the core. The core lives in an
+entry point of its own, `@rt-tools/ui-kit-v2/table-core`, because the two tables live in two
+entry points; the root of the kit does not give it.
 
 ### Refusal codes
 

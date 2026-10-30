@@ -3,7 +3,7 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 2 из 5 — the core and its tests
+- **Stage:** 4 из 5 — the showcase story and the owner's approval
 
 ### Stage 1 — the frame and the owner's approval
 
@@ -16,19 +16,25 @@ frame is removed from Figma; the stage closes without an approval, by the owner'
 
 ### Stage 2 — the core and its tests
 
-- [ ] 1. Tests of the present behaviour of both tables pass before the edit. ← now
-- [ ] 2. `table-core/` holds the filter and the sort with one aria type and the cycle flag.
-- [ ] 3. `rt-table-core.spec.ts` covers SC-UKV-1104…1108.
+- [x] 1. Tests of the present behaviour of both tables pass before the edit.
+- [x] 2. `table-core/` holds the filter and the sort with one aria type and the cycle flag.
+- [x] 3. `rt-table-core.spec.ts` covers SC-UKV-1104…1108.
+
+Before the edit: 285 suites, 3379 tests green. The core spec: 13 tests, SC-UKV-1104…1107.
 
 ### Stage 3 — both tables on the core
 
-- [ ] 1. `rt-table` and `rt-data-table` call the core; the four old logic files lose their copies.
-- [ ] 2. The specs of both tables pass, with the data-table cases for `false` and for column B.
-- [ ] 3. Typecheck and lint of the kit are green.
+- [x] 1. `rt-table` and `rt-data-table` call the core; the four old logic files lose their copies.
+- [x] 2. The specs of both tables pass, with the data-table cases for `false` and for column B.
+- [x] 3. Typecheck and lint of the kit are green.
+
+The four files keep their exported names as one-line calls of the core, so applications lose
+nothing. After the edit: 286 suites, 3392 tests green; typecheck and eslint over the touched files
+clean.
 
 ### Stage 4 — the showcase story and the owner's approval
 
-- [ ] 1. A story of `rt-data-table` with a list filter holding `false` and two sortable columns.
+- [ ] 1. A story of `rt-data-table` with a list filter holding `false` and two sortable columns. ← now
 - [ ] 2. The visual gate: the old frames do not move, the new frame is looked at and taken.
 - [ ] 3. The links and what to look at go to the owner; the answer is written into the grill.
 
