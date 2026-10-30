@@ -36,6 +36,17 @@ export type TChatMatrixPart =
 const NOW: string = '2026-03-14T16:02:00.000Z';
 
 /**
+ * Время ленты мессенджера. День считается от сегодняшнего: от него зависят метки «Сегодня» и
+ * «Вчера». Часы закреплены: время по часам машины меняло кадр каждую минуту.
+ */
+function dayAt(daysAgo: number, hours: number, minutes: number): string {
+    const date: Date = new Date();
+    date.setDate(date.getDate() - daysAgo);
+    date.setHours(hours, minutes, 0, 0);
+    return date.toISOString();
+}
+
+/**
  * Матрицы состояний `rt-chat` для витрины.
  *
  * Каждый чат стоит в ящике с заданными размерами и поверхностью, и это не украшение показа.
@@ -446,15 +457,15 @@ export class TestRtChatMatrixComponent {
             author: 'Анна',
             own: false,
             text: 'Добрый день! Есть свободные даты на март?',
-            createdAt: new Date(Date.now() - 86_400_000).toISOString(),
+            createdAt: dayAt(1, 18, 20),
         },
-        { id: 2, author: 'Анна', own: false, text: 'Можно заехать на час раньше?', createdAt: new Date().toISOString() },
+        { id: 2, author: 'Анна', own: false, text: 'Можно заехать на час раньше?', createdAt: dayAt(0, 12, 58) },
         {
             id: 3,
             author: 'Вы',
             own: true,
             text: 'Здравствуйте! Да, дом будет готов к 13:00.',
-            createdAt: new Date().toISOString(),
+            createdAt: dayAt(0, 13, 2),
             status: ERtChatMessageStatus.Read,
         },
         {
@@ -462,10 +473,10 @@ export class TestRtChatMatrixComponent {
             author: 'Вы',
             own: true,
             text: 'Ключи оставлю у охраны на въезде.',
-            createdAt: new Date().toISOString(),
+            createdAt: dayAt(0, 13, 2),
             status: ERtChatMessageStatus.Read,
         },
-        { id: 5, author: 'Анна', own: false, text: 'Спасибо, отлично!', createdAt: new Date().toISOString() },
+        { id: 5, author: 'Анна', own: false, text: 'Спасибо, отлично!', createdAt: dayAt(0, 13, 5) },
     ];
 
     public readonly signCases: readonly { name: string; sign: IRtServiceLogo.Item | null; subtitle: string }[] = [
