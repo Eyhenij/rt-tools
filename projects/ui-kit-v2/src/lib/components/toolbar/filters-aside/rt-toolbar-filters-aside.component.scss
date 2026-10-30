@@ -9,6 +9,11 @@
             flex-direction: column;
             gap: var(--rt-toolbar-filters-aside-gap);
 
+            // Блок получает начальный фокус панели как место, а не как элемент управления: рамки нет
+            &:focus {
+                outline: none;
+            }
+
             > * {
                 width: 100%;
             }

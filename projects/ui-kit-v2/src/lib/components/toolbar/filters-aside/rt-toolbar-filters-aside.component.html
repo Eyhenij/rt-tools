@@ -2,7 +2,8 @@
     <rt-aside-header [title]="title()" />
 
     <ng-container rtBlock="rt-toolbar-filters-aside">
-        <div rtElem="fields" qa-dataid="toolbar-filters-fields">
+        <!-- Начальный фокус — на блоке полей, а не на стрелке: рамка фокуса не встаёт на кнопку, которую не нажимали -->
+        <div rtElem="fields" qa-dataid="toolbar-filters-fields" tabindex="-1" cdkFocusInitial>
             <ng-container [ngTemplateOutlet]="data.template" [ngTemplateOutletContext]="{ $implicit: 'panel' }" />
         </div>
     </ng-container>
