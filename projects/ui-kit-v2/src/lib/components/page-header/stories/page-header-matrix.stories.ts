@@ -42,6 +42,50 @@ export const UserMenuNarrow: TStory = {
     },
 };
 
+/**
+ * Меню профиля на низком окне — телефон боком, невысокое окно ноутбука. Меню кончается у нижнего
+ * края и прокручивается по вертикали; `play` проверяет это в браузере на настоящем меню, а не на
+ * входе поповера, и оставляет меню прокрученным до последнего пункта.
+ */
+export const UserMenuLow: TStory = {
+    args: { part: 'user-menu' },
+    parameters: { snapshot: { fullPage: true, viewport: { width: 1440, height: 400 }, widths: [] } },
+    play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
+        await openStoryOverlay(canvasElement, { event: 'click', within: '[qa-dataid="header-user-menu"]', wait: 200 });
+
+        const page: Document = canvasElement.ownerDocument;
+        const windowHeight: number = page.documentElement.clientHeight;
+        const menu: HTMLElement | null = page.querySelector('.rt-popover-panel > .rt-profile-menu');
+        const last: HTMLElement | null = menu?.querySelector('[qa-dataid="profile-logout"]') ?? null;
+        if (menu === null || last === null) {
+            throw new Error('Меню профиля не открылось нажатием на имя: проверять нечего');
+        }
+        if (menu.getBoundingClientRect().bottom > windowHeight) {
+            throw new Error(`Меню уходит за нижний край: ${menu.getBoundingClientRect().bottom} при окне ${windowHeight}`);
+        }
+        // Строки выступают в поле отступа, поэтому ширина содержимого больше ширины меню и это не
+        // поломка; поломка — если человек может сдвинуть меню вбок, то есть прокрутка по
+        // горизонтали не выключена.
+        const sideways: string = getComputedStyle(menu).overflowX;
+        if (menu.scrollWidth > menu.clientWidth && sideways !== 'hidden' && sideways !== 'clip') {
+            throw new Error(`Меню сдвигается по горизонтали: содержимое ${menu.scrollWidth} при ширине ${menu.clientWidth}`);
+        }
+
+        // Без прокрутки панель просто обрезает низ меню: высота меню остаётся в окне, а содержимое
+        // под ней недостижимо. Поэтому проверяется, что прокрутка доходит до конца содержимого.
+        menu.scrollTop = menu.scrollHeight;
+        await new Promise<void>((resolve: () => void): void => {
+            requestAnimationFrame((): void => resolve());
+        });
+        if (menu.scrollTop + menu.clientHeight < menu.scrollHeight - 1) {
+            throw new Error(`Низ меню не достаётся прокруткой: ${menu.scrollTop + menu.clientHeight} из ${menu.scrollHeight}`);
+        }
+        if (last.getBoundingClientRect().bottom > menu.getBoundingClientRect().bottom + 1) {
+            throw new Error('Пункт «Выйти» не достаётся вертикальной прокруткой');
+        }
+    },
+};
+
 export const Presets: TStory = { args: { part: 'presets' } };
 
 export const Themes: TStory = { args: { part: 'themes' } };
