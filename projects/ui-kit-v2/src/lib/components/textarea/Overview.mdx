@@ -25,8 +25,8 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 - **Одна строка** — [`rt-input`](./?path=/docs/atoms-forms-input-overview--docs): многострочное
   поле под короткое значение обещает объём, которого не ждут.
-- **Форматированный текст** — [`rt-rich-editor`](./?path=/docs/organisms-chat-richeditor-overview--docs).
-- **Сообщение в переписке** — [`rt-message-composer`](./?path=/docs/organisms-chat-messagecomposer-overview--docs).
+- **Форматированный текст** — [`rt-rich-editor`](./?path=/docs/molecules-chat-richeditor-overview--docs).
+- **Сообщение в переписке** — [`rt-message-composer`](./?path=/docs/molecules-chat-messagecomposer-overview--docs).
 
 ## Оси
 
@@ -40,6 +40,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | растягивание  | `none`, `vertical`                            | `vertical` |
 | наполненность | пусто, одна строка, несколько строк           | пусто      |
 | рамка         | видна, снята (`bordered=false`)               | видна      |
+| вид рамки     | `outline`, `fill`                             | `outline`  |
 
 **Ось, которой не видно.** `clearable` поле унаследовало от основы, но крестик не рисует:
 в многострочном поле он нетипичен. Вход остаётся принятым и ни на что не влияет.
@@ -78,6 +79,11 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 всё остальное поле берёт из группы `--rt-input-*`, поэтому в форме стоит заодно с однострочным.
 `font-family: inherit` задан явно: без него браузер ставит `<textarea>` моноширинный шрифт.
 
+Вид `fill` — залитое поле с чертой снизу, как залитое `rt-input`: заливка
+`--rt-color-bg-surface-subtle-2`, черта `--rt-color-field-fill-underline`, скругление только сверху.
+Под материальным набором в `rt-field` подпись лежит внутри поля над первой строкой, а под последней
+строкой 6 px вместе с чертой — история **Appearance** и строки области текста в истории поля **Material**.
+
 ## Входы
 
 | вход          | тип                    | умолчание                 |
@@ -86,6 +92,8 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | `readonly`    | `boolean`              | `false`                   |
 | `rows`        | `number`               | `3`                       |
 | `resize`      | `'none' \| 'vertical'` | `'vertical'`              |
+| `appearance`  | `'outline' \| 'fill'`  | `'outline'`               |
+| `maxlength`   | `number \| null`       | `null` — без предела      |
 | `radius`      | `TRtRadius \| null`    | `null` → скругление полей |
 
 ## Входы от основы полей
@@ -93,14 +101,15 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 Достались от `RtFormControlBase` — общей основы полей кита; в ней же они и меняются, сразу для
 всех наследников.
 
-| вход        | тип                    | умолчание | здесь                       |
-| ----------- | ---------------------- | --------- | --------------------------- |
-| `size`      | `'sm' \| 'md' \| 'lg'` | `'md'`    | минимальная высота          |
-| `disabled`  | `boolean`              | `false`   | —                           |
-| `controlId` | `string \| null`       | `null`    | —                           |
-| `ariaLabel` | `string \| null`       | `null`    | —                           |
-| `clearable` | `boolean`              | `true`    | принимается, но не рисуется |
-| `bordered`  | `boolean`              | `true`    | —                           |
+| вход            | тип                    | умолчание | здесь                       |
+| --------------- | ---------------------- | --------- | --------------------------- |
+| `size`          | `'sm' \| 'md' \| 'lg'` | `'md'`    | минимальная высота          |
+| `disabled`      | `boolean`              | `false`   | —                           |
+| `controlId`     | `string \| null`       | `null`    | —                           |
+| `ariaLabel`     | `string \| null`       | `null`    | —                           |
+| `clearable`     | `boolean`              | `true`    | принимается, но не рисуется |
+| `clearTabbable` | `boolean`              | `false`   |
+| `bordered`      | `boolean`              | `true`    | —                           |
 
 ## Выходы
 

@@ -1,3 +1,5 @@
+@use '../../../../styles/breakpoints' as bp;
+
 @layer rt-kit.components {
     .rt-chat {
         --rt-chat-bubble-radius: var(--rt-radius-lg);
@@ -37,9 +39,9 @@
         &--expanded > .rt-file-drop {
             block-size: 100%;
 
-            // На широких экранах чат не растягивается на весь вьюпорт: тред и
-            // композер иначе разрежены. Свыше 1440px фиксируем колонку по центру.
-            @media (width >= 1441px) {
+            // На широком месте чат не растягивается во всю ширину: тред и композер иначе
+            // разрежены. Шире 1440px колонка стоит по центру.
+            @include bp.place-min(1440px) {
                 inline-size: 1000px;
                 margin-inline: auto;
                 max-inline-size: 100%;
@@ -70,7 +72,15 @@
             max-height: none;
         }
 
+        // Знак канала стоит перед заголовком и не сжимается рядом с длинным заголовком.
+        &__sign {
+            flex: none;
+        }
+
+        // Шапка — плотная полоса постоянной высоты: перенесённый заголовок вышел бы из неё вверх
+        // и вниз, поэтому длинный режется многоточием, а целиком виден в подсказке
         &__title {
+            overflow: hidden;
             margin: 0;
             color: var(--rt-color-text-primary);
             font-family: var(--rt-font-family-sans);
@@ -78,6 +88,33 @@
             font-weight: var(--rt-font-weight-bold);
             letter-spacing: var(--rt-letter-spacing-wide);
             line-height: var(--rt-leading-snug);
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        // Заголовок и строка под ним стоят столбцом; длинный контакт режется многоточием,
+        // кнопки шапки остаются на месте
+        &__names {
+            display: flex;
+            flex-direction: column;
+            gap: var(--rt-space-0-5);
+            min-inline-size: 0;
+        }
+
+        &__subtitle {
+            overflow: hidden;
+            margin: 0;
+            color: var(--rt-color-text-muted);
+            font-family: var(--rt-font-family-sans);
+            font-size: var(--rt-text-xs);
+            line-height: var(--rt-leading-snug);
+            text-overflow: ellipsis;
+            white-space: nowrap;
+
+            // Пустая строка скрыта признаком `hidden`, и шапка без неё прежней высоты
+            &[hidden] {
+                display: none;
+            }
         }
 
         &__thread-viewport {
@@ -287,10 +324,19 @@
             &--status--failed {
                 color: var(--rt-color-state-danger);
             }
+
+            &--status--undelivered {
+                color: var(--rt-color-state-warning-text);
+            }
         }
 
         &__status-icon {
             font-size: var(--rt-text-sm);
+        }
+
+        &__status-caption {
+            font-size: var(--rt-text-xs);
+            line-height: var(--rt-leading-none);
         }
 
         // Скелетон-пузырь повторяет геометрию `&__message`, чтобы подмена на реальное

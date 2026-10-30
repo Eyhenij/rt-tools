@@ -4,6 +4,7 @@
 
     .rt-copy-value {
         --rt-copy-value-radius: var(--rt-radius-sm);
+        --rt-copy-value-wrap-max-height: var(--rt-size-30);
 
         display: inline-flex;
         align-items: center;
@@ -34,6 +35,21 @@
 
         &__button {
             flex: none;
+        }
+
+        /* Многострочное значение: переносится по строкам, держит свою высоту и прокручивается в
+           ней. Кнопка стоит у верхнего края, рядом с началом текста. */
+        &--wrap {
+            display: flex;
+            align-items: flex-start;
+        }
+
+        &--wrap &__value {
+            overflow: auto;
+            flex: 1 1 auto;
+            max-block-size: var(--rt-copy-value-wrap-max-height);
+            overflow-wrap: anywhere;
+            white-space: pre-wrap;
         }
     }
 }

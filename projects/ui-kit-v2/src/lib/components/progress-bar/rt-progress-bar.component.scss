@@ -1,0 +1,77 @@
+@layer rt-kit.components {
+    /* rt-progress-bar — полоса прогресса. ViewEncapsulation.None: хост — дорожка, внутри заполнение. */
+    .rt-progress-bar {
+        --rt-progress-bar-height: var(--rt-size-1);
+        --rt-progress-bar-radius: var(--rt-radius-full);
+        --rt-progress-bar-track: var(--rt-color-border-default);
+        --rt-progress-bar-fill: var(--rt-color-action-primary);
+        --rt-progress-bar-duration: var(--rt-duration-base);
+        --rt-progress-bar-sweep-duration: var(--rt-duration-slower);
+
+        position: relative;
+        display: block;
+        overflow: hidden;
+        width: 100%;
+        height: var(--rt-progress-bar-height);
+        border-radius: var(--rt-progress-bar-radius);
+        background: var(--rt-progress-bar-track);
+
+        &__fill {
+            position: absolute;
+            display: block;
+            border-radius: inherit;
+            background: var(--rt-progress-bar-fill);
+            inset-block: 0;
+            inset-inline-start: 0;
+            transition: width var(--rt-progress-bar-duration) ease-out;
+        }
+
+        /* Без доли бежит отрезок в треть дорожки: от левого края за правый, по кругу. */
+        &--indeterminate &__fill {
+            width: 35%;
+            animation: rt-progress-bar-sweep calc(var(--rt-progress-bar-sweep-duration) * 3) ease-in-out infinite;
+        }
+
+        &--color--secondary {
+            --rt-progress-bar-fill: var(--rt-color-action-secondary);
+        }
+
+        &--color--info {
+            --rt-progress-bar-fill: var(--rt-color-action-info);
+        }
+
+        &--color--success {
+            --rt-progress-bar-fill: var(--rt-color-action-success);
+        }
+
+        &--color--warning {
+            --rt-progress-bar-fill: var(--rt-color-action-warning);
+        }
+
+        &--color--danger {
+            --rt-progress-bar-fill: var(--rt-color-action-danger);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            &__fill {
+                transition: none;
+            }
+
+            /* Без движения полоса без доли стоит залитой целиком: «идёт работа» читается и так. */
+            &--indeterminate &__fill {
+                width: 100%;
+                animation: none;
+            }
+        }
+    }
+
+    @keyframes rt-progress-bar-sweep {
+        from {
+            inset-inline-start: -35%;
+        }
+
+        to {
+            inset-inline-start: 100%;
+        }
+    }
+}

@@ -1,6 +1,7 @@
 @layer rt-kit.components {
     .rt-ai-chat-answer {
         display: flex;
+        min-width: 0;
         flex-direction: column;
         gap: var(--rt-space-sm);
 

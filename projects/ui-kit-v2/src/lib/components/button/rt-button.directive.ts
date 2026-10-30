@@ -1,9 +1,11 @@
+import { FocusMonitor } from '@angular/cdk/a11y';
 import { BooleanInput } from '@angular/cdk/coercion';
 import { DOCUMENT } from '@angular/common';
 import {
     afterNextRender,
     booleanAttribute,
     computed,
+    DestroyRef,
     Directive,
     effect,
     ElementRef,
@@ -13,8 +15,10 @@ import {
     InputSignal,
     InputSignalWithTransform,
     Renderer2,
+    signal,
     Signal,
     untracked,
+    WritableSignal,
 } from '@angular/core';
 
 import { IRtKitConfig } from '@rt-tools/ui-kit-v2/core';
@@ -77,6 +81,7 @@ const LOADING_FADE_OUT_BUFFER_MS: number = 50;
 export class RtButtonDirective {
     readonly #el: ElementRef<HTMLButtonElement | HTMLAnchorElement> = inject<ElementRef<HTMLButtonElement | HTMLAnchorElement>>(ElementRef);
     readonly #renderer: Renderer2 = inject(Renderer2);
+    readonly #focusMonitor: FocusMonitor = inject(FocusMonitor);
     readonly #doc: Document = inject(DOCUMENT);
     readonly #iconRegistry: RtIconRegistry = inject(RtIconRegistry);
     readonly #glyphStrategy: IRtIcon.GlyphStrategy = inject(RT_ICON_GLYPH_STRATEGY);
@@ -98,7 +103,18 @@ export class RtButtonDirective {
     #spinnerEl: HTMLElement | null = null;
     #wasLoading: boolean = false;
 
-    protected readonly isIconOnly: Signal<boolean> = computed(() => !!this.icon() && !this.label());
+    readonly #theme: Signal<IButton.Theme> = computed(() => this.placeLook()?.theme ?? this.theme());
+    readonly #appearanceShown: Signal<IButton.Appearance> = computed(() => this.placeLook()?.appearance ?? this.appearance());
+    readonly #icon: Signal<string | null> = computed(() => (this.placeLook()?.icon === null ? null : this.icon()));
+    readonly #label: Signal<string | null> = computed(() => this.placeLook()?.label ?? this.label());
+
+    protected readonly isIconOnly: Signal<boolean> = computed(() => !!this.#icon() && !this.#label());
+
+    /**
+     * Вид, который задаёт место кнопки: слот подвала панели. Пишет его хозяин места, а не
+     * приложение, — входы кнопки при этом не трогаются и вернутся, когда место вид снимет.
+     */
+    public readonly placeLook: WritableSignal<IButton.PlaceLook | null> = signal<IButton.PlaceLook | null>(null);
 
     /** Текстовый лейбл кнопки. Если null — кнопка только с иконкой. */
     public readonly label: InputSignal<string | null> = input<string | null>(null);
@@ -147,9 +163,16 @@ export class RtButtonDirective {
     constructor() {
         afterNextRender(() => untracked(() => this.#updateContent()));
 
+        /* Источник фокуса пишет CDK классами `cdk-keyboard-focused`, `cdk-mouse-focused` и
+           соседними, как у Material: кольцо фокуса рисуется только не от мыши и не от касания.
+           Сам монитор, а не `CdkMonitorFocus` хозяином: приложение вправе поставить на ту же
+           кнопку `cdkMonitorElementFocus`, и директива дважды на узле — ошибка NG0309. */
+        this.#focusMonitor.monitor(this.#el);
+        inject(DestroyRef).onDestroy((): void => this.#focusMonitor.stopMonitoring(this.#el));
+
         effect(() => {
-            this.label();
-            this.icon();
+            this.#label();
+            this.#icon();
             this.iconPos();
             this.loading();
             this.loadingIcon();
@@ -171,8 +194,8 @@ export class RtButtonDirective {
 
     @HostBinding('class')
     protected get hostClasses(): Record<string, boolean> {
-        const theme: IButton.Theme = this.theme();
-        const appearance: IButton.Appearance = this.appearance();
+        const theme: IButton.Theme = this.#theme();
+        const appearance: IButton.Appearance = this.#appearanceShown();
         const size: IButton.Size = this.size();
 
         return {
@@ -292,7 +315,7 @@ export class RtButtonDirective {
             this.#renderer.appendChild(button, this.#spinnerEl);
         }
 
-        const label: string | null = this.label();
+        const label: string | null = this.#label();
         if (label) {
             this.#labelEl = this.#createLabel(label);
             this.#renderer.appendChild(button, this.#labelEl);
@@ -300,8 +323,8 @@ export class RtButtonDirective {
     }
 
     #renderIconAndLabel(button: HTMLElement): void {
-        const iconClass: string | null = this.icon();
-        const label: string | null = this.label();
+        const iconClass: string | null = this.#icon();
+        const label: string | null = this.#label();
         const pos: IButton.IconPos = this.iconPos();
 
         const iconEl: HTMLElement | null = iconClass ? this.#createIcon(iconClass) : null;

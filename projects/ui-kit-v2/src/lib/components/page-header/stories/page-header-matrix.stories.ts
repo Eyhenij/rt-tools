@@ -2,6 +2,7 @@ import { Meta, StoryObj } from '@storybook/angular';
 
 import { storyWidthAtMost } from '../../../../showcase';
 import { openStoryOverlay } from '../../../../showcase/story-overlay';
+import { STORY_PHONE_VIEWPORT } from '../../../../showcase/story-snapshot';
 import { PAGE_HEADER_COMPACT_SCROLL_ATTRIBUTE, TestRtPageHeaderMatrixComponent } from './component/test-page-header-matrix.component';
 
 /**
@@ -27,6 +28,19 @@ export const Items: TStory = { args: { part: 'items' } };
 
 /** Блок пользователя справа: без него, с инициалом, без инициала. */
 export const User: TStory = { args: { part: 'user' } };
+
+/**
+ * Меню профиля на телефоне: открыто нажатием на имя и стоит на подложке меню разделов. Окно
+ * узкое с первого кадра — поповер берёт класс подложки при первом открытии.
+ */
+export const UserMenuNarrow: TStory = {
+    args: { part: 'user-menu' },
+    globals: { viewport: { value: 'narrow' } },
+    parameters: { snapshot: { fullPage: true, viewport: STORY_PHONE_VIEWPORT } },
+    play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
+        await openStoryOverlay(canvasElement, { event: 'click', within: '[qa-dataid="header-user-menu"]', wait: 200 });
+    },
+};
 
 export const Presets: TStory = { args: { part: 'presets' } };
 

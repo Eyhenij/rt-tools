@@ -127,6 +127,30 @@ describe('RtCopyCellComponent', (): void => {
         expect(hoverWith(fixture, 400, 120)).toBe('#7 — Тур в Сочи');
     });
 
+    it('SC-UKV-882 — обрезанное значение показывает подсказку с первого наведения', (): void => {
+        // Браузер шлёт mouseenter сперва внешнему узлу, потом вложенному, и перерисовки между
+        // ними нет. Подсказка спрашивает свой текст на входе указателя в содержимое: до починки
+        // он был ещё пустым, и подсказка появлялась только со второго наведения.
+        jest.useFakeTimers();
+        try {
+            const fixture: ComponentFixture<CopyCellHostComponent> = setup();
+            const content: HTMLElement = qa(fixture, 'copy-cell-content')?.nativeElement as HTMLElement;
+
+            Object.defineProperty(content, 'scrollWidth', { configurable: true, value: 400 });
+            Object.defineProperty(content, 'clientWidth', { configurable: true, value: 120 });
+
+            (el(fixture, 'rt-copy-cell')?.nativeElement as HTMLElement).dispatchEvent(new MouseEvent('mouseenter'));
+            content.dispatchEvent(new MouseEvent('mouseenter'));
+            jest.advanceTimersByTime(300);
+            fixture.detectChanges();
+
+            expect(document.querySelector('rt-tooltip')?.textContent?.trim()).toBe('#7 — Тур в Сочи');
+        } finally {
+            document.querySelectorAll('.cdk-overlay-container').forEach((container: Element): void => container.remove());
+            jest.useRealTimers();
+        }
+    });
+
     it('вне таблицы кнопка держится видимой — строки для наведения там нет', (): void => {
         const fixture: ComponentFixture<CopyCellHostComponent> = setup();
 

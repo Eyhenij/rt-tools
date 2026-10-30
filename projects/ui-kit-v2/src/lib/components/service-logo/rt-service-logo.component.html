@@ -1,0 +1,13 @@
+<ng-container rtBlock="rt-service-logo">
+    @for (mark of marks(); track $index) {
+        <span rtElem="plate" role="listitem" qa-dataid="service-logo-plate" [attr.data-label]="mark.label">
+            @if (mark.src !== null) {
+                <img rtElem="image" qa-dataid="service-logo-image" [src]="mark.src" [alt]="mark.label" />
+            } @else {
+                <span rtElem="icon" role="img" qa-dataid="service-logo-icon" [attr.aria-label]="mark.label">
+                    <rt-icon [name]="mark.icon" [size]="iconSize()" />
+                </span>
+            }
+        </span>
+    }
+</ng-container>

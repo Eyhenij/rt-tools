@@ -28,10 +28,14 @@ import { RtFormControlBase } from '@rt-tools/ui-kit-v2/form-control';
 import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
+import { RtSpinnerComponent } from '@rt-tools/ui-kit-v2/spinner';
 import { RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
-import { rtScrollActiveOptionIntoView } from '@rt-tools/ui-kit-v2/select';
+import { RtOptionList, TRtOptionListAction } from '@rt-tools/ui-kit-v2/core';
 import { IRtAutocomplete } from './rt-autocomplete.model';
+
+/** Сколько точек до дна панели уже считается концом списка. */
+const END_THRESHOLD_PX: number = 8;
 
 const BEM_BLOCK: string = 'rt-autocomplete';
 
@@ -68,6 +72,7 @@ function nextPanelId(): number {
         RtIconButtonComponent,
         RtIconComponent,
         RtPopoverDirective,
+        RtSpinnerComponent,
         BlockDirective,
         ElemDirective,
         ModDirective,
@@ -89,6 +94,9 @@ function nextPanelId(): number {
     },
 })
 export class RtAutocompleteComponent<TItem> extends RtFormControlBase<TItem | null> {
+    /** Длина списка, на которой конец уже сообщён: прокрутка у дна до новой страницы его не повторяет. */
+    #endReportedAt: number = -1;
+
     protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
 
     protected readonly panelId: string = `rt-autocomplete-panel-${nextPanelId()}`;
@@ -98,14 +106,23 @@ export class RtAutocompleteComponent<TItem> extends RtFormControlBase<TItem | nu
     protected readonly fieldEl: Signal<ElementRef<HTMLInputElement> | undefined> = viewChild<ElementRef<HTMLInputElement>>('fieldEl');
 
     protected readonly inputText: WritableSignal<string> = signal<string>('');
-    protected readonly activeIndex: WritableSignal<number> = signal<number>(-1);
 
     protected readonly isOpen: Signal<boolean> = computed((): boolean => this.popover().isOpen());
 
+    /** Клавиатура списка: подсветка, клавиши открытия, id для `aria-activedescendant`, прокрутка к опции. */
+    protected readonly optionList: RtOptionList = new RtOptionList({
+        panelId: (): string => this.panelId,
+        isOpen: (): boolean => this.isOpen(),
+        count: (): number => this.suggestions().length,
+        chooseKeys: new Set<string>(['Enter']),
+        sideKeys: false,
+        edgeKeys: false,
+    });
+
+    protected readonly activeIndex: WritableSignal<number> = this.optionList.activeIndex;
+
     /** Идентификатор подсвеченной опции — тот же, что уходит в `aria-activedescendant`. */
-    protected readonly activeOptionId: Signal<string | null> = computed((): string | null =>
-        this.isOpen() && this.activeIndex() >= 0 ? `${this.panelId}-opt-${this.activeIndex()}` : null
-    );
+    protected readonly activeOptionId: Signal<string | null> = this.optionList.activeOptionId;
 
     protected readonly hasValue: Signal<boolean> = computed((): boolean => this.inputText() !== '');
 
@@ -131,15 +148,31 @@ export class RtAutocompleteComponent<TItem> extends RtFormControlBase<TItem | nu
         null
     );
 
+    /**
+     * Подсказки грузятся: в панели строка со спиннером — вместо пустого результата при первой загрузке
+     * и под списком при подгрузке следующей страницы.
+     */
+    public readonly loading: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+
+    /** Свой текст пустого результата; `null` — подпись кита `uiNothingFound`. */
+    public readonly emptyText: InputSignal<string | null> = input<string | null>(null);
+
+    /** Своя разметка пустого результата; сильнее `emptyText`. Обстановка — набранная строка. */
+    public readonly emptyTemplate: InputSignal<TemplateRef<{ $implicit: string }> | null> = input<TemplateRef<{
+        $implicit: string;
+    }> | null>(null);
+
+    /**
+     * Панель долистали до конца — пора просить следующую страницу. Не приходит, пока идёт загрузка, и
+     * приходит один раз на каждую длину списка: прокрутка у дна до прихода страницы её не повторяет.
+     */
+    public readonly scrolledToEnd: OutputEmitterRef<void> = output<void>();
+
     public readonly complete: OutputEmitterRef<IRtAutocomplete.CompleteEvent> = output<IRtAutocomplete.CompleteEvent>();
 
     public readonly itemSelect: OutputEmitterRef<TItem> = output<TItem>();
-
-    constructor() {
-        super();
-        // Подсветка, сдвинутая клавишами, не уходит за край панели с пределом высоты.
-        rtScrollActiveOptionIntoView(this.activeOptionId);
-    }
 
     public override writeValue(value: TItem | null): void {
         super.writeValue(value);
@@ -164,6 +197,7 @@ export class RtAutocompleteComponent<TItem> extends RtFormControlBase<TItem | nu
     protected override clearValue(): void {
         super.clearValue();
         this.inputText.set('');
+        this.#endReportedAt = -1;
     }
 
     protected onInput(event: Event): void {
@@ -171,6 +205,9 @@ export class RtAutocompleteComponent<TItem> extends RtFormControlBase<TItem | nu
         const query: string = target.value;
         this.inputText.set(query);
         this.activeIndex.set(-1);
+        // Новый запрос — новый список: его первая страница той же длины, что прошлый список, снова
+        // сообщает о дне, иначе подгрузка нового запроса не началась бы вовсе.
+        this.#endReportedAt = -1;
         if (query.length >= this.minLength()) {
             this.complete.emit({ query, originalEvent: event });
             this.popover().open();
@@ -189,6 +226,18 @@ export class RtAutocompleteComponent<TItem> extends RtFormControlBase<TItem | nu
 
     protected onBlur(): void {
         this.markTouched();
+    }
+
+    /** Прокрутка панели: у дна — сообщить, что пора следующая страница. */
+    protected onPanelScroll(event: Event): void {
+        const panel: HTMLElement = event.target as HTMLElement;
+        const atEnd: boolean = panel.scrollTop + panel.clientHeight >= panel.scrollHeight - END_THRESHOLD_PX;
+        const length: number = this.suggestions().length;
+        if (!atEnd || this.loading() || length === this.#endReportedAt) {
+            return;
+        }
+        this.#endReportedAt = length;
+        this.scrolledToEnd.emit();
     }
 
     protected onClosed(): void {
@@ -211,37 +260,28 @@ export class RtAutocompleteComponent<TItem> extends RtFormControlBase<TItem | nu
         if (!this.isOpen()) {
             return;
         }
-        switch (key) {
-            case 'ArrowDown':
-                event.preventDefault();
-                this.#moveActive(1);
-                break;
-            case 'ArrowUp':
-                event.preventDefault();
-                this.#moveActive(-1);
-                break;
-            case 'Enter':
-                event.preventDefault();
-                this.#selectActive();
-                break;
-            case 'Escape':
-                event.preventDefault();
-                this.popover().close();
-                break;
-            default:
-                break;
-        }
-    }
-
-    #moveActive(delta: number): void {
-        const items: ReadonlyArray<TItem> = this.suggestions();
-        if (items.length === 0) {
-            this.activeIndex.set(-1);
+        const action: TRtOptionListAction = this.optionList.actionOf(key);
+        if (action === 'none' || action === 'side') {
             return;
         }
-        const index: number = this.activeIndex();
-        const next: number = (index + delta + items.length) % items.length;
-        this.activeIndex.set(next);
+        event.preventDefault();
+        switch (action) {
+            case 'next':
+                this.optionList.move(1);
+                break;
+            case 'previous':
+                this.optionList.move(-1);
+                break;
+            case 'choose':
+                this.#selectActive();
+                break;
+            case 'close':
+                // Escape закрывает один слой: панель. Без остановки событие всплывает до document,
+                // и оверлей под панелью — боковая панель, окно — закрывается вместе с ней.
+                event.stopPropagation();
+                this.popover().close();
+                break;
+        }
     }
 
     #selectActive(): void {

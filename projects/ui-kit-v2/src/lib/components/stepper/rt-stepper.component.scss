@@ -125,6 +125,99 @@
             }
         }
 
+        /* Вертикальный список шагов: метка с номером, подпись справа, линия между метками. Номер
+           рисует метка, а не список: глобальный сброс у потребителя снимает нумерацию `<ol>`. */
+        &.rt-stepper--vertical > .rt-stepper {
+            --rt-stepper-mark-size: var(--rt-size-6);
+            --rt-stepper-mark-font-size: var(--rt-text-xs);
+            --rt-stepper-mark-bg: var(--rt-color-text-muted);
+            --rt-stepper-mark-color: var(--rt-color-text-inverse);
+            --rt-stepper-line-width: var(--rt-border-width-thin);
+            --rt-stepper-line-color: var(--rt-color-border-default);
+            --rt-stepper-item-gap: var(--rt-space-6);
+
+            padding: 0;
+            margin: 0;
+            gap: 0;
+            list-style: none;
+
+            .rt-stepper__item {
+                position: relative;
+                display: flex;
+                align-items: flex-start;
+                gap: var(--rt-space-4);
+                padding-block-end: var(--rt-stepper-item-gap);
+
+                &:last-child {
+                    padding-block-end: 0;
+                }
+
+                /* Линия от метки до метки следующего шага, с просветом у обеих. */
+                &:not(:last-child):after {
+                    position: absolute;
+                    background: var(--rt-stepper-line-color);
+                    content: '';
+                    inline-size: var(--rt-stepper-line-width);
+                    inset-block: calc(var(--rt-stepper-mark-size) + var(--rt-space-1)) var(--rt-space-1);
+                    inset-inline-start: calc((var(--rt-stepper-mark-size) - var(--rt-stepper-line-width)) / 2);
+                }
+
+                /* Цифра пройденного шага — цвет, обратный тексту: прогресс в тёмной теме светлый. */
+                &--state--complete {
+                    --rt-stepper-mark-bg: var(--rt-color-stepper-progress);
+                    --rt-stepper-mark-color: var(--rt-color-text-inverse);
+                }
+
+                /* Янтарь текущего шага один в обеих темах, и цифра на нём одна — тёмная. */
+                &--state--current {
+                    --rt-stepper-mark-bg: var(--rt-color-stepper-current);
+                    --rt-stepper-mark-color: var(--rt-neutral-950);
+                }
+
+                &--state--upcoming {
+                    --rt-stepper-mark-bg: var(--rt-color-stepper-track);
+                    --rt-stepper-mark-color: var(--rt-color-text-primary);
+                }
+            }
+
+            .rt-stepper__mark {
+                display: inline-flex;
+                flex: 0 0 auto;
+                align-items: center;
+                justify-content: center;
+                border-radius: var(--rt-stepper-radius);
+                background: var(--rt-stepper-mark-bg);
+                block-size: var(--rt-stepper-mark-size);
+                color: var(--rt-stepper-mark-color);
+                font-size: var(--rt-stepper-mark-font-size);
+                font-weight: var(--rt-font-weight-medium);
+                inline-size: var(--rt-stepper-mark-size);
+                line-height: 1;
+            }
+
+            .rt-stepper__body {
+                display: flex;
+                min-width: 0;
+                flex-direction: column;
+                gap: var(--rt-space-1);
+                padding-block-start: var(--rt-space-1);
+            }
+
+            .rt-stepper__step-label {
+                color: var(--rt-color-text-primary);
+                font-size: var(--rt-text-sm);
+                line-height: var(--rt-leading-snug);
+                overflow-wrap: anywhere;
+            }
+
+            .rt-stepper__step-description {
+                margin: 0;
+                color: var(--rt-color-text-muted);
+                font-size: var(--rt-text-xs);
+                line-height: var(--rt-leading-snug);
+            }
+        }
+
         /* Шаг входа `radius` переназначает скругление точек шагов. */
         @include kv.radius-steps('--rt-stepper-radius', '> .rt-stepper');
     }

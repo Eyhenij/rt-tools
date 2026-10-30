@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, WritableSignal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 import { StoryGridComponent } from '../../../../../showcase/story-grid.component';
@@ -9,7 +9,7 @@ import { StoryThemesComponent } from '../../../../../showcase/story-themes.compo
 import { RtCheckboxComponent } from '../../rt-checkbox.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TCheckboxMatrixPart = 'value' | 'label' | 'states' | 'presets' | 'themes';
+export type TCheckboxMatrixPart = 'value' | 'label' | 'states' | 'presets' | 'themes' | 'standalone';
 
 /**
  * Положение чекбокса: значение и смешанность вместе, потому что порознь они не бывают —
@@ -139,6 +139,19 @@ function checked(value: boolean): FormControl<boolean> {
                     </ng-template>
                 </app-story-presets>
             }
+
+            @case ('standalone') {
+                <app-story-presets caption="Без формы: отметку ставит вход checked, смену сообщает checkedChange">
+                    <ng-template>
+                        @for (amenity of amenities; track amenity) {
+                            <rt-checkbox [checked]="picked().includes(amenity)" (checkedChange)="toggleAmenity(amenity, $event)">
+                                {{ amenity }}
+                            </rt-checkbox>
+                        }
+                        <p>Отмечено: {{ picked().join(', ') || 'ничего' }}</p>
+                    </ng-template>
+                </app-story-presets>
+            }
         }
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -177,9 +190,19 @@ export class TestRtCheckboxMatrixComponent {
         { name: 'длинная', text: 'Согласен с условиями обработки персональных данных', control: checked(true) },
     ];
 
+    /** Список без формы: отметки держит обёртка, как держал бы их экран приложения. */
+    public readonly amenities: readonly string[] = ['Завтрак', 'Парковка', 'Трансфер'];
+    public readonly picked: WritableSignal<readonly string[]> = signal<readonly string[]>(['Завтрак']);
+
     /** Подпись столбца сетки отключённости. */
     public readonly switchLabel: (value: boolean) => string = (value: boolean): string => (value ? 'отключён' : 'включён');
 
     /** Подпись случая: у всех наборов этой матрицы имя лежит в одном поле. */
     public readonly caseLabel: (value: { readonly name: string }) => string = (value: { readonly name: string }): string => value.name;
+
+    public toggleAmenity(amenity: string, on: boolean): void {
+        this.picked.update((list: readonly string[]): readonly string[] =>
+            on ? [...list, amenity] : list.filter((item: string): boolean => item !== amenity)
+        );
+    }
 }

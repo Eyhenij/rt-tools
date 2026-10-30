@@ -3,7 +3,7 @@ import { Meta, StoryObj } from '@storybook/angular';
 import { TestRtDynamicSelectorComponent } from './component/test-dynamic-selector.component';
 
 export default {
-    title: 'Organisms/Forms/DynamicSelector',
+    title: 'Molecules/Forms/DynamicSelector',
     component: TestRtDynamicSelectorComponent,
     argTypes: {
         mode: { control: { type: 'inline-radio' }, options: ['multi', 'single'] },

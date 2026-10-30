@@ -1,0 +1,168 @@
+@layer rt-kit.components {
+    /* rt-drawer — панель внутри rt-drawer-container. Хост прозрачен для раскладки: подложка и
+       панель становятся прямыми участниками гибкой строки контейнера. */
+    .rt-drawer {
+        display: contents;
+    }
+
+    .rt-drawer__panel {
+        --rt-drawer-width: var(--rt-size-64);
+        --rt-drawer-bg: var(--rt-color-bg-surface);
+        --rt-drawer-border-width: var(--rt-border-width-thin);
+        --rt-drawer-border-color: var(--rt-color-border-subtle);
+        --rt-drawer-shadow: var(--rt-shadow-lg);
+        --rt-drawer-side-shadow: none;
+        --rt-drawer-duration: var(--rt-duration-base);
+
+        /* Ярус панели рядом с содержимым. Начальная панель стоит в строке раньше содержимого, и
+           содержимое со своим контекстом наложения рисуется поверх её тени; ярус выше `auto` это
+           меняет. Поверх содержимого ярус свой, выше подложки: `isolation` контейнера не пускает
+           оба над страницей. */
+        --rt-drawer-z-index: auto;
+        --rt-drawer-over-z-index: var(--rt-z-modal);
+
+        position: relative;
+        z-index: var(--rt-drawer-z-index);
+        display: flex;
+        overflow: clip;
+        min-height: 0;
+        flex: 0 0 auto;
+        background-color: var(--rt-drawer-bg);
+        inline-size: var(--rt-drawer-width);
+        outline: none;
+        transition:
+            inline-size var(--rt-drawer-duration) ease,
+            transform var(--rt-drawer-duration) ease,
+            visibility 0s linear;
+
+        &--position--start {
+            order: -1;
+        }
+
+        &--position--end {
+            order: 1;
+        }
+
+        &--mode--side {
+            box-shadow: var(--rt-drawer-side-shadow);
+        }
+
+        &--mode--side#{&}--position--start {
+            border-inline-end: var(--rt-drawer-border-width) solid var(--rt-drawer-border-color);
+        }
+
+        &--mode--side#{&}--position--end {
+            border-inline-start: var(--rt-drawer-border-width) solid var(--rt-drawer-border-color);
+        }
+
+        /* Поверх содержимого: панель снята со строки и прижата к своему краю контейнера. */
+        &--mode--over {
+            position: absolute;
+            z-index: var(--rt-drawer-over-z-index);
+            box-shadow: var(--rt-drawer-shadow);
+            inset-block: 0;
+        }
+
+        &--mode--over#{&}--position--start {
+            inset-inline-start: 0;
+        }
+
+        &--mode--over#{&}--position--end {
+            inset-inline-end: 0;
+        }
+
+        /* Открытая панель с visible не обрезает своё: подпанель выходит вбок, ручка ложится на
+           край. Закрываясь, панель обрезает сразу — содержимое не висит над страницей, пока она
+           сжимается. */
+        &--overflow--visible#{&}--opened {
+            overflow: visible;
+        }
+
+        /* Ширина по содержимому: своей ширины нет, переход от неё к нулю не анимируется. */
+        &--auto-width {
+            inline-size: fit-content;
+        }
+
+        /* Закрытая панель остаётся в разметке: рядом с содержимым она сжимается до нуля, поверх —
+           уезжает за свой край. Видимость гаснет после перехода, иначе уход не виден. */
+        &:not(#{&}--opened) {
+            transition:
+                inline-size var(--rt-drawer-duration) ease,
+                transform var(--rt-drawer-duration) ease,
+                visibility 0s linear var(--rt-drawer-duration);
+            visibility: hidden;
+        }
+
+        &--mode--side:not(#{&}--opened) {
+            border-width: 0;
+            inline-size: 0;
+        }
+
+        &--mode--over#{&}--position--start:not(#{&}--opened) {
+            transform: translateX(-100%);
+        }
+
+        &--mode--over#{&}--position--end:not(#{&}--opened) {
+            transform: translateX(100%);
+        }
+
+        /* Справа налево начало строки справа: панель уезжает за правый край, а конечная — за левый. */
+        &--mode--over#{&}--position--start:not(#{&}--opened):dir(rtl) {
+            transform: translateX(100%);
+        }
+
+        &--mode--over#{&}--position--end:not(#{&}--opened):dir(rtl) {
+            transform: translateX(-100%);
+        }
+
+        /* Пока ручку тянут, ширина идёт за указателем без запаздывания. */
+        &--resizing {
+            transition: none;
+        }
+    }
+
+    /* Содержимое держит полную ширину и тогда, когда панель сжимается: строки не переносятся
+       заново на каждом кадре перехода. */
+    .rt-drawer__inner {
+        overflow: auto;
+        min-width: 0;
+        flex: 0 0 var(--rt-drawer-width);
+    }
+
+    .rt-drawer__panel--overflow--visible.rt-drawer__panel--opened > .rt-drawer__inner {
+        overflow: visible;
+    }
+
+    .rt-drawer__panel--auto-width > .rt-drawer__inner {
+        flex-basis: auto;
+    }
+
+    .rt-drawer__backdrop {
+        --rt-drawer-backdrop-bg: var(--rt-color-bg-overlay);
+        --rt-drawer-backdrop-duration: var(--rt-duration-base);
+
+        /* Подложка под панелью, но над содержимым и его ярусами. */
+        --rt-drawer-backdrop-z-index: var(--rt-z-modal-backdrop);
+
+        position: absolute;
+        z-index: var(--rt-drawer-backdrop-z-index);
+        background: var(--rt-drawer-backdrop-bg);
+        inset: 0;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity var(--rt-drawer-backdrop-duration) ease;
+
+        &--visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .rt-drawer__panel,
+        .rt-drawer__panel:not(.rt-drawer__panel--opened),
+        .rt-drawer__backdrop {
+            transition: none;
+        }
+    }
+}

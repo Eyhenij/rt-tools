@@ -7,7 +7,13 @@
         @if (showHeader()) {
             <rt-toolbar rtElem="header" dense>
                 <ng-template rtToolbarLeft>
-                    <h3 rtElem="title" qa-dataid="chat-title">{{ title() }}</h3>
+                    @if (sign(); as channel) {
+                        <rt-service-logo rtElem="sign" qa-dataid="chat-sign" size="xs" [logos]="[channel]" />
+                    }
+                    <div rtElem="names">
+                        <h3 rtElem="title" qa-dataid="chat-title" rtTooltipWhenTruncated [rtTooltip]="title()">{{ title() }}</h3>
+                        <p rtElem="subtitle" qa-dataid="chat-subtitle" [hidden]="!subtitle()">{{ subtitle() }}</p>
+                    </div>
                 </ng-template>
                 <ng-template rtToolbarRight>
                     @if (showRefresh()) {
@@ -61,6 +67,9 @@
                         [attr.aria-busy]="fetching() ? 'true' : null"
                         (scroll)="onThreadScroll()">
                         @for (m of messages(); track m.id) {
+                            <div rtElem="day" qa-dataid="chat-day" [hidden]="!dayLabels().has(m.id)">
+                                <span rtElem="day-label">{{ dayLabels().get(m.id) }}</span>
+                            </div>
                             <div
                                 rtElem="message-row"
                                 qa-dataid="chat-message"
@@ -90,16 +99,21 @@
                                             (clicked)="deleteMessage.emit(m)" />
                                     }
                                 }
-                                @if (messageActions()?.template; as actionsTpl) {
-                                    @if (m | rtChatMessageHasActions: messageHasActions()) {
-                                        <div rtElem="message-actions" qa-dataid="chat-message-actions">
-                                            <rt-menu>
+                                @if ((messageActions() || messageButtons()) && (m | rtChatMessageHasActions: messageHasActions())) {
+                                    <div rtElem="message-actions" qa-dataid="chat-message-actions">
+                                        <ng-container
+                                            [ngTemplateOutlet]="messageButtons()?.template ?? null"
+                                            [ngTemplateOutletContext]="{ $implicit: m }" />
+                                        @if (messageActions()?.template; as actionsTpl) {
+                                            <rt-menu
+                                                [icon]="messenger() ? 'ellipsis-v' : 'ellipsis-h'"
+                                                [triggerSize]="messenger() ? 'sm' : 'md'">
                                                 <ng-container
                                                     [ngTemplateOutlet]="actionsTpl"
                                                     [ngTemplateOutletContext]="{ $implicit: m }" />
                                             </rt-menu>
-                                        </div>
-                                    }
+                                        }
+                                    </div>
                                 }
                                 <div rtElem="message" [rtMod]="{ own: m.own, deleted: m.deleted }">
                                     <p rtElem="message-author" qa-dataid="chat-message-author">{{ m.author }}</p>
@@ -149,7 +163,7 @@
                                     }
                                     <span rtElem="message-footer">
                                         <span rtElem="message-date" qa-dataid="chat-message-date">
-                                            {{ m.createdAt | date: 'short' : undefined : locale() }}
+                                            {{ m.createdAt | date: (messenger() ? 'shortTime' : 'short') : undefined : locale() }}
                                         </span>
                                         @if (m.status) {
                                             <span
@@ -167,12 +181,19 @@
                                                         [ariaLabel]="t().chatRetryAria"
                                                         [tooltip]="t().chatRetryTooltip"
                                                         (clicked)="retryMessage.emit(m)" />
+                                                } @else if (m.status === MessageStatus.Undelivered) {
+                                                    <!-- Ответ записан, служба собеседника его не приняла: подпись видна глазом,
+                                                         повтора нет — он записал бы ответ второй раз. -->
+                                                    <rt-icon rtElem="status-icon" name="warning" size="sm" />
+                                                    <span rtElem="status-caption" qa-dataid="chat-message-undelivered">
+                                                        {{ t().chatStatusUndelivered }}
+                                                    </span>
                                                 } @else {
                                                     <!-- Часы, пока сообщение в пути; дальше двойной чек, цвет которого
                                                          (серый/синий) различает доставлено и прочитано. -->
                                                     <rt-icon
                                                         rtElem="status-icon"
-                                                        size="sm"
+                                                        [size]="messenger() ? 'xs' : 'sm'"
                                                         [name]="m.status === MessageStatus.Sending ? 'clock' : 'check-double'" />
                                                 }
                                             </span>
@@ -196,7 +217,42 @@
             </div>
 
             @if (canReply()) {
-                @if (richComposer()) {
+                @if (messenger()) {
+                    <!-- Поле ответа мессенджера: одна рамка, скрепка и кнопки потребителя внутри неё слева -->
+                    <input
+                        #composerFileEl
+                        qa-dataid="chat-composer-tools-file-input"
+                        type="file"
+                        hidden
+                        multiple
+                        [attr.accept]="accept() || null"
+                        (change)="onFilesPicked($event)" />
+                    <rt-ai-prompt-input
+                        rtElem="composer-prompt"
+                        qa-dataid="chat-composer-prompt"
+                        hint=""
+                        [placeholder]="placeholder()"
+                        [sending]="sending()"
+                        [disabled]="loading() || fetching()"
+                        (submitted)="onComposerSubmit($event)"
+                        (input)="onReplyInput($event)">
+                        <rt-icon-button
+                            rtPromptInputStart
+                            qa-dataid="chat-composer-tools-attach"
+                            icon="paperclip"
+                            variant="ghost"
+                            size="sm"
+                            iconColor="muted"
+                            [hidden]="!attachments()"
+                            [ariaLabel]="t().chatAttachAria"
+                            [tooltip]="t().chatAttachTooltip"
+                            [disabled]="composerDisabled()"
+                            (clicked)="openFilePicker()" />
+                        <ng-container ngProjectAs="[rtPromptInputStart]">
+                            <ng-content select="[rtChatComposerTools]" />
+                        </ng-container>
+                    </rt-ai-prompt-input>
+                } @else if (richComposer()) {
                     <rt-message-composer
                         rtElem="composer-rich"
                         qa-dataid="chat-composer-rich"

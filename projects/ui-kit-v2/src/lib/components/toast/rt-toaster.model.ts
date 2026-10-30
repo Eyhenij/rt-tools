@@ -1,6 +1,6 @@
-import { InjectionToken } from '@angular/core';
+import { InjectionToken, Type } from '@angular/core';
 
-import { INotification } from '@rt-tools/ui-kit-v2/core';
+import { INotification, NotificationRef } from '@rt-tools/ui-kit-v2/core';
 
 import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 
@@ -21,6 +21,9 @@ export const RT_TOAST_SEVERITY_ICONS: InjectionToken<Readonly<Record<INotificati
         danger: 'times-circle',
     }),
 });
+
+/** Данные своего компонента тоста — то, что приложение передало в `openFromComponent`. */
+export const RT_TOAST_DATA: InjectionToken<unknown> = new InjectionToken<unknown>('RT_TOAST_DATA');
 
 export namespace IRtToaster {
     export type Position = 'top-left' | 'top-center' | 'top-right' | 'bottom-left' | 'bottom-center' | 'bottom-right';
@@ -47,6 +50,22 @@ export namespace IRtToaster {
         readonly onDismiss?: (reason: INotification.DismissReason) => void;
         /** Тост вытеснен новым в режиме `replace` и уходит своей анимацией. */
         readonly replaced?: boolean;
+        readonly progressValue?: number | null;
+        readonly details?: string;
+        readonly component?: Type<unknown>;
+        readonly data?: unknown;
+        /** Голый тост: оболочки нет, свой компонент рисует карточку сам. */
+        readonly bare?: boolean;
+        /** Ручка тоста: тост сообщает ей, почему ушёл. */
+        readonly ref?: NotificationRef;
+        /** Приложение закрыло тост ручкой: он уходит своей анимацией, как вытесненный. */
+        readonly dismissRequested?: boolean;
+    }
+
+    /** Изменение показанного тоста от его ручки. */
+    export interface Change {
+        readonly toastId: number;
+        readonly patch: INotification.Update & Pick<Toast, 'dismissRequested'>;
     }
 
     export interface Height {

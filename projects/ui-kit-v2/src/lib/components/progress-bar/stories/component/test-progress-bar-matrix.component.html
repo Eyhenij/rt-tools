@@ -1,0 +1,69 @@
+@switch (part) {
+    @case ('value') {
+        <app-story-presets caption="Доля в обоих наборах: за краями прижимается к краю">
+            <ng-template>
+                <app-story-row slotWidth="12rem" [items]="values" [itemLabel]="valueLabel">
+                    <ng-template let-value>
+                        <rt-progress-bar [value]="value" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('mode') {
+        <app-story-presets caption="Режим в обоих наборах">
+            <ng-template>
+                <app-story-row slotWidth="16rem" [items]="modes">
+                    <ng-template let-mode>
+                        <rt-progress-bar [mode]="mode" [value]="60" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('color') {
+        <app-story-presets caption="Цвет в обоих наборах">
+            <ng-template>
+                <app-story-row slotWidth="10rem" [items]="colors">
+                    <ng-template let-color>
+                        <rt-progress-bar [value]="60" [color]="color" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('live') {
+        <app-story-presets caption="Живая доля в обоих наборах: тики из потока, полоса идёт следом">
+            <ng-template>
+                <app-progress-bar-live />
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('presets') {
+        <app-story-presets caption="Полоса в обоих наборах">
+            <ng-template>
+                <div style="width: 16rem">
+                    <rt-progress-bar [value]="60" />
+                </div>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('themes') {
+        <app-story-presets caption="Полоса в обеих темах в обоих наборах">
+            <ng-template>
+                <app-story-themes>
+                    <ng-template>
+                        <div style="width: 16rem">
+                            <rt-progress-bar [value]="60" />
+                        </div>
+                    </ng-template>
+                </app-story-themes>
+            </ng-template>
+        </app-story-presets>
+    }
+}

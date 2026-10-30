@@ -1,5 +1,6 @@
+import { CdkMonitorFocus, FocusMonitor, FocusOrigin } from '@angular/cdk/a11y';
 import { ChangeDetectionStrategy, Component, WritableSignal, signal } from '@angular/core';
-import { ComponentFixture } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { provideRtKit } from '../../config/rt-kit-config.providers';
 import { classesOf, createRtFixture, el, textOf } from '../../../testing/rt-kit-testing';
@@ -10,6 +11,19 @@ import { IButton } from './rt-button.model';
 /** Модификаторы блока кнопки: рядом с ними на хосте законно стоят классы директив-хозяев. */
 const modifiersOf: (node: HTMLElement) => string[] = (node: HTMLElement): string[] =>
     classesOf(node).filter((name: string): boolean => name.startsWith('rt-button--'));
+
+/** Приложение следит за фокусом кнопки своей директивой CDK рядом с `rtButton`. */
+@Component({
+    selector: 'rt-button-monitored-host',
+    template: `
+        <button rtButton label="Готово" cdkMonitorElementFocus (cdkFocusChange)="origin = $event"></button>
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtButtonDirective, CdkMonitorFocus],
+})
+class MonitoredButtonHostComponent {
+    public origin: FocusOrigin = null;
+}
 
 /** Директива живёт на чужом элементе — без host-обёртки её не поднять. */
 @Component({
@@ -422,6 +436,44 @@ describe('RtButtonDirective', (): void => {
             expect(button(fixture).getAttribute('aria-pressed')).toBe('true');
             expect(classesOf(button(fixture))).toContain('rt-button--pressed');
             expect(button(fixture).disabled).toBe(true);
+        });
+    });
+
+    describe('источник фокуса — SC-UKV-947', (): void => {
+        it.each<[FocusOrigin, string]>([
+            ['keyboard', 'cdk-keyboard-focused'],
+            ['program', 'cdk-program-focused'],
+            ['mouse', 'cdk-mouse-focused'],
+            ['touch', 'cdk-touch-focused'],
+        ])('фокус от %s помечается классом %s: кольцо гасят мышь и касание', (origin: FocusOrigin, mark: string): void => {
+            const fixture: ComponentFixture<ButtonHostComponent> = setup();
+
+            TestBed.inject(FocusMonitor).focusVia(button(fixture), origin);
+            fixture.detectChanges();
+
+            expect(classesOf(button(fixture))).toContain(mark);
+            expect(classesOf(button(fixture))).toContain('cdk-focused');
+        });
+
+        it('cdkMonitorElementFocus приложения на той же кнопке поднимается и слышит источник', (): void => {
+            const fixture: ComponentFixture<MonitoredButtonHostComponent> = createRtFixture(MonitoredButtonHostComponent);
+            const node: HTMLButtonElement = fixture.nativeElement.querySelector('button') as HTMLButtonElement;
+
+            TestBed.inject(FocusMonitor).focusVia(node, 'keyboard');
+            fixture.detectChanges();
+
+            expect(fixture.componentInstance.origin).toBe('keyboard');
+            expect(classesOf(node)).toContain('cdk-keyboard-focused');
+        });
+
+        it('уход фокуса снимает отметку источника', (): void => {
+            const fixture: ComponentFixture<ButtonHostComponent> = setup();
+            TestBed.inject(FocusMonitor).focusVia(button(fixture), 'mouse');
+
+            button(fixture).blur();
+            fixture.detectChanges();
+
+            expect(classesOf(button(fixture))).not.toContain('cdk-mouse-focused');
         });
     });
 });

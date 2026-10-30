@@ -24,7 +24,7 @@ import { FormsModule } from '@angular/forms';
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { RT_KIT_LABELS, TRtKitLabelMap, rtKitLabel } from '@rt-tools/ui-kit-v2/core';
-import { RtFormControlBase } from '@rt-tools/ui-kit-v2/form-control';
+import { rtNotchWidth, RtFormControlBase } from '@rt-tools/ui-kit-v2/form-control';
 import { IRtInput } from '@rt-tools/ui-kit-v2/core';
 import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
@@ -33,15 +33,15 @@ import { RtInputComponent } from '@rt-tools/ui-kit-v2/input';
 import { RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
 import { IRtPopover } from '@rt-tools/ui-kit-v2/popover';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
-import { rtScrollActiveOptionIntoView } from './rt-select-active-option';
-import { rtTreeFind, rtTreeIsTree, rtTreeOpenFor, rtTreeRows, rtTreeSideKey, rtTreeToggle } from './rt-select-tree';
+import { RtOptionList, TRtOptionListAction } from '@rt-tools/ui-kit-v2/core';
+import { rtTreeFind, rtTreeIsTree, rtTreeOpenFor, rtTreeRows, rtTreeSideKey, rtTreeToggle } from '@rt-tools/ui-kit-v2/core';
+import { RtSelectOptionDirective } from './rt-select-option.directive';
 import { RtSelectTriggerDirective } from './rt-select-trigger.directive';
 import { IRtSelect } from './rt-select.model';
 
 const BEM_BLOCK: string = 'rt-select';
 
 /** Клавиши, открывающие закрытый dropdown с фокуса на trigger'е. */
-const OPEN_KEYS: ReadonlySet<string> = new Set<string>(['ArrowDown', 'ArrowUp', 'Enter', ' ']);
 
 type TBooleanInput = boolean | string;
 
@@ -67,7 +67,7 @@ function nextPanelId(): number {
 @Component({
     selector: 'rt-select',
     templateUrl: './rt-select.component.html',
-    styleUrl: './rt-select.component.scss',
+    styleUrls: ['./rt-select.component.scss', './rt-select-floating-label.scss', './rt-select-clear.scss', './rt-select-material.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
     imports: [
@@ -100,6 +100,9 @@ function nextPanelId(): number {
         '[class.rt-select--size--sm]': "size() === 'sm'",
         '[class.rt-select--size--lg]': "size() === 'lg'",
         '[class.rt-select--with-icon-left]': '!!iconLeft()',
+        '[class.rt-select--floating]': '!!floatingLabel()',
+        '[style.--rt-select-notch-width]': "notchWidth() + 'px'",
+        '[class.rt-select--filled]': 'hasValue()',
     },
 })
 export class RtSelectComponent<TValue> extends RtFormControlBase<TValue | null> {
@@ -115,17 +118,33 @@ export class RtSelectComponent<TValue> extends RtFormControlBase<TValue | null> 
 
     protected readonly triggerEl: Signal<ElementRef<HTMLButtonElement> | undefined> = viewChild<ElementRef<HTMLButtonElement>>('triggerEl');
 
+    /** Подпись на рамке: по её ширине материальный набор вырезает разрыв в рамке. `#`-поле `viewChild` не принимает. */
+    protected readonly floatingLabelEl: Signal<ElementRef<HTMLElement> | undefined> = viewChild<ElementRef<HTMLElement>>('floatingLabelEl');
+
+    /** Ширина подписи на рамке, px. */
+    protected readonly notchWidth: Signal<number> = rtNotchWidth(this.floatingLabelEl);
+
     protected readonly filterTerm: WritableSignal<string> = signal<string>('');
-    protected readonly activeIndex: WritableSignal<number> = signal<number>(-1);
     /** Раскрытые ветки дерева. Живут, пока открыта панель: при открытии раскрыты ветки над выбранным. */
     protected readonly openBranches: WritableSignal<ReadonlySet<TValue>> = signal<ReadonlySet<TValue>>(new Set<TValue>());
 
     protected readonly isOpen: Signal<boolean> = computed((): boolean => this.popover().isOpen());
 
+    /** Клавиатура списка: подсветка, клавиши открытия, id для `aria-activedescendant`, прокрутка к опции. */
+    protected readonly optionList: RtOptionList = new RtOptionList({
+        panelId: (): string => this.panelId,
+        isOpen: (): boolean => this.isOpen(),
+        count: (): number => this.rows().length,
+        isDisabled: (index: number): boolean => Boolean(this.rows()[index]?.option.disabled),
+        chooseKeys: new Set<string>(['Enter', ' ']),
+        sideKeys: true,
+        edgeKeys: true,
+    });
+
+    protected readonly activeIndex: WritableSignal<number> = this.optionList.activeIndex;
+
     /** Идентификатор подсвеченной опции — тот же, что уходит в `aria-activedescendant`. */
-    protected readonly activeOptionId: Signal<string | null> = computed((): string | null =>
-        this.isOpen() && this.activeIndex() >= 0 ? `${this.panelId}-opt-${this.activeIndex()}` : null
-    );
+    protected readonly activeOptionId: Signal<string | null> = this.optionList.activeOptionId;
 
     /**
      * Своя разметка указателя, если потребитель её объявил. Не объявил — кит рисует свою, и ни один
@@ -133,15 +152,40 @@ export class RtSelectComponent<TValue> extends RtFormControlBase<TValue | null> 
      */
     protected readonly triggerTpl: Signal<RtSelectTriggerDirective<TValue> | undefined> = contentChild(RtSelectTriggerDirective);
 
+    /** Своя разметка строки списка; не объявлена — строка рисует подпись опции. */
+    protected readonly optionTpl: Signal<RtSelectOptionDirective<TValue> | undefined> = contentChild(RtSelectOptionDirective);
+
     protected readonly hasValue: Signal<boolean> = computed((): boolean => this.value() !== null);
 
-    protected readonly selectedLabel: Signal<string> = computed((): string => {
+    /** Id подписи на рамке: на него ссылается `aria-labelledby` указателя. */
+    protected readonly floatingLabelId: string = `${this.panelId}-label`;
+
+    /** Id текста выбранного значения в указателе: его имя читает скринридер вслед за подписью. */
+    protected readonly valueTextId: string = `${this.panelId}-value`;
+
+    /**
+     * Подпись на рамке называет указатель, только когда явного `ariaLabel` нет. Ссылка заменяет имя
+     * из содержимого кнопки, поэтому за подписью идёт и выбранное значение — иначе скринридер
+     * назвал бы поле без того, что в нём выбрано.
+     */
+    protected readonly labelledBy: Signal<string | null> = computed((): string | null =>
+        this.floatingLabel() && !this.ariaLabel() ? `${this.floatingLabelId} ${this.valueTextId}` : null
+    );
+
+    /** Выбранная опция: по ней указатель рисует подпись или ту же разметку строки, что и список. */
+    protected readonly selectedOption: Signal<IRtSelect.Option<TValue> | null> = computed((): IRtSelect.Option<TValue> | null => {
         const v: TValue | null = this.value();
-        if (v === null) {
-            return '';
-        }
-        return rtTreeFind(this.options(), v)?.label ?? '';
+        return v === null ? null : (rtTreeFind(this.options(), v) ?? null);
     });
+
+    /** Разметка выбранного в указателе — шаблон строки с выбранной опцией; без шаблона или выбора её нет. */
+    protected readonly chosenOwn: Signal<IRtSelect.ChosenView<TValue> | null> = computed((): IRtSelect.ChosenView<TValue> | null => {
+        const tpl: RtSelectOptionDirective<TValue> | undefined = this.optionTpl();
+        const option: IRtSelect.Option<TValue> | null = this.selectedOption();
+        return tpl && option ? { templateRef: tpl.templateRef, context: { $implicit: option, selected: true } } : null;
+    });
+
+    protected readonly selectedLabel: Signal<string> = computed((): string => this.selectedOption()?.label ?? '');
 
     /** Дерево ли список: тогда у строк есть место под стрелку и отступ по уровню. */
     protected readonly isTree: Signal<boolean> = computed((): boolean => rtTreeIsTree(this.options()));
@@ -160,6 +204,7 @@ export class RtSelectComponent<TValue> extends RtFormControlBase<TValue | null> 
     }));
 
     /** Вид рамки: `outline` — рамка со всех сторон, `fill` — залитое поле с чертой снизу. */
+    public override readonly fieldLabelInside: boolean = true;
     public readonly appearance: InputSignal<IRtInput.Appearance> = input<IRtInput.Appearance>('outline');
 
     public readonly displayText: Signal<string> = computed((): string => this.selectedLabel());
@@ -169,6 +214,12 @@ export class RtSelectComponent<TValue> extends RtFormControlBase<TValue | null> 
     public readonly placeholder: InputSignal<string> = input<string>('');
 
     public readonly iconLeft: InputSignal<IRtIcon.Name | null> = input<IRtIcon.Name | null>(null);
+
+    /**
+     * Видимая подпись на рамке. Пока ничего не выбрано и список закрыт, лежит на месте подсказки;
+     * при выбранном значении или открытом списке поднимается на верхнюю рамку. `null` — подписи нет.
+     */
+    public readonly floatingLabel: InputSignal<string | null> = input<string | null>(null);
 
     public readonly filter: InputSignalWithTransform<boolean, TBooleanInput> = input<boolean, TBooleanInput>(false, {
         transform: booleanAttribute,
@@ -195,12 +246,6 @@ export class RtSelectComponent<TValue> extends RtFormControlBase<TValue | null> 
     public readonly panelMaxHeight: InputSignal<string | null> = input<string | null>(null);
 
     public readonly selectionChange: OutputEmitterRef<TValue | null> = output<TValue | null>();
-
-    constructor() {
-        super();
-        // Подсветка, сдвинутая клавишами, не уходит за край панели с пределом высоты.
-        rtScrollActiveOptionIntoView(this.activeOptionId);
-    }
 
     public override setDisabledState(disabled: boolean): void {
         super.setDisabledState(disabled);
@@ -274,11 +319,11 @@ export class RtSelectComponent<TValue> extends RtFormControlBase<TValue | null> 
             return;
         }
         if (!this.isOpen()) {
-            if (OPEN_KEYS.has(event.key)) {
+            if (this.optionList.opensBy(event.key)) {
                 event.preventDefault();
                 this.popover().open();
                 if (this.activeIndex() < 0) {
-                    this.#moveActive(1);
+                    this.optionList.move(1);
                 }
             }
             return;
@@ -287,30 +332,35 @@ export class RtSelectComponent<TValue> extends RtFormControlBase<TValue | null> 
     }
 
     #handleOpenKeydown(event: KeyboardEvent): void {
-        switch (event.key) {
-            case 'ArrowDown':
-                event.preventDefault();
-                this.#moveActive(1);
+        const action: TRtOptionListAction = this.optionList.actionOf(event.key);
+        if (action === 'none') {
+            return;
+        }
+        event.preventDefault();
+        switch (action) {
+            case 'next':
+                this.optionList.move(1);
                 break;
-            case 'ArrowUp':
-                event.preventDefault();
-                this.#moveActive(-1);
+            case 'previous':
+                this.optionList.move(-1);
                 break;
-            case 'Enter':
-            case ' ':
-                event.preventDefault();
+            case 'first':
+                this.optionList.first();
+                break;
+            case 'last':
+                this.optionList.last();
+                break;
+            case 'choose':
                 this.#selectActive();
                 break;
-            case 'Escape':
-                event.preventDefault();
+            case 'close':
+                // Escape закрывает один слой: панель. Без остановки событие всплывает до document,
+                // и оверлей под панелью — боковая панель, окно — закрывается вместе с ней.
+                event.stopPropagation();
                 this.popover().close();
                 break;
-            case 'ArrowRight':
-            case 'ArrowLeft':
-                event.preventDefault();
+            case 'side':
                 this.#sideKey(event.key);
-                break;
-            default:
                 break;
         }
     }
@@ -322,24 +372,6 @@ export class RtSelectComponent<TValue> extends RtFormControlBase<TValue | null> 
             this.openBranches.update((open: ReadonlySet<TValue>): ReadonlySet<TValue> => rtTreeToggle(open, toggle));
         }
         this.activeIndex.set(answer.index);
-    }
-
-    #moveActive(delta: number): void {
-        const opts: ReadonlyArray<IRtSelect.Option<TValue>> = this.rows().map(
-            (row: IRtSelect.Row<TValue>): IRtSelect.Option<TValue> => row.option
-        );
-        if (opts.length === 0) {
-            this.activeIndex.set(-1);
-            return;
-        }
-        let index: number = this.activeIndex();
-        for (let step: number = 0; step < opts.length; step += 1) {
-            index = (index + delta + opts.length) % opts.length;
-            if (!opts[index].disabled) {
-                this.activeIndex.set(index);
-                return;
-            }
-        }
     }
 
     #selectActive(): void {

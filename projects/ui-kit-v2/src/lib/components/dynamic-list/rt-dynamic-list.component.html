@@ -19,6 +19,7 @@
                                 qa-dataid="dynamic-list-select-all"
                                 [ariaLabel]="t().uiSelectAll"
                                 [ngModel]="allSelected()"
+                                [ngModelOptions]="{ standalone: true }"
                                 [indeterminate]="!allSelected() && someSelected()"
                                 [disabled]="selectAllDisabled()"
                                 (ngModelChange)="onSelectAll($event)" />

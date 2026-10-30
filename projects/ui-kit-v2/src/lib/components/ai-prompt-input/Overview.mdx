@@ -1,0 +1,50 @@
+import { Meta, Title } from '@storybook/addon-docs/blocks';
+
+<Meta title="Molecules/Chat/AiPromptInput/Overview" />
+
+<Title>AiPromptInput — `rt-ai-prompt-input`</Title>
+
+Поле ввода ИИ-чата: одна рамка, текст сверху, ряд действий внутри снизу. Подсказка стоит строкой
+под полем или над ним.
+
+```html
+<rt-ai-prompt-input stoppable model="Opus 5.5" [usage]="32" [sending]="sending()" (submitted)="ask($event)" />
+```
+
+## Входы
+
+| вход           | тип                  | умолчание                |
+| -------------- | -------------------- | ------------------------ |
+| `placeholder`  | `string`             | `''` → `chatPlaceholder` |
+| `hint`         | `string \| null`     | `null` → `aiDisclaimer`  |
+| `hintPosition` | `'below' \| 'above'` | `'below'`                |
+| `attachments`  | `boolean`            | `false`                  |
+| `accept`       | `string`             | `''`                     |
+| `model`        | `string`             | `''`, кнопки нет         |
+| `effort`       | `string`             | `''`, кнопки нет         |
+| `mode`         | `string`             | `''`, кнопки нет         |
+| `usage`        | `number \| null`     | `null`, кольца нет       |
+| `usageHint`    | `string`             | `''`                     |
+| `usageWarnAt`  | `number`             | `80`                     |
+| `sending`      | `boolean`            | `false`                  |
+| `stoppable`    | `boolean`            | `false`                  |
+| `disabled`     | `boolean`            | `false`                  |
+| `minRows`      | `number`             | `1`                      |
+| `maxRows`      | `number`             | `8`                      |
+| `text`         | `model<string>`      | `''`                     |
+
+## Выходы
+
+| выход           | значение                           |
+| --------------- | ---------------------------------- |
+| `submitted`     | `IRtAiPromptInput.SubmitPayload`   |
+| `stopped`       | нет значения                       |
+| `controlPicked` | `'model'`, `'effort'` или `'mode'` |
+
+## Когда применять
+
+- Вопрос ассистенту: выбор модели, усилия и режима, расход лимита рядом с отправкой.
+
+## Когда не применять
+
+- **Переписка с людьми**: `rt-message-composer` входа `rich-editor`.

@@ -37,6 +37,7 @@ import { RtMoneyListComponent } from '@rt-tools/ui-kit-v2/money-list';
 import { RtMoneyRowComponent } from '@rt-tools/ui-kit-v2/money-list';
 import { RtNoteComponent } from '@rt-tools/ui-kit-v2/note';
 import { RtSelectComponent } from '@rt-tools/ui-kit-v2/select';
+import { RtServiceLogoComponent } from '@rt-tools/ui-kit-v2/service-logo';
 import { RtSpinnerComponent } from '@rt-tools/ui-kit-v2/spinner';
 import { RtTabDirective } from '@rt-tools/ui-kit-v2/tabs';
 import { RtTabsComponent } from '@rt-tools/ui-kit-v2/tabs';
@@ -78,6 +79,7 @@ interface ITransitionFormShape {
         RtMoneyRowComponent,
         RtNoteComponent,
         RtSelectComponent,
+        RtServiceLogoComponent,
         RtSpinnerComponent,
         RtTabDirective,
         RtTabsComponent,
@@ -147,6 +149,9 @@ export class RtWorkspaceDetailsComponent {
     });
 
     public readonly rows: InputSignal<readonly IRtWorkspaceDetails.Row[]> = input<readonly IRtWorkspaceDetails.Row[]>([]);
+
+    /** Верх сведений о человеке над строками: без него сведения начинаются со строк */
+    public readonly profile: InputSignal<IRtWorkspaceDetails.Profile | null> = input<IRtWorkspaceDetails.Profile | null>(null);
 
     public readonly agentEdit: InputSignal<IRtWorkspaceDetails.AgentEdit | null> = input<IRtWorkspaceDetails.AgentEdit | null>(null);
 

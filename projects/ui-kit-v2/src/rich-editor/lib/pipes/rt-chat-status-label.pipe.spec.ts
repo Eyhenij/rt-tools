@@ -11,6 +11,10 @@ describe('RtChatStatusLabelPipe', (): void => {
         expect(pipe.transform(ERtChatMessageStatus.Failed)).toBe('rtKit.chatStatusFailed');
     });
 
+    it('SC-UKV-915 — недоставленный статус читается своей подписью', (): void => {
+        expect(pipe.transform(ERtChatMessageStatus.Undelivered)).toBe('rtKit.chatStatusUndelivered');
+    });
+
     it('ключи у статусов разные — иначе доставленное и прочитанное звучали бы одинаково', (): void => {
         const keys: string[] = Object.values(ERtChatMessageStatus).map((status: ERtChatMessageStatus): string => pipe.transform(status));
 

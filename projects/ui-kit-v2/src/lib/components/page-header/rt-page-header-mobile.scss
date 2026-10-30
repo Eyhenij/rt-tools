@@ -1,4 +1,10 @@
 @layer rt-kit.components {
+    /* Подложка под мобильной панелью навигации: страница рядом затемнена, как под шторкой, и не
+       читается частью меню. Нажатие по ней закрывает панель */
+    .cdk-overlay-backdrop.rt-page-header-mobile-backdrop {
+        background: var(--rt-color-bg-overlay);
+    }
+
     /* Мобильная панель навигации (гамбургер). Рендерится в CDK Overlay, поэтому
        отдельный корневой блок. Раздел — аккордеон, внутри него те же группы, что и в
        панели на широком экране, только без колонок: они сюда не помещаются. */
@@ -159,6 +165,30 @@
 
         &__icon {
             flex-shrink: 0;
+        }
+
+        /* Панель пункта «Ещё» — тот же блок без аккордеона: раздел с панелью стоит
+           заголовком, пункты его групп идут под ним сразу, без отступа вложенности. */
+        &__heading {
+            display: flex;
+            min-height: var(--rt-nav-panel-item-height);
+            align-items: center;
+            padding: var(--rt-nav-panel-item-padding);
+            color: var(--rt-nav-item-color);
+            cursor: default;
+            font-size: var(--rt-nav-item-font-size);
+            font-weight: var(--rt-nav-item-font-weight);
+            line-height: var(--rt-leading-tight);
+            white-space: nowrap;
+        }
+
+        &--more &__children {
+            padding-left: 0;
+        }
+
+        &--more &__group-title {
+            letter-spacing: var(--rt-letter-spacing-wide);
+            text-transform: uppercase;
         }
     }
 }

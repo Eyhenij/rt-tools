@@ -1,0 +1,8 @@
+<!-- Содержимое идёт в разметке первым: панели после него рисуются поверх его узлов с положением.
+     На экране порядок задают сами панели — у каждой свой край строки. -->
+<ng-container rtBlock="rt-drawer-container">
+    <div rtElem="content" qa-dataid="drawer-container-content">
+        <ng-content />
+    </div>
+    <ng-content select="rt-drawer" />
+</ng-container>

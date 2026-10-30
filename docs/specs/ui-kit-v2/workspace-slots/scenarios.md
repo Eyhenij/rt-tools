@@ -28,3 +28,12 @@ When it is drawn
 Then the details panel and its handle are in the markup
 
 Covered by the component spec of the workspace.
+
+### SC-UKV-1065 — the columns stand as cards only by the cards input
+
+Given a workspace with all three templates declared
+When it is drawn without the `cards` input, and then with it
+Then the cards modifier is absent at first and present after: each column has its own border and
+radius, the gap between them is held by the handle
+
+Covered by the component spec of the workspace.

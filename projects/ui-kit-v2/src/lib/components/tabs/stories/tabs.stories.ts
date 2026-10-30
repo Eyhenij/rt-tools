@@ -14,6 +14,12 @@ export default {
         },
         stretch: { control: { type: 'boolean' } },
         contentScrollable: { control: { type: 'boolean' } },
+        animationDuration: { control: { type: 'text' } },
+        preserveContent: { control: { type: 'boolean' } },
+        contentTabIndex: {
+            options: [0, null],
+            control: { type: 'select' },
+        },
     },
 } as Meta<TestRtTabsComponent>;
 
@@ -26,5 +32,8 @@ export const Playground: TStory = {
         direction: 'horizontal',
         stretch: false,
         contentScrollable: true,
+        animationDuration: '500ms',
+        preserveContent: false,
+        contentTabIndex: 0,
     },
 };

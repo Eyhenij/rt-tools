@@ -1,0 +1,13 @@
+@layer rt-kit.components {
+    .rt-radio-group {
+        --rt-radio-group-gap: var(--rt-space-2);
+
+        display: flex;
+        flex-direction: column;
+        gap: var(--rt-radio-group-gap);
+
+        &--horizontal {
+            flex-flow: row wrap;
+        }
+    }
+}

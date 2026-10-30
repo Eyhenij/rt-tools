@@ -4,6 +4,8 @@ import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { IStoryState, STORY_STATES, storyStateLabel } from '../../../../../showcase/story-states';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
+import { IRtServiceLogo } from '../../../service-logo/rt-service-logo.model';
+import { RtServiceLogoComponent } from '../../../service-logo/rt-service-logo.component';
 import { RtCardComponent } from '../../rt-card.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
@@ -59,6 +61,12 @@ interface ICardHeaderCase {
                                         <rt-card>
                                             <span rtCardHeader>Договор №2024-118</span>
                                             Подписан 14 марта
+                                        </rt-card>
+                                    }
+                                    @case ('знак над названием') {
+                                        <rt-card header="Банковский перевод">
+                                            <rt-service-logo rtCardMedia [logos]="mediaLogos" />
+                                            Реквизиты счёта для гостя
                                         </rt-card>
                                     }
                                     @case ('с подвалом') {
@@ -135,6 +143,7 @@ interface ICardHeaderCase {
     imports: [
         // components
         RtCardComponent,
+        RtServiceLogoComponent,
 
         // showcase
         StoryPresetsComponent,
@@ -151,7 +160,16 @@ export class TestRtCardMatrixComponent {
         { name: 'длинный', header: 'Договор на подключение дополнительного рабочего места' },
     ];
 
-    public readonly slots: readonly string[] = ['только содержимое', 'заголовок входом', 'шапка проекцией', 'с подвалом'];
+    public readonly slots: readonly string[] = [
+        'только содержимое',
+        'заголовок входом',
+        'шапка проекцией',
+        'знак над названием',
+        'с подвалом',
+    ];
+
+    /** Знак над названием — иконка кита: чужих логотипов кит не несёт */
+    public readonly mediaLogos: readonly IRtServiceLogo.Item[] = [{ icon: 'wallet', label: 'Банковский перевод' }];
 
     public readonly clickables: readonly boolean[] = [false, true];
 

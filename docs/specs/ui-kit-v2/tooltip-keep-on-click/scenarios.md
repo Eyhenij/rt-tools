@@ -49,3 +49,43 @@ When the button is clicked and its tooltip text changes
 Then the tooltip stays and shows the new text
 
 Covered: `projects/ui-kit-v2/src/lib/components/icon-button/rt-icon-button.component.spec.ts`.
+
+### SC-UKV-1051 — a tap on a host with `rtTooltipShowOnTap` opens the tooltip at once
+
+Given a host with `rtTooltipShowOnTap` and a non-empty text
+When it is tapped
+Then the tooltip is open without the delay
+
+Covered: `projects/ui-kit-v2/src/lib/components/tooltip/rt-tooltip.tap.spec.ts`.
+
+### SC-UKV-1052 — a second tap closes it
+
+Given a tooltip opened by a tap
+When the host is tapped again
+Then the tooltip closes and does not come back by itself
+
+Covered: `projects/ui-kit-v2/src/lib/components/tooltip/rt-tooltip.tap.spec.ts`.
+
+### SC-UKV-1053 — a tap outside the host closes it
+
+Given a tooltip opened by a tap
+When a person taps outside the host
+Then the tooltip closes
+
+Covered: `projects/ui-kit-v2/src/lib/components/tooltip/rt-tooltip.tap.spec.ts`.
+
+### SC-UKV-1054 — without the input a tap still shows nothing
+
+Given a host without `rtTooltipShowOnTap`
+When it is tapped
+Then no tooltip appears
+
+Covered: `projects/ui-kit-v2/src/lib/components/tooltip/rt-tooltip.tap.spec.ts`.
+
+### SC-UKV-1055 — a tap on the usage ring opens its hint
+
+Given a usage ring with a hint
+When it is tapped
+Then the hint is open at once
+
+Covered: `projects/ui-kit-v2/src/lib/components/usage-ring/rt-usage-ring.component.spec.ts`.

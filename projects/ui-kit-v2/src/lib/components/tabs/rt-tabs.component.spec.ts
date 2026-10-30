@@ -10,7 +10,12 @@ import { IRtTabs } from './rt-tabs.model';
 @Component({
     selector: 'rt-tabs-host',
     template: `
-        <rt-tabs [activeId]="activeId()" [direction]="direction()" [stretch]="stretch()" (activeIdChange)="picked = $event">
+        <rt-tabs
+            [activeId]="activeId()"
+            [contentTabIndex]="contentTabIndex()"
+            [direction]="direction()"
+            [stretch]="stretch()"
+            (activeIdChange)="picked = $event">
             <ng-template rtTab="main" label="Основное">Содержимое основного</ng-template>
             <ng-template rtTab="extra" label="Дополнительно" [badge]="3" [badgeTitle]="badgeTitle()" [badgeAriaLabel]="badgeAriaLabel()">
                 Содержимое дополнительного
@@ -26,6 +31,7 @@ class TabsHostComponent {
     public readonly activeId: WritableSignal<IRtTabs.Id | null> = signal<IRtTabs.Id | null>(null);
     public readonly direction: WritableSignal<IRtTabs.Direction> = signal<IRtTabs.Direction>('horizontal');
     public readonly stretch: WritableSignal<boolean> = signal<boolean>(false);
+    public readonly contentTabIndex: WritableSignal<number | null> = signal<number | null>(0);
     public readonly lockedDisabled: WritableSignal<boolean> = signal<boolean>(true);
     public readonly badgeTitle: WritableSignal<string> = signal<string>('');
     public readonly badgeAriaLabel: WritableSignal<string> = signal<string>('');
@@ -184,6 +190,23 @@ describe('RtTabsComponent', (): void => {
 
             expect(tabs(fixture).map((node: HTMLButtonElement): string | null => node.getAttribute('tabindex'))).toEqual(['0', '-1', '-1']);
         });
+
+        it('SC-UKV-999 — открытая панель по умолчанию стоит в таб-порядке', (): void => {
+            const fixture: ComponentFixture<TabsHostComponent> = setup();
+
+            expect((qa(fixture, 'tabs-panel')?.nativeElement as HTMLElement).getAttribute('tabindex')).toBe('0');
+        });
+
+        it('SC-UKV-999 — contentTabIndex null снимает таб-стоп с панели', (): void => {
+            const fixture: ComponentFixture<TabsHostComponent> = setup();
+            fixture.componentInstance.contentTabIndex.set(null);
+            fixture.detectChanges();
+            const panel: HTMLElement = qa(fixture, 'tabs-panel')?.nativeElement as HTMLElement;
+
+            // Пара к утверждению ниже: панель найдена и осталась панелью, пропал только атрибут.
+            expect(panel.getAttribute('role')).toBe('tabpanel');
+            expect(panel.hasAttribute('tabindex')).toBe(false);
+        });
     });
 
     describe('оформление', (): void => {
@@ -203,7 +226,7 @@ describe('RtTabsComponent', (): void => {
             fixture.detectChanges();
 
             expect(classesOf(qa(fixture, 'tabs-tab-list'))).toContain('rt-tabs__tab-list--stretch');
-            expect(classesOf(tabs(fixture)[0])).toContain('rt-tab-item--stretch');
+            expect(Array.from(tabs(fixture)[0].parentElement?.classList ?? [])).toContain('rt-tab-item--stretch');
         });
 
         it('счётчик рисуется отдельным элементом рядом с подписью', (): void => {

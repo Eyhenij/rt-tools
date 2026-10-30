@@ -30,6 +30,9 @@ export const Threads: TStory = { args: { part: 'threads' } };
 /** На весь экран беседы стоят колонкой слева. */
 export const FullScreen: TStory = { args: { part: 'fullScreen' }, parameters: { snapshot: { fullPage: true } } };
 
+/** На весь экран лента и поле ввода стоят колонкой по центру, ширину задаёт потребитель. */
+export const ReadingColumn: TStory = { args: { part: 'readingColumn' }, parameters: { snapshot: { fullPage: true } } };
+
 /** Длинная лента прокручивается к последнему ответу; длинный вопрос растит поле. */
 export const Long: TStory = { args: { part: 'long' } };
 

@@ -1,25 +1,7 @@
 <ng-container rtBlock="rt-dynamic-input">
     <!-- Под приглашением пустой список не рисуется: узел нулевой высоты сдвигал бы приглашение зазором. -->
     @if (rows().length > 0 || !isInvitationShown()) {
-        <rt-dynamic-selector-list
-            [rows]="rows()"
-            [draggable]="draggable()"
-            [buttonRadius]="buttonRadius()"
-            [clearIcon]="clearIcon()"
-            [titleWrap]="titleWrap()"
-            [editable]="editable()"
-            [disabled]="isDisabled()"
-            [actionsShown]="!isInvitationShown()"
-            [resetClearShown]="listActionsShown()"
-            [removeShown]="removeShown()"
-            [resetDisabled]="isResetDisabled()"
-            [clearDisabled]="isClearDisabled()"
-            [controlsTpl]="controlsTpl()"
-            (removed)="onRemoved($event)"
-            (moved)="onMoved($event)"
-            (edited)="onEdited($event)"
-            (resetClicked)="onReset()"
-            (cleared)="onCleared()">
+        <rt-dynamic-selector-list>
             @if (isAddShown()) {
                 <button
                     rtButton
@@ -47,6 +29,7 @@
                     [controlId]="effectiveControlId()"
                     [placeholder]="fieldPlaceholder()"
                     [ngModel]="draft()"
+                    [ngModelOptions]="{ standalone: true }"
                     (ngModelChange)="draft.set($event ?? '')"
                     (keydown.enter)="onCommit()"
                     (focusout)="onCommit()" />
@@ -60,6 +43,7 @@
                 [controlId]="effectiveControlId()"
                 [placeholder]="fieldPlaceholder()"
                 [ngModel]="draft()"
+                [ngModelOptions]="{ standalone: true }"
                 (ngModelChange)="draft.set($event ?? '')"
                 (keydown.enter)="onCommit()"
                 (focusout)="onCommit()" />

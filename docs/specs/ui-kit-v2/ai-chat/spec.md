@@ -1,7 +1,7 @@
 # The assistant chat
 
 **Status:** in force · **Revision:** 2026-10-09 · **Scenario prefix:** `SC-UKV`
-**Depends on:** the run status, the value with a copy button, the prompt suggestion, the message composer, the thread list and the markdown text of the kit
+**Depends on:** the run status, the value with a copy button, the prompt suggestion, the AI prompt input with the usage ring, the thread list and the markdown text of the kit
 **Laws:** `frontend-application`, `reuse-first`, `verifiability`
 **Procedures:** none
 
@@ -62,6 +62,8 @@ conversations. Every application repeats the same screen, and every copy drifts 
 
 - **In a narrow panel the conversations open in place of the feed, on full screen they stand as a column on the left, and choosing one returns to the feed.**
 
+- **The consumer can cap the width of the feed and the composer; they then stand as a column in the middle of the conversation, and the feed scrolls at the conversation's edge.**
+
 - **The search over conversations marks every match, and an empty result says «Nothing found» instead of «No conversations yet».**
 
 - **Deleting a conversation is an action of its row and does not open the conversation.**
@@ -73,6 +75,28 @@ conversations. Every application repeats the same screen, and every copy drifts 
 - **The empty list of conversations draws preview rows with the assistant's marks, and the consumer sets its own icons.**
 
 - **The attachments of an answer come from the consumer's template, which receives the message.**
+
+- **A bare `http://` or `https://` address in an answer becomes a link, and the punctuation after it stays text.**
+
+- **An underscore inside a word stays a sign: only an underscore at a word's edge marks emphasis.**
+
+- **The feed is no wider than the panel: a long word and an address in an answer wrap.**
+
+- **A swipe that reaches the edge of the feed or of the list of conversations stays in the chat.**
+
+- **On a touch screen the row actions of a conversation are always visible; with a mouse they appear on hover, focus and an open menu.**
+
+- **The composer of the assistant is one box: the text on top, the row of actions inside at the bottom with «+» on the left and the model, the effort, the mode, the usage ring and Send on the right; every item of the row is drawn only when the consumer gives it.**
+
+- **The usage ring shows the spent share of the limit, turns orange from eighty percent and shows the consumer's hint with the share and the reset date on hover and focus.**
+
+- **The line «AI can make mistakes» stands as its own line under the composer or above it, and never inside the row of actions; an empty line removes it.**
+
+- **Enter sends the question and empties the composer, Shift + Enter wraps the line, and an empty or blank field sends nothing.**
+
+- **While an answer that can be stopped is written, Stop stands in place of Send and the field stays open; without it sending closes the field.**
+
+- **The chat passes the model, the effort, the mode and the usage to its composer, and puts the line under the composer above it when the consumer asks.**
 
 - **The title, the placeholder, the empty-screen texts and the line under the composer come from the consumer, and the kit's English text stands in when one is not given.**
 
@@ -155,3 +179,9 @@ None.
 - 2026-10-09 — the task RT-2722: the header icons by the material drawings without the material preset.
 - 2026-10-09 — the task RT-2729: the conversation menu «More actions» with «Copy ID» and «Delete» in
   place of the delete button.
+- 2026-10-28 — the task RT-2961 of the epic RT-2958: a bare address in an answer becomes a link, an
+  underscore inside a word stays a sign.
+- 2026-10-28 — the task RT-2959 of the epic RT-2958: a long word and an address in an answer wrap.
+- 2026-10-28 — the task RT-2960 of the epic RT-2958: a swipe at the edge of the feed and of the list of conversations stays in the chat.
+- 2026-10-28 — the task RT-2962 of the epic RT-2958: the row actions of a conversation are visible on a touch screen.
+- 2026-10-28 — the task RT-2964 of the epic RT-2958: the composer of the assistant with the row of actions and the usage ring.
