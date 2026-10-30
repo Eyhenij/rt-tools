@@ -457,7 +457,8 @@
                 Меню профиля открывается наведением, как и разделы: весь верхний
                 ряд ведёт себя одинаково. Нажатие остаётся запасным путём для
                 касания, а переход курсора на список языков панель переживает —
-                вложенный оверлей за уход наружу не считается.
+                вложенный оверлей за уход наружу не считается. На узком экране меню
+                стоит на той же подложке, что меню разделов из бургера.
             -->
             <button
                 rtElem="user"
@@ -467,6 +468,7 @@
                 rtPopoverTrigger="hover"
                 rtPopoverAlign="end"
                 rtPopoverOffsetY="14"
+                [rtPopoverBackdropClass]="userMenuBackdropClass()"
                 [rtMod]="{ isOpen: userPopover.isOpen() }"
                 [attr.aria-haspopup]="true"
                 [attr.aria-expanded]="userPopover.isOpen()"
