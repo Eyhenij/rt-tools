@@ -3,7 +3,9 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- Stage 1 is done: the service spec 12 of 12, the kit typecheck green. Stage 2 goes on.
+- Stage 1 is done: the service spec 12 of 12, the kit typecheck green. Stage 2 goes on: the kit
+  tests and lint run in the background; the archive record is written. The showcase on 6007 is
+  down, so the snapshots are compared by the push set.
 
 ### Stage 1 — the key and the copy
 
