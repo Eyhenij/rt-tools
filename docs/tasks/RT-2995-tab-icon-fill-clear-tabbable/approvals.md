@@ -16,6 +16,6 @@ badge position follow the label's text width, which Figma and the browser raster
 are left out on both sides; the badge is measured from the tab's right edge instead. Before the
 match the frame copies were brought to the kit's existing look where they drew it otherwise: the
 strip centres unselected tabs, the inline badge is 34 wide, the number field has no stepper, the
-date fields keep the calendar in a 32 px button.
+date fields keep the calendar in a 32 px button. On the owner's remark «на макете нет нижнего серого бордера тонкого на табах» every strip got the kit's 1 px line under it, and its height and colour joined the match (15 numbers).
 
-- **Совпадение:** 224 из 224 чисел
+- **Совпадение:** 239 из 239 чисел

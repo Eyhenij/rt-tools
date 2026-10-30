@@ -64,6 +64,7 @@
 - **The measurement found two defects of this work and one of the kit.** The overlay badge counted its padding past the 16 px side (`box-sizing` added); the multiselect cross outside the trigger stood a pixel right of its slot (the trigger border enters the offset); a tab without a label kept an empty title whose gap pushed the icon off centre (the title is drawn only when there is one, SC-UKV-1085). Affected stage: 3.
 - **The scenarios of this work are SC-UKV-1082 to 1086.** Main took 1080 and 1081 with RT-2997 while this branch was open; the plan keeps the old numbers, it is not edited. Affected stage: 4.
 - **Four places of the frame copies drew the kit unlike the kit and were brought to it before the match:** the strip centres unselected tabs, the inline badge is 34 wide, the number field has no stepper, the date fields keep the calendar in a 32 px button. Affected stage: 3.
+- **The tab strips of the frame got the kit's thin grey line under them.** The owner: «на макете нет нижнего серого бордера тонкого на табах». The match grew to 239 of 239. Affected stage: 3.
 
 ## Sessions
 
