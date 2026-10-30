@@ -3,11 +3,11 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 3 of 4 — The showcase, the match and the approvals
+- **Stage:** 4 of 4 — Closing and delivery
 - **Done:** the agreement `toolbar-filters`; the slot `rtToolbarFilters`, the filter button, the filters panel, the heading line of the aside header, `phoneCloseLabel` of the aside footer; SC-UKV-1086…1092 tested
-- **Next step:** the owner's answer about the showcase goes into the approval record
+- **Next step:** run the specs check, the types, the linters and the tests of the kit
 - **Uncommitted:** nothing
-- **Waiting for the owner:** the answer about the showcase on port 6017, built from this branch: the stories FilterOff, FilterOn and PanelOpen
+- **Waiting for the owner:** nothing; the showcase is approved: «Одобряю (Рекомендую)»
 - **PR:** not open yet
 
 ## Steps
@@ -24,10 +24,10 @@
 - [x] 3.1 Write the stories of the three states
 - [x] 3.2 Measure the stories against the frames and print the match line
 - [x] 3.3 Draw the overlay of the whole block
-- [>] 3.4 Show the owner the showcase and ask about it
-- [ ] 3.5 Write the approval record
-- [ ] 4.1 Merge the agreement into the kit spec
-- [ ] 4.2 Run the specs check, the types, the linters and the tests of the kit
+- [x] 3.4 Show the owner the showcase and ask about it
+- [x] 3.5 Write the approval record
+- [x] 4.1 Merge the agreement into the kit spec
+- [>] 4.2 Run the specs check, the types, the linters and the tests of the kit
 - [ ] 4.3 Take the task folder apart into the archive record
 - [ ] 4.4 Push and open the PR by the owner's word
 - [ ] 4.5 Release the kit by the owner's word and send the version to the consumer

@@ -1,6 +1,6 @@
 # The filters of a toolbar behind a button
 
-**Status:** proposed · **Revision:** 2026-10-30 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 2026-10-30 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the toolbar, the icon button and the aside of the second kit
 **Laws:** `frontend-application`, `mockups`, `lists`
 **Procedures:** none
