@@ -7,9 +7,12 @@
 
 ### Stage 1 — the frame and the owner's approval
 
-- [ ] 1. A Figma frame of `rt-data-table`: a list filter set to «Нет», column B pressed after A ascending. ← now
-- [ ] 2. The frame is measured and shown to the owner with what to look at.
-- [ ] 3. The owner's answer is written into the grill.
+- [x] 1. A Figma frame of `rt-data-table`: a list filter set to «Нет», column B pressed after A ascending.
+- [x] 2. The frame is measured and shown to the owner with what to look at.
+- [ ] 3. The owner's answer is written into the grill. ← now
+
+Frame: https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL/Design-System-V2?node-id=7377-496 — the page
+Data Table. Measured: three columns of 260 in every row, the filter row 50 high, no overlaps.
 
 ### Stage 2 — the core and its tests
 
