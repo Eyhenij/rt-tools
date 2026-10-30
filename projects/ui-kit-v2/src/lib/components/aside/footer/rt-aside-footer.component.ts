@@ -1,4 +1,16 @@
-import { contentChildren, effect, inject, ChangeDetectionStrategy, Component, ElementRef, Signal, ViewEncapsulation } from '@angular/core';
+import {
+    booleanAttribute,
+    contentChildren,
+    effect,
+    inject,
+    input,
+    ChangeDetectionStrategy,
+    Component,
+    ElementRef,
+    InputSignalWithTransform,
+    Signal,
+    ViewEncapsulation,
+} from '@angular/core';
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
@@ -70,13 +82,21 @@ export class RtAsideFooterComponent {
         read: ElementRef,
     });
 
+    /**
+     * На телефоне кнопка слота `[asideDismiss]` читается «Закрыть»: так она названа у всех панелей.
+     * `false` оставляет подпись потребителя — у панели фильтров эта кнопка «Сбросить», а не выход.
+     */
+    public readonly phoneCloseLabel: InputSignalWithTransform<boolean, boolean | string> = input<boolean, boolean | string>(true, {
+        transform: booleanAttribute,
+    });
+
     constructor() {
         effect((): void => {
             const hosts: readonly ElementRef<HTMLElement>[] = this.hosts();
             const dismissLook: IButton.PlaceLook = {
                 appearance: 'outlined',
                 theme: 'secondary',
-                ...(this.#phone() ? { label: this.#closeLabel() } : {}),
+                ...(this.#phone() && this.phoneCloseLabel() ? { label: this.#closeLabel() } : {}),
             };
 
             this.buttons().forEach((button: RtButtonDirective, index: number): void => {
