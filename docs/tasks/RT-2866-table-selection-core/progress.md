@@ -3,18 +3,20 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 1 из 2 — the selection in the core, with tests
+- **Stage:** 2 из 2 — closing
 
 ### Stage 1 — the selection in the core, with tests
 
-- [ ] 1. `table-core/rt-table-selection.core.ts` holds the eleven functions under core names. ← now
-- [ ] 2. `table-core/rt-table-selection.core.spec.ts` checks every function.
-- [ ] 3. The data-table and data-list files keep their names as calls of the core.
+- [x] 1. `table-core/rt-table-selection.core.ts` holds the eleven functions under core names.
+- [x] 2. `table-core/rt-table-selection.core.spec.ts` checks every function.
+- [x] 3. The data-table and data-list files keep their names as calls of the core.
+
+The core spec: 10 tests. The kit: 287 suites, 3402 tests green; typecheck and eslint clean.
 
 ### Stage 2 — closing
 
-- [ ] 1. The bindings of `table-full-port` name the core.
-- [ ] 2. The visual gate matches every frame; the affected checks are green.
+- [x] 1. The bindings of `table-full-port` name the core.
+- [ ] 2. The visual gate matches every frame; the affected checks are green. ← now
 - [ ] 3. The folder is taken apart, the PR opens into the epic branch.
 
 ## Decisions along the way
