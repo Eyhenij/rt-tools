@@ -37,12 +37,28 @@ The four open questions of the epic card (comment of 16.10.2026) are asked when 
 Question 3 («nothing changed»: the same array or `null`) is an inner interface, not a screen, and is
 closed by assumption at the call sites. Question 4 belongs to RT-2867 and is asked there.
 
+**Сортировка: в `rt-table` третье нажатие снимает порядок, в `rt-data-table` снова ставит «по
+возрастанию». Как в общем ядре?** Options: «Ядро держит оба (Recommended)», «Обе снимают», «Обе как
+первый кит».
+«Ядро держит оба (Recommended)»
+
+**Пустое значение фильтра: только `''` или любое ложное?** Options: «Пусто — только '' (Recommended)»,
+«Любое ложное — пусто».
+«как правильно?» — answered in chat: only `''` is empty; `0` and `false` are real values of a
+condition («остаток = 0», «активна = false»), and dropping them shows every row. Taken as the
+decision.
+
 ## Decisions
 
 - **Before the PR the owner approves the frame and the showcase story, with the exact places to
   look at named.** The owner's word above.
 - **Not included:** row selection (RT-2866), column keys (RT-2867), the look of the tables.
 
+- **The core keeps both sort cycles** by a flag; each table keeps its own, the screen does not
+  change. By the owner's answer.
+- **Only `''` drops a filter condition**, in both tables. By the owner's question «как правильно?»
+  and the answer given.
+
 ## What is left unclear
 
-- Questions 1 and 2 of the epic card — asked of the owner now.
+- Nothing blocks the work.
