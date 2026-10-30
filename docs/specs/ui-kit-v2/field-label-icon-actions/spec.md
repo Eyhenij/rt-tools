@@ -1,6 +1,6 @@
 # The field's label on the border, actionable icons and the clearing cross
 
-**Status:** in force · **Revision:** 2026-10-23 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 2026-10-30 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the field of input, the select family, the shared base of the fields, the tooltip of the kit
 **Laws:** `frontend-application`, `verifiability`, `reuse-first`
 **Procedures:** none
@@ -74,6 +74,17 @@ can be pressed and shows a hint, and a cross that the Tab key reaches.
   stays and says why.
 - **The clearing cross of the input and the select is reached by the Tab key when the field asks for
   it.** By default it stays out of the Tab order, as before.
+- **The kit settings name whether the clearing cross goes by Tab.** The fields node `formControl`
+  of the kit settings takes `clearTabbable`. `clearTabbable` on the element wins over it, and
+  without either the cross stays out of the Tab order, as before.
+- **Every control of the shared base with a clearing cross obeys `clearTabbable`.** Besides the
+  field of text and the select, so do the autocomplete, the number field, the date picker and the
+  date range. None of them keeps its cross out of the Tab order by a fixed index.
+- **The cross of the multiselect goes by Tab as a button next to the trigger.** With
+  `clearTabbable` the multiselect draws its cross as a neighbouring button over its place in the
+  row, as the select does: a button inside the trigger is not announced by a screen reader, and
+  its Enter would open the list. Tab from the trigger reaches the cross, Enter on it clears the
+  choice and leaves the list closed.
 - **Clearing reports to the host after the value is reset and the change is sent to the form.** The
   event comes from the shared base, so every field with a cross reports it.
 - **The cross is shown by default.** The default does not change: a form that never asked for the
@@ -86,7 +97,7 @@ can be pressed and shows a hint, and a cross that the Tab key reaches.
 ## What is out of scope
 
 - Changing the default of the cross.
-- A tabbable cross on the fields other than the input and the select.
+- The list clear of the dynamic selector: it is a button of its own and already goes by Tab.
 - The option template of the multiselect.
 - The label on the border for the fields other than the input and the select.
 - The look of these fields under the material preset — the subdomain `field-material-look`.
@@ -151,6 +162,9 @@ Not applicable.
   there. Rejected: an input on two components — a third field would repeat it.
 - **The label on the border is an input of the two fields, not of the shared base.** Its markup and
   look belong to each field.
+- **A node of its own for the cross rather than a field of the common settings.** The common
+  settings hold what acts on the whole page, such as the theme; the cross belongs to one family of
+  controls.
 
 ## Open questions
 
@@ -161,3 +175,5 @@ None.
 - 2026-10-13 — written before the code, from the application's request accepted by the owner.
 - 2026-10-23 — the application's request: the length limit of the input and the textarea.
 - 2026-10-23 — merged from the agreement into the subdomain, task RT-2812.
+- 2026-10-30 — the application's request: the clearing cross by Tab from the kit settings on every
+  field with a cross; merged from the agreement into the subdomain, task RT-2995.

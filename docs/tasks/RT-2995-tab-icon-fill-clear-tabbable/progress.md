@@ -2,7 +2,7 @@
 
 ## Where we stand
 
-- **State:** `этап-идёт`
+- **State:** `этапы-кончились`
 - **Stage:** 4 of 4 — Closing
 - **Done:** stage 1 — the frames `7327:531` and `7327:1317` approved; stage 2 — `iconFill` and
   `badgePosition` on `rtTab`, `components.formControl.clearTabbable`, four crosses on
@@ -10,7 +10,10 @@
   The whole kit run: 282 files green before the last two tests were fixed; both rerun green.
   The multiselect: frame `7330:2735` approved, the cross goes as a neighbouring button with
   `clearTabbable` (SC-UKV-1086), `rt-clear-tabbable.spec.ts` now 7 green, the multiselect spec 25.
-- **Next step:** 4.1 — merge the agreement `docs/specs/ui-kit-v2/proposed/tab-icon-fill-clear-tabbable/` into `tab-additions` and `field-label-icon-actions`, bring the Overview pages and `CONTEXT.md` up to date.
+  The agreement merged: tab rules, SC-UKV-1082 and SC-UKV-1085 into `tab-additions`, field rules,
+  SC-UKV-1083, SC-UKV-1084 and SC-UKV-1086 into `field-label-icon-actions`; `check:specs`,
+  `check:docs` and the Overview audit green.
+- **Next step:** 4.2 — the push set with the showcase snapshots, then take the folder apart and open the PR.
 - **Uncommitted:** nothing.
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -25,8 +28,8 @@
 - [x] 2.4 Write the tests of SC-UKV-1082, SC-UKV-1083 and SC-UKV-1084.
 - [x] 3.1 Add the stories: a tab with `iconFill`, the fields with the cross by Tab from the kit setting.
 - [x] 3.2 Measure the showcase against the frame and show both to the owner; write the approval.
-- [>] 4.1 Merge the agreement into `tab-additions` and `field-label-icon-actions`, bring the Overview pages and `CONTEXT.md` up to date.
-- [ ] 4.2 Run the push set, take the folder apart, open the PR.
+- [x] 4.1 Merge the agreement into `tab-additions` and `field-label-icon-actions`, bring the Overview pages and `CONTEXT.md` up to date.
+- [>] 4.2 Run the push set, take the folder apart, open the PR.
 
 ## Decisions along the way
 
@@ -72,3 +75,53 @@
 
 - Task RT-2995 created outside an epic, branch from main, card in progress.
 - The application sent a third request, a badge over the tab icon; the owner put it into this task.
+
+## Handover of the session
+
+Put together by a hook before the compaction of the context (auto).
+
+**Working tree:** /Users/sviatoslavkhutornoy/WebstormProjects/rt-tools
+**Branch:** RT-2995-tab-icon-fill-clear-tabbable
+
+### Where we stand at the minute of the compaction
+
+- **State:** `этапы-кончились`
+- **Stage:** 4 of 4 — Closing
+- **Next step:** 4.1 — merge the agreement `docs/specs/ui-kit-v2/proposed/tab-icon-fill-clear-tabbable/` into `tab-additions` and `field-label-icon-actions`, bring the Overview pages and `CONTEXT.md` up to date.
+- **PR:** not open yet
+
+The progress in full — `docs/tasks/RT-2995-tab-icon-fill-clear-tabbable/progress.md`; the plan lies next to it.
+
+### Uncommitted
+
+```
+none
+```
+
+### Commits over the main branch
+
+```
+9590a23de docs(rt:ui-kit-v2): кадр и витрина RT-2995 одобрены владельцем
+5c522afdb docs(rt:ui-kit-v2): кадр вкладок RT-2995 дорисован линией под полосой, совпадение 239 из 239
+355e3db6b fix(rt:ui-kit-v2): витрина RT-2995 совпала с кадрами 224 из 224
+8665b3f49 feat(rt:ui-kit-v2): витрина показывает заливку иконки вкладки, бейдж над ней и крестик по Tab
+047ae1d2b docs(rt:ui-kit-v2): витрина RT-2995 упёрлась в рисунки залитых значков
+c9bb33c08 Merge remote-tracking branch 'origin/main' into RT-2995-tab-icon-fill-clear-tabbable
+2c43a2fa4 docs(rt:ui-kit-v2): одна передача сессии в прогрессе RT-2995
+1c4faf50d docs(rt:ui-kit-v2): передача сессии по RT-2995 и RT-2996
+97dca066d feat(rt:ui-kit-v2): песочница вкладки берёт iconFill и badgePosition
+55ff5ad43 feat(rt:ui-kit-v2): крестик мультиселекта доходит по Tab соседней кнопкой, как у выбора
+6ddc42ef9 docs(rt:ui-kit-v2): кадр мультиселекта RT-2995 одобрен владельцем
+0bc5e64ce docs(rt:ui-kit-v2): задача RT-2995 ждёт одобрения кадра мультиселекта
+3d4609009 docs(rt:ui-kit-v2): крестик мультиселекта входит в RT-2995, кадр нарисован
+d1d600bb0 feat(rt:ui-kit-v2): вкладка заливает иконку и ставит бейдж над ней, крестик полей доходит по Tab от умолчания кита
+52970b19d docs(rt:ui-kit-v2): макет RT-2995 одобрен владельцем
+a7adfa1fd docs(rt:ui-kit-v2): задача RT-2995 ждёт одобрения кадров Figma
+0780a6c95 docs(rt:ui-kit-v2): кадры RT-2995 нарисованы в Figma, договорённость уточнена по ним
+2c39ce1cc docs(rt:ui-kit-v2): бейдж поверх иконки вкладки входит в RT-2995
+8a8e5569a docs(rt:ui-kit-v2): задача RT-2995 ждёт файл Figma кита и ответ о бейдже вкладки
+2e496f431 docs(rt:ui-kit-v2): задача RT-2995 — разбор, договорённость и план
+```
+
+Written by a hook before the compaction of the context. Everything standing here is checked
+against the tree: a handover retells what was written and describes the minute it was put together.

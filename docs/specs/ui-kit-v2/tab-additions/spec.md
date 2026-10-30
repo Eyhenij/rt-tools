@@ -1,6 +1,6 @@
 # What the tabs give an application moving from Material
 
-**Status:** in force · **Revision:** 2026-10-23 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 2026-10-30 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the tabs of the kit, the tooltip of the kit
 **Laws:** `frontend-application`, `verifiability`, `reuse-first`
 **Procedures:** none
@@ -39,6 +39,18 @@ on the screen names.
   reaches its cross, and Enter or Space there closes the tab. The cross is named by its tooltip,
   or by the translated "Close" without one. After a close from the keyboard the focus goes to the
   tab that became active. Delete on the tab still closes it, and the look stays as before.
+- **A tab fills its icon when it asks for it.** `rtTab` takes `iconFill`, `false` by default, and
+  passes it to the icon as `fill`, for an icon by `icon` and by `glyph` alike. The icon draws filled
+  where it has a filled drawing: a Material glyph always, a kit name under the material preset. A
+  kit name in the base preset has one drawing and stays as it is. A tab without `iconFill` is drawn
+  as before.
+- **A tab puts its badge over the icon when it asks for it.** `rtTab` takes `badgePosition`,
+  `'inline'` by default, which keeps the badge after the title as before. With `'overlay'` the
+  badge is a circle of 16 pixels over the top right corner of the icon and moves nothing in the tab.
+  Its top stands 8 pixels above the icon and its right edge 6 pixels past it, so a longer count
+  grows over the icon, not over the title. It is filled with the primary action colour. A tab
+  without an icon keeps the badge inline. A tab without a title draws no empty title, so an
+  icon-only tab keeps its icon in the middle.
 
 ## What is out of scope
 
@@ -68,6 +80,8 @@ Not applicable: nothing is stored.
 | a closable tab in focus      | Tab moves to its cross; the other crosses are out of order |
 | a disabled tab               | pale, no cross, its tooltip on hover                       |
 | a strip wider than its place | the scroll arrows over the tabs or beside the list         |
+| a tab with `iconFill`        | its icon is filled, the other tabs are outlined            |
+| a badge with `'overlay'`     | a circle with the count over the icon corner               |
 
 ## Cross-cutting requirements
 
@@ -90,7 +104,8 @@ Not applicable.
 
 ## Decisions
 
-- None.
+- **`iconFill` rather than `glyphFill`.** The application asked for `glyphFill`; the input stands
+  next to `icon`, `glyph` and `iconColor` and reaches both sources of the icon.
 
 ## Open questions
 
@@ -100,3 +115,5 @@ None.
 
 - 2026-10-23 — the application's request: the cross of a closable tab is reached from the keyboard.
 - 2026-10-23 — merged from the agreement into the subdomain, task RT-2812.
+- 2026-10-30 — the application's request: a filled tab icon and a badge over it; merged from the
+  agreement into the subdomain, task RT-2995.
