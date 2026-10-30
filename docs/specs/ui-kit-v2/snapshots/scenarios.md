@@ -56,7 +56,10 @@ Given the kit and the showcase did not change between the shootings
 When the run of the snapshots goes twice in a row
 Then both runs are green, and not a single story is named as diverged
 
-Not covered: it cannot be closed by a test with an identifier — the determinacy is checked by two passes of the run in a row — 86.1 s and 91.0 s, both green, 255 frames agreed.
+Coverage: partial — the test checks one source of a blinking frame: a story opens its overlay only
+after the page fonts arrived, since CDK places a panel once and does not follow a trigger that grew
+with the font. The determinacy itself is checked by two passes of the run in a row — 86.1 s and
+91.0 s, both green, 255 frames agreed.
 
 ### SC-UKV-07 — the run of the second showcase does not touch the references of the first
 

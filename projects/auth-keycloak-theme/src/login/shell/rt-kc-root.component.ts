@@ -1,11 +1,12 @@
 import { DOCUMENT, NgComponentOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, Type } from '@angular/core';
+import { afterNextRender, ChangeDetectionStrategy, Component, inject, Type } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { IRtSelect, RtDotFieldComponent, RtSelectComponent, RtThemeToggleComponent } from '@rt-tools/ui-kit-v2';
 
 import { KC_CONTEXT, KC_PAGE, TKcContext } from '../kc-context';
 import { KC_MESSAGES, TKcMessages } from '../kc-i18n';
+import { loadPageScripts } from '../kc-page-scripts';
 import { IKcRealmLogo, realmLogoOf } from '../kc-realm-logo';
 
 const BEM_BLOCK: string = 'rt-kc-root';
@@ -63,6 +64,10 @@ export class RtKcRootComponent {
     constructor() {
         this.#view.documentElement.lang = this.#i18n.currentLanguage.languageTag;
         this.#view.title = this.realmName;
+        // The reCAPTCHA script renders only the widgets it finds on load, so the page is drawn first.
+        afterNextRender((): void => {
+            loadPageScripts(this.#view, this.#context.scripts ?? []);
+        });
     }
 
     /** Keycloak draws a page in a language by its own address, so a choice opens that address. */
