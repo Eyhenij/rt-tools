@@ -1,6 +1,6 @@
 {
   "name": "@rt-tools/ui-kit-v2",
-  "version": "0.24.0",
+  "version": "0.37.0",
   "license": "Apache-2.0",
   "author": "Yauheni Krumin",
   "type": "module",
@@ -19,11 +19,15 @@
     "@angular/forms": "^22.0.0",
     "@angular/platform-browser": "^22.0.0",
     "@angular/router": "^22.0.0",
+    "pdfjs-dist": "^6.4.299",
     "quill": "^2.0.3",
     "rxjs": "^7.8.2",
     "typescript": "^6.0.0"
   },
   "peerDependenciesMeta": {
+    "pdfjs-dist": {
+      "optional": true
+    },
     "quill": {
       "optional": true
     }

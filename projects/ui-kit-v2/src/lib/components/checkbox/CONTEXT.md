@@ -5,14 +5,21 @@
 <rt-checkbox ariaLabel="Выбрать всё" [indeterminate]="someSelected()" [formControl]="allControl" />
 ```
 
-| вход            | тип              | умолчание |
-| --------------- | ---------------- | --------- |
-| `inputId`       | `string \| null` | `null`    |
-| `ariaLabel`     | `string \| null` | `null`    |
-| `disabled`      | `boolean`        | `false`   |
-| `indeterminate` | `boolean`        | `false`   |
+| вход            | тип               | умолчание             |
+| --------------- | ----------------- | --------------------- |
+| `inputId`       | `string \| null`  | `null`                |
+| `ariaLabel`     | `string \| null`  | `null`                |
+| `disabled`      | `boolean`         | `false`               |
+| `indeterminate` | `boolean`         | `false`               |
+| `checked`       | `boolean \| null` | `null` → решает форма |
 
-Значение — `boolean` через `ControlValueAccessor`. Подпись приходит проекцией.
+| выход           | тип       |
+| --------------- | --------- |
+| `checkedChange` | `boolean` |
+
+Значение — `boolean` через `ControlValueAccessor`. Подпись приходит проекцией. Без формы отметку
+ставит вход `checked`, а смену человеком сообщает `checkedChange`, как у радиокнопки. Не заданный
+`checked` оставляет решение форме.
 
 ## Главное, что нужно знать
 

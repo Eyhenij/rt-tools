@@ -1,0 +1,61 @@
+@layer rt-kit.components {
+    /* rt-service-block — блок службы в теле панели подключения. ViewEncapsulation.None.
+       Корень шаблона — ng-container, поэтому класс блока висит только на хосте.
+       Числа — компонента «Service Block»: промежутки, ступени шрифта, цвета и черта снизу. */
+
+    .rt-service-block {
+        --rt-service-block-gap: var(--rt-space-4);
+        --rt-service-block-text-gap: var(--rt-space-0-5);
+        --rt-service-block-padding-bottom: var(--rt-space-5);
+        --rt-service-block-divider: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
+        --rt-service-block-name-size: var(--rt-text-xl);
+        --rt-service-block-name-weight: var(--rt-font-weight-semibold);
+        --rt-service-block-name-line-height: var(--rt-leading-snug);
+        --rt-service-block-name-color: var(--rt-color-text-primary);
+        --rt-service-block-description-size: var(--rt-text-sm);
+        --rt-service-block-description-weight: var(--rt-font-weight-regular);
+        --rt-service-block-description-line-height: var(--rt-leading-normal);
+        --rt-service-block-description-color: var(--rt-color-text-muted);
+
+        /* Блок занимает всё место по ширине и в потоке, и во флекс-ряду: иначе он ужимается до
+           своего текста, и черта под ним кончается вместе с описанием. */
+        display: flex;
+        width: 100%;
+        align-items: center;
+        padding-bottom: var(--rt-service-block-padding-bottom);
+        border-bottom: var(--rt-service-block-divider);
+        gap: var(--rt-service-block-gap);
+
+        /* Знак держит свой размер: текст ужимается и переносится, круг — нет. */
+        &__logo {
+            flex: none;
+        }
+
+        /* Место текста — всё, что осталось от знака. Длинное слово переносится по любому
+           знаку, чтобы не вылезти за черту на узком экране. */
+        &__text {
+            display: flex;
+            min-width: 0;
+            flex: 1 1 0;
+            flex-direction: column;
+            gap: var(--rt-service-block-text-gap);
+            overflow-wrap: anywhere;
+        }
+
+        &__name {
+            margin: 0;
+            color: var(--rt-service-block-name-color);
+            font-size: var(--rt-service-block-name-size);
+            font-weight: var(--rt-service-block-name-weight);
+            line-height: var(--rt-service-block-name-line-height);
+        }
+
+        &__description {
+            margin: 0;
+            color: var(--rt-service-block-description-color);
+            font-size: var(--rt-service-block-description-size);
+            font-weight: var(--rt-service-block-description-weight);
+            line-height: var(--rt-service-block-description-line-height);
+        }
+    }
+}

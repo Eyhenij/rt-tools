@@ -30,6 +30,7 @@ import { NgTemplateOutlet } from '@angular/common';
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import {
+    RtAiPromptInputComponent,
     RtButtonDirective,
     RtConfirmDirective,
     RtDeltaViewComponent,
@@ -39,21 +40,25 @@ import {
     RtIconComponent,
     RtMenuComponent,
     RtNoteComponent,
+    RtServiceLogoComponent,
     RtSkeletonWrapperComponent,
     RtSpinnerComponent,
     RtToolbarComponent,
     RtToolbarLeftDirective,
     RtToolbarRightDirective,
+    RtTooltipDirective,
 } from '@rt-tools/ui-kit-v2';
+import { IRtServiceLogo } from '@rt-tools/ui-kit-v2';
 import { RT_KIT_LABELS, RT_KIT_LOCALE, rtKitLabel, TRtKitLabelKey, TRtKitLabelMap } from '@rt-tools/ui-kit-v2';
-import { RtChatMessageActionsDirective } from './rt-chat-message-actions.directive';
+import { RtChatMessageActionsDirective, RtChatMessageButtonsDirective } from './rt-chat-message-actions.directive';
 import { RtChatMessageHasActionsPipe } from './rt-chat-message-actions.pipe';
 import { RtChatStatusLabelPipe } from '../../pipes/rt-chat-status-label.pipe';
 import { RtMessageComposerComponent } from '../message-composer/rt-message-composer.component';
 import { IRtMessageComposer } from '../message-composer/rt-message-composer.model';
 import { TRtRichEditorToolbar } from '../rich-editor/rt-rich-editor.component';
-import { pickedFiles, withAppendedFiles, withoutFileAt } from './rt-chat-files.logic';
-import { nextAtBottom, RT_CHAT_PIN_RETRY_DELAYS_MS } from './rt-chat-thread.logic';
+import { pickedFiles, rtChatCanSend, withAppendedFiles, withoutFileAt } from './rt-chat-files.logic';
+import { rtChatDayLabels } from './rt-chat-days.logic';
+import { nextAtBottom, pinToBottomDeferred } from './rt-chat-thread.logic';
 import { typingDraft, RtChatTypingTracker } from './rt-chat-typing.logic';
 import { ERtChatMessageStatus, IRtChat } from './rt-chat.model';
 
@@ -72,7 +77,7 @@ const ATTACHMENT_FALLBACK_KEY: TRtKitLabelKey = 'chatAttachmentFallback';
 @Component({
     selector: 'rt-chat',
     templateUrl: './rt-chat.component.html',
-    styleUrls: ['./rt-chat.component.scss'],
+    styleUrls: ['./rt-chat.component.scss', './rt-chat-messenger.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
     imports: [
@@ -83,6 +88,7 @@ const ATTACHMENT_FALLBACK_KEY: TRtKitLabelKey = 'chatAttachmentFallback';
         ReactiveFormsModule,
 
         // standalone components / directives
+        RtAiPromptInputComponent,
         RtButtonDirective,
         RtChatStatusLabelPipe,
         RtConfirmDirective,
@@ -95,11 +101,13 @@ const ATTACHMENT_FALLBACK_KEY: TRtKitLabelKey = 'chatAttachmentFallback';
         RtMenuComponent,
         RtMessageComposerComponent,
         RtNoteComponent,
+        RtServiceLogoComponent,
         RtSkeletonWrapperComponent,
         RtSpinnerComponent,
         RtToolbarComponent,
         RtToolbarLeftDirective,
         RtToolbarRightDirective,
+        RtTooltipDirective,
         BlockDirective,
         ElemDirective,
         ModDirective,
@@ -108,6 +116,7 @@ const ATTACHMENT_FALLBACK_KEY: TRtKitLabelKey = 'chatAttachmentFallback';
         class: BEM_BLOCK,
         '[class.rt-chat--expanded]': 'expanded()',
         '[class.rt-chat--fill]': 'fill()',
+        '[class.rt-chat--messenger]': 'messenger()',
     },
 })
 export class RtChatComponent {
@@ -175,23 +184,18 @@ export class RtChatComponent {
     /** Композер заблокирован при загрузке/рефреше треда или отправке in-flight. */
     protected readonly composerDisabled: Signal<boolean> = computed((): boolean => this.loading() || this.fetching() || this.sending());
 
-    /**
-     * Можно ли отправить: композер активен и есть содержимое — непустой текст или
-     * (при включённых вложениях) хотя бы один файл. Сообщение само по себе не
-     * бывает «невалидным» — пустоту гасим дизейблом кнопки, а не подсветкой поля.
-     */
-    protected readonly canSend: Signal<boolean> = computed((): boolean => {
-        if (this.composerDisabled()) {
-            return false;
-        }
-        const value: Partial<{ message: string; files: File[] }> = this.#formValue();
-        const hasText: boolean = (value.message ?? '').trim().length > 0;
-        const hasFiles: boolean = this.attachments() && (value.files?.length ?? 0) > 0;
-        return hasText || hasFiles;
-    });
+    /** Можно ли отправить: пустоту гасит выключенная кнопка, поле не подсвечивается ошибкой */
+    protected readonly canSend: Signal<boolean> = computed((): boolean =>
+        rtChatCanSend(this.composerDisabled(), this.#formValue(), this.attachments())
+    );
+
+    /** Подписи дней над первым сообщением каждого дня — только в виде мессенджера */
+    protected readonly dayLabels: Signal<ReadonlyMap<number | string, string>> = computed((): ReadonlyMap<number | string, string> =>
+        this.messenger() ? rtChatDayLabels(this.messages(), new Date(), this.locale()) : new Map<number | string, string>()
+    );
 
     /** Показывать ли шапку: только когда включена хотя бы одна иконка. */
-    protected readonly showHeader: Signal<boolean> = computed((): boolean => this.showRefresh() || this.showExpand());
+    protected readonly showHeader: Signal<boolean> = computed((): boolean => this.messenger() || this.showRefresh() || this.showExpand());
 
     /** Подпись кнопки fullscreen: тернарник в шаблоне переводом не покрыть. */
     protected readonly expandLabel: Signal<string> = rtKitLabel(
@@ -201,28 +205,19 @@ export class RtChatComponent {
     /** Выбранные, но ещё не отправленные файлы — карточки над полем ввода. */
     protected readonly selectedFiles: Signal<File[]> = computed((): File[] => this.#formValue().files ?? []);
 
-    /**
-     * Drop-зона активна только когда вложения включены, ответ доступен и композер
-     * не занят (загрузка/рефреш/отправка). Иначе обёртка `rt-file-drop` просто
-     * пропускает контент без оверлея.
-     */
+    /** Drop-зона активна при включённых вложениях, доступном ответе и свободном композере */
     protected readonly dropDisabled: Signal<boolean> = computed(
         (): boolean => !this.attachments() || !this.canReply() || this.composerDisabled()
     );
 
-    /**
-     * Файл из drag-n-drop для rich-композера: каждый drop кладёт новый `File`,
-     * пробрасывается в `rt-message-composer` через input. Классический композер
-     * принимает drop напрямую в свой `replyForm`.
-     */
+    /** Файлы drop для rich-композера; классический композер принимает drop в свой `replyForm` */
     protected readonly droppedFiles: WritableSignal<File[] | null> = signal<File[] | null>(null);
 
-    /**
-     * Шаблон действий у реплики: `<ng-template rtChatMessageActions let-message>`.
-     *
-     * Не объявлен — разметка реплики прежняя, и лишней кнопки у неё не появляется.
-     */
+    /** Шаблон действий у реплики `<ng-template rtChatMessageActions>`; не объявлен — кнопки нет */
     protected readonly messageActions: Signal<RtChatMessageActionsDirective | undefined> = contentChild(RtChatMessageActionsDirective);
+
+    /** Кнопки у реплики перед меню `<ng-template rtChatMessageButtons>`; не объявлены — кнопок нет */
+    protected readonly messageButtons: Signal<RtChatMessageButtonsDirective | undefined> = contentChild(RtChatMessageButtonsDirective);
 
     /** История сообщений (consumer уже смаппил из доменной модели). */
     public readonly messages: InputSignal<readonly IRtChat.Message[]> = input<readonly IRtChat.Message[]>([]);
@@ -258,6 +253,15 @@ export class RtChatComponent {
     public readonly placeholder: InputSignal<string> = input<string>('');
 
     public readonly title: InputSignal<string> = input<string>('');
+
+    /**
+     * Знак канала разговора (сайт, мессенджер) слева от заголовка шапки: круг `rt-service-logo`
+     * размера `xs`. Шапку сам не создаёт — как и `title`, рисуется только в ней.
+     */
+    public readonly sign: InputSignal<IRtServiceLogo.Item | null> = input<IRtServiceLogo.Item | null>(null);
+
+    /** Строка под заголовком шапки: канал и контакт собеседника; пустая не показывается. */
+    public readonly subtitle: InputSignal<string> = input<string>('');
 
     /** Текст, когда треда ещё нет (заявка не создана). */
     public readonly emptyHint: InputSignal<string> = input<string>('');
@@ -305,6 +309,14 @@ export class RtChatComponent {
     });
 
     /** Показать иконку refresh в шапке. */
+    /**
+     * Вид мессенджера: без подписи автора, свой пузырь цвета действия, время без даты, над
+     * сообщениями дня — его подпись, поле ответа в одну строку с рядом кнопок под ним.
+     */
+    public readonly messenger: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+
     public readonly showRefresh: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
@@ -369,7 +381,10 @@ export class RtChatComponent {
             if (this.#forceScroll || this.#atBottom) {
                 el.scrollTop = el.scrollHeight;
                 this.#atBottom = true;
-                this.#pinToBottomDeferred();
+                pinToBottomDeferred(
+                    (): HTMLElement | undefined => this.thread()?.nativeElement,
+                    (): boolean => this.#atBottom
+                );
             }
             this.#forceScroll = false;
         });
@@ -438,7 +453,7 @@ export class RtChatComponent {
         if (files.length === 0) {
             return;
         }
-        if (this.richComposer()) {
+        if (this.richComposer() || this.messenger()) {
             // Новый массив на каждый drop — effect композера видит каждое перетаскивание.
             this.droppedFiles.set([...files]);
             return;
@@ -452,10 +467,7 @@ export class RtChatComponent {
 
     protected onFilesPicked(event: Event): void {
         const inputEl: HTMLInputElement = event.target as HTMLInputElement;
-        const picked: File[] = pickedFiles(inputEl.files);
-        if (picked.length > 0) {
-            this.replyForm.controls.files.setValue(withAppendedFiles(this.replyForm.controls.files.value, picked));
-        }
+        this.onFilesDropped(pickedFiles(inputEl.files));
         // Сброс значения: без него повторный выбор того же файла не даёт `change`.
         inputEl.value = '';
     }
@@ -473,22 +485,6 @@ export class RtChatComponent {
 
         this.#atBottom = nextAtBottom(this.#atBottom, this.#lastScrollTop, el);
         this.#lastScrollTop = el.scrollTop;
-    }
-
-    /**
-     * Серия отложенных подтягиваний ленты к низу: присланное содержимое дорисовывается несколькими
-     * проходами, и одной прокрутки мало. Каждый тик берёт тред заново — он бывает пересоздан — и
-     * дотягивает ленту, пока читатель стоит у нижнего края.
-     */
-    #pinToBottomDeferred(): void {
-        for (const delay of RT_CHAT_PIN_RETRY_DELAYS_MS) {
-            setTimeout((): void => {
-                const el: HTMLElement | undefined = this.thread()?.nativeElement;
-                if (el !== undefined && this.#atBottom) {
-                    el.scrollTop = el.scrollHeight;
-                }
-            }, delay);
-        }
     }
 
     protected toggleExpand(): void {

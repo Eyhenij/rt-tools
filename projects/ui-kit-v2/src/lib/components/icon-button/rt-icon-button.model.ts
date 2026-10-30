@@ -17,4 +17,7 @@ export namespace IRtIconButton {
 
     /** HTML-тип нативного `<button>`. */
     export type Type = 'button' | 'submit';
+
+    /** Какую панель открывает кнопка — значения `aria-haspopup`. */
+    export type HasPopup = 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog';
 }

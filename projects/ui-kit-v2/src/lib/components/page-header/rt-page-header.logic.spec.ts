@@ -3,6 +3,9 @@ import {
     compactSectionsOf,
     entryKindOf,
     ERtPageHeaderEntry,
+    fitRow,
+    hasActiveSection,
+    IRtPageHeaderFit,
     IRtPageHeaderView,
     isStuck,
     panelGroupsOf,
@@ -254,5 +257,66 @@ describe('isStuck', () => {
 
     it('шапка, ушедшая из области целиком, прилипшей не считается', () => {
         expect(isStuck(0, false)).toBe(false);
+    });
+});
+
+describe('fitRow', () => {
+    /** Пять разделов по сто пикселей: с промежутком 10 ряд целиком занимает 540. */
+    function slots(priorities: ReadonlyArray<number> = [0, 0, 0, 0, 0]): ReadonlyArray<IRtPageHeaderFit.Slot> {
+        return priorities.map((priority: number, index: number): IRtPageHeaderFit.Slot => ({ id: `s${index + 1}`, width: 100, priority }));
+    }
+
+    function fit(available: number, priorities?: ReadonlyArray<number>): IRtPageHeaderFit.Result {
+        return fitRow({ slots: slots(priorities), moreWidth: 60, available, gap: 10 });
+    }
+
+    it('SC-UKV-870: всё помещается — «Ещё» нет', () => {
+        expect(fit(540)).toEqual({ row: ['s1', 's2', 's3', 's4', 's5'], more: [] });
+    });
+
+    it('SC-UKV-871: без важности уходят разделы с конца списка', () => {
+        // Три раздела и «Ещё»: 300 + 60 + три промежутка = 390.
+        expect(fit(400)).toEqual({ row: ['s1', 's2', 's3'], more: ['s4', 's5'] });
+    });
+
+    it('SC-UKV-871: «Ещё» тоже занимает место: раздел, вставший бы без него, уходит', () => {
+        // Четыре раздела без «Ещё» заняли бы 430 — но с «Ещё» нужно 500.
+        expect(fit(450).more).toEqual(['s4', 's5']);
+    });
+
+    it('SC-UKV-872: первыми уходят наименее важные', () => {
+        expect(fit(400, [0, -1, 0, 5, -2])).toEqual({ row: ['s1', 's3', 's4'], more: ['s2', 's5'] });
+    });
+
+    it('SC-UKV-872: порядок оставшихся в ряду и ушедших не меняется', () => {
+        expect(fit(290, [3, 0, 2, 1, 4])).toEqual({ row: ['s1', 's5'], more: ['s2', 's3', 's4'] });
+    });
+
+    it('SC-UKV-872: при равной важности уходит стоящий дальше от начала', () => {
+        expect(fit(400, [1, 1, 0, 1, 1]).more).toEqual(['s3', 's5']);
+    });
+
+    it('SC-UKV-871: без места даже для одного раздела в ряду остаётся только «Ещё»', () => {
+        expect(fit(80)).toEqual({ row: [], more: ['s1', 's2', 's3', 's4', 's5'] });
+    });
+
+    it('SC-UKV-871: доля пикселя замера раздел в «Ещё» не уводит', () => {
+        expect(fit(539.7).more).toEqual([]);
+    });
+});
+
+describe('hasActiveSection', () => {
+    const sections: ReadonlyArray<IRtPageHeaderView.Section> = toSections([SETTINGS, item('bookings', { route: '/bookings' })]);
+
+    it('SC-UKV-874: активный раздел-ссылка в «Ещё» подсвечивает «Ещё»', () => {
+        expect(hasActiveSection(sections.slice(1), '/bookings/42?tab=info')).toBe(true);
+    });
+
+    it('SC-UKV-874: активный пункт панели в «Ещё» подсвечивает «Ещё»', () => {
+        expect(hasActiveSection(sections.slice(0, 1), '/settings/mail')).toBe(true);
+    });
+
+    it('SC-UKV-874: активный раздел вне «Ещё» его не подсвечивает', () => {
+        expect(hasActiveSection(sections.slice(0, 1), '/bookings')).toBe(false);
     });
 });

@@ -14,6 +14,7 @@ const STATUS_KEYS: Readonly<Record<ERtChatMessageStatus, string>> = {
     [ERtChatMessageStatus.Sent]: 'rtKit.chatStatusSent',
     [ERtChatMessageStatus.Read]: 'rtKit.chatStatusRead',
     [ERtChatMessageStatus.Failed]: 'rtKit.chatStatusFailed',
+    [ERtChatMessageStatus.Undelivered]: 'rtKit.chatStatusUndelivered',
 };
 
 /** Ключ текстовой расшифровки иконки статуса сообщения. */

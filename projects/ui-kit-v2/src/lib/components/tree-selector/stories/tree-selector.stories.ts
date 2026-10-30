@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtTreeSelectorComponent } from './component/test-tree-selector.component';
 
 export default {
-    title: 'Organisms/Forms/TreeSelector',
+    title: 'Molecules/Forms/TreeSelector',
     component: TestRtTreeSelectorComponent,
     argTypes: {
         mode: { options: ['multiple', 'single', 'none'], control: { type: 'select' } },

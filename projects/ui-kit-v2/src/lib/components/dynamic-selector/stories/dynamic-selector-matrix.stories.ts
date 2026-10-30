@@ -34,7 +34,7 @@ export const Presets: TStory = { args: { part: 'presets' } };
 export const Themes: TStory = { args: { part: 'themes' } };
 
 export default {
-    title: 'Organisms/Forms/DynamicSelector',
+    title: 'Molecules/Forms/DynamicSelector',
     component: TestRtDynamicSelectorMatrixComponent,
     parameters: {
         controls: { disable: true },

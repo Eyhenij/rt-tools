@@ -4,7 +4,7 @@ kind: rule
 law: verifiability
 description: Rule under the verifiability law. Load for any check through the browser and for requests to the dev server. Names where the tree's applications run, what on the dev server cannot be trusted and what to measure instead of looking. Patterns browser-verification-stand, -measure.
 ---
-<!-- rt-kit v0.32.0 · rules/browser-verification.md · 81c3cbfaba9f · правится надстройкой, не здесь -->
+<!-- rt-kit v0.33.1 · rules/browser-verification.md · 8add362d77be · правится надстройкой, не здесь -->
 
 # Checking the running application — how it works here
 
@@ -256,3 +256,17 @@ frontend-application law: such access compiles and fails only when the page is s
   and in the edit itself it looks like a refinement. An edit from a neighbouring task rolled out the
   same day enters the production check alongside one's own: the branch answers for what left
   together with it.
+
+## When this machine has no pinned profile
+
+A section of this tree. The owner's word, 13 October 2026: «я просил если открыт все один браузер
+то открывать его запиши это в правила!»
+
+- **One connected browser is the browser to drive.** The pinned profile file is absent and the list
+  of connected browsers names exactly one — that one is selected and driven, and its id is written
+  to the profile file, so the guards pin it from then on. Stopping there sends the owner to measure
+  by hand what the executor had to measure.
+- **Two or more connected browsers are named to the owner, and work through the browser waits.** The
+  names in the list identify nothing, and a pick from them lands in a profile nobody chose.
+- **A check in the showcase is done live before the owner is asked to look.** «проверь живьем в
+  сторибуке прежде чем мне смотреть»: a story handed over unopened makes the owner the tester.

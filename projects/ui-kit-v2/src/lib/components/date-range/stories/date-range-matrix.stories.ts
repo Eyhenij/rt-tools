@@ -9,7 +9,7 @@ import { TestRtDateRangeMatrixComponent } from './component/test-date-range-matr
  * при беглом просмотре неотличимо от отсутствующего.
  */
 export default {
-    title: 'Organisms/Forms/DateRange',
+    title: 'Molecules/Forms/DateRange',
     component: TestRtDateRangeMatrixComponent,
     parameters: {
         controls: { disable: true },

@@ -6,6 +6,7 @@
         iconOn="moon"
         [ariaLabel]="label"
         [ngModel]="isDark()"
+        [ngModelOptions]="{ standalone: true }"
         (ngModelChange)="onToggle()" />
 } @else {
     <rt-icon-button

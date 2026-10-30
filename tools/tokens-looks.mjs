@@ -19,6 +19,7 @@ export const STYLES = 'projects/ui-kit-v2/src/styles';
 
 const LIGHT_MIXIN = 'rt-theme-light-tokens';
 const LIGHT_LIST_MIXIN = 'rt-theme-light-list-tokens';
+const LIGHT_NAVIGATION_MIXIN = 'rt-theme-light-navigation-tokens';
 const DARK_MIXIN = 'rt-theme-dark-tokens';
 const PRESET_MIXIN = 'rt-preset-material-tokens';
 
@@ -54,11 +55,18 @@ export function mixinBody(text, name) {
 }
 
 /**
- * A Material name with a fallback: `var(--mat-sys-primary, #4284d7)`. The material preset reads
+ * The application's theme roles the material preset reads: the system roles `--rt-sys-*` and four
+ * component roles. The kit does not declare them — the application does, per colour scheme.
+ */
+export const APP_THEME_NAME =
+    '--rt-(?:sys-[a-z0-9-]+|field-filled-container-color|fab-small-container-color|option-selected-state-layer-color|menu-container-color)';
+
+/**
+ * A theme role with a fallback: `var(--rt-sys-primary, #4284d7)`. The material preset reads
  * the theme of the page this way, and a page without one gets the fallback. The checks judge the kit
  * on its own, so the value they see is the fallback.
  */
-const MATERIAL_THEME_RE = /^var\(\s*--mat-[a-z0-9-]+\s*,\s*(.+)\)$/;
+const MATERIAL_THEME_RE = new RegExp(`^var\\(\\s*${APP_THEME_NAME}\\s*,\\s*(.+)\\)$`);
 
 /** A value with its Material names unwrapped, name by name, down to the kit's own fallback. */
 export function withoutMaterial(value) {
@@ -84,9 +92,12 @@ export const primitives = declarations(read(`${STYLES}/_primitives.scss`));
 // The light mixin includes the list assignments from a file of their own: the light set outgrew the
 // length limit. A tree without that file has the whole set in the first one.
 const LIGHT_LISTS = `${STYLES}/_semantic-lists.scss`;
+// The navigation assignments went to a file of their own by the same limit.
+const LIGHT_NAVIGATION = `${STYLES}/_semantic-navigation.scss`;
 export const light = new Map([
     ...declarations(mixinBody(read(`${STYLES}/_semantic.scss`), LIGHT_MIXIN)),
     ...(existsSync(join(ROOT, LIGHT_LISTS)) ? declarations(mixinBody(read(LIGHT_LISTS), LIGHT_LIST_MIXIN)) : []),
+    ...(existsSync(join(ROOT, LIGHT_NAVIGATION)) ? declarations(mixinBody(read(LIGHT_NAVIGATION), LIGHT_NAVIGATION_MIXIN)) : []),
 ]);
 export const dark = declarations(mixinBody(read(`${STYLES}/_theme-dark.scss`), DARK_MIXIN));
 export const preset = declarations(mixinBody(read(`${STYLES}/_preset-material.scss`), PRESET_MIXIN));
@@ -110,6 +121,10 @@ export function mixOf(value) {
 
 /** A colour parsed: r, g, b and the share of opacity. */
 export function parseColor(text) {
+    // A transparent ground lets the page through: the contrast is then measured on the page.
+    if (/^transparent$/i.test(text)) {
+        return { r: 0, g: 0, b: 0, a: 0 };
+    }
     const hex = text.match(/^#([0-9a-f]{3,8})$/i)?.[1];
     if (hex) {
         const full = hex.length <= 4 ? [...hex].map((char) => char + char).join('') : hex;

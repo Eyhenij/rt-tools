@@ -5,6 +5,7 @@
         --rt-multiselect-radius: var(--rt-input-radius);
         --rt-multiselect-caret-transition-duration: var(--rt-duration-fast);
         --rt-multiselect-own-outline-width: var(--rt-border-width-medium);
+        --rt-multiselect-color-border-hover: var(--rt-color-text-primary);
 
         position: relative;
         display: block;
@@ -51,6 +52,12 @@
             &:disabled {
                 cursor: not-allowed;
             }
+        }
+
+        /* Наведение в материальном наборе — как у поля Material: рамка цвета текста. Сила правила —
+           на уровне кнопки, поэтому фокус, открытый список, ошибка и «без рамки» его перекрывают. */
+        :where(.rt-preset-material, [data-preset='material']) &__trigger:where(:hover:not(:disabled)) {
+            border-color: var(--rt-multiselect-color-border-hover);
         }
 
         /* Свой указатель потребителя: полевой вид кнопки снимается — ground, рамка, высота и

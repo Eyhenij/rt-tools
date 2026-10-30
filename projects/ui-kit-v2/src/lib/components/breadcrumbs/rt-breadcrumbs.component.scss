@@ -44,8 +44,8 @@
         :is(.rt-preset-material, [data-preset='material']) & {
             --rt-breadcrumbs-gap: var(--rt-size-2);
             --rt-breadcrumbs-separator-gap: var(--rt-size-2);
-            --rt-breadcrumbs-link-color: var(--mat-sys-on-surface-variant, var(--rt-color-text-muted));
-            --rt-breadcrumbs-separator-color: var(--mat-sys-on-surface-variant, var(--rt-color-text-muted));
+            --rt-breadcrumbs-link-color: var(--rt-sys-on-surface-variant, var(--rt-color-text-muted));
+            --rt-breadcrumbs-separator-color: var(--rt-sys-on-surface-variant, var(--rt-color-text-muted));
             --rt-breadcrumbs-back-size: var(--rt-size-10);
             --rt-breadcrumbs-back-icon-size: var(--rt-size-6);
 

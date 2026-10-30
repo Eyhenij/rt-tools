@@ -1,10 +1,9 @@
+import { rtMatchParts, rtSearchMatches } from '../../options';
 import {
     dynamicLabelCase,
     addDynamicText,
     clearDynamicKeys,
-    dynamicMatchParts,
     dynamicSelectAllState,
-    dynamicSelectorMatches,
     dynamicPopupRows,
     lastPinnedDynamicKey,
     moveDynamicKey,
@@ -33,9 +32,9 @@ const labelOf: (item: IItem) => unknown = (item: IItem): unknown => item.name;
 
 describe('rt-dynamic-selector.logic', (): void => {
     it('SC-UKV-442 — every word of the query has to occur in the label, case-insensitive', (): void => {
-        expect(dynamicSelectorMatches('Март, отчёт по складу', 'отчёт МАРТ')).toBe(true);
-        expect(dynamicSelectorMatches('Отчёт за апрель', 'отчёт март')).toBe(false);
-        expect(dynamicSelectorMatches('Любая подпись', '   ')).toBe(true);
+        expect(rtSearchMatches('Март, отчёт по складу', 'отчёт МАРТ')).toBe(true);
+        expect(rtSearchMatches('Отчёт за апрель', 'отчёт март')).toBe(false);
+        expect(rtSearchMatches('Любая подпись', '   ')).toBe(true);
     });
 
     it('SC-UKV-441 — chosen items and items without a label are not offered, the rest go by the alphabet', (): void => {
@@ -127,18 +126,18 @@ describe('rt-dynamic-selector.logic', (): void => {
     });
 
     it('SC-UKV-730 — the label is cut into matched and plain parts by every word of the query, case-insensitive', (): void => {
-        expect(dynamicMatchParts('Анна Сергеевна', 'сер')).toEqual([
+        expect(rtMatchParts('Анна Сергеевна', 'сер')).toEqual([
             { text: 'Анна ', matched: false },
             { text: 'Сер', matched: true },
             { text: 'геевна', matched: false },
         ]);
-        expect(dynamicMatchParts('Анна Анисимова', 'ан')).toEqual([
+        expect(rtMatchParts('Анна Анисимова', 'ан')).toEqual([
             { text: 'Ан', matched: true },
             { text: 'на ', matched: false },
             { text: 'Ан', matched: true },
             { text: 'исимова', matched: false },
         ]);
-        expect(dynamicMatchParts('Март, отчёт', 'отчёт март')).toEqual([
+        expect(rtMatchParts('Март, отчёт', 'отчёт март')).toEqual([
             { text: 'Март', matched: true },
             { text: ', ', matched: false },
             { text: 'отчёт', matched: true },
@@ -146,9 +145,9 @@ describe('rt-dynamic-selector.logic', (): void => {
     });
 
     it('SC-UKV-730 — overlapping matches merge, and an empty query leaves one plain part', (): void => {
-        expect(dynamicMatchParts('aaa', 'aa')).toEqual([{ text: 'aaa', matched: true }]);
-        expect(dynamicMatchParts('Boris', '  ')).toEqual([{ text: 'Boris', matched: false }]);
-        expect(dynamicMatchParts('', 'b')).toEqual([{ text: '', matched: false }]);
+        expect(rtMatchParts('aaa', 'aa')).toEqual([{ text: 'aaa', matched: true }]);
+        expect(rtMatchParts('Boris', '  ')).toEqual([{ text: 'Boris', matched: false }]);
+        expect(rtMatchParts('', 'b')).toEqual([]);
     });
 
     it('SC-UKV-731 — the label case leaves the text, raises every word or the whole label', (): void => {
@@ -157,5 +156,16 @@ describe('rt-dynamic-selector.logic', (): void => {
         expect(dynamicLabelCase('применить  всё', 'title')).toBe('Применить  Всё');
         expect(dynamicLabelCase('Применить', 'upper')).toBe('ПРИМЕНИТЬ');
         expect(dynamicLabelCase('', 'title')).toBe('');
+    });
+});
+
+describe('selectableDynamicItems — правило поиска кита', (): void => {
+    it('SC-UKV-894 — the dynamic selector finds a row whose words stand in another order', (): void => {
+        const items: readonly IItem[] = [
+            { id: 1, name: 'Отчёт за март' },
+            { id: 2, name: 'Отчёт за апрель' },
+        ];
+
+        expect(selectableDynamicItems(items, [], keyOf, labelOf, 'март отчёт').map(keyOf)).toEqual([1]);
     });
 });

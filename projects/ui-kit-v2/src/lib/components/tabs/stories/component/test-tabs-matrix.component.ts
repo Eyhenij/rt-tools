@@ -5,9 +5,22 @@ import { StoryPresetsComponent } from '../../../../../showcase/story-presets.com
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtTabDirective } from '../../rt-tab.directive';
 import { RtTabsComponent } from '../../rt-tabs.component';
+import { IRtTabs } from '../../rt-tabs.model';
+import { TestRtTabsLiveComponent } from './test-tabs-live.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TTabsMatrixPart = 'direction' | 'title' | 'tabState' | 'stretch' | 'edges' | 'presets' | 'themes';
+export type TTabsMatrixPart =
+    | 'direction'
+    | 'title'
+    | 'tabState'
+    | 'stretch'
+    | 'edges'
+    | 'scrollArrows'
+    | 'closable'
+    | 'iconOnly'
+    | 'headerOnly'
+    | 'presets'
+    | 'themes';
 
 /**
  * Матрицы состояний `rt-tabs` и `[rtTab]` для витрины.
@@ -155,6 +168,79 @@ export type TTabsMatrixPart = 'direction' | 'title' | 'tabState' | 'stretch' | '
                 </app-story-presets>
             }
 
+            @case ('scrollArrows') {
+                <app-story-presets caption="Стрелки прокрутки переполненной полосы в обоих наборах: поверх вкладок и в своих местах">
+                    <ng-template>
+                        <app-story-row slotWidth="24rem" [items]="arrowPlacements">
+                            <ng-template let-placement>
+                                <!-- Ширину держит коробка: ячейка ряда — гибкий узел, и полоса в ней встаёт во всю длину
+                                     вкладок, вылезая за половину, — переполнения, ради которого стрелки, тогда нет. -->
+                                <div style="width: 24rem">
+                                    <rt-tabs activeId="t1" [scrollArrows]="placement">
+                                        @for (index of many; track index) {
+                                            <ng-template [rtTab]="'t' + index" [label]="'Раздел ' + index">Содержимое</ng-template>
+                                        }
+                                    </rt-tabs>
+                                </div>
+                            </ng-template>
+                        </app-story-row>
+                    </ng-template>
+                </app-story-presets>
+            }
+
+            @case ('closable') {
+                <app-story-presets caption="Закрываемые вкладки в обоих наборах: крестик или Delete на вкладке в фокусе">
+                    <ng-template>
+                        <app-tabs-live kind="closable" />
+                    </ng-template>
+                </app-story-presets>
+            }
+
+            @case ('iconOnly') {
+                <app-story-presets caption="Вкладки из значка Material с подсказкой; отключённая объясняет, почему">
+                    <ng-template>
+                        <app-story-row slotWidth="24rem" [items]="iconCases">
+                            <ng-template let-iconCase>
+                                @switch (iconCase) {
+                                    @case ('glyph и подсказка') {
+                                        <rt-tabs activeId="home">
+                                            <ng-template rtTab="home" glyph="home" tooltip="Главная">Главная</ng-template>
+                                            <ng-template rtTab="person" glyph="person" tooltip="Профиль">Профиль</ng-template>
+                                            <ng-template rtTab="search" glyph="search" tooltip="Поиск">Поиск</ng-template>
+                                            <ng-template rtTab="settings" glyph="settings" tooltip="Настройки" disabled>
+                                                Настройки
+                                            </ng-template>
+                                        </rt-tabs>
+                                    }
+                                    @case ('glyph и подпись') {
+                                        <rt-tabs activeId="home">
+                                            <ng-template rtTab="home" glyph="home" label="Главная">Главная</ng-template>
+                                            <ng-template rtTab="person" glyph="person" label="Профиль">Профиль</ng-template>
+                                            <ng-template
+                                                rtTab="settings"
+                                                glyph="settings"
+                                                label="Настройки"
+                                                disabled
+                                                tooltip="Нужны права администратора">
+                                                Настройки
+                                            </ng-template>
+                                        </rt-tabs>
+                                    }
+                                }
+                            </ng-template>
+                        </app-story-row>
+                    </ng-template>
+                </app-story-presets>
+            }
+
+            @case ('headerOnly') {
+                <app-story-presets caption="Только полоса: вкладки в середине панели, без своей панели содержимого">
+                    <ng-template>
+                        <app-tabs-live kind="headerOnly" />
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('presets') {
                 <app-story-presets caption="Вкладки в обоих наборах">
                     <ng-template>
@@ -200,6 +286,7 @@ export type TTabsMatrixPart = 'direction' | 'title' | 'tabState' | 'stretch' | '
         StoryPresetsComponent,
         StoryRowComponent,
         StoryThemesComponent,
+        TestRtTabsLiveComponent,
     ],
 })
 export class TestRtTabsMatrixComponent {
@@ -215,6 +302,11 @@ export class TestRtTabsMatrixComponent {
         'активная отключена',
         'вкладок больше ширины',
     ];
+
+    public readonly iconCases: readonly string[] = ['glyph и подсказка', 'glyph и подпись'];
+
+    /** Где стоят стрелки прокрутки: поверх вкладок и в своих местах по краям. */
+    public readonly arrowPlacements: readonly IRtTabs.ScrollArrows[] = ['overlay', 'inline'];
 
     /** Полоса, не влезающая в ширину: показывает стрелки прокрутки по краям. */
     public readonly many: readonly number[] = [1, 2, 3, 4, 5, 6, 7, 8];

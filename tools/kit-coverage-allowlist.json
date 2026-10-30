@@ -33,6 +33,7 @@
     "ng-template[rtThreadListFilters]": "маркер проекции содержимого: своей разметки у него нет вовсе. В кадре виден не маркер, а то, как список бесед разложил содержимое, и это показывает история семейства `thread-list`",
     "ng-template[rtThreadListRow]": "маркер проекции содержимого: своей разметки у него нет вовсе. В кадре виден не маркер, а то, как список бесед разложил содержимое, и это показывает история семейства `thread-list`",
     "ng-template[rtThreadListSearch]": "маркер проекции содержимого: своей разметки у него нет вовсе. В кадре виден не маркер, а то, как список бесед разложил содержимое, и это показывает история семейства `thread-list`",
+    "ng-template[rtThreadListTabs]": "маркер проекции содержимого: своей разметки у него нет вовсе. В кадре виден не маркер, а то, как список бесед разложил содержимое, и это показывает история `Tabs` семейства `thread-list`",
     "[rtDataTableCustomCells]": "маркер шаблонов ячеек приложения: своей разметки у него нет вовсе. В кадре видна ячейка приложения, а не маркер, и рисует её приложение — витрине показывать нечего",
     "[rtDataTableAdditionalRowActions]": "маркер действий рядом с кнопкой меню строки: разметку даёт приложение, у маркера её нет. Полосу действий строки показывает история `Actions` семейства `data-table`",
     "ng-template[rtDataTableIcon]": "маркер шаблона значка приложения: рисунок даёт приложение, у маркера разметки нет. Значки из перечня кита видны в истории `Columns` семейства `data-table`",
@@ -45,6 +46,14 @@
     "ng-template[rtExpansionPanelContent]": "маркер ленивого тела панели: своей разметки у него нет вовсе. В кадре виден не маркер, а тело, которое панель создала при раскрытии, — это показывают истории семейства `expansion-panel`"
   },
   "shownWithin": {
+    "[rtExpansionPanelActions]": "projects/ui-kit-v2/src/lib/components/expansion-panel/stories/expansion-panel-matrix.stories.ts",
+    "[rtExpansionPanelGroup]": "projects/ui-kit-v2/src/lib/components/expansion-panel/stories/expansion-panel-matrix.stories.ts",
+    "rt-radio-group": "projects/ui-kit-v2/src/lib/components/radio-button/stories/radio-button-matrix.stories.ts",
+    "[rtSelectOption]": "projects/ui-kit-v2/src/lib/components/input/stories/field-extras.stories.ts",
+    "[rtToggleButtonOption]": "projects/ui-kit-v2/src/lib/components/toggle-button-group/stories/toggle-button-group-matrix.stories.ts",
+    "rt-drawer-container": "projects/ui-kit-v2/src/lib/components/drawer/stories/drawer-matrix.stories.ts",
+    "rt-resize-handle": "projects/ui-kit-v2/src/lib/components/drawer/stories/drawer.stories.ts",
+    "ng-template[rtStepLabel]": "projects/ui-kit-v2/src/lib/components/stepper/stories/stepper-matrix.stories.ts",
     "rt-color-picker": "projects/ui-kit-v2/src/lib/components/color-palette/stories/color-palette-matrix.stories.ts",
     "[rtDynamicListActions]": "projects/ui-kit-v2/src/lib/components/dynamic-list/stories/dynamic-list-matrix.stories.ts",
     "[rtDynamicListSelectors]": "projects/ui-kit-v2/src/lib/components/dynamic-list/stories/dynamic-list-matrix.stories.ts",

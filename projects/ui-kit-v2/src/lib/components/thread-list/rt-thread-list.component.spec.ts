@@ -6,7 +6,7 @@ import { IRtIcon } from '../icon/rt-icon.model';
 
 import { RtIconComponent } from '../icon/rt-icon.component';
 import { classesOf, createRtFixture, el, qa, qaAll, textOf } from '../../../testing/rt-kit-testing';
-import { RtThreadListRowActionsDirective, RtThreadListRowDirective } from './rt-thread-list.directives';
+import { RtThreadListRowActionsDirective, RtThreadListRowDirective, RtThreadListTabsDirective } from './rt-thread-list.directives';
 import { IRtThreadList } from './rt-thread-list.model';
 import { RtThreadListComponent } from './rt-thread-list.component';
 
@@ -84,6 +84,25 @@ class RowActionsHostComponent {
 })
 class DefaultPreviewHostComponent {}
 
+@Component({
+    selector: 'rt-thread-list-tabs-host',
+    template: `
+        <rt-thread-list [rows]="rows">
+            <ng-template rtThreadListRow let-row>
+                <span>{{ row.title }}</span>
+            </ng-template>
+            <ng-template rtThreadListTabs>
+                <span qa-dataid="consumer-tabs">Все · Ждут ответа · Архив</span>
+            </ng-template>
+        </rt-thread-list>
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtThreadListComponent, RtThreadListRowDirective, RtThreadListTabsDirective],
+})
+class TabsHostComponent {
+    public readonly rows: ReadonlyArray<IThread> = ROWS;
+}
+
 function setup(): ComponentFixture<ThreadListHostComponent> {
     return createRtFixture(ThreadListHostComponent, {}, { skipInitialDetect: true });
 }
@@ -118,6 +137,60 @@ describe('RtThreadListComponent', (): void => {
 
         expect(rows(fixture)[0].tagName).toBe('BUTTON');
         expect(rows(fixture)[0].getAttribute('data-id')).toBe('1');
+    });
+
+    describe('полоса вкладок', (): void => {
+        it('SC-UKV-1060 — слот вкладок стоит под шапкой списка и над строками', (): void => {
+            const fixture: ComponentFixture<TabsHostComponent> = createRtFixture(TabsHostComponent);
+
+            const tabs: HTMLElement = qa(fixture, 'thread-list-tabs')?.nativeElement as HTMLElement;
+            expect(tabs.querySelector('[qa-dataid="consumer-tabs"]')).not.toBeNull();
+            expect(tabs.previousElementSibling?.classList.contains('rt-thread-list__head')).toBe(true);
+            expect(tabs.nextElementSibling?.getAttribute('qa-dataid')).toBe('thread-list-rows');
+        });
+
+        it('SC-UKV-1061 — без слота полосы вкладок нет', (): void => {
+            const fixture: ComponentFixture<ThreadListHostComponent> = render(setup());
+
+            expect(qa(fixture, 'thread-list-rows')).not.toBeNull();
+            expect(qa(fixture, 'thread-list-tabs')).toBeNull();
+        });
+    });
+
+    describe('знак канала', (): void => {
+        const SIGNED: ReadonlyArray<IThread> = [
+            { id: 7, hasUnread: false, title: 'Гость из мессенджера', sign: { icon: 'globe', label: 'Telegram' } },
+        ];
+
+        it('SC-UKV-909 — строка со знаком рисует его первым в кнопке строки, размером xs', (): void => {
+            const fixture: ComponentFixture<ThreadListHostComponent> = setup();
+            fixture.componentInstance.rows.set(SIGNED);
+            render(fixture);
+
+            const row: HTMLButtonElement = rows(fixture)[0];
+            const sign: HTMLElement = row.firstElementChild as HTMLElement;
+            expect(sign.getAttribute('qa-dataid')).toBe('thread-list-row-sign');
+            expect(classesOf(sign)).toContain('rt-service-logo--size-xs');
+            expect(row.querySelector('.rt-thread-list__row-content [qa-dataid="row-title"]')).not.toBeNull();
+        });
+
+        it('SC-UKV-910 — строка без знака рисует только шаблон потребителя', (): void => {
+            const fixture: ComponentFixture<ThreadListHostComponent> = render(setup());
+
+            expect(qa(fixture, 'thread-list-row-sign')).toBeNull();
+            expect(el(fixture, '.rt-thread-list__row-content')).toBeNull();
+            expect((rows(fixture)[0].firstElementChild as HTMLElement).getAttribute('qa-dataid')).toBe('row-title');
+        });
+
+        it('SC-UKV-913 — знак читается именем канала и своего фокуса не берёт', (): void => {
+            const fixture: ComponentFixture<ThreadListHostComponent> = setup();
+            fixture.componentInstance.rows.set(SIGNED);
+            render(fixture);
+
+            const sign: HTMLElement = qa(fixture, 'thread-list-row-sign')?.nativeElement as HTMLElement;
+            expect(sign.querySelector('[role="img"]')?.getAttribute('aria-label')).toBe('Telegram');
+            expect(sign.querySelector('button, a, [tabindex]')).toBeNull();
+        });
     });
 
     describe('состояния строки', (): void => {

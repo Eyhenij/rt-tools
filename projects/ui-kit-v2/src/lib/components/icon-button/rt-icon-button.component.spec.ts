@@ -1,9 +1,21 @@
-import { DebugElement } from '@angular/core';
-import { ComponentFixture } from '@angular/core/testing';
+import { FocusMonitor, FocusOrigin } from '@angular/cdk/a11y';
+import { ChangeDetectionStrategy, Component, DebugElement } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
+import { provideRtKit } from '../../config/rt-kit-config.providers';
 import { classesOf, createRtFixture, el, hostClasses, qa } from '../../../testing/rt-kit-testing';
+import { RtTooltipDirective } from '../tooltip/rt-tooltip.directive';
 import { RtIconButtonComponent } from './rt-icon-button.component';
 import { IRtIconButton } from './rt-icon-button.model';
+
+/** Страница, куда ведёт кнопка-ссылка: самой разметки у неё нет. */
+@Component({ selector: 'rt-settings-page', template: '', changeDetection: ChangeDetectionStrategy.OnPush })
+class SettingsPageComponent {}
+
+const LINK_ROUTES: { path: string; component: typeof SettingsPageComponent }[] = [
+    { path: 'personal-settings', component: SettingsPageComponent },
+];
 
 function setup(inputs: Readonly<Record<string, unknown>> = {}): ComponentFixture<RtIconButtonComponent> {
     return createRtFixture(RtIconButtonComponent, { icon: 'ico-trash', ariaLabel: 'Удалить', ...inputs });
@@ -17,7 +29,29 @@ function controlClasses(fixture: ComponentFixture<RtIconButtonComponent>): strin
     return classesOf(control(fixture));
 }
 
+function tooltipOf(fixture: ComponentFixture<RtIconButtonComponent>): RtTooltipDirective {
+    return control(fixture)?.injector.get(RtTooltipDirective) as RtTooltipDirective;
+}
+
 describe('RtIconButtonComponent', (): void => {
+    it('SC-UKV-1007 — умолчание hideOnClick подсказки кнопки берётся из настроек кита, вход его перебивает', (): void => {
+        const kept: ComponentFixture<RtIconButtonComponent> = createRtFixture(
+            RtIconButtonComponent,
+            { icon: 'ico-trash', ariaLabel: 'Удалить', tooltip: 'Удалить' },
+            { providers: [provideRtKit({ components: { tooltip: { hideOnClick: false } } })] }
+        );
+
+        expect(tooltipOf(kept).hideOnClick()).toBe(false);
+
+        const own: ComponentFixture<RtIconButtonComponent> = createRtFixture(
+            RtIconButtonComponent,
+            { icon: 'ico-trash', ariaLabel: 'Удалить', tooltip: 'Удалить', tooltipHideOnClick: true },
+            { providers: [provideRtKit({ components: { tooltip: { hideOnClick: false } } })] }
+        );
+
+        expect(tooltipOf(own).hideOnClick()).toBe(true);
+    });
+
     it('рисует свою кнопку внутри, а не превращает host в кнопку', (): void => {
         const fixture: ComponentFixture<RtIconButtonComponent> = setup();
 
@@ -45,6 +79,18 @@ describe('RtIconButtonComponent', (): void => {
 
         expect(document.querySelector('rt-tooltip')?.textContent?.trim()).toBe('Открепить');
         jest.useRealTimers();
+    });
+
+    it.each<[FocusOrigin, string]>([
+        ['keyboard', 'cdk-keyboard-focused'],
+        ['mouse', 'cdk-mouse-focused'],
+    ])('SC-UKV-947 — фокус от %s помечается на кнопке классом %s', (origin: FocusOrigin, mark: string): void => {
+        const fixture: ComponentFixture<RtIconButtonComponent> = setup();
+
+        TestBed.inject(FocusMonitor).focusVia(control(fixture)?.nativeElement as HTMLElement, origin);
+        fixture.detectChanges();
+
+        expect(controlClasses(fixture)).toContain(mark);
     });
 
     describe('оформление', (): void => {
@@ -198,5 +244,111 @@ describe('RtIconButtonComponent', (): void => {
         const host: HTMLElement = fixture.nativeElement as HTMLElement;
 
         expect(host.querySelector('use')?.getAttribute('href')).toBe('#rt-icon-arrow-left');
+    });
+
+    describe('ссылка', (): void => {
+        function setupLink(inputs: Readonly<Record<string, unknown>> = {}): ComponentFixture<RtIconButtonComponent> {
+            return createRtFixture(
+                RtIconButtonComponent,
+                { icon: 'ico-user', ariaLabel: 'Личные настройки', link: '/personal-settings', tooltip: 'Личные настройки', ...inputs },
+                { providers: [provideRouter(LINK_ROUTES)] }
+            );
+        }
+
+        it('SC-UKV-1035 — с входом link рисует ссылку с адресом маршрута и тем же блоком, что у кнопки', (): void => {
+            const fixture: ComponentFixture<RtIconButtonComponent> = setupLink({ variant: 'primary', size: 'lg' });
+            const link: HTMLElement = control(fixture)?.nativeElement as HTMLElement;
+
+            expect(link.tagName).toBe('A');
+            expect(link.getAttribute('href')).toBe('/personal-settings');
+            expect(link.getAttribute('aria-label')).toBe('Личные настройки');
+            expect(link.hasAttribute('type')).toBe(false);
+            expect(controlClasses(fixture)).toEqual(
+                expect.arrayContaining(['rt-icon-button', 'rt-icon-button--primary', 'rt-icon-button--lg'])
+            );
+            expect(tooltipOf(fixture).text()).toBe('Личные настройки');
+            expect(el(fixture, 'use')?.attributes['href']).toBe('#rt-icon-ico-user');
+        });
+
+        it('SC-UKV-1035 — у ссылки кнопка спрятана и пуста, вложенное приходит в ссылку', (): void => {
+            const fixture: ComponentFixture<RtIconButtonComponent> = setupLink({ icon: null });
+            const host: HTMLElement = fixture.nativeElement as HTMLElement;
+            const button: HTMLButtonElement | null = host.querySelector('button');
+
+            expect(button?.hidden).toBe(true);
+            expect(button?.childElementCount).toBe(0);
+            expect(host.querySelector('a [qa-dataid="icon-button-content"]')).not.toBeNull();
+        });
+
+        it('SC-UKV-1035 — без входа link разметка остаётся кнопкой', (): void => {
+            const button: HTMLElement = control(setup())?.nativeElement as HTMLElement;
+
+            expect(button.tagName).toBe('BUTTON');
+            expect(button.hasAttribute('href')).toBe(false);
+        });
+
+        it('SC-UKV-1035 — клик по ссылке отдаёт clicked', (): void => {
+            const fixture: ComponentFixture<RtIconButtonComponent> = setupLink();
+            const emitted: MouseEvent[] = [];
+            fixture.componentInstance.clicked.subscribe((event: MouseEvent): number => emitted.push(event));
+
+            (control(fixture)?.nativeElement as HTMLElement).click();
+
+            expect(emitted).toHaveLength(1);
+        });
+
+        it('SC-UKV-1036 — у недоступной и загружающейся ссылки нет адреса, и клик не уходит наружу', (): void => {
+            for (const state of [{ disabled: true }, { loading: true }]) {
+                const fixture: ComponentFixture<RtIconButtonComponent> = setupLink(state);
+                const link: HTMLElement = control(fixture)?.nativeElement as HTMLElement;
+                const emitted: MouseEvent[] = [];
+                fixture.componentInstance.clicked.subscribe((event: MouseEvent): number => emitted.push(event));
+                const click: MouseEvent = new MouseEvent('click', { bubbles: true, cancelable: true });
+
+                link.dispatchEvent(click);
+
+                expect(link.tagName).toBe('A');
+                expect(link.hasAttribute('href')).toBe(false);
+                expect(link.getAttribute('aria-disabled')).toBe('true');
+                expect(link.getAttribute('tabindex')).toBe('-1');
+                expect(click.defaultPrevented).toBe(true);
+                expect(emitted).toHaveLength(0);
+            }
+        });
+    });
+
+    describe('aria-haspopup', (): void => {
+        it('SC-UKV-1037 — вход ariaHaspopup пишется в aria-haspopup кнопки', (): void => {
+            const fixture: ComponentFixture<RtIconButtonComponent> = setup({ ariaHaspopup: 'menu', expanded: false });
+
+            expect(control(fixture)?.attributes['aria-haspopup']).toBe('menu');
+            expect(control(fixture)?.attributes['aria-expanded']).toBe('false');
+        });
+
+        it('SC-UKV-1037 — без входа атрибута нет', (): void => {
+            expect(control(setup())?.attributes['aria-haspopup']).toBeFalsy();
+        });
+    });
+
+    describe('focus()', (): void => {
+        it('SC-UKV-1038 — фокусирует кнопку внутри', (): void => {
+            const fixture: ComponentFixture<RtIconButtonComponent> = setup();
+
+            fixture.componentInstance.focus();
+
+            expect(document.activeElement).toBe(control(fixture)?.nativeElement);
+        });
+
+        it('SC-UKV-1038 — фокусирует ссылку внутри', (): void => {
+            const fixture: ComponentFixture<RtIconButtonComponent> = createRtFixture(
+                RtIconButtonComponent,
+                { icon: 'ico-user', ariaLabel: 'Личные настройки', link: '/personal-settings' },
+                { providers: [provideRouter(LINK_ROUTES)] }
+            );
+
+            fixture.componentInstance.focus();
+
+            expect(document.activeElement).toBe(control(fixture)?.nativeElement);
+        });
     });
 });

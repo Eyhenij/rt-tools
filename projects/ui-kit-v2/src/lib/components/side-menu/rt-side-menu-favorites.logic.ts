@@ -137,6 +137,17 @@ export function sideMenuFavoritesSection(menu: ReadonlyArray<IRtSideMenu.Item>, 
     return section?.favorites ? section : null;
 }
 
+/**
+ * Показывать ли число строк в заголовке блока избранного.
+ *
+ * В режиме `collapsed` число стоит у свёрнутого блока — и у того, что свёрнут сохранённым выбором,
+ * но на время поиска раскрыт: человек свернул его сам и по числу видит, сколько строк в нём
+ * совпало. Раскрытый без поиска блок числа не несёт.
+ */
+export function isSideMenuFavoritesCountShown(mode: IRtSideMenu.FavoritesCount, open: boolean, savedCollapsed: boolean): boolean {
+    return mode === 'always' || (mode === 'collapsed' && (!open || savedCollapsed));
+}
+
 /** Место на экране, где строку отпустили, и прямоугольник панели подменю. */
 export interface IRtSideMenuDropPoint {
     x: number;

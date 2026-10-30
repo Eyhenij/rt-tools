@@ -59,6 +59,9 @@ jobs:
             # локальное умолчание 4311 и падала с EADDRINUSE, пока на машине стоял местный стенд.
             E2E_FOREIGN_PORT: 4321
             E2E_DATABASE: message_bus_e2e_ci
+            # Порт базы стенда — свой по той же причине: на рабочем 55432 стоит база местной копии,
+            # и `docker compose up -d db` падал с «port is already allocated».
+            E2E_DB_PORT: 55462
             # Браузер снимков — свой контейнер и свой порт. С общим умолчанием шаг снимков и местная
             # проверка перед отправкой делили один контейнер: второй запуск перезапускал его, и
             # первый падал с ECONNRESET посреди прогона.
@@ -122,9 +125,12 @@ jobs:
             # cannot be accessed because the current session does not allow user interaction».
             # Задание падает на первой же строке шага стенда, и выглядит это поломкой стенда.
             #
-            # Свой каталог настроек пуст: ни помощника, ни записей входа. Всё, что тянет
-            # конвейер, лежит в открытых реестрах, и вход ему не нужен; понадобится — пароль
-            # пишется в этот же файл прямо, а не командой входа.
+            # Свой каталог настроек без помощника. Пустым его оставить нельзя: если в настройках
+            # нет ни одной записи входа, клиент на macOS сам берёт `docker-credential-osxkeychain`,
+            # найденный в `PATH`, и сборка образа падает на том же отказе. Поэтому в файле лежит
+            # одна пустая запись для адреса, которого нет, — с ней клиент хранит ключи в самом
+            # файле. Всё, что тянет конвейер, лежит в открытых реестрах, и вход ему не нужен;
+            # понадобится — пароль пишется в этот же файл прямо, а не командой входа.
             #
             # `DOCKER_HOST` не для красоты: свой каталог уносит с собой и текущий контекст, а без
             # него клиент идёт в общесистемный сокет, которого на машине с настольным клиентом
@@ -138,7 +144,9 @@ jobs:
               run: |
                   dir="$RUNNER_TEMP/docker-config"
                   mkdir -p "$dir"
-                  printf '{}' > "$dir/config.json"
+                  # Свой каталог уносит и плагины клиента: без этой строки `docker compose`
+                  # отвечает «unknown shorthand flag: 'd'», плагин лежит в домашнем каталоге.
+                  printf '{"auths":{"ci.invalid":{}},"cliPluginsExtraDirs":["%s"]}' "$HOME/.docker/cli-plugins" > "$dir/config.json"
                   echo "DOCKER_CONFIG=$dir" >> "$GITHUB_ENV"
                   host="${DOCKER_HOST:-}"
                   for sock in "$HOME/.docker/run/docker.sock" "$HOME/.colima/default/docker.sock"; do
@@ -291,6 +299,27 @@ jobs:
             # который написал привычную форму, — держать его нечем, кроме этой проверки.
             - name: Boolean inputs of kit two
               run: node tools/check-boolean-inputs.mjs
+
+            # Сборка темы Keycloak зовёт `mvn --version` и без Maven падает строкой «Apache Maven
+            # required». Раннеров у дерева два, и Maven стоит не на обоих: задание, попавшее на
+            # машину без него, краснеет, хотя код цел. Поэтому JDK и Maven ставятся здесь, в
+            # каталог самого задания, а не ждутся от машины.
+            - name: Java for the Keycloak theme
+              uses: actions/setup-java@v6
+              with:
+                  distribution: temurin
+                  java-version: '21'
+
+            - name: Maven for the Keycloak theme
+              run: |
+                  if mvn --version >/dev/null 2>&1; then
+                      mvn --version | head -1
+                      exit 0
+                  fi
+                  v=3.9.11
+                  curl -fsSL "https://archive.apache.org/dist/maven/maven-3/$v/binaries/apache-maven-$v-bin.tar.gz" | tar -xz -C "$RUNNER_TEMP"
+                  echo "$RUNNER_TEMP/apache-maven-$v/bin" >> "$GITHUB_PATH"
+                  "$RUNNER_TEMP/apache-maven-$v/bin/mvn" --version | head -1
 
             # `typecheck` проверяет типы там, где их не проверяет ничто другое:
             # Jest транспилирует спеки без проверки типов, а ESLint здесь не

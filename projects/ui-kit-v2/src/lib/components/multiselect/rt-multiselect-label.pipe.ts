@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
-import { rtTreeFind } from '@rt-tools/ui-kit-v2/select';
+import { rtTreeFind } from '@rt-tools/ui-kit-v2/core';
 import { IRtSelect } from '@rt-tools/ui-kit-v2/select';
 
 /** Лейбл опции по её value для отображения чипа выбранного значения — на любой глубине дерева. */

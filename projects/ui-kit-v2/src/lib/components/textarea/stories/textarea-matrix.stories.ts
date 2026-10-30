@@ -28,6 +28,12 @@ export const Filling: TStory = { args: { part: 'filling' } };
 
 export const Bordered: TStory = { args: { part: 'bordered' } };
 
+/** Залитый вид: состояния показаны отдельной строкой — фокус у него черта снизу, а не кольцо. */
+export const Appearance: TStory = {
+    args: { part: 'appearance' },
+    parameters: { pseudo: storyPseudoParameters('.rt-textarea__control') },
+};
+
 /**
  * Рамку рисует сам `<textarea>`, а признак стоит на хосте — поэтому аддону передан спуск
  * до контрола: без него класс лёг бы на элемент, у которого этих правил нет.

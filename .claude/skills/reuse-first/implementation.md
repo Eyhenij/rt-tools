@@ -58,6 +58,7 @@ silent about.
 - **What accumulated before the guard is counted by the full check, and the list may only not grow.** — `tools/check-reuse.mjs:known` — the debt snapshot from `tools/reuse-allowlist.json`, and the audit goes over the whole file.
 - **Signs are declared by the tree, not hardcoded in the check.** — `tools/signals.mjs:loadSignals` — the declared bundles and the tree's own signs on top of them; what is declared stands in `.claude/rt-kit/checks.json`, key `reuse`.
 - **The second value of the same integration follows its own kind, not its neighbour in the file.** — `.claude/rt-kit.json:intake` — both halves of the link with the intake are declared by the tree config: the address by the key `intake`, the token by the key `token`, and the second is made the same way as the first.
+- **A logo of a foreign service is taken, not drawn.** — **Not checked.** A drawn mark and a taken one are both an `svg` file to a machine. The kit icon set under `projects/ui-kit-v2/src/assets/icons` holds no brand marks; a brand logo is taken from its owner or an open set when it is needed.
 
 ## What else is worth knowing when reading the code
 

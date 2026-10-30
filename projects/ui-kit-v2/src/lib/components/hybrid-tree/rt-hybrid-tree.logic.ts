@@ -1,4 +1,4 @@
-import { rtTreeLeaves } from '@rt-tools/ui-kit-v2/select';
+import { rtTreeLeaves } from '@rt-tools/ui-kit-v2/core';
 import { rtTreeAloneBase, rtTreeChoose, rtTreeChooseAlone, rtTreeMark, rtTreeVisibleLeaves } from '@rt-tools/ui-kit-v2/tree';
 import { IRtTree } from '@rt-tools/ui-kit-v2/tree';
 import { IRtHybridTree } from './rt-hybrid-tree.model';

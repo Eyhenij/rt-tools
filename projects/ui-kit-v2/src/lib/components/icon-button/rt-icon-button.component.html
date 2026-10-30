@@ -1,9 +1,38 @@
+<!-- Ссылка стоит перед кнопкой: в режиме ссылки поиск по `qa-dataid` находит её первой. -->
+@if (isLink()) {
+    <a
+        #linkEl
+        rtBlock="rt-icon-button"
+        qa-dataid="icon-button-control"
+        rtRipple
+        cdkMonitorElementFocus
+        [routerLink]="linkTarget()"
+        [rippleDisabled]="isDisabled()"
+        [rtTooltip]="tooltip()"
+        [rtTooltipHideOnClick]="tooltipHideOnClick()"
+        [rtMod]="bemMods()"
+        [attr.aria-label]="ariaLabel()"
+        [attr.aria-disabled]="isDisabled() ? 'true' : null"
+        [attr.aria-expanded]="expanded()"
+        [attr.aria-haspopup]="ariaHaspopup()"
+        [attr.tabindex]="linkTabIndex()"
+        (click)="onClick($event)">
+        <ng-container *ngTemplateOutlet="content" />
+    </a>
+}
+
+<!-- Кнопка стоит в шаблоне без условия и появляется с первым проходом, как до входа `link`: в
+     блоке `@if` она рождалась бы проходом позже, и родитель, который меряет соседей на первой
+     проверке (автовысота поля сообщения), считал бы ряд без неё. У ссылки кнопка спрятана. -->
 <button
+    #buttonEl
     rtBlock="rt-icon-button"
     qa-dataid="icon-button-control"
     rtRipple
+    cdkMonitorElementFocus
+    [hidden]="isLink()"
     [rippleDisabled]="isDisabled() || loading()"
-    [rtTooltip]="tooltip()"
+    [rtTooltip]="isLink() ? '' : tooltip()"
     [rtTooltipHideOnClick]="tooltipHideOnClick()"
     [rtMod]="bemMods()"
     [type]="type()"
@@ -11,16 +40,33 @@
     [attr.aria-label]="ariaLabel()"
     [attr.aria-pressed]="active() ? 'true' : null"
     [attr.aria-expanded]="expanded()"
+    [attr.aria-haspopup]="ariaHaspopup()"
     [attr.tabindex]="tabIndex()"
     (click)="onClick($event)">
-    @if (loading()) {
-        <rt-icon rtElem="spinner" name="spinner" color="current" [size]="resolvedIconSize()" />
-    } @else if (icon() || glyph()) {
-        <rt-icon rtElem="icon" [color]="iconColor()" [name]="icon()" [glyph]="glyph()" [size]="resolvedIconSize()" [fill]="iconFill()" />
-    } @else {
-        <span rtElem="content" qa-dataid="icon-button-content"><ng-content /></span>
-    }
-    @if (indicator()) {
-        <span rtElem="indicator" aria-hidden="true"></span>
+    @if (!isLink()) {
+        <ng-container *ngTemplateOutlet="content" />
     }
 </button>
+
+<!-- Содержимое общее у кнопки и ссылки и рисуется один раз — в том, что видно. Шаблон берёт
+     инжектор места объявления, поэтому `rtElem` внутри получает блок от `ng-container`. -->
+<ng-container rtBlock="rt-icon-button">
+    <ng-template #content>
+        @if (loading()) {
+            <rt-icon rtElem="spinner" name="spinner" color="current" [size]="resolvedIconSize()" />
+        } @else if (icon() || glyph()) {
+            <rt-icon
+                rtElem="icon"
+                [color]="iconColor()"
+                [name]="icon()"
+                [glyph]="glyph()"
+                [size]="resolvedIconSize()"
+                [fill]="iconFill()" />
+        } @else {
+            <span rtElem="content" qa-dataid="icon-button-content"><ng-content /></span>
+        }
+        @if (indicator()) {
+            <span rtElem="indicator" aria-hidden="true"></span>
+        }
+    </ng-template>
+</ng-container>

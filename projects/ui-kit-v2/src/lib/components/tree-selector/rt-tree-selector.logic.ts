@@ -1,28 +1,20 @@
+import { rtSearchMatches, rtSearchWords } from '@rt-tools/ui-kit-v2/core';
 import { IRtTree } from '@rt-tools/ui-kit-v2/tree';
 
 type TNode<TValue> = IRtTree.Node<TValue>;
 
-/** Слова строки поиска в нижнем регистре, без пустых. */
-export function rtTreeSelectorWords(term: string): ReadonlyArray<string> {
-    return term
-        .toLowerCase()
-        .split(/\s+/)
-        .filter((word: string): boolean => word !== '');
-}
-
 function nodeText<TValue>(node: TNode<TValue>): string {
     const badges: string = (node.badges ?? []).map((badge: IRtTree.Badge): string => badge.text).join(' ');
-    return `${node.label} ${node.description ?? ''} ${badges}`.toLowerCase();
+    return `${node.label} ${node.description ?? ''} ${badges}`;
 }
 
-function keepMatching<TValue>(nodes: ReadonlyArray<TNode<TValue>>, words: ReadonlyArray<string>): TNode<TValue>[] {
+function keepMatching<TValue>(nodes: ReadonlyArray<TNode<TValue>>, term: string): TNode<TValue>[] {
     return nodes.reduce((kept: TNode<TValue>[], node: TNode<TValue>): TNode<TValue>[] => {
-        const text: string = nodeText(node);
-        if (words.every((word: string): boolean => text.includes(word))) {
+        if (rtSearchMatches(nodeText(node), term)) {
             kept.push(node);
             return kept;
         }
-        const inside: TNode<TValue>[] = keepMatching(node.children ?? [], words);
+        const inside: TNode<TValue>[] = keepMatching(node.children ?? [], term);
         if (inside.length > 0) {
             kept.push({ ...node, children: inside });
         }
@@ -36,11 +28,10 @@ function keepMatching<TValue>(nodes: ReadonlyArray<TNode<TValue>>, words: Readon
  * совпавшим внизу. Узлы не правятся: отобранная ветка — новый объект.
  */
 export function rtTreeSelectorFilter<TValue>(nodes: ReadonlyArray<TNode<TValue>>, term: string): ReadonlyArray<TNode<TValue>> {
-    const words: ReadonlyArray<string> = rtTreeSelectorWords(term);
-    if (words.length === 0) {
+    if (rtSearchWords(term).length === 0) {
         return nodes;
     }
-    return keepMatching(nodes, words);
+    return keepMatching(nodes, term);
 }
 
 /** Выключенные узлы дерева на любой глубине. */

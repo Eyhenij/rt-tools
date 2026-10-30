@@ -12,3 +12,12 @@ export function withoutFileAt(current: ReadonlyArray<File>, index: number): File
 export function pickedFiles(files: FileList | null): File[] {
     return Array.from(files ?? []);
 }
+
+/** Можно ли отправить: поле не занято и в нём есть текст или, при включённых вложениях, файл */
+export function rtChatCanSend(busy: boolean, value: Partial<{ message: string; files: File[] }>, attachments: boolean): boolean {
+    if (busy) {
+        return false;
+    }
+    const hasText: boolean = (value.message ?? '').trim().length > 0;
+    return hasText || (attachments && (value.files?.length ?? 0) > 0);
+}

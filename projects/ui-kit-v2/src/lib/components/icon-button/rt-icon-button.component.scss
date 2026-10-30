@@ -47,6 +47,7 @@
             display: inline-flex;
             width: var(--rt-icon-button-size, var(--rt-icon-button-size-step));
             height: var(--rt-icon-button-size, var(--rt-icon-button-size-step));
+            box-sizing: border-box;
             align-items: center;
             justify-content: center;
             padding: 0;
@@ -56,6 +57,7 @@
             box-shadow: var(--rt-icon-button-shadow);
             color: var(--rt-icon-button-color);
             cursor: pointer;
+            text-decoration: none;
             transition:
                 background-color var(--rt-icon-button-transition-duration) ease,
                 box-shadow var(--rt-icon-button-transition-duration) ease;
@@ -92,14 +94,14 @@
 
             /* Подъём под указателем — ручка для потребителя, как тень покоя; по умолчанию равен
                тени покоя, и кнопка без подъёма под указателем не меняется. */
-            &:hover:not(:disabled) {
+            &:hover:not(:disabled, [aria-disabled='true']) {
                 box-shadow: var(--rt-icon-button-shadow-hover);
             }
 
             /* Заливка под указателем читается под ручкой `--rt-icon-button-bg-hover`; без неё каждый
                вид берёт свою, как прежде. */
             &--ghost {
-                &:hover:not(:disabled) {
+                &:hover:not(:disabled, [aria-disabled='true']) {
                     background-color: var(--rt-icon-button-bg-hover, var(--rt-icon-button-color-bg-hover));
                     color: var(--rt-icon-button-color-hover);
                 }
@@ -114,7 +116,7 @@
 
                 color: var(--rt-color-action-on-primary);
 
-                &:hover:not(:disabled) {
+                &:hover:not(:disabled, [aria-disabled='true']) {
                     background-color: var(--rt-icon-button-bg-hover, var(--rt-color-action-primary-hover));
                 }
             }
@@ -124,7 +126,7 @@
 
                 color: var(--rt-color-text-primary);
 
-                &:hover:not(:disabled) {
+                &:hover:not(:disabled, [aria-disabled='true']) {
                     background-color: var(--rt-icon-button-bg-hover, var(--rt-icon-button-color-bg-hover));
                 }
             }
@@ -132,7 +134,7 @@
             &--danger {
                 color: var(--rt-color-state-danger);
 
-                &:hover:not(:disabled) {
+                &:hover:not(:disabled, [aria-disabled='true']) {
                     background-color: var(--rt-icon-button-bg-hover, var(--rt-icon-button-color-bg-hover));
                 }
 
@@ -144,7 +146,7 @@
             &--success {
                 color: var(--rt-color-state-success);
 
-                &:hover:not(:disabled) {
+                &:hover:not(:disabled, [aria-disabled='true']) {
                     background-color: var(--rt-icon-button-bg-hover, var(--rt-icon-button-color-bg-hover));
                 }
 
@@ -156,7 +158,7 @@
             &--warning {
                 color: var(--rt-color-state-warning);
 
-                &:hover:not(:disabled) {
+                &:hover:not(:disabled, [aria-disabled='true']) {
                     background-color: var(--rt-icon-button-bg-hover, var(--rt-icon-button-color-bg-hover));
                 }
 
@@ -168,8 +170,9 @@
             /* Цвет неактивной кнопки ставится рисунку значка: по умолчанию `currentcolor`, то есть цвет
                значка, и свой вид остаётся прежним. Не самому значку — переданный цвет он ставит себе
                встроенным стилем, и правилом его не перебить. Заливка остаётся долей заливки покоя: по умолчанию
-               вся, и свой вид прежний. */
-            &:disabled {
+               вся, и свой вид прежний. У ссылки нет `:disabled`: недоступную отмечает `aria-disabled`. */
+            &:disabled,
+            &[aria-disabled='true'] {
                 background-color: color-mix(
                     in srgb,
                     var(--rt-icon-button-bg, var(--rt-icon-button-bg-variant)) var(--rt-icon-button-disabled-fill),
@@ -183,7 +186,14 @@
                 }
             }
 
-            &:focus-visible {
+            /* Кнопка, спрятанная под ссылкой: `display` блока сильнее `[hidden]` браузера. */
+            &[hidden] {
+                display: none;
+            }
+
+            /* Фокус от мыши и касания кольца не рисует, как у Material: браузер ставит `:focus-visible` и
+               на фокус из кода после нажатия мышью — окно открылось кликом и перевело фокус на кнопку. */
+            &:focus-visible:not(.cdk-mouse-focused, .cdk-touch-focused) {
                 box-shadow: var(--rt-icon-button-focus-shadow);
                 outline: 2px solid transparent;
                 outline-offset: 2px;

@@ -7,6 +7,7 @@ import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { RtToastComponent } from '../../rt-toast.component';
 import { IRtToaster } from '../../rt-toaster.model';
+import { TestRtToastRefreshComponent } from './test-toast-refresh.component';
 
 /** Сообщение всплывающей подсказки — одно на все ячейки матрицы. */
 const TOAST_MESSAGE: string = 'Договор сохранён';
@@ -16,7 +17,7 @@ const DARK_SURFACE: string = 'var(--rt-neutral-800)';
 const INVERSE_TEXT: string = 'var(--rt-color-text-inverse)';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TToastMatrixPart = 'severity' | 'parts' | 'actions' | 'edges' | 'options' | 'handles' | 'presets' | 'themes';
+export type TToastMatrixPart = 'severity' | 'parts' | 'actions' | 'edges' | 'options' | 'extras' | 'handles' | 'presets' | 'themes';
 
 /**
  * Ничего не делающее действие: в витрине важен вид кнопки, а не её последствие.
@@ -140,6 +141,29 @@ const noop: () => void = (): void => undefined;
                         <app-story-row slotWidth="22rem" [items]="optionCases" [itemLabel]="partLabel">
                             <ng-template let-item>
                                 <div style="position: relative; display: block; min-block-size: 5.5rem; width: 100%">
+                                    <rt-toast
+                                        [toast]="item.toast"
+                                        [index]="0"
+                                        [totalToasts]="1"
+                                        [heights]="heights"
+                                        [expanded]="false"
+                                        [interacting]="true"
+                                        [visibleToasts]="3"
+                                        [duration]="60000" />
+                                </div>
+                            </ng-template>
+                        </app-story-row>
+                    </ng-template>
+                </app-story-presets>
+            }
+
+            @case ('extras') {
+                <!-- Подробности здесь свёрнуты: раскрытые и живую долю показывает история Handle стопки. -->
+                <app-story-presets caption="Живая доля, подробности и свой компонент в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="22rem" [items]="extraCases" [itemLabel]="partLabel">
+                            <ng-template let-item>
+                                <div style="position: relative; display: block; min-block-size: 7.5rem; width: 100%">
                                     <rt-toast
                                         [toast]="item.toast"
                                         [index]="0"
@@ -325,6 +349,35 @@ export class TestRtToastMatrixComponent {
         {
             name: 'залитый со своим значком',
             toast: { id: 14, severity: 'success', message: 'Оплата прошла', filled: true, icon: 'star' },
+        },
+    ];
+
+    public readonly extraCases: readonly { name: string; toast: IRtToaster.Toast }[] = [
+        {
+            name: 'живая доля',
+            toast: { id: 31, severity: 'info', message: 'Обновление набора «Продажи»', progressValue: 64, duration: null },
+        },
+        {
+            name: 'подробности',
+            toast: {
+                id: 32,
+                severity: 'danger',
+                message: 'Токен отчёта отклонён',
+                description: 'Войдите заново, чтобы обновить доступ',
+                details: 'HTTP 401 Unauthorized\nrequest-id: 7f3a-91c2',
+                duration: null,
+            },
+        },
+        {
+            name: 'свой компонент',
+            toast: {
+                id: 33,
+                severity: 'info',
+                message: 'Обновление набора',
+                component: TestRtToastRefreshComponent,
+                data: { dataset: 'Гости' },
+                duration: null,
+            },
         },
     ];
 

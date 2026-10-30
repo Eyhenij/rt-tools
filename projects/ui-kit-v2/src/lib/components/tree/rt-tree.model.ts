@@ -1,5 +1,4 @@
-import { IRtSelect } from '@rt-tools/ui-kit-v2/select';
-import { IRtSideMenu } from '@rt-tools/ui-kit-v2/side-menu';
+import { IRtMatchPart, IRtOptionTree } from '@rt-tools/ui-kit-v2/core';
 import { IRtTag } from '@rt-tools/ui-kit-v2/tag';
 
 /**
@@ -8,7 +7,7 @@ import { IRtTag } from '@rt-tools/ui-kit-v2/tag';
  */
 export namespace IRtTree {
     /** Узел дерева: опция выбора из списка с необязательным описанием и детьми того же вида. */
-    export interface Node<TValue> extends IRtSelect.Option<TValue> {
+    export interface Node<TValue> extends IRtOptionTree.Option<TValue> {
         /** Вторая строка под подписью. */
         description?: string;
         /** Метки под подписью: поиск отмечает в них найденное так же, как в подписи. */
@@ -29,18 +28,18 @@ export namespace IRtTree {
     export type Mode = 'multiple' | 'single' | 'none';
 
     /** Отметка строки: выбрано всё, часть или ничего. У листа части не бывает. */
-    export type Mark = IRtSelect.TBranchState;
+    export type Mark = IRtOptionTree.TBranchState;
 
     /** Видимая строка дерева: та же, что у выбора из списка, с узлом дерева внутри. */
-    export interface Row<TValue> extends IRtSelect.Row<TValue> {
+    export interface Row<TValue> extends IRtOptionTree.Row<TValue> {
         readonly option: Node<TValue>;
     }
 
     /** Подпись и описание строки, разрезанные по найденному слову. */
     export interface LabelParts {
-        readonly label: ReadonlyArray<IRtSideMenu.TitlePart>;
-        readonly description: ReadonlyArray<IRtSideMenu.TitlePart>;
-        readonly badges: ReadonlyArray<ReadonlyArray<IRtSideMenu.TitlePart>>;
+        readonly label: ReadonlyArray<IRtMatchPart>;
+        readonly description: ReadonlyArray<IRtMatchPart>;
+        readonly badges: ReadonlyArray<ReadonlyArray<IRtMatchPart>>;
     }
 
     /** Отметка строки, радио ли она и сколько выбрано под группой; `null` — числа нет. */

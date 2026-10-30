@@ -174,6 +174,7 @@ export class RtInputNumberComponent extends RtFormControlBase<number | null> {
     );
 
     /** Вид рамки: `outline` — рамка со всех сторон, `fill` — залитое поле с чертой снизу. */
+    public override readonly fieldLabelInside: boolean = true;
     public readonly appearance: InputSignal<IRtInput.Appearance> = input<IRtInput.Appearance>('outline');
 
     public readonly displayText: Signal<string> = computed((): string => this.displayValue());

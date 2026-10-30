@@ -113,3 +113,43 @@ When the overlay is created
 Then it is told to stay through a navigation, and by default to leave
 
 Covered: `projects/ui-kit-v2/src/lib/components/aside/rt-aside-open.spec.ts`.
+
+### SC-UKV-1040 — the footer sets the look of its buttons
+
+Given a footer whose buttons the application gave the text look, an icon and another theme
+When the footer is drawn
+Then the dismiss button is outlined with the secondary theme, and the primary one is filled and has no icon
+
+Covered: `projects/ui-kit-v2/src/lib/components/aside/footer/rt-aside-footer.component.spec.ts`.
+
+### SC-UKV-1041 — on a phone the dismiss button gets the short label
+
+Given a footer whose dismiss button is labelled «Close without saving»
+When the window is 480 points wide or narrower
+Then the button reads the kit's short «Close», and on a wider window its own label
+
+Covered: `projects/ui-kit-v2/src/lib/components/aside/footer/rt-aside-footer.component.spec.ts`.
+
+### SC-UKV-1042 — the footer buttons do not wrap
+
+Given the styles of the footer
+When they are compiled
+Then the row of its buttons is a flex row that does not wrap
+
+Covered: `projects/ui-kit-v2/src/lib/components/aside/rt-aside-buttons.styles.spec.ts`.
+
+### SC-UKV-1043 — the window about the unsaved edits
+
+Given the window about the unsaved edits
+When it is drawn
+Then it is of the medium width, its stay button is outlined, and on a phone its buttons stand in a column
+
+Covered: `projects/ui-kit-v2/src/lib/components/aside/unsaved-dialog/rt-aside-unsaved-dialog.component.spec.ts`, `projects/ui-kit-v2/src/lib/components/aside/rt-aside-buttons.styles.spec.ts`.
+
+### SC-UKV-1044 — the cancel button of the confirm popover is outlined
+
+Given a confirm popover
+When it is drawn
+Then its cancel button is outlined with the secondary theme
+
+Covered: `projects/ui-kit-v2/src/lib/components/confirm-popover/rt-confirm-popover.component.spec.ts`.

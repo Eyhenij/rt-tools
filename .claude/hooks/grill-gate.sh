@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# rt-kit v0.32.0 · hooks/grill-gate.sh · 8e19a48b11dd · правится надстройкой, не здесь
-# Requires: hooks/deny-tail.sh, hooks/turn-exit-patterns.sh, hooks/grill-gate-bypass.sh
+# rt-kit v0.33.1 · hooks/grill-gate.sh · ca79cb33dde1 · правится надстройкой, не здесь
+# Requires: hooks/deny-tail.sh, hooks/turn-exit-patterns.sh, hooks/grill-gate-bypass.sh, hooks/grill-gate-options.sh
 # rt-hook: Stop
 # The conversation guard: the owner is not asked a question until the laws and rules have been read
 # within the same turn. It judges two events, and that is not duplication; the second is declared
@@ -389,10 +389,15 @@ if [ -n "$done_marker" ]; then
                 | join("\n")
             ' 2>/dev/null)"
         fi
+        # After a refused menu a list of options in prose is a question too: the helper next door.
+        # shellcheck disable=SC1090
+        [ -f "$rt_hooks_dir/grill-gate-options.sh" ] && . "$rt_hooks_dir/grill-gate-options.sh" 2>/dev/null
         asks="no"
         if [ -n "$tool" ]; then
             asks="yes"
         elif printf '%s\n' "$question_text" | grep -qE '\?[[:space:]]*$'; then
+            asks="yes"
+        elif command -v rt_grill_options_asked >/dev/null 2>&1 && rt_grill_options_asked; then
             asks="yes"
         fi
         marked="no"
@@ -403,6 +408,9 @@ if [ -n "$done_marker" ]; then
             reason="BLOCKED by grill-gate: a guard refused in this turn, and the question to the owner carries nothing done without the answer.
 
 A refusal removes the step, not the task. Do the mechanical part of the blocker first — what the linter's fix mode repairs, what the refusal names as fixable — then ask only the decision that is left. The question leaves with the line «$done_marker …» naming the working commands of this turn after the last refusal: an edit of a file or a command that changes the tree. A read or a status command does not count."
+            [ -n "$tool" ] && reason="${reason}
+
+The same question in prose does not walk around this refusal: the menu and prose are judged alike, a list of options included. Fix the menu — add the line and a working command — and send it again."
 
             # shellcheck disable=SC1090
             [ -f "$rt_hooks_dir/deny-tail.sh" ] && . "$rt_hooks_dir/deny-tail.sh" 2>/dev/null

@@ -137,6 +137,19 @@ describe('стили словаря формы панели', (): void => {
         expect(ruleBody(css, '.rt-form__framed-item')).toContain('padding');
     });
 
+    it('SC-UKV-1045 — строка контрола переносит элементы', (): void => {
+        expect(ruleBody(css, '.rt-form__control-item')).toContain('flex-wrap: wrap');
+    });
+
+    it('SC-UKV-1046 — на узком месте строка из одних кнопок встаёт столбиком во всю ширину', (): void => {
+        const at: number = css.indexOf('@media (width <= 480px)');
+        const body: string = ruleBody(css.slice(at), '.rt-form__control-item:has(> .rt-button):not(:has(> :not(.rt-button)))');
+
+        expect(at).toBeGreaterThan(-1);
+        expect(body).toContain('flex-direction: column');
+        expect(body).toContain('align-items: stretch');
+    });
+
     it('SC-UKV-110 — поле, стоящее в строке одно, занимает её целиком', (): void => {
         expect(ruleBody(css, '.rt-form__control-item > rt-field')).toContain('flex: 1 1 auto');
     });

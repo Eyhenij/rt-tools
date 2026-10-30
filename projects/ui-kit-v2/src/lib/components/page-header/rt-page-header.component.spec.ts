@@ -1,9 +1,10 @@
-import { ChangeDetectionStrategy, Component, DebugElement } from '@angular/core';
-import { ComponentFixture } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { ChangeDetectionStrategy, Component, DebugElement, Signal, signal } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter, Router } from '@angular/router';
 
 import { WINDOW } from '@rt-tools/core';
 
+import { BreakpointsService } from '../../platform';
 import { createRtFixture, el, hostClasses, qa, qaAll, textOf } from '../../../testing/rt-kit-testing';
 import { IRtPageHeader } from './rt-page-header.model';
 import { RtPageHeaderComponent } from './rt-page-header.component';
@@ -47,9 +48,30 @@ class ObserverDouble {
     }
 }
 
+/** Двойник наблюдателя размера: в jsdom его нет. Смена ширины шапки подаётся вызовом `resize`. */
+class ResizeDouble {
+    public static last: ResizeDouble | null = null;
+
+    constructor(public readonly callback: ResizeObserverCallback) {
+        ResizeDouble.last = this;
+    }
+
+    public observe(): void {}
+
+    public disconnect(): void {}
+
+    public resize(): void {
+        this.callback([], this as unknown as ResizeObserver);
+    }
+}
+
 /** Окно отдаётся токеном — двойник ставится провайдером, а не правкой глобального объекта. */
 function windowDouble(): Window & typeof globalThis {
-    return { IntersectionObserver: ObserverDouble } as unknown as Window & typeof globalThis;
+    return {
+        IntersectionObserver: ObserverDouble,
+        ResizeObserver: ResizeDouble,
+        getComputedStyle: (): Partial<CSSStyleDeclaration> => ({ columnGap: '4px' }),
+    } as unknown as Window & typeof globalThis;
 }
 
 function setup(inputs: Readonly<Record<string, unknown>> = {}): ComponentFixture<RtPageHeaderComponent> {
@@ -58,6 +80,11 @@ function setup(inputs: Readonly<Record<string, unknown>> = {}): ComponentFixture
         { items: ITEMS, ...inputs },
         { providers: [provideRouter([]), { provide: WINDOW, useFactory: windowDouble }] }
     );
+}
+
+/** Подмена наблюдателя ширины: узкий экран, на котором шапка показывает бургер. */
+class NarrowBreakpointsService {
+    public readonly narrow: Signal<boolean> = signal(true).asReadonly();
 }
 
 function navItems(fixture: ComponentFixture<RtPageHeaderComponent>): HTMLElement[] {
@@ -79,6 +106,47 @@ function navItems(fixture: ComponentFixture<RtPageHeaderComponent>): HTMLElement
 })
 class PageHeaderHostComponent {
     public readonly items: ReadonlyArray<IRtPageHeader.Item> = ITEMS;
+}
+
+/** Подмена наблюдателя ширины: широкий экран, на котором разделы стоят в строке. */
+class WideBreakpointsService {
+    public readonly narrow: Signal<boolean> = signal(false).asReadonly();
+}
+
+/** Меню профиля приходит шаблоном — нужна host-обёртка. */
+@Component({
+    selector: 'rt-page-header-user-host',
+    template: `
+        <rt-page-header [items]="items" [user]="user" [userMenu]="menu" />
+        <ng-template #menu><span qa-dataid="host-user-menu">Профиль</span></ng-template>
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtPageHeaderComponent],
+})
+class PageHeaderUserHostComponent {
+    public readonly items: ReadonlyArray<IRtPageHeader.Item> = ITEMS;
+    public readonly user: IRtPageHeader.User = { name: 'Иванов И.' };
+}
+
+/** Шапка с меню профиля на экране заданной ширины; меню открыто нажатием на имя */
+function openUserMenu(
+    breakpoints: typeof NarrowBreakpointsService | typeof WideBreakpointsService
+): ComponentFixture<PageHeaderUserHostComponent> {
+    const fixture: ComponentFixture<PageHeaderUserHostComponent> = createRtFixture(
+        PageHeaderUserHostComponent,
+        {},
+        {
+            providers: [
+                provideRouter([]),
+                { provide: WINDOW, useFactory: windowDouble },
+                { provide: BreakpointsService, useClass: breakpoints },
+            ],
+        }
+    );
+    (document.querySelector('[qa-dataid="header-user-menu"]') as HTMLElement).click();
+    fixture.detectChanges();
+
+    return fixture;
 }
 
 function scrollPastHeader(fixture: ComponentFixture<RtPageHeaderComponent>): void {
@@ -180,6 +248,53 @@ describe('RtPageHeaderComponent', (): void => {
         expect(qa(setup(), 'header-nav-burger')).not.toBeNull();
     });
 
+    it('SC-UKV-1072: открытое мобильное меню стоит на затемнении, и нажатие по нему меню закрывает', (): void => {
+        // Шапка закрывает мобильное меню, как только экран перестаёт быть узким, а в тестовой
+        // среде наблюдатель ширины ничего не измеряет
+        const fixture: ComponentFixture<RtPageHeaderComponent> = createRtFixture(
+            RtPageHeaderComponent,
+            { items: ITEMS },
+            {
+                providers: [
+                    provideRouter([]),
+                    { provide: WINDOW, useFactory: windowDouble },
+                    { provide: BreakpointsService, useClass: NarrowBreakpointsService },
+                ],
+            }
+        );
+
+        qa(fixture, 'header-nav-burger')?.nativeElement.click();
+        fixture.detectChanges();
+        const backdrop: HTMLElement | null = document.querySelector('.cdk-overlay-backdrop.rt-page-header-mobile-backdrop');
+        expect(document.querySelector('[qa-dataid="header-nav-mobile-trigger"]')).not.toBeNull();
+        expect(backdrop).not.toBeNull();
+
+        backdrop?.click();
+        fixture.detectChanges();
+
+        expect(document.querySelector('[qa-dataid="header-nav-mobile-trigger"]')).toBeNull();
+    });
+
+    it('SC-UKV-1080: на узком экране меню профиля стоит на затемнении меню разделов, и нажатие по нему меню закрывает', (): void => {
+        const fixture: ComponentFixture<PageHeaderUserHostComponent> = openUserMenu(NarrowBreakpointsService);
+        const backdrop: HTMLElement | null = document.querySelector('.cdk-overlay-backdrop.rt-page-header-mobile-backdrop');
+        expect(document.querySelector('[qa-dataid="host-user-menu"]')).not.toBeNull();
+        expect(backdrop).not.toBeNull();
+
+        backdrop?.click();
+        fixture.detectChanges();
+
+        expect(document.querySelector('[qa-dataid="host-user-menu"]')).toBeNull();
+    });
+
+    it('SC-UKV-1081: на широком экране меню профиля открывается без затемнения', (): void => {
+        openUserMenu(WideBreakpointsService);
+
+        // Сначала меню открыто, и только потом проверяется, что подложки под ним нет
+        expect(document.querySelector('[qa-dataid="host-user-menu"]')).not.toBeNull();
+        expect(document.querySelector('.cdk-overlay-backdrop')).toBeNull();
+    });
+
     it('пустой набор разделов рисует шапку без пунктов', (): void => {
         expect(navItems(setup({ items: [] })).length).toBe(0);
     });
@@ -251,6 +366,129 @@ describe('RtPageHeaderComponent', (): void => {
             ).not.toBeNull();
             expect(textOf(qa(fixture, 'host-filter'))).toBe('Все');
             expect(textOf(qa(fixture, 'host-actions'))).toBe('Действия');
+        });
+    });
+
+    describe('пункт «Ещё»', (): void => {
+        /** Пять разделов-ссылок; последний ведёт туда, куда переходит тест подсветки. */
+        const ROW: ReadonlyArray<IRtPageHeader.Item> = ['tours', 'orders', 'reports', 'rates', 'clients'].map(
+            (id: string): IRtPageHeader.Item => ({ id, label: id, route: `/${id}` })
+        );
+
+        /** Ширина навигации, которую видит замер; jsdom раскладки не считает, и замер подменяется. */
+        let navWidth: number = 0;
+
+        /** Раздел ряда — 100, «Ещё» — 60, навигация — сколько задал тест. */
+        function rectOf(node: Element): DOMRect {
+            let width: number = 0;
+            if (node.classList.contains('rt-page-header__nav')) {
+                width = navWidth;
+            } else if (node.getAttribute('qa-dataid') === 'header-nav-item') {
+                width = 100;
+            } else if (node.classList.contains('rt-page-header__item')) {
+                width = 60;
+            }
+
+            return { width, height: 32, top: 0, left: 0, right: width, bottom: 32, x: 0, y: 0, toJSON: (): void => {} };
+        }
+
+        function setupRow(width: number): ComponentFixture<RtPageHeaderComponent> {
+            navWidth = width;
+            const fixture: ComponentFixture<RtPageHeaderComponent> = createRtFixture(
+                RtPageHeaderComponent,
+                { items: ROW },
+                {
+                    providers: [
+                        provideRouter([{ path: '**', component: PageHeaderHostComponent }]),
+                        { provide: WINDOW, useFactory: windowDouble },
+                    ],
+                }
+            );
+            fixture.detectChanges();
+
+            return fixture;
+        }
+
+        function hiddenIds(fixture: ComponentFixture<RtPageHeaderComponent>): string[] {
+            return navItems(fixture)
+                .filter((node: HTMLElement): boolean => node.classList.contains('rt-page-header__item--is-overflow'))
+                .map((node: HTMLElement): string => node.dataset['id'] ?? '');
+        }
+
+        function moreSlot(fixture: ComponentFixture<RtPageHeaderComponent>): HTMLElement {
+            return (qa(fixture, 'header-nav-more')?.nativeElement as HTMLElement).closest('li') as HTMLElement;
+        }
+
+        beforeEach((): void => {
+            jest.spyOn(Element.prototype, 'getBoundingClientRect').mockImplementation(function (this: Element): DOMRect {
+                return rectOf(this);
+            });
+        });
+
+        afterEach((): void => {
+            jest.restoreAllMocks();
+        });
+
+        it('SC-UKV-870: широкой шапке «Ещё» не нужен: все разделы в ряду', (): void => {
+            const fixture: ComponentFixture<RtPageHeaderComponent> = setupRow(1000);
+
+            expect(qa(fixture, 'header-nav-more')).not.toBeNull();
+            expect(moreSlot(fixture).classList).toContain('rt-page-header__item--is-overflow');
+            expect(hiddenIds(fixture)).toEqual([]);
+        });
+
+        it('SC-UKV-871: в узкой шапке разделы с конца уходят в «Ещё», и «Ещё» встаёт в ряд', (): void => {
+            // Два раздела и «Ещё» с промежутками: 200 + 60 + 8 = 268 из 300.
+            const fixture: ComponentFixture<RtPageHeaderComponent> = setupRow(300);
+
+            expect(moreSlot(fixture).classList).not.toContain('rt-page-header__item--is-overflow');
+            expect(hiddenIds(fixture)).toEqual(['reports', 'rates', 'clients']);
+        });
+
+        it('SC-UKV-871: сужение шапки пересчитывает ряд', (): void => {
+            const fixture: ComponentFixture<RtPageHeaderComponent> = setupRow(1000);
+            expect(hiddenIds(fixture)).toEqual([]);
+
+            navWidth = 300;
+            ResizeDouble.last?.resize();
+            fixture.detectChanges();
+
+            expect(hiddenIds(fixture)).toEqual(['reports', 'rates', 'clients']);
+        });
+
+        it('SC-UKV-873: панель «Ещё» показывает ушедшие разделы', (): void => {
+            const fixture: ComponentFixture<RtPageHeaderComponent> = setupRow(300);
+
+            qa(fixture, 'header-nav-more')?.nativeElement.click();
+            fixture.detectChanges();
+
+            expect(
+                Array.from(document.querySelectorAll('[qa-dataid="header-nav-more-item"]')).map((node: Element): string | null =>
+                    node.getAttribute('data-id')
+                )
+            ).toEqual(['reports', 'rates', 'clients']);
+        });
+
+        it('SC-UKV-874: выбранный раздел внутри «Ещё» подсвечивает «Ещё»', async (): Promise<void> => {
+            const fixture: ComponentFixture<RtPageHeaderComponent> = setupRow(300);
+            const more: HTMLElement = qa(fixture, 'header-nav-more')?.nativeElement as HTMLElement;
+            expect(more.classList).not.toContain('rt-page-header__link--is-active');
+
+            await TestBed.inject(Router).navigateByUrl('/clients');
+            fixture.detectChanges();
+
+            expect(more.classList).toContain('rt-page-header__link--is-active');
+        });
+
+        it('SC-UKV-874: выбранный раздел в ряду «Ещё» не подсвечивает', async (): Promise<void> => {
+            const fixture: ComponentFixture<RtPageHeaderComponent> = setupRow(300);
+
+            await TestBed.inject(Router).navigateByUrl('/tours');
+            fixture.detectChanges();
+
+            expect((qa(fixture, 'header-nav-more')?.nativeElement as HTMLElement).classList).not.toContain(
+                'rt-page-header__link--is-active'
+            );
         });
     });
 });

@@ -71,6 +71,26 @@
                 [threads]="threads" />
         </div>
     }
+    @case ('readingColumn') {
+        <div
+            style="
+                box-sizing: border-box;
+                inline-size: 80rem;
+                block-size: 40rem;
+                border: 1px solid var(--rt-color-border-subtle);
+                border-radius: var(--rt-radius-lg);
+                overflow: hidden;
+            ">
+            <rt-ai-chat
+                style="--rt-ai-chat-content-max-width: 40rem"
+                subtitle="Occupancy last week"
+                activeThreadId="t1"
+                fullScreenable
+                [fullScreen]="true"
+                [messages]="done"
+                [threads]="threads" />
+        </div>
+    }
     @case ('extra') {
         <div
             style="

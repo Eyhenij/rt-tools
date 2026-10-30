@@ -68,6 +68,27 @@
                 </ng-template>
             </app-story-presets>
         }
+        @case ('actions') {
+            <app-story-presets caption="Действия в заголовке в обоих наборах: флажок и кнопка не раскрывают панель">
+                <ng-template>
+                    <app-expansion-panel-live kind="actions" />
+                </ng-template>
+            </app-story-presets>
+        }
+        @case ('group') {
+            <app-story-presets caption="Группа панелей в обоих наборах: открыта одна или независимо">
+                <ng-template>
+                    <app-expansion-panel-live kind="group" />
+                </ng-template>
+            </app-story-presets>
+        }
+        @case ('preserve') {
+            <app-story-presets caption="Сохранение тела в обоих наборах: наберите город, сверните и раскройте">
+                <ng-template>
+                    <app-expansion-panel-live kind="preserve" />
+                </ng-template>
+            </app-story-presets>
+        }
         @case ('presets') {
             <app-story-presets caption="Панель в обоих наборах">
                 <ng-template>

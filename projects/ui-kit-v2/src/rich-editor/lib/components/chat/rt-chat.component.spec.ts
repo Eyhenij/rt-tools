@@ -1,8 +1,13 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
 import { DebugElement } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 
 import { QuillMock } from '../../../../testing/quill-mock';
 import { createRtFixture, el, hostClasses, qa, qaAll, textOf } from '../../../../testing/rt-kit-testing';
+import { RtTooltipDirective } from '../../../../lib/components/tooltip/rt-tooltip.directive';
 import { ERtChatMessageStatus, IRtChat } from './rt-chat.model';
 import { RtChatComponent } from './rt-chat.component';
 
@@ -88,6 +93,16 @@ describe('RtChatComponent', (): void => {
             });
 
             expect(qa(fixture, 'chat-message-retry')).not.toBeNull();
+        });
+
+        it('SC-UKV-914 — недоставленный ответ рисует значок и подпись без кнопки повтора', (): void => {
+            const fixture: ComponentFixture<RtChatComponent> = setup({
+                messages: [message({ own: true, status: ERtChatMessageStatus.Undelivered })],
+            });
+
+            expect(el(fixture, '[qa-dataid="chat-message-status"] rt-icon')).not.toBeNull();
+            expect(textOf(qa(fixture, 'chat-message-undelivered'))).toContain('Not delivered');
+            expect(qa(fixture, 'chat-message-retry')).toBeNull();
         });
 
         it('вложения сообщения рисуются списком', (): void => {
@@ -202,6 +217,65 @@ describe('RtChatComponent', (): void => {
             expect(textOf(qa(setup({ title: 'Переписка по заявке', showRefresh: true }), 'chat-title'))).toBe('Переписка по заявке');
         });
 
+        it('SC-UKV-911 — знак канала стоит перед заголовком, размером xs', (): void => {
+            const fixture: ComponentFixture<RtChatComponent> = setup({
+                title: 'Анна Смирнова',
+                showRefresh: true,
+                sign: { icon: 'globe', label: 'Сайт' },
+            });
+
+            const sign: HTMLElement = qa(fixture, 'chat-sign')?.nativeElement as HTMLElement;
+            expect(sign.classList).toContain('rt-service-logo--size-xs');
+            expect(sign.nextElementSibling?.querySelector('[qa-dataid="chat-title"]')).not.toBeNull();
+            expect(sign.querySelector('[role="img"]')?.getAttribute('aria-label')).toBe('Сайт');
+        });
+
+        it('SC-UKV-912 — без знака шапка рисует только заголовок', (): void => {
+            const fixture: ComponentFixture<RtChatComponent> = setup({ title: 'Анна Смирнова', showRefresh: true });
+
+            expect(qa(fixture, 'chat-sign')).toBeNull();
+            expect(textOf(qa(fixture, 'chat-title'))).toBe('Анна Смирнова');
+        });
+
+        it('SC-UKV-1062 — строка под заголовком стоит под ним в одном столбце', (): void => {
+            const fixture: ComponentFixture<RtChatComponent> = setup({
+                title: '№12 Анна Смирнова',
+                subtitle: 'WhatsApp · +66 81 234 5678',
+                showRefresh: true,
+                sign: { icon: 'globe', label: 'WhatsApp' },
+            });
+
+            const subtitle: HTMLElement = qa(fixture, 'chat-subtitle')?.nativeElement as HTMLElement;
+            expect(textOf(qa(fixture, 'chat-subtitle'))).toBe('WhatsApp · +66 81 234 5678');
+            expect(subtitle.previousElementSibling?.getAttribute('qa-dataid')).toBe('chat-title');
+            expect(subtitle.parentElement?.classList).toContain('rt-chat__names');
+            expect(qa(fixture, 'chat-sign')?.nativeElement.nextElementSibling?.classList).toContain('rt-chat__names');
+            expect(subtitle.hidden).toBe(false);
+        });
+
+        it('SC-UKV-1063 — без строки шапка прежняя: строка под заголовком скрыта', (): void => {
+            const fixture: ComponentFixture<RtChatComponent> = setup({ title: 'Анна Смирнова', showRefresh: true });
+
+            expect(textOf(qa(fixture, 'chat-title'))).toBe('Анна Смирнова');
+            expect((qa(fixture, 'chat-subtitle')?.nativeElement as HTMLElement).hidden).toBe(true);
+        });
+
+        it('SC-UKV-1064 — длинный заголовок держится одной строкой и целиком виден в подсказке', (): void => {
+            const title: string = '№1287 Александра Константинопольская-Вознесенская';
+            const fixture: ComponentFixture<RtChatComponent> = setup({ title, subtitle: 'WhatsApp · +66 81 234 5678', showRefresh: true });
+
+            const node: DebugElement = fixture.debugElement.query(By.css('[qa-dataid="chat-title"]'));
+            const tip: RtTooltipDirective = node.injector.get(RtTooltipDirective);
+            expect(tip.text()).toBe(title);
+            expect(tip.whenTruncated()).toBe(true);
+
+            const scss: string = readFileSync(join(__dirname, 'rt-chat.component.scss'), 'utf8');
+            const rule: string = scss.slice(scss.indexOf('&__title {'), scss.indexOf('}', scss.indexOf('&__title {')));
+            expect(rule).toContain('white-space: nowrap');
+            expect(rule).toContain('text-overflow: ellipsis');
+            expect(rule).toContain('overflow: hidden');
+        });
+
         it('кнопки обновления и разворота появляются по входам', (): void => {
             expect(qa(setup(), 'chat-refresh')).toBeNull();
             expect(qa(setup({ showRefresh: true }), 'chat-refresh')).not.toBeNull();
@@ -224,5 +298,42 @@ describe('RtChatComponent', (): void => {
         const fixture: ComponentFixture<RtChatComponent> = setup({ hasThread: false });
 
         expect(qa(fixture, 'chat-empty-hint')).not.toBeNull();
+    });
+
+    describe('вид мессенджера', (): void => {
+        it('SC-UKV-1067 — вид мессенджера ставит метку дня и поле кита со скрепкой внутри рамки', (): void => {
+            const today: string = new Date().toISOString();
+            const fixture: ComponentFixture<RtChatComponent> = setup({
+                messenger: true,
+                canReply: true,
+                attachments: true,
+                richComposer: true,
+                formatting: true,
+                messages: [message({ createdAt: today }), message({ id: 2, own: true, createdAt: today })],
+            });
+
+            expect(hostClasses(fixture)).toContain('rt-chat--messenger');
+            const days: HTMLElement[] = qaAll(fixture, 'chat-day').map((node: DebugElement): HTMLElement => node.nativeElement);
+            expect(days.map((day: HTMLElement): boolean => day.hidden)).toEqual([false, true]);
+            expect(textOf(qa(fixture, 'chat-day'))).toBe('today');
+            const prompt: HTMLElement = qa(fixture, 'chat-composer-prompt').nativeElement;
+            expect(qa(fixture, 'chat-composer-rich')).toBeNull();
+            expect(qa(fixture, 'chat-composer')).toBeNull();
+            const attach: HTMLElement = qa(fixture, 'chat-composer-tools-attach').nativeElement;
+            expect(prompt.contains(attach)).toBe(true);
+            expect(attach.hidden).toBe(false);
+
+            const scss: string = readFileSync(join(__dirname, 'rt-chat-messenger.scss'), 'utf8');
+            expect(scss).toContain('.rt-chat__message-author {\n                display: none;');
+            expect(scss).toContain('--rt-chat-bubble-own-bg: var(--rt-color-action-primary);');
+        });
+
+        it('SC-UKV-1067 — без входа меток дня не видно и подпись автора на месте', (): void => {
+            const fixture: ComponentFixture<RtChatComponent> = setup({ messages: [message()] });
+
+            expect(hostClasses(fixture)).not.toContain('rt-chat--messenger');
+            expect((qa(fixture, 'chat-day').nativeElement as HTMLElement).hidden).toBe(true);
+            expect(qa(fixture, 'chat-message-author')).not.toBeNull();
+        });
     });
 });

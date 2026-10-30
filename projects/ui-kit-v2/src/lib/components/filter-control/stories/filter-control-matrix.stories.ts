@@ -1,4 +1,4 @@
-import { Signal, signal } from '@angular/core';
+import { signal } from '@angular/core';
 import { applicationConfig, Meta, StoryObj } from '@storybook/angular';
 
 import { storyWidthAtMost } from '../../../../showcase';
@@ -12,11 +12,12 @@ import { TestRtFilterControlMatrixComponent } from './component/test-filter-cont
  * ней. Подменяется поэтому источник ответа, а не окно: компонент спрашивает `narrow`, и в этой
  * истории ответ — «да».
  */
-const NARROW_ANSWERS: Record<keyof BreakpointsService, Signal<boolean>> = {
+const NARROW_ANSWERS: Pick<BreakpointsService, 'mobile' | 'tablet' | 'desktop' | 'narrow' | 'viewportNarrow'> = {
     mobile: signal(true),
     tablet: signal(false),
     desktop: signal(false),
     narrow: signal(true),
+    viewportNarrow: signal(true),
 };
 
 const NARROW_BREAKPOINTS: BreakpointsService = NARROW_ANSWERS as BreakpointsService;

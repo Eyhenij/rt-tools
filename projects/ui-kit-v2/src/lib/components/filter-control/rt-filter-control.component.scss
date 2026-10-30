@@ -1,10 +1,12 @@
+@use '../../../styles/breakpoints' as bp;
+
 @layer rt-kit.components {
     .rt-filter-control {
         display: inline-flex;
 
         // узкий экран: контрол — компактный select с капом --rt-input-max-width
         // (как строка поиска). В ряду тулбара (768–1080px) ширина по контенту.
-        @media (width <= 1080px) {
+        @include bp.place-max(1080px) {
             display: block;
 
             .rt-select {
@@ -15,7 +17,7 @@
 
         // стекнутый тулбар (≤768px): host занимает всю ширину столбца, select
         // вытягивается ровно как строка поиска (width:100% до --rt-input-max-width).
-        @media (width <= 768px) {
+        @include bp.place-max(768px) {
             inline-size: 100%;
         }
     }

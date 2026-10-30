@@ -4,7 +4,7 @@ import { storySnapshotSkip } from '../../../../showcase';
 import { TestRtColorPaletteComponent } from './component/test-color-palette.component';
 
 export default {
-    title: 'Organisms/Forms/ColorPalette',
+    title: 'Molecules/Forms/ColorPalette',
     component: TestRtColorPaletteComponent,
     argTypes: {
         themeColors: { control: { type: 'boolean' } },

@@ -1,7 +1,9 @@
+import { NgTemplateOutlet } from '@angular/common';
 import {
     ChangeDetectionStrategy,
     Component,
     computed,
+    contentChild,
     input,
     InputSignal,
     InputSignalWithTransform,
@@ -13,9 +15,28 @@ import {
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
+import { RtStepLabelDirective } from './rt-step-label.directive';
 import { IRtStepper } from './rt-stepper.model';
 
 const BEM_BLOCK: string = 'rt-stepper';
+
+/** Шаг вертикального списка, собранный для шаблона: номер для метки и состояние. */
+interface IStepItem {
+    readonly step: IRtStepper.Step;
+    readonly index: number;
+    readonly state: IRtStepper.StepState;
+}
+
+/** Состояние шага по номеру текущего; номер меньше нуля — текущего нет. */
+function stepState(index: number, current: number): IRtStepper.StepState {
+    if (current < 0) {
+        return 'neutral';
+    }
+    if (index < current) {
+        return 'complete';
+    }
+    return index === current ? 'current' : 'upcoming';
+}
 
 /**
  * Линейный прогресс-степпер: тонкая полоса, набор точек и подпись
@@ -29,6 +50,11 @@ const BEM_BLOCK: string = 'rt-stepper';
  * полосой — описание текущего шага, многоабзацное (`\n\n`). Сам список названий
  * шагов на ui не выводится — публичен только текущий, остальные читаются
  * скринридером через aria.
+ *
+ * `orientation="vertical"` показывает все шаги списком: у каждого круглая метка с номером и
+ * подпись справа, метки соединены линией. Подпись — строка `label` или шаблон `rtStepLabel`.
+ * `currentIndex` меньше нуля значит «текущего шага нет»: список — статичная инструкция, все метки
+ * нейтральные. Шаги в списке не нажимаются и фокуса не принимают.
  */
 @Component({
     selector: 'rt-stepper',
@@ -37,6 +63,9 @@ const BEM_BLOCK: string = 'rt-stepper';
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
     imports: [
+        // angular
+        NgTemplateOutlet,
+
         // standalone components / directives
         BlockDirective,
         ElemDirective,
@@ -45,6 +74,7 @@ const BEM_BLOCK: string = 'rt-stepper';
     hostDirectives: [{ directive: RtRadiusDirective, inputs: ['radius'] }],
     host: {
         class: BEM_BLOCK,
+        '[class.rt-stepper--vertical]': "orientation() === 'vertical'",
     },
 })
 export class RtStepperComponent {
@@ -83,6 +113,18 @@ export class RtStepperComponent {
 
     protected readonly totalSteps: Signal<number> = computed((): number => this.steps().length);
 
+    protected readonly labelTemplate: Signal<RtStepLabelDirective | undefined> = contentChild(RtStepLabelDirective);
+
+    /**
+     * Шаги вертикального списка с состоянием. Номер текущего здесь не зажимается: меньше нуля —
+     * текущего нет, и все шаги нейтральные; больше последнего — пройдены все.
+     */
+    protected readonly items: Signal<readonly IStepItem[]> = computed((): readonly IStepItem[] => {
+        const current: number = this.currentIndex();
+
+        return this.steps().map((step: IRtStepper.Step, index: number): IStepItem => ({ step, index, state: stepState(index, current) }));
+    });
+
     /**
      * Якорь подписи текущего шага: подпись висит над активной точкой и не должна
      * вылезать за края рельсы. Первый шаг — выравнивание по левому краю точки,
@@ -110,6 +152,8 @@ export class RtStepperComponent {
     });
 
     public readonly steps: InputSignal<readonly IRtStepper.Step[]> = input<readonly IRtStepper.Step[]>([]);
+
+    public readonly orientation: InputSignal<IRtStepper.Orientation> = input<IRtStepper.Orientation>('horizontal');
 
     public readonly currentIndex: InputSignalWithTransform<number, number | string> = input<number, number | string>(0, {
         transform: numberAttribute,

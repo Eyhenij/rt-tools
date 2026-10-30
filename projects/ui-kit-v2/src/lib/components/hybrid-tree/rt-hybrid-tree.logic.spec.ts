@@ -1,4 +1,4 @@
-import { rtTreeRows } from '../select/rt-select-tree';
+import { rtTreeRows } from '../../options/rt-option-tree';
 import { IRtTree } from '../tree/rt-tree.model';
 import {
     rtHybridTreeChoose,

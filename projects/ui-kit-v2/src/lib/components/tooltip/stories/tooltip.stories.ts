@@ -12,6 +12,7 @@ export default {
             options: ['top', 'bottom', 'left', 'right'],
             control: { type: 'select' },
         },
+        showDelay: { control: { type: 'number' } },
     },
 } as Meta<TestRtTooltipComponent>;
 
@@ -22,5 +23,6 @@ export const Playground: TStory = {
     args: {
         text: 'Текст подсказки',
         placement: 'top',
+        showDelay: null,
     },
 };

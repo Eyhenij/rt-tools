@@ -17,7 +17,9 @@ import { IRtToggleButtonGroup } from '../../rt-toggle-button-group.model';
             [ariaLabel]="ariaLabel"
             [size]="size"
             [disabled]="disabled"
-            [fullWidth]="fullWidth" />
+            [fullWidth]="fullWidth"
+            [appearance]="appearance"
+            [checkmark]="checkmark" />
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
@@ -32,4 +34,6 @@ export class TestRtToggleButtonGroupComponent {
     public size: IRtToggleButtonGroup.Size = 'sm';
     public disabled: boolean = false;
     public fullWidth: boolean = false;
+    public appearance: IRtToggleButtonGroup.Appearance = 'segmented';
+    public checkmark: boolean = false;
 }

@@ -82,7 +82,7 @@ export class RtDateRangeComponent extends RtFormControlBase<IRtDateRange.Value |
 
     protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
     /** Узкий экран: панель открывается в нижней шторке, а не в поповере. */
-    protected readonly narrow: Signal<boolean> = inject(BreakpointsService).narrow;
+    protected readonly narrow: Signal<boolean> = inject(BreakpointsService).viewportNarrow;
 
     protected readonly fieldEl: Signal<ElementRef<HTMLInputElement> | undefined> = viewChild<ElementRef<HTMLInputElement>>('fieldEl');
     protected readonly popover: Signal<RtPopoverDirective | undefined> = viewChild(RtPopoverDirective);

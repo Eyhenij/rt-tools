@@ -6,9 +6,11 @@ import {
     effect,
     inject,
     input,
+    viewChild,
     AfterContentInit,
     ChangeDetectionStrategy,
     Component,
+    ElementRef,
     InputSignal,
     InputSignalWithTransform,
     Signal,
@@ -19,7 +21,7 @@ import { ValidationErrors } from '@angular/forms';
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { RT_KIT_LABELS, TRtKitLabelKey, TRtKitLabelMap, rtKitLabel } from '@rt-tools/ui-kit-v2/core';
-import { RtFormControlBase } from '@rt-tools/ui-kit-v2/form-control';
+import { rtNotchWidth, RtFormControlBase } from '@rt-tools/ui-kit-v2/form-control';
 import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
 import { RtSkeletonWrapperComponent } from '@rt-tools/ui-kit-v2/skeleton-wrapper';
@@ -54,7 +56,7 @@ function nextAutoId(): string {
 @Component({
     selector: 'rt-field',
     templateUrl: './rt-field.component.html',
-    styleUrls: ['./rt-field.component.scss'],
+    styleUrls: ['./rt-field.component.scss', './rt-field-label-inside.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
     imports: [
@@ -66,7 +68,14 @@ function nextAutoId(): string {
         ElemDirective,
         ModDirective,
     ],
-    host: { class: BEM_BLOCK },
+    host: {
+        class: BEM_BLOCK,
+        '[class.rt-field--filled]': 'filled()',
+        '[class.rt-field--invalid]': 'showError()',
+        '[class.rt-field--static]': 'isStatic()',
+        '[class.rt-field--label-inside]': 'labelInside()',
+        '[style.--rt-field-notch-width]': "notchWidth() + 'px'",
+    },
 })
 export class RtFieldComponent implements AfterContentInit {
     // contentChild нельзя объявлять на ES-private (#) поле — Angular это запрещает,
@@ -81,12 +90,38 @@ export class RtFieldComponent implements AfterContentInit {
 
     readonly #autoId: string = nextAutoId();
 
+    /** Строка подписи: по её ширине материальный набор вырезает разрыв в рамке. `#`-поле `viewChild` не принимает. */
+    protected readonly labelRow: Signal<ElementRef<HTMLElement> | undefined> = viewChild<ElementRef<HTMLElement>>('labelRow');
+
+    /**
+     * Ширина подписи на рамке, px. Разрыв рамки под подписью, как у поля Material, режется по этому
+     * числу: ширину подписи стили сами не знают.
+     */
+    protected readonly notchWidth: Signal<number> = rtNotchWidth(this.labelRow);
+
     /** Итоговый id: явный controlId контрола важнее авто-id. */
     protected readonly controlId: Signal<string> = computed((): string => this.projectedControl()?.effectiveControlId() ?? this.#autoId);
 
     protected readonly isRequired: Signal<boolean> = computed((): boolean => this.projectedControl()?.required() ?? false);
 
     protected readonly showError: Signal<boolean> = computed((): boolean => !!this.projectedControl()?.invalid());
+
+    /**
+     * У контрола есть значение. Под материальным набором по нему подпись поднимается на рамку:
+     * текст значения есть у всех контролов, поэтому одно правило служит полю, области текста,
+     * числу и выбору.
+     */
+    protected readonly filled: Signal<boolean> = computed((): boolean => (this.projectedControl()?.displayText() ?? '') !== '');
+
+    /** Поле без рамки ввода — только для чтения или в загрузке: подпись остаётся над значением. */
+    protected readonly isStatic: Signal<boolean> = computed(
+        (): boolean => this.readonly() || this.loading() || !!this.projectedControl()?.isReadonly()
+    );
+
+    /** Подпись материального набора ложится внутрь контрола: только у полей с местом подсказки. */
+    protected readonly labelInside: Signal<boolean> = computed(
+        (): boolean => !this.isStatic() && !!this.projectedControl()?.fieldLabelInside
+    );
 
     /** Имя первого сработавшего валидатора: сообщений показываем по одному */
     readonly #failedValidator: Signal<string> = computed((): string => {

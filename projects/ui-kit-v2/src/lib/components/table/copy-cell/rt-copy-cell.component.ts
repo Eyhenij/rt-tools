@@ -3,6 +3,7 @@ import { BooleanInput } from '@angular/cdk/coercion';
 import {
     booleanAttribute,
     ChangeDetectionStrategy,
+    ChangeDetectorRef,
     Component,
     computed,
     DestroyRef,
@@ -86,6 +87,7 @@ export class RtCopyCellComponent {
     readonly #clipboard: Clipboard = inject(Clipboard);
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
     readonly #host: ElementRef<HTMLElement> = inject(ElementRef);
+    readonly #changeDetector: ChangeDetectorRef = inject(ChangeDetectorRef);
 
     #resetTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -133,12 +135,17 @@ export class RtCopyCellComponent {
      *
      * Ширина известна только отрисованному узлу, а меняется она и от переезда столбца, и от
      * ширины окна: посчитанная один раз при заведении, она соврала бы при первом же изменении.
+     *
+     * Браузер шлёт `mouseenter` сперва ячейке, потом её содержимому, и перерисовки между ними
+     * нет. Подсказка читает свой текст на входе указателя в содержимое, поэтому текст отдаётся
+     * ей сразу: иначе она застала бы прежний, пустой, и появилась бы только со второго наведения.
      */
     protected measureTruncation(): void {
         const content: HTMLElement | null = this.#host.nativeElement.querySelector(`.${BEM_BLOCK}__content`);
         const truncated: boolean = content !== null && content.scrollWidth > content.clientWidth;
 
         this.hint.set(truncated ? this.#displayedText() : '');
+        this.#changeDetector.detectChanges();
     }
 
     protected onCopy(event: MouseEvent): void {

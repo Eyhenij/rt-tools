@@ -97,6 +97,15 @@
     }
 
     <ng-template #detailsTpl>
+        @if (profile(); as person) {
+            <div rtElem="profile" qa-dataid="workspace-details-profile">
+                @if (person.sign; as sign) {
+                    <rt-service-logo size="md" [logos]="[sign]" />
+                }
+                <span rtElem="profile-name">{{ person.name }}</span>
+                <span rtElem="profile-contact">{{ person.contact }}</span>
+            </div>
+        }
         @if (rows().length > 0) {
             <rt-detail-list>
                 @for (row of rows(); track row.label) {
@@ -120,6 +129,7 @@
                                         qa-dataid="workspace-details-agent-select"
                                         [placeholder]="t().uiPickAgent"
                                         [ngModel]="selectedAgentId()"
+                                        [ngModelOptions]="{ standalone: true }"
                                         [options]="edit.options"
                                         [clearable]="false"
                                         (ngModelChange)="onSelectedAgentChange($event)" />
@@ -179,6 +189,7 @@
                             [inputId]="toggle.id"
                             [ariaLabel]="toggle.label"
                             [ngModel]="toggle.value"
+                            [ngModelOptions]="{ standalone: true }"
                             [disabled]="(toggle.disabled ?? false) || busy()"
                             (ngModelChange)="onToggleChange(toggle, $event)" />
                     </div>

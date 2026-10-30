@@ -71,18 +71,23 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Входы
 
-| вход            | тип                 | умолчание     |
-| --------------- | ------------------- | ------------- |
-| `inputId`       | `string \| null`    | `null`        |
-| `ariaLabel`     | `string \| null`    | `null`        |
-| `disabled`      | `boolean`           | `false`       |
-| `indeterminate` | `boolean`           | `false`       |
-| `radius`        | `TRtRadius \| null` | `null` → `sm` |
+| вход            | тип                 | умолчание             |
+| --------------- | ------------------- | --------------------- |
+| `inputId`       | `string \| null`    | `null`                |
+| `ariaLabel`     | `string \| null`    | `null`                |
+| `disabled`      | `boolean`           | `false`               |
+| `indeterminate` | `boolean`           | `false`               |
+| `checked`       | `boolean \| null`   | `null` → решает форма |
+| `radius`        | `TRtRadius \| null` | `null` → `sm`         |
 
 ## Выходы
 
-Своих выходов нет: значение уходит через `ControlValueAccessor`, то есть в связанный контрол
-формы.
+| выход           | тип       | когда                                                |
+| --------------- | --------- | ---------------------------------------------------- |
+| `checkedChange` | `boolean` | человек сменил отметку: нажатием, пробелом или Enter |
+
+В форме значение уходит через `ControlValueAccessor`, то есть в связанный контрол формы. Без формы
+отметку ставит вход `checked`, а смену сообщает `checkedChange`.
 
 ## Рядом
 

@@ -1,0 +1,82 @@
+@switch (part) {
+    @case ('position') {
+        <app-story-presets caption="Угол × наложение в обоих наборах: поверх значка и рядом с подписью">
+            <ng-template>
+                <app-story-grid [rows]="overlaps" [columns]="positions" [rowLabel]="overlapLabel">
+                    <ng-template let-overlap let-position="col">
+                        <div class="app-badge-demo__cell">
+                            @if (overlap) {
+                                <rt-icon name="bell" [rtBadge]="3" [rtBadgePosition]="position" />
+                            } @else {
+                                <span class="app-badge-demo__label" [rtBadge]="12" [rtBadgeOverlap]="false" [rtBadgePosition]="position">
+                                    Отели
+                                </span>
+                            }
+                        </div>
+                    </ng-template>
+                </app-story-grid>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('color') {
+        <app-story-presets caption="Цвет × размер в обоих наборах">
+            <ng-template>
+                <app-story-grid [rows]="sizes" [columns]="colors">
+                    <ng-template let-size let-color="col">
+                        <div class="app-badge-demo__cell">
+                            <rt-icon name="bell" [rtBadge]="size === 'sm' ? 5 : 24" [rtBadgeSize]="size" [rtBadgeColor]="color" />
+                        </div>
+                    </ng-template>
+                </app-story-grid>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('value') {
+        <app-story-presets caption="Значение в обоих наборах: пустое и скрытое пузырька не рисуют">
+            <ng-template>
+                <app-story-row [items]="values" [itemLabel]="valueLabel">
+                    <ng-template let-valueCase>
+                        <div class="app-badge-demo__cell">
+                            <span
+                                class="app-badge-demo__label"
+                                [rtBadge]="valueCase.value"
+                                [rtBadgeOverlap]="false"
+                                [rtBadgeHidden]="valueCase.hidden">
+                                Чат
+                            </span>
+                        </div>
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('presets') {
+        <app-story-presets caption="Пузырёк в обоих наборах">
+            <ng-template>
+                <div class="app-badge-demo__cell">
+                    <rt-icon name="bell" [rtBadge]="3" />
+                    <span class="app-badge-demo__label" [rtBadge]="12" [rtBadgeOverlap]="false">Отели</span>
+                </div>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('themes') {
+        <app-story-presets caption="Пузырёк в обеих темах в обоих наборах">
+            <ng-template>
+                <app-story-themes>
+                    <ng-template>
+                        <div class="app-badge-demo__cell">
+                            <rt-icon name="bell" [rtBadge]="3" />
+                            <span class="app-badge-demo__label" [rtBadge]="12" [rtBadgeOverlap]="false">Отели</span>
+                            <span class="app-badge-demo__label" rtBadge="!" rtBadgeColor="danger" [rtBadgeOverlap]="false">Ошибки</span>
+                        </div>
+                    </ng-template>
+                </app-story-themes>
+            </ng-template>
+        </app-story-presets>
+    }
+}

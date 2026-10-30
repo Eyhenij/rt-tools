@@ -5,7 +5,13 @@ import { STORY_FIELD_WIDTH } from '../../../../../showcase/story-metrics';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
+import { RtColorPaletteComponent } from '../../../color-palette/rt-color-palette.component';
+import { RtInputNumberComponent } from '../../../input-number/rt-input-number.component';
 import { RtInputComponent } from '../../../input/rt-input.component';
+import { IRtInput } from '../../../input/rt-input.model';
+import { RtSelectComponent } from '../../../select/rt-select.component';
+import { IRtSelect } from '../../../select/rt-select.model';
+import { RtTextareaComponent } from '../../../textarea/rt-textarea.component';
 import { RtFieldHintDirective } from '../../rt-field-hint.directive';
 import { RtFieldComponent } from '../../rt-field.component';
 
@@ -13,7 +19,16 @@ import { RtFieldComponent } from '../../rt-field.component';
 const HINT_TEXT: string = 'Рабочая, не личная';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TFieldMatrixPart = 'anatomy' | 'required' | 'error' | 'hint' | 'modes' | 'states' | 'presets' | 'themes';
+export type TFieldMatrixPart = 'anatomy' | 'required' | 'error' | 'hint' | 'modes' | 'states' | 'presets' | 'themes' | 'inside' | 'density';
+
+/** Случай плотности: шаг, вид поля и состояние взаимодействия. */
+interface IFieldDensityCase {
+    readonly name: string;
+    readonly density: string;
+    readonly appearance: IRtInput.Appearance;
+    readonly state: string | null;
+    readonly control: FormControl<string>;
+}
 
 /** Случай анатомии: какие части поля объявлены. */
 interface IFieldAnatomyCase {
@@ -54,6 +69,26 @@ interface IFieldModeCase {
     readonly loading: boolean;
     readonly control: FormControl<string>;
 }
+
+/** Какой контрол стоит в поле. */
+type TFieldInsideKind = 'input' | 'textarea' | 'number' | 'select' | 'palette';
+
+/** Контрол подписи внутри поля: какой контрол стоит в поле, в каком он состоянии и размере. */
+interface IFieldInsideCase {
+    readonly name: string;
+    readonly kind: TFieldInsideKind;
+    readonly state: string | null;
+    readonly appearance: IRtInput.Appearance;
+    readonly control: FormControl<unknown>;
+    readonly size?: IRtInput.Size;
+}
+
+const PALETTE: readonly string[] = ['#d32f2f', '#1976d2', '#388e3c', '#fbc02d'];
+
+const CITIES: ReadonlyArray<IRtSelect.Option<string>> = [
+    { label: 'Москва', value: 'msk' },
+    { label: 'Казань', value: 'kzn' },
+];
 
 function filled(text: string): FormControl<string> {
     return new FormControl<string>(text, { nonNullable: true });
@@ -235,6 +270,67 @@ function failing(validators: ValidatorFn[] = [Validators.required], value: strin
                     </ng-template>
                 </app-story-presets>
             }
+            @case ('inside') {
+                <app-story-presets caption="Подпись поля в обоих наборах: в материальном она внутри контрола">
+                    <ng-template>
+                        <app-story-row [items]="insideCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
+                            <ng-template let-insideCase>
+                                <rt-field label="Город доставки" hint="Как в адресе" [attr.data-story-state]="insideCase.state">
+                                    @switch (insideCase.kind) {
+                                        @case ('textarea') {
+                                            <rt-textarea placeholder="Комментарий" [formControl]="insideCase.control" />
+                                        }
+                                        @case ('number') {
+                                            <rt-input-number
+                                                placeholder="0"
+                                                [appearance]="insideCase.appearance"
+                                                [formControl]="insideCase.control" />
+                                        }
+                                        @case ('select') {
+                                            <rt-select
+                                                placeholder="Выберите"
+                                                [size]="insideCase.size ?? 'md'"
+                                                [appearance]="insideCase.appearance"
+                                                [options]="cities"
+                                                [formControl]="insideCase.control" />
+                                        }
+                                        @case ('palette') {
+                                            <!-- У палитры места подсказки нет: подпись остаётся над ней и в материальном наборе. -->
+                                            <rt-color-palette [colors]="palette" [formControl]="insideCase.control" />
+                                        }
+                                        @default {
+                                            <rt-input
+                                                placeholder="Москва"
+                                                [size]="insideCase.size ?? 'md'"
+                                                [appearance]="insideCase.appearance"
+                                                [formControl]="insideCase.control" />
+                                        }
+                                    }
+                                </rt-field>
+                            </ng-template>
+                        </app-story-row>
+                    </ng-template>
+                </app-story-presets>
+            }
+            @case ('density') {
+                <app-story-presets caption="Плотность и наведение: в материальном наборе поле 56 px и меньше на 4 px за шаг">
+                    <ng-template>
+                        <app-story-row [items]="densityCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
+                            <ng-template let-densityCase>
+                                <rt-field
+                                    label="Город доставки"
+                                    [attr.data-rt-density]="densityCase.density"
+                                    [attr.data-story-state]="densityCase.state">
+                                    <rt-input
+                                        placeholder="Москва"
+                                        [appearance]="densityCase.appearance"
+                                        [formControl]="densityCase.control" />
+                                </rt-field>
+                            </ng-template>
+                        </app-story-row>
+                    </ng-template>
+                </app-story-presets>
+            }
         }
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -245,7 +341,11 @@ function failing(validators: ValidatorFn[] = [Validators.required], value: strin
         // components
         RtFieldComponent,
         RtFieldHintDirective,
+        RtColorPaletteComponent,
         RtInputComponent,
+        RtInputNumberComponent,
+        RtSelectComponent,
+        RtTextareaComponent,
 
         // showcase
         StoryPresetsComponent,
@@ -257,6 +357,7 @@ export class TestRtFieldMatrixComponent {
     public part: TFieldMatrixPart = 'anatomy';
 
     public readonly fieldWidth: string = STORY_FIELD_WIDTH;
+    public readonly cities: ReadonlyArray<IRtSelect.Option<string>> = CITIES;
     public readonly emailErrors: Record<string, string> = { email: 'Проверьте адрес: нужен знак @' };
 
     public readonly hintCases: readonly IFieldHintCase[] = [
@@ -326,6 +427,67 @@ export class TestRtFieldMatrixComponent {
         { name: 'ошибка', hint: '', reserve: false, errors: {}, control: failing() },
         { name: 'ошибка поверх подсказки', hint: HINT_TEXT, reserve: false, errors: {}, control: failing() },
         { name: 'ошибка с резервом', hint: HINT_TEXT, reserve: true, errors: {}, control: failing() },
+    ];
+
+    /**
+     * Подпись внутри контрола: пустой, с фокусом и со значением у каждого контрола, плюс
+     * обязательное тронутое поле — звёздочка в цвете подписи и в цвете ошибки. Свой вид кита в
+     * левой половине держит подпись над полем, как прежде.
+     */
+    public readonly insideCases: readonly IFieldInsideCase[] = [
+        { name: 'поле пустое', kind: 'input', state: null, appearance: 'outline', control: filled('') },
+        { name: 'поле в фокусе', kind: 'input', state: 'focus-within', appearance: 'outline', control: filled('') },
+        { name: 'поле со значением', kind: 'input', state: null, appearance: 'outline', control: filled('Москва') },
+        { name: 'обязательное', kind: 'input', state: null, appearance: 'outline', control: required('Москва') },
+        { name: 'обязательное с ошибкой', kind: 'input', state: null, appearance: 'outline', control: failing() },
+        { name: 'текст пустой', kind: 'textarea', state: null, appearance: 'outline', control: filled('') },
+        { name: 'текст со значением', kind: 'textarea', state: null, appearance: 'outline', control: filled('Позвонить за час') },
+        { name: 'число пустое', kind: 'number', state: null, appearance: 'outline', control: new FormControl<number | null>(null) },
+        { name: 'число со значением', kind: 'number', state: null, appearance: 'outline', control: new FormControl<number | null>(12) },
+        { name: 'выбор пустой', kind: 'select', state: null, appearance: 'outline', control: new FormControl<string | null>(null) },
+        { name: 'выбор со значением', kind: 'select', state: null, appearance: 'outline', control: new FormControl<string | null>('kzn') },
+        { name: 'залитое пустое', kind: 'input', state: null, appearance: 'fill', control: filled('') },
+        { name: 'залитое в фокусе', kind: 'input', state: 'focus-within', appearance: 'fill', control: filled('') },
+        { name: 'залитое со значением', kind: 'input', state: null, appearance: 'fill', control: filled('Москва') },
+        { name: 'залитое с ошибкой', kind: 'input', state: null, appearance: 'fill', control: failing() },
+        { name: 'таблетка со значением', kind: 'input', state: null, appearance: 'pill', control: filled('Москва') },
+        { name: 'число залитое', kind: 'number', state: null, appearance: 'fill', control: new FormControl<number | null>(12) },
+        {
+            name: 'выбор залитый',
+            kind: 'select',
+            state: null,
+            appearance: 'fill',
+            control: new FormControl<string | null>('kzn'),
+        },
+        { name: 'малое пустое', kind: 'input', state: null, appearance: 'outline', size: 'sm', control: filled('') },
+        { name: 'малое со значением', kind: 'input', state: null, appearance: 'outline', size: 'sm', control: filled('Москва') },
+        {
+            name: 'малый выбор',
+            kind: 'select',
+            state: null,
+            appearance: 'outline',
+            size: 'sm',
+            control: new FormControl<string | null>('kzn'),
+        },
+        { name: 'крупное пустое', kind: 'input', state: null, appearance: 'outline', size: 'lg', control: filled('') },
+        { name: 'палитра', kind: 'palette', state: null, appearance: 'outline', control: new FormControl<string | null>('#1976d2') },
+    ];
+
+    public readonly palette: readonly string[] = PALETTE;
+
+    /**
+     * Плотность материального набора: шаги от 0 до −5 у обведённого поля, залитое поле при −1, как
+     * у залитых полей приложения, и наведение. Свой вид кита в левой половине атрибута не замечает.
+     */
+    public readonly densityCases: readonly IFieldDensityCase[] = [
+        { name: 'плотность 0', density: '0', appearance: 'outline', state: null, control: filled('Москва') },
+        { name: 'плотность −1', density: '-1', appearance: 'outline', state: null, control: filled('Москва') },
+        { name: 'плотность −2', density: '-2', appearance: 'outline', state: null, control: filled('Москва') },
+        { name: 'плотность −3', density: '-3', appearance: 'outline', state: null, control: filled('Москва') },
+        { name: 'плотность −4', density: '-4', appearance: 'outline', state: null, control: filled('Москва') },
+        { name: 'плотность −5', density: '-5', appearance: 'outline', state: null, control: filled('01.10.2026') },
+        { name: 'залитое, −1', density: '-1', appearance: 'fill', state: null, control: filled('Москва') },
+        { name: 'наведение', density: '0', appearance: 'outline', state: 'hover', control: filled('Москва') },
     ];
 
     /** Подпись случая: у всех наборов этой матрицы имя лежит в одном поле. */

@@ -54,4 +54,15 @@ describe('RtAsideUnsavedDialogComponent', (): void => {
             expect((qa(fixture, id)?.nativeElement as HTMLElement).getAttribute('aria-label')).not.toBe('');
         }
     });
+
+    it('SC-UKV-1043 — окно средней ширины, «Остаться» в рамке темы secondary', (): void => {
+        // На узком окне три кнопки переносились на две строки и на компьютере.
+        const fixture: ComponentFixture<RtAsideUnsavedDialogComponent> = setup();
+        const dialog: HTMLElement = qa(fixture, 'aside-unsaved-dialog')?.nativeElement as HTMLElement;
+        const stay: DOMTokenList = (qa(fixture, 'aside-unsaved-stay')?.nativeElement as HTMLElement).classList;
+
+        expect(dialog.querySelector('.rt-dialog--size--md')).not.toBeNull();
+        expect(stay.contains('rt-button--outlined')).toBe(true);
+        expect(stay.contains('rt-button--secondary')).toBe(true);
+    });
 });

@@ -1,5 +1,6 @@
 import { Clipboard } from '@angular/cdk/clipboard';
 import {
+    booleanAttribute,
     ChangeDetectionStrategy,
     Component,
     computed,
@@ -7,6 +8,7 @@ import {
     inject,
     input,
     InputSignal,
+    InputSignalWithTransform,
     output,
     OutputEmitterRef,
     signal,
@@ -44,6 +46,7 @@ const RESET_DELAY_MS: number = 2000;
     ],
     host: {
         class: BEM_BLOCK,
+        '[class.rt-copy-value--wrap]': 'wrap()',
     },
 })
 export class RtCopyValueComponent {
@@ -70,6 +73,12 @@ export class RtCopyValueComponent {
 
     /** Подсказка и имя кнопки в покое; пусто — переведённое «Copy». */
     public readonly copyLabel: InputSignal<string> = input<string>('');
+
+    /**
+     * Значение переносится по строкам и прокручивается в своей высоте, а не режется многоточием:
+     * так копируют текст ошибки или журнал, который читают целиком.
+     */
+    public readonly wrap: InputSignalWithTransform<boolean, unknown> = input(false, { transform: booleanAttribute });
 
     /** Значение ушло в буфер. */
     public readonly copiedValue: OutputEmitterRef<string> = output<string>();

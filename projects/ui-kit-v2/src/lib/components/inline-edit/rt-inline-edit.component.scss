@@ -59,10 +59,10 @@
 
             /* Плашка-поле приложения: светлая подложка, рамка, текст и значок — основной цвет темы. */
             --rt-inline-edit-chip-field-bg: var(--rt-mat-neutral-5);
-            --rt-inline-edit-chip-field-color: var(--mat-sys-primary, var(--rt-color-action-primary));
-            --rt-inline-edit-chip-field-icon-color: var(--mat-sys-primary, var(--rt-color-action-primary));
-            --rt-inline-edit-chip-field-border-color: var(--mat-sys-primary-fixed-dim, var(--rt-brand-200));
-            --rt-inline-edit-chip-field-border-color-focus: var(--mat-sys-primary, var(--rt-color-action-primary));
+            --rt-inline-edit-chip-field-color: var(--rt-sys-primary, var(--rt-color-action-primary));
+            --rt-inline-edit-chip-field-icon-color: var(--rt-sys-primary, var(--rt-color-action-primary));
+            --rt-inline-edit-chip-field-border-color: var(--rt-sys-primary-fixed-dim, var(--rt-brand-200));
+            --rt-inline-edit-chip-field-border-color-focus: var(--rt-sys-primary, var(--rt-color-action-primary));
         }
 
         /* Значение в покое: подпись режется многоточием, полный текст — в подсказке. */

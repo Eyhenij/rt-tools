@@ -94,37 +94,45 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Входы
 
-| вход           | тип                                         | умолчание                 |
-| -------------- | ------------------------------------------- | ------------------------- |
-| `suggestions`  | `ReadonlyArray<TItem>`                      | `[]`                      |
-| `displayWith`  | `(item: TItem \| null) => string`           | `String(item ?? '')`      |
-| `placeholder`  | `string`                                    | `''`                      |
-| `minLength`    | `number`                                    | `1`                       |
-| `iconLeft`     | `IRtIcon.Name \| null`                      | `null`                    |
-| `openOnFocus`  | `boolean`                                   | `false`                   |
-| `itemTemplate` | `TemplateRef<{ $implicit: TItem }> \| null` | `null`                    |
-| `radius`       | `TRtRadius \| null`                         | `null` → скругление полей |
+| вход            | тип                                          | умолчание                 |
+| --------------- | -------------------------------------------- | ------------------------- |
+| `suggestions`   | `ReadonlyArray<TItem>`                       | `[]`                      |
+| `displayWith`   | `(item: TItem \| null) => string`            | `String(item ?? '')`      |
+| `placeholder`   | `string`                                     | `''`                      |
+| `minLength`     | `number`                                     | `1`                       |
+| `iconLeft`      | `IRtIcon.Name \| null`                       | `null`                    |
+| `openOnFocus`   | `boolean`                                    | `false`                   |
+| `itemTemplate`  | `TemplateRef<{ $implicit: TItem }> \| null`  | `null`                    |
+| `radius`        | `TRtRadius \| null`                          | `null` → скругление полей |
+| `loading`       | `boolean`                                    | `false`                   |
+| `emptyText`     | `string \| null`                             | `null` → подпись кита     |
+| `emptyTemplate` | `TemplateRef<{ $implicit: string }> \| null` | `null`                    |
 
 ## Входы от основы полей
 
 Достались от `RtFormControlBase` — общей основы полей кита; в ней же они и меняются, сразу для
 всех наследников.
 
-| вход        | тип                    | умолчание |
-| ----------- | ---------------------- | --------- |
-| `size`      | `'sm' \| 'md' \| 'lg'` | `'md'`    |
-| `disabled`  | `boolean`              | `false`   |
-| `controlId` | `string \| null`       | `null`    |
-| `ariaLabel` | `string \| null`       | `null`    |
-| `clearable` | `boolean`              | `true`    |
-| `bordered`  | `boolean`              | `true`    |
+| вход            | тип                    | умолчание |
+| --------------- | ---------------------- | --------- |
+| `size`          | `'sm' \| 'md' \| 'lg'` | `'md'`    |
+| `disabled`      | `boolean`              | `false`   |
+| `controlId`     | `string \| null`       | `null`    |
+| `ariaLabel`     | `string \| null`       | `null`    |
+| `clearable`     | `boolean`              | `true`    |
+| `clearTabbable` | `boolean`              | `false`   |
+| `bordered`      | `boolean`              | `true`    |
 
 ## Выходы
 
-| выход        | тип                        | когда                                         |
-| ------------ | -------------------------- | --------------------------------------------- |
-| `complete`   | `{ query, originalEvent }` | набрано не меньше `minLength` символов        |
-| `itemSelect` | `TItem`                    | выбрана подсказка (значение уходит и в форму) |
+| выход           | тип                        | когда                                                      |
+| --------------- | -------------------------- | ---------------------------------------------------------- |
+| `complete`      | `{ query, originalEvent }` | набрано не меньше `minLength` символов                     |
+| `itemSelect`    | `TItem`                    | выбрана подсказка (значение уходит и в форму)              |
+| `scrolledToEnd` | `void`                     | панель долистали до конца, пора просить следующую страницу |
+
+`scrolledToEnd` не приходит, пока идёт загрузка, и приходит один раз на каждую длину списка. Новый
+запрос или очистка поля снова разрешают его.
 
 ## Рядом
 

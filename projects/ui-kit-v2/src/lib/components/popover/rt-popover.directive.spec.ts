@@ -1,4 +1,4 @@
-import { ConnectedPosition, FlexibleConnectedPositionStrategy } from '@angular/cdk/overlay';
+import { ConnectedPosition, FlexibleConnectedPositionStrategy, Overlay, OverlayConfig } from '@angular/cdk/overlay';
 import { ChangeDetectionStrategy, Component, Signal, WritableSignal, signal, viewChild } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
 
@@ -30,6 +30,8 @@ function panelText(): string {
             [rtPopoverDisabled]="disabled()"
             [rtPopoverPanelClass]="panelClass()"
             [rtPopoverPositions]="positions()"
+            [rtPopoverFitViewport]="fitViewport()"
+            [rtPopoverBackdropClass]="backdropClass()"
             (rtPopoverOpened)="openedCount = openedCount + 1"
             (rtPopoverClosed)="closedCount = closedCount + 1">
             Открыть
@@ -48,6 +50,8 @@ class PopoverHostComponent {
     public readonly disabled: WritableSignal<boolean> = signal<boolean>(false);
     public readonly panelClass: WritableSignal<string> = signal<string>('');
     public readonly positions: WritableSignal<readonly ConnectedPosition[] | null> = signal<readonly ConnectedPosition[] | null>(null);
+    public readonly fitViewport: WritableSignal<boolean> = signal<boolean>(false);
+    public readonly backdropClass: WritableSignal<string> = signal<string>('');
     public openedCount: number = 0;
     public closedCount: number = 0;
 }
@@ -324,6 +328,56 @@ describe('RtPopoverDirective', (): void => {
             clickTrigger(fixture);
 
             expect(lastPositions(spy)).toEqual([START]);
+        });
+    });
+
+    describe('подгонка под окно', (): void => {
+        afterEach((): void => {
+            jest.restoreAllMocks();
+        });
+
+        it('SC-UKV-883 — короткая панель высотой со своё содержимое, порог подгонки остаётся', (): void => {
+            // Порог 120 нужен оверлею, чтобы решить, сдвинуть панель или ужать. Стоя в стиле
+            // коробки, он же растягивал панель из двух пунктов, и под ними стояла пустая полоса.
+            const create: jest.SpyInstance = jest.spyOn(Overlay.prototype, 'create');
+            const fixture: ComponentFixture<PopoverHostComponent> = setup();
+            fixture.componentInstance.fitViewport.set(true);
+            fixture.detectChanges();
+
+            clickTrigger(fixture);
+
+            const config: OverlayConfig | undefined = create.mock.calls.at(-1)?.[0];
+            const box: HTMLElement | null = document.querySelector('.cdk-overlay-pane');
+            expect(config?.minHeight).toBe(120);
+            expect(box).not.toBeNull();
+            expect(box?.style.minHeight).toBe('');
+        });
+    });
+
+    describe('подложка', (): void => {
+        it('SC-UKV-1070: без класса подложки страница рядом с панелью открыта', (): void => {
+            const fixture: ComponentFixture<PopoverHostComponent> = setup();
+
+            clickTrigger(fixture);
+
+            expect(panel()).not.toBeNull();
+            expect(document.querySelector('.cdk-overlay-backdrop')).toBeNull();
+        });
+
+        it('SC-UKV-1071: класс подложки ставит её под панель, и нажатие по ней закрывает панель', (): void => {
+            const fixture: ComponentFixture<PopoverHostComponent> = setup();
+            fixture.componentInstance.backdropClass.set('spec-backdrop');
+            fixture.detectChanges();
+
+            clickTrigger(fixture);
+            const backdrop: HTMLElement | null = document.querySelector('.cdk-overlay-backdrop.spec-backdrop');
+            expect(backdrop).not.toBeNull();
+
+            backdrop?.click();
+            fixture.detectChanges();
+
+            expect(panel()).toBeNull();
+            expect(fixture.componentInstance.popover()?.isOpen()).toBe(false);
         });
     });
 });
