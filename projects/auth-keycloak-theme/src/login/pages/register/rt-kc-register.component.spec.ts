@@ -114,7 +114,22 @@ describe('RtKcRegisterComponent', () => {
         expect(sent.fields['g-recaptcha-response']).toBe('token-light');
     });
 
-    it('SC-AUTH-90 — the widget takes the scheme of the page theme and is drawn anew when it switches', async () => {
+    it('SC-AUTH-88 — the place of the widget is held while the Google script is on its way', async () => {
+        const context: TRegisterContext = Object.assign(registerPage(), {
+            recaptchaRequired: true,
+            recaptchaVisible: true,
+            recaptchaSiteKey: 'site-key',
+        });
+        const fixture: ComponentFixture<RtKcRegisterComponent> = await renderKcPage(RtKcRegisterComponent, context);
+        const widget: HTMLElement | null = kcNode(fixture, 'kc-recaptcha');
+
+        expect(widget).not.toBeNull();
+        expect(widget?.children.length).toBe(1);
+        expect(widget?.firstElementChild?.tagName.toLowerCase()).toBe('div');
+        expect(widget?.querySelector('textarea')).toBeNull();
+    });
+
+    it('SC-AUTH-90 —the widget takes the scheme of the page theme and is drawn anew when it switches', async () => {
         const context: TRegisterContext = Object.assign(registerPage(), {
             recaptchaRequired: true,
             recaptchaVisible: true,

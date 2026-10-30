@@ -206,7 +206,8 @@ Then the document holds one script with that address, added after the page conte
 Given a realm that requires a visible reCAPTCHA with a site key
 When the registration page is drawn
 Then the Google script draws the widget with that site key into a block right before the submit
-button, and an answer in it is posted as `g-recaptcha-response`
+button, and an answer in it is posted as `g-recaptcha-response`; while the script is on its way, an
+empty node holds the place of the widget
 
 ### SC-AUTH-89 — no widget without a visible reCAPTCHA
 
