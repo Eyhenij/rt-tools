@@ -26,13 +26,16 @@ No new words on the screen.
 ## Rules
 
 - **A hover popover follows the hover of a mouse only.** The hover a browser derives from a touch
-  or a pen neither opens nor closes the panel.
+  or a pen neither opens nor closes the panel. A pointer of any kind coming over the host or the
+  panel cancels a close a mouse leave planned: on a device with a mouse and a touch screen the
+  panel went out under the finger.
 - **A press on the host of a hover popover opens the panel.** A tap opens it once, and a popover
   with no press handler of its own in the template opens by it too.
 - **A tap on the backdrop of a hover popover closes the panel and leaves no backdrop.**
 - **The profile menu fits the room under the user name, and its items scroll inside it.** On a low
   screen — a phone on its side, a short window — the lower items went past the bottom edge, and
-  "Sign out" could not be reached.
+  "Sign out" could not be reached. The menu declares itself a scrolling container, so a language list
+  opened inside it follows its field while the menu scrolls.
 
 ## What is out of scope
 
@@ -91,6 +94,7 @@ None.
 
 ## History of changes
 
-| Date       | What changed                                                |
-| ---------- | ----------------------------------------------------------- |
-| 2026-10-30 | The subdomain is written with scenarios 1082…1085 (RT-3000) |
+| Date       | What changed                                                                    |
+| ---------- | ------------------------------------------------------------------------------- |
+| 2026-10-30 | The subdomain is written with scenarios 1082…1085 (RT-3000)                     |
+| 2026-10-30 | 1082 and 1085 widened after the review: the cancelled close, the following list |

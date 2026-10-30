@@ -285,6 +285,9 @@ export class RtPopoverDirective implements OnDestroy {
 
     protected onHostPointerEnter(event: PointerEvent): void {
         this.#pointerType = event.pointerType;
+        // Указатель любого типа вернулся к host: закрытие, запланированное уходом мыши, отменяется.
+        // Иначе на устройстве с мышью и экраном касания панель гасла бы под пальцем.
+        this.#clearHoverTimer();
     }
 
     protected onHostMouseEnter(): void {
@@ -362,6 +365,7 @@ export class RtPopoverDirective implements OnDestroy {
         // Listeners живут на overlay-элементе и умирают вместе с ним в dispose().
         overlayRef.overlayElement.addEventListener('pointerenter', (event: PointerEvent): void => {
             this.#pointerType = event.pointerType;
+            this.#clearHoverTimer();
         });
         overlayRef.overlayElement.addEventListener('mouseenter', (): void => {
             if (this.#isMouseHover()) {

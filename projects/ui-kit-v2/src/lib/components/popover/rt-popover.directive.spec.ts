@@ -198,6 +198,28 @@ describe('RtPopoverDirective', (): void => {
             expect(panel()).not.toBeNull();
         });
 
+        it('SC-UKV-1082: касание панели или host отменяет закрытие, которое запланировал уход мыши', (): void => {
+            jest.useFakeTimers();
+            const fixture: ComponentFixture<PopoverHostComponent> = setup({ trigger: 'hover' });
+            const trigger: HTMLElement = el(fixture, '[qa-dataid="popover-trigger"]')?.nativeElement;
+            trigger.dispatchEvent(pointerEnter('mouse'));
+            trigger.dispatchEvent(new MouseEvent('mouseenter'));
+            fixture.detectChanges();
+
+            trigger.dispatchEvent(new MouseEvent('mouseleave'));
+            panel()?.dispatchEvent(pointerEnter('touch'));
+            jest.advanceTimersByTime(200);
+            fixture.detectChanges();
+            expect(panel()).not.toBeNull();
+
+            trigger.dispatchEvent(pointerEnter('mouse'));
+            trigger.dispatchEvent(new MouseEvent('mouseleave'));
+            trigger.dispatchEvent(pointerEnter('touch'));
+            jest.advanceTimersByTime(200);
+            fixture.detectChanges();
+            expect(panel()).not.toBeNull();
+        });
+
         it('мышь после касания снова открывает панель наведением', (): void => {
             const fixture: ComponentFixture<PopoverHostComponent> = setup({ trigger: 'hover' });
             const trigger: HTMLElement = el(fixture, '[qa-dataid="popover-trigger"]')?.nativeElement;
