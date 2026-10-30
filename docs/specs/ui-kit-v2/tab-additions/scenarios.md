@@ -194,7 +194,7 @@ panel keeps `tabindex="0"` and takes the focus first, as before
 
 Покрытие: частичное — тест проверяет атрибут панели; переход фокуса по Tab проверен в витрине.
 
-### SC-UKV-1082 — a tab fills its icon when it asks for it
+### SC-UKV-1099 — a tab fills its icon when it asks for it
 
 Given tabs where one tab has `iconFill` and an icon by `glyph`, and another has `iconFill` and an icon by `icon`
 When the tab strip is drawn
@@ -202,7 +202,7 @@ Then the icon of each such tab gets `fill`: the glyph is drawn filled, the kit n
 
 Covered: `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-icon-badge.spec.ts`.
 
-### SC-UKV-1085 — a tab puts its badge over the icon when it asks for it
+### SC-UKV-1102 — a tab puts its badge over the icon when it asks for it
 
 Given tabs with an icon and a badge: one with `badgePosition` `'overlay'`, one without it, one with `'overlay'` and no icon, one with no title
 When the tab strip is drawn

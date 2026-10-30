@@ -110,32 +110,32 @@ function clearTabIndexes<T>(fixture: ComponentFixture<T>): (string | null)[] {
 }
 
 describe('Крестик очистки полей общей базы в порядке Tab', (): void => {
-    it('SC-UKV-1083 — настройка кита ставит крестик каждого поля в порядок Tab', (): void => {
+    it('SC-UKV-1100 — настройка кита ставит крестик каждого поля в порядок Tab', (): void => {
         const fixture: ComponentFixture<SilentHostComponent> = createRtFixture(SilentHostComponent, {}, { providers: TABBABLE_SETTING });
 
         expect(clearTabIndexes(fixture)).toEqual(['0', '0', '0', '0', '0']);
     });
 
-    it('SC-UKV-1083 — `clearTabbable` на поле перебивает настройку кита', (): void => {
+    it('SC-UKV-1100 — `clearTabbable` на поле перебивает настройку кита', (): void => {
         const fixture: ComponentFixture<OffHostComponent> = createRtFixture(OffHostComponent, {}, { providers: TABBABLE_SETTING });
 
         expect(clearTabIndexes(fixture)).toEqual(['-1', '-1', '-1', '-1', '-1']);
     });
 
-    it('SC-UKV-1083 — без настройки и без входа крестик вне порядка Tab, как прежде', (): void => {
+    it('SC-UKV-1100 — без настройки и без входа крестик вне порядка Tab, как прежде', (): void => {
         const fixture: ComponentFixture<SilentHostComponent> = createRtFixture(SilentHostComponent);
 
         expect(clearTabIndexes(fixture)).toEqual(['-1', '-1', '-1', '-1', '-1']);
     });
 
-    it('SC-UKV-1084 — автокомплит, число, дата и период слушаются `clearTabbable` на поле', (): void => {
+    it('SC-UKV-1101 — автокомплит, число, дата и период слушаются `clearTabbable` на поле', (): void => {
         const fixture: ComponentFixture<OnHostComponent> = createRtFixture(OnHostComponent);
 
         expect(clearTabIndexes(fixture)).toEqual(['0', '0', '0', '0', '0']);
     });
 
-    describe('SC-UKV-1086 — крестик мультиселекта', (): void => {
-        it('SC-UKV-1086 — с clearTabbable крестик — кнопка рядом с триггером, в порядке Tab', (): void => {
+    describe('SC-UKV-1103 — крестик мультиселекта', (): void => {
+        it('SC-UKV-1103 — с clearTabbable крестик — кнопка рядом с триггером, в порядке Tab', (): void => {
             const fixture: ComponentFixture<MultiselectHostComponent> = createRtFixture(MultiselectHostComponent);
             const root: HTMLElement = fixture.nativeElement as HTMLElement;
             const trigger: HTMLElement = root.querySelector<HTMLElement>('[qa-dataid="multiselect-trigger"]') as HTMLElement;
@@ -147,7 +147,7 @@ describe('Крестик очистки полей общей базы в пор
             expect(clearHost?.querySelector('[tabindex]')?.getAttribute('tabindex')).toBe('0');
         });
 
-        it('SC-UKV-1086 — нажатие крестика очищает выбор и не открывает список', (): void => {
+        it('SC-UKV-1103 — нажатие крестика очищает выбор и не открывает список', (): void => {
             const fixture: ComponentFixture<MultiselectHostComponent> = createRtFixture(MultiselectHostComponent);
             const root: HTMLElement = fixture.nativeElement as HTMLElement;
 
@@ -158,7 +158,7 @@ describe('Крестик очистки полей общей базы в пор
             expect(root.querySelector('[qa-dataid="multiselect-trigger"]')?.getAttribute('aria-expanded')).toBe('false');
         });
 
-        it('SC-UKV-1086 — без clearTabbable крестик внутри триггера и вне порядка Tab, как прежде', (): void => {
+        it('SC-UKV-1103 — без clearTabbable крестик внутри триггера и вне порядка Tab, как прежде', (): void => {
             const fixture: ComponentFixture<MultiselectHostComponent> = createRtFixture(
                 MultiselectHostComponent,
                 {},
