@@ -1,4 +1,4 @@
-import { ComponentFixture } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { IKcSubmitted, kcContextOf, kcNode, renderKcPage, submitForm, typeInto } from '../../../testing/kc-page-fixture';
 import { RtKcRegisterComponent } from './rt-kc-register.component';
@@ -74,6 +74,52 @@ describe('RtKcRegisterComponent', () => {
 
         expect(confirm?.nextElementSibling).toBe(list);
         expect(lines).toEqual(['Length: at least 8', 'Not the same as the email']);
+    });
+
+    it('SC-AUTH-88 — a visible reCAPTCHA stands right before the button and posts its answer with the form', async () => {
+        const context: TRegisterContext = Object.assign(registerPage(), {
+            recaptchaRequired: true,
+            recaptchaVisible: true,
+            recaptchaSiteKey: '6LeIxAcTAAAAAJcZVRqyHh71UZPB09XzwthjWJrm',
+            recaptchaAction: 'register',
+        });
+        const fixture: ComponentFixture<RtKcRegisterComponent> = await renderKcPage(RtKcRegisterComponent, context);
+        const widget: HTMLElement | null = kcNode(fixture, 'kc-recaptcha');
+        // The Google script puts the answer of the widget into a text area inside the block.
+        const answer: HTMLTextAreaElement = document.createElement('textarea');
+        answer.name = 'g-recaptcha-response';
+        answer.value = 'token';
+        widget?.appendChild(answer);
+        await typeInto(fixture, 'kc-email', 'ann@rt.localhost');
+        await typeInto(fixture, 'kc-password', 'n3w-Pass!');
+        await typeInto(fixture, 'kc-password-confirm', 'n3w-Pass!');
+        const sent: IKcSubmitted = await submitForm(fixture, 'kc-register-form');
+
+        expect(widget?.classList.contains('g-recaptcha')).toBe(true);
+        expect(widget?.getAttribute('data-sitekey')).toBe('6LeIxAcTAAAAAJcZVRqyHh71UZPB09XzwthjWJrm');
+        expect(widget?.getAttribute('data-action')).toBe('register');
+        expect(widget?.nextElementSibling).toBe(kcNode(fixture, 'kc-register-submit'));
+        expect(sent.sent).toBe(true);
+        expect(sent.fields['g-recaptcha-response']).toBe('token');
+    });
+
+    it('SC-AUTH-89 — no widget when the realm requires no reCAPTCHA or an invisible one', async () => {
+        const none: ComponentFixture<RtKcRegisterComponent> = await renderKcPage(RtKcRegisterComponent, registerPage());
+
+        expect(kcNode(none, 'kc-register-submit')).not.toBeNull();
+        expect(kcNode(none, 'kc-recaptcha')).toBeNull();
+
+        TestBed.resetTestingModule();
+        const invisible: TRegisterContext = Object.assign(registerPage(), {
+            recaptchaRequired: true,
+            recaptchaVisible: false,
+            recaptchaSiteKey: 'site-key',
+            recaptchaAction: 'register',
+        });
+        const hidden: ComponentFixture<RtKcRegisterComponent> = await renderKcPage(RtKcRegisterComponent, invisible);
+
+        expect(kcNode(hidden, 'kc-register-submit')).not.toBeNull();
+        expect(kcNode(hidden, 'kc-recaptcha')).toBeNull();
     });
 
     it('SC-AUTH-81 — the page carries the provider buttons and the link back to the sign-in', async () => {

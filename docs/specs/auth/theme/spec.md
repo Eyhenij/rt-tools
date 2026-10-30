@@ -87,6 +87,13 @@ the entry is not sure the page belongs to the admin.
   the field drops it once the person changes the value.
 - **The registration form checks the address and the match of the two passwords before the submit.**
   The person learns about a typo before the page reloads.
+- **The frame of a theme page loads every script Keycloak lists for the page, after the first draw.**
+  The standard layout loads them, and the theme pages bypass it. The reCAPTCHA script renders only
+  the widgets it finds in the page on load.
+- **The registration form draws the reCAPTCHA widget above the submit button when the realm requires a visible one.**
+  The widget carries the site key of the realm and posts its answer with the form as
+  `g-recaptcha-response`. Without the answer Keycloak refuses the registration. The invisible
+  reCAPTCHA is not drawn.
 - **The dark theme follows the system until the person switches it on the page.**
 - **The stand realm uses the theme, and the raising command builds it first.** Without the JAR the
   realm falls back to the standard look.
@@ -173,3 +180,4 @@ None.
 - 2026-10-05 — the theme, task RT-2530.
 - 2026-10-06 — the password requirements under the two password fields, task RT-2570.
 - 2026-10-14 — the registration page, the realm logo and the provider marks, task RT-2837.
+- 2026-10-30 — the page scripts and the reCAPTCHA widget on the registration page, task RT-3003.

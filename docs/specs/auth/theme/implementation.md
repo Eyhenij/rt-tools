@@ -31,6 +31,8 @@ without a line and a line without a rule is a divergence.
 - **The registration page asks for the address, the password and its confirmation.** — `projects/auth-keycloak-theme/src/login/pages/register/rt-kc-register.component.ts:RtKcRegisterComponent`. The list reads `projects/auth-keycloak-theme/src/login/kc-password-rules.ts:registrationRulesOf`
 - **An error Keycloak puts on a field stands under that field.** — `projects/auth-keycloak-theme/src/login/kc-form.ts:refusedValue`
 - **The registration form checks the address and the match of the two passwords before the submit.** — `projects/auth-keycloak-theme/src/login/kc-form.ts:sameValueAs`
+- **The frame of a theme page loads every script Keycloak lists for the page, after the first draw.** — `projects/auth-keycloak-theme/src/login/kc-page-scripts.ts:loadPageScripts`. The frame calls it at `projects/auth-keycloak-theme/src/login/shell/rt-kc-root.component.ts:afterNextRender`
+- **The registration form draws the reCAPTCHA widget above the submit button when the realm requires a visible one.** — `projects/auth-keycloak-theme/src/login/pages/register/rt-kc-register.component.ts:recaptchaSiteKey`. The block stands at `projects/auth-keycloak-theme/src/login/pages/register/rt-kc-register.component.html:g-recaptcha`
 - **The dark theme follows the system until the person switches it on the page.** — `projects/auth-keycloak-theme/src/login/kc-app.config.ts:themeAppConfig`
 - **The stand realm uses the theme, and the raising command builds it first.** — `deploy/auth/realm/rt.json:loginTheme`
 - **Every built file of the theme carries a hash of its content in its name.** — `projects/auth-keycloak-theme/project.json:outputHashing`

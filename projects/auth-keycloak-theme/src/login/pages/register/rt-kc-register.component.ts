@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, Signal, signal, WritableSignal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
+import { BlockDirective, ConcatClassesPipe, ElemDirective, ModDirective } from '@rt-tools/core';
 import { IRtField, RtButtonDirective, RtFieldComponent, RtIconComponent, RtInputComponent } from '@rt-tools/ui-kit-v2';
 import { map } from 'rxjs';
 
@@ -38,6 +38,7 @@ interface IRegisterValue {
     imports: [
         ReactiveFormsModule,
         BlockDirective,
+        ConcatClassesPipe,
         ElemDirective,
         ModDirective,
         RtButtonDirective,
@@ -122,6 +123,13 @@ export class RtKcRegisterComponent {
     };
 
     protected readonly providers: readonly IKcProviderButton[] = providerButtonsOf(this.#page);
+    /**
+     * The site key of the reCAPTCHA widget, or `null` when the realm asks for no visible widget. The
+     * script Keycloak lists for the page renders the widget and puts its answer into the form.
+     */
+    protected readonly recaptchaSiteKey: string | null =
+        this.context.recaptchaRequired && this.context.recaptchaVisible ? (this.context.recaptchaSiteKey ?? null) : null;
+    protected readonly recaptchaAction: string | null = this.context.recaptchaAction ?? null;
 
     constructor() {
         // The confirmation is compared with the password, so a change of the password checks it again.

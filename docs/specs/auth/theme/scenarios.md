@@ -194,3 +194,22 @@ Then their buttons carry a mark modifier and no ligature text
 Given a realm whose HTML display name holds an image, and a realm with plain text there
 When a page is drawn
 Then the first head shows the image, and the second shows the realm name
+
+### SC-AUTH-87 — the frame loads the scripts Keycloak lists for the page
+
+Given a page whose context lists a script address
+When the page is drawn
+Then the document holds one script with that address, added after the page content
+
+### SC-AUTH-88 — the registration form carries the reCAPTCHA widget above the button
+
+Given a realm that requires a visible reCAPTCHA with a site key
+When the registration page is drawn
+Then the form holds a `g-recaptcha` block with that site key right before the submit button, and
+an answer in it is posted as `g-recaptcha-response`
+
+### SC-AUTH-89 — no widget without a visible reCAPTCHA
+
+Given a realm that requires no reCAPTCHA, and a realm that requires an invisible one
+When the registration page is drawn
+Then the form holds no `g-recaptcha` block

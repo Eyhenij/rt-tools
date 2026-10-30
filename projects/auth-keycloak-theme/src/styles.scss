@@ -139,6 +139,23 @@ body {
 }
 
 /**
+ * Google draws the reCAPTCHA widget 304 pixels wide and does not follow the form. A form narrower
+ * than that, on a phone, gets the widget scaled down by a quarter from its left edge, and the
+ * block shrinks to the scaled height.
+ */
+.login__captcha {
+    container-type: inline-size;
+}
+
+@container (width < 304px) {
+    .login__captcha > div {
+        margin-bottom: calc(78px * -0.25);
+        scale: 0.75;
+        transform-origin: left top;
+    }
+}
+
+/**
  * The requirements of the realm password policy under the new password field. An unmet requirement
  * is muted; a met one takes the success colour and a filled mark.
  */
