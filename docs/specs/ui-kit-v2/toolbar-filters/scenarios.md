@@ -59,6 +59,24 @@ Given a narrow screen and the filter button
 When the panel is opened
 Then the panel holds the keyboard focus inside itself
 
+### SC-UKV-1096 — the filters panel opens once
+
+Given a narrow screen and the filter button
+When the button is pressed twice before the first panel is ready
+Then one panel is open, and the screen widening closes it
+
+### SC-UKV-1097 — the focus goes to the toolbar when the panel closes on a wide screen
+
+Given an open filters panel holding the focus
+When the screen widens
+Then the focus stands on a field in the left part of the toolbar, not on the page
+
+### SC-UKV-1098 — the filters panel is a modal dialog
+
+Given a narrow screen and the filter button
+When the panel is opened
+Then its frame is `role="dialog"` with `aria-modal="true"` and named «Фильтры»
+
 ### SC-UKV-1095 — a filter on is named to a screen reader
 
 Given a narrow screen and the filter button

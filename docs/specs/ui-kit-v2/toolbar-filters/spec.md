@@ -55,9 +55,13 @@ behind a button that opens a panel.
   the consumer's label — «Сбросить» in the filters panel.
 - **The filters panel lives no longer than its toolbar and its narrow screen.** It closes when the
   toolbar is destroyed and when the screen widens, so the filter fields never stand in two places
-  at once.
+  at once. A second press on the filter button before the first panel is ready opens nothing.
 - **The filters panel holds the keyboard focus while it is open.** Tab moves inside the panel, and
-  on closing the focus returns where it stood.
+  on closing the focus returns where it stood. When the panel closes because the screen widened,
+  the filter button is gone, and the focus goes to the left part of the toolbar where the fields
+  returned.
+- **The filters panel is announced as a modal dialog.** The panel blocks the page, so its frame is
+  `role="dialog"` with `aria-modal` — the input `modal` of the aside.
 - **A filter on is named to a screen reader in words.** The dot is invisible to it, so the button
   name changes from «Фильтры» to «Фильтры, отбор включён».
 

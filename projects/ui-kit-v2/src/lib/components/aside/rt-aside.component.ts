@@ -57,7 +57,8 @@ export type TRtAsideContentLayout = 'default' | 'tabs';
  * обводка фокуса поля срезалась краем такого мини-скроллера.
  *
  * Семантика — `role="complementary"` (mirror rt-dialog имеет `role="dialog"`,
- * aside — другая роль, side-sheet не обязательно блокирующий).
+ * aside — другая роль, side-sheet не обязательно блокирующий). Панель, которая блокирует
+ * страницу и держит фокус, включает вход `modal`: рамка объявлена `role="dialog"` с `aria-modal`.
  *
  * `ViewEncapsulation.None` — стили префиксованы `.rt-aside`, чтобы соседние
  * rt-aside-header / rt-aside-footer работали с одним BEM-блоком без
@@ -103,6 +104,11 @@ export class RtAsideComponent {
      * элемент под Tab, а когда панель уходит или вход гаснет, возвращается туда, где стоял.
      */
     public readonly trapFocus: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+
+    /** Панель блокирует страницу: рамка объявлена скринридеру модальным диалогом. */
+    public readonly modal: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
 

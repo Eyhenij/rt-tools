@@ -25,7 +25,7 @@ class StubBreakpointsService {
     template: `
         <rt-toolbar [filtersActive]="active()" (filtersApply)="applied = applied + 1" (filtersReset)="resets = resets + 1">
             <ng-template rtToolbarFilters let-place>
-                <span qa-dataid="slot-filter" [attr.data-place]="place">Статус</span>
+                <span qa-dataid="slot-filter" tabindex="0" [attr.data-place]="place">Статус</span>
             </ng-template>
             <ng-template rtToolbarRight><button type="button" qa-dataid="slot-right">Ещё</button></ng-template>
         </rt-toolbar>
@@ -213,6 +213,55 @@ describe('RtToolbarComponent — отборы за кнопкой', (): void => 
         await settle(fixture, 50);
 
         expect(panel()?.contains(document.activeElement)).toBe(true);
+    });
+
+    it('SC-UKV-1096 — двойное нажатие открывает одну панель, и расширение места её закрывает', async (): Promise<void> => {
+        const { fixture, breakpoints } = setup(true);
+        press(trigger(fixture));
+        press(trigger(fixture));
+        await settle(fixture);
+        expect(document.querySelectorAll('.rt-toolbar-filters-aside').length).toBe(1);
+
+        breakpoints.narrow.set(false);
+        await settle(fixture, 300);
+
+        expect(panel()).toBeNull();
+    });
+
+    it('SC-UKV-1096 — закрытая панель открывается снова', async (): Promise<void> => {
+        const { fixture } = setup(true);
+        await openPanel(fixture);
+        press(panel()?.querySelector('[qa-dataid="aside-back"]') ?? null);
+        await settle(fixture, 300);
+        expect(panel()).toBeNull();
+
+        await openPanel(fixture);
+
+        expect(panel()).not.toBeNull();
+    });
+
+    it('SC-UKV-1097 — расширение места переводит фокус из панели в поле полосы', async (): Promise<void> => {
+        const { fixture, breakpoints } = setup(true);
+        await openPanel(fixture);
+        await settle(fixture, 50);
+        expect(panel()?.contains(document.activeElement)).toBe(true);
+
+        breakpoints.narrow.set(false);
+        await settle(fixture, 300);
+
+        const field: HTMLElement | null = root(fixture).querySelector('[data-slot="left"] [qa-dataid="slot-filter"]');
+        expect(field).not.toBeNull();
+        expect(document.activeElement).toBe(field);
+    });
+
+    it('SC-UKV-1098 — рамка панели объявлена модальным диалогом с именем', async (): Promise<void> => {
+        const { fixture } = setup(true);
+        await openPanel(fixture);
+        const frame: HTMLElement | null = panel()?.querySelector('[qa-dataid="aside"]') ?? null;
+
+        expect(frame?.getAttribute('role')).toBe('dialog');
+        expect(frame?.getAttribute('aria-modal')).toBe('true');
+        expect(frame?.getAttribute('aria-label')).toBe('Filters');
     });
 
     it('SC-UKV-1095 — включённый отбор назван скринридеру словами', (): void => {

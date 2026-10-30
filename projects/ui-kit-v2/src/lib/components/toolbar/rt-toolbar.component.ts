@@ -1,5 +1,7 @@
-import { NgTemplateOutlet } from '@angular/common';
+import { InteractivityChecker } from '@angular/cdk/a11y';
+import { DOCUMENT, NgTemplateOutlet } from '@angular/common';
 import {
+    afterNextRender,
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
@@ -7,6 +9,7 @@ import {
     contentChild,
     Directive,
     effect,
+    ElementRef,
     inject,
     Injector,
     input,
@@ -18,6 +21,8 @@ import {
     untracked,
     ViewEncapsulation,
 } from '@angular/core';
+
+import { firstValueFrom } from 'rxjs';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
@@ -156,6 +161,9 @@ export class RtToolbarComponent {
     readonly #narrow: Signal<boolean> = inject(BreakpointsService).narrow;
     readonly #asideService: RtAsideService = inject(RtAsideService);
     readonly #injector: Injector = inject(Injector);
+    readonly #host: HTMLElement = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
+    readonly #document: Document = inject(DOCUMENT);
+    readonly #interactivity: InteractivityChecker = inject(InteractivityChecker);
     readonly #filtersActiveLabel: Signal<string> = rtKitLabel('uiFiltersActive');
 
     /** Открытая панель отборов: на широком месте её закрывают, чтобы поля не жили в двух местах. */
@@ -216,12 +224,14 @@ export class RtToolbarComponent {
 
     protected openFilters(): void {
         const template: TemplateRef<IRtToolbar.IFiltersContext> | undefined = this.filtersTpl();
-        if (template === undefined) {
+        // Подложка ловит нажатия только со следующего кадра: второе нажатие до него открыло бы
+        // вторую панель поверх первой
+        if (template === undefined || this.#filtersRef !== null) {
             return;
         }
 
         // Инжектор полосы — хозяин панели: уничтожение полосы закрывает и панель
-        this.#filtersRef = this.#asideService.open<RtToolbarFiltersAsideComponent, IRtToolbar.IFiltersPanelData>(
+        const ref: RtAsideRef = this.#asideService.open<RtToolbarFiltersAsideComponent, IRtToolbar.IFiltersPanelData>(
             RtToolbarFiltersAsideComponent,
             {
                 injector: this.#injector,
@@ -234,10 +244,34 @@ export class RtToolbarComponent {
                 backdropClass: 'rt-aside-backdrop',
             }
         );
+        this.#filtersRef = ref;
+        // Панель закрывается и сама — «Применить», стрелкой, подложкой: ссылка гаснет вместе с ней
+        void firstValueFrom(ref.afterClosed(), { defaultValue: null }).then((): void => {
+            if (this.#filtersRef === ref) {
+                this.#filtersRef = null;
+            }
+        });
     }
 
     #closeFilters(): void {
-        this.#filtersRef?.close();
+        if (this.#filtersRef === null) {
+            return;
+        }
+        // Кнопка, с которой панель открыли, на широком месте уже снята, и вернуть фокус панели
+        // некуда: он уходит в левую секцию полосы, куда вернулись поля отборов
+        const focusInPanel: boolean = this.#document.activeElement?.closest('rt-toolbar-filters-aside') != null;
+        this.#filtersRef.close();
         this.#filtersRef = null;
+        if (focusInPanel) {
+            afterNextRender({ write: (): void => this.#focusBar() }, { injector: this.#injector });
+        }
+    }
+
+    #focusBar(): void {
+        const place: HTMLElement = this.#host.querySelector<HTMLElement>('[data-slot="left"]') ?? this.#host;
+        const target: HTMLElement | undefined = Array.from(place.querySelectorAll<HTMLElement>('*')).find(
+            (node: HTMLElement): boolean => this.#interactivity.isFocusable(node) && this.#interactivity.isTabbable(node)
+        );
+        target?.focus();
     }
 }
