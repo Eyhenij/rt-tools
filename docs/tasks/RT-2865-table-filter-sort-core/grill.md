@@ -59,6 +59,17 @@ decision.
 - **Only `''` drops a filter condition**, in both tables. By the owner's question «как правильно?»
   and the answer given.
 
+## The frame of 30.10 — the owner's answer
+
+Asked «Одобряете кадр?» on https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL/Design-System-V2?node-id=7377-496.
+Answer:
+
+> А - так а почему поведение поменялось мы же обсудили что режим фильтра задается конфигом или входом (со снятием или без)?
+> если вид не меняется зачем мне смотреть маке?
+
+Read as: the filter keeps both behaviours, as the sort does, and the task changes nothing a person
+sees, so it needs no frame. The way the mode is set is asked next.
+
 ## What is left unclear
 
 - Nothing blocks the work.
