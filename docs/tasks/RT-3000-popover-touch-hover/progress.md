@@ -71,3 +71,11 @@
   (and the compact header through it), the detail list, the workspace details, the date panel,
   filter control references without a story, and the narrow profile menu of RT-2997 without a
   reference at all. None of those stories opens a popover.
+- The scroll gave the menu a horizontal scroll the owner found: the rows reach into the padding,
+  and the scroll container added the right padding past them — 267 against 259. The panel menu now
+  scrolls along the vertical axis only. Measured in the browser at 320×568, 375×667, 375×480,
+  375×360, 667×375, 844×390, 1024×600 with touch and 1440×900, 1440×400 with the mouse: the menu in
+  view, a side swipe and a side wheel leave it at 0, a vertical swipe or wheel reaches the last
+  item, the language picks «English» and the menu stays, a tap or leave outside closes the menu
+  and leaves no backdrop, the page has no horizontal scroll. Snapshots: 54 of 943 diverge, all
+  older than the task; the list page reference re-taken and confirmed by a second run.
