@@ -143,7 +143,8 @@ body {
  * stands on the axis of the form, under the full-width button's centre, and its place is kept
  * before the script draws it, so the button does not jump down. A form narrower than the widget,
  * on a phone, scales it down by the step that still fits, and the block shrinks to the scaled
- * height.
+ * height. A container query cannot read a property, so its thresholds repeat the widget width and
+ * its scaled steps: 304, 304 × 0.95 and 304 × 0.85.
  */
 .login__captcha {
     display: flex;
@@ -151,30 +152,32 @@ body {
     container-type: inline-size;
 }
 
-.login__captcha > div {
+.login__captcha-slot {
+    --rt-kc-captcha-width: 304px;
+    --rt-kc-captcha-height: 78px;
     --rt-kc-captcha-scale: 1;
 
-    min-width: 304px;
-    min-height: 78px;
-    margin-bottom: calc(78px * (var(--rt-kc-captcha-scale) - 1));
+    min-width: var(--rt-kc-captcha-width);
+    min-height: var(--rt-kc-captcha-height);
+    margin-bottom: calc(var(--rt-kc-captcha-height) * (var(--rt-kc-captcha-scale) - 1));
     scale: var(--rt-kc-captcha-scale);
     transform-origin: center top;
 }
 
 @container (width < 304px) {
-    .login__captcha > div {
+    .login__captcha-slot {
         --rt-kc-captcha-scale: 0.95;
     }
 }
 
 @container (width < 289px) {
-    .login__captcha > div {
+    .login__captcha-slot {
         --rt-kc-captcha-scale: 0.85;
     }
 }
 
 @container (width < 259px) {
-    .login__captcha > div {
+    .login__captcha-slot {
         --rt-kc-captcha-scale: 0.75;
     }
 }
