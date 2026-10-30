@@ -219,3 +219,10 @@ Then the form holds no reCAPTCHA block
 Given a realm that requires a visible reCAPTCHA and a page in the light theme
 When the person switches the page to the dark theme
 Then the widget is drawn anew in the dark scheme, and the form holds one answer field
+
+### SC-AUTH-91 — the page waits for the Google script however late it comes
+
+Given a registration page that asks for the Google script before the frame added it, or after the
+frame added it and before it loaded
+When the script is added and loads
+Then the page gets the script once, after its load and not before
