@@ -52,6 +52,7 @@
     "[rtSelectOption]": "projects/ui-kit-v2/src/lib/components/input/stories/field-extras.stories.ts",
     "[rtToggleButtonOption]": "projects/ui-kit-v2/src/lib/components/toggle-button-group/stories/toggle-button-group-matrix.stories.ts",
     "rt-drawer-container": "projects/ui-kit-v2/src/lib/components/drawer/stories/drawer-matrix.stories.ts",
+    "rt-toolbar-filters-aside": "projects/ui-kit-v2/src/lib/components/toolbar/stories/toolbar-filters.stories.ts",
     "rt-resize-handle": "projects/ui-kit-v2/src/lib/components/drawer/stories/drawer.stories.ts",
     "ng-template[rtStepLabel]": "projects/ui-kit-v2/src/lib/components/stepper/stories/stepper-matrix.stories.ts",
     "rt-color-picker": "projects/ui-kit-v2/src/lib/components/color-palette/stories/color-palette-matrix.stories.ts",

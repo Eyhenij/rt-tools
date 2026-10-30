@@ -1,4 +1,5 @@
 import { BooleanInput } from '@angular/cdk/coercion';
+import { CdkScrollable } from '@angular/cdk/scrolling';
 import {
     booleanAttribute,
     computed,
@@ -56,6 +57,10 @@ const BEM_BLOCK: string = 'rt-profile-menu';
         RtMenuItemComponent,
         RtSelectComponent,
     ],
+    // В панели поповера меню прокручивается само. CDK узнаёт о такой прокрутке только от
+    // зарегистрированного контейнера: без него открытый список языков стоял на месте, а поле под
+    // ним уезжало вместе с меню.
+    hostDirectives: [CdkScrollable],
     host: {
         class: BEM_BLOCK,
     },
