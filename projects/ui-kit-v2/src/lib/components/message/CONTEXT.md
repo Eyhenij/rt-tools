@@ -25,7 +25,7 @@
 
 ## Края
 
-- Иконка подставляется по палитре (`info` → `ico-info`, `success` → `check`,
+- Иконка подставляется по палитре (`info` → `info-circle`, `success` → `check`,
   `warning` → `ico-warning`, `danger` → `ico-error`). У `secondary` и `neutral` иконки нет —
   они не сообщают об исходе.
 - Заданная иконка перебивает умолчание; `hideIcon` гасит любую.

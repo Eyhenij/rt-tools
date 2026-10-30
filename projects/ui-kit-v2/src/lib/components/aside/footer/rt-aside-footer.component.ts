@@ -1,4 +1,15 @@
-import { contentChildren, effect, inject, ChangeDetectionStrategy, Component, ElementRef, Signal, ViewEncapsulation } from '@angular/core';
+import {
+    contentChildren,
+    effect,
+    inject,
+    input,
+    ChangeDetectionStrategy,
+    Component,
+    ElementRef,
+    InputSignal,
+    Signal,
+    ViewEncapsulation,
+} from '@angular/core';
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
@@ -7,16 +18,26 @@ import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
 
 const BEM_BLOCK: string = 'rt-aside-footer';
 
-/** Вид кнопки слота `[asidePrimary]`: залитая, основного цвета, без значка. */
+/**
+ * Раскладка подвала. `between` — «Закрыть» в рамке слева, позитивный глагол залитый и без значка
+ * справа. `start` — как в панели подключения службы: позитивный глагол первым, со своим значком,
+ * «Закрыть» текстом сразу за ним, обе у левого края.
+ */
+export type TRtAsideFooterLayout = 'between' | 'start';
+
+/** Вид кнопки слота `[asidePrimary]` в раскладке `between`: залитая, основного цвета, без значка. */
 const PRIMARY_LOOK: IButton.PlaceLook = { appearance: 'filled', theme: 'primary', icon: null };
 
+/** Вид кнопки слота `[asidePrimary]` в раскладке `start`: залитая, основного цвета, значок свой. */
+const PRIMARY_START_LOOK: IButton.PlaceLook = { appearance: 'filled', theme: 'primary' };
+
 /** Вид кнопки по слоту, в котором она стоит сама или внутри его обёртки; вне слотов вида нет. */
-function slotLook(host: HTMLElement | undefined, dismissLook: IButton.PlaceLook): IButton.PlaceLook | null {
+function slotLook(host: HTMLElement | undefined, dismissLook: IButton.PlaceLook, primaryLook: IButton.PlaceLook): IButton.PlaceLook | null {
     if (host?.closest('[asideDismiss]')) {
         return dismissLook;
     }
     if (host?.closest('[asidePrimary]')) {
-        return PRIMARY_LOOK;
+        return primaryLook;
     }
 
     return null;
@@ -57,6 +78,7 @@ function slotLook(host: HTMLElement | undefined, dismissLook: IButton.PlaceLook)
     imports: [BlockDirective, ElemDirective],
     host: {
         class: BEM_BLOCK,
+        '[class.rt-aside-footer--start]': "layout() === 'start'",
     },
 })
 export class RtAsideFooterComponent {
@@ -70,17 +92,22 @@ export class RtAsideFooterComponent {
         read: ElementRef,
     });
 
+    /** Раскладка кнопок: `between` по умолчанию, `start` — панель подключения службы. */
+    public readonly layout: InputSignal<TRtAsideFooterLayout> = input<TRtAsideFooterLayout>('between');
+
     constructor() {
         effect((): void => {
             const hosts: readonly ElementRef<HTMLElement>[] = this.hosts();
+            const start: boolean = this.layout() === 'start';
             const dismissLook: IButton.PlaceLook = {
-                appearance: 'outlined',
+                appearance: start ? 'text' : 'outlined',
                 theme: 'secondary',
                 ...(this.#phone() ? { label: this.#closeLabel() } : {}),
             };
+            const primaryLook: IButton.PlaceLook = start ? PRIMARY_START_LOOK : PRIMARY_LOOK;
 
             this.buttons().forEach((button: RtButtonDirective, index: number): void => {
-                button.placeLook.set(slotLook(hosts[index]?.nativeElement, dismissLook));
+                button.placeLook.set(slotLook(hosts[index]?.nativeElement, dismissLook, primaryLook));
             });
         });
     }

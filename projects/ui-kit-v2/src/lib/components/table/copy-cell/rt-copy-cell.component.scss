@@ -38,6 +38,26 @@
         &--static &__button {
             opacity: 1;
         }
+
+        /* framed — ячейка в рамке поля ввода на всю ширину формы: фон, рамка и радиус поля,
+           отступ слева как у текста поля, кнопка прижата к правому краю рамки. */
+        &--framed {
+            display: flex;
+            width: 100%;
+            box-sizing: border-box;
+            padding: var(--rt-space-1) var(--rt-space-1) var(--rt-space-1) var(--rt-input-padding-x);
+            border: var(--rt-input-border-width) solid var(--rt-input-color-border);
+            border-radius: var(--rt-input-radius);
+            background-color: var(--rt-input-color-bg);
+            color: var(--rt-color-text-primary);
+            font-size: var(--rt-text-sm);
+            gap: var(--rt-space-sm);
+            line-height: var(--rt-leading-normal);
+        }
+
+        &--framed &__content {
+            flex: 1 1 auto;
+        }
     }
 
     /* Reveal при наведении/фокусе на всю строку rt-table — привычное поведение

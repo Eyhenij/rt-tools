@@ -8,30 +8,38 @@
             <div rtElem="controls">
                 @for (field of fields; track field.label) {
                     <div rtElem="control-item">
-                        <rt-field [label]="field.label" [hint]="field.hint" [required]="field.required">
-                            <rt-input qa-dataid="service-block-panel-input" [clearable]="false" [ngModel]="field.value" />
+                        <rt-field [label]="field.label" [hint]="field.hint" [required]="true">
+                            <rt-input qa-dataid="service-block-panel-input" [clearable]="false" [placeholder]="field.placeholder" />
                         </rt-field>
                     </div>
                 }
+
+                <div rtElem="control-item">
+                    <section rtBlock="app-service-block-panel-webhook" qa-dataid="service-block-panel-webhook">
+                        <h3 rtElem="title">Адрес извещений</h3>
+                        <rt-message severity="info">Добавьте его в Stripe: Разработчикам → Вебхуки</rt-message>
+                        <rt-copy-cell framed qa-dataid="service-block-panel-webhook-url">
+                            https://rent-ops.com/payments/stripe/platform
+                        </rt-copy-cell>
+                    </section>
+                </div>
             </div>
         </div>
     </div>
 
-    <rt-aside-footer>
+    <rt-aside-footer layout="start">
         <button
             rtButton
             asideDismiss
             type="button"
-            theme="secondary"
-            appearance="text"
-            label="Закрыть и не сохранять"
-            aria-label="Закрыть и не сохранять"
+            label="Закрыть без сохранения"
+            aria-label="Закрыть без сохранения"
             qa-dataid="service-block-panel-dismiss"></button>
         <button
             rtButton
             asidePrimary
             type="button"
-            icon="ico-check"
+            icon="check"
             label="Сохранить"
             aria-label="Сохранить"
             qa-dataid="service-block-panel-save"></button>

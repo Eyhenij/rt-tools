@@ -20,6 +20,16 @@
             gap: var(--rt-aside-footer-gap, var(--rt-space-sm));
         }
 
+        /* Раскладка start: позитивный глагол первым, обе кнопки у левого края. Порядок меняется
+           стилем, а не разметкой: слоты проецируются в одном порядке при любой раскладке. */
+        &--start &__content {
+            justify-content: var(--rt-aside-footer-justify, flex-start);
+        }
+
+        &--start [asidePrimary] {
+            order: -1;
+        }
+
         &:empty {
             display: none;
         }

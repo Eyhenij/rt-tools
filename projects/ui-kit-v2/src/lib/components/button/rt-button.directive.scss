@@ -8,7 +8,10 @@
         --rt-btn-padding: 0 1.25rem;
         --rt-btn-gap: 0.5rem;
         --rt-btn-radius: var(--rt-radius-control);
-        --rt-btn-border-width: var(--rt-border-width-thin);
+
+        /* Рамка есть только у кнопки в рамке, как в макете кнопок: у залитой и текстовой
+           её нет, и подпись стоит на отступе от края, а не на отступе плюс рамка. */
+        --rt-btn-border-width: 0px;
         --rt-btn-transition-duration: var(--rt-duration-fast);
         --rt-btn-focus-shadow: var(--rt-shadow-focus-ring);
         --rt-btn-font-size: 0.95rem;
@@ -179,6 +182,7 @@
            марки, и роли danger или success получали бы от него чужой след. Доли вынесены
            свойствами — на графите слабый оттенок не виден, и тёмная тема их поднимает. */
         &--outlined {
+            --rt-btn-border-width: var(--rt-border-width-thin);
             --rt-btn-bg: transparent;
             --rt-btn-bg-hover: color-mix(in srgb, var(--rt-btn-color) var(--rt-btn-tint-hover), transparent);
             --rt-btn-bg-active: color-mix(in srgb, var(--rt-btn-color) var(--rt-btn-tint-active), transparent);

@@ -1,23 +1,22 @@
 import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
 import { RtAsideFooterComponent } from '../../../aside/footer/rt-aside-footer.component';
 import { RtAsideHeaderComponent } from '../../../aside/header/rt-aside-header.component';
 import { RtAsideComponent } from '../../../aside/rt-aside.component';
 import { RtButtonDirective } from '../../../button/rt-button.directive';
+import { RtCopyCellComponent } from '../../../table/copy-cell/rt-copy-cell.component';
 import { RtFieldComponent } from '../../../field/rt-field.component';
 import { RtInputComponent } from '../../../input/rt-input.component';
+import { RtMessageComponent } from '../../../message/rt-message.component';
 import { IRtServiceLogo } from '../../../service-logo/rt-service-logo.model';
 import { RtServiceBlockComponent } from '../../rt-service-block.component';
 
-/** Поле панели: подпись, значение и подсказка под ним — так, как их рисует кадр. */
+/** Поле панели: подпись, подсказка внутри поля и строка под ним — так, как их рисует эталон. */
 export interface IServiceBlockPanelField {
     readonly label: string;
-    readonly value: string;
+    readonly placeholder: string;
     readonly hint: string;
-    readonly required: boolean;
 }
 
 /** Знак службы из кадра: в пакет он не уезжает, история его рисует ради сверки с макетом. */
@@ -30,9 +29,9 @@ const STRIPE_MARK: string =
     );
 
 /**
- * Демонстрационная обёртка для витрины: панель подключения службы целиком, как кадр
- * «Оператор — панель Stripe · 1440» в макетах потребителя. Шапка, блок службы, четыре поля и
- * подвал собраны из компонентов кита, ширина панели — ширина кадра. История нужна для наложения
+ * Демонстрационная обёртка для витрины: панель подключения службы целиком, как эталон кита
+ * «Stripe · 540» на странице «Панель подключения службы». Шапка, блок службы, три поля, адрес
+ * извещений и подвал собраны из компонентов кита, ширина панели — ширина эталона. История нужна для наложения
  * на кадр: промежуток под блоком службы виден только рядом с полями под ним.
  *
  * В пакет обёртка не уезжает: `tsconfig.lib.json` исключает папки историй.
@@ -44,9 +43,6 @@ const STRIPE_MARK: string =
     encapsulation: ViewEncapsulation.None,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
-        // modules
-        FormsModule,
-
         // standalone components / directives
         BlockDirective,
         ElemDirective,
@@ -56,8 +52,10 @@ const STRIPE_MARK: string =
         RtAsideFooterComponent,
         RtAsideHeaderComponent,
         RtButtonDirective,
+        RtCopyCellComponent,
         RtFieldComponent,
         RtInputComponent,
+        RtMessageComponent,
         RtServiceBlockComponent,
     ],
 })
@@ -67,27 +65,18 @@ export class TestRtServiceBlockPanelComponent {
     public readonly fields: readonly IServiceBlockPanelField[] = [
         {
             label: 'Секретный ключ',
-            value: 'sk_live_51Px…a41c',
-            hint: 'Stripe → Разработчики → Ключи API, «Секретный ключ». Начинается с sk_.',
-            required: true,
+            placeholder: 'sk_live_51PxQ8kL2mN7vR4tYb9cZ3wE6hJ1aF0dK5sG8pU2xV4nM7qT3a41c',
+            hint: 'Лежит в кабинете Stripe: Разработчикам → Ключи API',
         },
         {
             label: 'Ключ подписи вебхука',
-            value: 'whsec_…9f02',
-            hint: 'Stripe → Разработчики → Вебхуки, «Секрет подписи». Начинается с whsec_.',
-            required: true,
+            placeholder: 'whsec_Hq7Lm2Nx9Pz4Rt6Vb8Kc3Wd5Yf1Gs0J9f02',
+            hint: 'Появится в Stripe, когда добавите адрес извещений ниже',
         },
         {
-            label: 'Открытый ключ',
-            value: 'pk_live_51Px…7c2e',
-            hint: 'Stripe → Разработчики → Ключи API, «Публикуемый ключ». Начинается с pk_.',
-            required: true,
-        },
-        {
-            label: 'Адрес извещений для кабинета Stripe',
-            value: 'https://rent-ops.com/payments/stripe/platform',
-            hint: 'Впишите его в Stripe: Разработчики → Вебхуки → Добавить адрес.',
-            required: false,
+            label: 'Публикуемый ключ',
+            placeholder: 'pk_live_51PxQ8kL2mN7vR4tYb9cZ3wE6hJ1aF0dK5sG8pU2xR9mW4c7c2e',
+            hint: 'Лежит рядом с секретным: Разработчикам → Ключи API',
         },
     ];
 }

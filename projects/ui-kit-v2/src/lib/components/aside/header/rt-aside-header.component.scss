@@ -31,6 +31,10 @@
             --rt-icon-step-sm: var(--rt-aside-header-back-icon-size, var(--rt-size-4));
 
             flex-shrink: 0;
+
+            /* Кнопка прижата к верху шапки, а не к середине двух строк заголовка: так в макете
+               шапки панели. */
+            align-self: flex-start;
         }
 
         /* Шаг кнопки переназначается на её внутреннем узле: модификатор размера объявляет его там
@@ -70,8 +74,9 @@
             font-size: var(--rt-aside-header-title-size, var(--rt-aside-header-title-size-default));
             font-weight: var(--rt-aside-header-title-weight, var(--rt-aside-header-title-weight-default));
 
-            /* Высота строки — ручка приложения; без неё 27 при кегле 20, как в макете шапки панели. */
-            line-height: var(--rt-aside-header-title-leading, var(--rt-leading-snug));
+            /* Высота строки — ручка приложения; без неё обычная строка шрифта, как в эталоне кита
+               «Панель подключения службы»: 24 при кегле 20. */
+            line-height: var(--rt-aside-header-title-leading, normal);
 
             /* Ellipsis для длинного заголовка: skeleton-wrapper рендерит `{{ title }}`
                как ng-content внутри inline-flex; чтобы `text-overflow: ellipsis`

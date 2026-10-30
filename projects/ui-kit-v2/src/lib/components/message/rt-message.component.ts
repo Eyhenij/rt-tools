@@ -39,7 +39,7 @@ const BEM_BLOCK: string = 'rt-message';
  * директивы `rtBlock` / `rtElem` / `rtMod` из `@rt-tools/core`.
  *
  * Default icon по severity:
- * - `info` → `ico-info`
+ * - `info` → `info-circle`
  * - `success` → `check`
  * - `warning` → `ico-warning`
  * - `danger` → `ico-error`
@@ -70,7 +70,7 @@ const BEM_BLOCK: string = 'rt-message';
 export class RtMessageComponent {
     /** Default icon mapping для каждой severity. `null` — иконка не рендерится. */
     readonly #severityIconDefaults: Readonly<Record<IRtTag.Severity, IRtIcon.Name | null>> = {
-        info: 'ico-info',
+        info: 'info-circle',
         success: 'check',
         warning: 'ico-warning',
         danger: 'ico-error',
