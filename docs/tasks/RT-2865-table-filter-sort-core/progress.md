@@ -3,7 +3,7 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 4 из 5 — the showcase story and the owner's approval
+- **Stage:** 5 из 5 — closing
 
 ### Stage 1 — the frame and the owner's approval
 
@@ -34,14 +34,17 @@ clean.
 
 ### Stage 4 — the showcase story and the owner's approval
 
-- [ ] 1. A story of `rt-data-table` with a list filter holding `false` and two sortable columns. ← now
-- [ ] 2. The visual gate: the old frames do not move, the new frame is looked at and taken.
+- [x] 1. A story of `rt-data-table` with a list filter holding `false` and two sortable columns.
+- [x] 2. The visual gate: the old frames do not move, the new frame is looked at and taken.
 - [ ] 3. The links and what to look at go to the owner; the answer is written into the grill.
+
+By the revision no new story: the gate matched 969 of 969 frames. Step 3 is the report to the owner
+with the PR.
 
 ### Stage 5 — closing
 
-- [ ] 1. The agreement merges into `table-filter` and `table-full-port`.
-- [ ] 2. `pnpm run check:all` is green.
+- [x] 1. The agreement merges into `table-filter` and `table-full-port`.
+- [ ] 2. `pnpm run check:all` is green. ← now
 - [ ] 3. The folder is taken apart, the PR opens into the epic branch.
 
 ## Stage revision of 30.10
